@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-02 18:38-0200\n"
+"POT-Creation-Date: 2017-02-03 14:34-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-02 10:16-0500\n"
+"PO-Revision-Date: 2017-02-03 11:28-0500\n"
 "Last-Translator: Andrea Cuccuru <cuccuru.andrea@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -22,8 +22,8 @@ msgid ""
 "hostname."
 msgstr ""
 "Potenziale attacco Rebind DNS rilevato, vedere http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br /> Provare ad accedere al router per indirizzo IP anziché "
-"per hostname."
+"DNS_rebinding<br /> Provare ad accedere al router con l'indirizzo IP anziché "
+"con hostname."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
@@ -140,7 +140,7 @@ msgstr "La ricerca ha generato un errore: %s"
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr ""
+msgstr "ERRORE! Ricerca LDAP fallita o utenti multipli trovati."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
@@ -155,13 +155,13 @@ msgstr "Collegato con successo come %1$s via LDAP server %2$s con DN = %3$s."
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
-msgid "RADIUS start: %s<br />\n"
-msgstr ""
+msgid "RADIUS start: %s"
+msgstr "RADIUS partito: %s"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
-msgid "RADIUS send failed: %s<br />\n"
-msgstr ""
+msgid "RADIUS send failed: %s"
+msgstr "Invio RADIUS fallito: %s"
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
@@ -358,11 +358,11 @@ msgstr "Premi sul tasto sotto per disconnetterti"
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr "ERRORE: non posso aprire '%1$s' in captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "PERICOLO! ATTENZIONE! ATTENZIONE!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
@@ -1608,7 +1608,7 @@ msgstr "Filtri disabilitati. Non carico le regole."
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1213
 #: src/etc/inc/system.inc:1311 src/etc/inc/system.inc:1614
-#: src/etc/inc/system.inc:2183
+#: src/etc/inc/system.inc:2186
 msgid "done."
 msgstr "fatto."
 
@@ -1974,7 +1974,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_summary.php:67
 #: src/usr/local/www/status_logs_settings.php:187
 #: src/usr/local/www/status_logs_vpn.php:84
-#: src/usr/local/www/status_ntpd.php:270 src/usr/local/www/status_ntpd.php:282
+#: src/usr/local/www/status_ntpd.php:283 src/usr/local/www/status_ntpd.php:295
 #: src/usr/local/www/status_openvpn.php:30
 #: src/usr/local/www/status_openvpn.php:156
 #: src/usr/local/www/status_openvpn.php:237
@@ -2284,79 +2284,79 @@ msgid ""
 "automatically replaced with %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3363
+#: src/etc/inc/interfaces.inc:3362
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3554 src/etc/inc/interfaces.inc:3624
-#: src/etc/inc/interfaces.inc:3688
+#: src/etc/inc/interfaces.inc:3553 src/etc/inc/interfaces.inc:3623
+#: src/etc/inc/interfaces.inc:3687
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3561 src/etc/inc/interfaces.inc:3567
+#: src/etc/inc/interfaces.inc:3560 src/etc/inc/interfaces.inc:3566
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3630
+#: src/etc/inc/interfaces.inc:3629
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3666
+#: src/etc/inc/interfaces.inc:3665
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3694 src/etc/inc/interfaces.inc:3749
-#: src/etc/inc/interfaces.inc:3835
+#: src/etc/inc/interfaces.inc:3693 src/etc/inc/interfaces.inc:3748
+#: src/etc/inc/interfaces.inc:3834
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3726
+#: src/etc/inc/interfaces.inc:3725
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3941
+#: src/etc/inc/interfaces.inc:3940
 msgid "Failed to write user DUID file!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4342
+#: src/etc/inc/interfaces.inc:4341
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4370
+#: src/etc/inc/interfaces.inc:4369
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4383
+#: src/etc/inc/interfaces.inc:4382
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4439
+#: src/etc/inc/interfaces.inc:4438
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4532
+#: src/etc/inc/interfaces.inc:4531
 #, php-format
-msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading.\n"
+msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:5572 src/etc/inc/service-utils.inc:358
+#: src/etc/inc/interfaces.inc:5571 src/etc/inc/service-utils.inc:358
 #: src/usr/local/www/diag_backup.php:490
 #: src/usr/local/www/diag_packet_capture.php:111
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
@@ -2656,14 +2656,14 @@ msgstr ""
 msgid "Mobile Client"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2981
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2983
 #: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:914
 #: src/usr/local/www/firewall_rules_edit.php:1597
 #: src/usr/local/www/interfaces.php:1658 src/usr/local/www/interfaces.php:1659
 #: src/usr/local/www/interfaces.php:1683 src/usr/local/www/interfaces.php:1696
-#: src/usr/local/www/services_ntpd_gps.php:358
+#: src/usr/local/www/services_ntpd_gps.php:364
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:445
 #: src/usr/local/www/vpn_ipsec_phase2.php:543
@@ -2678,12 +2678,12 @@ msgstr ""
 
 #: src/etc/inc/meta.inc:61
 #, php-format
-msgid "list_phpfiles: unable to examine path %s\n"
+msgid "list_phpfiles: unable to examine path %s"
 msgstr ""
 
 #: src/etc/inc/meta.inc:97
 #, php-format
-msgid "unable to read %s\n"
+msgid "unable to read %s"
 msgstr ""
 
 #: src/etc/inc/meta.inc:134
@@ -3222,19 +3222,27 @@ msgid "English"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2799
-msgid "Portuguese (Brazil)"
+msgid "Spanish"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2800
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2801
 msgid "Turkish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2989 src/etc/inc/pfsense-utils.inc:3004
-#: src/etc/inc/pfsense-utils.inc:3029
+#: src/etc/inc/pfsense-utils.inc:2802
+msgid "Chinese (Simplified, China)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2991 src/etc/inc/pfsense-utils.inc:3006
+#: src/etc/inc/pfsense-utils.inc:3031
 msgid "No Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2999 src/etc/inc/pfsense-utils.inc:3041
+#: src/etc/inc/pfsense-utils.inc:3001 src/etc/inc/pfsense-utils.inc:3043
 #: src/usr/local/www/firewall_nat_out.php:228
 #: src/usr/local/www/firewall_nat_out.php:232
 #: src/usr/local/www/interfaces.php:875 src/usr/local/www/interfaces.php:2959
@@ -3250,79 +3258,79 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3005
+#: src/etc/inc/pfsense-utils.inc:3007
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3006
+#: src/etc/inc/pfsense-utils.inc:3008
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3007
+#: src/etc/inc/pfsense-utils.inc:3009
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3008
+#: src/etc/inc/pfsense-utils.inc:3010
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3014
+#: src/etc/inc/pfsense-utils.inc:3016
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3015
+#: src/etc/inc/pfsense-utils.inc:3017
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3016
+#: src/etc/inc/pfsense-utils.inc:3018
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3017
+#: src/etc/inc/pfsense-utils.inc:3019
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3018
+#: src/etc/inc/pfsense-utils.inc:3020
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3019
+#: src/etc/inc/pfsense-utils.inc:3021
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3030
+#: src/etc/inc/pfsense-utils.inc:3032
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3046
+#: src/etc/inc/pfsense-utils.inc:3048
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3047
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3055
+#: src/etc/inc/pfsense-utils.inc:3057
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3056
+#: src/etc/inc/pfsense-utils.inc:3058
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3057
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3058
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -5895,7 +5903,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_pool_edit.php:306
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:177
 #: src/usr/local/www/services_checkip_edit.php:127
-#: src/usr/local/www/system_gateways_edit.php:618
+#: src/usr/local/www/system_gateways_edit.php:617
 msgid "*Name"
 msgstr ""
 
@@ -6028,8 +6036,8 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:393
 #: src/usr/local/www/firewall_rules_edit.php:1458
 #: src/usr/local/www/firewall_schedule.php:95
-#: src/usr/local/www/firewall_schedule_edit.php:372
-#: src/usr/local/www/firewall_schedule_edit.php:616
+#: src/usr/local/www/firewall_schedule_edit.php:375
+#: src/usr/local/www/firewall_schedule_edit.php:619
 #: src/usr/local/www/firewall_virtual_ip.php:264
 #: src/usr/local/www/firewall_virtual_ip_edit.php:425
 #: src/usr/local/www/guiconfig.inc:1139 src/usr/local/www/interfaces.php:494
@@ -6111,7 +6119,7 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups_edit.php:309
 #: src/usr/local/www/system_gateway_groups_edit.php:338
 #: src/usr/local/www/system_gateways.php:261
-#: src/usr/local/www/system_gateways_edit.php:685
+#: src/usr/local/www/system_gateways_edit.php:684
 #: src/usr/local/www/system_groupmanager.php:232
 #: src/usr/local/www/system_groupmanager.php:311
 #: src/usr/local/www/system_groupmanager.php:416
@@ -6318,8 +6326,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:502
 #: src/usr/local/www/firewall_rules.php:832
-#: src/usr/local/www/firewall_schedule_edit.php:620
-#: src/usr/local/www/firewall_schedule_edit.php:1117
+#: src/usr/local/www/firewall_schedule_edit.php:623
+#: src/usr/local/www/firewall_schedule_edit.php:1120
 #: src/usr/local/www/interfaces_assign.php:538
 #: src/usr/local/www/interfaces_qinq_edit.php:312
 #: src/usr/local/www/interfaces_vlan.php:133
@@ -6329,7 +6337,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:276
 #: src/usr/local/www/services_igmpproxy_edit.php:232
 #: src/usr/local/www/services_ntpd.php:266
-#: src/usr/local/www/services_ntpd_acls.php:288
+#: src/usr/local/www/services_ntpd_acls.php:290
 #: src/usr/local/www/services_pppoe_edit.php:520
 #: src/usr/local/www/services_router_advertisements.php:424
 #: src/usr/local/www/services_unbound_acls.php:269
@@ -6495,7 +6503,7 @@ msgstr ""
 msgid "Weight must be an integer between 1 and 100."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4205 src/usr/local/www/system_gateways_edit.php:712
+#: src/etc/inc/shaper.inc:4205 src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight"
 msgstr ""
 
@@ -6608,8 +6616,8 @@ msgstr ""
 msgid "Starting webConfigurator..."
 msgstr ""
 
-#: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2186
-#: src/etc/inc/system.inc:2189
+#: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2189
+#: src/etc/inc/system.inc:2192
 msgid "failed!"
 msgstr ""
 
@@ -6632,25 +6640,25 @@ msgstr ""
 msgid "Setting timezone..."
 msgstr ""
 
-#: src/etc/inc/system.inc:2018
+#: src/etc/inc/system.inc:2021
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr ""
 
-#: src/etc/inc/system.inc:2138
+#: src/etc/inc/system.inc:2141
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:2165
+#: src/etc/inc/system.inc:2168
 msgid "Setting hard disk standby... "
 msgstr ""
 
-#: src/etc/inc/system.inc:2380
+#: src/etc/inc/system.inc:2383
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2384 src/etc/inc/system.inc:2403
+#: src/etc/inc/system.inc:2387 src/etc/inc/system.inc:2406
 msgid "PC Engines ALIX"
 msgstr ""
 
@@ -7941,7 +7949,7 @@ msgstr ""
 #: src/usr/local/www/diag_backup.php:504
 #: src/usr/local/www/firewall_aliases.php:154
 #: src/usr/local/www/pkg_edit.php:1191
-#: src/usr/local/www/services_ntpd_gps.php:284
+#: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/services_unbound.php:220
 #: src/usr/local/www/status_graph.php:160
@@ -8180,9 +8188,10 @@ msgid "Backup Count"
 msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:161
+#, php-format
 msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
-"or leave blank for the default value ("
+"or leave blank for the default value (%s for the current platform)."
 msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:166
@@ -8385,7 +8394,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:236
-#: src/usr/local/www/status_ntpd.php:283
+#: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1005
 #: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
@@ -9034,7 +9043,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:173
 #: src/usr/local/www/services_wol.php:140
 #: src/usr/local/www/services_wol_edit.php:134
-#: src/usr/local/www/system_gateways_edit.php:601
+#: src/usr/local/www/system_gateways_edit.php:600
 #: src/usr/local/www/vpn_ipsec_phase1.php:676
 #: src/usr/local/www/vpn_l2tp.php:211
 #: src/usr/local/www/vpn_openvpn_client.php:517
@@ -9069,7 +9078,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:297
 #: src/usr/local/www/firewall_rules_edit.php:1267
-#: src/usr/local/www/system_gateways_edit.php:608
+#: src/usr/local/www/system_gateways_edit.php:607
 msgid "*Address Family"
 msgstr ""
 
@@ -10112,7 +10121,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns.php:214
 #: src/usr/local/www/services_igmpproxy.php:140
 #: src/usr/local/www/services_ntpd.php:276
-#: src/usr/local/www/services_ntpd_acls.php:302
+#: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_pppoe.php:146
 #: src/usr/local/www/services_rfc2136.php:202
 #: src/usr/local/www/services_router_advertisements.php:438
@@ -10509,7 +10518,7 @@ msgstr ""
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
 #: src/usr/local/www/status_logs_vpn.php:408
-#: src/usr/local/www/status_ntpd.php:286
+#: src/usr/local/www/status_ntpd.php:299
 #: src/usr/local/www/system_authservers.php:233
 #: src/usr/local/www/system_authservers.php:256
 #: src/usr/local/www/system_authservers.php:443
@@ -11271,10 +11280,10 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:360
 #: src/usr/local/www/services_ntpd.php:429
 #: src/usr/local/www/services_ntpd.php:466
-#: src/usr/local/www/services_ntpd_gps.php:468
-#: src/usr/local/www/services_ntpd_gps.php:669
-#: src/usr/local/www/system_gateways_edit.php:693
-#: src/usr/local/www/system_gateways_edit.php:896
+#: src/usr/local/www/services_ntpd_gps.php:481
+#: src/usr/local/www/services_ntpd_gps.php:683
+#: src/usr/local/www/system_gateways_edit.php:692
+#: src/usr/local/www/system_gateways_edit.php:895
 msgid "Display Advanced"
 msgstr ""
 
@@ -11324,7 +11333,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1436
 #: src/usr/local/www/interfaces.php:2639
 #: src/usr/local/www/interfaces_ppps_edit.php:759
-#: src/usr/local/www/services_ntpd_gps.php:333
+#: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
 msgstr ""
 
@@ -11477,8 +11486,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:1238
 #: src/usr/local/www/services_ntpd.php:427
 #: src/usr/local/www/services_ntpd.php:464
-#: src/usr/local/www/services_ntpd_gps.php:667
-#: src/usr/local/www/system_gateways_edit.php:894
+#: src/usr/local/www/services_ntpd_gps.php:681
+#: src/usr/local/www/system_gateways_edit.php:893
 msgid "Hide Advanced"
 msgstr ""
 
@@ -11825,7 +11834,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:1878 src/usr/local/www/interfaces.php:2870
 #: src/usr/local/www/interfaces.php:2879 src/usr/local/www/interfaces.php:2888
 #: src/usr/local/www/interfaces.php:2946 src/usr/local/www/interfaces.php:3201
-#: src/usr/local/www/services_ntpd_gps.php:333
+#: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Default"
 msgstr ""
 
@@ -11939,7 +11948,7 @@ msgstr ""
 #: src/usr/local/www/system.php:496
 #: src/usr/local/www/system_gateway_groups_edit.php:306
 #: src/usr/local/www/system_gateways.php:259
-#: src/usr/local/www/system_gateways_edit.php:625
+#: src/usr/local/www/system_gateways_edit.php:624
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/system_routes_edit.php:82
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:137
@@ -11976,7 +11985,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd.php:202
 #: src/usr/local/www/services_ntpd_acls.php:175
-#: src/usr/local/www/services_ntpd_gps.php:314
+#: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/services_ntpd_pps.php:116
 #: src/usr/local/www/services_router_advertisements.php:465
 #: src/usr/local/www/status_logs_common.inc:98
@@ -12652,7 +12661,11 @@ msgid "ICMP Subtypes"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1306
-msgid "<div id=\"icmptype_help\">"
+#: src/usr/local/www/firewall_virtual_ip_edit.php:381
+#: src/usr/local/www/status_pkglogs.php:92
+#: src/usr/local/www/status_pkglogs.php:94
+#, php-format
+msgid "%s"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1318
@@ -12700,8 +12713,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:897
 #: src/usr/local/www/services_dhcpv6.php:627
 #: src/usr/local/www/services_dhcpv6.php:652
-#: src/usr/local/www/system_gateways_edit.php:728
-#: src/usr/local/www/system_gateways_edit.php:748
+#: src/usr/local/www/system_gateways_edit.php:727
+#: src/usr/local/www/system_gateways_edit.php:747
 msgid "From"
 msgstr ""
 
@@ -12715,8 +12728,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:904
 #: src/usr/local/www/services_dhcpv6.php:636
 #: src/usr/local/www/services_dhcpv6.php:661
-#: src/usr/local/www/system_gateways_edit.php:735
-#: src/usr/local/www/system_gateways_edit.php:755
+#: src/usr/local/www/system_gateways_edit.php:734
+#: src/usr/local/www/system_gateways_edit.php:754
 msgid "To"
 msgstr ""
 
@@ -13037,78 +13050,82 @@ msgstr ""
 msgid "*Schedule Name"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:361
+#: src/usr/local/www/firewall_schedule_edit.php:362
 msgid ""
 "The name of the schedule may only consist of the characters \"a-z, A-Z, 0-9 "
 "and _\"."
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:375
-#: src/usr/local/www/firewall_schedule_edit.php:428
+#: src/usr/local/www/firewall_schedule_edit.php:364
+msgid "This schedule is in use so the name may not be modified!"
+msgstr ""
+
+#: src/usr/local/www/firewall_schedule_edit.php:378
+#: src/usr/local/www/firewall_schedule_edit.php:431
 msgid ""
 "A description may be entered here for administrative reference (not parsed). "
 ""
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:379
+#: src/usr/local/www/firewall_schedule_edit.php:382
 msgid "Month"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:385
+#: src/usr/local/www/firewall_schedule_edit.php:388
 msgid "*Date"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:389
+#: src/usr/local/www/firewall_schedule_edit.php:392
 msgid "*Time"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:396
+#: src/usr/local/www/firewall_schedule_edit.php:399
 msgid "Start Hrs"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:403
+#: src/usr/local/www/firewall_schedule_edit.php:406
 msgid "Start Mins"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:410
+#: src/usr/local/www/firewall_schedule_edit.php:413
 msgid "Stop Hrs"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:417
+#: src/usr/local/www/firewall_schedule_edit.php:420
 msgid "Stop Mins"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:419
+#: src/usr/local/www/firewall_schedule_edit.php:422
 msgid ""
 "Select the time range for the day(s) selected on the Month(s) above. A full "
 "day is 0:00-23:59."
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:425
+#: src/usr/local/www/firewall_schedule_edit.php:428
 msgid "Time range description"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:434
+#: src/usr/local/www/firewall_schedule_edit.php:437
 msgid "Add Time"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:441
+#: src/usr/local/www/firewall_schedule_edit.php:444
 msgid "Clear selection"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:459
+#: src/usr/local/www/firewall_schedule_edit.php:462
 msgid "Configured Ranges"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:595
+#: src/usr/local/www/firewall_schedule_edit.php:598
 msgid "Day(s)"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:602
+#: src/usr/local/www/firewall_schedule_edit.php:605
 msgid "Start time"
 msgstr ""
 
-#: src/usr/local/www/firewall_schedule_edit.php:609
+#: src/usr/local/www/firewall_schedule_edit.php:612
 msgid "Stop time"
 msgstr ""
 
@@ -13415,10 +13432,6 @@ msgstr ""
 msgid "*Address(es)"
 msgstr ""
 
-#: src/usr/local/www/firewall_virtual_ip_edit.php:381
-msgid "<span id=\"address_note\"></span>"
-msgstr ""
-
 #: src/usr/local/www/firewall_virtual_ip_edit.php:385
 msgid "Expansion"
 msgstr ""
@@ -13681,7 +13694,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_network.php:141
 #: src/usr/local/www/system_advanced_notifications.php:194
 #: src/usr/local/www/system_advanced_sysctl.php:120
-#: src/usr/local/www/system_gateways_edit.php:706
+#: src/usr/local/www/system_gateways_edit.php:705
 #: src/usr/local/www/vpn_openvpn_csc.php:579
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Advanced"
@@ -13689,7 +13702,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:229 src/usr/local/www/system.php:412
 msgid "General Setup"
-msgstr ""
+msgstr "Impostazioni Generali"
 
 #: src/usr/local/www/head.inc:230
 msgid "High Avail. Sync"
@@ -13697,7 +13710,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:232
 msgid "Setup Wizard"
-msgstr ""
+msgstr "Installazione facilitata"
 
 #: src/usr/local/www/head.inc:233 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
@@ -13708,11 +13721,11 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:212
 #: src/usr/local/www/system_routes_edit.php:224
 msgid "Routing"
-msgstr ""
+msgstr "Routing"
 
 #: src/usr/local/www/head.inc:234
 msgid "Cert. Manager"
-msgstr ""
+msgstr "Manager Cert."
 
 #: src/usr/local/www/head.inc:236 src/usr/local/www/head.inc:238
 #: src/usr/local/www/system_authservers.php:408
@@ -13722,36 +13735,36 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:45
 #: src/usr/local/www/system_usermanager_settings.php:109
 msgid "User Manager"
-msgstr ""
+msgstr "Manager Utenti"
 
 #: src/usr/local/www/head.inc:242 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
-msgstr ""
+msgstr "Impostazioni Utente"
 
 #: src/usr/local/www/head.inc:252
 msgid "Assignments"
-msgstr ""
+msgstr "Assegnazioni"
 
 #: src/usr/local/www/head.inc:259
 msgid "Switches"
-msgstr ""
+msgstr "Switch"
 
 #: src/usr/local/www/head.inc:264
 msgid "-DIVIDER-"
-msgstr ""
+msgstr "-DIVIDER-"
 
 #: src/usr/local/www/head.inc:298 src/usr/local/www/services_dhcpv6.php:483
 #: src/usr/local/www/services_dhcpv6_edit.php:201
 #: src/usr/local/www/services_router_advertisements.php:252
 msgid "DHCPv6 Server & RA"
-msgstr ""
+msgstr "Server DHCPv6 & RA"
 
 #: src/usr/local/www/head.inc:302 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
-msgstr ""
+msgstr "Proxy IGMP"
 
 #: src/usr/local/www/head.inc:303 src/usr/local/www/head.inc:337
 #: src/usr/local/www/load_balancer_monitor.php:72
@@ -13772,38 +13785,38 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1132
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:161
-#: src/usr/local/www/services_ntpd_gps.php:304
+#: src/usr/local/www/services_ntpd_gps.php:310
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/status_logs.php:55
 #: src/usr/local/www/status_logs_common.inc:97
 #: src/usr/local/www/status_logs_settings.php:225
-#: src/usr/local/www/status_ntpd.php:270
+#: src/usr/local/www/status_ntpd.php:283
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 #: src/usr/local/www/head.inc:306 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
-msgstr ""
+msgstr "SNMP"
 
 #: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:347
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP"
 
 #: src/usr/local/www/head.inc:323 src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 #: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
-msgstr ""
+msgstr "L2TP"
 
 #: src/usr/local/www/head.inc:329
 msgid "CARP (failover)"
-msgstr ""
+msgstr "CARP (failover)"
 
 #: src/usr/local/www/head.inc:330 src/usr/local/www/index.php:294
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 #: src/usr/local/www/head.inc:331
 #: src/usr/local/www/status_gateway_groups.php:47
@@ -13823,7 +13836,7 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:229
 #: src/usr/local/www/widgets/include/gateways.inc:23
 msgid "Gateways"
-msgstr ""
+msgstr "Gateways"
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/status_dhcp_leases.php:36
 msgid "DHCP Leases"
@@ -13879,7 +13892,7 @@ msgstr ""
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:161
-#: src/usr/local/www/services_ntpd_gps.php:304
+#: src/usr/local/www/services_ntpd_gps.php:310
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/services_pppoe.php:81
 #: src/usr/local/www/services_pppoe_edit.php:280
@@ -13898,12 +13911,12 @@ msgstr ""
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/system_authservers.php:259
 msgid "Services"
-msgstr ""
+msgstr "Servizi"
 
 #: src/usr/local/www/head.inc:344 src/usr/local/www/status_graph.php:125
 #: src/usr/local/www/status_graph.php:353
 msgid "Traffic Graph"
-msgstr ""
+msgstr "Grafico del traffico"
 
 #: src/usr/local/www/head.inc:359 src/usr/local/www/interfaces_assign.php:494
 #: src/usr/local/www/interfaces_bridge.php:85
@@ -13921,43 +13934,43 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:107
 #: src/usr/local/www/status_wireless.php:31
 msgid "Wireless"
-msgstr ""
+msgstr "Wireless"
 
 #: src/usr/local/www/head.inc:399
 msgid "pfSense Gold"
-msgstr ""
+msgstr "pfSense Gold"
 
 #: src/usr/local/www/head.inc:404 src/usr/local/www/help.php:383
 msgid "About this Page"
-msgstr ""
+msgstr "Info su questa pagina"
 
 #: src/usr/local/www/head.inc:406
 msgid "Bug Database"
-msgstr ""
+msgstr "Bug Database"
 
 #: src/usr/local/www/head.inc:409
 msgid "User Forum"
-msgstr ""
+msgstr "Forum Utenti"
 
 #: src/usr/local/www/head.inc:410
 msgid "Documentation"
-msgstr ""
+msgstr "Documentazione"
 
 #: src/usr/local/www/head.inc:411
 msgid "Paid Support"
-msgstr ""
+msgstr "Supporto a pagamento"
 
 #: src/usr/local/www/head.inc:412
 msgid "pfSense Book"
-msgstr ""
+msgstr "Libro pfSense"
 
 #: src/usr/local/www/head.inc:413
 msgid "FreeBSD Handbook"
-msgstr ""
+msgstr "Manuale FreeBSD"
 
 #: src/usr/local/www/head.inc:503 src/usr/local/www/head.inc:675
 msgid "Notices"
-msgstr ""
+msgstr "Note"
 
 #: src/usr/local/www/head.inc:540
 msgid "Save dashboard layout"
@@ -13965,7 +13978,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:548
 msgid "Available widgets"
-msgstr ""
+msgstr "Widgets disponibili"
 
 #: src/usr/local/www/head.inc:556
 msgid "Log filter"
@@ -13973,19 +13986,19 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:567
 msgid "Manage log"
-msgstr ""
+msgstr "Gestisci i log"
 
 #: src/usr/local/www/head.inc:585
 msgid "Refresh Graph"
-msgstr ""
+msgstr "Aggiorna il grafico"
 
 #: src/usr/local/www/head.inc:590
 msgid "Export Graph"
-msgstr ""
+msgstr "Esporta il grafico"
 
 #: src/usr/local/www/head.inc:630
 msgid "Help for items on this page"
-msgstr ""
+msgstr "Aiuto per gli elementi in questa pagina"
 
 #: src/usr/local/www/head.inc:641
 #, php-format
@@ -13993,12 +14006,16 @@ msgid ""
 "<p>%s is booting, then packages will be reinstalled in the background.</"
 "p><p>Do not make changes in the GUI until this is complete.</p>"
 msgstr ""
+"<p>%s sta riavviando, poi i pacchetti saranno reinstallati in background. </"
+"p><p>Non apportare modifiche alla GUI finche` non termina.</p>"
 
 #: src/usr/local/www/head.inc:644
 msgid ""
 "<p>Packages are currently being reinstalled in the background.</p><p>Do not "
 "make changes in the GUI until this is complete.</p>"
 msgstr ""
+"<p>I pacchetti stanno venendo reinstallati in background. </p><p>Non "
+"apportare modifiche alla GUI finche` non termina.</p>"
 
 #: src/usr/local/www/head.inc:645
 #, php-format
@@ -14010,29 +14027,32 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:655
 msgid "This page is currently being managed by a remote machine."
-msgstr ""
+msgstr "La pagina sta venendo gestita da una macchina in remoto."
 
 #: src/usr/local/www/head.inc:714
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: src/usr/local/www/head.inc:716
 msgid "Mark All as Read"
-msgstr ""
+msgstr "Segna tutti come letti"
 
 #: src/usr/local/www/help.php:383
 msgid "Help"
-msgstr ""
+msgstr "Aiuto"
 
 #: src/usr/local/www/help.php:388
 msgid "The Help page is the only page this user has privilege for."
 msgstr ""
+"La pagina d'aiuto e` l'unica pagina a cui questo utente puo` accedere."
 
 #: src/usr/local/www/help.php:390
 msgid ""
 "Displaying the Help page because it is the first page this user has "
 "privilege for."
 msgstr ""
+"Visualizza la pagina d'aiuto in quanto e` la prima pagina a cui puo` "
+"accedere l'utente"
 
 #: src/usr/local/www/help.php:393
 msgid "Help page accessed directly without any page parameter."
@@ -14046,21 +14066,21 @@ msgstr ""
 #: src/usr/local/www/index.php:79
 #, php-format
 msgid "Click <a href='crash_reporter.php'>here</a> for more information."
-msgstr ""
+msgstr "Click <a href='crash_reporter.php'>qui</a> per piu` informazioni."
 
 #: src/usr/local/www/index.php:81
 #, php-format
 msgid "Contact a firewall administrator for more information."
-msgstr ""
+msgstr "Contatta l'amministratore del firewall per piu` informazioni."
 
 #: src/usr/local/www/index.php:191
 #, php-format
-msgid "Welcome to %s!\n"
-msgstr ""
+msgid "Welcome to %s!"
+msgstr "Benvenuto su %s!"
 
 #: src/usr/local/www/index.php:192
 msgid "One moment while the initial setup wizard starts."
-msgstr ""
+msgstr "Attendi un momento mentre la configurazione guidata si avvia."
 
 #: src/usr/local/www/index.php:193
 msgid ""
@@ -14072,40 +14092,41 @@ msgstr ""
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr ""
+"Per evitare la configurazione, premi sul %s logo nella pagina iniziale."
 
 #: src/usr/local/www/index.php:307 src/etc/inc/pfsense-utils.inc:274
 msgid "Available Widgets"
-msgstr ""
+msgstr "Widgets disponibili"
 
 #: src/usr/local/www/index.php:486
 msgid "One or more widgets have been moved but have not yet been saved"
-msgstr ""
+msgstr "Uno o piu` widget sono stati spostati ma non e` stato salvato."
 
 #: src/usr/local/www/interfaces.php:415
 msgid "The settings have already been applied!"
-msgstr ""
+msgstr "Le impostazioni sono state gia` applicate!"
 
 #: src/usr/local/www/interfaces.php:501
 msgid "An interface with the specified description already exists."
-msgstr ""
+msgstr "Un'interfaccia con la descrizione specificata esiste gia`."
 
 #: src/usr/local/www/interfaces.php:510
 #, php-format
 msgid "Sorry, an alias with the name %s already exists."
-msgstr ""
+msgstr "Scusa, un alias con il nome %s esiste gia`."
 
 #: src/usr/local/www/interfaces.php:519
 #, php-format
 msgid "Sorry, an interface group with the name %s already exists."
-msgstr ""
+msgstr "Scusa, un gruppo interfacce con il nome %s esiste gia`."
 
 #: src/usr/local/www/interfaces.php:525
 msgid "The interface description cannot contain only numbers."
-msgstr ""
+msgstr "La descrizione dell'interfaccia non puo` contenere solo numeri."
 
 #: src/usr/local/www/interfaces.php:534
 msgid "The interface description cannot start with pkg_"
-msgstr ""
+msgstr "La descrizione dell'interfaccia non puo` cominciare con pkg_"
 
 #: src/usr/local/www/interfaces.php:540
 msgid ""
@@ -14113,6 +14134,9 @@ msgid ""
 "static IP configuration. Please disable the DHCP Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
+"Il Server DHCP su quest'interfaccia e`  attivo e puo` essere usato solo con "
+"un IP statico. Disabilita il server DHCP su questa interfaccia prima, e poi "
+"cambiane la configurazione."
 
 #: src/usr/local/www/interfaces.php:546
 msgid ""
@@ -14120,6 +14144,9 @@ msgid ""
 "IPv4 subnet < 31. Please disable the DHCP Server service on this interface "
 "first, then change the interface configuration."
 msgstr ""
+"Il Server DHCP su quest'interfaccia e` attivo e puo` essere usato solo con "
+"un IPv4 <31. Disabilita il server DHCP su questa interfaccia prima, e poi "
+"cambiane la configurazione."
 
 #: src/usr/local/www/interfaces.php:554
 msgid ""
@@ -14127,10 +14154,13 @@ msgid ""
 "static IPv6 configuration. Please disable the DHCPv6 Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
+"Il Server DHCPv6 su quest'interfaccia e`  attivo e puo` essere usato solo "
+"con un IPv6 statico. Disabilita il server DHCPv6 su questa interfaccia "
+"prima, e poi cambiane la configurazione."
 
 #: src/usr/local/www/interfaces.php:560
 msgid "IPv4 address"
-msgstr ""
+msgstr "Indirizzo IPv4"
 
 #: src/usr/local/www/interfaces.php:560 src/usr/local/www/interfaces.php:611
 msgid "Subnet bit count"
@@ -14144,20 +14174,20 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:574
 msgid "Modem Port"
-msgstr ""
+msgstr "Porta Modem"
 
 #: src/usr/local/www/interfaces.php:574
 #: src/usr/local/www/interfaces_ppps_edit.php:204
 msgid "Phone Number"
-msgstr ""
+msgstr "Numero Telefonico"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE username"
-msgstr ""
+msgstr "Nome utente PPPoE"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE password"
-msgstr ""
+msgstr "Password PPPoE"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:590
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:2620
@@ -14176,35 +14206,35 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP username"
-msgstr ""
+msgstr "Nome utente PPTP"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP password"
-msgstr ""
+msgstr "Password PPTP"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP local IP address"
-msgstr ""
+msgstr "Indirizzo IP PPTP locale"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP subnet"
-msgstr ""
+msgstr "Sottorete PPTP"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP remote IP address"
-msgstr ""
+msgstr "Indirizzo IP PPTP remoto"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP username"
-msgstr ""
+msgstr "Nome utente L2TP"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP password"
-msgstr ""
+msgstr "Password L2TP"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP remote IP address"
-msgstr ""
+msgstr "Indirizzo IP L2TP remoto"
 
 #: src/usr/local/www/interfaces.php:618
 msgid ""
@@ -14682,7 +14712,7 @@ msgid "New IPv6 Gateway"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1885 src/usr/local/www/interfaces.php:3208
-#: src/usr/local/www/system_gateways_edit.php:621
+#: src/usr/local/www/system_gateways_edit.php:620
 msgid "Gateway name"
 msgstr ""
 
@@ -18501,6 +18531,15 @@ msgid ""
 "window will not be shown."
 msgstr ""
 
+#: src/usr/local/www/services_captiveportal.php:658
+#, php-format
+msgid ""
+"If enabled with the automatically MAC passthrough entry created, the "
+"username used during authentication will be saved. To remove the passthrough "
+"MAC entry either log in and remove it manually from the %s or send a POST "
+"from another system."
+msgstr ""
+
 #: src/usr/local/www/services_captiveportal.php:664
 msgid "Per-user bandwidth restriction"
 msgstr ""
@@ -18755,20 +18794,18 @@ msgid ""
 "and value=\"$PORTAL_REDIRURL$\". Include the \"auth_user\" and \"auth_pass\" "
 "and/or \"auth_voucher\" input fields if authentication is enabled, otherwise "
 "it will always fail.<br />Example code for the form:<br />&lt;form method="
-"&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type="
-"&quot;password&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type="
-"&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />\n"
-"\t\t\t &lt;/form&gt;"
+"&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;redirurl&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_REDIRURL$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;zone&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_ZONE$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br "
+"/>&lt;/form&gt;"
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1082
@@ -18850,7 +18887,7 @@ msgid "Total"
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:244
-#: src/usr/local/www/services_ntpd_gps.php:325
+#: src/usr/local/www/services_ntpd_gps.php:331
 #: src/usr/local/www/services_ntpd_pps.php:127
 msgid "Notes"
 msgstr ""
@@ -20948,13 +20985,8 @@ msgid "*DUID"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_edit.php:221
-msgid "Enter a DUID in the following format: "
-msgstr ""
-
-#: src/usr/local/www/services_dhcpv6_edit.php:221
-#: src/usr/local/www/pkg_edit.php:1310 src/usr/local/www/pkg_edit.php:1316
-#: src/usr/local/www/pkg_edit.php:1321
-msgid "<br />"
+#, php-format
+msgid "Enter a DUID in the following format: %1$s %2$s"
 msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_edit.php:230
@@ -21446,12 +21478,11 @@ msgid "CloudFlare Proxy"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:329
+#, php-format
 msgid ""
 "Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will "
 "route all traffic through their servers. By Default this is disabled and "
-"your Real IP is exposed.More info: <a href=\"https://blog.cloudflare.com/"
-"announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-"
-"traffic/\" target=\"_blank\">CloudFlare Blog</a>"
+"your Real IP is exposed.More info: %s"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:335
@@ -21582,22 +21613,22 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:203
 #: src/usr/local/www/services_ntpd_acls.php:161
 #: src/usr/local/www/services_ntpd_acls.php:176
-#: src/usr/local/www/services_ntpd_gps.php:315
+#: src/usr/local/www/services_ntpd_gps.php:321
 #: src/usr/local/www/services_ntpd_pps.php:117
 msgid "ACLs"
 msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:204
 #: src/usr/local/www/services_ntpd_acls.php:177
-#: src/usr/local/www/services_ntpd_gps.php:304
-#: src/usr/local/www/services_ntpd_gps.php:316
+#: src/usr/local/www/services_ntpd_gps.php:310
+#: src/usr/local/www/services_ntpd_gps.php:322
 #: src/usr/local/www/services_ntpd_pps.php:118
 msgid "Serial GPS"
 msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:205
 #: src/usr/local/www/services_ntpd_acls.php:178
-#: src/usr/local/www/services_ntpd_gps.php:317
+#: src/usr/local/www/services_ntpd_gps.php:323
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/services_ntpd_pps.php:119
 #: src/usr/local/www/status_queues.php:162
@@ -21735,32 +21766,32 @@ msgstr ""
 msgid "Networks"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:242
+#: src/usr/local/www/services_ntpd_acls.php:238
 #: src/usr/local/www/services_unbound_acls.php:258
 msgid "Network/mask"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:249
+#: src/usr/local/www/services_ntpd_acls.php:251
 msgid "KOD"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:256
+#: src/usr/local/www/services_ntpd_acls.php:258
 msgid "nomodify"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:263
+#: src/usr/local/www/services_ntpd_acls.php:265
 msgid "noquery"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:270
+#: src/usr/local/www/services_ntpd_acls.php:272
 msgid "noserve"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:277
+#: src/usr/local/www/services_ntpd_acls.php:279
 msgid "nopeer"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_acls.php:284
+#: src/usr/local/www/services_ntpd_acls.php:286
 msgid "notrap"
 msgstr ""
 
@@ -21768,35 +21799,35 @@ msgstr ""
 msgid "Setting default NTPd settings"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:267
+#: src/usr/local/www/services_ntpd_gps.php:273
 msgid "Updated NTP GPS Settings"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:285
+#: src/usr/local/www/services_ntpd_gps.php:291
 msgid "RMC"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:286
+#: src/usr/local/www/services_ntpd_gps.php:292
 msgid "GGA"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:287
+#: src/usr/local/www/services_ntpd_gps.php:293
 msgid "GLL"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:288
+#: src/usr/local/www/services_ntpd_gps.php:294
 msgid "ZDA or ZDG"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:322
+#: src/usr/local/www/services_ntpd_gps.php:328
 msgid "NTP Serial GPS Configuration"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:337
+#: src/usr/local/www/services_ntpd_gps.php:343
 msgid "GPS Type"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:340
+#: src/usr/local/www/services_ntpd_gps.php:346
 msgid ""
 "This option allows a predefined configuration to be selected. Default is the "
 "configuration of pfSense 2.1 and earlier (not recommended). Select Generic "
@@ -21804,112 +21835,112 @@ msgid ""
 "the GPS has already been set to NMEA mode."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:356
+#: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
 msgid "Serial Port"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:359
+#: src/usr/local/www/services_ntpd_gps.php:365
 msgid ""
 "All serial ports are listed, be sure to pick the port with the GPS attached. "
 ""
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:367
+#: src/usr/local/www/services_ntpd_gps.php:373
 msgid ""
 "A higher baud rate is generally only helpful if the GPS is sending too many "
 "sentences. It is recommended to configure the GPS to send only one sentence "
 "at a baud rate of 4800 or 9600."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:374
+#: src/usr/local/www/services_ntpd_gps.php:380
 msgid "NMEA Sentences"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:378
+#: src/usr/local/www/services_ntpd_gps.php:384
 msgid ""
 "By default NTP will listen for all supported NMEA sentences. One or more "
 "sentences to listen for may be specified."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:382
+#: src/usr/local/www/services_ntpd_gps.php:395
 msgid "Fudge Time 1"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:385
+#: src/usr/local/www/services_ntpd_gps.php:398
 msgid ""
 "Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:389
+#: src/usr/local/www/services_ntpd_gps.php:402
 msgid "Fudge Time 2"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:392
+#: src/usr/local/www/services_ntpd_gps.php:405
 msgid "Fudge time 2 is used to specify the GPS time offset (default: 0.0)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:396
+#: src/usr/local/www/services_ntpd_gps.php:409
 msgid "Stratum (0-16)"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:399
+#: src/usr/local/www/services_ntpd_gps.php:412
 msgid ""
 "This may be used to change the GPS Clock stratum (default: 0). This may be "
 "useful to, for some reason, have ntpd prefer a different clock."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:403
+#: src/usr/local/www/services_ntpd_gps.php:416
 #: src/usr/local/www/services_ntpd_pps.php:169
 msgid "Flags"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:448
+#: src/usr/local/www/services_ntpd_gps.php:461
 msgid ""
 "Enabling this will rapidly fill the log, but is useful for tuning Fudge time "
 "2."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:455
+#: src/usr/local/www/services_ntpd_gps.php:468
 msgid ""
 "Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS "
 "initialization commands."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:459
+#: src/usr/local/www/services_ntpd_gps.php:472
 #: src/usr/local/www/services_ntpd_pps.php:190
 msgid "Clock ID"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:463
+#: src/usr/local/www/services_ntpd_gps.php:476
 msgid "This may be used to change the GPS Clock ID (default: GPS)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:476
+#: src/usr/local/www/services_ntpd_gps.php:489
 msgid "GPS Initialization"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:484
+#: src/usr/local/www/services_ntpd_gps.php:497
 msgid ""
 "Commands entered here will be sent to the GPS during initialization. Please "
 "read and understand the GPS documentation before making any changes here."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:491
+#: src/usr/local/www/services_ntpd_gps.php:504
 msgid ""
 "Calculates and appends checksum and missing special characters \"$\" and "
 "\"*\". May not work with some GPS models."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:493
+#: src/usr/local/www/services_ntpd_gps.php:506
 msgid "NMEA Checksum Calculator"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:502
+#: src/usr/local/www/services_ntpd_gps.php:515
 msgid "Calculate"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:519
+#: src/usr/local/www/services_ntpd_gps.php:532
 msgid ""
 "Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command "
 "string:"
@@ -21937,7 +21968,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_ntpd_pps.php:162
-#: src/usr/local/www/status_ntpd.php:285
+#: src/usr/local/www/status_ntpd.php:298
 msgid "Stratum"
 msgstr ""
 
@@ -25070,81 +25101,81 @@ msgstr ""
 msgid "Outlier"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:188
+#: src/usr/local/www/status_ntpd.php:201
 #, php-format
 msgid ""
 "Statistics unavailable because ntpq and ntpdc queries are disabled in the "
 "%1$sNTP service settings%2$s"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:194
+#: src/usr/local/www/status_ntpd.php:207
 #, php-format
 msgid "No peers found, %1$sis the ntp service running?%2$s"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:251
+#: src/usr/local/www/status_ntpd.php:264
 msgid "in view "
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:258
+#: src/usr/local/www/status_ntpd.php:271
 msgid "in use "
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:266
+#: src/usr/local/www/status_ntpd.php:279
 msgid "Google Maps Link"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:277
+#: src/usr/local/www/status_ntpd.php:290
 msgid "Network Time Protocol Status"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:284
+#: src/usr/local/www/status_ntpd.php:297
 msgid "Ref ID"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:287
+#: src/usr/local/www/status_ntpd.php:300
 msgid "When"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:288
+#: src/usr/local/www/status_ntpd.php:301
 msgid "Poll"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:289
+#: src/usr/local/www/status_ntpd.php:302
 msgid "Reach"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:290
+#: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:895
 msgid "Delay"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:291
+#: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:292
+#: src/usr/local/www/status_ntpd.php:305
 msgid "Jitter"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:314
+#: src/usr/local/www/status_ntpd.php:327
 msgid "GPS Information"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:319
+#: src/usr/local/www/status_ntpd.php:332
 msgid "Clock Latitude"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:320
+#: src/usr/local/www/status_ntpd.php:333
 msgid "Clock Longitude"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:324
+#: src/usr/local/www/status_ntpd.php:337
 msgid "Clock Altitude"
 msgstr ""
 
-#: src/usr/local/www/status_ntpd.php:331
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
+#: src/usr/local/www/status_ntpd.php:344
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:198
 msgid "Satellites"
 msgstr ""
 
@@ -25254,12 +25285,6 @@ msgstr ""
 
 #: src/usr/local/www/status_pkglogs.php:81
 msgid "No packages with logging facilities are currently installed."
-msgstr ""
-
-#: src/usr/local/www/status_pkglogs.php:92
-#: src/usr/local/www/status_pkglogs.php:94
-#, php-format
-msgid "%s"
 msgstr ""
 
 #: src/usr/local/www/status_pkglogs.php:102
@@ -26492,7 +26517,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:482
-#: src/usr/local/www/system_gateways_edit.php:647
+#: src/usr/local/www/system_gateways_edit.php:646
 msgid "Gateway Monitoring"
 msgstr ""
 
@@ -28195,7 +28220,7 @@ msgid "Gateways: removed gateways %s"
 msgstr ""
 
 #: src/usr/local/www/system_gateways.php:260
-#: src/usr/local/www/system_gateways_edit.php:659
+#: src/usr/local/www/system_gateways_edit.php:658
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:121
 msgid "Monitor IP"
 msgstr ""
@@ -28420,202 +28445,199 @@ msgid ""
 "Set this option to disable this gateway without removing it from the list."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:604
+#: src/usr/local/www/system_gateways_edit.php:603
 msgid "Choose which interface this gateway applies to."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:614
+#: src/usr/local/www/system_gateways_edit.php:613
 msgid "Choose the Internet Protocol this gateway uses."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:630
+#: src/usr/local/www/system_gateways_edit.php:629
 msgid "Gateway IP address"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:640
+#: src/usr/local/www/system_gateways_edit.php:639
 msgid "Default Gateway"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:650
+#: src/usr/local/www/system_gateways_edit.php:649
 msgid "This will consider this gateway as always being up."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:654
+#: src/usr/local/www/system_gateways_edit.php:653
 msgid "Gateway Action"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:657
+#: src/usr/local/www/system_gateways_edit.php:656
 msgid ""
 "No action will be taken on gateway events. The gateway is always considered "
 "up."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:670
+#: src/usr/local/www/system_gateways_edit.php:669
 msgid ""
 "Enter an alternative address here to be used to monitor the link. This is "
 "used for the quality RRD graphs as well as the load balancer entries. Use "
 "this if the gateway does not respond to ICMP echo requests (pings)."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:678
+#: src/usr/local/www/system_gateways_edit.php:677
 msgid "Force state"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:681
+#: src/usr/local/www/system_gateways_edit.php:680
 msgid "This will force this gateway to be considered down."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:688
+#: src/usr/local/www/system_gateways_edit.php:687
 msgid "A description may be entered here for reference (not parsed)."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:715
+#: src/usr/local/www/system_gateways_edit.php:714
 msgid "Weight for this gateway when used in a Gateway Group."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:719
+#: src/usr/local/www/system_gateways_edit.php:718
 msgid "Data Payload"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:723
+#: src/usr/local/www/system_gateways_edit.php:722
 msgid "Define data payload to send on ICMP packets to gateway monitor IP."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:725
+#: src/usr/local/www/system_gateways_edit.php:724
 msgid "Latency thresholds"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:740
+#: src/usr/local/www/system_gateways_edit.php:739
 #, php-format
-msgid ""
-"Low and high thresholds for latency in milliseconds.\n"
-"\tDefault is %d/%d."
+msgid "Low and high thresholds for latency in milliseconds. Default is %d/%d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:745
+#: src/usr/local/www/system_gateways_edit.php:744
 msgid "Packet Loss thresholds"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:760
+#: src/usr/local/www/system_gateways_edit.php:759
 #, php-format
-msgid "Low and high thresholds for packet loss in %%.\n"
-"\tDefault is %d/%d."
+msgid "Low and high thresholds for packet loss in %%. Default is %d/%d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:766
+#: src/usr/local/www/system_gateways_edit.php:765
 msgid "Probe Interval"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:773
+#: src/usr/local/www/system_gateways_edit.php:772
 #, php-format
 msgid "How often an ICMP probe will be sent in milliseconds. Default is %d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:777
+#: src/usr/local/www/system_gateways_edit.php:776
 msgid "Loss Interval"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:781
+#: src/usr/local/www/system_gateways_edit.php:780
 #, php-format
 msgid ""
 "Time interval in milliseconds before packets are treated as lost. Default is "
 "%d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:784
+#: src/usr/local/www/system_gateways_edit.php:783
 msgid "Time Period"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:794
+#: src/usr/local/www/system_gateways_edit.php:793
 #, php-format
 msgid ""
 "Time period in milliseconds over which results are averaged. Default is %d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:798
+#: src/usr/local/www/system_gateways_edit.php:797
 msgid "Alert interval"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:808
+#: src/usr/local/www/system_gateways_edit.php:807
 #, php-format
 msgid ""
 "Time interval in milliseconds between checking for an alert condition. "
 "Default is %d."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:813
+#: src/usr/local/www/system_gateways_edit.php:812
 msgid "Additional information"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:815
+#: src/usr/local/www/system_gateways_edit.php:814
 msgid ""
 "The time period, probe interval and loss interval are closely related. The "
 "ratio between these values control the accuracy of the numbers reported and "
 "the timeliness of alerts."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:819
+#: src/usr/local/www/system_gateways_edit.php:818
 msgid ""
 "A longer time period will provide smoother results for round trip time and "
 "loss, but will increase the time before a latency or loss alert is triggered."
 ""
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:822
+#: src/usr/local/www/system_gateways_edit.php:821
 msgid ""
 "A shorter probe interval will decrease the time required before a latency or "
 "loss alert is triggered, but will use more network resource. Longer probe "
 "intervals will degrade the accuracy of the quality graphs."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:826
+#: src/usr/local/www/system_gateways_edit.php:825
 msgid ""
 "The ratio of the probe interval to the time period (minus the loss interval) "
 "also controls the resolution of loss reporting. To determine the resolution, "
 "the following formula can be used:"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:830
+#: src/usr/local/www/system_gateways_edit.php:829
 msgid ""
 "&nbsp;&nbsp;&nbsp;&nbsp;100 * probe interval / (time period - loss interval)"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:832
+#: src/usr/local/www/system_gateways_edit.php:831
 msgid ""
 "Rounding up to the nearest whole number will yield the resolution of loss "
 "reporting in percent. The default values provide a resolution of 1%."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:835
+#: src/usr/local/www/system_gateways_edit.php:834
 msgid ""
 "The default settings are recommended for most use cases. However if changing "
 "the settings, please observe the following restrictions:"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:838
+#: src/usr/local/www/system_gateways_edit.php:837
 msgid ""
 "- The time period must be greater than twice the probe interval plus the "
 "loss interval. This guarantees there is at least one completed probe at all "
 "times. "
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:841
+#: src/usr/local/www/system_gateways_edit.php:840
 msgid ""
 "- The alert interval must be greater than or equal to the probe interval. "
 "There is no point checking for alerts more often than probes are done."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:844
+#: src/usr/local/www/system_gateways_edit.php:843
 msgid ""
 "- The loss interval must be greater than or equal to the high latency "
 "threshold."
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:850
+#: src/usr/local/www/system_gateways_edit.php:849
 msgid "Use non-local gateway"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:853
+#: src/usr/local/www/system_gateways_edit.php:852
 msgid ""
 "This will allow use of a gateway outside of this interface's subnet. This is "
 "usually indicative of a configuration error, but is required for some "
@@ -32141,31 +32163,31 @@ msgstr ""
 msgid "stratum"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:151
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:164
 msgid "Server Time"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:163
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:176
 msgid "Sync Source"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:166
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:179
 msgid "No active peers available"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:174
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:187
 msgid "Clock location"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:188
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:201
 msgid "in view"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:190
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:203
 msgid "in use"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:468
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:481
 msgid "Updating..."
 msgstr ""
 
@@ -32897,19 +32919,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2678
 msgid "Reset at each month (\"0 0 1 * *\")"
-msgstr ""
+msgstr "Resetta ogni mese (\"0 0 1 * *\")"
 
 #: src/usr/local/www/interfaces.php:2686
 msgid "Reset at each week (\"0 0 * * 0\")"
-msgstr ""
+msgstr "Resetta ogni settimana (\"0 0 * * 0\")"
 
 #: src/usr/local/www/interfaces.php:2694
 msgid "Reset at each day (\"0 0 * * *\")"
-msgstr ""
+msgstr "Resetta ogni giorno (\"0 0 * * *\")"
 
 #: src/usr/local/www/interfaces.php:2702
 msgid "Reset at each hour (\"0 * * * *\")"
-msgstr ""
+msgstr "resetta ogni ora (\"0 * * * *\")"
 
 #: src/usr/local/www/interfaces.php:2791
 msgid ""
@@ -32932,10 +32954,13 @@ msgid ""
 "Disable broadcasting of the SSID for this network (This may cause problems "
 "for some clients, and the SSID may still be discovered by other means.)"
 msgstr ""
+"Disabilita la trasmissione del SSID di questa rete (Questo potrebbe causare "
+"dei problemi per alcuni clients, e la SSID potrebbe comunque essere scoperta "
+"in altri modi.)"
 
 #: src/usr/local/www/interfaces.php:3020
 msgid "Enable WPA"
-msgstr ""
+msgstr "Abilita WPA"
 
 #: src/usr/local/www/interfaces.php:3072
 msgid "Force the AP to rekey whenever a client disassociates"
@@ -32943,7 +32968,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3084
 msgid "Enable 802.1X authentication"
-msgstr ""
+msgstr "Abilita autenticazione 802.1X"
 
 #: src/usr/local/www/interfaces_gif_edit.php:213
 msgid ""
@@ -32975,19 +33000,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:799
 msgid "Monthly (0 0 1 * *)"
-msgstr ""
+msgstr "Mensile (0 0 1 * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:807
 msgid "Weekly (0 0 * * 0)"
-msgstr ""
+msgstr "Settimanale (0 0 * * 0)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:815
 msgid "Daily (0 0 * * *)"
-msgstr ""
+msgstr "Giornaliero (0 0 * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:823
 msgid "Hourly (0 * * * *)"
-msgstr ""
+msgstr "Orario (0 * * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:852
 msgid "Enable Dial-on-Demand mode. "
@@ -32999,7 +33024,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:879
 msgid "Disable tcpmssfix (enabled by default)."
-msgstr ""
+msgstr "Disabilita tcpmssfix (predefinito: abilitato)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:890
 msgid "Disable shortseq (auto-negotiated by default)."
@@ -33015,11 +33040,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:951
 msgid "<span id=\"linkparamhelp\">"
-msgstr ""
+msgstr "<span id=\"linkparamhelp\">"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:262
 msgid "Adds interface to QinQ interface groups"
-msgstr ""
+msgstr "Aggiunge l'interfaccia al gruppo interfacce QinQ"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:275
 msgid ""
@@ -33027,6 +33052,9 @@ msgid ""
 "individual numbers.<br />Click \"Add Tag\" as many times as needed to add "
 "new inputs."
 msgstr ""
+"I range possono essere specificati nell'input sotto. Inserisci un range (2-"
+"3) oppure un numero singolo. <br />Premi \"Aggiungi Tag\" tante volte quante "
+"servono per aggiungere nuovi input."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:363
 msgid ""
@@ -33038,9 +33066,14 @@ msgstr ""
 msgid "Please add a pool on the \"Pools\" tab to use this feature. "
 msgstr ""
 
+#: src/usr/local/www/pkg_edit.php:1310 src/usr/local/www/pkg_edit.php:1316
+#: src/usr/local/www/pkg_edit.php:1321
+msgid "<br />"
+msgstr "<br />"
+
 #: src/usr/local/www/services_captiveportal.php:537
 msgid "Enable Captive Portal"
-msgstr ""
+msgstr "Abilita Captive Portal"
 
 #: src/usr/local/www/services_captiveportal.php:593
 msgid "Enable waiting period reset on attempted access"
@@ -33048,15 +33081,15 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:600
 msgid "Enable logout popup window"
-msgstr ""
+msgstr "Abilita la finestra popup per il logout"
 
 #: src/usr/local/www/services_captiveportal.php:629
 msgid "Disable Concurrent user logins"
-msgstr ""
+msgstr "Disabilita le multi sessioni degli utenti"
 
 #: src/usr/local/www/services_captiveportal.php:637
 msgid "Disable MAC filtering"
-msgstr ""
+msgstr "Disabilita il filtraggio MAC"
 
 #: src/usr/local/www/services_captiveportal.php:646
 msgid "Enable Pass-through MAC automatic additions"
@@ -33068,11 +33101,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:665
 msgid "Enable per-user bandwidth restriction"
-msgstr ""
+msgstr "Abilita le restrizioni sull'utilizzo banda per ogni utente"
 
 #: src/usr/local/www/services_captiveportal.php:694
 msgid "No Authentication"
-msgstr ""
+msgstr "Nessuna autenticazione"
 
 #: src/usr/local/www/services_captiveportal.php:702
 msgid "Local User Manager / Vouchers"
@@ -33080,7 +33113,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:710
 msgid "RADIUS Authentication"
-msgstr ""
+msgstr "Autenticazione RADIUS"
 
 #: src/usr/local/www/services_captiveportal.php:720
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
@@ -33088,19 +33121,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:730
 msgid "PAP"
-msgstr ""
+msgstr "PAP"
 
 #: src/usr/local/www/services_captiveportal.php:738
 msgid "CHAP-MD5"
-msgstr ""
+msgstr "CHAP-MD5"
 
 #: src/usr/local/www/services_captiveportal.php:746
 msgid "MSCHAPv1"
-msgstr ""
+msgstr "MSCHAPv1"
 
 #: src/usr/local/www/services_captiveportal.php:754
 msgid "MSCHAPv2"
-msgstr ""
+msgstr "MSCHAPv1"
 
 #: src/usr/local/www/services_captiveportal.php:874
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
@@ -33108,27 +33141,27 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:890
 msgid "No updates"
-msgstr ""
+msgstr "Nessun aggiornamento"
 
 #: src/usr/local/www/services_captiveportal.php:898
 msgid "Stop/Start"
-msgstr ""
+msgstr "Stop/Start"
 
 #: src/usr/local/www/services_captiveportal.php:906
 msgid "Stop/Start (FreeRADIUS)"
-msgstr ""
+msgstr "Stop/Start (FreeRADIUS)"
 
 #: src/usr/local/www/services_captiveportal.php:914
 msgid "Interim"
-msgstr ""
+msgstr "Interim"
 
 #: src/usr/local/www/services_captiveportal.php:929
 msgid "Reauthenticate connected users every minute"
-msgstr ""
+msgstr "Riautentica ogni minuto gli utenti connessi"
 
 #: src/usr/local/www/services_captiveportal.php:937
 msgid "Enable RADIUS MAC authentication"
-msgstr ""
+msgstr "Abilita l'autenticazione MAC RADIUS"
 
 #: src/usr/local/www/services_captiveportal.php:959
 msgid "Use RADIUS Session-Timeout attributes"
@@ -33144,7 +33177,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1017
 msgid "Enable HTTPS login"
-msgstr ""
+msgstr "Abilita l'autenticazione HTTPS"
 
 #: src/usr/local/www/services_captiveportal.php:1041
 msgid "Disable HTTPS Forwards"
@@ -33156,15 +33189,16 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:815
 msgid "Ignore BOOTP queries"
-msgstr ""
+msgstr "Ignora voci BOOTP"
 
 #: src/usr/local/www/services_dhcp.php:822
 msgid "Only the clients defined below will get DHCP leases from this server."
 msgstr ""
+"Solo i clients indicati qui sotto riceveranno un rilascio DHCP dal server."
 
 #: src/usr/local/www/services_dhcp.php:829
 msgid "Denied clients will be ignored rather than rejected."
-msgstr ""
+msgstr "I clients negati saranno ignorati invece che rifiutati"
 
 #: src/usr/local/www/services_dhcp.php:836
 msgid ""
@@ -33174,19 +33208,19 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1015
 msgid "Enable Static ARP entries"
-msgstr ""
+msgstr "Abilita le voci ARP statico"
 
 #: src/usr/local/www/services_dhcp.php:1022
 msgid "Change DHCP display lease time from UTC to local time"
-msgstr ""
+msgstr "Cambia l'orario visualizzato dei rilasci DHCP da UTC a ora locale"
 
 #: src/usr/local/www/services_dhcp.php:1029
 msgid "Enable RRD statistics graphs"
-msgstr ""
+msgstr "Abilita il grafico statistiche RRD"
 
 #: src/usr/local/www/services_dhcp.php:1052
 msgid "Enable registration of DHCP client names in DNS"
-msgstr ""
+msgstr "Abilita la registrazione dei nomi dei client DHCP nel DNS"
 
 #: src/usr/local/www/services_dhcp.php:1067
 #: src/usr/local/www/services_dhcpv6.php:772
@@ -33201,7 +33235,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1274
 msgid "<div class=\"alert alert-info\"> "
-msgstr ""
+msgstr "<div class=\"alert alert-info\"> "
 
 #: src/usr/local/www/services_dhcp_edit.php:482
 msgid "Create an ARP Table Static Entry for this MAC & IP Address pair."
@@ -33210,7 +33244,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:595
 #: src/usr/local/www/services_dhcpv6.php:758
 msgid "Enable registration of DHCP client names in DNS."
-msgstr ""
+msgstr "Abilita la registrazione dei nomi dei client DHCP nel DNS"
 
 #: src/usr/local/www/services_dhcp_edit.php:602
 msgid "Make dynamic DNS registered hostname the same as Hostname above."
@@ -33227,15 +33261,15 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:583
 msgid "Enable DHCPv6 server on interface "
-msgstr ""
+msgstr "Abilita il server DHCPv6 sull'interfaccia"
 
 #: src/usr/local/www/services_dhcpv6.php:602
 msgid " bits"
-msgstr ""
+msgstr "bits"
 
 #: src/usr/local/www/services_dhcpv6.php:607
 msgid " to "
-msgstr ""
+msgstr "a"
 
 #: src/usr/local/www/services_dhcpv6.php:735
 msgid "Change DHCPv6 display lease time from UTC to local time"
@@ -33275,7 +33309,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dnsmasq.php:300
 msgid "Require domain"
-msgstr ""
+msgstr "Richiede dominio"
 
 #: src/usr/local/www/services_dnsmasq.php:309
 msgid "Do not forward private reverse lookups"
@@ -33284,15 +33318,15 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:259
 #: src/usr/local/www/vpn_openvpn_client.php:489
 msgid "Disable this client"
-msgstr ""
+msgstr "Disabilita questo client"
 
 #: src/usr/local/www/services_dyndns_edit.php:320
 msgid "Enable Wildcard"
-msgstr ""
+msgstr "Abilita Wildcard"
 
 #: src/usr/local/www/services_dyndns_edit.php:327
 msgid "Enable Proxy"
-msgstr ""
+msgstr "Abilita Proxy"
 
 #: src/usr/local/www/services_dyndns_edit.php:336
 msgid "Enable verbose logging"
@@ -33316,7 +33350,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:316
 msgid "Log system messages (default: disabled)."
-msgstr ""
+msgstr "Messaggi dei Log di sistema (predefinito: disabilitato)"
 
 #: src/usr/local/www/services_ntpd.php:339
 msgid "Log reference clock statistics (default: disabled)."
@@ -33332,7 +33366,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_acls.php:188
 msgid "Enable KOD packets."
-msgstr ""
+msgstr "Abilita pacchetti KOD"
 
 #: src/usr/local/www/services_ntpd_acls.php:195
 msgid "Deny run-time Configuration (nomodify) by ntpq and ntpdc."
@@ -33354,7 +33388,7 @@ msgstr ""
 msgid "Deny mode 6 control message trap service (notrap)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:326
+#: src/usr/local/www/services_ntpd_gps.php:332
 msgid ""
 "A GPS connected via a serial port may be used as a reference clock for NTP. "
 "If the GPS also supports PPS and is properly configured, and connected, that "
@@ -33367,44 +33401,48 @@ msgid ""
 "clock when providing time to clients."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:404
+#: src/usr/local/www/services_ntpd_gps.php:389
+msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
+msgstr ""
+
+#: src/usr/local/www/services_ntpd_gps.php:417
 msgid "Prefer this clock (default: checked)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:411
+#: src/usr/local/www/services_ntpd_gps.php:424
 msgid ""
 "Do not use this clock, display for reference only (default: unchecked)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:418
+#: src/usr/local/www/services_ntpd_gps.php:431
 msgid "Enable PPS signal processing (default: checked)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:425
+#: src/usr/local/www/services_ntpd_gps.php:438
 #: src/usr/local/www/services_ntpd_pps.php:170
 msgid ""
 "Enable falling edge PPS signal processing (default: unchecked, rising edge)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:432
+#: src/usr/local/www/services_ntpd_gps.php:445
 msgid "Enable kernel PPS clock discipline (default: checked)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:439
+#: src/usr/local/www/services_ntpd_gps.php:452
 msgid "Obscure location in timestamp (default: unchecked, unobscured)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:446
+#: src/usr/local/www/services_ntpd_gps.php:459
 msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:453
+#: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd_gps.php:489
+#: src/usr/local/www/services_ntpd_gps.php:502
 msgid "Auto correct malformed initialization commands. (default: unchecked)."
 msgstr ""
 
@@ -33432,11 +33470,11 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:296
 msgid "Enable PPPoE Server"
-msgstr ""
+msgstr "Abilita Server PPPoE"
 
 #: src/usr/local/www/services_pppoe_edit.php:367
 msgid "Use RADIUS Authentication"
-msgstr ""
+msgstr "Usa autenticazione RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:375
 msgid "Use RADIUS Accounting"
@@ -33444,7 +33482,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:382
 msgid "Use a Backup RADIUS Authentication Server"
-msgstr ""
+msgstr "Usa un server di autenticazione RADIUS di riserva"
 
 #: src/usr/local/www/services_pppoe_edit.php:402
 msgid "Assign IP Addresses to users via RADIUS server reply attributes"
@@ -33452,11 +33490,11 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:542
 msgid "&nbsp;"
-msgstr ""
+msgstr "&nbsp;"
 
 #: src/usr/local/www/services_rfc2136_edit.php:244
 msgid "Use TCP instead of UDP"
-msgstr ""
+msgstr "Usa TCP invece di UDP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:251
 msgid ""
@@ -33466,47 +33504,47 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:260
 msgid "A (IPv4)"
-msgstr ""
+msgstr "A (IPv4)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:268
 msgid "AAAA (IPv6)"
-msgstr ""
+msgstr "AAAA (IPv6)"
 
 #: src/usr/local/www/services_router_advertisements.php:466
 msgid "Use same settings as DHCPv6 server"
-msgstr ""
+msgstr "Usa le stesse impostazioni del server DHCPv6"
 
 #: src/usr/local/www/services_snmp.php:216
 msgid "Enable the SNMP Daemon and its controls"
-msgstr ""
+msgstr "Abilita il demone SNMP e i suoi controlli"
 
 #: src/usr/local/www/services_snmp.php:259
 msgid "Enable the SNMP Trap and its controls"
-msgstr ""
+msgstr "Abilita la trappola SNMP e i suoi controlli"
 
 #: src/usr/local/www/services_snmp.php:303
 msgid "MibII"
-msgstr ""
+msgstr "MibII"
 
 #: src/usr/local/www/services_snmp.php:310
 msgid "Netgraph"
-msgstr ""
+msgstr "Netgraph"
 
 #: src/usr/local/www/services_snmp.php:317
 msgid "PF"
-msgstr ""
+msgstr "PF"
 
 #: src/usr/local/www/services_snmp.php:325
 msgid "Host Resources"
-msgstr ""
+msgstr "Risorse Host"
 
 #: src/usr/local/www/services_snmp.php:333
 msgid "UCD"
-msgstr ""
+msgstr "UCD"
 
 #: src/usr/local/www/services_snmp.php:340
 msgid "Regex"
-msgstr ""
+msgstr "Regex"
 
 #: src/usr/local/www/services_unbound.php:269
 msgid "Enable DNS resolver"
@@ -33514,7 +33552,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:312
 msgid "Enable DNSSEC Support"
-msgstr ""
+msgstr "Abilita supporto DNSSEC"
 
 #: src/usr/local/www/services_unbound.php:319
 msgid "Enable Forwarding Mode"
@@ -33567,11 +33605,11 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
-msgstr ""
+msgstr "Segue"
 
 #: src/usr/local/www/status_logs_common.inc:804
 msgid "Reverse"
-msgstr ""
+msgstr "Contrario"
 
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
@@ -33580,7 +33618,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:854
 msgid "Formatted"
-msgstr ""
+msgstr "Formattato"
 
 #: src/usr/local/www/status_logs_common.inc:884
 #: src/usr/local/www/status_logs_settings.php:287
@@ -33609,7 +33647,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:236
 msgid "Show log entries in reverse order (newest entries on top)"
-msgstr ""
+msgstr "Mostra le voci dei log in ordine inverso (le piu` recenti in cima)"
 
 #: src/usr/local/www/status_logs_settings.php:294
 msgid "Show raw filter logs"
@@ -33621,23 +33659,23 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:320
 msgid "Disable writing log files to the local disk"
-msgstr ""
+msgstr "Disabilita la scrittura dei log nel disco locale"
 
 #: src/usr/local/www/status_logs_settings.php:338
 msgid "Send log messages to remote syslog server"
-msgstr ""
+msgstr "Invia i messaggi log al server syslog remoto"
 
 #: src/usr/local/www/status_logs_settings.php:393
 msgid "Everything"
-msgstr ""
+msgstr "Tutto"
 
 #: src/usr/local/www/status_logs_settings.php:400
 msgid "System Events"
-msgstr ""
+msgstr "Eventi di sistema"
 
 #: src/usr/local/www/status_logs_settings.php:407
 msgid "Firewall Events"
-msgstr ""
+msgstr "Eventi Firewall"
 
 #: src/usr/local/www/status_logs_settings.php:414
 msgid "DNS Events (Resolver/unbound, Forwarder/dnsmasq, filterdns)"
@@ -33645,7 +33683,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:421
 msgid "DHCP Events (DHCP Daemon, DHCP Relay, DHCP Client)"
-msgstr ""
+msgstr "Eventi DHCP (Demone DHCP, Ritrasmissione DHCP, Client DHCP)"
 
 #: src/usr/local/www/status_logs_settings.php:428
 msgid "PPP Events (PPPoE WAN Client, L2TP WAN Client, PPTP WAN Client)"
@@ -33653,15 +33691,15 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:435
 msgid "Captive Portal Events"
-msgstr ""
+msgstr "Eventi Captive Portal"
 
 #: src/usr/local/www/status_logs_settings.php:442
 msgid "VPN Events (IPsec, OpenVPN, L2TP, PPPoE Server)"
-msgstr ""
+msgstr "Eventi VPN (IPsec, OpenVPN, L2TP, Server PPPoE)"
 
 #: src/usr/local/www/status_logs_settings.php:449
 msgid "Gateway Monitor Events"
-msgstr ""
+msgstr "Monitor eventi Gateway"
 
 #: src/usr/local/www/status_logs_settings.php:456
 msgid "Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)"
@@ -33677,7 +33715,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:477
 msgid "Wireless Events (hostapd)"
-msgstr ""
+msgstr "Eventi Wireless (hostapd)"
 
 #: src/usr/local/www/system.php:523
 msgid "Allow DNS server list to be overridden by DHCP/PPP on WAN"
@@ -33702,7 +33740,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:386
 msgid "Disable logging of webConfigurator successful logins"
-msgstr ""
+msgstr "Disabilita i log delle autenticazioni del ConfiguratoreWeb"
 
 #: src/usr/local/www/system_advanced_admin.php:400
 msgid "Disable webConfigurator anti-lockout rule"
@@ -33718,11 +33756,13 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:450
 msgid "Enable Secure Shell"
-msgstr ""
+msgstr "Abilita Shell sicura"
 
 #: src/usr/local/www/system_advanced_admin.php:457
 msgid "Disable password login for Secure Shell (RSA/DSA key only)"
 msgstr ""
+"Disabilita l'autenticazione con password per la Shell Sicura (solo chiavi "
+"RSA/DSA)"
 
 #: src/usr/local/www/system_advanced_admin.php:479
 msgid ""
@@ -33745,7 +33785,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:426
 msgid "Disable all packet filtering."
-msgstr ""
+msgstr "Disabilita tutto il filtraggio dei pacchetti."
 
 #: src/usr/local/www/system_advanced_firewall.php:436
 msgid ""
@@ -33756,10 +33796,11 @@ msgstr ""
 #: src/usr/local/www/system_advanced_firewall.php:502
 msgid "Bypass firewall rules for traffic on the same interface"
 msgstr ""
+"Ignora le regole del firewall per il traffico sulla stessa interfaccia"
 
 #: src/usr/local/www/system_advanced_firewall.php:512
 msgid "Disable all auto-added VPN rules."
-msgstr ""
+msgstr "Disabilita tutte le regole VPN aggiunte in automatico"
 
 #: src/usr/local/www/system_advanced_firewall.php:519
 msgid "Disable reply-to on WAN rules"
@@ -33771,7 +33812,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
-msgstr ""
+msgstr "Verifica i certificati HTTPS quando si scaricano URLs Alias"
 
 #: src/usr/local/www/system_advanced_firewall.php:618
 msgid ""
@@ -33787,11 +33828,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:382
 msgid "Enable default gateway switching"
-msgstr ""
+msgstr "Abilita il cambio di default gateway"
 
 #: src/usr/local/www/system_advanced_misc.php:394
 msgid "Enable PowerD"
-msgstr ""
+msgstr "Abilita Power D"
 
 #: src/usr/local/www/system_advanced_misc.php:475
 msgid "Do not kill connections when schedule expires"
@@ -33803,7 +33844,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:495
 msgid "Do not create rules when gateway is down"
-msgstr ""
+msgstr "Non creare regole quando il gateway e` offline"
 
 #: src/usr/local/www/system_advanced_misc.php:507
 msgid "Use memory file system for /tmp and /var"
@@ -33824,7 +33865,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:201
 msgid "Prefer to use IPv4 even if IPv6 is available"
-msgstr ""
+msgstr "Utilizza l'IPv4 anche quando l'IPv6 e` disponibile"
 
 #: src/usr/local/www/system_advanced_network.php:226
 msgid "Disable hardware checksum offload"
@@ -33840,19 +33881,19 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:257
 msgid "Suppress ARP messages"
-msgstr ""
+msgstr "Sopprimi i messaggi ARP"
 
 #: src/usr/local/www/system_advanced_notifications.php:222
 msgid "Disable SMTP Notifications"
-msgstr ""
+msgstr "Disabilita le notifiche SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:255
 msgid "Enable SMTP over SSL/TLS"
-msgstr ""
+msgstr "Abilita SMTP con SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:313
 msgid "Disable the startup/shutdown beep"
-msgstr ""
+msgstr "Disabiliti il bip all'accensione/spegnimento"
 
 #: src/usr/local/www/system_advanced_notifications.php:325
 msgid "Disable Growl Notifications"
@@ -33866,11 +33907,11 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:593
 msgid "Level "
-msgstr ""
+msgstr "Livello"
 
 #: src/usr/local/www/system_authservers.php:618
 msgid "Enable extended query"
-msgstr ""
+msgstr "Abilita query estesa"
 
 #: src/usr/local/www/system_authservers.php:637
 msgid "Use anonymous binds to resolve distinguished names"
@@ -33890,7 +33931,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:620
 msgid "<a href=\"system_camanager.php?act=new&amp;method=internal\"> "
-msgstr ""
+msgstr "<a href=\"system_camanager.php?act=new&amp;method=internal\"> "
 
 #: src/usr/local/www/system_gateway_groups_edit.php:314
 msgid ""
@@ -33900,6 +33941,11 @@ msgid ""
 "in a priority level are exhausted then the next available link(s) in the "
 "next priority level will be used."
 msgstr ""
+"La priorita` scelta qui definisce in quale ordine il failover e il "
+"bilanciamento dei link verra` fatto. Link multipli con la stessa priorita` "
+"bilanceranno le connessioni finche` tutti i link prioritari non saranno "
+"finiti. Se tutti i link in un livello prioritario saranno terminati allora "
+"si passera` ad altri link disponibili nel successivo livello."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:321
 msgid ""
@@ -33909,31 +33955,31 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:594
 msgid "Disable this gateway"
-msgstr ""
+msgstr "Disabilita questo gateway"
 
-#: src/usr/local/www/system_gateways_edit.php:641
+#: src/usr/local/www/system_gateways_edit.php:640
 msgid "This will select the above gateway as the default gateway."
-msgstr ""
+msgstr "Questo rendera` il suddetto gateway predefinito."
 
-#: src/usr/local/www/system_gateways_edit.php:648
+#: src/usr/local/www/system_gateways_edit.php:647
 msgid "Disable Gateway Monitoring"
-msgstr ""
+msgstr "Disabilita il monitoraggio del gateway"
 
-#: src/usr/local/www/system_gateways_edit.php:655
+#: src/usr/local/www/system_gateways_edit.php:654
 msgid "Disable Gateway Monitoring Action"
 msgstr ""
 
-#: src/usr/local/www/system_gateways_edit.php:679
+#: src/usr/local/www/system_gateways_edit.php:678
 msgid "Mark Gateway as Down"
-msgstr ""
+msgstr "Segna il gateway come spento"
 
-#: src/usr/local/www/system_gateways_edit.php:814
+#: src/usr/local/www/system_gateways_edit.php:813
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_usermanager_addprivs.php:172
 msgid "<span class=\"help-block\">"
-msgstr ""
+msgstr "<span class=\"help-block\">"
 
-#: src/usr/local/www/system_gateways_edit.php:851
+#: src/usr/local/www/system_gateways_edit.php:850
 msgid "Use non-local gateway through interface specific route."
 msgstr ""
 

@@ -5,12 +5,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-02 18:38-0200\n"
+"POT-Creation-Date: 2017-02-03 14:34-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-02 02:17-0500\n"
-"Last-Translator: zhiwu shan <26403799@qq.com>\n"
+"PO-Revision-Date: 2017-02-03 11:39-0500\n"
+"Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -149,13 +149,13 @@ msgstr "成功登录%1$s，通过 LDAP服务器 %2$s， DN = %3$s."
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
-msgid "RADIUS start: %s<br />\n"
-msgstr "RADIUS 启动: %s<br />\n"
+msgid "RADIUS start: %s"
+msgstr "RADIUS 启动: %s"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
-msgid "RADIUS send failed: %s<br />\n"
-msgstr "RADIUS 发送错误: %s<br />\n"
+msgid "RADIUS send failed: %s"
+msgstr "RADIUS 发送失败: %s"
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
@@ -193,7 +193,7 @@ msgstr "用户 '%1$s'的会话已超时：%2$s"
 #: src/etc/inc/auth.inc:1811
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr "用户已从用户'%1$s' 退出：%2$s"
+msgstr "用户'%1$s' 已注销：%2$s"
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
@@ -382,8 +382,8 @@ msgid ""
 "If VLANs will not be used, or only for optional interfaces, it is typical to\n"
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
-msgstr "如果不使用VLAN，或仅用于可选接口，则通常不使用\n"
-"可以在webConfigurator稍后配置VLAN。"
+msgstr "如果不使用VLAN，或仅用于可选接口，则通常不使用，\n"
+"可以在web配置器稍后配置VLAN。"
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
@@ -391,11 +391,11 @@ msgstr "是否现在立即设置VLAN [y | n]？"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr "VLAN接口"
+msgstr "VLAN接口："
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "输入WAN接口名称或“a”进行自动检测"
+msgstr "输入WAN接口名称或按“a”进行自动检测"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
@@ -419,7 +419,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$s可选接口 %2$s的描述: %3$s"
+msgstr "%1$s可选接口 %2$s找到的说明: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -430,7 +430,7 @@ msgstr "%1$s输入可选接口 %2$s 的名字 或按 'a'键自动配置%3$s(%4$s
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr "可选的l"
+msgstr "可选的"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
@@ -448,7 +448,7 @@ msgstr "您已选择删除LAN接口。"
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "您要删除LAN IP地址和\n"
+msgstr "您要删除LAN IP地址\n"
 "现在卸载接口[y | n]？"
 
 #: src/etc/inc/config.console.inc:365
@@ -471,7 +471,7 @@ msgstr "正在重新载入设置..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr "完成。"
+msgstr "完成！"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
@@ -581,7 +581,7 @@ msgstr "不能找到可用的配置文件,退出......."
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
-msgstr "在 %s开始升级配置，设置超时为15分钟。"
+msgstr "在 %s开始升级配置，超时为15分钟。"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
@@ -604,7 +604,7 @@ msgstr "警告：无法保存配置内容。无法打开文件！"
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr "不能打开 %1$s/config.xml for writing in write_config()%2$s"
+msgstr "不能打开 %1$s/config.xml 以写入write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
@@ -626,7 +626,7 @@ msgstr "XML错误：无法打开文件"
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s at line %2$d"
+msgstr "%1$s 在行 %2$d"
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
@@ -650,7 +650,7 @@ msgstr "动态DNS：更新DNS()开始"
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
-msgstr "动态DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
+msgstr "动态DNS (%1$s): 运行 get_failover_interface 在 %2$s. 发现 %3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -669,12 +669,12 @@ msgstr "动态DNS %1$s (%2$s): _update() starting."
 msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
-msgstr "动态DNS%1$s (%2$s):在无IP的帐户上处理虚拟更新。 IP临时设置为%3$s"
+msgstr "动态DNS%1$s (%2$s):在No-IP的帐户上处理虚拟更新。 IP临时设置为%3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr "正在向 %s发送请求"
+msgstr "发送请求到: %s"
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
@@ -749,7 +749,7 @@ msgstr "指定的DNS-O-Matic用户名或密码不正确。 在解决此问题之
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
-msgstr "指定的主机名不是完全限定的域名。 如果没有包括主机名，notfqdn将返回一次。"
+msgstr "指定的主机名不是完全合格域名(FQDN)。FQDN是指主机名加上全路径，全路径中列出了序列中所有域成员，是主机名的一种完全表示形式。"
 
 #: src/etc/inc/dyndns.class:873
 msgid ""
@@ -776,7 +776,7 @@ msgstr "遇到DNS错误。 停止更新30分钟。"
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr "不是FQDN！"
+msgstr "不是一个完全合格域名（FQDN）！"
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
@@ -789,7 +789,7 @@ msgstr "没有这样的主机"
 #: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
 #: src/etc/inc/dyndns.class:1456
 msgid "No Change In IP Address"
-msgstr "无更改IP地址"
+msgstr "没有更改IP地址"
 
 #: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
 #: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
@@ -813,7 +813,7 @@ msgstr "提供的主机名不存在。"
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
-msgstr "用户名无效"
+msgstr "用户名无效。"
 
 #: src/etc/inc/dyndns.class:981
 msgid "Invalid Password."
@@ -882,11 +882,11 @@ msgstr "无服务：此域已禁用动态DNS服务。"
 
 #: src/etc/inc/dyndns.class:1033
 msgid "Illegal Input: Self-Explanatory"
-msgstr "非法输入"
+msgstr "非法输入：自解释"
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr "太快了：自从上次更新以来，时间已经过去了"
+msgstr "太快：自从上次更新以来，时间已经过去了"
 
 #: src/etc/inc/dyndns.class:1037
 msgid "IP Updated Successfully!"
@@ -979,7 +979,7 @@ msgstr "服务器端错误。"
 
 #: src/etc/inc/dyndns.class:1184
 msgid "Badly Formed Request (check the settings)."
-msgstr "错误的成形请求（检查设置）。"
+msgstr "严重形成的请求（检查设置）。"
 
 #: src/etc/inc/dyndns.class:1202 src/etc/inc/dyndns.class:1222
 msgid "Bad Request - A hostname was not provided."
@@ -1024,7 +1024,7 @@ msgstr "%1$s 已更新为 %2$s"
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
-msgstr "无效证件！ 不要忘记使用API Key for CloudFlare的密码字段。"
+msgstr "无效证书！ 不要忘记使用API Key for CloudFlare的密码字段。"
 
 #: src/etc/inc/dyndns.class:1322
 msgid "Zone or Host ID was not found, check the hostname."
@@ -1052,11 +1052,11 @@ msgstr "用户无法管理所选域。"
 
 #: src/etc/inc/dyndns.class:1388
 msgid "Not A FQDN"
-msgstr "不是FQDN"
+msgstr "不是一个FQDN（完全合格域名）"
 
 #: src/etc/inc/dyndns.class:1398
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr "主机名不存在或DynDNS未启用"
+msgstr "主机名不存在或动态DNS未启用"
 
 #: src/etc/inc/dyndns.class:1400
 msgid "Bad request"
@@ -1068,7 +1068,7 @@ msgstr "动态DNS访问已被阻止！"
 
 #: src/etc/inc/dyndns.class:1404
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr "Google结束时发生错误，请在5分钟后重试"
+msgstr "在Google结束时发生错误，请在5分钟后重试"
 
 #: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
 msgid "Invalid username or password"
@@ -1084,7 +1084,7 @@ msgstr "帐户已撤销"
 
 #: src/etc/inc/dyndns.class:1427
 msgid "Record does not exist in the system. Unable to update record"
-msgstr "记录不存在于系统中。 无法更新记录"
+msgstr "记录不在系统中。 无法更新记录"
 
 #: src/etc/inc/dyndns.class:1430
 msgid "User does not have access to this record"
@@ -1096,7 +1096,7 @@ msgstr "系统识别的常规系统错误"
 
 #: src/etc/inc/dyndns.class:1440
 msgid "General system error unrecognized by the system"
-msgstr "系统无法识别常规系统错误"
+msgstr "系统无法识别的常规系统错误"
 
 #: src/etc/inc/dyndns.class:1492
 #, php-format
@@ -1148,14 +1148,16 @@ msgstr "区域ID无效"
 
 #: src/etc/inc/dyndns.class:1543
 msgid "Invalid TTL"
-msgstr "无效的TTL"
+msgstr ""
+"无效的TTL（TTL是 Time To Live的缩写，该字段指定IP包被路由器丢弃之前允许通过的最大网段数量。TTL是IPv4包头的一个8 "
+"bit字段。）"
 
 #: src/etc/inc/dyndns.class:1546
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
-msgstr "我的IP地址%s 天没有变化，不能通过。 没有更新动态DNS条目。"
+msgstr "我的IP地址%s 天没有变化，不能通过。不能更新动态DNS条目。"
 
 #: src/etc/inc/dyndns.class:1549
 msgid "Unknown Response."
@@ -1194,7 +1196,7 @@ msgstr "缓存IP: %s"
 
 #: src/etc/inc/dyndns.class:1606
 msgid "No Cached IP found."
-msgstr "未找到高速缓存的IP。"
+msgstr "没找到缓存的IP。"
 
 #: src/etc/inc/dyndns.class:1620
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
@@ -1392,7 +1394,7 @@ msgstr "IPv6我在这里"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr "IPv6在哪里"
+msgstr "IPv6你在哪里"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
@@ -1456,7 +1458,7 @@ msgstr "参数问题（IP头无效）"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr "Photuris"
+msgstr "Photuris协议（在RFC 2522中定义的会话密钥管理协议。）"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
@@ -1480,7 +1482,7 @@ msgstr "跳过"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr "回应请求"
+msgstr "源抑制"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
@@ -1515,7 +1517,7 @@ msgstr "你是谁回应"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr "你是谁请求"
+msgstr "你是谁应答"
 
 #: src/etc/inc/filter.inc:221
 msgid "Initializing"
@@ -1570,7 +1572,7 @@ msgstr "过滤器已禁用。未加载规则。"
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1213
 #: src/etc/inc/system.inc:1311 src/etc/inc/system.inc:1614
-#: src/etc/inc/system.inc:2183
+#: src/etc/inc/system.inc:2186
 msgid "done."
 msgstr "完成。"
 
@@ -1589,7 +1591,7 @@ msgstr "相关行显示 [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:430
 msgid "PF was wedged/busy and has been reset."
-msgstr "PF已锁定/正忙，已复位。"
+msgstr "PF已被锁定/忙碌并已复位。"
 
 #: src/etc/inc/filter.inc:436 src/etc/inc/filter.inc:437
 #, php-format
@@ -1628,7 +1630,7 @@ msgstr "正在创建网关组项..."
 #: src/etc/inc/filter.inc:868
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr "在 %2$s 上使用 %1$s 设置路由"
+msgstr "在 %2$s 上设置路由 %1$s "
 
 #: src/etc/inc/filter.inc:872
 #, php-format
@@ -1640,17 +1642,17 @@ msgstr "组%s中的成员过多，网关组被规则截断。"
 msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
-msgstr "尝试查找接口获得%s时出错 . ，未添加规则。"
+msgstr "尝试查找接口获得%s时出错 ，未添加规则。"
 
 #: src/etc/inc/filter.inc:1249
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr "正在创建反射NAT规则 %s..."
+msgstr "创建映射NAT规则 %s..."
 
 #: src/etc/inc/filter.inc:1347
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr "正在创建映射规则 %s..."
+msgstr "创建映射规则 %s..."
 
 #: src/etc/inc/filter.inc:1468
 msgid "Not installing NAT reflection rules for a port range > 500"
@@ -1694,7 +1696,7 @@ msgstr "IPSec客户端"
 
 #: src/etc/inc/filter.inc:1685
 msgid "Auto created rule for ISAKMP"
-msgstr "自动为ISAKMP创建规则"
+msgstr "自动为ISAKMP（ 因特网安全协议与密钥管理协议）创建规则"
 
 #: src/etc/inc/filter.inc:1695
 msgid "Auto created rule"
@@ -1707,7 +1709,7 @@ msgstr "创建1：1规则..."
 #: src/etc/inc/filter.inc:2013
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr "正在创建高级出站规则 %s"
+msgstr "创建高级出站规则 %s"
 
 #: src/etc/inc/filter.inc:2060
 msgid "Creating outbound NAT rules"
@@ -1734,7 +1736,7 @@ msgstr "正在创建过滤 规则 %s ..."
 #: src/etc/inc/filter.inc:2395
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
-msgstr "filter_generate_port: %1$s is not a valid %2$s port."
+msgstr "filter_generate_port: %1$s 不是有效%2$s 的端口。"
 
 #: src/etc/inc/filter.inc:2632
 #, php-format
@@ -1773,7 +1775,7 @@ msgstr "正在创建规则%s"
 #: src/etc/inc/filter.inc:3009
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr "[TDR DEBUG] status true -- rule type '%s'"
+msgstr "[TDR DEBUG] status true -- 规则类型 '%s'"
 
 #: src/etc/inc/filter.inc:3053
 msgid "Creating default rules"
@@ -1791,7 +1793,7 @@ msgstr "请使用filter_tdr_install_cron（）函数tdr_install_cron将被弃用
 
 #: src/etc/inc/filter.inc:3836
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr "为基于时间的规则安装15分钟过滤器重新加载"
+msgstr "安装15分钟过滤器重新加载基于时间的规则"
 
 #: src/etc/inc/filter.inc:3843
 msgid "Removed 15 minute filter reload for Time Based Rules"
@@ -1800,7 +1802,7 @@ msgstr "已删除15分钟过滤器重新加载基于时间的规则"
 #: src/etc/inc/filter.inc:4227
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr "Checking for %1$s PF hooks in package %2$s"
+msgstr "正在检查插件%2$s中的 %1$sPF挂钩"
 
 #: src/etc/inc/filter.inc:4240
 #, php-format
@@ -1822,20 +1824,20 @@ msgstr "删除此分隔符"
 msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
-msgstr "解析日志条目时出错：%s。"
+msgstr "解析日志条目时出错：%s。请报告到邮寄名单或论坛。"
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
 msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
-msgstr "解析规则编号时出错: %s。"
+msgstr "解析规则编号时出错: %s。请报告到邮寄名单或论坛。"
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
-msgstr "解析规则时出错: %s。"
+msgstr "解析规则时出错: %s。请报告到邮寄名单或论坛。"
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
@@ -1936,7 +1938,7 @@ msgstr "名称"
 #: src/usr/local/www/status_logs_filter_summary.php:67
 #: src/usr/local/www/status_logs_settings.php:187
 #: src/usr/local/www/status_logs_vpn.php:84
-#: src/usr/local/www/status_ntpd.php:270 src/usr/local/www/status_ntpd.php:282
+#: src/usr/local/www/status_ntpd.php:283 src/usr/local/www/status_ntpd.php:295
 #: src/usr/local/www/status_openvpn.php:30
 #: src/usr/local/www/status_openvpn.php:156
 #: src/usr/local/www/status_openvpn.php:237
@@ -1962,28 +1964,28 @@ msgstr "组件"
 
 #: src/etc/inc/gwlb.inc:185
 msgid "No gateways to monitor. dpinger will not run."
-msgstr "没有网关要监视。 dpinger不会运行。"
+msgstr "没有网关要监控。 dpinger不会运行。"
 
 #: src/etc/inc/gwlb.inc:233 src/etc/inc/gwlb.inc:274
 #, php-format
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
-msgstr "删除监视器%1$s的静态路由，并通过%2$s添加新路由"
+msgstr "删除监控%1$s的静态路由，并通过%2$s添加新路由"
 
 #: src/etc/inc/gwlb.inc:302
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr "启动 %s网关监视器出错"
+msgstr "启动 %s网关监控出错"
 
 #: src/etc/inc/gwlb.inc:315
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr "dpinger: No dpinger session running for gateway %s"
+msgstr "dpinger: 没有为网关%s运行dpinger会话"
 
 #: src/etc/inc/gwlb.inc:329
 #, php-format
 msgid "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
-msgstr "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
+msgstr "dpinger:无法连接到状态接口 %1$s - %2$s (%3$s)"
 
 #: src/etc/inc/gwlb.inc:983
 #, php-format
@@ -2020,7 +2022,7 @@ msgstr "网关：组%1$s 在层级 %2$s上没有任何网关！"
 #: src/etc/inc/gwlb.inc:1097
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
-msgstr "更新%1$s的网关组网关 - 新网关为 %2$s"
+msgstr "更新网关组网关%1$s 为新网关 %2$s"
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
@@ -2040,7 +2042,7 @@ msgstr "VLAN：调用了错误的选项。配置问题！"
 
 #: src/etc/inc/interfaces.inc:214
 msgid "interface_vlan_configure called with if undefined."
-msgstr "interface_vlan_configure called with if undefined."
+msgstr "如果未定义，则调用interface_vlan_configure。"
 
 #: src/etc/inc/interfaces.inc:260 src/etc/inc/interfaces.inc:355
 #, php-format
@@ -2050,12 +2052,12 @@ msgstr "QinQ compat VLAN:调用错误的选项。 是 config!%s的问题"
 #: src/etc/inc/interfaces.inc:267
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
-msgstr "interface_qinq_configure called with if undefined.%s"
+msgstr "如果未定义，则调用interface_qinq_configure。%s"
 
 #: src/etc/inc/interfaces.inc:272
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
-msgstr "interface_qinq_configure called with invalid if.%s"
+msgstr "如果无效，则调用interface_qinq_configure 。%s"
 
 #: src/etc/inc/interfaces.inc:338
 msgid "Configuring QinQ interfaces..."
@@ -2095,7 +2097,7 @@ msgstr "无法生成greif up - 变量未定义。"
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
-msgstr "无法带来realif上变量未定义 - interface_GIF_configure（）"
+msgstr "无法带来realif up-变量未定义 - interface_GIF_configure（）"
 
 #: src/etc/inc/interfaces.inc:981
 msgid "could not bring gifif up -- variable not defined"
@@ -2129,7 +2131,7 @@ msgstr "进入CARP维护模式"
 #: src/etc/inc/interfaces.inc:1610
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
-msgstr "不能找到PPP配置 %s 在 interface_ppps_configure()."
+msgstr "在 interface_ppps_configure()上不能找到PPP配置 %s "
 
 #: src/etc/inc/interfaces.inc:1668
 #, php-format
@@ -2154,7 +2156,7 @@ msgstr "设备 %s 不存在，PPP链路无法启动调制解调器设备。"
 #: src/etc/inc/interfaces.inc:1687
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr "未知的%s 配置为ppp接口。"
+msgstr "未知的%s 已配置为ppp接口。"
 
 #: src/etc/inc/interfaces.inc:2007
 #, php-format
@@ -2164,7 +2166,7 @@ msgstr "错误: 不能打开 mpd_%1$s.conf 在interface_ppps_configure().%2$s"
 #: src/etc/inc/interfaces.inc:2102
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
+msgstr " 在设备 '%1$s'为 接口'%2$s'启动 3gstats.php"
 
 #: src/etc/inc/interfaces.inc:2119
 msgid "Configuring CARP settings..."
@@ -2198,7 +2200,7 @@ msgstr "接口%s已更改为hostap模式。"
 #: src/etc/inc/interfaces.inc:2454
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr "接口%s已更改为adhoc模式。"
+msgstr "接口%s已更改为adhoc（点对点）模式。"
 
 #: src/etc/inc/interfaces.inc:2458
 #, php-format
@@ -2246,79 +2248,79 @@ msgid ""
 "automatically replaced with %2$s"
 msgstr "接口%1$s上的MAC地址(ff:ff:ff:ff:ff:ff) 无效，已自动替换为%2$s"
 
-#: src/etc/inc/interfaces.inc:3363
+#: src/etc/inc/interfaces.inc:3362
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
-msgstr "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
+msgstr "父级％ %1$s和VLAN(%2$s)之间的MTU有冲突"
 
-#: src/etc/inc/interfaces.inc:3554 src/etc/inc/interfaces.inc:3624
-#: src/etc/inc/interfaces.inc:3688
+#: src/etc/inc/interfaces.inc:3553 src/etc/inc/interfaces.inc:3623
+#: src/etc/inc/interfaces.inc:3687
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "接口 %1$s 跟踪不存在的接口 %2$s"
 
-#: src/etc/inc/interfaces.inc:3561 src/etc/inc/interfaces.inc:3567
+#: src/etc/inc/interfaces.inc:3560 src/etc/inc/interfaces.inc:3566
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
-msgstr "接口 %1$s 配置通过%2$s 类型 %3$s"
+msgstr "接口 %1$s 通过%2$s已配置 类型 %3$s"
 
-#: src/etc/inc/interfaces.inc:3630
+#: src/etc/inc/interfaces.inc:3629
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr "接口'%2$s'上的接口IPv4 '%1$s'地址无效，未配置6RD隧道"
 
-#: src/etc/inc/interfaces.inc:3666
+#: src/etc/inc/interfaces.inc:3665
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
-msgstr "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
+msgstr "rd6 %1$s 与ipv6地址 %2$s基于 %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:3694 src/etc/inc/interfaces.inc:3749
-#: src/etc/inc/interfaces.inc:3835
+#: src/etc/inc/interfaces.inc:3693 src/etc/inc/interfaces.inc:3748
+#: src/etc/inc/interfaces.inc:3834
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
-msgstr "接口'%2$s' 上的接口IPv4 '%1$s' 地址不是公共的，不配置6RD隧道"
+msgstr "接口'%2$s' 上的接口IPv4 '%1$s' 地址不是公共的，不能配置6RD隧道"
 
-#: src/etc/inc/interfaces.inc:3726
+#: src/etc/inc/interfaces.inc:3725
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
-msgstr "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
+msgstr "sixto4 %1$s ipv6地址 %2$s 基于 %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:3941
+#: src/etc/inc/interfaces.inc:3940
 msgid "Failed to write user DUID file!"
 msgstr "无法写入用户DUID文件！"
 
-#: src/etc/inc/interfaces.inc:4342
+#: src/etc/inc/interfaces.inc:4341
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr "错误: 不能打开 %s 在 DHCP6_Config_File_Override() for reading."
 
-#: src/etc/inc/interfaces.inc:4370
+#: src/etc/inc/interfaces.inc:4369
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr "错误: 不能打开dhclient_%s.conf 在 interface_dhcp_configure() for writing."
 
-#: src/etc/inc/interfaces.inc:4383
+#: src/etc/inc/interfaces.inc:4382
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "无接接口 \"%s\" 在interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:4439
+#: src/etc/inc/interfaces.inc:4438
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr "无法在interface_dhcp_configure() 中启动%s 接口。"
 
-#: src/etc/inc/interfaces.inc:4532
+#: src/etc/inc/interfaces.inc:4531
 #, php-format
-msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading.\n"
-msgstr "错误:不能打开 %s 在 DHCP_Config_File_Override() for reading.\n"
+msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
+msgstr "错误：无法在 DHCP_Config_File_Override() 中打开%s进行读取。"
 
-#: src/etc/inc/interfaces.inc:5572 src/etc/inc/service-utils.inc:358
+#: src/etc/inc/interfaces.inc:5571 src/etc/inc/service-utils.inc:358
 #: src/usr/local/www/diag_backup.php:490
 #: src/usr/local/www/diag_packet_capture.php:111
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
@@ -2391,7 +2393,7 @@ msgstr "完整性检查器"
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr "完整性认证器"
+msgstr "完整性验证器"
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
@@ -2415,7 +2417,7 @@ msgstr "无声"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
-msgstr "认证"
+msgstr "审查"
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
@@ -2423,7 +2425,7 @@ msgstr "控制"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr "Diag"
+msgstr "诊断"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
@@ -2492,7 +2494,7 @@ msgstr "动态 DNS"
 #: src/usr/local/www/firewall_rules_edit.php:1486
 #: src/usr/local/www/interfaces.php:2976
 msgid "Any"
-msgstr "Any"
+msgstr "任意"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
@@ -2618,14 +2620,14 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "移动客户端"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2981
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2983
 #: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:914
 #: src/usr/local/www/firewall_rules_edit.php:1597
 #: src/usr/local/www/interfaces.php:1658 src/usr/local/www/interfaces.php:1659
 #: src/usr/local/www/interfaces.php:1683 src/usr/local/www/interfaces.php:1696
-#: src/usr/local/www/services_ntpd_gps.php:358
+#: src/usr/local/www/services_ntpd_gps.php:364
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:445
 #: src/usr/local/www/vpn_ipsec_phase2.php:543
@@ -2640,18 +2642,18 @@ msgstr "无法找到IPsec守护程序租赁文件。 无法显示移动用户统
 
 #: src/etc/inc/meta.inc:61
 #, php-format
-msgid "list_phpfiles: unable to examine path %s\n"
-msgstr "list_phpfiles: unable to examine path %s\n"
+msgid "list_phpfiles: unable to examine path %s"
+msgstr "list_phpfiles: 无法检查路径 %s"
 
 #: src/etc/inc/meta.inc:97
 #, php-format
-msgid "unable to read %s\n"
-msgstr "无法读取%s\n"
+msgid "unable to read %s"
+msgstr "不能读取 %s"
 
 #: src/etc/inc/meta.inc:134
 #, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
+msgstr " '%3$s'%4$s错误：标签不匹配( %1$s != %2$s ) "
 
 #: src/etc/inc/meta.inc:145
 #, php-format
@@ -2707,7 +2709,7 @@ msgstr "无法将Growl通知发送到 %1$s -- 错误: %2$s"
 #: src/etc/inc/notices.inc:445
 #, php-format
 msgid "Could not send register Growl on %1$s -- Error: %2$s"
-msgstr "无法发送注册Grow到 %1$s -- 错误: %2$s"
+msgstr "无法在%1$s上发送注册Grow  -- 错误: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:763
 #: src/usr/local/www/firewall_rules_edit.php:1636
@@ -2784,7 +2786,7 @@ msgstr "LZ4压缩v2 [compress lz4-v2]"
 #: src/etc/inc/openvpn.inc:128
 msgid ""
 "LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"
-msgstr "LZO压缩[compress lzo，相当于comp-lzo是兼容性]"
+msgstr "LZO压缩[compress lzo，兼容comp-lzo]"
 
 #: src/etc/inc/openvpn.inc:129
 msgid "Enable Compression (stub) [compress]"
@@ -2814,7 +2816,7 @@ msgstr "子网 - 公共子网中每个客户端的一个IP地址"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr "net 30 - 每个客户端隔离/ 30网络"
+msgstr "net 30 - 每个客户端隔离30个网络"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
@@ -2826,7 +2828,7 @@ msgstr "TLS加密和验证"
 
 #: src/etc/inc/openvpn.inc:219
 msgid "None (Username and/or Password required)"
-msgstr "无（需要用户名和/或密码）"
+msgstr "无（需要用户名和或密码）"
 
 #: src/etc/inc/openvpn.inc:227
 msgid "===== Server Certificates ====="
@@ -2865,7 +2867,7 @@ msgstr "无（无加密）"
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr "默认用户"
+msgstr "用户默认"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
@@ -2906,7 +2908,7 @@ msgstr "无法构建OpenVPN服务器配置。 不能使用所选的DH参数长�
 #: src/etc/inc/openvpn.inc:1228
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr "OpenVPN ID %1$s PID %2$s still running, killing."
+msgstr "OpenVPN ID %1$s PID %2$s 仍在运行，终止它。"
 
 #: src/etc/inc/openvpn.inc:1463
 #, php-format
@@ -2929,7 +2931,7 @@ msgstr "为网关组%1$s客户端%2$s.重新同步OpenVPN。"
 
 #: src/etc/inc/openvpn.inc:1516
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
-msgstr "openvpn_resync_gwgroup called with null gwgroup parameter."
+msgstr "openvpn_resync_gwgroup使用null gwgroup参数调用。"
 
 #: src/etc/inc/openvpn.inc:1622 src/etc/inc/openvpn.inc:1753
 msgid "Unable to contact daemon"
@@ -2977,7 +2979,7 @@ msgstr "仅主机名"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Fully Qualified Domain Name"
-msgstr "完全限定域名"
+msgstr "完全合格域名"
 
 #: src/etc/inc/pfsense-utils.inc:228
 msgid "Hostname in Menu"
@@ -2995,7 +2997,7 @@ msgstr "仪表板显示列数"
 
 #: src/etc/inc/pfsense-utils.inc:269
 msgid "Associated Panels Show/Hide"
-msgstr "连带面板 显示/隐藏"
+msgstr "相关面板 显示/隐藏"
 
 #: src/etc/inc/pfsense-utils.inc:276
 msgid "Show the Available Widgets panel on the Dashboard."
@@ -3053,7 +3055,7 @@ msgstr "默认情况下，进入诊断>状态时将显示整个状态表。 此�
 
 #: src/etc/inc/pfsense-utils.inc:672
 msgid "After synch increase advertising skew"
-msgstr "后同步增加广播偏斜"
+msgstr "同步增加广播偏斜"
 
 #: src/etc/inc/pfsense-utils.inc:722
 msgid "Error creating socket!"
@@ -3067,7 +3069,7 @@ msgstr "错误代码是 '%1$s' - %2$s"
 #: src/etc/inc/pfsense-utils.inc:728
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr "setsockopt() failed, error: %s"
+msgstr "setsockopt() 失败, 错误: %s"
 
 #: src/etc/inc/pfsense-utils.inc:732
 #, php-format
@@ -3131,7 +3133,7 @@ msgstr "DNS缓存：找到旧IP %1$s和新IP％ %2$s"
 #: src/etc/inc/pfsense-utils.inc:1761
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
-msgstr "加载%s密码加速器模块。"
+msgstr "加载%s加密模块。"
 
 #: src/etc/inc/pfsense-utils.inc:1778
 #, php-format
@@ -3141,7 +3143,7 @@ msgstr "加载 %s 热监控模块。"
 #: src/etc/inc/pfsense-utils.inc:1855 src/etc/inc/pfsense-utils.inc:1911
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
-msgstr "下载文件失败，状态代码为%1$s.  网址：%2$s"
+msgstr "下载状态代码文件%1$s文件。 网址：%2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2107
 #, php-format
@@ -3167,12 +3169,12 @@ msgstr "下载别名 %s出错"
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
-msgstr "别名归档是一个.tar / tgz文件，无法解压缩，因为实用程序丢失！"
+msgstr "别名归档是一个.tar / tgz文件，它不能解压缩，因为实用程序丢失！"
 
 #: src/etc/inc/pfsense-utils.inc:2213
 #, php-format
 msgid "Could not open %s/aliases for writing!"
-msgstr "无法打开 %s/别名进行写入!"
+msgstr "无法打开别名%s进行写入!"
 
 #: src/etc/inc/pfsense-utils.inc:2219
 #, php-format
@@ -3184,19 +3186,27 @@ msgid "English"
 msgstr "英语"
 
 #: src/etc/inc/pfsense-utils.inc:2799
+msgid "Spanish"
+msgstr "西班牙"
+
+#: src/etc/inc/pfsense-utils.inc:2800
 msgid "Portuguese (Brazil)"
 msgstr "葡萄牙（巴西）"
 
-#: src/etc/inc/pfsense-utils.inc:2800
+#: src/etc/inc/pfsense-utils.inc:2801
 msgid "Turkish"
 msgstr "土耳其"
 
-#: src/etc/inc/pfsense-utils.inc:2989 src/etc/inc/pfsense-utils.inc:3004
-#: src/etc/inc/pfsense-utils.inc:3029
+#: src/etc/inc/pfsense-utils.inc:2802
+msgid "Chinese (Simplified, China)"
+msgstr "汉语（简体中文，中国）"
+
+#: src/etc/inc/pfsense-utils.inc:2991 src/etc/inc/pfsense-utils.inc:3006
+#: src/etc/inc/pfsense-utils.inc:3031
 msgid "No Service"
 msgstr "无服务"
 
-#: src/etc/inc/pfsense-utils.inc:2999 src/etc/inc/pfsense-utils.inc:3041
+#: src/etc/inc/pfsense-utils.inc:3001 src/etc/inc/pfsense-utils.inc:3043
 #: src/usr/local/www/firewall_nat_out.php:228
 #: src/usr/local/www/firewall_nat_out.php:232
 #: src/usr/local/www/interfaces.php:875 src/usr/local/www/interfaces.php:2959
@@ -3210,81 +3220,81 @@ msgstr "无服务"
 #: src/usr/local/www/status_lb_pool.php:134 src/usr/local/www/vpn_ipsec.php:252
 #: src/usr/local/www/vpn_ipsec.php:394
 msgid "Mode"
-msgstr "模式："
+msgstr "模式"
 
-#: src/etc/inc/pfsense-utils.inc:3005
+#: src/etc/inc/pfsense-utils.inc:3007
 msgid "Restricted Service"
 msgstr "受限服务"
 
-#: src/etc/inc/pfsense-utils.inc:3006
+#: src/etc/inc/pfsense-utils.inc:3008
 msgid "Valid Service"
 msgstr "有效服务"
 
-#: src/etc/inc/pfsense-utils.inc:3007
+#: src/etc/inc/pfsense-utils.inc:3009
 msgid "Restricted Regional Service"
 msgstr "受限区域服务"
 
-#: src/etc/inc/pfsense-utils.inc:3008
+#: src/etc/inc/pfsense-utils.inc:3010
 msgid "Powersaving Service"
 msgstr "节能服务"
 
-#: src/etc/inc/pfsense-utils.inc:3014
+#: src/etc/inc/pfsense-utils.inc:3016
 msgid "Invalid SIM/locked State"
-msgstr "无效的 SIM/locked State"
+msgstr "无效的 SIM/处于锁定状态"
 
-#: src/etc/inc/pfsense-utils.inc:3015
+#: src/etc/inc/pfsense-utils.inc:3017
 msgid "Valid SIM State"
 msgstr "有效的SIM卡状态"
 
-#: src/etc/inc/pfsense-utils.inc:3016
-msgid "Invalid SIM CS State"
-msgstr "无效的 SIM CS State"
-
-#: src/etc/inc/pfsense-utils.inc:3017
-msgid "Invalid SIM PS State"
-msgstr "无效的 SIM PS State"
-
 #: src/etc/inc/pfsense-utils.inc:3018
-msgid "Invalid SIM CS/PS State"
-msgstr "无效的 SIM CS/PS State"
+msgid "Invalid SIM CS State"
+msgstr "无效的 SIM CS 状态"
 
 #: src/etc/inc/pfsense-utils.inc:3019
+msgid "Invalid SIM PS State"
+msgstr "无效的 SIM PS 状态"
+
+#: src/etc/inc/pfsense-utils.inc:3020
+msgid "Invalid SIM CS/PS State"
+msgstr "无效的 SIM CS/PS 状态"
+
+#: src/etc/inc/pfsense-utils.inc:3021
 msgid "Missing SIM State"
 msgstr "缺少SIM状态"
 
-#: src/etc/inc/pfsense-utils.inc:3030
+#: src/etc/inc/pfsense-utils.inc:3032
 msgid "Limited Service"
 msgstr "有限服务"
 
-#: src/etc/inc/pfsense-utils.inc:3046
+#: src/etc/inc/pfsense-utils.inc:3048
 msgid "Initializing Service"
 msgstr "初始化服务"
 
-#: src/etc/inc/pfsense-utils.inc:3047
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Network Lock error Service"
 msgstr "网络锁定错误服务"
 
-#: src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Network Locked Service"
 msgstr "网络锁定服务"
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "已解锁或正确的MCC / MNC服务"
 
-#: src/etc/inc/pfsense-utils.inc:3055
+#: src/etc/inc/pfsense-utils.inc:3057
 msgid "No action State"
 msgstr "无操作状态"
 
-#: src/etc/inc/pfsense-utils.inc:3056
+#: src/etc/inc/pfsense-utils.inc:3058
 msgid "Network lock State"
 msgstr "网络锁状态"
 
-#: src/etc/inc/pfsense-utils.inc:3057
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "(U)SIM card lock State"
-msgstr "SIM卡锁定状态"
+msgstr "(U)SIM卡锁定状态"
 
-#: src/etc/inc/pfsense-utils.inc:3058
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "网络锁定和SIM卡锁定状态"
 
@@ -3321,7 +3331,7 @@ msgstr "同步插件："
 
 #: src/etc/inc/pkg-utils.inc:555
 msgid "Removing package..."
-msgstr "移除插件"
+msgstr "移除插件...."
 
 #: src/etc/inc/pkg-utils.inc:588
 #, php-format
@@ -3332,12 +3342,12 @@ msgstr "%s插件缺少配置文件，必须重新安装。"
 #: src/etc/inc/pkg-utils.inc:604
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
-msgstr "重新安装插件%1$s，因为其包文件(%2$s) 缺少！"
+msgstr "重新安装插件%1$s，因为它缺少包文件(%2$s)！"
 
 #: src/etc/inc/pkg-utils.inc:607
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
-msgstr "重装插件 %s失败， 请采取适当的措施!!!"
+msgstr "重装插件 %s失败， 请采取其他的办法安装!"
 
 #: src/etc/inc/pkg-utils.inc:700
 msgid "Beginning package installation."
@@ -3350,7 +3360,7 @@ msgstr "开始安装插件 %s 。"
 
 #: src/etc/inc/pkg-utils.inc:705
 msgid "Saving updated package information..."
-msgstr "正在保存更新的包信息"
+msgstr "正在保存插件更新信息"
 
 #: src/etc/inc/pkg-utils.inc:708
 #, php-format
@@ -3385,7 +3395,7 @@ msgstr "安装出错: %s."
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
 #: src/etc/inc/pkg-utils.inc:823
 msgid "Failed to install package."
-msgstr "无法安装插件。"
+msgstr "安装插件失败。"
 
 #: src/etc/inc/pkg-utils.inc:730
 msgid "Loading package configuration... "
@@ -3397,12 +3407,12 @@ msgstr "配置插件组件..."
 
 #: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
 msgid "Loading package instructions..."
-msgstr "正在加载包说明..."
+msgstr "正在加载插件说明..."
 
 #: src/etc/inc/pkg-utils.inc:752
 #, php-format
 msgid "Include %s is missing!"
-msgstr "包含 %s 缺失！"
+msgstr "缺失包文件 %s ！"
 
 #: src/etc/inc/pkg-utils.inc:763
 msgid "Custom commands..."
@@ -3426,11 +3436,11 @@ msgstr "菜单项..."
 
 #: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
 msgid "Services... "
-msgstr "服务...正在加载包配置...失败！"
+msgstr "服务..."
 
 #: src/etc/inc/pkg-utils.inc:817
 msgid "Loading package configuration... failed!"
-msgstr "正在加载包配置...失败！"
+msgstr "正在加载插件配置...失败！"
 
 #: src/etc/inc/pkg-utils.inc:817
 msgid "Installation aborted."
@@ -3438,7 +3448,7 @@ msgstr "安装中止。"
 
 #: src/etc/inc/pkg-utils.inc:818
 msgid "Unable to load package configuration. Installation aborted."
-msgstr "无法加载包配置。安装中止。"
+msgstr "无法加载插件配置。安装中止。"
 
 #: src/etc/inc/pkg-utils.inc:832
 msgid "Writing configuration... "
@@ -3467,12 +3477,12 @@ msgstr "正在移除 %s组件..."
 #: src/etc/inc/pkg-utils.inc:908
 #, php-format
 msgid "Intermediate config write during package removal for %s."
-msgstr "中间配置在 %s插件删除期间写入。"
+msgstr "中间配置在删除%s期间插件写入。"
 
 #: src/etc/inc/pkg-utils.inc:924
 #, php-format
 msgid "Include file %s could not be found for inclusion."
-msgstr "插件 %s找不到。"
+msgstr "未找到包文件 %s。"
 
 #: src/etc/inc/pkg-utils.inc:942
 msgid "Deinstall commands... "
@@ -3480,35 +3490,35 @@ msgstr "卸载命令..."
 
 #: src/etc/inc/pkg-utils.inc:947
 msgid "Not executing custom deinstall hook because an include is missing."
-msgstr "未执行自定义卸载，因为缺少组件"
+msgstr "未执行自定义卸载，因为缺少包。"
 
 #: src/etc/inc/pkg-utils.inc:954
 msgid "Syslog entries... "
-msgstr "系统日志"
+msgstr "系统日志条目...."
 
 #: src/etc/inc/pkg-utils.inc:962
 msgid "Configuration... "
-msgstr "组态..."
+msgstr "配置..."
 
 #: src/etc/inc/pkg-utils.inc:965
 #, php-format
 msgid "Removed %s package."
-msgstr "插件%s 已移除。"
+msgstr "已移除插件%s 。"
 
 #: src/etc/inc/pkg-utils.inc:992
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
-msgstr "正在等待Internet连接更新pkg元数据并完成插件重新安装"
+msgstr "正在等待Internet连接更新pkg元数据，并重新安装插件。"
 
 #: src/etc/inc/pkg-utils.inc:1005 src/etc/inc/pkg-utils.inc:1044
 msgid "Package reinstall"
-msgstr "重新安装这个插件。"
+msgstr "重新安装插件"
 
 #: src/etc/inc/pkg-utils.inc:1006
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
-msgstr "由于缺少互联网连接，插件重新安装过程已被中止"
+msgstr "由于缺少互联网连接，插件安装过程已被中止"
 
 #: src/etc/inc/pkg-utils.inc:1045
 #, php-format
@@ -3538,7 +3548,7 @@ msgstr "指示用户是否能够在入网门户上登录。"
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr "WebCfg - Help pages"
+msgstr "WebCfg - 帮助页面"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
@@ -3546,21 +3556,21 @@ msgstr "显示帮助菜单上的所有项目，并允许访问帮助快捷链接
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr "WebCfg - Dashboard (all)"
+msgstr "WebCfg - 仪表板 (全部)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
-msgstr "Allow access to all pages required for the dashboard."
+msgstr "允许访问仪表板所需的所有页面。"
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr "WebCfg - Dashboard widgets (direct access)."
+msgstr "WebCfg - 仪表板部件 (直接访问)。"
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
 "Allow direct access to all Dashboard widget pages, required for some widgets "
 "using AJAX."
-msgstr "允许直接访问所有“控制台”窗口小部件页面，这是使用AJAX的某些小部件所必需的。"
+msgstr "允许直接访问所有“控制台”窗口部件页面，这是使用AJAX的某些部件所必需的。"
 
 #: src/etc/inc/priv/user.priv.inc:38
 msgid "User - Config: Deny Config Write"
@@ -3653,103 +3663,103 @@ msgstr "指示是否允许用户通过PPPOE拨入"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr "WebCfg - Status: System Logs: Portal Auth"
+msgstr "Web配置 - 系统状态: 系统日志: 入网认证"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
-msgstr "Allow access to the 'Status: System Logs: Portal Auth' page."
+msgstr "允许访问 '系统状态: 系统日志: 入网认证' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr "WebCfg - Status: Logs: DHCP"
+msgstr "Web配置 - 系统状态: 系统日志: DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
-msgstr "Allow access to the 'Status: Logs: DHCP' page."
+msgstr "允许访问 '系统状态:系统日志: DHCP' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr "WebCfg - Status: Logs: Gateways"
+msgstr "Web配置 - 系统状态: 系统日志: 网关"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr "Allow access to the 'Status: Logs: System: Gateways' page."
+msgstr "允许访问 '系统状态: 系统日志: 系统: 网关'页面。"
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr "WebCfg - Status: Logs: Resolver"
+msgstr "Web配置 - 系统状态: 系统日志: DNS解析器"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
-msgstr "Allow access to the 'Status: Logs: System: Resolver' page."
+msgstr "允许访问 '系统状态: 系统日志: 系统: DNS解析器'页面。"
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr "WebCfg - Status: System Logs: IPsec VPN"
+msgstr "Web配置 - 系统状态: 系统日志: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr "Allow access to the 'Status: System Logs: IPsec VPN' page."
+msgstr "允许访问 '系统状态:系统日志: IPsec VPN' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr "WebCfg - Status: System Logs: NTP"
+msgstr "Web配置 - 系统状态: 系统日志: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
-msgstr "Allow access to the 'Status: System Logs: NTP' page."
+msgstr "允许访问 '系统状态:系统日志: NTP' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr "WebCfg - Status: System Logs: OpenVPN"
+msgstr "Web配置 - 系统状态: 系统日志: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
-msgstr "Allow access to the 'Status: System Logs: OpenVPN' page."
+msgstr "允许访问 '系统状态:系统日志:OpenVPN' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr "WebCfg - Status: System Logs: Load Balancer"
+msgstr "Web配置 - 系统状态: 系统日志: 负载均衡"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
-msgstr "Allow access to the 'Status: System Logs: Load Balancer' page."
+msgstr "允许访问 '系统状态:系统日志: 负载均衡' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr "WebCfg - Status: System Logs: Routing"
+msgstr "Web配置 - 系统状态: 系统日志: 路由"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
-msgstr "Allow access to the 'Status: System Logs: System: Routing' page."
+msgstr "允许访问 '系统状态:系统日志: 系统: 路由' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr "WebCfg - Status: System Logs: Wireless"
+msgstr "Web配置 - 系统状态: 系统日志: 无线"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
-msgstr "Allow access to the 'Status: System Logs: System: Wireless' page."
+msgstr "允许访问 '系统状态:系统日志: 系统: 无线' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr "WebCfg - Services: UPnP"
+msgstr "Web配置 - 系统服务: 即插即用"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr "Allow access to the 'Services: UPnP' page."
+msgstr "允许访问 '系统服务: 即插即用' 页面。"
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr "WebCfg - All pages"
+msgstr "Web配置 - 所有页面"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
-msgstr "Allow access to all pages"
+msgstr "允许访问所有页面"
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr "WebCfg - Crash reporter"
+msgstr "Web配置  - 崩溃报告"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
@@ -3757,115 +3767,115 @@ msgstr "将崩溃报告上传到pfSense或删除崩溃报告。"
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr "WebCfg - Diagnostics: ARP Table"
+msgstr "Web配置- 系统诊断: ARP表"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
-msgstr "Allow access to the 'Diagnostics: ARP Table' page."
+msgstr "允许访问 '系统诊断: ARP表' 页面。"
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr "WebCfg - Diagnostics: Authentication"
+msgstr "Web配置- 系统诊断: 认证检测"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr "Allow access to the 'Diagnostics: Authentication' page."
+msgstr "允许访问 '系统诊断: 认证检测'页面。"
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr "WebCfg - Diagnostics: Backup & Restore"
+msgstr "Web配置- 系统诊断: Backup & Restore"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr "Allow access to the 'Diagnostics: Backup & Restore' page."
+msgstr "A允许访问 '系统诊断: Backup & Restore' page."
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr "WebCfg - Diagnostics: Command"
+msgstr "Web配置- 系统诊断: Command"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
-msgstr "Allow access to the 'Diagnostics: Command' page."
+msgstr "允许访问 '系统诊断: Command' page."
 
 #: src/etc/inc/priv.defs.inc:56
 msgid "WebCfg - Diagnostics: Configuration History"
-msgstr "WebCfg - Diagnostics: Configuration History"
+msgstr "Web配置- 系统诊断: Configuration History"
 
 #: src/etc/inc/priv.defs.inc:57
 msgid "Allow access to the 'Diagnostics: Configuration History' page."
-msgstr "Allow access to the 'Diagnostics: Configuration History' page."
+msgstr "允许访问 '系统诊断: Configuration History' page."
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr "WebCfg - Diagnostics: Factory defaults"
+msgstr "Web配置- 系统诊断: Factory defaults"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
-msgstr "Allow access to the 'Diagnostics: Factory defaults' page."
+msgstr "允许访问 '系统诊断: Factory defaults' page."
 
 #: src/etc/inc/priv.defs.inc:69
 msgid "WebCfg - Diagnostics: DNS Lookup"
-msgstr "WebCfg - Diagnostics: DNS Lookup"
+msgstr "Web配置- 系统诊断: DNS Lookup"
 
 #: src/etc/inc/priv.defs.inc:70
 msgid "Allow access to the 'Diagnostics: DNS Lookup' page."
-msgstr "Allow access to the 'Diagnostics: DNS Lookup' page."
+msgstr "允许访问 '系统诊断: DNS Lookup' page."
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
-msgstr "WebCfg - Diagnostics: Show States"
+msgstr "Web配置- 系统诊断: Show States"
 
 #: src/etc/inc/priv.defs.inc:76
 msgid "Allow access to the 'Diagnostics: Show States' page."
-msgstr "Allow access to the 'Diagnostics: Show States' page."
+msgstr "允许访问 '系统诊断: Show States' page."
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
-msgstr "WebCfg - Diagnostics: Show Source Tracking"
+msgstr "Web配置- 系统诊断: Show Source Tracking"
 
 #: src/etc/inc/priv.defs.inc:82
 msgid "Allow access to the 'Diagnostics: Show Source Tracking' page."
-msgstr "Allow access to the 'Diagnostics: Show Source Tracking' page."
+msgstr "允许访问 '系统诊断: Show Source Tracking' page."
 
 #: src/etc/inc/priv.defs.inc:87
 msgid "WebCfg - Diagnostics: Edit File"
-msgstr "WebCfg - Diagnostics: Edit File"
+msgstr "Web配置- 系统诊断: Edit File"
 
 #: src/etc/inc/priv.defs.inc:88
 msgid "Allow access to the 'Diagnostics: Edit File' page."
-msgstr "Allow access to the 'Diagnostics: Edit File' page."
+msgstr "允许访问 '系统诊断: Edit File' page."
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
-msgstr "WebCfg - Diagnostics: GEOM Mirrors"
+msgstr "Web配置- 系统诊断: GEOM Mirrors"
 
 #: src/etc/inc/priv.defs.inc:97
 msgid "Allow access to the 'Diagnostics: GEOM Mirrors' page."
-msgstr "Allow access to the 'Diagnostics: GEOM Mirrors' page."
+msgstr "允许访问 '系统诊断: GEOM Mirrors' page."
 
 #: src/etc/inc/priv.defs.inc:102
 msgid "WebCfg - Diagnostics: Halt system"
-msgstr "WebCfg - Diagnostics: Halt system"
+msgstr "Web配置- 系统诊断: Halt system"
 
 #: src/etc/inc/priv.defs.inc:103
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr "Allow access to the 'Diagnostics: Halt system' page."
+msgstr "允许访问 '系统诊断: Halt system' page."
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr "WebCfg - Diagnostics: Limiter Info"
+msgstr "Web配置- 系统诊断: 整流信息"
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr "允许访问“诊断：整流信息”页面"
+msgstr "允许访问“系统诊断：整流信息”页面"
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
-msgstr "WebCfg - Diagnostics: NDP Table"
+msgstr "Web配置- 系统诊断: NDP 表"
 
 #: src/etc/inc/priv.defs.inc:115
 msgid "Allow access to the 'Diagnostics: NDP Table' page."
-msgstr "Allow access to the 'Diagnostics: NDP Table' page."
+msgstr "允许访问 '系统诊断: NDP 表'页面。"
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
@@ -3881,7 +3891,7 @@ msgstr "WebCfg - Diagnostics: pfInfo"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr "允许访问“诊断：pfInfo”页面"
+msgstr "允许访问“系统诊断：pfInfo”页面"
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
@@ -3889,7 +3899,7 @@ msgstr "WebCfg - Diagnostics: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
-msgstr "允许访问“诊断：pfTop”页面"
+msgstr "允许访问“系统诊断：pfTop”页面"
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
@@ -5873,7 +5883,7 @@ msgstr "启用/禁用"
 #: src/usr/local/www/load_balancer_pool_edit.php:306
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:177
 #: src/usr/local/www/services_checkip_edit.php:127
-#: src/usr/local/www/system_gateways_edit.php:618
+#: src/usr/local/www/system_gateways_edit.php:617
 msgid "*Name"
 msgstr "*名称"
 
@@ -6012,8 +6022,8 @@ msgstr "选择此队列的选项"
 #: src/usr/local/www/firewall_rules.php:393
 #: src/usr/local/www/firewall_rules_edit.php:1458
 #: src/usr/local/www/firewall_schedule.php:95
-#: src/usr/local/www/firewall_schedule_edit.php:372
-#: src/usr/local/www/firewall_schedule_edit.php:616
+#: src/usr/local/www/firewall_schedule_edit.php:375
+#: src/usr/local/www/firewall_schedule_edit.php:619
 #: src/usr/local/www/firewall_virtual_ip.php:264
 #: src/usr/local/www/firewall_virtual_ip_edit.php:425
 #: src/usr/local/www/guiconfig.inc:1139 src/usr/local/www/interfaces.php:494
@@ -6095,7 +6105,7 @@ msgstr "选择此队列的选项"
 #: src/usr/local/www/system_gateway_groups_edit.php:309
 #: src/usr/local/www/system_gateway_groups_edit.php:338
 #: src/usr/local/www/system_gateways.php:261
-#: src/usr/local/www/system_gateways_edit.php:685
+#: src/usr/local/www/system_gateways_edit.php:684
 #: src/usr/local/www/system_groupmanager.php:232
 #: src/usr/local/www/system_groupmanager.php:311
 #: src/usr/local/www/system_groupmanager.php:416
@@ -6302,8 +6312,8 @@ msgstr "延迟必须为整数。"
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:502
 #: src/usr/local/www/firewall_rules.php:832
-#: src/usr/local/www/firewall_schedule_edit.php:620
-#: src/usr/local/www/firewall_schedule_edit.php:1117
+#: src/usr/local/www/firewall_schedule_edit.php:623
+#: src/usr/local/www/firewall_schedule_edit.php:1120
 #: src/usr/local/www/interfaces_assign.php:538
 #: src/usr/local/www/interfaces_qinq_edit.php:312
 #: src/usr/local/www/interfaces_vlan.php:133
@@ -6313,7 +6323,7 @@ msgstr "延迟必须为整数。"
 #: src/usr/local/www/services_dnsmasq_edit.php:276
 #: src/usr/local/www/services_igmpproxy_edit.php:232
 #: src/usr/local/www/services_ntpd.php:266
-#: src/usr/local/www/services_ntpd_acls.php:288
+#: src/usr/local/www/services_ntpd_acls.php:290
 #: src/usr/local/www/services_pppoe_edit.php:520
 #: src/usr/local/www/services_router_advertisements.php:424
 #: src/usr/local/www/services_unbound_acls.php:269
@@ -6484,7 +6494,7 @@ msgstr "提示：在大多数情况下，您应该将该字段留空。它增加
 msgid "Weight must be an integer between 1 and 100."
 msgstr "权重必须是介于1和100之间的整数。"
 
-#: src/etc/inc/shaper.inc:4205 src/usr/local/www/system_gateways_edit.php:712
+#: src/etc/inc/shaper.inc:4205 src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight"
 msgstr "比重"
 
@@ -6597,8 +6607,8 @@ msgstr "生成的新的自签名HTTPS证书 (%s)"
 msgid "Starting webConfigurator..."
 msgstr "正在启动WEB配置界面..."
 
-#: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2186
-#: src/etc/inc/system.inc:2189
+#: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2189
+#: src/etc/inc/system.inc:2192
 msgid "failed!"
 msgstr "失败 "
 
@@ -6621,25 +6631,25 @@ msgstr "错误，不能打开 %1$s 在 system_generate_nginx_config().%2$s"
 msgid "Setting timezone..."
 msgstr "设置时区..."
 
-#: src/etc/inc/system.inc:2018
+#: src/etc/inc/system.inc:2021
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr "无法打开%s/ntpd.conf 进行写入"
 
-#: src/etc/inc/system.inc:2138
+#: src/etc/inc/system.inc:2141
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr "错误：无法在 system_dmesg_save().%s中打开dmesg.boot"
 
-#: src/etc/inc/system.inc:2165
+#: src/etc/inc/system.inc:2168
 msgid "Setting hard disk standby... "
 msgstr "设置硬盘待机..."
 
-#: src/etc/inc/system.inc:2380
+#: src/etc/inc/system.inc:2383
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2384 src/etc/inc/system.inc:2403
+#: src/etc/inc/system.inc:2387 src/etc/inc/system.inc:2406
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -7932,7 +7942,7 @@ msgstr "网络唤醒"
 #: src/usr/local/www/diag_backup.php:504
 #: src/usr/local/www/firewall_aliases.php:154
 #: src/usr/local/www/pkg_edit.php:1191
-#: src/usr/local/www/services_ntpd_gps.php:284
+#: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/services_unbound.php:220
 #: src/usr/local/www/status_graph.php:160
@@ -8171,10 +8181,11 @@ msgid "Backup Count"
 msgstr "备份计数"
 
 #: src/usr/local/www/diag_confbak.php:161
+#, php-format
 msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
-"or leave blank for the default value ("
-msgstr "要在缓存中保留的旧配置的最大数量，0表示无备份，默认值留空。"
+"or leave blank for the default value (%s for the current platform)."
+msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:166
 msgid "Current space used by backups"
@@ -8376,7 +8387,7 @@ msgstr "主机名"
 
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:236
-#: src/usr/local/www/status_ntpd.php:283
+#: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1005
 #: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
@@ -9025,7 +9036,7 @@ msgstr "数据包捕获选项"
 #: src/usr/local/www/services_rfc2136_edit.php:173
 #: src/usr/local/www/services_wol.php:140
 #: src/usr/local/www/services_wol_edit.php:134
-#: src/usr/local/www/system_gateways_edit.php:601
+#: src/usr/local/www/system_gateways_edit.php:600
 #: src/usr/local/www/vpn_ipsec_phase1.php:676
 #: src/usr/local/www/vpn_l2tp.php:211
 #: src/usr/local/www/vpn_openvpn_client.php:517
@@ -9060,7 +9071,7 @@ msgstr "仅IPV6"
 
 #: src/usr/local/www/diag_packet_capture.php:297
 #: src/usr/local/www/firewall_rules_edit.php:1267
-#: src/usr/local/www/system_gateways_edit.php:608
+#: src/usr/local/www/system_gateways_edit.php:607
 msgid "*Address Family"
 msgstr "*地址簇"
 
@@ -10121,7 +10132,7 @@ msgstr "删除别名"
 #: src/usr/local/www/services_dyndns.php:214
 #: src/usr/local/www/services_igmpproxy.php:140
 #: src/usr/local/www/services_ntpd.php:276
-#: src/usr/local/www/services_ntpd_acls.php:302
+#: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_pppoe.php:146
 #: src/usr/local/www/services_rfc2136.php:202
 #: src/usr/local/www/services_router_advertisements.php:438
@@ -10528,7 +10539,7 @@ msgstr "别名的名称只能由字符“a-z，A-Z，0-9和_”组成。"
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
 #: src/usr/local/www/status_logs_vpn.php:408
-#: src/usr/local/www/status_ntpd.php:286
+#: src/usr/local/www/status_ntpd.php:299
 #: src/usr/local/www/system_authservers.php:233
 #: src/usr/local/www/system_authservers.php:256
 #: src/usr/local/www/system_authservers.php:443
@@ -11301,10 +11312,10 @@ msgstr "选择此规则应匹配的协议。 在大多数情况下，指定“TC
 #: src/usr/local/www/services_ntpd.php:360
 #: src/usr/local/www/services_ntpd.php:429
 #: src/usr/local/www/services_ntpd.php:466
-#: src/usr/local/www/services_ntpd_gps.php:468
-#: src/usr/local/www/services_ntpd_gps.php:669
-#: src/usr/local/www/system_gateways_edit.php:693
-#: src/usr/local/www/system_gateways_edit.php:896
+#: src/usr/local/www/services_ntpd_gps.php:481
+#: src/usr/local/www/services_ntpd_gps.php:683
+#: src/usr/local/www/system_gateways_edit.php:692
+#: src/usr/local/www/system_gateways_edit.php:895
 msgid "Display Advanced"
 msgstr "显示高级选项"
 
@@ -11354,7 +11365,7 @@ msgstr "从"
 #: src/usr/local/www/firewall_rules_edit.php:1436
 #: src/usr/local/www/interfaces.php:2639
 #: src/usr/local/www/interfaces_ppps_edit.php:759
-#: src/usr/local/www/services_ntpd_gps.php:333
+#: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
 msgstr "自定义"
 
@@ -11508,8 +11519,8 @@ msgstr "更新"
 #: src/usr/local/www/services_dhcpv6.php:1238
 #: src/usr/local/www/services_ntpd.php:427
 #: src/usr/local/www/services_ntpd.php:464
-#: src/usr/local/www/services_ntpd_gps.php:667
-#: src/usr/local/www/system_gateways_edit.php:894
+#: src/usr/local/www/services_ntpd_gps.php:681
+#: src/usr/local/www/system_gateways_edit.php:893
 msgid "Hide Advanced"
 msgstr "隐藏高级"
 
@@ -11861,7 +11872,7 @@ msgstr "此子网必须路由到防火墙或子网中的每个地址必须在一
 #: src/usr/local/www/interfaces.php:1878 src/usr/local/www/interfaces.php:2870
 #: src/usr/local/www/interfaces.php:2879 src/usr/local/www/interfaces.php:2888
 #: src/usr/local/www/interfaces.php:2946 src/usr/local/www/interfaces.php:3201
-#: src/usr/local/www/services_ntpd_gps.php:333
+#: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Default"
 msgstr "默认"
 
@@ -11984,7 +11995,7 @@ msgstr "规则（拖动到更改订单）"
 #: src/usr/local/www/system.php:496
 #: src/usr/local/www/system_gateway_groups_edit.php:306
 #: src/usr/local/www/system_gateways.php:259
-#: src/usr/local/www/system_gateways_edit.php:625
+#: src/usr/local/www/system_gateways_edit.php:624
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/system_routes_edit.php:82
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:137
@@ -12021,7 +12032,7 @@ msgstr "防锁规则"
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd.php:202
 #: src/usr/local/www/services_ntpd_acls.php:175
-#: src/usr/local/www/services_ntpd_gps.php:314
+#: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/services_ntpd_pps.php:116
 #: src/usr/local/www/services_router_advertisements.php:465
 #: src/usr/local/www/status_logs_common.inc:98
@@ -12703,8 +12714,12 @@ msgid "ICMP Subtypes"
 msgstr "ICMP子网类型"
 
 #: src/usr/local/www/firewall_rules_edit.php:1306
-msgid "<div id=\"icmptype_help\">"
-msgstr "<div id=\"icmptype_help\">"
+#: src/usr/local/www/firewall_virtual_ip_edit.php:381
+#: src/usr/local/www/status_pkglogs.php:92
+#: src/usr/local/www/status_pkglogs.php:94
+#, php-format
+msgid "%s"
+msgstr "%s"
 
 #: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "*"
@@ -12751,8 +12766,8 @@ msgstr "开始端口"
 #: src/usr/local/www/services_dhcp.php:897
 #: src/usr/local/www/services_dhcpv6.php:627
 #: src/usr/local/www/services_dhcpv6.php:652
-#: src/usr/local/www/system_gateways_edit.php:728
-#: src/usr/local/www/system_gateways_edit.php:748
+#: src/usr/local/www/system_gateways_edit.php:727
+#: src/usr/local/www/system_gateways_edit.php:747
 msgid "From"
 msgstr "From"
 
@@ -12766,8 +12781,8 @@ msgstr "结束端口"
 #: src/usr/local/www/services_dhcp.php:904
 #: src/usr/local/www/services_dhcpv6.php:636
 #: src/usr/local/www/services_dhcpv6.php:661
-#: src/usr/local/www/system_gateways_edit.php:735
-#: src/usr/local/www/system_gateways_edit.php:755
+#: src/usr/local/www/system_gateways_edit.php:734
+#: src/usr/local/www/system_gateways_edit.php:754
 msgid "To"
 msgstr "To"
 
@@ -12776,7 +12791,7 @@ msgstr "To"
 msgid ""
 "Specify the %s port or port range for this rule. The \"To\" field may be "
 "left empty if only filtering a single port."
-msgstr ""
+msgstr "指定此规则的%s端口或端口范围。 如果只过滤单个端口，则“To”字段可以为空。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1445
 msgid "Extra Options"
@@ -13090,78 +13105,82 @@ msgstr "计划表信息"
 msgid "*Schedule Name"
 msgstr "*计划表名称"
 
-#: src/usr/local/www/firewall_schedule_edit.php:361
+#: src/usr/local/www/firewall_schedule_edit.php:362
 msgid ""
 "The name of the schedule may only consist of the characters \"a-z, A-Z, 0-9 "
 "and _\"."
 msgstr "时间表的名称只能由字符a-z，A-Z，0-9组成"
 
-#: src/usr/local/www/firewall_schedule_edit.php:375
-#: src/usr/local/www/firewall_schedule_edit.php:428
+#: src/usr/local/www/firewall_schedule_edit.php:364
+msgid "This schedule is in use so the name may not be modified!"
+msgstr ""
+
+#: src/usr/local/www/firewall_schedule_edit.php:378
+#: src/usr/local/www/firewall_schedule_edit.php:431
 msgid ""
 "A description may be entered here for administrative reference (not parsed). "
 ""
 msgstr "此处可以输入描述以供管理参考（不解析）。"
 
-#: src/usr/local/www/firewall_schedule_edit.php:379
+#: src/usr/local/www/firewall_schedule_edit.php:382
 msgid "Month"
 msgstr "月"
 
-#: src/usr/local/www/firewall_schedule_edit.php:385
+#: src/usr/local/www/firewall_schedule_edit.php:388
 msgid "*Date"
 msgstr "*日期"
 
-#: src/usr/local/www/firewall_schedule_edit.php:389
+#: src/usr/local/www/firewall_schedule_edit.php:392
 msgid "*Time"
 msgstr "*时间"
 
-#: src/usr/local/www/firewall_schedule_edit.php:396
+#: src/usr/local/www/firewall_schedule_edit.php:399
 msgid "Start Hrs"
 msgstr "开始(小时)："
 
-#: src/usr/local/www/firewall_schedule_edit.php:403
+#: src/usr/local/www/firewall_schedule_edit.php:406
 msgid "Start Mins"
 msgstr "开始(分钟)："
 
-#: src/usr/local/www/firewall_schedule_edit.php:410
+#: src/usr/local/www/firewall_schedule_edit.php:413
 msgid "Stop Hrs"
 msgstr "停止(小时)"
 
-#: src/usr/local/www/firewall_schedule_edit.php:417
+#: src/usr/local/www/firewall_schedule_edit.php:420
 msgid "Stop Mins"
 msgstr "停止(分钟)"
 
-#: src/usr/local/www/firewall_schedule_edit.php:419
+#: src/usr/local/www/firewall_schedule_edit.php:422
 msgid ""
 "Select the time range for the day(s) selected on the Month(s) above. A full "
 "day is 0:00-23:59."
 msgstr "选择在上面的月份中选择的日期的时间范围。一整天是0：00-23：59。"
 
-#: src/usr/local/www/firewall_schedule_edit.php:425
+#: src/usr/local/www/firewall_schedule_edit.php:428
 msgid "Time range description"
 msgstr "时间范围描述"
 
-#: src/usr/local/www/firewall_schedule_edit.php:434
+#: src/usr/local/www/firewall_schedule_edit.php:437
 msgid "Add Time"
 msgstr "添加时间"
 
-#: src/usr/local/www/firewall_schedule_edit.php:441
+#: src/usr/local/www/firewall_schedule_edit.php:444
 msgid "Clear selection"
 msgstr "清除选择"
 
-#: src/usr/local/www/firewall_schedule_edit.php:459
+#: src/usr/local/www/firewall_schedule_edit.php:462
 msgid "Configured Ranges"
 msgstr "配置范围"
 
-#: src/usr/local/www/firewall_schedule_edit.php:595
+#: src/usr/local/www/firewall_schedule_edit.php:598
 msgid "Day(s)"
 msgstr "天"
 
-#: src/usr/local/www/firewall_schedule_edit.php:602
+#: src/usr/local/www/firewall_schedule_edit.php:605
 msgid "Start time"
 msgstr "开始时间"
 
-#: src/usr/local/www/firewall_schedule_edit.php:609
+#: src/usr/local/www/firewall_schedule_edit.php:612
 msgid "Stop time"
 msgstr "停止时间"
 
@@ -13470,10 +13489,6 @@ msgstr "地址类型"
 msgid "*Address(es)"
 msgstr "*地址"
 
-#: src/usr/local/www/firewall_virtual_ip_edit.php:381
-msgid "<span id=\"address_note\"></span>"
-msgstr "<span id=\"address_note\"></span>"
-
 #: src/usr/local/www/firewall_virtual_ip_edit.php:385
 msgid "Expansion"
 msgstr "扩展"
@@ -13736,7 +13751,7 @@ msgstr "值"
 #: src/usr/local/www/system_advanced_network.php:141
 #: src/usr/local/www/system_advanced_notifications.php:194
 #: src/usr/local/www/system_advanced_sysctl.php:120
-#: src/usr/local/www/system_gateways_edit.php:706
+#: src/usr/local/www/system_gateways_edit.php:705
 #: src/usr/local/www/vpn_openvpn_csc.php:579
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Advanced"
@@ -13827,12 +13842,12 @@ msgstr "负载均衡"
 #: src/usr/local/www/services_dhcp.php:1132
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:161
-#: src/usr/local/www/services_ntpd_gps.php:304
+#: src/usr/local/www/services_ntpd_gps.php:310
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/status_logs.php:55
 #: src/usr/local/www/status_logs_common.inc:97
 #: src/usr/local/www/status_logs_settings.php:225
-#: src/usr/local/www/status_ntpd.php:270
+#: src/usr/local/www/status_ntpd.php:283
 msgid "NTP"
 msgstr "NTP 服务"
 
@@ -13934,7 +13949,7 @@ msgstr "插件日志"
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:161
-#: src/usr/local/www/services_ntpd_gps.php:304
+#: src/usr/local/www/services_ntpd_gps.php:310
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/services_pppoe.php:81
 #: src/usr/local/www/services_pppoe_edit.php:280
@@ -14112,8 +14127,8 @@ msgstr "有关详细信息，请联系防火墙管理员"
 
 #: src/usr/local/www/index.php:191
 #, php-format
-msgid "Welcome to %s!\n"
-msgstr "欢迎到%s!\n"
+msgid "Welcome to %s!"
+msgstr "欢迎来到%s!"
 
 #: src/usr/local/www/index.php:192
 msgid "One moment while the initial setup wizard starts."
@@ -14740,7 +14755,7 @@ msgid "New IPv6 Gateway"
 msgstr "添加新的IPV6网关"
 
 #: src/usr/local/www/interfaces.php:1885 src/usr/local/www/interfaces.php:3208
-#: src/usr/local/www/system_gateways_edit.php:621
+#: src/usr/local/www/system_gateways_edit.php:620
 msgid "Gateway name"
 msgstr "网关名字"
 
@@ -16800,7 +16815,7 @@ msgstr "正常运行时间记录"
 msgid ""
 "Causes cumulative uptime to be recorded and displayed on the %1$sStatus-"
 ">Interfaces%2$s page."
-msgstr ""
+msgstr "引起累积正常运行时间被记录并显示在%1$s系统状态->接口%2$s页面上。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:747
 msgid ""
@@ -16892,7 +16907,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:878
 msgid "TCPmssFix"
-msgstr "TCPmssFix"
+msgstr "TCP mss修正"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:881
 msgid ""
@@ -18603,6 +18618,18 @@ msgid ""
 "is enabled, RADIUS MAC authentication cannot be used. Also, the logout "
 "window will not be shown."
 msgstr ""
+"启用后，将在用户成功通过身份验证后自动添加MAC传递条目。 该MAC地址的用户将永远不必再次进行身份验证。 要删除直通MAC条目，请登录并从 "
+"%s手动删除，或从另一个系统发送POST。 如果启用，则不能使用RADIUS MAC身份验证。 此外，将不会显示注销窗口。"
+
+#: src/usr/local/www/services_captiveportal.php:658
+#, php-format
+msgid ""
+"If enabled with the automatically MAC passthrough entry created, the "
+"username used during authentication will be saved. To remove the passthrough "
+"MAC entry either log in and remove it manually from the %s or send a POST "
+"from another system."
+msgstr ""
+"如果启用自动创建的MAC传递条目，将会保存在身份验证期间使用的用户名。要删除直通MAC条目，请登录并从%s手动删除，或从另一个系统发送POST。"
 
 #: src/usr/local/www/services_captiveportal.php:664
 msgid "Per-user bandwidth restriction"
@@ -18840,9 +18867,7 @@ msgstr "*SSL 证书"
 msgid ""
 "If no certificates are defined, one may be defined here: <a href="
 "\"system_certmanager.php\">System &gt; Cert. Manager</a>"
-msgstr ""
-"如果未定义证书，则可以在此处定义： <a href=\"system_certmanager.php\">System &gt; Cert. "
-"Manager</a>"
+msgstr "如果未定义证书，则可以在此处定义： <a href=\"system_certmanager.php\">系统 &gt;证书管理</a>"
 
 #: src/usr/local/www/services_captiveportal.php:1040
 msgid "HTTPS Forwards"
@@ -18876,39 +18901,36 @@ msgid ""
 "and value=\"$PORTAL_REDIRURL$\". Include the \"auth_user\" and \"auth_pass\" "
 "and/or \"auth_voucher\" input fields if authentication is enabled, otherwise "
 "it will always fail.<br />Example code for the form:<br />&lt;form method="
-"&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type="
-"&quot;password&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type="
-"&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />\n"
-"\t\t\t &lt;/form&gt;"
+"&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;redirurl&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_REDIRURL$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;zone&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_ZONE$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br "
+"/>&lt;/form&gt;"
 msgstr ""
-"在此处上传门户网站页面的HTML / PHP文件（留空以保留当前的页面）.请确保包含一个带有提交按钮（name ="
-"“accept”）的表单（POST到“$ PORTAL_ACTION $”）和一个带有name =“redirurl”和value =“$ "
-"PORTAL_REDIRURL $”的隐藏字段。如果启用身份认证，则包含“auth_user”和“auth_pass”和/"
-"或“auth_voucher”输入字段，否则将总是失败。<br />表单的示例代码:<br />&lt;form method="
-"&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type="
-"&quot;password&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
-"&quot;text&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type="
-"&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />\n"
-"\t\t\t &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type="
-"&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />\n"
-"\t\t\t &lt;/form&gt;"
+"在此处上传门户网站页面的HTML / PHP文件（留空以保留当前的页面）。确保包含表单(POST to \"$PORTAL_ACTION$\") "
+"with a submit button (name=\"accept\") and a hidden field with name="
+"\"redirurl\" and value=\"$PORTAL_REDIRURL$\". Include the \"auth_user\" and "
+"\"auth_pass\" and/or \"auth_voucher\" input fields if authentication is "
+"enabled, otherwise it will always fail.<br />Example code for the form:<br /"
+">&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br /"
+">&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type="
+"&quot;text&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;redirurl&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_REDIRURL$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;zone&quot; type=&quot;hidden&quot; value="
+"&quot;$PORTAL_ZONE$&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input name="
+"&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br "
+"/>&lt;/form&gt;"
 
 #: src/usr/local/www/services_captiveportal.php:1082
 msgid "Current Portal Page"
@@ -18993,7 +19015,7 @@ msgid "Total"
 msgstr "总计"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:244
-#: src/usr/local/www/services_ntpd_gps.php:325
+#: src/usr/local/www/services_ntpd_gps.php:331
 #: src/usr/local/www/services_ntpd_pps.php:127
 msgid "Notes"
 msgstr "提示"
@@ -19794,7 +19816,7 @@ msgstr "删除服务"
 msgid ""
 "The server must return the client IP address as a string in the following "
 "format: "
-msgstr ""
+msgstr "服务器必须以以下格式返回客户端IP地址作为字符串："
 
 #: src/usr/local/www/services_checkip.php:165
 msgid ""
@@ -19805,15 +19827,15 @@ msgstr "第一个（列表中的最高）启用的检查IP服务将用于检查�
 
 #: src/usr/local/www/services_checkip.php:171
 msgid "Sample Server Configurations"
-msgstr ""
+msgstr "示例服务器配置"
 
 #: src/usr/local/www/services_checkip.php:173
 msgid "nginx with LUA"
-msgstr ""
+msgstr "nginx with LUA"
 
 #: src/usr/local/www/services_checkip.php:182
 msgid "PHP"
-msgstr ""
+msgstr "PHP"
 
 #: src/usr/local/www/services_checkip_edit.php:68
 msgid "The Check IP Service name contains invalid characters."
@@ -21117,14 +21139,9 @@ msgid "*DUID"
 msgstr "DHCP 唯一标识符"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:221
-msgid "Enter a DUID in the following format: "
-msgstr "以下列格式输入DUID："
-
-#: src/usr/local/www/services_dhcpv6_edit.php:221
-#: src/usr/local/www/pkg_edit.php:1310 src/usr/local/www/pkg_edit.php:1316
-#: src/usr/local/www/pkg_edit.php:1321
-msgid "<br />"
-msgstr "<br />"
+#, php-format
+msgid "Enter a DUID in the following format: %1$s %2$s"
+msgstr "以下列格式输入DUID: %1$s %2$s"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:230
 msgid ""
@@ -21203,6 +21220,8 @@ msgid ""
 "be resolved. The domain in %1$sSystem: General Setup%2$s should also be set "
 "to the proper value."
 msgstr ""
+"如果设置此选项，则在请求DHCP租用时指定其主机名的计算机将在DNS转发器中注册，以便可以解析其名称。 %1$s系统: "
+"常规设置%2$s中的域也应设置为正确的值。"
 
 #: src/usr/local/www/services_dnsmasq.php:267
 #: src/usr/local/www/services_unbound.php:336
@@ -21215,7 +21234,7 @@ msgid ""
 "If this option is set, DHCP static mappings will be registered in the DNS "
 "forwarder, so that their name can be resolved. The domain in %1$sSystem: "
 "General Setup%2$s should also be set to the proper value."
-msgstr ""
+msgstr "如果设置此选项，DHCP静态映射将注册在DNS转发器中，以便可以解析其名称。 %1$s系统: 常规设置%2$s中的域也应设置为正确的值。"
 
 #: src/usr/local/www/services_dnsmasq.php:278
 msgid "Prefer DHCP"
@@ -21225,7 +21244,7 @@ msgstr "首选DHCP"
 msgid ""
 "If this option is set DHCP mappings will be resolved before the manual list "
 "of names below. This only affects the name given for a reverse lookup (PTR)."
-msgstr ""
+msgstr "如果设置此选项，DHCP映射将在下面的手动名称列表之前解析。 这仅影响反向查找（PTR）给定的名称。"
 
 #: src/usr/local/www/services_dnsmasq.php:286
 #: src/usr/local/www/services_dnsmasq.php:290
@@ -21240,6 +21259,8 @@ msgid ""
 "sequentially in the order specified (<i>System - General Setup - DNS "
 "Servers</i>), rather than all at once in parallel. "
 msgstr ""
+"如果设置了此选项，则%s  DNS转发器（dnsmasq）将以指定的(<i>系统 - 常规设置 - DNS服务</"
+"i>)顺序查询DNS服务器，而不是同时并行查询。"
 
 #: src/usr/local/www/services_dnsmasq.php:302
 #, php-format
@@ -21249,6 +21270,8 @@ msgid ""
 "servers.\t If the name is not known from /etc/hosts or DHCP then a \"not "
 "found\" answer is returned. "
 msgstr ""
+"如果设置此选项， %s DNS转发器(dnsmasq) 不会转发A或AAAA查询的纯名称到上游名称服务器。\t 如果从 /etc/hosts 或 "
+"DHCP中未得到其名称，则返回 \"没找到\"结果。 "
 
 #: src/usr/local/www/services_dnsmasq.php:311
 #, php-format
@@ -21260,6 +21283,9 @@ msgid ""
 "name is not known from /etc/hosts, DHCP or a specific domain override then a "
 "\"not found\" answer is immediately returned. "
 msgstr ""
+"如果设置此选项，则%s DNS 转发器（dnsmasq）不会将专用地址（RFC 1918）的反向DNS查找（PTR）转发到上游名称服务器。 "
+"“域覆盖”部分中将私人“n.n.n.in-addr.arpa”名称转发到特定服务器的任何条目仍将转发。 如果从/ etc / "
+"hosts，DHCP或特定域覆盖不知道IP名称，则立即返回“未找到”答案。"
 
 #: src/usr/local/www/services_dnsmasq.php:320
 #: src/usr/local/www/services_unbound.php:275
@@ -21630,17 +21656,14 @@ msgid "CloudFlare Proxy"
 msgstr "Cloudflare代理（CloudFlare是一家美国的跨国科技企业，以向客户提供网站安全管理、性能优化为主要业务）"
 
 #: src/usr/local/www/services_dyndns_edit.php:329
+#, php-format
 msgid ""
 "Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will "
 "route all traffic through their servers. By Default this is disabled and "
-"your Real IP is exposed.More info: <a href=\"https://blog.cloudflare.com/"
-"announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-"
-"traffic/\" target=\"_blank\">CloudFlare Blog</a>"
+"your Real IP is exposed.More info: %s"
 msgstr ""
 "注意：这将启用CloudFlares虚拟DNS代理。 当启用时，它将路由所有流量通过他们的服务器。 "
-"默认情况下，这被禁用，并且您的真实IP被公开。更多信息：<a href =“https://blog.cloudflare.com/announcing-"
-"virtual-dns-ddos-mitigation-and-global-distribution-for-dns- traffic /"
-"“target =”_ blank“> CloudFlare Blog </a>"
+"默认情况下，这被禁用，您的真实IP被公开。更多信息：%s"
 
 #: src/usr/local/www/services_dyndns_edit.php:335
 msgid "Verbose logging"
@@ -21776,22 +21799,22 @@ msgstr "NTP孤立模式提供的值无效。"
 #: src/usr/local/www/services_ntpd.php:203
 #: src/usr/local/www/services_ntpd_acls.php:161
 #: src/usr/local/www/services_ntpd_acls.php:176
-#: src/usr/local/www/services_ntpd_gps.php:315
+#: src/usr/local/www/services_ntpd_gps.php:321
 #: src/usr/local/www/services_ntpd_pps.php:117
 msgid "ACLs"
 msgstr "ACLs"
 
 #: src/usr/local/www/services_ntpd.php:204
 #: src/usr/local/www/services_ntpd_acls.php:177
-#: src/usr/local/www/services_ntpd_gps.php:304
-#: src/usr/local/www/services_ntpd_gps.php:316
+#: src/usr/local/www/services_ntpd_gps.php:310
+#: src/usr/local/www/services_ntpd_gps.php:322
 #: src/usr/local/www/services_ntpd_pps.php:118
 msgid "Serial GPS"
 msgstr "串口 GPS"
 
 #: src/usr/local/www/services_ntpd.php:205
 #: src/usr/local/www/services_ntpd_acls.php:178
-#: src/usr/local/www/services_ntpd_gps.php:317
+#: src/usr/local/www/services_ntpd_gps.php:323
 #: src/usr/local/www/services_ntpd_pps.php:102
 #: src/usr/local/www/services_ntpd_pps.php:119
 #: src/usr/local/www/status_queues.php:162
@@ -21934,32 +21957,32 @@ msgstr "自定义访问限制"
 msgid "Networks"
 msgstr "网络"
 
-#: src/usr/local/www/services_ntpd_acls.php:242
+#: src/usr/local/www/services_ntpd_acls.php:238
 #: src/usr/local/www/services_unbound_acls.php:258
 msgid "Network/mask"
 msgstr "网络/掩码"
 
-#: src/usr/local/www/services_ntpd_acls.php:249
+#: src/usr/local/www/services_ntpd_acls.php:251
 msgid "KOD"
 msgstr "KOD"
 
-#: src/usr/local/www/services_ntpd_acls.php:256
+#: src/usr/local/www/services_ntpd_acls.php:258
 msgid "nomodify"
 msgstr "nomodify"
 
-#: src/usr/local/www/services_ntpd_acls.php:263
+#: src/usr/local/www/services_ntpd_acls.php:265
 msgid "noquery"
 msgstr "noquery"
 
-#: src/usr/local/www/services_ntpd_acls.php:270
+#: src/usr/local/www/services_ntpd_acls.php:272
 msgid "noserve"
 msgstr "noserve"
 
-#: src/usr/local/www/services_ntpd_acls.php:277
+#: src/usr/local/www/services_ntpd_acls.php:279
 msgid "nopeer"
 msgstr "nopeer"
 
-#: src/usr/local/www/services_ntpd_acls.php:284
+#: src/usr/local/www/services_ntpd_acls.php:286
 msgid "notrap"
 msgstr "notrap"
 
@@ -21967,35 +21990,35 @@ msgstr "notrap"
 msgid "Setting default NTPd settings"
 msgstr "设置默认NTP设置"
 
-#: src/usr/local/www/services_ntpd_gps.php:267
+#: src/usr/local/www/services_ntpd_gps.php:273
 msgid "Updated NTP GPS Settings"
 msgstr "更新了NTP GPS设置"
 
-#: src/usr/local/www/services_ntpd_gps.php:285
+#: src/usr/local/www/services_ntpd_gps.php:291
 msgid "RMC"
 msgstr "RMC"
 
-#: src/usr/local/www/services_ntpd_gps.php:286
+#: src/usr/local/www/services_ntpd_gps.php:292
 msgid "GGA"
 msgstr "GGA"
 
-#: src/usr/local/www/services_ntpd_gps.php:287
+#: src/usr/local/www/services_ntpd_gps.php:293
 msgid "GLL"
 msgstr "GLL"
 
-#: src/usr/local/www/services_ntpd_gps.php:288
+#: src/usr/local/www/services_ntpd_gps.php:294
 msgid "ZDA or ZDG"
 msgstr "ZDA or ZDG"
 
-#: src/usr/local/www/services_ntpd_gps.php:322
+#: src/usr/local/www/services_ntpd_gps.php:328
 msgid "NTP Serial GPS Configuration"
 msgstr "NTP 串口GPS配置"
 
-#: src/usr/local/www/services_ntpd_gps.php:337
+#: src/usr/local/www/services_ntpd_gps.php:343
 msgid "GPS Type"
 msgstr "GPS类型："
 
-#: src/usr/local/www/services_ntpd_gps.php:340
+#: src/usr/local/www/services_ntpd_gps.php:346
 msgid ""
 "This option allows a predefined configuration to be selected. Default is the "
 "configuration of pfSense 2.1 and earlier (not recommended). Select Generic "
@@ -22005,112 +22028,112 @@ msgstr ""
 "此选项允许选择预定义配置。 默认是pfSense 2.1和更早版本的配置（不推荐）。 如果未列出GPS，请选择“Generic”。<br /> <br /"
 ">预定义配置假定GPS已设置为NMEA模式。"
 
-#: src/usr/local/www/services_ntpd_gps.php:356
+#: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
 msgid "Serial Port"
 msgstr "端口"
 
-#: src/usr/local/www/services_ntpd_gps.php:359
+#: src/usr/local/www/services_ntpd_gps.php:365
 msgid ""
 "All serial ports are listed, be sure to pick the port with the GPS attached. "
 ""
 msgstr "列出所有串行端口，请务必选择附带GPS的端口。"
 
-#: src/usr/local/www/services_ntpd_gps.php:367
+#: src/usr/local/www/services_ntpd_gps.php:373
 msgid ""
 "A higher baud rate is generally only helpful if the GPS is sending too many "
 "sentences. It is recommended to configure the GPS to send only one sentence "
 "at a baud rate of 4800 or 9600."
 msgstr "更高的波特率通常只在GPS发送太多句子时才有用。 建议配置GPS仅发送一个句子，波特率为4800或9600。"
 
-#: src/usr/local/www/services_ntpd_gps.php:374
+#: src/usr/local/www/services_ntpd_gps.php:380
 msgid "NMEA Sentences"
 msgstr "NMEA句子"
 
-#: src/usr/local/www/services_ntpd_gps.php:378
+#: src/usr/local/www/services_ntpd_gps.php:384
 msgid ""
 "By default NTP will listen for all supported NMEA sentences. One or more "
 "sentences to listen for may be specified."
 msgstr "默认情况下，NTP将监听所有支持的NMEA句子。 可以指定要收听的一个或多个句子。"
 
-#: src/usr/local/www/services_ntpd_gps.php:382
+#: src/usr/local/www/services_ntpd_gps.php:395
 msgid "Fudge Time 1"
 msgstr "Fudge时间1"
 
-#: src/usr/local/www/services_ntpd_gps.php:385
+#: src/usr/local/www/services_ntpd_gps.php:398
 msgid ""
 "Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0)."
 msgstr "Fudge时间1用于指定GPS PPS信号偏移（默认值：0.0）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:389
+#: src/usr/local/www/services_ntpd_gps.php:402
 msgid "Fudge Time 2"
 msgstr "Fudge时间2"
 
-#: src/usr/local/www/services_ntpd_gps.php:392
+#: src/usr/local/www/services_ntpd_gps.php:405
 msgid "Fudge time 2 is used to specify the GPS time offset (default: 0.0)."
 msgstr "Fudge时间2用于指定GPS时间偏移（默认值：0.0）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:396
+#: src/usr/local/www/services_ntpd_gps.php:409
 msgid "Stratum (0-16)"
 msgstr "层（0-16）"
 
-#: src/usr/local/www/services_ntpd_gps.php:399
+#: src/usr/local/www/services_ntpd_gps.php:412
 msgid ""
 "This may be used to change the GPS Clock stratum (default: 0). This may be "
 "useful to, for some reason, have ntpd prefer a different clock."
 msgstr "这可用于更改GPS时钟层（默认值：0）。 这可能是有用的，由于某些原因，ntpd喜欢不同的时钟。"
 
-#: src/usr/local/www/services_ntpd_gps.php:403
+#: src/usr/local/www/services_ntpd_gps.php:416
 #: src/usr/local/www/services_ntpd_pps.php:169
 msgid "Flags"
 msgstr "标志"
 
-#: src/usr/local/www/services_ntpd_gps.php:448
+#: src/usr/local/www/services_ntpd_gps.php:461
 msgid ""
 "Enabling this will rapidly fill the log, but is useful for tuning Fudge time "
 "2."
 msgstr "启用此功能将快速填充日志。"
 
-#: src/usr/local/www/services_ntpd_gps.php:455
+#: src/usr/local/www/services_ntpd_gps.php:468
 msgid ""
 "Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS "
 "initialization commands."
 msgstr "如果GPGSV或GPGGA由GPS初始化命令显式启用，则启用扩展GPS状态。"
 
-#: src/usr/local/www/services_ntpd_gps.php:459
+#: src/usr/local/www/services_ntpd_gps.php:472
 #: src/usr/local/www/services_ntpd_pps.php:190
 msgid "Clock ID"
 msgstr "时钟ID"
 
-#: src/usr/local/www/services_ntpd_gps.php:463
+#: src/usr/local/www/services_ntpd_gps.php:476
 msgid "This may be used to change the GPS Clock ID (default: GPS)."
 msgstr "这可用于更改GPS时钟ID（默认值：GPS）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:476
+#: src/usr/local/www/services_ntpd_gps.php:489
 msgid "GPS Initialization"
 msgstr "GPS初始化"
 
-#: src/usr/local/www/services_ntpd_gps.php:484
+#: src/usr/local/www/services_ntpd_gps.php:497
 msgid ""
 "Commands entered here will be sent to the GPS during initialization. Please "
 "read and understand the GPS documentation before making any changes here."
 msgstr "在此处输入的命令将在初始化期间发送到GPS。 在进行任何更改之前，请阅读并理解GPS文档。"
 
-#: src/usr/local/www/services_ntpd_gps.php:491
+#: src/usr/local/www/services_ntpd_gps.php:504
 msgid ""
 "Calculates and appends checksum and missing special characters \"$\" and "
 "\"*\". May not work with some GPS models."
 msgstr "计算和附加校验和和缺少的特殊字符“$”和“*”。 可能无法使用一些GPS模型。"
 
-#: src/usr/local/www/services_ntpd_gps.php:493
+#: src/usr/local/www/services_ntpd_gps.php:506
 msgid "NMEA Checksum Calculator"
 msgstr "NMEA校验和计算器"
 
-#: src/usr/local/www/services_ntpd_gps.php:502
+#: src/usr/local/www/services_ntpd_gps.php:515
 msgid "Calculate"
 msgstr "计算"
 
-#: src/usr/local/www/services_ntpd_gps.php:519
+#: src/usr/local/www/services_ntpd_gps.php:532
 msgid ""
 "Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command "
 "string:"
@@ -22138,7 +22161,7 @@ msgid ""
 msgstr "Fudge时间用于指定从实际秒数的PPS信号偏移，例如发射机和接收机之间的传输延迟（默认值：0.0）。"
 
 #: src/usr/local/www/services_ntpd_pps.php:162
-#: src/usr/local/www/status_ntpd.php:285
+#: src/usr/local/www/status_ntpd.php:298
 msgid "Stratum"
 msgstr "层"
 
@@ -22984,6 +23007,8 @@ msgid ""
 "servers defined under %1$sSystem &gt; General Setup%2$s or those obtained "
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
+"如果设置此选项，DNS查询将转发到在%1$s系统 &gt; 常规设置%2$s 下定义的上游DNS服务器。 或通过WAN上的DHCP / "
+"PPP获取（如果启用了DNS服务器覆盖）。"
 
 #: src/usr/local/www/services_unbound.php:330
 #, php-format
@@ -22993,6 +23018,8 @@ msgid ""
 "their name can be resolved. The domain in %1$sSystem &gt; General Setup%2$s "
 "should also be set to the proper value."
 msgstr ""
+"如果设置此选项，则在请求DHCP租约时指定其主机名的计算机将在DNS解析器中注册，以便可以解析其名称。 %1$s系统&gt; 常规设置%2$s "
+"必须设置为正确的值。"
 
 #: src/usr/local/www/services_unbound.php:339
 #, php-format
@@ -23001,6 +23028,7 @@ msgid ""
 "DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
+"如果设置此选项，则DHCP静态映射将在DNS解析器中注册，以便可以解析其名称。域名在%1$s系统&gt; 常规设置%2$s 中必须设置为正确的值。"
 
 #: src/usr/local/www/services_unbound.php:352
 #: src/usr/local/www/services_unbound.php:388
@@ -25309,81 +25337,81 @@ msgstr "False Ticker"
 msgid "Outlier"
 msgstr "离群值"
 
-#: src/usr/local/www/status_ntpd.php:188
+#: src/usr/local/www/status_ntpd.php:201
 #, php-format
 msgid ""
 "Statistics unavailable because ntpq and ntpdc queries are disabled in the "
 "%1$sNTP service settings%2$s"
 msgstr "统计信息不可用，因为ntpq和ntpdc查询在%1$sNTP 服务设置s%2$s中被禁用"
 
-#: src/usr/local/www/status_ntpd.php:194
+#: src/usr/local/www/status_ntpd.php:207
 #, php-format
 msgid "No peers found, %1$sis the ntp service running?%2$s"
 msgstr "未找到对等项, %1$s确认ntp服务运行？%2$s"
 
-#: src/usr/local/www/status_ntpd.php:251
+#: src/usr/local/www/status_ntpd.php:264
 msgid "in view "
 msgstr "在视图中 "
 
-#: src/usr/local/www/status_ntpd.php:258
+#: src/usr/local/www/status_ntpd.php:271
 msgid "in use "
 msgstr "正在使用 "
 
-#: src/usr/local/www/status_ntpd.php:266
+#: src/usr/local/www/status_ntpd.php:279
 msgid "Google Maps Link"
 msgstr "Google地图链接"
 
-#: src/usr/local/www/status_ntpd.php:277
+#: src/usr/local/www/status_ntpd.php:290
 msgid "Network Time Protocol Status"
 msgstr "网络时间协议状态"
 
-#: src/usr/local/www/status_ntpd.php:284
+#: src/usr/local/www/status_ntpd.php:297
 msgid "Ref ID"
 msgstr "Ref ID"
 
-#: src/usr/local/www/status_ntpd.php:287
+#: src/usr/local/www/status_ntpd.php:300
 msgid "When"
 msgstr "何时"
 
-#: src/usr/local/www/status_ntpd.php:288
+#: src/usr/local/www/status_ntpd.php:301
 msgid "Poll"
 msgstr "轮询"
 
-#: src/usr/local/www/status_ntpd.php:289
+#: src/usr/local/www/status_ntpd.php:302
 msgid "Reach"
 msgstr "到达"
 
-#: src/usr/local/www/status_ntpd.php:290
+#: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:895
 msgid "Delay"
 msgstr "延迟"
 
-#: src/usr/local/www/status_ntpd.php:291
+#: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
 msgstr "抵消"
 
-#: src/usr/local/www/status_ntpd.php:292
+#: src/usr/local/www/status_ntpd.php:305
 msgid "Jitter"
 msgstr "抖动"
 
-#: src/usr/local/www/status_ntpd.php:314
+#: src/usr/local/www/status_ntpd.php:327
 msgid "GPS Information"
 msgstr "GPS信息"
 
-#: src/usr/local/www/status_ntpd.php:319
+#: src/usr/local/www/status_ntpd.php:332
 msgid "Clock Latitude"
 msgstr "时钟纬度"
 
-#: src/usr/local/www/status_ntpd.php:320
+#: src/usr/local/www/status_ntpd.php:333
 msgid "Clock Longitude"
 msgstr "时钟经度"
 
-#: src/usr/local/www/status_ntpd.php:324
+#: src/usr/local/www/status_ntpd.php:337
 msgid "Clock Altitude"
 msgstr "时钟纬度"
 
-#: src/usr/local/www/status_ntpd.php:331
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
+#: src/usr/local/www/status_ntpd.php:344
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:198
 msgid "Satellites"
 msgstr "卫星"
 
@@ -25494,12 +25522,6 @@ msgstr "未定义OpenVPN实例 "
 #: src/usr/local/www/status_pkglogs.php:81
 msgid "No packages with logging facilities are currently installed."
 msgstr "当前未安装具有日志记录功能的插件。"
-
-#: src/usr/local/www/status_pkglogs.php:92
-#: src/usr/local/www/status_pkglogs.php:94
-#, php-format
-msgid "%s"
-msgstr "%s"
 
 #: src/usr/local/www/status_pkglogs.php:102
 #, php-format
@@ -26259,10 +26281,8 @@ msgid ""
 "of states) / (adaptive.end - adaptive.start). Defaults to 60% of the "
 "Firewall Maximum States value"
 msgstr ""
-"When the number of state entries exceeds this value, adaptive scaling begins."
-"  All timeout values are scaled linearly with factor (adaptive.end - number "
-"of states) / (adaptive.end - adaptive.start). Defaults to 60% of the "
-"Firewall Maximum States value"
+"当状态条目的数量超过此值时，自适应缩放开始。 所有超时值都按因子线性缩放(adaptive.end - number of states) / "
+"(adaptive.end - adaptive.start). 默认为防火墙最大状态值的60％。"
 
 #: src/usr/local/www/system_advanced_firewall.php:455
 msgid "Adaptive end"
@@ -26277,11 +26297,8 @@ msgid ""
 "state limit, see below). Defaults to 120% of the Firewall Maximum States "
 "value"
 msgstr ""
-"When reaching this number of state entries, all timeout values become zero, "
-"effectively purging all state entries immediately.  This value is used to "
-"define the scale factor, it should not actually be reached (set a lower "
-"state limit, see below). Defaults to 120% of the Firewall Maximum States "
-"value"
+"当达到这个状态条目数时，所有超时值变为零，从而有效地立即清除所有状态条目。 该值用于定义比例因子，实际上不应达到（设置较低的状态限制，见下文）。 "
+"默认为防火墙最大状态值的120％"
 
 #: src/usr/local/www/system_advanced_firewall.php:465
 msgid ""
@@ -26777,7 +26794,7 @@ msgid ""
 msgstr "默认情况下，当时间表到期时，该时间表所允许的连接将被终止。 此选项通过不清除现有连接的状态来覆盖该行为。"
 
 #: src/usr/local/www/system_advanced_misc.php:482
-#: src/usr/local/www/system_gateways_edit.php:647
+#: src/usr/local/www/system_gateways_edit.php:646
 msgid "Gateway Monitoring"
 msgstr "网关监测"
 
@@ -28493,7 +28510,7 @@ msgid "Gateways: removed gateways %s"
 msgstr "网关: 已删除网关%s"
 
 #: src/usr/local/www/system_gateways.php:260
-#: src/usr/local/www/system_gateways_edit.php:659
+#: src/usr/local/www/system_gateways_edit.php:658
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:121
 msgid "Monitor IP"
 msgstr "监测IP"
@@ -28718,203 +28735,199 @@ msgid ""
 "Set this option to disable this gateway without removing it from the list."
 msgstr "设置此选项以禁用此网关，而不将其从列表中删除。"
 
-#: src/usr/local/www/system_gateways_edit.php:604
+#: src/usr/local/www/system_gateways_edit.php:603
 msgid "Choose which interface this gateway applies to."
 msgstr "选择此网关应用于的接口。"
 
-#: src/usr/local/www/system_gateways_edit.php:614
+#: src/usr/local/www/system_gateways_edit.php:613
 msgid "Choose the Internet Protocol this gateway uses."
 msgstr "选择此网关使用的Internet协议。"
 
-#: src/usr/local/www/system_gateways_edit.php:630
+#: src/usr/local/www/system_gateways_edit.php:629
 msgid "Gateway IP address"
 msgstr "网关IP地址 "
 
-#: src/usr/local/www/system_gateways_edit.php:640
+#: src/usr/local/www/system_gateways_edit.php:639
 msgid "Default Gateway"
 msgstr "默认网关 "
 
-#: src/usr/local/www/system_gateways_edit.php:650
+#: src/usr/local/www/system_gateways_edit.php:649
 msgid "This will consider this gateway as always being up."
 msgstr "如果网关一直正常使用，则不需要选中此选项。"
 
-#: src/usr/local/www/system_gateways_edit.php:654
+#: src/usr/local/www/system_gateways_edit.php:653
 msgid "Gateway Action"
 msgstr "网关操作"
 
-#: src/usr/local/www/system_gateways_edit.php:657
+#: src/usr/local/www/system_gateways_edit.php:656
 msgid ""
 "No action will be taken on gateway events. The gateway is always considered "
 "up."
 msgstr "将不对网关事件采取任何操作。 网关始终被考虑。"
 
-#: src/usr/local/www/system_gateways_edit.php:670
+#: src/usr/local/www/system_gateways_edit.php:669
 msgid ""
 "Enter an alternative address here to be used to monitor the link. This is "
 "used for the quality RRD graphs as well as the load balancer entries. Use "
 "this if the gateway does not respond to ICMP echo requests (pings)."
 msgstr "在此输入IP地址以用于监视， 如果网关不响应ICMP回显请求，请使用此选项。"
 
-#: src/usr/local/www/system_gateways_edit.php:678
+#: src/usr/local/www/system_gateways_edit.php:677
 msgid "Force state"
 msgstr "强制状态"
 
-#: src/usr/local/www/system_gateways_edit.php:681
+#: src/usr/local/www/system_gateways_edit.php:680
 msgid "This will force this gateway to be considered down."
 msgstr "这将强制该网关被视为关闭。"
 
-#: src/usr/local/www/system_gateways_edit.php:688
+#: src/usr/local/www/system_gateways_edit.php:687
 msgid "A description may be entered here for reference (not parsed)."
 msgstr "此处可以输入描述以供管理参考"
 
-#: src/usr/local/www/system_gateways_edit.php:715
+#: src/usr/local/www/system_gateways_edit.php:714
 msgid "Weight for this gateway when used in a Gateway Group."
 msgstr "在网关组中使用此网关的权重。"
 
-#: src/usr/local/www/system_gateways_edit.php:719
+#: src/usr/local/www/system_gateways_edit.php:718
 msgid "Data Payload"
 msgstr "数据有效载荷"
 
-#: src/usr/local/www/system_gateways_edit.php:723
+#: src/usr/local/www/system_gateways_edit.php:722
 msgid "Define data payload to send on ICMP packets to gateway monitor IP."
 msgstr "定义要在ICMP数据包上发送到网关监视IP的数据有效负载。"
 
-#: src/usr/local/www/system_gateways_edit.php:725
+#: src/usr/local/www/system_gateways_edit.php:724
 msgid "Latency thresholds"
 msgstr "延迟阈值"
 
-#: src/usr/local/www/system_gateways_edit.php:740
+#: src/usr/local/www/system_gateways_edit.php:739
 #, php-format
-msgid ""
-"Low and high thresholds for latency in milliseconds.\n"
-"\tDefault is %d/%d."
-msgstr "低延迟和高延迟阈值（以毫秒为单位）。\n"
-"\t默认是 %d/%d."
+msgid "Low and high thresholds for latency in milliseconds. Default is %d/%d."
+msgstr "低延迟和高延迟阈值（以毫秒为单位）。 默认值为 %d/%d。"
 
-#: src/usr/local/www/system_gateways_edit.php:745
+#: src/usr/local/www/system_gateways_edit.php:744
 msgid "Packet Loss thresholds"
 msgstr "丢包阈值"
 
-#: src/usr/local/www/system_gateways_edit.php:760
+#: src/usr/local/www/system_gateways_edit.php:759
 #, php-format
-msgid "Low and high thresholds for packet loss in %%.\n"
-"\tDefault is %d/%d."
-msgstr "网关的丢包低和高阈值。 默认是 %d/%d。"
+msgid "Low and high thresholds for packet loss in %%. Default is %d/%d."
+msgstr " %%中的丢包的低和高阈值。 默认值为 %d/%d。"
 
-#: src/usr/local/www/system_gateways_edit.php:766
+#: src/usr/local/www/system_gateways_edit.php:765
 msgid "Probe Interval"
 msgstr "探测间隔"
 
-#: src/usr/local/www/system_gateways_edit.php:773
+#: src/usr/local/www/system_gateways_edit.php:772
 #, php-format
 msgid "How often an ICMP probe will be sent in milliseconds. Default is %d."
 msgstr "以毫秒为单位发送ICMP探测器的频率。 默认值为%d。"
 
-#: src/usr/local/www/system_gateways_edit.php:777
+#: src/usr/local/www/system_gateways_edit.php:776
 msgid "Loss Interval"
 msgstr "丢包间隔"
 
-#: src/usr/local/www/system_gateways_edit.php:781
+#: src/usr/local/www/system_gateways_edit.php:780
 #, php-format
 msgid ""
 "Time interval in milliseconds before packets are treated as lost. Default is "
 "%d."
 msgstr "数据包被视为丢失的时间间隔（以毫秒为单位）， 默认值为%d。"
 
-#: src/usr/local/www/system_gateways_edit.php:784
+#: src/usr/local/www/system_gateways_edit.php:783
 msgid "Time Period"
 msgstr "时间段"
 
-#: src/usr/local/www/system_gateways_edit.php:794
+#: src/usr/local/www/system_gateways_edit.php:793
 #, php-format
 msgid ""
 "Time period in milliseconds over which results are averaged. Default is %d."
 msgstr "以毫秒为单位的结果被平均的时间周期。 默认值为%d。"
 
-#: src/usr/local/www/system_gateways_edit.php:798
+#: src/usr/local/www/system_gateways_edit.php:797
 msgid "Alert interval"
 msgstr "警报间隔"
 
-#: src/usr/local/www/system_gateways_edit.php:808
+#: src/usr/local/www/system_gateways_edit.php:807
 #, php-format
 msgid ""
 "Time interval in milliseconds between checking for an alert condition. "
 "Default is %d."
 msgstr "检查警报条件之间的时间间隔（以毫秒为单位）。 默认值为 %d."
 
-#: src/usr/local/www/system_gateways_edit.php:813
+#: src/usr/local/www/system_gateways_edit.php:812
 msgid "Additional information"
 msgstr "附加信息"
 
-#: src/usr/local/www/system_gateways_edit.php:815
+#: src/usr/local/www/system_gateways_edit.php:814
 msgid ""
 "The time period, probe interval and loss interval are closely related. The "
 "ratio between these values control the accuracy of the numbers reported and "
 "the timeliness of alerts."
 msgstr "时间段，探测间隔和丢失间隔密切相关。 "
 
-#: src/usr/local/www/system_gateways_edit.php:819
+#: src/usr/local/www/system_gateways_edit.php:818
 msgid ""
 "A longer time period will provide smoother results for round trip time and "
 "loss, but will increase the time before a latency or loss alert is triggered."
 ""
 msgstr "较长的时间段将为往返时间和丢失提供更平滑的结果，但会在触发延迟或丢失警报之前增加时间。"
 
-#: src/usr/local/www/system_gateways_edit.php:822
+#: src/usr/local/www/system_gateways_edit.php:821
 msgid ""
 "A shorter probe interval will decrease the time required before a latency or "
 "loss alert is triggered, but will use more network resource. Longer probe "
 "intervals will degrade the accuracy of the quality graphs."
 msgstr "较短的探测间隔将减少触发延迟或丢失警报之前所需的时间，但会使用更多的网络资源。 较长的探测间隔将降低质量图的精度。"
 
-#: src/usr/local/www/system_gateways_edit.php:826
+#: src/usr/local/www/system_gateways_edit.php:825
 msgid ""
 "The ratio of the probe interval to the time period (minus the loss interval) "
 "also controls the resolution of loss reporting. To determine the resolution, "
 "the following formula can be used:"
 msgstr "探测间隔与时间段的比值（减去丢失间隔）控制丢失报告的分辨率。 为了确定分辨率，可以使用以下公式："
 
-#: src/usr/local/www/system_gateways_edit.php:830
+#: src/usr/local/www/system_gateways_edit.php:829
 msgid ""
 "&nbsp;&nbsp;&nbsp;&nbsp;100 * probe interval / (time period - loss interval)"
 msgstr "100 * probe interval / (time period - loss interval)"
 
-#: src/usr/local/www/system_gateways_edit.php:832
+#: src/usr/local/www/system_gateways_edit.php:831
 msgid ""
 "Rounding up to the nearest whole number will yield the resolution of loss "
 "reporting in percent. The default values provide a resolution of 1%."
 msgstr "四舍五入到最接近的整数将得到损失报告的百分比解决方案。 默认值提供1％的分辨率。"
 
-#: src/usr/local/www/system_gateways_edit.php:835
+#: src/usr/local/www/system_gateways_edit.php:834
 msgid ""
 "The default settings are recommended for most use cases. However if changing "
 "the settings, please observe the following restrictions:"
 msgstr "建议在大多数情况下使用默认设置。 但是，如果更改设置，请遵守以下限制："
 
-#: src/usr/local/www/system_gateways_edit.php:838
+#: src/usr/local/www/system_gateways_edit.php:837
 msgid ""
 "- The time period must be greater than twice the probe interval plus the "
 "loss interval. This guarantees there is at least one completed probe at all "
 "times. "
 msgstr "- 时间周期必须大于探测间隔的两倍加上丢失间隔。"
 
-#: src/usr/local/www/system_gateways_edit.php:841
+#: src/usr/local/www/system_gateways_edit.php:840
 msgid ""
 "- The alert interval must be greater than or equal to the probe interval. "
 "There is no point checking for alerts more often than probes are done."
 msgstr "- 警报间隔必须大于或等于探测间隔。"
 
-#: src/usr/local/www/system_gateways_edit.php:844
+#: src/usr/local/www/system_gateways_edit.php:843
 msgid ""
 "- The loss interval must be greater than or equal to the high latency "
 "threshold."
 msgstr "- 丢失间隔必须大于或等于高延迟阈值。"
 
-#: src/usr/local/www/system_gateways_edit.php:850
+#: src/usr/local/www/system_gateways_edit.php:849
 msgid "Use non-local gateway"
 msgstr "使用非本地网关"
 
-#: src/usr/local/www/system_gateways_edit.php:853
+#: src/usr/local/www/system_gateways_edit.php:852
 msgid ""
 "This will allow use of a gateway outside of this interface's subnet. This is "
 "usually indicative of a configuration error, but is required for some "
@@ -29455,7 +29468,7 @@ msgstr "显示构造的命令。<br />使用“Diff / Minimal”选项。"
 
 #: src/usr/local/www/system_update_settings.php:258
 msgid "Dry-run only.<br />No files copied."
-msgstr "Dry-run only.<br />没有复制文件"
+msgstr "仅模拟运行。<br />没有复制文件"
 
 #: src/usr/local/www/system_update_settings.php:260
 msgid ""
@@ -32244,7 +32257,7 @@ msgstr "管理端口"
 msgid ""
 "The default port is 166. Specify a different port if the client machines "
 "need to select from multiple OpenVPN links."
-msgstr "默认端口为166.如果客户端计算机需要从多个OpenVPN链路中选择，请指定不同的端口。"
+msgstr "默认端口为166，如果客户端计算机需要从多个OpenVPN链路中选择，请指定不同的端口。"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
@@ -32325,7 +32338,7 @@ msgstr "没有定义CARP接口。"
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 #, php-format
 msgid "Click %1$shere%2$s to configure CARP."
-msgstr "单击 %1$shere%2$s 配置CARP。"
+msgstr "单击 %1$s这里%2$s 配置CARP。"
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:131
 msgid "Saved Dynamic DNS Filter via Dashboard."
@@ -32352,7 +32365,7 @@ msgstr "显示"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:64
 msgid "Updated gateways widget settings via dashboard."
-msgstr "通过仪表板更新网关窗口小部件设置。"
+msgstr "通过仪表板更新网关窗口部件设置。"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:118
 msgid "Gateway IP"
@@ -32388,7 +32401,7 @@ msgstr "未安装插件。"
 msgid ""
 "Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
 "a>."
-msgstr "已安装插件 <a href=\"pkg_mgr.php\" class=\"alert-link\">here</a>."
+msgstr "已安装插件 <a href=\"pkg_mgr.php\" class=\"alert-link\">这里</a>."
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
@@ -32480,11 +32493,11 @@ msgstr "在仪表板保存过滤日志条目。"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:101
 msgid "Act"
-msgstr "作为"
+msgstr "动作"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:103
 msgid "IF"
-msgstr "IF"
+msgstr "接口"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:138
 msgid "Rule that triggered this action"
@@ -32514,31 +32527,31 @@ msgstr "更新间隔"
 msgid "stratum"
 msgstr "层"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:151
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:164
 msgid "Server Time"
 msgstr "服务时间"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:163
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:176
 msgid "Sync Source"
 msgstr "同步源"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:166
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:179
 msgid "No active peers available"
 msgstr "没有活动对等体可用"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:174
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:187
 msgid "Clock location"
 msgstr "时钟位置"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:188
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:201
 msgid "in view"
 msgstr "在视图中"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:190
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:203
 msgid "in use"
 msgstr "正在使用"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:468
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:481
 msgid "Updating..."
 msgstr "正在更新..."
 
@@ -32575,19 +32588,19 @@ msgstr "新图片："
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:33
 msgid "Saved RSS Widget feed via Dashboard."
-msgstr "在仪表板保存RSS小部件Feed。"
+msgstr "在仪表板保存RSS部件的信息来源更新接口。"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:127
 msgid "Feeds"
-msgstr "Feeds"
+msgstr "信息来源更新接口"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:134
 msgid "# Stories"
-msgstr "# Stories"
+msgstr "# 显示信息条数"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:141
 msgid "Widget height"
-msgstr "小部件高度"
+msgstr "部件高度"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:148
 msgid "Content limit"
@@ -32636,11 +32649,11 @@ msgstr "你的系统是最新版本。"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "The system is on a later version than<br />the official release."
-msgstr "该系统的版本比官方发布的<br />更高。"
+msgstr "系统的版本高于<br />正式发布的版本。"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:74
 msgid "<i>Error comparing installed version<br />with latest available</i>"
-msgstr "<i>将安装版本<br />与最新版本</ i>比较时发生错误"
+msgstr "<i>比较已安装的版本时出错<br />与最新</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:104
 msgid "Unknown system"
@@ -32672,7 +32685,7 @@ msgstr "硬件加密 "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:152
 msgid "Current date/time"
-msgstr "当前 日期/时间"
+msgstr "当前日期/时间"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:156
 msgid "DNS server(s)"
@@ -32688,7 +32701,7 @@ msgstr "状态表大小"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:185
 msgid "Show states"
-msgstr "显示状态表详细信息"
+msgstr "显示状态表"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:189
 msgid "MBUF Usage"
@@ -32789,7 +32802,7 @@ msgstr "部分"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:118
 msgid "Updated traffic graph settings via dashboard."
-msgstr "通过信息中心更新了流量图设置。"
+msgstr "通过仪表板更新了流量图设置。"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:400
 msgid "Show graphs"
@@ -32825,7 +32838,7 @@ msgstr "唤醒！"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:106
 msgid "No saved WoL addresses"
-msgstr "没有已保存的WoL地址"
+msgstr "没有保存的网络唤醒地址"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:124
 msgid "DHCP Leases Status"
@@ -32880,7 +32893,7 @@ msgstr "连接数应大于1。"
 msgid ""
 "The specified number of connections is greater than the number of ALTQ-"
 "capable assigned interfaces!"
-msgstr "指定的连接数大于ALTQ分配的接口数！"
+msgstr "指定的连接数大于ALTQ（候补排队）分配的接口数！"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:295
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:330
@@ -32906,7 +32919,7 @@ msgstr "地址必须为有效的IP地址或防火墙别名。请更正然后继�
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:648
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:675
 msgid "Only percentage bandwidth specification is allowed."
-msgstr "仅允许百分比带宽规范。"
+msgstr "只能填入百分比。"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:762
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:831
@@ -32943,7 +32956,7 @@ msgstr "惩罚箱"
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1671
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1724
 msgid "Traffic Shaper Wizard"
-msgstr "流量管理师向导"
+msgstr "流量整形向导"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1471
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1562
@@ -32991,7 +33004,7 @@ msgstr "验证失败：没有足够的权限"
 #: src/usr/local/www/xmlrpc.php:445
 #, php-format
 msgid "Merged in config (%s sections) from XMLRPC client."
-msgstr "在配置合并（%s 部分）从XMLRPC客户。 "
+msgstr "合并来自XMLRPC客户端的配置（%s 部分）。"
 
 #: src/etc/inc/pfsense-utils.inc:288
 msgid "Manage Log"
@@ -33023,7 +33036,7 @@ msgstr "即时"
 
 #: src/etc/inc/shaper.inc:2359
 msgid "Link Share"
-msgstr "链接共享"
+msgstr "共享链接"
 
 #: src/etc/inc/shaper.inc:2804
 msgid "Borrow from other queues when available"
@@ -33045,7 +33058,7 @@ msgstr "不备份插件信息"
 msgid ""
 "Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config."
 "xml space!)"
-msgstr "不备份RRD的数据（注：RRD的数据可以消耗4兆字节config.xml的空间！）"
+msgstr "不备份RRD的数据（注：RRD的数据会消耗超过4M字节的config.xml的空间！）"
 
 #: src/usr/local/www/diag_backup.php:576
 msgid "Encrypt this configuration file."
@@ -33105,7 +33118,7 @@ msgstr "输送"
 
 #: src/usr/local/www/diag_smart.php:381
 msgid "Self-test"
-msgstr "自我测试"
+msgstr "自检"
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
@@ -33125,7 +33138,7 @@ msgstr "禁用此规则"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:428
 msgid "Do not perform binat for the specified address"
-msgstr "不要对指定的地址执行复发"
+msgstr "不要对指定的地址执行一对一的映射"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:506
@@ -33143,7 +33156,7 @@ msgstr "对符合此规则的流量禁用重定向"
 #: src/usr/local/www/firewall_nat_edit.php:796
 #: src/usr/local/www/firewall_rules_edit.php:1322
 msgid "Invert match."
-msgstr "反转"
+msgstr "倒置"
 
 #: src/usr/local/www/firewall_nat_edit.php:894
 msgid "Do not automatically sync to other CARP members"
@@ -33164,7 +33177,7 @@ msgid ""
 "<span class=\"help-block\">This is associated with a NAT rule.<br/>Editing "
 "the interface, protocol, source, or destination of associated filter rules "
 "is not permitted."
-msgstr "<span class =“help-block”>这与NAT规则相关联。不允许编辑关联的过滤规则的接口，协议，源或目标。"
+msgstr "<span class=\"help-block\">这与NAT规则相关联。<br/>不允许编辑关联的过滤规则的接口，协议，源或目标。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1449
 msgid "Log packets that are handled by this rule"
@@ -33174,7 +33187,7 @@ msgstr "记录此规则处理的数据包"
 msgid ""
 "Allow packets with IP options to pass. Otherwise they are blocked by default."
 " This is usually only seen with multicast traffic."
-msgstr "允许具有IP选项的数据包通过。 否则，它们将被默认阻止。 这通常仅在多播流量时才会出现。"
+msgstr "允许具有IP选项的数据包通过。 否则它们将被默认阻止通过。 这通常仅在多播流量时才会出现。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1507
 msgid "Disable auto generated reply-to for this rule."
@@ -33288,7 +33301,7 @@ msgstr "每小时重置（0 ****）"
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
-msgstr "通过接口删除和重新分配保持通用无线配置。"
+msgstr "通过删除接口和重新分配保持通用无线配置。"
 
 #: src/usr/local/www/interfaces.php:2991
 msgid ""
@@ -33298,7 +33311,7 @@ msgstr "允许数据包在作为接入点操作时直接在无线客户端之间
 
 #: src/usr/local/www/interfaces.php:2999
 msgid "Force the card to use WME (wireless QoS)"
-msgstr "强制卡使用WME（无线QoS）"
+msgstr "强制使用WME（无线QoS）"
 
 #: src/usr/local/www/interfaces.php:3007
 msgid ""
@@ -33312,7 +33325,7 @@ msgstr "启用WPA "
 
 #: src/usr/local/www/interfaces.php:3072
 msgid "Force the AP to rekey whenever a client disassociates"
-msgstr "强制AP密钥更新不论客户端是否解除关联"
+msgstr "强制AP密钥更新，不论客户端是否解除关联"
 
 #: src/usr/local/www/interfaces.php:3084
 msgid "Enable 802.1X authentication"
@@ -33322,7 +33335,7 @@ msgstr "启用802.1X认证"
 msgid ""
 "ECN friendly behavior violates RFC2893. This should be used in mutual "
 "agreement with the peer. "
-msgstr "ECO友好行为违反RFC 2893.这应该在与对等体的相互协议中使用。"
+msgstr "ECN友好行为违反RFC2893。 这应该在与同行的相互协议中使用。"
 
 #: src/usr/local/www/interfaces_gif_edit.php:220
 msgid ""
@@ -33330,13 +33343,13 @@ msgid ""
 "with the configured remote peer. When disabled, martian and inbound "
 "filtering is not performed which allows asymmetric routing of the outer "
 "traffic."
-msgstr "禁用外部GIF源的自动过滤，以确保与配置的远程对等体匹配。 当禁用时，不执行火星和入站过滤，这允许外部流量的不对称路由。"
+msgstr "禁用外部GIF源的自动过滤，以确保与配置的远程对等体匹配。 当禁用时，不执行入站过滤，这允许外部流量的不对称路由。"
 
 #: src/usr/local/www/interfaces_gre_edit.php:207
 msgid ""
 "Add an explicit static route for the remote inner tunnel address/subnet via "
 "the local tunnel address"
-msgstr "通过本地隧道地址为远程内部隧道地址/子网添加显式静态路由"
+msgstr "通过本地隧道地址为远程内部隧道地址/子网添加明晰的静态路由"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:725
 msgid "Enable persistent logging of connection uptime. "
@@ -33411,13 +33424,18 @@ msgstr "请在监视器选项卡上添加监视器IP地址以使用此功能。"
 msgid "Please add a pool on the \"Pools\" tab to use this feature. "
 msgstr "请在“池”选项卡上添加池以使用此功能。"
 
+#: src/usr/local/www/pkg_edit.php:1310 src/usr/local/www/pkg_edit.php:1316
+#: src/usr/local/www/pkg_edit.php:1321
+msgid "<br />"
+msgstr "<br />"
+
 #: src/usr/local/www/services_captiveportal.php:537
 msgid "Enable Captive Portal"
 msgstr "开启入网门户"
 
 #: src/usr/local/www/services_captiveportal.php:593
 msgid "Enable waiting period reset on attempted access"
-msgstr "启用等待尝试访问期间复位 "
+msgstr "在尝试访问时启用等待期重置"
 
 #: src/usr/local/www/services_captiveportal.php:600
 msgid "Enable logout popup window"
@@ -33433,19 +33451,19 @@ msgstr "禁用MAC过滤 "
 
 #: src/usr/local/www/services_captiveportal.php:646
 msgid "Enable Pass-through MAC automatic additions"
-msgstr "启用直通MAC自动增加 "
+msgstr "启用直通MAC自动添加 "
 
 #: src/usr/local/www/services_captiveportal.php:656
 msgid "Enable Pass-through MAC automatic addition with username"
-msgstr "启用MAC地址直通模式用户名自动此外 "
+msgstr "启用传递MAC自动添加用户名"
 
 #: src/usr/local/www/services_captiveportal.php:665
 msgid "Enable per-user bandwidth restriction"
-msgstr "开启每用户带宽限制 "
+msgstr "开启用户带宽限制 "
 
 #: src/usr/local/www/services_captiveportal.php:694
 msgid "No Authentication"
-msgstr "不作身份认证 "
+msgstr "不进行身份认证 "
 
 #: src/usr/local/www/services_captiveportal.php:702
 msgid "Local User Manager / Vouchers"
@@ -33457,7 +33475,7 @@ msgstr "RADIUS身份认证 "
 
 #: src/usr/local/www/services_captiveportal.php:720
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
-msgstr "仅允许具有“入网门户网站登录”权限的用户/组"
+msgstr "仅允许具有“入网门户登录”权限的用户/组"
 
 #: src/usr/local/www/services_captiveportal.php:730
 msgid "PAP"
@@ -33533,7 +33551,7 @@ msgstr "忽略BOOTP（Bootstrap Protocol，引导程序协议）查询"
 
 #: src/usr/local/www/services_dhcp.php:822
 msgid "Only the clients defined below will get DHCP leases from this server."
-msgstr "只有下面定义的客户端将从此服务器获得DHCP租约。"
+msgstr "只有下面定义的客户端才能从此服务器获得DHCP租约。"
 
 #: src/usr/local/www/services_dhcp.php:829
 msgid "Denied clients will be ignored rather than rejected."
@@ -33578,12 +33596,12 @@ msgstr "<div class=\"alert alert-info\"> "
 
 #: src/usr/local/www/services_dhcp_edit.php:482
 msgid "Create an ARP Table Static Entry for this MAC & IP Address pair."
-msgstr "为此MAC和IP地址对创建ARP表静态条目。"
+msgstr "为此MAC & IP地址对创建ARP表静态条目。"
 
 #: src/usr/local/www/services_dhcp_edit.php:595
 #: src/usr/local/www/services_dhcpv6.php:758
 msgid "Enable registration of DHCP client names in DNS."
-msgstr "启用DNS DHCP客户端名称注册。 "
+msgstr "在DNS中启用 DHCP客户端名称注册。 "
 
 #: src/usr/local/www/services_dhcp_edit.php:602
 msgid "Make dynamic DNS registered hostname the same as Hostname above."
@@ -33591,12 +33609,12 @@ msgstr "使动态DNS注册的主机名与上面的主机名相同。"
 
 #: src/usr/local/www/services_dhcp_relay.php:149
 msgid "Enable DHCP relay on interface"
-msgstr "接口上启用DHCP中继 "
+msgstr "在接口上启用DHCP中继 "
 
 #: src/usr/local/www/services_dhcp_relay.php:164
 #: src/usr/local/www/services_dhcpv6_relay.php:165
 msgid "Append circuit ID and agent ID to requests"
-msgstr "附加电路ID和代理ID的请求 "
+msgstr "将电路ID和代理ID附加到请求"
 
 #: src/usr/local/www/services_dhcpv6.php:583
 msgid "Enable DHCPv6 server on interface "
@@ -33727,7 +33745,7 @@ msgstr "拒绝尝试对等关联（nopeer）的数据包。"
 msgid "Deny mode 6 control message trap service (notrap)."
 msgstr "拒绝模式6控制消息陷阱服务（notrap）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:326
+#: src/usr/local/www/services_ntpd_gps.php:332
 msgid ""
 "A GPS connected via a serial port may be used as a reference clock for NTP. "
 "If the GPS also supports PPS and is properly configured, and connected, that "
@@ -33741,47 +33759,51 @@ msgid ""
 msgstr ""
 "通过串行端口连接的GPS可以用作NTP的参考时钟。如果GPS还支持PPS并且被正确地配置和连接，则该GPS也可以被用作每秒脉冲时钟参考。注意：USB "
 "GPS可能工作，但由于USB总线时序问题，不推荐使用。<br />为了获得最佳效果，NTP应至少有三个时间源。因此，最好在<a href="
-"\"services_ntpd.php\">服务> NTP>设置</"
+"\"services_ntpd.php\">系统服务> NTP>设置</"
 "a>下配置至少2个服务器，以便在GPS数据随时间有效时将时钟漂移最小化。否则，当向客户端提供时间时，ntpd只能使用来自非同步本地时钟的值。"
 
-#: src/usr/local/www/services_ntpd_gps.php:404
+#: src/usr/local/www/services_ntpd_gps.php:389
+msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
+msgstr "过程PGRMF。 忽略所有其他NMEA句子。 （默认值：未选中）。"
+
+#: src/usr/local/www/services_ntpd_gps.php:417
 msgid "Prefer this clock (default: checked)."
 msgstr "优先使用此时钟（默认值：选中）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:411
+#: src/usr/local/www/services_ntpd_gps.php:424
 msgid ""
 "Do not use this clock, display for reference only (default: unchecked)."
 msgstr "不要使用此时钟，仅供参考（默认值：未选中）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:418
+#: src/usr/local/www/services_ntpd_gps.php:431
 msgid "Enable PPS signal processing (default: checked)."
 msgstr "启用PPS信号处理（默认值：选中）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:425
+#: src/usr/local/www/services_ntpd_gps.php:438
 #: src/usr/local/www/services_ntpd_pps.php:170
 msgid ""
 "Enable falling edge PPS signal processing (default: unchecked, rising edge)."
 msgstr "使能下降沿PPS信号处理（默认值：未选中，上升沿）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:432
+#: src/usr/local/www/services_ntpd_gps.php:445
 msgid "Enable kernel PPS clock discipline (default: checked)."
 msgstr "启用内核PPS时钟纪律（默认值：选中）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:439
+#: src/usr/local/www/services_ntpd_gps.php:452
 msgid "Obscure location in timestamp (default: unchecked, unobscured)."
 msgstr "时间戳记中的模糊位置（默认值：未选中，未隐藏）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:446
+#: src/usr/local/www/services_ntpd_gps.php:459
 msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
 msgstr "记录接收时间戳的子秒部分（默认值：未选中，未记录）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:453
+#: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
 msgstr "显示扩展的GPS状态（默认值：选中）。"
 
-#: src/usr/local/www/services_ntpd_gps.php:489
+#: src/usr/local/www/services_ntpd_gps.php:502
 msgid "Auto correct malformed initialization commands. (default: unchecked)."
 msgstr "自动纠正格式不正确的初始化命令。 （默认值：未选中）。"
 
@@ -33889,11 +33911,11 @@ msgstr "正则表达式"
 
 #: src/usr/local/www/services_unbound.php:269
 msgid "Enable DNS resolver"
-msgstr "启动DNS解析器..."
+msgstr "启用DNS解析器"
 
 #: src/usr/local/www/services_unbound.php:312
 msgid "Enable DNSSEC Support"
-msgstr "启用DNSSEC支持"
+msgstr "启用DNSSEC（DNS安全扩展）支持"
 
 #: src/usr/local/www/services_unbound.php:319
 msgid "Enable Forwarding Mode"
@@ -33929,7 +33951,7 @@ msgstr "当遇到代理签名者时，在认证过程中提取DNSKEY"
 
 #: src/usr/local/www/services_unbound_advanced.php:245
 msgid "DNSSEC data is required for trust-anchored zones."
-msgstr "信任区域需要DNSSEC数据。"
+msgstr "信任区域需要DNSSEC（DNS安全扩展）数据。"
 
 #: src/usr/local/www/services_unbound_advanced.php:347
 msgid "Disable the automatically-added access control entries"
@@ -33955,7 +33977,7 @@ msgstr "反向"
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
 msgid "General Logging Options Setting"
-msgstr "常规日志记录选项设置"
+msgstr "常规日志记录选项"
 
 #: src/usr/local/www/status_logs_common.inc:854
 msgid "Formatted"
@@ -33996,7 +34018,7 @@ msgstr "显示原始过滤日志"
 
 #: src/usr/local/www/status_logs_settings.php:301
 msgid "Enable verbose logging (Default is terse logging)"
-msgstr "启用详细日志记录（默认为terse logging）"
+msgstr "启用详细日志记录（默认为简单记录）"
 
 #: src/usr/local/www/status_logs_settings.php:320
 msgid "Disable writing log files to the local disk"
@@ -34044,15 +34066,15 @@ msgstr "网关监测事件"
 
 #: src/usr/local/www/status_logs_settings.php:456
 msgid "Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)"
-msgstr "路由后台进程事件 (RADVD, UPnP, RIP, OSPF, BGP)"
+msgstr "路由进程事件 (RADVD, UPnP, RIP, OSPF, BGP)"
 
 #: src/usr/local/www/status_logs_settings.php:463
 msgid "Server Load Balancer Events (relayd)"
-msgstr "服务器负载平衡器事件（relayd）"
+msgstr "服务器负载事件（relayd）"
 
 #: src/usr/local/www/status_logs_settings.php:470
 msgid "Network Time Protocol Events (NTP Daemon, NTP Client)"
-msgstr "网络时间协议事件 (NTP Daemon, NTP Client)"
+msgstr "网络时间事件 (NTP Daemon, NTP Client)"
 
 #: src/usr/local/www/status_logs_settings.php:477
 msgid "Wireless Events (hostapd)"
@@ -34085,7 +34107,7 @@ msgstr "禁用WEB配置成功登录的记录 "
 
 #: src/usr/local/www/system_advanced_admin.php:400
 msgid "Disable webConfigurator anti-lockout rule"
-msgstr "禁用WEB管理界免锁定规则 "
+msgstr "禁用WEB管理界面免锁定规则 "
 
 #: src/usr/local/www/system_advanced_admin.php:413
 msgid "Disable DNS Rebinding Checks"
@@ -34130,7 +34152,7 @@ msgstr "禁用所有的数据包过滤。 "
 msgid ""
 "Disables the PF scrubbing option which can sometimes interfere with NFS "
 "traffic."
-msgstr "禁用PF刷新选项，有时可能会干扰NFS通信。"
+msgstr "关闭防火墙过滤选项，有时会干扰NFS的流量。"
 
 #: src/usr/local/www/system_advanced_firewall.php:502
 msgid "Bypass firewall rules for traffic on the same interface"
@@ -34146,7 +34168,7 @@ msgstr "禁用WAN规则的回复"
 
 #: src/usr/local/www/system_advanced_firewall.php:529
 msgid "Disable Negate rule on policy routing rules"
-msgstr "禁用对策略路由规则取反规则"
+msgstr "禁用对策略路由规则的取消规则"
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
@@ -34227,7 +34249,7 @@ msgstr "禁用SMTP通知"
 
 #: src/usr/local/www/system_advanced_notifications.php:255
 msgid "Enable SMTP over SSL/TLS"
-msgstr "启用 SMTP over SSL/TLS"
+msgstr "启用基于SSL / TLS的SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:313
 msgid "Disable the startup/shutdown beep"
@@ -34242,12 +34264,11 @@ msgid ""
 "No Certificate Authorities defined.<br/>Create one under <a href="
 "\"system_camanager.php\">System &gt; Cert. Manager</a>."
 msgstr ""
-"未定义证书权限。<br/> 在这里创建一个新的证书 <a href=\"system_camanager.php\">System &gt; Cert. "
-"Manager</a>."
+"未定义证书权限。<br/> 在这里创建一个新的证书 <a href=\"system_camanager.php\">系统 &gt; 证书管理</a>."
 
 #: src/usr/local/www/system_authservers.php:593
 msgid "Level "
-msgstr "级别："
+msgstr "层级"
 
 #: src/usr/local/www/system_authservers.php:618
 msgid "Enable extended query"
@@ -34292,31 +34313,31 @@ msgstr "当此组应用于本地动态DNS，IPsec或OpenVPN端点时，虚拟IP�
 
 #: src/usr/local/www/system_gateways_edit.php:594
 msgid "Disable this gateway"
-msgstr "禁用网关"
+msgstr "禁用这个网关"
 
-#: src/usr/local/www/system_gateways_edit.php:641
+#: src/usr/local/www/system_gateways_edit.php:640
 msgid "This will select the above gateway as the default gateway."
-msgstr "这将选择上述网关作为默认网关。"
+msgstr "这将选择上面网关作为默认网关。"
 
-#: src/usr/local/www/system_gateways_edit.php:648
+#: src/usr/local/www/system_gateways_edit.php:647
 msgid "Disable Gateway Monitoring"
 msgstr "禁用网关监测 "
 
-#: src/usr/local/www/system_gateways_edit.php:655
+#: src/usr/local/www/system_gateways_edit.php:654
 msgid "Disable Gateway Monitoring Action"
 msgstr "禁用网关监视操作"
 
-#: src/usr/local/www/system_gateways_edit.php:679
+#: src/usr/local/www/system_gateways_edit.php:678
 msgid "Mark Gateway as Down"
 msgstr "将网关标记为关闭"
 
-#: src/usr/local/www/system_gateways_edit.php:814
+#: src/usr/local/www/system_gateways_edit.php:813
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_usermanager_addprivs.php:172
 msgid "<span class=\"help-block\">"
 msgstr "<span class=\"help-block\">"
 
-#: src/usr/local/www/system_gateways_edit.php:851
+#: src/usr/local/www/system_gateways_edit.php:850
 msgid "Use non-local gateway through interface specific route."
 msgstr "通过接口特定路由使用非本地网关。"
 
@@ -34328,7 +34349,7 @@ msgstr "pfsync在防火墙之间传输状态插入、更新和删除消息。"
 
 #: src/usr/local/www/system_hasync.php:185
 msgid "User manager users and groups"
-msgstr "管理器用户和组"
+msgstr "用户管理器用户和组"
 
 #: src/usr/local/www/system_hasync.php:193
 msgid "Authentication servers (e.g. LDAP, RADIUS)"
@@ -34425,7 +34446,7 @@ msgstr "显示命令"
 
 #: src/usr/local/www/system_update_settings.php:256
 msgid "Dry Run"
-msgstr "Dry Run"
+msgstr "模拟运行"
 
 #: src/usr/local/www/system_usermanager.php:705
 msgid "This user cannot login"
@@ -34493,11 +34514,11 @@ msgstr "向客户提供WINS服务器列表 "
 msgid ""
 "Provide the Phase2 PFS group to clients ( overrides all mobile phase2 "
 "settings )"
-msgstr "向客户端提供阶段2 PFS组（覆盖所有移动阶段2设置）"
+msgstr "向客户端提供Phase22 PFS组（覆盖所有移动Phase2设置）"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:682
 msgid "Provide a login banner to clients"
-msgstr "向客户提供登录横幅"
+msgstr "向客户展示登录横幅"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:656
 msgid ""
@@ -34525,7 +34546,7 @@ msgid ""
 "Enable this to split connection entries with multiple phase 2 configurations."
 " Required for remote endpoints that support only a single traffic selector "
 "per child SA."
-msgstr "启用此选项可分割具有多个阶段2配置的连接条目。 对于每个子SA仅支持单个流量选择器的远程端点需要。"
+msgstr "启用此选项可分割具有多个phase 2配置的连接条目。 对于每个子SA仅支持单个流量选择器的远程端点需要。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "Enable DPD"
@@ -34533,7 +34554,7 @@ msgstr "启用DPD "
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
 msgid "Disable this phase 2 entry without removing it from the list. "
-msgstr "禁用此阶段2条目，而不从列表中删除它。"
+msgstr "禁用此phase 2条目，而不从列表中删除它。"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:262
 msgid "Enable IPCompression"
@@ -34553,7 +34574,7 @@ msgstr "启用 MSS 限制 VPN流量 "
 
 #: src/usr/local/www/vpn_ipsec_settings.php:314
 msgid "Enable Unity Plugin"
-msgstr "启用Unity插件"
+msgstr "启用统一插件"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:321
 msgid "Enable strict Certificate Revocation List checking"
@@ -34561,7 +34582,7 @@ msgstr "启用严格的证书吊销列表检查"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:328
 msgid "Initiate IKEv2 reauthentication with a make-before-break"
-msgstr "使用make-before-break启动IKEv2重新认证"
+msgstr "使用先断后启动IKEv2重新认证"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:337
 msgid "Enable bypass for LAN interface IP"
@@ -34633,7 +34654,7 @@ msgstr "基于其公用名称阻止此客户端连接。"
 #: src/usr/local/www/vpn_openvpn_csc.php:422
 #: src/usr/local/www/vpn_openvpn_server.php:1024
 msgid "Force all client generated traffic through the tunnel."
-msgstr "通过隧道强制所有客户端生成的流量。"
+msgstr "强制所有客户端生成的流量通过隧道。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:434
 msgid ""

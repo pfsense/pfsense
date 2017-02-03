@@ -309,8 +309,8 @@ if (!$input_errors && $type) {
 		</ul>
 		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
 		<ul class="list-group">
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr;?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr;?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
+			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=(is_ipaddr($ipaddr)?$ipaddr:$ipaddr['data']);?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
+			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=(is_ipaddr($ipaddr)?$ipaddr:$ipaddr['data']);?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
 		</ul>
 	</div>
 </div>

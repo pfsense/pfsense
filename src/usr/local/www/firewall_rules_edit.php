@@ -36,9 +36,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 /* build icmptypes valid for IPv4, IPv6 and IPv<any> */
-$icmptypes4 = array('any' => gettext('any'));
-$icmptypes6 = array('any' => gettext('any'));
-$icmptypes46 = array('any' => gettext('any'));
+$icmptypes4 = $icmptypes6 = $icmptypes46 = array();
 foreach ($icmptypes as $k => $v) {
 	if ($v['valid4']) {
 		$icmptypes4[$k] = $v['descrip'];
@@ -204,7 +202,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['proto'] = "any";
 	}
 
-	if ($a_filter[$id]['protocol'] == "icmp") {
+	if ($a_filter[$id]['protocol'] == "icmp" && isset($a_filter[$id]['icmptype'])) {
 		$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
 	}
 
@@ -300,6 +298,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
+
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
@@ -324,7 +323,7 @@ if ($_POST) {
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
-			$_POST['icmptype'] = $pconfig['icmptype'];
+			$_POST['icmptype_selection'] = explode(',', $pconfig['icmptype']);
 		}
 	}
 
@@ -423,14 +422,15 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
-	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
-		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	if (($_POST['proto'] == "icmp") && count($_POST['icmptype_selection'])) {
+		$pconfig['icmptype'] = implode(',', $_POST['icmptype_selection']);
 	} else {
 		unset($pconfig['icmptype']);
-	}
+	}  
 
-	/* input validation */
-	$reqdfields = explode(" ", "type proto");
+	/* further input validation */
+
+  $reqdfields = explode(" ", "type proto");
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {
 		$reqdfields[] = "src";
 		$reqdfields[] = "dst";
@@ -585,34 +585,46 @@ if ($_POST) {
 		}
 	}
 
+/* ICMP subtypes vary according to IP Protocol, so the form can legitimately return data from hidden checkboxes.
+   Solution - if a checkbox would have been hidden on the UI, ignore it here using array_intersect().
+   We also silently convert between "all subtypes" and the unset $config field in background as needed.
+*/
+
 	if ($_POST['proto'] == "icmp") {
-		$t =& $_POST['icmptype'];
-		if (isset($t) && !is_array($t)) {
-			// shouldn't happen but avoids making assumptions for data-sanitising
-			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
-		} elseif (!isset($t) || count($t) == 0) {
-			// not specified or none selected
-			unset($_POST['icmptype']);
+		if (isset($_POST['icmptype_selection']) && !is_array($_POST['icmptype_selection'])) {
+			// element present but not an array, substitute empty selection and report error
+			$input_errors[] = gettext("ICMP subtype list is incorrectly formatted.");
+			$_POST['icmptype_selection'] = array();
+		} elseif (!isset($_POST['icmptype_selection'])) {
+			// Null selection - substitute an empty array so we have consistent representation of form data
+			$_POST['icmptype_selection'] = array();
 		} else {
-			// check data
-			$bad_types = array();
-			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
-				// Only need to check valid if just one selected != "any", or >1 selected
-				$p = $_POST['ipprotocol'];
-				foreach ($t as $type) {
-					if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
-					    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
-					    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
-							$bad_types[] = $type;
-					}
-				}
-			}
+			// form contained a selection and it's an array. Does it contain only known icmp types?
+			$bad_types = array_diff($_POST['icmptype_selection'], array_keys($icmptypes));
 			if (count($bad_types) > 0) {
-				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+				$input_errors[] = gettext("ICMP subtype list cannot contain unrecognized subtypes: ") . implode(',', $bad_types);
+			}
+			// Detect and remove any duplicates? Not fatal but  remove them here.
+			// If no duplicates are present, count() can be used later to detect "select all"
+			if (count($_POST['icmptype_selection']) != count(array_unique($_POST['icmptype_selection']))) {
+				// We can fix it silently. To report it as an error, uncomment the next line
+				// $input_errors[] = gettext("ICMP subtype list cannot contain duplicate entries.");
+				$_POST['icmptype_selection'] = array_unique($_POST['icmptype_selection']);
+			}
+			// set $t = only *visible* selected icmptypes, i.e. excludes those whose checkboxes would have been hidden
+			// when form submitted (those should be completely ignored, as not applicable to the selected IP protocol)
+			$t = array_intersect($_POST['icmptype_selection'], array_keys($icmplookup[$_POST['ipprotocol']]['icmptypes']));
+			if (count($t) == 0) {
+				// No visible checkboxes were selected.
+				$input_errors[] = gettext("At least one valid ICMP type must be specified for an ICMP rule.");
+				unset($_POST['icmptype_selection']);
+			} else {
+				// Ok, we have a meaningful selection of icmptypes for the selected IP protocol. Use it.
+				$_POST['icmptype_selection'] = $t;
 			}
 		}
 	} else {
-		unset($_POST['icmptype']); // field not applicable, might hold junk from old hidden selections. Unset it.
+		unset($_POST['icmptype_selection']); // field not applicable. If set, might hold junk from old hidden selections. Unset it.
 	}
 
 	if ($_POST['ackqueue'] != "") {
@@ -848,10 +860,10 @@ if ($_POST) {
 		}
 
 		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
-		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype']) && !isset($_POST['icmptype']['any']) && count($_POST['icmptype']) > 0) {
-			//if any of these conditions not met, rule would apply to all icmptypes, so we would unset
-			$filterent['icmptype'] = implode(',', $_POST['icmptype']);
+		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype_selection']) && count($_POST['icmptype_selection']) > 0 && count($_POST['icmptype_selection']) < count($icmplookup[$_POST['ipprotocol']]['icmptypes'])) {
+			$filterent['icmptype'] = implode(',', $_POST['icmptype_selection']);
 		} else {
+			//if conditions not met, rule isn't icmp or applies to all icmptypes, so we unset
 			unset($filterent['icmptype']);
 		}
 
@@ -909,7 +921,7 @@ if ($_POST) {
 			$filterent['vlanprioset'] = $_POST['vlanprioset'];
 		}
 
-		// If we have an associated nat rule, make sure the source and destination doesn't change
+		// If we have an associated nat rule, make sure the source, destination, and icmp types (if any) don't change
 		if (isset($a_filter[$id]['associated-rule-id'])) {
 			$filterent['interface'] = $a_filter[$id]['interface'];
 			if (isset($a_filter[$id]['protocol'])) {
@@ -919,7 +931,7 @@ if ($_POST) {
 			}
 			if ($a_filter[$id]['protocol'] == "icmp" && $a_filter[$id]['icmptype']) {
 				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
-			} else if (isset($filterent['icmptype'])) {
+			} else {
 				unset($filterent['icmptype']);
 			}
 
@@ -1296,14 +1308,46 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('Choose which IP protocol this rule should match.');
 
-$group = new Form_Group("ICMP Subtypes");
-$group->add(new Form_Select(
-	'icmptype',
-	'ICMP subtypes',
-	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
-	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
-	true
-))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
+$group = new Form_Group('ICMP Subtypes'); 
+
+// generate ICMPTYPE checkboxes
+// If no existing selection, enable all.  Any not available under selected IP protocol will be hidden, & ignored on submit.
+// This probably works better for UI than using array_intersect to exclude them here
+$sel = (isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : array_keys($icmptypes);
+$html = '';
+foreach ($icmptypes as $type => $data) {
+	$chkbox = new Form_MultiCheckbox(
+		"icmptype_{$type}",
+		null,
+		$data['descrip'],
+		in_array($type, $sel),
+		$type
+	);
+	// manually edit bootstrap output: it sets name = id and we don't want that (we want name to reference an array)
+	$chkbox = str_replace("name=\"icmptype_{$type}\"", "name=\"icmptype_selection[]\"", $chkbox);
+	//wrap checkboxes with show/hide classes and a bit of spacing
+	$extraclasses = 'icmptype_chkbox' . 
+		($data['valid4'] ? ' icmptype_valid_inet' : '') .
+		($data['valid6'] ? ' icmptype_valid_inet6' : '') .
+		(($data['valid4'] && $data['valid6']) ? ' icmptype_valid_inet46' : '');
+	$html .= "<span class='{$extraclasses}' style='padding-right:10px'>{$chkbox}</span>\n";
+}
+
+$buttonall = (new Form_Button(
+	'btn_icmp_selectall',
+	'Select all'
+))->setAttribute('type','button')->addClass('btn-sm');
+
+$buttonnone = (new Form_Button(
+	'btn_icmp_selectnone',
+	'Deselect all'
+))->setAttribute('type','button')->addClass('btn-sm');
+
+$group->add(new Form_StaticText(
+	null,
+	$html . "<br />{$buttonall}&nbsp;&nbsp;{$buttonnone}"
+));
+
 $group->addClass('icmptype_section');
 
 $section->add($group);
@@ -1342,7 +1386,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	}
 
 	$ruleValues = array(
-		'any' => gettext('any'),
+		'any' => gettext('Any'),
 		'single' => gettext('Single host or alias'),
 		'network' => gettext('Network'),
 	);
@@ -1399,11 +1443,12 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
+
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' Port Range');
+	$group = new Form_Group($name .' port range');
 
 	$group->addClass($type . 'portrange');
 
@@ -1907,23 +1952,10 @@ events.push(function() {
 
 		// Hide ICMP types if not icmp rule
 		hideClass('icmptype_section', $('#proto').val() != 'icmp');
-		// Update ICMP help msg to match current IP protocol
-		$('#icmptype_help').html(icmphelp[$('#ipprotocol').val()]);
-		// Update ICMP types available for current IP protocol, copying over any still-valid selections
-		var listid = "#icmptype\\[\\]"; // for ease of use
-		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
-		var new_options = icmptypes[$('#ipprotocol').val()];
-		var new_html = '';
-		//remove and re-create the select element (otherwise the options can disappear in Safari)
-		$(listid).remove();
-		var select = $("<select></select>").attr("id", "icmptype[]").attr("name", "icmptype[]").addClass("form-control").attr("multiple", "multiple");
-		$('div.icmptype_section > div.col-sm-10').prepend(select);
-
-		for (var key in new_options) {
-			new_html += '<option value="' + key + (jQuery.inArray(key, current_sel) != -1 ? '" selected="selected">' : '">') + new_options[key] + '</option>\n';
-		}
-
-		$(listid).html(new_html);
+		// Update ICMP help msg and displayed icmptypes to match current IP protocol
+		setHelpText('icmptype_help', icmphelp[$('#ipprotocol').val()]);
+		hideClass('icmptype_chkbox',true); // hide all chkboxes initially
+		hideClass('icmptype_valid_' + $('#ipprotocol').val(), false); // reveal relevant chkboxes
 
 		ext_change();
 
@@ -1945,19 +1977,6 @@ events.push(function() {
 		show_source_port_range();
 	}
 
-	function icmptype_change() {
-		var listid = "#icmptype\\[\\]"; // for ease of use
-		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
-		if (jQuery.inArray('any', current_sel) != -1) {
-			// "any" negates all selections
-			$(listid).find('option').not('[value="any"]').removeAttr('selected');
-		}
-		if ($(listid + ' option:selected').length == 0) {
-			// no selection = select "any"
-			$(listid + ' option[value="any"]').prop('selected', true);
-		}
-	}
-
 	function src_rep_change() {
 		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
 	}
@@ -1970,18 +1989,14 @@ events.push(function() {
 
 <?php
 	// Generate icmptype data used in form JS
-	$out1 = "var icmptypes = [];\n";
-	$out2 = "var icmphelp = [];\n";
+	echo "var icmphelp = [];\n";
 	foreach ($icmplookup as $k => $v) {
 		$a = array();
 		foreach ($v['icmptypes'] as $icmp_k => $icmp_v) {
 			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
 		}
-		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
-		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', $v['helpmsg']) . "';\n";
+		echo "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', gettext($v['helpmsg'])) . "';\n";
 	}
-	echo $out1;
-	echo $out2;
 ?>
 
 	proto_change();
@@ -2042,8 +2057,17 @@ events.push(function() {
 		proto_change();
 	});
 
-	$('#icmptype\\[\\]').on('change', function() {
-			icmptype_change();
+	$('#btn_icmp_selectnone').on('click', function() {
+		$('.icmptype_section :checkbox').removeAttr('checked');
+	});
+
+	$('#btn_icmp_selectall').on('click', function() {
+		// deselect all, then select only visible icmptypes.
+		// this ensures no unexpected selections if proto changes
+		$('.icmptype_section :checkbox').removeAttr('checked');
+		// AFAIK some browsers don't like "attr", others need "attr". So do both.
+		$('.icmptype_section :checkbox:visible').attr('checked', true);
+		$('.icmptype_section :checkbox:visible').prop('checked', true);
 	});
 
 	$('#tcpflags_any').click(function () {
@@ -2075,9 +2099,20 @@ events.push(function() {
 	// When editing "associated" rules, everything except the enable, action, address family and desscription
 	// fields are disabled
 	function disable_most(disable) {
-		var elementsToDisable = [
-			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
-			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
+
+<?php
+	$disabled_static_elements = [
+				'interface', 'proto', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+				'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 
+				'dstendport_cust', 'btn_icmp_selectnone', 'btn_icmp_selectall'];
+	$disabled_icmp_checkboxes = array_map(
+						function($type) { return "icmptype_{$type}"; }, 
+						array_keys($icmptypes)
+					);
+	$disabled_elements_list = "'" . implode("', '", array_merge($disabled_static_elements, $disabled_icmp_checkboxes)) . "'";
+?>
+
+		var elementsToDisable = [<?=$disabled_elements_list ?>];
 
 		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {
 			disableInput(elementsToDisable[idx], disable);

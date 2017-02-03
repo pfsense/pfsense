@@ -1615,11 +1615,13 @@ function system_timezone_configure() {
 	}
 }
 
-function system_ntp_setup_gps($serialport) {
-	global $config, $g;
-	$gps_device = '/dev/gps0';
-	$serialport = '/dev/'.$serialport;
+function system_ntp_setup_gps($gps, $gps_idx) {
+	$gps_device = '/dev/gps' . $gps_idx;
+	$serialport = '/dev/' . $gps[port];
 
+	if (empty($gps[port])) {
+		return false;
+	}
 	if (!file_exists($serialport)) {
 		return false;
 	}
@@ -1629,45 +1631,47 @@ function system_ntp_setup_gps($serialport) {
 	@symlink($serialport, $gps_device);
 
 	$gpsbaud = '4800';
-	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['speed'])) {
-		switch ($config['ntpd']['gps']['speed']) {
-			case '16':
-				$gpsbaud = '9600';
-				break;
-			case '32':
-				$gpsbaud = '19200';
-				break;
-			case '48':
-				$gpsbaud = '38400';
-				break;
-			case '64':
-				$gpsbaud = '57600';
-				break;
-			case '80':
-				$gpsbaud = '115200';
-				break;
-		}
+	switch ($gps['speed']) {
+		case '16':
+			$gpsbaud = '9600';
+			break;
+		case '32':
+			$gpsbaud = '19200';
+			break;
+		case '48':
+			$gpsbaud = '38400';
+			break;
+		case '64':
+			$gpsbaud = '57600';
+			break;
+		case '80':
+			$gpsbaud = '115200';
+			break;
 	}
 
 	/* Configure the serial port for raw IO and set the speed */
 	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
 
 	/* Send the following to the GPS port to initialize the GPS */
-	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
-		$gps_init = base64_decode($config['ntpd']['gps']['initcmd']);
+	if (!empty($gps['type'])) {
+		$gps_init = base64_decode($gps['initcmd']);
 	} else {
 		$gps_init = base64_decode('JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ==');
 	}
 
-	/* XXX: Why not file_put_contents to the device */
-	@file_put_contents('/tmp/gps.init', $gps_init);
-	mwexec("cat /tmp/gps.init > {$serialport}");
+	@file_put_contents($gps_device, $gps_init);
 
-	/* Add /etc/remote entry in case we need to read from the GPS with tip */
-	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {
-		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
+	/* Remove old /etc/remote entry if it exists */
+	$gps_shortname = 'gps' . "$gps_idx";
+	if (intval(`grep -c "^{$gps_shortname}" /etc/remote`) != 0) {
+		mwexec("sed -n '/'{$gps_shortname}'/!p' /etc/remote > /etc/remote.new");
+		mwexec('mv /etc/remote.new /etc/remote');
 	}
 
+	/* Add /etc/remote entry in case we need to read from the GPS with tip */
+	if (intval(`grep -c "^{$gps_shortname}" /etc/remote`) == 0) {
+		@file_put_contents("/etc/remote", "{$gps_shortname}:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
+	}
 
 	return true;
 }
@@ -1758,84 +1762,59 @@ function system_ntp_configure() {
 	}
 	/* End PPS configuration */
 
-	/* Add GPS configuration */
-	if (is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['port']) &&
-	    file_exists('/dev/'.$config['ntpd']['gps']['port']) &&
-	    system_ntp_setup_gps($config['ntpd']['gps']['port'])) {
-		$ntpcfg .= "\n";
-		$ntpcfg .= "# GPS Setup\n";
-		$ntpcfg .= 'server 127.127.20.0 mode ';
-		if (!empty($config['ntpd']['gps']['nmea']) || !empty($config['ntpd']['gps']['speed']) || !empty($config['ntpd']['gps']['subsec']) || !empty($config['ntpd']['gps']['processpgrmf'])) {
-			if (!empty($config['ntpd']['gps']['nmea'])) {
-				$ntpmode = (int) $config['ntpd']['gps']['nmea'];
+	/* Add GPS configurations */
+	if (is_array($config['ntpd']['gpss'])) {
+		$gps_set = false;
+		foreach ($config['ntpd']['gpss'] as $i => $gps) {
+			if (system_ntp_setup_gps($gps, $i)) {
+				if (!$gps_set) {
+					$ntpcfg .= "\n# GPS Setup\n";
+					$gps_set = true;
+				}
+				$ntpcfg .= "server 127.127.20.$i mode ";
+				$ntpmode = 0;
+				if (!empty($gps['nmea'])) {
+					$ntpmode += (int) $gps['nmea'];
+				}
+				if (!empty($gps['speed'])) {
+					$ntpmode += (int) $gps['speed'];
+				}
+				if (!empty($gps['subsec'])) {
+					$ntpmode += 128;
+				}
+				if (!empty($gps['processpgrmf'])) {
+					$ntpmode += 256;
+				}
+				$ntpcfg .= (string) $ntpmode . ' minpoll 4 maxpoll 4';
+				if (!empty($gps['prefer'])) {
+					$ntpcfg .= ' prefer';
+				}
+				if (!empty($gps['noselect'])) {
+					$ntpcfg .= ' noselect ';
+				}
+				$ntpcfg .= "\nfudge 127.127.20.$i";
+				if (!empty($gps['fudge1'])) {
+					$ntpcfg .= ' time1 ' . $gps['fudge1'];
+				}
+				if (!empty($gps['fudge2'])) {
+					$ntpcfg .= ' time2 ' . $gps['fudge2'];
+				}
+				$ntpcfg .= ' flag1 ' . (int)!empty($gps['flag1']);
+				$ntpcfg .= ' flag2 ' . (int)!empty($gps['flag2']);
+				$ntpcfg .= ' flag3 ' . (int)!empty($gps['flag3']);
+				$ntpcfg .= ' flag4 ' . (int)!empty($gps['flag4']);
+				if (!empty($gps['refid'])) {
+					$ntpcfg .= ' refid ' . $gps['refid'];
+				}
+				if (!empty($gps['stratum'])) {
+					$ntpcfg .= ' stratum ' . $gps['stratum'];
+				}
+				$ntpcfg .= "\n";
 			}
-			if (!empty($config['ntpd']['gps']['speed'])) {
-				$ntpmode += (int) $config['ntpd']['gps']['speed'];
-			}
-			if (!empty($config['ntpd']['gps']['subsec'])) {
-				$ntpmode += 128;
-			}
-			if (!empty($config['ntpd']['gps']['processpgrmf'])) {
-				$ntpmode += 256;
-			}
-			$ntpcfg .= (string) $ntpmode;
-		} else {
-			$ntpcfg .= '0';
 		}
-		$ntpcfg .= ' minpoll 4 maxpoll 4';
-		if (empty($config['ntpd']['gps']['prefer'])) { /*note: this one works backwards */
-			$ntpcfg .= ' prefer';
-		}
-		if (!empty($config['ntpd']['gps']['noselect'])) {
-			$ntpcfg .= ' noselect ';
-		}
-		$ntpcfg .= "\n";
-		$ntpcfg .= 'fudge 127.127.20.0';
-		if (!empty($config['ntpd']['gps']['fudge1'])) {
-			$ntpcfg .= ' time1 ';
-			$ntpcfg .= $config['ntpd']['gps']['fudge1'];
-		}
-		if (!empty($config['ntpd']['gps']['fudge2'])) {
-			$ntpcfg .= ' time2 ';
-			$ntpcfg .= $config['ntpd']['gps']['fudge2'];
-		}
-		if (!empty($config['ntpd']['gps']['flag1'])) {
-			$ntpcfg .= ' flag1 1';
-		} else {
-			$ntpcfg .= ' flag1 0';
-		}
-		if (!empty($config['ntpd']['gps']['flag2'])) {
-			$ntpcfg .= ' flag2 1';
-		}
-		if (!empty($config['ntpd']['gps']['flag3'])) {
-			$ntpcfg .= ' flag3 1';
-		} else {
-			$ntpcfg .= ' flag3 0';
-		}
-		if (!empty($config['ntpd']['gps']['flag4'])) {
-			$ntpcfg .= ' flag4 1';
-		}
-		if (!empty($config['ntpd']['gps']['refid'])) {
-			$ntpcfg .= ' refid ';
-			$ntpcfg .= $config['ntpd']['gps']['refid'];
-		}
-		if (!empty($config['ntpd']['gps']['stratum'])) {
-			$ntpcfg .= ' stratum ';
-			$ntpcfg .= $config['ntpd']['gps']['stratum'];
-		}
-		$ntpcfg .= "\n";
-	} elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport']) &&
-	    file_exists('/dev/'.$config['ntpd']['gpsport']) &&
-	    system_ntp_setup_gps($config['ntpd']['gpsport'])) {
-		/* This handles a 2.1 and earlier config */
-		$ntpcfg .= "# GPS Setup\n";
-		$ntpcfg .= "server 127.127.20.0 mode 0 minpoll 4 maxpoll 4 prefer\n";
-		$ntpcfg .= "fudge 127.127.20.0 time1 0.155 time2 0.000 flag1 1 flag2 0 flag3 1\n";
-		// Fall back to local clock if GPS is out of sync?
-		$ntpcfg .= "server 127.127.1.0\n";
-		$ntpcfg .= "fudge 127.127.1.0 stratum 12\n";
 	}
 	/* End GPS configuration */
+
 	$auto_pool_suffix = "pool.ntp.org";
 	$have_pools = false;
 	$ntpcfg .= "\n\n# Upstream Servers\n";

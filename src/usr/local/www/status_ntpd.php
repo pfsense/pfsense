@@ -159,10 +159,25 @@ if (!isset($config['ntpd']['noquery'])) {
 	}
 }
 
-if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
-	$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
-	$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
-	$gpsport = fopen('/dev/gps0', 'r+');
+exec('/usr/local/sbin/ntpq -c "rv 0 peer"', $syspeer);
+$tmp = explode('=', $syspeer[0]);
+$syspeer = $tmp[1];
+
+if((int)$syspeer) {
+	exec("/usr/local/sbin/ntpq -nc \"rv $syspeer srcadr\"", $srcadr);
+	$tmp = explode('=', $srcadr[0]);
+	$srcadr = $tmp[1];
+}
+
+if(isset($srcadr) && (substr($srcadr, 0, 10) == '127.127.20') && is_array($config['ntpd']['gpss'])) {
+	$gps_idx = (int)substr($srcadr, 11);
+	$gps_config = $config['ntpd']['gpss'][$gps_idx];
+}
+
+if (isset($gps_ok) && isset($gps_config) && $gps_config['extstatus'] && ($gps_config['nmeaset']['gpgsv'] || $gps_config['nmeaset']['gpgga'])) {
+	$lookfor['GPGSV'] = $gps_config['nmeaset']['gpgsv'];
+	$lookfor['GPGGA'] = !isset($gps_sat) && $gps_config['nmeaset']['gpgga'];
+	$gpsport = fopen('/dev/gps' . $gps_idx, 'r+');
 	while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 		$buffer = fgets($gpsport);
 		if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {

@@ -51,26 +51,32 @@ if ($_REQUEST['updateme']) {
 		$inet_version = " -4";
 	}
 
-	exec("/usr/local/sbin/ntpq -pn -w $inet_version | /usr/bin/tail +3", $ntpq_output);
-	$ntpq_counter = 0;
 	$stratum_text = gettext("stratum");
-	foreach ($ntpq_output as $line) {
-		if (substr($line, 0, 1) == "*") {
-			//Active NTP Peer
-			$line = substr($line, 1);
-			$peerinfo = preg_split("/[\s\t]+/", $line);
-			if ($peerinfo[2] == "1") {
-				$syncsource = $peerinfo[0] . " (" . $stratum_text . " " . $peerinfo[2] . ", " . $peerinfo[1] . ")";
+	exec('/usr/local/sbin/ntpq -c "rv 0 peer"', $syspeer);
+	$tmp = explode('=', $syspeer[0]);
+	$syspeer = $tmp[1];
+	
+	if((int)$syspeer) {
+		exec("/usr/local/sbin/ntpq -nc \"rv $syspeer srcadr\"", $srcadr);
+		$tmp = explode('=', $srcadr[0]);
+		$srcadr = $tmp[1];
+		
+		exec("/usr/local/sbin/ntpq -nc \"rv $syspeer refid\"", $refid);
+		$tmp = explode('=', $refid[0]);
+		$refid = $tmp[1];
+		
+		exec("/usr/local/sbin/ntpq -nc \"rv $syspeer stratum\"", $stratum);
+		$tmp = explode('=', $stratum[0]);
+		$stratum = $tmp[1];
+		
+		if (substr($srcadr, 0, 10) == '127.127.20') {
+			$syncsource = ".$refid. ($stratum_text $stratum, GPS)";
+		} else {
+			if ($stratum == "1") {
+				$syncsource = "$srcadr ($stratum_text $stratum, .$refid.)";
 			} else {
-				$syncsource = $peerinfo[0] . " (" . $stratum_text . " " . $peerinfo[2] . ")";
+				$syncsource = "$srcadr ($stratum_text $stratum)";
 			}
-			$ntpq_counter++;
-		} elseif (substr($line, 0, 1) == "o") {
-			//Local PPS Peer
-			$line = substr($line, 1);
-			$peerinfo = preg_split("/[\s\t]+/", $line);
-			$syncsource = $peerinfo[1] . " (" . $stratum_text . " " . $peerinfo[2] . ", PPS)";
-			$ntpq_counter++;
 		}
 	}
 
@@ -138,10 +144,15 @@ if ($_REQUEST['updateme']) {
 		}
 	}
 
-	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
-		$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
-		$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
-		$gpsport = fopen('/dev/gps0', 'r+');
+	if(isset($srcadr) && (substr($srcadr, 0, 10) == '127.127.20') && is_array($config['ntpd']['gpss'])) {
+		$gps_idx = (int)substr($srcadr, 11);
+		$gps_config = $config['ntpd']['gpss'][$gps_idx];
+	}
+	
+	if (isset($gps_ok) && isset($gps_config) && $gps_config['extstatus'] && ($gps_config['nmeaset']['gpgsv'] || $gps_config['nmeaset']['gpgga'])) {
+		$lookfor['GPGSV'] = $gps_config['nmeaset']['gpgsv'];
+		$lookfor['GPGGA'] = !isset($gps_sat) && $gps_config['nmeaset']['gpgga'];
+		$gpsport = fopen('/dev/gps' .$gps_idx , 'r+');
 		while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 			$buffer = fgets($gpsport);
 			if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {
@@ -175,7 +186,7 @@ if ($_REQUEST['updateme']) {
 	<tr>
 		<th><?=gettext('Sync Source')?></th>
 		<td>
-		<?php if ($ntpq_counter == 0): ?>
+		<?php if (!(int)$syspeer): ?>
 			<i><?=gettext('No active peers available')?></i>
 		<?php else: ?>
 			<?=$syncsource;?>

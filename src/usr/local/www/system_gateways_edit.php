@@ -738,7 +738,7 @@ $group->add(new Form_Input(
 	['placeholder' => $dpinger_default['latencyhigh']]
 ));
 $group->setHelp('Low and high thresholds for latency in milliseconds. ' .
-	'Default is %d/%d.', [$dpinger_default['latencylow'], $dpinger_default['latencyhigh']]);
+	'Default is %d/%d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
 
 $section->add($group);
 
@@ -758,7 +758,7 @@ $group->add(new Form_Input(
 	['placeholder' => $dpinger_default['losshigh']]
 ));
 $group->setHelp('Low and high thresholds for packet loss in %%. ' .
-	'Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
+	'Default is %d/%d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -779,7 +779,7 @@ $section->addInput(new Form_Input(
 	$pconfig['loss_interval'],
 	['placeholder' => $dpinger_default['loss_interval']]
 ))->setHelp('Time interval in milliseconds before packets are treated as lost. '.
-	'Default is %d.', [$dpinger_default['loss_interval']]);
+	'Default is %d.', $dpinger_default['loss_interval']);
 
 $group = new Form_Group('Time Period');
 $group->add(new Form_Input(
@@ -792,7 +792,7 @@ $group->add(new Form_Input(
 	]
 ));
 $group->setHelp('Time period in milliseconds over which results are averaged. Default is %d.',
-	[$dpinger_default['time_period']]);
+	$dpinger_default['time_period']);
 $section->add($group);
 
 $group = new Form_Group('Alert interval');

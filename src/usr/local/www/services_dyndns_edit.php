@@ -328,7 +328,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['proxied']
 ))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
 			'through their servers. By Default this is disabled and your Real IP is exposed.'.
-			'More info: <a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>');
+			'More info: %s', '<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>');
 
 $section->addInput(new Form_Checkbox(
 	'verboselog',
@@ -391,7 +391,7 @@ $section->addInput(new Form_Textarea(
 	'Result Match',
 	$pconfig['resultmatch']
 ))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.' . '<br />' .
-			'To include the new IP in the request, put %IP% in its place.' . '<br />' .
+			'To include the new IP in the request, put %%IP%% in its place.' . '<br />' .
 			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)' . '<br />' .
 			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.');
 

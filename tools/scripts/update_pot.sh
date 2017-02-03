@@ -69,7 +69,7 @@ POT=$ROOT/src/usr/local/share/locale/pot/pfSense.pot
 		-kForm_MultiCheckbox:2 \
 		-kForm_IpAddress:2 \
 		-kForm_Select:2 \
-)
+) || exit 1
 
 ( \
 	cd $ROOT && \
@@ -82,4 +82,4 @@ POT=$ROOT/src/usr/local/share/locale/pot/pfSense.pot
 		-kForm_Checkbox:3 \
 		-kForm_StaticText:2 \
 		-kForm_MultiCheckbox:3 \
-)
+) || exit 1

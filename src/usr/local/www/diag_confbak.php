@@ -158,7 +158,7 @@ $section->addInput(new Form_Input(
 	'Backup Count',
 	'number',
 	$config['system']['backupcount']
-))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (' . $g['default_config_backup_count'] . ' for the current platform).');
+))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', $g['default_config_backup_count']);
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 

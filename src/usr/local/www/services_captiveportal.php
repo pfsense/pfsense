@@ -645,19 +645,19 @@ $section->addInput(new Form_Checkbox(
 	'Pass-through MAC Auto Entry',
 	'Enable Pass-through MAC automatic additions',
 	$pconfig['passthrumacadd']
-))->setHelp(sprintf('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
+))->setHelp('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
 			'%s or send a POST from another system. '  .
-			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>'));
+			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>');
 
 $section->addInput(new Form_Checkbox(
 	'passthrumacaddusername',
 	null,
 	'Enable Pass-through MAC automatic addition with username',
 	$pconfig['passthrumacaddusername']
-))->setHelp(sprintf('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
+))->setHelp('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
 			'To remove the passthrough MAC entry either log in and remove it manually from the %s or send a POST from another system.',
-			'<a href="services_captiveportal_mac.php">MAC tab</a>'));
+			'<a href="services_captiveportal_mac.php">MAC tab</a>');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',
@@ -1059,14 +1059,14 @@ $section->addInput(new Form_Input(
 			'with a submit button (name="accept") and a hidden field with name="redirurl" and value="$PORTAL_REDIRURL$". ' .
 			'Include the "auth_user" and "auth_pass" and/or "auth_voucher" input fields if authentication is enabled, otherwise it will always fail.' . '<br />' .
 			'Example code for the form:' . '<br />' .
-			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />
-			 &lt;/form&gt;')->addClass('btn btn-info btn-sm');
+			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />' .
+			'&lt;/form&gt;')->addClass('btn btn-info btn-sm');
 
 list($host) = explode(":", $_SERVER['HTTP_HOST']);
 $zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;

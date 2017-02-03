@@ -235,11 +235,13 @@ $counter = 0;
 foreach ($networkacl as $item) {
 	$group = new Form_Group($counter == 0 ? 'Networks':'');
 
+	$helptext = ($counter == $numrows) ? gettext('Network/mask'):"";
+
 	$group->add(new Form_IpAddress(
 		'acl_network' . $counter,
 		null,
 		$item['acl_network']
-	))->addMask('mask' . $counter, $item['mask'])->setWidth(3)->setHelp(($counter == $numrows) ? 'Network/mask':null);
+	))->addMask('mask' . $counter, $item['mask'])->setWidth(3)->setHelp($helptext);
 
 	$group->add(new Form_Checkbox(
 		'kod' . $counter,

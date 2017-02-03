@@ -185,7 +185,7 @@ $section->addInput(new Form_Input(
 	'*Roll #',
 	'text',
 	$pconfig['number']
-))->setHelp('Enter the Roll# (0..%d) found on top of the generated/printed vouchers', [$maxnumber]);
+))->setHelp('Enter the Roll# (0..%d) found on top of the generated/printed vouchers', $maxnumber);
 
 $section->addInput(new Form_Input(
 	'minutes',
@@ -199,7 +199,7 @@ $section->addInput(new Form_Input(
 	'*Count',
 	'text',
 	$pconfig['count']
-))->setHelp('Enter the number of vouchers (1..%d) found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again', [$maxcount]);
+))->setHelp('Enter the number of vouchers (1..%d) found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again', $maxcount);
 
 $section->addInput(new Form_Input(
 	'descr',

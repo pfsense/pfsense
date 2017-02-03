@@ -593,8 +593,7 @@ $section->addInput(new Form_Checkbox(
 	'Disabled',
 	'Disable this gateway',
 	$pconfig['disabled']
-))->setHelp('Set this option to disable this gateway without removing it from the '.
-	'list.');
+))->setHelp('Set this option to disable this gateway without removing it from the list.');
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -737,8 +736,8 @@ $group->add(new Form_Input(
 	$pconfig['latencyhigh'],
 	['placeholder' => $dpinger_default['latencyhigh']]
 ));
-$group->setHelp('Low and high thresholds for latency in milliseconds.
-	Default is %d/%d.', [$dpinger_default['latencylow'], $dpinger_default['latencyhigh']]);
+$group->setHelp('Low and high thresholds for latency in milliseconds. ' .
+	'Default is %d/%d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
 
 $section->add($group);
 
@@ -757,8 +756,8 @@ $group->add(new Form_Input(
 	$pconfig['losshigh'],
 	['placeholder' => $dpinger_default['losshigh']]
 ));
-$group->setHelp('Low and high thresholds for packet loss in %%.
-	Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
+$group->setHelp('Low and high thresholds for packet loss in %%. ' .
+	'Default is %d/%d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -770,7 +769,7 @@ $section->addInput(new Form_Input(
 		'placeholder' => $dpinger_default['interval'],
 		'max' => 86400
 	]
-))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', [$dpinger_default['interval']]);
+))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', $dpinger_default['interval']);
 
 $section->addInput(new Form_Input(
 	'loss_interval',
@@ -779,7 +778,7 @@ $section->addInput(new Form_Input(
 	$pconfig['loss_interval'],
 	['placeholder' => $dpinger_default['loss_interval']]
 ))->setHelp('Time interval in milliseconds before packets are treated as lost. '.
-	'Default is %d.', [$dpinger_default['loss_interval']]);
+	'Default is %d.', $dpinger_default['loss_interval']);
 
 $group = new Form_Group('Time Period');
 $group->add(new Form_Input(
@@ -792,7 +791,7 @@ $group->add(new Form_Input(
 	]
 ));
 $group->setHelp('Time period in milliseconds over which results are averaged. Default is %d.',
-	[$dpinger_default['time_period']]);
+	$dpinger_default['time_period']);
 $section->add($group);
 
 $group = new Form_Group('Alert interval');
@@ -806,7 +805,7 @@ $group->add(new Form_Input(
 	]
 ));
 $group->setHelp('Time interval in milliseconds between checking for an alert condition. Default is %d.',
-	[$dpinger_default['alert_interval']]);
+	$dpinger_default['alert_interval']);
 $section->add($group);
 
 $section->addInput(new Form_StaticText(

@@ -1303,7 +1303,7 @@ $group->add(new Form_Select(
 	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
 	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
 	true
-))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
+))->setHelp('%s', '<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
 $group->addClass('icmptype_section');
 
 $section->add($group);
@@ -1435,7 +1435,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-	$group->setHelp(sprintf('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.',strtolower($name)));
+	$group->setHelp('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.', strtolower($name));
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);

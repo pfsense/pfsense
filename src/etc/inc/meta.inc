@@ -58,7 +58,7 @@ function list_phpfiles($path, & $found) {
 
 	$dir = opendir($path);
 	if (!$dir) {
-		printf(gettext("list_phpfiles: unable to examine path %s\n"), $path);
+		printf(gettext("list_phpfiles: unable to examine path %s") . "\n", $path);
 		return;
 	}
 
@@ -94,7 +94,7 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 
 	$fdata = @file_get_contents($fpath);
 	if (!$fdata) {
-		printf(gettext("unable to read %s\n"), $fpath);
+		printf(gettext("unable to read %s") . "\n", $fpath);
 		continue;
 	}
 

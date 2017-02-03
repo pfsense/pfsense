@@ -110,10 +110,16 @@ class Form_Input extends Form_Element
 		return $this->_tagName;
 	}
 
-	public function setHelp($help, array $params = array())
+	public function setHelp()
 	{
-		$this->_help = $help;
-		$this->_helpParams = $params;
+		$args = func_get_args();
+
+		if (strlen($args[0]) < 4096) {
+			$args[0] = gettext($args[0]);
+		}
+
+		$this->_help = call_user_func_array('sprintf', $args);
+		$this->_helpParams = "";
 
 		return $this;
 	}
@@ -239,17 +245,7 @@ class Form_Input extends Form_Element
 
 		if (!empty($this->_help))
 		{
-			/* Strings longer than this will break gettext. */
-			if (strlen($this->_help) < 4096) {
-				$help = gettext($this->_help);
-			} else {
-				$help = $this->_help;
-			}
-
-			if (!empty($this->_helpParams))
-				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
-
-			$help = '<span class="help-block">'. $help .'</span>';
+			$help = '<span class="help-block">'. $this->_help .'</span>';
 		}
 
 		return <<<EOT

@@ -943,6 +943,8 @@ create_distribution_tarball() {
 }
 
 create_iso_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
 
 	if [ -z "${ISOPATH}" ]; then
@@ -954,7 +956,14 @@ create_iso_image() {
 
 	mkdir -p $(dirname ${ISOPATH})
 
-	customize_stagearea_for_image "iso"
+	local _image_path=${ISOPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/${PRODUCT_NAME_SUFFIX}-/&${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "iso" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
@@ -970,15 +979,15 @@ create_iso_image() {
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \
-		${ISOPATH} \
+		${_image_path} \
 		${INSTALLER_CHROOT_DIR}
 
-	if [ ! -f "${ISOPATH}" ]; then
+	if [ ! -f "${_image_path}" ]; then
 		echo "ERROR! ISO image was not built"
 		print_error_pfS
 	fi
 
-	gzip -qf $ISOPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> ISO created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

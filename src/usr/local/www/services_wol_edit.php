@@ -141,14 +141,14 @@ $section->addInput(new Form_Input(
 	'*MAC address',
 	'text',
 	$pconfig['mac']
-))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
+))->setHelp('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp(gettext('A description may be entered here for administrative reference (not parsed).'));
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 print $form;

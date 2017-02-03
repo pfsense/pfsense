@@ -193,7 +193,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 		<div class="container">
 			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 				<font color="white">
-				<p><h3><?=sprintf(gettext("Welcome to %s!\n"), $g['product_name'])?></h3></p>
+				<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
 				<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
 				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
 				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>

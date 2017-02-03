@@ -218,7 +218,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['duid'],
 	['placeholder' => 'DUID-LLT - ETH -- TIME --- ---- address ---- xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
-))->setHelp(gettext('Enter a DUID in the following format: ') . '<br />' .
+))->setHelp('Enter a DUID in the following format: %1$s %2$s', '<br />',
 			'DUID-LLT - ETH -- TIME --- ---- address ---- ' .
 			'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
 

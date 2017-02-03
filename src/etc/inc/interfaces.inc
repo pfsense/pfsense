@@ -3292,30 +3292,29 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	$mac = get_interface_mac($realhwif);
+	$current_mac = get_interface_mac($realhwif);
+	$vendor_mac = get_interface_vendor_mac($realhwif);
+	$spoof_mac = $wancfg['spoofmac'] ?: $vendor_mac;
 	/*
 	 * Don't try to reapply the spoofed MAC if it's already applied.
 	 * When ifconfig link is used, it cycles the interface down/up, which triggers
 	 * the interface config again, which attempts to spoof the MAC again,
 	 * which cycles the link again...
 	 */
-	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
+	if (!empty($spoof_mac) && ($spoof_mac != $current_mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($wancfg['spoofmac']));
-	} else {
-
-		if ($mac == "ff:ff:ff:ff:ff:ff") {
-			/*   this is not a valid mac address.  generate a
-			 *   temporary mac address so the machine can get online.
-			 */
-			echo gettext("Generating new MAC address.");
-			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-				" link " . escapeshellarg($random_mac));
-			$wancfg['spoofmac'] = $random_mac;
-			write_config();
-			file_notice("MAC Address altered", sprintf(gettext('The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
-		}
+			" link " . escapeshellarg($spoof_mac));
+	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
+		/*   this is not a valid mac address.  generate a
+		 *   temporary mac address so the machine can get online.
+		 */
+		echo gettext("Generating new MAC address.");
+		$random_mac = generate_random_mac_address();
+		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
+			" link " . escapeshellarg($random_mac));
+		$wancfg['spoofmac'] = $random_mac;
+		write_config();
+		file_notice("MAC Address altered", sprintf(gettext('The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
 	}
 
 	/* media */
@@ -4549,7 +4548,7 @@ function DHCP_Config_File_Override($wancfg, $wanif) {
 	$dhclientconf = @file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
 
 	if ($dhclientconf === false) {
-		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading.\n"), $wancfg['adv_dhcp_config_file_override_path']));
+		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading."), $wancfg['adv_dhcp_config_file_override_path']));
 		return '';
 	} else {
 		return DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
@@ -6013,9 +6012,23 @@ function get_interface_mtu($interface) {
 }
 
 function get_interface_mac($interface) {
-
 	$macinfo = pfSense_get_interface_addresses($interface);
 	return $macinfo["macaddr"];
+}
+
+function get_interface_vendor_mac($interface) {
+	global $g;
+
+	$mac = "";
+	$mac_file = "{$g['cf_conf_path']}/vendor_mac_{$interface}";
+	if (file_exists($mac_file)) {
+		$mac = file_get_contents($mac_file);
+		if (!is_macaddr($mac)) {
+			$mac = "";
+		}
+	}
+
+	return $mac;
 }
 
 /****f* pfsense-utils/generate_random_mac_address

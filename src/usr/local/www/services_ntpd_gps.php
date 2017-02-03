@@ -173,6 +173,12 @@ if ($_POST) {
 	} else {
 		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
 	}
+	
+	if (!empty($_POST['processpgrmf'])) {
+		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
+	} elseif (isset($config['ntpd']['gps']['processpgrmf']) || $config['ntpd']['gps']['type'] !== 'Garmin') {
+		unset($config['ntpd']['gps']['processpgrmf']);
+	}
 
 	if (!empty($_POST['gpsfudge1'])) {
 		$config['ntpd']['gps']['fudge1'] = $_POST['gpsfudge1'];
@@ -376,6 +382,13 @@ $section->addInput(new Form_Select(
 	$nmealist['options'],
 	true
 ))->setHelp('By default NTP will listen for all supported NMEA sentences. One or more sentences to listen for may be specified.');
+
+$section->addInput(new Form_Checkbox(
+	'processpgrmf',
+	null,
+	'Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked).',
+	$pconfig['processpgrmf']
+));
 
 $section->addInput(new Form_Input(
 	'gpsfudge1',
@@ -588,6 +601,7 @@ events.push(function() {
 
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
+		$('#processpgrmf').prop('checked', false);
 		$('#gpsspeed').val(0);
 		$('#gpsfudge1').val(0);
 		$('#gpsinitcmd').val(get_gps_string(type));
@@ -686,7 +700,9 @@ events.push(function() {
 	// When the 'GPS' selector is changed, we set the gps defaults
 	$('#gpstype').on('change', function() {
 		set_gps_default($(this).val());
+		hideInput('processpgrmf', $(this).val() !== "Garmin");
 	});
+	hideInput('processpgrmf', '<?=$pconfig['type']?>' !== "Garmin");
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
 		set_gps_default('<?=$pconfig['type']?>');

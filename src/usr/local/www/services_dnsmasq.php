@@ -255,11 +255,11 @@ $section->addInput(new Form_Checkbox(
 	'DHCP Registration',
 	'Register DHCP leases in DNS forwarder',
 	$pconfig['regdhcp']
-))->setHelp(sprintf('If this option is set, then machines that specify'.
+))->setHelp('If this option is set machines that specify'.
 			' their hostname when requesting a DHCP lease will be registered'.
 			' in the DNS forwarder, so that their name can be resolved.'.
 			' The domain in %1$sSystem: General Setup%2$s should also'.
-			' be set to the proper value.','<a href="system.php">','</a>'))
+			' be set to the proper value.','<a href="system.php">','</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -267,10 +267,10 @@ $section->addInput(new Form_Checkbox(
 	'Static DHCP',
 	'Register DHCP static mappings in DNS forwarder',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf('If this option is set, then DHCP static mappings will '.
+))->setHelp('If this option is set, DHCP static mappings will '.
 					'be registered in the DNS forwarder, so that their name can be '.
 					'resolved. The domain in %1$sSystem: General Setup%2$s should also '.
-					'be set to the proper value.','<a href="system.php">','</a>'))
+					'be set to the proper value.','<a href="system.php">','</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -278,9 +278,9 @@ $section->addInput(new Form_Checkbox(
 	'Prefer DHCP',
 	'Resolve DHCP mappings first',
 	$pconfig['dhcpfirst']
-))->setHelp(sprintf("If this option is set, then DHCP mappings will ".
+))->setHelp("If this option is set DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
-					"affects the name given for a reverse lookup (PTR)."))
+					"affects the name given for a reverse lookup (PTR).")
 	->addClass('toggle-dhcp');
 
 $group = new Form_Group('DNS Query Forwarding');
@@ -290,28 +290,28 @@ $group->add(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Query DNS servers sequentially',
 	$pconfig['strict_order']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
-					"rather than all at once in parallel. ", $g['product_name']));
+					"rather than all at once in parallel. ", $g['product_name']);
 
 $group->add(new Form_Checkbox(
 	'domain_needed',
 	null,
 	'Require domain',
 	$pconfig['domain_needed']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.	 ".
-					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']));
+					"If the name is not known from /etc/hosts or DHCP then a \"not found\" answer is returned. ", $g['product_name']);
 
 $group->add(new Form_Checkbox(
 	'no_private_reverse',
 	null,
 	'Do not forward private reverse lookups',
 	$pconfig['no_private_reverse']
-))->setHelp(sprintf("If this option is set, %s DNS Forwarder (dnsmasq) will ".
+))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
 					"not forward reverse DNS lookups (PTR) for private addresses (RFC 1918) to upstream name servers.  ".
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
-					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']));
+					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ", $g['product_name']);
 
 $section->add($group);
 

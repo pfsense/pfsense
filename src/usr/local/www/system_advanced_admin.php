@@ -405,7 +405,7 @@ $section->addInput(new Form_Checkbox(
 	'disable this automatically added rule, so access to the webConfigurator is '.
 	'controlled by the user-defined firewall rules (ensure a firewall rule is '.
 	'in place that allows access, to avoid being locked out!) <em>Hint: the &quot;Set interface(s) IP address&quot; '.
-	'option in the console menu resets this setting as well.</em>', [$lockout_interface]);
+	'option in the console menu resets this setting as well.</em>', $lockout_interface);
 
 $section->addInput(new Form_Checkbox(
 	'nodnsrebindcheck',

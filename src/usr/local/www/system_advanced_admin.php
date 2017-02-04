@@ -324,8 +324,10 @@ $group->add(new Form_Checkbox(
 	'https'
 ))->displayAsRadio();
 
-$group->setHelp($certs_available ? '':'No Certificates have been defined. A certificate is required before SSL can be enabled. '.
-	'<a href="system_certmanager.php">'. gettext("Create or Import").'</a> '.' a Certificate.');
+if (!$certs_available) {
+	$group->setHelp('No Certificates have been defined. A certificate is required before SSL can be enabled. %1$s Create or Import %2$s a Certificate.',
+		'<a href="system_certmanager.php">', '</a>');
+}
 
 $section->add($group);
 
@@ -412,11 +414,11 @@ $section->addInput(new Form_Checkbox(
 	'DNS Rebind Check',
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
-))->setHelp('When this is unchecked, the system is protected against <a '.
-	'href="http://en.wikipedia.org/wiki/DNS_rebinding">DNS Rebinding attacks</a>. '.
+))->setHelp('When this is unchecked, the system is protected against %1$sDNS Rebinding attacks%2$s. '.
 	'This blocks private IP responses from the configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
-	'name resolution in the environment.');
+	'name resolution in the environment.',
+	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
 
 $section->addInput(new Form_Input(
 	'althostnames',
@@ -436,8 +438,8 @@ $section->addInput(new Form_Checkbox(
 	'against HTTP_REFERER redirection attempts. Check this box to disable this '.
 	'protection if it interferes with webConfigurator access in certain '.
 	'corner cases such as using external scripts to interact with this system. More '.
-	'information on HTTP_REFERER is available from <a target="_blank" '.
-	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
+	'information on HTTP_REFERER is available from %1$sWikipedia%2$s',
+	'<a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
 
 gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 
@@ -456,9 +458,9 @@ $section->addInput(new Form_Checkbox(
 	'Authentication Method',
 	'Disable password login for Secure Shell (RSA/DSA key only)',
 	$pconfig['sshdkeyonly']
-))->setHelp('When enabled, authorized keys need to be configured for each <a '.
-	'href="system_usermanager.php">user</a> that has been granted secure shell '.
-	'access.');
+))->setHelp('When enabled, authorized keys need to be configured for each '.
+	'%1$suser%2$s that has been granted secure shell '.
+	'access.', '<a href="system_usermanager.php">', '</a>');
 
 $section->addInput(new Form_Input(
 	'sshport',

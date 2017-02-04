@@ -463,7 +463,7 @@ $group->add(new Form_Input(
 
 $group->setHelp('Timeouts for states can be scaled adaptively as the number of '.
 	'state table entries grows. Leave blank to use default values, set to '.
-	'0 to disable Adaptive Timeouts');
+	'0 to disable Adaptive Timeouts.');
 
 $section->add($group);
 

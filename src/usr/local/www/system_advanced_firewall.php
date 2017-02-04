@@ -428,7 +428,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Note: This converts %s into a routing only platform!<br/>'.
 	'Note: This will also turn off NAT! To only disable NAT, '.
 	'and not firewall rules, visit the <a href="firewall_nat_out.php">Outbound '.
-	'NAT</a> page.', [$g["product_name"]]);
+	'NAT</a> page.', $g["product_name"]);
 
 $section->addInput(new Form_Checkbox(
 	'disablescrub',

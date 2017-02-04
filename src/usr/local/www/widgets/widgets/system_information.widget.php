@@ -63,24 +63,24 @@ require_once('system.inc');
 include_once("includes/functions.inc.php");
 
 $sysinfo_items = array(
-	'name' => 'Name',
-	'system' => 'System', 'version' => 'Version',
-	'version' => 'Version',
-	'platform' => 'Platform',
-	'cpu_type' => 'CPU Type',
-	'hwcrypto' => 'Hardware Crypto',
-	'uptime' => 'Uptime',
-	'current_datetime' => 'Current Date/Time',
-	'dns_servers' => 'DNS Server(s)',
-	'last_config_change' => 'Last Config Change',
-	'state_table_size' => 'State Table Size',
-	'mbuf_usage' => 'MBUF Usage',
-	'temperature' => 'Temperature',
-	'load_average' => 'Load Average',
-	'cpu_usage' => 'CPU Usage',
-	'memory_usage' => 'Memory Usage',
-	'swap_usage' => 'Swap Usage',
-	'disk_usage' => 'Disk Usage'
+	'name' => gettext('Name'),
+	'system' => gettext('System'),
+	'version' => gettext('Version'),
+	'platform' => gettext('Platform'),
+	'cpu_type' => gettext('CPU Type'),
+	'hwcrypto' => gettext('Hardware Crypto'),
+	'uptime' => gettext('Uptime'),
+	'current_datetime' => gettext('Current Date/Time'),
+	'dns_servers' => gettext('DNS Server(s)'),
+	'last_config_change' => gettext('Last Config Change'),
+	'state_table_size' => gettext('State Table Size'),
+	'mbuf_usage' => gettext('MBUF Usage'),
+	'temperature' => gettext('Temperature'),
+	'load_average' => gettext('Load Average'),
+	'cpu_usage' => gettext('CPU Usage'),
+	'memory_usage' => gettext('Memory Usage'),
+	'swap_usage' => gettext('Swap Usage'),
+	'disk_usage' => gettext('Disk Usage')
 	);
 
 if ($_REQUEST['getupdatestatus']) {

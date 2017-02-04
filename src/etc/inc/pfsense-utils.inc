@@ -2801,7 +2801,13 @@ function get_locale_list() {
 		"tr" => gettext("Turkish"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 	);
-	asort($locales);
+
+	// If the locales are sorted, the order changes depending on the language selected. If the user accidentally
+	// selects the wrong language, this makes it very difficult to guess the intended language. NOT sorting
+	// allows the user to remember that English (say) is the second on the list and to get back to it more easily
+
+	//asort($locales);
+
 	return $locales;
 }
 

@@ -448,7 +448,7 @@ $group->add(new Form_Input(
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
 	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
-	'Defaults to 60% of the Firewall Maximum States value');
+	'Defaults to 60%% of the Firewall Maximum States value');
 
 $group->add(new Form_Input(
 	'adaptiveend',
@@ -460,7 +460,7 @@ $group->add(new Form_Input(
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
 	'reached (set a lower state limit, see below). '.
-	'Defaults to 120% of the Firewall Maximum States value');
+	'Defaults to 120%% of the Firewall Maximum States value');
 
 $group->setHelp('Timeouts for states can be scaled adaptively as the number of '.
 	'state table entries grows. Leave blank to use default values, set to '.
@@ -476,7 +476,7 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
 ))->setHelp('Maximum number of connections to hold in the firewall state table. '.
 	'<br/>Note: Leave this blank for the default. On this system the default '.
-	'size is: %d', [pfsense_default_state_size()]);
+	'size is: %d', pfsense_default_state_size());
 
 $section->addInput(new Form_Input(
 	'maximumtableentries',
@@ -487,7 +487,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
 	'sshlockout, snort, etc, combined.<br/>Note: Leave this blank for the '.
 	'default. On this system the default size is: %d',
-	[pfsense_default_table_entries_size()]);
+	pfsense_default_table_entries_size());
 
 $section->addInput(new Form_Input(
 	'maximumfrags',

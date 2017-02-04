@@ -83,7 +83,7 @@ class Route53
 	* @return string XML document
 	*/
 	public function getRequestBody($fqdn, $ip, $ttl){
-		$xmlreq .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		$xmlreq = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 		$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
 		$xmlreq .= "<ChangeBatch><Changes><Change>";
 		$xmlreq .= "<Action>UPSERT</Action>";
@@ -123,45 +123,33 @@ class Route53
 		$amz_date = sprintf("%sT%sZ", gmdate('Ymd'), gmdate('His'));
 		$date_stamp = gmdate('Ymd');
 
-		$canonical_headers = sprintf("content-type:%s\nhost:%s\n:x-amx-date:%s\n",
+		$canonical_headers = sprintf("content-type:%s\nhost:%s\nx-amz-date:%s\n",
 			"text/xml", "route53.amazonaws.com", $amz_date);
 
 		$signed_headers = "content-type;host;x-amz-date";
 
-		$canonical_request = sprintf("%s\n%s\n/\n/%s\n%s\n%s\n ", 
+		$canonical_request = sprintf("%s\n%s\n\n%s\n%s\n%s", 
 			"POST", $canonical_uri, $canonical_headers, $signed_headers, $requestBodySHA256);
-
 		$algorithm = "AWS4-HMAC-SHA256";
-		$credential_scope = sprintf("%s/%s/%s/%s", $date_stamp, $regionId, "route53domains", "aws4_request");
-		$string_to_sign = sprintf("%s\n%s\n%s\n%s ", 
+		$credential_scope = sprintf("%s/%s/%s/%s", $date_stamp, $regionId, "route53", "aws4_request");
+		$string_to_sign = sprintf("%s\n%s\n%s\n%s", 
 			$algorithm, $amz_date, $credential_scope, hash("sha256", $canonical_request));
-		$signing_key = getAWS4SigningKey($this->__secretKey, $date_stamp, $regionId);
 
-		$signature = hash_hmac("sha256", $string_to_sign, $signing_key);
+		$kSecret = sprintf("AWS4%s", $this->__secretKey);
+		$kDate = hash_hmac("sha256", $date_stamp, $kSecret, true);
+		$kRegion = hash_hmac("sha256", $regionId, $kDate, true);
+		$kService = hash_hmac("sha256", "route53", $kRegion, true);
+		$signing_key = hash_hmac("sha256","aws4_request", $kService, true);
 
-		$authorization_header = sprintf("%s Credential=%s/%s, SignedHeader=%s Signature=%s",
+		$signature = bin2hex(hash_hmac("sha256", $string_to_sign, $signing_key, true));
+
+		$authorization_header = sprintf("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
 			$algorithm, $this->__accessKey, $credential_scope, $signed_headers, $signature);
 
-		$httphead[] = array();
 		$httphead[] = "Content-Type: text/xml";
 		$httphead[] = sprintf("X-Amz-Date: %s", $amz_date);
 		$httphead[] = sprintf("Authorization: %s", $authorization_header);
 		return $httphead;
-	}
-
-	/**
-	* Return Signing key
-	*
-	* @param string secretKey The AWS key
-	* @param string dateStamp The AWS signing date in the form YYYYMMDD
-	* @param string regionName The AWS region name - e.g. us-east-1
-	*/
-	public function getAWS4SigningKey($secretKey, $dateStamp, $regionName){
-		$kSecret = sprintf("AWS4%s", $secretKey);
-		$kDate = hash_hmac("sha256", $dateStamp, $kSecret);
-		$kRegion = hash_hmac("sha256", $regionName, $kDate);
-		$kService = hash_hmac("sha256", "route53domains", $kRegion);
-		return hash_hmac("sha256", "aws4_request", $kService);
 	}
 }
 

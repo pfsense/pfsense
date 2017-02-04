@@ -96,7 +96,7 @@
 	 *  HE.net IPv6     - Last Tested: 7 July 2013
 	 *  HE.net Tunnel   - Last Tested: 28 June 2011
 	 *  SelfHost        - Last Tested: 26 December 2011
-	 *  Amazon Route 53 - Last Tested: 30 August 2016 
+	 *  Amazon Route 53 - Last Tested: 04 February 2017
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
 	 *  CloudFlare      - Last Tested: 05 September 2016
 	 *  CloudFlare IPv6 - Last Tested: 17 July 2016
@@ -650,10 +650,10 @@
 				case 'route53':		
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
-					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
+					list($r53_regionId, $r53_zoneId) = split('/', $this->_dnsZoneID);
+					$apiurl = $r53->getApiUrl($r53_zoneId);
 					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
-					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneId, "us-east-1", 
-						hash("sha256",$xmlreq));
+					$httphead = $r53->getHttpPostHeaders($r53_zoneId, $r53_regionId, hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
 						log_error(sprintf("Sending reuquest to: %s", $apiurl));

@@ -1617,9 +1617,9 @@ function system_timezone_configure() {
 
 function system_ntp_setup_gps($gps, $gps_idx) {
 	$gps_device = '/dev/gps' . $gps_idx;
-	$serialport = '/dev/' . $gps[port];
+	$serialport = '/dev/' . $gps['port'];
 
-	if (empty($gps[port])) {
+	if (empty($gps['port'])) {
 		return false;
 	}
 	if (!file_exists($serialport)) {
@@ -1662,7 +1662,7 @@ function system_ntp_setup_gps($gps, $gps_idx) {
 	@file_put_contents($gps_device, $gps_init);
 
 	/* Remove old /etc/remote entry if it exists */
-	$gps_shortname = 'gps' . "$gps_idx";
+	$gps_shortname = "gps$gps_idx";
 	if (intval(`grep -c "^{$gps_shortname}" /etc/remote`) != 0) {
 		mwexec("sed -n '/'{$gps_shortname}'/!p' /etc/remote > /etc/remote.new");
 		mwexec('mv /etc/remote.new /etc/remote');

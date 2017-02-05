@@ -592,7 +592,7 @@ if ($_POST) {
 	if ($_POST['proto'] == "icmp") {
 		$t = $_POST['icmptype'];
 		// note this checks format and in addition, unsets the field if not an HTML-safe string
-		if (!isset($t) || !is_string($t) || !preg_match('/^[a-zA-Z0-9]+(,[a-zA-Z0-9]+)*$/', $t)) {
+		if (!isset($t) || !is_string($t) || !preg_match('/^[a-zA-Z0-9-_]+(,[a-zA-Z0-9-_]+)*$/', $t)) {
 			$input_errors[] = gettext("One or more ICMP subtypes must be selected for an ICMP rule.");
 			unset($_POST['icmptype']);
 		} else {

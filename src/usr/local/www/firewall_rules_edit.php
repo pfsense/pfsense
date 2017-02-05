@@ -53,7 +53,7 @@ foreach ($icmptypes as $k => $v) {
 $icmplookup = array(
 	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
 	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
-	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 <i>or</i> IPv6, not both)'))
+	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
 );
 
 if (isset($_POST['referer'])) {
@@ -1166,10 +1166,10 @@ $section->addInput(new Form_Select(
 	$pconfig['type'],
 	$values
 ))->setHelp('Choose what to do with packets that match the criteria specified '.
-	'below.<br/>Hint: the difference between block and reject is that with '.
+	'below.%sHint: the difference between block and reject is that with '.
 	'reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned '.
 	'to the sender, whereas with block the packet is dropped silently. In '.
-	'either case, the original packet is discarded.');
+	'either case, the original packet is discarded.', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',
@@ -1393,9 +1393,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 			null,
 			'fa-cog'
 		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
-			'The <b>Source Port Range</b> for a connection is typically random '.
+			'The %1$sSource Port Range%2$s for a connection is typically random '.
 			'and almost never equal to the destination port. '.
-			'In most cases this setting must remain at its default value, <b>any</b>.');
+			'In most cases this setting must remain at its default value, %1$sany%2$s.', '<b>', '</b>');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
@@ -1450,8 +1450,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If doing a lot of logging, consider using a remote '.
-	'syslog server (see the <a href="status_logs_settings.php">Status: System Logs: '.
-	'Settings</a> page).');
+	'syslog server (see the %1$sStatus: System Logs: Settings%2$s page).', '<a href="status_logs_settings.php">', '</a>');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -1514,7 +1513,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['tag']
 ))->setHelp('A packet matching this rule can be marked and this mark used to match '.
-	'on other NAT/filter rules. It is called <b>Policy filtering</b>.');
+	'on other NAT/filter rules. It is called %1$sPolicy filtering%2$s.', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
 	'tagged',
@@ -1596,8 +1595,8 @@ $section->addInput(new Form_Select(
 		'synproxy state' => gettext('Synproxy'),
 		'none' => gettext('None'),
 	)
-))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.' . '<br />' .
-			'<span></span>');
+))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.%1$s',
+			'<br /><span></span>');
 
 $section->addInput(new Form_Checkbox(
 	'nosync',
@@ -1687,9 +1686,10 @@ $group->add(new Form_Select(
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
 	'In is also selected. The Out selection is applied to traffic leaving '.
 	'the interface where the rule is created, the In selection is applied to traffic coming '.
-	'into the chosen interface.<br />If creating a floating rule, if the '.
+	'into the chosen interface.%1$sIf creating a floating rule, if the '.
 	'direction is In then the same rules apply, if the direction is Out the '.
-	'selections are reversed, Out is for incoming and In is for outgoing.'
+	'selections are reversed, Out is for incoming and In is for outgoing.',
+	'<br />'
 );
 
 $group = new Form_Group('Ackqueue / Queue');
@@ -1736,14 +1736,20 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_filter[$id]['created']['time']),
+				'<b>' . $a_filter[$id]['created']['username'] . '</b>')
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_filter[$id]['updated']['time']),
+				'<b>' . $a_filter[$id]['updated']['username'] . '</b>')
 		));
 	}
 }

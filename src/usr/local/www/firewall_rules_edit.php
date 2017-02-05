@@ -1980,11 +1980,14 @@ events.push(function() {
 		$('#icmptypes_helplabel').html($('#ipprotocol :selected').text());
 		// Update ICMP types available for current IP protocol, copying over any still-valid selections
 		var valid_types = icmptypes[$('#ipprotocol').val()];
+		var old_selection = selected_icmptypes;
+		selected_icmptypes = []; // we rebuild this to prevent old values not being cleared from this array 
 		var new_selected_types = {};
 		var new_unselected_types = {};
 		for (var type in valid_types) {
-			if (selected_icmptypes.indexOf(type) != -1) {
+			if (old_selection.indexOf(type) != -1) {
 				new_selected_types[type] = valid_types[type].descrip;
+				selected_icmptypes.push(type);
 			} else {
 				new_unselected_types[type] = valid_types[type].descrip;
 			}

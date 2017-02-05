@@ -3264,8 +3264,13 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
+	/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
 	$current_mac = get_interface_mac($realhwif);
-	$vendor_mac = get_interface_vendor_mac($realhwif);
+	if (platform_booting()) {
+		$vendor_mac = $current_mac;
+	} else {
+		$vendor_mac = get_interface_vendor_mac($realhwif);
+	}
 	$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
 	/*
 	 * Don't try to reapply the MAC if it's already applied.

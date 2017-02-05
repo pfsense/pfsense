@@ -600,9 +600,7 @@ if ($_POST) {
 			$bad_types = array();
 			$p = $_POST['ipprotocol'];
 			foreach (explode(',', $t) as $type) {
-				if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
-				    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
-				    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+				if (!array_key_exists($type, $icmplookup[$p]['icmptypes'])) {
 						$bad_types[] = $type;
 				}
 			}

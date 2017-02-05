@@ -94,6 +94,20 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
+	if (strlen($pconfig['target']) > 0) {
+		// Deduce the target type and add to the front of the target string.
+		if (is_subnet($pconfig['target'])) {
+			$target_type = "S";
+		} elseif (is_ipaddr($pconfig['target'])) {
+			$target_type = "I";
+		} elseif (is_alias($pconfig['target'])) {
+			$target_type = "H";
+		} else {
+			$target_type = "O";
+		}
+		$pconfig['target'] = $target_type . $pconfig['target'];
+	}
+
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
@@ -172,6 +186,11 @@ if ($_POST) {
 	}
 	if ($_POST['natport']) {
 		$_POST['natport'] = trim($_POST['natport']);
+	}
+
+	if (strlen($_POST['target']) > 0) {
+		// Strip the target code 1-char code from the front before validating and saving.
+		$_POST['target'] = substr($_POST['target'], 1);
 	}
 
 	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
@@ -382,13 +401,23 @@ include("head.inc");
 function build_target_list() {
 	global $config, $sn, $a_aliases;
 	$list = array();
+	// Target list entries are made to start with the following characters:
+	// "" (blank) - the interface address of the selected interface
+	// S - a subnet
+	// I - an ordinary IP address
+	// H - a host alias
+	// O - other subnet
+	// The prefix letter makes it easy for the JavaScript to distinguish
+	// the type of entry based on the first letter of the value.
+	// The prefix letter is removed before saving in the config,
+	// and added back when reading from the config.
 
 	$list[""] = gettext('Interface Address');
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$list['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -398,10 +427,10 @@ function build_target_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$list['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$list['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
@@ -411,10 +440,10 @@ function build_target_list() {
 			continue;
 		}
 
-		$list[$alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
+		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['other-subnet'] = gettext('Other Subnet (Enter Below)');
+	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }
@@ -737,20 +766,20 @@ events.push(function() {
 	}
 
 	function poolopts_change() {
-		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
+		if ($('#target option:selected').val().substring(0,1) == "H") {
 			hideInput('poolopts', false);
 			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
-		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
+		} else if ($('#target option:selected').val().substring(0,1) == "S") {
 			hideInput('poolopts', false);
 			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
-		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
+		} else if ($('#target option:selected').val().substring(0,1) == "O") {
 			hideInput('poolopts', false);
 			hideIpAddress('targetip', false);
-			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
+			if ($('#poolopts option:selected').val() == "source-hash") {
 				hideInput('source_hash_key', false);
-			}else {
+			} else {
 				hideInput('source_hash_key', true);
 			}
 		} else {

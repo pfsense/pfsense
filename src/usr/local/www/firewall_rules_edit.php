@@ -49,9 +49,9 @@ foreach ($icmptypes as $k => $v) {
 	}
 }
 $icmplookup = array(
-	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
-	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
-	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 <i>or</i> IPv6, not both)'))
+	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4),
+	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6),
+	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46)
 );
 
 if (isset($_POST['referer'])) {
@@ -203,7 +203,13 @@ if (isset($id) && $a_filter[$id]) {
 	}
 
 	if ($a_filter[$id]['protocol'] == "icmp") {
-		$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
+		if (isset($a_filter[$id]['icmptype']) && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
+			// existing rule contains valid icmptype
+			$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
+		} else {
+			// existing rule has no (or blank) icmptype, meaning "all/any", select all subtypes on edit screen
+			$pconfig['icmptype'] = implode(',', $icmptypes[$pconfig['ipprotocol']]['icmptypes']);
+		}
 	}
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
@@ -427,7 +433,7 @@ if ($_POST) {
 		$pconfig['ipprotocol'] = "inet";
 	}
 
-	if (($_POST['proto'] == "icmp") && strlen($_POST['icmptype']) > 0) {
+	if (($_POST['proto'] == "icmp") && is_string($_POST['icmptype']) && strlen($_POST['icmptype']) > 0) {
 		$pconfig['icmptype'] = $_POST['icmptype'];
 	} else {
 		unset($pconfig['icmptype']);
@@ -845,7 +851,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['proto'] == "icmp" && isset($_POST['icmptype'])) {
-			// we already checked validity, if $_POST['icmptype'] is set at this point, it was valid
+			// we already checked validity, if $_POST['icmptype'] is set at this point, it was non-empty and valid
 			$filterent['icmptype'] = $_POST['icmptype'];
 		} else {
 			unset($filterent['icmptype']);
@@ -913,9 +919,9 @@ if ($_POST) {
 			} else if (isset($filterent['protocol'])) {
 				unset($filterent['protocol']);
 			}
-			if ($a_filter[$id]['protocol'] == "icmp" && $a_filter[$id]['icmptype']) {
+			if ($a_filter[$id]['protocol'] == "icmp" && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
 				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
-			} else if (isset($filterent['icmptype'])) {
+			} else {
 				unset($filterent['icmptype']);
 			}
 
@@ -1352,7 +1358,7 @@ $group->add(new Form_StaticText(
 ));
 
 $group->addClass('icmptype_section')
-  ->setHelp('Valid <span id="icmptypes_helplabel">IPvX</span> subtypes are listed. ' .
+  ->setHelp('Valid subtypes for <span id="icmptypes_helplabel">IPvX</span> are listed. ' .
             'Click any subtype in the left box to add it to the rule, or in the right box to remove it from the rule.');
 
 $section->add($group);

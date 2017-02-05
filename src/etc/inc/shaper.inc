@@ -1455,28 +1455,28 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetRed())
-		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
+		))->setHelp('%1$sRandom Early Detection%2$s', '<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#red">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
-		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
+		))->setHelp('%1$sRandom Early Detection In and Out%2$s', '<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#rio">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
-		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('%1$sExplicit Congestion Notification%2$s', '<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">', '</a>');
 
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
+		))->setHelp('%1$sCodel Active Queue%2$s', '<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">', '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -2381,10 +2381,11 @@ EOJS;
 			$this->GetL_m2()
 		))->setHelp('m2');
 
-		$group->sethelp('Bandwidth share overrides priority.' . '<br />' .
+		$group->sethelp('Bandwidth share overrides priority.%s' .
 						'The format for service curve specifications is (m1, d, m2). m2 controls the bandwidth assigned to the queue. ' .
 						'm1 and d are optional and can be used to control the initial bandwidth assignment. ' .
-						'For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value given in m2.');
+						'For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value given in m2.',
+						'<br />');
 
 		$section->add($group);
 
@@ -3874,14 +3875,14 @@ EOD;
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits%1$s%2$s', '<br />', '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits%1$s%2$s', '<br />', '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4178,14 +4179,14 @@ class dnqueue_class extends dummynet_class {
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits%1$s%2$s', '<br />', '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits%1$s%2$s', '<br />', '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 

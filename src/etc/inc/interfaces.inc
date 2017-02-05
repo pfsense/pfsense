@@ -3274,16 +3274,16 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	$current_mac = get_interface_mac($realhwif);
 	$vendor_mac = get_interface_vendor_mac($realhwif);
-	$spoof_mac = $wancfg['spoofmac'] ?: $vendor_mac;
+	$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
 	/*
-	 * Don't try to reapply the spoofed MAC if it's already applied.
+	 * Don't try to reapply the MAC if it's already applied.
 	 * When ifconfig link is used, it cycles the interface down/up, which triggers
-	 * the interface config again, which attempts to spoof the MAC again,
+	 * the interface config again, which attempts to apply the MAC again,
 	 * which cycles the link again...
 	 */
-	if (!empty($spoof_mac) && ($spoof_mac != $current_mac)) {
+	if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($spoof_mac));
+			" link " . escapeshellarg($mac_addr));
 	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
 		/*   this is not a valid mac address.  generate a
 		 *   temporary mac address so the machine can get online.

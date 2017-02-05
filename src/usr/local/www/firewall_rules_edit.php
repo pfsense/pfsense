@@ -846,8 +846,7 @@ if ($_POST) {
 			unset($filterent['protocol']);
 		}
 
-		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
-		if ($_POST['proto'] == "icmp" && is_set($_POST['icmptype'])) {
+		if ($_POST['proto'] == "icmp" && isset($_POST['icmptype'])) {
 			// we already checked validity, if $_POST['icmptype'] is set at this point, it was valid
 			$filterent['icmptype'] = $_POST['icmptype'];
 		} else {
@@ -1487,7 +1486,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-	$group->setHelp('Specify the " . strtolower($name) . " port or port range for this rule. The "To" field may be left empty if only filtering a single port.');
+	$group->setHelp('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.', strtolower($name));
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
@@ -2178,7 +2177,7 @@ events.push(function() {
 	// Disable everything except enable, action, address family and description if editing an "associated" rule
 
 	var elementsToDisable = [
-		'interface', 'proto', 'icmptype\\[\\]', 'icmptypes_unselected', 'icmptypes_selected', 'btn_icmptypes_selectall', 'btn_icmptypes_selectnone', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+		'interface', 'proto', 'icmptypes_unselected', 'icmptypes_selected', 'btn_icmptypes_selectall', 'btn_icmptypes_selectnone', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
 		'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
 
 	for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {

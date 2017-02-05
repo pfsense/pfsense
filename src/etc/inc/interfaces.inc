@@ -5862,7 +5862,7 @@ function get_interface_vendor_mac($interface) {
 	global $g;
 
 	$mac = "";
-	$mac_file = "{$g['cf_conf_path']}/vendor_mac_{$interface}";
+	$mac_file = "{$g['vardb_path']}/vendor_mac_($interface)";
 	if (file_exists($mac_file)) {
 		$mac = file_get_contents($mac_file);
 		if (!is_macaddr($mac)) {

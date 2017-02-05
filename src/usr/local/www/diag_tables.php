@@ -136,9 +136,9 @@ $group->add(new Form_Select(
 	null,
 	$tablename,
 	array_combine($tables, $tables)
-))->setHelp('Select a user-defined alias name or system table name to view its contents. <br/><br/>' .
+))->setHelp('Select a user-defined alias name or system table name to view its contents. %s' .
 	'Aliases become Tables when loaded into the active firewall ruleset. ' .
-	'The contents displayed on this page reflect the current addresses inside tables used by the firewall.');
+	'The contents displayed on this page reflect the current addresses inside tables used by the firewall.', '<br/><br/>');
 
 if ($bogons || $urltable || !empty($entries)) {
 	if ($bogons || $urltable) {

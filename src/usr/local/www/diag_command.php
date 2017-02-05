@@ -57,8 +57,8 @@ if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 	fpassthru($fd);
 	exit;
 } else if ($_POST['submit'] == "UPLOAD" && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
-	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s.'), htmlentities($_FILES['ulfile']['name']));
+	move_uploaded_file($_FILES['ulfile']['tmp_name'], $g["tmp_path"] . "/" . $_FILES['ulfile']['name']);
+	$ulmsg = sprintf(gettext('Uploaded file to %s.'), $g["tmp_path"] . "/" . htmlentities($_FILES['ulfile']['name']));
 }
 
 if ($_POST) {

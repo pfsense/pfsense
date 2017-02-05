@@ -35,7 +35,7 @@ if ($_POST) {
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg) {
-		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
+		$input_errors[] =  sprintf(gettext('%s is not a valid authentication server'), $_POST['authmode']);
 	}
 
 	if (empty($_POST['username']) || empty($_POST['password'])) {
@@ -45,7 +45,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$attributes = array();
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg, $attributes)) {
-			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
+			$savemsg = sprintf(gettext('User %s authenticated successfully.'), $_POST['username']);
 			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
 			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br /><br />";
 			$savemsg .= "<ul>";

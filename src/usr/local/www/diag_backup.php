@@ -171,13 +171,13 @@ if ($_POST['apply']) {
 
 if ($_POST) {
 	unset($input_errors);
-	if (stristr($_POST['Submit'], gettext("Restore configuration"))) {
+	if ($_POST['restore']) {
 		$mode = "restore";
-	} else if (stristr($_POST['Submit'], gettext("Reinstall"))) {
+	} else if ($_POST['reinstallpackages']) {
 		$mode = "reinstallpackages";
-	} else if (stristr($_POST['Submit'], gettext("Clear Package Lock"))) {
+	} else if ($_POST['clearpackagelock']) {
 		$mode = "clearpackagelock";
-	} else if (stristr($_POST['Submit'], gettext("Download"))) {
+	} else if ($_POST['download']) {
 		$mode = "download";
 	} else if (stristr($_POST['Submit'], gettext("Restore version"))) {
 		$mode = "restore_ver";
@@ -587,7 +587,7 @@ $section->addInput(new Form_Input(
 $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
-	'Submit',
+	'download',
 	'Download configuration as XML',
 	null,
 	'fa-download'
@@ -635,7 +635,7 @@ $section->addInput(new Form_Input(
 $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
-	'Submit',
+	'restore',
 	'Restore Configuration',
 	null,
 	'fa-undo'
@@ -652,7 +652,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
-			'Submit',
+			'reinstallpackages',
 			'Reinstall Packages',
 			null,
 			'fa-retweet'
@@ -665,7 +665,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
-			'Submit',
+			'clearpackagelock',
 			'Clear Package Lock',
 			null,
 			'fa-wrench'

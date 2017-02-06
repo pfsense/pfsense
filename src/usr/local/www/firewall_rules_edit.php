@@ -1312,7 +1312,7 @@ $form->add($section);
 
 // Source and destination share a lot of logic. Loop over the two
 // ToDo: Unfortunately they seem to differ more than they share. This needs to be unrolled
-foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
+foreach (['src' => gettext('Source'), 'dst' => gettext('Destination')] as $type => $name) {
 	$section = new Form_Section($name);
 
 	$group = new Form_Group('*' . $name);
@@ -1403,7 +1403,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' Port Range');
+	$group = new Form_Group($type == 'src' ? gettext('Source Port Range') : gettext('Destination Port Range'));
 
 	$group->addClass($type . 'portrange');
 

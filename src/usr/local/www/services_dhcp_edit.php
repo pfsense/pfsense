@@ -30,6 +30,10 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+function ipVersion($addr) {
+	return strpos($addr, ":") === false ? 4 : 6;
+}
+
 function staticmapcmp($a, $b) {
 	return ipcmp($a['ipaddr'], $b['ipaddr']);
 }
@@ -385,8 +389,14 @@ if ($_POST) {
 
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+
+if ((ipVersion($ip))=='4') {
+	$mymac = exec("/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d' ' -f4");
+	$mymac = str_replace("\n", "", $mymac);
+} else {
+	$mymac = exec("/usr/sbin/ndp -na | /usr/bin/grep '{$ip}' | /usr/bin/head -n 1 | /usr/bin/awk '{ print $2 }'");
+	$mymac = str_replace("\n", "", $mymac);
+}
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';
@@ -415,7 +425,6 @@ $macaddress = new Form_Input(
 	$pconfig['mac'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
-
 $btnmymac = new Form_Button(
 	'btnmymac',
 	'Copy My MAC',
@@ -424,10 +433,11 @@ $btnmymac = new Form_Button(
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
-$group->add($btnmymac);
+if (!empty($mymac)) {
+	$group->add($btnmymac);
+}
 $group->setHelp('MAC address (6 hex octets separated by colons)');
 $section->add($group);
 
@@ -817,5 +827,4 @@ events.push(function() {
 });
 //]]>
 </script>
-
 <?php include("foot.inc");

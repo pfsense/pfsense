@@ -219,7 +219,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 
 // NOTE:
-// $your_menu[] = array(gettext("-DIVIDER-"), ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
+// $your_menu[] = array("-DIVIDER-", ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -261,7 +261,7 @@ if ($platform['name'] == "uFW") {
 }
 
 if ($div) {
-	$interfaces_menu[] = array(gettext("-DIVIDER-"), "");
+	$interfaces_menu[] = array("-DIVIDER-", "");
 }
 
 $opts = get_configured_interface_with_descr(false, true);

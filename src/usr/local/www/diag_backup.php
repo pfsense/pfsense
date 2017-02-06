@@ -179,8 +179,6 @@ if ($_POST) {
 		$mode = "clearpackagelock";
 	} else if (stristr($_POST['Submit'], gettext("Download"))) {
 		$mode = "download";
-	} else if (stristr($_POST['Submit'], gettext("Restore version"))) {
-		$mode = "restore_ver";
 	}
 	if ($_POST["nopackages"] <> "") {
 		$options = "nopackages";
@@ -451,18 +449,6 @@ if ($_POST) {
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
 			$savemsg = "Package lock cleared.";
-		} else if ($mode == "restore_ver") {
-			$input_errors[] = gettext("XXX - this feature may hose the config (do NOT backrev configs!) - billm");
-			if ($ver2restore <> "") {
-				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
-				if (config_install($conf_file) == 0) {
-					mark_subsystem_dirty("restore");
-				} else {
-					$input_errors[] = gettext("The configuration could not be restored.");
-				}
-			} else {
-				$input_errors[] = gettext("No version selected.");
-			}
 		}
 	}
 }

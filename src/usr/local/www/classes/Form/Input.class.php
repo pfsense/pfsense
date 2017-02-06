@@ -92,8 +92,8 @@ class Form_Input extends Form_Element
 		if (isset($value))
 			$this->_attributes['value'] = $value;
 
-		foreach ($attributes as $name => $value)
-			$this->_attributes[$name] = $value;
+		foreach ($attributes as $attr_name => $attr_value)
+			$this->_attributes[$attr_name] = $attr_value;
 	}
 
 	public function getTitle()

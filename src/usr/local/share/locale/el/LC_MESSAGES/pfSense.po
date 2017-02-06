@@ -1,6 +1,5 @@
-# Mark Hoffer <mark1hoffer@hotmail.com>, 2017. #zanata
-# StijnLangenberg <stijn@rommelkamer.nl>, 2017. #zanata
-# Wraptor <nijs.thibaut@gmail.com>, 2017. #zanata
+# Orodreth <orodreth@protonmail.com>, 2017. #zanata
+# Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,10 +8,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-03 03:53-0500\n"
-"Last-Translator: StijnLangenberg <stijn@rommelkamer.nl>\n"
-"Language-Team: Dutch\n"
-"Language: nl\n"
+"PO-Revision-Date: 2017-02-06 06:36-0500\n"
+"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
+"Language-Team: Greek\n"
+"Language: el\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
@@ -22,143 +21,128 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Mogelijke DNS Rebind aanval gedetecteerd, zie http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Probeer de router te bereiken met zijn IP adres in plaats "
-"van de hostnaam."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Doorverbinden..."
+msgstr ""
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Doorverbinden naar het dashboard..."
+msgstr ""
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Operationeel: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FOUT! Kon niet met server %s verbinden."
+msgstr ""
 
 #: src/etc/inc/auth.inc:838
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Kon CA niet opzoeken met referentie voor systeem %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_test_bind() kon niet verbinden met server %s via STARTTLS."
+msgstr ""
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FOUT! ldap_get_user_ous() ondersteunde geselecteerde zonder opgegeven LDAP "
-"authenticatie server."
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
-"FOUT! ldap_get_user_ous() kon niet verbinden met server %s via STARTTLS."
 
 #: src/etc/inc/auth.inc:1013
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
-"FOUT! ldap_get_user_ous() kon niet anoniem gekoppeld worden met server %s"
 
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "FOUT! ldap_get_user_ous() kon niet binden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet verbinden met server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
-"FOUT! ldap_get_groups() kon niet verbinden met de server %s via STARTTLS."
 
 #: src/etc/inc/auth.inc:1157
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
-"FOUT! ldap_get_groups() kon niet anoniem gebonden worden met server %s."
 
 #: src/etc/inc/auth.inc:1162
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet gebonden worden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1268
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
-"Gebruik maken van lokale gebruikers databank... Ga naar Systeem -> Gebruiker "
-"-> Beheerder."
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
 
 #: src/etc/inc/auth.inc:1294
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_backed() kan niet verbinden met server %s via STARTTLS"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "FOUT! Kon niet binden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Zoeken naar %s in de map."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Zoeken in server %1$s, houder %2$s met filter %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Zoek opdracht resulteerde in fout: %s"
+msgstr "Η αναζήτηση κατέληξε σε πρόβλημα: %s"
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
-"FOUT! Of de LDAP zoekopdracht mislukte, of er waren meerdere gebruikers "
-"gevonden."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "FOUT! Kon niet inloggen op server %1$s als gebruiker %2$s: %3$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Login gelukt als %1$s via LDAP server %2$s met DN = %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
@@ -173,35 +157,35 @@ msgstr ""
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Authenticatie geslaagd"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Authenticatie afgewezen"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Widget configuratie is aangepast"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Gebruiker %s)"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Lokale database"
+msgstr "Τοπική Βάση Δεδομένων"
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Successvolle login voor gebruiker '%1$s' van: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Sessie verlopen voor '%1$s' van: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
@@ -211,30 +195,29 @@ msgstr ""
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
-"Geen pagina geassocieerd aan deze gebruiker! Klik hier om uit te loggen."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Fout: %1$s Omschrijving: %2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr "FOUT: niet toegestaan"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr "onbekende reden"
+msgstr "άγνωστη αιτία"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Incorrecte login (%s)."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
@@ -244,12 +227,12 @@ msgstr ""
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr "Inloggen op %1$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr "Inloggen"
+msgstr "Σύνδεση"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -258,14 +241,10 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
-"Het IP adres dat wordt gebruikt om toegang te krijgen tot deze router is "
-"niet lokaal geconfigureerd, welke misschien doorverwezen wordt door de NAT "
-"of door andere middelen. <br /><br />Als deze door verwijzing onverwacht is, "
-"dan moet er geverifieerd worden of er geen man-in-middle aanval plaats vind."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr "De browser moet cookies ondersteunen om in te loggen."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -288,11 +267,11 @@ msgstr "De browser moet cookies ondersteunen om in te loggen."
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr "Gebruikersnaam"
+msgstr "Όνομα Χρήστη"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr "Voer gebruikersnaam in"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:568
 #: src/usr/local/www/diag_backup.php:615 src/usr/local/www/interfaces.php:2539
@@ -317,83 +296,82 @@ msgstr "Voer gebruikersnaam in"
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr "Wachtwoord"
+msgstr "Κωδικός πρόσβασης"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr "Voer wachtwoord in"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s toegangspoort"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "Welkom bij de %s Toegangspoort!"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "Gebruikersnaam:"
+msgstr "Ονομα χρήστη:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Wachtwoord:"
+msgstr "Κωδικός χρήστη:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "Voer waardeboncode in:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr "Volgende"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "Doorverwijzen naar"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr "Uitloggen"
+msgstr "Αποσύνδεση"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr "Klik onderstaande knop om te verbreken"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Fout : kan '%1$s' niet openen in captiveportal_write_elements()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr "LET OP!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s heeft *MINSTENS* %2$s RAM nodig om goed te werken.%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
 msgstr ""
-"Er is maar (%1$s) MB RAM gevonden en (%2$s) beschikbaar voor %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr "Druk op ENTER om door te gaan."
+msgstr "Πατήστε enter για συνέχεια."
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr "Er is geen Interface gevonden!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr "Moeten er eerst VLAN's geconfigureerd worden?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -401,32 +379,29 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Als VLANs gebruikt worden, of alleen voor optionele interfaces, dan is het "
-"normaal om hier 'nee' te zeggen en de webConfigurator te gebruiken, om later "
-"VLANs te configureren, indien nodig."
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Moeten VLAN's nu geconfigureerd worden [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr "VLAN interfaces:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "Voer de WAN interface naam in of  'a' voor automatische detectie"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr "%1$s(%2$s or a): "
+msgstr ""
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:459
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr "%1$sIncorrecte interface naam '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -434,14 +409,11 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de LAN interface naam in of  'a' voor automatische "
-"detectie%2$sNOTITIE: dit activeert de volledige Firewalling/NAT mode."
-"%3$s(%4$s of doe niks indien klaar):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sOptionle interface %2$s gevonden omschrijving: %3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -449,36 +421,33 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de optionele %2$s interface naam in of  'a' voor automatische "
-"detectie%3$s(%4$s of doe niks indien klaar):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr "Optioneel"
+msgstr "Προεραιτικό"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr "De interfaces worden als volgt toegekend:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr "Wil je verder? [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr "Je hebt gekozen om de LAN interface te verwijderen."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:244
-#, fuzzy
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "Wil je het LAN IP nu verwijderen en de interface stoppen [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sSchrijven configuratie..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
@@ -487,73 +456,69 @@ msgstr ""
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr "klaar.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr "Een moment, de instellingen worden geladen..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr "klaar!"
+msgstr "ολοκληρώθηκε!"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr "Link detected op interface %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:401
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Geen link detected.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr "WARNING: alle bestaande VLANs worden verwijderd als je doorgaat!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
-msgstr "VLAN beschikbare interfaces:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:449
 msgid "No VLAN capable interfaces detected."
-msgstr "Geen VLAN's beschikbare interfaces gevonden."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:453
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Voer de parent interface naam in voor de nieuwe VLAN (of niks wanneer klaar):"
-""
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Voer het VLAN tag in (1-4094):"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr "%1$sIncorrect VLAN tag '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:477
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr "Dit parent interface en VLAN bestaat al."
+msgstr ""
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "Upgraden m0n0wall configuratie naar pfSense... "
+msgstr ""
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
 msgstr ""
-"Fout!  Kon de m0n0wall configuratie niet converteren naar Pfsense in config."
-"xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr "Configuratie gevonden op %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -561,22 +526,18 @@ msgstr "Configuratie gevonden op %1$s.%2$s"
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
-"Geen config.xml gevonden, geprobeerd wordt om de laatst bekende configuratie "
-"te herstellen."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
-"Geen config.xml of configuratie backups gevonden, standaard instellingen "
-"worden teruggezet. "
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr "Config.xml ontgrendeld."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr "Incorrect wachtwoord.Probeer het nog een keer!"
+msgstr "Μη έγκυρο συνθηματικό που εισάγατε. Προσπαθήστε ξανά."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -584,13 +545,11 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
-"Config.xml is corrupt en is 0 bytes.  Niet gelukt om van een vorige backup "
-"terug te zetten."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr "Kon config.xml  niet terugzetten."
+msgstr "Δεν ήταν δυνατή η επαναφορά του αρχείου config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
@@ -601,19 +560,16 @@ msgstr ""
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
 msgstr ""
-"XML configuratie bestand niet gevonden.  %s kan niet verder met opstarten."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
-"De laatst bekende configuratie is gevonden en teruggezet. Controleer "
-"alstublieft het configuratiebestand op correctheid."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kon geen werkbaar configuratie bestand vinden. Wordt afgesloten...."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
@@ -627,7 +583,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Configuratie upgrade gestopt op %s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
@@ -641,29 +597,29 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr "Kan %1$s/config.xml niet openen om te schrijven in write_config()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr "Terugkeren naar %s."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr "Configuratie aan het installeren..."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr "Configuratie aan het installeren ...."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr "XML fout: kan bestand niet openen"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s op regel %2$d"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
@@ -673,15 +629,15 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:878
 #, php-format
 msgid "%s made unknown change"
-msgstr "%s onbekende verandering gemaakt"
+msgstr ""
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr "Mislukt om te versleutelen/ontsleutelen data!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr "Dynamisch DNS: updatedns() gestart"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
@@ -699,39 +655,37 @@ msgstr ""
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _update() gestart."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:445
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamisch DNS %1$s (%2$s): Verwerkt dummy update van No-IP gratis account. "
-"IP tijdelijk gezet op%3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr "Verzoek verzenden naar: %s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _checkStatus() wordt opgestart."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr "Geslaagd"
+msgstr "Επιτυχία."
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr "Fout"
+msgstr "Σφάλμα"
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
-msgstr "Curl error opgetreden:"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
 #: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
@@ -742,7 +696,7 @@ msgstr "Curl error opgetreden:"
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr "IP Adres succesvol gewijzigd!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -759,7 +713,7 @@ msgstr "IP Adres succesvol gewijzigd!"
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr "Onbekende Respons"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -775,17 +729,14 @@ msgstr "Onbekende Respons"
 #: src/etc/inc/dyndns.class:1359 src/etc/inc/dyndns.class:1382
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
-#, fuzzy
 msgid "PAYLOAD:"
-msgstr "PAYLOAD"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:869
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"De DNS-O-Matic gebruikersnaam of wachtwoord is incorrect. Er worden geen "
-"updates naar de service gestuurd, totdat het problem is opgeslost."
 
 #: src/etc/inc/dyndns.class:871
 msgid ""
@@ -818,11 +769,11 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr "Geen FQDN!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
-msgstr "Host bestaan niet"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
@@ -855,11 +806,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
-msgstr ""
+msgstr "Εσφαλμένο  όνομα χρήστη."
 
 #: src/etc/inc/dyndns.class:981
 msgid "Invalid Password."
-msgstr ""
+msgstr "Εσφαλμένος κωδικός χρήστη."
 
 #: src/etc/inc/dyndns.class:984
 msgid "Too many updates sent."
@@ -936,15 +887,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1050
 msgid "Error 799"
-msgstr ""
+msgstr "Κωδικό λάθους 799."
 
 #: src/etc/inc/dyndns.class:1050 src/etc/inc/dyndns.class:1052
 msgid "Update Failed!"
-msgstr ""
+msgstr "Η Ενημέρωση Απέτυχε!"
 
 #: src/etc/inc/dyndns.class:1052
 msgid "Error 700"
-msgstr ""
+msgstr "Κωδικός λάθους 700."
 
 #: src/etc/inc/dyndns.class:1054 src/etc/inc/dyndns.class:1057
 #: src/etc/inc/dyndns.class:1075 src/etc/inc/dyndns.class:1085
@@ -975,7 +926,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1137
 msgid "Not a valid username or password!"
-msgstr ""
+msgstr "Μή έγκυρο όνομα  ή κωδικός χρήστη!"
 
 #: src/etc/inc/dyndns.class:1139
 msgid "Hostname specified does not exist."
@@ -1004,7 +955,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1162
 msgid "Invalid password."
-msgstr ""
+msgstr "Εσφαλμένος κωδικός χρήστη."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "This account has been administratively locked."
@@ -1030,7 +981,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
 #: src/etc/inc/dyndns.class:1251
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Μή έγκυρο όνομα  ή κωδικός χρήστη."
 
 #: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1229
 #: src/etc/inc/dyndns.class:1256 src/etc/inc/dyndns.class:1268
@@ -1074,7 +1025,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1324
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "Άγνωστο σφάλμα."
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Wrong values - Update could not be completed."
@@ -1114,7 +1065,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Μή έγκυρο όνομα  ή κωδικός χρήστη."
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Account suspended"
@@ -1158,7 +1109,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1516
 msgid "ERROR!"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ!"
 
 #: src/etc/inc/dyndns.class:1522
 msgid "No Dynamic DNS Service provider was selected."
@@ -1166,11 +1117,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1525
 msgid "No Username Provided."
-msgstr ""
+msgstr "Δεν δόθηκε όνομα χρήστη."
 
 #: src/etc/inc/dyndns.class:1528
 msgid "No Password Provided."
-msgstr ""
+msgstr "Δεν δόθηκε κωδικός χρήστη."
 
 #: src/etc/inc/dyndns.class:1531
 msgid "No Hostname Provided."
@@ -1289,7 +1240,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "Η καταχώρηση προστέθηκε. "
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1502,7 +1453,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
-msgstr ""
+msgstr "Ανακατεύθυνση"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
@@ -1518,7 +1469,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "Παράλειψη"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
@@ -1614,7 +1565,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1311 src/etc/inc/system.inc:1614
 #: src/etc/inc/system.inc:2186
 msgid "done."
-msgstr ""
+msgstr "ολοκληρώθηκε. "
 
 #: src/etc/inc/filter.inc:372
 msgid "Setting up logging information"
@@ -1656,7 +1607,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:526
 msgid "Done"
-msgstr ""
+msgstr "Ολοκληρώθηκε"
 
 #: src/etc/inc/filter.inc:750
 #, php-format
@@ -1724,11 +1675,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1630
 msgid "OpenVPN server"
-msgstr ""
+msgstr "Εξυπηρετητής OpenVPN"
 
 #: src/etc/inc/filter.inc:1639
 msgid "OpenVPN client"
-msgstr ""
+msgstr "Πελάτης OpenVPN"
 
 #: src/etc/inc/filter.inc:1649
 msgid "IPsec client"
@@ -1856,7 +1807,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:4318
 msgid "delete this separator"
-msgstr ""
+msgstr "Διαγραφή αυτού του δαχωριστικού"
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -1894,11 +1845,11 @@ msgstr ""
 
 #: src/etc/inc/functions.inc:109
 msgid "unread notice"
-msgstr ""
+msgstr "μη αναγνωσμένη ειδοποίηση"
 
 #: src/etc/inc/functions.inc:111
 msgid "unread notices"
-msgstr ""
+msgstr "μη αναγνωσμένες ειδοποιήσεις"
 
 #: src/etc/inc/gmirror.inc:65
 msgid "No mirrors found."
@@ -1943,7 +1894,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:384
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:93
 msgid "Name"
-msgstr ""
+msgstr "Όνομα"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:78
@@ -1996,11 +1947,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:64
 msgid "Status"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: src/etc/inc/gmirror.inc:75 src/usr/local/www/diag_gmirror.php:223
 msgid "Component"
-msgstr ""
+msgstr "Στοιχείο"
 
 #: src/etc/inc/gwlb.inc:185
 msgid "No gateways to monitor. dpinger will not run."
@@ -2452,7 +2403,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr ""
+msgstr "Αθόρυβο"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
@@ -2460,7 +2411,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
-msgstr ""
+msgstr "Ελεγχος"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
@@ -2476,7 +2427,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:76
 msgid "My IP address"
-msgstr ""
+msgstr "Η IP διεύθυνση μου"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1402
@@ -2490,7 +2441,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:96
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "IP address"
-msgstr ""
+msgstr "διεύθυνση ΙΡ"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
@@ -2589,71 +2540,71 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
-msgstr ""
+msgstr "1 (768 bit)"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "2 (1024 bit)"
-msgstr ""
+msgstr "2 (1024 bit)"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "5 (1536 bit)"
-msgstr ""
+msgstr "5 (1536 bit)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr ""
+msgstr "14 (2048 bit)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr ""
+msgstr "15 (3072 bit)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr ""
+msgstr "16 (4096 bit)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr ""
+msgstr "17 (6144 bit)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr ""
+msgstr "18 (8192 bit)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
-msgstr ""
+msgstr "19 (nist ecp256)"
 
 #: src/etc/inc/ipsec.inc:207
 msgid "20 (nist ecp384)"
-msgstr ""
+msgstr "20 (nist ecp384)"
 
 #: src/etc/inc/ipsec.inc:208
 msgid "21 (nist ecp521)"
-msgstr ""
+msgstr "21 (nist ecp521)"
 
 #: src/etc/inc/ipsec.inc:209
 msgid "22 (1024(sub 160) bit)"
-msgstr ""
+msgstr "22 (1024(sub 160) bit)"
 
 #: src/etc/inc/ipsec.inc:210
 msgid "23 (2048(sub 224) bit)"
-msgstr ""
+msgstr "23 (2048(sub 224) bit)"
 
 #: src/etc/inc/ipsec.inc:211
 msgid "24 (2048(sub 256) bit)"
-msgstr ""
+msgstr "24 (2048(sub 256) bit)"
 
 #: src/etc/inc/ipsec.inc:212
 msgid "28 (brainpool ecp256)"
-msgstr ""
+msgstr "28 (brainpool ecp256)"
 
 #: src/etc/inc/ipsec.inc:213
 msgid "29 (brainpool ecp384)"
-msgstr ""
+msgstr "29 (brainpool ecp384)"
 
 #: src/etc/inc/ipsec.inc:214
 msgid "30 (brainpool ecp512)"
-msgstr ""
+msgstr "30 (brainpool ecp512)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:319
 msgid "Mobile Client"
@@ -2671,7 +2622,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:445
 #: src/usr/local/www/vpn_ipsec_phase2.php:543
 msgid "None"
-msgstr ""
+msgstr "Κανένα"
 
 #: src/etc/inc/ipsec.inc:612
 msgid ""
@@ -2768,7 +2719,7 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:56
 msgid "3 (recommended)"
-msgstr ""
+msgstr "3 (προτεινόμενο)"
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
@@ -2879,11 +2830,11 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
-msgstr ""
+msgstr "Εξυπηρετητής: Ναι"
 
 #: src/etc/inc/openvpn.inc:240
 msgid "Server: NO"
-msgstr ""
+msgstr "Εξυπηρετητής: Οχι"
 
 #: src/etc/inc/openvpn.inc:243
 #, php-format
@@ -2894,7 +2845,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:957
 #: src/usr/local/www/system_crlmanager.php:586
 msgid "In Use"
-msgstr ""
+msgstr "Σε Χρήση"
 
 #: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1027
 msgid "Revoked"
@@ -2906,7 +2857,7 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr ""
+msgstr "Χρήση Προεπιλογών"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
@@ -2983,7 +2934,7 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:190
 #: src/usr/local/www/system_user_settings.php:62
 msgid "Theme"
-msgstr ""
+msgstr "Θέμα"
 
 #: src/etc/inc/pfsense-utils.inc:193
 #, php-format
@@ -3142,11 +3093,11 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:1555
 msgid "running"
-msgstr ""
+msgstr "εκτελείται"
 
 #: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:196
 msgid "up"
-msgstr ""
+msgstr "πάνω"
 
 #: src/etc/inc/pfsense-utils.inc:1601
 msgid "blocking"
@@ -3222,23 +3173,23 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2798
 msgid "English"
-msgstr ""
+msgstr "Αγγλικά"
 
 #: src/etc/inc/pfsense-utils.inc:2799
 msgid "Spanish"
-msgstr ""
+msgstr "Ισπανικά"
 
 #: src/etc/inc/pfsense-utils.inc:2800
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Πορτογαλικά (Βραζιλίας)"
 
 #: src/etc/inc/pfsense-utils.inc:2801
 msgid "Turkish"
-msgstr ""
+msgstr "Τούρκικα"
 
 #: src/etc/inc/pfsense-utils.inc:2802
 msgid "Chinese (Simplified, China)"
-msgstr ""
+msgstr "Κινέζικα (Απλοποιημένα, Κίνα)"
 
 #: src/etc/inc/pfsense-utils.inc:2997 src/etc/inc/pfsense-utils.inc:3012
 #: src/etc/inc/pfsense-utils.inc:3037
@@ -3259,7 +3210,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:134 src/usr/local/www/vpn_ipsec.php:252
 #: src/usr/local/www/vpn_ipsec.php:394
 msgid "Mode"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: src/etc/inc/pfsense-utils.inc:3013
 msgid "Restricted Service"
@@ -3303,7 +3254,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:3038
 msgid "Limited Service"
-msgstr ""
+msgstr "Περιορισμένη Υπηρεσία"
 
 #: src/etc/inc/pfsense-utils.inc:3054
 msgid "Initializing Service"
@@ -3370,7 +3321,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:555
 msgid "Removing package..."
-msgstr ""
+msgstr "Απεγκατάσταση πακέτου..."
 
 #: src/etc/inc/pkg-utils.inc:588
 #, php-format
@@ -3390,7 +3341,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:700
 msgid "Beginning package installation."
-msgstr ""
+msgstr "Έναρξη εγκατάστασης πακέτου. "
 
 #: src/etc/inc/pkg-utils.inc:701
 #, php-format
@@ -3475,7 +3426,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
 msgid "Services... "
-msgstr ""
+msgstr "Υπηρεσίες..."
 
 #: src/etc/inc/pkg-utils.inc:817
 msgid "Loading package configuration... failed!"
@@ -5805,7 +5756,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:2736
 msgid "Created:"
-msgstr ""
+msgstr "Δημιουργήθηκε:"
 
 #: src/etc/inc/services.inc:2762
 msgid "If possible do not add items to this file manually."
@@ -5839,7 +5790,7 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:163
 #: src/usr/local/www/status_queues.php:167
 msgid "Bandwidth"
-msgstr ""
+msgstr " Eύρος Zώνης"
 
 #: src/etc/inc/shaper.inc:438 src/etc/inc/shaper.inc:1903
 #: src/etc/inc/shaper.inc:2652 src/etc/inc/shaper.inc:2934
@@ -5908,7 +5859,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip_edit.php:127
 #: src/usr/local/www/system_gateways_edit.php:617
 msgid "*Name"
-msgstr ""
+msgstr "*'Ονομα"
 
 #: src/etc/inc/shaper.inc:811
 msgid "Scheduler Type"
@@ -5964,7 +5915,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:109
 #: src/usr/local/www/system_gateway_groups.php:132
 msgid "Priority"
-msgstr ""
+msgstr "Προτεραιότητα"
 
 #: src/etc/inc/shaper.inc:1432
 msgid ""
@@ -6128,7 +6079,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:76
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:137
 msgid "Description"
-msgstr ""
+msgstr "Περιγραφή"
 
 #: src/etc/inc/shaper.inc:1566
 msgid "Delete Queue from this Interface"
@@ -6239,7 +6190,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:2776
 msgid "NOTITLE"
-msgstr ""
+msgstr "ΧΩΡΙΣΤΙΤΛΟ"
 
 #: src/etc/inc/shaper.inc:2804
 msgid "Scheduler option"
@@ -6335,7 +6286,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:760
 #: src/usr/local/www/system_usermanager.php:634
 msgid "Delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: src/etc/inc/shaper.inc:3795
 msgid "Add Schedule"
@@ -6372,7 +6323,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
-msgstr ""
+msgstr "Ενεργοποίηση"
 
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Source addresses"
@@ -6384,7 +6335,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:3864 src/etc/inc/shaper.inc:4168
 msgid "Mask"
-msgstr ""
+msgstr "Μάσκα"
 
 #: src/etc/inc/shaper.inc:3867 src/etc/inc/shaper.inc:4171
 msgid ""
@@ -6449,7 +6400,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:3902
 msgid "Delay (ms)"
-msgstr ""
+msgstr "Καθυστέρηση (ms)"
 
 #: src/etc/inc/shaper.inc:3905
 msgid ""
@@ -6494,7 +6445,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:4206 src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight"
-msgstr ""
+msgstr "Βάρος"
 
 #: src/etc/inc/shaper.inc:4210
 msgid ""
@@ -6530,7 +6481,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:4643
 msgid "queues"
-msgstr ""
+msgstr "ουρές αναμονής"
 
 #: src/etc/inc/shaper.inc:4644
 msgid "limiters"
@@ -6544,7 +6495,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:4647 src/usr/local/www/diag_pftop.php:97
 msgid "queue"
-msgstr ""
+msgstr "ουρά αναμονής"
 
 #: src/etc/inc/shaper.inc:4648
 msgid "limiter"
@@ -6608,7 +6559,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2189
 #: src/etc/inc/system.inc:2192
 msgid "failed!"
-msgstr ""
+msgstr "απέτυχε!"
 
 #: src/etc/inc/system.inc:1515
 #, php-format
@@ -6627,7 +6578,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:1604
 msgid "Setting timezone..."
-msgstr ""
+msgstr "Ρύθμιση ζώνης ώρας..."
 
 #: src/etc/inc/system.inc:2021
 #, php-format
@@ -6654,19 +6605,19 @@ msgstr ""
 #: src/etc/inc/unbound.inc:741 src/usr/local/www/services_dhcpv6.php:803
 #: src/usr/local/www/services_unbound_acls.php:234
 msgid "Deny"
-msgstr ""
+msgstr "Άρνηση"
 
 #: src/etc/inc/unbound.inc:742 src/usr/local/www/services_unbound_acls.php:234
 msgid "Refuse"
-msgstr ""
+msgstr "Απόρριψη"
 
 #: src/etc/inc/unbound.inc:743
 msgid "Static"
-msgstr ""
+msgstr "Στατικό"
 
 #: src/etc/inc/unbound.inc:744
 msgid "Transparent"
-msgstr ""
+msgstr "Διαφανής"
 
 #: src/etc/inc/unbound.inc:745
 msgid "Type Transparent"
@@ -6682,7 +6633,7 @@ msgstr ""
 
 #: src/etc/inc/unbound.inc:749
 msgid "No Default"
-msgstr ""
+msgstr "Χωρίς Προεπιλογή"
 
 #: src/etc/inc/upgrade_config.inc:102
 #, php-format
@@ -6735,7 +6686,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:598
 msgid "System Administrators"
-msgstr ""
+msgstr "Διαχειριστές Συστήματος"
 
 #: src/etc/inc/upgrade_config.inc:617
 msgid ""
@@ -6872,7 +6823,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:1377
 msgid "All Users"
-msgstr ""
+msgstr "Όλοι οι Χρήστες"
 
 #: src/etc/inc/upgrade_config.inc:1520
 #, php-format
@@ -7045,7 +6996,7 @@ msgstr ""
 
 #: src/etc/inc/voucher.inc:350
 msgid "Access denied!"
-msgstr ""
+msgstr "Δεν επιτρέπεται η πρόσβαση!"
 
 #: src/etc/inc/voucher.inc:352
 #, php-format
@@ -7161,7 +7112,7 @@ msgstr ""
 
 #: src/etc/inc/vpn.inc:1714
 msgid "done"
-msgstr ""
+msgstr "ολοκληρώθηκε"
 
 #: src/etc/inc/vpn.inc:1736
 msgid "Configuring l2tp VPN service... "
@@ -7225,7 +7176,7 @@ msgstr ""
 #: src/usr/local/bin/dhcpd_gather_stats.php:102
 #: src/usr/local/www/status_dhcp_leases.php:189
 msgid "Never"
-msgstr ""
+msgstr "Ποτέ"
 
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
@@ -7263,7 +7214,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_install.php:352
 #: src/usr/local/www/pkg_mgr_install.php:354
 msgid "Confirm"
-msgstr ""
+msgstr "Επιβεβαίωση"
 
 #: src/usr/local/www/classes/Form.class.php:38
 #: src/usr/local/www/diag_confbak.php:172 src/usr/local/www/diag_edit.php:122
@@ -7303,7 +7254,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:475
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
 msgid "Save"
-msgstr ""
+msgstr "Αποθήκευση"
 
 #: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
@@ -7337,7 +7288,7 @@ msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:80
 msgid "Uploading..."
-msgstr ""
+msgstr "Μεταφόρτωση..."
 
 #: src/usr/local/www/crash_reporter.php:91
 msgid "Deleted crash report files from local disk."
@@ -7367,7 +7318,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
-msgstr ""
+msgstr "Ναί"
 
 #: src/usr/local/www/crash_reporter.php:138
 msgid "Submit this to the developers for inspection"
@@ -7378,7 +7329,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
-msgstr ""
+msgstr "Οχι"
 
 #: src/usr/local/www/crash_reporter.php:142
 msgid "Just delete the crash report and return to the Dashboard"
@@ -7452,7 +7403,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:63
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:138
 msgid "Interface"
-msgstr ""
+msgstr "Διεπαφή "
 
 #: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:109
 #: src/usr/local/www/services_captiveportal_mac.php:177
@@ -7553,7 +7504,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:1339
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 msgid "Actions"
-msgstr ""
+msgstr "Ενέργειες"
 
 #: src/usr/local/www/diag_arp.php:363
 msgid "Delete arp cache entry"
@@ -7607,7 +7558,7 @@ msgstr ""
 #: src/usr/local/www/guiconfig.inc:158 src/usr/local/www/head.inc:367
 #: src/usr/local/www/services_captiveportal.php:686
 msgid "Authentication"
-msgstr ""
+msgstr "Ταυτοποίηση"
 
 #: src/usr/local/www/diag_authentication.php:83
 msgid "Authentication Test"
@@ -7627,19 +7578,19 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:711
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 msgid "*Username"
-msgstr ""
+msgstr "*Όνομα Χρήστη"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/interfaces.php:2606 src/usr/local/www/interfaces.php:2731
 #: src/usr/local/www/system_usermanager_passwordmg.php:101
 msgid "*Password"
-msgstr ""
+msgstr "*Κωδικός Χρήστη"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:279 src/usr/local/www/diag_testport.php:269
 #: src/usr/local/www/status_captiveportal_test.php:109
 msgid "Test"
-msgstr ""
+msgstr "Δοκιμή"
 
 #: src/usr/local/www/diag_backup.php:79 src/usr/local/www/diag_backup.php:94
 #, php-format
@@ -7668,7 +7619,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:196
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:122
 msgid "Reinstall"
-msgstr ""
+msgstr "Επανεγκατάσταση"
 
 #: src/usr/local/www/diag_backup.php:178 src/usr/local/www/diag_backup.php:655
 msgid "Clear Package Lock"
@@ -7679,7 +7630,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1126
 #: src/usr/local/www/services_captiveportal.php:1158
 msgid "Download"
-msgstr ""
+msgstr "Λήψη"
 
 #: src/usr/local/www/diag_backup.php:193
 msgid "A password for encryption must be supplied and confirmed."
@@ -7796,7 +7747,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/widgets/include/interfaces.inc:23
 msgid "Interfaces"
-msgstr ""
+msgstr "Διεπαφές"
 
 #: src/usr/local/www/diag_backup.php:474
 msgid "IPSEC"
@@ -7874,7 +7825,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:97
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "System"
-msgstr ""
+msgstr "Σύστημα"
 
 #: src/usr/local/www/diag_backup.php:482
 msgid "Static routes"
@@ -7925,7 +7876,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:168
 #: src/usr/local/www/diag_smart.php:252
 msgid "All"
-msgstr ""
+msgstr "Ολα"
 
 #: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_backup.php:529
 #: src/usr/local/www/diag_confbak.php:99 src/usr/local/www/diag_confbak.php:108
@@ -7964,7 +7915,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:561 src/usr/local/www/diag_backup.php:608
 msgid "Encryption"
-msgstr ""
+msgstr "Κρυπτογράφηση"
 
 #: src/usr/local/www/diag_backup.php:577
 msgid "Download configuration as XML"
@@ -8059,7 +8010,7 @@ msgstr ""
 #: src/usr/local/www/diag_command.php:224
 #: src/usr/local/www/diag_command.php:315
 msgid "Execute"
-msgstr ""
+msgstr "Εκτέλεση"
 
 #: src/usr/local/www/diag_command.php:226
 msgid "Recall Next Command"
@@ -8074,21 +8025,21 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:196
 #: src/usr/local/www/interfaces.php:2035
 msgid "Clear"
-msgstr ""
+msgstr "Εκκαθάριση"
 
 #: src/usr/local/www/diag_command.php:239
 msgid "Download File"
-msgstr ""
+msgstr "Λήψη Αρχείου"
 
 #: src/usr/local/www/diag_command.php:258
 msgid "Upload File"
-msgstr ""
+msgstr "Μεταφόρτωση Αρχείου"
 
 #: src/usr/local/www/diag_command.php:265
 #: src/usr/local/www/services_captiveportal_filemanager.php:172
 #: src/usr/local/www/widgets/widgets/picture.widget.php:77
 msgid "Upload"
-msgstr ""
+msgstr "Μεταφόρτωση"
 
 #: src/usr/local/www/diag_command.php:308
 msgid "Execute PHP Commands"
@@ -8100,7 +8051,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:317
 msgid "Example"
-msgstr ""
+msgstr "Παράδειγμα"
 
 #: src/usr/local/www/diag_confbak.php:38
 msgid "(platform default)"
@@ -8180,20 +8131,20 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:211
 msgid "Date"
-msgstr ""
+msgstr "Ημερομηνία"
 
 #: src/usr/local/www/diag_confbak.php:212 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version"
-msgstr ""
+msgstr "Έκδοση"
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_gmirror.php:303 src/usr/local/www/diag_pftop.php:125
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
-msgstr ""
+msgstr "Μέγεθος"
 
 #: src/usr/local/www/diag_confbak.php:214
 msgid "Configuration Change"
@@ -8219,7 +8170,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:89
 msgid "Unknown"
-msgstr ""
+msgstr "Άγνωστο"
 
 #: src/usr/local/www/diag_confbak.php:260
 msgid "Revert config"
@@ -8244,7 +8195,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:372
 msgid "Factory Defaults"
-msgstr ""
+msgstr "Εργοστασιακές Ρυθμίσεις"
 
 #: src/usr/local/www/diag_defaults.php:46
 msgid ""
@@ -8254,7 +8205,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
-msgstr ""
+msgstr "Επαναφορά Εργοστασιακών Ρυθμίσεων"
 
 #: src/usr/local/www/diag_defaults.php:61
 msgid ""
@@ -8408,11 +8359,11 @@ msgstr ""
 #: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
-msgstr ""
+msgstr "Αποτελέσματα"
 
 #: src/usr/local/www/diag_dns.php:263
 msgid "Result"
-msgstr ""
+msgstr "Αποτέλεσμα"
 
 #: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
@@ -8432,7 +8383,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
-msgstr ""
+msgstr "Περισσότερες πληροφορίες"
 
 #: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
@@ -8472,7 +8423,7 @@ msgstr ""
 #: src/usr/local/www/diag_states_summary.php:154
 #: src/usr/local/www/firewall_rules.php:384 src/usr/local/www/head.inc:390
 msgid "States"
-msgstr ""
+msgstr "Καταστάσεις"
 
 #: src/usr/local/www/diag_dump_states.php:109
 #: src/usr/local/www/diag_dump_states_sources.php:53
@@ -8507,7 +8458,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:165
 #: src/usr/local/www/system_usermanager_addprivs.php:185
 msgid "Filter"
-msgstr ""
+msgstr "Φίλτρο"
 
 #: src/usr/local/www/diag_dump_states.php:160
 msgid "Kill States"
@@ -8543,7 +8494,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:321
 #: src/usr/local/www/vpn_openvpn_client.php:905
 msgid "Protocol"
-msgstr ""
+msgstr "Πρωτόκολλο"
 
 #: src/usr/local/www/diag_dump_states.php:183
 msgid "Source (Original Source) -> Destination (Original Destination)"
@@ -8552,7 +8503,7 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:184
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: src/usr/local/www/diag_dump_states.php:185
 msgid "Packets"
@@ -8606,7 +8557,7 @@ msgstr ""
 #: src/usr/local/www/diag_pftop.php:124
 #: src/usr/local/www/status_interfaces.php:165
 msgid "Rate"
-msgstr ""
+msgstr "Ρυθμός"
 
 #: src/usr/local/www/diag_dump_states_sources.php:154
 #, php-format
@@ -8621,7 +8572,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:194
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:117
 msgid "Remove"
-msgstr ""
+msgstr "Κατάργηση"
 
 #: src/usr/local/www/diag_dump_states_sources.php:168
 msgid "No source tracking entries were found."
@@ -8629,7 +8580,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:371
 msgid "Edit File"
-msgstr ""
+msgstr "Επεξεργασία Αρχείου"
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
@@ -8673,7 +8624,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:118 src/usr/local/www/diag_edit.php:120
 msgid "Browse"
-msgstr ""
+msgstr "Περιήγηση"
 
 #: src/usr/local/www/diag_edit.php:129
 msgid "GoTo Line #"
@@ -8777,7 +8728,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:191
 msgid "Consumer"
-msgstr ""
+msgstr "Καταναλωτής"
 
 #: src/usr/local/www/diag_gmirror.php:207
 msgid ""
@@ -8801,7 +8752,7 @@ msgstr ""
 #: src/usr/local/www/diag_gmirror.php:249
 #: src/usr/local/www/diag_gmirror.php:267
 msgid "Deactivate"
-msgstr ""
+msgstr "Απενεργοποίηση"
 
 #: src/usr/local/www/diag_gmirror.php:283
 msgid "No Mirrors Found"
@@ -8883,7 +8834,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:886
 #: src/usr/local/www/interfaces.php:1914 src/usr/local/www/interfaces.php:3237
 msgid "Cancel"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:379
 msgid "Limiter Info"
@@ -8900,7 +8851,7 @@ msgstr ""
 #: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:341
 #: src/usr/local/www/status_queues.php:110
 msgid "Queues"
-msgstr ""
+msgstr "Ουρές αναμονής"
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"
@@ -8945,7 +8896,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:129
 msgid "Invalid interface."
-msgstr ""
+msgstr "Μη έγκυρη διεπαφή."
 
 #: src/usr/local/www/diag_packet_capture.php:133
 msgid "Invalid address family."
@@ -8965,7 +8916,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:149
 msgid "Invalid protocol."
-msgstr ""
+msgstr "Μη έγκυρο πρωτόκολλο."
 
 #: src/usr/local/www/diag_packet_capture.php:163
 #, php-format
@@ -8991,17 +8942,17 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:442
 #: src/usr/local/www/status_dhcpv6_leases.php:537
 msgid "Start"
-msgstr ""
+msgstr "Έναρξη"
 
 #: src/usr/local/www/diag_packet_capture.php:219
 #: src/usr/local/www/diag_packet_capture.php:379
 #: src/usr/local/www/diag_packet_capture.php:389
 msgid "Stop"
-msgstr ""
+msgstr "Διακοπή"
 
 #: src/usr/local/www/diag_packet_capture.php:246
 msgid "Exclude"
-msgstr ""
+msgstr "Εξαίρεση"
 
 #: src/usr/local/www/diag_packet_capture.php:276
 msgid "Packet Capture Options"
@@ -9026,7 +8977,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:517
 #: src/usr/local/www/vpn_openvpn_server.php:729
 msgid "*Interface"
-msgstr ""
+msgstr "*Διεπαφή"
 
 #: src/usr/local/www/diag_packet_capture.php:283
 msgid "Select the interface on which to capture traffic. "
@@ -9071,7 +9022,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:502
 #: src/usr/local/www/vpn_openvpn_server.php:714
 msgid "*Protocol"
-msgstr ""
+msgstr "*Πρωτόκολλο"
 
 #: src/usr/local/www/diag_packet_capture.php:312
 msgid "Select the protocol to capture, or \"Any\". "
@@ -9106,7 +9057,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:200
 #: src/usr/local/www/status_upnp.php:69
 msgid "Port"
-msgstr ""
+msgstr "Θύρα"
 
 #: src/usr/local/www/diag_packet_capture.php:330
 msgid ""
@@ -9142,20 +9093,20 @@ msgstr ""
 #: src/usr/local/www/diag_packet_capture.php:354
 #: src/usr/local/www/services_router_advertisements.php:115
 msgid "Normal"
-msgstr ""
+msgstr "Κανονικό"
 
 #: src/usr/local/www/diag_packet_capture.php:355
 msgid "Medium"
-msgstr ""
+msgstr "Μέτριο"
 
 #: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/services_router_advertisements.php:116
 msgid "High"
-msgstr ""
+msgstr "Υψηλό"
 
 #: src/usr/local/www/diag_packet_capture.php:357
 msgid "Full"
-msgstr ""
+msgstr "Πλήρες"
 
 #: src/usr/local/www/diag_packet_capture.php:352
 msgid "Level of detail"
@@ -9206,7 +9157,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pf_info.php:67
 msgid "Refresh"
-msgstr ""
+msgstr "Ανανέωση"
 
 #: src/usr/local/www/diag_pf_info.php:102 src/usr/local/www/diag_pftop.php:167
 msgid "Output"
@@ -9226,7 +9177,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:95
 msgid "label"
-msgstr ""
+msgstr "ετικέτα"
 
 #: src/usr/local/www/diag_pftop.php:96
 msgid "long"
@@ -9238,19 +9189,19 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:99
 msgid "size"
-msgstr ""
+msgstr "μέγεθος"
 
 #: src/usr/local/www/diag_pftop.php:100
 msgid "speed"
-msgstr ""
+msgstr "ταχύτητα"
 
 #: src/usr/local/www/diag_pftop.php:101
 msgid "state"
-msgstr ""
+msgstr "κατάσταση"
 
 #: src/usr/local/www/diag_pftop.php:102
 msgid "time"
-msgstr ""
+msgstr "χρόνος"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:199
 #: src/usr/local/www/diag_smart.php:352
@@ -9258,11 +9209,11 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1119
 #: src/usr/local/www/services_captiveportal.php:1151
 msgid "View"
-msgstr ""
+msgstr "Προβολή"
 
 #: src/usr/local/www/diag_pftop.php:117
 msgid "Age"
-msgstr ""
+msgstr "Ηλικία"
 
 #: src/usr/local/www/diag_pftop.php:119
 msgid "Destination Address"
@@ -9277,11 +9228,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:121
 msgid "Expiry"
-msgstr ""
+msgstr "Λήξη"
 
 #: src/usr/local/www/diag_pftop.php:122
 msgid "Peak"
-msgstr ""
+msgstr "Κορυφή"
 
 #: src/usr/local/www/diag_pftop.php:123
 msgid "Packet"
@@ -9301,7 +9252,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:113 src/usr/local/www/status_graph.php:151
 msgid "Sort by"
-msgstr ""
+msgstr "Ταξινόμηση Ανά"
 
 #: src/usr/local/www/diag_pftop.php:134
 msgid "Maximum # of States"
@@ -9371,7 +9322,7 @@ msgstr ""
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:386
 #: src/usr/local/www/interfaces.php:2003
 msgid "Reboot"
-msgstr ""
+msgstr "Επανεκκίνηση"
 
 #: src/usr/local/www/diag_reboot.php:49
 msgid "Not actually rebooting (DEBUG is set true)."
@@ -9402,7 +9353,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:113
 msgid "Reboot the system"
-msgstr ""
+msgstr "Επανεκκίνηση συστήματος"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
@@ -9446,7 +9397,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:249
 #: src/usr/local/www/status_lb_pool.php:251
 msgid "Reset"
-msgstr ""
+msgstr "Επαναφορά"
 
 #: src/usr/local/www/diag_resetstate.php:121
 msgid "Please select at least one reset option"
@@ -9492,7 +9443,7 @@ msgstr ""
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
-msgstr ""
+msgstr "Ενημέρωση"
 
 #: src/usr/local/www/diag_routes.php:191
 msgid "IPv4 Routes"
@@ -9530,7 +9481,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:60
 msgid "Warning"
-msgstr ""
+msgstr "Προειδοποίηση"
 
 #: src/usr/local/www/diag_smart.php:69
 msgid "Device does not exist, bailing."
@@ -9552,7 +9503,7 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:103 src/usr/local/www/diag_smart.php:181
 #: src/usr/local/www/diag_smart.php:406 src/usr/local/www/diag_smart.php:415
 msgid "Abort"
-msgstr ""
+msgstr "Ματαίωση"
 
 #: src/usr/local/www/diag_smart.php:105
 msgid "Abort Test"
@@ -9561,7 +9512,7 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:109 src/usr/local/www/diag_smart.php:140
 #: src/usr/local/www/diag_smart.php:168
 msgid "Back"
-msgstr ""
+msgstr "Πίσω"
 
 #: src/usr/local/www/diag_smart.php:124
 msgid "Invalid info type, bailing."
@@ -9694,7 +9645,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound.php:514
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/firewall_nat.php:229
@@ -9763,7 +9714,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_tables.php:132
 msgid "Table"
-msgstr ""
+msgstr "Πίνακας"
 
 #: src/usr/local/www/diag_tables.php:139
 #, php-format
@@ -9794,11 +9745,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_tables.php:189
 msgid "."
-msgstr ""
+msgstr "."
 
 #: src/usr/local/www/diag_tables.php:189
 msgid ","
-msgstr ""
+msgstr ","
 
 #: src/usr/local/www/diag_tables.php:201
 msgid "Hide table comments."
@@ -9858,7 +9809,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_testport.php:205
 msgid "Connection failed."
-msgstr ""
+msgstr "Αποτυχία σύνδεσης"
 
 #: src/usr/local/www/diag_testport.php:211
 msgid ""
@@ -9965,7 +9916,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:276
 #: src/usr/local/www/status_logs_filter.php:299
 msgid "Message"
-msgstr ""
+msgstr "Μήνυμα"
 
 #: src/usr/local/www/easyrule.php:74
 msgid ""
@@ -10167,11 +10118,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:697
 #: src/usr/local/www/vpn_openvpn_server.php:1384
 msgid "Add"
-msgstr ""
+msgstr "Προσθήκη"
 
 #: src/usr/local/www/firewall_aliases.php:280
 msgid "Import"
-msgstr ""
+msgstr "Εισαγωγή"
 
 #: src/usr/local/www/firewall_aliases.php:291
 msgid ""
@@ -10199,7 +10150,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:74
 msgid "network"
-msgstr ""
+msgstr "Δίκτυο"
 
 #: src/usr/local/www/firewall_aliases_edit.php:75
 #: src/usr/local/www/firewall_aliases_edit.php:721
@@ -10272,7 +10223,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:287
 #: src/usr/local/www/vpn_openvpn_server.php:637
 msgid "Edit"
-msgstr ""
+msgstr "Επεξεργασία"
 
 #: src/usr/local/www/firewall_aliases_edit.php:148
 msgid ""
@@ -10520,7 +10471,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:656
 msgid "Properties"
-msgstr ""
+msgstr "Ιδιότητες"
 
 #: src/usr/local/www/firewall_aliases_edit.php:665
 #: src/usr/local/www/firewall_aliases_import.php:257
@@ -10558,7 +10509,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:550
 #: src/usr/local/www/vpn_ipsec_phase2.php:570
 msgid "Type"
-msgstr ""
+msgstr "Τύπος"
 
 #: src/usr/local/www/firewall_aliases_edit.php:687
 msgid "Hint"
@@ -10670,7 +10621,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:136
 #: src/usr/local/www/firewall_nat_out.php:219
 msgid "1:1"
-msgstr ""
+msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat.php:201
 #: src/usr/local/www/firewall_nat_1to1.php:137
@@ -10779,12 +10730,12 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:477
 #: src/usr/local/www/firewall_rules.php:838
 msgid "Add separator"
-msgstr ""
+msgstr "Προσθήκη Διαχωριστικού"
 
 #: src/usr/local/www/firewall_nat.php:479
 #: src/usr/local/www/firewall_rules.php:840
 msgid "Separator"
-msgstr ""
+msgstr "Διαχωριστικό"
 
 #: src/usr/local/www/firewall_nat.php:490
 #: src/usr/local/www/firewall_rules.php:888
@@ -10979,7 +10930,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:543
 #: src/usr/local/www/vpn_ipsec_phase2.php:569
 msgid "Network"
-msgstr ""
+msgstr "Δίκτυο"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:302
 #: src/usr/local/www/firewall_nat_1to1_edit.php:347
@@ -11131,7 +11082,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable"
-msgstr ""
+msgstr "Απενεργοποίηση"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
 #: src/usr/local/www/firewall_nat_edit.php:900
@@ -11371,7 +11322,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:759
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
-msgstr ""
+msgstr "Προσαρμοσμένο"
 
 #: src/usr/local/www/firewall_nat_edit.php:776
 #: src/usr/local/www/firewall_nat_edit.php:838
@@ -11495,13 +11446,13 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:693
 #: src/usr/local/www/firewall_rules_edit.php:1738
 msgid "Created"
-msgstr ""
+msgstr "Δημιουργήθηκε"
 
 #: src/usr/local/www/firewall_nat_edit.php:973
 #: src/usr/local/www/firewall_nat_out_edit.php:703
 #: src/usr/local/www/firewall_rules_edit.php:1748
 msgid "Updated"
-msgstr ""
+msgstr "Ενημερώθηκε"
 
 #: src/usr/local/www/firewall_nat_edit.php:1171
 #: src/usr/local/www/firewall_rules_edit.php:1788
@@ -11528,7 +11479,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:681
 #: src/usr/local/www/system_gateways_edit.php:893
 msgid "Hide Advanced"
-msgstr ""
+msgstr "Απόκρυψη σύνθετων"
 
 #: src/usr/local/www/firewall_nat_npt.php:113
 msgid "Firewall: NAT: NPt, enable/disable NAT rule"
@@ -11654,7 +11605,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:205
 #: src/usr/local/www/widgets/widgets/log.widget.php:105
 msgid "Destination"
-msgstr ""
+msgstr "Προορισμός"
 
 #: src/usr/local/www/firewall_nat_out.php:282
 #: src/usr/local/www/firewall_nat_out.php:535
@@ -11809,7 +11760,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:415
 #: src/usr/local/www/system_gateway_groups_edit.php:163
 msgid "Interface Address"
-msgstr ""
+msgstr "Διεύθυνση Διεπαφής"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:420
 msgid "Subnet: "
@@ -11871,7 +11822,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:576
 msgid "Translation"
-msgstr ""
+msgstr "Μετάφραση"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:584
 #, php-format
@@ -11910,7 +11861,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:604
 msgid "Random"
-msgstr ""
+msgstr "Τυχαία"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:605
 msgid "Random with Sticky Address"
@@ -12045,7 +11996,7 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:82
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:137
 msgid "Gateway"
-msgstr ""
+msgstr "Πύλη δικτύου"
 
 #: src/usr/local/www/firewall_rules.php:391
 #: src/usr/local/www/status_queues.php:159
@@ -12055,7 +12006,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:392
 #: src/usr/local/www/firewall_rules_edit.php:1633
 msgid "Schedule"
-msgstr ""
+msgstr "Πρόγραμμα"
 
 #: src/usr/local/www/firewall_rules.php:408
 #: src/usr/local/www/firewall_rules.php:499
@@ -12092,7 +12043,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
 msgid "Settings"
-msgstr ""
+msgstr "Ρυθμίσεις"
 
 #: src/usr/local/www/firewall_rules.php:427
 #: src/usr/local/www/firewall_rules.php:446
@@ -12144,13 +12095,13 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:256
 msgid "Mon"
-msgstr ""
+msgstr "Δευ"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Tues"
-msgstr ""
+msgstr "Τρι"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
@@ -12190,73 +12141,73 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "January"
-msgstr ""
+msgstr "Ιανουάριος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "February"
-msgstr ""
+msgstr "Φεβρουάριος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "March"
-msgstr ""
+msgstr "Μάρτιος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "April"
-msgstr ""
+msgstr "Απρίλιος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "May"
-msgstr ""
+msgstr "Μάιος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "June"
-msgstr ""
+msgstr "Ιούνιος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "July"
-msgstr ""
+msgstr "Ιούλιος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "August"
-msgstr ""
+msgstr "Αύγουστος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "September"
-msgstr ""
+msgstr "Σεπτέμβριος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "October"
-msgstr ""
+msgstr "Οκτώβριος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "November"
-msgstr ""
+msgstr "Νοέμβριος"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "December"
-msgstr ""
+msgstr "Δεκέμβριος"
 
 #: src/usr/local/www/firewall_rules.php:650
 msgid "Traffic matching this rule is currently being denied"
@@ -12277,7 +12228,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:780
 msgid "Copy"
-msgstr ""
+msgstr "Αντιγραφή"
 
 #: src/usr/local/www/firewall_rules.php:789
 msgid "Delete this rule"
@@ -12768,7 +12719,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1375
 msgid " Type"
-msgstr ""
+msgstr "Τύπος"
 
 #: src/usr/local/www/firewall_rules_edit.php:1382
 msgid " Address"
@@ -12811,7 +12762,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:727
 #: src/usr/local/www/system_gateways_edit.php:747
 msgid "From"
-msgstr ""
+msgstr "Από"
 
 #: src/usr/local/www/firewall_rules_edit.php:1426
 msgid " port end"
@@ -12826,7 +12777,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:734
 #: src/usr/local/www/system_gateways_edit.php:754
 msgid "To"
-msgstr ""
+msgstr "Πρός"
 
 #: src/usr/local/www/firewall_rules_edit.php:1438
 #, php-format
@@ -12968,7 +12919,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1593
 msgid "Keep"
-msgstr ""
+msgstr "Διατήρηση"
 
 #: src/usr/local/www/firewall_rules_edit.php:1594
 msgid "Sloppy"
@@ -13128,11 +13079,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:257
 msgid "Tue"
-msgstr ""
+msgstr "Τρι"
 
 #: src/usr/local/www/firewall_schedule_edit.php:259
 msgid "Thu"
-msgstr ""
+msgstr "Πεμ"
 
 #: src/usr/local/www/firewall_schedule_edit.php:308
 msgid ""
@@ -13167,7 +13118,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:382
 msgid "Month"
-msgstr ""
+msgstr "Μήνας"
 
 #: src/usr/local/www/firewall_schedule_edit.php:388
 msgid "*Date"
@@ -13233,7 +13184,7 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:370
 #: src/usr/local/www/firewall_shaper_wizards.php:73
 msgid "By Interface"
-msgstr ""
+msgstr "Ανα Διεπαφή "
 
 #: src/usr/local/www/firewall_shaper.php:129
 #: src/usr/local/www/firewall_shaper_vinterface.php:142
@@ -13362,7 +13313,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:102
 msgid "client"
-msgstr ""
+msgstr "πελάτης"
 
 #: src/usr/local/www/firewall_virtual_ip.php:113
 #, php-format
@@ -13632,7 +13583,7 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:191
 msgid "Switch to"
-msgstr ""
+msgstr "Εναλλαγή σε "
 
 #: src/usr/local/www/graph.php:196
 msgid "follow"
@@ -13640,27 +13591,27 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:367
 msgid "Kbps"
-msgstr ""
+msgstr "Kbps"
 
 #: src/usr/local/www/graph.php:370
 msgid "Mbps"
-msgstr ""
+msgstr "Mbps"
 
 #: src/usr/local/www/graph.php:373
 msgid "Gbps"
-msgstr ""
+msgstr "Gbps"
 
 #: src/usr/local/www/graph.php:379
 msgid "KB/s"
-msgstr ""
+msgstr "KB/s"
 
 #: src/usr/local/www/graph.php:382
 msgid "MB/s"
-msgstr ""
+msgstr "MB/s"
 
 #: src/usr/local/www/graph.php:385
 msgid "GB/s"
-msgstr ""
+msgstr "GB/s"
 
 #: src/usr/local/www/graph_cpu.php:76
 msgid "Cannot get CPU load"
@@ -13783,7 +13734,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:163
 #: src/usr/local/www/system_certmanager.php:756
 msgid "Value"
-msgstr ""
+msgstr "Τιμή"
 
 #: src/usr/local/www/head.inc:227
 #: src/usr/local/www/system_advanced_admin.php:284
@@ -14068,7 +14019,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:503 src/usr/local/www/head.inc:675
 msgid "Notices"
-msgstr ""
+msgstr "Ειδοποιήσεις"
 
 #: src/usr/local/www/head.inc:540
 msgid "Save dashboard layout"
@@ -14125,7 +14076,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:714
 msgid "Close"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #: src/usr/local/www/head.inc:716
 msgid "Mark All as Read"
@@ -14133,7 +14084,7 @@ msgstr ""
 
 #: src/usr/local/www/help.php:383
 msgid "Help"
-msgstr ""
+msgstr "Βοήθεια"
 
 #: src/usr/local/www/help.php:388
 msgid "The Help page is the only page this user has privilege for."
@@ -14260,7 +14211,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:574
 #: src/usr/local/www/interfaces_ppps_edit.php:204
 msgid "Phone Number"
-msgstr ""
+msgstr "Αριθμός τηλεφώνου"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE username"
@@ -14808,7 +14759,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1933 src/usr/local/www/interfaces.php:2117
 msgid "Options"
-msgstr ""
+msgstr "Επιλογές"
 
 #: src/usr/local/www/interfaces.php:1940
 msgid "Use advanced DHCP configuration options."
@@ -14854,12 +14805,12 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:1981
 #: src/usr/local/www/load_balancer_setting.php:117
 msgid "Timeout"
-msgstr ""
+msgstr "Λήξη Χρόνου"
 
 #: src/usr/local/www/interfaces.php:1988
 #: src/usr/local/www/load_balancer_pool_edit.php:337
 msgid "Retry"
-msgstr ""
+msgstr "Προσπάθεια ξανά"
 
 #: src/usr/local/www/interfaces.php:1996
 msgid "Select timeout"
@@ -14941,7 +14892,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2165
 msgid "Debug"
-msgstr ""
+msgstr "Αποσφαλμάτωση"
 
 #: src/usr/local/www/interfaces.php:2171
 msgid "Do not wait for a RA"
@@ -15057,12 +15008,12 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2511 src/usr/local/www/interfaces.php:2937
 #: src/usr/local/www/interfaces_ppps_edit.php:601
 msgid "Country"
-msgstr ""
+msgstr "Χώρα"
 
 #: src/usr/local/www/interfaces.php:2518
 #: src/usr/local/www/interfaces_ppps_edit.php:608
 msgid "Provider"
-msgstr ""
+msgstr "Πάροχος"
 
 #: src/usr/local/www/interfaces.php:2525
 #: src/usr/local/www/interfaces_ppps_edit.php:615
@@ -15142,11 +15093,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2651
 msgid "Hour (0-23)"
-msgstr ""
+msgstr "Ωρα (0-23)"
 
 #: src/usr/local/www/interfaces.php:2659
 msgid "Minutes (0-59)"
-msgstr ""
+msgstr "Λεπτά (0-59)"
 
 #: src/usr/local/www/interfaces.php:2666
 msgid "Specific date (mm/dd/yyyy)"
@@ -15217,7 +15168,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2810
 msgid "Standard"
-msgstr ""
+msgstr "Τυπικό"
 
 #: src/usr/local/www/interfaces.php:2820 src/usr/local/www/interfaces.php:2870
 msgid "Off"
@@ -15247,12 +15198,12 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:849
 #: src/usr/local/www/vpn_ipsec_phase2.php:628
 msgid "Auto"
-msgstr ""
+msgstr "Αυτόματο"
 
 #: src/usr/local/www/interfaces.php:2855
 #: src/usr/local/www/status_interfaces.php:162
 msgid "Channel"
-msgstr ""
+msgstr "Κανάλι"
 
 #: src/usr/local/www/interfaces.php:2858
 msgid ""
@@ -15340,7 +15291,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2944
 msgid "Location"
-msgstr ""
+msgstr "Τοποθεσία"
 
 #: src/usr/local/www/interfaces.php:2947
 msgid ""
@@ -15359,11 +15310,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11g"
-msgstr ""
+msgstr "802.11g"
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11n"
-msgstr ""
+msgstr "802.11n"
 
 #: src/usr/local/www/interfaces.php:2974
 msgid "Minimum wireless standard"
@@ -15454,7 +15405,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3050
 msgid "TKIP"
-msgstr ""
+msgstr "TKIP"
 
 #: src/usr/local/www/interfaces.php:3048
 msgid "WPA Pairwise"
@@ -15490,7 +15441,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3083
 msgid "IEEE802.1X"
-msgstr ""
+msgstr "IEEE802.1X"
 
 #: src/usr/local/www/interfaces.php:3087
 msgid "This option requires that the \"Enable WPA box\" is checked"
@@ -15728,7 +15679,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:89
 #: src/usr/local/www/interfaces_wireless.php:86
 msgid "GREs"
-msgstr ""
+msgstr "GREs"
 
 #: src/usr/local/www/interfaces_assign.php:499
 #: src/usr/local/www/interfaces_bridge.php:90
@@ -15743,7 +15694,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:90
 #: src/usr/local/www/interfaces_wireless.php:87
 msgid "GIFs"
-msgstr ""
+msgstr "GIFs"
 
 #: src/usr/local/www/interfaces_assign.php:500
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -15773,7 +15724,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:92
 #: src/usr/local/www/interfaces_wireless.php:89
 msgid "LAGGs"
-msgstr ""
+msgstr "LAGGs"
 
 #: src/usr/local/www/interfaces_assign.php:510
 msgid "Network port"
@@ -16117,7 +16068,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:601
 msgid " Priority"
-msgstr ""
+msgstr "Προτεραιότητα"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:605
 msgid ""
@@ -16499,7 +16450,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "LACP"
-msgstr ""
+msgstr "LACP"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "FAILOVER"
@@ -16728,7 +16679,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 msgid "Select"
-msgstr ""
+msgstr "Επιλογή"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:566
 msgid ""
@@ -16850,11 +16801,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:772
 msgid "Hour"
-msgstr ""
+msgstr "Ωρα"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:779
 msgid "Minute"
-msgstr ""
+msgstr "Λεπτό"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:787
 msgid "Specific date"
@@ -17239,7 +17190,7 @@ msgstr ""
 
 #: src/usr/local/www/license.php:33
 msgid "License"
-msgstr ""
+msgstr "Άδεια Χρήσης"
 
 #: src/usr/local/www/license.php:35
 #, php-format
@@ -17318,11 +17269,11 @@ msgstr ""
 
 #: src/usr/local/www/license.php:112
 msgid "2004-2013 Internet Software Consortium, Inc."
-msgstr ""
+msgstr "2004-2013 Internet Software Consortium, Inc."
 
 #: src/usr/local/www/license.php:113
 msgid "1995-2003 Internet Software Consortium"
-msgstr ""
+msgstr "1995-2003 Internet Software Consortium"
 
 #: src/usr/local/www/license.php:122 src/usr/local/www/license.php:127
 msgid "All rights reserved."
@@ -17330,7 +17281,7 @@ msgstr ""
 
 #: src/usr/local/www/license.php:126
 msgid "2011-2016 Nginx, Inc."
-msgstr ""
+msgstr "2011-2016 Nginx, Inc."
 
 #: src/usr/local/www/license.php:131
 msgid "Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved."
@@ -17342,11 +17293,11 @@ msgstr ""
 
 #: src/usr/local/www/license.php:136
 msgid "2005-2016 University of Applied Sciences Rapperswil"
-msgstr ""
+msgstr "2005-2016 University of Applied Sciences Rapperswil"
 
 #: src/usr/local/www/license.php:148
 msgid "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
-msgstr ""
+msgstr "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
 
 #: src/usr/local/www/license.php:185
 msgid "Public Domain"
@@ -17461,21 +17412,21 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "ICMP"
-msgstr ""
+msgstr "ICMP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:314
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:322
 msgid "HTTPS"
-msgstr ""
+msgstr "HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "Send/Expect"
@@ -17492,7 +17443,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor_edit.php:297
 #: src/usr/local/www/load_balancer_monitor_edit.php:323
 msgid "Path"
-msgstr ""
+msgstr "Διαδρομή"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:307
 #: src/usr/local/www/load_balancer_monitor_edit.php:333
@@ -17519,7 +17470,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor_edit.php:349
 #: src/usr/local/www/services_wol.php:156
 msgid "Send"
-msgstr ""
+msgstr "Αποστολή"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:356
 msgid "Expect"
@@ -17961,7 +17912,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:83
 msgid "Visit official website"
-msgstr ""
+msgstr "Επίσκεψη Επίσημης Ιστοσελίδας"
 
 #: src/usr/local/www/pkg_mgr.php:92 src/usr/local/www/pkg_mgr_installed.php:145
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:106
@@ -17999,7 +17950,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:142 src/usr/local/www/pkg_mgr.php:164
 msgid "Search"
-msgstr ""
+msgstr "Αναζήτηση"
 
 #: src/usr/local/www/pkg_mgr.php:153
 msgid "Search term"
@@ -18028,7 +17979,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:121
 msgid "Failed"
-msgstr ""
+msgstr "Απέτυχε"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
@@ -18216,7 +18167,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_installed.php:77
 msgid "Category"
-msgstr ""
+msgstr "Κατηγορία"
 
 #: src/usr/local/www/pkg_mgr_installed.php:100
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:70
@@ -18261,7 +18212,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_installed.php:191
 msgid "Current"
-msgstr ""
+msgstr "Τρέχον"
 
 #: src/usr/local/www/pkg_mgr_installed.php:198
 msgid "Newer version available"
@@ -18285,7 +18236,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
 #: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:84
 msgid "Configuration"
-msgstr ""
+msgstr "Ρύθμιση"
 
 #: src/usr/local/www/services_captiveportal.php:85
 #, php-format
@@ -18690,7 +18641,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:366
 #: src/usr/local/www/vpn_l2tp.php:273
 msgid "RADIUS"
-msgstr ""
+msgstr "RADIUS"
 
 #: src/usr/local/www/services_captiveportal.php:880
 msgid "Accounting Port"
@@ -18953,7 +18904,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:164
 msgid "File"
-msgstr ""
+msgstr "Αρχείο"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:183
 msgid "Installed Files"
@@ -18965,13 +18916,13 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:214
 msgid "Total"
-msgstr ""
+msgstr "Σύνολο"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:244
 #: src/usr/local/www/services_ntpd_gps.php:331
 #: src/usr/local/www/services_ntpd_pps.php:127
 msgid "Notes"
-msgstr ""
+msgstr "Σημειώσεις"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:246
 msgid ""
@@ -19208,7 +19159,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:441
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 msgid "Action"
-msgstr ""
+msgstr "Ενέργεια"
 
 #: src/usr/local/www/services_captiveportal_mac.php:200
 msgid "Edit MAC address"
@@ -19409,7 +19360,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:206
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:85
 msgid "Comment"
-msgstr ""
+msgstr "Σχόλιο"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:411
 msgid "Edit voucher roll"
@@ -19646,7 +19597,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones.php:74
 #: src/usr/local/www/services_rfc2136_edit.php:204
 msgid "Zone"
-msgstr ""
+msgstr "Ζώνη"
 
 #: src/usr/local/www/services_captiveportal_zones.php:76
 #: src/usr/local/www/services_pppoe.php:104
@@ -19725,7 +19676,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip.php:89
 #: src/usr/local/www/services_checkip_edit.php:63
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/usr/local/www/services_checkip.php:90
 #: src/usr/local/www/services_checkip_edit.php:155
@@ -19776,7 +19727,7 @@ msgstr ""
 
 #: src/usr/local/www/services_checkip.php:182
 msgid "PHP"
-msgstr ""
+msgstr "PHP"
 
 #: src/usr/local/www/services_checkip_edit.php:68
 msgid "The Check IP Service name contains invalid characters."
@@ -19802,11 +19753,11 @@ msgstr ""
 
 #: src/usr/local/www/services_checkip_edit.php:134
 msgid "*URL"
-msgstr ""
+msgstr "*URL"
 
 #: src/usr/local/www/services_checkip_edit.php:141
 msgid "User name"
-msgstr ""
+msgstr "Όνομα Χρήστη"
 
 #: src/usr/local/www/services_dhcp.php:254
 #: src/usr/local/www/services_dhcpv6.php:215
@@ -20085,7 +20036,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:814
 msgid "BOOTP"
-msgstr ""
+msgstr "BOOTP"
 
 #: src/usr/local/www/services_dhcp.php:821
 msgid "Deny unknown clients"
@@ -20162,7 +20113,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:963
 msgid "Other Options"
-msgstr ""
+msgstr "Αλλες Επιλογές"
 
 #: src/usr/local/www/services_dhcp.php:971
 msgid ""
@@ -20358,7 +20309,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1161
 msgid "TFTP"
-msgstr ""
+msgstr "TFTP"
 
 #: src/usr/local/www/services_dhcp.php:1167
 #: src/usr/local/www/services_dhcp_edit.php:686
@@ -20374,7 +20325,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1183
 #: src/usr/local/www/services_dhcpv6.php:863
 msgid "LDAP"
-msgstr ""
+msgstr "LDAP"
 
 #: src/usr/local/www/services_dhcp.php:1189
 msgid "LDAP Server URI"
@@ -20445,7 +20396,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1283
 msgid "Text"
-msgstr ""
+msgstr "Κείμενο"
 
 #: src/usr/local/www/services_dhcp.php:1283
 msgid "String"
@@ -20453,7 +20404,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1283
 msgid "Boolean"
-msgstr ""
+msgstr "Λογικός"
 
 #: src/usr/local/www/services_dhcp.php:1284
 msgid "Unsigned 8-bit integer"
@@ -20485,12 +20436,12 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1298
 msgid "Option"
-msgstr ""
+msgstr "Επιλογή"
 
 #: src/usr/local/www/services_dhcp.php:1306
 #: src/usr/local/www/services_dhcpv6.php:940
 msgid "Number"
-msgstr ""
+msgstr "Νούμερο"
 
 #: src/usr/local/www/services_dhcp.php:1388
 msgid "DHCP Static Mappings for this Interface"
@@ -20984,7 +20935,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:802
 #: src/usr/local/www/services_unbound_acls.php:234
 msgid "Allow"
-msgstr ""
+msgstr "Επιτρέπεται"
 
 #: src/usr/local/www/services_dhcpv6.php:804
 msgid "Ignore"
@@ -21047,7 +20998,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:439
 #: src/usr/local/www/status_dhcpv6_leases.php:536
 msgid "DUID"
-msgstr ""
+msgstr "DUID"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:141
 msgid "A valid DUID must be specified."
@@ -21468,7 +21419,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:75
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:123
 msgid "Service"
-msgstr ""
+msgstr "Υπηρεσία"
 
 #: src/usr/local/www/services_dyndns.php:92
 #: src/usr/local/www/services_rfc2136.php:84
@@ -21541,7 +21492,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:311
 msgid "MX"
-msgstr ""
+msgstr "MX"
 
 #: src/usr/local/www/services_dyndns_edit.php:314
 msgid ""
@@ -21612,7 +21563,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:400
 #: src/usr/local/www/services_rfc2136_edit.php:78
 msgid "TTL"
-msgstr ""
+msgstr "TTL"
 
 #: src/usr/local/www/services_dyndns_edit.php:403
 msgid "Choose TTL for the dns record."
@@ -21715,7 +21666,7 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:162
 #: src/usr/local/www/status_queues.php:166
 msgid "PPS"
-msgstr ""
+msgstr "PPS"
 
 #: src/usr/local/www/services_ntpd.php:211
 msgid "NTP Server Configuration"
@@ -21886,15 +21837,15 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:291
 msgid "RMC"
-msgstr ""
+msgstr "RMC"
 
 #: src/usr/local/www/services_ntpd_gps.php:292
 msgid "GGA"
-msgstr ""
+msgstr "GGA"
 
 #: src/usr/local/www/services_ntpd_gps.php:293
 msgid "GLL"
-msgstr ""
+msgstr "GLL"
 
 #: src/usr/local/www/services_ntpd_gps.php:294
 msgid "ZDA or ZDG"
@@ -22019,7 +21970,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:515
 msgid "Calculate"
-msgstr ""
+msgstr "Υπολογισμός"
 
 #: src/usr/local/www/services_ntpd_gps.php:532
 msgid ""
@@ -22294,7 +22245,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:533
 msgid "Add user"
-msgstr ""
+msgstr "Προσθήκη χρήστη"
 
 #: src/usr/local/www/services_pppoe_edit.php:568
 msgid ""
@@ -22329,7 +22280,7 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:78
 msgid "Key"
-msgstr ""
+msgstr "Κλειδί"
 
 #: src/usr/local/www/services_rfc2136_edit.php:83
 msgid "The DNS update host name contains invalid characters."
@@ -22444,7 +22395,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:114
 msgid "Low"
-msgstr ""
+msgstr "Χαμηλή"
 
 #: src/usr/local/www/services_router_advertisements.php:119
 msgid ""
@@ -22807,7 +22758,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:112
 #: src/usr/local/www/services_unbound_host_edit.php:200
 msgid "General Settings"
-msgstr ""
+msgstr "Γενικές Ρυθμίσεις"
 
 #: src/usr/local/www/services_unbound.php:253
 #: src/usr/local/www/services_unbound_acls.php:194
@@ -22875,7 +22826,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:311
 msgid "DNSSEC"
-msgstr ""
+msgstr "DNSSEC"
 
 #: src/usr/local/www/services_unbound.php:321
 #, php-format
@@ -22943,7 +22894,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:139
 msgid "save"
-msgstr ""
+msgstr "αποθήκευση"
 
 #: src/usr/local/www/services_unbound_acls.php:169
 #, php-format
@@ -23093,11 +23044,11 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:216
 msgid "Hide Identity"
-msgstr ""
+msgstr "Απόκρυψη ταυτότητας"
 
 #: src/usr/local/www/services_unbound_advanced.php:223
 msgid "Hide Version"
-msgstr ""
+msgstr "Απόκρυψη έκδοσης"
 
 #: src/usr/local/www/services_unbound_advanced.php:230
 msgid "Prefetch Support"
@@ -23229,7 +23180,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:310
 msgid "minutes"
-msgstr ""
+msgstr "λεπτά"
 
 #: src/usr/local/www/services_unbound_advanced.php:313
 msgid "TTL for Host Cache Entries"
@@ -23254,7 +23205,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:325
 msgid "million"
-msgstr ""
+msgstr "εκατομμύριο"
 
 #: src/usr/local/www/services_unbound_advanced.php:328
 msgid "Unwanted Reply Threshold"
@@ -23271,7 +23222,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:336
 msgid "level"
-msgstr ""
+msgstr "επίπεδο"
 
 #: src/usr/local/www/services_unbound_advanced.php:339
 msgid "Log Level"
@@ -23469,7 +23420,7 @@ msgstr ""
 
 #: src/usr/local/www/status.php:347
 msgid "Done."
-msgstr ""
+msgstr "Ολοκληρώθηκε."
 
 #: src/usr/local/www/status_captiveportal.php:42
 msgid "Session details"
@@ -23766,7 +23717,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcp_leases.php:142
 #: src/usr/local/www/status_dhcpv6_leases.php:195
 msgid "offline"
-msgstr ""
+msgstr "Εκτός σύνδεσης"
 
 #: src/usr/local/www/status_dhcp_leases.php:144
 #: src/usr/local/www/status_dhcpv6_leases.php:197
@@ -23829,7 +23780,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:443
 #: src/usr/local/www/status_dhcpv6_leases.php:538
 msgid "End"
-msgstr ""
+msgstr "Τέλος"
 
 #: src/usr/local/www/status_dhcp_leases.php:368
 #: src/usr/local/www/status_dhcpv6_leases.php:444
@@ -23973,7 +23924,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:95
 #: src/usr/local/www/diag_smart.php:300
 msgid "Offline"
-msgstr ""
+msgstr "Εκτός σύνδεσης"
 
 #: src/usr/local/www/status_gateway_groups.php:123
 #: src/usr/local/www/status_gateways.php:135
@@ -24052,12 +24003,12 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:158
 #: src/usr/local/www/system_groupmanager.php:410
 msgid "Local"
-msgstr ""
+msgstr "Τοπικό"
 
 #: src/usr/local/www/status_graph.php:159
 #: src/usr/local/www/system_groupmanager.php:410
 msgid "Remote"
-msgstr ""
+msgstr "Απομακρυσμένο"
 
 #: src/usr/local/www/status_graph.php:172
 msgid "FQDN"
@@ -24101,7 +24052,7 @@ msgstr ""
 
 #: src/usr/local/www/status_graph_cpu.php:46
 msgid "Note"
-msgstr ""
+msgstr "Σημείωση"
 
 #: src/usr/local/www/status_graph_cpu.php:47
 #, php-format
@@ -24120,12 +24071,12 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:111
 msgid " Interface "
-msgstr ""
+msgstr "Διεπαφή"
 
 #: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
 msgid "Release"
-msgstr ""
+msgstr "Απελευθέρωση"
 
 #: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
@@ -24139,14 +24090,14 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:232
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Disconnect"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: src/usr/local/www/status_interfaces.php:118
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
 msgid "Connect"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: src/usr/local/www/status_interfaces.php:122
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
@@ -24440,7 +24391,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_sad.php:72
 msgid "Data"
-msgstr ""
+msgstr "Δεδομένα"
 
 #: src/usr/local/www/status_ipsec_sad.php:106
 msgid "Remove this SPD Entry"
@@ -24452,7 +24403,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_spd.php:61
 msgid "Direction"
-msgstr ""
+msgstr "Κατεύθυνση"
 
 #: src/usr/local/www/status_ipsec_spd.php:63
 msgid "Tunnel endpoints"
@@ -24508,7 +24459,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
 #: src/etc/inc/pfsense-utils.inc:318
 msgid "Active"
-msgstr ""
+msgstr "Ενεργό"
 
 #: src/usr/local/www/status_lb_vs.php:102
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:76
@@ -24558,12 +24509,12 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:401
 #: src/usr/local/www/widgets/widgets/log.widget.php:102
 msgid "Time"
-msgstr ""
+msgstr "Χρόνος"
 
 #: src/usr/local/www/status_logs.php:142
 #: src/usr/local/www/status_logs_common.inc:250
 msgid "Process"
-msgstr ""
+msgstr "Διεργασία"
 
 #: src/usr/local/www/status_logs.php:143
 #: src/usr/local/www/status_logs_common.inc:257
@@ -24598,7 +24549,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:283
 #: src/usr/local/www/vpn_openvpn_server.php:633
 msgid "VPN"
-msgstr ""
+msgstr "VPN"
 
 #: src/usr/local/www/status_logs_common.inc:110
 #: src/usr/local/www/status_logs_filter.php:76
@@ -24764,7 +24715,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:782
 msgid "Manage"
-msgstr ""
+msgstr "Διαχείριση"
 
 #: src/usr/local/www/status_logs_common.inc:791
 #: src/usr/local/www/status_logs_settings.php:235
@@ -24928,7 +24879,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter_dynamic.php:381
 msgid "Pause"
-msgstr ""
+msgstr "Παύση"
 
 #: src/usr/local/www/status_logs_filter_summary.php:85
 msgid "Protocols"
@@ -25155,7 +25106,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:221
 #: src/usr/local/www/services_rfc2136_edit.php:220
 msgid "User"
-msgstr ""
+msgstr "Χρήστης"
 
 #: src/usr/local/www/status_logs_vpn.php:180
 #: src/usr/local/www/status_logs_vpn.php:434
@@ -25184,7 +25135,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ntpd.php:81
 msgid "Selected"
-msgstr ""
+msgstr "Επιλεγμένο"
 
 #: src/usr/local/www/status_ntpd.php:84
 msgid "Excess Peer"
@@ -25245,7 +25196,7 @@ msgstr ""
 #: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:895
 msgid "Delay"
-msgstr ""
+msgstr "Kαθυστέρηση"
 
 #: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
@@ -25407,7 +25358,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:160
 msgid "Statistics"
-msgstr ""
+msgstr "Στατιστικά"
 
 #: src/usr/local/www/status_queues.php:168
 msgid "Borrows"
@@ -25431,7 +25382,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:248
 msgid "Loading"
-msgstr ""
+msgstr "Γίνεται φόρτωση"
 
 #: src/usr/local/www/status_services.php:144
 msgid "No services found."
@@ -25637,7 +25588,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:562
 msgid "*Language"
-msgstr ""
+msgstr "*Γλώσσα"
 
 #: src/usr/local/www/system.php:565
 msgid "Choose a language for the webConfigurator"
@@ -26079,7 +26030,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_firewall.php:418
 #: src/usr/local/www/vpn_ipsec_phase1.php:712
 msgid "Aggressive"
-msgstr ""
+msgstr "Επιθετική"
 
 #: src/usr/local/www/system_advanced_firewall.php:419
 msgid "Conservative"
@@ -26246,15 +26197,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:560
 msgid "Monthly"
-msgstr ""
+msgstr "Μηνιαία"
 
 #: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Weekly"
-msgstr ""
+msgstr "Εβδομαδιαία"
 
 #: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Daily"
-msgstr ""
+msgstr "Ημερήσια"
 
 #: src/usr/local/www/system_advanced_firewall.php:557
 msgid "Update Frequency"
@@ -26272,7 +26223,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:585
 msgid "disabled"
-msgstr ""
+msgstr "απενεργοποιημένο"
 
 #: src/usr/local/www/system_advanced_firewall.php:586
 msgid "NAT + proxy"
@@ -26352,7 +26303,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:653
 msgid "TCP "
-msgstr ""
+msgstr "TCP "
 
 #: src/usr/local/www/system_advanced_firewall.php:664
 msgid "UDP "
@@ -26364,7 +26315,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:686
 msgid "Other "
-msgstr ""
+msgstr "Άλλο"
 
 #: src/usr/local/www/system_advanced_firewall.php:705
 msgid "The default optimization algorithm"
@@ -26550,11 +26501,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:413
 msgid "Minimum"
-msgstr ""
+msgstr "Ελάχιστο"
 
 #: src/usr/local/www/system_advanced_misc.php:414
 msgid "Maximum"
-msgstr ""
+msgstr "Μέγιστο"
 
 #: src/usr/local/www/system_advanced_misc.php:419
 msgid "AC Power"
@@ -27088,7 +27039,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:164
 msgid "New"
-msgstr ""
+msgstr "Νέο"
 
 #: src/usr/local/www/system_advanced_sysctl.php:184
 msgid "Edit tunable"
@@ -27226,7 +27177,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:85
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "Χρήστες"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:276
@@ -27239,7 +27190,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:136
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
-msgstr ""
+msgstr "Ομάδες"
 
 #: src/usr/local/www/system_authservers.php:442
 msgid "Server Name"
@@ -27629,12 +27580,12 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:365
 #: src/usr/local/www/system_crlmanager.php:584
 msgid "Internal"
-msgstr ""
+msgstr "Εσωτερικό"
 
 #: src/usr/local/www/system_camanager.php:366
 #: src/usr/local/www/system_certmanager.php:955
 msgid "Issuer"
-msgstr ""
+msgstr "Εκδότης"
 
 #: src/usr/local/www/system_camanager.php:368
 #: src/usr/local/www/system_certmanager.php:956
@@ -27883,7 +27834,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:620
 msgid "Create"
-msgstr ""
+msgstr "Δημιουργία"
 
 #: src/usr/local/www/system_certmanager.php:621
 msgid " an internal CA."
@@ -27923,7 +27874,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:747
 msgid "email address"
-msgstr ""
+msgstr "διεύθυνση ηλεκτρονικού ταχυδρομείου"
 
 #: src/usr/local/www/system_certmanager.php:780
 msgid "External Signing Request"
@@ -28088,7 +28039,7 @@ msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:401
 msgid "Serial"
-msgstr ""
+msgstr "Σειριακός"
 
 #: src/usr/local/www/system_crlmanager.php:424
 msgid "Edit Imported Certificate Revocation List"
@@ -28131,11 +28082,11 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:220
 #: src/usr/local/www/vpn_openvpn_server.php:440
 msgid "Certificate"
-msgstr ""
+msgstr "Πιστοποιητικό"
 
 #: src/usr/local/www/system_crlmanager.php:538
 msgid "Reason"
-msgstr ""
+msgstr "Αιτία"
 
 #: src/usr/local/www/system_crlmanager.php:578
 msgid "Additional Certificate Revocation Lists"
@@ -28345,7 +28296,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:117
 msgid "gateway"
-msgstr ""
+msgstr "πύλη δικτύου"
 
 #: src/usr/local/www/system_gateways_edit.php:146
 msgid "A valid gateway IP address must be specified."
@@ -28863,7 +28814,7 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager_addprivs.php:166
 #: src/usr/local/www/system_usermanager_addprivs.php:156
 msgid "Shadow"
-msgstr ""
+msgstr "Σκιά"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:178
 #: src/usr/local/www/system_usermanager_addprivs.php:168
@@ -29208,7 +29159,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:165
 msgid "Updates"
-msgstr ""
+msgstr "Ενημερώσεις"
 
 #: src/usr/local/www/system_update_settings.php:169
 msgid "Dashboard check"
@@ -29385,12 +29336,12 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Edit user"
-msgstr ""
+msgstr "Επεξεργασία χρήστη"
 
 #: src/usr/local/www/system_usermanager.php:616
 #: src/usr/local/www/vpn_l2tp_users.php:112
 msgid "Delete user"
-msgstr ""
+msgstr "Διαγραφή χρήστη"
 
 #: src/usr/local/www/system_usermanager.php:632
 msgid "Delete selected users"
@@ -29552,7 +29503,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:63
 #: src/usr/local/www/uploadconfig.php:49
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/usr/local/www/system_usermanager_settings.php:55
 #, php-format
@@ -29572,7 +29523,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:83
 #: src/usr/local/www/system_usermanager_settings.php:87
 msgid "failed"
-msgstr ""
+msgstr "απέτυχε"
 
 #: src/usr/local/www/system_usermanager_settings.php:121
 msgid "Session timeout must be an integer value."
@@ -29683,7 +29634,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:250
 msgid "IKE"
-msgstr ""
+msgstr "IKE"
 
 #: src/usr/local/www/vpn_ipsec.php:251
 msgid "Remote Gateway"
@@ -30000,7 +29951,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:463
 msgid "system"
-msgstr ""
+msgstr "σύστημα"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:459
 msgid "*Group Authentication"
@@ -30602,7 +30553,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:670
 #: src/usr/local/www/widgets/widgets/log.widget.php:257
 msgid "Seconds"
-msgstr ""
+msgstr "Δευτερόλεπτα"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:678
 msgid "Automatically ping host"
@@ -32059,7 +32010,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:99
 msgid "delete"
-msgstr ""
+msgstr "διαγραφή"
 
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 msgid "No CARP Interfaces Defined."
@@ -32091,7 +32042,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:123
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:140
 msgid "Show"
-msgstr ""
+msgstr "Εμφάνιση"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:64
 msgid "Updated gateways widget settings via dashboard."
@@ -32135,7 +32086,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
-msgstr ""
+msgstr "ok"
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:141
 msgid "Retrieving package data"
@@ -32283,7 +32234,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:481
 msgid "Updating..."
-msgstr ""
+msgstr "Ενημέρωση..."
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:71
 msgid "Saved OpenVPN Filter via Dashboard."
@@ -32367,7 +32318,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:61
 msgid "Version "
-msgstr ""
+msgstr "Έκδοση"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:62
 msgid "is available."
@@ -32439,7 +32390,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:204
 msgid "Temperature"
-msgstr ""
+msgstr "Θερμοκρασία"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:216
 msgid "Load average"
@@ -32492,7 +32443,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:165
 msgid "(1 to 100):"
-msgstr ""
+msgstr "(1 εως 100):"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:168
 msgid "Display settings:"
@@ -32556,7 +32507,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:62
 msgid "Device"
-msgstr ""
+msgstr "Συσκευή"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
 msgid "Wake"
@@ -32576,7 +32527,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:139
 msgid "MAC"
-msgstr ""
+msgstr "MAC"
 
 #: src/usr/local/www/wizard.php:58 src/usr/local/www/wizard.php:70
 #, php-format
@@ -33086,19 +33037,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:799
 msgid "Monthly (0 0 1 * *)"
-msgstr ""
+msgstr "Μηνιαία  (0 0 1 * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:807
 msgid "Weekly (0 0 * * 0)"
-msgstr ""
+msgstr "Εβδομαδιαία (0 0 * * 0)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:815
 msgid "Daily (0 0 * * *)"
-msgstr ""
+msgstr "Ημερήσια  (0 0 * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:823
 msgid "Hourly (0 * * * *)"
-msgstr ""
+msgstr "Ωριαία  (0 * * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:852
 msgid "Enable Dial-on-Demand mode. "
@@ -33204,19 +33155,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:730
 msgid "PAP"
-msgstr ""
+msgstr "PAP"
 
 #: src/usr/local/www/services_captiveportal.php:738
 msgid "CHAP-MD5"
-msgstr ""
+msgstr "CHAP-MD5"
 
 #: src/usr/local/www/services_captiveportal.php:746
 msgid "MSCHAPv1"
-msgstr ""
+msgstr "MSCHAPv1"
 
 #: src/usr/local/www/services_captiveportal.php:754
 msgid "MSCHAPv2"
-msgstr ""
+msgstr "MSCHAPv2"
 
 #: src/usr/local/www/services_captiveportal.php:874
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
@@ -33586,11 +33537,11 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:260
 msgid "A (IPv4)"
-msgstr ""
+msgstr "A (IPv4)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:268
 msgid "AAAA (IPv6)"
-msgstr ""
+msgstr "AAAA (IPv6)"
 
 #: src/usr/local/www/services_router_advertisements.php:466
 msgid "Use same settings as DHCPv6 server"
@@ -33753,7 +33704,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:400
 msgid "System Events"
-msgstr ""
+msgstr "Συμβάντα συστήματος"
 
 #: src/usr/local/www/status_logs_settings.php:407
 msgid "Firewall Events"
@@ -33911,7 +33862,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:394
 msgid "Enable PowerD"
-msgstr ""
+msgstr "Ενεργοποίηση PowerD"
 
 #: src/usr/local/www/system_advanced_misc.php:475
 msgid "Do not kill connections when schedule expires"
@@ -33986,7 +33937,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:593
 msgid "Level "
-msgstr ""
+msgstr "Επίπεδο"
 
 #: src/usr/local/www/system_authservers.php:618
 msgid "Enable extended query"

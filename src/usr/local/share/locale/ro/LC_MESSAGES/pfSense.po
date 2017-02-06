@@ -1,6 +1,4 @@
-# Mark Hoffer <mark1hoffer@hotmail.com>, 2017. #zanata
-# StijnLangenberg <stijn@rommelkamer.nl>, 2017. #zanata
-# Wraptor <nijs.thibaut@gmail.com>, 2017. #zanata
+# NoName <psaclubromania@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,12 +7,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-03 03:53-0500\n"
-"Last-Translator: StijnLangenberg <stijn@rommelkamer.nl>\n"
-"Language-Team: Dutch\n"
-"Language: nl\n"
+"PO-Revision-Date: 2017-02-06 06:38-0500\n"
+"Last-Translator: NoName <psaclubromania@gmail.com>\n"
+"Language-Team: Romanian\n"
+"Language: ro\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);\n"
 
 #: src/etc/inc/auth.inc:95
 msgid ""
@@ -22,234 +21,231 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Mogelijke DNS Rebind aanval gedetecteerd, zie http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Probeer de router te bereiken met zijn IP adres in plaats "
-"van de hostnaam."
+"Potențial atac DNS Rebind detectat, vezi http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br />Încercați să accesați routerul cu adresa IP în loc de "
+"nume-host."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Doorverbinden..."
+msgstr "Redirecționare..."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Doorverbinden naar het dashboard..."
+msgstr "Redirecționare la panoul de control..."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Operationeel: %s"
+msgstr "Funcționare: %s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FOUT! Kon niet met server %s verbinden."
+msgstr "EROARE! Nu se poate conecta la server %s."
 
 #: src/etc/inc/auth.inc:838
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Kon CA niet opzoeken met referentie voor systeem %s."
+msgstr "LDAP: Nu a putut fi găsit CA prin referința la host %s."
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_test_bind() kon niet verbinden met server %s via STARTTLS."
+msgstr "EROARE! ldap_test_bind() nu este posibil STARTTLS la server %s."
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FOUT! ldap_get_user_ous() ondersteunde geselecteerde zonder opgegeven LDAP "
-"authenticatie server."
+"ERORE!  ldap_get_user_ous() backed selectata cu nici un server de "
+"autentificare LDAP definit."
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
-msgstr ""
-"FOUT! ldap_get_user_ous() kon niet verbinden met server %s via STARTTLS."
+msgstr "EROARE! ldap_get_user_ous() nu este posibil STARTTLS la server %s."
 
 #: src/etc/inc/auth.inc:1013
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
-msgstr ""
-"FOUT! ldap_get_user_ous() kon niet anoniem gekoppeld worden met server %s"
+msgstr "EROARE! ldap_get_user_ous() nu se poate lega anonim la server %s."
 
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "FOUT! ldap_get_user_ous() kon niet binden aan server %s."
+msgstr "EROARE! ldap_get_user_ous() nu se poate lega la server %s."
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet verbinden met server %s."
+msgstr "EROARE! ldap_get_groups() nu se poate conecta la server %s."
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
-msgstr ""
-"FOUT! ldap_get_groups() kon niet verbinden met de server %s via STARTTLS."
+msgstr "EROARE! ldap_get_groups() nu este posibil STARTTLS la server %s."
 
 #: src/etc/inc/auth.inc:1157
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr ""
-"FOUT! ldap_get_groups() kon niet anoniem gebonden worden met server %s."
+msgstr "EROARE! ldap_get_groups() nu se poate lega anonim la server %s."
 
 #: src/etc/inc/auth.inc:1162
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet gebonden worden aan server %s."
+msgstr "EROARE! ldap_get_groups() nu se poate lega la server %s."
 
 #: src/etc/inc/auth.inc:1268
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
-"Gebruik maken van lokale gebruikers databank... Ga naar Systeem -> Gebruiker "
-"-> Beheerder."
+"ERROR! ldap_backed() apelat fără server de autentificare LDAP definit.  "
+"Implicit la utilizatorul din baza de date locala.  Accesați System -> User "
+"Manager."
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
+"ERROR! ldap_backed() apelat fără server de autentificare LDAP definit."
 
 #: src/etc/inc/auth.inc:1294
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_backed() kan niet verbinden met server %s via STARTTLS"
+msgstr "ERROR! ldap_backed() nu este posibil STARTTLS la server %s."
 
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "FOUT! Kon niet binden aan server %s."
+msgstr "EROARE! Nu se poate conecta la server %s."
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Zoeken naar %s in de map."
+msgstr "Acum caută %s în director."
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Zoeken in server %1$s, houder %2$s met filter %3$s."
+msgstr "Acum cauta în server %1$s, container %2$s cu filtrul %3$s."
 
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Zoek opdracht resulteerde in fout: %s"
+msgstr "Căutarea a returnat eroare: %s"
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
-"FOUT! Of de LDAP zoekopdracht mislukte, of er waren meerdere gebruikers "
-"gevonden."
+"EROARE! Sau căutarea LDAP a eșuat sau au fost găsiți mai mulți utilizatori."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "FOUT! Kon niet inloggen op server %1$s als gebruiker %2$s: %3$s"
+msgstr ""
+"EROARE! Nu este posibila autentificarea la server %1$s ca utilizator %2$s: "
+"%3$s"
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Login gelukt als %1$s via LDAP server %2$s met DN = %3$s."
+msgstr "Autentificat cu succes ca %1$s via LDAP server %2$s cu DN = %3$s."
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr "RADIUS start: %s"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "RADIUS trimitere eșuată: %s"
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Authenticatie geslaagd"
+msgstr "RADIUS Auth a reușit"
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Authenticatie afgewezen"
+msgstr "RADIUS Auth respinsa"
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Widget configuratie is aangepast"
+msgstr "Configurarea widget-ului a fost modificat."
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Gebruiker %s)"
+msgstr "(Utilizator %s)"
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Lokale database"
+msgstr "Baza de date locală"
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Successvolle login voor gebruiker '%1$s' van: %2$s"
+msgstr "Autentificare cu succes pentru utilizator '%1$s' de la: %2$s"
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Sessie verlopen voor '%1$s' van: %2$s"
+msgstr "Sesiunea a expirat pentru utilizatorul '%1$s' de la: %2$s"
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Deconectare pentru utilizator '%1$s' de la: %2$s"
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
-"Geen pagina geassocieerd aan deze gebruiker! Klik hier om uit te loggen."
+"Nici o pagină atribuită acestui utilizator! Apasă aici pentru deconectare."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Fout: %1$s Omschrijving: %2$s"
+msgstr "Eroare: %1$s Descriere: %2$s"
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr "FOUT: niet toegestaan"
+msgstr "Eroare: nu este permis"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr "onbekende reden"
+msgstr "motiv necunoscut"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Incorrecte login (%s)."
+msgstr "Autentificare invalida (%s)."
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
+msgstr "Acest dispozitiv este în prezent menținut de către: %s."
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Autentificare la %1$s în %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr "Inloggen op %1$s"
+msgstr "Autentificare la %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr "Inloggen"
+msgstr "Autentificare"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -258,14 +254,14 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
-"Het IP adres dat wordt gebruikt om toegang te krijgen tot deze router is "
-"niet lokaal geconfigureerd, welke misschien doorverwezen wordt door de NAT "
-"of door andere middelen. <br /><br />Als deze door verwijzing onverwacht is, "
-"dan moet er geverifieerd worden of er geen man-in-middle aanval plaats vind."
+"Adresa IP folosită pentru a accesa acest router nu este configurată local, "
+"ar putea fi redirecționata prin NAT sau prin alte mijloace. <br /><br />Dacă "
+"această redirecționare este neașteptată, trebuie verificat să nu aibă loc un "
+"atac 'man-in-the-middle'."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr "De browser moet cookies ondersteunen om in te loggen."
+msgstr "Browser-ul trebuie să accepte cookie-uri pentru autentificare."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -288,11 +284,11 @@ msgstr "De browser moet cookies ondersteunen om in te loggen."
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr "Gebruikersnaam"
+msgstr "Nume utilizator"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr "Voer gebruikersnaam in"
+msgstr "Introdu numele utilizatorului"
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:568
 #: src/usr/local/www/diag_backup.php:615 src/usr/local/www/interfaces.php:2539
@@ -317,83 +313,82 @@ msgstr "Voer gebruikersnaam in"
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr "Wachtwoord"
+msgstr "Parola"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr "Voer wachtwoord in"
+msgstr "Introdu parola"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s toegangspoort"
+msgstr "%s captive portal"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "Welkom bij de %s Toegangspoort!"
+msgstr "Bine ați venit la %s Captive Portal!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "Gebruikersnaam:"
+msgstr "Nume utilizator:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Wachtwoord:"
+msgstr "Parola:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "Voer waardeboncode in:"
+msgstr "Introduceți codul voucher:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr "Volgende"
+msgstr "Continuă"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "Doorverwijzen naar"
+msgstr "Redirecționare la"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr "Uitloggen"
+msgstr "Logout"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr "Klik onderstaande knop om te verbreken"
+msgstr "Apăsați butonul de mai jos pentru deconectare"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Fout : kan '%1$s' niet openen in captiveportal_write_elements()%2$s"
+msgstr "Eroare: nu pot deschide '%1$s' în captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr "LET OP!"
+msgstr "PERICOL! ATENȚIE!  ACHTUNG!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s heeft *MINSTENS* %2$s RAM nodig om goed te werken.%3$s"
+msgstr "%1$s necesită *MINIM* %2$s RAM pentru funcționare corectă.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
-"Er is maar (%1$s) MB RAM gevonden en (%2$s) beschikbaar voor %3$s.%4$s"
+msgstr "Doar (%1$s) MB RAM detectat, cu (%2$s) disponibil pentru %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr "Druk op ENTER om door te gaan."
+msgstr "Apăsați ENTER pentru a continua."
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr "Er is geen Interface gevonden!"
+msgstr "Nici o interfață găsită!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr "Moeten er eerst VLAN's geconfigureerd worden?"
+msgstr "VLANs trebuie să fie setat prima dată?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -401,32 +396,33 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Als VLANs gebruikt worden, of alleen voor optionele interfaces, dan is het "
-"normaal om hier 'nee' te zeggen en de webConfigurator te gebruiken, om later "
-"VLANs te configureren, indien nodig."
+"Dacă VLANs nu va fi folosit, sau doar pentru interfețele opționale, este "
+"normal\n"
+"să spuneți nu aici și să folosiți  configurarea web pentru a seta VLANs mai "
+"târziu, dacă este necesar."
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Moeten VLAN's nu geconfigureerd worden [y|n]?"
+msgstr "VLANs trebuie configurat acum [y|n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr "VLAN interfaces:"
+msgstr "Interfețe VLAN:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "Voer de WAN interface naam in of  'a' voor automatische detectie"
+msgstr "Introdu numele interfeței WAN sau 'a' pentru detectare automata"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr "%1$s(%2$s or a): "
+msgstr "%1$s(%2$s sau ): "
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:459
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr "%1$sIncorrecte interface naam '%2$s'%3$s"
+msgstr "%1$sNume interfață invalid '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -434,14 +430,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de LAN interface naam in of  'a' voor automatische "
-"detectie%2$sNOTITIE: dit activeert de volledige Firewalling/NAT mode."
-"%3$s(%4$s of doe niks indien klaar):%5$s"
+"%1$sIntroduceți numele interfeței WAN sau 'a' pentru detectare automata  "
+"%2$sNOTA: aceasta activează complet modul Firewall/NAT.%3$s(%4$s a sau nimic "
+"dacă ați terminat):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sOptionle interface %2$s gevonden omschrijving: %3$s"
+msgstr "%1$sInterfața opțională %2$s descriere găsită: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -449,134 +445,130 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de optionele %2$s interface naam in of  'a' voor automatische "
-"detectie%3$s(%4$s of doe niks indien klaar):%5$s"
+"%1$sIntroduceți numele Opțional %2$s al interfeței sau 'a' pentru detectare "
+"automată %3$s(%4$s a sau nimic dacă ați terminat):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr "Optioneel"
+msgstr "Opțional"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr "De interfaces worden als volgt toegekend:"
+msgstr "Interfețele vor fi atribuite după cum urmează:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr "Wil je verder? [y|n]?"
+msgstr "Doriți sa începeți [y|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr "Je hebt gekozen om de LAN interface te verwijderen."
+msgstr "Ați ales sa ștergeți interfața LAN."
 
 #: src/etc/inc/config.console.inc:244
-#, fuzzy
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "Wil je het LAN IP nu verwijderen en de interface stoppen [y|n]?"
+msgstr ""
+"Doriți sa ștergeți adresa LAN IP și \n"
+"sa dezactivați interfața acum [y|n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sSchrijven configuratie..."
+msgstr "%sScriere configurare..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Atribuirea consolei de interfețe"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr "klaar.%s"
+msgstr "Terminat.%s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr "Een moment, de instellingen worden geladen..."
+msgstr "Un moment până setările se reîncarcă..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr "klaar!"
+msgstr "gata!"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr "Link detected op interface %1$s.%2$s"
+msgstr "Detectat conexiune pe interfață %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:401
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Geen link detected.%s"
+msgstr "Nici o conexiune detectată.%s"
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr "WARNING: alle bestaande VLANs worden verwijderd als je doorgaat!"
+msgstr "ATENȚIE: toate VLAN-urile existente vor fi șterse dacă continuați!"
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
-msgstr "VLAN beschikbare interfaces:"
+msgstr "Interfețe care suporta VLAN :"
 
 #: src/etc/inc/config.console.inc:449
 msgid "No VLAN capable interfaces detected."
-msgstr "Geen VLAN's beschikbare interfaces gevonden."
+msgstr "Nici o interfață care suporta VLAN găsită."
 
 #: src/etc/inc/config.console.inc:453
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Voer de parent interface naam in voor de nieuwe VLAN (of niks wanneer klaar):"
-""
+"Introduceți numele interfeței principale pentru noul VLAN (sau nimic dacă "
+"ați terminat):"
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Voer het VLAN tag in (1-4094):"
+msgstr "Introduceți VLAN tag (1-4094):"
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr "%1$sIncorrect VLAN tag '%2$s'%3$s"
+msgstr "%1$sInvalid VLAN tag '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:477
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr "Dit parent interface en VLAN bestaat al."
+msgstr "Aceasta interfață principala și VLAN este deja creata."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "Upgraden m0n0wall configuratie naar pfSense... "
+msgstr "Actualizarea configurației m0n0wall la pfSense... "
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
-"Fout!  Kon de m0n0wall configuratie niet converteren naar Pfsense in config."
-"xml"
+msgstr "EROARE!  Nu se poate converti m0n0wall -> pfsense în config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr "Configuratie gevonden op %1$s.%2$s"
+msgstr "S-au găsit configurația pe %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
 #: src/etc/inc/config.lib.inc:232 src/etc/inc/config.lib.inc:253
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
-msgstr ""
-"Geen config.xml gevonden, geprobeerd wordt om de laatst bekende configuratie "
-"te herstellen."
+msgstr "Nu s-a găsit config.xml, încerc sa restaurez ultima configurație."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
-"Geen config.xml of configuratie backups gevonden, standaard instellingen "
-"worden teruggezet. "
+"config.xml sau configurație salvată negăsita, resetare la setările inițiale."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr "Config.xml ontgrendeld."
+msgstr "Config.xml deblocat."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr "Incorrect wachtwoord.Probeer het nog een keer!"
+msgstr "Parola introdusă este incorectă. Mai încercaţi odată."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -584,110 +576,115 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
-"Config.xml is corrupt en is 0 bytes.  Niet gelukt om van een vorige backup "
-"terug te zetten."
+"Fișierul Config.xml este corupt și are 0 bytes. Nu pot restaura salvarea "
+"anterioara."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr "Kon config.xml  niet terugzetten."
+msgstr "Nu se poate restaura config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s restaurează configurația %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
 msgstr ""
-"XML configuratie bestand niet gevonden.  %s kan niet verder met opstarten."
+"Nu se găsește fișierul de configurare XML.  %s nu poate continua bootarea."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
-"De laatst bekende configuratie is gevonden en teruggezet. Controleer "
-"alstublieft het configuratiebestand op correctheid."
+"Ultima configurare a găsită și restaurată. Vă rugăm să verificați fișierul "
+"de configurare pentru acuratețe."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kon geen werkbaar configuratie bestand vinden. Wordt afgesloten...."
+msgstr "Nu am găsit un fișier de configurare utilizabil! Ieșire..."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Start configurare upgrade la %s, setare expirare execuție la 15 minute"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Actualizare \"bogon\", frecventa de actualizare 3am"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Configuratie upgrade gestopt op %s"
+msgstr "Actualizarea configurației terminată la %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Actualizat versiunea de configurare de la %1$s la %2$s"
 
 #: src/etc/inc/config.lib.inc:475
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
+"ATENȚIE: Conținutul configurației nu poate fi salvat. Nu se poate deschide "
+"fișierul!"
 
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr "Kan %1$s/config.xml niet openen om te schrijven in write_config()%2$s"
+msgstr ""
+"NU se poate deschide %1$s/config.xml pentru scriere în write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr "Terugkeren naar %s."
+msgstr "Revenit la %s."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr "Configuratie aan het installeren..."
+msgstr "Instalare configurație..."
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr "Configuratie aan het installeren ...."
+msgstr "Instalare configurație..."
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr "XML fout: kan bestand niet openen"
+msgstr "Eroare XML: nu se poate deschide fișierul"
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s op regel %2$d"
+msgstr "%1$s la linia %2$d"
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Fișierul de backup %s este corupt. Ignorare."
 
 #: src/etc/inc/config.lib.inc:878
 #, php-format
 msgid "%s made unknown change"
-msgstr "%s onbekende verandering gemaakt"
+msgstr "%s a făcut modificări necunoscute"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr "Mislukt om te versleutelen/ontsleutelen data!"
+msgstr "Criptare/Decriptare date eșuata!"
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr "Dynamisch DNS: updatedns() gestart"
+msgstr "Dinamic DNS: updatedns() a inceput."
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dinamic DNS (%1$s): executat get_failover_interface pentru %2$s. găsit %3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -695,43 +692,45 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dinamic DNS (%1$s) A apărut o eroare la încercarea de a determina IP-ul "
+"public pentru interfață - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _update() gestart."
+msgstr "Dinamic DNS %1$s (%2$s): _update() pornit."
 
 #: src/etc/inc/dyndns.class:445
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamisch DNS %1$s (%2$s): Verwerkt dummy update van No-IP gratis account. "
-"IP tijdelijk gezet op%3$s"
+"Dinamic DNS %1$s (%2$s): Procesare actualizare pe cont gratuit No-IP. IP "
+"setat temporar la %3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr "Verzoek verzenden naar: %s"
+msgstr "Se trimite solicitarea către: %s"
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _checkStatus() wordt opgestart."
+msgstr "Dinamic DNS %1$s (%2$s): _checkStatus() pornit."
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr "Geslaagd"
+msgstr "Succes"
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr "Fout"
+msgstr "Eroare"
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
-msgstr "Curl error opgetreden:"
+msgstr "A apărut eroare Curl:"
 
 #: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
 #: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
@@ -742,7 +741,7 @@ msgstr "Curl error opgetreden:"
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr "IP Adres succesvol gewijzigd!"
+msgstr "Adresa IP schimbata cu succes!"
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -759,7 +758,7 @@ msgstr "IP Adres succesvol gewijzigd!"
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr "Onbekende Respons"
+msgstr "Răspuns necunoscut"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -775,54 +774,60 @@ msgstr "Onbekende Respons"
 #: src/etc/inc/dyndns.class:1359 src/etc/inc/dyndns.class:1382
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
-#, fuzzy
 msgid "PAYLOAD:"
-msgstr "PAYLOAD"
+msgstr "PAYLOAD:"
 
 #: src/etc/inc/dyndns.class:869
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"De DNS-O-Matic gebruikersnaam of wachtwoord is incorrect. Er worden geen "
-"updates naar de service gestuurd, totdat het problem is opgeslost."
+"Nume utilizator și parola pentru specificată pentru DNS-O-Matic este "
+"incorecta. Nici o actualizare nu va fi distribuită serviciilor până la "
+"rezolvarea problemei."
 
 #: src/etc/inc/dyndns.class:871
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Nume-Host specificat nu este un nume de domeniu corect specificat. Dacă nume-"
+"host nu este inclus, notfqdn va fi returnat o singură dată."
 
 #: src/etc/inc/dyndns.class:873
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Nume-Host transmis nu corespunde nici unui serviciu configurat. Cimpul "
+"'service' va fi gol în codul returnat."
 
 #: src/etc/inc/dyndns.class:875
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"Maxim 20 de host-uri pot fi actualizate. numhost este returnat dacă se "
+"încearcă actualizarea peste 20 sau se actualizează un 'round-robin'."
 
 #: src/etc/inc/dyndns.class:877
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Actualizare Nume-Host blocată din cauza abuzului actualizării."
 
 #: src/etc/inc/dyndns.class:882
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "Eroare DNS apărută. Actualizare oprită pentru 30 minute."
 
 #: src/etc/inc/dyndns.class:891 src/etc/inc/dyndns.class:911
 #: src/etc/inc/dyndns.class:928 src/etc/inc/dyndns.class:945
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr "Geen FQDN!"
+msgstr "Nu este FQDN!"
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
-msgstr "Host bestaan niet"
+msgstr "Host inexistent"
 
 #: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
@@ -831,7 +836,7 @@ msgstr "Host bestaan niet"
 #: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
 #: src/etc/inc/dyndns.class:1456
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "Nici o schimbare în adresa IP"
 
 #: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
 #: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
@@ -839,112 +844,122 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
 #: src/etc/inc/dyndns.class:1462
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Autorizare utilizator eșuată"
 
 #: src/etc/inc/dyndns.class:967
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "Adresa IP este actuală, actualizare ne efectuată."
 
 #: src/etc/inc/dyndns.class:971
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "DNS Nume-Host actualizat cu succes."
 
 #: src/etc/inc/dyndns.class:975
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Nume-Host specificat nu există."
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
-msgstr ""
+msgstr "Nume Utilizator invalid."
 
 #: src/etc/inc/dyndns.class:981
 msgid "Invalid Password."
-msgstr ""
+msgstr "Parolă invalidă."
 
 #: src/etc/inc/dyndns.class:984
 msgid "Too many updates sent."
-msgstr ""
+msgstr "Prea multe actualizări trimise."
 
 #: src/etc/inc/dyndns.class:987
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
+"Cont dezactivat datorită încălcării termenilor de furnizare a serviciilor No-"
+"IP."
 
 #: src/etc/inc/dyndns.class:990
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"IP invalid. Adresa IP trimisa este incorect introdusă sau este o adresă IP "
+"privata sau blocata."
 
 #: src/etc/inc/dyndns.class:993
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Nume-Host Dezactivat / Blocat."
 
 #: src/etc/inc/dyndns.class:996
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
+"Host-ul care trebuie actualizat este configurat ca redirecționare web, "
+"actualizarea nu s-a efectuat."
 
 #: src/etc/inc/dyndns.class:999
 msgid "Group supplied does not exist."
-msgstr ""
+msgstr "Grupul specificat nu există."
 
 #: src/etc/inc/dyndns.class:1002
 msgid "DNS group update is successful."
-msgstr ""
+msgstr "Actualizare grup DNS efectuată cu succes."
 
 #: src/etc/inc/dyndns.class:1006
 msgid "DNS group is current, no update performed."
-msgstr ""
+msgstr "Grupul DNS este actual, actualizare ne efectuată."
 
 #: src/etc/inc/dyndns.class:1010
 msgid "Update client support not available for supplied hostname or group."
-msgstr ""
+msgstr "Actualizare nesuportata pentru Nume-Host sau grup furnizat."
 
 #: src/etc/inc/dyndns.class:1013
 msgid "Hostname supplied does not have offline settings configured."
-msgstr ""
+msgstr "Nume-Host specificat nu are setări 'offline' configurate."
 
 #: src/etc/inc/dyndns.class:1016 src/etc/inc/dyndns.class:1019
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Client dezactivat. Clientul se va opri și nu va mai efectual actualizări "
+"fără intervenția utilizatorului."
 
 #: src/etc/inc/dyndns.class:1023
 msgid "Unknown Response:"
-msgstr ""
+msgstr "Răspuns necunoscut:"
 
 #: src/etc/inc/dyndns.class:1029
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr ""
+msgstr "Autentificare eșuată: Nume utilizator sau/și Parola a fost incorectă."
 
 #: src/etc/inc/dyndns.class:1031
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
+"Nici un serviciu: Dynamic DNS Service a fost dezactivat pentru acest domeniu."
+""
 
 #: src/etc/inc/dyndns.class:1033
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Intrare ilegală: Auto-Explicativ"
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr ""
+msgstr "Prea devreme: Nu a trecut suficient timp de la ultima actualizare"
 
 #: src/etc/inc/dyndns.class:1037
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "IP actualizat cu succes!"
 
 #: src/etc/inc/dyndns.class:1050
 msgid "Error 799"
-msgstr ""
+msgstr "Eroare 799"
 
 #: src/etc/inc/dyndns.class:1050 src/etc/inc/dyndns.class:1052
 msgid "Update Failed!"
-msgstr ""
+msgstr "Actualizare Eșuată!"
 
 #: src/etc/inc/dyndns.class:1052
 msgid "Error 700"
-msgstr ""
+msgstr "Error 700"
 
 #: src/etc/inc/dyndns.class:1054 src/etc/inc/dyndns.class:1057
 #: src/etc/inc/dyndns.class:1075 src/etc/inc/dyndns.class:1085
@@ -953,244 +968,252 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1253 src/etc/inc/dyndns.class:1308
 #: src/etc/inc/dyndns.class:1355 src/etc/inc/dyndns.class:1369
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "Adresă IP actualizată cu succes!"
 
 #: src/etc/inc/dyndns.class:1067
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Cerere Greșită - URL incorect. Parametrii ceruți nu au fost furnizați."
 
 #: src/etc/inc/dyndns.class:1069
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Actualizare prea devreme - Încercare de actualizare prea rapidă de la ultima "
+"modificare."
 
 #: src/etc/inc/dyndns.class:1071
 msgid "Database Error - There was a server-sided database error."
 msgstr ""
+"Eroare a bazei de date - A apărut o eroare a serverului la baza de date."
 
 #: src/etc/inc/dyndns.class:1073
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
+"Eroare Nume_Host - Nume_Host (%1$s) nu aparține utilizatorului (%2$s)."
 
 #: src/etc/inc/dyndns.class:1137
 msgid "Not a valid username or password!"
-msgstr ""
+msgstr "Nume utilizator sau parolă invalidă!"
 
 #: src/etc/inc/dyndns.class:1139
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Nume-Host specificat nu există."
 
 #: src/etc/inc/dyndns.class:1145
 msgid "Hostname specified exists, but not under the username specified."
-msgstr ""
+msgstr "Nume-Host specificat există dar nu pentru nume utilizator specificat."
 
 #: src/etc/inc/dyndns.class:1147
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Actualizare prea frecventă, este considerat abuz."
 
 #: src/etc/inc/dyndns.class:1156 src/etc/inc/dyndns.class:1220
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Cerere Greșită - IP-ul specificat este invalid."
 
 #: src/etc/inc/dyndns.class:1158
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Cerere Greșită -  Parametrii necesari nu au fost furnizați."
 
 #: src/etc/inc/dyndns.class:1160
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
-msgstr ""
+msgstr "Cerere Greșită - Caractere nepermise în parola sau nume utilizator."
 
 #: src/etc/inc/dyndns.class:1162
 msgid "Invalid password."
-msgstr ""
+msgstr "Parolă invalidă."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Acest cont este blocat administrativ."
 
 #: src/etc/inc/dyndns.class:1166
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Actualizare prea frecventă."
 
 #: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1182
 #: src/etc/inc/dyndns.class:1200
 msgid "Server side error."
-msgstr ""
+msgstr "Eroare din partea serverului."
 
 #: src/etc/inc/dyndns.class:1184
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Cerere Formulată Greșită (verificați setările)."
 
 #: src/etc/inc/dyndns.class:1202 src/etc/inc/dyndns.class:1222
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Cerere Greșită - Nume_Host neprecizat."
 
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
 #: src/etc/inc/dyndns.class:1251
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Nume utilizator sau parolă invalidă."
 
 #: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1229
 #: src/etc/inc/dyndns.class:1256 src/etc/inc/dyndns.class:1268
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "Nici o schimbare în adresa IP."
 
 #: src/etc/inc/dyndns.class:1247
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Cerere Greșită - Parametru invalid/lipsește."
 
 #: src/etc/inc/dyndns.class:1249
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Cerere Greșită - Tunel ID invalid."
 
 #: src/etc/inc/dyndns.class:1283
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Route53 API cerere eșuată."
 
 #: src/etc/inc/dyndns.class:1287
 msgid "IP address changed successfully"
-msgstr ""
+msgstr "Adresa IP schimbata cu succes"
 
 #: src/etc/inc/dyndns.class:1310 src/etc/inc/dyndns.class:1474
 msgid "Result did not match."
-msgstr ""
+msgstr "Rezultatul nu este corespunzator."
 
 #: src/etc/inc/dyndns.class:1317
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr ""
+msgstr "%1$s actualizat la %2$s"
 
 #: src/etc/inc/dyndns.class:1320
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Date de conectare nevalide! Nu uitați să utilizați API Key pentru parolă cu "
+"Cloudflare."
 
 #: src/etc/inc/dyndns.class:1322
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "Zona sau Host ID nu a fost găsit, verificați Nume-Host."
 
 #: src/etc/inc/dyndns.class:1324
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "Eroare necunoscută."
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "Valori Greșite - Actualizarea nu poate fi terminată."
 
 #: src/etc/inc/dyndns.class:1349
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "Nume utilizator necunoscut - Utilizatorul nu există."
 
 #: src/etc/inc/dyndns.class:1351
 msgid "Wrong password - Remember password is case sensitive."
-msgstr ""
+msgstr "Parolă greșită - Atenție parola este compusa din litere mari și mici."
 
 #: src/etc/inc/dyndns.class:1353
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "Utilizatorul nu poate administra domeniul selectat."
 
 #: src/etc/inc/dyndns.class:1388
 msgid "Not A FQDN"
-msgstr ""
+msgstr "Nu este FQDN"
 
 #: src/etc/inc/dyndns.class:1398
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "Nume-Host  inexistent sau DynDNS nu este activat.."
 
 #: src/etc/inc/dyndns.class:1400
 msgid "Bad request"
-msgstr ""
+msgstr "Cerere greşită"
 
 #: src/etc/inc/dyndns.class:1402
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "Accesul la Dynamic DNS a fost blocat!"
 
 #: src/etc/inc/dyndns.class:1404
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "Eroare din partea Google, reîncercare în 5 minute"
 
 #: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Nume utilizator sau parolă invalidă."
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Account suspended"
-msgstr ""
+msgstr "Cont suspendat"
 
 #: src/etc/inc/dyndns.class:1424
 msgid "Account revoked"
-msgstr ""
+msgstr "Cont revocat"
 
 #: src/etc/inc/dyndns.class:1427
 msgid "Record does not exist in the system. Unable to update record"
 msgstr ""
+"Înregistrarea nu există în sistem. Nu se poate actualiza înregistrarea"
 
 #: src/etc/inc/dyndns.class:1430
 msgid "User does not have access to this record"
-msgstr ""
+msgstr "Utilizatorul  nu are acces la această înregistrare"
 
 #: src/etc/inc/dyndns.class:1437
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "Eroare generală recunoscută de sistem"
 
 #: src/etc/inc/dyndns.class:1440
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "Eroare generală ne recunoscută de sistem"
 
 #: src/etc/inc/dyndns.class:1492
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS a actualizat adresa IP în %1$s (%2$s) to %3$s"
 
 #: src/etc/inc/dyndns.class:1493 src/etc/inc/dyndns.class:1501
 #: src/etc/inc/services.inc:2674 src/etc/inc/services.inc:2686
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr ""
+msgstr "phpDynDNS: actualizare fișiere cache %1$s: %2$s"
 
 #: src/etc/inc/dyndns.class:1500
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS a actualizat adresa IPv6 în %1$s (%2$s) to %3$s"
 
 #: src/etc/inc/dyndns.class:1516
 msgid "ERROR!"
-msgstr ""
+msgstr "EROARE!"
 
 #: src/etc/inc/dyndns.class:1522
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Nici un provider Dynamic DNS Service nu a fost selectat."
 
 #: src/etc/inc/dyndns.class:1525
 msgid "No Username Provided."
-msgstr ""
+msgstr "Nume utilizator nefurnizat."
 
 #: src/etc/inc/dyndns.class:1528
 msgid "No Password Provided."
-msgstr ""
+msgstr "Parola nefurnizata."
 
 #: src/etc/inc/dyndns.class:1531
 msgid "No Hostname Provided."
-msgstr ""
+msgstr "Nume-Host nefurnizat."
 
 #: src/etc/inc/dyndns.class:1534
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "Serviciul Dynamic DNS furnizat nu este suportat."
 
 #: src/etc/inc/dyndns.class:1537
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "URL pentru actualizare nefurnizat."
 
 #: src/etc/inc/dyndns.class:1540
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "Invalid ZoneID"
 
 #: src/etc/inc/dyndns.class:1543
 msgid "Invalid TTL"
-msgstr ""
+msgstr "TTL Invalid"
 
 #: src/etc/inc/dyndns.class:1546
 #, php-format
@@ -1198,15 +1221,17 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
+"Nici o modificare în adresa IP sau/în %s zile nu au trecut. Nu se "
+"actualizează intrarea dinamică DNS."
 
 #: src/etc/inc/dyndns.class:1549
 msgid "Unknown Response."
-msgstr ""
+msgstr "Răspuns necunoscut:"
 
 #: src/etc/inc/dyndns.class:1568
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
-msgstr ""
+msgstr "Dinamic DNS %1$s (%2$s): _detectChange() incepe.."
 
 #: src/etc/inc/dyndns.class:1575
 #, php-format
@@ -1214,52 +1239,54 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
+"Dinamic DNS (%s): Adresa curenta WAN IP nu poate fi determinată, procesul de "
+"actualizare nu se execută."
 
 #: src/etc/inc/dyndns.class:1578
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dinamic DNS (%1$s): Adresa curenta WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1586
 #, php-format
 msgid "Cached IPv6: %s"
-msgstr ""
+msgstr "IPv6 memorat: %s"
 
 #: src/etc/inc/dyndns.class:1592
 msgid "No Cached IPv6 found."
-msgstr ""
+msgstr "Nu exista IPv6 memorat."
 
 #: src/etc/inc/dyndns.class:1600
 #, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "IP memorat: %s"
 
 #: src/etc/inc/dyndns.class:1606
 msgid "No Cached IP found."
-msgstr ""
+msgstr "Nu exista IP memorat."
 
 #: src/etc/inc/dyndns.class:1620
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dinamic DNS: cacheIP != wan_ip. Actualizare."
 
 #: src/etc/inc/dyndns.class:1621
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "IP memorat: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1626
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dinamic DNS: Mai mult de %s zile. Actualizare."
 
 #: src/etc/inc/dyndns.class:1631
 msgid "Initial update."
-msgstr ""
+msgstr "Actualizare inițială."
 
 #: src/etc/inc/dyndns.class:1668
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dinamic DNS %1$s (%2$s): _checkIP() începută."
 
 #: src/etc/inc/dyndns.class:1693
 #, php-format
@@ -1267,258 +1294,260 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
+"Dinamic DNS %1$s informație depanare (%2$s): Nu se poate rezolva %3$s la IP "
+"folosind interfața IP %4$s."
 
 #: src/etc/inc/dyndns.class:1712
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dinamic DNS %1$s (%2$s): %3$s extras din %4$s"
 
 #: src/etc/inc/dyndns.class:1715
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "Dinamic DNS %1$s (%2$s): adresa IP nu poate fi extrasă din %3$s"
 
 #: src/etc/inc/dyndns.class:1720
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dinamic DNS %1$s (%2$s): %3$s extras din sistemul local."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "Regula Simplă: Blocat de la Vezi Log Firewall"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "Intrare adaugată"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "Host blocat de la Vezi Log Firewall"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr ""
+msgstr "Regula Simplă: Acceptat de la Vezi Log Firewall"
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Încercat sa blochez IP invalid:"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Interfață invalidă pentru regula de blocare:"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "Host adăugat cu succes"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "Eroare de creare: regula blocare, alias sau adăugare Host."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
-msgstr ""
+msgstr "Încercare de blocare dar nu exista IP Host sau interfață"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "Eroare de blocare necunoscută."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Încercare de deblocare IP invalid:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr ""
+msgstr "Nu exista regulă de blocare la interfața:"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "Host deblocat cu succes"
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "Host-ul nu este pe lista de blocare:"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr ""
+msgstr "Încercare de deblocare dar nu exista IP Host sau interfață"
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "Interfață invalidă pentru regula Trafic Permis:"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "Protocol invalid pentru regula Trafic Permis:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "Trafic Permis, sursa IP invalidă:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "Trafic Permis, destinație IP invalidă:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "Lipsește portul de destinație:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "Trafic Permis, port destinație invalid:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "SUCCES! Adăugare regula Trafic Permis."
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr " EȘUARE ! Adăugare regulă Trafic Permis."
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "Lipseste parametrul pentru regula Trafic Permis"
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Eroare necunoscută pentru Trafic Permis."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr ""
+msgstr "Host alternativ"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Eroare de conversie datagramă"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr ""
+msgstr "Răspuns Echo"
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr ""
+msgstr "Cerere Echo"
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "Răspuns FQDN"
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "Cerere FQDN"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr ""
+msgstr "Interogare membru al grupului"
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "Raport membru al grupului"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "Terminare membru al grupului"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr ""
+msgstr "Răspunsul informaţii"
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr ""
+msgstr "Cerere informație"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr ""
+msgstr "IPv6 I-am-here"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr ""
+msgstr "IPv6 where-are-you"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr ""
+msgstr "Ascultare efectuata Multicast"
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr ""
+msgstr "Raport ascultare Multicast"
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr ""
+msgstr "Interogare ascultare Multicast"
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr ""
+msgstr "Address mask raspuns"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr ""
+msgstr "Address mask cerere"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr ""
+msgstr "Redirecționare Host mobil"
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr ""
+msgstr "Răspuns înregistrare mobilă"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr ""
+msgstr "Cerere înregistrare mobilă"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "mesaje mtrace"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr ""
+msgstr "răspuns mtrace"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Anunțare vecini"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr ""
+msgstr "Solicitare vecini"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "Cerere informare nod"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr ""
+msgstr "Răspuns informare nod"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr ""
+msgstr "Problema parametru (invalid IP header)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr ""
+msgstr "Photuris"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
-msgstr ""
+msgstr "Redirecţionare"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "Anunțare Router"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "Solicitare Router"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Renumerotare Router"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "OCOLIRE"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
@@ -1526,11 +1555,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr ""
+msgstr "Răspuns Timestamp"
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "Timestamp"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
@@ -1538,7 +1567,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "Pachet prea mare"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
@@ -25502,6 +25531,7 @@ msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: src/usr/local/www/system.php:196
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."

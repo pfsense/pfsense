@@ -1,6 +1,4 @@
-# Mark Hoffer <mark1hoffer@hotmail.com>, 2017. #zanata
-# StijnLangenberg <stijn@rommelkamer.nl>, 2017. #zanata
-# Wraptor <nijs.thibaut@gmail.com>, 2017. #zanata
+# Jim Thompson <jim@netgate.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,10 +7,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-03 03:53-0500\n"
-"Last-Translator: StijnLangenberg <stijn@rommelkamer.nl>\n"
-"Language-Team: Dutch\n"
-"Language: nl\n"
+"PO-Revision-Date: 2017-02-03 05:17-0500\n"
+"Last-Translator: Jim Thompson <jim@netgate.com>\n"
+"Language-Team: English (United States)\n"
+"Language: en-US\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
@@ -22,143 +20,133 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Mogelijke DNS Rebind aanval gedetecteerd, zie http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Probeer de router te bereiken met zijn IP adres in plaats "
-"van de hostnaam."
+"Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br />Try accessing the router by IP address instead of by "
+"hostname."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Doorverbinden..."
+msgstr "Redirecting..."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Doorverbinden naar het dashboard..."
+msgstr "Redirecting to the dashboard..."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Operationeel: %s"
+msgstr "Running: %s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FOUT! Kon niet met server %s verbinden."
+msgstr "ERROR!  Could not connect to server %s."
 
 #: src/etc/inc/auth.inc:838
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Kon CA niet opzoeken met referentie voor systeem %s."
+msgstr "LDAP: Could not lookup CA by reference for host %s."
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_test_bind() kon niet verbinden met server %s via STARTTLS."
+msgstr "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FOUT! ldap_get_user_ous() ondersteunde geselecteerde zonder opgegeven LDAP "
-"authenticatie server."
+"ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
+"server defined."
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
-msgstr ""
-"FOUT! ldap_get_user_ous() kon niet verbinden met server %s via STARTTLS."
+msgstr "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 
 #: src/etc/inc/auth.inc:1013
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
-"FOUT! ldap_get_user_ous() kon niet anoniem gekoppeld worden met server %s"
 
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "FOUT! ldap_get_user_ous() kon niet binden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet verbinden met server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
-"FOUT! ldap_get_groups() kon niet verbinden met de server %s via STARTTLS."
 
 #: src/etc/inc/auth.inc:1157
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
-"FOUT! ldap_get_groups() kon niet anoniem gebonden worden met server %s."
 
 #: src/etc/inc/auth.inc:1162
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "FOUT! ldap_get_groups() kon niet gebonden worden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1268
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
-"Gebruik maken van lokale gebruikers databank... Ga naar Systeem -> Gebruiker "
-"-> Beheerder."
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
 
 #: src/etc/inc/auth.inc:1294
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr "FOUT! ldap_backed() kan niet verbinden met server %s via STARTTLS"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "FOUT! Kon niet binden aan server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Zoeken naar %s in de map."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Zoeken in server %1$s, houder %2$s met filter %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Zoek opdracht resulteerde in fout: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
-"FOUT! Of de LDAP zoekopdracht mislukte, of er waren meerdere gebruikers "
-"gevonden."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "FOUT! Kon niet inloggen op server %1$s als gebruiker %2$s: %3$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Login gelukt als %1$s via LDAP server %2$s met DN = %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
@@ -173,35 +161,35 @@ msgstr ""
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Authenticatie geslaagd"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Authenticatie afgewezen"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Widget configuratie is aangepast"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Gebruiker %s)"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Lokale database"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Successvolle login voor gebruiker '%1$s' van: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Sessie verlopen voor '%1$s' van: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
@@ -211,30 +199,29 @@ msgstr ""
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
-"Geen pagina geassocieerd aan deze gebruiker! Klik hier om uit te loggen."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Fout: %1$s Omschrijving: %2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr "FOUT: niet toegestaan"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr "onbekende reden"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Incorrecte login (%s)."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
@@ -244,12 +231,12 @@ msgstr ""
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr "Inloggen op %1$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr "Inloggen"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -258,14 +245,10 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
-"Het IP adres dat wordt gebruikt om toegang te krijgen tot deze router is "
-"niet lokaal geconfigureerd, welke misschien doorverwezen wordt door de NAT "
-"of door andere middelen. <br /><br />Als deze door verwijzing onverwacht is, "
-"dan moet er geverifieerd worden of er geen man-in-middle aanval plaats vind."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr "De browser moet cookies ondersteunen om in te loggen."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -288,11 +271,11 @@ msgstr "De browser moet cookies ondersteunen om in te loggen."
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr "Gebruikersnaam"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr "Voer gebruikersnaam in"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:568
 #: src/usr/local/www/diag_backup.php:615 src/usr/local/www/interfaces.php:2539
@@ -317,83 +300,82 @@ msgstr "Voer gebruikersnaam in"
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr "Wachtwoord"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr "Voer wachtwoord in"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s toegangspoort"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "Welkom bij de %s Toegangspoort!"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "Gebruikersnaam:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Wachtwoord:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "Voer waardeboncode in:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr "Volgende"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "Doorverwijzen naar"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr "Uitloggen"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr "Klik onderstaande knop om te verbreken"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Fout : kan '%1$s' niet openen in captiveportal_write_elements()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr "LET OP!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s heeft *MINSTENS* %2$s RAM nodig om goed te werken.%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
 msgstr ""
-"Er is maar (%1$s) MB RAM gevonden en (%2$s) beschikbaar voor %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr "Druk op ENTER om door te gaan."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr "Er is geen Interface gevonden!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr "Moeten er eerst VLAN's geconfigureerd worden?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -401,32 +383,29 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Als VLANs gebruikt worden, of alleen voor optionele interfaces, dan is het "
-"normaal om hier 'nee' te zeggen en de webConfigurator te gebruiken, om later "
-"VLANs te configureren, indien nodig."
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Moeten VLAN's nu geconfigureerd worden [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr "VLAN interfaces:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "Voer de WAN interface naam in of  'a' voor automatische detectie"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr "%1$s(%2$s or a): "
+msgstr ""
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:459
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr "%1$sIncorrecte interface naam '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -434,14 +413,11 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de LAN interface naam in of  'a' voor automatische "
-"detectie%2$sNOTITIE: dit activeert de volledige Firewalling/NAT mode."
-"%3$s(%4$s of doe niks indien klaar):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sOptionle interface %2$s gevonden omschrijving: %3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -449,36 +425,33 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sVoer de optionele %2$s interface naam in of  'a' voor automatische "
-"detectie%3$s(%4$s of doe niks indien klaar):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr "Optioneel"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr "De interfaces worden als volgt toegekend:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr "Wil je verder? [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr "Je hebt gekozen om de LAN interface te verwijderen."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:244
-#, fuzzy
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "Wil je het LAN IP nu verwijderen en de interface stoppen [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sSchrijven configuratie..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
@@ -487,73 +460,69 @@ msgstr ""
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr "klaar.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr "Een moment, de instellingen worden geladen..."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr "klaar!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr "Link detected op interface %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:401
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Geen link detected.%s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr "WARNING: alle bestaande VLANs worden verwijderd als je doorgaat!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
-msgstr "VLAN beschikbare interfaces:"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:449
 msgid "No VLAN capable interfaces detected."
-msgstr "Geen VLAN's beschikbare interfaces gevonden."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:453
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Voer de parent interface naam in voor de nieuwe VLAN (of niks wanneer klaar):"
-""
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Voer het VLAN tag in (1-4094):"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr "%1$sIncorrect VLAN tag '%2$s'%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:477
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr "Dit parent interface en VLAN bestaat al."
+msgstr ""
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "Upgraden m0n0wall configuratie naar pfSense... "
+msgstr ""
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
 msgstr ""
-"Fout!  Kon de m0n0wall configuratie niet converteren naar Pfsense in config."
-"xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr "Configuratie gevonden op %1$s.%2$s"
+msgstr ""
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -561,22 +530,18 @@ msgstr "Configuratie gevonden op %1$s.%2$s"
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
-"Geen config.xml gevonden, geprobeerd wordt om de laatst bekende configuratie "
-"te herstellen."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
-"Geen config.xml of configuratie backups gevonden, standaard instellingen "
-"worden teruggezet. "
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr "Config.xml ontgrendeld."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr "Incorrect wachtwoord.Probeer het nog een keer!"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -584,13 +549,11 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
-"Config.xml is corrupt en is 0 bytes.  Niet gelukt om van een vorige backup "
-"terug te zetten."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr "Kon config.xml  niet terugzetten."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
@@ -601,19 +564,16 @@ msgstr ""
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
 msgstr ""
-"XML configuratie bestand niet gevonden.  %s kan niet verder met opstarten."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
-"De laatst bekende configuratie is gevonden en teruggezet. Controleer "
-"alstublieft het configuratiebestand op correctheid."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kon geen werkbaar configuratie bestand vinden. Wordt afgesloten...."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
@@ -627,7 +587,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Configuratie upgrade gestopt op %s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
@@ -641,29 +601,29 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr "Kan %1$s/config.xml niet openen om te schrijven in write_config()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr "Terugkeren naar %s."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr "Configuratie aan het installeren..."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr "Configuratie aan het installeren ...."
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr "XML fout: kan bestand niet openen"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s op regel %2$d"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
@@ -673,15 +633,15 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:878
 #, php-format
 msgid "%s made unknown change"
-msgstr "%s onbekende verandering gemaakt"
+msgstr ""
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr "Mislukt om te versleutelen/ontsleutelen data!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr "Dynamisch DNS: updatedns() gestart"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
@@ -699,39 +659,37 @@ msgstr ""
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _update() gestart."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:445
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamisch DNS %1$s (%2$s): Verwerkt dummy update van No-IP gratis account. "
-"IP tijdelijk gezet op%3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr "Verzoek verzenden naar: %s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr "Dynamisch DNS %1$s (%2$s): _checkStatus() wordt opgestart."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr "Geslaagd"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr "Fout"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
-msgstr "Curl error opgetreden:"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
 #: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
@@ -742,7 +700,7 @@ msgstr "Curl error opgetreden:"
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr "IP Adres succesvol gewijzigd!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -759,7 +717,7 @@ msgstr "IP Adres succesvol gewijzigd!"
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr "Onbekende Respons"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -775,17 +733,14 @@ msgstr "Onbekende Respons"
 #: src/etc/inc/dyndns.class:1359 src/etc/inc/dyndns.class:1382
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
-#, fuzzy
 msgid "PAYLOAD:"
-msgstr "PAYLOAD"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:869
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"De DNS-O-Matic gebruikersnaam of wachtwoord is incorrect. Er worden geen "
-"updates naar de service gestuurd, totdat het problem is opgeslost."
 
 #: src/etc/inc/dyndns.class:871
 msgid ""
@@ -818,11 +773,11 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr "Geen FQDN!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
-msgstr "Host bestaan niet"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947

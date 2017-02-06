@@ -1010,6 +1010,13 @@ foreach ($a_cert as $i => $cert):
 		}
 
 		$subj = htmlspecialchars($subj);
+	} else {
+		$subj = "";
+		$issuer = "";
+		$purpose = "";
+		$startdate = "";
+		$enddate = "";
+		$caname = "<em>" . gettext("private key only") . "</em>";
 	}
 
 	if ($cert['csr']) {
@@ -1035,7 +1042,7 @@ foreach ($a_cert as $i => $cert):
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
-						<?php if (!$cert['csr']): ?>
+						<?php if (!empty($startdate) || !empty($enddate)): ?>
 						<br />
 						<small>
 							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>

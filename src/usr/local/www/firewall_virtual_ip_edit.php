@@ -147,7 +147,7 @@ if ($_POST) {
 
 		if (isset($network_addr) && $_POST['subnet'] == $network_addr) {
 			$input_errors[] = gettext("The network address cannot be used for this VIP");
-		} else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr) {
+		} else if (is_ipaddrv4($_POST['subnet']) && isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr) {
 			$input_errors[] = gettext("The broadcast address cannot be used for this VIP");
 		}
 	}

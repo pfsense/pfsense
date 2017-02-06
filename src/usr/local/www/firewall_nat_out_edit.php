@@ -94,6 +94,20 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
+	if (strlen($pconfig['target']) > 0) {
+		// Deduce the target type and add to the front of the target string.
+		if (is_subnet($pconfig['target'])) {
+			$target_type = "S";
+		} elseif (is_ipaddr($pconfig['target'])) {
+			$target_type = "I";
+		} elseif (is_alias($pconfig['target'])) {
+			$target_type = "H";
+		} else {
+			$target_type = "O";
+		}
+		$pconfig['target'] = $target_type . $pconfig['target'];
+	}
+
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
@@ -172,6 +186,11 @@ if ($_POST) {
 	}
 	if ($_POST['natport']) {
 		$_POST['natport'] = trim($_POST['natport']);
+	}
+
+	if (strlen($_POST['target']) > 0) {
+		// Strip the target code 1-char code from the front before validating and saving.
+		$_POST['target'] = substr($_POST['target'], 1);
 	}
 
 	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
@@ -382,13 +401,23 @@ include("head.inc");
 function build_target_list() {
 	global $config, $sn, $a_aliases;
 	$list = array();
+	// Target list entries are made to start with the following characters:
+	// "" (blank) - the interface address of the selected interface
+	// S - a subnet
+	// I - an ordinary IP address
+	// H - a host alias
+	// O - other subnet
+	// The prefix letter makes it easy for the JavaScript to distinguish
+	// the type of entry based on the first letter of the value.
+	// The prefix letter is removed before saving in the config,
+	// and added back when reading from the config.
 
 	$list[""] = gettext('Interface Address');
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$list['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -398,10 +427,10 @@ function build_target_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$list['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$list['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
@@ -411,10 +440,10 @@ function build_target_list() {
 			continue;
 		}
 
-		$list[$alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
+		$list['H' . $alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['other-subnet'] = gettext('Other Subnet (Enter Below)');
+	$list['Oother-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }
@@ -552,17 +581,17 @@ $section->addInput(new Form_Select(
 	'*Address',
 	$pconfig['target'],
 	build_target_list()
-))->setHelp(	'Connections matching this rule will be mapped to the specified <b>Address</b>.' . '<br />' .
-		'The <b>Address</b> can be an Interface, a Host-type Alias, or a ' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' address.');
+))->setHelp('Connections matching this rule will be mapped to the specified %1$sAddress%2$s.%3$s' .
+		'The %1$sAddress%2$s can be an Interface, a Host-type Alias, or a %4$sVirtual IP%5$s address.',
+		'<b>', '</b>', '<br />', '<a href="firewall_virtual_ip.php">', '</a>');
 
 $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
 ))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->setHelp(
-		'This subnet must be routed to the firewall or each address in the subnet must be defined in one or more ' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' addresses.');
+		'This subnet must be routed to the firewall or each address in the subnet must be defined in one or more %1$sVirtual IP%2$s addresses.',
+		'<a href="firewall_virtual_ip.php">', '</a>');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -577,13 +606,14 @@ $section->addInput(new Form_Select(
 		'source-hash' => gettext('Source hash'),
 		'bitmask' => gettext('Bit mask')
 	)
-))->setHelp('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.' . '<br />' .
-			'</span><ul class="help-block">' .
-				'<li>' . 'Round Robin: Loops through the translation addresses.' . '</li>' .
-				'<li>' . 'Random: Selects an address from the translation address pool at random.' . '</li>' .
-				'<li>' . 'Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.' . '</li>' .
-				'<li>' . 'Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.' . '</li>' .
-				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
+))->setHelp('%s',
+			gettext('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.') .
+			'<br /></span><ul class="help-block">' .
+				'<li>' . gettext('Round Robin: Loops through the translation addresses.') . '</li>' .
+				'<li>' . gettext('Random: Selects an address from the translation address pool at random.') . '</li>' .
+				'<li>' . gettext('Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.') . '</li>' .
+				'<li>' . gettext('Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.') . '</li>' .
+				'<li>' . gettext('Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.') . '</li>' .
 			'</ul><span class="help-block">');
 
 $section->addInput(new Form_Input(
@@ -601,10 +631,10 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the external source <b>Port or Range</b> used for remapping '.
-		'the original source port on connections matching the rule. <br/><br/>'.
-		'Port ranges are a low port and high port number separated by ":".<br/>'.
-		'Leave blank when <b>Static Port</b> is checked.');
+))->setHelp('Enter the external source %1$sPort or Range%2$s used for remapping '.
+		'the original source port on connections matching the rule. %3$s'.
+		'Port ranges are a low port and high port number separated by ":".%4$s'.
+		'Leave blank when %1$sStatic Port%2$s is checked.', '<b>', '</b>', '<br/><br/>', '<br/>');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
@@ -661,14 +691,20 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext(" by ") . $a_out[$id]['created']['username']
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']),
+				$a_out[$id]['created']['username'])
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext(" by ") . $a_out[$id]['updated']['username']
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']),
+				$a_out[$id]['updated']['username'])
 		));
 	}
 
@@ -737,20 +773,20 @@ events.push(function() {
 	}
 
 	function poolopts_change() {
-		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
+		if ($('#target option:selected').val().substring(0,1) == "H") {
 			hideInput('poolopts', false);
 			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
-		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
+		} else if ($('#target option:selected').val().substring(0,1) == "S") {
 			hideInput('poolopts', false);
 			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
-		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
+		} else if ($('#target option:selected').val().substring(0,1) == "O") {
 			hideInput('poolopts', false);
 			hideIpAddress('targetip', false);
-			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
+			if ($('#poolopts option:selected').val() == "source-hash") {
 				hideInput('source_hash_key', false);
-			}else {
+			} else {
 				hideInput('source_hash_key', true);
 			}
 		} else {

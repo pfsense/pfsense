@@ -15,12 +15,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-03 14:34-0200\n"
+"POT-Creation-Date: 2017-02-06 09:41-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-03 06:43-0500\n"
-"Last-Translator: Wendell Borges <perlporter@gmail.com>\n"
+"PO-Revision-Date: 2017-02-03 08:04-0500\n"
+"Last-Translator: Henrique Marques <marques.vix@gmail.com>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -183,7 +183,7 @@ msgstr ""
 #: src/etc/inc/auth.inc:1465
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr "Inicialização RADIUS: %s"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
@@ -314,8 +314,8 @@ msgstr "Usuário"
 msgid "Enter your username"
 msgstr "Informe seu nome de usuário"
 
-#: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:582
-#: src/usr/local/www/diag_backup.php:629 src/usr/local/www/interfaces.php:2539
+#: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:568
+#: src/usr/local/www/diag_backup.php:615 src/usr/local/www/interfaces.php:2539
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -1240,7 +1240,7 @@ msgstr "ZoneID inválida"
 
 #: src/etc/inc/dyndns.class:1543
 msgid "Invalid TTL"
-msgstr "inválido"
+msgstr "TTL inválido"
 
 #: src/etc/inc/dyndns.class:1546
 #, php-format
@@ -1978,7 +1978,7 @@ msgid "No mirrors found."
 msgstr "Não foram encontrados servidores."
 
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/shaper.inc:1201
-#: src/etc/inc/shaper.inc:3282 src/usr/local/www/diag_gmirror.php:221
+#: src/etc/inc/shaper.inc:3283 src/usr/local/www/diag_gmirror.php:221
 #: src/usr/local/www/diag_gmirror.php:302
 #: src/usr/local/www/firewall_aliases.php:192
 #: src/usr/local/www/firewall_aliases_edit.php:153
@@ -2465,8 +2465,7 @@ msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
 
 #: src/etc/inc/interfaces.inc:5571 src/etc/inc/service-utils.inc:358
-#: src/usr/local/www/diag_backup.php:490
-#: src/usr/local/www/diag_packet_capture.php:111
+#: src/usr/local/www/diag_backup.php:476
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
 #: src/usr/local/www/firewall_nat_edit.php:689
 #: src/usr/local/www/firewall_nat_npt_edit.php:172
@@ -2632,10 +2631,10 @@ msgstr "DNS dinâmico"
 #: src/usr/local/www/firewall_nat_edit.php:536
 #: src/usr/local/www/firewall_nat_edit.php:576
 #: src/usr/local/www/firewall_nat_edit.php:748
-#: src/usr/local/www/firewall_nat_out_edit.php:494
-#: src/usr/local/www/firewall_nat_out_edit.php:519
+#: src/usr/local/www/firewall_nat_out_edit.php:523
+#: src/usr/local/www/firewall_nat_out_edit.php:548
 #: src/usr/local/www/firewall_rules_edit.php:1281
-#: src/usr/local/www/firewall_rules_edit.php:1486
+#: src/usr/local/www/firewall_rules_edit.php:1485
 #: src/usr/local/www/interfaces.php:2976
 msgid "Any"
 msgstr "Qualquer"
@@ -2764,11 +2763,11 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Cliente Móvel"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2983
-#: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2989
+#: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
-#: src/usr/local/www/firewall_nat_edit.php:914
-#: src/usr/local/www/firewall_rules_edit.php:1597
+#: src/usr/local/www/firewall_nat_edit.php:913
+#: src/usr/local/www/firewall_rules_edit.php:1596
 #: src/usr/local/www/interfaces.php:1658 src/usr/local/www/interfaces.php:1659
 #: src/usr/local/www/interfaces.php:1683 src/usr/local/www/interfaces.php:1696
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -2860,9 +2859,9 @@ msgid "Could not send register Growl on %1$s -- Error: %2$s"
 msgstr "Não foi possível enviar registro Growl para %1$s -- Erro: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:763
-#: src/usr/local/www/firewall_rules_edit.php:1636
-#: src/usr/local/www/firewall_rules_edit.php:1677
-#: src/usr/local/www/firewall_rules_edit.php:1684
+#: src/usr/local/www/firewall_rules_edit.php:1635
+#: src/usr/local/www/firewall_rules_edit.php:1676
+#: src/usr/local/www/firewall_rules_edit.php:1683
 #: src/usr/local/www/status_ipsec.php:329
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:571
@@ -2870,7 +2869,7 @@ msgid "none"
 msgstr "nenhum"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
-#: src/usr/local/www/firewall_rules_edit.php:1639
+#: src/usr/local/www/firewall_rules_edit.php:1638
 #: src/usr/local/www/services_captiveportal.php:967
 msgid "default"
 msgstr "padrão"
@@ -3009,7 +3008,7 @@ msgstr "CA: %s"
 msgid "In Use"
 msgstr "Em Uso"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1020
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1027
 msgid "Revoked"
 msgstr "Revogado"
 
@@ -3375,12 +3374,12 @@ msgstr "Turco"
 msgid "Chinese (Simplified, China)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2991 src/etc/inc/pfsense-utils.inc:3006
-#: src/etc/inc/pfsense-utils.inc:3031
+#: src/etc/inc/pfsense-utils.inc:2997 src/etc/inc/pfsense-utils.inc:3012
+#: src/etc/inc/pfsense-utils.inc:3037
 msgid "No Service"
 msgstr "Sem Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3001 src/etc/inc/pfsense-utils.inc:3043
+#: src/etc/inc/pfsense-utils.inc:3007 src/etc/inc/pfsense-utils.inc:3049
 #: src/usr/local/www/firewall_nat_out.php:228
 #: src/usr/local/www/firewall_nat_out.php:232
 #: src/usr/local/www/interfaces.php:875 src/usr/local/www/interfaces.php:2959
@@ -3396,79 +3395,79 @@ msgstr "Sem Serviço"
 msgid "Mode"
 msgstr "Modo"
 
-#: src/etc/inc/pfsense-utils.inc:3007
+#: src/etc/inc/pfsense-utils.inc:3013
 msgid "Restricted Service"
 msgstr "Serviço Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3008
+#: src/etc/inc/pfsense-utils.inc:3014
 msgid "Valid Service"
 msgstr "Serviço Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3009
+#: src/etc/inc/pfsense-utils.inc:3015
 msgid "Restricted Regional Service"
 msgstr "Serviço Regional Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3010
+#: src/etc/inc/pfsense-utils.inc:3016
 msgid "Powersaving Service"
 msgstr "Serviço de Economia de Energia"
 
-#: src/etc/inc/pfsense-utils.inc:3016
+#: src/etc/inc/pfsense-utils.inc:3022
 msgid "Invalid SIM/locked State"
 msgstr "Estado SIM/locked inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3017
+#: src/etc/inc/pfsense-utils.inc:3023
 msgid "Valid SIM State"
 msgstr "Estado SIM Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3018
+#: src/etc/inc/pfsense-utils.inc:3024
 msgid "Invalid SIM CS State"
 msgstr "Estado SIM CS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3019
+#: src/etc/inc/pfsense-utils.inc:3025
 msgid "Invalid SIM PS State"
 msgstr "Estado SIM PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3020
+#: src/etc/inc/pfsense-utils.inc:3026
 msgid "Invalid SIM CS/PS State"
 msgstr "Estado SIM CS/PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3021
+#: src/etc/inc/pfsense-utils.inc:3027
 msgid "Missing SIM State"
 msgstr "Estado SIM não encontrado"
 
-#: src/etc/inc/pfsense-utils.inc:3032
+#: src/etc/inc/pfsense-utils.inc:3038
 msgid "Limited Service"
 msgstr "Serviço Limitado"
 
-#: src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Initializing Service"
 msgstr "Inicializando Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3055
 msgid "Network Lock error Service"
 msgstr "Erro de serviço Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3056
 msgid "Network Locked Service"
 msgstr "Serviço de Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3057
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Destravada ou serviço MCC/MNC correto"
 
-#: src/etc/inc/pfsense-utils.inc:3057
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "No action State"
 msgstr "Sem estados em atividade"
 
-#: src/etc/inc/pfsense-utils.inc:3058
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Network lock State"
 msgstr "Estado de rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "(U)SIM card lock State"
 msgstr "Estado de cartão (U)SIM travado"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3066
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Estado de cartão (U)SIM e rede travadas"
 
@@ -3922,30 +3921,32 @@ msgstr "WebCfg - Status: Logs de sistema: Balanceamento de Carga"
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
 msgstr ""
+"Permitir acesso a pagina 'Status: Logs de Sistema: Balanceamento de Carga'."
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr ""
+msgstr "WebCfg - Status: Logs de Sistema: Roteamento"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
 msgstr ""
+"Permitir acesso a pagina 'Status: Logs de Sistema: Sistema: Roteamento'."
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr ""
+msgstr "WebCfg - Status: Logs de Sistema: Sem Fio"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
-msgstr ""
+msgstr "Permitir acesso a pagina 'Status: Logs de Sistema: Sistema: Sem Fio'."
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr ""
+msgstr "WebCfg - Serviços: UPnP"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr ""
+msgstr "Permitir acesso a pagina 'Serviços: UPnP'."
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
@@ -3965,7 +3966,7 @@ msgstr "Envie os relatórios de falha para o pfSense e/ou exclua-os."
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr ""
+msgstr "WebCfg - Diagnosticos: Tabela ARP"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
@@ -3973,23 +3974,23 @@ msgstr "Permitir acesso à  página 'Diagnóstico: Tabela ARP'."
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr ""
+msgstr "WebCfg - Diagnostico: Autenticação"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr "Permite acesso à 'Diagnóstico: Página de Autenticação'."
+msgstr "Permite acesso à 'Diagnósticos: Página de Autenticação'."
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr ""
+msgstr "WebCfg - Diagnosticos: Backup e Restauração"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr ""
+msgstr "Permitir acesso à pagina: Backup e Restauração'."
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr ""
+msgstr "WebCfg - Diagnosticos: Comandos"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
@@ -4005,7 +4006,7 @@ msgstr "Permitir acesso à página 'Diagnósticos: Histórico de Configuração'
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr ""
+msgstr "WebCfg - Diagnósticos: Padrões de fábrica"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
@@ -5714,14 +5715,14 @@ msgstr "Criando script de atualização rrd"
 msgid "Router Advertisement Daemon"
 msgstr "Serviço de Anúncio de Roteador"
 
-#: src/etc/inc/service-utils.inc:248 src/usr/local/www/diag_backup.php:482
+#: src/etc/inc/service-utils.inc:248 src/usr/local/www/diag_backup.php:468
 #: src/usr/local/www/head.inc:291 src/usr/local/www/services_dnsmasq.php:226
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:120
 #: src/usr/local/www/services_dnsmasq_edit.php:185
 msgid "DNS Forwarder"
 msgstr "DNS Forwarder"
 
-#: src/etc/inc/service-utils.inc:255 src/usr/local/www/diag_backup.php:483
+#: src/etc/inc/service-utils.inc:255 src/usr/local/www/diag_backup.php:469
 #: src/usr/local/www/head.inc:292 src/usr/local/www/services_unbound.php:238
 #: src/usr/local/www/services_unbound_acls.php:176
 #: src/usr/local/www/services_unbound_advanced.php:187
@@ -5736,7 +5737,7 @@ msgstr "DNS Resolver"
 msgid "NTP clock sync"
 msgstr "Sincronização de relógio NTP"
 
-#: src/etc/inc/service-utils.inc:270 src/usr/local/www/diag_backup.php:480
+#: src/etc/inc/service-utils.inc:270 src/usr/local/www/diag_backup.php:466
 #: src/usr/local/www/head.inc:290 src/usr/local/www/head.inc:328
 #: src/usr/local/www/services_captiveportal.php:64
 #: src/usr/local/www/services_captiveportal_filemanager.php:67
@@ -5755,7 +5756,7 @@ msgstr "Sincronização de relógio NTP"
 #: src/usr/local/www/status_captiveportal_test.php:57
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:57
 #: src/usr/local/www/status_captiveportal_vouchers.php:57
-#: src/usr/local/www/system_certmanager.php:1038
+#: src/usr/local/www/system_certmanager.php:1045
 msgid "Captive Portal"
 msgstr "Portal Captive"
 
@@ -5817,7 +5818,7 @@ msgstr "Interrompido"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
 #: src/usr/local/www/firewall_nat_edit.php:652
 #: src/usr/local/www/firewall_nat_npt_edit.php:192
-#: src/usr/local/www/firewall_nat_out_edit.php:432
+#: src/usr/local/www/firewall_nat_out_edit.php:461
 #: src/usr/local/www/firewall_rules_edit.php:1176
 #: src/usr/local/www/interfaces.php:2639
 #: src/usr/local/www/interfaces_ppps_edit.php:758
@@ -6016,18 +6017,18 @@ msgid "The field '%s' is required."
 msgstr "O campo '%s' é requerido."
 
 #: src/etc/inc/shaper.inc:436 src/etc/inc/shaper.inc:1901
-#: src/etc/inc/shaper.inc:2264 src/etc/inc/shaper.inc:2649
-#: src/etc/inc/shaper.inc:2777 src/etc/inc/shaper.inc:2931
-#: src/etc/inc/shaper.inc:3050 src/etc/inc/shaper.inc:3276
-#: src/etc/inc/shaper.inc:3854 src/usr/local/www/interfaces_ppps_edit.php:920
+#: src/etc/inc/shaper.inc:2264 src/etc/inc/shaper.inc:2650
+#: src/etc/inc/shaper.inc:2778 src/etc/inc/shaper.inc:2932
+#: src/etc/inc/shaper.inc:3051 src/etc/inc/shaper.inc:3277
+#: src/etc/inc/shaper.inc:3855 src/usr/local/www/interfaces_ppps_edit.php:920
 #: src/usr/local/www/status_queues.php:163
 #: src/usr/local/www/status_queues.php:167
 msgid "Bandwidth"
 msgstr "Largura de banda"
 
 #: src/etc/inc/shaper.inc:438 src/etc/inc/shaper.inc:1903
-#: src/etc/inc/shaper.inc:2651 src/etc/inc/shaper.inc:2933
-#: src/etc/inc/shaper.inc:3280
+#: src/etc/inc/shaper.inc:2652 src/etc/inc/shaper.inc:2934
+#: src/etc/inc/shaper.inc:3281
 msgid "Bandwidthtype"
 msgstr "Tipo de largura de banda"
 
@@ -6084,7 +6085,7 @@ msgid "Enable/Disable"
 msgstr "Habilitar/Desabilitar"
 
 #: src/etc/inc/shaper.inc:805 src/etc/inc/shaper.inc:1414
-#: src/etc/inc/shaper.inc:3829 src/etc/inc/shaper.inc:4142
+#: src/etc/inc/shaper.inc:3830 src/etc/inc/shaper.inc:4143
 #: src/usr/local/www/firewall_aliases_edit.php:662
 #: src/usr/local/www/load_balancer_monitor_edit.php:271
 #: src/usr/local/www/load_balancer_pool_edit.php:306
@@ -6124,7 +6125,7 @@ msgstr ""
 msgid "The priority must be an integer between 1 and 15."
 msgstr "A prioridade deve ser um inteiro entre 1 e 15."
 
-#: src/etc/inc/shaper.inc:1222 src/etc/inc/shaper.inc:3295
+#: src/etc/inc/shaper.inc:1222 src/etc/inc/shaper.inc:3296
 msgid "Queue limit must be an integer"
 msgstr "Limite da fila deve ser um inteiro"
 
@@ -6133,7 +6134,7 @@ msgid "Queue limit must be positive"
 msgstr "Limite da fila deve ser positivo"
 
 #: src/etc/inc/shaper.inc:1228 src/etc/inc/shaper.inc:1231
-#: src/etc/inc/shaper.inc:3298 src/etc/inc/shaper.inc:3301
+#: src/etc/inc/shaper.inc:3299 src/etc/inc/shaper.inc:3302
 msgid "Queue names must be alphanumeric and _ or - only."
 msgstr "Nomes de filas devem ser alfanuméricos, _ ou - somente."
 
@@ -6172,59 +6173,45 @@ msgid "Default Queue"
 msgstr ""
 
 #: src/etc/inc/shaper.inc:1458
-msgid "Random Early Detection"
-msgstr "Detecção Antecipada Aleatória"
-
-#: src/etc/inc/shaper.inc:1458
-msgid ""
-"<a target=\"_new\" href=\"https://web.archive.org/web/20160404153707/http://"
-"www.openbsd.org/faq/pf/queueing.html#red\">"
+#, php-format
+msgid "%1$sRandom Early Detection%2$s"
 msgstr ""
 
 #: src/etc/inc/shaper.inc:1465
-msgid "Random Early Detection In and Out"
-msgstr "Detecção Randômica Recente de Entrada e Saída"
-
-#: src/etc/inc/shaper.inc:1465
-msgid ""
-"<a target=\"_new\" href=\"https://web.archive.org/web/20160404153707/http://"
-"www.openbsd.org/faq/pf/queueing.html#rio\">"
+#, php-format
+msgid "%1$sRandom Early Detection In and Out%2$s"
 msgstr ""
 
 #: src/etc/inc/shaper.inc:1472
-msgid "Explicit Congestion Notification"
-msgstr "Notificação de Congestionamento Explícita"
-
-#: src/etc/inc/shaper.inc:1472 src/etc/inc/shaper.inc:1479
-msgid ""
-"<a target=\"_new\" href=\"https://web.archive.org/web/20160404153707/http://"
-"www.openbsd.org/faq/pf/queueing.html#ecn\">"
+#, php-format
+msgid "%1$sExplicit Congestion Notification%2$s"
 msgstr ""
 
 #: src/etc/inc/shaper.inc:1479
-msgid "Codel Active Queue"
-msgstr "Fila ativa de Codel"
+#, php-format
+msgid "%1$sCodel Active Queue%2$s"
+msgstr ""
 
 #: src/etc/inc/shaper.inc:1481
 msgid "Select options for this queue"
 msgstr "Selecione opções para essa fila"
 
-#: src/etc/inc/shaper.inc:1487 src/etc/inc/shaper.inc:3890
-#: src/etc/inc/shaper.inc:4194 src/usr/local/www/firewall_aliases.php:194
+#: src/etc/inc/shaper.inc:1487 src/etc/inc/shaper.inc:3891
+#: src/etc/inc/shaper.inc:4195 src/usr/local/www/firewall_aliases.php:194
 #: src/usr/local/www/firewall_aliases_edit.php:670
 #: src/usr/local/www/firewall_aliases_edit.php:728
-#: src/usr/local/www/firewall_aliases_import.php:244
+#: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:234
 #: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
-#: src/usr/local/www/firewall_nat_edit.php:885
+#: src/usr/local/www/firewall_nat_edit.php:884
 #: src/usr/local/www/firewall_nat_npt.php:153
 #: src/usr/local/www/firewall_nat_npt_edit.php:236
 #: src/usr/local/www/firewall_nat_out.php:285
 #: src/usr/local/www/firewall_nat_out.php:538
-#: src/usr/local/www/firewall_nat_out_edit.php:632
+#: src/usr/local/www/firewall_nat_out_edit.php:662
 #: src/usr/local/www/firewall_rules.php:393
-#: src/usr/local/www/firewall_rules_edit.php:1458
+#: src/usr/local/www/firewall_rules_edit.php:1457
 #: src/usr/local/www/firewall_schedule.php:95
 #: src/usr/local/www/firewall_schedule_edit.php:375
 #: src/usr/local/www/firewall_schedule_edit.php:619
@@ -6408,8 +6395,8 @@ msgstr "o valor m2 de realtime precisa ser Kb, Mb, Gb, ou %"
 msgid "Service Curve (sc)"
 msgstr "Curva de Serviço (sc)"
 
-#: src/etc/inc/shaper.inc:2285 src/etc/inc/shaper.inc:2797
-#: src/etc/inc/shaper.inc:3070
+#: src/etc/inc/shaper.inc:2285 src/etc/inc/shaper.inc:2798
+#: src/etc/inc/shaper.inc:3071
 msgid "Choose the amount of bandwidth for this queue"
 msgstr "Escolha a largura de banda total para essa fila"
 
@@ -6440,83 +6427,83 @@ msgstr ""
 msgid "B/W share of a backlogged queue."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:2646
+#: src/etc/inc/shaper.inc:2647
 msgid "Priority must be an integer between 1 and 7."
 msgstr "A prioridade deve ser um inteiro entre 1 e 7."
 
-#: src/etc/inc/shaper.inc:2775
+#: src/etc/inc/shaper.inc:2776
 msgid "NOTITLE"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:2803
+#: src/etc/inc/shaper.inc:2804
 msgid "Scheduler option"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:2928
+#: src/etc/inc/shaper.inc:2929
 msgid "Priority must be an integer between 1 and 255."
 msgstr "Prioridade deve ser um inteiro entre 1 e 255."
 
-#: src/etc/inc/shaper.inc:3076
+#: src/etc/inc/shaper.inc:3077
 msgid "Scheduler specific options"
 msgstr "Opções específicas do Agendador"
 
-#: src/etc/inc/shaper.inc:3079
+#: src/etc/inc/shaper.inc:3080
 msgid "Number of buckets available"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3086
+#: src/etc/inc/shaper.inc:3087
 msgid "Bandwidth limit for hosts to not saturate link"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3288
+#: src/etc/inc/shaper.inc:3289
 msgid "Packet Loss Rate must be a value between 0 and 1."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3292
+#: src/etc/inc/shaper.inc:3293
 msgid "Buckets must be an integer between 16 and 65535."
 msgstr "Buckets deve ser um inteiro entre 16 e 65535."
 
-#: src/etc/inc/shaper.inc:3305
+#: src/etc/inc/shaper.inc:3306
 msgid "IPv4 bit mask must be blank or numeric value between 1 and 32."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3310
+#: src/etc/inc/shaper.inc:3311
 msgid "IPv6 bit mask must be blank or numeric value between 1 and 128."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3406
+#: src/etc/inc/shaper.inc:3407
 #, php-format
 msgid "SHAPER: Could not create queue %1$s on interface %2$s because: %3$s"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3464
+#: src/etc/inc/shaper.inc:3465
 #, php-format
 msgid "Bandwidth for schedule %s must be an integer."
 msgstr "O valor de tamanho de banda para %s deve ser um inteiro."
 
-#: src/etc/inc/shaper.inc:3466
+#: src/etc/inc/shaper.inc:3467
 #, php-format
 msgid "Burst for schedule %s must be an integer."
 msgstr "O limite de tamanho de banda para %s deve ser um inteiro."
 
-#: src/etc/inc/shaper.inc:3473
+#: src/etc/inc/shaper.inc:3474
 msgid "A schedule needs to be specified for every additional entry."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3476
+#: src/etc/inc/shaper.inc:3477
 msgid ""
 "If more than one bandwidth configured all schedules need to be selected."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3479
+#: src/etc/inc/shaper.inc:3480
 msgid "At least one bw specification is necessary."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3482
+#: src/etc/inc/shaper.inc:3483
 msgid "Delay must be an integer."
 msgstr "Espera deve ser um inteiro."
 
-#: src/etc/inc/shaper.inc:3786 src/usr/local/www/firewall_aliases_edit.php:735
+#: src/etc/inc/shaper.inc:3787 src/usr/local/www/firewall_aliases_edit.php:735
 #: src/usr/local/www/firewall_nat.php:471
 #: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:234
@@ -6544,11 +6531,11 @@ msgstr "Espera deve ser um inteiro."
 msgid "Delete"
 msgstr "Excluir"
 
-#: src/etc/inc/shaper.inc:3794
+#: src/etc/inc/shaper.inc:3795
 msgid "Add Schedule"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3817 src/etc/inc/shaper.inc:4130
+#: src/etc/inc/shaper.inc:3818 src/etc/inc/shaper.inc:4131
 #: src/usr/local/www/firewall_shaper.php:372
 #: src/usr/local/www/firewall_shaper_queues.php:205
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
@@ -6557,7 +6544,7 @@ msgstr ""
 msgid "Limiters"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3821 src/etc/inc/shaper.inc:4134
+#: src/etc/inc/shaper.inc:3822 src/etc/inc/shaper.inc:4135
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
 #: src/usr/local/www/firewall_rules.php:783
 #: src/usr/local/www/interfaces.php:1728 src/usr/local/www/interfaces.php:3019
@@ -6581,19 +6568,19 @@ msgstr ""
 msgid "Enable"
 msgstr "Habilitar"
 
-#: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
+#: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Source addresses"
 msgstr "Endereços fonte"
 
-#: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
+#: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Destination addresses"
 msgstr "Endereços de destino"
 
-#: src/etc/inc/shaper.inc:3863 src/etc/inc/shaper.inc:4167
+#: src/etc/inc/shaper.inc:3864 src/etc/inc/shaper.inc:4168
 msgid "Mask"
 msgstr "Máscara"
 
-#: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
+#: src/etc/inc/shaper.inc:3867 src/etc/inc/shaper.inc:4171
 msgid ""
 "If \"source\" or \"destination\" slots is chosen a dynamic pipe with the "
 "bandwidth, delay, packet loss and queue size given above will be created for "
@@ -6601,23 +6588,23 @@ msgid ""
 "possible to easily specify bandwidth limits per host."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3877 src/etc/inc/shaper.inc:4181
-msgid "IPv4 mask bits<br />255.255.255.255/?"
+#: src/etc/inc/shaper.inc:3878 src/etc/inc/shaper.inc:4182
+#, php-format
+msgid "IPv4 mask bits%1$s%2$s"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3884 src/etc/inc/shaper.inc:4188
-msgid ""
-"IPv6 mask bits<br /><span style=\"font-family:consolas\">ffff:ffff:ffff:ffff:"
-"ffff:ffff:ffff:ffff/?</span>"
+#: src/etc/inc/shaper.inc:3885 src/etc/inc/shaper.inc:4189
+#, php-format
+msgid "IPv6 mask bits%1$s%2$s"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3893 src/etc/inc/shaper.inc:4197
+#: src/etc/inc/shaper.inc:3894 src/etc/inc/shaper.inc:4198
 #: src/usr/local/www/firewall_aliases_edit.php:673
-#: src/usr/local/www/firewall_aliases_import.php:247
+#: src/usr/local/www/firewall_aliases_import.php:265
 #: src/usr/local/www/firewall_nat_1to1_edit.php:533
-#: src/usr/local/www/firewall_nat_edit.php:888
+#: src/usr/local/www/firewall_nat_edit.php:887
 #: src/usr/local/www/firewall_nat_npt_edit.php:239
-#: src/usr/local/www/firewall_nat_out_edit.php:635
+#: src/usr/local/www/firewall_nat_out_edit.php:665
 #: src/usr/local/www/firewall_virtual_ip_edit.php:428
 #: src/usr/local/www/interfaces_gif_edit.php:229
 #: src/usr/local/www/interfaces_gre_edit.php:216
@@ -6646,38 +6633,38 @@ msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3897 src/etc/inc/shaper.inc:4201
-#: src/usr/local/www/firewall_rules_edit.php:1473
-#: src/usr/local/www/firewall_rules_edit.php:1479
+#: src/etc/inc/shaper.inc:3898 src/etc/inc/shaper.inc:4202
+#: src/usr/local/www/firewall_rules_edit.php:1472
+#: src/usr/local/www/firewall_rules_edit.php:1478
 #: src/usr/local/www/interfaces_bridge_edit.php:425
 #: src/usr/local/www/vpn_ipsec_phase1.php:822
 msgid "Advanced Options"
 msgstr "Opções Avançadas"
 
-#: src/etc/inc/shaper.inc:3901
+#: src/etc/inc/shaper.inc:3902
 msgid "Delay (ms)"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3904
+#: src/etc/inc/shaper.inc:3905
 msgid ""
 "In most cases, zero (0) should specified here (or leave the field empty)."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3908 src/etc/inc/shaper.inc:4214
+#: src/etc/inc/shaper.inc:3909 src/etc/inc/shaper.inc:4215
 msgid "Packet Loss Rate"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3912
+#: src/etc/inc/shaper.inc:3913
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3917 src/etc/inc/shaper.inc:4223
+#: src/etc/inc/shaper.inc:3918 src/etc/inc/shaper.inc:4224
 msgid "Queue size (slots)"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3920 src/etc/inc/shaper.inc:4226
+#: src/etc/inc/shaper.inc:3921 src/etc/inc/shaper.inc:4227
 msgid ""
 "In most cases, the field should be left empty. All packets in this pipe are "
 "placed into a fixed-size queue first, then they are delayed by value "
@@ -6685,75 +6672,75 @@ msgid ""
 "destination."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3925 src/etc/inc/shaper.inc:4231
+#: src/etc/inc/shaper.inc:3926 src/etc/inc/shaper.inc:4232
 msgid "Bucket size (slots)"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3928
+#: src/etc/inc/shaper.inc:3929
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:3999
+#: src/etc/inc/shaper.inc:4000
 msgid "Weight must be an integer between 1 and 100."
 msgstr "Peso deve ser um inteiro entre 1 e 100."
 
-#: src/etc/inc/shaper.inc:4205 src/usr/local/www/system_gateways_edit.php:711
+#: src/etc/inc/shaper.inc:4206 src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight"
 msgstr "Peso"
 
-#: src/etc/inc/shaper.inc:4209
+#: src/etc/inc/shaper.inc:4210
 msgid ""
 "For queues under the same parent this specifies the share that a queue "
 "gets(values range from 1 to 100), it can be left blank otherwise."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4218
+#: src/etc/inc/shaper.inc:4219
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4234
+#: src/etc/inc/shaper.inc:4235
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4629
+#: src/etc/inc/shaper.inc:4630
 msgid "Clone Shaper to this Interface"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4638
+#: src/etc/inc/shaper.inc:4639
 #, php-format
 msgid "Welcome to the %s Traffic Shaper."
 msgstr "Bem-vindo ao Traffic Shaper %s."
 
-#: src/etc/inc/shaper.inc:4641
+#: src/etc/inc/shaper.inc:4642
 #, php-format
 msgid "The tree on the left navigates through the %s."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4642
+#: src/etc/inc/shaper.inc:4643
 msgid "queues"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4643
+#: src/etc/inc/shaper.inc:4644
 msgid "limiters"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4645
+#: src/etc/inc/shaper.inc:4646
 #, php-format
 msgid ""
 "Buttons at the bottom represent %s actions and are activated accordingly."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4646 src/usr/local/www/diag_pftop.php:97
+#: src/etc/inc/shaper.inc:4647 src/usr/local/www/diag_pftop.php:97
 msgid "queue"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:4647
+#: src/etc/inc/shaper.inc:4648
 msgid "limiter"
 msgstr ""
 
@@ -7540,7 +7527,7 @@ msgstr "Salvar"
 
 #: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/diag_backup.php:519 src/usr/local/www/diag_command.php:91
+#: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_command.php:91
 #: src/usr/local/www/diag_confbak.php:99 src/usr/local/www/diag_defaults.php:41
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dump_states.php:75
 #: src/usr/local/www/diag_dump_states_sources.php:53
@@ -7649,7 +7636,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:99
 #: src/usr/local/www/firewall_nat_out.php:277
 #: src/usr/local/www/firewall_nat_out.php:530
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_virtual_ip.php:262
 #: src/usr/local/www/interfaces_assign.php:509
 #: src/usr/local/www/interfaces_bridge.php:102
@@ -7793,15 +7780,8 @@ msgid "Delete arp cache entry"
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:385
-msgid "Local IPv6 peers use "
-msgstr ""
-
-#: src/usr/local/www/diag_arp.php:385
-msgid "NDP"
-msgstr "NDP"
-
-#: src/usr/local/www/diag_arp.php:385
-msgid " instead of ARP."
+#, php-format
+msgid "Local IPv6 peers use %1$sNDP%2$s instead of ARP."
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:386
@@ -7822,25 +7802,18 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:38
-msgid "is not a valid authentication server"
-msgstr "não é um servidor de autenticação válido"
+#, php-format
+msgid "%s is not a valid authentication server"
+msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:42
 msgid "A username and password must be specified."
 msgstr "Um nome de usuário e senha devem ser especificados."
 
 #: src/usr/local/www/diag_authentication.php:48
-#: src/usr/local/www/status_logs_vpn.php:140
-#: src/usr/local/www/status_logs_vpn.php:385
-#: src/usr/local/www/vpn_l2tp_users_edit.php:149
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:221
-#: src/usr/local/www/services_rfc2136_edit.php:220
-msgid "User"
-msgstr "Usuário"
-
-#: src/usr/local/www/diag_authentication.php:48
-msgid "authenticated successfully."
-msgstr "autenticado com sucesso."
+#, php-format
+msgid "User %s authenticated successfully."
+msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:50
 msgid "This user is a member of groups"
@@ -7917,7 +7890,7 @@ msgstr "Restaurar configuração"
 msgid "Reinstall"
 msgstr "Reinstalar"
 
-#: src/usr/local/www/diag_backup.php:178 src/usr/local/www/diag_backup.php:669
+#: src/usr/local/www/diag_backup.php:178 src/usr/local/www/diag_backup.php:655
 msgid "Clear Package Lock"
 msgstr "Limpar trava de Pacotes"
 
@@ -7928,79 +7901,66 @@ msgstr "Limpar trava de Pacotes"
 msgid "Download"
 msgstr "Download"
 
-#: src/usr/local/www/diag_backup.php:182
-msgid "Restore version"
-msgstr "Restaurar versão"
-
-#: src/usr/local/www/diag_backup.php:195
+#: src/usr/local/www/diag_backup.php:193
 msgid "A password for encryption must be supplied and confirmed."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:270
+#: src/usr/local/www/diag_backup.php:268
 msgid "A password for decryption must be supplied and confirmed."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:280
+#: src/usr/local/www/diag_backup.php:278
 #, php-format
 msgid "Warning, could not read file %s"
 msgstr "Aviso, não é possível ler o arquivo %s"
 
-#: src/usr/local/www/diag_backup.php:286
+#: src/usr/local/www/diag_backup.php:284
 msgid ""
 "The uploaded file does not appear to contain an encrypted pfsense "
 "configuration."
 msgstr ""
 "O arquivo enviado não parece conter uma configuração pfSense criptografada."
 
-#: src/usr/local/www/diag_backup.php:293
+#: src/usr/local/www/diag_backup.php:291
 msgid "Upgrading m0n0wall configuration to pfsense."
 msgstr "Atualizando configuração do m0n0wall para pfSense."
 
-#: src/usr/local/www/diag_backup.php:301 src/usr/local/www/diag_backup.php:304
+#: src/usr/local/www/diag_backup.php:299 src/usr/local/www/diag_backup.php:302
 msgid ""
 "An area to restore was selected but the correct xml tag could not be located."
 ""
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:315
+#: src/usr/local/www/diag_backup.php:313
 msgid ""
 "The configuration area has been restored. The firewall may need to be "
 "rebooted."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:320
+#: src/usr/local/www/diag_backup.php:318
 #, php-format
 msgid ""
 "A full configuration restore was selected but a %s tag could not be located."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:337
+#: src/usr/local/www/diag_backup.php:335
 msgid "Restore serial console enabling in configuration."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:410
+#: src/usr/local/www/diag_backup.php:408
 msgid "The m0n0wall configuration has been restored and upgraded to pfSense."
 msgstr "A configuração m0n0wall foi restaurada e atualizada para pfSense."
 
-#: src/usr/local/www/diag_backup.php:438 src/usr/local/www/diag_backup.php:461
+#: src/usr/local/www/diag_backup.php:436
 msgid "The configuration could not be restored."
 msgstr "A configuração não poderá ser restaurada."
 
-#: src/usr/local/www/diag_backup.php:443
+#: src/usr/local/www/diag_backup.php:441
 msgid "The configuration could not be restored (file upload error)."
 msgstr ""
 "A configuração não pode ser restaurada (erro de carregamento de arquivo)."
 
-#: src/usr/local/www/diag_backup.php:455
-msgid ""
-"XXX - this feature may hose the config (do NOT backrev configs!) - billm"
-msgstr ""
-
-#: src/usr/local/www/diag_backup.php:464
-msgid "No version selected."
-msgstr "Nenhuma versão selecionada."
-
-#: src/usr/local/www/diag_backup.php:479
+#: src/usr/local/www/diag_backup.php:465
 #: src/usr/local/www/firewall_aliases.php:163
 #: src/usr/local/www/firewall_aliases_edit.php:142
 #: src/usr/local/www/firewall_aliases_import.php:55
@@ -8008,17 +7968,17 @@ msgstr "Nenhuma versão selecionada."
 msgid "Aliases"
 msgstr "Aliases"
 
-#: src/usr/local/www/diag_backup.php:481
+#: src/usr/local/www/diag_backup.php:467
 msgid "Captive Portal Vouchers"
 msgstr "Vouchers do Portal Captive"
 
-#: src/usr/local/www/diag_backup.php:484 src/usr/local/www/head.inc:297
+#: src/usr/local/www/diag_backup.php:470 src/usr/local/www/head.inc:297
 #: src/usr/local/www/services_dhcp.php:722
 #: src/usr/local/www/services_dhcp_edit.php:397
 msgid "DHCP Server"
 msgstr "Servidor DHCP"
 
-#: src/usr/local/www/diag_backup.php:485
+#: src/usr/local/www/diag_backup.php:471
 #: src/usr/local/www/services_dhcpv6.php:489
 #: src/usr/local/www/services_dhcpv6.php:564
 #: src/usr/local/www/services_dhcpv6.php:575
@@ -8028,11 +7988,11 @@ msgstr "Servidor DHCP"
 msgid "DHCPv6 Server"
 msgstr "Servidor DHCPv6"
 
-#: src/usr/local/www/diag_backup.php:486
+#: src/usr/local/www/diag_backup.php:472
 msgid "Firewall Rules"
 msgstr "Regras de firewall"
 
-#: src/usr/local/www/diag_backup.php:487 src/usr/local/www/head.inc:335
+#: src/usr/local/www/diag_backup.php:473 src/usr/local/www/head.inc:335
 #: src/usr/local/www/interfaces.php:1655
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -8060,23 +8020,23 @@ msgstr "Regras de firewall"
 msgid "Interfaces"
 msgstr "Interfaces"
 
-#: src/usr/local/www/diag_backup.php:488
+#: src/usr/local/www/diag_backup.php:474
 msgid "IPSEC"
 msgstr "IPSEC"
 
-#: src/usr/local/www/diag_backup.php:489 src/usr/local/www/firewall_nat.php:185
+#: src/usr/local/www/diag_backup.php:475 src/usr/local/www/firewall_nat.php:185
 #: src/usr/local/www/firewall_nat_1to1.php:121
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
 #: src/usr/local/www/firewall_nat_edit.php:638
 #: src/usr/local/www/firewall_nat_npt.php:121
 #: src/usr/local/www/firewall_nat_npt_edit.php:178
 #: src/usr/local/www/firewall_nat_out.php:200
-#: src/usr/local/www/firewall_nat_out_edit.php:378
+#: src/usr/local/www/firewall_nat_out_edit.php:397
 #: src/usr/local/www/head.inc:281
 msgid "NAT"
 msgstr "NAT"
 
-#: src/usr/local/www/diag_backup.php:491 src/usr/local/www/head.inc:231
+#: src/usr/local/www/diag_backup.php:477 src/usr/local/www/head.inc:231
 #: src/usr/local/www/head.inc:643 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
@@ -8084,19 +8044,19 @@ msgstr "NAT"
 msgid "Package Manager"
 msgstr "Gerenciador de Pacotes"
 
-#: src/usr/local/www/diag_backup.php:492
+#: src/usr/local/www/diag_backup.php:478
 msgid "RRD Data"
 msgstr "Dados RRD"
 
-#: src/usr/local/www/diag_backup.php:493
+#: src/usr/local/www/diag_backup.php:479
 msgid "Scheduled Tasks"
 msgstr "Tarefas Agendadas"
 
-#: src/usr/local/www/diag_backup.php:494
+#: src/usr/local/www/diag_backup.php:480
 msgid "Syslog"
 msgstr "Syslog"
 
-#: src/usr/local/www/diag_backup.php:495 src/usr/local/www/head.inc:643
+#: src/usr/local/www/diag_backup.php:481 src/usr/local/www/head.inc:643
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
@@ -8138,19 +8098,19 @@ msgstr "Syslog"
 msgid "System"
 msgstr "Sistema"
 
-#: src/usr/local/www/diag_backup.php:496
+#: src/usr/local/www/diag_backup.php:482
 msgid "Static routes"
 msgstr "Rotas estáticas"
 
-#: src/usr/local/www/diag_backup.php:497
+#: src/usr/local/www/diag_backup.php:483
 msgid "System tunables"
 msgstr "Ajustes de sistema"
 
-#: src/usr/local/www/diag_backup.php:498
+#: src/usr/local/www/diag_backup.php:484
 msgid "SNMP Server"
 msgstr "Servidor SNMP"
 
-#: src/usr/local/www/diag_backup.php:499
+#: src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/firewall_shaper.php:41
 #: src/usr/local/www/firewall_shaper_queues.php:180
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
@@ -8159,18 +8119,18 @@ msgstr "Servidor SNMP"
 msgid "Traffic Shaper"
 msgstr "Traffic Shaper"
 
-#: src/usr/local/www/diag_backup.php:500
+#: src/usr/local/www/diag_backup.php:486
 msgid "VLANS"
 msgstr "VLANS"
 
-#: src/usr/local/www/diag_backup.php:501 src/usr/local/www/head.inc:315
+#: src/usr/local/www/diag_backup.php:487 src/usr/local/www/head.inc:315
 #: src/usr/local/www/services_wol.php:113
 #: src/usr/local/www/services_wol.php:136
 #: src/usr/local/www/services_wol_edit.php:111
 msgid "Wake-on-LAN"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:504
+#: src/usr/local/www/diag_backup.php:490
 #: src/usr/local/www/firewall_aliases.php:154
 #: src/usr/local/www/pkg_edit.php:1191
 #: src/usr/local/www/services_ntpd_gps.php:290
@@ -8189,92 +8149,92 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: src/usr/local/www/diag_backup.php:519 src/usr/local/www/diag_backup.php:543
+#: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_backup.php:529
 #: src/usr/local/www/diag_confbak.php:99 src/usr/local/www/diag_confbak.php:108
 #: src/usr/local/www/head.inc:368 src/usr/local/www/head.inc:645
 msgid "Backup & Restore"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:536
+#: src/usr/local/www/diag_backup.php:522
 msgid "The firewall configuration has been changed."
 msgstr "A configuração do firewall foi alterada."
 
-#: src/usr/local/www/diag_backup.php:536
+#: src/usr/local/www/diag_backup.php:522
 msgid "The firewall is now rebooting."
 msgstr "O firewall está reiniciando agora."
 
-#: src/usr/local/www/diag_backup.php:544 src/usr/local/www/diag_confbak.php:99
+#: src/usr/local/www/diag_backup.php:530 src/usr/local/www/diag_confbak.php:99
 #: src/usr/local/www/diag_confbak.php:109
 msgid "Config History"
 msgstr "Histórico de configuração"
 
-#: src/usr/local/www/diag_backup.php:550
+#: src/usr/local/www/diag_backup.php:536
 msgid "Backup Configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:554
+#: src/usr/local/www/diag_backup.php:540
 msgid "Backup area"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:561
+#: src/usr/local/www/diag_backup.php:547
 msgid "Skip packages"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:568
+#: src/usr/local/www/diag_backup.php:554
 msgid "Skip RRD data"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:575 src/usr/local/www/diag_backup.php:622
+#: src/usr/local/www/diag_backup.php:561 src/usr/local/www/diag_backup.php:608
 msgid "Encryption"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:591
+#: src/usr/local/www/diag_backup.php:577
 msgid "Download configuration as XML"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:599
+#: src/usr/local/www/diag_backup.php:585
 msgid "Restore Backup"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:603
+#: src/usr/local/www/diag_backup.php:589
 #, php-format
 msgid ""
 "Open a %s configuration XML file and click the button below to restore the "
 "configuration."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:608
+#: src/usr/local/www/diag_backup.php:594
 msgid "Restore area"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:615
+#: src/usr/local/www/diag_backup.php:601
 msgid "Configuration file"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:639
+#: src/usr/local/www/diag_backup.php:625
 msgid "Restore Configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:642
+#: src/usr/local/www/diag_backup.php:628
 msgid "The firewall will reboot after restoring the configuration."
 msgstr "O firewall irá reiniciar após restaurar a configuração."
 
-#: src/usr/local/www/diag_backup.php:649
+#: src/usr/local/www/diag_backup.php:635
 msgid "Package Functions"
 msgstr "Funções de Pacotes"
 
-#: src/usr/local/www/diag_backup.php:656
+#: src/usr/local/www/diag_backup.php:642
 msgid "Reinstall Packages"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:659
+#: src/usr/local/www/diag_backup.php:645
 msgid ""
 "Click this button to reinstall all system packages.  This may take a while."
 msgstr ""
 "Clique neste botão para reinstalar todos os pacotes de sistema. Isto pode "
 "demorar um pouco."
 
-#: src/usr/local/www/diag_backup.php:672
+#: src/usr/local/www/diag_backup.php:658
 msgid ""
 "Click this button to clear the package lock if a package fails to reinstall "
 "properly after an upgrade."
@@ -8284,7 +8244,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:61
 #, php-format
-msgid "Uploaded file to /tmp/%s."
+msgid "Uploaded file to %s."
 msgstr ""
 
 #: src/usr/local/www/diag_command.php:91 src/usr/local/www/head.inc:369
@@ -8386,10 +8346,12 @@ msgstr "Sucesso ao reverter o timestamp %1$s com descrição \"%2$s\"."
 #: src/usr/local/www/diag_confbak.php:117
 #: src/usr/local/www/diag_confbak.php:225
 #: src/usr/local/www/diag_confbak.php:236
-#: src/usr/local/www/firewall_nat_edit.php:965
-#: src/usr/local/www/firewall_nat_edit.php:972
-#: src/usr/local/www/firewall_nat_out_edit.php:664
-#: src/usr/local/www/firewall_nat_out_edit.php:671
+#: src/usr/local/www/firewall_nat_edit.php:966
+#: src/usr/local/www/firewall_nat_edit.php:976
+#: src/usr/local/www/firewall_nat_out_edit.php:696
+#: src/usr/local/www/firewall_nat_out_edit.php:706
+#: src/usr/local/www/firewall_rules_edit.php:1741
+#: src/usr/local/www/firewall_rules_edit.php:1751
 msgid "n/j/y H:i:s"
 msgstr "j/n/y H:i:s"
 
@@ -8626,7 +8588,7 @@ msgstr "Nome do Host"
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:236
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1005
+#: src/usr/local/www/system_certmanager.php:1012
 #: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -8795,7 +8757,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:227
 #: src/usr/local/www/firewall_nat_edit.php:212
 #: src/usr/local/www/firewall_nat_edit.php:215
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_rules.php:385
 #: src/usr/local/www/firewall_rules_edit.php:438
 #: src/usr/local/www/interfaces_bridge_edit.php:540
@@ -9091,7 +9053,8 @@ msgid "Add to Mirror"
 msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:326
-msgid "Reactivate on"
+#, php-format
+msgid "Reactivate on %s"
 msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:331
@@ -9191,13 +9154,25 @@ msgid "IPv6 address"
 msgstr "Endereço IPv6"
 
 #: src/usr/local/www/diag_packet_capture.php:82
-#: src/usr/local/www/diag_packet_capture.php:399
+#: src/usr/local/www/diag_packet_capture.php:405
 msgid "Download Capture"
 msgstr "Baixar captura"
 
 #: src/usr/local/www/diag_packet_capture.php:86 src/usr/local/www/head.inc:394
 msgid "Packet Capture"
 msgstr "Captura de pacotes"
+
+#: src/usr/local/www/diag_packet_capture.php:107
+#: src/usr/local/www/system_camanager.php:420
+#: src/usr/local/www/system_certmanager.php:1036
+msgid "OpenVPN Server"
+msgstr ""
+
+#: src/usr/local/www/diag_packet_capture.php:107
+#: src/usr/local/www/system_camanager.php:423
+#: src/usr/local/www/system_certmanager.php:1039
+msgid "OpenVPN Client"
+msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:129
 msgid "Invalid interface."
@@ -9241,8 +9216,8 @@ msgid "Invalid value specified for packet count."
 msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:211
-#: src/usr/local/www/diag_packet_capture.php:376
-#: src/usr/local/www/diag_packet_capture.php:452
+#: src/usr/local/www/diag_packet_capture.php:382
+#: src/usr/local/www/diag_packet_capture.php:458
 #: src/usr/local/www/status_dhcp_leases.php:366
 #: src/usr/local/www/status_dhcpv6_leases.php:442
 #: src/usr/local/www/status_dhcpv6_leases.php:537
@@ -9250,8 +9225,8 @@ msgid "Start"
 msgstr "Iniciar"
 
 #: src/usr/local/www/diag_packet_capture.php:219
-#: src/usr/local/www/diag_packet_capture.php:373
-#: src/usr/local/www/diag_packet_capture.php:383
+#: src/usr/local/www/diag_packet_capture.php:379
+#: src/usr/local/www/diag_packet_capture.php:389
 msgid "Stop"
 msgstr "Parar"
 
@@ -9267,7 +9242,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
 #: src/usr/local/www/firewall_nat_edit.php:694
 #: src/usr/local/www/firewall_nat_npt_edit.php:199
-#: src/usr/local/www/firewall_nat_out_edit.php:474
+#: src/usr/local/www/firewall_nat_out_edit.php:503
 #: src/usr/local/www/firewall_rules_edit.php:1231
 #: src/usr/local/www/firewall_rules_edit.php:1239
 #: src/usr/local/www/firewall_virtual_ip_edit.php:362
@@ -9293,35 +9268,34 @@ msgid "Promiscuous"
 msgstr "Promiscuo"
 
 #: src/usr/local/www/diag_packet_capture.php:290
+#, php-format
 msgid ""
-"The packet capture will be performed using promiscuous mode.<br />Note: Some "
-"network adapters do not support or work well in promiscuous mode.<br />More: "
-"<a target=\"_blank\" href=\"http://www.freebsd.org/cgi/man.cgi?query="
-"tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch="
-"default&amp;format=html\">Packet capture</a>"
+"The packet capture will be performed using promiscuous mode.%1$sNote: Some "
+"network adapters do not support or work well in promiscuous mode.%1$sMore: "
+"%2$sPacket capture%3$s"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:300
+#: src/usr/local/www/diag_packet_capture.php:302
 msgid "IPv4 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:301
+#: src/usr/local/www/diag_packet_capture.php:303
 msgid "IPv6 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:297
+#: src/usr/local/www/diag_packet_capture.php:299
 #: src/usr/local/www/firewall_rules_edit.php:1267
 #: src/usr/local/www/system_gateways_edit.php:607
 msgid "*Address Family"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:303
+#: src/usr/local/www/diag_packet_capture.php:305
 msgid "Select the type of traffic to be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:307
+#: src/usr/local/www/diag_packet_capture.php:309
 #: src/usr/local/www/firewall_nat_edit.php:703
-#: src/usr/local/www/firewall_nat_out_edit.php:483
+#: src/usr/local/www/firewall_nat_out_edit.php:512
 #: src/usr/local/www/firewall_rules_edit.php:1278
 #: src/usr/local/www/system_authservers.php:736
 #: src/usr/local/www/vpn_ipsec_phase2.php:594
@@ -9330,29 +9304,30 @@ msgstr ""
 msgid "*Protocol"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:310
+#: src/usr/local/www/diag_packet_capture.php:312
 msgid "Select the protocol to capture, or \"Any\". "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:314
+#: src/usr/local/www/diag_packet_capture.php:316
 msgid "Host Address"
 msgstr "Endereço do Host"
 
-#: src/usr/local/www/diag_packet_capture.php:317
+#: src/usr/local/www/diag_packet_capture.php:319
+#, php-format
 msgid ""
 "This value is either the Source or Destination IP address or subnet in CIDR "
-"notation. The packet capture will look for this address in either field.<br /"
-">Matching can be negated by preceding the value with \"!\". Multiple IP "
+"notation. The packet capture will look for this address in either field."
+"%1$sMatching can be negated by preceding the value with \"!\". Multiple IP "
 "addresses or CIDR subnets may be specified. Comma (\",\") separated values "
 "perform a boolean \"AND\". Separating with a pipe (\"|\") performs a boolean "
-"\"OR\".<br />If this field is left blank, all packets on the specified "
+"\"OR\".%1$sIf this field is left blank, all packets on the specified "
 "interface will be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:324
+#: src/usr/local/www/diag_packet_capture.php:327
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/firewall_aliases_edit.php:580
-#: src/usr/local/www/firewall_nat_edit.php:868
+#: src/usr/local/www/firewall_nat_edit.php:867
 #: src/usr/local/www/firewall_rules.php:387
 #: src/usr/local/www/firewall_rules.php:389
 #: src/usr/local/www/interfaces.php:3099 src/usr/local/www/interfaces.php:3123
@@ -9364,18 +9339,18 @@ msgstr ""
 msgid "Port"
 msgstr "Porta"
 
-#: src/usr/local/www/diag_packet_capture.php:327
+#: src/usr/local/www/diag_packet_capture.php:330
 msgid ""
 "The port can be either the source or destination port. The packet capture "
 "will look for this port in either field. Leave blank if not filtering by "
 "port."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:332
+#: src/usr/local/www/diag_packet_capture.php:335
 msgid "Packet Length"
 msgstr "Tamanho do Pacote"
 
-#: src/usr/local/www/diag_packet_capture.php:335
+#: src/usr/local/www/diag_packet_capture.php:338
 msgid ""
 "The Packet length is the number of bytes of each packet that will be "
 "captured. Default value is 0, which will capture the entire frame regardless "
@@ -9385,70 +9360,73 @@ msgstr ""
 "valor padrão é 0, o qual irá capturar todo o quadro independentemente do seu "
 "tamanho."
 
-#: src/usr/local/www/diag_packet_capture.php:340
+#: src/usr/local/www/diag_packet_capture.php:343
 #: src/usr/local/www/diag_ping.php:50
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:92
 msgid "Count"
 msgstr "Contagem"
 
-#: src/usr/local/www/diag_packet_capture.php:343
+#: src/usr/local/www/diag_packet_capture.php:346
+#, php-format
 msgid ""
 "This is the number of packets the packet capture will grab. Default value is "
-"100.<br />Enter 0 (zero) for no count limit."
+"100.%sEnter 0 (zero) for no count limit."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:350
+#: src/usr/local/www/diag_packet_capture.php:354
 #: src/usr/local/www/services_router_advertisements.php:115
 msgid "Normal"
 msgstr "Normal"
 
-#: src/usr/local/www/diag_packet_capture.php:351
+#: src/usr/local/www/diag_packet_capture.php:355
 msgid "Medium"
 msgstr "Médio"
 
-#: src/usr/local/www/diag_packet_capture.php:352
+#: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/services_router_advertisements.php:116
 msgid "High"
 msgstr "Alto"
 
-#: src/usr/local/www/diag_packet_capture.php:353
+#: src/usr/local/www/diag_packet_capture.php:357
 msgid "Full"
 msgstr "Total"
 
-#: src/usr/local/www/diag_packet_capture.php:348
+#: src/usr/local/www/diag_packet_capture.php:352
 msgid "Level of detail"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:355
+#: src/usr/local/www/diag_packet_capture.php:359
+#, php-format
 msgid ""
 "This is the level of detail that will be displayed after hitting \"Stop\" "
-"when the packets have been captured.<br />This option does not affect the "
-"level of detail when downloading the packet capture. "
+"when the packets have been captured.%sThis option does not affect the level "
+"of detail when downloading the packet capture. "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:360
+#: src/usr/local/www/diag_packet_capture.php:365
 msgid "Reverse DNS Lookup"
 msgstr "DNS Lookup Reverso"
 
-#: src/usr/local/www/diag_packet_capture.php:363
+#: src/usr/local/www/diag_packet_capture.php:368
+#, php-format
 msgid ""
 "The packet capture will perform a reverse DNS lookup associated with all IP "
-"addresses.<br />This option can cause delays for large packet captures."
+"addresses.%sThis option can cause delays for large packet captures."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:392
+#: src/usr/local/www/diag_packet_capture.php:398
 msgid "View Capture"
 msgstr "Visualizar Captura"
 
-#: src/usr/local/www/diag_packet_capture.php:405
+#: src/usr/local/www/diag_packet_capture.php:411
 msgid "Last capture"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:455
+#: src/usr/local/www/diag_packet_capture.php:461
 msgid "Packet capture is running."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:465
+#: src/usr/local/www/diag_packet_capture.php:471
 msgid "Packets Captured"
 msgstr ""
 
@@ -9881,23 +9859,61 @@ msgstr ""
 msgid "System Socket Information"
 msgstr ""
 
-#: src/usr/local/www/diag_sockets.php:107
+#: src/usr/local/www/diag_sockets.php:108
 msgid "Socket Information"
 msgstr ""
 
-#: src/usr/local/www/diag_sockets.php:108
+#: src/usr/local/www/diag_sockets.php:110
+#, php-format
 msgid ""
 "This page shows all listening sockets by default, and shows both listening "
-"and outbound connection sockets when <strong>Show all socket connections</"
-"strong> is clicked.<br /><br />The information listed for each socket is:<br "
-"/><br /><dl class=\"dl-horizontal responsive\"><dt>USER</dt>\t\t\t<dd>The "
-"user who owns the socket.</dd><dt>COMMAND</dt>\t\t<dd>The command which "
-"holds the socket.</dd><dt>PID</dt>\t\t\t<dd>The process ID of the command "
-"which holds the socket.</dd><dt>FD</dt>\t\t\t<dd>The file descriptor number "
-"of the socket.</dd><dt>PROTO</dt>\t\t\t<dd>The transport protocol associated "
-"with the socket.</dd><dt>LOCAL ADDRESS</dt>\t\t<dd>The address the local end "
-"of the socket is bound to.</dd><dt>FOREIGN ADDRESS</dt>\t<dd>The address the "
-"foreign end of the socket is bound to.</dd></dl>"
+"and outbound connection sockets when %1$sShow all socket connections%2$s is "
+"clicked."
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:112
+msgid "The information listed for each socket is:"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:115
+#, php-format
+msgid "%1$sUSER%2$s\t%3$sThe user who owns the socket.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:116
+#, php-format
+msgid "%1$sCOMMAND%2$s\t%3$sThe command which holds the socket.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:117
+#, php-format
+msgid ""
+"%1$sPID%2$s\t%3$sThe process ID of the command which holds the socket.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:118
+#, php-format
+msgid "%1$sFD%2$s\t%3$sThe file descriptor number of the socket.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:119
+#, php-format
+msgid ""
+"%1$sPROTO%2$s\t%3$sThe transport protocol associated with the socket.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:120
+#, php-format
+msgid ""
+"%1$sLOCAL ADDRESS%2$s\t%3$sThe address the local end of the socket is bound "
+"to.%4$s"
+msgstr ""
+
+#: src/usr/local/www/diag_sockets.php:121
+#, php-format
+msgid ""
+"%1$sFOREIGN ADDRESS%2$s\t%3$sThe address the foreign end of the socket is "
+"bound to.%4$s"
 msgstr ""
 
 #: src/usr/local/www/diag_states_summary.php:147
@@ -9984,11 +10000,12 @@ msgid "Table"
 msgstr ""
 
 #: src/usr/local/www/diag_tables.php:139
+#, php-format
 msgid ""
 "Select a user-defined alias name or system table name to view its contents. "
-"<br/><br/>Aliases become Tables when loaded into the active firewall ruleset."
-" The contents displayed on this page reflect the current addresses inside "
-"tables used by the firewall."
+"%sAliases become Tables when loaded into the active firewall ruleset. The "
+"contents displayed on this page reflect the current addresses inside tables "
+"used by the firewall."
 msgstr ""
 
 #: src/usr/local/www/diag_tables.php:154
@@ -10241,7 +10258,7 @@ msgstr "URLs"
 #: src/usr/local/www/firewall_nat_npt.php:121
 #: src/usr/local/www/firewall_nat_npt_edit.php:178
 #: src/usr/local/www/firewall_nat_out.php:200
-#: src/usr/local/www/firewall_nat_out_edit.php:378
+#: src/usr/local/www/firewall_nat_out_edit.php:397
 #: src/usr/local/www/firewall_rules.php:320
 #: src/usr/local/www/firewall_rules_edit.php:1091
 #: src/usr/local/www/firewall_schedule.php:42
@@ -10370,7 +10387,7 @@ msgstr "Remove alias"
 #: src/usr/local/www/system_authservers.php:471
 #: src/usr/local/www/system_camanager.php:453
 #: src/usr/local/www/system_certmanager.php:774
-#: src/usr/local/www/system_certmanager.php:1087
+#: src/usr/local/www/system_certmanager.php:1094
 #: src/usr/local/www/system_crlmanager.php:542
 #: src/usr/local/www/system_gateway_groups.php:188
 #: src/usr/local/www/system_gateways.php:332
@@ -10396,11 +10413,20 @@ msgstr ""
 msgid ""
 "Aliases act as placeholders for real hosts, networks or ports. They can be "
 "used to minimize the number of changes that have to be made if a host, "
-"network or port changes. <br />The name of an alias can be entered instead "
-"of the host, network or port where indicated. The alias will be resolved "
-"according to the list above.<br />If an alias cannot be resolved (e.g. "
-"because it was deleted), the corresponding element (e.g. filter/NAT/shaper "
-"rule) will be considered invalid and skipped."
+"network or port changes."
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases.php:293
+msgid ""
+"The name of an alias can be entered instead of the host, network or port "
+"where indicated. The alias will be resolved according to the list above."
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases.php:294
+msgid ""
+"If an alias cannot be resolved (e.g. because it was deleted), the "
+"corresponding element (e.g. filter/NAT/shaper rule) will be considered "
+"invalid and skipped."
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:73
@@ -10436,7 +10462,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
 #: src/usr/local/www/firewall_nat_edit.php:638
 #: src/usr/local/www/firewall_nat_npt_edit.php:178
-#: src/usr/local/www/firewall_nat_out_edit.php:378
+#: src/usr/local/www/firewall_nat_out_edit.php:397
 #: src/usr/local/www/firewall_rules.php:779
 #: src/usr/local/www/firewall_rules_edit.php:1104
 #: src/usr/local/www/firewall_schedule_edit.php:52
@@ -10521,7 +10547,8 @@ msgid "A valid URL must be provided."
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:221
-msgid "Unable to fetch usable data from URL"
+#, php-format
+msgid "Unable to fetch usable data from URL %s"
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:233
@@ -10733,7 +10760,7 @@ msgid "Properties"
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:665
-#: src/usr/local/www/firewall_aliases_import.php:239
+#: src/usr/local/www/firewall_aliases_import.php:257
 msgid ""
 "The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and "
 "_\"."
@@ -10746,8 +10773,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:515
 #: src/usr/local/www/firewall_nat_edit.php:737
 #: src/usr/local/www/firewall_nat_edit.php:805
-#: src/usr/local/www/firewall_nat_out_edit.php:495
-#: src/usr/local/www/firewall_nat_out_edit.php:520
+#: src/usr/local/www/firewall_nat_out_edit.php:524
+#: src/usr/local/www/firewall_nat_out_edit.php:549
 #: src/usr/local/www/firewall_rules_edit.php:438
 #: src/usr/local/www/firewall_virtual_ip.php:263
 #: src/usr/local/www/firewall_virtual_ip_edit.php:95
@@ -10812,31 +10839,46 @@ msgstr ""
 msgid ""
 "Paste in the ports to import separated by a carriage return. The list may "
 "contain port numbers, port ranges, blank lines (ignored) and an optional "
-"description after each port. e.g.:</span><ul><li>22</li><li>1234:1250</"
-"li><li>443 HTTPS port</li><li>4000:4099 Description of a port range</li></"
-"ul><span class=\"help-block\">"
+"description after each port. e.g.:"
 msgstr ""
 
-#: src/usr/local/www/firewall_aliases_import.php:222
+#: src/usr/local/www/firewall_aliases_import.php:224
+msgid "443 HTTPS port"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_import.php:226
+msgid "4000:4099 Description of a port range"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_import.php:229
 msgid "IP Alias Details"
 msgstr ""
 
-#: src/usr/local/www/firewall_aliases_import.php:223
+#: src/usr/local/www/firewall_aliases_import.php:230
 msgid ""
 "Paste in the aliases to import separated by a carriage return. Common "
 "examples are lists of IPs, networks, blacklists, etc. The list may contain "
 "IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) "
-"and an optional description after each IP. e.g.:</span><ul><li>172.16.1.2</"
-"li><li>172.16.0.0/24</li><li>10.11.12.100-10.11.12.200</li><li>192.168.1.254 "
-"Home router</li><li>10.20.0.0/16 Office network</li><li>10.40.1.10-10.40.1."
-"19 Managed switches</li></ul><span class=\"help-block\">"
+"and an optional description after each IP. e.g.:"
 msgstr ""
 
-#: src/usr/local/www/firewall_aliases_import.php:236
+#: src/usr/local/www/firewall_aliases_import.php:242
+msgid "192.168.1.254 Home router"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_import.php:244
+msgid "10.20.0.0/16 Office network"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_import.php:246
+msgid "10.40.1.10-10.40.1.19 Managed switches"
+msgstr ""
+
+#: src/usr/local/www/firewall_aliases_import.php:254
 msgid "*Alias Name"
 msgstr ""
 
-#: src/usr/local/www/firewall_aliases_import.php:251
+#: src/usr/local/www/firewall_aliases_import.php:269
 msgid "*Aliases to import"
 msgstr ""
 
@@ -10874,7 +10916,7 @@ msgstr "1:1"
 #: src/usr/local/www/firewall_nat_npt.php:137
 #: src/usr/local/www/firewall_nat_out.php:200
 #: src/usr/local/www/firewall_nat_out.php:220
-#: src/usr/local/www/firewall_nat_out_edit.php:378
+#: src/usr/local/www/firewall_nat_out_edit.php:397
 msgid "Outbound"
 msgstr "Saída"
 
@@ -10999,8 +11041,8 @@ msgid "Legend"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:542
-#: src/usr/local/www/firewall_nat_edit.php:914
-#: src/usr/local/www/firewall_nat_edit.php:949
+#: src/usr/local/www/firewall_nat_edit.php:913
+#: src/usr/local/www/firewall_nat_edit.php:948
 #: src/usr/local/www/firewall_rules.php:850
 #: src/usr/local/www/firewall_rules_edit.php:1154
 #: src/usr/local/www/services_captiveportal_mac.php:63
@@ -11076,20 +11118,11 @@ msgid "Save mapping order"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:255
+#, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
+"%1$sVirtual IP%2$s."
 msgstr ""
-
-#: src/usr/local/www/firewall_nat_1to1.php:256
-#: src/usr/local/www/firewall_nat_out.php:642
-#: src/usr/local/www/firewall_nat_out_edit.php:557
-#: src/usr/local/www/firewall_nat_out_edit.php:565
-#: src/usr/local/www/status_carp.php:177
-#: src/usr/local/www/system_gateway_groups_edit.php:288
-#: src/usr/local/www/system_gateway_groups_edit.php:308
-#: src/usr/local/www/system_gateway_groups_edit.php:320
-msgid "Virtual IP"
-msgstr "IP Virtual"
 
 #: src/usr/local/www/firewall_nat_1to1.php:257
 msgid ""
@@ -11109,7 +11142,7 @@ msgid "They must be either both IPv4 or both IPv6 addresses."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:115
-#: src/usr/local/www/firewall_nat_out_edit.php:146
+#: src/usr/local/www/firewall_nat_out_edit.php:160
 #, php-format
 msgid ""
 "Invalid characters detected (%s).  Please remove invalid characters and save "
@@ -11164,7 +11197,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:306
-#: src/usr/local/www/firewall_nat_out_edit.php:206
+#: src/usr/local/www/firewall_nat_out_edit.php:225
 #: src/usr/local/www/firewall_rules_edit.php:548
 msgid "A valid destination bit count must be specified."
 msgstr "Um bit count de destino válido deve ser especificado."
@@ -11177,8 +11210,8 @@ msgstr "Host único"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
 #: src/usr/local/www/firewall_nat_edit.php:536
 #: src/usr/local/www/firewall_nat_edit.php:576
-#: src/usr/local/www/firewall_nat_out_edit.php:494
-#: src/usr/local/www/firewall_nat_out_edit.php:519
+#: src/usr/local/www/firewall_nat_out_edit.php:523
+#: src/usr/local/www/firewall_nat_out_edit.php:548
 #: src/usr/local/www/firewall_rules_edit.php:1347
 #: src/usr/local/www/firewall_virtual_ip_edit.php:373
 #: src/usr/local/www/system_routes.php:243
@@ -11319,7 +11352,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:501
 #: src/usr/local/www/firewall_nat_edit.php:791
-#: src/usr/local/www/firewall_nat_out_edit.php:513
+#: src/usr/local/www/firewall_nat_out_edit.php:542
 msgid "*Destination"
 msgstr ""
 
@@ -11330,12 +11363,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
-#: src/usr/local/www/firewall_nat_edit.php:904
+#: src/usr/local/www/firewall_nat_edit.php:903
 msgid "Use system default"
 msgstr "Use padrão do sistema"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:542
-#: src/usr/local/www/firewall_nat_edit.php:907
+#: src/usr/local/www/firewall_nat_edit.php:906
 #: src/usr/local/www/firewall_rules.php:786
 #: src/usr/local/www/services_dyndns_edit.php:258
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
@@ -11344,7 +11377,7 @@ msgid "Disable"
 msgstr "Desabilitar"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
-#: src/usr/local/www/firewall_nat_edit.php:901
+#: src/usr/local/www/firewall_nat_edit.php:900
 msgid "NAT reflection"
 msgstr "Reflexão NAT"
 
@@ -11422,8 +11455,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:277
 #, php-format
 msgid ""
-"A valid redirect target port must be specified. It must be a port alias or "
-"integer between 1 and 65535."
+"%s is not a valid redirect target port. It must be a port alias or integer "
+"between 1 and 65535."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:288
@@ -11438,7 +11471,7 @@ msgid "Source must be IPv4."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:294
-#: src/usr/local/www/firewall_nat_out_edit.php:196
+#: src/usr/local/www/firewall_nat_out_edit.php:215
 #: src/usr/local/www/firewall_rules_edit.php:540
 msgid "A valid source bit count must be specified."
 msgstr "Um bit count de origem válido deve ser especificado."
@@ -11467,7 +11500,7 @@ msgid "NAT Port Forward"
 msgstr "Redirecionamento de Porta NAT"
 
 #: src/usr/local/www/firewall_nat_edit.php:576
-#: src/usr/local/www/firewall_nat_out_edit.php:494
+#: src/usr/local/www/firewall_nat_out_edit.php:523
 #: src/usr/local/www/firewall_rules_edit.php:1355
 msgid "This Firewall (self)"
 msgstr ""
@@ -11493,10 +11526,10 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:710
-#: src/usr/local/www/firewall_nat_edit.php:1164
-#: src/usr/local/www/firewall_rules_edit.php:1465
-#: src/usr/local/www/firewall_rules_edit.php:1784
-#: src/usr/local/www/firewall_rules_edit.php:1856
+#: src/usr/local/www/firewall_nat_edit.php:1169
+#: src/usr/local/www/firewall_rules_edit.php:1464
+#: src/usr/local/www/firewall_rules_edit.php:1790
+#: src/usr/local/www/firewall_rules_edit.php:1862
 #: src/usr/local/www/interfaces_bridge_edit.php:417
 #: src/usr/local/www/interfaces_bridge_edit.php:662
 #: src/usr/local/www/interfaces_ppps_edit.php:832
@@ -11546,9 +11579,10 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:722
 #: src/usr/local/www/firewall_nat_out.php:278
 #: src/usr/local/www/firewall_nat_out.php:531
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_rules.php:386
 #: src/usr/local/www/firewall_rules_edit.php:440
+#: src/usr/local/www/firewall_rules_edit.php:1315
 #: src/usr/local/www/status_ipsec_sad.php:66
 #: src/usr/local/www/status_ipsec_spd.php:59
 #: src/usr/local/www/status_logs_filter.php:161
@@ -11583,7 +11617,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:783
 #: src/usr/local/www/firewall_nat_edit.php:831
 #: src/usr/local/www/firewall_nat_edit.php:845
-#: src/usr/local/www/firewall_nat_edit.php:879
+#: src/usr/local/www/firewall_nat_edit.php:878
 #: src/usr/local/www/firewall_rules_edit.php:1422
 #: src/usr/local/www/firewall_rules_edit.php:1436
 #: src/usr/local/www/interfaces.php:2639
@@ -11623,105 +11657,108 @@ msgid "*Redirect target IP"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:857
+#, php-format
 msgid ""
-"Enter the internal IP address of the server on which to map the ports.<br /"
-">e.g.: 192.168.1.12"
+"Enter the internal IP address of the server on which to map the ports.%s e.g."
+": 192.168.1.12"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:860
+#: src/usr/local/www/firewall_nat_edit.php:859
 msgid "*Redirect target port"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:870
+#: src/usr/local/www/firewall_nat_edit.php:869
+#, php-format
 msgid ""
 "Specify the port on the machine with the IP address entered above. In case "
 "of a port range, specify the beginning port of the range (the end port will "
-"be calculated automatically).<br />This is usually identical to the \"From "
+"be calculated automatically).%sThis is usually identical to the \"From "
 "port\" above."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:893
-#: src/usr/local/www/firewall_nat_out_edit.php:623
-#: src/usr/local/www/firewall_rules_edit.php:1604
+#: src/usr/local/www/firewall_nat_edit.php:892
+#: src/usr/local/www/firewall_nat_out_edit.php:653
+#: src/usr/local/www/firewall_rules_edit.php:1603
 msgid "No XMLRPC Sync"
 msgstr "Sem XMLRPC Sync"
 
-#: src/usr/local/www/firewall_nat_edit.php:896
+#: src/usr/local/www/firewall_nat_edit.php:895
 msgid ""
 "This prevents the rule on Master from automatically syncing to other CARP "
 "members. This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:905
+#: src/usr/local/www/firewall_nat_edit.php:904
 msgid "Enable (NAT + Proxy)"
 msgstr "Habilitar (NAT + Proxy)"
 
-#: src/usr/local/www/firewall_nat_edit.php:906
+#: src/usr/local/www/firewall_nat_edit.php:905
 msgid "Enable (Pure NAT)"
 msgstr "Habilitar (NAT Puro)"
 
-#: src/usr/local/www/firewall_nat_edit.php:921
+#: src/usr/local/www/firewall_nat_edit.php:920
 #, php-format
 msgid "Rule %s"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:924
+#: src/usr/local/www/firewall_nat_edit.php:923
 msgid "View the filter rule"
 msgstr "Ver regra do filtro"
 
-#: src/usr/local/www/firewall_nat_edit.php:931
+#: src/usr/local/www/firewall_nat_edit.php:930
 msgid "Create new associated filter rule"
 msgstr "Criar nova regra de filtro associada"
 
-#: src/usr/local/www/firewall_nat_edit.php:936
-#: src/usr/local/www/firewall_nat_edit.php:943
+#: src/usr/local/www/firewall_nat_edit.php:935
+#: src/usr/local/www/firewall_nat_edit.php:942
 msgid "Filter rule association"
 msgstr "Associação de regra de filtro"
 
-#: src/usr/local/www/firewall_nat_edit.php:947
+#: src/usr/local/www/firewall_nat_edit.php:946
 msgid "Add associated filter rule"
 msgstr "Adicionar regra de filtro associada"
 
-#: src/usr/local/www/firewall_nat_edit.php:948
+#: src/usr/local/www/firewall_nat_edit.php:947
 msgid "Add unassociated filter rule"
 msgstr "Adicionar regra de filtro não associada"
 
-#: src/usr/local/www/firewall_nat_edit.php:951
+#: src/usr/local/www/firewall_nat_edit.php:950
 msgid ""
 "The \"pass\" selection does not work properly with Multi-WAN. It will only "
 "work on an interface containing the default gateway."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:960
-#: src/usr/local/www/firewall_nat_out_edit.php:659
+#: src/usr/local/www/firewall_nat_edit.php:959
+#: src/usr/local/www/firewall_nat_out_edit.php:689
 #: src/usr/local/www/firewall_rules_edit.php:1734
 msgid "Rule Information"
 msgstr "Informação de Regra"
 
 #: src/usr/local/www/firewall_nat_edit.php:965
-#: src/usr/local/www/firewall_nat_edit.php:972
-#: src/usr/local/www/firewall_nat_out_edit.php:664
-#: src/usr/local/www/firewall_nat_out_edit.php:671
-#: src/usr/local/www/firewall_rules_edit.php:1739
-#: src/usr/local/www/firewall_rules_edit.php:1746
-msgid " by "
+#: src/usr/local/www/firewall_nat_edit.php:975
+#: src/usr/local/www/firewall_nat_out_edit.php:695
+#: src/usr/local/www/firewall_nat_out_edit.php:705
+#: src/usr/local/www/firewall_rules_edit.php:1740
+#: src/usr/local/www/firewall_rules_edit.php:1750
+#, php-format
+msgid "%1$s by %2$s"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:964
-#: src/usr/local/www/firewall_nat_out_edit.php:663
+#: src/usr/local/www/firewall_nat_edit.php:963
+#: src/usr/local/www/firewall_nat_out_edit.php:693
 #: src/usr/local/www/firewall_rules_edit.php:1738
 msgid "Created"
 msgstr "Criado"
 
-#: src/usr/local/www/firewall_nat_edit.php:971
-#: src/usr/local/www/firewall_nat_out_edit.php:670
-#: src/usr/local/www/firewall_rules_edit.php:1745
+#: src/usr/local/www/firewall_nat_edit.php:973
+#: src/usr/local/www/firewall_nat_out_edit.php:703
+#: src/usr/local/www/firewall_rules_edit.php:1748
 msgid "Updated"
 msgstr "Atualizado"
 
-#: src/usr/local/www/firewall_nat_edit.php:1166
-#: src/usr/local/www/firewall_rules_edit.php:1782
-#: src/usr/local/www/firewall_rules_edit.php:1854
+#: src/usr/local/www/firewall_nat_edit.php:1171
+#: src/usr/local/www/firewall_rules_edit.php:1788
+#: src/usr/local/www/firewall_rules_edit.php:1860
 #: src/usr/local/www/interfaces_bridge_edit.php:660
 #: src/usr/local/www/interfaces_ppps_edit.php:1045
 #: src/usr/local/www/services_dhcp.php:1503
@@ -11779,9 +11816,10 @@ msgid "Edit NAT NPt Entry"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:202
+#, php-format
 msgid ""
-"Choose which interface this rule applies to.<br />Hint: Typically the "
-"\"WAN\" is used here."
+"Choose which interface this rule applies to.%sHint: Typically the \"WAN\" is "
+"used here."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:207
@@ -11795,7 +11833,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:214
 #: src/usr/local/www/firewall_nat_npt_edit.php:229
-#: src/usr/local/www/firewall_nat_out_edit.php:552
+#: src/usr/local/www/firewall_nat_out_edit.php:581
 msgid "*Address"
 msgstr ""
 
@@ -11832,23 +11870,24 @@ msgid "Outbound NAT Mode"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:236
-msgid ""
-"Automatic outbound NAT rule generation.<br />(IPsec passthrough included)"
+#, php-format
+msgid "Automatic outbound NAT rule generation.%s(IPsec passthrough included)"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:244
+#, php-format
 msgid ""
-"Hybrid Outbound NAT rule generation.<br />(Automatic Outbound NAT + rules "
-"below)"
+"Hybrid Outbound NAT rule generation.%s(Automatic Outbound NAT + rules below)"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:252
-msgid ""
-"Manual Outbound NAT rule generation.<br />(AON - Advanced Outbound NAT)"
+#, php-format
+msgid "Manual Outbound NAT rule generation.%s(AON - Advanced Outbound NAT)"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:260
-msgid "Disable Outbound NAT rule generation.<br />(No Outbound NAT rules)"
+#, php-format
+msgid "Disable Outbound NAT rule generation.%s(No Outbound NAT rules)"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:270
@@ -11857,9 +11896,10 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:280
 #: src/usr/local/www/firewall_nat_out.php:533
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_rules.php:388
 #: src/usr/local/www/firewall_rules_edit.php:441
+#: src/usr/local/www/firewall_rules_edit.php:1315
 #: src/usr/local/www/status_ipsec_sad.php:67
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
@@ -11881,7 +11921,7 @@ msgstr "Porta NAT"
 
 #: src/usr/local/www/firewall_nat_out.php:284
 #: src/usr/local/www/firewall_nat_out.php:537
-#: src/usr/local/www/firewall_nat_out_edit.php:612
+#: src/usr/local/www/firewall_nat_out_edit.php:642
 msgid "Static Port"
 msgstr "Porta estática"
 
@@ -11921,77 +11961,91 @@ msgstr ""
 msgid "automatic outbound nat"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out.php:635
+#: src/usr/local/www/firewall_nat_out.php:636
 msgid ""
 "If automatic outbound NAT is selected, a mapping is automatically generated "
 "for each interface's subnet (except WAN-type connections) and the rules on "
-"the \"Mappings\" section of this page are ignored.<br />If manual outbound "
-"NAT is selected, outbound NAT rules will not be automatically generated and "
-"only the mappings specified on this page will be used.<br />If hybrid "
-"outbound NAT is selected, mappings specified on this page will be used, "
-"followed by the automatically generated ones.<br />If disable outbound NAT "
-"is selected, no rules will be used.<br />If a target address other than an "
-"interface's IP address is used, then depending on the way the WAN connection "
-"is setup, a "
+"the \"Mappings\" section of this page are ignored."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out.php:638
+msgid ""
+"If manual outbound NAT is selected, outbound NAT rules will not be "
+"automatically generated and only the mappings specified on this page will be "
+"used."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out.php:640
+msgid ""
+"If hybrid outbound NAT is selected, mappings specified on this page will be "
+"used, followed by the automatically generated ones."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:642
-msgid " may also be required."
-msgstr "pode ser necessário."
+msgid "If disable outbound NAT is selected, no rules will be used."
+msgstr ""
 
-#: src/usr/local/www/firewall_nat_out.php:675
+#: src/usr/local/www/firewall_nat_out.php:645
+#, php-format
+msgid ""
+"If a target address other than an interface's IP address is used, then "
+"depending on the way the WAN connection is setup, a %1$sVirtual IP%2$s may "
+"also be required."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out.php:681
 msgid ""
 "One or more NAT outbound mappings have been moved but have not yet been "
 "saved"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_rules_edit.php:456
 msgid "Source bit count"
 msgstr "Contagem de bits de origem"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:152
+#: src/usr/local/www/firewall_nat_out_edit.php:166
 #: src/usr/local/www/firewall_rules_edit.php:461
 msgid "Destination bit count"
 msgstr "Contagem de bits de destino"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:178
+#: src/usr/local/www/firewall_nat_out_edit.php:197
 msgid "A valid port or port alias must be supplied for the source port entry."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:182
+#: src/usr/local/www/firewall_nat_out_edit.php:201
 msgid ""
 "A valid port or port alias must be supplied for the destination port entry."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:186
+#: src/usr/local/www/firewall_nat_out_edit.php:205
 msgid "A valid port must be supplied for the NAT port entry."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:191
+#: src/usr/local/www/firewall_nat_out_edit.php:210
 msgid "A valid source must be specified."
 msgstr "Uma fonte válida deve ser especificada."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:201
+#: src/usr/local/www/firewall_nat_out_edit.php:220
 msgid "A valid destination must be specified."
 msgstr "Um destino válido deve ser especificado."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:211
+#: src/usr/local/www/firewall_nat_out_edit.php:230
 msgid "Negating destination address of \"any\" is invalid."
 msgstr "Negando o endereço de destino de \"qualquer\" é inválido."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:216
+#: src/usr/local/www/firewall_nat_out_edit.php:235
 msgid "A valid target IP address must be specified."
 msgstr "Endereço de IP de destino deve ser especificado."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:221
+#: src/usr/local/www/firewall_nat_out_edit.php:240
 msgid ""
 "A valid target IP must be specified when using the 'Other Subnet' type."
 msgstr ""
 "Um endereço IP válido deve ser especificado quando usado 'Outros tipos de "
 "Sub-rede'."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:225
+#: src/usr/local/www/firewall_nat_out_edit.php:244
 msgid ""
 "A valid target bit count must be specified when using the 'Other Subnet' "
 "type."
@@ -11999,99 +12053,105 @@ msgstr ""
 "Um contador de bit válido de subrede deve ser especificado quando usado "
 "'Outros tipos de Sub-rede'."
 
-#: src/usr/local/www/firewall_nat_out_edit.php:239
+#: src/usr/local/www/firewall_nat_out_edit.php:258
 msgid "Only Round Robin pool options may be chosen when selecting an alias."
 msgstr ""
 "Somente opções de pool Round Robin podem ser escolhidos quando selecionado "
 "um alias. "
 
-#: src/usr/local/www/firewall_nat_out_edit.php:248
+#: src/usr/local/www/firewall_nat_out_edit.php:267
 msgid ""
 "Incorrect format for source-hash key, \"0x\" must be followed by exactly 32 "
 "hexadecimal characters."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:386
+#: src/usr/local/www/firewall_nat_out_edit.php:415
 #: src/usr/local/www/system_gateway_groups_edit.php:163
 msgid "Interface Address"
 msgstr "Endereço da Interface"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:414
+#: src/usr/local/www/firewall_nat_out_edit.php:420
+msgid "Subnet: "
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:443
 msgid "Host Alias: "
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:417
+#: src/usr/local/www/firewall_nat_out_edit.php:446
 msgid "Other Subnet (Enter Below)"
 msgstr "Outra Sub-rede (Digite abaixo)"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:428
+#: src/usr/local/www/firewall_nat_out_edit.php:457
 msgid "Edit Advanced Outbound NAT Entry"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:439
+#: src/usr/local/www/firewall_nat_out_edit.php:468
 msgid "Do not NAT"
 msgstr "Não faça NAT"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:442
+#: src/usr/local/www/firewall_nat_out_edit.php:471
 msgid "In most cases this option is not required."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:477
+#: src/usr/local/www/firewall_nat_out_edit.php:506
 msgid ""
 "The interface on which traffic is matched as it exits the firewall. In most "
 "cases this is \"WAN\" or another externally-connected interface."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:486
+#: src/usr/local/www/firewall_nat_out_edit.php:515
 msgid ""
 "Choose which protocol this rule should match. In most cases \"any\" is "
 "specified."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:488
+#: src/usr/local/www/firewall_nat_out_edit.php:517
 msgid "*Source"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:502
+#: src/usr/local/www/firewall_nat_out_edit.php:531
 msgid "Source network for the outbound NAT mapping."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:509
-#: src/usr/local/www/firewall_nat_out_edit.php:534
-#: src/usr/local/www/firewall_nat_out_edit.php:596
+#: src/usr/local/www/firewall_nat_out_edit.php:538
+#: src/usr/local/www/firewall_nat_out_edit.php:563
+#: src/usr/local/www/firewall_nat_out_edit.php:626
 msgid "Port or Range"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:527
+#: src/usr/local/www/firewall_nat_out_edit.php:556
 msgid "Destination network for the outbound NAT mapping."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:543
+#: src/usr/local/www/firewall_nat_out_edit.php:572
 msgid "Invert the sense of the destination match."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:547
+#: src/usr/local/www/firewall_nat_out_edit.php:576
 msgid "Translation"
 msgstr "Tradução"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:555
+#: src/usr/local/www/firewall_nat_out_edit.php:584
+#, php-format
 msgid ""
-"Connections matching this rule will be mapped to the specified <b>Address</"
-"b>.<br />The <b>Address</b> can be an Interface, a Host-type Alias, or a <a "
-"href=\"firewall_virtual_ip.php\">"
+"Connections matching this rule will be mapped to the specified "
+"%1$sAddress%2$s.%3$sThe %1$sAddress%2$s can be an Interface, a Host-type "
+"Alias, or a %4$sVirtual IP%5$s address."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:561
+#: src/usr/local/www/firewall_nat_out_edit.php:590
 msgid "Other subnet"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:564
+#: src/usr/local/www/firewall_nat_out_edit.php:593
+#, php-format
 msgid ""
 "This subnet must be routed to the firewall or each address in the subnet "
-"must be defined in one or more <a href=\"firewall_virtual_ip.php\">"
+"must be defined in one or more %1$sVirtual IP%2$s addresses."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:572
+#: src/usr/local/www/firewall_nat_out_edit.php:601
 #: src/usr/local/www/interfaces.php:1878 src/usr/local/www/interfaces.php:2870
 #: src/usr/local/www/interfaces.php:2879 src/usr/local/www/interfaces.php:2888
 #: src/usr/local/www/interfaces.php:2946 src/usr/local/www/interfaces.php:3201
@@ -12099,73 +12159,103 @@ msgstr ""
 msgid "Default"
 msgstr "Padrão"
 
-#: src/usr/local/www/firewall_nat_out_edit.php:573
+#: src/usr/local/www/firewall_nat_out_edit.php:602
 msgid "Round Robin"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:574
+#: src/usr/local/www/firewall_nat_out_edit.php:603
 msgid "Round Robin with Sticky Address"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:575
+#: src/usr/local/www/firewall_nat_out_edit.php:604
 msgid "Random"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:576
+#: src/usr/local/www/firewall_nat_out_edit.php:605
 msgid "Random with Sticky Address"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:577
+#: src/usr/local/www/firewall_nat_out_edit.php:606
 msgid "Source hash"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:578
+#: src/usr/local/www/firewall_nat_out_edit.php:607
 msgid "Bit mask"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:569
+#: src/usr/local/www/firewall_nat_out_edit.php:598
 msgid "Pool options"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:580
+#: src/usr/local/www/firewall_nat_out_edit.php:610
 msgid ""
 "Only Round Robin types work with Host Aliases. Any type can be used with a "
-"Subnet.<br /></span><ul class=\"help-block\"><li>Round Robin: Loops through "
-"the translation addresses.</li><li>Random: Selects an address from the "
-"translation address pool at random.</li><li>Source Hash: Uses a hash of the "
-"source address to determine the translation address, ensuring that the "
-"redirection address is always the same for a given source.</li><li>Bitmask: "
-"Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -"
-"&gt; x.x.x.50.</li><li>Sticky Address: The Sticky Address option can be used "
-"with the Random and Round Robin pool types to ensure that a particular "
-"source address is always mapped to the same translation address.</li></"
-"ul><span class=\"help-block\">"
+"Subnet."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:591
+#: src/usr/local/www/firewall_nat_out_edit.php:612
+msgid "Round Robin: Loops through the translation addresses."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:613
+msgid ""
+"Random: Selects an address from the translation address pool at random."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:614
+msgid ""
+"Source Hash: Uses a hash of the source address to determine the translation "
+"address, ensuring that the redirection address is always the same for a "
+"given source."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:615
+msgid ""
+"Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0."
+"1.50 -&gt; x.x.x.50."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:616
+msgid ""
+"Sticky Address: The Sticky Address option can be used with the Random and "
+"Round Robin pool types to ensure that a particular source address is always "
+"mapped to the same translation address."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_out_edit.php:609
+#: src/usr/local/www/firewall_rules_edit.php:1306
+#: src/usr/local/www/firewall_virtual_ip_edit.php:381
+#: src/usr/local/www/status_pkglogs.php:92
+#: src/usr/local/www/status_pkglogs.php:94
+#, php-format
+msgid "%s"
+msgstr "%s"
+
+#: src/usr/local/www/firewall_nat_out_edit.php:621
 msgid "Source Hash Key"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:594
+#: src/usr/local/www/firewall_nat_out_edit.php:624
 msgid ""
 "The key that is fed to the hashing algorithm in hex format, preceeded by "
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:604
+#: src/usr/local/www/firewall_nat_out_edit.php:634
+#, php-format
 msgid ""
-"Enter the external source <b>Port or Range</b> used for remapping the "
-"original source port on connections matching the rule. <br/><br/>Port ranges "
-"are a low port and high port number separated by \":\".<br/>Leave blank when "
-"<b>Static Port</b> is checked."
+"Enter the external source %1$sPort or Range%2$s used for remapping the "
+"original source port on connections matching the rule. %3$sPort ranges are a "
+"low port and high port number separated by \":\".%4$sLeave blank when "
+"%1$sStatic Port%2$s is checked."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:619
+#: src/usr/local/www/firewall_nat_out_edit.php:649
 msgid "Misc"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:627
+#: src/usr/local/www/firewall_nat_out_edit.php:657
 msgid ""
 "Prevents the rule on Master from automatically syncing to other CARP members."
 " This does NOT prevent the rule from being overwritten on Slave."
@@ -12201,7 +12291,7 @@ msgid "Rules (Drag to Change Order)"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:390
-#: src/usr/local/www/firewall_rules_edit.php:1665
+#: src/usr/local/www/firewall_rules_edit.php:1664
 #: src/usr/local/www/interfaces.php:560 src/usr/local/www/interfaces.php:611
 #: src/usr/local/www/services_dhcp.php:967
 #: src/usr/local/www/services_dhcp_edit.php:545
@@ -12222,7 +12312,7 @@ msgid "Queue"
 msgstr "FILA"
 
 #: src/usr/local/www/firewall_rules.php:392
-#: src/usr/local/www/firewall_rules_edit.php:1634
+#: src/usr/local/www/firewall_rules_edit.php:1633
 msgid "Schedule"
 msgstr "Agenda"
 
@@ -12555,9 +12645,10 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:56
+#, php-format
 msgid ""
 "For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be "
-"specified. (Other ICMP subtypes are only valid under IPv4 <i>or</i> IPv6, "
+"specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, "
 "not both)"
 msgstr ""
 
@@ -12856,10 +12947,11 @@ msgid "*Action"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1168
+#, php-format
 msgid ""
-"Choose what to do with packets that match the criteria specified below.<br/"
-">Hint: the difference between block and reject is that with reject, a packet "
-"(TCP RST or ICMP port unreachable for UDP) is returned to the sender, "
+"Choose what to do with packets that match the criteria specified below."
+"%sHint: the difference between block and reject is that with reject, a "
+"packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, "
 "whereas with block the packet is dropped silently. In either case, the "
 "original packet is discarded."
 msgstr ""
@@ -12921,14 +13013,6 @@ msgstr "Escolha qual protocolo IP essa regra deve corresponder."
 msgid "ICMP Subtypes"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1306
-#: src/usr/local/www/firewall_virtual_ip_edit.php:381
-#: src/usr/local/www/status_pkglogs.php:92
-#: src/usr/local/www/status_pkglogs.php:94
-#, php-format
-msgid "%s"
-msgstr "%s"
-
 #: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "*"
 msgstr ""
@@ -12950,10 +13034,11 @@ msgid " Address"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1396
+#, php-format
 msgid ""
-"The <b>Source Port Range</b> for a connection is typically random and almost "
-"never equal to the destination port. In most cases this setting must remain "
-"at its default value, <b>any</b>."
+"The %1$sSource Port Range%2$s for a connection is typically random and "
+"almost never equal to the destination port. In most cases this setting must "
+"remain at its default value, %1$sany%2$s."
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1401
@@ -12961,7 +13046,15 @@ msgid "(other)"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1406
-msgid " Port Range"
+msgid "Source Port Range"
+msgstr ""
+
+#: src/usr/local/www/firewall_rules_edit.php:1406
+msgid "Destination Port Range"
+msgstr ""
+
+#: src/usr/local/www/firewall_rules_edit.php:1406
+msgid "src"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1412
@@ -13006,122 +13099,123 @@ msgid "Extra Options"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1451
+#, php-format
 msgid ""
 "Hint: the firewall has limited local log space. Don't turn on logging for "
 "everything. If doing a lot of logging, consider using a remote syslog server "
-"(see the <a href=\"status_logs_settings.php\">Status: System Logs: Settings</"
-"a> page)."
+"(see the %1$sStatus: System Logs: Settings%2$s page)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1461
+#: src/usr/local/www/firewall_rules_edit.php:1460
 #: src/usr/local/www/services_unbound_acls.php:242
 msgid "A description may be entered here for administrative reference."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1484
+#: src/usr/local/www/firewall_rules_edit.php:1483
 msgid "Source OS"
 msgstr "Fonte OS"
 
-#: src/usr/local/www/firewall_rules_edit.php:1487
+#: src/usr/local/www/firewall_rules_edit.php:1486
 msgid ""
 "Note: this only works for TCP rules. General OS choice matches all subtypes."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1491
+#: src/usr/local/www/firewall_rules_edit.php:1490
 msgid "Diffserv Code Point"
 msgstr "Diff Code Point"
 
-#: src/usr/local/www/firewall_rules_edit.php:1498
+#: src/usr/local/www/firewall_rules_edit.php:1497
 msgid "Allow IP options"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1506
-#: src/usr/local/www/system_advanced_firewall.php:518
+#: src/usr/local/www/firewall_rules_edit.php:1505
+#: src/usr/local/www/system_advanced_firewall.php:517
 msgid "Disable reply-to"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1513
+#: src/usr/local/www/firewall_rules_edit.php:1512
 #: src/usr/local/www/interfaces_qinq.php:110
 msgid "Tag"
 msgstr "Tag"
 
-#: src/usr/local/www/firewall_rules_edit.php:1516
+#: src/usr/local/www/firewall_rules_edit.php:1515
+#, php-format
 msgid ""
 "A packet matching this rule can be marked and this mark used to match on "
-"other NAT/filter rules. It is called <b>Policy filtering</b>."
+"other NAT/filter rules. It is called %1$sPolicy filtering%2$s."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1521
+#: src/usr/local/www/firewall_rules_edit.php:1520
 msgid "Tagged"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1524
+#: src/usr/local/www/firewall_rules_edit.php:1523
 msgid "A packet can be matched on a mark placed before on another rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1528
+#: src/usr/local/www/firewall_rules_edit.php:1527
 msgid "Max. states"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1531
+#: src/usr/local/www/firewall_rules_edit.php:1530
 msgid "Maximum state entries this rule can create."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1535
+#: src/usr/local/www/firewall_rules_edit.php:1534
 msgid "Max. src nodes"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1538
+#: src/usr/local/www/firewall_rules_edit.php:1537
 msgid "Maximum number of unique source hosts."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1542
+#: src/usr/local/www/firewall_rules_edit.php:1541
 msgid "Max. connections"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1545
+#: src/usr/local/www/firewall_rules_edit.php:1544
 msgid "Maximum number of established connections per host (TCP only)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1549
+#: src/usr/local/www/firewall_rules_edit.php:1548
 msgid "Max. src. states"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1552
+#: src/usr/local/www/firewall_rules_edit.php:1551
 msgid "Maximum state entries per host."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1556
+#: src/usr/local/www/firewall_rules_edit.php:1555
 msgid "Max. src. conn. Rate"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1559
+#: src/usr/local/www/firewall_rules_edit.php:1558
 msgid "Maximum new connections per host (TCP only)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1563
+#: src/usr/local/www/firewall_rules_edit.php:1562
 msgid "Max. src. conn. Rates"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1567
+#: src/usr/local/www/firewall_rules_edit.php:1566
 msgid "/ per how many second(s) (TCP only)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1571
+#: src/usr/local/www/firewall_rules_edit.php:1570
 msgid "State timeout"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1575
+#: src/usr/local/www/firewall_rules_edit.php:1574
 msgid "State Timeout in seconds (TCP only)"
 msgstr "Tempo limite do estado em segundos (apenas TCP)"
 
-#: src/usr/local/www/firewall_rules_edit.php:1578
+#: src/usr/local/www/firewall_rules_edit.php:1577
 #: src/usr/local/www/status_logs_filter.php:331
 #: src/usr/local/www/status_logs_filter_dynamic.php:477
 msgid "TCP Flags"
 msgstr "Flags de TCP"
 
-#: src/usr/local/www/firewall_rules_edit.php:1580
+#: src/usr/local/www/firewall_rules_edit.php:1579
 msgid ""
 "Use this to choose TCP flags that must be set or cleared for this rule to "
 "match."
@@ -13129,80 +13223,82 @@ msgstr ""
 "Use isto para escolher as flags TCP que precisam estar definidas ou apuradas "
 "para esta regra corresponder."
 
-#: src/usr/local/www/firewall_rules_edit.php:1584
+#: src/usr/local/www/firewall_rules_edit.php:1583
 msgid "No pfSync"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1594
+#: src/usr/local/www/firewall_rules_edit.php:1593
 msgid "Keep"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1595
+#: src/usr/local/www/firewall_rules_edit.php:1594
 msgid "Sloppy"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1596
+#: src/usr/local/www/firewall_rules_edit.php:1595
 msgid "Synproxy"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1591
+#: src/usr/local/www/firewall_rules_edit.php:1590
 msgid "State type"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1599
+#: src/usr/local/www/firewall_rules_edit.php:1598
+#, php-format
 msgid ""
 "Select which type of state tracking mechanism to use.  If in doubt, use keep "
-"state.<br /><span></span>"
+"state.%1$s"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1607
+#: src/usr/local/www/firewall_rules_edit.php:1606
 msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1613
+#: src/usr/local/www/firewall_rules_edit.php:1612
 msgid "VLAN Prio"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1616
+#: src/usr/local/www/firewall_rules_edit.php:1615
 msgid "Choose 802.1p priority to match on."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1620
+#: src/usr/local/www/firewall_rules_edit.php:1619
 msgid "VLAN Prio Set"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1623
+#: src/usr/local/www/firewall_rules_edit.php:1622
 msgid "Choose 802.1p priority to apply."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1637
+#: src/usr/local/www/firewall_rules_edit.php:1636
 msgid "Leave as 'none' to leave the rule enabled all the time."
 msgstr "Deixa como 'nenhum' para deixar a regra habilitada o tempo todo."
 
-#: src/usr/local/www/firewall_rules_edit.php:1668
+#: src/usr/local/www/firewall_rules_edit.php:1667
 msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1671
+#: src/usr/local/www/firewall_rules_edit.php:1670
 msgid "In / Out pipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1675
+#: src/usr/local/www/firewall_rules_edit.php:1674
 msgid "DNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1682
+#: src/usr/local/www/firewall_rules_edit.php:1681
 msgid "PDNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1687
+#: src/usr/local/www/firewall_rules_edit.php:1686
+#, php-format
 msgid ""
 "Choose the Out queue/Virtual interface only if In is also selected. The Out "
 "selection is applied to traffic leaving the interface where the rule is "
 "created, the In selection is applied to traffic coming into the chosen "
-"interface.<br />If creating a floating rule, if the direction is In then the "
+"interface.%1$sIf creating a floating rule, if the direction is In then the "
 "same rules apply, if the direction is Out the selections are reversed, Out "
 "is for incoming and In is for outgoing."
 msgstr ""
@@ -23488,8 +23584,9 @@ msgid "Prefetch Support"
 msgstr "Prefetch Support"
 
 #: src/usr/local/www/services_unbound_advanced.php:233
+#, php-format
 msgid ""
-"When enabled, this option can cause an increase of around 10% more DNS "
+"When enabled, this option can cause an increase of around 10%% more DNS "
 "traffic and load on the server, but frequently requested items will not "
 "expire from the cache."
 msgstr ""
@@ -24130,6 +24227,13 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:37
 msgid "CARP Interface"
 msgstr "Interface CARP"
+
+#: src/usr/local/www/status_carp.php:177
+#: src/usr/local/www/system_gateway_groups_edit.php:288
+#: src/usr/local/www/system_gateway_groups_edit.php:308
+#: src/usr/local/www/system_gateway_groups_edit.php:320
+msgid "Virtual IP"
+msgstr "IP Virtual"
 
 #: src/usr/local/www/status_carp.php:226
 msgid "pfSync Nodes"
@@ -25134,7 +25238,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:732
 #: src/usr/local/www/status_logs_settings.php:178
-#: src/usr/local/www/system_advanced_admin.php:560
+#: src/usr/local/www/system_advanced_admin.php:562
 msgid "webConfigurator configuration has changed. Restarting webConfigurator."
 msgstr ""
 "configuração do webConfigurator foi modificada. Reiniciando webConfigurator."
@@ -25530,6 +25634,14 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:42
 msgid "VPN Logins"
 msgstr ""
+
+#: src/usr/local/www/status_logs_vpn.php:140
+#: src/usr/local/www/status_logs_vpn.php:385
+#: src/usr/local/www/vpn_l2tp_users_edit.php:149
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:221
+#: src/usr/local/www/services_rfc2136_edit.php:220
+msgid "User"
+msgstr "Usuário"
 
 #: src/usr/local/www/status_logs_vpn.php:180
 #: src/usr/local/www/status_logs_vpn.php:434
@@ -26026,7 +26138,7 @@ msgstr "Escolha o idioma para o configurador web (webConfigurator)"
 
 #: src/usr/local/www/system.php:569
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1023
+#: src/usr/local/www/system_certmanager.php:1030
 msgid "webConfigurator"
 msgstr "webConfigurator"
 
@@ -26127,51 +26239,54 @@ msgid "Notifications"
 msgstr "Notificações"
 
 #: src/usr/local/www/system_advanced_admin.php:328
-msgid "Create or Import"
-msgstr "Criar ou Importar"
+#, php-format
+msgid ""
+"No Certificates have been defined. A certificate is required before SSL can "
+"be enabled. %1$s Create or Import %2$s a Certificate."
+msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:339
+#: src/usr/local/www/system_advanced_admin.php:341
 msgid "SSL Certificate"
 msgstr "Certificado SSL"
 
-#: src/usr/local/www/system_advanced_admin.php:346
+#: src/usr/local/www/system_advanced_admin.php:348
 msgid "TCP port"
 msgstr "Porta TCP"
 
-#: src/usr/local/www/system_advanced_admin.php:350
+#: src/usr/local/www/system_advanced_admin.php:352
 msgid ""
 "Enter a custom port number for the webConfigurator above to override the "
 "default (80 for HTTP, 443 for HTTPS). Changes will take effect immediately "
 "after save."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:356
+#: src/usr/local/www/system_advanced_admin.php:358
 msgid "Max Processes"
 msgstr "Número máximo de processos"
 
-#: src/usr/local/www/system_advanced_admin.php:359
+#: src/usr/local/www/system_advanced_admin.php:361
 msgid ""
 "Enter the number of webConfigurator processes to run. This defaults to 2. "
 "Increasing this will allow more users/browsers to access the GUI "
 "concurrently."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:365
+#: src/usr/local/www/system_advanced_admin.php:367
 msgid "WebGUI redirect"
 msgstr "Redirecionamento WebGUI"
 
-#: src/usr/local/www/system_advanced_admin.php:368
+#: src/usr/local/www/system_advanced_admin.php:370
 msgid ""
 "When this is unchecked, access to the webConfigurator is always permitted "
 "even on port 80, regardless of the listening port configured. Check this box "
 "to disable this automatically added redirect rule."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:374
+#: src/usr/local/www/system_advanced_admin.php:376
 msgid "WebGUI Login Autocomplete"
 msgstr "Autocompletar Login do WebGUI"
 
-#: src/usr/local/www/system_advanced_admin.php:377
+#: src/usr/local/www/system_advanced_admin.php:379
 msgid ""
 "When this is checked, login credentials for the webConfigurator may be saved "
 "by the browser. While convenient, some security standards require this to be "
@@ -26180,11 +26295,11 @@ msgid ""
 "this option)."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:385
+#: src/usr/local/www/system_advanced_admin.php:387
 msgid "WebGUI login messages"
 msgstr "WebGUI mensagens de login"
 
-#: src/usr/local/www/system_advanced_admin.php:388
+#: src/usr/local/www/system_advanced_admin.php:390
 msgid ""
 "When this is checked, successful logins to the webConfigurator will not be "
 "logged."
@@ -26192,11 +26307,11 @@ msgstr ""
 "Quando esta opção estiver marcada, não haverá log de login com sucesso na "
 "interface Web."
 
-#: src/usr/local/www/system_advanced_admin.php:399
+#: src/usr/local/www/system_advanced_admin.php:401
 msgid "Anti-lockout"
 msgstr "Anti-lockout"
 
-#: src/usr/local/www/system_advanced_admin.php:402
+#: src/usr/local/www/system_advanced_admin.php:404
 #, php-format
 msgid ""
 "When this is unchecked, access to the webConfigurator on the %s interface is "
@@ -26208,80 +26323,80 @@ msgid ""
 "menu resets this setting as well.</em>"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:412
+#: src/usr/local/www/system_advanced_admin.php:414
 msgid "DNS Rebind Check"
 msgstr "Verificação de DNS Rebind"
 
-#: src/usr/local/www/system_advanced_admin.php:415
+#: src/usr/local/www/system_advanced_admin.php:417
+#, php-format
 msgid ""
-"When this is unchecked, the system is protected against <a href=\"http://en."
-"wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. This blocks "
-"private IP responses from the configured DNS servers. Check this box to "
-"disable this protection if it interferes with webConfigurator access or name "
-"resolution in the environment."
+"When this is unchecked, the system is protected against %1$sDNS Rebinding "
+"attacks%2$s. This blocks private IP responses from the configured DNS "
+"servers. Check this box to disable this protection if it interferes with "
+"webConfigurator access or name resolution in the environment."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:423
+#: src/usr/local/www/system_advanced_admin.php:425
 msgid "Alternate Hostnames"
 msgstr "Nomes de host alternativo"
 
-#: src/usr/local/www/system_advanced_admin.php:426
+#: src/usr/local/www/system_advanced_admin.php:428
 msgid ""
 "Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks. Specify "
 "alternate hostnames by which the router may be queried, to bypass the DNS "
 "Rebinding Attack checks. Separate hostnames with spaces."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:432
+#: src/usr/local/www/system_advanced_admin.php:434
 msgid "Browser HTTP_REFERER enforcement"
 msgstr "Execução de HTTP_REFERER de navegação"
 
-#: src/usr/local/www/system_advanced_admin.php:435
+#: src/usr/local/www/system_advanced_admin.php:437
+#, php-format
 msgid ""
 "When this is unchecked, access to the webConfigurator is protected against "
 "HTTP_REFERER redirection attempts. Check this box to disable this protection "
 "if it interferes with webConfigurator access in certain corner cases such as "
 "using external scripts to interact with this system. More information on "
-"HTTP_REFERER is available from <a target=\"_blank\" href=\"http://en."
-"wikipedia.org/wiki/HTTP_referrer\">Wikipedia</a>."
+"HTTP_REFERER is available from %1$sWikipedia%2$s"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:445
+#: src/usr/local/www/system_advanced_admin.php:447
 msgid "Secure Shell"
 msgstr "Secure Shell"
 
-#: src/usr/local/www/system_advanced_admin.php:449
+#: src/usr/local/www/system_advanced_admin.php:451
 msgid "Secure Shell Server"
 msgstr "Servidor de Secure Shell"
 
-#: src/usr/local/www/system_advanced_admin.php:456
+#: src/usr/local/www/system_advanced_admin.php:458
 msgid "Authentication Method"
 msgstr "Método de Autenticação"
 
-#: src/usr/local/www/system_advanced_admin.php:459
+#: src/usr/local/www/system_advanced_admin.php:461
+#, php-format
 msgid ""
-"When enabled, authorized keys need to be configured for each <a href="
-"\"system_usermanager.php\">user</a> that has been granted secure shell "
-"access."
+"When enabled, authorized keys need to be configured for each %1$suser%2$s "
+"that has been granted secure shell access."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:465
+#: src/usr/local/www/system_advanced_admin.php:467
 msgid "SSH port"
 msgstr "Porta SSH"
 
-#: src/usr/local/www/system_advanced_admin.php:469
+#: src/usr/local/www/system_advanced_admin.php:471
 msgid "Note: Leave this blank for the default of 22."
 msgstr "Nota: Deixe isso em branco para usar o padrão de 22."
 
-#: src/usr/local/www/system_advanced_admin.php:473
+#: src/usr/local/www/system_advanced_admin.php:475
 msgid "Serial Communications"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:478
+#: src/usr/local/www/system_advanced_admin.php:480
 msgid "Serial Terminal"
 msgstr "Terminal Serial"
 
-#: src/usr/local/www/system_advanced_admin.php:481
+#: src/usr/local/www/system_advanced_admin.php:483
 msgid ""
 "Note:\tThis will redirect the console output and messages to the serial port."
 " The console menu can still be accessed from the internal video card/"
@@ -26289,48 +26404,48 @@ msgid ""
 "serial console."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:489
+#: src/usr/local/www/system_advanced_admin.php:491
 msgid "Serial Speed"
 msgstr "Velocidade da porta serial"
 
-#: src/usr/local/www/system_advanced_admin.php:492
+#: src/usr/local/www/system_advanced_admin.php:494
 msgid "Allows selection of different speeds for the serial console port."
 msgstr ""
 "Possibilita selecionar diferentes velocidades para a porta serial do console."
 ""
 
-#: src/usr/local/www/system_advanced_admin.php:500
+#: src/usr/local/www/system_advanced_admin.php:502
 msgid "Serial Console"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:501
+#: src/usr/local/www/system_advanced_admin.php:503
 msgid "VGA Console"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:497
+#: src/usr/local/www/system_advanced_admin.php:499
 msgid "Primary Console"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:503
+#: src/usr/local/www/system_advanced_admin.php:505
 msgid ""
 "Select the preferred console if multiple consoles are present. The preferred "
 "console will show pfSense boot script output. All consoles display OS boot "
 "messages, console messages, and the console menu."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:509
+#: src/usr/local/www/system_advanced_admin.php:511
 msgid "Console Options"
 msgstr "Opções de Console"
 
-#: src/usr/local/www/system_advanced_admin.php:513
+#: src/usr/local/www/system_advanced_admin.php:515
 msgid "Console menu"
 msgstr "Menu do Console"
 
-#: src/usr/local/www/system_advanced_admin.php:549
+#: src/usr/local/www/system_advanced_admin.php:551
 msgid "secure shell configuration has changed. Stopping sshd."
 msgstr "configuração de secure shell foi modificada. Interrompendo sshd."
 
-#: src/usr/local/www/system_advanced_admin.php:552
+#: src/usr/local/www/system_advanced_admin.php:554
 msgid "secure shell configuration has changed. Restarting sshd."
 msgstr "configuração de secure shell foi modificada. Reiniciando sshd."
 
@@ -26493,68 +26608,68 @@ msgstr "Desabilitar Firewall"
 #, php-format
 msgid ""
 "Note: This converts %s into a routing only platform!<br/>Note: This will "
-"also turn off NAT! To only disable NAT, and not firewall rules, visit the <a "
-"href=\"firewall_nat_out.php\">Outbound NAT</a> page."
+"also turn off NAT! To only disable NAT, and not firewall rules, visit the %s "
+"page."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:435
+#: src/usr/local/www/system_advanced_firewall.php:434
 msgid "Disable Firewall Scrub"
 msgstr "Desabilitar Firewall Scrub"
 
-#: src/usr/local/www/system_advanced_firewall.php:440
+#: src/usr/local/www/system_advanced_firewall.php:439
 msgid "Firewall Adaptive Timeouts"
 msgstr "Tempos limite do firewall adaptativo"
 
-#: src/usr/local/www/system_advanced_firewall.php:444
+#: src/usr/local/www/system_advanced_firewall.php:443
 msgid "Adaptive start"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:448
+#: src/usr/local/www/system_advanced_firewall.php:447
 #, php-format
 msgid ""
 "When the number of state entries exceeds this value, adaptive scaling begins."
 "  All timeout values are scaled linearly with factor (adaptive.end - number "
-"of states) / (adaptive.end - adaptive.start). Defaults to 60% of the "
+"of states) / (adaptive.end - adaptive.start). Defaults to 60%% of the "
 "Firewall Maximum States value"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:455
+#: src/usr/local/www/system_advanced_firewall.php:454
 msgid "Adaptive end"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:459
+#: src/usr/local/www/system_advanced_firewall.php:458
 #, php-format
 msgid ""
 "When reaching this number of state entries, all timeout values become zero, "
 "effectively purging all state entries immediately.  This value is used to "
 "define the scale factor, it should not actually be reached (set a lower "
-"state limit, see below). Defaults to 120% of the Firewall Maximum States "
+"state limit, see below). Defaults to 120%% of the Firewall Maximum States "
 "value"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:465
+#: src/usr/local/www/system_advanced_firewall.php:464
 msgid ""
 "Timeouts for states can be scaled adaptively as the number of state table "
 "entries grows. Leave blank to use default values, set to 0 to disable "
-"Adaptive Timeouts"
+"Adaptive Timeouts."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:473
+#: src/usr/local/www/system_advanced_firewall.php:472
 msgid "Firewall Maximum States"
 msgstr "Estados Máximos do Firewall"
 
-#: src/usr/local/www/system_advanced_firewall.php:477
+#: src/usr/local/www/system_advanced_firewall.php:476
 #, php-format
 msgid ""
 "Maximum number of connections to hold in the firewall state table. <br/>Note:"
 " Leave this blank for the default. On this system the default size is: %d"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:483
+#: src/usr/local/www/system_advanced_firewall.php:482
 msgid "Firewall Maximum Table Entries"
 msgstr "Máximo de Entradas da Tabela do Firewall"
 
-#: src/usr/local/www/system_advanced_firewall.php:487
+#: src/usr/local/www/system_advanced_firewall.php:486
 #, php-format
 msgid ""
 "Maximum number of table entries for systems such as aliases, sshlockout, "
@@ -26562,21 +26677,21 @@ msgid ""
 "system the default size is: %d"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:494
+#: src/usr/local/www/system_advanced_firewall.php:493
 msgid "Firewall Maximum Fragment Entries"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:497
+#: src/usr/local/www/system_advanced_firewall.php:496
 msgid ""
 "Maximum number of packet fragments to hold for reassembly by scrub rules. "
 "Leave this blank for the default (5000)"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:501
+#: src/usr/local/www/system_advanced_firewall.php:500
 msgid "Static route filtering"
 msgstr "Filtragem de rota estática"
 
-#: src/usr/local/www/system_advanced_firewall.php:504
+#: src/usr/local/www/system_advanced_firewall.php:503
 msgid ""
 "This option only applies if one or more static routes have been defined. If "
 "it is enabled, traffic that enters and leaves through the same interface "
@@ -26584,15 +26699,15 @@ msgid ""
 "situations where multiple subnets are connected to the same interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:511
+#: src/usr/local/www/system_advanced_firewall.php:510
 msgid "Disable Auto-added VPN rules"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:514
+#: src/usr/local/www/system_advanced_firewall.php:513
 msgid "Note: This disables automatically added rules for IPsec."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:521
+#: src/usr/local/www/system_advanced_firewall.php:520
 msgid ""
 "With Multi-WAN it is generally desired to ensure traffic leaves the same "
 "interface it arrives on, hence reply-to is added automatically by default. "
@@ -26600,11 +26715,11 @@ msgid ""
 "different from the gateway IP of the hosts behind the bridged interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:528
+#: src/usr/local/www/system_advanced_firewall.php:527
 msgid "Disable Negate rules"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:531
+#: src/usr/local/www/system_advanced_firewall.php:530
 msgid ""
 "With Multi-WAN it is generally desired to ensure traffic reaches directly "
 "connected networks and VPN networks when using policy routing. This can be "
@@ -26612,73 +26727,73 @@ msgid ""
 "these networks."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:537
+#: src/usr/local/www/system_advanced_firewall.php:536
 msgid "Aliases Hostnames Resolve Interval"
 msgstr "Intervalo de resolução de Hostname de Aliases"
 
-#: src/usr/local/www/system_advanced_firewall.php:541
+#: src/usr/local/www/system_advanced_firewall.php:540
 msgid ""
 "Interval, in seconds, that will be used to resolve hostnames configured on "
 "aliases. <br/>Note:\t Leave this blank for the default (300s)."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:547
+#: src/usr/local/www/system_advanced_firewall.php:546
 msgid "Check certificate of aliases URLs"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:550
+#: src/usr/local/www/system_advanced_firewall.php:549
 msgid ""
 "Make sure the certificate is valid for all HTTPS addresses on aliases. If "
 "it's not valid or is revoked, do not download it."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:554
+#: src/usr/local/www/system_advanced_firewall.php:553
 msgid "Bogon Networks"
 msgstr "Redes bogon"
 
-#: src/usr/local/www/system_advanced_firewall.php:561
+#: src/usr/local/www/system_advanced_firewall.php:560
 msgid "Monthly"
 msgstr "Mensalmente"
 
-#: src/usr/local/www/system_advanced_firewall.php:562
+#: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Weekly"
 msgstr "Semanalmente"
 
-#: src/usr/local/www/system_advanced_firewall.php:563
+#: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Daily"
 msgstr "Diariamente"
 
-#: src/usr/local/www/system_advanced_firewall.php:558
+#: src/usr/local/www/system_advanced_firewall.php:557
 msgid "Update Frequency"
 msgstr "Frequencia de atualização"
 
-#: src/usr/local/www/system_advanced_firewall.php:565
+#: src/usr/local/www/system_advanced_firewall.php:564
 msgid ""
 "The frequency of updating the lists of IP addresses that are reserved (but "
 "not RFC 1918) or not yet assigned by IANA."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:571
+#: src/usr/local/www/system_advanced_firewall.php:570
 msgid "Network Address Translation"
 msgstr "Tradução de Endereço de Rede"
 
-#: src/usr/local/www/system_advanced_firewall.php:586
+#: src/usr/local/www/system_advanced_firewall.php:585
 msgid "disabled"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:587
+#: src/usr/local/www/system_advanced_firewall.php:586
 msgid "NAT + proxy"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:588
+#: src/usr/local/www/system_advanced_firewall.php:587
 msgid "Pure NAT"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:583
+#: src/usr/local/www/system_advanced_firewall.php:582
 msgid "NAT Reflection mode for port forwards"
 msgstr "Modo NAT Reflection para redirecionamento de portas"
 
-#: src/usr/local/www/system_advanced_firewall.php:590
+#: src/usr/local/www/system_advanced_firewall.php:589
 msgid ""
 "</span><ul class=\"help-block\"><li>The pure NAT mode uses a set of NAT "
 "rules to direct packets to the target of the port forward. It has better "
@@ -26696,21 +26811,21 @@ msgid ""
 "configured to override this system setting on a per-rule basis."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:608
+#: src/usr/local/www/system_advanced_firewall.php:607
 msgid "Reflection Timeout"
 msgstr "Tempo de expiração de Reflection"
 
-#: src/usr/local/www/system_advanced_firewall.php:612
+#: src/usr/local/www/system_advanced_firewall.php:611
 msgid ""
 "Enter value for Reflection timeout in seconds.<br/>Note: Only applies to "
 "Reflection on port forwards in NAT + proxy mode."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:617
+#: src/usr/local/www/system_advanced_firewall.php:616
 msgid "Enable NAT Reflection for 1:1 NAT"
 msgstr "Habilitar NAT Reflection para 1:1 NAT"
 
-#: src/usr/local/www/system_advanced_firewall.php:620
+#: src/usr/local/www/system_advanced_firewall.php:619
 msgid ""
 "Note: Reflection on 1:1 mappings is only for the inbound component of the 1:"
 "1 mappings. This functions the same as the pure NAT mode for port forwards. "
@@ -26718,11 +26833,11 @@ msgid ""
 "rules may be configured to override this system setting on a per-rule basis."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:628
+#: src/usr/local/www/system_advanced_firewall.php:627
 msgid "Enable automatic outbound NAT for Reflection"
 msgstr "Habilita a saída de NAT automatica para Reflexão"
 
-#: src/usr/local/www/system_advanced_firewall.php:631
+#: src/usr/local/www/system_advanced_firewall.php:630
 msgid ""
 "Required for full functionality of the pure NAT mode of NAT Reflection for "
 "port forwards or NAT Reflection for 1:1 NAT. Note: This only works for "
@@ -26730,50 +26845,50 @@ msgid ""
 "outbound NAT rules that direct the reply packets back through the router."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:638
+#: src/usr/local/www/system_advanced_firewall.php:637
 msgid "TFTP Proxy"
 msgstr "TFTP Proxy"
 
-#: src/usr/local/www/system_advanced_firewall.php:642
+#: src/usr/local/www/system_advanced_firewall.php:641
 msgid "Choose the interfaces on which to enable TFTP proxy helper."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:647
+#: src/usr/local/www/system_advanced_firewall.php:646
 msgid "State Timeouts (seconds - blank for default)"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:654
+#: src/usr/local/www/system_advanced_firewall.php:653
 msgid "TCP "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:665
+#: src/usr/local/www/system_advanced_firewall.php:664
 msgid "UDP "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:676
+#: src/usr/local/www/system_advanced_firewall.php:675
 msgid "ICMP "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:687
+#: src/usr/local/www/system_advanced_firewall.php:686
 msgid "Other "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:706
+#: src/usr/local/www/system_advanced_firewall.php:705
 msgid "The default optimization algorithm"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:708
+#: src/usr/local/www/system_advanced_firewall.php:707
 msgid ""
 "Used for eg. satellite links. Expires idle connections later than default"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:710
+#: src/usr/local/www/system_advanced_firewall.php:709
 msgid ""
 "Expires idle connections quicker. More efficient use of CPU and memory but "
 "can drop legitimate idle connections"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:712
+#: src/usr/local/www/system_advanced_firewall.php:711
 msgid ""
 "Tries to avoid dropping any legitimate idle connections at the expense of "
 "increased memory usage and CPU utilization"
@@ -28055,27 +28170,17 @@ msgid "external"
 msgstr "externa"
 
 #: src/usr/local/www/system_camanager.php:415
-#: src/usr/local/www/system_certmanager.php:1014
+#: src/usr/local/www/system_certmanager.php:1021
 msgid "Valid From"
 msgstr "Válido de"
 
 #: src/usr/local/www/system_camanager.php:415
-#: src/usr/local/www/system_certmanager.php:1014
+#: src/usr/local/www/system_certmanager.php:1021
 msgid "Valid Until"
 msgstr "Válido até"
 
-#: src/usr/local/www/system_camanager.php:420
-#: src/usr/local/www/system_certmanager.php:1029
-msgid "OpenVPN Server"
-msgstr ""
-
-#: src/usr/local/www/system_camanager.php:423
-#: src/usr/local/www/system_certmanager.php:1032
-msgid "OpenVPN Client"
-msgstr ""
-
 #: src/usr/local/www/system_camanager.php:426
-#: src/usr/local/www/system_certmanager.php:1035
+#: src/usr/local/www/system_certmanager.php:1042
 msgid "IPsec Tunnel"
 msgstr ""
 
@@ -28383,36 +28488,40 @@ msgstr ""
 msgid "Paste the certificate received from the certificate authority here."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:990
+#: src/usr/local/www/system_certmanager.php:992
+msgid "private key only"
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:997
 msgid "external - signature pending"
 msgstr "externa - assinatura pendente"
 
-#: src/usr/local/www/system_certmanager.php:1026
+#: src/usr/local/www/system_certmanager.php:1033
 msgid "User Cert"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1062
+#: src/usr/local/www/system_certmanager.php:1069
 msgid "Export Certificate"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1063
-#: src/usr/local/www/system_certmanager.php:1068
+#: src/usr/local/www/system_certmanager.php:1070
+#: src/usr/local/www/system_certmanager.php:1075
 msgid "Export Key"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1064
+#: src/usr/local/www/system_certmanager.php:1071
 msgid "Export P12"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1066
+#: src/usr/local/www/system_certmanager.php:1073
 msgid "Update CSR"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1067
+#: src/usr/local/www/system_certmanager.php:1074
 msgid "Export Request"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1071
+#: src/usr/local/www/system_certmanager.php:1078
 msgid "Delete Certificate"
 msgstr ""
 
@@ -33263,23 +33372,23 @@ msgstr ""
 msgid "Link Share"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:2804
+#: src/etc/inc/shaper.inc:2805
 msgid "Borrow from other queues when available"
 msgstr "Emprestar de outras filas quando disponíveis"
 
-#: src/etc/inc/shaper.inc:3822
+#: src/etc/inc/shaper.inc:3823
 msgid "Enable limiter and its children"
 msgstr "Habilitar/Desabilitar limitador e seus dependentes"
 
-#: src/etc/inc/shaper.inc:4135
+#: src/etc/inc/shaper.inc:4136
 msgid "Enable this queue"
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:562
+#: src/usr/local/www/diag_backup.php:548
 msgid "Do not backup package information."
 msgstr "Não fazer backup de informações de pacotes."
 
-#: src/usr/local/www/diag_backup.php:569
+#: src/usr/local/www/diag_backup.php:555
 msgid ""
 "Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config."
 "xml space!)"
@@ -33287,11 +33396,11 @@ msgstr ""
 "Não fazer backup dos dados RRD (Nota: dados RRD podem consumir 4+ megabytes "
 "de espaço no config.xml!)"
 
-#: src/usr/local/www/diag_backup.php:576
+#: src/usr/local/www/diag_backup.php:562
 msgid "Encrypt this configuration file."
 msgstr "Criptografar este arquivo de configuração."
 
-#: src/usr/local/www/diag_backup.php:623
+#: src/usr/local/www/diag_backup.php:609
 msgid "Configuration file is encrypted."
 msgstr "O arquivo de configuração está criptografado."
 
@@ -33299,7 +33408,7 @@ msgstr "O arquivo de configuração está criptografado."
 msgid "Enable promiscuous mode"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:361
+#: src/usr/local/www/diag_packet_capture.php:366
 msgid "Do reverse DNS lookup"
 msgstr ""
 
@@ -33358,7 +33467,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:421
 #: src/usr/local/www/firewall_nat_edit.php:653
 #: src/usr/local/www/firewall_nat_npt_edit.php:193
-#: src/usr/local/www/firewall_nat_out_edit.php:433
+#: src/usr/local/www/firewall_nat_out_edit.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1177
 msgid "Disable this rule"
 msgstr "Desabilita essa regra"
@@ -33371,7 +33480,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:506
 #: src/usr/local/www/firewall_nat_npt_edit.php:208
 #: src/usr/local/www/firewall_nat_npt_edit.php:223
-#: src/usr/local/www/firewall_nat_out_edit.php:541
+#: src/usr/local/www/firewall_nat_out_edit.php:570
 msgid "Not"
 msgstr ""
 
@@ -33385,11 +33494,11 @@ msgstr ""
 msgid "Invert match."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:894
+#: src/usr/local/www/firewall_nat_edit.php:893
 msgid "Do not automatically sync to other CARP members"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_out_edit.php:440
+#: src/usr/local/www/firewall_nat_out_edit.php:469
 msgid ""
 "Enabling this option will disable NAT for traffic matching this rule and "
 "stop processing Outbound NAT rules"
@@ -33410,28 +33519,23 @@ msgstr ""
 msgid "Log packets that are handled by this rule"
 msgstr "Pacotes de log que são tratados por essa regra"
 
-#: src/usr/local/www/firewall_rules_edit.php:1499
+#: src/usr/local/www/firewall_rules_edit.php:1498
 msgid ""
 "Allow packets with IP options to pass. Otherwise they are blocked by default."
 " This is usually only seen with multicast traffic."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1507
+#: src/usr/local/www/firewall_rules_edit.php:1506
 msgid "Disable auto generated reply-to for this rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1585
+#: src/usr/local/www/firewall_rules_edit.php:1584
 msgid "Prevent states created by this rule to be sync'ed over pfsync."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1605
+#: src/usr/local/www/firewall_rules_edit.php:1604
 msgid ""
 "Prevent the rule on Master from automatically syncing to other CARP members"
-msgstr ""
-
-#: src/usr/local/www/firewall_rules_edit.php:1739
-#: src/usr/local/www/firewall_rules_edit.php:1746
-msgid "<b>"
 msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:386
@@ -34316,45 +34420,45 @@ msgstr ""
 msgid "Show hostname on login banner"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:366
+#: src/usr/local/www/system_advanced_admin.php:368
 msgid "Disable webConfigurator redirect rule"
 msgstr "Desabiliar regra de redirecionamento do webConfigurator"
 
-#: src/usr/local/www/system_advanced_admin.php:375
+#: src/usr/local/www/system_advanced_admin.php:377
 msgid "Enable webConfigurator login autocomplete"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:386
+#: src/usr/local/www/system_advanced_admin.php:388
 msgid "Disable logging of webConfigurator successful logins"
 msgstr "Desabiliar log de logins efetuados com sucesso no webConfigurator"
 
-#: src/usr/local/www/system_advanced_admin.php:400
+#: src/usr/local/www/system_advanced_admin.php:402
 msgid "Disable webConfigurator anti-lockout rule"
 msgstr "Desabilitar regra anti-lockout do webConfigurator"
 
-#: src/usr/local/www/system_advanced_admin.php:413
+#: src/usr/local/www/system_advanced_admin.php:415
 msgid "Disable DNS Rebinding Checks"
 msgstr "Desabilitar Verificação DNS Rebinding"
 
-#: src/usr/local/www/system_advanced_admin.php:433
+#: src/usr/local/www/system_advanced_admin.php:435
 msgid "Disable HTTP_REFERER enforcement check"
 msgstr "Desabilitar verificação de execução de HTTP_REFERER"
 
-#: src/usr/local/www/system_advanced_admin.php:450
+#: src/usr/local/www/system_advanced_admin.php:452
 msgid "Enable Secure Shell"
 msgstr "Habilitar Secure Shell"
 
-#: src/usr/local/www/system_advanced_admin.php:457
+#: src/usr/local/www/system_advanced_admin.php:459
 msgid "Disable password login for Secure Shell (RSA/DSA key only)"
 msgstr "Desabilitar login com senha para Secure Shell (somente chave RSA/DSA)"
 
-#: src/usr/local/www/system_advanced_admin.php:479
+#: src/usr/local/www/system_advanced_admin.php:481
 msgid ""
 "Enables the first serial port with 115200/8/N/1 by default, or another speed "
 "selectable below."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_admin.php:514
+#: src/usr/local/www/system_advanced_admin.php:516
 msgid "Password protect the console menu"
 msgstr "Proteger menu do console com senha"
 
@@ -34371,39 +34475,39 @@ msgstr ""
 msgid "Disable all packet filtering."
 msgstr "Desabilitar todos os filtros de pacotes."
 
-#: src/usr/local/www/system_advanced_firewall.php:436
+#: src/usr/local/www/system_advanced_firewall.php:435
 msgid ""
 "Disables the PF scrubbing option which can sometimes interfere with NFS "
 "traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:502
+#: src/usr/local/www/system_advanced_firewall.php:501
 msgid "Bypass firewall rules for traffic on the same interface"
 msgstr "Evitar regras de firewall para tráfego na mesma interface"
 
-#: src/usr/local/www/system_advanced_firewall.php:512
+#: src/usr/local/www/system_advanced_firewall.php:511
 msgid "Disable all auto-added VPN rules."
 msgstr "Desabilita as regras VPN auto-adicionadas."
 
-#: src/usr/local/www/system_advanced_firewall.php:519
+#: src/usr/local/www/system_advanced_firewall.php:518
 msgid "Disable reply-to on WAN rules"
 msgstr "Desabilitar reply-to nas regras WAN"
 
-#: src/usr/local/www/system_advanced_firewall.php:529
+#: src/usr/local/www/system_advanced_firewall.php:528
 msgid "Disable Negate rule on policy routing rules"
 msgstr "Desabilitar regra de negação nas regras de política de roteamento"
 
-#: src/usr/local/www/system_advanced_firewall.php:548
+#: src/usr/local/www/system_advanced_firewall.php:547
 msgid "Verify HTTPS certificates when downloading alias URLs"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:618
+#: src/usr/local/www/system_advanced_firewall.php:617
 msgid ""
 "Automatic creation of additional NAT redirect rules from within the internal "
 "networks."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_firewall.php:629
+#: src/usr/local/www/system_advanced_firewall.php:628
 msgid ""
 "Automatic create outbound NAT rules that direct traffic back out to the same "
 "subnet it originated from."
@@ -34472,7 +34576,7 @@ msgstr "Desabilitar notificações SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:255
 msgid "Enable SMTP over SSL/TLS"
-msgstr ""
+msgstr "Habilita SMTP sobre SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:313
 msgid "Disable the startup/shutdown beep"
@@ -34487,10 +34591,12 @@ msgid ""
 "No Certificate Authorities defined.<br/>Create one under <a href="
 "\"system_camanager.php\">System &gt; Cert. Manager</a>."
 msgstr ""
+"Sem Autoridade Certificadora definida.<br/>Crie uma em <a href="
+"\"system_camanager.php\">Sistema &gt; Gerenciar Certificado</a>."
 
 #: src/usr/local/www/system_authservers.php:593
 msgid "Level "
-msgstr ""
+msgstr "Nível"
 
 #: src/usr/local/www/system_authservers.php:618
 msgid "Enable extended query"
@@ -34538,11 +34644,11 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:594
 msgid "Disable this gateway"
-msgstr ""
+msgstr "Desativar esse gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:640
 msgid "This will select the above gateway as the default gateway."
-msgstr ""
+msgstr "Isso selecionará o gateway acima como o gateway padrão."
 
 #: src/usr/local/www/system_gateways_edit.php:647
 msgid "Disable Gateway Monitoring"
@@ -34550,11 +34656,11 @@ msgstr "Desativar Monitoramento do Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:654
 msgid "Disable Gateway Monitoring Action"
-msgstr ""
+msgstr "Desabilita Ação Monitoramento de Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:678
 msgid "Mark Gateway as Down"
-msgstr ""
+msgstr "Marca Gateway como Down"
 
 #: src/usr/local/www/system_gateways_edit.php:813
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
@@ -34574,24 +34680,25 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:185
 msgid "User manager users and groups"
-msgstr ""
+msgstr "Gerenciador de Usuários e Grupos"
 
 #: src/usr/local/www/system_hasync.php:193
 msgid "Authentication servers (e.g. LDAP, RADIUS)"
-msgstr ""
+msgstr "Servidores de Autenticação"
 
 #: src/usr/local/www/system_hasync.php:201
 msgid ""
 "Certificate Authorities, Certificates, and Certificate Revocation Lists"
 msgstr ""
+"Lista de Certificados, Certificados Revogados e Autoridades Certificadoras"
 
 #: src/usr/local/www/system_hasync.php:209
 msgid "Firewall rules "
-msgstr ""
+msgstr "Regras de Firewall"
 
 #: src/usr/local/www/system_hasync.php:217
 msgid "Firewall schedules "
-msgstr ""
+msgstr "Agenda de Firewall"
 
 #: src/usr/local/www/system_hasync.php:225
 msgid "Firewall aliases "
@@ -34599,31 +34706,31 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:233
 msgid "NAT configuration "
-msgstr ""
+msgstr "Configuração NAT"
 
 #: src/usr/local/www/system_hasync.php:241
 msgid "IPsec configuration "
-msgstr ""
+msgstr "Configuração IPsec"
 
 #: src/usr/local/www/system_hasync.php:249
 msgid "OpenVPN configuration "
-msgstr ""
+msgstr "Configuração OpenVPN"
 
 #: src/usr/local/www/system_hasync.php:257
 msgid "DHCP Server settings "
-msgstr ""
+msgstr "Configuração do Servidor DNS"
 
 #: src/usr/local/www/system_hasync.php:265
 msgid "WoL Server settings "
-msgstr ""
+msgstr "Configuração Servidor WoL"
 
 #: src/usr/local/www/system_hasync.php:273
 msgid "Static Route configuration "
-msgstr ""
+msgstr "Configuração de Rotas Estaticas"
 
 #: src/usr/local/www/system_hasync.php:281
 msgid "Load Balancer configuration "
-msgstr ""
+msgstr "Configuração de Balanceamento de Carga"
 
 #: src/usr/local/www/system_hasync.php:289
 msgid "Virtual IPs "
@@ -34639,7 +34746,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:313
 msgid "DNS Forwarder and DNS Resolver configurations "
-msgstr ""
+msgstr "Configuração de DNS Forwarder e DNS Resolver"
 
 #: src/usr/local/www/system_hasync.php:321
 msgid "Captive Portal "
@@ -34697,6 +34804,8 @@ msgid ""
 "<span id=\"ldaptestop\">Testing pfSense LDAP settings... One moment please..."
 ""
 msgstr ""
+"<span id=\"ldaptestop\">Testando as configurações do LDAP pfSense... Um "
+"momento por favor..."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
 msgid "Provide a virtual IP address to clients"
@@ -34816,7 +34925,7 @@ msgstr "Habilitar verificação estrita da Lista de Certificados Revogados."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:328
 msgid "Initiate IKEv2 reauthentication with a make-before-break"
-msgstr ""
+msgstr "Inicia reautenticação IKEv2 com make-before-break."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:337
 msgid "Enable bypass for LAN interface IP"
@@ -34860,7 +34969,7 @@ msgstr "Gerar automaticamente uma chave compartilhada"
 #: src/usr/local/www/vpn_openvpn_client.php:717
 #: src/usr/local/www/vpn_openvpn_server.php:896
 msgid "Enable Negotiable Cryptographic Parameters"
-msgstr ""
+msgstr "Habilita Parâmetros Criptográficos Negociavel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:839
 #: src/usr/local/www/vpn_openvpn_server.php:1091
@@ -34888,7 +34997,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:422
 #: src/usr/local/www/vpn_openvpn_server.php:1024
 msgid "Force all client generated traffic through the tunnel."
-msgstr ""
+msgstr "Força todo o trafego gerado pelo cliente através do túnel."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:434
 msgid ""
@@ -34900,7 +35009,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:502
 #: src/usr/local/www/vpn_openvpn_server.php:1208
 msgid "Provide an NTP server list to clients"
-msgstr ""
+msgstr "Forneça uma lista de servidores NTP para os estações"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:530
 #: src/usr/local/www/vpn_openvpn_server.php:1229
@@ -34913,7 +35022,7 @@ msgstr "Desabilitar esse servidor"
 
 #: src/usr/local/www/vpn_openvpn_server.php:961
 msgid "Enforce match"
-msgstr ""
+msgstr "Forçar correspondência"
 
 #: src/usr/local/www/vpn_openvpn_server.php:992
 msgid "Allow clients on the bridge to obtain DHCP."
@@ -34932,16 +35041,21 @@ msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
+"Permitir conexões simultâneas de vários clientes usando o mesmo Common Name."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1117
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
+"Permite clientes conectados reterem suas conexões se seus endereços de IP "
+"mudarem."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1124
 msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
 msgstr ""
+"Fornece um endereço IP de adaptador virtual para clientes (Veja Tunnel "
+"Network)."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1159
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
@@ -34954,12 +35068,17 @@ msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
+"Bloqueia o acesso do Windows 10 aos Servidores DNS exceto através do OpenVPN "
+"enquanto conectado, forçando os clientes a usarem somente Servidores DNS VPN."
+""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1201
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
+"Execute \"net stop dnscache\", \"net start dnscache\", \"ipconfig /"
+"flushdns\" e \"ipconfig /registerdns\" no inicio da conexão."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1274
 msgid "Use a different management port for clients."

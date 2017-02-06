@@ -230,7 +230,7 @@ $section->addInput(new Form_Checkbox(
 	'Prefetch Support',
 	'Message cache elements are prefetched before they expire to help keep the cache up to date',
 	$pconfig['prefetch']
-))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.');
+))->setHelp('When enabled, this option can cause an increase of around 10%% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.');
 
 $section->addInput(new Form_Checkbox(
 	'prefetchkey',

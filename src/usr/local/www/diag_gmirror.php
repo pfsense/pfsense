@@ -323,7 +323,7 @@ else:
 			if ($oldmirror): ?>
 							<a class="btn btn-xs btn-success" href="diag_gmirror.php?action=activate&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>&amp;mirror=<?=htmlspecialchars($oldmirror); ?>">
 								<i class="fa fa-chain icon-embed-btn"></i>
-								<?=gettext("Reactivate on") . ' ' . htmlspecialchars($oldmirror); ?>
+								<?=sprintf(gettext("Reactivate on %s"), htmlspecialchars($oldmirror)); ?>
 							</a>
 
 							<a class="btn btn-xs btn-danger" href="diag_gmirror.php?action=clear&amp;consumer=<?=htmlspecialchars($consumer['name']); ?>">

@@ -104,11 +104,11 @@ if (ipsec_enabled()) {
 	$interfaces['enc0'] = "IPsec";
 }
 
-foreach (array('server', 'client') as $mode) {
+foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = $mode_descr . ": ".htmlspecialchars($setting['description']);
 			}
 		}
 	}
@@ -287,10 +287,12 @@ $section->addInput(new Form_Checkbox(
 	'Promiscuous',
 	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('The packet capture will be performed using promiscuous mode.<br />' .
-			'Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
-			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
-			'Packet capture' . '</a>');
+))->setHelp('The packet capture will be performed using promiscuous mode.%1$s' .
+			'Note: Some network adapters do not support or work well in promiscuous mode.%1$s' .
+			'More: %2$sPacket capture%3$s',
+			'<br />',
+			'<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">',
+			'</a>');
 
 $section->addInput(new Form_Select(
 	'fam',
@@ -314,10 +316,11 @@ $section->addInput(new Form_Input(
 	'Host Address',
 	'text',
 	$host
-))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.' . '<br />' .
+))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.%1$s' .
 			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
-			'Separating with a pipe ("|") performs a boolean "OR".' . '<br />' .
-			'If this field is left blank, all packets on the specified interface will be captured.');
+			'Separating with a pipe ("|") performs a boolean "OR".%1$s' .
+			'If this field is left blank, all packets on the specified interface will be captured.',
+			'<br />');
 
 $section->addInput(new Form_Input(
 	'port',
@@ -340,8 +343,9 @@ $section->addInput(new Form_Input(
 	'Count',
 	'text',
 	$count
-))->setHelp('This is the number of packets the packet capture will grab. Default value is 100.' . '<br />' .
-			'Enter 0 (zero) for no count limit.');
+))->setHelp('This is the number of packets the packet capture will grab. Default value is 100.%s' .
+			'Enter 0 (zero) for no count limit.',
+			'<br />');
 
 $section->addInput(new Form_Select(
 	'detail',
@@ -352,16 +356,18 @@ $section->addInput(new Form_Select(
 		  'high' => gettext('High'),
 		  'full' => gettext('Full'),
 	)
-))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
-			'This option does not affect the level of detail when downloading the packet capture. ');
+))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.%s' .
+			'This option does not affect the level of detail when downloading the packet capture. ',
+			'<br />');
 
 $section->addInput(new Form_Checkbox(
 	'dnsquery',
 	'Reverse DNS Lookup',
 	'Do reverse DNS lookup',
 	$_POST['dnsquery']
-))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
-			'This option can cause delays for large packet captures.');
+))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.%s' .
+			'This option can cause delays for large packet captures.',
+			'<br />');
 
 $form->add($section);
 

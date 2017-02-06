@@ -104,18 +104,24 @@ $showAllOption = $showAll ? "" : "?showAll";
 <div>
 <div class="infoblock">
 <?php
-print_info_box(gettext('Socket Information') . '<br /><br />' .
-gettext('This page shows all listening sockets by default, and shows both listening and outbound connection sockets when <strong>Show all socket connections</strong> is clicked.<br /><br />' .
-		'The information listed for each socket is:' . '<br /><br />' .
+print_info_box(
+	gettext('Socket Information') .
+		'<br /><br />' .
+		sprintf(gettext('This page shows all listening sockets by default, and shows both listening and outbound connection sockets when %1$sShow all socket connections%2$s is clicked.'), '<strong>', '</strong>') .
+		'<br /><br />' .
+		gettext('The information listed for each socket is:') .
+		'<br /><br />' .
 		'<dl class="dl-horizontal responsive">' .
-			'<dt>USER</dt>			<dd>The user who owns the socket.</dd>' .
-			'<dt>COMMAND</dt>		<dd>The command which holds the socket.</dd>' .
-			'<dt>PID</dt>			<dd>The process ID of the command which holds the socket.</dd>' .
-			'<dt>FD</dt>			<dd>The file descriptor number of the socket.</dd>' .
-			'<dt>PROTO</dt>			<dd>The transport protocol associated with the socket.</dd>' .
-			'<dt>LOCAL ADDRESS</dt>		<dd>The address the local end of the socket is bound to.</dd>' .
-			'<dt>FOREIGN ADDRESS</dt>	<dd>The address the foreign end of the socket is bound to.</dd>' .
-		'</dl>'), 'info', false);
+		sprintf(gettext('%1$sUSER%2$s	%3$sThe user who owns the socket.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sCOMMAND%2$s	%3$sThe command which holds the socket.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sPID%2$s	%3$sThe process ID of the command which holds the socket.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sFD%2$s	%3$sThe file descriptor number of the socket.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sPROTO%2$s	%3$sThe transport protocol associated with the socket.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sLOCAL ADDRESS%2$s	%3$sThe address the local end of the socket is bound to.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		sprintf(gettext('%1$sFOREIGN ADDRESS%2$s	%3$sThe address the foreign end of the socket is bound to.%4$s'), '<dt>', '</dt>', '<dd>', '</dd>') .
+		'</dl>',
+	'info',
+	false);
 ?>
 </div>
 </div>

@@ -274,7 +274,7 @@ if ($_POST) {
 	}
 
 	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
-		$input_errors[] = sprintf(gettext("A valid redirect target port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
+		$input_errors[] = sprintf(gettext("%s is not a valid redirect target port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
@@ -854,8 +854,7 @@ $section->addInput(new Form_IpAddress(
 	'*Redirect target IP',
 	$pconfig['localip'],
 	'ALIASV4V6'
-))->setHelp('Enter the internal IP address of the server on which to map the ports.' . '<br />' .
-			'e.g.: 192.168.1.12');
+))->setHelp('Enter the internal IP address of the server on which to map the ports.%s e.g.: 192.168.1.12', '<br />');
 
 $group = new Form_Group('*Redirect target port');
 $group->addClass('lclportrange');
@@ -868,8 +867,8 @@ $group->add(new Form_Select(
 ))->setHelp('Port');
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .
-				'beginning port of the range (the end port will be calculated automatically).' . '<br />' .
-				'This is usually identical to the "From port" above.');
+				'beginning port of the range (the end port will be calculated automatically).%s' .
+				'This is usually identical to the "From port" above.', '<br />');
 
 $group->add(new Form_Input(
 	'localbeginport_cust',
@@ -962,14 +961,20 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext(" by ") . $a_nat[$id]['created']['username']
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']),
+				$a_nat[$id]['created']['username'])
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext(" by ") . $a_nat[$id]['updated']['username']
+			sprintf(
+				gettext('%1$s by %2$s'),
+				date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']),
+				$a_nat[$id]['updated']['username'])
 		));
 	}
 

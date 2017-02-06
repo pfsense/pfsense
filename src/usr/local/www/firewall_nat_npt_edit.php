@@ -199,8 +199,8 @@ $section->addInput(new Form_Select(
 	'*Interface',
 	$pconfig['interface'],
 	build_if_list()
-))->setHelp('Choose which interface this rule applies to.' . '<br />' .
-			'Hint: Typically the "WAN" is used here.');
+))->setHelp('Choose which interface this rule applies to.%s' .
+			'Hint: Typically the "WAN" is used here.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'srcnot',

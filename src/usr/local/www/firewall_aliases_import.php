@@ -215,18 +215,36 @@ if ($tab == "port") {
 	$sectiontext = gettext('Port Alias Details');
 	$helptext = gettext('Paste in the ports to import separated by a carriage return. ' .
 		'The list may contain port numbers, port ranges, blank lines (ignored) and ' .
-		'an optional description after each port. e.g.:</span>' .
-		'<ul><li>22</li><li>1234:1250</li><li>443 HTTPS port</li><li>4000:4099 Description of a port range</li>' .
-		'</ul><span class="help-block">');
+		'an optional description after each port. e.g.:') .
+		'</span><ul><li>' .
+		'22' .
+		'</li><li>' .
+		'1234:1250' .
+		'</li><li>' .
+		gettext('443 HTTPS port') .
+		'</li><li>' .
+		gettext('4000:4099 Description of a port range') .
+		'</li></ul><span class="help-block">';
 } else {
 	$sectiontext = gettext('IP Alias Details');
 	$helptext = gettext('Paste in the aliases to ' .
 		'import separated by a carriage return. Common examples are lists of IPs, ' .
 		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
 		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
-		'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-' .
-		'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office ' .
-		'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+		'each IP. e.g.:') . 
+		'</span><ul><li>' .
+		'172.16.1.2' .
+		'</li><li>' .
+		'172.16.0.0/24' .
+		'</li><li>' .
+		'10.11.12.100-10.11.12.200' .
+		'</li><li>' .
+		gettext('192.168.1.254 Home router') .
+		'</li><li>' .
+		gettext('10.20.0.0/16 Office network') .
+		'</li><li>' .
+		gettext('10.40.1.10-10.40.1.19 Managed switches') .
+		'</li></ul><span class="help-block">';
 }
 
 $section = new Form_Section($sectiontext);

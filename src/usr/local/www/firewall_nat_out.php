@@ -233,7 +233,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'automatic',
 	'automatic'
-))->displayAsRadio()->setHelp('Automatic outbound NAT rule generation.' . '<br />' . '(IPsec passthrough included)');
+))->displayAsRadio()->setHelp('Automatic outbound NAT rule generation.%s(IPsec passthrough included)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -241,7 +241,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'hybrid',
 	'hybrid'
-))->displayAsRadio()->setHelp('Hybrid Outbound NAT rule generation.' . '<br />' . '(Automatic Outbound NAT + rules below)');
+))->displayAsRadio()->setHelp('Hybrid Outbound NAT rule generation.%s(Automatic Outbound NAT + rules below)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -249,7 +249,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'advanced',
 	'advanced'
-))->displayAsRadio()->setHelp('Manual Outbound NAT rule generation.' . '<br />' . '(AON - Advanced Outbound NAT)');
+))->displayAsRadio()->setHelp('Manual Outbound NAT rule generation.%s(AON - Advanced Outbound NAT)', '<br />');
 
 $group->add(new Form_Checkbox(
 	'mode',
@@ -257,7 +257,7 @@ $group->add(new Form_Checkbox(
 	null,
 	$mode == 'disabled',
 	'disabled'
-))->displayAsRadio()->setHelp('Disable Outbound NAT rule generation.' . '<br />' . '(No Outbound NAT rules)');
+))->displayAsRadio()->setHelp('Disable Outbound NAT rule generation.%s(No Outbound NAT rules)', '<br />');
 
 $section->add($group);
 
@@ -632,15 +632,21 @@ endif;
 
 <div class="infoblock">
 <?php
-	print_info_box(gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
-							'on the "Mappings" section of this page are ignored.' . '<br />' .
-							'If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings specified on this page ' .
-							'will be used.' . '<br />' .
-							'If hybrid outbound NAT is selected, mappings specified on this page will be used, followed by the automatically generated ones.' . '<br />' .
-							'If disable outbound NAT is selected, no rules will be used.' . '<br />' .
-							'If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a ') .
-							'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a>' . gettext(" may also be required."),
-				   'info', false);
+	print_info_box(
+		gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules on the "Mappings" section of this page are ignored.') .
+			'<br />' .
+			gettext('If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings specified on this page will be used.') .
+			'<br />' .
+			gettext('If hybrid outbound NAT is selected, mappings specified on this page will be used, followed by the automatically generated ones.') .
+			'<br />' .
+			gettext('If disable outbound NAT is selected, no rules will be used.') .
+			'<br />' .
+			sprintf(
+				gettext('If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a %1$sVirtual IP%2$s may also be required.'),
+				'<a href="firewall_virtual_ip.php">',
+				'</a>'),
+		'info',
+		false);
 ?>
 </div>
 

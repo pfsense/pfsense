@@ -138,4 +138,39 @@ function switch_get_title() {
 	return ("");
 }
 
+function switch_setvgroup($swidx, $vgroup, $vlan, $members = NULL) {
+
+	$devices = switch_get_devices();
+	if ($swidx >= count($devices)) {
+		return (false);
+	}
+
+	return (pfSense_etherswitch_setvlangroup($devices[$swidx], $vgroup,
+	    $vlan, $members));  
+}
+
+function switch_findvgroup($swidx, $vlan) {
+
+	$devices = switch_get_devices();
+	if ($swidx >= count($devices)) {
+		return (-1);
+	}
+
+	$swinfo = pfSense_etherswitch_getinfo($swdevice);
+	if ($swinfo == NULL) {
+		return (-1);
+	}
+
+	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
+		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
+		if ($vgroup == NULL) {
+			continue;
+		}
+		if ($vlan == $vgroup['vid'])
+			return ($i);
+	}
+
+	return (-1);
+}
+
 ?>

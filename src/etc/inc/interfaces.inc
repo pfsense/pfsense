@@ -224,23 +224,30 @@ function interface_vlan_configure(&$vlan) {
 	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
 	pfSense_interface_capabilities($if, IFCAP_VLAN_HWTAGGING|IFCAP_VLAN_MTU|IFCAP_VLAN_HWFILTER);
 
+	$swidx = -1;
 	$platform = system_identify_specific_platform();
 	if ($platform['name'] == "uFW") {
+		$swidx = 0;
 		switch ($if) {
 		case "cpsw0":
-			$swport = "1t";
+			$members[0] = array("tagged" => 1);
+			$members[1] = array("tagged" => 1);
 			break;
 		case "cpsw1":
-			$swport = "2t";
+			$members[0] = array("tagged" => 1);
+			$members[2] = array("tagged" => 1);
 			break;
 		default:
-			$swport = -1;
+			$members = NULL;
 		}
 	}
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
 		pfSense_interface_destroy($vlanif);
-		if (isset($swport) && $swport != -1) {
-			mwexec("/sbin/etherswitchcfg vlangroup$tag vlan 0");
+		if ($swidx != -1) {
+			$vgroup = switch_findvgroup($swidx, $a_vlans[$id]['tag']);
+			if ($vgroup >= 0) {
+				switch_setvgroup($swidx, $vgroup, 0);
+			}
 		}
 	}
 
@@ -252,8 +259,8 @@ function interface_vlan_configure(&$vlan) {
 
 	interfaces_bring_up($vlanif);
 
-	if (isset($swport) && $swport != -1) {
-		mwexec("/sbin/etherswitchcfg vlangroup$tag vlan $tag members 0t,$swport");
+	if (isset($members) && is_array($members) && $swidx != -1) {
+		switch_setvgroup($swidx, -1, $tag, $members);
 	}
 
 	/* invalidate interface cache */

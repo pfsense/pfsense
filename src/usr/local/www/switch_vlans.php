@@ -39,6 +39,25 @@ $tab_array[] = array(gettext("Ports"), false, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), true, "switch_vlans.php");
 display_top_tabs($tab_array);
 
+// Probably uFW specific.
+function find_pfSense_vlan($vlantag) {
+	global $config;
+
+	if (!isset($config["vlans"]["vlan"]) || !is_array($config["vlans"]["vlan"])) {
+		return (NULL);
+	}
+
+	for ($i = 0; $i < count($config["vlans"]["vlan"]); $i++) {
+		$vlan = $config["vlans"]["vlan"][$i];
+		if ($vlan["tag"] != $vlantag) {
+			continue;
+		}
+
+		return (array("id" => $i, "vlan" => $vlan));
+	}
+
+	return (NULL);
+}
 
 // Build an array with which to populate the switch device selector
 function get_switches($devicelist) {
@@ -162,9 +181,9 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 						</td>
 						<td>
 <?
+	$sys = false;
 	foreach ($vlans_system as $svlan) {
 		if ($svlan['vid'] != $vgroup['vid']) {
-			$sys = false;
 			continue;
 		}
 
@@ -173,14 +192,25 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 
 		break;
 	}
+	if (!$sys) {
+		$vlan = find_pfSense_vlan($vgroup['vid']);
+		if ($vlan != NULL && is_array($vlan)) {
+			echo htmlspecialchars($vlan['vlan']['descr']);
+		}
+	}
 ?>
 						</td>
 						<td>
 <?php
-		if (!$sys) { ?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit"); ?>" href="switch_vlans_edit.php?vid=<?=htmlspecialchars($vgroup['vid'])?>&amp;act=edit&amp;swdevice=<?=$swdevice?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete")?>" href="?act=del&amp;vid=<?=htmlspecialchars($vgroup['vid'])?>&amp;swdevice=<?=$swdevice?>"></a>
-<?php 	} ?>
+		if (!$sys) {
+			if (isset($vlan) && $vlan != NULL && is_array($vlan)) {
+?>
+							<a class="fa fa-pencil" title="<?=gettext("Edit"); ?>" href="interfaces_vlan_edit.php?id=<?=htmlspecialchars($vlan['id'])?>"></a>
+							<a class="fa fa-trash no-confirm"       title="<?=gettext('Delete VLAN')?>"     role="button" id="del-<?=$vlan['id']?>"></a>
+<?php
+			}
+		}
+?>
 						</td>
 					</tr>
 <?
@@ -193,14 +223,21 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 	</div>
 </div>
 
-<nav class="action-buttons">
-	<a href="switch_vlans_edit.php?swdevice=<?=$swdevice?>&amp;act=new&amp;nports=<?=$swinfo['nports']?>" role="button" class="btn btn-success btn-sm">
-		<i class="fa fa-plus icon-embed-btn"></i>
-		<?=gettext("Add");?>
-	</a>
-</nav>
+<?php
 
-<?php } // e-o-if($input_errors) else . .
+/*
+ * Not implemented yet.
+ *
+ * <nav class="action-buttons">
+ *	<a href="switch_vlans_edit.php?swdevice=<?=$swdevice?>&amp;act=new&amp;nports=<?=$swinfo['nports']?>" role="button" class="btn btn-success btn-sm">
+ *		<i class="fa fa-plus icon-embed-btn"></i>
+ *		<?=gettext("Add");?>
+ *	</a>
+ * </nav>
+ */
+
+} // e-o-if($input_errors) else . .
+
 ?>
 
 <script type="text/javascript">
@@ -211,6 +248,31 @@ events.push(function() {
 	$('#swdevice').on('change', function () {
 		$('form').submit();
 	});
+});
+//]]>
+</script>
+
+<?php
+        $delmsg = gettext("Are you sure you want to delete this VLAN?");
+?>
+
+<form name="vlan_edit_form" action="interfaces_vlan.php" method="post">
+        <input id="act" type="hidden" name="act" value="" />
+        <input id="id" type="hidden" name="id" value="" />
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
+	$('[id^=del-]').click(function(event) {
+		if (confirm("<?=$delmsg?>")) {
+			$('#act').val('del');
+			$('#id').val(this.id.replace("del-", ""));
+			$('form[name="vlan_edit_form"]').submit();
+		}
+	});
+
 });
 //]]>
 </script>

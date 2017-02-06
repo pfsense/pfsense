@@ -122,21 +122,18 @@ if ($_POST) {
 		if (isset($id) && $a_vlans[$id]) {
 			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
 				$platform = system_identify_specific_platform();
-				if ($platform['name'] == "uFW") {
-					switch ($a_vlans[$id]['if']) {
-					case "cpsw0":
-						$swport = "1t";
-						break;
-					case "cpsw1":
-						$swport = "2t";
-						break;
-					default:
-						$swport = -1;
-					}
+				switch ($platform['name']) {
+				case "uFW":
+					$swidx = 0;
+					break;
+				default:
+					$swidx = -1;
 				}
-				if (isset($swport) && $swport != -1) {
-					$tag = $a_vlans[$id]['tag'];
-					mwexec("/sbin/etherswitchcfg vlangroup$tag vlan 0");
+				if ($swidx != -1) {
+					$vgroup = switch_findvgroup($swidx, $a_vlans[$id]['tag']);
+					if ($vgroup >= 0) {
+						switch_setvgroup($swidx, $vgroup, 0);
+					}
 				}
 				if (!empty($a_vlans[$id]['vlanif'])) {
 					$confif = convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']);

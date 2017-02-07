@@ -1803,8 +1803,8 @@ $btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
 // $group->add($btnmymac);
-$group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .
-				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.');
+$group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.%s' .
+				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -1829,8 +1829,8 @@ if (count($mediaopts_list) > 0) {
 		'Speed and Duplex',
 		rtrim($config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt']),
 		build_mediaopts_list()
-	))->setHelp('Explicitly set speed and duplex mode for this interface.' . '<br />' .
-				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');
+	))->setHelp('Explicitly set speed and duplex mode for this interface.%s' .
+				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
 }
 
 $form->add($section);
@@ -1861,9 +1861,9 @@ $group->add(new Form_Button(
 	'fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
-$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
+$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
 				'On local area network interfaces the upstream gateway should be "none". ' .
-				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>.');
+				'Gateways can be managed by %2$sclicking here%3$s.', '<br />', '<a target="_blank" href="system_gateways.php">', '</a>');
 
 $section->add($group);
 
@@ -1895,8 +1895,8 @@ $group->add(new Form_Button(
 	'fa-plus'
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
 
-$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none". ');
+$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%s' .
+				'On local LANs the upstream gateway should be "none". ', '<br />');
 
 $section->add($group);
 $form->add($section);
@@ -2084,8 +2084,8 @@ $group->add(new Form_Checkbox(
 	'SavedCfg'
 ))->displayAsRadio();
 
-$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.' . '<br />' .
-				'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">' . 'See here more information' . '</a>');
+$group->setHelp('The values in these fields are DHCP protocol timings used when requesting a lease.%1$s' .
+				'See %2$shere%3$s for more information', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING">', '</a>');
 
 $section->add($group);
 
@@ -2094,10 +2094,10 @@ $section->addInput(new Form_Input(
 	'Configuration File Override',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
-))->setWidth(9)->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]] %1$s' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s'.
+			'Where C is U(pper) or L(ower) Case, and D is ":-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $form->add($section);
 
@@ -2109,18 +2109,18 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp_send_options']
-))->setWidth(9)->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
-			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('The values in this field are DHCP options to be sent when requesting a DHCP lease.	 [option declaration [, ...]] %1$s' .
+			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_request_options',
 	'Request options',
 	'text',
 	$pconfig['adv_dhcp_request_options']
-))->setWidth(9)->sethelp('The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]]' . '<br />' .
-			'Some ISPs may require certain options be or not be requested.');
+))->setWidth(9)->sethelp('The values in this field are DHCP option 55 to be sent when requesting a DHCP lease.  [option [, ...]] %1$s' .
+			'Some ISPs may require certain options be or not be requested.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_required_options',
@@ -2134,9 +2134,9 @@ $section->addInput(new Form_Input(
 	'Option modifiers',
 	'text',
 	$pconfig['adv_dhcp_option_modifiers']
-))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to the obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
-			'modifiers: (default, supersede, prepend, append)' . '<br />' .
-			'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS">' . 'See here more information' . '</a>');
+))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to the obtained DHCP lease.	 [modifier option declaration [, ...]] %1$s' .
+			'modifiers: (default, supersede, prepend, append) %1$s' .
+			'See %2$shere%3$s more information', '<br />', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS">', '</a>');
 
 $form->add($section);
 
@@ -2215,10 +2215,10 @@ $section->addInput(new Form_Input(
 	'Configuration File Override',
 	'text',
 	$pconfig['adv_dhcp6_config_file_override_path']
-))->setWidth(9)->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
-			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some ISPs may require certain options be or not be sent.');
+))->setWidth(9)->setHelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]] %1$s' .
+			'Value Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some ISPs may require certain options be or not be sent.', '<br />');
 
 $form->add($section);
 
@@ -2240,26 +2240,26 @@ $section->addInput(new Form_Input(
 	'Send options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_send_options']
-))->setWidth(9)->sethelp('DHCP send options to be sent when requesting a DHCP lease.	 [option declaration [, ...]]' . '<br />' .
-			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD}' . '<br />' .
-			'Where C is U(pper) or L(ower) Case, and D is \" :-.\" Delimiter (space, colon, hyphen, or period) (omitted for none).' . '<br />' .
-			'Some DHCP services may require certain options be or not be sent.');
+))->setWidth(9)->sethelp('DHCP send options to be sent when requesting a DHCP lease.	 [option declaration [, ...]] %1$s' .
+			'Value Substitutions: {interface}, {hostname}, {mac_addr_asciiCD}, {mac_addr_hexCD} %1$s' .
+			'Where C is U(pper) or L(ower) Case, and D is " :-." Delimiter (space, colon, hyphen, or period) (omitted for none).%1$s' .
+			'Some DHCP services may require certain options be or not be sent.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_request_options',
 	'Request Options',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_request_options']
-))->setWidth(9)->sethelp('DHCP request options to be sent when requesting a DHCP lease.	[option [, ...]]' . '<br />' .
-			'Some DHCP services may require certain options be or not be requested.');
+))->setWidth(9)->sethelp('DHCP request options to be sent when requesting a DHCP lease.	[option [, ...]] %1$s' .
+			'Some DHCP services may require certain options be or not be requested.', '<br />');
 
 $section->addInput(new Form_Input(
 	'adv_dhcp6_interface_statement_script',
 	'Scripts',
 	'text',
 	$pconfig['adv_dhcp6_interface_statement_script']
-))->setWidth(9)->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.' . '<br />' .
-			'[/[dirname/[.../]]filename[.ext]].');
+))->setWidth(9)->sethelp('Absolute path to a script invoked on certain conditions including when a reply message is received.%1$s' .
+			'[/[dirname/[.../]]filename[.ext]].', '<br />');
 
 $group = new Form_Group('Identity Association Statement');
 
@@ -2433,7 +2433,7 @@ $group->add(new Form_Input(
 	$pconfig['adv_dhcp6_key_info_statement_expire']
 ))->sethelp('Expire');
 
-$group->setHelp('<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement">' . 'See here more information' . '</a>');
+$group->setHelp('See %1$shere%2$s more information', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement">', '</a>');
 
 $section->add($group);
 
@@ -2522,7 +2522,7 @@ $section->addInput(new Form_Input(
 	'IPv6 Prefix ID',
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
-))->setHelp('<span id="track6-prefix-id-range"></span>The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
+))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
 $section->addInput(new Form_Input(
 	'track6-prefix-id-max',
@@ -2808,7 +2808,7 @@ $section->addInput(new Form_Button(
 	'Advanced and MLPPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('%sClick for additional PPTP and L2TP configuration options. Save first if changes have been made.', $mlppp_text);
 
 $form->add($section);
 
@@ -2887,8 +2887,8 @@ if (isset($wancfg['wireless'])) {
 		'Channel',
 		$pconfig['channel'],
 		$mode_list
-	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
-				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.');
+	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain) %1$s' .
+				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.', '<br />');
 
 	if (ANTENNAS) {
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
@@ -2977,10 +2977,10 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['reglocation'],
 		['' => gettext('Default'), 'indoor' => gettext('Indoor'), 'outdoor' => gettext('Outdoor'), 'anywhere' => gettext('Anywhere')]
 	))->setHelp('These settings may affect which channels are available and the maximum transmit power allowed on those channels. ' .
-				'Using the correct settings to comply with local regulatory requirements is recommended.' . '<br />' .
+				'Using the correct settings to comply with local regulatory requirements is recommended.%1$s' .
 				'All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  ' .
 				'Some of the regulatory domains or country codes may not be allowed by some cards.	' .
-				'These settings may not be able to add additional channels that are not already supported.');
+				'These settings may not be able to add additional channels that are not already supported.', '<br />');
 
 	$form->add($section);
 
@@ -3196,8 +3196,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['blockbogons'],
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
-			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.' . '<br />' .
-			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.');
+			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.%1$s' .
+			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.', '<br />');
 
 $form->add($section);
 
@@ -3394,7 +3394,7 @@ events.push(function() {
 		}
 
 		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
-		$('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
+		$('#track6-prefix-id-range').html(track6_prefix_ids);
 	}
 
 	// Create the new gateway from the data entered in the modal pop-up

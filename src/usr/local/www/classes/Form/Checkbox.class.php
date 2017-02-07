@@ -56,9 +56,9 @@ class Form_Checkbox extends Form_Input
 	{
 		$input = parent::_getInput();
 
-		if (empty($this->_description))
-			return '<label class="chkboxlbl">'. $input .'</label>';
+		if (!empty($this->_description) || is_numeric($this->_description))
+			return '<label class="chkboxlbl">'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';
 
-		return '<label class="chkboxlbl">'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';
+		return '<label class="chkboxlbl">'. $input .'</label>';
 	}
 }

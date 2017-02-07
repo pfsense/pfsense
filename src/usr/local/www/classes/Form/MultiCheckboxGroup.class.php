@@ -39,7 +39,10 @@ class Form_MultiCheckboxGroup extends Form_Group
 		$label = new Form_Element('label');
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
-		$title = htmlspecialchars(gettext($this->_title));
+		if (!empty(trim($this->_title)) || is_numeric($this->_title))
+			$title = htmlspecialchars(gettext($this->_title));
+		else
+			$title = '';
 
 		return <<<EOT
 	{$element}

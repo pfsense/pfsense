@@ -373,7 +373,7 @@ if ($savemsg) {
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . $_REQUEST['pkg_filter'] . '" />';
+					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . htmlspecialchars($_REQUEST['pkg_filter']) . '" />';
 					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
 					echo '<i class="fa fa-filter icon-embed-btn"></i>';
 					echo gettext("Filter");

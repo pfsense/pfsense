@@ -169,15 +169,20 @@ if ($_POST['apply']) {
 	exit;
 }
 
+$restore_config_text = gettext('Restore configuration');
+$reinstall_packages_text = gettext('Reinstall Packages');
+$clear_package_lock_text = gettext('Clear Package Lock');
+$download_config_text = gettext('Download configuration as XML');
+
 if ($_POST) {
 	unset($input_errors);
-	if (stristr($_POST['Submit'], gettext("Restore configuration"))) {
+	if ($_POST['Submit'] == $restore_config_text) {
 		$mode = "restore";
-	} else if (stristr($_POST['Submit'], gettext("Reinstall"))) {
+	} else if ($_POST['Submit'] == $reinstall_packages_text) {
 		$mode = "reinstallpackages";
-	} else if (stristr($_POST['Submit'], gettext("Clear Package Lock"))) {
+	} else if ($_POST['Submit'] == $clear_package_lock_text) {
 		$mode = "clearpackagelock";
-	} else if (stristr($_POST['Submit'], gettext("Download"))) {
+	} else if ($_POST['Submit'] == $download_config_text) {
 		$mode = "download";
 	}
 	if ($_POST["nopackages"] <> "") {
@@ -574,7 +579,7 @@ $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
-	'Download configuration as XML',
+	$download_config_text,
 	null,
 	'fa-download'
 ))->setAttribute('id')->addClass('btn-primary');
@@ -622,7 +627,7 @@ $group = new Form_Group('');
 // Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
-	'Restore Configuration',
+	$restore_config_text,
 	null,
 	'fa-undo'
 ))->setHelp('The firewall will reboot after restoring the configuration.')->addClass('btn-danger restore')->setAttribute('id');
@@ -639,7 +644,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
-			'Reinstall Packages',
+			$reinstall_packages_text,
 			null,
 			'fa-retweet'
 		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->addClass('btn-success')->setAttribute('id');
@@ -652,7 +657,7 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
-			'Clear Package Lock',
+			$clear_package_lock_text,
 			null,
 			'fa-wrench'
 		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->addClass('btn-warning')->setAttribute('id');

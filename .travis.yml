@@ -29,5 +29,3 @@ before_script:
 
 script:
   - sh -c "if [ ! -z "$SAUCE_USERNAME" ] && [ ! -z "$SAUCE_ACCESS_KEY" ]; then phpunit -c tests/phpunit-selenium-autotest.xml; fi"
-
-  fast_finish: true

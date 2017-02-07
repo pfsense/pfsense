@@ -796,6 +796,8 @@
 /usr/local/www/dtree.js
 /usr/local/www/easyrule.inc
 /usr/local/www/exec_raw.php
+/usr/local/www/fbegin.inc
+/usr/local/www/fend.inc
 /usr/local/www/filebrowser/browser.js
 /usr/local/www/filebrowser/browser.php
 /usr/local/www/filebrowser/images

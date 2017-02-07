@@ -318,7 +318,7 @@ if (!$confirmed && !$completed &&
 <?php
 			elseif ($_GET['from'] && $_GET['to']):
 ?>
-				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_GET['from']), htmlspecialchars($_GET['to']))?>
 <?php
 			elseif ($firmwareupdate):
 ?>

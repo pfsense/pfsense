@@ -294,26 +294,20 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 			}
 		}
 
-		// Loop through fields associated with an individual link/port and make an array of the data
-		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
+		// Loop through each individual link/port and check max mtu
 		foreach ($_POST['interfaces'] as $iface) {
-			foreach ($port_fields as $field_label) {
-				if (isset($_POST[$field_label . $iface]) &&
-				    strlen($_POST[$field_label . $iface]) > 0) {
-					$port_data[$field_label][] = $_POST[$field_label . $iface];
-					$pconfig[$field_label][$iface] = $_POST[$field_label . $iface];
-					$parent_array = get_parent_interface($iface);
-					$parent = $parent_array[0];
-					$friendly = convert_real_interface_to_friendly_interface_name($parent);
-					if ($field_label == "mtu" && isset($config['interfaces'][$friendly]['mtu']) &&
-					    $_POST[$field_label . $iface] > ($config['interfaces'][$friendly]['mtu'] - 8)) {
-						$input_errors[] = sprintf(gettext("The MTU (%d) is too big for %s (maximum allowed with current settings: %d)."),
-						    $_POST[$field_label . $iface], $iface, $config['interfaces'][$friendly]['mtu'] - 8);
-					}
+			if (isset($_POST['mtu'][$iface]) &&
+			    strlen($_POST['mtu'][$iface]) > 0) {
+				$parent_array = get_parent_interface($iface);
+				$parent = $parent_array[0];
+				$friendly = convert_real_interface_to_friendly_interface_name($parent);
+				if (isset($config['interfaces'][$friendly]['mtu']) &&
+					$_POST['mtu'][$iface] > ($config['interfaces'][$friendly]['mtu'] - 8)) {
+					$input_errors[] = sprintf(gettext('The MTU (%1$d) is too big for %2$s (maximum allowed with current settings: %3$d).'),
+						$_POST['mtu'][$iface], $iface, $config['interfaces'][$friendly]['mtu'] - 8);
 				}
 			}
 		}
-
 	}
 
 	if (!$input_errors) {
@@ -535,9 +529,8 @@ function build_link_list() {
 					$string .= " ({$ifinfo['mac']})";
 				}
 				if ($ifinfo['friendly']) {
-					$string .= " - {$ifinfo['friendly']}";
-				}
-				if ($ifinfo['descr']) {
+					$string .= " - " . convert_friendly_interface_to_friendly_descr($ifinfo['friendly']);
+				} elseif ($ifinfo['descr']) {
 					$string .= " - {$ifinfo['descr']}";
 				}
 			} else {
@@ -859,7 +852,7 @@ $section->addInput(new Form_Input(
 	'Idle Timeout',
 	'text',
 	$pconfig['idletimeout']
-))->setHelp('If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.' . " " .
+))->setHelp('If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down. ' .
 			'When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. ' .
 			'Otherwise, the interface is brought down and all associated routes removed.');
 
@@ -868,10 +861,10 @@ $section->addInput(new Form_Checkbox(
 	'Compression',
 	'Disable vjcomp (compression, auto-negotiated by default).',
 	$pconfig['vjcomp']
-))->setHelp('Disable vjcomp(compression) (auto-negotiated by default).' . '<br />' .
-				'This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet.' . " " .
+))->setHelp('Disable vjcomp(compression) (auto-negotiated by default).%1$s' .
+				'This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. ' .
 				'This option is almost always required. Compression is not effective for TCP connections with enabled modern extensions like time ' .
-				'stamping or SACK, which modify TCP options between sequential packets.');
+				'stamping or SACK, which modify TCP options between sequential packets.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'tcpmssfix',
@@ -986,7 +979,19 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (($pconfig['apn'] == "") &&
+			$have_link_param = false;
+
+			foreach ($linklist['list'] as $ifnm => $nm) {
+				if (($pconfig['bandwidth'][$ifnm] != "") ||
+				    ($pconfig['mtu'][$ifnm] != "") ||
+				    ($pconfig['mru'][$ifnm] != "") ||
+				    ($pconfig['mrru'][$ifnm] != "")) {
+					$have_link_param = true;
+				}
+			}
+
+			if ((!$have_link_param) &&
+			    ($pconfig['apn'] == "") &&
 			    ($pconfig['apnum'] == "") &&
 			    ($pconfig['simpin'] == "") &&
 			    ($pconfig['pin-wait'] == "") &&

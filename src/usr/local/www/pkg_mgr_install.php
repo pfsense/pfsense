@@ -294,7 +294,7 @@ if (!$confirmed && !$completed &&
 <?php
 			elseif ($_GET['from'] && $_GET['to']):
 ?>
-				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_GET['from']), htmlspecialchars($_GET['to']))?>
 <?php
 			elseif ($firmwareupdate):
 ?>
@@ -375,6 +375,8 @@ if ($_POST) {
 	}
 }
 
+$pkgname_bold = '<b>' . $pkgname . '</b>';
+
 if ($firmwareupdate) {
 	$panel_heading_txt = gettext("Updating System");
 	$pkg_success_txt = gettext('System update successfully completed.');
@@ -382,9 +384,9 @@ if ($firmwareupdate) {
 	$pkg_wait_txt = gettext('Please wait while the system update completes.');
 } else if ($pkgmode == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s removal successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s removal failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of %1$s completes.'), $pkgname_bold);
 } else if ($pkgmode == 'reinstallall') {
 	$panel_heading_txt = gettext("Packages Reinstallation");
 	$pkg_success_txt = gettext('All packages reinstallation successfully completed.');
@@ -392,14 +394,14 @@ if ($firmwareupdate) {
 	$pkg_wait_txt = gettext('Please wait while the reinstallation of all packages completes.');
 } else if ($pkgmode == 'reinstallpkg') {
 	$panel_heading_txt = gettext("Package Reinstallation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s reinstallation successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s reinstallation failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of %1$s completes.'), $pkgname_bold);
 } else {
 	$panel_heading_txt = gettext("Package Installation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgname);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgname);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgname);
+	$pkg_success_txt = sprintf(gettext('%1$s installation successfully completed.'), $pkgname_bold);
+	$pkg_fail_txt = sprintf(gettext('%1$s installation failed!'), $pkgname_bold);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of %1$s completes.'), $pkgname_bold);
 }
 
 if ($confirmed):
@@ -412,6 +414,7 @@ if ($confirmed):
 ?>
 	<input type="hidden" name="id" value="<?=$_REQUEST['id']?>" />
 	<input type="hidden" name="mode" value="<?=$pkgmode?>" />
+	<input type="hidden" name="pkg" value="<?=$pkgname?>" />
 	<input type="hidden" name="completed" value="true" />
 	<input type="hidden" name="confirmed" value="true" />
 	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />

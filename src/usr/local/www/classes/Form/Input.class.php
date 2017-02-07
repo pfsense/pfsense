@@ -60,8 +60,8 @@ class Form_Input extends Form_Element
 		if (isset($value))
 			$this->_attributes['value'] = $value;
 
-		foreach ($attributes as $name => $value)
-			$this->_attributes[$name] = $value;
+		foreach ($attributes as $attr_name => $attr_value)
+			$this->_attributes[$attr_name] = $attr_value;
 	}
 
 	public function getTitle()
@@ -113,8 +113,9 @@ class Form_Input extends Form_Element
 	public function setHelp()
 	{
 		$args = func_get_args();
+		$arg0_len = strlen($args[0]);
 
-		if (strlen($args[0]) < 4096) {
+		if (($arg0_len > 0) && ($arg0_len < 4096)) {
 			$args[0] = gettext($args[0]);
 		}
 

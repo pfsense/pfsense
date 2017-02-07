@@ -219,7 +219,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 
 // NOTE:
-// $your_menu[] = array(gettext("-DIVIDER-"), ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
+// $your_menu[] = array("-DIVIDER-", ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -261,7 +261,7 @@ if ($platform['name'] == "uFW") {
 }
 
 if ($div) {
-	$interfaces_menu[] = array(gettext("-DIVIDER-"), "");
+	$interfaces_menu[] = array("-DIVIDER-", "");
 }
 
 $opts = get_configured_interface_with_descr(false, true);
@@ -638,11 +638,11 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync') && platform_booting())) {
 	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
-		$warning_text = sprintf(gettext("<p>%s is booting, then packages will be reinstalled in the background.</p><p>Do not make changes in the GUI until this is complete.</p>"), $g['product_name']);
+		$warning_text = sprintf(gettext('%1$s%3$s is booting, then packages will be reinstalled in the background.%2$s%1$sDo not make changes in the GUI until this is complete.%2$s'), '<p>', '</p>', $g['product_name']);
 	} else {
 		$pgtitle = array(gettext("System"), gettext("Package Manager"));
-		$warning_text = gettext("<p>Packages are currently being reinstalled in the background.</p><p>Do not make changes in the GUI until this is complete.</p>");
-		$warning_text .= sprintf(gettext('<p>If the above message is still displayed after a couple of hours, use the \'Clear Package Lock\' button on the <a href="diag_backup.php" title="%1$s &gt; %2$s">%1$s &gt; %2$s</a> page and reinstall packages manually.</p>'), gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore')));
+		$warning_text = sprintf(gettext('%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo not make changes in the GUI until this is complete.%2$s'), '<p>', '</p>');
+		$warning_text .= sprintf(gettext('%1$sIf the above message is still displayed after a couple of hours, use the \'Clear Package Lock\' button on the %3$s page and reinstall packages manually.%2$s'), '<p>', '</p>', sprintf('<a href="diag_backup.php" title="%1$s &gt; %2$s">%1$s &gt; %2$s</a>', gettext('Diagnostics'), htmlspecialchars(gettext('Backup & Restore'))));
 	}
 
 	print_info_box($warning_text);

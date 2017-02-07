@@ -289,9 +289,9 @@ endif
 <div>
 	<div class="infoblock">
 		<?php print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
-			'of changes that have to be made if a host, network or port changes. <br />' .
-			'The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			'If an alias cannot be resolved (e.g. because it was deleted), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
+			'of changes that have to be made if a host, network or port changes.') . '<br />' .
+			gettext('The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.') . '<br />' .
+			gettext('If an alias cannot be resolved (e.g. because it was deleted), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
 	</div>
 </div>
 

@@ -218,7 +218,7 @@ if ($_POST) {
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("A valid URL must be provided.");
 			} elseif (!process_alias_urltable($alias['name'], $alias['type'], $alias['url'], 0, true, true)) {
-				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
+				$input_errors[] = sprintf(gettext("Unable to fetch usable data from URL %s"), htmlspecialchars($alias['url']));
 			}
 			if ($_POST["detail0"] <> "") {
 				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {

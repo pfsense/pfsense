@@ -203,19 +203,38 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
 
-$section->addInput(new Form_Input(
+$group = new Form_Group('DHCP6 DUID');
+
+$group->add(new Form_Input(
 	'global-v6duid',
 	'DHCP6 DUID',
 	'text',
 	$pconfig['global-v6duid'],
 	['placeholder' => $duid]
-	))->setWidth(9)->sethelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. ' .
+	));
+
+$btncopyduid = new Form_Button(
+	'btncopyduid',
+	'Copy DUID',
+	null,
+	'fa-clone'
+	);
+
+$btncopyduid->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$group->add($btncopyduid);
+
+$group->setHelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. ' .
 		'<br />' .
 		'By default, the firewall automatically creates a dynamic DUID which is not saved in the firewall configuration. '.
 		'To ensure the same DUID is retained by the firewall at all times, enter a DUID in this field. ' .
 		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.' .
 		'<br />' .
-		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot. ');
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot.' .
+		'<br />' .
+		'<br />' .
+		'You may use the Copy DUID button to copy the system detected DUID shown in the placeholder. ');
+
+$section->add($group);
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
@@ -271,5 +290,17 @@ if (get_freebsd_version() == 8) {
 
 $form->add($section);
 print $form;
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	// On click, copy the placeholder DUID to the input field
+	$('#btncopyduid').click(function() {
+		$('#global-v6duid').val('<?=$duid?>');
+	});
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

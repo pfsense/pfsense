@@ -385,7 +385,7 @@ function get_std_save_message($retval) {
 		$to_return = gettext("The changes have been applied successfully.");
 	} else {
 		// non-zero means there was some problem
-		$to_return = gettext("There was a problem applying the changes. See the <a href=\"status_logs.php\">System Logs</a>.");
+		$to_return = sprintf(gettext('There was a problem applying the changes. See the %1$sSystem Logs%2$s.'), '<a href=\"status_logs.php\">', '</a>');
 	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {

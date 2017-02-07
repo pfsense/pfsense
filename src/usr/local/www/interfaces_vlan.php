@@ -155,9 +155,9 @@ display_top_tabs($tab_array);
 
 <div class="infoblock">
 	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q '.
-		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
-		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'), $g['product_name']), 'info', false); ?>
+		'VLAN tagging properly. %1$sOn cards that do not explicitly support it, VLAN '.
+		'tagging will still work, but the reduced MTU may cause problems.%1$sSee the '.
+		'%2$s handbook for information on supported cards.'), '<br />', $g['product_name']), 'info', false); ?>
 </div>
 
 <?php

@@ -27,6 +27,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+$pgtitle = array(gettext($g['product_name']), gettext("License"));
 include("head.inc");
 ?>
 <div class="panel panel-default">
@@ -34,9 +35,9 @@ include("head.inc");
 	<div class="panel-body content">
 		<p><strong><?php printf(gettext('%1$s is Copyright &copy; %2$s %3$s. All rights reserved.'), $g['product_name'], $g['product_copyright_years'], $g['product_copyright'])?></strong></p>
 		<p><?=gettext("m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All rights reserved.")?></p>
-		<p><?=gettext("Licensed under the Apache License, Version 2.0 (the \"License\");<br />you may not use this file except in compliance with the License.<br />You may obtain a copy of the License at")?></p>
+		<p><?=sprintf(gettext('Licensed under the Apache License, Version 2.0 (the "License");%1$syou may not use this file except in compliance with the License.%1$sYou may obtain a copy of the License at'), '<br />')?></p>
 		<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-		<p><?=gettext("Unless required by applicable law or agreed to in writing, software<br />distributed under the License is distributed on an \"AS IS\" BASIS,<br />WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br />See the License for the specific language governing permissions and<br />limitations under the License.")?></p>
+		<p><?=sprintf(gettext('Unless required by applicable law or agreed to in writing, software%1$sdistributed under the License is distributed on an \"AS IS\" BASIS,%1$sWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.%1$sSee the License for the specific language governing permissions and%1$slimitations under the License.'), '<br />')?></p>
 	</div>
 </div>
 <div class="panel panel-default">
@@ -51,7 +52,7 @@ include("head.inc");
 				<?=gettext("Copyright")?> &copy;<?=gettext("1992-2016 The FreeBSD Project. All rights reserved.")?>
 			</li>
 			<li class="list-group-item">
-				<?=gettext("This product includes") . " <strong>PHP</strong>, " . gettext("freely available from")?> (<a href="http://www.php.net/" target="_blank">http://www.php.net</a>).<br />
+				<?=sprintf(gettext('This product includes %1$s, freely available from (%2$s)'), '<strong>PHP</strong>', '<a href="http://www.php.net/" target="_blank">http://www.php.net</a>')?> . <br />
 				<?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2016 The PHP Group. All rights reserved.")?>
 			</li>
 			<li class="list-group-item">

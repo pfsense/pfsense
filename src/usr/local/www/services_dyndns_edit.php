@@ -376,7 +376,7 @@ $section->addInput(new Form_Input(
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Enter Zone ID that was received when creating the domain in Route 53.' . '<br />' .
+))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").' . '<br />' .
 			'DNSimple: Enter the Record ID of record to update.');
 
 $section->addInput(new Form_Input(

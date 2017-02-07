@@ -108,7 +108,7 @@ print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
 		<text id="graph_out_txt" x="20" y="16" <?=$attribs['out']?>> </text>
 		<text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=htmlspecialchars($ifname)?></text>
 		<text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
-		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
+		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=gettext($scale_type);?>)</text>
 		<text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
 		<text id="time" x="<?=$width*0.33?>" y="11" <?=$attribs['legend']?>> </text>
 		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=sprintf(gettext("Graph shows last %s seconds"), $time_interval*$nb_plot)?></text>
@@ -178,6 +178,7 @@ var max_num_points = <?=$nb_plot?>;  // maximum number of plot data points
 var step = <?=$width?> / max_num_points ;
 var unit = 'bits';
 var scale_type = '<?=$scale_type?>';
+var scale_type_text = '<?=gettext($scale_type); ?>';
 
 function init(evt) {
 	SVGDoc = evt.target.ownerDocument;
@@ -188,13 +189,14 @@ function init(evt) {
 }
 
 function switch_unit(event) {
-	SVGDoc.getElementById('switch_unit').firstChild.data = '<?=gettext("Switch to"); ?> ' + unit + '/s';
+	SVGDoc.getElementById('switch_unit').firstChild.data = (unit == 'bits') ? '<?=gettext("Switch to bits/s"); ?>' : '<?=gettext("Switch to bytes/s"); ?>';
 	unit = (unit == 'bits') ? 'bytes' : 'bits';
 }
 
 function switch_scale(event) {
-	scale_type = (scale_type == 'up') ? '<?=gettext("follow"); ?>' : '<?=gettext("up"); ?>';
-	SVGDoc.getElementById('switch_scale').firstChild.data = 'AutoScale (' + scale_type + ')';
+	scale_type = (scale_type == 'up') ? 'follow' : 'up';
+	scale_type_text = (scale_type == 'up') ? '<?=gettext("up"); ?>' : '<?=gettext("follow"); ?>';
+	SVGDoc.getElementById('switch_scale').firstChild.data = '<?=gettext("AutoScale"); ?>' + ' (' + scale_type_text + ')';
 }
 
 function fetch_data() {

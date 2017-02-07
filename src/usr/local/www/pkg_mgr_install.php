@@ -412,6 +412,7 @@ if ($confirmed):
 ?>
 	<input type="hidden" name="id" value="<?=$_REQUEST['id']?>" />
 	<input type="hidden" name="mode" value="<?=$pkgmode?>" />
+	<input type="hidden" name="pkg" value="<?=$pkgname?>" />
 	<input type="hidden" name="completed" value="true" />
 	<input type="hidden" name="confirmed" value="true" />
 	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />

@@ -234,8 +234,8 @@ $section->addInput(new Form_Select(
 	true
 ))->setWidth(6)->setHelp('NOTE: Rules for WAN type '.
 	'interfaces in groups do not contain the reply-to mechanism upon which '.
-	'Multi-WAN typically relies. '.
-	'<a href="https://doc.pfsense.org/index.php/ifgroups">More Information</a>');
+	'Multi-WAN typically relies. %1$sMore Information%2$s',
+	'<a href="https://doc.pfsense.org/index.php/ifgroups">', '</a>');
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$form->addGlobal(new Form_Input(

@@ -191,7 +191,7 @@ if ($_POST) {
 	if (is_array($_POST['static'])) {
 		foreach ($_POST['static'] as $ifstatic) {
 			if (is_array($_POST['members']) && !in_array($ifstatic, $_POST['members'])) {
-				$input_errors[] = gettext("Sticky interface ($ifstatic) is not part of the bridge. Remove the sticky interface to continue.");
+				$input_errors[] = sprintf(gettext('Sticky interface (%s) is not part of the bridge. Remove the sticky interface to continuez.'), $ifacelist[$ifstatic]);
 			}
 		}
 		$pconfig['static'] = implode(',', $_POST['static']);
@@ -199,7 +199,7 @@ if ($_POST) {
 	if (is_array($_POST['private'])) {
 		foreach ($_POST['private'] as $ifprivate) {
 			if (is_array($_POST['members']) && !in_array($ifprivate, $_POST['members'])) {
-				$input_errors[] = gettext("Private interface ($ifprivate) is not part of the bridge. Remove the private interface to continue.");
+				$input_errors[] = sprintf(gettext('Private interface (%s) is not part of the bridge. Remove the private interface to continue.'), $ifacelist[$ifprivate]);
 			}
 		}
 		$pconfig['private'] = implode(',', $_POST['private']);
@@ -207,7 +207,7 @@ if ($_POST) {
 	if (is_array($_POST['stp'])) {
 		foreach ($_POST['stp'] as $ifstp) {
 			if (is_array($_POST['members']) && !in_array($ifstp, $_POST['members'])) {
-				$input_errors[] = gettext("STP interface ($ifstp) is not part of the bridge. Remove the STP interface to continue.");
+				$input_errors[] = sprintf(gettext('STP interface (%s) is not part of the bridge. Remove the STP interface to continue.'), $ifacelist[$ifstp]);
 			}
 		}
 		$pconfig['stp'] = implode(',', $_POST['stp']);
@@ -218,7 +218,7 @@ if ($_POST) {
 	if (is_array($_POST['edge'])) {
 		foreach ($_POST['edge'] as $ifedge) {
 			if (is_array($_POST['members']) && !in_array($ifedge, $_POST['members'])) {
-				$input_errors[] = gettext("Edge interface ($ifedge) is not part of the bridge. Remove the edge interface to continue.");
+				$input_errors[] = sprintf(gettext('Edge interface (%s) is not part of the bridge. Remove the edge interface to continue.'), $ifacelist[$ifedge]);
 			}
 		}
 		$pconfig['edge'] = implode(',', $_POST['edge']);
@@ -226,7 +226,7 @@ if ($_POST) {
 	if (is_array($_POST['autoedge'])) {
 		foreach ($_POST['autoedge'] as $ifautoedge) {
 			if (is_array($_POST['members']) && !in_array($ifautoedge, $_POST['members'])) {
-				$input_errors[] = gettext("Auto Edge interface ($ifautoedge) is not part of the bridge. Remove the auto edge interface to continue.");
+				$input_errors[] = sprintf(gettext('Auto Edge interface (%s) is not part of the bridge. Remove the auto edge interface to continue.'), $ifacelist[$ifautoedge]);
 			}
 		}
 		$pconfig['autoedge'] = implode(',', $_POST['autoedge']);
@@ -234,7 +234,7 @@ if ($_POST) {
 	if (is_array($_POST['ptp'])) {
 		foreach ($_POST['ptp'] as $ifptp) {
 			if (is_array($_POST['members']) && !in_array($ifptp, $_POST['members'])) {
-				$input_errors[] = gettext("PTP interface ($ifptp) is not part of the bridge. Remove the PTP interface to continue.");
+				$input_errors[] = sprintf(gettext('PTP interface (%s) is not part of the bridge. Remove the PTP interface to continue.'), $ifacelist[$ifptp]);
 			}
 		}
 		$pconfig['ptp'] = implode(',', $_POST['ptp']);
@@ -242,7 +242,7 @@ if ($_POST) {
 	if (is_array($_POST['autoptp'])) {
 		foreach ($_POST['autoptp'] as $ifautoptp) {
 			if (is_array($_POST['members']) && !in_array($ifautoptp, $_POST['members'])) {
-				$input_errors[] = gettext("Auto PTP interface ($ifautoptp) is not part of the bridge. Remove the auto PTP interface to continue.");
+				$input_errors[] = sprintf(gettext('Auto PTP interface (%s) is not part of the bridge. Remove the auto PTP interface to continue.'), $ifacelist[$ifautoptp]);
 			}
 		}
 		$pconfig['autoptp'] = implode(',', $_POST['autoptp']);
@@ -260,7 +260,7 @@ if ($_POST) {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
 			}
 			if (is_array($_POST['span']) && in_array($ifmembers, $_POST['span'])) {
-				$input_errors[] = gettext("Span interface ($ifmembers) cannot be part of the bridge. Remove the span interface from bridge members to continue.");
+				$input_errors[] = sprintf(gettext('Span interface (%s) cannot be part of the bridge. Remove the span interface from bridge members to continue.'), $ifacelist[$ifmembers]);
 			}
 			foreach ($a_bridges as $a_bridge) {
 				if ($_POST['bridgeif'] === $a_bridge['bridgeif']) {
@@ -269,7 +269,7 @@ if ($_POST) {
 				$a_members = explode(',', $a_bridge['members']);
 				foreach ($a_members as $a_member) {
 					if ($ifmembers === $a_member) {
-						$input_errors[] = sprintf(gettext("%s is part of another bridge. Remove the interface from bridge members to continue."), $ifmembers);
+						$input_errors[] = sprintf(gettext("%s is part of another bridge. Remove the interface from bridge members to continue."), $ifacelist[$ifmembers]);
 					}
 				}
 			}
@@ -455,8 +455,8 @@ $section->addInput(new Form_Select(
 	$spanlist['list'],
 	true
 ))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
-			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
-			'%1$sThe span interface cannot be part of the bridge member interfaces.%2$s', ['<strong>', '</strong>']);
+			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridgez. %1$s' .
+			'%2$sThe span interface cannot be part of the bridge member interfaces.%3$s', '<br />', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['edge']);
 
@@ -477,7 +477,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Allow interface to automatically detect edge status. This is the default for all interfaces added to a bridge.' .
-			'%1$sThis will disable the autoedge status of interfaces. %2$s', ['<strong>', '</strong>']);
+			'%1$sThis will disable the autoedge status of interfaces. %2$s', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['ptp']);
 
@@ -498,7 +498,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Automatically detect the point-to-point status on interface by checking the full duplex link status. This is the default for interfaces added to the bridge.' .
-			'%1$sThe interfaces selected here will be removed from default autoedge status. %2$s', ['<strong>', '</strong>']);
+			'%1$sThe interfaces selected here will be removed from default autoedge status. %2$s', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['static']);
 

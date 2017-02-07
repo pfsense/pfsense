@@ -861,10 +861,10 @@ $section->addInput(new Form_Checkbox(
 	'Compression',
 	'Disable vjcomp (compression, auto-negotiated by default).',
 	$pconfig['vjcomp']
-))->setHelp('Disable vjcomp(compression) (auto-negotiated by default).' . '<br />' .
+))->setHelp('Disable vjcomp(compression) (auto-negotiated by default).%1$s' .
 				'This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. ' .
 				'This option is almost always required. Compression is not effective for TCP connections with enabled modern extensions like time ' .
-				'stamping or SACK, which modify TCP options between sequential packets.');
+				'stamping or SACK, which modify TCP options between sequential packets.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'tcpmssfix',

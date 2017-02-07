@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-06 09:41-0200\n"
+"POT-Creation-Date: 2017-02-07 14:01-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-06 06:42-0500\n"
+"PO-Revision-Date: 2017-02-07 03:09-0500\n"
 "Last-Translator: Bosse <bomca75@hotmail.com>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -456,7 +456,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%Skriver konfigurationen..."
+msgstr "%sSkriver konfigurationen..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
@@ -673,572 +673,572 @@ msgid ""
 "temporarily set to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:684
+#: src/etc/inc/dyndns.class:685
 #, php-format
 msgid "Sending request to: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:841
+#: src/etc/inc/dyndns.class:842
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
+#: src/etc/inc/dyndns.class:845 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
 msgstr "Lyckades"
 
-#: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
+#: src/etc/inc/dyndns.class:846 src/etc/inc/dyndns.class:1518
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
 msgstr "Fel"
 
-#: src/etc/inc/dyndns.class:849
+#: src/etc/inc/dyndns.class:850
 msgid "Curl error occurred:"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
-#: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
-#: src/etc/inc/dyndns.class:933 src/etc/inc/dyndns.class:950
-#: src/etc/inc/dyndns.class:1099 src/etc/inc/dyndns.class:1112
-#: src/etc/inc/dyndns.class:1125 src/etc/inc/dyndns.class:1142
-#: src/etc/inc/dyndns.class:1271 src/etc/inc/dyndns.class:1335
-#: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
-#: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
+#: src/etc/inc/dyndns.class:859 src/etc/inc/dyndns.class:880
+#: src/etc/inc/dyndns.class:899 src/etc/inc/dyndns.class:917
+#: src/etc/inc/dyndns.class:934 src/etc/inc/dyndns.class:951
+#: src/etc/inc/dyndns.class:1100 src/etc/inc/dyndns.class:1113
+#: src/etc/inc/dyndns.class:1126 src/etc/inc/dyndns.class:1143
+#: src/etc/inc/dyndns.class:1272 src/etc/inc/dyndns.class:1336
+#: src/etc/inc/dyndns.class:1394 src/etc/inc/dyndns.class:1415
+#: src/etc/inc/dyndns.class:1460 src/etc/inc/dyndns.class:1472
 msgid "IP Address Changed Successfully!"
 msgstr ""
-
-#: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
-#: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
-#: src/etc/inc/dyndns.class:938 src/etc/inc/dyndns.class:955
-#: src/etc/inc/dyndns.class:1022 src/etc/inc/dyndns.class:1040
-#: src/etc/inc/dyndns.class:1060 src/etc/inc/dyndns.class:1078
-#: src/etc/inc/dyndns.class:1088 src/etc/inc/dyndns.class:1102
-#: src/etc/inc/dyndns.class:1115 src/etc/inc/dyndns.class:1130
-#: src/etc/inc/dyndns.class:1149 src/etc/inc/dyndns.class:1173
-#: src/etc/inc/dyndns.class:1192 src/etc/inc/dyndns.class:1212
-#: src/etc/inc/dyndns.class:1232 src/etc/inc/dyndns.class:1259
-#: src/etc/inc/dyndns.class:1276 src/etc/inc/dyndns.class:1340
-#: src/etc/inc/dyndns.class:1358 src/etc/inc/dyndns.class:1381
-#: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
-#: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
-msgid "Unknown Response"
-msgstr "Okänt svar"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
 #: src/etc/inc/dyndns.class:939 src/etc/inc/dyndns.class:956
-#: src/etc/inc/dyndns.class:1041 src/etc/inc/dyndns.class:1061
-#: src/etc/inc/dyndns.class:1079 src/etc/inc/dyndns.class:1089
-#: src/etc/inc/dyndns.class:1103 src/etc/inc/dyndns.class:1116
-#: src/etc/inc/dyndns.class:1131 src/etc/inc/dyndns.class:1150
-#: src/etc/inc/dyndns.class:1174 src/etc/inc/dyndns.class:1193
-#: src/etc/inc/dyndns.class:1213 src/etc/inc/dyndns.class:1233
-#: src/etc/inc/dyndns.class:1260 src/etc/inc/dyndns.class:1277
-#: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:1341
+#: src/etc/inc/dyndns.class:1023 src/etc/inc/dyndns.class:1041
+#: src/etc/inc/dyndns.class:1061 src/etc/inc/dyndns.class:1079
+#: src/etc/inc/dyndns.class:1089 src/etc/inc/dyndns.class:1103
+#: src/etc/inc/dyndns.class:1116 src/etc/inc/dyndns.class:1131
+#: src/etc/inc/dyndns.class:1150 src/etc/inc/dyndns.class:1174
+#: src/etc/inc/dyndns.class:1193 src/etc/inc/dyndns.class:1213
+#: src/etc/inc/dyndns.class:1233 src/etc/inc/dyndns.class:1260
+#: src/etc/inc/dyndns.class:1277 src/etc/inc/dyndns.class:1341
 #: src/etc/inc/dyndns.class:1359 src/etc/inc/dyndns.class:1382
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
+msgid "Unknown Response"
+msgstr "Okänt svar"
+
+#: src/etc/inc/dyndns.class:863 src/etc/inc/dyndns.class:886
+#: src/etc/inc/dyndns.class:905 src/etc/inc/dyndns.class:923
+#: src/etc/inc/dyndns.class:940 src/etc/inc/dyndns.class:957
+#: src/etc/inc/dyndns.class:1042 src/etc/inc/dyndns.class:1062
+#: src/etc/inc/dyndns.class:1080 src/etc/inc/dyndns.class:1090
+#: src/etc/inc/dyndns.class:1104 src/etc/inc/dyndns.class:1117
+#: src/etc/inc/dyndns.class:1132 src/etc/inc/dyndns.class:1151
+#: src/etc/inc/dyndns.class:1175 src/etc/inc/dyndns.class:1194
+#: src/etc/inc/dyndns.class:1214 src/etc/inc/dyndns.class:1234
+#: src/etc/inc/dyndns.class:1261 src/etc/inc/dyndns.class:1278
+#: src/etc/inc/dyndns.class:1326 src/etc/inc/dyndns.class:1342
+#: src/etc/inc/dyndns.class:1360 src/etc/inc/dyndns.class:1383
+#: src/etc/inc/dyndns.class:1408 src/etc/inc/dyndns.class:1445
+#: src/etc/inc/dyndns.class:1466 src/etc/inc/dyndns.class:1481
 msgid "PAYLOAD:"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:869
+#: src/etc/inc/dyndns.class:870
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:871
+#: src/etc/inc/dyndns.class:872
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:873
+#: src/etc/inc/dyndns.class:874
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:875
+#: src/etc/inc/dyndns.class:876
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:877
+#: src/etc/inc/dyndns.class:878
 msgid "The hostname is blocked for update abuse."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:882
+#: src/etc/inc/dyndns.class:883
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:891 src/etc/inc/dyndns.class:911
-#: src/etc/inc/dyndns.class:928 src/etc/inc/dyndns.class:945
-#: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
-#: src/etc/inc/dyndns.class:1452
+#: src/etc/inc/dyndns.class:892 src/etc/inc/dyndns.class:912
+#: src/etc/inc/dyndns.class:929 src/etc/inc/dyndns.class:946
+#: src/etc/inc/dyndns.class:1267 src/etc/inc/dyndns.class:1331
+#: src/etc/inc/dyndns.class:1453
 msgid "Not A FQDN!"
 msgstr "Inte ett FQDN!"
 
-#: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
+#: src/etc/inc/dyndns.class:894 src/etc/inc/dyndns.class:1455
 msgid "No such host"
 msgstr "Ingen sådan värd"
 
-#: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
-#: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
-#: src/etc/inc/dyndns.class:1096 src/etc/inc/dyndns.class:1109
-#: src/etc/inc/dyndns.class:1122 src/etc/inc/dyndns.class:1332
-#: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
-#: src/etc/inc/dyndns.class:1456
+#: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:914
+#: src/etc/inc/dyndns.class:931 src/etc/inc/dyndns.class:948
+#: src/etc/inc/dyndns.class:1097 src/etc/inc/dyndns.class:1110
+#: src/etc/inc/dyndns.class:1123 src/etc/inc/dyndns.class:1333
+#: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1434
+#: src/etc/inc/dyndns.class:1457
 msgid "No Change In IP Address"
 msgstr "Igen förändring av IP Adress"
 
-#: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
-#: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
-#: src/etc/inc/dyndns.class:1128 src/etc/inc/dyndns.class:1274
-#: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
-#: src/etc/inc/dyndns.class:1462
+#: src/etc/inc/dyndns.class:902 src/etc/inc/dyndns.class:920
+#: src/etc/inc/dyndns.class:937 src/etc/inc/dyndns.class:954
+#: src/etc/inc/dyndns.class:1129 src/etc/inc/dyndns.class:1275
+#: src/etc/inc/dyndns.class:1339 src/etc/inc/dyndns.class:1397
+#: src/etc/inc/dyndns.class:1463
 msgid "User Authorization Failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:967
+#: src/etc/inc/dyndns.class:968
 msgid "IP address is current, no update performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:971
+#: src/etc/inc/dyndns.class:972
 msgid "DNS hostname update successful."
 msgstr "DNS värdnamn uppdatering lyckades."
 
-#: src/etc/inc/dyndns.class:975
+#: src/etc/inc/dyndns.class:976
 msgid "Hostname supplied does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:978
+#: src/etc/inc/dyndns.class:979
 msgid "Invalid Username."
 msgstr "Ogiltigt användarnamn."
 
-#: src/etc/inc/dyndns.class:981
+#: src/etc/inc/dyndns.class:982
 msgid "Invalid Password."
 msgstr "Ogiltigt lösenord."
 
-#: src/etc/inc/dyndns.class:984
+#: src/etc/inc/dyndns.class:985
 msgid "Too many updates sent."
 msgstr "För många uppdateringar skickades."
 
-#: src/etc/inc/dyndns.class:987
+#: src/etc/inc/dyndns.class:988
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:990
+#: src/etc/inc/dyndns.class:991
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:993
+#: src/etc/inc/dyndns.class:994
 msgid "Disabled / Locked Hostname."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:996
+#: src/etc/inc/dyndns.class:997
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:999
+#: src/etc/inc/dyndns.class:1000
 msgid "Group supplied does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1002
+#: src/etc/inc/dyndns.class:1003
 msgid "DNS group update is successful."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1006
+#: src/etc/inc/dyndns.class:1007
 msgid "DNS group is current, no update performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1010
+#: src/etc/inc/dyndns.class:1011
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1013
+#: src/etc/inc/dyndns.class:1014
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1016 src/etc/inc/dyndns.class:1019
+#: src/etc/inc/dyndns.class:1017 src/etc/inc/dyndns.class:1020
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1023
+#: src/etc/inc/dyndns.class:1024
 msgid "Unknown Response:"
 msgstr "Okänt svar:"
 
-#: src/etc/inc/dyndns.class:1029
+#: src/etc/inc/dyndns.class:1030
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1031
+#: src/etc/inc/dyndns.class:1032
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1033
+#: src/etc/inc/dyndns.class:1034
 msgid "Illegal Input: Self-Explanatory"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1035
+#: src/etc/inc/dyndns.class:1036
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1037
+#: src/etc/inc/dyndns.class:1038
 msgid "IP Updated Successfully!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1050
+#: src/etc/inc/dyndns.class:1051
 msgid "Error 799"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1050 src/etc/inc/dyndns.class:1052
+#: src/etc/inc/dyndns.class:1051 src/etc/inc/dyndns.class:1053
 msgid "Update Failed!"
 msgstr "Uppdatering misslyckades!"
 
-#: src/etc/inc/dyndns.class:1052
+#: src/etc/inc/dyndns.class:1053
 msgid "Error 700"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1054 src/etc/inc/dyndns.class:1057
-#: src/etc/inc/dyndns.class:1075 src/etc/inc/dyndns.class:1085
-#: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1186
-#: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1226
-#: src/etc/inc/dyndns.class:1253 src/etc/inc/dyndns.class:1308
-#: src/etc/inc/dyndns.class:1355 src/etc/inc/dyndns.class:1369
+#: src/etc/inc/dyndns.class:1055 src/etc/inc/dyndns.class:1058
+#: src/etc/inc/dyndns.class:1076 src/etc/inc/dyndns.class:1086
+#: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1187
+#: src/etc/inc/dyndns.class:1207 src/etc/inc/dyndns.class:1227
+#: src/etc/inc/dyndns.class:1254 src/etc/inc/dyndns.class:1309
+#: src/etc/inc/dyndns.class:1356 src/etc/inc/dyndns.class:1370
 msgid "IP Address Updated Successfully!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1067
+#: src/etc/inc/dyndns.class:1068
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1069
+#: src/etc/inc/dyndns.class:1070
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1071
+#: src/etc/inc/dyndns.class:1072
 msgid "Database Error - There was a server-sided database error."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1073
+#: src/etc/inc/dyndns.class:1074
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1137
+#: src/etc/inc/dyndns.class:1138
 msgid "Not a valid username or password!"
 msgstr "Ogiltigt användarnamn eller lösenord."
 
-#: src/etc/inc/dyndns.class:1139
+#: src/etc/inc/dyndns.class:1140
 msgid "Hostname specified does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1145
+#: src/etc/inc/dyndns.class:1146
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1147
+#: src/etc/inc/dyndns.class:1148
 msgid "Updating too frequently, considered abuse."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1156 src/etc/inc/dyndns.class:1220
+#: src/etc/inc/dyndns.class:1157 src/etc/inc/dyndns.class:1221
 msgid "Bad Request - The IP provided was invalid."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1158
+#: src/etc/inc/dyndns.class:1159
 msgid "Bad Request - Required parameters were not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1160
+#: src/etc/inc/dyndns.class:1161
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1162
+#: src/etc/inc/dyndns.class:1163
 msgid "Invalid password."
 msgstr "Ogiltigt lösenord."
 
-#: src/etc/inc/dyndns.class:1164
+#: src/etc/inc/dyndns.class:1165
 msgid "This account has been administratively locked."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1166
+#: src/etc/inc/dyndns.class:1167
 msgid "Updating too frequently."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1182
-#: src/etc/inc/dyndns.class:1200
+#: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
+#: src/etc/inc/dyndns.class:1201
 msgid "Server side error."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1184
+#: src/etc/inc/dyndns.class:1185
 msgid "Badly Formed Request (check the settings)."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1202 src/etc/inc/dyndns.class:1222
+#: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1223
 msgid "Bad Request - A hostname was not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
-#: src/etc/inc/dyndns.class:1251
+#: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1225
+#: src/etc/inc/dyndns.class:1252
 msgid "Invalid username or password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1229
-#: src/etc/inc/dyndns.class:1256 src/etc/inc/dyndns.class:1268
+#: src/etc/inc/dyndns.class:1210 src/etc/inc/dyndns.class:1230
+#: src/etc/inc/dyndns.class:1257 src/etc/inc/dyndns.class:1269
 msgid "No Change In IP Address."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1247
+#: src/etc/inc/dyndns.class:1248
 msgid "Bad Request - Missing/Invalid Parameters."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1249
+#: src/etc/inc/dyndns.class:1250
 msgid "Bad Request - Invalid Tunnel ID."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1283
+#: src/etc/inc/dyndns.class:1284
 msgid "Route53 API call failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1287
+#: src/etc/inc/dyndns.class:1288
 msgid "IP address changed successfully"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1310 src/etc/inc/dyndns.class:1474
+#: src/etc/inc/dyndns.class:1311 src/etc/inc/dyndns.class:1475
 msgid "Result did not match."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1317
+#: src/etc/inc/dyndns.class:1318
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1320
+#: src/etc/inc/dyndns.class:1321
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1322
+#: src/etc/inc/dyndns.class:1323
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1324
+#: src/etc/inc/dyndns.class:1325
 msgid "UNKNOWN ERROR"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1347
+#: src/etc/inc/dyndns.class:1348
 msgid "Wrong values - Update could not be completed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1349
+#: src/etc/inc/dyndns.class:1350
 msgid "Unknown username - User does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1351
+#: src/etc/inc/dyndns.class:1352
 msgid "Wrong password - Remember password is case sensitive."
 msgstr "Fel lösenord - Kom ihåg att lösenordet är skiftkänsligt."
 
-#: src/etc/inc/dyndns.class:1353
+#: src/etc/inc/dyndns.class:1354
 msgid "User unable to administer the selected domain."
 msgstr "Användaren förhindrad att administrera den valda domänen. "
 
-#: src/etc/inc/dyndns.class:1388
+#: src/etc/inc/dyndns.class:1389
 msgid "Not A FQDN"
 msgstr "Inte en FQDN"
 
-#: src/etc/inc/dyndns.class:1398
+#: src/etc/inc/dyndns.class:1399
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr "Värdnamnet existerar inte eller så är DynDNS inte aktiverat"
 
-#: src/etc/inc/dyndns.class:1400
+#: src/etc/inc/dyndns.class:1401
 msgid "Bad request"
 msgstr "Ogiltig begäran"
 
-#: src/etc/inc/dyndns.class:1402
+#: src/etc/inc/dyndns.class:1403
 msgid "Dynamic DNS access has been blocked!"
 msgstr "Dynamisk DNS-åtkomst har blockerats!"
 
-#: src/etc/inc/dyndns.class:1404
+#: src/etc/inc/dyndns.class:1405
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr "Fel på Google's ände, försök igen om 5 minuter"
 
-#: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
+#: src/etc/inc/dyndns.class:1419 src/etc/inc/dyndns.class:1477
 msgid "Invalid username or password"
 msgstr "Ogiltigt användarnamn eller lösenord"
 
-#: src/etc/inc/dyndns.class:1421
+#: src/etc/inc/dyndns.class:1422
 msgid "Account suspended"
 msgstr "Konto avstängt"
 
-#: src/etc/inc/dyndns.class:1424
+#: src/etc/inc/dyndns.class:1425
 msgid "Account revoked"
 msgstr "Konto återkallat"
 
-#: src/etc/inc/dyndns.class:1427
+#: src/etc/inc/dyndns.class:1428
 msgid "Record does not exist in the system. Unable to update record"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1430
+#: src/etc/inc/dyndns.class:1431
 msgid "User does not have access to this record"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1437
+#: src/etc/inc/dyndns.class:1438
 msgid "General system error recognized by the system"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1440
+#: src/etc/inc/dyndns.class:1441
 msgid "General system error unrecognized by the system"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1492
+#: src/etc/inc/dyndns.class:1493
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1493 src/etc/inc/dyndns.class:1501
+#: src/etc/inc/dyndns.class:1494 src/etc/inc/dyndns.class:1502
 #: src/etc/inc/services.inc:2674 src/etc/inc/services.inc:2686
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1500
+#: src/etc/inc/dyndns.class:1501
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1516
+#: src/etc/inc/dyndns.class:1517
 msgid "ERROR!"
 msgstr "FEL!"
 
-#: src/etc/inc/dyndns.class:1522
+#: src/etc/inc/dyndns.class:1523
 msgid "No Dynamic DNS Service provider was selected."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1525
+#: src/etc/inc/dyndns.class:1526
 msgid "No Username Provided."
 msgstr "Inget användarnamn angett."
 
-#: src/etc/inc/dyndns.class:1528
+#: src/etc/inc/dyndns.class:1529
 msgid "No Password Provided."
 msgstr "Inget lösenord angett."
 
-#: src/etc/inc/dyndns.class:1531
+#: src/etc/inc/dyndns.class:1532
 msgid "No Hostname Provided."
 msgstr "Inget värdnamn angett."
 
-#: src/etc/inc/dyndns.class:1534
+#: src/etc/inc/dyndns.class:1535
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1537
+#: src/etc/inc/dyndns.class:1538
 msgid "No Update URL Provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1540
+#: src/etc/inc/dyndns.class:1541
 msgid "Invalid ZoneID"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1543
+#: src/etc/inc/dyndns.class:1544
 msgid "Invalid TTL"
 msgstr "Ogiltig TTL"
 
-#: src/etc/inc/dyndns.class:1546
+#: src/etc/inc/dyndns.class:1547
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1549
+#: src/etc/inc/dyndns.class:1550
 msgid "Unknown Response."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1568
+#: src/etc/inc/dyndns.class:1569
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1575
+#: src/etc/inc/dyndns.class:1576
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1578
+#: src/etc/inc/dyndns.class:1579
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1586
+#: src/etc/inc/dyndns.class:1587
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1592
+#: src/etc/inc/dyndns.class:1593
 msgid "No Cached IPv6 found."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1600
+#: src/etc/inc/dyndns.class:1601
 #, php-format
 msgid "Cached IP: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1606
+#: src/etc/inc/dyndns.class:1607
 msgid "No Cached IP found."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1620
+#: src/etc/inc/dyndns.class:1621
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1621
+#: src/etc/inc/dyndns.class:1622
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1626
+#: src/etc/inc/dyndns.class:1627
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1631
+#: src/etc/inc/dyndns.class:1632
 msgid "Initial update."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1668
+#: src/etc/inc/dyndns.class:1669
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1693
+#: src/etc/inc/dyndns.class:1694
 #, php-format
 msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1712
+#: src/etc/inc/dyndns.class:1713
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1715
+#: src/etc/inc/dyndns.class:1716
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1720
+#: src/etc/inc/dyndns.class:1721
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr ""
@@ -1901,7 +1901,8 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:76
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:50
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:384
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:93
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:34
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:135
 msgid "Name"
 msgstr "Namn"
 
@@ -2839,38 +2840,38 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
-msgstr ""
+msgstr "Server: Ja"
 
 #: src/etc/inc/openvpn.inc:240
 msgid "Server: NO"
-msgstr ""
+msgstr "Server: Nej"
 
 #: src/etc/inc/openvpn.inc:243
 #, php-format
 msgid "CA: %s"
-msgstr ""
+msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:369
 #: src/usr/local/www/system_certmanager.php:957
 #: src/usr/local/www/system_crlmanager.php:586
 msgid "In Use"
-msgstr ""
+msgstr "Används"
 
 #: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1027
 msgid "Revoked"
-msgstr ""
+msgstr "Återkallad"
 
 #: src/etc/inc/openvpn.inc:413
 msgid "None (No Encryption)"
-msgstr ""
+msgstr "Ingen (Ingen kryptering)"
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr ""
+msgstr "Använd Standard"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
-msgstr ""
+msgstr "Ingen (Ingen Autentisering)"
 
 #: src/etc/inc/openvpn.inc:451
 msgid "No Hardware Crypto Acceleration"
@@ -2943,7 +2944,7 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:190
 #: src/usr/local/www/system_user_settings.php:62
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/etc/inc/pfsense-utils.inc:193
 #, php-format
@@ -3104,13 +3105,13 @@ msgstr ""
 msgid "running"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:196
+#: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:1601
 msgid "blocking"
-msgstr ""
+msgstr "blockerar"
 
 #: src/etc/inc/pfsense-utils.inc:1601
 msgid "check for ethernet loops"
@@ -3182,23 +3183,23 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2798
 msgid "English"
-msgstr ""
+msgstr "Engelska"
 
 #: src/etc/inc/pfsense-utils.inc:2799
 msgid "Spanish"
-msgstr ""
+msgstr "Spanska"
 
 #: src/etc/inc/pfsense-utils.inc:2800
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portugisiska (Brasilien)"
 
 #: src/etc/inc/pfsense-utils.inc:2801
 msgid "Turkish"
-msgstr ""
+msgstr "Turkiska"
 
 #: src/etc/inc/pfsense-utils.inc:2802
 msgid "Chinese (Simplified, China)"
-msgstr ""
+msgstr "Kinesiska (Förenklad, Kina)"
 
 #: src/etc/inc/pfsense-utils.inc:2997 src/etc/inc/pfsense-utils.inc:3012
 #: src/etc/inc/pfsense-utils.inc:3037
@@ -3497,7 +3498,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:962
 msgid "Configuration... "
-msgstr ""
+msgstr "Konfiguration"
 
 #: src/etc/inc/pkg-utils.inc:965
 #, php-format
@@ -5646,12 +5647,12 @@ msgstr ""
 #: src/etc/inc/service-utils.inc:693
 #, php-format
 msgid "%s has been stopped."
-msgstr ""
+msgstr "%s har stoppats."
 
 #: src/etc/inc/service-utils.inc:762
 #, php-format
 msgid "%s has been restarted."
-msgstr ""
+msgstr "%s har startats."
 
 #: src/etc/inc/services.inc:382
 msgid "Error: cannot open radvd.conf in services_radvd_configure()."
@@ -5663,7 +5664,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:501
 msgid "Starting DHCP service..."
-msgstr ""
+msgstr "Startar DHCP-tjänst..."
 
 #: src/etc/inc/services.inc:607
 msgid "Warning!  DHCP Failover setup and no CARP virtual IPs defined!"
@@ -5711,7 +5712,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:1972
 msgid "Starting DynDNS clients..."
-msgstr ""
+msgstr "Startar DynDNS-klienter..."
 
 #: src/etc/inc/services.inc:2078
 msgid "Starting DNS forwarder..."
@@ -5765,7 +5766,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:2736
 msgid "Created:"
-msgstr ""
+msgstr "Skapad:"
 
 #: src/etc/inc/services.inc:2762
 msgid "If possible do not add items to this file manually."
@@ -5778,7 +5779,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:2813
 msgid "Starting UPnP service... "
-msgstr ""
+msgstr "Startar UPnP-tjänster..."
 
 #: src/etc/inc/shaper.inc:263 src/usr/local/www/system_camanager.php:231
 #: src/usr/local/www/system_certmanager.php:347
@@ -5799,7 +5800,7 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:163
 #: src/usr/local/www/status_queues.php:167
 msgid "Bandwidth"
-msgstr ""
+msgstr "Bandbredd"
 
 #: src/etc/inc/shaper.inc:438 src/etc/inc/shaper.inc:1903
 #: src/etc/inc/shaper.inc:2652 src/etc/inc/shaper.inc:2934
@@ -5857,7 +5858,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:798 src/etc/inc/shaper.inc:1406
 msgid "Enable/Disable"
-msgstr ""
+msgstr "Aktivera/Inaktivera"
 
 #: src/etc/inc/shaper.inc:805 src/etc/inc/shaper.inc:1414
 #: src/etc/inc/shaper.inc:3830 src/etc/inc/shaper.inc:4143
@@ -5868,7 +5869,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip_edit.php:127
 #: src/usr/local/www/system_gateways_edit.php:617
 msgid "*Name"
-msgstr ""
+msgstr "*Namn"
 
 #: src/etc/inc/shaper.inc:811
 msgid "Scheduler Type"
@@ -5885,7 +5886,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:851
 msgid "TBR Size"
-msgstr ""
+msgstr "TBR-storlek"
 
 #: src/etc/inc/shaper.inc:854
 msgid ""
@@ -6088,7 +6089,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:76
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:137
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: src/etc/inc/shaper.inc:1566
 msgid "Delete Queue from this Interface"
@@ -6295,7 +6296,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:760
 #: src/usr/local/www/system_usermanager.php:634
 msgid "Delete"
-msgstr ""
+msgstr "Ta bort"
 
 #: src/etc/inc/shaper.inc:3795
 msgid "Add Schedule"
@@ -6332,7 +6333,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
-msgstr ""
+msgstr "Aktivera"
 
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Source addresses"
@@ -6409,7 +6410,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:3902
 msgid "Delay (ms)"
-msgstr ""
+msgstr "Fördröjning (ms)"
 
 #: src/etc/inc/shaper.inc:3905
 msgid ""
@@ -6454,7 +6455,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:4206 src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight"
-msgstr ""
+msgstr "Vikt"
 
 #: src/etc/inc/shaper.inc:4210
 msgid ""
@@ -6535,7 +6536,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:980
 msgid "Starting syslog..."
-msgstr ""
+msgstr "Startar syslog..."
 
 #: src/etc/inc/system.inc:1153
 #, php-format
@@ -6544,7 +6545,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:1230
 msgid "Creating SSL Certificate for this host"
-msgstr ""
+msgstr "Skapar SSL-certifikat för denna värd"
 
 #: src/etc/inc/system.inc:1234
 #, php-format
@@ -6568,7 +6569,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2189
 #: src/etc/inc/system.inc:2192
 msgid "failed!"
-msgstr ""
+msgstr "misslyckades!"
 
 #: src/etc/inc/system.inc:1515
 #, php-format
@@ -6587,7 +6588,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:1604
 msgid "Setting timezone..."
-msgstr ""
+msgstr "Ställer in tidszon..."
 
 #: src/etc/inc/system.inc:2021
 #, php-format
@@ -6614,19 +6615,19 @@ msgstr ""
 #: src/etc/inc/unbound.inc:741 src/usr/local/www/services_dhcpv6.php:803
 #: src/usr/local/www/services_unbound_acls.php:234
 msgid "Deny"
-msgstr ""
+msgstr "Neka"
 
 #: src/etc/inc/unbound.inc:742 src/usr/local/www/services_unbound_acls.php:234
 msgid "Refuse"
-msgstr ""
+msgstr "Vägra"
 
 #: src/etc/inc/unbound.inc:743
 msgid "Static"
-msgstr ""
+msgstr "Statisk"
 
 #: src/etc/inc/unbound.inc:744
 msgid "Transparent"
-msgstr ""
+msgstr "Transparent"
 
 #: src/etc/inc/unbound.inc:745
 msgid "Type Transparent"
@@ -6832,7 +6833,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:1377
 msgid "All Users"
-msgstr ""
+msgstr "Alla användare"
 
 #: src/etc/inc/upgrade_config.inc:1520
 #, php-format
@@ -6928,32 +6929,32 @@ msgstr ""
 #: src/etc/inc/util.inc:2552
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
-msgstr ""
+msgstr "%s måste vara en giltig IPv4-adress eller alias."
 
 #: src/etc/inc/util.inc:2556
 #, php-format
 msgid "%s must be a valid IPv4 address."
-msgstr ""
+msgstr "%s måste vara en giltig IPv4-adress."
 
 #: src/etc/inc/util.inc:2568
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
-msgstr ""
+msgstr "%s måste vara en giltig IPv6-adress eller alias."
 
 #: src/etc/inc/util.inc:2572
 #, php-format
 msgid "%s must be a valid IPv6 address."
-msgstr ""
+msgstr "%s måste vara en giltig IPv6-adress."
 
 #: src/etc/inc/util.inc:2586
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
-msgstr ""
+msgstr "%s måste vara en giltig IPv4 eller IPv6-adress eller alias."
 
 #: src/etc/inc/util.inc:2590
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
-msgstr ""
+msgstr "%s måste vara en giltig IPv4 eller IPv6-adress."
 
 #: src/etc/inc/util.inc:2645
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
@@ -7185,7 +7186,7 @@ msgstr ""
 #: src/usr/local/bin/dhcpd_gather_stats.php:102
 #: src/usr/local/www/status_dhcp_leases.php:189
 msgid "Never"
-msgstr ""
+msgstr "Aldrig"
 
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
@@ -7213,7 +7214,7 @@ msgstr ""
 
 #: src/usr/local/www/bandwidth_by_ip.php:159
 msgid "no info"
-msgstr ""
+msgstr "ingen information"
 
 #: src/usr/local/www/classes/Form/Section.class.php:78
 #: src/usr/local/www/diag_gmirror.php:54 src/usr/local/www/diag_gmirror.php:198
@@ -7223,7 +7224,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_install.php:352
 #: src/usr/local/www/pkg_mgr_install.php:354
 msgid "Confirm"
-msgstr ""
+msgstr "Bekräfta"
 
 #: src/usr/local/www/classes/Form.class.php:38
 #: src/usr/local/www/diag_confbak.php:172 src/usr/local/www/diag_edit.php:122
@@ -7259,11 +7260,12 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/rss.widget.php:156
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:151
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:145
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:239
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:475
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
 msgid "Save"
-msgstr ""
+msgstr "Spara"
 
 #: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
@@ -7285,7 +7287,7 @@ msgstr ""
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:645
 msgid "Diagnostics"
-msgstr ""
+msgstr "Diagnostik"
 
 #: src/usr/local/www/crash_reporter.php:56
 msgid "Crash Reporter"
@@ -7293,11 +7295,11 @@ msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:68
 msgid "Processing..."
-msgstr ""
+msgstr "Bearbetar..."
 
 #: src/usr/local/www/crash_reporter.php:80
 msgid "Uploading..."
-msgstr ""
+msgstr "Laddar upp..."
 
 #: src/usr/local/www/crash_reporter.php:91
 msgid "Deleted crash report files from local disk."
@@ -7327,7 +7329,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: src/usr/local/www/crash_reporter.php:138
 msgid "Submit this to the developers for inspection"
@@ -7338,7 +7340,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: src/usr/local/www/crash_reporter.php:142
 msgid "Just delete the crash report and return to the Dashboard"
@@ -7412,7 +7414,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:63
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:138
 msgid "Interface"
-msgstr ""
+msgstr "Gränssnitt"
 
 #: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:109
 #: src/usr/local/www/services_captiveportal_mac.php:177
@@ -7425,7 +7427,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:440
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "MAC address"
-msgstr ""
+msgstr "MAC-adress"
 
 #: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:110
 #: src/usr/local/www/interfaces.php:1953
@@ -7587,19 +7589,19 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:711
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 msgid "*Username"
-msgstr ""
+msgstr "*Användarnamn"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/interfaces.php:2606 src/usr/local/www/interfaces.php:2731
 #: src/usr/local/www/system_usermanager_passwordmg.php:101
 msgid "*Password"
-msgstr ""
+msgstr "*Lösenord"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:279 src/usr/local/www/diag_testport.php:269
 #: src/usr/local/www/status_captiveportal_test.php:109
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: src/usr/local/www/diag_backup.php:79 src/usr/local/www/diag_backup.php:94
 #, php-format
@@ -7628,7 +7630,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:196
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:122
 msgid "Reinstall"
-msgstr ""
+msgstr "Ominstallera"
 
 #: src/usr/local/www/diag_backup.php:178 src/usr/local/www/diag_backup.php:655
 msgid "Clear Package Lock"
@@ -7639,7 +7641,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1126
 #: src/usr/local/www/services_captiveportal.php:1158
 msgid "Download"
-msgstr ""
+msgstr "Ladda ned"
 
 #: src/usr/local/www/diag_backup.php:193
 msgid "A password for encryption must be supplied and confirmed."
@@ -7704,7 +7706,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_import.php:55
 #: src/usr/local/www/head.inc:280
 msgid "Aliases"
-msgstr ""
+msgstr "Alias"
 
 #: src/usr/local/www/diag_backup.php:467
 msgid "Captive Portal Vouchers"
@@ -7714,7 +7716,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:722
 #: src/usr/local/www/services_dhcp_edit.php:397
 msgid "DHCP Server"
-msgstr ""
+msgstr "DHCP-server"
 
 #: src/usr/local/www/diag_backup.php:471
 #: src/usr/local/www/services_dhcpv6.php:489
@@ -7724,11 +7726,11 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:201
 #: src/usr/local/www/services_router_advertisements.php:305
 msgid "DHCPv6 Server"
-msgstr ""
+msgstr "DHCPv6-server"
 
 #: src/usr/local/www/diag_backup.php:472
 msgid "Firewall Rules"
-msgstr ""
+msgstr "Brandväggsregler"
 
 #: src/usr/local/www/diag_backup.php:473 src/usr/local/www/head.inc:335
 #: src/usr/local/www/interfaces.php:1655
@@ -7756,11 +7758,11 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/widgets/include/interfaces.inc:23
 msgid "Interfaces"
-msgstr ""
+msgstr "Gränssnitt"
 
 #: src/usr/local/www/diag_backup.php:474
 msgid "IPSEC"
-msgstr ""
+msgstr "IPSEC"
 
 #: src/usr/local/www/diag_backup.php:475 src/usr/local/www/firewall_nat.php:185
 #: src/usr/local/www/firewall_nat_1to1.php:121
@@ -7772,7 +7774,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:397
 #: src/usr/local/www/head.inc:281
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 #: src/usr/local/www/diag_backup.php:477 src/usr/local/www/head.inc:231
 #: src/usr/local/www/head.inc:643 src/usr/local/www/pkg_mgr.php:38
@@ -7831,10 +7833,11 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:97
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:35
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:143
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #: src/usr/local/www/diag_backup.php:482
 msgid "Static routes"
@@ -7846,7 +7849,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:484
 msgid "SNMP Server"
-msgstr ""
+msgstr "SNMP-server"
 
 #: src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/firewall_shaper.php:41
@@ -7882,16 +7885,17 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:428
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:152
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:146
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:168
 #: src/usr/local/www/diag_smart.php:252
 msgid "All"
-msgstr ""
+msgstr "Alla"
 
 #: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_backup.php:529
 #: src/usr/local/www/diag_confbak.php:99 src/usr/local/www/diag_confbak.php:108
 #: src/usr/local/www/head.inc:368 src/usr/local/www/head.inc:645
 msgid "Backup & Restore"
-msgstr ""
+msgstr "Säkerhetskopiering & Återställ"
 
 #: src/usr/local/www/diag_backup.php:522
 msgid "The firewall configuration has been changed."
@@ -8042,13 +8046,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:258
 msgid "Upload File"
-msgstr ""
+msgstr "Ladda upp fil"
 
 #: src/usr/local/www/diag_command.php:265
 #: src/usr/local/www/services_captiveportal_filemanager.php:172
 #: src/usr/local/www/widgets/widgets/picture.widget.php:77
 msgid "Upload"
-msgstr ""
+msgstr "Ladda upp"
 
 #: src/usr/local/www/diag_command.php:308
 msgid "Execute PHP Commands"
@@ -8060,7 +8064,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:317
 msgid "Example"
-msgstr ""
+msgstr "Exempel"
 
 #: src/usr/local/www/diag_confbak.php:38
 msgid "(platform default)"
@@ -8140,20 +8144,21 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:211
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: src/usr/local/www/diag_confbak.php:212 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:112
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:36
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:162
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_gmirror.php:303 src/usr/local/www/diag_pftop.php:125
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
-msgstr ""
+msgstr "Storlek"
 
 #: src/usr/local/www/diag_confbak.php:214
 msgid "Configuration Change"
@@ -8179,7 +8184,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:89
 msgid "Unknown"
-msgstr ""
+msgstr "Okänd"
 
 #: src/usr/local/www/diag_confbak.php:260
 msgid "Revert config"
@@ -8196,11 +8201,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:262
 msgid "Delete config"
-msgstr ""
+msgstr "Ta bort konfiguration"
 
 #: src/usr/local/www/diag_confbak.php:279
 msgid "No backups found."
-msgstr ""
+msgstr "Inga säkerhetskopior hittades."
 
 #: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:372
 msgid "Factory Defaults"
@@ -8260,11 +8265,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:73
 msgid "Perform a factory reset"
-msgstr ""
+msgstr "Utför en fabriksåterställning"
 
 #: src/usr/local/www/diag_defaults.php:75
 msgid "Factory Reset"
-msgstr ""
+msgstr "Fabriksåterställning"
 
 #: src/usr/local/www/diag_defaults.php:77
 msgid "Return to the dashboard"
@@ -8289,7 +8294,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:143
 msgid "No response"
-msgstr ""
+msgstr "Inget svar"
 
 #: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3093 src/usr/local/www/interfaces.php:3117
@@ -8309,7 +8314,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:173
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:38
 msgid "IP Address"
-msgstr ""
+msgstr "IP-adress"
 
 #: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:170
 #: src/usr/local/www/system_authservers.php:444
@@ -8323,7 +8328,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
@@ -8398,7 +8403,7 @@ msgstr ""
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:382
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/usr/local/www/diag_dns.php:310
 msgid ""
@@ -8467,7 +8472,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:165
 #: src/usr/local/www/system_usermanager_addprivs.php:185
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: src/usr/local/www/diag_dump_states.php:160
 msgid "Kill States"
@@ -8521,7 +8526,7 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
-msgstr ""
+msgstr "Bytes"
 
 #: src/usr/local/www/diag_dump_states.php:254
 #, php-format
@@ -8589,7 +8594,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:371
 msgid "Edit File"
-msgstr ""
+msgstr "Redigera Fil"
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
@@ -8836,14 +8841,14 @@ msgstr ""
 
 #: src/usr/local/www/diag_halt.php:72
 msgid "Halt the system and power off"
-msgstr ""
+msgstr "Stoppa systemet och stäng av"
 
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/diag_reboot.php:119
 #: src/usr/local/www/firewall_nat.php:488
 #: src/usr/local/www/firewall_rules.php:886
 #: src/usr/local/www/interfaces.php:1914 src/usr/local/www/interfaces.php:3237
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:379
 msgid "Limiter Info"
@@ -8895,13 +8900,13 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:420
 #: src/usr/local/www/system_certmanager.php:1036
 msgid "OpenVPN Server"
-msgstr ""
+msgstr "OpenVPN-server"
 
 #: src/usr/local/www/diag_packet_capture.php:107
 #: src/usr/local/www/system_camanager.php:423
 #: src/usr/local/www/system_certmanager.php:1039
 msgid "OpenVPN Client"
-msgstr ""
+msgstr "OpenVPN-klient"
 
 #: src/usr/local/www/diag_packet_capture.php:129
 msgid "Invalid interface."
@@ -8951,13 +8956,13 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:442
 #: src/usr/local/www/status_dhcpv6_leases.php:537
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: src/usr/local/www/diag_packet_capture.php:219
 #: src/usr/local/www/diag_packet_capture.php:379
 #: src/usr/local/www/diag_packet_capture.php:389
 msgid "Stop"
-msgstr ""
+msgstr "Stopp"
 
 #: src/usr/local/www/diag_packet_capture.php:246
 msgid "Exclude"
@@ -8986,7 +8991,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:517
 #: src/usr/local/www/vpn_openvpn_server.php:729
 msgid "*Interface"
-msgstr ""
+msgstr "*Gränssnitt"
 
 #: src/usr/local/www/diag_packet_capture.php:283
 msgid "Select the interface on which to capture traffic. "
@@ -9066,7 +9071,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:200
 #: src/usr/local/www/status_upnp.php:69
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: src/usr/local/www/diag_packet_capture.php:330
 msgid ""
@@ -9102,20 +9107,20 @@ msgstr ""
 #: src/usr/local/www/diag_packet_capture.php:354
 #: src/usr/local/www/services_router_advertisements.php:115
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: src/usr/local/www/diag_packet_capture.php:355
 msgid "Medium"
-msgstr ""
+msgstr "Medium"
 
 #: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/services_router_advertisements.php:116
 msgid "High"
-msgstr ""
+msgstr "Hög"
 
 #: src/usr/local/www/diag_packet_capture.php:357
 msgid "Full"
-msgstr ""
+msgstr "Full"
 
 #: src/usr/local/www/diag_packet_capture.php:352
 msgid "Level of detail"
@@ -9190,19 +9195,19 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:96
 msgid "long"
-msgstr ""
+msgstr "lång"
 
 #: src/usr/local/www/diag_pftop.php:98
 msgid "rules"
-msgstr ""
+msgstr "regler"
 
 #: src/usr/local/www/diag_pftop.php:99
 msgid "size"
-msgstr ""
+msgstr "storlek"
 
 #: src/usr/local/www/diag_pftop.php:100
 msgid "speed"
-msgstr ""
+msgstr "hastighet"
 
 #: src/usr/local/www/diag_pftop.php:101
 msgid "state"
@@ -9210,7 +9215,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:102
 msgid "time"
-msgstr ""
+msgstr "tid"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:199
 #: src/usr/local/www/diag_smart.php:352
@@ -9222,7 +9227,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:117
 msgid "Age"
-msgstr ""
+msgstr "Ålder"
 
 #: src/usr/local/www/diag_pftop.php:119
 msgid "Destination Address"
@@ -9261,7 +9266,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:113 src/usr/local/www/status_graph.php:151
 msgid "Sort by"
-msgstr ""
+msgstr "Sortera efter"
 
 #: src/usr/local/www/diag_pftop.php:134
 msgid "Maximum # of States"
@@ -9331,7 +9336,7 @@ msgstr ""
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:386
 #: src/usr/local/www/interfaces.php:2003
 msgid "Reboot"
-msgstr ""
+msgstr "Omstart"
 
 #: src/usr/local/www/diag_reboot.php:49
 msgid "Not actually rebooting (DEBUG is set true)."
@@ -9362,7 +9367,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:113
 msgid "Reboot the system"
-msgstr ""
+msgstr "Starta om systemet"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
@@ -9406,7 +9411,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:249
 #: src/usr/local/www/status_lb_pool.php:251
 msgid "Reset"
-msgstr ""
+msgstr "Återställ"
 
 #: src/usr/local/www/diag_resetstate.php:121
 msgid "Please select at least one reset option"
@@ -9490,7 +9495,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:60
 msgid "Warning"
-msgstr ""
+msgstr "Varning"
 
 #: src/usr/local/www/diag_smart.php:69
 msgid "Device does not exist, bailing."
@@ -9507,7 +9512,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:93
 msgid "Test Results"
-msgstr ""
+msgstr "Testresultat"
 
 #: src/usr/local/www/diag_smart.php:103 src/usr/local/www/diag_smart.php:181
 #: src/usr/local/www/diag_smart.php:406 src/usr/local/www/diag_smart.php:415
@@ -9521,7 +9526,7 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:109 src/usr/local/www/diag_smart.php:140
 #: src/usr/local/www/diag_smart.php:168
 msgid "Back"
-msgstr ""
+msgstr "Tillbaka"
 
 #: src/usr/local/www/diag_smart.php:124
 msgid "Invalid info type, bailing."
@@ -9530,7 +9535,7 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:131 src/usr/local/www/diag_smart.php:206
 #: src/usr/local/www/pkg_mgr_installed.php:195
 msgid "Information"
-msgstr ""
+msgstr "Information"
 
 #: src/usr/local/www/diag_smart.php:152
 msgid "Invalid log type, bailing."
@@ -9538,7 +9543,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:159
 msgid "Logs"
-msgstr ""
+msgstr "Loggar"
 
 #: src/usr/local/www/diag_smart.php:215
 msgid "Info type"
@@ -9555,7 +9560,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:295
 msgid "Test type"
-msgstr ""
+msgstr "Testtyp"
 
 #: src/usr/local/www/diag_smart.php:329
 msgid "Select \"Conveyance\" for ATA disks only."
@@ -9654,7 +9659,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound.php:514
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/firewall_nat.php:229
@@ -9681,7 +9686,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_states_summary.php:198
 msgid "Total per IP"
-msgstr ""
+msgstr "Totalt per IP"
 
 #: src/usr/local/www/diag_states_summary.php:199
 msgid "By IP Pair"
@@ -9693,7 +9698,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_system_activity.php:86
 msgid "CPU Activity"
-msgstr ""
+msgstr "CPU-aktivitet"
 
 #: src/usr/local/www/diag_system_activity.php:88
 msgid "Gathering CPU activity, please wait..."
@@ -9779,7 +9784,7 @@ msgstr ""
 #: src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:383
 msgid "Test Port"
-msgstr ""
+msgstr "Testport"
 
 #: src/usr/local/www/diag_testport.php:56
 msgid "Please enter a valid IP or hostname."
@@ -9818,7 +9823,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_testport.php:205
 msgid "Connection failed."
-msgstr ""
+msgstr "Anslutning misslyckad."
 
 #: src/usr/local/www/diag_testport.php:211
 msgid ""
@@ -9835,7 +9840,7 @@ msgstr ""
 #: src/usr/local/www/diag_testport.php:229
 #: src/usr/local/www/load_balancer_pool_edit.php:330
 msgid "*Port"
-msgstr ""
+msgstr "*Port"
 
 #: src/usr/local/www/diag_testport.php:245
 msgid "Remote text"
@@ -10164,15 +10169,15 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_edit.php:75
 #: src/usr/local/www/firewall_aliases_edit.php:721
 msgid "port"
-msgstr ""
+msgstr "port"
 
 #: src/usr/local/www/firewall_aliases_edit.php:76
 msgid "URL (IP)"
-msgstr ""
+msgstr "URL (IP)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:77
 msgid "URL (Port)"
-msgstr ""
+msgstr "URL (Port)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:78
 msgid "URL Table (IP)"
@@ -10232,7 +10237,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:287
 #: src/usr/local/www/vpn_openvpn_server.php:637
 msgid "Edit"
-msgstr ""
+msgstr "Redigera"
 
 #: src/usr/local/www/firewall_aliases_edit.php:148
 msgid ""
@@ -10353,7 +10358,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_edit.php:558
 #: src/usr/local/www/firewall_aliases_edit.php:619
 msgid "Network(s)"
-msgstr ""
+msgstr "Nätverk"
 
 #: src/usr/local/www/firewall_aliases_edit.php:559
 #: src/usr/local/www/firewall_aliases_edit.php:618
@@ -10369,13 +10374,13 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_edit.php:581
 #: src/usr/local/www/firewall_aliases_edit.php:621
 msgid "URL (IPs)"
-msgstr ""
+msgstr "URL (IPs)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:562
 #: src/usr/local/www/firewall_aliases_edit.php:582
 #: src/usr/local/www/firewall_aliases_edit.php:622
 msgid "URL (Ports)"
-msgstr ""
+msgstr "URL (Portar)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:563
 #: src/usr/local/www/firewall_aliases_edit.php:583
@@ -10400,12 +10405,12 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:570
 msgid "Add Port"
-msgstr ""
+msgstr "Lägg till port"
 
 #: src/usr/local/www/firewall_aliases_edit.php:571
 #: src/usr/local/www/firewall_aliases_edit.php:572
 msgid "Add URL"
-msgstr ""
+msgstr "Lägg till URL"
 
 #: src/usr/local/www/firewall_aliases_edit.php:573
 #: src/usr/local/www/firewall_aliases_edit.php:574
@@ -10480,7 +10485,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:656
 msgid "Properties"
-msgstr ""
+msgstr "Egenskaper"
 
 #: src/usr/local/www/firewall_aliases_edit.php:665
 #: src/usr/local/www/firewall_aliases_import.php:257
@@ -10630,7 +10635,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:136
 #: src/usr/local/www/firewall_nat_out.php:219
 msgid "1:1"
-msgstr ""
+msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat.php:201
 #: src/usr/local/www/firewall_nat_1to1.php:137
@@ -10639,7 +10644,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:220
 #: src/usr/local/www/firewall_nat_out_edit.php:397
 msgid "Outbound"
-msgstr ""
+msgstr "Utgående"
 
 #: src/usr/local/www/firewall_nat.php:202
 #: src/usr/local/www/firewall_nat_1to1.php:138
@@ -10648,14 +10653,14 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:178
 #: src/usr/local/www/firewall_nat_out.php:221
 msgid "NPt"
-msgstr ""
+msgstr "NPt"
 
 #: src/usr/local/www/firewall_nat.php:218
 #: src/usr/local/www/firewall_rules.php:320
 #: src/usr/local/www/firewall_rules_edit.php:1091
 #: src/usr/local/www/head.inc:282
 msgid "Rules"
-msgstr ""
+msgstr "Regler"
 
 #: src/usr/local/www/firewall_nat.php:230
 msgid "Dest. Address"
@@ -10663,11 +10668,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:232
 msgid "NAT IP"
-msgstr ""
+msgstr "NAT IP"
 
 #: src/usr/local/www/firewall_nat.php:233
 msgid "NAT Ports"
-msgstr ""
+msgstr "NAT-Portar"
 
 #: src/usr/local/www/firewall_nat.php:293
 #: src/usr/local/www/firewall_nat_1to1.php:178
@@ -10706,7 +10711,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:439
 msgid "Edit rule"
-msgstr ""
+msgstr "Redigera regel"
 
 #: src/usr/local/www/firewall_nat.php:440
 msgid "Add a new NAT based on this one"
@@ -10714,7 +10719,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:441
 msgid "Delete rule"
-msgstr ""
+msgstr "Radera regel"
 
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_rules.php:822
@@ -10939,7 +10944,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:543
 #: src/usr/local/www/vpn_ipsec_phase2.php:569
 msgid "Network"
-msgstr ""
+msgstr "Nätverk"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:302
 #: src/usr/local/www/firewall_nat_1to1_edit.php:347
@@ -10948,7 +10953,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1358
 #: src/usr/local/www/guiconfig.inc:226
 msgid "PPPoE clients"
-msgstr ""
+msgstr "PPPoE-klienter"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:306
 #: src/usr/local/www/firewall_nat_1to1_edit.php:351
@@ -10957,7 +10962,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1361
 #: src/usr/local/www/guiconfig.inc:227
 msgid "L2TP clients"
-msgstr ""
+msgstr "L2TP-klienter"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
 #: src/usr/local/www/firewall_nat_edit.php:536
@@ -10999,7 +11004,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe.php:95
 #: src/usr/local/www/services_pppoe_edit.php:280
 msgid "PPPoE Server"
-msgstr ""
+msgstr "PPPoE-server"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/firewall_nat_edit.php:684
@@ -11025,7 +11030,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/widgets/include/ipsec.inc:22
 msgid "IPsec"
-msgstr ""
+msgstr "IPsec"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:465
 #: src/usr/local/www/firewall_nat_edit.php:697
@@ -11280,7 +11285,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:692
 #: src/usr/local/www/system_gateways_edit.php:895
 msgid "Display Advanced"
-msgstr ""
+msgstr "Visa Avancerat"
 
 #: src/usr/local/www/firewall_nat_edit.php:718
 #: src/usr/local/www/firewall_nat_edit.php:722
@@ -11318,7 +11323,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:762
 #: src/usr/local/www/firewall_nat_edit.php:824
 msgid "From port"
-msgstr ""
+msgstr "Från port"
 
 #: src/usr/local/www/firewall_nat_edit.php:769
 #: src/usr/local/www/firewall_nat_edit.php:783
@@ -11336,7 +11341,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:776
 #: src/usr/local/www/firewall_nat_edit.php:838
 msgid "To port"
-msgstr ""
+msgstr "Till port"
 
 #: src/usr/local/www/firewall_nat_edit.php:785
 msgid ""
@@ -11406,7 +11411,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:920
 #, php-format
 msgid "Rule %s"
-msgstr ""
+msgstr "Regel %s"
 
 #: src/usr/local/www/firewall_nat_edit.php:923
 msgid "View the filter rule"
@@ -11455,13 +11460,13 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:693
 #: src/usr/local/www/firewall_rules_edit.php:1738
 msgid "Created"
-msgstr ""
+msgstr "Skapad"
 
 #: src/usr/local/www/firewall_nat_edit.php:973
 #: src/usr/local/www/firewall_nat_out_edit.php:703
 #: src/usr/local/www/firewall_rules_edit.php:1748
 msgid "Updated"
-msgstr ""
+msgstr "Uppdaterad"
 
 #: src/usr/local/www/firewall_nat_edit.php:1171
 #: src/usr/local/www/firewall_rules_edit.php:1788
@@ -11488,7 +11493,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:681
 #: src/usr/local/www/system_gateways_edit.php:893
 msgid "Hide Advanced"
-msgstr ""
+msgstr "Göm Avancerat"
 
 #: src/usr/local/www/firewall_nat_npt.php:113
 msgid "Firewall: NAT: NPt, enable/disable NAT rule"
@@ -11624,13 +11629,13 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:283
 #: src/usr/local/www/firewall_nat_out.php:536
 msgid "NAT Port"
-msgstr ""
+msgstr "NAT-port"
 
 #: src/usr/local/www/firewall_nat_out.php:284
 #: src/usr/local/www/firewall_nat_out.php:537
 #: src/usr/local/www/firewall_nat_out_edit.php:642
 msgid "Static Port"
-msgstr ""
+msgstr "Statisk Port"
 
 #: src/usr/local/www/firewall_nat_out.php:322
 msgid "This rule is being ignored"
@@ -11662,7 +11667,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:524
 msgid "Automatic Rules:"
-msgstr ""
+msgstr "Automatiska Regler:"
 
 #: src/usr/local/www/firewall_nat_out.php:548
 msgid "automatic outbound nat"
@@ -11773,7 +11778,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:420
 msgid "Subnet: "
-msgstr ""
+msgstr "Subnät:"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:443
 msgid "Host Alias: "
@@ -11954,7 +11959,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:649
 msgid "Misc"
-msgstr ""
+msgstr "Diverse"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:657
 msgid ""
@@ -12052,7 +12057,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
 msgid "Settings"
-msgstr ""
+msgstr "Inställningar"
 
 #: src/usr/local/www/firewall_rules.php:427
 #: src/usr/local/www/firewall_rules.php:446
@@ -12104,119 +12109,119 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:256
 msgid "Mon"
-msgstr ""
+msgstr "Mån"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Tues"
-msgstr ""
+msgstr "Tis"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:258
 msgid "Wed"
-msgstr ""
+msgstr "Ons"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Thur"
-msgstr ""
+msgstr "Tors"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:260
 msgid "Fri"
-msgstr ""
+msgstr "Fre"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:261
 msgid "Sat"
-msgstr ""
+msgstr "Lör"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:262
 msgid "Sun"
-msgstr ""
+msgstr "Sön"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "January"
-msgstr ""
+msgstr "Januari"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "February"
-msgstr ""
+msgstr "Februari"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "March"
-msgstr ""
+msgstr "Mars"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "May"
-msgstr ""
+msgstr "Maj"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "June"
-msgstr ""
+msgstr "Juni"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "July"
-msgstr ""
+msgstr "Juli"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "August"
-msgstr ""
+msgstr "Augusti"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "October"
-msgstr ""
+msgstr "Oktober"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #: src/usr/local/www/firewall_rules.php:650
 msgid "Traffic matching this rule is currently being denied"
@@ -12237,7 +12242,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:780
 msgid "Copy"
-msgstr ""
+msgstr "Kopiera"
 
 #: src/usr/local/www/firewall_rules.php:789
 msgid "Delete this rule"
@@ -12690,11 +12695,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1252
 msgid "in"
-msgstr ""
+msgstr "in"
 
 #: src/usr/local/www/firewall_rules_edit.php:1253
 msgid "out"
-msgstr ""
+msgstr "ut"
 
 #: src/usr/local/www/firewall_rules_edit.php:1248
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:177
@@ -12716,7 +12721,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: src/usr/local/www/firewall_rules_edit.php:1321
 msgid " not"
@@ -12728,11 +12733,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1375
 msgid " Type"
-msgstr ""
+msgstr " Typ"
 
 #: src/usr/local/www/firewall_rules_edit.php:1382
 msgid " Address"
-msgstr ""
+msgstr "Adress"
 
 #: src/usr/local/www/firewall_rules_edit.php:1396
 #, php-format
@@ -12744,7 +12749,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1401
 msgid "(other)"
-msgstr ""
+msgstr "(annan)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1406
 msgid "Source Port Range"
@@ -12771,7 +12776,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:727
 #: src/usr/local/www/system_gateways_edit.php:747
 msgid "From"
-msgstr ""
+msgstr "Från"
 
 #: src/usr/local/www/firewall_rules_edit.php:1426
 msgid " port end"
@@ -12786,7 +12791,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:734
 #: src/usr/local/www/system_gateways_edit.php:754
 msgid "To"
-msgstr ""
+msgstr "Till"
 
 #: src/usr/local/www/firewall_rules_edit.php:1438
 #, php-format
@@ -13088,11 +13093,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:257
 msgid "Tue"
-msgstr ""
+msgstr "Tis"
 
 #: src/usr/local/www/firewall_schedule_edit.php:259
 msgid "Thu"
-msgstr ""
+msgstr "Tors"
 
 #: src/usr/local/www/firewall_schedule_edit.php:308
 msgid ""
@@ -13127,31 +13132,31 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:382
 msgid "Month"
-msgstr ""
+msgstr "Månad"
 
 #: src/usr/local/www/firewall_schedule_edit.php:388
 msgid "*Date"
-msgstr ""
+msgstr "*Datum"
 
 #: src/usr/local/www/firewall_schedule_edit.php:392
 msgid "*Time"
-msgstr ""
+msgstr "*Tid"
 
 #: src/usr/local/www/firewall_schedule_edit.php:399
 msgid "Start Hrs"
-msgstr ""
+msgstr "Start Timmar"
 
 #: src/usr/local/www/firewall_schedule_edit.php:406
 msgid "Start Mins"
-msgstr ""
+msgstr "Start Minuter"
 
 #: src/usr/local/www/firewall_schedule_edit.php:413
 msgid "Stop Hrs"
-msgstr ""
+msgstr "Stopp Timmar"
 
 #: src/usr/local/www/firewall_schedule_edit.php:420
 msgid "Stop Mins"
-msgstr ""
+msgstr "Stopp Minuter"
 
 #: src/usr/local/www/firewall_schedule_edit.php:422
 msgid ""
@@ -13177,15 +13182,15 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:598
 msgid "Day(s)"
-msgstr ""
+msgstr "Dag(ar)"
 
 #: src/usr/local/www/firewall_schedule_edit.php:605
 msgid "Start time"
-msgstr ""
+msgstr "Starttid"
 
 #: src/usr/local/www/firewall_schedule_edit.php:612
 msgid "Stop time"
-msgstr ""
+msgstr "Stopptid"
 
 #: src/usr/local/www/firewall_shaper.php:41
 #: src/usr/local/www/firewall_shaper.php:370
@@ -13316,13 +13321,13 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:102
-#: src/usr/local/www/license.php:111
+#: src/usr/local/www/license.php:112
 msgid "server"
-msgstr ""
+msgstr "server"
 
 #: src/usr/local/www/firewall_virtual_ip.php:102
 msgid "client"
-msgstr ""
+msgstr "klient"
 
 #: src/usr/local/www/firewall_virtual_ip.php:113
 #, php-format
@@ -13476,7 +13481,7 @@ msgstr ""
 #: src/usr/local/www/services_igmpproxy_edit.php:170
 #: src/usr/local/www/system_authservers.php:500
 msgid "*Type"
-msgstr ""
+msgstr "*Typ"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:372
 msgid "Single address"
@@ -13504,7 +13509,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:399
 msgid "VHID Group"
-msgstr ""
+msgstr "VHID-grupp"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:402
 msgid "Enter the VHID group that the machines will share."
@@ -13555,17 +13560,17 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:105
 msgid "In"
-msgstr ""
+msgstr "In"
 
 #: src/usr/local/www/graph.php:106
 msgid "Out"
-msgstr ""
+msgstr "Ut"
 
-#: src/usr/local/www/graph.php:110
+#: src/usr/local/www/graph.php:110 src/usr/local/www/graph.php:192
 msgid "Switch to bytes/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:111
+#: src/usr/local/www/graph.php:111 src/usr/local/www/graph.php:199
 msgid "AutoScale"
 msgstr ""
 
@@ -13590,37 +13595,37 @@ msgstr ""
 msgid "Both getURL and XMLHttpRequest are undefined"
 msgstr ""
 
-#: src/usr/local/www/graph.php:191
-msgid "Switch to"
+#: src/usr/local/www/graph.php:192
+msgid "Switch to bits/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:196
+#: src/usr/local/www/graph.php:198
 msgid "follow"
 msgstr ""
 
-#: src/usr/local/www/graph.php:367
+#: src/usr/local/www/graph.php:369
 msgid "Kbps"
-msgstr ""
+msgstr "Kbps"
 
-#: src/usr/local/www/graph.php:370
+#: src/usr/local/www/graph.php:372
 msgid "Mbps"
-msgstr ""
+msgstr "Mbps"
 
-#: src/usr/local/www/graph.php:373
+#: src/usr/local/www/graph.php:375
 msgid "Gbps"
-msgstr ""
+msgstr "Gbps"
 
-#: src/usr/local/www/graph.php:379
+#: src/usr/local/www/graph.php:381
 msgid "KB/s"
-msgstr ""
+msgstr "KB/s"
 
-#: src/usr/local/www/graph.php:382
+#: src/usr/local/www/graph.php:384
 msgid "MB/s"
-msgstr ""
+msgstr "MB/s"
 
-#: src/usr/local/www/graph.php:385
+#: src/usr/local/www/graph.php:387
 msgid "GB/s"
-msgstr ""
+msgstr "GB/s"
 
 #: src/usr/local/www/graph_cpu.php:76
 msgid "Cannot get CPU load"
@@ -13654,19 +13659,19 @@ msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:237
 msgid "100BASE-TX full-duplex"
-msgstr ""
+msgstr "100BASE-TX full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:238
 msgid "100BASE-TX half-duplex"
-msgstr ""
+msgstr "100BASE-TX half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:239
 msgid "10BASE-T full-duplex"
-msgstr ""
+msgstr "10BASE-T full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:240
 msgid "10BASE-T half-duplex"
-msgstr ""
+msgstr "10BASE-T half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:243 src/usr/local/www/interfaces.php:2961
 #: src/usr/local/www/interfaces_wireless_edit.php:189
@@ -13706,9 +13711,8 @@ msgid "The changes have been applied successfully."
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:388
-msgid ""
-"There was a problem applying the changes. See the <a href=\"status_logs."
-"php\">System Logs</a>."
+#, php-format
+msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:396
@@ -13756,11 +13760,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:579
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Advanced"
-msgstr ""
+msgstr "Avancerat"
 
 #: src/usr/local/www/head.inc:229 src/usr/local/www/system.php:412
 msgid "General Setup"
-msgstr ""
+msgstr "Allmänna inställningar"
 
 #: src/usr/local/www/head.inc:230
 msgid "High Avail. Sync"
@@ -13797,7 +13801,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:242 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
-msgstr ""
+msgstr "Användarinställningar"
 
 #: src/usr/local/www/head.inc:252
 msgid "Assignments"
@@ -13805,10 +13809,6 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:259
 msgid "Switches"
-msgstr ""
-
-#: src/usr/local/www/head.inc:264
-msgid "-DIVIDER-"
 msgstr ""
 
 #: src/usr/local/www/head.inc:298 src/usr/local/www/services_dhcpv6.php:483
@@ -13850,7 +13850,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:225
 #: src/usr/local/www/status_ntpd.php:283
 msgid "NTP"
-msgstr ""
+msgstr "NTP"
 
 #: src/usr/local/www/head.inc:306 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
@@ -13859,14 +13859,14 @@ msgstr ""
 #: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:347
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP"
 
 #: src/usr/local/www/head.inc:323 src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 #: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
-msgstr ""
+msgstr "L2TP"
 
 #: src/usr/local/www/head.inc:329
 msgid "CARP (failover)"
@@ -13894,11 +13894,11 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:229
 #: src/usr/local/www/widgets/include/gateways.inc:23
 msgid "Gateways"
-msgstr ""
+msgstr "Gateways"
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/status_dhcp_leases.php:36
 msgid "DHCP Leases"
-msgstr ""
+msgstr "DHCP-lån"
 
 #: src/usr/local/www/head.inc:333 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
@@ -13969,7 +13969,7 @@ msgstr ""
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/system_authservers.php:259
 msgid "Services"
-msgstr ""
+msgstr "Tjänster"
 
 #: src/usr/local/www/head.inc:344 src/usr/local/www/status_graph.php:125
 #: src/usr/local/www/status_graph.php:353
@@ -13992,11 +13992,11 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:107
 #: src/usr/local/www/status_wireless.php:31
 msgid "Wireless"
-msgstr ""
+msgstr "Trådlös"
 
 #: src/usr/local/www/head.inc:399
 msgid "pfSense Gold"
-msgstr ""
+msgstr "pfSense Gold"
 
 #: src/usr/local/www/head.inc:404 src/usr/local/www/help.php:383
 msgid "About this Page"
@@ -14008,23 +14008,23 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:409
 msgid "User Forum"
-msgstr ""
+msgstr "Användarforum"
 
 #: src/usr/local/www/head.inc:410
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentation"
 
 #: src/usr/local/www/head.inc:411
 msgid "Paid Support"
-msgstr ""
+msgstr "Betald Support"
 
 #: src/usr/local/www/head.inc:412
 msgid "pfSense Book"
-msgstr ""
+msgstr "pfSense-bok"
 
 #: src/usr/local/www/head.inc:413
 msgid "FreeBSD Handbook"
-msgstr ""
+msgstr "FreeBSD Handbok"
 
 #: src/usr/local/www/head.inc:503 src/usr/local/www/head.inc:675
 msgid "Notices"
@@ -14036,7 +14036,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:548
 msgid "Available widgets"
-msgstr ""
+msgstr "Tillgängliga widgets"
 
 #: src/usr/local/www/head.inc:556
 msgid "Log filter"
@@ -14052,7 +14052,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:590
 msgid "Export Graph"
-msgstr ""
+msgstr "Exportera Graf"
 
 #: src/usr/local/www/head.inc:630
 msgid "Help for items on this page"
@@ -14061,22 +14061,23 @@ msgstr ""
 #: src/usr/local/www/head.inc:641
 #, php-format
 msgid ""
-"<p>%s is booting, then packages will be reinstalled in the background.</"
-"p><p>Do not make changes in the GUI until this is complete.</p>"
+"%1$s%3$s is booting, then packages will be reinstalled in the background."
+"%2$s%1$sDo not make changes in the GUI until this is complete.%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:644
+#, php-format
 msgid ""
-"<p>Packages are currently being reinstalled in the background.</p><p>Do not "
-"make changes in the GUI until this is complete.</p>"
+"%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
+"not make changes in the GUI until this is complete.%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:645
 #, php-format
 msgid ""
-"<p>If the above message is still displayed after a couple of hours, use the "
-"'Clear Package Lock' button on the <a href=\"diag_backup.php\" title=\"%1$s "
-"&gt; %2$s\">%1$s &gt; %2$s</a> page and reinstall packages manually.</p>"
+"%1$sIf the above message is still displayed after a couple of hours, use the "
+"'Clear Package Lock' button on the %3$s page and reinstall packages manually."
+"%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:655
@@ -14085,15 +14086,15 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:714
 msgid "Close"
-msgstr ""
+msgstr "Stäng"
 
 #: src/usr/local/www/head.inc:716
 msgid "Mark All as Read"
-msgstr ""
+msgstr "Markera Alla Som Läst"
 
 #: src/usr/local/www/help.php:383
 msgid "Help"
-msgstr ""
+msgstr "Hjälp"
 
 #: src/usr/local/www/help.php:388
 msgid "The Help page is the only page this user has privilege for."
@@ -14116,7 +14117,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:79
 #, php-format
-msgid "Click <a href='crash_reporter.php'>here</a> for more information."
+msgid "Click %1$shere%2$s for more information."
 msgstr ""
 
 #: src/usr/local/www/index.php:81
@@ -14127,7 +14128,7 @@ msgstr ""
 #: src/usr/local/www/index.php:191
 #, php-format
 msgid "Welcome to %s!"
-msgstr ""
+msgstr "Välkommen till %s!"
 
 #: src/usr/local/www/index.php:192
 msgid "One moment while the initial setup wizard starts."
@@ -14146,7 +14147,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:307 src/etc/inc/pfsense-utils.inc:274
 msgid "Available Widgets"
-msgstr ""
+msgstr "Tillgängliga widgets"
 
 #: src/usr/local/www/index.php:486
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -14201,7 +14202,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:560
 msgid "IPv4 address"
-msgstr ""
+msgstr "IPv4-adress"
 
 #: src/usr/local/www/interfaces.php:560 src/usr/local/www/interfaces.php:611
 msgid "Subnet bit count"
@@ -14215,20 +14216,20 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:574
 msgid "Modem Port"
-msgstr ""
+msgstr "Modemport"
 
 #: src/usr/local/www/interfaces.php:574
 #: src/usr/local/www/interfaces_ppps_edit.php:204
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE username"
-msgstr ""
+msgstr "PPPoE-användarnamn"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE password"
-msgstr ""
+msgstr "PPPoE-lösenord"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:590
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:2620
@@ -14247,19 +14248,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP username"
-msgstr ""
+msgstr "PPTP-användarnamn"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP password"
-msgstr ""
+msgstr "PPTP-lösenord"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP local IP address"
-msgstr ""
+msgstr "PPTP lokal IP-adress"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP subnet"
-msgstr ""
+msgstr "PPTP-subnät"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP remote IP address"
@@ -14267,11 +14268,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP username"
-msgstr ""
+msgstr "L2TP-användarnamn"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP password"
-msgstr ""
+msgstr "L2TP-lösenord"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP remote IP address"
@@ -14450,7 +14451,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:878 src/usr/local/www/interfaces.php:2966
 #: src/usr/local/www/status_interfaces.php:163
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: src/usr/local/www/interfaces.php:881
 msgid "A specific channel, not auto, must be selected for Access Point mode."
@@ -14544,13 +14545,13 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1658
 msgid "Static IPv4"
-msgstr ""
+msgstr "Statisk IPv4"
 
 #: src/usr/local/www/interfaces.php:1658 src/usr/local/www/status_logs.php:43
 #: src/usr/local/www/status_logs_common.inc:90
 #: src/usr/local/www/status_logs_settings.php:218
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
@@ -14558,25 +14559,25 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:93
 #: src/usr/local/www/status_logs_settings.php:221
 msgid "PPP"
-msgstr ""
+msgstr "PPP"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 msgid "PPPoE"
-msgstr ""
+msgstr "PPPoE"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 msgid "PPTP"
-msgstr ""
+msgstr "PPTP"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "Static IPv6"
-msgstr ""
+msgstr "Statisk IPv6"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "DHCP6"
-msgstr ""
+msgstr "DHCP6"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "SLAAC"
@@ -14648,13 +14649,14 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:218
 #: src/usr/local/www/services_dhcp_edit.php:421
 msgid "Copy My MAC"
-msgstr ""
+msgstr "Kopiera min MAC"
 
 #: src/usr/local/www/interfaces.php:1775
+#, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
-"interface.<br />Enter a MAC address in the following format: xx:xx:xx:xx:xx:"
-"xx or leave blank."
+"interface.%sEnter a MAC address in the following format: xx:xx:xx:xx:xx:xx "
+"or leave blank."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1781
@@ -14684,9 +14686,10 @@ msgid "Speed and Duplex"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1801
+#, php-format
 msgid ""
-"Explicitly set speed and duplex mode for this interface.<br />WARNING: MUST "
-"be set to autoselect (automatically negotiate speed) unless the port this "
+"Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
+"set to autoselect (automatically negotiate speed) unless the port this "
 "interface connects to has its speed and duplex forced."
 msgstr ""
 
@@ -14710,19 +14713,13 @@ msgstr ""
 msgid "Add a new gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1835
-msgid "Gateways can be managed by "
-msgstr ""
-
-#: src/usr/local/www/interfaces.php:1835
-msgid " clicking here"
-msgstr ""
-
 #: src/usr/local/www/interfaces.php:1833
+#, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
-"the list or add a new one using the \"Add\" button.<br />On local area "
-"network interfaces the upstream gateway should be \"none\". "
+"the list or add a new one using the \"Add\" button.%1$sOn local area network "
+"interfaces the upstream gateway should be \"none\". Gateways can be managed "
+"by %2$sclicking here%3$s."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1841
@@ -14742,9 +14739,10 @@ msgid "IPv6 Upstream Gateway"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1867
+#, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
-"the list or add a new one using the \"Add\" button.<br />On local LANs the "
+"the list or add a new one using the \"Add\" button.%sOn local LANs the "
 "upstream gateway should be \"none\". "
 msgstr ""
 
@@ -14838,11 +14836,10 @@ msgid "Presets"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2056
+#, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
-"lease.<br /><a target=\"_blank\" href=\"https://www.freebsd.org/cgi/man."
-"cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING\">See here more "
-"information</a>"
+"lease.%1$sSee %2$shere%3$s for more information"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2063 src/usr/local/www/interfaces.php:2183
@@ -14912,13 +14909,14 @@ msgid "Do not allow PD/Address release"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2186
+#, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
-"configuration file.\t [/[dirname/[.../]]filename[.ext]]<br />Value "
+"configuration file.\t [/[dirname/[.../]]filename[.ext]] %1$sValue "
 "Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, "
-"{mac_addr_hexCD}<br />Where C is U(pper) or L(ower) Case, and D is \" :-.\" "
-"Delimiter (space, colon, hyphen, or period) (omitted for none).<br />Some "
-"ISPs may require certain options be or not be sent."
+"{mac_addr_hexCD} %1$sWhere C is U(pper) or L(ower) Case, and D is \" :-.\" "
+"Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sSome ISPs "
+"may require certain options be or not be sent."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2195
@@ -14958,10 +14956,8 @@ msgid "Keyinfo statement"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2404
-msgid ""
-"<a target=\"_blank\" href=\"https://www.freebsd.org/cgi/man.cgi?query=dhcp6c."
-"conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-"
-"RELEASE+and+Ports#Interface_statement\">See here more information</a>"
+#, php-format
+msgid "See %1$shere%2$s more information"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2410
@@ -15003,8 +14999,9 @@ msgid "IPv6 Prefix ID"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2493
+#, php-format
 msgid ""
-"<span id=\"track6-prefix-id-range\"></span>The value in this field is the "
+"(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
 "(Delegated) IPv6 prefix ID. This determines the configurable network ID "
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
@@ -15012,17 +15009,17 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2506
 #: src/usr/local/www/interfaces_ppps_edit.php:573
 msgid "PPP Configuration"
-msgstr ""
+msgstr "PPP-konfiguration"
 
 #: src/usr/local/www/interfaces.php:2511 src/usr/local/www/interfaces.php:2937
 #: src/usr/local/www/interfaces_ppps_edit.php:601
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: src/usr/local/www/interfaces.php:2518
 #: src/usr/local/www/interfaces_ppps_edit.php:608
 msgid "Provider"
-msgstr ""
+msgstr "Leverantör"
 
 #: src/usr/local/www/interfaces.php:2525
 #: src/usr/local/www/interfaces_ppps_edit.php:615
@@ -15037,11 +15034,11 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2546
 #: src/usr/local/www/interfaces_ppps_edit.php:673
 msgid "*Phone number"
-msgstr ""
+msgstr "*Telefonnummer"
 
 #: src/usr/local/www/interfaces.php:2549
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
-msgstr ""
+msgstr "Vanligtvis *99# för GSM-nätverk och #777 för CDMA-nätverk."
 
 #: src/usr/local/www/interfaces.php:2553
 msgid "Access Point Name"
@@ -15053,15 +15050,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2586
 msgid "Advanced PPP"
-msgstr ""
+msgstr "Avancerad PPP"
 
 #: src/usr/local/www/interfaces.php:2589
 msgid "Create a new PPP configuration."
-msgstr ""
+msgstr "Ska en ny PPP-konfiguration."
 
 #: src/usr/local/www/interfaces.php:2594
 msgid "PPPoE Configuration"
-msgstr ""
+msgstr "PPPoE-konfiguration"
 
 #: src/usr/local/www/interfaces.php:2613
 #: src/usr/local/www/interfaces_ppps_edit.php:730
@@ -15070,7 +15067,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2616
 msgid "This field can usually be left empty."
-msgstr ""
+msgstr "Detta fält kan vanligtvis lämnas tomt."
 
 #: src/usr/local/www/interfaces.php:2628
 msgid "Idle timeout"
@@ -15102,15 +15099,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2651
 msgid "Hour (0-23)"
-msgstr ""
+msgstr "Timma (0-23)"
 
 #: src/usr/local/www/interfaces.php:2659
 msgid "Minutes (0-59)"
-msgstr ""
+msgstr "Minuter (0-59)"
 
 #: src/usr/local/www/interfaces.php:2666
 msgid "Specific date (mm/dd/yyyy)"
-msgstr ""
+msgstr "Specifikt datum (mm/dd/åååå)"
 
 #: src/usr/local/www/interfaces.php:2668
 msgid ""
@@ -15134,11 +15131,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2719
 msgid "PPTP/L2TP Configuration"
-msgstr ""
+msgstr "PPTP/L2TP-Konfiguration"
 
 #: src/usr/local/www/interfaces.php:2738
 msgid "*Local IP address"
-msgstr ""
+msgstr "*Lokal IP-adress"
 
 #: src/usr/local/www/interfaces.php:2745
 msgid "*Remote IP address"
@@ -15161,8 +15158,9 @@ msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2779
+#, php-format
 msgid ""
-"Click for additional PPTP and L2TP configuration options. Save first if "
+"%sClick for additional PPTP and L2TP configuration options. Save first if "
 "changes have been made."
 msgstr ""
 
@@ -15177,7 +15175,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2810
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 #: src/usr/local/www/interfaces.php:2820 src/usr/local/www/interfaces.php:2870
 msgid "Off"
@@ -15207,7 +15205,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:849
 #: src/usr/local/www/vpn_ipsec_phase2.php:628
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #: src/usr/local/www/interfaces.php:2855
 #: src/usr/local/www/status_interfaces.php:162
@@ -15215,10 +15213,11 @@ msgid "Channel"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2858
+#, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
-"allowed in reg. domain)<br />Not all channels may be supported by some cards."
-"  Auto may override the wireless standard selected above."
+"allowed in reg. domain) %1$sNot all channels may be supported by some cards. "
+" Auto may override the wireless standard selected above."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2863
@@ -15235,11 +15234,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2879 src/usr/local/www/interfaces.php:2888
 msgid "#1"
-msgstr ""
+msgstr "#1"
 
 #: src/usr/local/www/interfaces.php:2879 src/usr/local/www/interfaces.php:2888
 msgid "#2"
-msgstr ""
+msgstr "#2"
 
 #: src/usr/local/www/interfaces.php:2880
 msgid "Transmit antenna"
@@ -15288,25 +15287,26 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2946
 msgid "Indoor"
-msgstr ""
+msgstr "Inomhus"
 
 #: src/usr/local/www/interfaces.php:2946
 msgid "Outdoor"
-msgstr ""
+msgstr "Utomhus"
 
 #: src/usr/local/www/interfaces.php:2946
 msgid "Anywhere"
-msgstr ""
+msgstr "Var som helst"
 
 #: src/usr/local/www/interfaces.php:2944
 msgid "Location"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2947
+#, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
 "transmit power allowed on those channels. Using the correct settings to "
-"comply with local regulatory requirements is recommended.<br />All wireless "
+"comply with local regulatory requirements is recommended.%1$sAll wireless "
 "networks on this interface will be temporarily brought down when changing "
 "regulatory settings.  Some of the regulatory domains or country codes may "
 "not be allowed by some cards.\tThese settings may not be able to add "
@@ -15319,11 +15319,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11g"
-msgstr ""
+msgstr "802.11g"
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11n"
-msgstr ""
+msgstr "802.11n"
 
 #: src/usr/local/www/interfaces.php:2974
 msgid "Minimum wireless standard"
@@ -15338,7 +15338,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2981
 msgid "802.11g only"
-msgstr ""
+msgstr "802.11g endast"
 
 #: src/usr/local/www/interfaces.php:2985
 msgid ""
@@ -15358,15 +15358,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2998
 msgid "Enable WME"
-msgstr ""
+msgstr "Aktivera WME"
 
 #: src/usr/local/www/interfaces.php:3006
 msgid "Hide SSID"
-msgstr ""
+msgstr "Dölj SSID"
 
 #: src/usr/local/www/interfaces.php:3015 src/usr/local/www/interfaces.php:3036
 msgid "WPA"
-msgstr ""
+msgstr "WPA"
 
 #: src/usr/local/www/interfaces.php:3027
 msgid "WPA Pre-Shared Key"
@@ -15378,7 +15378,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3036
 msgid "WPA2"
-msgstr ""
+msgstr "WPA2"
 
 #: src/usr/local/www/interfaces.php:3036 src/usr/local/www/interfaces.php:3043
 #: src/usr/local/www/interfaces.php:3050 src/usr/local/www/pkg_mgr.php:160
@@ -15414,7 +15414,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3050
 msgid "TKIP"
-msgstr ""
+msgstr "TKIP"
 
 #: src/usr/local/www/interfaces.php:3048
 msgid "WPA Pairwise"
@@ -15450,7 +15450,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3083
 msgid "IEEE802.1X"
-msgstr ""
+msgstr "IEEE802.1X"
 
 #: src/usr/local/www/interfaces.php:3087
 msgid "This option requires that the \"Enable WPA box\" is checked"
@@ -15503,11 +15503,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:3166
+#, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
 "assigned by IANA. Bogons are prefixes that should never appear in the "
 "Internet routing table, and so should not appear as the source address in "
-"any packets received.<br />Note: The update frequency can be changed under "
+"any packets received.%1$sNote: The update frequency can be changed under "
 "System->Advanced Firewall/NAT settings."
 msgstr ""
 
@@ -15541,11 +15542,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:220
 msgid "lan"
-msgstr ""
+msgstr "lan"
 
 #: src/usr/local/www/interfaces_assign.php:221
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: src/usr/local/www/interfaces_assign.php:247
 msgid "Interface has been added."
@@ -15598,7 +15599,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:461
 msgid "The system is now rebooting. Please wait."
-msgstr ""
+msgstr "Systemet startar nu om. Vänligen vänta."
 
 #: src/usr/local/www/interfaces_assign.php:464
 msgid "Reboot is needed. Please apply the settings in order to reboot."
@@ -15673,7 +15674,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:88
 #: src/usr/local/www/interfaces_wireless.php:85
 msgid "PPPs"
-msgstr ""
+msgstr "PPPs"
 
 #: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/interfaces_bridge.php:89
@@ -15851,6 +15852,55 @@ msgstr ""
 msgid "At least one member interface must be selected for a bridge."
 msgstr ""
 
+#: src/usr/local/www/interfaces_bridge_edit.php:194
+#, php-format
+msgid ""
+"Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
+"to continuez."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:202
+#, php-format
+msgid ""
+"Private interface (%s) is not part of the bridge. Remove the private "
+"interface to continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:210
+#, php-format
+msgid ""
+"STP interface (%s) is not part of the bridge. Remove the STP interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:221
+#, php-format
+msgid ""
+"Edge interface (%s) is not part of the bridge. Remove the edge interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:229
+#, php-format
+msgid ""
+"Auto Edge interface (%s) is not part of the bridge. Remove the auto edge "
+"interface to continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:237
+#, php-format
+msgid ""
+"PTP interface (%s) is not part of the bridge. Remove the PTP interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:245
+#, php-format
+msgid ""
+"Auto PTP interface (%s) is not part of the bridge. Remove the auto PTP "
+"interface to continue."
+msgstr ""
+
 #: src/usr/local/www/interfaces_bridge_edit.php:253
 msgid "A member interface passed does not exist in configuration"
 msgstr ""
@@ -15861,6 +15911,13 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:260
 msgid "Bridging a wireless interface is only possible in hostap mode."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:263
+#, php-format
+msgid ""
+"Span interface (%s) cannot be part of the bridge. Remove the span interface "
+"from bridge members to continue."
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:272
@@ -15928,8 +15985,8 @@ msgid ""
 "Add the interface named by interface as a span port on the bridge. Span "
 "ports transmit a copy of every frame received by the bridge. This is most "
 "useful for snooping a bridged network passively on another host connected to "
-"one of the span ports of the bridge. <br />%1$sThe span interface cannot be "
-"part of the bridge member interfaces.%2$s"
+"one of the span ports of the bridgez. %1$s%2$sThe span interface cannot be "
+"part of the bridge member interfaces.%3$s"
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:465
@@ -16348,18 +16405,19 @@ msgstr ""
 #: src/usr/local/www/interfaces_groups.php:112
 #: src/usr/local/www/system_groupmanager.php:336
 msgid "Edit group"
-msgstr ""
+msgstr "Redigera grupp"
 
 #: src/usr/local/www/interfaces_groups.php:113
 #: src/usr/local/www/system_groupmanager.php:338
 msgid "Delete group"
-msgstr ""
+msgstr "Ta bort grupp"
 
 #: src/usr/local/www/interfaces_groups.php:131
+#, php-format
 msgid ""
 "Interface Groups allow setting up rules for multiple interfaces without "
-"duplicating the rules.<br />If members are removed from an interface group, "
-"the group rules are no longer applicable to that interface."
+"duplicating the rules.%sIf members are removed from an interface group, the "
+"group rules are no longer applicable to that interface."
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:58
@@ -16377,19 +16435,19 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups_edit.php:295
 #: src/usr/local/www/system_groupmanager.php:141
 msgid "Group Name"
-msgstr ""
+msgstr "Gruppnamn"
 
 #: src/usr/local/www/interfaces_groups_edit.php:74
 msgid "Group name already exists!"
-msgstr ""
+msgstr "Gruppnamnet finns redan!"
 
 #: src/usr/local/www/interfaces_groups_edit.php:79
 msgid "Group name cannot have more than 16 characters."
-msgstr ""
+msgstr "Gruppnamnet kan inte innehålla mer än 16 tecken."
 
 #: src/usr/local/www/interfaces_groups_edit.php:83
 msgid "Please choose another group name."
-msgstr ""
+msgstr "Vänligen välj ett annat gruppnamn."
 
 #: src/usr/local/www/interfaces_groups_edit.php:95
 msgid "Group name cannot start with pkg_"
@@ -16402,16 +16460,16 @@ msgstr ""
 #: src/usr/local/www/interfaces_groups_edit.php:214
 #: src/usr/local/www/system_gateway_groups_edit.php:209
 msgid "*Group Name"
-msgstr ""
+msgstr "*Gruppnamn"
 
 #: src/usr/local/www/interfaces_groups_edit.php:218
 #: src/usr/local/www/status_logs_common.inc:782
 msgid " "
-msgstr ""
+msgstr " "
 
 #: src/usr/local/www/interfaces_groups_edit.php:222
 msgid "Group Description"
-msgstr ""
+msgstr "Gruppbeskrivning"
 
 #: src/usr/local/www/interfaces_groups_edit.php:226
 #: src/usr/local/www/interfaces_vlan_edit.php:213
@@ -16422,13 +16480,13 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:231
 msgid "Group Members"
-msgstr ""
+msgstr "Gruppmedlemmar"
 
 #: src/usr/local/www/interfaces_groups_edit.php:235
+#, php-format
 msgid ""
 "NOTE: Rules for WAN type interfaces in groups do not contain the reply-to "
-"mechanism upon which Multi-WAN typically relies. <a href=\"https://doc."
-"pfsense.org/index.php/ifgroups\">More Information</a>"
+"mechanism upon which Multi-WAN typically relies. %1$sMore Information%2$s"
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:243
@@ -16599,14 +16657,14 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
 msgid "Local IP address"
-msgstr ""
+msgstr "Lokal IP-adress"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
 #: src/usr/local/www/services_dhcp.php:851
 #: src/usr/local/www/services_dhcpv6.php:596
 msgid "Subnet"
-msgstr ""
+msgstr "Subnät"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
@@ -16718,11 +16776,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:648
 msgid "IP/Gateway ("
-msgstr ""
+msgstr "IP/Gateway ("
 
 #: src/usr/local/www/interfaces_ppps_edit.php:654
 msgid "Local IP Address"
-msgstr ""
+msgstr "Lokal IP-adress"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:661
 msgid "Gateway IP or Hostname"
@@ -16730,7 +16788,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:676
 msgid "Typically *99# for GSM networks and #777 for CDMA networks"
-msgstr ""
+msgstr "Vanligtvis *99# för GSM-nätverk och #777 för CDMA-nätverk."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:681
 msgid "Access Point Name (APN)"
@@ -16738,7 +16796,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:688
 msgid "APN number (optional)"
-msgstr ""
+msgstr "APN-nummer (valfritt)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:691
 msgid "Defaults to 1 if APN is set. Ignored if no APN is set."
@@ -16746,7 +16804,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:695
 msgid "SIM PIN"
-msgstr ""
+msgstr "SIM-PIN"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:702
 msgid "SIM PIN wait"
@@ -16810,15 +16868,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:772
 msgid "Hour"
-msgstr ""
+msgstr "Timme"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:779
 msgid "Minute"
-msgstr ""
+msgstr "Minut"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:787
 msgid "Specific date"
-msgstr ""
+msgstr "Specifikt datum"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:789
 msgid ""
@@ -16964,9 +17022,9 @@ msgstr ""
 #: src/usr/local/www/interfaces_qinq.php:157
 #, php-format
 msgid ""
-"Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards "
-"that do not explicitly support it, QinQ tagging will still work, but the "
-"reduced MTU may cause problems.<br />See the %s handbook for information on "
+"Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
+"do not explicitly support it, QinQ tagging will still work, but the reduced "
+"MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
 
@@ -17073,9 +17131,9 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:157
 #, php-format
 msgid ""
-"Not all drivers/NICs support 802.1Q VLAN tagging properly. <br />On cards "
-"that do not explicitly support it, VLAN tagging will still work, but the "
-"reduced MTU may cause problems.<br />See the %s handbook for information on "
+"Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
+"do not explicitly support it, VLAN tagging will still work, but the reduced "
+"MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
 
@@ -17197,42 +17255,44 @@ msgstr ""
 msgid "*Mode"
 msgstr ""
 
-#: src/usr/local/www/license.php:33
+#: src/usr/local/www/license.php:30 src/usr/local/www/license.php:34
 msgid "License"
-msgstr ""
+msgstr "Licens"
 
-#: src/usr/local/www/license.php:35
+#: src/usr/local/www/license.php:36
 #, php-format
 msgid "%1$s is Copyright &copy; %2$s %3$s. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:36
+#: src/usr/local/www/license.php:37
 msgid ""
 "m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All "
 "rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:37
+#: src/usr/local/www/license.php:38
+#, php-format
 msgid ""
-"Licensed under the Apache License, Version 2.0 (the \"License\");<br />you "
-"may not use this file except in compliance with the License.<br />You may "
-"obtain a copy of the License at"
+"Licensed under the Apache License, Version 2.0 (the \"License\");%1$syou may "
+"not use this file except in compliance with the License.%1$sYou may obtain a "
+"copy of the License at"
 msgstr ""
 
-#: src/usr/local/www/license.php:39
+#: src/usr/local/www/license.php:40
+#, php-format
 msgid ""
-"Unless required by applicable law or agreed to in writing, software<br /"
-">distributed under the License is distributed on an \"AS IS\" BASIS,<br /"
-">WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br "
-"/>See the License for the specific language governing permissions and<br /"
-">limitations under the License."
+"Unless required by applicable law or agreed to in writing, "
+"software%1$sdistributed under the License is distributed on an \\\"AS IS\\\" "
+"BASIS,%1$sWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or "
+"implied.%1$sSee the License for the specific language governing permissions "
+"and%1$slimitations under the License."
 msgstr ""
 
-#: src/usr/local/www/license.php:43
+#: src/usr/local/www/license.php:44
 msgid "Third Party Credits"
 msgstr ""
 
-#: src/usr/local/www/license.php:46
+#: src/usr/local/www/license.php:47
 #, php-format
 msgid ""
 "%1$s is based upon/includes various free software packages, listed below. "
@@ -17240,75 +17300,72 @@ msgid ""
 "packages for their efforts."
 msgstr ""
 
-#: src/usr/local/www/license.php:51 src/usr/local/www/license.php:55
-#: src/usr/local/www/license.php:62 src/usr/local/www/license.php:66
-#: src/usr/local/www/license.php:74 src/usr/local/www/license.php:75
-#: src/usr/local/www/license.php:79 src/usr/local/www/license.php:83
-#: src/usr/local/www/license.php:87 src/usr/local/www/license.php:91
-#: src/usr/local/www/license.php:95 src/usr/local/www/license.php:100
-#: src/usr/local/www/license.php:104 src/usr/local/www/license.php:108
-#: src/usr/local/www/license.php:112 src/usr/local/www/license.php:113
-#: src/usr/local/www/license.php:117 src/usr/local/www/license.php:121
-#: src/usr/local/www/license.php:126 src/usr/local/www/license.php:136
-#: src/usr/local/www/license.php:140 src/usr/local/www/license.php:144
-#: src/usr/local/www/license.php:152 src/usr/local/www/license.php:153
-#: src/usr/local/www/license.php:157 src/usr/local/www/license.php:161
-#: src/usr/local/www/license.php:165 src/usr/local/www/license.php:169
-#: src/usr/local/www/license.php:173 src/usr/local/www/license.php:177
-#: src/usr/local/www/license.php:181 src/usr/local/www/license.php:189
-#: src/usr/local/www/license.php:193
+#: src/usr/local/www/license.php:52 src/usr/local/www/license.php:56
+#: src/usr/local/www/license.php:63 src/usr/local/www/license.php:67
+#: src/usr/local/www/license.php:75 src/usr/local/www/license.php:76
+#: src/usr/local/www/license.php:80 src/usr/local/www/license.php:84
+#: src/usr/local/www/license.php:88 src/usr/local/www/license.php:92
+#: src/usr/local/www/license.php:96 src/usr/local/www/license.php:101
+#: src/usr/local/www/license.php:105 src/usr/local/www/license.php:109
+#: src/usr/local/www/license.php:113 src/usr/local/www/license.php:114
+#: src/usr/local/www/license.php:118 src/usr/local/www/license.php:122
+#: src/usr/local/www/license.php:127 src/usr/local/www/license.php:137
+#: src/usr/local/www/license.php:141 src/usr/local/www/license.php:145
+#: src/usr/local/www/license.php:153 src/usr/local/www/license.php:154
+#: src/usr/local/www/license.php:158 src/usr/local/www/license.php:162
+#: src/usr/local/www/license.php:166 src/usr/local/www/license.php:170
+#: src/usr/local/www/license.php:174 src/usr/local/www/license.php:178
+#: src/usr/local/www/license.php:182 src/usr/local/www/license.php:190
+#: src/usr/local/www/license.php:194
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
-#: src/usr/local/www/license.php:51
+#: src/usr/local/www/license.php:52
 msgid "1992-2016 The FreeBSD Project. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:54
-msgid "This product includes"
-msgstr ""
-
-#: src/usr/local/www/license.php:54
-msgid "freely available from"
-msgstr ""
-
 #: src/usr/local/www/license.php:55
+#, php-format
+msgid "This product includes %1$s, freely available from (%2$s)"
+msgstr ""
+
+#: src/usr/local/www/license.php:56
 msgid "1999-2016 The PHP Group. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:112
+#: src/usr/local/www/license.php:113
 msgid "2004-2013 Internet Software Consortium, Inc."
 msgstr ""
 
-#: src/usr/local/www/license.php:113
+#: src/usr/local/www/license.php:114
 msgid "1995-2003 Internet Software Consortium"
 msgstr ""
 
-#: src/usr/local/www/license.php:122 src/usr/local/www/license.php:127
+#: src/usr/local/www/license.php:123 src/usr/local/www/license.php:128
 msgid "All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:126
+#: src/usr/local/www/license.php:127
 msgid "2011-2016 Nginx, Inc."
 msgstr ""
 
-#: src/usr/local/www/license.php:131
+#: src/usr/local/www/license.php:132
 msgid "Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:132
+#: src/usr/local/www/license.php:133
 msgid "This product includes software developed by Edwin Groothuis."
 msgstr ""
 
-#: src/usr/local/www/license.php:136
+#: src/usr/local/www/license.php:137
 msgid "2005-2016 University of Applied Sciences Rapperswil"
 msgstr ""
 
-#: src/usr/local/www/license.php:148
+#: src/usr/local/www/license.php:149
 msgid "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
 msgstr ""
 
-#: src/usr/local/www/license.php:185
+#: src/usr/local/www/license.php:186
 msgid "Public Domain"
 msgstr ""
 
@@ -17421,21 +17478,21 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "ICMP"
-msgstr ""
+msgstr "ICMP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:314
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:322
 msgid "HTTPS"
-msgstr ""
+msgstr "HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "Send/Expect"
@@ -17452,7 +17509,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor_edit.php:297
 #: src/usr/local/www/load_balancer_monitor_edit.php:323
 msgid "Path"
-msgstr ""
+msgstr "Sökväg"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:307
 #: src/usr/local/www/load_balancer_monitor_edit.php:333
@@ -17779,7 +17836,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:134
 #: src/usr/local/www/services_unbound_host_edit.php:231
 msgid "*IP Address"
-msgstr ""
+msgstr "*IP-adress"
 
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:194
 msgid ""
@@ -17959,7 +18016,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:142 src/usr/local/www/pkg_mgr.php:164
 msgid "Search"
-msgstr ""
+msgstr "Sök"
 
 #: src/usr/local/www/pkg_mgr.php:153
 msgid "Search term"
@@ -17988,7 +18045,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:121
 msgid "Failed"
-msgstr ""
+msgstr "Misslyckades"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
@@ -18172,7 +18229,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:558
 msgid "This may take several minutes!"
-msgstr ""
+msgstr "Detta kan ta flera minuter!"
 
 #: src/usr/local/www/pkg_mgr_installed.php:77
 msgid "Category"
@@ -18245,7 +18302,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
 #: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:84
 msgid "Configuration"
-msgstr ""
+msgstr "Inställningar"
 
 #: src/usr/local/www/services_captiveportal.php:85
 #, php-format
@@ -18401,7 +18458,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_vouchers.php:379
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:53
 msgid "Vouchers"
-msgstr ""
+msgstr "Kuponger"
 
 #: src/usr/local/www/services_captiveportal.php:526
 #: src/usr/local/www/services_captiveportal_filemanager.php:67
@@ -18420,7 +18477,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:543
 #: src/usr/local/www/services_dnsmasq.php:330
 msgid "*Interfaces"
-msgstr ""
+msgstr "*Gränssnitt"
 
 #: src/usr/local/www/services_captiveportal.php:547
 msgid "Select the interface(s) to enable for captive portal."
@@ -18546,7 +18603,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:636
 msgid "MAC filtering"
-msgstr ""
+msgstr "MAC-filtrering"
 
 #: src/usr/local/www/services_captiveportal.php:639
 msgid ""
@@ -18650,7 +18707,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:366
 #: src/usr/local/www/vpn_l2tp.php:273
 msgid "RADIUS"
-msgstr ""
+msgstr "RADIUS"
 
 #: src/usr/local/www/services_captiveportal.php:880
 msgid "Accounting Port"
@@ -18797,7 +18854,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1033
 msgid "*SSL Certificate"
-msgstr ""
+msgstr "*SSL-servercertifikat"
 
 #: src/usr/local/www/services_captiveportal.php:1036
 msgid ""
@@ -18913,19 +18970,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:164
 msgid "File"
-msgstr ""
+msgstr "Fil"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:183
 msgid "Installed Files"
-msgstr ""
+msgstr "Installerade Filer"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:203
 msgid "Delete file"
-msgstr ""
+msgstr "Borttagna Filer"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:214
 msgid "Total"
-msgstr ""
+msgstr "Totalt"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:244
 #: src/usr/local/www/services_ntpd_gps.php:331
@@ -19034,7 +19091,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:245
 #: src/usr/local/www/services_captiveportal_mac_edit.php:240
 msgid "Bandwidth up"
-msgstr ""
+msgstr "Bandbredd upp"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:202
 msgid "Enter a upload limit to be enforced on this Hostname in Kbit/s"
@@ -19044,7 +19101,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:252
 #: src/usr/local/www/services_captiveportal_mac_edit.php:247
 msgid "Bandwidth down"
-msgstr ""
+msgstr "Bandbredd ner"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:209
 msgid "Enter a download limit to be enforced on this Hostname in Kbit/s"
@@ -19052,15 +19109,15 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip.php:110
 msgid "IP Addresses"
-msgstr ""
+msgstr "IP-adresser"
 
 #: src/usr/local/www/services_captiveportal_ip.php:131
 msgid "Edit IP"
-msgstr ""
+msgstr "Redigera IP"
 
 #: src/usr/local/www/services_captiveportal_ip.php:132
 msgid "Delete IP"
-msgstr ""
+msgstr "Ta bort IP"
 
 #: src/usr/local/www/services_captiveportal_ip.php:141
 #, php-format
@@ -19082,7 +19139,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:97
 msgid "Allowed IP address"
-msgstr ""
+msgstr "Tillåten IP-adress"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:97
 #: src/usr/local/www/services_dhcp.php:856
@@ -19107,7 +19164,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:131
 #, php-format
 msgid "[%s] already allowed."
-msgstr ""
+msgstr "[%s] redan tillåten."
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:220
 msgid "Edit Captive Portal IP Rule"
@@ -19172,11 +19229,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_mac.php:200
 msgid "Edit MAC address"
-msgstr ""
+msgstr "Redigera MAC-adress"
 
 #: src/usr/local/www/services_captiveportal_mac.php:201
 msgid "Delete MAC address"
-msgstr ""
+msgstr "Ta bort MAC-adress"
 
 #: src/usr/local/www/services_captiveportal_mac.php:227
 msgid ""
@@ -19198,7 +19255,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:138
 #, php-format
 msgid "[%s] already exists."
-msgstr ""
+msgstr "[%s] finns redan."
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:199
 msgid "Edit MAC Address Rules"
@@ -19210,7 +19267,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:225
 msgid "*MAC Address"
-msgstr ""
+msgstr "*MAC-adress"
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:228
 msgid "6 hex octets separated by colons"
@@ -19236,11 +19293,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:129
 msgid "Voucher invalid"
-msgstr ""
+msgstr "Ogiltig kupong"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:132
 msgid "Voucher expired"
-msgstr ""
+msgstr "Utgången kupong"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:155
 msgid "Cannot write private key file"
@@ -19301,7 +19358,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:229
 msgid "',' aren't allowed."
-msgstr ""
+msgstr "',' är inte tillåtet."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:232
 msgid "# of Bits to store Roll Id needs to be between 1..31."
@@ -19606,24 +19663,24 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones.php:74
 #: src/usr/local/www/services_rfc2136_edit.php:204
 msgid "Zone"
-msgstr ""
+msgstr "Zon"
 
 #: src/usr/local/www/services_captiveportal_zones.php:76
 #: src/usr/local/www/services_pppoe.php:104
 msgid "Number of users"
-msgstr ""
+msgstr "Antal användare"
 
 #: src/usr/local/www/services_captiveportal_zones.php:102
 msgid "Edit zone"
-msgstr ""
+msgstr "Redigera zon"
 
 #: src/usr/local/www/services_captiveportal_zones.php:103
 msgid "Delete zone"
-msgstr ""
+msgstr "Ta bort zon"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 msgid "Add Zone"
-msgstr ""
+msgstr "Lägg till zon"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:55
 msgid "The zone name can only contain letters, digits, and underscores ( _ )."
@@ -19632,7 +19689,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones_edit.php:60
 #, php-format
 msgid "Zone [%s] already exists."
-msgstr ""
+msgstr "Zon [%s] finns redan."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:86
 msgid "Add Captive Portal Zone"
@@ -19640,7 +19697,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:90
 msgid "*Zone name"
-msgstr ""
+msgstr "Zon-namn"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:91
 msgid ""
@@ -19654,7 +19711,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:102
 msgid "Save & Continue"
-msgstr ""
+msgstr "Spara & Fortsätt"
 
 #: src/usr/local/www/services_checkip.php:65
 #: src/usr/local/www/services_checkip.php:72
@@ -19685,7 +19742,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip.php:89
 #: src/usr/local/www/services_checkip_edit.php:63
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/usr/local/www/services_checkip.php:90
 #: src/usr/local/www/services_checkip_edit.php:155
@@ -19736,7 +19793,7 @@ msgstr ""
 
 #: src/usr/local/www/services_checkip.php:182
 msgid "PHP"
-msgstr ""
+msgstr "PHP"
 
 #: src/usr/local/www/services_checkip_edit.php:68
 msgid "The Check IP Service name contains invalid characters."
@@ -19762,11 +19819,11 @@ msgstr ""
 
 #: src/usr/local/www/services_checkip_edit.php:134
 msgid "*URL"
-msgstr ""
+msgstr "*URL"
 
 #: src/usr/local/www/services_checkip_edit.php:141
 msgid "User name"
-msgstr ""
+msgstr "Användarnamn"
 
 #: src/usr/local/www/services_dhcp.php:254
 #: src/usr/local/www/services_dhcpv6.php:215
@@ -20111,7 +20168,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:955
 #: src/usr/local/www/status_interfaces.php:152
 msgid "DNS servers"
-msgstr ""
+msgstr "DNS-servrar"
 
 #: src/usr/local/www/services_dhcp.php:958
 msgid ""
@@ -20122,7 +20179,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:963
 msgid "Other Options"
-msgstr ""
+msgstr "Andra Alternativ"
 
 #: src/usr/local/www/services_dhcp.php:971
 msgid ""
@@ -20137,7 +20194,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:103
 #: src/usr/local/www/services_dyndns_edit.php:296
 msgid "Domain name"
-msgstr ""
+msgstr "Domännamn"
 
 #: src/usr/local/www/services_dhcp.php:978
 msgid ""
@@ -20334,7 +20391,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1183
 #: src/usr/local/www/services_dhcpv6.php:863
 msgid "LDAP"
-msgstr ""
+msgstr "LDAP"
 
 #: src/usr/local/www/services_dhcp.php:1189
 msgid "LDAP Server URI"
@@ -20450,7 +20507,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1306
 #: src/usr/local/www/services_dhcpv6.php:940
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 #: src/usr/local/www/services_dhcp.php:1388
 msgid "DHCP Static Mappings for this Interface"
@@ -20630,7 +20687,7 @@ msgstr ""
 #: src/usr/local/www/system.php:469 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:460
 msgid "DNS Servers"
-msgstr ""
+msgstr "DNS-servrar"
 
 #: src/usr/local/www/services_dhcp_edit.php:539
 msgid ""
@@ -20722,17 +20779,17 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:644
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid "NTP servers"
-msgstr ""
+msgstr "NTP-servrar"
 
 #: src/usr/local/www/services_dhcp_edit.php:648
 #: src/usr/local/www/services_dhcpv6.php:831
 #: src/usr/local/www/vpn_openvpn_csc.php:501
 msgid "NTP Servers"
-msgstr ""
+msgstr "NTP-servrar"
 
 #: src/usr/local/www/services_dhcp_edit.php:680
 msgid "TFTP servers"
-msgstr ""
+msgstr "TFTP-servrar"
 
 #: src/usr/local/www/services_dhcp_edit.php:689
 msgid ""
@@ -20944,11 +21001,11 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:802
 #: src/usr/local/www/services_unbound_acls.php:234
 msgid "Allow"
-msgstr ""
+msgstr "Tillåt"
 
 #: src/usr/local/www/services_dhcpv6.php:804
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorera"
 
 #: src/usr/local/www/services_dhcpv6.php:799
 msgid "DDNS Client Updates"
@@ -21111,7 +21168,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:267
 #: src/usr/local/www/services_unbound.php:336
 msgid "Static DHCP"
-msgstr ""
+msgstr "Statisk DHCP"
 
 #: src/usr/local/www/services_dnsmasq.php:270
 #, php-format
@@ -21228,7 +21285,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:280
 #: src/usr/local/www/system.php:150
 msgid "Domain"
-msgstr ""
+msgstr "Domän"
 
 #: src/usr/local/www/services_dnsmasq.php:388
 #: src/usr/local/www/services_dnsmasq.php:412
@@ -21245,7 +21302,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:405
 #: src/usr/local/www/services_unbound.php:479
 msgid "Alias for "
-msgstr ""
+msgstr "Alias för"
 
 #: src/usr/local/www/services_dnsmasq.php:433
 #: src/usr/local/www/services_unbound.php:508
@@ -21316,7 +21373,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:223
 #: src/usr/local/www/system.php:438
 msgid "*Domain"
-msgstr ""
+msgstr "*Domän"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:138
 msgid ""
@@ -21428,7 +21485,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:75
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:123
 msgid "Service"
-msgstr ""
+msgstr "Tjänst"
 
 #: src/usr/local/www/services_dyndns.php:92
 #: src/usr/local/www/services_rfc2136.php:84
@@ -21454,7 +21511,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:107
 #: src/usr/local/www/services_dyndns_edit.php:384
 msgid "Update URL"
-msgstr ""
+msgstr "Uppdatera URL"
 
 #: src/usr/local/www/services_dyndns_edit.php:136
 msgid "The hostname contains invalid characters."
@@ -21472,7 +21529,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:252
 msgid "Dynamic DNS Client"
-msgstr ""
+msgstr "Dynamisk DNS-klient"
 
 #: src/usr/local/www/services_dyndns_edit.php:265
 msgid "*Service Type"
@@ -21501,7 +21558,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:311
 msgid "MX"
-msgstr ""
+msgstr "MX"
 
 #: src/usr/local/www/services_dyndns_edit.php:314
 msgid ""
@@ -21555,8 +21612,9 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:379
 msgid ""
-"Enter Zone ID that was received when creating the domain in Route 53.<br /"
-">DNSimple: Enter the Record ID of record to update."
+"Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "
+"\"us-east-1/A1B2C3D4E5F6Z\").<br />DNSimple: Enter the Record ID of record "
+"to update."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:387
@@ -21572,7 +21630,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:400
 #: src/usr/local/www/services_rfc2136_edit.php:78
 msgid "TTL"
-msgstr ""
+msgstr "TTL"
 
 #: src/usr/local/www/services_dyndns_edit.php:403
 msgid "Choose TTL for the dns record."
@@ -21581,7 +21639,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:422
 #: src/usr/local/www/services_rfc2136_edit.php:300
 msgid "Save & Force Update"
-msgstr ""
+msgstr "Spara & Tvinga Uppdatering"
 
 #: src/usr/local/www/services_igmpproxy.php:71
 msgid "The IGMP entry list has been changed."
@@ -21805,7 +21863,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_acls.php:236
 msgid "Networks"
-msgstr ""
+msgstr "Nätverk"
 
 #: src/usr/local/www/services_ntpd_acls.php:238
 #: src/usr/local/www/services_unbound_acls.php:258
@@ -21879,7 +21937,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
 msgid "Serial Port"
-msgstr ""
+msgstr "Seriell Port"
 
 #: src/usr/local/www/services_ntpd_gps.php:365
 msgid ""
@@ -21979,7 +22037,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:515
 msgid "Calculate"
-msgstr ""
+msgstr "Beräkna"
 
 #: src/usr/local/www/services_ntpd_gps.php:532
 msgid ""
@@ -22031,7 +22089,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe.php:103
 #: src/usr/local/www/status_ipsec.php:478
 msgid "Local IP"
-msgstr ""
+msgstr "Lokal IP"
 
 #: src/usr/local/www/services_pppoe.php:128
 msgid "Edit PPPoE instance"
@@ -22159,7 +22217,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:342
 msgid "Hint: 24 is 255.255.255.0"
-msgstr ""
+msgstr "Tips: 24 är 255.255.255.0"
 
 #: src/usr/local/www/services_pppoe_edit.php:362
 msgid ""
@@ -22254,7 +22312,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:533
 msgid "Add user"
-msgstr ""
+msgstr "Lägg till användare"
 
 #: src/usr/local/www/services_pppoe_edit.php:568
 msgid ""
@@ -22268,20 +22326,20 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136.php:176
 #: src/usr/local/www/vpn_openvpn_client.php:929
 msgid "Edit client"
-msgstr ""
+msgstr "Redigera klient"
 
 #: src/usr/local/www/services_rfc2136.php:179
 msgid "Disable client"
-msgstr ""
+msgstr "Inaktivera klient"
 
 #: src/usr/local/www/services_rfc2136.php:182
 msgid "Enable client"
-msgstr ""
+msgstr "Aktivera klient"
 
 #: src/usr/local/www/services_rfc2136.php:185
 #: src/usr/local/www/vpn_openvpn_client.php:930
 msgid "Delete client"
-msgstr ""
+msgstr "Radera klient"
 
 #: src/usr/local/www/services_rfc2136_edit.php:78
 msgid "Key name"
@@ -22317,7 +22375,7 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:187
 msgid "*TTL (seconds)"
-msgstr ""
+msgstr "*TTL (sekunder)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:194
 msgid "*Key name"
@@ -22404,7 +22462,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:114
 msgid "Low"
-msgstr ""
+msgstr "Låg"
 
 #: src/usr/local/www/services_router_advertisements.php:119
 msgid ""
@@ -22606,7 +22664,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:450
 msgid "Server "
-msgstr ""
+msgstr "Server "
 
 #: src/usr/local/www/services_router_advertisements.php:461
 msgid ""
@@ -22786,7 +22844,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Avancerade inställningar"
 
 #: src/usr/local/www/services_unbound.php:259
 #: src/usr/local/www/services_unbound_acls.php:176
@@ -22903,7 +22961,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:139
 msgid "save"
-msgstr ""
+msgstr "spara"
 
 #: src/usr/local/www/services_unbound_acls.php:169
 #, php-format
@@ -22988,11 +23046,11 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:321
 msgid "Edit ACL"
-msgstr ""
+msgstr "Redigera ACL"
 
 #: src/usr/local/www/services_unbound_acls.php:322
 msgid "Delete ACL"
-msgstr ""
+msgstr "Radera ACL"
 
 #: src/usr/local/www/services_unbound_advanced.php:90
 msgid "A valid value for Message Cache Size must be specified."
@@ -23189,7 +23247,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:310
 msgid "minutes"
-msgstr ""
+msgstr "minuter"
 
 #: src/usr/local/www/services_unbound_advanced.php:313
 msgid "TTL for Host Cache Entries"
@@ -23214,7 +23272,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:325
 msgid "million"
-msgstr ""
+msgstr "miljon"
 
 #: src/usr/local/www/services_unbound_advanced.php:328
 msgid "Unwanted Reply Threshold"
@@ -23235,7 +23293,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:339
 msgid "Log Level"
-msgstr ""
+msgstr "Loggnivå"
 
 #: src/usr/local/www/services_unbound_advanced.php:342
 msgid "Select the log verbosity."
@@ -23346,7 +23404,7 @@ msgstr ""
 #: src/usr/local/www/services_wol.php:147
 #: src/usr/local/www/services_wol_edit.php:141
 msgid "*MAC address"
-msgstr ""
+msgstr "*MAC-adress"
 
 #: src/usr/local/www/services_wol.php:150
 #: src/usr/local/www/services_wol_edit.php:144
@@ -23363,11 +23421,11 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:194
 msgid "Edit Device"
-msgstr ""
+msgstr "Redigera Enhet"
 
 #: src/usr/local/www/services_wol.php:195
 msgid "Delete Device"
-msgstr ""
+msgstr "Radera Enhet"
 
 #: src/usr/local/www/services_wol.php:196
 msgid "Wake Device"
@@ -23429,7 +23487,7 @@ msgstr ""
 
 #: src/usr/local/www/status.php:347
 msgid "Done."
-msgstr ""
+msgstr "Klar."
 
 #: src/usr/local/www/status_captiveportal.php:42
 msgid "Session details"
@@ -23461,13 +23519,13 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal.php:82
 #, php-format
 msgid "Bytes sent: %s"
-msgstr ""
+msgstr "Bytes skickat: %s"
 
 #: src/usr/local/www/status_captiveportal.php:80
 #: src/usr/local/www/status_captiveportal.php:82
 #, php-format
 msgid "Bytes received: %s"
-msgstr ""
+msgstr "Bytes mottaget: %s"
 
 #: src/usr/local/www/status_captiveportal.php:140
 #: src/usr/local/www/status_captiveportal.php:150
@@ -23476,7 +23534,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:70
 #: src/usr/local/www/status_captiveportal_vouchers.php:96
 msgid "Active Users"
-msgstr ""
+msgstr "Aktiva Användare"
 
 #: src/usr/local/www/status_captiveportal.php:151
 #: src/usr/local/www/status_captiveportal_expire.php:74
@@ -23485,7 +23543,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_vouchers.php:57
 #: src/usr/local/www/status_captiveportal_vouchers.php:97
 msgid "Active Vouchers"
-msgstr ""
+msgstr "Aktiva Kuponger"
 
 #: src/usr/local/www/status_captiveportal.php:153
 #: src/usr/local/www/status_captiveportal_expire.php:76
@@ -23495,7 +23553,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:73
 #: src/usr/local/www/status_captiveportal_vouchers.php:99
 msgid "Test Vouchers"
-msgstr ""
+msgstr "Testkuponger"
 
 #: src/usr/local/www/status_captiveportal.php:154
 #: src/usr/local/www/status_captiveportal_expire.php:57
@@ -23543,27 +23601,27 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:280
 msgid "Don't show last activity"
-msgstr ""
+msgstr "Visa inte senaste aktivitet"
 
 #: src/usr/local/www/status_captiveportal.php:282
 msgid "Hide Last Activity"
-msgstr ""
+msgstr "Dölj Senaste Aktivitet"
 
 #: src/usr/local/www/status_captiveportal.php:287
 msgid "Show last activity"
-msgstr ""
+msgstr "Visa senaste aktivitet"
 
 #: src/usr/local/www/status_captiveportal.php:289
 msgid "Show Last Activity"
-msgstr ""
+msgstr "Visa Senaste Aktivitet"
 
 #: src/usr/local/www/status_captiveportal.php:294
 msgid "Disconnect all active users"
-msgstr ""
+msgstr "Koppla från alla aktiva användare"
 
 #: src/usr/local/www/status_captiveportal.php:296
 msgid "Disconnect All Users"
-msgstr ""
+msgstr "Koppla Från Alla Användare"
 
 #: src/usr/local/www/status_captiveportal_expire.php:65
 msgid "Voucher(s) successfully marked."
@@ -23576,7 +23634,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_expire.php:86
 #: src/usr/local/www/status_captiveportal_test.php:94
 msgid "*Vouchers"
-msgstr ""
+msgstr "*Kuponger"
 
 #: src/usr/local/www/status_captiveportal_expire.php:88
 msgid ""
@@ -23600,17 +23658,17 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:86
 msgid "used"
-msgstr ""
+msgstr "använd"
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:87
 #: src/usr/local/www/status_dhcp_leases.php:143
 #: src/usr/local/www/status_dhcpv6_leases.php:196
 msgid "active"
-msgstr ""
+msgstr "aktiv"
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:88
 msgid "ready"
-msgstr ""
+msgstr "redo"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:105
 #, php-format
@@ -23619,7 +23677,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:110
 msgid "Voucher"
-msgstr ""
+msgstr "Kupong"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:111
 msgid "Roll"
@@ -23627,7 +23685,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:112
 msgid "Activated at"
-msgstr ""
+msgstr "Aktiverades"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:113
 msgid "Expires in"
@@ -23639,7 +23697,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:125
 msgid "min"
-msgstr ""
+msgstr "min"
 
 #: src/usr/local/www/status_carp.php:73
 #, php-format
@@ -23684,7 +23742,7 @@ msgstr ""
 
 #: src/usr/local/www/status_carp.php:165
 msgid "Enable CARP"
-msgstr ""
+msgstr "Aktivera CARP"
 
 #: src/usr/local/www/status_carp.php:166
 msgid "Leave Persistent CARP Maintenance Mode"
@@ -23721,32 +23779,32 @@ msgstr ""
 #: src/usr/local/www/status_dhcp_leases.php:141
 #: src/usr/local/www/status_dhcpv6_leases.php:194
 msgid "online"
-msgstr ""
+msgstr "online"
 
 #: src/usr/local/www/status_dhcp_leases.php:142
 #: src/usr/local/www/status_dhcpv6_leases.php:195
 msgid "offline"
-msgstr ""
+msgstr "offline"
 
 #: src/usr/local/www/status_dhcp_leases.php:144
 #: src/usr/local/www/status_dhcpv6_leases.php:197
 msgid "expired"
-msgstr ""
+msgstr "utgången"
 
 #: src/usr/local/www/status_dhcp_leases.php:145
 #: src/usr/local/www/status_dhcpv6_leases.php:198
 msgid "reserved"
-msgstr ""
+msgstr "reserverad"
 
 #: src/usr/local/www/status_dhcp_leases.php:146
 #: src/usr/local/www/status_dhcpv6_leases.php:200
 msgid "dynamic"
-msgstr ""
+msgstr "dynamisk"
 
 #: src/usr/local/www/status_dhcp_leases.php:147
 #: src/usr/local/www/status_dhcpv6_leases.php:201
 msgid "static"
-msgstr ""
+msgstr "statisk"
 
 #: src/usr/local/www/status_dhcp_leases.php:317
 #: src/usr/local/www/status_dhcpv6_leases.php:395
@@ -23768,7 +23826,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:402
 #: src/usr/local/www/status_dhcpv6_leases.php:404
 msgid "Since"
-msgstr ""
+msgstr "Sedan"
 
 #: src/usr/local/www/status_dhcp_leases.php:325
 #: src/usr/local/www/status_dhcpv6_leases.php:403
@@ -23783,13 +23841,13 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_sad.php:55
 #: src/usr/local/www/status_ipsec_spd.php:48
 msgid "Leases"
-msgstr ""
+msgstr "Lån"
 
 #: src/usr/local/www/status_dhcp_leases.php:367
 #: src/usr/local/www/status_dhcpv6_leases.php:443
 #: src/usr/local/www/status_dhcpv6_leases.php:538
 msgid "End"
-msgstr ""
+msgstr "Slut"
 
 #: src/usr/local/www/status_dhcp_leases.php:368
 #: src/usr/local/www/status_dhcpv6_leases.php:444
@@ -23799,17 +23857,17 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:301
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:91
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 #: src/usr/local/www/status_dhcp_leases.php:369
 #: src/usr/local/www/status_dhcpv6_leases.php:445
 msgid "Lease Type"
-msgstr ""
+msgstr "Lån-typ"
 
 #: src/usr/local/www/status_dhcp_leases.php:458
 #: src/usr/local/www/status_dhcp_leases.php:459
 msgid "n/a"
-msgstr ""
+msgstr "Ej tillgänglig"
 
 #: src/usr/local/www/status_dhcp_leases.php:465
 #: src/usr/local/www/status_dhcpv6_leases.php:513
@@ -23920,7 +23978,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:245
 #: src/usr/local/www/system_routes.php:231
 msgid "Gateway Groups"
-msgstr ""
+msgstr "Gateway-grupper"
 
 #: src/usr/local/www/status_gateway_groups.php:92
 #, php-format
@@ -24002,22 +24060,22 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:148
 #: src/usr/local/www/status_graph.php:366
 msgid "Bandwidth In"
-msgstr ""
+msgstr "Bandbredd In"
 
 #: src/usr/local/www/status_graph.php:149
 #: src/usr/local/www/status_graph.php:367
 msgid "Bandwidth Out"
-msgstr ""
+msgstr "Bandbredd Ut"
 
 #: src/usr/local/www/status_graph.php:158
 #: src/usr/local/www/system_groupmanager.php:410
 msgid "Local"
-msgstr ""
+msgstr "Lokal"
 
 #: src/usr/local/www/status_graph.php:159
 #: src/usr/local/www/system_groupmanager.php:410
 msgid "Remote"
-msgstr ""
+msgstr "Fjärr"
 
 #: src/usr/local/www/status_graph.php:172
 msgid "FQDN"
@@ -24044,7 +24102,7 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:323
 #: src/usr/local/www/status_graph.php:324
 msgid "Bits/sec"
-msgstr ""
+msgstr "Bits/sek"
 
 #: src/usr/local/www/status_graph.php:365
 msgid "Host IP"
@@ -24061,7 +24119,7 @@ msgstr ""
 
 #: src/usr/local/www/status_graph_cpu.php:46
 msgid "Note"
-msgstr ""
+msgstr "Anteckning"
 
 #: src/usr/local/www/status_graph_cpu.php:47
 #, php-format
@@ -24080,7 +24138,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:111
 msgid " Interface "
-msgstr ""
+msgstr "Gränssnitt"
 
 #: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
@@ -24090,7 +24148,7 @@ msgstr ""
 #: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
 msgid "Renew"
-msgstr ""
+msgstr "Förnya"
 
 #: src/usr/local/www/status_interfaces.php:118
 #: src/usr/local/www/status_interfaces.php:119
@@ -24099,17 +24157,18 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:232
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Disconnect"
-msgstr ""
+msgstr "Koppla ner"
 
 #: src/usr/local/www/status_interfaces.php:118
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
 msgid "Connect"
-msgstr ""
+msgstr "Ansluta"
 
 #: src/usr/local/www/status_interfaces.php:122
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:148
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:39
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:210
 msgid "Uptime"
 msgstr ""
 
@@ -24147,7 +24206,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:140
 msgid "IPv4 Address"
-msgstr ""
+msgstr "IPv4-adress"
 
 #: src/usr/local/www/status_interfaces.php:141
 msgid "Subnet mask IPv4"
@@ -24159,7 +24218,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:144
 msgid "IPv6 Address"
-msgstr ""
+msgstr "IPv6-adress"
 
 #: src/usr/local/www/status_interfaces.php:145
 msgid "Subnet mask IPv6"
@@ -24167,7 +24226,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:159
 msgid "Media"
-msgstr ""
+msgstr "Media"
 
 #: src/usr/local/www/status_interfaces.php:160
 msgid "LAGG Protocol"
@@ -24179,7 +24238,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:164
 msgid "BSSID"
-msgstr ""
+msgstr "BSSID"
 
 #: src/usr/local/www/status_interfaces.php:166
 msgid "RSSI"
@@ -24233,21 +24292,21 @@ msgstr ""
 #: src/usr/local/www/status_ipsec.php:303
 #: src/usr/local/www/status_ipsec.php:304
 msgid " seconds ("
-msgstr ""
+msgstr "sekunder ("
 
 #: src/usr/local/www/status_ipsec.php:214
 msgid ") ago"
-msgstr ""
+msgstr ") sedan"
 
 #: src/usr/local/www/status_ipsec.php:223
 #: src/usr/local/www/status_ipsec.php:225
 #: src/usr/local/www/status_ipsec.php:444
 msgid "Connect VPN"
-msgstr ""
+msgstr "Anslut VPN"
 
 #: src/usr/local/www/status_ipsec.php:230
 msgid "Disconnect VPN"
-msgstr ""
+msgstr "Koppla från VPN"
 
 #: src/usr/local/www/status_ipsec.php:247
 msgid "Show child SA entries"
@@ -24255,11 +24314,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:281
 msgid "Local: "
-msgstr ""
+msgstr "Lokal:"
 
 #: src/usr/local/www/status_ipsec.php:285
 msgid "Remote: "
-msgstr ""
+msgstr "Fjärr: "
 
 #: src/usr/local/www/status_ipsec.php:302
 msgid "Rekey: "
@@ -24271,7 +24330,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:304
 msgid "Install: "
-msgstr ""
+msgstr "Installera:"
 
 #: src/usr/local/www/status_ipsec.php:325
 msgid "IPComp: "
@@ -24303,7 +24362,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:439
 msgid "Disconnected"
-msgstr ""
+msgstr "Frånkopplad"
 
 #: src/usr/local/www/status_ipsec.php:456
 #: src/usr/local/www/status_ipsec.php:463
@@ -24312,7 +24371,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:47
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:175
 msgid "Overview"
-msgstr ""
+msgstr "Översikt"
 
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -24332,7 +24391,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:471
 msgid "IPsec Status"
-msgstr ""
+msgstr "IPsec-status"
 
 #: src/usr/local/www/status_ipsec.php:477
 msgid "Local ID"
@@ -24356,7 +24415,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:483
 msgid "Algo"
-msgstr ""
+msgstr "Algo"
 
 #: src/usr/local/www/status_ipsec.php:491
 msgid "Collecting IPsec status information."
@@ -24376,7 +24435,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "Användning"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
@@ -24420,11 +24479,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_spd.php:71
 msgid " Inbound"
-msgstr ""
+msgstr "Inkommande"
 
 #: src/usr/local/www/status_ipsec_spd.php:73
 msgid " Outbound"
-msgstr ""
+msgstr "Utgående"
 
 #: src/usr/local/www/status_ipsec_spd.php:101
 msgid "No IPsec security policies configured."
@@ -24462,18 +24521,18 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:569
 #: src/usr/local/www/vpn_ipsec_phase2.php:576
 msgid "Address"
-msgstr ""
+msgstr "Adress"
 
 #: src/usr/local/www/status_lb_vs.php:98
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
 #: src/etc/inc/pfsense-utils.inc:318
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
 #: src/usr/local/www/status_lb_vs.php:102
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:76
 msgid "Down"
-msgstr ""
+msgstr "Ner"
 
 #: src/usr/local/www/status_lb_vs.php:106
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:80
@@ -24518,19 +24577,19 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:401
 #: src/usr/local/www/widgets/widgets/log.widget.php:102
 msgid "Time"
-msgstr ""
+msgstr "Tid"
 
 #: src/usr/local/www/status_logs.php:142
 #: src/usr/local/www/status_logs_common.inc:250
 msgid "Process"
-msgstr ""
+msgstr "Process"
 
 #: src/usr/local/www/status_logs.php:143
 #: src/usr/local/www/status_logs_common.inc:257
 #: src/usr/local/www/status_logs_vpn.php:179
 #: src/usr/local/www/status_logs_vpn.php:415
 msgid "PID"
-msgstr ""
+msgstr "PID"
 
 #: src/usr/local/www/status_logs.php:172 src/usr/local/www/status_logs.php:220
 #: src/usr/local/www/status_logs_filter.php:276
@@ -24558,7 +24617,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:283
 #: src/usr/local/www/vpn_openvpn_server.php:633
 msgid "VPN"
-msgstr ""
+msgstr "VPN"
 
 #: src/usr/local/www/status_logs_common.inc:110
 #: src/usr/local/www/status_logs_filter.php:76
@@ -24724,7 +24783,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:782
 msgid "Manage"
-msgstr ""
+msgstr "Hantera"
 
 #: src/usr/local/www/status_logs_common.inc:791
 #: src/usr/local/www/status_logs_settings.php:235
@@ -24863,7 +24922,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:156
 msgid "Rule"
-msgstr ""
+msgstr "Regel"
 
 #: src/usr/local/www/status_logs_filter.php:235
 #: src/usr/local/www/status_logs_filter.php:244
@@ -24888,11 +24947,11 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter_dynamic.php:381
 msgid "Pause"
-msgstr ""
+msgstr "Paus"
 
 #: src/usr/local/www/status_logs_filter_summary.php:85
 msgid "Protocols"
-msgstr ""
+msgstr "Protokoll"
 
 #: src/usr/local/www/status_logs_filter_summary.php:86
 msgid "Source IPs"
@@ -25061,7 +25120,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:351
 msgid "IP Protocol"
-msgstr ""
+msgstr "IP-Protokoll"
 
 #: src/usr/local/www/status_logs_settings.php:354
 msgid ""
@@ -25080,19 +25139,19 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:514
 #: src/usr/local/www/vpn_openvpn_csc.php:564
 msgid "Server 1"
-msgstr ""
+msgstr "Server 1"
 
 #: src/usr/local/www/status_logs_settings.php:371
 #: src/usr/local/www/vpn_openvpn_csc.php:480
 #: src/usr/local/www/vpn_openvpn_csc.php:521
 #: src/usr/local/www/vpn_openvpn_csc.php:571
 msgid "Server 2"
-msgstr ""
+msgstr "Server 2"
 
 #: src/usr/local/www/status_logs_settings.php:379
 #: src/usr/local/www/vpn_openvpn_csc.php:487
 msgid "Server 3"
-msgstr ""
+msgstr "Server 3"
 
 #: src/usr/local/www/status_logs_settings.php:387
 msgid "Remote Syslog Contents"
@@ -25115,7 +25174,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:221
 #: src/usr/local/www/services_rfc2136_edit.php:220
 msgid "User"
-msgstr ""
+msgstr "Användare"
 
 #: src/usr/local/www/status_logs_vpn.php:180
 #: src/usr/local/www/status_logs_vpn.php:434
@@ -25144,7 +25203,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ntpd.php:81
 msgid "Selected"
-msgstr ""
+msgstr "Markerad"
 
 #: src/usr/local/www/status_ntpd.php:84
 msgid "Excess Peer"
@@ -25205,7 +25264,7 @@ msgstr ""
 #: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:895
 msgid "Delay"
-msgstr ""
+msgstr "Fördröjning"
 
 #: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
@@ -25298,7 +25357,7 @@ msgstr ""
 
 #: src/usr/local/www/status_openvpn.php:191
 msgid "Last Used"
-msgstr ""
+msgstr "Senast Använd"
 
 #: src/usr/local/www/status_openvpn.php:211
 msgid ""
@@ -25318,7 +25377,7 @@ msgstr ""
 
 #: src/usr/local/www/status_openvpn.php:241
 msgid "Bytes Sent / Received"
-msgstr ""
+msgstr "Bytes Skickat / Mottaget"
 
 #: src/usr/local/www/status_openvpn.php:291
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:243
@@ -25327,7 +25386,7 @@ msgstr ""
 
 #: src/usr/local/www/status_openvpn.php:299
 msgid "Local Address"
-msgstr ""
+msgstr "Lokal Adress"
 
 #: src/usr/local/www/status_openvpn.php:361
 msgid ""
@@ -25367,7 +25426,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:160
 msgid "Statistics"
-msgstr ""
+msgstr "Statistik"
 
 #: src/usr/local/www/status_queues.php:168
 msgid "Borrows"
@@ -25391,7 +25450,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:248
 msgid "Loading"
-msgstr ""
+msgstr "Läser in"
 
 #: src/usr/local/www/status_services.php:144
 msgid "No services found."
@@ -25539,7 +25598,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:474
 msgid "DNS Server"
-msgstr ""
+msgstr "DNS-Server"
 
 #: src/usr/local/www/system.php:515
 msgid "Add DNS Server"
@@ -25575,7 +25634,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:546
 msgid "*Timezone"
-msgstr ""
+msgstr "*Tidszon"
 
 #: src/usr/local/www/system.php:549
 msgid ""
@@ -25597,7 +25656,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:562
 msgid "*Language"
-msgstr ""
+msgstr "*Språk"
 
 #: src/usr/local/www/system.php:565
 msgid "Choose a language for the webConfigurator"
@@ -25671,7 +25730,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:208
 #: src/usr/local/www/system_advanced_sysctl.php:143
 msgid "Firewall & NAT"
-msgstr ""
+msgstr "Brandvägg & NAT"
 
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_firewall.php:381
@@ -25682,7 +25741,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:145
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Övrigt"
 
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_firewall.php:382
@@ -25703,7 +25762,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:147
 msgid "Notifications"
-msgstr ""
+msgstr "Aviseringar"
 
 #: src/usr/local/www/system_advanced_admin.php:328
 #, php-format
@@ -25714,11 +25773,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:341
 msgid "SSL Certificate"
-msgstr ""
+msgstr "SSL-certifikat"
 
 #: src/usr/local/www/system_advanced_admin.php:348
 msgid "TCP port"
-msgstr ""
+msgstr "TCP-port"
 
 #: src/usr/local/www/system_advanced_admin.php:352
 msgid ""
@@ -25847,7 +25906,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:467
 msgid "SSH port"
-msgstr ""
+msgstr "SSH-port"
 
 #: src/usr/local/www/system_advanced_admin.php:471
 msgid "Note: Leave this blank for the default of 22."
@@ -26055,7 +26114,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:425
 msgid "Disable Firewall"
-msgstr ""
+msgstr "Inaktivera Brandvägg"
 
 #: src/usr/local/www/system_advanced_firewall.php:428
 #, php-format
@@ -26206,19 +26265,19 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:560
 msgid "Monthly"
-msgstr ""
+msgstr "Månadsvis"
 
 #: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Weekly"
-msgstr ""
+msgstr "Veckovis"
 
 #: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Daily"
-msgstr ""
+msgstr "Dagligen"
 
 #: src/usr/local/www/system_advanced_firewall.php:557
 msgid "Update Frequency"
-msgstr ""
+msgstr "Uppdateringsfrekvens"
 
 #: src/usr/local/www/system_advanced_firewall.php:564
 msgid ""
@@ -26232,11 +26291,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:585
 msgid "disabled"
-msgstr ""
+msgstr "inaktiverad"
 
 #: src/usr/local/www/system_advanced_firewall.php:586
 msgid "NAT + proxy"
-msgstr ""
+msgstr "NAT + proxy"
 
 #: src/usr/local/www/system_advanced_firewall.php:587
 msgid "Pure NAT"
@@ -26312,15 +26371,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:653
 msgid "TCP "
-msgstr ""
+msgstr "TCP "
 
 #: src/usr/local/www/system_advanced_firewall.php:664
 msgid "UDP "
-msgstr ""
+msgstr "UDP "
 
 #: src/usr/local/www/system_advanced_firewall.php:675
 msgid "ICMP "
-msgstr ""
+msgstr "ICMP "
 
 #: src/usr/local/www/system_advanced_firewall.php:686
 msgid "Other "
@@ -26510,11 +26569,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:413
 msgid "Minimum"
-msgstr ""
+msgstr "Minimum"
 
 #: src/usr/local/www/system_advanced_misc.php:414
 msgid "Maximum"
-msgstr ""
+msgstr "Maximum"
 
 #: src/usr/local/www/system_advanced_misc.php:419
 msgid "AC Power"
@@ -26726,7 +26785,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:168
 msgid "Allow IPv6"
-msgstr ""
+msgstr "Tillåt IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:171
 msgid ""
@@ -26766,19 +26825,38 @@ msgid ""
 "preferred over IPv6."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:206
+#: src/usr/local/www/system_advanced_network.php:210
 msgid "DHCP6 DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:221
+#: src/usr/local/www/system_advanced_network.php:218
+msgid "Copy DUID"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:226
+msgid ""
+"This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
+"requesting an IPv6 address. <br />By default, the firewall automatically "
+"creates a dynamic DUID which is not saved in the firewall configuration. To "
+"ensure the same DUID is retained by the firewall at all times, enter a DUID "
+"in this field. The new DUID will take effect after a reboot or when the WAN "
+"interface(s) are reconfigured by the firewall.<br />If the firewall is "
+"configured to use a RAM disk for /var, the best practice is to store a DUID "
+"here otherwise the DUID will change on each reboot.<br /><br />You may use "
+"the Copy DUID button to copy the system detected DUID shown in the "
+"placeholder. "
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:240
 msgid "Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:225
+#: src/usr/local/www/system_advanced_network.php:244
 msgid "Hardware Checksum Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:228
+#: src/usr/local/www/system_advanced_network.php:247
 msgid ""
 "Checking this option will disable hardware checksum offloading.<br/>Checksum "
 "offloading is broken in some hardware, particularly some Realtek cards. "
@@ -26787,11 +26865,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:236
+#: src/usr/local/www/system_advanced_network.php:255
 msgid "Hardware TCP Segmentation Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:239
+#: src/usr/local/www/system_advanced_network.php:258
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -26799,11 +26877,11 @@ msgid ""
 "machine reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:246
+#: src/usr/local/www/system_advanced_network.php:265
 msgid "Hardware Large Receive Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:249
+#: src/usr/local/www/system_advanced_network.php:268
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -26811,21 +26889,21 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:256
+#: src/usr/local/www/system_advanced_network.php:275
 msgid "ARP Handling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:259
+#: src/usr/local/www/system_advanced_network.php:278
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:265
+#: src/usr/local/www/system_advanced_network.php:284
 msgid "Enable flowtable support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:267
+#: src/usr/local/www/system_advanced_network.php:286
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -26860,11 +26938,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:217
 msgid "E-Mail"
-msgstr ""
+msgstr "E-mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:221
 msgid "Disable SMTP"
-msgstr ""
+msgstr "Inaktivera SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:224
 msgid ""
@@ -26909,7 +26987,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:254
 msgid "Enable SSL/TLS"
-msgstr ""
+msgstr "Aktivera SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:263
 msgid "From e-mail address"
@@ -26981,7 +27059,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:324
 msgid "Disable Growl"
-msgstr ""
+msgstr "Inaktivera Growl"
 
 #: src/usr/local/www/system_advanced_notifications.php:327
 msgid ""
@@ -27048,7 +27126,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:164
 msgid "New"
-msgstr ""
+msgstr "Ny"
 
 #: src/usr/local/www/system_advanced_sysctl.php:184
 msgid "Edit tunable"
@@ -27186,7 +27264,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:85
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "Användare"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:276
@@ -27199,25 +27277,25 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:136
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
-msgstr ""
+msgstr "Grupper"
 
 #: src/usr/local/www/system_authservers.php:442
 msgid "Server Name"
-msgstr ""
+msgstr "Servernamn"
 
 #: src/usr/local/www/system_authservers.php:456
 #: src/usr/local/www/vpn_openvpn_server.php:1368
 msgid "Edit server"
-msgstr ""
+msgstr "Redigera server"
 
 #: src/usr/local/www/system_authservers.php:457
 #: src/usr/local/www/vpn_openvpn_server.php:1369
 msgid "Delete server"
-msgstr ""
+msgstr "Radera server"
 
 #: src/usr/local/www/system_authservers.php:489
 msgid "Server Settings"
-msgstr ""
+msgstr "serverinställningar"
 
 #: src/usr/local/www/system_authservers.php:493
 #: src/usr/local/www/system_camanager.php:485
@@ -27281,7 +27359,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:578
 msgid "*Level"
-msgstr ""
+msgstr "*Nivå"
 
 #: src/usr/local/www/system_authservers.php:585
 msgid "Base DN"
@@ -27388,7 +27466,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:731
 msgid "RADIUS Server Settings"
-msgstr ""
+msgstr "RADIUS Serverinställningar"
 
 #: src/usr/local/www/system_authservers.php:750
 msgid "*Shared Secret"
@@ -27883,7 +27961,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:747
 msgid "email address"
-msgstr ""
+msgstr "E-postadress"
 
 #: src/usr/local/www/system_certmanager.php:780
 msgid "External Signing Request"
@@ -28289,23 +28367,23 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways.php:306
 msgid "Copy gateway"
-msgstr ""
+msgstr "Kopiera gateway"
 
 #: src/usr/local/www/system_gateways.php:311
 msgid "Enable gateway"
-msgstr ""
+msgstr "Aktivera gateway"
 
 #: src/usr/local/www/system_gateways.php:314
 msgid "Disable gateway"
-msgstr ""
+msgstr "Inaktivera gateway"
 
 #: src/usr/local/www/system_gateways.php:317
 msgid "Delete gateway"
-msgstr ""
+msgstr "Radera gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:117
 msgid "gateway"
-msgstr ""
+msgstr "gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:146
 msgid "A valid gateway IP address must be specified."
@@ -28492,7 +28570,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:589
 msgid "Edit Gateway"
-msgstr ""
+msgstr "Redigera Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:596
 msgid ""
@@ -28748,11 +28826,11 @@ msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:310
 msgid "Group name"
-msgstr ""
+msgstr "Gruppnamn"
 
 #: src/usr/local/www/system_groupmanager.php:312
 msgid "Member Count"
-msgstr ""
+msgstr "Medlemsantal"
 
 #: src/usr/local/www/system_groupmanager.php:387
 msgid "Group Properties"
@@ -28760,7 +28838,7 @@ msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:391
 msgid "*Group name"
-msgstr ""
+msgstr "*Gruppnamn"
 
 #: src/usr/local/www/system_groupmanager.php:401
 #: src/usr/local/www/system_groupmanager.php:408
@@ -28782,7 +28860,7 @@ msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:463
 msgid "Move to \"Members\""
-msgstr ""
+msgstr "Flytta till \"Medlemmar\""
 
 #: src/usr/local/www/system_groupmanager.php:470
 msgid "Move to \"Not members"
@@ -28960,7 +29038,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:184
 msgid "Synchronize Users and Groups"
-msgstr ""
+msgstr "Synkronisera Användare och Grupper"
 
 #: src/usr/local/www/system_hasync.php:192
 msgid "Synchronize Auth Servers"
@@ -28968,11 +29046,11 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:200
 msgid "Synchronize Certificates"
-msgstr ""
+msgstr "Synkronisera Certifikat"
 
 #: src/usr/local/www/system_hasync.php:208
 msgid "Synchronize Rules"
-msgstr ""
+msgstr "Synkronisera Regler"
 
 #: src/usr/local/www/system_hasync.php:216
 msgid "Synchronize Firewall schedules"
@@ -28984,19 +29062,19 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:232
 msgid "Synchronize NAT"
-msgstr ""
+msgstr "Synkronisera NAT"
 
 #: src/usr/local/www/system_hasync.php:240
 msgid "Synchronize IPsec"
-msgstr ""
+msgstr "Synkronisera IPsec"
 
 #: src/usr/local/www/system_hasync.php:248
 msgid "Synchronize OpenVPN"
-msgstr ""
+msgstr "Synkronisera OpenVPN"
 
 #: src/usr/local/www/system_hasync.php:256
 msgid "Synchronize DHCPD"
-msgstr ""
+msgstr "Synkronisera DHCPD"
 
 #: src/usr/local/www/system_hasync.php:264
 msgid "Synchronize Wake-on-LAN"
@@ -29134,7 +29212,7 @@ msgstr ""
 
 #: src/usr/local/www/system_routes_edit.php:259
 msgid "*Gateway"
-msgstr ""
+msgstr "*Gateway"
 
 #: src/usr/local/www/system_routes_edit.php:262
 msgid ""
@@ -29168,7 +29246,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:165
 msgid "Updates"
-msgstr ""
+msgstr "Uppdateringar"
 
 #: src/usr/local/www/system_update_settings.php:169
 msgid "Dashboard check"
@@ -29330,7 +29408,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:507
 msgid "CA"
-msgstr ""
+msgstr "CA"
 
 #: src/usr/local/www/system_usermanager.php:526
 msgid "Remove this certificate association? (Certificate will not be deleted)"
@@ -29339,22 +29417,22 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:585
 #: src/usr/local/www/system_usermanager.php:749
 msgid "Full name"
-msgstr ""
+msgstr "Fullständigt namn"
 
 #: src/usr/local/www/system_usermanager.php:614
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Edit user"
-msgstr ""
+msgstr "Redigera användare"
 
 #: src/usr/local/www/system_usermanager.php:616
 #: src/usr/local/www/vpn_l2tp_users.php:112
 msgid "Delete user"
-msgstr ""
+msgstr "Radera användare"
 
 #: src/usr/local/www/system_usermanager.php:632
 msgid "Delete selected users"
-msgstr ""
+msgstr "Radera markerade användare"
 
 #: src/usr/local/www/system_usermanager.php:640
 msgid ""
@@ -29387,7 +29465,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:760
 msgid "Expiration date"
-msgstr ""
+msgstr "Utgångsdatum"
 
 #: src/usr/local/www/system_usermanager.php:763
 msgid ""
@@ -29479,7 +29557,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:61
 msgid "Password successfully changed."
-msgstr ""
+msgstr "Lösenordet har ändrats."
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:90
 msgid "The password cannot be changed for a non-local user."
@@ -29487,11 +29565,11 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:97
 msgid "Update Password"
-msgstr ""
+msgstr "Uppdatera lösenordet"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:107
 msgid "*Confirmation"
-msgstr ""
+msgstr "*Bekräfta"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:109
 msgid "Select a new password"
@@ -29512,7 +29590,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:63
 #: src/usr/local/www/uploadconfig.php:49
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/usr/local/www/system_usermanager_settings.php:55
 #, php-format
@@ -29532,7 +29610,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:83
 #: src/usr/local/www/system_usermanager_settings.php:87
 msgid "failed"
-msgstr ""
+msgstr "misslyckades"
 
 #: src/usr/local/www/system_usermanager_settings.php:121
 msgid "Session timeout must be an integer value."
@@ -29960,7 +30038,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:463
 msgid "system"
-msgstr ""
+msgstr "system"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:459
 msgid "*Group Authentication"
@@ -30562,7 +30640,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:670
 #: src/usr/local/www/widgets/widgets/log.widget.php:257
 msgid "Seconds"
-msgstr ""
+msgstr "Sekunder"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:678
 msgid "Automatically ping host"
@@ -30727,7 +30805,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:188
 msgid "Enable L2TP"
-msgstr ""
+msgstr "Aktivera L2TP"
 
 #: src/usr/local/www/vpn_l2tp.php:218
 msgid "*Server address"
@@ -30783,7 +30861,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:292
 msgid "*Server"
-msgstr ""
+msgstr "*Server"
 
 #: src/usr/local/www/vpn_l2tp.php:294
 msgid "Enter the IP address of the RADIUS server."
@@ -31134,7 +31212,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:716
 #: src/usr/local/www/vpn_openvpn_server.php:895
 msgid "Enable NCP"
-msgstr ""
+msgstr "Aktivera NCP"
 
 #: src/usr/local/www/vpn_openvpn_client.php:719
 #: src/usr/local/www/vpn_openvpn_server.php:898
@@ -31186,8 +31264,9 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:769
 #: src/usr/local/www/vpn_openvpn_server.php:945
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:38
 msgid "Hardware Crypto"
-msgstr ""
+msgstr "Hårdvarukryptering"
 
 #: src/usr/local/www/vpn_openvpn_client.php:776
 #: src/usr/local/www/vpn_openvpn_csc.php:363
@@ -31326,7 +31405,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:900
 msgid "OpenVPN Clients"
-msgstr ""
+msgstr "OpenVPN-klienter"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:63
 msgid "Client specific override successfully deleted."
@@ -31510,11 +31589,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:445
 #: src/usr/local/www/vpn_openvpn_csc.php:450
 msgid "DNS Domain"
-msgstr ""
+msgstr "DNS-domän"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:494
 msgid "Server 4"
-msgstr ""
+msgstr "Server 4"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:529
 msgid "NetBIOS Options"
@@ -32049,6 +32128,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:385
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:124
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:123
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:396
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:140
 msgid "Show"
 msgstr ""
@@ -32317,125 +32397,172 @@ msgstr ""
 msgid "Ident"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:43
-msgid "<i>Unable to check for updates</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:50
-msgid "<i>Error in version information</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:61
-msgid "Version "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:62
-msgid "is available."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:68
-msgid "The system is on the latest version."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:71
-msgid "The system is on a later version than<br />the official release."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:74
-msgid "<i>Error comparing installed version<br />with latest available</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:104
-msgid "Unknown system"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:108
-msgid "Serial: "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:117
-msgid "built on"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:124
-msgid "Obtaining update status "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:129
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:37
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:183
 msgid "CPU Type"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:136
-msgid "CPUs"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:40
+msgid "Current Date/Time"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:143
-msgid "Hardware crypto"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:41
+msgid "DNS Server(s)"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:152
-msgid "Current date/time"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:42
+msgid "Last Config Change"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:156
-msgid "DNS server(s)"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:43
+msgid "State Table Size"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:170
-msgid "Last config change"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
-msgid "State table size"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:185
-msgid "Show states"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:44
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:271
 msgid "MBUF Usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:204
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:45
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
 msgid "Temperature"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:216
-msgid "Load average"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:46
+msgid "Load Average"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:47
+msgid "CPU Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:48
+msgid "Memory Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:49
+msgid "Swap Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:50
+msgid "Disk Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:63
+msgid "<i>Unable to check for updates</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:70
+msgid "<i>Error in version information</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:81
+msgid "Version "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:82
+msgid "is available."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:88
+msgid "The system is on the latest version."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:91
+msgid "The system is on a later version than<br />the official release."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:94
+msgid "<i>Error comparing installed version<br />with latest available</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:113
+msgid "Saved System Information Widget Filter via Dashboard."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:150
+msgid "Unknown system"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:154
+msgid "Serial: "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:167
+msgid "built on"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Obtaining update status "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:190
+msgid "CPUs"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:201
+msgid "Hardware crypto"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:218
+msgid "Current date/time"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:226
+msgid "DNS server(s)"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:244
+msgid "Last config change"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:253
+msgid "State table size"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:263
+msgid "Show states"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:306
+msgid "Load average"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:308
 msgid "Last 1, 5 and 15 minutes"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:222
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:316
 msgid "CPU usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:229
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:323
 #, php-format
 msgid "Updating in %s seconds"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:233
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:331
 msgid "Memory usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:246
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:348
 msgid "SWAP usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:260
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:367
 msgid "Disk usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:266
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 msgid " of "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:266
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 msgid "in RAM"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:395
+msgid "Item"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:58
@@ -33906,19 +34033,19 @@ msgstr ""
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:226
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Disable hardware checksum offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:237
+#: src/usr/local/www/system_advanced_network.php:256
 msgid "Disable hardware TCP segmentation offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:247
+#: src/usr/local/www/system_advanced_network.php:266
 msgid "Disable hardware large receive offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:276
 msgid "Suppress ARP messages"
 msgstr ""
 

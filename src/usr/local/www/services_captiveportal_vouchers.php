@@ -524,8 +524,8 @@ $section->addInput(new Form_IpAddress(
 	'vouchersyncdbip',
 	'Synchronize Voucher Database IP',
 	$pconfig['vouchersyncdbip']
-))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.' . '<br />' .
-			'NOTE: this should be setup on the slave nodes and not the primary node!');
+))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.%1$s' .
+			'NOTE: this should be setup on the slave nodes and not the primary node!', '<br />');
 
 $section->addInput(new Form_Input(
 	'vouchersyncport',

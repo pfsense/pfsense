@@ -687,7 +687,7 @@ if ($act == "delpool") {
 }
 
 if ($act == "del") {
-	if ($a_maps[$_GET['id']]) {
+	if (isset($a_maps[$_GET['id']])) {
 		unset($a_maps[$_GET['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {

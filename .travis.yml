@@ -2,6 +2,11 @@ sudo: false
 language: php
 php:
   - 5.6
+  
+env:
+  global:
+    - SRV_HOST_NAME=pfsense.local
+    - SRV_HOST_PORT=5555
 
 branches:
   only:
@@ -27,7 +32,7 @@ before_install:
   - bunzip2 pfsense.img.bz2
 
 before_script:
-  - qemu-system-x86_64 -nographic pfsense.img  -m 256 -device e1000,netdev=user.0 -netdev user,id=user.0,hostfwd=tcp::5555-:443  -device e1000,netdev=user.1 -netdev user,id=user.1 -display none -monitor tcp::4444,server,nowait -serial tcp::3333,server,nowait -daemonize
+  - qemu-system-x86_64 -nographic pfsense.img  -m 256 -device e1000,netdev=user.0 -netdev user,id=user.0,hostfwd=tcp::"$SRV_HOST_PORT"-:80  -device e1000,netdev=user.1 -netdev user,id=user.1 -display none -monitor tcp::4444,server,nowait -serial tcp::3333,server,nowait -daemonize
   - sleep 20
   - timeout 180 netcat localhost 3333; sleep 1;
 

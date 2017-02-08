@@ -50,7 +50,12 @@ if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 }
 
 $a_user = &$config['system']['user'];
-$act = $_GET['act'];
+
+if (isset($_POST['act'])) {
+	$act = $_POST['act'];
+} else {
+	$act = $_GET['act'];
+}
 
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
@@ -82,15 +87,15 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_GET['act'] == "deluser") {
+if ($_POST['act'] == "deluser") {
 
-	if (!isset($_GET['username']) || !isset($a_user[$id]) || ($_GET['username'] != $a_user[$id]['name'])) {
+	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	if ($_GET['username'] == $_SESSION['Username']) {
-		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	if ($_POST['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_POST['username']);
 	} else {
 		local_user_del($a_user[$id]);
 		$userdeleted = $a_user[$id]['name'];
@@ -98,6 +103,7 @@ if ($_GET['act'] == "deluser") {
 		write_config();
 		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
 	}
+
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -482,7 +488,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>';
 		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
-		
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -611,9 +617,9 @@ foreach ($a_user as $i => $userent):
 						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>" usepost></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
-							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
 					</tr>
@@ -624,7 +630,7 @@ foreach ($a_user as $i => $userent):
 	</div>
 </div>
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-sm btn-success">
+	<a href="?act=new" class="btn btn-sm btn-success" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
@@ -633,6 +639,7 @@ foreach ($a_user as $i => $userent):
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
+
 </nav>
 </form>
 <div class="infoblock">
@@ -643,7 +650,77 @@ foreach ($a_user as $i => $userent):
 		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
 		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
 	);
-?></div><?php
+
+
+// The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
+// GET calls to POST calls
+// Any anchor with the attribute "usepost" usses these functions. In this file "Edit user", "Delete user" and "Add"
+// have that attribute
+// These function can be moved to an included file
+
+?></div>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
+	// to POST format, make a POST form and submit it
+	$('a').click(function(e) {
+		// Does the clicker anchor have the "usepost" attribute?
+		var attr = $(this).attr('usepost');
+
+		if (typeof attr !== typeof undefined && attr !== false) {
+			var href = $(this).attr("href");
+
+			postSubmit(get2post(href));
+
+			return false;
+		}
+	});
+
+
+	// Convert a GET argument list such as ?name=fred&action=delete into an array of POST
+	// parameters such as [[name, fred],[action, delete]]
+	function get2post(getargs) {
+		var arglist = new Array();
+
+		getargs = getargs.substring(getargs.indexOf("?") + 1);
+		var argarray = getargs.split('&');
+
+		for (var i=0;i<argarray.length;i++) {
+			var thisarg = argarray[i].split('=');
+			var arg = new Array(thisarg[0], thisarg[1]);
+			arglist[i] = arg;
+		}
+
+		return arglist;
+	}
+
+	// Create a form, add, the POST data and submit it
+	function postSubmit(data) {
+
+	    var form = $(document.createElement('form'));
+
+	    $(form).attr("method", "POST");
+
+	    for (var i=0;i<data.length;i++) {
+			var input = $("<input>").attr("type", "hidden").attr("name", data[i][0]).val(data[i][1]);
+			$(form).append($(input));
+	    }
+
+		// The CSRF magic is required because we will be viewing the results of the POST
+		var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val($('[name=__csrf_magic]').val());
+		$(form).append($(input));
+
+        $(form).appendTo('body').submit();
+	}
+
+});
+//]]>
+</script>
+
+<?php
 	include("foot.inc");
 	exit;
 }
@@ -1040,6 +1117,7 @@ events.push(function() {
 	$('form').submit(function() {
 		AllServers($('[name="groups[]"] option'), true);
 	});
+
 });
 //]]>
 </script>

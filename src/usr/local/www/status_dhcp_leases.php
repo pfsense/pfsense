@@ -280,8 +280,7 @@ $got_cid = false;
 foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
 	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
-		$staticmap_array_index = 0;
-		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
+		foreach ($config['dhcpd'][$ifname]['staticmap'] as $idx => $static) {
 			if (!empty($static['mac']) || !empty($static['cid'])) {
 				$slease = array();
 				$slease['ip'] = $static['ipaddr'];
@@ -298,9 +297,8 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 				$slease['descr'] = htmlentities($static['descr']);
 				$slease['act'] = $static_string;
 				$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
-				$slease['staticmap_array_index'] = $staticmap_array_index;
+				$slease['staticmap_array_index'] = $idx;
 				$leases[] = $slease;
-				$staticmap_array_index++;
 			}
 		}
 	}

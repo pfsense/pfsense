@@ -29,292 +29,99 @@
 
 require_once("guiconfig.inc");
 
-function set_default_gps() {
-	global $config;
-
-	if (!is_array($config['ntpd'])) {
-		$config['ntpd'] = array();
-	}
-	if (is_array($config['ntpd']['gps'])) {
-		unset($config['ntpd']['gps']);
-	}
-
-	$config['ntpd']['gps'] = array();
-	$config['ntpd']['gps']['type'] = 'Default';
-	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
-	if (!empty($config['ntpd']['gpsport']) && empty($config['ntpd']['gps']['port'])) {
-		$config['ntpd']['gps']['port'] = $config['ntpd']['gpsport'];
-		unset($config['ntpd']['gpsport']); /* this removes the original port config from config.xml */
-		$config['ntpd']['gps']['speed'] = 0;
-		$config['ntpd']['gps']['nmea'] = 0;
-	}
-
-	write_config(gettext("Setting default NTPd settings"));
+if (!is_array($config['ntpd'])) {
+	$config['ntpd'] = array();
 }
-
-function parse_ublox(&$nmeaset, $splitline) {
-	$id_idx = 1;
-	$msg_idx = 2;
-	$ddc_idx = 3;
-	if ($splitline[$id_idx] == '40' && $splitline[$ddc_idx]) {
-		$nmeaset['GP' . $splitline[$msg_idx]] = 1;
-	}
-}
-
-function parse_garmin(&$nmeaset, $splitline) {
-	$msg_idx = 1;
-	$mode_idx = 2;
-	if ($splitline[$mode_idx] == '1') {
-		$nmeaset[$splitline[$msg_idx]] = 1;
-	}
-}
-
-function parse_mtk(&$nmeaset, $splitline) {
-	$nmeamap = [
-		1 => 'GPGLL',
-		2 => 'GPRMC',
-		3 => 'GPVTG',
-		4 => 'GPGGA',
-		5 => 'GPGSA',
-		6 => 'GPGSV',
-		7 => 'GPGRS',
-		8 => 'GPGST',
-	];
-	for ($x = 1; $x < 9; $x++) {
-		if($splitline[$x]) {
-			$nmeaset[$nmeamap[$x]] = 1;
-		}
-	}
-}
-
-function parse_sirf(&$nmeaset, $splitline) {
-	$msg_idx = 1;
-	$mode_idx = 2;
-	$rate_idx = 3;
-	$nmeamap = [
-		0 => 'GPGGA',
-		1 => 'GPGLL',
-		2 => 'GPGSA',
-		3 => 'GPGSV',
-		4 => 'GPRMC',
-		5 => 'GPVTG',
-	];
-	if (!(int)$splitline[$mode_idx] && (int)$splitline[$rate_idx]) {
-		$nmeaset[$nmeamap[(int)$splitline[$msg_idx]]] = 1;
-	}
-}
-
-function parse_initcmd(&$nmeaset, $initcmd) {
-	$type_idx = 0;
-	$nmeaset = [];
-	$split_initcmd = preg_split('/[\s]+/', $initcmd);
-	foreach ($split_initcmd as $line) {
-		$splitline = preg_split('/[,\*]+/', $line);
-		if ($splitline[$type_idx] == '$PUBX') {
-			parse_ublox($nmeaset, $splitline);
-		} elseif ($splitline[$type_idx] == '$PGRMO') {
-			parse_garmin($nmeaset, $splitline);
-		} elseif ($splitline[$type_idx] == '$PMTK314') {
-			parse_mtk($nmeaset, $splitline);
-		} elseif ($splitline[$type_idx] == '$PSRF103') {
-			parse_sirf($nmeaset, $splitline);
-		}
-	}
-}
-
-function NMEAChecksum($cmd) {
-	$checksum = 0;
-	for ($i=0; $i<strlen($cmd); $i++) {
-		$checksum = ($checksum ^ ord($cmd[$i]));
-	}
-	return strtoupper(str_pad(dechex($checksum), 2, '0', STR_PAD_LEFT));
-}
-
-function autocorrect_initcmd($initcmd) {
-	$cmds = '';
-	$split_initcmd = preg_split('/[\s]+/', $initcmd);
-	foreach ($split_initcmd as $line) {
-		if (!strlen($line)) {
-			continue;
-		}
-		$begin = ($line[0] == '$') ? 1 : 0;
-		$astpos = strrpos($line, '*');
-		$end = ($astpos !== false) ? $astpos : strlen($line);
-		$trimline = substr($line, $begin, $end-$begin);
-		$cmds = $cmds . '$' . $trimline . '*' . NMEAChecksum($trimline) . "\r\n";
-	}
-	return $cmds;
-}
-
-if ($_POST) {
-	unset($input_errors);
-
-	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport'])) {
-		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
-	} else {
-		/* if port is not set, remove all the gps config */
-		unset($config['ntpd']['gps']);
-	}
-
-	if (!empty($_POST['gpstype'])) {
-		$config['ntpd']['gps']['type'] = $_POST['gpstype'];
-	} elseif (isset($config['ntpd']['gps']['type'])) {
-		unset($config['ntpd']['gps']['type']);
-	}
-
-	if (!empty($_POST['gpsspeed'])) {
-		$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
-	} elseif (isset($config['ntpd']['gps']['speed'])) {
-		unset($config['ntpd']['gps']['speed']);
-	}
-
-	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0")) {
-		$config['ntpd']['gps']['nmea'] = "0";
-	} else {
-		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
-	}
 	
-	if (!empty($_POST['processpgrmf'])) {
-		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
-	} elseif (isset($config['ntpd']['gps']['processpgrmf']) || $config['ntpd']['gps']['type'] !== 'Garmin') {
-		unset($config['ntpd']['gps']['processpgrmf']);
-	}
+if (!is_array($config['ntpd']['gpss'])) {
+	$config['ntpd']['gpss'] = array();
+}
 
-	if (!empty($_POST['gpsfudge1'])) {
-		$config['ntpd']['gps']['fudge1'] = $_POST['gpsfudge1'];
-	} elseif (isset($config['ntpd']['gps']['fudge1'])) {
-		unset($config['ntpd']['gps']['fudge1']);
+if (is_array($config['ntpd']['gps'])) {
+	// convert old style
+	if (!isset($config['ntpd']['gps']['speed'])) {
+		$config['ntpd']['gps']['speed']=0;
 	}
-
-	if (!empty($_POST['gpsfudge2'])) {
-		$config['ntpd']['gps']['fudge2'] = $_POST['gpsfudge2'];
-	} elseif (isset($config['ntpd']['gps']['fudge2'])) {
-		unset($config['ntpd']['gps']['fudge2']);
+	if (!isset($config['ntpd']['gps']['prefer'])) {
+		$config['ntpd']['gps']['prefer']='yes';
 	}
+	$config['ntpd']['gpss'][] = $config['ntpd']['gps'];
+	unset($config['ntpd']['gps']);
+	write_config(gettext("Upgraded GPS Settings"));
+	system_ntp_configure();
+	pfSenseHeader("services_ntpd_gps.php");
+	exit;
+}
 
-	if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17) {
-		$config['ntpd']['gps']['stratum'] = $_POST['gpsstratum'];
-	} elseif (isset($config['ntpd']['gps']['stratum'])) {
-		unset($config['ntpd']['gps']['stratum']);
-	}
+$a_gps = &$config['ntpd']['gpss'];
 
-	if (empty($_POST['gpsprefer'])) {
-		$config['ntpd']['gps']['prefer'] = 'on';
-	} elseif (isset($config['ntpd']['gps']['prefer'])) {
-		unset($config['ntpd']['gps']['prefer']);
-	}
-
-	if (!empty($_POST['gpsnoselect'])) {
-		$config['ntpd']['gps']['noselect'] = $_POST['gpsnoselect'];
-	} elseif (isset($config['ntpd']['gps']['noselect'])) {
-		unset($config['ntpd']['gps']['noselect']);
-	}
-
-	if (!empty($_POST['gpsflag1'])) {
-		$config['ntpd']['gps']['flag1'] = $_POST['gpsflag1'];
-	} elseif (isset($config['ntpd']['gps']['flag1'])) {
-		unset($config['ntpd']['gps']['flag1']);
-	}
-
-	if (!empty($_POST['gpsflag2'])) {
-		$config['ntpd']['gps']['flag2'] = $_POST['gpsflag2'];
-	} elseif (isset($config['ntpd']['gps']['flag2'])) {
-		unset($config['ntpd']['gps']['flag2']);
-	}
-
-	if (!empty($_POST['gpsflag3'])) {
-		$config['ntpd']['gps']['flag3'] = $_POST['gpsflag3'];
-	} elseif (isset($config['ntpd']['gps']['flag3'])) {
-		unset($config['ntpd']['gps']['flag3']);
-	}
-
-	if (!empty($_POST['gpsflag4'])) {
-		$config['ntpd']['gps']['flag4'] = $_POST['gpsflag4'];
-	} elseif (isset($config['ntpd']['gps']['flag4'])) {
-		unset($config['ntpd']['gps']['flag4']);
-	}
-
-	if (!empty($_POST['gpssubsec'])) {
-		$config['ntpd']['gps']['subsec'] = $_POST['gpssubsec'];
-	} elseif (isset($config['ntpd']['gps']['subsec'])) {
-		unset($config['ntpd']['gps']['subsec']);
-	}
-
-	if (!empty($_POST['gpsrefid'])) {
-		$config['ntpd']['gps']['refid'] = $_POST['gpsrefid'];
-	} elseif (isset($config['ntpd']['gps']['refid'])) {
-		unset($config['ntpd']['gps']['refid']);
-	}
-
-	if (!empty($_POST['extstatus'])) {
-		$config['ntpd']['gps']['extstatus'] = $_POST['extstatus'];
-	} elseif (isset($config['ntpd']['gps']['extstatus'])) {
-		unset($config['ntpd']['gps']['extstatus']);
-	}
-
-	if (!empty($_POST['autocorrect_initcmd'])) {
-		$config['ntpd']['gps']['autocorrect_initcmd'] = $_POST['autocorrect_initcmd'];
-	} elseif (isset($config['ntpd']['gps']['autocorrect_initcmd'])) {
-		unset($config['ntpd']['gps']['autocorrect_initcmd']);
-	}
-
-	if (!empty($_POST['gpsinitcmd'])) {
-		$initcmd = $_POST['gpsinitcmd'];
-		if ($config['ntpd']['gps']['autocorrect_initcmd']) {
-			$initcmd = autocorrect_initcmd($initcmd);
+if ($_GET['act'] == "toggle_prefer") {
+	if ($a_gps[$_GET['id']]) {
+		if (isset($a_gps[$_GET['id']]['prefer'])){
+			unset($a_gps[$_GET['id']]['prefer']);
+		} else {
+			$a_gps[$_GET['id']]['prefer'] = 'yes';
+			if (isset($a_gps[$_GET['id']]['noselect'])){
+				unset($a_gps[$_GET['id']]['noselect']);
+			}
 		}
-		$config['ntpd']['gps']['initcmd'] = base64_encode($initcmd);
-		parse_initcmd($config['ntpd']['gps']['nmeaset'], $initcmd);
-	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
-		unset($config['ntpd']['gps']['initcmd']);
-		unset($config['ntpd']['gps']['nmeaset']);
+		write_config(gettext("Updated NTP GPS Settings"));
+		system_ntp_configure();
+		pfSenseHeader("services_ntpd_gps.php");
+		exit;
 	}
-
-	write_config(gettext("Updated NTP GPS Settings"));
-
-	$changes_applied = true;
-	$retval = 0;
-	$retval |= system_ntp_configure();
-} else {
-	/* set defaults if they do not already exist */
-	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
-		set_default_gps();
+}
+	
+if ($_GET['act'] == "toggle_no_select") {
+	if ($a_gps[$_GET['id']]) {
+		if (isset($a_gps[$_GET['id']]['noselect'])){
+			unset($a_gps[$_GET['id']]['noselect']);
+		} else {
+			$a_gps[$_GET['id']]['noselect'] = 'yes';
+			if (isset($a_gps[$_GET['id']]['prefer'])){
+				unset($a_gps[$_GET['id']]['prefer']);
+			}
+		}
+		write_config(gettext("Updated NTP GPS Settings"));
+		system_ntp_configure();
+		pfSenseHeader("services_ntpd_gps.php");
+		exit;
+	}
+}
+	
+if ($_GET['act'] == "swap") {
+	if ($a_gps[$_GET['id1']] && $a_gps[$_GET['id2']]) {
+		$temp = $a_gps[$_GET['id1']];
+		$a_gps[$_GET['id1']] = $a_gps[$_GET['id2']];
+		$a_gps[$_GET['id2']] = $temp;
+		write_config(gettext("Updated NTP GPS Settings"));
+		system_ntp_configure();
+		pfSenseHeader("services_ntpd_gps.php");
+		exit;
 	}
 }
 
-function build_nmea_list() {
-	global $pconfig;
-
-	$nmealist = array('options' => array(), 'selected' => array());
-
-	$nmealist['options'][0] = gettext('All');
-	$nmealist['options'][1] = gettext('RMC');
-	$nmealist['options'][2] = gettext('GGA');
-	$nmealist['options'][4] = gettext('GLL');
-	$nmealist['options'][8] = gettext('ZDA or ZDG');
-
-	if (!$pconfig['nmea']) {
-		array_push($nmealist['selected'], 0);
-	}
-
-	foreach ($nmealist['options'] as $val => $opt) {
-		if ($pconfig['nmea'] & $val) {
-		  array_push($nmealist['selected'], $val);
+if ($_GET['act'] == "del") {
+	if ($a_gps[$_GET['id']]) {
+		unlink_if_exists('/dev/gps' . $_GET['id']);
+		/* Remove old /etc/remote entry if it exists */
+		$gps_shortname = 'gps' . $_GET['id'];
+		if (intval(`grep -c "^{$gps_shortname}" /etc/remote`) != 0) {
+			mwexec("sed -n '/'{$gps_shortname}'/!p' /etc/remote > /etc/remote.new");
+			mwexec('mv /etc/remote.new /etc/remote');
 		}
+		unset($a_gps[$_GET['id']]);
+		write_config(gettext("Deleted GPS setting"));
+		system_ntp_configure();
+		pfSenseHeader("services_ntpd_gps.php");
+		exit;
 	}
-
-	return($nmealist);
 }
 
-$pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
-
-if ($changes_applied) {
-	print_apply_result_box($retval);
-}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
@@ -322,410 +129,69 @@ $tab_array[] = array(gettext("ACLs"), false, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
-
-$form = new Form;
-
-$section = new Form_Section('NTP Serial GPS Configuration');
-
-$section->addInput(new Form_StaticText(
-	'Notes',
-	'A GPS connected via a serial port may be used as a reference clock for NTP. If the GPS also supports PPS and is properly configured, ' .
-	'and connected, that GPS may also be used as a Pulse Per Second clock reference. NOTE: A USB GPS may work, but is not recommended due to USB bus timing issues.' . '<br />' .
-	'For the best results, NTP should have at least three sources of time. So it is best to configure at least 2 servers under ' .
-	'<a href="services_ntpd.php">Services > NTP > Settings</a>' .
-	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
-));
-
-$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
-
-$section->addInput(new Form_Select(
-	'gpstype',
-	'GPS Type',
-	$pconfig['type'],
-	array_combine($gpstypes, $gpstypes)
-))->setHelp('This option allows a predefined configuration to be selected. ' .
-			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.' . '<br /><br />' .
-			'The predefined configurations assume the GPS has already been set to NMEA mode.');
-
-$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-
-if (!empty($serialports)) {
-	$splist = array();
-
-	foreach ($serialports as $port) {
-		$shortport = substr($port, 5);
-		$splist[$shortport] = $shortport;
-	}
-
-	$section->addInput(new Form_Select(
-		'gpsport',
-		'Serial Port',
-		$pconfig['port'],
-		['' => gettext('None')] + $splist
-	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
-
-	$section->addInput(new Form_Select(
-		'gpsspeed',
-		null,
-		$pconfig['speed'],
-		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
-
-	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
-				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
-}
-
-$nmealist = build_nmea_list();
-$section->addInput(new Form_Select(
-	'gpsnmea',
-	'NMEA Sentences',
-	$nmealist['selected'],
-	$nmealist['options'],
-	true
-))->setHelp('By default NTP will listen for all supported NMEA sentences. One or more sentences to listen for may be specified.');
-
-$section->addInput(new Form_Checkbox(
-	'processpgrmf',
-	null,
-	'Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked).',
-	$pconfig['processpgrmf']
-));
-
-$section->addInput(new Form_Input(
-	'gpsfudge1',
-	'Fudge Time 1',
-	'text',
-	$pconfig['fudge1']
-))->setHelp('Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0).');
-
-$section->addInput(new Form_Input(
-	'gpsfudge2',
-	'Fudge Time 2',
-	'text',
-	$pconfig['fudge2']
-))->setHelp('Fudge time 2 is used to specify the GPS time offset (default: 0.0).');
-
-$section->addInput(new Form_Input(
-	'gpsstratum',
-	'Stratum (0-16)',
-	'text',
-	$pconfig['stratum']
-))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
-
-$section->addInput(new Form_Checkbox(
-	'gpsprefer',
-	'Flags',
-	'Prefer this clock (default: checked).',
-	!$pconfig['prefer']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpsnoselect',
-	null,
-	'Do not use this clock, display for reference only (default: unchecked).',
-	$pconfig['noselect']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpsflag1',
-	null,
-	'Enable PPS signal processing (default: checked).',
-	$pconfig['flag1']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpsflag2',
-	null,
-	'Enable falling edge PPS signal processing (default: unchecked, rising edge).',
-	$pconfig['flag2']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpsflag3',
-	null,
-	'Enable kernel PPS clock discipline (default: checked).',
-	$pconfig['flag3']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpsflag4',
-	null,
-	'Obscure location in timestamp (default: unchecked, unobscured).',
-	$pconfig['flag4']
-));
-
-$section->addInput(new Form_Checkbox(
-	'gpssubsec',
-	null,
-	'Log the sub-second fraction of the received time stamp (default: unchecked, not logged).',
-	$pconfig['subsec']
-))->setHelp('Enabling this will rapidly fill the log, but is useful for tuning Fudge time 2.');
-
-$section->addInput(new Form_Checkbox(
-	'extstatus',
-	null,
-	'Display extended GPS status (default: checked).',
-	$pconfig['extstatus']
-))->setHelp('Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS initialization commands.');
-
-$section->addInput(new Form_Input(
-	'gpsrefid',
-	'Clock ID',
-	'text',
-	$pconfig['refid'],
-	['placeholder' => '1 to 4 characters']
-))->setHelp('This may be used to change the GPS Clock ID (default: GPS).');
-
-// Statistics logging section
-$btnadv = new Form_Button(
-	'btnadvgps',
-	'Display Advanced',
-	null,
-	'fa-cog'
-);
-
-$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
-
-$section->addInput(new Form_StaticText(
-	'GPS Initialization',
-	$btnadv
-));
-
-$section->addInput(new Form_Textarea(
-	'gpsinitcmd',
-	null,
-	base64_decode($pconfig['initcmd'])
-))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here.');
-
-$section->addInput(new Form_Checkbox(
-	'autocorrect_initcmd',
-	null,
-	'Auto correct malformed initialization commands. (default: unchecked).',
-	$pconfig['autocorrect_initcmd']
-))->setHelp('Calculates and appends checksum and missing special characters "$" and "*". May not work with some GPS models.');
-
-$group = new Form_Group('NMEA Checksum Calculator');
-
-$group->add(new Form_Input(
-	'nmeastring',
-	null
-));
-
-$btncalc = new Form_Button(
-	'btncalc',
-	'Calculate',
-	null,
-	'fa-calculator'
-);
-
-$btncalc->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$group->add($btncalc);
-
-$group->add(new Form_Input(
-	'result',
-	null,
-	'text',
-	null,
-	['placeholder' => 'Result']
-));
-
-$group->setHelp('Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command string:');
-$group->addClass('calculator');
-
-$section->add($group);
-
-$form->add($section);
-print($form);
-
+$baud=[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200'];
 ?>
 
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('GPSs')?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+			<thead>
+				<tr>
+					<th><?=gettext("ID")?></th>
+					<th><?=gettext("Type")?></th>
+					<th><?=gettext("Port")?></th>
+					<th><?=gettext("Baud")?></th>
+					<th><?=gettext("Prefer")?></th>
+					<th><?=gettext("No Select")?></th>
+					<th><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($a_gps as $i => $gps): ?>
+					<tr>
+						<td>
+							127.127.20.<?=$i;?>
+						</td>
+						<td>
+							<?=$gps['type'];?>
+						</td>
+						<td>
+							<?=$gps['port'];?>
+						</td>
+						<td>
+							<?=$baud[$gps['speed']];?>
+						</td>
+						<td>
+							<input type="checkbox" id="frc<?=$i;?>" onClick="document.location='services_ntpd_gps.php?act=toggle_prefer&amp;id=<?=$i;?>';" <?=($gps['prefer'] ? 'checked':'')?>/>
+						</td>
+						<td>
+							<input type="checkbox" id="frc<?=$i;?>" onClick="document.location='services_ntpd_gps.php?act=toggle_no_select&amp;id=<?=$i;?>';" <?=($gps['noselect'] ?'checked':'')?>/>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_ntpd_gps_edit.php?id=<?=$i?>"></a>
+							<?php if ($i > 0): ?>
+								<a class="fa fa-arrow-up"	title="<?=gettext('Move Up')?>"	href="services_ntpd_gps.php?act=swap&amp;id1=<?=$i-1;?>&amp;id2=<?=$i;?>"></a>
+							<?php endif?>
+							<?php if ($i < (count($a_gps) - 1)): ?>
+								<a class="fa fa-arrow-down"	title="<?=gettext('Move Down')?>"	href="services_ntpd_gps.php?act=swap&amp;id1=<?=$i;?>&amp;id2=<?=$i+1;?>"></a>
+							<?php endif?>
+							<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_ntpd_gps.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
+				<?php endforeach?>
+			</tbody>
+		</table>
+	</div>
+</div>
 
-	function NMEAChecksum(cmd) {
-		// Compute the checksum by XORing all the character values in the string.
-		var checksum = 0;
-
-		for (var i = 0; i < cmd.length; i++) {
-			checksum = checksum ^ cmd.charCodeAt(i);
-		}
-		// Convert it to hexadecimal (base-16, upper case, most significant byte first).
-		var hexsum = Number(checksum).toString(16).toUpperCase();
-
-		if (hexsum.length < 2) {
-			hexsum = ("00" + hexsum).slice(-2);
-		}
-
-		return(hexsum);
-	}
-
-	function get_base64_gps_string(type) {
-
-		switch (type) {
-			case "Default":
-				return "JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ0K";
-				break;
-
-			case "Garmin":
-				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
-				break;
-
-			case "Generic":
-				return "";
-				break;
-
-			case "MediaTek":
-				return "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDAsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyOA0KJFBNVEszMDEsMioyRQ0KJFBNVEszMjAsMCoyRg0KJFBNVEszMzAsMCoyRQ0KJFBNVEszODYsMCoyMw0KJFBNVEszOTcsMCoyMw0KJFBNVEsyNTEsNDgwMCoxNA0K";
-				break;
-
-			case "SiRF":
-				return "JFBTUkYxMDMsMDAsMDAsMDEsMDEqMjUNCiRQU1JGMTAzLDAxLDAwLDAxLDAxKjI0DQokUFNSRjEwMywwMiwwMCwwMCwwMSoyNA0KJFBTUkYxMDMsMDMsMDAsMDAsMDEqMjQNCiRQU1JGMTAzLDA0LDAwLDAxLDAxKjI0DQokUFNSRjEwMywwNSwwMCwwMCwwMSoyNA0KJFBTUkYxMDAsMSw0ODAwLDgsMSwwKjBFDQo=";
-				break;
-
-			case "U-Blox":
-				return "JFBVQlgsNDAsR0dBLDEsMSwxLDEsMCwwKjVBDQokUFVCWCw0MCxHTEwsMSwxLDEsMSwwLDAqNUMNCiRQVUJYLDQwLEdTQSwwLDAsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR1NWLDAsMCwwLDAsMCwwKjU5DQokUFVCWCw0MCxSTUMsMSwxLDEsMSwwLDAqNDcNCiRQVUJYLDQwLFZURywwLDAsMCwwLDAsMCo1RQ0KJFBVQlgsNDAsR1JTLDAsMCwwLDAsMCwwKjVEDQokUFVCWCw0MCxHU1QsMCwwLDAsMCwwLDAqNUINCiRQVUJYLDQwLFpEQSwxLDEsMSwxLDAsMCo0NA0KJFBVQlgsNDAsR0JTLDAsMCwwLDAsMCwwKjREDQokUFVCWCw0MCxEVE0sMCwwLDAsMCwwLDAqNDYNCiRQVUJYLDQwLEdQUSwwLDAsMCwwLDAsMCo1RA0KJFBVQlgsNDAsVFhULDAsMCwwLDAsMCwwKjQzDQokUFVCWCw0MCxUSFMsMCwwLDAsMCwwLDAqNTQNCiRQVUJYLDQxLDEsMDAwNywwMDAzLDQ4MDAsMCoxMw0K";
-				break;
-
-			case "SureGPS":
-				return "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==";
-				break;
-			default:
-				return "";
-		}
-	}
-
-	function get_gps_string(type) {
-		return atob(get_base64_gps_string(type));
-	}
-
-	function set_gps_default(type) {
-		$('#gpsnmea').val(0);
-		$('#processpgrmf').prop('checked', false);
-		$('#gpsspeed').val(0);
-		$('#gpsfudge1').val(0);
-		$('#gpsinitcmd').val(get_gps_string(type));
-
-		//stuff the JS object as needed for each type
-		switch (type) {
-			case "Default":
-				$('#gpsfudge1').val("0.155");
-				$('#gpsfudge2').val("");
-				break;
-
-			case "Garmin":
-				$('#gpsfudge2').val("0.600");
-				break;
-
-			case "Generic":
-				$('#gpsfudge2').val("0.400");
-				break;
-
-			case "MediaTek":
-				$('#gpsfudge2').val("0.400");
-				break;
-
-			case "SiRF":
-				$('#gpsfudge2').val("0.704"); //valid for 4800, 0.688 @ 9600, 0.640 @ USB
-				break;
-
-			case "U-Blox":
-				$('#gpsfudge2').val("0.400");
-				break;
-
-			case "SureGPS":
-				$('#gpsnmea').val(1);
-				$('#gpsspeed').val(16);
-				$('#gpsfudge2').val("0.407");
-				break;
-			default:
-				return;
-		}
-
-		$('#gpsstratum').val("");
-		$('#gpsrefid').val("");
-		$('#gpsflag1').prop('checked', true);
-		$('#gpsflag2').prop('checked', false);
-		$('#gpsflag3').prop('checked', true);
-		$('#gpsflag4').prop('checked', false);
-		$('#gpssubsec').prop('checked', false);
-		$('#extstatus').prop('checked', true);
-		$('#autocorrect_initcmd').prop('checked', false);
-	}
-
-	// Show advanced GPS options ==============================================
-	var showadvgps = false;
-
-	function show_advgps(ispageload) {
-		var text;
-		// On page load decide the initial state based on the data.
-		if (ispageload) {
-			// If the string in initcmd matches the GPS string for the currently-selected type or is empty
-			// then we have default settings - do not show the advanced stuff.
-			if (('<?=$pconfig['initcmd'] ?>' == get_base64_gps_string($('#gpstype').val())) ||
-			    ('<?=$pconfig['initcmd']?>' == '')) {
-				showadvgps = false;
-			} else {
-				showadvgps = true;
-			}
-		} else {
-			// It was a click, swap the state.
-			showadvgps = !showadvgps;
-		}
-
-		hideInput('gpsinitcmd', !showadvgps);
-		hideInput('autocorrect_initcmd', !showadvgps);
-		hideClass('calculator', !showadvgps);
-
-		if (showadvgps) {
-			text = "<?=gettext('Hide Advanced');?>";
-		} else {
-			text = "<?=gettext('Display Advanced');?>";
-		}
-		$('#btnadvgps').html('<i class="fa fa-cog"></i> ' + text);
-	}
-
-	$('#btnadvgps').click(function(event) {
-		show_advgps();
-	});
-
-	$('#result').prop("disabled", true);
-
-	// Onclick read the string from the nmeastring box, calculate the checksum
-	// and display the results in the result box
-	$("#btncalc").click(function() {
-		$('#result').val(NMEAChecksum($('#nmeastring').val()));
-	});
-
-	// When the 'GPS' selector is changed, we set the gps defaults
-	$('#gpstype').on('change', function() {
-		set_gps_default($(this).val());
-		hideInput('processpgrmf', $(this).val() !== "Garmin");
-	});
-	hideInput('processpgrmf', '<?=$pconfig['type']?>' !== "Garmin");
-
-	if ('<?=$pconfig['initcmd']?>' == '') {
-		set_gps_default('<?=$pconfig['type']?>');
-	}
-
-	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive
-	$('#gpsprefer').click(function() {
-		if ($(this).is(':checked')) {
-			$('#gpsnoselect').prop('checked', false);
-		}
-	});
-
-	$('#gpsnoselect').click(function() {
-		if ($(this).is(':checked')) {
-			$('#gpsprefer').prop('checked', false);
-		}
-	});
-
-	// ---------- On initial page load ---------------------------------------
-
-	show_advgps(true);
-});
-//]]>
-</script>
+<?php if (count($a_gps) < 4): ?>
+	<nav class="action-buttons">
+		<a href="services_ntpd_gps_edit.php" class="btn btn-sm btn-success">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+	</nav>
+<?php endif?>
 
 <?php include("foot.inc");

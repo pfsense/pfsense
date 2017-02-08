@@ -37,7 +37,7 @@ function listtags() {
 		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',
-		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
+		'gateway_item', 'gateway_group', 'gif', 'gre', 'gpss', 'group',
 		'hash-algorithm-option', 'hosts', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
 		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
 		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',

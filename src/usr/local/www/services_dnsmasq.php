@@ -259,7 +259,7 @@ $section->addInput(new Form_Checkbox(
 			' their hostname when requesting a DHCP lease will be registered'.
 			' in the DNS forwarder, so that their name can be resolved.'.
 			' The domain in %1$sSystem: General Setup%2$s should also'.
-			' be set to the proper value.','<a href="system.php">','</a>')
+			' be set to the proper value.', '<a href="system.php">', '</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -270,7 +270,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, DHCP static mappings will '.
 					'be registered in the DNS forwarder, so that their name can be '.
 					'resolved. The domain in %1$sSystem: General Setup%2$s should also '.
-					'be set to the proper value.','<a href="system.php">','</a>')
+					'be set to the proper value.', '<a href="system.php">', '</a>')
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -290,9 +290,9 @@ $group->add(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Query DNS servers sequentially',
 	$pconfig['strict_order']
-))->setHelp("If this option is set %s DNS Forwarder (dnsmasq) will ".
-					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
-					"rather than all at once in parallel. ", $g['product_name']);
+))->setHelp('If this option is set %1$s DNS Forwarder (dnsmasq) will '.
+					'query the DNS servers sequentially in the order specified (%2$sSystem - General Setup - DNS Servers%3$s), '.
+					'rather than all at once in parallel. ', $g['product_name'], '<i>', '</i>');
 
 $group->add(new Form_Checkbox(
 	'domain_needed',
@@ -340,8 +340,8 @@ $section->addInput(new Form_Checkbox(
 	'Strict interface binding',
 	$pconfig['strictbind']
 ))->setHelp('If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, ' .
-					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
-					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
+					'rather than binding to all interfaces and discarding queries to other addresses.%1$s' .
+					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.', '<br /><br />');
 
 $section->addInput(new Form_Textarea(
 	'custom_options',

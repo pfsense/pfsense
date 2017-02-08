@@ -216,7 +216,7 @@ foreach ($a_dyndns as $dyndns):
 </nav>
 
 <div>
-	<?=gettext('IP addresses appearing in <span class="text-success">green</span> are up to date with Dynamic DNS provider. ')?>
+	<?=sprintf(gettext('IP addresses appearing in %1$sgreen%2$s are up to date with Dynamic DNS provider. '), '<span class="text-success">', '</span>')?>
 	<?=gettext('An update for an IP address can be forced on the edit page for that service.')?>
 </div>
 

@@ -718,16 +718,16 @@ $section->addInput(new Form_Input(
 	'Default lease time',
 	'text',
 	$pconfig['deftime']
-))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
-			'The default is 7200 seconds.');
+))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. %1$s' .
+			'The default is 7200 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'maxtime',
 	'Max lease time',
 	'text',
 	$pconfig['maxtime']
-))->setHelp('Maximum lease time for clients that ask for a specific expiration time.' . ' <br />' .
-			'The default is 86400 seconds.');
+))->setHelp('Maximum lease time for clients that ask for a specific expiration time. %1$s' .
+			'The default is 86400 seconds.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'dhcpv6leaseinlocaltime',

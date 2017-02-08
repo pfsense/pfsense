@@ -443,8 +443,8 @@ $section->addInput(new Form_IpAddress(
 	'IP Address',
 	$pconfig['ipaddr'],
 	'V4'
-))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
+))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

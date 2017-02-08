@@ -651,6 +651,10 @@ foreach ($a_user as $i => $userent):
 		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
 	);
 
+?></div>
+
+<script type="text/javascript">
+//<![CDATA[
 
 // The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
 // GET calls to POST calls
@@ -658,16 +662,12 @@ foreach ($a_user as $i => $userent):
 // have that attribute
 // These function can be moved to an included file
 
-?></div>
-
-<script type="text/javascript">
-//<![CDATA[
 events.push(function() {
 
 	// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
 	// to POST format, make a POST form and submit it
 	$('a').click(function(e) {
-		// Does the clicker anchor have the "usepost" attribute?
+		// Does the clicked anchor have the "usepost" attribute?
 		var attr = $(this).attr('usepost');
 
 		if (typeof attr !== typeof undefined && attr !== false) {

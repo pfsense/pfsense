@@ -756,7 +756,7 @@ $group->add(new Form_Input(
 	$pconfig['losshigh'],
 	['placeholder' => $dpinger_default['losshigh']]
 ));
-$group->setHelp('Low and high thresholds for packet loss in %%. ' .
+$group->setHelp('Low and high thresholds for packet loss in %. ' .
 	'Default is %d/%d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
 $section->add($group);
 

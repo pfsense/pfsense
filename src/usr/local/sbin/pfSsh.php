@@ -227,7 +227,7 @@ if ($argv[1]=="playback" or $argv[1]=="run") {
 		show_recordings();
 		exit(-1);
 	}
-	playback_file(basename($argv[2]));
+	playback_file(basename($argv[2]), $argv);
 	exit;
 }
 
@@ -374,7 +374,13 @@ function playback_text($playback_file_contents) {
 
 function playback_file($playback_file) {
 	$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
-	playback_text($playback_file_contents);
+	
+	$argvString = "\$argv = array();\n";
+	
+	foreach ($argv as $arg)
+		$argvString .= "\$argv[] = '{$arg}';\n";
+	
+	playback_text($argvString . $playback_file_contents);
 }
 
 ?>

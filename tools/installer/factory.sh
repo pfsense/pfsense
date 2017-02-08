@@ -313,10 +313,14 @@ sync; sync; sync
 trap "-" 1 2 15 EXIT
 
 # Calculate the "Unique ID" for support and tracking purposes
-# Hash the concatenated MAC addresses - Assume there are only physical interfaces present during the build
-UID=$(ifconfig -a |grep ether|awk '{print $2}'|sort|tr -d ':'|tr -d '\n'|sha256)
-# truncate to 20 chars
-UID=$(echo -n $UID|sha256|sed 's,.*\(.\{20\}\)$,\1.')
+# Hash the concatenated MAC addresses - Assume there are only physical
+# interfaces present during the build and use last 20 chars
+UID=$(ifconfig -a \
+	| awk '/ether / { gsub(/:/, "", $2); print $2 }' \
+	| sort \
+	| tr -d '\n' \
+	| sha256 \
+	| cut -c 45-)
 
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"

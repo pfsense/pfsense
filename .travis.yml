@@ -30,6 +30,7 @@ addons:
 before_install:
   - wget http://78.47.62.142/archisdownloads/pfsense.img.bz2
   - bunzip2 pfsense.img.bz2
+  - composer install
 
 before_script:
   - qemu-system-x86_64 -nographic pfsense.img  -m 256 -device e1000,netdev=user.0 -netdev user,id=user.0,hostfwd=tcp::"$SRV_HOST_PORT"-:80  -device e1000,netdev=user.1 -netdev user,id=user.1 -display none -monitor tcp::4444,server,nowait -serial tcp::3333,server,nowait -daemonize

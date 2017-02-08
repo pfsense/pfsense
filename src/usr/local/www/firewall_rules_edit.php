@@ -1086,7 +1086,9 @@ function build_if_list() {
 
 // Expands missing/blank/"all" icmptypes to a list of specific types. Doesn't check validity.
 function expand_icmptype($icmptype, $ipprotocol) {
-	if (isset($icmptype) && is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
+	global $icmptypes;
+	// if 1st arg is unset (as icmptype can historically be) then function will be passed NULL; test with is_null()
+	if (is_null($icmptype) && is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
 		// $icmptype appears to contain specific icmptype(s)
 		return $icmptype;
 	} else {

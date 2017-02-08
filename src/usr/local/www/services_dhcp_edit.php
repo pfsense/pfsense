@@ -405,18 +405,8 @@ if ($_POST) {
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 
-switch (is_ipaddr($ip)) {
-	case 4:
-		$mymac = exec("/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d' ' -f4");
-		$mymac = str_replace("\n", "", $mymac);
-        break;
-    case 6:
-		$mymac = exec("/usr/sbin/ndp -na | /usr/bin/grep '{$ip}' | /usr/bin/head -n 1 | /usr/bin/awk '{ print $2 }'");
-		$mymac = str_replace("\n", "", $mymac);
-		break;
-	default:
-		unset($mymac);
-}
+unset($mymac);
+$mymac = arp_get_mac_by_ip($ip);
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';
@@ -444,6 +434,7 @@ $macaddress = new Form_Input(
 	$pconfig['mac'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
+
 $btnmymac = new Form_Button(
 	'btnmymac',
 	'Copy My MAC',
@@ -452,6 +443,7 @@ $btnmymac = new Form_Button(
 	);
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
+
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
 if (!empty($mymac)) {

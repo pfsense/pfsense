@@ -1813,24 +1813,23 @@ function alias_expand_urltable($name) {
 
 /* obtain MAC address given an IP address by looking at the ARP/NDP table */
 function arp_get_mac_by_ip($ip) {
-	unset($arp_ndp_output);
+	unset($macaddr);
+	$retval = 1;
 	switch (is_ipaddr($ip)) {
 		case 4:
 			mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
-			exec("/usr/sbin/arp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $4}'", $arp_ndp_output);
+			$macaddr = exec("/usr/sbin/arp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $4}'", $output, $retval);
 			break;
 		case 6:
 			mwexec("/sbin/ping6 -c 1 -X 1 " . escapeshellarg($ip), true);
-			exec("/usr/sbin/ndp -n " . escapeshellarg($ip) . " | /usr/bin/tail -n+2 | /usr/bin/awk '{print $2}'", $arp_ndp_output);
+			$macaddr = exec("/usr/sbin/ndp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $2}'", $output, $retval);
 			break;
 	}
-	if ($arp_ndp_output[0]) {
-		$macaddr = $arp_ndp_output[0];
-		if (is_macaddr($macaddr)) {
-			return $macaddr;
-		}
+	if ($retval == 0 && is_macaddr($macaddr)) {
+		return $macaddr;
+	} else {
+		return false;
 	}
-	return false;
 }
 
 /* return a fieldname that is safe for xml usage */

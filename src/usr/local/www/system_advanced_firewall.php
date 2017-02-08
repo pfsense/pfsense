@@ -447,7 +447,7 @@ $group->add(new Form_Input(
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
 	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
-	'Defaults to 60%% of the Firewall Maximum States value');
+	'Defaults to 60% of the Firewall Maximum States value');
 
 $group->add(new Form_Input(
 	'adaptiveend',
@@ -459,7 +459,7 @@ $group->add(new Form_Input(
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
 	'reached (set a lower state limit, see below). '.
-	'Defaults to 120%% of the Firewall Maximum States value');
+	'Defaults to 120% of the Firewall Maximum States value');
 
 $group->setHelp('Timeouts for states can be scaled adaptively as the number of '.
 	'state table entries grows. Leave blank to use default values, set to '.

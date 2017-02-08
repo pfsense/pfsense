@@ -391,7 +391,7 @@ $section->addInput(new Form_Textarea(
 	'Result Match',
 	$pconfig['resultmatch']
 ))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.%1$s' .
-			'To include the new IP in the request, put %%IP%% in its place.%1$s' .
+			'To include the new IP in the request, put %IP% in its place.%1$s' .
 			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)%1$s' .
 			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', '<br />');
 

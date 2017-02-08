@@ -30,6 +30,8 @@ before_script:
   - qemu-system-x86_64 -nographic pfsense.img  -m 256 -device e1000,netdev=user.0 -netdev user,id=user.0,hostfwd=tcp::5555-:80  -device e1000,netdev=user.1 -netdev user,id=user.1 -display none -monitor tcp::4444,server,nowait -serial tcp::3333,server,nowait -daemonize
   - sleep 20
   - timeout 180 netcat localhost 3333; sleep 1;
+  - bash tests/pfsense-upgrade.sh localhost 3333
+  - bash tests/gitsync.sh localhost 3333
 
 script:
   - sh -c "if [ ! -z "$SAUCE_USERNAME" ] && [ ! -z "$SAUCE_ACCESS_KEY" ]; then phpunit -c tests/phpunit-selenium-autotest.xml; fi"

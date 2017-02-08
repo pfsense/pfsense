@@ -133,6 +133,7 @@ if ($_POST && !$input_errors) {
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = explode("->", $field);
+	$thisvar = null;
 	foreach ($field_split as $f) {
 		$field_conv .= "['" . $f . "']";
 	}
@@ -156,8 +157,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if ($field_type == "interfaces_selection") {
 		$var = "\$config{$field_conv}";
 		$text = "if (isset({$var})) unset({$var});";
-		$text .= "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		$text .= "\$thisvar = &\$config" . $field_conv . ";";
 		eval($text);
+		$thisvar = $updatetext;
 		return;
 	}
 
@@ -165,8 +167,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
-	$text = "\$config" . $field_conv . " = \"" . addslashes($updatetext) . "\";";
+	$text .= "\$thisvar = &\$config" . $field_conv . ";";
 	eval($text);
+	$thisvar = $updatetext;
 }
 
 $title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-06 09:41-0200\n"
+"POT-Creation-Date: 2017-02-07 14:01-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -663,572 +663,572 @@ msgid ""
 "temporarily set to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:684
+#: src/etc/inc/dyndns.class:685
 #, php-format
 msgid "Sending request to: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:841
+#: src/etc/inc/dyndns.class:842
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
+#: src/etc/inc/dyndns.class:845 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
+#: src/etc/inc/dyndns.class:846 src/etc/inc/dyndns.class:1518
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:849
+#: src/etc/inc/dyndns.class:850
 msgid "Curl error occurred:"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
-#: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
-#: src/etc/inc/dyndns.class:933 src/etc/inc/dyndns.class:950
-#: src/etc/inc/dyndns.class:1099 src/etc/inc/dyndns.class:1112
-#: src/etc/inc/dyndns.class:1125 src/etc/inc/dyndns.class:1142
-#: src/etc/inc/dyndns.class:1271 src/etc/inc/dyndns.class:1335
-#: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
-#: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
+#: src/etc/inc/dyndns.class:859 src/etc/inc/dyndns.class:880
+#: src/etc/inc/dyndns.class:899 src/etc/inc/dyndns.class:917
+#: src/etc/inc/dyndns.class:934 src/etc/inc/dyndns.class:951
+#: src/etc/inc/dyndns.class:1100 src/etc/inc/dyndns.class:1113
+#: src/etc/inc/dyndns.class:1126 src/etc/inc/dyndns.class:1143
+#: src/etc/inc/dyndns.class:1272 src/etc/inc/dyndns.class:1336
+#: src/etc/inc/dyndns.class:1394 src/etc/inc/dyndns.class:1415
+#: src/etc/inc/dyndns.class:1460 src/etc/inc/dyndns.class:1472
 msgid "IP Address Changed Successfully!"
-msgstr ""
-
-#: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
-#: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
-#: src/etc/inc/dyndns.class:938 src/etc/inc/dyndns.class:955
-#: src/etc/inc/dyndns.class:1022 src/etc/inc/dyndns.class:1040
-#: src/etc/inc/dyndns.class:1060 src/etc/inc/dyndns.class:1078
-#: src/etc/inc/dyndns.class:1088 src/etc/inc/dyndns.class:1102
-#: src/etc/inc/dyndns.class:1115 src/etc/inc/dyndns.class:1130
-#: src/etc/inc/dyndns.class:1149 src/etc/inc/dyndns.class:1173
-#: src/etc/inc/dyndns.class:1192 src/etc/inc/dyndns.class:1212
-#: src/etc/inc/dyndns.class:1232 src/etc/inc/dyndns.class:1259
-#: src/etc/inc/dyndns.class:1276 src/etc/inc/dyndns.class:1340
-#: src/etc/inc/dyndns.class:1358 src/etc/inc/dyndns.class:1381
-#: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
-#: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
-msgid "Unknown Response"
 msgstr ""
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
 #: src/etc/inc/dyndns.class:939 src/etc/inc/dyndns.class:956
-#: src/etc/inc/dyndns.class:1041 src/etc/inc/dyndns.class:1061
-#: src/etc/inc/dyndns.class:1079 src/etc/inc/dyndns.class:1089
-#: src/etc/inc/dyndns.class:1103 src/etc/inc/dyndns.class:1116
-#: src/etc/inc/dyndns.class:1131 src/etc/inc/dyndns.class:1150
-#: src/etc/inc/dyndns.class:1174 src/etc/inc/dyndns.class:1193
-#: src/etc/inc/dyndns.class:1213 src/etc/inc/dyndns.class:1233
-#: src/etc/inc/dyndns.class:1260 src/etc/inc/dyndns.class:1277
-#: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:1341
+#: src/etc/inc/dyndns.class:1023 src/etc/inc/dyndns.class:1041
+#: src/etc/inc/dyndns.class:1061 src/etc/inc/dyndns.class:1079
+#: src/etc/inc/dyndns.class:1089 src/etc/inc/dyndns.class:1103
+#: src/etc/inc/dyndns.class:1116 src/etc/inc/dyndns.class:1131
+#: src/etc/inc/dyndns.class:1150 src/etc/inc/dyndns.class:1174
+#: src/etc/inc/dyndns.class:1193 src/etc/inc/dyndns.class:1213
+#: src/etc/inc/dyndns.class:1233 src/etc/inc/dyndns.class:1260
+#: src/etc/inc/dyndns.class:1277 src/etc/inc/dyndns.class:1341
 #: src/etc/inc/dyndns.class:1359 src/etc/inc/dyndns.class:1382
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
+msgid "Unknown Response"
+msgstr ""
+
+#: src/etc/inc/dyndns.class:863 src/etc/inc/dyndns.class:886
+#: src/etc/inc/dyndns.class:905 src/etc/inc/dyndns.class:923
+#: src/etc/inc/dyndns.class:940 src/etc/inc/dyndns.class:957
+#: src/etc/inc/dyndns.class:1042 src/etc/inc/dyndns.class:1062
+#: src/etc/inc/dyndns.class:1080 src/etc/inc/dyndns.class:1090
+#: src/etc/inc/dyndns.class:1104 src/etc/inc/dyndns.class:1117
+#: src/etc/inc/dyndns.class:1132 src/etc/inc/dyndns.class:1151
+#: src/etc/inc/dyndns.class:1175 src/etc/inc/dyndns.class:1194
+#: src/etc/inc/dyndns.class:1214 src/etc/inc/dyndns.class:1234
+#: src/etc/inc/dyndns.class:1261 src/etc/inc/dyndns.class:1278
+#: src/etc/inc/dyndns.class:1326 src/etc/inc/dyndns.class:1342
+#: src/etc/inc/dyndns.class:1360 src/etc/inc/dyndns.class:1383
+#: src/etc/inc/dyndns.class:1408 src/etc/inc/dyndns.class:1445
+#: src/etc/inc/dyndns.class:1466 src/etc/inc/dyndns.class:1481
 msgid "PAYLOAD:"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:869
+#: src/etc/inc/dyndns.class:870
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:871
+#: src/etc/inc/dyndns.class:872
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:873
+#: src/etc/inc/dyndns.class:874
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:875
+#: src/etc/inc/dyndns.class:876
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:877
+#: src/etc/inc/dyndns.class:878
 msgid "The hostname is blocked for update abuse."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:882
+#: src/etc/inc/dyndns.class:883
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:891 src/etc/inc/dyndns.class:911
-#: src/etc/inc/dyndns.class:928 src/etc/inc/dyndns.class:945
-#: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
-#: src/etc/inc/dyndns.class:1452
+#: src/etc/inc/dyndns.class:892 src/etc/inc/dyndns.class:912
+#: src/etc/inc/dyndns.class:929 src/etc/inc/dyndns.class:946
+#: src/etc/inc/dyndns.class:1267 src/etc/inc/dyndns.class:1331
+#: src/etc/inc/dyndns.class:1453
 msgid "Not A FQDN!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
+#: src/etc/inc/dyndns.class:894 src/etc/inc/dyndns.class:1455
 msgid "No such host"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
-#: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
-#: src/etc/inc/dyndns.class:1096 src/etc/inc/dyndns.class:1109
-#: src/etc/inc/dyndns.class:1122 src/etc/inc/dyndns.class:1332
-#: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
-#: src/etc/inc/dyndns.class:1456
+#: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:914
+#: src/etc/inc/dyndns.class:931 src/etc/inc/dyndns.class:948
+#: src/etc/inc/dyndns.class:1097 src/etc/inc/dyndns.class:1110
+#: src/etc/inc/dyndns.class:1123 src/etc/inc/dyndns.class:1333
+#: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1434
+#: src/etc/inc/dyndns.class:1457
 msgid "No Change In IP Address"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
-#: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
-#: src/etc/inc/dyndns.class:1128 src/etc/inc/dyndns.class:1274
-#: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
-#: src/etc/inc/dyndns.class:1462
+#: src/etc/inc/dyndns.class:902 src/etc/inc/dyndns.class:920
+#: src/etc/inc/dyndns.class:937 src/etc/inc/dyndns.class:954
+#: src/etc/inc/dyndns.class:1129 src/etc/inc/dyndns.class:1275
+#: src/etc/inc/dyndns.class:1339 src/etc/inc/dyndns.class:1397
+#: src/etc/inc/dyndns.class:1463
 msgid "User Authorization Failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:967
+#: src/etc/inc/dyndns.class:968
 msgid "IP address is current, no update performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:971
+#: src/etc/inc/dyndns.class:972
 msgid "DNS hostname update successful."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:975
+#: src/etc/inc/dyndns.class:976
 msgid "Hostname supplied does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:978
+#: src/etc/inc/dyndns.class:979
 msgid "Invalid Username."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:981
+#: src/etc/inc/dyndns.class:982
 msgid "Invalid Password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:984
+#: src/etc/inc/dyndns.class:985
 msgid "Too many updates sent."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:987
+#: src/etc/inc/dyndns.class:988
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:990
+#: src/etc/inc/dyndns.class:991
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:993
+#: src/etc/inc/dyndns.class:994
 msgid "Disabled / Locked Hostname."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:996
+#: src/etc/inc/dyndns.class:997
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:999
+#: src/etc/inc/dyndns.class:1000
 msgid "Group supplied does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1002
+#: src/etc/inc/dyndns.class:1003
 msgid "DNS group update is successful."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1006
+#: src/etc/inc/dyndns.class:1007
 msgid "DNS group is current, no update performed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1010
+#: src/etc/inc/dyndns.class:1011
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1013
+#: src/etc/inc/dyndns.class:1014
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1016 src/etc/inc/dyndns.class:1019
+#: src/etc/inc/dyndns.class:1017 src/etc/inc/dyndns.class:1020
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1023
+#: src/etc/inc/dyndns.class:1024
 msgid "Unknown Response:"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1029
+#: src/etc/inc/dyndns.class:1030
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1031
+#: src/etc/inc/dyndns.class:1032
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1033
+#: src/etc/inc/dyndns.class:1034
 msgid "Illegal Input: Self-Explanatory"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1035
+#: src/etc/inc/dyndns.class:1036
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1037
+#: src/etc/inc/dyndns.class:1038
 msgid "IP Updated Successfully!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1050
+#: src/etc/inc/dyndns.class:1051
 msgid "Error 799"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1050 src/etc/inc/dyndns.class:1052
+#: src/etc/inc/dyndns.class:1051 src/etc/inc/dyndns.class:1053
 msgid "Update Failed!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1052
+#: src/etc/inc/dyndns.class:1053
 msgid "Error 700"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1054 src/etc/inc/dyndns.class:1057
-#: src/etc/inc/dyndns.class:1075 src/etc/inc/dyndns.class:1085
-#: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1186
-#: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1226
-#: src/etc/inc/dyndns.class:1253 src/etc/inc/dyndns.class:1308
-#: src/etc/inc/dyndns.class:1355 src/etc/inc/dyndns.class:1369
+#: src/etc/inc/dyndns.class:1055 src/etc/inc/dyndns.class:1058
+#: src/etc/inc/dyndns.class:1076 src/etc/inc/dyndns.class:1086
+#: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1187
+#: src/etc/inc/dyndns.class:1207 src/etc/inc/dyndns.class:1227
+#: src/etc/inc/dyndns.class:1254 src/etc/inc/dyndns.class:1309
+#: src/etc/inc/dyndns.class:1356 src/etc/inc/dyndns.class:1370
 msgid "IP Address Updated Successfully!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1067
+#: src/etc/inc/dyndns.class:1068
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1069
+#: src/etc/inc/dyndns.class:1070
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1071
+#: src/etc/inc/dyndns.class:1072
 msgid "Database Error - There was a server-sided database error."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1073
+#: src/etc/inc/dyndns.class:1074
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1137
+#: src/etc/inc/dyndns.class:1138
 msgid "Not a valid username or password!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1139
+#: src/etc/inc/dyndns.class:1140
 msgid "Hostname specified does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1145
+#: src/etc/inc/dyndns.class:1146
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1147
+#: src/etc/inc/dyndns.class:1148
 msgid "Updating too frequently, considered abuse."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1156 src/etc/inc/dyndns.class:1220
+#: src/etc/inc/dyndns.class:1157 src/etc/inc/dyndns.class:1221
 msgid "Bad Request - The IP provided was invalid."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1158
+#: src/etc/inc/dyndns.class:1159
 msgid "Bad Request - Required parameters were not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1160
+#: src/etc/inc/dyndns.class:1161
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1162
+#: src/etc/inc/dyndns.class:1163
 msgid "Invalid password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1164
+#: src/etc/inc/dyndns.class:1165
 msgid "This account has been administratively locked."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1166
+#: src/etc/inc/dyndns.class:1167
 msgid "Updating too frequently."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1182
-#: src/etc/inc/dyndns.class:1200
+#: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
+#: src/etc/inc/dyndns.class:1201
 msgid "Server side error."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1184
+#: src/etc/inc/dyndns.class:1185
 msgid "Badly Formed Request (check the settings)."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1202 src/etc/inc/dyndns.class:1222
+#: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1223
 msgid "Bad Request - A hostname was not provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
-#: src/etc/inc/dyndns.class:1251
+#: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1225
+#: src/etc/inc/dyndns.class:1252
 msgid "Invalid username or password."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1229
-#: src/etc/inc/dyndns.class:1256 src/etc/inc/dyndns.class:1268
+#: src/etc/inc/dyndns.class:1210 src/etc/inc/dyndns.class:1230
+#: src/etc/inc/dyndns.class:1257 src/etc/inc/dyndns.class:1269
 msgid "No Change In IP Address."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1247
+#: src/etc/inc/dyndns.class:1248
 msgid "Bad Request - Missing/Invalid Parameters."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1249
+#: src/etc/inc/dyndns.class:1250
 msgid "Bad Request - Invalid Tunnel ID."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1283
+#: src/etc/inc/dyndns.class:1284
 msgid "Route53 API call failed"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1287
+#: src/etc/inc/dyndns.class:1288
 msgid "IP address changed successfully"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1310 src/etc/inc/dyndns.class:1474
+#: src/etc/inc/dyndns.class:1311 src/etc/inc/dyndns.class:1475
 msgid "Result did not match."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1317
+#: src/etc/inc/dyndns.class:1318
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1320
+#: src/etc/inc/dyndns.class:1321
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1322
+#: src/etc/inc/dyndns.class:1323
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1324
+#: src/etc/inc/dyndns.class:1325
 msgid "UNKNOWN ERROR"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1347
+#: src/etc/inc/dyndns.class:1348
 msgid "Wrong values - Update could not be completed."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1349
+#: src/etc/inc/dyndns.class:1350
 msgid "Unknown username - User does not exist."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1351
+#: src/etc/inc/dyndns.class:1352
 msgid "Wrong password - Remember password is case sensitive."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1353
+#: src/etc/inc/dyndns.class:1354
 msgid "User unable to administer the selected domain."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1388
+#: src/etc/inc/dyndns.class:1389
 msgid "Not A FQDN"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1398
+#: src/etc/inc/dyndns.class:1399
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1400
+#: src/etc/inc/dyndns.class:1401
 msgid "Bad request"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1402
+#: src/etc/inc/dyndns.class:1403
 msgid "Dynamic DNS access has been blocked!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1404
+#: src/etc/inc/dyndns.class:1405
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
+#: src/etc/inc/dyndns.class:1419 src/etc/inc/dyndns.class:1477
 msgid "Invalid username or password"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1421
+#: src/etc/inc/dyndns.class:1422
 msgid "Account suspended"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1424
+#: src/etc/inc/dyndns.class:1425
 msgid "Account revoked"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1427
+#: src/etc/inc/dyndns.class:1428
 msgid "Record does not exist in the system. Unable to update record"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1430
+#: src/etc/inc/dyndns.class:1431
 msgid "User does not have access to this record"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1437
+#: src/etc/inc/dyndns.class:1438
 msgid "General system error recognized by the system"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1440
+#: src/etc/inc/dyndns.class:1441
 msgid "General system error unrecognized by the system"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1492
+#: src/etc/inc/dyndns.class:1493
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1493 src/etc/inc/dyndns.class:1501
+#: src/etc/inc/dyndns.class:1494 src/etc/inc/dyndns.class:1502
 #: src/etc/inc/services.inc:2674 src/etc/inc/services.inc:2686
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1500
+#: src/etc/inc/dyndns.class:1501
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1516
+#: src/etc/inc/dyndns.class:1517
 msgid "ERROR!"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1522
+#: src/etc/inc/dyndns.class:1523
 msgid "No Dynamic DNS Service provider was selected."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1525
+#: src/etc/inc/dyndns.class:1526
 msgid "No Username Provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1528
+#: src/etc/inc/dyndns.class:1529
 msgid "No Password Provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1531
+#: src/etc/inc/dyndns.class:1532
 msgid "No Hostname Provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1534
+#: src/etc/inc/dyndns.class:1535
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1537
+#: src/etc/inc/dyndns.class:1538
 msgid "No Update URL Provided."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1540
+#: src/etc/inc/dyndns.class:1541
 msgid "Invalid ZoneID"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1543
+#: src/etc/inc/dyndns.class:1544
 msgid "Invalid TTL"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1546
+#: src/etc/inc/dyndns.class:1547
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1549
+#: src/etc/inc/dyndns.class:1550
 msgid "Unknown Response."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1568
+#: src/etc/inc/dyndns.class:1569
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1575
+#: src/etc/inc/dyndns.class:1576
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1578
+#: src/etc/inc/dyndns.class:1579
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1586
+#: src/etc/inc/dyndns.class:1587
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1592
+#: src/etc/inc/dyndns.class:1593
 msgid "No Cached IPv6 found."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1600
+#: src/etc/inc/dyndns.class:1601
 #, php-format
 msgid "Cached IP: %s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1606
+#: src/etc/inc/dyndns.class:1607
 msgid "No Cached IP found."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1620
+#: src/etc/inc/dyndns.class:1621
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1621
+#: src/etc/inc/dyndns.class:1622
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1626
+#: src/etc/inc/dyndns.class:1627
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1631
+#: src/etc/inc/dyndns.class:1632
 msgid "Initial update."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1668
+#: src/etc/inc/dyndns.class:1669
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1693
+#: src/etc/inc/dyndns.class:1694
 #, php-format
 msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1712
+#: src/etc/inc/dyndns.class:1713
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1715
+#: src/etc/inc/dyndns.class:1716
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
 msgstr ""
 
-#: src/etc/inc/dyndns.class:1720
+#: src/etc/inc/dyndns.class:1721
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr ""
@@ -1891,7 +1891,8 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:76
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:50
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:384
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:93
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:34
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:135
 msgid "Name"
 msgstr ""
 
@@ -3094,7 +3095,7 @@ msgstr ""
 msgid "running"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:196
+#: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr ""
 
@@ -7249,6 +7250,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/rss.widget.php:156
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:151
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:145
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:239
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:475
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:167
@@ -7821,7 +7823,8 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:97
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:35
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:143
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "System"
 msgstr ""
@@ -7872,6 +7875,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:428
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:152
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:146
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:168
 #: src/usr/local/www/diag_smart.php:252
 msgid "All"
@@ -8135,7 +8139,8 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:212 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:112
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:36
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:162
 msgid "Version"
 msgstr ""
 
@@ -13306,7 +13311,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:102
-#: src/usr/local/www/license.php:111
+#: src/usr/local/www/license.php:112
 msgid "server"
 msgstr ""
 
@@ -13551,11 +13556,11 @@ msgstr ""
 msgid "Out"
 msgstr ""
 
-#: src/usr/local/www/graph.php:110
+#: src/usr/local/www/graph.php:110 src/usr/local/www/graph.php:192
 msgid "Switch to bytes/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:111
+#: src/usr/local/www/graph.php:111 src/usr/local/www/graph.php:199
 msgid "AutoScale"
 msgstr ""
 
@@ -13580,35 +13585,35 @@ msgstr ""
 msgid "Both getURL and XMLHttpRequest are undefined"
 msgstr ""
 
-#: src/usr/local/www/graph.php:191
-msgid "Switch to"
+#: src/usr/local/www/graph.php:192
+msgid "Switch to bits/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:196
+#: src/usr/local/www/graph.php:198
 msgid "follow"
 msgstr ""
 
-#: src/usr/local/www/graph.php:367
+#: src/usr/local/www/graph.php:369
 msgid "Kbps"
 msgstr ""
 
-#: src/usr/local/www/graph.php:370
+#: src/usr/local/www/graph.php:372
 msgid "Mbps"
 msgstr ""
 
-#: src/usr/local/www/graph.php:373
+#: src/usr/local/www/graph.php:375
 msgid "Gbps"
 msgstr ""
 
-#: src/usr/local/www/graph.php:379
+#: src/usr/local/www/graph.php:381
 msgid "KB/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:382
+#: src/usr/local/www/graph.php:384
 msgid "MB/s"
 msgstr ""
 
-#: src/usr/local/www/graph.php:385
+#: src/usr/local/www/graph.php:387
 msgid "GB/s"
 msgstr ""
 
@@ -13696,9 +13701,8 @@ msgid "The changes have been applied successfully."
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:388
-msgid ""
-"There was a problem applying the changes. See the <a href=\"status_logs."
-"php\">System Logs</a>."
+#, php-format
+msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:396
@@ -13795,10 +13799,6 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:259
 msgid "Switches"
-msgstr ""
-
-#: src/usr/local/www/head.inc:264
-msgid "-DIVIDER-"
 msgstr ""
 
 #: src/usr/local/www/head.inc:298 src/usr/local/www/services_dhcpv6.php:483
@@ -14051,22 +14051,23 @@ msgstr ""
 #: src/usr/local/www/head.inc:641
 #, php-format
 msgid ""
-"<p>%s is booting, then packages will be reinstalled in the background.</"
-"p><p>Do not make changes in the GUI until this is complete.</p>"
+"%1$s%3$s is booting, then packages will be reinstalled in the background."
+"%2$s%1$sDo not make changes in the GUI until this is complete.%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:644
+#, php-format
 msgid ""
-"<p>Packages are currently being reinstalled in the background.</p><p>Do not "
-"make changes in the GUI until this is complete.</p>"
+"%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
+"not make changes in the GUI until this is complete.%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:645
 #, php-format
 msgid ""
-"<p>If the above message is still displayed after a couple of hours, use the "
-"'Clear Package Lock' button on the <a href=\"diag_backup.php\" title=\"%1$s "
-"&gt; %2$s\">%1$s &gt; %2$s</a> page and reinstall packages manually.</p>"
+"%1$sIf the above message is still displayed after a couple of hours, use the "
+"'Clear Package Lock' button on the %3$s page and reinstall packages manually."
+"%2$s"
 msgstr ""
 
 #: src/usr/local/www/head.inc:655
@@ -14106,7 +14107,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:79
 #, php-format
-msgid "Click <a href='crash_reporter.php'>here</a> for more information."
+msgid "Click %1$shere%2$s for more information."
 msgstr ""
 
 #: src/usr/local/www/index.php:81
@@ -14641,10 +14642,11 @@ msgid "Copy My MAC"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1775
+#, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
-"interface.<br />Enter a MAC address in the following format: xx:xx:xx:xx:xx:"
-"xx or leave blank."
+"interface.%sEnter a MAC address in the following format: xx:xx:xx:xx:xx:xx "
+"or leave blank."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1781
@@ -14674,9 +14676,10 @@ msgid "Speed and Duplex"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1801
+#, php-format
 msgid ""
-"Explicitly set speed and duplex mode for this interface.<br />WARNING: MUST "
-"be set to autoselect (automatically negotiate speed) unless the port this "
+"Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
+"set to autoselect (automatically negotiate speed) unless the port this "
 "interface connects to has its speed and duplex forced."
 msgstr ""
 
@@ -14700,19 +14703,13 @@ msgstr ""
 msgid "Add a new gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1835
-msgid "Gateways can be managed by "
-msgstr ""
-
-#: src/usr/local/www/interfaces.php:1835
-msgid " clicking here"
-msgstr ""
-
 #: src/usr/local/www/interfaces.php:1833
+#, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
-"the list or add a new one using the \"Add\" button.<br />On local area "
-"network interfaces the upstream gateway should be \"none\". "
+"the list or add a new one using the \"Add\" button.%1$sOn local area network "
+"interfaces the upstream gateway should be \"none\". Gateways can be managed "
+"by %2$sclicking here%3$s."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1841
@@ -14732,9 +14729,10 @@ msgid "IPv6 Upstream Gateway"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:1867
+#, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
-"the list or add a new one using the \"Add\" button.<br />On local LANs the "
+"the list or add a new one using the \"Add\" button.%sOn local LANs the "
 "upstream gateway should be \"none\". "
 msgstr ""
 
@@ -14828,11 +14826,10 @@ msgid "Presets"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2056
+#, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
-"lease.<br /><a target=\"_blank\" href=\"https://www.freebsd.org/cgi/man."
-"cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING\">See here more "
-"information</a>"
+"lease.%1$sSee %2$shere%3$s for more information"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2063 src/usr/local/www/interfaces.php:2183
@@ -14902,13 +14899,14 @@ msgid "Do not allow PD/Address release"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2186
+#, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
-"configuration file.\t [/[dirname/[.../]]filename[.ext]]<br />Value "
+"configuration file.\t [/[dirname/[.../]]filename[.ext]] %1$sValue "
 "Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, "
-"{mac_addr_hexCD}<br />Where C is U(pper) or L(ower) Case, and D is \" :-.\" "
-"Delimiter (space, colon, hyphen, or period) (omitted for none).<br />Some "
-"ISPs may require certain options be or not be sent."
+"{mac_addr_hexCD} %1$sWhere C is U(pper) or L(ower) Case, and D is \" :-.\" "
+"Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sSome ISPs "
+"may require certain options be or not be sent."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2195
@@ -14948,10 +14946,8 @@ msgid "Keyinfo statement"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2404
-msgid ""
-"<a target=\"_blank\" href=\"https://www.freebsd.org/cgi/man.cgi?query=dhcp6c."
-"conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-"
-"RELEASE+and+Ports#Interface_statement\">See here more information</a>"
+#, php-format
+msgid "See %1$shere%2$s more information"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2410
@@ -14993,8 +14989,9 @@ msgid "IPv6 Prefix ID"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2493
+#, php-format
 msgid ""
-"<span id=\"track6-prefix-id-range\"></span>The value in this field is the "
+"(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
 "(Delegated) IPv6 prefix ID. This determines the configurable network ID "
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
@@ -15151,8 +15148,9 @@ msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2779
+#, php-format
 msgid ""
-"Click for additional PPTP and L2TP configuration options. Save first if "
+"%sClick for additional PPTP and L2TP configuration options. Save first if "
 "changes have been made."
 msgstr ""
 
@@ -15205,10 +15203,11 @@ msgid "Channel"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2858
+#, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
-"allowed in reg. domain)<br />Not all channels may be supported by some cards."
-"  Auto may override the wireless standard selected above."
+"allowed in reg. domain) %1$sNot all channels may be supported by some cards. "
+" Auto may override the wireless standard selected above."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2863
@@ -15293,10 +15292,11 @@ msgid "Location"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2947
+#, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
 "transmit power allowed on those channels. Using the correct settings to "
-"comply with local regulatory requirements is recommended.<br />All wireless "
+"comply with local regulatory requirements is recommended.%1$sAll wireless "
 "networks on this interface will be temporarily brought down when changing "
 "regulatory settings.  Some of the regulatory domains or country codes may "
 "not be allowed by some cards.\tThese settings may not be able to add "
@@ -15493,11 +15493,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:3166
+#, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
 "assigned by IANA. Bogons are prefixes that should never appear in the "
 "Internet routing table, and so should not appear as the source address in "
-"any packets received.<br />Note: The update frequency can be changed under "
+"any packets received.%1$sNote: The update frequency can be changed under "
 "System->Advanced Firewall/NAT settings."
 msgstr ""
 
@@ -15841,6 +15842,55 @@ msgstr ""
 msgid "At least one member interface must be selected for a bridge."
 msgstr ""
 
+#: src/usr/local/www/interfaces_bridge_edit.php:194
+#, php-format
+msgid ""
+"Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
+"to continuez."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:202
+#, php-format
+msgid ""
+"Private interface (%s) is not part of the bridge. Remove the private "
+"interface to continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:210
+#, php-format
+msgid ""
+"STP interface (%s) is not part of the bridge. Remove the STP interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:221
+#, php-format
+msgid ""
+"Edge interface (%s) is not part of the bridge. Remove the edge interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:229
+#, php-format
+msgid ""
+"Auto Edge interface (%s) is not part of the bridge. Remove the auto edge "
+"interface to continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:237
+#, php-format
+msgid ""
+"PTP interface (%s) is not part of the bridge. Remove the PTP interface to "
+"continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:245
+#, php-format
+msgid ""
+"Auto PTP interface (%s) is not part of the bridge. Remove the auto PTP "
+"interface to continue."
+msgstr ""
+
 #: src/usr/local/www/interfaces_bridge_edit.php:253
 msgid "A member interface passed does not exist in configuration"
 msgstr ""
@@ -15851,6 +15901,13 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:260
 msgid "Bridging a wireless interface is only possible in hostap mode."
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:263
+#, php-format
+msgid ""
+"Span interface (%s) cannot be part of the bridge. Remove the span interface "
+"from bridge members to continue."
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:272
@@ -15918,8 +15975,8 @@ msgid ""
 "Add the interface named by interface as a span port on the bridge. Span "
 "ports transmit a copy of every frame received by the bridge. This is most "
 "useful for snooping a bridged network passively on another host connected to "
-"one of the span ports of the bridge. <br />%1$sThe span interface cannot be "
-"part of the bridge member interfaces.%2$s"
+"one of the span ports of the bridgez. %1$s%2$sThe span interface cannot be "
+"part of the bridge member interfaces.%3$s"
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:465
@@ -16346,10 +16403,11 @@ msgid "Delete group"
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups.php:131
+#, php-format
 msgid ""
 "Interface Groups allow setting up rules for multiple interfaces without "
-"duplicating the rules.<br />If members are removed from an interface group, "
-"the group rules are no longer applicable to that interface."
+"duplicating the rules.%sIf members are removed from an interface group, the "
+"group rules are no longer applicable to that interface."
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:58
@@ -16415,10 +16473,10 @@ msgid "Group Members"
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:235
+#, php-format
 msgid ""
 "NOTE: Rules for WAN type interfaces in groups do not contain the reply-to "
-"mechanism upon which Multi-WAN typically relies. <a href=\"https://doc."
-"pfsense.org/index.php/ifgroups\">More Information</a>"
+"mechanism upon which Multi-WAN typically relies. %1$sMore Information%2$s"
 msgstr ""
 
 #: src/usr/local/www/interfaces_groups_edit.php:243
@@ -16954,9 +17012,9 @@ msgstr ""
 #: src/usr/local/www/interfaces_qinq.php:157
 #, php-format
 msgid ""
-"Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards "
-"that do not explicitly support it, QinQ tagging will still work, but the "
-"reduced MTU may cause problems.<br />See the %s handbook for information on "
+"Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
+"do not explicitly support it, QinQ tagging will still work, but the reduced "
+"MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
 
@@ -17063,9 +17121,9 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:157
 #, php-format
 msgid ""
-"Not all drivers/NICs support 802.1Q VLAN tagging properly. <br />On cards "
-"that do not explicitly support it, VLAN tagging will still work, but the "
-"reduced MTU may cause problems.<br />See the %s handbook for information on "
+"Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
+"do not explicitly support it, VLAN tagging will still work, but the reduced "
+"MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
 
@@ -17187,42 +17245,44 @@ msgstr ""
 msgid "*Mode"
 msgstr ""
 
-#: src/usr/local/www/license.php:33
+#: src/usr/local/www/license.php:30 src/usr/local/www/license.php:34
 msgid "License"
 msgstr ""
 
-#: src/usr/local/www/license.php:35
+#: src/usr/local/www/license.php:36
 #, php-format
 msgid "%1$s is Copyright &copy; %2$s %3$s. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:36
+#: src/usr/local/www/license.php:37
 msgid ""
 "m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All "
 "rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:37
+#: src/usr/local/www/license.php:38
+#, php-format
 msgid ""
-"Licensed under the Apache License, Version 2.0 (the \"License\");<br />you "
-"may not use this file except in compliance with the License.<br />You may "
-"obtain a copy of the License at"
+"Licensed under the Apache License, Version 2.0 (the \"License\");%1$syou may "
+"not use this file except in compliance with the License.%1$sYou may obtain a "
+"copy of the License at"
 msgstr ""
 
-#: src/usr/local/www/license.php:39
+#: src/usr/local/www/license.php:40
+#, php-format
 msgid ""
-"Unless required by applicable law or agreed to in writing, software<br /"
-">distributed under the License is distributed on an \"AS IS\" BASIS,<br /"
-">WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br "
-"/>See the License for the specific language governing permissions and<br /"
-">limitations under the License."
+"Unless required by applicable law or agreed to in writing, "
+"software%1$sdistributed under the License is distributed on an \\\"AS IS\\\" "
+"BASIS,%1$sWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or "
+"implied.%1$sSee the License for the specific language governing permissions "
+"and%1$slimitations under the License."
 msgstr ""
 
-#: src/usr/local/www/license.php:43
+#: src/usr/local/www/license.php:44
 msgid "Third Party Credits"
 msgstr ""
 
-#: src/usr/local/www/license.php:46
+#: src/usr/local/www/license.php:47
 #, php-format
 msgid ""
 "%1$s is based upon/includes various free software packages, listed below. "
@@ -17230,75 +17290,72 @@ msgid ""
 "packages for their efforts."
 msgstr ""
 
-#: src/usr/local/www/license.php:51 src/usr/local/www/license.php:55
-#: src/usr/local/www/license.php:62 src/usr/local/www/license.php:66
-#: src/usr/local/www/license.php:74 src/usr/local/www/license.php:75
-#: src/usr/local/www/license.php:79 src/usr/local/www/license.php:83
-#: src/usr/local/www/license.php:87 src/usr/local/www/license.php:91
-#: src/usr/local/www/license.php:95 src/usr/local/www/license.php:100
-#: src/usr/local/www/license.php:104 src/usr/local/www/license.php:108
-#: src/usr/local/www/license.php:112 src/usr/local/www/license.php:113
-#: src/usr/local/www/license.php:117 src/usr/local/www/license.php:121
-#: src/usr/local/www/license.php:126 src/usr/local/www/license.php:136
-#: src/usr/local/www/license.php:140 src/usr/local/www/license.php:144
-#: src/usr/local/www/license.php:152 src/usr/local/www/license.php:153
-#: src/usr/local/www/license.php:157 src/usr/local/www/license.php:161
-#: src/usr/local/www/license.php:165 src/usr/local/www/license.php:169
-#: src/usr/local/www/license.php:173 src/usr/local/www/license.php:177
-#: src/usr/local/www/license.php:181 src/usr/local/www/license.php:189
-#: src/usr/local/www/license.php:193
+#: src/usr/local/www/license.php:52 src/usr/local/www/license.php:56
+#: src/usr/local/www/license.php:63 src/usr/local/www/license.php:67
+#: src/usr/local/www/license.php:75 src/usr/local/www/license.php:76
+#: src/usr/local/www/license.php:80 src/usr/local/www/license.php:84
+#: src/usr/local/www/license.php:88 src/usr/local/www/license.php:92
+#: src/usr/local/www/license.php:96 src/usr/local/www/license.php:101
+#: src/usr/local/www/license.php:105 src/usr/local/www/license.php:109
+#: src/usr/local/www/license.php:113 src/usr/local/www/license.php:114
+#: src/usr/local/www/license.php:118 src/usr/local/www/license.php:122
+#: src/usr/local/www/license.php:127 src/usr/local/www/license.php:137
+#: src/usr/local/www/license.php:141 src/usr/local/www/license.php:145
+#: src/usr/local/www/license.php:153 src/usr/local/www/license.php:154
+#: src/usr/local/www/license.php:158 src/usr/local/www/license.php:162
+#: src/usr/local/www/license.php:166 src/usr/local/www/license.php:170
+#: src/usr/local/www/license.php:174 src/usr/local/www/license.php:178
+#: src/usr/local/www/license.php:182 src/usr/local/www/license.php:190
+#: src/usr/local/www/license.php:194
 msgid "Copyright"
 msgstr ""
 
-#: src/usr/local/www/license.php:51
+#: src/usr/local/www/license.php:52
 msgid "1992-2016 The FreeBSD Project. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:54
-msgid "This product includes"
-msgstr ""
-
-#: src/usr/local/www/license.php:54
-msgid "freely available from"
-msgstr ""
-
 #: src/usr/local/www/license.php:55
+#, php-format
+msgid "This product includes %1$s, freely available from (%2$s)"
+msgstr ""
+
+#: src/usr/local/www/license.php:56
 msgid "1999-2016 The PHP Group. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:112
+#: src/usr/local/www/license.php:113
 msgid "2004-2013 Internet Software Consortium, Inc."
 msgstr ""
 
-#: src/usr/local/www/license.php:113
+#: src/usr/local/www/license.php:114
 msgid "1995-2003 Internet Software Consortium"
 msgstr ""
 
-#: src/usr/local/www/license.php:122 src/usr/local/www/license.php:127
+#: src/usr/local/www/license.php:123 src/usr/local/www/license.php:128
 msgid "All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:126
+#: src/usr/local/www/license.php:127
 msgid "2011-2016 Nginx, Inc."
 msgstr ""
 
-#: src/usr/local/www/license.php:131
+#: src/usr/local/www/license.php:132
 msgid "Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved."
 msgstr ""
 
-#: src/usr/local/www/license.php:132
+#: src/usr/local/www/license.php:133
 msgid "This product includes software developed by Edwin Groothuis."
 msgstr ""
 
-#: src/usr/local/www/license.php:136
+#: src/usr/local/www/license.php:137
 msgid "2005-2016 University of Applied Sciences Rapperswil"
 msgstr ""
 
-#: src/usr/local/www/license.php:148
+#: src/usr/local/www/license.php:149
 msgid "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
 msgstr ""
 
-#: src/usr/local/www/license.php:185
+#: src/usr/local/www/license.php:186
 msgid "Public Domain"
 msgstr ""
 
@@ -21545,8 +21602,9 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:379
 msgid ""
-"Enter Zone ID that was received when creating the domain in Route 53.<br /"
-">DNSimple: Enter the Record ID of record to update."
+"Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "
+"\"us-east-1/A1B2C3D4E5F6Z\").<br />DNSimple: Enter the Record ID of record "
+"to update."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:387
@@ -24099,7 +24157,8 @@ msgid "Connect"
 msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:122
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:148
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:39
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:210
 msgid "Uptime"
 msgstr ""
 
@@ -26756,19 +26815,38 @@ msgid ""
 "preferred over IPv6."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:206
+#: src/usr/local/www/system_advanced_network.php:210
 msgid "DHCP6 DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:221
+#: src/usr/local/www/system_advanced_network.php:218
+msgid "Copy DUID"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:226
+msgid ""
+"This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
+"requesting an IPv6 address. <br />By default, the firewall automatically "
+"creates a dynamic DUID which is not saved in the firewall configuration. To "
+"ensure the same DUID is retained by the firewall at all times, enter a DUID "
+"in this field. The new DUID will take effect after a reboot or when the WAN "
+"interface(s) are reconfigured by the firewall.<br />If the firewall is "
+"configured to use a RAM disk for /var, the best practice is to store a DUID "
+"here otherwise the DUID will change on each reboot.<br /><br />You may use "
+"the Copy DUID button to copy the system detected DUID shown in the "
+"placeholder. "
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:240
 msgid "Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:225
+#: src/usr/local/www/system_advanced_network.php:244
 msgid "Hardware Checksum Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:228
+#: src/usr/local/www/system_advanced_network.php:247
 msgid ""
 "Checking this option will disable hardware checksum offloading.<br/>Checksum "
 "offloading is broken in some hardware, particularly some Realtek cards. "
@@ -26777,11 +26855,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:236
+#: src/usr/local/www/system_advanced_network.php:255
 msgid "Hardware TCP Segmentation Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:239
+#: src/usr/local/www/system_advanced_network.php:258
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -26789,11 +26867,11 @@ msgid ""
 "machine reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:246
+#: src/usr/local/www/system_advanced_network.php:265
 msgid "Hardware Large Receive Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:249
+#: src/usr/local/www/system_advanced_network.php:268
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -26801,21 +26879,21 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:256
+#: src/usr/local/www/system_advanced_network.php:275
 msgid "ARP Handling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:259
+#: src/usr/local/www/system_advanced_network.php:278
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:265
+#: src/usr/local/www/system_advanced_network.php:284
 msgid "Enable flowtable support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:267
+#: src/usr/local/www/system_advanced_network.php:286
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -31176,6 +31254,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:769
 #: src/usr/local/www/vpn_openvpn_server.php:945
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:38
 msgid "Hardware Crypto"
 msgstr ""
 
@@ -32039,6 +32118,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:385
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:124
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:123
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:396
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:140
 msgid "Show"
 msgstr ""
@@ -32307,125 +32387,172 @@ msgstr ""
 msgid "Ident"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:43
-msgid "<i>Unable to check for updates</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:50
-msgid "<i>Error in version information</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:61
-msgid "Version "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:62
-msgid "is available."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:68
-msgid "The system is on the latest version."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:71
-msgid "The system is on a later version than<br />the official release."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:74
-msgid "<i>Error comparing installed version<br />with latest available</i>"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:104
-msgid "Unknown system"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:108
-msgid "Serial: "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:117
-msgid "built on"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:124
-msgid "Obtaining update status "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:129
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:37
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:183
 msgid "CPU Type"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:136
-msgid "CPUs"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:40
+msgid "Current Date/Time"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:143
-msgid "Hardware crypto"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:41
+msgid "DNS Server(s)"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:152
-msgid "Current date/time"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:42
+msgid "Last Config Change"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:156
-msgid "DNS server(s)"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:43
+msgid "State Table Size"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:170
-msgid "Last config change"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
-msgid "State table size"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:185
-msgid "Show states"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:44
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:271
 msgid "MBUF Usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:204
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:45
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
 msgid "Temperature"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:216
-msgid "Load average"
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:46
+msgid "Load Average"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:47
+msgid "CPU Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:48
+msgid "Memory Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:49
+msgid "Swap Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:50
+msgid "Disk Usage"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:63
+msgid "<i>Unable to check for updates</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:70
+msgid "<i>Error in version information</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:81
+msgid "Version "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:82
+msgid "is available."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:88
+msgid "The system is on the latest version."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:91
+msgid "The system is on a later version than<br />the official release."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:94
+msgid "<i>Error comparing installed version<br />with latest available</i>"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:113
+msgid "Saved System Information Widget Filter via Dashboard."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:150
+msgid "Unknown system"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:154
+msgid "Serial: "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:167
+msgid "built on"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Obtaining update status "
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:190
+msgid "CPUs"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:201
+msgid "Hardware crypto"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:218
+msgid "Current date/time"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:226
+msgid "DNS server(s)"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:244
+msgid "Last config change"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:253
+msgid "State table size"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:263
+msgid "Show states"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:306
+msgid "Load average"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:308
 msgid "Last 1, 5 and 15 minutes"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:222
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:316
 msgid "CPU usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:229
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:323
 #, php-format
 msgid "Updating in %s seconds"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:233
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:331
 msgid "Memory usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:246
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:348
 msgid "SWAP usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:260
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:367
 msgid "Disk usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:266
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 msgid " of "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:266
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 msgid "in RAM"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:395
+msgid "Item"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:58
@@ -33896,19 +34023,19 @@ msgstr ""
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:226
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Disable hardware checksum offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:237
+#: src/usr/local/www/system_advanced_network.php:256
 msgid "Disable hardware TCP segmentation offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:247
+#: src/usr/local/www/system_advanced_network.php:266
 msgid "Disable hardware large receive offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:276
 msgid "Suppress ARP messages"
 msgstr ""
 

@@ -119,7 +119,12 @@ class Form_Input extends Form_Element
 			$args[0] = gettext($args[0]);
 		}
 
-		$this->_help = call_user_func_array('sprintf', $args);
+		if (func_num_args() == 1) {
+			$this->_help = $args[0];
+		} else {
+			$this->_help = call_user_func_array('sprintf', $args);
+		}
+
 		$this->_helpParams = "";
 
 		return $this;

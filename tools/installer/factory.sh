@@ -314,7 +314,7 @@ trap "-" 1 2 15 EXIT
 
 # Calculate the "Unique ID" for support and tracking purposes
 # Hash the concatenated MAC addresses - Assume there are only physical interfaces present during the build
-UID=$(ifconfig -a |grep ether|awk '{print $2}'|tr -d ':'|tr -d '\n'|sha256)
+UID=$(ifconfig -a |grep ether|awk '{print $2}'|sort|tr -d ':'|tr -d '\n'|sha256)
 # truncate to 20 chars
 UID=$(echo -n $UID|sha256|sed 's,.*\(.\{20\}\)$,\1.')
 

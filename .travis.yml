@@ -38,4 +38,4 @@ before_script:
   - timeout 180 netcat localhost 3333; sleep 1;
 
 script:
-  - sh -c "if [ ! -z "$SAUCE_USERNAME" ] && [ ! -z "$SAUCE_ACCESS_KEY" ]; then phpunit -c tests/phpunit-selenium-autotest.xml; fi"
+  - sh -c "if [ ! -z "$SAUCE_USERNAME" ] && [ ! -z "$SAUCE_ACCESS_KEY" ]; then vendor/bin/phpunit -c tests/phpunit-selenium-autotest.xml; fi"

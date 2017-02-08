@@ -203,13 +203,7 @@ if (isset($id) && $a_filter[$id]) {
 	}
 
 	if ($a_filter[$id]['protocol'] == "icmp") {
-		if (isset($a_filter[$id]['icmptype']) && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
-			// existing rule contains valid icmptype
-			$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
-		} else {
-			// existing rule has no (or blank) icmptype, meaning "all/any", select all subtypes on edit screen
-			$pconfig['icmptype'] = implode(',', $icmptypes[$pconfig['ipprotocol']]['icmptypes']);
-		}
+		$pconfig['icmptype'] = expand_icmptype($a_filter[$id]['icmptype'], $pconfig['ipprotocol']);
 	}
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
@@ -329,7 +323,7 @@ if ($_POST) {
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
-			$_POST['icmptype'] = $pconfig['icmptype'];
+			$_POST['icmptype'] = expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol']);
 		}
 	}
 
@@ -920,7 +914,7 @@ if ($_POST) {
 				unset($filterent['protocol']);
 			}
 			if ($a_filter[$id]['protocol'] == "icmp" && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
-				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
+				$filterent['icmptype'] = expand_icmptype($a_filter[$id]['icmptype'], $a_filter[$id]['ipprotocol']);
 			} else {
 				unset($filterent['icmptype']);
 			}
@@ -1088,6 +1082,17 @@ function build_if_list() {
 	}
 
 	return($iflist);
+}
+
+// Expands missing/blank/"all" icmptypes to a list of specific types. Doesn't check validity.
+function expand_icmptype($icmptype, $ipprotocol) {
+	if (isset($icmptype) && is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
+		// $icmptype appears to contain specific icmptype(s)
+		return $icmptype;
+	} else {
+		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
+		return implode(',', $icmptypes[$ipprotocol]['icmptypes']);
+	}
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));

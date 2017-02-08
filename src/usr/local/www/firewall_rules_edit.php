@@ -1091,9 +1091,12 @@ function expand_icmptype($icmptype, $ipprotocol) {
 	if (is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
 		// $icmptype appears to contain specific icmptype(s)
 		return $icmptype;
-	} else {
+	} elseif (array_key_exists($ipprotocol, $icmptypes)) {
 		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
 		return implode(',', $icmptypes[$ipprotocol]['icmptypes']);
+	} else {
+		// ipprotocol undefined or invalid
+		return '';
 	}
 }
 

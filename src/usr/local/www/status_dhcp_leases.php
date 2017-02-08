@@ -300,8 +300,9 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 				$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
 				$slease['staticmap_array_index'] = $staticmap_array_index;
 				$leases[] = $slease;
-				$staticmap_array_index++;
 			}
+
+			$staticmap_array_index++;
 		}
 	}
 }

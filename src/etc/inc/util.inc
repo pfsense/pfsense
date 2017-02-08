@@ -1811,22 +1811,25 @@ function alias_expand_urltable($name) {
 	return null;
 }
 
-/* obtain MAC address given an IP address by looking at the ARP table */
+/* obtain MAC address given an IP address by looking at the ARP/NDP table */
 function arp_get_mac_by_ip($ip) {
-	mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
-	$arpoutput = "";
-	exec("/usr/sbin/arp -n " . escapeshellarg($ip), $arpoutput);
-
-	if ($arpoutput[0]) {
-		$arpi = explode(" ", $arpoutput[0]);
-		$macaddr = $arpi[3];
+	unset($arp_ndp_output);
+	switch (is_ipaddr($ip)) {
+		case 4:
+			mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
+			exec("/usr/sbin/arp -n " . escapeshellarg($ip) . " | /usr/bin/awk '{print $4}'", $arp_ndp_output);
+			break;
+		case 6:
+			mwexec("/sbin/ping6 -c 1 -X 1 " . escapeshellarg($ip), true);
+			exec("/usr/sbin/ndp -n " . escapeshellarg($ip) . " | /usr/bin/tail -n+2 | /usr/bin/awk '{print $2}'", $arp_ndp_output);
+			break;
+	}
+	if ($arp_ndp_output[0]) {
+		$macaddr = $arp_ndp_output[0];
 		if (is_macaddr($macaddr)) {
 			return $macaddr;
-		} else {
-			return false;
 		}
 	}
-
 	return false;
 }
 

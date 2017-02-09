@@ -601,7 +601,7 @@ $group->add(new Form_Input(
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
 	'base dn above or the full container path can be specified containing a dc= '.
-	'component.<br/>Example: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers');
+	'component.%1$sExample: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers', '<br/>');
 
 $group->add(new Form_Button(
 	'Select',

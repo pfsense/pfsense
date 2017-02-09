@@ -173,7 +173,7 @@ if ($_POST) {
 				}
 
 				if ($found === false) {
-					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+					$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 				}
 			}
 		} else if (is_ipaddrv6($_POST['gateway'])) {
@@ -204,7 +204,7 @@ if ($_POST) {
 					}
 
 					if ($found === false) {
-						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+						$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 					}
 				}
 			}
@@ -737,7 +737,7 @@ $group->add(new Form_Input(
 	['placeholder' => $dpinger_default['latencyhigh']]
 ));
 $group->setHelp('Low and high thresholds for latency in milliseconds. ' .
-	'Default is %d/%d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
+	'Default is %1$d/%2$d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
 
 $section->add($group);
 
@@ -756,8 +756,8 @@ $group->add(new Form_Input(
 	$pconfig['losshigh'],
 	['placeholder' => $dpinger_default['losshigh']]
 ));
-$group->setHelp('Low and high thresholds for packet loss in %. ' .
-	'Default is %d/%d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
+$group->setHelp('Low and high thresholds for packet loss in %%. ' .
+	'Default is %1$d/%2$d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
 $section->add($group);
 
 $section->addInput(new Form_Input(

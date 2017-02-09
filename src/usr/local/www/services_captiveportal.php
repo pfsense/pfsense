@@ -647,8 +647,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['passthrumacadd']
 ))->setHelp('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
-			'%s or send a POST from another system. '  .
-			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>');
+			'%1$sMAC tab%2$s or send a POST from another system. '  .
+			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'passthrumacaddusername',
@@ -656,8 +656,8 @@ $section->addInput(new Form_Checkbox(
 	'Enable Pass-through MAC automatic addition with username',
 	$pconfig['passthrumacaddusername']
 ))->setHelp('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
-			'To remove the passthrough MAC entry either log in and remove it manually from the %s or send a POST from another system.',
-			'<a href="services_captiveportal_mac.php">MAC tab</a>');
+			'To remove the passthrough MAC entry either log in and remove it manually from the %1$sMAC tab%2$s or send a POST from another system.',
+			'<a href="services_captiveportal_mac.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',
@@ -999,12 +999,12 @@ $section->addInput(new Form_Select(
 	$pconfig['radmac_format'],
 	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
 ))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if the username format also needs to be changed for ' .
-			'RADIUS MAC authentication.' . '<br />' .
-			'Default: 00:11:22:33:44:55' . '<br />' .
-			'Single dash: 001122-334455' . '<br />' .
-			'IETF: 00-11-22-33-44-55' . '<br />' .
-			'Cisco: 0011.2233.4455' . '<br />' .
-			'Unformatted: 001122334455');
+			'RADIUS MAC authentication. %1$s' .
+			'Default: 00:11:22:33:44:55 %1$s' .
+			'Single dash: 001122-334455 %1$s' .
+			'IETF: 00-11-22-33-44-55 %1$s' .
+			'Cisco: 0011.2233.4455 %1$s' .
+			'Unformatted: 001122334455', '<br />');
 
 $form->add($section);
 
@@ -1033,7 +1033,7 @@ $section->addInput(new Form_Select(
 	'*SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
-))->setHelp('If no certificates are defined, one may be defined here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');
+))->setHelp('If no certificates are defined, one may be defined here: %1$sSystem &gt; Cert. Manager%2$s', '<a href="system_certmanager.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',
@@ -1057,16 +1057,16 @@ $section->addInput(new Form_Input(
 	$pconfig['htmlfile']
 ))->setHelp('Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to "$PORTAL_ACTION$") ' .
 			'with a submit button (name="accept") and a hidden field with name="redirurl" and value="$PORTAL_REDIRURL$". ' .
-			'Include the "auth_user" and "auth_pass" and/or "auth_voucher" input fields if authentication is enabled, otherwise it will always fail.' . '<br />' .
-			'Example code for the form:' . '<br />' .
-			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />' .
-			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />' .
-			'&lt;/form&gt;')->addClass('btn btn-info btn-sm');
+			'Include the "auth_user" and "auth_pass" and/or "auth_voucher" input fields if authentication is enabled, otherwise it will always fail.%1$s' .
+			'Example code for the form: %1$s' .
+			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;%1$s' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;%1$s' .
+			'&lt;/form&gt;', '<br />')->addClass('btn btn-info btn-sm');
 
 list($host) = explode(":", $_SERVER['HTTP_HOST']);
 $zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;

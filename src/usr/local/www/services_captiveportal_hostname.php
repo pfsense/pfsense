@@ -29,9 +29,10 @@
 $directionicons = array('to' => '&#x2192;', 'from' => '&#x2190;', 'both' => '&#x21c4;');
 
 $notestr =
-	gettext('Adding new hostnames will allow a DNS hostname access to/from the captive portal without being taken to the portal page. ' .
+	sprintf(gettext('Adding new hostnames will allow a DNS hostname access to/from the captive portal without being taken to the portal page. ' .
 	'This can be used for a web server serving images for the portal page, or a DNS server on another network, for example. ' .
-	'By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.');
+	'By specifying %1$sfrom%2$s addresses, it may be used to always allow pass-through access from a client behind the captive portal.'),
+	'<em>', '</em>');
 
 require_once("guiconfig.inc");
 require_once("functions.inc");

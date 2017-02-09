@@ -779,7 +779,7 @@ function manage_log_section() {
 	$form = new Form(false);
 	$form->setAttribute('id', 'manage-log-form')->addClass('collapse ' . $panel_state);
 
-	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
+	$section = new Form_Section(sprintf(gettext('Manage %1$s Log'), gettext($allowed_logs[$logfile]["name"])), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
 
 	$section->addInput(new Form_StaticText(
 		'',
@@ -841,9 +841,9 @@ function manage_log_section() {
 		$pconfig['logfilesize'],
 		['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
 	))->setWidth(2);
-	$group->setHelp("The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB." .
-						'<br /><br />' .
-				"NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the \"Clear Log\" action below. ");
+	$group->setHelp('The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB.%1$s' .
+				'NOTE: The log size is changed the next time it is cleared. To immediately change the log size, first save the options to set the size, then clear the log using the "Clear Log" action below. ',
+				'<br /><br />');
 	$section->add($group);
 
 	$group = new Form_Group('Formatted/Raw Display');
@@ -926,8 +926,9 @@ function manage_log_section() {
 				'1' => gettext('Display as column'),
 				'2' => gettext('Display as second row')
 			)
-		))->setHelp('Show the applied rule description below or in the firewall log rows.' . '<br />' .
-					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.');
+		))->setHelp('Show the applied rule description below or in the firewall log rows.%1$s' .
+					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.',
+					'<br />');
 	}
 
 

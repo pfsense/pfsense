@@ -138,7 +138,7 @@ function listCmds() {
 	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
 
 	print('<div class="panel panel-default">');
-	print('<div class="panel-heading"><h2 class="panel-title">' . gettext("Firewall Status on ") . $currentDate . '</h2></div>');
+	print('<div class="panel-heading"><h2 class="panel-title">' . sprintf(gettext("Firewall Status on %s"), $currentDate) . '</h2></div>');
 	print('<div class="panel-body">');
 	print('    <div class="content">');
 	print("\n<p>" . gettext("This status page includes the following information") . ":\n");
@@ -325,11 +325,13 @@ $currentDate = $dateOutput[0];
 $pgtitle = array($g['product_name'], "Status");
 include("head.inc");
 
-print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting " .
-			   "information from this page in public places (like mailing lists).") . '<br />' .
-		gettext("Common password fields in config.xml have been automatically redacted.") . '<br />' .
-		gettext("When the page has finished loading, the output will be stored in {$output_file}. It may be downloaded via scp or ") .
-		"<a href=\"/diag_command.php?dlPath={$output_file}\">" . gettext("Diagnostics > Command Prompt.") . '</a>');
+print_info_box(
+	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places (like mailing lists).") .
+	'<br />' .
+	gettext("Common password fields in config.xml have been automatically redacted.") .
+	'<br />' .
+	sprintf(gettext('Whenz the page has finished loading, the output will be stored in %1$s. It may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s.'),
+	$output_file, '<a href="/diag_command.php?dlPath=' . $output_file . '">', '</a>'));
 
 print_info_box(get_firewall_info(), 'info', false);
 

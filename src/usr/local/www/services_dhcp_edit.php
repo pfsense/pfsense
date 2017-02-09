@@ -404,7 +404,7 @@ if ($_POST) {
 
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = arp_get_mac_by_ip($ip);
+$mymac = arp_get_mac_by_ip($ip, false);
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';

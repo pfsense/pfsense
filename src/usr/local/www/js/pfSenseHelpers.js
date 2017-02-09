@@ -764,7 +764,7 @@ function postSubmit(data) {
     }
 
 	// The CSRF magic is required because we will be viewing the results of the POST
-	var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val($('[name=__csrf_magic]').val());
+	var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val(csrfMagicToken);
 	$(form).append($(input));
 
     $(form).appendTo('body').submit();

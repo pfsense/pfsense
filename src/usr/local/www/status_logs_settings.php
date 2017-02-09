@@ -258,14 +258,14 @@ $section->addInput(new Form_Checkbox(
 	'Log firewall default blocks',
 	'Log packets matched from the default block rules in the ruleset',
 	$pconfig['logdefaultblock']
-))->setHelp('Log packets that are <strong>blocked</strong> by the implicit default block rule. - Per-rule logging options are still respected.');
+))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule. - Per-rule logging options are still respected.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logdefaultpass',
 	null,
 	'Log packets matched from the default pass rules put in the ruleset',
 	$pconfig['logdefaultpass']
-))->setHelp('Log packets that are <strong>allowed</strong> by the implicit default pass rule. - Per-rule logging options are still respected. ');
+))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule. - Per-rule logging options are still respected. ', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
@@ -311,8 +311,9 @@ $section->addInput(new Form_Select(
 		'1' => gettext('Display as column'),
 		'2' => gettext('Display as second row')
 	)
-))->setHelp('Show the applied rule description below or in the firewall log rows.' . '<br />' .
-			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.');
+))->setHelp('Show the applied rule description below or in the firewall log rows.%1$s' .
+			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.',
+			'<br />');
 
 $section->addInput(new Form_Checkbox(
 	'disablelocallogging',

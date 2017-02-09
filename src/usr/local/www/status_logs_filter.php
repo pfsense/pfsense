@@ -329,7 +329,7 @@ events.push(function() {
 <?php
 print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.' . '<br />' .
-	'<i class="fa fa-minus-square-o icon-primary"></i> = Add to block list., <i class="fa fa-plus-square-o icon-primary"></i> = Pass traffic, <i class="fa fa-info icon-primary"></i> = Resolve', 'info', false);
+	'<i class="fa fa-minus-square-o icon-primary"></i> = ' . gettext('Add to block list') . ', <i class="fa fa-plus-square-o icon-primary"></i> = ' . gettext('Pass traffic') . ', <i class="fa fa-info icon-primary"></i> = ' . gettext('Resolve'), 'info', false);
 ?>
 </div>
 

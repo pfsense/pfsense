@@ -211,7 +211,8 @@ function print_ipsec_body() {
 			print(ucfirst(htmlspecialchars($ikesa['state'])));
 
 			if ($ikesa['state'] == 'ESTABLISHED') {
-				print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (") . convert_seconds_to_dhms($ikesa['established']) . gettext(") ago"));
+				print("<br/>");
+				printf(gettext('%1$s seconds (%2$s) ago'), htmlspecialchars($ikesa['established']), convert_seconds_to_dhms($ikesa['established']));
 			}
 
 			print("</span>");
@@ -299,9 +300,11 @@ function print_ipsec_body() {
 					print("</td>\n");
 					print("<td>\n");
 
-					print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['rekey-time']) . ")");
-					print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['life-time']) . ")");
-					print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['install-time']) . ")");
+					printf(gettext('Rekey: %1$s seconds (%2$s)'), htmlspecialchars($childsa['rekey-time']), convert_seconds_to_dhms($childsa['rekey-time']));
+					print('<br/>');
+					printf(gettext('Life: %1$s seconds (%2$s)'), htmlspecialchars($childsa['life-time']), convert_seconds_to_dhms($childsa['life-time']));
+					print('<br/>');
+					printf(gettext('Install: %1$s seconds (%2$s)'), htmlspecialchars($childsa['install-time']), convert_seconds_to_dhms($childsa['install-time']));
 
 
 					print("</td>\n");

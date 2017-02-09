@@ -119,7 +119,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
 		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
 		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"), '');
-		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? '(historical)':''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
+		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? gettext('(historical)'):''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);
 		showDef($ifinfo['cell_simstate'], gettext("Cell SIM State"), $ifinfo['cell_simstate']);
@@ -174,7 +174,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			showDef(isset($ifinfo['collisions']), gettext("Collisions"), $ifinfo['collisions']);
 		} // e-o-if ($ifinfo['status'] != "down")
 
-		showDef($ifinfo['bridge'], gettext('Bridge (') . $ifinfo['bridgeint'] . ')', $ifinfo['bridge']);
+		showDef($ifinfo['bridge'], sprintf(gettext('Bridge (%1$s)'), $ifinfo['bridgeint']), $ifinfo['bridge']);
 
 		if (file_exists("/usr/bin/vmstat")) {
 			$real_interface = "";
@@ -202,10 +202,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 <?php
 	endforeach;
 
-print_info_box(gettext("Using dial-on-demand will bring the connection up again if any packet ".
-	    "triggers it. To substantiate this point: disconnecting manually ".
-	    "will <strong>not</strong> prevent dial-on-demand from making connections ".
-	    "to the outside! Don't use dial-on-demand if the line ".
-	    "is to be kept disconnected."), 'warning', false);
+print_info_box(sprintf(gettext('Using dial-on-demand will bring the connection up again if any packet ' .
+	    'triggers it. To substantiate this point: disconnecting manually ' .
+	    'will %1$snot%2$s prevent dial-on-demand from making connections ' .
+	    'to the outside! Don\'t use dial-on-demand if the line ' .
+	    'is to be kept disconnected.'), '<strong>', '</strong>'), 'warning', false);
 include("foot.inc");
 ?>

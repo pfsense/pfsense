@@ -1849,7 +1849,7 @@ function alias_expand_urltable($name) {
 }
 
 /* obtain MAC address given an IP address by looking at the ARP/NDP table */
-function arp_get_mac_by_ip($ip, $do_ping = false) {
+function arp_get_mac_by_ip($ip, $do_ping = true) {
 	unset($macaddr);
 	$retval = 1;
 	switch (is_ipaddr($ip)) {

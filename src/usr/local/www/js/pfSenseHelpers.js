@@ -700,9 +700,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 
 // The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
 // GET calls to POST calls
-// Any anchor with the attribute "usepost" usses these functions. In this file "Edit user", "Delete user" and "Add"
-// have that attribute
-// These function can be moved to an included file
+// Any anchor with the attribute "usepost" usses these functions.
 
 // Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
 // to POST format, make a POST form and submit it
@@ -711,10 +709,27 @@ $('a').click(function(e) {
 	var attr = $(this).attr('usepost');
 
 	if (typeof attr !== typeof undefined && attr !== false) {
+		// Automatically apply a confirmation dialog to "Delete" icons
+		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
+		   ($(this).hasClass('fa-trash'))) {
+			var msg = $.trim(this.textContent).toLowerCase();
+
+			if (!msg)
+				var msg = $.trim(this.value).toLowerCase();
+
+			var q = 'Are you sure you wish to '+ msg +'?';
+
+			if ($(this).attr('title') != undefined)
+				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+			if (!confirm(q)) {
+				return false;
+			}
+		}
+
 		var href = $(this).attr("href");
 
 		postSubmit(get2post(href));
-
 		return false;
 	}
 });

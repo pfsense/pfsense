@@ -210,9 +210,9 @@ display_top_tabs($tab_array);
 </form>
 <div class="infoblock">
 <?php
-print_info_box(gettext('<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power saving mode.<br />' .
-			   '<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), ' .
-			   'S = Short preamble, s = Short slot time.'), 'info', false);
+print_info_box(sprintf(gettext('%1$sFlags:%2$s A = authorized, E = Extended Rate (802.11g), P = Power saving mode.%3$s' .
+			   '%1$sCapabilities:%2$s E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), ' .
+			   'S = Short preamble, s = Short slot time.'), '<b>', '</b>', '<br />'), 'info', false);
 ?>
 </div>
 <?php

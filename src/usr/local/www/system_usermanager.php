@@ -41,21 +41,12 @@ if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
 }
 
-if (isset($_GET['userid']) && is_numericint($_GET['userid'])) {
-	$id = $_GET['userid'];
-}
-
 if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 	$config['system']['user'] = array();
 }
 
 $a_user = &$config['system']['user'];
-
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
-} else {
-	$act = $_GET['act'];
-}
+$act = $_POST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
@@ -653,73 +644,6 @@ foreach ($a_user as $i => $userent):
 
 ?></div>
 
-<script type="text/javascript">
-//<![CDATA[
-
-// The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
-// GET calls to POST calls
-// Any anchor with the attribute "usepost" usses these functions. In this file "Edit user", "Delete user" and "Add"
-// have that attribute
-// These function can be moved to an included file
-
-events.push(function() {
-
-	// Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
-	// to POST format, make a POST form and submit it
-	$('a').click(function(e) {
-		// Does the clicked anchor have the "usepost" attribute?
-		var attr = $(this).attr('usepost');
-
-		if (typeof attr !== typeof undefined && attr !== false) {
-			var href = $(this).attr("href");
-
-			postSubmit(get2post(href));
-
-			return false;
-		}
-	});
-
-
-	// Convert a GET argument list such as ?name=fred&action=delete into an array of POST
-	// parameters such as [[name, fred],[action, delete]]
-	function get2post(getargs) {
-		var arglist = new Array();
-
-		getargs = getargs.substring(getargs.indexOf("?") + 1);
-		var argarray = getargs.split('&');
-
-		for (var i=0;i<argarray.length;i++) {
-			var thisarg = argarray[i].split('=');
-			var arg = new Array(thisarg[0], thisarg[1]);
-			arglist[i] = arg;
-		}
-
-		return arglist;
-	}
-
-	// Create a form, add, the POST data and submit it
-	function postSubmit(data) {
-
-	    var form = $(document.createElement('form'));
-
-	    $(form).attr("method", "POST");
-
-	    for (var i=0;i<data.length;i++) {
-			var input = $("<input>").attr("type", "hidden").attr("name", data[i][0]).val(data[i][1]);
-			$(form).append($(input));
-	    }
-
-		// The CSRF magic is required because we will be viewing the results of the POST
-		var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val($('[name=__csrf_magic]').val());
-		$(form).append($(input));
-
-        $(form).appendTo('body').submit();
-	}
-
-});
-//]]>
-</script>
-
 <?php
 	include("foot.inc");
 	exit;
@@ -987,7 +911,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					15360 => '15360 bits',
 					16384 => '16384 bits'
 				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
+				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
+				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
+				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',

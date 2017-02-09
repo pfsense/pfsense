@@ -259,8 +259,8 @@ $section->addInput(new Form_Select(
 	'*Gateway',
 	$pconfig['gateway'],
 	$allGateways
-))->setHelp('Choose which gateway this route applies to or <a href="'.
-	'/system_gateways_edit.php">add a new one first</a>');
+))->setHelp('Choose which gateway this route applies to or %1$sadd a new one first%2$s',
+	'<a href="/system_gateways_edit.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',

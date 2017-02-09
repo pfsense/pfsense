@@ -190,7 +190,7 @@ $group->add(new Form_Input(
 
 $group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
 	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
-	'IPv6 firewall rules are <a href="firewall_rules.php">also required</a>, to control and pass encapsulated traffic.');
+	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
 
 
 $section->add($group);
@@ -223,16 +223,12 @@ $btncopyduid = new Form_Button(
 $btncopyduid->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $group->add($btncopyduid);
 
-$group->setHelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. ' .
-		'<br />' .
+$group->setHelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. %1$s' .
 		'By default, the firewall automatically creates a dynamic DUID which is not saved in the firewall configuration. '.
 		'To ensure the same DUID is retained by the firewall at all times, enter a DUID in this field. ' .
-		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.' .
-		'<br />' .
-		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot.' .
-		'<br />' .
-		'<br />' .
-		'You may use the Copy DUID button to copy the system detected DUID shown in the placeholder. ');
+		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.%1$s' .
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot.%1$s%1$s' .
+		'You may use the Copy DUID button to copy the system detected DUID shown in the placeholder. ', '<br />');
 
 $section->add($group);
 
@@ -244,11 +240,11 @@ $section->addInput(new Form_Checkbox(
 	'Hardware Checksum Offloading',
 	'Disable hardware checksum offload',
 	isset($config['system']['disablechecksumoffloading'])
-))->setHelp('Checking this option will disable hardware checksum offloading.<br/>'.
+))->setHelp('Checking this option will disable hardware checksum offloading.%1$s'.
 	'Checksum offloading is broken in some hardware, particularly some Realtek cards. '.
 	'Rarely, drivers may have problems with checksum offloading and some specific '.
 	'NICs. This will take effect after a machine reboot or re-configure of each '.
-	'interface.');
+	'interface.', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'disablesegmentationoffloading',

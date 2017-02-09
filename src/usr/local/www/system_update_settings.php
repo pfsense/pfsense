@@ -157,8 +157,8 @@ $section->addInput(new Form_Select(
 	'*Branch',
 	get_repo_name($config['system']['pkg_repo_conf_path']),
 	build_repo_list()
-))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
-			'Use of the development version is at your own risk!');
+))->setHelp('Please select the stable, or the development branch from which to update the system firmware. %1$s' .
+			'Use of the development version is at your own risk!', '<br />');
 
 $form->add($section);
 
@@ -217,8 +217,8 @@ if (file_exists("/usr/local/bin/git")) {
 		'Branch name',
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%s". (Usually the branch name is master)' .
-					'<br />Note: Sync will not be performed if a branch is not specified.', $lastbranch);
+		))->setHelp('The most recently used branch was "%1$s". (Usually the branch name is master)' .
+					'%2$sNote: Sync will not be performed if a branch is not specified.', $lastbranch, '<br />');
 
 	$group = new Form_Group('Sync options');
 
@@ -241,21 +241,21 @@ if (file_exists("/usr/local/bin/git")) {
 		null,
 		'Show Files',
 		isset($gitcfg['show_files'])
-		))->setHelp('Show different and missing files.<br />With \'Diff/Minimal\' option..');
+		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option..', '<br />');
 
 	$group->add(new Form_Checkbox(
 		'show_command',
 		null,
 		'Show Command',
 		isset($gitcfg['show_command'])
-		))->setHelp('Show constructed command.<br />With \'Diff/Minimal\' option.');
+		))->setHelp('Show constructed command.%1$sWith \'Diff/Minimal\' option.', '<br />');
 
 	$group->add(new Form_Checkbox(
 		'dryrun',
 		null,
 		'Dry Run',
 		isset($gitcfg['dryrun'])
-		))->setHelp('Dry-run only.<br />No files copied.');
+		))->setHelp('Dry-run only.%1$sNo files copied.', '<br />');
 
 	$group->setHelp('See "playback gitsync --help" in console "PHP Shell + pfSense tools" for additional information.');
 	$section->add($group);

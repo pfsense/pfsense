@@ -227,8 +227,8 @@ $section->addInput(new Form_Input(
 	'IPv6 address',
 	'text',
 	$pconfig['ipaddrv6']
-))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv6 address is given, one will be dynamically allocated from the pool.');
+))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv6 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

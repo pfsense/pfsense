@@ -298,11 +298,11 @@ $group->add(new Form_Input(
 	$pconfig['domainname']
 ));
 
-$group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
-			'he.net tunnelbroker: Enter the tunnel ID.' . '<br />' .
-			'GleSYS: Enter the record ID.' . '<br />' .
-			'DNSimple: Enter only the domain name.' . '<br />' .
-			'Namecheap, Cloudflare, GratisDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.');
+$group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
+			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
+			'GleSYS: Enter the record ID.%1$s' .
+			'DNSimple: Enter only the domain name.%1$s' .
+			'Namecheap, Cloudflare, GratisDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
 
@@ -356,28 +356,28 @@ $section->addInput(new Form_Input(
 	'Username',
 	'text',
 	$pconfig['username']
-))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.' . '<br />' .
-			'Route 53: Enter the Access Key ID.' . '<br />' .
-			'GleSYS: Enter the API user.' . '<br />' .
-			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.');
+))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
+			'Route 53: Enter the Access Key ID.%1$s' .
+			'GleSYS: Enter the API user.%1$s' .
+			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.' . '<br />' .
-			'Route 53: Enter the Secret Access Key.' . '<br />' .
-			'GleSYS: Enter the API key.' . '<br />' .
-			'DNSimple: Enter the API token.');
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+			'Route 53: Enter the Secret Access Key.%1$s' .
+			'GleSYS: Enter the API key.%1$s' .
+			'DNSimple: Enter the API token.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").' . '<br />' .
-			'DNSimple: Enter the Record ID of record to update.');
+))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").%1$s' .
+			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(
 	'updateurl',
@@ -390,10 +390,10 @@ $section->addInput(new Form_Textarea(
 	'resultmatch',
 	'Result Match',
 	$pconfig['resultmatch']
-))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.' . '<br />' .
-			'To include the new IP in the request, put %IP% in its place.' . '<br />' .
-			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)' . '<br />' .
-			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.');
+))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.%1$s' .
+			'To include the new IP in the request, put %%IP%% in its place.%1$s' .
+			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)%1$s' .
+			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', '<br />');
 
 $section->addInput(new Form_Input(
 	'ttl',

@@ -402,12 +402,12 @@ $section->addInput(new Form_Checkbox(
 	'Disable webConfigurator anti-lockout rule',
 	$pconfig['noantilockout']
 ))->setHelp('When this is '.
-	'unchecked, access to the webConfigurator on the %s interface is always '.
+	'unchecked, access to the webConfigurator on the %1$s interface is always '.
 	'permitted, regardless of the user-defined firewall rule set. Check this box to '.
 	'disable this automatically added rule, so access to the webConfigurator is '.
 	'controlled by the user-defined firewall rules (ensure a firewall rule is '.
-	'in place that allows access, to avoid being locked out!) <em>Hint: the &quot;Set interface(s) IP address&quot; '.
-	'option in the console menu resets this setting as well.</em>', $lockout_interface);
+	'in place that allows access, to avoid being locked out!) %2$sHint: the &quot;Set interface(s) IP address&quot; '.
+	'option in the console menu resets this setting as well.%3$s', $lockout_interface, '<em>', '</em>');
 
 $section->addInput(new Form_Checkbox(
 	'nodnsrebindcheck',
@@ -482,8 +482,8 @@ if (!$g['enableserial_force']) {
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
 		'the serial port. The console menu can still be accessed from the internal video '.
-		'card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the '.
-		'serial console.');
+		'card/keyboard. A %1$snull modem%2$s serial cable or adapter is required to use the '.
+		'serial console.', '<b>', '</b>');
 }
 
 $section->addInput(new Form_Select(

@@ -614,8 +614,8 @@ $section->addInput(new Form_Select(
 	'Hard disk standby time',
 	$pconfig['harddiskstandby'],
 	['' => gettext("Always on")] + array_combine($opts, $vals)
-))->setHelp("Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access." . "<br />" .
-			"<strong> Do not set this for CF cards.</strong>");
+))->setHelp('Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access.%1$s' .
+			'%2$sDo not set this for CF cards.%3$s', '<br />', '<strong>', '</strong>');
 
 $form->add($section);
 

@@ -324,9 +324,9 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'*Server Address',
 	$pconfig['localip']
-))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway".' . '<br />' .
-			'Typically this is set to an unused IP just outside of the client range.'. '<br />' .
-			'NOTE: This should NOT be set to any IP address currently in use on this firewall.');
+))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway".%1$s' .
+			'Typically this is set to an unused IP just outside of the client range.%1$s' .
+			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'remoteip',

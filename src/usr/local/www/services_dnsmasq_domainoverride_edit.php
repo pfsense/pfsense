@@ -135,18 +135,18 @@ $section->addInput(new Form_Input(
 	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!)' . '<br />' .
-			'e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa');
+))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!)%1$s' .
+			'e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
 ))->setPattern('[a-f0-9:.#!]*')
-  ->setHelp('IP address of the authoritative DNS server for this domain' . '<br />' .
-			'e.g.: 192.168.100.100' . '<br />' .
-			'Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override.' . '<br />' .
-			'Or enter ! for lookups for this host/subdomain to NOT be forwarded anywhere.');
+  ->setHelp('IP address of the authoritative DNS server for this domain%1$s' .
+			'e.g.: 192.168.100.100%1$s' .
+			'Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override.%1$s' .
+			'Or enter ! for lookups for this host/subdomain to NOT be forwarded anywhere.', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'dnssrcip',

@@ -358,16 +358,16 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ravalidlifetime'],
 	['min' => 1, 'max' => 655350]
-))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
-'The default is 86400 seconds.');
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.%1$s' .
+'The default is 86400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'rapreferredlifetime',
 	'Default preferred lifetime',
 	'text',
 	$pconfig['rapreferredlifetime']
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
-			'The default is 14400 seconds.');
+))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.%1$s' .
+			'The default is 14400 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'raminrtradvinterval',

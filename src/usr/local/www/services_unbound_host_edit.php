@@ -215,23 +215,23 @@ $section->addInput(new Form_Input(
 	'Host',
 	'text',
 	$pconfig['host']
-))->setHelp('Name of the host, without the domain part' . '<br />' .
-			'e.g.: "myhost"');
+))->setHelp('Name of the host, without the domain part%1$s' .
+			'e.g.: "myhost"', '<br />');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain of the host' . '<br />' .
-			'e.g.: "example.com"');
+))->setHelp('Domain of the host%1$s' .
+			'e.g.: "example.com"', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the host' . '<br />' .
-			'e.g.: 192.168.100.100 or fd00:abcd::1');
+))->setHelp('IP address of the host%1$s' .
+			'e.g.: 192.168.100.100 or fd00:abcd::1', '<br />');
 
 $section->addInput(new Form_Input(
 	'descr',

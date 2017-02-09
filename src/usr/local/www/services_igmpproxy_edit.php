@@ -171,9 +171,9 @@ $section->addInput(new Form_Select(
 	$pconfig['type'],
 	['upstream' => gettext('Upstream Interface'), 'downstream' => gettext('Downstream Interface')]
 ))->setHelp('The upstream network interface is the outgoing interface which is responsible for communicating to available multicast data sources. ' .
-			'There can only be one upstream interface.' . '<br />' .
+			'There can only be one upstream interface.%1$s' .
 			'Downstream network interfaces are the distribution	interfaces to the destination networks, where multicast clients can join groups and '.
-			'receive multicast data. One or more downstream interfaces must be configured.');
+			'receive multicast data. One or more downstream interfaces must be configured.', '<br />');
 
 $section->addInput(new Form_Input(
 	'threshold',

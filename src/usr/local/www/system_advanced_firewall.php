@@ -425,9 +425,9 @@ $section->addInput(new Form_Checkbox(
 	'Disable Firewall',
 	'Disable all packet filtering.',
 	isset($config['system']['disablefilter'])
-))->setHelp('Note: This converts %s into a routing only platform!<br/>'.
+))->setHelp('Note: This converts %1$s into a routing only platform!%2$s'.
 	'Note: This will also turn off NAT! To only disable NAT, '.
-	'and not firewall rules, visit the %s page.', $g["product_name"], '<a href="firewall_nat_out.php">Outbound NAT</a>');
+	'and not firewall rules, visit the %3$sOutbound NAT%4$s page.', $g["product_name"], '<br/>', '<a href="firewall_nat_out.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
@@ -473,9 +473,9 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['maximumstates'],
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
-))->setHelp('Maximum number of connections to hold in the firewall state table. '.
-	'<br/>Note: Leave this blank for the default. On this system the default '.
-	'size is: %d', pfsense_default_state_size());
+))->setHelp('Maximum number of connections to hold in the firewall state table. %1$s'.
+	'Note: Leave this blank for the default. On this system the default '.
+	'size is: %2$d', '<br/>', pfsense_default_state_size());
 
 $section->addInput(new Form_Input(
 	'maximumtableentries',
@@ -484,8 +484,9 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumtableentries'],
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
-	'sshlockout, snort, etc, combined.<br/>Note: Leave this blank for the '.
-	'default. On this system the default size is: %d',
+	'sshlockout, snort, etc, combined.%1$sNote: Leave this blank for the '.
+	'default. On this system the default size is: %2$d',
+	'<br/>',
 	pfsense_default_table_entries_size());
 
 $section->addInput(new Form_Input(
@@ -538,8 +539,8 @@ $section->addInput(new Form_Input(
 	$pconfig['aliasesresolveinterval'],
 	['placeholder' => '300']
 ))->setHelp('Interval, in seconds, that will be used to resolve hostnames '.
-	'configured on aliases. <br/>Note:	 Leave this blank for the default '.
-	'(300s).');
+	'configured on aliases. %1$sNote:	 Leave this blank for the default '.
+	'(300s).', '<br/>');
 
 $section->addInput(new Form_Checkbox(
 	'checkaliasesurlcert',
@@ -586,21 +587,22 @@ if (count($config['interfaces']) > 1) {
 			'proxy' => gettext('NAT + proxy'),
 			'purenat' => gettext('Pure NAT'),
 		)
-	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
+	))->setHelp('%1$sThe pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
 		'but it must be possible to accurately determine the interface and '.
 		'gateway IP used for communication with the target at the time the '.
 		'rules are loaded. There are no inherent limits to the number of ports '.
 		'other than the limits of the protocols.  All protocols available for '.
-		'port forwards are supported.</li><li>The NAT + proxy mode uses a '.
+		'port forwards are supported.%2$sThe NAT + proxy mode uses a '.
 		'helper program to send packets to the target of the port forward. '.
 		'It is useful in setups where the interface and/or gateway IP used '.
 		'for communication with the target cannot be accurately determined at '.
 		'the time the rules are loaded. Reflection rules are not created for '.
 		'ranges larger than 500 ports and will not be used for more than 1000 '.
 		'ports total between all port forwards. Only TCP and UDP protocols are '.
-		'supported.</li></ul><span class="help-block">Individual rules may be configured to override '.
-		'this system setting on a per-rule basis.');
+		'supported.%3$sIndividual rules may be configured to override '.
+		'this system setting on a per-rule basis.',
+		'</span><ul class="help-block"><li>', '</li><li>', '</li></ul><span class="help-block">');
 
 	$section->addInput(new Form_Input(
 		'reflectiontimeout',
@@ -608,8 +610,8 @@ if (count($config['interfaces']) > 1) {
 		'number',
 		$config['system']['reflectiontimeout'],
 		['min' => 1]
-	))->setHelp('Enter value for Reflection timeout in seconds.<br/>Note: Only '.
-		'applies to Reflection on port forwards in NAT + proxy mode.');
+	))->setHelp('Enter value for Reflection timeout in seconds.%1$sNote: Only '.
+		'applies to Reflection on port forwards in NAT + proxy mode.', '<br/>');
 
 	$section->addInput(new Form_Checkbox(
 		'enablebinatreflection',

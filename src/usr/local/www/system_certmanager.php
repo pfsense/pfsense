@@ -615,10 +615,9 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	if (!$internal_ca_count) {
 		$section->addInput(new Form_StaticText(
 			'*Certificate authority',
-			gettext('No internal Certificate Authorities have been defined. ').
-			gettext('An internal CA must be defined in order to create an internal certificate. ').
-			'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext("Create") .'</a>'.
-			gettext(' an internal CA.')
+			gettext('No internal Certificate Authorities have been defined. ') .
+			gettext('An internal CA must be defined in order to create an internal certificate. ') .
+			sprintf(gettext('%1$sCreate%2$s an internal CA.'), '<a href="system_camanager.php?act=new&amp;method=internal"> ', '</a>')
 		));
 	} else {
 		$allCas = array();

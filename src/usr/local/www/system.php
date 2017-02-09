@@ -546,8 +546,8 @@ $section->addInput(new Form_Select(
 	'*Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonedesc)
-))->setHelp('Select a geographic region name (Continent/Location) to determine the timezone for the firewall. ' .
-	'<br/>Choose a special or "Etc" zone only in cases where the geographic zones do not properly handle the clock offset required for this firewall.');
+))->setHelp('Select a geographic region name (Continent/Location) to determine the timezone for the firewall. %1$s' .
+	'Choose a special or "Etc" zone only in cases where the geographic zones do not properly handle the clock offset required for this firewall.', '<br/>');
 
 $section->addInput(new Form_Input(
 	'timeservers',

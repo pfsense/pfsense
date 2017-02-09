@@ -911,7 +911,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					15360 => '15360 bits',
 					16384 => '16384 bits'
 				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
+				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
+				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
+				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',

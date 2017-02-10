@@ -42,7 +42,6 @@ $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
 if ($_POST) {
-
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -69,16 +68,16 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= sprintf(gettext("removed gateway group %s"), $_GET['id']);
+if ($_POST['act'] == "del") {
+	if ($a_gateway_groups[$_POST['id']]) {
+		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
-			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
+			if ($rule['gateway'] == $a_gateway_groups[$_POST['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
 			}
 		}
 
-		unset($a_gateway_groups[$_GET['id']]);
+		unset($a_gateway_groups[$_POST['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
@@ -167,9 +166,9 @@ foreach ($a_gateway_groups as $gateway_group):
 							<?=htmlspecialchars($gateway_group['descr'])?>
 						</td>
 						<td>
-							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
-							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>"></a>
+							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>" usepost></a>
+							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>" usepost></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -183,7 +182,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm">
+	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>

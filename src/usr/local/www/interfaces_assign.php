@@ -521,7 +521,7 @@ display_top_tabs($tab_array);
 		}
 ?>
 		<tr>
-			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
+			<td><a href="/interfaces.php?if=<?=$ifname?>" usepost><?=$ifdescr?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
 <?php foreach ($portlist as $portname => $portinfo):?>

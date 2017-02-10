@@ -176,6 +176,15 @@ EOT;
 
 		if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
 			$title = htmlspecialchars(gettext($this->_title));
+
+			// If the element tile (label) begins with a '*', remove the '*' and add a span with class
+			// 'element-required'. Text decoration can then be added in the CSS to indicate that this is a
+			// required field
+			if (substr($title, 0, 1 ) === "*" ) {
+				$title = '<span class="element-required">' . substr($title, 1) . '</span>';
+			} else {
+				$title = '<span>' . $title . '</span>';
+			}
 		}
 
 		return <<<EOT

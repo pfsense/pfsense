@@ -292,6 +292,7 @@ case "${PRODUCT_VERSION##*-}" in
 		export CORE_PKG_DATESTRING=".b.${PKG_DATESTRING}"
 		;;
 	RC*)
+		export _IS_RELEASE=yes
 		export CORE_PKG_DATESTRING=".r.${PKG_DATESTRING}"
 		;;
 	*)

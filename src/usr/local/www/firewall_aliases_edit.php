@@ -60,7 +60,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	$origname = $_POST['origname'];
 }
 
@@ -99,9 +99,6 @@ function alias_same_type($name, $type) {
 	return true;
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -142,7 +139,7 @@ if (empty($tab)) {
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
 $pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");

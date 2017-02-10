@@ -2082,11 +2082,6 @@ events.push(function() {
 		}
 	});
 
-	// Change help text based on the selector value
-	function setHelpText(id, text) {
-		$('#' + id).parent().parent('div').find('span').find('span').html(text);
-	}
-
 	function setOptText(target, val) {
 		var dispstr = '<span class="text-success">';
 

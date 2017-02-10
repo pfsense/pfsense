@@ -734,10 +734,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	// Change help text based on the selector value
-	function setHelpText(id, text) {
-		$('#' + id).parent().parent('div').find('span').html(text);
-	}
 
 	function setOptText(val) {
 		var htext = '<span class="text-success">';

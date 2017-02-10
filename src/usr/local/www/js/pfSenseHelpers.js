@@ -152,6 +152,11 @@ function hideMask(name, hide) {
 	}
 }
 
+// Set the help text for a given input
+function setHelpText(id, text) {
+	$('#' + id).parent().parent('div').find('span:nth-child(2)').html(text);
+}
+
 // Toggle table row checkboxes and background colors on the pages that use sortable tables:
 //	/usr/local/www/firewall_nat.php
 //	/usr/local/www/firewall_nat_1to1.php

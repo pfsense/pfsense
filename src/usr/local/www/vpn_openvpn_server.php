@@ -63,14 +63,10 @@ foreach ($a_crl as $cid => $acrl) {
 	}
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-$act = $_GET['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];
 }
@@ -81,7 +77,7 @@ if (isset($id) && $a_server[$id]) {
 	$vpnid = 0;
 }
 
-if ($_GET['act'] == "del") {
+if ($act == "del") {
 
 	if (!isset($a_server[$id])) {
 		pfSenseHeader("vpn_openvpn_server.php");
@@ -95,7 +91,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Server successfully deleted.");
 }
 
-if ($_GET['act'] == "new") {
+if ($act == "new") {
 	$pconfig['ncp_enable'] = "enabled";
 	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
@@ -112,7 +108,7 @@ if ($_GET['act'] == "new") {
 	$pconfig['digest'] = "SHA1";
 }
 
-if ($_GET['act'] == "edit") {
+if ($act == "edit") {
 
 	if (isset($id) && $a_server[$id]) {
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
@@ -255,7 +251,7 @@ if ($_GET['act'] == "edit") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -1369,8 +1365,8 @@ else:
 						<?=htmlspecialchars(sprintf('%1$s (%2$s)', $server['description'], $server['dev_mode']))?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete server')?>" href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete server')?>" href="vpn_openvpn_server.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -1383,7 +1379,7 @@ else:
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success btn-sm">
+	<a href="vpn_openvpn_server.php?act=new" class="btn btn-sm btn-success btn-sm" usepost>
 	<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

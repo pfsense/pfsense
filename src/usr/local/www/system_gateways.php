@@ -154,10 +154,10 @@ function delete_gateway_item($id) {
 }
 
 unset($input_errors);
-if ($_GET['act'] == "del") {
-	if (can_delete_disable_gateway_item($_GET['id'])) {
-		$realid = $a_gateways[$_GET['id']]['attribute'];
-		delete_gateway_item($_GET['id']);
+if ($_POST['act'] == "del") {
+	if (can_delete_disable_gateway_item($_POST['id'])) {
+		$realid = $a_gateways[$_POST['id']]['attribute'];
+		delete_gateway_item($_POST['id']);
 		write_config("Gateways: removed gateway {$realid}");
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateways.php");
@@ -189,12 +189,12 @@ if (isset($_POST['del_x'])) {
 		}
 	}
 
-} else if ($_GET['act'] == "toggle" && $a_gateways[$_GET['id']]) {
-	$realid = $a_gateways[$_GET['id']]['attribute'];
+} else if ($_POST['act'] == "toggle" && $a_gateways[$_POST['id']]) {
+	$realid = $a_gateways[$_POST['id']]['attribute'];
 	$disable_gw = !isset($a_gateway_item[$realid]['disabled']);
 	if ($disable_gw) {
 		// The user wants to disable the gateway, so check if that is OK.
-		$ok_to_toggle = can_delete_disable_gateway_item($_GET['id'], $disable_gw);
+		$ok_to_toggle = can_delete_disable_gateway_item($_POST['id'], $disable_gw);
 	} else {
 		// The user wants to enable the gateway. That is always OK.
 		$ok_to_toggle = true;
@@ -302,19 +302,19 @@ foreach ($a_gateways as $i => $gateway):
 							<?=htmlspecialchars($gateway['descr'])?>
 						</td>
 						<td>
-							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
-							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
+							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>" usepost></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>" usepost></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
 	<?php } else {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
 
 <?php endif; ?>
 						</td>
@@ -327,7 +327,7 @@ foreach ($a_gateways as $i => $gateway):
 </div>
 
 <nav class="action-buttons">
-	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
+	<a href="system_gateways_edit.php" role="button" class="btn btn-success" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>

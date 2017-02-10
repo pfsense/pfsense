@@ -57,14 +57,11 @@ if (!is_array($config['crl'])) {
 
 $a_crl =& $config['crl'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-$act = $_GET['act'];
+$act = $_POST['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];
 }
@@ -75,7 +72,7 @@ if (isset($id) && $a_client[$id]) {
 	$vpnid = 0;
 }
 
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_client[$id])) {
 		pfSenseHeader("vpn_openvpn_client.php");
@@ -89,7 +86,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Client successfully deleted.");
 }
 
-if ($_GET['act'] == "new") {
+if ($_POST['act'] == "new") {
 	$pconfig['ncp_enable'] = "enabled";
 	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
@@ -105,7 +102,7 @@ if ($_GET['act'] == "new") {
 global $simplefields;
 $simplefields = array('auth_user', 'auth_pass');
 
-if ($_GET['act'] == "edit") {
+if ($_POST['act'] == "edit") {
 
 	if (isset($id) && $a_client[$id]) {
 		foreach ($simplefields as $stat) {
@@ -182,7 +179,7 @@ if ($_GET['act'] == "edit") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -926,8 +923,8 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -940,7 +937,7 @@ else:
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
+	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

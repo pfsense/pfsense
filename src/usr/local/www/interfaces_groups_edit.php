@@ -39,13 +39,7 @@ if (!is_array($config['ifgroups']['ifgroupentry'])) {
 }
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_POST['id'];
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
@@ -59,7 +53,7 @@ $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' a
 $ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

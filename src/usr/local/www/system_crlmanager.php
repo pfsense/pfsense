@@ -284,12 +284,12 @@ function method_change() {
 <?php
 
 function build_method_list() {
-	global $_GET, $crl_methods;
+	global $_POST, $crl_methods;
 
 	$list = array();
 
 	foreach ($crl_methods as $method => $desc) {
-		if (($_GET['importonly'] == "yes") && ($method != "existing")) {
+		if (($_POST['importonly'] == "yes") && ($method != "existing")) {
 			continue;
 		}
 

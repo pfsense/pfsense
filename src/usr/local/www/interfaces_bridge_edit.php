@@ -65,12 +65,7 @@ foreach ($ifacelist as $bif => $bdescr) {
 	}
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_POST['id'];
 
 if (isset($id) && $a_bridges[$id]) {
 	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);
@@ -138,7 +133,7 @@ if (isset($id) && $a_bridges[$id]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

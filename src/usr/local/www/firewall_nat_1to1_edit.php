@@ -64,9 +64,9 @@ if (isset($_POST['after'])) {
 	$after = $_POST['after'];
 }
 
-if (isset($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_POST['dup'])) {
+	$id = $_POST['dup'];
+	$after = $_POST['dup'];
 }
 
 if (isset($id) && $a_1to1[$id]) {
@@ -93,7 +93,7 @@ if (isset($id) && $a_1to1[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_POST['dup'])) {
 	unset($id);
 }
 

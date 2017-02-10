@@ -350,9 +350,9 @@ if (is_subsystem_dirty('ipsec')) {
 						<td style="cursor: pointer;">
 <!--							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a> -->
 							<button style="display: none;" class="btn btn-default btn-xs" type="submit" id="move_<?=$i?>" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
-							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>"></a>
+							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>" usepost></a>
 <?php if (!isset($ph1ent['mobile'])): ?>
-							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>"></a>
+							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>" usepost></a>
 <?php endif; ?>
 							<a	class="fa fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
 							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
@@ -472,8 +472,8 @@ if (is_subsystem_dirty('ipsec')) {
 											</td>
 											<td style="cursor: pointer;">
 <!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
-												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
-												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
+												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>" usepost></a>
+												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>" usepost></a>
 												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
@@ -482,7 +482,7 @@ if (is_subsystem_dirty('ipsec')) {
 										<tr>
 											<td></td>
 											<td>
-												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
+												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>" usepost>
 													<i class="fa fa-plus icon-embed-btn"></i>
 													<?=gettext("Add P2")?>
 												</a>
@@ -511,7 +511,7 @@ if (is_subsystem_dirty('ipsec')) {
 <?php endif;
 */
 ?>
-		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm">
+		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm"  usepost>
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add P1")?>
 		</a>

@@ -37,9 +37,6 @@ $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
 
-if (ctype_alnum($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && ctype_alnum($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -68,10 +65,8 @@ foreach ($a_crl as $cid => $acrl) {
 	}
 }
 
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
+$act = $_POST['act'];
+
 
 if (!empty($id)) {
 	$thiscrl =& lookup_crl($id);
@@ -103,8 +98,8 @@ if ($act == "del") {
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
-	$pconfig['caref'] = $_GET['caref'];
+	$pconfig['method'] = $_POST['method'];
+	$pconfig['caref'] = $_POST['caref'];
 	$pconfig['lifetime'] = "9999";
 	$pconfig['serial'] = "0";
 }
@@ -123,40 +118,39 @@ if ($act == "exp") {
 }
 
 if ($act == "addcert") {
-	if ($_POST) {
-		unset($input_errors);
-		$pconfig = $_POST;
 
-		if (!$pconfig['crlref'] || !$pconfig['certref']) {
-			pfSenseHeader("system_crlmanager.php");
-			exit;
-		}
+	unset($input_errors);
+	$pconfig = $_POST;
 
-		// certref, crlref
-		$crl =& lookup_crl($pconfig['crlref']);
-		$cert = lookup_cert($pconfig['certref']);
+	if (!$pconfig['crlref'] || !$pconfig['certref']) {
+		pfSenseHeader("system_crlmanager.php");
+		exit;
+	}
 
-		if (!$crl['caref'] || !$cert['caref']) {
-			$input_errors[] = gettext("Both the Certificate and CRL must be specified.");
-		}
+	// certref, crlref
+	$crl =& lookup_crl($pconfig['crlref']);
+	$cert = lookup_cert($pconfig['certref']);
 
-		if ($crl['caref'] != $cert['caref']) {
-			$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
-		}
-		if (!is_crl_internal($crl)) {
-			$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
-		}
+	if (!$crl['caref'] || !$cert['caref']) {
+		$input_errors[] = gettext("Both the Certificate and CRL must be specified.");
+	}
 
-		if (!$input_errors) {
-			$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
-			cert_revoke($cert, $crl, $reason);
-			// refresh IPsec and OpenVPN CRLs
-			openvpn_refresh_crls();
-			vpn_ipsec_configure();
-			write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
-			pfSenseHeader("system_crlmanager.php");
-			exit;
-		}
+	if ($crl['caref'] != $cert['caref']) {
+		$input_errors[] = gettext("CA mismatch between the Certificate and CRL. Unable to Revoke.");
+	}
+	if (!is_crl_internal($crl)) {
+		$input_errors[] = gettext("Cannot revoke certificates for an imported/external CRL.");
+	}
+
+	if (!$input_errors) {
+		$reason = (empty($pconfig['crlreason'])) ? OCSP_REVOKED_STATUS_UNSPECIFIED : $pconfig['crlreason'];
+		cert_revoke($cert, $crl, $reason);
+		// refresh IPsec and OpenVPN CRLs
+		openvpn_refresh_crls();
+		vpn_ipsec_configure();
+		write_config("Revoked cert {$cert['descr']} in CRL {$crl['descr']}.");
+		pfSenseHeader("system_crlmanager.php");
+		exit;
 	}
 }
 
@@ -167,7 +161,7 @@ if ($act == "delcert") {
 	}
 	$found = false;
 	foreach ($thiscrl['cert'] as $acert) {
-		if ($acert['refid'] == $_GET['certref']) {
+		if ($acert['refid'] == $_POST['certref']) {
 			$found = true;
 			$thiscert = $acert;
 		}
@@ -192,7 +186,7 @@ if ($act == "delcert") {
 	$act="edit";
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	$input_errors = array();
 	$pconfig = $_POST;
 
@@ -493,7 +487,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 							<?=date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>">
+							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" usepost>
 								<i class="fa fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
 							</a>
 						</td>
@@ -613,14 +607,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php
 		if ($cainternal == "YES"):
 ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success" usepost>
 								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
 		else:
 ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success" usepost>
 								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
@@ -642,18 +636,18 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
 						<td>
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>"></a>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" usepost></a>
 <?php
 				if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
+							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>" usepost></a>
 <?php
 				else:
 ?>
-							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>" usepost></a>
 <?php			endif;
 				if (!$inuse):
 ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>"></a>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>" usepost></a>
 <?php
 				endif;
 ?>

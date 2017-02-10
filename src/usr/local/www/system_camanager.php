@@ -110,7 +110,7 @@ if ($act == "edit") {
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
+	$pconfig['method'] = $_POST['method'];
 	$pconfig['keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";

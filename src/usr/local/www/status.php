@@ -330,7 +330,7 @@ print_info_box(
 	'<br />' .
 	gettext("Common password fields in config.xml have been automatically redacted.") .
 	'<br />' .
-	sprintf(gettext('Whenz the page has finished loading, the output will be stored in %1$s. It may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s.'),
+	sprintf(gettext('When the page has finished loading, the output will be stored in %1$s. It may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s.'),
 	$output_file, '<a href="/diag_command.php?dlPath=' . $output_file . '">', '</a>'));
 
 print_info_box(get_firewall_info(), 'info', false);

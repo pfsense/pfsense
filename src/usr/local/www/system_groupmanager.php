@@ -42,16 +42,8 @@ if (!is_array($config['system']['group'])) {
 $a_group = &$config['system']['group'];
 
 unset($id);
-
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
-	$id = $_POST['groupid'];
-}
-
-if (isset($_GET['groupid']) && is_numericint($_GET['groupid'])) {
-	$id = $_GET['groupid'];
-}
-
-$act = (isset($_GET['act']) ? $_GET['act'] : '');
+$id = $_POST['groupid'];
+$act = (isset($_POST['act']) ? $_POST['act'] : '');
 
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
@@ -69,7 +61,7 @@ function admin_groups_sort() {
 
 if ($act == "delgroup") {
 
-	if (!isset($id) || !isset($_GET['groupname']) || !isset($a_group[$id]) || ($_GET['groupname'] != $a_group[$id]['name'])) {
+	if (!isset($id) || !isset($_POST['groupname']) || !isset($a_group[$id]) || ($_POST['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
@@ -89,7 +81,7 @@ if ($act == "delpriv") {
 	}
 
 	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_GET['privid']]);
+	unset($a_group[$id]['priv'][$_POST['privid']]);
 
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
@@ -116,9 +108,9 @@ if ($act == "edit") {
 	}
 }
 
-if (isset($_GET['dellall_x'])) {
+if (isset($_POST['dellall_x'])) {
 
-	$del_groups = $_GET['delete_check'];
+	$del_groups = $_POST['delete_check'];
 
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
@@ -246,7 +238,7 @@ function build_priv_table() {
 			$user_has_root_priv = true;
 		}
 		$privhtml .=			'</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '"></a></td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '" usepost></a></td>';
 		$privhtml .=		'</tr>';
 
 	}
@@ -259,7 +251,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>';
 		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
-		
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -267,7 +259,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -298,7 +290,7 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
+if (!($_POST['act'] == "new" || $_POST['act'] == "edit")) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
@@ -333,9 +325,9 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 							<?=$groupcount?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>" usepost></a>
 							<?php if ($group['scope'] != "system"): ?>
-								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
 						</td>
 					</tr>
@@ -349,7 +341,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success btn-sm">
+	<a href="?act=new" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
@@ -477,7 +469,7 @@ if ($pconfig['gid'] != 1998) { // all users group
 
 }
 
-if ($_GET['act'] != "new") {
+if ($_POST['act'] != "new") {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(

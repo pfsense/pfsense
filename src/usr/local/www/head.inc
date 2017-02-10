@@ -207,7 +207,7 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			if ($item[0] == '-DIVIDER-') {
 				$output .= ' <li class="divider"></li>';
 			} else {
-				$output .= "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]) . "</li>\n";
+				$output .= "<li>". sprintf("<a %s %s>%s</a>", $attr, ($item[1] == "/index.php?logout") ? "usepost":"",$item[0]) . "</li>\n";
 			}
 		}
 	}
@@ -505,7 +505,7 @@ if (are_notices_pending()) {
 					endif;
 				?>
 					<li class="dropdown">
-						<a href="/index.php?logout">
+						<a href="/index.php?logout" usepost>
 							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
@@ -524,7 +524,7 @@ if (are_notices_pending()) {
 		unset($notitle);
 	} else {
 		if (isset($pglinks)) {
-			print(genhtmltitle($pgtitle, $pglinks));	
+			print(genhtmltitle($pgtitle, $pglinks));
 		} else {
 			print(genhtmltitle($pgtitle));
 		}

@@ -706,7 +706,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['src'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true" usepost>
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_address($filterent['source'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['source']))?>
@@ -715,7 +715,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" usepost>
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
@@ -724,7 +724,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['dst'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" usepost>
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_address($filterent['destination'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
@@ -733,7 +733,7 @@ foreach ($a_filter as $filteri => $filterent):
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" usepost>
-									<?=str_replace('_', ' ', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
+									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
 								</a>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
@@ -741,7 +741,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])):?>
-								<?=str_replace('_', ' ', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
+								<?=str_replace('_', '_<wbr>', htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']))?>
 							<?php else: ?>
 								<?=htmlspecialchars(pprint_port($filterent['gateway']))?>
 							<?php endif; ?>
@@ -751,10 +751,10 @@ foreach ($a_filter as $filteri => $filterent):
 								if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 									$desc = str_replace('_', ' ', $filterent['ackqueue']);
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&amp;action=show\" usepost>{$desc}</a>";
-									$desc = str_replace('_', ' ', $filterent['defaultqueue']);
+									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
 									echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\" usepost>{$desc}</a>";
 								} else if (isset($filterent['defaultqueue'])) {
-									$desc = str_replace('_', ' ', $filterent['defaultqueue']);
+									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\" usepost>{$desc}</a>";
 								} else {
 									echo gettext("none");
@@ -765,7 +765,7 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php if ($printicon) { ?>
 								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>"></i>
 							<?php } ?>
-							<?=$schedule_span_begin;?><?=str_replace('_', ' ', htmlspecialchars($filterent['sched']));?>&nbsp;<?=$schedule_span_end;?>
+							<?=$schedule_span_begin;?><?=str_replace('_', '_<wbr>', htmlspecialchars($filterent['sched']));?>&nbsp;<?=$schedule_span_end;?>
 						</td>
 						<td>
 							<?=htmlspecialchars($filterent['descr']);?>

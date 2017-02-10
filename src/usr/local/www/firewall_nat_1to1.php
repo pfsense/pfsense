@@ -62,23 +62,21 @@ if (array_key_exists('order-store', $_POST)) {
 	}
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_1to1[$_GET['id']]) {
-		unset($a_1to1[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_1to1[$_POST['id']]) {
+		unset($a_1to1[$_POST['id']]);
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 		}
@@ -103,12 +101,12 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_1to1[$_GET['id']]) {
-		if (isset($a_1to1[$_GET['id']]['disabled'])) {
-			unset($a_1to1[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_1to1[$_POST['id']]) {
+		if (isset($a_1to1[$_POST['id']]['disabled'])) {
+			unset($a_1to1[$_POST['id']]['disabled']);
 		} else {
-			$a_1to1[$_GET['id']]['disabled'] = true;
+			$a_1to1[$_POST['id']]['disabled'] = true;
 		}
 		if (write_config(gettext("Firewall: NAT: 1:1, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
@@ -216,9 +214,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>" usepost></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 
 					</tr>
@@ -232,11 +230,11 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>" usepost>
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<a href="firewall_nat_1to1_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
+		<a href="firewall_nat_1to1_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>" usepost>
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>

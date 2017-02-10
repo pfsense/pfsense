@@ -1951,7 +1951,10 @@ nv.utils.arrayEquals = function (array1, array2) {
             scale = _;
             axis.scale(scale);
             isOrdinal = typeof scale.rangeBands === 'function';
-            nv.utils.inheritOptionsD3(chart, scale, ['domain', 'range', 'rangeBand', 'rangeBands']);
+
+            //code 'leaks' memory. (builds an ever growing string of the same options..)
+            //nv.utils.inheritOptionsD3(chart, scale, ['domain', 'range', 'rangeBand', 'rangeBands']);
+            nv.utils.inheritOptionsD3(chart, scale, []);
         }}
     });
 

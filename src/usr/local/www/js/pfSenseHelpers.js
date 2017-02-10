@@ -727,11 +727,9 @@ $('a').click(function(e) {
 			}
 		}
 
-		var href = $(this).attr("href");
+		var target = $(this).attr("href").split("?");
 
-		var target = href.split("?");
-
-		postSubmit(get2post(href),target[0]);
+		postSubmit(get2post(target[1]),target[0]);
 		return false;
 	}
 });
@@ -740,8 +738,6 @@ $('a').click(function(e) {
 // parameters such as [[name, fred],[action, delete]]
 function get2post(getargs) {
 	var arglist = new Array();
-
-	getargs = getargs.substring(getargs.indexOf("?") + 1);
 	var argarray = getargs.split('&');
 
 	for (var i=0;i<argarray.length;i++) {

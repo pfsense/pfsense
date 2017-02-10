@@ -179,7 +179,7 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
 }
 
-if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
+if (isset($_POST['save']) && is_array($_POST) && count($_POST) > 0) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

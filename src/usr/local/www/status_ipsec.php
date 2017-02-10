@@ -126,7 +126,13 @@ function print_ipsec_body() {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 				$ipsecconnected[$ph1idx] = $ph1idx;
 			} else {
-				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				if (!ipsec_ikeid_used($con_id)) {
+					// probably a v2 with split connection then
+					$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+					$ipsecconnected[$ph1idx] = $ph1idx;
+				} else {
+					$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				}
 			}
 
 			print("<tr>\n");

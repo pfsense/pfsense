@@ -39,19 +39,15 @@ if (!is_array($config['openvpn']['openvpn-csc'])) {
 
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-$act = $_GET['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];
 }
 
-if ($_GET['act'] == "del") {
+if ($act == "del") {
 	if (!$a_csc[$id]) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
@@ -63,7 +59,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Client specific override successfully deleted.");
 }
 
-if ($_GET['act'] == "edit") {
+if ($act == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
@@ -127,7 +123,7 @@ if ($_GET['act'] == "edit") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -682,8 +678,8 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -696,7 +692,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
+	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>

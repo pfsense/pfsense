@@ -729,7 +729,9 @@ $('a').click(function(e) {
 
 		var href = $(this).attr("href");
 
-		postSubmit(get2post(href));
+		var target = href.split("?");
+
+		postSubmit(get2post(href),target[0]);
 		return false;
 	}
 });
@@ -752,11 +754,12 @@ function get2post(getargs) {
 }
 
 // Create a form, add, the POST data and submit it
-function postSubmit(data) {
+function postSubmit(data, target) {
 
     var form = $(document.createElement('form'));
 
     $(form).attr("method", "POST");
+    $(form).attr("action", target);
 
     for (var i=0;i<data.length;i++) {
 		var input = $("<input>").attr("type", "hidden").attr("name", data[i][0]).val(data[i][1]);

@@ -385,8 +385,7 @@ if ($_POST) {
 
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$mymac = arp_get_mac_by_ip($ip, false);
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';
@@ -427,7 +426,9 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
-$group->add($btnmymac);
+if (!empty($mymac)) {
+	$group->add($btnmymac);
+}
 $group->setHelp('MAC address (6 hex octets separated by colons)');
 $section->add($group);
 

@@ -39,19 +39,15 @@ if (!is_array($config['openvpn']['openvpn-csc'])) {
 
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-$act = $_GET['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];
 }
 
-if ($_GET['act'] == "del") {
+if ($act == "del") {
 	if (!$a_csc[$id]) {
 		pfSenseHeader("vpn_openvpn_csc.php");
 		exit;
@@ -63,7 +59,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Client specific override successfully deleted.");
 }
 
-if ($_GET['act'] == "edit") {
+if ($act == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
@@ -127,7 +123,7 @@ if ($_GET['act'] == "edit") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -367,36 +363,37 @@ if ($act == "new" || $act == "edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). ' .
-		    '<br />' .
-		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. ' .
-		    '<br />' .
-		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.');
+	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). %1$s' .
+		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. %1$s' .
+		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
 		'IPv6 Tunnel Network',
 		'text',
 		$pconfig['tunnel_networkv6']
-	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). ' .
-		    '<br />' .
-		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ');
+	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). %1$s' .
+		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'local_network',
 		'IPv4 Local Network/s',
 		'text',
 		$pconfig['local_network']
-	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. ' . '<br />' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. %1$s' .
+		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'local_networkv6',
 		'IPv6 Local Network/s',
 		'text',
 		$pconfig['local_networkv6']
-	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.' . '<br />' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.%1$s' .
+		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -404,8 +401,9 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_network']
 	))->setHelp('These are the IPv4 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-		    'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.');
+		    'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.%1$s' .
+		    'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.',
+			'<br />');
 
 	$section->addInput(new Form_Input(
 		'remote_networkv6',
@@ -413,8 +411,9 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv6 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
+		    'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.%1$s' .
+		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.',
+			'<br />');
 
 	$section->addInput(new Form_Checkbox(
 		'gwredir',
@@ -578,8 +577,9 @@ if ($act == "new" || $act == "edit"):
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. ' . '<br />' .
-				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ');
+	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. %1$s' .
+				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ',
+				'<br />');
 
 	// The hidden fields
 	$section->addInput(new Form_Input(
@@ -678,8 +678,8 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -692,7 +692,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
+	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>

@@ -48,20 +48,20 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (is_numericint($_GET['p1index'])) {
-	$p1index = $_GET['p1index'];
+if (is_numericint($_POST['p1index'])) {
+	$p1index = $_POST['p1index'];
 }
 if (isset($_POST['p1index']) && is_numericint($_POST['p1index'])) {
 	$p1index = $_POST['p1index'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$p1index = $_GET['dup'];
+if (is_numericint($_POST['dup'])) {
+	$p1index = $_POST['dup'];
 }
 
 if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
-	if (!isset($_GET['dup']) || !is_numericint($_GET['dup'])) {
+	if (!isset($_POST['dup']) || !is_numericint($_POST['dup'])) {
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
 	}
 
@@ -160,17 +160,17 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
-	if ($_GET['mobile']) {
+	if ($_POST['mobile']) {
 		$pconfig['mobile'] = true;
 		$pconfig['mode'] = "aggressive";
 	}
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
 	unset($p1index);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

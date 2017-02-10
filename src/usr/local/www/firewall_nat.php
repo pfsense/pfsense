@@ -74,41 +74,41 @@ if (array_key_exists('order-store', $_POST)) {
 }
 
 /* if a custom message has been passed along, lets process it */
-if ($_GET['savemsg']) {
-	$savemsg = $_GET['savemsg'];
+if ($_POST['savemsg']) {
+	$savemsg = $_POST['savemsg'];
 }
 
 if ($_POST) {
 	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-
-		$retval = 0;
-
-		$retval |= filter_configure();
-
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
-
-	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_nat[$_GET['id']]) {
+if ($_POST['apply']) {
 
-		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
-			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
+	$retval = 0;
+
+	$retval |= filter_configure();
+
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
+
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
+	}
+
+}
+
+if ($_POST['act'] == "del") {
+	if ($a_nat[$_POST['id']]) {
+
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			delete_id($a_nat[$_POST['id']]['associated-rule-id'], $config['filter']['rule']);
 			$want_dirty_filter = true;
 		}
-		unset($a_nat[$_GET['id']]);
+		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
 		$a_separators = &$config['nat']['separator'];
-		$ridx = $_GET['id'];
+		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
@@ -156,19 +156,19 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
-} else if ($_GET['act'] == "toggle") {
-	if ($a_nat[$_GET['id']]) {
-		if (isset($a_nat[$_GET['id']]['disabled'])) {
-			unset($a_nat[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_nat[$_POST['id']]) {
+		if (isset($a_nat[$_POST['id']]['disabled'])) {
+			unset($a_nat[$_POST['id']]['disabled']);
 			$rule_status = true;
 		} else {
-			$a_nat[$_GET['id']]['disabled'] = true;
+			$a_nat[$_POST['id']]['disabled'] = true;
 			$rule_status = false;
 		}
 
 		// Check for filter rule associations
-		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
-			toggle_id($a_nat[$_GET['id']]['associated-rule-id'],
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			toggle_id($a_nat[$_POST['id']]['associated-rule-id'],
 			    $config['filter']['rule'], $rule_status);
 			unset($rule_status);
 			mark_subsystem_dirty('filter');
@@ -289,7 +289,7 @@ foreach ($a_nat as $natent):
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
@@ -331,7 +331,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['src'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -348,7 +348,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -366,7 +366,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -383,7 +383,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -400,7 +400,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['target'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -418,7 +418,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['targetport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['targetport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['targetport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['targetport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['targetport'])?>" data-html="true" usepost>
 <?php
 	endif;
 ?>
@@ -436,9 +436,9 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>" usepost></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -458,11 +458,11 @@ if ($seprows[$nnats]) {
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>" usepost>
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>" usepost>
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>

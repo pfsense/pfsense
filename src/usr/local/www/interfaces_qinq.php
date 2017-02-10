@@ -48,8 +48,8 @@ function qinq_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	$id = $_GET['id'];
+if ($_POST['act'] == "del") {
+	$id = $_POST['id'];
 
 	/* check if still in use */
 	if (qinq_inuse($id)) {
@@ -133,8 +133,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($qinq['descr'])?>&nbsp;
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -147,7 +147,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_qinq_edit.php" class="btn btn-success btn-sm">
+	<a href="interfaces_qinq_edit.php" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -700,9 +700,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 
 // The scripts that follow are an EXPERIMENT in using jQuery/Javascript to automatically convert
 // GET calls to POST calls
-// Any anchor with the attribute "usepost" usses these functions. In this file "Edit user", "Delete user" and "Add"
-// have that attribute
-// These function can be moved to an included file
+// Any anchor with the attribute "usepost" usses these functions.
 
 // Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
 // to POST format, make a POST form and submit it
@@ -711,10 +709,27 @@ $('a').click(function(e) {
 	var attr = $(this).attr('usepost');
 
 	if (typeof attr !== typeof undefined && attr !== false) {
-		var href = $(this).attr("href");
+		// Automatically apply a confirmation dialog to "Delete" icons
+		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
+		   ($(this).hasClass('fa-trash'))) {
+			var msg = $.trim(this.textContent).toLowerCase();
 
-		postSubmit(get2post(href));
+			if (!msg)
+				var msg = $.trim(this.value).toLowerCase();
 
+			var q = 'Are you sure you wish to '+ msg +'?';
+
+			if ($(this).attr('title') != undefined)
+				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+			if (!confirm(q)) {
+				return false;
+			}
+		}
+
+		var target = $(this).attr("href").split("?");
+
+		postSubmit(get2post(target[1]),target[0]);
 		return false;
 	}
 });
@@ -723,8 +738,6 @@ $('a').click(function(e) {
 // parameters such as [[name, fred],[action, delete]]
 function get2post(getargs) {
 	var arglist = new Array();
-
-	getargs = getargs.substring(getargs.indexOf("?") + 1);
 	var argarray = getargs.split('&');
 
 	for (var i=0;i<argarray.length;i++) {
@@ -737,11 +750,12 @@ function get2post(getargs) {
 }
 
 // Create a form, add, the POST data and submit it
-function postSubmit(data) {
+function postSubmit(data, target) {
 
     var form = $(document.createElement('form'));
 
     $(form).attr("method", "POST");
+    $(form).attr("action", target);
 
     for (var i=0;i<data.length;i++) {
 		var input = $("<input>").attr("type", "hidden").attr("name", data[i][0]).val(data[i][1]);
@@ -749,7 +763,7 @@ function postSubmit(data) {
     }
 
 	// The CSRF magic is required because we will be viewing the results of the POST
-	var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val($('[name=__csrf_magic]').val());
+	var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val(csrfMagicToken);
 	$(form).append($(input));
 
     $(form).appendTo('body').submit();

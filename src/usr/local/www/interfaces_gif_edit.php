@@ -33,13 +33,8 @@ if (!is_array($config['gifs']['gif'])) {
 }
 
 $a_gifs = &$config['gifs']['gif'];
+$id = $_POST['id'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
 
 if (isset($id) && $a_gifs[$id]) {
 	$pconfig['if'] = $a_gifs[$id]['if'];
@@ -56,7 +51,7 @@ if (isset($id) && $a_gifs[$id]) {
 	$pconfig['descr'] = $a_gifs[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

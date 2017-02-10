@@ -34,13 +34,7 @@ if (!is_array($config['gres']['gre'])) {
 }
 
 $a_gres = &$config['gres']['gre'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_POST['id'];
 
 if (isset($id) && $a_gres[$id]) {
 	$pconfig['if'] = $a_gres[$id]['if'];
@@ -55,7 +49,7 @@ if (isset($id) && $a_gres[$id]) {
 	$pconfig['descr'] = $a_gres[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

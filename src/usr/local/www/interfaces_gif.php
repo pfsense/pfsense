@@ -47,17 +47,17 @@ function gif_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	if (!isset($_GET['id'])) {
+if ($_POST['act'] == "del") {
+	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gifs[$_GET['id']])) {
+	} else if (empty($a_gifs[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (gif_inuse($_GET['id'])) {
+	} else if (gif_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gifs[$_GET['id']]['gifif']);
-		unset($a_gifs[$_GET['id']]);
+		pfSense_interface_destroy($a_gifs[$_POST['id']]['gifif']);
+		unset($a_gifs[$_POST['id']]);
 
 		write_config();
 
@@ -113,8 +113,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($gif['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>
@@ -125,7 +125,7 @@ display_top_tabs($tab_array);
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_gif_edit.php" class="btn btn-success btn-sm">
+	<a href="interfaces_gif_edit.php" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

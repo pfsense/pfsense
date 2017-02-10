@@ -1,5 +1,4 @@
-# Jack Brennan <social@sourcenix.com>, 2017. #zanata
-# Knut Edvard Klock <knut@netgate.com>, 2017. #zanata
+# Bruno Almeida <balmeida@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -8,10 +7,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-08 08:20-0500\n"
-"Last-Translator: Knut Edvard Klock <knut@netgate.com>\n"
-"Language-Team: Norwegian Bokmål\n"
-"Language: nb\n"
+"PO-Revision-Date: 2017-02-09 09:55-0500\n"
+"Last-Translator: Bruno Almeida <balmeida@gmail.com>\n"
+"Language-Team: Portuguese (Portugal)\n"
+"Language: pt-PT\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
@@ -21,230 +20,227 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Et potensielt \"DNS Rebind\" angrep oppdaget, se http://en.wikipedia.org/"
-"wiki/DNS_rebinding<br /> Prøv å koble til ruteren ved å benytte IP-adressen "
-"i stedet for hostnavnet."
+"Detectado potencial ataque DNS Rebind, consulte em http://en.wikipedia.org/"
+"wiki/DNS_rebinding <br /> Tente acessar o roteador por endereço IP em vez de "
+"por hostname."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Videresender..."
+msgstr "Redireccionando..."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Videresender til dashbordet..."
+msgstr "Redireccionando para o painel..."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Kjører: %s"
+msgstr "Correndo: %s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FEIL! Kan ikke koble til serveren %s."
+msgstr "ERRO!  Não foi possível conectar ao servidor %s."
 
 #: src/etc/inc/auth.inc:838
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr ""
-"LDAP: Kunne ikke gjøre oppslag mot sertifikat-autoritet (CA) ved bruk av "
-"referanse for host %s"
+msgstr "LDAP: Não foi possivel pesquisar CA pela referencia para host %s."
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr ""
-"FEIL! ldap_test_bind() kunne ikke koble opp med STARTTLS til server %s"
+msgstr "ERRO! ldap_test_bind() Não foi possível iniciar TLS no servidor %s."
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FEIL! ldap_get_user_ous() ingen LDAP Autentisering server spesifisert "
+"ERRO!  ldap_get_user_ous() suporte seleccionado com LDAP sem autenticação "
+"definida no servidor."
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
-"FEIL! ldap_get_user_ous() kunne ikke koble opp med STARTTLS til server %s"
+"ERRO! ldap_get_user_ous() não foi possível iniciar TLS para o servidor%s."
 
 #: src/etc/inc/auth.inc:1013
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
-msgstr "FEIL! ldap_get_user_ous() kunne ikke koble anonymt til server %s."
+msgstr ""
+"ERRO! ldap_get_user_ous() não foi possível ligar anonimamente ao servidor %s."
+""
 
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "FEIL! ldap_get_user_ous() kunne ikke binde til server %s."
+msgstr "ERRO! ldap_get_user_ous() não foi possível ligar ao servidor %s."
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "FEIL! ldap_get_groups() Kunne ikke koble til server %s."
+msgstr "ERRO! ldap_get_groups() Não foi possível conectar ao servidor %s."
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
-"FEIL! ldap_get_groups() kunne ikke koble opp med STARTTLS til server %s."
+"ERRO! ldap_get_groups() não foi possível iniciar TLS para o servidor%s."
 
 #: src/etc/inc/auth.inc:1157
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr "FEIL! ldap_get_groups() kunne ikke binde anonymt til server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1162
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "FEIL! ldap_get_groups() kunne ikke binde til server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1268
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FEIL! ldap_backed() kall med ingen LDAP autentiseringsserver definert. "
-"Bytter til lokal brukerdatabase. Besøk System -> Brukerhåndtering"
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
-msgstr "FEIL! ldap_backed() kall med ingen LDAP autentiseringsserver definert"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1294
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr "FEIL! ldap_backed() kunne ikke koble opp med STARTTLS til server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "FEIL! Kunne ikke binde til server %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Søker i mappen for %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Søker nå på server %1$s, container %2$s med filter %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "En feil har oppstått med søket: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
-"FEIL! Enten LDAP søket feilet eller søket returnerte mer enn 1 bruker."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "FEIL! Kunne ikke logge på server %1$s som bruker %2$s: %3$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Pålogging velykket som %1$s via LDAP server %2$s med DN = %3$s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
 msgid "RADIUS start: %s"
-msgstr "RADIUS Start: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr "RADIUS Mislyktes: %s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Autentisering vellykket"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Auth ikke godkjent"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Widget konfigurasjonen har blitt endret"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Bruker %s)"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Lokal Database"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Vellykket pålogging for bruker '%1$s' fra: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Utløpt sesjon for bruker '%1$s' fra: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr "Bruker logget ut for bruker '%1$s' fra: %2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
-msgstr "Ingen side tildelt denne brukeren! Klikk her for å logge ut."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Feil: %1$s Forklaring: %2$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr "Feil: Ikke tillatt"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr "Årsak ukjent"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Ugyldig innlogging (%s)"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Enheten er foreløpig vedlikeholdt av: %s."
+msgstr ""
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr "Pålogging til %1$s på %2$s.%3$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr "Logg på %1$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr "Logg på"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -253,15 +249,10 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
-"IP-adressen som brukes for å få tilgang til denne ruteren er ikke "
-"konfigurert lokalt, den kan ha blitt videresendt fra NAT eller via andre "
-"måter.<br />\n"
-"<br />Hvis denne videresending er uventet, bør det bekreftes at en mann-in-"
-"the-middle angrep ikke har funnet sted."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr "Nettleseren må støtte Informasjonskapseler"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -284,11 +275,11 @@ msgstr "Nettleseren må støtte Informasjonskapseler"
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr "Brukernavn"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr "Skriv inn ditt Brukernavn"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:568
 #: src/usr/local/www/diag_backup.php:615 src/usr/local/www/interfaces.php:2539
@@ -313,83 +304,82 @@ msgstr "Skriv inn ditt Brukernavn"
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr "Passord"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr "Skriv inn ditt Passord"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s Captive Portal"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "Velkommen til %s Captive Portal"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "Brukernavn:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Passord:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "Oppgi kupongkode:"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr "Fortsett"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "Videresender til"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr "Logg ut"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr "Klikk på knappen under for å koble fra"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Feil: Kan ikke åpne '%1$s' i captiveportal_write_elements()%2$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr "ADVARSEL!  WARNING!  ACHTUNG!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s krever *MINIMUM* %2$s RAM for å fungere fullstendig.%3$s"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
 msgstr ""
-"Kun (%1$s) MB RAM har blitt oppdaget, med (%2$s) tilgjengelig til %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr "Press ENTER for å fortsette"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr "Ingen grensesnitt funnet!"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr "Vill du sette opp VLAN først?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -397,10 +387,6 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Hvis VLAN ikke vil bli brukt, eller bare for valgfrie porter, er det vanlig "
-"å\n"
-"si nei her og bruker webConfigurator til å konfigurere VLAN senere, om "
-"nødvendig."
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
@@ -446,7 +432,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr "Valgfritt"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
@@ -454,11 +440,11 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr "Ønsker du å fortsette [y|n]?"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr "Du har valgt å fjerne LAN porten."
+msgstr ""
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
@@ -34552,27 +34538,27 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:540
 msgid "Infinitely resolve server "
-msgstr "Trinnløs beslutning om server"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:620
 #: src/usr/local/www/vpn_openvpn_server.php:756
 msgid "Use a TLS Key"
-msgstr "Bruk en TLS Nøkkel"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:630
 #: src/usr/local/www/vpn_openvpn_server.php:766
 msgid "Automatically generate a TLS Key."
-msgstr "Auto generere en TLS Nøkkel"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:686
 #: src/usr/local/www/vpn_openvpn_server.php:877
 msgid "Automatically generate a shared key"
-msgstr "Auto generere en delt nøkkel"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:715
 #: src/usr/local/www/vpn_openvpn_server.php:898
 msgid "Enable Negotiable Cryptographic Parameters"
-msgstr "Aktiver Forhandlingsbar Kryptografiske parametere"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:839
 #: src/usr/local/www/vpn_openvpn_server.php:1095
@@ -34580,50 +34566,46 @@ msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
 "packet value."
 msgstr ""
-"Sett TOS IP header verdi av tunnel pakker for å matche den innkapslede pakke "
-"verdien."
 
 #: src/usr/local/www/vpn_openvpn_client.php:846
 msgid "Bars the server from adding routes to the client's routing table"
-msgstr "Barer serveren fra å legge ruter til klientens ruting tabellen"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:853
 msgid "Don't add or remove routes automatically"
-msgstr "Ikke legge til eller fjerne ruter automatisk"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:336
 msgid "Disable this override"
-msgstr "Deaktiver denne overstyringen"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:357
 msgid "Block this client connection based on its common name."
-msgstr "Blokkere denne klientens tilkobling basert på sitt nettverksnavn."
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:425
 #: src/usr/local/www/vpn_openvpn_server.php:1028
 msgid "Force all client generated traffic through the tunnel."
-msgstr "Tving alt av klient generert trafikk gjennom tunnelen."
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:437
 msgid ""
 "Prevent this client from receiving any server-defined client settings. "
 msgstr ""
-"Forhindre at denne klienten i å motta alle server-definerte "
-"klientinnstillinger ."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:505
 #: src/usr/local/www/vpn_openvpn_server.php:1212
 msgid "Provide an NTP server list to clients"
-msgstr "Angi en NTP server liste til klienter"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:533
 #: src/usr/local/www/vpn_openvpn_server.php:1233
 msgid "Enable NetBIOS over TCP/IP"
-msgstr "Aktiver NetBIOS over TCP / IP"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:674
 msgid "Disable this server"
-msgstr "Deaktiver denne serveren"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:965
 msgid "Enforce match"
@@ -34631,61 +34613,48 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:996
 msgid "Allow clients on the bridge to obtain DHCP."
-msgstr "Tillater at klienter i broen til å få DHCP."
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1088
 msgid "Push the selected Compression setting to connecting clients."
-msgstr "Push den valgte Komprimering innstillingen til på koblete klienter"
+msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1102
 msgid "Allow communication between clients connected to this server"
 msgstr ""
-"Tillate kommunikasjon mellom klienter som er koblet til denne serveren"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1109
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
-"Tillat flere samtidige tilkoplinger fra klienter som bruker samme "
-"nettverksnavn."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1121
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
-"Tillat tilkoblede klienter til å beholde sine forbindelser dersom deres IP-"
-"adressen endres."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1128
 msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
 msgstr ""
-"Gi det virtuelle adapteret en IP-adresse til klienter (se Tunnel Nettverk)."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1163
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
-"Oppgi en liste med DNS-Servere til klientene. Adressene kan både være IPv4 "
-"eller IPv6."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1198
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
-"Tving Windows 10 klienter til å blokker tilgang til lokale DNS-Servere når "
-"tilkoblet med VPN, Dette tvinger klientene til å  bare bruke di DNS-Serverne "
-"som er oppgitt av OpenVPN Serveren den er koblet til."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1205
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
-"Kjør \"net stop dnscache\", \"net start dnscache\", \"ipconfig / flushdns\" "
-"og \"ipconfig / registerdns\" ved tilkobling start"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1278
 msgid "Use a different management port for clients."
-msgstr "Bruk en annen port for klient administrasjon"
+msgstr ""

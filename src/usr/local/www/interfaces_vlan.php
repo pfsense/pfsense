@@ -161,9 +161,9 @@ display_top_tabs($tab_array);
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" usepost></a>
 <!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -177,7 +177,7 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
+		<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php" usepost>
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext('Add'); ?>
 		</a>

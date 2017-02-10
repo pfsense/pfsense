@@ -56,21 +56,17 @@ if (!is_array($config['nat']['onetoone'])) {
 
 $a_1to1 = &$config['nat']['onetoone'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-$after = $_GET['after'];
 if (isset($_POST['after'])) {
 	$after = $_POST['after'];
 }
 
-if (isset($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_POST['dup'])) {
+	$id = $_POST['dup'];
+	$after = $_POST['dup'];
 }
 
 if (isset($id) && $a_1to1[$id]) {
@@ -97,11 +93,11 @@ if (isset($id) && $a_1to1[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_POST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	/*	run through $_POST items encoding HTML entities so that the user

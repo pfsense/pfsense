@@ -54,17 +54,17 @@ function lagg_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	if (!isset($_GET['id'])) {
+if ($_POST['act'] == "del") {
+	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_laggs[$_GET['id']])) {
+	} else if (empty($a_laggs[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (lagg_inuse($_GET['id'])) {
+	} else if (lagg_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
-		pfSense_interface_destroy($a_laggs[$_GET['id']]['laggif']);
-		unset($a_laggs[$_GET['id']]);
+		pfSense_interface_destroy($a_laggs[$_POST['id']]['laggif']);
+		unset($a_laggs[$_POST['id']]);
 
 		write_config();
 
@@ -125,8 +125,8 @@ foreach ($a_laggs as $lagg) {
 							<?=htmlspecialchars($lagg['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -140,7 +140,7 @@ foreach ($a_laggs as $lagg) {
 </div>
 
  <nav class="action-buttons">
-	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm">
+	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

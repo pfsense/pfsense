@@ -48,17 +48,17 @@ function gre_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	if (!isset($_GET['id'])) {
+if ($_POST['act'] == "del") {
+	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_gres[$_GET['id']])) {
+	} else if (empty($a_gres[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (gre_inuse($_GET['id'])) {
+	} else if (gre_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
-		pfSense_interface_destroy($a_gres[$_GET['id']]['greif']);
-		unset($a_gres[$_GET['id']]);
+		pfSense_interface_destroy($a_gres[$_POST['id']]['greif']);
+		unset($a_gres[$_POST['id']]);
 
 		write_config();
 
@@ -119,8 +119,8 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($gre['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php endforeach; ?>
@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_gre_edit.php" class="btn btn-success btn-sm">
+	<a href="interfaces_gre_edit.php" class="btn btn-success btn-sm" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -50,7 +50,7 @@ $pconfig['n_l2tp_units'] = $l2tpcfg['n_l2tp_units'];
 $pconfig['paporchap'] = $l2tpcfg['paporchap'];
 $pconfig['secret'] = $l2tpcfg['secret'];
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -218,9 +218,9 @@ $section->addInput(new Form_Input(
 	'*Server address',
 	'text',
 	$pconfig['localip']
-))->setHelp('Enter the IP address the L2TP server should give to clients for use as their "gateway". ' . '<br />' .
-			'Typically this is set to an unused IP just outside of the client range.' . '<br /><br />' .
-			'NOTE: This should NOT be set to any IP address currently in use on this firewall.');
+))->setHelp('Enter the IP address the L2TP server should give to clients for use as their "gateway". %1$s' .
+			'Typically this is set to an unused IP just outside of the client range.%1$s%1$s' .
+			'NOTE: This should NOT be set to any IP address currently in use on this firewall.', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'remoteip',

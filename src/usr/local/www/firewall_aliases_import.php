@@ -231,7 +231,7 @@ if ($tab == "port") {
 		'import separated by a carriage return. Common examples are lists of IPs, ' .
 		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
 		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
-		'each IP. e.g.:') . 
+		'each IP. e.g.:') .
 		'</span><ul><li>' .
 		'172.16.1.2' .
 		'</li><li>' .

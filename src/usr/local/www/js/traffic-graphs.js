@@ -90,7 +90,6 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 			charts[value].interactiveLayer.tooltip.contentGenerator(function(data) {
 
 				var units = 'b/s';
-				console.log(localStorage.getItem('size'));
 				if(localStorage.getItem('size') === "1") {
 					units = 'B/s'
 				}
@@ -197,7 +196,15 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 				myData[key][0].values.shift();
 				myData[key][1].values.shift();
 
-				charts[key].update();			
+				if (!Visibility.hidden()) {
+					/*
+					 * don't draw graph when tab is not
+					 * visible. This also prevents lots of
+					 * timers stacking up waiting for a
+					 * frame update.
+					 */
+					charts[key].update();
+				}
 
 			});
 

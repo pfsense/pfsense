@@ -487,7 +487,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -533,7 +533,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$certhtml .= '</nav>';
 
 	return($certhtml);

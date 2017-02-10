@@ -41,10 +41,7 @@ if (!is_array($config['ipsec']['mobilekey'])) {
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
+if (is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
@@ -54,7 +51,7 @@ if (isset($id) && $a_secret[$id]) {
 	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	$userids = array();
 	foreach ($config['system']['user'] as $uid => $user) {
 		$userids[$user['name']] = $uid;

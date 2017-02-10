@@ -52,23 +52,17 @@ if (!is_array($config['nat']['rule'])) {
 
 $a_nat = &$config['nat']['rule'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
 if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
+	$id = $_POST['dup'];
+	$after = $_POST['dup'];
 }
 
 if (isset($id) && $a_nat[$id]) {
@@ -110,7 +104,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['srcendport'] = "any";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
 	unset($id);
 }
 
@@ -127,7 +121,7 @@ foreach ($_POST as $key => $value) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	if (strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
@@ -907,7 +901,7 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
+if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
@@ -920,7 +914,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 
 				if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
-					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
+					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '" usepost>' . gettext("View the filter rule") . '</a><br />';
 				}
 			}
 		}

@@ -687,7 +687,7 @@ $section = new Form_Section('Properties');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.

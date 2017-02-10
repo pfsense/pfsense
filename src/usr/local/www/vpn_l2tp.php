@@ -50,7 +50,7 @@ $pconfig['n_l2tp_units'] = $l2tpcfg['n_l2tp_units'];
 $pconfig['paporchap'] = $l2tpcfg['paporchap'];
 $pconfig['secret'] = $l2tpcfg['secret'];
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

@@ -783,7 +783,7 @@ $group->add(new Form_Select(
 	null,
 	$pconfig['ealgo']['name'],
 	build_eal_list()
-));
+))->setHelp('Note: Blowfish, 3DES, and CAST128 provide weak security and should not be used.');
 
 $group->add(new Form_Select(
 	'ealgo_keylen',
@@ -799,14 +799,14 @@ $section->addInput(new Form_Select(
 	'Hash Algorithm',
 	$pconfig['halgo'],
 	$p1_halgos
-))->setHelp('Must match the setting chosen on the remote side.');
+))->setHelp('Note: MD5 and SHA1 provide weak security and should not be used. Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Select(
 	'dhgroup',
 	'DH Group',
 	$pconfig['dhgroup'],
 	$p1_dhgroups
-))->setHelp('Must match the setting chosen on the remote side.');
+))->setHelp('Note: groups 1, 2, 22, 23, and 24 provide weak security and should not be used. Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Input(
 	'lifetime',

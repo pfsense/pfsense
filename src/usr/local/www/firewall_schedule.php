@@ -47,12 +47,12 @@ if (!is_array($config['schedules']['schedule'])) {
 
 $a_schedules = &$config['schedules']['schedule'];
 
-if ($_GET['act'] == "del") {
-	if ($a_schedules[$_GET['id']]) {
+if ($_POST['act'] == "del") {
+	if ($a_schedules[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */
 		$is_schedule_referenced = false;
 		$referenced_by = false;
-		$schedule_name = $a_schedules[$_GET['id']]['name'];
+		$schedule_name = $a_schedules[$_POST['id']]['name'];
 
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $rule) {
@@ -68,7 +68,7 @@ if ($_GET['act'] == "del") {
 		if ($is_schedule_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
 		} else {
-			unset($a_schedules[$_GET['id']]);
+			unset($a_schedules[$_POST['id']]);
 			write_config();
 			header("Location: firewall_schedule.php");
 			exit;
@@ -223,8 +223,8 @@ foreach ($a_schedules as $schedule):
 					</td>
 
 					<td>
-						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>" usepost></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>" usepost></a>
 
 					</td>
 				</tr>
@@ -240,7 +240,7 @@ endforeach;
 <?=($i > 0) ? CLOCK . gettext(' Indicates that the schedule is currently active.'):''?>
 
 <nav class="action-buttons">
-	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
+	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success" usepost>
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -1101,7 +1101,7 @@ function expand_icmptype($icmptype, $ipprotocol, & $result, $invalid_proto_actio
 	} elseif ($invalid_proto_action != 'unset') {
 		// ipprotocol undefined or invalid, force value to whatever we were passed, should be inet4/6/46
 		$result = implode(',', $icmptypes[$invalid_proto_action]['icmptypes']);
-	? else {
+	} else {
 		// ipprotocol undefined or invalid and  $invalid_proto_action is 'unset'
 		unset($result);
 	}

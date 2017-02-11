@@ -1801,7 +1801,7 @@ function session_auth() {
 	if (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
-			$_GET['logout'] = true;
+			$_POST['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else {
 			$_SESSION['last_access'] = time();
@@ -1814,7 +1814,7 @@ function session_auth() {
 	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {
-			$_GET['logout'] = true;
+			$_POST['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else {
 			/* only update if it wasn't ajax */
@@ -1825,7 +1825,7 @@ function session_auth() {
 	}
 
 	/* user hit the logout button */
-	if (isset($_GET['logout'])) {
+	if (isset($_POST['logout'])) {
 
 		if ($_SESSION['Logout']) {
 			log_error(sprintf(gettext("Session timed out for user '%1\$s' from: %2\$s"), $_SESSION['Username'], $_SERVER['REMOTE_ADDR']));

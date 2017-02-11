@@ -63,10 +63,6 @@ if (!is_array($config['schedules']['schedule'])) {
 
 $a_schedules = &$config['schedules']['schedule'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -79,7 +75,7 @@ if (isset($id) && $a_schedules[$id]) {
 	$getSchedule = true;
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	if (strtolower($_POST['name']) == "lan") {
 		$input_errors[] = gettext("Schedule may not be named LAN.");

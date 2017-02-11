@@ -335,7 +335,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['source'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
 <?php
 	if (isset($alias['src'])):
 ?>
@@ -352,7 +352,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['source']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
 <?php
 	if (isset($alias['srcport'])):
 ?>
@@ -370,7 +370,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['destination'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
 <?php
 	if (isset($alias['dst'])):
 ?>
@@ -387,7 +387,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
 <?php
 	if (isset($alias['dstport'])):
 ?>
@@ -405,7 +405,7 @@ foreach ($a_nat as $natent):
 	endif;
 ?>
 
-							<?=str_replace('_', ' ', htmlspecialchars($natent['target']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target']))?>
 <?php
 	if (isset($alias['target'])):
 ?>
@@ -422,7 +422,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($localport)))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
 <?php
 	if (isset($alias['targetport'])):
 ?>

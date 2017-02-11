@@ -386,3 +386,5 @@ if (is_dir($output_path)) {
 }
 
 print(gettext("Done."));
+
+include("foot.inc");

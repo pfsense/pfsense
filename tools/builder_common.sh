@@ -221,7 +221,7 @@ print_error_pfS() {
 
 prestage_on_ram_setup() {
 	# Do not use memory disks for release build
-	if [ -n "${_IS_RELEASE}" ]; then
+	if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 		return
 	fi
 

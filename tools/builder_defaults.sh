@@ -276,6 +276,7 @@ export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/free
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"RELENG_2_3"}
 
 unset _IS_RELEASE
+unset _IS_RC
 unset CORE_PKG_DATESTRING
 export TIMESTAMP_SUFFIX="-${DATESTRING}"
 # pkg doesn't like - as version separator, use . instead
@@ -292,6 +293,7 @@ case "${PRODUCT_VERSION##*-}" in
 		export CORE_PKG_DATESTRING=".b.${PKG_DATESTRING}"
 		;;
 	RC*)
+		export _IS_RC=yes
 		export CORE_PKG_DATESTRING=".r.${PKG_DATESTRING}"
 		;;
 	*)
@@ -324,7 +326,7 @@ export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+https://beta.pfsense.
 export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://pkg.pfsense.org"}
 export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://${STAGING_HOSTNAME}/ce/packages"}
 
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-${POUDRIERE_BRANCH}}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-"v2_3"}
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_RELEASE}}

@@ -203,7 +203,7 @@ if (isset($id) && $a_filter[$id]) {
 	}
 
 	if ($a_filter[$id]['protocol'] == "icmp") {
-		$pconfig['icmptype'] = expand_icmptype($a_filter[$id]['icmptype'], $pconfig['ipprotocol']);
+		expand_icmptype($a_filter[$id]['icmptype'], $pconfig['ipprotocol'], $pconfig['icmptype']);
 	}
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
@@ -323,7 +323,7 @@ if ($_POST) {
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
-			$_POST['icmptype'] = expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol']);
+			expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol'], $_POST['icmptype']);
 		}
 	}
 
@@ -914,7 +914,7 @@ if ($_POST) {
 				unset($filterent['protocol']);
 			}
 			if ($a_filter[$id]['protocol'] == "icmp" && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
-				$filterent['icmptype'] = expand_icmptype($a_filter[$id]['icmptype'], $a_filter[$id]['ipprotocol']);
+				expand_icmptype($a_filter[$id]['icmptype'], $a_filter[$id]['ipprotocol'], $filterent['icmptype']);
 			} else {
 				unset($filterent['icmptype']);
 			}
@@ -1084,19 +1084,26 @@ function build_if_list() {
 	return($iflist);
 }
 
-// Expands missing/blank/"all" icmptypes to a list of specific types. Doesn't check validity.
-function expand_icmptype($icmptype, $ipprotocol) {
+/* Expands missing/blank/"all" icmptypes to a list of specific types. 
+ * Doesn't test $icmptype validity beyond: non-empty string => assumed valid, anything else or 'any'=> any icmptype
+ * If IP protocol undefined in existing/associated rule, then 4th arg can be inet4/inet6/inet46 to force its value, 
+ * or 'unset' to unset the output. Output is placed in $result, passed by reference so we can unset() if required
+*/
+function expand_icmptype($icmptype, $ipprotocol, & $result, $invalid_proto_action = 'unset') {
 	global $icmptypes;
-	// if 1st arg is unset (as icmptype can historically be) then value passed is NULL: is_string() suffices to test this as well
+	// if 1st arg was unset (as could happen historically) then it'll be passed as NULL, so is_string() will suffice
 	if (is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
 		// $icmptype appears to contain specific icmptype(s)
-		return $icmptype;
-	} elseif (array_key_exists($ipprotocol, $icmptypes)) {
+		$result = $icmptype;
+	} elseif (is_string($ipprotocol) && array_key_exists($ipprotocol, $icmptypes)) {
 		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
-		return implode(',', $icmptypes[$ipprotocol]['icmptypes']);
-	} else {
-		// ipprotocol undefined or invalid
-		return '';
+		$result = implode(',', $icmptypes[$ipprotocol]['icmptypes']);
+	} elseif ($invalid_proto_action != 'unset') {
+		// ipprotocol undefined or invalid, force value to whatever we were passed, should be inet4/6/46
+		$result = implode(',', $icmptypes[$invalid_proto_action]['icmptypes']);
+	? else {
+		// ipprotocol undefined or invalid and  $invalid_proto_action is 'unset'
+		unset($result);
 	}
 }
 

@@ -1096,7 +1096,26 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 }
 
 $pgtitle[] = gettext("Edit");
-$pglinks[] = "@self";
+$linkref = "firewall_rules_edit.php";
+$special_char = "?";
+if ($if != "") {
+	$linkref .= $special_char . "if=" . $if;
+	$special_char = "&";
+}
+if ($_POST['id'] != "") {
+	$linkref .= $special_char . "id=" . $_POST['id'];
+	$special_char = "&";
+}
+if ($_POST['dup'] != "") {
+	$linkref .= $special_char . "dup=" . $_POST['dup'];
+	$special_char = "&";
+}
+if ($_POST['after'] != "") {
+	$linkref .= $special_char . "after=" . $_POST['after'];
+	$special_char = "&";
+}
+$pglinks[] = $linkref;
+
 $shortcut_section = "firewall";
 
 $page_filename = "firewall_rules_edit.php";

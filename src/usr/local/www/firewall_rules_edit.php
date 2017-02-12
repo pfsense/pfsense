@@ -2086,7 +2086,12 @@ events.push(function() {
 	}
 	echo $out1;
 
-	$initial_icmptypes = (isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : [];
+	// Final GUI-only adjustment - if the rule being edited is an existing ICMP rule or has an associated ICMP rule, and no icmptypes 
+	// are selected (as can happen historically), we render this in the UI as "all selected" rather than requiring user to click "select all"
+	$icmp_str = '';
+	expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol'], $icmp_str);
+	$initial_icmptypes = (isset($icmp_str) && strlen($icmp_str) > 0) ? explode(',', $icmp_str) : [];
+
 	echo "var selected_icmptypes = " . ((count($initial_icmptypes) > 0) ? "['" . implode("', '", $initial_icmptypes) . "'];\n" : "[];\n");
 ?>
 

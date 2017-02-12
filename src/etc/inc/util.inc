@@ -1420,7 +1420,8 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 			}
 		}
 	}
-
+	
+	asort($iflist);
 	return $iflist;
 }
 

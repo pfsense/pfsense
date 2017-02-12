@@ -630,6 +630,9 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
+	
+	//Sort the array by GW name before moving on.
+	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false) {

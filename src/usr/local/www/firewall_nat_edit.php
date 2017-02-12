@@ -583,14 +583,16 @@ function build_dsttype_list() {
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
-
+	
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (is_ipaddrv6($sn['subnet'])) {
 				continue;
 			}
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -601,13 +603,18 @@ function build_dsttype_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+	
+	//Sort temp IP array and append onto main array
+	asort($templist);
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	return($list);
 }

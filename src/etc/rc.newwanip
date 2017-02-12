@@ -200,12 +200,13 @@ if (platform_booting()) {
 if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
 	/* IP changed, kill states accordingly */
 	if ($curwanip != $oldip) {
-		log_error("IP has changed, killing states on former IP $oldip.");
-		pfSense_kill_states($oldip);
 		if (isset($config['system']['ip_change_kill_states'])) {
-			/* hidden config option to wipe all states if needed */
-			log_error("Killing all states post-IP change.");
+			log_error("IP has changed, killing all states (ip_change_kill_states is set).");
+			pfSense_kill_states($oldip);
 			filter_flush_state_table();
+		} else {
+			log_error("IP has changed, killing states on former IP $oldip.");
+			pfSense_kill_states($oldip);
 		}
 	}
 

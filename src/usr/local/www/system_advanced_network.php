@@ -46,6 +46,7 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
+$pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']);
 
 if ($_POST) {
 
@@ -122,6 +123,12 @@ if ($_POST) {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
 			unset($config['system']['disablelargereceiveoffloading']);
+		}
+
+		if ($_POST['ip_change_kill_states'] == "yes") {
+			$config['system']['ip_change_kill_states'] = true;
+		} else {
+			unset($config['system']['ip_change_kill_states']);
 		}
 
 		setup_microcode();
@@ -273,6 +280,15 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['sharednet'])
 ))->setHelp('This option will suppress ARP log messages when multiple interfaces '.
 	'reside on the same broadcast domain.');
+
+$section->addInput(new Form_Checkbox(
+	'ip_change_kill_states',
+	'Reset all states',
+	'Reset all states if WAN IP changes',
+	isset($pconfig['ip_change_kill_states'])
+))->setHelp('This option will reset all states if a WAN IP changes instead of only '.
+    'reset states associated to old IP. This can help to kill zombie states associated '.
+    'to outdate WAN IPs when WAN IPs change too often.');
 
 if (get_freebsd_version() == 8) {
 	$section->addInput(new Form_Checkbox(

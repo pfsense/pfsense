@@ -1052,9 +1052,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 			// echo "<option onclick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
 			echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
 		}
-//		var target = $(this).attr("href").split("?");
-
-//		postSubmit(get2post(target[1]),target[0]);
 
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";

@@ -48,173 +48,173 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if ($_POST) {
-	if ($_POST['apply']) {
-		$ipsec_dynamic_hosts = vpn_ipsec_configure();
-		/* reload the filter in the background */
-		$retval = 0;
-		$retval |= filter_configure();
-		if ($ipsec_dynamic_hosts >= 0) {
-			if (is_subsystem_dirty('ipsec')) {
-				clear_subsystem_dirty('ipsec');
+
+if ($_POST['apply']) {
+	$ipsec_dynamic_hosts = vpn_ipsec_configure();
+	/* reload the filter in the background */
+	$retval = 0;
+	$retval |= filter_configure();
+	if ($ipsec_dynamic_hosts >= 0) {
+		if (is_subsystem_dirty('ipsec')) {
+			clear_subsystem_dirty('ipsec');
+		}
+	}
+} else if (isset($_POST['del'])) {
+	/* delete selected p1 entries */
+	if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
+		foreach ($_POST['p1entry'] as $p1entrydel) {
+			unset($a_phase1[$p1entrydel]);
+		}
+		if (write_config()) {
+			mark_subsystem_dirty('ipsec');
+		}
+	}
+} else if (isset($_POST['delp2'])) {
+	/* delete selected p2 entries */
+	if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+		foreach ($_POST['p2entry'] as $p2entrydel) {
+			unset($a_phase2[$p2entrydel]);
+		}
+		if (write_config()) {
+			mark_subsystem_dirty('ipsec');
+		}
+	}
+} else  {
+	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
+
+	// TODO: this. is. nasty.
+	unset($delbtn, $delbtnp2, $movebtn, $movebtnp2, $togglebtn, $togglebtnp2);
+	foreach ($_POST as $pn => $pd) {
+		if (preg_match("/del_(\d+)/", $pn, $matches)) {
+			$delbtn = $matches[1];
+		} else if (preg_match("/delp2_(\d+)/", $pn, $matches)) {
+			$delbtnp2 = $matches[1];
+		} else if (preg_match("/move_(\d+)/", $pn, $matches)) {
+			$movebtn = $matches[1];
+		} else if (preg_match("/movep2_(\d+)/", $pn, $matches)) {
+			$movebtnp2 = $matches[1];
+		} else if (preg_match("/toggle_(\d+)/", $pn, $matches)) {
+			$togglebtn = $matches[1];
+		} else if (preg_match("/togglep2_(\d+)/", $pn, $matches)) {
+			$togglebtnp2 = $matches[1];
+		}
+	}
+
+	$save = 1;
+
+	/* move selected p1 entries before this */
+	if (isset($movebtn) && is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
+		$a_phase1_new = array();
+
+		/* copy all p1 entries < $movebtn and not selected */
+		for ($i = 0; $i < $movebtn; $i++) {
+			if (!in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
 			}
 		}
-	} else if (isset($_POST['del'])) {
-		/* delete selected p1 entries */
-		if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-			foreach ($_POST['p1entry'] as $p1entrydel) {
-				unset($a_phase1[$p1entrydel]);
-			}
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
-			}
-		}
-	} else if (isset($_POST['delp2'])) {
-		/* delete selected p2 entries */
-		if (is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
-			foreach ($_POST['p2entry'] as $p2entrydel) {
-				unset($a_phase2[$p2entrydel]);
-			}
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
-			}
-		}
-	} else {
-		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 
-		// TODO: this. is. nasty.
-		unset($delbtn, $delbtnp2, $movebtn, $movebtnp2, $togglebtn, $togglebtnp2);
-		foreach ($_POST as $pn => $pd) {
-			if (preg_match("/del_(\d+)/", $pn, $matches)) {
-				$delbtn = $matches[1];
-			} else if (preg_match("/delp2_(\d+)/", $pn, $matches)) {
-				$delbtnp2 = $matches[1];
-			} else if (preg_match("/move_(\d+)/", $pn, $matches)) {
-				$movebtn = $matches[1];
-			} else if (preg_match("/movep2_(\d+)/", $pn, $matches)) {
-				$movebtnp2 = $matches[1];
-			} else if (preg_match("/toggle_(\d+)/", $pn, $matches)) {
-				$togglebtn = $matches[1];
-			} else if (preg_match("/togglep2_(\d+)/", $pn, $matches)) {
-				$togglebtnp2 = $matches[1];
+		/* copy all selected p1 entries */
+		for ($i = 0; $i < count($a_phase1); $i++) {
+			if ($i == $movebtn) {
+				continue;
+			}
+			if (in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
 			}
 		}
 
-		$save = 1;
+		/* copy $movebtn p1 entry */
+		if ($movebtn < count($a_phase1)) {
+			$a_phase1_new[] = $a_phase1[$movebtn];
+		}
 
-		/* move selected p1 entries before this */
-		if (isset($movebtn) && is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
-			$a_phase1_new = array();
+		/* copy all p1 entries > $movebtn and not selected */
+		for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
+			if (!in_array($i, $_POST['p1entry'])) {
+				$a_phase1_new[] = $a_phase1[$i];
+			}
+		}
+		if (count($a_phase1_new) > 0) {
+			$a_phase1 = $a_phase1_new;
+		}
 
-			/* copy all p1 entries < $movebtn and not selected */
-			for ($i = 0; $i < $movebtn; $i++) {
-				if (!in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
-			}
+	} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+		/* move selected p2 entries before this */
+		$a_phase2_new = array();
 
-			/* copy all selected p1 entries */
-			for ($i = 0; $i < count($a_phase1); $i++) {
-				if ($i == $movebtn) {
-					continue;
-				}
-				if (in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
+		/* copy all p2 entries < $movebtnp2 and not selected */
+		for ($i = 0; $i < $movebtnp2; $i++) {
+			if (!in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
 			}
+		}
 
-			/* copy $movebtn p1 entry */
-			if ($movebtn < count($a_phase1)) {
-				$a_phase1_new[] = $a_phase1[$movebtn];
+		/* copy all selected p2 entries */
+		for ($i = 0; $i < count($a_phase2); $i++) {
+			if ($i == $movebtnp2) {
+				continue;
 			}
+			if (in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
+			}
+		}
 
-			/* copy all p1 entries > $movebtn and not selected */
-			for ($i = $movebtn+1; $i < count($a_phase1); $i++) {
-				if (!in_array($i, $_POST['p1entry'])) {
-					$a_phase1_new[] = $a_phase1[$i];
-				}
-			}
-			if (count($a_phase1_new) > 0) {
-				$a_phase1 = $a_phase1_new;
-			}
+		/* copy $movebtnp2 p2 entry */
+		if ($movebtnp2 < count($a_phase2)) {
+			$a_phase2_new[] = $a_phase2[$movebtnp2];
+		}
 
-		} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
-			/* move selected p2 entries before this */
-			$a_phase2_new = array();
+		/* copy all p2 entries > $movebtnp2 and not selected */
+		for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
+			if (!in_array($i, $_POST['p2entry'])) {
+				$a_phase2_new[] = $a_phase2[$i];
+			}
+		}
+		if (count($a_phase2_new) > 0) {
+			$a_phase2 = $a_phase2_new;
+		}
 
-			/* copy all p2 entries < $movebtnp2 and not selected */
-			for ($i = 0; $i < $movebtnp2; $i++) {
-				if (!in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
-			}
-
-			/* copy all selected p2 entries */
-			for ($i = 0; $i < count($a_phase2); $i++) {
-				if ($i == $movebtnp2) {
-					continue;
-				}
-				if (in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
-			}
-
-			/* copy $movebtnp2 p2 entry */
-			if ($movebtnp2 < count($a_phase2)) {
-				$a_phase2_new[] = $a_phase2[$movebtnp2];
-			}
-
-			/* copy all p2 entries > $movebtnp2 and not selected */
-			for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
-				if (!in_array($i, $_POST['p2entry'])) {
-					$a_phase2_new[] = $a_phase2[$i];
-				}
-			}
-			if (count($a_phase2_new) > 0) {
-				$a_phase2 = $a_phase2_new;
-			}
-
-		} else if (isset($togglebtn)) {
-			if (isset($a_phase1[$togglebtn]['disabled'])) {
-				unset($a_phase1[$togglebtn]['disabled']);
-			} else {
-				$a_phase1[$togglebtn]['disabled'] = true;
-			}
-		} else if (isset($togglebtnp2)) {
-			if (isset($a_phase2[$togglebtnp2]['disabled'])) {
-				unset($a_phase2[$togglebtnp2]['disabled']);
-			} else {
-				$a_phase2[$togglebtnp2]['disabled'] = true;
-			}
-		} else if (isset($delbtn)) {
-			/* remove static route if interface is not WAN */
-			if ($a_phase1[$delbtn]['interface'] <> "wan") {
-				mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
-			}
-
-			/* remove all phase2 entries that match the ikeid */
-			$ikeid = $a_phase1[$delbtn]['ikeid'];
-			foreach ($a_phase2 as $p2index => $ph2tmp) {
-				if ($ph2tmp['ikeid'] == $ikeid) {
-					unset($a_phase2[$p2index]);
-				}
-			}
-			unset($a_phase1[$delbtn]);
-
-		} else if (isset($delbtnp2)) {
-			unset($a_phase2[$delbtnp2]);
-
+	} else if (isset($togglebtn)) {
+		if (isset($a_phase1[$togglebtn]['disabled'])) {
+			unset($a_phase1[$togglebtn]['disabled']);
 		} else {
-			$save = 0;
+			$a_phase1[$togglebtn]['disabled'] = true;
+		}
+	} else if (isset($togglebtnp2)) {
+		if (isset($a_phase2[$togglebtnp2]['disabled'])) {
+			unset($a_phase2[$togglebtnp2]['disabled']);
+		} else {
+			$a_phase2[$togglebtnp2]['disabled'] = true;
+		}
+	} else if (isset($delbtn)) {
+		/* remove static route if interface is not WAN */
+		if ($a_phase1[$delbtn]['interface'] <> "wan") {
+			mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
 		}
 
-		if ($save === 1) {
-			if (write_config()) {
-				mark_subsystem_dirty('ipsec');
+		/* remove all phase2 entries that match the ikeid */
+		$ikeid = $a_phase1[$delbtn]['ikeid'];
+		foreach ($a_phase2 as $p2index => $ph2tmp) {
+			if ($ph2tmp['ikeid'] == $ikeid) {
+				unset($a_phase2[$p2index]);
 			}
+		}
+		unset($a_phase1[$delbtn]);
+
+	} else if (isset($delbtnp2)) {
+		unset($a_phase2[$delbtnp2]);
+
+	} else {
+		$save = 0;
+	}
+
+	if ($save === 1) {
+		if (write_config()) {
+			mark_subsystem_dirty('ipsec');
 		}
 	}
 }
+
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
 $pglinks = array("", "@self", "@self");
@@ -350,9 +350,9 @@ if (is_subsystem_dirty('ipsec')) {
 						<td style="cursor: pointer;">
 <!--							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a> -->
 							<button style="display: none;" class="btn btn-default btn-xs" type="submit" id="move_<?=$i?>" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
-							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>" usepost></a>
+							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>"></a>
 <?php if (!isset($ph1ent['mobile'])): ?>
-							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>" usepost></a>
+							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>"></a>
 <?php endif; ?>
 							<a	class="fa fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
 							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
@@ -363,8 +363,8 @@ if (is_subsystem_dirty('ipsec')) {
 						<td colspan="2"></td>
 						<td colspan="7" class="contains-table">
 <?php
-			if (isset($_POST["tdph2-{$i}-visible"])) {
-				$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
+			if (isset($_REQUEST["tdph2-{$i}-visible"])) {
+				$tdph2_visible = htmlspecialchars($_REQUEST["tdph2-{$i}-visible"]);
 			} else {
 				$tdph2_visible = 0;
 			}
@@ -472,8 +472,8 @@ if (is_subsystem_dirty('ipsec')) {
 											</td>
 											<td style="cursor: pointer;">
 <!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
-												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>" usepost></a>
-												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>" usepost></a>
+												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
+												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
 												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
@@ -482,7 +482,7 @@ if (is_subsystem_dirty('ipsec')) {
 										<tr>
 											<td></td>
 											<td>
-												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>" usepost>
+												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
 													<i class="fa fa-plus icon-embed-btn"></i>
 													<?=gettext("Add P2")?>
 												</a>

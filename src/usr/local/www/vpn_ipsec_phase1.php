@@ -48,20 +48,17 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (is_numericint($_POST['p1index'])) {
-	$p1index = $_POST['p1index'];
-}
-if (isset($_POST['p1index']) && is_numericint($_POST['p1index'])) {
-	$p1index = $_POST['p1index'];
+if (is_numericint($_REQUEST['p1index'])) {
+	$p1index = $_REQUEST['p1index'];
 }
 
-if (is_numericint($_POST['dup'])) {
-	$p1index = $_POST['dup'];
+if (is_numericint($_REQUEST['dup'])) {
+	$p1index = $_REQUEST['dup'];
 }
 
 if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
-	if (!isset($_POST['dup']) || !is_numericint($_POST['dup'])) {
+	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
 	}
 
@@ -160,13 +157,13 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
-	if ($_POST['mobile']) {
+	if ($_REQUEST['mobile']) {
 		$pconfig['mobile'] = true;
 		$pconfig['mode'] = "aggressive";
 	}
 }
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($p1index);
 }
 
@@ -177,13 +174,16 @@ if ($_POST['save']) {
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
+
 	// Unset ca and cert if not required to avoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
 		unset($pconfig['certref']);
 	}
+
 	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
 		unset($pconfig['caref']);
 	}
+
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
@@ -220,6 +220,7 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 			break;
 	}
+
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";
 		$reqdfieldsn[] = gettext("Remote gateway");
@@ -909,7 +910,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		'p1index',
 		null,
 		'hidden',
-		$pconfig['$p1index']
+		$p1index
 	));
 }
 

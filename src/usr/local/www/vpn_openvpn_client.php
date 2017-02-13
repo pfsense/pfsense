@@ -57,14 +57,11 @@ if (!is_array($config['crl'])) {
 
 $a_crl =& $config['crl'];
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-$act = $_POST['act'];
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 if (isset($id) && $a_client[$id]) {
 	$vpnid = $a_client[$id]['vpnid'];
@@ -86,7 +83,7 @@ if ($_POST['act'] == "del") {
 	$savemsg = gettext("Client successfully deleted.");
 }
 
-if ($_POST['act'] == "new") {
+if ($act == "new") {
 	$pconfig['ncp_enable'] = "enabled";
 	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
@@ -102,8 +99,7 @@ if ($_POST['act'] == "new") {
 global $simplefields;
 $simplefields = array('auth_user', 'auth_pass');
 
-if ($_POST['act'] == "edit") {
-
+if ($act == "edit") {
 	if (isset($id) && $a_client[$id]) {
 		foreach ($simplefields as $stat) {
 			$pconfig[$stat] = $a_client[$id][$stat];
@@ -923,7 +919,7 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
 						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
@@ -937,7 +933,7 @@ else:
 </div>
 
 <nav class="action-buttons">
-	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success" usepost>
+	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -446,7 +446,7 @@ if ($_POST['save']) {
 
 	if ($pconfig['dev_mode'] != "tap") {
 		$reqdfields[] = 'tunnel_network';
-		$reqdfieldsn[] = gettext('Tunnel network');
+		$reqdfieldsn[] = gettext('IPv4 Tunnel network');
 	} else {
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");

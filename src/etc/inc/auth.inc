@@ -305,7 +305,7 @@ function get_user_privileges(& $user) {
 
 	if ($authcfg['type'] == "ldap") {
 		if (isset($_SESSION["ldap_allowed_groups"]) &&
-		    (time() <= $_SESSION["auth_check_time"]+ $recheck_time)) {
+		    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
 			$allowed_groups = $_SESSION["ldap_allowed_groups"];
 		} else {
 			$allowed_groups = @ldap_get_groups($user['name'], $authcfg);

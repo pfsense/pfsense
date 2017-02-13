@@ -223,7 +223,7 @@ foreach ($a_schedules as $schedule):
 					</td>
 
 					<td>
-						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>"></a>
 						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>" usepost></a>
 
 					</td>
@@ -240,7 +240,7 @@ endforeach;
 <?=($i > 0) ? CLOCK . gettext(' Indicates that the schedule is currently active.'):''?>
 
 <nav class="action-buttons">
-	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success" usepost>
+	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

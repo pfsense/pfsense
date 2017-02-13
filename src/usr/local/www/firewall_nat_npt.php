@@ -43,12 +43,12 @@ if (!is_array($config['nat']['npt'])) {
 $a_npt = &$config['nat']['npt'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (array_key_exists('order-store', $_REQUEST)) {
+	if (is_array($_POST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_npt_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
+		foreach ($_REQUEST['rule'] as $id) {
 			$a_npt_new[] = $a_npt[$id];
 		}
 
@@ -62,8 +62,6 @@ if (array_key_exists('order-store', $_POST)) {
 		exit;
 	}
 }
-
-$pconfig = $_POST;
 
 if ($_POST['apply']) {
 	$retval = 0;
@@ -204,8 +202,8 @@ display_top_tabs($tab_array);
 ?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>" usepost></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -219,11 +217,11 @@ endforeach;
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_npt_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>" usepost>
+		<a href="firewall_nat_npt_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>" usepost>
+		<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>

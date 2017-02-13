@@ -47,17 +47,17 @@ if (!is_array($config['nat']['npt'])) {
 
 $a_npt = &$config['nat']['npt'];
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_POST['after'])) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after'])) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_POST['dup'])) {
-	$id = $_POST['dup'];
-	$after = $_POST['dup'];
+if (isset($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_npt[$id]) {
@@ -81,7 +81,7 @@ if (isset($id) && $a_npt[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_POST['dup'])) {
+if (isset($_REQUEST['dup'])) {
 	unset($id);
 }
 

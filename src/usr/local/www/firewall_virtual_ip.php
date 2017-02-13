@@ -42,8 +42,6 @@ if (!is_array($config['virtualip']['vip'])) {
 
 $a_vip = &$config['virtualip']['vip'];
 
-$pconfig = $_POST;
-
 if ($_POST['apply']) {
 	$check_carp = false;
 	if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
@@ -222,8 +220,8 @@ if ($_POST['act'] == "del") {
 			exit;
 		}
 	}
-} else if ($_POST['changes'] == "mods" && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+} else if ($_REQUEST['changes'] == "mods" && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 $types = array('proxyarp' => gettext('Proxy ARP'),
@@ -315,7 +313,7 @@ foreach ($a_vip as $vipent):
 						<?=htmlspecialchars($vipent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>"></a>
 						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
@@ -330,7 +328,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success" usepost>
+	<a href="firewall_virtual_ip_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>

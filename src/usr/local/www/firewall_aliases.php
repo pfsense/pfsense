@@ -252,7 +252,7 @@ display_top_tabs($tab_array);
 				<?=htmlspecialchars($alias['descr'])?>&nbsp;
 			</td>
 			<td>
-				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>" usepost></a>
+				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
 				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
 			</td>
 		</tr>
@@ -266,14 +266,14 @@ display_top_tabs($tab_array);
 </div>
 
 <nav class="action-buttons">
-	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm" usepost>
+	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
 <?php
 if (($tab == "ip") || ($tab == "port") || ($tab == "all")):
 ?>
-	<a href="firewall_aliases_import.php?tab=<?=$tab?>" role="button" class="btn btn-primary btn-sm" usepost>
+	<a href="firewall_aliases_import.php?tab=<?=$tab?>" role="button" class="btn btn-primary btn-sm">
 		<i class="fa fa-upload icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>

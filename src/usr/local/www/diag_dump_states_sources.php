@@ -44,7 +44,7 @@ if ($_POST['action']) {
 
 /* get our states */
 if ($_POST['filter']) {
-	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
+	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_POST['filter'])), $sources);
 } else {
 	exec("/sbin/pfctl -s Sources", $sources);
 }

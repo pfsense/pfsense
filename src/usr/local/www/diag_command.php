@@ -61,9 +61,6 @@ if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 	$ulmsg = sprintf(gettext('Uploaded file to %s.'), $g["tmp_path"] . "/" . htmlentities($_FILES['ulfile']['name']));
 }
 
-if ($_POST) {
-}
-
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 
@@ -239,7 +236,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download File')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
-				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
+				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_REQUEST['dlPath']);?>"/>
 				<br /><br />
 				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">
 					<i class="fa fa-download icon-embed-btn"></i>

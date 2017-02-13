@@ -42,8 +42,8 @@ if (!is_array($config['system']['group'])) {
 $a_group = &$config['system']['group'];
 
 unset($id);
-$id = $_POST['groupid'];
-$act = (isset($_POST['act']) ? $_POST['act'] : '');
+$id = $_REQUEST['groupid'];
+$act = (isset($_REQUEST['act']) ? $_REQUEST['act'] : '');
 
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
@@ -59,9 +59,9 @@ function admin_groups_sort() {
 	usort($a_group, "cpusercmp");
 }
 
-if ($act == "delgroup") {
+if ($_POST['act'] == "delgroup") {
 
-	if (!isset($id) || !isset($_POST['groupname']) || !isset($a_group[$id]) || ($_POST['groupname'] != $a_group[$id]['name'])) {
+	if (!isset($id) || !isset($_REQUEST['groupname']) || !isset($a_group[$id]) || ($_REQUEST['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
@@ -73,15 +73,15 @@ if ($act == "delgroup") {
 	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
 }
 
-if ($act == "delpriv") {
+if ($_POST['act'] == "delpriv") {
 
 	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_POST['privid']]);
+	$privdeleted = $priv_list[$a_group[$id]['priv'][$_REQUEST['privid']]]['name'];
+	unset($a_group[$id]['priv'][$_REQUEST['privid']]);
 
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
@@ -259,7 +259,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -290,7 +290,7 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($_POST['act'] == "new" || $_POST['act'] == "edit")) {
+if (!($act == "new" || $act == "edit")) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
@@ -325,7 +325,7 @@ if (!($_POST['act'] == "new" || $_POST['act'] == "edit")) {
 							<?=$groupcount?>
 						</td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
 							<?php if ($group['scope'] != "system"): ?>
 								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" usepost></a>
 							<?php endif;?>
@@ -341,7 +341,7 @@ if (!($_POST['act'] == "new" || $_POST['act'] == "edit")) {
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success btn-sm" usepost>
+	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

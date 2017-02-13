@@ -37,8 +37,8 @@ $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
 
-if (isset($_POST['id']) && ctype_alnum($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && ctype_alnum($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($config['ca'])) {
@@ -65,7 +65,7 @@ foreach ($a_crl as $cid => $acrl) {
 	}
 }
 
-$act = $_POST['act'];
+$act = $_REQUEST['act'];
 
 
 if (!empty($id)) {
@@ -80,7 +80,7 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 	$class = "danger";
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
@@ -98,8 +98,8 @@ if ($act == "del") {
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_POST['method'];
-	$pconfig['caref'] = $_POST['caref'];
+	$pconfig['method'] = $_REQUEST['method'];
+	$pconfig['caref'] = $_REQUEST['caref'];
 	$pconfig['lifetime'] = "9999";
 	$pconfig['serial'] = "0";
 }
@@ -120,7 +120,7 @@ if ($act == "exp") {
 if ($act == "addcert") {
 
 	unset($input_errors);
-	$pconfig = $_POST;
+	$pconfig = $_REQUEST;
 
 	if (!$pconfig['crlref'] || !$pconfig['certref']) {
 		pfSenseHeader("system_crlmanager.php");
@@ -161,7 +161,7 @@ if ($act == "delcert") {
 	}
 	$found = false;
 	foreach ($thiscrl['cert'] as $acert) {
-		if ($acert['refid'] == $_POST['certref']) {
+		if ($acert['refid'] == $_REQUEST['certref']) {
 			$found = true;
 			$thiscert = $acert;
 		}
@@ -607,14 +607,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php
 		if ($cainternal == "YES"):
 ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success" usepost>
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
 								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
 		else:
 ?>
-							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success" usepost>
+							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
 								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
@@ -636,14 +636,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
 						<td>
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" usepost></a>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" ></a>
 <?php
 				if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>" usepost></a>
+							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php
 				else:
 ?>
-							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>" usepost></a>
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php			endif;
 				if (!$inuse):
 ?>

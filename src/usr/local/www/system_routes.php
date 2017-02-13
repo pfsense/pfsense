@@ -125,7 +125,9 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_POST['act'] == "toggle") {
+}
+
+if ($_POST['act'] == "toggle") {
 	if ($a_routes[$_POST['id']]) {
 		$do_update_config = true;
 		if (isset($a_routes[$_POST['id']]['disabled'])) {
@@ -151,7 +153,9 @@ if (isset($_POST['del_x'])) {
 			exit;
 		}
 	}
-} else {
+}
+
+if($_POST['save']) {
 	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
 	unset($movebtn);
 	foreach ($_POST as $pn => $pd) {
@@ -266,9 +270,9 @@ foreach ($a_routes as $i => $route):
 						<?=htmlspecialchars($route['descr'])?>
 					</td>
 					<td>
-						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit route')?>" usepost></a>
+						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit route')?>"></a>
 
-						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy route')?>" usepost></a>
+						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy route')?>"></a>
 
 				<?php if (isset($route['disabled'])) {
 				?>
@@ -289,7 +293,7 @@ foreach ($a_routes as $i => $route):
 </div>
 
 <nav class="action-buttons">
-	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm" usepost>
+	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -96,7 +96,7 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
@@ -114,9 +114,9 @@ if (!is_array($config['ca'])) {
 
 $a_ca =& $config['ca'];
 
-$act = $_POST['act'];
+$act = $_REQUEST['act'];
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!$a_server[$_POST['id']]) {
 		pfSenseHeader("system_authservers.php");
@@ -446,7 +446,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td><?=htmlspecialchars($server['host'])?></td>
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
 							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
@@ -459,7 +459,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success btn-sm" usepost>
+	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

@@ -41,29 +41,28 @@ $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
-if ($_POST) {
-	$pconfig = $_POST;
 
-	if ($_POST['apply']) {
+$pconfig = $_REQUEST;
 
-		$retval = 0;
+if ($_POST['apply']) {
 
-		$retval |= system_routing_configure();
-		send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
+	$retval = 0;
 
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
+	$retval |= system_routing_configure();
+	send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
-		foreach ($a_gateway_groups as $gateway_group) {
-			$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
-			if (is_subsystem_dirty($gw_subsystem)) {
-				openvpn_resync_gwgroup($gateway_group['name']);
-				clear_subsystem_dirty($gw_subsystem);
-			}
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
+	}
+
+	foreach ($a_gateway_groups as $gateway_group) {
+		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
+		if (is_subsystem_dirty($gw_subsystem)) {
+			openvpn_resync_gwgroup($gateway_group['name']);
+			clear_subsystem_dirty($gw_subsystem);
 		}
 	}
 }
@@ -72,7 +71,7 @@ if ($_POST['act'] == "del") {
 	if ($a_gateway_groups[$_POST['id']]) {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
-			if ($rule['gateway'] == $a_gateway_groups[$_POST['id']]['name']) {
+			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
 			}
 		}
@@ -166,8 +165,8 @@ foreach ($a_gateway_groups as $gateway_group):
 							<?=htmlspecialchars($gateway_group['descr'])?>
 						</td>
 						<td>
-							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>" usepost></a>
-							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>" usepost></a>
+							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
+							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
 							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
@@ -182,7 +181,7 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm" usepost>
+	<a href="system_gateway_groups_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>
 	</a>

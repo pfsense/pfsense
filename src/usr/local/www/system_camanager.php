@@ -153,7 +153,7 @@ if ($act == "expkey") {
 	exit;
 }
 
-if ($_POST['save'] == 'Save') {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$input_errors = array();

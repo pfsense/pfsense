@@ -188,6 +188,10 @@ if($_GET['act']=="edit"){
 			$pconfig['wins_server2'])
 			$pconfig['wins_server_enable'] = true;
 
+		$pconfig['client_mgmt_port'] = $a_server[$id]['client_mgmt_port'];
+		if ($pconfig['client_mgmt_port'])
+			$pconfig['client_mgmt_port_enable'] = true;
+
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
 		if ($pconfig['nbdd_server1'])
 			$pconfig['nbdd_server_enable'] = true;
@@ -299,6 +303,11 @@ if ($_POST) {
 		if ($pconfig['nbdd_server_enable'])
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1'])))
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
+	}
+
+	if ($pconfig['client_mgmt_port_enable']) {
+		if ($result = openvpn_validate_port($pconfig['client_mgmt_port'], 'Client management port'))
+			$input_errors[] = $result;
 	}
 
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
@@ -425,6 +434,9 @@ if ($_POST) {
 			if ($pconfig['dns_server_enable'])
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
+
+		if ($pconfig['client_mgmt_port_enable'])
+			$server['client_mgmt_port'] = $pconfig['client_mgmt_port'];
 
 		if ($_POST['duplicate_cn'] == "yes")
 			$server['duplicate_cn'] = true;
@@ -610,6 +622,14 @@ function wins_server_change() {
 		document.getElementById("wins_server_data").style.display="";
 	else
 		document.getElementById("wins_server_data").style.display="none";
+}
+
+function client_mgmt_port_change() {
+
+	if (document.iform.client_mgmt_port_enable.checked)
+		document.getElementById("client_mgmt_port_data").style.display="";
+	else
+		document.getElementById("client_mgmt_port_data").style.display="none";
 }
 
 function ntp_server_change() {
@@ -1640,6 +1660,31 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Client Management Port"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['client_mgmt_port_enable'],$chk); ?>
+										<input name="client_mgmt_port_enable" type="checkbox" id="client_mgmt_port_enable" value="yes" <?=$chk;?> onClick="client_mgmt_port_change()">
+									</td>
+									<td>
+										<span class="vexpl">
+	                                        <?=gettext("Use a different management port on clients. The default port is 166. Specify a different port if the client machines need to select from multiple OpenVPN links."); ?><br>
+										</span>
+									</td>
+								</tr>
+							</table>
+							<table border="0" cellpadding="2" cellspacing="0" id="client_mgmt_port_data">
+								<tr>
+									<td>
+										<input name="client_mgmt_port" type="text" class="formfld unknown" id="client_mgmt_port" size="30" value="<?=htmlspecialchars($pconfig['client_mgmt_port']);?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
 				</table>
 
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="adv_confg">
@@ -1758,6 +1803,7 @@ gwredir_change();
 dns_domain_change();
 dns_server_change();
 wins_server_change();
+client_mgmt_port_change();
 ntp_server_change();
 netbios_change();
 tuntap_change();

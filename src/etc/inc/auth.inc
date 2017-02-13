@@ -1132,7 +1132,7 @@ function ldap_get_groups($username, $authcfg) {
 
 	if ($error == true) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
-		return memberof;
+		return $memberof;
 	}
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
@@ -1161,7 +1161,7 @@ function ldap_get_groups($username, $authcfg) {
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));
 		@ldap_close($ldap);
-		return memberof;
+		return $memberof;
 	}
 
 	/* get groups from DN found */

@@ -34,14 +34,6 @@ $priv_list['user-config-readonly'] = array();
 $priv_list['user-config-readonly']['name']  = gettext("User - Config: Deny Config Write");
 $priv_list['user-config-readonly']['descr'] = gettext("If present, ignores requests from this user to write config.xml.");
 
-$priv_list['user-view-notices'] = array();
-$priv_list['user-view-notices']['name']  = gettext("User - Notices: View");
-$priv_list['user-view-notices']['descr'] = gettext("This user can view system notices.");
-
-$priv_list['user-view-clear-notices'] = array();
-$priv_list['user-view-clear-notices']['name']  = gettext("User - Notices: View and Clear");
-$priv_list['user-view-clear-notices']['descr'] = gettext("This user can view and clear system notices.");
-
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = gettext("User - System: Shell account access");
 $priv_list['user-shell-access']['descr'] = gettext("Indicates whether the user is able to login for example via SSH.");

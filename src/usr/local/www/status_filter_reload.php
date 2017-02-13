@@ -37,7 +37,7 @@ if (file_exists("{$g['varrun_path']}/filter_reload_status")) {
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");
 }
 
-if ($_GET['getstatus']) {
+if ($_REQUEST['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
@@ -78,7 +78,7 @@ endif;
 			</div>
 			<br/>
 
-<?php if (!$_GET['user']) { ?>
+<?php if (!$_REQUEST['user']) { ?>
 			<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading."); ?></div>
 <?php } ?>
 
@@ -161,12 +161,12 @@ if (typeof getURL == 'undefined') {
 			}
 		}
 
-		http_request.open('GET', url, true);
+		http_request.open('REQUEST', url, true);
 		http_request.send(null);
 	}
 }
 
-if ("<?=$_GET['user']?>" != "true") {
+if ("<?=$_REQUEST['user']?>" != "true") {
  	window.setTimeout('update_status_thread()', 1500);
  }
 //]]>

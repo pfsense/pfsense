@@ -41,10 +41,10 @@ include("head.inc");
 $sad = ipsec_dump_sad();
 
 /* delete any SA? */
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
-		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
+		fwrite($fd, "delete {$_POST['src']} {$_POST['dst']} {$_POST['proto']} {$_POST['spi']} ;\n");
 		pclose($fd);
 		sleep(1);
 	}
@@ -103,7 +103,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
+					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>" usepost></i></a>
 				</td>
 			</tr>
 

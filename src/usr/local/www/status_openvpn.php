@@ -36,10 +36,10 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if ($_GET['action']) {
-	if ($_GET['action'] == "kill") {
-		$port  = $_GET['port'];
-		$remipp  = $_GET['remipp'];
+if ($_REQUEST['action']) {
+	if ($_REQUEST['action'] == "kill") {
+		$port  = $_REQUEST['port'];
+		$remipp  = $_REQUEST['remipp'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = openvpn_kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");

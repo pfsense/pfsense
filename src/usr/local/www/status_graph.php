@@ -52,23 +52,8 @@ foreach (array('server', 'client') as $mode) {
 	}
 }
 
-// Compatiblity to restore GET parameters used pre-2.3
-// Useful to save a URL for a given graph configuration
-if (isset($_GET['if']) && !isset($_POST['if'])) {
-	$_POST['if'] = $_GET['if'];
-}
-if (isset($_GET['sort']) && !isset($_POST['sort'])) {
-	$_POST['sort'] = $_GET['sort'];
-}
-if (isset($_GET['filter']) && !isset($_POST['filter'])) {
-	$_POST['filter'] = $_GET['filter'];
-}
-if (isset($_GET['hostipformat']) && !isset($_POST['hostipformat'])) {
-	$_POST['hostipformat'] = $_GET['hostipformat'];
-}
-
-if ($_POST['if']) {
-	$curif = $_POST['if'];
+if ($_REQUEST['if']) {
+	$curif = $_REQUEST['if'];
 	$found = false;
 	foreach ($ifdescrs as $descr => $ifdescr) {
 		if ($descr == $curif) {
@@ -89,23 +74,23 @@ if ($_POST['if']) {
 		$curif = "wan";
 	}
 }
-if ($_POST['sort']) {
-	$cursort = $_POST['sort'];
+if ($_REQUEST['sort']) {
+	$cursort = $_REQUEST['sort'];
 } else {
 	$cursort = "";
 }
-if ($_POST['filter']) {
-	$curfilter = $_POST['filter'];
+if ($_REQUEST['filter']) {
+	$curfilter = $_REQUEST['filter'];
 } else {
 	$curfilter = "";
 }
-if ($_POST['hostipformat']) {
-	$curhostipformat = $_POST['hostipformat'];
+if ($_REQUEST['hostipformat']) {
+	$curhostipformat = $_REQUEST['hostipformat'];
 } else {
 	$curhostipformat = "";
 }
-if ($_POST['backgroundupdate']) {
-	$curbackgroundupdate = $_POST['backgroundupdate'];
+if ($_REQUEST['backgroundupdate']) {
+	$curbackgroundupdate = $_REQUEST['backgroundupdate'];
 } else {
 	$curbackgroundupdate = "";
 }

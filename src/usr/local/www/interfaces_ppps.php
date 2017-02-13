@@ -126,7 +126,7 @@ foreach ($a_ppps as $id => $ppp) {
 							<?=htmlspecialchars($ppp['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit PPP interface')?>"	href="interfaces_ppps_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit PPP interface')?>"	href="interfaces_ppps_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete PPP interface')?>"	href="interfaces_ppps.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -141,7 +141,7 @@ foreach ($a_ppps as $id => $ppp) {
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_ppps_edit.php" class="btn btn-success btn-sm" usepost>
+	<a href="interfaces_ppps_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

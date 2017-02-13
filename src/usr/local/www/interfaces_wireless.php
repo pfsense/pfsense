@@ -120,7 +120,7 @@ foreach ($a_clones as $clone) {
 							<?=htmlspecialchars($clone['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -135,7 +135,7 @@ foreach ($a_clones as $clone) {
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm" usepost>
+	<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?></a>
 </nav>

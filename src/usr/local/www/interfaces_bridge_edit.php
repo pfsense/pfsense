@@ -65,7 +65,7 @@ foreach ($ifacelist as $bif => $bdescr) {
 	}
 }
 
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_bridges[$id]) {
 	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);

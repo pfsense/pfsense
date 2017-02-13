@@ -109,7 +109,7 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($ifgroupentry['descr']);?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>" usepost></a>
 						</td>
 					</tr>
@@ -121,7 +121,7 @@ display_top_tabs($tab_array);
 </div>
 
 <nav class="action-buttons">
-	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button" usepost>
+	<a class="btn btn-success btn-sm" href="interfaces_groups_edit.php" role="button">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>

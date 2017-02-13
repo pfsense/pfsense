@@ -58,8 +58,8 @@ function clone_compare($a, $b) {
 
 $portlist = get_interface_list();
 
-if (is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_clones[$id]) {

@@ -34,7 +34,7 @@ if (!is_array($config['gres']['gre'])) {
 }
 
 $a_gres = &$config['gres']['gre'];
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_gres[$id]) {
 	$pconfig['if'] = $a_gres[$id]['if'];

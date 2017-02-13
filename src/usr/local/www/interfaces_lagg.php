@@ -125,7 +125,7 @@ foreach ($a_laggs as $lagg) {
 							<?=htmlspecialchars($lagg['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -140,7 +140,7 @@ foreach ($a_laggs as $lagg) {
 </div>
 
  <nav class="action-buttons">
-	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm" usepost>
+	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

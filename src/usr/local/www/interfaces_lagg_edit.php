@@ -107,7 +107,7 @@ foreach ($checklist as $tmpif) {
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 }
 
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_laggs[$id]) {
 	$pconfig['laggif'] = $a_laggs[$id]['laggif'];

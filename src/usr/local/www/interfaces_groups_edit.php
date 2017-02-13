@@ -39,7 +39,7 @@ if (!is_array($config['ifgroups']['ifgroupentry'])) {
 }
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];

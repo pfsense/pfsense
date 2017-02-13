@@ -33,7 +33,7 @@ if (!is_array($config['gifs']['gif'])) {
 }
 
 $a_gifs = &$config['gifs']['gif'];
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
 
 if (isset($id) && $a_gifs[$id]) {

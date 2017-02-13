@@ -57,8 +57,8 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_ppps[$id]) {
@@ -179,7 +179,7 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
 }
 
-if (isset($_POST['save']) && is_array($_POST) && count($_POST) > 0) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

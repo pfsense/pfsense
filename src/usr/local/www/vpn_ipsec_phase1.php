@@ -213,12 +213,13 @@ if ($_POST['save']) {
 			$reqdfieldsn = array(gettext("Pre-Shared Key"));
 			$validate_pskey = true;
 			break;
-		case "hybrid_rsa_server":
 		case "xauth_rsa_server":
 		case "rsasig":
 			$reqdfields = explode(" ", "caref certref");
 			$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 			break;
+		default:
+			/* Other types do not use this validation mechanism. */
 	}
 
 	if (!$pconfig['mobile']) {

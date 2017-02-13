@@ -32,7 +32,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 
 include('head.inc');
 
-$showAll = isset($_GET['showAll']);
+$showAll = isset($_REQUEST['showAll']);
 $showAllText = $showAll ? gettext("Show only listening sockets") : gettext("Show all socket connections");
 $showAllOption = $showAll ? "" : "?showAll";
 

@@ -38,7 +38,7 @@ $shortcut_section = "dhcp";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 
-if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
+if (($_POST['deleteip']) && (is_ipaddr($_POST['deleteip']))) {
 	/* Stop DHCPD */
 	killbyname("dhcpd");
 
@@ -49,7 +49,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	$i = 0;
 	while ($i < count($leases_contents)) {
 		/* Find the lease(s) we want to delete */
-		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {\n") {
+		if ($leases_contents[$i] == "lease {$_POST['deleteip']} {\n") {
 			/* Skip to the end of the lease declaration */
 			do {
 				$i++;
@@ -68,7 +68,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 
 	/* Restart DHCP Service */
 	services_dhcpd_configure();
-	header("Location: status_dhcp_leases.php?all={$_GET['all']}");
+	header("Location: status_dhcp_leases.php?all={$_REQUEST['all']}");
 }
 
 // Load MAC-Manufacturer table
@@ -77,7 +77,7 @@ $mac_man = load_mac_manufacturer_table();
 include("head.inc");
 
 function leasecmp($a, $b) {
-	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
+	return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
 }
 
 function adjust_gmt($dt) {
@@ -304,7 +304,7 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 	}
 }
 
-if ($_GET['order']) {
+if ($_REQUEST['order']) {
 	usort($leases, "leasecmp");
 }
 
@@ -375,7 +375,7 @@ $iflist = get_configured_interface_with_descr(); //get interface descr for # of 
 $no_leases_displayed = true;
 
 foreach ($leases as $data):
-	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_REQUEST['all'] != 1) {
 		continue;
 	}
 
@@ -470,7 +470,7 @@ if ($got_cid) {
 <?php endif; ?>
 
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_POST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -523,7 +523,7 @@ else:
 	</div>
 </div>
 
-<?php if ($_GET['all']): ?>
+<?php if ($_REQUEST['all']): ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>
 	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>

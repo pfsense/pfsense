@@ -461,7 +461,7 @@ if ($_POST['apply']) {
 		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
-} else if ($_POST) {
+} else if ($_POST['submit]']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -1450,7 +1450,7 @@ if ($_POST['apply']) {
 		exit;
 	}
 
-} // end if ($_POST)
+} // end if ($_POST['save'])
 
 function handle_wireless_post() {
 	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;

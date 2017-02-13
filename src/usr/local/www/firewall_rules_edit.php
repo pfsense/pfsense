@@ -39,6 +39,7 @@ require_once("shaper.inc");
 $icmptypes4 = array('any' => gettext('any'));
 $icmptypes6 = array('any' => gettext('any'));
 $icmptypes46 = array('any' => gettext('any'));
+
 foreach ($icmptypes as $k => $v) {
 	if ($v['valid4']) {
 		$icmptypes4[$k] = $v['descrip'];
@@ -50,6 +51,7 @@ foreach ($icmptypes as $k => $v) {
 		$icmptypes6[$k] = $v['descrip'];
 	}
 }
+
 $icmplookup = array(
 	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
 	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
@@ -128,6 +130,7 @@ if (count($ostypes) > 2) {
 
 $specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
+
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
@@ -136,20 +139,21 @@ foreach ($ifdisp as $kif => $kdescr) {
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }
+
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
-	$id = $_POST['dup'];
-	$after = $_POST['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -278,7 +282,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['sched'] = (($a_filter[$id]['sched'] == "none") ? '' : $a_filter[$id]['sched']);
 	$pconfig['vlanprio'] = (($a_filter[$id]['vlanprio'] == "none") ? '' : $a_filter[$id]['vlanprio']);
 	$pconfig['vlanprioset'] = (($a_filter[$id]['vlanprioset'] == "none") ? '' : $a_filter[$id]['vlanprioset']);
-	if (!isset($_POST['dup']) || !is_numericint($_POST['dup'])) {
+	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 	}
 
@@ -286,8 +290,8 @@ if (isset($id) && $a_filter[$id]) {
 
 } else {
 	/* defaults */
-	if ($_POST['if']) {
-		$pconfig['interface'] = $_POST['if'];
+	if ($_REQUEST['if']) {
+		$pconfig['interface'] = $_REQUEST['if'];
 	}
 	$pconfig['type'] = "pass";
 	$pconfig['proto'] = "tcp"; // for new blank rules, default=tcp, also ensures ports fields are visible
@@ -297,7 +301,7 @@ if (isset($id) && $a_filter[$id]) {
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
@@ -1189,7 +1193,7 @@ if ($edit_disabled) {
 	$extra = '';
 	foreach ($config['nat']['rule'] as $index => $nat_rule) {
 		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id']) {
-			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'" usepost>'. gettext('View the NAT rule') .'</a>';
+			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
 		}
 	}
 

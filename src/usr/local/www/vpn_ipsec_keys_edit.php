@@ -41,8 +41,8 @@ if (!is_array($config['ipsec']['mobilekey'])) {
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
-if (is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_secret[$id]) {

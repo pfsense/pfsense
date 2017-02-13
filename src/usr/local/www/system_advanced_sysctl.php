@@ -47,7 +47,7 @@ if (isset($_POST['id'])) {
 	$id = htmlspecialchars_decode($_POST['id']);
 }
 
-$act = $_POST['act'];
+$act = $_REQUEST['act'];
 
 if ($act == "edit") {
 	if (isset($a_tunable[$id])) {
@@ -62,7 +62,7 @@ if ($act == "edit") {
 	}
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	if ($a_tunable[$id]) {
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
@@ -118,6 +118,7 @@ if ($act == "edit") {
 	$pgtitle[] = gettext('Edit');
 	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($input_errors) {
@@ -155,7 +156,7 @@ if ($act != "edit"): ?>
 						<th class="col-sm-3"><?=gettext("Tunable Name"); ?></th>
 						<th><?=gettext("Description"); ?></th>
 						<th class="col-sm-1"><?=gettext("Value"); ?></th>
-						<th><a class="btn btn-xs btn-success" href="system_advanced_sysctl.php?act=edit" usepost><i class="fa fa-plus icon-embed-btn"></i><?=gettext('New'); ?></a></th>
+						<th><a class="btn btn-xs btn-success" href="system_advanced_sysctl.php?act=edit"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('New'); ?></a></th>
 					</tr>
 				</thead>
 				<?php
@@ -175,7 +176,7 @@ if ($act != "edit"): ?>
 					?>
 					</td>
 					<td>
-					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>" usepost></a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
 						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" usepost></a>
 						<?php endif; ?>

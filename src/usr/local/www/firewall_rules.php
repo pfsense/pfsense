@@ -114,8 +114,8 @@ if (!is_array($config['filter']['rule'])) {
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-if ($_POST['if']) {
-	$if = $_POST['if'];
+if ($_REQUEST['if']) {
+	$if = $_REQUEST['if'];
 }
 
 $ifdescs = get_configured_interface_with_descr();
@@ -166,8 +166,6 @@ if (!$if || !isset($iflist[$if])) {
 		$if = "FloatingRules";
 	}
 }
-
-$pconfig = $_POST;
 
 if ($_POST['apply']) {
 	$retval = 0;
@@ -630,7 +628,7 @@ foreach ($a_filter as $filteri => $filterent):
 					#FIXME
 					$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
 					$schedule_span_begin = '<a href="/firewall_schedule_edit.php?id=' . $idx . '" data-toggle="popover" data-trigger="hover focus" title="' . $schedule['name'] . '" data-content="' .
-						$sched_caption_escaped . '" data-html="true" usepost>';
+						$sched_caption_escaped . '" data-html="true">';
 					$schedule_span_end = "</a>";
 				}
 				$idx++;
@@ -705,7 +703,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($alias['src'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true" usepost>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['source'])))?>
 								</a>
 							<?php else: ?>
@@ -714,7 +712,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" usepost>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['source']['port'])))?>
 								</a>
 							<?php else: ?>
@@ -723,7 +721,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" usepost>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($filterent['destination'])))?>
 								</a>
 							<?php else: ?>
@@ -732,7 +730,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" usepost>
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 									<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($filterent['destination']['port'])))?>
 								</a>
 							<?php else: ?>
@@ -750,12 +748,12 @@ foreach ($a_filter as $filteri => $filterent):
 							<?php
 								if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 									$desc = str_replace('_', ' ', $filterent['ackqueue']);
-									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&amp;action=show\" usepost>{$desc}</a>";
+									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&amp;action=show\">{$desc}</a>";
 									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
-									echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\" usepost>{$desc}</a>";
+									echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 								} else if (isset($filterent['defaultqueue'])) {
 									$desc = str_replace('_', '_<wbr>', $filterent['defaultqueue']);
-									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\" usepost>{$desc}</a>";
+									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 								} else {
 									echo gettext("none");
 								}
@@ -773,8 +771,8 @@ foreach ($a_filter as $filteri => $filterent):
 						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
 							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=$XmoveTitle?>"></a>
-							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>" usepost></a>
-							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>" usepost></a>
+							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
+							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>
 							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>" usepost></a>
@@ -816,11 +814,11 @@ if ($seprows[$nrules]) {
 <?php endif;?>
 
 	<nav class="action-buttons">
-		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>" usepost>
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
-		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>" usepost>
+		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>

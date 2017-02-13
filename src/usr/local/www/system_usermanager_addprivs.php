@@ -34,8 +34,8 @@ function admusercmp($a, $b) {
 
 require_once("guiconfig.inc");
 
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$userid = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
+	$userid = $_REQUEST['userid'];
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));

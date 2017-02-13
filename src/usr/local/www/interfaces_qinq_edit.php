@@ -52,8 +52,8 @@ if (count($portlist) < 1) {
 	exit;
 }
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_qinqs[$id]) {
@@ -294,7 +294,7 @@ if ($members != "") {
 
 foreach ($item as $ww) {
 
-	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
+	$group = new Form_Group($counter == 0 ? '*Tag(s)':'');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(

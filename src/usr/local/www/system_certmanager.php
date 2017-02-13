@@ -44,8 +44,8 @@ $cert_types = array(
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$userid = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint(REQUEST['userid'])) {
+	$userid = $_REQUEST['userid'];
 }
 
 if (isset($userid)) {
@@ -56,8 +56,8 @@ if (isset($userid)) {
 	$a_user =& $config['system']['user'];
 }
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($config['ca'])) {
@@ -79,10 +79,10 @@ foreach ($a_ca as $ca) {
 	}
 }
 
-$act = $_POST['act'];
+$act = $_REQUEST['act'];
 
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_cert[$id])) {
 		pfSenseHeader("system_certmanager.php");
@@ -200,7 +200,7 @@ if ($act == "csr") {
 	$pconfig['csr'] = base64_decode($a_cert[$id]['csr']);
 }
 
-if ($_POST['save'] == "Save") {
+if ($_POST['save']) {
 	// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
 	if ($_POST['altname_value0'] == "") {
 		unset($_POST['altname_type0']);
@@ -1057,13 +1057,13 @@ foreach ($a_cert as $i => $cert):
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
-							<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>" usepost></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>" usepost></a>
-							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-archive" title="<?=gettext("Export P12")?>" usepost></a>
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 						<?php else: ?>
-							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>" usep></a>
-							<a href="system_certmanager.php?act=req&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>" usepost></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>" usepost></a>
+							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
+							<a href="system_certmanager.php?act=req&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
 							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
@@ -1080,7 +1080,7 @@ foreach ($a_cert as $i => $cert):
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success btn-sm" usepost>
+	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

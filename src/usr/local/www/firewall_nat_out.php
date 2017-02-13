@@ -50,13 +50,13 @@ $a_out = &$config['nat']['outbound']['rule'];
 
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
-if (isset($_POST['order-store'])) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (isset($_REQUEST['order-store'])) {
+	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
 
 		$a_out_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
+		foreach ($_REQUEST['rule'] as $id) {
 			$a_out_new[] = $a_out[$id];
 		}
 
@@ -346,7 +346,7 @@ print($form);
 
 						if (isset($alias['src'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true"  usepost>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 <?php
 						endif;
 ?>
@@ -369,7 +369,7 @@ print($form);
 
 							if (isset($alias['srcport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" usepost>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true" >
 <?php
 							endif;
 ?>
@@ -396,7 +396,7 @@ print($form);
 
 							if (isset($alias['dst'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" usepost>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true" >
 <?php
 							endif;
 ?>
@@ -420,7 +420,7 @@ print($form);
 						} else {
 							if (isset($alias['dstport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" usepost>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true" >
 <?php
 							endif;
 ?>
@@ -474,8 +474,8 @@ print($form);
 
 						<!-- Action	 icons -->
 						<td>
-							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>" usepost></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	 title="<?=gettext("Edit mapping")?>" href="firewall_nat_out_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_out_edit.php?dup=<?=$i?>"></a>
 							<a class="fa fa-trash"	 title="<?=gettext("Delete mapping")?>" href="firewall_nat_out.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -489,11 +489,11 @@ print($form);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the top of the list')?>" usepost>
+		<a href="firewall_nat_out_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the end of the list')?>" usepost>
+		<a href="firewall_nat_out_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping to the end of the list')?>">
 			<i class="fa fa-level-down icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>

@@ -44,10 +44,10 @@ if (!is_array($config['staticroutes']['route'])) {
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true);
 
-$id = $_POST['id'];
+$id = $_REQUEST['id'];
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
-	$id = $_POST['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_routes[$id]) {
@@ -58,7 +58,7 @@ if (isset($id) && $a_routes[$id]) {
 	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
 }
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 

@@ -49,12 +49,12 @@ if (!is_array($config['gateways']['gateway_item'])) {
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $dpinger_default = return_dpinger_defaults();
 
-if (is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
-	$id = $_POST['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_gateways[$id]) {
@@ -88,7 +88,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
-if (isset($_POST['dup']) && is_numericint($_POST['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }

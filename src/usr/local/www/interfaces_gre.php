@@ -119,7 +119,7 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($gre['descr'])?>
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 </div>
 
 <nav class="action-buttons">
-	<a href="interfaces_gre_edit.php" class="btn btn-success btn-sm" usepost>
+	<a href="interfaces_gre_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

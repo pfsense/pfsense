@@ -53,8 +53,8 @@ if (!is_array($config['l2tp']['user'])) {
 
 $a_secret = &$config['l2tp']['user'];
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_secret[$id]) {

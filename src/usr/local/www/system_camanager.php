@@ -38,8 +38,8 @@ $ca_methods = array(
 $ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($config['ca'])) {
@@ -60,11 +60,11 @@ if (!is_array($config['crl'])) {
 
 $a_crl =& $config['crl'];
 
-if ($_POST['act']) {
-	$act = $_POST['act'];
+if ($_REQUEST['act']) {
+	$act = $_REQUEST['act'];
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_ca[$id])) {
 		pfSenseHeader("system_camanager.php");
@@ -153,7 +153,7 @@ if ($act == "expkey") {
 	exit;
 }
 
-if ($_POST && ($_POST['save'] == 'Save')) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$input_errors = array();
@@ -426,10 +426,10 @@ foreach ($a_ca as $i => $ca):
 						<?php endif?>
 					</td>
 					<td class="text-nowrap">
-						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>" usepost></a>
-						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
-						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>" usepost></a>
+						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
 						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
@@ -444,7 +444,7 @@ foreach ($a_ca as $i => $ca):
 </div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success btn-sm" usepost>
+	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

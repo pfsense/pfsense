@@ -38,19 +38,17 @@ if (!is_array($config['l2tp']['user'])) {
 }
 $a_secret = &$config['l2tp']['user'];
 
-if ($_POST) {
 
-	$pconfig = $_POST;
+$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		if (!is_subsystem_dirty('rebootreq')) {
-			$retval |= vpn_l2tp_configure();
-		}
-		if ($retval == 0) {
-			if (is_subsystem_dirty('l2tpusers')) {
-				clear_subsystem_dirty('l2tpusers');
-			}
+if ($_POST['apply']) {
+	$retval = 0;
+	if (!is_subsystem_dirty('rebootreq')) {
+		$retval |= vpn_l2tp_configure();
+	}
+	if ($retval == 0) {
+		if (is_subsystem_dirty('l2tpusers')) {
+			clear_subsystem_dirty('l2tpusers');
 		}
 	}
 }
@@ -108,7 +106,7 @@ display_top_tabs($tab_array);
 							<?=htmlspecialchars($secretent['ip'])?>&nbsp;
 						</td>
 						<td>
-							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
@@ -119,7 +117,7 @@ display_top_tabs($tab_array);
 	</div>
 </div>
 <nav class="action-buttons">
-	<a class="btn btn-success btn-sm" href="vpn_l2tp_users_edit.php" usepost>
+	<a class="btn btn-success btn-sm" href="vpn_l2tp_users_edit.php">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

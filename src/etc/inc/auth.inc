@@ -286,30 +286,53 @@ function & getGroupEntryByGID($gid) {
 }
 
 function get_user_privileges(& $user) {
-	global $config;
+	global $config, $_SESSION;
 
 	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	$names = array();
+	$allowed_groups = array();
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {
 		$privs = array();
 	}
 
+	// cache auth results for a short time to ease load on auth services & logs
+	if (isset($config['system']['webgui']['auth_refresh_time'])) {
+		$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+	} else {
+		$recheck_time = 30;
+	}
+
 	if ($authcfg['type'] == "ldap") {
-		$names = @ldap_get_groups($user['name'], $authcfg);
+		if (isset($_SESSION["ldap_allowed_groups"]) &&
+		    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+			$allowed_groups = $_SESSION["ldap_allowed_groups"];
+		} else {
+			$allowed_groups = @ldap_get_groups($user['name'], $authcfg);
+			$_SESSION["ldap_allowed_groups"] = $allowed_groups;
+			$_SESSION["auth_check_time"] = time();
+		}
 	} elseif ($authcfg['type'] == "radius") {
-		$names = @radius_get_groups($_SESSION['user_radius_attributes']);
+		if (isset($_SESSION["radius_allowed_groups"]) &&
+		    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+			$allowed_groups = $_SESSION["radius_allowed_groups"];
+		} else {
+			$allowed_groups = @radius_get_groups($_SESSION['user_radius_attributes']);
+			$_SESSION["radius_allowed_groups"] = $allowed_groups;
+			$_SESSION["auth_check_time"] = time();
+		}
 	}
 
-	if (empty($names)) {
-		$names = local_user_get_groups($user, true);
+	if (empty($allowed_groups)) {
+		$allowed_groups = local_user_get_groups($user, true);
 	}
 
-	foreach ($names as $name) {
-		$group = getGroupEntry($name);
-		if (is_array($group['priv'])) {
-			$privs = array_merge($privs, $group['priv']);
+	if (is_array($allowed_groups)) {
+		foreach ($allowed_groups as $name) {
+			$group = getGroupEntry($name);
+			if (is_array($group['priv'])) {
+				$privs = array_merge($privs, $group['priv']);
+			}
 		}
 	}
 
@@ -1154,7 +1177,7 @@ function ldap_get_groups($username, $authcfg) {
 
 	if ($error == true) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
-		return memberof;
+		return $memberof;
 	}
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
@@ -1183,7 +1206,7 @@ function ldap_get_groups($username, $authcfg) {
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind to server %s."), $ldapname));
 		@ldap_close($ldap);
-		return memberof;
+		return $memberof;
 	}
 
 	/* get groups from DN found */

@@ -37,8 +37,8 @@ require_once("certs.inc");
 require_once("guiconfig.inc");
 
 // start admin user code
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$id = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
+	$id = $_REQUEST['userid'];
 }
 
 if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
@@ -46,7 +46,7 @@ if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 }
 
 $a_user = &$config['system']['user'];
-$act = $_POST['act'];
+$act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
@@ -487,7 +487,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -533,7 +533,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success" usepost><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
+	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$certhtml .= '</nav>';
 
 	return($certhtml);
@@ -546,6 +546,7 @@ if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
 	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($delete_errors) {
@@ -608,7 +609,7 @@ foreach ($a_user as $i => $userent):
 						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>" usepost></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
@@ -621,7 +622,7 @@ foreach ($a_user as $i => $userent):
 	</div>
 </div>
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-sm btn-success" usepost>
+	<a href="?act=new" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>

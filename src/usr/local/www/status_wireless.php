@@ -33,11 +33,7 @@ $shortcut_section = "wireless";
 
 include("head.inc");
 
-$if = $_POST['if'];
-
-if ($_GET['if'] != "") {
-	$if = $_GET['if'];
-}
+$if = $_REQUEST['if'];
 
 $ciflist = get_configured_interface_with_descr();
 if (empty($if)) {

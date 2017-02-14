@@ -1131,6 +1131,14 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false) {
 	global $g;
 
+	$output = exec("/usr/local/sbin/{$g['product_name']}-upgrade -c", $_gc,
+	    $rc);
+
+	/* pfSense-upgrade returns 2 when there is a new version */
+	if ($rc == 2) {
+		$new_version = explode(' ', $output)[0];
+	}
+
 	$base_pkg = get_base_pkg_name();
 	$meta_pkg = get_meta_pkg_name();
 
@@ -1138,23 +1146,24 @@ function get_system_pkg_version($baseonly = false) {
 		return false;
 	}
 
-	$info = get_pkg_info($base_pkg);
-	$pkg_name = $base_pkg;
+	$info = get_pkg_info($base_pkg, true);
 
 	$pkg_info = array();
 	foreach ($info as $item) {
 		if ($item['name'] == $base_pkg) {
 			$pkg_info = $item;
+			break;
 		}
 	}
 
-	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] == $pkg_info['installed_version']))) {
-		$info = get_pkg_info($meta_pkg);
-		$pkg_name = $meta_pkg;
+	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
+	    $pkg_info['installed_version']))) {
+		$info = get_pkg_info($meta_pkg, true);
 
 		foreach ($info as $item) {
 			if ($item['name'] == $meta_pkg) {
 				$pkg_info = $item;
+				break;
 			}
 		}
 	}
@@ -1164,8 +1173,7 @@ function get_system_pkg_version($baseonly = false) {
 	}
 
 	return array(
-	    'pkg_name'          => $pkg_name,
-	    'version'           => $pkg_info['version'],
+	    'version'           => $new_version ?: $pkg_info['version'],
 	    'installed_version' => $pkg_info['installed_version']
 	);
 }

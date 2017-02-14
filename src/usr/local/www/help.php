@@ -328,8 +328,8 @@ $helppages = array(
 
 $pagename = "";
 /* Check for parameter "page". */
-if ($_GET && isset($_GET['page'])) {
-	$pagename = $_GET['page'];
+if ($_REQUEST && isset($_REQUEST['page'])) {
+	$pagename = $_REQUEST['page'];
 }
 
 /* If "page" is not found, check referring URL */

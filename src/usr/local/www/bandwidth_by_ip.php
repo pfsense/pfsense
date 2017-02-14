@@ -27,8 +27,9 @@ require_once('util.inc');
 $listedIPs = "";
 
 //get interface IP and break up into an array
-$interface = $_GET['if'];
+$interface = $_REQUEST['if'];
 $real_interface = get_real_interface($interface);
+
 if (!does_interface_exist($real_interface)) {
 	echo gettext("Wrong Interface");
 	return;
@@ -40,7 +41,7 @@ $netmask = find_interface_subnet($real_interface);
 $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
 
 // see if they want local, remote or all IPs returned
-$filter = $_GET['filter'];
+$filter = $_REQUEST['filter'];
 
 if ($filter == "") {
 	$filter = "local";
@@ -56,7 +57,7 @@ if ($filter == "local") {
 }
 
 //get the sort method
-$sort = $_GET['sort'];
+$sort = $_REQUEST['sort'];
 if ($sort == "out") {
 	$sort_method = "-T";
 } else {
@@ -64,7 +65,7 @@ if ($sort == "out") {
 }
 
 // get the desired format for displaying the host name or IP
-$hostipformat = $_GET['hostipformat'];
+$hostipformat = $_REQUEST['hostipformat'];
 $iplookup = array();
 // If hostname, description or FQDN is requested then load the locally-known IP address - host/description mappings into an array keyed by IP address.
 if ($hostipformat != "") {

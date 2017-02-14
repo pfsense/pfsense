@@ -36,9 +36,10 @@ require_once("vslb.inc");
 if (!is_array($config['load_balancer']['virtual_server'])) {
 	$config['load_balancer']['virtual_server'] = array();
 }
+
 $a_vs = &$config['load_balancer']['virtual_server'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -51,12 +52,12 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if (array_key_exists($_GET['id'], $a_vs)) {
+if ($_POST['act'] == "del") {
+	if (array_key_exists($_POST['id'], $a_vs)) {
 
 		if (!$input_errors) {
-			cleanup_lb_mark_anchor($a_vs[$_GET['id']]['name']);
-			unset($a_vs[$_GET['id']]);
+			cleanup_lb_mark_anchor($a_vs[$_POST['id']]['name']);
+			unset($a_vs[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_virtual_server.php");
@@ -177,7 +178,7 @@ if (!empty($a_vs)) {
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit virtual server')?>"	href="load_balancer_virtual_server_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone"	title="<?=gettext('Copy virtual server')?>"	href="load_balancer_virtual_server_edit.php?act=dup&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

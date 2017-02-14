@@ -39,7 +39,7 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 $a_pool = &$config['load_balancer']['lbpool'];
 
 
-if ($_POST) {
+if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -51,12 +51,12 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if (array_key_exists($_GET['id'], $a_pool)) {
+if ($_POST['act'] == "del") {
+	if (array_key_exists($_POST['id'], $a_pool)) {
 		/* make sure no virtual servers reference this entry */
 		if (is_array($config['load_balancer']['virtual_server'])) {
 			foreach ($config['load_balancer']['virtual_server'] as $vs) {
-				if ($vs['poolname'] == $a_pool[$_GET['id']]['name']) {
+				if ($vs['poolname'] == $a_pool[$_POST['id']]['name']) {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one virtual server.");
 					break;
 				}
@@ -64,7 +64,7 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (!$input_errors) {
-			unset($a_pool[$_GET['id']]);
+			unset($a_pool[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_pool.php");
@@ -162,7 +162,7 @@ foreach ($a_pool as $pool) {
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit pool')?>"	href="load_balancer_pool_edit.php?id=<?=$idx?>"></a>
 							<a class="fa fa-clone"	title="<?=gettext('Copy pool')?>"	href="load_balancer_pool_edit.php?act=dup&amp;id=<?=$idx?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&amp;id=<?=$idx?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&amp;id=<?=$idx?>" usepost></a>
 						</td>
 					</tr>
 <?php

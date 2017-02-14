@@ -60,7 +60,7 @@ if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	$file = $g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml';
 
-	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");
+	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 	$exp_data = file_get_contents($file);
 	$exp_size = strlen($exp_data);
 

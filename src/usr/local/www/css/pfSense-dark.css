@@ -568,6 +568,10 @@ g.nv-axis text, g.nv-legend text {
     color: #e0e0e0;
 }
 
+.colspanth {
+    background-color: #000000;
+}
+
 /* Required input elements have a title that begins with "*". This causes
 Group.class.php to add <span class="element-required" to the title, which
 can then be used to style required input here. Example below uses a custom

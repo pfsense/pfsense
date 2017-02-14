@@ -1113,6 +1113,7 @@ clean_builder() {
 	mkdir -p $KERNEL_BUILD_PATH
 
 	echo -n ">>> Cleaning previously built images..."
+	chflags -R noschg ${IMAGES_FINAL_DIR} ${STAGINGAREA}2>&1 1>/dev/null
 	rm -rf $IMAGES_FINAL_DIR/*
 	rm -rf $STAGINGAREA/*
 	echo "Done!"

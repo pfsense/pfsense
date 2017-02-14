@@ -866,6 +866,9 @@ awk '
 		# Restore default action
 		trap "-" 1 2 15 EXIT
 
+		chflags -R noschg $MNT
+		rm -rf $MNT
+
 		# Check each image and ensure that they are over
 		# 3 megabytes.  If either image is under 20 megabytes
 		# in size then error out.

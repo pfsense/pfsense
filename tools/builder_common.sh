@@ -2532,7 +2532,7 @@ snapshots_copy_to_staging_nanobsd() {
 			# Copy NanoBSD auto update:
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
 				cp -l $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
-				create_sha256 $STAGINGAREAA/latest-${NANOTYPE}-$FILESIZE.img.gz
+				create_sha256 $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz
 				# NOTE: Updates need a file with output similar to date output
 				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
 				cp $BUILTDATESTRINGFILE $STAGINGAREA/version-${NANOTYPE}-$FILESIZE

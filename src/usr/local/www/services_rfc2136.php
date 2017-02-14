@@ -34,19 +34,19 @@ if (!is_array($config['dnsupdates']['dnsupdate'])) {
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if ($_GET['act'] == "del") {
-	unset($a_rfc2136[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	unset($a_rfc2136[$_POST['id']]);
 
 	write_config();
 
 	header("Location: services_rfc2136.php");
 	exit;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_rfc2136[$_GET['id']]) {
-		if (isset($a_rfc2136[$_GET['id']]['enable'])) {
-			unset($a_rfc2136[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_rfc2136[$_POST['id']]) {
+		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
+			unset($a_rfc2136[$_POST['id']]['enable']);
 		} else {
-			$a_rfc2136[$_GET['id']]['enable'] = true;
+			$a_rfc2136[$_POST['id']]['enable'] = true;
 		}
 		write_config();
 
@@ -176,13 +176,13 @@ foreach ($a_rfc2136 as $rfc2136):
 						<a class="fa fa-pencil" title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 					<?php if (isset($rfc2136['enable'])) {
 					?>
-						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php } else {
 					?>
-						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
-						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
 <?php

@@ -39,12 +39,10 @@ if (!is_array($config['dnsmasq']['hosts'])) {
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -54,7 +52,7 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -165,8 +163,8 @@ if ($_POST) {
 }
 
 // Delete a row in the options table
-if ($_GET['act'] == "delopt") {
-	$idx = $_GET['id'];
+if ($_POST['act'] == "delopt") {
+	$idx = $_POST['id'];
 
 	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
 	   unset($pconfig['aliases']['item'][$idx]);
@@ -174,7 +172,7 @@ if ($_GET['act'] == "delopt") {
 }
 
 // Add an option row
-if ($_GET['act'] == "addopt") {
+if ($_REQUEST['act'] == "addopt") {
     if (!is_array($pconfig['aliases']['item'])) {
         $pconfig['aliases']['item'] = array();
 	}

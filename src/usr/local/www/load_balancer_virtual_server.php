@@ -39,17 +39,15 @@ if (!is_array($config['load_balancer']['virtual_server'])) {
 
 $a_vs = &$config['load_balancer']['virtual_server'];
 
-if ($_POST['save']) {
-	$pconfig = $_POST;
+$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
-		$retval |= relayd_configure();
-		/* Wipe out old relayd anchors no longer in use. */
-		cleanup_lb_marked();
-		clear_subsystem_dirty('loadbalancer');
-	}
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
+	$retval |= relayd_configure();
+	/* Wipe out old relayd anchors no longer in use. */
+	cleanup_lb_marked();
+	clear_subsystem_dirty('loadbalancer');
 }
 
 if ($_POST['act'] == "del") {

@@ -793,7 +793,8 @@ awk '
 			echo "/dev/ufs/cf /cf ufs ro,sync,noatime 1 1" >> ${MNT}/etc/fstab
 		fi
 
-		umount ${MNT}
+		sync; sync; sync
+		umount ${MNT} || umount -f ${MNT}
 		# Restore the original trap
 		trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
@@ -824,7 +825,8 @@ awk '
 				echo "/dev/ufs/cf /cf ufs ro,sync,noatime 1 1" >> ${MNT}/etc/fstab
 			fi
 
-			umount ${MNT}
+			sync; sync; sync
+			umount ${MNT} || umount -f ${MNT}
 			# Restore the trap back
 			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 		fi
@@ -849,7 +851,8 @@ awk '
 
 			clone_directory_contents ${FINAL_CHROOT_DIR}/cf ${MNT}
 
-			umount ${MNT}
+			sync; sync; sync
+			umount ${MNT} || umount -f ${MNT}
 			# Restore the trap back
 			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 		else

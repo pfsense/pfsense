@@ -46,13 +46,7 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 }
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
@@ -76,7 +70,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;

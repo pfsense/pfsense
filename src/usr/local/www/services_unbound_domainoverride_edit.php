@@ -39,13 +39,7 @@ if (!is_array($config['unbound']['domainoverrides'])) {
 }
 
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['domain'] = $a_domainOverrides[$id]['domain'];
@@ -53,7 +47,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

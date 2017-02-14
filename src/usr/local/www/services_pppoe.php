@@ -36,42 +36,39 @@ if (!is_array($config['pppoes']['pppoe'])) {
 
 $a_pppoes = &$config['pppoes']['pppoe'];
 
-if ($_POST) {
-	$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
-			foreach ($toapplylist as $pppoeid) {
-				if (!is_numeric($pppoeid)) {
-					continue;
-				}
-				if (is_array($config['pppoes']['pppoe'])) {
-					foreach ($config['pppoes']['pppoe'] as $pppoe) {
-						if ($pppoe['pppoeid'] == $pppoeid) {
-							vpn_pppoe_configure($pppoe);
-							break;
-						}
+if ($_POST['apply']) {
+	if (file_exists("{$g['tmp_path']}/.vpn_pppoe.apply")) {
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.vpn_pppoe.apply"));
+		foreach ($toapplylist as $pppoeid) {
+			if (!is_numeric($pppoeid)) {
+				continue;
+			}
+			if (is_array($config['pppoes']['pppoe'])) {
+				foreach ($config['pppoes']['pppoe'] as $pppoe) {
+					if ($pppoe['pppoeid'] == $pppoeid) {
+						vpn_pppoe_configure($pppoe);
+						break;
 					}
 				}
 			}
-			@unlink("{$g['tmp_path']}/.vpn_pppoe.apply");
 		}
-		$retval = 0;
-		$retval |= filter_configure();
-		clear_subsystem_dirty('vpnpppoe');
+		@unlink("{$g['tmp_path']}/.vpn_pppoe.apply");
 	}
+	$retval = 0;
+	$retval |= filter_configure();
+	clear_subsystem_dirty('vpnpppoe');
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_pppoes[$_GET['id']]) {
-		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid") {
-			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid");
+if ($_POST['act'] == "del") {
+	if ($a_pppoes[$_POST['id']]) {
+		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid") {
+			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'] . "-vpn.pid");
 		}
-		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'])) {
-			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']);
+		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid'])) {
+			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_POST['id']]['pppoeid']);
 		}
-		unset($a_pppoes[$_GET['id']]);
+		unset($a_pppoes[$_POST['id']]);
 		write_config();
 		header("Location: services_pppoe.php");
 		exit;
@@ -94,7 +91,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('PPPoE Server')?></h2></div>
 	<div class="panel-body">
-	
+
 	<div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 		<thead>
@@ -126,7 +123,7 @@ foreach ($a_pppoes as $pppoe):
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext('Edit PPPoE instance')?>"	href="services_pppoe_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-trash" title="<?=gettext('Delete PPPoE instance')?>" href="services_pppoe.php?act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

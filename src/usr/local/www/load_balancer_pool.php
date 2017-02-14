@@ -38,17 +38,14 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 
 $a_pool = &$config['load_balancer']['lbpool'];
 
+$pconfig = $_POST;
 
-if ($_POST['save']) {
-	$pconfig = $_POST;
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
+	$retval |= relayd_configure();
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
-		$retval |= relayd_configure();
-
-		clear_subsystem_dirty('loadbalancer');
-	}
+	clear_subsystem_dirty('loadbalancer');
 }
 
 if ($_POST['act'] == "del") {

@@ -1863,14 +1863,14 @@ function session_auth() {
 	 * to submit a HTML form. It basically disables the observation
 	 * of the submit event and hence does not trigger Ajax.
 	 */
-	if ($_GET['disable_ajax']) {
+	if ($_REQUEST['disable_ajax']) {
 		$_SESSION['NO_AJAX'] = "True";
 	}
 
 	/*
 	 * Same to re-enable Ajax.
 	 */
-	if ($_GET['enable_ajax']) {
+	if ($_REQUEST['enable_ajax']) {
 		unset($_SESSION['NO_AJAX']);
 	}
 

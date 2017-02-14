@@ -39,19 +39,14 @@ define('DEBUG', false);
 
 global $g;
 
-$stepid = htmlspecialchars($_GET['stepid']);
-if (isset($_POST['stepid'])) {
-	$stepid = htmlspecialchars($_POST['stepid']);
-}
+$stepid = htmlspecialchars($_REQUEST['stepid']);
+
 
 if (!$stepid) {
 	$stepid = "0";
 }
 
-$xml = htmlspecialchars($_GET['xml']);
-if ($_POST['xml']) {
-	$xml = htmlspecialchars($_POST['xml']);
-}
+$xml = htmlspecialchars($_REQUEST['xml']);
 
 if (empty($xml)) {
 	$xml = "not_defined";
@@ -409,11 +404,8 @@ if ($input_errors) {
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
-if ($_GET['message'] != "") {
-	print_info_box(htmlspecialchars($_GET['message']));
-}
-if ($_POST['message'] != "") {
-	print_info_box(htmlspecialchars($_POST['message']));
+if ($_REQUEST['message'] != "") {
+	print_info_box(htmlspecialchars($_REQUEST['message']));
 }
 
 $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);

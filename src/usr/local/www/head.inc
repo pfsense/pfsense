@@ -250,7 +250,7 @@ $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 // Interfaces
 // NOTE:
 // Now that menus are sorted, adding a DIVIDER must be done after the sorting so an array is formed of the
-// items above the divider and another for below it. THese are then sorted and combined with the divider
+// items above the divider and another for below it. These are then sorted and combined with the divider
 $interfaces_menu = array();
 $interfaces_top = array();
 $interfaces_bottom = array();
@@ -274,7 +274,7 @@ foreach ($opts as $oif => $odescr) {
 	}
 }
 
-// COmbine the top section, the divider and hte bottom section of this menu
+// Combine the top section, the divider and the bottom section of this menu
 $interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], msort(array_merge($interfaces_bottom, return_ext_menu("Interfaces")), 0));
 
 // Firewall

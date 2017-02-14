@@ -364,7 +364,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 
 <div class="row">
 <?php
-	$columnWidth = 12 / $numColumns;
+	$columnWidth = (int) (12 / $numColumns);
 
 	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
 
@@ -428,8 +428,13 @@ function updateWidgets(newWidget) {
 	$('.container .col-md-<?=$columnWidth?>').each(function(idx, col) {
 		$('.panel', col).each(function(idx, widget) {
 			var isOpen = $('.panel-body', widget).hasClass('in');
+			var widget_basename = widget.id.split('-')[1];
 
-			sequence += widget.id.split('-')[1] + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ',';
+			// Only save details for panels that have id's like'widget-*'
+			// Some widgets create other panels, so ignore any of those.
+			if ((widget.id.split('-')[0] == 'widget') && (typeof widget_basename !== 'undefined')) {
+				sequence += widget_basename + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ',';
+			}
 		});
 	});
 

@@ -35,7 +35,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-if (substr($_GET['act'], 0, 3) == "get") {
+if (substr($_REQUEST['act'], 0, 3) == "get") {
 	$nocsrf = true;
 }
 
@@ -45,10 +45,8 @@ global $cpzone;
 global $cpzoneid;
 
 $cpzoneid = 1; /* Just a default */
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
+$cpzone = $_REQUEST['zone'];
+
 $cpzone = strtolower($cpzone);
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
@@ -59,18 +57,19 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Configuration"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self", "@self");
 $shortcut_section = "captiveportal";
 
-if ($_GET['act'] == "viewhtml") {
+if ($_REQUEST['act'] == "viewhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
 	}
 	exit;
-} else if ($_GET['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+} else if ($_REQUEST['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['htmltext']);
 	$file_size = strlen($file_data);
 
@@ -80,17 +79,17 @@ if ($_GET['act'] == "viewhtml") {
 	echo $file_data;
 
 	exit;
-} else if ($_GET['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+} else if ($_REQUEST['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
 	unset($a_cp[$cpzone]['page']['htmltext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default portal page"), $cpzone));
 	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
-} else if ($_GET['act'] == "viewerrhtml") {
+} else if ($_REQUEST['act'] == "viewerrhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
 	}
 	exit;
-} else if ($_GET['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+} else if ($_REQUEST['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['errtext']);
 	$file_size = strlen($file_data);
 
@@ -100,17 +99,17 @@ if ($_GET['act'] == "viewhtml") {
 	echo $file_data;
 
 	exit;
-} else if ($_GET['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+} else if ($_REQUEST['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
 	unset($a_cp[$cpzone]['page']['errtext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default error page"), $cpzone));
 	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
-} else if ($_GET['act'] == "viewlogouthtml") {
+} else if ($_REQUEST['act'] == "viewlogouthtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
 	}
 	exit;
-} else if ($_GET['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+} else if ($_REQUEST['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
 	$file_size = strlen($file_data);
 
@@ -120,7 +119,7 @@ if ($_GET['act'] == "viewhtml") {
 	echo $file_data;
 
 	exit;
-} else if ($_GET['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+} else if ($_REQUEST['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 	unset($a_cp[$cpzone]['page']['logouttext']);
 	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default logout page"), $cpzone));
 	header("Location: services_captiveportal.php?zone={$cpzone}");
@@ -205,7 +204,7 @@ if ($a_cp[$cpzone]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

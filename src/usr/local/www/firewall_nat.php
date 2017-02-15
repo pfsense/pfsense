@@ -43,8 +43,8 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (array_key_exists('order-store', $_REQUEST)) {
+	if (is_array($_REQUEST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_nat_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
@@ -74,41 +74,38 @@ if (array_key_exists('order-store', $_POST)) {
 }
 
 /* if a custom message has been passed along, lets process it */
-if ($_GET['savemsg']) {
-	$savemsg = $_GET['savemsg'];
+if ($_REQUEST['savemsg']) {
+	$savemsg = $_REQUEST['savemsg'];
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+if ($_POST['apply']) {
 
-	if ($_POST['apply']) {
+	$retval = 0;
 
-		$retval = 0;
+	$retval |= filter_configure();
 
-		$retval |= filter_configure();
+	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
 
-		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
-
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
+
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_nat[$_GET['id']]) {
+if ($_POST['act'] == "del") {
+	if ($a_nat[$_POST['id']]) {
 
-		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
-			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			delete_id($a_nat[$_POST['id']]['associated-rule-id'], $config['filter']['rule']);
 			$want_dirty_filter = true;
 		}
-		unset($a_nat[$_GET['id']]);
+
+		unset($a_nat[$_POST['id']]);
 
 		// Update the separators
 		$a_separators = &$config['nat']['separator'];
-		$ridx = $_GET['id'];
+		$ridx = $_POST['id'];
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
@@ -125,6 +122,7 @@ if ($_GET['act'] == "del") {
 }
 
 if (isset($_POST['del_x'])) {
+
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		$a_separators = &$config['nat']['separator'];
@@ -156,19 +154,19 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
-} else if ($_GET['act'] == "toggle") {
-	if ($a_nat[$_GET['id']]) {
-		if (isset($a_nat[$_GET['id']]['disabled'])) {
-			unset($a_nat[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_nat[$_POST['id']]) {
+		if (isset($a_nat[$_POST['id']]['disabled'])) {
+			unset($a_nat[$_POST['id']]['disabled']);
 			$rule_status = true;
 		} else {
-			$a_nat[$_GET['id']]['disabled'] = true;
+			$a_nat[$_POST['id']]['disabled'] = true;
 			$rule_status = false;
 		}
 
 		// Check for filter rule associations
-		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
-			toggle_id($a_nat[$_GET['id']]['associated-rule-id'],
+		if (isset($a_nat[$_POST['id']]['associated-rule-id'])) {
+			toggle_id($a_nat[$_POST['id']]['associated-rule-id'],
 			    $config['filter']['rule'], $rule_status);
 			unset($rule_status);
 			mark_subsystem_dirty('filter');
@@ -289,7 +287,7 @@ foreach ($a_nat as $natent):
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
@@ -335,7 +333,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['source'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['source'])))?>
 <?php
 	if (isset($alias['src'])):
 ?>
@@ -352,7 +350,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['source']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['source']['port'])))?>
 <?php
 	if (isset($alias['srcport'])):
 ?>
@@ -370,7 +368,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['destination'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_address($natent['destination'])))?>
 <?php
 	if (isset($alias['dst'])):
 ?>
@@ -387,7 +385,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
 <?php
 	if (isset($alias['dstport'])):
 ?>
@@ -400,12 +398,12 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['target'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true" >
 <?php
 	endif;
 ?>
 
-							<?=str_replace('_', ' ', htmlspecialchars($natent['target']))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars($natent['target']))?>
 <?php
 	if (isset($alias['target'])):
 ?>
@@ -422,7 +420,7 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($localport)))?>
+							<?=str_replace('_', '_<wbr>', htmlspecialchars(pprint_port($localport)))?>
 <?php
 	if (isset($alias['targetport'])):
 ?>
@@ -438,7 +436,7 @@ foreach ($a_nat as $natent):
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

@@ -48,6 +48,7 @@ foreach ($icmptypes as $k => $v) {
 		$icmptypes6[$k] = $v['descrip'];
 	}
 }
+
 $icmplookup = array(
 	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4),
 	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6),
@@ -126,6 +127,7 @@ if (count($ostypes) > 2) {
 
 $specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
+
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
@@ -134,26 +136,21 @@ foreach ($ifdisp as $kif => $kdescr) {
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }
+
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -282,7 +279,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['sched'] = (($a_filter[$id]['sched'] == "none") ? '' : $a_filter[$id]['sched']);
 	$pconfig['vlanprio'] = (($a_filter[$id]['vlanprio'] == "none") ? '' : $a_filter[$id]['vlanprio']);
 	$pconfig['vlanprioset'] = (($a_filter[$id]['vlanprioset'] == "none") ? '' : $a_filter[$id]['vlanprioset']);
-	if (!isset($_GET['dup']) || !is_numericint($_GET['dup'])) {
+	if (!isset($_REQUEST['dup']) || !is_numericint($_REQUEST['dup'])) {
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 	}
 
@@ -290,8 +287,8 @@ if (isset($id) && $a_filter[$id]) {
 
 } else {
 	/* defaults */
-	if ($_GET['if']) {
-		$pconfig['interface'] = $_GET['if'];
+	if ($_REQUEST['if']) {
+		$pconfig['interface'] = $_REQUEST['if'];
 	}
 	$pconfig['ipprotocol'] = "inet"; // other things depend on this, set a sensible default
 	$pconfig['type'] = "pass";
@@ -302,7 +299,7 @@ if (isset($id) && $a_filter[$id]) {
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
@@ -312,7 +309,7 @@ read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 

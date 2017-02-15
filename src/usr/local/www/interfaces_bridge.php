@@ -48,22 +48,22 @@ function bridge_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	if (!isset($_GET['id'])) {
+if ($_POST['act'] == "del") {
+	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
-	} else if (empty($a_bridges[$_GET['id']])) {
+	} else if (empty($a_bridges[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (bridge_inuse($_GET['id'])) {
+	} else if (bridge_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
 	} else {
-		if (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
+		if (!does_interface_exist($a_bridges[$_POST['id']]['bridgeif'])) {
 			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
 		} else {
-			pfSense_interface_destroy($a_bridges[$_GET['id']]['bridgeif']);
+			pfSense_interface_destroy($a_bridges[$_POST['id']]['bridgeif']);
 		}
 
-		unset($a_bridges[$_GET['id']]);
+		unset($a_bridges[$_POST['id']]);
 
 		write_config();
 
@@ -137,7 +137,7 @@ foreach ($a_bridges as $bridge) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit interface bridge')?>"	href="interfaces_bridge_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete interface bridge')?>"	href="interfaces_bridge.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete interface bridge')?>"	href="interfaces_bridge.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

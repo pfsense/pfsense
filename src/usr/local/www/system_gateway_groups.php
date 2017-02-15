@@ -41,44 +41,42 @@ $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = gettext("Gateway Groups") . ": ";
 
-if ($_POST) {
 
-	$pconfig = $_POST;
+$pconfig = $_REQUEST;
 
-	if ($_POST['apply']) {
+if ($_POST['apply']) {
 
-		$retval = 0;
+	$retval = 0;
 
-		$retval |= system_routing_configure();
-		send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
+	$retval |= system_routing_configure();
+	send_multiple_events(array("service reload dyndnsall", "service reload ipsecdns", "filter reload"));
 
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
+	}
 
-		foreach ($a_gateway_groups as $gateway_group) {
-			$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
-			if (is_subsystem_dirty($gw_subsystem)) {
-				openvpn_resync_gwgroup($gateway_group['name']);
-				clear_subsystem_dirty($gw_subsystem);
-			}
+	foreach ($a_gateway_groups as $gateway_group) {
+		$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
+		if (is_subsystem_dirty($gw_subsystem)) {
+			openvpn_resync_gwgroup($gateway_group['name']);
+			clear_subsystem_dirty($gw_subsystem);
 		}
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= sprintf(gettext("removed gateway group %s"), $_GET['id']);
+if ($_POST['act'] == "del") {
+	if ($a_gateway_groups[$_POST['id']]) {
+		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
-			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
+			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
 			}
 		}
 
-		unset($a_gateway_groups[$_GET['id']]);
+		unset($a_gateway_groups[$_POST['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
@@ -169,7 +167,7 @@ foreach ($a_gateway_groups as $gateway_group):
 						<td>
 							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
 							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
-							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>"></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -190,9 +188,9 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?php print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
-						   'or policy-based routing.' . '<br />' .
-						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), 'info', false); ?>
+	<?php print_info_box(sprintf(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
+						   'or policy-based routing.%1$s' .
+						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), '<br />'), 'info', false); ?>
 </div>
 <?php
 include("foot.inc");

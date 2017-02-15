@@ -37,12 +37,8 @@ require_once("certs.inc");
 require_once("guiconfig.inc");
 
 // start admin user code
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$id = $_POST['userid'];
-}
-
-if (isset($_GET['userid']) && is_numericint($_GET['userid'])) {
-	$id = $_GET['userid'];
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
+	$id = $_REQUEST['userid'];
 }
 
 if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
@@ -50,7 +46,7 @@ if (!isset($config['system']['user']) || !is_array($config['system']['user'])) {
 }
 
 $a_user = &$config['system']['user'];
-$act = $_GET['act'];
+$act = $_REQUEST['act'];
 
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$referer = $_SERVER['HTTP_REFERER'];
@@ -82,15 +78,15 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_GET['act'] == "deluser") {
+if ($_POST['act'] == "deluser") {
 
-	if (!isset($_GET['username']) || !isset($a_user[$id]) || ($_GET['username'] != $a_user[$id]['name'])) {
+	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	if ($_GET['username'] == $_SESSION['Username']) {
-		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	if ($_POST['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_POST['username']);
 	} else {
 		local_user_del($a_user[$id]);
 		$userdeleted = $a_user[$id]['name'];
@@ -98,6 +94,7 @@ if ($_GET['act'] == "deluser") {
 		write_config();
 		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
 	}
+
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -482,7 +479,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>';
 		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
-		
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -549,6 +546,7 @@ if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
 	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($delete_errors) {
@@ -613,7 +611,7 @@ foreach ($a_user as $i => $userent):
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
-							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" usepost></a>
 <?php endif; ?>
 						</td>
 					</tr>
@@ -633,6 +631,7 @@ foreach ($a_user as $i => $userent):
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Delete")?>
 	</button>
+
 </nav>
 </form>
 <div class="infoblock">
@@ -643,7 +642,10 @@ foreach ($a_user as $i => $userent):
 		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
 		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
 	);
-?></div><?php
+
+?></div>
+
+<?php
 	include("foot.inc");
 	exit;
 }
@@ -910,7 +912,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					15360 => '15360 bits',
 					16384 => '16384 bits'
 				)
-			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, ' .
+				'and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). ' .
+				'As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. ' .
+				'For more information see %1$s.', '<a href="https://keylength.com">keylength.com</a>');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -1040,6 +1045,7 @@ events.push(function() {
 	$('form').submit(function() {
 		AllServers($('[name="groups[]"] option'), true);
 	});
+
 });
 //]]>
 </script>

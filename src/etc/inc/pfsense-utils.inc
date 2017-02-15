@@ -242,7 +242,7 @@ function gen_webguihostnamemenu_field(&$section, $value) {
  ******/
 function gen_dashboardcolumns_field(&$section, $value) {
 
-	if (($value < 1) || ($value > 4)) {
+	if (($value < 1) || ($value > 6)) {
 		$value = 2;
 	}
 
@@ -251,7 +251,7 @@ function gen_dashboardcolumns_field(&$section, $value) {
 		'Dashboard Columns',
 		'number',
 		$value,
-		[min => 1, max => 4]
+		[min => 1, max => 6]
 	));
 }
 

@@ -48,8 +48,8 @@ function qinq_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
-	$id = $_GET['id'];
+if ($_POST['act'] == "del") {
+	$id = $_POST['id'];
 
 	/* check if still in use */
 	if (qinq_inuse($id)) {
@@ -134,7 +134,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

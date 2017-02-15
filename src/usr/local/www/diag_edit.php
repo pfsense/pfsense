@@ -408,9 +408,9 @@ var Base64 = {
 
 };
 
-	<?php if ($_GET['action'] == "load"): ?>
+	<?php if ($_POST['action'] == "load"): ?>
 		events.push(function() {
-			$("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			$("#fbTarget").val("<?=htmlspecialchars($_POST['path'])?>");
 			loadFile();
 		});
 	<?php endif; ?>

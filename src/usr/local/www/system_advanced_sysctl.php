@@ -43,17 +43,11 @@ if (!is_array($config['sysctl']['item'])) {
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 
-if (isset($_GET['id'])) {
-	$id = htmlspecialchars_decode($_GET['id']);
-}
 if (isset($_POST['id'])) {
 	$id = htmlspecialchars_decode($_POST['id']);
 }
 
-$act = $_GET['act'];
-if (isset($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 if ($act == "edit") {
 	if (isset($a_tunable[$id])) {
@@ -68,7 +62,7 @@ if ($act == "edit") {
 	}
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 	if ($a_tunable[$id]) {
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
@@ -80,7 +74,7 @@ if ($act == "del") {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save'] || $_POST['apply']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -124,6 +118,7 @@ if ($act == "edit") {
 	$pgtitle[] = gettext('Edit');
 	$pglinks[] = "@self";
 }
+
 include("head.inc");
 
 if ($input_errors) {
@@ -183,7 +178,7 @@ if ($act != "edit"): ?>
 					<td>
 					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" usepost></a>
 						<?php endif; ?>
 					</td>
 				</tr>

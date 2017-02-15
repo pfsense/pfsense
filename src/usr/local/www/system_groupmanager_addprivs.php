@@ -34,12 +34,7 @@
 
 require_once("guiconfig.inc");
 
-if (is_numericint($_GET['groupid'])) {
-	$groupid = $_GET['groupid'];
-}
-if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
-	$groupid = $_POST['groupid'];
-}
+$groupid = $_REQUEST['groupid'];
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
 $pglinks = array("", "system_usermanager.php", "system_groupmanager.php", "system_groupmanager.php?act=edit&groupid=" . $groupid, "@self");
@@ -58,7 +53,7 @@ if (!is_array($a_group['priv'])) {
 // Make a local copy and sort it
 $spriv_list = $priv_list;
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

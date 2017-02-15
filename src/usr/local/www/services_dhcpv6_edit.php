@@ -50,10 +50,7 @@ if (!$g['services_dhcp_server_enable']) {
 
 require_once("guiconfig.inc");
 
-$if = $_GET['if'];
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 if (!$if) {
 	header("Location: services_dhcpv6.php");
@@ -76,12 +73,7 @@ $ifcfgipv6 = get_interface_ipv6($if);
 $ifcfgsnv6 = get_interface_subnetv6($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['duid'] = $a_maps[$id]['duid'];
@@ -91,14 +83,14 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
 	$pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
-	$pconfig['duid'] = $_GET['duid'];
-	$pconfig['hostname'] = $_GET['hostname'];
-	$pconfig['filename'] = $_GET['filename'];
+	$pconfig['duid'] = $_REQUEST['duid'];
+	$pconfig['hostname'] = $_REQUEST['hostname'];
+	$pconfig['filename'] = $_REQUEST['filename'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
-	$pconfig['descr'] = $_GET['descr'];
+	$pconfig['descr'] = $_REQUEST['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -122,6 +114,7 @@ if ($_POST) {
 			}
 		}
 	}
+
 	if ($_POST['ipaddrv6']) {
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
@@ -227,8 +220,8 @@ $section->addInput(new Form_Input(
 	'IPv6 address',
 	'text',
 	$pconfig['ipaddrv6']
-))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv6 address is given, one will be dynamically allocated from the pool.');
+))->setHelp('If an IPv6 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv6 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

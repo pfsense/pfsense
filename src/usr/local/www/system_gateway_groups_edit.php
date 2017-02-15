@@ -44,15 +44,12 @@ $categories = array(
 	'downlatency' => gettext("High Latency"),
 	'downlosslatency' => gettext("Packet Loss or High Latency"));
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_gateway_groups[$id]) {
@@ -62,11 +59,11 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
-if ($_POST) {
+if (isset($_POST['save'])) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

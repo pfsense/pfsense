@@ -41,11 +41,8 @@ if (!is_array($config['virtualip']['vip'])) {
 
 $a_vip = &$config['virtualip']['vip'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 function return_first_two_octets($ip) {
@@ -86,7 +83,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['uniqid'] = uniqid();
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

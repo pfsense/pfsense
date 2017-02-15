@@ -53,13 +53,7 @@ if (!is_array($config['unbound']['hosts'])) {
 }
 
 $a_hosts = &$config['unbound']['hosts'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -69,7 +63,7 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -179,24 +173,6 @@ if ($_POST) {
 	}
 }
 
-// Delete a row in the options table
-if ($_GET['act'] == "delopt") {
-	$idx = $_GET['id'];
-
-	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
-	   unset($pconfig['aliases']['item'][$idx]);
-	}
-}
-
-// Add an option row
-if ($_GET['act'] == "addopt") {
-	if (!is_array($pconfig['aliases']['item'])) {
-		$pconfig['aliases']['item'] = array();
-	}
-
-	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
-}
-
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"), gettext("Edit Host Override"));
 $pglinks = array("", "services_unbound.php", "services_unbound.php", "@self");
 $shortcut_section = "resolver";
@@ -215,23 +191,23 @@ $section->addInput(new Form_Input(
 	'Host',
 	'text',
 	$pconfig['host']
-))->setHelp('Name of the host, without the domain part' . '<br />' .
-			'e.g.: "myhost"');
+))->setHelp('Name of the host, without the domain part%1$s' .
+			'e.g.: "myhost"', '<br />');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain of the host' . '<br />' .
-			'e.g.: "example.com"');
+))->setHelp('Domain of the host%1$s' .
+			'e.g.: "example.com"', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the host' . '<br />' .
-			'e.g.: 192.168.100.100 or fd00:abcd::1');
+))->setHelp('IP address of the host%1$s' .
+			'e.g.: 192.168.100.100 or fd00:abcd::1', '<br />');
 
 $section->addInput(new Form_Input(
 	'descr',

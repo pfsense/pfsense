@@ -52,23 +52,17 @@ if (!is_array($config['nat']['rule'])) {
 
 $a_nat = &$config['nat']['rule'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
-	$after = $_GET['after'];
-}
-if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
-	$after = $_POST['after'];
+if (isset($_REQUEST['after']) && (is_numericint($_REQUEST['after']) || $_REQUEST['after'] == "-1")) {
+	$after = $_REQUEST['after'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
+	$after = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_nat[$id]) {
@@ -110,7 +104,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['srcendport'] = "any";
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 }
 
@@ -119,15 +113,16 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
  */
 unset($input_errors);
 
-foreach ($_POST as $key => $value) {
+foreach ($_REQUEST as $key => $value) {
 	$temp = $value;
 	$newpost = htmlentities($temp);
+
 	if ($newpost != $temp) {
 		$input_errors[] = sprintf(gettext("Invalid characters detected %s. Please remove invalid characters and save again."), $temp);
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	if (strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
@@ -907,7 +902,7 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
+if (isset($id) && $a_nat[$id] && (!isset($_POST['dup']) || !is_numericint($_POST['dup']))) {
 
 	$hlpstr = '';
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));

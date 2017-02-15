@@ -42,26 +42,24 @@ $a_aliases = &$config['aliases']['alias'];
 
 $tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/", "", $_REQUEST['tab']));
 
-if ($_POST) {
+if ($_POST['apply']) {
+	$retval = 0;
 
-	if ($_POST['apply']) {
-		$retval = 0;
+	/* reload all components that use aliases */
+	$retval |= filter_configure();
 
-		/* reload all components that use aliases */
-		$retval |= filter_configure();
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('aliases');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('aliases');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_aliases[$_GET['id']]) {
+
+if ($_POST['act'] == "del") {
+	if ($a_aliases[$_POST['id']]) {
 		/* make sure rule is not being referenced by any nat or filter rules */
 		$is_alias_referenced = false;
 		$referenced_by = false;
-		$alias_name = $a_aliases[$_GET['id']]['name'];
+		$alias_name = $a_aliases[$_POST['id']]['name'];
 		// Firewall rules
 		find_alias_reference(array('filter', 'rule'), array('source', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
 		find_alias_reference(array('filter', 'rule'), array('destination', 'address'), $alias_name, $is_alias_referenced, $referenced_by);
@@ -94,11 +92,11 @@ if ($_GET['act'] == "del") {
 		if ($is_alias_referenced == true) {
 			$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
 		} else {
-			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
+			if (preg_match("/urltable/i", $a_aliases[$_POST['id']]['type'])) {
 				// this is a URL table type alias, delete its file as well
-				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_GET['id']]['name'] . ".txt");
+				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_POST['id']]['name'] . ".txt");
 			}
-			unset($a_aliases[$_GET['id']]);
+			unset($a_aliases[$_POST['id']]);
 			if (write_config()) {
 				filter_configure();
 				mark_subsystem_dirty('aliases');
@@ -255,7 +253,7 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
-				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>"></a>
+				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" usepost></a>
 			</td>
 		</tr>
 <?php endif?>

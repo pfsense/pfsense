@@ -49,15 +49,12 @@ if (!is_array($config['gateways']['gateway_item'])) {
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $dpinger_default = return_dpinger_defaults();
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
+	$id = $_REQUEST['dup'];
 }
 
 if (isset($id) && $a_gateways[$id]) {
@@ -91,7 +88,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }
@@ -100,7 +97,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$realid = $a_gateways[$id]['attribute'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 
@@ -173,7 +170,7 @@ if ($_POST) {
 				}
 
 				if ($found === false) {
-					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+					$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 				}
 			}
 		} else if (is_ipaddrv6($_POST['gateway'])) {
@@ -204,7 +201,7 @@ if ($_POST) {
 					}
 
 					if ($found === false) {
-						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
+						$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 					}
 				}
 			}
@@ -737,7 +734,7 @@ $group->add(new Form_Input(
 	['placeholder' => $dpinger_default['latencyhigh']]
 ));
 $group->setHelp('Low and high thresholds for latency in milliseconds. ' .
-	'Default is %d/%d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
+	'Default is %1$d/%2$d.', $dpinger_default['latencylow'], $dpinger_default['latencyhigh']);
 
 $section->add($group);
 
@@ -757,7 +754,7 @@ $group->add(new Form_Input(
 	['placeholder' => $dpinger_default['losshigh']]
 ));
 $group->setHelp('Low and high thresholds for packet loss in %%. ' .
-	'Default is %d/%d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
+	'Default is %1$d/%2$d.', $dpinger_default['losslow'], $dpinger_default['losshigh']);
 $section->add($group);
 
 $section->addInput(new Form_Input(

@@ -187,27 +187,34 @@ function output_menu($arrayitem, $target = null, $section = "") {
 	$output = "";
 
 	foreach ($arrayitem as $item) {
+
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
 		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" ||
 		    (($section == "Help") && isAllowedPage("help.php")) ||
 		    (substr($item[1], 0, 8) == "https://")) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
 			}
+
 			$class = "navlnk";
+
 			if ($item['class']) {
 				$class .= " {$item['class']}";
 			}
+
 			$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
 
+
 			if ($item[0] == '-DIVIDER-') {
 				$output .= ' <li class="divider"></li>';
 			} else {
-				$output .= "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]) . "</li>\n";
+				$output .= "<li>". sprintf("<a %s %s>%s</a>", $attr, ($item[1] == "/index.php?logout") ? "usepost":"",$item[0]) . "</li>\n";
 			}
 		}
 	}
@@ -216,10 +223,6 @@ function output_menu($arrayitem, $target = null, $section = "") {
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
-
-
-// NOTE:
-// $your_menu[] = array("-DIVIDER-", ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -244,36 +247,35 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
-$div = false;
-
 // Interfaces
+// NOTE:
+// Now that menus are sorted, adding a DIVIDER must be done after the sorting so an array is formed of the
+// items above the divider and another for below it. These are then sorted and combined with the divider
 $interfaces_menu = array();
+$interfaces_top = array();
+$interfaces_bottom = array();
+
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$interfaces_top[] = array(gettext("Assignments"), "/interfaces_assign.php");
 	$div = true;
 }
 
 $platform = system_identify_specific_platform();
 
 if ($platform['name'] == "uFW") {
-	$interfaces_menu[] = array(gettext("Switches"), "/switch_system.php");
-	$div = true;
-}
-
-if ($div) {
-	$interfaces_menu[] = array("-DIVIDER-", "");
+	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
 }
 
 $opts = get_configured_interface_with_descr(false, true);
+
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
-		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+		$interfaces_bottom[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
 
-// Interface list no longer sorted per Redmine #6753
-// $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
-$interfaces_menu = array_merge($interfaces_menu, return_ext_menu("Interfaces"));
+// Combine the top section, the divider and the bottom section of this menu
+$interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], msort(array_merge($interfaces_bottom, return_ext_menu("Interfaces")), 0));
 
 // Firewall
 $firewall_menu = array();
@@ -508,7 +510,7 @@ if (are_notices_pending()) {
 					endif;
 				?>
 					<li class="dropdown">
-						<a href="/index.php?logout">
+						<a href="/index.php?logout" usepost>
 							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
@@ -527,7 +529,7 @@ if (are_notices_pending()) {
 		unset($notitle);
 	} else {
 		if (isset($pglinks)) {
-			print(genhtmltitle($pgtitle, $pglinks));	
+			print(genhtmltitle($pgtitle, $pglinks));
 		} else {
 			print(genhtmltitle($pgtitle));
 		}

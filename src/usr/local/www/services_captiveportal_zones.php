@@ -40,8 +40,8 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp = &$config['captiveportal'];
 
-if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
-	$cpzone = strtolower(htmlspecialchars($_GET['zone']));
+if ($_POST['act'] == "del" && !empty($_POST['zone'])) {
+	$cpzone = strtolower(htmlspecialchars($_POST['zone']));
 	if ($a_cp[$cpzone]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		unset($a_cp[$cpzone]['enable']);
@@ -100,7 +100,7 @@ if (is_subsystem_dirty('captiveportal')) {
 						<td><?=htmlspecialchars($cpitem['descr']);?>&nbsp;</td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit zone"); ?>" href="services_captiveportal.php?zone=<?=$cpzone?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>"></a>
+							<a class="fa fa-trash"  title="<?=gettext("Delete zone")?>" href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" usepost></a>
 						</td>
 					</tr>
 <?php

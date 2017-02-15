@@ -40,10 +40,7 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-$if = $_GET['if'];
-if (!empty($_POST['if'])) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if ($config['installedpackages']['olsrd']) {
@@ -105,15 +102,12 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-$act = $_GET['act'];
-if (!empty($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 $a_pools = array();
 
 if (is_array($config['dhcpd'][$if])) {
-	$pool = $_GET['pool'];
+	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
 		$pool = $_POST['pool'];
 	}
@@ -144,6 +138,7 @@ if (is_array($config['dhcpd'][$if])) {
 
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
+
 if (is_array($dhcpdconf)) {
 	// Global Options
 	if (!is_numeric($pool) && !($act == "newpool")) {
@@ -645,8 +640,8 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 }
 
 if ($act == "delpool") {
-	if ($a_pools[$_GET['id']]) {
-		unset($a_pools[$_GET['id']]);
+	if ($a_pools[$_POST['id']]) {
+		unset($a_pools[$_POST['id']]);
 		write_config();
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
@@ -654,12 +649,12 @@ if ($act == "delpool") {
 }
 
 if ($act == "del") {
-	if ($a_maps[$_GET['id']]) {
+	if (isset($a_maps[$_POST['id']])) {
 		/* Remove static ARP entry, if necessary */
-		if (isset($a_maps[$_GET['id']]['arp_table_static_entry'])) {
-			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_GET['id']]['ipaddr']));
+		if (isset($a_maps[$_POST['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_POST['id']]['ipaddr']));
 		}
-		unset($a_maps[$_GET['id']]);
+		unset($a_maps[$_POST['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
@@ -705,7 +700,7 @@ function build_pooltable() {
 
 				$pooltbl .= '<td><a class="fa fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '"></a></td>';
+				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 				$pooltbl .= '</tr>';
 			}
 		$i++;
@@ -1058,8 +1053,8 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration.' . '<br />' .
-			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+))->setHelp('Leave blank to disable dynamic DNS registration.%1$s' .
+			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'ddnsforcehostname',
@@ -1272,7 +1267,7 @@ $section->addClass('adnlopts');
 $section->addInput(new Form_StaticText(
 	null,
 	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
-	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>.</div>')
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s.%3$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>', '</div>')
 ));
 
 if (!$pconfig['numberoptions']) {
@@ -1442,7 +1437,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

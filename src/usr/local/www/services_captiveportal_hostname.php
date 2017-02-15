@@ -29,9 +29,10 @@
 $directionicons = array('to' => '&#x2192;', 'from' => '&#x2190;', 'both' => '&#x21c4;');
 
 $notestr =
-	gettext('Adding new hostnames will allow a DNS hostname access to/from the captive portal without being taken to the portal page. ' .
+	sprintf(gettext('Adding new hostnames will allow a DNS hostname access to/from the captive portal without being taken to the portal page. ' .
 	'This can be used for a web server serving images for the portal page, or a DNS server on another network, for example. ' .
-	'By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.');
+	'By specifying %1$sfrom%2$s addresses, it may be used to always allow pass-through access from a client behind the captive portal.'),
+	'<em>', '</em>');
 
 require_once("guiconfig.inc");
 require_once("functions.inc");
@@ -39,10 +40,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
+$cpzone = $_REQUEST['zone'];
+
 $cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
@@ -53,6 +52,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
@@ -63,10 +63,10 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
+if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedhostnames =& $a_cp[$cpzone]['allowedhostname'];
-	if ($a_allowedhostnames[$_GET['id']]) {
-		$ipent = $a_allowedhostnames[$_GET['id']];
+	if ($a_allowedhostnames[$_POST['id']]) {
+		$ipent = $a_allowedhostnames[$_POST['id']];
 
 		if (isset($a_cp[$cpzone]['enable'])) {
 			if (is_ipaddr($ipent['hostname'])) {
@@ -89,7 +89,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 			}
 		}
 
-		unset($a_allowedhostnames[$_GET['id']]);
+		unset($a_allowedhostnames[$_POST['id']]);
 		write_config();
 		captiveportal_allowedhostname_configure();
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
@@ -133,7 +133,7 @@ foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext("Edit hostname"); ?>" href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete hostname")?>" href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete hostname")?>" href="services_captiveportal_hostname.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

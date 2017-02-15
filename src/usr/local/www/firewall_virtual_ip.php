@@ -42,55 +42,51 @@ if (!is_array($config['virtualip']['vip'])) {
 
 $a_vip = &$config['virtualip']['vip'];
 
-if ($_POST) {
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$check_carp = false;
-		if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
-			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
-			foreach ($toapplylist as $vid => $ovip) {
-				if (!empty($ovip)) {
-					interface_vip_bring_down($ovip);
-				}
-				if ($a_vip[$vid]) {
-					switch ($a_vip[$vid]['mode']) {
-						case "ipalias":
-							interface_ipalias_configure($a_vip[$vid]);
-							break;
-						case "proxyarp":
-							interface_proxyarp_configure($a_vip[$vid]['interface']);
-							break;
-						case "carp":
-							$check_carp = true;
-							interface_carp_configure($a_vip[$vid]);
-							break;
-						default:
-							break;
-					}
+if ($_POST['apply']) {
+	$check_carp = false;
+	if (file_exists("{$g['tmp_path']}/.firewall_virtual_ip.apply")) {
+		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply"));
+		foreach ($toapplylist as $vid => $ovip) {
+			if (!empty($ovip)) {
+				interface_vip_bring_down($ovip);
+			}
+			if ($a_vip[$vid]) {
+				switch ($a_vip[$vid]['mode']) {
+					case "ipalias":
+						interface_ipalias_configure($a_vip[$vid]);
+						break;
+					case "proxyarp":
+						interface_proxyarp_configure($a_vip[$vid]['interface']);
+						break;
+					case "carp":
+						$check_carp = true;
+						interface_carp_configure($a_vip[$vid]);
+						break;
+					default:
+						break;
 				}
 			}
-			@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
 		}
-		/* Before changing check #4633 */
-		if ($check_carp === true && !get_carp_status()) {
-			set_single_sysctl("net.inet.carp.allow", "1");
-		}
-
-		$retval = 0;
-		$retval |= filter_configure();
-
-		clear_subsystem_dirty('vip');
+		@unlink("{$g['tmp_path']}/.firewall_virtual_ip.apply");
 	}
+	/* Before changing check #4633 */
+	if ($check_carp === true && !get_carp_status()) {
+		set_single_sysctl("net.inet.carp.allow", "1");
+	}
+
+	$retval = 0;
+	$retval |= filter_configure();
+
+	clear_subsystem_dirty('vip');
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_vip[$_GET['id']]) {
+if ($_POST['act'] == "del") {
+	if ($a_vip[$_POST['id']]) {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
 				if ($rule['destination']['address'] != "") {
-					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
+					if ($rule['destination']['address'] == $a_vip[$_POST['id']]['subnet']) {
 						$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one NAT mapping.");
 						break;
 					}
@@ -104,7 +100,7 @@ if ($_GET['act'] == "del") {
 			if (is_array($config['openvpn'][$openvpn_type])) {
 				foreach ($config['openvpn'][$openvpn_type] as $openvpn) {
 					if ($openvpn['ipaddr'] <> "") {
-						if ($openvpn['ipaddr'] == $a_vip[$_GET['id']]['subnet']) {
+						if ($openvpn['ipaddr'] == $a_vip[$_POST['id']]['subnet']) {
 							if (strlen($openvpn['description'])) {
 								$openvpn_desc = $openvpn['description'];
 							} else {
@@ -118,24 +114,24 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet'])) {
+		if (is_ipaddrv6($a_vip[$_POST['id']]['subnet'])) {
 			$is_ipv6 = true;
-			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
-			$if_subnet_bits = get_interface_subnetv6($a_vip[$_GET['id']]['interface']);
-			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+			$subnet = gen_subnetv6($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnetv6($a_vip[$_POST['id']]['interface']);
+			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_POST['id']]['interface']), $if_subnet_bits);
 		} else {
 			$is_ipv6 = false;
-			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
-			$if_subnet_bits = get_interface_subnet($a_vip[$_GET['id']]['interface']);
-			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+			$subnet = gen_subnet($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnet($a_vip[$_POST['id']]['interface']);
+			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_POST['id']]['interface']), $if_subnet_bits);
 		}
 
-		$subnet .= "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		$subnet .= "/" . $a_vip[$_POST['id']]['subnet_bits'];
 		$if_subnet .= "/" . $if_subnet_bits;
 
 		if (is_array($config['gateways']['gateway_item'])) {
 			foreach ($config['gateways']['gateway_item'] as $gateway) {
-				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface']) {
+				if ($a_vip[$_POST['id']]['interface'] != $gateway['interface']) {
 					continue;
 				}
 				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet') {
@@ -156,8 +152,8 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
-			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		if ($a_vip[$_POST['id']]['mode'] == "ipalias") {
+			$subnet = gen_subnet($a_vip[$_POST['id']]['subnet'], $a_vip[$_POST['id']]['subnet_bits']) . "/" . $a_vip[$_POST['id']]['subnet_bits'];
 			$found_if = false;
 			$found_carp = false;
 			$found_other_alias = false;
@@ -166,10 +162,10 @@ if ($_GET['act'] == "del") {
 				$found_if = true;
 			}
 
-			$vipiface = $a_vip[$_GET['id']]['interface'];
+			$vipiface = $a_vip[$_POST['id']]['interface'];
 
 			foreach ($a_vip as $vip_id => $vip) {
-				if ($vip_id == $_GET['id']) {
+				if ($vip_id == $_POST['id']) {
 					continue;
 				}
 
@@ -185,8 +181,8 @@ if ($_GET['act'] == "del") {
 			if ($found_carp === true && $found_other_alias === false && $found_if === false) {
 				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
 			}
-		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
-			$vipiface = "{$a_vip[$_GET['id']]['interface']}_vip{$a_vip[$_GET['id']]['vhid']}";
+		} else if ($a_vip[$_POST['id']]['mode'] == "carp") {
+			$vipiface = "{$a_vip[$_POST['id']]['interface']}_vip{$a_vip[$_POST['id']]['vhid']}";
 			foreach ($a_vip as $vip) {
 				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias") {
 					$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description %s."), $vip['descr']);
@@ -208,13 +204,13 @@ if ($_GET['act'] == "del") {
 			session_commit();
 
 			// Special case since every proxyarp vip is handled by the same daemon.
-			if ($a_vip[$_GET['id']]['mode'] == "proxyarp") {
-				$viface = $a_vip[$_GET['id']]['interface'];
-				unset($a_vip[$_GET['id']]);
+			if ($a_vip[$_POST['id']]['mode'] == "proxyarp") {
+				$viface = $a_vip[$_POST['id']]['interface'];
+				unset($a_vip[$_POST['id']]);
 				interface_proxyarp_configure($viface);
 			} else {
-				interface_vip_bring_down($a_vip[$_GET['id']]);
-				unset($a_vip[$_GET['id']]);
+				interface_vip_bring_down($a_vip[$_POST['id']]);
+				unset($a_vip[$_POST['id']]);
 			}
 			if (count($config['virtualip']['vip']) == 0) {
 				unset($config['virtualip']['vip']);
@@ -224,8 +220,8 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	}
-} else if ($_GET['changes'] == "mods" && is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+} else if ($_REQUEST['changes'] == "mods" && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 $types = array('proxyarp' => gettext('Proxy ARP'),
@@ -318,7 +314,7 @@ foreach ($a_vip as $vipent):
 					</td>
 					<td>
 						<a class="fa fa-pencil" title="<?=gettext("Edit virtual ip"); ?>" href="firewall_virtual_ip_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext("Delete virtual ip")?>" href="firewall_virtual_ip.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

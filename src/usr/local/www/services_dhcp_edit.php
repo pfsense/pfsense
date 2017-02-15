@@ -49,11 +49,7 @@ if (!$g['services_dhcp_server_enable']) {
 
 require_once("guiconfig.inc");
 
-$if = $_GET['if'];
-
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 if (!$if) {
 	header("Location: services_dhcp.php");
@@ -63,9 +59,11 @@ if (!$if) {
 if (!is_array($config['dhcpd'])) {
 	$config['dhcpd'] = array();
 }
+
 if (!is_array($config['dhcpd'][$if])) {
 	$config['dhcpd'][$if] = array();
 }
+
 if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 	$config['dhcpd'][$if]['staticmap'] = array();
 }
@@ -73,6 +71,7 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 if (!is_array($config['dhcpd'][$if]['pool'])) {
 	$config['dhcpd'][$if]['pool'] = array();
 }
+
 $a_pools = &$config['dhcpd'][$if]['pool'];
 
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
@@ -82,12 +81,7 @@ $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
 $ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
@@ -114,36 +108,36 @@ if (isset($id) && $a_maps[$id]) {
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
-	$pconfig['mac'] = $_GET['mac'];
-	$pconfig['cid'] = $_GET['cid'];
-	$pconfig['hostname'] = $_GET['hostname'];
-	$pconfig['filename'] = $_GET['filename'];
-	$pconfig['rootpath'] = $_GET['rootpath'];
-	$pconfig['descr'] = $_GET['descr'];
-	$pconfig['arp_table_static_entry'] = $_GET['arp_table_static_entry'];
-	$pconfig['deftime'] = $_GET['defaultleasetime'];
-	$pconfig['maxtime'] = $_GET['maxleasetime'];
-	$pconfig['gateway'] = $_GET['gateway'];
-	$pconfig['domain'] = $_GET['domain'];
-	$pconfig['domainsearchlist'] = $_GET['domainsearchlist'];
-	$pconfig['wins1'] = $_GET['wins1'];
-	$pconfig['wins2'] = $_GET['wins2'];
-	$pconfig['dns1'] = $_GET['dns1'];
-	$pconfig['dns2'] = $_GET['dns2'];
-	$pconfig['dns3'] = $_GET['dns3'];
-	$pconfig['dns4'] = $_GET['dns4'];
-	$pconfig['ddnsdomain'] = $_GET['ddnsdomain'];
-	$pconfig['ddnsdomainprimary'] = $_GET['ddnsdomainprimary'];
-	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
-	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
-	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
-	$pconfig['ddnsforcehostname'] = isset($_GET['ddnsforcehostname']);
-	$pconfig['ntp1'] = $_GET['ntp1'];
-	$pconfig['ntp2'] = $_GET['ntp2'];
-	$pconfig['tftp'] = $_GET['tftp'];
+	$pconfig['mac'] = $_REQUEST['mac'];
+	$pconfig['cid'] = $_REQUEST['cid'];
+	$pconfig['hostname'] = $_REQUEST['hostname'];
+	$pconfig['filename'] = $_REQUEST['filename'];
+	$pconfig['rootpath'] = $_REQUEST['rootpath'];
+	$pconfig['descr'] = $_REQUEST['descr'];
+	$pconfig['arp_table_static_entry'] = $_REQUEST['arp_table_static_entry'];
+	$pconfig['deftime'] = $_REQUEST['defaultleasetime'];
+	$pconfig['maxtime'] = $_REQUEST['maxleasetime'];
+	$pconfig['gateway'] = $_REQUEST['gateway'];
+	$pconfig['domain'] = $_REQUEST['domain'];
+	$pconfig['domainsearchlist'] = $_REQUEST['domainsearchlist'];
+	$pconfig['wins1'] = $_REQUEST['wins1'];
+	$pconfig['wins2'] = $_REQUEST['wins2'];
+	$pconfig['dns1'] = $_REQUEST['dns1'];
+	$pconfig['dns2'] = $_REQUEST['dns2'];
+	$pconfig['dns3'] = $_REQUEST['dns3'];
+	$pconfig['dns4'] = $_REQUEST['dns4'];
+	$pconfig['ddnsdomain'] = $_REQUEST['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $_REQUEST['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $_REQUEST['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $_REQUEST['ddnsdomainkey'];
+	$pconfig['ddnsupdate'] = isset($_REQUEST['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($_REQUEST['ddnsforcehostname']);
+	$pconfig['ntp1'] = $_REQUEST['ntp1'];
+	$pconfig['ntp2'] = $_REQUEST['ntp2'];
+	$pconfig['tftp'] = $_REQUEST['tftp'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -385,8 +379,7 @@ if ($_POST) {
 
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$mymac = arp_get_mac_by_ip($ip, false);
 
 $iflist = get_configured_interface_with_descr();
 $ifname = '';
@@ -427,7 +420,9 @@ $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('
 
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
-$group->add($btnmymac);
+if (!empty($mymac)) {
+	$group->add($btnmymac);
+}
 $group->setHelp('MAC address (6 hex octets separated by colons)');
 $section->add($group);
 
@@ -443,8 +438,8 @@ $section->addInput(new Form_IpAddress(
 	'IP Address',
 	$pconfig['ipaddr'],
 	'V4'
-))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
-			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
+))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.%1$s' .
+			'If no IPv4 address is given, one will be dynamically allocated from the pool.', '<br />');
 
 $section->addInput(new Form_Input(
 	'hostname',

@@ -38,12 +38,7 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 require_once("voucher.inc");
 
-$cpzone = $_GET['zone'];
-
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower(htmlspecialchars($cpzone));
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if ($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
@@ -63,6 +58,7 @@ if (empty($cpzone)) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 if (!is_array($config['voucher'])) {
@@ -128,14 +124,15 @@ if (!isset($config['voucher'][$cpzone]['publickey'])) {
 if (!isset($config['voucher'][$cpzone]['descrmsgnoaccess'])) {
 	$config['voucher'][$cpzone]['descrmsgnoaccess'] = gettext("Voucher invalid");
 }
+
 if (!isset($config['voucher'][$cpzone]['descrmsgexpired'])) {
 	$config['voucher'][$cpzone]['descrmsgexpired'] = gettext("Voucher expired");
 }
 
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
-if ($_GET['act'] == "del") {
-	$id = $_GET['id'];
+if ($_POST['act'] == "del") {
+	$id = $_POST['id'];
 	if ($a_roll[$id]) {
 		$roll = $a_roll[$id]['number'];
 		$voucherlck = lock("voucher{$cpzone}");
@@ -146,7 +143,7 @@ if ($_GET['act'] == "del") {
 	}
 	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 	exit;
-} else if ($_GET['act'] == "csv") {
+} else if ($_REQUEST['act'] == "csv") {
 	/* print all vouchers of the selected roll */
 	$privkey = base64_decode($config['voucher'][$cpzone]['privatekey']);
 	if (strstr($privkey, "BEGIN RSA PRIVATE KEY")) {
@@ -158,7 +155,7 @@ if ($_GET['act'] == "del") {
 			fwrite($fd, $privkey);
 			fclose($fd);
 			$a_voucher = &$config['voucher'][$cpzone]['roll'];
-			$id = $_GET['id'];
+			$id = $_REQUEST['id'];
 			if (isset($id) && $a_voucher[$id]) {
 				$number = $a_voucher[$id]['number'];
 				$count = $a_voucher[$id]['count'];
@@ -194,7 +191,7 @@ $pconfig['vouchersyncport'] = $config['voucher'][$cpzone]['vouchersyncport'];
 $pconfig['vouchersyncpass'] = $config['voucher'][$cpzone]['vouchersyncpass'];
 $pconfig['vouchersyncusername'] = $config['voucher'][$cpzone]['vouchersyncusername'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 
 	if ($_POST['postafterlogin']) {
@@ -303,7 +300,7 @@ EOF;
 				require_once("xmlrpc_client.inc");
 				$rpc_client = new pfsense_xmlrpc_client();
 				$rpc_client->setConnectionData(
-						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'], 
+						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'],
 						$newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
 				$rpc_client->set_noticefile("CaptivePortalVoucherSync");
 				$resp = $rpc_client->xmlrpc_exec_php($execcmd);
@@ -361,6 +358,7 @@ EOF;
 		}
 	}
 }
+
 include("head.inc");
 
 if ($input_errors) {
@@ -409,7 +407,7 @@ foreach ($a_roll as $rollent):
 						<td>
 							<!-- These buttons are hidden/shown on checking the 'enable' checkbox -->
 							<a class="fa fa-pencil"		title="<?=gettext("Edit voucher roll"); ?>" href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i; ?>"></a>
-							<a class="fa fa-trash"		title="<?=gettext("Delete voucher roll")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>"></a>
+							<a class="fa fa-trash"		title="<?=gettext("Delete voucher roll")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i; ?>" usepost></a>
 							<a class="fa fa-file-excel-o"	title="<?=gettext("Export vouchers for this roll to a .csv file")?>" href="services_captiveportal_vouchers.php?zone=<?=$cpzone?>&amp;act=csv&amp;id=<?=$i; ?>"></a>
 						</td>
 					</tr>
@@ -524,8 +522,8 @@ $section->addInput(new Form_IpAddress(
 	'vouchersyncdbip',
 	'Synchronize Voucher Database IP',
 	$pconfig['vouchersyncdbip']
-))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.' . '<br />' .
-			'NOTE: this should be setup on the slave nodes and not the primary node!');
+))->setHelp('IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from.%1$s' .
+			'NOTE: this should be setup on the slave nodes and not the primary node!', '<br />');
 
 $section->addInput(new Form_Input(
 	'vouchersyncport',

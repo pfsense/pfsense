@@ -38,26 +38,24 @@ if (!is_array($config['l2tp']['user'])) {
 }
 $a_secret = &$config['l2tp']['user'];
 
-if ($_POST) {
 
-	$pconfig = $_POST;
+$pconfig = $_POST;
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		if (!is_subsystem_dirty('rebootreq')) {
-			$retval |= vpn_l2tp_configure();
-		}
-		if ($retval == 0) {
-			if (is_subsystem_dirty('l2tpusers')) {
-				clear_subsystem_dirty('l2tpusers');
-			}
+if ($_POST['apply']) {
+	$retval = 0;
+	if (!is_subsystem_dirty('rebootreq')) {
+		$retval |= vpn_l2tp_configure();
+	}
+	if ($retval == 0) {
+		if (is_subsystem_dirty('l2tpusers')) {
+			clear_subsystem_dirty('l2tpusers');
 		}
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_secret[$_GET['id']]) {
-		unset($a_secret[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_secret[$_POST['id']]) {
+		unset($a_secret[$_POST['id']]);
 		write_config();
 		mark_subsystem_dirty('l2tpusers');
 		pfSenseHeader("vpn_l2tp_users.php");
@@ -109,7 +107,7 @@ display_top_tabs($tab_array);
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="vpn_l2tp_users_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete user')?>"	href="vpn_l2tp_users.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php $i++; endforeach?>

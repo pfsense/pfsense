@@ -36,10 +36,10 @@
 require_once("guiconfig.inc");
 
 // delete arp entry
-if (isset($_GET['deleteentry'])) {
-	$ip = $_GET['deleteentry'];
+if (isset($_POST['deleteentry'])) {
+	$ip = $_POST['deleteentry'];
 	if (is_ipaddrv4($ip)) {
-		$ret = mwexec("arp -d " . $_GET['deleteentry'], true);
+		$ret = mwexec("arp -d " . $_POST['deleteentry'], true);
 	} else {
 		$ret = 1;
 	}
@@ -53,7 +53,7 @@ if (isset($_GET['deleteentry'])) {
 }
 
 function leasecmp($a, $b) {
-	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
+	return strcmp($a[$_REQUEST['order']], $b[$_REQUEST['order']]);
 }
 
 function adjust_gmt($dt) {
@@ -360,7 +360,7 @@ $mac_man = load_mac_manufacturer_table();
 				<td><?=ucfirst($entry['status'])?></td>
 				<td><?=$entry['linktype']?></td>
 				<td>
-					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>"></a>
+					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>" usepost></a>
 				</td>
 			</tr>
 		<?php endforeach?>

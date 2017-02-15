@@ -32,7 +32,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 
 include('head.inc');
 
-$showAll = isset($_GET['showAll']);
+$showAll = isset($_REQUEST['showAll']);
 $showAllText = $showAll ? gettext("Show only listening sockets") : gettext("Show all socket connections");
 $showAllOption = $showAll ? "" : "?showAll";
 
@@ -45,7 +45,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 <br />
 
 <?php
-	if (isset($_GET['showAll'])) {
+	if (isset($_REQUEST['showAll'])) {
 		$internet4 = shell_exec('sockstat -4');
 		$internet6 = shell_exec('sockstat -6');
 	} else {

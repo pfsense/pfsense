@@ -75,10 +75,7 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-$if = $_GET['if'];
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if ($config['installedpackages']['olsrd']) {
@@ -465,9 +462,9 @@ if (isset($_POST['apply'])) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_maps[$_GET['id']]) {
-		unset($a_maps[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_maps[$_POST['id']]) {
+		unset($a_maps[$_POST['id']]);
 		write_config();
 		if (isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmapsv6');
@@ -718,16 +715,16 @@ $section->addInput(new Form_Input(
 	'Default lease time',
 	'text',
 	$pconfig['deftime']
-))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
-			'The default is 7200 seconds.');
+))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. %1$s' .
+			'The default is 7200 seconds.', '<br />');
 
 $section->addInput(new Form_Input(
 	'maxtime',
 	'Max lease time',
 	'text',
 	$pconfig['maxtime']
-))->setHelp('Maximum lease time for clients that ask for a specific expiration time.' . ' <br />' .
-			'The default is 86400 seconds.');
+))->setHelp('Maximum lease time for clients that ask for a specific expiration time. %1$s' .
+			'The default is 86400 seconds.', '<br />');
 
 $section->addInput(new Form_Checkbox(
 	'dhcpv6leaseinlocaltime',
@@ -1033,7 +1030,7 @@ if (is_array($a_maps)):
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$if?>&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>" href="services_dhcpv6.php?if=<?=$if?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php

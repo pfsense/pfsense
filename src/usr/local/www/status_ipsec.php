@@ -45,35 +45,35 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if ($_GET['act'] == 'connect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		$ph1ent = ipsec_get_phase1($_GET['ikeid']);
+if ($_REQUEST['act'] == 'connect') {
+	if (ctype_digit($_REQUEST['ikeid'])) {
+		$ph1ent = ipsec_get_phase1($_REQUEST['ikeid']);
 		if (!empty($ph1ent)) {
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
-				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
+				$ph2entries = ipsec_get_number_of_phase2($_REQUEST['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
-					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
+					$connid = escapeshellarg("con{$_REQUEST['ikeid']}00{$i}");
 					mwexec_bg("/usr/local/sbin/ipsec down {$connid}");
 					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
-				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_REQUEST['ikeid']));
 			}
 		}
 	}
-} else if ($_GET['act'] == 'ikedisconnect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
+} else if ($_REQUEST['act'] == 'ikedisconnect') {
+	if (ctype_digit($_REQUEST['ikeid'])) {
+		if (!empty($_REQUEST['ikesaid']) && ctype_digit($_REQUEST['ikesaid'])) {
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']) . "[" . escapeshellarg($_REQUEST['ikesaid']) . "]");
 		} else {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']));
 		}
 	}
-} else if ($_GET['act'] == 'childdisconnect') {
-	if (ctype_digit($_GET['ikeid'])) {
-		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
+} else if ($_REQUEST['act'] == 'childdisconnect') {
+	if (ctype_digit($_REQUEST['ikeid'])) {
+		if (!empty($_REQUEST['ikesaid']) && ctype_digit($_REQUEST['ikesaid'])) {
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']) . "{" . escapeshellarg($_REQUEST['ikesaid']) . "}");
 		}
 	}
 }
@@ -94,7 +94,13 @@ function print_ipsec_body() {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 				$ipsecconnected[$ph1idx] = $ph1idx;
 			} else {
-				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				if (!ipsec_ikeid_used($con_id)) {
+					// probably a v2 with split connection then
+					$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+					$ipsecconnected[$ph1idx] = $ph1idx;
+				} else {
+					$ipsecconnected[$con_id] = $ph1idx = $con_id;
+				}
 			}
 
 			print("<tr>\n");
@@ -211,7 +217,8 @@ function print_ipsec_body() {
 			print(ucfirst(htmlspecialchars($ikesa['state'])));
 
 			if ($ikesa['state'] == 'ESTABLISHED') {
-				print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (") . convert_seconds_to_dhms($ikesa['established']) . gettext(") ago"));
+				print("<br/>");
+				printf(gettext('%1$s seconds (%2$s) ago'), htmlspecialchars($ikesa['established']), convert_seconds_to_dhms($ikesa['established']));
 			}
 
 			print("</span>");
@@ -220,7 +227,7 @@ function print_ipsec_body() {
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '">');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
@@ -299,9 +306,11 @@ function print_ipsec_body() {
 					print("</td>\n");
 					print("<td>\n");
 
-					print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['rekey-time']) . ")");
-					print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['life-time']) . ")");
-					print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_dhms($childsa['install-time']) . ")");
+					printf(gettext('Rekey: %1$s seconds (%2$s)'), htmlspecialchars($childsa['rekey-time']), convert_seconds_to_dhms($childsa['rekey-time']));
+					print('<br/>');
+					printf(gettext('Life: %1$s seconds (%2$s)'), htmlspecialchars($childsa['life-time']), convert_seconds_to_dhms($childsa['life-time']));
+					print('<br/>');
+					printf(gettext('Install: %1$s seconds (%2$s)'), htmlspecialchars($childsa['install-time']), convert_seconds_to_dhms($childsa['install-time']));
 
 
 					print("</td>\n");

@@ -64,11 +64,11 @@ $allowed_logs = array(
 		    "shortcut" => "wireless"),
 );
 
-// The logs to display are specified in a GET argument. Default to 'system' logs
-if (!$_GET['logfile']) {
+// The logs to display are specified in a REQUEST argument. Default to 'system' logs
+if (!$_REQUEST['logfile']) {
 	$logfile = 'system';
 } else {
-	$logfile = $_GET['logfile'];
+	$logfile = $_REQUEST['logfile'];
 	if (!array_key_exists($logfile, $allowed_logs)) {
 		/* Do not let someone attempt to load an unauthorized log. */
 		$logfile = 'system';

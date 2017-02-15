@@ -53,6 +53,7 @@ if (isset($_POST['referer'])) {
 $ifdescrs = get_configured_interface_with_descr(false, true);
 
 $if = "wan";
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
 }
@@ -461,7 +462,7 @@ if ($_POST['apply']) {
 		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
-} else if ($_POST) {
+} else if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -1450,7 +1451,7 @@ if ($_POST['apply']) {
 		exit;
 	}
 
-} // end if ($_POST)
+} // end if ($_POST['save'])
 
 function handle_wireless_post() {
 	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr, $wlanbaseif;

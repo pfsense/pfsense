@@ -38,11 +38,8 @@ $ca_methods = array(
 $ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($config['ca'])) {
@@ -63,12 +60,11 @@ if (!is_array($config['crl'])) {
 
 $a_crl =& $config['crl'];
 
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
+if ($_REQUEST['act']) {
+	$act = $_REQUEST['act'];
 }
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_ca[$id])) {
 		pfSenseHeader("system_camanager.php");
@@ -114,7 +110,7 @@ if ($act == "edit") {
 }
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
+	$pconfig['method'] = $_POST['method'];
 	$pconfig['keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";
@@ -157,7 +153,7 @@ if ($act == "expkey") {
 	exit;
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$input_errors = array();
@@ -436,7 +432,7 @@ foreach ($a_ca as $i => $ca):
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
 					<?php if (!ca_in_use($ca['refid'])): ?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>" usepost ></a>
 					<?php endif?>
 					</td>
 				</tr>

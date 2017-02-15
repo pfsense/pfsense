@@ -122,7 +122,7 @@ if (count($a_client)) {
 	}
 }
 
-if ($_POST['create']) {
+if ($_REQUEST['create']) {
 	header("Location: vpn_ipsec_phase1.php?mobile=true");
 }
 

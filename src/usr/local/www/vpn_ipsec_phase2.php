@@ -53,15 +53,16 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (!empty($_GET['p2index'])) {
-	$uindex = $_GET['p2index'];
-}
-if (!empty($_POST['uniqid'])) {
-	$uindex = $_POST['uniqid'];
+if (!empty($_REQUEST['p2index'])) {
+	$uindex = $_REQUEST['p2index'];
 }
 
-if (!empty($_GET['dup'])) {
-	$uindex = $_GET['dup'];
+if (!empty($_REQUEST['uniqid'])) {
+	$uindex = $_REQUEST['uniqid'];
+}
+
+if (!empty($_REQUEST['dup'])) {
+	$uindex = $_REQUEST['dup'];
 }
 
 $ph2found = false;
@@ -100,7 +101,7 @@ if ($ph2found === true) {
 		$pconfig['remoteid_type'] = "mobile";
 	}
 } else {
-	$pconfig['ikeid'] = $_GET['ikeid'];
+	$pconfig['ikeid'] = $_REQUEST['ikeid'];
 
 	/* defaults */
 	$pconfig['localid_type'] = "lan";
@@ -113,21 +114,21 @@ if ($ph2found === true) {
 	$pconfig['uniqid'] = uniqid();
 
 	/* mobile client */
-	if ($_GET['mobile']) {
+	if ($_REQUEST['mobile']) {
 		$pconfig['mobile']=true;
 		$pconfig['remoteid_type'] = "mobile";
 	}
 }
 
 unset($ph2);
-if (!empty($_GET['dup'])) {
+if (!empty($_REQUEST['dup'])) {
 	unset($uindex);
 	unset($p2index);
 	$pconfig['uniqid'] = uniqid();
 	$pconfig['reqid'] = ipsec_new_reqid();
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

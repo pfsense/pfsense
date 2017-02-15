@@ -107,13 +107,7 @@ foreach ($checklist as $tmpif) {
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_laggs[$id]) {
 	$pconfig['laggif'] = $a_laggs[$id]['laggif'];
@@ -126,7 +120,7 @@ if (isset($id) && $a_laggs[$id]) {
 	$pconfig['descr'] = $a_laggs[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

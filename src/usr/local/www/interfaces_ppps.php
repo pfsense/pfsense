@@ -50,15 +50,15 @@ function ppp_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 	/* check if still in use */
-	if (ppp_inuse($_GET['id'])) {
+	if (ppp_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This point-to-point link cannot be deleted because it is still being used as an interface.");
-	} elseif (is_array($config['ppps']['ppp']) && is_array($config['ppps']['ppp'][$_GET['id']])) {
+	} elseif (is_array($config['ppps']['ppp']) && is_array($config['ppps']['ppp'][$_POST['id']])) {
 
-		unset($config['ppps']['ppp'][$_GET['id']]['pppoe-reset-type']);
-		handle_pppoe_reset($config['ppps']['ppp'][$_GET['id']]);
-		unset($config['ppps']['ppp'][$_GET['id']]);
+		unset($config['ppps']['ppp'][$_POST['id']]['pppoe-reset-type']);
+		handle_pppoe_reset($config['ppps']['ppp'][$_POST['id']]);
+		unset($config['ppps']['ppp'][$_POST['id']]);
 		write_config();
 		header("Location: interfaces_ppps.php");
 		exit;
@@ -127,7 +127,7 @@ foreach ($a_ppps as $id => $ppp) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit PPP interface')?>"	href="interfaces_ppps_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete PPP interface')?>"	href="interfaces_ppps.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete PPP interface')?>"	href="interfaces_ppps.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

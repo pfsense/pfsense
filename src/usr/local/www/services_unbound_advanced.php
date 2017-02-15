@@ -230,14 +230,14 @@ $section->addInput(new Form_Checkbox(
 	'Prefetch Support',
 	'Message cache elements are prefetched before they expire to help keep the cache up to date',
 	$pconfig['prefetch']
-))->setHelp('When enabled, this option can cause an increase of around 10%% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.');
+))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.');
 
 $section->addInput(new Form_Checkbox(
 	'prefetchkey',
 	'Prefetch DNS Key Support',
 	'DNSKEYs are fetched earlier in the validation process when a Delegation signer is encountered',
 	$pconfig['prefetchkey']
-))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: <a href="http://en.wikipedia.org/wiki/List_of_DNS_record_types">Wikipedia</a>');
+))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: %1$sWikipedia%2$s', '<a href="http://en.wikipedia.org/wiki/List_of_DNS_record_types">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'dnssecstripped',
@@ -354,7 +354,7 @@ $section->addInput(new Form_Checkbox(
 	'Experimental Bit 0x20 Support',
 	'Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts.',
 	$pconfig['use_caps']
-))->setHelp('See the implementation <a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">draft dns-0x20</a> for more information.');
+))->setHelp('See the implementation %1$sdraft dns-0x20%2$s for more information.', '<a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">', '</a>');
 
 $form->add($section);
 print($form);

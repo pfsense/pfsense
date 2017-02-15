@@ -34,7 +34,7 @@ if ($_POST['action']) {
 	if ($_POST['action'] == "remove") {
 		if (is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_POST['srcip']) . " -K " . escapeshellarg($_POST['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_POST['dstip']}|{$retval}|");
+			echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
@@ -44,7 +44,7 @@ if ($_POST['action']) {
 
 /* get our states */
 if ($_POST['filter']) {
-	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
+	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_POST['filter'])), $sources);
 } else {
 	exec("/sbin/pfctl -s Sources", $sources);
 }

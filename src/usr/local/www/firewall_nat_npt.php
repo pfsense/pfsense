@@ -43,12 +43,12 @@ if (!is_array($config['nat']['npt'])) {
 $a_npt = &$config['nat']['npt'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if (array_key_exists('order-store', $_POST)) {
-	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
+if (array_key_exists('order-store', $_REQUEST)) {
+	if (is_array($_POST['rule']) && !empty($_REQUEST['rule'])) {
 		$a_npt_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
+		foreach ($_REQUEST['rule'] as $id) {
 			$a_npt_new[] = $a_npt[$id];
 		}
 
@@ -63,23 +63,19 @@ if (array_key_exists('order-store', $_POST)) {
 	}
 }
 
-if ($_POST) {
-	$pconfig = $_POST;
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= filter_configure();
 
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= filter_configure();
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('natconf');
-			clear_subsystem_dirty('filter');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_npt[$_GET['id']]) {
-		unset($a_npt[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_npt[$_POST['id']]) {
+		unset($a_npt[$_POST['id']]);
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 		}
@@ -103,12 +99,12 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 
-} else if ($_GET['act'] == "toggle") {
-	if ($a_npt[$_GET['id']]) {
-		if (isset($a_npt[$_GET['id']]['disabled'])) {
-			unset($a_npt[$_GET['id']]['disabled']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_npt[$_POST['id']]) {
+		if (isset($a_npt[$_POST['id']]['disabled'])) {
+			unset($a_npt[$_POST['id']]['disabled']);
 		} else {
-			$a_npt[$_GET['id']]['disabled'] = true;
+			$a_npt[$_POST['id']]['disabled'] = true;
 		}
 		if (write_config(gettext("Firewall: NAT: NPt, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
@@ -175,7 +171,7 @@ display_top_tabs($tab_array);
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 						<td>
-							<a href="?act=toggle&amp;id=<?=$i?>">
+							<a href="?act=toggle&amp;id=<?=$i?>" usepost>
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 							</a>
 						</td>
@@ -208,7 +204,7 @@ display_top_tabs($tab_array);
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_npt_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

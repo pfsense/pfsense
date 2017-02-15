@@ -35,18 +35,18 @@ if (!is_array($config['checkipservices']['checkipservice'])) {
 $a_checkipservice = &$config['checkipservices']['checkipservice'];
 
 $dirty = false;
-if ($_GET['act'] == "del") {
-	unset($a_checkipservice[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	unset($a_checkipservice[$_POST['id']]);
 	$dirty = true;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_checkipservice[$_GET['id']]) {
-		if (isset($a_checkipservice[$_GET['id']]['enable'])) {
-			unset($a_checkipservice[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_checkipservice[$_POST['id']]) {
+		if (isset($a_checkipservice[$_POST['id']]['enable'])) {
+			unset($a_checkipservice[$_POST['id']]['enable']);
 		} else {
-			$a_checkipservice[$_GET['id']]['enable'] = true;
+			$a_checkipservice[$_POST['id']]['enable'] = true;
 		}
 		$dirty = true;
-	} else if ($_GET['id'] == count($a_checkipservice)) {
+	} else if ($_POST['id'] == count($a_checkipservice)) {
 		if (isset($config['checkipservices']['disable_factory_default'])) {
 			unset($config['checkipservices']['disable_factory_default']);
 		} else {
@@ -130,13 +130,13 @@ foreach ($a_checkipservice as $checkipservice):
 							<a class="fa fa-pencil <?=$visibility?>" title="<?=gettext('Edit service')?>" href="services_checkip_edit.php?id=<?=$i?>"></a>
 						<?php if (isset($checkipservice['enable'])) {
 						?>
-							<a	class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+							<a	class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php } else {
 						?>
-							<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+							<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 						<?php }
 						?>
-							<a class="fa fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash <?=$visibility?>" title="<?=gettext('Delete service')?>" href="services_checkip.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php
@@ -162,7 +162,7 @@ endforeach; ?>
 	'as a string in the following format: ') .
 	'<pre>Current IP Address: x.x.x.x</pre>' .
 	gettext(
-	'The first (highest in list) enabled check ip service will be used to ' . 
+	'The first (highest in list) enabled check ip service will be used to ' .
 	'check IP addresses for Dynamic DNS services, and ' .
 	'RFC 2136 entries that have the "Use public IP" option enabled.') .
 	'<br/><br/>'

@@ -52,13 +52,13 @@ function clone_inuse($num) {
 	return false;
 }
 
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 	/* check if still in use */
-	if (clone_inuse($_GET['id'])) {
+	if (clone_inuse($_POST['id'])) {
 		$input_errors[] = gettext("This wireless clone cannot be deleted because it is assigned as an interface.");
 	} else {
-		pfSense_interface_destroy($a_clones[$_GET['id']]['cloneif']);
-		unset($a_clones[$_GET['id']]);
+		pfSense_interface_destroy($a_clones[$_POST['id']]['cloneif']);
+		unset($a_clones[$_POST['id']]);
 
 		write_config();
 
@@ -121,7 +121,7 @@ foreach ($a_clones as $clone) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

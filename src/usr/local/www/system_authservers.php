@@ -96,19 +96,14 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
 $a_servers = auth_get_authserver_list();
+
 foreach ($a_servers as $servers) {
 	$a_server[] = $servers;
 }
@@ -116,22 +111,20 @@ foreach ($a_servers as $servers) {
 if (!is_array($config['ca'])) {
 	$config['ca'] = array();
 }
+
 $a_ca =& $config['ca'];
 
-$act = $_GET['act'];
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
-	if (!$a_server[$_GET['id']]) {
+	if (!$a_server[$_POST['id']]) {
 		pfSenseHeader("system_authservers.php");
 		exit;
 	}
 
 	/* Remove server from main list. */
-	$serverdeleted = $a_server[$_GET['id']]['name'];
+	$serverdeleted = $a_server[$_POST['id']]['name'];
 	foreach ($config['system']['authserver'] as $k => $as) {
 		if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
 			unset($config['system']['authserver'][$k]);
@@ -139,7 +132,7 @@ if ($act == "del") {
 	}
 
 	/* Remove server from temp list used later on this page. */
-	unset($a_server[$_GET['id']]);
+	unset($a_server[$_POST['id']]);
 
 	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
@@ -216,7 +209,7 @@ if ($act == "new") {
 	$pconfig['radius_acct_port'] = "1813";
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -454,7 +447,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<td>
 						<?php if ($i < (count($a_server) - 1)): ?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>" usepost></a>
 						<?php endif?>
 						</td>
 					</tr>
@@ -601,7 +594,7 @@ $group->add(new Form_Input(
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
 	'base dn above or the full container path can be specified containing a dc= '.
-	'component.<br/>Example: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers');
+	'component.%1$sExample: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers', '<br/>');
 
 $group->add(new Form_Button(
 	'Select',

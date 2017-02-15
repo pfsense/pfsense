@@ -144,19 +144,24 @@ $(function() {
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
 		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn'))) {
-			var msg = $.trim(this.textContent).toLowerCase();
+			// Anchors using the automatic get2post system (pfSenseHelpers.js) perform the confirmation dialog
+			// in those functions
+			var attr = $(this).attr('usepost');
+			if (typeof attr === typeof undefined || attr === false) {
+				var msg = $.trim(this.textContent).toLowerCase();
 
-			if (!msg)
-				var msg = $.trim(this.value).toLowerCase();
+				if (!msg)
+					var msg = $.trim(this.value).toLowerCase();
 
-			var q = 'Are you sure you wish to '+ msg +'?';
+				var q = 'Are you sure you wish to '+ msg +'?';
 
-			if ($(this).attr('title') != undefined)
-				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+				if ($(this).attr('title') != undefined)
+					q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
 
-			if (!confirm(q)) {
-				e.preventDefault();
-				e.stopPropagation();	// Don't leave ancestor(s) selected.
+				if (!confirm(q)) {
+					e.preventDefault();
+					e.stopPropagation();	// Don't leave ancestor(s) selected.
+				}
 			}
 		}
 	});

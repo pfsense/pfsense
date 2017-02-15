@@ -162,7 +162,7 @@ foreach ($unused_disks as $disk) {
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($_GET["error"] && ($_GET["error"] != 0)) {
+if ($_REQUEST["error"] && ($_REQUEST["error"] != 0)) {
 	print_info_box(gettext("There was an error performing the chosen mirror operation. Check the System Log for details."));
 }
 
@@ -171,26 +171,26 @@ if ($_GET["error"] && ($_GET["error"] != 0)) {
 
 <!-- Confirmation screen -->
 <?php
-if ($_GET["action"]):  ?>
+if ($_REQUEST["action"]):  ?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Confirm Action')?></h2></div>
 		<div class="panel-body">
 			<strong><?=gettext('Please confirm the selected action: '); ?></strong>
-			<span style="color:green"><?=$action_list[$_GET["action"]]; ?></span>
-			<input type="hidden" name="action" value="<?=htmlspecialchars($_GET['action']); ?>" />
+			<span style="color:green"><?=$action_list[$_REQUEST["action"]]; ?></span>
+			<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action']); ?>" />
 <?php
-	if (!empty($_GET["mirror"])): ?>
+	if (!empty($_REQUEST["mirror"])): ?>
 			<br /><strong><?=gettext("Mirror: "); ?></strong>
-			<?=htmlspecialchars($_GET['mirror']); ?>
-			<input type="hidden" name="mirror" value="<?=htmlspecialchars($_GET['mirror']); ?>" />
+			<?=htmlspecialchars($_REQUEST['mirror']); ?>
+			<input type="hidden" name="mirror" value="<?=htmlspecialchars($_REQUEST['mirror']); ?>" />
 <?php
 	endif; ?>
 
 <?php
-	if (!empty($_GET["consumer"])): ?>
+	if (!empty($_REQUEST["consumer"])): ?>
 			<br /><strong><?=gettext("Consumer"); ?>:</strong>
-			<?=htmlspecialchars($_GET["consumer"]); ?>
-			<input type="hidden" name="consumer" value="<?=htmlspecialchars($_GET["consumer"]); ?>" />
+			<?=htmlspecialchars($_REQUEST["consumer"]); ?>
+			<input type="hidden" name="consumer" value="<?=htmlspecialchars($_REQUEST["consumer"]); ?>" />
 <?php
 	endif; ?>
 			<br />

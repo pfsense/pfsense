@@ -39,19 +39,14 @@ define('DEBUG', false);
 
 global $g;
 
-$stepid = htmlspecialchars($_GET['stepid']);
-if (isset($_POST['stepid'])) {
-	$stepid = htmlspecialchars($_POST['stepid']);
-}
+$stepid = htmlspecialchars($_REQUEST['stepid']);
+
 
 if (!$stepid) {
 	$stepid = "0";
 }
 
-$xml = htmlspecialchars($_GET['xml']);
-if ($_POST['xml']) {
-	$xml = htmlspecialchars($_POST['xml']);
-}
+$xml = htmlspecialchars($_REQUEST['xml']);
 
 if (empty($xml)) {
 	$xml = "not_defined";
@@ -133,6 +128,7 @@ if ($_POST && !$input_errors) {
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = explode("->", $field);
+	$thisvar = null;
 	foreach ($field_split as $f) {
 		$field_conv .= "['" . $f . "']";
 	}
@@ -156,8 +152,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if ($field_type == "interfaces_selection") {
 		$var = "\$config{$field_conv}";
 		$text = "if (isset({$var})) unset({$var});";
-		$text .= "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		$text .= "\$thisvar = &\$config" . $field_conv . ";";
 		eval($text);
+		$thisvar = $updatetext;
 		return;
 	}
 
@@ -165,8 +162,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}
-	$text = "\$config" . $field_conv . " = \"" . addslashes($updatetext) . "\";";
+	$text .= "\$thisvar = &\$config" . $field_conv . ";";
 	eval($text);
+	$thisvar = $updatetext;
 }
 
 $title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
@@ -406,11 +404,8 @@ if ($input_errors) {
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
-if ($_GET['message'] != "") {
-	print_info_box(htmlspecialchars($_GET['message']));
-}
-if ($_POST['message'] != "") {
-	print_info_box(htmlspecialchars($_POST['message']));
+if ($_REQUEST['message'] != "") {
+	print_info_box(htmlspecialchars($_REQUEST['message']));
 }
 
 $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);

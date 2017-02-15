@@ -218,9 +218,9 @@ $section->addInput(new Form_Select(
 	$iflist['selected'],
 	$iflist['options'],
 	true
-))->setHelp('Interfaces without an IP address will not be shown.' . '<br />' .
-			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
-			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
+))->setHelp('Interfaces without an IP address will not be shown.%1$s' .
+			'Selecting no interfaces will listen on all interfaces with a wildcard.%1$s' .
+			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.', '<br />');
 
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
@@ -281,10 +281,11 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_StaticText(
 	null,
 	$btnaddrow
-))->setHelp('For best results three to five servers should be configured here, or at least one pool.' . '<br />' .
-			'The <b>Prefer</b> option indicates that NTP should favor the use of this server more than all others.' . '<br />' .
-			'The <b>No Select</b> option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.' . '<br />' .
-			'The <b>Is a Pool</b> option indicates this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.');
+))->setHelp('For best results three to five servers should be configured here, or at least one pool.%1$s' .
+			'The %2$sPrefer%3$s option indicates that NTP should favor the use of this server more than all others.%1$s' .
+			'The %2$sNo Select%3$s option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
+			'The %2$sIs a Pool%3$s option indicates this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
+			'<br />', '<b>', '</b>');
 
 $section->addInput(new Form_Input(
 	'ntporphan',
@@ -315,8 +316,8 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Log system messages (default: disabled).',
 	$pconfig['logsys']
-))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>.');
+))->setHelp('These options enable additional messages from NTP to be written to the System Log %1$sStatus > System Logs > NTP%2$s',
+			'<a href="status_logs.php?logfile=ntpd">', '</a>.');
 
 // Statistics logging section
 $btnadv = new Form_Button(

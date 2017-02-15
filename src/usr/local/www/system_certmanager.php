@@ -44,11 +44,8 @@ $cert_types = array(
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (is_numericint($_GET['userid'])) {
-	$userid = $_GET['userid'];
-}
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$userid = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint(REQUEST['userid'])) {
+	$userid = $_REQUEST['userid'];
 }
 
 if (isset($userid)) {
@@ -59,11 +56,8 @@ if (isset($userid)) {
 	$a_user =& $config['system']['user'];
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($config['ca'])) {
@@ -85,13 +79,10 @@ foreach ($a_ca as $ca) {
 	}
 }
 
-$act = $_GET['act'];
+$act = $_REQUEST['act'];
 
-if ($_POST['act']) {
-	$act = $_POST['act'];
-}
 
-if ($act == "del") {
+if ($_POST['act'] == "del") {
 
 	if (!isset($a_cert[$id])) {
 		pfSenseHeader("system_certmanager.php");
@@ -107,7 +98,7 @@ if ($act == "del") {
 
 
 if ($act == "new") {
-	$pconfig['method'] = $_GET['method'];
+	$pconfig['method'] = $_POST['method'];
 	$pconfig['keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['csr_keylen'] = "2048";
@@ -209,7 +200,7 @@ if ($act == "csr") {
 	$pconfig['csr'] = base64_decode($a_cert[$id]['csr']);
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
 	if ($_POST['altname_value0'] == "") {
 		unset($_POST['altname_type0']);
@@ -615,10 +606,9 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	if (!$internal_ca_count) {
 		$section->addInput(new Form_StaticText(
 			'*Certificate authority',
-			gettext('No internal Certificate Authorities have been defined. ').
-			gettext('An internal CA must be defined in order to create an internal certificate. ').
-			'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext("Create") .'</a>'.
-			gettext(' an internal CA.')
+			gettext('No internal Certificate Authorities have been defined. ') .
+			gettext('An internal CA must be defined in order to create an internal certificate. ') .
+			sprintf(gettext('%1$sCreate%2$s an internal CA.'), '<a href="system_camanager.php?act=new&amp;method=internal"> ', '</a>')
 		));
 	} else {
 		$allCas = array();
@@ -775,6 +765,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		null,
 		'fa-plus'
 	))->addClass('btn-success');
+
 
 	$form->add($section);
 	$section = new Form_Section('External Signing Request');
@@ -1075,12 +1066,12 @@ foreach ($a_cert as $i => $cert):
 							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>"></a>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>" usepost></a>
 						<?php endif?>
 					</td>
 				</tr>
 <?php
-	$i++; 
+	$i++;
 	endforeach; ?>
 			</tbody>
 		</table>

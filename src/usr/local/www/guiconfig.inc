@@ -989,7 +989,7 @@ function echo_array($array, $return_me = false) {
  * RESULT
  *	 null
  ******/
-function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') {
+function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', $usepost = "") {
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -1068,7 +1068,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 				echo ' class="active"';
 			}
 
-			echo '><a href="' . $ta[2] . '">' . $ta[0] . '</a></li>';
+			echo '><a href="' . $ta[2] . '" ' . $usepost . '>' . $ta[0] . '</a></li>';
 		}
 
 		echo '</ul>';

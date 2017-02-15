@@ -36,7 +36,7 @@ if (!is_array($config['wol']['wolentry'])) {
 }
 $a_wol = &$config['wol']['wolentry'];
 
-if ($_GET['wakeall'] != "") {
+if ($_REQUEST['wakeall'] != "") {
 	$i = 0;
 	$savemsg = "";
 	foreach ($a_wol as $wolent) {
@@ -59,25 +59,20 @@ if ($_GET['wakeall'] != "") {
 	}
 }
 
-if ($_POST || $_GET['mac']) {
+if ($_POST['Submit'] || $_POST['mac']) {
 	unset($input_errors);
 
-	if ($_GET['mac']) {
+	if ($_POST['mac']) {
 		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-		$_GET['mac'] = strtolower(str_replace("-", ":", $_GET['mac']));
-		$mac = $_GET['mac'];
-		$if = $_GET['if'];
-	} else {
-		/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-		$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
-		$mac = $_POST['mac'];
-		$if = $_POST['interface'];
+		$mac = strtolower(str_replace("-", ":", $_POST['mac']));
+		$if = $_POST['if'];
 	}
 
 	/* input validation */
 	if (!$mac || !is_macaddr($mac)) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
+
 	if (!$if) {
 		$input_errors[] = gettext("A valid interface must be specified.");
 	}
@@ -101,9 +96,9 @@ if ($_POST || $_GET['mac']) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_wol[$_GET['id']]) {
-		unset($a_wol[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_wol[$_POST['id']]) {
+		unset($a_wol[$_POST['id']]);
 		write_config();
 		header("Location: services_wol.php");
 		exit;
@@ -192,8 +187,8 @@ print $form;
 							</td>
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
-								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>" usepost></a>
+								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost></a>
 							</td>
 						</tr>
 					<?php endforeach?>

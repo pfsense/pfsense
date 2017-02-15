@@ -45,27 +45,25 @@ if (!is_array($config['gateways']['gateway_item'])) {
 
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
-if ($_POST) {
+$pconfig = $_REQUEST;
 
-	$pconfig = $_POST;
+if ($_POST['apply']) {
 
-	if ($_POST['apply']) {
+	$retval = 0;
 
-		$retval = 0;
+	$retval |= system_routing_configure();
+	$retval |= system_resolvconf_generate();
+	$retval |= filter_configure();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
+	/* Dynamic DNS on gw groups may have changed */
+	send_event("service reload dyndnsall");
 
-		$retval |= system_routing_configure();
-		$retval |= system_resolvconf_generate();
-		$retval |= filter_configure();
-		/* reconfigure our gateway monitor */
-		setup_gateways_monitor();
-		/* Dynamic DNS on gw groups may have changed */
-		send_event("service reload dyndnsall");
-
-		if ($retval == 0) {
-			clear_subsystem_dirty('staticroutes');
-		}
+	if ($retval == 0) {
+		clear_subsystem_dirty('staticroutes');
 	}
 }
+
 
 function can_delete_disable_gateway_item($id, $disable = false) {
 	global $config, $input_errors, $a_gateways;
@@ -154,10 +152,10 @@ function delete_gateway_item($id) {
 }
 
 unset($input_errors);
-if ($_GET['act'] == "del") {
-	if (can_delete_disable_gateway_item($_GET['id'])) {
-		$realid = $a_gateways[$_GET['id']]['attribute'];
-		delete_gateway_item($_GET['id']);
+if ($_REQUEST['act'] == "del") {
+	if (can_delete_disable_gateway_item($_REQUEST['id'])) {
+		$realid = $a_gateways[$_REQUEST['id']]['attribute'];
+		delete_gateway_item($_REQUEST['id']);
 		write_config("Gateways: removed gateway {$realid}");
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateways.php");
@@ -165,10 +163,10 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-if (isset($_POST['del_x'])) {
+if (isset($_REQUEST['del_x'])) {
 	/* delete selected items */
-	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		foreach ($_POST['rule'] as $rulei) {
+	if (is_array($_REQUEST['rule']) && count($_REQUEST['rule'])) {
+		foreach ($_REQUEST['rule'] as $rulei) {
 			if (!can_delete_disable_gateway_item($rulei)) {
 				break;
 			}
@@ -176,7 +174,7 @@ if (isset($_POST['del_x'])) {
 
 		if (!isset($input_errors)) {
 			$items_deleted = "";
-			foreach ($_POST['rule'] as $rulei) {
+			foreach ($_REQUEST['rule'] as $rulei) {
 				delete_gateway_item($rulei);
 				$items_deleted .= "{$rulei} ";
 			}
@@ -189,12 +187,12 @@ if (isset($_POST['del_x'])) {
 		}
 	}
 
-} else if ($_GET['act'] == "toggle" && $a_gateways[$_GET['id']]) {
-	$realid = $a_gateways[$_GET['id']]['attribute'];
+} else if ($_REQUEST['act'] == "toggle" && $a_gateways[$_REQUEST['id']]) {
+	$realid = $a_gateways[$_REQUEST['id']]['attribute'];
 	$disable_gw = !isset($a_gateway_item[$realid]['disabled']);
 	if ($disable_gw) {
 		// The user wants to disable the gateway, so check if that is OK.
-		$ok_to_toggle = can_delete_disable_gateway_item($_GET['id'], $disable_gw);
+		$ok_to_toggle = can_delete_disable_gateway_item($_REQUEST['id'], $disable_gw);
 	} else {
 		// The user wants to enable the gateway. That is always OK.
 		$ok_to_toggle = true;
@@ -308,13 +306,13 @@ foreach ($a_gateways as $i => $gateway):
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>" usepost></a>
 	<?php } else {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>" usepost></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>" usepost></a>
 
 <?php endif; ?>
 						</td>

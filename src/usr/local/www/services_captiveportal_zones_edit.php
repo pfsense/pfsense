@@ -39,9 +39,10 @@ $shortcut_section = "captiveportal";
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
-if ($_POST) {
+if ($_POST['Submit']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

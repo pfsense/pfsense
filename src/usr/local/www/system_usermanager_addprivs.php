@@ -34,12 +34,8 @@ function admusercmp($a, $b) {
 
 require_once("guiconfig.inc");
 
-if (is_numericint($_GET['userid'])) {
-	$userid = $_GET['userid'];
-}
-
-if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
-	$userid = $_POST['userid'];
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
+	$userid = $_REQUEST['userid'];
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
@@ -60,9 +56,7 @@ if (!is_array($a_user['priv'])) {
 $spriv_list = $priv_list;
 uasort($spriv_list, "admusercmp");
 
-if ($_POST) {
-
-
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

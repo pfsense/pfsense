@@ -59,9 +59,9 @@ if (isset($_POST['apply'])) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_secret[$_GET['id']]) {
-		unset($a_secret[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_secret[$_POST['id']]) {
+		unset($a_secret[$_POST['id']]);
 		write_config(gettext("Deleted IPsec Pre-Shared Key"));
 		mark_subsystem_dirty('ipsec');
 		header("Location: vpn_ipsec_keys.php");
@@ -153,7 +153,7 @@ if (is_subsystem_dirty('ipsec')) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit key')?>" href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php $i++; endforeach; ?>

@@ -45,7 +45,7 @@ $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -250,10 +250,11 @@ $section->addInput(new Form_Select(
 	'Whether a particular participant ID should be kept unique, with any new IKE_SA using an ID ' .
 	'deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new ' .
 	'IKE_SA using the same ID is almost invariably intended to replace an old one. ' .
-	'The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an ' .
-	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. ' .
-	'The daemon also accepts the value <b>keep</b> to reject ' .
-	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.'
+	'The difference between %1$sno%2$s and %1$snever%2$s is that the old IKE_SAs will be replaced when receiving an ' .
+	'INITIAL_CONTACT notify if the option is no but will ignore these notifies if %1$snever%2$s is configured. ' .
+	'The daemon also accepts the value %1$skeep%2$s to reject ' .
+	'new IKE_SA setups and keep the duplicate established earlier. Defaults to Yes.',
+	'<b>', '</b>'
 );
 
 $section->addInput(new Form_Checkbox(

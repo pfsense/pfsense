@@ -150,7 +150,7 @@ if ($_POST && $_POST['sequence']) {
 		$widget_sep = ',';
 	}
 
-	// Find the new entry (and do not assume there is only 1 new entry)
+	// Find any new entry (and do not assume there is only 1 new entry)
 	foreach ($widget_seq_array as $widget_seq_data) {
 		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
 
@@ -177,9 +177,12 @@ if ($_POST && $_POST['sequence']) {
 
 	$widget_settings['sequence'] = $widget_sequence;
 
-	foreach ($known_widgets as $widgetname => $widgetconfig) {
-		if ($_POST[$widgetname . '-config']) {
-			$widget_settings[$widgetname . '-config'] = $_POST[$widgetname . '-config'];
+	foreach ($widget_counter_array as $basename => $instances) {
+		foreach ($instances as $instance => $value) {
+			$widgetconfigname = $basename . '-' . $instance . '-config';
+			if ($_POST[$widgetconfigname]) {
+				$widget_settings[$widgetconfigname] = $_POST[$widgetconfigname];
+			}
 		}
 	}
 

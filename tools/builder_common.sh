@@ -282,16 +282,18 @@ create_ova_image() {
 
 	LOGFILE=${BUILDER_LOGS}/ova.${TARGET}.log
 
-	if [ -d "${OVA_TMP}" ]; then
+	local _mntdir=${OVA_TMP}/mnt
+
+	if [ -d "${_mntdir}" ]; then
 		local _dev
 		# XXX Root cause still didn't found but it doesn't umount
 		#     properly on looped builds and then require this extra
 		#     check
 		while true; do
-			_dev=$(mount -p ${OVA_TMP} 2>/dev/null | awk '{print $1}')
+			_dev=$(mount -p ${_mntdir} 2>/dev/null | awk '{print $1}')
 			[ $? -ne 0 -o -z "${_dev}" ] \
 				&& break
-			umount -f ${OVA_TMP}
+			umount -f ${_mntdir}
 			mdconfig -d -u ${_dev#/dev/}
 		done
 		chflags -R noschg ${OVA_TMP}
@@ -300,7 +302,6 @@ create_ova_image() {
 
 	mkdir -p $(dirname ${OVAPATH})
 
-	local _mntdir=${OVA_TMP}/mnt
 	mkdir -p ${_mntdir}
 
 	if [ -z "${OVA_SWAP_PART_SIZE_IN_GB}" -o "${OVA_SWAP_PART_SIZE_IN_GB}" = "0" ]; then

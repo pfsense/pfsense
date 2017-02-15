@@ -40,11 +40,7 @@ require_once("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower(htmlspecialchars($cpzone));
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -54,6 +50,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
@@ -63,7 +60,7 @@ $shortcut_section = "captiveportal";
 $actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
 	'block' => '<i class="fa fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
-if ($_POST) {
+if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -133,17 +130,17 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
+if ($_POST['act'] == "del") {
 	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 
-	if ($a_passthrumacs[$_GET['id']]) {
+	if ($a_passthrumacs[$_POST['id']]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
-		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_GET['id']]);
+		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_POST['id']]);
 		$uniqid = uniqid("{$cpzone}_mac");
 		file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 		@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
-		unset($a_passthrumacs[$_GET['id']]);
+		unset($a_passthrumacs[$_POST['id']]);
 		write_config();
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
 		exit;
@@ -198,7 +195,7 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext("Edit MAC address"); ?>" href="services_captiveportal_mac_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete MAC address")?>" href="services_captiveportal_mac.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"usepost></a>
 				</td>
 			</tr>
 <?php

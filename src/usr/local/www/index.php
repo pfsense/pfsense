@@ -48,8 +48,8 @@ if (isset($_POST['closenotice'])) {
 	exit;
 }
 
-if (isset($_GET['closenotice'])) {
-	close_notice($_GET['closenotice']);
+if (isset($_REQUEST['closenotice'])) {
+	close_notice($_REQUEST['closenotice']);
 	sleep(1);
 }
 

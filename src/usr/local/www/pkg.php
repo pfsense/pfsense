@@ -90,7 +90,7 @@ if ($_REQUEST['display_maximum_rows']) {
 
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($_GET['act'] == "update") {
+if ($_REQUEST['act'] == "update") {
 
 	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
 		#get current values
@@ -113,7 +113,7 @@ if ($_GET['act'] == "update") {
 	#function called via jquery, no need to continue after save changes.
 	exit;
 }
-if ($_GET['act'] == "del") {
+if ($_REQUEST['act'] == "del") {
 	// loop through our fieldnames and automatically setup the fieldnames
 	// in the environment.	ie: a fieldname of username with a value of
 	// testuser would automatically eval $username = "testuser";
@@ -127,8 +127,8 @@ if ($_GET['act'] == "del") {
 
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-	if ($a_pkg[$_GET['id']]) {
-		unset($a_pkg[$_GET['id']]);
+	if ($a_pkg[$_REQUEST['id']]) {
+		unset($a_pkg[$_REQUEST['id']]);
 		write_config();
 		if ($pkg['custom_delete_php_command'] != "") {
 			if ($pkg['custom_php_command_before_form'] != "") {
@@ -157,7 +157,7 @@ if ($pkg['custom_php_command_before_form'] != "") {
 // Breadcrumb
 if ($pkg['title'] != "") {
 	/*if (!$only_edit) {						// Is any package still making use of this?? Is this something that is still wanted, considering the breadcrumb policy https://redmine.pfsense.org/issues/5527
- 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text']; 
+ 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text'];
 	}*/
 	if (strpos($pkg['title'], '/')) {
 		$title = explode('/', $pkg['title']);
@@ -286,8 +286,8 @@ function save_changes_to_xml(xml) {
 </script>
 
 <?php
-if ($_GET['savemsg'] != "") {
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+if ($_REQUEST['savemsg'] != "") {
+	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
 }
 
 if ($savemsg) {

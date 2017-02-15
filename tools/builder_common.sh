@@ -287,6 +287,17 @@ create_ova_image() {
 	LOGFILE=${BUILDER_LOGS}/ova.${TARGET}.log
 
 	if [ -d "${OVA_TMP}" ]; then
+		local _dev
+		# XXX Root cause still didn't found but it doesn't umount
+		#     properly on looped builds and then require this extra
+		#     check
+		while true; do
+			_dev=$(mount -p ${OVA_TMP} 2>/dev/null | awk '{print $1}')
+			[ $? -ne 0 -o -z "${_dev}" ] \
+				&& break
+			umount -f ${OVA_TMP}
+			mdconfig -d -u ${_dev#/dev/}
+		done
 		chflags -R noschg ${OVA_TMP}
 		rm -rf ${OVA_TMP}
 	fi

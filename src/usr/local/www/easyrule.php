@@ -75,34 +75,34 @@ if ($input_errors) {
 			<div class="content">
 <?php
 if (!$confirmed && !empty($_REQUEST['action'])) { ?>
-	<?php if ($_GET['action'] == 'block'): ?>
-				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_GET['action'])))?>
-				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_GET['int']))?>
-				<input type="hidden" name="int" value="<?=htmlspecialchars($_GET['int'])?>" />
-				<br/><b><?= gettext("Source") ?>:</b> <?=htmlspecialchars($_GET['src'])?>
-				<input type="hidden" name="src" value="<?=htmlspecialchars($_GET['src'])?>" />
-				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_GET['ipproto']))?>
-				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_GET['ipproto'])?>" />
-	<?php elseif ($_GET['action'] == 'pass'): ?>
-				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_GET['action'])))?>
-				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_GET['int']))?>
-				<input type="hidden" name="int" value="<?=htmlspecialchars($_GET['int'])?>" />
-				<br/><b><?=gettext("Protocol")?>:</b> <?=htmlspecialchars(strtoupper($_GET['proto']))?>
-				<input type="hidden" name="proto" value="<?=htmlspecialchars($_GET['proto'])?>" />
-				<br/><b><?=gettext("Source")?>:</b> <?=htmlspecialchars($_GET['src'])?>
-				<input type="hidden" name="src" value="<?=htmlspecialchars($_GET['src'])?>" />
-				<br/><b><?=gettext("Destination")?>:</b> <?=htmlspecialchars($_GET['dst'])?>
-				<input type="hidden" name="dst" value="<?=htmlspecialchars($_GET['dst'])?>" />
-				<br/><b><?=gettext("Destination Port")?>:</b> <?=htmlspecialchars($_GET['dstport'])?>
-				<input type="hidden" name="dstport" value="<?=htmlspecialchars($_GET['dstport'])?>" />
-				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_GET['ipproto']))?>
-				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_GET['ipproto'])?>" />
+	<?php if ($_REQUEST['action'] == 'block'): ?>
+				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_REQUEST['action'])))?>
+				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['int']))?>
+				<input type="hidden" name="int" value="<?=htmlspecialchars($_REQUEST['int'])?>" />
+				<br/><b><?= gettext("Source") ?>:</b> <?=htmlspecialchars($_REQUEST['src'])?>
+				<input type="hidden" name="src" value="<?=htmlspecialchars($_REQUEST['src'])?>" />
+				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_REQUEST['ipproto']))?>
+				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_REQUEST['ipproto'])?>" />
+	<?php elseif ($_REQUEST['action'] == 'pass'): ?>
+				<b><?=gettext("Rule Type")?>:</b> <?=htmlspecialchars(ucfirst(gettext($_REQUEST['action'])))?>
+				<br/><b><?=gettext("Interface")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['int']))?>
+				<input type="hidden" name="int" value="<?=htmlspecialchars($_REQUEST['int'])?>" />
+				<br/><b><?=gettext("Protocol")?>:</b> <?=htmlspecialchars(strtoupper($_REQUEST['proto']))?>
+				<input type="hidden" name="proto" value="<?=htmlspecialchars($_REQUEST['proto'])?>" />
+				<br/><b><?=gettext("Source")?>:</b> <?=htmlspecialchars($_REQUEST['src'])?>
+				<input type="hidden" name="src" value="<?=htmlspecialchars($_REQUEST['src'])?>" />
+				<br/><b><?=gettext("Destination")?>:</b> <?=htmlspecialchars($_REQUEST['dst'])?>
+				<input type="hidden" name="dst" value="<?=htmlspecialchars($_REQUEST['dst'])?>" />
+				<br/><b><?=gettext("Destination Port")?>:</b> <?=htmlspecialchars($_REQUEST['dstport'])?>
+				<input type="hidden" name="dstport" value="<?=htmlspecialchars($_REQUEST['dstport'])?>" />
+				<br/><b><?=gettext("IP Protocol")?>:</b> <?=htmlspecialchars(ucfirst($_REQUEST['ipproto']))?>
+				<input type="hidden" name="ipproto" value="<?=htmlspecialchars($_REQUEST['ipproto'])?>" />
 	<?php	else:
 			$message = gettext("Invalid action specified.");
 		endif; ?>
 				<br/><br/>
 	<?php if (empty($message)): ?>
-				<input type="hidden" name="action" value="<?=htmlspecialchars($_GET['action'])?>" />
+				<input type="hidden" name="action" value="<?=htmlspecialchars($_REQUEST['action'])?>" />
 				<input type="hidden" name="confirmed" value="true" />
 				<button type="submit" class="btn btn-success" name="erconfirm" id="erconfirm" value="<?=gettext("Confirm")?>">
 					<i class="fa fa-check icon-embed-btn"></i>

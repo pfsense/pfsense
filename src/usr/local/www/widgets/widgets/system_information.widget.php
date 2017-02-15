@@ -133,7 +133,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']
 ?>
 		<tr>
 			<th><?=gettext("Name");?></th>
-			<td><?php echo htmlspecialchars($config['widgets']['sequence']); ?></td>
+			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
 <?php
 	endif;
@@ -436,7 +436,6 @@ function systemStatusGetUpdateStatus() {
 		},
 		dataType: 'html',
 		success: function(data){
-			// $("[id^=jander]")
 			$('[id^=widget-system_information] #updatestatus').html(data);
 		}
 	});

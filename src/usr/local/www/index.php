@@ -138,20 +138,43 @@ if ($_POST && $_POST['sequence']) {
 	$widget_counter_array = array();
 	$widget_sep = '';
 
+	// Make a record of the counter of each widget that is in use.
 	foreach ($widget_seq_array as $widget_seq_data) {
 		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
 
 		if ($widget_counter != 'next') {
-			// Keep count of the maximum counter of each widget.
-			$widget_counter_array[$basename] = max($widget_counter_array[$basename], $widget_counter);
+			$widget_counter_array[$basename][$widget_counter] = true;
 			$widget_sequence .= $widget_sep . $widget_seq_data;
-		} else {
-			// Construct the widget counter of the new widget instance by incrementing the current largest counter of this widget.
-			$widget_sequence .= $widget_sep . $basename . ':' . $col . ':' . $display . ':' . ($widget_counter_array[$basename] + 1);
 		}
+
 		$widget_sep = ',';
 	}
-	
+
+	// Find the new entry (and do not assume there is only 1 new entry)
+	foreach ($widget_seq_array as $widget_seq_data) {
+		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
+
+		if ($widget_counter == 'next') {
+			// Construct the widget counter of the new widget instance by finding
+			// the first non-negative integer that is not in use.
+			// The reasoning here is that if you just deleted a widget instance,
+			// e.g. had System Information 0,1,2 and deleted 1,
+			// then when you add System Information again it will become instance 1,
+			// which will bring back whatever filter selections happened to be on
+			// the previous instance 1.
+			$instance_num = 0;
+
+			while (isset($widget_counter_array[$basename][$instance_num])) {
+				$instance_num++;
+			}
+
+			$widget_sequence .= $widget_sep . $basename . ':' . $col . ':' . $display . ':' . $instance_num;
+			$widget_counter_array[$basename][$instance_num] = true;
+		}
+
+		$widget_sep = ',';
+	}
+
 	$widget_settings['sequence'] = $widget_sequence;
 
 	foreach ($known_widgets as $widgetname => $widgetconfig) {

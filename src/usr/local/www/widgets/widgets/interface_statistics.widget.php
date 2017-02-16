@@ -109,6 +109,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
 <table id="<?=$widgetkey?>-iftbl" class="table table-striped table-hover">
@@ -161,7 +162,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 <script type="text/javascript">
 //<![CDATA[
 
-	function get_if_stats_<?=str_replace("-", "", $widgetkey)?>() {
+	function get_if_stats_<?=$widgetkey_nodash?>() {
 		var ajaxRequest;
 
 		ajaxRequest = $.ajax({
@@ -175,7 +176,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 			$('#<?=$widgetkey?>-iftbl').html(response);
 
 			// and do it again
-			setTimeout(get_if_stats_<?=str_replace("-", "", $widgetkey)?>, "<?=$widgetperiod?>");
+			setTimeout(get_if_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
 		});
 	}
 
@@ -188,7 +189,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
-		setTimeout(get_if_stats_<?=str_replace("-", "", $widgetkey)?>, Math.floor((Math.random() * 10000) + 1000));
+		setTimeout(get_if_stats_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

@@ -506,6 +506,8 @@ function systemStatusGetUpdateStatus() {
 		}
 	});
 }
+
+setTimeout('systemStatusGetUpdateStatus()', 4000);
 <?php endif; ?>
 
 function updateMeters() {
@@ -524,17 +526,13 @@ function updateMeters() {
 
 }
 
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
 	$("#showallsysinfoitems").click(function() {
 		$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
 			$(this).prop("checked", true);
 		});
 	});
-
-	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
-<?php endif; ?>
 
 var update_interval = "<?=$widgetperiod?>";
 

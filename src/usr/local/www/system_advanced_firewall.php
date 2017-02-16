@@ -56,6 +56,7 @@ $pconfig['enablebinatreflection'] = $config['system']['enablebinatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
+$pconfig['fwblockreturn'] = isset($config['system']['fwblockreturn']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 $pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout'];
@@ -326,6 +327,12 @@ if ($_POST) {
 			unset($config['system']['disablescrub']);
 		}
 
+		if ($_POST['fwblockreturn'] == "yes") {
+			$config['system']['fwblockreturn'] = $_POST['fwblockreturn'];
+		} else {
+			unset($config['system']['fwblockreturn']);
+		}
+
 		if ($_POST['tftpinterface']) {
 			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
 		} else {
@@ -434,6 +441,13 @@ $section->addInput(new Form_Checkbox(
 	'Disable Firewall Scrub',
 	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
 	isset($config['system']['disablescrub'])
+));
+
+$section->addInput(new Form_Checkbox(
+	'fwblockreturn',
+	'Reject by default',
+	'Use reject instead of block for default deny rules.',
+	isset($config['system']['fwblockreturn'])
 ));
 
 $group = new Form_Group('Firewall Adaptive Timeouts');

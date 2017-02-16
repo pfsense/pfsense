@@ -336,7 +336,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.' . '<br />' .
 			'GleSYS: Enter the record ID.' . '<br />' .
 			'DNSimple: Enter only the domain name.' . '<br />' .
-			'Namecheap, Cloudflare, GratisDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.');
+			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.');
 
 $section->add($group);
 
@@ -507,6 +507,7 @@ events.push(function() {
 			case "cloudflare-v6":
 			case "cloudflare":
 			case "gratisdns":
+			case "hover":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);

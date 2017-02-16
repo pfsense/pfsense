@@ -424,6 +424,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']
 
 <script type="text/javascript">
 //<![CDATA[
+<?php if ($widget_first_instance): ?>
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 function systemStatusGetUpdateStatus() {
 	$.ajax({
@@ -440,6 +441,8 @@ function systemStatusGetUpdateStatus() {
 		}
 	});
 }
+
+setTimeout('systemStatusGetUpdateStatus()', 4000);
 <?php endif; ?>
 
 function updateMeters() {
@@ -457,18 +460,6 @@ function updateMeters() {
 	setTimer();
 
 }
-
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-events.push(function(){
-	$("#widget-<?=$widgetkey?> #showallsysinfoitems").click(function() {
-		$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
-			$(this).prop("checked", true);
-		});
-	});
-
-	setTimeout('systemStatusGetUpdateStatus()', 4000);
-});
-<?php endif; ?>
 
 var update_interval = "<?=$widgetperiod?>";
 
@@ -653,6 +644,14 @@ function widgetActive(x) {
 /* start updater */
 events.push(function(){
 	setTimer();
+});
+<?php endif; ?>
+events.push(function(){
+	$("#widget-<?=$widgetkey?> #showallsysinfoitems").click(function() {
+		$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
+			$(this).prop("checked", true);
+		});
+	});
 });
 //]]>
 </script>

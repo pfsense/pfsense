@@ -455,6 +455,15 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 						<?php
 							// For backward compatibility, included *.widget.php code needs the var $widgetname
 							$widgetname = $widgetkey;
+							// Determine if this is the first instance of this particular widget.
+							// Provide the $widget_first_instance var, to make it easy for the included widget code
+							// to be able to know if it is being included for the first time.
+							if ($widgets_found[$widgetconfig['basename']]) {
+								$widget_first_instance = false;
+							} else {
+								$widget_first_instance = true;
+								$widgets_found[$widgetconfig['basename']] = true;
+							}
 							include('/usr/local/www/widgets/widgets/' . $widgetconfig['basename'] . '.widget.php');
 						?>
 					</div>

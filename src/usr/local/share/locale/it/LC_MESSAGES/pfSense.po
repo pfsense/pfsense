@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-14 08:43-0500\n"
+"PO-Revision-Date: 2017-02-15 04:25-0500\n"
 "Last-Translator: Filippo Santinello <filippo.santinello@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -3591,7 +3591,7 @@ msgstr "Caricamento istruzioni pacchetto..."
 #: src/etc/inc/pkg-utils.inc:752
 #, php-format
 msgid "Include %s is missing!"
-msgstr ""
+msgstr "L'include %s non è presente!"
 
 #: src/etc/inc/pkg-utils.inc:763
 msgid "Custom commands..."
@@ -3677,123 +3677,138 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:954
 msgid "Syslog entries... "
-msgstr ""
+msgstr "Registrazioni syslog... "
 
 #: src/etc/inc/pkg-utils.inc:962
 msgid "Configuration... "
-msgstr ""
+msgstr "Configurazione..."
 
 #: src/etc/inc/pkg-utils.inc:965
 #, php-format
 msgid "Removed %s package."
-msgstr ""
+msgstr "Pacchetto %s rimosso."
 
 #: src/etc/inc/pkg-utils.inc:992
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
+"In attesa della connessione Internet per aggiornare i metadati del pacchetto "
+"e completarne la reinstallazione"
 
 #: src/etc/inc/pkg-utils.inc:1005 src/etc/inc/pkg-utils.inc:1044
 msgid "Package reinstall"
-msgstr ""
+msgstr "Reinstallazione pacchetto"
 
 #: src/etc/inc/pkg-utils.inc:1006
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
+"Processo di reinstallazione pacchetto INTERROTTO a causa della mancanza di "
+"connettività Internet"
 
 #: src/etc/inc/pkg-utils.inc:1045
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr ""
+"Il pacchetto %s non esiste nella corrente versione %s ed è stato rimosso."
 
 #: src/etc/inc/pkg-utils.inc:1066
 msgid "Stopping all packages."
-msgstr ""
+msgstr "Arresto di tutti i pacchetti."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
-msgstr ""
+msgstr "SIstema - sincronizzazione nodo HA"
 
 #: src/etc/inc/priv/user.priv.inc:7
 msgid "Allow access to authenticate this user for HA sync via XMLRPC"
 msgstr ""
+"Concedi l'accesso per autenticare questo utente per la sincronizzazione HA "
+"via XMLRPC"
 
 #: src/etc/inc/priv/user.priv.inc:10
 msgid "User - Services: Captive Portal login"
-msgstr ""
+msgstr "Utente - Servizi: autenticazione Captive Portal"
 
 #: src/etc/inc/priv/user.priv.inc:11
 msgid "Indicates whether the user is able to login on the captive portal."
 msgstr ""
+"Indica se l'utente ha la possibilità di autenticarsi sul Captive Portal."
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr ""
+msgstr "WebCfg - Pagine di aiuto"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
 msgstr ""
+"Mostra tutti gli oggetti nel menu di aiuto e concedi l'accesso alle "
+"scorciatoie delle pagine aiuto"
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr ""
+msgstr "WebCfg - Cruscotto (completo)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
-msgstr ""
+msgstr "Concedi l'accesso a tutte le pagine richieste per il cruscotto."
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr ""
+msgstr "WebCfg - Widget del cruscotto (accesso diretto)."
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
 "Allow direct access to all Dashboard widget pages, required for some widgets "
 "using AJAX."
 msgstr ""
+"Concedi l'accesso diretto a tutte le pagine dei widget del cruscotto, "
+"necessario per alcuni widget che utilizzano AJAX."
 
 #: src/etc/inc/priv/user.priv.inc:38
 msgid "User - Config: Deny Config Write"
-msgstr ""
+msgstr "Utente - configurazione: nega la scrittura della configurazione"
 
 #: src/etc/inc/priv/user.priv.inc:39
 msgid "If present, ignores requests from this user to write config.xml."
 msgstr ""
+"Se presente, ignora le richieste da questo utente di scrivere sul file "
+"config.xml."
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr ""
+msgstr "Utente - avvisi: visualizzazione"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
-msgstr ""
+msgstr "Questo utente può visualizzare gli avvisi di sistema."
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr ""
+msgstr "Utente - avvisi: visualizzazione e cancellazione"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
-msgstr ""
+msgstr "Questo utente può visualizzare e cancellare gli avvisi di sistema."
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr ""
+msgstr "Utente - sistema: accesso all'account tramite shell"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
 msgstr ""
+"Indica se l'utente ha la possibilità di autenticarsi ad esempio via SSH."
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
-msgstr ""
+msgstr "Utente - sistema: copia file (SCP)"
 
 #: src/etc/inc/priv/user.priv.inc:60
 msgid "User - System: Copy files to home directory (chrooted scp)"
-msgstr ""
+msgstr "Utente - sistema: copia file sulla cartella home (chrooted SCP)"
 
 #: src/etc/inc/priv/user.priv.inc:61
 msgid ""
@@ -3802,10 +3817,14 @@ msgid ""
 "privilege.Warning: Manual chroot setup required, see /usr/local/etc/rc.d/"
 "scponlyc."
 msgstr ""
+"Indica se a questo utente è consentito copiare file alla propria cartella "
+"home via SCP/SFTP. Nota: Utente - sistema - copia file (SCP) è in conflitto "
+"con questo privilegio. Attenzione: è necessario un setup manuale di chroot, "
+"vedi /usr/local/etc/rc.d/scponlyc."
 
 #: src/etc/inc/priv/user.priv.inc:66
 msgid "User - System: SSH tunneling"
-msgstr ""
+msgstr "Utente - sistema: tunneling SSH"
 
 #: src/etc/inc/priv/user.priv.inc:67
 msgid ""
@@ -3813,64 +3832,74 @@ msgid ""
 "have no shell access. Note: User - System - Copy files (scp) and System: "
 "Copy files to home directory (chrooted scp) conflict with this privilege."
 msgstr ""
+"Indica se l'utente ha possibilità di autenticarsi per il tunneling via SSH "
+"quando non è concesso l'accesso via shell. Nota: Utente - sistema - copia "
+"file (SCP) e copia file sulla cartella home (chrooted SCP) sono in conflitto "
+"con questo privilegio."
 
 #: src/etc/inc/priv/user.priv.inc:74
 msgid "User - VPN: IPsec xauth Dialin"
-msgstr ""
+msgstr "Utente - VPN: dial in via IPsec xauth"
 
 #: src/etc/inc/priv/user.priv.inc:75
 msgid ""
 "Indicates whether the user is allowed to dial in via IPsec xauth (Note: Does "
 "not allow shell access, but may allow the user to create SSH tunnels)"
 msgstr ""
+"Indica se all'utente è consentito fare il dial in via IPsec xauth (Nota: "
+"questo privilegio non permette l'accesso via shell, ma potrebbe consentire "
+"all'utente di creare tunnel SSH)"
 
 #: src/etc/inc/priv/user.priv.inc:80
 msgid "User - VPN: L2TP Dialin"
-msgstr ""
+msgstr "Utente - VPN: dial in via L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:81
 msgid "Indicates whether the user is allowed to dial in via L2TP"
-msgstr ""
+msgstr "Indica se all'utente è consentito effettuare il dial in via L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:84
 msgid "User - VPN: PPPOE Dialin"
-msgstr ""
+msgstr "Utente - VPN: dial in via PPPoE"
 
 #: src/etc/inc/priv/user.priv.inc:85
 msgid "Indicates whether the user is allowed to dial in via PPPOE"
 msgstr ""
+"Indica se all'utente è consentito effettuare il dial in attraverso PPPoE"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr ""
+msgstr "WebCfg - Stato: Log di sistema: autenticazioni portale"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
 msgstr ""
+"Consente l'accesso alla pagina 'Stato: log di sistema: autenticazioni "
+"portale'"
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr ""
+msgstr "WebCfg - Stato: Log: DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
-msgstr ""
+msgstr "Consente l'accesso alla pagina 'Stato: log: DHCP'"
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr ""
+msgstr "WebCfg - Stato: log: gateways"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "Consente l'accesso alla pagina 'Stato: log: gateways'"
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr ""
+msgstr "WebCfg - stato: log: resolver"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
-msgstr ""
+msgstr "Consente l'accesso alla pagina 'Stato: log: resolver'"
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"

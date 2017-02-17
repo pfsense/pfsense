@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-14 06:14-0500\n"
-"Last-Translator: Denis Karpushin <denis@netgate.com>\n"
+"PO-Revision-Date: 2017-02-16 03:46-0500\n"
+"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -3868,603 +3868,652 @@ msgstr "Разрешаем доступ к  странице \"Статус: Ж�
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Журнал: Шлюзы"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: Шлюзы\""
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Журнал: Резолвер"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: Резолвер\""
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: IPsec VPN\""
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: NTP\""
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: OpenVPN\""
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: Балансировщик нагрузки"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
 msgstr ""
+"Разрешить доступ к странице \"Статус: Журнал: Система: Балансировщик "
+"нагрузки\""
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: Маршрутизация"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Статус: Журнал: Система: Маршрутизация\""
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr ""
+msgstr "Вебконфигуратор - Статус: Системный Журнал: Беспроводные сети"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
 msgstr ""
+"Разрешить доступ к странице \"Статус: Журнал: Система: Беспроводные сети\""
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr ""
+msgstr "Вебконфигуратор - Сервисы: UPnP"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \" Сервисы: UPnP\""
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr ""
+msgstr "Вебконфигуратор - Все страницы"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
-msgstr ""
+msgstr "Разрешить доступ ко всем страницам"
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr ""
+msgstr "Вебконфигуратор - сообщение об аварии"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
-msgstr ""
+msgstr "Загрузка сообщения об аварии в pfSense и удаление сообщения об аварии"
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: ARP таблица"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \" Диагностика: ARP таблица\""
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  Аутентификация"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr ""
+msgstr "Разрешить  доступ к странице \"Диагностика: Аутентификация\""
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Резервное копирование и восстановление"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
 msgstr ""
+"Разрешить доступ к странице \"Диагностика: Резервное копирование и "
+"восстановление\""
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Команда"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Команда\""
 
 #: src/etc/inc/priv.defs.inc:56
 msgid "WebCfg - Diagnostics: Configuration History"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: История настроек"
 
 #: src/etc/inc/priv.defs.inc:57
 msgid "Allow access to the 'Diagnostics: Configuration History' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: История настроек\""
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Заводские настройки по умолчанию"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
 msgstr ""
+"Разрешить доступ к странице \"Диагностика:  Заводские настройки по "
+"умолчанию\""
 
 #: src/etc/inc/priv.defs.inc:69
 msgid "WebCfg - Diagnostics: DNS Lookup"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Поиск доменных имен"
 
 #: src/etc/inc/priv.defs.inc:70
 msgid "Allow access to the 'Diagnostics: DNS Lookup' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  Поиск доменных имен\""
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Вывод Состояний"
 
 #: src/etc/inc/priv.defs.inc:76
 msgid "Allow access to the 'Diagnostics: Show States' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  Вывод Состояний\""
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Вывод Отслеживания Источника "
 
 #: src/etc/inc/priv.defs.inc:82
 msgid "Allow access to the 'Diagnostics: Show Source Tracking' page."
 msgstr ""
+"Разрешить доступ к странице \"Диагностика: Вывод Отслеживания Источника\""
 
 #: src/etc/inc/priv.defs.inc:87
 msgid "WebCfg - Diagnostics: Edit File"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  Редактирование Файла"
 
 #: src/etc/inc/priv.defs.inc:88
 msgid "Allow access to the 'Diagnostics: Edit File' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Редактирование Файла\""
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  GEOM зеркала"
 
 #: src/etc/inc/priv.defs.inc:97
 msgid "Allow access to the 'Diagnostics: GEOM Mirrors' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: GEOM зеркала\""
 
 #: src/etc/inc/priv.defs.inc:102
 msgid "WebCfg - Diagnostics: Halt system"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  Остановка Системы\""
 
 #: src/etc/inc/priv.defs.inc:103
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Остановка Системы\""
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Сведения об ограничителях"
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Сведения об ограничителях\""
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  таблица NDP"
 
 #: src/etc/inc/priv.defs.inc:115
 msgid "Allow access to the 'Diagnostics: NDP Table' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  таблица NDP\""
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Отслеживание пакетов"
 
 #: src/etc/inc/priv.defs.inc:121
 msgid "Allow access to the 'Diagnostics: Packet Capture' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  Отслеживание пакетов\""
 
 #: src/etc/inc/priv.defs.inc:126
 msgid "WebCfg - Diagnostics: pfInfo"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Cведения о pf"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  Cведения о pf\""
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  pfTop\""
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Ping"
 
 #: src/etc/inc/priv.defs.inc:139
 msgid "Allow access to the 'Diagnostics: Ping' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Ping\""
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Перезагрузка Системы"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Перезагрузка Системы\""
 
 #: src/etc/inc/priv.defs.inc:150
 msgid "WebCfg - Diagnostics: Reset states"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Сброс Состояний"
 
 #: src/etc/inc/priv.defs.inc:151
 msgid "Allow access to the 'Diagnostics: Reset states' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Сброс Состояний\""
 
 #: src/etc/inc/priv.defs.inc:156
 msgid "WebCfg - Diagnostics: Routing tables"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Таблицы маршрутизации"
 
 #: src/etc/inc/priv.defs.inc:157
 msgid "Allow access to the 'Diagnostics: Routing tables' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Таблицы маршрутизации\""
 
 #: src/etc/inc/priv.defs.inc:162
 msgid "WebCfg - Diagnostics: S.M.A.R.T. Status"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Статус S.M.A.R.T."
 
 #: src/etc/inc/priv.defs.inc:163
 msgid "Allow access to the 'Diagnostics: S.M.A.R.T. Status' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Статус S.M.A.R.T.\""
 
 #: src/etc/inc/priv.defs.inc:168
 msgid "WebCfg - Diagnostics: Sockets"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Сокеты"
 
 #: src/etc/inc/priv.defs.inc:169
 msgid "Allow access to the 'Diagnostics: Sockets' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Сокеты\""
 
 #: src/etc/inc/priv.defs.inc:174
 msgid "WebCfg - Diagnostics: States Summary"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  Сводка о Состояниях"
 
 #: src/etc/inc/priv.defs.inc:175
 msgid "Allow access to the 'Diagnostics: States Summary' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Сводка о Состояниях\""
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  Активность Системы"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Активность Системы\""
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика:  IP адреса таблицы pf"
 
 #: src/etc/inc/priv.defs.inc:187
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: IP адреса таблицы pf\""
 
 #: src/etc/inc/priv.defs.inc:192
 msgid "WebCfg - Diagnostics: Test Port"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Тестовые порты"
 
 #: src/etc/inc/priv.defs.inc:193
 msgid "Allow access to the 'Diagnostics: Test Port' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика:  Тестовый Порт\""
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr ""
+msgstr "Вебконфигуратор - Диагностика: Трассировка"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Трассировка\""
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Простое Правило добавить/статус"
 
 #: src/etc/inc/priv.defs.inc:205
 msgid "Allow access to the 'Firewall: Easy Rule' add/status page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Простое Правило добавить/"
+"статус\""
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Алиасы"
 
 #: src/etc/inc/priv.defs.inc:211
 msgid "Allow access to the 'Firewall: Aliases' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран: Алиасы\""
 
 #: src/etc/inc/priv.defs.inc:216
 msgid "WebCfg - Firewall: Alias: Edit"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Алиасы: Редактировать"
 
 #: src/etc/inc/priv.defs.inc:217
 msgid "Allow access to the 'Firewall: Alias: Edit' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран: Алиасы: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:222
 msgid "WebCfg - Firewall: Alias: Import"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Алиасы: Импорт"
 
 #: src/etc/inc/priv.defs.inc:223
 msgid "Allow access to the 'Firewall: Alias: Import' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран: Алиасы: Импорт\""
 
 #: src/etc/inc/priv.defs.inc:228
 msgid "WebCfg - Firewall: NAT: Port Forward"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов: "
+"Перенаправление портов"
 
 #: src/etc/inc/priv.defs.inc:229
 msgid "Allow access to the 'Firewall: NAT: Port Forward' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"Перенаправление портов\""
 
 #: src/etc/inc/priv.defs.inc:234
 msgid "WebCfg - Firewall: NAT: 1:1"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов:  1:1"
 
 #: src/etc/inc/priv.defs.inc:235
 msgid "Allow access to the 'Firewall: NAT: 1:1' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"1:1\""
 
 #: src/etc/inc/priv.defs.inc:240
 msgid "WebCfg - Firewall: NAT: 1:1: Edit"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов: 1:1: "
+"Редактировать"
 
 #: src/etc/inc/priv.defs.inc:241
 msgid "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"1:1: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:246
 msgid "WebCfg - Firewall: NAT: Port Forward: Edit"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов: "
+"Перенаправление портов: Редактировать"
 
 #: src/etc/inc/priv.defs.inc:247
 msgid "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:252
 msgid "WebCfg - Firewall: NAT: NPt"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов:  NPt"
 
 #: src/etc/inc/priv.defs.inc:253
 msgid "Allow access to the 'Firewall: NAT: NPt' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"NPt\""
 
 #: src/etc/inc/priv.defs.inc:258
 msgid "WebCfg - Firewall: NAT: NPt: Edit"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов: NPt: "
+"Редактировать"
 
 #: src/etc/inc/priv.defs.inc:259
 msgid "Allow access to the 'Firewall: NAT: NPt: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"NPt: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:264
 msgid "WebCfg - Firewall: NAT: Outbound"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов:  Исходящие"
 
 #: src/etc/inc/priv.defs.inc:265
 msgid "Allow access to the 'Firewall: NAT: Outbound' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Сетевая Трансляция Адресов: "
+"Исходящие\""
 
 #: src/etc/inc/priv.defs.inc:270
 msgid "WebCfg - Firewall: NAT: Outbound: Edit"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран: Сетевая Трансляция Адресов: Исходящие: "
+"Редактировать"
 
 #: src/etc/inc/priv.defs.inc:271
 msgid "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран:  Сетевая Трансляция Адресов: "
+"Исходящие: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Правила"
 
 #: src/etc/inc/priv.defs.inc:277
 msgid "Allow access to the 'Firewall: Rules' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран:  Правила\""
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Правила: Редактировать"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран:  Правила: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Расписания"
 
 #: src/etc/inc/priv.defs.inc:289
 msgid "Allow access to the 'Firewall: Schedules' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран:  Расписания\""
 
 #: src/etc/inc/priv.defs.inc:294
 msgid "WebCfg - Firewall: Schedules: Edit"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Расписания: Редактировать"
 
 #: src/etc/inc/priv.defs.inc:295
 msgid "Allow access to the 'Firewall: Schedules: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран:  Расписания: Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Трафик Шейпер"
 
 #: src/etc/inc/priv.defs.inc:301
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран: Трафик Шейпер\""
 
 #: src/etc/inc/priv.defs.inc:306
 msgid "WebCfg - Firewall: Traffic Shaper: Queues"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Трафик Шейпер: Очереди"
 
 #: src/etc/inc/priv.defs.inc:307
 msgid "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Трафик Шейпер: Очереди\""
 
 #: src/etc/inc/priv.defs.inc:312
 msgid "WebCfg - Firewall: Traffic Shaper: Limiters"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Трафик Шейпер: Ограничители"
 
 #: src/etc/inc/priv.defs.inc:313
 msgid "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Трафик Шейпер: "
+"Ограничители\""
 
 #: src/etc/inc/priv.defs.inc:318
 msgid "WebCfg - Firewall: Traffic Shaper: Wizard"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран: Трафик Шейпер: Помощник\""
 
 #: src/etc/inc/priv.defs.inc:319
 msgid "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Трафик Шейпер: Помощник\""
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
-msgstr ""
+msgstr "Вебконфигуратор -  Межсетевой экран:  Виртуальный IP адрес"
 
 #: src/etc/inc/priv.defs.inc:325
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Межсетевой экран: Виртуальный IP адрес\""
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
 msgstr ""
+"Вебконфигуратор -  Межсетевой экран:  Виртуальный IP адрес: Редактировать"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
 msgstr ""
+"Разрешить доступ к странице \"Межсетевой экран: Виртуальный IP адрес: "
+"Редактировать\""
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
-msgstr ""
+msgstr "Вебконфигуратор - AJAX: Получение Сервис Провайдеров"
 
 #: src/etc/inc/priv.defs.inc:337
 msgid "Allow access to the 'AJAX: Service Providers' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"AJAX: Cервис Провайдеры\""
 
 #: src/etc/inc/priv.defs.inc:342
 msgid "WebCfg - AJAX: Get Stats"
-msgstr ""
+msgstr "Вебконфигуратор - AJAX: Получить Статистику"
 
 #: src/etc/inc/priv.defs.inc:343
 msgid "Allow access to the 'AJAX: Get Stats' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"AJAX: Получить Статистику\""
 
 #: src/etc/inc/priv.defs.inc:348
 msgid "WebCfg - Diagnostics: Interface Traffic"
-msgstr ""
+msgstr "Вебконфигуратор -  Диагностика: Трафик Интерфейсов\""
 
 #: src/etc/inc/priv.defs.inc:349
 msgid "Allow access to the 'Diagnostics: Interface Traffic' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Диагностика: Трафик Интерфейсов\""
 
 #: src/etc/inc/priv.defs.inc:354
 msgid "WebCfg - Diagnostics: CPU Utilization"
-msgstr ""
+msgstr "Вебконфигуратор -  Диагностика: Утилизация Центрального процессора"
 
 #: src/etc/inc/priv.defs.inc:355
 msgid "Allow access to the 'Diagnostics: CPU Utilization' page."
 msgstr ""
+"Разрешить доступ к странице \"Диагностика: Утилизация Центрального "
+"процессора\""
 
 #: src/etc/inc/priv.defs.inc:361
 msgid "WebCfg - XMLRPC Interface Stats"
-msgstr ""
+msgstr "Вебконфигуратор - XMLRPC Статистика Интерфейса"
 
 #: src/etc/inc/priv.defs.inc:362
 msgid "Allow access to the 'XMLRPC Interface Stats' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"XMLRPC Статистика Интерфейса\""
 
 #: src/etc/inc/priv.defs.inc:367
 msgid "WebCfg - System: Login / Logout / Dashboard"
-msgstr ""
+msgstr "Вебконфигуратор -  Система: Вход/ Выход / Приборная Панель"
 
 #: src/etc/inc/priv.defs.inc:368
 msgid "Allow access to the 'System: Login / Logout' page and Dashboard."
 msgstr ""
+"Разрешить доступ к странице \"Система: Вход / Выход\" и к Приборной Панели"
 
 #: src/etc/inc/priv.defs.inc:373
 msgid "WebCfg - Interfaces: WAN"
-msgstr ""
+msgstr "Вебконфигуратор -  Интерфейсы: WAN"
 
 #: src/etc/inc/priv.defs.inc:374
 msgid "Allow access to the 'Interfaces' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы\""
 
 #: src/etc/inc/priv.defs.inc:379
 msgid "WebCfg - Interfaces: Interface Assignments"
-msgstr ""
+msgstr "Вебконфигуратор -  Интерфейсы: Назначение Интерфейсов"
 
 #: src/etc/inc/priv.defs.inc:380
 msgid "Allow access to the 'Interfaces: Interface Assignments' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы: Назначение Интерфейсов\""
 
 #: src/etc/inc/priv.defs.inc:385
 msgid "WebCfg - Interfaces: Bridge"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы: Мост"
 
 #: src/etc/inc/priv.defs.inc:386
 msgid "Allow access to the 'Interfaces: Bridge' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы: Мост\""
 
 #: src/etc/inc/priv.defs.inc:391
 msgid "WebCfg - Interfaces: Bridge edit"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы: Мост: Редактирование "
 
 #: src/etc/inc/priv.defs.inc:392
 msgid "Allow access to the 'Interfaces: Bridge : Edit' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы: Мост: Редактирование\""
 
 #: src/etc/inc/priv.defs.inc:397
 msgid "WebCfg - Interfaces: GIF"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы:  GIF"
 
 #: src/etc/inc/priv.defs.inc:398
 msgid "Allow access to the 'Interfaces: GIF' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы:  GIF\""
 
 #: src/etc/inc/priv.defs.inc:403
 msgid "WebCfg - Interfaces: GIF: Edit"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы: GIF: Редактирование"
 
 #: src/etc/inc/priv.defs.inc:404
 msgid "Allow access to the 'Interfaces: GIF: Edit' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы:  GIF: Редактирование\""
 
 #: src/etc/inc/priv.defs.inc:409
 msgid "WebCfg - Interfaces: GRE"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы: GRE"
 
 #: src/etc/inc/priv.defs.inc:410
 msgid "Allow access to the 'Interfaces: GRE' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы: GRE\""
 
 #: src/etc/inc/priv.defs.inc:415
 msgid "WebCfg - Interfaces: GRE: Edit"
-msgstr ""
+msgstr "Вебконфигуратор - Интерфейсы: GRE: Редактирование"
 
 #: src/etc/inc/priv.defs.inc:416
 msgid "Allow access to the 'Interfaces: GRE: Edit' page."
-msgstr ""
+msgstr "Разрешить доступ к странице \"Интерфейсы: GRE: Редактирование\""
 
 #: src/etc/inc/priv.defs.inc:421
 msgid "WebCfg - Interfaces: Groups"

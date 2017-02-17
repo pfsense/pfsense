@@ -25,12 +25,13 @@ namespace Test;
 use PHPUnit\Framework\TestCase;
 use Facebook\WebDriver\Remote\RemoteWebDriver as RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy as WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition as WebDriverExpectedCondition;
 
 abstract class SeleniumTestCase extends TestCase
 {
 	protected $webDriver;
 	protected $rootURL;
+	protected $loginPage;
+	
 	protected function setUp()
 	{
 		$sauceUserName = getenv("SAUCE_USERNAME");
@@ -106,20 +107,10 @@ abstract class SeleniumTestCase extends TestCase
 	 */
 	protected function adminLogin()
 	{
-		$this->webDriver->get($this->rootURL);
-		
-		$login = $this->webDriver->findElement(WebDriverBy::id("user"));
-		$login->click();
-		$login->sendKeys("admin");
-		
-		$login = $this->webDriver->findElement(WebDriverBy::id("password"));
-		$login->click();
-		$login->sendKeys("pfsense");
-		
-		$login = $this->webDriver->findElement(WebDriverBy::id("submit"));
-		$login->click();
-		$this->webDriver->wait()->until(
-			WebDriverExpectedCondition::urlContains("apps/files")
-		);
+		$this->loginPage = new PageObject\LoginPage(
+			$this->webDriver, $this->rootURL
+			);
+		$this->loginPage->loginAs("admin", "pfsense");
+
 	}
 }

@@ -102,7 +102,7 @@ abstract class SeleniumTestCase extends TestCase
 	}
 	
 	/**
-	 * logs in to the admin account of OwnCloud
+	 * logs in to the admin account of pfSense
 	 */
 	protected function adminLogin()
 	{
@@ -114,7 +114,7 @@ abstract class SeleniumTestCase extends TestCase
 		
 		$login = $this->webDriver->findElement(WebDriverBy::id("password"));
 		$login->click();
-		$login->sendKeys("admin");
+		$login->sendKeys("pfsense");
 		
 		$login = $this->webDriver->findElement(WebDriverBy::id("submit"));
 		$login->click();

@@ -69,7 +69,7 @@ class LoginPage extends PfsensePage
 		 */
 		return $this;
 	}
-	
+
 	/**
 	 * The login page allows the user to type their password into the
 	 * password field
@@ -86,33 +86,30 @@ class LoginPage extends PfsensePage
 		 */
 		return $this;
 	}
-		
+
 	// The login page allows the user to submit the login form
 	public function submitLogin()
 	{
 		/* This is the only place that submits the login form and expects the
 		destination to be the home page.
-		A seperate method should be created for the instance of clicking
+		A separate method should be created for the instance of clicking
 		login whilst expecting a login failure. */
 		
 		$this->webDriver->findElement($this->loginButtonLocator)->click();
 		
 		/* Return a new page object representing the destination. Should the
-		login page ever
-		go somewhere else (for example, a legal disclaimer) then changing the
-		method signature
-		for this method will mean that all tests that rely on this behaviour
-		won't compile. */
+		login page ever go somewhere else (for example, a legal disclaimer)
+		then changing the method signature for this method will mean that all
+		tests that rely on this behaviour won't compile. */
 		return new StatusDashboardPage($this->webDriver);
 	}
-	
+
 	/* Conceptually, the login page offers the user the service of being able to
-	"log into"
-	the application using a user name and password. */
+	"log into" the application using a user name and password. */
 	public function loginAs($username, $password)
 	{
 		/* The PageObject methods that enter username, password & submit login
-		have already defined and should not be repeated here. */
+		have already been defined and should not be repeated here. */
 		$this->typeUsername($username);
 		$this->typePassword($password);
 		return $this->submitLogin();

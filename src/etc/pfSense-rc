@@ -340,6 +340,10 @@ mkdir -p /usr/local/openssl >/dev/null 2>&1
 ln -sf /etc/ssl/openssl.cnf \
 	/usr/local/openssl/openssl.cnf
 
+# Add environment variable to custom CA trusted roots directory
+# Use SSL_CA_CERT_PATH environment variable per man fetch(3)
+export SSL_CA_CERT_PATH=/etc/ssl/certs
+
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt

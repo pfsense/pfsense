@@ -513,6 +513,12 @@ function cert_get_subject_hash($crt) {
 	return $inf_crt['subject'];
 }
 
+function cert_get_hash($crt) {
+	$str_crt = base64_decode($crt);
+	$inf_crt = openssl_x509_parse($str_crt);
+	return $inf_crt['hash'];
+}
+
 function cert_get_issuer($str_crt, $decode = true) {
 
 	if ($decode) {

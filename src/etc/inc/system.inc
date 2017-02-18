@@ -577,13 +577,13 @@ function system_trustedcerts_generate() {
 
 	if (is_array($config['ca'])) {
 		mwexec("/bin/mkdir -p {$g['etc_path']}/ssl/certs");
+		/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
+		mwexec("/usr/bin/find {$g['etc_path']}/ssl/certs -type f -exec /bin/rm '{}' ';'");
 		foreach ($config['ca'] as & $ca) {
-			$ca_hash = cert_get_hash($ca['crt']);
-			$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
-
-			/* Unlink before checking if the CA is trusted, so we delete any formerly trusted CA certfiles */
-			unlink_if_exists($ca_certfile);
 			if ($ca['trusted']) {
+				$ca_hash = cert_get_hash($ca['crt']);
+				$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
+
 				$fd = fopen($ca_certfile, "w");
 				if (!$fd) {
 					log_error(gettext(

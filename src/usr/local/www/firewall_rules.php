@@ -174,6 +174,9 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('filter');
 }
 
+if ($_POST) {
+	$pconfig = $_POST;
+}
 
 if ($_POST['act'] == "del") {
 	if ($a_filter[$_POST['id']]) {

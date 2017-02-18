@@ -578,20 +578,22 @@ function system_trustedcerts_generate() {
 	if (is_array($config['ca'])) {
 		mwexec("/bin/mkdir -p {$g['etc_path']}/ssl/certs");
 		foreach ($config['ca'] as & $ca) {
-			$ca_hash = cert_get_hash($ca['crt']);
-			$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
-			
-			unlink_if_exists($ca_certfile);
-			$fd = fopen($ca_certfile, "w");
-			if (!$fd) {
-				log_error(gettext(
-					"Error: cannot open {$g['etc_path']}/ssl/certs/{$ca_hash}.0 file in system_trustedcerts_generate()."
-					));
-				return 1;
-			}
+			if ($ca['trusted']) {
+				$ca_hash = cert_get_hash($ca['crt']);
+				$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
 
-			fwrite($fd, base64_decode($ca['crt']));
-			fclose($fd);
+				unlink_if_exists($ca_certfile);
+				$fd = fopen($ca_certfile, "w");
+				if (!$fd) {
+					log_error(gettext(
+						"Error: cannot open {$g['etc_path']}/ssl/certs/{$ca_hash}.0 file in system_trustedcerts_generate()."
+						));
+					return 1;
+				}
+
+				fwrite($fd, base64_decode($ca['crt']));
+				fclose($fd);
+			}
 		}
 	}
 

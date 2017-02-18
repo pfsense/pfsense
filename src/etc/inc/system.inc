@@ -229,6 +229,22 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	return 0;
 }
+function get_dns_glob_pattern() {
+       // names of interfaces to use dns settings from
+        $dns_interfaces = array();
+        $dns_glob_pattern = "*"; // default to using all interfaces
+
+        // get current gateway groups state
+        $gwgroups = return_gateway_groups_array();
+        foreach ($gwgroups as $group) {
+		if (count($group) > 0) {
+			$dns_interfaces[]=$group[0]['int']; // one active tier at a time
+		        // update the glob pattern,
+                        $dns_glob_pattern="{".implode(",",array_unique($dns_interfaces))."}";
+		}
+        }
+	return $dns_glob_pattern;
+}
 
 function get_searchdomains() {
 	global $config, $g;
@@ -236,7 +252,7 @@ function get_searchdomains() {
 	$master_list = array();
 
 	// Read in dhclient nameservers
-	$search_list = glob("/var/etc/searchdomain_*");
+	$search_list = glob("/var/etc/searchdomain_".get_dns_glob_pattern(), GLOB_BRACE);
 	if (is_array($search_list)) {
 		foreach ($search_list as $fdns) {
 			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -259,7 +275,7 @@ function get_nameservers() {
 	$master_list = array();
 
 	// Read in dhclient nameservers
-	$dns_lists = glob("/var/etc/nameserver_*");
+	$dns_lists = glob("/var/etc/nameserver_".get_dns_glob_pattern(), GLOB_BRACE);
 	if (is_array($dns_lists)) {
 		foreach ($dns_lists as $fdns) {
 			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

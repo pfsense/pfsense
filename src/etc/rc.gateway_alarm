@@ -23,6 +23,7 @@ if [ -z "$GW" ]; then
 fi
 
 /usr/local/sbin/pfSctl \
+	-c "service reload dns" \
 	-c "service reload dyndns ${GW}" \
 	-c "service reload ipsecdns" \
 	-c "service reload openvpn ${GW}" \

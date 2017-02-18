@@ -39,6 +39,9 @@ require_once("rrd.inc");
 function restart_packages() {
 	global $oldip, $curwanip, $g;
 
+	/* reload dns */
+	send_event("service reload dns");
+
 	/* restart packages */
 	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
 	send_event("service reload packages");

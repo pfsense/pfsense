@@ -286,6 +286,13 @@ if ($_POST['save']) {
 		}
 	}
 
+	// https://redmine.pfsense.org/issues/4154
+	if ($pconfig['type'] == "radius_host") {
+		if (is_ipaddrv6($_POST['radius_host'])) {
+			$input_errors[] = gettext("IPv6 does not work for RADIUS authentication, see Bug #4154.");
+		}
+	}
+
 	if (!$input_errors) {
 		$server = array();
 		$server['refid'] = uniqid();

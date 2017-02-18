@@ -568,39 +568,6 @@ function system_hosts_generate() {
 	return 0;
 }
 
-function system_trustedcerts_generate() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_trustedcerts_generate() being called $mt\n";
-	}
-
-	if (is_array($config['ca'])) {
-		mwexec("/bin/mkdir -p {$g['etc_path']}/ssl/certs");
-		/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
-		mwexec("/usr/bin/find {$g['etc_path']}/ssl/certs -type f -exec /bin/rm '{}' ';'");
-		foreach ($config['ca'] as & $ca) {
-			if ($ca['trusted']) {
-				$ca_hash = cert_get_hash($ca['crt']);
-				$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
-
-				$fd = fopen($ca_certfile, "w");
-				if (!$fd) {
-					log_error(gettext(
-						"Error: cannot open {$g['etc_path']}/ssl/certs/{$ca_hash}.0 file in system_trustedcerts_generate()."
-						));
-					return 1;
-				}
-
-				fwrite($fd, base64_decode($ca['crt']));
-				fclose($fd);
-			}
-		}
-	}
-
-	return 0;
-}
-
 function system_dhcpleases_configure() {
 	global $config, $g;
 

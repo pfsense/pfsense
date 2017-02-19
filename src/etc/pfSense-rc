@@ -343,6 +343,8 @@ ln -sf /etc/ssl/openssl.cnf \
 # Add environment variable to custom CA trusted roots directory
 # Use SSL_CA_CERT_PATH environment variable per man fetch(3)
 export SSL_CA_CERT_PATH=/etc/ssl/certs
+# Use SSL_CERT_DIR environment variable per man SSL_CTX_load_verify_locations(3)
+export SSL_CERT_DIR=/etc/ssl/certs
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini

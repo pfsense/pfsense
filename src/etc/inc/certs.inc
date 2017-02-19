@@ -298,6 +298,8 @@ function ca_trustedcerts_generate() {
 				$ca_hash = cert_get_hash($ca['crt']);
 				$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
 
+				/* Try again to unlink the specific cert file just in case a non-regular file (e.g. symlink) with the same hash exists */
+				unlink_if_exists($ca_certfile);
 				$fd = fopen($ca_certfile, "w");
 				if (!$fd) {
 					log_error(gettext(

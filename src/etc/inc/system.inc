@@ -1615,7 +1615,7 @@ function system_timezone_configure() {
 	}
 }
 
-function check_gps_speed($device, $baud) {
+function check_gps_speed($device) {
 	usleep(1000);
 	// Set timeout to 5s
 	$timeout=microtime(true)+5;
@@ -1676,11 +1676,11 @@ function system_ntp_setup_gps($serialport) {
 	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
 
 	$autospeed = ($config['ntpd']['gps']['speed'] == 'autoalways' || $config['ntpd']['gps']['speed'] == 'autoset');
-	if($autospeed || ($config['ntpd']['gps']['autobaudinit'] && !check_gps_speed($gps_device, $gpsbaud))) {
+	if($autospeed || ($config['ntpd']['gps']['autobaudinit'] && !check_gps_speed($gps_device))) {
 		$found = false;
 		foreach ($speeds as $baud) {
 			mwexec("stty -f {$serialport}.init raw speed {$baud}");
-			if($found = check_gps_speed($gps_device, $baud)) {
+			if($found = check_gps_speed($gps_device)) {
 				if($autospeed) {
 					$saveconfig = ($config['ntpd']['gps']['speed'] == 'autoset');
 					$config['ntpd']['gps']['speed'] = $revspeeds[$baud];

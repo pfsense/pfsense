@@ -288,10 +288,11 @@ function ca_trustedcerts_generate() {
 		echo "ca_trustedcerts_generate() being called $mt\n";
 	}
 
+	mwexec("/bin/mkdir -p {$g['etc_path']}/ssl/certs");
+	/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
+	mwexec("/usr/bin/find {$g['etc_path']}/ssl/certs -type f -exec /bin/rm '{}' ';'");
+
 	if (is_array($config['ca'])) {
-		mwexec("/bin/mkdir -p {$g['etc_path']}/ssl/certs");
-		/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
-		mwexec("/usr/bin/find {$g['etc_path']}/ssl/certs -type f -exec /bin/rm '{}' ';'");
 		foreach ($config['ca'] as & $ca) {
 			if ($ca['trusted']) {
 				$ca_hash = cert_get_hash($ca['crt']);

@@ -55,8 +55,8 @@ function set_default_gps() {
 function parse_ublox(&$nmeaset, $splitline) {
 	$id_idx = 1;
 	$msg_idx = 2;
-	$ddc_idx = 3;
-	if ($splitline[$id_idx] == '40' && $splitline[$ddc_idx]) {
+	$usart1_idx = 4;
+	if ($splitline[$id_idx] == '40' && $splitline[$usart1_idx]) {
 		$nmeaset['GP' . $splitline[$msg_idx]] = 1;
 	}
 }

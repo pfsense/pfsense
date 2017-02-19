@@ -176,7 +176,7 @@ if ($_POST) {
 	
 	if (!empty($_POST['processpgrmf'])) {
 		$config['ntpd']['gps']['processpgrmf'] = $_POST['processpgrmf'];
-	} elseif (isset($config['ntpd']['gps']['processpgrmf']) || $config['ntpd']['gps']['type'] !== 'Garmin') {
+	} elseif (isset($config['ntpd']['gps']['processpgrmf'])) {
 		unset($config['ntpd']['gps']['processpgrmf']);
 	}
 
@@ -700,9 +700,9 @@ events.push(function() {
 	// When the 'GPS' selector is changed, we set the gps defaults
 	$('#gpstype').on('change', function() {
 		set_gps_default($(this).val());
-		hideInput('processpgrmf', $(this).val() !== "Garmin");
+		hideInput('processpgrmf', ($(this).val() !== "Garmin" && $(this).val() !== "Custom"));
 	});
-	hideInput('processpgrmf', '<?=$pconfig['type']?>' !== "Garmin");
+	hideInput('processpgrmf', ('<?=$pconfig['type']?>' !== "Garmin" && '<?=$pconfig['type']?>' !== "Custom"));
 
 	if ('<?=$pconfig['initcmd']?>' == '') {
 		set_gps_default('<?=$pconfig['type']?>');

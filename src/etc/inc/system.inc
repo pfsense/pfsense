@@ -1515,7 +1515,7 @@ EOD;
 			printf(gettext("Error: cannot open certificate file in system_webgui_start().%s"), "\n");
 			return 1;
 		}
-		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
+		chmod("{$g['varetc_path']}/{$cert_location}", 0644);
 		if ($ca <> "") {
 			$cert_chain = $cert . "\n" . $ca;
 		} else {

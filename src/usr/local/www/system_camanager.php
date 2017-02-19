@@ -90,6 +90,7 @@ if ($_POST['act'] == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
+	ca_trustedcerts_generate();
 	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
 	pfSenseHeader("system_camanager.php");
 	exit;
@@ -316,6 +317,7 @@ if ($_POST['save']) {
 
 		if (!$input_errors) {
 			write_config();
+			ca_trustedcerts_generate();
 		}
 
 		pfSenseHeader("system_camanager.php");

@@ -281,7 +281,6 @@ if (!function_exists('get_dyndns_service_text')) {
 		var responseStrings = transport.responseText.split("|");
 		for (var count=0; count<responseStrings.length; count++) {
 			var divlabel = '#widget-<?=$widgetkey?> #dyndnsstatus' + count;
-//			var divlabel = '#dyndnsstatus' + count;
 			$(divlabel).prop('innerHTML',responseStrings[count]);
 		}
 

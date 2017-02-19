@@ -1642,12 +1642,10 @@ function check_gps_speed($device, $baud) {
 		$nmeasentences = ['RMC', 'GGA', 'GLL', 'ZDA', 'ZDG', 'PGRMF'];
 		foreach ($nmeasentences as $sentence) {
 			if(strpos($contents, $sentence) > 0) {
-				@file_put_contents("/tmp/testread".$baud.$sentence, $contents);
 				return true;
 			}
 		}
 		if (strpos($contents, "0") > 0 && strpos($contents, "`") === false && strpos($contents, "??") === false) {
-			@file_put_contents("/tmp/testread".$baud, $contents);
 			return true;
 		}
 	}
@@ -1682,7 +1680,6 @@ function system_ntp_setup_gps($serialport) {
 		$found = false;
 		foreach ($speeds as $baud) {
 			mwexec("stty -f {$serialport}.init raw speed {$baud}");
-			@file_put_contents("/tmp/testreadcheck".$baud, 'dffsd');
 			if($found = check_gps_speed($gps_device, $baud)) {
 				if($autospeed) {
 					$saveconfig = ($config['ntpd']['gps']['speed'] == 'autoset');

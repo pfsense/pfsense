@@ -1645,13 +1645,13 @@ function check_gps_speed($device) {
 				return true;
 			}
 		}
-		$filters = ['`', '?', '/', '~'];
-		foreach ($filters as $filter) {
-			if(strpos($contents, $filter) !== false) {
-				return false;
+		if (strpos($contents, '0') > 0) {
+			$filters = ['`', '?', '/', '~'];
+			foreach ($filters as $filter) {
+				if(strpos($contents, $filter) !== false) {
+					return false;
+				}
 			}
-		}
-		if (strpos($contents, '0')) {
 			return true;
 		}
 	}

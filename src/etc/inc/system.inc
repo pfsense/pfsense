@@ -1721,8 +1721,8 @@ function system_ntp_setup_gps($serialport) {
 	}
 
 	/* Remove old /etc/remote entry if it exists */
-	if (intval(`grep -c "^gps0" /etc/remote`) != 0) {
-		mwexec("sed -i '' -n '/gps0/!p' /etc/remote");
+	if (intval(`/usr/bin/grep -c "^gps0" /etc/remote`) != 0) {
+		mwexec("/usr/bin/sed -i '' -n '/gps0/!p' /etc/remote");
 	}
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */

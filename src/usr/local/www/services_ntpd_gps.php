@@ -392,7 +392,7 @@ if (!empty($serialports)) {
 		null,
 		'Check baud rate before sending init commands (default: unchecked).',
 		$pconfig['autobaudinit']
-		))->setHelp('Before sending the initialization commands, check the baud rate is correct. If it is not correct try to find the correct baud rate automatically, send the initialization commands if the correct rate is found, and then set the baud rate to the configured speed.%1$s' . 'This is useful if the GPS device resets back to a default rate on power loss or when changing the baud rate.', '<br /><br />');
+		))->setHelp('Before sending the initialization commands, check the GPS baud rate. If it is not correct try to find the correct baud rate automatically, send the initialization commands if the correct rate is found, and then set the baud rate to the configured speed.%1$s' . 'This is useful if the GPS device resets back to a default rate on power loss or when changing the baud rate.', '<br /><br />');
 }
 
 $nmealist = build_nmea_list();

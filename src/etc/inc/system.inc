@@ -1630,7 +1630,7 @@ function check_gps_speed($device) {
 
 			// Wait for data to arive
 			if($c === false || strlen($c) == 0) {
-				usleep(10000);
+				usleep(500);
 				continue;
 			}
 
@@ -1645,7 +1645,13 @@ function check_gps_speed($device) {
 				return true;
 			}
 		}
-		if (strpos($contents, "0") > 0 && strpos($contents, "`") === false && strpos($contents, "??") === false) {
+		$filters = ['`', '?', '/', '~'];
+		foreach ($filters as $filter) {
+			if(strpos($contents, $filter) !== false) {
+				return false;
+			}
+		}
+		if (strpos($contents, '0')) {
 			return true;
 		}
 	}
@@ -1667,18 +1673,20 @@ function system_ntp_setup_gps($serialport) {
 
 	$gpsbaud = '4800';
 	$speeds=[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200'];
-	$revspeeds=['4800' => 0, '9600' => 16, '19200' => 32, '38400' => 48, '57600' => 64, '115200' => 80];
+	$revspeeds = array_flip($speeds);
 	if($config['ntpd']['gps']['speed'] && array_key_exists($config['ntpd']['gps']['speed'], $speeds)) {
 		$gpsbaud = $speeds[$config['ntpd']['gps']['speed']];
 	}
 
 	/* Configure the serial port for raw IO and set the speed */
+	mwexec("stty -f {$serialport} raw speed {$gpsbaud}");
 	mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
 
 	$autospeed = ($config['ntpd']['gps']['speed'] == 'autoalways' || $config['ntpd']['gps']['speed'] == 'autoset');
 	if($autospeed || ($config['ntpd']['gps']['autobaudinit'] && !check_gps_speed($gps_device))) {
 		$found = false;
 		foreach ($speeds as $baud) {
+			mwexec("stty -f {$serialport} raw speed {$baud}");
 			mwexec("stty -f {$serialport}.init raw speed {$baud}");
 			if($found = check_gps_speed($gps_device)) {
 				if($autospeed) {
@@ -1707,6 +1715,7 @@ function system_ntp_setup_gps($serialport) {
 	@file_put_contents($gps_device, $gps_init);
 
 	if ($found && $config['ntpd']['gps']['autobaudinit']) {
+		mwexec("stty -f {$serialport} raw speed {$gpsbaud}");
 		mwexec("stty -f {$serialport}.init raw speed {$gpsbaud}");
 	}
 

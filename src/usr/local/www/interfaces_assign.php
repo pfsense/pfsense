@@ -389,7 +389,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		} else if (link_interface_to_gif($id)) {
 			$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
 		} else if (interface_has_queue($id)) {
-			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease emove all queues on the interface to continue.\n");
+			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.\n");
 		} else {
 			unset($config['interfaces'][$id]['enable']);
 			$realid = get_real_interface($id);

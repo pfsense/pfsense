@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-11 03:01-0500\n"
-"Last-Translator: Nahuel Lofeudo <nahuel@nahuellofeudo.com>\n"
+"PO-Revision-Date: 2017-02-16 08:38-0500\n"
+"Last-Translator: Enrique Sánchez <kikesan7@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2412,7 +2412,7 @@ msgid ""
 "configuring 6RD tunnel"
 msgstr ""
 "'La interfaz IPv4 %1$s ' en la interfaz dirección ' %2$s ' no es pública, no "
-"la configuración de túnel 6RD"
+"se configura túnel 6RD"
 
 #: src/etc/inc/interfaces.inc:3725
 #, php-format
@@ -2421,7 +2421,7 @@ msgstr "sixto4 %1$s con direcciones IPv6 %2$s en base a %3$s IPv4 %4$s"
 
 #: src/etc/inc/interfaces.inc:3940
 msgid "Failed to write user DUID file!"
-msgstr "No se ha podido escribir el archivo DUID usuario!"
+msgstr "No se ha podido escribir usuario en el archivo DUID!"
 
 #: src/etc/inc/interfaces.inc:4341
 #, php-format
@@ -2479,7 +2479,7 @@ msgstr "Demonio"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
-msgstr "SA Administrador"
+msgstr "Manager SA"
 
 #: src/etc/inc/ipsec.inc:28 src/etc/inc/ipsec.inc:58
 msgid "IKE SA"
@@ -2487,15 +2487,15 @@ msgstr "IKE SA"
 
 #: src/etc/inc/ipsec.inc:29 src/etc/inc/ipsec.inc:59
 msgid "IKE Child SA"
-msgstr "IKE SA Niño"
+msgstr "IKE hijo SA "
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr "Procesamiento de trabajos"
+msgstr "Procesando trabajo"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
-msgstr "back-end de configuración"
+msgstr "Configuración de back-end"
 
 #: src/etc/inc/ipsec.inc:32 src/etc/inc/ipsec.inc:62
 msgid "Kernel Interface"
@@ -2510,7 +2510,7 @@ msgstr "Interfaz del núcleo"
 #: src/usr/local/www/system_advanced_notifications.php:209
 #: src/usr/local/www/system_advanced_sysctl.php:139
 msgid "Networking"
-msgstr "la creación de una red de contactos profesionales"
+msgstr "Redes"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
@@ -2526,11 +2526,11 @@ msgstr "comprobador de integridad"
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr "Integrity Verifier"
+msgstr "verificador de integridad"
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
-msgstr "Servicio de Confianza Plataforma"
+msgstr "Servicio de Plataforma confiable"
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
@@ -2538,7 +2538,7 @@ msgstr "manejador de TLS"
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
-msgstr "el tráfico IPsec"
+msgstr "tráfico IPsec"
 
 #: src/etc/inc/ipsec.inc:41 src/etc/inc/ipsec.inc:71
 msgid "StrongSwan Lib"
@@ -2546,7 +2546,7 @@ msgstr "strongSwan Lib"
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr "Silenci"
+msgstr "Silencio"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
@@ -2558,11 +2558,11 @@ msgstr "Controlar"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr "diag"
+msgstr "Diagnostico"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr "Bruto"
+msgstr "en Bruto"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
@@ -2588,19 +2588,19 @@ msgstr "Dirección IP"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
-msgstr "Nombre distinguido"
+msgstr "Nombre distintivo"
 
 #: src/etc/inc/ipsec.inc:79 src/etc/inc/ipsec.inc:91
 msgid "User distinguished name"
-msgstr "nombre completo del usuario"
+msgstr "Nombre de usuario distintivo"
 
 #: src/etc/inc/ipsec.inc:80 src/etc/inc/ipsec.inc:92
 msgid "ASN.1 distinguished Name"
-msgstr "ASN.1 nombre distinguido"
+msgstr "ASN.1 nombre distintivo"
 
 #: src/etc/inc/ipsec.inc:81 src/etc/inc/ipsec.inc:93
 msgid "KeyID tag"
-msgstr "etiqueta IDdeLlave"
+msgstr "etiqueta KeyID"
 
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:303
 #: src/usr/local/www/services_checkip.php:65
@@ -2639,11 +2639,11 @@ msgstr "Híbrido RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:167
 msgid "Mutual RSA + Xauth"
-msgstr "Mutua RSA + Xauth"
+msgstr "Mutuo RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:168
 msgid "Mutual PSK + Xauth"
-msgstr "Mutua PSK + Xauth"
+msgstr "Mutuo PSK + Xauth"
 
 #: src/etc/inc/ipsec.inc:169
 msgid "EAP-TLS"
@@ -2659,7 +2659,7 @@ msgstr "EAP-MSCHAPv2"
 
 #: src/etc/inc/ipsec.inc:172
 msgid "Mutual RSA"
-msgstr "RSA mutua"
+msgstr "RSA Mutuo"
 
 #: src/etc/inc/ipsec.inc:173
 msgid "Mutual PSK"
@@ -2683,35 +2683,35 @@ msgstr "Apagado"
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
-msgstr "centímetros."
+msgstr "1 (768 bit)"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "2 (1024 bit)"
-msgstr "centímetros."
+msgstr "2 (1024 bit)"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "5 (1536 bit)"
-msgstr "centímetros."
+msgstr "5 (1536 bit)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr "centímetros."
+msgstr "14 (2048 bit)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr "centímetros."
+msgstr "15 (3072 bit)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr "centímetros."
+msgstr "16 (4096 bit)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr "centímetros."
+msgstr "17 (6144 bit)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr "centímetros."
+msgstr "18 (8192 bit)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
@@ -2751,7 +2751,7 @@ msgstr "30 (ecp512 Brainpool)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:319
 msgid "Mobile Client"
-msgstr "Client Mobile"
+msgstr "Cliente Movil"
 
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2989
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
@@ -2765,9 +2765,10 @@ msgstr "Client Mobile"
 #: src/usr/local/www/system_advanced_misc.php:445
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
-msgstr "Ninguna "
+msgstr "Ninguno"
 
 #: src/etc/inc/ipsec.inc:612
+#, fuzzy
 msgid ""
 "Unable to find IPsec daemon leases file. Could not display mobile user "
 "stats!"
@@ -2788,9 +2789,7 @@ msgstr "no se puede leer %s"
 #: src/etc/inc/meta.inc:134
 #, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr ""
-"Error: falta de correspondencia de etiqueta ( %1$s =! %2$s ) en ' %3$s ' "
-"%4$s"
+msgstr "Error: etiquetas distintas ( %1$s =! %2$s ) en ' %3$s ' %4$s"
 
 #: src/etc/inc/meta.inc:145
 #, php-format
@@ -2817,7 +2816,7 @@ msgstr "No se pudo abrir %s para la escritura"
 #: src/etc/inc/notices.inc:79
 #, php-format
 msgid "New alert found: %s"
-msgstr "Nueva alerta encontró: %s"
+msgstr "Nueva alerta: %s"
 
 #: src/etc/inc/notices.inc:321
 #, php-format
@@ -2834,8 +2833,8 @@ msgid ""
 "Growl IP Address is invalid. Check the setting in System Advanced "
 "Notifications."
 msgstr ""
-"Dirección IP no es válida gruñido. Compruebe el ajuste de avanzada del "
-"sistema de notificaciones."
+"Growl Dirección IP no válida. Compruebe el ajuste avanzado del sistema de "
+"notificaciones."
 
 #: src/etc/inc/notices.inc:383
 #, php-format
@@ -2878,19 +2877,19 @@ msgstr "Un (Client + Server)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
-msgstr "Dos (Cliente + Intermedio + Server)"
+msgstr "Dos (Cliente + Intermedio + Servidor)"
 
 #: src/etc/inc/openvpn.inc:102
 msgid "Three (Client+2xIntermediate+Server)"
-msgstr "Tres (Cliente + 2xIntermediate + Server)"
+msgstr "Tres (Cliente + 2x Intermediarios + Servidor)"
 
 #: src/etc/inc/openvpn.inc:103
 msgid "Four (Client+3xIntermediate+Server)"
-msgstr "Cuatro (Client + 3xIntermediate + Server)"
+msgstr "Cuatro (Client + 3x Intermediarios + Servidor)"
 
 #: src/etc/inc/openvpn.inc:104
 msgid "Five (Client+4xIntermediate+Server)"
-msgstr "Cinco (Cliente + 4xIntermediate + Server)"
+msgstr "Cinco (Cliente + 4x Intermediarios+ Servidor)"
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
@@ -2914,42 +2913,43 @@ msgstr "Acceso Remoto (SSL / TLS + Aut.usuario)"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
-msgstr "Omitir Preferencia (Uso OpenVPN por defecto)"
+msgstr "Omitir Preferencia (Usar OpenVPN por defecto)"
 
 #: src/etc/inc/openvpn.inc:126
 msgid "LZ4 Compression [compress lz4]"
-msgstr "LZ4 Compresión [compresa LZ4]"
+msgstr "LZ4 Compresión [comprime LZ4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 comression v2 [comprimir LZ4-v2]"
+msgstr "LZ4 Compresión v2 [comprime LZ4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
+#, fuzzy
 msgid ""
 "LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"
 msgstr ""
-"Lzo Compresión [comprimir lzo, equivalente a un borrador-lzo sí para la "
+"Compresión LZO [comprimir lzo, es equivalente a un comp-lzo sí para la "
 "compatibilidad]"
 
 #: src/etc/inc/openvpn.inc:129
 msgid "Enable Compression (stub) [compress]"
-msgstr "Habilitar la compresión (talón) [compresa]"
+msgstr "Habilitar la compresión (stub) [comprimir]"
 
 #: src/etc/inc/openvpn.inc:130
 msgid ""
 "Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-"
 "noadapt]"
 msgstr ""
-"Omitir Preferencia, + Desactivar adaptativa lzo Compresión [estilo Legacy, "
+"Omitir Preferencia, + Desactivar Compresión adaptativa lzo [estilo Legacy, "
 "comp-noadapt]"
 
 #: src/etc/inc/openvpn.inc:131
 msgid "Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"
-msgstr "Adaptativo lzo Compresión [estilo Legacy, comp-lzo adaptativo]"
+msgstr "Compresión adaptativo LZO [estilo Legacy, comp-lzo adaptativo]"
 
 #: src/etc/inc/openvpn.inc:132
 msgid "LZO Compression [Legacy style, comp-lzo yes]"
-msgstr "Lzo Compresión [estilo Legacy, comp-lzo sí]"
+msgstr "Compresión LZO [estilo Legacy, comp-lzo sí]"
 
 #: src/etc/inc/openvpn.inc:133
 msgid "No LZO Compression [Legacy style, comp-lzo no]"
@@ -2957,11 +2957,11 @@ msgstr "Sin compresión LZO [estilo Legacy, comp-lzo no]"
 
 #: src/etc/inc/openvpn.inc:138
 msgid "Subnet -- One IP address per client in a common subnet"
-msgstr "Subred - un dirección IP por cliente en una subred común"
+msgstr "Subred -- una dirección IP por cliente en una subred común"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr "NET30 - Aislado / 30 red por cliente"
+msgstr "NET30 - Aislada red /30 por cliente"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
@@ -2977,11 +2977,11 @@ msgstr "Ninguno (nombre de usuario y / o contraseña requerida)"
 
 #: src/etc/inc/openvpn.inc:227
 msgid "===== Server Certificates ====="
-msgstr "===== ===== certificados de servidor"
+msgstr "===== Server Certificates ====="
 
 #: src/etc/inc/openvpn.inc:228
 msgid "===== Non-Server Certificates ====="
-msgstr "===== Certificados de servidor para no ====="
+msgstr "===== Non-Server Certificates ====="
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
@@ -3020,7 +3020,7 @@ msgstr "Ninguno (Sin autenticación)"
 
 #: src/etc/inc/openvpn.inc:451
 msgid "No Hardware Crypto Acceleration"
-msgstr "N de hardware de aceleración Crypto"
+msgstr "Sin hardware de aceleración criptografica"
 
 #: src/etc/inc/openvpn.inc:495
 #, php-format
@@ -3037,7 +3037,7 @@ msgstr ""
 #: src/etc/inc/openvpn.inc:517
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
-msgstr "'El campo %1$s ' debe contener una única válida %2$s rango CIDR."
+msgstr "'El campo %1$s ' debe contener un único válido rango CIDR %2$s."
 
 #: src/etc/inc/openvpn.inc:532
 #, php-format
@@ -3045,7 +3045,7 @@ msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
 "commas."
 msgstr ""
-"'El campo %1$s ' debe contener sólo es válido %2$s rango (s) CIDR separados "
+"'El campo %1$s ' debe contener sólo rango(s) valido CIDR  %2$s  separados "
 "por comas."
 
 #: src/etc/inc/openvpn.inc:1074
@@ -3053,34 +3053,34 @@ msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr ""
-"Error al construir la configuración del servidor OpenVPN. La longitud DH "
-"parámetro seleccionado no se puede utilizar."
+"Error al construir la configuración del servidor OpenVPN. La longitud de "
+"parámetro DH seleccionado no se puede utilizar."
 
 #: src/etc/inc/openvpn.inc:1228
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr "OpenVPN ID %1$s PID %2$s aún en marcha, causando la muerte."
+msgstr "OpenVPN ID %1$s PID %2$s aún en marcha, apagando..."
 
 #: src/etc/inc/openvpn.inc:1463
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
-msgstr "Resyncing casos OpenVPN para la interfaz %s ."
+msgstr "Reiniciando OpenVPN para la interfaz %s ."
 
 #: src/etc/inc/openvpn.inc:1465
 msgid "Resyncing OpenVPN instances."
-msgstr "Resyncing casos OpenVPN."
+msgstr "Reiniciando OpenVPN."
 
 #: src/etc/inc/openvpn.inc:1498
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
 msgstr ""
-"Resyncing OpenVPN para el grupo de puerta de enlace %1$s servidor %2$s ."
+"Reiniciando OpenVPN para el grupo de puerta de enlace %1$s servidor %2$s ."
 
 #: src/etc/inc/openvpn.inc:1507
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
 msgstr ""
-"Resyncing OpenVPN para el grupo de puerta de enlace %1$s cliente %2$s ."
+"Reiniciando OpenVPN para el grupo de puerta de enlace %1$s cliente %2$s ."
 
 #: src/etc/inc/openvpn.inc:1516
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
@@ -3106,12 +3106,12 @@ msgid ""
 "the webConfigurator. css files are located in /usr/local/www/css/%s"
 msgstr ""
 "Elija un archivo CSS alternativo (si está instalado) para cambiar la "
-"apariencia de la webConfigurator. css se encuentran en / / / www / css usr / "
-"local %s"
+"apariencia de la webConfigurator. El CSS se encuentran en  /usr/local/www/"
+"css/%s"
 
 #: src/etc/inc/pfsense-utils.inc:211
 msgid "Scrolls with page"
-msgstr "Se desplaza con la página"
+msgstr "Desplazar en páginas"
 
 #: src/etc/inc/pfsense-utils.inc:211
 msgid "Fixed (Remains visible at top of page)"
@@ -3119,7 +3119,7 @@ msgstr "Fijo (permanece visible en la parte superior de la página)"
 
 #: src/etc/inc/pfsense-utils.inc:209
 msgid "Top Navigation"
-msgstr "Navegación supierior"
+msgstr "Navegación superior"
 
 #: src/etc/inc/pfsense-utils.inc:212
 msgid "The fixed option is intended for large screens only."
@@ -3127,11 +3127,11 @@ msgstr "La opción fija está destinada únicamente a las pantallas grandes."
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Default (No hostname)"
-msgstr "Por defecto (No nombre de host)"
+msgstr "Por defecto (sin hostname)"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Hostname only"
-msgstr "Sólo el nombre de host"
+msgstr "Sólo el hostname"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Fully Qualified Domain Name"
@@ -3139,40 +3139,41 @@ msgstr "Nombre de dominio completo"
 
 #: src/etc/inc/pfsense-utils.inc:228
 msgid "Hostname in Menu"
-msgstr "Nombre de host en el menú"
+msgstr "Hostname en el menú"
 
 #: src/etc/inc/pfsense-utils.inc:231
 msgid ""
 "Replaces the Help menu title in the Navbar with the system hostname or FQDN."
 msgstr ""
-"Sustituye el título del menú de Ayuda en la barra de navegación con el "
-"nombre del sistema host o FQDN."
+"Sustituye la Ayuda en el menú de la barra de navegación con el hostname o el "
+"FQDN."
 
 #: src/etc/inc/pfsense-utils.inc:251
 #: src/usr/local/www/system_user_settings.php:62
 msgid "Dashboard Columns"
-msgstr "Las columnas del tablero de instrumentos"
+msgstr "Columnas del tablero."
 
 #: src/etc/inc/pfsense-utils.inc:269
 msgid "Associated Panels Show/Hide"
-msgstr "Los paneles asociados Mostrar / Ocultar"
+msgstr "Paneles asociados Mostrar/Ocultar"
 
 #: src/etc/inc/pfsense-utils.inc:276
 msgid "Show the Available Widgets panel on the Dashboard."
-msgstr ""
-"Mostrar el panel de widgets disponibles en el tablero de instrumentos."
+msgstr "Mostrar el panel de widgets disponibles en el tablero."
 
 #: src/etc/inc/pfsense-utils.inc:283
+#, fuzzy
 msgid "Show the Log Filter panel in System Logs."
-msgstr "Mostrar el panel Registro de filtro en los registros del sistema."
+msgstr "Mostrar el panel Registros en los registros del sistema."
 
 #: src/etc/inc/pfsense-utils.inc:290
+#, fuzzy
 msgid "Show the Manage Log panel in System Logs."
 msgstr "Mostrar el panel de Log en los registros del sistema."
 
 #: src/etc/inc/pfsense-utils.inc:297
 msgid "Show the Settings panel in Status Monitoring."
-msgstr "Mostrar el panel de configuración de Supervisión del estado."
+msgstr "Mostrar el panel de configuración en Monitoreo de estado."
 
 #: src/etc/inc/pfsense-utils.inc:299
 msgid ""
@@ -3180,8 +3181,8 @@ msgid ""
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
 "Estas opciones permiten que ciertos paneles que se oculta automáticamente al "
-"cargar la página. Se proporciona un control en la barra de título para un-"
-"ocultar el panel."
+"cargar la página. Se proporciona un control en la barra de título para "
+"mostrar el panel."
 
 #: src/etc/inc/pfsense-utils.inc:317
 msgid "Left Column Labels"
@@ -3193,7 +3194,7 @@ msgid ""
 "first item of the group."
 msgstr ""
 "Si está seleccionado, hacer clic en una etiqueta en la columna izquierda "
-"seleccionará / alternar el primer elemento del grupo."
+"seleccionará/ alternará el primer elemento del grupo."
 
 #: src/etc/inc/pfsense-utils.inc:336
 msgid "Browser tab text"
@@ -3211,7 +3212,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:381
 msgid "Require State Filter"
-msgstr "Filtro requerir Estado"
+msgstr "Filtro de estado requerido."
 
 #: src/etc/inc/pfsense-utils.inc:384
 msgid ""
@@ -3220,10 +3221,11 @@ msgid ""
 "displayed. Useful for systems with large state tables."
 msgstr ""
 "Por defecto, toda la tabla de estado se muestra cuando ingresa Diagnóstico> "
-"Unidos. Esta opción requiere un filtro para ser introducido antes de que se "
+"Estados. Esta opción requiere un filtro para ser introducido antes de que se "
 "muestran los estados. Útil para sistemas con grandes tablas de estado."
 
 #: src/etc/inc/pfsense-utils.inc:672
+#, fuzzy
 msgid "After synch increase advertising skew"
 msgstr "Después de inclinación sincronizada aumento de la publicidad"
 
@@ -3239,12 +3241,12 @@ msgstr "El código de error es ' %1$s ' - %2$s"
 #: src/etc/inc/pfsense-utils.inc:728
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr "setsockopt () falló a error: %s"
+msgstr "setsockopt() falló, error: %s"
 
 #: src/etc/inc/pfsense-utils.inc:732
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
-msgstr "Magic Packet envió ( %1$s ) a ( %2$s ) MAC = %3$s"
+msgstr "Magic Packet enviado ( %1$s ) a ( %2$s ) MAC = %3$s"
 
 #: src/etc/inc/pfsense-utils.inc:795 src/etc/inc/pfsense-utils.inc:815
 #, php-format
@@ -3265,15 +3267,15 @@ msgstr "La limpieza de Interfaces"
 
 #: src/etc/inc/pfsense-utils.inc:1354
 msgid "No history data found!"
-msgstr "No se encontraron datos de la historia!"
+msgstr "No se encontraron datos historicos!"
 
 #: src/etc/inc/pfsense-utils.inc:1486
 msgid "device not present! Is the modem attached to the system?"
-msgstr "dispositivo no está presente! Es el módem conectado al sistema?"
+msgstr "dispositivo no encontrado! El módem está conectado al sistema?"
 
 #: src/etc/inc/pfsense-utils.inc:1555
 msgid "running"
-msgstr "en curso"
+msgstr "corriendo"
 
 #: src/etc/inc/pfsense-utils.inc:1556 src/usr/local/www/graph.php:198
 msgid "up"
@@ -3281,7 +3283,7 @@ msgstr "arriba"
 
 #: src/etc/inc/pfsense-utils.inc:1601
 msgid "blocking"
-msgstr "Bloqueo"
+msgstr "bloqueo"
 
 #: src/etc/inc/pfsense-utils.inc:1601
 msgid "check for ethernet loops"
@@ -3298,7 +3300,7 @@ msgstr "Reenvío"
 #: src/etc/inc/pfsense-utils.inc:1741
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
-msgstr "Dnscache: Encontrado edad IP %1$s y nueva IP %2$s"
+msgstr "Dnscache: Encontrada IP anterior  %1$s y nueva IP %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:1761
 #, php-format
@@ -3340,7 +3342,7 @@ msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
-"Archivo de alias es un archivo tar / TGZ que no puede ser descomprimido "
+"Archivo de alias es un archivo .tar/TGZ que no puede ser descomprimido "
 "porque la utilidad no se encuentra!"
 
 #: src/etc/inc/pfsense-utils.inc:2213
@@ -3363,7 +3365,7 @@ msgstr "Español"
 
 #: src/etc/inc/pfsense-utils.inc:2800
 msgid "Portuguese (Brazil)"
-msgstr "portugués (Brasil)"
+msgstr "Portugués (Brasil)"
 
 #: src/etc/inc/pfsense-utils.inc:2801
 msgid "Turkish"
@@ -10498,7 +10500,7 @@ msgstr ""
 
 #: src/usr/local/www/easyrule.php:53 src/usr/local/www/easyrule.php:101
 msgid "Invalid action specified."
-msgstr ""
+msgstr "Acción inválida especificada."
 
 #: src/usr/local/www/easyrule.php:61 src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:139
@@ -10528,15 +10530,16 @@ msgstr "Cortafuegos"
 
 #: src/usr/local/www/easyrule.php:61
 msgid "Easy Rule"
-msgstr ""
+msgstr "Regla Fácil"
 
 #: src/usr/local/www/easyrule.php:71
+#, fuzzy
 msgid "Confirmation Required to Add Easy Rule"
-msgstr ""
+msgstr "Confirmación requerida para agregar Regla Fácil"
 
 #: src/usr/local/www/easyrule.php:79 src/usr/local/www/easyrule.php:87
 msgid "Rule Type"
-msgstr ""
+msgstr "Tipo de regla"
 
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:92
 #: src/usr/local/www/firewall_nat_edit.php:713
@@ -12659,6 +12662,8 @@ msgstr ""
 msgid ""
 "Random: Selects an address from the translation address pool at random."
 msgstr ""
+"Aleatorio: Selecciona de manera aleatoria una dirección del conjunto de "
+"direcciones de traducción."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:606
 #, fuzzy
@@ -37639,12 +37644,11 @@ msgid "Click to paste an authorized key"
 msgstr "Haga clic para pegar una llave autorizada"
 
 #: src/usr/local/www/system_usermanager_settings.php:241
-#, fuzzy
 msgid ""
 "<span id=\"ldaptestop\">Testing pfSense LDAP settings... One moment please..."
 ""
 msgstr ""
-"<Span id = \\ \"ldaptestop \"> Prueba configuración LDAP de pfSense ... Un "
+"<span id=\"ldaptestop\"> Probando configuración LDAP de pfSense ... Un "
 "momento por favor ..."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
@@ -37751,9 +37755,8 @@ msgid "Enable IPCompression"
 msgstr "Habilitar IPCompression"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:270
-#, fuzzy
 msgid "Enable strict interface binding"
-msgstr "Habilitar estricta unión interfaz"
+msgstr "Habilitar unión estricta de interfaz"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:277
 msgid "Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"
@@ -37765,9 +37768,8 @@ msgid "Enable MSS clamping on VPN traffic"
 msgstr "Habilitar MSS de sujeción en el tráfico VPN"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:315
-#, fuzzy
 msgid "Enable Unity Plugin"
-msgstr "Habilitar la Unidad Plugin"
+msgstr "Habilitar plugin Unity"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:322
 msgid "Enable strict Certificate Revocation List checking"
@@ -37853,7 +37855,7 @@ msgstr "Bloquear esta conexión de cliente en función de su nombre común."
 #: src/usr/local/www/vpn_openvpn_server.php:1024
 #, fuzzy
 msgid "Force all client generated traffic through the tunnel."
-msgstr "Obligar a todo el tráfico de cliente generado por el túnel."
+msgstr "Forzar todo el tráfico de clientes generado a pasar por el túnel."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:432
 msgid ""

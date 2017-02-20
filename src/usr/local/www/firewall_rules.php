@@ -174,7 +174,6 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('filter');
 }
 
-
 if ($_POST['act'] == "del") {
 	if ($a_filter[$_POST['id']]) {
 		if (!empty($a_filter[$_POST['id']]['associated-rule-id'])) {
@@ -368,6 +367,7 @@ $columns_in_table = 13;
 </style>
 
 <form method="post">
+	<input name="if" id="if" type="hidden" value="<?=$if?>" />
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">

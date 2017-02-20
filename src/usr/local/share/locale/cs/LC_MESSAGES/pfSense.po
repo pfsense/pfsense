@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-13 03:45-0500\n"
+"PO-Revision-Date: 2017-02-17 10:41-0500\n"
 "Last-Translator: Lukáš Malý <Iam@LukasMaly.NET>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -1239,43 +1239,45 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
+"Dynamic DNS (%s): Nebylo možné určit aktuální IP WAN, proces aktualizace "
+"přeskočen."
 
 #: src/etc/inc/dyndns.class:1579
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dynamic DNS (%1$s): Aktuální IP WAN: %2$s"
 
 #: src/etc/inc/dyndns.class:1587
 #, php-format
 msgid "Cached IPv6: %s"
-msgstr ""
+msgstr "Mezipaměť IPv6: %s"
 
 #: src/etc/inc/dyndns.class:1593
 msgid "No Cached IPv6 found."
-msgstr ""
+msgstr "Mezipaměť IPv6 nenalezena."
 
 #: src/etc/inc/dyndns.class:1601
 #, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "Mezipaměť IP: %s"
 
 #: src/etc/inc/dyndns.class:1607
 msgid "No Cached IP found."
-msgstr ""
+msgstr "Mezipaměť IP nenalezena."
 
 #: src/etc/inc/dyndns.class:1621
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dynamic DNS: cacheIP != wan_ip. Aktualizováno."
 
 #: src/etc/inc/dyndns.class:1622
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "Mezipaměť IP: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1627
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dynamic DNS: Více než %s dní. Aktualizováno."
 
 #: src/etc/inc/dyndns.class:1632
 msgid "Initial update."
@@ -1284,7 +1286,7 @@ msgstr "Počáteční aktualizace."
 #: src/etc/inc/dyndns.class:1669
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkIP() start."
 
 #: src/etc/inc/dyndns.class:1694
 #, php-format
@@ -1292,66 +1294,68 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
+"Dynamic DNS %1$s debug informace (%2$s): Nelze vyřešit %3$s pro IP pomocí "
+"rozhraní IP %4$s."
 
 #: src/etc/inc/dyndns.class:1713
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s odvozena z %4$s"
 
 #: src/etc/inc/dyndns.class:1716
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): IP adresa nemohla být odvozena z %3$s"
 
 #: src/etc/inc/dyndns.class:1721
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s odvozeno z lokálního systému."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "Jednoduché Pravidlo: Blokováno Firewallem Pohled na Log"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "Záznam přidán"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "Hosts blokován firewalem Pohled na Log"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr ""
+msgstr "Jednoduché Pravidlo: Prošlo Firewallem Pohled na Log"
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Snaha blokovat neplatné IP:"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Neplatné rozhraní pro pravidlo pro blokování:"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "Hosti byl úspěšně přidán"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "Nepodařilo se vytvořit blokovací pravidlo, alias nebo přidat hosta."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
-msgstr ""
+msgstr "Pokus zablokovat, ale neměl žádný host IP nebo rozhraní"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "Neznámá chyba blokování."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Pokus odblokovat neplatnou IP:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"

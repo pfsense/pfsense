@@ -704,35 +704,40 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 
 // Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
 // to POST format, make a POST form and submit it
-$('a').click(function(e) {
-	// Does the clicked anchor have the "usepost" attribute?
-	var attr = $(this).attr('usepost');
 
-	if (typeof attr !== typeof undefined && attr !== false) {
-		// Automatically apply a confirmation dialog to "Delete" icons
-		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-		   ($(this).hasClass('fa-trash'))) {
-			var msg = $.trim(this.textContent).toLowerCase();
+interceptGET();
 
-			if (!msg)
-				var msg = $.trim(this.value).toLowerCase();
+function interceptGET() {
+	$('a').click(function(e) {
+		// Does the clicked anchor have the "usepost" attribute?
+		var attr = $(this).attr('usepost');
 
-			var q = 'Are you sure you wish to '+ msg +'?';
+		if (typeof attr !== typeof undefined && attr !== false) {
+			// Automatically apply a confirmation dialog to "Delete" icons
+			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
+			   ($(this).hasClass('fa-trash'))) {
+				var msg = $.trim(this.textContent).toLowerCase();
 
-			if ($(this).attr('title') != undefined)
-				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+				if (!msg)
+					var msg = $.trim(this.value).toLowerCase();
 
-			if (!confirm(q)) {
-				return false;
+				var q = 'Are you sure you wish to '+ msg +'?';
+
+				if ($(this).attr('title') != undefined)
+					q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+				if (!confirm(q)) {
+					return false;
+				}
 			}
+
+			var target = $(this).attr("href").split("?");
+
+			postSubmit(get2post(target[1]),target[0]);
+			return false;
 		}
-
-		var target = $(this).attr("href").split("?");
-
-		postSubmit(get2post(target[1]),target[0]);
-		return false;
-	}
-});
+	});
+}
 
 // Convert a GET argument list such as ?name=fred&action=delete into an array of POST
 // parameters such as [[name, fred],[action, delete]]

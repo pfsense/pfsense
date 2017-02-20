@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-14 09:25-0500\n"
+"PO-Revision-Date: 2017-02-16 10:06-0500\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
@@ -1504,7 +1504,7 @@ msgstr "包太大"
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:395
 msgid "Traceroute"
-msgstr "路由跟踪"
+msgstr "跟踪路由"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
@@ -3547,7 +3547,7 @@ msgstr "指示用户是否能够在入网门户上登录。"
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr "WebCfg - 帮助页面"
+msgstr "Web配置- 帮助页面"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
@@ -3555,7 +3555,7 @@ msgstr "显示帮助菜单上的所有项目，并允许访问帮助快捷链接
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr "WebCfg - 仪表板 (全部)"
+msgstr "Web配置- 仪表板 (全部)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
@@ -3563,7 +3563,7 @@ msgstr "允许访问仪表板所需的所有页面。"
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr "WebCfg - 仪表板部件 (直接访问)。"
+msgstr "Web配置- 仪表板部件 (直接访问)。"
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
@@ -3662,7 +3662,7 @@ msgstr "指示是否允许用户通过PPPOE拨入"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr "Web配置 - 系统状态: 系统日志: 入网认证"
+msgstr "Web配置- 系统状态: 系统日志: 入网认证"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
@@ -3670,7 +3670,7 @@ msgstr "允许访问 '系统状态: 系统日志: 入网认证' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr "Web配置 - 系统状态: 系统日志: DHCP"
+msgstr "Web配置- 系统状态: 系统日志: DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
@@ -3678,7 +3678,7 @@ msgstr "允许访问 '系统状态:系统日志: DHCP' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr "Web配置 - 系统状态: 系统日志: 网关"
+msgstr "Web配置- 系统状态: 系统日志: 网关"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
@@ -3686,7 +3686,7 @@ msgstr "允许访问 '系统状态: 系统日志: 系统: 网关'页面。"
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr "Web配置 - 系统状态: 系统日志: DNS解析器"
+msgstr "Web配置- 系统状态: 系统日志: DNS解析器"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
@@ -3694,7 +3694,7 @@ msgstr "允许访问 '系统状态: 系统日志: 系统: DNS解析器'页面。
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr "Web配置 - 系统状态: 系统日志: IPsec VPN"
+msgstr "Web配置- 系统状态: 系统日志: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
@@ -3702,7 +3702,7 @@ msgstr "允许访问 '系统状态:系统日志: IPsec VPN' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr "Web配置 - 系统状态: 系统日志: NTP"
+msgstr "Web配置-系统状态: 系统日志: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
@@ -3710,7 +3710,7 @@ msgstr "允许访问 '系统状态:系统日志: NTP' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr "Web配置 - 系统状态: 系统日志: OpenVPN"
+msgstr "Web配置-系统状态: 系统日志: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
@@ -3718,7 +3718,7 @@ msgstr "允许访问 '系统状态:系统日志:OpenVPN' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr "Web配置 - 系统状态: 系统日志: 负载平衡"
+msgstr "Web配置-系统状态: 系统日志: 负载平衡"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
@@ -3726,7 +3726,7 @@ msgstr "允许访问 '系统状态:系统日志: 负载平衡' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr "Web配置 - 系统状态: 系统日志: 路由"
+msgstr "Web配置-系统状态: 系统日志: 路由"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
@@ -3734,7 +3734,7 @@ msgstr "允许访问 '系统状态:系统日志: 系统: 路由' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr "Web配置 - 系统状态: 系统日志: 无线"
+msgstr "Web配置-系统状态: 系统日志: 无线"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
@@ -3742,7 +3742,7 @@ msgstr "允许访问 '系统状态:系统日志: 系统: 无线' 页面。"
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr "Web配置 - 系统服务: 即插即用"
+msgstr "Web配置- 系统服务: 即插即用"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
@@ -3750,7 +3750,7 @@ msgstr "允许访问 '系统服务: 即插即用' 页面。"
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr "Web配置 - 所有页面"
+msgstr "Web配置- 所有页面"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
@@ -3758,7 +3758,7 @@ msgstr "允许访问所有页面"
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr "Web配置  - 崩溃报告"
+msgstr "Web配置- 崩溃报告"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
@@ -3822,11 +3822,11 @@ msgstr "允许访问 '系统诊断:DNS查找' 页面。"
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
-msgstr "Web配置- 系统诊断:显示状态"
+msgstr "Web配置- 系统诊断: 显示状态"
 
 #: src/etc/inc/priv.defs.inc:76
 msgid "Allow access to the 'Diagnostics: Show States' page."
-msgstr "允许访问 '系统诊断:显示状态' 页面。"
+msgstr "允许访问 '系统诊断: 显示状态' 页面。"
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
@@ -3878,23 +3878,23 @@ msgstr "允许访问 '系统诊断: NDP 表'页面。"
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
-msgstr "WebCfg - Diagnostics: Packet Capture"
+msgstr "Web配置- 系统诊断: 数据捕获"
 
 #: src/etc/inc/priv.defs.inc:121
 msgid "Allow access to the 'Diagnostics: Packet Capture' page."
-msgstr "Allow access to the 'Diagnostics: Packet Capture' page."
+msgstr "允许访问 '系统诊断: 数据捕获' 页面"
 
 #: src/etc/inc/priv.defs.inc:126
 msgid "WebCfg - Diagnostics: pfInfo"
-msgstr "WebCfg - Diagnostics: pfInfo"
+msgstr "Web配置- 系统诊断: pf信息"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr "允许访问“系统诊断：pfInfo”页面"
+msgstr "允许访问“系统诊断：pf信息”页面"
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
-msgstr "WebCfg - Diagnostics: pfTop"
+msgstr "Web配置- 系统诊断: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
@@ -3902,47 +3902,47 @@ msgstr "允许访问“系统诊断：pfTop”页面"
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
-msgstr "WebCfg - Diagnostics: Ping"
+msgstr "Web配置- 系统诊断: Ping"
 
 #: src/etc/inc/priv.defs.inc:139
 msgid "Allow access to the 'Diagnostics: Ping' page."
-msgstr "Allow access to the 'Diagnostics: Ping' page."
+msgstr "允许访问 '系统诊断: Ping' 页面"
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr "WebCfg - Diagnostics: Reboot System"
+msgstr "Web配置- 系统诊断: 重启系统"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
-msgstr "Allow access to the 'Diagnostics: Reboot System' page."
+msgstr "允许访问 '系统诊断: 重启系统' 页面"
 
 #: src/etc/inc/priv.defs.inc:150
 msgid "WebCfg - Diagnostics: Reset states"
-msgstr "WebCfg - Diagnostics: Reset states"
+msgstr "Web配置- 系统诊断: 重置状态"
 
 #: src/etc/inc/priv.defs.inc:151
 msgid "Allow access to the 'Diagnostics: Reset states' page."
-msgstr "Allow access to the 'Diagnostics: Reset states' page."
+msgstr "允许访问 '系统诊断: 重置状态' 页面"
 
 #: src/etc/inc/priv.defs.inc:156
 msgid "WebCfg - Diagnostics: Routing tables"
-msgstr "WebCfg - Diagnostics: Routing tables"
+msgstr "Web配置- 系统诊断: 路由表"
 
 #: src/etc/inc/priv.defs.inc:157
 msgid "Allow access to the 'Diagnostics: Routing tables' page."
-msgstr "Allow access to the 'Diagnostics: Routing tables' page."
+msgstr "允许访问 '系统诊断:  路由表' 页面"
 
 #: src/etc/inc/priv.defs.inc:162
 msgid "WebCfg - Diagnostics: S.M.A.R.T. Status"
-msgstr "WebCfg - Diagnostics: S.M.A.R.T. Status"
+msgstr "Web配置- 系统诊断: SMART 状态"
 
 #: src/etc/inc/priv.defs.inc:163
 msgid "Allow access to the 'Diagnostics: S.M.A.R.T. Status' page."
-msgstr "Allow access to the 'Diagnostics: S.M.A.R.T. Status' page."
+msgstr "允许访问 '系统诊断: SMART 状态' 页面"
 
 #: src/etc/inc/priv.defs.inc:168
 msgid "WebCfg - Diagnostics: Sockets"
-msgstr "WebCfg - 系统诊断: 套接字"
+msgstr "Web配置- 系统诊断: 套接字"
 
 #: src/etc/inc/priv.defs.inc:169
 msgid "Allow access to the 'Diagnostics: Sockets' page."
@@ -3950,15 +3950,15 @@ msgstr "总是允许 '系统诊断: 套接字'页面。"
 
 #: src/etc/inc/priv.defs.inc:174
 msgid "WebCfg - Diagnostics: States Summary"
-msgstr "WebCfg - Diagnostics: States Summary"
+msgstr "Web配置- 系统诊断: 状态摘要"
 
 #: src/etc/inc/priv.defs.inc:175
 msgid "Allow access to the 'Diagnostics: States Summary' page."
-msgstr "Allow access to the 'Diagnostics: States Summary' page."
+msgstr "允许访问 '系统诊断: 状态摘要' 页面"
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr "WebCfg - Diagnostics: System Activity"
+msgstr "Web配置- 系统诊断: 系统活动"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
@@ -3966,319 +3966,319 @@ msgstr "允许访问“诊断：系统活动”页面"
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
-msgstr "WebCfg - Diagnostics: pf Table IP addresses"
+msgstr "Web配置- 系统诊断: 表"
 
 #: src/etc/inc/priv.defs.inc:187
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr "Allow access to the 'Diagnostics: Tables' page."
+msgstr "允许访问 '系统诊断:表' 页面"
 
 #: src/etc/inc/priv.defs.inc:192
 msgid "WebCfg - Diagnostics: Test Port"
-msgstr "WebCfg - Diagnostics: Test Port"
+msgstr "Web配置- 系统诊断: 测试端口"
 
 #: src/etc/inc/priv.defs.inc:193
 msgid "Allow access to the 'Diagnostics: Test Port' page."
-msgstr "Allow access to the 'Diagnostics: Test Port' page."
+msgstr "允许访问 '系统诊断: 测试端口' 页面"
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr "WebCfg - Diagnostics: Traceroute"
+msgstr "Web配置- 系统诊断: 跟踪路由"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr "Allow access to the 'Diagnostics: Traceroute' page."
+msgstr "允许访问 '系统诊断: 跟踪路由' 页面"
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
-msgstr "WebCfg - Firewall: Easy Rule add/status"
+msgstr "Web配置- 防火墙: 简单规则添加/状态"
 
 #: src/etc/inc/priv.defs.inc:205
 msgid "Allow access to the 'Firewall: Easy Rule' add/status page."
-msgstr "Allow access to the 'Firewall: Easy Rule' add/status page."
+msgstr "允许访问 '防火墙: 简单规则'添加/状态 页面"
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
-msgstr "WebCfg - Firewall: Aliases"
+msgstr "Web配置- 防火墙: 别名管理"
 
 #: src/etc/inc/priv.defs.inc:211
 msgid "Allow access to the 'Firewall: Aliases' page."
-msgstr "Allow access to the 'Firewall: Aliases' page."
+msgstr "允许访问 '防火墙: 别名管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:216
 msgid "WebCfg - Firewall: Alias: Edit"
-msgstr "WebCfg - Firewall: Alias: Edit"
+msgstr "Web配置- 防火墙: 别名:编辑"
 
 #: src/etc/inc/priv.defs.inc:217
 msgid "Allow access to the 'Firewall: Alias: Edit' page."
-msgstr "Allow access to the 'Firewall: Alias: Edit' page."
+msgstr "允许访问 '防火墙:  别名:编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:222
 msgid "WebCfg - Firewall: Alias: Import"
-msgstr "WebCfg - Firewall: Alias: Import"
+msgstr "Web配置- 防火墙: 别名:导入"
 
 #: src/etc/inc/priv.defs.inc:223
 msgid "Allow access to the 'Firewall: Alias: Import' page."
-msgstr "Allow access to the 'Firewall: Alias: Import' page."
+msgstr "允许访问 '防火墙: 别名:导入' 页面"
 
 #: src/etc/inc/priv.defs.inc:228
 msgid "WebCfg - Firewall: NAT: Port Forward"
-msgstr "WebCfg - Firewall: NAT: Port Forward"
+msgstr "Web配置- 防火墙: 地址转换: 端口转发"
 
 #: src/etc/inc/priv.defs.inc:229
 msgid "Allow access to the 'Firewall: NAT: Port Forward' page."
-msgstr "Allow access to the 'Firewall: NAT: Port Forward' page."
+msgstr "允许访问 '防火墙: 地址转换: 端口转发' 页面"
 
 #: src/etc/inc/priv.defs.inc:234
 msgid "WebCfg - Firewall: NAT: 1:1"
-msgstr "WebCfg - Firewall: NAT: 1:1"
+msgstr "Web配置- 防火墙: 地址转换: 1:1"
 
 #: src/etc/inc/priv.defs.inc:235
 msgid "Allow access to the 'Firewall: NAT: 1:1' page."
-msgstr "Allow access to the 'Firewall: NAT: 1:1' page."
+msgstr "允许访问 '防火墙: 地址转换: 1:1' 页面"
 
 #: src/etc/inc/priv.defs.inc:240
 msgid "WebCfg - Firewall: NAT: 1:1: Edit"
-msgstr "WebCfg - Firewall: NAT: 1:1: Edit"
+msgstr "Web配置- 防火墙: 地址转换: 1:1:编辑"
 
 #: src/etc/inc/priv.defs.inc:241
 msgid "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
-msgstr "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
+msgstr "允许访问 '防火墙: 地址转换: 1:1: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:246
 msgid "WebCfg - Firewall: NAT: Port Forward: Edit"
-msgstr "WebCfg - Firewall: NAT: Port Forward: Edit"
+msgstr "Web配置- 防火墙: 地址转换: 端口转发: 编辑"
 
 #: src/etc/inc/priv.defs.inc:247
 msgid "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
-msgstr "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
+msgstr "允许访问 '防火墙: 地址转换: 端口转发: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:252
 msgid "WebCfg - Firewall: NAT: NPt"
-msgstr "WebCfg - Firewall: NAT: NPt"
+msgstr "Web配置- 防火墙: 地址转换: NPt"
 
 #: src/etc/inc/priv.defs.inc:253
 msgid "Allow access to the 'Firewall: NAT: NPt' page."
-msgstr "Allow access to the 'Firewall: NAT: NPt' page."
+msgstr "允许访问 '防火墙: 地址转换: NPt' 页面"
 
 #: src/etc/inc/priv.defs.inc:258
 msgid "WebCfg - Firewall: NAT: NPt: Edit"
-msgstr "WebCfg - Firewall: NAT: NPt: Edit"
+msgstr "Web配置- 防火墙: 地址转换: NPt: 编辑"
 
 #: src/etc/inc/priv.defs.inc:259
 msgid "Allow access to the 'Firewall: NAT: NPt: Edit' page."
-msgstr "Allow access to the 'Firewall: NAT: NPt: Edit' page."
+msgstr "允许访问 '防火墙: 地址转换: NPt: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:264
 msgid "WebCfg - Firewall: NAT: Outbound"
-msgstr "WebCfg - Firewall: NAT: Outbound"
+msgstr "Web配置- 防火墙: 地址转换: 出站"
 
 #: src/etc/inc/priv.defs.inc:265
 msgid "Allow access to the 'Firewall: NAT: Outbound' page."
-msgstr "Allow access to the 'Firewall: NAT: Outbound' page."
+msgstr "允许访问 '防火墙: 地址转换: 出站' 页面"
 
 #: src/etc/inc/priv.defs.inc:270
 msgid "WebCfg - Firewall: NAT: Outbound: Edit"
-msgstr "WebCfg - Firewall: NAT: Outbound: Edit"
+msgstr "Web配置- 防火墙: 地址转换: 出站:编辑"
 
 #: src/etc/inc/priv.defs.inc:271
 msgid "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
-msgstr "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
+msgstr "允许访问 '防火墙: 地址转换: 出站:编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
-msgstr "WebCfg - Firewall: Rules"
+msgstr "Web配置- 防火墙: 规则策略"
 
 #: src/etc/inc/priv.defs.inc:277
 msgid "Allow access to the 'Firewall: Rules' page."
-msgstr "Allow access to the 'Firewall: Rules' page."
+msgstr "允许访问 '防火墙: 规则策略' 页面"
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr "WebCfg - Firewall: Rules: Edit"
+msgstr "Web配置- 防火墙: 规则策略: 编辑"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
-msgstr "Allow access to the 'Firewall: Rules: Edit' page."
+msgstr "允许访问 '防火墙: 规则策略: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
-msgstr "WebCfg - Firewall: Schedules"
+msgstr "Web配置- 防火墙: 时间计划"
 
 #: src/etc/inc/priv.defs.inc:289
 msgid "Allow access to the 'Firewall: Schedules' page."
-msgstr "Allow access to the 'Firewall: Schedules' page."
+msgstr "允许访问 '防火墙: 时间计划' 页面"
 
 #: src/etc/inc/priv.defs.inc:294
 msgid "WebCfg - Firewall: Schedules: Edit"
-msgstr "WebCfg - Firewall: Schedules: Edit"
+msgstr "Web配置- 防火墙: 时间计划: 编辑"
 
 #: src/etc/inc/priv.defs.inc:295
 msgid "Allow access to the 'Firewall: Schedules: Edit' page."
-msgstr "Allow access to the 'Firewall: Schedules: Edit' page."
+msgstr "允许访问 '防火墙: 时间计划: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
-msgstr "WebCfg - Firewall: Traffic Shaper"
+msgstr "Web配置- 防火墙: 流量整形"
 
 #: src/etc/inc/priv.defs.inc:301
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr "Allow access to the 'Firewall: Traffic Shaper' page."
+msgstr "允许访问 '防火墙:  流量整形' 页面"
 
 #: src/etc/inc/priv.defs.inc:306
 msgid "WebCfg - Firewall: Traffic Shaper: Queues"
-msgstr "WebCfg - Firewall: Traffic Shaper: Queues"
+msgstr "Web配置- 防火墙: 流量整形: 队列"
 
 #: src/etc/inc/priv.defs.inc:307
 msgid "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
-msgstr "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
+msgstr "允许访问 '防火墙: 流量整形: 队列' 页面"
 
 #: src/etc/inc/priv.defs.inc:312
 msgid "WebCfg - Firewall: Traffic Shaper: Limiters"
-msgstr "WebCfg - Firewall: Traffic Shaper: Limiters"
+msgstr "Web配置- 防火墙: 流量整形: 限制器"
 
 #: src/etc/inc/priv.defs.inc:313
 msgid "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
-msgstr "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
+msgstr "允许访问 '防火墙: 流量整形: 限制器' 页面"
 
 #: src/etc/inc/priv.defs.inc:318
 msgid "WebCfg - Firewall: Traffic Shaper: Wizard"
-msgstr "WebCfg - Firewall: Traffic Shaper: Wizard"
+msgstr "Web配置- 防火墙: 流量整形: 向导"
 
 #: src/etc/inc/priv.defs.inc:319
 msgid "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
-msgstr "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
+msgstr "允许访问 '防火墙: 流量整形: 向导' 页面"
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
-msgstr "WebCfg - Firewall: Virtual IP Addresses"
+msgstr "Web配置- 防火墙: 虚拟接口"
 
 #: src/etc/inc/priv.defs.inc:325
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr "Allow access to the 'Firewall: Virtual IP Addresses' page."
+msgstr "允许访问 '防火墙: 虚拟接口' 页面"
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
-msgstr "WebCfg - Firewall: Virtual IP Address: Edit"
+msgstr "Web配置- 防火墙: 虚拟接口: 编辑"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
-msgstr "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
+msgstr "允许访问 '防火墙: 虚拟接口:编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
-msgstr "WebCfg - AJAX: Get Service Providers"
+msgstr "Web配置- AJAX: 获取服务提供商"
 
 #: src/etc/inc/priv.defs.inc:337
 msgid "Allow access to the 'AJAX: Service Providers' page."
-msgstr "Allow access to the 'AJAX: Service Providers' page."
+msgstr "允许访问 'AJAX: 服务提供商' 页面"
 
 #: src/etc/inc/priv.defs.inc:342
 msgid "WebCfg - AJAX: Get Stats"
-msgstr "WebCfg - AJAX: Get Stats"
+msgstr "Web配置- AJAX: 获取统计信息"
 
 #: src/etc/inc/priv.defs.inc:343
 msgid "Allow access to the 'AJAX: Get Stats' page."
-msgstr "Allow access to the 'AJAX: Get Stats' page."
+msgstr "允许访问 'AJAX: 获取统计信息' 页面"
 
 #: src/etc/inc/priv.defs.inc:348
 msgid "WebCfg - Diagnostics: Interface Traffic"
-msgstr "WebCfg - Diagnostics: Interface Traffic"
+msgstr "Web配置- 系统诊断: 接口流量"
 
 #: src/etc/inc/priv.defs.inc:349
 msgid "Allow access to the 'Diagnostics: Interface Traffic' page."
-msgstr "Allow access to the 'Diagnostics: Interface Traffic' page."
+msgstr "允许访问 '系统诊断: 接口流量' 页面"
 
 #: src/etc/inc/priv.defs.inc:354
 msgid "WebCfg - Diagnostics: CPU Utilization"
-msgstr "WebCfg - Diagnostics: CPU Utilization"
+msgstr "Web配置- 系统诊断: CPU利用率"
 
 #: src/etc/inc/priv.defs.inc:355
 msgid "Allow access to the 'Diagnostics: CPU Utilization' page."
-msgstr "Allow access to the 'Diagnostics: CPU Utilization' page."
+msgstr "允许访问 '系统诊断: CPU利用率' 页面"
 
 #: src/etc/inc/priv.defs.inc:361
 msgid "WebCfg - XMLRPC Interface Stats"
-msgstr "WebCfg - XMLRPC Interface Stats"
+msgstr "Web配置- XMLRPC 接口统计"
 
 #: src/etc/inc/priv.defs.inc:362
 msgid "Allow access to the 'XMLRPC Interface Stats' page."
-msgstr "Allow access to the 'XMLRPC Interface Stats' page."
+msgstr "允许访问 'XMLRPC 接口统计' 页面"
 
 #: src/etc/inc/priv.defs.inc:367
 msgid "WebCfg - System: Login / Logout / Dashboard"
-msgstr "WebCfg - System: Login / Logout / Dashboard"
+msgstr "Web配置- 系统:登录/注销/仪表板"
 
 #: src/etc/inc/priv.defs.inc:368
 msgid "Allow access to the 'System: Login / Logout' page and Dashboard."
-msgstr "Allow access to the 'System: Login / Logout' page and Dashboard."
+msgstr "允许访问 '系统: 登录/注销' 页面和仪表板"
 
 #: src/etc/inc/priv.defs.inc:373
 msgid "WebCfg - Interfaces: WAN"
-msgstr "WebCfg - Interfaces: WAN"
+msgstr "Web配置- 网络接口: WAN"
 
 #: src/etc/inc/priv.defs.inc:374
 msgid "Allow access to the 'Interfaces' page."
-msgstr "Allow access to the 'Interfaces' page."
+msgstr "允许访问 '网络接口' 页面"
 
 #: src/etc/inc/priv.defs.inc:379
 msgid "WebCfg - Interfaces: Interface Assignments"
-msgstr "WebCfg - Interfaces: Interface Assignments"
+msgstr "Web配置- 网络接口: 接口管理"
 
 #: src/etc/inc/priv.defs.inc:380
 msgid "Allow access to the 'Interfaces: Interface Assignments' page."
-msgstr "Allow access to the 'Interfaces: Interface Assignments' page."
+msgstr "允许访问 '网络接口: 接口管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:385
 msgid "WebCfg - Interfaces: Bridge"
-msgstr "WebCfg - Interfaces: Bridge"
+msgstr "Web配置- 网络接口: 网桥"
 
 #: src/etc/inc/priv.defs.inc:386
 msgid "Allow access to the 'Interfaces: Bridge' page."
-msgstr "Allow access to the 'Interfaces: Bridge' page."
+msgstr "允许访问 '网络接口: 网桥' 页面"
 
 #: src/etc/inc/priv.defs.inc:391
 msgid "WebCfg - Interfaces: Bridge edit"
-msgstr "WebCfg - Interfaces: Bridge edit"
+msgstr "Web配置- 网络接口: 编辑网桥"
 
 #: src/etc/inc/priv.defs.inc:392
 msgid "Allow access to the 'Interfaces: Bridge : Edit' page."
-msgstr "Allow access to the 'Interfaces: Bridge : Edit' page."
+msgstr "允许访问 '网络接口: 编辑网桥' 页面"
 
 #: src/etc/inc/priv.defs.inc:397
 msgid "WebCfg - Interfaces: GIF"
-msgstr "WebCfg - Interfaces: GIF"
+msgstr "Web配置- 网络接口: GIF"
 
 #: src/etc/inc/priv.defs.inc:398
 msgid "Allow access to the 'Interfaces: GIF' page."
-msgstr "Allow access to the 'Interfaces: GIF' page."
+msgstr "允许访问 '网络接口: GIF' 页面"
 
 #: src/etc/inc/priv.defs.inc:403
 msgid "WebCfg - Interfaces: GIF: Edit"
-msgstr "WebCfg - Interfaces: GIF: Edit"
+msgstr "Web配置- 网络接口: GIF: 编辑"
 
 #: src/etc/inc/priv.defs.inc:404
 msgid "Allow access to the 'Interfaces: GIF: Edit' page."
-msgstr "Allow access to the 'Interfaces: GIF: Edit' page."
+msgstr "允许访问 '网络接口: GIF:编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:409
 msgid "WebCfg - Interfaces: GRE"
-msgstr "WebCfg - Interfaces: GRE"
+msgstr "Web配置- 网络接口: GRE"
 
 #: src/etc/inc/priv.defs.inc:410
 msgid "Allow access to the 'Interfaces: GRE' page."
-msgstr "Allow access to the 'Interfaces: GRE' page."
+msgstr "允许访问 '网络接口: GRE' 页面"
 
 #: src/etc/inc/priv.defs.inc:415
 msgid "WebCfg - Interfaces: GRE: Edit"
-msgstr "WebCfg - Interfaces: GRE: Edit"
+msgstr "Web配置- 网络接口: GRE: 编辑"
 
 #: src/etc/inc/priv.defs.inc:416
 msgid "Allow access to the 'Interfaces: GRE: Edit' page."
-msgstr "Allow access to the 'Interfaces: GRE: Edit' page."
+msgstr "允许访问 '网络接口: GRE: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:421
 msgid "WebCfg - Interfaces: Groups"
-msgstr "WebCfg - Interfaces: Groups"
+msgstr "Web配置- 网络接口: Groups"
 
 #: src/etc/inc/priv.defs.inc:422
 msgid "Create interface groups"
@@ -4286,199 +4286,199 @@ msgstr "建立接口组"
 
 #: src/etc/inc/priv.defs.inc:427
 msgid "WebCfg - Interfaces: Groups: Edit"
-msgstr "WebCfg - Interfaces: Groups: Edit"
+msgstr "Web配置- 网络接口: 组: 编辑"
 
 #: src/etc/inc/priv.defs.inc:428
 msgid "Allow access to the 'Interfaces: Groups: Edit' page."
-msgstr "Allow access to the 'Interfaces: Groups: Edit' page."
+msgstr "允许访问 '网络接口:组: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:433
 msgid "WebCfg - Interfaces: LAGG:"
-msgstr "WebCfg - Interfaces: LAGG:"
+msgstr "Web配置- 网络接口: LAGG:"
 
 #: src/etc/inc/priv.defs.inc:434
 msgid "Allow access to the 'Interfaces: LAGG' page."
-msgstr "Allow access to the 'Interfaces: LAGG' page."
+msgstr "允许访问 '网络接口: LAGG' 页面"
 
 #: src/etc/inc/priv.defs.inc:439
 msgid "WebCfg - Interfaces: LAGG: Edit"
-msgstr "WebCfg - Interfaces: LAGG: Edit"
+msgstr "Web配置- 网络接口: LAGG: 编辑"
 
 #: src/etc/inc/priv.defs.inc:440
 msgid "Allow access to the 'Interfaces: LAGG: Edit' page."
-msgstr "Allow access to the 'Interfaces: LAGG: Edit' page."
+msgstr "允许访问 '网络接口: LAGG: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:445
 msgid "WebCfg - Interfaces: PPPs"
-msgstr "WebCfg - Interfaces: PPPs"
+msgstr "Web配置- 网络接口: PPPs"
 
 #: src/etc/inc/priv.defs.inc:446
 msgid "Allow access to the 'Interfaces: PPPs' page."
-msgstr "Allow access to the 'Interfaces: PPPs' page."
+msgstr "允许访问 '网络接口: PPPs' 页面"
 
 #: src/etc/inc/priv.defs.inc:451
 msgid "WebCfg - Interfaces: PPPs: Edit"
-msgstr "WebCfg - Interfaces: PPPs: Edit"
+msgstr "Web配置- 网络接口: PPPs: 编辑"
 
 #: src/etc/inc/priv.defs.inc:452
 msgid "Allow access to the 'Interfaces: PPPs: Edit' page."
-msgstr "Allow access to the 'Interfaces: PPPs: Edit' page."
+msgstr "允许访问 '网络接口: PPPs: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:457
 msgid "WebCfg - Interfaces: QinQ"
-msgstr "WebCfg - Interfaces: QinQ"
+msgstr "Web配置- 网络接口: QinQ"
 
 #: src/etc/inc/priv.defs.inc:458
 msgid "Allow access to the 'Interfaces: QinQ' page."
-msgstr "Allow access to the 'Interfaces: QinQ' page."
+msgstr "允许访问 '网络接口: QinQ' 页面"
 
 #: src/etc/inc/priv.defs.inc:463
 msgid "WebCfg - Interfaces: QinQ: Edit"
-msgstr "WebCfg - Interfaces: QinQ: Edit"
+msgstr "Web配置- 网络接口: QinQ: 编辑"
 
 #: src/etc/inc/priv.defs.inc:464
 msgid "Allow access to 'Interfaces: QinQ: Edit' page"
-msgstr "Allow access to 'Interfaces: QinQ: Edit' page"
+msgstr "允许访问 '网络接口: QinQ: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:469
 msgid "WebCfg - Interfaces: VLAN"
-msgstr "WebCfg - Interfaces: VLAN"
+msgstr "Web配置- 网络接口: VLAN"
 
 #: src/etc/inc/priv.defs.inc:470
 msgid "Allow access to the 'Interfaces: VLAN' page."
-msgstr "Allow access to the 'Interfaces: VLAN' page."
+msgstr "允许访问 '网络接口: VLAN' 页面"
 
 #: src/etc/inc/priv.defs.inc:475
 msgid "WebCfg - Interfaces: VLAN: Edit"
-msgstr "WebCfg - Interfaces: VLAN: Edit"
+msgstr "Web配置- 网络接口: VLAN: 编辑"
 
 #: src/etc/inc/priv.defs.inc:476
 msgid "Allow access to the 'Interfaces: VLAN: Edit' page."
-msgstr "Allow access to the 'Interfaces: VLAN: Edit' page."
+msgstr "允许访问 '网络接口: VLAN: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:481
 msgid "WebCfg - Interfaces: Wireless"
-msgstr "WebCfg - Interfaces: Wireless"
+msgstr "Web配置- 网络接口: 无线"
 
 #: src/etc/inc/priv.defs.inc:482
 msgid "Allow access to the 'Interfaces: Wireless' page."
-msgstr "Allow access to the 'Interfaces: Wireless' page."
+msgstr "允许访问 '网络接口: 无线' 页面"
 
 #: src/etc/inc/priv.defs.inc:487
 msgid "WebCfg - Interfaces: Wireless: Edit"
-msgstr "WebCfg - Interfaces: Wireless: Edit"
+msgstr "Web配置- 网络接口: 无线: 编辑"
 
 #: src/etc/inc/priv.defs.inc:488
 msgid "Allow access to the 'Interfaces: Wireless: Edit' page."
-msgstr "Allow access to the 'Interfaces: Wireless: Edit' page."
+msgstr "允许访问 '网络接口: 无线: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:493
 msgid "WebCfg - System: License"
-msgstr "WebCfg - System: License"
+msgstr "Web配置- 系统: 许可"
 
 #: src/etc/inc/priv.defs.inc:494
 msgid "Allow access to the 'System: License' page."
-msgstr "Allow access to the 'System: License' page."
+msgstr "允许访问 '系统:许可' 页面"
 
 #: src/etc/inc/priv.defs.inc:499
 msgid "WebCfg - Services: Load Balancer: Monitors"
-msgstr "WebCfg - Services: Load Balancer: Monitors"
+msgstr "Web配置- 系统服务:负载平衡: 监视"
 
 #: src/etc/inc/priv.defs.inc:500
 msgid "Allow access to the 'Services: Load Balancer: Monitors' page."
-msgstr "Allow access to the 'Services: Load Balancer: Monitors' page."
+msgstr "允许访问 '系统服务:负载平衡: 监视' 页面"
 
 #: src/etc/inc/priv.defs.inc:505
 msgid "WebCfg - Services: Load Balancer: Monitor: Edit"
-msgstr "WebCfg - Services: Load Balancer: Monitor: Edit"
+msgstr "Web配置- 系统服务:负载平衡: 监视: 编辑"
 
 #: src/etc/inc/priv.defs.inc:506
 msgid "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
-msgstr "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
+msgstr "允许访问 '系统服务: 负载平衡: 监视: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:511
 msgid "WebCfg - Load Balancer: Pool"
-msgstr "WebCfg - Load Balancer: Pool"
+msgstr "Web配置- 负载平衡: 地址池"
 
 #: src/etc/inc/priv.defs.inc:512
 msgid "Allow access to the 'Load Balancer: Pool' page."
-msgstr "Allow access to the 'Load Balancer: Pool' page."
+msgstr "允许访问 '负载平衡: 地址池' 页面"
 
 #: src/etc/inc/priv.defs.inc:517
 msgid "WebCfg - Load Balancer: Pool: Edit"
-msgstr "WebCfg - Load Balancer: Pool: Edit"
+msgstr "Web配置- 负载平衡: 地址池: 编辑"
 
 #: src/etc/inc/priv.defs.inc:518
 msgid "Allow access to the 'Load Balancer: Pool: Edit' page."
-msgstr "Allow access to the 'Load Balancer: Pool: Edit' page."
+msgstr "允许访问 '负载平衡: 地址池: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:523
 msgid "WebCfg - Services: Load Balancer: Settings"
-msgstr "WebCfg - Services: Load Balancer: Settings"
+msgstr "Web配置- 系统服务:负载平衡: 设置"
 
 #: src/etc/inc/priv.defs.inc:524
 msgid "Allow access to the 'Settings: Load Balancer: Settings' page."
-msgstr "Allow access to the 'Settings: Load Balancer: Settings' page."
+msgstr "允许访问 '设置: 负载平衡: 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:529
 msgid "WebCfg - Services: Load Balancer: Virtual Servers"
-msgstr "WebCfg - Services: Load Balancer: Virtual Servers"
+msgstr "Web配置- 系统服务:负载平衡: 虚拟服务"
 
 #: src/etc/inc/priv.defs.inc:530
 msgid "Allow access to the 'Services: Load Balancer: Virtual Servers' page."
-msgstr "Allow access to the 'Services: Load Balancer: Virtual Servers' page."
+msgstr "允许访问 '系统服务: 负载平衡: 虚拟服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:535
 msgid "WebCfg - Load Balancer: Virtual Server: Edit"
-msgstr "WebCfg - Load Balancer: Virtual Server: Edit"
+msgstr "Web配置- 负载平衡: 虚拟服务: 编辑"
 
 #: src/etc/inc/priv.defs.inc:536
 msgid "Allow access to the 'Load Balancer: Virtual Server: Edit' page."
-msgstr "Allow access to the 'Load Balancer: Virtual Server: Edit' page."
+msgstr "允许访问 '负载平衡: 虚拟服务: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:541
 msgid "WebCfg - Package: Settings"
-msgstr "WebCfg - Package: Settings"
+msgstr "Web配置- 插件管理:设置"
 
 #: src/etc/inc/priv.defs.inc:542
 msgid "Allow access to the 'Package: Settings' page."
-msgstr "Allow access to the 'Package: Settings' page."
+msgstr "允许访问 '插件管理:设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:547
 msgid "WebCfg - Package: Edit"
-msgstr "WebCfg - Package: Edit"
+msgstr "Web配置- 插件: 编辑"
 
 #: src/etc/inc/priv.defs.inc:548
 msgid "Allow access to the 'Package: Edit' page."
-msgstr "Allow access to the 'Package: Edit' page."
+msgstr "允许访问 '插件: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:553
 msgid "WebCfg - System: Package Manager"
-msgstr "WebCfg - System: Package Manager"
+msgstr "Web配置- 系统:插件管理"
 
 #: src/etc/inc/priv.defs.inc:554
 msgid "Allow access to the 'System: Package Manager' page."
-msgstr "Allow access to the 'System: Package Manager' page."
+msgstr "允许访问 '系统: 插件管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:559
 msgid "WebCfg - System: Package Manager: Install Package"
-msgstr "WebCfg - System: Package Manager: Install Package"
+msgstr "Web配置- 系统:插件管理: 安装插件"
 
 #: src/etc/inc/priv.defs.inc:560
 msgid "Allow access to the 'System: Package Manager: Install Package' page."
-msgstr "Allow access to the 'System: Package Manager: Install Package' page."
+msgstr "允许访问 '系统: 插件管理: 安装插件' 页面"
 
 #: src/etc/inc/priv.defs.inc:565
 msgid "WebCfg - System: Package Manager: Installed"
-msgstr "WebCfg - System: Package Manager: Installed"
+msgstr "Web配置- 系统:插件管理: 已安装"
 
 #: src/etc/inc/priv.defs.inc:566
 msgid "Allow access to the 'System: Package Manager: Installed' page."
-msgstr "Allow access to the 'System: Package Manager: Installed' page."
+msgstr "允许访问 '系统:插件管理: 已安装' 页面"
 
 #: src/etc/inc/priv.defs.inc:571
 msgid "WebCfg - Services: Captive Portal"
-msgstr "WebCfg - Services: Captive Portal"
+msgstr "Web配置-系统服务: 入网门户"
 
 #: src/etc/inc/priv.defs.inc:572
 msgid "Allow access to the 'Services: Captive Portal' page."
@@ -4486,973 +4486,963 @@ msgstr "允许访问“系统服务：入网门户”页面。"
 
 #: src/etc/inc/priv.defs.inc:577
 msgid "WebCfg - Services: Captive Portal: File Manager"
-msgstr "WebCfg - Services: Captive Portal: File Manager"
+msgstr "Web配置-系统服务: 入网门户: 文件管理"
 
 #: src/etc/inc/priv.defs.inc:578
 msgid "Allow access to the 'Services: Captive Portal: File Manager' page."
-msgstr "Allow access to the 'Services: Captive Portal: File Manager' page."
+msgstr "允许访问 '系统服务: 入网门户:  文件管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:583
 msgid "WebCfg - Services: Captive Portal: Allowed Hostnames"
-msgstr "WebCfg - Services: Captive Portal: Allowed Hostnames"
+msgstr "Web配置-系统服务: 入网门户: 允许的主机名"
 
 #: src/etc/inc/priv.defs.inc:584
 msgid ""
 "Allow access to the 'Services: Captive Portal: Allowed Hostnames' page."
-msgstr ""
-"Allow access to the 'Services: Captive Portal: Allowed Hostnames' page."
+msgstr "允许访问 '系统服务: 入网门户: 允许的主机名' 页面"
 
 #: src/etc/inc/priv.defs.inc:589
 msgid "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
-msgstr "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
+msgstr "Web配置-系统服务: 入网门户: 编辑允许的主机名"
 
 #: src/etc/inc/priv.defs.inc:590
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
-msgstr ""
-"Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
+msgstr "允许访问 '系统服务: 入网门户: 编辑允许的主机名' 页面"
 
 #: src/etc/inc/priv.defs.inc:595
 msgid "WebCfg - Services: Captive Portal: Allowed IPs"
-msgstr "WebCfg - Services: Captive Portal: Allowed IPs"
+msgstr "Web配置-系统服务: 入网门户: 允许的IPs"
 
 #: src/etc/inc/priv.defs.inc:596
 msgid "Allow access to the 'Services: Captive Portal: Allowed IPs' page."
-msgstr "Allow access to the 'Services: Captive Portal: Allowed IPs' page."
+msgstr "允许访问 '系统服务: 入网门户: 允许的IPs' 页面"
 
 #: src/etc/inc/priv.defs.inc:601
 msgid "WebCfg - Services: Captive Portal: Edit Allowed IPs"
-msgstr "WebCfg - Services: Captive Portal: Edit Allowed IPs"
+msgstr "Web配置-系统服务: 入网门户: 编辑允许的IPs"
 
 #: src/etc/inc/priv.defs.inc:602
 msgid "Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
-msgstr ""
-"Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
+msgstr "允许访问 '系统服务: 入网门户: 编辑允许的IPs' 页面"
 
 #: src/etc/inc/priv.defs.inc:607
 msgid "WebCfg - Services: Captive Portal: Mac Addresses"
-msgstr "WebCfg - Services: Captive Portal: Mac Addresses"
+msgstr "Web配置-系统服务: 入网门户: Mac 地址"
 
 #: src/etc/inc/priv.defs.inc:608
 msgid "Allow access to the 'Services: Captive Portal: Mac Addresses' page."
-msgstr "Allow access to the 'Services: Captive Portal: Mac Addresses' page."
+msgstr "允许访问 '系统服务: 入网门户: Mac 地址' 页面"
 
 #: src/etc/inc/priv.defs.inc:613
 msgid "WebCfg - Services: Captive Portal: Edit MAC Addresses"
-msgstr "WebCfg - Services: Captive Portal: Edit MAC Addresses"
+msgstr "Web配置-系统服务: 入网门户: 编辑Mac 地址"
 
 #: src/etc/inc/priv.defs.inc:614
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
-msgstr ""
-"Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
+msgstr "允许访问 '系统服务: 入网门户: 编辑Mac 地址' 页面"
 
 #: src/etc/inc/priv.defs.inc:619
 msgid "WebCfg - Services: Captive Portal Vouchers"
-msgstr "WebCfg - Services: Captive Portal Vouchers"
+msgstr "Web配置-系统服务: 入网门户: 凭证"
 
 #: src/etc/inc/priv.defs.inc:620
 msgid "Allow access to the 'Services: Captive Portal Vouchers' page."
-msgstr "Allow access to the 'Services: Captive Portal Vouchers' page."
+msgstr "允许访问 '系统服务: 入网门户: 凭证' 页面"
 
 #: src/etc/inc/priv.defs.inc:625
 msgid "WebCfg - Services: Captive Portal Voucher Rolls"
-msgstr "WebCfg - Services: Captive Portal Voucher Rolls"
+msgstr "Web配置-系统服务: 入网门户: 凭证卷"
 
 #: src/etc/inc/priv.defs.inc:626
 msgid ""
 "Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page."
-msgstr ""
-"Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page."
+msgstr "允许访问 '系统服务: 入网门户:编辑凭证卷' 页面"
 
 #: src/etc/inc/priv.defs.inc:631
 msgid "WebCfg - Services: Captive Portal Zones"
-msgstr "WebCfg - Services: Captive Portal Zones"
+msgstr "Web配置-系统服务: 入网门户:区域"
 
 #: src/etc/inc/priv.defs.inc:632
 msgid "Allow access to the 'Services: Captive Portal Zones' page."
-msgstr "Allow access to the 'Services: Captive Portal Zones' page."
+msgstr "允许访问 '系统服务: 入网门户 区域' 页面"
 
 #: src/etc/inc/priv.defs.inc:637
 msgid "WebCfg - Services: Captive Portal: Edit Zones"
-msgstr "WebCfg - Services: Captive Portal: Edit Zones"
+msgstr "Web配置-系统服务: 入网门户: 编辑区域"
 
 #: src/etc/inc/priv.defs.inc:638
 msgid "Allow access to the 'Services: Captive Portal: Edit Zones' page."
-msgstr "Allow access to the 'Services: Captive Portal: Edit Zones' page."
+msgstr "允许访问 '系统服务: 入网门户: 编辑区域' 页面"
 
 #: src/etc/inc/priv.defs.inc:643
 msgid "WebCfg - Services: Check IP Service"
-msgstr "WebCfg - Services: Check IP Service"
+msgstr "Web配置- 系统服务:检查IP服务"
 
 #: src/etc/inc/priv.defs.inc:644
 msgid "Allow access to the 'Services: Check IP Service' page."
-msgstr "Allow access to the 'Services: Check IP Service' page."
+msgstr "允许访问 '系统服务: 检查IP服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:649
 msgid "WebCfg - Services: Check IP Service: Edit"
-msgstr "WebCfg - Services: Check IP Service: Edit"
+msgstr "Web配置- 系统服务: 检查IP服务: 编辑"
 
 #: src/etc/inc/priv.defs.inc:650
 msgid "Allow access to the 'Services: Check IP Service: Edit' page."
-msgstr "Allow access to the 'Services: Check IP Service: Edit' page."
+msgstr "允许访问 '系统服务: 检查IP服务: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:655
 msgid "WebCfg - Services: DHCP Server"
-msgstr "WebCfg - Services: DHCP Server"
+msgstr "Web配置- 系统服务: DHCP 服务"
 
 #: src/etc/inc/priv.defs.inc:656
 msgid "Allow access to the 'Services: DHCP Server' page."
-msgstr "Allow access to the 'Services: DHCP Server' page."
+msgstr "允许访问 '系统服务: DHCP 服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:661
 msgid "WebCfg - Services: DHCP Server: Edit static mapping"
-msgstr "WebCfg - Services: DHCP Server: Edit static mapping"
+msgstr "Web配置- 系统服务: DHCP 服务: 编辑表态映射"
 
 #: src/etc/inc/priv.defs.inc:662
 msgid "Allow access to the 'Services: DHCP Server: Edit static mapping' page."
-msgstr ""
-"Allow access to the 'Services: DHCP Server: Edit static mapping' page."
+msgstr "允许访问 '系统服务: DHCP 服务: 编辑表态映射' 页面"
 
 #: src/etc/inc/priv.defs.inc:667
 msgid "WebCfg - Services: DHCP Relay"
-msgstr "WebCfg - Services: DHCP Relay"
+msgstr "Web配置- 系统服务: DHCP中继"
 
 #: src/etc/inc/priv.defs.inc:668
 msgid "Allow access to the 'Services: DHCP Relay' page."
-msgstr "Allow access to the 'Services: DHCP Relay' page."
+msgstr "允许访问 '系统服务: DHCP中继' 页面"
 
 #: src/etc/inc/priv.defs.inc:673
 msgid "WebCfg - Services: DHCPv6 Server"
-msgstr "WebCfg - Services: DHCPv6 Server"
+msgstr "Web配置- 系统服务: DHCPv6 服务"
 
 #: src/etc/inc/priv.defs.inc:674
 msgid "Allow access to the 'Services: DHCPv6 Server' page."
-msgstr "Allow access to the 'Services: DHCPv6 Server' page."
+msgstr "允许访问 '系统服务: DHCPv6 服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:679
 msgid "WebCfg - Services: DHCPv6 Server: Edit static mapping"
-msgstr "WebCfg - Services: DHCPv6 Server: Edit static mapping"
+msgstr "Web配置- 系统服务: DHCPv6 服务: 编辑静态映射"
 
 #: src/etc/inc/priv.defs.inc:680
 msgid ""
 "Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page."
-msgstr ""
-"Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page."
+msgstr "允许访问 '系统服务: DHCPv6 服务: 编辑静态映射' 页面"
 
 #: src/etc/inc/priv.defs.inc:685
 msgid "WebCfg - Services: DHCPv6 Relay"
-msgstr "WebCfg - Services: DHCPv6 Relay"
+msgstr "Web配置- 系统服务: DHCPv6 中继"
 
 #: src/etc/inc/priv.defs.inc:686
 msgid "Allow access to the 'Services: DHCPv6 Relay' page."
-msgstr "Allow access to the 'Services: DHCPv6 Relay' page."
+msgstr "允许访问 '系统服务:DHCPv6 中继' 页面"
 
 #: src/etc/inc/priv.defs.inc:691
 msgid "WebCfg - Services: DNS Forwarder"
-msgstr "WebCfg - Services: DNS Forwarder"
+msgstr "Web配置- 系统服务: DNS 转发"
 
 #: src/etc/inc/priv.defs.inc:692
 msgid "Allow access to the 'Services: DNS Forwarder' page."
-msgstr "Allow access to the 'Services: DNS Forwarder' page."
+msgstr "允许访问 '系统服务: DNS 转发' 页面"
 
 #: src/etc/inc/priv.defs.inc:697
 msgid "WebCfg - Services: DNS Forwarder: Edit Domain Override"
-msgstr "WebCfg - Services: DNS Forwarder: Edit Domain Override"
+msgstr "Web配置- 系统服务: DNS 转发: 编辑域覆盖"
 
 #: src/etc/inc/priv.defs.inc:698
 msgid ""
 "Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page."
-msgstr ""
-"Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page."
+msgstr "允许访问 '系统服务:DNS 转发: 编辑域覆盖' 页面"
 
 #: src/etc/inc/priv.defs.inc:703
 msgid "WebCfg - Services: DNS Forwarder: Edit host"
-msgstr "WebCfg - Services: DNS Forwarder: Edit host"
+msgstr "Web配置- 系统服务: DNS 转发: 编辑主机"
 
 #: src/etc/inc/priv.defs.inc:704
 msgid "Allow access to the 'Services: DNS Forwarder: Edit host' page."
-msgstr "Allow access to the 'Services: DNS Forwarder: Edit host' page."
+msgstr "允许访问 '系统服务: DNS 转发: 编辑主机' 页面"
 
 #: src/etc/inc/priv.defs.inc:709
 msgid "WebCfg - Services: Dynamic DNS clients"
-msgstr "WebCfg - Services: Dynamic DNS clients"
+msgstr "Web配置- 系统服务: 动态DNS 客户端"
 
 #: src/etc/inc/priv.defs.inc:710
 msgid "Allow access to the 'Services: Dynamic DNS clients' page."
-msgstr "Allow access to the 'Services: Dynamic DNS clients' page."
+msgstr "允许访问 '系统服务: 动态DNS 客户端' 页面"
 
 #: src/etc/inc/priv.defs.inc:715
 msgid "WebCfg - Services: Dynamic DNS client"
-msgstr "WebCfg - Services: Dynamic DNS client"
+msgstr "Web配置- 系统服务: 动态DNS 客户端"
 
 #: src/etc/inc/priv.defs.inc:716
 msgid "Allow access to the 'Services: Dynamic DNS client' page."
-msgstr "Allow access to the 'Services: Dynamic DNS client' page."
+msgstr "允许访问 '系统服务: 动态DNS 客户端' 页面"
 
 #: src/etc/inc/priv.defs.inc:721
 msgid "WebCfg - Services: IGMP Proxy"
-msgstr "WebCfg - Services: IGMP Proxy"
+msgstr "Web配置- 系统服务: IGMP 代理"
 
 #: src/etc/inc/priv.defs.inc:722
 msgid "Allow access to the 'Services: IGMP Proxy' page."
-msgstr "Allow access to the 'Services: IGMP Proxy' page."
+msgstr "允许访问 '系统服务: IGMP 代理' 页面"
 
 #: src/etc/inc/priv.defs.inc:727
 msgid "WebCfg - Services: IGMP Proxy: Edit"
-msgstr "WebCfg - Services: IGMP Proxy: Edit"
+msgstr "Web配置- 系统服务: IGMP 代理: 编辑"
 
 #: src/etc/inc/priv.defs.inc:728
 msgid "Allow access to the 'Services: IGMP Proxy: Edit' page."
-msgstr "Allow access to the 'Services: IGMP Proxy: Edit' page."
+msgstr "允许访问 '系统服务: IGMP代理: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:733
 msgid "WebCfg - Services: NTP Settings"
-msgstr "WebCfg - Services: NTP Settings"
+msgstr "Web配置- 系统服务: NTP 设置"
 
 #: src/etc/inc/priv.defs.inc:734
 msgid "Allow access to the 'Services: NTP Settings' page."
-msgstr "Allow access to the 'Services: NTP Settings' page."
+msgstr "允许访问 '系统服务: NTP 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:739
 msgid "WebCfg - Services: NTP ACL Settings"
-msgstr "WebCfg - Services: NTP ACL Settings"
+msgstr "Web配置- 系统服务: NTP ACL 设置"
 
 #: src/etc/inc/priv.defs.inc:740
 msgid "Allow access to the 'Services: NTP ACL Settings' page."
-msgstr "Allow access to the 'Services: NTP ACL Settings' page."
+msgstr "允许访问 '系统服务: NTP ACL 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:745
 msgid "WebCfg - Services: NTP Serial GPS"
-msgstr "WebCfg - Services: NTP Serial GPS"
+msgstr "Web配置- 系统服务: NTP 串口 GPS"
 
 #: src/etc/inc/priv.defs.inc:746
 msgid "Allow access to the 'Services: NTP Serial GPS' page."
-msgstr "Allow access to the 'Services: NTP Serial GPS' page."
+msgstr "允许访问 '系统服务: NTP 串口 GPS' 页面"
 
 #: src/etc/inc/priv.defs.inc:751
 msgid "WebCfg - Services: NTP PPS"
-msgstr "WebCfg - Services: NTP PPS"
+msgstr "Web配置- 系统服务: NTP PPS"
 
 #: src/etc/inc/priv.defs.inc:752
 msgid "Allow access to the 'Services: NTP PPS' page."
-msgstr "Allow access to the 'Services: NTP PPS' page."
+msgstr "允许访问 '系统服务: NTP PPS' 页面"
 
 #: src/etc/inc/priv.defs.inc:757
 msgid "WebCfg - Services: PPPoE Server"
-msgstr "WebCfg - Services: PPPoE Server"
+msgstr "Web配置- 系统服务: PPPoE 服务"
 
 #: src/etc/inc/priv.defs.inc:758
 msgid "Allow access to the 'Services: PPPoE Server' page."
-msgstr "Allow access to the 'Services: PPPoE Server' page."
+msgstr "允许访问 '系统服务: PPPoE 服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:763
 msgid "WebCfg - Services: PPPoE Server: Edit"
-msgstr "WebCfg - Services: PPPoE Server: Edit"
+msgstr "Web配置- 系统服务: PPPoE 服务: 编辑"
 
 #: src/etc/inc/priv.defs.inc:764
 msgid "Allow access to the 'Services: PPPoE Server: Edit' page."
-msgstr "Allow access to the 'Services: PPPoE Server: Edit' page."
+msgstr "允许访问 '系统服务: PPPoE 服务: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:769
 msgid "WebCfg - Services: RFC 2136 Clients"
-msgstr "WebCfg - Services: RFC 2136 Clients"
+msgstr "Web配置- 系统服务: RFC 2136 客户端"
 
 #: src/etc/inc/priv.defs.inc:770
 msgid "Allow access to the 'Services: RFC 2136 Clients' page."
-msgstr "Allow access to the 'Services: RFC 2136 Clients' page."
+msgstr "允许访问 '系统服务: RFC 2136 客户端' 页面"
 
 #: src/etc/inc/priv.defs.inc:775
 msgid "WebCfg - Services: RFC 2136 Client: Edit"
-msgstr "WebCfg - Services: RFC 2136 Client: Edit"
+msgstr "Web配置- 系统服务: RFC 2136 客户端: 编辑"
 
 #: src/etc/inc/priv.defs.inc:776
 msgid "Allow access to the 'Services: RFC 2136 Client: Edit' page."
-msgstr "Allow access to the 'Services: RFC 2136 Client: Edit' page."
+msgstr "允许访问 '系统服务: RFC 2136 客户端: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
-msgstr "WebCfg - Services: Router Advertisements"
+msgstr "Web配置- 系统服务:路由器广播"
 
 #: src/etc/inc/priv.defs.inc:782
 msgid "Allow access to the 'Services: Router Advertisements' page."
-msgstr "Allow access to the 'Services: Router Advertisements' page."
+msgstr "允许访问 '系统服务: 路由器广播' 页面"
 
 #: src/etc/inc/priv.defs.inc:787
 msgid "WebCfg - Services: SNMP"
-msgstr "WebCfg - Services: SNMP"
+msgstr "Web配置- 系统服务: SNMP"
 
 #: src/etc/inc/priv.defs.inc:788
 msgid "Allow access to the 'Services: SNMP' page."
-msgstr "Allow access to the 'Services: SNMP' page."
+msgstr "允许访问 '系统服务: SNMP' 页面"
 
 #: src/etc/inc/priv.defs.inc:793
 msgid "WebCfg - Services: DNS Resolver"
-msgstr "WebCfg - Services: DNS Resolver"
+msgstr "Web配置- 系统服务: DNS 解析"
 
 #: src/etc/inc/priv.defs.inc:794
 msgid "Allow access to the 'Services: DNS Resolver' page."
-msgstr "Allow access to the 'Services: DNS Resolver' page."
+msgstr "允许访问 '系统服务: DNS 解析' 页面"
 
 #: src/etc/inc/priv.defs.inc:799
 msgid "WebCfg - Services: DNS Resolver: Access Lists"
-msgstr "WebCfg - Services: DNS Resolver: Access Lists"
+msgstr "Web配置- 系统服务:  DNS 解析: 访问列表"
 
 #: src/etc/inc/priv.defs.inc:800
 msgid "Allow access to the 'Services: DNS Resolver: Access Lists' page."
-msgstr "Allow access to the 'Services: DNS Resolver: Access Lists' page."
+msgstr "允许访问 '系统服务:  DNS 解析: 访问列表' 页面"
 
 #: src/etc/inc/priv.defs.inc:805
 msgid "WebCfg - Services: DNS Resolver: Advanced"
-msgstr "WebCfg - Services: DNS Resolver: Advanced"
+msgstr "Web配置- 系统服务: DNS 解析: 高级设置"
 
 #: src/etc/inc/priv.defs.inc:806
 msgid "Allow access to the 'Services: DNS Resolver: Advanced' page."
-msgstr "Allow access to the 'Services: DNS Resolver: Advanced' page."
+msgstr "允许访问 '系统服务: DNS 解析: 高级设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:811
 msgid "WebCfg - Services: DNS Resolver: Edit Domain Override"
-msgstr "WebCfg - Services: DNS Resolver: Edit Domain Override"
+msgstr "Web配置- 系统服务: DNS 解析: 编辑域覆盖"
 
 #: src/etc/inc/priv.defs.inc:812
 msgid ""
 "Allow access to the 'Services: DNS Resolver: Edit Domain Override' page."
-msgstr ""
-"Allow access to the 'Services: DNS Resolver: Edit Domain Override' page."
+msgstr "允许访问 '系统服务:DNS 解析: 编辑域覆盖' 页面"
 
 #: src/etc/inc/priv.defs.inc:817
 msgid "WebCfg - Services: DNS Resolver: Edit host"
-msgstr "WebCfg - Services: DNS Resolver: Edit host"
+msgstr "Web配置- 系统服务: DNS 解析: 编辑主机"
 
 #: src/etc/inc/priv.defs.inc:818
 msgid "Allow access to the 'Services: DNS Resolver: Edit host' page."
-msgstr "Allow access to the 'Services: DNS Resolver: Edit host' page."
+msgstr "允许访问 '系统服务: DNS 解析: 编辑主机' 页面"
 
 #: src/etc/inc/priv.defs.inc:823
 msgid "WebCfg - Services: Wake-on-LAN"
-msgstr "WebCfg - Services: Wake-on-LAN"
+msgstr "Web配置- 系统服务: 网络唤醒"
 
 #: src/etc/inc/priv.defs.inc:824
 msgid "Allow access to the 'Services: Wake-on-LAN' page."
-msgstr "Allow access to the 'Services: Wake-on-LAN' page."
+msgstr "允许访问 '系统服务: 网络唤醒' 页面"
 
 #: src/etc/inc/priv.defs.inc:829
 msgid "WebCfg - Services: Wake-on-LAN: Edit"
-msgstr "WebCfg - Services: Wake-on-LAN: Edit"
+msgstr "Web配置- 系统服务: 网络唤醒: 编辑"
 
 #: src/etc/inc/priv.defs.inc:830
 msgid "Allow access to the 'Services: Wake-on-LAN: Edit' page."
-msgstr "Allow access to the 'Services: Wake-on-LAN: Edit' page."
+msgstr "允许访问 '系统服务: 网络唤醒: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:835
 msgid "WebCfg - Hidden: Detailed Status"
-msgstr "WebCfg - Hidden: Detailed Status"
+msgstr "Web配置- 隐藏：详细状态"
 
 #: src/etc/inc/priv.defs.inc:836
 msgid "Allow access to the 'Hidden: Detailed Status' page."
-msgstr "Allow access to the 'Hidden: Detailed Status' page."
+msgstr "允许访问 '隐藏：详细状态' 页面"
 
 #: src/etc/inc/priv.defs.inc:841
 msgid "WebCfg - Status: Captive Portal"
-msgstr "WebCfg - Status: Captive Portal"
+msgstr "Web配置- 系统状态: 入网门户"
 
 #: src/etc/inc/priv.defs.inc:842
 msgid "Allow access to the 'Status: Captive Portal' page."
-msgstr "Allow access to the 'Status: Captive Portal' page."
+msgstr "允许访问 '系统状态: 入网门户' 页面"
 
 #: src/etc/inc/priv.defs.inc:847
 msgid "WebCfg - Status: Captive Portal: Expire Vouchers"
-msgstr "WebCfg - Status: Captive Portal: Expire Vouchers"
+msgstr "Web配置- 系统状态: 入网门户: 到期凭证"
 
 #: src/etc/inc/priv.defs.inc:848
 msgid "Allow access to the 'Status: Captive Portal: Expire Vouchers' page."
-msgstr "Allow access to the 'Status: Captive Portal: Expire Vouchers' page."
+msgstr "允许访问 '系统状态: 入网门户: 到期凭证' 页面"
 
 #: src/etc/inc/priv.defs.inc:853
 msgid "WebCfg - Status: Captive Portal: Test Vouchers"
-msgstr "WebCfg - Status: Captive Portal: Test Vouchers"
+msgstr "Web配置- 系统状态: 入网门户: 测试凭证"
 
 #: src/etc/inc/priv.defs.inc:854
 msgid "Allow access to the 'Status: Captive Portal: Test Vouchers' page."
-msgstr "Allow access to the 'Status: Captive Portal: Test Vouchers' page."
+msgstr "允许访问 '系统状态: 入网门户: 测试凭证' 页面"
 
 #: src/etc/inc/priv.defs.inc:859
 msgid "WebCfg - Status: Captive Portal Voucher Rolls"
-msgstr "WebCfg - Status: Captive Portal Voucher Rolls"
+msgstr "Web配置- 系统状态: 入网门户: 凭证卷"
 
 #: src/etc/inc/priv.defs.inc:860
 msgid "Allow access to the 'Status: Captive Portal Voucher Rolls' page."
-msgstr "Allow access to the 'Status: Captive Portal Voucher Rolls' page."
+msgstr "允许访问 '系统状态: 入网门户: 凭证卷' 页面"
 
 #: src/etc/inc/priv.defs.inc:865
 msgid "WebCfg - Status: Captive Portal Vouchers"
-msgstr "WebCfg - Status: Captive Portal Vouchers"
+msgstr "Web配置- 系统状态: 入网门户:凭证"
 
 #: src/etc/inc/priv.defs.inc:866
 msgid "Allow access to the 'Status: Captive Portal Vouchers' page."
-msgstr "Allow access to the 'Status: Captive Portal Vouchers' page."
+msgstr "允许访问 '系统状态: 入网门户:凭证' 页面"
 
 #: src/etc/inc/priv.defs.inc:871
 msgid "WebCfg - Status: CARP"
-msgstr "WebCfg - Status: CARP"
+msgstr "Web配置- 系统状态: CARP"
 
 #: src/etc/inc/priv.defs.inc:872
 msgid "Allow access to the 'Status: CARP' page."
-msgstr "Allow access to the 'Status: CARP' page."
+msgstr "允许访问 '系统状态: CARP' 页面"
 
 #: src/etc/inc/priv.defs.inc:877
 msgid "WebCfg - Status: DHCP leases"
-msgstr "WebCfg - Status: DHCP leases"
+msgstr "Web配置- 系统状态: DHCP租约"
 
 #: src/etc/inc/priv.defs.inc:878
 msgid "Allow access to the 'Status: DHCP leases' page."
-msgstr "Allow access to the 'Status: DHCP leases' page."
+msgstr "允许访问 '系统状态: DHCP租约' 页面"
 
 #: src/etc/inc/priv.defs.inc:883
 msgid "WebCfg - Status: DHCPv6 leases"
-msgstr "WebCfg - Status: DHCPv6 leases"
+msgstr "Web配置- 系统状态: DHCPv6租约"
 
 #: src/etc/inc/priv.defs.inc:884
 msgid "Allow access to the 'Status: DHCPv6 leases' page."
-msgstr "Allow access to the 'Status: DHCPv6 leases' page."
+msgstr "允许访问 '系统状态: DHCPv6 租约' 页面"
 
 #: src/etc/inc/priv.defs.inc:889
 msgid "WebCfg - Status: Filter Reload Status"
-msgstr "WebCfg - Status: Filter Reload Status"
+msgstr "Web配置- 系统状态: 重置过滤器"
 
 #: src/etc/inc/priv.defs.inc:890
 msgid "Allow access to the 'Status: Filter Reload Status' page."
-msgstr "Allow access to the 'Status: Filter Reload Status' page."
+msgstr "允许访问 '系统状态:重置过滤器' 页面"
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
-msgstr "WebCfg - Status: Gateway Groups"
+msgstr "Web配置- 系统状态: 网关组"
 
 #: src/etc/inc/priv.defs.inc:896
 msgid "Allow access to the 'Status: Gateway Groups' page."
-msgstr "Allow access to the 'Status: Gateway Groups' page."
+msgstr "允许访问 '系统状态: 网关组' 页面"
 
 #: src/etc/inc/priv.defs.inc:901
 msgid "WebCfg - Status: Gateways"
-msgstr "WebCfg - Status: Gateways"
+msgstr "Web配置- 系统状态: 网关"
 
 #: src/etc/inc/priv.defs.inc:902
 msgid "Allow access to the 'Status: Gateways' page."
-msgstr "Allow access to the 'Status: Gateways' page."
+msgstr "允许访问 '系统状态: 网关' 页面"
 
 #: src/etc/inc/priv.defs.inc:907
 msgid "WebCfg - Status: Traffic Graph"
-msgstr "WebCfg - Status: Traffic Graph"
+msgstr "Web配置- 系统状态: 流量整形"
 
 #: src/etc/inc/priv.defs.inc:908
 msgid "Allow access to the 'Status: Traffic Graph' page."
-msgstr "Allow access to the 'Status: Traffic Graph' page."
+msgstr "允许访问 '系统状态: 流量整形' 页面"
 
 #: src/etc/inc/priv.defs.inc:916
 msgid "WebCfg - Status: CPU load"
-msgstr "WebCfg - Status: CPU load"
+msgstr "Web配置- 系统状态: CPU负载"
 
 #: src/etc/inc/priv.defs.inc:917
 msgid "Allow access to the 'Status: CPU load' page."
-msgstr "Allow access to the 'Status: CPU load' page."
+msgstr "允许访问 '系统状态: CPU负载' 页面"
 
 #: src/etc/inc/priv.defs.inc:922
 msgid "WebCfg - Status: Interfaces"
-msgstr "WebCfg - Status: Interfaces"
+msgstr "Web配置- 系统状态: 网络接口"
 
 #: src/etc/inc/priv.defs.inc:923
 msgid "Allow access to the 'Status: Interfaces' page."
-msgstr "Allow access to the 'Status: Interfaces' page."
+msgstr "允许访问 '系统状态: 网络接口' 页面"
 
 #: src/etc/inc/priv.defs.inc:928
 msgid "WebCfg - Status: IPsec"
-msgstr "WebCfg - Status: IPsec"
+msgstr "Web配置- 系统状态: IPsec"
 
 #: src/etc/inc/priv.defs.inc:929
 msgid "Allow access to the 'Status: IPsec' page."
-msgstr "Allow access to the 'Status: IPsec' page."
+msgstr "允许访问 '系统状态: IPsec' 页面"
 
 #: src/etc/inc/priv.defs.inc:934
 msgid "WebCfg - Status: IPsec: Leases"
-msgstr "WebCfg - Status: IPsec: Leases"
+msgstr "Web配置- 系统状态: IPsec: 租约"
 
 #: src/etc/inc/priv.defs.inc:935
 msgid "Allow access to the 'Status: IPsec: Leases' page."
-msgstr "Allow access to the 'Status: IPsec: Leases' page."
+msgstr "允许访问 '系统状态: IPsec: 租约' 页面"
 
 #: src/etc/inc/priv.defs.inc:940
 msgid "WebCfg - Status: IPsec: SADs"
-msgstr "WebCfg - Status: IPsec: SADs"
+msgstr "Web配置- 系统状态: IPsec: SADs"
 
 #: src/etc/inc/priv.defs.inc:941
 msgid "Allow access to the 'Status: IPsec: SADs' page."
-msgstr "Allow access to the 'Status: IPsec: SADs' page."
+msgstr "允许访问 '系统状态: IPsec: SADs' 页面"
 
 #: src/etc/inc/priv.defs.inc:946
 msgid "WebCfg - Status: IPsec: SPD"
-msgstr "WebCfg - Status: IPsec: SPD"
+msgstr "Web配置- 系统状态: IPsec: SPD"
 
 #: src/etc/inc/priv.defs.inc:947
 msgid "Allow access to the 'Status: IPsec: SPD' page."
-msgstr "Allow access to the 'Status: IPsec: SPD' page."
+msgstr "允许访问 '系统状态: IPsec: SPD' 页面"
 
 #: src/etc/inc/priv.defs.inc:952
 msgid "WebCfg - Status: Load Balancer: Pool"
-msgstr "WebCfg - Status: Load Balancer: Pool"
+msgstr "Web配置- 系统状态: 负载平衡: 地址池"
 
 #: src/etc/inc/priv.defs.inc:953
 msgid "Allow access to the 'Status: Load Balancer: Pool' page."
-msgstr "Allow access to the 'Status: Load Balancer: Pool' page."
+msgstr "允许访问 '系统状态: 负载平衡: 地址池' 页面"
 
 #: src/etc/inc/priv.defs.inc:958
 msgid "WebCfg - Status: Load Balancer: Virtual Server"
-msgstr "WebCfg - Status: Load Balancer: Virtual Server"
+msgstr "Web配置- 系统状态: 负载平衡: 虚拟服务"
 
 #: src/etc/inc/priv.defs.inc:959
 msgid "Allow access to the 'Status: Load Balancer: Virtual Server' page."
-msgstr "Allow access to the 'Status: Load Balancer: Virtual Server' page."
+msgstr "允许访问 '系统状态: 负载平衡: 虚拟服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:964
 msgid "WebCfg - Status: Logs: System"
-msgstr "WebCfg - Status: Logs: System"
+msgstr "Web配置- 系统状态: 系统日志"
 
 #: src/etc/inc/priv.defs.inc:965
 msgid "Allow access to the 'Status: System Logs: General' page."
-msgstr "Allow access to the 'Status: System Logs: General' page."
+msgstr "允许访问 '系统状态: 系统日志: 常规设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:970
 msgid "WebCfg - Status: Logs: Firewall"
-msgstr "WebCfg - Status: Logs: Firewall"
+msgstr "Web配置- 系统状态: 系统日志: 防火墙"
 
 #: src/etc/inc/priv.defs.inc:971
 msgid "Allow access to the 'Status: Logs: Firewall' page."
-msgstr "Allow access to the 'Status: Logs: Firewall' page."
+msgstr "允许访问 '系统状态: 系统日志: 防火墙' 页面"
 
 #: src/etc/inc/priv.defs.inc:976
 msgid "WebCfg - Status: System Logs: Firewall (Dynamic View)"
-msgstr "WebCfg - Status: System Logs: Firewall (Dynamic View)"
+msgstr "Web配置- 系统状态: 系统日志: 防火墙 (动态视图)"
 
 #: src/etc/inc/priv.defs.inc:977
 msgid ""
 "Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page"
-msgstr ""
-"Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page"
+msgstr "允许访问 '系统状态:  系统日志: 防火墙 (动态视图)' page"
 
 #: src/etc/inc/priv.defs.inc:982
 msgid "WebCfg - Status: System Logs: Firewall Log Summary"
-msgstr "WebCfg - Status: System Logs: Firewall Log Summary"
+msgstr "Web配置- 系统状态: 系统日志: 防火墙日志摘要"
 
 #: src/etc/inc/priv.defs.inc:983
 msgid "Allow access to the 'Status: System Logs: Firewall Log Summary' page"
-msgstr "Allow access to the 'Status: System Logs: Firewall Log Summary' page"
+msgstr "允许访问 '系统状态: 系统日志: 防火墙日志摘要'页面"
 
 #: src/etc/inc/priv.defs.inc:988
 msgid "WebCfg - Status: Logs: Settings"
-msgstr "WebCfg - Status: Logs: Settings"
+msgstr "Web配置- 系统状态: 系统日志: 设置"
 
 #: src/etc/inc/priv.defs.inc:989
 msgid "Allow access to the 'Status: Logs: Settings' page."
-msgstr "Allow access to the 'Status: Logs: Settings' page."
+msgstr "允许访问 '系统状态:系统日志: 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:994
 msgid "WebCfg - Status: Logs: VPN"
-msgstr "WebCfg - Status: Logs: VPN"
+msgstr "Web配置- 系统状态: 系统日志: VPN"
 
 #: src/etc/inc/priv.defs.inc:995
 msgid "Allow access to the 'Status: Logs: VPN' page."
-msgstr "Allow access to the 'Status: Logs: VPN' page."
+msgstr "允许访问 '系统状态:系统日志: VPN' 页面"
 
 #: src/etc/inc/priv.defs.inc:1000
 msgid "WebCfg - Status: NTP"
-msgstr "WebCfg - Status: NTP"
+msgstr "Web配置- 系统状态: NTP"
 
 #: src/etc/inc/priv.defs.inc:1001
 msgid "Allow access to the 'Status: NTP' page."
-msgstr "Allow access to the 'Status: NTP' page."
+msgstr "允许访问 '系统状态: NTP' 页面"
 
 #: src/etc/inc/priv.defs.inc:1006
 msgid "WebCfg - Status: OpenVPN"
-msgstr "WebCfg - Status: OpenVPN"
+msgstr "Web配置- 系统状态: OpenVPN"
 
 #: src/etc/inc/priv.defs.inc:1007
 msgid "Allow access to the 'Status: OpenVPN' page."
-msgstr "Allow access to the 'Status: OpenVPN' page."
+msgstr "允许访问 '系统状态: OpenVPN' 页面"
 
 #: src/etc/inc/priv.defs.inc:1012
 msgid "WebCfg - Status: Package logs"
-msgstr "WebCfg - Status: Package logs"
+msgstr "Web配置- 系统状态: 插件日志"
 
 #: src/etc/inc/priv.defs.inc:1013
 msgid "Allow access to the 'Status: Package logs' page."
-msgstr "Allow access to the 'Status: Package logs' page."
+msgstr "允许访问 '系统状态: 插件日志' 页面"
 
 #: src/etc/inc/priv.defs.inc:1018
 msgid "WebCfg - Status: Traffic Shaper: Queues"
-msgstr "WebCfg - Status: Traffic Shaper: Queues"
+msgstr "Web配置- 系统状态: 流量整形: 队列"
 
 #: src/etc/inc/priv.defs.inc:1019
 msgid "Allow access to the 'Status: Traffic Shaper: Queues' page."
-msgstr "Allow access to the 'Status: Traffic Shaper: Queues' page."
+msgstr "允许访问 '系统状态: 流量整形: 队列' 页面"
 
 #: src/etc/inc/priv.defs.inc:1024
 msgid "WebCfg - Status: Services"
-msgstr "WebCfg - Status: Services"
+msgstr "Web配置- 系统状态: 系统服务"
 
 #: src/etc/inc/priv.defs.inc:1025
 msgid "Allow access to the 'Status: Services' page."
-msgstr "Allow access to the 'Status: Services' page."
+msgstr "允许访问 '系统状态: 系统服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:1030
 msgid "WebCfg - Status: UPnP Status"
-msgstr "WebCfg - Status: UPnP Status"
+msgstr "Web配置- 系统状态: UPnP 状态"
 
 #: src/etc/inc/priv.defs.inc:1031
 msgid "Allow access to the 'Status: UPnP Status' page."
-msgstr "Allow access to the 'Status: UPnP Status' page."
+msgstr "允许访问 '系统状态: UPnP 状态' 页面"
 
 #: src/etc/inc/priv.defs.inc:1036
 msgid "WebCfg - Status: Wireless"
-msgstr "WebCfg - Status: Wireless"
+msgstr "Web配置- 系统状态: 无线"
 
 #: src/etc/inc/priv.defs.inc:1037
 msgid "Allow access to the 'Status: Wireless' page."
-msgstr "Allow access to the 'Status: Wireless' page."
+msgstr "允许访问 '系统状态: 无线' 页面"
 
 #: src/etc/inc/priv.defs.inc:1042
 msgid "WebCfg - System: General Setup"
-msgstr "WebCfg - System: General Setup"
+msgstr "Web配置- 系统: 常规设置"
 
 #: src/etc/inc/priv.defs.inc:1043
 msgid "Allow access to the 'System: General Setup' page."
-msgstr "Allow access to the 'System: General Setup' page."
+msgstr "允许访问 '系统:  常规设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:1048
 msgid "WebCfg - System: Advanced: Admin Access Page"
-msgstr "WebCfg - System: Advanced: Admin Access Page"
+msgstr "Web配置- 系统:高级选项: 管理员访问页面"
 
 #: src/etc/inc/priv.defs.inc:1049
 msgid "Allow access to the 'System: Advanced: Admin Access' page."
-msgstr "Allow access to the 'System: Advanced: Admin Access' page."
+msgstr "允许访问 '系统:高级选项:管理员访问' 页面"
 
 #: src/etc/inc/priv.defs.inc:1054
 msgid "WebCfg - System: Advanced: Firewall & NAT"
-msgstr "WebCfg - System: Advanced: Firewall & NAT"
+msgstr "Web配置- 系统:高级选项: 防火墙 & NAT"
 
 #: src/etc/inc/priv.defs.inc:1055
 msgid "Allow access to the 'System: Advanced: Firewall & NAT' page."
-msgstr "Allow access to the 'System: Advanced: Firewall & NAT' page."
+msgstr "允许访问 '系统:高级选项: 防火墙 & NAT' 页面"
 
 #: src/etc/inc/priv.defs.inc:1060
 msgid "WebCfg - System: Advanced: Miscellaneous"
-msgstr "WebCfg - System: Advanced: Miscellaneous"
+msgstr "Web配置- 系统:高级选项: 附带组件"
 
 #: src/etc/inc/priv.defs.inc:1061
 msgid "Allow access to the 'System: Advanced: Miscellaneous' page."
-msgstr "Allow access to the 'System: Advanced: Miscellaneous' page."
+msgstr "允许访问 '系统:高级选项:  附带组件' 页面"
 
 #: src/etc/inc/priv.defs.inc:1066
 msgid "WebCfg - System: Advanced: Networking"
-msgstr "WebCfg - System: Advanced: Networking"
+msgstr "Web配置- 系统:高级选项:网络"
 
 #: src/etc/inc/priv.defs.inc:1067
 msgid "Allow access to the 'System: Advanced: Networking' page."
-msgstr "Allow access to the 'System: Advanced: Networking' page."
+msgstr "允许访问 '系统:高级选项: 网络' 页面"
 
 #: src/etc/inc/priv.defs.inc:1072
 msgid "WebCfg - System: Advanced: Notifications"
-msgstr "WebCfg - System: Advanced: Notifications"
+msgstr "Web配置- 系统:高级选项: 通知"
 
 #: src/etc/inc/priv.defs.inc:1073
 msgid "Allow access to the 'System: Advanced: Notifications' page."
-msgstr "Allow access to the 'System: Advanced: Notifications' page."
+msgstr "允许访问 '系统:高级选项: 通知' 页面"
 
 #: src/etc/inc/priv.defs.inc:1078
 msgid "WebCfg - System: Advanced: Tunables"
-msgstr "WebCfg - System: Advanced: Tunables"
+msgstr "Web配置- 系统:高级选项: 可调参数"
 
 #: src/etc/inc/priv.defs.inc:1079
 msgid "Allow access to the 'System: Advanced: Tunables' page."
-msgstr "Allow access to the 'System: Advanced: Tunables' page."
+msgstr "允许访问 '系统:高级选项: 可调参数' 页面"
 
 #: src/etc/inc/priv.defs.inc:1084
 msgid "WebCfg - System: Authentication Servers"
-msgstr "WebCfg - System: Authentication Servers"
+msgstr "Web配置- 系统:认证服务器"
 
 #: src/etc/inc/priv.defs.inc:1085
 msgid "Allow access to the 'System: Authentication Servers' page."
-msgstr "Allow access to the 'System: Authentication Servers' page."
+msgstr "允许访问 '系统: 认证服务器' 页面"
 
 #: src/etc/inc/priv.defs.inc:1091
 msgid "WebCfg - System: CA Manager"
-msgstr "WebCfg - System: CA Manager"
+msgstr "Web配置- 系统: CA 管理"
 
 #: src/etc/inc/priv.defs.inc:1092
 msgid "Allow access to the 'System: CA Manager' page."
-msgstr "Allow access to the 'System: CA Manager' page."
+msgstr "允许访问 '系统: CA 管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1097
 msgid "WebCfg - System: Certificate Manager"
-msgstr "WebCfg - System: Certificate Manager"
+msgstr "Web配置- 系统: 证书管理"
 
 #: src/etc/inc/priv.defs.inc:1098
 msgid "Allow access to the 'System: Certificate Manager' page."
-msgstr "Allow access to the 'System: Certificate Manager' page."
+msgstr "允许访问 '系统: 证书管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1103
 msgid "WebCfg - System: CRL Manager"
-msgstr "WebCfg - System: CRL管理"
+msgstr "Web配置- 系统: 证书吊销列表管理"
 
 #: src/etc/inc/priv.defs.inc:1104
 msgid "Allow access to the 'System: CRL Manager' page."
-msgstr "Allow access to the 'System: CRL Manager' page."
+msgstr "允许访问 '系统:证书吊销列表管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1109
 msgid "WebCfg - System: Gateway Groups"
-msgstr "WebCfg - System: Gateway Groups"
+msgstr "Web配置- 系统:网关组"
 
 #: src/etc/inc/priv.defs.inc:1110
 msgid "Allow access to the 'System: Gateway Groups' page."
-msgstr "Allow access to the 'System: Gateway Groups' page."
+msgstr "允许访问 '系统: 网关组' 页面"
 
 #: src/etc/inc/priv.defs.inc:1115
 msgid "WebCfg - System: Gateways: Edit Gateway Groups"
-msgstr "WebCfg - System: Gateways: Edit Gateway Groups"
+msgstr "Web配置- 系统: 网关: 编辑网关组"
 
 #: src/etc/inc/priv.defs.inc:1116
 msgid "Allow access to the 'System: Gateways: Edit Gateway Groups' page."
-msgstr "Allow access to the 'System: Gateways: Edit Gateway Groups' page."
+msgstr "允许访问 '系统:网关: 编辑网关组' 页面"
 
 #: src/etc/inc/priv.defs.inc:1121
 msgid "WebCfg - System: Gateways"
-msgstr "WebCfg - System: Gateways"
+msgstr "Web配置- 系统:网关"
 
 #: src/etc/inc/priv.defs.inc:1122
 msgid "Allow access to the 'System: Gateways' page."
-msgstr "Allow access to the 'System: Gateways' page."
+msgstr "允许访问 '系统: 网关' 页面"
 
 #: src/etc/inc/priv.defs.inc:1127
 msgid "WebCfg - System: Gateways: Edit Gateway"
-msgstr "WebCfg - System: Gateways: Edit Gateway"
+msgstr "Web配置- 系统: 网关: 编辑网关"
 
 #: src/etc/inc/priv.defs.inc:1128
 msgid "Allow access to the 'System: Gateways: Edit Gateway' page."
-msgstr "Allow access to the 'System: Gateways: Edit Gateway' page."
+msgstr "允许访问 '系统: 网关: 编辑网关' 页面"
 
 #: src/etc/inc/priv.defs.inc:1133
 msgid "WebCfg - System: Group Manager"
-msgstr "WebCfg - System: Group Manager"
+msgstr "Web配置- 系统: 组管理"
 
 #: src/etc/inc/priv.defs.inc:1134
 msgid "Allow access to the 'System: Group Manager' page."
-msgstr "Allow access to the 'System: Group Manager' page."
+msgstr "允许访问 '系统: 组管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1140
 msgid "WebCfg - System: Group Manager: Add Privileges"
-msgstr "WebCfg - System: Group Manager: Add Privileges"
+msgstr "Web配置- 系统: 组管理:添加权限"
 
 #: src/etc/inc/priv.defs.inc:1141
 msgid "Allow access to the 'System: Group Manager: Add Privileges' page."
-msgstr "Allow access to the 'System: Group Manager: Add Privileges' page."
+msgstr "允许访问 '系统: 组管理:添加权限' 页面"
 
 #: src/etc/inc/priv.defs.inc:1147
 msgid "WebCfg - System: High Availability Sync"
-msgstr "WebCfg - System: High Availability Sync"
+msgstr "Web配置- 系统: 双机备份"
 
 #: src/etc/inc/priv.defs.inc:1148
 msgid "Allow access to the 'System: High Availability Sync' page."
-msgstr "Allow access to the 'System: High Availability Sync' page."
+msgstr "允许访问 '系统: 双机备份' 页面"
 
 #: src/etc/inc/priv.defs.inc:1153
 msgid "WebCfg - System: Static Routes"
-msgstr "WebCfg - System: Static Routes"
+msgstr "Web配置- 系统: 静态路由"
 
 #: src/etc/inc/priv.defs.inc:1154
 msgid "Allow access to the 'System: Static Routes' page."
-msgstr "Allow access to the 'System: Static Routes' page."
+msgstr "允许访问 '系统: 静态路由' 页面"
 
 #: src/etc/inc/priv.defs.inc:1159
 msgid "WebCfg - System: Static Routes: Edit route"
-msgstr "WebCfg - System: Static Routes: Edit route"
+msgstr "Web配置- 系统: 静态路由: 编辑路由"
 
 #: src/etc/inc/priv.defs.inc:1160
 msgid "Allow access to the 'System: Static Routes: Edit route' page."
-msgstr "Allow access to the 'System: Static Routes: Edit route' page."
+msgstr "允许访问 '系统: 静态路由: 编辑路由' 页面"
 
 #: src/etc/inc/priv.defs.inc:1165
 msgid "WebCfg - System: Update: Settings"
-msgstr "WebCfg - System: Update: Settings"
+msgstr "Web配置- 系统: 更新: 设置"
 
 #: src/etc/inc/priv.defs.inc:1166
 msgid "Allow access to the 'System: Update: Settings' page."
-msgstr "Allow access to the 'System: Update: Settings' page."
+msgstr "允许访问 '系统:更新: 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:1171
 msgid "WebCfg - System: User Settings"
-msgstr "WebCfg - System: User Settings"
+msgstr "Web配置- 系统: 用户管理"
 
 #: src/etc/inc/priv.defs.inc:1172
 msgid "Allow access to the 'System: User Settings' page."
-msgstr "Allow access to the 'System: User Settings' page."
+msgstr "允许访问 '系统: 用户管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1177
 msgid "WebCfg - System: User Manager"
-msgstr "WebCfg - System: User Manager"
+msgstr "Web配置- 系统:用户管理"
 
 #: src/etc/inc/priv.defs.inc:1178
 msgid "Allow access to the 'System: User Manager' page."
-msgstr "Allow access to the 'System: User Manager' page."
+msgstr "允许访问 '系统: 用户管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1184
 msgid "WebCfg - System: User Manager: Add Privileges"
-msgstr "WebCfg - System: User Manager: Add Privileges"
+msgstr "Web配置- 系统: 用户管理: 添加权限"
 
 #: src/etc/inc/priv.defs.inc:1185
 msgid "Allow access to the 'System: User Manager: Add Privileges' page."
-msgstr "Allow access to the 'System: User Manager: Add Privileges' page."
+msgstr "允许访问 '系统:用户管理: 添加权限' 页面"
 
 #: src/etc/inc/priv.defs.inc:1191
 msgid "WebCfg - System: User Password Manager"
-msgstr "WebCfg - System: User Password Manager"
+msgstr "Web配置- 系统: 用户密码管理"
 
 #: src/etc/inc/priv.defs.inc:1192
 msgid "Allow access to the 'System: User Password Manager' page."
-msgstr "Allow access to the 'System: User Password Manager' page."
+msgstr "允许访问 '系统: 用户密码管理' 页面"
 
 #: src/etc/inc/priv.defs.inc:1197
 msgid "WebCfg - System: User Manager: Settings"
-msgstr "WebCfg - System: User Manager: Settings"
+msgstr "Web配置- 系统: 用户管理: 设置"
 
 #: src/etc/inc/priv.defs.inc:1198
 msgid "Allow access to the 'System: User Manager: Settings' page."
-msgstr "Allow access to the 'System: User Manager: Settings' page."
+msgstr "允许访问 '系统: 用户管理: 设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:1204
 msgid "WebCfg - Hidden: Upload Configuration"
-msgstr "WebCfg - Hidden: Upload Configuration"
+msgstr "Web配置- 隐藏：上传配置"
 
 #: src/etc/inc/priv.defs.inc:1205
 msgid "Allow access to the 'Hidden: Upload Configuration' page."
-msgstr "Allow access to the 'Hidden: Upload Configuration' page."
+msgstr "允许访问 '隐藏：上传配置' 页面"
 
 #: src/etc/inc/priv.defs.inc:1210
 msgid "WebCfg - VPN: IPsec"
-msgstr "WebCfg - VPN: IPsec"
+msgstr "Web配置- 虚拟网络: IPsec"
 
 #: src/etc/inc/priv.defs.inc:1211
 msgid "Allow access to the 'VPN: IPsec' page."
-msgstr "Allow access to the 'VPN: IPsec' page."
+msgstr "允许访问 '虚拟网络: IPsec' 页面"
 
 #: src/etc/inc/priv.defs.inc:1216
 msgid "WebCfg - VPN: IPsec: Pre-Shared Keys List"
-msgstr "WebCfg - VPN: IPsec: Pre-Shared Keys List"
+msgstr "Web配置- 虚拟网络: IPsec: 预共享密钥列表"
 
 #: src/etc/inc/priv.defs.inc:1217
 msgid "Allow access to the 'VPN: IPsec: Pre-Shared Keys List' page."
-msgstr "Allow access to the 'VPN: IPsec: Pre-Shared Keys List' page."
+msgstr "允许访问 '虚拟网络: IPsec: 预共享密钥列表' 页面"
 
 #: src/etc/inc/priv.defs.inc:1222
 msgid "WebCfg - VPN: IPsec: Edit Pre-Shared Keys"
-msgstr "WebCfg - VPN: IPsec: Edit Pre-Shared Keys"
+msgstr "Web配置- 虚拟网络: IPsec: 编辑预共享密钥"
 
 #: src/etc/inc/priv.defs.inc:1223
 msgid "Allow access to the 'VPN: IPsec: Edit Pre-Shared Keys' page."
-msgstr "Allow access to the 'VPN: IPsec: Edit Pre-Shared Keys' page."
+msgstr "允许访问 '虚拟网络: IPsec: 编辑预共享密钥' 页面"
 
 #: src/etc/inc/priv.defs.inc:1228
 msgid "WebCfg - VPN: IPsec: Mobile"
-msgstr "WebCfg - VPN: IPsec: Mobile"
+msgstr "Web配置- 虚拟网络: IPsec: 移动客户端"
 
 #: src/etc/inc/priv.defs.inc:1229
 msgid "Allow access to the 'VPN: IPsec: Mobile' page."
-msgstr "Allow access to the 'VPN: IPsec: Mobile' page."
+msgstr "允许访问 '虚拟网络: IPsec: 移动客户端' 页面"
 
 #: src/etc/inc/priv.defs.inc:1234
 msgid "WebCfg - VPN: IPsec: Edit Phase 1"
-msgstr "WebCfg - VPN: IPsec: Edit Phase 1"
+msgstr "Web配置- 虚拟网络: IPsec: 编辑 Phase 1"
 
 #: src/etc/inc/priv.defs.inc:1235
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 1' page."
-msgstr "Allow access to the 'VPN: IPsec: Edit Phase 1' page."
+msgstr "允许访问 '虚拟网络: IPsec: 编辑 Phase 1' 页面"
 
 #: src/etc/inc/priv.defs.inc:1240
 msgid "WebCfg - VPN: IPsec: Edit Phase 2"
-msgstr "WebCfg - VPN: IPsec: Edit Phase 2"
+msgstr "Web配置- 虚拟网络: IPsec: 编辑 Phase 2"
 
 #: src/etc/inc/priv.defs.inc:1241
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 2' page."
-msgstr "Allow access to the 'VPN: IPsec: Edit Phase 2' page."
+msgstr "允许访问 '虚拟网络: IPsec: 编辑 Phase 2' 页面"
 
 #: src/etc/inc/priv.defs.inc:1246
 msgid "WebCfg - VPN: IPsec: Settings"
-msgstr "WebCfg - VPN: IPsec: Settings"
+msgstr "Web配置- 虚拟网络: IPsec: 设置"
 
 #: src/etc/inc/priv.defs.inc:1247
 msgid "Allow access to the 'VPN: IPsec: Settings' page."
-msgstr "Allow access to the 'VPN: IPsec: Settings' page."
+msgstr "允许访问 '虚拟网络: IPsec:设置' 页面"
 
 #: src/etc/inc/priv.defs.inc:1252
 msgid "WebCfg - VPN: L2TP"
-msgstr "WebCfg - VPN: L2TP"
+msgstr "Web配置- 虚拟网络: L2TP"
 
 #: src/etc/inc/priv.defs.inc:1253
 msgid "Allow access to the 'VPN: L2TP' page."
-msgstr "Allow access to the 'VPN: L2TP' page."
+msgstr "允许访问 '虚拟网络: L2TP' 页面"
 
 #: src/etc/inc/priv.defs.inc:1258
 msgid "WebCfg - VPN: L2TP: Users"
-msgstr "WebCfg - VPN: L2TP: Users"
+msgstr "Web配置- 虚拟网络: L2TP:用户"
 
 #: src/etc/inc/priv.defs.inc:1259
 msgid "Allow access to the 'VPN: L2TP: Users' page."
-msgstr "Allow access to the 'VPN: L2TP: Users' page."
+msgstr "允许访问 '虚拟网络: L2TP: 用户' 页面"
 
 #: src/etc/inc/priv.defs.inc:1264
 msgid "WebCfg - VPN: L2TP: Users: Edit"
-msgstr "WebCfg - VPN: L2TP: Users: Edit"
+msgstr "Web配置- 虚拟网络: L2TP: 用户: 编辑"
 
 #: src/etc/inc/priv.defs.inc:1265
 msgid "Allow access to the 'VPN: L2TP: Users: Edit' page."
-msgstr "Allow access to the 'VPN: L2TP: Users: Edit' page."
+msgstr "允许访问 '虚拟网络: L2TP: 用户: 编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:1270
 msgid "WebCfg - OpenVPN: Clients"
-msgstr "WebCfg - OpenVPN: Clients"
+msgstr "Web配置- OpenVPN: 客户端"
 
 #: src/etc/inc/priv.defs.inc:1271
 msgid "Allow access to the 'OpenVPN: Clients' page."
-msgstr "Allow access to the 'OpenVPN: Clients' page."
+msgstr "允许访问 'OpenVPN:客户端' 页面"
 
 #: src/etc/inc/priv.defs.inc:1276
 msgid "WebCfg - OpenVPN: Client Specific Override"
-msgstr "WebCfg - OpenVPN: Client Specific Override"
+msgstr "Web配置- OpenVPN: 客户端特定覆盖"
 
 #: src/etc/inc/priv.defs.inc:1277
 msgid "Allow access to the 'OpenVPN: Client Specific Override' page."
-msgstr "Allow access to the 'OpenVPN: Client Specific Override' page."
+msgstr "允许访问 'OpenVPN: 客户端特定覆盖' 页面"
 
 #: src/etc/inc/priv.defs.inc:1282
 msgid "WebCfg - OpenVPN: Servers"
-msgstr "WebCfg - OpenVPN: Servers"
+msgstr "Web配置- OpenVPN: 服务"
 
 #: src/etc/inc/priv.defs.inc:1283
 msgid "Allow access to the 'OpenVPN: Servers' page."
-msgstr "Allow access to the 'OpenVPN: Servers' page."
+msgstr "允许访问 'OpenVPN: 服务' 页面"
 
 #: src/etc/inc/priv.defs.inc:1288
 msgid "WebCfg - pfSense wizard subsystem"
-msgstr "WebCfg - pfSense向导子系统"
+msgstr "Web配置- pfSense向导子系统"
 
 #: src/etc/inc/priv.defs.inc:1289
 msgid "Allow access to the 'pfSense wizard subsystem' page."
-msgstr "Allow access to the 'pfSense wizard subsystem' page."
+msgstr "允许访问 'pfSense向导子系统' 页面"
 
 #: src/etc/inc/priv.defs.inc:1294
 msgid "WebCfg - XMLRPC Library"
-msgstr "WebCfg - XMLRPC Library"
+msgstr "Web配置- XMLRPC 库"
 
 #: src/etc/inc/priv.defs.inc:1295
 msgid "Allow access to the 'XMLRPC Library' page."
-msgstr "Allow access to the 'XMLRPC Library' page."
+msgstr "允许访问 'XMLRPC 库' 页面"
 
 #: src/etc/inc/radius.inc:416
 msgid "Error sending request:"
@@ -7713,7 +7703,7 @@ msgstr "入网门户凭证"
 #: src/usr/local/www/services_dhcp.php:722
 #: src/usr/local/www/services_dhcp_edit.php:396
 msgid "DHCP Server"
-msgstr "DHCP服务器"
+msgstr "DHCP服务"
 
 #: src/usr/local/www/diag_backup.php:471
 #: src/usr/local/www/services_dhcpv6.php:489
@@ -8294,7 +8284,7 @@ msgstr "DNS查找"
 
 #: src/usr/local/www/diag_dns.php:114
 msgid "Created from Diagnostics-> DNS Lookup"
-msgstr "从诊断 - > DNS查找创建"
+msgstr "从系统诊断 - > DNS查找创建"
 
 #: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
@@ -8634,7 +8624,7 @@ msgstr "文件保存成功 "
 
 #: src/usr/local/www/diag_edit.php:107
 msgid "Save / Load a File from the Filesystem"
-msgstr "保存/从文件系统加载文件"
+msgstr "保存/加载文件"
 
 #: src/usr/local/www/diag_edit.php:111
 msgid "Path to file to be edited"
@@ -8978,7 +8968,7 @@ msgstr "排除"
 
 #: src/usr/local/www/diag_packet_capture.php:276
 msgid "Packet Capture Options"
-msgstr "数据包捕获选项"
+msgstr "数据捕获选项"
 
 #: src/usr/local/www/diag_packet_capture.php:280
 #: src/usr/local/www/firewall_nat_1to1_edit.php:458
@@ -9147,7 +9137,7 @@ msgstr "这是在捕获数据包后点击“停止”显示的详细程度。%s�
 
 #: src/usr/local/www/diag_packet_capture.php:365
 msgid "Reverse DNS Lookup"
-msgstr "DNS反向查询"
+msgstr "反向DNS查找"
 
 #: src/usr/local/www/diag_packet_capture.php:368
 #, php-format
@@ -9442,7 +9432,7 @@ msgstr "路由诊断"
 
 #: src/usr/local/www/diag_routes.php:77
 msgid "Routing Table Display Options"
-msgstr "路由表显示选项"
+msgstr "选项"
 
 #: src/usr/local/www/diag_routes.php:81
 msgid "Resolve names"
@@ -9456,7 +9446,7 @@ msgstr "启用名称解析可能会导致查询花费更长时间。 可以通�
 
 #: src/usr/local/www/diag_routes.php:90
 msgid "Rows to display"
-msgstr "要显示的行"
+msgstr "显示行数"
 
 #: src/usr/local/www/diag_routes.php:100
 msgid "Use a regular expression to filter the tables."
@@ -9927,7 +9917,7 @@ msgid ""
 "When checked, traceroute will attempt to perform a PTR lookup to locate "
 "hostnames for hops along the path. This will slow down the process as it has "
 "to wait for DNS replies."
-msgstr "选中时，路由跟踪将尝试执行PTR查找，以查找沿路径跳转的主机名。 这将减慢进程，因为它必须等待DNS回复。"
+msgstr "选中时，跟踪路由将尝试执行PTR查找，以查找沿路径跳转的主机名。 这将减慢进程，因为它必须等待DNS回复。"
 
 #: src/usr/local/www/diag_traceroute.php:161
 msgid "Use ICMP"
@@ -9937,7 +9927,7 @@ msgstr "使用ICMP"
 msgid ""
 "By default, traceroute uses UDP but that may be blocked by some routers. "
 "Check this box to use ICMP instead, which may succeed. "
-msgstr "默认情况下，路由跟踪使用UDP，但可能被一些路由器阻止。 选中此框以使用ICMP协议，这可能会成功。"
+msgstr "默认情况下，跟踪路由使用UDP，但可能被一些路由器阻止。 选中此框以使用ICMP协议，这可能会成功。"
 
 #: src/usr/local/www/easyrule.php:53 src/usr/local/www/easyrule.php:101
 msgid "Invalid action specified."
@@ -13224,7 +13214,7 @@ msgstr "停止(分钟)"
 msgid ""
 "Select the time range for the day(s) selected on the Month(s) above. A full "
 "day is 0:00-23:59."
-msgstr "在上面的月份中选择日期和时间范围。一整天是0：00-23：59。"
+msgstr "在上面选择日期和时间范围。一整天是0:00 - 23:59。"
 
 #: src/usr/local/www/firewall_schedule_edit.php:424
 msgid "Time range description"
@@ -13963,7 +13953,7 @@ msgstr "DHCPv6租约"
 #: src/usr/local/www/head.inc:336 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
-msgstr "重载过滤器"
+msgstr "重置过滤"
 
 #: src/usr/local/www/head.inc:342 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
@@ -17199,7 +17189,7 @@ msgstr "成员(s)"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:297
 msgid "*Tag(s)"
-msgstr ""
+msgstr "*标签"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:321
 msgid "Add Tag"
@@ -24222,7 +24212,7 @@ msgstr "路由到"
 
 #: src/usr/local/www/status_filter_reload.php:63
 msgid "Reload Filter"
-msgstr "重载过滤器"
+msgstr "重置过滤器"
 
 #: src/usr/local/www/status_filter_reload.php:66
 msgid "Force Config Sync"
@@ -24373,7 +24363,7 @@ msgstr "当不可见时清除图表。"
 
 #: src/usr/local/www/status_graph.php:167
 msgid "Keep graphs updated on inactive tab. (increases cpu usage)"
-msgstr "在非活动标签上保持图表更新。 （增加cpu使用）"
+msgstr "在非活动标签上保持图表更新。"
 
 #: src/usr/local/www/status_graph.php:169
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:458
@@ -29386,7 +29376,7 @@ msgstr "设置此选项将强制pfsync将其状态表同步到此IP地址。 默
 
 #: src/usr/local/www/system_hasync.php:152
 msgid "Configuration Synchronization Settings (XMLRPC Sync)"
-msgstr "配置同步设置（XMLRPC同步）"
+msgstr "同步配置（XMLRPC同步）"
 
 #: src/usr/local/www/system_hasync.php:156
 msgid "Synchronize Config to IP"
@@ -29431,7 +29421,7 @@ msgstr "输入用于同步配置远程系统的web配置器密码。%1$s不要�
 
 #: src/usr/local/www/system_hasync.php:180
 msgid "Select options to sync"
-msgstr "选择要同步的选项"
+msgstr "同步项目"
 
 #: src/usr/local/www/system_hasync.php:184
 msgid "Synchronize Users and Groups"
@@ -29807,7 +29797,7 @@ msgstr "继承自 "
 
 #: src/usr/local/www/system_usermanager.php:477
 msgid "Security notice: This user effectively has administrator-level access"
-msgstr "安全通知：此用户具有管理员级访问权限"
+msgstr "安全提示：此用户具有管理员级访问权限。"
 
 #: src/usr/local/www/system_usermanager.php:504
 msgid "CA"
@@ -29949,7 +29939,7 @@ msgid ""
 "The following privileges effectively give the user administrator-level "
 "access  because the user gains access to execute general commands, edit "
 "system files,  modify users, change passwords or similar:"
-msgstr "以下权限实际为用户提供了管理员级访问，因为用户可以访问执行常规命令、编辑系统文件、修改用户、更改密码或类似操作："
+msgstr "以下权限实际为用户提供了管理员级访问，请谨慎添加："
 
 #: src/usr/local/www/system_usermanager_addprivs.php:233
 msgid ""
@@ -30857,7 +30847,7 @@ msgstr "拆分连接"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:890
 msgid "Dead Peer Detection"
-msgstr "死对端检测"
+msgstr "失效对等体检测"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:900
 msgid "Delay between requesting peer acknowledgement."
@@ -32117,7 +32107,7 @@ msgid ""
 "separated by a semicolon. %1$sEXAMPLE: push \"route 10.0.0.0 255.255.255."
 "0\"; "
 msgstr ""
-"输入要为此客户端特定覆盖添加的任何其他选项，以分号分隔。 %1$s例子：push“route 10.0.0.0 255.255.255.0”;"
+"输入要为此客户端特定覆盖添加的任何其他选项，以分号分隔。 %1$s示例：push“route 10.0.0.0 255.255.255.0”;"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:652
 msgid "CSC Overrides"
@@ -32176,7 +32166,7 @@ msgstr "指定的ECDH曲线无效。"
 
 #: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "IPv4 Tunnel network"
-msgstr ""
+msgstr "IPv4 隧道网络"
 
 #: src/usr/local/www/vpn_openvpn_server.php:452
 msgid ""
@@ -32706,7 +32696,7 @@ msgstr "未安装插件。"
 msgid ""
 "Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
 "a>."
-msgstr "已安装插件 <a href=\"pkg_mgr.php\" class=\"alert-link\">这里</a>."
+msgstr "本系统可用插件列表，请点<a href=\"pkg_mgr.php\" class=\"alert-link\">这里</a>。"
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
@@ -32786,7 +32776,7 @@ msgstr "检索移动数据"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
 msgid "There are no configured IPsec Tunnels"
-msgstr "没有配置的IPsec隧道"
+msgstr "没有配置IPsec隧道"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:235
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
@@ -32889,19 +32879,19 @@ msgstr "在仪表板保存图片窗口小部件。"
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:73
 msgid "New picture:"
-msgstr "新图片："
+msgstr "添加图片："
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:33
 msgid "Saved RSS Widget feed via Dashboard."
-msgstr "在仪表板保存RSS部件的信息来源更新接口。"
+msgstr "在仪表板保存RSS部件的信息源更新网址。"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:127
 msgid "Feeds"
-msgstr "信息来源更新接口"
+msgstr "信息源更新网址"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:134
 msgid "# Stories"
-msgstr "# 显示信息条数"
+msgstr "信息条数限制"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:141
 msgid "Widget height"
@@ -33146,7 +33136,7 @@ msgstr "核心关键："
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:245
 msgid "* A proper Thermal Sensor / Module can be configured under"
-msgstr "*可在下配置正确的热传感器/模块"
+msgstr "提示：可在下配置正确的温度传感器模块"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "section"
@@ -33166,7 +33156,7 @@ msgstr "刷新间隔"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:424
 msgid "Inverse"
-msgstr "相反"
+msgstr "倒转"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:441
 msgid "Unit Size"
@@ -33376,7 +33366,7 @@ msgstr "不显示没有过滤器的状态表"
 
 #: src/etc/inc/shaper.inc:799 src/etc/inc/shaper.inc:1407
 msgid "Enable/disable discipline and its children"
-msgstr "启用/禁用"
+msgstr "启用/禁用纪律及其子项"
 
 #: src/etc/inc/shaper.inc:2294
 msgid "Upper Limit"
@@ -33388,7 +33378,7 @@ msgstr "即时"
 
 #: src/etc/inc/shaper.inc:2359
 msgid "Link Share"
-msgstr "共享链接"
+msgstr "链接共享"
 
 #: src/etc/inc/shaper.inc:2805
 msgid "Borrow from other queues when available"
@@ -33396,7 +33386,7 @@ msgstr "从可用的其他队列借用"
 
 #: src/etc/inc/shaper.inc:3823
 msgid "Enable limiter and its children"
-msgstr "启用限制器及其选项"
+msgstr "启用限制器及其子项"
 
 #: src/etc/inc/shaper.inc:4136
 msgid "Enable this queue"
@@ -33450,7 +33440,7 @@ msgstr "健康 "
 
 #: src/usr/local/www/diag_smart.php:237
 msgid "S.M.A.R.T. Capabilities"
-msgstr "S.M.A.R.T. 能力"
+msgstr "SMART性能"
 
 #: src/usr/local/www/diag_smart.php:245
 msgid "Attributes"
@@ -33498,7 +33488,7 @@ msgstr "不要对指定的地址执行一对一的映射"
 #: src/usr/local/www/firewall_nat_npt_edit.php:219
 #: src/usr/local/www/firewall_nat_out_edit.php:562
 msgid "Not"
-msgstr "Not"
+msgstr "倒置"
 
 #: src/usr/local/www/firewall_nat_edit.php:655
 msgid "Disable redirection for traffic matching this rule"
@@ -33508,7 +33498,7 @@ msgstr "对符合此规则的流量禁用重定向"
 #: src/usr/local/www/firewall_nat_edit.php:791
 #: src/usr/local/www/firewall_rules_edit.php:1320
 msgid "Invert match."
-msgstr "倒置"
+msgstr "反转匹配。"
 
 #: src/usr/local/www/firewall_nat_edit.php:888
 msgid "Do not automatically sync to other CARP members"
@@ -33529,7 +33519,7 @@ msgid ""
 "<span class=\"help-block\">This is associated with a NAT rule.<br/>Editing "
 "the interface, protocol, source, or destination of associated filter rules "
 "is not permitted."
-msgstr "<span class=\"help-block\">这与NAT规则相关联。<br/>不允许编辑关联的过滤规则的接口，协议，源或目标。"
+msgstr "<span class=\"help-block\">这与NAT规则相关联。<br/>不允许编辑关联的过滤规则的接口、协议、源或目标。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1447
 msgid "Log packets that are handled by this rule"
@@ -33610,7 +33600,7 @@ msgid ""
 "dhcp6c will send a release to the ISP on exit, some ISPs then release the "
 "allocated address or prefix. This option prevents that signal ever being "
 "sent"
-msgstr "dhcp6c将在退出时向ISP发送一个释放，然后一些ISP释放分配的地址或前缀。 此选项可防止该信号被发送。"
+msgstr "dhcp6c将在退出时向ISP发送一个释放，然后ISP释放分配的地址或前缀。 此选项可防止该信号被发送。"
 
 #: src/usr/local/www/interfaces.php:2201
 msgid "Exchange Information Only"
@@ -33648,7 +33638,7 @@ msgstr "每小时重置（0 ****）"
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
-msgstr "通过删除接口和重新分配保持通用无线配置。"
+msgstr "通过删除接口和重新分配保持常见的无线配置。"
 
 #: src/usr/local/www/interfaces.php:2991
 msgid ""
@@ -33682,7 +33672,7 @@ msgstr "启用802.1X认证"
 msgid ""
 "ECN friendly behavior violates RFC2893. This should be used in mutual "
 "agreement with the peer. "
-msgstr "ECN友好行为违反RFC2893。 这应该在与同行的相互协议中使用。"
+msgstr "ECN友好行为违反RFC2893。 这应该在与对等的相互协议中使用。"
 
 #: src/usr/local/www/interfaces_gif_edit.php:215
 msgid ""
@@ -33700,7 +33690,7 @@ msgstr "通过本地隧道地址为远程内部隧道地址/子网添加明晰�
 
 #: src/usr/local/www/interfaces_ppps_edit.php:718
 msgid "Enable persistent logging of connection uptime. "
-msgstr "启用持续记录连接正常运行时间。"
+msgstr "在正常运行期间启用持久性日志记录。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:736
 msgid "Configure NULL service name"
@@ -33712,15 +33702,15 @@ msgstr "每月（0 0 1 * *）"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:800
 msgid "Weekly (0 0 * * 0)"
-msgstr "每周（0 0 * * 0）"
+msgstr "周（0 0 * * 0）"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:808
 msgid "Daily (0 0 * * *)"
-msgstr "每日（0 0 * * *）"
+msgstr "日（0 0 * * *）"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:816
 msgid "Hourly (0 * * * *)"
-msgstr "每小时（0 * * * *）"
+msgstr "小时（0 * * * *）"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:845
 msgid "Enable Dial-on-Demand mode. "
@@ -33764,12 +33754,12 @@ msgstr "范围可以在下面的输入中指定。 输入范围（2-3）或单�
 #: src/usr/local/www/load_balancer_pool_edit.php:363
 msgid ""
 "Please add a monitor IP address on the monitors tab to use this feature.\""
-msgstr "请在监视器选项卡上添加监视器IP地址以使用此功能。"
+msgstr "请在监视选项卡上添加监视IP地址以使用此功能。"
 
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:210
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:230
 msgid "Please add a pool on the \"Pools\" tab to use this feature. "
-msgstr "请在“池”选项卡上添加池以使用此功能。"
+msgstr "请在“地址池”选项卡上添加池以使用此功能。"
 
 #: src/usr/local/www/pkg_edit.php:1310 src/usr/local/www/pkg_edit.php:1316
 #: src/usr/local/www/pkg_edit.php:1321
@@ -33818,7 +33808,7 @@ msgstr "本地用户管理器/凭证"
 
 #: src/usr/local/www/services_captiveportal.php:710
 msgid "RADIUS Authentication"
-msgstr "RADIUS身份认证 "
+msgstr "RADIUS认证 "
 
 #: src/usr/local/www/services_captiveportal.php:720
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
@@ -33890,11 +33880,11 @@ msgstr "禁用HTTPS转发"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:444
 msgid "Enable the creation, generation and activation of rolls with vouchers"
-msgstr "启用凭证的创建，生成和激活"
+msgstr "启用凭证创建、生成和激活"
 
 #: src/usr/local/www/services_dhcp.php:815
 msgid "Ignore BOOTP queries"
-msgstr "忽略BOOTP（Bootstrap Protocol，引导程序协议）查询。"
+msgstr "忽略BOOTP（Bootstrap Protocol，引导程序协议）查询"
 
 #: src/usr/local/www/services_dhcp.php:822
 msgid "Only the clients defined below will get DHCP leases from this server."
@@ -33935,7 +33925,7 @@ msgstr "强制动态DNS主机名与静态映射的已配置主机名相同"
 
 #: src/usr/local/www/services_dhcp.php:1212
 msgid "Enables network booting"
-msgstr "启用网络引导。"
+msgstr "启用网络引导"
 
 #: src/usr/local/www/services_dhcp.php:1274
 msgid "<div class=\"alert alert-info\"> "
@@ -33961,7 +33951,7 @@ msgstr "在接口上启用DHCP中继 "
 #: src/usr/local/www/services_dhcp_relay.php:164
 #: src/usr/local/www/services_dhcpv6_relay.php:165
 msgid "Append circuit ID and agent ID to requests"
-msgstr "将电路ID和代理ID附加到请求"
+msgstr "将线路ID和代理ID附加到请求"
 
 #: src/usr/local/www/services_dhcpv6.php:583
 msgid "Enable DHCPv6 server on interface "
@@ -33997,15 +33987,15 @@ msgstr "启用DNS转发器 "
 
 #: src/usr/local/www/services_dnsmasq.php:256
 msgid "Register DHCP leases in DNS forwarder"
-msgstr "注册的DHCP DNS转发器租赁 "
+msgstr "在DNS转发器中注册DHCP 租约 "
 
 #: src/usr/local/www/services_dnsmasq.php:268
 msgid "Register DHCP static mappings in DNS forwarder"
-msgstr "在DNS转发器中注册DHCP租约中的主机名 "
+msgstr "在DNS转发器中注册DHCP静态映射 "
 
 #: src/usr/local/www/services_dnsmasq.php:279
 msgid "Resolve DHCP mappings first"
-msgstr "首先解析DHCP的映射 "
+msgstr "先解析DHCP的映射 "
 
 #: src/usr/local/www/services_dnsmasq.php:291
 msgid "Query DNS servers sequentially"
@@ -34042,7 +34032,7 @@ msgstr "强制IPv4解析"
 
 #: src/usr/local/www/services_dyndns_edit.php:350
 msgid "Verify SSL peer"
-msgstr "认证SSL对等体"
+msgstr "验证SSL对等体"
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -34050,7 +34040,7 @@ msgstr "启用NTP统计的RRD图（默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd.php:310
 msgid "Log peer messages (default: disabled)."
-msgstr "日志对等消息（默认值：禁用）。"
+msgstr "日志对等体消息（默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd.php:317
 msgid "Log system messages (default: disabled)."
@@ -34058,15 +34048,15 @@ msgstr "日志系统消息（默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd.php:340
 msgid "Log reference clock statistics (default: disabled)."
-msgstr "参考时钟统计（​​默认值：禁用）"
+msgstr "日志参考时钟统计（​​默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd.php:347
 msgid "Log clock discipline statistics (default: disabled)."
-msgstr "时钟纪律统计（默认值：禁用）"
+msgstr "日志时钟纪律统计（默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd.php:354
 msgid "Log NTP peer statistics (default: disabled)."
-msgstr "NTP对等体统计（默认值：禁用）"
+msgstr "日志NTP对等体统计（默认值：禁用）。"
 
 #: src/usr/local/www/services_ntpd_acls.php:188
 msgid "Enable KOD packets."
@@ -34082,7 +34072,7 @@ msgstr "禁用ntpq和ntpdc查询（noquery）。"
 
 #: src/usr/local/www/services_ntpd_acls.php:209
 msgid "Disable all except ntpq and ntpdc queries (noserve)."
-msgstr "禁用除ntpq和ntpdc查询（noserve）之外的所有内容。"
+msgstr "禁用除ntpq和ntpdc查询之外的所有操作（noserve）。"
 
 #: src/usr/local/www/services_ntpd_acls.php:216
 msgid "Deny packets that attempt a peer association (nopeer)."
@@ -34111,48 +34101,48 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:389
 msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
-msgstr "过程PGRMF。 忽略所有其他NMEA句子。 （默认值：未选中）。"
+msgstr "进程PGRMF。 忽略所有其他NMEA句子。 （默认值：未选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:417
 msgid "Prefer this clock (default: checked)."
-msgstr "优先使用此时钟（默认值：选中）"
+msgstr "首选此时钟（默认值：选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:424
 msgid ""
 "Do not use this clock, display for reference only (default: unchecked)."
-msgstr "不要使用此时钟，仅供参考（默认值：未选中）"
+msgstr "不要使用此时钟，显示仅供参考（默认值：未选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:431
 msgid "Enable PPS signal processing (default: checked)."
-msgstr "启用PPS信号处理（默认值：选中）"
+msgstr "启用PPS信号处理（默认值：选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:438
 #: src/usr/local/www/services_ntpd_pps.php:170
 msgid ""
 "Enable falling edge PPS signal processing (default: unchecked, rising edge)."
-msgstr "启用下降edge PPS信号处理（默认值：未选中，上升沿）"
+msgstr "启用下降edge PPS信号处理（默认值：未选中，上升沿）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:445
 msgid "Enable kernel PPS clock discipline (default: checked)."
-msgstr "启用内核PPS时钟纪律（默认值：选中）"
+msgstr "启用内核PPS时钟纪律（默认值：选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:452
 msgid "Obscure location in timestamp (default: unchecked, unobscured)."
-msgstr "在时间戳中隐藏位置（默认值：未选中，未隐藏）"
+msgstr "在时间戳中隐藏位置（默认值：未选中，未隐藏）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:459
 msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
-msgstr "记录接收到的时间戳的子秒部分（默认值：未选中，未记录）"
+msgstr "记录接收到的时间戳的子秒部分（默认值：未选中，未记录）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
-msgstr "显示扩展的GPS状态（默认值：选中）"
+msgstr "显示扩展的GPS状态（默认值：选中）。"
 
 #: src/usr/local/www/services_ntpd_gps.php:502
 msgid "Auto correct malformed initialization commands. (default: unchecked)."
-msgstr "自动纠正格式不正确的初始化命令。 （默认值：未选中）"
+msgstr "自动纠正格式不正确的初始化命令。 （默认值：未选中）。"
 
 #: src/usr/local/www/services_ntpd_pps.php:128
 msgid ""
@@ -34313,7 +34303,7 @@ msgstr "在DNS查询中使用0x-20编码的随机比特来进行欺骗尝试。"
 
 #: src/usr/local/www/status_logs_common.inc:786
 msgid "These settings override the \"General Logging Options\" settings."
-msgstr "这些设置覆盖“常规记录选项”设置。"
+msgstr "这些设置覆盖“常规日志选项”设置。"
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
@@ -34326,7 +34316,7 @@ msgstr "反向"
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
 msgid "General Logging Options Setting"
-msgstr "常规日志记录选项"
+msgstr "常规日志选项"
 
 #: src/usr/local/www/status_logs_common.inc:854
 msgid "Formatted"
@@ -34345,7 +34335,7 @@ msgstr "从规则集中的默认阻止规则匹配的日志包"
 #: src/usr/local/www/status_logs_common.inc:902
 #: src/usr/local/www/status_logs_settings.php:266
 msgid "Log packets matched from the default pass rules put in the ruleset"
-msgstr "根据默认通过规则匹配的日志包放入规则集"
+msgstr "从规则集中的默认通过规则匹配的日志包"
 
 #: src/usr/local/www/status_logs_common.inc:909
 #: src/usr/local/www/status_logs_settings.php:273
@@ -34501,11 +34491,11 @@ msgstr "禁用所有的数据包过滤"
 msgid ""
 "Disables the PF scrubbing option which can sometimes interfere with NFS "
 "traffic."
-msgstr "禁用防火墙擦除选项，有时可能会干扰NFS通信"
+msgstr "禁用防火墙清除选项，有时可能会干扰NFS通信"
 
 #: src/usr/local/www/system_advanced_firewall.php:502
 msgid "Bypass firewall rules for traffic on the same interface"
-msgstr "绕过同一接口上流量的防火墙规则"
+msgstr "通过同一接口流量的防火墙规则"
 
 #: src/usr/local/www/system_advanced_firewall.php:512
 msgid "Disable all auto-added VPN rules."
@@ -34517,7 +34507,7 @@ msgstr "禁用WAN规则上的应答"
 
 #: src/usr/local/www/system_advanced_firewall.php:529
 msgid "Disable Negate rule on policy routing rules"
-msgstr "禁用对策略路由规则的取消规则"
+msgstr "禁用在策略路由规则上的否定规则"
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
@@ -34527,13 +34517,13 @@ msgstr "在下载别名网址时认证HTTPS证书"
 msgid ""
 "Automatic creation of additional NAT redirect rules from within the internal "
 "networks."
-msgstr "从内部网络自动创建额外的NAT重定向规则"
+msgstr "从内部网络自动创建附加NAT重定向规则。"
 
 #: src/usr/local/www/system_advanced_firewall.php:630
 msgid ""
 "Automatic create outbound NAT rules that direct traffic back out to the same "
 "subnet it originated from."
-msgstr "自动创建出站NAT规则，将流量引导回到源自同一子网的流量"
+msgstr "自动创建出站NAT规则，将流量引导回同一子网。"
 
 #: src/usr/local/www/system_advanced_misc.php:382
 msgid "Enable default gateway switching"
@@ -34586,7 +34576,7 @@ msgstr "禁用硬件TCP分段卸载 "
 
 #: src/usr/local/www/system_advanced_network.php:262
 msgid "Disable hardware large receive offload"
-msgstr "禁用硬件大型接收卸载"
+msgstr "禁用硬件大量接收卸载"
 
 #: src/usr/local/www/system_advanced_network.php:272
 msgid "Suppress ARP messages"
@@ -34694,7 +34684,7 @@ msgstr "pfsync在防火墙之间传输状态插入、更新和删除消息。"
 
 #: src/usr/local/www/system_hasync.php:185
 msgid "User manager users and groups"
-msgstr "用户管理器用户和组"
+msgstr "用户管理用户和组"
 
 #: src/usr/local/www/system_hasync.php:193
 msgid "Authentication servers (e.g. LDAP, RADIUS)"
@@ -34719,7 +34709,7 @@ msgstr "防火墙别名"
 
 #: src/usr/local/www/system_hasync.php:233
 msgid "NAT configuration "
-msgstr "NAT配置。"
+msgstr "NAT配置"
 
 #: src/usr/local/www/system_hasync.php:241
 msgid "IPsec configuration "
@@ -34735,7 +34725,7 @@ msgstr "DHCP服务设置"
 
 #: src/usr/local/www/system_hasync.php:265
 msgid "WoL Server settings "
-msgstr "远程网络唤醒配置"
+msgstr "网络唤醒服务设置"
 
 #: src/usr/local/www/system_hasync.php:273
 msgid "Static Route configuration "
@@ -34771,7 +34761,7 @@ msgstr "禁用此静态路由"
 
 #: src/usr/local/www/system_update_settings.php:170
 msgid "Disable the automatic dashboard auto-update check"
-msgstr "禁用仪表板自动更新检查。"
+msgstr "禁用仪表板的自动更新检查。"
 
 #: src/usr/local/www/system_update_settings.php:182
 msgid "Enable repository/branch sync before reboot"
@@ -34814,7 +34804,7 @@ msgstr "单击以粘贴授权密钥"
 msgid ""
 "<span id=\"ldaptestop\">Testing pfSense LDAP settings... One moment please..."
 ""
-msgstr "<span id =“ldaptestop”>测试pfSense LDAP设置...请稍等..."
+msgstr "<span id=\"ldaptestop\">测试pfSense LDAP设置...请稍等..."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
 msgid "Provide a virtual IP address to clients"
@@ -34842,7 +34832,7 @@ msgstr "为客户端提供默认域名"
 msgid ""
 "Provide a list of split DNS domain names to clients. Enter a space separated "
 "list."
-msgstr "向客户端提供拆分的DNS域名列表。 输入空格分隔列表。"
+msgstr "向客户端提供拆分的DNS域名列表。 输入空格可以分隔列表。"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:608
 #: src/usr/local/www/vpn_openvpn_csc.php:459
@@ -34853,7 +34843,7 @@ msgstr "向客户端提供DNS服务器列表"
 #: src/usr/local/www/vpn_openvpn_csc.php:551
 #: src/usr/local/www/vpn_openvpn_server.php:1253
 msgid "Provide a WINS server list to clients"
-msgstr "向客户提供WINS服务器列表 "
+msgstr "向客户端提供WINS服务器列表 "
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:659
 msgid ""
@@ -34895,7 +34885,7 @@ msgstr "启用此选项可分割具有多个phase 2配置的连接条目。 对�
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:891
 msgid "Enable DPD"
-msgstr "启用DPD "
+msgstr "启用失效对等体检测（Dead peer detection ），用于帮助VPN设备检测存在于隧道另一端的隧道故障。"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:501
 msgid "Disable this phase 2 entry without removing it from the list. "
@@ -35034,7 +35024,7 @@ msgstr "将所选的“压缩”设置推送到连接的客户端。"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1098
 msgid "Allow communication between clients connected to this server"
-msgstr "允许连接到该服务器的客户机之间的通信。"
+msgstr "允许连接到该服务器的客户机之间的通信"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1105
 msgid ""

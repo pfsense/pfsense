@@ -54,9 +54,10 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css">
-	<link rel="stylesheet" href="<?=$cssfile?>" />
+	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/font-awesome.min.css')?>">
+	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable-theme-bootstrap.css')?>">
+	<link rel="stylesheet" href="<?=$cssfile?>?v=<?=filemtime('/usr/local/www/' . $cssfile)?>" />
+
 	<title><?=$tabtitle?></title>
 	<script type="text/javascript">
 	//<![CDATA[

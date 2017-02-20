@@ -70,7 +70,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] || $_POST['force']) {
 	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;

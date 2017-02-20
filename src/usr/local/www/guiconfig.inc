@@ -1056,7 +1056,11 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";
 		echo "\n//<![CDATA[\n";
-		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		if ($usepost == 'usepost') {
+			echo " function tabs_will_go(obj){ var target = obj.value.split(\"?\"); postSubmit(get2post(target[1]),target[0]); }\n";
+		} else {
+			echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		}
 		echo "//]]>\n";
 		echo "</script>";
 	} else {

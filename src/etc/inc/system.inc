@@ -1692,6 +1692,7 @@ function system_ntp_setup_gps($serialport) {
 				if($autospeed) {
 					$saveconfig = ($config['ntpd']['gps']['speed'] == 'autoset');
 					$config['ntpd']['gps']['speed'] = $revspeeds[$baud];
+					$gpsbaud = $baud;
 					if($saveconfig) {
 						write_config(sprintf(gettext('Autoset GPS baud rate to %s'), $baud));
 					}
@@ -1721,8 +1722,7 @@ function system_ntp_setup_gps($serialport) {
 
 	/* Remove old /etc/remote entry if it exists */
 	if (intval(`grep -c "^gps0" /etc/remote`) != 0) {
-		mwexec("sed -n '/gps0/!p' /etc/remote > /etc/remote.new");
-		mwexec('mv /etc/remote.new /etc/remote');
+		mwexec("sed -i '' -n '/gps0/!p' /etc/remote");
 	}
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */

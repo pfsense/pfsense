@@ -136,6 +136,7 @@ $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
+$pglinks = array("", "system_usermanager.php", "@self");
 
 $save_and_test = false;
 

@@ -336,6 +336,7 @@ if ($_POST['save']) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"));
+$pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");

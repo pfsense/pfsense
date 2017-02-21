@@ -83,6 +83,7 @@ if ($_POST['filter']) {
 
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Source Tracking"));
+$pglinks = array("", "diag_dump_states.php", "@self");
 include("head.inc");
 
 $tab_array = array();

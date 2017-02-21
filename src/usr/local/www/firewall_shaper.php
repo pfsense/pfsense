@@ -71,6 +71,7 @@ if ($_GET['reset'] != "") {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Interface"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();

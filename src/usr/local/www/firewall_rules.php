@@ -71,7 +71,6 @@ require_once("shaper.inc");
 $XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
 $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");
 
-$pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 function get_pf_rules($rules, $tracker) {
@@ -354,6 +353,7 @@ foreach ($tab_array as $dtab) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), $bctab);
+$pglinks = array("", "firewall_rules.php", "@self");
 $shortcut_section = "firewall";
 
 include("head.inc");

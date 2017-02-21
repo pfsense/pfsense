@@ -59,6 +59,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"));
+$pglinks = array("", "vpn_l2tp.php", "@self");
 $shortcut_section = "l2tps";
 
 require_once("guiconfig.inc");

@@ -141,6 +141,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Wake-on-LAN"), gettext("Edit"));
+$pglinks = array("", "services_wol.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

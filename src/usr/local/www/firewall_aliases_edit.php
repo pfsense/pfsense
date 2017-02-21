@@ -67,8 +67,6 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
-
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
@@ -93,8 +91,6 @@ if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
 $a_aliases = &$config['aliases']['alias'];
-
-$tab = $_REQUEST['tab'];
 
 if ($_POST) {
 	$origname = $_POST['origname'];
@@ -162,6 +158,21 @@ if (isset($id) && $a_aliases[$id]) {
 		}
 	}
 }
+
+$tab = $_REQUEST['tab'];
+
+if (empty($tab)) {
+	if (preg_match("/url/i", $pconfig['type'])) {
+		$tab = 'url';
+	} else if ($pconfig['type'] == 'host') {
+		$tab = 'ip';
+	} else {
+		$tab = $pconfig['type'];
+	}
+}
+
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Edit"));
+$pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
 if ($_POST) {
 
@@ -643,16 +654,6 @@ $types = array(
 	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)"),
 );
-
-if (empty($tab)) {
-	if (preg_match("/url/i", $pconfig['type'])) {
-		$tab = 'url';
-	} else if ($pconfig['type'] == 'host') {
-		$tab = 'ip';
-	} else {
-		$tab = $pconfig['type'];
-	}
-}
 
 if ($input_errors) {
 	print_input_errors($input_errors);

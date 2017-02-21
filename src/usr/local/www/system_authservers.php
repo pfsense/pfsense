@@ -433,9 +433,11 @@ if ($_POST && $input_errors) {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
+$pglinks = array("", "system_usermanager.php", "system_authservers.php");
 
 if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 $shortcut_section = "authentication";
 include("head.inc");

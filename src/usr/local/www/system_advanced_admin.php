@@ -315,6 +315,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($input_errors) {

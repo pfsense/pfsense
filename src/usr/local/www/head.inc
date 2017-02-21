@@ -414,6 +414,21 @@ if (!$g['disablehelpmenu']) {
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
 
+// User Actions
+$actions_menu = array();
+/* determine if user is local to system */
+$islocal = false;
+foreach ($config['system']['user'] as $user) {
+        if ($user['name'] == $_SESSION['Username']) {
+                $islocal = true;
+        }
+}
+if ($islocal === true) {
+	$actions_menu[] = array(gettext("Change Password"), "/system_usermanager_passwordmg.php");
+}
+$actions_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")");
+$actions_menu = msort(array_merge($actions_menu, return_ext_menu("User Actions")), 0);
+
 $menuclass = "static";
 
 if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
@@ -507,9 +522,10 @@ if (are_notices_pending()) {
 					endif;
 				?>
 					<li class="dropdown">
-						<a href="/index.php?logout" usepost>
-							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
-						</a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+						<i class="fa fa-user" title="<?=gettext("User Actions")?>"></i>
+						<span class="caret"></span>
+					<ul class="dropdown-menu" role="menu"><?=output_menu($actions_menu, $actions_menu['href'], "User Actions");?></ul>
 					</li>
 			</ul>
 		</div>

@@ -1017,6 +1017,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 	}
 
 	/* reinit ipfw rules */
+	mwexec("/sbin/ipfw zone {$cpzoneid} destroy", true);
 	captiveportal_init_rules(true);
 
 	unlock($cpdblck);

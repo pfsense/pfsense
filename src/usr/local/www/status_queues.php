@@ -180,7 +180,13 @@ else: ?>
 				</tbody>
 			</table>
 			<br />
-			<div class="infoblock blockopen">
+			<?php
+			if (isset($config['system']['webgui']['webguihelphidden'])) {
+				echo '<div class="infoblock" style="display: none;">';
+			} else {
+				echo '<div class="infoblock">';
+			}
+			?>
 <?php
 	print_info_box(gettext("Queue graphs take 5 seconds to sample data."), 'info', false);
 ?>

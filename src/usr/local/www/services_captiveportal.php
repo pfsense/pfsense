@@ -167,6 +167,8 @@ if ($a_cp[$cpzone]) {
 	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
+	$pconfig['bypass_android'] = isset($a_cp[$cpzone]['bypass_android']);
+	$pconfig['bypass_ios'] = isset($a_cp[$cpzone]['bypass_ios']);
 	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
 	$pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
@@ -387,6 +389,8 @@ if ($_POST['save']) {
 		} else {
 			unset($newcp['bwdefaultup']);
 		}
+		$newcp['bypass_android'] = $_POST['bypass_android'] ? true : false;
+		$newcp['bypass_ios'] = $_POST['bypass_ios'] ? true : false;
 		$newcp['certref'] = $_POST['certref'];
 		$newcp['nohttpsforwards'] = $_POST['nohttpsforwards'] ? true : false;
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
@@ -600,6 +604,28 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['logoutwin_enable']
 ))->setHelp('If enabled, a popup window will appear when clients are allowed through the captive portal. ' .
 			'This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs.');
+
+$group = new Form_Group('Captive portal detection bypass');
+$group->addClass("bypass");
+
+$group->add(new Form_Checkbox(
+        'bypass_android',
+        null,
+        'Android',
+        $pconfig['bypass_android']
+));
+
+$group->add(new Form_Checkbox(
+        'bypass_ios',
+        null,
+        'iOS',
+        $pconfig['bypass_ios']
+));
+
+$group->setHelp('When captive portal detection bypass is enabled, the users\' devices will not be able to detect the presence of a captive portal ' .
+			'and the users will need to login launching a full-fledged browser instead of using the reduced-function pop-up window.' .
+			'The feature can be enabled independently for iOS and Android devices.');
+$section->add($group);
 
 $section->addInput(new Form_Input(
 	'preauthurl',
@@ -1237,6 +1263,7 @@ events.push(function() {
 		hideCheckbox('peruserbw', hide);
 		hideInput('bwdefaultdn', hide);
 		hideInput('bwdefaultup', hide);
+		hideClass("bypass", hide);
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------

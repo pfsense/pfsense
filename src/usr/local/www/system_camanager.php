@@ -108,7 +108,7 @@ if ($act == "edit") {
 	if (!empty($a_ca[$id]['prv'])) {
 		$pconfig['key'] = base64_decode($a_ca[$id]['prv']);
 	}
-	$pconfig['trusted'] = $a_ca[$id]['trusted'];
+	$pconfig['trusted'] = isset($a_ca[$id]['trusted']);
 }
 
 if ($act == "new") {
@@ -117,7 +117,6 @@ if ($act == "new") {
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['lifetime'] = "3650";
 	$pconfig['dn_commonname'] = "internal-ca";
-	$pconfig['trusted'] = false;
 }
 
 if ($act == "exp") {
@@ -253,11 +252,7 @@ if ($_POST['save']) {
 
 		$ca['descr'] = $pconfig['descr'];
 
-		if (!isset($pconfig['trusted']) || empty($pconfig['trusted'])) {
-			$ca['trusted'] = false;
-		} else {
-			$ca['trusted'] = $pconfig['trusted'];
-		}
+		$ca['trusted'] = isset($pconfig['trusted']);
 
 		if ($act == "edit") {
 			$ca['descr']  = $pconfig['descr'];
@@ -413,7 +408,7 @@ foreach ($a_ca as $i => $ca):
 				<tr>
 					<td><?=$name?></td>
 					<td><i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
-					<td><i class="fa fa-<?= (isset($ca['trusted']) && $ca['trusted']) ? "check" : "times" ; ?>"></i></td>
+					<td><i class="fa fa-<?= (isset($ca['trusted'])) ? "check" : "times" ; ?>"></i></td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>

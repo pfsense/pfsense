@@ -2800,6 +2800,7 @@ function get_locale_list() {
 		"pt_BR" => gettext("Portuguese (Brazil)"),
 		"tr" => gettext("Turkish"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
+		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);
 
 	// If the locales are sorted, the order changes depending on the language selected. If the user accidentally

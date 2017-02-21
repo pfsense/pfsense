@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-17 15:47-0200\n"
+"POT-Creation-Date: 2017-02-20 10:49-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -640,7 +640,7 @@ msgstr ""
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:878
+#: src/etc/inc/config.lib.inc:879
 #, php-format
 msgid "%s made unknown change"
 msgstr ""
@@ -5989,7 +5989,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1139 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1143 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1900 src/usr/local/www/interfaces.php:3223
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -7222,7 +7222,7 @@ msgid "Confirm"
 msgstr ""
 
 #: src/usr/local/www/classes/Form.class.php:38
-#: src/usr/local/www/diag_confbak.php:169 src/usr/local/www/diag_edit.php:122
+#: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
 #: src/usr/local/www/firewall_nat_1to1.php:246
@@ -7265,8 +7265,9 @@ msgstr ""
 #: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_command.php:88
-#: src/usr/local/www/diag_confbak.php:96 src/usr/local/www/diag_defaults.php:41
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dump_states.php:75
+#: src/usr/local/www/diag_confbak.php:101
+#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/diag_dns.php:29
+#: src/usr/local/www/diag_dump_states.php:75
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/diag_gmirror.php:33
 #: src/usr/local/www/diag_halt.php:45
@@ -7449,7 +7450,7 @@ msgstr ""
 msgid "Link Type"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:338 src/usr/local/www/diag_confbak.php:212
+#: src/usr/local/www/diag_arp.php:338 src/usr/local/www/diag_confbak.php:222
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
 #: src/usr/local/www/firewall_nat_1to1.php:152
@@ -7866,8 +7867,9 @@ msgid "All"
 msgstr ""
 
 #: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_backup.php:529
-#: src/usr/local/www/diag_confbak.php:96 src/usr/local/www/diag_confbak.php:105
-#: src/usr/local/www/head.inc:371 src/usr/local/www/head.inc:648
+#: src/usr/local/www/diag_confbak.php:101
+#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:371
+#: src/usr/local/www/head.inc:648
 msgid "Backup & Restore"
 msgstr ""
 
@@ -7879,8 +7881,8 @@ msgstr ""
 msgid "The firewall is now rebooting."
 msgstr ""
 
-#: src/usr/local/www/diag_backup.php:530 src/usr/local/www/diag_confbak.php:96
-#: src/usr/local/www/diag_confbak.php:106
+#: src/usr/local/www/diag_backup.php:530 src/usr/local/www/diag_confbak.php:101
+#: src/usr/local/www/diag_confbak.php:115
 msgid "Config History"
 msgstr ""
 
@@ -8051,24 +8053,28 @@ msgstr ""
 msgid "Example"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:38
+#: src/usr/local/www/diag_confbak.php:34
+msgid "Invalid Backup Count specified"
+msgstr ""
+
+#: src/usr/local/www/diag_confbak.php:43
 msgid "(platform default)"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:41
+#: src/usr/local/www/diag_confbak.php:45
 #, php-format
 msgid "Changed backup revision count to %s"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:48
+#: src/usr/local/www/diag_confbak.php:53
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:48 src/usr/local/www/diag_confbak.php:56
-#: src/usr/local/www/diag_confbak.php:114
-#: src/usr/local/www/diag_confbak.php:222
-#: src/usr/local/www/diag_confbak.php:233
+#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
+#: src/usr/local/www/diag_confbak.php:123
+#: src/usr/local/www/diag_confbak.php:232
+#: src/usr/local/www/diag_confbak.php:243
 #: src/usr/local/www/firewall_nat_edit.php:961
 #: src/usr/local/www/firewall_nat_edit.php:971
 #: src/usr/local/www/firewall_nat_out_edit.php:688
@@ -8078,40 +8084,40 @@ msgstr ""
 msgid "n/j/y H:i:s"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:50
+#: src/usr/local/www/diag_confbak.php:55
 msgid "Unable to revert to the selected configuration."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:56
+#: src/usr/local/www/diag_confbak.php:61
 #, php-format
 msgid "Deleted backup with timestamp %1$s and description \"%2$s\"."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:114
+#: src/usr/local/www/diag_confbak.php:123
 #, php-format
 msgid "Configuration Diff from %1$s to %2$s"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:151
+#: src/usr/local/www/diag_confbak.php:160
 msgid "Configuration Backup Cache Settings"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:155
+#: src/usr/local/www/diag_confbak.php:164
 msgid "Backup Count"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:158
+#: src/usr/local/www/diag_confbak.php:168
 #, php-format
 msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
 "or leave blank for the default value (%s for the current platform)."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:163
+#: src/usr/local/www/diag_confbak.php:173
 msgid "Current space used by backups"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:184
+#: src/usr/local/www/diag_confbak.php:194
 msgid ""
 "To view the differences between an older configuration and a newer "
 "configuration, select the older configuration using the left column of radio "
@@ -8119,19 +8125,19 @@ msgid ""
 "the \"Diff\" button."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:203
-#: src/usr/local/www/diag_confbak.php:205
-#: src/usr/local/www/diag_confbak.php:267
-#: src/usr/local/www/diag_confbak.php:269
+#: src/usr/local/www/diag_confbak.php:213
+#: src/usr/local/www/diag_confbak.php:215
+#: src/usr/local/www/diag_confbak.php:277
+#: src/usr/local/www/diag_confbak.php:279
 #: src/usr/local/www/system_update_settings.php:235
 msgid "Diff"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:208
+#: src/usr/local/www/diag_confbak.php:218
 msgid "Date"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:209 src/usr/local/www/pkg_mgr.php:67
+#: src/usr/local/www/diag_confbak.php:219 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
@@ -8139,21 +8145,21 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:210
+#: src/usr/local/www/diag_confbak.php:220
 #: src/usr/local/www/diag_gmirror.php:303 src/usr/local/www/diag_pftop.php:125
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:211
+#: src/usr/local/www/diag_confbak.php:221
 msgid "Configuration Change"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:226
+#: src/usr/local/www/diag_confbak.php:236
 msgid "Current configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:235
+#: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/pkg_mgr_installed.php:121
 #: src/usr/local/www/status_ipsec.php:119
 #: src/usr/local/www/status_ipsec.php:128
@@ -8171,24 +8177,24 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:257
+#: src/usr/local/www/diag_confbak.php:267
 msgid "Revert config"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:257
+#: src/usr/local/www/diag_confbak.php:267
 msgid ""
 "Confirmation Required to replace the current configuration with this backup."
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:258
+#: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:259
+#: src/usr/local/www/diag_confbak.php:269
 msgid "Delete config"
 msgstr ""
 
-#: src/usr/local/www/diag_confbak.php:276
+#: src/usr/local/www/diag_confbak.php:286
 msgid "No backups found."
 msgstr ""
 
@@ -9919,7 +9925,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:200
 #: src/usr/local/www/firewall_nat_out_edit.php:389
-#: src/usr/local/www/firewall_rules.php:315
+#: src/usr/local/www/firewall_rules.php:314
 #: src/usr/local/www/firewall_rules_edit.php:1089
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule_edit.php:52
@@ -10040,7 +10046,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1.php:128
 #: src/usr/local/www/firewall_nat_npt.php:127
 #: src/usr/local/www/firewall_nat_out.php:214
-#: src/usr/local/www/firewall_rules.php:331
+#: src/usr/local/www/firewall_rules.php:330
 #: src/usr/local/www/firewall_shaper.php:366
 #: src/usr/local/www/firewall_shaper_queues.php:199
 #: src/usr/local/www/firewall_shaper_vinterface.php:366
@@ -10660,7 +10666,7 @@ msgid "NPt"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:216
-#: src/usr/local/www/firewall_rules.php:315
+#: src/usr/local/www/firewall_rules.php:314
 #: src/usr/local/www/firewall_rules_edit.php:1089
 #: src/usr/local/www/head.inc:285
 msgid "Rules"
@@ -11978,13 +11984,13 @@ msgstr ""
 msgid "States details"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:302
+#: src/usr/local/www/firewall_rules.php:301
 #: src/usr/local/www/firewall_rules_edit.php:1094
 #: src/usr/local/www/firewall_rules_edit.php:1257
 msgid "Floating"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules.php:331
+#: src/usr/local/www/firewall_rules.php:330
 msgid "The firewall rule configuration has been changed."
 msgstr ""
 
@@ -13721,11 +13727,11 @@ msgstr ""
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1129
+#: src/usr/local/www/guiconfig.inc:1133
 msgid "listing only first 10k items"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1139
+#: src/usr/local/www/guiconfig.inc:1143
 #: src/usr/local/www/services_dhcp.php:1316
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
@@ -25312,7 +25318,7 @@ msgid "Clock Altitude"
 msgstr ""
 
 #: src/usr/local/www/status_ntpd.php:344
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:198
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:180
 msgid "Satellites"
 msgstr ""
 
@@ -32385,35 +32391,35 @@ msgstr ""
 msgid "Update interval"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:56
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:164
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:151
 msgid "Server Time"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:176
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:158
 msgid "Sync Source"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:179
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:161
 msgid "No active peers available"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:187
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:169
 msgid "Clock location"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:201
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:183
 msgid "in view"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:203
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
 msgid "in use"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:481
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:243
 msgid "Updating..."
 msgstr ""
 

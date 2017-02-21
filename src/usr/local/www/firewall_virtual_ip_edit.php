@@ -445,7 +445,13 @@ $form->add($section);
 print($form);
 ?>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
 			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), 'info', false); ?>
 </div>

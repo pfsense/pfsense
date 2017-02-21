@@ -72,6 +72,7 @@ $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 $pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
+$pconfig['webguihelphidden'] = isset($config['system']['webgui']['webguihelphidden']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -162,6 +163,7 @@ if ($_POST) {
 	}
 
 	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
+	$config['system']['webgui']['webguihelphidden'] = $_POST['webguihelphidden'] ? true:false;
 
 	if ($_POST['webguifixedmenu']) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
@@ -586,6 +588,13 @@ $section->addInput(new Form_Checkbox(
 	'Login hostname',
 	'Show hostname on login banner',
 	$pconfig['loginshowhost']
+));
+
+$section->addInput(new Form_Checkbox(
+	'webguihelphidden',
+	'Default help visibility',
+	'Help sections within the webConfigurator will be hidden by default',
+	$pconfig['webguihelphidden']
 ));
 
 $section->addInput(new Form_Input(

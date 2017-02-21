@@ -630,7 +630,13 @@ endif;
 	</div>
 </form>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+  echo '<div class="infoblock" style="display: none;">';
+} else {
+  echo '<div class="infoblock">';
+}
+?>
 <?php
 	print_info_box(
 		gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules on the "Mappings" section of this page are ignored.') .

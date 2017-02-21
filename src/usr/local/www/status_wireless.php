@@ -204,7 +204,13 @@ display_top_tabs($tab_array);
 		</button>
 	</nav>
 </form>
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 <?php
 print_info_box(sprintf(gettext('%1$sFlags:%2$s A = authorized, E = Extended Rate (802.11g), P = Power saving mode.%3$s' .
 			   '%1$sCapabilities:%2$s E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), ' .

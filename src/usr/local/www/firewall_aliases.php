@@ -283,9 +283,15 @@ endif
 </nav>
 
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".
-	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
+	 That way jQuery (in pfSenseHelpers.js) will automatically take care of the display. -->
 <div>
-	<div class="infoblock">
+	<?php
+	if (isset($config['system']['webgui']['webguihelphidden'])) {
+		echo '<div class="infoblock" style="display: none;">';
+	} else {
+		echo '<div class="infoblock">';
+	}
+	?>
 		<?php print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes.') . '<br />' .
 			gettext('The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.') . '<br />' .

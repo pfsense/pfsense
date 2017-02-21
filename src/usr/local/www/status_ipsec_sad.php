@@ -117,14 +117,10 @@ if (count($sad)) {
 	print_info_box(gettext('No IPsec security associations.'));
 }
 
-if (ipsec_enabled()) {
-?>
-<div class="infoblock">
-<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
 } else {
-?>
-<div class="infoblock blockopen">
-<?php
+	echo '<div class="infoblock">';
 }
 print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>

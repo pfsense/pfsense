@@ -453,7 +453,13 @@ if (!$dfltmsg && $sform)  {
 if ($dfltmsg) {
 ?>
 <div>
-	<div class="infoblock">
+	<?php
+	if (isset($config['system']['webgui']['webguihelphidden'])) {
+		echo '<div class="infoblock" style="display: none;">';
+	} else {
+		echo '<div class="infoblock">';
+	}
+	?>
 		<?php print_info_box($default_shaper_msg, 'info', false); ?>
 	</div>
 </div>

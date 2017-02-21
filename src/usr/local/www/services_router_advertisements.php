@@ -121,7 +121,7 @@ $subnets_help = '<span class="help-block">' .
 
 // THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
 $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (RA) Daemon.') .
-	'<div class="infoblock">' .
+	'<div class="infoblock" style="display: none;">' .
 	'<dl class="dl-horizontal responsive">' .
 	'<dt>' . gettext('Disabled') . 		 '</dt><dd>' . gettext('RADVD will not be enabled on this interface.') . '</dd>' .
 	'<dt>' . gettext('Router Only') . 	 '</dt><dd>' . gettext('Will advertise this router.') . '</dd>' .

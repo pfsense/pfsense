@@ -710,7 +710,7 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('Check this option to allow OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
 				'Encryption Algorithms from those selected in the NCP Algorithms list below.' .
 				'%1$s%2$s%3$s',
-				'<div class="infoblock">',
+				'<div class="infoblock" style="display: none;">',
 				sprint_info_box(gettext('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.') . '<br />' .
 					gettext('When disabled, only the selected Encryption Algorithm is allowedz.'), 'info', false),
 				'</div>');
@@ -741,7 +741,7 @@ if ($act=="new" || $act=="edit"):
 
 	$group->setHelp('The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
 					'%1$s%2$s%3$s',
-					'<div class="infoblock">',
+					'<div class="infoblock" style="display: none;">',
 					sprint_info_box(gettext('For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
 						'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.'), 'info', false),
 					'</div>');

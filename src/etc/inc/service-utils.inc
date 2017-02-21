@@ -702,7 +702,7 @@ function service_control_stop($name, $extras) {
 			}
 			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-			usleep(100000);
+				usleep(100000);
 			}
 			break;
 		default:

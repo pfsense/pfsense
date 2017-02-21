@@ -42,7 +42,7 @@ if ($_POST) {
 
 		if (!empty($_POST['speed'])) {
 			$config['ntpd']['acts']['speed'] = $_POST['speed'];
-		} elseif (isset($config['ntpd']['gps']['speed'])) {
+		} elseif (isset($config['ntpd']['acts']['speed'])) {
 			unset($config['ntpd']['acts']['speed']);
 		}
 		

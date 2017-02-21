@@ -426,7 +426,7 @@ foreach ($config['system']['user'] as $user) {
 if ($islocal === true) {
 	$actions_menu[] = array(gettext("Change Password"), "/system_usermanager_passwordmg.php");
 }
-$actions_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")");
+$actions_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")", "/index.php?logout");
 $actions_menu = msort(array_merge($actions_menu, return_ext_menu("User Actions")), 0);
 
 $menuclass = "static";

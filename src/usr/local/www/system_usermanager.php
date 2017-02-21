@@ -581,7 +581,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<th>&nbsp;</th>
 						<th><?=gettext("Username")?></th>
 						<th><?=gettext("Full name")?></th>
-						<th><?=gettext("Disabled")?></th>
+						<th><?=gettext("Status")?></th>
 						<th><?=gettext("Groups")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
@@ -606,7 +606,7 @@ foreach ($a_user as $i => $userent):
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
+						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>

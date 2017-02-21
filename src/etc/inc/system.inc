@@ -1715,7 +1715,7 @@ function system_ntp_setup_acts($serialport) {
 	}
 
 	/* Add /etc/remote entry in case we need to read from the ACTS with tip */
-	if (intval(`grep -c "^{$acts_shortname}" /etc/remote`) == 0) {
+	if (intval(`/usr/bin/grep -c "^{$acts_shortname}" /etc/remote`) == 0) {
 		@file_put_contents("/etc/remote", "{$acts_shortname}:dv={$serialport}:br#{$actsbaud}:pa=none:\n", FILE_APPEND);
 	}
 

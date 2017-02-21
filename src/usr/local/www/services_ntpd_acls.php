@@ -176,6 +176,7 @@ $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("ACLs"), true, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
+$tab_array[] = array(gettext("ACTS"), false, "services_ntpd_acts.php");
 display_top_tabs($tab_array);
 
 $form = new Form;

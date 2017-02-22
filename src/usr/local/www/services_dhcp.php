@@ -454,6 +454,16 @@ if (isset($_POST['save'])) {
 		$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
 	}
 
+	/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
+	if (!$_POST['enable']) {
+		if (isset($config['dnsmasq']['enable']) && (isset($config['dnsmasq']['regdhcp']) || isset($config['dnsmasq']['regdhcpstatic']) || isset($config['dnsmasq']['dhcpfirst']))) {
+			$input_errors[] = gettext("Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+		}
+		if (isset($config['unbound']['enable']) && (isset($config['unbound']['regdhcp']) || isset($config['unbound']['regdhcpstatic']))) {
+			$input_errors[] = gettext("Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+		}
+	}
+
 	// If nothing is wrong so far, and we have range from and to, then check conditions related to the values of range from and to.
 	if (!$input_errors && $_POST['range_from'] && $_POST['range_to']) {
 		/* make sure the range lies within the current subnet */

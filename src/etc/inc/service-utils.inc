@@ -693,7 +693,7 @@ function service_control_stop($name, $extras) {
 			}
 			break;
 		case 'relayd':
-			mwexec('/bin/pkill relayd');
+			sigkillbyname("relayd", "TERM");
 			break;
 		case 'syslogd':
 			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {

@@ -44,7 +44,7 @@ $cert_types = array(
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (isset($_REQUEST['userid']) && is_numericint(REQUEST['userid'])) {
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
 }
 

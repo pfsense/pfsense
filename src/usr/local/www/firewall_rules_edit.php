@@ -917,7 +917,8 @@ if ($_POST) {
 		} else {
 			unset($filterent['log']);
 		}
-		strncpy($filterent['descr'], $_POST['descr'], 52);
+
+		$filterent['descr'] = trim($_POST['descr']);
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
@@ -1497,7 +1498,9 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference.');
+))->setHelp('A description may be entered here for administrative reference. ' .
+	'A maximum of %s characters will be used in the ruleset and displayed in the firewall log.',
+	user_rule_descr_maxlen());
 
 $btnadv = new Form_Button(
 	'btnadvopts',

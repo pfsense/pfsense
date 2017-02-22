@@ -134,6 +134,8 @@ $icmptypes = array(
 define("ANTILOCKOUT_TRACKER", 10000);
 define("BOGONS_TRACKER", 11000);
 define("RFC1918_TRACKER", 12000);
+define("PFLABEL_MAXLEN", 63);
+define("USER_LABEL_INTRO", "USER_RULE: ");
 
 $tracker = 1000000000;
 $negate_tracker = 10000000;
@@ -151,10 +153,15 @@ function filter_negaterule_tracker() {
         return "tracker {$negate_tracker} ";
 }
 
+function user_rule_descr_maxlen() {
+	return PFLABEL_MAXLEN - strlen(USER_LABEL_INTRO);
+}
+
 function fix_rule_label($descr) {
 	$descr = str_replace('"', '', $descr);
-	if (strlen($descr) > 63) {
-		return substr($descr, 0, 60) . "...";
+	if (strlen($descr) > PFLABEL_MAXLEN) {
+		$dots = "...";
+		return substr($descr, 0, PFLABEL_MAXLEN - strlen($dots)) . $dots;
 	} else {
 		return $descr;
 	}
@@ -2408,7 +2415,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if ($rule['descr'] != "" and $line != "") {
-		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['descr']}") . "\"";
+		$ret['descr'] = "label \"" . fix_rule_label(USER_LABEL_INTRO . "{$rule['descr']}") . "\"";
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";
 	}

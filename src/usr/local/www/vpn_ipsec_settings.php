@@ -172,7 +172,7 @@ if ($_POST['save']) {
 		vpn_ipsec_configure($needsrestart);
 	}
 
-	// The logic value sent by $POST for autoexcludelanaddress is opposite to
+	// The logic value sent by $_POST for autoexcludelanaddress is opposite to
 	// the way it is stored in the config as noshuntlaninterfaces.
 	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
 	// This helps a redrawn UI page after Save to correctly display the most recently entered setting.

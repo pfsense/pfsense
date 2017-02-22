@@ -898,10 +898,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		}
 
 		if (cert_in_use($cert['refid'])) {
-			$cert['descr'] .= " <i>In Use</i>";
+			$cert['descr'] .= " (In Use)";
 		}
 		if (is_cert_revoked($cert)) {
-			$cert['descr'] .= " <b>Revoked</b>";
+			$cert['descr'] .= " (Revoked)";
 		}
 
 		$existCerts[ $cert['refid'] ] = $cert['descr'];

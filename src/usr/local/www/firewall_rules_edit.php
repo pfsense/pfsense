@@ -1094,10 +1094,10 @@ function expand_icmptype($icmptype, $ipprotocol, & $result, $invalid_proto_actio
 		$result = $icmptype;
 	} elseif (is_string($ipprotocol) && array_key_exists($ipprotocol, $icmplookup)) {
 		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
-		$result = implode(',', $icmplookup[$ipprotocol]['icmptypes']);
+		$result = implode(',', array_keys($icmplookup[$ipprotocol]['icmptypes']));
 	} elseif ($invalid_proto_action != 'unset') {
 		// ipprotocol undefined or invalid, force value to whatever we were passed, should be inet4/6/46
-		$result = implode(',', $icmplookup[$invalid_proto_action]['icmptypes']);
+		$result = implode(',', array_keys($icmplookup[$invalid_proto_action]['icmptypes']));
 	} else {
 		// ipprotocol undefined or invalid and  $invalid_proto_action is 'unset'
 		unset($result);

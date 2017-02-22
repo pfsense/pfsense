@@ -1087,17 +1087,17 @@ function build_if_list() {
  * or 'unset' to unset the output. Output is placed in $result, passed by reference so we can unset() if required
 */
 function expand_icmptype($icmptype, $ipprotocol, & $result, $invalid_proto_action = 'unset') {
-	global $icmptypes;
+	global $icmplookup, $icmptypes;
 	// if 1st arg was unset (as could happen historically) then it'll be passed as NULL, so is_string() will suffice
 	if (is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
 		// $icmptype appears to contain specific icmptype(s)
 		$result = $icmptype;
-	} elseif (is_string($ipprotocol) && array_key_exists($ipprotocol, $icmptypes)) {
+	} elseif (is_string($ipprotocol) && array_key_exists($ipprotocol, $icmplookup)) {
 		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
-		$result = implode(',', $icmptypes[$ipprotocol]['icmptypes']);
+		$result = implode(',', $icmplookup[$ipprotocol]['icmptypes']);
 	} elseif ($invalid_proto_action != 'unset') {
 		// ipprotocol undefined or invalid, force value to whatever we were passed, should be inet4/6/46
-		$result = implode(',', $icmptypes[$invalid_proto_action]['icmptypes']);
+		$result = implode(',', $icmplookup[$invalid_proto_action]['icmptypes']);
 	} else {
 		// ipprotocol undefined or invalid and  $invalid_proto_action is 'unset'
 		unset($result);

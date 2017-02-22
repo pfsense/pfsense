@@ -609,12 +609,15 @@ function system_hosts_generate() {
 
 function system_dhcpleases_configure() {
 	global $config, $g;
-
+	if (!function_exists('is_dhcp_server_enabled')) {
+		require_once('pfsense-utils.inc');
+	}
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if ((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
-	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) {
+	if (((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
+	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) &&
+	    (is_dhcp_server_enabled())) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases")) {

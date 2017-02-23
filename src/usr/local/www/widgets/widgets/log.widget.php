@@ -103,6 +103,8 @@ if ($_POST) {
 	exit(0);
 }
 
+$iface_descr_arr = get_configured_interface_with_descr();
+
 $nentries = isset($user_settings['widgets']['filterlogentries']) ? $user_settings['widgets']['filterlogentries'] : 5;
 
 //set variables for log
@@ -111,7 +113,7 @@ $nentriesinterfaces = isset($user_settings['widgets']['filterlogentriesinterface
 
 $filterfieldsarray = array(
 	"act" => $nentriesacts,
-	"interface" => $nentriesinterfaces
+	"interface" => isset($iface_descr_arr[$nentriesinterfaces]) ? $iface_descr_arr[$nentriesinterfaces] : $nentriesinterfaces
 );
 
 $nentriesinterval = isset($user_settings['widgets']['filterlogentriesinterval']) ? $user_settings['widgets']['filterlogentriesinterval'] : 60;
@@ -272,7 +274,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets']['filterlogentries
 			</label>
 			<div class="col-sm-6 checkbox">
 				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
-			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
+			<?php foreach (array("All" => "ALL") + $iface_descr_arr as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>

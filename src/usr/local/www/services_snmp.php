@@ -103,7 +103,11 @@ $pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
 $pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['ucd'] = isset($config['snmpd']['modules']['ucd']);
 $pconfig['regex'] = isset($config['snmpd']['modules']['regex']);
-$pconfig['bindip'] = $config['snmpd']['bindip'];
+if (empty($config['snmpd']['bindip'])) {
+	$pconfig['bindip'] = array();
+} else {
+	$pconfig['bindip'] = explode(",", $config['snmpd']['bindip']);
+}
 
 if ($_POST) {
 
@@ -184,6 +188,9 @@ if ($_POST) {
 		$config['snmpd']['modules']['ucd'] = $_POST['ucd'] ? true : false;
 		$config['snmpd']['modules']['regex'] = $_POST['regex'] ? true : false;
 		$config['snmpd']['bindip'] = $_POST['bindip'];
+		if (is_array($_POST['bindip']) && !empty($_POST['bindip'])) {
+			$config['snmpd']['bindip'] = implode(",", $_POST['bindip']);
+		}
 
 		write_config();
 
@@ -193,17 +200,28 @@ if ($_POST) {
 	}
 }
 
-function build_iplist() {
-	$listenips = get_possible_listen_ips();
-	$iplist = array();
-	$iplist[''] = 'All';
+function build_if_list($selectedifs) {
+	$interface_addresses = get_possible_listen_ips(true);
+	$iflist = array('options' => array(), 'selected' => array());
 
-	foreach ($listenips as $lip => $ldescr) {
-		$iplist[$lip] = $ldescr;
+	$iflist['options']['all']	= gettext("All");
+	if (empty($selectedifs) || empty($selectedifs[0]) || in_array("all", $selectedifs)) {
+		array_push($iflist['selected'], "all");
 	}
-	unset($listenips);
 
-	return($iplist);
+	foreach ($interface_addresses as $laddr => $ldescr) {
+		if (is_ipaddr(get_interface_ip($laddr))) {
+			$iflist['options'][$laddr] = htmlspecialchars($ldescr);
+		}
+
+		if ($selectedifs && in_array($laddr, $selectedifs)) {
+			array_push($iflist['selected'], $laddr);
+		}
+	}
+
+	unset($interface_addresses);
+
+	return($iflist);
 }
 
 $pgtitle = array(gettext("Services"), gettext("SNMP"));
@@ -357,11 +375,14 @@ $form->add($section);
 
 $section = new Form_Section('Interface Binding');
 
+$iflist = build_if_list($pconfig['bindip']);
+
 $section->addInput(new Form_Select(
 	'bindip',
-	'Bind Interface',
-	$pconfig['bindip'],
-	build_iplist()
+	'Bind Interfaces',
+	$iflist['selected'],
+	$iflist['options'],
+	true
 ));
 
 $form->add($section);

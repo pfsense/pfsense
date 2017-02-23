@@ -134,8 +134,7 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
-
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"cryptodev i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
 

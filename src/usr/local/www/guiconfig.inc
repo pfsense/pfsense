@@ -440,7 +440,7 @@ function pprint_port($port) {
 }
 
 function insert_word_breaks_in_domain_name($domain_name) {
-	return str_replace('.', '.<wbr>', $domain_name);
+	return str_replace('.', '<wbr>.', $domain_name);
 }
 
 function firewall_check_for_advanced_options(&$item) {

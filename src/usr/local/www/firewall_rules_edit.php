@@ -2153,6 +2153,19 @@ events.push(function() {
 	});
 
 	$('#ipprotocol').on('change', function() {
+		/* if no icmptypes unselected (=all selected), we keep all selected after a change of IP protocol
+		 * by updating the list of selected icmptypes to reflect all valid types for the new protocol, before
+		 * calling the code that will update the GUI.
+		 * This is valid *even for non-icmp rules*, since user could later edit rule to icmp and would expect
+		 * to see all ICMPtypes for the new IP protocol selected when the control is unhidden.
+		*/
+		if ($('#icmptypes_unselected').length() == 0) {
+			// Select all valid icmptypes for the upcoming new ip proto, before we update GUI
+			selected_icmptypes = [];
+			for (var type in icmptypes[$('#ipprotocol').val()]) {
+				selected_icmptypes.push(type);
+			}
+		}
 		proto_change();
 	});
 

@@ -2678,7 +2678,7 @@ function filter_generate_user_rule($rule) {
 			$aline['ipprotocol'] = "inet6";
 			break;
 		default:
-			$aline['ipprotocol'] = "";
+			$aline['ipprotocol'] = "inet";
 			break;
 	}
 

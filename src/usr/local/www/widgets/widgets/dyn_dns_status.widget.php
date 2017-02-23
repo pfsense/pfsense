@@ -229,7 +229,7 @@ function get_dyndns_service_text($dyndns_type) {
 		<?=htmlspecialchars(get_dyndns_service_text($dyndns['type']));?>
 		</td>
 		<td>
-		<?=htmlspecialchars(get_dyndns_hostname_text($dyndns));?>
+		<?=insert_word_breaks_in_domain_name(htmlspecialchars(get_dyndns_hostname_text($dyndns)));?>
 		</td>
 		<td>
 		<div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div>

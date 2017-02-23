@@ -118,7 +118,7 @@ if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_POS
 	exit;
 }
 
-if ($POST['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
+if ($_POST['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
 	captiveportal_disconnect_all();
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;

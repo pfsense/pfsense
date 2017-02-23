@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("pfsense-utils.inc");
 require_once("system.inc");
 
 if (!is_array($config['unbound'])) {
@@ -151,6 +152,10 @@ if ($_POST['save']) {
 	if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
 		$display_active_interface = $pconfig['active_interface'];
 		$pconfig['active_interface'] = implode(",", $pconfig['active_interface']);
+	}
+
+	if ((isset($pconfig['regdhcp']) || isset($pconfig['regdhcpstatic'])) && !is_dhcp_server_enabled()) {
+		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Resolver.");
 	}
 
 	$display_custom_options = $pconfig['custom_options'];

@@ -39,10 +39,7 @@ function pfSenseHeader($location) {
 	header("Location: " . $location);
 }
 
-$xml = htmlspecialchars($_GET['xml']);
-if ($_POST['xml']) {
-	$xml = htmlspecialchars($_POST['xml']);
-}
+$xml = htmlspecialchars($_REQUEST['xml']);
 
 $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
@@ -67,7 +64,7 @@ if (!isset($pkg['adddeleteeditpagefields'])) {
 	$only_edit = false;
 }
 
-$id = $_GET['id'];
+$id = $_REQUEST['id'];
 if (isset($_POST['id'])) {
 	$id = htmlspecialchars($_POST['id']);
 }
@@ -101,8 +98,8 @@ if ($config['installedpackages'] &&
 
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($_GET['savemsg'] != "") {
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+if ($_REQUEST['savemsg'] != "") {
+	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
 }
 
 if ($pkg['custom_php_command_before_form'] != "") {

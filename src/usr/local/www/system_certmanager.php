@@ -44,7 +44,7 @@ $cert_types = array(
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
-if (isset($_REQUEST['userid']) && is_numericint(REQUEST['userid'])) {
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
 }
 
@@ -860,10 +860,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		}
 
 		if (cert_in_use($cert['refid'])) {
-			$cert['descr'] .= " <i>In Use</i>";
+			$cert['descr'] .= " (In Use)";
 		}
 		if (is_cert_revoked($cert)) {
-			$cert['descr'] .= " <b>Revoked</b>";
+			$cert['descr'] .= " (Revoked)";
 		}
 
 		$existCerts[ $cert['refid'] ] = $cert['descr'];

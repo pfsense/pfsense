@@ -30,15 +30,20 @@
 require_once("guiconfig.inc");
 
 if (isset($_POST['backupcount'])) {
-	if (is_numericint($_POST['backupcount'])) {
-		$config['system']['backupcount'] = $_POST['backupcount'];
-		$changedescr = $config['system']['backupcount'];
-	} else {
-		unset($config['system']['backupcount']);
-		$changedescr = gettext("(platform default)");
+	if (!empty($_POST['backupcount']) && (!is_numericint($_POST['backupcount']) || ($_POST['backupcount'] < 0))) {
+		$input_errors[] = gettext("Invalid Backup Count specified");
 	}
 
-	write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
+	if (!$input_errors) {
+		if (is_numericint($_POST['backupcount'])) {
+			$config['system']['backupcount'] = $_POST['backupcount'];
+			$changedescr = $config['system']['backupcount'];
+		} elseif (empty($_POST['backupcount'])) {
+			unset($config['system']['backupcount']);
+			$changedescr = gettext("(platform default)");
+		}
+		write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
+	}
 }
 
 $confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
@@ -60,7 +65,7 @@ if ($_REQUEST['getcfg'] != "") {
 	$_REQUEST['getcfg'] = basename($_REQUEST['getcfg']);
 	$file = $g['conf_path'] . '/backup/config-' . $_REQUEST['getcfg'] . '.xml';
 
-	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");
+	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_REQUEST['getcfg']}.xml");
 	$exp_data = file_get_contents($file);
 	$exp_size = strlen($exp_data);
 
@@ -96,6 +101,10 @@ unset($confvers['versions']);
 $pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
 $pglinks = array("", "diag_backup.php", "@self");
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
@@ -154,7 +163,8 @@ $section->addInput(new Form_Input(
 	'backupcount',
 	'Backup Count',
 	'number',
-	$config['system']['backupcount']
+	$config['system']['backupcount'],
+	['min' => '0']
 ))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (%s for the current platform).', $g['default_config_backup_count']);
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");

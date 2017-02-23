@@ -292,9 +292,9 @@ if (!$confirmed && !$completed &&
 ?>
 				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
-			elseif ($_GET['from'] && $_GET['to']):
+			elseif ($_REQUEST['from'] && $_REQUEST['to']):
 ?>
-				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_GET['from']), htmlspecialchars($_GET['to']))?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_REQUEST['from']), htmlspecialchars($_REQUEST['to']))?>
 <?php
 			elseif ($firmwareupdate):
 ?>

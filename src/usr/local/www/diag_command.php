@@ -75,16 +75,6 @@ function puts($arg) {
 	echo "$arg\n";
 }
 
-// "Constants".
-
-$Version = '';
-$ScriptName = $REQUEST['SCRIPT_NAME'];
-
-// Get year.
-
-$arrDT = localtime();
-$intYear = $arrDT[5] + 1900;
-
 $pgtitle = array(gettext("Diagnostics"), gettext("Command Prompt"));
 include("head.inc");
 ?>

@@ -34,11 +34,8 @@ if (!is_array($config['dnsupdates']['dnsupdate'])) {
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && isset($a_rfc2136[$id])) {
@@ -66,7 +63,7 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 
 }
 
-if ($_POST) {
+if ($_POST['save'] || $_POST['force']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

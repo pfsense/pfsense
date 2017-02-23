@@ -34,7 +34,7 @@ if ($_POST['action']) {
 	if ($_POST['action'] == "remove") {
 		if (is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_POST['srcip']) . " -K " . escapeshellarg($_POST['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_POST['dstip']}|{$retval}|");
+			echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}

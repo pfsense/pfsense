@@ -39,12 +39,8 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 
 $a_pool = &$config['load_balancer']['lbpool'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
+
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
@@ -62,7 +58,7 @@ $changecount = 0;
 
 $allowed_modes = array("loadbalance", "failover");
 
-if ($_POST) {
+if ($_POST['save']) {
 	$changecount++;
 
 	unset($input_errors);
@@ -451,7 +447,7 @@ $group->add(new Form_Button(
 
 $section->add($group);
 
-if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup') {
+if (isset($id) && $a_pool[$id] && $_REQUEST['act'] != 'dup') {
 	$section->addInput(new Form_Input(
 		'id',
 		null,

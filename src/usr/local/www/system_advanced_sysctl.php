@@ -43,8 +43,8 @@ if (!is_array($config['sysctl']['item'])) {
 $a_tunable = &$config['sysctl']['item'];
 $tunables = system_get_sysctls();
 
-if (isset($_POST['id'])) {
-	$id = htmlspecialchars_decode($_POST['id']);
+if (isset($_REQUEST['id'])) {
+	$id = htmlspecialchars_decode($_REQUEST['id']);
 }
 
 $act = $_REQUEST['act'];

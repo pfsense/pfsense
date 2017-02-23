@@ -234,7 +234,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
-	$parent_ip = get_interface_ip($POST['if']);
+	$parent_ip = get_interface_ip($_POST['if']);
 	if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
 		$parent_sn = get_interface_subnet($_POST['if']);
 		if (!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) {

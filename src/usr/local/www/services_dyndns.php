@@ -35,27 +35,27 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 $a_dyndns = &$config['dyndnses']['dyndns'];
 global $dyndns_split_domain_types;
 
-if ($_GET['act'] == "del") {
-	$conf = $a_dyndns[$_GET['id']];
+if ($_POST['act'] == "del") {
+	$conf = $a_dyndns[$_POST['id']];
 	if (in_array($conf['type'], $dyndns_split_domain_types)) {
 		$hostname = $conf['host'] . "." . $conf['domainname'];
 	} else {
 		$hostname = $conf['host'];
 	}
 	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($hostname) . "{$conf['id']}.cache");
-	unset($a_dyndns[$_GET['id']]);
+	unset($a_dyndns[$_POST['id']]);
 
 	write_config();
 	services_dyndns_configure();
 
 	header("Location: services_dyndns.php");
 	exit;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_dyndns[$_GET['id']]) {
-		if (isset($a_dyndns[$_GET['id']]['enable'])) {
-			unset($a_dyndns[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_dyndns[$_POST['id']]) {
+		if (isset($a_dyndns[$_POST['id']]['enable'])) {
+			unset($a_dyndns[$_POST['id']]['enable']);
 		} else {
-			$a_dyndns[$_GET['id']]['enable'] = true;
+			$a_dyndns[$_POST['id']]['enable'] = true;
 		}
 		write_config();
 		services_dyndns_configure();
@@ -64,6 +64,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
 $pglinks = array("", "@self", "@self");
 include("head.inc");
@@ -188,13 +189,13 @@ foreach ($a_dyndns as $dyndns):
 								<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
-								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php } else {
 ?>
-								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
-								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php

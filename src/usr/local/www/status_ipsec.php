@@ -45,35 +45,35 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-if ($_REQUEST['act'] == 'connect') {
-	if (ctype_digit($_REQUEST['ikeid'])) {
-		$ph1ent = ipsec_get_phase1($_REQUEST['ikeid']);
+if ($_POST['act'] == 'connect') {
+	if (ctype_digit($_POST['ikeid'])) {
+		$ph1ent = ipsec_get_phase1($_POST['ikeid']);
 		if (!empty($ph1ent)) {
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
-				$ph2entries = ipsec_get_number_of_phase2($_REQUEST['ikeid']);
+				$ph2entries = ipsec_get_number_of_phase2($_POST['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
-					$connid = escapeshellarg("con{$_REQUEST['ikeid']}00{$i}");
+					$connid = escapeshellarg("con{$_POST['ikeid']}00{$i}");
 					mwexec_bg("/usr/local/sbin/ipsec down {$connid}");
 					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
-				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']));
-				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_REQUEST['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_POST['ikeid']));
 			}
 		}
 	}
-} else if ($_REQUEST['act'] == 'ikedisconnect') {
-	if (ctype_digit($_REQUEST['ikeid'])) {
-		if (!empty($_REQUEST['ikesaid']) && ctype_digit($_REQUEST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']) . "[" . escapeshellarg($_REQUEST['ikesaid']) . "]");
+} else if ($_POST['act'] == 'ikedisconnect') {
+	if (ctype_digit($_POST['ikeid'])) {
+		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']) . "[" . escapeshellarg($_POST['ikesaid']) . "]");
 		} else {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']));
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']));
 		}
 	}
-} else if ($_REQUEST['act'] == 'childdisconnect') {
-	if (ctype_digit($_REQUEST['ikeid'])) {
-		if (!empty($_REQUEST['ikesaid']) && ctype_digit($_REQUEST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_REQUEST['ikeid']) . "{" . escapeshellarg($_REQUEST['ikesaid']) . "}");
+} else if ($_POST['act'] == 'childdisconnect') {
+	if (ctype_digit($_POST['ikeid'])) {
+		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']) . "{" . escapeshellarg($_POST['ikesaid']) . "}");
 		}
 	}
 }
@@ -227,14 +227,14 @@ function print_ipsec_body() {
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '">');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
 
 			} else {
 
-				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '">');
+				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '" usepost>');
 				print('<i class="fa fa-trash icon-embed-btn"></i>');
 				print(gettext("Disconnect"));
 				print("</a><br />\n");
@@ -348,7 +348,7 @@ function print_ipsec_body() {
 
 					print("</td>\n");
 					print("<td>\n");
-					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $con_id . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '">');
+					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $con_id . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '" usepost>');
 					print('<i class="fa fa-trash icon-embed-btn"></i>');
 					print(gettext("Disconnect"));
 					print("</a>\n");
@@ -448,7 +448,7 @@ function print_ipsec_body() {
 				print(gettext("Disconnected"));
 				print("</td>\n");
 				print("<td>\n");
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success">');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
@@ -566,6 +566,9 @@ events.push(function() {
 					show_childsa(sa_idx);
 				}
 			});
+
+			// re-attached the GET to POST handler
+			interceptGET();
 
 			// and do it again
 			setTimeout(update_table, 5000);

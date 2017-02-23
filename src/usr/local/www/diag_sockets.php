@@ -45,7 +45,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 <br />
 
 <?php
-	if (isset($_GET['showAll'])) {
+	if (isset($_REQUEST['showAll'])) {
 		$internet4 = shell_exec('sockstat -4');
 		$internet6 = shell_exec('sockstat -6');
 	} else {

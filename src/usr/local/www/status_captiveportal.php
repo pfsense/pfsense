@@ -58,7 +58,7 @@ function print_details($cpent) {
 	}
 
 	/* print idle time and time left before disconnection if idle timeout is set */
-	if ($_GET['showact']) {
+	if ($_REQUEST['showact']) {
 		$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
 
 		/* if the user never sent traffic, set last activity time to the login time */
@@ -86,15 +86,12 @@ function print_details($cpent) {
 	printf("%s</a>", htmlspecialchars($cpent[4]));
 }
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower($_REQUEST['zone']);
 
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 if (count($a_cp) == 1) {
@@ -110,10 +107,10 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
 }
 
-if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
-	captiveportal_disconnect_client($_GET['id'], 6);
+if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_POST['id'])) {
+	captiveportal_disconnect_client($_POST['id'], 6);
 	/* keep displaying last activity times */
-	if ($_GET['showact']) {
+	if ($_POST['showact']) {
 		header("Location: status_captiveportal.php?zone={$cpzone}&showact=1");
 	} else {
 		header("Location: status_captiveportal.php?zone={$cpzone}");
@@ -121,7 +118,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	exit;
 }
 
-if ($_GET['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
+if ($_POST['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
 	captiveportal_disconnect_all();
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
@@ -200,7 +197,7 @@ if (!empty($cpzone)): ?>
 					<th><?=gettext("Username")?></th>
 					<th><?=gettext("Session start")?></th>
 <?php
-	if ($_GET['showact']):
+	if ($_REQUEST['showact']):
 ?>
 					<th><?=gettext("Last activity")?></th>
 <?php
@@ -235,7 +232,7 @@ if (!empty($cpzone)): ?>
 ?>
 					<td><?php print_details($cpent); ?></td>
 <?php
-		if ($_GET['showact']):
+		if ($_REQUEST['showact']):
 			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
 			/* if the user never sent traffic, set last activity time to the login time */
 			$last_act = $last_act ? $last_act : $cpent[0];
@@ -254,7 +251,7 @@ if (!empty($cpzone)): ?>
 		endif;
 ?>
 					<td>
-						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_REQUEST['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>" usepost><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
 					</td>
 				</tr>
 <?php
@@ -276,7 +273,7 @@ endif;
 <nav class="action-buttons">
 <?php
 if (!empty($cpzone)):
-	if ($_GET['showact']): ?>
+	if ($_REQUEST['showact']): ?>
 	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
 		<i class="fa fa-minus-circle icon-embed-btn"></i>
 		<?=gettext("Hide Last Activity")?>
@@ -291,7 +288,7 @@ if (!empty($cpzone)):
 <?php
 	endif;
 ?>
-	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>">
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>" usepost>
 		<i class="fa fa-trash icon-embed-btn"></i>
 		<?=gettext("Disconnect All Users")?>
 	</a>

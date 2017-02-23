@@ -48,10 +48,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
+$cpzone = $_REQUEST['zone'];
+
 $cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone)) {
@@ -62,6 +60,7 @@ if (empty($cpzone)) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
@@ -71,6 +70,7 @@ $shortcut_section = "captiveportal";
 if (!is_array($a_cp[$cpzone]['element'])) {
 	$a_cp[$cpzone]['element'] = array();
 }
+
 $a_element =& $a_cp[$cpzone]['element'];
 
 // Calculate total size of all files
@@ -79,7 +79,7 @@ foreach ($a_element as $element) {
 	$total_size += $element['size'];
 }
 
-if ($_POST) {
+if ($_POST['Submit']) {
 	unset($input_errors);
 
 	if (is_uploaded_file($_FILES['new']['tmp_name'])) {
@@ -120,10 +120,10 @@ if ($_POST) {
 			exit;
 		}
 	}
-} else if (($_GET['act'] == "del") && !empty($cpzone) && $a_element[$_GET['id']]) {
-	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_GET['id']]['name']);
-	@unlink("{$g['captiveportal_path']}/" . $a_element[$_GET['id']]['name']);
-	unset($a_element[$_GET['id']]);
+} else if (($_POST['act'] == "del") && !empty($cpzone) && $a_element[$_POST['id']]) {
+	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_POST['id']]['name']);
+	@unlink("{$g['captiveportal_path']}/" . $a_element[$_POST['id']]['name']);
+	unset($a_element[$_POST['id']]);
 	write_config();
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
@@ -144,7 +144,7 @@ $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_voucher
 $tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-if ($_GET['act'] == 'add') {
+if ($_REQUEST['act'] == 'add') {
 
 	$form = new Form(false);
 
@@ -200,7 +200,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 							<td><?=htmlspecialchars($element['name'])?></td>
 							<td><?=format_bytes($element['size'])?></td>
 							<td>
-								<a class="fa fa-trash"	title="<?=gettext("Delete file")?>" href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext("Delete file")?>" href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -229,7 +229,7 @@ endif;
 
 ?>
 	   <nav class="action-buttons">
-<?php if (!$_GET['act'] == 'add'): ?>
+<?php if (!$_REQUEST['act'] == 'add'): ?>
 			<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone?>&amp;act=add" class="btn btn-success">
 		   		<i class="fa fa-plus icon-embed-btn"></i>
 		   		<?=gettext("Add")?>

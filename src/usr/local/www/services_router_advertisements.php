@@ -38,10 +38,7 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-$if = $_GET['if'];
-if ($_POST['if']) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if ($config['installedpackages']['olsrd']) {
@@ -53,7 +50,7 @@ if ($config['installedpackages']['olsrd']) {
 	}
 }
 
-if (!$_GET['if']) {
+if (!$_REQUEST['if']) {
 	$info_msg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
 	    gettext("Only interfaces configured with a static IP will be shown.");
 }
@@ -136,7 +133,7 @@ $ramode_help = gettext('Select the Operating Mode for the Router Advertisement (
 	gettext('It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.') .
 	'</div>';
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 
 	$pconfig = $_POST;

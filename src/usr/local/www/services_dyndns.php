@@ -142,7 +142,7 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	print(htmlspecialchars($hostname));
+	print(insert_word_breaks_in_domain_name(htmlspecialchars($hostname)));
 ?>
 							</td>
 							<td>

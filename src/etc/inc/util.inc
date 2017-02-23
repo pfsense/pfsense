@@ -2613,4 +2613,10 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 
 	return false;
 }
+
+/* Replaces the Mac OS 9 and earlier (\r) and DOS/Windows (\r\n) newlines with the Unix equivalent (\n). */
+function unixnewlines($text) {
+	return preg_replace('/\r\n?/', "\n", $text);
+}
+
 ?>

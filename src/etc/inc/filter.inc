@@ -2619,7 +2619,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $dummynet_name_list;
+	global $dummynet_name_list, $icmptypes;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2784,10 +2784,26 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	if ($rule['protocol'] == "icmp" && $rule['icmptype'] && ($rule['icmptype'] != 'any')) {
-		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
-		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
-		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
+	if ($rule['protocol'] == "icmp" && isset($rule['icmptype']) && strlen($rule['icmptype']) > 0 && $rule['icmptype'] != 'any') {
+		// Rule contains an explicit list of specific icmp subtypes; generate an "icmp*-type" clause **if needed**
+		$selected_icmptypes = explode(',', $rule['icmptype']);
+		if ($rule['ipprotocol'] == 'inet6') {
+			$icmptype_key = 'icmp6-type';
+			$ipproto_to_test = 'valid6';
+		} else {
+			$icmptype_key = 'icmp-type';
+			$ipproto_to_test = 'valid4';
+		}
+		// Is there any ICMP subtype that's valid for the selected ip protocol but *not* listed in the rule?
+		// If so, then rule triggers on some but not all icmptypes, so we must explicitly list those icmptypes.
+		// (Otherwise, it triggers on all valid icmptypes, so we don't actually need to specify any)
+		foreach ($icmptypes as $itype => $idata) {
+			if ($idata[$ipproto_to_test] && !in_array($itype, $selected_icmptypes)) {
+				$icmptype_text = (count($selected_icmptypes) == 1 ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+				$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
+				break;
+			}
+		}
 	}
 	
 	if (!empty($rule['tag'])) {

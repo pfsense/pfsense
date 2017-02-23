@@ -2788,6 +2788,9 @@ function filter_generate_user_rule($rule) {
 		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
 		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
+		if ($rule['ipprotocol'] == '') {
+			$aline['ipprotocol'] = 'inet';
+		}
 	}
 	
 	if (!empty($rule['tag'])) {

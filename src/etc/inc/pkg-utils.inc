@@ -171,7 +171,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	stream_set_blocking($pipes[2], 0);
 
 	/* XXX: should be a tunnable? */
-	$timeout = 300; // seconds
+	$timeout = 60; // seconds
 	$error_log = '';
 
 	do {
@@ -179,7 +179,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		$read = array($pipes[1], $pipes[2]);
 		$except = array();
 
-		$stream = stream_select($read, $write, $except, null, $timeout);
+		$stream = stream_select($read, $write, $except, $timeout);
 		if ($stream !== FALSE && $stream > 0) {
 			foreach ($read as $pipe) {
 				$content = stream_get_contents($pipe);

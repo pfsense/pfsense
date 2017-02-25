@@ -652,6 +652,7 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 			$bindzone = array();
 		}
 		for ($x = 0; $x < sizeof($bindzone); $x++) {
+			$zone = $bindzone[$x];
 			if ($zone['regdhcpstatic'] == 'on') {
 				$reloadbind = true;
 				break;

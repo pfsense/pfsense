@@ -331,11 +331,11 @@ if ($_POST['save']) {
 			foreach ($config['gateways']['gateway_group'] as $gw_group) {
 				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
 					if ($_POST['ipprotocol'] == "inet46") {
-						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+						$input_errors[] = gettext("Gateways cannot be assigned in a rule that applies to both IPv4 and IPv6.");
 					} elseif ($_POST['ipprotocol'] == "inet6") {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+						$input_errors[] = gettext("An IPv4 gateway group cannot be assigned in an IPv6 rule.");
 					} elseif ($_POST['ipprotocol'] == "inet") {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
+						$input_errors[] = gettext("An IPv6 gateway group cannot be assigned in an IPv4 rule.");
 					}
 				}
 			}
@@ -343,13 +343,13 @@ if ($_POST['save']) {
 		if ($iptype = is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
 			// this also implies that  $_POST['gateway'] was set and not empty
 			if ($_POST['ipprotocol'] == "inet46") {
-				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+				$input_errors[] = gettext("Gateways cannot be assigned in a rule that applies to both IPv4 and IPv6.");
 			}
 			if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
-				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
+				$input_errors[] = gettext("An IPv4 gateway cannot be assigned in an IPv6 rule.");
 			}
 			if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
-				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+				$input_errors[] = gettext("An IPv6 gateway cannot be assigned in an IPv4 rule.");
 			}
 		}
 	}
@@ -552,14 +552,14 @@ if ($_POST['save']) {
 		}
 	}
 	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
-		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules.");
+		$input_errors[] = gettext("IPv6 addresses cannot be used in an IPv4 rule.");
 	}
 	if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
-		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
+		$input_errors[] = gettext("IPv4 addresses cannot be used in an IPv6 rule.");
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6.");
+		$input_errors[] = gettext("IPv4 and IPv6 addresses cannot be used in rules that apply to both IPv4 and IPv6.");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -576,7 +576,7 @@ if ($_POST['save']) {
 	}
 	if ($_POST['os']) {
 		if ($_POST['proto'] != "tcp") {
-			$input_errors[] = gettext("OS detection is only valid with protocol TCP.");
+			$input_errors[] = gettext("OS detection is only available for TCP.");
 		}
 		if (!in_array($_POST['os'], $ostypes)) {
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
@@ -606,7 +606,7 @@ if ($_POST['save']) {
 				}
 			}
 			if (count($bad_types) > 0) {
-				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s cannot be used with %s."), implode(';', $bad_types),  $t['name']);
 			}
 		}
 	} else {
@@ -621,10 +621,10 @@ if ($_POST['save']) {
 		}
 	}
 	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
-		$input_errors[] = gettext("Limiters can not be used in Floating rules without choosing a direction.");
+		$input_errors[] = gettext("Limiters cannot be used in Floating rules without choosing a direction.");
 	}
 	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
-		$input_errors[] = gettext("Gateways can not be used in Floating rules without choosing a direction.");
+		$input_errors[] = gettext("Gateways cannot be used in Floating rules without choosing a direction.");
 	}
 	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "") {
 		if ($_POST['dnpipe'] == "") {

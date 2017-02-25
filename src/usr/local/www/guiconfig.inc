@@ -1214,6 +1214,7 @@ var_dump($content);die;
 function set_flash_message($class, $msg) {
 	@session_start();
 	$_SESSION['flash_messages'][$class][] = $msg;
+	@session_commit();
 }
 
 function get_flash_message() {
@@ -1224,6 +1225,7 @@ function get_flash_message() {
 		}
 		unset($_SESSION['flash_messages']);
 	}
+	@session_commit();
 }
 
 /* Retrieve GET or POST Value/State

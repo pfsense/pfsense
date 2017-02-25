@@ -454,11 +454,9 @@ function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 }
 
 function csr_complete(& $cert, $str_crt) {
-
-	// return our request information
-	$cert['crt'] = base64_encode($str_crt);
+	$str_key = base64_decode($cert['prv']);
+	cert_import($cert, $str_crt, $str_key);
 	unset($cert['csr']);
-
 	return true;
 }
 

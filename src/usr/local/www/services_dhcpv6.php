@@ -73,6 +73,7 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 			$bindzone = array();
 		}
 		for ($x = 0; $x < sizeof($bindzone); $x++) {
+			$zone = $bindzone[$x];
 			if ($zone['regdhcpstatic'] == 'on') {
 				$reloadbind = true;
 				break;

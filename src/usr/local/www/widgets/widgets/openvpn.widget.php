@@ -321,6 +321,90 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 ?>
 
+<div id="mainpanel" class="content">
+
+<?php
+	printPanel();
+?>
+</div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+
+<form action="/widgets/widgets/openvpn.widget.php" method="post" class="form-horizontal">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Name")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$servers = openvpn_get_active_servers();
+				$sk_servers = openvpn_get_active_servers("p2p");
+				$clients = openvpn_get_active_clients();
+				$skipovpns = explode(",", $user_settings['widgets']['openvpn']['filter']);
+				$not_all_shown = false;
+				foreach ($servers as $server):
+					if (in_array($server['vpnid'], $skipovpns)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
+?>
+						<tr>
+							<td><?=htmlspecialchars($server['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$server['vpnid']?>" type="checkbox" <?=$check_box?>></td>
+						</tr>
+<?php
+				endforeach;
+				foreach ($sk_servers as $sk_server):
+					if (in_array($sk_server['vpnid'], $skipovpns)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
+?>
+						<tr>
+							<td><?=htmlspecialchars($sk_server['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sk_server['vpnid']?>" type="checkbox" <?=$check_box?>></td>
+						</tr>
+<?php
+				endforeach;
+				foreach ($clients as $client):
+					if (in_array($client['vpnid'], $skipovpns)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
+?>
+						<tr>
+							<td><?=htmlspecialchars($client['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$client['vpnid']?>" type="checkbox" <?=$check_box?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallovpns" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
+		</div>
+	</div>
+</form>
+
 <script type="text/javascript">
 //<![CDATA[
 	function killClient(mport, remipp) {
@@ -364,10 +448,21 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
+		var showAllOvpns = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallovpns").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllOvpns);
 			});
+
+			showAllOvpns = !showAllOvpns;
+
+			if (showAllOvpns) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallovpns").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
@@ -376,67 +471,3 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	});
 //]]>
 </script>
-<div id="mainpanel" class="content">
-
-<?php
-	printPanel();
-?>
-</div>
-<!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
-
-<form action="/widgets/widgets/openvpn.widget.php" method="post" class="form-horizontal">
-    <div class="panel panel-default col-sm-10">
-		<div class="panel-body">
-			<div class="table responsive">
-				<table class="table table-striped table-hover table-condensed">
-					<thead>
-						<tr>
-							<th><?=gettext("Name")?></th>
-							<th><?=gettext("Show")?></th>
-						</tr>
-					</thead>
-					<tbody>
-<?php
-				$servers = openvpn_get_active_servers();
-				$sk_servers = openvpn_get_active_servers("p2p");
-				$clients = openvpn_get_active_clients();
-				$skipovpns = explode(",", $user_settings['widgets']['openvpn']['filter']);
-				foreach ($servers as $server):
-?>
-						<tr>
-							<td><?=htmlspecialchars($server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$server['vpnid']?>" type="checkbox" <?=(!in_array($server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
-						</tr>
-<?php
-				endforeach;
-				foreach ($sk_servers as $sk_server):
-?>
-						<tr>
-							<td><?=htmlspecialchars($sk_server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sk_server['vpnid']?>" type="checkbox" <?=(!in_array($sk_server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
-						</tr>
-<?php
-				endforeach;
-				foreach ($clients as $client):
-?>
-						<tr>
-							<td><?=htmlspecialchars($client['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$client['vpnid']?>" type="checkbox" <?=(!in_array($client['vpnid'], $skipovpns) ? 'checked':'')?>></td>
-						</tr>
-<?php
-				endforeach;
-?>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallovpns" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
-		</div>
-	</div>
-</form>

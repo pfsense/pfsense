@@ -425,11 +425,19 @@ $rows_displayed = false;
 					</thead>
 					<tbody>
 <?php
+				$not_all_shown = false;
+
 				foreach ($sysinfo_items as $sysinfo_item_key => $sysinfo_item_name):
+					if (in_array($sysinfo_item_key, $skipsysinfoitems)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=gettext($sysinfo_item_name)?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sysinfo_item_key?>" type="checkbox" <?=(!in_array($sysinfo_item_key, $skipsysinfoitems) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sysinfo_item_key?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -443,7 +451,7 @@ $rows_displayed = false;
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -486,10 +494,21 @@ function updateMeters() {
 
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
+	var showAllSysInfoItems = <?=$not_all_shown ? 'true' : 'false'?>;
 	$("#showallsysinfoitems").click(function() {
-		$("[id^=show]").each(function() {
-			$(this).prop("checked", true);
+		$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+			$(this).prop("checked", showAllSysInfoItems);
 		});
+
+		showAllSysInfoItems = !showAllSysInfoItems;
+
+		if (showAllSysInfoItems) {
+			text = "<?=gettext('All');?>";
+		} else {
+			text = "<?=gettext('None');?>";
+		}
+
+		$("#showallsysinfoitems").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 	});
 
 	setTimeout('systemStatusGetUpdateStatus()', 4000);

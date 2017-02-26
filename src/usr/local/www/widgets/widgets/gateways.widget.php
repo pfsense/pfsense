@@ -143,12 +143,19 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 				$a_gateways = return_gateways_array();
 				$hiddengateways = explode(",", $user_settings["widgets"]["gateways_widget"]["gatewaysfilter"]);
 				$idx = 0;
+				$not_all_shown = false;
 
 				foreach ($a_gateways as $gname => $gateway):
+					if (in_array($gname, $hiddengateways)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=$gname?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$gname?>" type="checkbox" <?=(!in_array($gname, $hiddengateways) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$gname?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -162,7 +169,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallgateways" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallgateways" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -188,10 +195,21 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
+		var showAllGateways = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallgateways").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllGateways);
 			});
+
+			showAllGateways = !showAllGateways;
+
+			if (showAllGateways) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallgateways").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't

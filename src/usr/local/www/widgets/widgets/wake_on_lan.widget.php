@@ -153,15 +153,22 @@ if (is_array($config['dhcpd'])) {
 					<tbody>
 <?php
 				$skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($wolcomputers as $wolent):
+					if (in_array(get_wolent_key($wolent), $skipwols)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=$wolent['descr']?></td>
 							<td><?=convert_friendly_interface_to_friendly_descr($wolent['interface'])?></td>
 							<td><?=$wolent['mac']?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=(!in_array(get_wolent_key($wolent), $skipwols) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -175,7 +182,7 @@ if (is_array($config['dhcpd'])) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallwols" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallwols" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -183,10 +190,21 @@ if (is_array($config['dhcpd'])) {
 <script>
 //<![CDATA[
 	events.push(function(){
+		var showAllWOLs = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallwols").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllWOLs);
 			});
+
+			showAllWOLs = !showAllWOLs;
+
+			if (showAllWOLs) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallwols").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

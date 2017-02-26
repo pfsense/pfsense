@@ -156,13 +156,20 @@ endif;
 					<tbody>
 <?php
 				$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
+					if (in_array($ifdescr, $skipinterfaces)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=$ifname?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skipinterfaces) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -176,7 +183,7 @@ endif;
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfaces" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallinterfaces" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -184,10 +191,21 @@ endif;
 <script>
 //<![CDATA[
 	events.push(function(){
+		var showAllInterfaces = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallinterfaces").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllInterfaces);
 			});
+
+			showAllInterfaces = !showAllInterfaces;
+
+			if (showAllInterfaces) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallinterfaces").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

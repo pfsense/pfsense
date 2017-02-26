@@ -134,14 +134,22 @@ if (count($services) > 0) {
 					<tbody>
 <?php
 				$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($services as $service):
+					if (in_array($service['dispname'], $skipservices)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
+
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
 ?>
 						<tr>
 							<td><?=$service['dispname']?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=(!in_array($service['dispname'], $skipservices) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 					}
@@ -156,7 +164,7 @@ if (count($services) > 0) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -164,10 +172,21 @@ if (count($services) > 0) {
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
+		var showAllServices = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallservices").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllServices);
 			});
+
+			showAllServices = !showAllServices;
+
+			if (showAllServices) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallservices").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

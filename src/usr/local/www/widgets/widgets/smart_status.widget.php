@@ -137,11 +137,19 @@ if (count($devs) > 0)  {
 					</thead>
 					<tbody>
 <?php
+				$not_all_shown = false;
+
 				foreach ($devs as $dev):
+					if (in_array($dev, $skipsmart)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=htmlspecialchars($dev)?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$dev?>" type="checkbox" <?=(!in_array($dev, $skipsmart) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$dev?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -155,17 +163,28 @@ if (count($devs) > 0)  {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
+		var showAllSmartDrives = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallsmartdrives").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", showAllSmartDrives);
 			});
+
+			showAllSmartDrives = !showAllSmartDrives;
+
+			if (showAllSmartDrives) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallsmartdrives").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

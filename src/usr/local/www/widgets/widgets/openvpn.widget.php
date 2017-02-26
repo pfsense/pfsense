@@ -97,7 +97,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['openvpn']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['openvpn']['filter'] = "";
+		$user_settings['widgets']['openvpn']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved OpenVPN Filter via Dashboard."));
@@ -115,11 +115,14 @@ function printPanel() {
 	$skipovpns = explode(",", $user_settings['widgets']['openvpn']['filter']);
 
 	$opstring = "";
+	$got_ovpn_server = false;
 
 	foreach ($servers as $server):
 		if (in_array($server['vpnid'], $skipovpns)) {
 			continue;
 		}
+
+		$got_ovpn_server = true;
 
 	$opstring .= "<div class=\"widget panel panel-default\">";
 	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . htmlspecialchars($server['name']) . "</h2></div>";
@@ -322,7 +325,15 @@ function printPanel() {
 	endif;
 
 	if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-		print(gettext("No OpenVPN instances defined"));
+		$none_to_display_text = gettext("No OpenVPN instances defined");
+	} else if (!$got_ovpn_server && !$got_sk_server && !$got_ovpn_client) {
+		$none_to_display_text = gettext("All OpenVPN instances are hidden");
+	} else {
+		$none_to_display_text = "";
+	}
+	
+	if (strlen($none_to_display_text) > 0) {
+		print('<table class="table"><tbody><td class="text-center">' . $none_to_display_text . '</td></tbody></table>');
 	}
 }
 

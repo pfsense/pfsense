@@ -72,7 +72,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interfaces']['iffilter'] = "";
+		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
@@ -86,12 +86,14 @@ if ($_POST) {
 		<tbody>
 <?php
 $skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+$interface_is_displayed = false;
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	if (in_array($ifdescr, $skipinterfaces)) {
 		continue;
 	}
 
+	$interface_is_displayed = true;
 	$ifinfo = get_interface_info($ifdescr);
 	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
@@ -159,6 +161,16 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	</tr>
 <?php
 endforeach;
+if (!$interface_is_displayed):
+?>
+	<tr>
+		<td class="text-center">
+			<?=gettext('All interfaces are hidden.');?>
+		</td>
+	</tr>
+
+<?php
+endif;
 ?>
 		</tbody>
 	</table>

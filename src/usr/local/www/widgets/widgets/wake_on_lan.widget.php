@@ -81,7 +81,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['wol']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['wol']['filter'] = "";
+		$user_settings['widgets']['wol']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Wake on LAN Filter via Dashboard."));
@@ -104,11 +104,14 @@ if ($_POST) {
 $skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
 
 if (count($wolcomputers) > 0):
+	$wol_entry_is_displayed = false;
+
 	foreach ($wolcomputers as $wolent):
 		if (in_array(get_wolent_key($wolent), $skipwols)) {
 			continue;
 		}
 
+		$wol_entry_is_displayed = true;
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 		?>
@@ -135,8 +138,15 @@ if (count($wolcomputers) > 0):
 				</a>
 			</td>
 		</tr>
-<?php	endforeach;
-else: ?>
+<?php
+	endforeach;
+	if (!$wol_entry_is_displayed):
+?>
+		<tr><td colspan="4" class="text-center"><?=gettext("All WoL entries are hidden.")?></td></tr>
+<?php
+	endif;
+else:
+?>
 	<tr><td colspan="4" class="text-center"><?= gettext("No saved WoL addresses") ?></td></tr>
 <?php
 endif;

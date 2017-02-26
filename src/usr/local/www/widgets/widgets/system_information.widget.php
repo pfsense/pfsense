@@ -107,7 +107,7 @@ if ($_REQUEST['getupdatestatus']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['system_information']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['system_information']['filter'] = "";
+		$user_settings['widgets']['system_information']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved System Information Widget Filter via Dashboard."));
@@ -123,6 +123,7 @@ $widgetperiod += 1000;
 $filesystems = get_mounted_filesystems();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']['filter']);
+$rows_displayed = false;
 ?>
 
 <div class="table-responsive">
@@ -130,6 +131,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 	<tbody>
 <?php
 	if (!in_array('name', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Name");?></th>
@@ -138,6 +140,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('system', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("System");?></th>
@@ -157,6 +160,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('version', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Version");?></th>
@@ -178,6 +182,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('cpu_type', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
@@ -195,6 +200,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('hwcrypto', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($hwcrypto): ?>
 		<tr>
@@ -205,6 +211,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('uptime', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Uptime");?></th>
@@ -213,6 +220,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('current_datetime', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Current date/time");?></th>
@@ -221,6 +229,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('dns_servers', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
@@ -238,6 +247,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('last_config_change', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($config['revision']): ?>
 		<tr>
@@ -248,6 +258,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('state_table_size', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("State table size");?></th>
@@ -266,6 +277,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('mbuf_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("MBUF Usage");?></th>
@@ -284,6 +296,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('temperature', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if (get_temp() != ""): ?>
 		<tr>
@@ -301,6 +314,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('load_average', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Load average");?></th>
@@ -311,6 +325,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('cpu_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("CPU usage");?></th>
@@ -326,6 +341,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('memory_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Memory usage");?></th>
@@ -342,6 +358,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('swap_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($showswap == true): ?>
 		<tr>
@@ -360,6 +377,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('disk_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 		$diskidx = 0;
 		foreach ($filesystems as $fs):
 ?>
@@ -376,6 +394,15 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 			$diskidx++;
 		endforeach;
+	endif;
+	if (!$rows_displayed):
+?>
+		<tr>
+			<td class="text-center">
+				<?=gettext('All System Information items are hidden.');?>
+			</td>
+		</tr>
+<?php
 	endif;
 ?>
 

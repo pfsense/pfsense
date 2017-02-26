@@ -47,7 +47,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['smart_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['smart_status']['filter'] = "";
+		$user_settings['widgets']['smart_status']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved SMART Status Filter via Dashboard."));
@@ -69,6 +69,7 @@ if ($_POST) {
 	<tbody>
 <?php
 $skipsmart = explode(",", $user_settings['widgets']['smart_status']['filter']);
+$smartdrive_is_displayed = false;
 
 if (count($devs) > 0)  {
 	foreach ($devs as $dev)  { ## for each found drive do
@@ -76,6 +77,7 @@ if (count($devs) > 0)  {
 			continue;
 		}
 
+		$smartdrive_is_displayed = true;
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
@@ -101,6 +103,16 @@ if (count($devs) > 0)  {
 			<td><?=$dev?></td>
 			<td><?=$dev_ident?></td>
 			<td><?=ucfirst($dev_state)?></td>
+		</tr>
+<?php
+	}
+
+	if (!$smartdrive_is_displayed) {
+?>
+		<tr>
+			<td colspan="4" class="text-center">
+				<?=gettext('All SMART drives are hidden.');?>
+			</td>
 		</tr>
 <?php
 	}

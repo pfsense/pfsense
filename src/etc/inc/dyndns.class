@@ -840,14 +840,14 @@
 					$needsIP = TRUE;
 					$isv6 = ($this->_dnsService === 'dreamhost-v6');
 					$server = 'https://api.dreamhost.com/';
-					$post_data['key'] = $this->_dnsUser;
+					$post_data['key'] = $this->_dnsPass;
 					$post_data['unique_id'] = uniqid($this->_dnsHost);
 					$post_data['cmd'] = 'dns-add_record';
 					$post_data['format'] = 'json';
 					$post_data['value'] = $this->_dnsIP;
 					$post_data['record'] = $this->_dnsHost;
 					$post_data['type'] = $isv6 ? 'AAAA' : 'A';
-					$post_data['comment'] = "Updated by pfsense on ".date('c');
+					$post_data['comment'] = "Updated by pfSense:$this->_dnsUser on ".date('c');
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;
@@ -910,7 +910,7 @@
 				case 'dreamhost':
 				case 'dreamhost-v6':
 					$server = 'https://api.dreamhost.com/';
-					$post_data['key'] = $this->_dnsUser;
+					$post_data['key'] = $this->_dnsPass;
 					$post_data['unique_id'] = uniqid($this->_dnsHost);
 					$post_data['cmd'] = 'dns-remove_record';
 					$post_data['format'] = 'json';
@@ -978,7 +978,7 @@
 				case 'dreamhost':
 				case 'dreamhost-v6':
 					$server = 'https://api.dreamhost.com/';
-					$post_data['key'] = $this->_dnsUser;
+					$post_data['key'] = $this->_dnsPass;
 					$post_data['unique_id'] = uniqid($this->_dnsHost);
 					$post_data['cmd'] = 'dns-list_records';
 					$post_data['format'] = 'json';

@@ -49,6 +49,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	);
 
 	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+	$interface_is_displayed = false;
 
 	print("<thead>");
 	print(	"<tr>");
@@ -57,7 +58,12 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		if (!in_array($ifdescr, $skipinterfaces)) {
 			print(		"<th>" . $ifname . "</th>");
+			$interface_is_displayed = true;
 		}
+	}
+
+	if (!$interface_is_displayed) {
+		print("<th>" . gettext('All interfaces are hidden.') . "</th>");
 	}
 
 	print(		"</tr>");
@@ -101,7 +107,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = "";
+		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));

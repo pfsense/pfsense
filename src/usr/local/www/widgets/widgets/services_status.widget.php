@@ -59,7 +59,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['servicestatusfilter'] = "";
+		$user_settings['widgets']['servicestatusfilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
@@ -83,11 +83,14 @@ $skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");
+	$service_is_displayed = false;
 
 	foreach ($services as $service) {
 		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
 			continue;
 		}
+
+		$service_is_displayed = true;
 
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
@@ -103,8 +106,12 @@ if (count($services) > 0) {
 			</tr>
 <?php
 	}
+
+	if (!$service_is_displayed) {
+		echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("All services are hidden") . ". </td></tr>\n";
+	}
 } else {
-	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
+	echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
 }
 ?>
 		</tbody>

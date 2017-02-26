@@ -48,17 +48,17 @@ if ($_POST) {
 		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
 
+	$validNames = array();
+	$a_gateways = return_gateways_array();
+
+	foreach ($a_gateways as $gname => $gateway) {
+		array_push($validNames, $gname);
+	}
+
 	if (is_array($_POST['show'])) {
-		$validNames = array();
-		$a_gateways = return_gateways_array();
-
-		foreach ($a_gateways as $gname => $gateway) {
-			array_push($validNames, $gname);
-		}
-
 		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = "";
+		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated gateways widget settings via dashboard."));
@@ -319,7 +319,7 @@ function compose_table_body_contents() {
 
 	if (!$gw_displayed) {
 		$rtnstr .= '<tr>';
-		$rtnstr .= 	'<td colspan="5">';
+		$rtnstr .= 	'<td colspan="5" class="text-center">';
 		if (count($a_gateways)) {
 			$rtnstr .= gettext('All gateways are hidden.');
 		} else {

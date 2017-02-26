@@ -460,7 +460,7 @@ function updateMeters() {
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
 	$("#showallsysinfoitems").click(function() {
-		$("[id^=show]").each(function() {
+		$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
 			$(this).prop("checked", true);
 		});
 	});

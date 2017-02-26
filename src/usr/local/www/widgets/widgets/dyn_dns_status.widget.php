@@ -279,7 +279,7 @@ function get_dyndns_service_text($dyndns_type) {
 	}
 	events.push(function(){
 		$("#showalldyndns").click(function() {
-			$("[id^=show]").each(function() {
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

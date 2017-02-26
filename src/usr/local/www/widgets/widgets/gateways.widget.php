@@ -189,7 +189,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 	events.push(function(){
 		$("#showallgateways").click(function() {
-			$("[id^=show]").each(function() {
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

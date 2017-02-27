@@ -173,8 +173,8 @@ endforeach;
 <script>
 //<![CDATA[
 	events.push(function(){
-		$("#widget-<?=$widgetkey?> #showallinterfaces").click(function() {
-			$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer #showallinterfaces").click(function() {
+			$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

@@ -647,8 +647,8 @@ events.push(function(){
 });
 <?php endif; ?>
 events.push(function(){
-	$("#widget-<?=$widgetkey?> #showallsysinfoitems").click(function() {
-		$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
+	$("#widget-<?=$widgetkey?>_panel-footer #showallsysinfoitems").click(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 			$(this).prop("checked", true);
 		});
 	});

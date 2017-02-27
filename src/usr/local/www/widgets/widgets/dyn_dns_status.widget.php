@@ -288,8 +288,8 @@ if (!function_exists('get_dyndns_service_text')) {
 		setTimeout('dyndns_getstatus_<?=$widgetkey_nodash?>()', 5*60*1000);
 	}
 	events.push(function(){
-		$("#widget-<?=$widgetkey?> #showalldyndns").click(function() {
-			$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer #showalldyndns").click(function() {
+			$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

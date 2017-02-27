@@ -321,8 +321,8 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 	}
 
 	events.push(function(){
-		$("#widget-<?=$widgetkey?> #showallgateways").click(function() {
-			$("#widget-<?=$widgetkey?> [id^=show]").each(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer #showallgateways").click(function() {
+			$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

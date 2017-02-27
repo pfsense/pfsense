@@ -151,7 +151,7 @@ if (count($devs) > 0)  {
 //<![CDATA[
 	events.push(function(){
 		$("#showallsmartdrives").click(function() {
-			$("[id^=show]").each(function() {
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

@@ -194,6 +194,8 @@ if (isset($id) && $a_filter[$id]) {
 
 	if (isset($a_filter[$id]['ipprotocol'])) {
 		$pconfig['ipprotocol'] = $a_filter[$id]['ipprotocol'];
+	} else {
+		$pconfig['ipprotocol'] = 'inet';
 	}
 
 	if (isset($a_filter[$id]['protocol'])) {

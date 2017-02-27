@@ -474,6 +474,8 @@ function systemStatusGetUpdateStatus() {
 		}
 	});
 }
+
+setTimeout('systemStatusGetUpdateStatus()', 4000);
 <?php endif; ?>
 
 function updateMeters() {
@@ -492,7 +494,6 @@ function updateMeters() {
 
 }
 
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
 	var showAllSysInfoItems = <?=$not_all_shown ? 'true' : 'false'?>;
 	$("#showallsysinfoitems").click(function() {
@@ -510,10 +511,7 @@ events.push(function(){
 
 		$("#showallsysinfoitems").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 	});
-
-	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
-<?php endif; ?>
 
 var update_interval = "<?=$widgetperiod?>";
 

@@ -68,8 +68,6 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-
-	)
 	/* input validation */
 	$reqdfields = explode(" ", "interface mac");
 	$reqdfieldsn = array(gettext("Interface"), gettext("MAC address"));

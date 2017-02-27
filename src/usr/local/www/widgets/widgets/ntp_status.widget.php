@@ -197,27 +197,6 @@ if ($_REQUEST['updateme']) {
 
 <script type="text/javascript">
 //<![CDATA[
-function ntpWidgetUpdateFromServer() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/ntp_status.widget.php',
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		dataType: 'html',
-		success: function(data){
-			console.log(data);
-			$('#ntp_status_widget').html(data);
-		}
-	});
-}
-
-//]]>
-</script>
-
-<script type="text/javascript">
-//<![CDATA[
 var d = new Date('<?=date_format(date_create(), 'c')?>');
 var tz = '<?=date('T');?>';
 

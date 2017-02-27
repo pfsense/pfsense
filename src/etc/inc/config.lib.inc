@@ -443,21 +443,19 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	global $config, $g;
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
-		if (!session_id()) {
-			@session_start();
-		}
+		@phpsession_begin();
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
-				session_commit();
+				phpsession_end(true);
 				return false;
 			}
 		}
+		if (!isset($argc)) {
+			phpsession_end(true);
+		}
 	}
 
-	if (!isset($argc)) {
-		session_commit();
-	}
 
 	if ($backup) {
 		backup_config();

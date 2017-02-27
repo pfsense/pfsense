@@ -25,6 +25,7 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+include_once('phpsessionmanager.inc');
 if (!$nocsrf) {
 	function csrf_startup() {
 		global $config;
@@ -33,6 +34,9 @@ if (!$nocsrf) {
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		phpsession_end(true);
+	}
 }
 
 /* make sure nothing is cached */
@@ -1212,18 +1216,20 @@ var_dump($content);die;
 }
 
 function set_flash_message($class, $msg) {
-	@session_start();
+	@phpsession_begin();
 	$_SESSION['flash_messages'][$class][] = $msg;
+	@phpsession_end(true);
 }
 
 function get_flash_message() {
-	@session_start();
+	@phpsession_begin();
 	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
 		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
 			print_info_box(implode("<br />", $flash_message), $class);
 		}
 		unset($_SESSION['flash_messages']);
 	}
+	@phpsession_end(true);
 }
 
 /* Retrieve GET or POST Value/State

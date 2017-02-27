@@ -45,16 +45,14 @@ if (isset($_POST['save'])) {
 	}
 
 	if (!$input_errors) {
-		if (!session_id()) {
-			session_start();
-		}
+		phpsession_begin();
 		// all values are okay --> saving changes
 
 		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
 		local_user_set_password($userent, $_POST['passwordfld1']);
 		local_user_set($userent);
 		unset($userent);
-		session_commit();
+		phpsession_end(true);
 
 		write_config();
 
@@ -62,9 +60,7 @@ if (isset($_POST['save'])) {
 	}
 }
 
-if (!session_id()) {
-	session_start();
-}
+phpsession_begin();
 
 /* determine if user is not local to system */
 $islocal = false;
@@ -74,7 +70,7 @@ foreach ($config['system']['user'] as $user) {
 	}
 }
 
-session_commit();
+phpsession_end(true);
 
 include("head.inc");
 

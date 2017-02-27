@@ -191,17 +191,16 @@ if ($_POST['act'] == "del") {
 		}
 
 		if (!$input_errors) {
-			if (!session_id()) {
-				session_start();
-			}
+			phpsession_begin();
 			$user = getUserEntry($_SESSION['Username']);
 
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
 				header("Location: firewall_virtual_ip.php");
+				phpsession_end();
 				exit;
 			}
+			phpsession_end();
 
-			session_commit();
 
 			// Special case since every proxyarp vip is handled by the same daemon.
 			if ($a_vip[$_POST['id']]['mode'] == "proxyarp") {

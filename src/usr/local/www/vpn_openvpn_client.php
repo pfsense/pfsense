@@ -960,8 +960,10 @@ events.push(function() {
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
-				hideLabel('Peer Certificate Revocation list', true);
+				hideLabel('Peer Certificate Revocation list', false);
+				hideInput('crlref', false);
 				hideInput('topology', false);
+				hideCheckbox('route_no_pull', false);
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
@@ -970,8 +972,10 @@ events.push(function() {
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
 				hideInput('shared_key', false);
-				hideLabel('Peer Certificate Revocation list', false);
+				hideLabel('Peer Certificate Revocation list', true);
+				hideInput('crlref', true);
 				hideInput('topology', true);
+				hideCheckbox('route_no_pull', true);
 				break;
 		}
 

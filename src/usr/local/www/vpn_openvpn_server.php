@@ -1434,6 +1434,7 @@ events.push(function() {
 				hideInput('shared_key', false);
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
+				hideCheckbox('duplicate_cn', false);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1447,6 +1448,7 @@ events.push(function() {
 				hideInput('shared_key', true);
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
+				hideCheckbox('duplicate_cn', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1465,6 +1467,7 @@ events.push(function() {
 				hideInput('shared_key', false);
 				hideInput('topology', true);
 				hideCheckbox('compression_push', true);
+				hideCheckbox('duplicate_cn', true);
 			break;
 		}
 
@@ -1488,7 +1491,7 @@ events.push(function() {
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
-				hideCheckbox('client2client', true);
+				hideCheckbox('client2client', false);
 			break;
 			case "server_user":
 			case "server_tls_user":

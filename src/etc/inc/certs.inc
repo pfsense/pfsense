@@ -290,7 +290,7 @@ function ca_trustedcerts_generate() {
 
 	safe_mkdir("{$g['etc_path']}/ssl/certs");
 	/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
-	array_map('unlink', array_filter('is_file',glob("{$g['etc_path']}/ssl/certs/*")));
+	array_map('unlink', array_filter(glob("{$g['etc_path']}/ssl/certs/*"),function($x) { return is_file($x) && !is_link($x); }));
 
 	if (is_array($config['ca'])) {
 		foreach ($config['ca'] as & $ca) {

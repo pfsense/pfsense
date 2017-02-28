@@ -72,8 +72,28 @@ function fixup_host($value, $position) {
 		return "{$andor}host {$not}" . $host;
 	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
-	} elseif (is_macaddr($host)) {
+	} elseif (is_macaddr($host, false)) {
 		return "{$andor}ether host {$not}" . $host;
+	} elseif (is_macaddr($host, true)) {
+		/* Try to match a partial MAC address. tcpdump only allows
+		 * matching 1, 2, or 4 byte chunks so enforce that limit
+		 */
+		$searchmac = "0x";
+		$partcount = 0;
+		/* is_macaddr will fail a partial match that has empty sections
+		 * but sections may only have one digit (leading 0) so add a
+		 * left 0 pad.
+		 */
+		foreach (explode(':', $host) as $mp) {
+			$searchmac .= str_pad($mp, 2, "0", STR_PAD_LEFT);
+			$partcount++;
+		}
+		if (!in_array($partcount, array(1, 2, 4))) {
+			return "";
+		}
+		$eq = has_not($value) ? "!=" : "==";
+		// ether[0:2] == 0x0090 or ether[6:2] == 0x0090
+		return "{$andor} ( ether[0:{$partcount}] {$eq} {$searchmac} or ether[6:{$partcount}] {$eq} {$searchmac} )";
 	} else {
 		return "";
 	}
@@ -159,8 +179,16 @@ if ($_POST) {
 		}
 
 		foreach ($hosts as $h) {
-			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h)) && !is_macaddr(strip_host_logic($h))) {
+			$h = strip_host_logic($h);
+			if (!is_subnet($h) && !is_ipaddr($h) && !is_macaddr($h, true)) {
 				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
+			}
+			/* Check length of partial MAC */
+			if (!is_macaddr($h, false) && is_macaddr($h, true)) {
+				$mac_parts = explode(':', $h);
+				if (!in_array(count($mac_parts), array(1, 2, 4))) {
+					$input_errors[] = gettext("Partial MAC addresses can only be matched using 1, 2, or 4 MAC segments (bytes).");
+				}
 			}
 		}
 	}
@@ -316,9 +344,10 @@ $section->addInput(new Form_Input(
 	'Host Address',
 	'text',
 	$host
-))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.%1$s' .
+))->setHelp('This value is either the Source or Destination IP address, subnet in CIDR notation, or MAC address.%1$s' .
 			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
 			'Separating with a pipe ("|") performs a boolean "OR".%1$s' .
+			'MAC addresses must be entered in colon-separated format, such as xx:xx:xx:xx:xx:xx or a partial address consisting of one (xx), two (xx:xx), or four (xx:xx:xx:xx) segments.%1$s' .
 			'If this field is left blank, all packets on the specified interface will be captured.',
 			'<br />');
 

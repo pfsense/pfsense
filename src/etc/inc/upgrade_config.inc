@@ -5147,4 +5147,14 @@ function upgrade_160_to_161() {
 	}
 }
 
+/* Previous versions of pfSense had cryptodev built into the kernel.
+ * To retain the expected behavior on upgrade, load the cryptodev
+ * module for users that did not choose a module.
+ */
+function upgrade_161_to_162() {
+	global $config;
+	if (empty($config['system']['crypto_hardware'])) {
+		$config['system']['crypto_hardware'] = "cryptodev";
+	}
+}
 ?>

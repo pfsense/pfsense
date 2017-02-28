@@ -1821,6 +1821,7 @@ function get_curl_handle($url, $connect_timeout = 5, $timeout = 0, $verify_ssl =
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	curl_setopt($ch, CURLOPT_CAPATH, "{$g['etc_path']}/ssl/certs");
 	curl_setopt($ch, CURLOPT_VERBOSE, $verbose);
 
 	if (!isset($config['system']['do_not_send_host_uuid'])) {

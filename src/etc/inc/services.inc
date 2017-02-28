@@ -23,6 +23,8 @@
  * limitations under the License.
  */
 
+require_once('pfsense-utils.inc');
+
 define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
@@ -2032,12 +2034,8 @@ function dyndnsCheckIP($int) {
 		}
 
 		$hosttocheck = $url;
-		$ip_ch = curl_init($hosttocheck);
-		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
+		$ip_ch = get_curl_handle($hosttocheck, 30, 120, $verifysslpeer);
 		curl_setopt($ip_ch, CURLOPT_INTERFACE, 'host!' . $ip_address);
-		curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
-		curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
 		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");

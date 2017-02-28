@@ -1810,24 +1810,19 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
-function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 5, $timeout = 0) {
+function get_curl_handle($url, $connect_timeout = 5, $timeout = 0, $verify_ssl = true, $follow_location = true, $verbose = false) {
 	global $config, $g;
-
-	$fp = fopen($destination, "wb");
-
-	if (!$fp) {
-		return false;
-	}
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $follow_location);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
-	curl_setopt($ch, CURLOPT_FILE, $fp);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_VERBOSE, $verbose);
+
 	if (!isset($config['system']['do_not_send_host_uuid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
 	} else {
@@ -1844,6 +1839,22 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
 		}
 	}
+
+	return $ch;
+}
+
+function download_file($url, $destination, $verify_ssl = true, $connect_timeout = 5, $timeout = 0) {
+	global $config, $g;
+
+	$fp = fopen($destination, "wb");
+
+	if (!$fp) {
+		return false;
+	}
+
+	$ch = get_curl_handle($url);
+	curl_setopt($ch, CURLOPT_FILE, $fp);
+	curl_setopt($ch, CURLOPT_HEADER, false);
 
 	@curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -1874,32 +1885,10 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	 *      Originally by Author: Keyvan Minoukadeh
 	 *      Modified by Scott Ullrich to return Content-Length size
 	 */
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	$ch = get_curl_handle($url);
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
-	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	if (!isset($config['system']['do_not_send_host_uuid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
-	} else {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
-	}
-
-	if (!empty($config['system']['proxyurl'])) {
-		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
-		if (!empty($config['system']['proxyport'])) {
-			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
-		}
-		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
-			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
-		}
-	}
+	curl_setopt($ch, CURLOPT_NOPROGRESS, true);
 
 	@curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

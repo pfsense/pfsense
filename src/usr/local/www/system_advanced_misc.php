@@ -73,7 +73,9 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 }
 
 $crypto_modules = array(
-	'aesni' => gettext("AES-NI CPU-based Acceleration"));
+	'aesni' => gettext("AES-NI CPU-based Acceleration"),
+	'cryptodev' => gettext("BSD Crypto Device (cryptodev)")
+);
 
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
@@ -443,15 +445,12 @@ $section->addInput(new Form_Select(
 	'Cryptographic Hardware',
 	$pconfig['crypto_hardware'],
 	['' => gettext('None')] + $crypto_modules
-))->setHelp('A cryptographic '.
-	'accelerator module will use hardware support to speed up some cryptographic '.
-	'functions on systems which have the chip. Do not enable this option with '.
-	'a Hifn cryptographic acceleration card, as this will take precedence and the '.
-	'Hifn card will not be used. Acceleration should be automatic for IPsec when '.
-	'using a cipher supported by the chip, such as AES-128. OpenVPN should be set '.
-	'for AES-128-CBC and have cryptodev enabled for hardware acceleration. If there '.
-	'is not a crypto chip in the system, this option will have no effect. To '.
-	'unload the selected module, set this option to "none" and then reboot.');
+))->setHelp('A cryptographic accelerator module will use hardware support to speed up some cryptographic '.
+	'functions on systems which have the chip. '.
+	'Loading the BSD Crypto Device module will allow access to acceleration devices using drivers '.
+	'built into the kernel, such as Hifn or ubsec chipsets. '.
+	'If the firewall does not contain a crypto chip, this option will have no effect. '.
+	'To unload the selected module, set this option to "none" and then reboot.');
 
 $section->addInput(new Form_Select(
 	'thermal_hardware',

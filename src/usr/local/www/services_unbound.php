@@ -442,6 +442,8 @@ events.push(function() {
 				<tr>
 					<th><?=gettext("Host")?></th>
 					<th><?=gettext("Domain")?></th>
+					<th><?=gettext("Track")?></th>
+					<th><?=gettext("Unqual")?></th>
 					<th><?=gettext("IP")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
@@ -457,7 +459,19 @@ foreach ($a_hosts as $hostent):
 						<?=$hostent['host']?>
 					</td>
 					<td>
-						<?=$hostent['domain']?>
+					<?php
+						if ($hostent['track_system_domain']) {
+							print '<span class="text-success">' . $hostent['domain'] . '</span>';
+						} else {
+							print $hostent['domain'];
+						}
+					?>
+					</td>
+					<td>
+						<?=$hostent['track_system_domain'] ? '<i class="fa fa-check" title="Domain is being dynamically set based on the setting in System &gt; General"></i>' : '&nbsp;'?>
+					</td>
+					<td>
+						<?=$hostent['add_unqualified'] ? '<i class="fa fa-check" title="Both qualified and unqualified entries have been created for this host"></i>' : '&nbsp;'?>
 					</td>
 					<td>
 						<?=$hostent['ip']?>
@@ -481,6 +495,12 @@ foreach ($a_hosts as $hostent):
 					</td>
 					<td>
 						<?=$alias['domain']?>
+					</td>
+					<td>
+						&nbsp;
+					</td>
+					<td>
+						&nbsp;
 					</td>
 					<td>
 						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>

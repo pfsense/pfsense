@@ -345,6 +345,8 @@ function system_hosts_local_entries() {
 
 /* Read host override entries from dnsmasq or unbound */
 function system_hosts_override_entries($dnscfg) {
+	global $config;
+	$syscfg = $config['system'];
 	$hosts = array();
 
 	if (!is_array($dnscfg) ||
@@ -358,11 +360,16 @@ function system_hosts_override_entries($dnscfg) {
 		if ($host['host'] || $host['host'] == "0") {
 			$fqdn .= "{$host['host']}.";
 		}
-		$fqdn .= $host['domain'];
-
+		if ($host['track_system_domain']) {
+			$fqdn .= $syscfg['domain'];
+		} else {
+			$fqdn .= $host['domain'];
+		}
 		$hosts[] = array(
 		    'ipaddr' => $host['ip'],
-		    'fqdn' => $fqdn
+		    'fqdn' => $fqdn,
+		    'name' => $host['host'],
+		    'add_unqualified' => $host['add_unqualified']
 		);
 
 		if (!is_array($host['aliases']) ||

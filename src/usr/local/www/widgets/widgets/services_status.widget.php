@@ -138,14 +138,13 @@ if (count($services) > 0) {
 				$idx = 0;
 
 				foreach ($services as $service):
-					if (in_array($service['dispname'], $skipservices)) {
-						$check_box = '';
-						$not_all_shown = true;
-					} else {
-						$check_box = 'checked';
-					}
-
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
+						if (in_array($service['dispname'], $skipservices)) {
+							$check_box = '';
+							$not_all_shown = true;
+						} else {
+							$check_box = 'checked';
+						}
 ?>
 						<tr>
 							<td><?=$service['dispname']?></td>

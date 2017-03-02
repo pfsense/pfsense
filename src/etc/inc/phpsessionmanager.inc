@@ -19,8 +19,6 @@
  * limitations under the License.
  */
 
-include_once('notices.inc');
-
 $session_opencounter = 0;
 $session_write = false;
 $session_action_list = array();
@@ -66,14 +64,14 @@ function phpsession_end($write = false) {
 	}
 	if ($session_opencounter < 0) {
 		$session_opencounter = 0;
-		file_notice("sessionmanager", "PHPSESSION closed more often than opened!" . simplestacktrace());
+		syslog(LOG_WARNING, "PHPSESSION closed more often than opened!" . simplestacktrace());
 	}
 }
 
 function phpsession_cleanupcheck() {
 	global $session_opencounter, $session_action_list;
 	if ($session_opencounter > 0) {
-		file_notice("sessionmanager", "PHPSESSION {$session_opencounter} open sessions left at shutdown script!".print_r($session_action_list, true));
+		syslog(LOG_WARNING, "PHPSESSION {$session_opencounter} open sessions left at shutdown script!".print_r($session_action_list, true));
 	}
 }
 

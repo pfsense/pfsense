@@ -182,7 +182,7 @@ foreach ($a_dyndns as $dyndns):
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
 		$ipaddr = dyndnsCheckIP($dyndns['interface']);
-		$cached_ip_s = explode(":", file_get_contents($filename));
+		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {

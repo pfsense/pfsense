@@ -2574,7 +2574,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			$wanipv6 = get_interface_ipv6($if);
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
-			$cacheFilev6 = $cacheFile . ".ipv6";
+			$cacheFilev6 = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}_v6.cache";
 			$currentTime = time();
 
 			if ($wanip || $wanipv6) {

@@ -3,7 +3,7 @@
  * interfaces.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -1190,16 +1190,16 @@ function interfaces_configure() {
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
 
+		/* restart dns servers (defering dhcpd reload) */
+		if (isset($config['dnsmasq']['enable'])) {
+			services_dnsmasq_configure(false);
+		}
+		if (isset($config['unbound']['enable'])) {
+			services_unbound_configure(false);
+		}
+
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
-
-		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
-		}
-
-		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
-		}
 	}
 
 	return 0;
@@ -1252,6 +1252,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	if ($g['debug']) {
 		log_error(sprintf(gettext('Calling interface down for interface %1$s, destroy is %2$s'), $interface, (($destroy) ? 'true' : 'false')));
 	}
+
+	$wancfg = $config['interfaces'][$interface];
 
 	/*
 	 * NOTE: The $realifv6 is needed when WANv4 is type PPP and v6 is DHCP and the option v6 from v4 is used.
@@ -1332,11 +1334,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	switch ($ifcfg['ipaddrv6']) {
 		case "slaac":
 		case "dhcp6":
-			$pidv6 = find_dhcp6c_process($realif);
-			if ($pidv6) {
-				posix_kill($pidv6, SIGTERM);
-			}
-			sleep(3);
+			kill_dhcp6client_process($realif,wancfg);
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
 			unlink_if_exists("{$g['varetc_path']}/rtsold_{$realifv6}_script.sh");
@@ -1685,6 +1683,9 @@ function interface_ppps_configure($interface) {
 				if (!is_ipaddr($localips[$pid])) {
 					log_error(sprintf(gettext("Could not get a Local IP address for PPTP/L2TP link on %s in interfaces_ppps_configure. Using 0.0.0.0 ip!"), $port));
 					$localips[$pid] = "0.0.0.0";
+				}
+				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
+					$gateways[$pid] = gethostbyname($gateways[$pid]);
 				}
 				if (!is_ipaddr($gateways[$pid])) {
 					log_error(sprintf(gettext('Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in interfaces_ppps_configure.'), $dhcp_gateway, $gway));
@@ -2614,8 +2615,6 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	$wlcmd = array();
 	$wl_sysctl = array();
-	/* Make sure it's up */
-	$wlcmd[] = "up";
 	/* Set a/b/g standard */
 	$standard = str_replace(" Turbo", "", $wlcfg['standard']);
 	/* skip mode entirely for "auto" */
@@ -2874,7 +2873,8 @@ EOD;
 			/* add line to script to restore old mac to make hostapd happy */
 			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
 				$if_oldmac = file_get_contents("{$g['tmp_path']}/{$if}_oldmac");
-				if (is_macaddr($if_oldmac)) {
+				$if_curmac = get_interface_mac($if);
+				if ($if_curmac != $if_oldmac && is_macaddr($if_oldmac)) {
 					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
 						" link " . escapeshellarg($if_oldmac) . "\n");
 				}
@@ -2883,15 +2883,11 @@ EOD;
 			fwrite($fd_set, "{$hostapd} -B -P {$g['varrun_path']}/hostapd_{$if}.pid {$g['varetc_path']}/hostapd_{$if}.conf\n");
 
 			/* add line to script to restore spoofed mac after running hostapd */
-			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
-				if ($wl['spoofmac']) {
-					$if_curmac = $wl['spoofmac'];
-				} else {
-					$if_curmac = get_interface_mac($if);
-				}
-				if (is_macaddr($if_curmac)) {
+			if ($wl['spoofmac']) {
+				$if_curmac = get_interface_mac($if);
+				if ($wl['spoofmac'] != $if_curmac && is_macaddr($wl['spoofmac'])) {
 					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
-						" link " . escapeshellarg($if_curmac) . "\n");
+						" link " . escapeshellarg($wl['spoofmac']) . "\n");
 				}
 			}
 		}
@@ -2986,18 +2982,22 @@ EOD;
 		}
 	}
 
-	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set
-	 * mode twice (for now at least). This can be removed entirely in the future if no problems are found
-
-	 * The mode must be specified in a separate command before ifconfig
-	 * will allow the mode and channel at the same time in the next. */
-	//mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
-	//fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+	/* The mode must be specified in a separate command before ifconfig
+	 * will allow the mode and channel at the same time in the next.
+	 * Only do this for AP mode as this breaks client mode (PR 198680).
+	 */
+	if ($wlcfg['mode'] == "hostap") {
+		mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
+		fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+	}
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " " . "$wlcmd_args \n");
+	/* Bring the interface up only after setting up all the other parameters. */
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up", false);
+	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " up\n");
 	fclose($wlan_setup_log);
 
 	unset($wlcmd_args, $wlcmd);
@@ -3052,6 +3052,7 @@ function kill_dhclient_process($interface) {
 function find_dhcp6c_process($interface) {
 	global $g;
 
+	$realif = get_real_interface($interface);
 	if ($interface && isvalidpid("{$g['varrun_path']}/dhcp6c_{$interface}.pid")) {
 		$pid = trim(file_get_contents("{$g['varrun_path']}/dhcp6c_{$interface}.pid"), " \n");
 	} else {
@@ -3059,6 +3060,56 @@ function find_dhcp6c_process($interface) {
 	}
 
 	return intval($pid);
+}
+
+function kill_dhcp6client_process($interface, $wancfg) {
+	global $g;
+
+ 	if($wancfg['dhcp6c_or_dibbler_value'] == 'dhcp6c') {
+    	    if (($pid = find_dhcp6c_process($interface)) != 0) {           
+        			/* Kill -9 can cause the pid to get left behind, but if we need a */
+        			/* relase sent then it needs to be -15, this then allows dhcp6c time */
+                    /* to send the release, it will also clean up after itself */
+                    log_error(sprintf(gettext("Shutting down dhcp6c process on %s"),$interface));
+                    $sig = (isset($norelease) ? SIGKILL : SIGTERM);
+                    posix_kill($pid,$sig);
+                    if(!isset($wancfg['dhcp6norelease'])) {
+                               sleep(2); //Allow dhcp6c to send releae and exit gracefully if needed.
+                    }
+             }
+     } else {
+             mwexec("/usr/sbin/dibbler-client stop");  // Kill dibbler if its there
+             sleep(2); //Allow dhcp6c to send releae and exit gracefully.
+     }
+     /* Clear the RTSOLD script created lock */
+     unlink_if_exists("/tmp/dhcp6c_{$interface}_lock");
+     unlink_if_exists("{$g['varrun_path']}/dhcp6c_{$interface}.pid"); // just in case!
+}	
+
+function run_dhcp6client_process($interface, $wancfg) {
+	global $g;
+
+	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+	$noreleaseOption = isset($wancfg['dhcp6norelease']) ? "-n" : "";
+	
+	if($wancfg['dhcp6c_or_dibbler_value'] == 'dhcp6c') {
+	
+		if(!file_exists("/tmp/dhcp6c_{$interface}_lock"))
+		{
+			kill_dhcp6client_process($interface,$wancfg); //Should not be required, but belts and braces
+			
+			// The -x option here, we'll let the RA do the script. Script will not run on receipt of REQUEST, but will run on info(RENEW)
+			mwexec("/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -x -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$interface}.pid {$interface}"); 
+			mwexec("/usr/bin/logger -t info 'Starting dhcp6 client for interface wan({$wanif} in DHCP6 without RA mode)'");
+			
+			
+		}
+	} else {
+	
+		kill_dhcp6client_process($interface,$wancfg); //Should not be required, but belts and braces
+		mwexec("/usr/sbin/dibbler-client start"); 
+		mwexec("/usr/bin/logger -t info 'Starting dibbler client for interface {$wanif}'");
+	}
 }
 
 function interface_virtual_create($interface) {
@@ -3552,14 +3603,15 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			require_once("services.inc");
 		}
 
+		/* restart dns servers (defering dhcpd reload) */
 		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
+			services_unbound_configure(false);
 		}
-
 		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
+			services_dnsmasq_configure(false);
 		}
 
+		/* reconfigure dhcpdv6 (leaving dhcpdv4 alone) */
 		services_dhcpd_configure("inet6");
 	}
 
@@ -3963,6 +4015,14 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		}
 	}
 
+	/* Setup for dibbler */
+	if (!is_dir("/var/lib/dibbler")) {
+    	mkdir("/var/lib/dibbler", 0777, true);
+    }
+    if (file_exists("/conf/dibbler-duid")) {
+    	echo copy ("/conf/dibbler-duid","/var/lib/dibbler/client-duid");
+    }
+
 	/* wide-dhcp6c works for now. */
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}.conf", $dhcp6cconf)) {
 		printf("Error: cannot open dhcp6c_{$interface}.conf in interface_dhcpv6_configure() for writing.\n");
@@ -3985,18 +4045,44 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	unset($dhcp6cscript);
 	@chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
 
+	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+	$noreleaseOption = isset($wancfg['dhcp6norelease']) ? "-n" : "";
+	
 	$rtsoldscript = "#!/bin/sh\n";
 	$rtsoldscript .= "# This shell script launches dhcp6c and configured gateways for this interface.\n";
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_routerv6\n";
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_defaultgwv6\n";
 	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Received RA specifying route \$2 for interface {$interface}({$wanif})\"\n";
-	$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
-	$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
-	$rtsoldscript .= "\t/bin/sleep 1\n";
-	$rtsoldscript .= "fi\n";
-	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
-	$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
-	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
+
+	/* non ipoe Process */
+	if (!isset($wancfg['dhcp6withoutra'])) {
+		// We only want this script to run once, and if it runs twice then do not launch dhcp6c again, this only happens if dhcpwithoutra is not set
+			
+		$rtsoldscript .= "if [ ! -f /tmp/dhcp6c_{$wanif}_lock ]; then\n";
+		$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
+		$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
+		$rtsoldscript .= "\t/bin/rm -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
+		$rtsoldscript .= "\t/bin/sleep 1\n";
+		$rtsoldscript .= "fi\n";
+		// No -x option for dhcp6c as we want it to run the script on receipt of REQUEST
+		if($wancfg['dhcp6c_or_dibbler_value'] == 'dhcp6c') {
+			$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n"; //
+		}
+		else {
+			$rtsoldscript .= "/usr/sbin/dibbler-client start\n";
+		}
+		$rtsoldscript .= "/usr/bin/touch /tmp/dhcp6c_{$wanif}_lock\n";
+		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
+		$rtsoldscript .= "else\n";
+		$rtsoldscript .= "/usr/bin/logger -t rtsold \"RTSOLD Lock in place\"\n";
+		$rtsoldscript .= "fi\n";
+	} else {
+		$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
+		$rtsoldscript .= "/usr/bin/touch /tmp/dhcp6c_{$wanif}_lock\n"; // if this lock is in place then we have already got a running dhcp6 process and do not want to kill it.
+		$rtsoldscript .= "fi\n";
+		$rtsoldscript .= "{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\n"; // The script needs to run again in dhcp6withoutra mode as RA may not have been received, or there can be a delay with certain ISPs
+		$rtsoldscript .= "/bin/sleep 1\n";
+	}
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", $rtsoldscript)) {
 		printf("Error: cannot open rtsold_{$wanif}_script.sh in interface_dhcpv6_configure() for writing.\n");
@@ -4009,7 +4095,14 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	/* accept router advertisements for this interface */
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
-
+	
+	/* start dhcp6c here if we don't want to wait for ra */
+	if (isset($wancfg['dhcp6withoutra'])) {
+		mwexec("/usr/bin/logger -t info 'Calling Run dhcpclient Process'");
+		run_dhcp6client_process($wanif,$wancfg);
+		// Wait for return of process before launching rtsold
+		sleep(1);
+	}
 	/* fire up rtsold for IPv6 RAs first, this backgrounds immediately. It will call dhcp6c */
 	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid")) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
@@ -4976,6 +5069,7 @@ function interface_find_child_cfgmtu($realiface) {
 
 	$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	$vlans = link_interface_to_vlans($realiface);
+	$qinqs = link_interface_to_qinqs($realiface);
 	$bridge = link_interface_to_bridge($realiface);
 	if (!empty($interface)) {
 		$gifs = link_interface_to_gif($interface);
@@ -4989,6 +5083,19 @@ function interface_find_child_cfgmtu($realiface) {
 	if (is_array($vlans)) {
 		foreach ($vlans as $vlan) {
 			$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (empty($ifass)) {
+				continue;
+			}
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+				}
+			}
+		}
+	}
+	if (is_array($qinqs)) {
+		foreach ($qinqs as $qinq) {
+			$ifass = convert_real_interface_to_friendly_interface_name($qinq['vlanif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5051,6 +5158,30 @@ function link_interface_to_vlans($int, $action = "") {
 					interfaces_bring_up($int);
 				} else {
 					$ifaces[$vlan['tag']] = $vlan;
+				}
+			}
+		}
+		if (!empty($ifaces)) {
+			return $ifaces;
+		}
+	}
+}
+
+function link_interface_to_qinqs($int, $action = "") {
+	global $config;
+
+	if (empty($int)) {
+		return;
+	}
+
+	if (is_array($config['qinqs']['qinqentry'])) {
+		$ifaces = array();
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			if ($int == $qinq['if']) {
+				if ($action == "update") {
+					interfaces_bring_up($int);
+				} else {
+					$ifaces[$qinq['tag']] = $qinq;
 				}
 			}
 		}
@@ -5916,6 +6047,54 @@ function get_failover_interface($interface, $family = "all") {
 	/* fall through to get_real_interface */
 	/* XXX: Really needed? */
 	return get_real_interface($interface, $family);
+}
+
+/****f* interfaces/interface_has_dhcp
+ * NAME
+ *   interface_has_dhcp - determine if the interface or gateway group uses DHCP
+ * INPUTS
+ *   interface or gateway group name
+ *   family - 4 (check for IPv4 DHCP) or 6 (check for IPv6 DHCP)
+ * RESULT
+ *   true - if the interface uses DHCP/DHCP6, or the name is a gateway group which has any member that uses DHCP/DHCP6
+ *   false - otherwise (DHCP/DHCP6 not in use, or the name is not an interface or gateway group)
+ ******/
+function interface_has_dhcp($interface, $family = 4) {
+	global $config;
+
+	if ($config['interfaces'][$interface]) {
+		if (($family == 4) && ($config['interfaces'][$interface]['ipaddr'] == "dhcp")) {
+			return true;
+		} elseif (($family == 6) && ($config['interfaces'][$interface]['ipaddrv6'] == "dhcp6")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (!is_array($config['gateways']['gateway_group'])) {
+		return false;
+	}
+
+	if ($family == 6) {
+		$dhcp_string = "_DHCP6";
+	} else {
+		$dhcp_string = "_DHCP";
+	}
+
+	foreach ($config['gateways']['gateway_group'] as $group) {
+		if (($group['name'] != $interface) || !is_array($group['item'])) {
+			continue;
+		}
+		foreach ($group['item'] as $item) {
+			$item_data = explode("|", $item);
+			if (substr($item_data[0], -strlen($dhcp_string)) == $dhcp_string) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 function remove_ifindex($ifname) {

@@ -113,7 +113,6 @@ echo "done.\n";
 if (mwexec("/bin/kenv -q pfSense.boot 2>/dev/null") != 0) {
 	/* Collect vendor MAC address for all interfaces */
 	$ifs = pfSense_interface_listget();
-	unlink_if_exists("{$g['vardb_path']}/vendor_mac");
 	foreach ($ifs as $if) {
 		$if_details = pfSense_get_interface_addresses($if);
 		if (isset($if_details['iftype']) &&
@@ -128,8 +127,11 @@ if (mwexec("/bin/kenv -q pfSense.boot 2>/dev/null") != 0) {
 
 		$vendor_mac_arr[$if] = $if_details['macaddr'];
 	}
-	@file_put_contents("{$g['vardb_path']}/vendor_mac", json_encode($vendor_mac_arr));
-	unset($ifs, $if, $vendor_mac_arr);
+	$vendor_mac_arr_json = json_encode($vendor_mac_arr);
+	if (@file_get_contents("{$g['vardb_path']}/vendor_mac") !== $vendor_mac_arr_json) {
+		@file_put_contents("{$g['vardb_path']}/vendor_mac", $vendor_mac_arr_json);
+	}
+	unset($ifs, $if, $vendor_mac_arr, $vendor_mac_arr_json);
 	mwexec("/bin/kenv pfSense.boot=1");
 }
 

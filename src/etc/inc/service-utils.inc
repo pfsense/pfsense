@@ -489,16 +489,19 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false,
 	}
 	$fa_size = ($smallicon) ? "fa-1x" : "fa-lg";
 
-	$spacer = ($withthumbs || $withtext) ? " " : "";
 	if ($title == "state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$statustext}\"></i>{$spacer}";
+		$title = $statustext;
 	} elseif ($title == "service_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s Service is %2$s'), $service["name"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["name"], $statustext);
 	} elseif ($title == "description_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s Service is %2$s'), $service["description"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["description"], $statustext);
 	} elseif ($title == "description_service_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s, %2$s Service is %3$s'), $service["description"], $service["name"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s, %2$s Service is %3$s'), $service["description"], $service["name"], $statustext);
 	}
+
+	$spacer = ($withthumbs || $withtext) ? " " : "";
+
+	$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$title}\"><span style=\"display: none\">{$statustext}</span></i>{$spacer}";
 
 	$spacer = ($withtext) ? " " : "";
 	if ($withthumbs) {

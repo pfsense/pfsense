@@ -122,6 +122,7 @@ foreach ($a_rfc2136 as $rfc2136):
 							<td>
 <?php
 	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+	$filename_v6 = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}_v6.cache";
 	$if = get_failover_interface($rfc2136['interface']);
 
 	if (file_exists($filename)) {
@@ -149,10 +150,10 @@ foreach ($a_rfc2136 as $rfc2136):
 
 	print('<br />');
 
-	if (file_exists("{$filename}.ipv6")) {
+	if (file_exists($filename_v6)) {
 		print('IPv6: ');
 		$ipaddr = get_interface_ipv6($if);
-		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
+		$cached_ip_s = explode("|", file_get_contents($filename_v6));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {

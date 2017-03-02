@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 10:49-0300\n"
+"POT-Creation-Date: 2017-03-02 14:29-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1102,7 +1102,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
 #: src/etc/inc/dyndns.class:1494 src/etc/inc/dyndns.class:1502
-#: src/etc/inc/services.inc:2674 src/etc/inc/services.inc:2686
+#: src/etc/inc/services.inc:2677 src/etc/inc/services.inc:2689
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr ""
@@ -1566,9 +1566,9 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1213
-#: src/etc/inc/system.inc:1311 src/etc/inc/system.inc:1614
-#: src/etc/inc/system.inc:2186
+#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
+#: src/etc/inc/system.inc:1314 src/etc/inc/system.inc:1617
+#: src/etc/inc/system.inc:2189
 msgid "done."
 msgstr "完了。"
 
@@ -1947,6 +1947,7 @@ msgstr "ネーム"
 #: src/usr/local/www/status_upnp.php:42
 #: src/usr/local/www/status_wireless.php:31
 #: src/usr/local/www/status_wireless.php:58
+#: src/usr/local/www/system_usermanager.php:584
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:80
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:207
@@ -2234,96 +2235,96 @@ msgstr ""
 msgid "Deny router advertisements for interface %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3291
+#: src/etc/inc/interfaces.inc:3296
 msgid "Generating new MAC address."
 msgstr "新しいMACアドレスを生成する。"
 
-#: src/etc/inc/interfaces.inc:3297
+#: src/etc/inc/interfaces.inc:3302
 #, php-format
 msgid ""
 "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3362
+#: src/etc/inc/interfaces.inc:3367
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3553 src/etc/inc/interfaces.inc:3623
-#: src/etc/inc/interfaces.inc:3687
+#: src/etc/inc/interfaces.inc:3558 src/etc/inc/interfaces.inc:3628
+#: src/etc/inc/interfaces.inc:3692
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3560 src/etc/inc/interfaces.inc:3566
+#: src/etc/inc/interfaces.inc:3565 src/etc/inc/interfaces.inc:3571
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3629
+#: src/etc/inc/interfaces.inc:3634
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3665
+#: src/etc/inc/interfaces.inc:3670
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3693 src/etc/inc/interfaces.inc:3748
-#: src/etc/inc/interfaces.inc:3834
+#: src/etc/inc/interfaces.inc:3698 src/etc/inc/interfaces.inc:3753
+#: src/etc/inc/interfaces.inc:3839
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3725
+#: src/etc/inc/interfaces.inc:3730
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3940
+#: src/etc/inc/interfaces.inc:3945
 msgid "Failed to write user DUID file!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4341
+#: src/etc/inc/interfaces.inc:4346
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4369
+#: src/etc/inc/interfaces.inc:4374
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4382
+#: src/etc/inc/interfaces.inc:4387
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4438
+#: src/etc/inc/interfaces.inc:4443
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr "interface_dhcp_configure.() で%sはインターフェイスを起動できませんでした"
 
-#: src/etc/inc/interfaces.inc:4531
+#: src/etc/inc/interfaces.inc:4536
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:5571 src/etc/inc/service-utils.inc:358
+#: src/etc/inc/interfaces.inc:5576 src/etc/inc/service-utils.inc:358
 #: src/usr/local/www/diag_backup.php:476
 #: src/usr/local/www/firewall_nat_1to1_edit.php:453
 #: src/usr/local/www/firewall_nat_edit.php:684
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
-#: src/usr/local/www/firewall_rules_edit.php:1083
+#: src/usr/local/www/firewall_rules_edit.php:1085
 #: src/usr/local/www/head.inc:324 src/usr/local/www/head.inc:342
 #: src/usr/local/www/status_graph.php:49 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/status_logs_common.inc:96
@@ -2367,7 +2368,7 @@ msgstr ""
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 #: src/usr/local/www/system_advanced_admin.php:299
 #: src/usr/local/www/system_advanced_firewall.php:380
-#: src/usr/local/www/system_advanced_misc.php:309
+#: src/usr/local/www/system_advanced_misc.php:311
 #: src/usr/local/www/system_advanced_network.php:141
 #: src/usr/local/www/system_advanced_network.php:156
 #: src/usr/local/www/system_advanced_notifications.php:209
@@ -2436,7 +2437,7 @@ msgid "My IP address"
 msgstr "私のIPアドレス"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
-#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1397
+#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1407
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:64
 #: src/usr/local/www/services_dnsmasq_edit.php:61
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
@@ -2468,7 +2469,7 @@ msgstr "KEYIDタグ"
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:304
 #: src/usr/local/www/services_checkip.php:65
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:1040
+#: src/usr/local/www/services_dhcp.php:1050
 #: src/usr/local/www/services_dhcp_edit.php:583
 #: src/usr/local/www/services_dhcpv6.php:748
 #: src/usr/local/www/services_dyndns.php:68
@@ -2486,8 +2487,8 @@ msgstr "ダイナミックDNS"
 #: src/usr/local/www/firewall_nat_edit.php:743
 #: src/usr/local/www/firewall_nat_out_edit.php:515
 #: src/usr/local/www/firewall_nat_out_edit.php:540
-#: src/usr/local/www/firewall_rules_edit.php:1279
-#: src/usr/local/www/firewall_rules_edit.php:1483
+#: src/usr/local/www/firewall_rules_edit.php:1281
+#: src/usr/local/www/firewall_rules_edit.php:1485
 #: src/usr/local/www/interfaces.php:2977
 msgid "Any"
 msgstr "任意の"
@@ -2616,16 +2617,16 @@ msgstr ""
 msgid "Mobile Client"
 msgstr "移動クライアント"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2989
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:2990
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:908
-#: src/usr/local/www/firewall_rules_edit.php:1594
+#: src/usr/local/www/firewall_rules_edit.php:1596
 #: src/usr/local/www/interfaces.php:1659 src/usr/local/www/interfaces.php:1660
 #: src/usr/local/www/interfaces.php:1684 src/usr/local/www/interfaces.php:1697
 #: src/usr/local/www/services_ntpd_gps.php:364
 #: src/usr/local/www/services_ntpd_pps.php:149
-#: src/usr/local/www/system_advanced_misc.php:445
+#: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
 msgstr "なし"
@@ -2708,9 +2709,9 @@ msgid "Could not send register Growl on %1$s -- Error: %2$s"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:758
-#: src/usr/local/www/firewall_rules_edit.php:1633
-#: src/usr/local/www/firewall_rules_edit.php:1674
-#: src/usr/local/www/firewall_rules_edit.php:1681
+#: src/usr/local/www/firewall_rules_edit.php:1635
+#: src/usr/local/www/firewall_rules_edit.php:1676
+#: src/usr/local/www/firewall_rules_edit.php:1683
 #: src/usr/local/www/status_ipsec.php:338
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:564
@@ -2718,7 +2719,7 @@ msgid "none"
 msgstr "なし"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
-#: src/usr/local/www/firewall_rules_edit.php:1636
+#: src/usr/local/www/firewall_rules_edit.php:1638
 #: src/usr/local/www/services_captiveportal.php:966
 msgid "default"
 msgstr "デフォルト"
@@ -3197,12 +3198,16 @@ msgstr "トルコ語"
 msgid "Chinese (Simplified, China)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2997 src/etc/inc/pfsense-utils.inc:3012
-#: src/etc/inc/pfsense-utils.inc:3037
+#: src/etc/inc/pfsense-utils.inc:2803
+msgid "Chinese (Taiwan)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2998 src/etc/inc/pfsense-utils.inc:3013
+#: src/etc/inc/pfsense-utils.inc:3038
 msgid "No Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3007 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3008 src/etc/inc/pfsense-utils.inc:3050
 #: src/usr/local/www/firewall_nat_out.php:228
 #: src/usr/local/www/firewall_nat_out.php:232
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2960
@@ -3218,79 +3223,79 @@ msgstr ""
 msgid "Mode"
 msgstr "モード"
 
-#: src/etc/inc/pfsense-utils.inc:3013
+#: src/etc/inc/pfsense-utils.inc:3014
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3014
+#: src/etc/inc/pfsense-utils.inc:3015
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3015
+#: src/etc/inc/pfsense-utils.inc:3016
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3016
+#: src/etc/inc/pfsense-utils.inc:3017
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3022
+#: src/etc/inc/pfsense-utils.inc:3023
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3023
+#: src/etc/inc/pfsense-utils.inc:3024
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3024
+#: src/etc/inc/pfsense-utils.inc:3025
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/pfsense-utils.inc:3026
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/pfsense-utils.inc:3027
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3027
+#: src/etc/inc/pfsense-utils.inc:3028
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3038
+#: src/etc/inc/pfsense-utils.inc:3039
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3055
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3055
+#: src/etc/inc/pfsense-utils.inc:3056
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3056
+#: src/etc/inc/pfsense-utils.inc:3057
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3057
+#: src/etc/inc/pfsense-utils.inc:3058
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3066
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3066
+#: src/etc/inc/pfsense-utils.inc:3067
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -5491,14 +5496,14 @@ msgid "Router Advertisement Daemon"
 msgstr "ルータ通知デーモン"
 
 #: src/etc/inc/service-utils.inc:248 src/usr/local/www/diag_backup.php:468
-#: src/usr/local/www/head.inc:294 src/usr/local/www/services_dnsmasq.php:228
+#: src/usr/local/www/head.inc:294 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:183
 msgid "DNS Forwarder"
 msgstr "DNSフォワーダ"
 
 #: src/etc/inc/service-utils.inc:255 src/usr/local/www/diag_backup.php:469
-#: src/usr/local/www/head.inc:295 src/usr/local/www/services_unbound.php:240
+#: src/usr/local/www/head.inc:295 src/usr/local/www/services_unbound.php:245
 #: src/usr/local/www/services_unbound_acls.php:161
 #: src/usr/local/www/services_unbound_advanced.php:187
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -5594,7 +5599,7 @@ msgstr "停止"
 #: src/usr/local/www/firewall_nat_edit.php:647
 #: src/usr/local/www/firewall_nat_npt_edit.php:188
 #: src/usr/local/www/firewall_nat_out_edit.php:453
-#: src/usr/local/www/firewall_rules_edit.php:1174
+#: src/usr/local/www/firewall_rules_edit.php:1176
 #: src/usr/local/www/interfaces.php:2640
 #: src/usr/local/www/interfaces_ppps_edit.php:751
 #: src/usr/local/www/load_balancer_pool_edit.php:402
@@ -5602,7 +5607,7 @@ msgstr "停止"
 #: src/usr/local/www/services_router_advertisements.php:126
 #: src/usr/local/www/system_gateways_edit.php:590
 #: src/usr/local/www/system_routes_edit.php:262
-#: src/usr/local/www/system_usermanager.php:584
+#: src/usr/local/www/system_usermanager.php:609
 #: src/usr/local/www/system_usermanager.php:706
 #: src/usr/local/www/vpn_ipsec_phase1.php:657
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
@@ -5729,53 +5734,53 @@ msgstr "SNMPデーモンを起動する... "
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "エラー：services_snmpd_configure.().%sを処理のsnmpd.confを開くことはできません"
 
-#: src/etc/inc/services.inc:2623
+#: src/etc/inc/services.inc:2626
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2642
+#: src/etc/inc/services.inc:2645
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2677
+#: src/etc/inc/services.inc:2680
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2689
+#: src/etc/inc/services.inc:2692
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2697
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2702
+#: src/etc/inc/services.inc:2705
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2736
+#: src/etc/inc/services.inc:2739
 msgid "Created:"
 msgstr "作成："
 
-#: src/etc/inc/services.inc:2762
+#: src/etc/inc/services.inc:2765
 msgid "If possible do not add items to this file manually."
 msgstr "できればこのファイルに項目を手動で追加しないでください。"
 
-#: src/etc/inc/services.inc:2763
+#: src/etc/inc/services.inc:2766
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2813
+#: src/etc/inc/services.inc:2816
 msgid "Starting UPnP service... "
 msgstr "UPnPサービスを開始... "
 
@@ -5939,7 +5944,7 @@ msgstr ""
 msgid "Scheduler options"
 msgstr "スケジューラオプション"
 
-#: src/etc/inc/shaper.inc:1450 src/usr/local/www/firewall_rules_edit.php:1717
+#: src/etc/inc/shaper.inc:1450 src/usr/local/www/firewall_rules_edit.php:1719
 msgid "Default Queue"
 msgstr ""
 
@@ -5982,7 +5987,7 @@ msgstr "このキューの((オプション))を選択します"
 #: src/usr/local/www/firewall_nat_out.php:538
 #: src/usr/local/www/firewall_nat_out_edit.php:654
 #: src/usr/local/www/firewall_rules.php:388
-#: src/usr/local/www/firewall_rules_edit.php:1455
+#: src/usr/local/www/firewall_rules_edit.php:1457
 #: src/usr/local/www/firewall_schedule.php:95
 #: src/usr/local/www/firewall_schedule_edit.php:371
 #: src/usr/local/www/firewall_schedule_edit.php:615
@@ -6024,13 +6029,13 @@ msgstr "このキューの((オプション))を選択します"
 #: src/usr/local/www/services_captiveportal_zones.php:77
 #: src/usr/local/www/services_checkip.php:91
 #: src/usr/local/www/services_checkip_edit.php:162
-#: src/usr/local/www/services_dhcp.php:681
-#: src/usr/local/www/services_dhcp.php:1399
+#: src/usr/local/www/services_dhcp.php:691
+#: src/usr/local/www/services_dhcp.php:1409
 #: src/usr/local/www/services_dhcp_edit.php:469
 #: src/usr/local/www/services_dhcpv6.php:1007
 #: src/usr/local/www/services_dhcpv6_edit.php:235
-#: src/usr/local/www/services_dnsmasq.php:368
-#: src/usr/local/www/services_dnsmasq.php:442
+#: src/usr/local/www/services_dnsmasq.php:373
+#: src/usr/local/www/services_dnsmasq.php:447
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:156
 #: src/usr/local/www/services_dnsmasq_edit.php:221
 #: src/usr/local/www/services_dnsmasq_edit.php:270
@@ -6042,8 +6047,8 @@ msgstr "このキューの((オプション))を選択します"
 #: src/usr/local/www/services_pppoe_edit.php:343
 #: src/usr/local/www/services_rfc2136.php:85
 #: src/usr/local/www/services_rfc2136_edit.php:282
-#: src/usr/local/www/services_unbound.php:441
-#: src/usr/local/www/services_unbound.php:517
+#: src/usr/local/www/services_unbound.php:446
+#: src/usr/local/www/services_unbound.php:522
 #: src/usr/local/www/services_unbound_acls.php:224
 #: src/usr/local/www/services_unbound_acls.php:250
 #: src/usr/local/www/services_unbound_acls.php:286
@@ -6051,7 +6056,7 @@ msgstr "このキューの((オプション))を選択します"
 #: src/usr/local/www/services_unbound_host_edit.php:214
 #: src/usr/local/www/services_unbound_host_edit.php:263
 #: src/usr/local/www/services_wol.php:172
-#: src/usr/local/www/services_wol_edit.php:150
+#: src/usr/local/www/services_wol_edit.php:148
 #: src/usr/local/www/status_dhcp_leases.php:363
 #: src/usr/local/www/status_gateway_groups.php:66
 #: src/usr/local/www/status_gateways.php:67
@@ -6276,9 +6281,9 @@ msgstr "遅延は整数でなければなりません。"
 #: src/usr/local/www/firewall_rules.php:827
 #: src/usr/local/www/firewall_schedule_edit.php:619
 #: src/usr/local/www/firewall_schedule_edit.php:1116
-#: src/usr/local/www/interfaces_assign.php:538
+#: src/usr/local/www/interfaces_assign.php:540
 #: src/usr/local/www/interfaces_qinq_edit.php:309
-#: src/usr/local/www/pkg_edit.php:1438 src/usr/local/www/services_dhcp.php:1320
+#: src/usr/local/www/pkg_edit.php:1438 src/usr/local/www/services_dhcp.php:1330
 #: src/usr/local/www/services_dhcp_relay.php:186
 #: src/usr/local/www/services_dhcpv6.php:948
 #: src/usr/local/www/services_dnsmasq_edit.php:274
@@ -6315,17 +6320,17 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:535
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
 #: src/usr/local/www/services_checkip_edit.php:120
-#: src/usr/local/www/services_dhcp.php:791
-#: src/usr/local/www/services_dhcp.php:798
-#: src/usr/local/www/services_dhcp.php:1206
+#: src/usr/local/www/services_dhcp.php:801
+#: src/usr/local/www/services_dhcp.php:808
+#: src/usr/local/www/services_dhcp.php:1216
 #: src/usr/local/www/services_dhcp_relay.php:148
 #: src/usr/local/www/services_dhcpv6_relay.php:148
-#: src/usr/local/www/services_dnsmasq.php:250
+#: src/usr/local/www/services_dnsmasq.php:255
 #: src/usr/local/www/services_pppoe_edit.php:292
 #: src/usr/local/www/services_rfc2136_edit.php:159
 #: src/usr/local/www/services_snmp.php:215
 #: src/usr/local/www/services_snmp.php:258
-#: src/usr/local/www/services_unbound.php:270
+#: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
 #: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
 #: src/usr/local/www/diag_routes.php:82
@@ -6386,7 +6391,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:285
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:138
 #: src/usr/local/www/services_unbound_host_edit.php:217
-#: src/usr/local/www/services_wol_edit.php:153
+#: src/usr/local/www/services_wol_edit.php:151
 #: src/usr/local/www/system_gateway_groups_edit.php:338
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/vpn_ipsec_phase1.php:697
@@ -6398,8 +6403,8 @@ msgid ""
 msgstr ""
 
 #: src/etc/inc/shaper.inc:3898 src/etc/inc/shaper.inc:4202
-#: src/usr/local/www/firewall_rules_edit.php:1470
-#: src/usr/local/www/firewall_rules_edit.php:1476
+#: src/usr/local/www/firewall_rules_edit.php:1472
+#: src/usr/local/www/firewall_rules_edit.php:1478
 #: src/usr/local/www/interfaces_bridge_edit.php:420
 #: src/usr/local/www/vpn_ipsec_phase1.php:824
 msgid "Advanced Options"
@@ -6512,100 +6517,100 @@ msgstr ""
 msgid "Error: cannot open hosts file in system_hosts_generate()."
 msgstr ""
 
-#: src/etc/inc/system.inc:708
+#: src/etc/inc/system.inc:711
 msgid "Not adding default route because OLSR dynamic gateway is enabled."
 msgstr "OLSRダイナミックゲートウェイが有効になっているため、デフォルトルートを追加しない。"
 
-#: src/etc/inc/system.inc:732
+#: src/etc/inc/system.inc:735
 #, php-format
 msgid "ROUTING: setting default route to %s"
 msgstr ""
 
-#: src/etc/inc/system.inc:743
+#: src/etc/inc/system.inc:746
 #, php-format
 msgid "ROUTING: setting IPv6 default route to %s"
 msgstr ""
 
-#: src/etc/inc/system.inc:764
+#: src/etc/inc/system.inc:767
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
 msgstr "静的ルート：ゲートウェイのIPは%sを見つかりませんでした"
 
-#: src/etc/inc/system.inc:980
+#: src/etc/inc/system.inc:983
 msgid "Starting syslog..."
 msgstr "syslogを開始..."
 
-#: src/etc/inc/system.inc:1153
+#: src/etc/inc/system.inc:1156
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
 msgstr "エラー：system_syslogd_start.().%s 処理のsyslog.confを開くことはできません"
 
-#: src/etc/inc/system.inc:1230
+#: src/etc/inc/system.inc:1233
 msgid "Creating SSL Certificate for this host"
 msgstr ""
 
-#: src/etc/inc/system.inc:1234
+#: src/etc/inc/system.inc:1237
 #, php-format
 msgid "webConfigurator default (%s)"
 msgstr ""
 
-#: src/etc/inc/system.inc:1246
+#: src/etc/inc/system.inc:1249
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1255
+#: src/etc/inc/system.inc:1258
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
 msgstr ""
 
-#: src/etc/inc/system.inc:1263
+#: src/etc/inc/system.inc:1266
 msgid "Starting webConfigurator..."
 msgstr "webConfiguratorを開始..."
 
-#: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2189
-#: src/etc/inc/system.inc:2192
+#: src/etc/inc/system.inc:1316 src/etc/inc/system.inc:2192
+#: src/etc/inc/system.inc:2195
 msgid "failed!"
 msgstr "フェイル"
 
-#: src/etc/inc/system.inc:1515
+#: src/etc/inc/system.inc:1518
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1528
+#: src/etc/inc/system.inc:1531
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1555
+#: src/etc/inc/system.inc:1558
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1604
+#: src/etc/inc/system.inc:1607
 msgid "Setting timezone..."
 msgstr "タイムゾーンの設定..."
 
-#: src/etc/inc/system.inc:2021
+#: src/etc/inc/system.inc:2024
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr ""
 
-#: src/etc/inc/system.inc:2141
+#: src/etc/inc/system.inc:2144
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr "エラー：system_dmesg_save.().%s 処理dmesg.boot開くことができません。"
 
-#: src/etc/inc/system.inc:2168
+#: src/etc/inc/system.inc:2171
 msgid "Setting hard disk standby... "
 msgstr "ハードディスクのスタンバイの設定... "
 
-#: src/etc/inc/system.inc:2383
+#: src/etc/inc/system.inc:2386
 msgid "PC Engines WRAP"
 msgstr "PCエンジンラップ"
 
-#: src/etc/inc/system.inc:2387 src/etc/inc/system.inc:2406
+#: src/etc/inc/system.inc:2390 src/etc/inc/system.inc:2409
 msgid "PC Engines ALIX"
 msgstr "PCエンジンALIX"
 
@@ -7235,7 +7240,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:506
 #: src/usr/local/www/firewall_rules.php:831
 #: src/usr/local/www/firewall_rules.php:882
-#: src/usr/local/www/interfaces_assign.php:571 src/usr/local/www/pkg.php:598
+#: src/usr/local/www/interfaces_assign.php:573 src/usr/local/www/pkg.php:598
 #: src/usr/local/www/pkg_edit.php:591
 #: src/usr/local/www/services_igmpproxy.php:134
 #: src/usr/local/www/services_igmpproxy.php:136
@@ -7269,7 +7274,7 @@ msgstr "保存"
 
 #: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_command.php:88
+#: src/usr/local/www/diag_backup.php:505 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/diag_dns.php:29
 #: src/usr/local/www/diag_dump_states.php:75
@@ -7277,7 +7282,7 @@ msgstr "保存"
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/diag_gmirror.php:33
 #: src/usr/local/www/diag_halt.php:45
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/diag_ndp.php:96
-#: src/usr/local/www/diag_packet_capture.php:86
+#: src/usr/local/www/diag_packet_capture.php:106
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
 #: src/usr/local/www/diag_resetstate.php:56
@@ -7382,7 +7387,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:530
 #: src/usr/local/www/firewall_nat_out_edit.php:158
 #: src/usr/local/www/firewall_virtual_ip.php:258
-#: src/usr/local/www/interfaces_assign.php:509
+#: src/usr/local/www/interfaces_assign.php:511
 #: src/usr/local/www/interfaces_bridge.php:102
 #: src/usr/local/www/interfaces_gif.php:97
 #: src/usr/local/www/interfaces_gre.php:97
@@ -7399,7 +7404,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe.php:99
 #: src/usr/local/www/services_rfc2136.php:81
 #: src/usr/local/www/services_wol.php:170
-#: src/usr/local/www/services_wol_edit.php:75
+#: src/usr/local/www/services_wol_edit.php:73
 #: src/usr/local/www/status_dhcp_leases.php:495
 #: src/usr/local/www/status_graph.php:126
 #: src/usr/local/www/status_logs_common.inc:470
@@ -7421,9 +7426,9 @@ msgstr "インターフェース"
 #: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:109
 #: src/usr/local/www/services_captiveportal_mac.php:174
 #: src/usr/local/www/services_captiveportal_mac_edit.php:95
-#: src/usr/local/www/services_dhcp.php:1389
+#: src/usr/local/www/services_dhcp.php:1399
 #: src/usr/local/www/services_wol.php:171
-#: src/usr/local/www/services_wol_edit.php:75
+#: src/usr/local/www/services_wol_edit.php:73
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
@@ -7434,7 +7439,7 @@ msgstr "MACアドレス"
 #: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:110
 #: src/usr/local/www/interfaces.php:1954
 #: src/usr/local/www/services_captiveportal_hostname.php:115
-#: src/usr/local/www/services_dhcp.php:1398
+#: src/usr/local/www/services_dhcp.php:1408
 #: src/usr/local/www/services_dhcp_edit.php:446
 #: src/usr/local/www/services_dhcpv6.php:1006
 #: src/usr/local/www/services_dhcpv6_edit.php:228
@@ -7484,15 +7489,15 @@ msgstr "リンク型"
 #: src/usr/local/www/services_captiveportal_vouchers.php:394
 #: src/usr/local/www/services_captiveportal_zones.php:78
 #: src/usr/local/www/services_checkip.php:92
-#: src/usr/local/www/services_dhcp.php:682
-#: src/usr/local/www/services_dnsmasq.php:369
-#: src/usr/local/www/services_dnsmasq.php:443
+#: src/usr/local/www/services_dhcp.php:692
+#: src/usr/local/www/services_dnsmasq.php:374
+#: src/usr/local/www/services_dnsmasq.php:448
 #: src/usr/local/www/services_dyndns.php:95
 #: src/usr/local/www/services_igmpproxy.php:87
 #: src/usr/local/www/services_pppoe.php:103
 #: src/usr/local/www/services_rfc2136.php:86
-#: src/usr/local/www/services_unbound.php:442
-#: src/usr/local/www/services_unbound.php:518
+#: src/usr/local/www/services_unbound.php:447
+#: src/usr/local/www/services_unbound.php:523
 #: src/usr/local/www/services_unbound_acls.php:287
 #: src/usr/local/www/services_wol.php:173
 #: src/usr/local/www/status_captiveportal.php:206
@@ -7694,7 +7699,7 @@ msgid "Captive Portal Vouchers"
 msgstr "キャプティブポータルバウチャー"
 
 #: src/usr/local/www/diag_backup.php:470 src/usr/local/www/head.inc:300
-#: src/usr/local/www/services_dhcp.php:717
+#: src/usr/local/www/services_dhcp.php:727
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
 msgstr "DHCPサーバ"
@@ -7761,7 +7766,7 @@ msgstr "NAT"
 #: src/usr/local/www/head.inc:646 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
-#: src/usr/local/www/pkg_mgr_installed.php:204
+#: src/usr/local/www/pkg_mgr_installed.php:191
 msgid "Package Manager"
 msgstr "パッケージマネージャー"
 
@@ -7782,7 +7787,7 @@ msgstr "Syslogの"
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
-#: src/usr/local/www/pkg_mgr_installed.php:204
+#: src/usr/local/www/pkg_mgr_installed.php:191
 #: src/usr/local/www/status_logs.php:96
 #: src/usr/local/www/status_logs_common.inc:88
 #: src/usr/local/www/status_logs_settings.php:216
@@ -7790,7 +7795,7 @@ msgstr "Syslogの"
 #: src/usr/local/www/system.php:427
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
-#: src/usr/local/www/system_advanced_misc.php:293
+#: src/usr/local/www/system_advanced_misc.php:295
 #: src/usr/local/www/system_advanced_network.php:141
 #: src/usr/local/www/system_advanced_notifications.php:194
 #: src/usr/local/www/system_advanced_sysctl.php:114
@@ -7848,7 +7853,7 @@ msgstr "のVLAN"
 #: src/usr/local/www/diag_backup.php:487 src/usr/local/www/head.inc:318
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
-#: src/usr/local/www/services_wol_edit.php:113
+#: src/usr/local/www/services_wol_edit.php:111
 msgid "Wake-on-LAN"
 msgstr ""
 
@@ -7857,7 +7862,7 @@ msgstr ""
 #: src/usr/local/www/pkg_edit.php:1188
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
-#: src/usr/local/www/services_unbound.php:222
+#: src/usr/local/www/services_unbound.php:227
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:249
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:165
@@ -7971,91 +7976,91 @@ msgstr ""
 msgid "Uploaded file to %s."
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:88 src/usr/local/www/head.inc:372
+#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:372
 msgid "Command Prompt"
 msgstr "コマンドプロンプト"
 
-#: src/usr/local/www/diag_command.php:149
+#: src/usr/local/www/diag_command.php:139
 msgid "Nothing to recall"
 msgstr "なし"
 
-#: src/usr/local/www/diag_command.php:184 src/usr/local/www/diag_edit.php:98
+#: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid ""
 "The capabilities offered here can be dangerous. No support is available. Use "
 "them at your own risk!"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:184 src/usr/local/www/diag_edit.php:98
+#: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:189
+#: src/usr/local/www/diag_command.php:179
 #, php-format
 msgid "Shell Output - %s"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:208
+#: src/usr/local/www/diag_command.php:198
 msgid "Execute Shell Command"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:216
+#: src/usr/local/www/diag_command.php:206
 msgid "Recall Previous Command"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:219
+#: src/usr/local/www/diag_command.php:209
 msgid "Execute the entered command"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:221
-#: src/usr/local/www/diag_command.php:312
+#: src/usr/local/www/diag_command.php:211
+#: src/usr/local/www/diag_command.php:302
 msgid "Execute"
 msgstr "実行"
 
-#: src/usr/local/www/diag_command.php:223
+#: src/usr/local/www/diag_command.php:213
 msgid "Recall Next Command"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:226
+#: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:228 src/usr/local/www/pkg_mgr.php:165
+#: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
 #: src/usr/local/www/system_groupmanager_addprivs.php:201
 #: src/usr/local/www/system_usermanager_addprivs.php:190
 #: src/usr/local/www/interfaces.php:2036
 msgid "Clear"
 msgstr "クリアー"
 
-#: src/usr/local/www/diag_command.php:236
+#: src/usr/local/www/diag_command.php:226
 msgid "Download File"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:243
+#: src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1091
 #: src/usr/local/www/services_captiveportal.php:1125
 #: src/usr/local/www/services_captiveportal.php:1157
 msgid "Download"
 msgstr "ダウンロード"
 
-#: src/usr/local/www/diag_command.php:255
+#: src/usr/local/www/diag_command.php:245
 msgid "Upload File"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:262
+#: src/usr/local/www/diag_command.php:252
 #: src/usr/local/www/services_captiveportal_filemanager.php:172
 #: src/usr/local/www/widgets/widgets/picture.widget.php:77
 msgid "Upload"
 msgstr "アップロード"
 
-#: src/usr/local/www/diag_command.php:305
+#: src/usr/local/www/diag_command.php:295
 msgid "Execute PHP Commands"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:310
+#: src/usr/local/www/diag_command.php:300
 msgid "Execute this PHP Code"
 msgstr ""
 
-#: src/usr/local/www/diag_command.php:314
+#: src/usr/local/www/diag_command.php:304
 msgid "Example"
 msgstr "例"
 
@@ -8085,8 +8090,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:971
 #: src/usr/local/www/firewall_nat_out_edit.php:688
 #: src/usr/local/www/firewall_nat_out_edit.php:698
-#: src/usr/local/www/firewall_rules_edit.php:1739
-#: src/usr/local/www/firewall_rules_edit.php:1749
+#: src/usr/local/www/firewall_rules_edit.php:1741
+#: src/usr/local/www/firewall_rules_edit.php:1751
 msgid "n/j/y H:i:s"
 msgstr "N / J / YのH ： I： S"
 
@@ -8490,7 +8495,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:210
 #: src/usr/local/www/firewall_nat_out_edit.php:158
 #: src/usr/local/www/firewall_rules.php:380
-#: src/usr/local/www/firewall_rules_edit.php:436
+#: src/usr/local/www/firewall_rules_edit.php:438
 #: src/usr/local/www/interfaces_bridge_edit.php:535
 #: src/usr/local/www/load_balancer_virtual_server.php:140
 #: src/usr/local/www/services_rfc2136_edit.php:240
@@ -8580,7 +8585,7 @@ msgstr ""
 #: src/usr/local/www/diag_gmirror.php:268
 #: src/usr/local/www/load_balancer_pool_edit.php:418
 #: src/usr/local/www/load_balancer_pool_edit.php:425
-#: src/usr/local/www/pkg_mgr_installed.php:194
+#: src/usr/local/www/pkg_mgr_installed.php:224
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:117
 msgid "Remove"
 msgstr "削除する"
@@ -8884,104 +8889,110 @@ msgstr "NDP表"
 msgid "IPv6 address"
 msgstr "IPv6アドレス"
 
-#: src/usr/local/www/diag_packet_capture.php:82
-#: src/usr/local/www/diag_packet_capture.php:405
+#: src/usr/local/www/diag_packet_capture.php:102
+#: src/usr/local/www/diag_packet_capture.php:434
 msgid "Download Capture"
 msgstr "キャプチャをダウンロード"
 
-#: src/usr/local/www/diag_packet_capture.php:86 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:397
 msgid "Packet Capture"
 msgstr "パケットキャプチャ"
 
-#: src/usr/local/www/diag_packet_capture.php:107
+#: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:416
 #: src/usr/local/www/system_certmanager.php:1027
 msgid "OpenVPN Server"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:107
+#: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:419
 #: src/usr/local/www/system_certmanager.php:1030
 msgid "OpenVPN Client"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:129
+#: src/usr/local/www/diag_packet_capture.php:149
 msgid "Invalid interface."
 msgstr "無効なインタフェース。"
 
-#: src/usr/local/www/diag_packet_capture.php:133
+#: src/usr/local/www/diag_packet_capture.php:153
 msgid "Invalid address family."
 msgstr "無効なアドレスファミリ。"
 
-#: src/usr/local/www/diag_packet_capture.php:138
+#: src/usr/local/www/diag_packet_capture.php:158
 msgid "IPv4 with ICMPv6 is not valid."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:141
+#: src/usr/local/www/diag_packet_capture.php:161
 msgid "IPv6 with ICMP is not valid."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:144
+#: src/usr/local/www/diag_packet_capture.php:164
 msgid "IPv6 with ARP is not valid."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:149
+#: src/usr/local/www/diag_packet_capture.php:169
 msgid "Invalid protocol."
 msgstr "無効なプロトコル。"
 
-#: src/usr/local/www/diag_packet_capture.php:163
+#: src/usr/local/www/diag_packet_capture.php:184
 #, php-format
 msgid "A valid IP address, CIDR block, or MAC address must be specified. [%s]"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:170
+#: src/usr/local/www/diag_packet_capture.php:190
+msgid ""
+"Partial MAC addresses can only be matched using 1, 2, or 4 MAC segments "
+"(bytes)."
+msgstr ""
+
+#: src/usr/local/www/diag_packet_capture.php:198
 msgid "Invalid value specified for port."
 msgstr "ポートに指定された値が無効です。"
 
-#: src/usr/local/www/diag_packet_capture.php:178
+#: src/usr/local/www/diag_packet_capture.php:206
 msgid "Invalid value specified for packet length."
 msgstr "パケット長に指定された値が無効です。"
 
-#: src/usr/local/www/diag_packet_capture.php:186
+#: src/usr/local/www/diag_packet_capture.php:214
 msgid "Invalid value specified for packet count."
 msgstr "パケット数に指定された値が無効です。"
 
-#: src/usr/local/www/diag_packet_capture.php:211
-#: src/usr/local/www/diag_packet_capture.php:382
-#: src/usr/local/www/diag_packet_capture.php:458
+#: src/usr/local/www/diag_packet_capture.php:239
+#: src/usr/local/www/diag_packet_capture.php:411
+#: src/usr/local/www/diag_packet_capture.php:487
 #: src/usr/local/www/status_dhcp_leases.php:364
 #: src/usr/local/www/status_dhcpv6_leases.php:442
 #: src/usr/local/www/status_dhcpv6_leases.php:537
 msgid "Start"
 msgstr "スタート"
 
-#: src/usr/local/www/diag_packet_capture.php:219
-#: src/usr/local/www/diag_packet_capture.php:379
-#: src/usr/local/www/diag_packet_capture.php:389
+#: src/usr/local/www/diag_packet_capture.php:247
+#: src/usr/local/www/diag_packet_capture.php:408
+#: src/usr/local/www/diag_packet_capture.php:418
 msgid "Stop"
 msgstr "停止"
 
-#: src/usr/local/www/diag_packet_capture.php:246
+#: src/usr/local/www/diag_packet_capture.php:274
 msgid "Exclude"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:276
+#: src/usr/local/www/diag_packet_capture.php:304
 msgid "Packet Capture Options"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:280
+#: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/firewall_nat_1to1_edit.php:458
 #: src/usr/local/www/firewall_nat_edit.php:689
 #: src/usr/local/www/firewall_nat_npt_edit.php:195
 #: src/usr/local/www/firewall_nat_out_edit.php:495
-#: src/usr/local/www/firewall_rules_edit.php:1229
-#: src/usr/local/www/firewall_rules_edit.php:1237
+#: src/usr/local/www/firewall_rules_edit.php:1231
+#: src/usr/local/www/firewall_rules_edit.php:1239
 #: src/usr/local/www/firewall_virtual_ip_edit.php:359
 #: src/usr/local/www/services_igmpproxy_edit.php:153
 #: src/usr/local/www/services_pppoe_edit.php:300
 #: src/usr/local/www/services_rfc2136_edit.php:170
 #: src/usr/local/www/services_wol.php:135
-#: src/usr/local/www/services_wol_edit.php:136
+#: src/usr/local/www/services_wol_edit.php:134
 #: src/usr/local/www/system_gateways_edit.php:597
 #: src/usr/local/www/vpn_ipsec_phase1.php:678
 #: src/usr/local/www/vpn_l2tp.php:211
@@ -8990,15 +9001,15 @@ msgstr ""
 msgid "*Interface"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:283
+#: src/usr/local/www/diag_packet_capture.php:311
 msgid "Select the interface on which to capture traffic. "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:287
+#: src/usr/local/www/diag_packet_capture.php:315
 msgid "Promiscuous"
 msgstr "無差別"
 
-#: src/usr/local/www/diag_packet_capture.php:290
+#: src/usr/local/www/diag_packet_capture.php:318
 #, php-format
 msgid ""
 "The packet capture will be performed using promiscuous mode.%1$sNote: Some "
@@ -9006,28 +9017,28 @@ msgid ""
 "%2$sPacket capture%3$s"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:302
+#: src/usr/local/www/diag_packet_capture.php:330
 msgid "IPv4 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:303
+#: src/usr/local/www/diag_packet_capture.php:331
 msgid "IPv6 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:299
-#: src/usr/local/www/firewall_rules_edit.php:1265
+#: src/usr/local/www/diag_packet_capture.php:327
+#: src/usr/local/www/firewall_rules_edit.php:1267
 #: src/usr/local/www/system_gateways_edit.php:604
 msgid "*Address Family"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:305
+#: src/usr/local/www/diag_packet_capture.php:333
 msgid "Select the type of traffic to be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:309
+#: src/usr/local/www/diag_packet_capture.php:337
 #: src/usr/local/www/firewall_nat_edit.php:698
 #: src/usr/local/www/firewall_nat_out_edit.php:504
-#: src/usr/local/www/firewall_rules_edit.php:1276
+#: src/usr/local/www/firewall_rules_edit.php:1278
 #: src/usr/local/www/system_authservers.php:729
 #: src/usr/local/www/vpn_ipsec_phase2.php:595
 #: src/usr/local/www/vpn_openvpn_client.php:495
@@ -9035,27 +9046,28 @@ msgstr ""
 msgid "*Protocol"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:312
+#: src/usr/local/www/diag_packet_capture.php:340
 msgid "Select the protocol to capture, or \"Any\". "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:316
+#: src/usr/local/www/diag_packet_capture.php:344
 msgid "Host Address"
 msgstr "ホストアドレス"
 
-#: src/usr/local/www/diag_packet_capture.php:319
+#: src/usr/local/www/diag_packet_capture.php:347
 #, php-format
 msgid ""
-"This value is either the Source or Destination IP address or subnet in CIDR "
-"notation. The packet capture will look for this address in either field."
-"%1$sMatching can be negated by preceding the value with \"!\". Multiple IP "
-"addresses or CIDR subnets may be specified. Comma (\",\") separated values "
-"perform a boolean \"AND\". Separating with a pipe (\"|\") performs a boolean "
-"\"OR\".%1$sIf this field is left blank, all packets on the specified "
-"interface will be captured."
+"This value is either the Source or Destination IP address, subnet in CIDR "
+"notation, or MAC address.%1$sMatching can be negated by preceding the value "
+"with \"!\". Multiple IP addresses or CIDR subnets may be specified. Comma "
+"(\",\") separated values perform a boolean \"AND\". Separating with a pipe "
+"(\"|\") performs a boolean \"OR\".%1$sMAC addresses must be entered in colon-"
+"separated format, such as xx:xx:xx:xx:xx:xx or a partial address consisting "
+"of one (xx), two (xx:xx), or four (xx:xx:xx:xx) segments.%1$sIf this field "
+"is left blank, all packets on the specified interface will be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:327
+#: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/firewall_aliases_edit.php:577
 #: src/usr/local/www/firewall_nat_edit.php:862
@@ -9070,60 +9082,60 @@ msgstr ""
 msgid "Port"
 msgstr "ポート"
 
-#: src/usr/local/www/diag_packet_capture.php:330
+#: src/usr/local/www/diag_packet_capture.php:359
 msgid ""
 "The port can be either the source or destination port. The packet capture "
 "will look for this port in either field. Leave blank if not filtering by "
 "port."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:335
+#: src/usr/local/www/diag_packet_capture.php:364
 msgid "Packet Length"
 msgstr "パケット長"
 
-#: src/usr/local/www/diag_packet_capture.php:338
+#: src/usr/local/www/diag_packet_capture.php:367
 msgid ""
 "The Packet length is the number of bytes of each packet that will be "
 "captured. Default value is 0, which will capture the entire frame regardless "
 "of its size."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:343
+#: src/usr/local/www/diag_packet_capture.php:372
 #: src/usr/local/www/diag_ping.php:50
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:84
 msgid "Count"
 msgstr "カウント"
 
-#: src/usr/local/www/diag_packet_capture.php:346
+#: src/usr/local/www/diag_packet_capture.php:375
 #, php-format
 msgid ""
 "This is the number of packets the packet capture will grab. Default value is "
 "100.%sEnter 0 (zero) for no count limit."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:354
+#: src/usr/local/www/diag_packet_capture.php:383
 #: src/usr/local/www/services_router_advertisements.php:112
 msgid "Normal"
 msgstr "通常の"
 
-#: src/usr/local/www/diag_packet_capture.php:355
+#: src/usr/local/www/diag_packet_capture.php:384
 msgid "Medium"
 msgstr "メディア"
 
-#: src/usr/local/www/diag_packet_capture.php:356
+#: src/usr/local/www/diag_packet_capture.php:385
 #: src/usr/local/www/services_router_advertisements.php:113
 msgid "High"
 msgstr "高い"
 
-#: src/usr/local/www/diag_packet_capture.php:357
+#: src/usr/local/www/diag_packet_capture.php:386
 msgid "Full"
 msgstr "フル"
 
-#: src/usr/local/www/diag_packet_capture.php:352
+#: src/usr/local/www/diag_packet_capture.php:381
 msgid "Level of detail"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:359
+#: src/usr/local/www/diag_packet_capture.php:388
 #, php-format
 msgid ""
 "This is the level of detail that will be displayed after hitting \"Stop\" "
@@ -9131,30 +9143,30 @@ msgid ""
 "of detail when downloading the packet capture. "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:365
+#: src/usr/local/www/diag_packet_capture.php:394
 msgid "Reverse DNS Lookup"
 msgstr "DNSの逆引き"
 
-#: src/usr/local/www/diag_packet_capture.php:368
+#: src/usr/local/www/diag_packet_capture.php:397
 #, php-format
 msgid ""
 "The packet capture will perform a reverse DNS lookup associated with all IP "
 "addresses.%sThis option can cause delays for large packet captures."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:398
+#: src/usr/local/www/diag_packet_capture.php:427
 msgid "View Capture"
 msgstr "ビューキャプチャー"
 
-#: src/usr/local/www/diag_packet_capture.php:411
+#: src/usr/local/www/diag_packet_capture.php:440
 msgid "Last capture"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:461
+#: src/usr/local/www/diag_packet_capture.php:490
 msgid "Packet capture is running."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:471
+#: src/usr/local/www/diag_packet_capture.php:500
 msgid "Packets Captured"
 msgstr ""
 
@@ -9277,9 +9289,9 @@ msgstr "pfTOPアクティビティを収集しています。しばらくお待�
 #: src/usr/local/www/diag_traceroute.php:58
 #: src/usr/local/www/load_balancer_monitor_edit.php:297
 #: src/usr/local/www/load_balancer_monitor_edit.php:323
-#: src/usr/local/www/services_dnsmasq.php:365
+#: src/usr/local/www/services_dnsmasq.php:370
 #: src/usr/local/www/services_dnsmasq_edit.php:198
-#: src/usr/local/www/services_unbound.php:438
+#: src/usr/local/www/services_unbound.php:443
 #: src/usr/local/www/services_unbound_host_edit.php:191
 #: src/usr/local/www/status_ipsec_leases.php:56
 #: src/usr/local/www/services_rfc2136_edit.php:209
@@ -9446,7 +9458,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
-#: src/usr/local/www/pkg_mgr_installed.php:190
+#: src/usr/local/www/pkg_mgr_installed.php:220
 #: src/usr/local/www/system_certmanager.php:458
 #: src/usr/local/www/system_certmanager.php:515
 #: src/usr/local/www/system_certmanager.php:882
@@ -9530,7 +9542,7 @@ msgid "Invalid info type, bailing."
 msgstr ""
 
 #: src/usr/local/www/diag_smart.php:132 src/usr/local/www/diag_smart.php:207
-#: src/usr/local/www/pkg_mgr_installed.php:195
+#: src/usr/local/www/pkg_mgr_installed.php:225
 msgid "Information"
 msgstr ""
 
@@ -9650,10 +9662,10 @@ msgstr ""
 
 #: src/usr/local/www/diag_states_summary.php:151
 #: src/usr/local/www/firewall_aliases.php:149
-#: src/usr/local/www/services_dnsmasq.php:367
-#: src/usr/local/www/services_dnsmasq.php:441
-#: src/usr/local/www/services_unbound.php:440
-#: src/usr/local/www/services_unbound.php:516
+#: src/usr/local/www/services_dnsmasq.php:372
+#: src/usr/local/www/services_dnsmasq.php:446
+#: src/usr/local/www/services_unbound.php:445
+#: src/usr/local/www/services_unbound.php:521
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "IP"
 msgstr "IP"
@@ -9934,7 +9946,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:200
 #: src/usr/local/www/firewall_nat_out_edit.php:389
 #: src/usr/local/www/firewall_rules.php:314
-#: src/usr/local/www/firewall_rules_edit.php:1089
+#: src/usr/local/www/firewall_rules_edit.php:1091
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/firewall_shaper.php:41
@@ -9967,8 +9979,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:531
 #: src/usr/local/www/firewall_nat_out_edit.php:158
 #: src/usr/local/www/firewall_rules.php:381
-#: src/usr/local/www/firewall_rules_edit.php:438
-#: src/usr/local/www/firewall_rules_edit.php:1313
+#: src/usr/local/www/firewall_rules_edit.php:440
+#: src/usr/local/www/firewall_rules_edit.php:1315
 #: src/usr/local/www/status_ipsec_sad.php:66
 #: src/usr/local/www/status_ipsec_spd.php:59
 #: src/usr/local/www/status_logs_filter.php:161
@@ -9989,8 +10001,8 @@ msgstr "IPプロトコル"
 #: src/usr/local/www/firewall_nat_out.php:533
 #: src/usr/local/www/firewall_nat_out_edit.php:158
 #: src/usr/local/www/firewall_rules.php:383
-#: src/usr/local/www/firewall_rules_edit.php:439
-#: src/usr/local/www/firewall_rules_edit.php:1313
+#: src/usr/local/www/firewall_rules_edit.php:441
+#: src/usr/local/www/firewall_rules_edit.php:1315
 #: src/usr/local/www/status_ipsec_sad.php:67
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
@@ -10060,19 +10072,19 @@ msgstr "エイリアスリストが変更されました。"
 #: src/usr/local/www/firewall_shaper_vinterface.php:366
 #: src/usr/local/www/firewall_shaper_wizards.php:84
 #: src/usr/local/www/firewall_virtual_ip.php:241
-#: src/usr/local/www/interfaces_assign.php:475
+#: src/usr/local/www/interfaces_assign.php:477
 #: src/usr/local/www/load_balancer_monitor.php:86
 #: src/usr/local/www/load_balancer_pool.php:98
 #: src/usr/local/www/load_balancer_setting.php:100
 #: src/usr/local/www/load_balancer_virtual_server.php:120
 #: src/usr/local/www/services_captiveportal_mac.php:157
 #: src/usr/local/www/services_captiveportal_zones.php:64
-#: src/usr/local/www/services_dhcp.php:737
+#: src/usr/local/www/services_dhcp.php:747
 #: src/usr/local/www/services_dhcpv6.php:502
-#: src/usr/local/www/services_dnsmasq.php:241
+#: src/usr/local/www/services_dnsmasq.php:246
 #: src/usr/local/www/services_igmpproxy.php:71
 #: src/usr/local/www/services_pppoe.php:87
-#: src/usr/local/www/services_unbound.php:255
+#: src/usr/local/www/services_unbound.php:260
 #: src/usr/local/www/services_unbound_acls.php:179
 #: src/usr/local/www/services_unbound_advanced.php:201
 #: src/usr/local/www/status_lb_pool.php:110
@@ -10117,7 +10129,7 @@ msgstr "エイリアスを削除"
 #: src/usr/local/www/firewall_schedule.php:245
 #: src/usr/local/www/firewall_virtual_ip.php:333
 #: src/usr/local/www/interfaces.php:1906 src/usr/local/www/interfaces.php:3229
-#: src/usr/local/www/interfaces_assign.php:562
+#: src/usr/local/www/interfaces_assign.php:564
 #: src/usr/local/www/interfaces_bridge.php:156
 #: src/usr/local/www/interfaces_gif.php:130
 #: src/usr/local/www/interfaces_gre.php:136
@@ -10138,21 +10150,21 @@ msgstr "エイリアスを削除"
 #: src/usr/local/www/services_captiveportal_vouchers.php:429
 #: src/usr/local/www/services_captiveportal_zones.php:118
 #: src/usr/local/www/services_checkip.php:156
-#: src/usr/local/www/services_dhcp.php:917
-#: src/usr/local/www/services_dhcp.php:1332
-#: src/usr/local/www/services_dhcp.php:1458
+#: src/usr/local/www/services_dhcp.php:927
+#: src/usr/local/www/services_dhcp.php:1342
+#: src/usr/local/www/services_dhcp.php:1468
 #: src/usr/local/www/services_dhcpv6.php:1050
-#: src/usr/local/www/services_dnsmasq.php:430
-#: src/usr/local/www/services_dnsmasq.php:477
+#: src/usr/local/www/services_dnsmasq.php:435
+#: src/usr/local/www/services_dnsmasq.php:482
 #: src/usr/local/www/services_dyndns.php:215
 #: src/usr/local/www/services_igmpproxy.php:140
 #: src/usr/local/www/services_ntpd.php:276
 #: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_pppoe.php:143
-#: src/usr/local/www/services_rfc2136.php:202
+#: src/usr/local/www/services_rfc2136.php:203
 #: src/usr/local/www/services_router_advertisements.php:435
-#: src/usr/local/www/services_unbound.php:505
-#: src/usr/local/www/services_unbound.php:554
+#: src/usr/local/www/services_unbound.php:510
+#: src/usr/local/www/services_unbound.php:559
 #: src/usr/local/www/services_unbound_acls.php:323
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:464
@@ -10235,7 +10247,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out_edit.php:389
 #: src/usr/local/www/firewall_rules.php:774
-#: src/usr/local/www/firewall_rules_edit.php:1102
+#: src/usr/local/www/firewall_rules_edit.php:1104
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
 #: src/usr/local/www/interfaces_bridge_edit.php:379
@@ -10260,7 +10272,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:277
 #: src/usr/local/www/services_rfc2136_edit.php:145
 #: src/usr/local/www/services_unbound_acls.php:165
-#: src/usr/local/www/services_wol_edit.php:113
+#: src/usr/local/www/services_wol_edit.php:111
 #: src/usr/local/www/system_advanced_sysctl.php:118
 #: src/usr/local/www/system_authservers.php:405
 #: src/usr/local/www/system_camanager.php:321
@@ -10675,7 +10687,7 @@ msgstr "NPT"
 
 #: src/usr/local/www/firewall_nat.php:216
 #: src/usr/local/www/firewall_rules.php:314
-#: src/usr/local/www/firewall_rules_edit.php:1089
+#: src/usr/local/www/firewall_rules_edit.php:1091
 #: src/usr/local/www/head.inc:285
 msgid "Rules"
 msgstr "ルール"
@@ -10788,7 +10800,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:908
 #: src/usr/local/www/firewall_nat_edit.php:943
 #: src/usr/local/www/firewall_rules.php:845
-#: src/usr/local/www/firewall_rules_edit.php:1152
+#: src/usr/local/www/firewall_rules_edit.php:1154
 #: src/usr/local/www/services_captiveportal_mac.php:60
 #: src/usr/local/www/services_captiveportal_mac_edit.php:200
 #: src/usr/local/www/status_logs_common.inc:418
@@ -10940,7 +10952,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:231
 #: src/usr/local/www/firewall_nat_edit.php:301
 #: src/usr/local/www/firewall_nat_out_edit.php:217
-#: src/usr/local/www/firewall_rules_edit.php:546
+#: src/usr/local/www/firewall_rules_edit.php:548
 msgid "A valid destination bit count must be specified."
 msgstr "有効な宛先ビット数を指定する必要があります。"
 
@@ -10954,7 +10966,7 @@ msgstr "単一宿主"
 #: src/usr/local/www/firewall_nat_edit.php:571
 #: src/usr/local/www/firewall_nat_out_edit.php:515
 #: src/usr/local/www/firewall_nat_out_edit.php:540
-#: src/usr/local/www/firewall_rules_edit.php:1345
+#: src/usr/local/www/firewall_rules_edit.php:1347
 #: src/usr/local/www/firewall_virtual_ip_edit.php:370
 #: src/usr/local/www/system_routes.php:242
 #: src/usr/local/www/vpn_ipsec_mobile.php:488
@@ -10968,7 +10980,7 @@ msgstr "ネットワーク"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:343
 #: src/usr/local/www/firewall_nat_edit.php:534
 #: src/usr/local/www/firewall_nat_edit.php:574
-#: src/usr/local/www/firewall_rules_edit.php:1356
+#: src/usr/local/www/firewall_rules_edit.php:1358
 #: src/usr/local/www/guiconfig.inc:226
 msgid "PPPoE clients"
 msgstr "PPPoEクライアント"
@@ -10977,7 +10989,7 @@ msgstr "PPPoEクライアント"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:347
 #: src/usr/local/www/firewall_nat_edit.php:538
 #: src/usr/local/www/firewall_nat_edit.php:578
-#: src/usr/local/www/firewall_rules_edit.php:1359
+#: src/usr/local/www/firewall_rules_edit.php:1361
 #: src/usr/local/www/guiconfig.inc:227
 msgid "L2TP clients"
 msgstr "L2TPクライアント"
@@ -10985,7 +10997,7 @@ msgstr "L2TPクライアント"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:340
 #: src/usr/local/www/firewall_nat_edit.php:531
 #: src/usr/local/www/firewall_nat_edit.php:571
-#: src/usr/local/www/firewall_rules_edit.php:1344
+#: src/usr/local/www/firewall_rules_edit.php:1346
 msgid "Single host or alias"
 msgstr "単一のホストまたはエイリアス"
 
@@ -11009,7 +11021,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:669
 #: src/usr/local/www/firewall_nat_npt_edit.php:151
 #: src/usr/local/www/firewall_rules.php:140
-#: src/usr/local/www/firewall_rules_edit.php:1069
+#: src/usr/local/www/firewall_rules_edit.php:1071
 msgid "L2TP VPN"
 msgstr ""
 
@@ -11017,7 +11029,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:674
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
-#: src/usr/local/www/firewall_rules_edit.php:1073
+#: src/usr/local/www/firewall_rules_edit.php:1075
 #: src/usr/local/www/head.inc:308 src/usr/local/www/services_pppoe.php:78
 #: src/usr/local/www/services_pppoe.php:92
 #: src/usr/local/www/services_pppoe_edit.php:277
@@ -11028,7 +11040,7 @@ msgstr "PPPoE サーバー"
 #: src/usr/local/www/firewall_nat_edit.php:679
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
-#: src/usr/local/www/firewall_rules_edit.php:1078
+#: src/usr/local/www/firewall_rules_edit.php:1080
 #: src/usr/local/www/head.inc:323 src/usr/local/www/head.inc:339
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:332
 #: src/usr/local/www/status_ipsec.php:465
@@ -11083,14 +11095,14 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:800
 #: src/usr/local/www/firewall_nat_out_edit.php:516
 #: src/usr/local/www/firewall_nat_out_edit.php:541
-#: src/usr/local/www/firewall_rules_edit.php:436
+#: src/usr/local/www/firewall_rules_edit.php:438
 #: src/usr/local/www/firewall_virtual_ip.php:259
 #: src/usr/local/www/firewall_virtual_ip_edit.php:92
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
 #: src/usr/local/www/services_captiveportal.php:964
-#: src/usr/local/www/services_dhcp.php:1309
+#: src/usr/local/www/services_dhcp.php:1319
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
 #: src/usr/local/www/status_logs_vpn.php:408
@@ -11182,7 +11194,7 @@ msgid "Redirect target IP must be IPv4."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:259
-#: src/usr/local/www/firewall_rules_edit.php:474
+#: src/usr/local/www/firewall_rules_edit.php:476
 #, php-format
 msgid ""
 "%s is not a valid start source port. It must be a port alias or integer "
@@ -11190,7 +11202,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:262
-#: src/usr/local/www/firewall_rules_edit.php:477
+#: src/usr/local/www/firewall_rules_edit.php:479
 #, php-format
 msgid ""
 "%s is not a valid end source port. It must be a port alias or integer "
@@ -11198,7 +11210,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:265
-#: src/usr/local/www/firewall_rules_edit.php:480
+#: src/usr/local/www/firewall_rules_edit.php:482
 #, php-format
 msgid ""
 "%s is not a valid start destination port. It must be a port alias or integer "
@@ -11206,7 +11218,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:268
-#: src/usr/local/www/firewall_rules_edit.php:483
+#: src/usr/local/www/firewall_rules_edit.php:485
 #, php-format
 msgid ""
 "%s is not a valid end destination port. It must be a port alias or integer "
@@ -11221,7 +11233,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:283
-#: src/usr/local/www/firewall_rules_edit.php:535
+#: src/usr/local/www/firewall_rules_edit.php:537
 #, php-format
 msgid "%s is not a valid source IP address or alias."
 msgstr "%sは、有効な送信元IPアドレスまたはエイリアスではありません。"
@@ -11233,12 +11245,12 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:289
 #: src/usr/local/www/firewall_nat_out_edit.php:207
-#: src/usr/local/www/firewall_rules_edit.php:538
+#: src/usr/local/www/firewall_rules_edit.php:540
 msgid "A valid source bit count must be specified."
 msgstr "有効なソースビット数を指定する必要があります。"
 
 #: src/usr/local/www/firewall_nat_edit.php:295
-#: src/usr/local/www/firewall_rules_edit.php:543
+#: src/usr/local/www/firewall_rules_edit.php:545
 #, php-format
 msgid "%s is not a valid destination IP address or alias."
 msgstr "%sは有効な宛先IPアドレスまたはエイリアスではありません。"
@@ -11262,7 +11274,7 @@ msgstr "NATのポートフォワード"
 
 #: src/usr/local/www/firewall_nat_edit.php:571
 #: src/usr/local/www/firewall_nat_out_edit.php:515
-#: src/usr/local/www/firewall_rules_edit.php:1353
+#: src/usr/local/www/firewall_rules_edit.php:1355
 msgid "This Firewall (self)"
 msgstr ""
 
@@ -11288,27 +11300,27 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:705
 #: src/usr/local/www/firewall_nat_edit.php:1164
-#: src/usr/local/www/firewall_rules_edit.php:1462
-#: src/usr/local/www/firewall_rules_edit.php:1788
-#: src/usr/local/www/firewall_rules_edit.php:1860
+#: src/usr/local/www/firewall_rules_edit.php:1464
+#: src/usr/local/www/firewall_rules_edit.php:1790
+#: src/usr/local/www/firewall_rules_edit.php:1862
 #: src/usr/local/www/interfaces_bridge_edit.php:412
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:825
 #: src/usr/local/www/interfaces_ppps_edit.php:1052
-#: src/usr/local/www/services_dhcp.php:1032
-#: src/usr/local/www/services_dhcp.php:1090
-#: src/usr/local/www/services_dhcp.php:1119
-#: src/usr/local/www/services_dhcp.php:1148
-#: src/usr/local/www/services_dhcp.php:1170
-#: src/usr/local/www/services_dhcp.php:1192
-#: src/usr/local/www/services_dhcp.php:1250
-#: src/usr/local/www/services_dhcp.php:1500
-#: src/usr/local/www/services_dhcp.php:1535
-#: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp.php:1604
-#: src/usr/local/www/services_dhcp.php:1638
-#: src/usr/local/www/services_dhcp.php:1673
-#: src/usr/local/www/services_dhcp.php:1712
+#: src/usr/local/www/services_dhcp.php:1042
+#: src/usr/local/www/services_dhcp.php:1100
+#: src/usr/local/www/services_dhcp.php:1129
+#: src/usr/local/www/services_dhcp.php:1158
+#: src/usr/local/www/services_dhcp.php:1180
+#: src/usr/local/www/services_dhcp.php:1202
+#: src/usr/local/www/services_dhcp.php:1260
+#: src/usr/local/www/services_dhcp.php:1510
+#: src/usr/local/www/services_dhcp.php:1545
+#: src/usr/local/www/services_dhcp.php:1580
+#: src/usr/local/www/services_dhcp.php:1614
+#: src/usr/local/www/services_dhcp.php:1648
+#: src/usr/local/www/services_dhcp.php:1683
+#: src/usr/local/www/services_dhcp.php:1722
 #: src/usr/local/www/services_dhcp_edit.php:575
 #: src/usr/local/www/services_dhcp_edit.php:631
 #: src/usr/local/www/services_dhcp_edit.php:667
@@ -11360,8 +11372,8 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:826
 #: src/usr/local/www/firewall_nat_edit.php:840
 #: src/usr/local/www/firewall_nat_edit.php:873
-#: src/usr/local/www/firewall_rules_edit.php:1420
-#: src/usr/local/www/firewall_rules_edit.php:1434
+#: src/usr/local/www/firewall_rules_edit.php:1422
+#: src/usr/local/www/firewall_rules_edit.php:1436
 #: src/usr/local/www/interfaces.php:2640
 #: src/usr/local/www/interfaces_ppps_edit.php:752
 #: src/usr/local/www/services_ntpd_gps.php:339
@@ -11420,7 +11432,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:887
 #: src/usr/local/www/firewall_nat_out_edit.php:645
-#: src/usr/local/www/firewall_rules_edit.php:1601
+#: src/usr/local/www/firewall_rules_edit.php:1603
 msgid "No XMLRPC Sync"
 msgstr "いいえXMLRPC同期しない"
 
@@ -11472,7 +11484,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:954
 #: src/usr/local/www/firewall_nat_out_edit.php:681
-#: src/usr/local/www/firewall_rules_edit.php:1732
+#: src/usr/local/www/firewall_rules_edit.php:1734
 msgid "Rule Information"
 msgstr "情報ルール"
 
@@ -11480,36 +11492,36 @@ msgstr "情報ルール"
 #: src/usr/local/www/firewall_nat_edit.php:970
 #: src/usr/local/www/firewall_nat_out_edit.php:687
 #: src/usr/local/www/firewall_nat_out_edit.php:697
-#: src/usr/local/www/firewall_rules_edit.php:1738
-#: src/usr/local/www/firewall_rules_edit.php:1748
+#: src/usr/local/www/firewall_rules_edit.php:1740
+#: src/usr/local/www/firewall_rules_edit.php:1750
 #, php-format
 msgid "%1$s by %2$s"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:958
 #: src/usr/local/www/firewall_nat_out_edit.php:685
-#: src/usr/local/www/firewall_rules_edit.php:1736
+#: src/usr/local/www/firewall_rules_edit.php:1738
 msgid "Created"
 msgstr "作成"
 
 #: src/usr/local/www/firewall_nat_edit.php:968
 #: src/usr/local/www/firewall_nat_out_edit.php:695
-#: src/usr/local/www/firewall_rules_edit.php:1746
+#: src/usr/local/www/firewall_rules_edit.php:1748
 msgid "Updated"
 msgstr "更新した"
 
 #: src/usr/local/www/firewall_nat_edit.php:1166
-#: src/usr/local/www/firewall_rules_edit.php:1786
-#: src/usr/local/www/firewall_rules_edit.php:1858
+#: src/usr/local/www/firewall_rules_edit.php:1788
+#: src/usr/local/www/firewall_rules_edit.php:1860
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1050
-#: src/usr/local/www/services_dhcp.php:1498
-#: src/usr/local/www/services_dhcp.php:1533
-#: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp.php:1602
-#: src/usr/local/www/services_dhcp.php:1636
-#: src/usr/local/www/services_dhcp.php:1671
-#: src/usr/local/www/services_dhcp.php:1710
+#: src/usr/local/www/services_dhcp.php:1508
+#: src/usr/local/www/services_dhcp.php:1543
+#: src/usr/local/www/services_dhcp.php:1578
+#: src/usr/local/www/services_dhcp.php:1612
+#: src/usr/local/www/services_dhcp.php:1646
+#: src/usr/local/www/services_dhcp.php:1681
+#: src/usr/local/www/services_dhcp.php:1720
 #: src/usr/local/www/services_dhcp_edit.php:723
 #: src/usr/local/www/services_dhcp_edit.php:758
 #: src/usr/local/www/services_dhcp_edit.php:792
@@ -11727,12 +11739,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:158
-#: src/usr/local/www/firewall_rules_edit.php:454
+#: src/usr/local/www/firewall_rules_edit.php:456
 msgid "Source bit count"
 msgstr "ソースビット数"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:158
-#: src/usr/local/www/firewall_rules_edit.php:459
+#: src/usr/local/www/firewall_rules_edit.php:461
 msgid "Destination bit count"
 msgstr "先のビット数"
 
@@ -11944,7 +11956,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:601
-#: src/usr/local/www/firewall_rules_edit.php:1304
+#: src/usr/local/www/firewall_rules_edit.php:1306
 #: src/usr/local/www/firewall_virtual_ip_edit.php:378
 #: src/usr/local/www/status_pkglogs.php:92
 #: src/usr/local/www/status_pkglogs.php:94
@@ -11998,8 +12010,8 @@ msgid "States details"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:301
-#: src/usr/local/www/firewall_rules_edit.php:1094
-#: src/usr/local/www/firewall_rules_edit.php:1257
+#: src/usr/local/www/firewall_rules_edit.php:1096
+#: src/usr/local/www/firewall_rules_edit.php:1259
 msgid "Floating"
 msgstr "フローティング"
 
@@ -12012,9 +12024,9 @@ msgid "Rules (Drag to Change Order)"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:385
-#: src/usr/local/www/firewall_rules_edit.php:1662
+#: src/usr/local/www/firewall_rules_edit.php:1664
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
-#: src/usr/local/www/services_dhcp.php:962
+#: src/usr/local/www/services_dhcp.php:972
 #: src/usr/local/www/services_dhcp_edit.php:540
 #: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:458
 #: src/usr/local/www/system.php:496
@@ -12033,7 +12045,7 @@ msgid "Queue"
 msgstr "キュー"
 
 #: src/usr/local/www/firewall_rules.php:387
-#: src/usr/local/www/firewall_rules_edit.php:1631
+#: src/usr/local/www/firewall_rules_edit.php:1633
 msgid "Schedule"
 msgstr "スケジュール"
 
@@ -12251,7 +12263,7 @@ msgid "This rule is not currently active because its period has expired"
 msgstr "その期間が満了したため、このルールは、現在アクティブではありません"
 
 #: src/usr/local/www/firewall_rules.php:697
-#: src/usr/local/www/firewall_rules_edit.php:1300
+#: src/usr/local/www/firewall_rules_edit.php:1302
 msgid "ICMP subtypes"
 msgstr ""
 
@@ -12282,12 +12294,12 @@ msgid "Click the button to add a new rule."
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:846
-#: src/usr/local/www/firewall_rules_edit.php:1158
+#: src/usr/local/www/firewall_rules_edit.php:1160
 msgid "Match"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:847
-#: src/usr/local/www/firewall_rules_edit.php:1153
+#: src/usr/local/www/firewall_rules_edit.php:1155
 #: src/usr/local/www/services_captiveportal_mac.php:61
 #: src/usr/local/www/services_captiveportal_mac_edit.php:200
 #: src/usr/local/www/status_logs_common.inc:459
@@ -12297,13 +12309,13 @@ msgid "Block"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:848
-#: src/usr/local/www/firewall_rules_edit.php:1154
+#: src/usr/local/www/firewall_rules_edit.php:1156
 #: src/usr/local/www/widgets/widgets/log.widget.php:232
 msgid "Reject"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:849
-#: src/usr/local/www/firewall_rules_edit.php:1446
+#: src/usr/local/www/firewall_rules_edit.php:1448
 msgid "Log"
 msgstr "ログ"
 
@@ -12347,10 +12359,10 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:39
 #: src/usr/local/www/firewall_rules_edit.php:40
 #: src/usr/local/www/firewall_rules_edit.php:41
-#: src/usr/local/www/firewall_rules_edit.php:1249
-#: src/usr/local/www/firewall_rules_edit.php:1302
-#: src/usr/local/www/firewall_rules_edit.php:1343
-#: src/usr/local/www/firewall_rules_edit.php:1399
+#: src/usr/local/www/firewall_rules_edit.php:1251
+#: src/usr/local/www/firewall_rules_edit.php:1304
+#: src/usr/local/www/firewall_rules_edit.php:1345
+#: src/usr/local/www/firewall_rules_edit.php:1401
 msgid "any"
 msgstr "任意の"
 
@@ -12372,301 +12384,301 @@ msgid ""
 "not both)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:319
+#: src/usr/local/www/firewall_rules_edit.php:321
 msgid "The IP protocol is not recognized."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:334
-#: src/usr/local/www/firewall_rules_edit.php:346
+#: src/usr/local/www/firewall_rules_edit.php:336
+#: src/usr/local/www/firewall_rules_edit.php:348
 msgid ""
 "Gateways can not be assigned in a rule that applies to both IPv4 and IPv6."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:336
+#: src/usr/local/www/firewall_rules_edit.php:338
 msgid "An IPv4 gateway group can not be assigned in IPv6 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:338
+#: src/usr/local/www/firewall_rules_edit.php:340
 msgid "An IPv6 gateway group can not be assigned in IPv4 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:349
+#: src/usr/local/www/firewall_rules_edit.php:351
 msgid "An IPv4 gateway can not be assigned in IPv6 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:352
+#: src/usr/local/www/firewall_rules_edit.php:354
 msgid "An IPv6 gateway can not be assigned in IPv4 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:444
+#: src/usr/local/www/firewall_rules_edit.php:446
 #, php-format
 msgid "%s is only valid with protocol TCP."
 msgstr "%sはプロトコルTCPでのみ有効です。"
 
-#: src/usr/local/www/firewall_rules_edit.php:447
+#: src/usr/local/www/firewall_rules_edit.php:449
 #, php-format
 msgid "%s is only valid if the gateway is set to 'default'."
 msgstr "ゲートウェイが「デフォルト」に設定されている場合%sにのみ有効です。"
 
-#: src/usr/local/www/firewall_rules_edit.php:524
-#: src/usr/local/www/firewall_rules_edit.php:529
+#: src/usr/local/www/firewall_rules_edit.php:526
+#: src/usr/local/www/firewall_rules_edit.php:531
 msgid "Alias entries must be a single host or alias."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:551
+#: src/usr/local/www/firewall_rules_edit.php:553
 msgid ""
 "The source and destination IP addresses must have the same family (IPv4 / "
 "IPv6)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:555
+#: src/usr/local/www/firewall_rules_edit.php:557
 msgid "IPv6 addresses cannot be used in IPv4 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:558
+#: src/usr/local/www/firewall_rules_edit.php:560
 msgid "IPv4 addresses can not be used in IPv6 rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:562
+#: src/usr/local/www/firewall_rules_edit.php:564
 msgid ""
 "IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and "
 "IPv6."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:579
+#: src/usr/local/www/firewall_rules_edit.php:581
 msgid "OS detection is only valid with protocol TCP."
 msgstr "OS検出、プロトコルはTCPでのみ有効です。"
 
-#: src/usr/local/www/firewall_rules_edit.php:582
+#: src/usr/local/www/firewall_rules_edit.php:584
 msgid "Invalid OS detection selection. Please select a valid OS."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:590
+#: src/usr/local/www/firewall_rules_edit.php:592
 msgid "ICMP types expected to be a list if present, but is not."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:609
+#: src/usr/local/www/firewall_rules_edit.php:611
 #, php-format
 msgid "Invalid ICMP subtype: %s can not be used with %s."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:618
+#: src/usr/local/www/firewall_rules_edit.php:620
 msgid "A queue must be selected when an acknowledge queue is also selected."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:620
+#: src/usr/local/www/firewall_rules_edit.php:622
 msgid "Acknowledge queue and Queue cannot be the same."
 msgstr "キューを確認し、キューは同じにすることはできません。"
 
-#: src/usr/local/www/firewall_rules_edit.php:624
+#: src/usr/local/www/firewall_rules_edit.php:626
 msgid ""
 "Limiters can not be used in Floating rules without choosing a direction."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:627
+#: src/usr/local/www/firewall_rules_edit.php:629
 msgid ""
 "Gateways can not be used in Floating rules without choosing a direction."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:631
+#: src/usr/local/www/firewall_rules_edit.php:633
 msgid ""
 "A queue must be selected for the In direction before selecting one for Out "
 "too."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:633
+#: src/usr/local/www/firewall_rules_edit.php:635
 msgid "In and Out Queue cannot be the same."
 msgstr "INとOUTキューが同じにすることはできません。"
 
-#: src/usr/local/www/firewall_rules_edit.php:635
 #: src/usr/local/www/firewall_rules_edit.php:637
+#: src/usr/local/www/firewall_rules_edit.php:639
 msgid ""
 "A queue and a virtual interface cannot be selected for IN and Out. Both must "
 "be from the same type."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:640
+#: src/usr/local/www/firewall_rules_edit.php:642
 msgid ""
 "Please select a gateway, normally the interface selected gateway, so the "
 "limiters work correctly"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:644
+#: src/usr/local/www/firewall_rules_edit.php:646
 msgid "ID must be an integer"
 msgstr "IDは整数でなければなりません"
 
-#: src/usr/local/www/firewall_rules_edit.php:649
+#: src/usr/local/www/firewall_rules_edit.php:651
 msgid ""
 "The maximum number of established connections per host (advanced option) can "
 "only be specified for TCP protocol."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:652
+#: src/usr/local/www/firewall_rules_edit.php:654
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) can "
 "only be specified for TCP protocol."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:655
+#: src/usr/local/www/firewall_rules_edit.php:657
 msgid ""
 "The state timeout (advanced option) can only be specified for TCP protocol."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:661
+#: src/usr/local/www/firewall_rules_edit.php:663
 msgid ""
 "The maximum state entries (advanced option) can only be specified for Pass "
 "type rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:664
+#: src/usr/local/www/firewall_rules_edit.php:666
 msgid ""
 "The maximum number of unique source hosts (advanced option) can only be "
 "specified for Pass type rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:667
+#: src/usr/local/www/firewall_rules_edit.php:669
 msgid ""
 "The maximum number of established connections per host (advanced option) can "
 "only be specified for Pass type rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:670
+#: src/usr/local/www/firewall_rules_edit.php:672
 msgid ""
 "The maximum state entries per host (advanced option) can only be specified "
 "for Pass type rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:673
+#: src/usr/local/www/firewall_rules_edit.php:675
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) can "
 "only be specified for Pass type rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:676
+#: src/usr/local/www/firewall_rules_edit.php:678
 msgid ""
 "The state timeout (advanced option) can only be specified for Pass type "
 "rules."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:682
+#: src/usr/local/www/firewall_rules_edit.php:684
 msgid ""
 "The maximum state entries (advanced option) cannot be specified if statetype "
 "is none."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:685
+#: src/usr/local/www/firewall_rules_edit.php:687
 msgid ""
 "The maximum number of unique source hosts (advanced option) cannot be "
 "specified if statetype is none."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:688
+#: src/usr/local/www/firewall_rules_edit.php:690
 msgid ""
 "The maximum number of established connections per host (advanced option) "
 "cannot be specified if statetype is none."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:691
+#: src/usr/local/www/firewall_rules_edit.php:693
 msgid ""
 "The maximum state entries per host (advanced option) cannot be specified if "
 "statetype is none."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:694
+#: src/usr/local/www/firewall_rules_edit.php:696
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) "
 "cannot be specified if statetype is none."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:697
+#: src/usr/local/www/firewall_rules_edit.php:699
 msgid ""
 "The state timeout (advanced option) cannot be specified if statetype is none."
 ""
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:702
+#: src/usr/local/www/firewall_rules_edit.php:704
 msgid "Maximum state entries (advanced option) must be a positive integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:706
+#: src/usr/local/www/firewall_rules_edit.php:708
 msgid ""
 "Maximum number of unique source hosts (advanced option) must be a positive "
 "integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:710
+#: src/usr/local/www/firewall_rules_edit.php:712
 msgid ""
 "Maximum number of established connections per host (advanced option) must be "
 "a positive integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:714
+#: src/usr/local/www/firewall_rules_edit.php:716
 msgid ""
 "Maximum state entries per host (advanced option) must be a positive integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:718
+#: src/usr/local/www/firewall_rules_edit.php:720
 msgid ""
 "Maximum new connections per host / per second(s) (advanced option) must be a "
 "positive integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:722
+#: src/usr/local/www/firewall_rules_edit.php:724
 msgid "State timeout (advanced option) must be a positive integer"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:727
+#: src/usr/local/www/firewall_rules_edit.php:729
 msgid ""
 "Both maximum new connections per host and the interval (per second(s)) must "
 "be specified"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:742
+#: src/usr/local/www/firewall_rules_edit.php:744
 msgid ""
 "If TCP flags that should be set is specified, then out of which flags should "
 "be specified as well."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1015
+#: src/usr/local/www/firewall_rules_edit.php:1017
 msgid "set"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1016
+#: src/usr/local/www/firewall_rules_edit.php:1018
 msgid "out of"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1043
+#: src/usr/local/www/firewall_rules_edit.php:1045
 msgid " Any flags."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1114
+#: src/usr/local/www/firewall_rules_edit.php:1116
 msgid "Edit Firewall Rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1119
+#: src/usr/local/www/firewall_rules_edit.php:1121
 #: src/usr/local/www/status_ipsec_leases.php:55
 msgid "ID"
 msgstr "ID"
 
-#: src/usr/local/www/firewall_rules_edit.php:1128
+#: src/usr/local/www/firewall_rules_edit.php:1130
 msgid "Tracker"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1136
+#: src/usr/local/www/firewall_rules_edit.php:1138
 msgid "After"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1143
+#: src/usr/local/www/firewall_rules_edit.php:1145
 msgid "Ruleid"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1163
+#: src/usr/local/www/firewall_rules_edit.php:1165
 #: src/usr/local/www/services_captiveportal_mac_edit.php:198
 #: src/usr/local/www/services_unbound_acls.php:217
 msgid "*Action"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1166
+#: src/usr/local/www/firewall_rules_edit.php:1168
 #, php-format
 msgid ""
 "Choose what to do with packets that match the criteria specified below."
@@ -12676,84 +12688,84 @@ msgid ""
 "original packet is discarded."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1177
+#: src/usr/local/www/firewall_rules_edit.php:1179
 msgid ""
 "Set this option to disable this rule without removing it from the list."
 msgstr "リストから削除せずに、このルールを無効にするには、このオプションを設定します。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1183
+#: src/usr/local/www/firewall_rules_edit.php:1185
 msgid "Quick"
 msgstr "クイック"
 
-#: src/usr/local/www/firewall_rules_edit.php:1186
+#: src/usr/local/www/firewall_rules_edit.php:1188
 msgid ""
 "Set this option to apply this action to traffic that matches this rule "
 "immediately."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1196
+#: src/usr/local/www/firewall_rules_edit.php:1198
 msgid "View the NAT rule"
 msgstr "NATルールを表示する"
 
-#: src/usr/local/www/firewall_rules_edit.php:1201
+#: src/usr/local/www/firewall_rules_edit.php:1203
 msgid "Associated filter rule"
 msgstr "関連するフィルタルール"
 
-#: src/usr/local/www/firewall_rules_edit.php:1233
+#: src/usr/local/www/firewall_rules_edit.php:1235
 msgid "Choose the interface(s) for this rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1240
+#: src/usr/local/www/firewall_rules_edit.php:1242
 msgid "Choose the interface from which packets must come to match this rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1250
+#: src/usr/local/www/firewall_rules_edit.php:1252
 msgid "in"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1251
+#: src/usr/local/www/firewall_rules_edit.php:1253
 msgid "out"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1246
+#: src/usr/local/www/firewall_rules_edit.php:1248
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:173
 #: src/usr/local/www/services_captiveportal_ip_edit.php:229
 msgid "*Direction"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1272
+#: src/usr/local/www/firewall_rules_edit.php:1274
 msgid "Select the Internet Protocol version this rule applies to."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1295
+#: src/usr/local/www/firewall_rules_edit.php:1297
 msgid "Choose which IP protocol this rule should match."
 msgstr "選択しているIPプロトコルこの規則は、一致している必要があります。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1297
+#: src/usr/local/www/firewall_rules_edit.php:1299
 msgid "ICMP Subtypes"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1316
+#: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "*"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1319
+#: src/usr/local/www/firewall_rules_edit.php:1321
 msgid " not"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1349
+#: src/usr/local/www/firewall_rules_edit.php:1351
 msgid "This firewall (self)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1373
+#: src/usr/local/www/firewall_rules_edit.php:1375
 msgid " Type"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1380
+#: src/usr/local/www/firewall_rules_edit.php:1382
 msgid " Address"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1394
+#: src/usr/local/www/firewall_rules_edit.php:1396
 #, php-format
 msgid ""
 "The %1$sSource Port Range%2$s for a connection is typically random and "
@@ -12761,30 +12773,30 @@ msgid ""
 "remain at its default value, %1$sany%2$s."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1399
+#: src/usr/local/www/firewall_rules_edit.php:1401
 msgid "(other)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1404
+#: src/usr/local/www/firewall_rules_edit.php:1406
 msgid "Source Port Range"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1404
+#: src/usr/local/www/firewall_rules_edit.php:1406
 msgid "Destination Port Range"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1404
+#: src/usr/local/www/firewall_rules_edit.php:1406
 msgid "src"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1410
+#: src/usr/local/www/firewall_rules_edit.php:1412
 msgid " port begin"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1413
+#: src/usr/local/www/firewall_rules_edit.php:1415
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:892
+#: src/usr/local/www/services_dhcp.php:902
 #: src/usr/local/www/services_dhcpv6.php:624
 #: src/usr/local/www/services_dhcpv6.php:649
 #: src/usr/local/www/system_gateways_edit.php:724
@@ -12792,14 +12804,14 @@ msgstr ""
 msgid "From"
 msgstr "から"
 
-#: src/usr/local/www/firewall_rules_edit.php:1424
+#: src/usr/local/www/firewall_rules_edit.php:1426
 msgid " port end"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1427
+#: src/usr/local/www/firewall_rules_edit.php:1429
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:899
+#: src/usr/local/www/services_dhcp.php:909
 #: src/usr/local/www/services_dhcpv6.php:633
 #: src/usr/local/www/services_dhcpv6.php:658
 #: src/usr/local/www/system_gateways_edit.php:731
@@ -12807,18 +12819,18 @@ msgstr ""
 msgid "To"
 msgstr "へ"
 
-#: src/usr/local/www/firewall_rules_edit.php:1436
+#: src/usr/local/www/firewall_rules_edit.php:1438
 #, php-format
 msgid ""
 "Specify the %s port or port range for this rule. The \"To\" field may be "
 "left empty if only filtering a single port."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1443
+#: src/usr/local/www/firewall_rules_edit.php:1445
 msgid "Extra Options"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1449
+#: src/usr/local/www/firewall_rules_edit.php:1451
 #, php-format
 msgid ""
 "Hint: the firewall has limited local log space. Don't turn on logging for "
@@ -12826,173 +12838,173 @@ msgid ""
 "(see the %1$sStatus: System Logs: Settings%2$s page)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1458
+#: src/usr/local/www/firewall_rules_edit.php:1460
 #: src/usr/local/www/services_unbound_acls.php:227
 msgid "A description may be entered here for administrative reference."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1481
+#: src/usr/local/www/firewall_rules_edit.php:1483
 msgid "Source OS"
 msgstr "ソースのOS"
 
-#: src/usr/local/www/firewall_rules_edit.php:1484
+#: src/usr/local/www/firewall_rules_edit.php:1486
 msgid ""
 "Note: this only works for TCP rules. General OS choice matches all subtypes."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1488
+#: src/usr/local/www/firewall_rules_edit.php:1490
 msgid "Diffserv Code Point"
 msgstr "DiffServのコードポイント"
 
-#: src/usr/local/www/firewall_rules_edit.php:1495
+#: src/usr/local/www/firewall_rules_edit.php:1497
 msgid "Allow IP options"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1503
+#: src/usr/local/www/firewall_rules_edit.php:1505
 #: src/usr/local/www/system_advanced_firewall.php:518
 msgid "Disable reply-to"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1510
+#: src/usr/local/www/firewall_rules_edit.php:1512
 #: src/usr/local/www/interfaces_qinq.php:110
 msgid "Tag"
 msgstr "タグ"
 
-#: src/usr/local/www/firewall_rules_edit.php:1513
+#: src/usr/local/www/firewall_rules_edit.php:1515
 #, php-format
 msgid ""
 "A packet matching this rule can be marked and this mark used to match on "
 "other NAT/filter rules. It is called %1$sPolicy filtering%2$s."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1518
+#: src/usr/local/www/firewall_rules_edit.php:1520
 msgid "Tagged"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1521
+#: src/usr/local/www/firewall_rules_edit.php:1523
 msgid "A packet can be matched on a mark placed before on another rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1525
+#: src/usr/local/www/firewall_rules_edit.php:1527
 msgid "Max. states"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1528
+#: src/usr/local/www/firewall_rules_edit.php:1530
 msgid "Maximum state entries this rule can create."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1532
+#: src/usr/local/www/firewall_rules_edit.php:1534
 msgid "Max. src nodes"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1535
+#: src/usr/local/www/firewall_rules_edit.php:1537
 msgid "Maximum number of unique source hosts."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1539
+#: src/usr/local/www/firewall_rules_edit.php:1541
 msgid "Max. connections"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1542
+#: src/usr/local/www/firewall_rules_edit.php:1544
 msgid "Maximum number of established connections per host (TCP only)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1546
+#: src/usr/local/www/firewall_rules_edit.php:1548
 msgid "Max. src. states"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1549
+#: src/usr/local/www/firewall_rules_edit.php:1551
 msgid "Maximum state entries per host."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1553
+#: src/usr/local/www/firewall_rules_edit.php:1555
 msgid "Max. src. conn. Rate"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1556
+#: src/usr/local/www/firewall_rules_edit.php:1558
 msgid "Maximum new connections per host (TCP only)."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1560
+#: src/usr/local/www/firewall_rules_edit.php:1562
 msgid "Max. src. conn. Rates"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1564
+#: src/usr/local/www/firewall_rules_edit.php:1566
 msgid "/ per how many second(s) (TCP only)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1568
+#: src/usr/local/www/firewall_rules_edit.php:1570
 msgid "State timeout"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1572
+#: src/usr/local/www/firewall_rules_edit.php:1574
 msgid "State Timeout in seconds (TCP only)"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1575
+#: src/usr/local/www/firewall_rules_edit.php:1577
 #: src/usr/local/www/status_logs_filter.php:331
 #: src/usr/local/www/status_logs_filter_dynamic.php:477
 msgid "TCP Flags"
 msgstr "TCPフラグ"
 
-#: src/usr/local/www/firewall_rules_edit.php:1577
+#: src/usr/local/www/firewall_rules_edit.php:1579
 msgid ""
 "Use this to choose TCP flags that must be set or cleared for this rule to "
 "match."
 msgstr "マッチ」には、このルールに設定またはクリアする必要がTCPフラグを選択して、これを使用してください」 。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1581
+#: src/usr/local/www/firewall_rules_edit.php:1583
 msgid "No pfSync"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1591
+#: src/usr/local/www/firewall_rules_edit.php:1593
 msgid "Keep"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1592
+#: src/usr/local/www/firewall_rules_edit.php:1594
 msgid "Sloppy"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1593
+#: src/usr/local/www/firewall_rules_edit.php:1595
 msgid "Synproxy"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1588
+#: src/usr/local/www/firewall_rules_edit.php:1590
 msgid "State type"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1596
+#: src/usr/local/www/firewall_rules_edit.php:1598
 #, php-format
 msgid ""
 "Select which type of state tracking mechanism to use.  If in doubt, use keep "
 "state.%1$s"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1604
+#: src/usr/local/www/firewall_rules_edit.php:1606
 msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1610
+#: src/usr/local/www/firewall_rules_edit.php:1612
 msgid "VLAN Prio"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1613
+#: src/usr/local/www/firewall_rules_edit.php:1615
 msgid "Choose 802.1p priority to match on."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1617
+#: src/usr/local/www/firewall_rules_edit.php:1619
 msgid "VLAN Prio Set"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1620
+#: src/usr/local/www/firewall_rules_edit.php:1622
 msgid "Choose 802.1p priority to apply."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1634
+#: src/usr/local/www/firewall_rules_edit.php:1636
 msgid "Leave as 'none' to leave the rule enabled all the time."
 msgstr "すべての時間を有効にするルールを残して「該当なし」としておきます。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1665
+#: src/usr/local/www/firewall_rules_edit.php:1667
 msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
@@ -13000,19 +13012,19 @@ msgstr ""
 "ポリシーベースのルーティングを使用する」には、システムのルーティングテーブルを使用するように「デフォルト」のままにします。またはゲートウェイを選択する」 "
 "。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1668
+#: src/usr/local/www/firewall_rules_edit.php:1670
 msgid "In / Out pipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1672
+#: src/usr/local/www/firewall_rules_edit.php:1674
 msgid "DNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1679
+#: src/usr/local/www/firewall_rules_edit.php:1681
 msgid "PDNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1684
+#: src/usr/local/www/firewall_rules_edit.php:1686
 #, php-format
 msgid ""
 "Choose the Out queue/Virtual interface only if In is also selected. The Out "
@@ -13023,15 +13035,15 @@ msgid ""
 "is for incoming and In is for outgoing."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1693
+#: src/usr/local/www/firewall_rules_edit.php:1695
 msgid "Ackqueue / Queue"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1710
+#: src/usr/local/www/firewall_rules_edit.php:1712
 msgid "Ackqueue"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1722
+#: src/usr/local/www/firewall_rules_edit.php:1724
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
 msgstr ""
 
@@ -13039,7 +13051,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule.php:87
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/head.inc:286
-#: src/usr/local/www/system_advanced_misc.php:470
+#: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
 msgstr "スケジュール"
 
@@ -13754,7 +13766,7 @@ msgid "listing only first 10k items"
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:1143
-#: src/usr/local/www/services_dhcp.php:1316
+#: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
 #: src/usr/local/www/system_certmanager.php:746
@@ -13764,7 +13776,7 @@ msgstr "値"
 #: src/usr/local/www/head.inc:231
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
-#: src/usr/local/www/system_advanced_misc.php:293
+#: src/usr/local/www/system_advanced_misc.php:295
 #: src/usr/local/www/system_advanced_network.php:141
 #: src/usr/local/www/system_advanced_notifications.php:194
 #: src/usr/local/www/system_advanced_sysctl.php:114
@@ -13852,7 +13864,7 @@ msgid "Load Balancer"
 msgstr "バランサをロードする"
 
 #: src/usr/local/www/head.inc:307 src/usr/local/www/head.inc:341
-#: src/usr/local/www/services_dhcp.php:1127
+#: src/usr/local/www/services_dhcp.php:1137
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:161
 #: src/usr/local/www/services_ntpd_gps.php:310
@@ -13947,13 +13959,13 @@ msgstr "パッケージログ"
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 #: src/usr/local/www/services_checkip.php:65
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:717
+#: src/usr/local/www/services_dhcp.php:727
 #: src/usr/local/www/services_dhcp_edit.php:390
 #: src/usr/local/www/services_dhcp_relay.php:124
 #: src/usr/local/www/services_dhcpv6.php:480
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_dhcpv6_relay.php:124
-#: src/usr/local/www/services_dnsmasq.php:228
+#: src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:183
 #: src/usr/local/www/services_dyndns.php:68
@@ -13970,13 +13982,13 @@ msgstr "パッケージログ"
 #: src/usr/local/www/services_rfc2136_edit.php:145
 #: src/usr/local/www/services_router_advertisements.php:249
 #: src/usr/local/www/services_snmp.php:196
-#: src/usr/local/www/services_unbound.php:240
+#: src/usr/local/www/services_unbound.php:245
 #: src/usr/local/www/services_unbound_acls.php:161
 #: src/usr/local/www/services_unbound_advanced.php:187
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 #: src/usr/local/www/services_unbound_host_edit.php:176
 #: src/usr/local/www/services_wol.php:108
-#: src/usr/local/www/services_wol_edit.php:113
+#: src/usr/local/www/services_wol_edit.php:111
 #: src/usr/local/www/status_services.php:56
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/system_authservers.php:252
@@ -13988,7 +14000,7 @@ msgstr "サービス"
 msgid "Traffic Graph"
 msgstr "トラフィックグラフ"
 
-#: src/usr/local/www/head.inc:362 src/usr/local/www/interfaces_assign.php:494
+#: src/usr/local/www/head.inc:362 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_gre.php:80
@@ -14010,7 +14022,7 @@ msgstr "ワイヤレス"
 msgid "pfSense Gold"
 msgstr ""
 
-#: src/usr/local/www/head.inc:407 src/usr/local/www/help.php:383
+#: src/usr/local/www/head.inc:407 src/usr/local/www/help.php:529
 msgid "About this Page"
 msgstr "このページについて"
 
@@ -14104,21 +14116,21 @@ msgstr "クローズ"
 msgid "Mark All as Read"
 msgstr ""
 
-#: src/usr/local/www/help.php:383
+#: src/usr/local/www/help.php:529
 msgid "Help"
 msgstr "助け"
 
-#: src/usr/local/www/help.php:388
+#: src/usr/local/www/help.php:534
 msgid "The Help page is the only page this user has privilege for."
 msgstr ""
 
-#: src/usr/local/www/help.php:390
+#: src/usr/local/www/help.php:536
 msgid ""
 "Displaying the Help page because it is the first page this user has "
 "privilege for."
 msgstr ""
 
-#: src/usr/local/www/help.php:393
+#: src/usr/local/www/help.php:539
 msgid "Help page accessed directly without any page parameter."
 msgstr ""
 
@@ -14442,7 +14454,7 @@ msgstr "有効なPPTPリモートIPアドレスを指定する必要がありま
 #: src/usr/local/www/interfaces.php:816
 #: src/usr/local/www/services_dhcp_edit.php:177
 #: src/usr/local/www/services_wol.php:73
-#: src/usr/local/www/services_wol_edit.php:83
+#: src/usr/local/www/services_wol_edit.php:81
 msgid "A valid MAC address must be specified."
 msgstr "有効なMACアドレスを指定する必要があります。"
 
@@ -15542,7 +15554,7 @@ msgid "Gateway IPv4"
 msgstr "ゲートウェイのIPv4"
 
 #: src/usr/local/www/interfaces_assign.php:34
-#: src/usr/local/www/interfaces_assign.php:492
+#: src/usr/local/www/interfaces_assign.php:494
 #: src/usr/local/www/interfaces_bridge.php:83
 #: src/usr/local/www/interfaces_gif.php:78
 #: src/usr/local/www/interfaces_gre.php:78
@@ -15613,29 +15625,35 @@ msgid ""
 "The interface is part of a gif tunnel. Please delete the tunnel to continue"
 msgstr "「インターフェースは、GIFトンネルの一部である。継続してトンネルを削除してください"
 
-#: src/usr/local/www/interfaces_assign.php:435
+#: src/usr/local/www/interfaces_assign.php:392
+msgid ""
+"The interface has a traffic shaper queue configured.\n"
+"Please remove all queues on the interface to continue."
+msgstr ""
+
+#: src/usr/local/www/interfaces_assign.php:437
 msgid "Interface has been deleted."
 msgstr "インターフェイスは削除されました。"
 
-#: src/usr/local/www/interfaces_assign.php:461
+#: src/usr/local/www/interfaces_assign.php:463
 msgid "The system is now rebooting. Please wait."
 msgstr "システムがリブートされます。しばらくお待ちください。"
 
-#: src/usr/local/www/interfaces_assign.php:464
+#: src/usr/local/www/interfaces_assign.php:466
 msgid "Reboot is needed. Please apply the settings in order to reboot."
 msgstr "再起動が必要になる。再起動するために設定を適用してください。"
 
-#: src/usr/local/www/interfaces_assign.php:468
+#: src/usr/local/www/interfaces_assign.php:470
 msgid ""
 "Interface mismatch detected. Please resolve the mismatch, save and then "
 "click 'Apply Changes'. The firewall will reboot afterwards."
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:475
+#: src/usr/local/www/interfaces_assign.php:477
 msgid "The interface configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:493
+#: src/usr/local/www/interfaces_assign.php:495
 #: src/usr/local/www/interfaces_bridge.php:84
 #: src/usr/local/www/interfaces_gif.php:79
 #: src/usr/local/www/interfaces_gre.php:79
@@ -15651,7 +15669,7 @@ msgstr ""
 msgid "Interface Groups"
 msgstr "インタフェースグループ"
 
-#: src/usr/local/www/interfaces_assign.php:495
+#: src/usr/local/www/interfaces_assign.php:497
 #: src/usr/local/www/interfaces_bridge.php:86
 #: src/usr/local/www/interfaces_gif.php:81
 #: src/usr/local/www/interfaces_gre.php:81
@@ -15666,7 +15684,7 @@ msgstr "インタフェースグループ"
 msgid "VLANs"
 msgstr "VLANは"
 
-#: src/usr/local/www/interfaces_assign.php:496
+#: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/interfaces_bridge.php:87
 #: src/usr/local/www/interfaces_gif.php:82
 #: src/usr/local/www/interfaces_gre.php:82
@@ -15681,7 +15699,7 @@ msgstr "VLANは"
 msgid "QinQs"
 msgstr "QinQs"
 
-#: src/usr/local/www/interfaces_assign.php:497
+#: src/usr/local/www/interfaces_assign.php:499
 #: src/usr/local/www/interfaces_bridge.php:88
 #: src/usr/local/www/interfaces_gif.php:83
 #: src/usr/local/www/interfaces_gre.php:83
@@ -15696,7 +15714,7 @@ msgstr "QinQs"
 msgid "PPPs"
 msgstr "購買力平価"
 
-#: src/usr/local/www/interfaces_assign.php:498
+#: src/usr/local/www/interfaces_assign.php:500
 #: src/usr/local/www/interfaces_bridge.php:89
 #: src/usr/local/www/interfaces_gif.php:84
 #: src/usr/local/www/interfaces_gre.php:70
@@ -15711,7 +15729,7 @@ msgstr "購買力平価"
 msgid "GREs"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:499
+#: src/usr/local/www/interfaces_assign.php:501
 #: src/usr/local/www/interfaces_bridge.php:90
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/interfaces_gif.php:85
@@ -15726,7 +15744,7 @@ msgstr ""
 msgid "GIFs"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:500
+#: src/usr/local/www/interfaces_assign.php:502
 #: src/usr/local/www/interfaces_bridge.php:75
 #: src/usr/local/www/interfaces_bridge.php:91
 #: src/usr/local/www/interfaces_bridge_edit.php:379
@@ -15741,7 +15759,7 @@ msgstr ""
 msgid "Bridges"
 msgstr "橋"
 
-#: src/usr/local/www/interfaces_assign.php:501
+#: src/usr/local/www/interfaces_assign.php:503
 #: src/usr/local/www/interfaces_bridge.php:92
 #: src/usr/local/www/interfaces_gif.php:87
 #: src/usr/local/www/interfaces_gre.php:87
@@ -15756,29 +15774,29 @@ msgstr "橋"
 msgid "LAGGs"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:510
+#: src/usr/local/www/interfaces_assign.php:512
 msgid "Network port"
 msgstr "ネットワークポート"
 
-#: src/usr/local/www/interfaces_assign.php:536
+#: src/usr/local/www/interfaces_assign.php:538
 msgid "Delete interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:548
+#: src/usr/local/www/interfaces_assign.php:550
 msgid "Available network ports:"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:560
+#: src/usr/local/www/interfaces_assign.php:562
 msgid "Add selected interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces_assign.php:576
+#: src/usr/local/www/interfaces_assign.php:578
 msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
 msgstr "示されている「 laggのメンバーとして構成されたインタフェースは、 （ 4 ）インタフェースはなりません」 。"
 
-#: src/usr/local/www/interfaces_assign.php:578
+#: src/usr/local/www/interfaces_assign.php:580
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
@@ -16690,7 +16708,7 @@ msgstr "ローカルIPアドレス"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
-#: src/usr/local/www/services_dhcp.php:846
+#: src/usr/local/www/services_dhcp.php:856
 #: src/usr/local/www/services_dhcpv6.php:593
 msgid "Subnet"
 msgstr "サブネット"
@@ -17590,7 +17608,7 @@ msgid "Pool"
 msgstr "プール"
 
 #: src/usr/local/www/load_balancer_pool.php:119
-#: src/usr/local/www/services_dhcp.php:931
+#: src/usr/local/www/services_dhcp.php:941
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
 #: src/usr/local/www/vpn_openvpn_client.php:467
@@ -17601,7 +17619,7 @@ msgid "Servers"
 msgstr "サーバ"
 
 #: src/usr/local/www/load_balancer_pool.php:160
-#: src/usr/local/www/services_dhcp.php:701
+#: src/usr/local/www/services_dhcp.php:711
 msgid "Edit pool"
 msgstr ""
 
@@ -17610,7 +17628,7 @@ msgid "Copy pool"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_pool.php:162
-#: src/usr/local/www/services_dhcp.php:703
+#: src/usr/local/www/services_dhcp.php:713
 msgid "Delete pool"
 msgstr ""
 
@@ -17990,7 +18008,7 @@ msgstr ""
 msgid "Advanced Features"
 msgstr ""
 
-#: src/usr/local/www/pkg_edit.php:723 src/usr/local/www/services_dhcp.php:785
+#: src/usr/local/www/pkg_edit.php:723 src/usr/local/www/services_dhcp.php:795
 msgid "General Options"
 msgstr ""
 
@@ -18036,14 +18054,14 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr.php:136
 #: src/usr/local/www/pkg_mgr_install.php:252
-#: src/usr/local/www/pkg_mgr_installed.php:210
+#: src/usr/local/www/pkg_mgr_installed.php:197
 msgid "Available Packages"
 msgstr "利用可能なパッケージ"
 
 #: src/usr/local/www/pkg_mgr.php:135 src/usr/local/www/pkg_mgr_install.php:251
-#: src/usr/local/www/pkg_mgr_installed.php:204
-#: src/usr/local/www/pkg_mgr_installed.php:209
-#: src/usr/local/www/pkg_mgr_installed.php:216
+#: src/usr/local/www/pkg_mgr_installed.php:191
+#: src/usr/local/www/pkg_mgr_installed.php:196
+#: src/usr/local/www/pkg_mgr_installed.php:203
 #: src/usr/local/www/widgets/include/installed_packages.inc:24
 msgid "Installed Packages"
 msgstr "インストール済みパッケージ"
@@ -18068,12 +18086,12 @@ msgid "Packages"
 msgstr "パッケージ"
 
 #: src/usr/local/www/pkg_mgr.php:178
-#: src/usr/local/www/pkg_mgr_installed.php:219
+#: src/usr/local/www/pkg_mgr_installed.php:206
 msgid "Please wait while the list of packages is retrieved and formatted."
 msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:182
-#: src/usr/local/www/pkg_mgr_installed.php:223
+#: src/usr/local/www/pkg_mgr_installed.php:210
 msgid "Unable to retrieve package information."
 msgstr ""
 
@@ -18310,26 +18328,26 @@ msgstr ""
 msgid "Reinstall package %s"
 msgstr ""
 
-#: src/usr/local/www/pkg_mgr_installed.php:191
+#: src/usr/local/www/pkg_mgr_installed.php:214
+msgid "There are no packages currently installed."
+msgstr "現在インストールされないパッケージがありません。"
+
+#: src/usr/local/www/pkg_mgr_installed.php:221
 msgid "Current"
 msgstr "現在の"
 
-#: src/usr/local/www/pkg_mgr_installed.php:196
+#: src/usr/local/www/pkg_mgr_installed.php:226
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:122
 msgid "Reinstall"
 msgstr "再インストールする"
 
-#: src/usr/local/www/pkg_mgr_installed.php:198
+#: src/usr/local/www/pkg_mgr_installed.php:229
 msgid "Newer version available"
 msgstr ""
 
-#: src/usr/local/www/pkg_mgr_installed.php:199
+#: src/usr/local/www/pkg_mgr_installed.php:231
 msgid "Package is configured but not (fully) installed"
 msgstr ""
-
-#: src/usr/local/www/pkg_mgr_installed.php:227
-msgid "There are no packages currently installed."
-msgstr "現在インストールされないパッケージがありません。"
 
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal.php:520
@@ -18514,7 +18532,7 @@ msgid "Captive Portal Configuration"
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:542
-#: src/usr/local/www/services_dnsmasq.php:332
+#: src/usr/local/www/services_dnsmasq.php:337
 msgid "*Interfaces"
 msgstr ""
 
@@ -19196,8 +19214,8 @@ msgid "Allowed IP address"
 msgstr "許可されたIPアドレス"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:89
-#: src/usr/local/www/services_dhcp.php:851
-#: src/usr/local/www/services_dhcp.php:879
+#: src/usr/local/www/services_dhcp.php:861
+#: src/usr/local/www/services_dhcp.php:889
 msgid "Subnet mask"
 msgstr "サブネットマスク"
 
@@ -20086,169 +20104,181 @@ msgid ""
 "server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:424
+#: src/usr/local/www/services_dhcp.php:423
+msgid ""
+"Disable DHCP Registration features in DNS Forwarder before disabling DHCP "
+"Server."
+msgstr ""
+
+#: src/usr/local/www/services_dhcp.php:426
+msgid ""
+"Disable DHCP Registration features in DNS Resolver before disabling DHCP "
+"Server."
+msgstr ""
+
+#: src/usr/local/www/services_dhcp.php:434
 #: src/usr/local/www/services_dhcpv6.php:366
 msgid "The range is invalid (first element higher than second element)."
 msgstr "範囲は、 （第2要素よりも、最初の要素が高い）が無効です。"
 
-#: src/usr/local/www/services_dhcp.php:429
+#: src/usr/local/www/services_dhcp.php:439
 #: src/usr/local/www/services_dhcpv6.php:361
 msgid "The specified range lies outside of the current subnet."
 msgstr "指定された範囲は、現在のサブネットの外側にある。"
 
-#: src/usr/local/www/services_dhcp.php:439
+#: src/usr/local/www/services_dhcp.php:449
 msgid ""
 "The specified range must not be within the DHCP range for this interface."
 msgstr "「指定された範囲は、このインターフェイスのDHCP範囲内にあってはならない。"
 
-#: src/usr/local/www/services_dhcp.php:452
+#: src/usr/local/www/services_dhcp.php:462
 msgid ""
 "The specified range must not be within the range configured on a DHCP pool "
 "for this interface."
 msgstr "このインタフェースの「指定された範囲は、 DHCPプールに設定された範囲内であってはならない」 。"
 
-#: src/usr/local/www/services_dhcp.php:463
+#: src/usr/local/www/services_dhcp.php:473
 #: src/usr/local/www/services_dhcpv6.php:382
 #, php-format
 msgid "The DHCP range cannot overlap any static DHCP mappings."
 msgstr "DHCP範囲は、静的DHCPマッピングをオーバーラップすることはできません。"
 
-#: src/usr/local/www/services_dhcp.php:679
+#: src/usr/local/www/services_dhcp.php:689
 #: src/usr/local/www/status_dhcp_leases.php:496
 msgid "Pool Start"
 msgstr "プールスタート"
 
-#: src/usr/local/www/services_dhcp.php:680
+#: src/usr/local/www/services_dhcp.php:690
 #: src/usr/local/www/status_dhcp_leases.php:497
 msgid "Pool End"
 msgstr "プール終了"
 
-#: src/usr/local/www/services_dhcp.php:737
+#: src/usr/local/www/services_dhcp.php:747
 #: src/usr/local/www/services_dhcpv6.php:502
 msgid "The static mapping configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:772
+#: src/usr/local/www/services_dhcp.php:782
 #, php-format
 msgid "%1$s has a CIDR mask of %2$s, which does not contain enough addresses."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:774
+#: src/usr/local/www/services_dhcp.php:784
 msgid "This system has no interfaces configured with a static IPv4 address."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:776
+#: src/usr/local/www/services_dhcp.php:786
 msgid ""
 "The DHCP Server requires a static IPv4 subnet large enough to serve "
 "addresses to clients."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:792
+#: src/usr/local/www/services_dhcp.php:802
 msgid ""
 "DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:799
+#: src/usr/local/www/services_dhcp.php:809
 #, php-format
 msgid "Enable DHCP server on %s interface"
 msgstr "%sインターフェイス上でDHCPサーバを有効にする"
 
-#: src/usr/local/www/services_dhcp.php:804
+#: src/usr/local/www/services_dhcp.php:814
 msgid ""
 "Editing pool-specific options. To return to the Interface, click its tab "
 "above."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:809
+#: src/usr/local/www/services_dhcp.php:819
 msgid "BOOTP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:816
+#: src/usr/local/www/services_dhcp.php:826
 msgid "Deny unknown clients"
 msgstr "不明なクライアントを否定"
 
-#: src/usr/local/www/services_dhcp.php:823
+#: src/usr/local/www/services_dhcp.php:833
 msgid "Ignore denied clients"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:826
+#: src/usr/local/www/services_dhcp.php:836
 msgid ""
 "This option is not compatible with failover and cannot be enabled when a "
 "Failover Peer IP address is configured."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:830
+#: src/usr/local/www/services_dhcp.php:840
 msgid "Ignore client identifiers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:833
+#: src/usr/local/www/services_dhcp.php:843
 msgid ""
 "This option may be useful when a client can dual boot using different client "
 "identifiers but the same hardware (MAC) address.  Note that the resulting "
 "server behavior violates the official DHCP specification."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:839
+#: src/usr/local/www/services_dhcp.php:849
 msgid "Pool Description"
 msgstr "プールの説明"
 
-#: src/usr/local/www/services_dhcp.php:859
+#: src/usr/local/www/services_dhcp.php:869
 msgid "In-use DHCP Pool Ranges:"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:872
+#: src/usr/local/www/services_dhcp.php:882
 msgid "Available range"
 msgstr "利用可能な範囲"
 
-#: src/usr/local/www/services_dhcp.php:885
+#: src/usr/local/www/services_dhcp.php:895
 #: src/usr/local/www/services_dhcpv6.php:635
 msgid "*Range"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:906
+#: src/usr/local/www/services_dhcp.php:916
 msgid "Additional Pools"
 msgstr "追加のプール"
 
-#: src/usr/local/www/services_dhcp.php:910
+#: src/usr/local/www/services_dhcp.php:920
 msgid "Add pool"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:919
+#: src/usr/local/www/services_dhcp.php:929
 msgid ""
 "If additional pools of addresses are needed inside of this subnet outside "
 "the above Range, they may be specified here."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:935
+#: src/usr/local/www/services_dhcp.php:945
 #: src/usr/local/www/vpn_openvpn_csc.php:550
 msgid "WINS servers"
 msgstr "WINSサーバー"
 
-#: src/usr/local/www/services_dhcp.php:950
+#: src/usr/local/www/services_dhcp.php:960
 #: src/usr/local/www/status_interfaces.php:152
 msgid "DNS servers"
 msgstr "DNSサーバ"
 
-#: src/usr/local/www/services_dhcp.php:953
+#: src/usr/local/www/services_dhcp.php:963
 msgid ""
 "Leave blank to use the system default DNS servers: this interface's IP if "
 "DNS Forwarder or Resolver is enabled, otherwise the servers configured on "
 "the System / General Setup page."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:958
+#: src/usr/local/www/services_dhcp.php:968
 msgid "Other Options"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:966
+#: src/usr/local/www/services_dhcp.php:976
 msgid ""
 "The default is to use the IP on this interface of the firewall as the "
 "gateway. Specify an alternate gateway here if this is not the correct "
 "gateway for the network. Type \"none\" for no gateway assignment."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:970
+#: src/usr/local/www/services_dhcp.php:980
 #: src/usr/local/www/services_dhcp_edit.php:547
 #: src/usr/local/www/services_dhcpv6.php:701
 #: src/usr/local/www/services_dyndns_edit.php:97
@@ -20256,20 +20286,20 @@ msgstr ""
 msgid "Domain name"
 msgstr "ドメイン名"
 
-#: src/usr/local/www/services_dhcp.php:973
+#: src/usr/local/www/services_dhcp.php:983
 msgid ""
 "The default is to use the domain name of this system as the default domain "
 "name provided by DHCP. An alternate domain name may be specified here."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:977
+#: src/usr/local/www/services_dhcp.php:987
 #: src/usr/local/www/services_dhcp_edit.php:554
 #: src/usr/local/www/services_dhcpv6.php:708
 #: src/usr/local/www/services_router_advertisements.php:455
 msgid "Domain search list"
 msgstr "ドメインサーチリスト"
 
-#: src/usr/local/www/services_dhcp.php:980
+#: src/usr/local/www/services_dhcp.php:990
 #: src/usr/local/www/services_dhcp_edit.php:557
 #: src/usr/local/www/services_dhcpv6.php:711
 msgid ""
@@ -20277,33 +20307,33 @@ msgid ""
 "semicolon character as separator."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:984
+#: src/usr/local/www/services_dhcp.php:994
 #: src/usr/local/www/services_dhcpv6.php:715
 msgid "Default lease time"
 msgstr "デフォルトのリース時間"
 
-#: src/usr/local/www/services_dhcp.php:987
+#: src/usr/local/www/services_dhcp.php:997
 msgid ""
 "This is used for clients that do not ask for a specific expiration time. The "
 "default is 7200 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:991
+#: src/usr/local/www/services_dhcp.php:1001
 msgid "Maximum lease time"
 msgstr "最大リース時間"
 
-#: src/usr/local/www/services_dhcp.php:994
+#: src/usr/local/www/services_dhcp.php:1004
 #: src/usr/local/www/services_dhcp_edit.php:571
 msgid ""
 "This is the maximum lease time for clients that ask for a specific "
 "expiration time. The default is 86400 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:999
+#: src/usr/local/www/services_dhcp.php:1009
 msgid "Failover peer IP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1002
+#: src/usr/local/www/services_dhcp.php:1012
 msgid ""
 "Leave blank to disable. Enter the interface IP address of the other machine. "
 "Machines must be using CARP. Interface's advskew determines whether the "
@@ -20311,281 +20341,281 @@ msgid ""
 "(and the other is &gt; 20)."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1009
-#: src/usr/local/www/services_dhcp.php:1388
+#: src/usr/local/www/services_dhcp.php:1019
+#: src/usr/local/www/services_dhcp.php:1398
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:93
 msgid "Static ARP"
 msgstr "スタティックARP"
 
-#: src/usr/local/www/services_dhcp.php:1012
+#: src/usr/local/www/services_dhcp.php:1022
 msgid ""
 "This option persists even if DHCP server is disabled. Only the machines "
 "listed below will be able to communicate with the firewall on this interface."
 ""
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1016
+#: src/usr/local/www/services_dhcp.php:1026
 msgid "Time format change"
 msgstr "時刻形式の変更"
 
-#: src/usr/local/www/services_dhcp.php:1019
+#: src/usr/local/www/services_dhcp.php:1029
 msgid ""
 "By default DHCP leases are displayed in UTC time.\tBy checking this box DHCP "
 "lease time will be displayed in local time and set to the time zone selected."
 " This will be used for all DHCP interfaces lease time."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1023
+#: src/usr/local/www/services_dhcp.php:1033
 msgid "Statistics graphs"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1026
+#: src/usr/local/www/services_dhcp.php:1036
 msgid ""
 "Enable this to add DHCP leases statistics to the RRD graphs. Disabled by "
 "default."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1053
+#: src/usr/local/www/services_dhcp.php:1063
 #: src/usr/local/www/services_dhcp_edit.php:603
 #: src/usr/local/www/services_dhcpv6.php:761
 msgid "DDNS Domain"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1056
+#: src/usr/local/www/services_dhcp.php:1066
 #, php-format
 msgid ""
 "Leave blank to disable dynamic DNS registration.%1$sEnter the dynamic DNS "
 "domain which will be used to register client names in the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1061
+#: src/usr/local/www/services_dhcp.php:1071
 #: src/usr/local/www/services_dhcpv6.php:768
 msgid "DDNS Hostnames"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1064
+#: src/usr/local/www/services_dhcp.php:1074
 #: src/usr/local/www/services_dhcpv6.php:771
 msgid "Default registers host name option supplied by DHCP client."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1068
+#: src/usr/local/www/services_dhcp.php:1078
 msgid "Primary DDNS address"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1071
+#: src/usr/local/www/services_dhcp.php:1081
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1075
+#: src/usr/local/www/services_dhcp.php:1085
 msgid "DNS Domain key"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1078
+#: src/usr/local/www/services_dhcp.php:1088
 msgid ""
 "Dynamic DNS domain key name which will be used to register client names in "
 "the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1082
+#: src/usr/local/www/services_dhcp.php:1092
 msgid "DNS Domain key secret"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1085
+#: src/usr/local/www/services_dhcp.php:1095
 msgid ""
 "Dynamic DNS domain key secret (HMAC-MD5) which will be used to register "
 "client names in the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1098
+#: src/usr/local/www/services_dhcp.php:1108
 msgid "MAC address control"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1104
+#: src/usr/local/www/services_dhcp.php:1114
 msgid "MAC Allow"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1107
+#: src/usr/local/www/services_dhcp.php:1117
 msgid ""
 "List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:"
 "00:00,01:E5:FF"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1111
+#: src/usr/local/www/services_dhcp.php:1121
 msgid "MAC Deny"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1114
+#: src/usr/local/www/services_dhcp.php:1124
 msgid ""
 "List of partial MAC addresses to deny access, comma separated, no spaces, e."
 "g.: 00:00:00,01:E5:FF"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1133
+#: src/usr/local/www/services_dhcp.php:1143
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:832
 #: src/usr/local/www/vpn_openvpn_server.php:1214
 msgid "NTP Server 1"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1140
+#: src/usr/local/www/services_dhcp.php:1150
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:840
 #: src/usr/local/www/vpn_openvpn_server.php:1221
 msgid "NTP Server 2"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1156
+#: src/usr/local/www/services_dhcp.php:1166
 msgid "TFTP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1162
+#: src/usr/local/www/services_dhcp.php:1172
 #: src/usr/local/www/services_dhcp_edit.php:681
 msgid "TFTP Server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1165
+#: src/usr/local/www/services_dhcp.php:1175
 msgid ""
 "Leave blank to disable. Enter a valid IP address, hostname or URL for the "
 "TFTP server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1178
+#: src/usr/local/www/services_dhcp.php:1188
 #: src/usr/local/www/services_dhcpv6.php:860
 msgid "LDAP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1184
+#: src/usr/local/www/services_dhcp.php:1194
 msgid "LDAP Server URI"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1187
+#: src/usr/local/www/services_dhcp.php:1197
 msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1200
+#: src/usr/local/www/services_dhcp.php:1210
 msgid "Network Booting"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1213
+#: src/usr/local/www/services_dhcp.php:1223
 msgid "Next Server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1216
+#: src/usr/local/www/services_dhcp.php:1226
 msgid "Enter the IP address of the next server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1220
+#: src/usr/local/www/services_dhcp.php:1230
 msgid "Default BIOS file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1227
+#: src/usr/local/www/services_dhcp.php:1237
 msgid "UEFI 32 bit file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1234
+#: src/usr/local/www/services_dhcp.php:1244
 msgid "UEFI 64 bit file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1237
+#: src/usr/local/www/services_dhcp.php:1247
 msgid ""
 "Both a filename and a boot server must be configured for this to work! All "
 "three filenames and a configured boot server are necessary for UEFI to work! "
 ""
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1242
+#: src/usr/local/www/services_dhcp.php:1252
 #: src/usr/local/www/services_dhcpv6_edit.php:250
 msgid "Root path"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1245
+#: src/usr/local/www/services_dhcp.php:1255
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1258
-#: src/usr/local/www/services_dhcp.php:1264
+#: src/usr/local/www/services_dhcp.php:1268
+#: src/usr/local/www/services_dhcp.php:1274
 #: src/usr/local/www/services_dhcpv6.php:909
 msgid "Additional BOOTP/DHCP Options"
 msgstr "追加のBOOTP / DHCPオプション"
 
-#: src/usr/local/www/services_dhcp.php:1269
+#: src/usr/local/www/services_dhcp.php:1279
 msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1270
+#: src/usr/local/www/services_dhcp.php:1280
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1278
+#: src/usr/local/www/services_dhcp.php:1288
 msgid "Text"
 msgstr "テキスト"
 
-#: src/usr/local/www/services_dhcp.php:1278
+#: src/usr/local/www/services_dhcp.php:1288
 msgid "String"
 msgstr "文字列"
 
-#: src/usr/local/www/services_dhcp.php:1278
+#: src/usr/local/www/services_dhcp.php:1288
 msgid "Boolean"
 msgstr "ブーリアン"
 
-#: src/usr/local/www/services_dhcp.php:1279
+#: src/usr/local/www/services_dhcp.php:1289
 msgid "Unsigned 8-bit integer"
 msgstr "符号なし8ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1279
+#: src/usr/local/www/services_dhcp.php:1289
 msgid "Unsigned 16-bit integer"
 msgstr "符号なしの16ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1279
+#: src/usr/local/www/services_dhcp.php:1289
 msgid "Unsigned 32-bit integer"
 msgstr "符号なしの32ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1290
 msgid "Signed 8-bit integer"
 msgstr "符号付き8ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1290
 msgid "Signed 16-bit integer"
 msgstr "符号付き16ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1290
 msgid "Signed 32-bit integer"
 msgstr "符号付き32ビット整数"
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1290
 msgid "IP address or host"
 msgstr "IPアドレスまたはホスト"
 
-#: src/usr/local/www/services_dhcp.php:1293
+#: src/usr/local/www/services_dhcp.php:1303
 msgid "Option"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1301
+#: src/usr/local/www/services_dhcp.php:1311
 #: src/usr/local/www/services_dhcpv6.php:937
 msgid "Number"
 msgstr "数"
 
-#: src/usr/local/www/services_dhcp.php:1383
+#: src/usr/local/www/services_dhcp.php:1393
 msgid "DHCP Static Mappings for this Interface"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1393
+#: src/usr/local/www/services_dhcp.php:1403
 #: src/usr/local/www/status_dhcp_leases.php:358
 msgid "Client Id"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1439
+#: src/usr/local/www/services_dhcp.php:1449
 #: src/usr/local/www/services_dhcpv6.php:1032
 #: src/usr/local/www/status_dhcp_leases.php:465
 msgid "Edit static mapping"
 msgstr "静的マッピングを編集"
 
-#: src/usr/local/www/services_dhcp.php:1440
+#: src/usr/local/www/services_dhcp.php:1450
 #: src/usr/local/www/services_dhcpv6.php:1033
 msgid "Delete static mapping"
 msgstr ""
@@ -20788,8 +20818,8 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_edit.php:589
 #: src/usr/local/www/services_dhcpv6.php:754
-#: src/usr/local/www/services_dnsmasq.php:257
-#: src/usr/local/www/services_unbound.php:329
+#: src/usr/local/www/services_dnsmasq.php:262
+#: src/usr/local/www/services_unbound.php:334
 msgid "DHCP Registration"
 msgstr "DHCP登録"
 
@@ -21198,30 +21228,35 @@ msgid ""
 "This is the IPv6 address of the server to which DHCPv6 requests are relayed."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:146
+#: src/usr/local/www/services_dnsmasq.php:147
 msgid ""
 "The DNS Resolver is enabled using this port. Choose a non-conflicting port, "
 "or disable DNS Resolver."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:154
-#: src/usr/local/www/services_unbound.php:148
+#: src/usr/local/www/services_dnsmasq.php:152
+msgid ""
+"DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder."
+msgstr ""
+
+#: src/usr/local/www/services_dnsmasq.php:159
+#: src/usr/local/www/services_unbound.php:149
 msgid "A valid port number must be specified."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:173
+#: src/usr/local/www/services_dnsmasq.php:178
 msgid "Invalid custom options"
 msgstr "無効なカスタムオプション"
 
-#: src/usr/local/www/services_dnsmasq.php:241
+#: src/usr/local/www/services_dnsmasq.php:246
 msgid "The DNS forwarder configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:246
+#: src/usr/local/www/services_dnsmasq.php:251
 msgid "General DNS Forwarder Options"
 msgstr "一般的なDNSのフォワーダオプション"
 
-#: src/usr/local/www/services_dnsmasq.php:260
+#: src/usr/local/www/services_dnsmasq.php:265
 #, php-format
 msgid ""
 "If this option is set machines that specify their hostname when requesting a "
@@ -21230,12 +21265,12 @@ msgid ""
 "to the proper value."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:269
-#: src/usr/local/www/services_unbound.php:338
+#: src/usr/local/www/services_dnsmasq.php:274
+#: src/usr/local/www/services_unbound.php:343
 msgid "Static DHCP"
 msgstr "静的DHCP"
 
-#: src/usr/local/www/services_dnsmasq.php:272
+#: src/usr/local/www/services_dnsmasq.php:277
 #, php-format
 msgid ""
 "If this option is set, DHCP static mappings will be registered in the DNS "
@@ -21243,23 +21278,23 @@ msgid ""
 "General Setup%2$s should also be set to the proper value."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:280
+#: src/usr/local/www/services_dnsmasq.php:285
 msgid "Prefer DHCP"
 msgstr "DHCPを好む"
 
-#: src/usr/local/www/services_dnsmasq.php:283
+#: src/usr/local/www/services_dnsmasq.php:288
 msgid ""
 "If this option is set DHCP mappings will be resolved before the manual list "
 "of names below. This only affects the name given for a reverse lookup (PTR)."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:288
-#: src/usr/local/www/services_dnsmasq.php:292
-#: src/usr/local/www/services_unbound.php:320
+#: src/usr/local/www/services_dnsmasq.php:293
+#: src/usr/local/www/services_dnsmasq.php:297
+#: src/usr/local/www/services_unbound.php:325
 msgid "DNS Query Forwarding"
 msgstr "DNSクエリ転送"
 
-#: src/usr/local/www/services_dnsmasq.php:295
+#: src/usr/local/www/services_dnsmasq.php:300
 #, php-format
 msgid ""
 "If this option is set %1$s DNS Forwarder (dnsmasq) will query the DNS "
@@ -21267,7 +21302,7 @@ msgid ""
 "DNS Servers%3$s), rather than all at once in parallel. "
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:304
+#: src/usr/local/www/services_dnsmasq.php:309
 #, php-format
 msgid ""
 "If this option is set %s DNS Forwarder (dnsmasq) will not forward A or AAAA "
@@ -21276,7 +21311,7 @@ msgid ""
 "found\" answer is returned. "
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:313
+#: src/usr/local/www/services_dnsmasq.php:318
 #, php-format
 msgid ""
 "If this option is set %s DNS Forwarder (dnsmasq) will not forward reverse "
@@ -21287,13 +21322,13 @@ msgid ""
 "\"not found\" answer is immediately returned. "
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:322
-#: src/usr/local/www/services_unbound.php:277
+#: src/usr/local/www/services_dnsmasq.php:327
+#: src/usr/local/www/services_unbound.php:282
 msgid "Listen Port"
 msgstr "ポートを聞く"
 
-#: src/usr/local/www/services_dnsmasq.php:326
-#: src/usr/local/www/services_unbound.php:281
+#: src/usr/local/www/services_dnsmasq.php:331
+#: src/usr/local/www/services_unbound.php:286
 msgid ""
 "The port used for responding to DNS queries. It should normally be left "
 "blank unless another service needs to bind to TCP/UDP port 53."
@@ -21301,7 +21336,7 @@ msgstr ""
 "他のサービスは、TCP / UDPポート53にバインドする必要がない限り、空白の「 "
 "DNSクエリに応答するために使用されるポートは、それは通常のままにしてください」 。"
 
-#: src/usr/local/www/services_dnsmasq.php:336
+#: src/usr/local/www/services_dnsmasq.php:341
 msgid ""
 "Interface IPs used by the DNS Forwarder for responding to queries from "
 "clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries "
@@ -21312,11 +21347,11 @@ msgstr ""
 "。インターフェイスはIPv4とIPv6のIPアドレスの両方がある場合、両方が使用される。クエリ動作は、すべての利用可能なIPv4アドレスとIPv6アドレスでの質問に答えることです」下の選択されていない他のインタフェースIPには、デフォルトでは。破棄されます」 "
 "。"
 
-#: src/usr/local/www/services_dnsmasq.php:341
+#: src/usr/local/www/services_dnsmasq.php:346
 msgid "Strict binding"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:344
+#: src/usr/local/www/services_dnsmasq.php:349
 #, php-format
 msgid ""
 "If this option is set, the DNS forwarder will only bind to the interfaces "
@@ -21325,32 +21360,32 @@ msgid ""
 "NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:350
-#: src/usr/local/www/services_unbound.php:346
-#: src/usr/local/www/services_unbound.php:360
+#: src/usr/local/www/services_dnsmasq.php:355
+#: src/usr/local/www/services_unbound.php:351
+#: src/usr/local/www/services_unbound.php:365
 #: src/usr/local/www/vpn_openvpn_client.php:857
 #: src/usr/local/www/vpn_openvpn_server.php:1292
 msgid "Custom options"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:352
+#: src/usr/local/www/services_dnsmasq.php:357
 msgid ""
 "Enter any additional options to add to the dnsmasq configuration here, "
 "separated by a space or newline."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:360
-#: src/usr/local/www/services_unbound.php:433
+#: src/usr/local/www/services_dnsmasq.php:365
+#: src/usr/local/www/services_unbound.php:438
 msgid "Host Overrides"
 msgstr "オーバーライドをホストする"
 
-#: src/usr/local/www/services_dnsmasq.php:366
-#: src/usr/local/www/services_dnsmasq.php:440
+#: src/usr/local/www/services_dnsmasq.php:371
+#: src/usr/local/www/services_dnsmasq.php:445
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:64
 #: src/usr/local/www/services_dnsmasq_edit.php:61
 #: src/usr/local/www/services_dnsmasq_edit.php:263
-#: src/usr/local/www/services_unbound.php:439
-#: src/usr/local/www/services_unbound.php:515
+#: src/usr/local/www/services_unbound.php:444
+#: src/usr/local/www/services_unbound.php:520
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/services_unbound_host_edit.php:256
@@ -21358,46 +21393,46 @@ msgstr "オーバーライドをホストする"
 msgid "Domain"
 msgstr "ドメイン"
 
-#: src/usr/local/www/services_dnsmasq.php:390
-#: src/usr/local/www/services_dnsmasq.php:414
-#: src/usr/local/www/services_unbound.php:464
-#: src/usr/local/www/services_unbound.php:488
+#: src/usr/local/www/services_dnsmasq.php:395
+#: src/usr/local/www/services_dnsmasq.php:419
+#: src/usr/local/www/services_unbound.php:469
+#: src/usr/local/www/services_unbound.php:493
 msgid "Edit host override"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:391
-#: src/usr/local/www/services_unbound.php:465
+#: src/usr/local/www/services_dnsmasq.php:396
+#: src/usr/local/www/services_unbound.php:470
 msgid "Delete host override"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:407
-#: src/usr/local/www/services_unbound.php:481
+#: src/usr/local/www/services_dnsmasq.php:412
+#: src/usr/local/www/services_unbound.php:486
 msgid "Alias for "
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:435
-#: src/usr/local/www/services_unbound.php:510
+#: src/usr/local/www/services_dnsmasq.php:440
+#: src/usr/local/www/services_unbound.php:515
 msgid "Domain Overrides"
 msgstr "ドメインオーバーライド"
 
-#: src/usr/local/www/services_dnsmasq.php:462
-#: src/usr/local/www/services_unbound.php:538
+#: src/usr/local/www/services_dnsmasq.php:467
+#: src/usr/local/www/services_unbound.php:543
 msgid "Edit domain override"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:463
-#: src/usr/local/www/services_unbound.php:539
+#: src/usr/local/www/services_dnsmasq.php:468
+#: src/usr/local/www/services_unbound.php:544
 msgid "Delete domain override"
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:484
+#: src/usr/local/www/services_dnsmasq.php:489
 msgid ""
 "If the DNS forwarder is enabled, the DHCP service (if enabled) will "
 "automatically serve the LAN IP address as a DNS server to DHCP clients so "
 "they will use the forwarder."
 msgstr ""
 
-#: src/usr/local/www/services_dnsmasq.php:486
+#: src/usr/local/www/services_dnsmasq.php:491
 #, php-format
 msgid ""
 "The DNS forwarder will use the DNS servers entered in %1$sSystem > General "
@@ -22411,20 +22446,20 @@ msgstr ""
 msgid "RFC2136 Clients"
 msgstr ""
 
-#: src/usr/local/www/services_rfc2136.php:176
+#: src/usr/local/www/services_rfc2136.php:177
 #: src/usr/local/www/vpn_openvpn_client.php:922
 msgid "Edit client"
 msgstr ""
 
-#: src/usr/local/www/services_rfc2136.php:179
+#: src/usr/local/www/services_rfc2136.php:180
 msgid "Disable client"
 msgstr ""
 
-#: src/usr/local/www/services_rfc2136.php:182
+#: src/usr/local/www/services_rfc2136.php:183
 msgid "Enable client"
 msgstr ""
 
-#: src/usr/local/www/services_rfc2136.php:185
+#: src/usr/local/www/services_rfc2136.php:186
 #: src/usr/local/www/vpn_openvpn_client.php:923
 msgid "Delete client"
 msgstr ""
@@ -22873,45 +22908,50 @@ msgstr "インターフェイスのバインド"
 msgid "Bind Interfaces"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:108
+#: src/usr/local/www/services_unbound.php:109
 msgid ""
 "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, "
 "or disable the DNS Forwarder."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:133
+#: src/usr/local/www/services_unbound.php:134
 msgid ""
 "At least one DNS server must be specified under System &gt; General Setup to "
 "enable Forwarding mode."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:138
+#: src/usr/local/www/services_unbound.php:139
 msgid "One or more Network Interfaces must be selected for binding."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:140
+#: src/usr/local/www/services_unbound.php:141
 msgid ""
 "This system is configured to use the DNS Resolver as its DNS server, so "
 "Localhost or All must be selected in Network Interfaces."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:144
+#: src/usr/local/www/services_unbound.php:145
 msgid "One or more Outgoing Network Interfaces must be selected."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:166
+#: src/usr/local/www/services_unbound.php:158
+msgid ""
+"DHCP Server must be enabled for DHCP Registration to work in DNS Resolver."
+msgstr ""
+
+#: src/usr/local/www/services_unbound.php:171
 msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:182
+#: src/usr/local/www/services_unbound.php:187
 #: src/usr/local/www/services_unbound_advanced.php:180
 msgid "DNS Resolver configured."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:240
-#: src/usr/local/www/services_unbound.php:259
+#: src/usr/local/www/services_unbound.php:245
+#: src/usr/local/www/services_unbound.php:264
 #: src/usr/local/www/services_unbound_acls.php:183
 #: src/usr/local/www/services_unbound_advanced.php:205
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -22919,13 +22959,13 @@ msgstr ""
 msgid "General Settings"
 msgstr "一般設定"
 
-#: src/usr/local/www/services_unbound.php:255
+#: src/usr/local/www/services_unbound.php:260
 #: src/usr/local/www/services_unbound_acls.php:179
 #: src/usr/local/www/services_unbound_advanced.php:201
 msgid "The DNS resolver configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:260
+#: src/usr/local/www/services_unbound.php:265
 #: src/usr/local/www/services_unbound_acls.php:184
 #: src/usr/local/www/services_unbound_advanced.php:187
 #: src/usr/local/www/services_unbound_advanced.php:206
@@ -22938,22 +22978,22 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:261
+#: src/usr/local/www/services_unbound.php:266
 #: src/usr/local/www/services_unbound_acls.php:161
 #: src/usr/local/www/services_unbound_acls.php:185
 #: src/usr/local/www/services_unbound_advanced.php:207
 msgid "Access Lists"
 msgstr "アクセスリスト"
 
-#: src/usr/local/www/services_unbound.php:266
+#: src/usr/local/www/services_unbound.php:271
 msgid "General DNS Resolver Options"
 msgstr "一般的なDNSリゾルバのオプション"
 
-#: src/usr/local/www/services_unbound.php:287
+#: src/usr/local/www/services_unbound.php:292
 msgid "*Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:291
+#: src/usr/local/www/services_unbound.php:296
 msgid ""
 "Interface IPs used by the DNS Resolver for responding to queries from "
 "clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries "
@@ -22961,11 +23001,11 @@ msgid ""
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:298
+#: src/usr/local/www/services_unbound.php:303
 msgid "*Outgoing Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:302
+#: src/usr/local/www/services_unbound.php:307
 msgid ""
 "Utilize different network interface(s) that the DNS Resolver will use to "
 "send queries to authoritative servers and receive their replies. By default "
@@ -22974,22 +23014,22 @@ msgstr ""
 "その返信を権威サーバにクエリーを送信し、受信」 DNSリゾルバがするために使用する別のネットワーク·インタフェース（S ）を利用」 "
 "。デフォルトでは「すべてのインターフェイスが使用されます。"
 
-#: src/usr/local/www/services_unbound.php:306
+#: src/usr/local/www/services_unbound.php:311
 msgid "*System Domain Local Zone Type"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:309
+#: src/usr/local/www/services_unbound.php:314
 msgid ""
 "The local-zone type used for the pfSense system domain (System | General "
 "Setup | Domain).  Transparent is the default.  Local-Zone type descriptions "
 "are available in the unbound.conf(5) manual pages."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:313
+#: src/usr/local/www/services_unbound.php:318
 msgid "DNSSEC"
 msgstr "DNSSEC"
 
-#: src/usr/local/www/services_unbound.php:323
+#: src/usr/local/www/services_unbound.php:328
 #, php-format
 msgid ""
 "If this option is set, DNS queries will be forwarded to the upstream DNS "
@@ -22997,7 +23037,7 @@ msgid ""
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:332
+#: src/usr/local/www/services_unbound.php:337
 #, php-format
 msgid ""
 "If this option is set, then machines that specify their hostname when "
@@ -23006,7 +23046,7 @@ msgid ""
 "should also be set to the proper value."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:341
+#: src/usr/local/www/services_unbound.php:346
 #, php-format
 msgid ""
 "If this option is set, then DHCP static mappings will be registered in the "
@@ -23014,22 +23054,22 @@ msgid ""
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:354
-#: src/usr/local/www/services_unbound.php:390
+#: src/usr/local/www/services_unbound.php:359
+#: src/usr/local/www/services_unbound.php:395
 msgid "Display Custom Options"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:362
+#: src/usr/local/www/services_unbound.php:367
 msgid ""
 "Enter any additional configuration parameters to add to the DNS Resolver "
 "configuration here, separated by a newline."
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:388
+#: src/usr/local/www/services_unbound.php:393
 msgid "Hide Custom Options"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:559
+#: src/usr/local/www/services_unbound.php:564
 #, php-format
 msgid ""
 "If the DNS Resolver is enabled, the DHCP service (if enabled) will "
@@ -23497,12 +23537,12 @@ msgid "Choose which interface the host to be woken up is connected to."
 msgstr "に接続されているウェイクアップするホストとのインターフェースかを選択。"
 
 #: src/usr/local/www/services_wol.php:142
-#: src/usr/local/www/services_wol_edit.php:143
+#: src/usr/local/www/services_wol_edit.php:141
 msgid "*MAC address"
 msgstr ""
 
 #: src/usr/local/www/services_wol.php:145
-#: src/usr/local/www/services_wol_edit.php:146
+#: src/usr/local/www/services_wol_edit.php:144
 msgid "Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx"
 msgstr "次の形式でMACアドレスを入力してください： XX ： XX ： XX ： XX ： XX ： XX"
 
@@ -23530,15 +23570,15 @@ msgstr ""
 msgid "Wake All Devices"
 msgstr ""
 
-#: src/usr/local/www/services_wol_edit.php:88
+#: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
 msgstr ""
 
-#: src/usr/local/www/services_wol_edit.php:132
+#: src/usr/local/www/services_wol_edit.php:130
 msgid "Edit WOL Entry"
 msgstr ""
 
-#: src/usr/local/www/services_wol_edit.php:139
+#: src/usr/local/www/services_wol_edit.php:137
 msgid "Choose which interface this host is connected to."
 msgstr "選択したどのインターフェイスこのホストがに接続されている。"
 
@@ -25835,7 +25875,7 @@ msgstr "一つの瞬間が··· 20秒で%sにリダイレクトする。"
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_admin.php:297
 #: src/usr/local/www/system_advanced_firewall.php:378
-#: src/usr/local/www/system_advanced_misc.php:307
+#: src/usr/local/www/system_advanced_misc.php:309
 #: src/usr/local/www/system_advanced_network.php:154
 #: src/usr/local/www/system_advanced_notifications.php:207
 #: src/usr/local/www/system_advanced_sysctl.php:137
@@ -25845,7 +25885,7 @@ msgstr "管理者のアクセス"
 #: src/usr/local/www/system_advanced_admin.php:298
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_firewall.php:379
-#: src/usr/local/www/system_advanced_misc.php:308
+#: src/usr/local/www/system_advanced_misc.php:310
 #: src/usr/local/www/system_advanced_network.php:155
 #: src/usr/local/www/system_advanced_notifications.php:208
 #: src/usr/local/www/system_advanced_sysctl.php:138
@@ -25854,8 +25894,8 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_firewall.php:381
-#: src/usr/local/www/system_advanced_misc.php:293
-#: src/usr/local/www/system_advanced_misc.php:310
+#: src/usr/local/www/system_advanced_misc.php:295
+#: src/usr/local/www/system_advanced_misc.php:312
 #: src/usr/local/www/system_advanced_network.php:157
 #: src/usr/local/www/system_advanced_notifications.php:210
 #: src/usr/local/www/system_advanced_sysctl.php:140
@@ -25865,7 +25905,7 @@ msgstr "雑多"
 
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_firewall.php:382
-#: src/usr/local/www/system_advanced_misc.php:311
+#: src/usr/local/www/system_advanced_misc.php:313
 #: src/usr/local/www/system_advanced_network.php:158
 #: src/usr/local/www/system_advanced_notifications.php:211
 #: src/usr/local/www/system_advanced_sysctl.php:114
@@ -25876,7 +25916,7 @@ msgstr "システムのチューニング可能パラメータ"
 
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_firewall.php:383
-#: src/usr/local/www/system_advanced_misc.php:312
+#: src/usr/local/www/system_advanced_misc.php:314
 #: src/usr/local/www/system_advanced_network.php:159
 #: src/usr/local/www/system_advanced_notifications.php:194
 #: src/usr/local/www/system_advanced_notifications.php:212
@@ -26537,99 +26577,103 @@ msgstr ""
 msgid "AES-NI CPU-based Acceleration"
 msgstr "AES- NIのCPUベースのアクセラレーション"
 
-#: src/usr/local/www/system_advanced_misc.php:79
+#: src/usr/local/www/system_advanced_misc.php:77
+msgid "BSD Crypto Device (cryptodev)"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_misc.php:81
 msgid "Intel Core* CPU on-die thermal sensor"
 msgstr ""
 "インテルCore README.txt _notes boot cf conf.default etc misc.translate root sbin "
 "tmp usr CPUオンダイ熱センサ"
 
-#: src/usr/local/www/system_advanced_misc.php:80
+#: src/usr/local/www/system_advanced_misc.php:82
 msgid "AMD K8, K10 and K11 CPU on-die thermal sensor"
 msgstr "AMD K8 、 K10およびK11 CPUが熱センサをオンダイ"
 
-#: src/usr/local/www/system_advanced_misc.php:90
+#: src/usr/local/www/system_advanced_misc.php:92
 msgid "Please select a valid Cryptographic Accelerator."
 msgstr "有効な暗号化アクセラレータを選択してください。"
 
-#: src/usr/local/www/system_advanced_misc.php:94
+#: src/usr/local/www/system_advanced_misc.php:96
 msgid "Please select a valid Thermal Hardware Sensor."
 msgstr "有効な熱ハードウェアセンサーを選択してください。"
 
-#: src/usr/local/www/system_advanced_misc.php:98
+#: src/usr/local/www/system_advanced_misc.php:100
 msgid "/tmp Size must be numeric and should not be less than 40MiB."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:102
+#: src/usr/local/www/system_advanced_misc.php:104
 msgid "/var Size must be numeric and should not be less than 60MiB."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:106
+#: src/usr/local/www/system_advanced_misc.php:108
 msgid "Proxy port must be a valid port number, 1-65535."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:110
+#: src/usr/local/www/system_advanced_misc.php:112
 msgid "Proxy URL must be a valid IP address or FQDN."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:114
+#: src/usr/local/www/system_advanced_misc.php:116
 msgid "The proxy username contains invalid characters."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:118
+#: src/usr/local/www/system_advanced_misc.php:120
 msgid "Proxy password and confirmation must match."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:316
+#: src/usr/local/www/system_advanced_misc.php:318
 msgid "Proxy Support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:320
+#: src/usr/local/www/system_advanced_misc.php:322
 msgid "Proxy URL"
 msgstr "プロキシのURL"
 
-#: src/usr/local/www/system_advanced_misc.php:323
+#: src/usr/local/www/system_advanced_misc.php:325
 msgid ""
 "Hostname or IP address of proxy server this system will use for its outbound "
 "Internet access."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:328
+#: src/usr/local/www/system_advanced_misc.php:330
 msgid "Proxy Port"
 msgstr "プロキシポート"
 
-#: src/usr/local/www/system_advanced_misc.php:331
+#: src/usr/local/www/system_advanced_misc.php:333
 msgid "Port where proxy server is listening."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:335
+#: src/usr/local/www/system_advanced_misc.php:337
 msgid "Proxy Username"
 msgstr "[プロキシユーザー名"
 
-#: src/usr/local/www/system_advanced_misc.php:338
+#: src/usr/local/www/system_advanced_misc.php:340
 msgid ""
 "Username for authentication to proxy server. Optional, leave blank to not "
 "use authentication."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:343
+#: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:346
+#: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:349
 #: src/usr/local/www/system_advanced_misc.php:351
+#: src/usr/local/www/system_advanced_misc.php:353
 msgid "Load Balancing"
 msgstr "ロードバランシング"
 
-#: src/usr/local/www/system_advanced_misc.php:355
-#: src/usr/local/www/system_advanced_misc.php:356
+#: src/usr/local/www/system_advanced_misc.php:357
+#: src/usr/local/www/system_advanced_misc.php:358
 msgid "Use sticky connections"
 msgstr "スティッキー接続を使用"
 
-#: src/usr/local/www/system_advanced_misc.php:358
+#: src/usr/local/www/system_advanced_misc.php:360
 msgid ""
 "Successive connections will be redirected to the servers in a round-robin "
 "manner with connections from the same source being sent to the same web "
@@ -26640,11 +26684,11 @@ msgid ""
 "Load Balancing service."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:368
+#: src/usr/local/www/system_advanced_misc.php:370
 msgid "Source tracking timeout"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:372
+#: src/usr/local/www/system_advanced_misc.php:374
 msgid ""
 "Set the source tracking timeout for sticky connections. By default this is "
 "0, so source tracking is removed as soon as the state expires. Setting this "
@@ -26655,26 +26699,26 @@ msgstr ""
 "0ため、ソースの追跡とすぐ状態が期限切れになったとして除去される。この設定は、より長い期間「タイムアウト高くして送信元/"
 "送信先の関係が持続することになります」 。"
 
-#: src/usr/local/www/system_advanced_misc.php:381
+#: src/usr/local/www/system_advanced_misc.php:383
 msgid "Default gateway switching"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:384
+#: src/usr/local/www/system_advanced_misc.php:386
 msgid ""
 "If the default gateway goes down, switch the default gateway to another "
 "available one. This is not enabled by default, as it's unnecessary in most "
 "all scenarios, which instead use gateway groups."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:389
+#: src/usr/local/www/system_advanced_misc.php:391
 msgid "Power Savings"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:393
+#: src/usr/local/www/system_advanced_misc.php:395
 msgid "PowerD"
 msgstr "パワード"
 
-#: src/usr/local/www/system_advanced_misc.php:396
+#: src/usr/local/www/system_advanced_misc.php:398
 msgid ""
 "The powerd utility monitors the system state and sets various power control "
 "options accordingly.  It offers four modes (maximum, minimum, adaptive and "
@@ -26691,62 +26735,59 @@ msgid ""
 "lower CPU load."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:411
+#: src/usr/local/www/system_advanced_misc.php:413
 msgid "Hiadaptive"
 msgstr "Hiadaptive"
 
-#: src/usr/local/www/system_advanced_misc.php:412
+#: src/usr/local/www/system_advanced_misc.php:414
 msgid "Adaptive"
 msgstr "適応型"
 
-#: src/usr/local/www/system_advanced_misc.php:413
+#: src/usr/local/www/system_advanced_misc.php:415
 msgid "Minimum"
 msgstr "最小"
 
-#: src/usr/local/www/system_advanced_misc.php:414
+#: src/usr/local/www/system_advanced_misc.php:416
 msgid "Maximum"
 msgstr "最大"
 
-#: src/usr/local/www/system_advanced_misc.php:419
+#: src/usr/local/www/system_advanced_misc.php:421
 msgid "AC Power"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:426
+#: src/usr/local/www/system_advanced_misc.php:428
 msgid "Battery Power"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:433
+#: src/usr/local/www/system_advanced_misc.php:435
 msgid "Unknown Power"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:439
+#: src/usr/local/www/system_advanced_misc.php:441
 msgid "Cryptographic & Thermal Hardware"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:443
+#: src/usr/local/www/system_advanced_misc.php:445
 msgid "Cryptographic Hardware"
 msgstr "暗号ハードウェア"
 
-#: src/usr/local/www/system_advanced_misc.php:446
+#: src/usr/local/www/system_advanced_misc.php:448
 msgid ""
 "A cryptographic accelerator module will use hardware support to speed up "
-"some cryptographic functions on systems which have the chip. Do not enable "
-"this option with a Hifn cryptographic acceleration card, as this will take "
-"precedence and the Hifn card will not be used. Acceleration should be "
-"automatic for IPsec when using a cipher supported by the chip, such as AES-"
-"128. OpenVPN should be set for AES-128-CBC and have cryptodev enabled for "
-"hardware acceleration. If there is not a crypto chip in the system, this "
-"option will have no effect. To unload the selected module, set this option "
-"to \"none\" and then reboot."
+"some cryptographic functions on systems which have the chip. Loading the BSD "
+"Crypto Device module will allow access to acceleration devices using drivers "
+"built into the kernel, such as Hifn or ubsec chipsets. If the firewall does "
+"not contain a crypto chip, this option will have no effect. To unload the "
+"selected module, set this option to \"none\" and then reboot."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:458
+#: src/usr/local/www/system_advanced_misc.php:457
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Thermal Sensors"
 msgstr "温度センサ"
 
-#: src/usr/local/www/system_advanced_misc.php:461
+#: src/usr/local/www/system_advanced_misc.php:460
 msgid ""
 "With a supported CPU, selecting a thermal sensor will load the appropriate "
 "driver to read its temperature. Setting this to \"None\" will attempt to "
@@ -26756,52 +26797,52 @@ msgid ""
 "this option to \"none\" and then reboot."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:474
+#: src/usr/local/www/system_advanced_misc.php:473
 msgid "Schedule States"
 msgstr "スケジュール状態"
 
-#: src/usr/local/www/system_advanced_misc.php:477
+#: src/usr/local/www/system_advanced_misc.php:476
 msgid ""
 "By default, when a schedule expires, connections permitted by that schedule "
 "are killed. This option overrides that behavior by not clearing states for "
 "existing connections."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:482
+#: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:643
 msgid "Gateway Monitoring"
 msgstr "ゲートウェイの監視"
 
-#: src/usr/local/www/system_advanced_misc.php:486
+#: src/usr/local/www/system_advanced_misc.php:485
 msgid "State Killing on Gateway Failure"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:489
+#: src/usr/local/www/system_advanced_misc.php:488
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:494
+#: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
 msgstr "ゲートウェイがダウンしているときのルールをスキップ"
 
-#: src/usr/local/www/system_advanced_misc.php:497
+#: src/usr/local/www/system_advanced_misc.php:496
 msgid ""
 "By default, when a rule has a gateway specified and this gateway is down, "
 "the rule is created omitting the gateway. This option overrides that "
 "behavior by omitting the entire rule instead."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:502
+#: src/usr/local/www/system_advanced_misc.php:501
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
 msgstr "RAMディスク設定（変更を適用するために再起動します）"
 
-#: src/usr/local/www/system_advanced_misc.php:506
+#: src/usr/local/www/system_advanced_misc.php:505
 msgid "Use RAM Disks"
 msgstr "RAMディスクを使用して、"
 
-#: src/usr/local/www/system_advanced_misc.php:509
+#: src/usr/local/www/system_advanced_misc.php:508
 msgid ""
 "Set this to use /tmp and /var as RAM disks (memory file system disks) on a "
 "full install rather than use the hard disk. Setting this will cause the data "
@@ -26810,93 +26851,93 @@ msgid ""
 "clicking \"Save\"."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:516
+#: src/usr/local/www/system_advanced_misc.php:515
 msgid "/tmp RAM Disk Size"
 msgstr "/ tmpにRAMディスクサイズ"
 
-#: src/usr/local/www/system_advanced_misc.php:520
+#: src/usr/local/www/system_advanced_misc.php:519
 msgid ""
 "Set the size, in MiB, for the /tmp RAM disk. Leave blank for 40MiB. Do not "
 "set lower than 40."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:525
+#: src/usr/local/www/system_advanced_misc.php:524
 msgid "/var RAM Disk Size"
 msgstr "の/ var RAMディスクのサイズ"
 
-#: src/usr/local/www/system_advanced_misc.php:529
+#: src/usr/local/www/system_advanced_misc.php:528
 msgid ""
 "Set the size, in MiB, for the /var RAM disk. Leave blank for 60MiB. Do not "
 "set lower than 60."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:534
+#: src/usr/local/www/system_advanced_misc.php:533
 msgid "Periodic RRD Backup"
 msgstr "定期的なRRDバックアップ"
 
-#: src/usr/local/www/system_advanced_misc.php:538
+#: src/usr/local/www/system_advanced_misc.php:537
 msgid ""
 "This will periodically backup the RRD data so it can be restored "
 "automatically on the next boot. Keep in mind that the more frequent the "
 "backup, the more writes will happen to the media."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:544
+#: src/usr/local/www/system_advanced_misc.php:543
 msgid "Periodic DHCP Leases Backup"
 msgstr "定期的なDHCPはバックアップのリース"
 
-#: src/usr/local/www/system_advanced_misc.php:548
+#: src/usr/local/www/system_advanced_misc.php:547
 msgid ""
 "This will periodically backup the DHCP leases so it can be restored "
 "automatically on the next boot. Keep in mind that the more frequent the "
 "backup, the more writes will happen to the media."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:554
+#: src/usr/local/www/system_advanced_misc.php:553
 msgid "Periodic Logs Backup"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:558
+#: src/usr/local/www/system_advanced_misc.php:557
 msgid ""
 "This will periodically backup the log directory so it can be restored "
 "automatically on the next boot. Keep in mind that the more frequent the "
 "backup, the more writes will happen to the media."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:564
+#: src/usr/local/www/system_advanced_misc.php:563
 msgid "Hardware Settings"
 msgstr "ハードウェア設定"
 
-#: src/usr/local/www/system_advanced_misc.php:573
+#: src/usr/local/www/system_advanced_misc.php:572
 msgid "Always on"
 msgstr "常にオン"
 
-#: src/usr/local/www/system_advanced_misc.php:571
+#: src/usr/local/www/system_advanced_misc.php:570
 msgid "Hard disk standby time"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:574
+#: src/usr/local/www/system_advanced_misc.php:573
 #, php-format
 msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
 "elapsed since the last access.%1$s%2$sDo not set this for CF cards.%3$s"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:579
+#: src/usr/local/www/system_advanced_misc.php:578
 msgid "Installation Feedback"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:583
+#: src/usr/local/www/system_advanced_misc.php:582
 msgid "Host UUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:586
+#: src/usr/local/www/system_advanced_misc.php:585
 msgid ""
 "Enable this option to not send HOST UUID to pfSense as part of User-Agent "
 "header."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:592
+#: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
 "The \\\"Use Ramdisk\\\" setting has been changed. This will cause the "
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
@@ -29560,6 +29601,10 @@ msgstr ""
 msgid "Full name"
 msgstr "フルネーム"
 
+#: src/usr/local/www/system_usermanager.php:609
+msgid "Enabled"
+msgstr ""
+
 #: src/usr/local/www/system_usermanager.php:612
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:109
@@ -30842,7 +30887,7 @@ msgid "IPComp compression of content is proposed on the connection."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:269
-#: src/usr/local/www/services_dnsmasq.php:342
+#: src/usr/local/www/services_dnsmasq.php:347
 msgid "Strict interface binding"
 msgstr ""
 
@@ -31917,7 +31962,7 @@ msgid "The port used by OpenVPN to receive client connections."
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:824
-#: src/usr/local/www/vpn_openvpn_server.php:1758
+#: src/usr/local/www/vpn_openvpn_server.php:1761
 msgid ""
 "Warning: The selected server certificate was not created as an SSL Server "
 "certificate and may not work as expected"
@@ -32531,7 +32576,7 @@ msgstr ""
 msgid "in use"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:243
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
 msgid "Updating..."
 msgstr ""
 
@@ -33095,11 +33140,11 @@ msgstr "この構成ファイルを暗号化する。"
 msgid "Configuration file is encrypted."
 msgstr "設定ファイルが暗号化されています。"
 
-#: src/usr/local/www/diag_packet_capture.php:288
+#: src/usr/local/www/diag_packet_capture.php:316
 msgid "Enable promiscuous mode"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:366
+#: src/usr/local/www/diag_packet_capture.php:395
 msgid "Do reverse DNS lookup"
 msgstr ""
 
@@ -33159,7 +33204,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:648
 #: src/usr/local/www/firewall_nat_npt_edit.php:189
 #: src/usr/local/www/firewall_nat_out_edit.php:454
-#: src/usr/local/www/firewall_rules_edit.php:1175
+#: src/usr/local/www/firewall_rules_edit.php:1177
 msgid "Disable this rule"
 msgstr "このルールを無効にする"
 
@@ -33181,7 +33226,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:723
 #: src/usr/local/www/firewall_nat_edit.php:791
-#: src/usr/local/www/firewall_rules_edit.php:1320
+#: src/usr/local/www/firewall_rules_edit.php:1322
 msgid "Invert match."
 msgstr ""
 
@@ -33195,36 +33240,36 @@ msgid ""
 "stop processing Outbound NAT rules"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1184
+#: src/usr/local/www/firewall_rules_edit.php:1186
 msgid "Apply the action immediately on match."
 msgstr "一致にすぐにアクションを適用します。"
 
-#: src/usr/local/www/firewall_rules_edit.php:1202
+#: src/usr/local/www/firewall_rules_edit.php:1204
 msgid ""
 "<span class=\"help-block\">This is associated with a NAT rule.<br/>Editing "
 "the interface, protocol, source, or destination of associated filter rules "
 "is not permitted."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1447
+#: src/usr/local/www/firewall_rules_edit.php:1449
 msgid "Log packets that are handled by this rule"
 msgstr "この規則によって処理されたパケットをログに記録する"
 
-#: src/usr/local/www/firewall_rules_edit.php:1496
+#: src/usr/local/www/firewall_rules_edit.php:1498
 msgid ""
 "Allow packets with IP options to pass. Otherwise they are blocked by default."
 " This is usually only seen with multicast traffic."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1504
+#: src/usr/local/www/firewall_rules_edit.php:1506
 msgid "Disable auto generated reply-to for this rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1582
+#: src/usr/local/www/firewall_rules_edit.php:1584
 msgid "Prevent states created by this rule to be sync'ed over pfsync."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1602
+#: src/usr/local/www/firewall_rules_edit.php:1604
 msgid ""
 "Prevent the rule on Master from automatically syncing to other CARP members"
 msgstr ""
@@ -33567,52 +33612,52 @@ msgstr ""
 msgid "Enable the creation, generation and activation of rolls with vouchers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:810
+#: src/usr/local/www/services_dhcp.php:820
 msgid "Ignore BOOTP queries"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:817
+#: src/usr/local/www/services_dhcp.php:827
 msgid "Only the clients defined below will get DHCP leases from this server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:824
+#: src/usr/local/www/services_dhcp.php:834
 msgid "Denied clients will be ignored rather than rejected."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:831
+#: src/usr/local/www/services_dhcp.php:841
 msgid ""
 "If a client includes a unique identifier in its DHCP request, that UID will "
 "not be recorded in its lease."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1010
+#: src/usr/local/www/services_dhcp.php:1020
 msgid "Enable Static ARP entries"
 msgstr "スタティックARPエントリを有効にする"
 
-#: src/usr/local/www/services_dhcp.php:1017
+#: src/usr/local/www/services_dhcp.php:1027
 msgid "Change DHCP display lease time from UTC to local time"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1024
+#: src/usr/local/www/services_dhcp.php:1034
 msgid "Enable RRD statistics graphs"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1047
+#: src/usr/local/www/services_dhcp.php:1057
 msgid "Enable registration of DHCP client names in DNS"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1062
+#: src/usr/local/www/services_dhcp.php:1072
 #: src/usr/local/www/services_dhcpv6.php:769
 msgid ""
 "Force dynamic DNS hostname to be the same as configured hostname for Static "
 "Mappings"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1207
+#: src/usr/local/www/services_dhcp.php:1217
 msgid "Enables network booting"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1269
+#: src/usr/local/www/services_dhcp.php:1279
 msgid "<div class=\"alert alert-info\"> "
 msgstr ""
 
@@ -33666,31 +33711,31 @@ msgstr ""
 msgid "Enable DHCPv6 relay on interface"
 msgstr "インターフェイス上のDHCPv6リレーを有効にする"
 
-#: src/usr/local/www/services_dnsmasq.php:251
+#: src/usr/local/www/services_dnsmasq.php:256
 msgid "Enable DNS forwarder"
 msgstr "DNSフォワーダを有効にする"
 
-#: src/usr/local/www/services_dnsmasq.php:258
+#: src/usr/local/www/services_dnsmasq.php:263
 msgid "Register DHCP leases in DNS forwarder"
 msgstr "レジスタDHCPはDNSフォワーダ内のリース"
 
-#: src/usr/local/www/services_dnsmasq.php:270
+#: src/usr/local/www/services_dnsmasq.php:275
 msgid "Register DHCP static mappings in DNS forwarder"
 msgstr "DNSフォワーダでDHCPの静的マッピングを登録"
 
-#: src/usr/local/www/services_dnsmasq.php:281
+#: src/usr/local/www/services_dnsmasq.php:286
 msgid "Resolve DHCP mappings first"
 msgstr "最初のDHCPマッピングを解決する"
 
-#: src/usr/local/www/services_dnsmasq.php:293
+#: src/usr/local/www/services_dnsmasq.php:298
 msgid "Query DNS servers sequentially"
 msgstr "クエリのDNSサーバーが順次"
 
-#: src/usr/local/www/services_dnsmasq.php:302
+#: src/usr/local/www/services_dnsmasq.php:307
 msgid "Require domain"
 msgstr "ドメインを必要とする"
 
-#: src/usr/local/www/services_dnsmasq.php:311
+#: src/usr/local/www/services_dnsmasq.php:316
 msgid "Do not forward private reverse lookups"
 msgstr "プライベートの逆引きを転送しないでください"
 
@@ -33925,23 +33970,23 @@ msgstr "UCD"
 msgid "Regex"
 msgstr "正規表現"
 
-#: src/usr/local/www/services_unbound.php:271
+#: src/usr/local/www/services_unbound.php:276
 msgid "Enable DNS resolver"
 msgstr ""
 
-#: src/usr/local/www/services_unbound.php:314
+#: src/usr/local/www/services_unbound.php:319
 msgid "Enable DNSSEC Support"
 msgstr "DNSSECサポートを有効にする"
 
-#: src/usr/local/www/services_unbound.php:321
+#: src/usr/local/www/services_unbound.php:326
 msgid "Enable Forwarding Mode"
 msgstr "転送モードを有効にする"
 
-#: src/usr/local/www/services_unbound.php:330
+#: src/usr/local/www/services_unbound.php:335
 msgid "Register DHCP leases in the DNS Resolver"
 msgstr "レジスタDHCPはDNSリゾルバ内のリース"
 
-#: src/usr/local/www/services_unbound.php:339
+#: src/usr/local/www/services_unbound.php:344
 msgid "Register DHCP static mappings in the DNS Resolver"
 msgstr "DNSリゾルバのレジスタのDHCP静的マッピング"
 
@@ -34202,31 +34247,31 @@ msgid ""
 "subnet it originated from."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:382
+#: src/usr/local/www/system_advanced_misc.php:384
 msgid "Enable default gateway switching"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:394
+#: src/usr/local/www/system_advanced_misc.php:396
 msgid "Enable PowerD"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:475
+#: src/usr/local/www/system_advanced_misc.php:474
 msgid "Do not kill connections when schedule expires"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:487
+#: src/usr/local/www/system_advanced_misc.php:486
 msgid "Flush all states when a gateway goes down"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:495
+#: src/usr/local/www/system_advanced_misc.php:494
 msgid "Do not create rules when gateway is down"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_misc.php:507
+#: src/usr/local/www/system_advanced_misc.php:506
 msgid "Use memory file system for /tmp and /var"
 msgstr "のために/ tmpと/ varメモリファイルシステムを使用して、"
 
-#: src/usr/local/www/system_advanced_misc.php:584
+#: src/usr/local/www/system_advanced_misc.php:583
 msgid "Do NOT send HOST UUID with user agent"
 msgstr ""
 

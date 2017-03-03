@@ -1498,9 +1498,10 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference. ' .
-	'A maximum of %s characters will be used in the ruleset and displayed in the firewall log.',
-	user_rule_descr_maxlen());
+))->setHelp(sprintf(gettext('A description may be entered here for administrative reference. ' .
+	'A maximum of %s characters will be used in the ruleset and displayed in the firewall log.'),
+	user_rule_descr_maxlen())
+	);
 
 $btnadv = new Form_Button(
 	'btnadvopts',

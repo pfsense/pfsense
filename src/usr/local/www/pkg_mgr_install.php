@@ -58,6 +58,7 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
+$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 if ($_REQUEST['ajax']) {
 	$response = "";
@@ -72,7 +73,6 @@ if ($_REQUEST['ajax']) {
 	}
 
 	// Check to see if our process is still running
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 	$running = "running";
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
@@ -406,7 +406,6 @@ if ($firmwareupdate) {
 
 if ($confirmed):
 	// XXX: What if the user navigates away from this page and then comes back via his/her "Back" button?
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 	if (isvalidpid($pidfile)) {
 		$start_polling = true;

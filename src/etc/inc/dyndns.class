@@ -650,10 +650,9 @@
 				case 'route53':		
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
-					list($r53_regionId, $r53_zoneId) = split('/', $this->_dnsZoneID);
-					$apiurl = $r53->getApiUrl($r53_zoneId);
+					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
 					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
-					$httphead = $r53->getHttpPostHeaders($r53_zoneId, $r53_regionId, hash("sha256",$xmlreq));
+					$httphead = $r53->getHttpPostHeaders($r53_zoneId, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
 						log_error(sprintf("Sending reuquest to: %s", $apiurl));

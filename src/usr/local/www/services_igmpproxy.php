@@ -39,7 +39,7 @@ if (!is_array($config['igmpproxy']['igmpentry'])) {
 //igmpproxy_sort();
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
-if ($_POST['submit']) {
+if ($_POST['apply']) {
 	$pconfig = $_POST;
 
 	$changes_applied = true;
@@ -131,10 +131,6 @@ endforeach;
 </form>
 
 <nav class="action-buttons">
-	<button id="submit" name="submit" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Save")?>">
-		<i class="fa fa-save icon-embed-btn"></i>
-		<?=gettext("Save")?>
-	</button>
 	<a href="services_igmpproxy_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>

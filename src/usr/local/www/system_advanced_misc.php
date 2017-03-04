@@ -384,8 +384,11 @@ $section->addInput(new Form_Checkbox(
 	'Enable default gateway switching',
 	$pconfig['gw_switch_default']
 ))->setHelp('If the default gateway goes down, switch the default gateway to '.
-	'another available one. This is not enabled by default, as it\'s unnecessary in '.
-	'most all scenarios, which instead use gateway groups.');
+	'another available one. If you do not enable this option, traffic originating '.
+	'from the firewall itself (e.g. SMTP notifications) may fail if the default '.
+	'gateway is down, even if other gateways are still up. Individual gateways '.
+	'can be omitted from being marked as default by enabling the "Skip Default" '.
+	'checkbox on their respective %1$sGateway Settings%2$s page.','<a href="system_gateways.php">','</a>');
 
 $form->add($section);
 $section = new Form_Section('Power Savings');

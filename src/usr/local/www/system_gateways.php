@@ -253,6 +253,7 @@ display_top_tabs($tab_array);
 					<tr>
 						<th></th>
 						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Skip Def.")?></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Gateway")?></th>
 						<th><?=gettext("Monitor IP")?></th>
@@ -286,6 +287,9 @@ foreach ($a_gateways as $i => $gateway):
 				echo " <strong>(default)</strong>";
 			}
 ?>
+						</td>
+						<td>
+							<?=$gateway['no_defgw_switch'] ? '<i class="fa fa-arrow-circle-o-down" title="This gateway will be skipped during default gateway switching"></i>' : '&nbsp;'?>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>

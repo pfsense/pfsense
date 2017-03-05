@@ -114,14 +114,14 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Domain Override');
+$section = new Form_Section('Domains to Override with Custom Lookup Servers');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa');
+))->setHelp('Domain whose lookups will be directed to a user-specified DNS lookup server.');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
@@ -145,6 +145,12 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		$id
 	));
 }
+
+$section->setHelp("This page is used to specify domains for which the resolver's standard DNS lookup process will be overridden, " .
+"and the resolver will query a different (non-standard) lookup server instead. It is possible to enter \'non-standard\', 'invalid' " .
+"and 'local' domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable " .
+"domains such as 'org', 'info', or 'google.co.uk'.  The IP entered will be treated as the IP of an authoritative lookup server for " .
+"the domain (including all of its subdomains), and other lookup servers will not be queried.");
 
 $form->add($section);
 

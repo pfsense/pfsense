@@ -149,38 +149,6 @@ function restore_rrddata() {
 	}
 }
 
-function add_base_packages_menu_items() {
-	global $g, $config;
-	$base_packages = explode(",", $g['base_packages']);
-	$modified_config = false;
-	foreach ($base_packages as $bp) {
-		$basepkg_path = "/usr/local/pkg/{$bp}";
-		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION);
-		if ($tmpinfo['extension'] == "xml" && file_exists($basepkg_path)) {
-			$pkg_config = parse_xml_config_pkg($basepkg_path, "packagegui");
-			if ($pkg_config['menu'] != "") {
-				if (is_array($pkg_config['menu'])) {
-					foreach ($pkg_config['menu'] as $menu) {
-						if (is_array($config['installedpackages']['menu'])) {
-							foreach ($config['installedpackages']['menu'] as $amenu) {
-								if ($amenu['name'] == $menu['name']) {
-									continue;
-								}
-							}
-						}
-						$config['installedpackages']['menu'][] = $menu;
-						$modified_config = true;
-					}
-				}
-			}
-		}
-	}
-	if ($modified_config) {
-		write_config(gettext("Restored base_package menus after configuration restore."));
-		$config = parse_config(true);
-	}
-}
-
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
@@ -341,7 +309,6 @@ if ($_POST) {
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									write_config();
-									add_base_packages_menu_items();
 									convert_config();
 									conf_mount_ro();
 								}
@@ -379,7 +346,6 @@ if ($_POST) {
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									write_config();
-									add_base_packages_menu_items();
 									convert_config();
 									conf_mount_ro();
 								}
@@ -441,7 +407,6 @@ if ($_POST) {
 									}
 									$config['diag']['ipv6nat'] = true;
 									write_config();
-									add_base_packages_menu_items();
 									convert_config();
 									conf_mount_ro();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");

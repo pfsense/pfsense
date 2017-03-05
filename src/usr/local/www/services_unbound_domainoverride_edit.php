@@ -127,7 +127,7 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100%1$s' .
+))->setHelp('IPv4 or IPv6 address of the authoritative DNS server for this domain. e.g.: 192.168.100.100%1$s' .
 			'To use a non-default port for communication, append an \'@\' with the port number.', '<br />')->setPattern('[a-zA-Z0-9@.:]+');
 
 $section->addInput(new Form_Input(

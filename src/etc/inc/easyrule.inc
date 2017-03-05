@@ -263,7 +263,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 
 	/* If needed, write the config and reload the filter */
 	if ($dirty) {
-		write_config();
+		write_config(sprintf(gettext("Blocked host %s via easy rule"), $host));
 		$retval = filter_configure();
 		if (!empty($_SERVER['DOCUMENT_ROOT'])) {
 			header("Location: firewall_aliases.php");
@@ -413,7 +413,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 			$config['aliases']['alias'][$id]['detail'] = join("||", $a_detail);
 
 			// Update config
-			write_config();
+			write_config(sprintf(gettext("Unblocked host %s via easy rule"), $host));
 			$retval = filter_configure();
 			if (!empty($_SERVER['DOCUMENT_ROOT'])) {
 				header("Location: firewall_aliases.php");

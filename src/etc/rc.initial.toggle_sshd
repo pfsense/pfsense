@@ -34,7 +34,7 @@ if (isset($config['system']['enablesshd'])) {
 	if ($yn[0] == "y") {
 		unset($config['system']['enablesshd']);
 		echo "\nWriting configuration...";
-		write_config();
+		write_config(gettext("Disabled SSHD from console menu."));
 		echo " done.\n";
 		echo "\nDisabling SSHD...";
 		send_event("service reload sshd");
@@ -50,7 +50,7 @@ if (isset($config['system']['enablesshd'])) {
 	if ($yn[0] == "y") {
 		$config['system']['enablesshd'] = true;
 		echo "\nWriting configuration...";
-		write_config();
+		write_config(gettext("Enabled SSHD from console menu."));
 		echo " done.\n";
 		echo "\nEnabling SSHD...";
 		send_event("service reload sshd");

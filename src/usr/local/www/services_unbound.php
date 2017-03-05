@@ -441,8 +441,8 @@ events.push(function() {
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
-					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("Host's parent domain")?></th>
+					<th><?=gettext("IP to return")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -504,6 +504,13 @@ endforeach;
 	</div>
 </div>
 
+<span class="help-block">
+	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
+	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains 
+	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for 
+	the host will automatically return the given IP, and the usual lookup server for the domain will not be queried for the host's records.
+</span>
+
 <nav class="action-buttons">
 	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
@@ -518,7 +525,7 @@ endforeach;
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("IP of lookup server")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>

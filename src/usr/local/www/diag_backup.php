@@ -273,7 +273,7 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
+									write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
 									convert_config();
 								}
 								filter_configure();
@@ -308,7 +308,7 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
+									write_config(gettext("Unset RRD data from configuration after restoring full configuration"));
 									convert_config();
 								}
 								if ($m0n0wall_upgrade == true) {
@@ -368,7 +368,7 @@ if ($_POST) {
 										}
 									}
 									$config['diag']['ipv6nat'] = true;
-									write_config();
+									write_config(gettext("Imported m0n0wall configuration"));
 									convert_config();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");

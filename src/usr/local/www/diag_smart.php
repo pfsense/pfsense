@@ -268,7 +268,6 @@ switch ($action) {
 				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 				write_config();
 				$retval = 0;
-				config_lock();
 				if (stristr($retval, "error") != true) {
 					$savemsg = get_std_save_message($retval);
 					$style = 'success';
@@ -276,7 +275,6 @@ switch ($action) {
 					$savemsg = $retval;
 					$style='danger';
 				}
-				config_unlock();
 				// Write the changes to the smartd.conf file
 				update_email($_POST['smartmonemail']);
 				// Send sig HUP to smartd, rereads the config file

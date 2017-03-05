@@ -441,8 +441,8 @@ events.push(function() {
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
-					<th><?=gettext("Host's parent domain")?></th>
-					<th><?=gettext("IP to return")?></th>
+					<th><?=gettext("Parent domain of host")?></th>
+					<th><?=gettext("IP returned for host")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>

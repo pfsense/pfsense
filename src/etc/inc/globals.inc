@@ -37,7 +37,6 @@ define('DMYPWD', "********");
 
 global $g;
 $g = array(
-	"base_packages" => "siproxd",
 	"event_address" => "unix:///var/run/check_reload_status",
 	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",

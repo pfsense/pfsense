@@ -204,7 +204,7 @@ if ($_POST['act'] == "del") {
 	if ($_POST['type'] == 'host') {
 		if ($a_hosts[$_POST['id']]) {
 			unset($a_hosts[$_POST['id']]);
-			write_config();
+			write_config(gettext("Host override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
@@ -212,7 +212,7 @@ if ($_POST['act'] == "del") {
 	} elseif ($_POST['type'] == 'doverride') {
 		if ($a_domainOverrides[$_POST['id']]) {
 			unset($a_domainOverrides[$_POST['id']]);
-			write_config();
+			write_config(gettext("Domain override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;

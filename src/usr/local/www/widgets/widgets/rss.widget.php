@@ -85,8 +85,8 @@ if (is_numeric($user_settings['widgets']['rsswidgettextlength'])) {
 
 // Set a default feed if none exists
 if (!$rss_feed_s) {
-	$rss_feed_s = "https://blog.pfsense.org";
-	$user_settings['widgets']['rssfeed'] = "https://blog.pfsense.org";
+	$rss_feed_s = "https://www.netgate.com/blog/";
+	$user_settings['widgets']['rssfeed'] = "https://www.netgate.com/blog/";
 }
 
 if (!$max_items || !is_numeric($max_items)) {

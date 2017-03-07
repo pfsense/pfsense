@@ -96,7 +96,7 @@ if ($_REQUEST['getupdatestatus']) {
 	}
 
 	exit;
-} elseif ($_POST) {
+} elseif ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -105,9 +105,9 @@ if ($_REQUEST['getupdatestatus']) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['system_information']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['system_information']['filter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = "";
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved System Information Widget Filter via Dashboard."));
@@ -122,7 +122,7 @@ $widgetperiod += 1000;
 
 $filesystems = get_mounted_filesystems();
 
-$skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']['filter']);
+$skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 ?>
 
 <div class="table-responsive">
@@ -383,11 +383,12 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 </table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="widget-<?=$widgetkey?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -423,6 +424,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 
 <script type="text/javascript">
 //<![CDATA[
+<?php if ($widget_first_instance): ?>
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 function systemStatusGetUpdateStatus() {
 	$.ajax({
@@ -435,7 +437,7 @@ function systemStatusGetUpdateStatus() {
 		},
 		dataType: 'html',
 		success: function(data){
-			$('#widget-system_information #updatestatus').html(data);
+			$('[id^=widget-system_information] #updatestatus').html(data);
 		}
 	});
 }
@@ -459,18 +461,10 @@ function updateMeters() {
 
 }
 
-events.push(function(){
-	$("#showallsysinfoitems").click(function() {
-		$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-			$(this).prop("checked", true);
-		});
-	});
-});
-
 var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
-	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
+	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
 }
 
 function setTimer() {
@@ -503,7 +497,7 @@ function stats(x) {
 
 function updateMemory(x) {
 	if ($('#memusagemeter')) {
-		$("#memusagemeter").html(x);
+		$('[id="memusagemeter"]').html(x);
 	}
 	if ($('#memUsagePB')) {
 		setProgress('memUsagePB', parseInt(x));
@@ -512,13 +506,13 @@ function updateMemory(x) {
 
 function updateMbuf(x) {
 	if ($('#mbuf')) {
-		$("#mbuf").html('(' + x + ')');
+		$('[id="mbuf"]').html('(' + x + ')');
 	}
 }
 
 function updateMbufMeter(x) {
 	if ($('#mbufusagemeter')) {
-		$("#mbufusagemeter").html(x + '%');
+		$('[id="mbufusagemeter"]').html(x + '%');
 	}
 	if ($('#mbufPB')) {
 		setProgress('mbufPB', parseInt(x));
@@ -528,7 +522,7 @@ function updateMbufMeter(x) {
 function updateCPU(x) {
 
 	if ($('#cpumeter')) {
-		$("#cpumeter").html(x + '%');
+		$('[id="cpumeter"]').html(x + '%');
 	}
 	if ($('#cpuPB')) {
 		setProgress('cpuPB', parseInt(x));
@@ -542,7 +536,7 @@ function updateCPU(x) {
 
 function updateTemp(x) {
 	if ($("#tempmeter")) {
-		$("#tempmeter").html(x + '&deg;' + 'C');
+		$('[id="tempmeter"]').html(x + '&deg;' + 'C');
 	}
 	if ($('#tempPB')) {
 		setProgress('tempPB', parseInt(x));
@@ -551,25 +545,25 @@ function updateTemp(x) {
 
 function updateDateTime(x) {
 	if ($('#datetime')) {
-		$("#datetime").html(x);
+		$('[id="datetime"]').html(x);
 	}
 }
 
 function updateUptime(x) {
 	if ($('#uptime')) {
-		$("#uptime").html(x);
+		$('[id="uptime"]').html(x);
 	}
 }
 
 function updateState(x) {
 	if ($('#pfstate')) {
-		$("#pfstate").html('(' + x + ')');
+		$('[id="pfstate"]').html('(' + x + ')');
 	}
 }
 
 function updateStateMeter(x) {
 	if ($('#pfstateusagemeter')) {
-		$("#pfstateusagemeter").html(x + '%');
+		$('[id="pfstateusagemeter"]').html(x + '%');
 	}
 	if ($('#statePB')) {
 		setProgress('statePB', parseInt(x));
@@ -578,13 +572,13 @@ function updateStateMeter(x) {
 
 function updateCpuFreq(x) {
 	if ($('#cpufreq')) {
-		$("#cpufreq").html(x);
+		$('[id="cpufreq"]').html(x);
 	}
 }
 
 function updateLoadAverage(x) {
 	if ($('#load_average')) {
-		$("#load_average").html(x);
+		$('[id="load_average"]').html(x);
 	}
 }
 
@@ -594,7 +588,7 @@ function updateInterfaceStats(x) {
 		var counter = 1;
 		for (var y=0; y<statistics_split.length-1; y++) {
 			if ($('#stat' + counter)) {
-				$('#stat' + counter).html(statistics_split[y]);
+				$('[id="stat' + counter + '"]').html(statistics_split[y]);
 				counter++;
 			}
 		}
@@ -613,25 +607,25 @@ function updateInterfaces(x) {
 			}
 			switch (details[1]) {
 				case "up":
-					$('#' + details[0] + '-up').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
+					$('[id="' + details[0] + '-up"]').css("display","inline");
+					$('[id="' + details[0] + '-down"]').css("display","none");
+					$('[id="' + details[0] + '-block"]').css("display","none");
+					$('[id="' + details[0] + '-ip"]').html(ipv4_details);
+					$('[id="' + details[0] + '-ipv6"]').html(details[3]);
+					$('[id="' + details[0] + '-media"]').html(details[4]);
 					break;
 				case "down":
-					$('#' + details[0] + '-down').css("display","inline");
-					$('#' + details[0] + '-up').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
+					$('[id="' + details[0] + '-down"]').css("display","inline");
+					$('[id="' + details[0] + '-up"]').css("display","none");
+					$('[id="' + details[0] + '-block"]').css("display","none");
+					$('[id="' + details[0] + '-ip"]').html(ipv4_details);
+					$('[id="' + details[0] + '-ipv6"]').html(details[3]);
+					$('[id="' + details[0] + '-media"]').html(details[4]);
 					break;
 				case "block":
-					$('#' + details[0] + '-block').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-up').css("display","none");
+					$('[id="' + details[0] + '-block"]').css("display","inline");
+					$('[id="' + details[0] + '-down"]').css("display","none");
+					$('[id="' + details[0] + '-up"]').css("display","none");
 					break;
 			}
 		});
@@ -650,6 +644,14 @@ function widgetActive(x) {
 /* start updater */
 events.push(function(){
 	setTimer();
+});
+<?php endif; ?>
+events.push(function(){
+	$("#widget-<?=$widgetkey?>_panel-footer #showallsysinfoitems").click(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
+			$(this).prop("checked", true);
+		});
+	});
 });
 //]]>
 </script>

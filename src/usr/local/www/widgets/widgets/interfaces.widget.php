@@ -29,7 +29,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -38,9 +38,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interfaces']['iffilter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = "";
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
@@ -53,7 +53,7 @@ if ($_POST) {
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 <?php
-$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	if (in_array($ifdescr, $skipinterfaces)) {
@@ -132,11 +132,12 @@ endforeach;
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="widget-<?=$widgetkey?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -147,7 +148,7 @@ endforeach;
 					</thead>
 					<tbody>
 <?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+				$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
@@ -176,8 +177,8 @@ endforeach;
 <script>
 //<![CDATA[
 	events.push(function(){
-		$("#showallinterfaces").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer #showallinterfaces").click(function() {
+			$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});

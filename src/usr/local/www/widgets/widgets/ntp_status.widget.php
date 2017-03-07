@@ -194,7 +194,7 @@ if ($_REQUEST['updateme']) {
 	exit;
 }
 ?>
-
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
 var d = new Date('<?=date_format(date_create(), 'c')?>');
@@ -210,11 +210,11 @@ setInterval(function() {
 	thisMinute = thisMinute < 10 ? "0" + thisMinute : thisMinute;
 	thisSecond = thisSecond < 10 ? "0" + thisSecond : thisSecond;
 
-	$('#ntpStatusClock').html(thisHour +':' + thisMinute + ':' + thisSecond + ' ' + tz);
+	$('[id="ntpStatusClock"]').html(thisHour +':' + thisMinute + ':' + thisSecond + ' ' + tz);
 }, 1000);
 //]]>
 </script>
-
+<?php endif; ?>
 <table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
@@ -224,7 +224,7 @@ setInterval(function() {
 		</tr>
 	</tbody>
 </table>
-
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
 	function ntp_getstatus() {
@@ -242,7 +242,7 @@ setInterval(function() {
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText
-		$('#ntpstatus').prop('innerHTML',responseStringNtp);
+		$('[id="ntpstatus"]').prop('innerHTML',responseStringNtp);
 
 		// Refresh the status at the configured interval
 		setTimeout('ntp_getstatus()', "<?=$widgetperiod?>");
@@ -254,3 +254,4 @@ setInterval(function() {
 
 //]]>
 </script>
+<?php endif; ?>

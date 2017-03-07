@@ -48,7 +48,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		'collisions' => gettext('Collisions'),
 	);
 
-	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+	$skipinterfaces = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['iffilter']);
 
 	print("<thead>");
 	print(	"<tr>");
@@ -90,7 +90,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 	print(	"</tbody>");
 	exit;
-} else if ($_POST) {
+} else if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -99,9 +99,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = "";
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));
@@ -109,18 +109,20 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
-<table id="iftbl" class="table table-striped table-hover">
+<table id="<?=$widgetkey?>-iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="widget-<?=$widgetkey?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -131,7 +133,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 					</thead>
 					<tbody>
 <?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+				$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
@@ -160,34 +162,34 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 <script type="text/javascript">
 //<![CDATA[
 
-	function get_if_stats() {
+	function get_if_stats_<?=$widgetkey_nodash?>() {
 		var ajaxRequest;
 
 		ajaxRequest = $.ajax({
 				url: "/widgets/widgets/interface_statistics.widget.php",
 				type: "post",
-				data: { ajax: "ajax"}
+				data: { ajax: "ajax", widgetkey: "<?=$widgetkey?>"}
 			});
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#iftbl').html(response);
+			$('#<?=$widgetkey?>-iftbl').html(response);
 
 			// and do it again
-			setTimeout(get_if_stats, "<?=$widgetperiod?>");
+			setTimeout(get_if_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
-		$("#showallinterfacesforstats").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+		$("#widget-<?=$widgetkey?>_panel-footer #showallinterfacesforstats").click(function() {
+			$("#widget-<?=$widgetkey?>_panel-footer [id^=show]").each(function() {
 				$(this).prop("checked", true);
 			});
 		});
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
-		setTimeout(get_if_stats, Math.floor((Math.random() * 10000) + 1000));
+		setTimeout(get_if_stats_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

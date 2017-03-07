@@ -125,7 +125,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['dyn_dns_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['dyn_dns_status']['filter'] = "";
+		$user_settings['widgets']['dyn_dns_status']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Dynamic DNS Filter via Dashboard."));
@@ -204,6 +204,13 @@ function get_dyndns_service_text($dyndns_type) {
 		</td>
 	</tr>
 	<?php endforeach;?>
+	<?php if ($rowid == -1):?>
+	<tr>
+		<td colspan="4" class="text-center">
+			<?=gettext('All Dyn DNS entries are hidden.');?>
+		</td>
+	</tr>
+	<?php endif;?>
 	</tbody>
 </table>
 </div>
@@ -278,10 +285,18 @@ function get_dyndns_service_text($dyndns_type) {
 		setTimeout('dyndns_getstatus()', 5*60*1000);
 	}
 	events.push(function(){
-		$("#showalldyndns").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
+		var showAllCheckboxRef = "#widget-<?=$widgetname?>_panel-footer [id^=show]";
+		var showAllId = "showalldyndns";
+
+		set_all_none_button(showAllCheckboxRef, showAllId);
+
+		$(showAllCheckboxRef).change(function() {
+			set_all_none_button(showAllCheckboxRef, showAllId);
+		});
+
+		$("#" + showAllId).click(function() {
+			set_clear_checkboxes(showAllCheckboxRef);
+			set_all_none_button(showAllCheckboxRef, showAllId);
 		});
 
 	});

@@ -37,7 +37,7 @@ foreach ($config['filter']['rule'] as $key => $rule) {
 		unset($config['filter']['rule'][$key]);
 	}
 }
-if (write_config()) {
+if (write_config(gettext("pfSsh.php removed shaper settings"))) {
 	echo gettext("Shaper Successfully Removed.\n");
 } else {
 	echo gettext("Unable to write config.xml (Access Denied?)\n");

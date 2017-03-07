@@ -192,7 +192,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$a_dyndns[$i]['id'] = $i;
 		}
 
-		write_config();
+		write_config(gettext("Dynamic DNS client configured."));
 
 		services_dyndns_configure_client($dyndns);
 

@@ -99,7 +99,7 @@ if ($_POST['Submit'] || $_POST['mac']) {
 if ($_POST['act'] == "del") {
 	if ($a_wol[$_POST['id']]) {
 		unset($a_wol[$_POST['id']]);
-		write_config();
+		write_config(gettext("Deleted a device from WOL configuration."));
 		header("Location: services_wol.php");
 		exit;
 	}

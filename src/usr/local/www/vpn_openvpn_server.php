@@ -85,9 +85,12 @@ if ($_POST['act'] == "del") {
 	}
 	if (!empty($a_server[$id])) {
 		openvpn_delete('server', $a_server[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
+	} else {
+		$wc_msg = gettext('Deleted empty OpenVPN server');
 	}
 	unset($a_server[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Server successfully deleted.");
 }
 
@@ -605,11 +608,13 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
+			$wc_msg = sprintf(gettext('Updated OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		} else {
 			$a_server[] = $server;
+			$wc_msg = sprintf(gettext('Added OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		}
 
-		write_config();
+		write_config($wc_msg);
 		openvpn_resync('server', $server);
 		openvpn_resync_csc_all();
 

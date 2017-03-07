@@ -77,9 +77,12 @@ if ($_POST['act'] == "del") {
 	}
 	if (!empty($a_client[$id])) {
 		openvpn_delete('client', $a_client[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $a_client[$id]['server_addr'], $a_client[$id]['server_port'], $a_client[$id]['description']);
+	} else {
+		$wc_msg = gettext('Deleted empty OpenVPN client');
 	}
 	unset($a_client[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Client successfully deleted.");
 }
 
@@ -424,11 +427,13 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
+			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		} else {
 			$a_client[] = $client;
+			$wc_msg = sprintf(gettext('Added OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		}
 
-		write_config();
+		write_config($wc_msg);
 		openvpn_resync('client', $client);
 
 		header("Location: vpn_openvpn_client.php");

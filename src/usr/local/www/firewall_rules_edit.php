@@ -1573,7 +1573,7 @@ $section->addInput(new Form_Input(
 	'State timeout',
 	'number',
 	$pconfig['statetimeout'],
-	['min' => 1, 'max' => 3600]
+	['min' => 1]
 ))->setHelp('State Timeout in seconds (TCP only)');
 
 $section->addInput(new Form_StaticText(

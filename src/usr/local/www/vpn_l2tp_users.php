@@ -56,7 +56,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	if ($a_secret[$_POST['id']]) {
 		unset($a_secret[$_POST['id']]);
-		write_config();
+		write_config(gettext("Deleted a L2TP VPN user."));
 		mark_subsystem_dirty('l2tpusers');
 		pfSenseHeader("vpn_l2tp_users.php");
 		exit;

@@ -157,7 +157,7 @@ if ($_POST['save']) {
 			unset($l2tpcfg['radius']['radiusissueips']);
 		}
 
-		write_config();
+		write_config(gettext("L2TP VPN configuration changed."));
 
 		$changes_applied = true;
 		$retval = 0;

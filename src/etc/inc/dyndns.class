@@ -688,6 +688,7 @@
 					break;
 				case 'cloudflare-v6':
 				case 'cloudflare':
+					$this->_FQDN = ltrim($this->_FQDN, '@.');
 					$isv6 = ($this->_dnsService === 'cloudflare-v6');
 					$recordType = $isv6 ? "AAAA" : "A";
 					$needsIP = TRUE;

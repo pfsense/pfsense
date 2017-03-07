@@ -166,7 +166,7 @@ if ($_POST['save']) {
 
 		mark_subsystem_dirty('unbound');
 
-		write_config();
+		write_config(gettext("Host override configured for DNS Resolver."));
 
 		header("Location: services_unbound.php");
 		exit;

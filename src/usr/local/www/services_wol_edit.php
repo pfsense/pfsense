@@ -101,7 +101,7 @@ if ($_POST['save']) {
 		}
 		wol_sort();
 
-		write_config();
+		write_config(gettext("Configured a wake-on-LAN entry."));
 
 		header("Location: services_wol.php");
 		exit;

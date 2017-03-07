@@ -126,7 +126,7 @@ if ($_POST['save']) {
 		}
 		l2tp_users_sort();
 
-		write_config();
+		write_config(gettext("Configured a L2TP VPN user."));
 
 		$retval = vpn_l2tp_configure();
 

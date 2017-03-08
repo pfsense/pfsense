@@ -1626,6 +1626,10 @@ function system_ntp_setup_gps($serialport) {
 	if (!file_exists($serialport)) {
 		return false;
 	}
+	// If ntpd is disabled, just return
+	if (is_array($config['ntpd']) && $config['ntpd']['enable'] == "off") {
+		return false;
+	}
 
 	// Create symlink that ntpd requires
 	unlink_if_exists($gps_device);
@@ -1684,6 +1688,10 @@ function system_ntp_setup_pps($serialport) {
 	if (!file_exists($serialport)) {
 		return false;
 	}
+	// If ntpd is disabled, just return
+	if (is_array($config['ntpd']) && $config['ntpd']['enable'] == "off") {
+		return false;
+	}
 
 	// Create symlink that ntpd requires
 	unlink_if_exists($pps_device);
@@ -1705,6 +1713,16 @@ function system_ntp_configure() {
 
 	if (!is_array($config['ntpd'])) {
 		$config['ntpd'] = array();
+	}
+	// ntpd is disabled, just stop it and return
+	if ($config['ntpd']['enable'] == "off") {
+		while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
+			killbypid("{$g['varrun_path']}/ntpd.pid");
+		}
+		@unlink("{$g['varrun_path']}/ntpd.pid");
+		@unlink("{$g['varetc_path']}/ntpd.conf");
+		log_error("NTPD is disabled.");
+		return;
 	}
 
 	$ntpcfg = "# \n";
@@ -1996,11 +2014,7 @@ function system_ntp_configure() {
 
 
 	if (empty($config['ntpd']['interface'])) {
-		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
-			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
-		} else {
-			$interfaces = array();
-		}
+		$interfaces = array();
 	} else {
 		$interfaces = explode(",", $config['ntpd']['interface']);
 	}

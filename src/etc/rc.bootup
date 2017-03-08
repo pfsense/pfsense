@@ -189,7 +189,10 @@ echo "done.\n";
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 
-if (file_exists("/conf/trigger_initial_wizard")) {
+// Only do the alternate interface checks if:
+// 1) The user has not yet run the initial wizard; and
+// 2) The user has not used the console menu to setup interface assignments
+if (file_exists("/conf/trigger_initial_wizard") && !file_exists("/conf/assign_complete")) {
 	check_for_alternate_interfaces();
 }
 

@@ -305,9 +305,11 @@ if ($_POST) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			} else if ($pconfig['method'] == "intermediate") {
@@ -322,9 +324,11 @@ if ($_POST) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			}
@@ -339,9 +343,8 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			write_config();
+			pfSenseHeader("system_camanager.php");
 		}
-
-		pfSenseHeader("system_camanager.php");
 	}
 }
 

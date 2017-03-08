@@ -201,6 +201,9 @@ function getstatus_ifaces() {
 		},
 		success: function(data){
 			$('#ifaces_status').html(data);
+		},
+		error: function(){
+			$('#ifaces_status').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
 		}
 	});
 }

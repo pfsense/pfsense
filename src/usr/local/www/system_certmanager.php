@@ -398,9 +398,11 @@ if ($_POST['save']) {
 					}
 
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
-							$input_errors = array();
-							array_push($input_errors, "openssl library returns: " . $ssl_err);
+							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+								array_push($input_errors, "openssl library returns: " . $ssl_err);
+							}
 						}
 					}
 				}
@@ -425,9 +427,11 @@ if ($_POST['save']) {
 					}
 
 					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])) {
+						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
-							$input_errors = array();
-							array_push($input_errors, "openssl library returns: " . $ssl_err);
+							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+								array_push($input_errors, "openssl library returns: " . $ssl_err);
+							}
 						}
 					}
 				}

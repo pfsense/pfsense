@@ -68,6 +68,7 @@
 	<stepbeforeformdisplay>
 		conf_mount_rw();
 		unlink_if_exists('/conf/trigger_initial_wizard');
+		unlink_if_exists('/conf/assign_complete');
 		conf_mount_ro();
 	</stepbeforeformdisplay>
 </step>

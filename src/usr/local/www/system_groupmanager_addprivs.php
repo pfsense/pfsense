@@ -33,6 +33,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $groupid = $_REQUEST['groupid'];
 

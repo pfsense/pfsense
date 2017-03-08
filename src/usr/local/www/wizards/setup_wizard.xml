@@ -35,6 +35,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		unlink_if_exists('/conf/trigger_initial_wizard');
+		unlink_if_exists('/conf/assign_complete');
 	</stepbeforeformdisplay>
 </step>
 <step>

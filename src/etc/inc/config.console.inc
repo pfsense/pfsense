@@ -23,6 +23,11 @@
  * limitations under the License.
  */
 
+require_once("config.inc");
+require_once("globals.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
+
 function set_networking_interfaces_ports() {
 	global $noreboot;
 	global $config;

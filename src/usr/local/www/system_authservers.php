@@ -30,6 +30,7 @@
 
 require_once("guiconfig.inc");
 require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 // Have we been called to populate the "Select a container" modal?
 if ($_REQUEST['ajax']) {

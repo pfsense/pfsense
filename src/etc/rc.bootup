@@ -140,7 +140,10 @@ system_do_shell_commands(1);
 
 if (isset($config['system']['trigger_virt_setup'])) {
 	netgate_hardware_setup();
-} elseif (file_exists("/conf/trigger_initial_wizard")) {
+} elseif (file_exists("/conf/trigger_initial_wizard") && !file_exists("/conf/assign_complete")) {
+	// Only do the alternate interface checks if:
+	// 1) The user has not yet run the initial wizard; and
+	// 2) The user has not used the console menu to setup interface assignments
 	netgate_hardware_setup();
 	check_for_alternate_interfaces();
 }

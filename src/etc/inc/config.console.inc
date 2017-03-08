@@ -377,6 +377,10 @@ EOD;
 
 		touch("{$g['tmp_path']}/assign_complete");
 
+		if (file_exists("/conf/trigger_initial_wizard")) {
+			// Let the system know that the interface assign part of initial setup has been done.
+			touch("{$g['conf_path']}/assign_complete");
+		}
 	}
 }
 

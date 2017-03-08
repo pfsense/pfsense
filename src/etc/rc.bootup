@@ -281,9 +281,11 @@ echo "done.\n";
 system_routing_enable();
 
 /* Enable ntpd */
-echo "Starting NTP time client...";
-system_ntp_configure();
-echo "done.\n";
+if (is_array($config['ntpd']) && $config['ntpd']['enable'] != "off") {
+	echo "Starting NTP Server...";
+	system_ntp_configure();
+	echo "done.\n";
+}
 
 /* start load balancer daemon */
 relayd_configure();

@@ -25,7 +25,7 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 require_once("functions.inc");
 
 global $openssl_digest_algs;
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 global $openssl_crl_status;
 $openssl_crl_status = array(

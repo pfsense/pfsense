@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),

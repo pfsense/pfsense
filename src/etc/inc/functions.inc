@@ -23,6 +23,11 @@
  * limitations under the License.
  */
 
+/*
+ * DEPRECATED! DO NOT INCLUDE THIS FILE!
+ * Use individual .inc files containing the required functions instead.
+ */
+
 /* include all configuration functions */
 require_once("certs.inc");
 require_once("gwlb.inc");

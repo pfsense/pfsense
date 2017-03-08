@@ -34,6 +34,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();

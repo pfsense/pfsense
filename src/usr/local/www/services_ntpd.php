@@ -207,7 +207,7 @@ $section->addInput(new Form_Select(
 	'enable',
 	'Enable NTP Server',
 	$pconfig['enable'],
-        array('enabled' => 'Enabled', 'off' => 'Disabled')
+	array('enabled' => 'Enabled', 'off' => 'Disabled')
 ));
 
 $iflist = build_interface_list();

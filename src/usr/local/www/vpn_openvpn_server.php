@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;

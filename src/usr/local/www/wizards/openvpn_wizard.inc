@@ -662,7 +662,7 @@ function step12_submitphpaction() {
 	$config['openvpn']['openvpn-server'][] = $server;
 
 	openvpn_resync('server', $server);
-	write_config();
+	write_config(gettext("OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."));
 	header("Location: vpn_openvpn_server.php");
 	exit;
 }

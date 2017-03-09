@@ -501,12 +501,27 @@ create_virt_images() {
 
 	LOGFILE=${BUILDER_LOGS}/virt.${TARGET}.log
 
+	local _mntdir=${VIRT_TMP}/mnt
+
+	if [ -d "${_mntdir}" ]; then
+		local _dev
+		# XXX Root cause still didn't found but it doesn't umount
+		#     properly on looped builds and then require this extra
+		#     check
+		while true; do
+			_dev=$(mount -p ${_mntdir} 2>/dev/null | awk '{print $1}')
+			[ $? -ne 0 -o -z "${_dev}" ] \
+				&& break
+			umount -f ${_mntdir}
+			mdconfig -d -u ${_dev#/dev/}
+		done
+	fi
+
 	if [ -d "${VIRT_TMP}" ]; then
 		chflags -R noschg ${VIRT_TMP}
 		rm -rf ${VIRT_TMP}
 	fi
 
-	local _mntdir=${VIRT_TMP}/mnt
 	mkdir -p ${_mntdir}
 
 	if [ -z "${VIRT_SWAP_PART_SIZE_IN_GB}" -o "${VIRT_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
@@ -561,7 +576,7 @@ create_virt_images() {
 		echo ">>> ERROR: Error mounting virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	trap "sync; sleep 3; umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
+	trap "sync; sleep 3; umount ${_mntdir} || umount -f ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
 	echo "Done!" | tee -a ${LOGFILE}
 
@@ -569,7 +584,7 @@ create_virt_images() {
 
 	sync
 	sleep 3
-	umount ${_mntdir} 2>&1 >>${LOGFILE}
+	umount ${_mntdir} || umount -f ${_mntdir} 2>&1 >>${LOGFILE}
 	mdconfig -d -u ${_md}
 	trap "-" 1 2 15 EXIT
 

@@ -1635,7 +1635,7 @@ function apply_all_chosen_items() {
 			}
 		}
 	}
-	write_config();
+	write_config(gettext("Shaper configuration saved via pfSense traffic shaper wizard."));
 }
 
 function wizard_get_bandwidthtype_scale($type = "b") {

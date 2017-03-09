@@ -1111,7 +1111,8 @@ function setup_serial_port($when = "save", $path = "") {
 
 		if (($g['platform'] == "nanobsd") && isset($g['enableserial_force'])) {
 			$serial_only = true;
-		} elseif ($specific_platform['name'] ==  'XG-1540') {
+		} elseif ($specific_platform['name'] == 'XG-1540' ||
+		    $specific_platform['name'] == 'C2758') {
 			$vga_only = true;
 		} elseif ($specific_platform['name'] == 'RCC-VE' ||
 		    $specific_platform['name'] == 'RCC' ||

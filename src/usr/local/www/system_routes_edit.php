@@ -209,7 +209,7 @@ if ($_POST['save']) {
 
 		mark_subsystem_dirty('staticroutes');
 
-		write_config();
+		write_config(gettext("Saved static route configuration."));
 
 		header("Location: system_routes.php");
 		exit;

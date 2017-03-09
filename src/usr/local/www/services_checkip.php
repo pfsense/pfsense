@@ -37,26 +37,31 @@ $a_checkipservice = &$config['checkipservices']['checkipservice'];
 $dirty = false;
 if ($_POST['act'] == "del") {
 	unset($a_checkipservice[$_POST['id']]);
+	$wc_msg = gettext('Deleted a check IP service.');
 	$dirty = true;
 } else if ($_POST['act'] == "toggle") {
 	if ($a_checkipservice[$_POST['id']]) {
 		if (isset($a_checkipservice[$_POST['id']]['enable'])) {
 			unset($a_checkipservice[$_POST['id']]['enable']);
+			$wc_msg = gettext('Disabled a check IP service.');
 		} else {
 			$a_checkipservice[$_POST['id']]['enable'] = true;
+			$wc_msg = gettext('Enabled a check IP service.');
 		}
 		$dirty = true;
 	} else if ($_POST['id'] == count($a_checkipservice)) {
 		if (isset($config['checkipservices']['disable_factory_default'])) {
 			unset($config['checkipservices']['disable_factory_default']);
+			$wc_msg = gettext('Enabled the default check IP service.');
 		} else {
 			$config['checkipservices']['disable_factory_default'] = true;
+			$wc_msg = gettext('Disabled the default check IP service.');
 		}
 		$dirty = true;
 	}
 }
 if ($dirty) {
-	write_config();
+	write_config($wc_msg);
 
 	header("Location: services_checkip.php");
 	exit;

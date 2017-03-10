@@ -3011,6 +3011,7 @@ function huawei_service_to_string($state) {
 	$modes[2] = gettext("Valid Service");
 	$modes[3] = gettext("Restricted Regional Service");
 	$modes[4] = gettext("Powersaving Service");
+	$modes[255] = gettext("Unknown Service");
 	$string = $modes[$state];
 	return $string;
 }

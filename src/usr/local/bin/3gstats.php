@@ -22,7 +22,7 @@
 
 ini_set("max_execution_time", "0");
 
-if(empty($argv[1])) {
+if (empty($argv[1])) {
 	echo "No modem device given \n";
 	exit(0);
 }
@@ -37,7 +37,7 @@ $i = 0;
 
 $record = array();
 $handle = fopen($device, "r");
-if(! $handle) {
+if (!$handle) {
 	echo "Can not open modem stats device\n";
 	exit(1);
 }
@@ -51,8 +51,8 @@ $record['sent'] = 0;
 $record['received'] = 0;
 $record['bwupstream'] = 0;
 $record['bwdownstream'] = 0;
-$record['simstate'] = 0;
-$record['service'] = 0;
+$record['simstate'] = 255;
+$record['service'] = 255;
 
 while (true) {
 	$string = "";

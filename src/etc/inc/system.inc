@@ -327,13 +327,15 @@ function system_hosts_local_entries() {
 			);
 			$hosts_if_found = true;
 		}
-		$cfgipv6 = get_interface_ipv6($sysif);
-		if (is_ipaddrv6($cfgipv6)) {
-			$hosts[] = array(
-			    'ipaddr' => $cfgipv6,
-			    'fqdn' => $local_fqdn
-			);
-			$hosts_if_found = true;
+		if (!isset($syscfg['ipv6dontcreatelocaldns'])) {
+			$cfgipv6 = get_interface_ipv6($sysif);
+			if (is_ipaddrv6($cfgipv6)) {
+				$hosts[] = array(
+					'ipaddr' => $cfgipv6,
+					'fqdn' => $local_fqdn
+				);
+				$hosts_if_found = true;
+			}
 		}
 		if ($hosts_if_found == true) {
 			break;

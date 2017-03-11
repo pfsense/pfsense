@@ -3095,6 +3095,14 @@ function kill_dhcp6client_process($interface, $force, $release = false) {
 	unlink_if_exists("/tmp/dhcp6c_{$interface}_lock");
 	unlink_if_exists("{$g['varrun_path']}/dhcp6c_{$interface}.pid"); // just in case!
 }
+function reset_dhcp6client_process($interface) {
+	
+	$pid = find_dhcp6c_process($interface);
+	
+	if($pid != 0) {
+		posix_kill($pid, SIGHUP);
+	}
+}
 
 function run_dhcp6client_process($interface, $wancfg) {
 	global $g;
@@ -3292,8 +3300,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($g['debug']) {
 		log_error(sprintf(gettext("Deny router advertisements for interface %s"), $interface));
 	}
-	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv", true);
-
+	if (isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')
+	{
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv", true);
+	}
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless'])) {
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
@@ -4211,7 +4221,9 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		    "-p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "\t/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 		$rtsoldscript .= "else\n";
-		$rtsoldscript .= "\t/usr/bin/logger -t rtsold \"RTSOLD Lock in place\"\n";
+		$rtsoldscript .= "\t/usr/bin/logger -t rtsold \"RTSOLD Lock in place - sending SIGHUP to dhcp6c\"\n";
+		$rtsoldscript .= "\tdhcp6c_pid=\$(cat \"{$g['varrun_path']}/dhcp6c_{$wanif}.pid\")\n";
+		$rtsoldscript .= "\t/bin/kill -1 \${dhcp6c_pid}\n";
 		$rtsoldscript .= "fi\n";
 	} else {
 		/*
@@ -4233,6 +4245,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 
 	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid")) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
+		log_error("Killing running rtsold process");
 		sleep(2);
 	}
 
@@ -4265,6 +4278,8 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		 * ( it does not background, it exits! ) It will launch dhcp6c
 		 * if dhcpwihtoutra is not set
 		 */
+		log_error("Starting rtsold process");
+		sleep(2);
 		mwexec("/usr/sbin/rtsold -1 " .
 		    "-p {$g['varrun_path']}/rtsold_{$wanif}.pid " .
 		    "-O {$g['varetc_path']}/rtsold_{$wanif}_script.sh " .

@@ -986,10 +986,7 @@ if ($_POST['apply']) {
 				kill_dhclient_process($wancfg['if']);
 			}
 			if ($wancfg['ipaddrv6'] == "dhcp6") {
-				$pid = find_dhcp6c_process($wancfg['if']);
-				if ($pid) {
-					posix_kill($pid, SIGTERM);
-				}
+				kill_dhcp6client_process($wancfg['if'],true);
 			}
 		}
 		$ppp = array();

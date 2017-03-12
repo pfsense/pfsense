@@ -3104,7 +3104,7 @@ function reset_dhcp6client_process($interface) {
 	}
 }
 
-function run_dhcp6client_process($interface, $wancfg) {
+function run_dhcp6client_process($interface, $interface_name, $wancfg) {
 	global $g;
 
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
@@ -3118,19 +3118,19 @@ function run_dhcp6client_process($interface, $wancfg) {
 	 * It should not happen as the process should have been killed and the
 	 * lock deleted.
 	 */
+	 
 	if (!file_exists("/tmp/dhcp6c_{$interface}_lock")) {
-		kill_dhcp6client_process($realif, true);
-
+		kill_dhcp6client_process($interface, true);
 		/* Lock it to avoid multiple runs */
 		touch("/tmp/dhcp6c_{$interface}_lock");
 		mwexec("/usr/local/sbin/dhcp6c {$debugOption} " .
 		    "{$noreleaseOption} " .
-		    "-c {$g['varetc_path']}/dhcp6c_wan.conf " .
+		    "-c {$g['varetc_path']}/dhcp6c_{$interface_name}.conf " .
 		    "-p {$g['varrun_path']}/dhcp6c_{$interface}.pid " .
 		    $interface);
 		log_error(sprintf(gettext(
 		    "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"),
-		    $wanif));
+		    $interface));
 	}
 }
 
@@ -4270,7 +4270,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 			 * Otherwise it is not ready to accept and will fail.
 			 */
 			sleep(3);
-			run_dhcp6client_process($wanif,$wancfg);
+			run_dhcp6client_process($wanif,$interface,$wancfg);
 		}
 	} else {
 		/*

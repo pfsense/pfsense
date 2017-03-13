@@ -275,7 +275,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");

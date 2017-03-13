@@ -308,6 +308,13 @@ if [ -f /mnt/etc/version ]; then
 	release_ver=$(cat /mnt/etc/version)
 fi
 
+if [ -f /mnt/etc/version.patch ]; then
+	release_patch=$(cat /mnt/etc/version.patch)
+	if [ -n "${release_patch}" -a "${release_patch}" != "0" ]; then
+		release_ver="${release_ver}-p${release_patch}"
+	fi
+fi
+
 umount /mnt
 sync; sync; sync
 trap "-" 1 2 15 EXIT

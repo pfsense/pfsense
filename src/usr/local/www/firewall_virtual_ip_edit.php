@@ -32,8 +32,10 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once("config.inc");
+require_once("globals.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
 if (!is_array($config['virtualip']['vip'])) {
 		$config['virtualip']['vip'] = array();
@@ -270,7 +272,7 @@ if ($_POST['save']) {
 
 		$a_vip[$id] = $vipent;
 
-		if (write_config()) {
+		if (write_config(gettext("Saved/edited a virtual IP."))) {
 			mark_subsystem_dirty('vip');
 			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
 		}

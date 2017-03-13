@@ -19,7 +19,11 @@
  * limitations under the License.
  */
 
+require_once("auth.inc");
+require_once("certs.inc");
+require_once("config.inc");
 require_once("openvpn.inc");
+require_once("util.inc");
 
 function has_special_chars($text) {
 	return preg_match('/[^A-Za-z0-9 _-]/', $text);

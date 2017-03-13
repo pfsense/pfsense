@@ -31,9 +31,11 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("config.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
-require_once("shaper.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
 if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();

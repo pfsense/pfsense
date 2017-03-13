@@ -32,9 +32,12 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once("auth.inc");
+require_once("config.inc");
 require_once("filter.inc");
-require_once("shaper.inc");
+require_once("globals.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
 if (!is_array($config['virtualip']['vip'])) {
 	$config['virtualip']['vip'] = array();
@@ -215,7 +218,7 @@ if ($_POST['act'] == "del") {
 			if (count($config['virtualip']['vip']) == 0) {
 				unset($config['virtualip']['vip']);
 			}
-			write_config();
+			write_config(gettext("Deleted a virtual IP."));
 			header("Location: firewall_virtual_ip.php");
 			exit;
 		}

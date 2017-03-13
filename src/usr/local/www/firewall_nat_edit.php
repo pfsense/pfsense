@@ -31,10 +31,12 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("itemid.inc");
-require_once("ipsec.inc");
+require_once("config.inc");
 require_once("filter.inc");
-require_once("shaper.inc");
+require_once("ipsec.inc");
+require_once("itemid.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
 

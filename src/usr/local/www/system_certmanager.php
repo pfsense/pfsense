@@ -394,22 +394,33 @@ if ($_POST['save']) {
 				$caref = $config['ca'][$pconfig['catosignwith']]['refid'];
 				$type = (cert_get_purpose($config['cert'][$pconfig['csrtosign']]['csr'])['server'] === "Yes") ? "server":"user";
 
-				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
-
-				$newcert = array();
-				$newcert['refid'] = uniqid();
-				$newcert['caref'] = $caref;
-				$newcert['descr'] = $pconfig['descr'];
-				$newcert['type'] = $type;
-				$newcert['crt'] = base64_encode($n509);
-
-				if ($pconfig['csrtosign'] === "new") {
-					$newcert['prv'] = $pconfig['keypaste'];
-				} else {
-					$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
+				$e = openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']);
+				$input_errors = array();
+				while ($ssl_err = openssl_error_string()) {
+					if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+						array_push($input_errors, "openssl library returns: " . $ssl_err);
+					}
 				}
 
-				$config['cert'][] = $newcert;
+				if (!$input_errors) {
+					openssl_x509_export($e, $n509);
+
+					$newcert = array();
+					$newcert['refid'] = uniqid();
+					$newcert['caref'] = $caref;
+					$newcert['descr'] = $pconfig['descr'];
+					$newcert['type'] = $type;
+					$newcert['crt'] = base64_encode($n509);
+
+					if ($pconfig['csrtosign'] === "new") {
+						$newcert['prv'] = $pconfig['keypaste'];
+					} else {
+						$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
+					}
+
+					$config['cert'][] = $newcert;
+				}
+
 				error_reporting($old_err_level);
 
 			} else {
@@ -1252,10 +1263,12 @@ events.push(function() {
 	}
 
 	function set_csr_ro() {
-		$('#csrpaste').attr('readonly', ($('#csrtosign').val() != "new"));
-		$('#keypaste').attr('readonly', ($('#csrtosign').val() != "new"));
-		setRequired('csrpaste', ($('#csrtosign').val() == "new"));
-		setRequired('keypaste', ($('#csrtosign').val() == "new"));
+		var newcsr = $('#csrtosign').val() == "new");
+
+		$('#csrpaste').attr('readonly', !newcsr);
+		$('#keypaste').attr('readonly', !newcsr);
+		setRequired('csrpaste', newcsr);
+		setRequired('keypaste', newcsr);
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------

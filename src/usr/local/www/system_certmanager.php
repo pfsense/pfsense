@@ -34,6 +34,7 @@ $cert_methods = array(
 	"import" => gettext("Import an existing Certificate"),
 	"internal" => gettext("Create an internal Certificate"),
 	"external" => gettext("Create a Certificate Signing Request"),
+	"sign" => gettext("Sign a Certificate Signing Request")
 );
 
 $cert_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
@@ -81,7 +82,6 @@ foreach ($a_ca as $ca) {
 
 $act = $_REQUEST['act'];
 
-
 if ($_POST['act'] == "del") {
 
 	if (!isset($a_cert[$id])) {
@@ -95,7 +95,6 @@ if ($_POST['act'] == "del") {
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
-
 
 if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
@@ -172,6 +171,7 @@ if ($act == "p12") {
 	$args['friendly_name'] = $a_cert[$id]['descr'];
 
 	$ca = lookup_ca($a_cert[$id]['caref']);
+
 	if ($ca) {
 		$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
 	}
@@ -212,6 +212,22 @@ if ($_POST['save']) {
 		$pconfig = $_POST;
 
 		/* input validation */
+		if ($pconfig['method'] == "sign") {
+			$reqdfields = explode(" ",
+				"descr catosignwith");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("CA to sign with"));
+
+			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST"))) {
+				$input_errors[] = gettext("This signing request does not appear to be valid.");
+			}
+
+			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
+				$input_errors[] = gettext("This CSR key does not appear to be valid.");
+			}
+		}
+
 		if ($pconfig['method'] == "import") {
 			$reqdfields = explode(" ",
 				"descr cert key");
@@ -267,6 +283,7 @@ if ($_POST['save']) {
 
 		$altnames = array();
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
 		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
 			foreach ($_POST as $key => $value) {
@@ -362,6 +379,39 @@ if ($_POST['save']) {
 				if ($cert && $a_user) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
 				}
+			} else if ($pconfig['method'] == "sign") { // Sign a CSR
+				if ($pconfig['csrtosign'] === "new") {
+					$csr = $pconfig['csrpaste'];
+				} else {
+					$csr = base64_decode($config['cert'][$pconfig['csrtosign']]['csr']);
+				}
+
+				$old_err_level = error_reporting(0);
+
+				$ca = base64_decode($config['ca'][$pconfig['catosignwith']]['crt']);
+				$key = base64_decode($config['ca'][$pconfig['catosignwith']]['prv']);
+				$duration = $pconfig['duration'];
+				$caref = $config['ca'][$pconfig['catosignwith']]['refid'];
+				$type = (cert_get_purpose($config['cert'][$pconfig['csrtosign']]['csr'])['server'] === "Yes") ? "server":"user";
+
+				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
+
+				$newcert = array();
+				$newcert['refid'] = uniqid();
+				$newcert['caref'] = $caref;
+				$newcert['descr'] = $pconfig['descr'];
+				$newcert['type'] = $type;
+				$newcert['crt'] = base64_encode($n509);
+
+				if ($pconfig['csrtosign'] === "new") {
+					$newcert['prv'] = $pconfig['keypaste'];
+				} else {
+					$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
+				}
+
+				$config['cert'][] = $newcert;
+				error_reporting($old_err_level);
+
 			} else {
 				$cert = array();
 				$cert['refid'] = uniqid();
@@ -435,6 +485,7 @@ if ($_POST['save']) {
 						}
 					}
 				}
+
 				error_reporting($old_err_level);
 
 				if (isset($id) && $a_cert[$id]) {
@@ -569,7 +620,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		));
 	}
 
-	$section = new Form_Section('Add a New Certificate');
+	$section = new Form_Section('Add/Sign a New Certificate');
 
 	if (!isset($id)) {
 		$section->addInput(new Form_Select(
@@ -588,6 +639,77 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	))->addClass('toggle-existing');
 
 	$form->add($section);
+
+	function list_cas() {
+		global $a_ca;
+		$idx = 0;
+		$allCas = array();
+
+		foreach ($a_ca as $ca) {
+			if ($ca['prv']) {
+				$allCas[$idx] = $ca['descr'];
+			}
+
+			$idx++;
+		}
+
+		return $allCas;
+	}
+
+	function list_csrs() {
+		global $config;
+		$allCsrs = array();
+		$idx = 0;
+
+		foreach ($config['cert'] as $cert) {
+			if ($cert['csr']) {
+				$allCsrs[$idx] = $cert['descr'];
+			}
+
+			$idx++;
+		}
+
+		return ['new' => gettext('New')] + $allCsrs;
+	}
+
+	$section = new Form_Section('Sign CSR');
+	$section->addClass('toggle-sign collapse');
+
+	$section->AddInput(new Form_Select(
+		'catosignwith',
+		'*CA to sign with',
+		$pconfig['catosignwith'],
+		list_cas()
+	));
+
+	$section->AddInput(new Form_Select(
+		'csrtosign',
+		'*CSR to sign',
+		isset($pconfig['csrtosign']) ? $pconfig['csrtosign'] : 'new',
+		list_csrs()
+	));
+
+	$section->addInput(new Form_Input(
+		'duration',
+		'*Certificate duration (days)',
+		'number',
+		$pconfig['duration'] ? $pconfig['duration']:'365'
+	));
+
+	$section->addInput(new Form_Textarea(
+		'csrpaste',
+		'CSR data',
+		$pconfig['csrpaste']
+	))->setHelp('Paste a Certificate Signing Request in X.509 PEM format here.');
+
+	$section->addInput(new Form_Textarea(
+		'keypaste',
+		'CSR key',
+		$pconfig['keypaste']
+	))->setHelp('Paste a Certificate Signing Request provate key in X.509 PEM format here.');
+
+	$form->add($section);
+
 	$section = new Form_Section('Import Certificate');
 	$section->addClass('toggle-import collapse');
 
@@ -1086,7 +1208,7 @@ foreach ($a_cert as $i => $cert):
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
-		<?=gettext("Add")?>
+		<?=gettext("Add/Sign")?>
 	</a>
 </nav>
 <?php
@@ -1129,15 +1251,27 @@ events.push(function() {
 		}
 	}
 
+	function set_csr_ro() {
+		$('#csrpaste').attr('readonly', ($('#csrtosign').val() != "new"));
+		$('#keypaste').attr('readonly', ($('#csrtosign').val() != "new"));
+		setRequired('csrpaste', ($('#csrtosign').val() == "new"));
+		setRequired('keypaste', ($('#csrtosign').val() == "new"));
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#caref').on('change', function() {
 		internalca_change();
 	});
 
+	$('#csrtosign').change(function () {
+		set_csr_ro();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	internalca_change();
+	set_csr_ro();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

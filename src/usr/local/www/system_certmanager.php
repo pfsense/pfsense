@@ -414,7 +414,7 @@ if ($_POST['save']) {
 				$newcert['crt'] = base64_encode($n509);
 
 				if ($pconfig['csrtosign'] === "new") {
-					$newcert['prv'] = $pconfig['keypaste'];
+					$newcert['prv'] = base64_encode($pconfig['keypaste']);
 				} else {
 					$newcert['prv'] = $csrid['prv'];
 				}

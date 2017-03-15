@@ -36,10 +36,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 /* build icmptypes valid for IPv4, IPv6 and IPv<any> */
-$icmptypes4 = array('any' => gettext('any'));
-$icmptypes6 = array('any' => gettext('any'));
-$icmptypes46 = array('any' => gettext('any'));
-
+$icmptypes4 = $icmptypes6 = $icmptypes46 = [];
 foreach ($icmptypes as $k => $v) {
 	if ($v['valid4']) {
 		$icmptypes4[$k] = $v['descrip'];
@@ -53,9 +50,9 @@ foreach ($icmptypes as $k => $v) {
 }
 
 $icmplookup = array(
-	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
-	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
-	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => sprintf(gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, not both)'), '<i>', '</i>'))
+	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4),
+	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6),
+	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46)
 );
 
 if (isset($_POST['referer'])) {
@@ -205,7 +202,7 @@ if (isset($id) && $a_filter[$id]) {
 	}
 
 	if ($a_filter[$id]['protocol'] == "icmp") {
-		$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
+		expand_icmptype($a_filter[$id]['icmptype'], $pconfig['ipprotocol'], $pconfig['icmptype']);
 	}
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
@@ -295,6 +292,7 @@ if (isset($id) && $a_filter[$id]) {
 	if ($_REQUEST['if']) {
 		$pconfig['interface'] = $_REQUEST['if'];
 	}
+	$pconfig['ipprotocol'] = "inet"; // other things depend on this, set a sensible default
 	$pconfig['type'] = "pass";
 	$pconfig['proto'] = "tcp"; // for new blank rules, default=tcp, also ensures ports fields are visible
 	$pconfig['src'] = "any";
@@ -324,7 +322,7 @@ if ($_POST['save']) {
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
-			$_POST['icmptype'] = $pconfig['icmptype'];
+			expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol'], $_POST['icmptype']);
 		}
 	}
 
@@ -423,8 +421,13 @@ if ($_POST['save']) {
 
 	$pconfig = $_POST;
 
-	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
-		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	if (!isset($pconfig['ipprotocol'])) {
+		// other things depend on this, so ensure a valid value if none provided
+		$pconfig['ipprotocol'] = "inet";
+	}
+
+	if (($_POST['proto'] == "icmp") && is_string($_POST['icmptype']) && strlen($_POST['icmptype']) > 0) {
+		$pconfig['icmptype'] = $_POST['icmptype'];
 	} else {
 		unset($pconfig['icmptype']);
 	}
@@ -586,25 +589,18 @@ if ($_POST['save']) {
 	}
 
 	if ($_POST['proto'] == "icmp") {
-		$t =& $_POST['icmptype'];
-		if (isset($t) && !is_array($t)) {
-			// shouldn't happen but avoids making assumptions for data-sanitising
-			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
-		} elseif (!isset($t) || count($t) == 0) {
-			// not specified or none selected
+		$t = $_POST['icmptype'];
+		// note this checks format and in addition, unsets the field if not an HTML-safe string
+		if (!isset($t) || !is_string($t) || !preg_match('/^[a-zA-Z0-9-_]+(,[a-zA-Z0-9-_]+)*$/', $t)) {
+			$input_errors[] = gettext("One or more ICMP subtypes must be selected for an ICMP rule.");
 			unset($_POST['icmptype']);
 		} else {
-			// check data
+			// check ICMP subtypes are valid for the specified IP Protocol
 			$bad_types = array();
-			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
-				// Only need to check valid if just one selected != "any", or >1 selected
-				$p = $_POST['ipprotocol'];
-				foreach ($t as $type) {
-					if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
-					    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
-					    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
-							$bad_types[] = $type;
-					}
+			$p = $_POST['ipprotocol'];
+			foreach (explode(',', $t) as $type) {
+				if (!array_key_exists($type, $icmplookup[$p]['icmptypes'])) {
+						$bad_types[] = $type;
 				}
 			}
 			if (count($bad_types) > 0) {
@@ -847,10 +843,9 @@ if ($_POST['save']) {
 			unset($filterent['protocol']);
 		}
 
-		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
-		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype']) && !isset($_POST['icmptype']['any']) && count($_POST['icmptype']) > 0) {
-			//if any of these conditions not met, rule would apply to all icmptypes, so we would unset
-			$filterent['icmptype'] = implode(',', $_POST['icmptype']);
+		if ($_POST['proto'] == "icmp" && isset($_POST['icmptype'])) {
+			// we already checked validity, if $_POST['icmptype'] is set at this point, it was non-empty and valid
+			$filterent['icmptype'] = $_POST['icmptype'];
 		} else {
 			unset($filterent['icmptype']);
 		}
@@ -918,9 +913,9 @@ if ($_POST['save']) {
 			} else if (isset($filterent['protocol'])) {
 				unset($filterent['protocol']);
 			}
-			if ($a_filter[$id]['protocol'] == "icmp" && $a_filter[$id]['icmptype']) {
-				$filterent['icmptype'] = $a_filter[$id]['icmptype'];
-			} else if (isset($filterent['icmptype'])) {
+			if ($a_filter[$id]['protocol'] == "icmp" && is_string($a_filter[$id]['icmptype']) && strlen($a_filter[$id]['icmptype']) > 0) {
+				expand_icmptype($a_filter[$id]['icmptype'], $a_filter[$id]['ipprotocol'], $filterent['icmptype']);
+			} else {
 				unset($filterent['icmptype']);
 			}
 
@@ -1087,6 +1082,29 @@ function build_if_list() {
 	}
 
 	return($iflist);
+}
+
+/* Expands missing/blank/"all" icmptypes to a list of specific types. 
+ * Doesn't test $icmptype validity beyond: non-empty string => assumed valid, anything else or 'any'=> any icmptype
+ * If IP protocol undefined in existing/associated rule, then 4th arg can be inet4/inet6/inet46 to force its value, 
+ * or 'unset' to unset the output. Output is placed in $result, passed by reference so we can unset() if required
+*/
+function expand_icmptype($icmptype, $ipprotocol, & $result, $invalid_proto_action = 'unset') {
+	global $icmplookup, $icmptypes;
+	// if 1st arg was unset (as could happen historically) then it'll be passed as NULL, so is_string() will suffice
+	if (is_string($icmptype) && strlen($icmptype) > 0 && $icmptype != "any") {
+		// $icmptype appears to contain specific icmptype(s)
+		$result = $icmptype;
+	} elseif (is_string($ipprotocol) && array_key_exists($ipprotocol, $icmplookup)) {
+		// $icmptype has no (or blank) icmptype,or is "all"  meaning "all/any", select all subtypes
+		$result = implode(',', array_keys($icmplookup[$ipprotocol]['icmptypes']));
+	} elseif ($invalid_proto_action != 'unset') {
+		// ipprotocol undefined or invalid, force value to whatever we were passed, should be inet4/6/46
+		$result = implode(',', array_keys($icmplookup[$invalid_proto_action]['icmptypes']));
+	} else {
+		// ipprotocol undefined or invalid and  $invalid_proto_action is 'unset'
+		unset($result);
+	}
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
@@ -1297,15 +1315,68 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('Choose which IP protocol this rule should match.');
 
+// construct the various elements for the ICMP subtypes section
+// The two list boxes must be re-created dynamically on change of their contents due to a Safari bug
+// on rebuilding/repopulating (see PR#3139) so pointless to do more than add empty lists as templates, for now
 $group = new Form_Group("ICMP Subtypes");
-$group->add(new Form_Select(
-	'icmptype',
-	'ICMP subtypes',
-	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
-	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
-	true
-))->setHelp('%s', '<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
-$group->addClass('icmptype_section');
+
+$icmptypes_unselected_html = (new Form_Select(
+	'icmptypes_unselected',
+	null,
+	[],
+	[]
+))->setAttribute('size', '6')
+  ->setAttribute('style', 'width:250px')
+  ->setHelp('Available subtypes');
+
+$icmptypes_selected_html = (new Form_Select(
+	'icmptypes_selected',
+	null,
+	[],
+	[]
+))->setAttribute('size', '6')
+  ->setAttribute('style', 'width:250px')
+  ->setHelp('Selected subtypes');
+
+$icmptype_submit_html = (new Form_Input(
+		'icmptype',
+		null,
+		'hidden',
+		''
+	))->setAttribute('hidden', 'hidden');
+
+$icmptypes_btn_selectall_html = (new Form_Button(
+	'btn_icmptypes_selectall',
+	'Select all'
+))->setAttribute('type','button')->addClass('btn-sm');
+
+$icmptypes_btn_selectnone_html = (new Form_Button(
+	'btn_icmptypes_selectnone',
+	'Remove all'
+))->setAttribute('type','button')->addClass('btn-sm');
+
+$icmptype_section_html = <<<ICMPTYPES_SELECTOR
+	<table style="border:none" cellspacing="300px">
+		<tr>
+			<td valign="top">{$icmptypes_unselected_html}</td>
+			<td valign="middle" style="padding-left:20px;padding-right:20px">
+					<p style="padding-bottom:5px">{$icmptypes_btn_selectall_html}</p>
+					{$icmptypes_btn_selectnone_html}
+			</td>
+			<td valign="top">$icmptypes_selected_html</td>
+		</tr>
+	</table>
+	{$icmptype_submit_html}
+ICMPTYPES_SELECTOR;
+
+$group->add(new Form_StaticText(
+	null,
+	$icmptype_section_html
+));
+
+$group->addClass('icmptype_section')
+  ->setHelp('Valid subtypes for <span id="icmptypes_helplabel">IPvX</span> are listed. ' .
+            'Click any subtype in the left box to add it to the rule, or in the right box to remove it from the rule.');
 
 $section->add($group);
 
@@ -1765,13 +1836,6 @@ echo $form;
 //<![CDATA[
 events.push(function() {
 
-	var portsenabled = 1;
-	var editenabled = 1;
-	var srcportsvisible = false;
-
-	// Show advanced additional opts options ======================================================
-	var showadvopts = false;
-
 	function show_advopts(ispageload) {
 		var text;
 		// On page load decide the initial state based on the data.
@@ -1794,10 +1858,6 @@ events.push(function() {
 		}
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	}
-
-	$('#btnadvopts').click(function(event) {
-		show_advopts();
-	});
 
 	function ext_change() {
 
@@ -1906,6 +1966,37 @@ events.push(function() {
 		}
 	}
 
+// Change help text based on the selector value
+	function setHelpText(id, text) {
+		$('#' + id).parent().parent('div').find('span').find('span').html(text);
+	}
+
+	//create and populate one of the two icmptype selector list boxes
+	function update_icmptype_list(list_id, valid_selections) {
+		// build new select box HTML based on existing select box
+		var new_options_html = '';
+		for (var opt in valid_selections) {
+			new_options_html += "<option value='" + opt + "'>" + valid_selections[opt] + "</option>\n";
+		}
+		var new_select_html = $('#' + list_id).parent().html().replace(/>[\S\s]*<\/select>/i, '>\n' + new_options_html + '</select>\n');
+		//fully remove and re-create the select element (otherwise the options can disappear in Safari)
+		$('#' + list_id).parent().empty().html(new_select_html);
+		// now remove + re-create the events on it (otherwise events wouldn't work without delegation)
+		$('#' + list_id).off().on('change', function() {
+			if ($(this).attr('id') == 'icmptypes_unselected') {
+				// clicked on an option to add
+				selected_icmptypes.push($(this).val());
+			} else {
+				// clicked on an option to remove
+				var index = selected_icmptypes.indexOf($(this).val());
+				if (index > -1) {
+				    selected_icmptypes.splice(index, 1);
+				}
+			}
+			proto_change();  // and call proto_change to fully update listboxes
+		});
+	}
+
 	function proto_change() {
 		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
 		portsenabled = (is_tcpudp ? 1 : 0);
@@ -1917,22 +2008,25 @@ events.push(function() {
 		// Hide ICMP types if not icmp rule
 		hideClass('icmptype_section', $('#proto').val() != 'icmp');
 		// Update ICMP help msg to match current IP protocol
-		$('#icmptype_help').html(icmphelp[$('#ipprotocol').val()]);
+		$('#icmptypes_helplabel').html($('#ipprotocol :selected').text());
 		// Update ICMP types available for current IP protocol, copying over any still-valid selections
-		var listid = "#icmptype\\[\\]"; // for ease of use
-		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
-		var new_options = icmptypes[$('#ipprotocol').val()];
-		var new_html = '';
-		//remove and re-create the select element (otherwise the options can disappear in Safari)
-		$(listid).remove();
-		var select = $("<select></select>").attr("id", "icmptype[]").attr("name", "icmptype[]").addClass("form-control").attr("multiple", "multiple");
-		$('div.icmptype_section > div.col-sm-10').prepend(select);
-
-		for (var key in new_options) {
-			new_html += '<option value="' + key + (jQuery.inArray(key, current_sel) != -1 ? '" selected="selected">' : '">') + new_options[key] + '</option>\n';
+		var valid_types = icmptypes[$('#ipprotocol').val()];
+		var old_selection = selected_icmptypes;
+		selected_icmptypes = []; // we rebuild this to prevent old values not being cleared from this array 
+		var new_selected_types = {};
+		var new_unselected_types = {};
+		for (var type in valid_types) {
+			if (old_selection.indexOf(type) != -1) {
+				new_selected_types[type] = valid_types[type].descrip;
+				selected_icmptypes.push(type);
+			} else {
+				new_unselected_types[type] = valid_types[type].descrip;
+			}
 		}
 
-		$(listid).html(new_html);
+		// update icmptype listboxes and events set on them
+		update_icmptype_list("icmptypes_selected", new_selected_types);
+		update_icmptype_list("icmptypes_unselected", new_unselected_types);
 
 		ext_change();
 
@@ -1954,19 +2048,6 @@ events.push(function() {
 		show_source_port_range();
 	}
 
-	function icmptype_change() {
-		var listid = "#icmptype\\[\\]"; // for ease of use
-		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
-		if (jQuery.inArray('any', current_sel) != -1) {
-			// "any" negates all selections
-			$(listid).find('option').not('[value="any"]').removeAttr('selected');
-		}
-		if ($(listid + ' option:selected').length == 0) {
-			// no selection = select "any"
-			$(listid + ' option[value="any"]').prop('selected', true);
-		}
-	}
-
 	function src_rep_change() {
 		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
 	}
@@ -1975,23 +2056,51 @@ events.push(function() {
 		$('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
 	}
 
+	// Change help text based on the selector value
+	function setOptText(target, val) {
+		var dispstr = '<span class="text-success">';
+
+		if (val == 'keep state') {
+			dispstr += 'Keep: works with all IP protocols';
+		} else if (val == 'sloppy state') {
+			dispstr += 'Sloppy: works with all IP protocols';
+		} else if (val == 'synproxy state') {
+			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods, at the cost of performance (no SACK or window scaling)';
+		} else if (val == 'none') {
+			dispstr += 'None: Do not use state mechanisms to keep track';
+		}
+
+		dispstr += '</span>';
+		setHelpText(target, dispstr);
+	}
+
 	// On initial page load
 
 <?php
-	// Generate icmptype data used in form JS
+	// Generate icmptype data used in form JS, and initial icmptype selection (if any)
 	$out1 = "var icmptypes = [];\n";
-	$out2 = "var icmphelp = [];\n";
 	foreach ($icmplookup as $k => $v) {
 		$a = array();
 		foreach ($v['icmptypes'] as $icmp_k => $icmp_v) {
-			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
+			$a[] = sprintf("'%s': {'descrip':'%s'}", $icmp_k, $icmp_v);
 		}
 		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
-		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', $v['helpmsg']) . "';\n";
 	}
 	echo $out1;
-	echo $out2;
+
+	// Final GUI-only adjustment - if the rule being edited is an existing ICMP rule or has an associated ICMP rule, and no icmptypes 
+	// are selected (as can happen historically), we render this in the UI as "all selected" rather than requiring user to click "select all"
+	$icmp_str = '';
+	expand_icmptype($pconfig['icmptype'], $pconfig['ipprotocol'], $icmp_str);
+	$initial_icmptypes = (isset($icmp_str) && strlen($icmp_str) > 0) ? explode(',', $icmp_str) : [];
+
+	echo "var selected_icmptypes = " . ((count($initial_icmptypes) > 0) ? "['" . implode("', '", $initial_icmptypes) . "'];\n" : "[];\n");
 ?>
+
+	var portsenabled = 1;
+	var editenabled = 1;
+	var srcportsvisible = false;
+	var showadvopts = false;
 
 	proto_change();
 
@@ -2007,13 +2116,18 @@ events.push(function() {
 		show_source_port_range();
 	<?php endif; ?>
 
-	// on click . .
+	// events setup . .
+
+	$('#btnadvopts').on('click', function() {
+		show_advopts();
+	});
+
 	$('#srcbeginport').on('change', function() {
 		src_rep_change();
 		ext_change();
 	});
 
-	$('#btnsrctoggle').click(function() {
+	$('#btnsrctoggle').on('click', function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
 	});
@@ -2044,6 +2158,19 @@ events.push(function() {
 	});
 
 	$('#ipprotocol').on('change', function() {
+		/* if no icmptypes unselected (=all selected), we keep all selected after a change of IP protocol
+		 * by updating the list of selected icmptypes to reflect all valid types for the new protocol, before
+		 * calling the code that will update the GUI.
+		 * This is valid *even for non-icmp rules*, since user could later edit rule to icmp and would expect
+		 * to see all ICMPtypes for the new IP protocol selected when the control is unhidden.
+		*/
+		if ($('#icmptypes_unselected').length() == 0) {
+			// Select all valid icmptypes for the upcoming new ip proto, before we update GUI
+			selected_icmptypes = [];
+			for (var type in icmptypes[$('#ipprotocol').val()]) {
+				selected_icmptypes.push(type);
+			}
+		}
 		proto_change();
 	});
 
@@ -2051,11 +2178,20 @@ events.push(function() {
 		proto_change();
 	});
 
-	$('#icmptype\\[\\]').on('change', function() {
-			icmptype_change();
+	$('#btn_icmptypes_selectall').on('click', function() {
+		selected_icmptypes = [];
+		for (var type in icmptypes[$('#ipprotocol').val()]) {
+			selected_icmptypes.push(type);
+		}
+		proto_change();
 	});
 
-	$('#tcpflags_any').click(function () {
+	$('#btn_icmptypes_selectnone').on('click', function() {
+		selected_icmptypes = [];
+		proto_change();
+	});
+
+	$('#tcpflags_any').on('click', function() {
 		if (this.checked) {
 			$('.table-flags').addClass('hidden');
 		} else {
@@ -2063,53 +2199,16 @@ events.push(function() {
 		}
 	});
 
-	// Change help text based on the selector value
-	function setOptText(target, val) {
-		var dispstr = '<span class="text-success">';
+	// note: icmp selected/unselected lists have their events set when populated as they're dynamically created
 
-		if (val == 'keep state') {
-			dispstr += 'Keep: works with all IP protocols';
-		} else if (val == 'sloppy state') {
-			dispstr += 'Sloppy: works with all IP protocols';
-		} else if (val == 'synproxy state') {
-			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods, at the cost of performance (no SACK or window scaling)';
-		} else if (val == 'none') {
-			dispstr += 'None: Do not use state mechanisms to keep track';
-		}
-
-		dispstr += '</span>';
-		setHelpText(target, dispstr);
-	}
-
-	// When editing "associated" rules, everything except the enable, action, address family and desscription
-	// fields are disabled
-	function disable_most(disable) {
-		var elementsToDisable = [
-			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
-			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
-
-		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {
-			disableInput(elementsToDisable[idx], disable);
-		}
-	}
-
-	// ---------- Click checkbox handlers ---------------------------------------------------------
-
+	// Click checkbox handlers
 	$('#statetype').on('change', function() {
 		setOptText('statetype', this.value);
 	});
 
-	// ---------- On initial page load ------------------------------------------------------------
-
 	setOptText('statetype', $('#statetype').val())
-<?php if ($edit_disabled) {
-?>
-	disable_most(true);
-<?php
-}
-?>
 
-	// ---------- Autocomplete --------------------------------------------------------------------
+	// set up src/dst autocomplete
 
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "url", "urltable"))) ?>;
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
@@ -2121,6 +2220,32 @@ events.push(function() {
 	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust').autocomplete({
 		source: customarray
 	});
+
+<?php 
+	if ($edit_disabled): 
+?>
+	// Disable everything except enable, action, address family and description if editing an "associated" rule
+
+	var elementsToDisable = [
+		'interface', 'proto', 'icmptypes_unselected', 'icmptypes_selected', 'btn_icmptypes_selectall', 'btn_icmptypes_selectnone', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+		'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
+
+	for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {
+		disableInput(elementsToDisable[idx], disable);
+	}
+
+<?php
+	endif; 
+?>
+
+	// On submit, disable ICMP subtype elements, so they aren't submitted, and populate a text field from the selected subtypes
+	$('form').submit(function() {
+		$("#icmptypes_selected" ).prop( "disabled", true);
+		$("#icmptypes_unselected" ).prop( "disabled", true);
+		$('#icmptype').val(selected_icmptypes.join(','));
+	});
+
+
 });
 //]]>
 </script>

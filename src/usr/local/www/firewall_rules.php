@@ -41,6 +41,20 @@ $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to mov
 
 $shortcut_section = "firewall";
 
+/* build icmptypes valid for IPv4, IPv6 and IPv<any> */
+$icmplookup = array('inet' => [], 'inet6' => [], 'inet46' => []);
+foreach ($icmptypes as $k => $v) {
+	if ($v['valid4']) {
+		$icmplookup['inet'][] = $k;
+		if ($v['valid6']) {
+			$icmplookup['inet6'][] = $k;
+			$icmplookup['inet46'][] = $k;
+		}
+	} else {
+			$icmplookup['inet6'][] = $k;
+	}
+}
+
 function get_pf_rules($rules, $tracker) {
 
 	if ($rules == NULL || !is_array($rules))
@@ -683,17 +697,24 @@ foreach ($a_filter as $filteri => $filterent):
 		if (isset($filterent['protocol'])) {
 			echo strtoupper($filterent['protocol']);
 
-			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				// replace each comma-separated icmptype item by its (localised) full description
-				$t = 	implode(', ',
-						array_map(
-						        function($type) {
-								global $icmptypes;
-								return $icmptypes[$type]['descrip'];
-							},
-							explode(',', $filterent['icmptype'])
-						)
-					);
+			if (strtoupper($filterent['protocol']) == "ICMP") {
+				$tlist = explode(',', $filterent['icmptype']);
+				$ipproto = array_key_exists($filterent['ipprotocol'], $icmplookup) ? $filterent['ipprotocol'] : 'inet';
+				if (!isset($filterent['icmptype']) || !is_string($filterent['icmptype']) || count($t) == 0 || count(array_diff($icmplookup[$ipproto], $tlist)) == 0) {
+					// when no icmptype specified, or it's a full list of all valid icmptypes for the ipprotocol, print "any"
+					$t = 'any';
+				} else {
+					// replace each comma-separated icmptype item by its (localised) full description
+					$t = 	implode(', ',
+							array_map(
+								function($type) {
+									global $icmptypes;
+									return $icmptypes[$type]['descrip'];
+								},
+								$tlist
+							)
+						);
+				}
 				echo sprintf('<br /><div style="cursor:help;padding:1px;line-height:1.1em;max-height:2.5em;max-width:180px;overflow-y:auto;overflow-x:hidden" title="%s:%s%s"><small><u>%s</u></small></div>', gettext('ICMP subtypes'), chr(13), $t, str_replace(',', '</u>, <u>',$filterent['icmptype']));
 			}
 		} else {

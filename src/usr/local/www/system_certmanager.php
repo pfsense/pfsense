@@ -222,6 +222,12 @@ if ($_POST['save']) {
 			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST"))) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
+
+			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
+				$input_errors[] = gettext("This private does not appear to be valid.");
+				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
+			}
+
 		}
 
 		if ($pconfig['method'] == "import") {
@@ -234,6 +240,7 @@ if ($_POST['save']) {
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
+
 			if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
@@ -405,7 +412,12 @@ if ($_POST['save']) {
 				$newcert['descr'] = $pconfig['descr'];
 				$newcert['type'] = $type;
 				$newcert['crt'] = base64_encode($n509);
-				$newcert['prv'] = $csrid['prv'];
+
+				if ($pconfig['csrtosign'] === "new") {
+					$newcert['prv'] = $pconfig['keypaste'];
+				} else {
+					$newcert['prv'] = $csrid['prv'];
+				}
 
 				// Add it to the config file
 				$config['cert'][] = $newcert;
@@ -697,6 +709,12 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'CSR data',
 		$pconfig['csrpaste']
 	))->setHelp('Paste a Certificate Signing Request in X.509 PEM format here.');
+
+	$section->addInput(new Form_Textarea(
+		'keypaste',
+		'Key data',
+		$pconfig['keypaste']
+	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in pfSense');
 
 	$form->add($section);
 
@@ -1244,6 +1262,7 @@ events.push(function() {
 		var newcsr = ($('#csrtosign').val() == "new");
 
 		$('#csrpaste').attr('readonly', !newcsr);
+		$('#keypaste').attr('readonly', !newcsr);
 		setRequired('csrpaste', newcsr);
 	}
 

@@ -1192,7 +1192,9 @@ foreach ($a_cert as $i => $cert):
 					<td>
 						<?php if (!$cert['csr']): ?>
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<?php if ($cert['prv']): ?>
+								<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<?php endif?>
 							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>

@@ -394,32 +394,22 @@ if ($_POST['save']) {
 				$caref = $config['ca'][$pconfig['catosignwith']]['refid'];
 				$type = (cert_get_purpose($config['cert'][$pconfig['csrtosign']]['csr'])['server'] === "Yes") ? "server":"user";
 
-				$e = openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']);
-				$input_errors = array();
-				while ($ssl_err = openssl_error_string()) {
-					if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
-					}
+				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
+
+				$newcert = array();
+				$newcert['refid'] = uniqid();
+				$newcert['caref'] = $caref;
+				$newcert['descr'] = $pconfig['descr'];
+				$newcert['type'] = $type;
+				$newcert['crt'] = base64_encode($n509);
+
+				if ($pconfig['csrtosign'] === "new") {
+					$newcert['prv'] = $pconfig['keypaste'];
+				} else {
+					$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
 				}
 
-				if (!$input_errors) {
-					openssl_x509_export($e, $n509);
-
-					$newcert = array();
-					$newcert['refid'] = uniqid();
-					$newcert['caref'] = $caref;
-					$newcert['descr'] = $pconfig['descr'];
-					$newcert['type'] = $type;
-					$newcert['crt'] = base64_encode($n509);
-
-					if ($pconfig['csrtosign'] === "new") {
-						$newcert['prv'] = $pconfig['keypaste'];
-					} else {
-						$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
-					}
-
-					$config['cert'][] = $newcert;
-				}
+				$config['cert'][] = $newcert;
 
 				error_reporting($old_err_level);
 
@@ -717,7 +707,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'keypaste',
 		'CSR key',
 		$pconfig['keypaste']
-	))->setHelp('Paste a Certificate Signing Request private key in X.509 PEM format here.');
+	))->setHelp('Paste a Certificate Signing Request provate key in X.509 PEM format here.');
 
 	$form->add($section);
 
@@ -1246,7 +1236,6 @@ events.push(function() {
 				}
 
 				$subject = cert_get_subject_array($ca['crt']);
-
 ?>
 				case "<?=$ca['refid'];?>":
 					$('#dn_country').val("<?=$subject[0]['v'];?>");
@@ -1263,7 +1252,7 @@ events.push(function() {
 	}
 
 	function set_csr_ro() {
-		var newcsr = $('#csrtosign').val() == "new");
+		var newcsr = ($('#csrtosign').val() == "new");
 
 		$('#csrpaste').attr('readonly', !newcsr);
 		$('#keypaste').attr('readonly', !newcsr);

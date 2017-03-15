@@ -615,6 +615,7 @@ function service_control_start($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure();
+			filter_configure();
 			break;
 		default:
 			start_service($name);
@@ -754,6 +755,7 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure(true);
+			filter_configure();
 			break;
 		default:
 			restart_service($name);

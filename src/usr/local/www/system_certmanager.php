@@ -222,10 +222,6 @@ if ($_POST['save']) {
 			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST"))) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
-
-			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
-				$input_errors[] = gettext("This CSR key does not appear to be valid.");
-			}
 		}
 
 		if ($pconfig['method'] == "import") {
@@ -402,12 +398,7 @@ if ($_POST['save']) {
 				$newcert['descr'] = $pconfig['descr'];
 				$newcert['type'] = $type;
 				$newcert['crt'] = base64_encode($n509);
-
-				if ($pconfig['csrtosign'] === "new") {
-					$newcert['prv'] = $pconfig['keypaste'];
-				} else {
-					$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
-				}
+				$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
 
 				$config['cert'][] = $newcert;
 
@@ -670,7 +661,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 			$idx++;
 		}
 
-		return ['new' => gettext('New')] + $allCsrs;
+		return ['new' => gettext('New CSR (Paste below)')] + $allCsrs;
 	}
 
 	$section = new Form_Section('Sign CSR');
@@ -694,7 +685,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'duration',
 		'*Certificate duration (days)',
 		'number',
-		$pconfig['duration'] ? $pconfig['duration']:'365'
+		$pconfig['duration'] ? $pconfig['duration']:'3650'
 	));
 
 	$section->addInput(new Form_Textarea(
@@ -702,12 +693,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'CSR data',
 		$pconfig['csrpaste']
 	))->setHelp('Paste a Certificate Signing Request in X.509 PEM format here.');
-
-	$section->addInput(new Form_Textarea(
-		'keypaste',
-		'CSR key',
-		$pconfig['keypaste']
-	))->setHelp('Paste a Certificate Signing Request provate key in X.509 PEM format here.');
 
 	$form->add($section);
 
@@ -1255,9 +1240,7 @@ events.push(function() {
 		var newcsr = ($('#csrtosign').val() == "new");
 
 		$('#csrpaste').attr('readonly', !newcsr);
-		$('#keypaste').attr('readonly', !newcsr);
 		setRequired('csrpaste', newcsr);
-		setRequired('keypaste', newcsr);
 	}
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------

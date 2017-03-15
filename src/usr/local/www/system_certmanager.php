@@ -717,7 +717,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'keypaste',
 		'CSR key',
 		$pconfig['keypaste']
-	))->setHelp('Paste a Certificate Signing Request provate key in X.509 PEM format here.');
+	))->setHelp('Paste a Certificate Signing Request private key in X.509 PEM format here.');
 
 	$form->add($section);
 

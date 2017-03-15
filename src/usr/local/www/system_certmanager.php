@@ -376,30 +376,38 @@ if ($_POST['save']) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
 				}
 			} else if ($pconfig['method'] == "sign") { // Sign a CSR
+				$csrid = lookup_cert($pconfig['csrtosign']);
+				$caid =  lookup_ca($pconfig['catosignwith']);
+
+				// Read the CSR from $config, or if a new one, from the textarea
 				if ($pconfig['csrtosign'] === "new") {
 					$csr = $pconfig['csrpaste'];
 				} else {
-					$csr = base64_decode($config['cert'][$pconfig['csrtosign']]['csr']);
+					$csr = base64_decode($csrid['csr']);
 				}
 
 				$old_err_level = error_reporting(0);
 
-				$ca = base64_decode($config['ca'][$pconfig['catosignwith']]['crt']);
-				$key = base64_decode($config['ca'][$pconfig['catosignwith']]['prv']);
+				// Gather the information required for signed cert
+				$ca = base64_decode($caid['crt']);
+				$key = base64_decode($caid['prv']);
 				$duration = $pconfig['duration'];
-				$caref = $config['ca'][$pconfig['catosignwith']]['refid'];
-				$type = (cert_get_purpose($config['cert'][$pconfig['csrtosign']]['csr'])['server'] === "Yes") ? "server":"user";
+				$caref = $pconfig['catosignwith'];
+				$type = (cert_get_purpose($csrid)['server'] === "Yes") ? "server":"user";
 
+				// Sign the new cert and export it in x509 format
 				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
 
+				// Gather the details required to save the new cert
 				$newcert = array();
 				$newcert['refid'] = uniqid();
 				$newcert['caref'] = $caref;
 				$newcert['descr'] = $pconfig['descr'];
 				$newcert['type'] = $type;
 				$newcert['crt'] = base64_encode($n509);
-				$newcert['prv'] = $config['cert'][$pconfig['csrtosign']]['prv'];
+				$newcert['prv'] = $csrid['prv'];
 
+				// Add it to the config file
 				$config['cert'][] = $newcert;
 
 				error_reporting($old_err_level);
@@ -632,33 +640,29 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$form->add($section);
 
+	// Return an array containing the IDs od all CAs
 	function list_cas() {
 		global $a_ca;
-		$idx = 0;
 		$allCas = array();
 
 		foreach ($a_ca as $ca) {
 			if ($ca['prv']) {
-				$allCas[$idx] = $ca['descr'];
+				$allCas[$ca['refid']] = $ca['descr'];
 			}
-
-			$idx++;
 		}
 
 		return $allCas;
 	}
 
+	// Return an array containing the IDs od all CSRs
 	function list_csrs() {
 		global $config;
 		$allCsrs = array();
-		$idx = 0;
 
 		foreach ($config['cert'] as $cert) {
 			if ($cert['csr']) {
-				$allCsrs[$idx] = $cert['descr'];
+				$allCsrs[$cert['refid']] = $cert['descr'];
 			}
-
-			$idx++;
 		}
 
 		return ['new' => gettext('New CSR (Paste below)')] + $allCsrs;

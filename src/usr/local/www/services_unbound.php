@@ -508,7 +508,8 @@ endforeach;
 	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
 	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains 
 	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for 
-	the host will automatically return the given IP, and the usual lookup server for the domain will not be queried for the host's records.
+	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for 
+	the host's records.
 </span>
 
 <nav class="action-buttons">
@@ -525,7 +526,7 @@ endforeach;
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP of lookup server")?></th>
+					<th><?=gettext("Lookup Server IP Address")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>

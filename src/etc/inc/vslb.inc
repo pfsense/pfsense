@@ -517,6 +517,10 @@ function get_lb_anchors() {
 function cleanup_lb_anchor($anchorname = "*") {
 	$lbanchors = get_lb_anchors();
 	foreach ($lbanchors as $lba) {
+		/* Skip empty/blank results */
+		if (empty($lba)) {
+			continue;
+		}
 		if (($anchorname == "*") || ($lba == "relayd/{$anchorname}")) {
 			/* Flush both the NAT and the Table for the anchor, so it will be completely removed by pf. */
 			mwexec("/sbin/pfctl -a " . escapeshellarg($lba) . " -F nat");

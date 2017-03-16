@@ -225,11 +225,17 @@ if (isset($id) && $a_hosts[$id]) {
 	));
 }
 
-$section->setHelp("This page is used to override the usual lookup process for a specific host. A host is defined by its name" .
-	"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
-	"attempt to lookup that host will automatically return the given IP, and any usual external lookup server for the domain " .
-	"will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' domains " .
-	"such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names such as 'www' or 'google.co.uk'.");
+$section->addInput(new Form_StaticText(
+	'',
+	'<span class="help-block">' .
+	gettext("This page is used to override the usual lookup process for a specific host. A host is defined by its name" .
+		"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
+		"attempt to lookup that host will automatically return the given IP address, and any usual external lookup server for " .
+		"the domain will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' " .
+		"domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
+		"such as 'www' or 'google.co.uk'.") .
+	'</span>'
+));
 
 $form->add($section);
 
@@ -287,7 +293,12 @@ $form->addGlobal(new Form_Button(
 	'fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
-$section->setHelp("If the host can be accessed using multiple names, then enter any other names for the host which should also be overridden.");
+$section->addInput(new Form_StaticText(
+	'',
+	'<span class="help-block">'.
+	gettext("If the host can be accessed using multiple names, then enter any other names for the host which should also be overridden.") .
+	'</span>'
+));
 
 $form->add($section);
 print($form);

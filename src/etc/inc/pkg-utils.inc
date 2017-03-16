@@ -938,7 +938,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			}
 		}
 		/* deinstall commands */
-		if ($when == "post-deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
+		if ($when == "deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
 			update_status(gettext("Deinstall commands... "));
 			if ($missing_include == false) {
 				eval_once($pkg_config['custom_php_deinstall_command']);

@@ -114,6 +114,10 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 unset($input_errors);
 
 foreach ($_REQUEST as $key => $value) {
+	if ($key == 'descr') {
+		continue;
+	}
+
 	$temp = $value;
 	$newpost = htmlentities($temp);
 

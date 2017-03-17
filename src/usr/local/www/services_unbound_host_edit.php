@@ -228,7 +228,7 @@ if (isset($id) && $a_hosts[$id]) {
 $section->addInput(new Form_StaticText(
 	'',
 	'<span class="help-block">' .
-	gettext("This page is used to override the usual lookup process for a specific host. A host is defined by its name" .
+	gettext("This page is used to override the usual lookup process for a specific host. A host is defined by its name " .
 		"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
 		"attempt to lookup that host will automatically return the given IP address, and any usual external lookup server for " .
 		"the domain will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' " .

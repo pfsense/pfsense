@@ -47,7 +47,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['smart_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['smart_status']['filter'] = "";
+		$user_settings['widgets']['smart_status']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved SMART Status Filter via Dashboard."));
@@ -69,6 +69,7 @@ if ($_POST) {
 	<tbody>
 <?php
 $skipsmart = explode(",", $user_settings['widgets']['smart_status']['filter']);
+$smartdrive_is_displayed = false;
 
 if (count($devs) > 0)  {
 	foreach ($devs as $dev)  { ## for each found drive do
@@ -76,6 +77,7 @@ if (count($devs) > 0)  {
 			continue;
 		}
 
+		$smartdrive_is_displayed = true;
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
@@ -104,6 +106,16 @@ if (count($devs) > 0)  {
 		</tr>
 <?php
 	}
+
+	if (!$smartdrive_is_displayed) {
+?>
+		<tr>
+			<td colspan="4" class="text-center">
+				<?=gettext('All SMART drives are hidden.');?>
+			</td>
+		</tr>
+<?php
+	}
 }
 ?>
 	</tbody>
@@ -125,11 +137,19 @@ if (count($devs) > 0)  {
 					</thead>
 					<tbody>
 <?php
+				$not_all_shown = false;
+
 				foreach ($devs as $dev):
+					if (in_array($dev, $skipsmart)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=htmlspecialchars($dev)?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$dev?>" type="checkbox" <?=(!in_array($dev, $skipsmart) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$dev?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -143,17 +163,28 @@ if (count($devs) > 0)  {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
+		var showAllSmartDrives = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallsmartdrives").click(function() {
 			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
+				$(this).prop("checked", showAllSmartDrives);
 			});
+
+			showAllSmartDrives = !showAllSmartDrives;
+
+			if (showAllSmartDrives) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallsmartdrives").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

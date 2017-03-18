@@ -59,7 +59,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['servicestatusfilter'] = "";
+		$user_settings['widgets']['servicestatusfilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
@@ -83,11 +83,14 @@ $skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");
+	$service_is_displayed = false;
 
 	foreach ($services as $service) {
 		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
 			continue;
 		}
+
+		$service_is_displayed = true;
 
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
@@ -103,8 +106,12 @@ if (count($services) > 0) {
 			</tr>
 <?php
 	}
+
+	if (!$service_is_displayed) {
+		echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("All services are hidden") . ". </td></tr>\n";
+	}
 } else {
-	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
+	echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
 }
 ?>
 		</tbody>
@@ -127,14 +134,21 @@ if (count($services) > 0) {
 					<tbody>
 <?php
 				$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($services as $service):
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
+						if (in_array($service['dispname'], $skipservices)) {
+							$check_box = '';
+							$not_all_shown = true;
+						} else {
+							$check_box = 'checked';
+						}
 ?>
 						<tr>
 							<td><?=$service['dispname']?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=(!in_array($service['dispname'], $skipservices) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 					}
@@ -149,7 +163,7 @@ if (count($services) > 0) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -157,10 +171,21 @@ if (count($services) > 0) {
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
+		var showAllServices = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallservices").click(function() {
 			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
+				$(this).prop("checked", showAllServices);
 			});
+
+			showAllServices = !showAllServices;
+
+			if (showAllServices) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallservices").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

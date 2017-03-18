@@ -49,6 +49,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	);
 
 	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+	$interface_is_displayed = false;
 
 	print("<thead>");
 	print(	"<tr>");
@@ -57,7 +58,12 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		if (!in_array($ifdescr, $skipinterfaces)) {
 			print(		"<th>" . $ifname . "</th>");
+			$interface_is_displayed = true;
 		}
+	}
+
+	if (!$interface_is_displayed) {
+		print("<th>" . gettext('All interfaces are hidden.') . "</th>");
 	}
 
 	print(		"</tr>");
@@ -101,7 +107,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = "";
+		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));
@@ -132,13 +138,20 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 					<tbody>
 <?php
 				$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
+					if (in_array($ifdescr, $skipinterfaces)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=$ifname?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skipinterfaces) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -152,7 +165,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfacesforstats" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallinterfacesforstats" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -179,10 +192,21 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
+		var showAllInterfacesForStats = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallinterfacesforstats").click(function() {
 			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
+				$(this).prop("checked", showAllInterfacesForStats);
 			});
+
+			showAllInterfacesForStats = !showAllInterfacesForStats;
+
+			if (showAllInterfacesForStats) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallinterfacesforstats").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't

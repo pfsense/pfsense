@@ -47,7 +47,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['wol']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['wol']['filter'] = "";
+		$user_settings['widgets']['wol']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Wake on LAN Filter via Dashboard."));
@@ -70,11 +70,14 @@ if ($_POST) {
 $skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
 
 if (count($wolcomputers) > 0):
+	$wol_entry_is_displayed = false;
+
 	foreach ($wolcomputers as $wolent):
 		if (in_array(get_wolent_key($wolent), $skipwols)) {
 			continue;
 		}
 
+		$wol_entry_is_displayed = true;
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 		?>
@@ -101,8 +104,15 @@ if (count($wolcomputers) > 0):
 				</a>
 			</td>
 		</tr>
-<?php	endforeach;
-else: ?>
+<?php
+	endforeach;
+	if (!$wol_entry_is_displayed):
+?>
+		<tr><td colspan="4" class="text-center"><?=gettext("All WoL entries are hidden.")?></td></tr>
+<?php
+	endif;
+else:
+?>
 	<tr><td colspan="4" class="text-center"><?= gettext("No saved WoL addresses") ?></td></tr>
 <?php
 endif;
@@ -143,15 +153,22 @@ if (is_array($config['dhcpd'])) {
 					<tbody>
 <?php
 				$skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
+				$not_all_shown = false;
 				$idx = 0;
 
 				foreach ($wolcomputers as $wolent):
+					if (in_array(get_wolent_key($wolent), $skipwols)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=$wolent['descr']?></td>
 							<td><?=convert_friendly_interface_to_friendly_descr($wolent['interface'])?></td>
 							<td><?=$wolent['mac']?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=(!in_array(get_wolent_key($wolent), $skipwols) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_wolent_key($wolent)?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -165,7 +182,7 @@ if (is_array($config['dhcpd'])) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallwols" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallwols" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -173,10 +190,21 @@ if (is_array($config['dhcpd'])) {
 <script>
 //<![CDATA[
 	events.push(function(){
+		var showAllWOLs = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showallwols").click(function() {
 			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
+				$(this).prop("checked", showAllWOLs);
 			});
+
+			showAllWOLs = !showAllWOLs;
+
+			if (showAllWOLs) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showallwols").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

@@ -125,7 +125,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['dyn_dns_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['dyn_dns_status']['filter'] = "";
+		$user_settings['widgets']['dyn_dns_status']['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Dynamic DNS Filter via Dashboard."));
@@ -204,6 +204,13 @@ function get_dyndns_service_text($dyndns_type) {
 		</td>
 	</tr>
 	<?php endforeach;?>
+	<?php if ($rowid == -1):?>
+	<tr>
+		<td colspan="4" class="text-center">
+			<?=gettext('All Dyn DNS entries are hidden.');?>
+		</td>
+	</tr>
+	<?php endif;?>
 	</tbody>
 </table>
 </div>
@@ -226,13 +233,20 @@ function get_dyndns_service_text($dyndns_type) {
 					<tbody>
 <?php
 				$skipdyndns = explode(",", $user_settings['widgets']['dyn_dns_status']['filter']);
+				$not_all_shown = false;
 				foreach ($all_dyndns as $dyndns):
+					if (in_array(get_dyndnsent_key($dyndns), $skipdyndns)) {
+						$check_box = '';
+						$not_all_shown = true;
+					} else {
+						$check_box = 'checked';
+					}
 ?>
 						<tr>
 							<td><?=get_dyndns_interface_text($dyndns['interface'])?></td>
 							<td><?=get_dyndns_service_text($dyndns['type'])?></td>
 							<td><?=get_dyndns_hostname_text($dyndns)?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_dyndnsent_key($dyndns)?>" type="checkbox" <?=(!in_array(get_dyndnsent_key($dyndns), $skipdyndns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_dyndnsent_key($dyndns)?>" type="checkbox" <?=$check_box?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -246,7 +260,7 @@ function get_dyndns_service_text($dyndns_type) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showalldyndns" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showalldyndns" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=$not_all_shown ? gettext('All') : gettext('None')?></button>
 		</div>
 	</div>
 </form>
@@ -278,10 +292,21 @@ function get_dyndns_service_text($dyndns_type) {
 		setTimeout('dyndns_getstatus()', 5*60*1000);
 	}
 	events.push(function(){
+		var showAllDynDNS = <?=$not_all_shown ? 'true' : 'false'?>;
 		$("#showalldyndns").click(function() {
 			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
+				$(this).prop("checked", showAllDynDNS);
 			});
+
+			showAllDynDNS = !showAllDynDNS;
+
+			if (showAllDynDNS) {
+				text = "<?=gettext('All');?>";
+			} else {
+				text = "<?=gettext('None');?>";
+			}
+
+			$("#showalldyndns").html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
 		});
 
 	});

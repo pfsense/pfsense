@@ -33,7 +33,7 @@
 //apply css change to Status > Monitoring
 //show interface name and latest in/out in upper left
 //add stacked overall graph?
-    //also show pie graph of lastest precentages of total? (split 50/50 on width)
+    //also show pie graph of lastest percentages of total? (split 50/50 on width)
     //make this an option?
 
 $nocsrf = true;
@@ -60,7 +60,7 @@ if (!is_array($config["widgets"]["trafficgraphs"])) {
 	$config["widgets"]["trafficgraphs"]["shown"] = array();
 	$config["widgets"]["trafficgraphs"]["shown"]["item"] = array();
 
-	foreach($ifdescrs as $ifname => $ifdescr) {
+	foreach ($ifdescrs as $ifname => $ifdescr) {
 
 		$ifinfo = get_interface_info($ifname);
 
@@ -74,17 +74,18 @@ if (!is_array($config["widgets"]["trafficgraphs"])) {
 
 }
 
-if(!isset($config["widgets"]["trafficgraphs"]["size"])) {
+if (!isset($config["widgets"]["trafficgraphs"]["size"])) {
 	$config["widgets"]["trafficgraphs"]["size"] = 1;
 }
 
-if(!isset($config["widgets"]["trafficgraphs"]["invert"])) {
+if (!isset($config["widgets"]["trafficgraphs"]["invert"])) {
 	$config["widgets"]["trafficgraphs"]["invert"] = "true";
 }
 
-if(!isset($config["widgets"]["trafficgraphs"]["backgroundupdate"])) {
+if (!isset($config["widgets"]["trafficgraphs"]["backgroundupdate"])) {
 	$config["widgets"]["trafficgraphs"]["backgroundupdate"] = "true";
 }
+
 $a_config = &$config["widgets"]["trafficgraphs"];
 
 // save new default config options that have been submitted
@@ -100,13 +101,13 @@ if ($_POST) {
 		die('{ "error" : "Refresh Interval is not a valid number between 1 and 10." }');
 	}
 
-	if($_POST["traffic-graph-invert"] === "true" || $_POST["traffic-graph-invert"] === "false") {
+	if ($_POST["traffic-graph-invert"] === "true" || $_POST["traffic-graph-invert"] === "false") {
 		$a_config["invert"] = $_POST["traffic-graph-invert"];
 	} else {
 		die('{ "error" : "Invert is not a boolean of true or false." }');
 	}
 
-	if($_POST["traffic-graph-backgroundupdate"] === "true" || $_POST["traffic-graph-backgroundupdate"] === "false") {
+	if ($_POST["traffic-graph-backgroundupdate"] === "true" || $_POST["traffic-graph-backgroundupdate"] === "false") {
 		$a_config["backgroundupdate"] = $_POST["traffic-graph-backgroundupdate"];
 	} else {
 		die('{ "error" : "Backgroundupdate is not a boolean of true or false." }');
@@ -151,7 +152,7 @@ $allifs = implode("|", $ifsarray);
 	<div id="traffic-chart-error" class="alert alert-danger" style="display: none;"></div>
 
 	<?php
-	foreach($a_config["shown"]["item"] as $ifname) {
+	foreach ($a_config["shown"]["item"] as $ifname) {
 		echo '<div id="traffic-chart-' . $ifname . '" class="d3-chart traffic-widget-chart">';
 		echo '	<svg></svg>';
 		echo '</div>';
@@ -203,13 +204,13 @@ events.push(function() {
 		var itemOut = new Object();
 
 		itemIn.key = value + " (in)";
-		if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+		if (localStorage.getItem('invert') === "true") { itemIn.area = true; }
 		itemIn.first = true;
 		itemIn.values = [{x: nowTime, y: 0}];
 		myData[value].push(itemIn);
 
 		itemOut.key = value + " (out)";
-		if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+		if (localStorage.getItem('invert') === "true") { itemOut.area = true; }
 		itemOut.first = true;
 		itemOut.values = [{x: nowTime, y: 0}];
 		myData[value].push(itemOut);
@@ -220,10 +221,10 @@ events.push(function() {
 
 	//re-draw graph when the page goes from inactive (in it's window) to active
 	Visibility.change(function (e, state) {
-		if($('#traffic-graph-backgroundupdate').val() === "true"){
+		if ($('#traffic-graph-backgroundupdate').val() === "true"){
 			return;
 		}
-		if(state === "visible") {
+		if (state === "visible") {
 
 			now = then = new Date(Date.now());
 
@@ -240,13 +241,13 @@ events.push(function() {
 				var itemOut = new Object();
 
 				itemIn.key = value + " (in)";
-				if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+				if (localStorage.getItem('invert') === "true") { itemIn.area = true; }
 				itemIn.first = true;
 				itemIn.values = [{x: nowTime, y: 0}];
 				myData[value].push(itemIn);
 
 				itemOut.key = value + " (out)";
-				if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+				if (localStorage.getItem('invert') === "true") { itemOut.area = true; }
 				itemOut.first = true;
 				itemOut.values = [{x: nowTime, y: 0}];
 				myData[value].push(itemOut);
@@ -259,30 +260,28 @@ events.push(function() {
 	});
 
 	// save new config defaults
-    $( '#traffic-graph-form' ).submit(function(event) {
+    $('#traffic-graph-form').submit(function(event) {
 
 		var error = false;
 		$("#traffic-chart-error").hide();
 
-		var interfaces = $( "#traffic-graph-interfaces" ).val();
-		refreshInterval = parseInt($( "#traffic-graph-interval" ).val());
-		var invert = $( "#traffic-graph-invert" ).val();
-		var size = $( "#traffic-graph-size" ).val();
-		var backgroundupdate = $( "#traffic-graph-backgroundupdate" ).val();
+		var interfaces = $("#traffic-graph-interfaces").val();
+		refreshInterval = parseInt($("#traffic-graph-interval").val());
+		var invert = $("#traffic-graph-invert").val();
+		var size = $("#traffic-graph-size").val();
+		var backgroundupdate = $("#traffic-graph-backgroundupdate").val();
 
 		//TODO validate interfaces data and throw error
 
-		if(!Number.isInteger(refreshInterval) || refreshInterval < 1 || refreshInterval > 10) {
+		if (!Number.isInteger(refreshInterval) || refreshInterval < 1 || refreshInterval > 10) {
 			error = 'Refresh Interval is not a valid number between 1 and 10.';
 		}
 
-		if(invert != "true" && invert != "false") {
-
+		if (invert != "true" && invert != "false") {
 			error = 'Invert is not a boolean of true or false.';
-
 		}
 
-		if(!error) {
+		if (!error) {
 
 			var formData = {
 				'traffic-graph-interfaces'       : interfaces,
@@ -301,13 +300,13 @@ events.push(function() {
 			})
 			.done(function(message) {
 
-				if(message.success) {
+				if (message.success) {
 
 					Visibility.stop(updateIds);
 					clearInterval(updateTimerIds);
 
 					//remove all old graphs (divs/svgs)
-					$( ".traffic-widget-chart" ).remove();
+					$(".traffic-widget-chart").remove();
 
 					window.interfaces = interfaces;
 					localStorage.setItem('interval', refreshInterval);
@@ -333,13 +332,13 @@ events.push(function() {
 						var itemOut = new Object();
 
 						itemIn.key = value + " (in)";
-						if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+						if (localStorage.getItem('invert') === "true") { itemIn.area = true; }
 						itemIn.first = true;
 						itemIn.values = [{x: nowTime, y: 0}];
 						myData[value].push(itemIn);
 
 						itemOut.key = value + " (out)";
-						if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+						if (localStorage.getItem('invert') === "true") { itemOut.area = true; }
 						itemOut.first = true;
 						itemOut.values = [{x: nowTime, y: 0}];
 						myData[value].push(itemOut);
@@ -348,18 +347,18 @@ events.push(function() {
 
 					draw_graph(refreshInterval, then, backgroundupdate);
 
-					$( "#traffic-graph-message" ).removeClass("text-danger").addClass("text-success");
-					$( "#traffic-graph-message" ).text(message.success);
+					$("#traffic-graph-message").removeClass("text-danger").addClass("text-success");
+					$("#traffic-graph-message").text(message.success);
 
 					setTimeout(function() {
-						$( "#traffic-graph-message" ).empty();
-						$( "#traffic-graph-message" ).removeClass("text-success");
+						$("#traffic-graph-message").empty();
+						$("#traffic-graph-message").removeClass("text-success");
 					}, 5000);
 
 				} else {
 
-					$( "#traffic-graph-message" ).addClass("text-danger");
-					$( "#traffic-graph-message" ).text(message.error);
+					$("#traffic-graph-message").addClass("text-danger");
+					$("#traffic-graph-message").text(message.error);
 
 					console.warn(message.error);
 
@@ -368,14 +367,14 @@ events.push(function() {
 	        })
 	        .fail(function() {
 
-			    console.warn( "The Traffic Graphs widget AJAX request failed." );
+			    console.warn("The Traffic Graphs widget AJAX request failed.");
 
 			});
 
 	    } else {
 
-			$( "#traffic-graph-message" ).addClass("text-danger");
-			$( "#traffic-graph-message" ).text(error);
+			$("#traffic-graph-message").addClass("text-danger");
+			$("#traffic-graph-message").text(error);
 
 			console.warn(error);
 
@@ -404,7 +403,9 @@ events.push(function() {
 				foreach ($ifdescrs as $ifname => $ifdescr) {
 
 					$if_shown = "";
-					if (in_array($ifname, $a_config["shown"]["item"])) { $if_shown = " selected"; };
+					if (in_array($ifname, $a_config["shown"]["item"])) {
+						$if_shown = " selected";
+					};
 					echo '<option value="' . $ifname . '"' . $if_shown . '>' . $ifdescr . "</option>\n";
 
 				}
@@ -425,7 +426,7 @@ events.push(function() {
 			<div class="col-sm-9">
 				<select class="form-control" id="traffic-graph-invert" name="traffic-graph-invert">
 				<?php
-					if($a_config["invert"] === "true") {
+					if ($a_config["invert"] === "true") {
 						echo '<option value="true" selected>On</option>';
 						echo '<option value="false">Off</option>';
 					} else {
@@ -442,7 +443,7 @@ events.push(function() {
 			<div class="col-sm-9">
 				<select class="form-control" id="traffic-graph-size" name="traffic-graph-size">
 				<?php
-					if($a_config["size"] === "8") {
+					if ($a_config["size"] === "8") {
 						echo '<option value="8" selected>Bits</option>';
 						echo '<option value="1">Bytes</option>';
 					} else {
@@ -459,7 +460,7 @@ events.push(function() {
 			<div class="col-sm-9">
 				<select class="form-control" id="traffic-graph-backgroundupdate" name="traffic-graph-backgroundupdate">
 				<?php
-					if($a_config["backgroundupdate"] === "true") {
+					if ($a_config["backgroundupdate"] === "true") {
 						echo '<option value="true" selected>Keep graphs updated on inactive tab. (increases cpu usage)</option>';
 						echo '<option value="false">Clear graphs when not visible.</option>';
 					} else {

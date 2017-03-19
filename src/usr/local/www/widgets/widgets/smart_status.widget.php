@@ -194,12 +194,7 @@ if (count($devs) > 0)  {
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
-		$("#showallsmartdrives").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallsmartdrives");
 	});
 //]]>
 </script>

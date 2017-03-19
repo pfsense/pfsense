@@ -164,12 +164,7 @@ if (count($services) > 0) {
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
-		$("#showallservices").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallservices");
 	});
 //]]>
 </script>

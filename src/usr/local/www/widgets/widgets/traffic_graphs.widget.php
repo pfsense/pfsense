@@ -70,7 +70,7 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings["widgets"]["traffic_graphs"]["filter"] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings["widgets"]["traffic_graphs"]["filter"] = "";
+		$user_settings["widgets"]["traffic_graphs"]["filter"] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated traffic graphs widget settings via dashboard."));
@@ -131,6 +131,12 @@ $tg_displayed_ifs_array = [];
 		$tg_displayed_ifs_array[] = $ifdescr;
 		echo '<div id="traffic-chart-' . $ifdescr . '" class="d3-chart traffic-widget-chart">';
 		echo '	<svg></svg>';
+		echo '</div>';
+	}
+
+	if (!$tg_displayed) {
+		echo '<div id="traffic-chartnone" class="d3-chart traffic-widget-chart">';
+		echo gettext('All traffic graphs are hidden.');
 		echo '</div>';
 	}
 ?>
@@ -257,7 +263,7 @@ events.push(function() {
 	localStorage.setItem('size', <?=$tg_size?>);
 	localStorage.setItem('backgroundupdate', <?=$tg_backgroundupdate?>);
 
-	window.interfaces = InterfaceString.split("|");
+	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.charts = {};
     window.myData = {};
     window.updateIds = 0;
@@ -295,7 +301,9 @@ events.push(function() {
 
 	});
 
-	draw_graph(refreshInterval, then, backgroundupdate);
+	if (window.interfaces.length > 0) {
+		draw_graph(refreshInterval, then, backgroundupdate);
+	}
 
 	//re-draw graph when the page goes from inactive (in it's window) to active
 	Visibility.change(function (e, state) {
@@ -332,7 +340,9 @@ events.push(function() {
 
 			});
 
-			draw_graph(refreshInterval, then, backgroundupdate);
+			if (window.interfaces.length > 0) {
+				draw_graph(refreshInterval, then, backgroundupdate);
+			}
 
 		}
 	});

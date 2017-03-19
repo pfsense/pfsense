@@ -285,12 +285,7 @@ function get_dyndns_service_text($dyndns_type) {
 		setTimeout('dyndns_getstatus()', 5*60*1000);
 	}
 	events.push(function(){
-		$("#showalldyndns").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalldyndns");
 	});
 	// Do the first status check 2 seconds after the dashboard opens
 	setTimeout('dyndns_getstatus()', 2000);

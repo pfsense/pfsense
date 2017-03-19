@@ -185,11 +185,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
-		$("#showallinterfacesforstats").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfacesforstats");
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)

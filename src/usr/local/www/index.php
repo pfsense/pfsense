@@ -445,6 +445,53 @@ function updateWidgets(newWidget) {
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
+// Determine if all the checkboxes are checked
+function are_all_checked(checkbox_panel_ref) {
+	var allBoxesChecked = true;
+	$(checkbox_panel_ref).each(function() {
+		if ((this.type == 'checkbox') && !this.checked) {
+			allBoxesChecked = false;
+		}
+	});
+	return allBoxesChecked;
+}
+
+// If the checkboxes are all checked, then clear them all.
+// Otherwise set them all.
+function set_clear_checkboxes(checkbox_panel_ref) {
+	checkTheBoxes = !are_all_checked(checkbox_panel_ref);
+
+	$(checkbox_panel_ref).each(function() {
+		$(this).prop("checked", checkTheBoxes);
+	});
+}
+
+// Set the given id to All or None button depending if the checkboxes are all checked.
+function set_all_none_button(checkbox_panel_ref, all_none_button_id) {
+	if (are_all_checked(checkbox_panel_ref)) {
+		text = "<?=gettext('None')?>";
+	} else {
+		text = "<?=gettext('All')?>";
+	}
+
+	$("#" + all_none_button_id).html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
+}
+
+// Setup the necessary events to manage the All/None button and included checkboxes
+// used for selecting the items to show on a widget.
+function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
+		set_all_none_button(checkbox_panel_ref, all_none_button_id);
+
+		$(checkbox_panel_ref).change(function() {
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
+
+		$("#" + all_none_button_id).click(function() {
+			set_clear_checkboxes(checkbox_panel_ref);
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
+}
+
 events.push(function() {
 
 	// Make panels destroyable

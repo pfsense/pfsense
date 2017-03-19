@@ -183,12 +183,7 @@ if (is_array($config['dhcpd'])) {
 <script>
 //<![CDATA[
 	events.push(function(){
-		$("#showallwols").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallwols");
 	});
 //]]>
 </script>

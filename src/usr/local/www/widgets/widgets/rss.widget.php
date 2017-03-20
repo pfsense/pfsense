@@ -25,36 +25,38 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if ($_POST['rssfeed']) {
-	$user_settings['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
-	$user_settings['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
-	$user_settings['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
-	$user_settings['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
+if ($_POST['widgetkey']) {
+	$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
+	$user_settings['widgets'][$_POST['widgetkey']]['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
+	$user_settings['widgets'][$_POST['widgetkey']]['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
+	$user_settings['widgets'][$_POST['widgetkey']]['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved RSS Widget feed via Dashboard."));
 	header("Location: /");
 }
 
 // Use saved feed and max items
-if ($user_settings['widgets']['rssfeed']) {
-	$rss_feed_s = explode(",", $user_settings['widgets']['rssfeed']);
+if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
+	$rss_feed_s = explode(",", $user_settings['widgets'][$widgetkey]['rssfeed']);
 }
 
-if ($user_settings['widgets']['rssmaxitems']) {
-	$max_items =  $user_settings['widgets']['rssmaxitems'];
+if ($user_settings['widgets'][$widgetkey]['rssmaxitems']) {
+	$max_items =  $user_settings['widgets'][$widgetkey]['rssmaxitems'];
 }
 
-if (is_numeric($user_settings['widgets']['rsswidgetheight'])) {
-	$rsswidgetheight =	$user_settings['widgets']['rsswidgetheight'];
+if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgetheight'])) {
+	$rsswidgetheight =	$user_settings['widgets'][$widgetkey]['rsswidgetheight'];
 }
 
-if (is_numeric($user_settings['widgets']['rsswidgettextlength'])) {
-	$rsswidgettextlength =	$user_settings['widgets']['rsswidgettextlength'];
+if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgettextlength'])) {
+	$rsswidgettextlength =	$user_settings['widgets'][$widgetkey]['rsswidgettextlength'];
 }
 
 // Set a default feed if none exists
 if (!$rss_feed_s) {
 	$rss_feed_s = "https://www.netgate.com/blog/";
-	$user_settings['widgets']['rssfeed'] = "https://www.netgate.com/blog/";
+	if ($widgetkey != "") {
+		$user_settings['widgets'][$widgetkey]['rssfeed'] = $rss_feed_s;
+	}
 }
 
 if (!$max_items || !is_numeric($max_items)) {
@@ -69,8 +71,8 @@ if (!$rsswidgettextlength || !is_numeric($rsswidgettextlength)) {
 	$rsswidgettextlength = 140; // oh twitter, how do we love thee?
 }
 
-if ($user_settings['widgets']['rssfeed']) {
-	$textarea_txt =	 str_replace(",", "\n", $user_settings['widgets']['rssfeed']);
+if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
+	$textarea_txt =	 str_replace(",", "\n", $user_settings['widgets'][$widgetkey]['rssfeed']);
 } else {
 	$textarea_txt = "";
 }
@@ -85,11 +87,13 @@ if ($user_settings['widgets']['rssfeed']) {
 	exec("chmod a+rw /tmp/simplepie/.");
 	exec("chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
-	function textLimit($string, $length, $replacer = '...') {
-		if (strlen($string) > $length) {
-			return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
+	if (!function_exists('textLimit')) {
+		function textLimit($string, $length, $replacer = '...') {
+			if (strlen($string) > $length) {
+				return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
+			}
+			return $string;
 		}
-		return $string;
 	}
 	$feed = new SimplePie();
 	$feed->set_cache_location("/tmp/simplepie/");
@@ -120,9 +124,10 @@ if ($user_settings['widgets']['rssfeed']) {
 </div>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
+	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 	<div class="form-group">
 		<label for="rssfeed" class="col-sm-3 control-label"><?=gettext('Feeds')?></label>
 		<div class="col-sm-6">

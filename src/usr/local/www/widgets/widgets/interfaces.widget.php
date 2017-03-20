@@ -29,7 +29,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -38,9 +38,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', $validNames);
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
@@ -53,7 +53,7 @@ if ($_POST) {
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 <?php
-$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 $interface_is_displayed = false;
 
 foreach ($ifdescrs as $ifdescr => $ifname):
@@ -144,11 +144,12 @@ endif;
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -159,7 +160,7 @@ endif;
 					</thead>
 					<tbody>
 <?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+				$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
@@ -180,7 +181,7 @@ endif;
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfaces" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -188,7 +189,7 @@ endif;
 <script>
 //<![CDATA[
 	events.push(function(){
-		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfaces");
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
 //]]>
 </script>

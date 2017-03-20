@@ -146,6 +146,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php"><?=gettext("System")?> -&gt; <?=gettext("Packages")?></a>
 </p>
 
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -160,7 +161,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#pkgtbl').html(response);
+			$('[id="pkgtbl"]').html(response);
 
 			// and do it again
 			// NOT! There is no need to refresh this widget
@@ -173,3 +174,4 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	});
 //]]>
 </script>
+<?php endif; ?>

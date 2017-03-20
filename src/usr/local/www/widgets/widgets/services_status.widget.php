@@ -48,7 +48,7 @@ for ($idx=1; $idx < $numsvcs; $idx++) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -57,9 +57,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['servicestatusfilter'] = implode(',', $validNames);
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
@@ -79,7 +79,7 @@ if ($_POST) {
 		</thead>
 		<tbody>
 <?php
-$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
+$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");
@@ -118,11 +118,12 @@ if (count($services) > 0) {
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -133,7 +134,7 @@ if (count($services) > 0) {
 					</thead>
 					<tbody>
 <?php
-				$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
+				$skipservices = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 				$idx = 0;
 
 				foreach ($services as $service):
@@ -156,7 +157,7 @@ if (count($services) > 0) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -164,7 +165,7 @@ if (count($services) > 0) {
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
-		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallservices");
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
 //]]>
 </script>

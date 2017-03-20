@@ -36,7 +36,7 @@ if ($specplatform['name'] != "Hyper-V") {
 	$devs = get_smart_drive_list();
 }
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -45,9 +45,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['smart_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['smart_status']['filter'] = implode(',', $validNames);
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved SMART Status Filter via Dashboard."));
@@ -68,7 +68,7 @@ if ($_POST) {
 	</thead>
 	<tbody>
 <?php
-$skipsmart = explode(",", $user_settings['widgets']['smart_status']['filter']);
+$skipsmart = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 $smartdrive_is_displayed = false;
 
 if (count($devs) > 0)  {
@@ -122,11 +122,12 @@ if (count($devs) > 0)  {
 </table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/smart_status.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -155,14 +156,14 @@ if (count($devs) > 0)  {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
-		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallsmartdrives");
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
 //]]>
 </script>

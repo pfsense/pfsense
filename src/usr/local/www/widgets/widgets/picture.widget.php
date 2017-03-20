@@ -26,19 +26,19 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if ($_GET['getpic']=="true") {
-	$pic_type_s = explode(".", $user_settings['widgets']['picturewidget_filename']);
+	$pic_type_s = explode(".", $user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']);
 	$pic_type = $pic_type_s[1];
-	if ($user_settings['widgets']['picturewidget']) {
-		$data = base64_decode($user_settings['widgets']['picturewidget']);
+	if ($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']) {
+		$data = base64_decode($user_settings['widgets'][$_GET['widgetkey']]['picturewidget']);
 	}
-	header("Content-Disposition: inline; filename=\"{$user_settings['widgets']['picturewidget_filename']}\"");
+	header("Content-Disposition: inline; filename=\"{$user_settings['widgets'][$_GET['widgetkey']]['picturewidget_filename']}\"");
 	header("Content-Type: image/{$pic_type}");
 	header("Content-Length: " . strlen($data));
 	echo $data;
 	exit;
 }
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 		/* read the file contents */
 		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
@@ -52,8 +52,8 @@ if ($_POST) {
 			die("Could not read temporary file");
 		} else {
 			$picname = basename($_FILES['uploadedfile']['name']);
-			$user_settings['widgets']['picturewidget'] = base64_encode($data);
-			$user_settings['widgets']['picturewidget_filename'] = $_FILES['pictfile']['name'];
+			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = base64_encode($data);
+			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
 			save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
 			header("Location: /index.php");
 			exit;
@@ -62,14 +62,15 @@ if ($_POST) {
 }
 
 ?>
-<a href="/widgets/widgets/picture.widget.php?getpic=true" target="_blank">
-	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
+<a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" target="_blank">
+	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" alt="picture" />
 </a>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
+	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 	<label for="pictfile"><?=gettext('New picture:')?> </label>
 	<input id="pictfile" name="pictfile" type="file" class="form-control" />
 	<button type="submit" class="btn btn-primary btn-xs">

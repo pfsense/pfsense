@@ -306,8 +306,8 @@ function compose_table_body_contents() {
 			$bgcolor = "info";  // lightblue
 		}
 
-		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n";
-		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['stddev']) : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['delay'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['delay'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['stddev'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['stddev'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
 		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n";
 		$rtnstr .= '<td class="bg-' . $bgcolor . '">' . $online . "</td>\n";
 		$rtnstr .= "</tr>\n";

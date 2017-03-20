@@ -28,6 +28,8 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
+// Update once per minute by default, instead of every 10 seconds
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
 if ($_POST) {
 
@@ -49,9 +51,10 @@ if ($_POST) {
 
 ?>
 
-<div class="table-responsive">
+<div class="table-responsive" id="ifaces_status">
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
+
 <?php
 $skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
 $interface_is_displayed = false;
@@ -106,7 +109,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php endif; ?>
 		</td>
 		<td>
-			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink']  == "up" || $ifinfo['l2tplink']  == "up"):?>
+			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up"):?>
 				<?=sprintf(gettext("Uptime: %s"), htmlspecialchars($ifinfo['ppp_uptime']));?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>
@@ -147,7 +150,7 @@ endif;
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
-    <div class="panel panel-default col-sm-10">
+	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
@@ -189,6 +192,32 @@ endif;
 //<![CDATA[
 	events.push(function(){
 		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfaces");
+	});
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+function getstatus_ifaces() {
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/interfaces.widget.php',
+		dataType: 'html',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		success: function(data){
+			$('#ifaces_status').html(data);
+		},
+		error: function(){
+			$('#ifaces_status').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
+		}
+	});
+}
+
+	events.push(function(){
+		setInterval('getstatus_ifaces()', "<?=$widgetperiod?>");
 	});
 //]]>
 </script>

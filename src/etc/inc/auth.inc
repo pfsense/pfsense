@@ -1583,6 +1583,7 @@ function get_user_settings($username) {
 	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
 	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+	$settings['webgui']['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 	$settings['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 	$settings['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 	$settings['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
@@ -1606,6 +1607,7 @@ function get_user_settings($username) {
 		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
 		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
 		$settings['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);
+		$settings['webgui']['disablealiaspopupdetail'] = isset($user['disablealiaspopupdetail']);
 		$settings['webgui']['systemlogsfilterpanel'] = isset($user['systemlogsfilterpanel']);
 		$settings['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
 		$settings['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);

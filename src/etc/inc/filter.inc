@@ -2794,6 +2794,8 @@ function filter_generate_user_rule($rule) {
 	if ($rule['protocol'] == "icmp" && $rule['icmptype'] && ($rule['icmptype'] != 'any')) {
 		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
 		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+		// XXX: Bug #7372
+		$icmptype_text = preg_replace("/skip/", "39", $icmptype_text);
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
 	

@@ -32,11 +32,13 @@ if (is_array($config['wol']['wolentry'])) {
 }
 
 // Constructs a unique key that will identify a WoL entry in the filter list.
-function get_wolent_key($wolent) {
-	return ($wolent['interface'] . "|" . $wolent['mac']);
+if (!function_exists('get_wolent_key')) {
+	function get_wolent_key($wolent) {
+		return ($wolent['interface'] . "|" . $wolent['mac']);
+	}
 }
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -45,9 +47,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['wol']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['wol']['filter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Wake on LAN Filter via Dashboard."));
@@ -67,14 +69,17 @@ if ($_POST) {
 	</thead>
 	<tbody>
 <?php
-$skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
+$skipwols = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 
 if (count($wolcomputers) > 0):
+	$wol_entry_is_displayed = false;
+
 	foreach ($wolcomputers as $wolent):
 		if (in_array(get_wolent_key($wolent), $skipwols)) {
 			continue;
 		}
 
+		$wol_entry_is_displayed = true;
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 		?>
@@ -101,8 +106,15 @@ if (count($wolcomputers) > 0):
 				</a>
 			</td>
 		</tr>
-<?php	endforeach;
-else: ?>
+<?php
+	endforeach;
+	if (!$wol_entry_is_displayed):
+?>
+		<tr><td colspan="4" class="text-center"><?=gettext("All WoL entries are hidden.")?></td></tr>
+<?php
+	endif;
+else:
+?>
 	<tr><td colspan="4" class="text-center"><?= gettext("No saved WoL addresses") ?></td></tr>
 <?php
 endif;
@@ -125,11 +137,12 @@ if (is_array($config['dhcpd'])) {
 <?php endif; ?>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/wake_on_lan.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -142,7 +155,7 @@ if (is_array($config['dhcpd'])) {
 					</thead>
 					<tbody>
 <?php
-				$skipwols = explode(",", $user_settings['widgets']['wol']['filter']);
+				$skipwols = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 				$idx = 0;
 
 				foreach ($wolcomputers as $wolent):
@@ -165,7 +178,7 @@ if (is_array($config['dhcpd'])) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallwols" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -173,12 +186,7 @@ if (is_array($config['dhcpd'])) {
 <script>
 //<![CDATA[
 	events.push(function(){
-		$("#showallwols").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
 //]]>
 </script>

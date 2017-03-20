@@ -170,11 +170,13 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	exit;
 }
 
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
+
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
-	$tab_array[] = array(gettext("Overview"), true, "ipsec-Overview");
-	$tab_array[] = array(gettext("Tunnels"), false, "ipsec-tunnel");
-	$tab_array[] = array(gettext("Mobile"), false, "ipsec-mobile");
+	$tab_array[] = array(gettext("Overview"), true, $widgetkey_nodash . "-Overview");
+	$tab_array[] = array(gettext("Tunnels"), false, $widgetkey_nodash . "-tunnel");
+	$tab_array[] = array(gettext("Mobile"), false, $widgetkey_nodash . "-mobile");
 
 	display_widget_tabs($tab_array);
 }
@@ -183,7 +185,7 @@ $mobile = ipsec_dump_mobile();
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
 if (isset($config['ipsec']['phase2'])): ?>
-<div id="ipsec-Overview" style="display:block;"  class="table-responsive">
+<div id="<?=$widgetkey_nodash?>-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -197,7 +199,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tbody>
 	</table>
 </div>
-<div class="table-responsive" id="ipsec-tunnel" style="display:none;">
+<div class="table-responsive" id="<?=$widgetkey_nodash?>-tunnel" style="display:none;">
 	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
@@ -214,7 +216,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 </div>
 
 	<?php if (is_array($mobile['pool'])): ?>
-<div id="ipsec-mobile" style="display:none;" class="table-responsive">
+<div id="<?=$widgetkey_nodash?>-mobile" style="display:none;" class="table-responsive">
 		<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -288,7 +290,7 @@ function changeTabDIV(selectedDiv) {
 	}
 }
 
-function get_ipsec_stats() {
+function get_ipsec_stats_<?=$widgetkey_nodash?>() {
 	var ajaxRequest;
 
 	ajaxRequest = $.ajax({
@@ -303,17 +305,17 @@ function get_ipsec_stats() {
 	// Deal with the results of the above ajax call
 	ajaxRequest.done(function (response, textStatus, jqXHR) {
 
-		$('tbody', '#ipsec-' + curtab).html(response);
+		$('tbody', '#<?=$widgetkey_nodash?>-' + curtab).html(response);
 
 		// and do it again
-		setTimeout(get_ipsec_stats, "<?=$widgetperiod?>");
+		setTimeout(get_ipsec_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
 	});
 }
 
 events.push(function(){
 	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 	// hit the server at exactly the same time)
-	setTimeout(get_ipsec_stats, Math.floor((Math.random() * 10000) + 1000));
+	setTimeout(get_ipsec_stats_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
 });
 //]]>
 </script>

@@ -31,7 +31,7 @@ $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -40,29 +40,38 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interfaces']['iffilter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
 	header("Location: /index.php");
 }
 
+// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
+// When the ajax call is made to refresh the interfaces table, 'widgetkey' comes in $_REQUEST.
+if ($_REQUEST['widgetkey']) {
+	$widgetkey = $_REQUEST['widgetkey'];
+}
+
 ?>
 
-<div class="table-responsive" id="ifaces_status">
+<div class="table-responsive" id="ifaces_status_<?=$widgetkey?>">
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 
 <?php
-$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
+$interface_is_displayed = false;
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	if (in_array($ifdescr, $skipinterfaces)) {
 		continue;
 	}
 
+	$interface_is_displayed = true;
 	$ifinfo = get_interface_info($ifdescr);
 	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
@@ -128,17 +137,29 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php endif; ?>
 		</td>
 	</tr>
-<?php endforeach; ?>
+<?php
+endforeach;
+if (!$interface_is_displayed):
+?>
+	<tr>
+		<td class="text-center">
+			<?=gettext('All interfaces are hidden.');?>
+		</td>
+	</tr>
 
+<?php
+endif;
+?>
 		</tbody>
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -149,7 +170,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 					</thead>
 					<tbody>
 <?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+				$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
@@ -170,46 +191,43 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfaces" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
 
-<script>
-//<![CDATA[
-	events.push(function(){
-		$("#showallinterfaces").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
+<?php
 
-	});
-//]]>
-</script>
+/* for AJAX response, we only need the panels */
+if ($_REQUEST['widgetkey']) {
+	exit;
+}
+?>
 
 <script type="text/javascript">
 //<![CDATA[
-function getstatus_ifaces() {
+function getstatus_ifaces_<?=$widgetkey_nodash?>() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/interfaces.widget.php',
 		dataType: 'html',
+		data: { widgetkey: "<?=$widgetkey?>" },
 		dataFilter: function(raw){
 			// We reload the entire widget, strip this block of javascript from it
 			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
 		},
 		success: function(data){
-			$('#ifaces_status').html(data);
+			$('#ifaces_status_<?=$widgetkey?>').html(data);
 		},
 		error: function(){
-			$('#ifaces_status').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
+			$('#ifaces_status_<?=$widgetkey?>').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
 		}
 	});
 }
 
 	events.push(function(){
-		setInterval('getstatus_ifaces()', "<?=$widgetperiod?>");
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
+		setInterval('getstatus_ifaces_<?=$widgetkey_nodash?>()', "<?=$widgetperiod?>");
 	});
 //]]>
 </script>

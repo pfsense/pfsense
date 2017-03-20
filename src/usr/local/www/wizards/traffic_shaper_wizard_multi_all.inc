@@ -19,6 +19,9 @@
  * limitations under the License.
  */
 
+require_once("config.inc");
+require_once("interfaces.inc");
+require_once("util.inc");
 
 function step1_stepbeforeformdisplay() {
 	global $stepid, $savemsg, $pkg;
@@ -1727,7 +1730,7 @@ function apply_all_chosen_items() {
 			}
 		}
 	}
-	write_config();
+	write_config(gettext("Shaper configuration saved via pfSense traffic shaper wizard."));
 }
 
 function wizard_get_bandwidthtype_scale($type = "b") {

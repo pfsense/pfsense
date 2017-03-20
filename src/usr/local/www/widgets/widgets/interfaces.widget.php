@@ -49,14 +49,21 @@ if ($_POST['widgetkey']) {
 	header("Location: /index.php");
 }
 
+// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
+// When the ajax call is made to refresh the interfaces table, 'widgetkey' comes in $_REQUEST.
+if ($_REQUEST['widgetkey']) {
+	$widgetkey = $_REQUEST['widgetkey'];
+}
+
 ?>
 
-<div class="table-responsive" id="ifaces_status">
+<div class="table-responsive" id="ifaces_status_<?=$widgetkey?>">
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 
 <?php
 $skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
 $interface_is_displayed = false;
 
 foreach ($ifdescrs as $ifdescr => $ifname):
@@ -189,36 +196,38 @@ endif;
 	</div>
 </form>
 
-<script>
-//<![CDATA[
-	events.push(function(){
-		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
-	});
-//]]>
-</script>
+<?php
+
+/* for AJAX response, we only need the panels */
+if ($_REQUEST['widgetkey']) {
+	exit;
+}
+?>
 
 <script type="text/javascript">
 //<![CDATA[
-function getstatus_ifaces() {
+function getstatus_ifaces_<?=$widgetkey_nodash?>() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/interfaces.widget.php',
 		dataType: 'html',
+		data: { widgetkey: "<?=$widgetkey?>" },
 		dataFilter: function(raw){
 			// We reload the entire widget, strip this block of javascript from it
 			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
 		},
 		success: function(data){
-			$('#ifaces_status').html(data);
+			$('#ifaces_status_<?=$widgetkey?>').html(data);
 		},
 		error: function(){
-			$('#ifaces_status').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
+			$('#ifaces_status_<?=$widgetkey?>').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
 		}
 	});
 }
 
 	events.push(function(){
-		setInterval('getstatus_ifaces()', "<?=$widgetperiod?>");
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
+		setInterval('getstatus_ifaces_<?=$widgetkey_nodash?>()', "<?=$widgetperiod?>");
 	});
 //]]>
 </script>

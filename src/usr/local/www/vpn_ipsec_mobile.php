@@ -294,7 +294,7 @@ if ($_POST['save']) {
 
 		$a_client = $client;
 
-		write_config();
+		write_config(gettext("Saved IPsec Mobile Clients configuration."));
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec_mobile.php");

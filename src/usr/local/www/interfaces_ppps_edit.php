@@ -241,9 +241,6 @@ if ($_POST['save']) {
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
-	if ($_POST['provider'] && !is_domain($_POST['provider'])) {
-		$input_errors[] = gettext("The Service name contains invalid characters.");
-	}
 	if ($_POST['provider'] && $_POST['null_service']) {
 		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
 	}
@@ -1235,4 +1232,3 @@ events.push(function() {
 <?php
 
 include("foot.inc");
-

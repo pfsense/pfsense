@@ -348,7 +348,7 @@ if ($_POST) {
 			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
 
-		write_config();
+		write_config(gettext("Changed Advanced Firewall/NAT settings."));
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&

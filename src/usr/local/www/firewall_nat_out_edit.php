@@ -146,6 +146,10 @@ if ($_POST['save']) {
 	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 		if ($newpost <> $temp) {
@@ -406,10 +410,12 @@ function build_target_list() {
 
 	$list[""] = gettext('Interface Address');
 
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -419,13 +425,17 @@ function build_target_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+	asort($templist);
+	//Append sorted IP array onto main array
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	foreach ($a_aliases as $alias) {
 		if ($alias['type'] != "host") {

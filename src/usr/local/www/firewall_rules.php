@@ -940,7 +940,7 @@ events.push(function() {
 			}
 		});
 
-		// If so, change the icon to show the insetion point
+		// If so, change the icon to show the insertion point
 		if (ruleselected) {
 			if (e.shiftKey) {
 				$(this).removeClass().addClass("fa fa-lg fa-arrow-down text-danger");

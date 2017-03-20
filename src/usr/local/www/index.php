@@ -445,6 +445,38 @@ function updateWidgets(newWidget) {
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
+// Determine if all the checkboxes are checked
+function are_all_checked(checkboxes) {
+	var allBoxesChecked = true;
+	$(checkboxes).each(function() {
+		if ((this.type == 'checkbox') && !this.checked) {
+			allBoxesChecked = false;
+		}
+	});
+	return allBoxesChecked;
+}
+
+// If the checkboxes are all checked, then clear them all.
+// Otherwise set them all.
+function set_clear_checkboxes(checkboxes) {
+	checkTheBoxes = !are_all_checked(checkboxes);
+
+	$(checkboxes).each(function() {
+		$(this).prop("checked", checkTheBoxes);
+	});
+}
+
+// Set the given id to All or None button depending if the checkboxes are all checked.
+function set_all_none_button(checkboxes, id) {
+	if (are_all_checked(checkboxes)) {
+		text = "<?=gettext('None')?>";
+	} else {
+		text = "<?=gettext('All')?>";
+	}
+
+	$("#" + id).html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
+}
+
 events.push(function() {
 
 	// Make panels destroyable

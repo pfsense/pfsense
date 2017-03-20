@@ -2369,6 +2369,23 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
+/*
+ * Given a string of text with some delimiter, look for occurrences
+ * of some string and replace all of those.
+ * $text - the text string (e.g. "abc,defg,x123,ipv4,xyz")
+ * $delimiter - the delimiter (e.g. ",")
+ * $element - the element to match (e.g. "defg")
+ * $replacement - the string to replace it with (e.g. "42")
+ * Returns the resulting delimited string (e.g. "abc,42,x123,ipv4,xyz")
+ */
+function replace_element_in_list($text, $delimiter, $element, $replacement) {
+	$textArray = explode($delimiter, $text);
+	while (($entry = array_search($element, $textArray)) !== false) {
+		$textArray[$entry] = $replacement;
+	}
+	return implode(',', $textArray);
+}
+
 /* Try to change a static route, if it doesn't exist, add it */
 function route_add_or_change($args) {
 	global $config;

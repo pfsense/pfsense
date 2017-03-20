@@ -46,6 +46,9 @@ function gmirrorStatusUpdateFromServer() {
 		},
 		success: function(data){
 			$('#gmirror_status').html(data);
+		},
+		error: function(){
+			$('#gmirror_status').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
 		}
 	});
 }

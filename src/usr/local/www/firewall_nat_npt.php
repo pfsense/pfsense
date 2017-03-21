@@ -54,7 +54,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 
 		$a_npt = $a_npt_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - reordered NPt mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -76,7 +76,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	if ($a_npt[$_POST['id']]) {
 		unset($a_npt[$_POST['id']]);
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - deleted NPt mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_npt.php");
@@ -91,7 +91,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_npt[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - deleted selected NPt mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -103,10 +103,12 @@ if (isset($_POST['del_x'])) {
 	if ($a_npt[$_POST['id']]) {
 		if (isset($a_npt[$_POST['id']]['disabled'])) {
 			unset($a_npt[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: NPt - enabled NPt rule.');
 		} else {
 			$a_npt[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: NPt - disabled NPt rule.');
 		}
-		if (write_config(gettext("Firewall: NAT: NPt, enable/disable NAT rule"))) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_npt.php");

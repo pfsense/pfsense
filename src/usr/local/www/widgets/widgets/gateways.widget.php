@@ -70,6 +70,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 if ($_POST) {
+
+
 	if (!is_array($user_settings["widgets"]["gateways_widget"])) {
 		$user_settings["widgets"]["gateways_widget"] = array();
 	}
@@ -78,7 +80,7 @@ if ($_POST) {
 		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
 
-	if (is_array($_POST['gatewaysfilter'])) {
+	if (is_array($_POST['show'])) {
 		$validNames = array();
 		$a_gateways = return_gateways_array();
 
@@ -86,7 +88,7 @@ if ($_POST) {
 			array_push($validNames, $gname);
 		}
 
-		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', array_intersect($validNames, $_POST['gatewaysfilter']));
+		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
 		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = "";
 	}
@@ -142,7 +144,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 					$display_type_both_ip = "checked";
 				}
 			}
-		?>
+?>
 		<div class="col-sm-6">
 			<div class="radio">
 				<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <?=gettext('Gateway IP')?></label>
@@ -155,26 +157,44 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 			</div>
 		</div>
 	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label"><?=gettext('Hidden gateways')?></label>
-		<div class="col-sm-6">
-			<select multiple id="gatewaysfilter" name="gatewaysfilter[]" class="form-control">
-			<?php
+
+	<br />
+
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>Gateway</th>
+							<th>Show</th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
 				$a_gateways = return_gateways_array();
 				$hiddengateways = explode(",", $user_settings["widgets"]["gateways_widget"]["gatewaysfilter"]);
+				$idx = 0;
+
 				foreach ($a_gateways as $gname => $gateway):
-			?>
-				<option value=<?=$gname?> <?=(in_array($gname, $hiddengateways)?'selected':'')?>><?=$gname?></option>
-			<?php
+?>
+						<tr>
+							<td><?=$gname?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$gname?>" type="checkbox" <?=(!in_array($gname, $hiddengateways) ? 'checked':'')?>></td>
+						</tr>
+<?php
 				endforeach;
-			?>
-			</select>
+?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
+
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="clearallgateways" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('Clear')?></button>
+			<button id="showallgateways" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -200,8 +220,10 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
-		$("#clearallgateways").click(function() {
-			$('select#gatewaysfilter option').removeAttr("selected");
+		$("#showallgateways").click(function() {
+			$("[id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
 		});
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't

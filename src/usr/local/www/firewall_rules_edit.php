@@ -1012,7 +1012,7 @@ if ($_POST['save']) {
 
 		filter_rules_sort();
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
 

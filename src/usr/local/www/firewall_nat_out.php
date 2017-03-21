@@ -62,7 +62,7 @@ if (isset($_REQUEST['order-store'])) {
 
 		$a_out = $a_out_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - reordered outbound NAT mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -139,7 +139,7 @@ if ($_POST['save']) {
 
 	$config['nat']['outbound']['mode'] = $_POST['mode'];
 
-	if (write_config()) {
+	if (write_config(gettext("Firewall: NAT: Outbound - saved outbound NAT settings."))) {
 		mark_subsystem_dirty('natconf');
 	}
 
@@ -152,7 +152,7 @@ if ($_POST['act'] == "del") {
 
 	if ($a_out[$_POST['id']]) {
 		unset($a_out[$_POST['id']]);
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - deleted outbound NAT mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -173,7 +173,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_out[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - deleted selected outbound NAT mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -185,10 +185,12 @@ if (isset($_POST['del_x'])) {
 	if ($a_out[$_POST['id']]) {
 		if (isset($a_out[$_POST['id']]['disabled'])) {
 			unset($a_out[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: Outbound - enabled outbound NAT rule.');
 		} else {
 			$a_out[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: Outbound - disabled outbound NAT rule.');
 		}
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 

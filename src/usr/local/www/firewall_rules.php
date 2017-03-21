@@ -187,7 +187,7 @@ if ($_POST['act'] == "del") {
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -223,7 +223,7 @@ if (isset($_POST['del_x'])) {
 		}
 
 		if ($deleted) {
-			if (write_config()) {
+			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
 				mark_subsystem_dirty('filter');
 			}
 		}
@@ -235,10 +235,12 @@ if (isset($_POST['del_x'])) {
 	if ($a_filter[$_POST['id']]) {
 		if (isset($a_filter[$_POST['id']]['disabled'])) {
 			unset($a_filter[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: Rules - enabled a firewall rule.');
 		} else {
 			$a_filter[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: Rules - disabled a firewall rule.');
 		}
-		if (write_config()) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -289,7 +291,7 @@ if (isset($_POST['del_x'])) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: Rules - reordered firewall rules."))) {
 			mark_subsystem_dirty('filter');
 		}
 

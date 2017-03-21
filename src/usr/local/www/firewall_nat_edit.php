@@ -520,7 +520,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
 			mark_subsystem_dirty('natconf');
 		}
 

@@ -382,7 +382,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - saved/edited outbound NAT mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_out.php");

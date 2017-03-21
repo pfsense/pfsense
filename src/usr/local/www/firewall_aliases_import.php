@@ -183,7 +183,7 @@ if ($_POST) {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config()) {
+		if (write_config(gettext("Imported a firewall alias."))) {
 			mark_subsystem_dirty('aliases');
 		}
 

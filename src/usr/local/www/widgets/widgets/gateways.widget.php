@@ -70,12 +70,29 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 if ($_POST) {
+
+
 	if (!is_array($user_settings["widgets"]["gateways_widget"])) {
 		$user_settings["widgets"]["gateways_widget"] = array();
 	}
+
 	if (isset($_POST["display_type"])) {
 		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
+
+	if (is_array($_POST['show'])) {
+		$validNames = array();
+		$a_gateways = return_gateways_array();
+
+		foreach ($a_gateways as $gname => $gateway) {
+			array_push($validNames, $gname);
+		}
+
+		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = "";
+	}
+
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated gateways widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
@@ -103,55 +120,86 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	</table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div>
-
-<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
-<input type="hidden" id="gateways-config" name="gateways-config" value="" />
-
-<div id="gateways-settings" class="widgetconfigdiv" >
-	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
-		Display:
-			<?php
-				$display_type_gw_ip = "checked";
-				$display_type_monitor_ip = "";
-				$display_type_both_ip = "";
-				if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
-					$selected_radio = $user_settings["widgets"]["gateways_widget"]["display_type"];
-					if ($selected_radio == "gw_ip") {
-						$display_type_gw_ip = "checked";
-						$display_type_monitor_ip = "";
-						$display_type_both_ip = "";
-					} else if ($selected_radio == "monitor_ip") {
-						$display_type_gw_ip = "";
-						$display_type_monitor_ip = "checked";
-						$display_type_both_ip = "";
-					} else if ($selected_radio == "both_ip") {
-						$display_type_gw_ip = "";
-						$display_type_monitor_ip = "";
-						$display_type_both_ip = "checked";
-					}
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+<form action="/widgets/widgets/gateways.widget.php" method="post" class="form-horizontal">
+	<div class="form-group">
+		<label class="col-sm-3 control-label"><?=gettext('Display')?></label>
+		<?php
+			$display_type_gw_ip = "checked";
+			$display_type_monitor_ip = "";
+			$display_type_both_ip = "";
+			if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
+				$selected_radio = $user_settings["widgets"]["gateways_widget"]["display_type"];
+				if ($selected_radio == "gw_ip") {
+					$display_type_gw_ip = "checked";
+					$display_type_monitor_ip = "";
+					$display_type_both_ip = "";
+				} else if ($selected_radio == "monitor_ip") {
+					$display_type_gw_ip = "";
+					$display_type_monitor_ip = "checked";
+					$display_type_both_ip = "";
+				} else if ($selected_radio == "both_ip") {
+					$display_type_gw_ip = "";
+					$display_type_monitor_ip = "";
+					$display_type_both_ip = "checked";
 				}
-			?>
-
-		<div class="radio">
-			<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <?=gettext('Gateway IP')?></label>
+			}
+?>
+		<div class="col-sm-6">
+			<div class="radio">
+				<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <?=gettext('Gateway IP')?></label>
+			</div>
+			<div class="radio">
+				<label><input name="display_type" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Monitor IP')?></label>
+			</div>
+			<div class="radio">
+				<label><input name="display_type" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Both')?></label>
+			</div>
 		</div>
-		<div class="radio">
-			<label><input name="display_type" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Monitor IP')?></label>
-		</div>
-		<div class="radio">
-			<label><input name="display_type" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Both')?></label>
-		</div>
-		<br />
-		<button id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="btn btn-primary btn-sm" value="<?=gettext('Save Settings')?>">
-			<i class="fa fa-save icon-embed-btn"></i>
-			<?=gettext('Save Settings')?>
-		</button>
+	</div>
 
-	</form>
-</div>
+	<br />
 
-<script type="text/javascript">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Gateway")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$a_gateways = return_gateways_array();
+				$hiddengateways = explode(",", $user_settings["widgets"]["gateways_widget"]["gatewaysfilter"]);
+				$idx = 0;
+
+				foreach ($a_gateways as $gname => $gateway):
+?>
+						<tr>
+							<td><?=$gname?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$gname?>" type="checkbox" <?=(!in_array($gname, $hiddengateways) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallgateways" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>
+
+<script>
 //<![CDATA[
 
 	function get_gw_stats() {
@@ -172,6 +220,12 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
+		$("#showallgateways").click(function() {
+			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
+		});
+
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
 		setTimeout(get_gw_stats, Math.floor((Math.random() * 10000) + 1000));
@@ -195,7 +249,15 @@ function compose_table_body_contents() {
 		$display_type = "gw_ip";
 	}
 
+	$hiddengateways = explode(",", $user_settings["widgets"]["gateways_widget"]["gatewaysfilter"]);
+	$gw_displayed = false;
+
 	foreach ($a_gateways as $gname => $gateway) {
+		if (in_array($gname, $hiddengateways)) {
+			continue;
+		}
+
+		$gw_displayed = true;
 		$rtnstr .= "<tr>\n";
 		$rtnstr .= 	"<td>\n";
 		$rtnstr .= htmlspecialchars($gateway['name']) . "<br />";
@@ -280,11 +342,23 @@ function compose_table_body_contents() {
 			$bgcolor = "info";  // lightblue
 		}
 
-		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n";
-		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['stddev']) : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['delay'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['delay'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['stddev'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['stddev'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
 		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n";
 		$rtnstr .= '<td class="bg-' . $bgcolor . '">' . $online . "</td>\n";
 		$rtnstr .= "</tr>\n";
+	}
+
+	if (!$gw_displayed) {
+		$rtnstr .= '<tr>';
+		$rtnstr .= 	'<td colspan="5">';
+		if (count($a_gateways)) {
+			$rtnstr .= gettext('All gateways are hidden.');
+		} else {
+			$rtnstr .= gettext('No gateways found.');
+		}
+		$rtnstr .= '</td>';
+		$rtnstr .= '</tr>';
 	}
 	return($rtnstr);
 }

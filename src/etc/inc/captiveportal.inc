@@ -2328,7 +2328,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 	}
 
 	if ($writecfg == true) {
-		write_config();
+		write_config(gettext("Captive Portal allowed users configuration changed"));
 	}
 
 	/* redirect user to desired destination */

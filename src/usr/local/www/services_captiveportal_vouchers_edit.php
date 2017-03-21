@@ -34,11 +34,7 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 require_once("voucher.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower(htmlspecialchars($cpzone));
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -48,6 +44,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
@@ -63,13 +60,8 @@ if (!is_array($config['voucher'][$cpzone]['roll'])) {
 }
 
 $a_roll = &$config['voucher'][$cpzone]['roll'];
+$id = $_REQUEST['id'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
 
 if (isset($id) && $a_roll[$id]) {
 	$pconfig['zone'] = $a_roll[$id]['zone'];
@@ -82,7 +74,7 @@ if (isset($id) && $a_roll[$id]) {
 $maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;	// Highest Roll#
 $maxcount = (1<<$config['voucher'][$cpzone]['ticketbits']) -1;	 // Highest Ticket#
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

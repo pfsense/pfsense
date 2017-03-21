@@ -140,7 +140,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	stream_set_blocking($pipes[2], 0);
 
 	/* XXX: should be a tunnable? */
-	$timeout = 300; // seconds
+	$timeout = 60; // seconds
 	$error_log = '';
 
 	do {
@@ -148,7 +148,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		$read = array($pipes[1], $pipes[2]);
 		$except = array();
 
-		$stream = stream_select($read, $write, $except, null, $timeout);
+		$stream = stream_select($read, $write, $except, $timeout);
 		if ($stream !== FALSE && $stream > 0) {
 			foreach ($read as $pipe) {
 				$content = stream_get_contents($pipe);
@@ -938,7 +938,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			}
 		}
 		/* deinstall commands */
-		if ($when == "post-deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
+		if ($when == "deinstall" && $pkg_config['custom_php_deinstall_command'] <> "") {
 			update_status(gettext("Deinstall commands... "));
 			if ($missing_include == false) {
 				eval_once($pkg_config['custom_php_deinstall_command']);
@@ -952,7 +952,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 	$need_syslog_restart = false;
 	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
 		update_status(gettext("Syslog entries... "));
-		@unlink("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
+		@unlink_if_exists("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		update_status("done.\n");
 		$need_syslog_restart = true;
 	}
@@ -963,14 +963,12 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		unset($config['installedpackages']['package'][$pkgid]);
 		update_status(gettext("done.") . "\n");
 		write_config(sprintf(gettext("Removed %s package."), $package_name));
+		/* remove package entry from /etc/syslog.conf if needed */
+		/* this must be done after removing the entries from config.xml */
+		if ($need_syslog_restart) {
+			system_syslogd_start();
+		}
 	}
-
-	/* remove package entry from /etc/syslog.conf if needed */
-	/* this must be done after removing the entries from config.xml */
-	if ($need_syslog_restart) {
-		system_syslogd_start();
-	}
-
 }
 
 /*
@@ -1131,6 +1129,14 @@ function get_base_pkg_name() {
 function get_system_pkg_version($baseonly = false) {
 	global $g;
 
+	$output = exec("/usr/local/sbin/{$g['product_name']}-upgrade -c", $_gc,
+	    $rc);
+
+	/* pfSense-upgrade returns 2 when there is a new version */
+	if ($rc == 2) {
+		$new_version = explode(' ', $output)[0];
+	}
+
 	$base_pkg = get_base_pkg_name();
 	$meta_pkg = get_meta_pkg_name();
 
@@ -1138,23 +1144,24 @@ function get_system_pkg_version($baseonly = false) {
 		return false;
 	}
 
-	$info = get_pkg_info($base_pkg);
-	$pkg_name = $base_pkg;
+	$info = get_pkg_info($base_pkg, true);
 
 	$pkg_info = array();
 	foreach ($info as $item) {
 		if ($item['name'] == $base_pkg) {
 			$pkg_info = $item;
+			break;
 		}
 	}
 
-	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] == $pkg_info['installed_version']))) {
-		$info = get_pkg_info($meta_pkg);
-		$pkg_name = $meta_pkg;
+	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
+	    $pkg_info['installed_version']))) {
+		$info = get_pkg_info($meta_pkg, true);
 
 		foreach ($info as $item) {
 			if ($item['name'] == $meta_pkg) {
 				$pkg_info = $item;
+				break;
 			}
 		}
 	}
@@ -1164,8 +1171,7 @@ function get_system_pkg_version($baseonly = false) {
 	}
 
 	return array(
-	    'pkg_name'          => $pkg_name,
-	    'version'           => $pkg_info['version'],
+	    'version'           => $new_version ?: $pkg_info['version'],
 	    'installed_version' => $pkg_info['installed_version']
 	);
 }

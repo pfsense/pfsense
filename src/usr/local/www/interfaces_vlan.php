@@ -130,7 +130,7 @@ display_top_tabs($tab_array);
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" usepost></a>
+								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php

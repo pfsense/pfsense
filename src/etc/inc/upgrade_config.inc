@@ -5147,4 +5147,49 @@ function upgrade_160_to_161() {
 	}
 }
 
+/* Previous versions of pfSense had cryptodev built into the kernel.
+ * To retain the expected behavior on upgrade, load the cryptodev
+ * module for users that did not choose a module.
+ */
+function upgrade_161_to_162() {
+	global $config;
+	if (empty($config['system']['crypto_hardware'])) {
+		$config['system']['crypto_hardware'] = "cryptodev";
+	}
+}
+
+/* Traffic graphs widget settings are now stored in a layout similar
+ * to other widgets. Migrate any old settings.
+ */
+function upgrade_162_to_163() {
+	require_once("ipsec.inc");
+	global $config;
+
+	foreach (array('refreshinterval', 'invert', 'size', 'backgroundupdate') as $setting) {
+		if (isset($config['widgets']['trafficgraphs'][$setting])) {
+			$config['widgets']['traffic_graphs'][$setting] = $config['widgets']['trafficgraphs'][$setting];
+			unset($config['widgets']['trafficgraphs'][$setting]);
+		}
+	}
+
+	if (isset($config['widgets']['trafficgraphs']['shown'])) {
+		if (is_array($config['widgets']['trafficgraphs']['shown']['item'])) {
+			$ifdescrs = get_configured_interface_with_descr();
+
+			if (ipsec_enabled()) {
+				$ifdescrs['enc0'] = "IPsec";
+			}
+
+			$validNames = array();
+
+			foreach ($ifdescrs as $ifdescr => $ifname) {
+				array_push($validNames, $ifdescr);
+			}
+
+			$config['widgets']['traffic_graphs']['filter'] = implode(',', array_diff($validNames, $config['widgets']['trafficgraphs']['shown']['item']));
+		}
+
+		unset($config['widgets']['trafficgraphs']['shown']);
+	}
+}
 ?>

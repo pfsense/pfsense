@@ -73,7 +73,9 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 }
 
 $crypto_modules = array(
-	'aesni' => gettext("AES-NI CPU-based Acceleration"));
+	'aesni' => gettext("AES-NI CPU-based Acceleration"),
+	'cryptodev' => gettext("BSD Crypto Device (cryptodev)")
+);
 
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
@@ -443,15 +445,12 @@ $section->addInput(new Form_Select(
 	'Cryptographic Hardware',
 	$pconfig['crypto_hardware'],
 	['' => gettext('None')] + $crypto_modules
-))->setHelp('A cryptographic '.
-	'accelerator module will use hardware support to speed up some cryptographic '.
-	'functions on systems which have the chip. Do not enable this option with '.
-	'a Hifn cryptographic acceleration card, as this will take precedence and the '.
-	'Hifn card will not be used. Acceleration should be automatic for IPsec when '.
-	'using a cipher supported by the chip, such as AES-128. OpenVPN should be set '.
-	'for AES-128-CBC and have cryptodev enabled for hardware acceleration. If there '.
-	'is not a crypto chip in the system, this option will have no effect. To '.
-	'unload the selected module, set this option to "none" and then reboot.');
+))->setHelp('A cryptographic accelerator module will use hardware support to speed up some cryptographic '.
+	'functions on systems which have the chip. '.
+	'Loading the BSD Crypto Device module will allow access to acceleration devices using drivers '.
+	'built into the kernel, such as Hifn or ubsec chipsets. '.
+	'If the firewall does not contain a crypto chip, this option will have no effect. '.
+	'To unload the selected module, set this option to "none" and then reboot.');
 
 $section->addInput(new Form_Select(
 	'thermal_hardware',
@@ -508,56 +507,62 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['use_mfs_tmpvar']
 ))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
-	'cause the data in /tmp and /var to be lost, including log data. RRD '.
-	'and DHCP Leases will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
+	'cause the data in /tmp and /var to be lost. RRD, '.
+	'DHCP leases and log directory will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
 
-$section->addInput(new Form_Input(
+$group = new Form_Group('RAM Disk Size');
+
+$group->add(new Form_Input(
 	'use_mfs_tmp_size',
 	'/tmp RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_tmp_size'],
 	['placeholder' => 40]
-))->setHelp('Set the size, in MiB, for the /tmp '.
-	'RAM disk. Leave blank for 40MiB. Do not set lower than 40.');
+))->setHelp('/tmp RAM Disk<br />Do not set lower than 40.');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'use_mfs_var_size',
 	'/var RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_var_size'],
 	['placeholder' => 60]
-))->setHelp('Set the size, in MiB, for the /var '.
-	'RAM disk. Leave blank for 60MiB. Do not set lower than 60.');
+))->setHelp('/var RAM Disk<br />Do not set lower than 60.');
 
-$section->addInput(new Form_Input(
+$group->setHelp('Sets the size, in MiB, for the RAM disks.');
+
+$section->add($group);
+
+$group = new Form_Group('Periodic RAM Disk Data Backups');
+
+$group->add(new Form_Input(
 	'rrdbackup',
 	'Periodic RRD Backup',
 	'number',
 	$config['system']['rrdbackup'],
-	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
-))->setHelp('This will periodically backup the RRD data so '.
-	'it can be restored automatically on the next boot. Keep in mind that the more '.
-	'frequent the backup, the more writes will happen to the media.');
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('RRD Data');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'dhcpbackup',
 	'Periodic DHCP Leases Backup',
 	'number',
 	$config['system']['dhcpbackup'],
-	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
-))->setHelp('This will periodically backup the DHCP leases so '.
-	'it can be restored automatically on the next boot. Keep in mind that the more '.
-	'frequent the backup, the more writes will happen to the media.');
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('DHCP Leases');
 
-$section->addInput(new Form_Input(
+$group->add(new Form_Input(
 	'logsbackup',
 	'Periodic Logs Backup',
 	'number',
 	$config['system']['logsbackup'],
-	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
-))->setHelp('This will periodically backup the log directory so '.
-	'it can be restored automatically on the next boot. Keep in mind that the more '.
+	['min' => 0, 'max' => 24, 'placeholder' => '1 to 24 hours']
+))->setHelp('Log Directory');
+
+$group->setHelp('Sets the interval, in hours, to periodically backup these portions of RAM disk data so '.
+	'they can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');
+
+$section->add($group);
 
 $form->add($section);
 

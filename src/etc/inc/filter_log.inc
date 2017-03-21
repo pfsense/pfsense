@@ -559,7 +559,7 @@ function find_action_image($action) {
 /* AJAX specific handlers */
 function handle_ajax() {
 	global $config;
-	if (($_GET['lastsawtime'] or $_POST['lastsawtime']) and ($_GET['logfile'] or $_POST['logfile'])) {
+	if ($_REQUEST['lastsawtime'] && $_REQUEST['logfile']) {
 
 		$lastsawtime = getGETPOSTsettingvalue('lastsawtime', null);
 		$logfile = getGETPOSTsettingvalue('logfile', null);

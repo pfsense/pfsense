@@ -42,6 +42,7 @@ function get_country_providers($country) {
 			return is_array($sp['provider'][0]) ? $sp['provider'] : array($sp['provider']);
 		}
 	}
+	$provider_list = (is_array($provider_list)) ? $provider_list : array();
 	return $provider_list;
 }
 
@@ -59,8 +60,12 @@ function country_list() {
 
 function providers_list($country) {
 	$serviceproviders = get_country_providers($country);
-	foreach ($serviceproviders as $sp) {
-		echo $sp['name']['value'] . "\n";
+	if (is_array($serviceproviders)) {
+		foreach ($serviceproviders as $sp) {
+			echo $sp['name']['value'] . "\n";
+		}
+	} else {
+		$serviceproviders = array();
 	}
 }
 
@@ -124,15 +129,15 @@ function provider_plans_list($country, $provider) {
 	}
 }
 
-$_GET_OR_POST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_GET;
+$_REQ_OR_POST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? $_POST : $_REQUEST;
 
-if (isset($_GET_OR_POST['country']) && !isset($_GET_OR_POST['provider'])) {
-	providers_list($_GET_OR_POST['country']);
-} elseif (isset($_GET_OR_POST['country']) && isset($_GET_OR_POST['provider'])) {
-	if (isset($_GET_OR_POST['plan'])) {
-		provider_plan_data($_GET_OR_POST['country'], $_GET_OR_POST['provider'], $_GET_OR_POST['plan']);
+if (isset($_REQ_OR_POST['country']) && !isset($_REQ_OR_POST['provider'])) {
+	providers_list($_REQ_OR_POST['country']);
+} elseif (isset($_REQ_OR_POST['country']) && isset($_REQ_OR_POST['provider'])) {
+	if (isset($_REQ_OR_POST['plan'])) {
+		provider_plan_data($_REQ_OR_POST['country'], $_REQ_OR_POST['provider'], $_REQ_OR_POST['plan']);
 	} else {
-		provider_plans_list($_GET_OR_POST['country'], $_GET_OR_POST['provider']);
+		provider_plans_list($_REQ_OR_POST['country'], $_REQ_OR_POST['provider']);
 	}
 } else {
 	country_list();

@@ -65,7 +65,7 @@ if ($_POST['apply']) {
 		foreach ($_POST['p1entry'] as $p1entrydel) {
 			unset($a_phase1[$p1entrydel]);
 		}
-		if (write_config()) {
+		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
@@ -75,7 +75,7 @@ if ($_POST['apply']) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
 			unset($a_phase2[$p2entrydel]);
 		}
-		if (write_config()) {
+		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
@@ -209,7 +209,7 @@ if ($_POST['apply']) {
 	}
 
 	if ($save === 1) {
-		if (write_config()) {
+		if (write_config(gettext("Saved configuration changes for IPsec tunnels."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}

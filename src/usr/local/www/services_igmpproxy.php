@@ -39,7 +39,7 @@ if (!is_array($config['igmpproxy']['igmpentry'])) {
 //igmpproxy_sort();
 $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 
-if ($_POST) {
+if ($_POST['apply']) {
 	$pconfig = $_POST;
 
 	$changes_applied = true;
@@ -50,9 +50,9 @@ if ($_POST) {
 	clear_subsystem_dirty('igmpproxy');
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_igmpproxy[$_GET['id']]) {
-		unset($a_igmpproxy[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	if ($a_igmpproxy[$_POST['id']]) {
+		unset($a_igmpproxy[$_POST['id']]);
 		write_config();
 		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
@@ -116,7 +116,7 @@ foreach ($a_igmpproxy as $igmpentry):
 							</td>
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php
@@ -131,10 +131,6 @@ endforeach;
 </form>
 
 <nav class="action-buttons">
-	<button id="submit" name="submit" type="submit" class="btn btn-primary btn-sm" value="<?=gettext("Save")?>">
-		<i class="fa fa-save icon-embed-btn"></i>
-		<?=gettext("Save")?>
-	</button>
 	<a href="services_igmpproxy_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext('Add')?>

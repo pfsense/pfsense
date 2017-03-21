@@ -53,13 +53,7 @@ if (!is_array($config['unbound']['hosts'])) {
 }
 
 $a_hosts = &$config['unbound']['hosts'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_hosts[$id]) {
 	$pconfig['host'] = $a_hosts[$id]['host'];
@@ -69,7 +63,7 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -172,29 +166,11 @@ if ($_POST) {
 
 		mark_subsystem_dirty('unbound');
 
-		write_config();
+		write_config(gettext("Host override configured for DNS Resolver."));
 
 		header("Location: services_unbound.php");
 		exit;
 	}
-}
-
-// Delete a row in the options table
-if ($_GET['act'] == "delopt") {
-	$idx = $_GET['id'];
-
-	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
-	   unset($pconfig['aliases']['item'][$idx]);
-	}
-}
-
-// Add an option row
-if ($_GET['act'] == "addopt") {
-	if (!is_array($pconfig['aliases']['item'])) {
-		$pconfig['aliases']['item'] = array();
-	}
-
-	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"), gettext("Edit Host Override"));
@@ -216,21 +192,21 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['host']
 ))->setHelp('Name of the host, without the domain part%1$s' .
-			'e.g.: "myhost"', '<br />');
+			'e.g. enter "myhost" if the full domain name is "myhost.example.com"', '<br />');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'*Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain of the host%1$s' .
-			'e.g.: "example.com"', '<br />');
+))->setHelp('Parent domain of the host%1$s' .
+			'e.g. enter "example.com" for "myhost.example.com"', '<br />');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
 	'*IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the host%1$s' .
+))->setHelp('IPv4 or IPv6 address to be returned for the host%1$s' .
 			'e.g.: 192.168.100.100 or fd00:abcd::1', '<br />');
 
 $section->addInput(new Form_Input(
@@ -248,6 +224,18 @@ if (isset($id) && $a_hosts[$id]) {
 		$pconfig['id']
 	));
 }
+
+$section->addInput(new Form_StaticText(
+	'',
+	'<span class="help-block">' .
+	gettext("This page is used to override the usual lookup process for a specific host. A host is defined by its name " .
+		"and parent domain (e.g., 'somesite.google.com' is entered as host='somesite' and parent domain='google.com'). Any " .
+		"attempt to lookup that host will automatically return the given IP address, and any usual external lookup server for " .
+		"the domain will not be queried. Both the name and parent domain can contain 'non-standard', 'invalid' and 'local' " .
+		"domains such as 'test', 'mycompany.localdomain', or '1.168.192.in-addr.arpa', as well as usual publicly resolvable names ".
+		"such as 'www' or 'google.co.uk'.") .
+	'</span>'
+));
 
 $form->add($section);
 
@@ -304,6 +292,13 @@ $form->addGlobal(new Form_Button(
 	null,
 	'fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');
+
+$section->addInput(new Form_StaticText(
+	'',
+	'<span class="help-block">'.
+	gettext("If the host can be accessed using multiple names, then enter any other names for the host which should also be overridden.") .
+	'</span>'
+));
 
 $form->add($section);
 print($form);

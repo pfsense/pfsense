@@ -41,29 +41,29 @@ function wol_sort() {
 }
 
 require_once("guiconfig.inc");
+
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
+
 $a_wol = &$config['wol']['wolentry'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+
 
 if (isset($id) && $a_wol[$id]) {
 	$pconfig['interface'] = $a_wol[$id]['interface'];
 	$pconfig['mac'] = $a_wol[$id]['mac'];
 	$pconfig['descr'] = $a_wol[$id]['descr'];
 } else {
-	$pconfig['interface'] = $_GET['if'];
-	$pconfig['mac'] = $_GET['mac'];
-	$pconfig['descr'] = $_GET['descr'];
+	$pconfig['interface'] = $_REQUEST['if'];
+	$pconfig['mac'] = $_REQUEST['mac'];
+	$pconfig['descr'] = $_REQUEST['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -101,7 +101,7 @@ if ($_POST) {
 		}
 		wol_sort();
 
-		write_config();
+		write_config(gettext("Configured a wake-on-LAN entry."));
 
 		header("Location: services_wol.php");
 		exit;

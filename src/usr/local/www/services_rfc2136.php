@@ -34,19 +34,19 @@ if (!is_array($config['dnsupdates']['dnsupdate'])) {
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if ($_GET['act'] == "del") {
-	unset($a_rfc2136[$_GET['id']]);
+if ($_POST['act'] == "del") {
+	unset($a_rfc2136[$_POST['id']]);
 
 	write_config();
 
 	header("Location: services_rfc2136.php");
 	exit;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_rfc2136[$_GET['id']]) {
-		if (isset($a_rfc2136[$_GET['id']]['enable'])) {
-			unset($a_rfc2136[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_rfc2136[$_POST['id']]) {
+		if (isset($a_rfc2136[$_POST['id']]['enable'])) {
+			unset($a_rfc2136[$_POST['id']]['enable']);
 		} else {
-			$a_rfc2136[$_GET['id']]['enable'] = true;
+			$a_rfc2136[$_POST['id']]['enable'] = true;
 		}
 		write_config();
 
@@ -122,6 +122,7 @@ foreach ($a_rfc2136 as $rfc2136):
 							<td>
 <?php
 	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+	$filename_v6 = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}_v6.cache";
 	$if = get_failover_interface($rfc2136['interface']);
 
 	if (file_exists($filename)) {
@@ -149,10 +150,10 @@ foreach ($a_rfc2136 as $rfc2136):
 
 	print('<br />');
 
-	if (file_exists("{$filename}.ipv6")) {
+	if (file_exists($filename_v6)) {
 		print('IPv6: ');
 		$ipaddr = get_interface_ipv6($if);
-		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
+		$cached_ip_s = explode("|", file_get_contents($filename_v6));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {
@@ -176,13 +177,13 @@ foreach ($a_rfc2136 as $rfc2136):
 						<a class="fa fa-pencil" title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 					<?php if (isset($rfc2136['enable'])) {
 					?>
-						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a	class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php } else {
 					?>
-						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+						<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 					<?php }
 					?>
-						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 					</tr>
 <?php

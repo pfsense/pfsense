@@ -25,7 +25,7 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 require_once("functions.inc");
 
 global $openssl_digest_algs;
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 global $openssl_crl_status;
 $openssl_crl_status = array(
@@ -463,11 +463,9 @@ function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 }
 
 function csr_complete(& $cert, $str_crt) {
-
-	// return our request information
-	$cert['crt'] = base64_encode($str_crt);
+	$str_key = base64_decode($cert['prv']);
+	cert_import($cert, $str_crt, $str_key);
 	unset($cert['csr']);
-
 	return true;
 }
 

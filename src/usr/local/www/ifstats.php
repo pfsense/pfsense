@@ -81,7 +81,7 @@ if($_POST['if']) {
 
 } else {
 
-	$if = $_GET['if'];
+	$if = $_REQUEST['if'];
 
 	$realif = get_real_interface($if);
 

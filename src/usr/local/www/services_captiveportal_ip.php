@@ -39,11 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower(htmlspecialchars($cpzone));
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -53,6 +49,7 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
@@ -63,11 +60,11 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone][
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
+if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 
-	if ($a_allowedips[$_GET['id']]) {
-		$ipent = $a_allowedips[$_GET['id']];
+	if ($a_allowedips[$_POST['id']]) {
+		$ipent = $a_allowedips[$_POST['id']];
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
@@ -84,7 +81,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 			}
 		}
 
-		unset($a_allowedips[$_GET['id']]);
+		unset($a_allowedips[$_POST['id']]);
 		write_config();
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
@@ -129,7 +126,7 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 				</td>
 				<td>
 					<a class="fa fa-pencil"	title="<?=gettext("Edit IP"); ?>" href="services_captiveportal_ip_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>"></a>
+					<a class="fa fa-trash"	title="<?=gettext("Delete IP")?>" href="services_captiveportal_ip.php?zone=<?=$cpzone?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 				</td>
 			</tr>
 <?php

@@ -439,6 +439,10 @@ function pprint_port($port) {
 	return $pport;
 }
 
+function insert_word_breaks_in_domain_name($domain_name) {
+	return str_replace('.', '<wbr>.', $domain_name);
+}
+
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
 	if ($item['os']) {
@@ -1056,7 +1060,11 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";
 		echo "\n//<![CDATA[\n";
-		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		if ($usepost == 'usepost') {
+			echo " function tabs_will_go(obj){ var target = obj.value.split(\"?\"); postSubmit(get2post(target[1]),target[0]); }\n";
+		} else {
+			echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
+		}
 		echo "//]]>\n";
 		echo "</script>";
 	} else {
@@ -1102,7 +1110,7 @@ function add_package_tabs($tabgroup, &$tab_array) {
 }
 
 function alias_info_popup($alias_id) {
-	global $config;
+	global $config, $user_settings;
 
 	if (!is_array($config['aliases']['alias'][$alias_id])) {
 		return;
@@ -1112,7 +1120,13 @@ function alias_info_popup($alias_id) {
 	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
-	if ($alias['url']) {
+	if ($user_settings['webgui']['disablealiaspopupdetail']) {
+		if (strlen($alias['descr']) >= $maxlength) {
+			$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+		}
+
+		$content .= $alias['descr'];
+	} else if ($alias['url']) {
 		// TODO: Change it when pf supports tables with ports
 		if ($alias['type'] == "urltable") {
 			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
@@ -1154,10 +1168,6 @@ function alias_info_popup($alias_id) {
 
 		$content .= "</tbody>\n";
 		$content .= "<table>\n";
-	}
-
-	if (strlen($alias['descr']) >= $maxlength) {
-		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
 	}
 
 	return $content;

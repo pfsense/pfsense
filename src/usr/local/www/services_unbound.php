@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("pfsense-utils.inc");
 require_once("system.inc");
 
 if (!is_array($config['unbound'])) {
@@ -86,106 +87,112 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 	$pconfig['system_domain_local_zone_type'] = $a_unboundcfg['system_domain_local_zone_type'];
 }
 
-if ($_POST) {
-	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= services_unbound_configure();
-		if ($retval == 0) {
-			clear_subsystem_dirty('unbound');
-		}
-		/* Update resolv.conf in case the interface bindings exclude localhost. */
-		system_resolvconf_generate();
-		/* Start or restart dhcpleases when it's necessary */
-		system_dhcpleases_configure();
-	} else {
-		$pconfig = $_POST;
-		unset($input_errors);
 
-		if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
-			if ($pconfig['port'] == $config['dnsmasq']['port']) {
-				$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
-			}
-		}
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval |= services_unbound_configure();
+	if ($retval == 0) {
+		clear_subsystem_dirty('unbound');
+	}
+	/* Update resolv.conf in case the interface bindings exclude localhost. */
+	system_resolvconf_generate();
+	/* Start or restart dhcpleases when it's necessary */
+	system_dhcpleases_configure();
+}
 
-		// forwarding mode requires having valid DNS servers
-		if (isset($pconfig['forwarding'])) {
-			$founddns = false;
-			if (isset($config['system']['dnsallowoverride'])) {
-				$dns_servers = get_dns_servers();
-				if (is_array($dns_servers)) {
-					foreach ($dns_servers as $dns_server) {
-						if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
-							$founddns = true;
-						}
-					}
-				}
-			}
-			if (is_array($config['system']['dnsserver'])) {
-				foreach ($config['system']['dnsserver'] as $dnsserver) {
-					if (is_ipaddr($dnsserver)) {
+if ($_POST['save']) {
+	$pconfig = $_POST;
+	unset($input_errors);
+
+	if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
+		if ($pconfig['port'] == $config['dnsmasq']['port']) {
+			$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
+		}
+	}
+
+	// forwarding mode requires having valid DNS servers
+	if (isset($pconfig['forwarding'])) {
+		$founddns = false;
+		if (isset($config['system']['dnsallowoverride'])) {
+			$dns_servers = get_dns_servers();
+			if (is_array($dns_servers)) {
+				foreach ($dns_servers as $dns_server) {
+					if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
 						$founddns = true;
 					}
 				}
 			}
-			if ($founddns == false) {
-				$input_errors[] = gettext("At least one DNS server must be specified under System &gt; General Setup to enable Forwarding mode.");
+		}
+		if (is_array($config['system']['dnsserver'])) {
+			foreach ($config['system']['dnsserver'] as $dnsserver) {
+				if (is_ipaddr($dnsserver)) {
+					$founddns = true;
+				}
 			}
 		}
-
-		if (empty($pconfig['active_interface'])) {
-			$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
-		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
-			$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
+		if ($founddns == false) {
+			$input_errors[] = gettext("At least one DNS server must be specified under System &gt; General Setup to enable Forwarding mode.");
 		}
-
-		if (empty($pconfig['outgoing_interface'])) {
-			$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
-		}
-
-		if ($pconfig['port'] && !is_port($pconfig['port'])) {
-			$input_errors[] = gettext("A valid port number must be specified.");
-		}
-
-		if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
-			$display_active_interface = $pconfig['active_interface'];
-			$pconfig['active_interface'] = implode(",", $pconfig['active_interface']);
-		}
-
-		$display_custom_options = $pconfig['custom_options'];
-		$pconfig['custom_options'] = base64_encode(str_replace("\r\n", "\n", $pconfig['custom_options']));
-
-		if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
-			$display_outgoing_interface = $pconfig['outgoing_interface'];
-			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
-		}
-
-		$test_output = array();
-		if (test_unbound_config($pconfig, $test_output)) {
-			$input_errors[] = gettext("The generated config file cannot be parsed by unbound. Please correct the following errors:");
-			$input_errors = array_merge($input_errors, $test_output);
-		}
-
-		if (!$input_errors) {
-			$a_unboundcfg['enable'] = isset($pconfig['enable']);
-			$a_unboundcfg['port'] = $pconfig['port'];
-			$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
-			$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
-			$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
-			$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
-			$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
-			$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
-			$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
-			$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
-
-			write_config(gettext("DNS Resolver configured."));
-			mark_subsystem_dirty('unbound');
-		}
-
-		$pconfig['active_interface'] = $display_active_interface;
-		$pconfig['outgoing_interface'] = $display_outgoing_interface;
-		$pconfig['custom_options'] = $display_custom_options;
 	}
+
+	if (empty($pconfig['active_interface'])) {
+		$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
+	} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
+		$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
+	}
+
+	if (empty($pconfig['outgoing_interface'])) {
+		$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
+	}
+
+	if ($pconfig['port'] && !is_port($pconfig['port'])) {
+		$input_errors[] = gettext("A valid port number must be specified.");
+	}
+
+	if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
+		$display_active_interface = $pconfig['active_interface'];
+		$pconfig['active_interface'] = implode(",", $pconfig['active_interface']);
+	}
+
+	if ((isset($pconfig['regdhcp']) || isset($pconfig['regdhcpstatic'])) && !is_dhcp_server_enabled()) {
+		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Resolver.");
+	}
+
+	$display_custom_options = $pconfig['custom_options'];
+	$pconfig['custom_options'] = base64_encode(str_replace("\r\n", "\n", $pconfig['custom_options']));
+
+	if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
+		$display_outgoing_interface = $pconfig['outgoing_interface'];
+		$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
+	}
+
+	$test_output = array();
+	if (test_unbound_config($pconfig, $test_output)) {
+		$input_errors[] = gettext("The generated config file cannot be parsed by unbound. Please correct the following errors:");
+		$input_errors = array_merge($input_errors, $test_output);
+	}
+
+	if (!$input_errors) {
+		$a_unboundcfg['enable'] = isset($pconfig['enable']);
+		$a_unboundcfg['port'] = $pconfig['port'];
+		$a_unboundcfg['dnssec'] = isset($pconfig['dnssec']);
+		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
+		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
+		$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
+		$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
+		$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
+		$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
+		$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
+
+		write_config(gettext("DNS Resolver configured."));
+		mark_subsystem_dirty('unbound');
+	}
+
+	$pconfig['active_interface'] = $display_active_interface;
+	$pconfig['outgoing_interface'] = $display_outgoing_interface;
+	$pconfig['custom_options'] = $display_custom_options;
 }
+
 
 if ($pconfig['custom_options']) {
 	$customoptions = true;
@@ -193,19 +200,19 @@ if ($pconfig['custom_options']) {
 	$customoptions = false;
 }
 
-if ($_GET['act'] == "del") {
-	if ($_GET['type'] == 'host') {
-		if ($a_hosts[$_GET['id']]) {
-			unset($a_hosts[$_GET['id']]);
-			write_config();
+if ($_POST['act'] == "del") {
+	if ($_POST['type'] == 'host') {
+		if ($a_hosts[$_POST['id']]) {
+			unset($a_hosts[$_POST['id']]);
+			write_config(gettext("Host override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
 		}
-	} elseif ($_GET['type'] == 'doverride') {
-		if ($a_domainOverrides[$_GET['id']]) {
-			unset($a_domainOverrides[$_GET['id']]);
-			write_config();
+	} elseif ($_POST['type'] == 'doverride') {
+		if ($a_domainOverrides[$_POST['id']]) {
+			unset($a_domainOverrides[$_POST['id']]);
+			write_config(gettext("Domain override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
@@ -434,8 +441,8 @@ events.push(function() {
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
-					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("Parent domain of host")?></th>
+					<th><?=gettext("IP to return for host")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -460,7 +467,7 @@ foreach ($a_hosts as $hostent):
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" href="services_unbound_host_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>" href="services_unbound.php?type=host&amp;act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 
@@ -497,6 +504,14 @@ endforeach;
 	</div>
 </div>
 
+<span class="help-block">
+	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
+	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains 
+	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for 
+	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for 
+	the host's records.
+</span>
+
 <nav class="action-buttons">
 	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
@@ -511,7 +526,7 @@ endforeach;
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("Lookup Server IP Address")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -534,7 +549,7 @@ foreach ($a_domainOverrides as $doment):
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_unbound_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -545,6 +560,13 @@ endforeach;
 		</table>
 	</div>
 </div>
+
+<span class="help-block">
+	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard) 
+	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered, 
+	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the 
+	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
+</span>
 
 <nav class="action-buttons">
 	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">

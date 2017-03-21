@@ -46,13 +46,7 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 }
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
@@ -76,7 +70,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
-if ($_POST) {
+if ($_POST['save'] || $_POST['force']) {
 	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -116,6 +110,8 @@ if ($_POST) {
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
+		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
@@ -196,7 +192,7 @@ if ($_POST) {
 			$a_dyndns[$i]['id'] = $i;
 		}
 
-		write_config();
+		write_config(gettext("Dynamic DNS client configured."));
 
 		services_dyndns_configure_client($dyndns);
 

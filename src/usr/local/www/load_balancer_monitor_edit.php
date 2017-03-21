@@ -36,14 +36,7 @@ if (!is_array($config['load_balancer']['monitor_type'])) {
 }
 
 $a_monitor = &$config['load_balancer']['monitor_type'];
-
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
-}
+$id = $_REQUEST['id'];
 
 if (isset($id) && $a_monitor[$id]) {
 	$pconfig['name'] = $a_monitor[$id]['name'];
@@ -57,14 +50,14 @@ if (isset($id) && $a_monitor[$id]) {
 	$pconfig['options']['code'] = 200;
 }
 
-if ($_GET['act'] == "dup") {
+if ($_REQUEST['act'] == "dup") {
 	unset($id);
 }
 
 $changedesc = gettext("Load Balancer: Monitor:") . " ";
 $changecount = 0;
 
-if ($_POST) {
+if ($_POST['save']) {
 	$changecount++;
 
 	unset($input_errors);

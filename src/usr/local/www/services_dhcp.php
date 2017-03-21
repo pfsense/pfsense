@@ -40,10 +40,7 @@ if (!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-$if = $_GET['if'];
-if (!empty($_POST['if'])) {
-	$if = $_POST['if'];
-}
+$if = $_REQUEST['if'];
 
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if ($config['installedpackages']['olsrd']) {
@@ -105,15 +102,12 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-$act = $_GET['act'];
-if (!empty($_POST['act'])) {
-	$act = $_POST['act'];
-}
+$act = $_REQUEST['act'];
 
 $a_pools = array();
 
 if (is_array($config['dhcpd'][$if])) {
-	$pool = $_GET['pool'];
+	$pool = $_REQUEST['pool'];
 	if (is_numeric($_POST['pool'])) {
 		$pool = $_POST['pool'];
 	}
@@ -144,6 +138,7 @@ if (is_array($config['dhcpd'][$if])) {
 
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
+
 if (is_array($dhcpdconf)) {
 	// Global Options
 	if (!is_numeric($pool) && !($act == "newpool")) {
@@ -422,6 +417,16 @@ if (isset($_POST['save'])) {
 		$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
 	}
 
+	/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
+	if (!$_POST['enable']) {
+		if (isset($config['dnsmasq']['enable']) && (isset($config['dnsmasq']['regdhcp']) || isset($config['dnsmasq']['regdhcpstatic']) || isset($config['dnsmasq']['dhcpfirst']))) {
+			$input_errors[] = gettext("Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+		}
+		if (isset($config['unbound']['enable']) && (isset($config['unbound']['regdhcp']) || isset($config['unbound']['regdhcpstatic']))) {
+			$input_errors[] = gettext("Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+		}
+	}
+
 	// If nothing is wrong so far, and we have range from and to, then check conditions related to the values of range from and to.
 	if (!$input_errors && $_POST['range_from'] && $_POST['range_to']) {
 		/* make sure the range lies within the current subnet */
@@ -645,8 +650,8 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 }
 
 if ($act == "delpool") {
-	if ($a_pools[$_GET['id']]) {
-		unset($a_pools[$_GET['id']]);
+	if ($a_pools[$_POST['id']]) {
+		unset($a_pools[$_POST['id']]);
 		write_config();
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
@@ -654,12 +659,12 @@ if ($act == "delpool") {
 }
 
 if ($act == "del") {
-	if (isset($a_maps[$_GET['id']])) {
+	if (isset($a_maps[$_POST['id']])) {
 		/* Remove static ARP entry, if necessary */
-		if (isset($a_maps[$_GET['id']]['arp_table_static_entry'])) {
-			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_GET['id']]['ipaddr']));
+		if (isset($a_maps[$_POST['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_POST['id']]['ipaddr']));
 		}
-		unset($a_maps[$_GET['id']]);
+		unset($a_maps[$_POST['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
@@ -705,7 +710,7 @@ function build_pooltable() {
 
 				$pooltbl .= '<td><a class="fa fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '"></a></td>';
+				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 				$pooltbl .= '</tr>';
 			}
 		$i++;
@@ -1442,7 +1447,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 						</td>
 					</tr>
 <?php

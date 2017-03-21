@@ -41,10 +41,10 @@ header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 header("Content-type: image/svg+xml");
 
-/********** HTTP GET Based Conf ***********/
-$ifnum = @$_GET["ifnum"];  // BSD / SNMP interface name / number
+/********** HTTP REQUEST Based Conf ***********/
+$ifnum = @$_REQUEST["ifnum"];  // BSD / SNMP interface name / number
 $ifnum = get_real_interface($ifnum);
-$ifname = @$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
+$ifname = @$_REQUEST["ifname"]?$_REQUEST["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
 if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
@@ -54,14 +54,14 @@ if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
 }
 
 $nb_plot=120;                   //NB plot in graph
-if ($_GET["timeint"]) {
-	$time_interval = $_GET["timeint"];		//Refresh time Interval
+if ($_REQUEST["timeint"]) {
+	$time_interval = $_REQUEST["timeint"];		//Refresh time Interval
 } else {
 	$time_interval = 3;
 }
 
-if ($_GET["initdelay"]) {
-	$init_delay = $_GET["initdelay"];		//Initial Delay
+if ($_REQUEST["initdelay"]) {
+	$init_delay = $_REQUEST["initdelay"];		//Initial Delay
 } else {
 	$init_delay = 3;
 }
@@ -161,7 +161,7 @@ if (typeof getURL == 'undefined') {
 					contentType : http_request.getResponseHeader("Content-Type") } );
 			}
 		}
-		http_request.open('GET', url, true);
+		http_request.open('REQUEST', url, true);
 		http_request.send(null);
 	}
 }

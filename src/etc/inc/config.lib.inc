@@ -750,6 +750,7 @@ function cleanup_backupcache($lock = false) {
 	}
 	if (is_int($revisions) and (count($tocache) > $revisions)) {
 		$toslice = array_slice(array_keys($tocache), 0, $revisions);
+		$newcache = array();
 		foreach ($toslice as $sliced) {
 			$newcache[$sliced] = $tocache[$sliced];
 		}

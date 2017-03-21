@@ -688,6 +688,7 @@
 					break;
 				case 'cloudflare-v6':
 				case 'cloudflare':
+					$this->_FQDN = ltrim($this->_FQDN, '@.');
 					$isv6 = ($this->_dnsService === 'cloudflare-v6');
 					$recordType = $isv6 ? "AAAA" : "A";
 					$needsIP = TRUE;
@@ -1492,7 +1493,7 @@
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile, $wan_ip));
-					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
+					@file_put_contents($this->_cacheFile, "{$wan_ip}|{$currentTime}");
 				} else {
 					@unlink($this->_cacheFile);
 				}
@@ -1595,13 +1596,13 @@
 			} else {
 				if (file_exists($this->_cacheFile)) {
 					$contents = file_get_contents($this->_cacheFile);
-					list($cacheIP, $cacheTime) = explode(':', $contents);
+					list($cacheIP, $cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP.'/'.$cacheTime);
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IP: %s"), $cacheIP);
 				} else {
 					$cacheIP = '0.0.0.0';
-					@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
+					@file_put_contents($this->_cacheFile, "0.0.0.0|{$currentTime}");
 					$cacheTime = $currentTime;
 					$initial = true;
 					$log_error .= gettext("No Cached IP found.");

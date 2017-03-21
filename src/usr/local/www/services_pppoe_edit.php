@@ -52,11 +52,8 @@ if (!is_array($config['pppoes']['pppoe'])) {
 
 $a_pppoes = &$config['pppoes']['pppoe'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_pppoes[$id]) {
@@ -98,7 +95,7 @@ if (isset($id) && $a_pppoes[$id]) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 

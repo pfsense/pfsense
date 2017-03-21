@@ -90,30 +90,30 @@ if ($_REQUEST['display_maximum_rows']) {
 
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-if ($_GET['act'] == "update") {
+if ($_REQUEST['act'] == "update") {
 
 	if (is_array($config['installedpackages'][$pkg['name']]) && $pkg['name'] != "" && $_REQUEST['ids'] !="") {
-		#get current values
+		// get current values
 		$current_values=$config['installedpackages'][$pkg['name']]['config'];
-		#get updated ids
+		// get updated ids
 		parse_str($_REQUEST['ids'], $update_list);
-		#sort ids to know what to change
-		#useful to do not lose data when using sorting and paging
+		// sort ids to know what to change
+		// useful to do not lose data when using sorting and paging
 		$sort_list=$update_list['ids'];
 		sort($sort_list);
-		#apply updates
+		// apply updates
 		foreach ($update_list['ids'] as $key=> $value) {
 			$config['installedpackages'][$pkg['name']]['config'][$sort_list[$key]]=$current_values[$update_list['ids'][$key]];
 		}
-		#save current config
-		write_config();
-		#sync package
+		// save current config
+		write_config(gettext("Package configuration changes saved from package settings page."));
+		// sync package
 		eval ("{$pkg['custom_php_resync_config_command']}");
 	}
-	#function called via jquery, no need to continue after save changes.
+	// function called via jquery, no need to continue after save changes.
 	exit;
 }
-if ($_GET['act'] == "del") {
+if ($_REQUEST['act'] == "del") {
 	// loop through our fieldnames and automatically setup the fieldnames
 	// in the environment.	ie: a fieldname of username with a value of
 	// testuser would automatically eval $username = "testuser";
@@ -127,9 +127,9 @@ if ($_GET['act'] == "del") {
 
 	$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
-	if ($a_pkg[$_GET['id']]) {
-		unset($a_pkg[$_GET['id']]);
-		write_config();
+	if ($a_pkg[$_REQUEST['id']]) {
+		unset($a_pkg[$_REQUEST['id']]);
+		write_config(gettext("Package configuration item deleted from package settings page."));
 		if ($pkg['custom_delete_php_command'] != "") {
 			if ($pkg['custom_php_command_before_form'] != "") {
 				eval($pkg['custom_php_command_before_form']);
@@ -157,7 +157,7 @@ if ($pkg['custom_php_command_before_form'] != "") {
 // Breadcrumb
 if ($pkg['title'] != "") {
 	/*if (!$only_edit) {						// Is any package still making use of this?? Is this something that is still wanted, considering the breadcrumb policy https://redmine.pfsense.org/issues/5527
- 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text']; 
+ 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text'];
 	}*/
 	if (strpos($pkg['title'], '/')) {
 		$title = explode('/', $pkg['title']);
@@ -286,8 +286,8 @@ function save_changes_to_xml(xml) {
 </script>
 
 <?php
-if ($_GET['savemsg'] != "") {
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+if ($_REQUEST['savemsg'] != "") {
+	$savemsg = htmlspecialchars($_REQUEST['savemsg']);
 }
 
 if ($savemsg) {

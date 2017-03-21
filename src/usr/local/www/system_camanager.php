@@ -36,7 +36,7 @@ $ca_methods = array(
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+global $openssl_digest_algs;
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -278,9 +278,11 @@ if ($_POST['save']) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			} else if ($pconfig['method'] == "intermediate") {
@@ -295,9 +297,11 @@ if ($_POST['save']) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			}
@@ -313,9 +317,8 @@ if ($_POST['save']) {
 		if (!$input_errors) {
 			write_config();
 			ca_trustedcerts_generate();
+			pfSenseHeader("system_camanager.php");
 		}
-
-		pfSenseHeader("system_camanager.php");
 	}
 }
 

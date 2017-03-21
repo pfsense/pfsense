@@ -58,6 +58,7 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
+$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 if ($_REQUEST['ajax']) {
 	$response = "";
@@ -72,7 +73,6 @@ if ($_REQUEST['ajax']) {
 	}
 
 	// Check to see if our process is still running
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 	$running = "running";
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
@@ -292,9 +292,9 @@ if (!$confirmed && !$completed &&
 ?>
 				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
-			elseif ($_GET['from'] && $_GET['to']):
+			elseif ($_REQUEST['from'] && $_REQUEST['to']):
 ?>
-				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_GET['from']), htmlspecialchars($_GET['to']))?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, htmlspecialchars($_REQUEST['from']), htmlspecialchars($_REQUEST['to']))?>
 <?php
 			elseif ($firmwareupdate):
 ?>
@@ -406,7 +406,6 @@ if ($firmwareupdate) {
 
 if ($confirmed):
 	// XXX: What if the user navigates away from this page and then comes back via his/her "Back" button?
-	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 	if (isvalidpid($pidfile)) {
 		$start_polling = true;

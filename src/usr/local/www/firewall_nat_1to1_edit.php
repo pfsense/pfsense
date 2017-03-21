@@ -104,6 +104,10 @@ if ($_POST['save']) {
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 

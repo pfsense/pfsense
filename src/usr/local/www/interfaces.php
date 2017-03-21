@@ -53,6 +53,7 @@ if (isset($_POST['referer'])) {
 $ifdescrs = get_configured_interface_with_descr(false, true);
 
 $if = "wan";
+
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
 }
@@ -461,7 +462,7 @@ if ($_POST['apply']) {
 		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
-} else if ($_POST['submit]']) {
+} else if ($_POST['save']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -986,10 +987,7 @@ if ($_POST['apply']) {
 				kill_dhclient_process($wancfg['if']);
 			}
 			if ($wancfg['ipaddrv6'] == "dhcp6") {
-				$pid = find_dhcp6c_process($wancfg['if']);
-				if ($pid) {
-					posix_kill($pid, SIGTERM);
-				}
+				kill_dhcp6client_process($wancfg['if'],true);
 			}
 		}
 		$ppp = array();

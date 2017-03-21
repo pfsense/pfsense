@@ -68,6 +68,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
 	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
@@ -359,6 +360,12 @@ if ($_POST['save']) {
 			unset($userent['webguileftcolumnhyper']);
 		}
 
+		if ($_POST['disablealiaspopupdetail']) {
+			$userent['disablealiaspopupdetail'] = true;
+		} else {
+			unset($userent['disablealiaspopupdetail']);
+		}
+
 		if ($_POST['pagenamefirst']) {
 			$userent['pagenamefirst'] = true;
 		} else {
@@ -581,7 +588,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<th>&nbsp;</th>
 						<th><?=gettext("Username")?></th>
 						<th><?=gettext("Full name")?></th>
-						<th><?=gettext("Disabled")?></th>
+						<th><?=gettext("Status")?></th>
 						<th><?=gettext("Groups")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
@@ -606,7 +613,7 @@ foreach ($a_user as $i => $userent):
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
+						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
@@ -974,6 +981,7 @@ events.push(function() {
 		hideCheckbox('systemlogsmanagelogpanel', !adv);
 		hideCheckbox('statusmonitoringsettingspanel', !adv);
 		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('disablealiaspopupdetail', !adv);
 		hideCheckbox('pagenamefirst', !adv);
 	}
 

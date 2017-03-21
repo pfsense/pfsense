@@ -50,11 +50,7 @@ require_once("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone'])) {
-	$cpzone = $_POST['zone'];
-}
-$cpzone = strtolower(htmlspecialchars($cpzone));
+$cpzone = strtolower(htmlspecialchars($_REQUEST['zone']));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -64,22 +60,21 @@ if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
+
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (!is_array($a_cp[$cpzone]['passthrumac'])) {
 	$a_cp[$cpzone]['passthrumac'] = array();
 }
+
 $a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
@@ -91,7 +86,7 @@ if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['username'] = $a_passthrumacs[$id]['username'];
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -126,7 +121,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
 	}
 	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
-		$input_errors[] = gettext("Download speed must be between 1 and 999999"); 
+		$input_errors[] = gettext("Download speed must be between 1 and 999999");
 	}
 
 	foreach ($a_passthrumacs as $macent) {

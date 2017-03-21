@@ -36,7 +36,7 @@ if ($specplatform['name'] != "Hyper-V") {
 	$devs = get_smart_drive_list();
 }
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -45,9 +45,9 @@ if ($_POST) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['smart_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['smart_status']['filter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved SMART Status Filter via Dashboard."));
@@ -68,7 +68,8 @@ if ($_POST) {
 	</thead>
 	<tbody>
 <?php
-$skipsmart = explode(",", $user_settings['widgets']['smart_status']['filter']);
+$skipsmart = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+$smartdrive_is_displayed = false;
 
 if (count($devs) > 0)  {
 	foreach ($devs as $dev)  { ## for each found drive do
@@ -76,6 +77,7 @@ if (count($devs) > 0)  {
 			continue;
 		}
 
+		$smartdrive_is_displayed = true;
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
@@ -104,17 +106,28 @@ if (count($devs) > 0)  {
 		</tr>
 <?php
 	}
+
+	if (!$smartdrive_is_displayed) {
+?>
+		<tr>
+			<td colspan="4" class="text-center">
+				<?=gettext('All SMART drives are hidden.');?>
+			</td>
+		</tr>
+<?php
+	}
 }
 ?>
 	</tbody>
 </table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/smart_status.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -143,19 +156,14 @@ if (count($devs) > 0)  {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
-		$("#showallsmartdrives").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
 //]]>
 </script>

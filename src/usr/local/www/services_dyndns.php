@@ -35,35 +35,38 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 $a_dyndns = &$config['dyndnses']['dyndns'];
 global $dyndns_split_domain_types;
 
-if ($_GET['act'] == "del") {
-	$conf = $a_dyndns[$_GET['id']];
+if ($_POST['act'] == "del") {
+	$conf = $a_dyndns[$_POST['id']];
 	if (in_array($conf['type'], $dyndns_split_domain_types)) {
 		$hostname = $conf['host'] . "." . $conf['domainname'];
 	} else {
 		$hostname = $conf['host'];
 	}
 	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($hostname) . "{$conf['id']}.cache");
-	unset($a_dyndns[$_GET['id']]);
+	unset($a_dyndns[$_POST['id']]);
 
-	write_config();
+	write_config(gettext("Dynamic DNS client deleted."));
 	services_dyndns_configure();
 
 	header("Location: services_dyndns.php");
 	exit;
-} else if ($_GET['act'] == "toggle") {
-	if ($a_dyndns[$_GET['id']]) {
-		if (isset($a_dyndns[$_GET['id']]['enable'])) {
-			unset($a_dyndns[$_GET['id']]['enable']);
+} else if ($_POST['act'] == "toggle") {
+	if ($a_dyndns[$_POST['id']]) {
+		if (isset($a_dyndns[$_POST['id']]['enable'])) {
+			unset($a_dyndns[$_POST['id']]['enable']);
+			$wc_msg = gettext('Dynamic DNS client disabled.');
 		} else {
-			$a_dyndns[$_GET['id']]['enable'] = true;
+			$a_dyndns[$_POST['id']]['enable'] = true;
+			$wc_msg = gettext('Dynamic DNS client enabled.');
 		}
-		write_config();
+		write_config($wc_msg);
 		services_dyndns_configure();
 
 		header("Location: services_dyndns.php");
 		exit;
 	}
 }
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
 $pglinks = array("", "@self", "@self");
 include("head.inc");
@@ -141,7 +144,7 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	print(htmlspecialchars($hostname));
+	print(insert_word_breaks_in_domain_name(htmlspecialchars($hostname)));
 ?>
 							</td>
 							<td>
@@ -150,7 +153,7 @@ foreach ($a_dyndns as $dyndns):
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
 		$ipaddr = dyndnsCheckIP($dyndns['interface']);
-		$cached_ip_s = explode(":", file_get_contents($filename));
+		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {
@@ -188,13 +191,13 @@ foreach ($a_dyndns as $dyndns):
 								<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
-								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php } else {
 ?>
-								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" usepost></a>
 <?php }
 ?>
-								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>" usepost></a>
 							</td>
 						</tr>
 <?php

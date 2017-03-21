@@ -34,8 +34,8 @@ if (!is_array($config['checkipservices']['checkipservice'])) {
 
 $a_checkip = &$config['checkipservices']['checkipservice'];
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
+if (is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {

@@ -5192,4 +5192,105 @@ function upgrade_162_to_163() {
 		unset($config['widgets']['trafficgraphs']['shown']);
 	}
 }
+
+/* Dashboard widget settings config format has changed to support having possibly multiple
+ * of a widget on the dashboard. Migrate any old settings.
+ */
+function convert_widget_164($oldname, $newname, $settings_keys) {
+	global $config;
+
+	if ($newname == '') {
+		$newname = $oldname . '-0';
+	}
+
+	if ($oldname == '') {
+		// These settings were stored directly in $config['widgets']
+		// Move them down under their new key.
+		// e.g. $config['widgets']['filterlogentries']
+		// becomes $config['widgets']['log-0']['filterlogentries']
+		foreach ($settings_keys as $oldkey => $newkey) {
+			if ($newkey == '') {
+				$newkey = $oldkey;
+			}
+
+			// Modify the system-wide entry
+			if (isset($config['widgets'][$oldkey])) {
+				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldkey];
+				unset($config['widgets'][$oldkey]);
+			}
+
+			// Modify any user-specific entries
+			foreach ($config['system']['user'] as & $user) {
+				if (isset($user['widgets'][$oldkey])) {
+					$user['widgets'][$newname][$newkey] = $user['widgets'][$oldkey];
+					unset($user['widgets'][$oldkey]);
+				}
+			}
+		}
+	} else {
+		// These settings were stored in some key under 'widgets',
+		// e.g. $config['widgets']['gateways_widget']['display_type']
+		// becomes $config['widgets']['gateways-0']['display_type']
+		foreach ($settings_keys as $oldkey => $newkey) {
+			if ($newkey == '') {
+				$newkey = $oldkey;
+			}
+
+			// Modify the system-wide entry
+			if (isset($config['widgets'][$oldname][$oldkey])) {
+				$config['widgets'][$newname][$newkey] = $config['widgets'][$oldname][$oldkey];
+				unset($config['widgets'][$oldname][$oldkey]);
+			}
+
+			// Modify any user-specific entries
+			foreach ($config['system']['user'] as & $user) {
+				if (isset($user['widgets'][$oldname][$oldkey])) {
+					$user['widgets'][$newname][$newkey] = $user['widgets'][$oldname][$oldkey];
+					unset($user['widgets'][$oldname][$oldkey]);
+				}
+
+				if (isset($user['widgets'][$oldname])) {
+					unset($user['widgets'][$oldname]);
+				}
+			}
+		}
+
+		if (isset($config['widgets'][$oldname])) {
+			unset($config['widgets'][$oldname]);
+		}
+	}
+}
+
+function upgrade_163_to_164() {
+	global $config;
+
+	convert_widget_164('dyn_dns_status', '', array('filter' => ''));
+	convert_widget_164('gateways_widget', 'gateways-0', array('display_type' => '', 'gatewaysfilter' => ''));
+	convert_widget_164('interface_statistics', '', array('iffilter' => ''));
+	convert_widget_164('interfaces', '', array('iffilter' => ''));
+	convert_widget_164('', 'log-0',
+		array(
+			'filterlogentries' => '',
+			'filterlogentriesacts' => '',
+			'filterlogentriesinterfaces' => '',
+			'filterlogentriesinterval' => ''));
+	convert_widget_164('openvpn', '', array('filter' => ''));
+	convert_widget_164('', 'picture-0', array('picturewidget' => '', 'picturewidget_filename' => ''));
+	convert_widget_164('', 'rss-0', array('rssfeed' => '', 'rssmaxitems' => '', 'rsswidgetheight' => '', 'rsswidgettextlength' => ''));
+	convert_widget_164('', 'services_status-0', array('servicestatusfilter' => 'filter'));
+	convert_widget_164('smart_status', '', array('filter' => ''));
+	convert_widget_164('system_information', '', array('filter' => ''));
+	convert_widget_164('thermal_sensors_widget', 'thermal_sensors-0',
+		array(
+			'thermal_sensors_widget_zone_warning_threshold' => '',
+			'thermal_sensors_widget_zone_critical_threshold' => '',
+			'thermal_sensors_widget_core_warning_threshold' => '',
+			'thermal_sensors_widget_core_critical_threshold' => '',
+			'thermal_sensors_widget_show_raw_output' => '',
+			'thermal_sensors_widget_show_full_sensor_name' => '',
+			'thermal_sensors_widget_pulsate_warning' => '',
+			'thermal_sensors_widget_pulsate_critical' => ''
+		));
+	convert_widget_164('wol', 'wake_on_lan-0', array('filter' => ''));
+}
 ?>

@@ -33,6 +33,7 @@ require_once("gmirror.inc");
 	<?=gmirror_html_status()?>
 </div>
 
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
 function gmirrorStatusUpdateFromServer() {
@@ -45,7 +46,10 @@ function gmirrorStatusUpdateFromServer() {
 			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
 		},
 		success: function(data){
-			$('#gmirror_status').html(data);
+			$('[id="gmirror_status"]').html(data);
+		},
+		error: function(){
+			$('[id="gmirror_status"]').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
 		}
 	});
 }
@@ -55,3 +59,4 @@ events.push(function(){
 });
 //]]>
 </script>
+<?php endif; ?>

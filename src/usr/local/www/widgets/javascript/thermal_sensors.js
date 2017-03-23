@@ -23,7 +23,7 @@ criticalTemp = 100;
 ajaxBusy = false;
 
 //should be called from "thermal_sensors.widget.php"
-function showThermalSensorsData() {
+function showThermalSensorsData(widgetKey, tsParams, firstTime) {
 	if (!ajaxBusy) {
 		ajaxBusy = true;
 		//get data from thermal_sensors.widget.php
@@ -35,34 +35,35 @@ function showThermalSensorsData() {
 			type: 'get',
 			success: function(data) {
 				var thermalSensorsData = data || "";
-				buildThermalSensorsData(thermalSensorsData);
+				buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime);
+				firstTime = false;
 			},
 			error: function(jqXHR, status, error) {
+				firstTime = true;
 				warningTemp = 9999;
-				buildThermalSensorsDataRaw('<span class="alert-danger">Temperature data could not be read.</span>');
+				buildThermalSensorsDataRaw('<span class="alert-danger">Temperature data could not be read.</span>', widgetKey);
 			}
 		});
 
 		ajaxBusy = false;
 	}
 	//call itself in 11 seconds
-	window.setTimeout(showThermalSensorsData, 11000);
+	window.setTimeout(function(){showThermalSensorsData(widgetKey, tsParams, firstTime);}, 11000);
 }
 
-function buildThermalSensorsData(thermalSensorsData) {
-	//NOTE: variable thermal_sensors_widget_showRawOutput is declared/set in "thermal_sensors.widget.php"
-	if (thermal_sensors_widget_showRawOutput) {
-		buildThermalSensorsDataRaw(thermalSensorsData);
+function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
+	if (tsParams.showRawOutput) {
+		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);
 	} else {
-		if (warningTemp == 9999) {
-			buildThermalSensorsDataGraph(thermalSensorsData);
+		if (firstTime) {
+			buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 		}
 
-		updateThermalSensorsDataGraph(thermalSensorsData);
+		updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey);
 	}
 }
 
-function buildThermalSensorsDataRaw(thermalSensorsData) {
+function buildThermalSensorsDataRaw(thermalSensorsData, widgetKey) {
 
 	var thermalSensorsContent = "";
 
@@ -71,20 +72,20 @@ function buildThermalSensorsDataRaw(thermalSensorsData) {
 		//rawData = thermalSensorsData.split("|").join("<br />");
 	}
 
-	loadThermalSensorsContainer(thermalSensorsContent);
+	loadThermalSensorsContainer(thermalSensorsContent, widgetKey);
 }
 
-function loadThermalSensorsContainer (thermalSensorsContent) {
+function loadThermalSensorsContainer (thermalSensorsContent, widgetKey) {
 
 	if (thermalSensorsContent && thermalSensorsContent != "") {
 		//load generated graph (or raw data) into thermalSensorsContainer (thermalSensorsContainer DIV defined in "thermal_sensors.widget.php")
-		$('#thermalSensorsContainer').html(thermalSensorsContent);
+		$('#thermalSensorsContainer-' + widgetKey).html(thermalSensorsContent);
 	} else {
-		$('#thermalSensorsContainer').html("No Thermal Sensors data available.");
+		$('#thermalSensorsContainer-' + widgetKey).html("No Thermal Sensors data available.");
 	}
 }
 
-function buildThermalSensorsDataGraph(thermalSensorsData) {
+function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 	var thermalSensorsArray = new Array();
 
@@ -103,26 +104,25 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = thermal_sensors_widget_coreWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_coreCriticalTempThreshold;
+			warningTemp = tsParams.coreWarningTempThreshold;
+			criticalTemp = tsParams.coreCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = thermal_sensors_widget_zoneWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_zoneCriticalTempThreshold;
+			warningTemp = tsParams.zoneWarningTempThreshold;
+			criticalTemp = tsParams.zoneCriticalTempThreshold;
 		}
 
-		//NOTE: variable thermal_sensors_widget_showFullSensorName is declared/set in "thermal_sensors.widget.php"
-		if (!thermal_sensors_widget_showFullSensorName) {
+		if (!tsParams.showFullSensorName) {
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
 		//build temperature item/row for a sensor
 
 		var thermalSensorRow =	'<div class="progress">' +
-									'<div id="temperaturebarL' + i + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
-									'<div id="temperaturebarM' + i + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-									'<div id="temperaturebarH' + i + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+									'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
+									'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+									'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
 								'</div>' +
-								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + '">' + thermalSensorValue + ' &deg;C</span>';
+								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + ' &deg;C</span>';
 
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
@@ -130,12 +130,12 @@ function buildThermalSensorsDataGraph(thermalSensorsData) {
 	}
 
 	//load generated graph into thermalSensorsContainer (DIV defined in "thermal_sensors.widget.php")
-	loadThermalSensorsContainer(thermalSensorsHTMLContent);
+	loadThermalSensorsContainer(thermalSensorsHTMLContent, widgetKey);
 
 
 }
 
-function updateThermalSensorsDataGraph(thermalSensorsData) {
+function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 	var thermalSensorsArray = new Array();
 
 	if (thermalSensorsData && thermalSensorsData != "") {
@@ -152,19 +152,18 @@ function updateThermalSensorsDataGraph(thermalSensorsData) {
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
-			warningTemp = thermal_sensors_widget_coreWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_coreCriticalTempThreshold;
+			warningTemp = tsParams.coreWarningTempThreshold;
+			criticalTemp = tsParams.coreCriticalTempThreshold;
 		} else { //assuming sensor is for a zone, check Zone Threshold config settings
-			warningTemp = thermal_sensors_widget_zoneWarningTempThreshold;
-			criticalTemp = thermal_sensors_widget_zoneCriticalTempThreshold;
+			warningTemp = tsParams.zoneWarningTempThreshold;
+			criticalTemp = tsParams.zoneCriticalTempThreshold;
 		}
 
-		//NOTE: variable thermal_sensors_widget_showFullSensorName is declared/set in "thermal_sensors.widget.php"
-		if (!thermal_sensors_widget_showFullSensorName) {
+		if (!tsParams.showFullSensorName) {
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
-	setTempProgress(i, thermalSensorValue);
+	setTempProgress(i, thermalSensorValue, widgetKey);
 	}
 }
 
@@ -189,7 +188,7 @@ function getThermalSensorValue(stringValue) {
 
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous
-function setTempProgress(bar, percent) {
+function setTempProgress(bar, percent, widgetKey) {
 	var barTempL, barTempM, barTempH;
 
 	if (percent <= warningTemp) {
@@ -207,9 +206,9 @@ function setTempProgress(bar, percent) {
 	}
 
 
-	$('#' + 'temperaturebarL' + bar).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
-	$('#' + 'temperaturebarM' + bar).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
-	$('#' + 'temperaturebarH' + bar).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
+	$('#' + 'temperaturebarL' + bar + widgetKey).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
+	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
+	$('#' + 'temperaturebarH' + bar + widgetKey).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturemsg' + bar).html(percent + ' &deg;C');
+	$('#' + 'temperaturemsg' + bar + widgetKey).html(percent + ' &deg;C');
 }

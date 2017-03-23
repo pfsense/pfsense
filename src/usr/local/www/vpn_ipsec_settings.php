@@ -163,7 +163,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		write_config();
+		write_config(gettext("Saved IPsec advanced settings."));
 
 		$changes_applied = true;
 		$retval = 0;

@@ -320,6 +320,25 @@ function gen_webguileftcolumnhyper_field(&$section, $value) {
 	))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 }
 
+/****f* pfsense-utils/gen_disablealiaspopupdetail_field
+ * NAME
+ *   gen_disablealiaspopupdetail_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_disablealiaspopupdetail_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'disablealiaspopupdetail',
+		'Alias Popups',
+		'Disable details in alias popups',
+		$value
+	))->setHelp('If selected, the details in alias popups will not be shown, just the alias description (e.g. in Firewall Rules).');
+}
+
 /****f* pfsense-utils/gen_pagenamefirst_field
  * NAME
  *   gen_pagenamefirst_field
@@ -363,6 +382,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 		$pconfig['systemlogsmanagelogpanel'],
 		$pconfig['statusmonitoringsettingspanel']);
 	gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+	gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 	gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 }
 
@@ -3011,6 +3031,7 @@ function huawei_service_to_string($state) {
 	$modes[2] = gettext("Valid Service");
 	$modes[3] = gettext("Restricted Regional Service");
 	$modes[4] = gettext("Powersaving Service");
+	$modes[255] = gettext("Unknown Service");
 	$string = $modes[$state];
 	return $string;
 }

@@ -54,9 +54,11 @@ unset($cpzone);
 
 flush();
 
-function clientcmp($a, $b) {
-	global $order;
-	return strcmp($a[$order], $b[$order]);
+if (!function_exists('clientcmp')) {
+	function clientcmp($a, $b) {
+		global $order;
+		return strcmp($a[$order], $b[$order]);
+	}
 }
 
 $cpdb_all = array();

@@ -113,16 +113,16 @@ foreach ($phpincludefiles as $includename) {
 
 ##build list of widgets
 foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
-	$name = basename($file, '.widget.php');
+	$basename = basename($file, '.widget.php');
 	// Get the widget title that should be in a var defined in the widget's inc file.
-	$widgettitle = ${$name . '_title'};
+	$widgettitle = ${$basename . '_title'};
 
 	if (empty(trim($widgettitle))) {
 		// Fall back to constructing a title from the file name of the widget.
-		$widgettitle = ucwords(str_replace('_', ' ', $name));
+		$widgettitle = ucwords(str_replace('_', ' ', $basename));
 	}
 
-	$widgets[ $name ] = array('name' => $widgettitle, 'display' => 'none');
+	$known_widgets[$basename . '-0'] = array('basename' => $basename, 'title' => $widgettitle, 'display' => 'none');
 }
 
 ##if no config entry found, initialize config entry
@@ -138,11 +138,54 @@ if ($_POST && $_POST['sequence']) {
 	// Start with the user's widget settings.
 	$widget_settings = $user_settings['widgets'];
 
-	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
+	$widget_sep = ',';
+	$widget_seq_array = explode($widget_sep, rtrim($_POST['sequence'], $widget_sep));
+	$widget_counter_array = array();
+	$widget_sep = '';
 
-	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($_POST[$widgetname . '-config']) {
-			$widget_settings[$widgetname . '-config'] = $_POST[$widgetname . '-config'];
+	// Make a record of the counter of each widget that is in use.
+	foreach ($widget_seq_array as $widget_seq_data) {
+		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
+
+		if ($widget_counter != 'next') {
+			$widget_counter_array[$basename][$widget_counter] = true;
+			$widget_sequence .= $widget_sep . $widget_seq_data;
+			$widget_sep = ',';
+		}
+	}
+
+	// Find any new entry (and do not assume there is only 1 new entry)
+	foreach ($widget_seq_array as $widget_seq_data) {
+		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
+
+		if ($widget_counter == 'next') {
+			// Construct the widget counter of the new widget instance by finding
+			// the first non-negative integer that is not in use.
+			// The reasoning here is that if you just deleted a widget instance,
+			// e.g. had System Information 0,1,2 and deleted 1,
+			// then when you add System Information again it will become instance 1,
+			// which will bring back whatever filter selections happened to be on
+			// the previous instance 1.
+			$instance_num = 0;
+
+			while (isset($widget_counter_array[$basename][$instance_num])) {
+				$instance_num++;
+			}
+
+			$widget_sequence .= $widget_sep . $basename . ':' . $col . ':' . $display . ':' . $instance_num;
+			$widget_counter_array[$basename][$instance_num] = true;
+			$widget_sep = ',';
+		}
+	}
+
+	$widget_settings['sequence'] = $widget_sequence;
+
+	foreach ($widget_counter_array as $basename => $instances) {
+		foreach ($instances as $instance => $value) {
+			$widgetconfigname = $basename . '-' . $instance . '-config';
+			if ($_POST[$widgetconfigname]) {
+				$widget_settings[$widgetconfigname] = $_POST[$widgetconfigname];
+			}
 		}
 	}
 
@@ -235,13 +278,20 @@ if ($user_settings['widgets']['sequence'] != "") {
 	$widgetsfromconfig = array();
 
 	foreach (explode(',', $pconfig['sequence']) as $line) {
-		list($file, $col, $display) = explode(':', $line);
+		$line_items = explode(':', $line);
+		if (count($line_items) == 3) {
+			// There can be multiple copies of a widget on the dashboard.
+			// Default the copy number if it is not present (e.g. from old configs)
+			$line_items[] = 0;
+		}
+
+		list($basename, $col, $display, $copynum) = $line_items;
 
 		// be backwards compatible
 		// If the display column information is missing, we will assign a temporary
 		// column here. Next time the user saves the dashboard it will fix itself
 		if ($col == "") {
-			if ($file == "system_information") {
+			if ($basename == "system_information") {
 				$col = "col1";
 			} else {
 				$col = "col2";
@@ -253,28 +303,32 @@ if ($user_settings['widgets']['sequence'] != "") {
 			$col = "col" . $dashboardcolumns;
 		}
 
-		$offset = strpos($file, '-container');
+		$offset = strpos($basename, '-container');
 		if (false !== $offset) {
-			$file = substr($file, 0, $offset);
+			$basename = substr($basename, 0, $offset);
 		}
 
 		// Get the widget title that should be in a var defined in the widget's inc file.
-		$widgettitle = ${$file . '_title'};
+		$widgettitle = ${$basename . '_title'};
 
 		if (empty(trim($widgettitle))) {
 			// Fall back to constructing a title from the file name of the widget.
-			$widgettitle = ucwords(str_replace('_', ' ', $file));
+			$widgettitle = ucwords(str_replace('_', ' ', $basename));
 		}
 
-		$widgetsfromconfig[ $file ] = array(
-			'name' => $widgettitle,
+		$widgetkey = $basename . '-' . $copynum;
+
+		$widgetsfromconfig[$widgetkey] = array(
+			'basename' => $basename,
+			'title' => $widgettitle,
 			'col' => $col,
 			'display' => $display,
+			'copynum' => $copynum,
 		);
 	}
 
 	// add widgets that may not be in the saved configuration, in case they are to be displayed later
-	$widgets = $widgetsfromconfig + $widgets;
+	$widgets = $widgetsfromconfig + $known_widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
@@ -322,15 +376,13 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			<div class="row">
 <?php
 
-// Build the Available Widgets table using a sorted copy of the $widgets array
-$available = $widgets;
-uasort($available, function($a, $b){ return strcasecmp($a['name'], $b['name']); });
+// Build the Available Widgets table using a sorted copy of the $known_widgets array
+$available = $known_widgets;
+uasort($available, function($a, $b){ return strcasecmp($a['title'], $b['title']); });
 
-foreach ($available as $widgetname => $widgetconfig):
-	if ($widgetconfig['display'] == 'none'):
+foreach ($available as $widgetkey => $widgetconfig):
 ?>
-		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
-	<?php endif; ?>
+		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa fa-plus"></i> <?=$widgetconfig['title']?></a></div>
 <?php endforeach; ?>
 			</div>
 		</div>
@@ -345,20 +397,20 @@ foreach ($available as $widgetname => $widgetconfig):
 
 <?php
 $widgetColumns = array();
-foreach ($widgets as $widgetname => $widgetconfig) {
+foreach ($widgets as $widgetkey => $widgetconfig) {
 	if ($widgetconfig['display'] == 'none') {
 		continue;
 	}
 
-	if (!file_exists('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php')) {
+	if (!file_exists('/usr/local/www/widgets/widgets/'. $widgetconfig['basename'].'.widget.php')) {
 		continue;
 	}
 
-	if (!isset($widgetColumns[ $widgetconfig['col'] ])) {
-		$widgetColumns[ $widgetconfig['col'] ] = array();
+	if (!isset($widgetColumns[$widgetconfig['col']])) {
+		$widgetColumns[$widgetconfig['col']] = array();
 	}
 
-	$widgetColumns[ $widgetconfig['col'] ][ $widgetname ] = $widgetconfig;
+	$widgetColumns[$widgetconfig['col']][$widgetkey] = $widgetconfig;
 }
 ?>
 
@@ -374,36 +426,55 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
 			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
 
-			foreach ($columnWidgets as $widgetname => $widgetconfig) {
+			foreach ($columnWidgets as $widgetkey => $widgetconfig) {
+				// Construct some standard names for the ids this widget will use for its commonly-used elements.
+				// Included widget.php code can rely on and use these, so the format does not have to be repeated in every widget.php
+				$widget_panel_body_id = 'widget-' . $widgetkey . '_panel-body';
+				$widget_panel_footer_id = 'widget-' . $widgetkey . '_panel-footer';
+				$widget_showallnone_id = 'widget-' . $widgetkey . '_showallnone';
+
 				// Compose the widget title and include the title link if available
-				$widgetlink = ${$widgetname . '_title_link'};
+				$widgetlink = ${$widgetconfig['basename'] . '_title_link'};
 
 				if ((strlen($widgetlink) > 0)) {
-					$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';
+					$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['title'] . '</a>';
 				} else {
-					$wtitle = $widgetconfig['name'];
+					$wtitle = $widgetconfig['title'];
 				}
 				?>
-					<div class="panel panel-default" id="widget-<?=$widgetname?>">
+				<div class="panel panel-default" id="widget-<?=$widgetkey?>">
 					<div class="panel-heading">
 						<h2 class="panel-title">
 							<?=$wtitle?>
 							<span class="widget-heading-icon">
-								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
+								<a data-toggle="collapse" href="#<?=$widget_panel_footer_id?>" class="config hidden">
 									<i class="fa fa-wrench"></i>
 								</a>
-								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
+								<a data-toggle="collapse" href="#<?=$widget_panel_body_id?>">
 									<!--  actual icon is determined in css based on state of body -->
 									<i class="fa fa-plus-circle"></i>
 								</a>
-								<a data-toggle="close" href="#widget-<?=$widgetname?>">
+								<a data-toggle="close" href="#widget-<?=$widgetkey?>">
 									<i class="fa fa-times-circle"></i>
 								</a>
 							</span>
 						</h2>
 					</div>
-					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
-						<?php include_once('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
+					<div id="<?=$widget_panel_body_id?>" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
+						<?php
+							// For backward compatibility, included *.widget.php code needs the var $widgetname
+							$widgetname = $widgetkey;
+							// Determine if this is the first instance of this particular widget.
+							// Provide the $widget_first_instance var, to make it easy for the included widget code
+							// to be able to know if it is being included for the first time.
+							if ($widgets_found[$widgetconfig['basename']]) {
+								$widget_first_instance = false;
+							} else {
+								$widget_first_instance = true;
+								$widgets_found[$widgetconfig['basename']] = true;
+							}
+							include('/usr/local/www/widgets/widgets/' . $widgetconfig['basename'] . '.widget.php');
+						?>
 					</div>
 				</div>
 				<?php
@@ -433,7 +504,7 @@ function updateWidgets(newWidget) {
 			// Only save details for panels that have id's like'widget-*'
 			// Some widgets create other panels, so ignore any of those.
 			if ((widget.id.split('-')[0] == 'widget') && (typeof widget_basename !== 'undefined')) {
-				sequence += widget_basename + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ',';
+				sequence += widget_basename + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ':' + widget.id.split('-')[2] + ',';
 			}
 		});
 	});
@@ -441,13 +512,60 @@ function updateWidgets(newWidget) {
 	if (typeof newWidget !== 'undefined') {
 		// The system_information widget is always added to column one. Others go in column two
 		if (newWidget == "system_information") {
-			sequence += newWidget + ':' + 'col1:open';
+			sequence += newWidget.split('-')[0] + ':' + 'col1:open:next';
 		} else {
-		sequence += newWidget + ':' + 'col2:open';
+			sequence += newWidget.split('-')[0] + ':' + 'col2:open:next';
 		}
 	}
 
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
+}
+
+// Determine if all the checkboxes are checked
+function are_all_checked(checkbox_panel_ref) {
+	var allBoxesChecked = true;
+	$(checkbox_panel_ref).each(function() {
+		if ((this.type == 'checkbox') && !this.checked) {
+			allBoxesChecked = false;
+		}
+	});
+	return allBoxesChecked;
+}
+
+// If the checkboxes are all checked, then clear them all.
+// Otherwise set them all.
+function set_clear_checkboxes(checkbox_panel_ref) {
+	checkTheBoxes = !are_all_checked(checkbox_panel_ref);
+
+	$(checkbox_panel_ref).each(function() {
+		$(this).prop("checked", checkTheBoxes);
+	});
+}
+
+// Set the given id to All or None button depending if the checkboxes are all checked.
+function set_all_none_button(checkbox_panel_ref, all_none_button_id) {
+	if (are_all_checked(checkbox_panel_ref)) {
+		text = "<?=gettext('None')?>";
+	} else {
+		text = "<?=gettext('All')?>";
+	}
+
+	$("#" + all_none_button_id).html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
+}
+
+// Setup the necessary events to manage the All/None button and included checkboxes
+// used for selecting the items to show on a widget.
+function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
+		set_all_none_button(checkbox_panel_ref, all_none_button_id);
+
+		$(checkbox_panel_ref).change(function() {
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
+
+		$("#" + all_none_button_id).click(function() {
+			set_clear_checkboxes(checkbox_panel_ref);
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
 }
 
 events.push(function() {

@@ -96,7 +96,7 @@ if ($_POST) {
 		unset($config['system']['gitsync']['dryrun']);
 	}
 
-	write_config();
+	write_config(gettext("Saved system update settings."));
 
 	$savemsg = gettext("Changes have been saved successfully");
 }

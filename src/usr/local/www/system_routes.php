@@ -200,7 +200,7 @@ if($_POST['save']) {
 			$a_routes = $a_routes_new;
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Saved static routes configuration."))) {
 			mark_subsystem_dirty('staticroutes');
 		}
 		header("Location: system_routes.php");

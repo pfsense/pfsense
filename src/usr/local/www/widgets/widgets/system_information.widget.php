@@ -161,6 +161,7 @@ $rows_displayed = false;
 <?php
 	endif;
 	if (!in_array('bios', $skipsysinfoitems)):
+		$rows_displayed = true;
 		unset($biosvendor);
 		unset($biosversion);
 		unset($biosdate);

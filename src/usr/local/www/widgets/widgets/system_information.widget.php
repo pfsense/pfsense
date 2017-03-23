@@ -33,6 +33,7 @@ include_once("includes/functions.inc.php");
 $sysinfo_items = array(
 	'name' => gettext('Name'),
 	'system' => gettext('System'),
+	'bios' => gettext('BIOS'),
 	'version' => gettext('Version'),
 	'cpu_type' => gettext('CPU Type'),
 	'hwcrypto' => gettext('Hardware Crypto'),
@@ -158,6 +159,33 @@ $rows_displayed = false;
 			</td>
 		</tr>
 <?php
+	endif;
+	if (!in_array('bios', $skipsysinfoitems)):
+		unset($biosvendor);
+		unset($biosversion);
+		unset($biosdate);
+		$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
+		$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
+		$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
+		/* Only display BIOS information if there is any to show. */
+		if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])):
+?>
+		<tr>
+			<th><?=gettext("BIOS");?></th>
+			<td>
+			<?php if (!empty($biosvendor[0])): ?>
+				<?=gettext("Vendor: ");?><strong><?=$biosvendor[0];?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($biosversion[0])): ?>
+				<?=gettext("Version: ");?><strong><?=$biosversion[0];?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($biosdate[0])): ?>
+				<?=gettext("Release Date: ");?><strong><?=$biosdate[0];?></strong><br/>
+			<?php endif; ?>
+			</td>
+		</tr>
+<?php
+		endif;
 	endif;
 	if (!in_array('version', $skipsysinfoitems)):
 		$rows_displayed = true;

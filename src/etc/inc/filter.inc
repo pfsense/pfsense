@@ -2727,6 +2727,16 @@ function filter_generate_user_rule($rule) {
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
+	if ($rule['source']['port'] && !alias_expand($rule['source']['port'])) {
+		$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
+	}
+	if ($rule['destination']['port'] && !alias_expand($rule['destination']['port'])) {
+		$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
+	}
 	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];
 	if ($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {

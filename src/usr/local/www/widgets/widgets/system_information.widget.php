@@ -191,6 +191,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('bios', $skipsysinfoitems)):
+		$rows_displayed = true;
 		unset($biosvendor);
 		unset($biosversion);
 		unset($biosdate);

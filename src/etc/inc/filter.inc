@@ -2700,12 +2700,16 @@ function filter_generate_user_rule($rule) {
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
-	if ($rule['source']['port'] && !alias_expand($rule['source']['port'])) {
+	if ($rule['source']['port']
+	    && !(is_portrange(str_replace("-", ":", $rule['source']['port']))
+	    || alias_expand($rule['source']['port']))) {
 		$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
-	if ($rule['destination']['port'] && !alias_expand($rule['destination']['port'])) {
+	if ($rule['destination']['port']
+	    && !(is_portrange(str_replace("-", ":", $rule['destination']['port']))
+	    || alias_expand($rule['destination']['port']))) {
 		$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";

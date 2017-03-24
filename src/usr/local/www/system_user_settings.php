@@ -47,6 +47,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
 	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 } else {
 	echo gettext("The settings cannot be managed for a non-local user.");
@@ -116,6 +117,13 @@ if (isset($_POST['save'])) {
 		} else {
 			$pconfig['webguileftcolumnhyper'] = false;
 			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['disablealiaspopupdetail']) {
+			$pconfig['disablealiaspopupdetail'] = $userent['disablealiaspopupdetail'] = true;
+		} else {
+			$pconfig['disablealiaspopupdetail'] = false;
+			unset($userent['disablealiaspopupdetail']);
 		}
 
 		if ($_POST['pagenamefirst']) {

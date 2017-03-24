@@ -718,7 +718,7 @@ if ($act=="new" || $act=="edit"):
 				'%1$s%2$s%3$s',
 				'<div class="infoblock">',
 				sprint_info_box(gettext('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.') . '<br />' .
-					gettext('When disabled, only the selected Encryption Algorithm is allowedz.'), 'info', false),
+					gettext('When disabled, only the selected Encryption Algorithm is allowed.'), 'info', false),
 				'</div>');
 
 	foreach (explode(",", $pconfig['ncp-ciphers']) as $cipher) {

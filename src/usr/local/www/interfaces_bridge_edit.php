@@ -186,7 +186,7 @@ if ($_POST['save']) {
 	if (is_array($_POST['static'])) {
 		foreach ($_POST['static'] as $ifstatic) {
 			if (is_array($_POST['members']) && !in_array($ifstatic, $_POST['members'])) {
-				$input_errors[] = sprintf(gettext('Sticky interface (%s) is not part of the bridge. Remove the sticky interface to continuez.'), $ifacelist[$ifstatic]);
+				$input_errors[] = sprintf(gettext('Sticky interface (%s) is not part of the bridge. Remove the sticky interface to continue.'), $ifacelist[$ifstatic]);
 			}
 		}
 		$pconfig['static'] = implode(',', $_POST['static']);
@@ -450,7 +450,7 @@ $section->addInput(new Form_Select(
 	$spanlist['list'],
 	true
 ))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
-			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridgez. %1$s' .
+			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. %1$s' .
 			'%2$sThe span interface cannot be part of the bridge member interfaces.%3$s', '<br />', '<strong>', '</strong>');
 
 $edgelist = build_port_list($pconfig['edge']);

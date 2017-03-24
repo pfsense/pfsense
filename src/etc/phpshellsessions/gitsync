@@ -512,8 +512,8 @@ if (!$upgrading) {
 echo "===> Checkout complete.\n";
 echo "\n";
 if (!$upgrading) {
-	echo "Your system is now sync'd and PHP and nginx will be restarted in 5 seconds.\n\n";
+	echo "The system is now sync'd and PHP and nginx will be restarted in 5 seconds.\n\n";
 } else {
-	echo "Your system is now sync'd.\n\n";
+	echo "The system is now sync'd.\n\n";
 }
 

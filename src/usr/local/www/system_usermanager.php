@@ -69,6 +69,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
 	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
@@ -358,6 +359,12 @@ if ($_POST['save']) {
 			$userent['webguileftcolumnhyper'] = true;
 		} else {
 			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['disablealiaspopupdetail']) {
+			$userent['disablealiaspopupdetail'] = true;
+		} else {
+			unset($userent['disablealiaspopupdetail']);
 		}
 
 		if ($_POST['pagenamefirst']) {
@@ -975,6 +982,7 @@ events.push(function() {
 		hideCheckbox('systemlogsmanagelogpanel', !adv);
 		hideCheckbox('statusmonitoringsettingspanel', !adv);
 		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('disablealiaspopupdetail', !adv);
 		hideCheckbox('pagenamefirst', !adv);
 	}
 

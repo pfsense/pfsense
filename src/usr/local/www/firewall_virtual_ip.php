@@ -215,7 +215,7 @@ if ($_POST['act'] == "del") {
 			if (count($config['virtualip']['vip']) == 0) {
 				unset($config['virtualip']['vip']);
 			}
-			write_config();
+			write_config(gettext("Deleted a virtual IP."));
 			header("Location: firewall_virtual_ip.php");
 			exit;
 		}

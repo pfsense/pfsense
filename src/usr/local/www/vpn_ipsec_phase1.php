@@ -508,7 +508,7 @@ if ($_POST['save']) {
 			$a_phase1[] = $ph1ent;
 		}
 
-		write_config();
+		write_config(gettext("Saved IPsec tunnel Phase 1 configuration."));
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec.php");

@@ -160,7 +160,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			unset($config['syslog']['remoteserver3']);
 		}
 
-		write_config();
+		write_config(gettext("Changed system logging options."));
 
 		$changes_applied = true;
 		$retval = 0;

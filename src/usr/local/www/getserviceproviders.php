@@ -42,6 +42,7 @@ function get_country_providers($country) {
 			return is_array($sp['provider'][0]) ? $sp['provider'] : array($sp['provider']);
 		}
 	}
+	$provider_list = (is_array($provider_list)) ? $provider_list : array();
 	return $provider_list;
 }
 
@@ -59,8 +60,12 @@ function country_list() {
 
 function providers_list($country) {
 	$serviceproviders = get_country_providers($country);
-	foreach ($serviceproviders as $sp) {
-		echo $sp['name']['value'] . "\n";
+	if (is_array($serviceproviders)) {
+		foreach ($serviceproviders as $sp) {
+			echo $sp['name']['value'] . "\n";
+		}
+	} else {
+		$serviceproviders = array();
 	}
 }
 

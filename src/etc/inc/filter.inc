@@ -2700,6 +2700,20 @@ function filter_generate_user_rule($rule) {
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
+	if ($rule['source']['port']
+	    && !(is_portrange(str_replace("-", ":", $rule['source']['port']))
+	    || alias_expand($rule['source']['port']))) {
+		$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
+	}
+	if ($rule['destination']['port']
+	    && !(is_portrange(str_replace("-", ":", $rule['destination']['port']))
+	    || alias_expand($rule['destination']['port']))) {
+		$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
+	}
 	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];
 	if ($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {
@@ -2793,7 +2807,9 @@ function filter_generate_user_rule($rule) {
 
 	if ($rule['protocol'] == "icmp" && $rule['icmptype'] && ($rule['icmptype'] != 'any')) {
 		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
-		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+		// XXX: Bug #7372
+		$icmptype_text = replace_element_in_list($rule['icmptype'], ',', 'skip', '39');
+		$icmptype_text = (strpos($icmptype_text, ",") === false ? $icmptype_text : '{ ' . $icmptype_text . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
 	

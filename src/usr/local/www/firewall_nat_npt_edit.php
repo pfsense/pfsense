@@ -128,7 +128,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: NPt - saved/edited NPt mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 

@@ -41,11 +41,8 @@ function interface_ipv6_lower($interface_real) {
                             break;
                         }
                         // bring down dhcp6c if it is running
-                        $pidv6 = find_dhcp6c_process($interface_real);
-                        if ($pidv6) {
-                            posix_kill($pidv6, SIGTERM);
-                            sleep(3);
-                        }
+						kill_dhcp6client_process($interface_real,false);
+
                         unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 
                         // disable router advertisements (and therefore SLAAC)

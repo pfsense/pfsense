@@ -1078,13 +1078,14 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 
 	foreach ($config['installedpackages']['package'] as $pkg) {
-		$pkg_config = read_package_configurationfile($pkg['name']);
-
-		if (!isset($pkg_config['tabs']['tab'])) {
+		if (!is_array($pkg['tabs']['tab'])) {
 			continue;
 		}
 
-		foreach ($pkg_config['tabs']['tab'] as $tab) {
+		foreach ($pkg['tabs']['tab'] as $tab) {
+			if ($tab['tabgroup'] != $tabgroup) {
+				continue;
+			}
 			$tab_entry = array();
 			if ($tab['name']) {
 				$tab_entry[] = $tab['name'];

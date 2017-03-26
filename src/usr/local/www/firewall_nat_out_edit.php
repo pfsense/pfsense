@@ -206,15 +206,15 @@ if ($_POST) {
 		$_POST['natport'] = trim($_POST['natport']);
 	}
 
-	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
+	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_portorrangeoralias($_POST['sourceport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the source port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
+	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !is_portorrangeoralias($_POST['dstport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the destination port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['natport'] <> "" && !(is_portoralias($_POST['natport']) || is_portrange($_POST['natport'])) && !isset($_POST['nonat'])) {
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_portorrangeoralias($_POST['natport']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("A valid port must be supplied for the NAT port entry.");
 	}
 

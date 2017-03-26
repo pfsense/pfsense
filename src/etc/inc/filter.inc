@@ -2710,18 +2710,36 @@ function filter_generate_user_rule($rule) {
 		return "# {$error_text}";
 	}
 	if ($rule['source']['port']
-	    && !(is_portrange(str_replace("-", ":", $rule['source']['port']))
-	    || alias_expand($rule['source']['port']))) {
-		$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
-		return "# {$error_text}";
+	    && !is_portorrange(str_replace("-", ":", $rule['source']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['source']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['source']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
 	}
 	if ($rule['destination']['port']
-	    && !(is_portrange(str_replace("-", ":", $rule['destination']['port']))
-	    || alias_expand($rule['destination']['port']))) {
-		$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
-		return "# {$error_text}";
+	    && !is_portorrange(str_replace("-", ":", $rule['destination']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['destination']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['destination']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
 	}
 	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];

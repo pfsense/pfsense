@@ -312,8 +312,7 @@ $rows_displayed = false;
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
-					$mbufstext = get_mbuf();
-					$mbufusage = get_mbuf(true);
+					get_mbuf($mbufstext, $mbufusage);
 				?>
 				<div class="progress">
 					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
@@ -500,8 +499,12 @@ function systemStatusGetUpdateStatus() {
 
 setTimeout('systemStatusGetUpdateStatus()', 4000);
 <?php endif; ?>
-
+var updateMeters_running = false;
 function updateMeters() {
+	if (updateMeters_running) {
+		return;
+	}
+	updateMeters_running = true;
 	url = '/getstats.php';
 
 	$.ajax(url, {
@@ -510,21 +513,15 @@ function updateMeters() {
 			response = data || "";
 			if (response != "")
 				stats(data);
+			updateMeters_running = false;
 		}
 	});
-
-	setTimer();
-
 }
 
 var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
-}
-
-function setTimer() {
-	timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -699,7 +696,7 @@ function widgetActive(x) {
 
 /* start updater */
 events.push(function(){
-	setTimer();
+	timeout = window.setInterval(updateMeters, update_interval);
 });
 <?php endif; // $widget_first_instance ?>
 events.push(function(){

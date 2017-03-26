@@ -121,7 +121,7 @@ if ($_POST) {
 					if ($tab == "port") {
 						// Port alias
 						if (!empty($impip)) {
-							if (is_port($impip) || is_portrange($impip)) {
+							if (is_portorrange($impip)) {
 								$imported_ips[] = $impip;
 								$imported_descs[] = $impdesc;
 							} else {

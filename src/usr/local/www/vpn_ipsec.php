@@ -289,8 +289,27 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody class="p1-entries">
-<?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
+$iflabels = get_configured_interface_with_descr();
+$viplist = get_configured_vip_list();
+foreach ($viplist as $vip => $address) {
+	$iflabels[$vip] = $address;
+	if (get_vip_descr($address)) {
+		$iflabels[$vip] .= " (". get_vip_descr($address) .")";
+	}
+}
+$grouplist = return_gateway_groups_array();
+foreach ($grouplist as $name => $group) {
+	if ($group[0]['vip'] != "") {
+		$vipif = $group[0]['vip'];
+	} else {
+		$vipif = $group[0]['int'];
+	}
+	$iflabels[$name] = "GW Group {$name}";
+}
+
+$i = 0; foreach ($a_phase1 as $ph1ent): 
+
 	$iconfn = "pass";
 
 	$entryStatus = (isset($ph1ent['disabled']) ? 'disabled' : 'enabled');
@@ -321,25 +340,6 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 			if ($ph1ent['interface']) {
-				$iflabels = get_configured_interface_with_descr();
-
-				$viplist = get_configured_vip_list();
-				foreach ($viplist as $vip => $address) {
-					$iflabels[$vip] = $address;
-					if (get_vip_descr($address)) {
-						$iflabels[$vip] .= " (". get_vip_descr($address) .")";
-					}
-				}
-
-				$grouplist = return_gateway_groups_array();
-				foreach ($grouplist as $name => $group) {
-					if ($group[0]['vip'] != "") {
-						$vipif = $group[0]['vip'];
-					} else {
-						$vipif = $group[0]['int'];
-					}
-					$iflabels[$name] = "GW Group {$name}";
-				}
 				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
 			} else {
 				$if = "WAN";

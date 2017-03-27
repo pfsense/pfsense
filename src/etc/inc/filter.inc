@@ -636,7 +636,7 @@ function filter_generate_nested_alias_recurse($name, $alias, &$aliasnesting, &$a
 				$tmpline = filter_generate_nested_alias_recurse($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && is_portorrange($address)) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && is_port_or_range($address)) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"])) {
 					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
@@ -2710,7 +2710,7 @@ function filter_generate_user_rule($rule) {
 		return "# {$error_text}";
 	}
 	if ($rule['source']['port']
-	    && !is_portorrange(str_replace("-", ":", $rule['source']['port']))) {
+	    && !is_port_or_range(str_replace("-", ":", $rule['source']['port']))) {
 		$error_text = "";
 
 		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
@@ -2726,7 +2726,7 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 	if ($rule['destination']['port']
-	    && !is_portorrange(str_replace("-", ":", $rule['destination']['port']))) {
+	    && !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
 		$error_text = "";
 
 		// It is not a literal port or port range, so alias should exist, and expand to something non-empty

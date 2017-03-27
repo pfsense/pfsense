@@ -259,20 +259,20 @@ if ($_POST['save']) {
 		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
+	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
+	if ($_POST['srcendport'] && !is_port_or_alias($_POST['srcendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
 	}
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstbeginport'] && !is_port_or_alias($_POST['dstbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
 	}
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
+	if ($_POST['dstendport'] && !is_port_or_alias($_POST['dstendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 	}
 
-	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
+	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_port_or_alias($_POST['localbeginport']))) {
 		$input_errors[] = sprintf(gettext("%s is not a valid redirect target port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 

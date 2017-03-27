@@ -429,7 +429,7 @@ if ($_POST['save']) {
 					}
 				}
 			} else if ($_POST['type'] == "port") {
-				if (!is_port($input_address) && !is_portrange($input_address)) {
+				if (!is_port_or_range($input_address)) {
 					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {

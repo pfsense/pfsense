@@ -2153,7 +2153,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 				$tmp = $tmp_str;
 			}
 			$valid = (($type == "url" || $type == "urltable") && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-				(($type == "url_ports" || $type == "urltable_ports") && (is_port($tmp) || is_portrange($tmp)));
+				(($type == "url_ports" || $type == "urltable_ports") && is_port_or_range($tmp));
 			if ($valid) {
 				$items[] = $tmp;
 				if (count($items) == $max_items) {

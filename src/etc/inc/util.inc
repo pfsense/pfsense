@@ -1125,12 +1125,12 @@ function is_portrange($portrange) {
 }
 
 /* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") */
-function is_portorrange($port) {
+function is_port_or_range($port) {
 	return (is_port($port) || is_portrange($port));
 }
 
 /* returns true if $port is a valid port number or an alias thereof */
-function is_portoralias($port) {
+function is_port_or_alias($port) {
 	global $config;
 
 	if (is_alias($port)) {
@@ -1148,8 +1148,8 @@ function is_portoralias($port) {
 }
 
 /* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") or an alias thereof */
-function is_portorrangeoralias($port) {
-	return (is_portoralias($port) || is_portrange($port));
+function is_port_or_range_or_alias($port) {
+	return (is_port_or_alias($port) || is_portrange($port));
 }
 
 /* create ranges of sequential port numbers (200:215) and remove duplicates */
@@ -1791,7 +1791,7 @@ function alias_expand($name) {
 			}
 		}
 		return "\${$name}";
-	} else if (is_ipaddr($name) || is_subnet($name) || is_portorrange($name)) {
+	} else if (is_ipaddr($name) || is_subnet($name) || is_port_or_range($name)) {
 		return "{$name}";
 	} else {
 		return null;

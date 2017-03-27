@@ -88,7 +88,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The 'name' field must be 32 characters or less.");
 	}
 
-	if ($_POST['port'] != "" && !is_portoralias($_POST['port'])) {
+	if ($_POST['port'] != "" && !is_port_or_alias($_POST['port'])) {
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, a port alias, or left blank.");
 	}
 

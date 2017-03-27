@@ -32,6 +32,7 @@ net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
 net/%%PRODUCT_NAME%%-pkg-Avahi
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate-Coreboot-Upgrade
 sysutils/%%PRODUCT_NAME%%-pkg-Notes
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron

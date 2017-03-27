@@ -619,7 +619,20 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
+function filter_generate_nested_alias($name) {
+	global $aliastable;
+
+	$aliasnesting = array();
+	$aliasaddrnesting = array();
+
+	if (($name == "") || !isset($aliastable[$name])) {
+		return "";
+	}
+
+	return filter_generate_nested_alias_recurse($name, $aliastable[$name], $aliasnesting, $aliasaddrnesting);
+}
+
+function filter_generate_nested_alias_recurse($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
@@ -636,7 +649,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$tmpline = "";
 		if (is_alias($address)) {
 			if (alias_get_type($address) == 'urltable') {
-				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
+				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias_recurse. Just load IPs from the file.
 				$urltable_nesting = alias_expand_urltable($address);
 				if (!empty($urltable_nesting)) {
 					$urlfile_as_arr = file($urltable_nesting);
@@ -652,10 +665,10 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no necessity to do it again. */
 			else if (!isset($aliasnesting[$address])) {
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
+				$tmpline = filter_generate_nested_alias_recurse($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && is_portorrange($address)) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"])) {
 					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
@@ -696,9 +709,7 @@ function filter_expand_alias($alias_name) {
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			if ($aliased['name'] == $alias_name) {
-				$aliasnesting = array();
-				$aliasaddrnesting = array();
-				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+				return filter_generate_nested_alias($aliased['name']);
 			}
 		}
 	}
@@ -784,14 +795,12 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$aliasnesting = array();
-			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
 				// skip aliases with numeric-only names. redmine #4289
 				file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));
 				continue;
 			}
-			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+			$addrlist = filter_generate_nested_alias($aliased['name']);
 			switch ($aliased['type']) {
 			case "host":
 			case "network":
@@ -2735,18 +2744,36 @@ function filter_generate_user_rule($rule) {
 		return "# {$error_text}";
 	}
 	if ($rule['source']['port']
-	    && !(is_portrange(str_replace("-", ":", $rule['source']['port']))
-	    || alias_expand($rule['source']['port']))) {
-		$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
-		return "# {$error_text}";
+	    && !is_portorrange(str_replace("-", ":", $rule['source']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['source']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['source']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
 	}
 	if ($rule['destination']['port']
-	    && !(is_portrange(str_replace("-", ":", $rule['destination']['port']))
-	    || alias_expand($rule['destination']['port']))) {
-		$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
-		file_notice("Filter_Reload", $error_text);
-		return "# {$error_text}";
+	    && !is_portorrange(str_replace("-", ":", $rule['destination']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['destination']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['destination']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
 	}
 	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];

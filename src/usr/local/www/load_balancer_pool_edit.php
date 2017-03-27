@@ -129,7 +129,7 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("Sorry, an alias is already named %s."), $_POST['name']);
 	}
 
-	if (!is_portoralias($_POST['port'])) {
+	if (!is_port_or_alias($_POST['port'])) {
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
 	}
 

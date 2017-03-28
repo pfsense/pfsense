@@ -165,11 +165,15 @@ if ($_POST) {
 		}
 
 		if (($hostent['host'] == $_POST['host']) &&
-		    ($hostent['domain'] == $_POST['domain']) &&
-		    ((is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) ||
-		     (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])))) {
-			$input_errors[] = gettext("This host/domain already exists.");
-			break;
+		    ($hostent['domain'] == $_POST['domain'])) {
+			if (is_ipaddrv4($hostent['ip']) && is_ipaddrv4($_POST['ip'])) {
+				$input_errors[] = gettext("This host/domain override combination already exists with an IPv4 address.");
+				break;
+			}
+			if (is_ipaddrv6($hostent['ip']) && is_ipaddrv6($_POST['ip'])) {
+				$input_errors[] = gettext("This host/domain override combination already exists with an IPv6 address.");
+				break;
+			}
 		}
 	}
 
@@ -261,7 +265,7 @@ if (isset($id) && $a_hosts[$id]) {
 		'id',
 		null,
 		'hidden',
-		$pconfig['id']
+		$id
 	));
 }
 

@@ -163,7 +163,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		'id',
 		null,
 		'hidden',
-		$pconfig['id']
+		$id
 	));
 }
 

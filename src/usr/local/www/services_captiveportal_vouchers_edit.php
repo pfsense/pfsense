@@ -212,7 +212,7 @@ if (isset($id) && $a_roll[$id]) {
 		'id',
 		null,
 		'hidden',
-		$pconfig['id']
+		$id
 	));
 }
 

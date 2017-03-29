@@ -38,6 +38,27 @@ function interfaces_bring_up($interface) {
 }
 
 /*
+ * Validate comma-separated list of IPv4 addresses
+ */
+function validate_ipv4_list($value) {
+	$value = trim($value);
+
+	if (empty($value)) {
+		return false;
+	}
+
+	$list = explode(',', $value);
+
+	foreach ($list as $ip) {
+		if (!is_ipaddrv4($ip)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
  * Return the interface array
  */
 function get_interface_arr($flush = false) {

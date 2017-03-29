@@ -33,13 +33,9 @@ function get_stats() {
 	$stats['states'] = get_pfstate();
 	$stats['temp'] = get_temp();
 	$stats['datetime'] = update_date_time();
-	$stats['interfacestatistics'] = 0;//get_interfacestats();//unused
-	$stats['interfacestatus'] = 0;//get_interfacestatus();//unused
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
-	get_mbuf($mbuf, $mbufpercent);
-	$stats['mbuf'] = $mbuf;
-	$stats['mbufpercent'] = $mbufpercent;
+	get_mbuf($stats['mbuf'], $stats['mbufpercent']);
 	$stats['statepercent'] = get_pfstate(true);
 	$stats = join("|", $stats);
 	return $stats;

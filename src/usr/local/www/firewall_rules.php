@@ -332,7 +332,7 @@ if (is_subsystem_dirty('filter')) {
 	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
-display_top_tabs($tab_array, false, 'pills', "usepost");
+display_top_tabs($tab_array, false, 'pills');
 
 $showantilockout = false;
 $showprivate = false;

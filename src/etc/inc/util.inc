@@ -1416,7 +1416,7 @@ function get_configured_interface_list_by_realif($only_opt = false, $withdisable
 
 /* return the configured interfaces list with their description. */
 function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
-	global $config;
+	global $config, $user_settings;
 
 	$iflist = array();
 
@@ -1433,8 +1433,11 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 			}
 		}
 	}
-	
-	asort($iflist);
+
+	if ($user_settings['webgui']['interfacessort']) {
+		asort($iflist);
+	}
+
 	return $iflist;
 }
 

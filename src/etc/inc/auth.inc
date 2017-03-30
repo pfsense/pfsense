@@ -1580,6 +1580,7 @@ function get_user_settings($username) {
 	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
+	$settings['webgui']['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
 	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
 	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
@@ -1604,6 +1605,7 @@ function get_user_settings($username) {
 		if (isset($user['webguihostnamemenu'])) {
 			$settings['webgui']['webguihostnamemenu'] = $user['webguihostnamemenu'];
 		}
+		$settings['webgui']['interfacessort'] = isset($user['interfacessort']);
 		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
 		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
 		$settings['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);

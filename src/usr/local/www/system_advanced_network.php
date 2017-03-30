@@ -216,9 +216,9 @@ $section->addInput(new Form_Checkbox(
 	'Do not generate local IPv6 DNS entries for LAN interfaces',
 	$pconfig['ipv6dontcreatelocaldns']
 ))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
-    'it can cause connections to this firewall that were established via IPv6 hostname to fail. This can happen '.
-	'unintentionally when accessing the system by hostname, since by default both IPv4 and IPv6 entries are added '.
-	'to /etc/hosts. Enabling this option prevents those IPv6 records from being created.');
+    'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
+	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
+	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
 $group = new Form_Group('DHCP6 DUID');
 

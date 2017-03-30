@@ -290,7 +290,7 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody class="p1-entries">
 <?php
-$iflabels = get_configured_interface_with_descr();
+$iflabels = get_configured_interface_with_descr(false, true);
 $viplist = get_configured_vip_list();
 foreach ($viplist as $vip => $address) {
 	$iflabels[$vip] = $address;
@@ -340,7 +340,11 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 						<td>
 <?php
 			if ($ph1ent['interface']) {
-				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+				if (isset($iflabels[$ph1ent['interface']])) {
+					$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+				} else {
+					$if = sprintf("Interface not found: '%s'", $ph1ent['interface']);
+				}
 			} else {
 				$if = "WAN";
 			}

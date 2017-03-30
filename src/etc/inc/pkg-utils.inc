@@ -812,6 +812,9 @@ function install_package_xml($package_name) {
 			}
 			update_status(gettext("done.") . "\n");
 		}
+ 		if (is_array($pkg_config['tabs'])) {
+ 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];			
+ 		}
 	} else {
 		pkg_debug("Unable to find config file\n");
 		update_status(gettext("Loading package configuration... failed!") . "\n\n" . gettext("Installation aborted."));

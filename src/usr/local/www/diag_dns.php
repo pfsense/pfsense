@@ -118,7 +118,6 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 			$a_aliases[] = $newalias;
 		}
 		write_config(gettext("Created an alias from Diagnostics - DNS Lookup page."));
-		write_config();
 		$createdalias = true;
 	}
 }

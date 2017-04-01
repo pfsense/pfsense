@@ -261,6 +261,11 @@ function get_services() {
 	$pconfig['description'] = gettext("NTP clock sync");
 	$services[] = $pconfig;
 
+	$pconfig = array();
+	$pconfig['name'] = "syslogd";
+	$pconfig['description'] = gettext("Syslog logging");
+	$services[] = $pconfig;
+	
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $zone => $setting) {
 			if (isset($setting['enable'])) {
@@ -605,6 +610,9 @@ function service_control_start($name, $extras) {
 			break;
 		case 'sshd':
 			send_event("service restart sshd");
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		case 'openvpn':
 			$vpnmode = isset($extras['vpnmode']) ? htmlspecialchars($extras['vpnmode']) : htmlspecialchars($extras['mode']);

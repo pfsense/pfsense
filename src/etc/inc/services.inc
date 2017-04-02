@@ -2620,6 +2620,7 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
+				$upinst .= "local ${wanip}\n";
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(

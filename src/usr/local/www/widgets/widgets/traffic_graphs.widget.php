@@ -105,6 +105,7 @@ if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
 $tg_displayed = false;
 $tg_displayed_ifs_array = [];
+$tg_displayed_realifsarray = [];
 ?>
 	<script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
 	<script src="/vendor/nvd3/nv.d3.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.js')?>"></script>
@@ -129,6 +130,7 @@ $tg_displayed_ifs_array = [];
 
 		$tg_displayed = true;
 		$tg_displayed_ifs_array[] = $ifdescr;
+		$tg_displayed_realifsarray[] = get_real_interface($ifdescr);
 		echo '<div id="traffic-chart-' . $ifdescr . '" class="d3-chart traffic-widget-chart">';
 		echo '	<svg></svg>';
 		echo '</div>';
@@ -255,6 +257,7 @@ var graph_interfacenames = <?php
 events.push(function() {
 
 	var InterfaceString = "<?=implode("|", $tg_displayed_ifs_array)?>";
+	var RealInterfaceString = "<?=implode("|", $tg_displayed_realifsarray)?>";
 
 	//store saved settings in a fresh localstorage
 	localStorage.clear();
@@ -264,6 +267,7 @@ events.push(function() {
 	localStorage.setItem('backgroundupdate', <?=$tg_backgroundupdate?>);
 
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
+	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.charts = {};
     window.myData = {};
     window.updateIds = 0;

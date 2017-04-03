@@ -2524,8 +2524,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
+			$bindip = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);
+			$bindip = $wanip;
 		}
 
 		$wanipv6 = get_interface_ipv6($if);
@@ -2620,6 +2622,7 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
+				$upinst .= "local {$bindip}\n";
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(

@@ -9,6 +9,7 @@
 # Mathias <mathias@mediamixx.de>, 2017. #zanata
 # Michael <sonic@dersonic.org>, 2017. #zanata
 # Michael Köck <tysonm898@gmail.com>, 2017. #zanata
+# Philipp Schenkl <Ps@ict-expert.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 # Robert Trapp <rbt.trapp@gmail.com>, 2017. #zanata
 # Stephan <stephan@confidr.me>, 2017. #zanata
@@ -16,16 +17,17 @@
 # athurdent <tobi@underscore.de>, 2017. #zanata
 # brlx <bk@offizin.at>, 2017. #zanata
 # pauneu <Zanata@nhsml.de>, 2017. #zanata
+# vanOert <oertel@bannerstop.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-27 09:13-0400\n"
-"Last-Translator: Michael Köck <tysonm898@gmail.com>\n"
+"PO-Revision-Date: 2017-04-02 10:23-0400\n"
+"Last-Translator: vanOert <oertel@bannerstop.com>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -1635,7 +1637,7 @@ msgstr "Zeit überschritten"
 msgid "Packet too big"
 msgstr "Paket zu groß"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
@@ -1700,9 +1702,9 @@ msgstr "Filter deaktiviert, lade keine Regeln."
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
@@ -1896,24 +1898,24 @@ msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
 msgstr "Unauflösbarer Ziel-Alias '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2718
-#, php-format
+#, fuzzy, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Nicht auflösbarer Quell-Alias '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2720
-#, php-format
+#, fuzzy, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Leerer Quell-Alias '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2734
-#, php-format
+#, fuzzy, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Nicht auflösbarer Ziel-Alias  '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2736
-#, php-format
+#, fuzzy, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Leerer Ziel-Alias  '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
@@ -3021,9 +3023,8 @@ msgid "TLS Encryption and Authentication"
 msgstr "TLS-Verschlüsselung und Authentifizierung"
 
 #: src/etc/inc/openvpn.inc:219
-#, fuzzy
 msgid "None (Username and/or Password required)"
-msgstr "Kein (Benutzername und/oder Kennwort benötigt)"
+msgstr "Kein (Benutzername und/oder Kennwort wird benötigt)"
 
 #: src/etc/inc/openvpn.inc:227
 msgid "===== Server Certificates ====="
@@ -3171,9 +3172,8 @@ msgid "Top Navigation"
 msgstr "Obere Navigation"
 
 #: src/etc/inc/pfsense-utils.inc:212
-#, fuzzy
 msgid "The fixed option is intended for large screens only."
-msgstr "Die Option 'Fixiert' ist nur für grosse Bildschirme gedacht."
+msgstr "Die Option 'Fixiert' ist nur für große Bildschirme vorgesehen."
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Default (No hostname)"
@@ -3402,10 +3402,13 @@ msgid "Failed to download alias %s"
 msgstr "Download des Aliases %s fehlgeschlagen"
 
 #: src/etc/inc/pfsense-utils.inc:2219
+#, fuzzy
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
+"Das Alias-Archiv ist eine .tar/tgz-Datei, die nicht demkomprimiert werden "
+"kann, da das entsprechende Utility fehlt!"
 
 #: src/etc/inc/pfsense-utils.inc:2229
 #, php-format
@@ -3535,8 +3538,9 @@ msgid "Network lock State"
 msgstr "Status Netzwerksperre"
 
 #: src/etc/inc/pfsense-utils.inc:3083
+#, fuzzy
 msgid "(U)SIM card lock State"
-msgstr ""
+msgstr "(U-)SIM-Karten-Sperrstatus"
 
 #: src/etc/inc/pfsense-utils.inc:3084
 msgid "Network Lock and (U)SIM card Lock State"
@@ -3640,13 +3644,13 @@ msgstr ""
 "abgebrochen."
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Paket Installation fehlgeschlagen: %s."
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
 msgstr "Paket Installation fehlgeschlagen."
 
@@ -3658,7 +3662,7 @@ msgstr "Lade Paket Konfiguration..."
 msgid "Configuring package components..."
 msgstr "Konfiguriere Paket Komponenten..."
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
 msgstr "Lade Paketanleitung..."
 
@@ -3683,83 +3687,83 @@ msgstr "custom_php_install_command() wird ausgeführt..."
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "custom_php_resync_config_command() wird ausgeführt..."
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
 msgstr "Menü Einträge..."
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
 msgstr "Dienste..."
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
 msgstr "Laden der Paket Konfiguration fehlgeschlagen!"
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
 msgstr "Installation abgebrochen."
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 "Laden der Paket Konfiguration nicht möglich. Installation abgebrochen."
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
 msgstr "Schreibe Konfiguration..."
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Erfolgreich installierte Pakete: %s."
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Das %1$s Paket ist nicht installiert. %2$s Löschen wurde abgebrochen."
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
 msgstr "Entferne %s Pakete"
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
 msgstr "Entferne %s Komponenten..."
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
 msgstr "Befehle deinstallieren..."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
 msgstr "Syslog-Einträge"
 
-#: src/etc/inc/pkg-utils.inc:962
+#: src/etc/inc/pkg-utils.inc:965
 msgid "Configuration... "
 msgstr "Konfiguration..."
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
 msgstr "Entfernte Pakete %s."
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -3767,25 +3771,25 @@ msgstr ""
 "Warte auf Internetverbindung zum Aktualisieren der pkg Metadaten und "
 "Abschließen der Paket-Neuinstallation"
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
 msgstr "Paket erneut installieren"
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Die Neuinstallation des Paketes wurde ABGEBROCHEN, da keine Internet-"
 "Verbindung bestand."
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr ""
 "Paket %s ist nicht in aktueller %s Version vorhanden und es wurde entfernt."
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
 msgstr "Stoppe alle Pakete."
 
@@ -5825,9 +5829,10 @@ msgid "RRD dump failed exited with %1$s, the error is: %2$s"
 msgstr "RRD-Dump wurde mit %1$s abgebrochen, der Fehler ist: %2$s."
 
 #: src/etc/inc/rrd.inc:43
-#, php-format
+#, fuzzy, php-format
 msgid "RRD create failed exited with %1$s, the error is: %2$s"
 msgstr ""
+"RRD Erstellung fehlgeschlagen mit %1$s, die Fehlermeldung lautet: %2$s"
 
 #: src/etc/inc/rrd.inc:58
 #, php-format
@@ -6388,7 +6393,7 @@ msgstr "Wählen Sie Optionen für diese Queue"
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -7570,7 +7575,7 @@ msgstr ""
 #: src/etc/inc/vpn.inc:744
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
-msgstr ""
+msgstr "Fehler: IPsec CA Datei für %s kann nicht erstellt werden"
 
 #: src/etc/inc/vpn.inc:1363
 #, php-format
@@ -7578,9 +7583,11 @@ msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr "Keine Phase2-Spezifikationen für Tunnel mit REQID =%s"
 
 #: src/etc/inc/vpn.inc:1482
-#, php-format
+#, fuzzy, php-format
 msgid "Ignoring IPsec reload since there are no tunnels on interface %s"
 msgstr ""
+"Ignoriere IPsec Ladeversuch - es sind keine Tunnel auf Schnittstelle %s "
+"definiert"
 
 #: src/etc/inc/vpn.inc:1488
 msgid "Forcefully reloading IPsec"
@@ -7625,7 +7632,7 @@ msgstr ""
 #: src/etc/inc/xmlparse.inc:87 src/etc/inc/xmlparse_attr.inc:72
 #, php-format
 msgid "XML error: %1$s at line %2$d cannot occur more than once"
-msgstr ""
+msgstr "XML Fehler: %1$s in Zeile %2$d mehr als einmal vorhanden"
 
 #: src/etc/inc/xmlparse.inc:180 src/etc/inc/xmlparse_attr.inc:188
 msgid "Error: could not open XML input"
@@ -7662,6 +7669,8 @@ msgid ""
 "A communications error occurred while attempting XMLRPC sync with %s "
 "(pfsense.%s)."
 msgstr ""
+"Ein Kommunikationsproblem trat beim XMLRPC Synchronisationsversuch mit %s "
+"(pfsense.%s) auf."
 
 #: src/etc/inc/xmlrpc_client.inc:125
 msgid "Error code received"
@@ -7802,10 +7811,13 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:129
+#, fuzzy
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
 msgstr ""
+"Bitte prüfen Sie die zu sendenden Informationen vor dem Absenden, um "
+"sicherzustellen dass diese keine sensiblen Daten enthalten."
 
 #: src/usr/local/www/crash_reporter.php:138
 #: src/usr/local/www/diag_defaults.php:45
@@ -8008,7 +8020,7 @@ msgstr "ARP Cache Eintrag löschen"
 #: src/usr/local/www/diag_arp.php:385
 #, php-format
 msgid "Local IPv6 peers use %1$sNDP%2$s instead of ARP."
-msgstr ""
+msgstr "Lokale IPv6 Partner verwenden %1$sNDP%2$s anstelle von ARP."
 
 #: src/usr/local/www/diag_arp.php:386
 msgid ""
@@ -8652,6 +8664,10 @@ msgid ""
 "options and select the newer configuration in the right column, then press "
 "the \"Diff\" button."
 msgstr ""
+"Um die Änderungen zwischen einer älteren und einer neueren Konfiguration "
+"anzuzeigen, wählen Sie die ältere Konfiguration mittels der linken "
+"Radiobutton-Spalte aus, wählen Sie die neuere Konfiguration in der rechten "
+"Radiobutton-Spalte aus und klicken Sie auf den \"Diff\"-Button"
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
@@ -8811,7 +8827,7 @@ msgstr "Zurück zum Dashboard"
 msgid "Keep Configuration"
 msgstr "Konfiguration behalten"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr "DNS Lookup"
@@ -8824,15 +8840,15 @@ msgstr "Generiert aus Diagnose -> DNS Abfrage"
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr "Der Host muss einen zulässigen Hostnamen oder IP-Adresse besitzen."
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr "Keine Antwort"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8852,12 +8868,12 @@ msgstr "Keine Antwort"
 msgid "IP Address"
 msgstr "IP-Adresse"
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr "Host Name"
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8866,24 +8882,24 @@ msgstr "Host Name"
 msgid "Server"
 msgstr "Server"
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr "Abfragezeit"
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr "Adresse für Host '%s' konnte nicht aufgelöst werden."
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr "Alias wurde erfolgreich aktualisiert."
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr "Alias wurde erfolgreich erstellt."
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8893,65 +8909,65 @@ msgstr "Alias wurde erfolgreich erstellt."
 msgid "*Hostname"
 msgstr "*Hostname"
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr "Nachschlagen"
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr "Alias aktualisieren"
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr "Alias hinzufügen"
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr "Ergebnisse"
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr "Ergebniss"
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr "Eintragstyp"
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr "Name Server"
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr "Abfragezeit"
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr "Mehr Informationen"
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr "Ping"
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr ""
 
@@ -9088,8 +9104,9 @@ msgid "Filters"
 msgstr "Filter"
 
 #: src/usr/local/www/diag_dump_states_sources.php:115
+#, fuzzy
 msgid "Current Source Tracking Entries"
-msgstr ""
+msgstr "Aktuelle Quellverfolgungseinträge"
 
 #: src/usr/local/www/diag_dump_states_sources.php:120
 msgid "Source -> Destination"
@@ -9106,8 +9123,9 @@ msgstr "# Verbindungen"
 #: src/usr/local/www/diag_dump_states_sources.php:123
 #: src/usr/local/www/diag_pftop.php:124
 #: src/usr/local/www/status_interfaces.php:165
+#, fuzzy
 msgid "Rate"
-msgstr ""
+msgstr "Geschwindigkeit"
 
 #: src/usr/local/www/diag_dump_states_sources.php:154
 #, php-format
@@ -9241,8 +9259,11 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:86
+#, fuzzy
 msgid "Consumer is in use and cannot be cleared. Deactivate disk first."
 msgstr ""
+"Abnehmer wird verwendet und kann nicht gelöscht werden. Deaktiviere zuerst "
+"die Disk."
 
 #: src/usr/local/www/diag_gmirror.php:89
 msgid "Consumer has no metadata to clear."
@@ -9939,11 +9960,11 @@ msgstr "System neustarten"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
-msgstr ""
+msgstr "Die Statustabelle wurde erfolgreich gelöscht."
 
 #: src/usr/local/www/diag_resetstate.php:52
 msgid "The source tracking table has been flushed successfully."
-msgstr ""
+msgstr "Die Quellverfolgungstabelle wurde erfolgreich gelöscht."
 
 #: src/usr/local/www/diag_resetstate.php:68
 #, fuzzy, php-format
@@ -9977,7 +9998,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_resetstate.php:92
 msgid "State reset options"
-msgstr ""
+msgstr "Status Reset Optionen"
 
 #: src/usr/local/www/diag_resetstate.php:96
 msgid "State Table"
@@ -10238,7 +10259,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_states_summary.php:147
 msgid "Protocol counts"
-msgstr ""
+msgstr "Protokoll Zähler"
 
 #: src/usr/local/www/diag_states_summary.php:151
 #: src/usr/local/www/firewall_aliases.php:149
@@ -10637,7 +10658,7 @@ msgstr "Kann den Alias nicht löschen. Wird aktuell benutzt von %s."
 
 #: src/usr/local/www/firewall_aliases.php:100
 msgid "Deleted a firewall alias."
-msgstr ""
+msgstr "Ein Firewall Alias wurde gelöscht."
 
 #: src/usr/local/www/firewall_aliases.php:150
 msgid "Ports"
@@ -10782,11 +10803,15 @@ msgid "Import"
 msgstr "Importieren"
 
 #: src/usr/local/www/firewall_aliases.php:289
+#, fuzzy
 msgid ""
 "Aliases act as placeholders for real hosts, networks or ports. They can be "
 "used to minimize the number of changes that have to be made if a host, "
 "network or port changes."
 msgstr ""
+"Aliasse stehen für physische Hosts, Netzwerke oder Ports. Sie können "
+"verwendet werden um die Anzahl der (Regel-) Veränderungen zu minimieren, die "
+"durch Veränderung eines Hosts, Netzwerks oder Ports notwendig werden."
 
 #: src/usr/local/www/firewall_aliases.php:291
 msgid ""
@@ -11006,7 +11031,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:526
 msgid "Edited a firewall alias."
-msgstr ""
+msgstr "Ein Firewall Alias wurde bearbeitet."
 
 #: src/usr/local/www/firewall_aliases_edit.php:555
 #: src/usr/local/www/firewall_aliases_edit.php:636
@@ -11233,7 +11258,7 @@ msgstr "Beschreibung muss weniger als 200 Zeichen lang sein."
 
 #: src/usr/local/www/firewall_aliases_import.php:186
 msgid "Imported a firewall alias."
-msgstr ""
+msgstr "Ein Firewall Alias wurde importiert."
 
 #: src/usr/local/www/firewall_aliases_import.php:215
 msgid "Port Alias Details"
@@ -14673,11 +14698,12 @@ msgstr "Die CPU-Auslastung kann nicht bezogen werden."
 
 #: src/usr/local/www/guiconfig.inc:129
 msgid "One Level"
-msgstr ""
+msgstr "Eine Ebene"
 
 #: src/usr/local/www/guiconfig.inc:130
+#, fuzzy
 msgid "Entire Subtree"
-msgstr ""
+msgstr "Gesamte Unterstruktur"
 
 #: src/usr/local/www/guiconfig.inc:157
 msgid "Authentication and Accounting"
@@ -14779,11 +14805,11 @@ msgstr "Protokolldatei eröffnet."
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr "Nur die ersten 10.000 Einträge werden aufgelistet"
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
@@ -15274,7 +15300,7 @@ msgstr "IPv4-Adresse"
 
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
 msgid "Subnet bit count"
-msgstr ""
+msgstr "Subnetz Bitzahl."
 
 #: src/usr/local/www/interfaces.php:568
 msgid ""
@@ -15307,8 +15333,9 @@ msgstr "PPPoE-Kennwort"
 #: src/usr/local/www/interfaces.php:2750
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:221
+#, fuzzy
 msgid "Dial on demand"
-msgstr ""
+msgstr "Einwahl nach Bedarf"
 
 #: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:591
 #: src/usr/local/www/interfaces.php:601
@@ -15916,8 +15943,9 @@ msgstr ""
 "verwendet."
 
 #: src/usr/local/www/interfaces.php:1965
+#, fuzzy
 msgid "Reject leases from"
-msgstr ""
+msgstr "Verweigere Leases von"
 
 #: src/usr/local/www/interfaces.php:1968
 msgid ""
@@ -16193,7 +16221,7 @@ msgstr "Diese Feld kann normalerweise leer bleiben."
 
 #: src/usr/local/www/interfaces.php:2626
 msgid "Idle timeout"
-msgstr ""
+msgstr "Inaktivitäts-Timeout"
 
 #: src/usr/local/www/interfaces.php:2630 src/usr/local/www/interfaces.php:2763
 msgid ""
@@ -18346,13 +18374,15 @@ msgid "Delete VLAN"
 msgstr "VLAN löschen"
 
 #: src/usr/local/www/interfaces_vlan.php:156
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
 "do not explicitly support it, VLAN tagging will still work, but the reduced "
 "MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
+"Nicht alle Treiber /NICs unterstützen 802.1Q VLAN-Kennzeichnung "
+"ordnungsgemäß. ..."
 
 #: src/usr/local/www/interfaces_vlan.php:163
 msgid "Are you sure you want to delete this VLAN?"
@@ -18388,6 +18418,8 @@ msgid ""
 "A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for "
 "a normal VLAN."
 msgstr ""
+"Es gibt bereits ein QinQ-VLAN auf %s mit dieser Kennzeichnung. Bitte dieses "
+"entfernen, um die Kennzeichnung für ein normales VLAN nutzen zu können."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:179
 msgid "VLAN Configuration"

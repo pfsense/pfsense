@@ -1,15 +1,16 @@
+# Aniss <zanata@bellator.se>, 2017. #zanata
 # Bosse <bomca75@hotmail.com>, 2017. #zanata
 # Ivan Pedersen <ivan@alpe.se>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-07 03:09-0500\n"
-"Last-Translator: Bosse <bomca75@hotmail.com>\n"
+"PO-Revision-Date: 2017-04-03 04:41-0400\n"
+"Last-Translator: Aniss <zanata@bellator.se>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -61,6 +62,8 @@ msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
+"FEL!  _ldap_get_user_ous() backend valt utan definierad LDAP "
+"autentiseringsserver."
 
 #: src/etc/inc/auth.inc:1026
 #, php-format
@@ -156,12 +159,12 @@ msgstr "Inloggningen lyckades som %1$s genom LDAP-server %2$s med DN = %3$s."
 #: src/etc/inc/auth.inc:1488
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr "RADIUS start: %s"
 
 #: src/etc/inc/auth.inc:1500
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "RADIUS kunde inte skicka: %s"
 
 #: src/etc/inc/auth.inc:1508
 #, php-format
@@ -194,25 +197,25 @@ msgstr "Lyckad inloggning för användare: '%1$s' från: %2$s"
 #: src/etc/inc/auth.inc:1834
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Sessionen har gått ut för användare '%1$s' från: %2$s"
 
 #: src/etc/inc/auth.inc:1836
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Användaren har loggat ut användare '%1$s' från: %2$s"
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
-msgstr ""
+msgstr "Ingen sida tilldelad till användaren! Klicka här för att logga ut."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr ""
+msgstr "Fel: %1$s Beskrivning: %2$s"
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr ""
+msgstr "Fel: ej tillåtet"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
@@ -226,22 +229,22 @@ msgstr "Ogiltig inloggning (%s)."
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "Denna enhet underhålls för närvarande av: %s."
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Logga in i %1$s på %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "Logga in i %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1015
 msgid "Login"
-msgstr ""
+msgstr "Login"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -253,7 +256,7 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "Webbläsaren måste stödja cookies för att kunna logga in."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2530
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -314,12 +317,12 @@ msgstr "Ange ditt lösenord"
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr ""
+msgstr "%s captive portal"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr ""
+msgstr "Välkommen till %s Captive Portal!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
@@ -331,7 +334,7 @@ msgstr "Lösenord:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Fyll i  voucher kod:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
@@ -353,26 +356,26 @@ msgstr "Klicka på knappen nedan för att koppla från"
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr "Fel: kan inte öppna '%1$s' i captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Captive Portal konfiguration för tillåtna användare ändrad"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "FARA!_VARNING!_UPPMÄRKSAMHET!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr ""
+msgstr "%1$s kräver *MINST* %2$s RAM för att fungera korrekt.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
+msgstr "Enbart (%1$s) MB RAM detekterat, varav (%2$s) ledigt till %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
@@ -384,7 +387,7 @@ msgstr "Inga gränssnitt hittades!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "Behöver VLAN konfigureras först?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -395,7 +398,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "Ska VLAN konfigureras nu [y|n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
@@ -403,18 +406,18 @@ msgstr "VLAN gränssnitt:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr ""
+msgstr "Ange WAN enhet eller 'a' för automatisk detektering"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr ""
+msgstr "%1$s(%2$s eller a): "
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:463
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sOgiltigt enhetsnamn '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -422,11 +425,13 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sAnge LAN enhet eller 'a' för automatisk detektering %2$sOBS: Detta "
+"aktiverar fullt brandvägg/NAT läge.%3$s(%4$s a eller inget om klart):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sExtra enhet %2$s beskrivning hittad: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -437,25 +442,25 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr ""
+msgstr "Valfri"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Nätverkskorten tilldelas enligt följande:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "Vill du fortsätta [y|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "Du har valt att ta bort LAN enheten."
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr ""
+msgstr "Vill du ta bort LAN-enhetens IP-adress och ladda urenheten nu [y|n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
@@ -464,7 +469,7 @@ msgstr "%sSkriver konfigurationen..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Konsoltilldelning av nätverkskort"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
@@ -473,7 +478,7 @@ msgstr "klar. %s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Ett ögonblick, inställningar laddas om..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
@@ -482,56 +487,57 @@ msgstr "klar!"
 #: src/etc/inc/config.console.inc:400
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "Detekterat länk på enhet %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Ingen länk detekterad. %s"
 
 #: src/etc/inc/config.console.inc:422
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "VARNING: alla existerande VLAN kommer att rensas om du fortsätter!"
 
 #: src/etc/inc/config.console.inc:438
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "VLAN kompatibla enheter:"
 
 #: src/etc/inc/config.console.inc:453
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "Inga VLAN kompatibla enheter hittades."
 
 #: src/etc/inc/config.console.inc:457
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"Fyll i nätverkskortet namn för det nya VLANet (eller lämna tom om klar):"
 
 #: src/etc/inc/config.console.inc:470
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "Fyll i VLAN ID (1-4096):"
 
 #: src/etc/inc/config.console.inc:474
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sOgiltigt VLAN ID '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:481
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "Nätverkskort och VLAN redan skapade."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "Uppgraderar m0n0wall konfiguration till pfSense..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "FEL!  Kunde inte konvertera m0n0wall -> pfsense i config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "Konfiguration funnen på %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -539,10 +545,13 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"Hittar inte config.xml, försöker återställa senast kända konfiguration."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"Hittar inte config.xml eller konfigurations-backuper, återställer till "
+"fabriksinställningar."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
@@ -550,7 +559,7 @@ msgstr "Config.xml upplåst."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "Felaktigt lösenord inmatat. Var god försök igen."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -558,36 +567,42 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml är korrupt och på 0 bytes.  Kunde inte återställa tidigare backup."
+""
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Kunde inte återställa config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s återställer konfigurationen %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "XML-konfigurationsfilen hittas ej. %s kan inte fortsätta boota."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Senast kända konfiguration hittat och återställd. Var god kontrollera "
+"konfigurationsfilen."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Hittar ingen användbar konfigurationsfil! Avslutar...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Startar konfigurationsuppgradering %s, sätter exekveringstimeout till 15 "
+"minuter"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
@@ -596,26 +611,26 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Slutförde konfigurationsuppgraderingen %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Uppgraderat konfigurationens versionsnivå från %1$s till %2$s"
 
 #: src/etc/inc/config.lib.inc:475
 msgid "WARNING: Config contents could not be saved. Could not open file!"
-msgstr ""
+msgstr "WARNING: Konfigurationen kunde inte sparas. Kan inte öppna filen!"
 
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "Kan inte öppna %1$s/config.xml för att skriva write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Återgår till %s."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
@@ -632,17 +647,17 @@ msgstr "XML fel: kan ej öppna filen"
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s på rad %2$d"
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Backuppens cachefil %s är korrupt. Tar bort länkningen."
 
 #: src/etc/inc/config.lib.inc:879
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "%s gjorde en okänd förändring"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
@@ -656,7 +671,7 @@ msgstr "Dynamisk DNS: updatedns() startar"
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
-msgstr ""
+msgstr "Dynamisk DNS (%1$s): kör get_failover_interface på %2$s. Hittad %3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -664,11 +679,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dynamisk DNS (%1$s) Det var ett problem med att identifiera publikt IP för "
+"enhet - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): _update() startar."
 
 #: src/etc/inc/dyndns.class:445
 #, php-format
@@ -680,7 +697,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:685
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Skickar förfråga till: %s"
 
 #: src/etc/inc/dyndns.class:843
 #, php-format
@@ -698,7 +715,7 @@ msgstr "Fel"
 
 #: src/etc/inc/dyndns.class:851
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Curl fel inträffade:"
 
 #: src/etc/inc/dyndns.class:860 src/etc/inc/dyndns.class:881
 #: src/etc/inc/dyndns.class:900 src/etc/inc/dyndns.class:918
@@ -709,7 +726,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1395 src/etc/inc/dyndns.class:1416
 #: src/etc/inc/dyndns.class:1461 src/etc/inc/dyndns.class:1473
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "IP adress bytt med framgång!"
 
 #: src/etc/inc/dyndns.class:863 src/etc/inc/dyndns.class:886
 #: src/etc/inc/dyndns.class:905 src/etc/inc/dyndns.class:923
@@ -743,7 +760,7 @@ msgstr "Okänt svar"
 #: src/etc/inc/dyndns.class:1409 src/etc/inc/dyndns.class:1446
 #: src/etc/inc/dyndns.class:1467 src/etc/inc/dyndns.class:1482
 msgid "PAYLOAD:"
-msgstr ""
+msgstr "PAYLOAD:"
 
 #: src/etc/inc/dyndns.class:871
 msgid ""
@@ -771,11 +788,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:879
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Värdnamnet är blockerat på grund av missbruk av uppdateringar."
 
 #: src/etc/inc/dyndns.class:884
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "DNS-fel inträffat. Uppdateringar stoppas i 30 minuter."
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
@@ -803,11 +820,11 @@ msgstr "Igen förändring av IP Adress"
 #: src/etc/inc/dyndns.class:1340 src/etc/inc/dyndns.class:1398
 #: src/etc/inc/dyndns.class:1464
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Autentisering av användare misslyckades"
 
 #: src/etc/inc/dyndns.class:969
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "IP-adressen är den samma, ingen uppdatering genomförd."
 
 #: src/etc/inc/dyndns.class:973
 msgid "DNS hostname update successful."
@@ -815,7 +832,7 @@ msgstr "DNS värdnamn uppdatering lyckades."
 
 #: src/etc/inc/dyndns.class:977
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Angivet datornamn finns inte."
 
 #: src/etc/inc/dyndns.class:980
 msgid "Invalid Username."
@@ -831,17 +848,19 @@ msgstr "För många uppdateringar skickades."
 
 #: src/etc/inc/dyndns.class:989
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr ""
+msgstr "Konto inaktiverar då det brutit mot användarvillkoren hos No-IP. "
 
 #: src/etc/inc/dyndns.class:992
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"Felaktigt IP. Den angivna IP-adressen är felaktigt formaterad, i det privata "
+"området eller svartlistad."
 
 #: src/etc/inc/dyndns.class:995
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Inaktiverat / Låst datornamn."
 
 #: src/etc/inc/dyndns.class:998
 msgid ""
@@ -850,11 +869,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1001
 msgid "Group supplied does not exist."
-msgstr ""
+msgstr "Den angivna gruppen finns inte."
 
 #: src/etc/inc/dyndns.class:1004
 msgid "DNS group update is successful."
-msgstr ""
+msgstr "DNS gruppuppdatering lyckad."
 
 #: src/etc/inc/dyndns.class:1008
 msgid "DNS group is current, no update performed."
@@ -873,6 +892,8 @@ msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Klienten inaktiverad. Klienten bör koppla från och inte göra fler "
+"uppdateringar utan användaringripande."
 
 #: src/etc/inc/dyndns.class:1025
 msgid "Unknown Response:"
@@ -881,6 +902,7 @@ msgstr "Okänt svar:"
 #: src/etc/inc/dyndns.class:1031
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr ""
+"Autentisering misslyckades: Användarnamn och/eller lösenord är felaktigt."
 
 #: src/etc/inc/dyndns.class:1033
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
@@ -888,19 +910,19 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Ogiltig inmatning: Självförklarande"
 
 #: src/etc/inc/dyndns.class:1037
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr ""
+msgstr "För tidigt: För lite tid har passerat sedan senaste uppdateringen"
 
 #: src/etc/inc/dyndns.class:1039
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "IP uppdaterat framgångsrikt!"
 
 #: src/etc/inc/dyndns.class:1052
 msgid "Error 799"
-msgstr ""
+msgstr "Fel 799"
 
 #: src/etc/inc/dyndns.class:1052 src/etc/inc/dyndns.class:1054
 msgid "Update Failed!"
@@ -908,7 +930,7 @@ msgstr "Uppdatering misslyckades!"
 
 #: src/etc/inc/dyndns.class:1054
 msgid "Error 700"
-msgstr ""
+msgstr "Fel 700"
 
 #: src/etc/inc/dyndns.class:1056 src/etc/inc/dyndns.class:1059
 #: src/etc/inc/dyndns.class:1077 src/etc/inc/dyndns.class:1087
@@ -917,25 +939,28 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1255 src/etc/inc/dyndns.class:1310
 #: src/etc/inc/dyndns.class:1357 src/etc/inc/dyndns.class:1371
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "IP adress uppdaterat framgångsrikt!"
 
 #: src/etc/inc/dyndns.class:1069
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Felaktig förfrågan - URL:en var felformaterad. Nödvändiga parametrar saknas."
 
 #: src/etc/inc/dyndns.class:1071
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"För tidig uppdatering - Försökte uppdatera för nära inpå senaste "
+"förändringen."
 
 #: src/etc/inc/dyndns.class:1073
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Databasfel - Fel inträffat på serversidan."
 
 #: src/etc/inc/dyndns.class:1075
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
-msgstr ""
+msgstr "Fel i värdnamn - Värdnamnet (%1$s) tillhör inte användare (%2$s)."
 
 #: src/etc/inc/dyndns.class:1139
 msgid "Not a valid username or password!"
@@ -943,28 +968,30 @@ msgstr "Ogiltigt användarnamn eller lösenord."
 
 #: src/etc/inc/dyndns.class:1141
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Angivet värdnamn finns inte."
 
 #: src/etc/inc/dyndns.class:1147
 msgid "Hostname specified exists, but not under the username specified."
-msgstr ""
+msgstr "Angivet värdnamn finns, men inte för den angivna användaren."
 
 #: src/etc/inc/dyndns.class:1149
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Uppdaterar för frekvent, anses vara missbruk."
 
 #: src/etc/inc/dyndns.class:1158 src/etc/inc/dyndns.class:1222
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Felaktig förfrågan - Det angivna IP:t är ogiltigt."
 
 #: src/etc/inc/dyndns.class:1160
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Felaktig förfrågan - Nödvändiga parametrar inte angivna."
 
 #: src/etc/inc/dyndns.class:1162
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
+"Felaktig förfrågan - Ogiltiga tecken i antingen i användarnamn eller "
+"lösenord."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "Invalid password."
@@ -972,81 +999,83 @@ msgstr "Ogiltigt lösenord."
 
 #: src/etc/inc/dyndns.class:1166
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Detta konto är låst av administrativt låst."
 
 #: src/etc/inc/dyndns.class:1168
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Uppdaterar för frekvent."
 
 #: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1184
 #: src/etc/inc/dyndns.class:1202
 msgid "Server side error."
-msgstr ""
+msgstr "Serverfel."
 
 #: src/etc/inc/dyndns.class:1186
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Felaktigt formaterad förfråga (kontrollera inställningarna)."
 
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Felaktig förfrågan - Datornamn ej angivet."
 
 #: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1226
 #: src/etc/inc/dyndns.class:1253
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Felaktigt användarnamn eller lösenord."
 
 #: src/etc/inc/dyndns.class:1211 src/etc/inc/dyndns.class:1231
 #: src/etc/inc/dyndns.class:1258 src/etc/inc/dyndns.class:1270
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "Ingen förändring i IP-adress."
 
 #: src/etc/inc/dyndns.class:1249
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Felaktig förfrågan - Felaktig/saknad parameter."
 
 #: src/etc/inc/dyndns.class:1251
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Felaktig förfrågan - Felaktigt Tunnel ID."
 
 #: src/etc/inc/dyndns.class:1285
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Route53 API uppkoppling misslyckad"
 
 #: src/etc/inc/dyndns.class:1289
 msgid "IP address changed successfully"
-msgstr ""
+msgstr "IP adress bytt med framgång"
 
 #: src/etc/inc/dyndns.class:1312 src/etc/inc/dyndns.class:1476
 msgid "Result did not match."
-msgstr ""
+msgstr "Resultat matchar ej."
 
 #: src/etc/inc/dyndns.class:1319
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr ""
+msgstr "%1$s uppdaterat till %2$s"
 
 #: src/etc/inc/dyndns.class:1322
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Felaktiga uppgifter! Glöm inte bort att använda \"API Key\" som lösenord "
+"tillsammans med CloudFlare."
 
 #: src/etc/inc/dyndns.class:1324
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "Zon eller Dator ID hittas ej, kontrollera datornamnet."
 
 #: src/etc/inc/dyndns.class:1326
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "OKÄNT FEL"
 
 #: src/etc/inc/dyndns.class:1349
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "Felaktiva värden - Uppdatering kan inte slutföras."
 
 #: src/etc/inc/dyndns.class:1351
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "Felaktigt användarnamn - Användaren finns inte."
 
 #: src/etc/inc/dyndns.class:1353
 msgid "Wrong password - Remember password is case sensitive."
@@ -1090,35 +1119,35 @@ msgstr "Konto återkallat"
 
 #: src/etc/inc/dyndns.class:1429
 msgid "Record does not exist in the system. Unable to update record"
-msgstr ""
+msgstr "Posten finns inte i systemet. Går inte att uppdatera post"
 
 #: src/etc/inc/dyndns.class:1432
 msgid "User does not have access to this record"
-msgstr ""
+msgstr "Användare har inte access till denna post"
 
 #: src/etc/inc/dyndns.class:1439
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "Generellt systemfel identifierat av systemet"
 
 #: src/etc/inc/dyndns.class:1442
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "Generellt systemfel oidentifierat av systemet"
 
 #: src/etc/inc/dyndns.class:1494
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS uppdaterat IP adress på %1$s (%2$s) till %3$s"
 
 #: src/etc/inc/dyndns.class:1495 src/etc/inc/dyndns.class:1503
 #: src/etc/inc/services.inc:2677 src/etc/inc/services.inc:2689
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr ""
+msgstr "phpDynDNS: uppdaterar chachefil %1$s: %2$s"
 
 #: src/etc/inc/dyndns.class:1502
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS uppdaterat IPv6 adress på %1$s (%2$s) till %3$s"
 
 #: src/etc/inc/dyndns.class:1518
 msgid "ERROR!"
@@ -1126,7 +1155,7 @@ msgstr "FEL!"
 
 #: src/etc/inc/dyndns.class:1524
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Ingen tjänsteleverantör för Dynamisk DNS vald."
 
 #: src/etc/inc/dyndns.class:1527
 msgid "No Username Provided."
@@ -1142,15 +1171,15 @@ msgstr "Inget värdnamn angett."
 
 #: src/etc/inc/dyndns.class:1536
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "Stöd för Dynamisk DNS tjänsteleverantören saknas."
 
 #: src/etc/inc/dyndns.class:1539
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "Uppdaterings URL saknas."
 
 #: src/etc/inc/dyndns.class:1542
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "Felaktig ZoneID"
 
 #: src/etc/inc/dyndns.class:1545
 msgid "Invalid TTL"
@@ -1162,15 +1191,17 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
+"Ingen förändring i IP adress och/eller har inte %s dagar gått. Uppdaterar "
+"inte dynamisk DNS."
 
 #: src/etc/inc/dyndns.class:1551
 msgid "Unknown Response."
-msgstr ""
+msgstr "Okänt svar."
 
 #: src/etc/inc/dyndns.class:1570
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): _detectChange() startar."
 
 #: src/etc/inc/dyndns.class:1577
 #, php-format
@@ -1178,52 +1209,54 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
+"Dynamisk DNS (%s): Aktuellt WAN IP kan inte fastställas, hoppar över "
+"uppdateringsprocessen."
 
 #: src/etc/inc/dyndns.class:1580
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dynamisk DNS (%1$s): Aktuellt WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1588
 #, php-format
 msgid "Cached IPv6: %s"
-msgstr ""
+msgstr "Cachad IPv6: %s"
 
 #: src/etc/inc/dyndns.class:1594
 msgid "No Cached IPv6 found."
-msgstr ""
+msgstr "Ingen cachad IPv6 hittad."
 
 #: src/etc/inc/dyndns.class:1602
 #, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "Cachat IP: %s"
 
 #: src/etc/inc/dyndns.class:1608
 msgid "No Cached IP found."
-msgstr ""
+msgstr "Inget cachat IP hittat."
 
 #: src/etc/inc/dyndns.class:1622
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dynamisk Dns: cacheIP != wan_ip. Uppdaterar."
 
 #: src/etc/inc/dyndns.class:1623
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "Cachat IP: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1628
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dynamisk DNS: Äldre än %s dagar. Uppdaterar."
 
 #: src/etc/inc/dyndns.class:1633
 msgid "Initial update."
-msgstr ""
+msgstr "Inledande uppdatering."
 
 #: src/etc/inc/dyndns.class:1670
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): _checkIP() startar."
 
 #: src/etc/inc/dyndns.class:1695
 #, php-format
@@ -1231,21 +1264,23 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
+"Dynamisk DNS %1$s felsöknings information (%2$s): Kan inte slå upp %3$s till "
+"ett IP användandes nätverkskortets IP %4$s."
 
 #: src/etc/inc/dyndns.class:1714
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): %3$s extraherat från %4$s"
 
 #: src/etc/inc/dyndns.class:1717
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): IP adressen kan inte extraheras från %3$s"
 
 #: src/etc/inc/dyndns.class:1722
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dynamisk DNS %1$s (%2$s): %3$s extraherat från lokala systemet."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
@@ -1253,7 +1288,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "Lagt till post"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1514,7 +1549,7 @@ msgstr ""
 msgid "Packet too big"
 msgstr ""
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
@@ -1579,9 +1614,9 @@ msgstr "Filter är inaktiverat. Laddar inga regler."
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
@@ -3419,13 +3454,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
 msgstr ""
 
@@ -3437,7 +3472,7 @@ msgstr ""
 msgid "Configuring package components..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
 msgstr ""
 
@@ -3462,103 +3497,103 @@ msgstr ""
 msgid "Executing custom_php_resync_config_command()..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:962
+#: src/etc/inc/pkg-utils.inc:965
 msgid "Configuration... "
 msgstr "Konfiguration"
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
 msgstr ""
 
@@ -6022,7 +6057,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -8317,7 +8352,7 @@ msgstr ""
 msgid "Keep Configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr ""
@@ -8330,15 +8365,15 @@ msgstr ""
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr "Inget svar"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8358,12 +8393,12 @@ msgstr "Inget svar"
 msgid "IP Address"
 msgstr "IP-adress"
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8372,24 +8407,24 @@ msgstr ""
 msgid "Server"
 msgstr "Server"
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8399,65 +8434,65 @@ msgstr ""
 msgid "*Hostname"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr "Ping"
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr ""
 
@@ -13933,11 +13968,11 @@ msgstr ""
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158

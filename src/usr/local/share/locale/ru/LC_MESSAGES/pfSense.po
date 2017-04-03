@@ -1,3 +1,4 @@
+# Aleksandr Gumenik <agumenik@eastdatasystems.com>, 2017. #zanata
 # Denis Karpushin <denis@netgate.com>, 2017. #zanata
 # Maxim Lebedev <maxim@netgate.com>, 2017. #zanata
 # Stephen Beaver <sbeaver@netgate.com>, 2017. #zanata
@@ -6,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-28 02:51-0400\n"
+"PO-Revision-Date: 2017-04-03 05:09-0400\n"
 "Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -375,7 +376,7 @@ msgstr "Ошибка: не могу открыть %1$s' в captiveportal_write_
 
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Портал Авторизации позволил пользователям изменить настройки"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -1596,7 +1597,7 @@ msgstr "Время превышено"
 msgid "Packet too big"
 msgstr "Пакет слишком большой"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
@@ -1661,9 +1662,9 @@ msgstr "Фильтр отключен. Правила не загружаем."
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
@@ -3582,13 +3583,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Пакет %1$s не установлен. %2$s Отмена установки."
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Не удалось установить пакет: %s."
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
 msgstr "Не удалось установить пакет"
 
@@ -3600,7 +3601,7 @@ msgstr "Загрузка настроек пакета..."
 msgid "Configuring package components..."
 msgstr "Настройка компонентов пакета..."
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
 msgstr "Загрузка инструкций пакета..."
 
@@ -3625,83 +3626,83 @@ msgstr "Выполняем вызов custom_php_install_command()..."
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Выполняем вызов custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
 msgstr "Пункты меню..."
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
 msgstr "Сервисы...."
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
 msgstr "Загрузка настроек пакета... Не удалось!"
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
 msgstr "Установка отменена."
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "Невозможно загрузить настройки пакета. Установка отменена."
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
 msgstr "Сохраняю конфигурацию..."
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Пакет успешно установлен: %s"
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "%1$s пакет не установлен.%2$s Удаление отменено."
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
 msgstr "Удаляю %s пакет... "
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
 msgstr "Удаляю %s компоненты..."
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "В процессе удаления пакета сохранен промеждуточный файл конфигурации для %s."
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Не удаётся найти включительный файл %s для включения "
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
 msgstr "Команды удаления..."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
 msgstr "Записи Syslog"
 
-#: src/etc/inc/pkg-utils.inc:962
+#: src/etc/inc/pkg-utils.inc:965
 msgid "Configuration... "
 msgstr "Конфигурация..."
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
 msgstr "Пакет %s удалён"
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -3709,24 +3710,24 @@ msgstr ""
 "Ожидаю подключения к сети Internet для обноления мета данных pkg и "
 "завершения переустановки пакета"
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
 msgstr "Переустановить пакет"
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Переустановка пакета была ОТМЕНЕНА из-за отсутствия подключения к сети "
 "Internet"
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "Пакет %s не существует в текущей %s версии и был удален."
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
 msgstr "Отсанавливаю все пакеты."
 
@@ -6389,7 +6390,7 @@ msgstr "Выберите опции для данной очереди"
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -8820,7 +8821,7 @@ msgstr "Вернуться на информационную панель"
 msgid "Keep Configuration"
 msgstr "Сохранить Конфигурацию"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr "DNS Запрос"
@@ -8833,15 +8834,15 @@ msgstr "Создано через  Диагностика -> DNS Запрос"
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr "Хост долен иметь валидное имя хоста или IP адрес"
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr "Нет ответа"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8861,12 +8862,12 @@ msgstr "Нет ответа"
 msgid "IP Address"
 msgstr "IP адрес"
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr "Имя Хоста"
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8875,24 +8876,24 @@ msgstr "Имя Хоста"
 msgid "Server"
 msgstr "Сервер"
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr "Время Запроса"
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr "Хост \"%s\" не удаётся разрешить."
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr "Алиас был успешно обновлён."
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr "Алиас был успешно создан."
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8902,55 +8903,55 @@ msgstr "Алиас был успешно создан."
 msgid "*Hostname"
 msgstr "*Имя хоста"
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr "Поиск"
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr "Обновление алиаса"
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr "Добавить алиас"
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr "Результаты"
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr "Результат"
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr "Тип записи"
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr "Задержки"
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr "Сервер имён"
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr "Время Запроса"
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr "Больше Информации"
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr "Пинг"
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
@@ -8958,11 +8959,11 @@ msgstr ""
 "К СВЕДЕНИЮ: следующие ссылки ведут к внешним сервисам, поэтому их надёжность "
 "не может быть гарантирована."
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr "IP WHOIS @ DNS сведения"
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr "IP Info @ DNS сведения"
 
@@ -14924,11 +14925,11 @@ msgstr "Файл лога запущен."
 msgid "Currently viewing: "
 msgstr "В данный момент просматриваем:"
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr "Просматриваем только первые 10 тысяч пунктов"
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
@@ -23467,17 +23468,17 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:440
 #: src/usr/local/www/services_unbound.php:523
 msgid "Domain Overrides"
-msgstr ""
+msgstr "Переопределения Домена"
 
 #: src/usr/local/www/services_dnsmasq.php:467
 #: src/usr/local/www/services_unbound.php:551
 msgid "Edit domain override"
-msgstr ""
+msgstr "Редактировать переопределение домена"
 
 #: src/usr/local/www/services_dnsmasq.php:468
 #: src/usr/local/www/services_unbound.php:552
 msgid "Delete domain override"
-msgstr ""
+msgstr "Удалить переопределение домена"
 
 #: src/usr/local/www/services_dnsmasq.php:489
 msgid ""
@@ -23485,6 +23486,9 @@ msgid ""
 "automatically serve the LAN IP address as a DNS server to DHCP clients so "
 "they will use the forwarder."
 msgstr ""
+"Если DNS-форвардер включен, служба DHCP (если включена) будет автоматически "
+"обслуживать IP-адрес локальной сети в качестве DNS-сервера для клиентов "
+"DHCP, чтобы они могли использовать форвардер."
 
 #: src/usr/local/www/services_dnsmasq.php:491
 #, php-format
@@ -23495,37 +23499,45 @@ msgid ""
 "not used (or if a static IP address is used on WAN), at least one DNS server "
 "must be manually specified on the %1$sSystem > General Setup%2$s page."
 msgstr ""
+"DNS-форвардер будет использовать DNS-серверы, введенные в%1$sСистема > Общая "
+"Настройка%2$s или те, которые получены через DHCP или PPP на WAN, если "
+"«Разрешить DHCP/PPP на WAN переопределять список DNS-серверов». отмечено. "
+"Если эта опция не используется (или если статический IP-адрес используется "
+"на WAN), по крайней мере один DNS-сервер должен быть указан вручную на "
+"странице%1$sСистема > Общая Настройка%2$s."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:76
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:68
 msgid "A valid domain must be specified after _msdcs."
-msgstr ""
+msgstr "Допустимый домен должен быть указан после _msdcs."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:79
 #: src/usr/local/www/services_dnsmasq_edit.php:76
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:71
 #: src/usr/local/www/services_unbound_host_edit.php:87
 msgid "A valid domain must be specified."
-msgstr ""
+msgstr "Должен быть указан допустимый домен ."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:83
 msgid ""
 "A valid IP address must be specified, or # for an exclusion or ! to not "
 "forward at all."
 msgstr ""
+"Необходимо указать действительный IP-адрес или # для исключения или ! что бы "
+"не пересылать вообще."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:87
 msgid "An interface IP address must be specified for the DNS query source."
-msgstr ""
+msgstr "IP-адрес интерфейса должен быть указан для источника запроса DNS."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 msgid "Edit Domain Override"
-msgstr ""
+msgstr "Редактировать Переопределение Домена"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:128
 msgid "Domain Override Options"
-msgstr ""
+msgstr "Опции Переопределения Домена"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:132
 #: src/usr/local/www/services_dnsmasq_edit.php:210
@@ -23533,7 +23545,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:204
 #: src/usr/local/www/system.php:442
 msgid "*Domain"
-msgstr ""
+msgstr "*Домен"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:135
 #, php-format
@@ -23541,6 +23553,9 @@ msgid ""
 "Domain to override (NOTE: this does not have to be a valid TLD!)%1$se.g.: "
 "test or mycompany.localdomain or 1.168.192.in-addr.arpa"
 msgstr ""
+"Домен для переопределения (ПРИМЕЧАНИЕ: это не обязательно должен быть "
+"действительный TLD!)%1$s например: test или mycompany.localdomain или 1.168."
+"192.in-addr.arpa"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:143
 #, php-format
@@ -23550,16 +23565,23 @@ msgid ""
 "to standard nameservers instead of a previous override.%1$sOr enter ! for "
 "lookups for this host/subdomain to NOT be forwarded anywhere."
 msgstr ""
+"IP-адрес доверенного DNS-сервера для этого домена%1$sнапример.: 192.168.100."
+"100%1$sИли введите #, чтобы исключить передачу через этот хост/поддомен к "
+"стандартным серверам имен вместо предыдущего переопределения.%1$sИли введите "
+"! что бы разрешение имени этого хоста/поддомена, не переадресовывалось "
+"никуда."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:150
 msgid "Source IP"
-msgstr ""
+msgstr "IP Источника"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:152
 msgid ""
 "Source IP address for queries to the DNS server for the override domain. "
 "Leave blank unless the DNS server is accessed through a VPN tunnel."
 msgstr ""
+"IP-адрес источника для запросов к DNS-серверу для домена переопределения. "
+"Оставьте поле пустым, если только DNS-сервер не доступен через туннель VPN."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
 #: src/usr/local/www/system.php:189
@@ -23567,11 +23589,13 @@ msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
 msgstr ""
+"Имя хоста может содержать только символы A-Z, 0-9 и '-'. Он не может "
+"начинаться или заканчиваться символом «-»."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:108
 #: src/usr/local/www/services_unbound_host_edit.php:119
 msgid "Alias Domain"
-msgstr ""
+msgstr "Алиас Домен"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:113
 #: src/usr/local/www/services_unbound_host_edit.php:125
@@ -23579,6 +23603,8 @@ msgid ""
 "Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. "
 "They may not start or end with '-'."
 msgstr ""
+"Имена хостов в списке алиасов могут содержать только символы A-Z, 0-9 и '-'. "
+"Они не могут начинаться или заканчиваться символом «-»."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:116
 #: src/usr/local/www/services_unbound_host_edit.php:128
@@ -23586,75 +23612,79 @@ msgid ""
 "A valid alias hostname is specified, but the domain name part should be "
 "omitted"
 msgstr ""
+"Указано действительный алиас имени хоста, но доменная часть имени должна "
+"быть опущена"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:122
 #: src/usr/local/www/services_unbound_host_edit.php:133
 msgid "A valid domain must be specified in alias list."
-msgstr ""
+msgstr "Допустимый домен должен быть указан в списке алиасов."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:136
 #: src/usr/local/www/services_unbound_host_edit.php:147
 msgid ""
 "This host/domain override combination already exists with an IPv4 address."
 msgstr ""
+"Эта комбинация переопределения хоста/домена уже существует с адресом IPv4."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:140
 #: src/usr/local/www/services_unbound_host_edit.php:151
 msgid ""
 "This host/domain override combination already exists with an IPv6 address."
 msgstr ""
+"Эта комбинация переопределения хоста / домена уже существует с адресом IPv6."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "Edit Host Override"
-msgstr ""
+msgstr "Редактировать Переопределение Хоста"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:198
 #: src/usr/local/www/services_unbound_host_edit.php:192
 msgid "Host Override Options"
-msgstr ""
+msgstr "Опции Переопределения Хоста"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:205
 #, php-format
 msgid "Name of the host, without the domain part%1$se.g.: \"myhost\""
-msgstr ""
+msgstr "Имя хоста без доменной части%1$se.g.: \"myhost\""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:213
 #, php-format
 msgid "Domain of the host%1$se.g.: \"example.com\""
-msgstr ""
+msgstr "Домен хоста%1$sнапример: \"example.com\" "
 
 #: src/usr/local/www/services_dnsmasq_edit.php:220
 #, php-format
 msgid "IP address of the host%1$se.g.: 192.168.100.100 or fd00:abcd::1"
-msgstr ""
+msgstr "IP адрес хоста %1$sнапример: 192.168.100.100 или fd00:abcd::1"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:241
 #: src/usr/local/www/services_unbound_host_edit.php:247
 msgid "Additional Names for this Host"
-msgstr ""
+msgstr "Дополнительные Имени для Хоста"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:260
 #: src/usr/local/www/services_unbound_host_edit.php:266
 msgid "Host name"
-msgstr ""
+msgstr "Имя хоста"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:290
 #: src/usr/local/www/services_unbound_host_edit.php:296
 msgid "Add Host Name"
-msgstr ""
+msgstr "Добавить Имя Хоста"
 
 #: src/usr/local/www/services_dyndns.php:48
 msgid "Dynamic DNS client deleted."
-msgstr ""
+msgstr "Клиент динамического DNS удалён."
 
 #: src/usr/local/www/services_dyndns.php:57
 msgid "Dynamic DNS client disabled."
-msgstr ""
+msgstr "Клиент динамического DNS выключен."
 
 #: src/usr/local/www/services_dyndns.php:60
 msgid "Dynamic DNS client enabled."
-msgstr ""
+msgstr "Клиент динамического DNS включен."
 
 #: src/usr/local/www/services_dyndns.php:93
 #: src/usr/local/www/services_ntpd_acls.php:208
@@ -23666,13 +23696,13 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:75
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:131
 msgid "Service"
-msgstr ""
+msgstr "Сервис."
 
 #: src/usr/local/www/services_dyndns.php:95
 #: src/usr/local/www/services_rfc2136.php:84
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:179
 msgid "Cached IP"
-msgstr ""
+msgstr "Закэшированный IP"
 
 #: src/usr/local/www/services_dyndns.php:222
 #, php-format
@@ -23680,58 +23710,62 @@ msgid ""
 "IP addresses appearing in %1$sgreen%2$s are up to date with Dynamic DNS "
 "provider. "
 msgstr ""
+"IP адреса,  выделенные %1$sзелёным%2$s, обновлены провайдером Динамического "
+"DNS."
 
 #: src/usr/local/www/services_dyndns.php:223
 msgid ""
 "An update for an IP address can be forced on the edit page for that service."
 msgstr ""
+"Обновление IP адреса может быть принудительно запущено на странице "
+"редактирование для данного сервиса."
 
 #: src/usr/local/www/services_dyndns_edit.php:86
 msgid "Service type"
-msgstr ""
+msgstr "Тип сервиса"
 
 #: src/usr/local/www/services_dyndns_edit.php:101
 #: src/usr/local/www/services_dyndns_edit.php:380
 msgid "Update URL"
-msgstr ""
+msgstr "Обновить URL"
 
 #: src/usr/local/www/services_dyndns_edit.php:132
 msgid "The hostname contains invalid characters."
-msgstr ""
+msgstr "Имя хоста содержит невалидные символы."
 
 #: src/usr/local/www/services_dyndns_edit.php:139
 msgid "The MX contains invalid characters."
-msgstr ""
+msgstr "MX запись содержит навалидные символы."
 
 #: src/usr/local/www/services_dyndns_edit.php:142
 #: src/usr/local/www/system_usermanager.php:197
 #: src/usr/local/www/vpn_l2tp_users_edit.php:85
 msgid "The username contains invalid characters."
-msgstr ""
+msgstr "Имя пользователя содержит навалидные символы."
 
 #: src/usr/local/www/services_dyndns_edit.php:195
 msgid "Dynamic DNS client configured."
-msgstr ""
+msgstr "Клиент динамического DNS настроен."
 
 #: src/usr/local/www/services_dyndns_edit.php:248
 msgid "Dynamic DNS Client"
-msgstr ""
+msgstr "Клиент динамического DNS "
 
 #: src/usr/local/www/services_dyndns_edit.php:261
 msgid "*Service Type"
-msgstr ""
+msgstr "*Тип Сервиса"
 
 #: src/usr/local/www/services_dyndns_edit.php:270
 msgid "*Interface to monitor"
-msgstr ""
+msgstr "*Интерфейс для мониторинга"
 
 #: src/usr/local/www/services_dyndns_edit.php:277
 msgid "*Interface to send update from"
-msgstr ""
+msgstr "*Интерфейс, с которого отправить обновление"
 
 #: src/usr/local/www/services_dyndns_edit.php:280
 msgid "This is almost always the same as the Interface to Monitor. "
-msgstr ""
+msgstr "Это почти то же самое, что и Интерфейс для Мониторинга."
 
 #: src/usr/local/www/services_dyndns_edit.php:297
 #, php-format
@@ -23742,10 +23776,15 @@ msgid ""
 "GratisDNS: Enter the hostname and the domain separately, with the domain "
 "being the domain or subdomain zone being handled by the provider."
 msgstr ""
+"Укажите полностью определённое имя домена.  Пример: myhost.dyndns.org%1$she."
+"net туннельный брокер: Введите идентификатор туннеля.%1$sGleSYS: Введите "
+"запись идентификатора.%1$sDNSimple: Введите только имя домена.%1$sNamecheap, "
+"Cloudflare, GratisDNS: Введите имя хоста и домена по отдельности, причём "
+"домен - это домен или субдомен, администрируемый провайдером. "
 
 #: src/usr/local/www/services_dyndns_edit.php:307
 msgid "MX"
-msgstr ""
+msgstr "MX"
 
 #: src/usr/local/www/services_dyndns_edit.php:310
 msgid ""
@@ -23753,14 +23792,17 @@ msgid ""
 "Set this option only if a special MX record is needed. Not all services "
 "support this."
 msgstr ""
+"Примечание: В службе DynDNS может использоваться только имя хоста, а не IP-"
+"адрес. Установите этот параметр только в том случае, если требуется "
+"специальная запись MX. Не все службы поддерживают это."
 
 #: src/usr/local/www/services_dyndns_edit.php:315
 msgid "Wildcards"
-msgstr ""
+msgstr "Wildcards"
 
 #: src/usr/local/www/services_dyndns_edit.php:322
 msgid "CloudFlare Proxy"
-msgstr ""
+msgstr "Прокси-сервер CloudFlare"
 
 #: src/usr/local/www/services_dyndns_edit.php:325
 #, php-format
@@ -23769,14 +23811,18 @@ msgid ""
 "route all traffic through their servers. By Default this is disabled and "
 "your Real IP is exposed.More info: %s"
 msgstr ""
+"Примечание: Это позволяет использовать виртуальны прокси-сервер CloudFlares "
+"DNS. Когда он включен, он будет маршрутизировать весь трафик через свои "
+"серверы. По умолчанию этот параметр отключен, и ваш реальный IP-адрес "
+"отображается. Дополнительная информация:%s"
 
 #: src/usr/local/www/services_dyndns_edit.php:331
 msgid "Verbose logging"
-msgstr ""
+msgstr "Подробное журналирование"
 
 #: src/usr/local/www/services_dyndns_edit.php:338
 msgid "CURL options"
-msgstr ""
+msgstr "опции CURL"
 
 #: src/usr/local/www/services_dyndns_edit.php:355
 #, php-format
@@ -23786,6 +23832,11 @@ msgid ""
 "%1$sFor Custom Entries, Username and Password represent HTTP Authentication "
 "username and passwords."
 msgstr ""
+"Имя пользователя требуется для всех типов, кроме Namecheap, FreeDNS и "
+"пользовательских записей.%1$sМаршрут 53: Введите идентификатор ключа доступа."
+"%1$sGleSYS: введите API пользователя .%1$sДля пользовательских записей, имя "
+"пользователя и пароль представляют имя пользователя и пароль для HTTP "
+"Аутентификации"
 
 #: src/usr/local/www/services_dyndns_edit.php:365
 #, php-format
@@ -23794,10 +23845,13 @@ msgid ""
 "FreeDNS.%1$sRoute 53: Enter the Secret Access Key.%1$sGleSYS: Enter the API "
 "key.%1$sDNSimple: Enter the API token."
 msgstr ""
+"FreeDNS (freedns.afraid.org): введите «Токен Аутентификации », "
+"предоставленный FreeDNS.%1$sМаршрут 53: Введите секретный ключ доступа."
+"%1$sGleSYS: Введите ключ API.%1$sDNSimple: введите токен API ."
 
 #: src/usr/local/www/services_dyndns_edit.php:372
 msgid "Zone ID"
-msgstr ""
+msgstr "Идентификатор Зоны"
 
 #: src/usr/local/www/services_dyndns_edit.php:375
 #, php-format
@@ -23806,42 +23860,47 @@ msgid ""
 "\"us-east-1/A1B2C3D4E5F6Z\").%1$sDNSimple: Enter the Record ID of record to "
 "update."
 msgstr ""
+"Маршрут53: Введите идентификатор зоны и AWS региона в форму РЕГИОН/IDЗОНЫ "
+"(пример: «us-east-1/A1B2C3D4E5F6Z»).%1$sDNSimple: введите идентификатор "
+"записи для обновления."
 
 #: src/usr/local/www/services_dyndns_edit.php:383
 msgid ""
 "This is the only field required by for Custom Dynamic DNS, and is only used "
 "by Custom Entries."
 msgstr ""
+"Это единственное поле, которое требуется для настраиваемого динамического "
+"DNS, и используется только для пользовательских записей."
 
 #: src/usr/local/www/services_dyndns_edit.php:387
 msgid "Result Match"
-msgstr ""
+msgstr "Совпадение Результата"
 
 #: src/usr/local/www/services_dyndns_edit.php:396
 #: src/usr/local/www/services_rfc2136_edit.php:75
 msgid "TTL"
-msgstr ""
+msgstr "TTL"
 
 #: src/usr/local/www/services_dyndns_edit.php:399
 msgid "Choose TTL for the dns record."
-msgstr ""
+msgstr "Выберите TTL для  dns записи."
 
 #: src/usr/local/www/services_dyndns_edit.php:418
 #: src/usr/local/www/services_rfc2136_edit.php:297
 msgid "Save & Force Update"
-msgstr ""
+msgstr "Сохранить и Обновить Принудительно"
 
 #: src/usr/local/www/services_igmpproxy.php:71
 msgid "The IGMP entry list has been changed."
-msgstr ""
+msgstr "Список записей IGMP изменен."
 
 #: src/usr/local/www/services_igmpproxy.php:118
 msgid "Edit IGMP entry"
-msgstr ""
+msgstr "Редактировать запись IGMP"
 
 #: src/usr/local/www/services_igmpproxy.php:119
 msgid "Delete IGMP entry"
-msgstr ""
+msgstr "Удалить запись IGMP"
 
 #: src/usr/local/www/services_igmpproxy.php:141
 msgid ""
@@ -23849,22 +23908,25 @@ msgid ""
 "downstream interfaces for the proxy to allow. Only one \"upstream\" "
 "interface can be configured."
 msgstr ""
+"Пожалуйста, добавьте восходящий интерфейс, разрешенных подсетей, и "
+"нисходящий интерфейс для разрешения прокси. Может быть настроен только один "
+"«восходящий» интерфейс."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:68
 msgid "Only one 'upstream' interface can be configured."
-msgstr ""
+msgstr "Может быть настроен только один «восходящий» интерфейс."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:142
 msgid "IGMP Proxy Edit"
-msgstr ""
+msgstr "Редактировать ICMP Прокси"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:169
 msgid "Upstream Interface"
-msgstr ""
+msgstr "Восходящий Интрефейс"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:169
 msgid "Downstream Interface"
-msgstr ""
+msgstr "Нисходящий Интерфейс"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:170
 #, php-format
@@ -23876,10 +23938,16 @@ msgid ""
 "clients can join groups and receive multicast data. One or more downstream "
 "interfaces must be configured."
 msgstr ""
+"Восходящий сетевой интерфейс - это исходящий интерфейс, который отвечает за "
+"связь с доступными источниками данных многоадресной передачи. Может быть "
+"только один восходящий интерфейс. Сетевые интерфейсы%1$sНисходящие - это "
+"интерфейсы распространения в целевых сетях, где многоадресные клиенты могут "
+"присоединяться к группам и получать данные многоадресной рассылки. "
+"Необходимо настроить один или несколько нисходящих интерфейсов."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:177
 msgid "Threshold"
-msgstr ""
+msgstr "Порог"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:180
 msgid ""
@@ -23887,18 +23955,21 @@ msgid ""
 "TTL than the threshold value will be ignored. This setting is optional, and "
 "by default the threshold is 1."
 msgstr ""
+"Определяет порог TTL (времени жизни) для сетевого интерфейса. Пакеты с "
+"временем жизни ниже порога будут игнорироваться. Данная настройка "
+"опциональна, по умолчанию порог - 1."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:240
 msgid "Add network"
-msgstr ""
+msgstr "Добавиь сеть"
 
 #: src/usr/local/www/services_ntpd.php:44
 msgid "Upgraded settings from openttpd"
-msgstr ""
+msgstr "Обновить настройки из openttpd"
 
 #: src/usr/local/www/services_ntpd.php:57
 msgid "The supplied value for NTP Orphan Mode is invalid."
-msgstr ""
+msgstr "Указанное значение для NTP в Автономном Режиме не является валидным."
 
 #: src/usr/local/www/services_ntpd.php:203
 #: src/usr/local/www/services_ntpd_acls.php:161
@@ -23906,7 +23977,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:321
 #: src/usr/local/www/services_ntpd_pps.php:117
 msgid "ACLs"
-msgstr ""
+msgstr "Списки Доступа"
 
 #: src/usr/local/www/services_ntpd.php:204
 #: src/usr/local/www/services_ntpd_acls.php:177
@@ -23914,7 +23985,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:322
 #: src/usr/local/www/services_ntpd_pps.php:118
 msgid "Serial GPS"
-msgstr ""
+msgstr "Последовательный GPS"
 
 #: src/usr/local/www/services_ntpd.php:205
 #: src/usr/local/www/services_ntpd_acls.php:178
@@ -23924,11 +23995,11 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:162
 #: src/usr/local/www/status_queues.php:166
 msgid "PPS"
-msgstr ""
+msgstr "PPS"
 
 #: src/usr/local/www/services_ntpd.php:211
 msgid "NTP Server Configuration"
-msgstr ""
+msgstr "Настройки Сервера NTP"
 
 #: src/usr/local/www/services_ntpd.php:221
 #, php-format
@@ -23937,15 +24008,19 @@ msgid ""
 "interfaces will listen on all interfaces with a wildcard.%1$sSelecting all "
 "interfaces will explicitly listen on only the interfaces/IPs specified."
 msgstr ""
+"Интерфейс без IP адреса не будет отображён. %1$sЕсли интерфейсы не выбраны, "
+"сервис будет слушать на всех интерфейсах, соответствующих  шаблону.%1$s Если "
+"выбраны все интерфейсы, сервис будет слушать  только на указанных "
+"интерфейсах/IP."
 
 #: src/usr/local/www/services_ntpd.php:229
 msgid "Time Servers"
-msgstr ""
+msgstr "Серверы Времени"
 
 #: src/usr/local/www/services_ntpd.php:232
 #, php-format
 msgid "%d is the maximum number of configured servers."
-msgstr ""
+msgstr "%d - максимальное число настроенных серверов."
 
 #: src/usr/local/www/services_ntpd.php:284
 #, php-format
@@ -23958,10 +24033,17 @@ msgid ""
 "indicates this entry is a pool of NTP servers and not a single address. This "
 "is assumed for *.pool.ntp.org."
 msgstr ""
+"Для наилучшего результата следует указать здесь от трёх до пяти серверов, "
+"или по крайней мере один пул. Опция %1$s %2$sПредпочесть%3$s означает, что "
+"NTP должен стремиться в первую очередь использовать данный сервер. Опция "
+"1$s%2$sНе выбирать%3$s означает, что NTP не должен использовать данный "
+"сервер, но статистике для данного сервера будут собираться и отображаться. "
+"Опция %1$s%2$sIs как Пул%3$s означает, что данная запись является пулом "
+"серверов NTP, а не одним адресом. Это предполагается для  *.pool.ntp.org."
 
 #: src/usr/local/www/services_ntpd.php:292
 msgid "Orphan Mode"
-msgstr ""
+msgstr "Автономный Режим"
 
 #: src/usr/local/www/services_ntpd.php:296
 msgid ""
@@ -23970,14 +24052,19 @@ msgid ""
 "and should normally be set to a number high enough to insure that any other "
 "servers available to clients are preferred over this server (default: 12)."
 msgstr ""
+"Автономный Режим разрешает  использовать часы системы, если все другие часы "
+"недоступны. Число здесь указывает страту, которое сообщается во время "
+"автономного режима. Данное число должно быть достаточно высоким, чтобы быть "
+"уверенным в приоритетности серверов для клиентов над данным сервером (по "
+"умолчанию:12)."
 
 #: src/usr/local/www/services_ntpd.php:302
 msgid "NTP Graphs"
-msgstr ""
+msgstr "Графики NTP"
 
 #: src/usr/local/www/services_ntpd.php:309
 msgid "Logging"
-msgstr ""
+msgstr "Журналирование"
 
 #: src/usr/local/www/services_ntpd.php:319
 #, php-format
@@ -23985,20 +24072,24 @@ msgid ""
 "These options enable additional messages from NTP to be written to the "
 "System Log %1$sStatus > System Logs > NTP%2$s"
 msgstr ""
+"Данные опции активируют дополнительные сообщения от NTP, которые будут "
+"записываться в Системный Журнал %1$sСтатус > Системные Логи > NTP%2$s"
 
 #: src/usr/local/www/services_ntpd.php:333
 msgid "Statistics Logging"
-msgstr ""
+msgstr "Логирование статистик"
 
 #: src/usr/local/www/services_ntpd.php:335
 msgid ""
 "Warning: These options will create persistent daily log files in /var/log/"
 "ntp."
 msgstr ""
+"Предупреждение: Данные опции будут ежедневно создавать файлы логов в /var/"
+"log/ntp."
 
 #: src/usr/local/www/services_ntpd.php:369
 msgid "Leap seconds"
-msgstr ""
+msgstr "Секунды координации"
 
 #: src/usr/local/www/services_ntpd.php:371
 msgid ""
@@ -24006,118 +24097,124 @@ msgid ""
 "or subtraction. Normally this is only useful if this server is a stratum 1 "
 "time server. "
 msgstr ""
+"Файлы секунды координации разрешает NTP сообщать о предстоящем увеличении "
+"или уменьшении секунды координации "
 
 #: src/usr/local/www/services_ntpd.php:378
 msgid "Enter Leap second configuration as text OR select a file to upload."
 msgstr ""
+"Укажите настройки секунды координации как текст ИЛИ выберите файл для "
+"загрузки."
 
 #: src/usr/local/www/services_ntpd_acls.php:92
 #, php-format
 msgid "A valid IP address must be entered for row %s under Networks."
-msgstr ""
+msgstr "Валидный IP адрес должен быть указан для строки %s для  Сетей"
 
 #: src/usr/local/www/services_ntpd_acls.php:96
 #, php-format
 msgid "A valid IPv4 netmask must be entered for IPv4 row %s under Networks."
-msgstr ""
+msgstr "Валидная маска IPv4  должна быть указана для IPv4 строки %s для Сетей"
 
 #: src/usr/local/www/services_ntpd_acls.php:99
 #, php-format
 msgid "A valid IPv6 netmask must be entered for IPv6 row %s under Networks."
 msgstr ""
+"Действительная сетевая маска IPv6 должна быть введена для IPv6 строки %s в "
+"разделе «Сети»."
 
 #: src/usr/local/www/services_ntpd_acls.php:183
 msgid "Default Access Restrictions"
-msgstr ""
+msgstr "Ограничения доступа по умолчанию"
 
 #: src/usr/local/www/services_ntpd_acls.php:187
 msgid "Kiss-o'-death"
-msgstr ""
+msgstr "Kiss-o'-death"
 
 #: src/usr/local/www/services_ntpd_acls.php:194
 msgid "Modifications"
-msgstr ""
+msgstr "Модификации"
 
 #: src/usr/local/www/services_ntpd_acls.php:201
 msgid "Queries"
-msgstr ""
+msgstr "Запросы"
 
 #: src/usr/local/www/services_ntpd_acls.php:215
 msgid "Peer Association"
-msgstr ""
+msgstr "Ассоциация с узлом "
 
 #: src/usr/local/www/services_ntpd_acls.php:222
 msgid "Trap Service"
-msgstr ""
+msgstr "Трэп Сервис"
 
 #: src/usr/local/www/services_ntpd_acls.php:230
 msgid "Custom Access Restrictions"
-msgstr ""
+msgstr "Пользовательские ограничения доступа"
 
 #: src/usr/local/www/services_ntpd_acls.php:236
 msgid "Networks"
-msgstr ""
+msgstr "Сети"
 
 #: src/usr/local/www/services_ntpd_acls.php:238
 #: src/usr/local/www/services_unbound_acls.php:243
 msgid "Network/mask"
-msgstr ""
+msgstr "Сеть/маска"
 
 #: src/usr/local/www/services_ntpd_acls.php:251
 msgid "KOD"
-msgstr ""
+msgstr "KOD"
 
 #: src/usr/local/www/services_ntpd_acls.php:258
 msgid "nomodify"
-msgstr ""
+msgstr "nomodify"
 
 #: src/usr/local/www/services_ntpd_acls.php:265
 msgid "noquery"
-msgstr ""
+msgstr "noquery"
 
 #: src/usr/local/www/services_ntpd_acls.php:272
 msgid "noserve"
-msgstr ""
+msgstr "noserve"
 
 #: src/usr/local/www/services_ntpd_acls.php:279
 msgid "nopeer"
-msgstr ""
+msgstr "nopeer"
 
 #: src/usr/local/www/services_ntpd_acls.php:286
 msgid "notrap"
-msgstr ""
+msgstr "notrap"
 
 #: src/usr/local/www/services_ntpd_gps.php:52
 msgid "Setting default NTPd settings"
-msgstr ""
+msgstr "Устанавливаю параметры NTPd по умолчанию"
 
 #: src/usr/local/www/services_ntpd_gps.php:273
 msgid "Updated NTP GPS Settings"
-msgstr ""
+msgstr "Обновленные настройки GPS NTP"
 
 #: src/usr/local/www/services_ntpd_gps.php:291
 msgid "RMC"
-msgstr ""
+msgstr "RMC"
 
 #: src/usr/local/www/services_ntpd_gps.php:292
 msgid "GGA"
-msgstr ""
+msgstr "GGA"
 
 #: src/usr/local/www/services_ntpd_gps.php:293
 msgid "GLL"
-msgstr ""
+msgstr "GLL"
 
 #: src/usr/local/www/services_ntpd_gps.php:294
 msgid "ZDA or ZDG"
-msgstr ""
+msgstr "ZDA или ZDG"
 
 #: src/usr/local/www/services_ntpd_gps.php:328
 msgid "NTP Serial GPS Configuration"
-msgstr ""
+msgstr "Конфигурация NTP для последовательного GPS"
 
 #: src/usr/local/www/services_ntpd_gps.php:343
 msgid "GPS Type"
-msgstr ""
+msgstr "Тип GPS"
 
 #: src/usr/local/www/services_ntpd_gps.php:346
 #, php-format
@@ -24127,17 +24224,24 @@ msgid ""
 "if the GPS is not listed.%1$sThe predefined configurations assume the GPS "
 "has already been set to NMEA mode."
 msgstr ""
+"Эта опция позволяет выбрать предопределенную конфигурацию. По умолчанию "
+"используется конфигурация pfSense 2.1 и более ранних версий (не "
+"рекомендуется). Выберите «Generic», если GPS отсутствует в списке."
+"%1$sПеречисленные конфигурации предполагают, что GPS уже настроен на режим "
+"NMEA."
 
 #: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
 msgid "Serial Port"
-msgstr ""
+msgstr "Последовательный Порт"
 
 #: src/usr/local/www/services_ntpd_gps.php:365
 msgid ""
 "All serial ports are listed, be sure to pick the port with the GPS attached. "
 ""
 msgstr ""
+"Все последовательные порты указаны в списке, убедитесь что выбрали порт с "
+"подключенным GPS."
 
 #: src/usr/local/www/services_ntpd_gps.php:373
 msgid ""
@@ -24145,113 +24249,138 @@ msgid ""
 "sentences. It is recommended to configure the GPS to send only one sentence "
 "at a baud rate of 4800 or 9600."
 msgstr ""
+"Более высокая скорость передачи в бодах обычно полезна только в том случае, "
+"если GPS отправляет слишком много предложений. Рекомендуется настроить GPS "
+"для отправки только одного предложения со скоростью передачи 4800 или 9600 "
+"бод."
 
 #: src/usr/local/www/services_ntpd_gps.php:380
 msgid "NMEA Sentences"
-msgstr ""
+msgstr "Предложения NMEA"
 
 #: src/usr/local/www/services_ntpd_gps.php:384
 msgid ""
 "By default NTP will listen for all supported NMEA sentences. One or more "
 "sentences to listen for may be specified."
 msgstr ""
+"По умолчанию NTP будет слушать все поддерживаемые предложения NMEA. Можно "
+"указать одно или несколько предложений для прослушивания."
 
 #: src/usr/local/www/services_ntpd_gps.php:395
 msgid "Fudge Time 1"
-msgstr ""
+msgstr "Время Задержки 1"
 
 #: src/usr/local/www/services_ntpd_gps.php:398
 msgid ""
 "Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0)."
 msgstr ""
+"Время задержки 1 используется для задания сдвига сигнала GPS PPS (по "
+"умолчанию: 0.0)."
 
 #: src/usr/local/www/services_ntpd_gps.php:402
 msgid "Fudge Time 2"
-msgstr ""
+msgstr "Время Задержки 2"
 
 #: src/usr/local/www/services_ntpd_gps.php:405
 msgid "Fudge time 2 is used to specify the GPS time offset (default: 0.0)."
 msgstr ""
+"Время задержки 2 используется для задания сдвига сигнала GPS (по умолчанию: "
+"0.0)."
 
 #: src/usr/local/www/services_ntpd_gps.php:409
 msgid "Stratum (0-16)"
-msgstr ""
+msgstr "Страта (0-16)"
 
 #: src/usr/local/www/services_ntpd_gps.php:412
 msgid ""
 "This may be used to change the GPS Clock stratum (default: 0). This may be "
 "useful to, for some reason, have ntpd prefer a different clock."
 msgstr ""
+"Это может использоваться для изменения страта GPS часов (по умолчанию: 0). "
+"Это может быть полезно, еси по какой-то причине, ntpd предпочитает дргуие "
+"часы."
 
 #: src/usr/local/www/services_ntpd_gps.php:416
 #: src/usr/local/www/services_ntpd_pps.php:169
 msgid "Flags"
-msgstr ""
+msgstr "Флаги"
 
 #: src/usr/local/www/services_ntpd_gps.php:461
 msgid ""
 "Enabling this will rapidly fill the log, but is useful for tuning Fudge time "
 "2."
 msgstr ""
+"Включение этого позволит быстро заполнить журнал, но полезно для настройки "
+"Fudge time 2."
 
 #: src/usr/local/www/services_ntpd_gps.php:468
 msgid ""
 "Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS "
 "initialization commands."
 msgstr ""
+"Включить расширенный статус GPS, если GPGSV или GPGGA явно разрешены "
+"командами инициализации GPS."
 
 #: src/usr/local/www/services_ntpd_gps.php:472
 #: src/usr/local/www/services_ntpd_pps.php:190
 msgid "Clock ID"
-msgstr ""
+msgstr "Идентификатор Часов"
 
 #: src/usr/local/www/services_ntpd_gps.php:476
 msgid "This may be used to change the GPS Clock ID (default: GPS)."
 msgstr ""
+"Это может быть использовано для изменения идентификатора часов GPS  (по "
+"умолчанию: GPS)."
 
 #: src/usr/local/www/services_ntpd_gps.php:489
 msgid "GPS Initialization"
-msgstr ""
+msgstr "Инициализация GPS"
 
 #: src/usr/local/www/services_ntpd_gps.php:497
 msgid ""
 "Commands entered here will be sent to the GPS during initialization. Please "
 "read and understand the GPS documentation before making any changes here."
 msgstr ""
+"Вводимые здесь команды будут отправляться к GPS во время инициализации. "
+"Перед внесением любых изменений ознакомьтесь с документацией GPS."
 
 #: src/usr/local/www/services_ntpd_gps.php:504
 msgid ""
 "Calculates and appends checksum and missing special characters \"$\" and "
 "\"*\". May not work with some GPS models."
 msgstr ""
+"Вычисляет и добавляет контрольную сумму и пропускает специальные символы «$» "
+"и «*». Может не работать с некоторыми моделями GPS."
 
 #: src/usr/local/www/services_ntpd_gps.php:506
 msgid "NMEA Checksum Calculator"
-msgstr ""
+msgstr "Калькулятор Контрольной Суммы NMEA"
 
 #: src/usr/local/www/services_ntpd_gps.php:515
 msgid "Calculate"
-msgstr ""
+msgstr "Расчитать"
 
 #: src/usr/local/www/services_ntpd_gps.php:532
 msgid ""
 "Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command "
 "string:"
-msgstr ""
+msgstr "Введите текст между \";$\" и  \"*\" командной строки NMEA:"
 
 #: src/usr/local/www/services_ntpd_pps.php:124
 msgid "NTP Serial PPS Configuration"
-msgstr ""
+msgstr "Конфигурация NTP для Последовательного PPS"
 
 #: src/usr/local/www/services_ntpd_pps.php:150
 msgid ""
 "All serial ports are listed, be sure to pick the port with the PPS source "
 "attached. "
 msgstr ""
+"Все последовательные порты указаны в списке, убедитесь что выбрали порт с "
+"подключенным источником PPS."
 
 #: src/usr/local/www/services_ntpd_pps.php:155
 msgid "Fudge Time"
-msgstr ""
+msgstr "Время Задержки"
 
 #: src/usr/local/www/services_ntpd_pps.php:158
 msgid ""
@@ -24259,11 +24388,14 @@ msgid ""
 "such as the transmission delay between the transmitter and the receiver "
 "(default: 0.0)."
 msgstr ""
+"Время Задержки используется для указания смещения сигнала PPS от "
+"фактического, например, задержки передачи между передатчиком и приемником "
+"(по умолчанию: 0,0)."
 
 #: src/usr/local/www/services_ntpd_pps.php:162
 #: src/usr/local/www/status_ntpd.php:298
 msgid "Stratum"
-msgstr ""
+msgstr "Стара"
 
 #: src/usr/local/www/services_ntpd_pps.php:165
 msgid ""
@@ -24271,122 +24403,129 @@ msgid ""
 "useful to, for some reason, have ntpd prefer a different clock and just "
 "monitor this source."
 msgstr ""
+"Это может быть использовано для изменения страты Часов PPS (по умолчанию: 0)."
+" Это может быть полезно, по какой-то причине, ntpd предпочитает другие часы "
+"и просто отслеживает этот источник."
 
 #: src/usr/local/www/services_ntpd_pps.php:194
 msgid "This may be used to change the PPS Clock ID (default: PPS)."
 msgstr ""
+"Это можно использовать для изменения идентификатора Часов PPS (по умолчанию: "
+"PPS)."
 
 #: src/usr/local/www/services_pppoe.php:87
 msgid "The PPPoE entry list has been changed."
-msgstr ""
+msgstr "Список записей PPPoE был изменен."
 
 #: src/usr/local/www/services_pppoe.php:100
 #: src/usr/local/www/status_ipsec.php:487
 msgid "Local IP"
-msgstr ""
+msgstr "Локальный IP"
 
 #: src/usr/local/www/services_pppoe.php:125
 msgid "Edit PPPoE instance"
-msgstr ""
+msgstr "Редактировать интсанцию PPPoE"
 
 #: src/usr/local/www/services_pppoe.php:126
 msgid "Delete PPPoE instance"
-msgstr ""
+msgstr "Удалить интсанцию PPPoE"
 
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Server address"
-msgstr ""
+msgstr "Адрес сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Remote start address"
-msgstr ""
+msgstr "Удаленный начальный адрес"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS server address"
-msgstr ""
+msgstr "Адрес RADIUS сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS shared secret"
-msgstr ""
+msgstr "Секретный ключ RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:116
 #: src/usr/local/www/vpn_l2tp.php:72
 msgid "A valid server address must be specified."
-msgstr ""
+msgstr "Должен быть указан действительный адрес сервера."
 
 #: src/usr/local/www/services_pppoe_edit.php:119
 #: src/usr/local/www/vpn_l2tp.php:78
 msgid "A valid remote start address must be specified."
-msgstr ""
+msgstr "Должен быть указан действительный   удаленный начальный адрес ."
 
 #: src/usr/local/www/services_pppoe_edit.php:122
 #: src/usr/local/www/vpn_l2tp.php:81
 msgid "A valid RADIUS server address must be specified."
-msgstr ""
+msgstr "Должен быть указан действительный адрес RADIUS сервера."
 
 #: src/usr/local/www/services_pppoe_edit.php:125
 msgid "Number of PPPoE users must be between 1 and 255"
-msgstr ""
+msgstr "Количество пользователей PPPoE должно быть от 1 до 255"
 
 #: src/usr/local/www/services_pppoe_edit.php:128
 msgid "User Max Logins must be between 1 and 255"
-msgstr ""
+msgstr "Максимальное количество пользователей должно быть от 1 до 255"
 
 #: src/usr/local/www/services_pppoe_edit.php:131
 msgid "Subnet mask must be an integer between 0 and 32"
-msgstr ""
+msgstr "Маска подсети должна быть целым числом от 0 до 32"
 
 #: src/usr/local/www/services_pppoe_edit.php:136
 #: src/usr/local/www/vpn_l2tp.php:99
 msgid "The specified server address lies in the remote subnet."
-msgstr ""
+msgstr "Указанный адрес сервера находится в удаленной подсети."
 
 #: src/usr/local/www/services_pppoe_edit.php:139
 msgid "The specified server address is equal to an interface ip address."
-msgstr ""
+msgstr "Указанный адрес сервера равен IP-адресу интерфейса."
 
 #: src/usr/local/www/services_pppoe_edit.php:145
 #, php-format
 msgid "No password specified for username %s"
-msgstr ""
+msgstr "Не указан пароль для пользователя %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:148
 #, php-format
 msgid "Incorrect ip address specified for username %s"
-msgstr ""
+msgstr "Неверный IP-адрес, указанн для пользователя %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:155
 msgid "Wrong data submitted"
-msgstr ""
+msgstr "Неверные данные отправлены"
 
 #: src/usr/local/www/services_pppoe_edit.php:288
 msgid "PPPoE Server Configuration"
-msgstr ""
+msgstr "Конфигурация сервера PPPoE"
 
 #: src/usr/local/www/services_pppoe_edit.php:308
 msgid "*Total User Count"
-msgstr ""
+msgstr "* Всего пользователей"
 
 #: src/usr/local/www/services_pppoe_edit.php:311
 msgid ""
 "The number of PPPoE users allowed to connect to this server simultaneously."
 msgstr ""
+"Количество пользователей PPPoE, которым разрешено подключаться к этому "
+"серверу одновременно."
 
 #: src/usr/local/www/services_pppoe_edit.php:315
 msgid "*User Max Logins"
-msgstr ""
+msgstr "* Максимальное количество пользователей"
 
 #: src/usr/local/www/services_pppoe_edit.php:318
 msgid "The number of times a single user may be logged in at the same time."
-msgstr ""
+msgstr "Количество одновременных подключений одного пользователя."
 
 #: src/usr/local/www/services_pppoe_edit.php:322
 msgid "*Server Address"
-msgstr ""
+msgstr "*Адрес сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:324
 #, php-format
@@ -24396,89 +24535,101 @@ msgid ""
 "the client range.%1$sNOTE: This should NOT be set to any IP address "
 "currently in use on this firewall."
 msgstr ""
+"Введите IP-адрес, который сервер PPPoE должен предоставить клиентам для "
+"использования в качестве «шлюза».%1$sОбычно задается неиспользуемый IP-"
+"адрес, находящийся за пределами клиентского диапазона.%1$sПРИМЕЧАНИЕ: Не "
+"должен быть установлен ни один IP-адрес, используемый в данный момент на "
+"этом межсетевом экране."
 
 #: src/usr/local/www/services_pppoe_edit.php:330
 msgid "*Remote Address Range"
-msgstr ""
+msgstr "*Удаленный диапазон адресов"
 
 #: src/usr/local/www/services_pppoe_edit.php:332
 #: src/usr/local/www/vpn_l2tp.php:230
 msgid "Specify the starting address for the client IP address subnet."
-msgstr ""
+msgstr "Укажите начальный адрес подсети IP-адресов клиента."
 
 #: src/usr/local/www/services_pppoe_edit.php:336
 msgid "*Subnet mask"
-msgstr ""
+msgstr "*Маска подсети"
 
 #: src/usr/local/www/services_pppoe_edit.php:339
 msgid "Hint: 24 is 255.255.255.0"
-msgstr ""
+msgstr "Подсказка: 24 это 255.255.255.0"
 
 #: src/usr/local/www/services_pppoe_edit.php:359
 msgid ""
 "If entered these servers will be given to all PPPoE clients, otherwise LAN "
 "DNS and one WAN DNS will go to all clients."
 msgstr ""
+"Если введены, эти серверы будут переданы всем клиентам PPPoE, в противном "
+"случае LAN DNS и один WAN DNS будут отправлены всем клиентам."
 
 #: src/usr/local/www/services_pppoe_edit.php:366
 msgid ""
 "Users will be authenticated using the RADIUS server specified below. The "
 "local user database will not be used."
 msgstr ""
+"Пользователи будут проходить аутентификацию с использованием RADIUS-сервера, "
+"указанного ниже. Локальная база данных пользователей не будет использоваться."
+""
 
 #: src/usr/local/www/services_pppoe_edit.php:374
 #: src/usr/local/www/vpn_l2tp.php:288
 msgid "Sends accounting packets to the RADIUS server."
-msgstr ""
+msgstr "Отправляет учетные пакеты на сервер RADIUS."
 
 #: src/usr/local/www/services_pppoe_edit.php:381
 msgid "If primary server fails all requests will be sent via backup server."
 msgstr ""
+"В случае отказа основного сервера все запросы будут отправляться через "
+"резервный сервер."
 
 #: src/usr/local/www/services_pppoe_edit.php:385
 msgid "NAS IP Address"
-msgstr ""
+msgstr "IP адрсе NAS"
 
 #: src/usr/local/www/services_pppoe_edit.php:387
 msgid "NAS IP Address sent to the RADIUS Server"
-msgstr ""
+msgstr "IP-адрес NAS, отправлемый на сервер RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:391
 msgid "RADIUS Accounting Update"
-msgstr ""
+msgstr "Обновление учетных записей RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:394
 msgid "RADIUS accounting update period in seconds"
-msgstr ""
+msgstr "Период обновление учетных записей RADIUS в секундах"
 
 #: src/usr/local/www/services_pppoe_edit.php:398
 msgid "RADIUS Issued IP Addresses"
-msgstr ""
+msgstr "IP-адреса выданные RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:403
 msgid "Primary RADIUS Server"
-msgstr ""
+msgstr "Основной RADIUS Сервер"
 
 #: src/usr/local/www/services_pppoe_edit.php:416
 #: src/usr/local/www/services_pppoe_edit.php:449
 #: src/usr/local/www/system_authservers.php:257
 #: src/usr/local/www/system_authservers.php:757
 msgid "Authentication port"
-msgstr ""
+msgstr "Порт аутентификации"
 
 #: src/usr/local/www/services_pppoe_edit.php:423
 #: src/usr/local/www/services_pppoe_edit.php:456
 msgid "Accounting port (optional)"
-msgstr ""
+msgstr "Порт для учетных данных (поциаонально)"
 
 #: src/usr/local/www/services_pppoe_edit.php:425
 #: src/usr/local/www/services_pppoe_edit.php:458
 msgid "Standard ports are 1812 (authentication) and 1813 (accounting)."
-msgstr ""
+msgstr "Стандартными портами являются 1812 (аутентификация) и 1813 (учет)."
 
 #: src/usr/local/www/services_pppoe_edit.php:431
 msgid "Primary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Секретный Ключ Основного RADIUS Сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:434
 #: src/usr/local/www/vpn_l2tp.php:301
@@ -24486,131 +24637,137 @@ msgid ""
 "Enter the shared secret that will be used to authenticate to the RADIUS "
 "server."
 msgstr ""
+"Введите секретный ключ, который будет использоваться для аутентификации на "
+"сервере RADIUS."
 
 #: src/usr/local/www/services_pppoe_edit.php:436
 msgid "Secondary RADIUS Server"
-msgstr ""
+msgstr "Вторичный RADIUS Сервер"
 
 #: src/usr/local/www/services_pppoe_edit.php:464
 msgid "Secondary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Секретный Ключ Вторичного RADIUS Сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:467
 msgid ""
 "Enter the shared secret that will be used to authenticate to the backup "
 "RADIUS server."
 msgstr ""
+"Введите секретный ключ, который будет использоваться для аутентификации на "
+"вторичном сервере RADIUS."
 
 #: src/usr/local/www/services_pppoe_edit.php:492
 msgid "User table"
-msgstr ""
+msgstr "Таблица пользовтелей"
 
 #: src/usr/local/www/services_pppoe_edit.php:530
 msgid "Add user"
-msgstr ""
+msgstr "Добавить пользователя"
 
 #: src/usr/local/www/services_pppoe_edit.php:565
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from PPPoE clients."
 msgstr ""
+"Не забудьте добавить правило брандмауэра, разрешающее трафик от клиентов "
+"PPPoE."
 
 #: src/usr/local/www/services_rfc2136.php:75
 msgid "RFC2136 Clients"
-msgstr ""
+msgstr "Клиенты RFC2136"
 
 #: src/usr/local/www/services_rfc2136.php:177
 #: src/usr/local/www/vpn_openvpn_client.php:927
 msgid "Edit client"
-msgstr ""
+msgstr "Редактировать клиента"
 
 #: src/usr/local/www/services_rfc2136.php:180
 msgid "Disable client"
-msgstr ""
+msgstr "Отключить клиента"
 
 #: src/usr/local/www/services_rfc2136.php:183
 msgid "Enable client"
-msgstr ""
+msgstr "Активировать клиента"
 
 #: src/usr/local/www/services_rfc2136.php:186
 #: src/usr/local/www/vpn_openvpn_client.php:928
 msgid "Delete client"
-msgstr ""
+msgstr "Удалить клиента"
 
 #: src/usr/local/www/services_rfc2136_edit.php:75
 msgid "Key name"
-msgstr ""
+msgstr "Имя ключа"
 
 #: src/usr/local/www/services_rfc2136_edit.php:75
 msgid "Key"
-msgstr ""
+msgstr "Ключ"
 
 #: src/usr/local/www/services_rfc2136_edit.php:80
 msgid "The DNS update host name contains invalid characters."
-msgstr ""
+msgstr "Имя узла обновления DNS содержит недопустимые символы."
 
 #: src/usr/local/www/services_rfc2136_edit.php:83
 msgid "The DNS update TTL must be an integer."
-msgstr ""
+msgstr "TTL-обновление DNS должно быть целым числом."
 
 #: src/usr/local/www/services_rfc2136_edit.php:86
 msgid "The DNS update key name contains invalid characters."
-msgstr ""
+msgstr "Имя ключа обновления DNS содержит недопустимые символы."
 
 #: src/usr/local/www/services_rfc2136_edit.php:110
 msgid "New/Edited RFC2136 dnsupdate entry was posted."
-msgstr ""
+msgstr "Была размещена новая/измененная запись dnsupdate RFC2136."
 
 #: src/usr/local/www/services_rfc2136_edit.php:155
 msgid "RFC 2136 Client"
-msgstr ""
+msgstr "Клиент RFC 2136"
 
 #: src/usr/local/www/services_rfc2136_edit.php:180
 msgid "Fully qualified hostname of the host to be updated."
-msgstr ""
+msgstr "Полное имя хоста которое будетобновлено."
 
 #: src/usr/local/www/services_rfc2136_edit.php:184
 msgid "*TTL (seconds)"
-msgstr ""
+msgstr "*TTL (секунд)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:191
 msgid "*Key name"
-msgstr ""
+msgstr "*Имя ключа"
 
 #: src/usr/local/www/services_rfc2136_edit.php:194
 msgid "This must match the setting on the DNS server."
-msgstr ""
+msgstr "Это должно соответствовать настройке на DNS-сервере."
 
 #: src/usr/local/www/services_rfc2136_edit.php:196
 msgid "*Key Type"
-msgstr ""
+msgstr "*Тип Ключа"
 
 #: src/usr/local/www/services_rfc2136_edit.php:200
 #: src/usr/local/www/services_rfc2136_edit.php:208
 #: src/usr/local/www/services_rfc2136_edit.php:216
 msgid "Key Type"
-msgstr ""
+msgstr "Тип Ключа"
 
 #: src/usr/local/www/services_rfc2136_edit.php:226
 msgid "*Key"
-msgstr ""
+msgstr "*Ключ"
 
 #: src/usr/local/www/services_rfc2136_edit.php:229
 msgid "Paste an HMAC-MD5 key here."
-msgstr ""
+msgstr "Вставьте HMAC-MD5 ключ сюда."
 
 #: src/usr/local/www/services_rfc2136_edit.php:247
 msgid "Use public IP"
-msgstr ""
+msgstr "Использовать публичный IP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:252
 msgid "*Record Type"
-msgstr ""
+msgstr "*Тип Записи"
 
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/services_rfc2136_edit.php:264
 #: src/usr/local/www/services_rfc2136_edit.php:272
 msgid "Record Type"
-msgstr ""
+msgstr "Тип Записи"
 
 #: src/usr/local/www/services_rfc2136_edit.php:306
 #, php-format
@@ -24619,45 +24776,57 @@ msgid ""
 "the DNS server list to be overridden by DHCP/PPP on WAN for dynamic DNS "
 "updates to work."
 msgstr ""
+"DNS-сервер должен быть настроен в%1$sСистема: Общая Настройка%2$sили "
+"разрешить переопределить список DNS-серверов через DHCP/PPP на WAN для "
+"динамического обновления DNS."
 
 #: src/usr/local/www/services_router_advertisements.php:54
 msgid ""
 "The DHCPv6 Server can only be enabled on interfaces configured with static, "
 "non unique local IP addresses."
 msgstr ""
+"Сервер DHCPv6 можно включить только на интерфейсах, настроенных со "
+"статическими, не уникальными локальными IP-адресами."
 
 #: src/usr/local/www/services_router_advertisements.php:55
 msgid "Only interfaces configured with a static IP will be shown."
-msgstr ""
+msgstr "Будут показаны только интерфейсы, настроенные со статическим IP."
 
 #: src/usr/local/www/services_router_advertisements.php:105
 msgid "Router Only - RA Flags [none], Prefix Flags [router]"
-msgstr ""
+msgstr "Только маршрутизатор - RA-флаги [none], Флаги префикса [router]"
 
 #: src/usr/local/www/services_router_advertisements.php:106
 msgid "Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"
 msgstr ""
+"Неуправляемые - флаги RA [none], Флаги Префикса [onlink, auto, router]"
 
 #: src/usr/local/www/services_router_advertisements.php:107
 msgid ""
 "Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"
 msgstr ""
+"Управляемые - флаги RA [managed, other stateful], Флаги Префикса [onlink, "
+"router]"
 
 #: src/usr/local/www/services_router_advertisements.php:108
 msgid ""
 "Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
+"Содействующие - флаги RA [managed, other stateful], Флаги Префикса [onlink, "
+"auto, router]"
 
 #: src/usr/local/www/services_router_advertisements.php:109
 msgid ""
 "Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
+"DHCP без отслеживания состояния - флаги RA [other stateful], Флаги Префикса "
+"[onlink, auto, router]"
 
 #: src/usr/local/www/services_router_advertisements.php:111
 msgid "Low"
-msgstr ""
+msgstr "Низкий"
 
 #: src/usr/local/www/services_router_advertisements.php:116
 msgid ""
@@ -24667,59 +24836,72 @@ msgid ""
 "(RA) Daemon will advertise to the subnet to which the router's interface is "
 "assigned."
 msgstr ""
+"Подсети задаются в формате CIDR. Выберите маску CIDR, которая относится к "
+"каждой записи. /128 указывает один хост IPv6; /64 определяет обычную сеть "
+"IPv6; и т.д. Если ни одна подсеть не указана, Демон Объявления "
+"Маршрутизатора (RA) будет анонсировать подсеть, к которой принадлежит "
+"интерфейс маршрутизатора."
 
 #: src/usr/local/www/services_router_advertisements.php:123
 msgid "Select the Operating Mode for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Выберите режим работы для Демона Объявления Маршрутизатора (RA)."
 
 #: src/usr/local/www/services_router_advertisements.php:126
 msgid "RADVD will not be enabled on this interface."
-msgstr ""
+msgstr "RADVD не будет включен на этом интерфейсе."
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
-msgstr ""
+msgstr "Только Маршрутизатор"
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Will advertise this router."
-msgstr ""
+msgstr "Анонсирует этот маршрутизатор"
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Unmanaged"
-msgstr ""
+msgstr "Неуправляемый"
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Will advertise this router with stateless autoconfig."
 msgstr ""
+"Будет анонсировать этот маршрутизатор без автоматической конфигурацией без "
+"отслеживания состояния."
 
 #: src/usr/local/www/services_router_advertisements.php:129
 msgid "Managed"
-msgstr ""
+msgstr "Управляемый"
 
 #: src/usr/local/www/services_router_advertisements.php:129
 msgid ""
 "Will advertise this router with all configuration through a DHCPv6 server."
 msgstr ""
+"Будет анонсировать этот маршрутизатор со всеми настройками через сервер "
+"DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
-msgstr ""
+msgstr "Содействующий"
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid ""
 "Will advertise this router with configuration through a DHCPv6 server and/or "
 "stateless autoconfig."
 msgstr ""
+"Будет анонсировать этот маршрутизатор с настройкой через сервер DHCPv6 и/или "
+"автоконфиг без учета состояния."
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
-msgstr ""
+msgstr "DHCP без отслеживания состояния"
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid ""
 "Will advertise this router with stateless autoconfig and other configuration "
 "information available via DHCPv6."
 msgstr ""
+"Будет анонсировать этот маршрутизатор с автосогласованием без учета "
+"состояния и с другой информацией о конфигурации, доступной через DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:133
 msgid ""
@@ -24727,77 +24909,86 @@ msgid ""
 "\"Managed\", \"Assisted\" or \"Stateless DHCP\", it can be another host on "
 "the network."
 msgstr ""
+"Если включен режим \"Управляемый\", \"Ассистируемый\" или DHCP без "
+"отслеживания состояний\", включение сервера DHCPv6  не требуется - им может "
+"быть любой другой узел сети."
 
 #: src/usr/local/www/services_router_advertisements.php:160
 #, php-format
 msgid "An invalid subnet or alias was specified. [%1$s/%2$s]"
-msgstr ""
+msgstr "Указана невалидная подсеть или алиас. [%1$s/%2$s]"
 
 #: src/usr/local/www/services_router_advertisements.php:179
 msgid ""
 "A valid lifetime below 2 hours will be ignored by clients (RFC 4862 Section "
 "5.5.3 point e)"
 msgstr ""
+"Валидное время жизни менее, чем 2 часа будет игнорироваться клиентами (RFC "
+"4862 Секция 5.5.3 пункт е)"
 
 #: src/usr/local/www/services_router_advertisements.php:182
 msgid "Valid lifetime must be an integer."
-msgstr ""
+msgstr "Валидное время жизни должно быть целым числом."
 
 #: src/usr/local/www/services_router_advertisements.php:186
 msgid "Minimum advertisement interval must be an integer."
-msgstr ""
+msgstr "Минимальный интервал времени объявления должен быть целым числом."
 
 #: src/usr/local/www/services_router_advertisements.php:189
 msgid "Minimum advertisement interval must be no less than 3."
-msgstr ""
+msgstr "Минимальный интервал времени объявления не должен быть менее 3."
 
 #: src/usr/local/www/services_router_advertisements.php:192
 msgid ""
 "Minimum advertisement interval must be no greater than 0.75 * Maximum "
 "advertisement interval"
 msgstr ""
+"Минимальный интервал времени объявления не должен быть больше произведения 0."
+"75 и Максимального интервала времени объявления"
 
 #: src/usr/local/www/services_router_advertisements.php:197
 msgid "Maximum advertisement interval must be an integer."
-msgstr ""
+msgstr "Максимальный интервал времени объявления должен быть целым числом."
 
 #: src/usr/local/www/services_router_advertisements.php:200
 msgid ""
 "Maximum advertisement interval must be no less than 4 and no greater than "
 "1800."
 msgstr ""
+"Максимальный интервал времени объявления должен быть не менее 4 и не более "
+"1800."
 
 #: src/usr/local/www/services_router_advertisements.php:204
 msgid "Router lifetime must be an integer between 1 and 9000."
-msgstr ""
+msgstr "Время жизни маршрутизатора должно быть целым числом от 1 до 9000."
 
 #: src/usr/local/www/services_router_advertisements.php:308
 msgid "Advertisements"
-msgstr ""
+msgstr "Объявления"
 
 #: src/usr/local/www/services_router_advertisements.php:312
 msgid "*Router mode"
-msgstr ""
+msgstr "*Режим маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:319
 msgid "*Router priority"
-msgstr ""
+msgstr "*Приоритет маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:322
 msgid "Select the Priority for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Выберите Приоритет демона Объявления Маршрутизатора."
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
-msgstr ""
+msgstr "Интерфейс Объявления Маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Выберите Интерфейс для Демона Объявления Маршрутизатора."
 
 #: src/usr/local/www/services_router_advertisements.php:354
 msgid "Default valid lifetime"
-msgstr ""
+msgstr "Валидное время жизни по умолчанию"
 
 #: src/usr/local/www/services_router_advertisements.php:358
 #, php-format
@@ -24806,10 +24997,13 @@ msgid ""
 "the prefix is valid for the purpose of on-link determination.%1$sThe default "
 "is 86400 seconds."
 msgstr ""
+"Длительность времени в секундах (относительно времени отправки пакета), при "
+"котором префикс валиден для целей определения линка.%1$s По умолчанию это "
+"значение 86400 секунд."
 
 #: src/usr/local/www/services_router_advertisements.php:363
 msgid "Default preferred lifetime"
-msgstr ""
+msgstr "Предпочитаемое время жизни по умолчанию"
 
 #: src/usr/local/www/services_router_advertisements.php:366
 #, php-format
@@ -24818,118 +25012,128 @@ msgid ""
 "sent) that addresses generated from the prefix via stateless address "
 "autoconfiguration remain preferred.%1$sThe default is 14400 seconds."
 msgstr ""
+"Секунд. Длительность времени в секундах (относительно времени отправки "
+"пакетов), которое генерируется адресом через префикс посредством  протокола "
+"автоконфигурирования адресов без отслеживания состояний, остается "
+"предпочтительной.%1$sПо умолчанию это 14400 секунд."
 
 #: src/usr/local/www/services_router_advertisements.php:371
 msgid "Minimum RA interval"
-msgstr ""
+msgstr "Минимальный интервал Объявления  Маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:375
 msgid ""
 "The minimum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
+"Минимальное разрешенное время для отправки незатребованных многоадресных "
+"объявлений маршрутизатора в секундах."
 
 #: src/usr/local/www/services_router_advertisements.php:379
 msgid "Maximum RA interval"
-msgstr ""
+msgstr "Максимальный интервал Объявления Маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:383
 msgid ""
 "The maximum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
+"Максимальное разрешенное время для отправки незатребованных многоадресных "
+"объявлений маршрутизатора в секундах."
 
 #: src/usr/local/www/services_router_advertisements.php:387
 msgid "Router lifetime"
-msgstr ""
+msgstr "Время жизни маршрутизатора"
 
 #: src/usr/local/www/services_router_advertisements.php:391
 msgid "The lifetime associated with the default router in seconds."
-msgstr ""
+msgstr "Время жизни, связанное с маршрутизатором по умолчанию, в секундах."
 
 #: src/usr/local/www/services_router_advertisements.php:394
 msgid "RA Subnets"
-msgstr ""
+msgstr "Подсети RA"
 
 #: src/usr/local/www/services_router_advertisements.php:410
 msgid "Subnets"
-msgstr ""
+msgstr "Подсети"
 
 #: src/usr/local/www/services_router_advertisements.php:442
 msgid "DNS Configuration"
-msgstr ""
+msgstr "Конфигурация DNS"
 
 #: src/usr/local/www/services_router_advertisements.php:447
 msgid "Server "
-msgstr ""
+msgstr "Сервер"
 
 #: src/usr/local/www/services_router_advertisements.php:458
 msgid ""
 "The RA server can optionally provide a domain search list. Use the semicolon "
 "character as separator."
 msgstr ""
+"Сервер RA может дополнительно предоставить список поиска домена. Используйте "
+"символ точки с запятой в качестве разделителя."
 
 #: src/usr/local/www/services_snmp.php:90
 msgid "Invalid character '#' in system location"
-msgstr ""
+msgstr "Недопустимый символ '#' в системном расположении"
 
 #: src/usr/local/www/services_snmp.php:93
 msgid "Invalid character '#' in system contact"
-msgstr ""
+msgstr "Недопустимый символ '#' в системном контакте"
 
 #: src/usr/local/www/services_snmp.php:96
 msgid "Invalid character '#' in read community string"
-msgstr ""
+msgstr "Недопустимый символ '#' в строке комьюнити для чтения"
 
 #: src/usr/local/www/services_snmp.php:100
 msgid "Community"
-msgstr ""
+msgstr "Комьюнити"
 
 #: src/usr/local/www/services_snmp.php:104
 #: src/usr/local/www/services_snmp.php:226
 msgid "Polling Port"
-msgstr ""
+msgstr "Опрашиваемый Порт"
 
 #: src/usr/local/www/services_snmp.php:112
 msgid "Invalid character '#' in SNMP trap string"
-msgstr ""
+msgstr "Недопустимый символ '#' в строке  SNMP ловушки"
 
 #: src/usr/local/www/services_snmp.php:116
 #: src/usr/local/www/services_snmp.php:275
 msgid "Trap server"
-msgstr ""
+msgstr "Сервер ловушки"
 
 #: src/usr/local/www/services_snmp.php:120
 msgid "Trap server port"
-msgstr ""
+msgstr "Порт сервера ловушки"
 
 #: src/usr/local/www/services_snmp.php:124
 msgid "Trap string"
-msgstr ""
+msgstr "Строка ловушки"
 
 #: src/usr/local/www/services_snmp.php:211
 msgid "SNMP Daemon"
-msgstr ""
+msgstr "SNMP Демон"
 
 #: src/usr/local/www/services_snmp.php:222
 msgid "SNMP Daemon Settings"
-msgstr ""
+msgstr "Настройки SNMP Демона"
 
 #: src/usr/local/www/services_snmp.php:229
 msgid "Enter the port to accept polling events on (default 161)."
-msgstr ""
+msgstr "Введите порт, чтобы принимать события опроса (по умолчанию 161)."
 
 #: src/usr/local/www/services_snmp.php:233
 msgid "System Location"
-msgstr ""
+msgstr "Расположение Системы"
 
 #: src/usr/local/www/services_snmp.php:240
 msgid "System Contact"
-msgstr ""
+msgstr "Контакты Системы"
 
 #: src/usr/local/www/services_snmp.php:247
 msgid "Read Community String"
-msgstr ""
+msgstr "Строка Комьюнити для Чтения"
 
 #: src/usr/local/www/services_snmp.php:250
 msgid ""
@@ -24937,96 +25141,110 @@ msgid ""
 "to hosts knowing the community string. Use a strong value here to protect "
 "from unauthorized information disclosure."
 msgstr ""
+"Строка комьюнити подобна паролю, ограничивая доступ к запросу SNMP хостам, "
+"зная строку комьюнити. Используйте надежное значение здесь, чтобы защитить "
+"от несанкционированного раскрытия информации."
 
 #: src/usr/local/www/services_snmp.php:254
 msgid "SNMP Traps Enable"
-msgstr ""
+msgstr "Ловушки SNMP Активировны"
 
 #: src/usr/local/www/services_snmp.php:265
 msgid "SNMP Trap Settings"
-msgstr ""
+msgstr "Настройки SNMP ловушек"
 
 #: src/usr/local/www/services_snmp.php:278
 msgid "Enter the trap server name"
-msgstr ""
+msgstr "Введите имя сервера ловушек"
 
 #: src/usr/local/www/services_snmp.php:282
 msgid "Trap Server Port"
-msgstr ""
+msgstr "Порт Ловушки Сервера"
 
 #: src/usr/local/www/services_snmp.php:285
 msgid "Enter the port to send the traps to (default 162)"
-msgstr ""
+msgstr "Укажите порт для отправки ловушек (по умолчанию 162)"
 
 #: src/usr/local/www/services_snmp.php:289
 msgid "SNMP Trap String"
-msgstr ""
+msgstr "Строка Ловушки SNMP"
 
 #: src/usr/local/www/services_snmp.php:296
 msgid "SNMP Modules"
-msgstr ""
+msgstr "Модули SNMP"
 
 #: src/usr/local/www/services_snmp.php:298
 msgid "SNMP modules"
-msgstr ""
+msgstr "Модули SNMP"
 
 #: src/usr/local/www/services_snmp.php:355
 msgid "Interface Binding"
-msgstr ""
+msgstr "Привязка SNMP"
 
 #: src/usr/local/www/services_snmp.php:361
 msgid "Bind Interfaces"
-msgstr ""
+msgstr "Привязать Интерфейсы"
 
 #: src/usr/local/www/services_unbound.php:109
 msgid ""
 "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, "
 "or disable the DNS Forwarder."
 msgstr ""
+"DNS Форвардер включен для данного порта. Выберите свободный порт или "
+"выключите DNS Форвардер."
 
 #: src/usr/local/www/services_unbound.php:134
 msgid ""
 "At least one DNS server must be specified under System &gt; General Setup to "
 "enable Forwarding mode."
 msgstr ""
+"По крайней мере один DNS сервер должен быть указан в контексте - Система "
+"&gt; Общие Настройки для включения режима Форвардинга."
 
 #: src/usr/local/www/services_unbound.php:139
 msgid "One or more Network Interfaces must be selected for binding."
-msgstr ""
+msgstr "Один или более Сетевых Интерфейсов должен быть выбран для привязки."
 
 #: src/usr/local/www/services_unbound.php:141
 msgid ""
 "This system is configured to use the DNS Resolver as its DNS server, so "
 "Localhost or All must be selected in Network Interfaces."
 msgstr ""
+"Данная система настроена для использования DNS Резольвера в качестве её DNS "
+"сервера, поэтому Локальный хост или Все должны быть указаны в Сетевых "
+"интерфейсах."
 
 #: src/usr/local/www/services_unbound.php:145
 msgid "One or more Outgoing Network Interfaces must be selected."
-msgstr ""
+msgstr "Один или более Исходящих Сетевых Интерфейсов должны быть выбраны."
 
 #: src/usr/local/www/services_unbound.php:158
 msgid ""
 "DHCP Server must be enabled for DHCP Registration to work in DNS Resolver."
 msgstr ""
+"Сервер DHCP должен быть активирован для Регистрации DHCP, чтобы данный "
+"сервер мог работать в DNS Резольвере."
 
 #: src/usr/local/www/services_unbound.php:171
 msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
+"Сгенерированный конфигурационный файл не может быть прочитан unbound. "
+"Пожалуйста, исправьте следующие ошибки:"
 
 #: src/usr/local/www/services_unbound.php:187
 #: src/usr/local/www/services_unbound_advanced.php:180
 msgid "DNS Resolver configured."
-msgstr ""
+msgstr "DNS Резольвер настроен."
 
 #: src/usr/local/www/services_unbound.php:207
 msgid "Host override deleted from DNS Resolver."
-msgstr ""
+msgstr "Хост переопределения удалён из DNS Резольвера."
 
 #: src/usr/local/www/services_unbound.php:215
 msgid "Domain override deleted from DNS Resolver."
-msgstr ""
+msgstr "Домен переопределения удалён DNS Резольвера."
 
 #: src/usr/local/www/services_unbound.php:245
 #: src/usr/local/www/services_unbound.php:264
@@ -25035,13 +25253,13 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "General Settings"
-msgstr ""
+msgstr "Общие Настройки"
 
 #: src/usr/local/www/services_unbound.php:260
 #: src/usr/local/www/services_unbound_acls.php:179
 #: src/usr/local/www/services_unbound_advanced.php:201
 msgid "The DNS resolver configuration has been changed."
-msgstr ""
+msgstr "Настройки DNS Резольвера удалены."
 
 #: src/usr/local/www/services_unbound.php:265
 #: src/usr/local/www/services_unbound_acls.php:184
@@ -25054,22 +25272,22 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Расширенные Установки"
 
 #: src/usr/local/www/services_unbound.php:266
 #: src/usr/local/www/services_unbound_acls.php:161
 #: src/usr/local/www/services_unbound_acls.php:185
 #: src/usr/local/www/services_unbound_advanced.php:207
 msgid "Access Lists"
-msgstr ""
+msgstr "Списки Доступа"
 
 #: src/usr/local/www/services_unbound.php:271
 msgid "General DNS Resolver Options"
-msgstr ""
+msgstr "Общие опции DNS Резольвера."
 
 #: src/usr/local/www/services_unbound.php:292
 msgid "*Network Interfaces"
-msgstr ""
+msgstr "*Сетевый Интерфейсы"
 
 #: src/usr/local/www/services_unbound.php:296
 msgid ""
@@ -25078,10 +25296,15 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
+"IP интерфейсов, используемые DNS Резольвером для ответа на запросы от "
+"клиентов. Если у интерфейса имеется и IPv4, и IPv6 адреса, будут "
+"использоваться оба. Запросы к IP других интерфейсов, не выбранных ниже, "
+"будут проигнорированы. Ответ на запросы на каждый доступный IPv4 и IPv6 "
+"адрес является поведением по умолчанию."
 
 #: src/usr/local/www/services_unbound.php:303
 msgid "*Outgoing Network Interfaces"
-msgstr ""
+msgstr "*Исходящие Сетевые Интерфейсы"
 
 #: src/usr/local/www/services_unbound.php:307
 msgid ""
@@ -25089,10 +25312,13 @@ msgid ""
 "send queries to authoritative servers and receive their replies. By default "
 "all interfaces are used."
 msgstr ""
+"Использовать другой сетевой интерфейс , который DNS Резольвер будет "
+"использовать для отправки запросов к авторитативному серверу и для получения "
+"от него ответов. По умолчанию используются все интерфейсы."
 
 #: src/usr/local/www/services_unbound.php:311
 msgid "*System Domain Local Zone Type"
-msgstr ""
+msgstr "*Тип Локальной Зоны Системы Домена"
 
 #: src/usr/local/www/services_unbound.php:314
 msgid ""
@@ -25100,10 +25326,13 @@ msgid ""
 "Setup | Domain).  Transparent is the default.  Local-Zone type descriptions "
 "are available in the unbound.conf(5) manual pages."
 msgstr ""
+"Тип локальной зоны используется для домена системы pfSense (Система | Общие "
+"Настройки | Домен). Описания типа Локальной Зоны доступны в страницах "
+"руководства  по настройке  unbound.conf(5)"
 
 #: src/usr/local/www/services_unbound.php:318
 msgid "DNSSEC"
-msgstr ""
+msgstr "DNSSEC"
 
 #: src/usr/local/www/services_unbound.php:328
 #, php-format
@@ -25112,6 +25341,10 @@ msgid ""
 "servers defined under %1$sSystem &gt; General Setup%2$s or those obtained "
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
+"Если данная опция активирована, запросы DNS  будут отправлены к восходящим "
+"DNS серверам, определенных в контексте  %1$sСистема &gt; Общие Настройки%2$s "
+"или  полученных по DHCP/PPP на WAN (если включена опция Переопределения  DNS "
+"сервера)."
 
 #: src/usr/local/www/services_unbound.php:337
 #, php-format
@@ -25121,6 +25354,10 @@ msgid ""
 "their name can be resolved. The domain in %1$sSystem &gt; General Setup%2$s "
 "should also be set to the proper value."
 msgstr ""
+"Если данная опция активирована,  станции, которые указывают своё имя хоста "
+"при запросе аренды DHCP будут зарегистрированы в DNS Резольвере, чтобы их "
+"имена могли быть разрешены. Домен в  %1$sСистема &gt; Общие Настройки%2$s  "
+"также должен быть корректно указан."
 
 #: src/usr/local/www/services_unbound.php:346
 #, php-format
@@ -25129,33 +25366,39 @@ msgid ""
 "DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
+"Если данная опция активирована,  статические соответствия DHCP будут "
+"зарегистрированы в DNS Резольвере, чтобы их имена могли быть разрешены. "
+"Домен в  %1$sСистема &gt; Общие Настройки%2$s  также должен быть корректно "
+"указан."
 
 #: src/usr/local/www/services_unbound.php:359
 #: src/usr/local/www/services_unbound.php:395
 msgid "Display Custom Options"
-msgstr ""
+msgstr "Отобразить Пользовательские Опции"
 
 #: src/usr/local/www/services_unbound.php:367
 msgid ""
 "Enter any additional configuration parameters to add to the DNS Resolver "
 "configuration here, separated by a newline."
 msgstr ""
+"Укажите любые дополнительные  параметры конфигурации для  добавления к "
+"настройкам DNS Резольвера, разделенные новой строкой."
 
 #: src/usr/local/www/services_unbound.php:393
 msgid "Hide Custom Options"
-msgstr ""
+msgstr "Скрыть Пользовательские Опции"
 
 #: src/usr/local/www/services_unbound.php:444
 msgid "Parent domain of host"
-msgstr ""
+msgstr "Родительский домен для хоста"
 
 #: src/usr/local/www/services_unbound.php:445
 msgid "IP to return for host"
-msgstr ""
+msgstr "Вернуть IP для хоста"
 
 #: src/usr/local/www/services_unbound.php:529
 msgid "Lookup Server IP Address"
-msgstr ""
+msgstr "Поиск IP адреса Сервера"
 
 #: src/usr/local/www/services_unbound.php:579
 #, php-format
@@ -25167,31 +25410,42 @@ msgid ""
 "those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be "
 "overridden by DHCP/PPP on WAN&quot; is checked."
 msgstr ""
+"Если активирован DNS  Резольвер,  DHCP сервис (если он включен) будет "
+"автоматически обслуживать LAN IP адрес в качестве DNS сервера для клиентов "
+"DHCP, таким образом они будут использовать DNS резольвер. Если включен "
+"Форвардинг, DNS резольвер будет использовать DNS серверы, указанные в "
+"%1$sСистема &gt; Общие Настройки%2$s или полученные по DHCP или PPP на  WAN "
+"если включена опция &quot;Разрешить переопределение списка DNS серверов  по "
+"DHCP/PPP на WAN&quot;"
 
 #: src/usr/local/www/services_unbound_acls.php:59
 msgid "Access list deleted from DNS Resolver."
-msgstr ""
+msgstr "Список доступа, удалённый из DNS Резольвера."
 
 #: src/usr/local/www/services_unbound_acls.php:103
 #: src/usr/local/www/services_unbound_acls.php:117
 msgid "A valid IP address must be entered for each row under Networks."
-msgstr ""
+msgstr "Валидный IP адрес должен быть указан на каждой строке  под \"Сетями\"."
 
 #: src/usr/local/www/services_unbound_acls.php:108
 msgid "A valid IPv4 netmask must be entered for each IPv4 row under Networks."
 msgstr ""
+"Валидная маска IPv4 должна быть указана для каждой строки IPv4 под "
+"\"Сетями\"."
 
 #: src/usr/local/www/services_unbound_acls.php:114
 msgid "A valid IPv6 netmask must be entered for each IPv6 row under Networks."
 msgstr ""
+"Валидная маска IPv6 должна быть указана для каждой строки IPv6 под "
+"\"Сетями\"."
 
 #: src/usr/local/www/services_unbound_acls.php:125
 msgid "save"
-msgstr ""
+msgstr "сохранить"
 
 #: src/usr/local/www/services_unbound_acls.php:145
 msgid "Access list configured for DNS Resolver."
-msgstr ""
+msgstr "Список доступа настроенный для DNS Резольвера."
 
 #: src/usr/local/www/services_unbound_acls.php:154
 #, php-format
@@ -25199,6 +25453,8 @@ msgid ""
 "%1$sDeny:%2$s Stops queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
+"%1$sОтменить:%2$s Останавливает запросы от узлов в пределах блока адресов, "
+"указанного ниже. %3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:155
 #, php-format
@@ -25206,6 +25462,9 @@ msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
+"%1$sОтказать:%2$s Останавливает запросы от узлов в пределах блока адресов, "
+"указанного ниже, при этом отправляя сообщение об ошибке DNS rcode REFUSED "
+"обратно к клиенту.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:156
 #, php-format
@@ -25213,6 +25472,8 @@ msgid ""
 "%1$sAllow:%2$s Allow queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
+"%1$sРазрешить:%2$s  Разрешает запросы от узлов в пределах блока адресов, "
+"указанного ниже. %3$s "
 
 #: src/usr/local/www/services_unbound_acls.php:157
 #, php-format
@@ -25221,6 +25482,10 @@ msgid ""
 "within the netblock defined below. Used for cache snooping and ideally "
 "should only be configured for the administrative host.%3$s"
 msgstr ""
+"%1$sРазрешить Отслеживание:%2$s Разрешить рекурсивный и нерекурсивный доступ "
+" от узлов в пределах блока адресов, указанного ниже. Используется для кэша "
+"отслеживания и в идеале должен быть настроен только для административного "
+"хоста.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:158
 #, php-format
@@ -25229,6 +25494,9 @@ msgid ""
 "hosts within the netblock defined below. Messages that are disallowed are "
 "dropped.%3$s"
 msgstr ""
+"%1$sОтменить Нелокальный:%2$s Разрешить только авторитативные запросы "
+"локальных данных от узлов в пределах блока адресов, указанного ниже. "
+"Сообщения, которые не разрешены, будут проигнорированы.%3$s "
 
 #: src/usr/local/www/services_unbound_acls.php:159
 #, php-format
@@ -25237,123 +25505,136 @@ msgid ""
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
+"%1$sОтказать Нелокальному:%2$s Разрешить только авторитативные запросы о "
+"локальных данных с пределах блока адресов, указанного ниже. Отправляет "
+"сообщение об ошибке DNS rcode REFUSED обратно к клиенту для сообщение, "
+"которые не разрешены."
 
 #: src/usr/local/www/services_unbound_acls.php:192
 msgid "New Access List"
-msgstr ""
+msgstr "Новый Список Доступа"
 
 #: src/usr/local/www/services_unbound_acls.php:210
 msgid "Access List name"
-msgstr ""
+msgstr "Имя Списка Доступа"
 
 #: src/usr/local/www/services_unbound_acls.php:213
 msgid "Provide an Access List name."
-msgstr ""
+msgstr "Укажите имя Списка Доступа."
 
 #: src/usr/local/www/services_unbound_acls.php:219
 msgid "Allow Snoop"
-msgstr ""
+msgstr "Разрешить Отслеживание"
 
 #: src/usr/local/www/services_unbound_acls.php:219
 msgid "Deny Nonlocal"
-msgstr ""
+msgstr "Отменить Нелокальным"
 
 #: src/usr/local/www/services_unbound_acls.php:219
 msgid "Refuse Nonlocal"
-msgstr ""
+msgstr "Отказать Нелокальным"
 
 #: src/usr/local/www/services_unbound_acls.php:227
 msgid "A description may be entered here for administrative reference."
-msgstr ""
+msgstr "Здесь можно указать описание для административной ссылки."
 
 #: src/usr/local/www/services_unbound_acls.php:237
 msgid "*Networks"
-msgstr ""
+msgstr "*Сети"
 
 #: src/usr/local/www/services_unbound_acls.php:278
 msgid "Access Lists to Control Access to the DNS Resolver"
-msgstr ""
+msgstr "Список Доступа для контролирования доступа к DNS "
 
 #: src/usr/local/www/services_unbound_acls.php:284
 msgid "Access List Name"
-msgstr ""
+msgstr "Имя Списка Доступа"
 
 #: src/usr/local/www/services_unbound_acls.php:306
 msgid "Edit ACL"
-msgstr ""
+msgstr "Редактировать Список Доступа"
 
 #: src/usr/local/www/services_unbound_acls.php:307
 msgid "Delete ACL"
-msgstr ""
+msgstr "Удалить Список Доступа"
 
 #: src/usr/local/www/services_unbound_advanced.php:90
 msgid "A valid value for Message Cache Size must be specified."
-msgstr ""
+msgstr "Валидное значение для Размера Кэша Сообщений должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:93
 msgid "A valid value must be specified for Outgoing TCP Buffers."
-msgstr ""
+msgstr "Валидное значение для Исходящего TCP Буфера должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:96
 msgid "A valid value must be specified for Incoming TCP Buffers."
-msgstr ""
+msgstr "Валидное значение для Входящего TCP Буфера должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:99
 msgid "A valid value must be specified for EDNS Buffer Size."
-msgstr ""
+msgstr "Валидное значение для Размера EDNS Буфера должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:102
 msgid "A valid value must be specified for Number of Queries per Thread."
 msgstr ""
+"Валидное значение для Числа Запросов на каждый Поток должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:105
 msgid "A valid value must be specified for Jostle Timeout."
-msgstr ""
+msgstr "Валидное значение для Таймаута Давки должно быть указано."
 
 #: src/usr/local/www/services_unbound_advanced.php:108
 msgid "'Maximum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
+"\"Максимальный TTL для RRsets и Сообщений\" должен быть положительным целым "
+"числом."
 
 #: src/usr/local/www/services_unbound_advanced.php:111
 msgid "'Minimum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
+"\"Минимальный TTL для RRsets и Сообщений\" должен быть положительным целым "
+"числом."
 
 #: src/usr/local/www/services_unbound_advanced.php:114
 msgid "A valid value must be specified for TTL for Host Cache Entries."
 msgstr ""
+"Валидное значение должно быть указано для TTL  для Записей Кэша Хостов."
 
 #: src/usr/local/www/services_unbound_advanced.php:117
 msgid "A valid value must be specified for Number of Hosts to Cache."
-msgstr ""
+msgstr "Валидное значение должно быть указано для Числа Хостов в Кэше."
 
 #: src/usr/local/www/services_unbound_advanced.php:120
 msgid "A valid value must be specified for Unwanted Reply Threshold."
 msgstr ""
+"Валидное значение должно быть указано для Порога Нежелательных Ответов."
 
 #: src/usr/local/www/services_unbound_advanced.php:123
 msgid "A valid value must be specified for Log Level."
-msgstr ""
+msgstr "Валидное значение должно быть указано для Уровня Журналирования."
 
 #: src/usr/local/www/services_unbound_advanced.php:126
 msgid ""
 "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled."
 msgstr ""
+"Опция Усиления DNSSEC Данных может быть активирована, только если включена "
+"поддержка DNSSEC."
 
 #: src/usr/local/www/services_unbound_advanced.php:212
 msgid "Advanced Resolver Options"
-msgstr ""
+msgstr "Дополнительные Параметры Резольвера"
 
 #: src/usr/local/www/services_unbound_advanced.php:216
 msgid "Hide Identity"
-msgstr ""
+msgstr "Скрыть Идентификатор"
 
 #: src/usr/local/www/services_unbound_advanced.php:223
 msgid "Hide Version"
-msgstr ""
+msgstr "Скрыть Версию"
 
 #: src/usr/local/www/services_unbound_advanced.php:230
 msgid "Prefetch Support"
-msgstr ""
+msgstr "Поддержка Предварительной Выборки"
 
 #: src/usr/local/www/services_unbound_advanced.php:233
 msgid ""
@@ -25361,10 +25642,13 @@ msgid ""
 "traffic and load on the server, but frequently requested items will not "
 "expire from the cache."
 msgstr ""
+"Когда включена, эта опция может увеличить, примерно на 10%, DNS трафик и "
+"нагрузку на сервер, но часто запрашиваемые элементы не будут удаляться из "
+"кеша."
 
 #: src/usr/local/www/services_unbound_advanced.php:237
 msgid "Prefetch DNS Key Support"
-msgstr ""
+msgstr "Поддержка Предварительной Выборки DNS Ключа"
 
 #: src/usr/local/www/services_unbound_advanced.php:240
 #, php-format
@@ -25372,20 +25656,24 @@ msgid ""
 "This helps lower the latency of requests but does utilize a little more CPU. "
 "See: %1$sWikipedia%2$s"
 msgstr ""
+"Это помогает снизить задержку запросов, но использует немного больше "
+"ресурсов ЦПУ. См.%1$sWikipedia%2$s"
 
 #: src/usr/local/www/services_unbound_advanced.php:244
 msgid "Harden DNSSEC Data"
-msgstr ""
+msgstr "Усилить DNSSEC Данные"
 
 #: src/usr/local/www/services_unbound_advanced.php:247
 msgid ""
 "If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC "
 "data is received, then the zone is made insecure. "
 msgstr ""
+"Если такие данные отсутствуют, зона становится фиктивной. Если отключено и "
+"данные DNSSEC не получены, зона становится небезопасной."
 
 #: src/usr/local/www/services_unbound_advanced.php:251
 msgid "Message Cache Size"
-msgstr ""
+msgstr "Размер Кэша Сообщения"
 
 #: src/usr/local/www/services_unbound_advanced.php:254
 msgid ""
@@ -25394,10 +25682,14 @@ msgid ""
 "automatically be set to twice this amount. The RRSet cache contains the "
 "actual RR data. The default is 4 megabytes."
 msgstr ""
+"Размер кэша сообщения. Кэш сообщений хранит коды ответа DNS и статусы "
+"проверки. Кэш Записей Ресурсов (RRSet) будет автоматически установлен в два "
+"раза больше этой суммы. Кэш RRSet содержит фактические данные RR. Значение "
+"по умолчанию 4 мегабайта."
 
 #: src/usr/local/www/services_unbound_advanced.php:258
 msgid "Outgoing TCP Buffers"
-msgstr ""
+msgstr "Исходящие Буферы TCP"
 
 #: src/usr/local/www/services_unbound_advanced.php:261
 msgid ""
@@ -25405,20 +25697,25 @@ msgid ""
 "is 10. If 0 is selected then TCP queries are not sent to authoritative "
 "servers."
 msgstr ""
+"Количество исходящих TCP-буферов для распределения на поток. Значение по "
+"умолчанию 10. Если выбран 0, запросы TCP не отправляются на авторизованные "
+"серверы."
 
 #: src/usr/local/www/services_unbound_advanced.php:265
 msgid "Incoming TCP Buffers"
-msgstr ""
+msgstr "Входящие Буферы TCP"
 
 #: src/usr/local/www/services_unbound_advanced.php:268
 msgid ""
 "The number of incoming TCP buffers to allocate per thread. The default value "
 "is 10. If 0 is selected then TCP queries are not accepted from clients."
 msgstr ""
+"Число входящих буферов TCP для распределения на поток. Значение по умолчанию "
+" 10. Если выбран 0, запросы TCP не принимаются от клиентов."
 
 #: src/usr/local/www/services_unbound_advanced.php:272
 msgid "EDNS Buffer Size"
-msgstr ""
+msgstr "Размер Буфера EDNS"
 
 #: src/usr/local/www/services_unbound_advanced.php:275
 msgid ""
@@ -25429,10 +25726,16 @@ msgid ""
 "bypasses most MTU path problems, but it can generate an excessive amount of "
 "TCP fallback."
 msgstr ""
+"Количество байтов  в качестве размера буфера повторной сборки EDNS. Это "
+"значение, которое используется в датаграммах UDP, отправленных соседним "
+"узлам. Рекомендация RFC - 4096 (по умолчанию). Если возникают проблемы со "
+"сборкой фрагментации, которые обычно встречаются как тайм-ауты, значение "
+"1480 должно помочь. Значение 512 решает большинство проблем с путями MTU, но "
+"может генерировать чрезмерное количество потерь TCP трафика."
 
 #: src/usr/local/www/services_unbound_advanced.php:281
 msgid "Number of Queries per Thread"
-msgstr ""
+msgstr "Количество Запросов на Поток"
 
 #: src/usr/local/www/services_unbound_advanced.php:284
 msgid ""
@@ -25440,10 +25743,13 @@ msgid ""
 "queries arrive that need to be serviced, and no queries can be jostled, then "
 "these queries are dropped."
 msgstr ""
+"Количество запросов, которое каждый поток будет обслуживать одновременно. "
+"Если приходит большее количество запросов, которые необходимо обслужить, и "
+"никакой запрос не может быть подвинут, тогда эти запросы сбрасываются."
 
 #: src/usr/local/www/services_unbound_advanced.php:288
 msgid "Jostle Timeout"
-msgstr ""
+msgstr "Тайм-аут Запроса"
 
 #: src/usr/local/www/services_unbound_advanced.php:291
 msgid ""
@@ -25451,10 +25757,13 @@ msgid ""
 "denial of service by slow queries or high query rates. The default value is "
 "200 milliseconds. "
 msgstr ""
+"Этот тайм-аут используется, когда сервер очень занят. Это защищает от отказа "
+"в обслуживании (DoS) медленными или быстрыми запросами . Значение по "
+"умолчанию 200 миллисекунд."
 
 #: src/usr/local/www/services_unbound_advanced.php:295
 msgid "Maximum TTL for RRsets and Messages"
-msgstr ""
+msgstr "Максимальный TTL для RRsets и Сообщений"
 
 #: src/usr/local/www/services_unbound_advanced.php:298
 msgid ""
@@ -25463,10 +25772,15 @@ msgid ""
 "expired. This can be configured to force the resolver to query for data more "
 "often and not trust (very large) TTL values."
 msgstr ""
+"Максимальное время жизни для RRsets и сообщений в кэше. Значение по "
+"умолчанию - 86400 секунд (1 день). Когда срок действия внутреннего TTL "
+"истекает, элемент кэша удаляется. Это можно настроить таким образом, чтобы "
+"заставить резольвер чаще запрашивать данные и не доверять (очень большим) "
+"значениям TTL."
 
 #: src/usr/local/www/services_unbound_advanced.php:303
 msgid "Minimum TTL for RRsets and Messages"
-msgstr ""
+msgstr "Минимальный TTL для RRsets и Сообщений"
 
 #: src/usr/local/www/services_unbound_advanced.php:306
 msgid ""

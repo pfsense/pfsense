@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-27 04:59-0400\n"
+"PO-Revision-Date: 2017-03-30 09:01-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -1515,7 +1515,7 @@ msgstr "超時"
 msgid "Packet too big"
 msgstr "包太大"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
@@ -1580,9 +1580,9 @@ msgstr "篩檢程式已禁用。未加載規則。"
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
@@ -1771,22 +1771,22 @@ msgstr "規則'%2$s'無法解析目標別名 '%1$s' "
 #: src/etc/inc/filter.inc:2718
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "規則 '%2$s'無法解析源端口別名'%1$s'"
 
 #: src/etc/inc/filter.inc:2720
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "用於規則 '%2$s'的空源端口別名 '%1$s'"
 
 #: src/etc/inc/filter.inc:2734
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "規則 '%2$s'無法解析目標端口別名'%1$s'"
 
 #: src/etc/inc/filter.inc:2736
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "用於規則 '%2$s'的空目標端口別名 '%1$s'"
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
@@ -3420,13 +3420,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "插件 %1$s沒有安裝，%2$s安裝中止。"
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "安裝出錯: %s."
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
 msgstr "安裝插件失敗。"
 
@@ -3438,7 +3438,7 @@ msgstr "正在載入插件配置..."
 msgid "Configuring package components..."
 msgstr "配置插件組件..."
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
 msgstr "正在加載插件說明..."
 
@@ -3463,103 +3463,103 @@ msgstr "正在執行custom_php_install_command()..."
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "正在執行custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
 msgstr "菜單項..."
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
 msgstr "服務..."
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
 msgstr "正在加載插件配置...失敗！"
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
 msgstr "安裝中止。"
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "無法加載插件配置。安裝中止。"
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
 msgstr "正在寫入配置..."
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "插件 %s已成功安裝。"
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "插件 %1$s沒有安裝，%2$s刪除並中止。"
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
 msgstr "正在移除插件%s... "
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
 msgstr "正在移除 %s組件..."
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr "中間配置在刪除%s期間插件寫入。"
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "未找到包檔 %s。"
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
 msgstr "卸載命令..."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr "未執行自定義卸載，因為缺少包。"
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
 msgstr "系統日誌條目...."
 
-#: src/etc/inc/pkg-utils.inc:962
+#: src/etc/inc/pkg-utils.inc:965
 msgid "Configuration... "
 msgstr "配置..."
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
 msgstr "已移除插件%s 。"
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr "正在等待Internet連接更新pkg元數據，並重新安裝插件。"
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
 msgstr "重新安裝插件"
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr "由於缺少互聯網連接，插件安裝過程已被中止"
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "插件 %s 在當前%s版本中不存在，並且已被刪除。 "
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
 msgstr "停止所有插件。"
 
@@ -6027,7 +6027,7 @@ msgstr "選擇此佇列的選項"
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -8327,7 +8327,7 @@ msgstr "返回到儀錶板"
 msgid "Keep Configuration"
 msgstr "保持配置"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr "DNS查找"
@@ -8340,15 +8340,15 @@ msgstr "從系統診斷 - > DNS查找創建"
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr "從系統診斷 - DNS查找頁面創建別名。"
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr "主機必須是一個有效的主機名或IP地址"
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr "沒有任何反應"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8368,12 +8368,12 @@ msgstr "沒有任何反應"
 msgid "IP Address"
 msgstr "IP 地址"
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr "主機名"
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8382,24 +8382,24 @@ msgstr "主機名"
 msgid "Server"
 msgstr "伺服器"
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr "查詢時間"
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr "無法解析主機\"%s\"。"
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr "別名已成功更新。"
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr "別名已成功創建。"
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8409,65 +8409,65 @@ msgstr "別名已成功創建。"
 msgid "*Hostname"
 msgstr "*主機名"
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr "查找"
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr "更新別名"
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr "添加新的別名"
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr "結果"
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr "結果"
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr "記錄類型"
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr "時間"
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr "名稱伺服器"
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr "查詢時間"
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr "更多資訊"
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr "Ping "
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr "注意：下麵的鏈接是外部服務，因此不能保證其可靠性。"
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr "IP WHOIS @ DNS Stuff"
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr "IP Info @ DNS Stuff"
 
@@ -10110,7 +10110,7 @@ msgstr "不能刪除別名。 目前%s正在使用此規則！"
 
 #: src/usr/local/www/firewall_aliases.php:100
 msgid "Deleted a firewall alias."
-msgstr ""
+msgstr "已刪除防火牆別名。"
 
 #: src/usr/local/www/firewall_aliases.php:150
 msgid "Ports"
@@ -10472,7 +10472,7 @@ msgstr "別名: %s不能嵌套，因為它們不是相同的類型。"
 
 #: src/usr/local/www/firewall_aliases_edit.php:526
 msgid "Edited a firewall alias."
-msgstr ""
+msgstr "已編輯防火牆別名。"
 
 #: src/usr/local/www/firewall_aliases_edit.php:555
 #: src/usr/local/www/firewall_aliases_edit.php:636
@@ -10671,7 +10671,7 @@ msgstr "說明長度必須小於200個字元。"
 
 #: src/usr/local/www/firewall_aliases_import.php:186
 msgid "Imported a firewall alias."
-msgstr ""
+msgstr "已導入防火牆別名。"
 
 #: src/usr/local/www/firewall_aliases_import.php:215
 msgid "Port Alias Details"
@@ -10903,23 +10903,23 @@ msgstr "鏈接規則"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已重排NAT 1：1映射。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已刪除NAT 1：1映射。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已刪除選擇的NAT 1：1映射。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已啟用NAT 1：1映射規則。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已禁用NAT 1：1映射規則。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:142
 msgid "NAT 1:1 Mappings"
@@ -11064,7 +11064,7 @@ msgstr "必須指定一個有效的目的位計數。"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:282
 msgid "Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."
-msgstr ""
+msgstr "防火牆: NAT: 1:1 - 已保存/編輯NAT 1：1映射。"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 msgid "Single host"
@@ -11383,7 +11383,7 @@ msgstr "NAT端口轉發"
 
 #: src/usr/local/www/firewall_nat_edit.php:523
 msgid "Firewall: NAT: Port Forward - saved/edited a port forward rule."
-msgstr ""
+msgstr "防火牆: NAT:端口轉發 - 已保存/編輯端口轉發規則。"
 
 #: src/usr/local/www/firewall_nat_edit.php:575
 #: src/usr/local/www/firewall_nat_out_edit.php:525
@@ -11653,23 +11653,23 @@ msgstr "隱藏高級選項"
 
 #: src/usr/local/www/firewall_nat_npt.php:57
 msgid "Firewall: NAT: NPt - reordered NPt mappings."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已重排NPt映射。"
 
 #: src/usr/local/www/firewall_nat_npt.php:79
 msgid "Firewall: NAT: NPt - deleted NPt mapping."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已刪除NPt映射。"
 
 #: src/usr/local/www/firewall_nat_npt.php:94
 msgid "Firewall: NAT: NPt - deleted selected NPt mappings."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已刪除選擇的NPt映射。"
 
 #: src/usr/local/www/firewall_nat_npt.php:106
 msgid "Firewall: NAT: NPt - enabled NPt rule."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已啟用NPt規則。"
 
 #: src/usr/local/www/firewall_nat_npt.php:109
 msgid "Firewall: NAT: NPt - disabled NPt rule."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已禁用NPt規則。"
 
 #: src/usr/local/www/firewall_nat_npt.php:141
 msgid "NPt Mappings"
@@ -11697,7 +11697,7 @@ msgstr "目的首碼"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:131
 msgid "Firewall: NAT: NPt - saved/edited NPt mapping."
-msgstr ""
+msgstr "防火牆: NAT: NPt -已保存/編輯NPt映射。"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:184
 msgid "Edit NAT NPt Entry"
@@ -11742,7 +11742,7 @@ msgstr "此處輸入全局單播路由IPv6首碼"
 
 #: src/usr/local/www/firewall_nat_out.php:65
 msgid "Firewall: NAT: Outbound - reordered outbound NAT mappings."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已重排出站NAT映射。"
 
 #: src/usr/local/www/firewall_nat_out.php:113
 #, php-format
@@ -11759,23 +11759,23 @@ msgstr "已創建每個介面的默認規則。"
 
 #: src/usr/local/www/firewall_nat_out.php:142
 msgid "Firewall: NAT: Outbound - saved outbound NAT settings."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已保存出站NAT設置。"
 
 #: src/usr/local/www/firewall_nat_out.php:155
 msgid "Firewall: NAT: Outbound - deleted outbound NAT mapping."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已刪除出站NAT映射。"
 
 #: src/usr/local/www/firewall_nat_out.php:176
 msgid "Firewall: NAT: Outbound - deleted selected outbound NAT mappings."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已刪除選擇的出站NAT映射。"
 
 #: src/usr/local/www/firewall_nat_out.php:188
 msgid "Firewall: NAT: Outbound - enabled outbound NAT rule."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已禁用出站NAT規則。"
 
 #: src/usr/local/www/firewall_nat_out.php:191
 msgid "Firewall: NAT: Outbound - disabled outbound NAT rule."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已禁用出站規則。"
 
 #: src/usr/local/www/firewall_nat_out.php:228
 msgid "Outbound NAT Mode"
@@ -11958,7 +11958,7 @@ msgstr "源哈希值的格式不正確，“0x”後面必須緊跟32個十六�
 
 #: src/usr/local/www/firewall_nat_out_edit.php:385
 msgid "Firewall: NAT: Outbound - saved/edited outbound NAT mapping."
-msgstr ""
+msgstr "防火牆: NAT: 出站 - 已保存/編輯出站NAT映射。"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:411
 #: src/usr/local/www/system_gateway_groups_edit.php:160
@@ -12178,23 +12178,23 @@ msgstr "狀態詳細資訊"
 
 #: src/usr/local/www/firewall_rules.php:190
 msgid "Firewall: Rules - deleted a firewall rule."
-msgstr ""
+msgstr "防火牆: 規則 - 已刪除防火牆規則。"
 
 #: src/usr/local/www/firewall_rules.php:226
 msgid "Firewall: Rules - deleted selected firewall rules."
-msgstr ""
+msgstr "防火牆: 規則 - 已刪除選擇防火牆規則。"
 
 #: src/usr/local/www/firewall_rules.php:238
 msgid "Firewall: Rules - enabled a firewall rule."
-msgstr ""
+msgstr "防火牆: 規則 - 已啟用防火牆規則。"
 
 #: src/usr/local/www/firewall_rules.php:241
 msgid "Firewall: Rules - disabled a firewall rule."
-msgstr ""
+msgstr "防火牆: 規則 - 已禁用防火牆規則。"
 
 #: src/usr/local/www/firewall_rules.php:294
 msgid "Firewall: Rules - reordered firewall rules."
-msgstr ""
+msgstr "防火牆: 規則 - 已重排防火牆規則。"
 
 #: src/usr/local/www/firewall_rules.php:303
 #: src/usr/local/www/firewall_rules_edit.php:1115
@@ -12836,7 +12836,7 @@ msgstr "如果指定應該設置的TCP標識，那麼也應該指定是哪些標
 
 #: src/usr/local/www/firewall_rules_edit.php:1015
 msgid "Firewall: Rules - saved/edited a firewall rule."
-msgstr ""
+msgstr "防火牆: 規則 - 已保存/編輯防火牆規則。"
 
 #: src/usr/local/www/firewall_rules_edit.php:1036
 msgid "set"
@@ -13268,7 +13268,7 @@ msgstr "無法刪除計畫表。 目前正在由 %s使用。"
 
 #: src/usr/local/www/firewall_schedule.php:72
 msgid "Firewall schedule deleted."
-msgstr ""
+msgstr "已刪除防火牆計畫。"
 
 #: src/usr/local/www/firewall_schedule.php:94
 msgid "Range: Date / Times / Name"
@@ -13331,7 +13331,7 @@ msgstr "計畫必須至少配置一個時間範圍。"
 
 #: src/usr/local/www/firewall_schedule_edit.php:189
 msgid "Firewall schedule configured."
-msgstr ""
+msgstr "已配置防火牆計畫。"
 
 #: src/usr/local/www/firewall_schedule_edit.php:253
 msgid "Tue"
@@ -13600,7 +13600,7 @@ msgstr "此條目不能被刪除，因為它仍被描述%s的IP別名條目引�
 
 #: src/usr/local/www/firewall_virtual_ip.php:218
 msgid "Deleted a virtual IP."
-msgstr ""
+msgstr "已刪除虛擬IP。"
 
 #: src/usr/local/www/firewall_virtual_ip.php:227
 #: src/usr/local/www/firewall_virtual_ip_edit.php:342
@@ -13711,7 +13711,7 @@ msgstr "IPv6虛擬IP不能有IPv4 CARP父節點。"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:273
 msgid "Saved/edited a virtual IP."
-msgstr ""
+msgstr "已保存/編輯虛擬IP。"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:283
 msgid ""
@@ -13981,11 +13981,11 @@ msgstr "日誌檔已啟動。"
 msgid "Currently viewing: "
 msgstr "當前查看："
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr "只列出前10k專案"
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
@@ -16127,7 +16127,7 @@ msgstr "必須為網橋選擇至少一個成員介面。"
 msgid ""
 "Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
 "to continue."
-msgstr ""
+msgstr "粘性介面(%s)不是網橋的一部分。 請刪除粘性介面繼續。"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:197
 #, php-format
@@ -16258,6 +16258,8 @@ msgid ""
 "one of the span ports of the bridge. %1$s%2$sThe span interface cannot be "
 "part of the bridge member interfaces.%3$s"
 msgstr ""
+"將介面上已已命名的介面添加為橋接器上的跨度端口。 跨度端口傳輸由橋接收的每個幀的副本。 "
+"這對於連接到橋接器的一個跨接端口的另一個主機上被動地偵聽橋接網路是最有用的。 %1$s%2$s跨介面不能是橋接器介面的一部分。%3$s"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:460
 msgid "Edge Ports"
@@ -21876,13 +21878,13 @@ msgstr "必須在別名列表中指定有效的域。"
 #: src/usr/local/www/services_unbound_host_edit.php:147
 msgid ""
 "This host/domain override combination already exists with an IPv4 address."
-msgstr ""
+msgstr "此主機/域替代組合已IPv4地址上存在。"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:140
 #: src/usr/local/www/services_unbound_host_edit.php:151
 msgid ""
 "This host/domain override combination already exists with an IPv6 address."
-msgstr ""
+msgstr "此主機/域替代組合已IPv6地址上存在。"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 #: src/usr/local/www/services_unbound_host_edit.php:181
@@ -24369,20 +24371,20 @@ msgstr ""
 #: src/usr/local/www/status_carp.php:149
 msgid ""
 "CARP has detected a problem and this unit has a non-zero demotion status."
-msgstr ""
+msgstr "CARP發現了一個問題，該單位具有非零降級狀態。"
 
 #: src/usr/local/www/status_carp.php:151
 msgid "Check the link status on all interfaces configured with CARP VIPs and "
-msgstr ""
+msgstr "檢查配置有CARP VIPs的所有介面的鏈路狀態"
 
 #: src/usr/local/www/status_carp.php:152
 #, php-format
 msgid "search the %1$sSystem Log%2$s for CARP demotion-related events."
-msgstr ""
+msgstr "在%1$s系統日誌%2$s上搜索與CARP降級相關的事件。"
 
 #: src/usr/local/www/status_carp.php:155 src/usr/local/www/status_carp.php:157
 msgid "Reset CARP Demotion Status"
-msgstr ""
+msgstr "重置CARP降級狀態"
 
 #: src/usr/local/www/status_carp.php:164
 msgid "Temporarily Disable CARP"
@@ -33496,7 +33498,7 @@ msgstr "所有SMART驅動器都被隱藏。"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:175
 msgid "BIOS"
-msgstr ""
+msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:217
@@ -33591,15 +33593,15 @@ msgstr "串號："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:178
 msgid "Vendor: "
-msgstr ""
+msgstr "供應商："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:181
 msgid "Version: "
-msgstr ""
+msgstr "版本："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:184
 msgid "Release Date: "
-msgstr ""
+msgstr "發佈日期："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:200
 msgid "built on"

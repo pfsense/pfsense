@@ -33,7 +33,7 @@ if (!session_auth()) {
 	display_login_form();
 	exit;
 }
-
+phpsession_begin();
 /*
  * Once here, the user has authenticated with the web server.
  * We give them access only to the appropriate pages based on
@@ -90,9 +90,9 @@ if (!$_SESSION['Post_Login']) {
 
 /*
  * Close session data to allow other scripts from same host to come in.
- * A session can be reactivated from calling session_start again
+ * A session can be reactivated from calling phpsession_begin again
  */
-session_commit();
+phpsession_end(true);
 
 /*
  * determine if the user is allowed access to the requested page

@@ -697,7 +697,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		name = args[0];
 		mode_zone = args[2];
 		id = args[3];
-	} else if (args[0] == "cpativeportal") {
+	} else if (args[0] == "captiveportal") {
 		action = args[1];
 		name = args[0];
 		mode_zone = args[2];

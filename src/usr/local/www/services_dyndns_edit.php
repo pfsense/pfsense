@@ -270,7 +270,7 @@ $section->addInput(new Form_Select(
 	'*Interface to monitor',
 	$pconfig['interface'],
 	$interfacelist
-))->setHelp('If the interface IP is private the public IP will be fetched and used instead.');
+))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
 
 $section->addInput(new Form_Select(
 	'requestif',

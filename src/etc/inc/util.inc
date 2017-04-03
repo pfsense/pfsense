@@ -105,13 +105,6 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
-function config_lock() {
-	return;
-}
-function config_unlock() {
-	return;
-}
-
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;

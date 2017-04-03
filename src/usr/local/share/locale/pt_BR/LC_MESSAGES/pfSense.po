@@ -4,6 +4,7 @@
 # Vinicius Coque <vcoque@gmail.com>, 2011.
 # Luiz Gustavo <luizgustavo@luizgustavo.pro>, 2014 Powered by: TrustUX Network (www.trustux.com)
 # Henrique Marques <marques.vix@gmail.com>, 2017. #zanata
+# Luiz Fernando Barros <lfb@outlook.com.br>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 # Renato Pereira de Aquino <renato.aquino@gmail.com>, 2017. #zanata
 # Silvio Ap Silva <alvolivre@live.com>, 2017. #zanata
@@ -15,12 +16,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-08 12:18-0500\n"
-"Last-Translator: Silvio Ap Silva <alvolivre@live.com>\n"
+"PO-Revision-Date: 2017-04-03 10:53-0400\n"
+"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -390,7 +391,7 @@ msgstr ""
 
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Captive Portal usuário permitido configuração alterada  "
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -1358,7 +1359,7 @@ msgstr "Hosts bloqueados da Visualização de Log do Firewall"
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "Host bloqueado %s via regra fácil "
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
@@ -1400,7 +1401,7 @@ msgstr "Sem um conjunto de bloco de regras na interface:"
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "Host desbloqueado %s via regra fácil "
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
@@ -1610,7 +1611,7 @@ msgstr "Tempo excedido"
 msgid "Packet too big"
 msgstr "Pacote muito grande"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
@@ -1675,9 +1676,9 @@ msgstr "Filtro estático desabilitado. Não carregando regras."
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
@@ -1873,21 +1874,23 @@ msgstr "Destino de alias '%1$s' não resolvido para regra '%2$s'"
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
 msgstr ""
+"Não foi possível resolver origem do alias de porta  '%1$s' para regra '%2$s'"
 
 #: src/etc/inc/filter.inc:2720
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Origem do alias esta vazio '%1$s' para regra '%2$s'"
 
 #: src/etc/inc/filter.inc:2734
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
 msgstr ""
+"Não foi possível resolver origem do alias de porta  '%1$s' para regra '%2$s'"
 
 #: src/etc/inc/filter.inc:2736
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Destino do alias esta vazio '%1$s' para regra '%2$s'"
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
@@ -2393,6 +2396,8 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"O endereço MAC INVÁLIDO (ff:ff:ff:ff:ff:ff) na interface %1$s foi "
+"automaticamente substituído por %2$s"
 
 #: src/etc/inc/interfaces.inc:3404
 #, php-format
@@ -3209,13 +3214,15 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:336
 msgid "Alias Popups"
-msgstr ""
+msgstr "Pop-ups"
 
 #: src/etc/inc/pfsense-utils.inc:339
 msgid ""
 "If selected, the details in alias popups will not be shown, just the alias "
 "description (e.g. in Firewall Rules)."
 msgstr ""
+"Se selecionado, o pop-up de detalhes do alias não será mostrado apenas a "
+"descrição vai aparecer (e.g. nas regras de firewall) ."
 
 #: src/etc/inc/pfsense-utils.inc:355
 msgid "Browser tab text"
@@ -3439,7 +3446,7 @@ msgstr "Serviço de Economia de Energia"
 
 #: src/etc/inc/pfsense-utils.inc:3034
 msgid "Unknown Service"
-msgstr ""
+msgstr "Serviço desconhecido"
 
 #: src/etc/inc/pfsense-utils.inc:3040
 msgid "Invalid SIM/locked State"
@@ -3596,13 +3603,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "O pacote %1$s não foi instalado. %2$s instalação abortada."
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Falha ao instalar pacote: %s."
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
 msgstr "Falha ao instalar pacote."
 
@@ -3614,7 +3621,7 @@ msgstr "Carregando configuração de pacote... "
 msgid "Configuring package components..."
 msgstr "Configurando componentes do pacote..."
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
 msgstr "Carregando instruções de pacote..."
 
@@ -3639,84 +3646,84 @@ msgstr "Executando custom_php_install_command()..."
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Executando custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
 msgstr "Items de menu..."
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
 msgstr "Serviços... "
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
 msgstr "Carregando configuração de pacote... falhou!"
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
 msgstr "Instalação abortada."
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 "Não foi possível carregar a configuração do pacote. Instalação abortada."
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
 msgstr "Escrevendo a configuração..."
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Pacote instalado com sucesso: %s."
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "O pacote %1$s não foi instalado. %2$s exclusão interrompida."
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
 msgstr "Removendo pacote %s..."
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
 msgstr "Removendo componentes %s..."
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "Configuração intermediaria escrita durante a remoção de pacote para %s."
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Não foi possivel achar o arquivo enclude %s para incluir."
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
 msgstr "Desinstalar comandos..."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr "Não executando uma desinstalação adicional por falta de um include."
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
 msgstr "Entradas Syslog..."
 
-#: src/etc/inc/pkg-utils.inc:962
+#: src/etc/inc/pkg-utils.inc:965
 msgid "Configuration... "
 msgstr "Configuração..."
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
 msgstr "Pacote %s removido."
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -3724,24 +3731,24 @@ msgstr ""
 "Aguardando pela conexão à Internet para atualizar metadados e concluir a "
 "reinstalação do pacote."
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
 msgstr "Reinstalando pacote"
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Processo de reinstalação do pacote foi ABORTADO devido à falta de "
 "conectividade à Internet"
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "O pacote %s não existe na versão atual do %s e foi removido."
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
 msgstr "Parando todos os pacotes."
 
@@ -6294,7 +6301,7 @@ msgstr "Selecione opções para essa fila"
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -7381,12 +7388,12 @@ msgstr "%1$s (%2$s/%3$s) usado e expiredo"
 #: src/etc/inc/voucher.inc:329
 #, php-format
 msgid "%1$s (%2$s/%3$s) good for %4$s Minutes"
-msgstr ""
+msgstr "%1$s (%2$s/%3$s) ativo e válido por %4$s Minutos"
 
 #: src/etc/inc/voucher.inc:340
 #, php-format
 msgid "%1$s invalid: %2$s !!"
-msgstr ""
+msgstr "%1$s inválido: %2$s"
 
 #: src/etc/inc/voucher.inc:350
 msgid "Access denied!"
@@ -7409,12 +7416,12 @@ msgstr "Erro: não pode escrever voicher.cfg"
 #: src/etc/inc/voucher.inc:519
 #, php-format
 msgid "cant write %1$s/voucher_%2$s_used_%3$s.db"
-msgstr ""
+msgstr "Não pode gravar %1$s/voucher_%2$s_usado_%3$s.db"
 
 #: src/etc/inc/voucher.inc:605
 #, php-format
 msgid "cant read %1$s/voucher_%2$s_used_%3$s.db"
-msgstr ""
+msgstr "Não pode ler %1$s/voucher_%2$s_usado_%3$s.db"
 
 #: src/etc/inc/voucher.inc:622
 #, php-format
@@ -7423,7 +7430,7 @@ msgstr "Voucher: %s"
 
 #: src/etc/inc/voucher.inc:677
 msgid "Syncing vouchers"
-msgstr ""
+msgstr "Sincronizando vouchers"
 
 #: src/etc/inc/vpn.inc:233
 msgid "Configuring IPsec VPN... "
@@ -7435,21 +7442,23 @@ msgid ""
 "IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from "
 "configuration file."
 msgstr ""
+"IPsec Erro: não foi possível encontrar fase 1 da origem para conexão %s. "
+"(\\n) Não encontrado no arquivo de configuração."
 
 #: src/etc/inc/vpn.inc:303
 #, php-format
 msgid "The remote gateway %s already exists on another phase 1 entry"
-msgstr ""
+msgstr "O gateway remoto %s já existe e está sendo usado pela fase 1"
 
 #: src/etc/inc/vpn.inc:620
 #, php-format
 msgid "Warning: Missing CRL data for %s"
-msgstr ""
+msgstr "Aviso: Falta argumentos de CRL para %s"
 
 #: src/etc/inc/vpn.inc:625
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
-msgstr ""
+msgstr "Erro: Não pode escrever no arquivo IPsec CRL para %s"
 
 #: src/etc/inc/vpn.inc:649
 #, php-format
@@ -7479,16 +7488,16 @@ msgstr "Erro: Não pode escrever arquivo de IPsec CA para %s"
 #: src/etc/inc/vpn.inc:1363
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
-msgstr ""
+msgstr "Sem especificação da phase2 para o túnel com REQID = %s"
 
 #: src/etc/inc/vpn.inc:1482
 #, php-format
 msgid "Ignoring IPsec reload since there are no tunnels on interface %s"
-msgstr ""
+msgstr "Recarregamento IPSec ignorado não existem tuneis na interface %s"
 
 #: src/etc/inc/vpn.inc:1488
 msgid "Forcefully reloading IPsec"
-msgstr ""
+msgstr "Recarregamento forçado IPSec"
 
 #: src/etc/inc/vpn.inc:1538
 msgid "Configuring PPPoE Server service... "
@@ -7554,7 +7563,7 @@ msgstr "Erro retornado quando tentava analisar %s"
 #: src/etc/inc/xmlrpc_client.inc:91
 #, php-format
 msgid "Beginning XMLRPC sync data to %s."
-msgstr ""
+msgstr "Sem dados XMLRPC Sync para %s."
 
 #: src/etc/inc/xmlrpc_client.inc:94
 #, php-format
@@ -7562,6 +7571,8 @@ msgid ""
 "A communications error occurred while attempting XMLRPC sync with %s "
 "(pfsense.%s)."
 msgstr ""
+"Ocorreu um erro durante a tentativa de sincronização de XMLRPC com %s "
+"(pfsense.%s)."
 
 #: src/etc/inc/xmlrpc_client.inc:125
 msgid "Error code received"
@@ -7957,29 +7968,29 @@ msgstr "Autenticação"
 
 #: src/usr/local/www/diag_authentication.php:83
 msgid "Authentication Test"
-msgstr ""
+msgstr "Teste de autenticação "
 
 #: src/usr/local/www/diag_authentication.php:91
 #: src/usr/local/www/system_usermanager_settings.php:214
 msgid "*Authentication Server"
-msgstr ""
+msgstr "Servidor de autenticação "
 
 #: src/usr/local/www/diag_authentication.php:94
 msgid "Select the authentication server to test against."
-msgstr ""
+msgstr "Selecione o servidor de autenticação para efetuar o teste"
 
 #: src/usr/local/www/diag_authentication.php:98
 #: src/usr/local/www/interfaces.php:2597 src/usr/local/www/interfaces.php:2722
 #: src/usr/local/www/system_usermanager.php:720
 #: src/usr/local/www/vpn_l2tp_users_edit.php:151
 msgid "*Username"
-msgstr ""
+msgstr "*Nome de usuário "
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/interfaces.php:2604 src/usr/local/www/interfaces.php:2729
 #: src/usr/local/www/system_usermanager_passwordmg.php:101
 msgid "*Password"
-msgstr ""
+msgstr "*Senha"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:280 src/usr/local/www/diag_testport.php:269
@@ -7990,25 +8001,25 @@ msgstr "Teste"
 #: src/usr/local/www/diag_backup.php:79 src/usr/local/www/diag_backup.php:94
 #, php-format
 msgid "Cannot write %s"
-msgstr ""
+msgstr "Não é possível escrever em %s"
 
 #: src/usr/local/www/diag_backup.php:103 src/usr/local/www/diag_backup.php:109
 #, php-format
 msgid "fwrite %s failed"
-msgstr ""
+msgstr "Escrita de %s falhou"
 
 #: src/usr/local/www/diag_backup.php:114
 #, php-format
 msgid "fclose %s failed"
-msgstr ""
+msgstr "Saida %s falhou"
 
 #: src/usr/local/www/diag_backup.php:161
 msgid "A password for encryption must be supplied and confirmed."
-msgstr ""
+msgstr "Uma senha para criptografia deve ser confirmada"
 
 #: src/usr/local/www/diag_backup.php:236
 msgid "A password for decryption must be supplied and confirmed."
-msgstr ""
+msgstr "Uma senha para criptografia deve ser confirmada"
 
 #: src/usr/local/www/diag_backup.php:246
 #, php-format
@@ -8031,6 +8042,7 @@ msgid ""
 "An area to restore was selected but the correct xml tag could not be located."
 ""
 msgstr ""
+"Uma área de restauração deve ser selecionada, o xml não pode ser localizado."
 
 #: src/usr/local/www/diag_backup.php:276
 #, php-format
@@ -8042,13 +8054,15 @@ msgstr ""
 msgid ""
 "The configuration area has been restored. The firewall may need to be "
 "rebooted."
-msgstr ""
+msgstr "A configuração foi restaurada, o pfsense precisa ser reinicializado."
 
 #: src/usr/local/www/diag_backup.php:285
 #, php-format
 msgid ""
 "A full configuration restore was selected but a %s tag could not be located."
 msgstr ""
+"Uma área de restauração completa foi selecionada, mas um %s não pode ser "
+"localizado."
 
 #: src/usr/local/www/diag_backup.php:302
 msgid "Restore serial console enabling in configuration."
@@ -8060,7 +8074,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:371
 msgid "Imported m0n0wall configuration"
-msgstr ""
+msgstr "Importando configuração do m0n0wall para pfSense."
 
 #: src/usr/local/www/diag_backup.php:373
 msgid "The m0n0wall configuration has been restored and upgraded to pfSense."
@@ -8245,7 +8259,7 @@ msgstr "VLANS"
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
 msgid "Wake-on-LAN"
-msgstr ""
+msgstr "WebCfg - Serviços: Wake-on-LAN"
 
 #: src/usr/local/www/diag_backup.php:455
 #: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:545
@@ -8273,7 +8287,7 @@ msgstr "Todos"
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:371
 #: src/usr/local/www/head.inc:648
 msgid "Backup & Restore"
-msgstr ""
+msgstr "WebCfg - Diagnosticos: Backup e Restauração"
 
 #: src/usr/local/www/diag_backup.php:487
 msgid "The firewall configuration has been changed."
@@ -8290,27 +8304,27 @@ msgstr "Histórico de configuração"
 
 #: src/usr/local/www/diag_backup.php:501
 msgid "Backup Configuration"
-msgstr ""
+msgstr "Configuração de backup"
 
 #: src/usr/local/www/diag_backup.php:505
 msgid "Backup area"
-msgstr ""
+msgstr "Área de backup"
 
 #: src/usr/local/www/diag_backup.php:512
 msgid "Skip packages"
-msgstr ""
+msgstr "Pular pacotes"
 
 #: src/usr/local/www/diag_backup.php:519
 msgid "Skip RRD data"
-msgstr ""
+msgstr "Pular Dados RRD"
 
 #: src/usr/local/www/diag_backup.php:526 src/usr/local/www/diag_backup.php:573
 msgid "Encryption"
-msgstr ""
+msgstr "Encriptação "
 
 #: src/usr/local/www/diag_backup.php:542
 msgid "Download configuration as XML"
-msgstr ""
+msgstr "Download das configurações como XMl"
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Restore Backup"
@@ -8502,15 +8516,15 @@ msgstr "Backup excluído com timestamp %1$s e descrição \"%2$s\"."
 #: src/usr/local/www/diag_confbak.php:123
 #, php-format
 msgid "Configuration Diff from %1$s to %2$s"
-msgstr ""
+msgstr "Configuração Diff de %1$s para %2$s"
 
 #: src/usr/local/www/diag_confbak.php:160
 msgid "Configuration Backup Cache Settings"
-msgstr ""
+msgstr "Configurações de cache de backup"
 
 #: src/usr/local/www/diag_confbak.php:164
 msgid "Backup Count"
-msgstr ""
+msgstr "Contador de backup"
 
 #: src/usr/local/www/diag_confbak.php:168
 #, php-format
@@ -8521,7 +8535,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:173
 msgid "Current space used by backups"
-msgstr ""
+msgstr "Espaço atual usado para backup"
 
 #: src/usr/local/www/diag_confbak.php:194
 msgid ""
@@ -8563,7 +8577,7 @@ msgstr "Alteração na configuração"
 
 #: src/usr/local/www/diag_confbak.php:236
 msgid "Current configuration"
-msgstr ""
+msgstr "Configuração atual"
 
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/pkg_mgr_installed.php:121
@@ -8585,7 +8599,7 @@ msgstr "Desconhecido"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid "Revert config"
-msgstr ""
+msgstr "Reverter configuração"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid ""
@@ -8679,7 +8693,7 @@ msgstr ""
 msgid "Keep Configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr "DNS Lookup"
@@ -8692,15 +8706,15 @@ msgstr ""
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr "Host deve ser um hostname ou endereço IP válido."
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr "Sem resposta"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8720,12 +8734,12 @@ msgstr "Sem resposta"
 msgid "IP Address"
 msgstr "Endereço IP"
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr "Nome do Host"
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8734,24 +8748,24 @@ msgstr "Nome do Host"
 msgid "Server"
 msgstr "Servidor"
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr "Tempo de Consulta"
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8761,55 +8775,55 @@ msgstr ""
 msgid "*Hostname"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr "Tempo de consulta"
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr "Ping"
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
@@ -8817,11 +8831,11 @@ msgstr ""
 "NOTA: Os seguintes links são para serviços externos, assim a sua "
 "confiabilidade não pode ser garantida."
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr "IP WHOIS @ DNS Stuff"
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr "IP Info @ DNS Stuff"
 
@@ -14335,11 +14349,11 @@ msgstr ""
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr "listando somente os primeiros 10k items"
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158

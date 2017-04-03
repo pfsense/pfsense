@@ -1,17 +1,19 @@
 # A. olde Kalter <arian@oldekalter.com>, 2017. #zanata
+# Kevin Nienhuis <kevin_nienhuis@hotmail.com>, 2017. #zanata
 # Mark Hoffer <mark1hoffer@hotmail.com>, 2017. #zanata
 # StijnLangenberg <stijn@rommelkamer.nl>, 2017. #zanata
+# Talle <talle-zanata@gelesneeuw.nl>, 2017. #zanata
 # Wraptor <nijs.thibaut@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 10:45-0300\n"
+"POT-Creation-Date: 2017-04-03 11:43-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-23 10:58-0400\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-04-02 02:39-0400\n"
+"Last-Translator: Talle <talle-zanata@gelesneeuw.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -110,9 +112,9 @@ msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FOUT! ldap_backed() geroepen zonder opgegeven LDAP authenticatie server. "
-"Gebruik maken van lokale gebruikers databank... Ga naar Systeem -> Gebruiker "
-"-> Beheerder."
+"FOUT! ldap_backed() aangeroepen zonder opgegeven LDAP authenticatie server. "
+"Terugval op de lokale gebruikers databank. Ga naar Systeem -> Gebruiker "
+"Beheerder."
 
 #: src/etc/inc/auth.inc:1294
 msgid ""
@@ -370,7 +372,7 @@ msgstr "Fout : kan '%1$s' niet openen in captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Captive Portal toegestane gebruikers configuratie aangepast"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -628,8 +630,9 @@ msgstr ""
 "in"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
+#, fuzzy
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Bogon bijwerk frequentie gezet op 3:00"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
@@ -639,12 +642,13 @@ msgstr "Configuratie upgrade gestopt op %s"
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Configuratie versie niveau bijgewerkt van %1$s naar %2$s"
 
 #: src/etc/inc/config.lib.inc:475
-#, fuzzy
 msgid "WARNING: Config contents could not be saved. Could not open file!"
-msgstr "Waarschuwing: "
+msgstr ""
+"Waarschuwing: Configuratie inhoud kon niet worden opgeslagen. Het bestand "
+"kon niet worden geopend!"
 
 #: src/etc/inc/config.lib.inc:477
 #, php-format
@@ -696,6 +700,8 @@ msgstr "Dynamisch DNS: updatedns() gestart"
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dynamic DNS (%1$s): De aanroep get_failover_interface voor %2$s heeft %3$s "
+"gevonden"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -703,6 +709,8 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dynamic DNS (%1$s) Er is een fout opgetreden bij het bepalen van het "
+"publieke IP voor de interface - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
@@ -710,13 +718,13 @@ msgid "Dynamic DNS %1$s (%2$s): _update() starting."
 msgstr "Dynamisch DNS %1$s (%2$s): _update() gestart."
 
 #: src/etc/inc/dyndns.class:445
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamisch DNS %1$s (%2$s): Verwerkt dummy update van No-IP gratis account. "
-"IP tijdelijk gezet op%3$s"
+"Dynamisch DNS %1$s (%2$s): Verwerken van dummy update van een gratis No-IP "
+"account. Het IP is tijdelijk gezet op %3$s"
 
 #: src/etc/inc/dyndns.class:685
 #, php-format
@@ -800,18 +808,26 @@ msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"De opgegeven hostname is geen volledige geldige domeinnaam. Wanneer er geen "
+"hostname word meegegeven zal notfqdn eenmalig worden teruggegeven."
 
 #: src/etc/inc/dyndns.class:875
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"De opgegeven hostname kon niet worden gevonden in de geconfigureerde "
+"diensten. Het service-veld zal leeg zijn in de resultaat code."
 
 #: src/etc/inc/dyndns.class:877
+#, fuzzy
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"Tot en met 20 hosts kunnen worden bijgewerkt. numhost word teruggegeven "
+"wanneer er meer dan 20 worden geprobeerd bij te werken zodat ze volgens "
+"round-robin alsnog kunnen worden bijgewerkt."
 
 #: src/etc/inc/dyndns.class:879
 msgid "The hostname is blocked for update abuse."
@@ -882,15 +898,19 @@ msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"Ongeldig IP. Het opgegeven IP adres heeft een ongeldig formaat, is een prive-"
+"adres of staat op een blacklist."
 
 #: src/etc/inc/dyndns.class:995
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Uitgeschakelde / geblockeerde hostname."
 
 #: src/etc/inc/dyndns.class:998
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
+"De host is geconfigureerd als een web-doorverwijzing en is daarom niet "
+"bijgewerkt."
 
 #: src/etc/inc/dyndns.class:1001
 msgid "Group supplied does not exist."
@@ -907,6 +927,8 @@ msgstr "DNS groep is actueel, geen update uitgevoerd."
 #: src/etc/inc/dyndns.class:1012
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Update client ondersteuning niet beschikbaar voorde  opgegeven hostname of "
+"groep."
 
 #: src/etc/inc/dyndns.class:1015
 msgid "Hostname supplied does not have offline settings configured."
@@ -917,6 +939,8 @@ msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Client uitgeschakeld. Clients dienen te sluiten en geen updates meer uit te "
+"voeren zonder ingreep van de gebruiker."
 
 #: src/etc/inc/dyndns.class:1025
 msgid "Unknown Response:"
@@ -928,7 +952,7 @@ msgstr "Authenticatie mislukt: Gebruikersnaam en/of Wachtwoord is incorrect."
 
 #: src/etc/inc/dyndns.class:1033
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
-msgstr ""
+msgstr "Geen service: Dynamic DNS Service is uitgeschakeld voor dit domein."
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Illegal Input: Self-Explanatory"
@@ -936,7 +960,7 @@ msgstr "Incorrecte invoer"
 
 #: src/etc/inc/dyndns.class:1037
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr ""
+msgstr "Te snel: er is niet genoeg tijd verstreken sinds de vorige update"
 
 #: src/etc/inc/dyndns.class:1039
 msgid "IP Updated Successfully!"
@@ -967,10 +991,13 @@ msgstr "IP-Adres succesvol bijgewerkt!"
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Foutief verzoek - De URL was ongeldig. Verplichte parameters waren niet "
+"opgegeven."
 
 #: src/etc/inc/dyndns.class:1071
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Te snel bijwerken - Poging om te snel bij te werken na de vorige aanpassing."
 
 #: src/etc/inc/dyndns.class:1073
 msgid "Database Error - There was a server-sided database error."
@@ -996,7 +1023,7 @@ msgstr "Gespecificeerde hostnaam bestaat, maar niet onder opgegeven gebruiker"
 
 #: src/etc/inc/dyndns.class:1149
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Te vaak bijgewerkt, gezien als misbruik."
 
 #: src/etc/inc/dyndns.class:1158 src/etc/inc/dyndns.class:1222
 msgid "Bad Request - The IP provided was invalid."
@@ -1004,12 +1031,13 @@ msgstr "Foutief verzoek - Het IP-adres opgegeven is ongeldig."
 
 #: src/etc/inc/dyndns.class:1160
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Foutief verzoek - Verplichte parameters ontbreken."
 
 #: src/etc/inc/dyndns.class:1162
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
+"Foutief verzoek - Ongeldige tekens in de gebruikersnaam of het wachtwoord."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "Invalid password."
@@ -1030,7 +1058,7 @@ msgstr "Fout aan serverzijde"
 
 #: src/etc/inc/dyndns.class:1186
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Ongeldig geformuleerd verzoek (controlleer de instellingen)."
 
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
 msgid "Bad Request - A hostname was not provided."
@@ -1076,6 +1104,8 @@ msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Ongeldige toegangsgegevens! Vergeet niet uw API sleutel te gebruiken als "
+"wachtwoord voor CloudFlare."
 
 #: src/etc/inc/dyndns.class:1324
 msgid "Zone or Host ID was not found, check the hostname."
@@ -1099,7 +1129,7 @@ msgstr "Verkeerd wachtwoord - Onthoud het wachtwoord is hoofdlettergevoelig"
 
 #: src/etc/inc/dyndns.class:1355
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "De gebruiker kan niet het geselecteerde domein beheren."
 
 #: src/etc/inc/dyndns.class:1390
 msgid "Not A FQDN"
@@ -1191,11 +1221,11 @@ msgstr "De Dynamic DNS Service provided is nog niet ondersteund."
 
 #: src/etc/inc/dyndns.class:1539
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "Geen URL voor updates ingesteld."
 
 #: src/etc/inc/dyndns.class:1542
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "Ongeldige ZoneID"
 
 #: src/etc/inc/dyndns.class:1545
 msgid "Invalid TTL"
@@ -1225,52 +1255,55 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
+"Dynamic DNS (%s): Huidige WAN IP kon niet worden bepaald, het update proces "
+"wordt overgeslagen."
 
 #: src/etc/inc/dyndns.class:1580
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dynamic DNS: (%1$s): Huidige WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1588
-#, php-format
+#, fuzzy, php-format
 msgid "Cached IPv6: %s"
-msgstr ""
+msgstr "Onthouden IPv6: %s"
 
 #: src/etc/inc/dyndns.class:1594
+#, fuzzy
 msgid "No Cached IPv6 found."
-msgstr ""
+msgstr "Geen onthouden IPv6 gevonden."
 
 #: src/etc/inc/dyndns.class:1602
-#, php-format
+#, fuzzy, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "Onthouden IP: %s"
 
 #: src/etc/inc/dyndns.class:1608
 msgid "No Cached IP found."
-msgstr ""
+msgstr "Geen onthouden IP gevonden."
 
 #: src/etc/inc/dyndns.class:1622
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dynamic DNS: onthouden IP != wan_ip. Bijwerken."
 
 #: src/etc/inc/dyndns.class:1623
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "Onthouden IP: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1628
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dynamic DNS: Meer dan %s dagen. Bijwerken."
 
 #: src/etc/inc/dyndns.class:1633
 msgid "Initial update."
-msgstr ""
+msgstr "Initiële update."
 
 #: src/etc/inc/dyndns.class:1670
-#, php-format
+#, fuzzy, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkIP() begint."
 
 #: src/etc/inc/dyndns.class:1695
 #, php-format
@@ -1278,25 +1311,28 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
+"Dynamic DNS %1$s debug informatie (%2$s): Kon %3$s niet herleiden tot IP via "
+"interface IP %4$s."
 
 #: src/etc/inc/dyndns.class:1714
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s geëxtraheerd uit %4$s"
 
 #: src/etc/inc/dyndns.class:1717
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
 msgstr ""
+"Dynamic DNS %1$s (%2$s): IP adres kon niet worden geëxtraheerd uit %3$s"
 
 #: src/etc/inc/dyndns.class:1722
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s geëxtraheerd uit het lokale systeem."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "Makkelijke Regel: Geblokkeerd vanuit de Firewall Log View"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
@@ -1304,25 +1340,25 @@ msgstr "Item toegevoegd"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "Host is geblokkeerd vanuit de Firewall Log View"
 
 #: src/etc/inc/easyrule.inc:266
-#, php-format
+#, fuzzy, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "Host %s geblokkeerd door Makkelijke Regel"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr ""
+msgstr "Makkelijke Regel: Doorgelaten vanuit Firewall Log View"
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Poging tot blokkeren van ongeldig IP"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Ongeldige interface voor blokkeer regel"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
@@ -1331,10 +1367,12 @@ msgstr "Host succesvol toegevoegd"
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
 msgstr ""
+"Mislukt om blokkeer-regel of alias aan te maken of een host toe te voegen."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
 msgstr ""
+"Geprobeerd te blokkeren maar er was geen host IP of interface beschikbaar"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
@@ -1342,68 +1380,71 @@ msgstr "Onbekende blok fout."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Poging tot deblokkeren van ongeldig IP:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr ""
+msgstr "Geen blokkeer regels zijn ingesteld op deze interface:"
 
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "Host %s gedeblokkeerd via makkelijke regel"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "Host succesvol gedeblokkeerd"
 
 #: src/etc/inc/easyrule.inc:425
+#, fuzzy
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "Host staat niet op een blokkadelijst:"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
 msgstr ""
+"Geprobeerd te deblokkeren maar er was geen host IP of interface beschikbaar"
 
 #: src/etc/inc/easyrule.inc:460
+#, fuzzy
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "Ongeldige interface voor doorlaat regel:"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "Ongeldig protocol voor doorlaat regel:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "Poging een ongeldig bron IP door te laten:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "Poging een ongeldig doel IP door te laten:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "Doel poort ontbreekt:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "Poging een ongeldige doel poort door te laten:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "Doorlaat regel succesvol toegevoegd!"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "Toevoegen van doorlaat regel is mislukt."
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "Parameters voor doorlaat regel ontbreken."
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Onbekende doorlaat fout."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
@@ -1431,95 +1472,95 @@ msgstr "FQDN zoekopdracht uitvoeren"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr ""
+msgstr "Groep lidmaatschap verzoek"
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "Groep lidmaatschap rapport"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "Groep lidmaatschap beëindiging"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr ""
+msgstr "Informatie antwoord"
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr ""
+msgstr "Informatie verzoek"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr ""
+msgstr "IPv6 Ik-ben-hier"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr ""
+msgstr "IPv6 Waar-ben-je"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr ""
+msgstr "Multicast luisteraar klaar"
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr ""
+msgstr "Multicast luisteraar rapport"
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr ""
+msgstr "Multicast luisteraar verzoek"
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr ""
+msgstr "Adres masker antwoord"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr ""
+msgstr "Adres masker verzoek"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr ""
+msgstr "Mobiele host doorverwijzing"
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr ""
+msgstr "Mobiele registratie antwoord"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr ""
+msgstr "Mobiele registratie verzoek"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "mtrace berichten"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr ""
+msgstr "mtrace antw"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Buren advertentie"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr ""
+msgstr "Buren solicitatie"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "Node informatie verzoek"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr ""
+msgstr "Node informatie antwoord"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr ""
+msgstr "Parameter probleem (ongeldige IP header)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr ""
+msgstr "Photuris"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
@@ -1527,94 +1568,94 @@ msgstr "Doorverwijzen"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "Router advertentie"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "Router solicitatie"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Router hernummering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "SKIP"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr ""
+msgstr "Bron sussen"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr ""
+msgstr "Timestamp antwoord"
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "Timestamp"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr ""
+msgstr "Tijd verstreken"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "Pakket te groot"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:309
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:396
 msgid "Traceroute"
-msgstr ""
+msgstr "Tracering"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "Doel onbereikbaar"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "Wie ben je antwoord"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "Wie ben je verzoek"
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
-msgstr ""
+msgstr "Bezig met initializeren"
 
 #: src/etc/inc/filter.inc:240
 msgid "Configuring firewall"
-msgstr ""
+msgstr "Bezig met configureren van de firewall"
 
 #: src/etc/inc/filter.inc:247
 msgid "Creating aliases"
-msgstr ""
+msgstr "Aliasen aan het aanmaken"
 
 #: src/etc/inc/filter.inc:253
 msgid "Generating Limiter rules"
-msgstr ""
+msgstr "Begrenzing regels aan het genereren"
 
 #: src/etc/inc/filter.inc:256
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "NAT regels aan het genereren"
 
 #: src/etc/inc/filter.inc:262
 msgid "Generating filter rules"
-msgstr ""
+msgstr "Filter regels aan het genereren"
 
 #: src/etc/inc/filter.inc:269
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "ALTQ wachtrijen aan het genereren"
 
 #: src/etc/inc/filter.inc:274
 msgid "Loading filter rules"
-msgstr ""
+msgstr "Filter regels aan het laden"
 
 #: src/etc/inc/filter.inc:281
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "Filter is uitgeschakeld. Geen regels aan het laden."
 
 #: src/etc/inc/filter.inc:283 src/etc/inc/filter.inc:535
 #: src/etc/inc/interfaces.inc:177 src/etc/inc/interfaces.inc:201
@@ -1626,77 +1667,79 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:732 src/etc/inc/pkg-utils.inc:768
 #: src/etc/inc/pkg-utils.inc:773 src/etc/inc/pkg-utils.inc:778
 #: src/etc/inc/pkg-utils.inc:796 src/etc/inc/pkg-utils.inc:813
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:876
-#: src/etc/inc/pkg-utils.inc:902 src/etc/inc/pkg-utils.inc:945
-#: src/etc/inc/pkg-utils.inc:964 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:838 src/etc/inc/pkg-utils.inc:879
+#: src/etc/inc/pkg-utils.inc:905 src/etc/inc/pkg-utils.inc:948
+#: src/etc/inc/pkg-utils.inc:967 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1216
 #: src/etc/inc/system.inc:1314 src/etc/inc/system.inc:1617
 #: src/etc/inc/system.inc:2189
 msgid "done."
-msgstr ""
+msgstr "klaar."
 
 #: src/etc/inc/filter.inc:379
 msgid "Setting up logging information"
-msgstr ""
+msgstr "Logging informatie aan het opzetten"
 
 #: src/etc/inc/filter.inc:384
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "SCRUB informatie aan het opzetten"
 
 #: src/etc/inc/filter.inc:430
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "De gewraakte regel leest [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:437
 msgid "PF was wedged/busy and has been reset."
-msgstr ""
+msgstr "PF was vastgelopen of bezig en is gereset"
 
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Er waren fout(en) bij het laden van de regels: %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
-msgstr ""
+msgstr "Verwerken van uitgeschakelde interface status"
 
 #: src/etc/inc/filter.inc:524
 msgid "Running plugins"
-msgstr ""
+msgstr "Plugins aan het uitvoeren"
 
 #: src/etc/inc/filter.inc:528
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "Plugins aan het uitvoeren (pf)"
 
 #: src/etc/inc/filter.inc:530
 msgid "Plugins completed."
-msgstr ""
+msgstr "Plugins compleet"
 
 #: src/etc/inc/filter.inc:533
 msgid "Done"
-msgstr ""
+msgstr "Klaar"
 
 #: src/etc/inc/filter.inc:766
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
 msgstr ""
+"Aliasen met alleen numerieke namen zijn niet geldig. Skipping alias %s"
 
 #: src/etc/inc/filter.inc:844
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "Aanmaken van gateway groep item..."
 
 #: src/etc/inc/filter.inc:884
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "Opzetten van route %1$s op %2$s"
 
 #: src/etc/inc/filter.inc:888
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
+"Teveel leden in groep %s, gateway groep is ingekort in de set van regels."
 
 #: src/etc/inc/filter.inc:900
 #, php-format
@@ -1704,194 +1747,200 @@ msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
+"Er is een fout opgetreden tijdens het zoeken naar de interface: %s. De regel "
+"is niet toegevoegd."
 
 #: src/etc/inc/filter.inc:1265
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr ""
+msgstr "Aanmaken van NAT reflectie regel voor %s..."
 
 #: src/etc/inc/filter.inc:1363
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr ""
+msgstr "Aanmaken van reflectie regel voor %s..."
 
 #: src/etc/inc/filter.inc:1484
 msgid "Not installing NAT reflection rules for a port range > 500"
 msgstr ""
+"Overslaan van het installeren van NAT reflectie regels voor een poort bereik "
+"> 500"
 
 #: src/etc/inc/filter.inc:1490
+#, fuzzy
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
 msgstr ""
+"Installeren regels NAT deelreflectie. Het maximum van 1.000 is bereikt."
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
-msgstr ""
+msgstr "localhost"
 
 #: src/etc/inc/filter.inc:1580
 msgid "static route"
-msgstr ""
+msgstr "statische roete"
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
-msgstr ""
+msgstr "DHCP alias adres"
 
 #: src/etc/inc/filter.inc:1626
 msgid "PPPoE server"
-msgstr ""
+msgstr "PPPoE server"
 
 #: src/etc/inc/filter.inc:1637
 msgid "L2TP server"
-msgstr ""
+msgstr "L2TP server"
 
 #: src/etc/inc/filter.inc:1646
 msgid "OpenVPN server"
-msgstr ""
+msgstr "OpenVPN server"
 
 #: src/etc/inc/filter.inc:1655
 msgid "OpenVPN client"
-msgstr ""
+msgstr "OpenVPN cliënt"
 
 #: src/etc/inc/filter.inc:1665
 msgid "IPsec client"
-msgstr ""
+msgstr "IPsec cliënt"
 
 #: src/etc/inc/filter.inc:1701
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr "Automatisch aangemaakte regel voor ISAKMP"
 
 #: src/etc/inc/filter.inc:1711
 msgid "Auto created rule"
-msgstr ""
+msgstr "Automatisch aangemaakte regel"
 
 #: src/etc/inc/filter.inc:1844
 msgid "Creating 1:1 rules..."
-msgstr ""
+msgstr "Aanmaken 1:1 regels..."
 
 #: src/etc/inc/filter.inc:2029
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr ""
+msgstr "Aanmaken geavanceerde uitgaande regel %s"
 
 #: src/etc/inc/filter.inc:2076
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "Aanmaken uitgaande NAT regels"
 
 #: src/etc/inc/filter.inc:2083
 msgid "Creating automatic outbound rules"
-msgstr ""
+msgstr "Aanmaken automatische uitgaande regels"
 
 #: src/etc/inc/filter.inc:2113
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "Opzetten van TFTP helper"
 
 #: src/etc/inc/filter.inc:2157
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "Aanmaken NAT regel %s"
 
 #: src/etc/inc/filter.inc:2387
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "Aanmaken filter regel %s..."
 
 #: src/etc/inc/filter.inc:2411
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
-msgstr ""
+msgstr "filter_generate_port: %1$s is geen geldige %2$s poort."
 
 #: src/etc/inc/filter.inc:2648
 #, php-format
 msgid "Creating filter rules %s ..."
-msgstr ""
+msgstr "Aanmaken filter regels %s..."
 
 #: src/etc/inc/filter.inc:2703
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Onherleidbare bron alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2708
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Onherleidbare doel alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2718
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Onherleidbare bron poort alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2720
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Lege bron poort alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2734
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Onherleidbare doel poort alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2736
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "Lege doel poort alias '%1$s' voor regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
-msgstr ""
+msgstr "Opzetten van doorlaat/blokkeer regels"
 
 #: src/etc/inc/filter.inc:2771
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr ""
+msgstr "Opzetten van doorlaat/blokkeer regels %s"
 
 #: src/etc/inc/filter.inc:2795
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr ""
+msgstr "De gateway: %s is ongeldig of niet bekend. Wordt niet gebruikt."
 
 #: src/etc/inc/filter.inc:2814
 #, php-format
 msgid "Creating rule %s"
-msgstr ""
+msgstr "Aanmaken regel %s"
 
 #: src/etc/inc/filter.inc:3059
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr ""
+msgstr "[TDR DEBUG] status waar -- regel type '%s'"
 
 #: src/etc/inc/filter.inc:3103
 msgid "Creating default rules"
-msgstr ""
+msgstr "Aanmaken standaard regels"
 
 #: src/etc/inc/filter.inc:3784
 msgid "Creating IPsec rules..."
-msgstr ""
+msgstr "Aanmaken IPsec regels..."
 
 #: src/etc/inc/filter.inc:3880
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr ""
+msgstr "15 minuten filter herladen voor Time Based Rules geïnstalleerd"
 
 #: src/etc/inc/filter.inc:3887
 msgid "Removed 15 minute filter reload for Time Based Rules"
-msgstr ""
+msgstr "15 minuten filter herladen voor Time Based Rules gedeïnstalleerd"
 
 #: src/etc/inc/filter.inc:4271
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr ""
+msgstr "Controlere voor %1$s PF hooks in pakket %2$s"
 
 #: src/etc/inc/filter.inc:4284
 #, php-format
 msgid "Processing early %1$s rules for package %2$s"
-msgstr ""
+msgstr "Verwerken vroege %1$s regels voor pakket %2$s"
 
 #: src/etc/inc/filter.inc:4294
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr ""
+msgstr "Er was een fout bij het inlezen van de filter regels voor pakket %s."
 
 #: src/etc/inc/filter.inc:4362
 msgid "delete this separator"
-msgstr ""
+msgstr "verwijder deze scheiding"
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -1900,6 +1949,8 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Er was een fout bij het inlezen van de log melding: %s. Rapporteer dit a.u.b."
+" aan de mailing list of op het forum."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -1907,21 +1958,26 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Er was een fout bij het inlezen van regel nummer: %s. Rapporteer dit a.u.b. "
+"aan de mailing list of op het forum."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
+"Er was een fout bij het inlezen van regel: %s Rapporteer dit a.u.b. aan de "
+"mailing list of op het forum."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
 msgid "Service %1$s/%2$s: %3$s"
-msgstr ""
+msgstr "Service %1$s/%2$s: %3$s"
 
 #: src/etc/inc/gmirror.inc:65
+#, fuzzy
 msgid "No mirrors found."
-msgstr ""
+msgstr "Geen spiegel gevonden"
 
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/shaper.inc:1201
 #: src/etc/inc/shaper.inc:3283 src/usr/local/www/diag_gmirror.php:221
@@ -1963,7 +2019,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:34
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:138
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
@@ -2017,56 +2073,59 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/etc/inc/gmirror.inc:75 src/usr/local/www/diag_gmirror.php:223
 msgid "Component"
-msgstr ""
+msgstr "Component"
 
 #: src/etc/inc/gwlb.inc:185
 msgid "No gateways to monitor. dpinger will not run."
-msgstr ""
+msgstr "Geen gateways om te monitoren. dpinger zal niet draaien."
 
 #: src/etc/inc/gwlb.inc:233 src/etc/inc/gwlb.inc:274
 #, php-format
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
 msgstr ""
+"Verwijderen van statische route voor monitor %1$s en een nieuwe route aan "
+"het toevoegen via %2$s"
 
 #: src/etc/inc/gwlb.inc:302
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr ""
+msgstr "Fout bij het starten van de gateway monitor voor %s"
 
 #: src/etc/inc/gwlb.inc:315
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr ""
+msgstr "dpinger: Geen dpinger sessie draait voor gateway %s"
 
 #: src/etc/inc/gwlb.inc:329
 #, php-format
 msgid "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
-msgstr ""
+msgstr "dpinger: kan niet verbinden met status socket %1$s - %2$s (%3$s)"
 
 #: src/etc/inc/gwlb.inc:986
 #, php-format
 msgid "MONITOR: %1$s is down, omitting from routing group %2$s"
-msgstr ""
+msgstr "MONITOR: %1$s is neer, vermijden in routing group %2$s"
 
 #: src/etc/inc/gwlb.inc:990
 #, php-format
 msgid "MONITOR: %1$s has packet loss, omitting from routing group %2$s"
-msgstr ""
+msgstr "MONITOR: %1$s verliest pakketten, vermijden voor routing group %2$s"
 
 #: src/etc/inc/gwlb.inc:994
 #, php-format
 msgid "MONITOR: %1$s has high latency, omitting from routing group %2$s"
 msgstr ""
+"MONITOR: %1$s heeft hoge vertraging, vermijden voor routing group %2$s"
 
 #: src/etc/inc/gwlb.inc:1017
 #, php-format
 msgid "MONITOR: %1$s is available now, adding to routing group %2$s"
-msgstr ""
+msgstr "MONITOR: %1$s is nu beschikbaar, toevoegen aan routing group %2$s"
 
 #: src/etc/inc/gwlb.inc:1035
 #, php-format
@@ -2074,125 +2133,135 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
+"Gateway statussen konden niet worden bepaald, beschouw ze allen als "
+"beschikbaar/actief. (Groep: %s)"
 
 #: src/etc/inc/gwlb.inc:1078
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
-msgstr ""
+msgstr "GATEWAYS: Groep %1$s heeft geen gateways beschikbaar in rang %2$s!"
 
 #: src/etc/inc/gwlb.inc:1100
-#, php-format
+#, fuzzy, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr ""
+"Bijwerken van gateway groep gateway voor %1$s - nieuwe gateway is %2$s"
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
 msgstr ""
+"interfaces_bring_up() was aangeroepen maar er waren geen variabelen "
+"gedefineerd."
 
 #: src/etc/inc/interfaces.inc:172
 msgid "Configuring loopback interface..."
-msgstr ""
+msgstr "Configureren loopback interface..."
 
 #: src/etc/inc/interfaces.inc:185
 msgid "Configuring VLAN interfaces..."
-msgstr ""
+msgstr "Configureren VLAN interfaces..."
 
 #: src/etc/inc/interfaces.inc:209
 msgid "VLAN: called with wrong options. Problems with config!"
-msgstr ""
+msgstr "VLAN: aangeroepen met verkeerde opties. Probleem met configuratie!"
 
 #: src/etc/inc/interfaces.inc:214
 msgid "interface_vlan_configure called with if undefined."
-msgstr ""
+msgstr "interface_vlan_configure aangeroepen met if ongedefineerd."
 
 #: src/etc/inc/interfaces.inc:260 src/etc/inc/interfaces.inc:355
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
 msgstr ""
+"QinQ compat VLAN: aangeroepen met verkeerde opties. Probleem met "
+"configuratie! %s"
 
 #: src/etc/inc/interfaces.inc:267
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
-msgstr ""
+msgstr "interface_qinq_configure aangeroepen met if ongedefineerd.%s"
 
 #: src/etc/inc/interfaces.inc:272
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
-msgstr ""
+msgstr "interface_qinq_configure aangeroepen met ongeldige if.%s"
 
 #: src/etc/inc/interfaces.inc:338
 msgid "Configuring QinQ interfaces..."
-msgstr ""
+msgstr "Configureren QinQ interfaces..."
 
 #: src/etc/inc/interfaces.inc:363
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
-msgstr ""
+msgstr "interface_qinq2_configure aangeroepen met if ongedefineerd.%s"
 
 #: src/etc/inc/interfaces.inc:384
 msgid "Creating wireless clone interfaces..."
-msgstr ""
+msgstr "Aanmaken draaloze kloon interfaces..."
 
 #: src/etc/inc/interfaces.inc:462
 #, php-format
 msgid "No members found on %s"
-msgstr ""
+msgstr "Geen leden gevonden voor %s"
 
 #: src/etc/inc/interfaces.inc:526
 msgid "realif not defined in interfaces bridge - up"
-msgstr ""
+msgstr "realif is ongedefineerd in interfaces bridge - up"
 
 #: src/etc/inc/interfaces.inc:545
 msgid "bridgeif not defined -- could not bring interface up"
-msgstr ""
+msgstr "bridgeif is ongedefineerd -- kon interface niet activeren"
 
 #: src/etc/inc/interfaces.inc:700
 msgid "Configuring LAGG interfaces..."
-msgstr ""
+msgstr "Configureren LAGG interfaces..."
 
 #: src/etc/inc/interfaces.inc:851
 msgid "Could not bring greif up -- variable not defined."
-msgstr ""
+msgstr "Kon greif niet activeren -- variabele niet gedefineerd."
 
 #: src/etc/inc/interfaces.inc:934
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
+"Kon realif niet activeren -- variabele niet gedefineerd -- "
+"interface_gif_configure()"
 
 #: src/etc/inc/interfaces.inc:981
 msgid "could not bring gifif up -- variable not defined"
-msgstr ""
+msgstr "kon gifif niet activeren -- variabele niet gedefineerd"
 
 #: src/etc/inc/interfaces.inc:1063 src/etc/inc/interfaces.inc:1093
 #: src/etc/inc/interfaces.inc:1117 src/etc/inc/interfaces.inc:1135
 #, php-format
 msgid "Configuring %s interface..."
-msgstr ""
+msgstr "Configureren %s interface..."
 
 #: src/etc/inc/interfaces.inc:1067 src/etc/inc/interfaces.inc:1096
 #: src/etc/inc/interfaces.inc:1120 src/etc/inc/interfaces.inc:1138
 #, php-format
 msgid "Configuring %s"
-msgstr ""
+msgstr "Configureren %s"
 
 #: src/etc/inc/interfaces.inc:1221
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr ""
+msgstr "Aanroep interface deactiveren voor interface %1$s, vernietig is %2$s"
 
 #: src/etc/inc/interfaces.inc:1235
 msgid "Wrong parameters used during interface_bring_down"
-msgstr ""
+msgstr "Verkeerde parameters gebruikt tijdens interface_bring_down"
 
 #: src/etc/inc/interfaces.inc:1406
 msgid "Enter CARP maintenance mode"
-msgstr ""
+msgstr "Activeren van CARP onderhouds-modus"
 
 #: src/etc/inc/interfaces.inc:1610
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
+"Kan geen PPP configuratie vinden voor %s in interface_ppps_configure()"
 
 #: src/etc/inc/interfaces.inc:1668
 #, php-format
@@ -2200,6 +2269,8 @@ msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
+"Kan geen lokaal IP adres verkrijgen voor PPTP/L2TP link op %s in "
+"interfaces_ppps_configure. Gebruik van 0.0.0.0 ip!"
 
 #: src/etc/inc/interfaces.inc:1675
 #, php-format
@@ -2207,44 +2278,48 @@ msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
+"Kan geen PPTP/L2TP doel IP adres verkrijgen van %1$s voor %2$s in "
+"interfaces_ppps_configure."
 
 #: src/etc/inc/interfaces.inc:1682
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
+"Apparaat %s bestaat niet. PPP link kan niet worden opgezet zonder het modem."
 
 #: src/etc/inc/interfaces.inc:1687
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr ""
+msgstr "Onbekend %s geconfigureerd als ppp interface."
 
 #: src/etc/inc/interfaces.inc:2007
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
+"Fout: kan mpd_%1$s.conf niet openen in interface_ppps_configure().%2$s"
 
 #: src/etc/inc/interfaces.inc:2102
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr ""
+msgstr "Starten van 3gstats.php op apparaat '%1$s' voor interface '%2$s'"
 
 #: src/etc/inc/interfaces.inc:2119
 msgid "Configuring CARP settings..."
-msgstr ""
+msgstr "Configureren van CARP instellingen..."
 
 #: src/etc/inc/interfaces.inc:2160
 msgid "waiting for pfsync..."
-msgstr ""
+msgstr "Wachten op pfsync..."
 
 #: src/etc/inc/interfaces.inc:2166
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr ""
+msgstr "pfsync voltooid in %s seconden."
 
 #: src/etc/inc/interfaces.inc:2167
 msgid "Configuring CARP settings finalize..."
-msgstr ""
+msgstr "Configuratie van CARP instellingen aan het afronden..."
 
 #: src/etc/inc/interfaces.inc:2390
 #, php-format
@@ -2252,55 +2327,59 @@ msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
+"De opgegeven interface voor het virtuele IP adres %s bestaat niet. Dit VIP "
+"word overgeslagen."
 
 #: src/etc/inc/interfaces.inc:2450
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr ""
+msgstr "Interface %s is veranderd naar hostap modus."
 
 #: src/etc/inc/interfaces.inc:2454
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr ""
+msgstr "Interface %s is veranderd naar adhoc modus."
 
 #: src/etc/inc/interfaces.inc:2458
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
-msgstr ""
+msgstr "Interface %s is veranderd naar infrastructure modus"
 
 #: src/etc/inc/interfaces.inc:2471
 #, php-format
 msgid "Cloning new wireless interface %s"
-msgstr ""
+msgstr "Klonen van nieuwe draadloze interface %s"
 
 #: src/etc/inc/interfaces.inc:2476
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
+"Het klonen van interface %1$s is mislukt met foutcode %2$s, uitvoer %3$s"
 
 #: src/etc/inc/interfaces.inc:3132
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
+"Starten van dhcp6 cliënt voor interface wan %s in DHCP6  zonder RA modus"
 
 #: src/etc/inc/interfaces.inc:3153
 #, php-format
 msgid "OpenVPN: Resync server %s"
-msgstr ""
+msgstr "OpenVPN: Hersynchroniseren server %s"
 
 #: src/etc/inc/interfaces.inc:3166
 #, php-format
 msgid "OpenVPN: Resync client %s"
-msgstr ""
+msgstr "OpenVPN: Hersynchroniseren cliënt %s"
 
 #: src/etc/inc/interfaces.inc:3301
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr ""
+msgstr "Weiger router advertenties op interface %s"
 
 #: src/etc/inc/interfaces.inc:3333
 msgid "Generating new MAC address."
-msgstr ""
+msgstr "Genereren van nieuw MAC adres."
 
 #: src/etc/inc/interfaces.inc:3338 src/etc/inc/interfaces.inc:3339
 #, php-format
@@ -2308,22 +2387,24 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"Het ongeldige MAC adres (ff:ff:ff:ff:ff:ff) op interface %1$s is automatisch "
+"vervangen voor %2$s"
 
 #: src/etc/inc/interfaces.inc:3404
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
-msgstr ""
+msgstr "Er is een conflict met de MTU tussen bovenliggende %1$s en VLAN(%2$s)"
 
 #: src/etc/inc/interfaces.inc:3595 src/etc/inc/interfaces.inc:3665
 #: src/etc/inc/interfaces.inc:3729
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
-msgstr ""
+msgstr "Interface %1$s volgt niet bestaande interface %2$s"
 
 #: src/etc/inc/interfaces.inc:3602 src/etc/inc/interfaces.inc:3608
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
-msgstr ""
+msgstr "Interface %1$s geconfigureerd via %2$s type %3$s"
 
 #: src/etc/inc/interfaces.inc:3671
 #, php-format
@@ -2331,11 +2412,13 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
+"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet geldig, "
+"overslaan van configureren als 6RD tunnel"
 
 #: src/etc/inc/interfaces.inc:3707
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
-msgstr ""
+msgstr "rd6 %1$s met ipv6 adres %2$s gebaseerd op %3$s ipv4 %4$s"
 
 #: src/etc/inc/interfaces.inc:3735 src/etc/inc/interfaces.inc:3790
 #: src/etc/inc/interfaces.inc:3876
@@ -2344,20 +2427,24 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
+"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet publiek, "
+"overslaan van configureren als 6RD tunnel"
 
 #: src/etc/inc/interfaces.inc:3767
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
-msgstr ""
+msgstr "sixto4 %1$s met ipv6 adres %2$s gebaseerd op %3$s ipv4 %4$s"
 
 #: src/etc/inc/interfaces.inc:3982
 msgid "Failed to write user DUID file!"
-msgstr ""
+msgstr "Mislukt om het gebruiker DUID bestand te schrijven!"
 
 #: src/etc/inc/interfaces.inc:4456
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
+"Fout: kan het bestand %s in DHCP6_Config_File_Override() niet openen om te "
+"lezen."
 
 #: src/etc/inc/interfaces.inc:4484
 #, php-format
@@ -2365,21 +2452,24 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
+"Fout: kan dhclient_%s.conf in interface_dhcp_configure() niet openen om te "
+"schrijven."
 
 #: src/etc/inc/interfaces.inc:4497
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
-msgstr ""
+msgstr "Ongeldige interface \"%s\" in interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4553
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr ""
+"Het is niet gelukt interface %s te activeren in interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4646
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
-msgstr ""
+msgstr "Fout: kan %s niet openen voor lezen in DHCP_Config_File_Override()"
 
 #: src/etc/inc/interfaces.inc:5686 src/etc/inc/service-utils.inc:358
 #: src/usr/local/www/diag_backup.php:441
@@ -2398,35 +2488,35 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:634
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
-msgstr ""
+msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
-msgstr ""
+msgstr "Daemon"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
-msgstr ""
+msgstr "SA Manager"
 
 #: src/etc/inc/ipsec.inc:28 src/etc/inc/ipsec.inc:58
 msgid "IKE SA"
-msgstr ""
+msgstr "IKE SA"
 
 #: src/etc/inc/ipsec.inc:29 src/etc/inc/ipsec.inc:59
 msgid "IKE Child SA"
-msgstr ""
+msgstr "IKE Child SA"
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr ""
+msgstr "Taak Verwerken"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
-msgstr ""
+msgstr "Configuratie backend"
 
 #: src/etc/inc/ipsec.inc:32 src/etc/inc/ipsec.inc:62
 msgid "Kernel Interface"
-msgstr ""
+msgstr "Kernel interface"
 
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 #: src/usr/local/www/system_advanced_admin.php:299
@@ -2437,67 +2527,67 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:209
 #: src/usr/local/www/system_advanced_sysctl.php:139
 msgid "Networking"
-msgstr ""
+msgstr "Netwerken"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
-msgstr ""
+msgstr "ASN encoding"
 
 #: src/etc/inc/ipsec.inc:35 src/etc/inc/ipsec.inc:65
 msgid "Message encoding"
-msgstr ""
+msgstr "Bericht codering"
 
 #: src/etc/inc/ipsec.inc:36 src/etc/inc/ipsec.inc:66
 msgid "Integrity checker"
-msgstr ""
+msgstr "Integriteit controleur"
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr ""
+msgstr "Integriteit verifiëerder"
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
-msgstr ""
+msgstr "Platvorm Vertrouwens Dienst"
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
-msgstr ""
+msgstr "TLS handler"
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
-msgstr ""
+msgstr "IPsec verkeer"
 
 #: src/etc/inc/ipsec.inc:41 src/etc/inc/ipsec.inc:71
 msgid "StrongSwan Lib"
-msgstr ""
+msgstr "StrongSwan Lib"
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr ""
+msgstr "Stil"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
-msgstr ""
+msgstr "Audit"
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
-msgstr ""
+msgstr "Controle"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr ""
+msgstr "Diag"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr ""
+msgstr "Onverwerkt"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
-msgstr ""
+msgstr "Hoogste"
 
 #: src/etc/inc/ipsec.inc:76
 msgid "My IP address"
-msgstr ""
+msgstr "Mijn IP adres"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1407
@@ -2511,23 +2601,25 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:94
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "IP address"
-msgstr ""
+msgstr "IP adres"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
+#, fuzzy
 msgid "Distinguished name"
-msgstr ""
+msgstr "Distinguished name"
 
 #: src/etc/inc/ipsec.inc:79 src/etc/inc/ipsec.inc:91
+#, fuzzy
 msgid "User distinguished name"
-msgstr ""
+msgstr "Gebruiker distinguished name"
 
 #: src/etc/inc/ipsec.inc:80 src/etc/inc/ipsec.inc:92
 msgid "ASN.1 distinguished Name"
-msgstr ""
+msgstr "ASN.1 distinguished name"
 
 #: src/etc/inc/ipsec.inc:81 src/etc/inc/ipsec.inc:93
 msgid "KeyID tag"
-msgstr ""
+msgstr "KeyID tag"
 
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:304
 #: src/usr/local/www/services_checkip.php:70
@@ -2540,7 +2632,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136.php:58
 #: src/usr/local/www/services_rfc2136_edit.php:145
 msgid "Dynamic DNS"
-msgstr ""
+msgstr "Dynamic DNS"
 
 #: src/etc/inc/ipsec.inc:87 src/usr/local/www/diag_traceroute.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
@@ -2554,131 +2646,131 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1506
 #: src/usr/local/www/interfaces.php:2974
 msgid "Any"
-msgstr ""
+msgstr "Elke"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
-msgstr ""
+msgstr "IP adres tegenpartij"
 
 #: src/etc/inc/ipsec.inc:166
 msgid "Hybrid RSA + Xauth"
-msgstr ""
+msgstr "Hybride RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:167
 msgid "Mutual RSA + Xauth"
-msgstr ""
+msgstr "Wederzijds RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:168
 msgid "Mutual PSK + Xauth"
-msgstr ""
+msgstr "Wederzijds RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:169
 msgid "EAP-TLS"
-msgstr ""
+msgstr "EAP-TLS"
 
 #: src/etc/inc/ipsec.inc:170
 msgid "EAP-RADIUS"
-msgstr ""
+msgstr "EAP-RADIUS"
 
 #: src/etc/inc/ipsec.inc:171
 msgid "EAP-MSChapv2"
-msgstr ""
+msgstr "EAP-MSChapv2"
 
 #: src/etc/inc/ipsec.inc:172
 msgid "Mutual RSA"
-msgstr ""
+msgstr "Wederzijds RSA"
 
 #: src/etc/inc/ipsec.inc:173
 msgid "Mutual PSK"
-msgstr ""
+msgstr "Wederzijds PSK"
 
 #: src/etc/inc/ipsec.inc:184
 msgid "Tunnel IPv4"
-msgstr ""
+msgstr "Tunnel IPv4"
 
 #: src/etc/inc/ipsec.inc:185
 msgid "Tunnel IPv6"
-msgstr ""
+msgstr "Tunnel IPv6"
 
 #: src/etc/inc/ipsec.inc:186 src/usr/local/www/system_authservers.php:229
 msgid "Transport"
-msgstr ""
+msgstr "Transport"
 
 #: src/etc/inc/ipsec.inc:197
 msgid "off"
-msgstr ""
+msgstr "uit"
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
-msgstr ""
+msgstr "1 (768 bit)"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "2 (1024 bit)"
-msgstr ""
+msgstr "2 (1024 bit)"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "5 (1536 bit)"
-msgstr ""
+msgstr "5 (1536 bit)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr ""
+msgstr "14 (2048 bit)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr ""
+msgstr "15 (3072 bit)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr ""
+msgstr "16 (4096 bit)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr ""
+msgstr "17 (6144 bit)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr ""
+msgstr "18 (8192 bit)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
-msgstr ""
+msgstr "19 (nist ecp256)"
 
 #: src/etc/inc/ipsec.inc:207
 msgid "20 (nist ecp384)"
-msgstr ""
+msgstr "20 (nist ecp384)"
 
 #: src/etc/inc/ipsec.inc:208
 msgid "21 (nist ecp521)"
-msgstr ""
+msgstr "21 (nist ecp521)"
 
 #: src/etc/inc/ipsec.inc:209
 msgid "22 (1024(sub 160) bit)"
-msgstr ""
+msgstr "22 (1024(sub 160) bit)"
 
 #: src/etc/inc/ipsec.inc:210
 msgid "23 (2048(sub 224) bit)"
-msgstr ""
+msgstr "23 (2048(sub 224) bit)"
 
 #: src/etc/inc/ipsec.inc:211
 msgid "24 (2048(sub 256) bit)"
-msgstr ""
+msgstr "24 (2048(sub 256) bit)"
 
 #: src/etc/inc/ipsec.inc:212
 msgid "28 (brainpool ecp256)"
-msgstr ""
+msgstr "28 (brainpool ecp256)"
 
 #: src/etc/inc/ipsec.inc:213
 msgid "29 (brainpool ecp384)"
-msgstr ""
+msgstr "29 (brainpool ecp384)"
 
 #: src/etc/inc/ipsec.inc:214
 msgid "30 (brainpool ecp512)"
-msgstr ""
+msgstr "30 (brainpool ecp512)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:319
 msgid "Mobile Client"
-msgstr ""
+msgstr "Mobiele Client"
 
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3006
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
@@ -2693,53 +2785,55 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
-msgstr ""
+msgstr "Geen"
 
 #: src/etc/inc/ipsec.inc:612
 msgid ""
 "Unable to find IPsec daemon leases file. Could not display mobile user "
 "stats!"
 msgstr ""
+"Kan het IPsec daemon reserveringen bestand niet vinden. Kan de mobiele "
+"gebruikers statistieken niet tonen!"
 
 #: src/etc/inc/meta.inc:61
 #, php-format
 msgid "list_phpfiles: unable to examine path %s"
-msgstr ""
+msgstr "list_phpfiles: kan de directory %s niet bestuderen"
 
 #: src/etc/inc/meta.inc:97
 #, php-format
 msgid "unable to read %s"
-msgstr ""
+msgstr "kan %s niet lezen"
 
 #: src/etc/inc/meta.inc:134
 #, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr ""
+msgstr "fout: label komt niet overeen ( %1$s != %2$s ) in '%3$s'%4$s"
 
 #: src/etc/inc/meta.inc:145
 #, php-format
 msgid "warning: tag %1$s has no data in '%2$s'%3$s"
-msgstr ""
+msgstr "waarschuwing: label %1$s heeft geen gegevens in '%2$s'%3$s"
 
 #: src/etc/inc/meta.inc:168
 #, php-format
 msgid "warning: tag %1$s has malformed data in '%2$s'%3$s"
-msgstr ""
+msgstr "waarschuwing: label %1$s bevat misvormde gegevens in '%2$s'%3$s"
 
 #: src/etc/inc/meta.inc:190
 #, php-format
 msgid "warning: tag %1$s has invalid data in '%2$s'%3$s"
-msgstr ""
+msgstr "waarschuwing: label %1$s bevat ongeldige gegevens in '%2$s'%3$s"
 
 #: src/etc/inc/notices.inc:74
 #, php-format
 msgid "Could not open %s for writing"
-msgstr ""
+msgstr "Kan %s niet openen om te schrijven"
 
 #: src/etc/inc/notices.inc:79
 #, php-format
 msgid "New alert found: %s"
-msgstr ""
+msgstr "Nieuwe waarschuwing gevonden: %s"
 
 #: src/etc/inc/notices.inc:321
 #, php-format
@@ -2749,28 +2843,31 @@ msgstr "Kan het bericht niet verzenden naar %1$s -- Fout: %2$s"
 #: src/etc/inc/notices.inc:327
 #, php-format
 msgid "Message sent to %s OK"
-msgstr ""
+msgstr "Bericht verzonden naar %s OK"
 
 #: src/etc/inc/notices.inc:364 src/etc/inc/notices.inc:420
+#, fuzzy
 msgid ""
 "Growl IP Address is invalid. Check the setting in System Advanced "
 "Notifications."
 msgstr ""
+"Growl IP adres is ongeldig. Controleer de instellingen in System Advanced "
+"Notifications"
 
 #: src/etc/inc/notices.inc:383
 #, php-format
 msgid "%1$s (%2$s) - Notification"
-msgstr ""
+msgstr "%1$s (%2$s) - Notificatie"
 
 #: src/etc/inc/notices.inc:387
 #, php-format
 msgid "Could not send Growl notification to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Kon Growl notification niet versturen naar %1$s -- Fout: %2$s"
 
 #: src/etc/inc/notices.inc:445
 #, php-format
 msgid "Could not send register Growl on %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Kon registratie Growl niet versturen naar %1$s -- Error: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:760
 #: src/usr/local/www/firewall_rules_edit.php:1656
@@ -2780,178 +2877,181 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:569
 msgid "none"
-msgstr ""
+msgstr "geen"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
 #: src/usr/local/www/services_captiveportal.php:966
 msgid "default"
-msgstr ""
+msgstr "standaard"
 
 #: src/etc/inc/openvpn.inc:56
 msgid "3 (recommended)"
-msgstr ""
+msgstr "3 (aangeraden)"
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
-msgstr ""
+msgstr "Een (Cliënt+Server)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
-msgstr ""
+msgstr "Twee (Cliënt+Tussenliggend+Server)"
 
 #: src/etc/inc/openvpn.inc:102
 msgid "Three (Client+2xIntermediate+Server)"
-msgstr ""
+msgstr "Drie (Cliënt+2x Tussenliggend+Server)"
 
 #: src/etc/inc/openvpn.inc:103
 msgid "Four (Client+3xIntermediate+Server)"
-msgstr ""
+msgstr "Vier (Cliënt+3x Tussenliggend+Server)"
 
 #: src/etc/inc/openvpn.inc:104
 msgid "Five (Client+4xIntermediate+Server)"
-msgstr ""
+msgstr "Vijf (Cliënt+4x Tussenliggend+Server)"
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
-msgstr ""
+msgstr "Eindpunt tot Eindpunt (SSL/TLS)"
 
 #: src/etc/inc/openvpn.inc:110 src/etc/inc/openvpn.inc:121
 msgid "Peer to Peer ( Shared Key )"
-msgstr ""
+msgstr "Eindpunt tot Eindpunt (Gedeelde Sleutel)"
 
 #: src/etc/inc/openvpn.inc:111
 msgid "Remote Access ( SSL/TLS )"
-msgstr ""
+msgstr "Toegang op afstand (SSL/TLS)"
 
 #: src/etc/inc/openvpn.inc:112
 msgid "Remote Access ( User Auth )"
-msgstr ""
+msgstr "Toegang op afstand (Gebruiker Authorisatie)"
 
 #: src/etc/inc/openvpn.inc:113
 msgid "Remote Access ( SSL/TLS + User Auth )"
-msgstr ""
+msgstr "Toegang op afstand (SSL/TLS + Gebruiker Authorisatie)"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
-msgstr ""
+msgstr "Voorkeur Overslaan (Gebruik de OpenVPN standaard)"
 
 #: src/etc/inc/openvpn.inc:126
 msgid "LZ4 Compression [compress lz4]"
-msgstr ""
+msgstr "LZ4 Compressie [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "LZ4 Compressie v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
 "LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"
 msgstr ""
+"LZO Compressie [compress lzo, gelijk aan comp-lzo yes voor compatibiliteit]"
 
 #: src/etc/inc/openvpn.inc:129
 msgid "Enable Compression (stub) [compress]"
-msgstr ""
+msgstr "Inschakelen Compressie (stub) [compress]"
 
 #: src/etc/inc/openvpn.inc:130
 msgid ""
 "Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-"
 "noadapt]"
 msgstr ""
+"Voorkeur Overslaan, + Uitschakelen Aangepaste LZO Compressie [Legacy style, "
+"comp-noadapt]"
 
 #: src/etc/inc/openvpn.inc:131
 msgid "Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"
-msgstr ""
+msgstr "Aangepaste LZO Compressie [Legacy style, comp-lzo adaptive]"
 
 #: src/etc/inc/openvpn.inc:132
 msgid "LZO Compression [Legacy style, comp-lzo yes]"
-msgstr ""
+msgstr "LZO Compressie [Legacy style, comp-lzo yes]"
 
 #: src/etc/inc/openvpn.inc:133
 msgid "No LZO Compression [Legacy style, comp-lzo no]"
-msgstr ""
+msgstr "Geen LZO Compressie [Legacy style, comp-lzo no]"
 
 #: src/etc/inc/openvpn.inc:138
 msgid "Subnet -- One IP address per client in a common subnet"
-msgstr ""
+msgstr "Subnet -- Één  IP adres per cliënt in een gedeeld subnet"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr ""
+msgstr "net30 -- Geisoleerd /30 network per cliënt"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
-msgstr ""
+msgstr "TLS Authenticatie"
 
 #: src/etc/inc/openvpn.inc:146
 msgid "TLS Encryption and Authentication"
-msgstr ""
+msgstr "TLS Codering en Authenticatie"
 
 #: src/etc/inc/openvpn.inc:219
 msgid "None (Username and/or Password required)"
-msgstr ""
+msgstr "Geen (Gebruikersnaam en/of wachtwoord vereist)"
 
 #: src/etc/inc/openvpn.inc:227
 msgid "===== Server Certificates ====="
-msgstr ""
+msgstr "===== Server Certificates ====="
 
 #: src/etc/inc/openvpn.inc:228
 msgid "===== Non-Server Certificates ====="
-msgstr ""
+msgstr "===== Non-Server Certificates ====="
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
-msgstr ""
+msgstr "Server: Yes"
 
 #: src/etc/inc/openvpn.inc:240
 msgid "Server: NO"
-msgstr ""
+msgstr "Server: NO"
 
 #: src/etc/inc/openvpn.inc:243
 #, php-format
 msgid "CA: %s"
-msgstr ""
+msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:368
 #: src/usr/local/www/system_certmanager.php:1082
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "In Use"
-msgstr ""
+msgstr "In Gebruik"
 
 #: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1152
 msgid "Revoked"
-msgstr ""
+msgstr "Ingetrokken"
 
 #: src/etc/inc/openvpn.inc:413
 msgid "None (No Encryption)"
-msgstr ""
+msgstr "Geen (Geen Codering)"
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr ""
+msgstr "Gebruik standaard"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
-msgstr ""
+msgstr "Geen (Geen Authenticatie)"
 
 #: src/etc/inc/openvpn.inc:451
 msgid "No Hardware Crypto Acceleration"
-msgstr ""
+msgstr "Geen Hardware Codering Acceleratie"
 
 #: src/etc/inc/openvpn.inc:495
 #, php-format
 msgid "The field '%s' must contain a valid IP address or domain name."
-msgstr ""
+msgstr "Het veld '%s' moet een geldig IP adres of domeinnaam bevatten."
 
 #: src/etc/inc/openvpn.inc:503
 #, php-format
 msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr ""
+msgstr "Het veld '%s' moet een geldige poort bevatten tussen de 0 en 65535."
 
 #: src/etc/inc/openvpn.inc:517
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
-msgstr ""
+msgstr "Het veld '%1$s' moet een enkel geldig %2$s CIDR bereik bevatten."
 
 #: src/etc/inc/openvpn.inc:532
 #, php-format
@@ -2959,53 +3059,57 @@ msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
 "commas."
 msgstr ""
+"Het veld '%1$s' moet alleen geldige %2$s CIDR bereik(en) gescheiden door "
+"comma's bevatten."
 
 #: src/etc/inc/openvpn.inc:1074
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr ""
+"Het bouwen van een OpenVPN server configuratie is mislukt. De geselecteerde "
+"DH Parameter lengte kan niet gebruikt worden."
 
 #: src/etc/inc/openvpn.inc:1228
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr ""
+msgstr "OpenVPN ID %1$s PID %2$s draait nog steeds, killing."
 
 #: src/etc/inc/openvpn.inc:1463
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
-msgstr ""
+msgstr "Hersynchroniseren OpenVPN instanties voor interface %s."
 
 #: src/etc/inc/openvpn.inc:1465
 msgid "Resyncing OpenVPN instances."
-msgstr ""
+msgstr "Hersynchroniseren OpenVPN instanties."
 
 #: src/etc/inc/openvpn.inc:1498
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
-msgstr ""
+msgstr "Hersynchroniseren OpenVPN voor gateway groep %1$s server %2$s."
 
 #: src/etc/inc/openvpn.inc:1507
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
-msgstr ""
+msgstr "Hersynchroniseren OpenVPN voor gateway groep %1$s cliënt %2$s."
 
 #: src/etc/inc/openvpn.inc:1516
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
-msgstr ""
+msgstr "openvpn_resync_gwgroup aangeroepen met null gwgroup parameter."
 
 #: src/etc/inc/openvpn.inc:1622 src/etc/inc/openvpn.inc:1753
 msgid "Unable to contact daemon"
-msgstr ""
+msgstr "Kon niet verbinden met de daemon"
 
 #: src/etc/inc/openvpn.inc:1623 src/etc/inc/openvpn.inc:1754
 msgid "Service not running?"
-msgstr ""
+msgstr "Service draait mogelijk niet?"
 
 #: src/etc/inc/pfsense-utils.inc:190
 #: src/usr/local/www/system_user_settings.php:63
 msgid "Theme"
-msgstr ""
+msgstr "Thema"
 
 #: src/etc/inc/pfsense-utils.inc:193
 #, php-format
@@ -3013,98 +3117,113 @@ msgid ""
 "Choose an alternative css file (if installed) to change the appearance of "
 "the webConfigurator. css files are located in /usr/local/www/css/%s"
 msgstr ""
+"Kies een alternatief css bestand (indien geinstalleerd) om het uiterlijk van "
+"de webConfigurator aan te passen. css bestanden staan in /usr/local/www/css/"
+"%s"
 
 #: src/etc/inc/pfsense-utils.inc:211
 msgid "Scrolls with page"
-msgstr ""
+msgstr "Scroll met de pagina"
 
 #: src/etc/inc/pfsense-utils.inc:211
 msgid "Fixed (Remains visible at top of page)"
-msgstr ""
+msgstr "Gefixeerd (Blijft zichtbaar aan de bovenkant van de pagina)"
 
 #: src/etc/inc/pfsense-utils.inc:209
 msgid "Top Navigation"
-msgstr ""
+msgstr "Top Navigatie"
 
 #: src/etc/inc/pfsense-utils.inc:212
 msgid "The fixed option is intended for large screens only."
-msgstr ""
+msgstr "De optie gefixeerd is alleen bedoeld voor grotere schermen"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Default (No hostname)"
-msgstr ""
+msgstr "Standaard (geen hostname)"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Hostname only"
-msgstr ""
+msgstr "Alleen een hostname"
 
 #: src/etc/inc/pfsense-utils.inc:230
 msgid "Fully Qualified Domain Name"
-msgstr ""
+msgstr "Volledig Geldige Domeinnaam"
 
 #: src/etc/inc/pfsense-utils.inc:228
 msgid "Hostname in Menu"
-msgstr ""
+msgstr "Hostname in het Menu"
 
 #: src/etc/inc/pfsense-utils.inc:231
 msgid ""
 "Replaces the Help menu title in the Navbar with the system hostname or FQDN."
 msgstr ""
+"Vervangt de Help menu titel in de Navigatiebalk met de hostname of "
+"domeinnaam van het systeem."
 
 #: src/etc/inc/pfsense-utils.inc:251
 #: src/usr/local/www/system_user_settings.php:63
 msgid "Dashboard Columns"
-msgstr ""
+msgstr "Dashboard Kolommen"
 
 #: src/etc/inc/pfsense-utils.inc:269
 msgid "Associated Panels Show/Hide"
-msgstr ""
+msgstr "Geassocieerde Panelen Tonen/Verbergen"
 
 #: src/etc/inc/pfsense-utils.inc:276
 msgid "Show the Available Widgets panel on the Dashboard."
-msgstr ""
+msgstr "Toon het beschikbare widgets paneel op het dashboard."
 
 #: src/etc/inc/pfsense-utils.inc:283
+#, fuzzy
 msgid "Show the Log Filter panel in System Logs."
-msgstr ""
+msgstr "Toon het Log Filter paneel in Systeem Logs."
 
 #: src/etc/inc/pfsense-utils.inc:290
+#, fuzzy
 msgid "Show the Manage Log panel in System Logs."
-msgstr ""
+msgstr "Toon het Beheer Log paneel in Systeem Logs."
 
 #: src/etc/inc/pfsense-utils.inc:297
+#, fuzzy
 msgid "Show the Settings panel in Status Monitoring."
-msgstr ""
+msgstr "Toon het Instellingen paneel in Status Monitoring"
 
 #: src/etc/inc/pfsense-utils.inc:299
 msgid ""
 "These options allow certain panels to be automatically hidden on page load. "
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
+"Deze opties maken het mogelijk bepaalde panelen te verbergen bij het laden "
+"van de pagina. Er is een knop beschikbaar in de titelbalk om het paneel te "
+"tonen."
 
 #: src/etc/inc/pfsense-utils.inc:317
 msgid "Left Column Labels"
-msgstr ""
+msgstr "Linker Kolom Titels"
 
 #: src/etc/inc/pfsense-utils.inc:320
 msgid ""
 "If selected, clicking a label in the left column will select/toggle the "
 "first item of the group."
 msgstr ""
+"Indien geselecteerd zal bij het klikken op een titel in de linker kolom het "
+"eerste item van de groep worden geselecteerd/omgezet."
 
 #: src/etc/inc/pfsense-utils.inc:336
 msgid "Alias Popups"
-msgstr ""
+msgstr "Alias Popups"
 
 #: src/etc/inc/pfsense-utils.inc:339
 msgid ""
 "If selected, the details in alias popups will not be shown, just the alias "
 "description (e.g. in Firewall Rules)."
 msgstr ""
+"Indien geselecteerd zullen de details in de alias popup niet getoond worden, "
+"alleen de alias omschrijving (b.v. Firewall Regels)."
 
 #: src/etc/inc/pfsense-utils.inc:355
 msgid "Browser tab text"
-msgstr ""
+msgstr "Browser tab tekst"
 
 #: src/etc/inc/pfsense-utils.inc:358
 msgid ""
@@ -3112,10 +3231,13 @@ msgid ""
 "current page. Check this box to display the current page followed by the "
 "host name."
 msgstr ""
+"Indien dit niet geselecteerd is zal het browser tabblad de hostname en "
+"vervolgens de huidige pagina weergeven. Anders zal eerst de huidige pagina "
+"en daarna de hostname worden weergegeven."
 
 #: src/etc/inc/pfsense-utils.inc:401
 msgid "Require State Filter"
-msgstr ""
+msgstr "Verplicht State Filter"
 
 #: src/etc/inc/pfsense-utils.inc:404
 msgid ""
@@ -3123,163 +3245,168 @@ msgid ""
 "States. This option requires a filter to be entered before the states are "
 "displayed. Useful for systems with large state tables."
 msgstr ""
+"Standaard zal de volledige tabel worden weergegeven wanneer met gaat naar "
+"Diagnose > States. Deze optie verplicht het eerst een filter te selecteren. "
+"Nuttig voor systemen met hele grote state tabellen."
 
 #: src/etc/inc/pfsense-utils.inc:692
 msgid "After synch increase advertising skew"
-msgstr ""
+msgstr "Na synchronisatie de advertising skew verhogen"
 
 #: src/etc/inc/pfsense-utils.inc:742
 msgid "Error creating socket!"
-msgstr ""
+msgstr "Fout bij het aanmaken van de socket!"
 
 #: src/etc/inc/pfsense-utils.inc:743
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
-msgstr ""
+msgstr "Error code is '%1$s' - %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:748
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr ""
+msgstr "setsockopt() mislukt, fout: %s"
 
 #: src/etc/inc/pfsense-utils.inc:752
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
-msgstr ""
+msgstr "Magisch Pakket verstuurd (%1$s) naar (%2$s) MAC=%3$s"
 
 #: src/etc/inc/pfsense-utils.inc:815 src/etc/inc/pfsense-utils.inc:835
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
-msgstr ""
+msgstr "%s hersteld uit de config file (mogelijk van CARP partner)"
 
 #: src/etc/inc/pfsense-utils.inc:922
 msgid "reload_interfaces_sync() is starting."
-msgstr ""
+msgstr "reload_interfaces_sync() is aan het starten."
 
 #: src/etc/inc/pfsense-utils.inc:931
 msgid "Enabling system routing"
-msgstr ""
+msgstr "Activeren van system routing"
 
 #: src/etc/inc/pfsense-utils.inc:935
 msgid "Cleaning up Interfaces"
-msgstr ""
+msgstr "Opschonen van Interfaces"
 
 #: src/etc/inc/pfsense-utils.inc:1378
 msgid "No history data found!"
-msgstr ""
+msgstr "Geen historische data gevonden!"
 
 #: src/etc/inc/pfsense-utils.inc:1510
 msgid "device not present! Is the modem attached to the system?"
-msgstr ""
+msgstr "Apparaat niet aanwezig! Is de modem aangesloten op het systeem?"
 
 #: src/etc/inc/pfsense-utils.inc:1579
 msgid "running"
-msgstr ""
+msgstr "draaiend"
 
 #: src/etc/inc/pfsense-utils.inc:1580 src/usr/local/www/graph.php:198
 msgid "up"
-msgstr ""
+msgstr "up"
 
 #: src/etc/inc/pfsense-utils.inc:1625
 msgid "blocking"
-msgstr ""
+msgstr "blokkerend"
 
 #: src/etc/inc/pfsense-utils.inc:1625
 msgid "check for ethernet loops"
-msgstr ""
+msgstr "controleer op ethernet lussen"
 
 #: src/etc/inc/pfsense-utils.inc:1628
 msgid "learning"
-msgstr ""
+msgstr "lerend"
 
 #: src/etc/inc/pfsense-utils.inc:1631
 msgid "forwarding"
-msgstr ""
+msgstr "doorsturend"
 
 #: src/etc/inc/pfsense-utils.inc:1765
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
-msgstr ""
+msgstr "DNSCACHE: Oud IP %1$s and nieuw IP %2$s gevonden"
 
 #: src/etc/inc/pfsense-utils.inc:1785
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
-msgstr ""
+msgstr "Laden van %s cryptografische acceleratie module."
 
 #: src/etc/inc/pfsense-utils.inc:1802
 #, php-format
 msgid "Loading %s thermal monitor module."
-msgstr ""
+msgstr "Laden van %s temperatuur monitoring module."
 
 #: src/etc/inc/pfsense-utils.inc:1879 src/etc/inc/pfsense-utils.inc:1935
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
-msgstr ""
+msgstr "Ophalen van bestand mislukt met status code %1$s. URL: %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2123
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
-msgstr ""
+msgstr "Kon het niet-bestaande bestand niet verwerken van alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2128
 #, php-format
 msgid "Could not process empty file from alias: %s"
-msgstr ""
+msgstr "Kon het lege bestand niet verwerken van alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2133
 #, php-format
 msgid "Could not process aliases from alias: %s"
-msgstr ""
+msgstr "Kon aliasen niet verwerken van alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2190
 #, php-format
 msgid "Failed to download alias %s"
-msgstr ""
+msgstr "Ophalen mislukt van alias %s"
 
 #: src/etc/inc/pfsense-utils.inc:2219
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
+"Alias archief is een .tar/tgz bestand en kon niet worden uitgepakt omdat het "
+"programma mist."
 
 #: src/etc/inc/pfsense-utils.inc:2229
 #, php-format
 msgid "Could not open %s/aliases for writing!"
-msgstr ""
+msgstr "Kon %s/aliasen niet openen om te schrijven!"
 
 #: src/etc/inc/pfsense-utils.inc:2235
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
-msgstr ""
+msgstr "Het volgende bestand kon niet gelezen worden %1$s van %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2814
 msgid "English"
-msgstr ""
+msgstr "Engels"
 
 #: src/etc/inc/pfsense-utils.inc:2815
 msgid "Spanish"
-msgstr ""
+msgstr "Spaans"
 
 #: src/etc/inc/pfsense-utils.inc:2816
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portugees (Braziliaans)"
 
 #: src/etc/inc/pfsense-utils.inc:2817
 msgid "Turkish"
-msgstr ""
+msgstr "Turks"
 
 #: src/etc/inc/pfsense-utils.inc:2818
 msgid "Chinese (Simplified, China)"
-msgstr ""
+msgstr "Chinees (Eenvoudig, China)"
 
 #: src/etc/inc/pfsense-utils.inc:2819
 msgid "Chinese (Taiwan)"
-msgstr ""
+msgstr "Chinees (Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:3014 src/etc/inc/pfsense-utils.inc:3029
 #: src/etc/inc/pfsense-utils.inc:3055
 msgid "No Service"
-msgstr ""
+msgstr "Geen Dienst"
 
 #: src/etc/inc/pfsense-utils.inc:3024 src/etc/inc/pfsense-utils.inc:3067
 #: src/usr/local/www/firewall_nat_out.php:230
@@ -3295,97 +3422,99 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:134 src/usr/local/www/vpn_ipsec.php:252
 #: src/usr/local/www/vpn_ipsec.php:394
 msgid "Mode"
-msgstr ""
+msgstr "Mode"
 
 #: src/etc/inc/pfsense-utils.inc:3030
 msgid "Restricted Service"
-msgstr ""
+msgstr "Beperkte Service"
 
 #: src/etc/inc/pfsense-utils.inc:3031
 msgid "Valid Service"
-msgstr ""
+msgstr "Geldige Service"
 
 #: src/etc/inc/pfsense-utils.inc:3032
 msgid "Restricted Regional Service"
-msgstr ""
+msgstr "Beperkte Regionale Service"
 
 #: src/etc/inc/pfsense-utils.inc:3033
 msgid "Powersaving Service"
-msgstr ""
+msgstr "Zuinige Service"
 
 #: src/etc/inc/pfsense-utils.inc:3034
 msgid "Unknown Service"
-msgstr ""
+msgstr "Onbekende Service"
 
 #: src/etc/inc/pfsense-utils.inc:3040
 msgid "Invalid SIM/locked State"
-msgstr ""
+msgstr "Ongeldige SIM/vergrendeld Status"
 
 #: src/etc/inc/pfsense-utils.inc:3041
 msgid "Valid SIM State"
-msgstr ""
+msgstr "Geldige SIM Status"
 
 #: src/etc/inc/pfsense-utils.inc:3042
 msgid "Invalid SIM CS State"
-msgstr ""
+msgstr "Ongeldige SIM CS Status"
 
 #: src/etc/inc/pfsense-utils.inc:3043
 msgid "Invalid SIM PS State"
-msgstr ""
+msgstr "Ongeldige SIM PS Status"
 
 #: src/etc/inc/pfsense-utils.inc:3044
 msgid "Invalid SIM CS/PS State"
-msgstr ""
+msgstr "Ongeldige SIM CS/PS Status"
 
 #: src/etc/inc/pfsense-utils.inc:3045
 msgid "Missing SIM State"
-msgstr ""
+msgstr "Ontbrekende SIM Status"
 
 #: src/etc/inc/pfsense-utils.inc:3056
 msgid "Limited Service"
-msgstr ""
+msgstr "Beperkte Service"
 
 #: src/etc/inc/pfsense-utils.inc:3072
 msgid "Initializing Service"
-msgstr ""
+msgstr "Initializeren van Service"
 
 #: src/etc/inc/pfsense-utils.inc:3073
 msgid "Network Lock error Service"
-msgstr ""
+msgstr "Netwerk Vergrendeld fout Service"
 
 #: src/etc/inc/pfsense-utils.inc:3074
 msgid "Network Locked Service"
-msgstr ""
+msgstr "Netwerk Vergrendeld Service"
 
 #: src/etc/inc/pfsense-utils.inc:3075
 msgid "Unlocked or correct MCC/MNC Service"
-msgstr ""
+msgstr "Ontgrendeld of correcte MCC/MNC Service"
 
 #: src/etc/inc/pfsense-utils.inc:3081
 msgid "No action State"
-msgstr ""
+msgstr "Geen actie Status"
 
 #: src/etc/inc/pfsense-utils.inc:3082
 msgid "Network lock State"
-msgstr ""
+msgstr "Netwerk vergendel Status"
 
 #: src/etc/inc/pfsense-utils.inc:3083
 msgid "(U)SIM card lock State"
-msgstr ""
+msgstr "(U)SIM kaart vergrendel Status"
 
 #: src/etc/inc/pfsense-utils.inc:3084
 msgid "Network Lock and (U)SIM card Lock State"
-msgstr ""
+msgstr "Netwerk Vergrendel en (U)SIM kaart vergrendel Status"
 
 #: src/etc/inc/pkg-utils.inc:45
 msgid "Warning, could not open log for writing."
-msgstr ""
+msgstr "Waarschuwing: kon de log niet openen om te schrijven."
 
 #: src/etc/inc/pkg-utils.inc:187
 #, php-format
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr ""
+"ERROR!!! Er is een fout opgetreden tijdens pkg uitvoering (rc = %d) met "
+"parameters '%s':"
 
 #: src/etc/inc/pkg-utils.inc:410 src/etc/inc/pkg-utils.inc:413
 msgid "ERROR: Error trying to get packages list. Aborting..."
@@ -3398,298 +3527,318 @@ msgstr "FOUT: Fout bij het ophalen van pakket versie. Annuleren..."
 #: src/etc/inc/pkg-utils.inc:498
 #, php-format
 msgid "Running last steps of %s installation."
-msgstr ""
+msgstr "Uitvoeren van laatste stappen van %s installatie."
 
 #: src/etc/inc/pkg-utils.inc:511
 msgid "Resyncing configuration for all packages."
-msgstr ""
+msgstr "Hersynchroniseren configuratie van alle pakketten."
 
 #: src/etc/inc/pkg-utils.inc:533
 msgid "Syncing packages..."
-msgstr ""
+msgstr "Synchroniseren van pakketten..."
 
 #: src/etc/inc/pkg-utils.inc:555
 msgid "Removing package..."
-msgstr ""
+msgstr "Verwijderen van pakket."
 
 #: src/etc/inc/pkg-utils.inc:588
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
 msgstr ""
+"Het configuratie bestand van pakket %s ontbreekt en moet opnieuw "
+"geinstalleerd worden."
 
 #: src/etc/inc/pkg-utils.inc:604
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
+"Herinstalleren van pakket %1$s omdat het configuratiebestand (%2$s) "
+"ontbreekt."
 
 #: src/etc/inc/pkg-utils.inc:607
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
-msgstr ""
+msgstr "Herinstallatie van pakket %s mislukt. Neem gepaste actie!!!"
 
 #: src/etc/inc/pkg-utils.inc:700
 msgid "Beginning package installation."
-msgstr ""
+msgstr "Begin met installatie van pakket."
 
 #: src/etc/inc/pkg-utils.inc:701
 #, php-format
 msgid "Beginning package installation for %s ."
-msgstr ""
+msgstr "Begin installatie van pakket %s."
 
 #: src/etc/inc/pkg-utils.inc:705
 msgid "Saving updated package information..."
-msgstr ""
+msgstr "Opslaan van bijgewerkte pakket informatie..."
 
 #: src/etc/inc/pkg-utils.inc:708
 #, php-format
 msgid "Installed %s package."
-msgstr ""
+msgstr "Installatie van pakket %s voltooid."
 
 #: src/etc/inc/pkg-utils.inc:712
 #, php-format
 msgid "Overwrote previous installation of %s."
-msgstr ""
+msgstr "Vorige installatie van %s is overschreven."
 
 #: src/etc/inc/pkg-utils.inc:713
 msgid "overwrite!"
-msgstr ""
+msgstr "overschrijven!"
 
 #: src/etc/inc/pkg-utils.inc:716
-#, php-format
+#, fuzzy, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
+"Tussentijdse opslag van configuratie tijdens installatie van pakket voor %s."
 
 #: src/etc/inc/pkg-utils.inc:720
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
-msgstr ""
+msgstr "Het pakket %1$s is niet geinstalleerd. %2$s installatie afgebroken."
 
 #: src/etc/inc/pkg-utils.inc:724 src/etc/inc/pkg-utils.inc:756
-#: src/etc/inc/pkg-utils.inc:822
+#: src/etc/inc/pkg-utils.inc:825
 #, php-format
 msgid "Failed to install package: %s."
-msgstr ""
+msgstr "Installatie mislukt van pakket: %s."
 
 #: src/etc/inc/pkg-utils.inc:725 src/etc/inc/pkg-utils.inc:757
-#: src/etc/inc/pkg-utils.inc:823
+#: src/etc/inc/pkg-utils.inc:826
 msgid "Failed to install package."
-msgstr ""
+msgstr "Installatie van pakket mislukt."
 
 #: src/etc/inc/pkg-utils.inc:730
 msgid "Loading package configuration... "
-msgstr ""
+msgstr "Laden van pakket configuratie..."
 
 #: src/etc/inc/pkg-utils.inc:733
 msgid "Configuring package components..."
-msgstr ""
+msgstr "Configureren van componenten voor pakket..."
 
-#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:917
+#: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:920
 msgid "Loading package instructions..."
-msgstr ""
+msgstr "Laden van instructies voor pakket..."
 
 #: src/etc/inc/pkg-utils.inc:752
 #, php-format
 msgid "Include %s is missing!"
-msgstr ""
+msgstr "Include %s ontbreekt!"
 
 #: src/etc/inc/pkg-utils.inc:763
 msgid "Custom commands..."
-msgstr ""
+msgstr "Gepersonaliseerde commando's..."
 
 #: src/etc/inc/pkg-utils.inc:766
 msgid "Executing custom_php_global_functions()..."
-msgstr ""
+msgstr "Uitvoeren van custom_php_global_functions()..."
 
 #: src/etc/inc/pkg-utils.inc:771
 msgid "Executing custom_php_install_command()..."
-msgstr ""
+msgstr "Uitvoeren van custom_php_install_command()..."
 
 #: src/etc/inc/pkg-utils.inc:776
 msgid "Executing custom_php_resync_config_command()..."
-msgstr ""
+msgstr "Uitvoeren van custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:865
+#: src/etc/inc/pkg-utils.inc:783 src/etc/inc/pkg-utils.inc:868
 msgid "Menu items... "
-msgstr ""
+msgstr "Menu items... "
 
-#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:880
+#: src/etc/inc/pkg-utils.inc:800 src/etc/inc/pkg-utils.inc:883
 msgid "Services... "
-msgstr ""
+msgstr "Diensten... "
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Loading package configuration... failed!"
-msgstr ""
+msgstr "Laden van pakket configuratie... mislukt!"
 
-#: src/etc/inc/pkg-utils.inc:817
+#: src/etc/inc/pkg-utils.inc:820
 msgid "Installation aborted."
-msgstr ""
+msgstr "Installatie afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:818
+#: src/etc/inc/pkg-utils.inc:821
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
+"Kon de configuratie van het pakket niet laden. Installatie afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:832
+#: src/etc/inc/pkg-utils.inc:835
 msgid "Writing configuration... "
-msgstr ""
+msgstr "Schrijven van configuratie..."
 
-#: src/etc/inc/pkg-utils.inc:834
+#: src/etc/inc/pkg-utils.inc:837
 #, php-format
 msgid "Successfully installed package: %s."
-msgstr ""
+msgstr "Installatie succesvol van pakket: %s."
 
-#: src/etc/inc/pkg-utils.inc:849
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
-msgstr ""
+msgstr "Het pakket %1$s is niet geinstalleerd.%2$sVerwijderen afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:854
+#: src/etc/inc/pkg-utils.inc:857
 #, php-format
 msgid "Removing %s package... "
-msgstr ""
+msgstr "Verwijderen van pakket %s..."
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:858
 #, php-format
 msgid "Removing %s components..."
-msgstr ""
+msgstr "Verwijderen van componenten voor %s..."
 
-#: src/etc/inc/pkg-utils.inc:908
+#: src/etc/inc/pkg-utils.inc:911
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
+"Tussentijdse opslag van configuratie tijdens verwijderen van pakket %s."
 
-#: src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:927
 #, php-format
 msgid "Include file %s could not be found for inclusion."
-msgstr ""
+msgstr "Bijgesloten bestand %s kon niet worden gevonden om in te sluiten"
 
-#: src/etc/inc/pkg-utils.inc:942
+#: src/etc/inc/pkg-utils.inc:945
 msgid "Deinstall commands... "
-msgstr ""
+msgstr "De-installeer commando's..."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:950
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
+"De aangepaste de-installeer hook wordt niet uitgevoerd omdat een bijlage "
+"mist."
 
-#: src/etc/inc/pkg-utils.inc:954
+#: src/etc/inc/pkg-utils.inc:957
 msgid "Syslog entries... "
-msgstr ""
-
-#: src/etc/inc/pkg-utils.inc:962
-msgid "Configuration... "
-msgstr ""
+msgstr "Syslog regels..."
 
 #: src/etc/inc/pkg-utils.inc:965
+msgid "Configuration... "
+msgstr "Configuratie..."
+
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Removed %s package."
-msgstr ""
+msgstr "Pakket %s is verwijderd."
 
-#: src/etc/inc/pkg-utils.inc:990
+#: src/etc/inc/pkg-utils.inc:993
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
+"Wachten op internet verbinding om pakket metadata bij te werken en de "
+"herinstallatie te voltooien"
 
-#: src/etc/inc/pkg-utils.inc:1003 src/etc/inc/pkg-utils.inc:1042
+#: src/etc/inc/pkg-utils.inc:1006 src/etc/inc/pkg-utils.inc:1045
 msgid "Package reinstall"
-msgstr ""
+msgstr "Pakket herinstallatie"
 
-#: src/etc/inc/pkg-utils.inc:1004
+#: src/etc/inc/pkg-utils.inc:1007
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
+"Pakket herinstallatie was afgebroken vanwege een gebrek aan verbinding met "
+"het internet"
 
-#: src/etc/inc/pkg-utils.inc:1043
+#: src/etc/inc/pkg-utils.inc:1046
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
-msgstr ""
+msgstr "Pakket %s bestaat niet in de huidige versie %s en is verwijderd."
 
-#: src/etc/inc/pkg-utils.inc:1064
+#: src/etc/inc/pkg-utils.inc:1067
 msgid "Stopping all packages."
-msgstr ""
+msgstr "Alle pakketten aan het stoppen."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
-msgstr ""
+msgstr "Systeem - HA node synchronisatie"
 
 #: src/etc/inc/priv/user.priv.inc:7
 msgid "Allow access to authenticate this user for HA sync via XMLRPC"
-msgstr ""
+msgstr "Sta toe deze gebruiker te authenticeren voor HA sync via XMLRPC"
 
 #: src/etc/inc/priv/user.priv.inc:10
 msgid "User - Services: Captive Portal login"
-msgstr ""
+msgstr "Gebruiker - Diensten: Captive Portal login"
 
 #: src/etc/inc/priv/user.priv.inc:11
 msgid "Indicates whether the user is able to login on the captive portal."
-msgstr ""
+msgstr "Indicatie of the gebruiker kan inloggen op het Captive Portal."
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr ""
+msgstr "WebCfg - Help pagina's"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
 msgstr ""
+"Toon alle items op het help menu en geef toegang tot de Help snelkoppelingen."
+""
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr ""
+msgstr "WebCfg - Dashboard (all)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
-msgstr ""
+msgstr "Geef toegang tot alle benodigde pagina's voor het dashboard."
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr ""
+msgstr "WebCfg - Dashboard widgets (directe toegang)."
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
 "Allow direct access to all Dashboard widget pages, required for some widgets "
 "using AJAX."
 msgstr ""
+"Geef toegang tot alle Dashboard widgets pagina's, nodig voor sommige widgets "
+"die AJAX gebruiken."
 
 #: src/etc/inc/priv/user.priv.inc:38
 msgid "User - Config: Deny Config Write"
-msgstr ""
+msgstr "Gebruiker - Config: Verbied Schrijven Configuratie"
 
 #: src/etc/inc/priv/user.priv.inc:39
 msgid "If present, ignores requests from this user to write config.xml."
 msgstr ""
+"Indien aanwezig, negeer alle verzoeken van deze gebruiker om naar config.xml "
+"te schrijven."
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr ""
+msgstr "Gebruiker - Notificaties: Bekijken"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
-msgstr ""
+msgstr "Deze gebruiker kan systeem notificaties bekijken."
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr ""
+msgstr "Gebruiker - Notificaties: Bekijken en Opschonen"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
-msgstr ""
+msgstr "Deze gebruiker kan de notificaties bekijken en opschonen."
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr ""
+msgstr "Gebruiker - Systeem: Shell account toegang"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
-msgstr ""
+msgstr "Geeft aan of de gebruiker met bijvoorbeeld SSH kan inloggen."
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
-msgstr ""
+msgstr "Gebruiker - Systeem: Kopiëer bestanden (scp)"
 
 #: src/etc/inc/priv/user.priv.inc:60
 msgid "User - System: Copy files to home directory (chrooted scp)"
 msgstr ""
+"Gebruiker - Systeem: Kopiëer bestanden naar homedirectory (chrooted scp)"
 
 #: src/etc/inc/priv/user.priv.inc:61
 msgid ""
@@ -3698,10 +3847,14 @@ msgid ""
 "privilege.Warning: Manual chroot setup required, see /usr/local/etc/rc.d/"
 "scponlyc."
 msgstr ""
+"Geeft aan of deze gebruiker bestanden mag kopiëren naar zijn homedirectory "
+"via SCP/SFTP. Let wel: Gebruiker - Systeem: Kopiëer bestanden conflicteerd "
+"met dit privilege. Waarschuwing: Handmatig opzetten van chroot is benodigd, "
+"zie /usr/local/etc/rc.d/scponlyc."
 
 #: src/etc/inc/priv/user.priv.inc:66
 msgid "User - System: SSH tunneling"
-msgstr ""
+msgstr "Gebruiker - Systeem: SSH tunnels"
 
 #: src/etc/inc/priv/user.priv.inc:67
 msgid ""
@@ -3709,772 +3862,786 @@ msgid ""
 "have no shell access. Note: User - System - Copy files (scp) and System: "
 "Copy files to home directory (chrooted scp) conflict with this privilege."
 msgstr ""
+"Geeft aan of de gebruiker mag inloggen voor het opzetten van tunnels via SSH "
+"zonder shell toegang. Let wel: Gebruiker - Systeem: Kopiëer bestanden (scp) "
+"en Gebruiker - Systeem: Kopiëer bestanden naar homedirectory (chrooted scp) "
+"conflicteren met dit privilege."
 
 #: src/etc/inc/priv/user.priv.inc:74
 msgid "User - VPN: IPsec xauth Dialin"
-msgstr ""
+msgstr "Gebruiker - VPN: IPsec xauth Inbellen"
 
 #: src/etc/inc/priv/user.priv.inc:75
 msgid ""
 "Indicates whether the user is allowed to dial in via IPsec xauth (Note: Does "
 "not allow shell access, but may allow the user to create SSH tunnels)"
 msgstr ""
+"Geeft aan of de gebruiker mag inbellen via IPsec xauth (let wel: geeft geen "
+"shell toegang, maar maakt het wel mogelijk voor de gebruiker om SSH tunnels "
+"op te zetten)"
 
 #: src/etc/inc/priv/user.priv.inc:80
 msgid "User - VPN: L2TP Dialin"
-msgstr ""
+msgstr "Gebruiker - VPN: L2TP Inbellen"
 
 #: src/etc/inc/priv/user.priv.inc:81
 msgid "Indicates whether the user is allowed to dial in via L2TP"
-msgstr ""
+msgstr "Geeft aan of de gebruiker mag inbellen via L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:84
 msgid "User - VPN: PPPOE Dialin"
-msgstr ""
+msgstr "Gebruiker - VPN: PPPOE Inbellen"
 
 #: src/etc/inc/priv/user.priv.inc:85
 msgid "Indicates whether the user is allowed to dial in via PPPOE"
-msgstr ""
+msgstr "Geeft aan of de gebruiker mag inbellen via PPPOE"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: Portal Auth"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
 msgstr ""
+"Geeft toegang tot de 'WebCfg - Status: Systeem Logs: Portal Auth' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr ""
+msgstr "WebCfg - Status: Logs: DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'WebCfg - Status: Logs: DHCP' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr ""
+msgstr "WebCfg - Status: Logs: Gateways"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "Geeft toegang aan de 'WebCfg - Status: Logs: Gateways' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr ""
+msgstr "WebCfg - Status: Logs: Resolver"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
 msgstr ""
+"Geeft toegang tot de 'WebCfg - Status: Logs: Systeem: Resolver' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: IPsec VPN' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: NTP' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: OpenVPN' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: Load Balancer"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: Load Balancer' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: Routing"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: Routing' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr ""
+msgstr "WebCfg - Status: Systeem Logs: Draadloos"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Status: Systeem Logs: Draadloos' pagina."
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr ""
+msgstr "WebCfg - Diensten: UPnP"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: UPnP' pagina."
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr ""
+msgstr "WebCfg - Alle pagina's"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
-msgstr ""
+msgstr "Geeft toegang tot alle pagina's."
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr ""
+msgstr "WebCfg - Crash Reporter"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
-msgstr ""
+msgstr "Stuur crash rapporten naar pfSense en/of verwijder crash rapporten."
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr ""
+msgstr "WebCfg - Diagnose: ARP Table"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: ARP Table' pagina."
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr ""
+msgstr "WebCfg - Diagnose: Authenticatie"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Authenticatie' pagina."
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr ""
+msgstr "WebCfg - Diagnose: Backup & Herstel"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Backup en Herstel' pagina."
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr ""
+msgstr "WebCfg - Diagnose: Command"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Command' pagina."
 
 #: src/etc/inc/priv.defs.inc:56
 msgid "WebCfg - Diagnostics: Configuration History"
-msgstr ""
+msgstr "WebCfg - Diagnose: Configuratie Geschiedenis"
 
 #: src/etc/inc/priv.defs.inc:57
 msgid "Allow access to the 'Diagnostics: Configuration History' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Configuratie Geschiedenis' pagina."
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr ""
+msgstr "WebCfg - Diagnose: Fabrieksinstellingen"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Fabrieksinstellingen' pagina."
 
 #: src/etc/inc/priv.defs.inc:69
 msgid "WebCfg - Diagnostics: DNS Lookup"
-msgstr ""
+msgstr "WebCfg - Diagnose: DNS Opzoeken"
 
 #: src/etc/inc/priv.defs.inc:70
 msgid "Allow access to the 'Diagnostics: DNS Lookup' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: DNS Opzoeken' pagina."
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
-msgstr ""
+msgstr "WebCfg - Diagnose: States Weergeven"
 
 #: src/etc/inc/priv.defs.inc:76
 msgid "Allow access to the 'Diagnostics: Show States' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: States Weergeven' pagina."
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
-msgstr ""
+msgstr "WebCfg - Diagnose: Toon Bron Volgen"
 
 #: src/etc/inc/priv.defs.inc:82
 msgid "Allow access to the 'Diagnostics: Show Source Tracking' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Toon Bron Volgen' pagina."
 
 #: src/etc/inc/priv.defs.inc:87
 msgid "WebCfg - Diagnostics: Edit File"
-msgstr ""
+msgstr "WebCfg - Diagnose: Bestand Bewerken"
 
 #: src/etc/inc/priv.defs.inc:88
 msgid "Allow access to the 'Diagnostics: Edit File' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Bestand Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
-msgstr ""
+msgstr "WebCfg - Diagnose: GEOM Mirrors"
 
 #: src/etc/inc/priv.defs.inc:97
 msgid "Allow access to the 'Diagnostics: GEOM Mirrors' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: GEOM Mirrors' pagina."
 
 #: src/etc/inc/priv.defs.inc:102
 msgid "WebCfg - Diagnostics: Halt system"
-msgstr ""
+msgstr "WebCfg - Diagnose: Systeem Afsluiten"
 
 #: src/etc/inc/priv.defs.inc:103
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Systeem Afsluiten' pagina."
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr ""
+msgstr "WebCfg - Diagnose: Begrenzer Info"
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Begrenzer Info' pagina."
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
-msgstr ""
+msgstr "WebCfg - Diagnose: NDP Tabel"
 
 #: src/etc/inc/priv.defs.inc:115
 msgid "Allow access to the 'Diagnostics: NDP Table' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: NDP Tabel' pagina."
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
-msgstr ""
+msgstr "WebCfg - Diagnose: Packet Capture"
 
 #: src/etc/inc/priv.defs.inc:121
 msgid "Allow access to the 'Diagnostics: Packet Capture' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Packet Capture' pagina."
 
 #: src/etc/inc/priv.defs.inc:126
 msgid "WebCfg - Diagnostics: pfInfo"
-msgstr ""
+msgstr "WebCfg - Diagnose: pfInfo"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: pfInfo' pagina."
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
-msgstr ""
+msgstr "WebCfg - Diagnose: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: pfTop' pagina."
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
-msgstr ""
+msgstr "WebCfg - Diagnose: Ping"
 
 #: src/etc/inc/priv.defs.inc:139
 msgid "Allow access to the 'Diagnostics: Ping' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Ping' pagina."
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr ""
+msgstr "WebCfg - Diagnose: Opnieuw Opstarten"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Opnieuw Opstarten' pagina."
 
 #: src/etc/inc/priv.defs.inc:150
 msgid "WebCfg - Diagnostics: Reset states"
-msgstr ""
+msgstr "ẆebCfg - Diagnose: States Resetten"
 
 #: src/etc/inc/priv.defs.inc:151
 msgid "Allow access to the 'Diagnostics: Reset states' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: States Resetten' pagina."
 
 #: src/etc/inc/priv.defs.inc:156
 msgid "WebCfg - Diagnostics: Routing tables"
-msgstr ""
+msgstr "WebCfg - Diagnose: Routing Tabellen"
 
 #: src/etc/inc/priv.defs.inc:157
 msgid "Allow access to the 'Diagnostics: Routing tables' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Routing Tabellen' pagina."
 
 #: src/etc/inc/priv.defs.inc:162
 msgid "WebCfg - Diagnostics: S.M.A.R.T. Status"
-msgstr ""
+msgstr "WebCfg - Diagnose: S.M.A.R.T. Status"
 
 #: src/etc/inc/priv.defs.inc:163
 msgid "Allow access to the 'Diagnostics: S.M.A.R.T. Status' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: S.M.A.R.T. Status' pagina."
 
 #: src/etc/inc/priv.defs.inc:168
 msgid "WebCfg - Diagnostics: Sockets"
-msgstr ""
+msgstr "WebCfg - Diagnose: Sockets"
 
 #: src/etc/inc/priv.defs.inc:169
 msgid "Allow access to the 'Diagnostics: Sockets' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Sockets' pagina."
 
 #: src/etc/inc/priv.defs.inc:174
 msgid "WebCfg - Diagnostics: States Summary"
-msgstr ""
+msgstr "WebCfg - Diagnose: States Samenvatting"
 
 #: src/etc/inc/priv.defs.inc:175
 msgid "Allow access to the 'Diagnostics: States Summary' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: States Samenvatting' pagina."
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr ""
+msgstr "WebCfg - Diagnose: Systeem Activiteit"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Systeem Activiteit' pagina."
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
-msgstr ""
+msgstr "WebCfg - Diagnose: pf Tabel IP adressen"
 
 #: src/etc/inc/priv.defs.inc:187
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Tabellen' pagina."
 
 #: src/etc/inc/priv.defs.inc:192
 msgid "WebCfg - Diagnostics: Test Port"
-msgstr ""
+msgstr "WebCfg - Diagnose: Test Poort"
 
 #: src/etc/inc/priv.defs.inc:193
 msgid "Allow access to the 'Diagnostics: Test Port' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Test Poort' pagina."
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr ""
+msgstr "WebCfg - Diagnose: Traceroute"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Traceroute' pagina."
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
-msgstr ""
+msgstr "WebCfg - Firewall: Makkelijke Regel toevoegen/status"
 
 #: src/etc/inc/priv.defs.inc:205
 msgid "Allow access to the 'Firewall: Easy Rule' add/status page."
 msgstr ""
+"Geeft toegang tot de 'Firewall: Makkelijke Regel toevoegen/status' pagina."
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
-msgstr ""
+msgstr "WebCfg - Firewall: Aliassen"
 
 #: src/etc/inc/priv.defs.inc:211
 msgid "Allow access to the 'Firewall: Aliases' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Aliassen' pagina."
 
 #: src/etc/inc/priv.defs.inc:216
 msgid "WebCfg - Firewall: Alias: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Alias: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:217
 msgid "Allow access to the 'Firewall: Alias: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Alias: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:222
 msgid "WebCfg - Firewall: Alias: Import"
-msgstr ""
+msgstr "WebCfg - Firewall: Alias: Importeer"
 
 #: src/etc/inc/priv.defs.inc:223
 msgid "Allow access to the 'Firewall: Alias: Import' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Alias: Importeer' pagina."
 
 #: src/etc/inc/priv.defs.inc:228
 msgid "WebCfg - Firewall: NAT: Port Forward"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Poort Doorsturen"
 
 #: src/etc/inc/priv.defs.inc:229
 msgid "Allow access to the 'Firewall: NAT: Port Forward' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: Poort Doorsturen' pagina."
 
 #: src/etc/inc/priv.defs.inc:234
 msgid "WebCfg - Firewall: NAT: 1:1"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: 1:1"
 
 #: src/etc/inc/priv.defs.inc:235
 msgid "Allow access to the 'Firewall: NAT: 1:1' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: 1:1' pagina."
 
 #: src/etc/inc/priv.defs.inc:240
 msgid "WebCfg - Firewall: NAT: 1:1: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: 1:1: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:241
 msgid "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: 1:1: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:246
 msgid "WebCfg - Firewall: NAT: Port Forward: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Poort Doorsturen: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:247
 msgid "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
 msgstr ""
+"Geeft toegang tot de 'Firewall: NAT: Poort Doorsturen: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:252
 msgid "WebCfg - Firewall: NAT: NPt"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: NPt"
 
 #: src/etc/inc/priv.defs.inc:253
 msgid "Allow access to the 'Firewall: NAT: NPt' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: NPt' pagina."
 
 #: src/etc/inc/priv.defs.inc:258
 msgid "WebCfg - Firewall: NAT: NPt: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: NPt: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:259
 msgid "Allow access to the 'Firewall: NAT: NPt: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: NPt: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:264
 msgid "WebCfg - Firewall: NAT: Outbound"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Uitgaand"
 
 #: src/etc/inc/priv.defs.inc:265
 msgid "Allow access to the 'Firewall: NAT: Outbound' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: Uitgaand' pagina."
 
 #: src/etc/inc/priv.defs.inc:270
 msgid "WebCfg - Firewall: NAT: Outbound: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Uitgaand: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:271
 msgid "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: NAT: Uitgaand: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
-msgstr ""
+msgstr "WebCfg - Firewall: Regels"
 
 #: src/etc/inc/priv.defs.inc:277
 msgid "Allow access to the 'Firewall: Rules' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Regels' pagina."
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Regels: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Regels: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
-msgstr ""
+msgstr "WebCfg - Firewall: Schema's"
 
 #: src/etc/inc/priv.defs.inc:289
 msgid "Allow access to the 'Firewall: Schedules' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Schema's' pagina."
 
 #: src/etc/inc/priv.defs.inc:294
 msgid "WebCfg - Firewall: Schedules: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Schema's: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:295
 msgid "Allow access to the 'Firewall: Schedules: Edit' page."
-msgstr ""
+msgstr "Geef ttoegang tot de 'Firewall: Schema's: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper"
 
 #: src/etc/inc/priv.defs.inc:301
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Traffic Shaper' pagina."
 
 #: src/etc/inc/priv.defs.inc:306
 msgid "WebCfg - Firewall: Traffic Shaper: Queues"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Wachtrijen"
 
 #: src/etc/inc/priv.defs.inc:307
 msgid "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Traffic Shaper: Wachtrijen' pagina."
 
 #: src/etc/inc/priv.defs.inc:312
 msgid "WebCfg - Firewall: Traffic Shaper: Limiters"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Begrenzers"
 
 #: src/etc/inc/priv.defs.inc:313
 msgid "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Traffic Shaper: Begrenzers' pagina."
 
 #: src/etc/inc/priv.defs.inc:318
 msgid "WebCfg - Firewall: Traffic Shaper: Wizard"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Wizard"
 
 #: src/etc/inc/priv.defs.inc:319
 msgid "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Traffic Shaper: Wizard' pagina."
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
-msgstr ""
+msgstr "WebCfg - Firewall: Virtuele IP Adressen"
 
 #: src/etc/inc/priv.defs.inc:325
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Virtuele IP Adressen' pagina."
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Virtuele IP Adressen: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Firewall: Virtuele IP Adressen: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
-msgstr ""
+msgstr "WebCfg - AJAX: Geef Dienstverleners"
 
 #: src/etc/inc/priv.defs.inc:337
 msgid "Allow access to the 'AJAX: Service Providers' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'AJAX: Geef Dienstverleners' pagina."
 
 #: src/etc/inc/priv.defs.inc:342
 msgid "WebCfg - AJAX: Get Stats"
-msgstr ""
+msgstr "WebCfg - AJAX: Geef Statistieken"
 
 #: src/etc/inc/priv.defs.inc:343
 msgid "Allow access to the 'AJAX: Get Stats' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'AJAX: Geef Statistieken' pagina."
 
 #: src/etc/inc/priv.defs.inc:348
 msgid "WebCfg - Diagnostics: Interface Traffic"
-msgstr ""
+msgstr "WebCfg - Diagnose: Interface Verkeer"
 
 #: src/etc/inc/priv.defs.inc:349
 msgid "Allow access to the 'Diagnostics: Interface Traffic' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: Interface Verkeer' pagina."
 
 #: src/etc/inc/priv.defs.inc:354
 msgid "WebCfg - Diagnostics: CPU Utilization"
-msgstr ""
+msgstr "WebCfg - Diagnose: CPU Verbruik"
 
 #: src/etc/inc/priv.defs.inc:355
 msgid "Allow access to the 'Diagnostics: CPU Utilization' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diagnose: CPU Verbruik' pagina."
 
 #: src/etc/inc/priv.defs.inc:361
 msgid "WebCfg - XMLRPC Interface Stats"
-msgstr ""
+msgstr "WebCfg - XMLRPC Interface Statistieken"
 
 #: src/etc/inc/priv.defs.inc:362
 msgid "Allow access to the 'XMLRPC Interface Stats' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'XMLRPC Interface Statistieken' pagina."
 
 #: src/etc/inc/priv.defs.inc:367
 msgid "WebCfg - System: Login / Logout / Dashboard"
-msgstr ""
+msgstr "WebCfg - Systeem: Aanmelden / Afmelden / Dashboard"
 
 #: src/etc/inc/priv.defs.inc:368
 msgid "Allow access to the 'System: Login / Logout' page and Dashboard."
 msgstr ""
+"Geeft toegang tot de 'Systeem: Aanmelden / Afmelden' pagina en het Dashboard."
+""
 
 #: src/etc/inc/priv.defs.inc:373
 msgid "WebCfg - Interfaces: WAN"
-msgstr ""
+msgstr "WebCfg - Interfaces: WAN"
 
 #: src/etc/inc/priv.defs.inc:374
 msgid "Allow access to the 'Interfaces' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: WAN' pagina."
 
 #: src/etc/inc/priv.defs.inc:379
 msgid "WebCfg - Interfaces: Interface Assignments"
-msgstr ""
+msgstr "WebCfg - Interfaces: Interface Toewijzen"
 
 #: src/etc/inc/priv.defs.inc:380
 msgid "Allow access to the 'Interfaces: Interface Assignments' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Interface Toewijzen' pagina."
 
 #: src/etc/inc/priv.defs.inc:385
 msgid "WebCfg - Interfaces: Bridge"
-msgstr ""
+msgstr "WebCfg - Interfaces: Bridge"
 
 #: src/etc/inc/priv.defs.inc:386
 msgid "Allow access to the 'Interfaces: Bridge' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Bridge' pagina."
 
 #: src/etc/inc/priv.defs.inc:391
 msgid "WebCfg - Interfaces: Bridge edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: Bridge: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:392
 msgid "Allow access to the 'Interfaces: Bridge : Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Bridge: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:397
 msgid "WebCfg - Interfaces: GIF"
-msgstr ""
+msgstr "WebCfg - Interfaces: GIF"
 
 #: src/etc/inc/priv.defs.inc:398
 msgid "Allow access to the 'Interfaces: GIF' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: GIF' pagina."
 
 #: src/etc/inc/priv.defs.inc:403
 msgid "WebCfg - Interfaces: GIF: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: GIF: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:404
 msgid "Allow access to the 'Interfaces: GIF: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: GIF: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:409
 msgid "WebCfg - Interfaces: GRE"
-msgstr ""
+msgstr "WebCfg - Interfaces: GRE"
 
 #: src/etc/inc/priv.defs.inc:410
 msgid "Allow access to the 'Interfaces: GRE' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: GRE' pagina."
 
 #: src/etc/inc/priv.defs.inc:415
 msgid "WebCfg - Interfaces: GRE: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: GRE: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:416
 msgid "Allow access to the 'Interfaces: GRE: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: GRE: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:421
 msgid "WebCfg - Interfaces: Groups"
-msgstr ""
+msgstr "WebCfg - Interfaces: Groups"
 
 #: src/etc/inc/priv.defs.inc:422
 msgid "Create interface groups"
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Groups' pagina."
 
 #: src/etc/inc/priv.defs.inc:427
 msgid "WebCfg - Interfaces: Groups: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: Groups: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:428
 msgid "Allow access to the 'Interfaces: Groups: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Groups: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:433
 msgid "WebCfg - Interfaces: LAGG:"
-msgstr ""
+msgstr "WebCfg - Interfaces: LAGG"
 
 #: src/etc/inc/priv.defs.inc:434
 msgid "Allow access to the 'Interfaces: LAGG' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: LAGG' pagina."
 
 #: src/etc/inc/priv.defs.inc:439
 msgid "WebCfg - Interfaces: LAGG: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: LAGG: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:440
 msgid "Allow access to the 'Interfaces: LAGG: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: LAGG: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:445
 msgid "WebCfg - Interfaces: PPPs"
-msgstr ""
+msgstr "WebCfg - Interfaces: PPPs"
 
 #: src/etc/inc/priv.defs.inc:446
 msgid "Allow access to the 'Interfaces: PPPs' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: PPPs' pagina."
 
 #: src/etc/inc/priv.defs.inc:451
 msgid "WebCfg - Interfaces: PPPs: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: PPPs: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:452
 msgid "Allow access to the 'Interfaces: PPPs: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: PPPs: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:457
 msgid "WebCfg - Interfaces: QinQ"
-msgstr ""
+msgstr "WebCfg - Interfaces QinQ"
 
 #: src/etc/inc/priv.defs.inc:458
 msgid "Allow access to the 'Interfaces: QinQ' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces QinQ' pagina."
 
 #: src/etc/inc/priv.defs.inc:463
 msgid "WebCfg - Interfaces: QinQ: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces QinQ: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:464
 msgid "Allow access to 'Interfaces: QinQ: Edit' page"
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces QinQ: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:469
 msgid "WebCfg - Interfaces: VLAN"
-msgstr ""
+msgstr "WebCfg - Interfaces: VLAN"
 
 #: src/etc/inc/priv.defs.inc:470
 msgid "Allow access to the 'Interfaces: VLAN' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: VLAN' pagina."
 
 #: src/etc/inc/priv.defs.inc:475
 msgid "WebCfg - Interfaces: VLAN: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: VLAN: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:476
 msgid "Allow access to the 'Interfaces: VLAN: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: VLAN: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:481
 msgid "WebCfg - Interfaces: Wireless"
-msgstr ""
+msgstr "WebCfg - Interfaces: Draadloos"
 
 #: src/etc/inc/priv.defs.inc:482
 msgid "Allow access to the 'Interfaces: Wireless' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Draadloos' pagina."
 
 #: src/etc/inc/priv.defs.inc:487
 msgid "WebCfg - Interfaces: Wireless: Edit"
-msgstr ""
+msgstr "WebCfg - Interfaces: Draadloos: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:488
 msgid "Allow access to the 'Interfaces: Wireless: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Interfaces: Draadloos: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:493
 msgid "WebCfg - System: License"
-msgstr ""
+msgstr "WebCfg - Systeem: Licentie"
 
 #: src/etc/inc/priv.defs.inc:494
 msgid "Allow access to the 'System: License' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Systeem: Licentie' pagina."
 
 #: src/etc/inc/priv.defs.inc:499
 msgid "WebCfg - Services: Load Balancer: Monitors"
-msgstr ""
+msgstr "WebCfg - Diensten: Load Balancer: Monitors"
 
 #: src/etc/inc/priv.defs.inc:500
 msgid "Allow access to the 'Services: Load Balancer: Monitors' page."
-msgstr ""
+msgstr "Geef toegang tot de 'Diensten: Load Balancer: Monitors' pagina."
 
 #: src/etc/inc/priv.defs.inc:505
 msgid "WebCfg - Services: Load Balancer: Monitor: Edit"
-msgstr ""
+msgstr "WebCfg - Diensten: Load Balancer: Monitor: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:506
 msgid "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
 msgstr ""
+"Geef toegang tot de 'Diensten: Load Balancer: Monitor: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:511
 msgid "WebCfg - Load Balancer: Pool"
-msgstr ""
+msgstr "WebCfg - Load Balancer: Lijst"
 
 #: src/etc/inc/priv.defs.inc:512
 msgid "Allow access to the 'Load Balancer: Pool' page."
@@ -4490,7 +4657,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:523
 msgid "WebCfg - Services: Load Balancer: Settings"
-msgstr ""
+msgstr "WebCfg - Diensten: Load Balancer: Instellingen"
 
 #: src/etc/inc/priv.defs.inc:524
 msgid "Allow access to the 'Settings: Load Balancer: Settings' page."
@@ -4498,191 +4665,209 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:529
 msgid "WebCfg - Services: Load Balancer: Virtual Servers"
-msgstr ""
+msgstr "WebCfg - Diensten: Load Balancer: Virtuele Servers"
 
 #: src/etc/inc/priv.defs.inc:530
 msgid "Allow access to the 'Services: Load Balancer: Virtual Servers' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Load Balancer: Virtuele Servers' pagina."
 
 #: src/etc/inc/priv.defs.inc:535
 msgid "WebCfg - Load Balancer: Virtual Server: Edit"
-msgstr ""
+msgstr "WebCfg - Load Balancer: Virtuele Servers: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:536
 msgid "Allow access to the 'Load Balancer: Virtual Server: Edit' page."
 msgstr ""
+"Geeft toegang tot de 'Load Balancer: Virtuele Servers: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:541
 msgid "WebCfg - Package: Settings"
-msgstr ""
+msgstr "WebCfg - Pakket: Instellingen"
 
 #: src/etc/inc/priv.defs.inc:542
 msgid "Allow access to the 'Package: Settings' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Pakket: Instellingen' pagina."
 
 #: src/etc/inc/priv.defs.inc:547
 msgid "WebCfg - Package: Edit"
-msgstr ""
+msgstr "WebCfg - Pakket: Bewerk"
 
 #: src/etc/inc/priv.defs.inc:548
 msgid "Allow access to the 'Package: Edit' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Pakket: Bewerk' pagina."
 
 #: src/etc/inc/priv.defs.inc:553
 msgid "WebCfg - System: Package Manager"
-msgstr ""
+msgstr "ẆebCfg - Systeem: Pakket Beheerder"
 
 #: src/etc/inc/priv.defs.inc:554
 msgid "Allow access to the 'System: Package Manager' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Systeem: Pakket Beheerder' pagina."
 
 #: src/etc/inc/priv.defs.inc:559
 msgid "WebCfg - System: Package Manager: Install Package"
-msgstr ""
+msgstr "WebCfg - Systeem: Pakket Beheerder: Installeer Pakket"
 
 #: src/etc/inc/priv.defs.inc:560
 msgid "Allow access to the 'System: Package Manager: Install Package' page."
 msgstr ""
+"Geeft toegang tot de 'Systeem: Pakket Beheerder: Installeer Pakket' pagina."
 
 #: src/etc/inc/priv.defs.inc:565
 msgid "WebCfg - System: Package Manager: Installed"
-msgstr ""
+msgstr "WebCfg - Systeem: Pakket Beheerder: Geïnstalleerd"
 
 #: src/etc/inc/priv.defs.inc:566
 msgid "Allow access to the 'System: Package Manager: Installed' page."
 msgstr ""
+"Geeft toegang tot de 'Systeem: Pakket Beheerder: Geïnstalleerd' pagina."
 
 #: src/etc/inc/priv.defs.inc:571
 msgid "WebCfg - Services: Captive Portal"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal"
 
 #: src/etc/inc/priv.defs.inc:572
 msgid "Allow access to the 'Services: Captive Portal' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal' pagina."
 
 #: src/etc/inc/priv.defs.inc:577
 msgid "WebCfg - Services: Captive Portal: File Manager"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Bestandsbeheer"
 
 #: src/etc/inc/priv.defs.inc:578
 msgid "Allow access to the 'Services: Captive Portal: File Manager' page."
 msgstr ""
+"Geeft toegang tot de 'WebCfg - Diensten: Captive Portal: Bestandsbeheer' "
+"pagina."
 
 #: src/etc/inc/priv.defs.inc:583
 msgid "WebCfg - Services: Captive Portal: Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Toegestane Hostnames"
 
 #: src/etc/inc/priv.defs.inc:584
 msgid ""
 "Allow access to the 'Services: Captive Portal: Allowed Hostnames' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Captive Portal: Toegestane Hostnames' pagina."
+""
 
 #: src/etc/inc/priv.defs.inc:589
 msgid "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Bewerk Toegestane Hostnames"
 
 #: src/etc/inc/priv.defs.inc:590
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Captive Portal: Bewerk Toegestane Hostnames' "
+"pagina."
 
 #: src/etc/inc/priv.defs.inc:595
 msgid "WebCfg - Services: Captive Portal: Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Toegestane IPs"
 
 #: src/etc/inc/priv.defs.inc:596
 msgid "Allow access to the 'Services: Captive Portal: Allowed IPs' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Captive Portal: Toegestane IPs' pagina."
 
 #: src/etc/inc/priv.defs.inc:601
 msgid "WebCfg - Services: Captive Portal: Edit Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Bewerk Toegestane IPs"
 
 #: src/etc/inc/priv.defs.inc:602
 msgid "Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Captive Portal: Bewerk Toegestane IPs' "
+"pagina."
 
 #: src/etc/inc/priv.defs.inc:607
 msgid "WebCfg - Services: Captive Portal: Mac Addresses"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: MAC adressen"
 
 #: src/etc/inc/priv.defs.inc:608
 msgid "Allow access to the 'Services: Captive Portal: Mac Addresses' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal: MAC adressen' pagina."
 
 #: src/etc/inc/priv.defs.inc:613
 msgid "WebCfg - Services: Captive Portal: Edit MAC Addresses"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Bewerk MAC adressen"
 
 #: src/etc/inc/priv.defs.inc:614
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal: Bewerk MAC adressen'"
 
 #: src/etc/inc/priv.defs.inc:619
 msgid "WebCfg - Services: Captive Portal Vouchers"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal Couponnen"
 
 #: src/etc/inc/priv.defs.inc:620
 msgid "Allow access to the 'Services: Captive Portal Vouchers' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal Couponnen' pagina."
 
 #: src/etc/inc/priv.defs.inc:625
 msgid "WebCfg - Services: Captive Portal Voucher Rolls"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal Coupon Lijsten"
 
 #: src/etc/inc/priv.defs.inc:626
 msgid ""
 "Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page."
 msgstr ""
+"Geeft toegang tot de 'Diensten: Captive Portal Bewerk Coupon Lijsten' pagina."
+""
 
 #: src/etc/inc/priv.defs.inc:631
 msgid "WebCfg - Services: Captive Portal Zones"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal Zones"
 
 #: src/etc/inc/priv.defs.inc:632
 msgid "Allow access to the 'Services: Captive Portal Zones' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal Zones' pagina."
 
 #: src/etc/inc/priv.defs.inc:637
 msgid "WebCfg - Services: Captive Portal: Edit Zones"
-msgstr ""
+msgstr "WebCfg - Diensten: Captive Portal: Bewerk Zones"
 
 #: src/etc/inc/priv.defs.inc:638
 msgid "Allow access to the 'Services: Captive Portal: Edit Zones' page."
-msgstr ""
+msgstr "Geeft toegang tot de 'Diensten: Captive Portal: Bewerk Zones' pagina."
 
 #: src/etc/inc/priv.defs.inc:643
 msgid "WebCfg - Services: Check IP Service"
-msgstr ""
+msgstr "WebCfg - Diensten: Controleer IP Dienst"
 
 #: src/etc/inc/priv.defs.inc:644
 msgid "Allow access to the 'Services: Check IP Service' page."
-msgstr ""
+msgstr "Geef toegang tot de 'Diensten: Controleer IP Dienst' pagina."
 
 #: src/etc/inc/priv.defs.inc:649
 msgid "WebCfg - Services: Check IP Service: Edit"
-msgstr ""
+msgstr "WebCfg - Diensten: Controleer IP Dienst: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:650
 msgid "Allow access to the 'Services: Check IP Service: Edit' page."
 msgstr ""
+"Geef toegang tot de 'Diensten: Controleer IP Dienst: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:655
 msgid "WebCfg - Services: DHCP Server"
-msgstr ""
+msgstr "WebCfg - Diensten: DHCP Server"
 
 #: src/etc/inc/priv.defs.inc:656
 msgid "Allow access to the 'Services: DHCP Server' page."
-msgstr ""
+msgstr "Geef toegang tot de 'Diensten: DHCP Server' pagina."
 
 #: src/etc/inc/priv.defs.inc:661
 msgid "WebCfg - Services: DHCP Server: Edit static mapping"
-msgstr ""
+msgstr "WebCfg - Diensten: DHCP Server: Bewerk statische mapping"
 
 #: src/etc/inc/priv.defs.inc:662
 msgid "Allow access to the 'Services: DHCP Server: Edit static mapping' page."
 msgstr ""
+"Geef toegang tot de 'Diensten: DHCP Server: Bewerk statische mapping' pagina."
+""
 
 #: src/etc/inc/priv.defs.inc:667
 msgid "WebCfg - Services: DHCP Relay"
@@ -4694,15 +4879,15 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:673
 msgid "WebCfg - Services: DHCPv6 Server"
-msgstr ""
+msgstr "WebCfg - Diensten: DHCPv6 Server"
 
 #: src/etc/inc/priv.defs.inc:674
 msgid "Allow access to the 'Services: DHCPv6 Server' page."
-msgstr ""
+msgstr "Geef toegang tot de 'Diensten: DHCPv6 Server' pagina."
 
 #: src/etc/inc/priv.defs.inc:679
 msgid "WebCfg - Services: DHCPv6 Server: Edit static mapping"
-msgstr ""
+msgstr "WebCfg - Diensten: DHCPv6 Server: Bewerk statische mapping"
 
 #: src/etc/inc/priv.defs.inc:680
 msgid ""
@@ -6069,7 +6254,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:260
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1153 src/usr/local/www/interfaces.php:495
+#: src/usr/local/www/guiconfig.inc:1154 src/usr/local/www/interfaces.php:495
 #: src/usr/local/www/interfaces.php:1897 src/usr/local/www/interfaces.php:3220
 #: src/usr/local/www/interfaces_bridge.php:104
 #: src/usr/local/www/interfaces_bridge_edit.php:404
@@ -8364,7 +8549,7 @@ msgstr ""
 msgid "Keep Configuration"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:219
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:373
 msgid "DNS Lookup"
 msgstr ""
@@ -8377,15 +8562,15 @@ msgstr ""
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:135
+#: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:144
+#: src/usr/local/www/diag_dns.php:143
 msgid "No response"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3091 src/usr/local/www/interfaces.php:3115
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8405,12 +8590,12 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:186 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:437
 msgid "Host Name"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:189 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1137
@@ -8419,24 +8604,24 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:189
+#: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:207
+#: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:212
+#: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:214
+#: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:223 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8446,65 +8631,65 @@ msgstr ""
 msgid "*Hostname"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:233
+#: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:240
+#: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:242
+#: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:258 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:263
 msgid "Result"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:265
+#: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:282
+#: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:288
+#: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:305
+#: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:308 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:385
 msgid "Ping"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:311
+#: src/usr/local/www/diag_dns.php:310
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:314
+#: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
 msgstr ""
 
@@ -13984,11 +14169,11 @@ msgstr "Logbestand gestart"
 msgid "Currently viewing: "
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1143
+#: src/usr/local/www/guiconfig.inc:1144
 msgid "listing only first 10k items"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:1153
+#: src/usr/local/www/guiconfig.inc:1154
 #: src/usr/local/www/services_dhcp.php:1326
 #: src/usr/local/www/services_dhcpv6.php:944
 #: src/usr/local/www/system_advanced_sysctl.php:158
@@ -35057,19 +35242,21 @@ msgstr "Virtuele IP's"
 
 #: src/usr/local/www/system_hasync.php:297
 msgid "Traffic Shaper configuration "
-msgstr ""
+msgstr "Traffic Shaper configuratie"
 
 #: src/usr/local/www/system_hasync.php:305
+#, fuzzy
 msgid "Traffic Shaper Limiters configuration "
-msgstr ""
+msgstr "Traffic Shaper Limiters configuratie"
 
 #: src/usr/local/www/system_hasync.php:313
+#, fuzzy
 msgid "DNS Forwarder and DNS Resolver configurations "
-msgstr ""
+msgstr "DNS Forwarder en DNS Resolver configuratie"
 
 #: src/usr/local/www/system_hasync.php:321
 msgid "Captive Portal "
-msgstr ""
+msgstr "Captive Portal"
 
 #: src/usr/local/www/system_routes_edit.php:263
 msgid "Disable this static route"
@@ -35088,12 +35275,14 @@ msgid "Minimal"
 msgstr "Minimaal"
 
 #: src/usr/local/www/system_update_settings.php:242
+#, fuzzy
 msgid "Show Files"
-msgstr ""
+msgstr "Bestanden bekijken"
 
 #: src/usr/local/www/system_update_settings.php:249
+#, fuzzy
 msgid "Show Command"
-msgstr ""
+msgstr "Toon Commando"
 
 #: src/usr/local/www/system_update_settings.php:256
 msgid "Dry Run"
@@ -35104,9 +35293,12 @@ msgid "This user cannot login"
 msgstr "Deze gebruiker kan niet inloggen"
 
 #: src/usr/local/www/system_usermanager.php:778
+#, fuzzy
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr ""
+"Gebruik unieke aangepaste inferface opties en dashboard layout voor deze "
+"gebruiker."
 
 #: src/usr/local/www/system_usermanager.php:846
 msgid "Click to create a user certificate"
@@ -35125,8 +35317,9 @@ msgstr ""
 "geduld aub..."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
+#, fuzzy
 msgid "Provide a virtual IP address to clients"
-msgstr ""
+msgstr "Voorzie cliënten met een virtueel IP adres"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:511
 msgid "Provide a virtual IPv6 address to clients"
@@ -35211,7 +35404,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:263
 msgid "Enable IPCompression"
-msgstr ""
+msgstr "Activeer IPCompression"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:270
 msgid "Enable strict interface binding"
@@ -35226,20 +35419,22 @@ msgid "Enable MSS clamping on VPN traffic"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:315
+#, fuzzy
 msgid "Enable Unity Plugin"
-msgstr ""
+msgstr "Activeer Unity Plugin"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:322
 msgid "Enable strict Certificate Revocation List checking"
-msgstr ""
+msgstr "Schakel strikte Certificate Revocation List controle in"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:329
+#, fuzzy
 msgid "Initiate IKEv2 reauthentication with a make-before-break"
-msgstr ""
+msgstr "Initieer IKEv2 herauthenticatie met een make-before-break"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:338
 msgid "Enable bypass for LAN interface IP"
-msgstr ""
+msgstr "Schakel omzeil voor LAN interface IP in"
 
 #: src/usr/local/www/vpn_l2tp.php:193
 msgid "Enable L2TP server"
@@ -35251,15 +35446,15 @@ msgstr "Gebruik voor authenticatie een RADIUS server"
 
 #: src/usr/local/www/vpn_l2tp.php:286
 msgid "Enable RADIUS accounting"
-msgstr ""
+msgstr "Schakel RADIUS accounting in"
 
 #: src/usr/local/www/vpn_l2tp.php:306
 msgid "Issue IP Addresses via RADIUS server."
-msgstr ""
+msgstr "Geef IP adressen uit via de RADIUS server."
 
 #: src/usr/local/www/vpn_openvpn_client.php:538
 msgid "Infinitely resolve server "
-msgstr ""
+msgstr "Blijf oneindig de server zoeken"
 
 #: src/usr/local/www/vpn_openvpn_client.php:618
 #: src/usr/local/www/vpn_openvpn_server.php:757
@@ -35269,17 +35464,17 @@ msgstr "Gebruik een TLS Sleutel"
 #: src/usr/local/www/vpn_openvpn_client.php:628
 #: src/usr/local/www/vpn_openvpn_server.php:767
 msgid "Automatically generate a TLS Key."
-msgstr ""
+msgstr "Genereer automatisch een TLS sleutel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:684
 #: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Automatically generate a shared key"
-msgstr ""
+msgstr "Genereer automatisch een gedeelte sleutel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:713
 #: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable Negotiable Cryptographic Parameters"
-msgstr ""
+msgstr "Schakel Negotiable Cryptographic Parameters in"
 
 #: src/usr/local/www/vpn_openvpn_client.php:837
 #: src/usr/local/www/vpn_openvpn_server.php:1096
@@ -35287,88 +35482,107 @@ msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
 "packet value."
 msgstr ""
+"Zet de TOS IP header waarde van tunnel pakketten gelijk aan de waarde van "
+"het ingekapselde pakket."
 
 #: src/usr/local/www/vpn_openvpn_client.php:844
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr ""
+"Blokkeerd de server voor het toevoegen van routes aan de router-tabel van de "
+"cliënt."
 
 #: src/usr/local/www/vpn_openvpn_client.php:851
 msgid "Don't add or remove routes automatically"
-msgstr ""
+msgstr "Geen routes automatisch toevoegen of verwijderen"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:334
 msgid "Disable this override"
-msgstr ""
+msgstr "Schakel deze overschrijving uit"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Block this client connection based on its common name."
-msgstr ""
+msgstr "Blokkeer the verbinding van deze client op basis van de Common Name."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:423
 #: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Force all client generated traffic through the tunnel."
-msgstr ""
+msgstr "Forceer al het verkeer van de client door de tunnel."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:435
 msgid ""
 "Prevent this client from receiving any server-defined client settings. "
-msgstr ""
+msgstr "Voorkom dat deze cliënt instellingen van de server accepteerd."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:503
 #: src/usr/local/www/vpn_openvpn_server.php:1213
+#, fuzzy
 msgid "Provide an NTP server list to clients"
-msgstr ""
+msgstr "Voorzie cliënten met een NTP server lijst"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:531
 #: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Enable NetBIOS over TCP/IP"
-msgstr ""
+msgstr "Activeer NetBIOS over TCP/IP"
 
 #: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disable this server"
-msgstr ""
+msgstr "Deactiveer deze server"
 
 #: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Enforce match"
-msgstr ""
+msgstr "Dwing een overeenkomst af"
 
 #: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Allow clients on the bridge to obtain DHCP."
-msgstr ""
+msgstr "Sta toe dat cliënts op deze bridge  DHCP kunnen verkrijgen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push the selected Compression setting to connecting clients."
 msgstr ""
+"Duw de geselecteerde compressie-instellingen naar verbindende cliënten."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Allow communication between clients connected to this server"
-msgstr ""
+msgstr "Sta communicatie tussen verbonden cliënten toe."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1110
+#, fuzzy
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
+"Laat meerdere gelijktijdige verbindingen toe van cliënten met dezelfde "
+"Common Name."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1122
+#, fuzzy
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
+"Sta verbonden cliënten toe om hun verbinding te behouden wanneer hun IP "
+"adres veranderd."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
-msgstr ""
+msgstr "Bied een virtueel IP adres aan aan de cliënten (zie Tunnel Netwerk)."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1164
+#, fuzzy
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
+"Geef een DNS server lijst aan de cliënten. Adressen mogen alleen IPv4 of "
+"IPv6 zijn."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1199
+#, fuzzy
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
+"Blokkeer toegang tot DNS servers buiten het OpenVPN netwerk voor Windows 10 "
+"gebruikers, waardoor cliënten alleen gebruik kunnen maken van de opgegeven "
+"VPN DNS servers."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid ""

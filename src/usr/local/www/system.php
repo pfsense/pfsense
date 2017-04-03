@@ -62,6 +62,7 @@ $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+$pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
 $pconfig['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
@@ -271,6 +272,9 @@ if ($_POST) {
 			$config['system']['language'] = $_POST['language'];
 			set_language();
 		}
+
+		unset($config['system']['webgui']['interfacessort']);
+		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
@@ -576,6 +580,7 @@ gen_webguicss_field($section, $pconfig['webguicss']);
 gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+gen_interfacessort_field($section, $pconfig['interfacessort']);
 gen_associatedpanels_fields(
 	$section,
 	$pconfig['dashboardavailablewidgetspanel'],

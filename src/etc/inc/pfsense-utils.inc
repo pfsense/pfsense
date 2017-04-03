@@ -255,6 +255,25 @@ function gen_dashboardcolumns_field(&$section, $value) {
 	));
 }
 
+/****f* pfsense-utils/gen_interfacessort_field
+ * NAME
+ *   gen_interfacessort_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_interfacessort_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'interfacessort',
+		'Interfaces Sort',
+		'Sort Alphabetically',
+		$value
+	))->setHelp('If selected, lists of interfaces will be sorted by description, otherwise they are listed wan,lan,optn...');
+}
+
 /****f* pfsense-utils/gen_associatedpanels_fields
  * NAME
  *   gen_associatedpanels_fields
@@ -375,6 +394,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 	gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 	gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 	gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+	gen_interfacessort_field($section, $pconfig['interfacessort']);
 	gen_associatedpanels_fields(
 		$section,
 		$pconfig['dashboardavailablewidgetspanel'],

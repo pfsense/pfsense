@@ -40,6 +40,7 @@ require_once("shaper.inc");
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
+$pconfig['ipv6dontcreatelocaldns'] = isset($config['system']['ipv6dontcreatelocaldns']);
 $pconfig['global-v6duid'] = $config['system']['global-v6duid'];
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
@@ -84,6 +85,12 @@ if ($_POST) {
 			$config['system']['ipv6allow'] = true;
 		} else {
 			unset($config['system']['ipv6allow']);
+		}
+
+		if ($_POST['ipv6dontcreatelocaldns'] == "yes") {
+			$config['system']['ipv6dontcreatelocaldns'] = true;
+		} else {
+			unset($config['system']['ipv6dontcreatelocaldns']);
 		}
 
 		if ($_POST['prefer_ipv4'] == "yes") {
@@ -202,6 +209,16 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['prefer_ipv4']
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
+
+$section->addInput(new Form_Checkbox(
+	'ipv6dontcreatelocaldns',
+	'IPv6 DNS entry',
+	'Do not generate local IPv6 DNS entries for LAN interfaces',
+	$pconfig['ipv6dontcreatelocaldns']
+))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
+    'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
+	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
+	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
 $group = new Form_Group('DHCP6 DUID');
 

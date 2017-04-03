@@ -105,13 +105,6 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
-function config_lock() {
-	return;
-}
-function config_unlock() {
-	return;
-}
-
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;
@@ -1416,7 +1409,7 @@ function get_configured_interface_list_by_realif($only_opt = false, $withdisable
 
 /* return the configured interfaces list with their description. */
 function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
-	global $config;
+	global $config, $user_settings;
 
 	$iflist = array();
 
@@ -1433,8 +1426,11 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 			}
 		}
 	}
-	
-	asort($iflist);
+
+	if ($user_settings['webgui']['interfacessort']) {
+		asort($iflist);
+	}
+
 	return $iflist;
 }
 
@@ -2166,7 +2162,7 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

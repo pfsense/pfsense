@@ -275,6 +275,7 @@ function getAllowedPages($username, &$attributes = array()) {
 	$allowed_pages = array();
 	$allowed_groups = array();
 
+ 	phpsession_begin();
 	if ($_SESSION['remoteauth']) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		// cache auth results for a short time to ease load on auth services & logs
@@ -331,7 +332,7 @@ function getAllowedPages($username, &$attributes = array()) {
 //	log_error("debug: user {$username} pages = {$dbg_pages}");
 
 	$_SESSION['page-match'] = $allowed_pages;
-
+	phpsession_end(true);
 	return $allowed_pages;
 }
 

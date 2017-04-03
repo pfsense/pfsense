@@ -63,6 +63,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
 	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
 	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
 	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
 	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
@@ -328,6 +329,12 @@ if ($_POST['save']) {
 			$userent['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
 		} else {
 			unset($userent['webguihostnamemenu']);
+		}
+
+		if ($_POST['interfacessort']) {
+			$userent['interfacessort'] = true;
+		} else {
+			unset($userent['interfacessort']);
 		}
 
 		if ($_POST['dashboardavailablewidgetspanel']) {
@@ -976,6 +983,7 @@ events.push(function() {
 		hideInput('webguifixedmenu', !adv);
 		hideInput('webguihostnamemenu', !adv);
 		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('interfacessort', !adv);
 		hideCheckbox('dashboardavailablewidgetspanel', !adv);
 		hideCheckbox('systemlogsfilterpanel', !adv);
 		hideCheckbox('systemlogsmanagelogpanel', !adv);

@@ -20,10 +20,13 @@
  * limitations under the License.
  */
 
-require_once("globals.inc");
 require_once("captiveportal.inc");
-require_once("openvpn.inc");
+require_once("globals.inc");
+require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("openvpn.inc");
+require_once("system.inc");
+require_once("util.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
 require_once("gwlb.inc");
@@ -267,6 +270,11 @@ function get_services() {
 	$pconfig = array();
 	$pconfig['name'] = "ntpd";
 	$pconfig['description'] = gettext("NTP clock sync");
+	$services[] = $pconfig;
+
+	$pconfig = array();
+	$pconfig['name'] = "syslogd";
+	$pconfig['description'] = gettext("System Logger Daemon");
 	$services[] = $pconfig;
 
 	if (is_array($config['captiveportal'])) {
@@ -581,7 +589,6 @@ function service_control_start($name, $extras) {
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
-		case 'openntpd':
 			system_ntp_configure();
 			break;
 		case 'dpinger':
@@ -633,6 +640,9 @@ function service_control_start($name, $extras) {
 			break;
 		case 'watchdogd':
 			watchdogd_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			start_service($name);
@@ -702,7 +712,17 @@ function service_control_stop($name, $extras) {
 			}
 			break;
 		case 'relayd':
-			mwexec('pkill relayd');
+			sigkillbyname("relayd", "TERM");
+			break;
+		case 'syslogd':
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+				usleep(100000);
+			}
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+				usleep(100000);
+			}
 			break;
 		case 'watchdogd':
 			killbypid("{$g['varrun_path']}/watchdogd.pid");
@@ -779,6 +799,9 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'watchdogd':
 			watchdogd_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			restart_service($name);

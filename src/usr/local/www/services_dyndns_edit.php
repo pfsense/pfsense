@@ -270,7 +270,7 @@ $section->addInput(new Form_Select(
 	'*Interface to monitor',
 	$pconfig['interface'],
 	$interfacelist
-));
+))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
 
 $section->addInput(new Form_Select(
 	'requestif',
@@ -372,7 +372,7 @@ $section->addInput(new Form_Input(
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").%1$s' .
+))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
 			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(

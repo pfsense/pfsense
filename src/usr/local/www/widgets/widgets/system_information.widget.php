@@ -312,8 +312,7 @@ $rows_displayed = false;
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
-					$mbufstext = get_mbuf();
-					$mbufusage = get_mbuf(true);
+					get_mbuf($mbufstext, $mbufusage);
 				?>
 				<div class="progress">
 					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
@@ -500,8 +499,12 @@ function systemStatusGetUpdateStatus() {
 
 setTimeout('systemStatusGetUpdateStatus()', 4000);
 <?php endif; ?>
-
+var updateMeters_running = false;
 function updateMeters() {
+	if (updateMeters_running) {
+		return;
+	}
+	updateMeters_running = true;
 	url = '/getstats.php';
 
 	$.ajax(url, {
@@ -510,21 +513,15 @@ function updateMeters() {
 			response = data || "";
 			if (response != "")
 				stats(data);
+			updateMeters_running = false;
 		}
 	});
-
-	setTimer();
-
 }
 
 var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
-}
-
-function setTimer() {
-	timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -542,13 +539,11 @@ function stats(x) {
 	updateMemory(values[1]);
 	updateState(values[3]);
 	updateTemp(values[4]);
-	updateInterfaceStats(values[6]);
-	updateInterfaces(values[7]);
-	updateCpuFreq(values[8]);
-	updateLoadAverage(values[9]);
-	updateMbuf(values[10]);
-	updateMbufMeter(values[11]);
-	updateStateMeter(values[12]);
+	updateCpuFreq(values[6]);
+	updateLoadAverage(values[7]);
+	updateMbuf(values[8]);
+	updateMbufMeter(values[9]);
+	updateStateMeter(values[10]);
 }
 
 function updateMemory(x) {
@@ -638,56 +633,6 @@ function updateLoadAverage(x) {
 	}
 }
 
-function updateInterfaceStats(x) {
-	if (widgetActive("interface_statistics")) {
-		statistics_split = x.split(",");
-		var counter = 1;
-		for (var y=0; y<statistics_split.length-1; y++) {
-			if ($('#stat' + counter)) {
-				$('[id="stat' + counter + '"]').html(statistics_split[y]);
-				counter++;
-			}
-		}
-	}
-}
-
-function updateInterfaces(x) {
-	if (widgetActive("interfaces")) {
-		interfaces_split = x.split("~");
-		interfaces_split.each(function(iface){
-			details = iface.split("^");
-			if (details[2] == '') {
-				ipv4_details = '';
-			} else {
-				ipv4_details = details[2] + '<br />';
-			}
-			switch (details[1]) {
-				case "up":
-					$('[id="' + details[0] + '-up"]').css("display","inline");
-					$('[id="' + details[0] + '-down"]').css("display","none");
-					$('[id="' + details[0] + '-block"]').css("display","none");
-					$('[id="' + details[0] + '-ip"]').html(ipv4_details);
-					$('[id="' + details[0] + '-ipv6"]').html(details[3]);
-					$('[id="' + details[0] + '-media"]').html(details[4]);
-					break;
-				case "down":
-					$('[id="' + details[0] + '-down"]').css("display","inline");
-					$('[id="' + details[0] + '-up"]').css("display","none");
-					$('[id="' + details[0] + '-block"]').css("display","none");
-					$('[id="' + details[0] + '-ip"]').html(ipv4_details);
-					$('[id="' + details[0] + '-ipv6"]').html(details[3]);
-					$('[id="' + details[0] + '-media"]').html(details[4]);
-					break;
-				case "block":
-					$('[id="' + details[0] + '-block"]').css("display","inline");
-					$('[id="' + details[0] + '-down"]').css("display","none");
-					$('[id="' + details[0] + '-up"]').css("display","none");
-					break;
-			}
-		});
-	}
-}
-
 function widgetActive(x) {
 	var widget = $('#' + x + '-container');
 	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none")) {
@@ -699,7 +644,7 @@ function widgetActive(x) {
 
 /* start updater */
 events.push(function(){
-	setTimer();
+	timeout = window.setInterval(updateMeters, update_interval);
 });
 <?php endif; // $widget_first_instance ?>
 events.push(function(){

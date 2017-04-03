@@ -704,7 +704,8 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		id = args[3];
 	} else {
 		action = args[0];
-		name = args[1];
+		args.shift();
+		name = args.join('-');
 	}
 
 	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');

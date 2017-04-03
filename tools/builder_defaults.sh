@@ -44,7 +44,7 @@ if [ ! -d "${BUILDER_TOOLS}" ]; then
 	exit 1
 fi
 
-BUILD_CONF="${BUILDER_ROOT}/build.conf"
+BUILD_CONF=${BUILD_CONF:-"${BUILDER_ROOT}/build.conf"}
 
 # Ensure file exists
 if [ -f ${BUILD_CONF} ]; then

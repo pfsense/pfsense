@@ -4284,7 +4284,7 @@ initial-interval 1;
 	script "/sbin/dhclient-script";
 EOD;
 
-	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
+	if (validate_ipv4_list($wancfg['dhcprejectfrom'])) {
 		$dhclientconf .= <<<EOD
 
 	reject {$wancfg['dhcprejectfrom']};

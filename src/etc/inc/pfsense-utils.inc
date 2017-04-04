@@ -2833,8 +2833,7 @@ function get_locale_list() {
 	$locales = array(
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
-		"pt_BR" => gettext("Portuguese (Brazil)"),
-		"tr" => gettext("Turkish"),
+		"nb" => gettext("Norwegian Bokmål"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);

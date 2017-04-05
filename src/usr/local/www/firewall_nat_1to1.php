@@ -53,7 +53,7 @@ if (array_key_exists('order-store', $_POST)) {
 
 		$a_1to1 = $a_1to1_new;
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -76,7 +76,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	if ($a_1to1[$_POST['id']]) {
 		unset($a_1to1[$_POST['id']]);
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -92,7 +92,7 @@ if (isset($_POST['del_x'])) {
 			unset($a_1to1[$rulei]);
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -104,10 +104,12 @@ if (isset($_POST['del_x'])) {
 	if ($a_1to1[$_POST['id']]) {
 		if (isset($a_1to1[$_POST['id']]['disabled'])) {
 			unset($a_1to1[$_POST['id']]['disabled']);
+			$wc_msg = gettext('Firewall: NAT: 1:1 - enabled a NAT 1:1 rule.');
 		} else {
 			$a_1to1[$_POST['id']]['disabled'] = true;
+			$wc_msg = gettext('Firewall: NAT: 1:1 - disabled a NAT 1:1 rule.');
 		}
-		if (write_config(gettext("Firewall: NAT: 1:1, enable/disable NAT rule"))) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");

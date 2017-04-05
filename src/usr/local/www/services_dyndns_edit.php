@@ -111,6 +111,8 @@ if ($_POST['save'] || $_POST['force']) {
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
+		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
 
@@ -190,7 +192,7 @@ if ($_POST['save'] || $_POST['force']) {
 			$a_dyndns[$i]['id'] = $i;
 		}
 
-		write_config();
+		write_config(gettext("Dynamic DNS client configured."));
 
 		services_dyndns_configure_client($dyndns);
 
@@ -268,7 +270,7 @@ $section->addInput(new Form_Select(
 	'*Interface to monitor',
 	$pconfig['interface'],
 	$interfacelist
-));
+))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
 
 $section->addInput(new Form_Select(
 	'requestif',
@@ -372,8 +374,8 @@ $section->addInput(new Form_Input(
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").%1$s' .
-			'DNSimple: Enter the Record ID of record to update.', array('<br />'));
+))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
+			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(
 	'updateurl',

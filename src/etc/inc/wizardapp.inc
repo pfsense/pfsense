@@ -644,7 +644,7 @@ $othersplist = array();
 	$othersplist['smb'] = array();
 		/* Microsoft SMB and friends */
 		$othersplist['smb'][] = array('SMB1', 'tcp', '445', '445', 'both');
-		$othersplist['smb'][] = array('SMB2', 'tcp', '137-139', '137-139', 'both');
+		$othersplist['smb'][] = array('SMB2', 'tcp', '137', '139', 'both');
 
 	$othersplist['snmp'] = array();
 		/* Simple network management protocol */

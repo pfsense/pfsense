@@ -104,6 +104,10 @@ if ($_POST['save']) {
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
@@ -275,7 +279,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");

@@ -114,6 +114,10 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
 unset($input_errors);
 
 foreach ($_REQUEST as $key => $value) {
+	if ($key == 'descr') {
+		continue;
+	}
+
 	$temp = $value;
 	$newpost = htmlentities($temp);
 
@@ -255,20 +259,20 @@ if ($_POST['save']) {
 		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
+	if ($_POST['srcbeginport'] && !is_port_or_alias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
+	if ($_POST['srcendport'] && !is_port_or_alias($_POST['srcendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);
 	}
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstbeginport'] && !is_port_or_alias($_POST['dstbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstbeginport']);
 	}
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport'])) {
+	if ($_POST['dstendport'] && !is_port_or_alias($_POST['dstendport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 	}
 
-	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
+	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_port_or_alias($_POST['localbeginport']))) {
 		$input_errors[] = sprintf(gettext("%s is not a valid redirect target port. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
@@ -516,7 +520,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -584,14 +588,16 @@ function build_dsttype_list() {
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
-
+	
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (is_ipaddrv6($sn['subnet'])) {
 				continue;
 			}
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$templist[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -602,13 +608,18 @@ function build_dsttype_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+	
+	//Sort temp IP array and append onto main array
+	asort($templist);
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	return($list);
 }

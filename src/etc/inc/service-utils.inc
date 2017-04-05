@@ -20,13 +20,15 @@
  * limitations under the License.
  */
 
-require_once("globals.inc");
 require_once("captiveportal.inc");
-require_once("openvpn.inc");
+require_once("globals.inc");
+require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("openvpn.inc");
+require_once("system.inc");
+require_once("util.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
-require_once("gwlb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -261,6 +263,11 @@ function get_services() {
 	$pconfig['description'] = gettext("NTP clock sync");
 	$services[] = $pconfig;
 
+	$pconfig = array();
+	$pconfig['name'] = "syslogd";
+	$pconfig['description'] = gettext("System Logger Daemon");
+	$services[] = $pconfig;
+
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $zone => $setting) {
 			if (isset($setting['enable'])) {
@@ -478,16 +485,19 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false,
 	}
 	$fa_size = ($smallicon) ? "fa-1x" : "fa-lg";
 
-	$spacer = ($withthumbs || $withtext) ? " " : "";
 	if ($title == "state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$statustext}\"></i>{$spacer}";
+		$title = $statustext;
 	} elseif ($title == "service_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s Service is %2$s'), $service["name"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["name"], $statustext);
 	} elseif ($title == "description_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s Service is %2$s'), $service["description"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s Service is %2$s'), $service["description"], $statustext);
 	} elseif ($title == "description_service_state") {
-		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext('%1$s, %2$s Service is %3$s'), $service["description"], $service["name"], $statustext) . "\"></i>{$spacer}";
+		$title = sprintf(gettext('%1$s, %2$s Service is %3$s'), $service["description"], $service["name"], $statustext);
 	}
+
+	$spacer = ($withthumbs || $withtext) ? " " : "";
+
+	$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$title}\"><span style=\"display: none\">{$statustext}</span></i>{$spacer}";
 
 	$spacer = ($withtext) ? " " : "";
 	if ($withthumbs) {
@@ -567,7 +577,6 @@ function service_control_start($name, $extras) {
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
-		case 'openntpd':
 			system_ntp_configure();
 			break;
 		case 'dpinger':
@@ -615,6 +624,10 @@ function service_control_start($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure();
+			filter_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			start_service($name);
@@ -684,7 +697,17 @@ function service_control_stop($name, $extras) {
 			}
 			break;
 		case 'relayd':
-			mwexec('pkill relayd');
+			sigkillbyname("relayd", "TERM");
+			break;
+		case 'syslogd':
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+				usleep(100000);
+			}
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+				usleep(100000);
+			}
 			break;
 		default:
 			stop_service($name);
@@ -754,6 +777,10 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure(true);
+			filter_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			restart_service($name);

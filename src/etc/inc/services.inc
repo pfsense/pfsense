@@ -2524,8 +2524,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
+			$bindip = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);
+			$bindip = $wanip;
 		}
 
 		$wanipv6 = get_interface_ipv6($if);
@@ -2533,7 +2535,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
 		    escapeshellarg($dnsupdate['host']) .
 		    "_{$dnsupdate['server']}.cache";
-		$cacheFilev6 = $cacheFile . ".ipv6";
+		$cacheFilev6 = $g['conf_path'] .
+		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
+		    escapeshellarg($dnsupdate['host']) .
+		    "_{$dnsupdate['server']}_v6.cache";
 		$currentTime = time();
 
 		if (!$wanip && !$wanipv6) {
@@ -2617,6 +2622,7 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
+				$upinst .= "local {$bindip}\n";
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(
@@ -2864,6 +2870,8 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		if ($is_installed == true) {
 			unset($config['cron']['item'][$x]);
 			$change_message = "Removed cron job for %s";
+		} else {
+			$cron_changed = false;
 		}
 	}
 

@@ -63,11 +63,13 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
 	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
 	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
 	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
 	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
 	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['disablealiaspopupdetail'] = isset($a_user[$id]['disablealiaspopupdetail']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
@@ -329,6 +331,12 @@ if ($_POST['save']) {
 			unset($userent['webguihostnamemenu']);
 		}
 
+		if ($_POST['interfacessort']) {
+			$userent['interfacessort'] = true;
+		} else {
+			unset($userent['interfacessort']);
+		}
+
 		if ($_POST['dashboardavailablewidgetspanel']) {
 			$userent['dashboardavailablewidgetspanel'] = true;
 		} else {
@@ -357,6 +365,12 @@ if ($_POST['save']) {
 			$userent['webguileftcolumnhyper'] = true;
 		} else {
 			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['disablealiaspopupdetail']) {
+			$userent['disablealiaspopupdetail'] = true;
+		} else {
+			unset($userent['disablealiaspopupdetail']);
 		}
 
 		if ($_POST['pagenamefirst']) {
@@ -606,7 +620,7 @@ foreach ($a_user as $i => $userent):
 							<?=htmlspecialchars($userent['name'])?>
 						</td>
 						<td><?=htmlspecialchars($userent['descr'])?></td>
-						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>></i></td>
+						<td><i class="fa fa-<?= (isset($userent['disabled'])) ? 'ban" title="' . gettext("Disabled") . '"' : 'check" title="' . gettext("Enabled") . '"' ; ?>><span style='display: none'><?= (isset($userent['disabled'])) ? gettext("Disabled") : gettext("Enabled") ; ?></span></i></td>
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
@@ -969,11 +983,13 @@ events.push(function() {
 		hideInput('webguifixedmenu', !adv);
 		hideInput('webguihostnamemenu', !adv);
 		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('interfacessort', !adv);
 		hideCheckbox('dashboardavailablewidgetspanel', !adv);
 		hideCheckbox('systemlogsfilterpanel', !adv);
 		hideCheckbox('systemlogsmanagelogpanel', !adv);
 		hideCheckbox('statusmonitoringsettingspanel', !adv);
 		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('disablealiaspopupdetail', !adv);
 		hideCheckbox('pagenamefirst', !adv);
 	}
 

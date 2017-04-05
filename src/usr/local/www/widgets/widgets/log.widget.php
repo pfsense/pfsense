@@ -29,11 +29,11 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if ($_POST) {
+if ($_POST['widgetkey']) {
 	if (is_numeric($_POST['filterlogentries'])) {
-		$user_settings['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentries'] = $_POST['filterlogentries'];
 	} else {
-		unset($user_settings['widgets']['filterlogentries']);
+		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentries']);
 	}
 
 	$acts = array();
@@ -48,22 +48,22 @@ if ($_POST) {
 	}
 
 	if (!empty($acts)) {
-		$user_settings['widgets']['filterlogentriesacts'] = implode(" ", $acts);
+		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesacts'] = implode(" ", $acts);
 	} else {
-		unset($user_settings['widgets']['filterlogentriesacts']);
+		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesacts']);
 	}
 	unset($acts);
 
 	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
-		$user_settings['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
+		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
 	} else {
-		unset($user_settings['widgets']['filterlogentriesinterfaces']);
+		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces']);
 	}
 
 	if (is_numeric($_POST['filterlogentriesinterval'])) {
-		$user_settings['widgets']['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
+		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
 	} else {
-		unset($user_settings['widgets']['filterlogentriesinterval']);
+		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterval']);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Filter Log Entries via Dashboard."));
@@ -71,29 +71,38 @@ if ($_POST) {
 	exit(0);
 }
 
-$nentries = isset($user_settings['widgets']['filterlogentries']) ? $user_settings['widgets']['filterlogentries'] : 5;
+// When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
+// When the ajax call is made to refresh the firewall log table, 'widgetkey' comes in $_REQUEST.
+if ($_REQUEST['widgetkey']) {
+	$widgetkey = $_REQUEST['widgetkey'];
+}
+
+$iface_descr_arr = get_configured_interface_with_descr();
+
+$nentries = isset($user_settings['widgets'][$widgetkey]['filterlogentries']) ? $user_settings['widgets'][$widgetkey]['filterlogentries'] : 5;
 
 //set variables for log
-$nentriesacts		= isset($user_settings['widgets']['filterlogentriesacts'])		? $user_settings['widgets']['filterlogentriesacts']		: 'All';
-$nentriesinterfaces = isset($user_settings['widgets']['filterlogentriesinterfaces']) ? $user_settings['widgets']['filterlogentriesinterfaces'] : 'All';
+$nentriesacts		= isset($user_settings['widgets'][$widgetkey]['filterlogentriesacts']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesacts'] : 'All';
+$nentriesinterfaces = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterfaces']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterfaces'] : 'All';
 
 $filterfieldsarray = array(
 	"act" => $nentriesacts,
-	"interface" => $nentriesinterfaces
+	"interface" => isset($iface_descr_arr[$nentriesinterfaces]) ? $iface_descr_arr[$nentriesinterfaces] : $nentriesinterfaces
 );
 
-$nentriesinterval = isset($user_settings['widgets']['filterlogentriesinterval']) ? $user_settings['widgets']['filterlogentriesinterval'] : 60;
+$nentriesinterval = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
+
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
 ?>
 <script type="text/javascript">
 //<![CDATA[
-	var logWidgetLastRefresh = <?=time()?>;
+	var logWidgetLastRefresh<?=$widgetkey_nodash?> = <?=time()?>;
 //]]>
 </script>
-
 
 <table class="table table-striped table-hover">
 	<thead>
@@ -175,38 +184,39 @@ if (isset($_GET['lastsawtime'])) {
 
 <script type="text/javascript">
 //<![CDATA[
-function logWidgetUpdateFromServer() {
+function logWidgetUpdateFromServer<?=$widgetkey_nodash?>() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/log.widget.php',
-		data: 'lastsawtime='+logWidgetLastRefresh,
+		data: { lastsawtime: logWidgetLastRefresh<?=$widgetkey_nodash?>, widgetkey: "<?=$widgetkey?>"},
 		dataFilter: function(raw){
 			// We reload the entire widget, strip this block of javascript from it
 			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
 		},
 		dataType: 'html',
 		success: function(data){
-			$('#widget-log .panel-body').html(data);
+			$('#widget-<?=$widgetkey?> .panel-body').html(data);
 		}
 	});
 }
 
 events.push(function(){
-	setInterval('logWidgetUpdateFromServer()', <?=$nentriesinterval?>*1000);
+	setInterval('logWidgetUpdateFromServer<?=$widgetkey_nodash?>()', <?=$nentriesinterval?>*1000);
 });
 //]]>
 </script>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
-<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+<div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <?php
-$pconfig['nentries'] = isset($user_settings['widgets']['filterlogentries']) ? $user_settings['widgets']['filterlogentries'] : '';
-$pconfig['nentriesinterval'] = isset($user_settings['widgets']['filterlogentriesinterval']) ? $user_settings['widgets']['filterlogentriesinterval'] : '';
+$pconfig['nentries'] = isset($user_settings['widgets'][$widgetkey]['filterlogentries']) ? $user_settings['widgets'][$widgetkey]['filterlogentries'] : '';
+$pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : '';
 ?>
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
+		<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 		<div class="form-group">
 			<label for="filterlogentries" class="col-sm-4 control-label"><?=gettext('Number of entries')?></label>
 			<div class="col-sm-6">
@@ -240,7 +250,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets']['filterlogentries
 			</label>
 			<div class="col-sm-6 checkbox">
 				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
-			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
+			<?php foreach (array("All" => "ALL") + $iface_descr_arr as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>

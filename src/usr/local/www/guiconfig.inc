@@ -25,6 +25,7 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+include_once('phpsessionmanager.inc');
 if (!$nocsrf) {
 	function csrf_startup() {
 		global $config;
@@ -33,6 +34,9 @@ if (!$nocsrf) {
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		phpsession_end(true);
+	}
 }
 
 /* make sure nothing is cached */
@@ -437,6 +441,10 @@ function pprint_port($port) {
 	}
 
 	return $pport;
+}
+
+function insert_word_breaks_in_domain_name($domain_name) {
+	return str_replace('.', '<wbr>.', $domain_name);
 }
 
 function firewall_check_for_advanced_options(&$item) {
@@ -1087,13 +1095,14 @@ function add_package_tabs($tabgroup, &$tab_array) {
 	}
 
 	foreach ($config['installedpackages']['package'] as $pkg) {
-		$pkg_config = read_package_configurationfile($pkg['name']);
-
-		if (!isset($pkg_config['tabs']['tab'])) {
+		if (!is_array($pkg['tabs']['tab'])) {
 			continue;
 		}
 
-		foreach ($pkg_config['tabs']['tab'] as $tab) {
+		foreach ($pkg['tabs']['tab'] as $tab) {
+			if ($tab['tabgroup'] != $tabgroup) {
+				continue;
+			}
 			$tab_entry = array();
 			if ($tab['name']) {
 				$tab_entry[] = $tab['name'];
@@ -1106,7 +1115,7 @@ function add_package_tabs($tabgroup, &$tab_array) {
 }
 
 function alias_info_popup($alias_id) {
-	global $config;
+	global $config, $user_settings;
 
 	if (!is_array($config['aliases']['alias'][$alias_id])) {
 		return;
@@ -1116,7 +1125,13 @@ function alias_info_popup($alias_id) {
 	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
-	if ($alias['url']) {
+	if ($user_settings['webgui']['disablealiaspopupdetail']) {
+		if (strlen($alias['descr']) >= $maxlength) {
+			$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+		}
+
+		$content .= $alias['descr'];
+	} else if ($alias['url']) {
 		// TODO: Change it when pf supports tables with ports
 		if ($alias['type'] == "urltable") {
 			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
@@ -1158,10 +1173,6 @@ function alias_info_popup($alias_id) {
 
 		$content .= "</tbody>\n";
 		$content .= "<table>\n";
-	}
-
-	if (strlen($alias['descr']) >= $maxlength) {
-		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
 	}
 
 	return $content;
@@ -1212,18 +1223,20 @@ var_dump($content);die;
 }
 
 function set_flash_message($class, $msg) {
-	@session_start();
+	@phpsession_begin();
 	$_SESSION['flash_messages'][$class][] = $msg;
+	@phpsession_end(true);
 }
 
 function get_flash_message() {
-	@session_start();
+	@phpsession_begin();
 	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
 		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
 			print_info_box(implode("<br />", $flash_message), $class);
 		}
 		unset($_SESSION['flash_messages']);
 	}
+	@phpsession_end(true);
 }
 
 /* Retrieve GET or POST Value/State

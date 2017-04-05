@@ -35,6 +35,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		unlink_if_exists('/conf/trigger_initial_wizard');
+		unlink_if_exists('/conf/assign_complete');
 	</stepbeforeformdisplay>
 </step>
 <step>
@@ -555,7 +556,7 @@
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
-				write_config();
+				write_config(gettext("WAN interface configuration saved via pfSense setup wizard."));
 			}
 			if (!$config['interfaces']['lan']) {
 				header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
@@ -683,7 +684,7 @@
 			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
-			write_config();
+			write_config(gettext("Admin WebGUI password saved via pfSense setup wizard."));
 		} else {
 			print_info_box("Passwords do not match! Please press back in the browser window and correct.");
 			die;
@@ -746,7 +747,7 @@
 			}
 		}
 		unset($config['wizardtemp']);
-		write_config();
+		write_config(gettext("Configuration saved on completion of the pfSense setup wizard."));
 		reload_all();
 		mwexec_bg("/etc/rc.update_bogons.sh now");
 		]]>

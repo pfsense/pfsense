@@ -22,6 +22,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+echo ">>> Killing check_reload_status"
+/bin/pkill -9 check_reload_status
+sleep 2
+
 echo ">>> Killing php-fpm"
 /bin/pkill -F /var/run/php-fpm.pid
 sleep 2
@@ -40,3 +44,6 @@ echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_
 echo ">>> Starting php-fpm"
 /usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
+# restart check_reload_status
+echo ">>> Starting check_reload_status"
+/usr/bin/nice -n20 /usr/local/sbin/check_reload_status

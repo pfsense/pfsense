@@ -429,7 +429,7 @@ if ($_POST['save']) {
 					}
 				}
 			} else if ($_POST['type'] == "port") {
-				if (!is_port($input_address) && !is_portrange($input_address)) {
+				if (!is_port_or_range($input_address)) {
 					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
@@ -523,7 +523,7 @@ if ($_POST['save']) {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config()) {
+		if (write_config(gettext("Edited a firewall alias."))) {
 			mark_subsystem_dirty('aliases');
 		}
 
@@ -609,6 +609,26 @@ $pattern_str = array(
 	'url_ports'			=> '.*',				// Alias Name or URL
 	'urltable'			=> '.*',				// Alias Name or URL
 	'urltable_ports'	=> '.*'					// Alias Name or URL
+);
+
+$title_str = array(
+	'network'			=> 'An IPv4 network address like 1.2.3.0, an IPv6 network address like 1:2a:3b:ffff::0, IP address range, FQDN or an alias',
+	'host'				=> 'An IPv4 address like 1.2.3.4, an IPv6 address like 1:2a:3b:ffff::1, IP address range, FQDN or an alias',
+	'port'				=> 'A port number, port number range or an alias',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
+);
+
+$placeholder_str = array(
+	'network'			=> 'Address',
+	'host'				=> 'Address',
+	'port'				=> 'Port',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
 );
 
 $types = array(
@@ -715,7 +735,7 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		$tab == 'port' ? 'Port':'Address',
+		'Address',
 		$address,
 		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
@@ -787,9 +807,15 @@ events.push(function() {
 
 		// Set the input field pattern by tab type
 		var patternstr = <?=json_encode($pattern_str);?>;
-		for (i = 0; i < <?=$counter;?>; i++) {
-			$('#address' + i).prop('pattern', patternstr[tab]);
-		}
+		var titlestr = <?=json_encode($title_str);?>;
+		var placeholderstr = <?=json_encode($placeholder_str);?>;
+		$("[id^='address']").each(function () {
+			if (/^address[0-9]+$/.test(this.id)) {
+				$('#' + this.id).prop('pattern', patternstr[tab]);
+				$('#' + this.id).prop('title', titlestr[tab]);
+				$('#' + this.id).prop('placeholder', placeholderstr[tab]);
+			}
+		});
 
 		// Hide and disable rows other than the first
 		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));

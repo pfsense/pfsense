@@ -111,7 +111,9 @@
 			<ipaddr/>
 		</ipv6nat>
 	</diag>
-	<syslog/>
+	<syslog>
+		<filterdescriptions>1</filterdescriptions>
+	</syslog>
 	<nat>
 		<outbound>
 			<mode>automatic</mode>

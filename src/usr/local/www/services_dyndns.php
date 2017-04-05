@@ -45,7 +45,7 @@ if ($_POST['act'] == "del") {
 	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($hostname) . "{$conf['id']}.cache");
 	unset($a_dyndns[$_POST['id']]);
 
-	write_config();
+	write_config(gettext("Dynamic DNS client deleted."));
 	services_dyndns_configure();
 
 	header("Location: services_dyndns.php");
@@ -54,10 +54,12 @@ if ($_POST['act'] == "del") {
 	if ($a_dyndns[$_POST['id']]) {
 		if (isset($a_dyndns[$_POST['id']]['enable'])) {
 			unset($a_dyndns[$_POST['id']]['enable']);
+			$wc_msg = gettext('Dynamic DNS client disabled.');
 		} else {
 			$a_dyndns[$_POST['id']]['enable'] = true;
+			$wc_msg = gettext('Dynamic DNS client enabled.');
 		}
-		write_config();
+		write_config($wc_msg);
 		services_dyndns_configure();
 
 		header("Location: services_dyndns.php");
@@ -142,7 +144,7 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	print(htmlspecialchars($hostname));
+	print(insert_word_breaks_in_domain_name(htmlspecialchars($hostname)));
 ?>
 							</td>
 							<td>
@@ -151,7 +153,7 @@ foreach ($a_dyndns as $dyndns):
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
 		$ipaddr = dyndnsCheckIP($dyndns['interface']);
-		$cached_ip_s = explode(":", file_get_contents($filename));
+		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
 		if ($ipaddr != $cached_ip) {

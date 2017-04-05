@@ -68,8 +68,6 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-
-	)
 	/* input validation */
 	$reqdfields = explode(" ", "interface mac");
 	$reqdfieldsn = array(gettext("Interface"), gettext("MAC address"));
@@ -103,7 +101,7 @@ if ($_POST['save']) {
 		}
 		wol_sort();
 
-		write_config();
+		write_config(gettext("Configured a wake-on-LAN entry."));
 
 		header("Location: services_wol.php");
 		exit;

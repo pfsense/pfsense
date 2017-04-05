@@ -69,7 +69,7 @@ if ($_POST['act'] == "del") {
 			$savemsg = sprintf(gettext("Cannot delete schedule. Currently in use by %s."), $referenced_by);
 		} else {
 			unset($a_schedules[$_POST['id']]);
-			write_config();
+			write_config(gettext("Firewall schedule deleted."));
 			header("Location: firewall_schedule.php");
 			exit;
 		}

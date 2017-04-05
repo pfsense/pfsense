@@ -77,9 +77,12 @@ if ($_POST['act'] == "del") {
 	}
 	if (!empty($a_client[$id])) {
 		openvpn_delete('client', $a_client[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN client to server %1$s:%2$s %3$s'), $a_client[$id]['server_addr'], $a_client[$id]['server_port'], $a_client[$id]['description']);
+	} else {
+		$wc_msg = gettext('Deleted empty OpenVPN client');
 	}
 	unset($a_client[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Client successfully deleted.");
 }
 
@@ -424,11 +427,13 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
+			$wc_msg = sprintf(gettext('Updated OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		} else {
 			$a_client[] = $client;
+			$wc_msg = sprintf(gettext('Added OpenVPN client to server %1$s:%2$s %3$s'), $client['server_addr'], $client['server_port'], $client['description']);
 		}
 
-		write_config();
+		write_config($wc_msg);
 		openvpn_resync('client', $client);
 
 		header("Location: vpn_openvpn_client.php");
@@ -712,7 +717,7 @@ if ($act=="new" || $act=="edit"):
 				'%1$s%2$s%3$s',
 				'<div class="infoblock">',
 				sprint_info_box(gettext('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.') . '<br />' .
-					gettext('When disabled, only the selected Encryption Algorithm is allowedz.'), 'info', false),
+					gettext('When disabled, only the selected Encryption Algorithm is allowed.'), 'info', false),
 				'</div>');
 
 	foreach (explode(",", $pconfig['ncp-ciphers']) as $cipher) {
@@ -960,8 +965,10 @@ events.push(function() {
 				hideClass('authentication', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
-				hideLabel('Peer Certificate Revocation list', true);
+				hideLabel('Peer Certificate Revocation list', false);
+				hideInput('crlref', false);
 				hideInput('topology', false);
+				hideCheckbox('route_no_pull', false);
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
@@ -970,8 +977,10 @@ events.push(function() {
 				hideClass('authentication', true);
 				hideCheckbox('autokey_enable', false);
 				hideInput('shared_key', false);
-				hideLabel('Peer Certificate Revocation list', false);
+				hideLabel('Peer Certificate Revocation list', true);
+				hideInput('crlref', true);
 				hideInput('topology', true);
+				hideCheckbox('route_no_pull', true);
 				break;
 		}
 

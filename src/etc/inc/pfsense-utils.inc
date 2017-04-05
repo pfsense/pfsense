@@ -255,6 +255,25 @@ function gen_dashboardcolumns_field(&$section, $value) {
 	));
 }
 
+/****f* pfsense-utils/gen_interfacessort_field
+ * NAME
+ *   gen_interfacessort_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_interfacessort_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'interfacessort',
+		'Interfaces Sort',
+		'Sort Alphabetically',
+		$value
+	))->setHelp('If selected, lists of interfaces will be sorted by description, otherwise they are listed wan,lan,optn...');
+}
+
 /****f* pfsense-utils/gen_associatedpanels_fields
  * NAME
  *   gen_associatedpanels_fields
@@ -320,6 +339,25 @@ function gen_webguileftcolumnhyper_field(&$section, $value) {
 	))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 }
 
+/****f* pfsense-utils/gen_disablealiaspopupdetail_field
+ * NAME
+ *   gen_disablealiaspopupdetail_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_disablealiaspopupdetail_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'disablealiaspopupdetail',
+		'Alias Popups',
+		'Disable details in alias popups',
+		$value
+	))->setHelp('If selected, the details in alias popups will not be shown, just the alias description (e.g. in Firewall Rules).');
+}
+
 /****f* pfsense-utils/gen_pagenamefirst_field
  * NAME
  *   gen_pagenamefirst_field
@@ -356,6 +394,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 	gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 	gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 	gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+	gen_interfacessort_field($section, $pconfig['interfacessort']);
 	gen_associatedpanels_fields(
 		$section,
 		$pconfig['dashboardavailablewidgetspanel'],
@@ -363,6 +402,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 		$pconfig['systemlogsmanagelogpanel'],
 		$pconfig['statusmonitoringsettingspanel']);
 	gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+	gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 	gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 }
 
@@ -1009,9 +1049,12 @@ function setup_serial_port($when = "save", $path = "") {
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	$serial_only = false;
+	$vga_only = false;
 
 	$specific_platform = system_identify_specific_platform();
-	if ($specific_platform['name'] == 'RCC-VE' ||
+	if ($specific_platform['name'] == 'XG-1540') {
+		$vga_only = true;
+	} elseif ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||
 	    $specific_platform['name'] == 'apu2') {
@@ -1067,7 +1110,9 @@ function setup_serial_port($when = "save", $path = "") {
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
-	} else if (is_serial_enabled()) {
+	} elseif ($vga_only === true) {
+		$data[] = 'console="vidconsole"';
+	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
 		$data[] = 'boot_serial="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
@@ -1084,10 +1129,9 @@ function setup_serial_port($when = "save", $path = "") {
 	}
 	$data[] = 'comconsole_speed="' . $serialspeed . '"';
 
-	$specplatform = system_identify_specific_platform();
-	if ($specplatform['name'] == 'RCC-VE' ||
-	    $specplatform['name'] == 'RCC' ||
-	    $specplatform['name'] == 'RCC-DFF') {
+	if ($specific_platform['name'] == 'RCC-VE' ||
+	    $specific_platform['name'] == 'RCC' ||
+	    $specific_platform['name'] == 'RCC-DFF') {
 		$data[] = 'comconsole_port="0x2F8"';
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';
@@ -1751,7 +1795,7 @@ function compare_hostname_to_dnscache($hostname) {
  */
 function load_crypto() {
 	global $config, $g;
-	$crypto_modules = array('aesni');
+	$crypto_modules = array('aesni', 'cryptodev');
 
 	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
 		return false;
@@ -2034,14 +2078,6 @@ function update_progress_bar($percent, $first_time) {
 	}
 }
 
-/* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
-if (!function_exists("split")) {
-	function split($separator, $haystack, $limit = null) {
-		log_error("deprecated split() call with separator '{$separator}'");
-		return preg_split($separator, $haystack, $limit);
-	}
-}
-
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
 	if (!$origname) {
@@ -2137,7 +2173,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 				$tmp = $tmp_str;
 			}
 			$valid = (($type == "url" || $type == "urltable") && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-				(($type == "url_ports" || $type == "urltable_ports") && (is_port($tmp) || is_portrange($tmp)));
+				(($type == "url_ports" || $type == "urltable_ports") && is_port_or_range($tmp));
 			if ($valid) {
 				$items[] = $tmp;
 				if (count($items) == $max_items) {
@@ -2797,8 +2833,7 @@ function get_locale_list() {
 	$locales = array(
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
-		"pt_BR" => gettext("Portuguese (Brazil)"),
-		"tr" => gettext("Turkish"),
+		"nb" => gettext("Norwegian Bokmål"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);
@@ -3015,6 +3050,7 @@ function huawei_service_to_string($state) {
 	$modes[2] = gettext("Valid Service");
 	$modes[3] = gettext("Restricted Regional Service");
 	$modes[4] = gettext("Powersaving Service");
+	$modes[255] = gettext("Unknown Service");
 	$string = $modes[$state];
 	return $string;
 }

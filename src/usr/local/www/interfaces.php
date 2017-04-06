@@ -3377,7 +3377,7 @@ events.push(function() {
 		}
 
 		var url = "system_gateways_edit.php";
-		var pars = 'isAjax=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+		var pars = 'isAjax=true&save=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 		$.ajax(
 			url,
 			{

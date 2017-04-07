@@ -22,12 +22,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-02 10:23-0400\n"
-"Last-Translator: vanOert <oertel@bannerstop.com>\n"
+"PO-Revision-Date: 2017-04-05 04:20-0400\n"
+"Last-Translator: Lars <l.wegener@outlook.com>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2422,6 +2422,8 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"Die ungültige MAC-Adresse (ff:ff:ff:ff:ff:ff) für Schnittstelle %1$s wurde "
+"automatisch mit %2$s ersetzt"
 
 #: src/etc/inc/interfaces.inc:3425
 #, php-format
@@ -2809,7 +2811,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiler Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3205,13 +3207,15 @@ msgstr "Dashboard Spalten"
 
 #: src/etc/inc/pfsense-utils.inc:271
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "Schnittstellen sortieren"
 
 #: src/etc/inc/pfsense-utils.inc:274
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
+"Wenn ausgewählt, werden die Schnittstellen nach Beschreibung sortiert. "
+"Ansonsten erfolgt die Sortierung nach wan, lan, optn..."
 
 #: src/etc/inc/pfsense-utils.inc:288
 msgid "Associated Panels Show/Hide"
@@ -3260,7 +3264,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:355
 msgid "Alias Popups"
-msgstr ""
+msgstr "Alias Popups"
 
 #: src/etc/inc/pfsense-utils.inc:358
 msgid ""
@@ -3439,27 +3443,23 @@ msgid "Spanish"
 msgstr "Spanisch"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Portugiesisch (Brasilien)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Türkisch"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chinesisch (Vereinfacht, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr "Chinesisch (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Kein Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3475,84 +3475,84 @@ msgstr "Kein Dienst"
 msgid "Mode"
 msgstr "Modus"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "Eingeschränkter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "Gültiger Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "Eingeschränkter regionaler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "Stromspar-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr "Unbekannter Service"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "Ungültiger SIM/gesperrt Status"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "Gültiger SIM-Status"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "Ungültiger SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "Ungültiger SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "Ungültiger SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "Fehlender SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "Begrenzter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "Initialisiere Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "Netzwerksperre Fehler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "Netzwerk gesperrt Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Freigeschalteter oder zutreffender MCC/MNC-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "Kein Aktionsstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "Status Netzwerksperre"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 #, fuzzy
 msgid "(U)SIM card lock State"
 msgstr "(U-)SIM-Karten-Sperrstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -5892,7 +5892,7 @@ msgstr "NTP-Uhr Synchronisation"
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "Systemprotokollierungsdaemon"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:431
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -7132,6 +7132,8 @@ msgid ""
 "%sWarning: traffic shaper rule removed (source network '%s' does not exist "
 "anymore)."
 msgstr ""
+"%sWarnung: Traffic Shaper Regel entfernt (Quellnetzwerk '%s' existiert nicht "
+"mehr)."
 
 #: src/etc/inc/upgrade_config.inc:172
 #, php-format
@@ -7139,6 +7141,8 @@ msgid ""
 "%sWarning: traffic shaper rule removed (destination network '%s' does not "
 "exist anymore)."
 msgstr ""
+"%sWarnung: Traffic Shaper Regel entfernt (Zielnetzwerk '%s' existiert nicht "
+"mehr)."
 
 #: src/etc/inc/upgrade_config.inc:343
 #, php-format
@@ -7314,7 +7318,7 @@ msgstr "Alle Benutzer"
 #: src/etc/inc/upgrade_config.inc:1520
 #, php-format
 msgid "Converted bridged %s"
-msgstr ""
+msgstr "Umgewandelte Brücke %s"
 
 #: src/etc/inc/upgrade_config.inc:1911
 msgid "Auto added OpenVPN rule from config upgrade."
@@ -7584,7 +7588,7 @@ msgstr ""
 #: src/etc/inc/vpn.inc:739
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
-msgstr ""
+msgstr "Fehler: Ungültiger Hash für Zertifikat %s"
 
 #: src/etc/inc/vpn.inc:744
 #, php-format
@@ -7686,7 +7690,7 @@ msgstr ""
 "Ein Kommunikationsproblem trat beim XMLRPC Synchronisationsversuch mit %s "
 "(pfsense.%s) auf."
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr "Fehlercode erhalten"
 
@@ -8979,11 +8983,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:312
 msgid "IP WHOIS @ DNS Stuff"
-msgstr ""
+msgstr "IP Whois @ DNS"
 
 #: src/usr/local/www/diag_dns.php:313
 msgid "IP Info @ DNS Stuff"
-msgstr ""
+msgstr "IP Info @ DNS"
 
 #: src/usr/local/www/diag_dump_states.php:55
 #: src/usr/local/www/diag_dump_states_sources.php:39
@@ -9011,7 +9015,7 @@ msgstr "States"
 #: src/usr/local/www/diag_resetstate.php:84
 #: src/usr/local/www/diag_resetstate.php:104
 msgid "Source Tracking"
-msgstr ""
+msgstr "Quellverfolgung"
 
 #: src/usr/local/www/diag_dump_states.php:111
 #: src/usr/local/www/diag_dump_states_sources.php:60
@@ -10488,7 +10492,7 @@ msgstr "*Quelladresse"
 #: src/usr/local/www/diag_testport.php:255
 #: src/usr/local/www/diag_traceroute.php:143
 msgid "Select source address for the trace."
-msgstr ""
+msgstr "Quelladresse für Verfolgung auswählen."
 
 #: src/usr/local/www/diag_testport.php:262
 msgid ""
@@ -10530,7 +10534,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_traceroute.php:154
 msgid "Reverse Address Lookup"
-msgstr ""
+msgstr "Rückwärtsauflösung der IP-Adresse"
 
 #: src/usr/local/www/diag_traceroute.php:157
 msgid ""
@@ -11504,23 +11508,23 @@ msgstr "Verknüpfte Regel"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Zuordnungen neu sortiert"
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Zuordnung gelöscht"
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - ausgewählte Zuordnung gelöscht"
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Regel aktiviert"
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Regel deaktiviert"
 
 #: src/usr/local/www/firewall_nat_1to1.php:142
 msgid "NAT 1:1 Mappings"
@@ -11680,7 +11684,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:282
 msgid "Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Zuordnung gespeichert"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 msgid "Single host"
@@ -11998,11 +12002,11 @@ msgstr "Ziel muss IPv4 sein."
 
 #: src/usr/local/www/firewall_nat_edit.php:325
 msgid "The target port range must be an integer between 1 and 65535."
-msgstr ""
+msgstr "Der Zielportbereich muss eine Ganzzahl zwischen 1 und  65535 sein."
 
 #: src/usr/local/www/firewall_nat_edit.php:351
 msgid "The destination port range overlaps with an existing entry."
-msgstr ""
+msgstr "Der Zielportbereich überschneidet sich mit einem anderen Eintrag."
 
 #: src/usr/local/www/firewall_nat_edit.php:480
 msgid "NAT Port Forward"

@@ -21,12 +21,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 05:36-0400\n"
-"Last-Translator: noel corentin <noel.corentin@gmail.com>\n"
+"PO-Revision-Date: 2017-04-04 03:10-0400\n"
+"Last-Translator: Pierre BRIENNE <pierre@brienne.io>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2840,7 +2840,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Client mobile"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3480,27 +3480,23 @@ msgid "Spanish"
 msgstr "Espagnol"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Portugais (Brésil)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Turc"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chinois (Simplifié)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr "Chinois (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Pas de service"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3516,83 +3512,83 @@ msgstr "Pas de service"
 msgid "Mode"
 msgstr "Mode"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "Service Limité"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "Service Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "Service de restriction regional"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "Service d'économie d'énergie"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr "Service inconnu"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "Invalide SIM/Etat Bloqué"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "Etat de la SIM Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "Etat de la SIM CS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "Etat de la SIM PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "Etat de la SIM CS/PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "Etat de la SIM manquant"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "Service limité"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "Initialisation du service"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "Service d'erreur de verrouillage réseau"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "Service Reseau Verrouillé"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Service MCC/MNC déverrouillé ou correct"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "Aucun état d'action"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "Etat des réseaux verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr "Etat des cartes(U)SIM verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Etat des réseaux et des cartes (U)SIM verouillés"
 
@@ -5313,7 +5309,7 @@ msgstr "WebCfg - Statut: Statut de rechargement du filtre"
 
 #: src/etc/inc/priv.defs.inc:890
 msgid "Allow access to the 'Status: Filter Reload Status' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'Statut: Statut Rafraîchissement Filtre'."
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
@@ -5522,11 +5518,12 @@ msgstr "Autoriser l'accès à la page 'Système: Configuration générale'."
 
 #: src/etc/inc/priv.defs.inc:1048
 msgid "WebCfg - System: Advanced: Admin Access Page"
-msgstr ""
+msgstr "WebCfg - Système: Avancé: Accès Page d'Administration"
 
 #: src/etc/inc/priv.defs.inc:1049
 msgid "Allow access to the 'System: Advanced: Admin Access' page."
 msgstr ""
+"Autoriser l'accès à la page 'Système: Avancé: Accès Page d'Administration'."
 
 #: src/etc/inc/priv.defs.inc:1054
 msgid "WebCfg - System: Advanced: Firewall & NAT"
@@ -5586,11 +5583,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1097
 msgid "WebCfg - System: Certificate Manager"
-msgstr ""
+msgstr "WebCfg - Système: Gestion Certificats"
 
 #: src/etc/inc/priv.defs.inc:1098
 msgid "Allow access to the 'System: Certificate Manager' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'Système: Gestion Certificats'."
 
 #: src/etc/inc/priv.defs.inc:1103
 msgid "WebCfg - System: CRL Manager"
@@ -5618,11 +5615,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1121
 msgid "WebCfg - System: Gateways"
-msgstr ""
+msgstr "WebCfg - Système : Passerelles"
 
 #: src/etc/inc/priv.defs.inc:1122
 msgid "Allow access to the 'System: Gateways' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'Système : Passerelles'."
 
 #: src/etc/inc/priv.defs.inc:1127
 msgid "WebCfg - System: Gateways: Edit Gateway"
@@ -5730,19 +5727,19 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1204
 msgid "WebCfg - Hidden: Upload Configuration"
-msgstr ""
+msgstr "WebCfg - Masqué: Importer Configuration"
 
 #: src/etc/inc/priv.defs.inc:1205
 msgid "Allow access to the 'Hidden: Upload Configuration' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'Masqué: Importer Configuration'."
 
 #: src/etc/inc/priv.defs.inc:1210
 msgid "WebCfg - VPN: IPsec"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec"
 
 #: src/etc/inc/priv.defs.inc:1211
 msgid "Allow access to the 'VPN: IPsec' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'VPN: IPsec'."
 
 #: src/etc/inc/priv.defs.inc:1216
 msgid "WebCfg - VPN: IPsec: Pre-Shared Keys List"
@@ -5762,11 +5759,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1228
 msgid "WebCfg - VPN: IPsec: Mobile"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Mobile"
 
 #: src/etc/inc/priv.defs.inc:1229
 msgid "Allow access to the 'VPN: IPsec: Mobile' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'VPN: IPsec: Mobile'."
 
 #: src/etc/inc/priv.defs.inc:1234
 msgid "WebCfg - VPN: IPsec: Edit Phase 1"
@@ -7672,7 +7669,7 @@ msgid ""
 "(pfsense.%s)."
 msgstr ""
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr ""
 

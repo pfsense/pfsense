@@ -16,12 +16,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-03 04:43-0400\n"
-"Last-Translator: Luiz Fernando Barros <lfb@outlook.com.br>\n"
+"PO-Revision-Date: 2017-04-04 03:24-0400\n"
+"Last-Translator: clkw <leandro@fullonmorning.com>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -2779,7 +2779,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Cliente Móvel"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3173,13 +3173,15 @@ msgstr "Colunas do Dashboard"
 
 #: src/etc/inc/pfsense-utils.inc:271
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "Classificar por interfaces"
 
 #: src/etc/inc/pfsense-utils.inc:274
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
+"Se selecionado, listas de interfaces serão classificadas por descrição, caso "
+"contrário são listadas por wan, lan, optn..."
 
 #: src/etc/inc/pfsense-utils.inc:288
 msgid "Associated Panels Show/Hide"
@@ -3402,27 +3404,23 @@ msgid "Spanish"
 msgstr "Espanhol"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Português (Brasil)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Turco"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chines (Simplificado)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr "Chines (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Sem Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3438,83 +3436,83 @@ msgstr "Sem Serviço"
 msgid "Mode"
 msgstr "Modo"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "Serviço Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "Serviço Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "Serviço Regional Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "Serviço de Economia de Energia"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr "Serviço desconhecido"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "Estado SIM/locked inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "Estado SIM Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "Estado SIM CS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "Estado SIM PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "Estado SIM CS/PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "Estado SIM não encontrado"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "Serviço Limitado"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "Inicializando Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "Erro de serviço Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "Serviço de Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Destravada ou serviço MCC/MNC correto"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "Sem estados em atividade"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "Estado de rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr "Estado de cartão (U)SIM travado"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Estado de cartão (U)SIM e rede travadas"
 
@@ -7588,7 +7586,7 @@ msgstr ""
 "Ocorreu um erro durante a tentativa de sincronização de XMLRPC com %s "
 "(pfsense.%s)."
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr "Código de erro recebido"
 
@@ -8354,7 +8352,7 @@ msgstr "Download das configurações como XMl"
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Restore Backup"
-msgstr ""
+msgstr "Restaurar backup"
 
 #: src/usr/local/www/diag_backup.php:554
 #, php-format
@@ -8365,15 +8363,15 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:559
 msgid "Restore area"
-msgstr ""
+msgstr "Área de restauração"
 
 #: src/usr/local/www/diag_backup.php:566
 msgid "Configuration file"
-msgstr ""
+msgstr "Arquivo de configuração"
 
 #: src/usr/local/www/diag_backup.php:590
 msgid "Restore Configuration"
-msgstr ""
+msgstr "Restaurar configuração"
 
 #: src/usr/local/www/diag_backup.php:593
 msgid "The firewall will reboot after restoring the configuration."
@@ -8385,7 +8383,7 @@ msgstr "Funções de Pacotes"
 
 #: src/usr/local/www/diag_backup.php:607
 msgid "Reinstall Packages"
-msgstr ""
+msgstr "Reinstalar pacotes"
 
 #: src/usr/local/www/diag_backup.php:610
 msgid ""
@@ -8427,7 +8425,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
-msgstr ""
+msgstr "Apenas usuários avançados"
 
 #: src/usr/local/www/diag_command.php:179
 #, php-format
@@ -8479,7 +8477,7 @@ msgstr "Download"
 
 #: src/usr/local/www/diag_command.php:245
 msgid "Upload File"
-msgstr ""
+msgstr "Enviar arquivo"
 
 #: src/usr/local/www/diag_command.php:252
 #: src/usr/local/www/services_captiveportal_filemanager.php:172
@@ -8493,7 +8491,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:300
 msgid "Execute this PHP Code"
-msgstr ""
+msgstr "Executar este código PHP"
 
 #: src/usr/local/www/diag_command.php:304
 msgid "Example"
@@ -8653,6 +8651,8 @@ msgid ""
 "The system has been reset to factory defaults and is now rebooting. This may "
 "take a few minutes, depending on the hardware."
 msgstr ""
+"Este sistema foi redefinido para suas configurações padrões e agora esta "
+"reiniciando. Isso pode levar alguns minutos, dependendo do seu hardware."
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
@@ -8713,11 +8713,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:77
 msgid "Return to the dashboard"
-msgstr ""
+msgstr "Retornar ao painel"
 
 #: src/usr/local/www/diag_defaults.php:79
 msgid "Keep Configuration"
-msgstr ""
+msgstr "Manter configuração"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:379
@@ -35579,6 +35579,8 @@ msgstr ""
 msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr ""
+"Todo o tráfego IPv6 será bloqueado pelo firewall a menos que esta caixa "
+"esteja marcada"
 
 #: src/usr/local/www/system_advanced_network.php:187
 msgid "Enable IPv6 over IPv4 tunneling"

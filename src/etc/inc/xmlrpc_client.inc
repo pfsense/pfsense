@@ -111,7 +111,8 @@ class pfsense_xmlrpc_client {
 				if ($previouserror == null) {
 					// CurlException doesnt get filled with PreviousError,
 					// however we dont want to show the stacktrace included in the 'message' to non sysadmin users
-					$this->error = "CurlException calling XMLRPC method {$method} #" . $e->getMessage();
+					preg_match("/HTTP_Request2_ConnectionException: (.*) in \/.*/", $e->getMessage(), $errormsg);
+					$this->error = "A communications error occurred while attempting to call XMLRPC method {$method}: " . $errormsg[1];
 				} else {
 					$this->error = "CurlException calling XMLRPC method {$method} #" . $previouserror->getMessage();
 				}

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2780,7 +2780,7 @@ msgstr "30 (Brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Cliente Movil"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3407,27 +3407,23 @@ msgid "Spanish"
 msgstr "Español"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Portugués (Brasil)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Turco"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chino (Simplificado, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr "Chino (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Sin servicio"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3443,83 +3439,83 @@ msgstr "Sin servicio"
 msgid "Mode"
 msgstr "Modo"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "Servicio restringido"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "Servicio válido"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "Servicio Regional restringido"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "Servicio de ahorro de energía"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr "Servicio desconocido"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "SIM inválida / estado bloqueado"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "Estado de SIM Válido "
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "Estado de SIM CS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "Estado de SIM PS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "Estado de SIM CS/PS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "Falta el Estado de SIM"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "Servicio limitado"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "Inicializando servicio"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "Servicio de Red bloqueado, Error"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "Servicio de red Bloqueada"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Servicio MCC / MNC desbloqueado o correcta"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "Ningún Estado la acción"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "Estado de bloqueo de red"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr " Estado del bloqueo de tarjeta (U)SIM"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Bloqueo de red y estado de bloqueo de tarjeta (U)SIM"
 
@@ -7691,7 +7687,7 @@ msgstr ""
 "Se ha producido un error de comunicación al intentar la sincronización con "
 "XMLRPC %s (pfSense. %s )."
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr "código de error recibido"
 

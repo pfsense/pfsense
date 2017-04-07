@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-30 09:01-0400\n"
+"PO-Revision-Date: 2017-04-05 09:30-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -2634,7 +2634,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "移動客戶端"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3012,13 +3012,13 @@ msgstr "儀錶板顯示列數"
 
 #: src/etc/inc/pfsense-utils.inc:271
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "介面排序"
 
 #: src/etc/inc/pfsense-utils.inc:274
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
-msgstr ""
+msgstr "如果選擇，介面列表將按描述排序，否則列出為wan，lan，optn ..."
 
 #: src/etc/inc/pfsense-utils.inc:288
 msgid "Associated Panels Show/Hide"
@@ -3225,27 +3225,23 @@ msgid "Spanish"
 msgstr "西班牙"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "葡萄牙（巴西）"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "土耳其"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "中文（簡體中文，中國）"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr "繁體中文（臺灣）"
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "無服務"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3261,83 +3257,83 @@ msgstr "無服務"
 msgid "Mode"
 msgstr "模式"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "受限服務"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "有效服務"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "受限區域服務"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "節能服務"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr "未知服務"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "無效的 SIM/處於鎖定狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "有效的SIM卡狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "無效的 SIM CS 狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "無效的 SIM PS 狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "無效的 SIM CS/PS 狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "缺少SIM狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "有限服務"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "初始化服務"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "網路鎖定錯誤服務"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "網路鎖定服務"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "已解鎖或正確的MCC / MNC服務"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "無操作狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "網路鎖狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM卡鎖定狀態"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "網路鎖定和SIM卡鎖定狀態"
 
@@ -5563,7 +5559,7 @@ msgstr "NTP時鐘同步"
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "系統記錄器守護進程"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:431
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -7234,7 +7230,7 @@ msgid ""
 "(pfsense.%s)."
 msgstr "嘗試與%s (pfsense.%s)進行XMLRPC同步時發生通信錯誤。"
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr "接收到錯誤代碼"
 
@@ -14639,7 +14635,7 @@ msgstr "必須指定一個有效的別名子網位計數。"
 
 #: src/usr/local/www/interfaces.php:768
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
-msgstr ""
+msgstr "在“拒絕租賃”字段中檢測到無效的IP地址。"
 
 #: src/usr/local/www/interfaces.php:783
 #: src/usr/local/www/system_routes_edit.php:89
@@ -15065,6 +15061,8 @@ msgid ""
 "useful for rejecting leases from cable modems that offer private IP "
 "addresses when they lose upstream sync."
 msgstr ""
+"要讓DHCP客戶端拒絕來自特定DHCP伺服器的分配，可以在此輸入其IP地址（用逗號分隔多個條目）。 "
+"這對於拒絕在丟失上游同步時提供私有IP地址的有線數據機的租賃非常有用。"
 
 #: src/usr/local/www/interfaces.php:1972
 msgid "Protocol timing"
@@ -22023,7 +22021,7 @@ msgstr "*監視介面"
 msgid ""
 "If the interface IP address is private the public IP address will be fetched "
 "and used instead."
-msgstr ""
+msgstr "如果介面IP地址是私有的，那麼公共IP地址將被取而代之。"
 
 #: src/usr/local/www/services_dyndns_edit.php:277
 msgid "*Interface to send update from"
@@ -22113,7 +22111,7 @@ msgstr "區域ID"
 msgid ""
 "Route53: Enter AWS Zone ID.%1$sDNSimple: Enter the Record ID of record to "
 "update."
-msgstr ""
+msgstr "Route53: 輸入AWS區域ID%1$sDNSimple：輸入要更新的記錄的記錄ID。"
 
 #: src/usr/local/www/services_dyndns_edit.php:383
 msgid ""
@@ -27577,7 +27575,7 @@ msgstr "默認情況下，如果配置了IPv6並且主機名解析IPv6和IPv4地
 
 #: src/usr/local/www/system_advanced_network.php:215
 msgid "IPv6 DNS entry"
-msgstr ""
+msgstr "IPv6 DNS 條目"
 
 #: src/usr/local/www/system_advanced_network.php:218
 msgid ""
@@ -27588,6 +27586,8 @@ msgid ""
 "entries are added to the system's DNS. Enabling this option prevents those "
 "IPv6 records from being created."
 msgstr ""
+"如果LAN介面的IPv6配置設置為“跟蹤”，並且跟蹤的介面失去連接，則可能導致通過主機名建立的防火牆的連接失敗。 "
+"當主機名訪問防火牆時，這可能會無意中發生，因為默認情況下，IPv4和IPv6條目都將添加到系統的DNS。 啟用此選項可防止創建這些IPv6記錄。"
 
 #: src/usr/local/www/system_advanced_network.php:223
 #: src/usr/local/www/system_advanced_network.php:227
@@ -28017,7 +28017,7 @@ msgstr "%s超時值必須為數字和正數。"
 
 #: src/usr/local/www/system_authservers.php:292
 msgid "IPv6 does not work for RADIUS authentication, see Bug #4154."
-msgstr ""
+msgstr "IPv6不能用於RADIUS身份驗證，請參閱Bug #4154。"
 
 #: src/usr/local/www/system_authservers.php:408
 #: src/usr/local/www/system_authservers.php:430
@@ -33995,7 +33995,7 @@ msgstr "合併來自XMLRPC客戶端的配置（%s 部分）。"
 
 #: src/etc/inc/pfsense-utils.inc:272
 msgid "Sort Alphabetically"
-msgstr ""
+msgstr "按字母排序"
 
 #: src/etc/inc/pfsense-utils.inc:307
 msgid "Manage Log"
@@ -35230,7 +35230,7 @@ msgstr "即使IPv6可用，也希望使用IPv4"
 
 #: src/usr/local/www/system_advanced_network.php:216
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
-msgstr ""
+msgstr "不要為LAN介面生成本地IPv6 DNS條目"
 
 #: src/usr/local/www/system_advanced_network.php:258
 msgid "Disable hardware checksum offload"

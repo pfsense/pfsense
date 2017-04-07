@@ -8,12 +8,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 10:56-0400\n"
-"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
+"PO-Revision-Date: 2017-04-07 05:35-0400\n"
+"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2763,7 +2763,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Мобильный Клиент"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3383,27 +3383,23 @@ msgid "Spanish"
 msgstr "Испанский"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Португальский (Бразильский)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Турецкий"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Китайский (Упрощённый, Китай)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Нет Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3419,83 +3415,83 @@ msgstr "Нет Сервиса"
 msgid "Mode"
 msgstr "Режим"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr "Валидный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr "Ограниченный Региональный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr "Сервис сбережения электроэнергии"
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr "Невалидный SIM/заблокированное состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr "Валидное SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr "Валидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr "Невалидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr "Невалидное SIM CS/PS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr "Недостающее SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr "Инициализация Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr "Сетевая блокировка ошибка Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr "Сервис, заблокированный по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Разблокируйте или поправьте MCC/MNC Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr "Состояние бездействия"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr "Состояние блокировки по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr "Состояние блокировки (U)SIM карта"
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Состояние блокировки (U)SIM карта по сети"
 
@@ -7691,7 +7687,7 @@ msgstr ""
 "Ошибка коммуникации произошла при попытке синхронизации XMLRPC с  %s "
 "(pfsense.%s)."
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr "Получен код ошибки"
 
@@ -26901,97 +26897,97 @@ msgstr "Сотовый Режим"
 
 #: src/usr/local/www/status_interfaces.php:125
 msgid "Cell SIM State"
-msgstr ""
+msgstr "Состояние SIM"
 
 #: src/usr/local/www/status_interfaces.php:126
 msgid "Cell Service"
-msgstr ""
+msgstr "Сотовый Сервис"
 
 #: src/usr/local/www/status_interfaces.php:127
 msgid "Cell Upstream"
-msgstr ""
+msgstr "Восходящяя Сота"
 
 #: src/usr/local/www/status_interfaces.php:128
 msgid "Cell Downstream"
-msgstr ""
+msgstr "Нисходящая Сота"
 
 #: src/usr/local/www/status_interfaces.php:129
 msgid "Cell Current Up"
-msgstr ""
+msgstr "Текущая Активная Сота"
 
 #: src/usr/local/www/status_interfaces.php:130
 msgid "Cell Current Down"
-msgstr ""
+msgstr "Текущая Неактивная Сота"
 
 #: src/usr/local/www/status_interfaces.php:140
 msgid "IPv4 Address"
-msgstr ""
+msgstr "Адрес IPv4"
 
 #: src/usr/local/www/status_interfaces.php:141
 msgid "Subnet mask IPv4"
-msgstr ""
+msgstr "Маска подсети IPv4"
 
 #: src/usr/local/www/status_interfaces.php:143
 msgid "IPv6 Link Local"
-msgstr ""
+msgstr "IPv6 Адрес Локального Линка"
 
 #: src/usr/local/www/status_interfaces.php:144
 msgid "IPv6 Address"
-msgstr ""
+msgstr "IPv6 Адрес"
 
 #: src/usr/local/www/status_interfaces.php:145
 msgid "Subnet mask IPv6"
-msgstr ""
+msgstr "Маска подсети IPv6"
 
 #: src/usr/local/www/status_interfaces.php:159
 msgid "Media"
-msgstr ""
+msgstr "Среда Передачи"
 
 #: src/usr/local/www/status_interfaces.php:160
 msgid "LAGG Protocol"
-msgstr ""
+msgstr "Протокол LAGG"
 
 #: src/usr/local/www/status_interfaces.php:161
 msgid "LAGG Ports"
-msgstr ""
+msgstr "LAGG Порты"
 
 #: src/usr/local/www/status_interfaces.php:164
 msgid "BSSID"
-msgstr ""
+msgstr "BSSID"
 
 #: src/usr/local/www/status_interfaces.php:166
 msgid "RSSI"
-msgstr ""
+msgstr "RSSI"
 
 #: src/usr/local/www/status_interfaces.php:167
 msgid "In/out packets"
-msgstr ""
+msgstr "Исходящие/входящие пакеты"
 
 #: src/usr/local/www/status_interfaces.php:169
 msgid "In/out packets (pass)"
-msgstr ""
+msgstr "Исходящие/входящие пакеты (разрешённые)"
 
 #: src/usr/local/www/status_interfaces.php:171
 msgid "In/out packets (block)"
-msgstr ""
+msgstr "Исходящие/входящие пакеты (заблокированные)"
 
 #: src/usr/local/www/status_interfaces.php:173
 msgid "In/out errors"
-msgstr ""
+msgstr "Исходящие/входящие ошибки"
 
 #: src/usr/local/www/status_interfaces.php:174
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:48
 msgid "Collisions"
-msgstr ""
+msgstr "Коллизии"
 
 #: src/usr/local/www/status_interfaces.php:177
 #, php-format
 msgid "Bridge (%1$s)"
-msgstr ""
+msgstr "Мосты (%1$s)"
 
 #: src/usr/local/www/status_interfaces.php:194
 msgid "Total interrupts"
-msgstr ""
+msgstr "Общее количество прерываний"
 
 #: src/usr/local/www/status_interfaces.php:205
 #, php-format
@@ -27001,89 +26997,94 @@ msgid ""
 "%1$snot%2$s prevent dial-on-demand from making connections to the outside! "
 "Don't use dial-on-demand if the line is to be kept disconnected."
 msgstr ""
+"Использование соединения по требованию сделает подключение активным снова "
+"при появлении новых пакетов. Для обоснования данного утверждения: ручное "
+"отключение %1$sне%2$s  будет предотвращать  подключения наружу у соединения "
+"по требованию! Не используйте соединение по требованию, если необходимо "
+"оставить канал отключённым."
 
 #: src/usr/local/www/status_ipsec.php:114
 #: src/usr/local/www/status_ipsec.php:147
 msgid "Any identifier"
-msgstr ""
+msgstr "Любой идентификатор"
 
 #: src/usr/local/www/status_ipsec.php:198
 msgid " seconds ("
-msgstr ""
+msgstr "секунды ("
 
 #: src/usr/local/www/status_ipsec.php:221
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr ""
+msgstr "%1$s секунд (%2$s) назад"
 
 #: src/usr/local/www/status_ipsec.php:230
 #: src/usr/local/www/status_ipsec.php:232
 #: src/usr/local/www/status_ipsec.php:453
 msgid "Connect VPN"
-msgstr ""
+msgstr "Подключить VPN"
 
 #: src/usr/local/www/status_ipsec.php:237
 msgid "Disconnect VPN"
-msgstr ""
+msgstr "Отключить VPN"
 
 #: src/usr/local/www/status_ipsec.php:254
 msgid "Show child SA entries"
-msgstr ""
+msgstr "Показать дочерние записи SA"
 
 #: src/usr/local/www/status_ipsec.php:288
 msgid "Local: "
-msgstr ""
+msgstr "Локальная:"
 
 #: src/usr/local/www/status_ipsec.php:292
 msgid "Remote: "
-msgstr ""
+msgstr "Удалённая:"
 
 #: src/usr/local/www/status_ipsec.php:309
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Обновление ключей:  %1$s секунд (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:311
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Время жизни:%1$s секунд (%2$s) "
 
 #: src/usr/local/www/status_ipsec.php:313
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Установить:%1$s секунд (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:334
 msgid "IPComp: "
-msgstr ""
+msgstr "IP Компрессия:"
 
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Bytes-In: "
-msgstr ""
+msgstr "Входящие байты:"
 
 #: src/usr/local/www/status_ipsec.php:345
 msgid "Packets-In: "
-msgstr ""
+msgstr "Входящие пакеты:"
 
 #: src/usr/local/www/status_ipsec.php:346
 msgid "Bytes-Out: "
-msgstr ""
+msgstr "Исходящие байты:"
 
 #: src/usr/local/www/status_ipsec.php:347
 msgid "Packets-Out: "
-msgstr ""
+msgstr "Исходящие пакеты:"
 
 #: src/usr/local/www/status_ipsec.php:351
 msgid "Disconnect Child SA"
-msgstr ""
+msgstr "Отключить дочернюю SA"
 
 #: src/usr/local/www/status_ipsec.php:440
 msgid "Awaiting connections"
-msgstr ""
+msgstr "Ожидание соединений"
 
 #: src/usr/local/www/status_ipsec.php:448
 msgid "Disconnected"
-msgstr ""
+msgstr "Отключено"
 
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec.php:472
@@ -27092,7 +27093,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:47
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:177
 msgid "Overview"
-msgstr ""
+msgstr "Обзор"
 
 #: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -27100,7 +27101,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "База данных SA"
 
 #: src/usr/local/www/status_ipsec.php:475
 #: src/usr/local/www/status_ipsec_leases.php:43
@@ -27108,39 +27109,39 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "База данных SP"
 
 #: src/usr/local/www/status_ipsec.php:480
 msgid "IPsec Status"
-msgstr ""
+msgstr "Статус IPsec"
 
 #: src/usr/local/www/status_ipsec.php:486
 msgid "Local ID"
-msgstr ""
+msgstr "Локальный ID"
 
 #: src/usr/local/www/status_ipsec.php:488
 msgid "Remote ID"
-msgstr ""
+msgstr "Удалённый ID"
 
 #: src/usr/local/www/status_ipsec.php:489
 msgid "Remote IP"
-msgstr ""
+msgstr "Удалённый IP"
 
 #: src/usr/local/www/status_ipsec.php:490
 msgid "Role"
-msgstr ""
+msgstr "Роль"
 
 #: src/usr/local/www/status_ipsec.php:491
 msgid "Reauth"
-msgstr ""
+msgstr "Переаутентификация"
 
 #: src/usr/local/www/status_ipsec.php:492
 msgid "Algo"
-msgstr ""
+msgstr "Алгоритм"
 
 #: src/usr/local/www/status_ipsec.php:500
 msgid "Collecting IPsec status information."
-msgstr ""
+msgstr "Получение сведений о статусе IPsec"
 
 #: src/usr/local/www/status_ipsec.php:517
 #: src/usr/local/www/status_ipsec_leases.php:129
@@ -27148,133 +27149,133 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr ""
+msgstr "IPsec можно настроить %1$sздесь%2$s."
 
 #: src/usr/local/www/status_ipsec.php:550
 msgid "No IPsec status information available."
-msgstr ""
+msgstr "Недоступны сведения о статусе IPsec."
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "Использование"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
-msgstr ""
+msgstr "Пока ещё нет аренды из данного пула."
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
-msgstr ""
+msgstr "Нет пулов IPsec."
 
 #: src/usr/local/www/status_ipsec_sad.php:69
 msgid "SPI"
-msgstr ""
+msgstr "SPI"
 
 #: src/usr/local/www/status_ipsec_sad.php:70
 msgid "Enc. alg."
-msgstr ""
+msgstr "Алгоритмы шифрования"
 
 #: src/usr/local/www/status_ipsec_sad.php:71
 msgid "Auth. alg."
-msgstr ""
+msgstr "Алгоритмы аутентификации"
 
 #: src/usr/local/www/status_ipsec_sad.php:72
 msgid "Data"
-msgstr ""
+msgstr "Данные"
 
 #: src/usr/local/www/status_ipsec_sad.php:106
 msgid "Remove this SPD Entry"
-msgstr ""
+msgstr "Удалить данную запись SPD"
 
 #: src/usr/local/www/status_ipsec_sad.php:117
 msgid "No IPsec security associations."
-msgstr ""
+msgstr "Нет ассоциаций безопасности IPsec."
 
 #: src/usr/local/www/status_ipsec_spd.php:61
 msgid "Direction"
-msgstr ""
+msgstr "Направление"
 
 #: src/usr/local/www/status_ipsec_spd.php:63
 msgid "Tunnel endpoints"
-msgstr ""
+msgstr "Конечные точки туннеля"
 
 #: src/usr/local/www/status_ipsec_spd.php:71
 msgid " Inbound"
-msgstr ""
+msgstr "Входящие"
 
 #: src/usr/local/www/status_ipsec_spd.php:73
 msgid " Outbound"
-msgstr ""
+msgstr "Исходящие"
 
 #: src/usr/local/www/status_ipsec_spd.php:101
 msgid "No IPsec security policies configured."
-msgstr ""
+msgstr "Политики безопасности IPsec не настроены."
 
 #: src/usr/local/www/status_lb_pool.php:105
 msgid "Updated load balancer pools via status screen."
-msgstr ""
+msgstr "Пулы балансировщика нагрузки обновлены через экран статуса."
 
 #: src/usr/local/www/status_lb_pool.php:128
 msgid "Load Balancer Pools"
-msgstr ""
+msgstr "Пулы Балансировщика Нагрузки"
 
 #: src/usr/local/www/status_lb_pool.php:153
 msgid "Load balancing"
-msgstr ""
+msgstr "Балансировка нагрузки"
 
 #: src/usr/local/www/status_lb_pool.php:156
 msgid "Manual failover"
-msgstr ""
+msgstr "Ручное переключение"
 
 #: src/usr/local/www/status_lb_pool.php:159
 msgid "(default)"
-msgstr ""
+msgstr "(по умолчанию)"
 
 #: src/usr/local/www/status_lb_vs.php:56
 msgid "No load balancers have been configured."
-msgstr ""
+msgstr "Ни одного балансировщика нагрузки не настроено."
 
 #: src/usr/local/www/status_lb_vs.php:98
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
 #: src/etc/inc/pfsense-utils.inc:337
 msgid "Active"
-msgstr ""
+msgstr "Активный"
 
 #: src/usr/local/www/status_lb_vs.php:102
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:76
 msgid "Down"
-msgstr ""
+msgstr "Неактивный"
 
 #: src/usr/local/www/status_lb_vs.php:106
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:80
 msgid "Unknown - relayd not running?"
-msgstr ""
+msgstr "Неизвестно - работает ли relayd?"
 
 #: src/usr/local/www/status_lb_vs.php:118
 #, php-format
 msgid "Total Sessions: %s"
-msgstr ""
+msgstr "Общее число Сессий: %s"
 
 #: src/usr/local/www/status_lb_vs.php:121
 #, php-format
 msgid "Last: %s"
-msgstr ""
+msgstr "Последнее: %s"
 
 #: src/usr/local/www/status_lb_vs.php:124
 #, php-format
 msgid "Average: %s"
-msgstr ""
+msgstr "Среднее: %s"
 
 #: src/usr/local/www/status_logs.php:41
 #: src/usr/local/www/status_logs_common.inc:103
 msgid "General"
-msgstr ""
+msgstr "Общее"
 
 #: src/usr/local/www/status_logs.php:45
 #: src/usr/local/www/status_logs_common.inc:91
 #: src/usr/local/www/status_logs_settings.php:219
 msgid "Captive Portal Auth"
-msgstr ""
+msgstr "Аутентификация Портала Захвата"
 
 #: src/usr/local/www/status_logs.php:141 src/usr/local/www/status_logs.php:193
 #: src/usr/local/www/status_logs_common.inc:243
@@ -27288,25 +27289,25 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:401
 #: src/usr/local/www/widgets/widgets/log.widget.php:111
 msgid "Time"
-msgstr ""
+msgstr "Время "
 
 #: src/usr/local/www/status_logs.php:142
 #: src/usr/local/www/status_logs_common.inc:250
 msgid "Process"
-msgstr ""
+msgstr "Процесс"
 
 #: src/usr/local/www/status_logs.php:143
 #: src/usr/local/www/status_logs_common.inc:257
 #: src/usr/local/www/status_logs_vpn.php:179
 #: src/usr/local/www/status_logs_vpn.php:415
 msgid "PID"
-msgstr ""
+msgstr "PID"
 
 #: src/usr/local/www/status_logs.php:144 src/usr/local/www/status_logs.php:194
 #: src/usr/local/www/status_logs_common.inc:276
 #: src/usr/local/www/status_logs_filter.php:299
 msgid "Message"
-msgstr ""
+msgstr "Сообщение"
 
 #: src/usr/local/www/status_logs.php:172 src/usr/local/www/status_logs.php:220
 #: src/usr/local/www/status_logs_filter.php:276
@@ -27315,7 +27316,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:211
 #: src/usr/local/www/status_logs_vpn.php:243
 msgid "No logs to display."
-msgstr ""
+msgstr "Нет логов для отображения на экране."
 
 #: src/usr/local/www/status_logs_common.inc:94
 #: src/usr/local/www/status_logs_settings.php:222
@@ -27334,79 +27335,79 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:281
 #: src/usr/local/www/vpn_openvpn_server.php:634
 msgid "VPN"
-msgstr ""
+msgstr "VPN"
 
 #: src/usr/local/www/status_logs_common.inc:110
 #: src/usr/local/www/status_logs_filter.php:76
 #: src/usr/local/www/status_logs_filter_dynamic.php:65
 #: src/usr/local/www/status_logs_filter_summary.php:58
 msgid "Normal View"
-msgstr ""
+msgstr "Нормальный Вид"
 
 #: src/usr/local/www/status_logs_common.inc:111
 #: src/usr/local/www/status_logs_filter.php:77
 #: src/usr/local/www/status_logs_filter_dynamic.php:66
 #: src/usr/local/www/status_logs_filter_summary.php:59
 msgid "Dynamic View"
-msgstr ""
+msgstr "Динамический Вид"
 
 #: src/usr/local/www/status_logs_common.inc:112
 #: src/usr/local/www/status_logs_filter.php:78
 #: src/usr/local/www/status_logs_filter_dynamic.php:67
 #: src/usr/local/www/status_logs_filter_summary.php:60
 msgid "Summary View"
-msgstr ""
+msgstr "Обзорный Вид"
 
 #: src/usr/local/www/status_logs_common.inc:115
 #: src/usr/local/www/status_logs_vpn.php:64
 msgid "PPPoE Logins"
-msgstr ""
+msgstr "Логины PPPoE"
 
 #: src/usr/local/www/status_logs_common.inc:118
 #: src/usr/local/www/status_logs_vpn.php:44
 msgid "PPPoE Service"
-msgstr ""
+msgstr "Сервисы PPPoE"
 
 #: src/usr/local/www/status_logs_common.inc:121
 #: src/usr/local/www/status_logs_vpn.php:65
 msgid "L2TP Logins"
-msgstr ""
+msgstr "Логины L2TP"
 
 #: src/usr/local/www/status_logs_common.inc:124
 #: src/usr/local/www/status_logs_vpn.php:46
 msgid "L2TP Service"
-msgstr ""
+msgstr "Сервис L2TP"
 
 #: src/usr/local/www/status_logs_common.inc:143
 #, php-format
 msgid "%1$s Matched %2$s Log Entries."
-msgstr ""
+msgstr "%1$s Соответствие %2$s Записям Лога."
 
 #: src/usr/local/www/status_logs_common.inc:145
 #, php-format
 msgid "Last %1$s %2$s Log Entries."
-msgstr ""
+msgstr "Последние %1$s %2$s Записи Лога."
 
 #: src/usr/local/www/status_logs_common.inc:149
 #, php-format
 msgid "%1$d Matched %2$s Log Entries."
-msgstr ""
+msgstr "%1$d Соответствие %2$s Записям Лога."
 
 #: src/usr/local/www/status_logs_common.inc:151
 #, php-format
 msgid "Last %1$d %2$s Log Entries."
-msgstr ""
+msgstr "Последние %1$d  %2$s Записи Лога."
 
 #: src/usr/local/www/status_logs_common.inc:155
 #, php-format
 msgid "Maximum %d"
-msgstr ""
+msgstr "Максимум %d"
 
 #: src/usr/local/www/status_logs_common.inc:234
 #: src/usr/local/www/status_logs_common.inc:395
 #: src/usr/local/www/status_logs_vpn.php:349
 msgid "Advanced Log Filter"
-msgstr ""
+msgstr "Расширенный Фильтр Журнала"
 
 #: src/usr/local/www/status_logs_common.inc:265
 #: src/usr/local/www/status_logs_common.inc:305
@@ -27416,7 +27417,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:423
 #: src/usr/local/www/status_logs_vpn.php:464
 msgid "Quantity"
-msgstr ""
+msgstr "Количество"
 
 #: src/usr/local/www/status_logs_common.inc:280
 #: src/usr/local/www/status_logs_common.inc:309
@@ -27425,118 +27426,122 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:439
 #: src/usr/local/www/status_logs_vpn.php:468
 msgid "Apply Filter"
-msgstr ""
+msgstr "Применить Фильтр"
 
 #: src/usr/local/www/status_logs_common.inc:288
 #: src/usr/local/www/status_logs_common.inc:496
 #: src/usr/local/www/status_logs_vpn.php:447 src/etc/inc/pfsense-utils.inc:300
 msgid "Log Filter"
-msgstr ""
+msgstr "Фильтр Журнала"
 
 #: src/usr/local/www/status_logs_common.inc:297
 #: src/usr/local/www/status_logs_common.inc:524
 #: src/usr/local/www/status_logs_vpn.php:456
 msgid "Filter Expression"
-msgstr ""
+msgstr "Выражение Фильтра"
 
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "Regular expression reference"
-msgstr ""
+msgstr "Ссылка на регулярное выражение"
 
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "Precede with exclamation (!) to exclude match."
-msgstr ""
+msgstr "Поставить впереди восклицание (!), чтобы исключить соответствие."
 
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
-msgstr ""
+msgstr "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
 
 #: src/usr/local/www/status_logs_common.inc:404
 msgid "Source IP Address"
-msgstr ""
+msgstr "IP Адрес Источника"
 
 #: src/usr/local/www/status_logs_common.inc:411
 msgid "Destination IP Address"
-msgstr ""
+msgstr "IP Адрес Назначения"
 
 #: src/usr/local/www/status_logs_common.inc:484
 msgid "Protocol Flags"
-msgstr ""
+msgstr "Флаги Протокола"
 
 #: src/usr/local/www/status_logs_common.inc:645
 #: src/usr/local/www/status_logs_settings.php:100
 msgid "Number of log entries to show must be between 5 and 2000."
-msgstr ""
+msgstr "Число записей логов для отображения должно быть от 5 до 2000."
 
 #: src/usr/local/www/status_logs_common.inc:651
 #: src/usr/local/www/status_logs_settings.php:105
 msgid "Log file size must be numeric and greater than or equal to 100000."
-msgstr ""
+msgstr "Размер файла журнала должен быть числом равным или более 100000."
 
 #: src/usr/local/www/status_logs_common.inc:721
 msgid "Log Display Settings Saved: "
-msgstr ""
+msgstr "Настройки Отображения Журнала Сохранены:"
 
 #: src/usr/local/www/status_logs_common.inc:724
 msgid "Log Display Settings Saved (no backup, no sync): "
 msgstr ""
+"Настройки Отображения Журнала Сохранены (без резервирования и синхронизации):"
+""
 
 #: src/usr/local/www/status_logs_common.inc:732
 #: src/usr/local/www/status_logs_settings.php:178
 #: src/usr/local/www/system_advanced_admin.php:562
 msgid "webConfigurator configuration has changed. Restarting webConfigurator."
-msgstr ""
+msgstr "Настройки вебКонфигуратора изменены. Перезугрузка вебКонфигуратора."
 
 #: src/usr/local/www/status_logs_common.inc:734
 #: src/usr/local/www/status_logs_settings.php:180
 msgid "WebGUI process is restarting."
-msgstr ""
+msgstr "Графиеский вебинтервейс перезагружается."
 
 #: src/usr/local/www/status_logs_common.inc:782
 #, php-format
 msgid "Manage %1$s Log"
-msgstr ""
+msgstr "Управлять %1$s  Журналом"
 
 #: src/usr/local/www/status_logs_common.inc:791
 #: src/usr/local/www/status_logs_settings.php:235
 msgid "Forward/Reverse Display"
-msgstr ""
+msgstr "Отобразить в прямом или обратном порядке"
 
 #: src/usr/local/www/status_logs_common.inc:799
 msgid "(newest at bottom)"
-msgstr ""
+msgstr "(самый новый внизу)"
 
 #: src/usr/local/www/status_logs_common.inc:807
 msgid "(newest at top)"
-msgstr ""
+msgstr "(самый новый наверху)"
 
 #: src/usr/local/www/status_logs_common.inc:817
 msgid "Show log entries in forward or reverse order."
-msgstr ""
+msgstr "Показать записи лога в прямом или обратном порядке."
 
 #: src/usr/local/www/status_logs_common.inc:820
 #: src/usr/local/www/status_logs_common.inc:825
 #: src/usr/local/www/status_logs_settings.php:242
 msgid "GUI Log Entries"
-msgstr ""
+msgstr "Записи Журнала Графического Интерфейса"
 
 #: src/usr/local/www/status_logs_common.inc:831
 msgid ""
 "This is the number of log entries displayed in the GUI. It does not affect "
 "how many entries are contained in the log."
 msgstr ""
+"Это число записей журнала, отображённое в графическом интерфейсе. Оно не "
+"влият на количество записей, содержащееся в журнале."
 
 #: src/usr/local/www/status_logs_common.inc:834
 #: src/usr/local/www/status_logs_common.inc:839
 #: src/usr/local/www/status_logs_settings.php:250
 msgid "Log file size (Bytes)"
-msgstr ""
+msgstr "Размер файла журнала (в Байтах)"
 
 #: src/usr/local/www/status_logs_common.inc:844
 #, php-format
@@ -27548,10 +27553,17 @@ msgid ""
 "the options to set the size, then clear the log using the \"Clear Log\" "
 "action below. "
 msgstr ""
+"Размер файла журнала остаётся неизменным на циклической основе. Данное поле "
+"контролирует, насколько большим будет размер файла журнала,  и сколько "
+"записей может быть внутри журнала. По умолчанию данное значение "
+"приблизительно составляет 500Кб. %1$sК СВЕДЕНИЮ: размер журнала изменится в "
+"следующий раз при его очистке. Для немедленной очистки размера журнала, "
+"сначала сохраните опции установок размера, а потом очистите журнал, "
+"используя действие \"Очистить Журнал\" ниже."
 
 #: src/usr/local/www/status_logs_common.inc:849
 msgid "Formatted/Raw Display"
-msgstr ""
+msgstr "Отформатированное/Неотформатированное Отображение"
 
 #: src/usr/local/www/status_logs_common.inc:875
 msgid ""
@@ -27559,22 +27571,27 @@ msgid ""
 "The raw output will reveal more detailed information, but it is more "
 "difficult to read."
 msgstr ""
+"Показать записи журнала в виду отформатированного  или неотформатированного "
+"вывода, сгенерированного сервисом. Неотформатированный вывод покажет больше "
+"детализированной информации, но его сложно читать."
 
 #: src/usr/local/www/status_logs_common.inc:883
 #: src/usr/local/www/status_logs_settings.php:286
 msgid "Web Server Log"
-msgstr ""
+msgstr "Журнал Веб Сервера"
 
 #: src/usr/local/www/status_logs_common.inc:886
 msgid ""
 "If this is checked, errors from the nginx web server process for the GUI or "
 "Captive Portal will appear in the system log."
 msgstr ""
+"При выделении, ошибки процесса веб сервера nginx для графического интерфейса "
+"или Портала Захвата появятся в системном логе."
 
 #: src/usr/local/www/status_logs_common.inc:894
 #: src/usr/local/www/status_logs_settings.php:258
 msgid "Log firewall default blocks"
-msgstr ""
+msgstr "Лог межсетевого экрана блокировок по умолчанию"
 
 #: src/usr/local/www/status_logs_common.inc:897
 msgid ""
@@ -27582,32 +27599,38 @@ msgid ""
 "logged if this option is unchecked. Per-rule logging options are still "
 "respected."
 msgstr ""
+"Пакеты, блокируемые неявным блокирующим правилом по умолчанию, не будут "
+"журналироваться, если данная опция включена. Опции журналирования по каждому "
+"правилу всё ещё будут иметь силу."
 
 #: src/usr/local/www/status_logs_common.inc:904
 msgid ""
 "Packets that are allowed by the implicit default pass rule will be logged if "
 "this option is checked. Per-rule logging options are still respected. "
 msgstr ""
+"Пакеты, блокируемые неявным блокирующим правилом по умолчанию, будут "
+"журналироваться, если данная опция включена. Опции журналирования по каждому "
+"правилу всё ещё будут иметь силу."
 
 #: src/usr/local/www/status_logs_common.inc:925
 #: src/usr/local/www/status_logs_settings.php:310
 msgid "Dont load descriptions"
-msgstr ""
+msgstr "Не загружать описания"
 
 #: src/usr/local/www/status_logs_common.inc:926
 #: src/usr/local/www/status_logs_settings.php:311
 msgid "Display as column"
-msgstr ""
+msgstr "Отобразить как столбец"
 
 #: src/usr/local/www/status_logs_common.inc:927
 #: src/usr/local/www/status_logs_settings.php:312
 msgid "Display as second row"
-msgstr ""
+msgstr "Отобразить как вторую строку"
 
 #: src/usr/local/www/status_logs_common.inc:922
 #: src/usr/local/www/status_logs_settings.php:307
 msgid "Where to show rule descriptions"
-msgstr ""
+msgstr "Где показать описания правил"
 
 #: src/usr/local/www/status_logs_common.inc:929
 #: src/usr/local/www/status_logs_settings.php:314
@@ -27617,124 +27640,137 @@ msgid ""
 "%1$sDisplaying rule descriptions for all lines in the log might affect "
 "performance with large rule sets."
 msgstr ""
+"Показать описание примененного правила ниже или в записях журнала "
+"межсетевого экрана.%1$sОтображение описаний правил для всех строк может "
+"иметь влияние на производительность с большими блоками правил."
 
 #: src/usr/local/www/status_logs_common.inc:950
 msgid "Saves changed settings."
-msgstr ""
+msgstr "Сохраняет измененные настройки."
 
 #: src/usr/local/www/status_logs_common.inc:955
 msgid "Clear log"
-msgstr ""
+msgstr "Очистить журнал"
 
 #: src/usr/local/www/status_logs_common.inc:965
 msgid ""
 "Clears local log file and reinitializes it as an empty log. Save any "
 "settings changes first."
 msgstr ""
+"Очищает локальный журнал или переинициализирует его как пустой файл журнала. "
+"Сначала сохраните любые изменения."
 
 #: src/usr/local/www/status_logs_filter.php:45
 msgid "Cannot resolve"
-msgstr ""
+msgstr "Невозможно разрешить"
 
 #: src/usr/local/www/status_logs_filter.php:85
 msgid "The rule that triggered this action is"
-msgstr ""
+msgstr "Правило, которое запустило данное действие"
 
 #: src/usr/local/www/status_logs_filter.php:156
 msgid "Rule"
-msgstr ""
+msgstr "Правило"
 
 #: src/usr/local/www/status_logs_filter.php:235
 #: src/usr/local/www/status_logs_filter.php:244
 msgid "Click to resolve"
-msgstr ""
+msgstr "Нажать для разрешения"
 
 #: src/usr/local/www/status_logs_filter.php:238
 msgid "Easy Rule: Add to Block List"
-msgstr ""
+msgstr "Простое Правило: Добавить в Список Блокировок"
 
 #: src/usr/local/www/status_logs_filter.php:247
 msgid "Easy Rule: Pass this traffic"
-msgstr ""
+msgstr "Простое Правило: Разрешить данный трафик"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Add to block list"
-msgstr ""
+msgstr "Добавить в список блокировок"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Pass traffic"
-msgstr ""
+msgstr "Разрешить трафик"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Resolve"
-msgstr ""
+msgstr "Разрешить"
 
 #: src/usr/local/www/status_logs_filter_dynamic.php:381
 msgid "Pause"
-msgstr ""
+msgstr "Пауза"
 
 #: src/usr/local/www/status_logs_filter_summary.php:85
 msgid "Protocols"
-msgstr ""
+msgstr "Протоколы"
 
 #: src/usr/local/www/status_logs_filter_summary.php:86
 msgid "Source IPs"
-msgstr ""
+msgstr "IP источника"
 
 #: src/usr/local/www/status_logs_filter_summary.php:87
 msgid "Destination IPs"
-msgstr ""
+msgstr "IP назначения"
 
 #: src/usr/local/www/status_logs_filter_summary.php:89
 msgid "Destination Ports"
-msgstr ""
+msgstr "Порты назначения"
 
 #: src/usr/local/www/status_logs_filter_summary.php:123
 #, php-format
 msgid ""
 "This is a summary of the last %1$s lines of the firewall log (Max %2$s)."
 msgstr ""
+"Это сводка последних %1$s  записей журнала межсетевого экрана (Максимум "
+"%2$s)."
 
 #: src/usr/local/www/status_logs_filter_summary.php:166
 msgid "Data points"
-msgstr ""
+msgstr "Точки Данных"
 
 #: src/usr/local/www/status_logs_filter_summary.php:176
 #: src/usr/local/www/widgets/widgets/log.widget.php:154
 #: src/usr/local/www/widgets/widgets/log.widget.php:157
 msgid "Reverse Resolve with DNS"
-msgstr ""
+msgstr "Разрешить Обратно с DNS"
 
 #: src/usr/local/www/status_logs_settings.php:81
 #: src/usr/local/www/status_logs_settings.php:327
 msgid "Reset Log Files"
-msgstr ""
+msgstr "Сбросить записи Журнала"
 
 #: src/usr/local/www/status_logs_settings.php:83
 msgid "The log files have been reset."
-msgstr ""
+msgstr "Файлы журнала сброшены."
 
 #: src/usr/local/www/status_logs_settings.php:90
 msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #1."
 msgstr ""
+"Валидный IP адрес/имя хоста или IP/имя хоста:порт должны быть указаны для "
+"удалённого сервера системного журнала #1."
 
 #: src/usr/local/www/status_logs_settings.php:93
 msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #2."
 msgstr ""
+"Валидный IP адрес/имя хоста или IP/имя хоста:порт должны быть указаны для "
+"удалённого сервера системного журнала #2."
 
 #: src/usr/local/www/status_logs_settings.php:96
 msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #3."
 msgstr ""
+"Валидный IP адрес/имя хоста или IP/имя хоста:порт должны быть указаны для "
+"удалённого сервера системного журнала #3."
 
 #: src/usr/local/www/status_logs_settings.php:163
 msgid "Changed system logging options."
-msgstr ""
+msgstr "Опции системного журналирования изменены."
 
 #: src/usr/local/www/status_logs_settings.php:191
 msgid ""
@@ -27743,6 +27779,10 @@ msgid ""
 "By default this is approximately 500KB per log file, and there are nearly 20 "
 "such log files."
 msgstr ""
+"Размер файла журнала остаётся неизменным на циклической основе. Данное поле "
+"контролирует, насколько большим будет размер файла журнала,  и сколько "
+"записей может быть внутри журнала. По умолчанию данное значение "
+"приблизительно составляет 500Кб, и таких файлов журнала  примерно 20."
 
 #: src/usr/local/www/status_logs_settings.php:193
 msgid ""
@@ -27751,20 +27791,26 @@ msgid ""
 "set the size, then clear all logs using the \"Reset Log Files\" option "
 "farther down this page. "
 msgstr ""
+"К СВЕДЕНИЮ: Размер журнала будет изменён, когда в следующий раз файл журнала "
+"будет очищен или удалён. Чтобы немедленно увеличить размер файла журнала, "
+"сначала сохраните опции установок размера, а потом очистите все логи, "
+"используя опцию \"Сброс Файлов Журнала\" далее ниже на данной странице."
 
 #: src/usr/local/www/status_logs_settings.php:194
 msgid ""
 "Be aware that increasing this value increases every log file size, so disk "
 "usage will increase significantly."
 msgstr ""
+"Имейти в виду, что увеличение данного значения увеличит размер каждого файла "
+"журнала, таким образом использование диска значительно увеличится."
 
 #: src/usr/local/www/status_logs_settings.php:195
 msgid "Disk space currently used by log files is: "
-msgstr ""
+msgstr "Пространство диска, используемое файлов журнала в данный момент:"
 
 #: src/usr/local/www/status_logs_settings.php:196
 msgid " Remaining disk space for log files: "
-msgstr ""
+msgstr "Оставшееся пространство диска для файлов журнала:"
 
 #: src/usr/local/www/status_logs_settings.php:198
 msgid ""

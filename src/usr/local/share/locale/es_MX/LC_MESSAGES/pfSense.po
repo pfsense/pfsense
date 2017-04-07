@@ -1,4 +1,4 @@
-# Ivor Kreso <ivor@netgate.com>, 2017. #zanata
+# Jose Antonio Vela Castillo <ja.velac@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -7,13 +7,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-23 12:32-0500\n"
-"Last-Translator: Ivor Kreso <ivor@netgate.com>\n"
-"Language-Team: Croatian\n"
-"Language: hr\n"
+"PO-Revision-Date: 2017-04-07 02:03-0400\n"
+"Last-Translator: Jose Antonio Vela Castillo <ja.velac@gmail.com>\n"
+"Language-Team: Spanish (Mexico)\n"
+"Language: es-MX\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/etc/inc/auth.inc:96
 msgid ""
@@ -21,29 +20,30 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Potencijalni DNS Rebind napad otkriven, posjeti http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Probaj pristupiti ruteru preko IP adrese umjesto imena."
+"Se detecto posible ataque \"DNS Rebind \" , revisar http://en.wikipedia.org/"
+"wiki/DNS_rebinding<br /> Trate de acceder por la IP del router en lugar del "
+"nombre del equipo."
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr ""
+msgstr "Redireccionando..."
 
 #: src/etc/inc/auth.inc:121
 msgid "Redirecting to the dashboard..."
-msgstr ""
+msgstr "Redireccionando al panel principal"
 
 #: src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:445 src/etc/inc/auth.inc:522
 #: src/etc/inc/auth.inc:563 src/etc/inc/auth.inc:632 src/etc/inc/auth.inc:790
 #: src/etc/inc/auth.inc:803
 #, php-format
 msgid "Running: %s"
-msgstr ""
+msgstr "Ejecutando: %s"
 
 #: src/etc/inc/auth.inc:844 src/etc/inc/auth.inc:925 src/etc/inc/auth.inc:1013
 #: src/etc/inc/auth.inc:1325
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr ""
+msgstr "ERROR!  no se ha podido conectar con el servidor %s."
 
 #: src/etc/inc/auth.inc:862
 #, php-format
@@ -149,45 +149,45 @@ msgstr ""
 #: src/etc/inc/auth.inc:1489
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr "Iniciando RADIUS: %s"
 
 #: src/etc/inc/auth.inc:1501
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "Error en envio de RADIUS : %s"
 
 #: src/etc/inc/auth.inc:1509
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr ""
+msgstr "Autenticación RADIUS exitosa"
 
 #: src/etc/inc/auth.inc:1515
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr ""
+msgstr "Autenticación RADIUS rechazada"
 
 #: src/etc/inc/auth.inc:1636
 msgid "Widget configuration has been changed."
-msgstr ""
+msgstr "La configuración del Widget ha sido modificada"
 
 #: src/etc/inc/auth.inc:1641
 #, php-format
 msgid "(User %s)"
-msgstr ""
+msgstr "(Usuario %s)"
 
 #: src/etc/inc/auth.inc:1659 src/etc/inc/auth.inc:1675
 msgid "Local Database"
-msgstr ""
+msgstr "Base de Datos Local"
 
 #: src/etc/inc/auth.inc:1779
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Inicio de sesión exitosa para el usuario '%1$s' desde: %2$s"
 
 #: src/etc/inc/auth.inc:1838
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Sesión expirada para el usuario '%1$s' desde: %2$s"
 
 #: src/etc/inc/auth.inc:1840
 #, php-format
@@ -219,22 +219,22 @@ msgstr ""
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "Este dispositivo esta siendo soportado por: %s."
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Inicio de Sesión %1$s on %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "Inicio de Sesión de %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1015
 msgid "Login"
-msgstr ""
+msgstr "Inicio de Sesión"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -243,10 +243,14 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
+"La dirección IP usada para acceder a este router no está configurada "
+"localmente, y puede que haya sido reenviada por NAT u otro mecanismo. <br /"
+"><br /> Si este comportamiento es inesperado, verifique que no está siendo "
+"víctima de un ataque Man-in-the-Middle."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "El navegador debe soportar cookies para ingresar."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2531
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -269,11 +273,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:599
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr ""
+msgstr "Ingrese su nombre de usuario"
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:533
 #: src/usr/local/www/diag_backup.php:580 src/usr/local/www/interfaces.php:2538
@@ -298,50 +302,50 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:581
 #: src/usr/local/www/vpn_openvpn_client.php:606
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr ""
+msgstr "Ingrese su contraseña"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr ""
+msgstr "%s portal cautivo"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr ""
+msgstr "Bienvenido al Portal Cautivo %s"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr ""
+msgstr "Contraseña:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Ingrese el código del cupon"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "Redireccionando a"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
 #: src/usr/local/www/head.inc:521
 msgid "Logout"
-msgstr ""
+msgstr "Salir"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "Haga click en el botón de abajo para desconectarse"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
@@ -351,6 +355,7 @@ msgstr ""
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
 msgstr ""
+"El Portal Cautivo permitió el cambio de  configuración de los usuarios"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -25948,7 +25953,6 @@ msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #: src/usr/local/www/system.php:198
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."

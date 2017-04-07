@@ -1,3 +1,4 @@
+# Bjarke Madsen <bjarke@klex.dk>, 2017. #zanata
 # Kenneth Holmqvist <kholmqvist88@gmail.com>, 2017. #zanata
 # Mads Clausen <masbakke65@gmail.com>, 2017. #zanata
 # Michael Sass <michael@fam-sass.dk>, 2017. #zanata
@@ -5,12 +6,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-07 15:53-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-31 05:17-0400\n"
-"Last-Translator: Michael Sass <michael@fam-sass.dk>\n"
+"PO-Revision-Date: 2017-04-04 03:53-0400\n"
+"Last-Translator: Bjarke Madsen <bjarke@klex.dk>\n"
 "Language-Team: Danish\n"
 "Language: da\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -45,7 +46,7 @@ msgstr "Kører: %s"
 #: src/etc/inc/auth.inc:1325
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "Fejl! Kunne ikke få forbindelse til serveren %s."
+msgstr "FEJL! Kunne ikke få forbindelse til serveren %s."
 
 #: src/etc/inc/auth.inc:862
 #, php-format
@@ -55,59 +56,64 @@ msgstr "LDAP: Kunne ikke slå CA op som henviser til host %s"
 #: src/etc/inc/auth.inc:937
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr "Fejl! ldap_test_bind() kunne ikke forbinde med STTLS til server %s."
+msgstr "FEJL! ldap_test_bind() kunne ikke forbinde med STTLS til server %s."
 
 #: src/etc/inc/auth.inc:999
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
+"FEJL! ldap_get_user_ous() backend valgt uden en LDAP autentificeringsserver "
+"defineret."
 
 #: src/etc/inc/auth.inc:1027
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_user_ous() kunne ikke STARTTLS til serveren %s."
 
 #: src/etc/inc/auth.inc:1037
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_user_ous() kunne ikke binde anonymt til serveren %s."
 
 #: src/etc/inc/auth.inc:1042
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_user_ous() kunne ikke binde til serveren %s."
 
 #: src/etc/inc/auth.inc:1158
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_groups() kunne ikke forbinde til serveren %s."
 
 #: src/etc/inc/auth.inc:1170
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_groups() kunne ikke STARTTLS til serveren %s."
 
 #: src/etc/inc/auth.inc:1181
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_groups() kunne ikke binde anonymt til serveren %s."
 
 #: src/etc/inc/auth.inc:1186
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr ""
+msgstr "FEJL! ldap_get_groups() kunne ikke binde til serveren %s."
 
 #: src/etc/inc/auth.inc:1292
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
+"FEJL! ldap_backed() kaldt uden en LDAP autentificeringsserver defineret. "
+"Skifter til lokal database. Besøg System -> Brugeradministration."
 
 #: src/etc/inc/auth.inc:1295
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
+"FEJL! ldap_backed() kaldt uden en LDAP autentificeringsserver defineret."
 
 #: src/etc/inc/auth.inc:1318
 #, php-format
@@ -117,7 +123,7 @@ msgstr "FEJL! ldap_backed() kunne ikke forbinde med STARTTLS til server %s."
 #: src/etc/inc/auth.inc:1343
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "Fejl! Kunne ikke forbinde til serveren %s."
+msgstr "FEJL! Kunne ikke forbinde til serveren %s."
 
 #: src/etc/inc/auth.inc:1361
 #, php-format
@@ -136,12 +142,12 @@ msgstr "Fejl i søgningen: %s"
 
 #: src/etc/inc/auth.inc:1400
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr "Fejl! LDAP søgning fejlede, eller flere brugere blev fundet."
+msgstr "FEJL! LDAP søgning fejlede, eller flere brugere blev fundet."
 
 #: src/etc/inc/auth.inc:1407
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "Fejl! Kunne ikke logge ind på serveren %1$s med bruger %2$s: %3$s"
+msgstr "FEJL! Kunne ikke logge ind på serveren %1$s med bruger %2$s: %3$s"
 
 #: src/etc/inc/auth.inc:1414
 #, php-format
@@ -156,7 +162,7 @@ msgstr "RADIUS starter: %s8"
 #: src/etc/inc/auth.inc:1501
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "RADIUS sende mislykkedes: %s"
 
 #: src/etc/inc/auth.inc:1509
 #, php-format
@@ -194,7 +200,7 @@ msgstr "Sessionen er udløbet for bruger '%1$s' fra: %2$s"
 #: src/etc/inc/auth.inc:1840
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Bruger loggede ud for bruger '%1$s' fra: %2$s"
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
@@ -239,7 +245,6 @@ msgid "Login"
 msgstr "Log ind"
 
 #: src/etc/inc/authgui.inc:249
-#, fuzzy
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means. <br /><br />If this forwarding "
@@ -247,8 +252,8 @@ msgid ""
 "taking place."
 msgstr ""
 "IP adressen der bliver brugt til at tilgå denne router er ikke konfigureret "
-"lokalt. Den kan være forwarded af NAT. <br /><br />Hvis forwarding  ikke er "
-"forventet, så skal tjek at der ikke er et Man-In-The-Middle angreb i gang"
+"lokalt. Den kan være forwarded af NAT. <br /><br />Hvis denne forwarding "
+"ikke er forventet, tjek at der ikke er et man-in-the-middle angreb i gang."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
@@ -356,7 +361,7 @@ msgstr "Fejl: kan ikke åbne '%1$s' i captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2331
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Captive Portal tilladte brugere konfiguration ændret"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -365,7 +370,7 @@ msgstr "ADVARSEL!"
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s kræver *MINUMUM* %2$s RAM for at virke korrekt.%3$s"
+msgstr "%1$s kræver *MINIMUM* %2$s RAM for at virke korrekt.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
@@ -383,7 +388,7 @@ msgstr "Ingen interfaces fundet!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr "Skal VLANs opsætte først?"
+msgstr "Skal VLANs opsættes først?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -535,7 +540,7 @@ msgstr "Opgraderer m0n0wall konfiguration til pfSense..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr "Fejl! Kunne ikke konvertere m0n0wall -> pfSense i config.xml"
+msgstr "FEJL! Kunne ikke konvertere m0n0wall -> pfSense i config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
@@ -562,7 +567,7 @@ msgstr "Config.xml låst op."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr "Ugyldigt adgangskode. Prøv igen."
+msgstr "Ugyldig adgangskode indtastet. Prøv igen."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -570,8 +575,8 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
-"Config.xml er ødelagt og fylder 0 bytes. Kunne ikke gendanne en tidligere "
-"backup."
+"Config.xml er ødelagt og fylder 0 bytes. Kunne ikke gendanne fra en "
+"tidligere backup."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:496
@@ -613,12 +618,12 @@ msgstr "Opdateret bogon opdateringsfrekvens til 03:00"
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Afsluttede opgradering af konfigurationen %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr "Opdateret konfiguration fra version %1$s til %2$s"
+msgstr "Opgraderede konfiguration fra version %1$s til %2$s"
 
 #: src/etc/inc/config.lib.inc:473
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -656,7 +661,7 @@ msgstr "%1$s på linie %2$d"
 #: src/etc/inc/config.lib.inc:724 src/etc/inc/config.lib.inc:726
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr "Backup cache filen %s er korrupt. "
+msgstr "Backup cache filen %s er korrupt.  Fjerner tilknytning."
 
 #: src/etc/inc/config.lib.inc:877
 #, php-format
@@ -684,8 +689,8 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
-"Dynamic DNS (%1$s) Der opstod en fejl ved at finder offentlige IP for "
-"interface - %2$s (%3$s %4$s)."
+"Dynamic DNS (%1$s) Der opstod en fejl med at bestemme den offentlige IP for "
+"interfacet - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
@@ -698,7 +703,7 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamic DNS %1$s (%2$s): Kører test opdatering på No-IP konto. IP Adressen "
+"Dynamic DNS %1$s (%2$s): Kører test opdatering på No-IP konto. IP-adressen "
 "er midlertidigt sat til %3$s"
 
 #: src/etc/inc/dyndns.class:684
@@ -722,7 +727,7 @@ msgstr "Fejl"
 
 #: src/etc/inc/dyndns.class:850
 msgid "Curl error occurred:"
-msgstr "Fejl opstod"
+msgstr "Curl fejl opstod:"
 
 #: src/etc/inc/dyndns.class:859 src/etc/inc/dyndns.class:880
 #: src/etc/inc/dyndns.class:899 src/etc/inc/dyndns.class:917
@@ -733,7 +738,7 @@ msgstr "Fejl opstod"
 #: src/etc/inc/dyndns.class:1394 src/etc/inc/dyndns.class:1415
 #: src/etc/inc/dyndns.class:1460 src/etc/inc/dyndns.class:1472
 msgid "IP Address Changed Successfully!"
-msgstr "IP Adresse skift lykkedes!"
+msgstr "Skift af IP-adresse lykkedes!"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -774,31 +779,36 @@ msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"Det angivede DNS-O-Matic brugernavn eller password er forkert. Opdatering af "
-"servicen vil ikke blive udført indtil fejlen er rettet."
+"Det angivne DNS-O-Matic brugernavn eller password er forkert. Opdateringer "
+"vil ikke blive distribueret til tjenesterne indtil fejlen er rettet."
 
 #: src/etc/inc/dyndns.class:872
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
-msgstr "Det indtastede hostnavn er ikke et fully-qualified domæne nave. "
+msgstr ""
+"Det indtastede værtsnavn er ikke et fuldt kvalificeret domænenavn.  Hvis "
+"ingen værtsnavne inkluderes, vil notfqdn returneres. "
 
 #: src/etc/inc/dyndns.class:874
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Det indførte værtsnavn kunne ikke matches til nogen konfigurerede tjenester. "
+"Tjenestefeltet vil være blank i returkoden."
 
 #: src/etc/inc/dyndns.class:876
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"Op til 20 værter kan opdateres. numhost returneres hvis der forsøges at "
+"opdatere mere end 20, eller opdatere en round-robin."
 
 #: src/etc/inc/dyndns.class:878
-#, fuzzy
 msgid "The hostname is blocked for update abuse."
-msgstr "Hostnavnet er blokeret for pga. opdaterings misbrug."
+msgstr "Værtsnavnet er blokeret for pga. opdateringsmisbrug."
 
 #: src/etc/inc/dyndns.class:883
 msgid "DNS error encountered. Stop updating for 30 minutes."
@@ -813,7 +823,7 @@ msgstr "Ikke et FQDN!"
 
 #: src/etc/inc/dyndns.class:894 src/etc/inc/dyndns.class:1455
 msgid "No such host"
-msgstr "Hosten findes ikke!"
+msgstr "Værten findes ikke!"
 
 #: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:914
 #: src/etc/inc/dyndns.class:931 src/etc/inc/dyndns.class:948
@@ -822,7 +832,7 @@ msgstr "Hosten findes ikke!"
 #: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1434
 #: src/etc/inc/dyndns.class:1457
 msgid "No Change In IP Address"
-msgstr "Ingen ændring i IP adressen"
+msgstr "Ingen ændring i IP-adressen"
 
 #: src/etc/inc/dyndns.class:902 src/etc/inc/dyndns.class:920
 #: src/etc/inc/dyndns.class:937 src/etc/inc/dyndns.class:954
@@ -830,19 +840,19 @@ msgstr "Ingen ændring i IP adressen"
 #: src/etc/inc/dyndns.class:1339 src/etc/inc/dyndns.class:1397
 #: src/etc/inc/dyndns.class:1463
 msgid "User Authorization Failed"
-msgstr "Bruger godkendelse fejlede"
+msgstr "Brugergodkendelse fejlede"
 
 #: src/etc/inc/dyndns.class:968
 msgid "IP address is current, no update performed."
-msgstr "IP adressen er uændret, ingen opdatering udføres."
+msgstr "IP-adressen er uændret, ingen opdatering udføres."
 
 #: src/etc/inc/dyndns.class:972
 msgid "DNS hostname update successful."
-msgstr "DNS hostnavn opdateret."
+msgstr "DNS værtsnavn opdateret."
 
 #: src/etc/inc/dyndns.class:976
 msgid "Hostname supplied does not exist."
-msgstr "Hostnavnet eksisterer ikke."
+msgstr "Det valgte værtsnavn eksisterer ikke."
 
 #: src/etc/inc/dyndns.class:979
 msgid "Invalid Username."
@@ -854,28 +864,30 @@ msgstr "Ugyldigt password."
 
 #: src/etc/inc/dyndns.class:985
 msgid "Too many updates sent."
-msgstr "For mange forespørgsler er sendt."
+msgstr "For mange opdateringer er sendt."
 
 #: src/etc/inc/dyndns.class:988
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr "Kontoen er deaktivert pga. bruger på No-IPs regler."
+msgstr "Kontoen er deaktiveret grundet krænkelse af No-IPs regler."
 
 #: src/etc/inc/dyndns.class:991
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
-"Ugyldig IP. IP Adressen er forkert, en privat IP adresse eller på en "
+"Ugyldig IP. IP-adressen er enten forkert, en privat IP-adresse eller på en "
 "blacklist."
 
 #: src/etc/inc/dyndns.class:994
 msgid "Disabled / Locked Hostname."
-msgstr "Deaktiveret / Låst hostnavn."
+msgstr "Deaktiveret / Låst værtsnavn."
 
 #: src/etc/inc/dyndns.class:997
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
+"Den opdaterede vært er konfigureret som en web-omdirigerer og ingen "
+"opdatering blev gennemført."
 
 #: src/etc/inc/dyndns.class:1000
 msgid "Group supplied does not exist."
@@ -892,16 +904,20 @@ msgstr "DNS gruppen er uændret, ingen opdatering udført."
 #: src/etc/inc/dyndns.class:1011
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Det er ikke muligt at opdatere klienten for det angivne værtsnavn eller "
+"gruppe."
 
 #: src/etc/inc/dyndns.class:1014
 msgid "Hostname supplied does not have offline settings configured."
-msgstr ""
+msgstr "Det angivne værtsnavn har ikke offline-indstillinger konfigureret."
 
 #: src/etc/inc/dyndns.class:1017 src/etc/inc/dyndns.class:1020
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Klient deaktiveret. Klienten burde afslutte og ikke udføre flere "
+"opdateringer uden indgriben fra brugeren."
 
 #: src/etc/inc/dyndns.class:1024
 msgid "Unknown Response:"
@@ -909,19 +925,19 @@ msgstr "Ukendt svar:"
 
 #: src/etc/inc/dyndns.class:1030
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr ""
+msgstr "Autentificering fejlede: Brugernavn og/eller password var inkorrekt."
 
 #: src/etc/inc/dyndns.class:1032
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
-msgstr ""
+msgstr "Ingen Service: Dynamic DNS Service er deaktiveret for dette domæne."
 
 #: src/etc/inc/dyndns.class:1034
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Ulovligt Input: Selvforklarende"
 
 #: src/etc/inc/dyndns.class:1036
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr ""
+msgstr "For tidligt: Ikke nok tid er forløbet siden den sidste opdatering."
 
 #: src/etc/inc/dyndns.class:1038
 msgid "IP Updated Successfully!"
@@ -946,54 +962,59 @@ msgstr "Fejl 700"
 #: src/etc/inc/dyndns.class:1254 src/etc/inc/dyndns.class:1309
 #: src/etc/inc/dyndns.class:1356 src/etc/inc/dyndns.class:1370
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "IP-addressen opdaterede succesfuldt!"
 
 #: src/etc/inc/dyndns.class:1068
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Ugyldig Forespørgsel - URLen var i et forkert format. De nødvendige "
+"parametre blev ikke angivet."
 
 #: src/etc/inc/dyndns.class:1070
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"For tidlig opdatering - Forsøgte at opdatere for hurtigt siden sidste "
+"ændring."
 
 #: src/etc/inc/dyndns.class:1072
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Database Fejl - Der var en en database fejl på serverens side."
 
 #: src/etc/inc/dyndns.class:1074
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
-msgstr "Hostnavn fejl - Hostnavnet (%1$s) tilhører ikke bruger (%2$s)."
+msgstr "Værtsnavn Fejl - Værtsnavnet (%1$s) tilhører ikke brugeren (%2$s)."
 
 #: src/etc/inc/dyndns.class:1138
 msgid "Not a valid username or password!"
-msgstr "Forkert brugernavn eller kode"
+msgstr "Forkert brugernavn eller password!"
 
 #: src/etc/inc/dyndns.class:1140
 msgid "Hostname specified does not exist."
-msgstr "Hostnavnet eksisterer ikke."
+msgstr "Værtsnavnet eksisterer ikke."
 
 #: src/etc/inc/dyndns.class:1146
 msgid "Hostname specified exists, but not under the username specified."
-msgstr "Hostnavnet eksisterer, men ikke sammen med brugernavnet."
+msgstr "Værtsnavnet eksisterer, men ikke under det specificerede brugernavn."
 
 #: src/etc/inc/dyndns.class:1148
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Opdaterer for tit, opfattes som misbrug."
 
 #: src/etc/inc/dyndns.class:1157 src/etc/inc/dyndns.class:1221
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Ugyldig Forespørgsel - Den angivne IP-adresse var ugyldig."
 
 #: src/etc/inc/dyndns.class:1159
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Ugyldig Forespørgsel - Krævne parametre blev ikke angivet."
 
 #: src/etc/inc/dyndns.class:1161
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
+"Ugyldig Forespørgsel - Ugyldige tegn i enten brugernavnet eller passwordet."
 
 #: src/etc/inc/dyndns.class:1163
 msgid "Invalid password."
@@ -1010,7 +1031,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
 #: src/etc/inc/dyndns.class:1201
 msgid "Server side error."
-msgstr ""
+msgstr "Server side fejl."
 
 #: src/etc/inc/dyndns.class:1185
 msgid "Badly Formed Request (check the settings)."
@@ -1018,7 +1039,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1223
 msgid "Bad Request - A hostname was not provided."
-msgstr "Ugyldig forespørgsel - Et hostnavn mangler."
+msgstr "Ugyldig forespørgsel - Et værtsnavn mangler."
 
 #: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1225
 #: src/etc/inc/dyndns.class:1252
@@ -1036,7 +1057,7 @@ msgstr "Ugyldig anmodning - Manglende eller ugyldige parametre."
 
 #: src/etc/inc/dyndns.class:1250
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Ugyldig Forespørgsel - Ugyldigt Tunnel ID."
 
 #: src/etc/inc/dyndns.class:1284
 msgid "Route53 API call failed"
@@ -1069,7 +1090,7 @@ msgstr "Zone eller Host ID blev ikke fundet, check hostnavnet"
 
 #: src/etc/inc/dyndns.class:1325
 msgid "UNKNOWN ERROR"
-msgstr "Ukendt fejl."
+msgstr "UKENDT FEJL"
 
 #: src/etc/inc/dyndns.class:1348
 msgid "Wrong values - Update could not be completed."
@@ -1097,7 +1118,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1401
 msgid "Bad request"
-msgstr "Forkert forespørgelse "
+msgstr "Ugyldig Forespørgsel "
 
 #: src/etc/inc/dyndns.class:1403
 msgid "Dynamic DNS access has been blocked!"
@@ -1105,7 +1126,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1405
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "Fejl på googles side, prøv igen om 5 minutter."
 
 #: src/etc/inc/dyndns.class:1419 src/etc/inc/dyndns.class:1477
 msgid "Invalid username or password"
@@ -1129,11 +1150,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1438
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "Generel systemfejl genkendt af systemet"
 
 #: src/etc/inc/dyndns.class:1441
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "Generel systemfejl ikke genkendt af systemet"
 
 #: src/etc/inc/dyndns.class:1493
 #, php-format
@@ -1324,7 +1345,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "Ukendt block fejl."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
@@ -1389,7 +1410,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Ukendt passeringsfejl."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
@@ -1397,7 +1418,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Datagram konverteringsfejl"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
@@ -1643,7 +1664,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Der var en eller flere fejl under indlæsning af reglerne: %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
@@ -1690,6 +1711,8 @@ msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
+"En fejl opstod under forsøg på at finde interfacet %s. Reglen blev ikke "
+"tilføjet."
 
 #: src/etc/inc/filter.inc:1265
 #, php-format
@@ -1873,7 +1896,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:4294
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr ""
+msgstr "Der skete en fejl under parsning af pakke-filter reglerne for %s."
 
 #: src/etc/inc/filter.inc:4362
 msgid "delete this separator"
@@ -1886,6 +1909,8 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Der skete en fejl under parsning af følgende log entry: %s. Venligst "
+"rapporter til mailing liste eller forum."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -1893,12 +1918,16 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Der skete en fejl under parsning af regel nummer: %s. Venligst rapporter til "
+"mailing liste eller forum."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
+"Der skete en fejl under parsning af reglen: %s. Venligst rapporter til "
+"mailing liste eller forum."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
@@ -2022,7 +2051,7 @@ msgstr ""
 #: src/etc/inc/gwlb.inc:302
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr ""
+msgstr "Fejl ved start af gateway monitor for %s"
 
 #: src/etc/inc/gwlb.inc:315
 #, php-format
@@ -2208,7 +2237,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:2028
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
-msgstr ""
+msgstr "Fejl: Kan ikke åbne mpd_%1$s.conf i interface_ppps_configure().%2$s"
 
 #: src/etc/inc/interfaces.inc:2123
 #, php-format
@@ -2263,6 +2292,7 @@ msgstr ""
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
+"Var ikke i stand til at klone interface %1$s med fejlkode %2$s, output %3$s"
 
 #: src/etc/inc/interfaces.inc:3153
 #, php-format
@@ -2343,7 +2373,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:4477
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
-msgstr ""
+msgstr "Fejl: Kan ikke åbne %s i DHCP6_Config_File_Override() til læsning."
 
 #: src/etc/inc/interfaces.inc:4505
 #, php-format
@@ -2351,6 +2381,8 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
+"Fejl: Kan ikke åbne dhclient_%s.conf i interface_dhcp_configure() til "
+"skrivning."
 
 #: src/etc/inc/interfaces.inc:4518
 #, php-format
@@ -2666,7 +2698,7 @@ msgstr ""
 msgid "Mobile Client"
 msgstr "Mobil Kunde"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3257,27 +3289,23 @@ msgid "Spanish"
 msgstr "Spansk"
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "Portugisisk (Brasiliansk)"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "Tyrkisk"
-
-#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Kinesisk (forenklet, Kina)"
 
-#: src/etc/inc/pfsense-utils.inc:2839
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
+#: src/etc/inc/pfsense-utils.inc:3074
 msgid "No Service"
 msgstr "Ingen Service"
 
-#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
+#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3293,83 +3321,83 @@ msgstr "Ingen Service"
 msgid "Mode"
 msgstr "Tilstand"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3049
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3054
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3059
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3065
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3076
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3091
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3095
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3100
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3104
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -3381,7 +3409,7 @@ msgstr ""
 #, php-format
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
-msgstr ""
+msgstr "FEJL! En fejl opstod på pkg eksekvering (rc = %d) med parametre '%s':"
 
 #: src/etc/inc/pkg-utils.inc:410 src/etc/inc/pkg-utils.inc:413
 msgid "ERROR: Error trying to get packages list. Aborting..."
@@ -7257,7 +7285,7 @@ msgid ""
 "(pfsense.%s)."
 msgstr ""
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr ""
 

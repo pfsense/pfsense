@@ -840,7 +840,7 @@ function netgate_hardware_setup() {
 		$rule = array();
 		$rule['type'] = 'pass';
 		$rule['interface'] = 'lan';
-		$rule['protocol'] = 'inet';
+		$rule['ipprotocol'] = 'inet';
 		$rule['source']['network'] = 'lan';
 		$rule['destination']['any'] = true;
 		$rule['descr'] = 'Default allow LAN to any rule';

@@ -13,6 +13,8 @@
  * This library is PHP4 and PHP5 compatible.
  */
 
+include_once('phpsessionmanager.inc');
+
 // CONFIGURATION:
 
 /**
@@ -350,7 +352,7 @@ function csrf_conf($key, $val) {
  */
 function csrf_start() {
     if ($GLOBALS['csrf']['auto-session'] && !session_id()) {
-        session_start();
+        phpsession_begin();
     }
 }
 

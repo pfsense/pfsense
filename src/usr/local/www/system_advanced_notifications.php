@@ -88,7 +88,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($_POST['save'])) {
+	$testgrowl = isset($_POST['test-growl']);
+	$testsmtp = isset($_POST['test-smtp']);
+	if (isset($_POST['save']) || $testsmtp || $testgrowl) {
 
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
@@ -152,7 +154,7 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 
-		if (!$input_errors) {
+		if (!$input_errors && !$testsmtp && !$testgrowl) {
 			write_config();
 
 			pfSenseHeader("system_advanced_notifications.php");
@@ -161,7 +163,7 @@ if ($_POST) {
 
 	}
 
-	if (isset($_POST['test-growl'])) {
+	if ($testgrowl) {
 		// Send test message via growl
 		if (isset($config['notifications']['growl']['ipaddress'])) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
@@ -176,7 +178,7 @@ if ($_POST) {
 		}
 	}
 
-	if (isset($_POST['test-smtp'])) {
+	if ($testsmtp) {
 		// Send test message via smtp
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");

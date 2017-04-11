@@ -2834,6 +2834,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
 		"nb" => gettext("Norwegian Bokmål"),
+		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);

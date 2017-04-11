@@ -201,7 +201,6 @@ function csrf_check($fatal = true) {
         $callback = $GLOBALS['csrf']['callback'];
         if (trim($tokens, 'A..Za..z0..9:;,') !== '') $tokens = 'hidden';
         $callback($tokens);
-        phpsession_end();
         exit;
     }
     return $ok;

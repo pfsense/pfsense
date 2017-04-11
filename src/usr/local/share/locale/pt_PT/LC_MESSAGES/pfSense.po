@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-03 09:00-0400\n"
+"PO-Revision-Date: 2017-04-07 10:03-0400\n"
 "Last-Translator: Paulo Meireles <pmeireles@meireles.org>\n"
 "Language-Team: Portuguese (Portugal)\n"
 "Language: pt-PT\n"
@@ -169,12 +169,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1509
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr ""
+msgstr "Autenticação RADIUS bem sucedida"
 
 #: src/etc/inc/auth.inc:1515
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr ""
+msgstr "Autenticação RADIUS rejeitada"
 
 #: src/etc/inc/auth.inc:1636
 msgid "Widget configuration has been changed."
@@ -183,11 +183,11 @@ msgstr ""
 #: src/etc/inc/auth.inc:1641
 #, php-format
 msgid "(User %s)"
-msgstr ""
+msgstr "(Utilizador %s)"
 
 #: src/etc/inc/auth.inc:1659 src/etc/inc/auth.inc:1675
 msgid "Local Database"
-msgstr ""
+msgstr "Base de dados local"
 
 #: src/etc/inc/auth.inc:1779
 #, php-format
@@ -215,11 +215,11 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr ""
+msgstr "Erro: não permitido"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr ""
+msgstr "razão desconhecida"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format

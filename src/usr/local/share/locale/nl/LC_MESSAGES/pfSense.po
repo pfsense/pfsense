@@ -9,11 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-07 02:58-0400\n"
+"PO-Revision-Date: 2017-04-10 05:48-0400\n"
 "Last-Translator: Talle <talle-zanata@gelesneeuw.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -3400,7 +3400,7 @@ msgstr "Spaans"
 
 #: src/etc/inc/pfsense-utils.inc:2836
 msgid "Norwegian Bokmål"
-msgstr ""
+msgstr "Noorweegse Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2837
 msgid "Chinese (Simplified, China)"
@@ -10939,90 +10939,96 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_import.php:75
 #: src/usr/local/www/interfaces_groups_edit.php:102
 msgid "An alias with this name already exists."
-msgstr ""
+msgstr "Er bestaat al een alias met deze naam."
 
 #: src/usr/local/www/firewall_aliases_edit.php:169
 #: src/usr/local/www/firewall_aliases_import.php:82
 #, php-format
 msgid "Cannot use a reserved keyword as an alias name: %s"
-msgstr ""
+msgstr "Kan geen gereserveerd sleutelwoord als alias naam: %s gebruiken"
 
 #: src/usr/local/www/firewall_aliases_edit.php:179
 msgid "The alias name cannot start with pkg_"
-msgstr ""
+msgstr "De alias naam mag niet starten met pkg_"
 
 #: src/usr/local/www/firewall_aliases_edit.php:185
 #: src/usr/local/www/firewall_aliases_import.php:89
 msgid "An interface description with this name already exists."
-msgstr ""
+msgstr "Een interface omschrijving met deze naam bestaat al."
 
 #: src/usr/local/www/firewall_aliases_edit.php:194
 #: src/usr/local/www/firewall_aliases_import.php:98
 msgid "Sorry, an interface group with this name already exists."
-msgstr ""
+msgstr "Sorry, een interface groep met deze naam bestaat al."
 
 #: src/usr/local/www/firewall_aliases_edit.php:216
 msgid "A valid URL must be provided."
-msgstr ""
+msgstr "Er moet een geldige URL worden opgegeven."
 
 #: src/usr/local/www/firewall_aliases_edit.php:218
 #, php-format
 msgid "Unable to fetch usable data from URL %s"
-msgstr ""
+msgstr "Kan geen bruikbare data uit URL %s halen"
 
 #: src/usr/local/www/firewall_aliases_edit.php:230
 #: src/usr/local/www/firewall_aliases_edit.php:273
 #: src/usr/local/www/firewall_aliases_edit.php:318
 #, php-format
 msgid "Entry added %s"
-msgstr ""
+msgstr "Item toegevoegd %s"
 
 #: src/usr/local/www/firewall_aliases_edit.php:246
 #, php-format
 msgid "Could not fetch the URL '%s'."
-msgstr ""
+msgstr "Kon de URL '%s' niet ophalen."
 
 #: src/usr/local/www/firewall_aliases_edit.php:280
 #, php-format
 msgid "A valid URL must be provided. Could not fetch usable data from '%s'."
 msgstr ""
+"Er moet een geldige URL worden opgegeven. Kon geen bruikbare data ophalen "
+"uit '%s'."
 
 #: src/usr/local/www/firewall_aliases_edit.php:284
 #, php-format
 msgid "URL '%s' is not valid."
-msgstr ""
+msgstr "De URL '%s' is niet geldig."
 
 #: src/usr/local/www/firewall_aliases_edit.php:349
 #, php-format
 msgid "Range is too large to expand into individual host IP addresses (%s)"
 msgstr ""
+"Het bereik is te groot om uit te breiden naar individuele host IP adressen "
+"(%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:350
 #: src/usr/local/www/firewall_aliases_edit.php:380
 #, php-format
 msgid "The maximum number of entries in an alias is %s"
-msgstr ""
+msgstr "Het maximum aantal items in een alias is %s"
 
 #: src/usr/local/www/firewall_aliases_edit.php:358
 #: src/usr/local/www/firewall_aliases_import.php:141
 #, php-format
 msgid "IPv6 address ranges are not supported (%s)"
-msgstr ""
+msgstr "IPv6 adres ranges worden niet ondersteund (%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:379
 #, php-format
 msgid "Subnet is too large to expand into individual host IP addresses (%s)"
 msgstr ""
+"Het subnet is te groot om naar individuele host IP adressen uit te breiden "
+"(%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:387
 #, php-format
 msgid "IPv6 subnets are not supported in host aliases (%s)"
-msgstr ""
+msgstr "IPv6 subnetten worden niet ondersteund in host aliassen (%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:414
 #, php-format
 msgid "The maximum number of entries in an alias has been exceeded (%s)"
-msgstr ""
+msgstr "Het maximum aantal items in een alias is overschreden (%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:433
 #, php-format
@@ -11032,22 +11038,24 @@ msgstr "%s is geen valide poort of alias."
 #: src/usr/local/www/firewall_aliases_edit.php:438
 #, php-format
 msgid "%1$s is not a valid %2$s address, FQDN or alias."
-msgstr ""
+msgstr "%1$s is geen geldig %2$s adres, FQDN of alias."
 
 #: src/usr/local/www/firewall_aliases_edit.php:444
 #, php-format
 msgid "%1$s/%2$s is not a valid subnet."
-msgstr ""
+msgstr "%1$s/%2$sis geen geldig subnet."
 
 #: src/usr/local/www/firewall_aliases_edit.php:453
 #, php-format
 msgid ""
 "The alias(es): %s cannot be nested because they are not of the same type."
 msgstr ""
+"De alias(sen): %s kunnen niet genest worden omdat ze niet van het zelfde "
+"type zijn."
 
 #: src/usr/local/www/firewall_aliases_edit.php:526
 msgid "Edited a firewall alias."
-msgstr ""
+msgstr "Een firewall alias bewerkt."
 
 #: src/usr/local/www/firewall_aliases_edit.php:555
 #: src/usr/local/www/firewall_aliases_edit.php:636
@@ -11121,7 +11129,7 @@ msgstr "IP of FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:584
 msgid "The value after the \"/\" is the update frequency in days."
-msgstr ""
+msgstr "De waarde na de \"/\" is de update frequentie in dagen."
 
 #: src/usr/local/www/firewall_aliases_edit.php:587
 msgid ""
@@ -11132,6 +11140,13 @@ msgid ""
 "for IPv6. An IP range such as 192.168.1.1-192.168.1.254 may also be entered "
 "and a list of CIDR networks will be derived to fill the range."
 msgstr ""
+"Netwerken worden bepaald in CIDR formaat. Selecteer het CIDR masker dat "
+"betrekking heeft op ieder item. /32 bepaalt een enkele IPv4 host, /128 "
+"bepaalt een enkele IPv6 host, /24 bepaalt 255.255.255.0, /64 bepaalt een "
+"normaal IPv6 netwerk, enz. Hostnamen (FQDNs) mogen ook gespecificeerd "
+"worden, gebruik daarvoor een /32 masker voor IPv4 of /128 voor IPv6. Een IP "
+"range zoals 192.168.1.1-192.168.1.254 mag ook worden ingevuld, een lijst van "
+"CIDR netwerken zal worden afgeleid om de range op te vullen."
 
 #: src/usr/local/www/firewall_aliases_edit.php:588
 msgid ""
@@ -11142,12 +11157,21 @@ msgid ""
 "192.168.1.16/28 may also be entered and a list of individual IP addresses "
 "will be generated."
 msgstr ""
+"Vul zo veel hosts in als nodig. Hosts moeten worden gespecificeerd met hun "
+"IP adres of volledig geldige domein naam (FQDN). FQDN hostnamen worden "
+"periodiek opnieuw opgelost en geupdate. Als een DNS query meerdere IPs terug "
+"geeft worden ze allen gebruikt. Een IP range zoals 192.168.1.1-192.168.1.10 "
+"of een klein subnet zoals 192.168.1.16/28 kan ook worden ingevoerd, daarop "
+"zal een lijst van individuele IP adressen worden gegenereerd."
 
 #: src/usr/local/www/firewall_aliases_edit.php:589
 msgid ""
 "Enter ports as desired, with a single port or port range per entry. Port "
 "ranges can be expressed by separating with a colon."
 msgstr ""
+"Vul poorten in zoals nodig met een enkele poort of poort range per item. "
+"Poort ranges kunnen worden uitgedrukt door ze te scheiden met een dubbele "
+"punt."
 
 #: src/usr/local/www/firewall_aliases_edit.php:590
 msgid ""
@@ -11155,6 +11179,9 @@ msgid ""
 "the items imported into the alias. Use only with small sets of IP addresses "
 "(less than 3000)."
 msgstr ""
+"Vul zo veel URLs in als nodig. Na het op slaan zullen de URLs worden "
+"gedownload en de items worden geïnporteerd in de alias. Gebruik alleen "
+"kleine sets IP adressen (minder dan 3000)."
 
 #: src/usr/local/www/firewall_aliases_edit.php:591
 msgid ""
@@ -11162,6 +11189,9 @@ msgid ""
 "the items imported into the alias. Use only with small sets of Ports (less "
 "than 3000)."
 msgstr ""
+"Vul zo veel URLs in als nodig. Na het op slaan zullen de URLs worden "
+"gedownload en de items worden geïnporteerd in de alias. Gebruik alleen "
+"kleine sets Poorten (minder dan 3000)."
 
 #: src/usr/local/www/firewall_aliases_edit.php:592
 msgid ""
@@ -11170,16 +11200,22 @@ msgid ""
 "addresses will be created. This will work with large numbers of addresses "
 "(30,000+) or small numbers."
 msgstr ""
+"Vul een enkele URL in die een groot aantal IPs en/of Subnets bevat. Na het "
+"opslaan zal de URL worden gedownload en er zal een een tabelbestand worden "
+"gecreëerd die de adressen bevat. Dit werkt met grote aantallen adressen (30."
+"000+) of kleine aantallen."
 
 #: src/usr/local/www/firewall_aliases_edit.php:594
 msgid ""
 "Enter a single URL containing a list of Port numbers and/or Port ranges. "
 "After saving, the URL will be downloaded."
 msgstr ""
+"Vul een enkele URL in die een lijst Poort nummers en/of Poort ranges bevat. "
+"Na het saven zal de URL worden gedownload."
 
 #: src/usr/local/www/firewall_aliases_edit.php:673
 msgid "Properties"
-msgstr ""
+msgstr "Eigenschappen"
 
 #: src/usr/local/www/firewall_aliases_edit.php:682
 #: src/usr/local/www/firewall_aliases_import.php:257
@@ -11187,17 +11223,19 @@ msgid ""
 "The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and "
 "_\"."
 msgstr ""
+"De naam of de alias mag alleen bestaan uit de karakters \"a-z, A-Z, 0-9 en "
+"_\"."
 
 #: src/usr/local/www/firewall_aliases_edit.php:694
 #: src/usr/local/www/firewall_virtual_ip_edit.php:321
 #: src/usr/local/www/services_igmpproxy_edit.php:167
 #: src/usr/local/www/system_authservers.php:500
 msgid "*Type"
-msgstr ""
+msgstr "*Type"
 
 #: src/usr/local/www/firewall_aliases_edit.php:704
 msgid "Hint"
-msgstr ""
+msgstr "Hint"
 
 #: src/usr/local/www/firewall_aliases_edit.php:738
 #: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:464
@@ -11208,20 +11246,20 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:570
 #: src/usr/local/www/vpn_ipsec_phase2.php:577
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #: src/usr/local/www/firewall_aliases_import.php:55
 msgid "Bulk import"
-msgstr ""
+msgstr "Bulk import"
 
 #: src/usr/local/www/firewall_aliases_import.php:65
 msgid "Aliases to import"
-msgstr ""
+msgstr "Aliassen om te importeren"
 
 #: src/usr/local/www/firewall_aliases_import.php:128
 #, php-format
 msgid "%s is not a valid port or port range."
-msgstr ""
+msgstr "%s is geen geldige poort range"
 
 #: src/usr/local/www/firewall_aliases_import.php:145
 #, php-format
@@ -11233,18 +11271,20 @@ msgid ""
 "Descriptions may not start or end with vertical bar (|) or contain double "
 "vertical bar ||."
 msgstr ""
+"Omschrijvingen mogen niet met een verticaal streepje (|) starten of een "
+"dubbel verticaal streepje bevatten ||."
 
 #: src/usr/local/www/firewall_aliases_import.php:165
 msgid "Descriptions must be less than 200 characters long."
-msgstr ""
+msgstr "Omschrijvingen moeten minder dan 200 woorden lang zijn."
 
 #: src/usr/local/www/firewall_aliases_import.php:186
 msgid "Imported a firewall alias."
-msgstr ""
+msgstr "Een firewall alias geimporteerd."
 
 #: src/usr/local/www/firewall_aliases_import.php:215
 msgid "Port Alias Details"
-msgstr ""
+msgstr "Poort Alias Details"
 
 #: src/usr/local/www/firewall_aliases_import.php:216
 msgid ""
@@ -11252,6 +11292,9 @@ msgid ""
 "contain port numbers, port ranges, blank lines (ignored) and an optional "
 "description after each port. e.g.:"
 msgstr ""
+"Plak de te importeren poorten elk op een nieuwe regel. De lijst kan bestaan "
+"uit poort nummers, poort bereiken, lege regels (genegeerd) en een optionele "
+"omschrijving na elke port. B.v.:"
 
 #: src/usr/local/www/firewall_aliases_import.php:224
 msgid "443 HTTPS port"
@@ -11259,7 +11302,7 @@ msgstr "443 HTTPS poort"
 
 #: src/usr/local/www/firewall_aliases_import.php:226
 msgid "4000:4099 Description of a port range"
-msgstr ""
+msgstr "4000:4099 Omschrijving van het bereik"
 
 #: src/usr/local/www/firewall_aliases_import.php:229
 msgid "IP Alias Details"
@@ -11272,30 +11315,34 @@ msgid ""
 "IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) "
 "and an optional description after each IP. e.g.:"
 msgstr ""
+"Plak de te importeren aliassen elk op een nieuwe regel. Veel voorkomende "
+"voorbeelden zijn lijsten van IPs, netwerken, zwarte lijsten, etc. De lijst "
+"kan bestaan uit IP adressen, met of zonder CIDR prefix, IP bereiken, lege "
+"regels (genegeerd) en een optionele omschrijving na elk IP. B.v.:"
 
 #: src/usr/local/www/firewall_aliases_import.php:242
 msgid "192.168.1.254 Home router"
-msgstr ""
+msgstr "192.168.1.254 Thuis router"
 
 #: src/usr/local/www/firewall_aliases_import.php:244
 msgid "10.20.0.0/16 Office network"
-msgstr ""
+msgstr "10.20.0.0/16 Kantoor netwerk"
 
 #: src/usr/local/www/firewall_aliases_import.php:246
 msgid "10.40.1.10-10.40.1.19 Managed switches"
-msgstr ""
+msgstr "10.40.1.10-10.40.1.19 Managed switches"
 
 #: src/usr/local/www/firewall_aliases_import.php:254
 msgid "*Alias Name"
-msgstr ""
+msgstr "* Alias naam"
 
 #: src/usr/local/www/firewall_aliases_import.php:269
 msgid "*Aliases to import"
-msgstr ""
+msgstr "* Aliassen om te importeren"
 
 #: src/usr/local/www/firewall_nat.php:175
 msgid "Firewall: NAT: Port forward, enable/disable NAT rule"
-msgstr ""
+msgstr "Firewall: NAT: Poort doorsturen, activeren/deactiveren NAT regel"
 
 #: src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat.php:197
@@ -11304,14 +11351,14 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:133
 #: src/usr/local/www/firewall_nat_out.php:220
 msgid "Port Forward"
-msgstr ""
+msgstr "Poort doorsturen"
 
 #: src/usr/local/www/firewall_nat.php:192
 #: src/usr/local/www/firewall_nat_1to1.php:129
 #: src/usr/local/www/firewall_nat_npt.php:128
 #: src/usr/local/www/firewall_nat_out.php:215
 msgid "The NAT configuration has been changed."
-msgstr ""
+msgstr "De NAT configuratie is aangepast."
 
 #: src/usr/local/www/firewall_nat.php:198
 #: src/usr/local/www/firewall_nat_1to1.php:120
@@ -11329,7 +11376,7 @@ msgstr "1:1"
 #: src/usr/local/www/firewall_nat_out.php:222
 #: src/usr/local/www/firewall_nat_out_edit.php:393
 msgid "Outbound"
-msgstr ""
+msgstr "Uitgaand"
 
 #: src/usr/local/www/firewall_nat.php:200
 #: src/usr/local/www/firewall_nat_1to1.php:137
@@ -11345,11 +11392,11 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_rules_edit.php:1110
 #: src/usr/local/www/head.inc:291
 msgid "Rules"
-msgstr ""
+msgstr "Regels"
 
 #: src/usr/local/www/firewall_nat.php:228
 msgid "Dest. Address"
-msgstr ""
+msgstr "Doel Adres"
 
 #: src/usr/local/www/firewall_nat.php:230
 msgid "NAT IP"
@@ -11365,21 +11412,21 @@ msgstr "NAT Poorten"
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:276
 #: src/usr/local/www/vpn_ipsec.php:426
 msgid "click to toggle enabled/disabled status"
-msgstr ""
+msgstr "Klik om de ingeschakeld/uitgeschakeld status te wisselen"
 
 #: src/usr/local/www/firewall_nat.php:293
 #: src/usr/local/www/firewall_nat_1to1.php:179
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr ""
+msgstr "Ongedaan gemaakt: Deze regel sluit NAT uit van een latere regel"
 
 #: src/usr/local/www/firewall_nat.php:301
 msgid "All traffic matching this NAT entry is passed"
-msgstr ""
+msgstr "Al het verkeer dat matched met deze NAT regel wordt doorgelaten"
 
 #: src/usr/local/www/firewall_nat.php:305
 #, php-format
 msgid "Firewall rule ID %s is managed by this rule"
-msgstr ""
+msgstr "Firewall regel ID %s is beheerd door deze regel"
 
 #: src/usr/local/www/firewall_nat.php:332
 #: src/usr/local/www/firewall_nat.php:349
@@ -11392,59 +11439,62 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:726
 #: src/usr/local/www/firewall_rules.php:735
 msgid "Alias details"
-msgstr ""
+msgstr "Alias details"
 
 #: src/usr/local/www/firewall_nat.php:437
 msgid "Edit rule"
-msgstr ""
+msgstr "Bewerk regel"
 
 #: src/usr/local/www/firewall_nat.php:438
 msgid "Add a new NAT based on this one"
-msgstr ""
+msgstr "Voeg een nieuwe NAT toe gebaseerd op deze"
 
 #: src/usr/local/www/firewall_nat.php:439
 msgid "Delete rule"
-msgstr ""
+msgstr "Verwijder regel"
 
 #: src/usr/local/www/firewall_nat.php:459
 #: src/usr/local/www/firewall_rules.php:819
 msgid "Add rule to the top of the list"
-msgstr ""
+msgstr "Voeg regel toe aan de top van de lijst"
 
 #: src/usr/local/www/firewall_nat.php:463
 #: src/usr/local/www/firewall_rules.php:823
 msgid "Add rule to the end of the list"
-msgstr ""
+msgstr "Voeg regel toe aan het einde van de lijst"
 
 #: src/usr/local/www/firewall_nat.php:467
 #: src/usr/local/www/firewall_rules.php:827
 msgid "Delete selected rules"
-msgstr ""
+msgstr "Verwijder de geselecteerde regels"
 
 #: src/usr/local/www/firewall_nat.php:471
 #: src/usr/local/www/firewall_rules.php:831
 msgid "Save rule order"
-msgstr ""
+msgstr "Sla regel volgorde op"
 
 #: src/usr/local/www/firewall_nat.php:475
 #: src/usr/local/www/firewall_rules.php:835
 msgid "Add separator"
-msgstr ""
+msgstr "Scheiding toevoegen"
 
 #: src/usr/local/www/firewall_nat.php:477
 #: src/usr/local/www/firewall_rules.php:837
 msgid "Separator"
-msgstr ""
+msgstr "Scheiding"
 
 #: src/usr/local/www/firewall_nat.php:488
 #: src/usr/local/www/firewall_rules.php:885
 msgid "Enter a description, Save, then drag to final location."
 msgstr ""
+"Voer een omschrijving in, sla op, en sleep vervolgens naar de uiteindelijke "
+"bestemming."
 
 #: src/usr/local/www/firewall_nat.php:524
 msgid ""
 "One or more Port Forward rules have been moved but have not yet been saved"
 msgstr ""
+"Een of meer Poort Doorstuur regels zijn verplaatst maar nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_nat.php:539
 #: src/usr/local/www/firewall_rules.php:846
@@ -11462,35 +11512,35 @@ msgstr "Legenda"
 #: src/usr/local/www/widgets/widgets/log.widget.php:234
 #: src/usr/local/www/status_logs_common.inc:419
 msgid "Pass"
-msgstr ""
+msgstr "Doorlaten"
 
 #: src/usr/local/www/firewall_nat.php:541
 msgid "Linked rule"
-msgstr ""
+msgstr "Gelinkte regel"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - herschikte NAT 1:1 koppelingen."
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - verwijderde NAT 1:1 koppeling"
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - verwijder geselecteerde NAT 1:1 koppelingen."
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - geactiveerde NAT 1:1 koppeling."
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - gedeactiveerde NAT 1:1 koppeling."
 
 #: src/usr/local/www/firewall_nat_1to1.php:142
 msgid "NAT 1:1 Mappings"
-msgstr ""
+msgstr "NAT 1:1 Koppelingen"
 
 #: src/usr/local/www/firewall_nat_1to1.php:150
 msgid "External IP"
@@ -11509,40 +11559,40 @@ msgstr "Bestemming IP"
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
-msgstr ""
+msgstr "Bewerk koppeling"
 
 #: src/usr/local/www/firewall_nat_1to1.php:219
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
-msgstr ""
+msgstr "Voeg een nieuwe koppeling toe gebaseerd op deze"
 
 #: src/usr/local/www/firewall_nat_1to1.php:220
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
-msgstr "Verwijder mapping"
+msgstr "Verwijder koppeling"
 
 #: src/usr/local/www/firewall_nat_1to1.php:234
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
-msgstr ""
+msgstr "Voeg koppeling toe aan de top van de lijst"
 
 #: src/usr/local/www/firewall_nat_1to1.php:238
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
-msgstr ""
+msgstr "Voeg koppeling toe aan het einde van de lijst"
 
 #: src/usr/local/www/firewall_nat_1to1.php:242
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
-msgstr ""
+msgstr "Verwijder geselecteerde koppelingen"
 
 #: src/usr/local/www/firewall_nat_1to1.php:246
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
-msgstr ""
+msgstr "Sla koppeling volgorde op"
 
 #: src/usr/local/www/firewall_nat_1to1.php:254
 #, php-format
@@ -11550,6 +11600,8 @@ msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
+"Afhankelijk van hoe de WAN verbinding is opgezet heeft dit mogelijk ook een "
+"%1$sVirtueel IP%2$s nodig."
 
 #: src/usr/local/www/firewall_nat_1to1.php:256
 msgid ""
@@ -11558,15 +11610,19 @@ msgid ""
 "address is used, any services on this system (IPsec, OpenVPN server, etc.) "
 "using the WAN IP address will no longer function."
 msgstr ""
+"Indien er een 1:1 NAT item word toegevoegd aan één van de interface IPs op "
+"dit systeem dan word dit systeem ontoegankelijk op dat IP adres. Oftewel als "
+"het WAN IP adres word gebruikt zullen de diensten op dit systeem (IPsec, "
+"OpenVPN server etc) die dit WAN adres gebruiken niet langer functioneren."
 
 #: src/usr/local/www/firewall_nat_1to1.php:291
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
-msgstr ""
+msgstr "Een of meer NAT 1:! mappings is verplaatst maar nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
-msgstr ""
+msgstr "Beide moeten een IPv4 of een IPv6 adres zijn."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:115
 #: src/usr/local/www/firewall_nat_out_edit.php:156
@@ -11575,6 +11631,8 @@ msgid ""
 "Invalid characters detected (%s).  Please remove invalid characters and save "
 "again."
 msgstr ""
+"Ongeldige tekens gevonden (%s). Verwijder de ongeldige tekens en sla opnieuw "
+"op."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 msgid "External subnet"
@@ -11593,7 +11651,7 @@ msgstr "Bestemming adres"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:282
 msgid "Alias entries must specify a single host or alias."
-msgstr ""
+msgstr "Alies items dienen een enkele host of alias te specificeren."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:193
 #, php-format
@@ -11601,10 +11659,12 @@ msgid ""
 "The external IP address (%1$s) and internal IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"Het externe IP adres (%1$s) en interne IP adres (%2$s) zijn van "
+"verschillende families."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:202
 msgid "A valid internal bit count must be specified."
-msgstr ""
+msgstr "Een geldig aantal interne bits moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:219
 #, php-format
@@ -11612,6 +11672,8 @@ msgid ""
 "The external IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"Het externe IP adres (%1$s) en doel IP adres (%2$s) zijn van verschillende "
+"adres-families."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:226
 #, php-format
@@ -11619,21 +11681,23 @@ msgid ""
 "The internal IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"Het interne IP adres (%1$s) en doel IP adres (%2$s) zijn van verschillende "
+"families."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:305
 #: src/usr/local/www/firewall_nat_out_edit.php:221
 #: src/usr/local/www/firewall_rules_edit.php:567
 msgid "A valid destination bit count must be specified."
-msgstr ""
+msgstr "Een geldig aantal doel bits moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:282
 msgid "Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - opgeslagen/gewijzigd NAT 1:1 mapping."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 msgid "Single host"
-msgstr ""
+msgstr "Enkele host"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
@@ -11674,23 +11738,23 @@ msgstr "L2TP clienten"
 #: src/usr/local/www/firewall_nat_edit.php:575
 #: src/usr/local/www/firewall_rules_edit.php:1365
 msgid "Single host or alias"
-msgstr ""
+msgstr "Enkele host of alias"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:416
 msgid "Edit NAT 1:1 Entry"
-msgstr ""
+msgstr "Bewerk NAT 1:1 Item"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:423
 msgid "When disabled, the rule will not have any effect."
-msgstr ""
+msgstr "Indien uitgeschakels heeft deze regel geen effect."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:427
 msgid "No BINAT (NOT)"
-msgstr ""
+msgstr "No BINAT (NOT)"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:430
 msgid "Excludes the address from a later, more general, rule."
-msgstr ""
+msgstr "Sluit het adres uit van een latere, meer generieke, regel"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:442
 #: src/usr/local/www/firewall_nat_edit.php:680
@@ -11743,10 +11807,12 @@ msgid ""
 "Choose which interface this rule applies to. In most cases \"WAN\" is "
 "specified."
 msgstr ""
+"Kies op welke interface deze regel van toepassing is. In de meeste gevallen "
+"wordt hier \"WAN\" opgegeven."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:469
 msgid "*External subnet IP"
-msgstr ""
+msgstr "* Extern subnet IP"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:471
 msgid ""
@@ -11754,15 +11820,18 @@ msgid ""
 "mapping. The subnet mask from the internal address below will be applied to "
 "this IP address."
 msgstr ""
+"Geef het externe (gebruikelijk op WAN) subnet start adres voor de 1:1 "
+"mapping. Het subnet masker van het interne adres hiesonder zal worden "
+"toegepast op dit IP adres."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:474
 msgid "*Internal IP"
-msgstr ""
+msgstr "* Intern IP"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:481
 #: src/usr/local/www/firewall_nat_1to1_edit.php:508
 msgid "Invert the sense of the match."
-msgstr ""
+msgstr "Inverteer de interpretatie van de match."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:488
 #: src/usr/local/www/firewall_nat_1to1_edit.php:515
@@ -11792,37 +11861,42 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
 #: src/usr/local/www/vpn_ipsec_phase2.php:571
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:494
 #: src/usr/local/www/firewall_nat_1to1_edit.php:522
 #: src/usr/local/www/firewall_nat_edit.php:750
 #: src/usr/local/www/firewall_nat_edit.php:818
 msgid "Address/mask"
-msgstr ""
+msgstr "Adres/masker"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:496
 msgid ""
 "Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size "
 "specified for the internal subnet will be applied to the external subnet."
 msgstr ""
+"Geef het interne (LAN) subnet voor de 1:1 mapping. De subnet grootte "
+"opgegeven voor het interne subnet zal worden toegepast op het externe subnet."
+""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:501
 #: src/usr/local/www/firewall_nat_edit.php:797
 #: src/usr/local/www/firewall_nat_out_edit.php:544
 msgid "*Destination"
-msgstr ""
+msgstr "* Doel"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:524
 msgid ""
 "The 1:1 mapping will only be used for connections to or from the specified "
 "destination. Hint: this is usually \"Any\"."
 msgstr ""
+"De 1:1 mapping zal alleen gebruikt worden voor verbindingen van of naar het "
+"opgegeven doel. Hint: dit is meestal \"Alle\"."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
 #: src/usr/local/www/firewall_nat_edit.php:909
 msgid "Use system default"
-msgstr ""
+msgstr "Gebruik de systeem standaard"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:542
 #: src/usr/local/www/firewall_nat_edit.php:912
@@ -11831,12 +11905,12 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
 #: src/usr/local/www/vpn_openvpn_csc.php:333
 msgid "Disable"
-msgstr ""
+msgstr "Uitschakelen"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
 #: src/usr/local/www/firewall_nat_edit.php:906
 msgid "NAT reflection"
-msgstr ""
+msgstr "NAT reflectie"
 
 #: src/usr/local/www/firewall_nat_edit.php:125
 #, php-format
@@ -11844,28 +11918,30 @@ msgid ""
 "Invalid characters detected %s. Please remove invalid characters and save "
 "again."
 msgstr ""
+"Ongeldige tekens gevonden %s. Verwijder de ongeldige tekens en sla opnieuw "
+"op."
 
 #: src/usr/local/www/firewall_nat_edit.php:211
 msgid "Destination port from"
-msgstr ""
+msgstr "Doel poort van"
 
 #: src/usr/local/www/firewall_nat_edit.php:211
 msgid "Destination port to"
-msgstr ""
+msgstr "Doel poort naar"
 
 #: src/usr/local/www/firewall_nat_edit.php:229
 msgid "Redirect target IP"
-msgstr ""
+msgstr "Doorverwijzen van doel IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:255
 #, php-format
 msgid "\"%s\" is not a valid redirect target IP address or host alias."
-msgstr ""
+msgstr "\"%s\" is geen geldig doorverwijs doel IP adres of host alias."
 
 #: src/usr/local/www/firewall_nat_edit.php:259
 #, php-format
 msgid "Redirect target IP must be IPv4."
-msgstr ""
+msgstr "Doorverwijs doel IP dient IPv4 te zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:263
 #: src/usr/local/www/firewall_rules_edit.php:495
@@ -11874,6 +11950,8 @@ msgid ""
 "%s is not a valid start source port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
+"%s is geen geldige begin bron poort. Dit moet een poort alias of geheel "
+"getal tussen de 1 en 65535 zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:266
 #: src/usr/local/www/firewall_rules_edit.php:498
@@ -11882,6 +11960,8 @@ msgid ""
 "%s is not a valid end source port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
+"%s is geen geldige eind bron poort. Dit moet een poort alias of geheel getal "
+"tussen de 1 en 65535 zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:269
 #: src/usr/local/www/firewall_rules_edit.php:501
@@ -11890,6 +11970,8 @@ msgid ""
 "%s is not a valid start destination port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
+"%s is geen geldige start doel poort. Dit moet een poort alias of geheel "
+"getal tussen de 1 en 65535 zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:272
 #: src/usr/local/www/firewall_rules_edit.php:504
@@ -11898,6 +11980,8 @@ msgid ""
 "%s is not a valid end destination port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
+"%s is geen geldige eind doel poort. Dit moet een poort alias of geheel getal "
+"tussen de 1 en 65535 zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:276
 #, php-format
@@ -11905,12 +11989,14 @@ msgid ""
 "%s is not a valid redirect target port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
+"%s is geen geldige doorverwijs doel poort. Dit moet een poort alias of "
+"geheel getal tussen de 1 en 65535 zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #: src/usr/local/www/firewall_rules_edit.php:556
 #, php-format
 msgid "%s is not a valid source IP address or alias."
-msgstr ""
+msgstr "%s is geen geldige bron IP adres of alias"
 
 #: src/usr/local/www/firewall_nat_edit.php:290
 #, php-format
@@ -11921,26 +12007,27 @@ msgstr "Bron moet IPv4 zijn."
 #: src/usr/local/www/firewall_nat_out_edit.php:211
 #: src/usr/local/www/firewall_rules_edit.php:559
 msgid "A valid source bit count must be specified."
-msgstr ""
+msgstr "Een geldig aantal bron bits dient te worden opgegeven"
 
 #: src/usr/local/www/firewall_nat_edit.php:299
 #: src/usr/local/www/firewall_rules_edit.php:564
 #, php-format
 msgid "%s is not a valid destination IP address or alias."
-msgstr ""
+msgstr "%s is geen geldig doel IP adres of alias"
 
 #: src/usr/local/www/firewall_nat_edit.php:302
 #, php-format
 msgid "Destination must be IPv4."
-msgstr ""
+msgstr "Doel dient IPv4 te zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:325
 msgid "The target port range must be an integer between 1 and 65535."
 msgstr ""
+"Het doel poort bereik dient een geheel getal tussen de 1 en 65535 te zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:351
 msgid "The destination port range overlaps with an existing entry."
-msgstr ""
+msgstr "Het doel poort bereik overlapt met een reeds bestaand item."
 
 #: src/usr/local/www/firewall_nat_edit.php:480
 msgid "NAT Port Forward"
@@ -11949,32 +12036,37 @@ msgstr "NAT Poort Forward"
 #: src/usr/local/www/firewall_nat_edit.php:523
 msgid "Firewall: NAT: Port Forward - saved/edited a port forward rule."
 msgstr ""
+"Firewall: NAT: Poort Forward - opgeslagen/bewerkte poort forward rule."
 
 #: src/usr/local/www/firewall_nat_edit.php:575
 #: src/usr/local/www/firewall_nat_out_edit.php:525
 #: src/usr/local/www/firewall_rules_edit.php:1374
 msgid "This Firewall (self)"
-msgstr ""
+msgstr "Deze Firewall (self)"
 
 #: src/usr/local/www/firewall_nat_edit.php:654
 msgid "Edit Redirect Entry"
-msgstr ""
+msgstr "Bewerk Doorverwijs Item"
 
 #: src/usr/local/www/firewall_nat_edit.php:665
 msgid "No RDR (NOT)"
-msgstr ""
+msgstr "No RDR (NOT)"
 
 #: src/usr/local/www/firewall_nat_edit.php:668
 msgid ""
 "This option is rarely needed. Don't use this without thorough knowledge of "
 "the implications."
 msgstr ""
+"Deze optie is zelden nodig. Gebruik dit niet zonder zeer bekend te zijn met "
+"alle gevolgen."
 
 #: src/usr/local/www/firewall_nat_edit.php:712
 msgid ""
 "Choose which protocol this rule should match. In most cases \"TCP\" is "
 "specified."
 msgstr ""
+"Kies welk protocol deze regel moet matchen. In de meeste gevallen zal dit "
+"\"TCP\" zijn."
 
 #: src/usr/local/www/firewall_nat_edit.php:716
 #: src/usr/local/www/firewall_nat_edit.php:1175
@@ -12024,26 +12116,26 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:689
 #: src/usr/local/www/system_gateways_edit.php:892
 msgid "Display Advanced"
-msgstr ""
+msgstr "Toon Geavanceerd"
 
 #: src/usr/local/www/firewall_nat_edit.php:733
 msgid "Source not"
-msgstr ""
+msgstr "Bron niet"
 
 #: src/usr/local/www/firewall_nat_edit.php:754
 #: src/usr/local/www/firewall_virtual_ip.php:228
 #: src/usr/local/www/firewall_virtual_ip_edit.php:350
 msgid "Other"
-msgstr ""
+msgstr "Andere"
 
 #: src/usr/local/www/firewall_nat_edit.php:760
 msgid "Source port range"
-msgstr ""
+msgstr "Bron poort bereik"
 
 #: src/usr/local/www/firewall_nat_edit.php:768
 #: src/usr/local/www/firewall_nat_edit.php:830
 msgid "From port"
-msgstr ""
+msgstr "Van poort"
 
 #: src/usr/local/www/firewall_nat_edit.php:775
 #: src/usr/local/www/firewall_nat_edit.php:789
@@ -12056,12 +12148,12 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:749
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
-msgstr ""
+msgstr "Aangepast"
 
 #: src/usr/local/www/firewall_nat_edit.php:782
 #: src/usr/local/www/firewall_nat_edit.php:844
 msgid "To port"
-msgstr ""
+msgstr "Naar poort"
 
 #: src/usr/local/www/firewall_nat_edit.php:791
 msgid ""
@@ -12069,24 +12161,31 @@ msgid ""
 "and almost never equal to the destination port range (and should usually be "
 "'any'). The 'to' field may be left empty if only filtering a single port."
 msgstr ""
+"Specificeer de bron poort of poort bereik voor deze regel. Dit is meestal "
+"willekeurig and haast nooit gelijk aan het het doel poort bereik (en dient "
+"gewoonlijk 'ieder' te zijn). Het 'naar' veld mag leeg blijven indien er op "
+"slechts op een enkele poort wordt gefilterd."
 
 #: src/usr/local/www/firewall_nat_edit.php:801
 msgid "Destination not"
-msgstr ""
+msgstr "Doel niet"
 
 #: src/usr/local/www/firewall_nat_edit.php:822
 msgid "*Destination port range"
-msgstr ""
+msgstr "* Doel poort bereik"
 
 #: src/usr/local/www/firewall_nat_edit.php:853
 msgid ""
 "Specify the port or port range for the destination of the packet for this "
 "mapping. The 'to' field may be left empty if only mapping a single port. "
 msgstr ""
+"Specificeer de poort of poort bereik voor het doel voor een pakket voor deze "
+"mapping. Het 'naar' veld mag leeg blijven indien er slechts een enkele poort "
+"gemapped word."
 
 #: src/usr/local/www/firewall_nat_edit.php:860
 msgid "*Redirect target IP"
-msgstr ""
+msgstr "* Doorverwijs doel IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:863
 #, php-format
@@ -12094,10 +12193,12 @@ msgid ""
 "Enter the internal IP address of the server on which to map the ports.%s e.g."
 ": 192.168.1.12"
 msgstr ""
+"Geef het interne IP adres op van de server naar waar de poorten te mappen.%s "
+"b.v.: 192.168.1.12"
 
 #: src/usr/local/www/firewall_nat_edit.php:865
 msgid "*Redirect target port"
-msgstr ""
+msgstr "* Doorverwijs doel poort"
 
 #: src/usr/local/www/firewall_nat_edit.php:875
 #, php-format
@@ -12107,6 +12208,10 @@ msgid ""
 "be calculated automatically).%sThis is usually identical to the \"From "
 "port\" above."
 msgstr ""
+"Specificeer de poort op de machine met het IP adres hierboven opgegeven. In "
+"het geval van een poort bereik specificeer de begin poort van het bereik (de "
+"eindpoort zal automatisch worden berekend). %Dit is gewoonlijk identiek aan "
+"de 'Van poort' hierboven."
 
 #: src/usr/local/www/firewall_nat_edit.php:898
 #: src/usr/local/www/firewall_nat_out_edit.php:655
@@ -12119,6 +12224,9 @@ msgid ""
 "This prevents the rule on Master from automatically syncing to other CARP "
 "members. This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
+"Dit voorkomt dat de regel op de Master automatisch gesynchroniseerd wordt "
+"naar andere CARP leden. Dit voorkomt NIET dat de regel word overschreven op "
+"een slaaf."
 
 #: src/usr/local/www/firewall_nat_edit.php:910
 msgid "Enable (NAT + Proxy)"
@@ -12139,32 +12247,34 @@ msgstr "Bekijk de filter regel"
 
 #: src/usr/local/www/firewall_nat_edit.php:936
 msgid "Create new associated filter rule"
-msgstr ""
+msgstr "Creëer een nieuwe gelinkte filter regel"
 
 #: src/usr/local/www/firewall_nat_edit.php:941
 #: src/usr/local/www/firewall_nat_edit.php:948
 msgid "Filter rule association"
-msgstr ""
+msgstr "Filter regel link"
 
 #: src/usr/local/www/firewall_nat_edit.php:952
 msgid "Add associated filter rule"
-msgstr ""
+msgstr "Voeg een gelinkte filter regel toe"
 
 #: src/usr/local/www/firewall_nat_edit.php:953
 msgid "Add unassociated filter rule"
-msgstr ""
+msgstr "Voeg een ongelinkte filter regel toe"
 
 #: src/usr/local/www/firewall_nat_edit.php:956
 msgid ""
 "The \"pass\" selection does not work properly with Multi-WAN. It will only "
 "work on an interface containing the default gateway."
 msgstr ""
+"De \"doorlaten\" selectie werkt niet goed met Multi-WAN. Het werkt alleen op "
+"de interface met de standaard gateway."
 
 #: src/usr/local/www/firewall_nat_edit.php:965
 #: src/usr/local/www/firewall_nat_out_edit.php:691
 #: src/usr/local/www/firewall_rules_edit.php:1755
 msgid "Rule Information"
-msgstr ""
+msgstr "Regel Informatie"
 
 #: src/usr/local/www/firewall_nat_edit.php:971
 #: src/usr/local/www/firewall_nat_edit.php:981
@@ -12174,19 +12284,19 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1771
 #, php-format
 msgid "%1$s by %2$s"
-msgstr ""
+msgstr "%1$s bij %2$s"
 
 #: src/usr/local/www/firewall_nat_edit.php:969
 #: src/usr/local/www/firewall_nat_out_edit.php:695
 #: src/usr/local/www/firewall_rules_edit.php:1759
 msgid "Created"
-msgstr ""
+msgstr "Aangemaakt"
 
 #: src/usr/local/www/firewall_nat_edit.php:979
 #: src/usr/local/www/firewall_nat_out_edit.php:705
 #: src/usr/local/www/firewall_rules_edit.php:1769
 msgid "Updated"
-msgstr ""
+msgstr "Bijgewerkt"
 
 #: src/usr/local/www/firewall_nat_edit.php:1177
 #: src/usr/local/www/firewall_rules_edit.php:1809
@@ -12213,31 +12323,31 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:681
 #: src/usr/local/www/system_gateways_edit.php:890
 msgid "Hide Advanced"
-msgstr ""
+msgstr "Verberg Geavanceerd"
 
 #: src/usr/local/www/firewall_nat_npt.php:57
 msgid "Firewall: NAT: NPt - reordered NPt mappings."
-msgstr ""
+msgstr "Firewall: NAT: NPt - herschikte NPt mappings."
 
 #: src/usr/local/www/firewall_nat_npt.php:79
 msgid "Firewall: NAT: NPt - deleted NPt mapping."
-msgstr ""
+msgstr "Firewall: NAT: NPt - verwijderde NPt mapping."
 
 #: src/usr/local/www/firewall_nat_npt.php:94
 msgid "Firewall: NAT: NPt - deleted selected NPt mappings."
-msgstr ""
+msgstr "Firewall: NAT: NPt - verwijderde geselecteerde NPt mappings."
 
 #: src/usr/local/www/firewall_nat_npt.php:106
 msgid "Firewall: NAT: NPt - enabled NPt rule."
-msgstr ""
+msgstr "Firewall: NAT: NPt - ingeschakelde NPt regel."
 
 #: src/usr/local/www/firewall_nat_npt.php:109
 msgid "Firewall: NAT: NPt - disabled NPt rule."
-msgstr ""
+msgstr "Firewall: NAT: NPt - uitgeschakelde NPt regel."
 
 #: src/usr/local/www/firewall_nat_npt.php:141
 msgid "NPt Mappings"
-msgstr ""
+msgstr "NPt Koppelingen"
 
 #: src/usr/local/www/firewall_nat_npt.php:149
 msgid "External Prefix"
@@ -12250,6 +12360,7 @@ msgstr "Interne prefix"
 #: src/usr/local/www/firewall_nat_npt.php:268
 msgid "One or more NPt mappings have been moved but have not yet been saved"
 msgstr ""
+"Één of meerdere NPt koppelingen zijn verplaats maar nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:97
 msgid "Source prefix"
@@ -12261,11 +12372,11 @@ msgstr "Bestemming prefix"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:131
 msgid "Firewall: NAT: NPt - saved/edited NPt mapping."
-msgstr ""
+msgstr "Firewall: NAT: NPt - opgeslagen/bewerkte NPt mapping."
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:184
 msgid "Edit NAT NPt Entry"
-msgstr ""
+msgstr "Bewerk NAT NPt item"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:198
 #, php-format
@@ -12273,15 +12384,17 @@ msgid ""
 "Choose which interface this rule applies to.%sHint: Typically the \"WAN\" is "
 "used here."
 msgstr ""
+"Kies op welke interface deze regel van toepassing is. %sHint: Gewoonlijk "
+"wordt hier \"WAN\" gebruikt."
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:203
 msgid "Internal IPv6 prefix"
-msgstr ""
+msgstr "Intern IPv6 voorvoegsel"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:206
 #: src/usr/local/www/firewall_nat_npt_edit.php:221
 msgid "Use this option to invert the sense of the match. "
-msgstr ""
+msgstr "Gebruik deze optie om de interpretatie van de match om te keren."
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:210
 #: src/usr/local/www/firewall_nat_npt_edit.php:225
@@ -12295,80 +12408,90 @@ msgid ""
 "prefix size specified for the internal IPv6 prefix will be applied to the "
 "external prefix."
 msgstr ""
+"Interne (LAN) ULA IPv6 Voorvoegsel voor de Network Prefix vertaling. De "
+"grootte van het voorvoegsel gespecificeerd voor het interne IPv6 voorvoegsel "
+"zal worden toegepast op het externe voorvoegsel."
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:218
 msgid "Destination IPv6 prefix"
-msgstr ""
+msgstr "Doel IPv6 voorvoegsel"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:228
 msgid "Global Unicast routable IPv6 prefix"
-msgstr ""
+msgstr "Global Unicast routeerbaar IPv6 voorvoegsel"
 
 #: src/usr/local/www/firewall_nat_out.php:65
 msgid "Firewall: NAT: Outbound - reordered outbound NAT mappings."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaan - herschikte uitgaande NAT mappings."
 
 #: src/usr/local/www/firewall_nat_out.php:113
 #, php-format
 msgid " - %1$s to %2$s"
-msgstr ""
+msgstr " - %1$s naar %2$s"
 
 #: src/usr/local/www/firewall_nat_out.php:116
 msgid "Manual Outbound NAT Switch"
-msgstr ""
+msgstr "Handmatig Uitgaande NAT Switch"
 
 #: src/usr/local/www/firewall_nat_out.php:136
 msgid "Default rules for each interface have been created."
-msgstr ""
+msgstr "Standaard regels voor elke interface zijn aangemaakt."
 
 #: src/usr/local/www/firewall_nat_out.php:142
 msgid "Firewall: NAT: Outbound - saved outbound NAT settings."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT instellingen zijn opgeslagen."
 
 #: src/usr/local/www/firewall_nat_out.php:155
 msgid "Firewall: NAT: Outbound - deleted outbound NAT mapping."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT mappings zijn verwijderd."
 
 #: src/usr/local/www/firewall_nat_out.php:176
 msgid "Firewall: NAT: Outbound - deleted selected outbound NAT mappings."
 msgstr ""
+"Firewall: NAT: Uitgaand - geselecteerde uitgaande NAT mappings zijn "
+"verwijderd."
 
 #: src/usr/local/www/firewall_nat_out.php:188
 msgid "Firewall: NAT: Outbound - enabled outbound NAT rule."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT regel ingeschakeld."
 
 #: src/usr/local/www/firewall_nat_out.php:191
 msgid "Firewall: NAT: Outbound - disabled outbound NAT rule."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT regel uitgeschakeld."
 
 #: src/usr/local/www/firewall_nat_out.php:228
 msgid "Outbound NAT Mode"
-msgstr ""
+msgstr "Uitgaande NAT Modus"
 
 #: src/usr/local/www/firewall_nat_out.php:238
 #, php-format
 msgid "Automatic outbound NAT rule generation.%s(IPsec passthrough included)"
 msgstr ""
+"Automatische uitgaande NAT regel generatie. %s(inclusief IPsec doorvoeren)"
 
 #: src/usr/local/www/firewall_nat_out.php:246
 #, php-format
 msgid ""
 "Hybrid Outbound NAT rule generation.%s(Automatic Outbound NAT + rules below)"
 msgstr ""
+"Gemende Uitgaande NAT regel generatie. %s(Automatisch Uitgaande NAT + "
+"onderstaande regels)"
 
 #: src/usr/local/www/firewall_nat_out.php:254
 #, php-format
 msgid "Manual Outbound NAT rule generation.%s(AON - Advanced Outbound NAT)"
 msgstr ""
+"Handmatige Uitgaande NAT regel generatie. %s(AON - Advanced Outbound NAT)"
 
 #: src/usr/local/www/firewall_nat_out.php:262
 #, php-format
 msgid "Disable Outbound NAT rule generation.%s(No Outbound NAT rules)"
 msgstr ""
+"Schakel Uitgaande NAT regel generatie uit. %s(Geen Uitgaande NAT regels)"
 
 #: src/usr/local/www/firewall_nat_out.php:272
 msgid "Mappings"
-msgstr ""
+msgstr "Mappings"
 
 #: src/usr/local/www/firewall_nat_out.php:284
 #: src/usr/local/www/firewall_nat_out.php:537
@@ -12384,43 +12507,43 @@ msgstr "NAT Poort"
 #: src/usr/local/www/firewall_nat_out.php:539
 #: src/usr/local/www/firewall_nat_out_edit.php:644
 msgid "Static Port"
-msgstr ""
+msgstr "Statische Poort"
 
 #: src/usr/local/www/firewall_nat_out.php:324
 msgid "This rule is being ignored"
-msgstr ""
+msgstr "Deze regel word genegeerd"
 
 #: src/usr/local/www/firewall_nat_out.php:329
 msgid "Click to toggle enabled/disabled status"
-msgstr ""
+msgstr "Klik om ingeschakeld/uitgeschakeld status te wisselen"
 
 #: src/usr/local/www/firewall_nat_out.php:336
 msgid "Negated: Traffic matching this rule is not translated."
-msgstr ""
+msgstr "Teniet gedaan: Verkeer dat deze regel matched word niet vertaald."
 
 #: src/usr/local/www/firewall_nat_out.php:494
 msgid "Add new mapping to the top of the list"
-msgstr ""
+msgstr "Voeg nieuwe mappings toe aan de bovenkant van de lijst"
 
 #: src/usr/local/www/firewall_nat_out.php:498
 msgid "Add new mapping to the end of the list"
-msgstr ""
+msgstr "Voeg nieuwe mappings toe aan het einde van de lijst"
 
 #: src/usr/local/www/firewall_nat_out.php:502
 msgid "Delete selected map"
-msgstr ""
+msgstr "Verwijder geselecteerde map"
 
 #: src/usr/local/www/firewall_nat_out.php:502
 msgid "Delete selected maps"
-msgstr ""
+msgstr "Verwijder geselecteerde maps"
 
 #: src/usr/local/www/firewall_nat_out.php:526
 msgid "Automatic Rules:"
-msgstr ""
+msgstr "Automatische Regels:"
 
 #: src/usr/local/www/firewall_nat_out.php:550
 msgid "automatic outbound nat"
-msgstr ""
+msgstr "automatische uitgaande nat"
 
 #: src/usr/local/www/firewall_nat_out.php:638
 msgid ""
@@ -12428,6 +12551,9 @@ msgid ""
 "for each interface's subnet (except WAN-type connections) and the rules on "
 "the \"Mappings\" section of this page are ignored."
 msgstr ""
+"Indien automatische uitgaande NAT is geselecteerd worden er voor elk subnet "
+"per interface (behalve WAN-type verbindingen) automatisch een koppeling "
+"aangemaakt en de regels in de \"Koppeling\" sectie op deze pagina genegeerd."
 
 #: src/usr/local/www/firewall_nat_out.php:640
 msgid ""
@@ -12435,16 +12561,24 @@ msgid ""
 "automatically generated and only the mappings specified on this page will be "
 "used."
 msgstr ""
+"Indien handmatige NAT is geselecteerd zullen er geen uitgaande NAT regels "
+"automatisch worden aangemaakt en gelden uitsluitend de koppelingen zoals "
+"gespecificeerd op deze pagina."
 
 #: src/usr/local/www/firewall_nat_out.php:642
 msgid ""
 "If hybrid outbound NAT is selected, mappings specified on this page will be "
 "used, followed by the automatically generated ones."
 msgstr ""
+"Indien gemengde uitgaande NAT is geselecteerd zullen de koppelingen zoals "
+"gespecificeerd op deze pagina worden gebruikt, vervolgd door de automatisch "
+"gegenereerde koppelingen."
 
 #: src/usr/local/www/firewall_nat_out.php:644
 msgid "If disable outbound NAT is selected, no rules will be used."
 msgstr ""
+"Indien uitschakelen uitgaande NAT is geselecteerd zullen er geen regels "
+"worden gebruikt."
 
 #: src/usr/local/www/firewall_nat_out.php:647
 #, php-format
@@ -12453,81 +12587,98 @@ msgid ""
 "depending on the way the WAN connection is setup, a %1$sVirtual IP%2$s may "
 "also be required."
 msgstr ""
+"Indien een doel adres anders dan het interface IP adres is gebruikt dan, "
+"afhankelijk van hoe de WAN verbinding is opgezet, is er mogelijk ook een "
+"%1$sVirtueel IP%2$s nodig."
 
 #: src/usr/local/www/firewall_nat_out.php:683
 msgid ""
 "One or more NAT outbound mappings have been moved but have not yet been "
 "saved"
 msgstr ""
+"Één of meerdere NAT uitgaande koppelingen zijn verplaatst maar nog niet "
+"opgeslagen"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/firewall_rules_edit.php:475
 msgid "Source bit count"
-msgstr ""
+msgstr "Aantal bron bits"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/firewall_rules_edit.php:480
 msgid "Destination bit count"
-msgstr ""
+msgstr "Aantal doel bits"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:193
 msgid "A valid port or port alias must be supplied for the source port entry."
 msgstr ""
+"Geen geldige poort of poort alias moet worden opgegeven voor de bron poort "
+"invoer."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:197
 msgid ""
 "A valid port or port alias must be supplied for the destination port entry."
 msgstr ""
+"Een geldige poort of poort alias moet worden opgegeven voor de doel poort "
+"invoer."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:201
 msgid "A valid port must be supplied for the NAT port entry."
-msgstr ""
+msgstr "Een geldige poort moet worden opgegeven voor de NAT poort invoer."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:206
 msgid "A valid source must be specified."
-msgstr ""
+msgstr "Een geldige bron moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:216
 msgid "A valid destination must be specified."
-msgstr ""
+msgstr "Een geldig doel moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:226
 msgid "Negating destination address of \"any\" is invalid."
-msgstr ""
+msgstr "Het omkeren van het doel adres \"alle\" is ongeldig."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:231
 msgid "A valid target IP address must be specified."
-msgstr ""
+msgstr "Een geldig doel IP adres moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:236
 msgid ""
 "A valid target IP must be specified when using the 'Other Subnet' type."
 msgstr ""
+"Een geldig doel IP moet worden opgegeven wanneer men gebruik maakt van het "
+"'Ander Subnet' type."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:240
 msgid ""
 "A valid target bit count must be specified when using the 'Other Subnet' "
 "type."
 msgstr ""
+"Een geldig doel aantal bits moet worden opgegeven wanneer men gebruikt maakt "
+"van het 'Ander Subnet' type."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:254
 msgid "Only Round Robin pool options may be chosen when selecting an alias."
 msgstr ""
+"Uitsluitend Round Robin poule opties mogen worden gekozen wanneer men een "
+"alias selecteerd."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:263
 msgid ""
 "Incorrect format for source-hash key, \"0x\" must be followed by exactly 32 "
 "hexadecimal characters."
 msgstr ""
+"Ongeldig formaat voor de bron-hash sleutel, \"0x\" dient gevolgd te worden "
+"door exact 32 hexadecimale karakters."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:385
 msgid "Firewall: NAT: Outbound - saved/edited outbound NAT mapping."
-msgstr ""
+msgstr "Firewall: NAT: Uitgaand - opgeslagen/bewerkte uitgaande NAT mapping."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:411
 #: src/usr/local/www/system_gateway_groups_edit.php:160
 msgid "Interface Address"
-msgstr ""
+msgstr "Interface Adres"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:418
 msgid "Subnet: "
@@ -12539,31 +12690,36 @@ msgstr "Host Alias: "
 
 #: src/usr/local/www/firewall_nat_out_edit.php:448
 msgid "Other Subnet (Enter Below)"
-msgstr ""
+msgstr "Ander Subnet (geef hieronder op)"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:459
 msgid "Edit Advanced Outbound NAT Entry"
-msgstr ""
+msgstr "Bewerk Geavanceerde Uitgaande NAT entry"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:470
 msgid "Do not NAT"
-msgstr ""
+msgstr "Niet NATen"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:473
 msgid "In most cases this option is not required."
-msgstr ""
+msgstr "In de meeste gevallen is deze optie niet verplicht."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:508
 msgid ""
 "The interface on which traffic is matched as it exits the firewall. In most "
 "cases this is \"WAN\" or another externally-connected interface."
 msgstr ""
+"De interface waarop het verkeer wordt gematched wanneer het de firewall "
+"verlaat. In de meeste gevallen is dit \"WAN\" of een andere extern-verbonden "
+"interface."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:517
 msgid ""
 "Choose which protocol this rule should match. In most cases \"any\" is "
 "specified."
 msgstr ""
+"Kies welk met protocol deze regel moet matchen. In de meeste gevallen is "
+"\"Alle\" gespecificeerd."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:519
 msgid "*Source"
@@ -12571,25 +12727,26 @@ msgstr "*Bron"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:533
 msgid "Source network for the outbound NAT mapping."
-msgstr ""
+msgstr "Bron netwerk voor de uitgaande NAT koppeling."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:540
 #: src/usr/local/www/firewall_nat_out_edit.php:565
 #: src/usr/local/www/firewall_nat_out_edit.php:628
 msgid "Port or Range"
-msgstr ""
+msgstr "Poort of Bereik"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:558
 msgid "Destination network for the outbound NAT mapping."
-msgstr ""
+msgstr "Doel netwerk voor de uitgaande NAT koppeling."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:574
+#, fuzzy
 msgid "Invert the sense of the destination match."
-msgstr ""
+msgstr "Keer de sense van de doel match om."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:578
 msgid "Translation"
-msgstr ""
+msgstr "Vertaling"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:586
 #, php-format
@@ -12598,10 +12755,13 @@ msgid ""
 "%1$sAddress%2$s.%3$sThe %1$sAddress%2$s can be an Interface, a Host-type "
 "Alias, or a %4$sVirtual IP%5$s address."
 msgstr ""
+"Verbindingen die overeenkomen met deze regel zullen worden gemapped naar het "
+"opgegeven %1$sAdres%2$s. %3$sHet %1$sAdres%2$s kan een Interface, een Host-"
+"type Alias, of een %4$sVirtueel IP%5$s adres zijn."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:592
 msgid "Other subnet"
-msgstr ""
+msgstr "Ander subnet"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:595
 #, php-format
@@ -12609,6 +12769,9 @@ msgid ""
 "This subnet must be routed to the firewall or each address in the subnet "
 "must be defined in one or more %1$sVirtual IP%2$s addresses."
 msgstr ""
+"Het subnet moet worden gerouteerd naar de firewall of elk adres in het "
+"subnet moet worden gedefineerd in een of meerdere %1$sVirtuele IP%2$s "
+"adressen."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:603
 #: src/usr/local/www/interfaces.php:1876 src/usr/local/www/interfaces.php:2869
@@ -12624,7 +12787,7 @@ msgstr "Round Robin"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:605
 msgid "Round Robin with Sticky Address"
-msgstr ""
+msgstr "Round Robin met Sticky Address"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:606
 msgid "Random"
@@ -12632,7 +12795,7 @@ msgstr "Willekeurig"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:607
 msgid "Random with Sticky Address"
-msgstr ""
+msgstr "Random met Sticky Address"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid "Source hash"
@@ -12644,22 +12807,25 @@ msgstr "Bit mask"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:600
 msgid "Pool options"
-msgstr ""
+msgstr "Poule Opties"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:612
 msgid ""
 "Only Round Robin types work with Host Aliases. Any type can be used with a "
 "Subnet."
 msgstr ""
+"Uitsluitend Round Robin types werken met Host Aliasen. Elk type kan worden "
+"gebruikt met een Subnet."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:614
 msgid "Round Robin: Loops through the translation addresses."
-msgstr ""
+msgstr "Round Robin: lust door de vertaal adressen."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:615
 msgid ""
 "Random: Selects an address from the translation address pool at random."
 msgstr ""
+"Willekeurig: Selecteerd een willekeurig adres uit de vertaal adressen poule."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:616
 msgid ""
@@ -12667,12 +12833,17 @@ msgid ""
 "address, ensuring that the redirection address is always the same for a "
 "given source."
 msgstr ""
+"Bron Hash: Gebruikt een hash van het bron adres om het vertaal adres te "
+"bepalen. Hiermee is verzekerd dat het doorstuur adres altijd hetzelfde is "
+"voor de gegeven bron."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:617
 msgid ""
 "Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0."
 "1.50 -&gt; x.x.x.50."
 msgstr ""
+"Bitmask: Past het subnet masker toe en houdt het laatste deel gelijk; 10.0.1."
+"50 -&gt; x.x.x.50."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:618
 msgid ""
@@ -12680,6 +12851,9 @@ msgid ""
 "Round Robin pool types to ensure that a particular source address is always "
 "mapped to the same translation address."
 msgstr ""
+"Sticky Adres: De Sticky Adres optie can worden gebruikt met de Willekeurige "
+"of Round Robin poule types om er voor te zorgen dat een bepaald bron adres "
+"altijd wordt gemapped naar het zelfde vertaal adres."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:611
 #: src/usr/local/www/firewall_rules_edit.php:1325
@@ -12688,11 +12862,11 @@ msgstr ""
 #: src/usr/local/www/status_pkglogs.php:94
 #, php-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:623
 msgid "Source Hash Key"
-msgstr ""
+msgstr "Bron Hash Sleutel"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:626
 msgid ""
@@ -12700,6 +12874,10 @@ msgid ""
 "\"0x\", or any string. A non-hex string is hashed using md5 to a hexadecimal "
 "key. Defaults to a randomly generated value."
 msgstr ""
+"De sleutel die word ingevoerd in het hashing algoritme in hex formaat, "
+"voorafgegaand door \"0x\", of een string. Een niet-hex string wordt gehashed "
+"met md5 tot een hexadecimale sleutel. Standaard word een willekeurig "
+"gegenereerde waarde gebruikt."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:636
 #, php-format
@@ -12709,6 +12887,10 @@ msgid ""
 "low port and high port number separated by \":\".%4$sLeave blank when "
 "%1$sStatic Port%2$s is checked."
 msgstr ""
+"Geef de externe bron %1$sPoort of Bereik%2$s die word gebruikt om de "
+"originele bron poort van verbindingen die met de regel overeenkomen te "
+"mappen. %3$sPoort bereiken zijn een laag en een hoge poort nummer gescheiden "
+"door een \":\".%4$sLaat leeg wanneer %1$sStatische Poort%2$s is aangevinkt."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:651
 msgid "Misc"
@@ -12719,55 +12901,62 @@ msgid ""
 "Prevents the rule on Master from automatically syncing to other CARP members."
 " This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
+"Dit voorkomt dat de regel op de Master automatisch gesynchroniseerd wordt "
+"naar andere CARP leden. Dit voorkomt NIET dat de regel word overschreven op "
+"een slaaf."
 
 #: src/usr/local/www/firewall_rules.php:39
 msgid ""
 "Move checked rules above this one. Shift+Click to move checked rules below."
 msgstr ""
+"Plaats de aangevinkte regels boven deze regel. Shift+Klik om de "
+"geselecteerde regels hieronder te plaatsen."
 
 #: src/usr/local/www/firewall_rules.php:40
 msgid ""
 "Move checked rules below this one. Release shift to move checked rules above."
 ""
 msgstr ""
+"Plaats de aangevinkte regels onder deze regel. Laat shift los om ze "
+"hierboven te plaatsen."
 
 #: src/usr/local/www/firewall_rules.php:87
 msgid "States details"
-msgstr ""
+msgstr "Details van de Staten"
 
 #: src/usr/local/www/firewall_rules.php:190
 msgid "Firewall: Rules - deleted a firewall rule."
-msgstr ""
+msgstr "Firewall: Rules - firewall regel verwijderd."
 
 #: src/usr/local/www/firewall_rules.php:226
 msgid "Firewall: Rules - deleted selected firewall rules."
-msgstr ""
+msgstr "Firewall: Rules - geselecteerde firewall regels verwijderd."
 
 #: src/usr/local/www/firewall_rules.php:238
 msgid "Firewall: Rules - enabled a firewall rule."
-msgstr ""
+msgstr "Firewall: Rules - een firewall regel ingeschakeld."
 
 #: src/usr/local/www/firewall_rules.php:241
 msgid "Firewall: Rules - disabled a firewall rule."
-msgstr ""
+msgstr "Firewall: Rules - een firewall regel uitgeschakeld."
 
 #: src/usr/local/www/firewall_rules.php:294
 msgid "Firewall: Rules - reordered firewall rules."
-msgstr ""
+msgstr "Firewall: Rules - firewall regels herschikt."
 
 #: src/usr/local/www/firewall_rules.php:303
 #: src/usr/local/www/firewall_rules_edit.php:1115
 #: src/usr/local/www/firewall_rules_edit.php:1278
 msgid "Floating"
-msgstr ""
+msgstr "Zwevend"
 
 #: src/usr/local/www/firewall_rules.php:332
 msgid "The firewall rule configuration has been changed."
-msgstr ""
+msgstr "De firewall regels configuratie is gewijzigd"
 
 #: src/usr/local/www/firewall_rules.php:374
 msgid "Rules (Drag to Change Order)"
-msgstr ""
+msgstr "Regels (sleep om de volgorde aan te passen)"
 
 #: src/usr/local/www/firewall_rules.php:387
 #: src/usr/local/www/firewall_rules_edit.php:1685
@@ -12788,21 +12977,21 @@ msgstr "Gateway"
 #: src/usr/local/www/firewall_rules.php:388
 #: src/usr/local/www/status_queues.php:159
 msgid "Queue"
-msgstr ""
+msgstr "Wachtrij"
 
 #: src/usr/local/www/firewall_rules.php:389
 #: src/usr/local/www/firewall_rules_edit.php:1654
 msgid "Schedule"
-msgstr ""
+msgstr "Schema"
 
 #: src/usr/local/www/firewall_rules.php:405
 #: src/usr/local/www/firewall_rules.php:496
 msgid "traffic is passed"
-msgstr ""
+msgstr "Verkeer is doorgelaten"
 
 #: src/usr/local/www/firewall_rules.php:415
 msgid "Anti-Lockout Rule"
-msgstr ""
+msgstr "Anti-Buitensluit Regel"
 
 #: src/usr/local/www/firewall_rules.php:417
 #: src/usr/local/www/firewall_rules.php:436
@@ -12830,13 +13019,13 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: src/usr/local/www/firewall_rules.php:424
 #: src/usr/local/www/firewall_rules.php:443
 #: src/usr/local/www/firewall_rules.php:487
 msgid "traffic is blocked"
-msgstr ""
+msgstr "Verkeer is geblokekerd"
 
 #: src/usr/local/www/firewall_rules.php:427
 msgid "RFC 1918 networks"
@@ -12844,64 +13033,64 @@ msgstr "RFC 1918 netwerken"
 
 #: src/usr/local/www/firewall_rules.php:434
 msgid "Block private networks"
-msgstr ""
+msgstr "Blokkeer privé-netwerken"
 
 #: src/usr/local/www/firewall_rules.php:446
 #, php-format
 msgid "Reserved%sNot assigned by IANA"
-msgstr ""
+msgstr "Gereserveerd%sNiet toegewezen door IANA"
 
 #: src/usr/local/www/firewall_rules.php:453
 #: src/usr/local/www/interfaces.php:3161
 msgid "Block bogon networks"
-msgstr ""
+msgstr "Blokkeer bogon netwerken"
 
 #: src/usr/local/www/firewall_rules.php:490
 msgid "traffic is rejected"
-msgstr ""
+msgstr "Verkeer is geweigerd"
 
 #: src/usr/local/www/firewall_rules.php:493
 msgid "traffic is matched"
-msgstr ""
+msgstr "Verkeer is gematched"
 
 #: src/usr/local/www/firewall_rules.php:505
 #: src/usr/local/www/firewall_rules.php:853
 msgid "&quot;Quick&quot; rule. Applied immediately on match."
-msgstr ""
+msgstr "&quot;Snelle&quot; regel. Direct toegepast wanneer gematched."
 
 #: src/usr/local/www/firewall_rules.php:510
 msgid "advanced setting"
-msgstr ""
+msgstr "geavanceerde instellingen"
 
 #: src/usr/local/www/firewall_rules.php:514
 msgid "traffic is logged"
-msgstr ""
+msgstr "verkeer is gelogt"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:252
 msgid "Mon"
-msgstr "Maan"
+msgstr "Ma"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Tues"
-msgstr "Dins"
+msgstr "Di"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:254
 msgid "Wed"
-msgstr "Woes"
+msgstr "Wo"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Thur"
-msgstr "Donder"
+msgstr "Do"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
@@ -12915,68 +13104,68 @@ msgstr "Vrij"
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:257
 msgid "Sat"
-msgstr "Zater"
+msgstr "Za"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:258
 msgid "Sun"
-msgstr "Zon"
+msgstr "Zo"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "January"
-msgstr ""
+msgstr "Januari"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "February"
-msgstr ""
+msgstr "Februari"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "March"
-msgstr ""
+msgstr "Maart"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "May"
-msgstr ""
+msgstr "Mei"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "June"
-msgstr ""
+msgstr "Juni"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "July"
-msgstr ""
+msgstr "Juli"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "August"
-msgstr ""
+msgstr "Augustus"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: src/usr/local/www/firewall_rules.php:534
 #: src/usr/local/www/firewall_schedule.php:36
@@ -12998,15 +13187,15 @@ msgstr "December"
 
 #: src/usr/local/www/firewall_rules.php:647
 msgid "Traffic matching this rule is currently being denied"
-msgstr ""
+msgstr "Verkeer dat aan deze regel voldoet wordt momenteel geweigerd"
 
 #: src/usr/local/www/firewall_rules.php:651
 msgid "Traffic matching this rule is currently being allowed"
-msgstr ""
+msgstr "Verkeer dat aan deze regel voldoet wordt momenteel toegestaan"
 
 #: src/usr/local/www/firewall_rules.php:660
 msgid "This rule is not currently active because its period has expired"
-msgstr ""
+msgstr "De regel is momenteel niet actief omdat zijn periode verlopen is"
 
 #: src/usr/local/www/firewall_rules.php:699
 #: src/usr/local/www/firewall_rules_edit.php:1321
@@ -13023,26 +13212,28 @@ msgstr "Verwijder deze regel"
 
 #: src/usr/local/www/firewall_rules.php:808
 msgid "No floating rules are currently defined."
-msgstr ""
+msgstr "Er worden momenteel geen zwevende regels geweigerd"
 
 #: src/usr/local/www/firewall_rules.php:810
 msgid "No rules are currently defined for this interface"
-msgstr ""
+msgstr "Er worden momenteel geen regels geweigerd voor deze interface"
 
 #: src/usr/local/www/firewall_rules.php:811
 msgid ""
 "All incoming connections on this interface will be blocked until pass rules "
 "are added."
 msgstr ""
+"Alle binnenkomende verbindingen op deze interface zullen worden geblokkeerd "
+"totdat doorlaat regels worden toegevoegd."
 
 #: src/usr/local/www/firewall_rules.php:813
 msgid "Click the button to add a new rule."
-msgstr ""
+msgstr "Klik op de knop om een nieuwe regel toe te voegen."
 
 #: src/usr/local/www/firewall_rules.php:848
 #: src/usr/local/www/firewall_rules_edit.php:1179
 msgid "Match"
-msgstr ""
+msgstr "Gelijkenis"
 
 #: src/usr/local/www/firewall_rules.php:849
 #: src/usr/local/www/firewall_rules_edit.php:1174
@@ -13058,7 +13249,7 @@ msgstr "Blokeer"
 #: src/usr/local/www/firewall_rules_edit.php:1175
 #: src/usr/local/www/widgets/widgets/log.widget.php:242
 msgid "Reject"
-msgstr ""
+msgstr "Weiger"
 
 #: src/usr/local/www/firewall_rules.php:851
 #: src/usr/local/www/firewall_rules_edit.php:1467
@@ -13067,13 +13258,15 @@ msgstr "Log"
 
 #: src/usr/local/www/firewall_rules.php:852
 msgid "Advanced filter"
-msgstr ""
+msgstr "Geavanceerd filter"
 
 #: src/usr/local/www/firewall_rules.php:858
 msgid ""
 "Rules are evaluated on a first-match basis (i.e. the action of the first "
 "rule to match a packet will be executed). "
 msgstr ""
+"Regels worden geevalueerd op een eerste match basis (de actie van de eerste "
+"regel die geldt voor een pakket zal worden uitgevoerd)."
 
 #: src/usr/local/www/firewall_rules.php:860
 msgid ""
@@ -13081,6 +13274,9 @@ msgid ""
 "the rule order. Everything that isn't explicitly passed is blocked by "
 "default. "
 msgstr ""
+"Dit betekent het belangrijk is om in het geval dat blokkeer regels worden "
+"gebruikt op te letten op de regel volgorde. Alles dat niet expliciet wordt "
+"toegestaan wordt standaard geblokkeerd."
 
 #: src/usr/local/www/firewall_rules.php:864
 msgid ""
@@ -13090,6 +13286,12 @@ msgid ""
 "Pay close attention to the rule order and options chosen. If no rule here "
 "matches, the per-interface or default rules are used. "
 msgstr ""
+"Zwevende regels worden alleen als de 'quick' optie is aangevinkt op de regel "
+"geëvalueerd op een eerste match basis (de actie van de eerste regel die "
+"geldt voor een pakket zal worden uitgevoerd). Anders zullen ze alleen gelden "
+"als er geen andere regels gelden. Let goed op de regel volgorde en gekozen "
+"opties. Als er geen van deze regels geldt, zullen de regels per interface of "
+"de standaard regels gebruikt worden."
 
 #: src/usr/local/www/firewall_rules.php:871
 #, php-format
@@ -13097,10 +13299,13 @@ msgid ""
 "%1$sClick the anchor icon %2$s to move checked rules before the clicked row. "
 "Hold down the shift key and click to move the rules after the clicked row."
 msgstr ""
+"%1$sKlik op het anker icoon %2$s om aangevinkte regels te verplaatsen naar "
+"vóór de aangeklikte regel. Hou de shift toets vast en klik om de regels "
+"achter de aangeklikte regel te verplaatsen."
 
 #: src/usr/local/www/firewall_rules.php:989
 msgid "One or more rules have been moved but have not yet been saved"
-msgstr ""
+msgstr "Eén of meer regels zijn verplaatst, maar zijn nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_rules_edit.php:39
 #: src/usr/local/www/firewall_rules_edit.php:40
@@ -13110,17 +13315,21 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1364
 #: src/usr/local/www/firewall_rules_edit.php:1420
 msgid "any"
-msgstr ""
+msgstr "Alle"
 
 #: src/usr/local/www/firewall_rules_edit.php:56
 msgid ""
 "For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified."
 msgstr ""
+"Voor ICMP regels op IPv4, mogen één of meer van deze ICMP suptypes "
+"gespecificeerd worden."
 
 #: src/usr/local/www/firewall_rules_edit.php:57
 msgid ""
 "For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified."
 msgstr ""
+"Voor ICMP regels op IPv6, mogen één of meer van deze ICMP subtypes "
+"gespecificeerd worden."
 
 #: src/usr/local/www/firewall_rules_edit.php:58
 #, php-format
@@ -13129,116 +13338,136 @@ msgid ""
 "specified. (Other ICMP subtypes are only valid under IPv4 %1$sor%2$s IPv6, "
 "not both)"
 msgstr ""
+"Voor ICMP regels op IPv4+IPv6, mogen één of meer van deze ICMP subtypes "
+"gespecificeerd worden. (Andere ICMP subtypes zijn alleen geldig onder IPv4 "
+"%1$sor%2$s IPv6, niet allebei)"
 
 #: src/usr/local/www/firewall_rules_edit.php:322
 msgid "The IP protocol is not recognized."
-msgstr ""
+msgstr "Het IP protocol werd niet herkend."
 
 #: src/usr/local/www/firewall_rules_edit.php:330
 msgid "A valid rule type is not selected."
-msgstr ""
+msgstr "Er is geen geldig regeltype geselecteerd."
 
 #: src/usr/local/www/firewall_rules_edit.php:350
 #: src/usr/local/www/firewall_rules_edit.php:362
 msgid ""
 "Gateways can not be assigned in a rule that applies to both IPv4 and IPv6."
 msgstr ""
+"Gateways kunnen niet worden toegewezen in een regel die geldt voor zowel "
+"IPv4 als IPv6."
 
 #: src/usr/local/www/firewall_rules_edit.php:352
 msgid "An IPv4 gateway group can not be assigned in IPv6 rules."
-msgstr ""
+msgstr "Een IPv4 gateway groep kan niet worden toegewezen in IPv6 regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:354
 msgid "An IPv6 gateway group can not be assigned in IPv4 rules."
-msgstr ""
+msgstr "Een IPv6 gateway groep kan niet worden toegewezen in IPv4 regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:365
 msgid "An IPv4 gateway can not be assigned in IPv6 rules."
-msgstr ""
+msgstr "Een IPv4 gateway kan niet worden toegewezen in IPv6 regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:368
 msgid "An IPv6 gateway can not be assigned in IPv4 rules."
-msgstr ""
+msgstr "Een IPv6 gateway kan niet worden toegewezen in IPv4 regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:465
 #, php-format
 msgid "%s is only valid with protocol TCP."
-msgstr ""
+msgstr "%s is alleen geldig met TCP protocol."
 
 #: src/usr/local/www/firewall_rules_edit.php:468
 #, php-format
 msgid "%s is only valid if the gateway is set to 'default'."
-msgstr ""
+msgstr "%s is alleen geldig als de gateway op 'standaard' staat."
 
 #: src/usr/local/www/firewall_rules_edit.php:545
 #: src/usr/local/www/firewall_rules_edit.php:550
 msgid "Alias entries must be a single host or alias."
-msgstr ""
+msgstr "Alias items moeten een enkele host of alias zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:572
 msgid ""
 "The source and destination IP addresses must have the same family (IPv4 / "
 "IPv6)."
-msgstr ""
+msgstr "De bron en doel IP moeten van de zelfde familie zijn (IPv4 / IPv6)."
 
 #: src/usr/local/www/firewall_rules_edit.php:576
 msgid "IPv6 addresses cannot be used in IPv4 rules (except within an alias)."
 msgstr ""
+"IPv6 adressen kunnen niet worden gebruikt in IPv4 regels (behalve binnen een "
+"alias)."
 
 #: src/usr/local/www/firewall_rules_edit.php:579
 msgid "IPv4 addresses can not be used in IPv6 rules (except within an alias)."
 msgstr ""
+"IPv4 adressen kunnen niet worden gebruikt in IPv6 regels (behalve binnen een "
+"alias)."
 
 #: src/usr/local/www/firewall_rules_edit.php:583
 msgid ""
 "IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and "
 "IPv6 (except within an alias)."
 msgstr ""
+"IPv4 en IPv6 adressen kunnen niet worden gebruikt in regels die voor zowel "
+"IPv4 als IPv6 gelden (behalve binnen een alias)."
 
 #: src/usr/local/www/firewall_rules_edit.php:600
 msgid "OS detection is only valid with protocol TCP."
-msgstr ""
+msgstr "OS detectie is alleen geldig met TCP protocol."
 
 #: src/usr/local/www/firewall_rules_edit.php:603
 msgid "Invalid OS detection selection. Please select a valid OS."
-msgstr ""
+msgstr "Ongeldige OS detectie selectie. Graag een geldig OS selecteren."
 
 #: src/usr/local/www/firewall_rules_edit.php:611
 msgid "ICMP types expected to be a list if present, but is not."
 msgstr ""
+"ICMP types verwacht een lijst te zijn indien aanwezig, maar dat is niet zo."
 
 #: src/usr/local/www/firewall_rules_edit.php:630
 #, php-format
 msgid "Invalid ICMP subtype: %s can not be used with %s."
-msgstr ""
+msgstr "Ongeldig ICMP subtype: %s kan niet gebruikt worden met %s."
 
 #: src/usr/local/www/firewall_rules_edit.php:639
 msgid "A queue must be selected when an acknowledge queue is also selected."
 msgstr ""
+"Er moet een wachtrij geselecteerd worden als een aanvaard wachtrij ook is "
+"geselecteerd."
 
 #: src/usr/local/www/firewall_rules_edit.php:641
 msgid "Acknowledge queue and Queue cannot be the same."
-msgstr ""
+msgstr "Aanvaard wachtrij en Wachtrij kunnen niet het zelfde zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:645
 msgid ""
 "Limiters can not be used in Floating rules without choosing a direction."
 msgstr ""
+"Begrenzers kunnen niet met Zwevende regels worden gebruikt zonder een "
+"richting te kiezen."
 
 #: src/usr/local/www/firewall_rules_edit.php:648
 msgid ""
 "Gateways can not be used in Floating rules without choosing a direction."
 msgstr ""
+"Gateways kunnen niet gebruikt worden in Zwevende regels zonder een richting "
+"te kiezen."
 
 #: src/usr/local/www/firewall_rules_edit.php:652
 msgid ""
 "A queue must be selected for the In direction before selecting one for Out "
 "too."
 msgstr ""
+"Er moet een wachtrij voor de In richting worden geselecteerd voor er een "
+"voor Uit wordt geselecteerd."
 
 #: src/usr/local/www/firewall_rules_edit.php:654
 msgid "In and Out Queue cannot be the same."
-msgstr ""
+msgstr "In en Uit Wachtrijen kunnen niet het zelfde zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:656
 #: src/usr/local/www/firewall_rules_edit.php:658
@@ -13246,168 +13475,218 @@ msgid ""
 "A queue and a virtual interface cannot be selected for IN and Out. Both must "
 "be from the same type."
 msgstr ""
+"Een wachtrij en een virtuele interfact kunnen niet voor IN en UIT worden "
+"geselecteerd. Beiden moeten van het zelfde type zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:661
 msgid ""
 "Please select a gateway, normally the interface selected gateway, so the "
 "limiters work correctly"
 msgstr ""
+"Selecteer a.u.b. een gateway. gewoonlijk de interface geselecteerde gateway, "
+"zodat de begrenzers goed functioneren."
 
 #: src/usr/local/www/firewall_rules_edit.php:665
 msgid "ID must be an integer"
-msgstr ""
+msgstr "ID moet een geheel getal zijn"
 
 #: src/usr/local/www/firewall_rules_edit.php:670
 msgid ""
 "The maximum number of established connections per host (advanced option) can "
 "only be specified for TCP protocol."
 msgstr ""
+"Het maximum aantal opgezette verbindingen per host (geavanceerde optie) kan "
+"alleen worden opgegeven voor het TCP protocol."
 
 #: src/usr/local/www/firewall_rules_edit.php:673
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) can "
 "only be specified for TCP protocol."
 msgstr ""
+"Het maximum aantal opgezette verbindingen per host  / per seconde "
+"(geavanceerde optie) kan alleen worden opgegeven voor het TCP protocol."
 
 #: src/usr/local/www/firewall_rules_edit.php:676
 msgid ""
 "The state timeout (advanced option) can only be specified for TCP protocol."
 msgstr ""
+"De state timeout (geavanceerde optie) kan alleen worden opgegeven voor het "
+"TCP protocol."
 
 #: src/usr/local/www/firewall_rules_edit.php:682
 msgid ""
 "The maximum state entries (advanced option) can only be specified for Pass "
 "type rules."
 msgstr ""
+"Het maximale aantal state items (geavanceerde optie) kan alleen worden "
+"opgegeven voor 'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:685
 msgid ""
 "The maximum number of unique source hosts (advanced option) can only be "
 "specified for Pass type rules."
 msgstr ""
+"Het maximale aantal unieke hosts (geavanceerde optie) kan alleen worden "
+"opgegeven voor 'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:688
 msgid ""
 "The maximum number of established connections per host (advanced option) can "
 "only be specified for Pass type rules."
 msgstr ""
+"Het maximale aantal opgezette verbindingen per host (geavanceerde optie) kan "
+"alleen worden opgegeven voor 'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:691
 msgid ""
 "The maximum state entries per host (advanced option) can only be specified "
 "for Pass type rules."
 msgstr ""
+"Het maximale aantal state items per host (geavanceerde optie) kan alleen "
+"worden opgegeven voor 'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:694
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) can "
 "only be specified for Pass type rules."
 msgstr ""
+"Het maximale aantal nieuwe verbindingen per host / per seconde (geavanceerde "
+"optie) kan alleen worden opgegeven voor 'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:697
 msgid ""
 "The state timeout (advanced option) can only be specified for Pass type "
 "rules."
 msgstr ""
+"De state timeout (geavanceerde optie) kan alleen worden opgegeven voor "
+"'Doorlaten' type regels."
 
 #: src/usr/local/www/firewall_rules_edit.php:703
 msgid ""
 "The maximum state entries (advanced option) cannot be specified if statetype "
 "is none."
 msgstr ""
+"Het maximale aantal state items (geavanceerde optie) kan niet worden "
+"opgegeven wanneer statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:706
 msgid ""
 "The maximum number of unique source hosts (advanced option) cannot be "
 "specified if statetype is none."
 msgstr ""
+"Het maximale aantal unieke bron hosts (geavanceerde optie) kan niet worden "
+"opgegeven wanneer statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:709
 msgid ""
 "The maximum number of established connections per host (advanced option) "
 "cannot be specified if statetype is none."
 msgstr ""
+"Het maximale aantal opgezette verbindingen per host (geavanceerde optie) kan "
+"niet worden opgegeven wanneer statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:712
 msgid ""
 "The maximum state entries per host (advanced option) cannot be specified if "
 "statetype is none."
 msgstr ""
+"Het maximale aantal state items (geavanceerde optie) kan niet worden "
+"opgegeven wanneer statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:715
 msgid ""
 "The maximum new connections per host / per second(s) (advanced option) "
 "cannot be specified if statetype is none."
 msgstr ""
+"Het maximale aantal nieuwe verbindingen per host / per seconde (geavanceerde "
+"optie) kan niet worden opgegeven wanneer statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:718
 msgid ""
 "The state timeout (advanced option) cannot be specified if statetype is none."
 ""
 msgstr ""
+"De state timeout (geavanceerde optie) kan niet worden opgegeven wanneer "
+"statetype 'geen' is."
 
 #: src/usr/local/www/firewall_rules_edit.php:723
 msgid "Maximum state entries (advanced option) must be a positive integer"
 msgstr ""
+"Maximale aantal state items (geavanceerde optie) dient een positief geheel "
+"getal te zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:727
 msgid ""
 "Maximum number of unique source hosts (advanced option) must be a positive "
 "integer"
 msgstr ""
+"Maximale aantal unieke bron hosts (geavanceerde optie) dient een positief "
+"geheel getal te zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:731
 msgid ""
 "Maximum number of established connections per host (advanced option) must be "
 "a positive integer"
 msgstr ""
+"Maximale aantal opgezette verbindingen per host (geavanceerde optie) dient "
+"een positief geheel getal te zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:735
 msgid ""
 "Maximum state entries per host (advanced option) must be a positive integer"
 msgstr ""
+"Maximale aantal state items per host (geavanceerde optie) dient een positief "
+"geheel getal te zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:739
 msgid ""
 "Maximum new connections per host / per second(s) (advanced option) must be a "
 "positive integer"
 msgstr ""
+"Maximale aantal nieuwe verbindingen per host / per seconde (geavanceerde "
+"optie) dient een positief geheel getal te zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:743
 msgid "State timeout (advanced option) must be a positive integer"
 msgstr ""
+"De state timeout (geavanceerde optie) dient een positief geheel getal te "
+"zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:748
 msgid ""
 "Both maximum new connections per host and the interval (per second(s)) must "
 "be specified"
 msgstr ""
+"Zowel maximale aantal niewe verbindingen per host als de tijdsspanne (per "
+"seconde) moet worden opgegeven."
 
 #: src/usr/local/www/firewall_rules_edit.php:763
 msgid ""
 "If TCP flags that should be set is specified, then out of which flags should "
 "be specified as well."
 msgstr ""
+"Indien TCP vlaggen moeten zijn gezet is opgegeven dan dient men ook op te "
+"geven welke vlaggen dit moeten zijn."
 
 #: src/usr/local/www/firewall_rules_edit.php:1015
 msgid "Firewall: Rules - saved/edited a firewall rule."
-msgstr ""
+msgstr "Firewall: Regels - firewall regel opgeslagen/bewerkt."
 
 #: src/usr/local/www/firewall_rules_edit.php:1036
 msgid "set"
-msgstr ""
+msgstr "zet"
 
 #: src/usr/local/www/firewall_rules_edit.php:1037
 msgid "out of"
-msgstr ""
+msgstr "van de"
 
 #: src/usr/local/www/firewall_rules_edit.php:1064
 msgid " Any flags."
-msgstr ""
+msgstr "Elke vlag."
 
 #: src/usr/local/www/firewall_rules_edit.php:1135
 msgid "Edit Firewall Rule"
-msgstr ""
+msgstr "Bewerk Firewall Regel"
 
 #: src/usr/local/www/firewall_rules_edit.php:1140
 #: src/usr/local/www/status_ipsec_leases.php:55
@@ -13416,21 +13695,21 @@ msgstr "ID"
 
 #: src/usr/local/www/firewall_rules_edit.php:1149
 msgid "Tracker"
-msgstr ""
+msgstr "Tracker"
 
 #: src/usr/local/www/firewall_rules_edit.php:1157
 msgid "After"
-msgstr ""
+msgstr "Na"
 
 #: src/usr/local/www/firewall_rules_edit.php:1164
 msgid "Ruleid"
-msgstr ""
+msgstr "Regelid"
 
 #: src/usr/local/www/firewall_rules_edit.php:1184
 #: src/usr/local/www/services_captiveportal_mac_edit.php:198
 #: src/usr/local/www/services_unbound_acls.php:217
 msgid "*Action"
-msgstr ""
+msgstr "*Actie"
 
 #: src/usr/local/www/firewall_rules_edit.php:1187
 #, php-format
@@ -13441,37 +13720,48 @@ msgid ""
 "whereas with block the packet is dropped silently. In either case, the "
 "original packet is discarded."
 msgstr ""
+"Kies wat er moet gebeuren met pakketten die voldoen aan de criteria "
+"hieronder. %sHint: het verschil tussen blokkeren en weigeren is dat met "
+"weigeren een pakket (TCP RST of ICMP poort onbereikbaar voor UDP) wordt "
+"teruggestuurd naar de verzender terwijl met blokkeren het pakket in stilte "
+"wordt genegeerd. In ieder geval zal het originele pakket worden weggegooid."
 
 #: src/usr/local/www/firewall_rules_edit.php:1198
 msgid ""
 "Set this option to disable this rule without removing it from the list."
 msgstr ""
+"Zet deze optie om deze regel uit te schakelen zonder deze uit de lijst te "
+"verwijderen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1204
 msgid "Quick"
-msgstr ""
+msgstr "Snel"
 
 #: src/usr/local/www/firewall_rules_edit.php:1207
 msgid ""
 "Set this option to apply this action to traffic that matches this rule "
 "immediately."
 msgstr ""
+"Zet deze optie om deze actie direct toe te passen op verkeer dat voldoet aan "
+"deze regel."
 
 #: src/usr/local/www/firewall_rules_edit.php:1217
 msgid "View the NAT rule"
-msgstr ""
+msgstr "Bekijk de NAT regel"
 
 #: src/usr/local/www/firewall_rules_edit.php:1222
 msgid "Associated filter rule"
-msgstr ""
+msgstr "Geassocieerde filter regel"
 
 #: src/usr/local/www/firewall_rules_edit.php:1254
 msgid "Choose the interface(s) for this rule."
-msgstr ""
+msgstr "Kies de interface(s) voor deze regel"
 
 #: src/usr/local/www/firewall_rules_edit.php:1261
 msgid "Choose the interface from which packets must come to match this rule."
 msgstr ""
+"Kies de interface waarvandaan pakketten moeten komen om aan deze regel te "
+"voldoen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1271
 msgid "in"
@@ -13485,23 +13775,24 @@ msgstr "uit"
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:173
 #: src/usr/local/www/services_captiveportal_ip_edit.php:229
 msgid "*Direction"
-msgstr ""
+msgstr "*Richting"
 
 #: src/usr/local/www/firewall_rules_edit.php:1293
 msgid "Select the Internet Protocol version this rule applies to."
 msgstr ""
+"Selecteer de Internet Protocol versie waarop deze regel van toepassing is."
 
 #: src/usr/local/www/firewall_rules_edit.php:1316
 msgid "Choose which IP protocol this rule should match."
-msgstr ""
+msgstr "Kies het IP protocol waarmee deze regel overeen moet komen"
 
 #: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "ICMP Subtypes"
-msgstr ""
+msgstr "ICMP Subtypes"
 
 #: src/usr/local/www/firewall_rules_edit.php:1337
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: src/usr/local/www/firewall_rules_edit.php:1340
 msgid " not"
@@ -13509,7 +13800,7 @@ msgstr "niet"
 
 #: src/usr/local/www/firewall_rules_edit.php:1370
 msgid "This firewall (self)"
-msgstr ""
+msgstr "Deze firewall (zelf)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1394
 msgid " Type"
@@ -13526,26 +13817,29 @@ msgid ""
 "almost never equal to the destination port. In most cases this setting must "
 "remain at its default value, %1$sany%2$s."
 msgstr ""
+"Het %1$sBron Poort Bereik%2$svoor een verbinding is typisch willekeurig en "
+"bijna nooit hetzelfde als de doel poort. In de meeste gevallen dient deze "
+"instelling op de standaard waarde te blijven, %1$selke%2$s."
 
 #: src/usr/local/www/firewall_rules_edit.php:1420
 msgid "(other)"
-msgstr ""
+msgstr "(andere)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1425
 msgid "Source Port Range"
-msgstr ""
+msgstr "Bron Poort Bereik"
 
 #: src/usr/local/www/firewall_rules_edit.php:1425
 msgid "Destination Port Range"
-msgstr ""
+msgstr "Doel Poort Bereik"
 
 #: src/usr/local/www/firewall_rules_edit.php:1425
 msgid "src"
-msgstr ""
+msgstr "bron"
 
 #: src/usr/local/www/firewall_rules_edit.php:1431
 msgid " port begin"
-msgstr ""
+msgstr "poort begin"
 
 #: src/usr/local/www/firewall_rules_edit.php:1434
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
@@ -13556,11 +13850,11 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:724
 #: src/usr/local/www/system_gateways_edit.php:744
 msgid "From"
-msgstr ""
+msgstr "Van"
 
 #: src/usr/local/www/firewall_rules_edit.php:1445
 msgid " port end"
-msgstr ""
+msgstr "poort einde"
 
 #: src/usr/local/www/firewall_rules_edit.php:1448
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
@@ -13571,7 +13865,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:731
 #: src/usr/local/www/system_gateways_edit.php:751
 msgid "To"
-msgstr ""
+msgstr "Naar"
 
 #: src/usr/local/www/firewall_rules_edit.php:1457
 #, php-format
@@ -13579,10 +13873,12 @@ msgid ""
 "Specify the %s port or port range for this rule. The \"To\" field may be "
 "left empty if only filtering a single port."
 msgstr ""
+"Geef de %s poort of poort bereik op voor deze regel. Het \"Naar\" veld mag "
+"leegblijven indien er slechts een enkele port wordt gefilterd."
 
 #: src/usr/local/www/firewall_rules_edit.php:1464
 msgid "Extra Options"
-msgstr ""
+msgstr "Extra Opties"
 
 #: src/usr/local/www/firewall_rules_edit.php:1470
 #, php-format
@@ -13591,6 +13887,10 @@ msgid ""
 "everything. If doing a lot of logging, consider using a remote syslog server "
 "(see the %1$sStatus: System Logs: Settings%2$s page)."
 msgstr ""
+"Hint: de fireall heeft een beperkte ruimte voor logs. Schakel niet voor "
+"alles de logging in. Indien er veel gelogt moet worden overweeg dan een "
+"externe syslog server te gebruiken (zie de %1$sStatus: Systeem Logs: "
+"Instellingen%2$s pagina)."
 
 #: src/usr/local/www/firewall_rules_edit.php:1479
 #, php-format
@@ -13598,33 +13898,38 @@ msgid ""
 "A description may be entered here for administrative reference. A maximum of "
 "%s characters will be used in the ruleset and displayed in the firewall log."
 msgstr ""
+"Een omschrijving mag hier worden opgegeven voor een administratieve "
+"referentie. Een maximum van %s tekens zal worden gebruikt in de set van "
+"regels en worden weergegeven in de log van de firewall."
 
 #: src/usr/local/www/firewall_rules_edit.php:1504
 msgid "Source OS"
-msgstr ""
+msgstr "Bron OS"
 
 #: src/usr/local/www/firewall_rules_edit.php:1507
 msgid ""
 "Note: this only works for TCP rules. General OS choice matches all subtypes."
 msgstr ""
+"Opmerking: dit werkt alleen voor TCP regels. Generiek OS keuze matched met "
+"alle subtypes."
 
 #: src/usr/local/www/firewall_rules_edit.php:1511
 msgid "Diffserv Code Point"
-msgstr ""
+msgstr "Diffserv Code Point"
 
 #: src/usr/local/www/firewall_rules_edit.php:1518
 msgid "Allow IP options"
-msgstr ""
+msgstr "Sta IP opties toe"
 
 #: src/usr/local/www/firewall_rules_edit.php:1526
 #: src/usr/local/www/system_advanced_firewall.php:518
 msgid "Disable reply-to"
-msgstr ""
+msgstr "Schakel reply-to uit"
 
 #: src/usr/local/www/firewall_rules_edit.php:1533
 #: src/usr/local/www/interfaces_qinq.php:110
 msgid "Tag"
-msgstr ""
+msgstr "Tag"
 
 #: src/usr/local/www/firewall_rules_edit.php:1536
 #, php-format
@@ -13632,102 +13937,109 @@ msgid ""
 "A packet matching this rule can be marked and this mark used to match on "
 "other NAT/filter rules. It is called %1$sPolicy filtering%2$s."
 msgstr ""
+"Een pakket dat overeenkomt met deze regel kan worden gemarkeerd en deze "
+"merking kan worden gebruikt op andere NAT/filter regels. Dit heet %1$sPolicy "
+"filtering%2$s."
 
 #: src/usr/local/www/firewall_rules_edit.php:1541
 msgid "Tagged"
-msgstr ""
+msgstr "Getagged"
 
 #: src/usr/local/www/firewall_rules_edit.php:1544
 msgid "A packet can be matched on a mark placed before on another rule."
 msgstr ""
+"Een pakket kan worden gematched op een marking geplaatst door een eerdere "
+"regel."
 
 #: src/usr/local/www/firewall_rules_edit.php:1548
 msgid "Max. states"
-msgstr ""
+msgstr "Max. states"
 
 #: src/usr/local/www/firewall_rules_edit.php:1551
 msgid "Maximum state entries this rule can create."
-msgstr ""
+msgstr "Maximale aantal state items die deze regel kan aanmaken."
 
 #: src/usr/local/www/firewall_rules_edit.php:1555
 msgid "Max. src nodes"
-msgstr ""
+msgstr "Max. bron nodes"
 
 #: src/usr/local/www/firewall_rules_edit.php:1558
 msgid "Maximum number of unique source hosts."
-msgstr ""
+msgstr "Maximale aantal van unieke bron hosts."
 
 #: src/usr/local/www/firewall_rules_edit.php:1562
 msgid "Max. connections"
-msgstr ""
+msgstr "Max. verbindingen"
 
 #: src/usr/local/www/firewall_rules_edit.php:1565
 msgid "Maximum number of established connections per host (TCP only)."
-msgstr ""
+msgstr "Maximale aantal opgezette verbindingen per host (alleen TCP)."
 
 #: src/usr/local/www/firewall_rules_edit.php:1569
 msgid "Max. src. states"
-msgstr ""
+msgstr "Max. bron states"
 
 #: src/usr/local/www/firewall_rules_edit.php:1572
 msgid "Maximum state entries per host."
-msgstr ""
+msgstr "Maximale aantal state items per host."
 
 #: src/usr/local/www/firewall_rules_edit.php:1576
 msgid "Max. src. conn. Rate"
-msgstr ""
+msgstr "Max. bron verb. snelheid"
 
 #: src/usr/local/www/firewall_rules_edit.php:1579
 msgid "Maximum new connections per host (TCP only)."
-msgstr ""
+msgstr "Maximale aantal nieuwe verbindingen per host (alleen TCP)."
 
 #: src/usr/local/www/firewall_rules_edit.php:1583
 msgid "Max. src. conn. Rates"
-msgstr ""
+msgstr "Max. bron verb. snelheid"
 
 #: src/usr/local/www/firewall_rules_edit.php:1587
 msgid "/ per how many second(s) (TCP only)"
-msgstr ""
+msgstr "/ per hoeveel seconde (alleen TCP)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1591
 msgid "State timeout"
-msgstr ""
+msgstr "State timeout"
 
 #: src/usr/local/www/firewall_rules_edit.php:1595
 msgid "State Timeout in seconds (TCP only)"
-msgstr ""
+msgstr "State timeout in seconde (alleen TCP)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1598
 #: src/usr/local/www/status_logs_filter.php:331
 #: src/usr/local/www/status_logs_filter_dynamic.php:477
 msgid "TCP Flags"
-msgstr ""
+msgstr "TCP vlaggen"
 
 #: src/usr/local/www/firewall_rules_edit.php:1600
 msgid ""
 "Use this to choose TCP flags that must be set or cleared for this rule to "
 "match."
 msgstr ""
+"Gebruik dit om te kiezen welke TCP vlaggen moeten worden gezet of weggehaald "
+"om deze regel te matchen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1604
 msgid "No pfSync"
-msgstr ""
+msgstr "Geen pfSync"
 
 #: src/usr/local/www/firewall_rules_edit.php:1614
 msgid "Keep"
-msgstr ""
+msgstr "Behoudt"
 
 #: src/usr/local/www/firewall_rules_edit.php:1615
 msgid "Sloppy"
-msgstr ""
+msgstr "Slordig"
 
 #: src/usr/local/www/firewall_rules_edit.php:1616
 msgid "Synproxy"
-msgstr ""
+msgstr "Synproxy"
 
 #: src/usr/local/www/firewall_rules_edit.php:1611
 msgid "State type"
-msgstr ""
+msgstr "State type"
 
 #: src/usr/local/www/firewall_rules_edit.php:1619
 #, php-format
@@ -13735,10 +14047,12 @@ msgid ""
 "Select which type of state tracking mechanism to use.  If in doubt, use keep "
 "state.%1$s"
 msgstr ""
+"Selecteer welk type state tracking mechanisme moet worden gebruikt. Bij "
+"twijfel kies voor behoudt state %1$s"
 
 #: src/usr/local/www/firewall_rules_edit.php:1627
 msgid "This does NOT prevent the rule from being overwritten on Slave."
-msgstr ""
+msgstr "Dit voorkomt NIET dat deze regel wordt overschreven op een Slave."
 
 #: src/usr/local/www/firewall_rules_edit.php:1633
 msgid "VLAN Prio"
@@ -13746,37 +14060,39 @@ msgstr "VLAN Prio"
 
 #: src/usr/local/www/firewall_rules_edit.php:1636
 msgid "Choose 802.1p priority to match on."
-msgstr ""
+msgstr "Kies 802.1p prioriteit om te matchen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1640
 msgid "VLAN Prio Set"
-msgstr ""
+msgstr "VLAN Prio Set"
 
 #: src/usr/local/www/firewall_rules_edit.php:1643
 msgid "Choose 802.1p priority to apply."
-msgstr ""
+msgstr "Kies 802.1p prioriteit om toe te passen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1657
 msgid "Leave as 'none' to leave the rule enabled all the time."
-msgstr ""
+msgstr "Laat op 'geen' om de regel altijd actief te houden."
 
 #: src/usr/local/www/firewall_rules_edit.php:1688
 msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
 msgstr ""
+"Laat op 'standaard' om de systeem routing tabel te gebruiken. Of kies een "
+"gateway om gebruik te maken van policy based routering."
 
 #: src/usr/local/www/firewall_rules_edit.php:1691
 msgid "In / Out pipe"
-msgstr ""
+msgstr "In / Uit pipe"
 
 #: src/usr/local/www/firewall_rules_edit.php:1695
 msgid "DNpipe"
-msgstr ""
+msgstr "DNpipe"
 
 #: src/usr/local/www/firewall_rules_edit.php:1702
 msgid "PDNpipe"
-msgstr ""
+msgstr "PDNpipe"
 
 #: src/usr/local/www/firewall_rules_edit.php:1707
 #, php-format
@@ -13788,18 +14104,27 @@ msgid ""
 "same rules apply, if the direction is Out the selections are reversed, Out "
 "is for incoming and In is for outgoing."
 msgstr ""
+"Kies de Uit wachtrij / Virtuele interface alleen indien In ook is "
+"geselecteerd. De Uit selectie wordt toegepast op verkeer dat de interface "
+"verlaat waar de regel is aangemaakt. De In selectie wordt toegepast op "
+"verkeer dat binnenkomt op de gekozen interface. %1$sIndien er een zwevende "
+"regel wordt aangemaakt dan zal in het geval de In-richting dezelfde regels "
+"gelden. Wanneer de de richting Uit is worden de selecties omgedraaid. Uit is "
+"voor binnenkomend en In is voor uitgaand."
 
 #: src/usr/local/www/firewall_rules_edit.php:1716
 msgid "Ackqueue / Queue"
-msgstr ""
+msgstr "Ackqueue / Queue"
 
 #: src/usr/local/www/firewall_rules_edit.php:1733
 msgid "Ackqueue"
-msgstr ""
+msgstr "Ackqueue"
 
 #: src/usr/local/www/firewall_rules_edit.php:1745
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
 msgstr ""
+"Kies de Acknowledge Queue alleen als er een geselecteerde Queue (wachtrij) "
+"is."
 
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
@@ -13807,79 +14132,81 @@ msgstr ""
 #: src/usr/local/www/head.inc:292
 #: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
-msgstr ""
+msgstr "Schema's"
 
 #: src/usr/local/www/firewall_schedule.php:69
 #, php-format
 msgid "Cannot delete schedule. Currently in use by %s."
-msgstr ""
+msgstr "Kan schema niet verwijderen. Is in gebruik door %s."
 
 #: src/usr/local/www/firewall_schedule.php:72
 msgid "Firewall schedule deleted."
-msgstr ""
+msgstr "Firewall schema verwijderd."
 
 #: src/usr/local/www/firewall_schedule.php:94
 msgid "Range: Date / Times / Name"
-msgstr ""
+msgstr "Bereik: Datum / Tijden / Naam"
 
 #: src/usr/local/www/firewall_schedule.php:107
 msgid "Schedule is currently active"
-msgstr ""
+msgstr "Schema is op dit moment actief"
 
 #: src/usr/local/www/firewall_schedule.php:226
 msgid "Edit schedule"
-msgstr ""
+msgstr "Bewerk schema"
 
 #: src/usr/local/www/firewall_schedule.php:227
 msgid "Delete schedule"
-msgstr ""
+msgstr "Verwijder schema"
 
 #: src/usr/local/www/firewall_schedule.php:240
 msgid " Indicates that the schedule is currently active."
-msgstr ""
+msgstr "Geeft aan of het schema op dit moment actief is."
 
 #: src/usr/local/www/firewall_schedule.php:250
 msgid ""
 "Schedules act as placeholders for time ranges to be used in firewall rules."
 msgstr ""
+"Schema's dienen als plaatsvervangers voor tijd-reeksen die gebruikt kunnen "
+"worden in firewall regels."
 
 #: src/usr/local/www/firewall_schedule_edit.php:81
 msgid "Schedule may not be named LAN."
-msgstr ""
+msgstr "Schema's mogen niet LAN heten."
 
 #: src/usr/local/www/firewall_schedule_edit.php:85
 msgid "Schedule may not be named WAN."
-msgstr ""
+msgstr "Schema's mogen niet WAN heten."
 
 #: src/usr/local/www/firewall_schedule_edit.php:89
 msgid "Schedule name cannot be blank."
-msgstr ""
+msgstr "Schema naam kan niet leeg zijn."
 
 #: src/usr/local/www/firewall_schedule_edit.php:93
 msgid "schedule"
-msgstr ""
+msgstr "schema"
 
 #: src/usr/local/www/firewall_schedule_edit.php:103
 msgid "A Schedule with this name already exists."
-msgstr ""
+msgstr "Een schema met deze naam bestaat al."
 
 #: src/usr/local/www/firewall_schedule_edit.php:118
 #, php-format
 msgid "Invalid start time - '%s'"
-msgstr ""
+msgstr "Ongeldige begin tijd - '%s'"
 
 #: src/usr/local/www/firewall_schedule_edit.php:123
 #, php-format
 msgid "Invalid stop time - '%s'"
-msgstr ""
+msgstr "Ongeldige eind tijd - '%s'"
 
 #: src/usr/local/www/firewall_schedule_edit.php:170
 msgid "The schedule must have at least one time range configured."
-msgstr ""
+msgstr "Het schema dient tenminste een tijdreeks te bevatten."
 
 #: src/usr/local/www/firewall_schedule_edit.php:189
 msgid "Firewall schedule configured."
-msgstr ""
+msgstr "Firewall schema geconfigureerd."
 
 #: src/usr/local/www/firewall_schedule_edit.php:253
 msgid "Tue"
@@ -13894,24 +14221,28 @@ msgid ""
 "Click individual date to select that date only. Click the appropriate "
 "weekday Header to select all occurrences of that weekday. "
 msgstr ""
+"Klik op een individuele datum om deze uitsluitend te selecteren. Klik in de "
+"header op een dag van de week om alle dagen van dat type te selecteren."
 
 #: src/usr/local/www/firewall_schedule_edit.php:348
 msgid "Schedule Information"
-msgstr ""
+msgstr "Schema Informatie"
 
 #: src/usr/local/www/firewall_schedule_edit.php:352
 msgid "*Schedule Name"
-msgstr ""
+msgstr "*Schema Naam"
 
 #: src/usr/local/www/firewall_schedule_edit.php:358
 msgid ""
 "The name of the schedule may only consist of the characters \"a-z, A-Z, 0-9 "
 "and _\"."
 msgstr ""
+"De naam van het schema mag alleen bestaan uit de tekens \"a-z, A-Z, 0-9 en "
+"_\"."
 
 #: src/usr/local/www/firewall_schedule_edit.php:360
 msgid "This schedule is in use so the name may not be modified!"
-msgstr ""
+msgstr "Dit schema is in gebruik dus de naam mag niet worden aangepast!"
 
 #: src/usr/local/www/firewall_schedule_edit.php:374
 #: src/usr/local/www/firewall_schedule_edit.php:427
@@ -13919,14 +14250,15 @@ msgid ""
 "A description may be entered here for administrative reference (not parsed). "
 ""
 msgstr ""
+"Een omschrijving mag hier worden ingevoerd voor referentie (niet gebruikt)."
 
 #: src/usr/local/www/firewall_schedule_edit.php:378
 msgid "Month"
-msgstr ""
+msgstr "Maand"
 
 #: src/usr/local/www/firewall_schedule_edit.php:384
 msgid "*Date"
-msgstr ""
+msgstr "*Datum"
 
 #: src/usr/local/www/firewall_schedule_edit.php:388
 msgid "*Time"
@@ -13953,22 +14285,24 @@ msgid ""
 "Select the time range for the day(s) selected on the Month(s) above. A full "
 "day is 0:00-23:59."
 msgstr ""
+"Selecteer de tijd reeks voor de dag(en) geselecteerd op de maand(en) "
+"hierboven. Een volledige dag is 0:00-23:59."
 
 #: src/usr/local/www/firewall_schedule_edit.php:424
 msgid "Time range description"
-msgstr ""
+msgstr "Tijd reeks omschrijving"
 
 #: src/usr/local/www/firewall_schedule_edit.php:433
 msgid "Add Time"
-msgstr ""
+msgstr "Voeg Tijd Toe"
 
 #: src/usr/local/www/firewall_schedule_edit.php:440
 msgid "Clear selection"
-msgstr ""
+msgstr "Selectie leegmaken"
 
 #: src/usr/local/www/firewall_schedule_edit.php:458
 msgid "Configured Ranges"
-msgstr ""
+msgstr "Geconfigureerde reeksen"
 
 #: src/usr/local/www/firewall_schedule_edit.php:594
 msgid "Day(s)"
@@ -13976,11 +14310,11 @@ msgstr "Dag(en)"
 
 #: src/usr/local/www/firewall_schedule_edit.php:601
 msgid "Start time"
-msgstr ""
+msgstr "Begin tijd"
 
 #: src/usr/local/www/firewall_schedule_edit.php:608
 msgid "Stop time"
-msgstr ""
+msgstr "Eind tijd"
 
 #: src/usr/local/www/firewall_shaper.php:41
 #: src/usr/local/www/firewall_shaper.php:370
@@ -13988,18 +14322,20 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:370
 #: src/usr/local/www/firewall_shaper_wizards.php:73
 msgid "By Interface"
-msgstr ""
+msgstr "Per Interface"
 
 #: src/usr/local/www/firewall_shaper.php:129
 #: src/usr/local/www/firewall_shaper_vinterface.php:142
 msgid "Unable to write config.xml (Access Denied?)."
-msgstr ""
+msgstr "Kon niet schrijven naar config.xml (Toegang Geweigerd?)."
 
 #: src/usr/local/www/firewall_shaper.php:162
 msgid ""
 "Could not create new queue/discipline! Any recent changes may need to be "
 "applied first."
 msgstr ""
+"Kon geen nieuwe wachtrij/discipline aanmaken! Enige recente wijzigingen "
+"moeten morgelijk eerst worden toegepast."
 
 #: src/usr/local/www/firewall_shaper.php:184
 #: src/usr/local/www/firewall_shaper.php:195
@@ -14008,19 +14344,19 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:191
 #: src/usr/local/www/firewall_shaper_vinterface.php:203
 msgid "Queue not found!"
-msgstr ""
+msgstr "Wachtrij niet gevonden!"
 
 #: src/usr/local/www/firewall_shaper.php:272
 #: src/usr/local/www/firewall_shaper_vinterface.php:261
 msgid "Could not add new queue."
-msgstr ""
+msgstr "Kon geen nieuwe wachtrij toevoegen."
 
 #: src/usr/local/www/firewall_shaper.php:366
 #: src/usr/local/www/firewall_shaper_queues.php:199
 #: src/usr/local/www/firewall_shaper_vinterface.php:366
 #: src/usr/local/www/firewall_shaper_wizards.php:84
 msgid "The traffic shaper configuration has been changed."
-msgstr ""
+msgstr "De traffic shaper configuratie is gewijzigd."
 
 #: src/usr/local/www/firewall_shaper.php:371
 #: src/usr/local/www/firewall_shaper_queues.php:180
@@ -14028,7 +14364,7 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:371
 #: src/usr/local/www/firewall_shaper_wizards.php:74
 msgid "By Queue"
-msgstr ""
+msgstr "Per Wachtrij"
 
 #: src/usr/local/www/firewall_shaper.php:373
 #: src/usr/local/www/firewall_shaper_queues.php:206
@@ -14039,21 +14375,21 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:304
 #: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Wizards"
-msgstr ""
+msgstr "Wizards"
 
 #: src/usr/local/www/firewall_shaper.php:392
 msgid "Remove Shaper"
-msgstr ""
+msgstr "Verwijder Shaper"
 
 #: src/usr/local/www/firewall_shaper.php:413
 #: src/usr/local/www/firewall_shaper_vinterface.php:402
 msgid "Add new Queue"
-msgstr ""
+msgstr "Voeg nieuwe wachtrij toe"
 
 #: src/usr/local/www/firewall_shaper.php:428
 #: src/usr/local/www/firewall_shaper_vinterface.php:417
 msgid "Delete this queue"
-msgstr ""
+msgstr "Verwijder deze wachtrij"
 
 #: src/usr/local/www/firewall_shaper.php:447
 #: src/usr/local/www/firewall_shaper_queues.php:230
@@ -14063,38 +14399,43 @@ msgid ""
 "This firewall does not have any interfaces assigned that are capable of "
 "using ALTQ traffic shaping."
 msgstr ""
+"Deze firewall heeft geen interfaces toegewezen die in staat zijn ALTQ "
+"traffic shaping toe te passen."
 
 #: src/usr/local/www/firewall_shaper_queues.php:40
 msgid "No Queue Configured/Selected"
-msgstr ""
+msgstr "Geen wachtrij geconfigureerd/geselecteerd"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:98
 msgid ""
 "This pipe/queue is referenced in filter rules, please remove references from "
 "there before deleting."
 msgstr ""
+"Aan deze pipe/wachtrij word gerefereerd in filter regels, verwijder deze "
+"referenties voor dat u dit item verwijderd."
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:112
 #, php-format
 msgid "No queue with name %s was found!"
-msgstr ""
+msgstr "Er is geen wachtrij met de naam %s gevonden!"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:156
 msgid "Could not create new queue/discipline!"
-msgstr ""
+msgstr "Kon geen nieuwe wachtrij/discipline aanmaken!"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:218
 #: src/usr/local/www/firewall_shaper_vinterface.php:244
 msgid "A child queue cannot be named the same as a parent limiter."
 msgstr ""
+"Een wachtrij kan niet dezelfde naam dragen als de bovenliggende begrenzer"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:384
 msgid "New Limiter"
-msgstr ""
+msgstr "Nieuwe Begrenzer"
 
 #: src/usr/local/www/firewall_shaper_wizards.php:62
 msgid "Multiple Lan/Wan"
-msgstr ""
+msgstr "Meervoudige Lan/Wan"
 
 #: src/usr/local/www/firewall_shaper_wizards.php:63
 msgid "Dedicated Links"

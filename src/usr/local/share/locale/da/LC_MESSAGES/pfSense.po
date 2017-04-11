@@ -1,4 +1,5 @@
 # Bjarke Madsen <bjarke@klex.dk>, 2017. #zanata
+# Bjarne Damgaard Pedersen <bjarne.pedersen@gmail.com>, 2017. #zanata
 # Kenneth Holmqvist <kholmqvist88@gmail.com>, 2017. #zanata
 # Mads Clausen <masbakke65@gmail.com>, 2017. #zanata
 # Michael Sass <michael@fam-sass.dk>, 2017. #zanata
@@ -6,12 +7,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 03:53-0400\n"
-"Last-Translator: Bjarke Madsen <bjarke@klex.dk>\n"
+"PO-Revision-Date: 2017-04-11 12:37-0400\n"
+"Last-Translator: Bjarne Damgaard Pedersen <bjarne.pedersen@gmail.com>\n"
 "Language-Team: Danish\n"
 "Language: da\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -133,7 +134,7 @@ msgstr "Søger efter %s i mappen. "
 #: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Søger på server %1$s, kontainer %2$s med filter %3$s."
+msgstr "Søger på server %1$s, container %2$s med filter %3$s."
 
 #: src/etc/inc/auth.inc:1384
 #, php-format
@@ -217,7 +218,7 @@ msgstr "Fejl: Ikke tilladt"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr "Ukendt årsag"
+msgstr "ukendt årsag"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
@@ -1026,7 +1027,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1167
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Opdaterer for ofte."
 
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
 #: src/etc/inc/dyndns.class:1201
@@ -1103,6 +1104,8 @@ msgstr "Ukendt brugernavn - brugeren eksisterer ikke."
 #: src/etc/inc/dyndns.class:1352
 msgid "Wrong password - Remember password is case sensitive."
 msgstr ""
+"Forkert adgangskode - Husk ved adgangskode skelnes der mellem store og små "
+"bogstaver."
 
 #: src/etc/inc/dyndns.class:1354
 msgid "User unable to administer the selected domain."
@@ -1114,7 +1117,7 @@ msgstr "Ikke et FQDN"
 
 #: src/etc/inc/dyndns.class:1399
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "Værtsnavnet eksisterer ikke eller også er DynDNS ikke slået til."
 
 #: src/etc/inc/dyndns.class:1401
 msgid "Bad request"
@@ -1138,7 +1141,7 @@ msgstr "Kontoen er deaktiveret"
 
 #: src/etc/inc/dyndns.class:1425
 msgid "Account revoked"
-msgstr ""
+msgstr "Kontoen er deaktiveret."
 
 #: src/etc/inc/dyndns.class:1428
 msgid "Record does not exist in the system. Unable to update record"
@@ -1190,7 +1193,7 @@ msgstr "Ingen kode angivet."
 
 #: src/etc/inc/dyndns.class:1532
 msgid "No Hostname Provided."
-msgstr ""
+msgstr "Der er ikke angivet et værtsnavn."
 
 #: src/etc/inc/dyndns.class:1535
 msgid "The Dynamic DNS Service provided is not yet supported."
@@ -1270,7 +1273,7 @@ msgstr "Dynamic Dns: Mere end %s dage. Opdaterer."
 
 #: src/etc/inc/dyndns.class:1632
 msgid "Initial update."
-msgstr ""
+msgstr "Startopdatering."
 
 #: src/etc/inc/dyndns.class:1669
 #, php-format
@@ -1324,16 +1327,16 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Prøvede at blokere invalid IP."
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Invalidt interface for blokeringsregel."
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "Vært tilføjet."
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
@@ -1349,11 +1352,11 @@ msgstr "Ukendt block fejl."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Prøvede at fjerne blokering for ugyldig IP."
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr ""
+msgstr "Ingen blokeringsregler sat for interface."
 
 #: src/etc/inc/easyrule.inc:416
 #, php-format
@@ -1362,15 +1365,15 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "Fjernet blokering for vært."
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "Vært er ikke på blokeringsliste."
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr ""
+msgstr "Prøvede at fjerne blokering, men manglede værts IP eller interface"
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
@@ -1390,7 +1393,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "Mangler destinationsport"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
@@ -1422,19 +1425,19 @@ msgstr "Datagram konverteringsfejl"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr ""
+msgstr "Echo svar."
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr ""
+msgstr "Echo forespørgsel."
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "FQDN svar."
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "FQDN forespørgsel."
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
@@ -1498,7 +1501,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "mtrace beskeder"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
@@ -1558,15 +1561,15 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "Tidsstempel"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr ""
+msgstr "Tid overskredet"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "Pakken er for stor"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
@@ -1577,7 +1580,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "Destination kan ikke nåes"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
@@ -1589,15 +1592,15 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
-msgstr ""
+msgstr "Initialiserer"
 
 #: src/etc/inc/filter.inc:240
 msgid "Configuring firewall"
-msgstr ""
+msgstr "Konfigurerer firewall"
 
 #: src/etc/inc/filter.inc:247
 msgid "Creating aliases"
-msgstr ""
+msgstr "Opretter alias'er"
 
 #: src/etc/inc/filter.inc:253
 msgid "Generating Limiter rules"
@@ -1605,23 +1608,23 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:256
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "Genererer NAT-regler"
 
 #: src/etc/inc/filter.inc:262
 msgid "Generating filter rules"
-msgstr ""
+msgstr "Genererer filter-regler"
 
 #: src/etc/inc/filter.inc:269
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "Genererer ALTQ køer"
 
 #: src/etc/inc/filter.inc:274
 msgid "Loading filter rules"
-msgstr ""
+msgstr "Indlæser filter-regler"
 
 #: src/etc/inc/filter.inc:281
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "Filter er slået fra. Indlæser ikke regler."
 
 #: src/etc/inc/filter.inc:283 src/etc/inc/filter.inc:535
 #: src/etc/inc/interfaces.inc:198 src/etc/inc/interfaces.inc:222
@@ -1734,47 +1737,47 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
-msgstr ""
+msgstr "localhost"
 
 #: src/etc/inc/filter.inc:1580
 msgid "static route"
-msgstr ""
+msgstr "statisk rute"
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
-msgstr ""
+msgstr "DHCP alias adresse"
 
 #: src/etc/inc/filter.inc:1626
 msgid "PPPoE server"
-msgstr ""
+msgstr "PPPoE vært"
 
 #: src/etc/inc/filter.inc:1637
 msgid "L2TP server"
-msgstr ""
+msgstr "L2TP vært"
 
 #: src/etc/inc/filter.inc:1646
 msgid "OpenVPN server"
-msgstr ""
+msgstr "OpenVPN vært"
 
 #: src/etc/inc/filter.inc:1655
 msgid "OpenVPN client"
-msgstr ""
+msgstr "OpenVPN klient"
 
 #: src/etc/inc/filter.inc:1665
 msgid "IPsec client"
-msgstr ""
+msgstr "IPsec klient"
 
 #: src/etc/inc/filter.inc:1701
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr "Automatisk genereret regel for ISAKMP"
 
 #: src/etc/inc/filter.inc:1711
 msgid "Auto created rule"
-msgstr ""
+msgstr "Automatisk genereret regel"
 
 #: src/etc/inc/filter.inc:1844
 msgid "Creating 1:1 rules..."
-msgstr ""
+msgstr "Genererer 1:1 regler..."
 
 #: src/etc/inc/filter.inc:2029
 #, php-format
@@ -1783,25 +1786,25 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:2076
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "Genererer udgående NAT-regler"
 
 #: src/etc/inc/filter.inc:2083
 msgid "Creating automatic outbound rules"
-msgstr ""
+msgstr "Genererer automatiske udgående regler"
 
 #: src/etc/inc/filter.inc:2113
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "Opsætter TFTP-hjælper"
 
 #: src/etc/inc/filter.inc:2157
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "Genererer NAT-regler %s"
 
 #: src/etc/inc/filter.inc:2387
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "Genererer filter-regler %s..."
 
 #: src/etc/inc/filter.inc:2411
 #, php-format
@@ -35302,7 +35305,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:423
 #: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Force all client generated traffic through the tunnel."
-msgstr ""
+msgstr "Tving al klientgenereret trafik gennem tunnelen."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:435
 msgid ""
@@ -35317,7 +35320,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:531
 #: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Enable NetBIOS over TCP/IP"
-msgstr ""
+msgstr "Slå NetBIOS over TCP/IP til"
 
 #: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disable this server"

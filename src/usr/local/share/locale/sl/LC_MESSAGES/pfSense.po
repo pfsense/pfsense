@@ -1,14 +1,14 @@
-# Matija Jeraj <matija.jeraj@gmail.com>, 2017. #zanata
+# matija <matija.jeraj@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-07 11:33-0400\n"
-"Last-Translator: Matija Jeraj <matija.jeraj@gmail.com>\n"
+"PO-Revision-Date: 2017-04-11 03:40-0400\n"
+"Last-Translator: matija <matija.jeraj@gmail.com>\n"
 "Language-Team: Slovenian\n"
 "Language: sl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -576,36 +576,42 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml je poškodovana in je velika 0 bajtov. Ne morem obnoviti iz "
+"prejšnje varnostne kopije."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:496
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Ne morem obnoviti config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s obnavlja konfiguracijo %2$s "
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "XML konfiguracija ni najdena. %s ne more nadaljevati z zagonom."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Zadnja poznana konfiguracija je bila najdena in obnovljena. Prosimo dvakrat "
+"preverite ustreznost konfiguracije."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Ne morem najti uporabnega konfiguracije. Zaključujem...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Začetek nadgradnje konfiguracije pri %s, iztek časovne kontrole je "
+"nastavljen na 15min."
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
@@ -614,30 +620,32 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Nadgradnja konfiguracije je zaključena pri %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Nadgrajena je verzija konfiguracije iz %1$s na %2$s "
 
 #: src/etc/inc/config.lib.inc:473
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
+"OPOZORILO: Vsebina konfiguracije ne more biti shranjena. Ne morem odpreti "
+"dokumenta!"
 
 #: src/etc/inc/config.lib.inc:475
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "Ne morem odpreti %1$s/config.xml za pisanje in write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:595
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Povrni na %s."
 
 #: src/etc/inc/config.lib.inc:612
 msgid "Installing configuration..."
-msgstr ""
+msgstr "Nameščam konfiguracijo..."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration ...."
@@ -656,6 +664,7 @@ msgstr "%1$s v vrstici %2$d"
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr ""
+"Varnostna kopija predpomnilnika %s je poškodovana. Prekinjanje povezave."
 
 #: src/etc/inc/config.lib.inc:877
 #, php-format
@@ -668,13 +677,14 @@ msgstr "Enkripcija/dekripcija podatkov ni uspela!"
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "Dinamični DNS: začetek updatedns() "
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dinamični DNS (%1$s): zagon get_failover_interface za %2$s. najden %3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -682,11 +692,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dinamični DNS (%1$s) Prišlo je do napake pri določitvi javnega IP naslova za "
+"mrežni vmesnik - %2$s (%3$s %4$s). "
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dinamični DNS %1$s (%2$s): zagon _update()"
 
 #: src/etc/inc/dyndns.class:445
 #, php-format
@@ -694,6 +706,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dinamični DNS %1$s (%2$s): Obdelujem posodobitev na No-IP brezplačnem računu."
+" Začasno je IP naslov nastavljen na %3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
@@ -703,7 +717,7 @@ msgstr "Pošlji zahtevo na: %s"
 #: src/etc/inc/dyndns.class:842
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "Dinamični DNS %1$s (%2$s): zagon _checkStatus()"
 
 #: src/etc/inc/dyndns.class:845 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
@@ -789,7 +803,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:878
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Domena je zaradi zlorabe blokirana."
 
 #: src/etc/inc/dyndns.class:883
 msgid "DNS error encountered. Stop updating for 30 minutes."
@@ -825,7 +839,7 @@ msgstr "Avtorizacija uporabnika ni uspela"
 
 #: src/etc/inc/dyndns.class:968
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "IP naslov je trenuten, posodobitev ni izvedena."
 
 #: src/etc/inc/dyndns.class:972
 msgid "DNS hostname update successful."
@@ -833,7 +847,7 @@ msgstr "Posodobitev DNS domene je bila uspešna."
 
 #: src/etc/inc/dyndns.class:976
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Priložena domena ne obstaja."
 
 #: src/etc/inc/dyndns.class:979
 msgid "Invalid Username."
@@ -845,7 +859,7 @@ msgstr "Neveljavno geslo."
 
 #: src/etc/inc/dyndns.class:985
 msgid "Too many updates sent."
-msgstr ""
+msgstr "Poslanih je bilo preveč posodobitev."
 
 #: src/etc/inc/dyndns.class:988
 msgid "Account disabled due to violation of No-IP terms of service."
@@ -859,7 +873,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:994
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Onemogočena / zaklenjena domena."
 
 #: src/etc/inc/dyndns.class:997
 msgid ""
@@ -894,7 +908,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1024
 msgid "Unknown Response:"
-msgstr "Neznan odgovor"
+msgstr "Neznan odgovor:"
 
 #: src/etc/inc/dyndns.class:1030
 msgid "Authentication Failed: Username and/or Password was Incorrect."
@@ -961,15 +975,15 @@ msgstr "To ni veljavno upo"
 
 #: src/etc/inc/dyndns.class:1140
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Izbrana domena ne obstaja."
 
 #: src/etc/inc/dyndns.class:1146
 msgid "Hostname specified exists, but not under the username specified."
-msgstr ""
+msgstr "Izbrana domena obstaja, vendar ne s trenutnim uporabniškim imenom."
 
 #: src/etc/inc/dyndns.class:1148
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Posodabljanje je prepogosto kar se smatra za zlorabo."
 
 #: src/etc/inc/dyndns.class:1157 src/etc/inc/dyndns.class:1221
 msgid "Bad Request - The IP provided was invalid."
@@ -986,11 +1000,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1163
 msgid "Invalid password."
-msgstr ""
+msgstr "Neveljavno geslo"
 
 #: src/etc/inc/dyndns.class:1165
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Ta račun je bil administratorsko zaklenjen."
 
 #: src/etc/inc/dyndns.class:1167
 msgid "Updating too frequently."
@@ -999,7 +1013,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
 #: src/etc/inc/dyndns.class:1201
 msgid "Server side error."
-msgstr ""
+msgstr "Napaka na strani strežnika."
 
 #: src/etc/inc/dyndns.class:1185
 msgid "Badly Formed Request (check the settings)."
@@ -1012,12 +1026,12 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1225
 #: src/etc/inc/dyndns.class:1252
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Neveljavno uporabniško ime ali geslo."
 
 #: src/etc/inc/dyndns.class:1210 src/etc/inc/dyndns.class:1230
 #: src/etc/inc/dyndns.class:1257 src/etc/inc/dyndns.class:1269
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "Ni spremembe v IP naslovu."
 
 #: src/etc/inc/dyndns.class:1248
 msgid "Bad Request - Missing/Invalid Parameters."
@@ -1033,34 +1047,36 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1288
 msgid "IP address changed successfully"
-msgstr ""
+msgstr "IP naslov je uspešno spremenjen."
 
 #: src/etc/inc/dyndns.class:1311 src/etc/inc/dyndns.class:1475
 msgid "Result did not match."
-msgstr ""
+msgstr "Rezultati se ne ujemajo."
 
 #: src/etc/inc/dyndns.class:1318
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr ""
+msgstr "%1$s posodobljen na %2$s "
 
 #: src/etc/inc/dyndns.class:1321
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Neveljavni prijavni podatki! Ne pozabi uporabiti API ključa za geslo z "
+"CloudFlare."
 
 #: src/etc/inc/dyndns.class:1323
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "Cona ali ID gostitelja ni bila najdena, preverite domeno."
 
 #: src/etc/inc/dyndns.class:1325
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "NEZNANA NAPAKA"
 
 #: src/etc/inc/dyndns.class:1348
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "Napačne vrednosti - posodobitev ni bila zaključena."
 
 #: src/etc/inc/dyndns.class:1350
 msgid "Unknown username - User does not exist."
@@ -35214,17 +35230,17 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:618
 #: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "Use a TLS Key"
-msgstr ""
+msgstr "Uporabi TLS ključ"
 
 #: src/usr/local/www/vpn_openvpn_client.php:628
 #: src/usr/local/www/vpn_openvpn_server.php:767
 msgid "Automatically generate a TLS Key."
-msgstr ""
+msgstr "Samodejno generiraj TLS ključ."
 
 #: src/usr/local/www/vpn_openvpn_client.php:684
 #: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Automatically generate a shared key"
-msgstr ""
+msgstr "Samodejno generiraj ključ v skupni rabi"
 
 #: src/usr/local/www/vpn_openvpn_client.php:713
 #: src/usr/local/www/vpn_openvpn_server.php:899
@@ -35244,88 +35260,99 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:851
 msgid "Don't add or remove routes automatically"
-msgstr ""
+msgstr "Ne dodaj ali odstrani poti samodejno"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:334
 msgid "Disable this override"
-msgstr ""
+msgstr "Onemogoči prepisovanje"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Block this client connection based on its common name."
-msgstr ""
+msgstr "Blokiraj povezavo odjemalca na osnovi splošnega imena."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:423
 #: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Force all client generated traffic through the tunnel."
-msgstr ""
+msgstr "Prisili vse odjemalce da generirajo promet skozi tunel."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:435
 msgid ""
 "Prevent this client from receiving any server-defined client settings. "
 msgstr ""
+"Prepreči odjemalcu prejem strežniško določenih odjemalskih nastavitev."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:503
 #: src/usr/local/www/vpn_openvpn_server.php:1213
 msgid "Provide an NTP server list to clients"
-msgstr ""
+msgstr "Odejmalcem pošlji seznam NTP strežnikov"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:531
 #: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Enable NetBIOS over TCP/IP"
-msgstr ""
+msgstr "Omogoči NetBIOS preko TCP/IP"
 
 #: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disable this server"
-msgstr ""
+msgstr "Onemogoči strežnik"
 
 #: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Enforce match"
-msgstr ""
+msgstr "Uveljavi ujemanje"
 
 #: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Allow clients on the bridge to obtain DHCP."
-msgstr ""
+msgstr "Dovoli odjemalcem, ki so povezani na most, da uporabljajo DHCP."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push the selected Compression setting to connecting clients."
 msgstr ""
+"Pošlji izbrano nastavitev za stiskanje podatkov na povezujoče odjemalce."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Allow communication between clients connected to this server"
-msgstr ""
+msgstr "Dovoli povezovanje med odjemalci, ki so povezani na ta strežnik"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1110
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
-msgstr ""
+msgstr "Dovoli več hkratnih povezav z odjemalcev z istim imenom."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
+"Dovoli povezanim odejmalcem da ohranijo povezavo, če se njihov IP naslov "
+"spremeni."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
 msgstr ""
+"Zagotovi IP naslov virtualnega vmesnika za odjemalce (poglej tuneliranje "
+"omrežja)."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1164
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
+"Navedite seznam DNS strežnikov za odjemalce. Naslov je lahko IPV4 ali IPV6."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
+"Blokiraj odjamalcem Windows 10 dostop do DNS strežnikov, razen ko so "
+"povezani preko OpenVPN in uporabljajo VPN DNS strežnike."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
+"Zaženi \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
+"in \"ipconfig /registerdns\""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1279
 msgid "Use a different management port for clients."
-msgstr ""
+msgstr "Uporabi drug mrežni vmesnik za upravljanje odjemalcev."

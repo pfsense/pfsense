@@ -10,18 +10,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 01:15-0400\n"
-"Last-Translator: Franco Caldera <himekisan@gmail.com>\n"
+"PO-Revision-Date: 2017-04-08 09:06-0400\n"
+"Last-Translator: Enrique Sánchez <kikesan7@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/etc/inc/auth.inc:96
+#, fuzzy
 msgid ""
 "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
@@ -37,7 +38,7 @@ msgstr "Redirigiendo..."
 
 #: src/etc/inc/auth.inc:121
 msgid "Redirecting to the dashboard..."
-msgstr "Redirigiendo al tablero de instrumentos..."
+msgstr "Redirigiendo al Panel Principal..."
 
 #: src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:445 src/etc/inc/auth.inc:522
 #: src/etc/inc/auth.inc:563 src/etc/inc/auth.inc:632 src/etc/inc/auth.inc:790
@@ -3177,13 +3178,15 @@ msgstr "Columnas del panel de control."
 
 #: src/etc/inc/pfsense-utils.inc:271
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "Orden de interfaces."
 
 #: src/etc/inc/pfsense-utils.inc:274
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
+"Si se selecciona, la lista de interfaces será ordenada de acuerdo a la "
+"descripción, de lo contrario se muestran como WAN, LAN, OPTN..."
 
 #: src/etc/inc/pfsense-utils.inc:288
 msgid "Associated Panels Show/Hide"
@@ -3408,7 +3411,7 @@ msgstr "Español"
 
 #: src/etc/inc/pfsense-utils.inc:2836
 msgid "Norwegian Bokmål"
-msgstr ""
+msgstr "Noruego Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2837
 msgid "Chinese (Simplified, China)"
@@ -4402,43 +4405,38 @@ msgstr "Permitir el acceso a la página 'Firewall: Horarios: Editar'."
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
-msgstr "WebCFG - Firewall: Creador de Tráfico(Traffic Shaper)"
+msgstr "WebCFG - Firewall: Conformador de Tráfico"
 
 #: src/etc/inc/priv.defs.inc:301
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr ""
-"Permitir el acceso a la página 'Firewall: Creador de Tráfico(Traffic "
-"Shaper)'"
+msgstr "Permitir el acceso a la página 'Firewall: Conformador de Tráfico"
 
 #: src/etc/inc/priv.defs.inc:306
 msgid "WebCfg - Firewall: Traffic Shaper: Queues"
-msgstr "WebCFG - Firewall: Creador de Tráfico(Traffic Shaper): Colas"
+msgstr "WebCFG - Firewall: Conformador de Tráfico: Colas"
 
 #: src/etc/inc/priv.defs.inc:307
 msgid "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
 msgstr ""
-"Permitir el acceso a la página 'Firewall: Creador de Tráfico(Traffic Shaper):"
-" Colas'."
+"Permitir el acceso a la página 'Firewall: Conformador de Tráfico: Colas'."
 
 #: src/etc/inc/priv.defs.inc:312
 msgid "WebCfg - Firewall: Traffic Shaper: Limiters"
-msgstr "WebCFG - Firewall: Creador de Tráfico(Traffic Shaper): Limitadores"
+msgstr "WebCFG - Firewall: Conformador de Tráfico: Limitadores"
 
 #: src/etc/inc/priv.defs.inc:313
 msgid "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
 msgstr ""
-"Permitir el acceso a la página 'Firewall: Creador de Tráfico(Traffic Shaper):"
-" Limitadores'"
+"Permitir el acceso a la página 'Firewall: Conformador de Tráfico: "
+"Limitadores'"
 
 #: src/etc/inc/priv.defs.inc:318
 msgid "WebCfg - Firewall: Traffic Shaper: Wizard"
-msgstr "WebCFG - Firewall: Creador Tráfico(Traffic Shaper): Asistente"
+msgstr "WebCFG - Firewall: Conformador de Tráfico: Asistente"
 
 #: src/etc/inc/priv.defs.inc:319
 msgid "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
-msgstr ""
-"Permitir el acceso a la página 'Firewall: Creador Tráfico(Traffic Shaper): "
-"Asistente'"
+msgstr "Permitir el acceso a la página 'Conformador de Tráfico: Asistente'"
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
@@ -5423,13 +5421,12 @@ msgstr "Permitir el acceso a la página 'Estado: Registros de paquete'."
 
 #: src/etc/inc/priv.defs.inc:1018
 msgid "WebCfg - Status: Traffic Shaper: Queues"
-msgstr "WebCFG - Estado: Creador de Tráfico(Traffic Shaper): Colas"
+msgstr "WebCFG - Estado: Conformador de Tráfico: Colas"
 
 #: src/etc/inc/priv.defs.inc:1019
 msgid "Allow access to the 'Status: Traffic Shaper: Queues' page."
 msgstr ""
-"Permitir el acceso a la página 'Estado: Creador de Tráfico(Traffic Shaper): "
-"Colas'."
+"Permitir el acceso a la página 'Estado: Conformador de Tráfico: Colas'."
 
 #: src/etc/inc/priv.defs.inc:1024
 msgid "WebCfg - Status: Services"
@@ -5883,7 +5880,7 @@ msgstr "Sincronizar reloj NTP"
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "Demonio de Registros del Sistema"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:431
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -6829,7 +6826,7 @@ msgstr "Opciones Avanzadas"
 
 #: src/etc/inc/shaper.inc:3902
 msgid "Delay (ms)"
-msgstr "Retraso (Delay) (ms)"
+msgstr "Retraso (ms)"
 
 #: src/etc/inc/shaper.inc:3905
 msgid ""
@@ -6908,17 +6905,17 @@ msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set"
 msgstr ""
-"En la mayoría de los casos, este campo debe dejarse vacío.Esto aumenta el "
+"En la mayoría de los casos, este campo debe dejarse vacío. Esto aumenta el "
 "tamaño del hash."
 
 #: src/etc/inc/shaper.inc:4630
 msgid "Clone Shaper to this Interface"
-msgstr "Clonar esta interfaz"
+msgstr "Clonar Conformador a esta Interfaz"
 
 #: src/etc/inc/shaper.inc:4639
 #, php-format
 msgid "Welcome to the %s Traffic Shaper."
-msgstr "Bienvenido al Traffic Shaper %s."
+msgstr "Bienvenido al Conformador de Tráfico %s."
 
 #: src/etc/inc/shaper.inc:4642
 #, php-format
@@ -7083,6 +7080,7 @@ msgid "Inform"
 msgstr "Informar"
 
 #: src/etc/inc/unbound.inc:748
+#, fuzzy
 msgid "Inform Deny"
 msgstr "Denegar Informe"
 
@@ -7095,14 +7093,14 @@ msgstr "Ningún valor predeterminado"
 msgid ""
 "%sWarning: filter rule removed (interface '%s' does not exist anymore)."
 msgstr ""
-"%s Advertencia: regla de filtrado eliminado (interfaz ' %s ' ya no existe)."
+"%s Advertencia: regla de filtrado eliminada (interfaz ' %s ' ya no existe)."
 
 #: src/etc/inc/upgrade_config.inc:114
 #, php-format
 msgid ""
 "%sWarning: filter rule removed (source network '%s' does not exist anymore)."
 msgstr ""
-"%s Advertencia: regla de filtrado elimina (red de origen ' %s ' ya no "
+"%s Advertencia: regla de filtrado eliminada (red de origen ' %s ' ya no "
 "existe)."
 
 #: src/etc/inc/upgrade_config.inc:127
@@ -7111,7 +7109,7 @@ msgid ""
 "%sWarning: filter rule removed (destination network '%s' does not exist "
 "anymore)."
 msgstr ""
-"%s Advertencia: regla de filtrado elimina (red de destino ' %s ' ya no "
+"%s Advertencia: regla de filtrado eliminada (red de destino ' %s ' ya no "
 "existe)."
 
 #: src/etc/inc/upgrade_config.inc:147
@@ -7120,7 +7118,7 @@ msgid ""
 "%sWarning: traffic shaper rule removed (interface '%s' does not exist "
 "anymore)."
 msgstr ""
-"%s Advertencia: regla de conformación de tráfico eliminado (interfaz de ' %s "
+"%sAdvertencia: regla de conformación de tráfico eliminada (interfaz de ' %s "
 "' ya no existe)."
 
 #: src/etc/inc/upgrade_config.inc:159
@@ -7129,7 +7127,7 @@ msgid ""
 "%sWarning: traffic shaper rule removed (source network '%s' does not exist "
 "anymore)."
 msgstr ""
-"%s Advertencia: regla de conformación de tráfico eliminado (red de origen ' "
+"%sAdvertencia: regla de conformación de tráfico eliminada (red de origen ' "
 "%s ' ya no existe)."
 
 #: src/etc/inc/upgrade_config.inc:172
@@ -7138,7 +7136,7 @@ msgid ""
 "%sWarning: traffic shaper rule removed (destination network '%s' does not "
 "exist anymore)."
 msgstr ""
-"%s Advertencia: regla de conformación de tráfico eliminado (red de destino ' "
+"%sAdvertencia: regla de conformación de tráfico eliminada (red de destino ' "
 "%s ' ya no existe)."
 
 #: src/etc/inc/upgrade_config.inc:343
@@ -7152,7 +7150,7 @@ msgstr "Permitir el tráfico IPsec."
 
 #: src/etc/inc/upgrade_config.inc:598
 msgid "System Administrators"
-msgstr "Administrador del Sistema"
+msgstr "Administradores del Sistema"
 
 #: src/etc/inc/upgrade_config.inc:617
 msgid ""
@@ -8380,7 +8378,7 @@ msgstr "servidor SNMP"
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/head.inc:293
 msgid "Traffic Shaper"
-msgstr "Traffic Shaper"
+msgstr "Conformador de Tráfico"
 
 #: src/usr/local/www/diag_backup.php:451
 msgid "VLANS"
@@ -14380,7 +14378,7 @@ msgstr "Descripción Intervalo de tiempo"
 
 #: src/usr/local/www/firewall_schedule_edit.php:433
 msgid "Add Time"
-msgstr "Nuevo Tiempo"
+msgstr "Agregar Tiempo"
 
 #: src/usr/local/www/firewall_schedule_edit.php:440
 msgid "Clear selection"
@@ -14388,7 +14386,7 @@ msgstr "Quitar Selección"
 
 #: src/usr/local/www/firewall_schedule_edit.php:458
 msgid "Configured Ranges"
-msgstr "Los rangos configurados"
+msgstr "Intervalos configurados"
 
 #: src/usr/local/www/firewall_schedule_edit.php:594
 msgid "Day(s)"
@@ -14430,7 +14428,7 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:191
 #: src/usr/local/www/firewall_shaper_vinterface.php:203
 msgid "Queue not found!"
-msgstr "Cola no encontrado!"
+msgstr "Cola no encontrada!"
 
 #: src/usr/local/www/firewall_shaper.php:272
 #: src/usr/local/www/firewall_shaper_vinterface.php:261
@@ -14442,7 +14440,7 @@ msgstr "No se pudo añadir nueva cola."
 #: src/usr/local/www/firewall_shaper_vinterface.php:366
 #: src/usr/local/www/firewall_shaper_wizards.php:84
 msgid "The traffic shaper configuration has been changed."
-msgstr "La configuración de la talladora de tráfico ha sido cambiado."
+msgstr "La configuración del Conformador de Tráfico ha sido cambiada."
 
 #: src/usr/local/www/firewall_shaper.php:371
 #: src/usr/local/www/firewall_shaper_queues.php:180
@@ -14461,11 +14459,11 @@ msgstr "por cola"
 #: src/usr/local/www/vpn_openvpn_csc.php:304
 #: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Wizards"
-msgstr "Magos."
+msgstr "Asistentes."
 
 #: src/usr/local/www/firewall_shaper.php:392
 msgid "Remove Shaper"
-msgstr "Retire Shaper"
+msgstr "Eliminar Conformador"
 
 #: src/usr/local/www/firewall_shaper.php:413
 #: src/usr/local/www/firewall_shaper_vinterface.php:402
@@ -14490,7 +14488,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_shaper_queues.php:40
 msgid "No Queue Configured/Selected"
-msgstr "Sin cola configurada / Selected"
+msgstr "Sin cola Configurada/Seleccionada"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:98
 msgid ""
@@ -14503,7 +14501,7 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:112
 #, php-format
 msgid "No queue with name %s was found!"
-msgstr "Sin cola con el nombre %s fue encontrado!"
+msgstr "Ninguna cola con el nombre %s fue encontrada!"
 
 #: src/usr/local/www/firewall_shaper_vinterface.php:156
 msgid "Could not create new queue/discipline!"
@@ -14530,7 +14528,7 @@ msgstr "Enlaces dedicados"
 
 #: src/usr/local/www/firewall_shaper_wizards.php:89
 msgid "Traffic Shaper Wizards"
-msgstr "Traffic Shaper Wizards"
+msgstr "Asistentes de Conformador de Tráfico"
 
 #: src/usr/local/www/firewall_virtual_ip.php:90
 msgid ""
@@ -14543,7 +14541,7 @@ msgstr ""
 #: src/usr/local/www/firewall_virtual_ip.php:98
 #: src/usr/local/www/license.php:112
 msgid "server"
-msgstr "10539=Servidor"
+msgstr "servidor"
 
 #: src/usr/local/www/firewall_virtual_ip.php:98
 msgid "client"
@@ -14586,7 +14584,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip.php:217
 msgid "Deleted a virtual IP."
-msgstr "Borrada IP Virtual."
+msgstr "IP Virtual borrada ."
 
 #: src/usr/local/www/firewall_virtual_ip.php:226
 #: src/usr/local/www/firewall_virtual_ip_edit.php:342
@@ -14597,7 +14595,7 @@ msgstr "Proxy ARP"
 #: src/usr/local/www/status_carp.php:106
 #: src/usr/local/www/firewall_virtual_ip_edit.php:334
 msgid "CARP"
-msgstr "Carpa común"
+msgstr "CARP"
 
 #: src/usr/local/www/firewall_virtual_ip.php:229
 #: src/usr/local/www/firewall_virtual_ip_edit.php:326
@@ -14640,7 +14638,7 @@ msgstr ""
 "NAT %2$s asignaciones."
 
 #: src/usr/local/www/firewall_virtual_ip.php:338
-#, php-format
+#, fuzzy, php-format
 msgid "Check the status of CARP Virtual IPs and interfaces %1$shere%2$s."
 msgstr ""
 "Compruebe el estado de la carpa IPs virtuales e interfaces %1$s aquí %2$s ."
@@ -15673,6 +15671,8 @@ msgstr "Un recuento de bits de subred válida alias debe ser especificado."
 #: src/usr/local/www/interfaces.php:768
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
 msgstr ""
+"Se detectó una dirección IP inválida en el campo \"Concesiones rechazadas "
+"desde\"."
 
 #: src/usr/local/www/interfaces.php:783
 #: src/usr/local/www/system_routes_edit.php:89
@@ -17028,6 +17028,8 @@ msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
 msgstr ""
+"La interfaz tiene configurada una cola de conformado de tráfico .\n"
+"Por favor elimine todas las colas de esta interfaz para continuar."
 
 #: src/usr/local/www/interfaces_assign.php:437
 msgid "Interface has been deleted."
@@ -17309,6 +17311,8 @@ msgid ""
 "Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
 "to continue."
 msgstr ""
+"La Interfaz Persistente (%s) no es parte del puente. Elimine la Interfaz "
+"Persistente para continuar."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:197
 #, php-format
@@ -18654,17 +18658,13 @@ msgid "Delete Q-in-Q interface"
 msgstr "Eliminar Q-in-Q Interfaz"
 
 #: src/usr/local/www/interfaces_qinq.php:157
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
 "do not explicitly support it, QinQ tagging will still work, but the reduced "
 "MTU may cause problems.%1$sSee the %2$s handbook for information on "
 "supported cards."
 msgstr ""
-"Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
-"do not explicitly support it, QinQ tagging will still work, but the reduced "
-"MTU may cause problems.%1$sSee the %2$s handbook for information on "
-"supported cards."
 
 #: src/usr/local/www/interfaces_qinq_edit.php:73
 msgid "First level tag cannot be empty."
@@ -19623,10 +19623,14 @@ msgstr "Archivo no encontrado %s ."
 #: src/usr/local/www/pkg.php:109
 msgid "Package configuration changes saved from package settings page."
 msgstr ""
+"Cambios de configuración de Paquete guardados desde la página de "
+"Configuración de Paquete."
 
 #: src/usr/local/www/pkg.php:132
 msgid "Package configuration item deleted from package settings page."
 msgstr ""
+"Objeto de configuración de Paquete eliminado desde la página de "
+"Configuración de Paquete."
 
 #: src/usr/local/www/pkg.php:265
 msgid "Saving changes..."
@@ -21683,23 +21687,23 @@ msgstr "Guardar continuar"
 
 #: src/usr/local/www/services_checkip.php:40
 msgid "Deleted a check IP service."
-msgstr ""
+msgstr "Servicio de Verificación de IP eliminado."
 
 #: src/usr/local/www/services_checkip.php:46
 msgid "Disabled a check IP service."
-msgstr ""
+msgstr "Servicio de Verificación de IP desactivado."
 
 #: src/usr/local/www/services_checkip.php:49
 msgid "Enabled a check IP service."
-msgstr ""
+msgstr "Servicio de Verificación de IP activado."
 
 #: src/usr/local/www/services_checkip.php:55
 msgid "Enabled the default check IP service."
-msgstr ""
+msgstr "Servicio de Verificación de IP por defecto activado."
 
 #: src/usr/local/www/services_checkip.php:58
 msgid "Disabled the default check IP service."
-msgstr ""
+msgstr "Servicio de Verificación de IP por defecto desactivado."
 
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip.php:77
@@ -23826,15 +23830,15 @@ msgstr "Añadir el nombre de host"
 
 #: src/usr/local/www/services_dyndns.php:48
 msgid "Dynamic DNS client deleted."
-msgstr ""
+msgstr "Cliente DNS Dinámico eliminado."
 
 #: src/usr/local/www/services_dyndns.php:57
 msgid "Dynamic DNS client disabled."
-msgstr ""
+msgstr "Cliente DNS Dinámico desactivado."
 
 #: src/usr/local/www/services_dyndns.php:60
 msgid "Dynamic DNS client enabled."
-msgstr ""
+msgstr "Cliente DNS Dinámico activado."
 
 #: src/usr/local/www/services_dyndns.php:93
 #: src/usr/local/www/services_ntpd_acls.php:208
@@ -23895,7 +23899,7 @@ msgstr "El nombre de usuario contiene caracteres no válidos."
 
 #: src/usr/local/www/services_dyndns_edit.php:195
 msgid "Dynamic DNS client configured."
-msgstr ""
+msgstr "Cliente DNS Dinámico configurado."
 
 #: src/usr/local/www/services_dyndns_edit.php:248
 msgid "Dynamic DNS Client"
@@ -27854,7 +27858,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:163
 msgid "Changed system logging options."
-msgstr ""
+msgstr "Opciones de registros del Sistema cambiadas."
 
 #: src/usr/local/www/status_logs_settings.php:191
 msgid ""
@@ -29054,7 +29058,7 @@ msgstr "El otro valor de tiempo de espera múltiple debe ser un entero."
 
 #: src/usr/local/www/system_advanced_firewall.php:351
 msgid "Changed Advanced Firewall/NAT settings."
-msgstr ""
+msgstr "Configuración avanzada de Firewall/NAT cambiada."
 
 #: src/usr/local/www/system_advanced_firewall.php:389
 msgid "Firewall Advanced"
@@ -29796,7 +29800,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:513
 msgid "RAM Disk Size"
-msgstr ""
+msgstr "Tamaño del disco RAM"
 
 #: src/usr/local/www/system_advanced_misc.php:517
 msgid "/tmp RAM Disk Size"
@@ -29836,7 +29840,7 @@ msgstr "Registros periódicos de copia de seguridad"
 
 #: src/usr/local/www/system_advanced_misc.php:559
 msgid "Log Directory"
-msgstr ""
+msgstr "Directorio de registro"
 
 #: src/usr/local/www/system_advanced_misc.php:561
 msgid ""
@@ -29956,7 +29960,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:215
 msgid "IPv6 DNS entry"
-msgstr ""
+msgstr "Entrada DNS IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:218
 msgid ""
@@ -30434,7 +30438,7 @@ msgstr "%s valor de tiempo de espera debe ser numérico y positivo."
 
 #: src/usr/local/www/system_authservers.php:292
 msgid "IPv6 does not work for RADIUS authentication, see Bug #4154."
-msgstr ""
+msgstr "IPv6 no funciona con la autenticación  RADIUS, ver Bug#4154"
 
 #: src/usr/local/www/system_authservers.php:408
 #: src/usr/local/www/system_authservers.php:430
@@ -31114,6 +31118,8 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:228
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr ""
+"El campo de los datos de la clave debe estar en blanco, o ser una clave "
+"privada X509 válida"
 
 #: src/usr/local/www/system_certmanager.php:239
 #: src/usr/local/www/system_certmanager.php:715
@@ -31146,15 +31152,15 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:635
 msgid "Add/Sign a New Certificate"
-msgstr ""
+msgstr "Agregar/Firmar un Nuevo Certificado"
 
 #: src/usr/local/www/system_certmanager.php:680
 msgid "New CSR (Paste below)"
-msgstr ""
+msgstr "Nuevo CSR (pegar abajo)"
 
 #: src/usr/local/www/system_certmanager.php:683
 msgid "Sign CSR"
-msgstr ""
+msgstr "Firmar CSR"
 
 #: src/usr/local/www/system_certmanager.php:688
 msgid "*CA to sign with"
@@ -31162,25 +31168,27 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:695
 msgid "*CSR to sign"
-msgstr ""
+msgstr "*CSR a firmar"
 
 #: src/usr/local/www/system_certmanager.php:702
 msgid "*Certificate duration (days)"
-msgstr ""
+msgstr "*Duración del certificado (días)"
 
 #: src/usr/local/www/system_certmanager.php:709
 msgid "CSR data"
-msgstr ""
+msgstr "Datos CSR"
 
 #: src/usr/local/www/system_certmanager.php:711
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
-msgstr ""
+msgstr "Pegue aquí una Solicitud de Firma de Certificado en formato X.509."
 
 #: src/usr/local/www/system_certmanager.php:717
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr ""
+"Opcionalmente pegue la clave privada aquí. La clave será asociada con el "
+"nuevo certificado firmado en pfSense"
 
 #: src/usr/local/www/system_certmanager.php:721
 msgid "Import Certificate"
@@ -31333,7 +31341,7 @@ msgstr "eliminar certificado"
 
 #: src/usr/local/www/system_certmanager.php:1221
 msgid "Add/Sign"
-msgstr ""
+msgstr "Agregar/Firmar"
 
 #: src/usr/local/www/system_crlmanager.php:37
 msgid "Create an internal Certificate Revocation List"
@@ -32524,11 +32532,11 @@ msgstr "Sincronizar direcciones IP virtuales"
 
 #: src/usr/local/www/system_hasync.php:296
 msgid "Synchronize traffic shaper (queues)"
-msgstr "Sincronizar conformación de tráfico (colas)"
+msgstr "Sincronizar conformador de tráfico (colas)"
 
 #: src/usr/local/www/system_hasync.php:304
 msgid "Synchronize traffic shaper (limiter)"
-msgstr "Sincronizar regulador de trafico (limitador)"
+msgstr "Sincronizar conformador de trafico (limitador)"
 
 #: src/usr/local/www/system_hasync.php:312
 msgid "Synchronize DNS (Forwarder/Resolver)"
@@ -32566,7 +32574,7 @@ msgstr "discapacitados ruta a %s"
 
 #: src/usr/local/www/system_routes.php:203
 msgid "Saved static routes configuration."
-msgstr ""
+msgstr "Información de rutas estáticas guardada."
 
 #: src/usr/local/www/system_routes.php:224
 msgid "The static route configuration has been changed."
@@ -32639,7 +32647,7 @@ msgstr "Esta red conflictos con dirección configurada en la interfaz %s ."
 
 #: src/usr/local/www/system_routes_edit.php:212
 msgid "Saved static route configuration."
-msgstr ""
+msgstr "Información de ruta estática guardada."
 
 #: src/usr/local/www/system_routes_edit.php:239
 msgid "Edit Route Entry"
@@ -32675,7 +32683,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:99
 msgid "Saved system update settings."
-msgstr ""
+msgstr "Configuración de actualización del sistema guardada."
 
 #: src/usr/local/www/system_update_settings.php:101
 msgid "Changes have been saved successfully"
@@ -35238,7 +35246,7 @@ msgstr "Los clientes OpenVPN"
 #: src/usr/local/www/vpn_openvpn_csc.php:56
 #, php-format
 msgid "Deleted OpenVPN client specific override %1$s %2$s"
-msgstr ""
+msgstr "Anulación específica de cliente OpenVPN eliminada %1$s %2$s"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:60
 msgid "Client specific override successfully deleted."
@@ -35302,12 +35310,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:264
 #, php-format
 msgid "Updated OpenVPN client specific override %1$s %2$s"
-msgstr ""
+msgstr "Anulación específica de cliente OpenVPN actualizada %1$s %2$s"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:267
 #, php-format
 msgid "Added OpenVPN client specific override %1$s %2$s"
-msgstr ""
+msgstr "Anulación específica de cliente OpenVPN agregada %1$s %2$s"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:317
 #, php-format
@@ -35519,11 +35527,11 @@ msgstr "Eliminar CSC Anulación"
 #: src/usr/local/www/vpn_openvpn_server.php:88
 #, php-format
 msgid "Deleted OpenVPN server from %1$s:%2$s %3$s"
-msgstr ""
+msgstr "Servidor OpenVPN eliminado de %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:90
 msgid "Deleted empty OpenVPN server"
-msgstr ""
+msgstr "Servidor OpenVPN vacío eliminado"
 
 #: src/usr/local/www/vpn_openvpn_server.php:94
 msgid "Server successfully deleted."
@@ -35605,12 +35613,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:611
 #, php-format
 msgid "Updated OpenVPN server on %1$s:%2$s %3$s"
-msgstr ""
+msgstr "Servidor OpenVPN actualizado en %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:614
 #, php-format
 msgid "Added OpenVPN server on %1$s:%2$s %3$s"
-msgstr ""
+msgstr "Servidor OpenVPN agregado en %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:677
 msgid ""
@@ -36114,7 +36122,7 @@ msgstr "Verificando.."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:219
 msgid "All Dyn DNS entries are hidden."
-msgstr ""
+msgstr "Todas las entradas DynDNS están ocultas."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:240
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:271
@@ -36164,7 +36172,7 @@ msgstr "IP de la puerta de enlace"
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:223
 msgid "Unable to retrieve status"
-msgstr ""
+msgstr "No se puede obtener el estado"
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
 msgid "No packages installed."
@@ -36217,7 +36225,7 @@ msgstr "errores Out"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:66
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:146
 msgid "All interfaces are hidden."
-msgstr ""
+msgstr "Todas las interfaces están ocultas."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:113
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -36364,7 +36372,7 @@ msgstr "No hay casos de OpenVPN definen"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:263
 msgid "All OpenVPN instances are hidden"
-msgstr ""
+msgstr "Todas las instancias OpenVPN están ocultas"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:318
 msgid "Saved OpenVPN Filter via Dashboard."
@@ -36405,7 +36413,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:111
 msgid "All services are hidden"
-msgstr ""
+msgstr "Todos los servicios están ocultos"
 
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:114
 msgid "No services found"
@@ -36426,12 +36434,12 @@ msgstr "Identificación"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:114
 msgid "All SMART drives are hidden."
-msgstr ""
+msgstr "Todos los dispositivos SMART están ocultos."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:175
 msgid "BIOS"
-msgstr ""
+msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:217
@@ -36530,15 +36538,15 @@ msgstr "Serial:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:178
 msgid "Vendor: "
-msgstr ""
+msgstr "Fabricante:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:181
 msgid "Version: "
-msgstr ""
+msgstr "Versión:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:184
 msgid "Release Date: "
-msgstr ""
+msgstr "Fecha de lanzamiento:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:200
 msgid "built on"
@@ -36615,7 +36623,7 @@ msgstr "en RAM"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:430
 msgid "All System Information items are hidden."
-msgstr ""
+msgstr "Todos los objetos de Información del Sistema están ocultos."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:451
 msgid "Item"
@@ -36678,10 +36686,11 @@ msgstr "sección"
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:76
 msgid "Updated traffic graphs widget settings via dashboard."
 msgstr ""
+"Widget de gráficas de tráfico actualizado mediante el panel de control."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:139
 msgid "All traffic graphs are hidden."
-msgstr ""
+msgstr "Todas las gráficas de tráfico están ocultas."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:151
 msgid "Refresh Interval"
@@ -36713,7 +36722,7 @@ msgstr "¡Despierta!"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:113
 msgid "All WoL entries are hidden."
-msgstr ""
+msgstr "Todas las entradas WoL están ocultas."
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:118
 msgid "No saved WoL addresses"
@@ -36744,6 +36753,7 @@ msgstr "No se pudo analizar %1$s / asistentes / %2$s archivos."
 #: src/usr/local/www/wizard.php:119
 msgid "Configuration changed via the pfSense wizard subsystem."
 msgstr ""
+"Configuración modificada mediante el subsistema del asistente de pfSense"
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
@@ -36764,6 +36774,8 @@ msgstr "Asistente OpenVPN"
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr ""
+"Configuración de OpenVPN guardada mediante el asistente del Servidor de "
+"Acceso Remoto de OpenVPN."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:57
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:63
@@ -36852,7 +36864,7 @@ msgstr "ÁREA DE PENALTI"
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1674
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1727
 msgid "Traffic Shaper Wizard"
-msgstr "Asistente Traffic Shaper"
+msgstr "Asistente de Conformador de Tráfico"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
@@ -36868,6 +36880,8 @@ msgstr "Las conexiones al servidor SIP Upstream"
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
 msgstr ""
+"Configuración del conformador guardada mediante el asistente de Conformado "
+"de Tráfico de pfSense."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:48
 msgid ""
@@ -36914,7 +36928,7 @@ msgstr "Fusionado en config ( %s secciones) desde el cliente XMLRPC."
 
 #: src/etc/inc/pfsense-utils.inc:272
 msgid "Sort Alphabetically"
-msgstr ""
+msgstr "Ordenado alfabéticamente."
 
 #: src/etc/inc/pfsense-utils.inc:307
 msgid "Manage Log"
@@ -36926,7 +36940,7 @@ msgstr "Ajustes de vigilancia"
 
 #: src/etc/inc/pfsense-utils.inc:356
 msgid "Disable details in alias popups"
-msgstr ""
+msgstr "Desactivar detalles en ventanas emergentes de alias"
 
 #: src/etc/inc/pfsense-utils.inc:375
 msgid "Display page name first in browser tab"
@@ -38288,7 +38302,7 @@ msgstr "Preferir utilizar IPv4 incluso si IPv6 está disponible"
 
 #: src/usr/local/www/system_advanced_network.php:216
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
-msgstr ""
+msgstr "No generar entradas DNS IPv6 locales para interfaces LAN"
 
 #: src/usr/local/www/system_advanced_network.php:258
 msgid "Disable hardware checksum offload"
@@ -38473,11 +38487,11 @@ msgstr "IPs virtuales "
 
 #: src/usr/local/www/system_hasync.php:297
 msgid "Traffic Shaper configuration "
-msgstr "configuración de Traffic Shaper "
+msgstr "configuración de Conformador de Tráfico"
 
 #: src/usr/local/www/system_hasync.php:305
 msgid "Traffic Shaper Limiters configuration "
-msgstr "configuración de Traffic Shaper limitadores "
+msgstr "configuración de Limitadores de Conformador de Tráfico"
 
 #: src/usr/local/www/system_hasync.php:313
 msgid "DNS Forwarder and DNS Resolver configurations "

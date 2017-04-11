@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-07 05:35-0400\n"
+"PO-Revision-Date: 2017-04-11 11:18-0400\n"
 "Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -27823,22 +27823,29 @@ msgid ""
 "If a single IP is picked, remote syslog servers must all be of that IP type. "
 "To mix IPv4 and IPv6 remote syslog servers, bind to all interfaces."
 msgstr ""
+"Если выбран один IP, все удалённые серверы системного журнала должны быть  "
+"этого типа IP. Чтобы использовать IPv4 и IPv6  удалённые серверы системного "
+"журнала, привяжите их ко всем интерфейсам."
 
 #: src/usr/local/www/status_logs_settings.php:201
 msgid ""
 "NOTE: If an IP address cannot be located on the chosen interface, the daemon "
 "will bind to all addresses."
 msgstr ""
+"К СВЕДЕНИЮ: Если IP адрес не может быть найден на выбранном интерфейсе, "
+"демон будет привязан ко всем адресам."
 
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "General Logging Options"
-msgstr ""
+msgstr "Общие Опции Журналирования"
 
 #: src/usr/local/www/status_logs_settings.php:246
 msgid ""
 "This is only the number of log entries displayed in the GUI. It does not "
 "affect how many entries are contained in the actual log files."
 msgstr ""
+"Это число записей журнала, отображаемое на графическом интерфейсе. Он не "
+"влияет на количество актуальных записей в  файлах журнала."
 
 #: src/usr/local/www/status_logs_settings.php:261
 #, php-format
@@ -27846,6 +27853,9 @@ msgid ""
 "Log packets that are %1$sblocked%2$s by the implicit default block rule. - "
 "Per-rule logging options are still respected."
 msgstr ""
+"Пакеты журнала, %1$sблокируемые%2$s неявным блокирующим правилом по "
+"умолчанию. Опции журналирования по каждому правилу при этом будут продолжать "
+"иметь силу."
 
 #: src/usr/local/www/status_logs_settings.php:268
 #, php-format
@@ -27853,16 +27863,21 @@ msgid ""
 "Log packets that are %1$sallowed%2$s by the implicit default pass rule. - "
 "Per-rule logging options are still respected. "
 msgstr ""
+"Пакеты журнала, %1$sразрешаемые%2$s неявным разрешающим правилом по "
+"умолчанию. Опции журналирования по каждому правилу при этом будут продолжать "
+"иметь силу."
 
 #: src/usr/local/www/status_logs_settings.php:289
 msgid ""
 "If this is checked, errors from the web server process for the GUI or "
 "Captive Portal will appear in the main system log."
 msgstr ""
+"При активации данной опции, ошибки  от процесса вебсервера  для графического "
+"интерфейса или Портала Захвата будут появляться в главном системном журнале."
 
 #: src/usr/local/www/status_logs_settings.php:293
 msgid "Raw Logs"
-msgstr ""
+msgstr "Неотформатированные записи журнала"
 
 #: src/usr/local/www/status_logs_settings.php:296
 msgid ""
@@ -27870,10 +27885,12 @@ msgid ""
 "without any formatting. This will reveal more detailed information, but it "
 "is more difficult to read."
 msgstr ""
+"При активации данной опции, фильтры журнала буду показаны в таком виде, в "
+"каком они генерируются пакетным фильтром, без какого-либо форматирования."
 
 #: src/usr/local/www/status_logs_settings.php:320
 msgid "Local Logging"
-msgstr ""
+msgstr "Локальное Журналирование"
 
 #: src/usr/local/www/status_logs_settings.php:330
 msgid ""
@@ -27881,18 +27898,21 @@ msgid ""
 "restarts the DHCP daemon. Use the Save button first if any setting changes "
 "have been made."
 msgstr ""
+"Очистить все файлы локального журнала и переинициализировать их как пустой "
+"журнал. Это также перезагрузит демон DHCP. Используйте сначала кнопку "
+"\"Сохранить\", если произведены какие-либо изменения настроек."
 
 #: src/usr/local/www/status_logs_settings.php:333
 msgid "Remote Logging Options"
-msgstr ""
+msgstr "Опции Удалённого Журналирования"
 
 #: src/usr/local/www/status_logs_settings.php:338
 msgid "Enable Remote Logging"
-msgstr ""
+msgstr "Включить Удалённое Журналирование"
 
 #: src/usr/local/www/status_logs_settings.php:347
 msgid "Default (any)"
-msgstr ""
+msgstr "По умолчанию (любой)"
 
 #: src/usr/local/www/status_logs_settings.php:355
 msgid ""
@@ -27901,33 +27921,37 @@ msgid ""
 "selected type is not found on the chosen interface, the other type will be "
 "tried."
 msgstr ""
+"Данная опция используется только при выборе выше не-дефолтного адреса в "
+"качестве источника. Данная опция всего лишь выражает предпочтение; Если IP "
+"адрес данного типа не найден на выбранном интерфейсе, будуе предпринята "
+"попытка использования другого типа."
 
 #: src/usr/local/www/status_logs_settings.php:359
 msgid "Remote log servers"
-msgstr ""
+msgstr "Серверы удалённого журнала"
 
 #: src/usr/local/www/status_logs_settings.php:364
 #: src/usr/local/www/vpn_openvpn_csc.php:474
 #: src/usr/local/www/vpn_openvpn_csc.php:515
 #: src/usr/local/www/vpn_openvpn_csc.php:565
 msgid "Server 1"
-msgstr ""
+msgstr "Сервер 1"
 
 #: src/usr/local/www/status_logs_settings.php:372
 #: src/usr/local/www/vpn_openvpn_csc.php:481
 #: src/usr/local/www/vpn_openvpn_csc.php:522
 #: src/usr/local/www/vpn_openvpn_csc.php:572
 msgid "Server 2"
-msgstr ""
+msgstr "Сервер 2"
 
 #: src/usr/local/www/status_logs_settings.php:380
 #: src/usr/local/www/vpn_openvpn_csc.php:488
 msgid "Server 3"
-msgstr ""
+msgstr "Сервер 3"
 
 #: src/usr/local/www/status_logs_settings.php:388
 msgid "Remote Syslog Contents"
-msgstr ""
+msgstr "Содержание Удалённого Сервера Журнала"
 
 #: src/usr/local/www/status_logs_settings.php:482
 msgid ""
@@ -27935,10 +27959,14 @@ msgid ""
 "server, unless another port is specified. Be sure to set syslogd on the "
 "remote server to accept syslog messages from pfSense."
 msgstr ""
+"Системный Журнал отправляет датаграммы на порт 514 указанного удалённого "
+"сервера системного журнала, если не указан другой порт. Убедитесь в том, что "
+"настроен syslogd  на удалённом сервере, чтобы принимать сообщения системного "
+"журнала от pfSense."
 
 #: src/usr/local/www/status_logs_vpn.php:42
 msgid "VPN Logins"
-msgstr ""
+msgstr "Логины VPN"
 
 #: src/usr/local/www/status_logs_vpn.php:140
 #: src/usr/local/www/status_logs_vpn.php:385
@@ -27946,48 +27974,48 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: src/usr/local/www/status_logs_vpn.php:180
 #: src/usr/local/www/status_logs_vpn.php:434
 msgid "Log Message"
-msgstr ""
+msgstr "Сообщение журнала"
 
 #: src/usr/local/www/status_ntpd.php:66
 msgid "Pool Placeholder"
-msgstr ""
+msgstr "Пул Местодержателя"
 
 #: src/usr/local/www/status_ntpd.php:68
 msgid "Unreach/Pending"
-msgstr ""
+msgstr "Недоступен/В Ожидании"
 
 #: src/usr/local/www/status_ntpd.php:72
 msgid "Active Peer"
-msgstr ""
+msgstr "Активный Узел"
 
 #: src/usr/local/www/status_ntpd.php:75
 msgid "Candidate"
-msgstr ""
+msgstr "Кандидат"
 
 #: src/usr/local/www/status_ntpd.php:78
 msgid "PPS Peer"
-msgstr ""
+msgstr "PPS Узел"
 
 #: src/usr/local/www/status_ntpd.php:81
 msgid "Selected"
-msgstr ""
+msgstr "Выбранный"
 
 #: src/usr/local/www/status_ntpd.php:84
 msgid "Excess Peer"
-msgstr ""
+msgstr "Превышение Узла"
 
 #: src/usr/local/www/status_ntpd.php:87
 msgid "False Ticker"
-msgstr ""
+msgstr "Ложный Тикер"
 
 #: src/usr/local/www/status_ntpd.php:90
 msgid "Outlier"
-msgstr ""
+msgstr "Выброс"
 
 #: src/usr/local/www/status_ntpd.php:201
 #, php-format
@@ -27995,170 +28023,175 @@ msgid ""
 "Statistics unavailable because ntpq and ntpdc queries are disabled in the "
 "%1$sNTP service settings%2$s"
 msgstr ""
+"Статистика недоступна, поскольку запросы ntpq и ntpdc отключены в настройках "
+"службы%1$sNTP%2$s"
 
 #: src/usr/local/www/status_ntpd.php:207
 #, php-format
 msgid "No peers found, %1$sis the ntp service running?%2$s"
-msgstr ""
+msgstr "Не найдено ни одного узла,%1$sзапущена ли служба ntp?%2$s"
 
 #: src/usr/local/www/status_ntpd.php:264
 msgid "in view "
-msgstr ""
+msgstr "ввиду"
 
 #: src/usr/local/www/status_ntpd.php:271
 msgid "in use "
-msgstr ""
+msgstr "используется"
 
 #: src/usr/local/www/status_ntpd.php:279
 msgid "Google Maps Link"
-msgstr ""
+msgstr "Ссылка на Карты Google"
 
 #: src/usr/local/www/status_ntpd.php:290
 msgid "Network Time Protocol Status"
-msgstr ""
+msgstr "Состояние протокола сетевого времени"
 
 #: src/usr/local/www/status_ntpd.php:297
 msgid "Ref ID"
-msgstr ""
+msgstr "Идентификатор ссылки"
 
 #: src/usr/local/www/status_ntpd.php:300
 msgid "When"
-msgstr ""
+msgstr "Когда"
 
 #: src/usr/local/www/status_ntpd.php:301
 msgid "Poll"
-msgstr ""
+msgstr "Голосование"
 
 #: src/usr/local/www/status_ntpd.php:302
 msgid "Reach"
-msgstr ""
+msgstr "Охват"
 
 #: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:897
 msgid "Delay"
-msgstr ""
+msgstr "Задержка"
 
 #: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
-msgstr ""
+msgstr "Смещение"
 
 #: src/usr/local/www/status_ntpd.php:305
 msgid "Jitter"
-msgstr ""
+msgstr "Джиттер"
 
 #: src/usr/local/www/status_ntpd.php:327
 msgid "GPS Information"
-msgstr ""
+msgstr "Информация GPS"
 
 #: src/usr/local/www/status_ntpd.php:332
 msgid "Clock Latitude"
-msgstr ""
+msgstr "Часы Широта"
 
 #: src/usr/local/www/status_ntpd.php:333
 msgid "Clock Longitude"
-msgstr ""
+msgstr "Часы Долгота"
 
 #: src/usr/local/www/status_ntpd.php:337
 msgid "Clock Altitude"
-msgstr ""
+msgstr "Часы Высота"
 
 #: src/usr/local/www/status_ntpd.php:344
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:180
 msgid "Satellites"
-msgstr ""
+msgstr "Спутники"
 
 #: src/usr/local/www/status_openvpn.php:81
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:407
 msgid "An error occurred."
-msgstr ""
+msgstr "Произошла ошибка"
 
 #: src/usr/local/www/status_openvpn.php:98
 msgid "Client Connections"
-msgstr ""
+msgstr "Клиентские подключения"
 
 #: src/usr/local/www/status_openvpn.php:103
 #: src/usr/local/www/status_openvpn.php:188
 #: src/usr/local/www/vpn_openvpn_csc.php:661
 msgid "Common Name"
-msgstr ""
+msgstr "Основное Имя"
 
 #: src/usr/local/www/status_openvpn.php:104
 #: src/usr/local/www/status_openvpn.php:189
 msgid "Real Address"
-msgstr ""
+msgstr "Реальный Адрес"
 
 #: src/usr/local/www/status_openvpn.php:105
 #: src/usr/local/www/status_openvpn.php:239
 #: src/usr/local/www/status_openvpn.php:300
 msgid "Virtual Address"
-msgstr ""
+msgstr "Виртуальный Адрес"
 
 #: src/usr/local/www/status_openvpn.php:106
 #: src/usr/local/www/status_openvpn.php:238
 #: src/usr/local/www/status_openvpn.php:298
 msgid "Connected Since"
-msgstr ""
+msgstr "Подключен с"
 
 #: src/usr/local/www/status_openvpn.php:107
 #: src/usr/local/www/status_openvpn.php:302
 msgid "Bytes Sent/Received"
-msgstr ""
+msgstr "Байт Отправлено/Получено"
 
 #: src/usr/local/www/status_openvpn.php:140
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:78
 #, php-format
 msgid "Kill client connection from %s"
-msgstr ""
+msgstr "Убить соединение клиента от %s"
 
 #: src/usr/local/www/status_openvpn.php:175
 #: src/usr/local/www/status_openvpn.php:177
 msgid "Show Routing Table"
-msgstr ""
+msgstr "Показать Таблицу Маршрутизации"
 
 #: src/usr/local/www/status_openvpn.php:179
 msgid "Display OpenVPN's internal routing table for this server."
 msgstr ""
+"Отобразить внутреннюю таблицу маршрутизации OpenVPN для этого сервера."
 
 #: src/usr/local/www/status_openvpn.php:183
 msgid "Routing Table"
-msgstr ""
+msgstr "Таблица Маршрутизации"
 
 #: src/usr/local/www/status_openvpn.php:190
 msgid "Target Network"
-msgstr ""
+msgstr "Сеть Назначения"
 
 #: src/usr/local/www/status_openvpn.php:191
 msgid "Last Used"
-msgstr ""
+msgstr "Последний используемый"
 
 #: src/usr/local/www/status_openvpn.php:211
 msgid ""
 "An IP address followed by C indicates a host currently connected through the "
 "VPN."
 msgstr ""
+"IP-адрес следующий за C, указывает хост, подключенный в настоящее время "
+"через VPN."
 
 #: src/usr/local/www/status_openvpn.php:231
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:122
 msgid "Peer to Peer Server Instance Statistics"
-msgstr ""
+msgstr "Статистика узлов одноранговой сети (Peer-to-Peer)"
 
 #: src/usr/local/www/status_openvpn.php:240
 #: src/usr/local/www/status_openvpn.php:301
 msgid "Remote Host"
-msgstr ""
+msgstr "Удаленный Хост"
 
 #: src/usr/local/www/status_openvpn.php:241
 msgid "Bytes Sent / Received"
-msgstr ""
+msgstr "Байт Отправлено / Получено"
 
 #: src/usr/local/www/status_openvpn.php:291
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:199
 msgid "Client Instance Statistics"
-msgstr ""
+msgstr "Статистика клиента"
 
 #: src/usr/local/www/status_openvpn.php:299
 msgid "Local Address"
-msgstr ""
+msgstr "Локальный Адрес"
 
 #: src/usr/local/www/status_openvpn.php:361
 msgid ""
@@ -28166,110 +28199,117 @@ msgid ""
 "on a client or server, they will cause that OpenVPN instance to not work "
 "correctly with this status page."
 msgstr ""
+"Если есть настраиваемые параметры, которые переопределяют функции управления "
+"OpenVPN на клиенте или сервере, они приведут к тому, что OpenVPN не будет "
+"корректно работать с этой страницей состояния."
 
 #: src/usr/local/www/status_openvpn.php:365
 msgid "No OpenVPN instances defined."
-msgstr ""
+msgstr "Не определены инстанции OpenVPN."
 
 #: src/usr/local/www/status_pkglogs.php:81
 msgid "No packages with logging facilities are currently installed."
 msgstr ""
+"В настоящее время не установлены пакеты с средствами ведения журналов."
 
 #: src/usr/local/www/status_pkglogs.php:102
 #, php-format
 msgid "Last %1$s %2$s Log Entries"
-msgstr ""
+msgstr "Последняя %1$s %2$s Запись Журнала"
 
 #: src/usr/local/www/status_queues.php:53
 msgid "Something wrong happened during communication with stat gathering."
-msgstr ""
+msgstr "Во время соединения со сбором статистики произошла ошибка."
 
 #: src/usr/local/www/status_queues.php:63
 msgid "No queue statistics could be read."
-msgstr ""
+msgstr "Статистики очереди не могут прочитаны."
 
 #: src/usr/local/www/status_queues.php:115
 msgid "Traffic shaping is not configured."
-msgstr ""
+msgstr "Трафик шейпинг не может быть настроен."
 
 #: src/usr/local/www/status_queues.php:154
 msgid "Status Queues"
-msgstr ""
+msgstr "Очереди Статуса"
 
 #: src/usr/local/www/status_queues.php:160
 msgid "Statistics"
-msgstr ""
+msgstr "Статистики"
 
 #: src/usr/local/www/status_queues.php:168
 msgid "Borrows"
-msgstr ""
+msgstr "Занимает"
 
 #: src/usr/local/www/status_queues.php:169
 msgid "Suspends"
-msgstr ""
+msgstr "Приостанавливает"
 
 #: src/usr/local/www/status_queues.php:170
 msgid "Drops"
-msgstr ""
+msgstr "Сбрасывает"
 
 #: src/usr/local/www/status_queues.php:171
 msgid "Length"
-msgstr ""
+msgstr "Длина"
 
 #: src/usr/local/www/status_queues.php:185
 msgid "Queue graphs take 5 seconds to sample data."
-msgstr ""
+msgstr "Графики очереди требуют 5 секунд для отбора образцов данных."
 
 #: src/usr/local/www/status_queues.php:248
 msgid "Loading"
-msgstr ""
+msgstr "Загружаем"
 
 #: src/usr/local/www/status_services.php:144
 msgid "No services found."
-msgstr ""
+msgstr "Сервисы не найдены."
 
 #: src/usr/local/www/status_upnp.php:35
 msgid "Rules have been cleared and the daemon restarted."
-msgstr ""
+msgstr "Правила очищены и демон перезагружен."
 
 #: src/usr/local/www/status_upnp.php:55
 #, php-format
 msgid "UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s."
 msgstr ""
+"UPnP в данный момент выключен. Он может быть включен здесь: %1$s%2$s%3$s."
 
 #: src/usr/local/www/status_upnp.php:55
 msgid "Services &gt; UPnP &amp; NAT-PMP"
-msgstr ""
+msgstr "Сервисы &gt; UPnP &amp;  NAT-PMP"
 
 #: src/usr/local/www/status_upnp.php:63
 msgid "UPnP &amp; NAT-PMP Rules"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP Правила"
 
 #: src/usr/local/www/status_upnp.php:72
 msgid "Int. Port"
-msgstr ""
+msgstr "Внутренний Порт"
 
 #: src/usr/local/www/status_upnp.php:120 src/usr/local/www/status_upnp.php:122
 msgid "Clear all sessions"
-msgstr ""
+msgstr "Очистить все сессии"
 
 #: src/usr/local/www/status_wireless.php:66
 msgid ""
 "Rescan has been initiated in the background. Refresh this page in 10 seconds "
 "to see the results."
 msgstr ""
+"Новое сканирование инициализировано в фоновом режиме. Обновите данную "
+"странице через 10 секунд, чтобы увидеть результаты."
 
 #: src/usr/local/www/status_wireless.php:77
 msgid "Nearby Access Points or Ad-Hoc Peers"
-msgstr ""
+msgstr "Ближайшие Точки доступа или Узлы Ad-Hoc"
 
 #: src/usr/local/www/status_wireless.php:146
 msgid "Associated or Ad-Hoc Peers"
-msgstr ""
+msgstr "Ассоциированные  или Узлы Ad-Hoc"
 
 #: src/usr/local/www/status_wireless.php:203
 msgid "Rescan"
-msgstr ""
+msgstr "Новое сканирование"
 
 #: src/usr/local/www/status_wireless.php:209
 #, php-format
@@ -28279,49 +28319,56 @@ msgid ""
 "hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot "
 "time."
 msgstr ""
+"%1$sФлаги:%2$s A = авторизован, E = Расширенная Скорость (802.11g),  P = "
+"режим экономии энергии. %3$s%1$sВозможности:%2$s E = ESS (режим "
+"инфраструктуры),  I = IBSS (режим ad-hoc), P = конфиденциальность (WEP/TKIP/"
+"AES),  S =  Короткая преамбула,  s = Время короткого интервала."
 
 #: src/usr/local/www/system.php:121
 msgid "AHEAD of"
-msgstr ""
+msgstr "ВПЕРЕДИ"
 
 #: src/usr/local/www/system.php:124
 msgid "BEHIND"
-msgstr ""
+msgstr "ПОЗАДИ"
 
 #: src/usr/local/www/system.php:132
 #, php-format
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
-msgstr[0] ""
+msgstr[0] "(%1$s часы %2$s GMT)\n"
+"(%1$s часы %2$s GMT)"
 msgstr[1] ""
 msgstr[2] ""
 
 #: src/usr/local/www/system.php:198
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
-msgstr ""
+msgstr "Домен может содержать только символы a-z, 0-9, '-' и '.'."
 
 #: src/usr/local/www/system.php:211
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
-msgstr ""
+msgstr "Для DNS-сервера %s должен быть указан действительный IP-адрес."
 
 #: src/usr/local/www/system.php:217
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
-msgstr ""
+msgstr "Шлюз IPv6 «%1$s» не может быть указан для DNS-сервера IPv4 «%2$s»."
 
 #: src/usr/local/www/system.php:220
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
-msgstr ""
+msgstr "Шлюз IPv4 «%1$s» не может быть указан для DNS-сервера IPv6 «%2$s»."
 
 #: src/usr/local/www/system.php:233
 msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
 msgstr ""
+"Каждый настроенный DNS-сервер должен иметь уникальный IP-адрес. Удалите "
+"дублированный IP-адрес."
 
 #: src/usr/local/www/system.php:245
 #, php-format
@@ -28329,58 +28376,70 @@ msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
 "connected network."
 msgstr ""
+"Шлюз не может быть назначен серверу DNS '%s', который находится в "
+"непосредственно подключенной сети."
 
 #: src/usr/local/www/system.php:258
 msgid ""
 "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'."
 ""
 msgstr ""
+"Имя сервера времени (NTP) может содержать только символы a-z, 0-9, '-' и '.'."
+""
 
 #: src/usr/local/www/system.php:442
 msgid "Name of the firewall host, without domain part"
-msgstr ""
+msgstr "Имя хоста брандмауэра, без доменной части"
 
 #: src/usr/local/www/system.php:450
 msgid ""
 "Do not use 'local' as a domain name. It will cause local hosts running mDNS "
 "(avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."
 msgstr ""
+"Не используйте «local» в качестве имени домена. Это приведет к тому, что "
+"локальные узлы, работающие под управлением mDNS (avahi, bonjour и т. д.), Не "
+"смогут разрешать локальные узлы, на которых не работает mDNS."
 
 #: src/usr/local/www/system.php:456
 msgid "DNS Server Settings"
-msgstr ""
+msgstr "Настройки DNS сервера"
 
 #: src/usr/local/www/system.php:464
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
+"Введите IP-адреса, которые будут использоваться системой для разрешения DNS."
 
 #: src/usr/local/www/system.php:465
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
 msgstr ""
+"Они также используются для службы DHCP, DNS Forwarder и DNS Resolver, когда "
+"включена пересылка DNS-запросов."
 
 #: src/usr/local/www/system.php:466
 msgid "Optionally select the gateway for each DNS server."
-msgstr ""
+msgstr "При необходимости выберите шлюз для каждого DNS-сервера."
 
 #: src/usr/local/www/system.php:467
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
+"При использовании нескольких соединений WAN на каждый шлюз должен быть по "
+"крайней мере один уникальный DNS-сервер."
 
 #: src/usr/local/www/system.php:482
 msgid "DNS Server"
-msgstr ""
+msgstr "DNS Сервер"
 
 #: src/usr/local/www/system.php:523
 msgid "Add DNS Server"
-msgstr ""
+msgstr "Добавить DNS Сервер"
 
 #: src/usr/local/www/system.php:530
 msgid "DNS Server Override"
-msgstr ""
+msgstr "Переопределение DNS-сервера"
 
 #: src/usr/local/www/system.php:533
 #, php-format
@@ -28389,10 +28448,14 @@ msgid ""
 "on WAN for its own purposes (including the DNS Forwarder/DNS Resolver). "
 "However, they will not be assigned to DHCP clients."
 msgstr ""
+"Если этот параметр установлен,%s будет использовать DNS-серверы, назначенные "
+"сервером DHCP/PPP в глобальной сети (WAN), в своих собственных целях "
+"(включая DNS Forwarder/DNS Resolver). Тем не менее, они не будут назначаться "
+"клиентам DHCP."
 
 #: src/usr/local/www/system.php:540
 msgid "Disable DNS Forwarder"
-msgstr ""
+msgstr "Отключить DNS Forwarder"
 
 #: src/usr/local/www/system.php:543
 msgid ""
@@ -28401,14 +28464,19 @@ msgid ""
 "so system can use the local DNS service to perform lookups. Checking this "
 "box omits localhost from the list of DNS servers in resolv.conf."
 msgstr ""
+"По умолчанию localhost (127.0.0.1) будет использоваться в качестве первого "
+"DNS-сервера, где DNS Forwarder или DNS Resolver включен и настроен на "
+"прослушивание на localhost, поэтому система может использовать локальную "
+"службу DNS для выполнения поиска. При установке этого флажка localhost "
+"отсутствует в списке DNS-серверов в файле resolv.conf."
 
 #: src/usr/local/www/system.php:550
 msgid "Localization"
-msgstr ""
+msgstr "Локализация"
 
 #: src/usr/local/www/system.php:554
 msgid "*Timezone"
-msgstr ""
+msgstr "*ВременнаяЗона"
 
 #: src/usr/local/www/system.php:557
 #, php-format
@@ -28418,38 +28486,44 @@ msgid ""
 "cases where the geographic zones do not properly handle the clock offset "
 "required for this firewall."
 msgstr ""
+"Выберите название географического региона (Континент/Местоположение), чтобы "
+"определить часовой пояс для брандмауэра. %1$s Выберите специальную зону или "
+"зону \"Etc\" только в тех случаях, когда географические зоны неправильно "
+"обрабатывают смещение часов, необходимое для этого брандмауэра."
 
 #: src/usr/local/www/system.php:562
 msgid "Timeservers"
-msgstr ""
+msgstr "СерверыВремени"
 
 #: src/usr/local/www/system.php:565
 msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
 msgstr ""
+"Используйте пробел для разделения нескольких узлов (требуется только один). "
+"Не забудьте настроить хотя бы один DNS-сервер, если здесь введено имя хоста!"
 
 #: src/usr/local/www/system.php:570
 msgid "*Language"
-msgstr ""
+msgstr "*Язык"
 
 #: src/usr/local/www/system.php:573
 msgid "Choose a language for the webConfigurator"
-msgstr ""
+msgstr "Выберите язык для ВебКонфигуратора"
 
 #: src/usr/local/www/system.php:577
 #: src/usr/local/www/system_advanced_admin.php:308
 #: src/usr/local/www/system_certmanager.php:1155
 msgid "webConfigurator"
-msgstr ""
+msgstr "ВебКонфигуратор"
 
 #: src/usr/local/www/system.php:596
 msgid "Login hostname"
-msgstr ""
+msgstr "Логин имя хоста"
 
 #: src/usr/local/www/system.php:603
 msgid "Dashboard update period"
-msgstr ""
+msgstr "Период обновления панели мониторинга"
 
 #: src/usr/local/www/system.php:607
 msgid ""
@@ -28457,6 +28531,9 @@ msgid ""
 "frequent updates but increase the load on the web server. Minimum is 5 "
 "seconds, maximum 600 seconds"
 msgstr ""
+"Время в секундах между обновлениями виджета панели мониторинга. Небольшие "
+"значения вызывают более частые обновления, но увеличивают нагрузку на веб-"
+"сервер. Минимум 5 секунд, максимум 600 секунд"
 
 #: src/usr/local/www/system.php:615
 #: src/usr/local/www/system_user_settings.php:168
@@ -28464,28 +28541,29 @@ msgstr ""
 #, php-format
 msgid "%sUser-created themes are unsupported, use at your own risk."
 msgstr ""
+"%sПользовательские темы не поддерживаются, используйте на свой страх и риск."
 
 #: src/usr/local/www/system_advanced_admin.php:80
 msgid "A valid webConfigurator port number must be specified"
-msgstr ""
+msgstr "Необходимо указать действительный номер порта ВебКонфигуратора."
 
 #: src/usr/local/www/system_advanced_admin.php:86
 msgid "Max Processes must be a number 1 or greater"
-msgstr ""
+msgstr "Максимальное количество процессов должно быть числом 1 или выше"
 
 #: src/usr/local/www/system_advanced_admin.php:94
 #, php-format
 msgid "Alternate hostname %s is not a valid hostname."
-msgstr ""
+msgstr "Альтернативное имя хоста %s не является допустимым именем хоста."
 
 #: src/usr/local/www/system_advanced_admin.php:101
 msgid "A valid port number must be specified"
-msgstr ""
+msgstr "Необходимо указать действительный номер порта"
 
 #: src/usr/local/www/system_advanced_admin.php:271
 #, php-format
 msgid "One moment...redirecting to %s in 20 seconds."
-msgstr ""
+msgstr "Один момент ... перенаправление на %s через 20 секунд."
 
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_admin.php:297
@@ -28495,7 +28573,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:207
 #: src/usr/local/www/system_advanced_sysctl.php:137
 msgid "Admin Access"
-msgstr ""
+msgstr "Доступ Администратора"
 
 #: src/usr/local/www/system_advanced_admin.php:298
 #: src/usr/local/www/system_advanced_firewall.php:365
@@ -28505,7 +28583,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:208
 #: src/usr/local/www/system_advanced_sysctl.php:138
 msgid "Firewall & NAT"
-msgstr ""
+msgstr "Брандмауэр и NAT"
 
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_firewall.php:381
@@ -28516,7 +28594,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:140
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:255
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Разное"
 
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_firewall.php:382
@@ -28527,7 +28605,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:141
 #: src/usr/local/www/system_advanced_sysctl.php:148
 msgid "System Tunables"
-msgstr ""
+msgstr "Системные Настройки"
 
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_firewall.php:383
@@ -28537,7 +28615,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:142
 msgid "Notifications"
-msgstr ""
+msgstr "Уведомления"
 
 #: src/usr/local/www/system_advanced_admin.php:328
 #, php-format
@@ -28545,14 +28623,16 @@ msgid ""
 "No Certificates have been defined. A certificate is required before SSL can "
 "be enabled. %1$s Create or Import %2$s a Certificate."
 msgstr ""
+"Сертификаты не определены. Перед включением SSL может потребоваться "
+"сертификат. %1$s Создать или импортировать%2$s сертификат."
 
 #: src/usr/local/www/system_advanced_admin.php:341
 msgid "SSL Certificate"
-msgstr ""
+msgstr "Сертификат SSL"
 
 #: src/usr/local/www/system_advanced_admin.php:348
 msgid "TCP port"
-msgstr ""
+msgstr "TCP порт"
 
 #: src/usr/local/www/system_advanced_admin.php:352
 msgid ""
@@ -28560,10 +28640,13 @@ msgid ""
 "default (80 for HTTP, 443 for HTTPS). Changes will take effect immediately "
 "after save."
 msgstr ""
+"Введите собственный номер порта для вышеописанного ВебКонфигуратора, чтобы "
+"переопределить значение по умолчанию (80 для HTTP, 443 для HTTPS). Изменения "
+"вступят в силу сразу после сохранения."
 
 #: src/usr/local/www/system_advanced_admin.php:358
 msgid "Max Processes"
-msgstr ""
+msgstr "Максимальное Число Процессов"
 
 #: src/usr/local/www/system_advanced_admin.php:361
 msgid ""
@@ -28571,10 +28654,14 @@ msgid ""
 "Increasing this will allow more users/browsers to access the GUI "
 "concurrently."
 msgstr ""
+"Введите количество запущенных процессов ВебКонфигуратора. По умолчанию это "
+"значение равно 2. Увеличение этого количества позволит большему количеству "
+"пользователей/браузеров получить доступ к графическому интерфейсу "
+"одновременно."
 
 #: src/usr/local/www/system_advanced_admin.php:367
 msgid "WebGUI redirect"
-msgstr ""
+msgstr "Перенаправление Графического Интерфейса"
 
 #: src/usr/local/www/system_advanced_admin.php:370
 msgid ""
@@ -28582,10 +28669,13 @@ msgid ""
 "even on port 80, regardless of the listening port configured. Check this box "
 "to disable this automatically added redirect rule."
 msgstr ""
+"Если этот флажок снят, доступ к ВебКонфигуратору всегда разрешен даже на "
+"порту 80, независимо от настроенного порта прослушивания. Установите этот "
+"флажок, чтобы отключить автоматически добавленное правило перенаправления."
 
 #: src/usr/local/www/system_advanced_admin.php:376
 msgid "WebGUI Login Autocomplete"
-msgstr ""
+msgstr "Автозавершение Входа в Графический Вебинтерфейс"
 
 #: src/usr/local/www/system_advanced_admin.php:379
 msgid ""
@@ -28595,20 +28685,28 @@ msgid ""
 "browsers will prompt to save credentials (NOTE: Some browsers do not respect "
 "this option)."
 msgstr ""
+"Если данная опция активирована, учётная записись вебКонфигуратора должен "
+"быть сохранён браузером. Если это удобно, некоторые стандарты безопасности "
+"требуют отключения данной опции. Поставьте здесь флажок, чтобы активировать "
+"форму автозавершения входа;  таким образом браузеры будут напоминать  о "
+"сохранении учётной записи (К СВЕДЕНИЮ: Некоторые браузеры игнорируют данную "
+"опцию)."
 
 #: src/usr/local/www/system_advanced_admin.php:387
 msgid "WebGUI login messages"
-msgstr ""
+msgstr "Сообщения входа в Графический Вебинтерфейс"
 
 #: src/usr/local/www/system_advanced_admin.php:390
 msgid ""
 "When this is checked, successful logins to the webConfigurator will not be "
 "logged."
 msgstr ""
+"Если данная опция активировано, успешные входы в вебКонфигуратор не будет "
+"логироваться."
 
 #: src/usr/local/www/system_advanced_admin.php:401
 msgid "Anti-lockout"
-msgstr ""
+msgstr "Анти-локаут"
 
 #: src/usr/local/www/system_advanced_admin.php:404
 #, php-format
@@ -28621,10 +28719,19 @@ msgid ""
 "%2$sHint: the &quot;Set interface(s) IP address&quot; option in the console "
 "menu resets this setting as well.%3$s"
 msgstr ""
+"Если данная опция выключена, доступ в вебКонфигуратор через %1$s интерфейс "
+"будет всегда разрешён, невзирая на правила межсетевого экрана, установленные "
+"пользователем. Установите здесь флажок, чтобы выключить данное автоматически "
+"добавляемое правило, таким образом доступ к вебКонфигуратору будет "
+"контролироваться правилами межсетевого экрана, определённые пользователем "
+"(убедитесь в наличии правила межсетевого экрана, разрешающего к нему доступ, "
+"чтобы избежать локаута!) %2$sПодсказка: опция &quot;Установить IP адрес "
+"интерфейса(ов)&quot; в консольном меню также сбрасывает данную настройку."
+"%3$s"
 
 #: src/usr/local/www/system_advanced_admin.php:414
 msgid "DNS Rebind Check"
-msgstr ""
+msgstr "Проверка DNS Rebind"
 
 #: src/usr/local/www/system_advanced_admin.php:417
 #, php-format
@@ -28634,10 +28741,14 @@ msgid ""
 "servers. Check this box to disable this protection if it interferes with "
 "webConfigurator access or name resolution in the environment."
 msgstr ""
+"Если данная опция выключена, система защищена от %1$sатаки DNS Rebinding%2$s."
+" Это блокирует ответы, содержащие частные IP, от настроенных серверов DNS. "
+"Поставьте здесь флажок, чтобы выключить данную защиту, если это нарушает "
+"доступ к вебКонфигуратору или разрешение имён в окружении."
 
 #: src/usr/local/www/system_advanced_admin.php:425
 msgid "Alternate Hostnames"
-msgstr ""
+msgstr "Альтернативные имена хостов"
 
 #: src/usr/local/www/system_advanced_admin.php:428
 msgid ""
@@ -28645,10 +28756,14 @@ msgid ""
 "alternate hostnames by which the router may be queried, to bypass the DNS "
 "Rebinding Attack checks. Separate hostnames with spaces."
 msgstr ""
+"Альтернативные имена хостов для DNS Rebinding и Проверки HTTP_REFERER. "
+"Укажите альтернативные имена хостов, по которым маршрутизатор может быть "
+"запрошен, чтобы пропустить проверку на атаку DNS Rebinding. Отделите имена "
+"хостов пробелами. "
 
 #: src/usr/local/www/system_advanced_admin.php:434
 msgid "Browser HTTP_REFERER enforcement"
-msgstr ""
+msgstr "Принуждение HTTP_REFERER браузера"
 
 #: src/usr/local/www/system_advanced_admin.php:437
 #, php-format
@@ -28659,18 +28774,24 @@ msgid ""
 "using external scripts to interact with this system. More information on "
 "HTTP_REFERER is available from %1$sWikipedia%2$s"
 msgstr ""
+"Если данная опция выключена, доступ к вебКонфигуратору защищён от попыток "
+"перенаправления HTTP_REFERER. Установите здесь флажок, чтобы выключить "
+"данную защиту, если она нарушает доступ к вебКонфигуратору  в некоторых "
+"крайних случаях, такие как использование внешнего скрипта дял взаимодействия "
+"с системой. Для больших сведений о HTTP_REFERER обращайтесь к  "
+"%1$sВикипедии%2$s"
 
 #: src/usr/local/www/system_advanced_admin.php:447
 msgid "Secure Shell"
-msgstr ""
+msgstr "Безопасная Оболочка"
 
 #: src/usr/local/www/system_advanced_admin.php:451
 msgid "Secure Shell Server"
-msgstr ""
+msgstr "Сервер Безопасное Оболочки (SSH)"
 
 #: src/usr/local/www/system_advanced_admin.php:458
 msgid "Authentication Method"
-msgstr ""
+msgstr "Метод Аутентификации"
 
 #: src/usr/local/www/system_advanced_admin.php:461
 #, php-format
@@ -28678,22 +28799,25 @@ msgid ""
 "When enabled, authorized keys need to be configured for each %1$suser%2$s "
 "that has been granted secure shell access."
 msgstr ""
+"Когда включено, необходимо настроить авторизованные ключи для каждого "
+"%1$sпользователя%2$s, которому предоставлен доступ к безопасной оболочке "
+"(ssh)."
 
 #: src/usr/local/www/system_advanced_admin.php:467
 msgid "SSH port"
-msgstr ""
+msgstr "Порт SSH"
 
 #: src/usr/local/www/system_advanced_admin.php:471
 msgid "Note: Leave this blank for the default of 22."
-msgstr ""
+msgstr "К сведению: Оставьте поле пустым для порта по умолчанию - 22."
 
 #: src/usr/local/www/system_advanced_admin.php:475
 msgid "Serial Communications"
-msgstr ""
+msgstr "Коммуникации Последовательной Шины"
 
 #: src/usr/local/www/system_advanced_admin.php:480
 msgid "Serial Terminal"
-msgstr ""
+msgstr "Терминал Последовательной Шины"
 
 #: src/usr/local/www/system_advanced_admin.php:483
 #, php-format
@@ -28703,26 +28827,30 @@ msgid ""
 "keyboard. A %1$snull modem%2$s serial cable or adapter is required to use "
 "the serial console."
 msgstr ""
+"К сведению: Это перенаправит вывод консоли и сообщения к последовательному "
+"порту. Консольное меню при этом будет доступно через внутреннюю видеокарту/"
+"клавиатуру. Последовательный %1$snull modem%2$s кабель или адаптер требуется "
+"для использования последовательной консоли."
 
 #: src/usr/local/www/system_advanced_admin.php:491
 msgid "Serial Speed"
-msgstr ""
+msgstr "Скорость Последовательной Шины"
 
 #: src/usr/local/www/system_advanced_admin.php:494
 msgid "Allows selection of different speeds for the serial console port."
-msgstr ""
+msgstr "Разрешает выбор различных скоростейдля порта последовательной шины."
 
 #: src/usr/local/www/system_advanced_admin.php:502
 msgid "Serial Console"
-msgstr ""
+msgstr "Последовательная Консоль"
 
 #: src/usr/local/www/system_advanced_admin.php:503
 msgid "VGA Console"
-msgstr ""
+msgstr "Консоль VGA"
 
 #: src/usr/local/www/system_advanced_admin.php:499
 msgid "Primary Console"
-msgstr ""
+msgstr "Основная Консоль"
 
 #: src/usr/local/www/system_advanced_admin.php:505
 msgid ""
@@ -28730,126 +28858,137 @@ msgid ""
 "console will show pfSense boot script output. All consoles display OS boot "
 "messages, console messages, and the console menu."
 msgstr ""
+"Выберите предпочитаемую консоль, если присутствуют несколько консолей. В "
+"предпочтительной консоли будет показан вывод скрипта загрузки pfSense. Все "
+"консоли отображают загрузочные сообщения ОС, сообщения консоли и консольное "
+"меню."
 
 #: src/usr/local/www/system_advanced_admin.php:511
 msgid "Console Options"
-msgstr ""
+msgstr "Параметры Консоли"
 
 #: src/usr/local/www/system_advanced_admin.php:515
 msgid "Console menu"
-msgstr ""
+msgstr "Меню консоли"
 
 #: src/usr/local/www/system_advanced_admin.php:551
 msgid "secure shell configuration has changed. Stopping sshd."
-msgstr ""
+msgstr "Изменилась защищенная конфигурация оболочки. Остановка sshd."
 
 #: src/usr/local/www/system_advanced_admin.php:554
 msgid "secure shell configuration has changed. Restarting sshd."
-msgstr ""
+msgstr "Изменилась защищенная конфигурация оболочки. Перезапуск sshd."
 
 #: src/usr/local/www/system_advanced_firewall.php:83
 msgid "The Firewall Adaptive values must be set together."
-msgstr ""
+msgstr "Адаптивные значения брандмауэра должны быть установлены вместе."
 
 #: src/usr/local/www/system_advanced_firewall.php:86
 msgid "The Firewall Adaptive Start value must be an integer."
-msgstr ""
+msgstr "Значение Запуска Адаптивного Брандмауэра должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:89
 msgid "The Firewall Adaptive End value must be an integer."
-msgstr ""
+msgstr "Значение Завершения Адаптивного Брандмауэра должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:92
 msgid "The Firewall Maximum States value must be an integer."
 msgstr ""
+"Значение Максимального количества сессий брандмауэра должно быть целым "
+"числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:95
 msgid "The Aliases Hostname Resolve Interval value must be an integer."
 msgstr ""
+"Значение Интервала Разрешения Имени Хоста Алиаса должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:98
 msgid "The Firewall Maximum Table Entries value must be an integer."
 msgstr ""
+"Значение Максимального Кколичества Записей в Таблице Брандмауэра должно быть "
+"целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:101
 msgid "The Firewall Maximum Fragment Entries value must be an integer."
 msgstr ""
+"Значение Максимального Количества Частичных Записей Брандмауэра должно быть "
+"целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:104
 msgid "The TCP idle timeout must be an integer."
-msgstr ""
+msgstr "Тайм-аут простоя TCP должен быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:107
 msgid "The Reflection timeout must be an integer."
-msgstr ""
+msgstr "Тайм-аут обдумывания должен быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:110
 msgid "The TCP first timeout value must be an integer."
-msgstr ""
+msgstr "Значение первого таймаута TCP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:113
 msgid "The TCP opening timeout value must be an integer."
-msgstr ""
+msgstr "Значение тайм-аута открытия TCP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:116
 msgid "The TCP established timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута установления TCP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:119
 msgid "The TCP closing timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута закрытия TCP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:122
 msgid "The TCP FIN wait timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута ожидания TCP FIN должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:125
 msgid "The TCP closed timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута закрытия TCP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:128
 msgid "The UDP first timeout value must be an integer."
-msgstr ""
+msgstr "Значение первого таймаута UDP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:131
 msgid "The UDP single timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута единичного UDP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:134
 msgid "The UDP multiple timeout value must be an integer."
-msgstr ""
+msgstr "Значение таймаута множественного UDP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:137
 msgid "The ICMP first timeout value must be an integer."
-msgstr ""
+msgstr "Значение первого тайм-аута ICMP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:140
 msgid "The ICMP error timeout value must be an integer."
-msgstr ""
+msgstr "Значение тайм-аута ошибки ICMP должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:143
 msgid "The Other first timeout value must be an integer."
-msgstr ""
+msgstr "Значение Другого первого таймаута должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:146
 msgid "The Other single timeout value must be an integer."
-msgstr ""
+msgstr "Значение Другого единичного таймаута  должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:149
 msgid "The Other multiple timeout value must be an integer."
-msgstr ""
+msgstr "Значение Другого множественного таймаута  должно быть целым числом."
 
 #: src/usr/local/www/system_advanced_firewall.php:351
 msgid "Changed Advanced Firewall/NAT settings."
-msgstr ""
+msgstr "Изменены расширенные настройки Брандмауэра/NAT."
 
 #: src/usr/local/www/system_advanced_firewall.php:389
 msgid "Firewall Advanced"
-msgstr ""
+msgstr "Брандмауэра Расширенные"
 
 #: src/usr/local/www/system_advanced_firewall.php:393
 msgid "IP Do-Not-Fragment compatibility"
-msgstr ""
+msgstr "IP Do-Not-Fragment совместимость"
 
 #: src/usr/local/www/system_advanced_firewall.php:396
 msgid ""
@@ -28858,10 +28997,14 @@ msgid ""
 "will cause the filter to not drop such packets but instead clear the don't "
 "fragment bit."
 msgstr ""
+"Это позволяет осуществлять связь с хостами, которые генерируют "
+"фрагментированные пакеты с установленным битом не фрагментировать(DF). "
+"Известно, Linux NFS это делает. Это заставит фильтр не отбрасывать такие "
+"пакеты, но вместо этого очистить бит «не фрагментировать»."
 
 #: src/usr/local/www/system_advanced_firewall.php:403
 msgid "IP Random id generation"
-msgstr ""
+msgstr "Генерация случайных идентификаторов IP"
 
 #: src/usr/local/www/system_advanced_firewall.php:406
 msgid ""
@@ -28870,31 +29013,35 @@ msgid ""
 "only applies to packets that are not fragmented after the optional packet "
 "reassembly."
 msgstr ""
+"Заменяет поле IP-идентификации пакетов случайными значениями, чтобы "
+"компенсировать для операционных систем, которые используют предсказуемые "
+"значения. Этот параметр применяется только к пакетам, которые не "
+"фрагментируются после дополнительной пакетной сборки."
 
 #: src/usr/local/www/system_advanced_firewall.php:417
 msgid "High-latency"
-msgstr ""
+msgstr "Высокая-задержка"
 
 #: src/usr/local/www/system_advanced_firewall.php:418
 #: src/usr/local/www/vpn_ipsec_phase1.php:714
 msgid "Aggressive"
-msgstr ""
+msgstr "Агрессивный"
 
 #: src/usr/local/www/system_advanced_firewall.php:419
 msgid "Conservative"
-msgstr ""
+msgstr "Консервативный"
 
 #: src/usr/local/www/system_advanced_firewall.php:413
 msgid "Firewall Optimization Options"
-msgstr ""
+msgstr "Опции Оптимизации Брандмауэра"
 
 #: src/usr/local/www/system_advanced_firewall.php:421
 msgid "Select the type of state table optimization to use"
-msgstr ""
+msgstr "Выберите тип оптимизации таблицы состояний для использования"
 
 #: src/usr/local/www/system_advanced_firewall.php:425
 msgid "Disable Firewall"
-msgstr ""
+msgstr "Отключить Брандмауэр"
 
 #: src/usr/local/www/system_advanced_firewall.php:428
 #, php-format
@@ -28903,18 +29050,22 @@ msgid ""
 "also turn off NAT! To only disable NAT, and not firewall rules, visit the "
 "%3$sOutbound NAT%4$s page."
 msgstr ""
+"Примечание: Это преобразовывает%1$s в платформу только для "
+"маршрутизации!%2$s Примечание: Это также отключит NAT! Чтобы отключить "
+"только NAT, но не правила брандмауэра, перейдите на страницу%3$sИсходящий "
+"NAT%4$s."
 
 #: src/usr/local/www/system_advanced_firewall.php:434
 msgid "Disable Firewall Scrub"
-msgstr ""
+msgstr "Отключение Скраба Брандмауэра"
 
 #: src/usr/local/www/system_advanced_firewall.php:439
 msgid "Firewall Adaptive Timeouts"
-msgstr ""
+msgstr "Адаптивные Тайм-ауты Брандмауэра"
 
 #: src/usr/local/www/system_advanced_firewall.php:443
 msgid "Adaptive start"
-msgstr ""
+msgstr "Адаптивный старт"
 
 #: src/usr/local/www/system_advanced_firewall.php:447
 #, php-format
@@ -28924,10 +29075,15 @@ msgid ""
 "of states) / (adaptive.end - adaptive.start). Defaults to 60% of the "
 "Firewall Maximum States value"
 msgstr ""
+"Когда число записей состояния превышает это значение, начинается адаптивное "
+"масштабирование. Все значения тайм-аута масштабируются линейно с "
+"коэффициентом (adaptive.end - количество состояний) / (adaptive.end - "
+"adaptive.start). По умолчанию используется значение 60% от Максимального "
+"Количества Сессий Брандмауэра."
 
 #: src/usr/local/www/system_advanced_firewall.php:454
 msgid "Adaptive end"
-msgstr ""
+msgstr "Адаптивное завершение"
 
 #: src/usr/local/www/system_advanced_firewall.php:458
 #, php-format
@@ -28938,6 +29094,12 @@ msgid ""
 "state limit, see below). Defaults to 120% of the Firewall Maximum States "
 "value"
 msgstr ""
+"При достижении этого количества сессий все значения тайм-аута становятся "
+"равными нулю, что приводит к немедленной очистке всех сессий. Это значение "
+"используется для определения масштабного коэффициента, оно фактически не "
+"должно быть достигнуто (установите нижний предел состояния, см. Ниже). "
+"Значение по умолчанию составляет 120% от Максимального Значения Сессий "
+"Брандмауэра."
 
 #: src/usr/local/www/system_advanced_firewall.php:464
 msgid ""
@@ -28945,10 +29107,14 @@ msgid ""
 "entries grows. Leave blank to use default values, set to 0 to disable "
 "Adaptive Timeouts."
 msgstr ""
+"Тайм-ауты состояний могут масштабироваться адаптивно по мере увеличения "
+"количества записей в таблице состояний. Оставьте поле пустым, чтобы "
+"использовать значения по умолчанию, установите 0, чтобы отключить адаптивные "
+"тайм-ауты."
 
 #: src/usr/local/www/system_advanced_firewall.php:472
 msgid "Firewall Maximum States"
-msgstr ""
+msgstr "Максимальное Количество Сессий Брандмауэра"
 
 #: src/usr/local/www/system_advanced_firewall.php:476
 #, php-format
@@ -28956,10 +29122,13 @@ msgid ""
 "Maximum number of connections to hold in the firewall state table. %1$sNote: "
 "Leave this blank for the default. On this system the default size is: %2$d"
 msgstr ""
+"Максимальное число соединений в таблице сессий межсетевого экрана. %1$sК "
+"сведению: Оставьте данное поле пустым для значения по умолчанию. Но данной "
+"системе размер по умолчанию: %2$d"
 
 #: src/usr/local/www/system_advanced_firewall.php:482
 msgid "Firewall Maximum Table Entries"
-msgstr ""
+msgstr "Максимальное Число Записей Таблицы Межсетевого Экрана"
 
 #: src/usr/local/www/system_advanced_firewall.php:486
 #, php-format
@@ -28968,20 +29137,25 @@ msgid ""
 "snort, etc, combined.%1$sNote: Leave this blank for the default. On this "
 "system the default size is: %2$d"
 msgstr ""
+"Общее максимальное число записей таблицы для системы, такие как алиасы, ssh "
+"локаут, snort и т.д. %1$sК сведению: Оставьте данное поле пустым для "
+"значения по умолчанию. Но данной системе размер по умолчанию: %2$d"
 
 #: src/usr/local/www/system_advanced_firewall.php:494
 msgid "Firewall Maximum Fragment Entries"
-msgstr ""
+msgstr "Максимальное Число Записей Фрагментов"
 
 #: src/usr/local/www/system_advanced_firewall.php:497
 msgid ""
 "Maximum number of packet fragments to hold for reassembly by scrub rules. "
 "Leave this blank for the default (5000)"
 msgstr ""
+"Максимальное число фрагментов пакетов для повторной сборки scrub правилами. "
+"Оставьте данное поле пустым для значения по умолчанию (5000)"
 
 #: src/usr/local/www/system_advanced_firewall.php:501
 msgid "Static route filtering"
-msgstr ""
+msgstr "Фильтрация статических маршрутов"
 
 #: src/usr/local/www/system_advanced_firewall.php:504
 msgid ""
@@ -28990,14 +29164,19 @@ msgid ""
 "will not be checked by the firewall. This may be desirable in some "
 "situations where multiple subnets are connected to the same interface."
 msgstr ""
+"Данная опция применяется лишь в случае, если указаны одна или более "
+"статических маршрутов. При включении, трафик, который входит и выходит ихз "
+"того же самого интерфейса, не будет проверяться межсетевым экраном. Это "
+"может потребоваться в случаях, когда к одному и тому же интерфейсу "
+"подключено несколько подсетей."
 
 #: src/usr/local/www/system_advanced_firewall.php:511
 msgid "Disable Auto-added VPN rules"
-msgstr ""
+msgstr "Отключить Автоматическое добавление VPN правил"
 
 #: src/usr/local/www/system_advanced_firewall.php:514
 msgid "Note: This disables automatically added rules for IPsec."
-msgstr ""
+msgstr "К сведению: Это отключает автоматическое добавление правил для IPsec."
 
 #: src/usr/local/www/system_advanced_firewall.php:521
 msgid ""
@@ -29006,10 +29185,15 @@ msgid ""
 "When using bridging, this behavior must be disabled if the WAN gateway IP is "
 "different from the gateway IP of the hosts behind the bridged interface."
 msgstr ""
+"При использовании Мульти-WAN, желательно убедиться в том, что трафик "
+"покидает тот же интерфейс, на которой он приходит. Поэтому функция ответ-к "
+"(reply-to) автоматически  добавляется по умолчанию. При использовании "
+"сетевого моста, данное поведение должно быть отключено, если IP шлюза WAN "
+"отличается от IP шлюза узлов позади интерфейса моста."
 
 #: src/usr/local/www/system_advanced_firewall.php:528
 msgid "Disable Negate rules"
-msgstr ""
+msgstr "Отключить Отрицающие правила"
 
 #: src/usr/local/www/system_advanced_firewall.php:531
 msgid ""
@@ -29018,10 +29202,14 @@ msgid ""
 "disabled for special purposes but it requires manually creating rules for "
 "these networks."
 msgstr ""
+"При использовании Мульти-WAN, желательно убедиться в том, что трафик "
+"достигает непосредственно подключенных сетей и VPN сетей, когда используется "
+"маршрутизация на основе политик. Это может быть отключено для опредленных "
+"целей, но это требует создание правил для данных сетей."
 
 #: src/usr/local/www/system_advanced_firewall.php:537
 msgid "Aliases Hostnames Resolve Interval"
-msgstr ""
+msgstr "Интервал Разрешения Алиасов Имён Хостов"
 
 #: src/usr/local/www/system_advanced_firewall.php:541
 #, php-format
@@ -29029,62 +29217,69 @@ msgid ""
 "Interval, in seconds, that will be used to resolve hostnames configured on "
 "aliases. %1$sNote:\t Leave this blank for the default (300s)."
 msgstr ""
+"Интервал (в секундах), который будет использоваться для разрешения имён "
+"хостов, настроенных на алиасах. %1$s:К сведению:  Оставьте данное поле "
+"пустым для значения по умолчанию (300с)."
 
 #: src/usr/local/www/system_advanced_firewall.php:547
 msgid "Check certificate of aliases URLs"
-msgstr ""
+msgstr "Проверьте сертификат алиасов URL"
 
 #: src/usr/local/www/system_advanced_firewall.php:550
 msgid ""
 "Make sure the certificate is valid for all HTTPS addresses on aliases. If "
 "it's not valid or is revoked, do not download it."
 msgstr ""
+"Убедитесь в том, что сертификат валиден для всех адресов HTTPS на алиасах. "
+"Если он невалиден или отозван, не скачивайте его."
 
 #: src/usr/local/www/system_advanced_firewall.php:554
 msgid "Bogon Networks"
-msgstr ""
+msgstr "Bogon  Сети"
 
 #: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Monthly"
-msgstr ""
+msgstr "Ежемесячно"
 
 #: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Weekly"
-msgstr ""
+msgstr "Еженедельно"
 
 #: src/usr/local/www/system_advanced_firewall.php:563
 msgid "Daily"
-msgstr ""
+msgstr "Ежедневно"
 
 #: src/usr/local/www/system_advanced_firewall.php:558
 msgid "Update Frequency"
-msgstr ""
+msgstr "Частота Обновления"
 
 #: src/usr/local/www/system_advanced_firewall.php:565
 msgid ""
 "The frequency of updating the lists of IP addresses that are reserved (but "
 "not RFC 1918) or not yet assigned by IANA."
 msgstr ""
+"Частота обновления списка IP адресов, зарезервированных (но не RFC 1918) или "
+"еще не назначенных IANA."
 
 #: src/usr/local/www/system_advanced_firewall.php:571
 msgid "Network Address Translation"
-msgstr ""
+msgstr "Сетевая Трансляция Адресов"
 
 #: src/usr/local/www/system_advanced_firewall.php:586
 msgid "disabled"
-msgstr ""
+msgstr "выключено"
 
 #: src/usr/local/www/system_advanced_firewall.php:587
 msgid "NAT + proxy"
-msgstr ""
+msgstr "Сетевая Трансляция Адресов + Прокси"
 
 #: src/usr/local/www/system_advanced_firewall.php:588
 msgid "Pure NAT"
-msgstr ""
+msgstr "Чистый (Pure) NAT "
 
 #: src/usr/local/www/system_advanced_firewall.php:583
 msgid "NAT Reflection mode for port forwards"
-msgstr ""
+msgstr "Режим NAT Отражения (Reflection) для переадресации портов"
 
 #: src/usr/local/www/system_advanced_firewall.php:590
 #, php-format
@@ -29104,10 +29299,24 @@ msgid ""
 "%3$sIndividual rules may be configured to override this system setting on a "
 "per-rule basis."
 msgstr ""
+"%1$sРежим чистого (Pure) NAT использует набор правил NAT, для отправки "
+"пакетов к цели переадресации портов. Он лучше масштабируется, но необходимо "
+"аккуратно определять интерфейс и IP шлюза, используемое для коммуникации с "
+"целью во время загрузки правил. Нет каких-либо ограничений по количеству "
+"портов, кроме как определенных в протоколах. Все доступные для переадресации "
+"портов протоколы поддерживаются.%2$sРежим NAT+прокси использует программу-"
+"помощника, которая отправляет пакеты к цели переадресации портов. Этот режим "
+"может быть полезен в случаях, когда интерфейс и/или IP шлюза, используемые "
+"для коммуникации с целью, не может быть точно определён во время загрузки "
+"правил. Правила отражения (reflection) не создаются для диапазонов портов "
+"больше 500, и не они не могут использоваться более, чем для 1000 портов для "
+"всех переадресаций портов. Поддерживаются только протоколы TCP и UDP. "
+"%3$sИндивидуальные правила могут быть настроены для переопределения "
+"системных настроек на основе каждого правила."
 
 #: src/usr/local/www/system_advanced_firewall.php:609
 msgid "Reflection Timeout"
-msgstr ""
+msgstr "Таймаут Отражения "
 
 #: src/usr/local/www/system_advanced_firewall.php:613
 #, php-format
@@ -29115,10 +29324,12 @@ msgid ""
 "Enter value for Reflection timeout in seconds.%1$sNote: Only applies to "
 "Reflection on port forwards in NAT + proxy mode."
 msgstr ""
+"Введите значение для  таймаута Отражения  в секундах. %1$s:К сведению: "
+"Применимо только к Отражению на переадресациях портов в режиме NAT+прокси."
 
 #: src/usr/local/www/system_advanced_firewall.php:618
 msgid "Enable NAT Reflection for 1:1 NAT"
-msgstr ""
+msgstr "Включить Отражение NAT для 1:1 NAT"
 
 #: src/usr/local/www/system_advanced_firewall.php:621
 msgid ""
@@ -29127,10 +29338,15 @@ msgid ""
 "For more details, refer to the pure NAT mode description above. Individual "
 "rules may be configured to override this system setting on a per-rule basis."
 msgstr ""
+"К сведению: Отражение на соответствиях 1:1 работает только на входящем "
+"компоненте соответствия 1:1. Это работает таким же образом, как и чистые "
+"(pure) NAT для переадресаций портов. Для больших сведений, обратитесь к "
+"описанию режима чистого (pure) NAT выше. Индивидуальные правила могут быть "
+"настроены для переопределения системных настроек на основе каждого правила."
 
 #: src/usr/local/www/system_advanced_firewall.php:629
 msgid "Enable automatic outbound NAT for Reflection"
-msgstr ""
+msgstr "Активирует автоматический исходящий NAT для Отражений"
 
 #: src/usr/local/www/system_advanced_firewall.php:632
 msgid ""
@@ -29139,153 +29355,173 @@ msgid ""
 "assigned interfaces.  Other interfaces require manually creating the "
 "outbound NAT rules that direct the reply packets back through the router."
 msgstr ""
+"Требуется для полной функциональности режима чистого NAT в режиме NAT "
+"Отражения для переадресаций портов или NAT Отражения для 1:1 NAT. К сведению:"
+" Это работает только с назначенными интерфейсами. Другие интерфейсы требуют "
+"ручное создание исходящих NAT правил, которые будут направлять ответные "
+"пакеты обратно через маршрутизатор."
 
 #: src/usr/local/www/system_advanced_firewall.php:639
 msgid "TFTP Proxy"
-msgstr ""
+msgstr "TFTP Прокси"
 
 #: src/usr/local/www/system_advanced_firewall.php:643
 msgid "Choose the interfaces on which to enable TFTP proxy helper."
-msgstr ""
+msgstr "Выбрать интерфейсы, на которых включить помощник TFTP прокси."
 
 #: src/usr/local/www/system_advanced_firewall.php:648
 msgid "State Timeouts (seconds - blank for default)"
 msgstr ""
+"Таймаут Сессий (в секундах - оставить пустым для значения по умолчанию)"
 
 #: src/usr/local/www/system_advanced_firewall.php:655
 msgid "TCP "
-msgstr ""
+msgstr "TCP"
 
 #: src/usr/local/www/system_advanced_firewall.php:666
 msgid "UDP "
-msgstr ""
+msgstr "UDP "
 
 #: src/usr/local/www/system_advanced_firewall.php:677
 msgid "ICMP "
-msgstr ""
+msgstr "ICMP  "
 
 #: src/usr/local/www/system_advanced_firewall.php:688
 msgid "Other "
-msgstr ""
+msgstr "Другой"
 
 #: src/usr/local/www/system_advanced_firewall.php:707
 msgid "The default optimization algorithm"
-msgstr ""
+msgstr "Алгоритм оптимизации по умолчанию"
 
 #: src/usr/local/www/system_advanced_firewall.php:709
 msgid ""
 "Used for eg. satellite links. Expires idle connections later than default"
 msgstr ""
+"Используется для, например, спутниковых соединений. Простаивающие соединения "
+"сбрасываются позже, чем по умолчанию"
 
 #: src/usr/local/www/system_advanced_firewall.php:711
 msgid ""
 "Expires idle connections quicker. More efficient use of CPU and memory but "
 "can drop legitimate idle connections"
 msgstr ""
+"Простаивающие соединения сбрасываются быстрее. Это помогает более эффективно "
+"использовать процессор и оперативную память, но может сбрасывать  легитимные "
+"простаивающие соединения."
 
 #: src/usr/local/www/system_advanced_firewall.php:713
 msgid ""
 "Tries to avoid dropping any legitimate idle connections at the expense of "
 "increased memory usage and CPU utilization"
 msgstr ""
+"Попытка избежать сброса  легитимных простаивающих соединений за счёт "
+"увеличения использования памяти и утилизации процессора"
 
 #: src/usr/local/www/system_advanced_misc.php:76
 msgid "AES-NI CPU-based Acceleration"
-msgstr ""
+msgstr "AES-NI ускорение на основе процессора"
 
 #: src/usr/local/www/system_advanced_misc.php:77
 msgid "BSD Crypto Device (cryptodev)"
-msgstr ""
+msgstr "Устройство шифрования BSD (cryptodev)"
 
 #: src/usr/local/www/system_advanced_misc.php:81
 msgid "Intel Core* CPU on-die thermal sensor"
-msgstr ""
+msgstr "Встроенный температурный датчик процессора Intel Core*"
 
 #: src/usr/local/www/system_advanced_misc.php:82
 msgid "AMD K8, K10 and K11 CPU on-die thermal sensor"
-msgstr ""
+msgstr "Встроенные температурные датчики процессора AMD K8, K10 и K11"
 
 #: src/usr/local/www/system_advanced_misc.php:92
 msgid "Please select a valid Cryptographic Accelerator."
-msgstr ""
+msgstr "Пожалуйста, выберите валидный криптографический ускоритель."
 
 #: src/usr/local/www/system_advanced_misc.php:96
 msgid "Please select a valid Thermal Hardware Sensor."
-msgstr ""
+msgstr "Пожалуйста, выберите действующий датчик температуры."
 
 #: src/usr/local/www/system_advanced_misc.php:100
 msgid "/tmp Size must be numeric and should not be less than 40MiB."
-msgstr ""
+msgstr "Размер  /tmp должен быть числовым и не должен быть меньше 40MiB."
 
 #: src/usr/local/www/system_advanced_misc.php:104
 msgid "/var Size must be numeric and should not be less than 60MiB."
-msgstr ""
+msgstr "Размер  /var должен быть числовым и не должен быть меньше 60MiB."
 
 #: src/usr/local/www/system_advanced_misc.php:108
 msgid "Proxy port must be a valid port number, 1-65535."
 msgstr ""
+"Порт прокси-сервера должен быть действительным номером порта, 1-65535."
 
 #: src/usr/local/www/system_advanced_misc.php:112
 msgid "Proxy URL must be a valid IP address or FQDN."
 msgstr ""
+"URL-адрес прокси-сервера должен быть действительным IP-адресом или полным "
+"доменным именем."
 
 #: src/usr/local/www/system_advanced_misc.php:116
 msgid "The proxy username contains invalid characters."
-msgstr ""
+msgstr "Имя пользователя прокси содержит недопустимые символы."
 
 #: src/usr/local/www/system_advanced_misc.php:120
 msgid "Proxy password and confirmation must match."
-msgstr ""
+msgstr "Пароль прокси-сервера и его подтверждение должны совпадать."
 
 #: src/usr/local/www/system_advanced_misc.php:318
 msgid "Proxy Support"
-msgstr ""
+msgstr "Поддержка Прокси"
 
 #: src/usr/local/www/system_advanced_misc.php:322
 msgid "Proxy URL"
-msgstr ""
+msgstr "URL-адрес Прокси-сервера"
 
 #: src/usr/local/www/system_advanced_misc.php:325
 msgid ""
 "Hostname or IP address of proxy server this system will use for its outbound "
 "Internet access."
 msgstr ""
+"Имя хоста или IP-адрес прокси-сервера, который эта система будет "
+"использовать для исходящего доступа в Интернет."
 
 #: src/usr/local/www/system_advanced_misc.php:330
 msgid "Proxy Port"
-msgstr ""
+msgstr "Порт Прокси"
 
 #: src/usr/local/www/system_advanced_misc.php:333
 msgid "Port where proxy server is listening."
-msgstr ""
+msgstr "Порт, который прослушивает прокси-сервер."
 
 #: src/usr/local/www/system_advanced_misc.php:337
 msgid "Proxy Username"
-msgstr ""
+msgstr "Имя Пользователя Прокси-сервера"
 
 #: src/usr/local/www/system_advanced_misc.php:340
 msgid ""
 "Username for authentication to proxy server. Optional, leave blank to not "
 "use authentication."
 msgstr ""
+"Имя пользователя для аутентификации на прокси-сервере. Необязательно, "
+"оставьте поле пустым, чтобы не использовать аутентификацию."
 
 #: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
-msgstr ""
+msgstr "Пароль Прокси-сервера"
 
 #: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
-msgstr ""
+msgstr "Пароль для аутентификации на прокси-сервере."
 
 #: src/usr/local/www/system_advanced_misc.php:351
 #: src/usr/local/www/system_advanced_misc.php:353
 msgid "Load Balancing"
-msgstr ""
+msgstr "Балансировка Нагрузки"
 
 #: src/usr/local/www/system_advanced_misc.php:357
 #: src/usr/local/www/system_advanced_misc.php:358
 msgid "Use sticky connections"
-msgstr ""
+msgstr "Используйте липкие (sticky) соединения"
 
 #: src/usr/local/www/system_advanced_misc.php:360
 msgid ""
@@ -29297,10 +29533,17 @@ msgid ""
 "next web server in the round robin. Changing this option will restart the "
 "Load Balancing service."
 msgstr ""
+"Успешные подключения будут переадресовываться на серверы циклически, при "
+"этом соединения из одного источника отправляются на тот же веб-сервер. Это "
+"«липкое соединение» будет существовать, пока есть состояния, которые "
+"ссылаются на это соединение. Как только истечет срок действия сессий, липкое "
+"соединение тоже завершится. Дальнейшие соединения с этого хоста будут "
+"перенаправлены на следующий веб-сервер в циклическом режиме. Изменение этого "
+"параметра приведет к перезапуску службы Балансировки Нагрузки."
 
 #: src/usr/local/www/system_advanced_misc.php:370
 msgid "Source tracking timeout"
-msgstr ""
+msgstr "Таймаут отслеживания источника"
 
 #: src/usr/local/www/system_advanced_misc.php:374
 msgid ""
@@ -29309,10 +29552,15 @@ msgid ""
 "timeout higher will cause the source/destination relationship to persist for "
 "longer periods of time."
 msgstr ""
+"Установите тайм-аут отслеживания источника для липких подключений. По "
+"умолчанию это 0, поэтому отслеживание источника удаляется сразу после "
+"истечения срока действия сессии. Установка этого тайм-аута выше приведет к "
+"тому, что связь источника/назначения будет сохраняться в течение более "
+"длительных периодов времени."
 
 #: src/usr/local/www/system_advanced_misc.php:383
 msgid "Default gateway switching"
-msgstr ""
+msgstr "Переключение шлюза по умолчанию"
 
 #: src/usr/local/www/system_advanced_misc.php:386
 msgid ""
@@ -29320,14 +29568,17 @@ msgid ""
 "available one. This is not enabled by default, as it's unnecessary in most "
 "all scenarios, which instead use gateway groups."
 msgstr ""
+"Если шлюз по умолчанию отключается, переключите шлюз по умолчанию на другой "
+"доступный. По умолчанию этот параметр отключен, так как он не нужен в "
+"большинстве сценариев, которые вместо этого используют группы шлюзов."
 
 #: src/usr/local/www/system_advanced_misc.php:391
 msgid "Power Savings"
-msgstr ""
+msgstr "Экономия Электроэнергии"
 
 #: src/usr/local/www/system_advanced_misc.php:395
 msgid "PowerD"
-msgstr ""
+msgstr "PowerD"
 
 #: src/usr/local/www/system_advanced_misc.php:398
 msgid ""
@@ -29345,42 +29596,57 @@ msgid ""
 "consumption.\t It raises frequency faster, drops slower and keeps twice "
 "lower CPU load."
 msgstr ""
+"Утилита powerd контролирует состояние системы и соответственно устанавливает "
+"различные параметры управления питанием. Он предлагает четыре режима "
+"(максимальный, минимальный, адаптивный и  высокоадаптивный), которые можно "
+"индивидуально выбирать при питании от сети переменного тока или от батарей.  "
+"Максимальный, минимальный, адаптивный и высокоадаптивный режимы могут быть "
+"сокращены до max, min, adp, hadp. Максимальный режим выбирает самые высокие "
+"значения производительности. Минимальный режим выбирает самые низкие "
+"значения производительности, чтобы получить максимальную экономию энергии. "
+"Адаптивный режим пытается балансировать, снижая производительность, когда "
+"система работает в режиме ожидания и увеличивает ее, когда система занята. "
+"Он обеспечивает хороший баланс между небольшой потерей производительности и "
+"значительным сбережением энергозатрат. Высокоадаптивный режим - это "
+"адаптивный режим, но настроенный для систем, где производительность и "
+"интерактивность важнее энергопотребления. Он повышает частоту быстрее, "
+"падает медленнее и вдвое снижает нагрузку на процессор."
 
 #: src/usr/local/www/system_advanced_misc.php:413
 msgid "Hiadaptive"
-msgstr ""
+msgstr "Высокоадаптивный"
 
 #: src/usr/local/www/system_advanced_misc.php:414
 msgid "Adaptive"
-msgstr ""
+msgstr "Адаптивный"
 
 #: src/usr/local/www/system_advanced_misc.php:415
 msgid "Minimum"
-msgstr ""
+msgstr "Минимальный"
 
 #: src/usr/local/www/system_advanced_misc.php:416
 msgid "Maximum"
-msgstr ""
+msgstr "Максимальный"
 
 #: src/usr/local/www/system_advanced_misc.php:421
 msgid "AC Power"
-msgstr ""
+msgstr "Источник Переменного Тока"
 
 #: src/usr/local/www/system_advanced_misc.php:428
 msgid "Battery Power"
-msgstr ""
+msgstr "Батарея"
 
 #: src/usr/local/www/system_advanced_misc.php:435
 msgid "Unknown Power"
-msgstr ""
+msgstr "Неизвестный Источник Питания"
 
 #: src/usr/local/www/system_advanced_misc.php:441
 msgid "Cryptographic & Thermal Hardware"
-msgstr ""
+msgstr "Криптографическое и Тепловое Оборудование"
 
 #: src/usr/local/www/system_advanced_misc.php:445
 msgid "Cryptographic Hardware"
-msgstr ""
+msgstr "Криптографическое Оборудование"
 
 #: src/usr/local/www/system_advanced_misc.php:448
 msgid ""
@@ -29391,12 +29657,19 @@ msgid ""
 "not contain a crypto chip, this option will have no effect. To unload the "
 "selected module, set this option to \"none\" and then reboot."
 msgstr ""
+"Модуль криптографического ускорителя будет использовать аппаратную поддержку "
+"для ускорения некоторых криптографических функций в системах, имеющих чип. "
+"Загрузка модуля BSD Crypto Device позволит получить доступ к устройствам "
+"ускорения с использованием драйверов, встроенных в ядро, таких как чипсеты "
+"Hifn или ubsec. Если брандмауэр не содержит криптографический чип, этот "
+"вариант не будет иметь эффекта. Чтобы выгрузить выбранный модуль, установите "
+"для этого параметра значение «ничего», а затем перезагрузитесь."
 
 #: src/usr/local/www/system_advanced_misc.php:457
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:255
 msgid "Thermal Sensors"
-msgstr ""
+msgstr "Сенсор Температуры"
 
 #: src/usr/local/www/system_advanced_misc.php:460
 msgid ""
@@ -29407,10 +29680,17 @@ msgid ""
 "system, this option will have no effect. To unload the selected module, set "
 "this option to \"none\" and then reboot."
 msgstr ""
+"При поддерживаемом процессоре выбор температурного датчика будет загружать "
+"соответствующий драйвер для считывания его температуры. При установке этого "
+"параметра в значение «Ничего» вместо этого будет пытаться считывать "
+"температуру с датчика, совместимого с ACPI, если он присутствует. Если в "
+"системе нет поддерживаемого термодатчика, этот вариант не будет иметь "
+"эффекта. Чтобы выгрузить выбранный модуль, установите для этого параметра "
+"значение «ничего», а затем перезагрузитесь."
 
 #: src/usr/local/www/system_advanced_misc.php:473
 msgid "Schedule States"
-msgstr ""
+msgstr "Расписание Сессий"
 
 #: src/usr/local/www/system_advanced_misc.php:476
 msgid ""
@@ -29418,25 +29698,30 @@ msgid ""
 "are killed. This option overrides that behavior by not clearing states for "
 "existing connections."
 msgstr ""
+"По умолчанию, когда срок действия расписания истекает, соединения, "
+"разрешенные этим расписанием, уничтожаются. Этот параметр переопределяет это "
+"поведение, не очищая состояния для существующих подключений."
 
 #: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:643
 msgid "Gateway Monitoring"
-msgstr ""
+msgstr "Мониторинг Шлюзов"
 
 #: src/usr/local/www/system_advanced_misc.php:485
 msgid "State Killing on Gateway Failure"
-msgstr ""
+msgstr "Сброс сессии при сбое шлюза"
 
 #: src/usr/local/www/system_advanced_misc.php:488
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
 msgstr ""
+"Процесс мониторинга очистит все сессии, когда шлюз упадет, если этот флажок "
+"установлен."
 
 #: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
-msgstr ""
+msgstr "Пропустить правила, когда шлюз не работает"
 
 #: src/usr/local/www/system_advanced_misc.php:496
 msgid ""
@@ -29444,14 +29729,17 @@ msgid ""
 "the rule is created omitting the gateway. This option overrides that "
 "behavior by omitting the entire rule instead."
 msgstr ""
+"По умолчанию, когда правило содержит указанный шлюз и этот шлюз не работает, "
+"правило создается без участия шлюза. Этот параметр переопределяет такое "
+"поведение, и опускает правило целиком."
 
 #: src/usr/local/www/system_advanced_misc.php:501
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
-msgstr ""
+msgstr "Настройки RAM-диска (Перезагрузите для Применения Изменений)"
 
 #: src/usr/local/www/system_advanced_misc.php:505
 msgid "Use RAM Disks"
-msgstr ""
+msgstr "Использовать RAM Диск"
 
 #: src/usr/local/www/system_advanced_misc.php:508
 msgid ""
@@ -29461,50 +29749,55 @@ msgid ""
 "retained. Changing this setting will cause the firewall to reboot after "
 "clicking \"Save\"."
 msgstr ""
+"Установите это для использования /tmp и /var в качестве RAM-дисков (дисков "
+"файловой системы памяти) при полной установке, а не на жестком диске. "
+"Установка этого параметра приведет к потере данных в /tmp и /var. RRD, DHCP "
+"аренды и каталог журнала будут сохранены. Изменение этого параметра приведет "
+"к перезагрузке брандмауэра после нажатия «Сохранить»."
 
 #: src/usr/local/www/system_advanced_misc.php:513
 msgid "RAM Disk Size"
-msgstr ""
+msgstr "Размер RAM Диска"
 
 #: src/usr/local/www/system_advanced_misc.php:517
 msgid "/tmp RAM Disk Size"
-msgstr ""
+msgstr "/tmp RAM Размер Диска "
 
 #: src/usr/local/www/system_advanced_misc.php:521
 msgid "/tmp RAM Disk<br />Do not set lower than 40."
-msgstr ""
+msgstr "/tmp RAM Диск <br />Не устанавливайте значение ниже 40."
 
 #: src/usr/local/www/system_advanced_misc.php:525
 msgid "/var RAM Disk Size"
-msgstr ""
+msgstr "/var RAM Размер Диска"
 
 #: src/usr/local/www/system_advanced_misc.php:529
 msgid "/var RAM Disk<br />Do not set lower than 60."
-msgstr ""
+msgstr "/var RAM Диск<br />Не устанавливайте значение ниже  60."
 
 #: src/usr/local/www/system_advanced_misc.php:531
 msgid "Sets the size, in MiB, for the RAM disks."
-msgstr ""
+msgstr "Устанавливает размер в МБ для RAM-дисков."
 
 #: src/usr/local/www/system_advanced_misc.php:535
 msgid "Periodic RAM Disk Data Backups"
-msgstr ""
+msgstr "Периодическое Резервное Копирование Данных  RAM Диска"
 
 #: src/usr/local/www/system_advanced_misc.php:539
 msgid "Periodic RRD Backup"
-msgstr ""
+msgstr "Периодическое Резервное Копирование RRD"
 
 #: src/usr/local/www/system_advanced_misc.php:547
 msgid "Periodic DHCP Leases Backup"
-msgstr ""
+msgstr "Периодическое Резервное Копирование Данных Аренды DHCP"
 
 #: src/usr/local/www/system_advanced_misc.php:555
 msgid "Periodic Logs Backup"
-msgstr ""
+msgstr "Периодическое Резервное Копирование Журналов"
 
 #: src/usr/local/www/system_advanced_misc.php:559
 msgid "Log Directory"
-msgstr ""
+msgstr "Директория Журнала"
 
 #: src/usr/local/www/system_advanced_misc.php:561
 msgid ""
@@ -29513,18 +29806,22 @@ msgid ""
 "mind that the more frequent the backup, the more writes will happen to the "
 "media."
 msgstr ""
+"Устанавливает интервал, в часах, для периодического резервного копирования "
+"этих частей данных RAM-диска, чтобы их можно было автоматически восстановить "
+"при следующей загрузке. Имейте в виду, что чем чаще будет выполняться "
+"резервное копирование, тем больше записей будет выполняться на носители."
 
 #: src/usr/local/www/system_advanced_misc.php:569
 msgid "Hardware Settings"
-msgstr ""
+msgstr "Настройки Оборудования"
 
 #: src/usr/local/www/system_advanced_misc.php:578
 msgid "Always on"
-msgstr ""
+msgstr "Всегда Включен"
 
 #: src/usr/local/www/system_advanced_misc.php:576
 msgid "Hard disk standby time"
-msgstr ""
+msgstr "Время ожидания Жесткого Диска"
 
 #: src/usr/local/www/system_advanced_misc.php:579
 #, php-format
@@ -29532,20 +29829,25 @@ msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
 "elapsed since the last access.%1$s%2$sDo not set this for CF cards.%3$s"
 msgstr ""
+"Переводит жесткий диск в режим ожидания по истечении заданного количества "
+"минут с момента последнего доступа.%1$s%2$sНе устанавливайте это для CF-карт."
+"%3$s"
 
 #: src/usr/local/www/system_advanced_misc.php:584
 msgid "Installation Feedback"
-msgstr ""
+msgstr "Обратная связь по установке"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Host UUID"
-msgstr ""
+msgstr "UUID Хоста"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
 "Enable this option to not send HOST UUID to pfSense as part of User-Agent "
 "header."
 msgstr ""
+"Включите эту опцию, чтобы не отправлять HOST UUID в pfSense как часть "
+"заголовка User-Agent"
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -29553,40 +29855,45 @@ msgid ""
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
 "confirm."
 msgstr ""
+"Параметр \\\"Использовать Ramdisk\\\" был изменен. Это приведет к "
+"перезагрузке брандмауэра сразу после сохранения новой настройки. \\n\\n "
+"Пожалуйста, подтвердите."
 
 #: src/usr/local/www/system_advanced_network.php:57
 msgid "An IP address to NAT IPv6 packets must be specified."
-msgstr ""
+msgstr "Необходимо указать IP-адрес для пакетов NAT IPv6."
 
 #: src/usr/local/www/system_advanced_network.php:64
 msgid "A valid DUID must be specified"
-msgstr ""
+msgstr "Должен быть указан действительный идентификатор DUID"
 
 #: src/usr/local/www/system_advanced_network.php:171
 msgid "IPv6 Options"
-msgstr ""
+msgstr "Опции IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:175
 msgid "Allow IPv6"
-msgstr ""
+msgstr "Разрешить IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:178
 msgid ""
 "NOTE: This does not disable any IPv6 features on the firewall, it only "
 "blocks traffic."
 msgstr ""
+"ПРИМЕЧАНИЕ: Это не отключает какие-либо функции IPv6 на брандмауэре, а "
+"только блокирует трафик."
 
 #: src/usr/local/www/system_advanced_network.php:182
 msgid "IPv6 over IPv4"
-msgstr ""
+msgstr "IPv6 через IPv4"
 
 #: src/usr/local/www/system_advanced_network.php:186
 msgid "IPv6 over IPv4 Tunneling"
-msgstr ""
+msgstr "Туннелирование IPv6 через IPv4"
 
 #: src/usr/local/www/system_advanced_network.php:193
 msgid "IPv4 address of Tunnel Peer"
-msgstr ""
+msgstr "IPv4-адрес туннельного узла"
 
 #: src/usr/local/www/system_advanced_network.php:198
 #, php-format
@@ -29596,10 +29903,15 @@ msgid ""
 "IPv4 routing infrastructures. IPv6 firewall rules are %1$salso required%2$s, "
 "to control and pass encapsulated traffic."
 msgstr ""
+"Эти параметры создают RFC 2893-совместимый механизм для IPv4 NAT-"
+"инкапсуляции пакетов IPv6, который может использоваться для туннелирования "
+"пакетов IPv6 по инфраструктурам маршрутизации IPv4. Правила брандмауэра "
+"IPv6%1$sтакже необходимы%2$s, чтобы контролировать и передавать "
+"инкапсулированный трафик."
 
 #: src/usr/local/www/system_advanced_network.php:207
 msgid "Prefer IPv4 over IPv6"
-msgstr ""
+msgstr "Предпочитать IPv4 вместо IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:210
 msgid ""
@@ -29607,10 +29919,13 @@ msgid ""
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr ""
+"По умолчанию, если IPv6 настроен и имя хоста разрешает адреса IPv6 и IPv4, "
+"будет использован IPv6. Если этот параметр выбран, IPv4 будет "
+"предпочтительнее IPv6."
 
 #: src/usr/local/www/system_advanced_network.php:215
 msgid "IPv6 DNS entry"
-msgstr ""
+msgstr "IPv6 DNS-запись"
 
 #: src/usr/local/www/system_advanced_network.php:218
 msgid ""
@@ -29621,15 +29936,22 @@ msgid ""
 "entries are added to the system's DNS. Enabling this option prevents those "
 "IPv6 records from being created."
 msgstr ""
+"Если для конфигурации IPv6 в интерфейсе LAN задано значение "
+"Отслеживать(Track), а отслеживаемый интерфейс теряет связь, это может "
+"привести к сбоям подключения к этому брандмауэру, которые были установлены с "
+"помощью имени хоста. Это может произойти непреднамеренно при доступе к "
+"брандмауэру по имени хоста, так как по умолчанию в DNS системы добавляются "
+"как записи IPv4, так и IPv6. Включение этого параметра предотвращает "
+"создание таких записей IPv6."
 
 #: src/usr/local/www/system_advanced_network.php:223
 #: src/usr/local/www/system_advanced_network.php:227
 msgid "DHCP6 DUID"
-msgstr ""
+msgstr "DHCP6 DUID"
 
 #: src/usr/local/www/system_advanced_network.php:235
 msgid "Copy DUID"
-msgstr ""
+msgstr "Копировать DUID"
 
 #: src/usr/local/www/system_advanced_network.php:243
 #, php-format
@@ -29644,14 +29966,24 @@ msgid ""
 "here otherwise the DUID will change on each reboot.%1$s%1$sYou may use the "
 "Copy DUID button to copy the system detected DUID shown in the placeholder. "
 msgstr ""
+"Это уникальный идентификатор DHCPv6 (DUID), используемый брандмауэром при "
+"запросе адреса IPv6. %1$sПо умолчанию брандмауэр автоматически создает "
+"динамический DUID, который не сохраняется в конфигурации брандмауэра. Чтобы "
+"обеспечить постоянное сохранение одинакового идентификатора DUID в "
+"брандмауэре, введите DUID в это поле. Новый DUID вступает в силу после "
+"перезагрузки или когда интерфейс(ы) WAN перенастроены брандмауэром.%1$sЕсли "
+"брандмауэр настроен на использование RAM-диска для /var, лучше всего хранить "
+"DUID здесь, иначе DUID будет меняться при каждой перезагрузке.%1$s%1$sВы "
+"можете использовать кнопку «Копировать DUID», чтобы скопировать обнаруженный "
+"системой DUID."
 
 #: src/usr/local/www/system_advanced_network.php:253
 msgid "Network Interfaces"
-msgstr ""
+msgstr "Сетевые Интерфейсы"
 
 #: src/usr/local/www/system_advanced_network.php:257
 msgid "Hardware Checksum Offloading"
-msgstr ""
+msgstr "Выгрузка аппаратной контрольной суммы"
 
 #: src/usr/local/www/system_advanced_network.php:260
 #, php-format
@@ -29662,10 +29994,15 @@ msgid ""
 "NICs. This will take effect after a machine reboot or re-configure of each "
 "interface."
 msgstr ""
+"Выбор этой опции отключит выгрузку контрольной суммы аппаратной части."
+"%1$sКонтрольная сумма разрывается в некоторых аппаратных средствах, в "
+"частности некоторых картах Realtek. Редко у драйверов могут быть проблемы с "
+"выгрузкой контрольной суммы и некоторыми сетевыми картами. Это вступит в "
+"силу после перезагрузки или повторной настройки каждого интерфейса."
 
 #: src/usr/local/www/system_advanced_network.php:268
 msgid "Hardware TCP Segmentation Offloading"
-msgstr ""
+msgstr "Выгрузка Аппаратной Сегментации TCP"
 
 #: src/usr/local/www/system_advanced_network.php:271
 msgid ""
@@ -29674,10 +30011,14 @@ msgid ""
 "impact performance with some specific NICs. This will take effect after a "
 "machine reboot or re-configure of each interface."
 msgstr ""
+"Выбор этой опции отключит аппаратную сегментацию TCP (TSO, TSO4, TSO6). Эта "
+"выгрузка нарушается в некоторых драйверах оборудования и может повлиять на "
+"производительность некоторых сетевых адаптеров. Это вступит в силу после "
+"перезагрузки или повторной настройки каждого интерфейса."
 
 #: src/usr/local/www/system_advanced_network.php:278
 msgid "Hardware Large Receive Offloading"
-msgstr ""
+msgstr "Выгрузка Аппаратного Большого Приема"
 
 #: src/usr/local/www/system_advanced_network.php:281
 msgid ""
@@ -29686,20 +30027,27 @@ msgid ""
 "performance with some specific NICs. This will take effect after a machine "
 "reboot or re-configure of each interface."
 msgstr ""
+"При выборе этой опции будет отключена аппаратная выгрузка больших объемов "
+"данных (LRO). Эта выгрузка нарушается в некоторых драйверах оборудования и "
+"может повлиять на производительность некоторых сетевых адаптеров. Это "
+"вступит в силу после перезагрузки или повторной настройки каждого интерфейса."
+""
 
 #: src/usr/local/www/system_advanced_network.php:288
 msgid "ARP Handling"
-msgstr ""
+msgstr "Обработка ARP"
 
 #: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
+"Эта опция подавляет сообщения журнала ARP, когда несколько интерфейсов "
+"находятся в одном широковещательном домене."
 
 #: src/usr/local/www/system_advanced_network.php:297
 msgid "Enable flowtable support"
-msgstr ""
+msgstr "Включить поддержку Таблицы Потоков"
 
 #: src/usr/local/www/system_advanced_network.php:299
 msgid ""
@@ -29707,40 +30055,43 @@ msgid ""
 "L2 lookups as well as providing stateful load balancing when used with "
 "RADIX_MPATH."
 msgstr ""
+"Включает инфраструктуру для кэширования потоков в качестве средства "
+"ускорения поиска L3 и L2, а также обеспечения балансировки нагрузки с учетом "
+"состояния при использовании с RADIX_MPATH."
 
 #: src/usr/local/www/system_advanced_notifications.php:101
 msgid "Growl passwords must match"
-msgstr ""
+msgstr "Пароли Growl должны совпадать"
 
 #: src/usr/local/www/system_advanced_notifications.php:134
 msgid "SMTP passwords must match"
-msgstr ""
+msgstr "Пароли SMTP должны совпадать"
 
 #: src/usr/local/www/system_advanced_notifications.php:169
 #, php-format
 msgid "This is a test message from %s.  It is safe to ignore this message."
-msgstr ""
+msgstr "Это тестовое сообщение от%s. Безопасно проигнорировать это сообщение."
 
 #: src/usr/local/www/system_advanced_notifications.php:171
 msgid "Growl testing notification successfully sent"
-msgstr ""
+msgstr "Тестовое уведомление Growl успешно отправлено"
 
 #: src/usr/local/www/system_advanced_notifications.php:184
 #, php-format
 msgid "This is a test message from %s. It is safe to ignore this message."
-msgstr ""
+msgstr "Это тестовое сообщение от%s. Безопасно проигнорировать это сообщение."
 
 #: src/usr/local/www/system_advanced_notifications.php:186
 msgid "SMTP testing e-mail successfully sent"
-msgstr ""
+msgstr "Пробный e-mail SMTP успешно отправлен"
 
 #: src/usr/local/www/system_advanced_notifications.php:217
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:221
 msgid "Disable SMTP"
-msgstr ""
+msgstr "Отключить SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:224
 msgid ""
@@ -29748,216 +30099,239 @@ msgid ""
 "below. Some other mechanisms, such as packages, may need these settings in "
 "place to function."
 msgstr ""
+"Выделите данную опцию, чтобы отключить уведомления SMTP, но при этом "
+"сохранить настройки ниже. Некоторые другие механизмы, такие как пакеты, "
+"могут потребовать наличие этих настроек для нормального функционирования."
 
 #: src/usr/local/www/system_advanced_notifications.php:230
 msgid "E-Mail server"
-msgstr ""
+msgstr "Сервер E-Mail "
 
 #: src/usr/local/www/system_advanced_notifications.php:233
 msgid ""
 "This is the FQDN or IP address of the SMTP E-Mail server to which "
 "notifications will be sent."
 msgstr ""
+"Это полностью определённое имя домена или IP адрес SMTP E-Mail  сервера, на "
+"который будут отправляться уведомления."
 
 #: src/usr/local/www/system_advanced_notifications.php:238
 msgid "SMTP Port of E-Mail server"
-msgstr ""
+msgstr "Порт SMTP сервера E-Mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:241
 msgid ""
 "This is the port of the SMTP E-Mail server, typically 25, 587 (submission) "
 "or 465 (smtps)."
 msgstr ""
+"Это порт SMTP сервера E-Mail, как правило - 25587(отправка) или 465 (smtps)."
 
 #: src/usr/local/www/system_advanced_notifications.php:246
 msgid "Connection timeout to E-Mail server"
-msgstr ""
+msgstr "Таймаут подключения к серверу E-Mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:249
 msgid ""
 "This is how many seconds it will wait for the SMTP server to connect. "
 "Default is 20s."
 msgstr ""
+"Это количество секунд, которое будет потрачено на ожидание подключения "
+"сервера SMTP. Поумолчанию это 2сек."
 
 #: src/usr/local/www/system_advanced_notifications.php:251
 msgid "Secure SMTP Connection"
-msgstr ""
+msgstr "Безопасное Соединение SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:254
 msgid "Enable SSL/TLS"
-msgstr ""
+msgstr "Включить SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:263
 msgid "From e-mail address"
-msgstr ""
+msgstr "От адреса e-mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:266
 msgid "This is the e-mail address that will appear in the from field."
-msgstr ""
+msgstr "Это e-mail адрес, который появится в поле \"от\". "
 
 #: src/usr/local/www/system_advanced_notifications.php:270
 msgid "Notification E-Mail address"
-msgstr ""
+msgstr "E-Mail адрес уведомлений"
 
 #: src/usr/local/www/system_advanced_notifications.php:273
 msgid "Enter the e-mail address to send email notifications to."
-msgstr ""
+msgstr "Укажите e-mail адрес для отправки email   уведомлений."
 
 #: src/usr/local/www/system_advanced_notifications.php:278
 msgid "Notification E-Mail auth username (optional)"
-msgstr ""
+msgstr "Имя пользователя для аутентификации уведомлений E-Mail (опционально)"
 
 #: src/usr/local/www/system_advanced_notifications.php:282
 msgid "Enter the e-mail address username for SMTP authentication."
-msgstr ""
+msgstr "Укажите имя пользователя e-mail адреса для аутентификации SMTP."
 
 #: src/usr/local/www/system_advanced_notifications.php:286
 msgid "Notification E-Mail auth password"
-msgstr ""
+msgstr "Пароль для аутентификации уведомлений E-Mail "
 
 #: src/usr/local/www/system_advanced_notifications.php:289
 msgid "Enter the e-mail account password for SMTP authentication."
-msgstr ""
+msgstr "Укажите пароль  учётной записи e-mail  для аутентификации SMTP."
 
 #: src/usr/local/www/system_advanced_notifications.php:293
 msgid "Notification E-Mail auth mechanism"
-msgstr ""
+msgstr "Метод  аутентификации уведомлений E-Mail"
 
 #: src/usr/local/www/system_advanced_notifications.php:296
 msgid ""
 "Select the authentication mechanism used by the SMTP server. Most work with "
 "PLAIN, some servers like Exchange or Office365 might require LOGIN. "
 msgstr ""
+"Выбрать метод аутентификации, используемый сервером SMTP. Многие серверы "
+"работают с PLAIN, некоторые другие - как Exchange или Office365 - могут "
+"потребовать метод LOGIN. "
 
 #: src/usr/local/www/system_advanced_notifications.php:300
 msgid "Test SMTP Settings"
-msgstr ""
+msgstr "Тестировать настройки SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:303
 msgid ""
 "A test notification will be sent even if the service is marked as disabled.  "
 "The last SAVED values will be used, not necessarily the values entered here."
 msgstr ""
+"Тестовые уведомления будут отправлены, даже если сервис будет помечен как "
+"выключенный. Последние СОХРАНЁННЫЕ значения будут использоваться - не "
+"обязательно значения, указанные здесь."
 
 #: src/usr/local/www/system_advanced_notifications.php:308
 msgid "Sounds"
-msgstr ""
+msgstr "Звуки"
 
 #: src/usr/local/www/system_advanced_notifications.php:312
 msgid "Startup/Shutdown Sound"
-msgstr ""
+msgstr " Звук Запуска/Выключения"
 
 #: src/usr/local/www/system_advanced_notifications.php:315
 msgid "When this is checked, startup and shutdown sounds will no longer play."
 msgstr ""
+"При включении данной опции, звуки запуска и выключения не будут больше "
+"проигрываться."
 
 #: src/usr/local/www/system_advanced_notifications.php:320
 msgid "Growl"
-msgstr ""
+msgstr "Growl"
 
 #: src/usr/local/www/system_advanced_notifications.php:324
 msgid "Disable Growl"
-msgstr ""
+msgstr "Отключить Growl"
 
 #: src/usr/local/www/system_advanced_notifications.php:327
 msgid ""
 "Check this option to disable growl notifications but preserve the settings "
 "below."
 msgstr ""
+"Активируйте данную опцию, чтобы отключить уведомления Growl, но при этом "
+"сохранить настройки ниже."
 
 #: src/usr/local/www/system_advanced_notifications.php:332
 msgid "Registration Name"
-msgstr ""
+msgstr "Имя для Регистрации"
 
 #: src/usr/local/www/system_advanced_notifications.php:336
 msgid "Enter the name to register with the Growl server."
-msgstr ""
+msgstr "Укажите имя для регистрации на сервере Growl."
 
 #: src/usr/local/www/system_advanced_notifications.php:340
 msgid "Notification Name"
-msgstr ""
+msgstr "Имя Уведомления"
 
 #: src/usr/local/www/system_advanced_notifications.php:345
 msgid "Enter a name for the Growl notifications."
-msgstr ""
+msgstr "Укажите имя для уведомлений Growl."
 
 #: src/usr/local/www/system_advanced_notifications.php:352
 msgid "This is the IP address to send growl notifications to."
-msgstr ""
+msgstr "Это IP адрес, на который следует отправлять уведомления growl."
 
 #: src/usr/local/www/system_advanced_notifications.php:359
 msgid "Enter the password of the remote growl notification device."
-msgstr ""
+msgstr "Укажите пароль для удалённого устройства уведомлений growl."
 
 #: src/usr/local/www/system_advanced_notifications.php:363
 msgid "Test Growl Settings"
-msgstr ""
+msgstr "Тестировать Настройки Growl."
 
 #: src/usr/local/www/system_advanced_notifications.php:366
 msgid ""
 "A test notification will be sent even if the service is marked as disabled."
 msgstr ""
+"Пробное уведомление будет отправлено даже если сервис помечен как "
+"выключенный."
 
 #: src/usr/local/www/system_advanced_sysctl.php:92
 msgid "Both a name and a value must be specified."
-msgstr ""
+msgstr "Должны быть указано как имя, так и значение."
 
 #: src/usr/local/www/system_advanced_sysctl.php:94
 msgid "The value may only contain alphanumeric characters, -, _, %, and /."
 msgstr ""
+"Значение может содержать лишь алфавитно-цифровые символы, -, _, %, и /. "
 
 #: src/usr/local/www/system_advanced_sysctl.php:133
 msgid "The firewall tunables have changed."
-msgstr ""
+msgstr "Настройки межсетевого экрана изменены"
 
 #: src/usr/local/www/system_advanced_sysctl.php:153
 msgid "NOTE: "
-msgstr ""
+msgstr "К СВЕДЕНИЮ:"
 
 #: src/usr/local/www/system_advanced_sysctl.php:153
 msgid "The options on this page are intended for use by advanced users only."
 msgstr ""
+"Опции на данной странице предполагаются только для использования "
+"продвинутыми пользователями."
 
 #: src/usr/local/www/system_advanced_sysctl.php:156
 msgid "Tunable Name"
-msgstr ""
+msgstr "Имя Настройки"
 
 #: src/usr/local/www/system_advanced_sysctl.php:159
 msgid "New"
-msgstr ""
+msgstr "Новый"
 
 #: src/usr/local/www/system_advanced_sysctl.php:179
 msgid "Edit tunable"
-msgstr ""
+msgstr "Редактировать настройку"
 
 #: src/usr/local/www/system_advanced_sysctl.php:181
 msgid "Delete/Reset tunable"
-msgstr ""
+msgstr "Удалить/Сбросить настройку"
 
 #: src/usr/local/www/system_advanced_sysctl.php:196
 msgid "Edit Tunable"
-msgstr ""
+msgstr "Редактировать Настройки"
 
 #: src/usr/local/www/system_advanced_sysctl.php:200
 msgid "*Tunable"
-msgstr ""
+msgstr "*Настройка"
 
 #: src/usr/local/www/system_advanced_sysctl.php:207
 msgid "*Value"
-msgstr ""
+msgstr "*Значение"
 
 #: src/usr/local/www/system_authservers.php:56
 msgid "Select LDAP containers for authentication"
-msgstr ""
+msgstr "Выбрать контейнер LDAP для аутентификации"
 
 #: src/usr/local/www/system_authservers.php:57
 msgid "Containers"
-msgstr ""
+msgstr "Контейнеры"
 
 #: src/usr/local/www/system_authservers.php:137
 #, php-format
 msgid "Authentication Server %s deleted."
-msgstr ""
+msgstr "Сервер Аутентификации %s удалён."
 
 #: src/usr/local/www/system_authservers.php:225
 #: src/usr/local/www/system_authservers.php:248
@@ -29974,74 +30348,74 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:188
 #: src/usr/local/www/system_usermanager.php:902
 msgid "Descriptive name"
-msgstr ""
+msgstr "Описательное имя"
 
 #: src/usr/local/www/system_authservers.php:227
 #: src/usr/local/www/system_authservers.php:251
 msgid "Hostname or IP"
-msgstr ""
+msgstr "Имя хоста или IP"
 
 #: src/usr/local/www/system_authservers.php:228
 msgid "Port value"
-msgstr ""
+msgstr "Значение порта"
 
 #: src/usr/local/www/system_authservers.php:230
 msgid "Protocol version"
-msgstr ""
+msgstr "Версия протокола"
 
 #: src/usr/local/www/system_authservers.php:231
 msgid "Search level"
-msgstr ""
+msgstr "Уровень поиска"
 
 #: src/usr/local/www/system_authservers.php:232
 msgid "User naming Attribute"
-msgstr ""
+msgstr "Атрибут именования пользователя"
 
 #: src/usr/local/www/system_authservers.php:233
 msgid "Group naming Attribute"
-msgstr ""
+msgstr "Атрибут именования группы"
 
 #: src/usr/local/www/system_authservers.php:234
 msgid "Group member attribute"
-msgstr ""
+msgstr "Атрибут члена группы"
 
 #: src/usr/local/www/system_authservers.php:235
 msgid "Authentication container"
-msgstr ""
+msgstr "Контейнер аутентификации"
 
 #: src/usr/local/www/system_authservers.php:240
 msgid "Bind user DN"
-msgstr ""
+msgstr "Привязать DN (отличительное имя) пользователя "
 
 #: src/usr/local/www/system_authservers.php:241
 msgid "Bind Password"
-msgstr ""
+msgstr "Привязать Пароль"
 
 #: src/usr/local/www/system_authservers.php:250
 msgid "Radius Protocol"
-msgstr ""
+msgstr "Протокол Радиус"
 
 #: src/usr/local/www/system_authservers.php:263
 #: src/usr/local/www/system_authservers.php:771
 msgid "Accounting port"
-msgstr ""
+msgstr "Порт Учёта"
 
 #: src/usr/local/www/system_authservers.php:275
 msgid "The host name contains invalid characters."
-msgstr ""
+msgstr "Имя хоста содержит невалидные символы."
 
 #: src/usr/local/www/system_authservers.php:279
 msgid "An authentication server with the same name already exists."
-msgstr ""
+msgstr "Сервер аутентификации с таким же именем уже существует."
 
 #: src/usr/local/www/system_authservers.php:285
 #, php-format
 msgid "%s Timeout value must be numeric and positive."
-msgstr ""
+msgstr "%s Значение таймаута должно быть положительным числом."
 
 #: src/usr/local/www/system_authservers.php:292
 msgid "IPv6 does not work for RADIUS authentication, see Bug #4154."
-msgstr ""
+msgstr "IPv6 не работает для аутентификации РАДИУС, смотрите Bug #4154."
 
 #: src/usr/local/www/system_authservers.php:408
 #: src/usr/local/www/system_authservers.php:430
@@ -30052,7 +30426,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:132
 #: src/usr/local/www/system_usermanager_settings.php:185
 msgid "Authentication Servers"
-msgstr ""
+msgstr "Серверы Аутентификации"
 
 #: src/usr/local/www/system_authservers.php:427
 #: src/usr/local/www/system_groupmanager.php:287
@@ -30067,7 +30441,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:83
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "Пользователи"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:268
@@ -30080,25 +30454,25 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:130
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
-msgstr ""
+msgstr "Группы"
 
 #: src/usr/local/www/system_authservers.php:442
 msgid "Server Name"
-msgstr ""
+msgstr "Имя Сервера"
 
 #: src/usr/local/www/system_authservers.php:456
 #: src/usr/local/www/vpn_openvpn_server.php:1373
 msgid "Edit server"
-msgstr ""
+msgstr "Редактировать серверы"
 
 #: src/usr/local/www/system_authservers.php:457
 #: src/usr/local/www/vpn_openvpn_server.php:1374
 msgid "Delete server"
-msgstr ""
+msgstr "Удалить сервер"
 
 #: src/usr/local/www/system_authservers.php:489
 msgid "Server Settings"
-msgstr ""
+msgstr "Настройки сервера"
 
 #: src/usr/local/www/system_authservers.php:493
 #: src/usr/local/www/system_camanager.php:484
@@ -30107,74 +30481,79 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:357
 #: src/usr/local/www/system_crlmanager.php:422
 msgid "*Descriptive name"
-msgstr ""
+msgstr "*Описательное имя"
 
 #: src/usr/local/www/system_authservers.php:508
 msgid "LDAP Server Settings"
-msgstr ""
+msgstr "Настройки сервера LDAP"
 
 #: src/usr/local/www/system_authservers.php:516
 #: src/usr/local/www/system_authservers.php:743
 msgid "*Hostname or IP address"
-msgstr ""
+msgstr "*Имя хоста или IP адреса"
 
 #: src/usr/local/www/system_authservers.php:519
 msgid ""
 "NOTE: When using SSL or STARTTLS, this hostname MUST match the Common Name "
 "(CN) of the LDAP server's SSL Certificate."
 msgstr ""
+"К СВЕДЕНИЮ: при использовании SSL или STARTTLS, данное имя хоста ДОЛЖНО "
+"соответствовать Обычному Имени (CN) SSL сертификата LDAP сервера. "
 
 #: src/usr/local/www/system_authservers.php:524
 msgid "*Port value"
-msgstr ""
+msgstr "*Значение порта"
 
 #: src/usr/local/www/system_authservers.php:531
 msgid "*Transport"
-msgstr ""
+msgstr "*Транспорт"
 
 #: src/usr/local/www/system_authservers.php:539
 #: src/usr/local/www/system_authservers.php:551
 msgid "Peer Certificate Authority"
-msgstr ""
+msgstr "Узел центр сертификации"
 
 #: src/usr/local/www/system_authservers.php:554
 msgid ""
 "This option is used if 'SSL Encrypted' or 'TCP - STARTTLS' options are "
 "chosen. It must match with the CA in the AD otherwise problems will arise."
 msgstr ""
+"Данная опция используется, если выбраны опции 'SSL Encrypted' или 'TCP - "
+"STARTTLS'. Они  должны соответствовать центру сертификации в активном "
+"каталоге, иначе могут возникнуть проблемы."
 
 #: src/usr/local/www/system_authservers.php:561
 msgid "*Protocol version"
-msgstr ""
+msgstr "*Версия протокола"
 
 #: src/usr/local/www/system_authservers.php:568
 msgid "Server Timeout"
-msgstr ""
+msgstr "*Таймаут сервера"
 
 #: src/usr/local/www/system_authservers.php:572
 msgid "Timeout for LDAP operations (seconds)"
-msgstr ""
+msgstr "Таймаут для LDAP операций (в секундах)"
 
 #: src/usr/local/www/system_authservers.php:574
 #: src/usr/local/www/system_authservers.php:592
 msgid "Search scope"
-msgstr ""
+msgstr "Пределы поиска"
 
 #: src/usr/local/www/system_authservers.php:578
 msgid "*Level"
-msgstr ""
+msgstr "*Уровень"
 
 #: src/usr/local/www/system_authservers.php:585
 msgid "Base DN"
-msgstr ""
+msgstr "Базовое определённое имя (DN)"
 
 #: src/usr/local/www/system_authservers.php:596
 msgid "Authentication containers"
-msgstr ""
+msgstr "Контейнеры аутентификации"
 
 #: src/usr/local/www/system_authservers.php:599
 msgid "*Containers"
-msgstr ""
+msgstr "*Контейнеры"
 
 #: src/usr/local/www/system_authservers.php:602
 #, php-format
@@ -30183,55 +30562,59 @@ msgid ""
 "above or the full container path can be specified containing a dc= component."
 "%1$sExample: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers"
 msgstr ""
+"К сведению: разделённые точкой с запятой. Это будет поставлено впереди "
+"поисковой базы dn выше или же  может быть указан полный путь контейнера, "
+"который содержит компонент dc= .%1$sПример: CN=Users;DC=example,DC=com or OU="
+"Staff;OU=Freelancers"
 
 #: src/usr/local/www/system_authservers.php:608
 msgid "Select a container"
-msgstr ""
+msgstr "Выбрать контейнер"
 
 #: src/usr/local/www/system_authservers.php:617
 msgid "Extended query"
-msgstr ""
+msgstr "Расширенный запрос"
 
 #: src/usr/local/www/system_authservers.php:622
 #: src/usr/local/www/system_authservers.php:627
 msgid "Query"
-msgstr ""
+msgstr "Запрос"
 
 #: src/usr/local/www/system_authservers.php:630
 msgid "Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
-msgstr ""
+msgstr "Пример: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
 
 #: src/usr/local/www/system_authservers.php:636
 msgid "Bind anonymous"
-msgstr ""
+msgstr "Привязать анонимно"
 
 #: src/usr/local/www/system_authservers.php:641
 msgid "*Bind credentials"
-msgstr ""
+msgstr "*Привязать имя пользователя и пароль"
 
 #: src/usr/local/www/system_authservers.php:646
 msgid "User DN:"
-msgstr ""
+msgstr "Использовать определённое имя (DN):"
 
 #: src/usr/local/www/system_authservers.php:668
 msgid "Initial Template"
-msgstr ""
+msgstr "Исходный Шаблон"
 
 #: src/usr/local/www/system_authservers.php:676
 msgid "*User naming attribute"
-msgstr ""
+msgstr "*Атрибут именования пользователя"
 
 #: src/usr/local/www/system_authservers.php:683
 msgid "*Group naming attribute"
-msgstr ""
+msgstr "*Атрибут именования группы"
 
 #: src/usr/local/www/system_authservers.php:690
 msgid "*Group member attribute"
-msgstr ""
+msgstr "*Атрибут члена группы"
 
 #: src/usr/local/www/system_authservers.php:697
 msgid "RFC 2307 Groups"
-msgstr ""
+msgstr "Группы RFC 2307"
 
 #: src/usr/local/www/system_authservers.php:700
 msgid ""
@@ -30239,50 +30622,58 @@ msgid ""
 "rather than using groups listed on user object. Leave unchecked for Active "
 "Directory style group membership (RFC 2307bis)."
 msgstr ""
+"Стиль группового членства RFC 2307 более предполагает перечисление членов в "
+"объекте группы, чем использование перечисления групп в объекте пользователя. "
+"Оставьте выключенным для использования стиля группового членства активного "
+"каталога (RFC 2307bis)."
 
 #: src/usr/local/www/system_authservers.php:706
 msgid "Group Object Class"
-msgstr ""
+msgstr "Класс Объекта Группы"
 
 #: src/usr/local/www/system_authservers.php:710
 msgid ""
 "Object class used for groups in RFC2307 mode. Typically \"posixGroup\" or "
 "\"group\"."
 msgstr ""
+"Класс объекта, используемый для групп в режиме RFC2307. Обычно это \"группа "
+"Posix\" или \"группа\""
 
 #: src/usr/local/www/system_authservers.php:715
 msgid "UTF8 Encode"
-msgstr ""
+msgstr "Кодировка UTF8"
 
 #: src/usr/local/www/system_authservers.php:718
 msgid ""
 "Required to support international characters, but may not be supported by "
 "every LDAP server."
 msgstr ""
+"Требуется поддержка международных символов, но это может не поддерживаться "
+"всеми серверами LDAP."
 
 #: src/usr/local/www/system_authservers.php:723
 msgid "Username Alterations"
-msgstr ""
+msgstr "Изменения имени пользователя"
 
 #: src/usr/local/www/system_authservers.php:726
 msgid "e.g. user@host becomes user when unchecked."
-msgstr ""
+msgstr "Например, user@host превратится в user, когда выключено."
 
 #: src/usr/local/www/system_authservers.php:731
 msgid "RADIUS Server Settings"
-msgstr ""
+msgstr "Настройки сервера РАДИУС"
 
 #: src/usr/local/www/system_authservers.php:750
 msgid "*Shared Secret"
-msgstr ""
+msgstr "*Общий ключ"
 
 #: src/usr/local/www/system_authservers.php:757
 msgid "*Services offered"
-msgstr ""
+msgstr "*Предложенные сервисы"
 
 #: src/usr/local/www/system_authservers.php:778
 msgid "Authentication Timeout"
-msgstr ""
+msgstr "Таймаут аутентификации"
 
 #: src/usr/local/www/system_authservers.php:781
 msgid ""
@@ -30292,55 +30683,64 @@ msgid ""
 "increase this timeout to account for how long it will take the user to "
 "receive and enter a token."
 msgstr ""
+"Данное значение (в секундах) контролирует, насколько долго РАДИУС сервер "
+"может отвечать на запрос на аутентификацию. Если оставить поле пустым, "
+"значение по умолчанию  - 5 секунд. К  СВЕДЕНИЮ: при использовании системы "
+"двухфакторной аутентификации, увеличьте данный таймаут для учётной записи до "
+"значения, достаточного для получения и ввода ключа аутентификации."
 
 #: src/usr/local/www/system_authservers.php:800
 msgid "LDAP containers"
-msgstr ""
+msgstr "Контейнеры LDAP"
 
 #: src/usr/local/www/system_authservers.php:817
 msgid "Please fill the required values."
-msgstr ""
+msgstr "Пожалуйста, укажите требуемые значения."
 
 #: src/usr/local/www/system_authservers.php:824
 msgid "Please fill the bind username/password."
-msgstr ""
+msgstr "Пожалуйста, укажите привязанные имя пользователя и пароль."
 
 #: src/usr/local/www/system_camanager.php:34
 msgid "Import an existing Certificate Authority"
-msgstr ""
+msgstr "Импортировать существующий Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:35
 msgid "Create an internal Certificate Authority"
-msgstr ""
+msgstr "Создать Внутренний Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:36
 msgid "Create an intermediate Certificate Authority"
-msgstr ""
+msgstr "Создать Промежуточный Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:93
 #, php-format
 msgid "Certificate Authority %s and its CRLs (if any) successfully deleted."
 msgstr ""
+"Центр Сертификации %s  и его список аннулированных сертификатов (при "
+"наличии) успешно удалены."
 
 #: src/usr/local/www/system_camanager.php:167
 #: src/usr/local/www/system_certmanager.php:238
 msgid "Certificate data"
-msgstr ""
+msgstr "Данные сертификата"
 
 #: src/usr/local/www/system_camanager.php:169
 #: src/usr/local/www/system_certmanager.php:241
 msgid "This certificate does not appear to be valid."
-msgstr ""
+msgstr "Данный сертификат не является валидным."
 
 #: src/usr/local/www/system_camanager.php:172
 msgid "Encrypted private keys are not yet supported."
-msgstr ""
+msgstr "Зашифрованные приватные ключи ещё не поддерживаются."
 
 #: src/usr/local/www/system_camanager.php:175
 #: src/usr/local/www/system_certmanager.php:245
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr ""
+"Представленные приватные ключи не соответствуют представленным данным "
+"сертификата."
 
 #: src/usr/local/www/system_camanager.php:184
 #: src/usr/local/www/system_camanager.php:200
@@ -30349,7 +30749,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:190
 #: src/usr/local/www/system_usermanager.php:916
 msgid "Key length"
-msgstr ""
+msgstr "Длина ключа"
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
@@ -30358,94 +30758,96 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:936
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Lifetime"
-msgstr ""
+msgstr "Время жизни"
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
 #: src/usr/local/www/system_certmanager.php:259
 #: src/usr/local/www/system_certmanager.php:274
 msgid "Distinguished name Country Code"
-msgstr ""
+msgstr "Код страны определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
 #: src/usr/local/www/system_certmanager.php:260
 #: src/usr/local/www/system_certmanager.php:275
 msgid "Distinguished name State or Province"
-msgstr ""
+msgstr "Штат или Провинция определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
 #: src/usr/local/www/system_certmanager.php:261
 #: src/usr/local/www/system_certmanager.php:276
 msgid "Distinguished name City"
-msgstr ""
+msgstr "Город определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
 #: src/usr/local/www/system_certmanager.php:262
 #: src/usr/local/www/system_certmanager.php:277
 msgid "Distinguished name Organization"
-msgstr ""
+msgstr "Организация определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
 #: src/usr/local/www/system_certmanager.php:263
 #: src/usr/local/www/system_certmanager.php:278
 msgid "Distinguished name Email Address"
-msgstr ""
+msgstr "Адрес Email определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
 #: src/usr/local/www/system_certmanager.php:264
 #: src/usr/local/www/system_certmanager.php:279
 msgid "Distinguished name Common Name"
-msgstr ""
+msgstr "Обычное имя (CN) определённого имени (DN)"
 
 #: src/usr/local/www/system_camanager.php:199
 msgid "Signing Certificate Authority"
-msgstr ""
+msgstr "Подписание Центра Сертификации"
 
 #: src/usr/local/www/system_camanager.php:214
 msgid "The field 'Descriptive Name' contains invalid characters."
-msgstr ""
+msgstr "Поле \"Описательное Имя\" содержит невалидные символы."
 
 #: src/usr/local/www/system_camanager.php:220
 #: src/usr/local/www/system_certmanager.php:351
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
-msgstr ""
+msgstr "Поле \"Адрес Email определённого имени\" содержит невалидные символы."
 
 #: src/usr/local/www/system_camanager.php:224
 #: src/usr/local/www/system_certmanager.php:355
 msgid ""
 "The field 'Distinguished name Common Name' contains invalid characters."
 msgstr ""
+"Поле \"Обычное имя (CN) определённого имени (DN)\" содержит невалидные "
+"символы."
 
 #: src/usr/local/www/system_camanager.php:231
 #: src/usr/local/www/system_certmanager.php:363
 #: src/usr/local/www/system_certmanager.php:370
 msgid "Please select a valid Key Length."
-msgstr ""
+msgstr "Пожалуйста, выберите валидную Длину Ключа."
 
 #: src/usr/local/www/system_camanager.php:234
 #: src/usr/local/www/system_certmanager.php:366
 #: src/usr/local/www/system_certmanager.php:373
 msgid "Please select a valid Digest Algorithm."
-msgstr ""
+msgstr "Пожалуйста, выберите валидный Дайджест Алгоритм."
 
 #: src/usr/local/www/system_camanager.php:320
 #: src/usr/local/www/system_certmanager.php:579
 #: src/usr/local/www/system_crlmanager.php:252
 msgid "Certificate Manager"
-msgstr ""
+msgstr "Менеджер Сертификатов"
 
 #: src/usr/local/www/system_camanager.php:320
 #: src/usr/local/www/system_camanager.php:349
 #: src/usr/local/www/system_certmanager.php:597
 #: src/usr/local/www/system_crlmanager.php:335
 msgid "CAs"
-msgstr ""
+msgstr "Центры Сертификации"
 
 #: src/usr/local/www/system_camanager.php:350
 #: src/usr/local/www/system_camanager.php:366
@@ -30455,106 +30857,106 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:336
 #: src/usr/local/www/system_crlmanager.php:579
 msgid "Certificates"
-msgstr ""
+msgstr "Сертификаты"
 
 #: src/usr/local/www/system_camanager.php:351
 #: src/usr/local/www/system_certmanager.php:599
 #: src/usr/local/www/system_crlmanager.php:252
 #: src/usr/local/www/system_crlmanager.php:337
 msgid "Certificate Revocation"
-msgstr ""
+msgstr "Отзыв Сертификата"
 
 #: src/usr/local/www/system_camanager.php:357
 msgid "Certificate Authorities"
-msgstr ""
+msgstr "Центры Сертификации"
 
 #: src/usr/local/www/system_camanager.php:364
 #: src/usr/local/www/system_crlmanager.php:578
 msgid "Internal"
-msgstr ""
+msgstr "Внутренний"
 
 #: src/usr/local/www/system_camanager.php:365
 #: src/usr/local/www/system_certmanager.php:1080
 msgid "Issuer"
-msgstr ""
+msgstr "Издатель"
 
 #: src/usr/local/www/system_camanager.php:367
 #: src/usr/local/www/system_certmanager.php:1081
 msgid "Distinguished Name"
-msgstr ""
+msgstr "Определённое Имя"
 
 #: src/usr/local/www/system_camanager.php:380
 #: src/usr/local/www/system_certmanager.php:1105
 msgid "self-signed"
-msgstr ""
+msgstr "самоподписанный"
 
 #: src/usr/local/www/system_camanager.php:382
 #: src/usr/local/www/system_certmanager.php:1107
 msgid "external"
-msgstr ""
+msgstr "внешний"
 
 #: src/usr/local/www/system_camanager.php:414
 #: src/usr/local/www/system_certmanager.php:1146
 msgid "Valid From"
-msgstr ""
+msgstr "Валиден От"
 
 #: src/usr/local/www/system_camanager.php:414
 #: src/usr/local/www/system_certmanager.php:1146
 msgid "Valid Until"
-msgstr ""
+msgstr "Валиден До"
 
 #: src/usr/local/www/system_camanager.php:425
 #: src/usr/local/www/system_certmanager.php:1167
 msgid "IPsec Tunnel"
-msgstr ""
+msgstr "IPsec Туннель"
 
 #: src/usr/local/www/system_camanager.php:428
 msgid "LDAP Server"
-msgstr ""
+msgstr "Сервер LDAP"
 
 #: src/usr/local/www/system_camanager.php:432
 msgid "Edit CA"
-msgstr ""
+msgstr "Редактировать Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:433
 msgid "Export CA"
-msgstr ""
+msgstr "Экспортировать Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:435
 msgid "Export key"
-msgstr ""
+msgstr "Экспортировать ключ"
 
 #: src/usr/local/www/system_camanager.php:438
 msgid "Delete CA and its CRLs"
-msgstr ""
+msgstr "Удалить Центр Сертификации и списки отозванных сертификатов"
 
 #: src/usr/local/www/system_camanager.php:480
 msgid "Create / Edit CA"
-msgstr ""
+msgstr "Создать / Редактировать Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:492
 #: src/usr/local/www/system_certmanager.php:640
 #: src/usr/local/www/system_crlmanager.php:348
 msgid "*Method"
-msgstr ""
+msgstr "*Метод"
 
 #: src/usr/local/www/system_camanager.php:500
 msgid "Existing Certificate Authority"
-msgstr ""
+msgstr "Существующий Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:505
 #: src/usr/local/www/system_certmanager.php:726
 msgid "*Certificate data"
-msgstr ""
+msgstr "*Данные сертификата"
 
 #: src/usr/local/www/system_camanager.php:507
 #: src/usr/local/www/system_certmanager.php:728
 msgid "Paste a certificate in X.509 PEM format here."
-msgstr ""
+msgstr "Вставьте здесь сертификат в формате X.509 PEM"
 
 #: src/usr/local/www/system_camanager.php:511
 msgid "Certificate Private Key (optional)"
-msgstr ""
+msgstr "Приватный Ключ Сертификата (опционально)"
 
 #: src/usr/local/www/system_camanager.php:513
 msgid ""
@@ -30562,34 +30964,39 @@ msgid ""
 "most cases, but is required when generating a Certificate Revocation List "
 "(CRL)."
 msgstr ""
+"Вставьте здесь приватный ключ для сертификата выше. Это опционально в "
+"большинстве случаев, но это требуется при создании Списка Отзованных "
+"Сертификатов (CRL)."
 
 #: src/usr/local/www/system_camanager.php:519
 msgid "Serial for next certificate"
-msgstr ""
+msgstr "Серийный номер для следующего сертификата"
 
 #: src/usr/local/www/system_camanager.php:522
 msgid ""
 "Enter a decimal number to be used as the serial number for the next "
 "certificate to be created using this CA."
 msgstr ""
+"Укажите десятичное число для использования в качестве серийного номера для  "
+"следующего сертификата, используя данный центр сертификации."
 
 #: src/usr/local/www/system_camanager.php:527
 msgid "Internal Certificate Authority"
-msgstr ""
+msgstr "Внутренний Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:539
 msgid "*Signing Certificate Authority"
-msgstr ""
+msgstr "*Подписание Центра Аутентификации"
 
 #: src/usr/local/www/system_camanager.php:551
 msgid "*Key length (bits)"
-msgstr ""
+msgstr "*Длина ключа (в битах)"
 
 #: src/usr/local/www/system_camanager.php:558
 #: src/usr/local/www/system_certmanager.php:774
 #: src/usr/local/www/system_certmanager.php:917
 msgid "*Digest Algorithm"
-msgstr ""
+msgstr "*Алгоритм Дайджеста"
 
 #: src/usr/local/www/system_camanager.php:561
 #: src/usr/local/www/system_certmanager.php:777
@@ -30597,262 +31004,275 @@ msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
 msgstr ""
+"К СВЕДЕНИЮ: рекомендуется использование, при возможности, алгоритма более "
+"сильного, чем SHA1."
 
 #: src/usr/local/www/system_camanager.php:566
 #: src/usr/local/www/system_certmanager.php:790
 msgid "*Lifetime (days)"
-msgstr ""
+msgstr "*Время жизни (в днях)"
 
 #: src/usr/local/www/system_camanager.php:573
 #: src/usr/local/www/system_certmanager.php:797
 #: src/usr/local/www/system_certmanager.php:925
 msgid "*Country Code"
-msgstr ""
+msgstr "*Код Страны"
 
 #: src/usr/local/www/system_camanager.php:580
 #: src/usr/local/www/system_certmanager.php:804
 #: src/usr/local/www/system_certmanager.php:932
 msgid "*State or Province"
-msgstr ""
+msgstr "*Штат или Провинция"
 
 #: src/usr/local/www/system_camanager.php:588
 #: src/usr/local/www/system_certmanager.php:812
 #: src/usr/local/www/system_certmanager.php:940
 msgid "*City"
-msgstr ""
+msgstr "*Город"
 
 #: src/usr/local/www/system_camanager.php:596
 #: src/usr/local/www/system_certmanager.php:820
 #: src/usr/local/www/system_certmanager.php:948
 msgid "*Organization"
-msgstr ""
+msgstr "*Организация"
 
 #: src/usr/local/www/system_camanager.php:604
 #: src/usr/local/www/system_certmanager.php:828
 #: src/usr/local/www/system_certmanager.php:956
 msgid "Organizational Unit"
-msgstr ""
+msgstr "Организационное подразделение"
 
 #: src/usr/local/www/system_camanager.php:612
 #: src/usr/local/www/system_certmanager.php:836
 #: src/usr/local/www/system_certmanager.php:964
 msgid "*Email Address"
-msgstr ""
+msgstr "*Email  адрес"
 
 #: src/usr/local/www/system_camanager.php:620
 #: src/usr/local/www/system_certmanager.php:844
 #: src/usr/local/www/system_certmanager.php:972
 #: src/usr/local/www/vpn_openvpn_csc.php:340
 msgid "*Common Name"
-msgstr ""
+msgstr "*Обычное Имя (CN)"
 
 #: src/usr/local/www/system_certmanager.php:34
 msgid "Import an existing Certificate"
-msgstr ""
+msgstr "Импортировать существующий Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:35
 msgid "Create an internal Certificate"
-msgstr ""
+msgstr "Создать внутренний Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:36
 msgid "Create a Certificate Signing Request"
-msgstr ""
+msgstr "Создать Запрос на Подписание Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:37
 msgid "Sign a Certificate Signing Request"
-msgstr ""
+msgstr "Подписать Запрос на Подписание Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:53
 msgid "Choose an existing certificate"
-msgstr ""
+msgstr "Выбрать существующий сертификат"
 
 #: src/usr/local/www/system_certmanager.php:94
 #, php-format
 msgid "Certificate %s successfully deleted."
-msgstr ""
+msgstr "Сертификат %s успешно удалён."
 
 #: src/usr/local/www/system_certmanager.php:220
 msgid "CA to sign with"
-msgstr ""
+msgstr "Центр Сертификации, которым подписать"
 
 #: src/usr/local/www/system_certmanager.php:223
 msgid "This signing request does not appear to be valid."
-msgstr ""
+msgstr "Запрос на подписание не  является валидным."
 
 #: src/usr/local/www/system_certmanager.php:227
 msgid "This private does not appear to be valid."
-msgstr ""
+msgstr "Этот приватный сертификат не является валидным"
 
 #: src/usr/local/www/system_certmanager.php:228
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr ""
+"Поле данных ключа должно быть пустым или валидным частным ключом x509 "
 
 #: src/usr/local/www/system_certmanager.php:239
 #: src/usr/local/www/system_certmanager.php:715
 msgid "Key data"
-msgstr ""
+msgstr "Данные ключа"
 
 #: src/usr/local/www/system_certmanager.php:255
 #: src/usr/local/www/system_usermanager.php:189
 #: src/usr/local/www/system_usermanager.php:909
 msgid "Certificate authority"
-msgstr ""
+msgstr "Центр сертификации"
 
 #: src/usr/local/www/system_certmanager.php:257
 msgid "Certificate Type"
-msgstr ""
+msgstr "Тип сертификата"
 
 #: src/usr/local/www/system_certmanager.php:284
 msgid "Existing Certificate Choice"
-msgstr ""
+msgstr "Выбор Существующего Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:533
 msgid "Final Certificate data"
-msgstr ""
+msgstr "Конечные данные Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:557
 #, php-format
 msgid "The certificate modulus does not match the signing request modulus."
-msgstr ""
+msgstr "Модуль сертификата не соответствует модулю запроса на подписание."
 
 #: src/usr/local/www/system_certmanager.php:635
 msgid "Add/Sign a New Certificate"
-msgstr ""
+msgstr "Добавить/Подписать Новый Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:680
 msgid "New CSR (Paste below)"
-msgstr ""
+msgstr "Новый CSR (Вставьте ниже)"
 
 #: src/usr/local/www/system_certmanager.php:683
 msgid "Sign CSR"
-msgstr ""
+msgstr "Подписать CSR"
 
 #: src/usr/local/www/system_certmanager.php:688
 msgid "*CA to sign with"
-msgstr ""
+msgstr "* CA для подписания с"
 
 #: src/usr/local/www/system_certmanager.php:695
 msgid "*CSR to sign"
-msgstr ""
+msgstr "*CSR для подписания"
 
 #: src/usr/local/www/system_certmanager.php:702
 msgid "*Certificate duration (days)"
-msgstr ""
+msgstr "*Срок действия сертификата (дней)"
 
 #: src/usr/local/www/system_certmanager.php:709
 msgid "CSR data"
-msgstr ""
+msgstr "Данные CSR"
 
 #: src/usr/local/www/system_certmanager.php:711
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
-msgstr ""
+msgstr "Вставьте здесь запрос подписи сертификата в формате X.509 PEM."
 
 #: src/usr/local/www/system_certmanager.php:717
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr ""
+"При желании вставьте здесь закрытый ключ. Ключ будет связан с новым "
+"подписанным сертификатом в pfSense"
 
 #: src/usr/local/www/system_certmanager.php:721
 msgid "Import Certificate"
-msgstr ""
+msgstr "Импортировать Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:732
 msgid "*Private key data"
-msgstr ""
+msgstr "*Данные закрытого ключа"
 
 #: src/usr/local/www/system_certmanager.php:734
 msgid "Paste a private key in X.509 PEM format here."
-msgstr ""
+msgstr "Вставьте закрытый ключ в формате X.509 PEM."
 
 #: src/usr/local/www/system_certmanager.php:737
 msgid "Internal Certificate"
-msgstr ""
+msgstr "Внутренний Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:743
 msgid "No internal Certificate Authorities have been defined. "
-msgstr ""
+msgstr "Внутренние центры сертификации (CA) не определены."
 
 #: src/usr/local/www/system_certmanager.php:744
 msgid ""
 "An internal CA must be defined in order to create an internal certificate. "
 msgstr ""
+"Внутренний центр сертификации (CA) должен быть определен для создания "
+"внутреннего сертификата."
 
 #: src/usr/local/www/system_certmanager.php:745
 #, php-format
 msgid "%1$sCreate%2$s an internal CA."
-msgstr ""
+msgstr "%1$sСоздать%2$s внутренний центр сертификации (CA)."
 
 #: src/usr/local/www/system_certmanager.php:742
 #: src/usr/local/www/system_certmanager.php:759
 msgid "*Certificate authority"
-msgstr ""
+msgstr "*Центр сертификации"
 
 #: src/usr/local/www/system_certmanager.php:767
 #: src/usr/local/www/system_certmanager.php:910
 msgid "*Key length"
-msgstr ""
+msgstr "*Длина ключа"
 
 #: src/usr/local/www/system_certmanager.php:782
 msgid "*Certificate Type"
-msgstr ""
+msgstr "*Тип Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:785
 msgid ""
 "Type of certificate to generate. Used for placing restrictions on the usage "
 "of the generated certificate."
 msgstr ""
+"Тип сертификата для генерации. Используется для ограничения использования "
+"сгенерированного сертификата."
 
 #: src/usr/local/www/system_certmanager.php:861
 msgid "Alternative Names"
-msgstr ""
+msgstr "Альтернативные Имена"
 
 #: src/usr/local/www/system_certmanager.php:868
 msgid "FQDN or Hostname"
-msgstr ""
+msgstr "Полное доменное имя или имя хоста"
 
 #: src/usr/local/www/system_certmanager.php:870
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 #: src/usr/local/www/system_certmanager.php:871
 msgid "email address"
-msgstr ""
+msgstr "почтовый адрес"
 
 #: src/usr/local/www/system_certmanager.php:905
 msgid "External Signing Request"
-msgstr ""
+msgstr "Внешний запрос на подпись"
 
 #: src/usr/local/www/system_certmanager.php:920
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr ""
+"ПРИМЕЧАНИЕ: Рекомендуется использовать алгоритм, более сильный, чем SHA1, "
+"когда это возможно"
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "Choose an Existing Certificate"
-msgstr ""
+msgstr "Выберите Существующий Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:1008
 msgid "*Existing Certificates"
-msgstr ""
+msgstr "*Существующие Сертификаты"
 
 #: src/usr/local/www/system_certmanager.php:1020
 msgid "Complete Signing Request for "
-msgstr ""
+msgstr "Полный запрос на подпись для"
 
 #: src/usr/local/www/system_certmanager.php:1031
 msgid "Signing request data"
-msgstr ""
+msgstr "Данные запроса подписи"
 
 #: src/usr/local/www/system_certmanager.php:1035
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr ""
+"Скопируйте данные подписания сертификата отсюда и отправьте его в центр "
+"сертификации для подписания."
 
 #: src/usr/local/www/system_certmanager.php:1039
 msgid "*Final certificate data"
-msgstr ""
+msgstr "*Данные окончательного сертификата"
 
 #: src/usr/local/www/system_certmanager.php:1042
 msgid "Paste the certificate received from the certificate authority here."
@@ -30860,212 +31280,215 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1117
 msgid "private key only"
-msgstr ""
+msgstr "только закрытый ключ"
 
 #: src/usr/local/www/system_certmanager.php:1122
 msgid "external - signature pending"
-msgstr ""
+msgstr "Внешний -  ожидает подпись"
 
 #: src/usr/local/www/system_certmanager.php:1158
 msgid "User Cert"
-msgstr ""
+msgstr "Пользовательский Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:1194
 msgid "Export Certificate"
-msgstr ""
+msgstr "Экспортировать Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:1196
 #: src/usr/local/www/system_certmanager.php:1202
 msgid "Export Key"
-msgstr ""
+msgstr "Экспортировать Ключ"
 
 #: src/usr/local/www/system_certmanager.php:1198
 msgid "Export P12"
-msgstr ""
+msgstr "Экспортировать P12"
 
 #: src/usr/local/www/system_certmanager.php:1200
 msgid "Update CSR"
-msgstr ""
+msgstr "Обновить CSR"
 
 #: src/usr/local/www/system_certmanager.php:1201
 msgid "Export Request"
-msgstr ""
+msgstr "Экспортировать Запрос"
 
 #: src/usr/local/www/system_certmanager.php:1205
 msgid "Delete Certificate"
-msgstr ""
+msgstr "Удалить Сертификат"
 
 #: src/usr/local/www/system_certmanager.php:1221
 msgid "Add/Sign"
-msgstr ""
+msgstr "Добавить/Подписать"
 
 #: src/usr/local/www/system_crlmanager.php:37
 msgid "Create an internal Certificate Revocation List"
-msgstr ""
+msgstr "Создание внутреннего списка отзыва сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:38
 msgid "Import an existing Certificate Revocation List"
-msgstr ""
+msgstr "Импорт существующего списка отозванных сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:79
 msgid "Invalid CRL reference."
-msgstr ""
+msgstr "Неверная ссылка на CRL."
 
 #: src/usr/local/www/system_crlmanager.php:86
 #, php-format
 msgid "Certificate Revocation List %s is in use and cannot be deleted."
 msgstr ""
+"Список отозванных сертификатов %s используется и не может быть удален."
 
 #: src/usr/local/www/system_crlmanager.php:95
 #, php-format
 msgid "Certificate Revocation List %s successfully deleted."
-msgstr ""
+msgstr "Список отозванных сертификатов %s успешно удален."
 
 #: src/usr/local/www/system_crlmanager.php:135
 msgid "Both the Certificate and CRL must be specified."
-msgstr ""
+msgstr "Необходимо указать как сертификат, так и CRL."
 
 #: src/usr/local/www/system_crlmanager.php:139
 msgid "CA mismatch between the Certificate and CRL. Unable to Revoke."
 msgstr ""
+"Несоответствие Центра Сертификации (CA) между сертификатом и CRL. Невозможно "
+"отозвать."
 
 #: src/usr/local/www/system_crlmanager.php:142
 msgid "Cannot revoke certificates for an imported/external CRL."
-msgstr ""
+msgstr "Невозможно отозвать сертификаты для импортированного/внешнего CRL."
 
 #: src/usr/local/www/system_crlmanager.php:176
 #, php-format
 msgid "Deleted Certificate %1$s from CRL %2$s."
-msgstr ""
+msgstr "Удален Сертификат %1$s из CRL %2$s."
 
 #: src/usr/local/www/system_crlmanager.php:183
 #, php-format
 msgid "Failed to delete Certificate %1$s from CRL %2$s."
-msgstr ""
+msgstr "Не удалось удалить сертификат %1$s из CRL %2$s."
 
 #: src/usr/local/www/system_crlmanager.php:198
 msgid "Certificate Revocation List data"
-msgstr ""
+msgstr "Данные списка отозванных сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
 #: src/usr/local/www/vpn_openvpn_client.php:327
 #: src/usr/local/www/vpn_openvpn_server.php:439
 msgid "Certificate Authority"
-msgstr ""
+msgstr "Центр Сертификации"
 
 #: src/usr/local/www/system_crlmanager.php:344
 msgid "Create new Revocation List"
-msgstr ""
+msgstr "Создать новый список Отозванных Сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:364
 msgid "*Certificate Authority"
-msgstr ""
+msgstr "*Центр Сертификации"
 
 #: src/usr/local/www/system_crlmanager.php:371
 msgid "Existing Certificate Revocation List"
-msgstr ""
+msgstr "Существующий Список Отозванных Сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:376
 #: src/usr/local/www/system_crlmanager.php:429
 msgid "*CRL data"
-msgstr ""
+msgstr "*Данные CLR"
 
 #: src/usr/local/www/system_crlmanager.php:378
 #: src/usr/local/www/system_crlmanager.php:431
 msgid "Paste a Certificate Revocation List in X.509 CRL format here."
-msgstr ""
+msgstr "Вставьте сюда список отозванных сертификатов в формате X.509 CRL."
 
 #: src/usr/local/www/system_crlmanager.php:382
 msgid "Internal Certificate Revocation List"
-msgstr ""
+msgstr "Внутренний список отозванных сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:387
 msgid "Lifetime (Days)"
-msgstr ""
+msgstr "Продолжительность жизни (дни)"
 
 #: src/usr/local/www/system_crlmanager.php:395
 msgid "Serial"
-msgstr ""
+msgstr "Последовательный"
 
 #: src/usr/local/www/system_crlmanager.php:418
 msgid "Edit Imported Certificate Revocation List"
-msgstr ""
+msgstr "Редактировать Импортированный Список Отозванных Сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:458
 msgid "Currently Revoked Certificates for CRL"
-msgstr ""
+msgstr "В настоящее время отозванные сертификаты для CRL"
 
 #: src/usr/local/www/system_crlmanager.php:462
 msgid "No certificates found for this CRL."
-msgstr ""
+msgstr "Сертификаты для этого CRL не найдены."
 
 #: src/usr/local/www/system_crlmanager.php:468
 msgid "Certificate Name"
-msgstr ""
+msgstr "Имя Сертификата"
 
 #: src/usr/local/www/system_crlmanager.php:469
 msgid "Revocation Reason"
-msgstr ""
+msgstr "Причина Отзыва"
 
 #: src/usr/local/www/system_crlmanager.php:470
 msgid "Revoked At"
-msgstr ""
+msgstr "Отозван в"
 
 #: src/usr/local/www/system_crlmanager.php:491
 msgid "Delete this certificate from the CRL"
-msgstr ""
+msgstr "Удалить этот сертификат из CLR"
 
 #: src/usr/local/www/system_crlmanager.php:515
 msgid "No certificates found for this CA."
-msgstr ""
+msgstr "Сертификаты для данного центра сертификации (CA) не найдены."
 
 #: src/usr/local/www/system_crlmanager.php:517
 msgid "Choose a Certificate to Revoke"
-msgstr ""
+msgstr "Выберите Сертификат который нужно Отозвать"
 
 #: src/usr/local/www/system_crlmanager.php:525
 #: src/usr/local/www/system_usermanager.php:852
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
 #: src/usr/local/www/vpn_openvpn_server.php:439
 msgid "Certificate"
-msgstr ""
+msgstr "Сертификат"
 
 #: src/usr/local/www/system_crlmanager.php:532
 msgid "Reason"
-msgstr ""
+msgstr "Причина"
 
 #: src/usr/local/www/system_crlmanager.php:572
 msgid "Additional Certificate Revocation Lists"
-msgstr ""
+msgstr "Дополнительный Список Отозванных Сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:612
 #: src/usr/local/www/system_crlmanager.php:619
 msgid "Add or Import CRL"
-msgstr ""
+msgstr "Добавить или импортировать CRL"
 
 #: src/usr/local/www/system_crlmanager.php:639
 msgid "Export CRL"
-msgstr ""
+msgstr "Экспортировать CRL"
 
 #: src/usr/local/www/system_crlmanager.php:642
 #: src/usr/local/www/system_crlmanager.php:646
 msgid "Edit CRL"
-msgstr ""
+msgstr "Редактировать CRL"
 
 #: src/usr/local/www/system_crlmanager.php:650
 msgid "Delete CRL"
-msgstr ""
+msgstr "Удалить CRL"
 
 #: src/usr/local/www/system_gateway_groups.php:72
 #, php-format
 msgid "removed gateway group %s"
-msgstr ""
+msgstr "удалить группу шлюзов %s"
 
 #: src/usr/local/www/system_gateway_groups.php:112
 #: src/usr/local/www/system_gateways.php:237
 msgid "The gateway configuration has been changed."
-msgstr ""
+msgstr "Конфигурация шлюза была изменена."
 
 #: src/usr/local/www/system_gateway_groups.php:117
 #: src/usr/local/www/system_gateways.php:242
@@ -31075,19 +31498,19 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:235
 #: src/usr/local/www/system_routes_edit.php:219
 msgid "Static Routes"
-msgstr ""
+msgstr "Статические Маршруты "
 
 #: src/usr/local/www/system_gateway_groups.php:168
 msgid "Edit gateway group"
-msgstr ""
+msgstr "Редактировать группу шлюзов"
 
 #: src/usr/local/www/system_gateway_groups.php:169
 msgid "Copy gateway group"
-msgstr ""
+msgstr "Копировать группу шлюзов"
 
 #: src/usr/local/www/system_gateway_groups.php:170
 msgid "Delete gateway group"
-msgstr ""
+msgstr "Удалить группу шлюзов"
 
 #: src/usr/local/www/system_gateway_groups.php:191
 #, php-format
@@ -31096,41 +31519,45 @@ msgid ""
 "load balancing, failover, or policy-based routing.%1$sWithout rules "
 "directing traffic into the Gateway Groups, they will not be used."
 msgstr ""
+"Не забудьте использовать эти группы шлюзов в правилах брандмауэра, чтобы "
+"включить балансировку нагрузки, отказоустойчивость или маршрутизацию на "
+"основе политик. %1$sБез правил, направляющих трафик в группы шлюзов, эти "
+"группы не будут использоваться."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:42
 msgid "Member Down"
-msgstr ""
+msgstr "Участник Неактивен"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:43
 #: src/usr/local/www/system_gateway_groups_edit.php:327
 msgid "Packet Loss"
-msgstr ""
+msgstr "Потеря Пакетов"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:44
 #: src/usr/local/www/system_gateway_groups_edit.php:328
 msgid "High Latency"
-msgstr ""
+msgstr "Высокая Задержка"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:45
 msgid "Packet Loss or High Latency"
-msgstr ""
+msgstr "Потеря Пакетов или Высокая Задержка"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:78
 msgid "A valid gateway group name must be specified."
-msgstr ""
+msgstr "Должно быть указано допустимое имя группы шлюзов."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:81
 msgid "gateway group"
-msgstr ""
+msgstr "группа шлюзов"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:90
 msgid "Changing name on a gateway group is not allowed."
-msgstr ""
+msgstr "Изменение имени в группе шлюзов не допускается."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:96
 #, php-format
 msgid "A gateway group with this name \"%s\" already exists."
-msgstr ""
+msgstr "Группа шлюзов с таким именем \"%s\" уже существует."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:113
 #, php-format
@@ -31138,44 +31565,46 @@ msgid ""
 "A gateway group cannot have the same name as a gateway \"%s\" please choose "
 "another name."
 msgstr ""
+"Группа шлюзов не может иметь то же имя, что и шлюз \"%s\", выберите другое "
+"имя."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:118
 msgid "No gateway(s) have been selected to be used in this group"
-msgstr ""
+msgstr "Шлюз(ы) не были выбраны для использования в этой группе"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:202
 msgid "Edit Gateway Group Entry"
-msgstr ""
+msgstr "Редактировать запись группы шлюза"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:214
 msgid "*Gateway Priority"
-msgstr ""
+msgstr "*Приоритет Шлюза"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:268
 #: src/usr/local/www/system_gateway_groups_edit.php:271
 #: src/usr/local/www/system_gateway_groups_edit.php:304
 msgid "Tier"
-msgstr ""
+msgstr "Уровень"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:310
 msgid "Link Priority"
-msgstr ""
+msgstr "Приоритет Канала"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:326
 msgid "Member down"
-msgstr ""
+msgstr "Участник неактивен"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:329
 msgid "Packet Loss or High latency"
-msgstr ""
+msgstr "Потеря Пакетов или Высокая Задержка"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:323
 msgid "*Trigger Level"
-msgstr ""
+msgstr "*Уровень Триггера"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:331
 msgid "When to trigger exclusion of a member"
-msgstr ""
+msgstr "Когда инициировать исключение участника"
 
 #: src/usr/local/www/system_gateways.php:81
 #, php-format
@@ -31183,6 +31612,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
+"Шлюз \"%1$s\" не может быть удален, потому что он используется в Группе "
+"Шлюзов \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:83
 #: src/usr/local/www/system_gateways_edit.php:123
@@ -31191,6 +31622,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
+"Шлюз \"%1$s\" нельзя отключить, так как он используется в Группе Шлюзов "
+"\"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:95
 #, php-format
@@ -31198,6 +31631,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
+"Шлюз \"%1$s\" не может быть удален, поскольку он используется в Статическом "
+"Маршруте \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:99
 #: src/usr/local/www/system_gateways_edit.php:135
@@ -31206,55 +31641,59 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
+"Шлюз \"%1$s\" нельзя отключить, поскольку он используется в Статическом "
+"Маршруте \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:182
 #, php-format
 msgid "Gateways: removed gateways %s"
-msgstr ""
+msgstr "Шлюзы: удаленные шлюзы %s"
 
 #: src/usr/local/www/system_gateways.php:258
 #: src/usr/local/www/system_gateways_edit.php:655
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:253
 msgid "Monitor IP"
-msgstr ""
+msgstr "IP-адрес для мониторинга"
 
 #: src/usr/local/www/system_gateways.php:275
 msgid "This gateway is inactive because interface is missing"
-msgstr ""
+msgstr "Этот шлюз неактивен, поскольку отсутствует интерфейс"
 
 #: src/usr/local/www/system_gateways.php:303
 msgid "Edit gateway"
-msgstr ""
+msgstr "Редактировать шлюз"
 
 #: src/usr/local/www/system_gateways.php:304
 msgid "Copy gateway"
-msgstr ""
+msgstr "Копировать шлюз"
 
 #: src/usr/local/www/system_gateways.php:309
 msgid "Enable gateway"
-msgstr ""
+msgstr "Активировать шлюз"
 
 #: src/usr/local/www/system_gateways.php:312
 msgid "Disable gateway"
-msgstr ""
+msgstr "Отключить шлюз"
 
 #: src/usr/local/www/system_gateways.php:315
 msgid "Delete gateway"
-msgstr ""
+msgstr "Удалить шлюз"
 
 #: src/usr/local/www/system_gateways_edit.php:114
 msgid "gateway"
-msgstr ""
+msgstr "шлюз"
 
 #: src/usr/local/www/system_gateways_edit.php:143
 msgid "A valid gateway IP address must be specified."
-msgstr ""
+msgstr "Должен быть указан действительный IP-адрес шлюза."
 
 #: src/usr/local/www/system_gateways_edit.php:151
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
+"Не удается добавить адрес шлюза IPv4, поскольку на интерфейсе не может быть "
+"найден IPv4-адрес."
 
 #: src/usr/local/www/system_gateways_edit.php:173
 #: src/usr/local/www/system_gateways_edit.php:204
@@ -31262,63 +31701,69 @@ msgstr ""
 msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
-msgstr ""
+msgstr "Адрес шлюза %s не лежит ни в одной из подсетей выбранного интерфейса"
 
 #: src/usr/local/www/system_gateways_edit.php:182
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
+"Не удается добавить адрес шлюза IPv6, поскольку на интерфейсе не может быть "
+"найден IPv6-адрес."
 
 #: src/usr/local/www/system_gateways_edit.php:212
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
 msgstr ""
+"Значения динамического шлюза не могут указываться для интерфейсов со "
+"статической конфигурацией IPv4."
 
 #: src/usr/local/www/system_gateways_edit.php:217
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
 msgstr ""
+"Значения динамического шлюза не могут указываться для интерфейсов со "
+"статической конфигурацией IPv6."
 
 #: src/usr/local/www/system_gateways_edit.php:225
 msgid "A valid data payload must be specified."
-msgstr ""
+msgstr "Должна быть указана допустимая полезная нагрузка данных (payload)."
 
 #: src/usr/local/www/system_gateways_edit.php:230
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
-msgstr ""
+msgstr "Адрес шлюза IPv6 '%s' не может использоваться в качестве шлюза IPv4."
 
 #: src/usr/local/www/system_gateways_edit.php:233
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
-msgstr ""
+msgstr "Адрес шлюза IPv4 '%s' не может использоваться в качестве шлюза IPv6."
 
 #: src/usr/local/www/system_gateways_edit.php:239
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
-msgstr ""
+msgstr "Мониторинговый IPv6 адрес '%s' не может  использован на шлюзе IPv4."
 
 #: src/usr/local/www/system_gateways_edit.php:242
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
-msgstr ""
+msgstr "Мониторинговый IPv4 адрес '%s' не может  использован на шлюзе IPv6."
 
 #: src/usr/local/www/system_gateways_edit.php:251
 msgid "Changing name on a gateway is not allowed."
-msgstr ""
+msgstr "Изменение имени на шлюзе не разрешено."
 
 #: src/usr/local/www/system_gateways_edit.php:257
 #, php-format
 msgid "The gateway name \"%s\" already exists."
-msgstr ""
+msgstr "Имя шлюза  \"%s\" уже существует."
 
 #: src/usr/local/www/system_gateways_edit.php:263
 #, php-format
 msgid "The gateway IP address \"%s\" already exists."
-msgstr ""
+msgstr "IP адрес шлюза \"%s\" уже существует."
 
 #: src/usr/local/www/system_gateways_edit.php:269
 #, php-format
@@ -31326,147 +31771,167 @@ msgid ""
 "The monitor IP address \"%s\" is already in use. A different monitor IP must "
 "be chosen."
 msgstr ""
+"Мониторинговый IP адрес \"%s\" уже используется.  Другой мониторинговый IP "
+"адрес должен быть выбран."
 
 #: src/usr/local/www/system_gateways_edit.php:281
 msgid "The low latency threshold needs to be a numeric value."
-msgstr ""
+msgstr "Значение нижнего  порога  задержки должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:283
 msgid "The low latency threshold needs to be positive."
-msgstr ""
+msgstr "Значение  нижнего  порога  задержки должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:292
 msgid "The high latency threshold needs to be a numeric value."
-msgstr ""
+msgstr "Значение верхнего порога задержки должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:294
 msgid "The high latency threshold needs to be positive."
-msgstr ""
+msgstr "Значение верхнего порога  задержки должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:303
 msgid "The low Packet Loss threshold needs to be a numeric value."
-msgstr ""
+msgstr "Значение нижнего порога  потерь пакетов должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:305
 msgid "The low Packet Loss threshold needs to be positive."
-msgstr ""
+msgstr "Значение нижнего порога потерь пакетов должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:307
 msgid "The low Packet Loss threshold needs to be less than 100."
-msgstr ""
+msgstr "Значение нижнего порога потерь пакетов должно быть меньше, чем 100."
 
 #: src/usr/local/www/system_gateways_edit.php:316
 msgid "The high Packet Loss threshold needs to be a numeric value."
-msgstr ""
+msgstr "Значение верхнего порога  потерь пакетов должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:318
 msgid "The high Packet Loss threshold needs to be positive."
-msgstr ""
+msgstr "Значение верхнего порога потерь пакетов должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:320
 msgid "The high Packet Loss threshold needs to be 100 or less."
 msgstr ""
+"Значение нижнего порога потерь пакетов должно быть меньше или равно 100."
 
 #: src/usr/local/www/system_gateways_edit.php:329
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
 msgstr ""
+"Период времени, который будет использоваться для вычисления среднего "
+"значения , должен быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:331
 msgid "The time period over which results are averaged needs to be positive."
 msgstr ""
+"Период времени, который будет использоваться для вычисления среднего "
+"значения, должен быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:340
 msgid "The probe interval needs to be a numeric value."
-msgstr ""
+msgstr "Значение интервала пробы должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:342
 msgid "The probe interval needs to be positive."
-msgstr ""
+msgstr "Значение интервала пробы должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:351
 msgid "The loss interval needs to be a numeric value."
-msgstr ""
+msgstr "Значение интервала потерь должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:353
 msgid "The loss interval setting needs to be positive."
-msgstr ""
+msgstr "Значение интервала потерь должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:362
 msgid "The alert interval needs to be a numeric value."
-msgstr ""
+msgstr "Значения интервала оповещения должно быть числом."
 
 #: src/usr/local/www/system_gateways_edit.php:364
 msgid "The alert interval setting needs to be positive."
-msgstr ""
+msgstr "Значения интервала оповещения должно быть положительным."
 
 #: src/usr/local/www/system_gateways_edit.php:372
 msgid ""
 "The high latency threshold needs to be greater than the low latency "
 "threshold"
 msgstr ""
+"Значение верхнего порога задержки должно быть выше, чем значение нижнего "
+"порога задержки."
 
 #: src/usr/local/www/system_gateways_edit.php:377
 msgid ""
 "The high packet loss threshold needs to be higher than the low packet loss "
 "threshold"
 msgstr ""
+"Значение верхнего порога потерь пакетов должно быть выше, чем значение "
+"нижнего порога потерь пакетов ."
 
 #: src/usr/local/www/system_gateways_edit.php:383
 msgid ""
 "The loss interval needs to be greater than or equal to the high latency "
 "threshold."
 msgstr ""
+"Значение интервала потерь должно быть выше или равно значению верхнего "
+"порога задержки."
 
 #: src/usr/local/www/system_gateways_edit.php:388
 msgid ""
 "The time period needs to be greater than twice the probe interval plus the "
 "loss interval."
 msgstr ""
+"Значение периода времени должно быть более, чем в два раза выше, чем "
+"значение интервала пробы плюс интервал потерь."
 
 #: src/usr/local/www/system_gateways_edit.php:394
 msgid ""
 "The alert interval needs to be greater than or equal to the probe interval."
 msgstr ""
+"Значение оповещения должно быть больше или равно значения интервала пробы."
 
 #: src/usr/local/www/system_gateways_edit.php:586
 msgid "Edit Gateway"
-msgstr ""
+msgstr "Редактировать Шлюз"
 
 #: src/usr/local/www/system_gateways_edit.php:593
 msgid ""
 "Set this option to disable this gateway without removing it from the list."
 msgstr ""
+"Активируйте данную опцию, чтобы выключить шлюз, не удаляя его из списка."
 
 #: src/usr/local/www/system_gateways_edit.php:600
 msgid "Choose which interface this gateway applies to."
-msgstr ""
+msgstr "Выбирает интерфейс, к которому  применить шлюз."
 
 #: src/usr/local/www/system_gateways_edit.php:610
 msgid "Choose the Internet Protocol this gateway uses."
-msgstr ""
+msgstr "Выбирает Интернет Протокол, который использует данный шлюз."
 
 #: src/usr/local/www/system_gateways_edit.php:626
 msgid "Gateway IP address"
-msgstr ""
+msgstr "IP адрес Шлюза"
 
 #: src/usr/local/www/system_gateways_edit.php:636
 msgid "Default Gateway"
-msgstr ""
+msgstr "Шлюз по умолчанию"
 
 #: src/usr/local/www/system_gateways_edit.php:646
 msgid "This will consider this gateway as always being up."
 msgstr ""
+"Эта настройка заставит систему рассматривать шлюз как постоянно активный."
 
 #: src/usr/local/www/system_gateways_edit.php:650
 msgid "Gateway Action"
-msgstr ""
+msgstr "Действие Шлюза"
 
 #: src/usr/local/www/system_gateways_edit.php:653
 msgid ""
 "No action will be taken on gateway events. The gateway is always considered "
 "up."
 msgstr ""
+"Никаких действий не будет предприниматься при событиях шлюза. Шлюза "
+"рассматривается системой как постоянно активный."
 
 #: src/usr/local/www/system_gateways_edit.php:666
 msgid ""
@@ -31474,53 +31939,59 @@ msgid ""
 "used for the quality RRD graphs as well as the load balancer entries. Use "
 "this if the gateway does not respond to ICMP echo requests (pings)."
 msgstr ""
+"Введите здесь альтернативный адрес, чтобы использовать его для мониторинга "
+"соединения. "
 
 #: src/usr/local/www/system_gateways_edit.php:674
 msgid "Force state"
-msgstr ""
+msgstr "Принудительное состояние"
 
 #: src/usr/local/www/system_gateways_edit.php:677
 msgid "This will force this gateway to be considered down."
-msgstr ""
+msgstr "Это заставит систему рассматривать шлюз как постоянно неактивный."
 
 #: src/usr/local/www/system_gateways_edit.php:684
 msgid "A description may be entered here for reference (not parsed)."
-msgstr ""
+msgstr "Здесь может быть указано описание для ссылки (не форматируется)."
 
 #: src/usr/local/www/system_gateways_edit.php:711
 msgid "Weight for this gateway when used in a Gateway Group."
-msgstr ""
+msgstr "Вес для данного шлюза при использовании в Группе Шлюзов."
 
 #: src/usr/local/www/system_gateways_edit.php:715
 msgid "Data Payload"
-msgstr ""
+msgstr "Полезная нагрузка данных"
 
 #: src/usr/local/www/system_gateways_edit.php:719
 msgid "Define data payload to send on ICMP packets to gateway monitor IP."
 msgstr ""
+"Определить полезную нагрузку данных для отправки ICMP пакетов к "
+"мониторинговому IP шлюза."
 
 #: src/usr/local/www/system_gateways_edit.php:721
 msgid "Latency thresholds"
-msgstr ""
+msgstr "Пороги задержки"
 
 #: src/usr/local/www/system_gateways_edit.php:736
 #, php-format
 msgid ""
 "Low and high thresholds for latency in milliseconds. Default is %1$d/%2$d."
 msgstr ""
+"Значение нижнего и верхнего порогов в миллисекундах. По умолчанию это %1$d/"
+"%2$d."
 
 #: src/usr/local/www/system_gateways_edit.php:741
 msgid "Packet Loss thresholds"
-msgstr ""
+msgstr "Порог Потерь Пакетов"
 
 #: src/usr/local/www/system_gateways_edit.php:756
 #, php-format
 msgid "Low and high thresholds for packet loss in %%. Default is %1$d/%2$d."
-msgstr ""
+msgstr "Значение нижнего и верхнего порогов в %%. По умолчанию это %1$d/%2$d."
 
 #: src/usr/local/www/system_gateways_edit.php:762
 msgid "Probe Interval"
-msgstr ""
+msgstr "Интервал пробы"
 
 #: src/usr/local/www/system_gateways_edit.php:769
 #, php-format

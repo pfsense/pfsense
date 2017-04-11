@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-06 10:51-0400\n"
+"PO-Revision-Date: 2017-04-07 10:52-0400\n"
 "Last-Translator: Vero O. <vero.ovando@live.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es-ES\n"
@@ -119,16 +119,17 @@ msgstr ""
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr ""
+"¡ERROR! ldap_backed() no realizar la operación StartTLS con el servidor %s."
 
 #: src/etc/inc/auth.inc:1343
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr ""
+msgstr "¡ERROR! No puedo enlazarse al servidor %s."
 
 #: src/etc/inc/auth.inc:1361
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr ""
+msgstr "Buscando a %s en el directorio."
 
 #: src/etc/inc/auth.inc:1370
 #, php-format
@@ -138,7 +139,7 @@ msgstr ""
 #: src/etc/inc/auth.inc:1384
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr ""
+msgstr "La búsqueda resultó en un error: %s"
 
 #: src/etc/inc/auth.inc:1400
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
@@ -153,6 +154,8 @@ msgstr ""
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr ""
+"Inicio de sesión exitoso como %1$s a través del servidor LDAP %2$s y DN = "
+"%3$s"
 
 #: src/etc/inc/auth.inc:1489
 #, php-format

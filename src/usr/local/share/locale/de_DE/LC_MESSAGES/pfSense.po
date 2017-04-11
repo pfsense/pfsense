@@ -1,3 +1,4 @@
+# DerEnderKeks <derenderkeks@gmail.com>, 2017. #zanata
 # Egal <Gschulz86@gmail.com>, 2017. #zanata
 # Florian <goflo.mailbox@googlemail.com>, 2017. #zanata
 # Hivetech Riederer <info@hivetech.ch>, 2017. #zanata
@@ -22,12 +23,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-05 04:20-0400\n"
-"Last-Translator: Lars <l.wegener@outlook.com>\n"
+"PO-Revision-Date: 2017-04-11 09:36-0400\n"
+"Last-Translator: DerEnderKeks <derenderkeks@gmail.com>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -1804,7 +1805,7 @@ msgstr "Erstelle keine reflektierte NAT Regel für einen Portbereich > 500"
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
 msgstr ""
 "NAT-Reflection Regeln nur teilweise installiert. Das Maximum von 1000 wurde "
-"erreicht"
+"erreicht."
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
@@ -1915,7 +1916,7 @@ msgstr "Nicht auflösbarer Ziel-Alias  '%1$s' für Regel '%2$s'"
 #: src/etc/inc/filter.inc:2736
 #, fuzzy, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr "Leerer Ziel-Alias  '%1$s' für Regel '%2$s'"
+msgstr "Leerer Port-Alias  '%1$s' für Regel '%2$s'"
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
@@ -6569,11 +6570,11 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:1992
 msgid "realtime d value needs to be numeric"
-msgstr ""
+msgstr "Echtzeit D-Wert muss eine Zahl sein"
 
 #: src/etc/inc/shaper.inc:1995
 msgid "realtime m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "Echtzeit m2-Wert muss die Einheit kb, Mb, Gb or % sein"
 
 #: src/etc/inc/shaper.inc:2262
 msgid "Service Curve (sc)"
@@ -7272,6 +7273,9 @@ msgid ""
 "connection and limit the amount of data queued to the network to just the "
 "amount required to maintain optimum throughput. "
 msgstr ""
+"Das System wird versuchen die Bandbreitenverzögerung für jede Verbindung zu "
+"berechnen und limitiert die Menge an Daten, die an das Netzwerk übergeben "
+"werden, so dass ein optimaler Durchsatz erreicht wird."
 
 #: src/etc/inc/upgrade_config.inc:708
 msgid "Set ICMP Limits"
@@ -7363,12 +7367,14 @@ msgstr ""
 #: src/etc/inc/upgrade_config.inc:5099
 #, php-format
 msgid "Could not extract %s RRD xml file from archive!"
-msgstr ""
+msgstr "Es konnte kein %s RRD XML-File aus dem Archiv entpackt werden!"
 
 #: src/etc/inc/upgrade_config.inc:5104
 #, php-format
 msgid "rrdtool restore -f '%1$s' '%2$s' failed returning %3$s."
 msgstr ""
+"rrdtool restore -f '%1$s' '%2$s' ist fehlgeschlagen und hat %3$s "
+"zurückgegeben."
 
 #: src/etc/inc/util.inc:98
 #, php-format
@@ -7581,9 +7587,9 @@ msgid "Error: Cannot write phase1 key file for %s"
 msgstr "Fehler: Konnte nicht in Phase 1 key file für %s schreiben"
 
 #: src/etc/inc/vpn.inc:674
-#, php-format
+#, fuzzy, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
-msgstr ""
+msgstr "Fehler: Konnte phase1 Zertifikat für %s nicht speichern"
 
 #: src/etc/inc/vpn.inc:739
 #, php-format
@@ -7710,14 +7716,18 @@ msgid "Mirror %s status changed from %s to %s."
 msgstr "Mirror %s Status geändert von %s nach %s."
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
-#, php-format
+#, fuzzy, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
 msgstr ""
+"Die Teilnehmeranzahl des gespiegelten Laufwerks hat sich von %d zu %d "
+"geändert."
 
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
 msgstr ""
+"Status des gespiegelten Laufwerks %s hat sich geändert. Alter Wert: (%s) "
+"Neuer Wert: (%s)"
 
 #: src/usr/local/www/bandwidth_by_ip.php:34
 msgid "Wrong Interface"
@@ -7823,10 +7833,13 @@ msgid "Unfortunately a Programming Bug has been detected"
 msgstr "Unglücklicherweise wurde ein Fehler im Programm gefunen"
 
 #: src/usr/local/www/crash_reporter.php:128
+#, fuzzy
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
 msgstr ""
+"Die Programmierungs Debug Logs können zur Inspektion an die pfSense "
+"Entwickler gesendet werden."
 
 #: src/usr/local/www/crash_reporter.php:129
 #, fuzzy
@@ -8203,7 +8216,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:371
 msgid "Imported m0n0wall configuration"
-msgstr ""
+msgstr "Importierte m0n0wall Konfiguration"
 
 #: src/usr/local/www/diag_backup.php:373
 msgid "The m0n0wall configuration has been restored and upgraded to pfSense."
@@ -8526,7 +8539,7 @@ msgstr "Kommandozeile"
 
 #: src/usr/local/www/diag_command.php:139
 msgid "Nothing to recall"
-msgstr ""
+msgstr "Nichts zu wiederholen"
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid ""
@@ -8549,7 +8562,7 @@ msgstr "Shell-Kommando ausführen"
 
 #: src/usr/local/www/diag_command.php:206
 msgid "Recall Previous Command"
-msgstr ""
+msgstr "Vorherigen Befehl wiederholen"
 
 #: src/usr/local/www/diag_command.php:209
 msgid "Execute the entered command"
@@ -8562,7 +8575,7 @@ msgstr "Ausführen"
 
 #: src/usr/local/www/diag_command.php:213
 msgid "Recall Next Command"
-msgstr ""
+msgstr "Nächsten Befehl wiederholen"
 
 #: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
@@ -8613,18 +8626,21 @@ msgid "Invalid Backup Count specified"
 msgstr "Ungültiges Backup Anzahl angegeben"
 
 #: src/usr/local/www/diag_confbak.php:43
+#, fuzzy
 msgid "(platform default)"
-msgstr ""
+msgstr "(Platform Standard)"
 
 #: src/usr/local/www/diag_confbak.php:45
-#, php-format
+#, fuzzy, php-format
 msgid "Changed backup revision count to %s"
-msgstr ""
+msgstr "Sicherungs Revisions Anzahl wurde auf %s geändert"
 
 #: src/usr/local/www/diag_confbak.php:53
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
 msgstr ""
+"Erfolgreich auf Zeitstempel %1$s mit der Beschreibung \"%2$s\" zurückgesetzt."
+""
 
 #: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
 #: src/usr/local/www/diag_confbak.php:123

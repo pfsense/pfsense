@@ -16,12 +16,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 15:53-0300\n"
+"POT-Creation-Date: 2017-04-11 16:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 03:24-0400\n"
-"Last-Translator: clkw <leandro@fullonmorning.com>\n"
+"PO-Revision-Date: 2017-04-08 11:54-0400\n"
+"Last-Translator: Luiz Fernando Barros <lfb@outlook.com.br>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -5810,7 +5810,7 @@ msgstr "Sincronização de relógio NTP"
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "Daemon do sitema de log"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:431
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -8073,6 +8073,8 @@ msgstr ""
 msgid ""
 "Unset RRD data from configuration after restoring %s configuration area"
 msgstr ""
+"As configurações de dados RRD não estão configuradas após a restauração %s  "
+"na área de configuração"
 
 #: src/usr/local/www/diag_backup.php:280
 msgid ""
@@ -8090,11 +8092,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:302
 msgid "Restore serial console enabling in configuration."
-msgstr ""
+msgstr "Restauração de configuração via console serial está habilitada."
 
 #: src/usr/local/www/diag_backup.php:311
 msgid "Unset RRD data from configuration after restoring full configuration"
 msgstr ""
+"As configurações de dados RRD não estão configuradas após a restauração "
+"completa  da configuração"
 
 #: src/usr/local/www/diag_backup.php:371
 msgid "Imported m0n0wall configuration"
@@ -8360,6 +8364,8 @@ msgid ""
 "Open a %s configuration XML file and click the button below to restore the "
 "configuration."
 msgstr ""
+"Abrir o arquivo de configuração XML %s e clicar no botão abaixo para "
+"restaurar a configuração."
 
 #: src/usr/local/www/diag_backup.php:559
 msgid "Restore area"
@@ -8407,7 +8413,7 @@ msgstr ""
 #: src/usr/local/www/diag_command.php:61
 #, php-format
 msgid "Uploaded file to %s."
-msgstr ""
+msgstr "Arquivo carregado para %s."
 
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
 msgid "Command Prompt"
@@ -8422,6 +8428,8 @@ msgid ""
 "The capabilities offered here can be dangerous. No support is available. Use "
 "them at your own risk!"
 msgstr ""
+"As funcionalidades aqui oferecidas podem ser perigosas. Não há suporte "
+"disponível, Use essas configuração por sua conta e risco."
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
@@ -8430,19 +8438,19 @@ msgstr "Apenas usuários avançados"
 #: src/usr/local/www/diag_command.php:179
 #, php-format
 msgid "Shell Output - %s"
-msgstr ""
+msgstr "Saída Shell - %s"
 
 #: src/usr/local/www/diag_command.php:198
 msgid "Execute Shell Command"
-msgstr ""
+msgstr "Execução de comando Shell"
 
 #: src/usr/local/www/diag_command.php:206
 msgid "Recall Previous Command"
-msgstr ""
+msgstr "Recuperar o comando anterior"
 
 #: src/usr/local/www/diag_command.php:209
 msgid "Execute the entered command"
-msgstr ""
+msgstr "Entre com o comando a ser executado."
 
 #: src/usr/local/www/diag_command.php:211
 #: src/usr/local/www/diag_command.php:302
@@ -8451,11 +8459,11 @@ msgstr "Executar"
 
 #: src/usr/local/www/diag_command.php:213
 msgid "Recall Next Command"
-msgstr ""
+msgstr "Recuperar o próximo comando"
 
 #: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
-msgstr ""
+msgstr "Limpar a entrada de comando"
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
 #: src/usr/local/www/system_groupmanager_addprivs.php:201
@@ -8466,7 +8474,7 @@ msgstr "Limpar"
 
 #: src/usr/local/www/diag_command.php:226
 msgid "Download File"
-msgstr ""
+msgstr "Baixar o arquivo"
 
 #: src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1091
@@ -8487,7 +8495,7 @@ msgstr "Carregar"
 
 #: src/usr/local/www/diag_command.php:295
 msgid "Execute PHP Commands"
-msgstr ""
+msgstr "Execute os comandos PHP"
 
 #: src/usr/local/www/diag_command.php:300
 msgid "Execute this PHP Code"
@@ -8499,16 +8507,16 @@ msgstr "Exemplo"
 
 #: src/usr/local/www/diag_confbak.php:34
 msgid "Invalid Backup Count specified"
-msgstr ""
+msgstr "Contador de backup especificado inválido"
 
 #: src/usr/local/www/diag_confbak.php:43
 msgid "(platform default)"
-msgstr ""
+msgstr "(Plataforma padrão)"
 
 #: src/usr/local/www/diag_confbak.php:45
 #, php-format
 msgid "Changed backup revision count to %s"
-msgstr ""
+msgstr "Contador de revisão de backup alterado para %s"
 
 #: src/usr/local/www/diag_confbak.php:53
 #, php-format
@@ -8556,6 +8564,8 @@ msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
 "or leave blank for the default value (%s for the current platform)."
 msgstr ""
+"Numero máximo de configurações anteriores mantém no cache, 0 para não "
+"backups, ou deixe em branco para o valor padrão (%s para a plataforma atual)"
 
 #: src/usr/local/www/diag_confbak.php:173
 msgid "Current space used by backups"
@@ -8568,6 +8578,10 @@ msgid ""
 "options and select the newer configuration in the right column, then press "
 "the \"Diff\" button."
 msgstr ""
+"Para ver as diferenças entre uma configuracao antiga e uma configuracao mais "
+"recente, selecione a configuracao antiga usando a coluna esquerda das opções "
+"de rádio e selecione a configuracao mais recente na coluna direita, então "
+"pressione o botão \"Diff\" "
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
@@ -8629,14 +8643,15 @@ msgstr "Reverter configuração"
 msgid ""
 "Confirmation Required to replace the current configuration with this backup."
 msgstr ""
+"Para substituir à atual configuração de backup uma confirmação é requerida."
 
 #: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
-msgstr ""
+msgstr "Baixar configuração"
 
 #: src/usr/local/www/diag_confbak.php:269
 msgid "Delete config"
-msgstr ""
+msgstr "Deletar configuração"
 
 #: src/usr/local/www/diag_confbak.php:286
 msgid "No backups found."
@@ -8656,7 +8671,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
-msgstr ""
+msgstr "Resetar configurações de fabrica"
 
 #: src/usr/local/www/diag_defaults.php:61
 msgid ""
@@ -8958,7 +8973,7 @@ msgstr "Protocolo"
 
 #: src/usr/local/www/diag_dump_states.php:183
 msgid "Source (Original Source) -> Destination (Original Destination)"
-msgstr ""
+msgstr "Origem (Origem original) -> Destino (Destino original)"
 
 #: src/usr/local/www/diag_dump_states.php:184
 #: src/usr/local/www/status_dhcpv6_leases.php:539
@@ -8977,17 +8992,19 @@ msgstr "Bytes"
 #: src/usr/local/www/diag_dump_states.php:254
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
-msgstr ""
+msgstr "Remover todas as entradas de estado %1$s para %2$s"
 
 #: src/usr/local/www/diag_dump_states.php:269
 msgid "No states were found that match the current filter."
-msgstr ""
+msgstr "Nenhum dos estados encontrados combinam com o filtro atual"
 
 #: src/usr/local/www/diag_dump_states.php:271
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
 msgstr ""
+"O estado mostrado suprimiu sem filtro de submissão. Ver em Sistema > "
+"Configuração Geral, Estado de filtro requerido."
 
 #: src/usr/local/www/diag_dump_states.php:274
 msgid "No states were found."
@@ -8995,11 +9012,11 @@ msgstr "Nenhum estado foi encontrado."
 
 #: src/usr/local/www/diag_dump_states_sources.php:93
 msgid "Filters"
-msgstr ""
+msgstr "Filtros"
 
 #: src/usr/local/www/diag_dump_states_sources.php:115
 msgid "Current Source Tracking Entries"
-msgstr ""
+msgstr "Entradas de rastreabilidade de origem"
 
 #: src/usr/local/www/diag_dump_states_sources.php:120
 msgid "Source -> Destination"
@@ -9023,6 +9040,7 @@ msgstr "Taxa"
 #, php-format
 msgid "Remove all source tracking entries from %1$s to %2$s"
 msgstr ""
+"Remova todas as entradas de rastreabilidade de origem de %1$s para %2$s"
 
 #: src/usr/local/www/diag_dump_states_sources.php:154
 #: src/usr/local/www/diag_gmirror.php:250
@@ -9044,39 +9062,39 @@ msgstr "Editar arquivo"
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
-msgstr ""
+msgstr "Nenhum nome de arquivo foi especificado."
 
 #: src/usr/local/www/diag_edit.php:44
 msgid "Loading a directory is not supported."
-msgstr ""
+msgstr "Não há a suporte para carregar diretório."
 
 #: src/usr/local/www/diag_edit.php:48
 msgid "File does not exist or is not a regular file."
-msgstr ""
+msgstr "Arquivo não existe ou não é um arquivo regular."
 
 #: src/usr/local/www/diag_edit.php:54
 msgid "Failed to read file."
-msgstr ""
+msgstr "Falha ao ler o arquivo."
 
 #: src/usr/local/www/diag_edit.php:79
 msgid "Failed to write file."
-msgstr ""
+msgstr "Falha ao escrever no arquivo."
 
 #: src/usr/local/www/diag_edit.php:83
 msgid "Error while writing file."
-msgstr ""
+msgstr "Erro durante a escrita no arquivo."
 
 #: src/usr/local/www/diag_edit.php:87
 msgid "File saved successfully."
-msgstr ""
+msgstr "Arquivo solve com sucesso."
 
 #: src/usr/local/www/diag_edit.php:107
 msgid "Save / Load a File from the Filesystem"
-msgstr ""
+msgstr "Salva / Carregar o arquivo do sistema de arquivos "
 
 #: src/usr/local/www/diag_edit.php:111
 msgid "Path to file to be edited"
-msgstr ""
+msgstr "Caminho para editar o arquivo"
 
 #: src/usr/local/www/diag_edit.php:114 src/usr/local/www/diag_edit.php:116
 msgid "Load"
@@ -9088,39 +9106,39 @@ msgstr "Navegar"
 
 #: src/usr/local/www/diag_edit.php:129
 msgid "GoTo Line #"
-msgstr ""
+msgstr "Vá para linha #"
 
 #: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:384
 msgid "GEOM Mirrors"
-msgstr ""
+msgstr "GEOM Espelhos"
 
 #: src/usr/local/www/diag_gmirror.php:38
 msgid "Forget all formerly connected consumers"
-msgstr ""
+msgstr "Esquecer todos os antigos clientes conectados"
 
 #: src/usr/local/www/diag_gmirror.php:39
 msgid "Remove metadata from disk"
-msgstr ""
+msgstr "Remover metadado do disco"
 
 #: src/usr/local/www/diag_gmirror.php:40
 msgid "Insert consumer into mirror"
-msgstr ""
+msgstr "Inserir clientes dentro do espelho"
 
 #: src/usr/local/www/diag_gmirror.php:41
 msgid "Remove consumer from mirror"
-msgstr ""
+msgstr "Remover clientes do espelho"
 
 #: src/usr/local/www/diag_gmirror.php:42
 msgid "Reactivate consumer on mirror"
-msgstr ""
+msgstr "Reativar clientes no espelho"
 
 #: src/usr/local/www/diag_gmirror.php:43
 msgid "Deactivate consumer from mirror"
-msgstr ""
+msgstr "Desativar clientes no espelho"
 
 #: src/usr/local/www/diag_gmirror.php:44
 msgid "Force rebuild of mirror consumer"
-msgstr ""
+msgstr "Forçar reconstrução do espelho de clientes "
 
 #: src/usr/local/www/diag_gmirror.php:62
 msgid "A valid mirror name must be supplied."
@@ -9239,23 +9257,27 @@ msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:331
 msgid "Clear Metadata"
-msgstr ""
+msgstr "Limpar metadado"
 
 #: src/usr/local/www/diag_gmirror.php:360
 msgid "No unused consumers found"
-msgstr ""
+msgstr "Não foram encontrados clientes sem uso"
 
 #: src/usr/local/www/diag_gmirror.php:366
 msgid ""
 "Consumers may only be added to a mirror if they are larger than the size of "
 "the mirror."
 msgstr ""
+"Clientes podem apenas ser adicionados para um espelho se eles forem maiores "
+"que o tamanho do espelho."
 
 #: src/usr/local/www/diag_gmirror.php:367
 msgid ""
 "To repair a failed mirror, first perform a 'Forget' command on the mirror, "
 "followed by an 'insert' action on the new consumer."
 msgstr ""
+"Para reparar uma falha de espelho, primeiro realize o comando de esquecer "
+"espelho, seguido pela ação de inserir um novo cliente."
 
 #: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:387
 msgid "Halt System"
@@ -9264,15 +9286,16 @@ msgstr "Desligar sistema"
 #: src/usr/local/www/diag_halt.php:52
 msgid "The system is halting now. This may take one minute or so."
 msgstr ""
+"O sistema está sendo desligado. Isso pode tomar um minuto ou um pouco mais."
 
 #: src/usr/local/www/diag_halt.php:55
 #, php-format
 msgid "Not actually halting (DEBUG is set true)%s"
-msgstr ""
+msgstr "Desligamento não verdadeiro (DEBUG está configurado verdadeiro)%s"
 
 #: src/usr/local/www/diag_halt.php:66
 msgid "System Halt Confirmation"
-msgstr ""
+msgstr "Confirmação de desligamento  de sistema"
 
 #: src/usr/local/www/diag_halt.php:70
 msgid ""
@@ -9280,14 +9303,17 @@ msgid ""
 "system dashboard. (There will be a brief delay before the dashboard appears."
 ")"
 msgstr ""
+"Clique em \"Desligar\" para desligar o sistema imediatamente , ou "
+"\"Cancelar\"para ir para os painel do sistema. (Haverá um breve atraso antes "
+"do painel de sistema aparecer)"
 
 #: src/usr/local/www/diag_halt.php:72 src/usr/local/www/diag_halt.php:74
 msgid "Halt"
-msgstr ""
+msgstr "Desligar"
 
 #: src/usr/local/www/diag_halt.php:72
 msgid "Halt the system and power off"
-msgstr ""
+msgstr "Para o sistema e desligar"
 
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/diag_reboot.php:119
 #: src/usr/local/www/firewall_nat.php:486
@@ -9302,11 +9328,11 @@ msgstr "Limitador"
 
 #: src/usr/local/www/diag_limiter_info.php:37
 msgid "No limiters were found on this system."
-msgstr ""
+msgstr "Limitadores não foram encontrados neste sistema."
 
 #: src/usr/local/www/diag_limiter_info.php:39
 msgid "Limiters:"
-msgstr ""
+msgstr "Limitadores:"
 
 #: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:350
 #: src/usr/local/www/status_queues.php:110
@@ -9315,7 +9341,7 @@ msgstr "Filas"
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"
-msgstr ""
+msgstr "Informação de limites"
 
 #: src/usr/local/www/diag_limiter_info.php:82
 msgid "Gathering Limiter information, please wait..."
@@ -9346,13 +9372,13 @@ msgstr "Captura de pacotes"
 #: src/usr/local/www/system_camanager.php:419
 #: src/usr/local/www/system_certmanager.php:1161
 msgid "OpenVPN Server"
-msgstr ""
+msgstr "Servidor OpenVPN"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:422
 #: src/usr/local/www/system_certmanager.php:1164
 msgid "OpenVPN Client"
-msgstr ""
+msgstr "Cliente OpenVPN"
 
 #: src/usr/local/www/diag_packet_capture.php:149
 msgid "Invalid interface."
@@ -9364,15 +9390,15 @@ msgstr "Família de Endereço inválido."
 
 #: src/usr/local/www/diag_packet_capture.php:158
 msgid "IPv4 with ICMPv6 is not valid."
-msgstr ""
+msgstr "IPv4 com ICMPv6 não é valido."
 
 #: src/usr/local/www/diag_packet_capture.php:161
 msgid "IPv6 with ICMP is not valid."
-msgstr ""
+msgstr "IPv6 com ICMP não é valido."
 
 #: src/usr/local/www/diag_packet_capture.php:164
 msgid "IPv6 with ARP is not valid."
-msgstr ""
+msgstr "IPv6 com ARP não é valido."
 
 #: src/usr/local/www/diag_packet_capture.php:169
 msgid "Invalid protocol."
@@ -9382,24 +9408,28 @@ msgstr "procolo inválido."
 #, php-format
 msgid "A valid IP address, CIDR block, or MAC address must be specified. [%s]"
 msgstr ""
+"Um endereço de IP válido, bloco CIRD, ou MAC address deve ser especificado. "
+"[%s]"
 
 #: src/usr/local/www/diag_packet_capture.php:190
 msgid ""
 "Partial MAC addresses can only be matched using 1, 2, or 4 MAC segments "
 "(bytes)."
 msgstr ""
+"Endereço parcial MAC só pode se combinado usando 1,2 ou 3 seguimentos MAC "
+"(bytes)."
 
 #: src/usr/local/www/diag_packet_capture.php:198
 msgid "Invalid value specified for port."
-msgstr ""
+msgstr "O valor de porta especificado é invalido."
 
 #: src/usr/local/www/diag_packet_capture.php:206
 msgid "Invalid value specified for packet length."
-msgstr ""
+msgstr "O valor de tamanho de pacote especificado é invalido."
 
 #: src/usr/local/www/diag_packet_capture.php:214
 msgid "Invalid value specified for packet count."
-msgstr ""
+msgstr "O valor de contador de pacote especificado é invalido."
 
 #: src/usr/local/www/diag_packet_capture.php:239
 #: src/usr/local/www/diag_packet_capture.php:411
@@ -9418,11 +9448,11 @@ msgstr "Parar"
 
 #: src/usr/local/www/diag_packet_capture.php:274
 msgid "Exclude"
-msgstr ""
+msgstr "Excluir"
 
 #: src/usr/local/www/diag_packet_capture.php:304
 msgid "Packet Capture Options"
-msgstr ""
+msgstr "Opções de captura de pacote"
 
 #: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
@@ -9663,15 +9693,15 @@ msgstr "tamanho"
 
 #: src/usr/local/www/diag_pftop.php:100
 msgid "speed"
-msgstr ""
+msgstr "Velocidade"
 
 #: src/usr/local/www/diag_pftop.php:101
 msgid "state"
-msgstr ""
+msgstr "Estado"
 
 #: src/usr/local/www/diag_pftop.php:102
 msgid "time"
-msgstr ""
+msgstr "Tempo"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
@@ -9722,11 +9752,11 @@ msgstr "Endereço de Origem"
 
 #: src/usr/local/www/diag_pftop.php:113 src/usr/local/www/status_graph.php:136
 msgid "Sort by"
-msgstr ""
+msgstr "Ordenar por"
 
 #: src/usr/local/www/diag_pftop.php:134
 msgid "Maximum # of States"
-msgstr ""
+msgstr "Maximo # de estados"
 
 #: src/usr/local/www/diag_pftop.php:169
 msgid "Gathering pfTOP activity, please wait..."
@@ -9766,15 +9796,15 @@ msgstr ""
 #: src/usr/local/www/diag_ping.php:139 src/usr/local/www/diag_testport.php:259
 #: src/usr/local/www/diag_traceroute.php:133
 msgid "*IP Protocol"
-msgstr ""
+msgstr "Protocolo IP"
 
 #: src/usr/local/www/diag_ping.php:148
 msgid "Automatically selected (default)"
-msgstr ""
+msgstr "Selecionado automaticamente (Padrão)"
 
 #: src/usr/local/www/diag_ping.php:146
 msgid "*Source address"
-msgstr ""
+msgstr "Endereço de origem"
 
 #: src/usr/local/www/diag_ping.php:149
 msgid "Select source address for the ping."
@@ -9812,7 +9842,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:107
 msgid "System Reboot Confirmation"
-msgstr ""
+msgstr "Confirmação de reinicio do sitema"
 
 #: src/usr/local/www/diag_reboot.php:111
 msgid ""
@@ -9823,7 +9853,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:113
 msgid "Reboot the system"
-msgstr ""
+msgstr "Reiniciar sistema"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
@@ -9857,11 +9887,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_resetstate.php:92
 msgid "State reset options"
-msgstr ""
+msgstr "Opção de reinicio de estados"
 
 #: src/usr/local/www/diag_resetstate.php:96
 msgid "State Table"
-msgstr ""
+msgstr "Tabela de estado"
 
 #: src/usr/local/www/diag_resetstate.php:114
 #: src/usr/local/www/status_lb_pool.php:249
@@ -9871,7 +9901,7 @@ msgstr "Reiniciar"
 
 #: src/usr/local/www/diag_resetstate.php:121
 msgid "Please select at least one reset option"
-msgstr ""
+msgstr "Por favor selecione pelo menos uma opção de reinicio"
 
 #: src/usr/local/www/diag_resetstate.php:122
 msgid "Do you really want to reset the selected states?"

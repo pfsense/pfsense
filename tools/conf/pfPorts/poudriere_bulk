@@ -41,6 +41,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 security/%%PRODUCT_NAME%%-pkg-snort
 security/%%PRODUCT_NAME%%-pkg-acme
 sysutils/%%PRODUCT_NAME%%-pkg-Shellcmd
+sysutils/%%PRODUCT_NAME%%-pkg-stunnel
 net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd
 net/%%PRODUCT_NAME%%-pkg-OpenBGPD

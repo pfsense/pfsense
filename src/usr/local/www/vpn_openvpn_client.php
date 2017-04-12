@@ -1012,8 +1012,8 @@ events.push(function() {
 
 	// Process "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
-		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
-		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked') || ($('#mode').val() == 'p2p_shared_key'));
+		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked') || ($('#mode').val() == 'p2p_shared_key'));
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------

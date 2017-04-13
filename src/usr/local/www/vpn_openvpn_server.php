@@ -1754,7 +1754,7 @@ events.push(function() {
 	});
 
 	 // Tun/tap mode
-	$('#dev_mode, #serverbridge_dhcp').click(function () {
+	$('#dev_mode, #serverbridge_dhcp').change(function () {
 		tuntap_change();
 	});
 

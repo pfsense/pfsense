@@ -1029,17 +1029,17 @@ events.push(function() {
 	});
 
 	 // Mode
-	$('#mode').click(function () {
+	$('#mode').change(function () {
 		mode_change();
 	});
 
 	 // Use proxy
-	$('#proxy_authtype').click(function () {
+	$('#proxy_authtype').change(function () {
 		useproxy_changed();
 	});
 
 	 // Tun/tap
-	$('#dev_mode').click(function () {
+	$('#dev_mode').change(function () {
 		dev_mode_change();
 	});
 

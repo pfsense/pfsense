@@ -1012,8 +1012,8 @@ events.push(function() {
 
 	// Process "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
-		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
-		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked') || ($('#mode').val() == 'p2p_shared_key'));
+		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked') || ($('#mode').val() == 'p2p_shared_key'));
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
@@ -1029,17 +1029,17 @@ events.push(function() {
 	});
 
 	 // Mode
-	$('#mode').click(function () {
+	$('#mode').change(function () {
 		mode_change();
 	});
 
 	 // Use proxy
-	$('#proxy_authtype').click(function () {
+	$('#proxy_authtype').change(function () {
 		useproxy_changed();
 	});
 
 	 // Tun/tap
-	$('#dev_mode').click(function () {
+	$('#dev_mode').change(function () {
 		dev_mode_change();
 	});
 

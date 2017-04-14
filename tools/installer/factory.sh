@@ -127,6 +127,7 @@ if [ "${machine_arch}" != "armv6" ]; then
 		echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
 		echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
 		echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
+		echo 'kern.cam.boot_delay="10000"' >> /tmp/loader.conf.local.pfSense
 	else
 		echo "-S115200 -D" > /tmp/boot.config
 		echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense

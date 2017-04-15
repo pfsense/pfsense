@@ -541,29 +541,25 @@ function cert_get_issuer($str_crt, $decode = true) {
 	return $issuer;
 }
 
-/* this function works on x509 (crt), rsa key (prv), and req(csr) */
-function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
+/* Works for both RSA and ECC (crt) and key (prv) */
+function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
-
-	$modulus = "";
-	if (in_array($type, array("crt", "prv", "csr"))) {
-		$type = str_replace(array("crt", "prv", "csr"), array("x509", "rsa", "req"), $type);
-		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
+	$publickey = "";
+	if ($type == "prv") {
+		exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
+		$publickey = implode("\n", $out);
 	}
-	return $modulus;
-}
-
-/* Same but returns modulus keysize not modulus itself */
-function cert_get_modulus_keysize($str_crt, $decode = true, $type = "crt") {
-	// modulus usually returned as "modulus=.....". Remove anything before an "=" and return 4 x (hex string length)
-	$raw_modulus = explode('=', cert_get_modulus($str_crt, $decode, $type));
-	return strlen(array_pop($raw_modulus))*4;
-}
-
-function csr_get_modulus($str_crt, $decode = true) {
-	return cert_get_modulus($str_crt, $decode, "csr");
+	if ($type == "crt") {
+		exec("echo \"{$str_crt}\" | openssl x509 -inform pem -noout -pubkey", $out);
+		$publickey = implode("\n", $out);
+	}
+	if ($type == "csr") {
+		exec("echo \"{$str_crt}\" | openssl req -inform pem -noout -pubkey", $out);
+		$publickey = implode("\n", $out);
+	}
+	return $publickey;
 }
 
 function cert_get_purpose($str_crt, $decode = true) {
@@ -601,10 +597,6 @@ function cert_get_serial($str_crt, $decode = true) {
 	} else {
 		return NULL;
 	}
-}
-
-function prv_get_modulus($str_crt, $decode = true) {
-	return cert_get_modulus($str_crt, $decode, "prv");
 }
 
 function is_openvpn_server_ca($caref) {
@@ -861,7 +853,7 @@ function cert_compare($cert1, $cert2) {
 	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false)) &&
 	    (cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
 	    (cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
-	    (cert_get_modulus($c1, false) == cert_get_modulus($c2, false))) {
+	    (cert_get_publickey($c1, false) == cert_get_publickey($c2, false))) {
 		return true;
 	}
 	return false;

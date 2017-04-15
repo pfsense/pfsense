@@ -30,10 +30,8 @@
 ##|*MATCH=diag_arp.php*
 ##|-PRIV
 
-@ini_set('zlib.output_compression', 0);
-@ini_set('implicit_flush', 1);
-
 require_once("guiconfig.inc");
+require_once("diag_ping_shared.php");
 
 // delete arp entry
 if (isset($_POST['deleteentry'])) {
@@ -275,19 +273,7 @@ if ($savemsg) {
 }
 ?>
 
-<!-- On modern hardware the table will load so fast you may never see this! -->
-<div id="loading">
-	<?= gettext(" Loading, please wait...")?>
-</div>
-
 <?php
-
-// Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) {
-	ob_end_flush();
-}
-
-ob_implicit_flush(1);
 
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
@@ -361,6 +347,7 @@ $mac_man = load_mac_manufacturer_table();
 				<td><?=$entry['linktype']?></td>
 				<td>
 					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>" usepost></a>
+					<a class="fa fa-rss ping" title="<?=gettext("Ping")?>" data-ip="<?=$entry['ip']?>" href="#"></a>
 				</td>
 			</tr>
 		<?php endforeach?>
@@ -370,12 +357,22 @@ $mac_man = load_mac_manufacturer_table();
 
 	</div>
 </div>
-
+<?php
+$form = getPingForm('', $ipproto, $sourceip, DEFAULT_PING_COUNT)
+		->setAttribute('id', 'ping-form')
+		->setAction(PING_ACTION_FILE_NAME)
+		->addClass('hidden');
+echo $form;
+?>
 <script type="text/javascript">
 //<![CDATA[
-// Clear the "loading" div once the page has loaded"
 events.push(function() {
-	$('#loading').empty();
+	// Wire-up click event to trigger a ping from the listing.
+	$("a.ping").click(function(event) {
+		event.preventDefault();
+		$("#host").val($(this).data('ip'));
+		$("#ping-form").submit();
+	});
 });
 //]]>
 </script>

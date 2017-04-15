@@ -34,12 +34,11 @@
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require_once("guiconfig.inc");
+require_once("diag_ping_shared.php");
 
-define('MAX_COUNT', 10);
-define('DEFAULT_COUNT', 3);
 $do_ping = false;
 $host = '';
-$count = DEFAULT_COUNT;
+$count = DEFAULT_PING_COUNT;
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
@@ -50,8 +49,8 @@ if ($_POST || $_REQUEST['host']) {
 	$reqdfieldsn = array(gettext("Host"), gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
-		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
+	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_PING_COUNT)) {
+		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_PING_COUNT);
 	}
 
 	$host = trim($_REQUEST['host']);
@@ -72,7 +71,7 @@ if ($_POST || $_REQUEST['host']) {
 		}
 		$count = $_REQUEST['count'];
 		if (preg_match('/[^0-9]/', $count)) {
-			$count = DEFAULT_COUNT;
+			$count = DEFAULT_PING_COUNT;
 		}
 	}
 }
@@ -122,49 +121,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form(false);
-
-$section = new Form_Section('Ping');
-
-$section->addInput(new Form_Input(
-	'host',
-	'*Hostname',
-	'text',
-	$host,
-	['placeholder' => 'Hostname to ping']
-));
-
-$section->addInput(new Form_Select(
-	'ipproto',
-	'*IP Protocol',
-	$ipproto,
-	['ipv4' => 'IPv4', 'ipv6' => 'IPv6']
-));
-
-$section->addInput(new Form_Select(
-	'sourceip',
-	'*Source address',
-	$sourceip,
-	array('' => gettext('Automatically selected (default)')) + get_possible_traffic_source_addresses(true)
-))->setHelp('Select source address for the ping.');
-
-$section->addInput(new Form_Select(
-	'count',
-	'Maximum number of pings',
-	$count,
-	array_combine(range(1, MAX_COUNT), range(1, MAX_COUNT))
-))->setHelp('Select the maximum number of pings.');
-
-$form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'Submit',
-	'Ping',
-	null,
-	'fa-rss'
-))->addClass('btn-primary');
-
-print $form;
+echo getPingForm($host, $ipproto, $sourceip, $count);
 
 if ($do_ping && !empty($result) && !$input_errors) {
 ?>

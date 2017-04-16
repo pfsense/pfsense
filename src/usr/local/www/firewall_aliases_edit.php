@@ -60,10 +60,6 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST['save']) {
-	$origname = $_POST['origname'];
-}
-
 // Debugging
 if ($debug) {
 	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
@@ -122,6 +118,14 @@ if (isset($id) && $a_aliases[$id]) {
 			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
 		}
 	}
+}
+
+if ($_POST['save']) {
+	// Remember the original name on an attempt to save
+	$origname = $_POST['origname'];
+} else {
+	// Set the original name on edit (or add, when this will be blank)
+	$origname = $pconfig['name'];
 }
 
 $tab = $_REQUEST['tab'];
@@ -468,7 +472,7 @@ if ($_POST['save']) {
 		/*	 Check to see if alias name needs to be
 		 *	 renamed on referenced rules and such
 		 */
-		if ($_POST['name'] <> $_POST['origname']) {
+		if ($_POST['name'] <> $origname) {
 			update_alias_name($_POST['name'], $origname);
 		}
 
@@ -635,7 +639,7 @@ $form->addGlobal(new Form_Input(
 	'origname',
 	null,
 	'hidden',
-	$pconfig['name']
+	$origname
 ));
 
 if (isset($id) && $a_aliases[$id]) {

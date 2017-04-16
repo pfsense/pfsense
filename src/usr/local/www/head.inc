@@ -267,7 +267,7 @@ if ($platform['name'] == "uFW") {
 	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
 }
 
-$opts = get_configured_interface_with_descr(false, true);
+$opts = get_configured_interface_with_descr(true);
 
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {

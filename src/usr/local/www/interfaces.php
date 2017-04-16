@@ -50,7 +50,7 @@ if (isset($_POST['referer'])) {
 }
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 
 $if = "wan";
 
@@ -2441,7 +2441,7 @@ function build_ipv6interface_list() {
 
 	$list = array('' => '');
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$dynv6ifs = array();
 
 	foreach ($interfaces as $iface => $ifacename) {

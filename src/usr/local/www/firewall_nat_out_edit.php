@@ -472,7 +472,7 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['nonat'])
 ))->setHelp('In most cases this option is not required.');
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 
 foreach ($iflist as $if => $ifdesc) {
 	if (have_ruleint_access($if)) {

@@ -4879,7 +4879,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 				return get_interface_linklocal($interface);
 			} else {
 				/* if list */
-				$ifdescrs = get_configured_interface_with_descr(false, true);
+				$ifdescrs = get_configured_interface_with_descr(true);
 				foreach ($ifdescrs as $if => $ifname) {
 					if ($if == $interface || $ifname == $interface) {
 						return $ifname;

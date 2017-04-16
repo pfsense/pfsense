@@ -51,7 +51,7 @@ if (is_array($config['load_balancer']['lbpool'])) {
 	}
 }
 
-$reserved_ifs = get_configured_interface_list(false, true);
+$reserved_ifs = get_configured_interface_list(true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 

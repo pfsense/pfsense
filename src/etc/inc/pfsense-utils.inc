@@ -605,7 +605,7 @@ function is_schedule_inuse($schedule) {
 function setup_microcode() {
 
 	/* if list */
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if => $ifdescr) {
 		enable_hardware_offloading($if);
 	}

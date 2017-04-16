@@ -1367,16 +1367,13 @@ function compare_interface_friendly_names($a, $b) {
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list($only_opt = false, $withdisabled = false) {
+function get_configured_interface_list($withdisabled = false) {
 	global $config;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$iflist[$if] = $if;
 		}

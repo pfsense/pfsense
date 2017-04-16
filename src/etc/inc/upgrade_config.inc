@@ -742,7 +742,7 @@ function upgrade_041_to_042() {
 function upgrade_042_to_043() {
 	global $config;
 	/* migrate old interface gateway to the new gateways config */
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	$gateways = array();
 	$i = 0;
 	foreach ($iflist as $ifname => $interface) {
@@ -837,7 +837,7 @@ function upgrade_043_to_044() {
 
 function upgrade_044_to_045() {
 	global $config;
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		$i = 0;
 		foreach ($config['vlans']['vlan'] as $id => $vlan) {

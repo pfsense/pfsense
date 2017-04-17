@@ -546,20 +546,21 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
-	$publickey = "";
-	if ($type == "prv") {
-		exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
-		$publickey = implode("\n", $out);
+	switch ($type) {
+		case 'prv':
+			exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
+			break;
+		case 'crt':
+			exec("echo \"{$str_crt}\" | openssl x509 -inform pem -noout -pubkey", $out);
+			break;
+		case 'csr':
+			exec("echo \"{$str_crt}\" | openssl req -inform pem -noout -pubkey", $out);
+			break;
+		default:
+			$out = array();
+			break;
 	}
-	if ($type == "crt") {
-		exec("echo \"{$str_crt}\" | openssl x509 -inform pem -noout -pubkey", $out);
-		$publickey = implode("\n", $out);
-	}
-	if ($type == "csr") {
-		exec("echo \"{$str_crt}\" | openssl req -inform pem -noout -pubkey", $out);
-		$publickey = implode("\n", $out);
-	}
-	return $publickey;
+	return implode("\n", $out);
 }
 
 function cert_get_purpose($str_crt, $decode = true) {

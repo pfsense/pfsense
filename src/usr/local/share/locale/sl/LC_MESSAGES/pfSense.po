@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:36-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-11 03:40-0400\n"
+"PO-Revision-Date: 2017-04-15 04:23-0400\n"
 "Last-Translator: matija <matija.jeraj@gmail.com>\n"
 "Language-Team: Slovenian\n"
 "Language: sl\n"
@@ -1506,102 +1506,102 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr ""
+msgstr "Photuris"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
-msgstr ""
+msgstr "Preusmeri"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "Usmerjevalno naznanilo"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "Povpraševanje po usmerjevalnikih"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Preštevilčenje usmerjevalnika"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "PRESKOČI"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr ""
+msgstr "Vir rušenja"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr ""
+msgstr "Časovni žig odgovor"
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "Časovni žig"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr ""
+msgstr "Čas je presežen"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "Paket je prevelik"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
 msgid "Traceroute"
-msgstr ""
+msgstr "Sledenje poti"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "Destinacija ni dosegljiva"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "Kdo si ti odgovor"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "Kdo si ti zahteva"
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
-msgstr ""
+msgstr "Inicializacija"
 
 #: src/etc/inc/filter.inc:240
 msgid "Configuring firewall"
-msgstr ""
+msgstr "Nastavitve požarne pregrade"
 
 #: src/etc/inc/filter.inc:247
 msgid "Creating aliases"
-msgstr ""
+msgstr "Ustvarjam vzdevek"
 
 #: src/etc/inc/filter.inc:253
 msgid "Generating Limiter rules"
-msgstr ""
+msgstr "Ustvarjanje pravil omejevalnika"
 
 #: src/etc/inc/filter.inc:256
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "Ustvarjanje NAT pravil"
 
 #: src/etc/inc/filter.inc:262
 msgid "Generating filter rules"
-msgstr ""
+msgstr "Ustvarjanje filter pravil"
 
 #: src/etc/inc/filter.inc:269
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "Ustvarjanje ALTQ čakalne vrste"
 
 #: src/etc/inc/filter.inc:274
 msgid "Loading filter rules"
-msgstr ""
+msgstr "Nalagam filter pravila"
 
 #: src/etc/inc/filter.inc:281
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "Filter je onemogočen. Pravila niso naložena."
 
 #: src/etc/inc/filter.inc:283 src/etc/inc/filter.inc:535
 #: src/etc/inc/interfaces.inc:198 src/etc/inc/interfaces.inc:222
@@ -1622,20 +1622,20 @@ msgstr ""
 #: src/etc/inc/system.inc:1316 src/etc/inc/system.inc:1619
 #: src/etc/inc/system.inc:2191
 msgid "done."
-msgstr ""
+msgstr "končano."
 
 #: src/etc/inc/filter.inc:379
 msgid "Setting up logging information"
-msgstr ""
+msgstr "Nastavljam prijavne informacije"
 
 #: src/etc/inc/filter.inc:384
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "Nastavljam SCRUM informacije"
 
 #: src/etc/inc/filter.inc:430
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "Vrstica v vprašanju prebrana [%1$d]: %2$s "
 
 #: src/etc/inc/filter.inc:437
 msgid "PF was wedged/busy and has been reset."
@@ -1644,41 +1644,41 @@ msgstr ""
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Prišlo je do napake pri nalaganju pravil: %1$s - %2$s "
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
-msgstr ""
+msgstr "Obdelujem zahtevo za izklop vmesnika"
 
 #: src/etc/inc/filter.inc:524
 msgid "Running plugins"
-msgstr ""
+msgstr "Zagnani vtičniki"
 
 #: src/etc/inc/filter.inc:528
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "Zagnani vtičniki (pf)"
 
 #: src/etc/inc/filter.inc:530
 msgid "Plugins completed."
-msgstr ""
+msgstr "Vtičniki zaključeni."
 
 #: src/etc/inc/filter.inc:533
 msgid "Done"
-msgstr ""
+msgstr "Končano"
 
 #: src/etc/inc/filter.inc:766
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
-msgstr ""
+msgstr "Vzdevki s številčnimi imeni niso veljavni. Zavračam vzdevek %s"
 
 #: src/etc/inc/filter.inc:844
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "Ustvarjam element skupine prehoda..."
 
 #: src/etc/inc/filter.inc:884
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "Nastavljam pot z %1$s na %2$s"
 
 #: src/etc/inc/filter.inc:888
 #, php-format
@@ -1695,91 +1695,91 @@ msgstr ""
 #: src/etc/inc/filter.inc:1265
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr ""
+msgstr "Ustvarjanje NAT pravila za %s..."
 
 #: src/etc/inc/filter.inc:1363
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr ""
+msgstr "Ustvarjanje pravila za %s...  "
 
 #: src/etc/inc/filter.inc:1484
 msgid "Not installing NAT reflection rules for a port range > 500"
-msgstr ""
+msgstr "Ne nameščam NAT pravil za področje vmesnika > 500"
 
 #: src/etc/inc/filter.inc:1490
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr ""
+msgstr "Nameščanje delnih NAT pravil. Največje število 1,000 je doseženo."
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
-msgstr ""
+msgstr "localhost"
 
 #: src/etc/inc/filter.inc:1580
 msgid "static route"
-msgstr ""
+msgstr "statična pot"
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
-msgstr ""
+msgstr "DHCP "
 
 #: src/etc/inc/filter.inc:1626
 msgid "PPPoE server"
-msgstr ""
+msgstr "PPPoE strežnik"
 
 #: src/etc/inc/filter.inc:1637
 msgid "L2TP server"
-msgstr ""
+msgstr "L2TP strežnik"
 
 #: src/etc/inc/filter.inc:1646
 msgid "OpenVPN server"
-msgstr ""
+msgstr "OpenVPN strežnik"
 
 #: src/etc/inc/filter.inc:1655
 msgid "OpenVPN client"
-msgstr ""
+msgstr "OpenVPN odjemalec"
 
 #: src/etc/inc/filter.inc:1665
 msgid "IPsec client"
-msgstr ""
+msgstr "IPsec odjemalec"
 
 #: src/etc/inc/filter.inc:1701
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr "Samodejno ustvarjeno pravilo za ISAKMP"
 
 #: src/etc/inc/filter.inc:1711
 msgid "Auto created rule"
-msgstr ""
+msgstr "Samodejno ustvarjeno pravilo"
 
 #: src/etc/inc/filter.inc:1844
 msgid "Creating 1:1 rules..."
-msgstr ""
+msgstr "Ustvarjanje 1:1 pravil..."
 
 #: src/etc/inc/filter.inc:2029
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr ""
+msgstr "Ustvarjanje naprednega izhodnega pravila %s"
 
 #: src/etc/inc/filter.inc:2076
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "Ustvarjanje izhodnega NAT pravila"
 
 #: src/etc/inc/filter.inc:2083
 msgid "Creating automatic outbound rules"
-msgstr ""
+msgstr "Ustvarjanje samodejnih izhodnih pravil"
 
 #: src/etc/inc/filter.inc:2113
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "Ustvarjanje TFTP pomočnika"
 
 #: src/etc/inc/filter.inc:2157
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "Ustvarjanje NAT pravil %s"
 
 #: src/etc/inc/filter.inc:2387
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "Ustvarjanje filter pravil %s ..."
 
 #: src/etc/inc/filter.inc:2411
 #, php-format
@@ -1789,7 +1789,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:2648
 #, php-format
 msgid "Creating filter rules %s ..."
-msgstr ""
+msgstr "Ustvarjanje filter pravil %s ..."
 
 #: src/etc/inc/filter.inc:2703
 #, php-format
@@ -2667,7 +2667,7 @@ msgstr ""
 msgid "Mobile Client"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3262,19 +3262,23 @@ msgid "Norwegian Bokmål"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Chinese (Simplified, China)"
+msgid "Russian"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2838
+msgid "Chinese (Simplified, China)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2839
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
-#: src/etc/inc/pfsense-utils.inc:3074
+#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "No Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
+#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3290,83 +3294,83 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3076
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3091
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3095
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3100
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3104
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -34596,11 +34600,11 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
-msgstr ""
+msgstr "Naprej"
 
 #: src/usr/local/www/status_logs_common.inc:804
 msgid "Reverse"
-msgstr ""
+msgstr "Nasprotno"
 
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
@@ -34774,7 +34778,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:426
 msgid "Disable all packet filtering."
-msgstr ""
+msgstr "Onemogoči vso filtriranje paketkov."
 
 #: src/usr/local/www/system_advanced_firewall.php:435
 msgid ""
@@ -34788,7 +34792,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:512
 msgid "Disable all auto-added VPN rules."
-msgstr ""
+msgstr "Onemogoči vsa samodejno dodana VPN pravila."
 
 #: src/usr/local/www/system_advanced_firewall.php:519
 msgid "Disable reply-to on WAN rules"
@@ -34820,7 +34824,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:396
 msgid "Enable PowerD"
-msgstr ""
+msgstr "Omogoči PowerD"
 
 #: src/usr/local/www/system_advanced_misc.php:474
 msgid "Do not kill connections when schedule expires"
@@ -34836,11 +34840,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:506
 msgid "Use memory file system for /tmp and /var"
-msgstr ""
+msgstr "Uporabi sistemski dokument "
 
 #: src/usr/local/www/system_advanced_misc.php:589
 msgid "Do NOT send HOST UUID with user agent"
-msgstr ""
+msgstr "NE pošlji UUID te naprave uporabniškem odjemalcu"
 
 #: src/usr/local/www/system_advanced_network.php:176
 msgid ""
@@ -34849,11 +34853,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:187
 msgid "Enable IPv6 over IPv4 tunneling"
-msgstr ""
+msgstr "Omogoči IPv6 namesto IPv4 tuneliranja prometa"
 
 #: src/usr/local/www/system_advanced_network.php:208
 msgid "Prefer to use IPv4 even if IPv6 is available"
-msgstr ""
+msgstr "Uporabi IPv4 če tudi je na voljo IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:216
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
@@ -34993,156 +34997,160 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:233
 msgid "NAT configuration "
-msgstr ""
+msgstr "NAT konfiguracija"
 
 #: src/usr/local/www/system_hasync.php:241
 msgid "IPsec configuration "
-msgstr ""
+msgstr "IPsec konfiguracija"
 
 #: src/usr/local/www/system_hasync.php:249
 msgid "OpenVPN configuration "
-msgstr ""
+msgstr "OpenVPN konfiguracija"
 
 #: src/usr/local/www/system_hasync.php:257
 msgid "DHCP Server settings "
-msgstr ""
+msgstr "Nastavitve DHCP strežnika"
 
 #: src/usr/local/www/system_hasync.php:265
 msgid "WoL Server settings "
-msgstr ""
+msgstr "Nastavitve WoL strežnika"
 
 #: src/usr/local/www/system_hasync.php:273
 msgid "Static Route configuration "
-msgstr ""
+msgstr "Konfiguracija statične poti"
 
 #: src/usr/local/www/system_hasync.php:281
 msgid "Load Balancer configuration "
-msgstr ""
+msgstr "Konfiguracija strežnika za razporejanje prometa"
 
 #: src/usr/local/www/system_hasync.php:289
 msgid "Virtual IPs "
-msgstr ""
+msgstr "Virtualni IP naslovi"
 
 #: src/usr/local/www/system_hasync.php:297
 msgid "Traffic Shaper configuration "
-msgstr ""
+msgstr "Konfiguracija oblikovalca prometa "
 
 #: src/usr/local/www/system_hasync.php:305
 msgid "Traffic Shaper Limiters configuration "
-msgstr ""
+msgstr "Konfiguracija omejevalnika prometa"
 
 #: src/usr/local/www/system_hasync.php:313
 msgid "DNS Forwarder and DNS Resolver configurations "
-msgstr ""
+msgstr "Konfiguracija DNS posredovalca in DNS razreševalnika"
 
 #: src/usr/local/www/system_hasync.php:321
 msgid "Captive Portal "
-msgstr ""
+msgstr "Prijavni portal"
 
 #: src/usr/local/www/system_routes_edit.php:263
 msgid "Disable this static route"
-msgstr ""
+msgstr "Onemogoči statično pot"
 
 #: src/usr/local/www/system_update_settings.php:170
 msgid "Disable the automatic dashboard auto-update check"
-msgstr ""
+msgstr "Onemogoči samodejne preveritve posodobitev za nadzorno ploščo"
 
 #: src/usr/local/www/system_update_settings.php:182
 msgid "Enable repository/branch sync before reboot"
-msgstr ""
+msgstr "Omogoči sinhronizacijo arhiva pred ponovnim zagonom"
 
 #: src/usr/local/www/system_update_settings.php:228
 msgid "Minimal"
-msgstr ""
+msgstr "Minimalen"
 
 #: src/usr/local/www/system_update_settings.php:242
 msgid "Show Files"
-msgstr ""
+msgstr "Pokaži dokumente"
 
 #: src/usr/local/www/system_update_settings.php:249
 msgid "Show Command"
-msgstr ""
+msgstr "Pokaži ukaz"
 
 #: src/usr/local/www/system_update_settings.php:256
 msgid "Dry Run"
-msgstr ""
+msgstr "Preizkus"
 
 #: src/usr/local/www/system_usermanager.php:721
 msgid "This user cannot login"
-msgstr ""
+msgstr "Uporabnik se ne more prijaviti"
 
 #: src/usr/local/www/system_usermanager.php:785
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr ""
+"Za tega uporabnika uporabi posebne nastavavitve za prikaz GUI in kontrolne "
+"plošče."
 
 #: src/usr/local/www/system_usermanager.php:853
 msgid "Click to create a user certificate"
-msgstr ""
+msgstr "Izberi za ustvarjanje uporabniškega certifikata"
 
 #: src/usr/local/www/system_usermanager.php:952
 msgid "Click to paste an authorized key"
-msgstr ""
+msgstr "Izberi, da lahko prilepiš avtorizacijski ključ"
 
 #: src/usr/local/www/system_usermanager_settings.php:241
 msgid ""
 "<span id=\"ldaptestop\">Testing pfSense LDAP settings... One moment please..."
 ""
 msgstr ""
+"<span id=\"ldaptestop\">Testiram pfSense LDAP nastavitve...Počakajte "
+"trenutek..."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
 msgid "Provide a virtual IP address to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji navidezni IP naslov"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:511
 msgid "Provide a virtual IPv6 address to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji navidezni IPv6 naslov"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:548
 msgid "Provide a list of accessible networks to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji seznam dosegljivih omrežij "
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:555
 msgid "Allow clients to save Xauth passwords (Cisco VPN client only)."
-msgstr ""
+msgstr "Dovoli odjemalcem da shranijo Xauth gesla (samo Cisco VPN odjemalec)."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:442
 #: src/usr/local/www/vpn_openvpn_server.php:1150
 msgid "Provide a default domain name to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji privzeto ime domene"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:585
 msgid ""
 "Provide a list of split DNS domain names to clients. Enter a space separated "
 "list."
-msgstr ""
+msgstr "Odjemalcem pošlji seznam DNS domen. Seznam vnesi s presledki."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:608
 #: src/usr/local/www/vpn_openvpn_csc.php:462
 msgid "Provide a DNS server list to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji seznam DNS strežnikov"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:554
 #: src/usr/local/www/vpn_openvpn_server.php:1258
 msgid "Provide a WINS server list to clients"
-msgstr ""
+msgstr "Odjemalcem pošlji seznam WINS strežnikov"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:659
 msgid ""
 "Provide the Phase2 PFS group to clients ( overrides all mobile phase2 "
 "settings )"
-msgstr ""
+msgstr "Odjemalcem pošlji Phase2 PFS skupino"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:682
 msgid "Provide a login banner to clients"
-msgstr ""
+msgstr "Zagotovi prijavno sporočilo za odjemalce"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:658
 msgid ""
 "Set this option to disable this phase1 without removing it from the list. "
-msgstr ""
+msgstr "Nastavi to možnost za onemogočenje faze1 brez odstranitve s seznama."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:829
 msgid "Disables renegotiation when a connection is about to expire."
@@ -35169,7 +35177,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:891
 msgid "Enable DPD"
-msgstr ""
+msgstr "Omogoči DPD"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:501
 msgid "Disable this phase 2 entry without removing it from the list. "
@@ -35193,7 +35201,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:315
 msgid "Enable Unity Plugin"
-msgstr ""
+msgstr "Omogoči Unity vtičnik"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:322
 msgid "Enable strict Certificate Revocation List checking"
@@ -35209,23 +35217,23 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:193
 msgid "Enable L2TP server"
-msgstr ""
+msgstr "Omogoči L2TP strežnik"
 
 #: src/usr/local/www/vpn_l2tp.php:279
 msgid "Use a RADIUS server for authentication"
-msgstr ""
+msgstr "Uporabi RADIUS strežnik za avtentikacijo"
 
 #: src/usr/local/www/vpn_l2tp.php:286
 msgid "Enable RADIUS accounting"
-msgstr ""
+msgstr "Omogoči RADIUS zaračunavanje"
 
 #: src/usr/local/www/vpn_l2tp.php:306
 msgid "Issue IP Addresses via RADIUS server."
-msgstr ""
+msgstr "Izdaj IP naslov preko RADIUS strežnika"
 
 #: src/usr/local/www/vpn_openvpn_client.php:538
 msgid "Infinitely resolve server "
-msgstr ""
+msgstr "Neskončno razrešuj strežnik"
 
 #: src/usr/local/www/vpn_openvpn_client.php:618
 #: src/usr/local/www/vpn_openvpn_server.php:757

@@ -9,11 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:36-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-10 05:48-0400\n"
+"PO-Revision-Date: 2017-04-16 10:29-0400\n"
 "Last-Translator: Talle <talle-zanata@gelesneeuw.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -1405,7 +1405,6 @@ msgstr ""
 "Geprobeerd te deblokkeren maar er was geen host IP of interface beschikbaar"
 
 #: src/etc/inc/easyrule.inc:460
-#, fuzzy
 msgid "Invalid interface for pass rule:"
 msgstr "Ongeldige interface voor doorlaat regel:"
 
@@ -2141,7 +2140,7 @@ msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
 msgstr "GATEWAYS: Groep %1$s heeft geen gateways beschikbaar in rang %2$s!"
 
 #: src/etc/inc/gwlb.inc:1100
-#, fuzzy, php-format
+#, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr ""
 "Bijwerken van gateway groep gateway voor %1$s - nieuwe gateway is %2$s"
@@ -2771,7 +2770,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiele Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3403,19 +3402,23 @@ msgid "Norwegian Bokmål"
 msgstr "Noorweegse Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2837
+msgid "Russian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chinees (Eenvoudig, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2838
+#: src/etc/inc/pfsense-utils.inc:2839
 msgid "Chinese (Taiwan)"
 msgstr "Chinees (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
-#: src/etc/inc/pfsense-utils.inc:3074
+#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "No Service"
 msgstr "Geen Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
+#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3431,83 +3434,83 @@ msgstr "Geen Dienst"
 msgid "Mode"
 msgstr "Mode"
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Restricted Service"
 msgstr "Beperkte Service"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Valid Service"
 msgstr "Geldige Service"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Restricted Regional Service"
 msgstr "Beperkte Regionale Service"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Powersaving Service"
 msgstr "Zuinige Service"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Unknown Service"
 msgstr "Onbekende Service"
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Invalid SIM/locked State"
 msgstr "Ongeldige SIM/vergrendeld Status"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Valid SIM State"
 msgstr "Geldige SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM CS State"
 msgstr "Ongeldige SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM PS State"
 msgstr "Ongeldige SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Invalid SIM CS/PS State"
 msgstr "Ongeldige SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Missing SIM State"
 msgstr "Ontbrekende SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3076
 msgid "Limited Service"
 msgstr "Beperkte Service"
 
-#: src/etc/inc/pfsense-utils.inc:3091
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Initializing Service"
 msgstr "Initializeren van Service"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Lock error Service"
 msgstr "Netwerk Vergrendeld fout Service"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Network Locked Service"
 msgstr "Netwerk Vergrendeld Service"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3095
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Ontgrendeld of correcte MCC/MNC Service"
 
-#: src/etc/inc/pfsense-utils.inc:3100
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "No action State"
 msgstr "Geen actie Status"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "Network lock State"
 msgstr "Netwerk vergendel Status"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM kaart vergrendel Status"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3104
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Netwerk Vergrendel en (U)SIM kaart vergrendel Status"
 
@@ -14439,17 +14442,19 @@ msgstr "Meervoudige Lan/Wan"
 
 #: src/usr/local/www/firewall_shaper_wizards.php:63
 msgid "Dedicated Links"
-msgstr ""
+msgstr "Dedicated Links"
 
 #: src/usr/local/www/firewall_shaper_wizards.php:89
 msgid "Traffic Shaper Wizards"
-msgstr ""
+msgstr "Traffic Shaper Wizards"
 
 #: src/usr/local/www/firewall_virtual_ip.php:90
 msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "NAT mapping."
 msgstr ""
+"Dit item kan niet worden verwijderd omdat het nog gebruikt word door "
+"tenminste één NAT mapping."
 
 #: src/usr/local/www/firewall_virtual_ip.php:98
 #: src/usr/local/www/license.php:112
@@ -14466,12 +14471,16 @@ msgid ""
 "This entry cannot be deleted because it is still referenced by OpenVPN %1$s "
 "%2$s."
 msgstr ""
+"Dit item kan niet worden verwijderd omdat het nog in gebruik is door OpenVPN "
+"%1$s %2$s."
 
 #: src/usr/local/www/firewall_virtual_ip.php:149
 msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "Gateway."
 msgstr ""
+"Dit item kan niet worden verwijderd omdat het nog gebruikt word door "
+"tenminste één gateway."
 
 #: src/usr/local/www/firewall_virtual_ip.php:182
 #, php-format
@@ -14479,6 +14488,8 @@ msgid ""
 "This entry cannot be deleted because it is still referenced by a CARP IP "
 "with the description %s."
 msgstr ""
+"Dit item kan niet worden verwijderd omdat het nog gebruikt word door een "
+"CARP met de omschrijving %s."
 
 #: src/usr/local/www/firewall_virtual_ip.php:188
 #, php-format
@@ -14486,10 +14497,12 @@ msgid ""
 "This entry cannot be deleted because it is still referenced by an IP alias "
 "entry with the description %s."
 msgstr ""
+"Dit item kan niet worden verwijderd omdat het nog gebruikt word door een IP "
+"alias met de omschrijving %s."
 
 #: src/usr/local/www/firewall_virtual_ip.php:217
 msgid "Deleted a virtual IP."
-msgstr ""
+msgstr "Virtueel IP verwijderd."
 
 #: src/usr/local/www/firewall_virtual_ip.php:226
 #: src/usr/local/www/firewall_virtual_ip_edit.php:342
@@ -14516,23 +14529,23 @@ msgstr "Virtueele IPs"
 
 #: src/usr/local/www/firewall_virtual_ip.php:240
 msgid "The VIP configuration has been changed."
-msgstr ""
+msgstr "De VIP configuratie is aangepast."
 
 #: src/usr/local/www/firewall_virtual_ip.php:251
 msgid "Virtual IP Address"
-msgstr ""
+msgstr "Virtueel IP Adres"
 
 #: src/usr/local/www/firewall_virtual_ip.php:256
 msgid "Virtual IP address"
-msgstr ""
+msgstr "Virtueel IP adres"
 
 #: src/usr/local/www/firewall_virtual_ip.php:315
 msgid "Edit virtual ip"
-msgstr ""
+msgstr "Pas virtueel ip aan"
 
 #: src/usr/local/www/firewall_virtual_ip.php:316
 msgid "Delete virtual ip"
-msgstr ""
+msgstr "Verwijder virtueel ip"
 
 #: src/usr/local/www/firewall_virtual_ip.php:337
 #, php-format
@@ -14540,128 +14553,139 @@ msgid ""
 "The virtual IP addresses defined on this page may be used in %1$sNAT%2$s "
 "mappings."
 msgstr ""
+"Het virtuele IP adres gedefinieerd op deze pagina mag gebruikt worden in "
+"%1$sNAT%2$s mappings."
 
 #: src/usr/local/www/firewall_virtual_ip.php:338
 #, php-format
 msgid "Check the status of CARP Virtual IPs and interfaces %1$shere%2$s."
 msgstr ""
+"Controleer de status van CARP Virtueel IPs en interfaces %1$shere%2$s."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:102
 #: src/usr/local/www/services_dnsmasq_edit.php:80
 #: src/usr/local/www/services_unbound_host_edit.php:91
 msgid "A valid IP address must be specified."
-msgstr ""
+msgstr "Een valide IP adres moet gespecificeerd worden."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:121
 msgid "This IP address is being used by another interface or VIP."
-msgstr ""
+msgstr "Dit IP adres wordt reeds gebruikt door een andere interface of VIP."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:131
 msgid ""
 "The interface chosen for the VIP has no IPv4 or IPv6 address configured so "
 "it cannot be used as a parent for the VIP."
 msgstr ""
+"De gekozen interface voor de VIP heeft geen geconfigureerd IPv4 of IPv6 "
+"adres dus kan niet gebruikt worden als parent voor de VIP."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:146
 msgid "The network address cannot be used for this VIP"
-msgstr ""
+msgstr "Het netwerkadres kan niet gebruikt worden voor deze VIP"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:148
 msgid "The broadcast address cannot be used for this VIP"
-msgstr ""
+msgstr "Het broadcast adres kan niet gebruikt worden voor deze VIP"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:167
 msgid ""
 "A CARP password that is shared between the two VHID members must be "
 "specified."
 msgstr ""
+"Een CARP wachtwoord die gedeeld wordt tussen twee VHID members moet "
+"gedefinieerd worden."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:171
 msgid "Password and confirm password must match"
-msgstr ""
+msgstr "Wachtwoord en confirmatie wachtwoord moeten gelijk zijn."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:175
 #: src/usr/local/www/firewall_virtual_ip_edit.php:195
 msgid "For this type of vip localhost is not allowed."
-msgstr ""
+msgstr "Voor dit type vip is localhost niet toegestaan."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:177
 #: src/usr/local/www/firewall_virtual_ip_edit.php:197
 msgid ""
 "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr ""
+"Een bovenliggende CARP interface kan alleen worden met Virtuele IPs van het "
+"type IP Alias."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:186
 msgid "An IPv4 Virtual IP cannot have an IPv6 CARP parent."
-msgstr ""
+msgstr "Een IPv4 virtueel IP kan niet onder een IPv6 CARP hangen."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:189
 msgid "An IPv6 Virtual IP cannot have an IPv4 CARP parent."
-msgstr ""
+msgstr "Een IPv6 virtueel IP kan niet onder een IPv4 CARP hangen."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:273
 msgid "Saved/edited a virtual IP."
-msgstr ""
+msgstr "Opgeslagen/aangepast virtueel IP."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:283
 msgid ""
 "The mask must be the network's subnet mask. It does not specify a CIDR range."
 ""
 msgstr ""
+"Het masker dient het subnet te zijn van het netwerk. Het specificeerd geen "
+"CIDR bereik."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:284
 msgid "Enter a CIDR block of proxy ARP addresses."
-msgstr ""
+msgstr "Geef een CIDR blok of proxy ARP adres."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:319
 msgid "Edit Virtual IP"
-msgstr ""
+msgstr "Aanpassen Virtueel IP"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:369
 msgid "Single address"
-msgstr ""
+msgstr "Enkel adres"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:366
 msgid "Address type"
-msgstr ""
+msgstr "Adres type"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:376
 msgid "*Address(es)"
-msgstr ""
+msgstr "*Adres(sen)"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:382
 msgid "Expansion"
-msgstr ""
+msgstr "Expansie"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
 msgid "Virtual IP Password"
-msgstr ""
+msgstr "Virtueel IP wachtwoord"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:392
 msgid "Enter the VHID group password."
-msgstr ""
+msgstr "Voer het wachtwoord voor de VHID groep in."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:396
 msgid "VHID Group"
-msgstr ""
+msgstr "VHID groep"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:399
 msgid "Enter the VHID group that the machines will share."
-msgstr ""
+msgstr "Geef de VHID groep die de machines zullen delen."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:401
 msgid "Advertising frequency"
-msgstr ""
+msgstr "Adverteer frequentie "
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:404
 #: src/usr/local/www/firewall_virtual_ip_edit.php:407
 msgid "Base"
-msgstr ""
+msgstr "Basis"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:411
 #: src/usr/local/www/firewall_virtual_ip_edit.php:414
 msgid "Skew"
-msgstr ""
+msgstr "Verschuiving"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:416
 msgid ""
@@ -14669,6 +14693,9 @@ msgid ""
 "Otherwise the lowest combination of both values in the cluster determines "
 "the master."
 msgstr ""
+"De fequentie die deze machine zal adverteren. 0 betekend gewoonlijk master. "
+"Anders bepaalt de combinatie van de laagste waardes in deze cluster de "
+"master."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:449
 msgid ""
@@ -14676,6 +14703,9 @@ msgid ""
 "on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type "
 "address for these types."
 msgstr ""
+"Aan Proxy ARP and Ander type Virtuele IPs kan niet worden gebonden door iets "
+"dat draait op de firewall, zoals IPsec, OpenVPN etc. Gebruik een CARP of IP "
+"Alias type adres voor deze types."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:450
 #, php-format
@@ -14687,12 +14717,12 @@ msgstr ""
 
 #: src/usr/local/www/foot.inc:31 src/usr/local/www/foot.inc:35
 msgid "Top of page"
-msgstr ""
+msgstr "Top van de pagina"
 
 #: src/usr/local/www/graph.php:85
 #, php-format
 msgid "Cannot get data about interface %s"
-msgstr ""
+msgstr "Kan geen informatie ophalen over interface %s"
 
 #: src/usr/local/www/graph.php:105
 msgid "In"
@@ -14725,11 +14755,11 @@ msgstr "Geen URL voor getURL"
 
 #: src/usr/local/www/graph.php:138 src/usr/local/www/graph_cpu.php:98
 msgid "No callback function for getURL"
-msgstr ""
+msgstr "Geen terugroep functie voor getURL"
 
 #: src/usr/local/www/graph.php:154 src/usr/local/www/graph_cpu.php:114
 msgid "Both getURL and XMLHttpRequest are undefined"
-msgstr ""
+msgstr "Zowel getURL en XMLHttpRequest zijn ongedefineerd"
 
 #: src/usr/local/www/graph.php:192
 msgid "Switch to bits/s"
@@ -14737,7 +14767,7 @@ msgstr "Schakel om naar bits/s"
 
 #: src/usr/local/www/graph.php:198
 msgid "follow"
-msgstr ""
+msgstr "volg"
 
 #: src/usr/local/www/graph.php:369
 msgid "Kbps"
@@ -14765,15 +14795,15 @@ msgstr "GB/s"
 
 #: src/usr/local/www/graph_cpu.php:76
 msgid "Cannot get CPU load"
-msgstr ""
+msgstr "Kan CPU belasting niet ophalen"
 
 #: src/usr/local/www/guiconfig.inc:133
 msgid "One Level"
-msgstr ""
+msgstr "Een niveau"
 
 #: src/usr/local/www/guiconfig.inc:134
 msgid "Entire Subtree"
-msgstr ""
+msgstr "Volledige onderliggende boom"
 
 #: src/usr/local/www/guiconfig.inc:161
 #, fuzzy
@@ -14784,56 +14814,56 @@ msgstr "Authenticatie en ...."
 #: src/usr/local/www/services_captiveportal.php:867
 #: src/usr/local/www/vpn_l2tp.php:285
 msgid "Accounting"
-msgstr ""
+msgstr "Accounting"
 
 #: src/usr/local/www/guiconfig.inc:229
 msgid "This Firewall"
-msgstr ""
+msgstr "Deze Firewall"
 
 #: src/usr/local/www/guiconfig.inc:240
 msgid "autoselect"
-msgstr ""
+msgstr "Automatisch selecteren"
 
 #: src/usr/local/www/guiconfig.inc:241
 msgid "100BASE-TX full-duplex"
-msgstr ""
+msgstr "100BASE-TX full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:242
 msgid "100BASE-TX half-duplex"
-msgstr ""
+msgstr "100BASE-TX half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:243
 msgid "10BASE-T full-duplex"
-msgstr ""
+msgstr "10BASE-T full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:244
 msgid "10BASE-T half-duplex"
-msgstr ""
+msgstr "10BASE-T half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:247 src/usr/local/www/interfaces.php:2960
 #: src/usr/local/www/interfaces_wireless_edit.php:186
 msgid "Infrastructure (BSS)"
-msgstr ""
+msgstr "Infrastructure (BSS)"
 
 #: src/usr/local/www/guiconfig.inc:248 src/usr/local/www/interfaces.php:2960
 #: src/usr/local/www/interfaces_wireless_edit.php:187
 msgid "Ad-hoc (IBSS)"
-msgstr ""
+msgstr "Ad-hoc (IBSS)"
 
 #: src/usr/local/www/guiconfig.inc:249 src/usr/local/www/interfaces.php:2960
 #: src/usr/local/www/interfaces_wireless_edit.php:188
 msgid "Access Point"
-msgstr ""
+msgstr "Access Point"
 
 #: src/usr/local/www/guiconfig.inc:256
 #, php-format
 msgid "The field %s contains invalid characters."
-msgstr ""
+msgstr "Het veld %s bevat ongeldige tekens."
 
 #: src/usr/local/www/guiconfig.inc:262
 #, php-format
 msgid "The field %s is required."
-msgstr ""
+msgstr "Het veld %s is verplicht."
 
 #: src/usr/local/www/guiconfig.inc:269
 #, fuzzy
@@ -14842,25 +14872,27 @@ msgstr "De volgende invoer fouten werden geconstateerd:"
 
 #: src/usr/local/www/guiconfig.inc:333
 msgid "Apply Changes"
-msgstr ""
+msgstr "Wijzigingen Toepassen"
 
 #: src/usr/local/www/guiconfig.inc:389
 msgid "The changes have been applied successfully."
-msgstr ""
+msgstr "De wijzigingen zijn succesvol toegepast."
 
 #: src/usr/local/www/guiconfig.inc:392
 #, php-format
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
+"Er was een probleem bij het toepassen van de wijzigingen. Zie de %1$sSysteem "
+"Logs%2$s."
 
 #: src/usr/local/www/guiconfig.inc:400
 msgid "The firewall rules are now reloading in the background."
-msgstr ""
+msgstr "De firewall regels worden nu herladen op de achtergrond."
 
 #: src/usr/local/www/guiconfig.inc:401
 #, php-format
 msgid "%1$sMonitor%2$s the filter reload progress."
-msgstr ""
+msgstr "%1$sMonitor%2$s de filter herlaad voortgang."
 
 #: src/usr/local/www/guiconfig.inc:610 src/usr/local/www/guiconfig.inc:661
 #, php-format
@@ -14873,11 +14905,11 @@ msgstr "Logbestand gestart"
 
 #: src/usr/local/www/guiconfig.inc:1050
 msgid "Currently viewing: "
-msgstr ""
+msgstr "Nu aan het bekijken:"
 
 #: src/usr/local/www/guiconfig.inc:1148
 msgid "listing only first 10k items"
-msgstr ""
+msgstr "Alleen de eerste 10k items worden getoond"
 
 #: src/usr/local/www/guiconfig.inc:1158
 #: src/usr/local/www/services_dhcp.php:1351
@@ -14906,7 +14938,7 @@ msgstr "Algemene instellingen"
 
 #: src/usr/local/www/head.inc:234
 msgid "High Avail. Sync"
-msgstr ""
+msgstr "Hoge Beschikbaarheid Sync."
 
 #: src/usr/local/www/head.inc:236
 msgid "Setup Wizard"
@@ -14921,7 +14953,7 @@ msgstr "Installatiewizard"
 #: src/usr/local/www/system_routes.php:211
 #: src/usr/local/www/system_routes_edit.php:219
 msgid "Routing"
-msgstr ""
+msgstr "Routing"
 
 #: src/usr/local/www/head.inc:238
 msgid "Cert. Manager"
@@ -14943,17 +14975,17 @@ msgstr "Gebruikersinstellingen"
 
 #: src/usr/local/www/head.inc:260
 msgid "Assignments"
-msgstr ""
+msgstr "Toewijzingen"
 
 #: src/usr/local/www/head.inc:267
 msgid "Switches"
-msgstr ""
+msgstr "Switches"
 
 #: src/usr/local/www/head.inc:307 src/usr/local/www/services_dhcpv6.php:505
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:249
 msgid "DHCPv6 Server & RA"
-msgstr ""
+msgstr "DHCPv6 Server & RA"
 
 #: src/usr/local/www/head.inc:311 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
@@ -14975,7 +15007,7 @@ msgstr "IGMP Proxy"
 #: src/usr/local/www/status_logs_common.inc:95
 #: src/usr/local/www/status_logs_settings.php:223
 msgid "Load Balancer"
-msgstr ""
+msgstr "Load Balancer"
 
 #: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
 #: src/usr/local/www/services_dhcp.php:1162
@@ -14997,7 +15029,7 @@ msgstr "SNMP"
 #: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:356
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP"
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1656
 #: src/usr/local/www/interfaces_ppps_edit.php:456
@@ -15013,7 +15045,7 @@ msgstr "CARP (failover)"
 
 #: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:348
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 #: src/usr/local/www/head.inc:340
 #: src/usr/local/www/status_gateway_groups.php:47
@@ -15033,25 +15065,25 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:228
 #: src/usr/local/www/widgets/include/gateways.inc:23
 msgid "Gateways"
-msgstr ""
+msgstr "Gateways"
 
 #: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
 msgid "DHCP Leases"
-msgstr ""
+msgstr "DHCP Reserveringen"
 
 #: src/usr/local/www/head.inc:342 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
-msgstr ""
+msgstr "DHCPv6 Reserveringen"
 
 #: src/usr/local/www/head.inc:343 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
-msgstr ""
+msgstr "Filter Reload"
 
 #: src/usr/local/www/head.inc:349 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
-msgstr ""
+msgstr "Package Logs"
 
 #: src/usr/local/www/head.inc:351
 #: src/usr/local/www/load_balancer_monitor.php:71
@@ -15109,12 +15141,12 @@ msgstr ""
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/system_authservers.php:252
 msgid "Services"
-msgstr ""
+msgstr "Diensten"
 
 #: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph.php:338
 msgid "Traffic Graph"
-msgstr ""
+msgstr "Verkeer Graffieken"
 
 #: src/usr/local/www/head.inc:368 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
@@ -15132,31 +15164,31 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:107
 #: src/usr/local/www/status_wireless.php:31
 msgid "Wireless"
-msgstr ""
+msgstr "Draadloos"
 
 #: src/usr/local/www/head.inc:408
 msgid "pfSense Gold"
-msgstr ""
+msgstr "pfSense Gold"
 
 #: src/usr/local/www/head.inc:413 src/usr/local/www/help.php:529
 msgid "About this Page"
-msgstr ""
+msgstr "Over deze Pagina"
 
 #: src/usr/local/www/head.inc:415
 msgid "Bug Database"
-msgstr ""
+msgstr "Bug Database"
 
 #: src/usr/local/www/head.inc:418
 msgid "User Forum"
-msgstr ""
+msgstr "Gebruikers Forum"
 
 #: src/usr/local/www/head.inc:419
 msgid "Documentation"
-msgstr ""
+msgstr "Documentatie"
 
 #: src/usr/local/www/head.inc:420
 msgid "Paid Support"
-msgstr ""
+msgstr "Betaalde Ondersteuning"
 
 #: src/usr/local/www/head.inc:421
 msgid "pfSense Book"
@@ -15168,11 +15200,11 @@ msgstr "FreeBSD Handboek"
 
 #: src/usr/local/www/head.inc:512 src/usr/local/www/head.inc:684
 msgid "Notices"
-msgstr ""
+msgstr "Mededelingen"
 
 #: src/usr/local/www/head.inc:549
 msgid "Save dashboard layout"
-msgstr ""
+msgstr "Dashboard indeling opslaan"
 
 #: src/usr/local/www/head.inc:557
 msgid "Available widgets"
@@ -15184,7 +15216,7 @@ msgstr "Log filter"
 
 #: src/usr/local/www/head.inc:576
 msgid "Manage log"
-msgstr ""
+msgstr "Beheer log"
 
 #: src/usr/local/www/head.inc:594
 msgid "Refresh Graph"
@@ -15196,7 +15228,7 @@ msgstr "Exporteer Grafiek"
 
 #: src/usr/local/www/head.inc:639
 msgid "Help for items on this page"
-msgstr ""
+msgstr "Help voor de items op deze pagina"
 
 #: src/usr/local/www/head.inc:650
 #, php-format
@@ -15204,6 +15236,9 @@ msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
 "%2$s%1$sDo not make changes in the GUI until this is complete.%2$s"
 msgstr ""
+"%1$s%3$s is aan het opstarten, daarna worden de pakketten op de achtergrond "
+"opnieuw geïnstalleerd.%2$s%1$sMaak geen wijzgingen in de GUI totdat dit "
+"voltooid is.%2$s"
 
 #: src/usr/local/www/head.inc:653
 #, php-format
@@ -15211,6 +15246,8 @@ msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
 "not make changes in the GUI until this is complete.%2$s"
 msgstr ""
+"%1$sPakketten worden nu op de achtergrond opnieuw geïnstalleerd.%2$s%1$sMaak "
+"geen wijzgingen in de GUI totdat dit voltooid is.%2$s"
 
 #: src/usr/local/www/head.inc:654
 #, php-format
@@ -15219,6 +15256,9 @@ msgid ""
 "'Clear Package Lock' button on the %3$s page and reinstall packages manually."
 "%2$s"
 msgstr ""
+"%1$sWanneer bovenstaand bericht nog steeds wordt weergeven na een aantal "
+"uur, gebruik dan de 'Pakketten Opschonen' knop op de %3$s pagina en "
+"herinstalleer de pakketten handmatig.%2$s"
 
 #: src/usr/local/www/head.inc:664
 msgid "This page is currently being managed by a remote machine."
@@ -15239,21 +15279,24 @@ msgstr "Help"
 #: src/usr/local/www/help.php:534
 msgid "The Help page is the only page this user has privilege for."
 msgstr ""
+"De Help-pagina is deze enige pagina waar deze gebruiker rechten op heeft."
 
 #: src/usr/local/www/help.php:536
 msgid ""
 "Displaying the Help page because it is the first page this user has "
 "privilege for."
 msgstr ""
+"Tonen van de Help-pagina omdat het de eerste pagina is waarop de gebruiker "
+"recht heeft."
 
 #: src/usr/local/www/help.php:539
 msgid "Help page accessed directly without any page parameter."
-msgstr ""
+msgstr "Help-pagina is direct opgevraagd zonder enige pagina parameter."
 
 #: src/usr/local/www/index.php:77
 #, php-format
 msgid "%s has detected a crash report or programming bug."
-msgstr ""
+msgstr "%s heeft een crash rapport of programmeerfout gedetecteerd."
 
 #: src/usr/local/www/index.php:79
 #, php-format
@@ -15272,52 +15315,54 @@ msgstr "Welkom bij %s!"
 
 #: src/usr/local/www/index.php:235
 msgid "One moment while the initial setup wizard starts."
-msgstr ""
+msgstr "Een ogenblik geduld terwijl de initiele instellingen wizard start."
 
 #: src/usr/local/www/index.php:236
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
 msgstr ""
+"Embedded platvorm gebruikers: Wees geduldig, het starten van de wizard neemt "
+"wat meer tijd in beslag dan het starten van de normale GUI."
 
 #: src/usr/local/www/index.php:237
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
-msgstr ""
+msgstr "Om de wizard over te slaan, klik op het %s logo op de eerste pagina."
 
 #: src/usr/local/www/index.php:361 src/etc/inc/pfsense-utils.inc:293
 msgid "Available Widgets"
-msgstr ""
+msgstr "Beschikbare Widgets"
 
 #: src/usr/local/www/index.php:609
 msgid "One or more widgets have been moved but have not yet been saved"
-msgstr ""
+msgstr "Één of meerdere widgets zijn verplaats maar nog niet opgeslagen"
 
 #: src/usr/local/www/interfaces.php:416
 msgid "The settings have already been applied!"
-msgstr ""
+msgstr "De instellingen zijn al toegepast!"
 
 #: src/usr/local/www/interfaces.php:502
 msgid "An interface with the specified description already exists."
-msgstr ""
+msgstr "Een interface met de opgegeven omschrijving bestaat reeds."
 
 #: src/usr/local/www/interfaces.php:511
 #, php-format
 msgid "Sorry, an alias with the name %s already exists."
-msgstr ""
+msgstr "Sorry, een alias met de naam %s bestaat reeds."
 
 #: src/usr/local/www/interfaces.php:520
 #, php-format
 msgid "Sorry, an interface group with the name %s already exists."
-msgstr ""
+msgstr "Sorry, een interface groep met de naam %s bestaat reeds."
 
 #: src/usr/local/www/interfaces.php:526
 msgid "The interface description cannot contain only numbers."
-msgstr ""
+msgstr "De interface omschrijving kan niet bestaan uit uitsluitend nummers."
 
 #: src/usr/local/www/interfaces.php:535
 msgid "The interface description cannot start with pkg_"
-msgstr ""
+msgstr "De interface omschrijving kan niet beginnen met pkg_"
 
 #: src/usr/local/www/interfaces.php:541
 msgid ""
@@ -15325,6 +15370,9 @@ msgid ""
 "static IP configuration. Please disable the DHCP Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
+"De DHCP Server is actief op deze interface en kan alleen gebruikt worden met "
+"een statische IP configuratie. Schakel a.u.b. eerst de DHCP Server dienst "
+"uit op deze interface en wijzig dan pas de configuratie."
 
 #: src/usr/local/www/interfaces.php:547
 msgid ""
@@ -15332,6 +15380,9 @@ msgid ""
 "IPv4 subnet < 31. Please disable the DHCP Server service on this interface "
 "first, then change the interface configuration."
 msgstr ""
+"De DHCP Server is actief op deze interface en kan alleen gebruikt worden met "
+"een IPv4 subnet < 31. Schakel .au.b. de DHCP Server dient uit op deze "
+"interface en wijzig dan pas de configuratie."
 
 #: src/usr/local/www/interfaces.php:555
 msgid ""
@@ -15339,6 +15390,9 @@ msgid ""
 "static IPv6 configuration. Please disable the DHCPv6 Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
+"De DHCP6 Server is actief op deze interface en kan alleen gebruikt worden "
+"met een statische IPv6 configuratie. Schakel .au.b. de DHCP6 Server dient "
+"uit op deze interface en wijzig dan pas de configuratie."
 
 #: src/usr/local/www/interfaces.php:561
 msgid "IPv4 address"
@@ -15346,13 +15400,15 @@ msgstr "IPv4 adres"
 
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
 msgid "Subnet bit count"
-msgstr ""
+msgstr "Subnet bit aantal"
 
 #: src/usr/local/www/interfaces.php:568
 msgid ""
 "This interface is referenced by IPv4 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
 msgstr ""
+"Deze interface word gebruikt door IPv4 VIPs. Verwijder deze a.u.b. eerst "
+"voordat de interface op 'geen' configuratie zet."
 
 #: src/usr/local/www/interfaces.php:575
 msgid "Modem Port"
@@ -15384,7 +15440,7 @@ msgstr "Dial-on-demand"
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 msgid "Idle timeout value"
-msgstr ""
+msgstr "Inactieve timeout waarde"
 
 #: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
 msgid "PPTP username"
@@ -15423,170 +15479,182 @@ msgid ""
 "This interface is referenced by IPv6 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
 msgstr ""
+"Deze interface word gebruikt door IPv6 VIPs. Verwijder deze a.u.b. eerst "
+"voordat de interface op 'geen' configuratie zet."
 
 #: src/usr/local/www/interfaces.php:626 src/usr/local/www/interfaces.php:645
 #: src/usr/local/www/interfaces.php:656 src/usr/local/www/interfaces.php:662
 #, php-format
 msgid "The interface must be reassigned to configure as %s."
 msgstr ""
+"De interface moet opnieuw worden toegewezen om te configureren als %s."
 
 #: src/usr/local/www/interfaces.php:629
 msgid ""
 "DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint "
 "flag is checked"
 msgstr ""
+"DHCPv6 Prefix Delegation grootte moet worden opgegeven wanneer Send IPv6 "
+"prefix hint vlag is aangevinkt"
 
 #: src/usr/local/www/interfaces.php:636
 msgid "Only one interface can be configured within a single 6rd prefix."
 msgstr ""
+"Slechts één interface kan worden geconfigureerd binnen een enkele 6rd prefix."
+""
 
 #: src/usr/local/www/interfaces.php:642
 msgid "6RD Border Relay must be an IPv4 address."
-msgstr ""
+msgstr "6RD Border Relay dient een IPv4 adres te zijn."
 
 #: src/usr/local/www/interfaces.php:651
 #, php-format
 msgid "Only one interface can be configured as 6to4."
-msgstr ""
+msgstr "Slechts één interface kan worden geconfigureerd als 6to4."
 
 #: src/usr/local/www/interfaces.php:666
 msgid "A valid interface to track must be selected."
-msgstr ""
+msgstr "Een geldige interface om te volgen moet worden geselecteerd."
 
 #: src/usr/local/www/interfaces.php:670
 msgid "A valid hexadecimal number must be entered for the IPv6 prefix ID."
 msgstr ""
+"Een geldig hexadecimaal nummer moet worden opgegeven voor de IPv6 prefix ID."
 
 #: src/usr/local/www/interfaces.php:674
 msgid "The specified IPv6 Prefix ID is out of range."
-msgstr ""
+msgstr "De opgegeven IPv6 Prefix ID valt buiten de grenzen."
 
 #: src/usr/local/www/interfaces.php:684
 #, php-format
 msgid "This track6 prefix ID is already being used in %s."
-msgstr ""
+msgstr "Deze track6 prefix ID is reeds in gebruik door %s."
 
 #: src/usr/local/www/interfaces.php:697
 #: src/usr/local/www/services_dhcp_edit.php:173
 msgid "A valid IPv4 address must be specified."
-msgstr ""
+msgstr "Een geldig IPv4 adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:701
 #, php-format
 msgid "IPv4 address %s is being used by or overlaps with:"
-msgstr ""
+msgstr "IPv4 adres %s word gebruikt of overlapt met:"
 
 #: src/usr/local/www/interfaces.php:711
 msgid "This IPv4 address is the network address and cannot be used"
-msgstr ""
+msgstr "Dit IPv4 adres is het netwerk adres en kan niet worden gebruikt"
 
 #: src/usr/local/www/interfaces.php:713
 msgid "This IPv4 address is the broadcast address and cannot be used"
-msgstr ""
+msgstr "Dit IPv4 adres is het broadcast adres en kan niet worden gebruikt"
 
 #: src/usr/local/www/interfaces.php:720
 msgid "This IPv4 address conflicts with a Static Route."
-msgstr ""
+msgstr "Dit IPv4 adres heeft een conflict met de Statische Route."
 
 #: src/usr/local/www/interfaces.php:731
 #: src/usr/local/www/services_dhcpv6_edit.php:120
 msgid "A valid IPv6 address must be specified."
-msgstr ""
+msgstr "Een geldig IPv6 adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:734
 msgid "IPv6 link local addresses cannot be configured as an interface IP."
 msgstr ""
+"IPv6 link local adressen kunnen niet worden geconfigureerd als interface IP."
 
 #: src/usr/local/www/interfaces.php:738
 #, php-format
 msgid "IPv6 address %s is being used by or overlaps with:"
-msgstr ""
+msgstr "IPv6 adres %s is word gebruikt of overlapt met:"
 
 #: src/usr/local/www/interfaces.php:748
 msgid "This IPv6 address conflicts with a Static Route."
-msgstr ""
+msgstr "Dit IPv6 adres heeft een conflict met een Statische Route."
 
 #: src/usr/local/www/interfaces.php:756 src/usr/local/www/interfaces.php:759
 msgid "A valid subnet bit count must be specified."
-msgstr ""
+msgstr "Een geldig subnet bit aantal moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:762
 msgid "A valid alias IP address must be specified."
-msgstr ""
+msgstr "Een geldig IP adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:765
 msgid "A valid alias subnet bit count must be specified."
-msgstr ""
+msgstr "Een geldig alias subnet bit aantal moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:768
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
 msgstr ""
+"Een ongeldig IP adres was gedetecteerd in het 'Weiger reserveringen van' "
+"veld."
 
 #: src/usr/local/www/interfaces.php:783
 #: src/usr/local/www/system_routes_edit.php:89
 msgid "A valid gateway must be specified."
-msgstr ""
+msgstr "Een geldige gateway moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:787
 msgid "The service name contains invalid characters."
-msgstr ""
+msgstr "Een dienst naam bevat ongeldige tekens."
 
 #: src/usr/local/www/interfaces.php:790 src/usr/local/www/interfaces.php:813
 #: src/usr/local/www/interfaces_ppps_edit.php:248
 msgid "The idle timeout value must be an integer."
-msgstr ""
+msgstr "De idle timeout waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/interfaces.php:794
 #: src/usr/local/www/interfaces_ppps_edit.php:252
 msgid "A valid PPPoE reset hour must be specified (0-23)."
-msgstr ""
+msgstr "Een geldig PPPoE reset uur moet worden opgegeven (0-23)."
 
 #: src/usr/local/www/interfaces.php:798
 #: src/usr/local/www/interfaces_ppps_edit.php:256
 msgid "A valid PPPoE reset minute must be specified (0-59)."
-msgstr ""
+msgstr "Een geldig PPPoE reset minuut moet worden opgegeven (0-59)."
 
 #: src/usr/local/www/interfaces.php:801
 #: src/usr/local/www/interfaces_ppps_edit.php:259
 msgid "A valid PPPoE reset date must be specified (mm/dd/yyyy)."
-msgstr ""
+msgstr "Een geldige PPPoE reset datum moet worden opgegeven (mm/dd/yyyy)."
 
 #: src/usr/local/www/interfaces.php:804
 msgid "A valid PPTP local IP address must be specified."
-msgstr ""
+msgstr "Een geldig PPTP lokaal IP adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:807
 msgid "A valid PPTP subnet bit count must be specified."
-msgstr ""
+msgstr "Een geldig PPTP subnet bit aantal moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:810
 msgid "A valid PPTP remote IP address must be specified."
-msgstr ""
+msgstr "Een geldig PPTP doel IP adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:816
 #: src/usr/local/www/services_dhcp_edit.php:177
 #: src/usr/local/www/services_wol.php:73
 #: src/usr/local/www/services_wol_edit.php:81
 msgid "A valid MAC address must be specified."
-msgstr ""
+msgstr "Een geldig MAC adres moet worden opgegeven."
 
 #: src/usr/local/www/interfaces.php:831
 #, php-format
 msgid "The MTU must be between %d and %d bytes."
-msgstr ""
+msgstr "De MTU moet liggen tussen de %d en %d bytes."
 
 #: src/usr/local/www/interfaces.php:847
 msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr ""
+"De MTU van een VLAN kan niet groter zijn dan de bovenliggende interface."
 
 #: src/usr/local/www/interfaces.php:863
 #, php-format
 msgid "Interface %s (VLAN) has MTU set to a larger value."
-msgstr ""
+msgstr "Interface %s (VLAN) heeft een MTU met een grotere waarde."
 
 #: src/usr/local/www/interfaces.php:870
 msgid "The MSS must be an integer between 576 and 65535 bytes."
-msgstr ""
+msgstr "De MSS moet een geheel getal tussen de 576 en 65535 bytes zijn."
 
 #: src/usr/local/www/interfaces.php:879 src/usr/local/www/interfaces.php:2965
 #: src/usr/local/www/status_interfaces.php:163
@@ -15596,41 +15664,48 @@ msgstr "SSID"
 #: src/usr/local/www/interfaces.php:882
 msgid "A specific channel, not auto, must be selected for Access Point mode."
 msgstr ""
+"Een specifiek kanaal, niet automatisch, moet worden geselecteerd voor Access "
+"Point mode."
 
 #: src/usr/local/www/interfaces.php:887
 msgid "802.11n standards require enabling WME."
-msgstr ""
+msgstr "Voor 802.11n standaarden is het inschakelen van WME verplicht."
 
 #: src/usr/local/www/interfaces.php:893
 msgid "Key Rotation must be an integer between 1 and 9999."
-msgstr ""
+msgstr "Key rotatie dient een geheel getal tussen de 1 en 9999 te zijn."
 
 #: src/usr/local/www/interfaces.php:896
 msgid "Master Key Regeneration must be an integer between 1 and 9999."
 msgstr ""
+"Master Key Regeneration dient een geheel getal tussen de 1 en 9999 te zijn."
 
 #: src/usr/local/www/interfaces.php:900
 msgid "Master Key Regeneration must be greater than Key Rotation."
-msgstr ""
+msgstr "Master Key Rotation dient groter te zijn dan Key Rotation."
 
 #: src/usr/local/www/interfaces.php:905
 msgid "802.1X Authentication Server must be an IP or hostname."
-msgstr ""
+msgstr "802.1X Authenticatie Server dient een IP of hostnaam te zijn."
 
 #: src/usr/local/www/interfaces.php:910
 msgid "Secondary 802.1X Authentication Server must be an IP or hostname."
-msgstr ""
+msgstr "Tweede 802.1X Authenticatie Server dient een IP of hostnaam te zijn."
 
 #: src/usr/local/www/interfaces.php:915
 msgid ""
 "802.1X Authentication Server Port must be a valid port number (1-65535)."
 msgstr ""
+"802.1X Authenticatie Server Poort dient een geldig poortnummer te zijn (1-"
+"65535)."
 
 #: src/usr/local/www/interfaces.php:920
 msgid ""
 "Secondary 802.1X Authentication Server Port must be a valid port number (1-"
 "65535)."
 msgstr ""
+"Tweede 802.1X Authenticatie Server Poort dient een geldig poortnummer te "
+"zijn (1-65535)."
 
 #: src/usr/local/www/interfaces.php:925
 msgid "Invalid channel specified."
@@ -15654,15 +15729,17 @@ msgstr "Geselecteerd kanaal is niet geldig voor 802.11b of 802.11g."
 
 #: src/usr/local/www/interfaces.php:946
 msgid "Invalid option chosen for OFDM Protection Mode"
-msgstr ""
+msgstr "Ongeldige optie gekozen voor OFDM Protection Mode"
 
 #: src/usr/local/www/interfaces.php:952
 msgid "The WPA passphrase must be between 8 and 63 characters long."
-msgstr ""
+msgstr "Het WPA wachtwoord moet tussen de 8 en 63 tekens lang zijn."
 
 #: src/usr/local/www/interfaces.php:958
 msgid "A WPA Passphrase must be specified when WPA PSK is enabled."
 msgstr ""
+"Een WPA wachtwoord dient te worden opgegeven wanneer WPA PSK is ingeschakeld."
+""
 
 #: src/usr/local/www/interfaces.php:964
 msgid "PPP Password and confirmed password must match!"
@@ -15682,6 +15759,8 @@ msgid ""
 "Unable to change mode to %s. The maximum number of wireless clones supported "
 "in this mode may have been reached."
 msgstr ""
+"Kan de modues niet veranderen naar %s. Het maximum aantal wireless clones "
+"ondersteund door deze mode kan zijn bereikt. "
 
 #: src/usr/local/www/interfaces.php:1656
 msgid "Static IPv4"
@@ -15733,49 +15812,51 @@ msgstr "6to4 Tunnel"
 
 #: src/usr/local/www/interfaces.php:1657
 msgid "Track Interface"
-msgstr ""
+msgstr "Volg Interface"
 
 #: src/usr/local/www/interfaces.php:1667
 msgid "Default (no preference, typically autoselect)"
-msgstr ""
+msgstr "Standaard (geen voorkeur, gewoonlijk automatisch geselecteerd)"
 
 #: src/usr/local/www/interfaces.php:1668
 msgid "------- Media Supported by this interface -------"
-msgstr ""
+msgstr "------- Media Ondersteund door deze interface -------"
 
 #: src/usr/local/www/interfaces.php:1711
 #, php-format
 msgid "The %s configuration has been changed."
-msgstr ""
+msgstr "De %s configuratie is aangepast."
 
 #: src/usr/local/www/interfaces.php:1712
 msgid "The changes must be applied to take effect."
-msgstr ""
+msgstr "De wijzigingen dienen te worden toegepast voordat ze effect hebben."
 
 #: src/usr/local/www/interfaces.php:1713
 msgid "Don't forget to adjust the DHCP Server range if needed after applying."
 msgstr ""
+"Vergeet niet de DHCP Server range aan te passen indien nodig na het "
+"toepassen."
 
 #: src/usr/local/www/interfaces.php:1722
 msgid "General Configuration"
-msgstr ""
+msgstr "Generieke Configuratie"
 
 #: src/usr/local/www/interfaces.php:1734
 #: src/usr/local/www/load_balancer_monitor_edit.php:271
 msgid "*Description"
-msgstr ""
+msgstr "*Omschrijving"
 
 #: src/usr/local/www/interfaces.php:1737
 msgid "Enter a description (name) for the interface here."
-msgstr ""
+msgstr "Geef hier een omschrijving (naam) voor de interface."
 
 #: src/usr/local/www/interfaces.php:1741
 msgid "IPv4 Configuration Type"
-msgstr ""
+msgstr "IPv4 Configuratie Type"
 
 #: src/usr/local/www/interfaces.php:1748
 msgid "IPv6 Configuration Type"
-msgstr ""
+msgstr "IPv6 Configuratie Type"
 
 #: src/usr/local/www/interfaces.php:1755 src/usr/local/www/interfaces.php:1770
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
@@ -15798,6 +15879,9 @@ msgid ""
 "interface.%sEnter a MAC address in the following format: xx:xx:xx:xx:xx:xx "
 "or leave blank."
 msgstr ""
+"Dit veld kan worden gebruikt om het MAC adres van deze interface te wijzigen "
+"(\"spoof\").%sGeef een MAC adres in het volgende formaat: xx:xx:xx:xx:xx:xx "
+"of laat leeg."
 
 #: src/usr/local/www/interfaces.php:1779
 #: src/usr/local/www/interfaces_ppps_edit.php:917
@@ -15810,16 +15894,22 @@ msgid ""
 "If this field is blank, the adapter's default MTU will be used. This is "
 "typically 1500 bytes but can vary in some circumstances."
 msgstr ""
+"Indien dit veld leeg is zal de standaard waarde voor MTU van deze adapter "
+"worden gebruikt. Dit is gewoonlijk 1500 bytes maar kan variëren in sommige "
+"omstandigheden."
 
 #: src/usr/local/www/interfaces.php:1787
 msgid "MSS"
-msgstr ""
+msgstr "MSS"
 
 #: src/usr/local/www/interfaces.php:1790
 msgid ""
 "If a value is entered in this field, then MSS clamping for TCP connections "
 "to the value entered above minus 40 (TCP/IP header size) will be in effect."
 msgstr ""
+"Indien er een waarde is opgegeven in dit veld dan zal er MSS clamping met "
+"een waarde van de invoer min 40 (TCP/IP header grootte) voor TCP "
+"verbindingen worden toegepast."
 
 #: src/usr/local/www/interfaces.php:1796
 #, fuzzy
@@ -15833,6 +15923,10 @@ msgid ""
 "set to autoselect (automatically negotiate speed) unless the port this "
 "interface connects to has its speed and duplex forced."
 msgstr ""
+"Geef een expliciete snelheid en duplex mode voor deze interface."
+"%sWAARSCHUWING: MOET op automatische selectie (automatisch onderhandelen "
+"over snelheid) staan tenzij de poort waarmee deze interface verbind ook een "
+"gefoceerde snelheid en duplex heeft."
 
 #: src/usr/local/www/interfaces.php:1805
 msgid "Static IPv4 Configuration"
@@ -15844,15 +15938,15 @@ msgstr "*IPv4 adres"
 
 #: src/usr/local/www/interfaces.php:1815
 msgid "IPv4 Upstream gateway"
-msgstr ""
+msgstr "IPv4 Upstream gateway"
 
 #: src/usr/local/www/interfaces.php:1819
 msgid "IPv4 Upstream Gateway"
-msgstr ""
+msgstr "IPv4 Upstream Gateway"
 
 #: src/usr/local/www/interfaces.php:1826 src/usr/local/www/interfaces.php:1860
 msgid "Add a new gateway"
-msgstr ""
+msgstr "Voeg een nieuwe gateway toe"
 
 #: src/usr/local/www/interfaces.php:1831
 #, php-format
@@ -15862,6 +15956,10 @@ msgid ""
 "interfaces the upstream gateway should be \"none\". Gateways can be managed "
 "by %2$sclicking here%3$s."
 msgstr ""
+"Wanneer deze interface een internet verbinding is selecteer een bestaande "
+"Gateway van de lijst of voeg een nieuwe toe met de \"Toevoegen\" knop.%1$sOp "
+"een lokaal netwerk interface dient de upstream gateway \"geen\" te zijn. "
+"Gateways kunnen worden beheerd door %2$shier te klikken%3$s."
 
 #: src/usr/local/www/interfaces.php:1839
 msgid "Static IPv6 Configuration"
@@ -15873,11 +15971,11 @@ msgstr "*IPv6 adres"
 
 #: src/usr/local/www/interfaces.php:1849
 msgid "IPv6 Upstream gateway"
-msgstr ""
+msgstr "IPv6 Upstream gateway"
 
 #: src/usr/local/www/interfaces.php:1853
 msgid "IPv6 Upstream Gateway"
-msgstr ""
+msgstr "IPv6 Upstream Gateway"
 
 #: src/usr/local/www/interfaces.php:1865
 #, php-format
@@ -15886,10 +15984,13 @@ msgid ""
 "the list or add a new one using the \"Add\" button.%sOn local LANs the "
 "upstream gateway should be \"none\". "
 msgstr ""
+"Wanneer deze interface een internet verbinding is selecteer een bestaande "
+"Gateway van de lijst of voeg een nieuwe toe met de \"Toevoegen\" knop.%sOp "
+"een lokaal netwerk interface dient de upstream gateway \"geen\" te zijn."
 
 #: src/usr/local/www/interfaces.php:1872
 msgid "New IPv6 Gateway"
-msgstr ""
+msgstr "Nieuwe IPv6 Gateway"
 
 #: src/usr/local/www/interfaces.php:1883 src/usr/local/www/interfaces.php:3207
 #: src/usr/local/www/system_gateways_edit.php:617
@@ -15903,19 +16004,19 @@ msgstr "Gateway IPv6"
 
 #: src/usr/local/www/interfaces.php:1928
 msgid "DHCP Client Configuration"
-msgstr ""
+msgstr "DHCP Cliënt Configuratie"
 
 #: src/usr/local/www/interfaces.php:1931 src/usr/local/www/interfaces.php:2116
 msgid "Options"
-msgstr ""
+msgstr "Opties"
 
 #: src/usr/local/www/interfaces.php:1938
 msgid "Use advanced DHCP configuration options."
-msgstr ""
+msgstr "Gebruik geavanceerde DHCP configuratie opties."
 
 #: src/usr/local/www/interfaces.php:1945 src/usr/local/www/interfaces.php:2130
 msgid "Override the configuration from this file."
-msgstr ""
+msgstr "Overschrijf de configuratie van dit bestand."
 
 #: src/usr/local/www/interfaces.php:1954
 msgid ""
@@ -15923,6 +16024,9 @@ msgid ""
 "when requesting a DHCP lease. Some ISPs may require this (for client "
 "identification)."
 msgstr ""
+"De waarde in dit veld word gestuurd als de DHCP cliënt identificatie en "
+"hostnaam wanneer er verzocht word om een DHCP reservering. Sommige ISPs "
+"stellen dit verplicht (voor cliënt identificatie)."
 
 #: src/usr/local/www/interfaces.php:1958
 msgid "Alias IPv4 address"
@@ -15933,10 +16037,12 @@ msgid ""
 "The value in this field is used as a fixed alias IPv4 address by the DHCP "
 "client."
 msgstr ""
+"De waarde in dit veld wordt gebruikt als een gefixeerde alias IPv4 adres "
+"door de DHCP client."
 
 #: src/usr/local/www/interfaces.php:1965
 msgid "Reject leases from"
-msgstr ""
+msgstr "Weiger reserveringen van"
 
 #: src/usr/local/www/interfaces.php:1968
 msgid ""
@@ -15945,10 +16051,14 @@ msgid ""
 "useful for rejecting leases from cable modems that offer private IP "
 "addresses when they lose upstream sync."
 msgstr ""
+"Om de DHCP cliënt aanbiedingen van specifieke DHCP servers te laten weigeren "
+"geef hier de IP adressen (meerdere items mogelijk gescheiden door comma's). "
+"Dit is handig om reserveringen te weigeren van kabel-modems die privé-"
+"adressen uitdelen wanneer ze hun upstream synchronisatie verliezen."
 
 #: src/usr/local/www/interfaces.php:1972
 msgid "Protocol timing"
-msgstr ""
+msgstr "Protocol timing"
 
 #: src/usr/local/www/interfaces.php:1980
 #: src/usr/local/www/load_balancer_setting.php:117
@@ -15966,15 +16076,15 @@ msgstr "Selecteer time-out"
 
 #: src/usr/local/www/interfaces.php:2009
 msgid "Backoff cutoff"
-msgstr ""
+msgstr "Backoff cutoff"
 
 #: src/usr/local/www/interfaces.php:2016
 msgid "Initial interval"
-msgstr ""
+msgstr "Initiële interval"
 
 #: src/usr/local/www/interfaces.php:2020
 msgid "Presets"
-msgstr ""
+msgstr "Voorkeuzes"
 
 #: src/usr/local/www/interfaces.php:2055
 #, php-format
@@ -15982,72 +16092,76 @@ msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
 "lease.%1$sSee %2$shere%3$s for more information"
 msgstr ""
+"De waarde in deze velden zijn DHCP protocol periodes die worden gebruikt bij "
+"het aanvragen van een reservering.%1$sZie %2$shier%3$s voor meer informatie"
 
 #: src/usr/local/www/interfaces.php:2062 src/usr/local/www/interfaces.php:2182
 msgid "Configuration File Override"
-msgstr ""
+msgstr "Configuratie Bestand Overschrijving"
 
 #: src/usr/local/www/interfaces.php:2072
 msgid "Lease Requirements and Requests"
-msgstr ""
+msgstr "Reservering Vereisten en Verzoeken"
 
 #: src/usr/local/www/interfaces.php:2077 src/usr/local/www/interfaces.php:2207
 msgid "Send options"
-msgstr ""
+msgstr "Verstuur opties"
 
 #: src/usr/local/www/interfaces.php:2087
 msgid "Request options"
-msgstr ""
+msgstr "Verzoek opties"
 
 #: src/usr/local/www/interfaces.php:2095
 msgid "Require options"
-msgstr ""
+msgstr "Vereisten opties"
 
 #: src/usr/local/www/interfaces.php:2102
 msgid "Option modifiers"
-msgstr ""
+msgstr "Optie aanpassingen"
 
 #: src/usr/local/www/interfaces.php:2113
 msgid "DHCP6 Client Configuration"
-msgstr ""
+msgstr "DHCP6 Cliënt Configuratie"
 
 #: src/usr/local/www/interfaces.php:2123
 msgid "Use advanced DHCPv6 configuration options."
-msgstr ""
+msgstr "Gebruik geavanceerde DHCPv6 configuratie opties."
 
 #: src/usr/local/www/interfaces.php:2136
 msgid "Use IPv4 connectivity as parent interface"
-msgstr ""
+msgstr "Gebruik IPv4 verbinding as bovenliggende interface"
 
 #: src/usr/local/www/interfaces.php:2143
 msgid "Request only an IPv6 prefix"
-msgstr ""
+msgstr "Verzoek alleen een IPv6 prefix"
 
 #: src/usr/local/www/interfaces.php:2150
 msgid "DHCPv6 Prefix Delegation size"
-msgstr ""
+msgstr "DHCPv6 Prefix Delegation grootte"
 
 #: src/usr/local/www/interfaces.php:2153
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
 msgstr ""
+"De waarde in dit veld is de delegated prefix grootte zoals geleverd door de "
+"DHCPv6 server. Gewoonlijk opgegeven door de ISP."
 
 #: src/usr/local/www/interfaces.php:2157
 msgid "Send IPv6 prefix hint"
-msgstr ""
+msgstr "Stuur IPv6 prefix hint"
 
 #: src/usr/local/www/interfaces.php:2164
 msgid "Debug"
-msgstr ""
+msgstr "Foutopsporing"
 
 #: src/usr/local/www/interfaces.php:2170
 msgid "Do not wait for a RA"
-msgstr ""
+msgstr "Niet wachten op een RA"
 
 #: src/usr/local/www/interfaces.php:2176
 msgid "Do not allow PD/Address release"
-msgstr ""
+msgstr "Sta geen PD/Adres vrijgeven toe"
 
 #: src/usr/local/www/interfaces.php:2185
 #, php-format
@@ -16059,10 +16173,17 @@ msgid ""
 "Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sSome ISPs "
 "may require certain options be or not be sent."
 msgstr ""
+"De waarde in dit veld is een absoluut pad naar een DHCP cliënt configuratie "
+"bestand.\t [/[mapnaam/[.../]]bestandsnaam[.ext]] %1$sVariabele waardes in "
+"configuratie bestand: {interface}, {hostname}, {mac_addr_asciiCD}, "
+"{mac_addr_hexCD} %1$sWaarbij C is U: hoofdletters of L: kleine letters en D "
+"is \" :-.\" scheidingsteken (spatie, dubbele punt, koppelstreepje, of punt) "
+"(weglaten voor geen).%1$sSommige IPSs vereisen dat opties specifiek wel "
+"danwel niet gezet worden."
 
 #: src/usr/local/www/interfaces.php:2194
 msgid "Advanced DHCP6 Client Configuration"
-msgstr ""
+msgstr "Geavanceerde DHCP6 Cliënt Configuratie"
 
 #: src/usr/local/www/interfaces.php:2199
 msgid "Information only"
@@ -16071,10 +16192,11 @@ msgstr "Alleen informatie"
 #: src/usr/local/www/interfaces.php:2203
 msgid "Only exchange informational configuration parameters with servers."
 msgstr ""
+"Wissel informatieve configuratie parameters alleen uit tussen servers."
 
 #: src/usr/local/www/interfaces.php:2217
 msgid "Request Options"
-msgstr ""
+msgstr "Verzoek Opties"
 
 #: src/usr/local/www/interfaces.php:2225
 msgid "Scripts"
@@ -16082,19 +16204,19 @@ msgstr "Scripts"
 
 #: src/usr/local/www/interfaces.php:2231
 msgid "Identity Association Statement"
-msgstr ""
+msgstr "Identiteit Associatie Verklaring"
 
 #: src/usr/local/www/interfaces.php:2312
 msgid "Prefix interface statement"
-msgstr ""
+msgstr "Prefix interface verklaring"
 
 #: src/usr/local/www/interfaces.php:2330
 msgid "Authentication statement"
-msgstr ""
+msgstr "Authenticatie verklaring"
 
 #: src/usr/local/www/interfaces.php:2362
 msgid "Keyinfo statement"
-msgstr ""
+msgstr "Keyinfo verklaring"
 
 #: src/usr/local/www/interfaces.php:2403
 #, php-format
@@ -16111,21 +16233,23 @@ msgstr "6rd voorvoegsel"
 
 #: src/usr/local/www/interfaces.php:2421
 msgid "*6RD Border relay"
-msgstr ""
+msgstr "*6RD Border relay"
 
 #: src/usr/local/www/interfaces.php:2428
 msgid "6RD IPv4 Prefix length"
-msgstr ""
+msgstr "6RD IPv4 Prefix lengte"
 
 #: src/usr/local/www/interfaces.php:2431
 msgid ""
 "6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means "
 "embed the entire IPv4 address in the 6RD prefix."
 msgstr ""
+"6RD IPv4 prefix lengte. Gewoonlijk opgegeven door de ISP. Een waarde van 0 "
+"betekend dat het volledige IPv4 adres in de 6RD prefix word opgenomen."
 
 #: src/usr/local/www/interfaces.php:2436
 msgid "Track IPv6 Interface"
-msgstr ""
+msgstr "Volg IPv6 Interface"
 
 #: src/usr/local/www/interfaces.php:2478
 msgid "*IPv6 Interface"
@@ -16134,6 +16258,7 @@ msgstr "*IPv6 interface"
 #: src/usr/local/www/interfaces.php:2481
 msgid "Selects the dynamic IPv6 WAN interface to track for configuration."
 msgstr ""
+"Selecteerd de dynamische IPv6 WAN interface om te volgen voor configuratie."
 
 #: src/usr/local/www/interfaces.php:2489
 msgid "IPv6 Prefix ID"
@@ -16165,12 +16290,12 @@ msgstr "Leverancier"
 #: src/usr/local/www/interfaces.php:2524
 #: src/usr/local/www/interfaces_ppps_edit.php:605
 msgid "Plan"
-msgstr ""
+msgstr "Plan"
 
 #: src/usr/local/www/interfaces.php:2527
 #: src/usr/local/www/interfaces_ppps_edit.php:608
 msgid "Select to fill in service provider data."
-msgstr ""
+msgstr "Selecteer om de service provider data op te geven."
 
 #: src/usr/local/www/interfaces.php:2545
 #: src/usr/local/www/interfaces_ppps_edit.php:663
@@ -16179,11 +16304,11 @@ msgstr "* Telefoonnummer"
 
 #: src/usr/local/www/interfaces.php:2548
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
-msgstr ""
+msgstr "Gewoonlijk *99# voor GSM networken en #777 voor CDMA networken."
 
 #: src/usr/local/www/interfaces.php:2552
 msgid "Access Point Name"
-msgstr ""
+msgstr "Access Point Naam"
 
 #: src/usr/local/www/interfaces.php:2578
 msgid "*Modem port"
@@ -16195,24 +16320,24 @@ msgstr "Geavanceerde PPP"
 
 #: src/usr/local/www/interfaces.php:2588
 msgid "Create a new PPP configuration."
-msgstr ""
+msgstr "Creëer een nieuwe PPP configuratie."
 
 #: src/usr/local/www/interfaces.php:2593
 msgid "PPPoE Configuration"
-msgstr ""
+msgstr "PPPoE Configuratie"
 
 #: src/usr/local/www/interfaces.php:2612
 #: src/usr/local/www/interfaces_ppps_edit.php:720
 msgid "Service name"
-msgstr ""
+msgstr "Service naam"
 
 #: src/usr/local/www/interfaces.php:2615
 msgid "This field can usually be left empty."
-msgstr ""
+msgstr "Dit veld kan gewoonlijk leeg blijven."
 
 #: src/usr/local/www/interfaces.php:2627
 msgid "Idle timeout"
-msgstr ""
+msgstr "Inactieve timeout"
 
 #: src/usr/local/www/interfaces.php:2631 src/usr/local/www/interfaces.php:2764
 msgid ""
@@ -16220,23 +16345,26 @@ msgid ""
 "of seconds, the connection is brought down. An idle timeout of zero disables "
 "this feature."
 msgstr ""
+"Indien er geen overeenkomende uitgaande pakketten worden verstuurd voor het "
+"opgegeven aantal seconde word de verbinding afgesloten. Een idle timeout van "
+"nul deactiveerd deze functie."
 
 #: src/usr/local/www/interfaces.php:2638
 #: src/usr/local/www/interfaces_ppps_edit.php:750
 msgid "Pre-set"
-msgstr ""
+msgstr "Pre-set"
 
 #: src/usr/local/www/interfaces.php:2636
 msgid "Periodic reset"
-msgstr ""
+msgstr "Periodische reset"
 
 #: src/usr/local/www/interfaces.php:2639
 msgid "Select a reset timing type."
-msgstr ""
+msgstr "Selecteer een reset timing type."
 
 #: src/usr/local/www/interfaces.php:2641
 msgid "Custom reset"
-msgstr ""
+msgstr "Handmatige reset"
 
 #: src/usr/local/www/interfaces.php:2650
 msgid "Hour (0-23)"
@@ -16255,20 +16383,24 @@ msgid ""
 "Leave the date field empty, for the reset to be executed each day at the "
 "time specified by the minutes and hour fields"
 msgstr ""
+"Laat het datum veld leeg om de reset elke dag uit te voeren op de tijd "
+"opgegeven in de minuut en uur velden."
 
 #: src/usr/local/www/interfaces.php:2671
 msgid "cron based reset"
-msgstr ""
+msgstr "cron gebaseerde reset"
 
 #: src/usr/local/www/interfaces.php:2710 src/usr/local/www/interfaces.php:2775
 msgid "Advanced and MLPPP"
-msgstr ""
+msgstr "Geavanceerd en MLPPP"
 
 #: src/usr/local/www/interfaces.php:2713
 msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
 msgstr ""
+"Klik voor extra PPPoE configuratie opties. Indien u aanpassingen heeft "
+"gedaan sla deze dan eerst op."
 
 #: src/usr/local/www/interfaces.php:2718
 msgid "PPTP/L2TP Configuration"
@@ -16292,11 +16424,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2760
 msgid "Idle timeout (seconds)"
-msgstr ""
+msgstr "Inactieve timeout (seconde)"
 
 #: src/usr/local/www/interfaces.php:2768
 msgid "There are additional Local and Remote IP addresses defined for MLPPP."
-msgstr ""
+msgstr "Er zijn extra Lokale en Externe IP adressen gedefineerd voor MLPPP."
 
 #: src/usr/local/www/interfaces.php:2778
 #, php-format
@@ -16309,10 +16441,12 @@ msgstr ""
 msgid ""
 "Common Wireless Configuration - Settings apply to all wireless networks on "
 msgstr ""
+"Gedeelde Draadloze Configuratie - Instellingen zijn van toepassing op alle "
+"draadloze netwerken op"
 
 #: src/usr/local/www/interfaces.php:2789
 msgid "Persist common settings"
-msgstr ""
+msgstr "Gedeelte instellingen vasthouden"
 
 #: src/usr/local/www/interfaces.php:2809
 msgid "Standard"
@@ -16324,7 +16458,7 @@ msgstr "Uit"
 
 #: src/usr/local/www/interfaces.php:2819
 msgid "CTS to self"
-msgstr ""
+msgstr "CTS naar zelf"
 
 #: src/usr/local/www/interfaces.php:2819
 msgid "RTS and CTS"
@@ -16332,7 +16466,7 @@ msgstr "RTS en CTS"
 
 #: src/usr/local/www/interfaces.php:2817
 msgid "802.11g OFDM Protection Mode"
-msgstr ""
+msgstr "802.11g OFDM Protection Mode"
 
 #: src/usr/local/www/interfaces.php:2820
 msgid ""
@@ -16363,7 +16497,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2862
 msgid "Antenna Settings"
-msgstr ""
+msgstr "Antenne Instellingen"
 
 #: src/usr/local/www/interfaces.php:2869
 msgid "On"
@@ -16394,6 +16528,8 @@ msgid ""
 "Note: The antenna numbers do not always match up with the labels on the card."
 ""
 msgstr ""
+"Opmerking: De antenne nummers komen niet altijd overeen met de labels op de "
+"kaart."
 
 #: src/usr/local/www/interfaces.php:2900
 msgid "Distance setting (meters)"
@@ -16404,14 +16540,16 @@ msgid ""
 "This field can be used to tune ACK/CTS timers to fit the distance between AP "
 "and Client"
 msgstr ""
+"Dit veld kan worden gebruikt om de ACK/CTS timers af te stemmen op de "
+"afstand tussen AP en Cliënt"
 
 #: src/usr/local/www/interfaces.php:2909
 msgid "Regulatory Settings"
-msgstr ""
+msgstr "Beheers Instellingen"
 
 #: src/usr/local/www/interfaces.php:2921
 msgid "Regulatory domain"
-msgstr ""
+msgstr "Beheers domein"
 
 #: src/usr/local/www/interfaces.php:2924
 msgid ""
@@ -16419,12 +16557,17 @@ msgid ""
 "regulatory domain to one in this list for the changes to other regulatory "
 "settings to work"
 msgstr ""
+"Sommige kaarten hebben een standaard die niet word herkent en vereisen dat "
+"het beheers domein word aangepast naar één in deze lijst voordat de andere "
+"beheersinstellingen werken."
 
 #: src/usr/local/www/interfaces.php:2939
 msgid ""
 "Any country setting other than \"Default\" will override the regulatory "
 "domain setting"
 msgstr ""
+"Elke landinstelling anders dan \"Standaard\" zal de beheers domein "
+"instelling  overschrijven"
 
 #: src/usr/local/www/interfaces.php:2945
 msgid "Indoor"
@@ -16456,7 +16599,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2954
 msgid "Network-Specific Wireless Configuration"
-msgstr ""
+msgstr "Netwerk-Specifieke Draadloze Configuratie"
 
 #: src/usr/local/www/interfaces.php:2975
 msgid "802.11g"
@@ -16468,7 +16611,7 @@ msgstr "802.11n"
 
 #: src/usr/local/www/interfaces.php:2973
 msgid "Minimum wireless standard"
-msgstr ""
+msgstr "Minimale draadloze standaard"
 
 #: src/usr/local/www/interfaces.php:2976
 msgid ""
@@ -26334,19 +26477,19 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:238
 msgid "Easy Rule: Add to Block List"
-msgstr ""
+msgstr "Eenvoudige Regel: Voeg toe aan Blokkeerlijst"
 
 #: src/usr/local/www/status_logs_filter.php:247
 msgid "Easy Rule: Pass this traffic"
-msgstr ""
+msgstr "Eenvoudige Regel: Laat verkeer door"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Add to block list"
-msgstr ""
+msgstr "Voeg toe aan blokkeerlijst"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Pass traffic"
-msgstr ""
+msgstr "Laat verkeer door"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Resolve"
@@ -26354,23 +26497,23 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter_dynamic.php:381
 msgid "Pause"
-msgstr ""
+msgstr "Pauzeer"
 
 #: src/usr/local/www/status_logs_filter_summary.php:85
 msgid "Protocols"
-msgstr ""
+msgstr "Protocollen "
 
 #: src/usr/local/www/status_logs_filter_summary.php:86
 msgid "Source IPs"
-msgstr ""
+msgstr "Bron IPs"
 
 #: src/usr/local/www/status_logs_filter_summary.php:87
 msgid "Destination IPs"
-msgstr ""
+msgstr "Bestemming IPs"
 
 #: src/usr/local/www/status_logs_filter_summary.php:89
 msgid "Destination Ports"
-msgstr ""
+msgstr "Bestemming Poorten"
 
 #: src/usr/local/www/status_logs_filter_summary.php:123
 #, php-format
@@ -26380,7 +26523,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter_summary.php:166
 msgid "Data points"
-msgstr ""
+msgstr "Data punten"
 
 #: src/usr/local/www/status_logs_filter_summary.php:176
 #: src/usr/local/www/widgets/widgets/log.widget.php:154
@@ -26395,7 +26538,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:83
 msgid "The log files have been reset."
-msgstr ""
+msgstr "Het log bestand is gereset."
 
 #: src/usr/local/www/status_logs_settings.php:90
 msgid ""
@@ -26510,7 +26653,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:320
 msgid "Local Logging"
-msgstr ""
+msgstr "Locale Logging"
 
 #: src/usr/local/www/status_logs_settings.php:330
 msgid ""
@@ -26529,7 +26672,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:347
 msgid "Default (any)"
-msgstr ""
+msgstr "Standaard (elke)"
 
 #: src/usr/local/www/status_logs_settings.php:355
 msgid ""
@@ -26548,19 +26691,19 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:515
 #: src/usr/local/www/vpn_openvpn_csc.php:565
 msgid "Server 1"
-msgstr ""
+msgstr "Server 1"
 
 #: src/usr/local/www/status_logs_settings.php:372
 #: src/usr/local/www/vpn_openvpn_csc.php:481
 #: src/usr/local/www/vpn_openvpn_csc.php:522
 #: src/usr/local/www/vpn_openvpn_csc.php:572
 msgid "Server 2"
-msgstr ""
+msgstr "Server 2"
 
 #: src/usr/local/www/status_logs_settings.php:380
 #: src/usr/local/www/vpn_openvpn_csc.php:488
 msgid "Server 3"
-msgstr ""
+msgstr "Server 3"
 
 #: src/usr/local/www/status_logs_settings.php:388
 msgid "Remote Syslog Contents"
@@ -26575,7 +26718,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_vpn.php:42
 msgid "VPN Logins"
-msgstr ""
+msgstr "VPN Logins"
 
 #: src/usr/local/www/status_logs_vpn.php:140
 #: src/usr/local/www/status_logs_vpn.php:385
@@ -26583,12 +26726,12 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: src/usr/local/www/status_logs_vpn.php:180
 #: src/usr/local/www/status_logs_vpn.php:434
 msgid "Log Message"
-msgstr ""
+msgstr "Log Bericht"
 
 #: src/usr/local/www/status_ntpd.php:66
 msgid "Pool Placeholder"
@@ -32212,8 +32355,9 @@ msgid "Saved IPsec advanced settings."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:225
+#, fuzzy
 msgid "IPsec Logging Controls"
-msgstr ""
+msgstr "IPsec logging Beheer"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:237
 msgid ""
@@ -32358,7 +32502,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:160
 msgid "L2TP VPN configuration changed."
-msgstr ""
+msgstr "L2TP VPN configuratie aangepast."
 
 #: src/usr/local/www/vpn_l2tp.php:188
 msgid "Enable L2TP"
@@ -32379,11 +32523,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:227
 msgid "*Remote address range"
-msgstr ""
+msgstr " "
 
 #: src/usr/local/www/vpn_l2tp.php:234
 msgid "*Number of L2TP users"
-msgstr ""
+msgstr "*Aantal L2TP gebruikers"
 
 #: src/usr/local/www/vpn_l2tp.php:241
 msgid "Secret"
@@ -32397,7 +32541,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:248
 msgid "*Authentication type"
-msgstr ""
+msgstr "*Authenticatie type"
 
 #: src/usr/local/www/vpn_l2tp.php:255
 msgid "Specifies the protocol to use for authentication."
@@ -32405,11 +32549,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:259
 msgid "Primary L2TP DNS server"
-msgstr ""
+msgstr "Primaire L2TP DNS server"
 
 #: src/usr/local/www/vpn_l2tp.php:266
 msgid "Secondary L2TP DNS server"
-msgstr ""
+msgstr "Secondaire L2TP DNS server"
 
 #: src/usr/local/www/vpn_l2tp.php:281
 msgid ""
@@ -32431,7 +32575,7 @@ msgstr "*Geheim"
 
 #: src/usr/local/www/vpn_l2tp.php:305
 msgid "RADIUS issued IPs"
-msgstr ""
+msgstr "RADIUS uitgegeven IPs"
 
 #: src/usr/local/www/vpn_l2tp.php:316
 msgid ""
@@ -32440,11 +32584,12 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:59
 msgid "Deleted a L2TP VPN user."
-msgstr ""
+msgstr "Verwijderde L2TP VPN gebruiker."
 
 #: src/usr/local/www/vpn_l2tp_users.php:73
 msgid "RADIUS is enabled. The local user database will not be used."
 msgstr ""
+"RADIUS ingeschakeld. De lokale gebruikers database wordt niet gebruikt."
 
 #: src/usr/local/www/vpn_l2tp_users.php:77
 msgid "The L2TP user list has been modified."
@@ -32483,17 +32628,17 @@ msgid "To assign the user a specific IP address, enter it here."
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:80
-#, php-format
+#, fuzzy, php-format
 msgid "Deleted OpenVPN client to server %1$s:%2$s %3$s"
-msgstr ""
+msgstr "Verwijderd OpenVPN client naar server %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_client.php:82
 msgid "Deleted empty OpenVPN client"
-msgstr ""
+msgstr "Verwijderd lege OpenVPN client"
 
 #: src/usr/local/www/vpn_openvpn_client.php:86
 msgid "Client successfully deleted."
-msgstr ""
+msgstr "Client succesvol verwijderd."
 
 #: src/usr/local/www/vpn_openvpn_client.php:194
 #: src/usr/local/www/vpn_openvpn_server.php:269
@@ -32549,22 +32694,23 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:299
 #: src/usr/local/www/vpn_openvpn_server.php:342
 msgid "The field 'Shared Key' does not appear to be valid"
-msgstr ""
+msgstr "Het veld 'Gedeelde Sleutel' blijkt niet valide te zijn"
 
 #: src/usr/local/www/vpn_openvpn_client.php:306
 #: src/usr/local/www/vpn_openvpn_server.php:349
 msgid "The field 'TLS Key' does not appear to be valid"
-msgstr ""
+msgstr "Het veld 'TLS Sleutel' blijkt niet valide te zijn"
 
 #: src/usr/local/www/vpn_openvpn_client.php:309
 #: src/usr/local/www/vpn_openvpn_server.php:352
 msgid "The field 'TLS Key Usage Mode' is not valid"
-msgstr ""
+msgstr "Het veld 'TLS Sleutel Gebruiksmodus' blijkt niet valide te zijn"
 
 #: src/usr/local/www/vpn_openvpn_client.php:314
 #: src/usr/local/www/vpn_openvpn_server.php:447
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
+"GCM Encryptie Algoritme kan niet gebruikt worden met Gedeelde Sleutelmodus"
 
 #: src/usr/local/www/vpn_openvpn_client.php:322
 #: src/usr/local/www/vpn_openvpn_server.php:433
@@ -32575,7 +32721,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:443
 #: src/usr/local/www/vpn_openvpn_server.php:877
 msgid "Shared key"
-msgstr ""
+msgstr "Gedeelde sleutel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:337
 msgid ""
@@ -32598,7 +32744,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:302
 #: src/usr/local/www/vpn_openvpn_server.php:659
 msgid "Clients"
-msgstr ""
+msgstr "Clienten"
 
 #: src/usr/local/www/vpn_openvpn_client.php:474
 #: src/usr/local/www/vpn_openvpn_csc.php:281
@@ -32615,12 +32761,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:493
 #: src/usr/local/www/vpn_openvpn_server.php:681
 msgid "*Server mode"
-msgstr ""
+msgstr "*Server modus"
 
 #: src/usr/local/www/vpn_openvpn_client.php:507
 #: src/usr/local/www/vpn_openvpn_server.php:722
 msgid "*Device mode"
-msgstr ""
+msgstr "*Apparaat modus"
 
 #: src/usr/local/www/vpn_openvpn_client.php:510
 #: src/usr/local/www/vpn_openvpn_server.php:725
@@ -32639,7 +32785,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:522
 msgid "Local port"
-msgstr ""
+msgstr "Locale poort"
 
 #: src/usr/local/www/vpn_openvpn_client.php:526
 msgid ""
@@ -32740,7 +32886,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:635
 #: src/usr/local/www/vpn_openvpn_server.php:774
 msgid "*TLS Key"
-msgstr ""
+msgstr "*TLS Sleutel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:637
 #: src/usr/local/www/vpn_openvpn_server.php:776
@@ -32753,7 +32899,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:642
 #: src/usr/local/www/vpn_openvpn_server.php:782
 msgid "*TLS Key Usage Mode"
-msgstr ""
+msgstr "*TLS Sleutel Gebruiksmodus"
 
 #: src/usr/local/www/vpn_openvpn_client.php:645
 #: src/usr/local/www/vpn_openvpn_server.php:785

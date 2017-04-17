@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:36-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-07 10:52-0400\n"
+"PO-Revision-Date: 2017-04-16 11:14-0400\n"
 "Last-Translator: Vero O. <vero.ovando@live.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es-ES\n"
@@ -48,7 +48,7 @@ msgstr "¡Error! No pudo conectarse con el servidor %s."
 #: src/etc/inc/auth.inc:862
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr ""
+msgstr "LDAP: no se pudo buscar en el CA referencias para el host %s"
 
 #: src/etc/inc/auth.inc:937
 #, php-format
@@ -62,6 +62,8 @@ msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
+"¡ERROR!  ldap_get_user_ous() seleccionado sin el servidor de autenticación "
+"LDAP definido."
 
 #: src/etc/inc/auth.inc:1027
 #, php-format
@@ -71,15 +73,15 @@ msgstr ""
 "servidor %s."
 
 #: src/etc/inc/auth.inc:1037
-#, fuzzy, php-format
+#, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
-"¡ERROR! ldap_get_user_ous() no pudo enlazarse anónimamente al servidor %s."
+"¡ERROR! ldap_get_user_ous() no pudo conectarse anónimamente al servidor %s."
 
 #: src/etc/inc/auth.inc:1042
-#, fuzzy, php-format
+#, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "¡ERROR! ldap_get_user_ous() no pudo enlazarse al servidor %s."
+msgstr "¡ERROR! ldap_get_user_ous() no pudo conectarse al servidor %s."
 
 #: src/etc/inc/auth.inc:1158
 #, php-format
@@ -94,26 +96,31 @@ msgstr ""
 "%s."
 
 #: src/etc/inc/auth.inc:1181
-#, fuzzy, php-format
+#, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
-"ERROR! ldap_get_groups() no pudo enlazarse anónimamente al servidor %s."
+"ERROR! ldap_get_groups() no pudo conectarse anónimamente al servidor %s."
 
 #: src/etc/inc/auth.inc:1186
-#, fuzzy, php-format
+#, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "¡ERROR! ldap_get_groups() no pudo enlazarse al servidor %s."
+msgstr "¡ERROR! ldap_get_groups() no pudo conectarse al servidor %s."
 
 #: src/etc/inc/auth.inc:1292
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
+"¡ERROR! ldap_backed() fue llamada sin el servidor de autenticación LDAP "
+"definido. Utilizando base de datos de usuarios local. Visite System -> User "
+"Manager"
 
 #: src/etc/inc/auth.inc:1295
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
+"¡ERROR! ldap_backed() fue llamada sin el servidor de autenticación LDAP "
+"definido."
 
 #: src/etc/inc/auth.inc:1318
 #, php-format
@@ -134,7 +141,7 @@ msgstr "Buscando a %s en el directorio."
 #: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr ""
+msgstr "Buscando en el servidor %1$s, contenedor %2$s con el filtro %3$s."
 
 #: src/etc/inc/auth.inc:1384
 #, php-format
@@ -143,12 +150,14 @@ msgstr "La búsqueda resultó en un error: %s"
 
 #: src/etc/inc/auth.inc:1400
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr ""
+msgstr "¡ERROR! La búsqueda LDAP falló o encontró más de un usuario."
 
 #: src/etc/inc/auth.inc:1407
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr ""
+"¡ERROR! No se pudo iniciar sesión en el servidor %1$s con el usuario %2$s: "
+"%3$s"
 
 #: src/etc/inc/auth.inc:1414
 #, php-format
@@ -160,12 +169,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1489
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr "Inicialización de RADIUS: %s"
 
 #: src/etc/inc/auth.inc:1501
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "Error en el evío de RADIUS: %s"
 
 #: src/etc/inc/auth.inc:1509
 #, php-format
@@ -193,7 +202,7 @@ msgstr "Base de datos local"
 #: src/etc/inc/auth.inc:1779
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Inicio de sesión exitoso del usuario '%1$s' desde: %2$s"
 
 #: src/etc/inc/auth.inc:1838
 #, php-format
@@ -237,12 +246,12 @@ msgstr "Este dispositivo actualmente es mantenido por: %s."
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Iniciar sesión en %1$s en %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "Iniciar sesión en %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1015
@@ -2643,7 +2652,7 @@ msgstr ""
 msgid "Mobile Client"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3238,19 +3247,23 @@ msgid "Norwegian Bokmål"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Chinese (Simplified, China)"
+msgid "Russian"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2838
+msgid "Chinese (Simplified, China)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2839
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
-#: src/etc/inc/pfsense-utils.inc:3074
+#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "No Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
+#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3266,83 +3279,83 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3076
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3091
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3095
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3100
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3104
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 

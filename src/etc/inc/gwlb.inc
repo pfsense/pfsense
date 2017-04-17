@@ -1337,13 +1337,18 @@ function gateway_is_gwgroup_member($name) {
 
 	return $members;
 }
-
-// Check the proposed gateway settings to see if they are valid.
-// $gateway_settings - the proposed array of proposed gateway settings
-// $id - the index of the gateway proposed to be modified (otherwise "" if adding a new gateway)
-// Return completed $input_errors array if there is any problem.
-// Otherwise return an empty $input_errors array
-function validate_gateway($gateway_settings, $id = "") {
+/*
+  Check the proposed gateway settings to see if they are valid.
+  $gateway_settings - the proposed array of proposed gateway settings
+  $id - the index of the gateway proposed to be modified (otherwise "" if adding a new gateway)
+  $parent_ip - the IP (v4 or v6) address about to be set on the corresponding interface (if any)
+  $parent_sn - the subnet about to be set on the corresponding interface (if any)
+  (Note: the above 2 parameters allow gateway parameters to be validated concurrently with saving
+   an interface, before the new interface parameters are actually saved in the config.)
+  Return completed $input_errors array if there is any problem.
+  Otherwise return an empty $input_errors array
+*/
+function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "") {
 	global $config;
 
 	$a_gateways = return_gateways_array(true, false, true, true);
@@ -1393,8 +1398,10 @@ function validate_gateway($gateway_settings, $id = "") {
 
 	if ($gateway_settings['gateway'] && (is_ipaddr($gateway_settings['gateway'])) && !$gateway_settings['isAjax']) {
 		if (is_ipaddrv4($gateway_settings['gateway'])) {
-			$parent_ip = get_interface_ip($gateway_settings['interface']);
-			$parent_sn = get_interface_subnet($gateway_settings['interface']);
+			if ($parent_ip == '') {
+				$parent_ip = get_interface_ip($gateway_settings['interface']);
+				$parent_sn = get_interface_subnet($gateway_settings['interface']);
+			}
 			if (empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
 			} elseif (!isset($gateway_settings["nonlocalgateway"])) {
@@ -1424,8 +1431,10 @@ function validate_gateway($gateway_settings, $id = "") {
 		} else if (is_ipaddrv6($gateway_settings['gateway'])) {
 			/* do not do a subnet match on a link local address, it's valid */
 			if (!is_linklocal($gateway_settings['gateway'])) {
-				$parent_ip = get_interface_ipv6($gateway_settings['interface']);
-				$parent_sn = get_interface_subnetv6($gateway_settings['interface']);
+				if ($parent_ip == '') {
+					$parent_ip = get_interface_ipv6($gateway_settings['interface']);
+					$parent_sn = get_interface_subnetv6($gateway_settings['interface']);
+				}
 				if (empty($parent_ip) || empty($parent_sn)) {
 					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
 				} elseif (!isset($gateway_settings["nonlocalgateway"])) {

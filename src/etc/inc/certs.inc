@@ -771,6 +771,27 @@ function cert_in_use($certref) {
 		is_package_cert($certref));
 }
 
+function cert_usedby_description($refid, $certificates_used_by_packages) {
+	$result = "";
+	if (is_array($certificates_used_by_packages)) {
+		foreach ($certificates_used_by_packages as $name => $package) {
+			if (isset($package['certificatelist'][$refid])) {
+				$hint = "" ;
+				if (is_array($package['certificatelist'][$refid])) {
+					foreach ($package['certificatelist'][$refid] as $cert_used) {
+						$hint = $hint . $cert_used['usedby']."\n";
+					}
+				}
+				$count = count($package['certificatelist'][$refid]);
+				$result .= "<div title='".htmlspecialchars($hint)."'>";
+				$result .= htmlspecialchars($package['pkgname'])." ($count)<br />";
+				$result .= "</div>";
+			}
+		}
+	}
+	return $result;
+}
+
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	global $config;
 	$ca =& lookup_ca($caref);

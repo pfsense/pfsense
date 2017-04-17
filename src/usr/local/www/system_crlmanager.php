@@ -583,6 +583,10 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
+	$pluginparams = array();
+	$pluginparams['type'] = 'certificates';
+	$pluginparams['event'] = 'used_crl';
+	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
 	foreach ($a_crl as $crl) {
@@ -634,7 +638,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<td><?=$tmpcrl['descr']; ?></td>
 						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
+						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i>
+						<?php echo cert_usedby_description($tmpcrl['refid'], $certificates_used_by_packages); ?>
+						</td>
 						<td>
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>" ></a>
 <?php

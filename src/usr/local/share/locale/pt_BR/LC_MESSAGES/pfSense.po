@@ -16,11 +16,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:36-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-08 11:54-0400\n"
+"PO-Revision-Date: 2017-04-16 07:20-0400\n"
 "Last-Translator: Luiz Fernando Barros <lfb@outlook.com.br>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
@@ -2779,7 +2779,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Cliente Móvel"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3408,19 +3408,23 @@ msgid "Norwegian Bokmål"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
+msgid "Russian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
 msgstr "Chines (Simplificado)"
 
-#: src/etc/inc/pfsense-utils.inc:2838
+#: src/etc/inc/pfsense-utils.inc:2839
 msgid "Chinese (Taiwan)"
 msgstr "Chines (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
-#: src/etc/inc/pfsense-utils.inc:3074
+#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "No Service"
 msgstr "Sem Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
+#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3436,83 +3440,83 @@ msgstr "Sem Serviço"
 msgid "Mode"
 msgstr "Modo"
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Restricted Service"
 msgstr "Serviço Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Valid Service"
 msgstr "Serviço Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Restricted Regional Service"
 msgstr "Serviço Regional Restrito"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Powersaving Service"
 msgstr "Serviço de Economia de Energia"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Unknown Service"
 msgstr "Serviço desconhecido"
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Invalid SIM/locked State"
 msgstr "Estado SIM/locked inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Valid SIM State"
 msgstr "Estado SIM Válido"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM CS State"
 msgstr "Estado SIM CS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM PS State"
 msgstr "Estado SIM PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Invalid SIM CS/PS State"
 msgstr "Estado SIM CS/PS inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Missing SIM State"
 msgstr "Estado SIM não encontrado"
 
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3076
 msgid "Limited Service"
 msgstr "Serviço Limitado"
 
-#: src/etc/inc/pfsense-utils.inc:3091
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Initializing Service"
 msgstr "Inicializando Serviço"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Lock error Service"
 msgstr "Erro de serviço Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Network Locked Service"
 msgstr "Serviço de Rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3095
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Destravada ou serviço MCC/MNC correto"
 
-#: src/etc/inc/pfsense-utils.inc:3100
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "No action State"
 msgstr "Sem estados em atividade"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "Network lock State"
 msgstr "Estado de rede travada"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "(U)SIM card lock State"
 msgstr "Estado de cartão (U)SIM travado"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3104
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Estado de cartão (U)SIM e rede travadas"
 
@@ -8678,6 +8682,8 @@ msgid ""
 "Resetting the system to factory defaults will remove all user configuration "
 "and apply the following settings:"
 msgstr ""
+"Restaurando as configurações padrão de fabrica removerá todas a "
+"configurações de usuário e aplicará as seguintes configurações "
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
@@ -8712,7 +8718,7 @@ msgstr "Usuário admin do webConfigurator será redefinido para 'admin'"
 #: src/usr/local/www/diag_defaults.php:69
 #, php-format
 msgid "webConfigurator admin password will be reset to '%s'"
-msgstr ""
+msgstr "senha de configuração web admin será reconfigurada para '%s'"
 
 #: src/usr/local/www/diag_defaults.php:71
 msgid "Are you sure you want to proceed?"
@@ -8720,11 +8726,11 @@ msgstr "Você tem certeza que deseja prosseguir?"
 
 #: src/usr/local/www/diag_defaults.php:73
 msgid "Perform a factory reset"
-msgstr ""
+msgstr "Realizar reconfiguração de fabrica"
 
 #: src/usr/local/www/diag_defaults.php:75
 msgid "Factory Reset"
-msgstr ""
+msgstr "Reconfiguraçao de fabrica "
 
 #: src/usr/local/www/diag_defaults.php:77
 msgid "Return to the dashboard"
@@ -8741,11 +8747,11 @@ msgstr "DNS Lookup"
 
 #: src/usr/local/www/diag_dns.php:114
 msgid "Created from Diagnostics-> DNS Lookup"
-msgstr ""
+msgstr "Criado a partir de diagnostico-> DNS lookup"
 
 #: src/usr/local/www/diag_dns.php:120
 msgid "Created an alias from Diagnostics - DNS Lookup page."
-msgstr ""
+msgstr "Aliás criado a partir de diagnostico - Página DNS Lookup."
 
 #: src/usr/local/www/diag_dns.php:134
 msgid "Host must be a valid hostname or IP address."
@@ -8796,15 +8802,15 @@ msgstr "Tempo de Consulta"
 #: src/usr/local/www/diag_dns.php:206
 #, php-format
 msgid "Host \"%s\" could not be resolved."
-msgstr ""
+msgstr "Servidor \"%s\" não pode ser resolvido"
 
 #: src/usr/local/www/diag_dns.php:211
 msgid "Alias was updated successfully."
-msgstr ""
+msgstr "Aliás foi atualizado com sucesso."
 
 #: src/usr/local/www/diag_dns.php:213
 msgid "Alias was created successfully."
-msgstr ""
+msgstr "Aliás foi criado com sucesso."
 
 #: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -8814,29 +8820,29 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/system.php:438
 msgid "*Hostname"
-msgstr ""
+msgstr "Nome do servidor"
 
 #: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
-msgstr ""
+msgstr "Lookup"
 
 #: src/usr/local/www/diag_dns.php:239
 msgid "Update alias"
-msgstr ""
+msgstr "Atualizar aliás"
 
 #: src/usr/local/www/diag_dns.php:241
 msgid "Add alias"
-msgstr ""
+msgstr "Adicionar aliás"
 
 #: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
-msgstr ""
+msgstr "Resultados"
 
 #: src/usr/local/www/diag_dns.php:263
 msgid "Result"
-msgstr ""
+msgstr "Resultado"
 
 #: src/usr/local/www/diag_dns.php:264
 msgid "Record type"
@@ -8844,11 +8850,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:281
 msgid "Timings"
-msgstr ""
+msgstr "Momentos"
 
 #: src/usr/local/www/diag_dns.php:286
 msgid "Name server"
-msgstr ""
+msgstr "Nome do servidor"
 
 #: src/usr/local/www/diag_dns.php:287
 msgid "Query time"
@@ -8856,7 +8862,7 @@ msgstr "Tempo de consulta"
 
 #: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
-msgstr ""
+msgstr "Mais informação"
 
 #: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
@@ -8917,12 +8923,12 @@ msgstr "Reiniciar Estados"
 
 #: src/usr/local/www/diag_dump_states.php:119
 msgid "State Filter"
-msgstr ""
+msgstr "Filtro de estado"
 
 #: src/usr/local/www/diag_dump_states.php:139
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
-msgstr ""
+msgstr "Filtro de expressão"
 
 #: src/usr/local/www/diag_dump_states.php:147
 #: src/usr/local/www/diag_dump_states_sources.php:106
@@ -8937,15 +8943,15 @@ msgstr "Filtro"
 
 #: src/usr/local/www/diag_dump_states.php:160
 msgid "Kill States"
-msgstr ""
+msgstr "Matar estados"
 
 #: src/usr/local/www/diag_dump_states.php:166
 msgid "Kill filtered states"
-msgstr ""
+msgstr "Matar estados filtrados"
 
 #: src/usr/local/www/diag_dump_states.php:168
 msgid "Remove all states to and from the filtered address"
-msgstr ""
+msgstr "Remover todos os estados a partir dos endereços filtrados"
 
 #: src/usr/local/www/diag_dump_states.php:182
 #: src/usr/local/www/diag_states_summary.php:153
@@ -9248,12 +9254,12 @@ msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:304
 msgid "Add to Mirror"
-msgstr ""
+msgstr "Adicionar para espelho"
 
 #: src/usr/local/www/diag_gmirror.php:326
 #, php-format
 msgid "Reactivate on %s"
-msgstr ""
+msgstr "Reativar em %s"
 
 #: src/usr/local/www/diag_gmirror.php:331
 msgid "Clear Metadata"
@@ -9473,11 +9479,11 @@ msgstr "Opções de captura de pacote"
 #: src/usr/local/www/vpn_openvpn_client.php:515
 #: src/usr/local/www/vpn_openvpn_server.php:730
 msgid "*Interface"
-msgstr ""
+msgstr "*Dispositivo"
 
 #: src/usr/local/www/diag_packet_capture.php:311
 msgid "Select the interface on which to capture traffic. "
-msgstr ""
+msgstr "Selecione o dispositivo para o trafico de captura."
 
 #: src/usr/local/www/diag_packet_capture.php:315
 msgid "Promiscuous"
@@ -9490,24 +9496,27 @@ msgid ""
 "network adapters do not support or work well in promiscuous mode.%1$sMore: "
 "%2$sPacket capture%3$s"
 msgstr ""
+"A captura de pacote será realizado usando modo promíscuo. %1$sNota: Alguns "
+"dispositivos de rede não suportam ou não trabalham bem no modo promiscuo."
+"%1$sMais: %2$sCaptura de pacote%3$s"
 
 #: src/usr/local/www/diag_packet_capture.php:330
 msgid "IPv4 Only"
-msgstr ""
+msgstr "Apenas IPv4"
 
 #: src/usr/local/www/diag_packet_capture.php:331
 msgid "IPv6 Only"
-msgstr ""
+msgstr "Apenas IPv6"
 
 #: src/usr/local/www/diag_packet_capture.php:327
 #: src/usr/local/www/firewall_rules_edit.php:1286
 #: src/usr/local/www/system_gateways_edit.php:604
 msgid "*Address Family"
-msgstr ""
+msgstr "Família de endereço"
 
 #: src/usr/local/www/diag_packet_capture.php:333
 msgid "Select the type of traffic to be captured."
-msgstr ""
+msgstr "Selecione o tipo de trafico para ser capturado."
 
 #: src/usr/local/www/diag_packet_capture.php:337
 #: src/usr/local/www/firewall_nat_edit.php:709
@@ -9518,11 +9527,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:500
 #: src/usr/local/www/vpn_openvpn_server.php:715
 msgid "*Protocol"
-msgstr ""
+msgstr "*Protocolo"
 
 #: src/usr/local/www/diag_packet_capture.php:340
 msgid "Select the protocol to capture, or \"Any\". "
-msgstr ""
+msgstr "Selecione o protocolo para captura, ou \"Qualquer\"."
 
 #: src/usr/local/www/diag_packet_capture.php:344
 msgid "Host Address"
@@ -9540,6 +9549,15 @@ msgid ""
 "of one (xx), two (xx:xx), or four (xx:xx:xx:xx) segments.%1$sIf this field "
 "is left blank, all packets on the specified interface will be captured."
 msgstr ""
+"Esse valor é, ou endereço IP origem ou endereço IP destino, subclasse em "
+"notação CIDR, ou endereço MAC.%1$sCombinado pode ser negado por preceder o "
+"valor com \"!\". Múltiplos endereços IP ou Subclasses CIDR podem ser "
+"esecificadas. Virgula(\",\") valores separados realizam booleano \"AND\". "
+"Separando com o pipe (\"|\") realizados com booleanos \"OR\".%1$sEndereços "
+"MAC devem ser inseridos em formato dois-pontos Ex: xx:xx:xx:xx:xx ou uma "
+"parte do endereço consistindo de um (xx), dois (xx:xx) ou quatro (xx:xx:xx:"
+"xx) segmentos. %1$slf esse campo deixe em branco, todos os pacotes "
+"especificados nos dispositivos serão capturados."
 
 #: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/diag_testport.php:52
@@ -9562,6 +9580,8 @@ msgid ""
 "will look for this port in either field. Leave blank if not filtering by "
 "port."
 msgstr ""
+"Essa porta pode ser ou a porta de origem ou de destino. O pacote irá "
+"procurar por essa porta ou campo. Deixe em branco se não filtrar por porta."
 
 #: src/usr/local/www/diag_packet_capture.php:364
 msgid "Packet Length"
@@ -9589,6 +9609,8 @@ msgid ""
 "This is the number of packets the packet capture will grab. Default value is "
 "100.%sEnter 0 (zero) for no count limit."
 msgstr ""
+"Esse é o número de pacotes que serão filtrados. O valor padrão é 100.%sDeixe "
+"0 para não limitar o contador."
 
 #: src/usr/local/www/diag_packet_capture.php:383
 #: src/usr/local/www/services_router_advertisements.php:112
@@ -9610,7 +9632,7 @@ msgstr "Total"
 
 #: src/usr/local/www/diag_packet_capture.php:381
 msgid "Level of detail"
-msgstr ""
+msgstr "Nível de detalhes"
 
 #: src/usr/local/www/diag_packet_capture.php:388
 #, php-format
@@ -9619,6 +9641,9 @@ msgid ""
 "when the packets have been captured.%sThis option does not affect the level "
 "of detail when downloading the packet capture. "
 msgstr ""
+"Esse é o nível de detalhes que será mostrados depois de alcançar \"Pare\" "
+"quando o  pacote  foi capturado. %sEssa Opção não afeta o nível de detalhes "
+"quando baixar o pacote capturado"
 
 #: src/usr/local/www/diag_packet_capture.php:394
 msgid "Reverse DNS Lookup"
@@ -9630,6 +9655,9 @@ msgid ""
 "The packet capture will perform a reverse DNS lookup associated with all IP "
 "addresses.%sThis option can cause delays for large packet captures."
 msgstr ""
+"O pacote capturado irá realizar uma consulta de DNS reverso associado com "
+"todos os endereços IP. %sEssas opção pode causar atraso para grandes pacotes "
+"capturados."
 
 #: src/usr/local/www/diag_packet_capture.php:427
 msgid "View Capture"
@@ -9637,15 +9665,15 @@ msgstr "Visualizar Captura"
 
 #: src/usr/local/www/diag_packet_capture.php:440
 msgid "Last capture"
-msgstr ""
+msgstr "Ultima Captura"
 
 #: src/usr/local/www/diag_packet_capture.php:490
 msgid "Packet capture is running."
-msgstr ""
+msgstr "Captura de pacote está em execução."
 
 #: src/usr/local/www/diag_packet_capture.php:500
 msgid "Packets Captured"
-msgstr ""
+msgstr "Pacotes capturados"
 
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:393
 msgid "pfInfo"
@@ -9653,15 +9681,15 @@ msgstr "pfInfo"
 
 #: src/usr/local/www/diag_pf_info.php:63
 msgid "Auto Update Page"
-msgstr ""
+msgstr "Atualização automática de pagina"
 
 #: src/usr/local/www/diag_pf_info.php:67
 msgid "Refresh"
-msgstr ""
+msgstr "Atualizar"
 
 #: src/usr/local/www/diag_pf_info.php:102 src/usr/local/www/diag_pftop.php:167
 msgid "Output"
-msgstr ""
+msgstr "Saída"
 
 #: src/usr/local/www/diag_pf_info.php:104
 msgid "Gathering PF information, please wait..."
@@ -9673,11 +9701,11 @@ msgstr "pfTop"
 
 #: src/usr/local/www/diag_pftop.php:91
 msgid "pfTop Configuration"
-msgstr ""
+msgstr "Configuração pfTop"
 
 #: src/usr/local/www/diag_pftop.php:95
 msgid "label"
-msgstr ""
+msgstr "Etiqueta"
 
 #: src/usr/local/www/diag_pftop.php:96
 msgid "long"

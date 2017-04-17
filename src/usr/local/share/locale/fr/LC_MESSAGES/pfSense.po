@@ -23,12 +23,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:36-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-11 03:40-0400\n"
-"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
+"PO-Revision-Date: 2017-04-13 08:16-0400\n"
+"Last-Translator: Pascal Pagan <pythagore@intnet.mu>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2842,7 +2842,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Client mobile"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3025
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3026
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3398,7 +3398,7 @@ msgstr "en cours"
 
 #: src/etc/inc/pfsense-utils.inc:1600 src/usr/local/www/graph.php:198
 msgid "up"
-msgstr "Monter"
+msgstr "monter"
 
 #: src/etc/inc/pfsense-utils.inc:1645
 msgid "blocking"
@@ -3410,7 +3410,7 @@ msgstr "Vérification des boucles ethernet"
 
 #: src/etc/inc/pfsense-utils.inc:1648
 msgid "learning"
-msgstr "Apprend"
+msgstr "apprend"
 
 #: src/etc/inc/pfsense-utils.inc:1651
 msgid "forwarding"
@@ -3477,11 +3477,11 @@ msgstr "Le Fichier suivant ne peut être lu %1$s depuis %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2834
 msgid "English"
-msgstr "Anglais"
+msgstr "English"
 
 #: src/etc/inc/pfsense-utils.inc:2835
 msgid "Spanish"
-msgstr "Espagnol"
+msgstr "Spanish"
 
 #: src/etc/inc/pfsense-utils.inc:2836
 #, fuzzy
@@ -3489,19 +3489,23 @@ msgid "Norwegian Bokmål"
 msgstr "Norwegian Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Chinese (Simplified, China)"
-msgstr "Chinois (Simplifié)"
+msgid "Russian"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2838
-msgid "Chinese (Taiwan)"
-msgstr "Chinois (Taiwan)"
+msgid "Chinese (Simplified, China)"
+msgstr "Chinese (Simplified, China)"
 
-#: src/etc/inc/pfsense-utils.inc:3033 src/etc/inc/pfsense-utils.inc:3048
-#: src/etc/inc/pfsense-utils.inc:3074
+#: src/etc/inc/pfsense-utils.inc:2839
+msgid "Chinese (Taiwan)"
+msgstr "Chinese (Taiwan)"
+
+#: src/etc/inc/pfsense-utils.inc:3034 src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3075
 msgid "No Service"
 msgstr "Pas de service"
 
-#: src/etc/inc/pfsense-utils.inc:3043 src/etc/inc/pfsense-utils.inc:3086
+#: src/etc/inc/pfsense-utils.inc:3044 src/etc/inc/pfsense-utils.inc:3087
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:876 src/usr/local/www/interfaces.php:2958
@@ -3517,83 +3521,83 @@ msgstr "Pas de service"
 msgid "Mode"
 msgstr "Mode"
 
-#: src/etc/inc/pfsense-utils.inc:3049
+#: src/etc/inc/pfsense-utils.inc:3050
 msgid "Restricted Service"
 msgstr "Service Limité"
 
-#: src/etc/inc/pfsense-utils.inc:3050
+#: src/etc/inc/pfsense-utils.inc:3051
 msgid "Valid Service"
 msgstr "Service Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3051
+#: src/etc/inc/pfsense-utils.inc:3052
 msgid "Restricted Regional Service"
 msgstr "Service de restriction regional"
 
-#: src/etc/inc/pfsense-utils.inc:3052
+#: src/etc/inc/pfsense-utils.inc:3053
 msgid "Powersaving Service"
 msgstr "Service d'économie d'énergie"
 
-#: src/etc/inc/pfsense-utils.inc:3053
+#: src/etc/inc/pfsense-utils.inc:3054
 msgid "Unknown Service"
 msgstr "Service inconnu"
 
-#: src/etc/inc/pfsense-utils.inc:3059
+#: src/etc/inc/pfsense-utils.inc:3060
 msgid "Invalid SIM/locked State"
 msgstr "Invalide SIM/Etat Bloqué"
 
-#: src/etc/inc/pfsense-utils.inc:3060
+#: src/etc/inc/pfsense-utils.inc:3061
 msgid "Valid SIM State"
 msgstr "Etat de la SIM Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3061
+#: src/etc/inc/pfsense-utils.inc:3062
 msgid "Invalid SIM CS State"
 msgstr "Etat de la SIM CS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3062
+#: src/etc/inc/pfsense-utils.inc:3063
 msgid "Invalid SIM PS State"
 msgstr "Etat de la SIM PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3063
+#: src/etc/inc/pfsense-utils.inc:3064
 msgid "Invalid SIM CS/PS State"
 msgstr "Etat de la SIM CS/PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3064
+#: src/etc/inc/pfsense-utils.inc:3065
 msgid "Missing SIM State"
 msgstr "Etat de la SIM manquant"
 
-#: src/etc/inc/pfsense-utils.inc:3075
+#: src/etc/inc/pfsense-utils.inc:3076
 msgid "Limited Service"
 msgstr "Service limité"
 
-#: src/etc/inc/pfsense-utils.inc:3091
+#: src/etc/inc/pfsense-utils.inc:3092
 msgid "Initializing Service"
 msgstr "Initialisation du service"
 
-#: src/etc/inc/pfsense-utils.inc:3092
+#: src/etc/inc/pfsense-utils.inc:3093
 msgid "Network Lock error Service"
 msgstr "Service d'erreur de verrouillage réseau"
 
-#: src/etc/inc/pfsense-utils.inc:3093
+#: src/etc/inc/pfsense-utils.inc:3094
 msgid "Network Locked Service"
 msgstr "Service Reseau Verrouillé"
 
-#: src/etc/inc/pfsense-utils.inc:3094
+#: src/etc/inc/pfsense-utils.inc:3095
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Service MCC/MNC déverrouillé ou correct"
 
-#: src/etc/inc/pfsense-utils.inc:3100
+#: src/etc/inc/pfsense-utils.inc:3101
 msgid "No action State"
 msgstr "Aucun état d'action"
 
-#: src/etc/inc/pfsense-utils.inc:3101
+#: src/etc/inc/pfsense-utils.inc:3102
 msgid "Network lock State"
 msgstr "Etat des réseaux verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3102
+#: src/etc/inc/pfsense-utils.inc:3103
 msgid "(U)SIM card lock State"
 msgstr "Etat des cartes(U)SIM verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3103
+#: src/etc/inc/pfsense-utils.inc:3104
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Etat des réseaux et des cartes (U)SIM verouillés"
 
@@ -3853,7 +3857,7 @@ msgstr "Arrêt de tous les paquets."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
-msgstr "Synchronisation du noeud du Système HA"
+msgstr "Système - Synchronisation du noeud du Système HA"
 
 #: src/etc/inc/priv/user.priv.inc:7
 msgid "Allow access to authenticate this user for HA sync via XMLRPC"
@@ -3909,7 +3913,7 @@ msgstr "Ignorer les requêtes en écriture sur config.xml de cet utilisateur"
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr "User - Notices: Voir"
+msgstr "Utilisateur - Notices: Voir"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
@@ -3917,7 +3921,7 @@ msgstr "Cet utilisateur peut voir les notices système"
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr "User - Notices: Voir et Purger"
+msgstr "Utilisateur - Notices: Voir et Purger"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
@@ -3925,7 +3929,7 @@ msgstr "Cet utilisateur peut voir et purger les notices système"
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr "User - System: Accès au compte Shell"
+msgstr "Utilisateur - Système: Accès au compte Shell"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
@@ -5749,19 +5753,21 @@ msgstr "Autoriser l'accès à la page 'VPN: IPsec'."
 
 #: src/etc/inc/priv.defs.inc:1216
 msgid "WebCfg - VPN: IPsec: Pre-Shared Keys List"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Liste des clés pré-partagées"
 
 #: src/etc/inc/priv.defs.inc:1217
 msgid "Allow access to the 'VPN: IPsec: Pre-Shared Keys List' page."
 msgstr ""
+"Autoriser l'accès à la page 'VPN: IPsec: Liste des clés pré-partagées'."
 
 #: src/etc/inc/priv.defs.inc:1222
 msgid "WebCfg - VPN: IPsec: Edit Pre-Shared Keys"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Modifier les clés pré-partagées"
 
 #: src/etc/inc/priv.defs.inc:1223
 msgid "Allow access to the 'VPN: IPsec: Edit Pre-Shared Keys' page."
 msgstr ""
+"Autoriser l'accès à la page 'VPN: IPsec: Modifier les clés pré-partagées'."
 
 #: src/etc/inc/priv.defs.inc:1228
 msgid "WebCfg - VPN: IPsec: Mobile"
@@ -5773,19 +5779,19 @@ msgstr "Autoriser l'accès à la page 'VPN: IPsec: Mobile'."
 
 #: src/etc/inc/priv.defs.inc:1234
 msgid "WebCfg - VPN: IPsec: Edit Phase 1"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Modifier la phase 1"
 
 #: src/etc/inc/priv.defs.inc:1235
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 1' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'VPN: IPsec: Modifier la phase 1'."
 
 #: src/etc/inc/priv.defs.inc:1240
 msgid "WebCfg - VPN: IPsec: Edit Phase 2"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Modifier la phase 2"
 
 #: src/etc/inc/priv.defs.inc:1241
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 2' page."
-msgstr ""
+msgstr "Autoriser l'accès à la page 'VPN: IPsec: Modifier la phase 2'."
 
 #: src/etc/inc/priv.defs.inc:1246
 msgid "WebCfg - VPN: IPsec: Settings"
@@ -5902,14 +5908,16 @@ msgstr ""
 #, php-format
 msgid "The new RRD now has %1$s DS values and %2$s RRA databases"
 msgstr ""
+"Le nouveau graphique RRD à maintenant les valeurs DS %1$s et les bases de "
+"données RRA %2$s"
 
 #: src/etc/inc/rrd.inc:150
 msgid "Generating RRD graphs..."
-msgstr ""
+msgstr "Génération du graphique RRD ..."
 
 #: src/etc/inc/rrd.inc:942
 msgid "Creating rrd update script"
-msgstr ""
+msgstr "Création du script de mise a jour RRD"
 
 #: src/etc/inc/service-utils.inc:243
 msgid "Router Advertisement Daemon"
@@ -6044,12 +6052,12 @@ msgstr "Désactivé"
 #: src/etc/inc/service-utils.inc:491 src/etc/inc/service-utils.inc:493
 #, php-format
 msgid "%1$s Service is %2$s"
-msgstr ""
+msgstr "Le service %1$s est %2$s"
 
 #: src/etc/inc/service-utils.inc:495
-#, php-format
+#, fuzzy, php-format
 msgid "%1$s, %2$s Service is %3$s"
-msgstr ""
+msgstr "%1$s, Le service %2$s est %3$s"
 
 #: src/etc/inc/service-utils.inc:542
 #, php-format
@@ -6095,8 +6103,11 @@ msgid "Starting DHCP service..."
 msgstr "Démarrage en cours du service DHCP..."
 
 #: src/etc/inc/services.inc:607
+#, fuzzy
 msgid "Warning!  DHCP Failover setup and no CARP virtual IPs defined!"
 msgstr ""
+"Attention! Le Failover du DHCP est configuré mais aucune IP virtuel CARP est "
+"défini!"
 
 #: src/etc/inc/services.inc:774
 #, php-format
@@ -6423,7 +6434,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:1481
 msgid "Select options for this queue"
-msgstr ""
+msgstr "Sélectionnez les options de cette file d'attente"
 
 #: src/etc/inc/shaper.inc:1487 src/etc/inc/shaper.inc:3891
 #: src/etc/inc/shaper.inc:4195 src/usr/local/www/firewall_aliases.php:192
@@ -6554,53 +6565,64 @@ msgstr "Supprimer la File de cette Interface"
 #: src/etc/inc/shaper.inc:1924
 msgid "upperlimit service curve defined but missing (d) value"
 msgstr ""
+"La limite supérieure de la courbe du service est défini mais il manque la "
+"valeur (d)"
 
 #: src/etc/inc/shaper.inc:1927
 msgid ""
 "upperlimit service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"La limite supérieure de la courbe du service est défini mais il manque la "
+"valeur initiale de bande passante (m1)"
 
 #: src/etc/inc/shaper.inc:1930
 msgid "upperlimit m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "La valeur limite supérieure de m1 doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1933
 msgid "upperlimit d value needs to be numeric"
-msgstr ""
+msgstr "La valeur limite supérieure de d doit être numerique"
 
 #: src/etc/inc/shaper.inc:1936
 msgid "upperlimit m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "La valeur limite supérieure de m2 doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1953
 msgid "linkshare service curve defined but missing (d) value"
 msgstr ""
+"La limite supérieure du service de partage de liens est défini mais il "
+"manque la valeur (d)"
 
 #: src/etc/inc/shaper.inc:1956
 msgid ""
 "linkshare service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"La limite supérieure du service de partage de liens est défini mais il "
+"manque la valeur initiale de bande passante (m1)"
 
 #: src/etc/inc/shaper.inc:1959
 msgid "linkshare m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "La valeur m1 du partage de liens doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1962
 msgid "linkshare d value needs to be numeric"
-msgstr ""
+msgstr "La valeur d du partage de liens doit être numerique"
 
 #: src/etc/inc/shaper.inc:1965
 msgid "linkshare m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "La valeur m2 du partage de liens doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1968
 msgid "realtime service curve defined but missing (d) value"
 msgstr ""
+"La courbe du service temps réel est défini mais il manque la valeur (d)"
 
 #: src/etc/inc/shaper.inc:1971
 msgid ""
 "realtime service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"La courbe du service temps réel est défini mais il manque la valeur initiale "
+"de bande passante (m1)"
 
 #: src/etc/inc/shaper.inc:1989
 msgid "realtime m1 value needs to be Kb, Mb, Gb, or %"
@@ -6616,12 +6638,12 @@ msgstr "La valeur temps réel m2 doit etre Kb, Mb, Gb, or % "
 
 #: src/etc/inc/shaper.inc:2262
 msgid "Service Curve (sc)"
-msgstr ""
+msgstr "Courbe de service (sc)"
 
 #: src/etc/inc/shaper.inc:2285 src/etc/inc/shaper.inc:2798
 #: src/etc/inc/shaper.inc:3071
 msgid "Choose the amount of bandwidth for this queue"
-msgstr ""
+msgstr "Choisir la bande passante pour cette file d'attente"
 
 #: src/etc/inc/shaper.inc:2289
 msgid "Max bandwidth for queue."
@@ -6656,10 +6678,9 @@ msgstr "La priorité doit être un nombre entier compris entre 1 et 7."
 
 #: src/etc/inc/shaper.inc:2776
 msgid "NOTITLE"
-msgstr ""
+msgstr "PAS DE TITRE"
 
 #: src/etc/inc/shaper.inc:2804
-#, fuzzy
 msgid "Scheduler option"
 msgstr "Option de Planificateur"
 
@@ -6668,7 +6689,6 @@ msgid "Priority must be an integer between 1 and 255."
 msgstr "La priorité doit être un nombre entier compris entre 1 et 255."
 
 #: src/etc/inc/shaper.inc:3077
-#, fuzzy
 msgid "Scheduler specific options"
 msgstr "Options specifique de Planificateur"
 
@@ -6678,15 +6698,16 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:3087
 msgid "Bandwidth limit for hosts to not saturate link"
-msgstr ""
+msgstr "Limite de bande passante de l’hôte pour ne pas saturer le lien"
 
 #: src/etc/inc/shaper.inc:3289
 msgid "Packet Loss Rate must be a value between 0 and 1."
 msgstr "Le taux de paquets perdu doit être une valeur comprise entre 0 et 1."
 
 #: src/etc/inc/shaper.inc:3293
+#, fuzzy
 msgid "Buckets must be an integer between 16 and 65535."
-msgstr ""
+msgstr "(buckets!) doit être un nombre entier entre 16 et 65535"
 
 #: src/etc/inc/shaper.inc:3306
 msgid "IPv4 bit mask must be blank or numeric value between 1 and 32."
@@ -6719,6 +6740,7 @@ msgstr ""
 #: src/etc/inc/shaper.inc:3474
 msgid "A schedule needs to be specified for every additional entry."
 msgstr ""
+"Une tache programmée doit être spécifiée pour toute entrée additionnelle."
 
 #: src/etc/inc/shaper.inc:3477
 msgid ""
@@ -6773,7 +6795,7 @@ msgstr "Ajouter un planificateur"
 #: src/usr/local/www/firewall_shaper_vinterface.php:372
 #: src/usr/local/www/firewall_shaper_wizards.php:75
 msgid "Limiters"
-msgstr ""
+msgstr "Limiteurs"
 
 #: src/etc/inc/shaper.inc:3822 src/etc/inc/shaper.inc:4135
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
@@ -6965,7 +6987,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:4630
 msgid "Clone Shaper to this Interface"
-msgstr ""
+msgstr "Cloner le Régulateur sur cette interface"
 
 #: src/etc/inc/shaper.inc:4639
 #, php-format
@@ -7023,7 +7045,7 @@ msgstr ""
 #: src/etc/inc/system.inc:769
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
-msgstr ""
+msgstr "Routes Statique: Impossible de trouver l'IP de la passerelle pour %s "
 
 #: src/etc/inc/system.inc:985
 msgid "Starting syslog..."
@@ -7134,11 +7156,11 @@ msgstr "Type transparent"
 
 #: src/etc/inc/unbound.inc:747
 msgid "Inform"
-msgstr ""
+msgstr "Informer"
 
 #: src/etc/inc/unbound.inc:748
 msgid "Inform Deny"
-msgstr ""
+msgstr "Information de blocage"
 
 #: src/etc/inc/unbound.inc:749
 msgid "No Default"
@@ -7332,17 +7354,17 @@ msgstr ""
 #: src/etc/inc/upgrade_config.inc:755
 #, php-format
 msgid "Interface %s Static Gateway"
-msgstr ""
+msgstr "Interface %s Passerelle Statique"
 
 #: src/etc/inc/upgrade_config.inc:758
 #, php-format
 msgid "Interface %s Dynamic Gateway"
-msgstr ""
+msgstr "Interface %s Passerelle Dynamique"
 
 #: src/etc/inc/upgrade_config.inc:825
 #, php-format
 msgid "Upgraded static route for %s"
-msgstr ""
+msgstr "Statique Route mis a jour pour %s"
 
 #: src/etc/inc/upgrade_config.inc:923
 #, php-format
@@ -7352,7 +7374,7 @@ msgstr ""
 #: src/etc/inc/upgrade_config.inc:1086
 #, php-format
 msgid "phase2 for %s"
-msgstr ""
+msgstr "phase2 pour %s"
 
 #: src/etc/inc/upgrade_config.inc:1323
 #, php-format
@@ -7369,8 +7391,9 @@ msgid "Converted bridged %s"
 msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:1911
+#, fuzzy
 msgid "Auto added OpenVPN rule from config upgrade."
-msgstr ""
+msgstr "Ajout automatique de la règle OpenVPN depuis la mise a niveau config"
 
 #: src/etc/inc/upgrade_config.inc:3972
 #, php-format
@@ -7401,9 +7424,9 @@ msgid ""
 msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:5090
-#, php-format
+#, fuzzy, php-format
 msgid "RRD restore failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "Échec de restoration RDD,  sortie avec %1$s, l'erreure est: %2$s"
 
 #: src/etc/inc/upgrade_config.inc:5099
 #, php-format
@@ -7418,7 +7441,7 @@ msgstr ""
 #: src/etc/inc/util.inc:98
 #, php-format
 msgid "WARNING: Could not mark subsystem: %s dirty"
-msgstr ""
+msgstr "Attention, impossible de marquer le sous système: %s souillé "
 
 #: src/etc/inc/util.inc:112
 msgid "WARNING: A name must be given as parameter to lock() function."
@@ -7503,11 +7526,11 @@ msgstr "%s doit être une adresse IPv4 ou IPv6 valide."
 
 #: src/etc/inc/util.inc:2678
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
-msgstr ""
+msgstr "Erreur: Ecriture du fichier DUID - DUID invalide detecté"
 
 #: src/etc/inc/util.inc:2688
 msgid "Error: attempting to write DUID file - File write error"
-msgstr ""
+msgstr "Erreur: Ecriture du fichier DUID - erreur d’écriture du fichier"
 
 #: src/etc/inc/voucher.inc:105
 #, php-format
@@ -7522,32 +7545,32 @@ msgstr ""
 #: src/etc/inc/voucher.inc:196
 #, php-format
 msgid "%1$s invalid: %2$s!!"
-msgstr ""
+msgstr "%1$s invalide: %2$s!!"
 
 #: src/etc/inc/voucher.inc:283
 #, php-format
 msgid "%s invalid: Too short!"
-msgstr ""
+msgstr "%s invalide: trop court!"
 
 #: src/etc/inc/voucher.inc:309
 #, php-format
 msgid "%1$s (%2$s/%3$s) active and good for %4$d Minutes"
-msgstr ""
+msgstr "%1$s (%2$s/%3$s) actif et bon pour %4$d Minutes"
 
 #: src/etc/inc/voucher.inc:321
 #, php-format
 msgid "%1$s (%2$s/%3$s) already used and expired"
-msgstr ""
+msgstr "%1$s (%2$s/%3$s) déjà utilisé et expiré"
 
 #: src/etc/inc/voucher.inc:329
 #, php-format
 msgid "%1$s (%2$s/%3$s) good for %4$s Minutes"
-msgstr ""
+msgstr "%1$s (%2$s/%3$s) bon pour %4$s Minutes"
 
 #: src/etc/inc/voucher.inc:340
 #, php-format
 msgid "%1$s invalid: %2$s !!"
-msgstr ""
+msgstr "%1$s invalide: %2$s !!"
 
 #: src/etc/inc/voucher.inc:350
 msgid "Access denied!"
@@ -7560,12 +7583,12 @@ msgstr ""
 
 #: src/etc/inc/voucher.inc:421
 msgid "Enabling voucher support... "
-msgstr ""
+msgstr "Activation du support de ticket"
 
 #: src/etc/inc/voucher.inc:464
 #, php-format
 msgid "Error: cannot write voucher.cfg"
-msgstr ""
+msgstr "Erreur: ne peut écrire dans voucher.cfg"
 
 #: src/etc/inc/voucher.inc:519
 #, php-format
@@ -7649,7 +7672,7 @@ msgstr ""
 
 #: src/etc/inc/vpn.inc:1488
 msgid "Forcefully reloading IPsec"
-msgstr ""
+msgstr "Rechargement forcé IPsec "
 
 #: src/etc/inc/vpn.inc:1538
 msgid "Configuring PPPoE Server service... "
@@ -8245,11 +8268,11 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_import.php:55
 #: src/usr/local/www/head.inc:289
 msgid "Aliases"
-msgstr ""
+msgstr "Aliases"
 
 #: src/usr/local/www/diag_backup.php:432
 msgid "Captive Portal Vouchers"
-msgstr ""
+msgstr "Ticket Portail Captif"
 
 #: src/usr/local/www/diag_backup.php:435 src/usr/local/www/head.inc:306
 #: src/usr/local/www/services_dhcp.php:752
@@ -8546,6 +8569,8 @@ msgid ""
 "The capabilities offered here can be dangerous. No support is available. Use "
 "them at your own risk!"
 msgstr ""
+"Les capacités offerte ici peuvent être dangereuse. Aucun support n'est "
+"disponible. A utilisé a vos risques et périls."
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
@@ -9270,7 +9295,7 @@ msgstr "Un nom de miroir valide doit être fourni."
 
 #: src/usr/local/www/diag_gmirror.php:66
 msgid "A valid consumer name must be supplied"
-msgstr ""
+msgstr "Un nom de consommateur valide doit être spécifié."
 
 #: src/usr/local/www/diag_gmirror.php:73
 msgid ""
@@ -9377,7 +9402,7 @@ msgstr "Ajouter au miroir"
 #: src/usr/local/www/diag_gmirror.php:326
 #, php-format
 msgid "Reactivate on %s"
-msgstr ""
+msgstr "Reactivé sur %s"
 
 #: src/usr/local/www/diag_gmirror.php:331
 msgid "Clear Metadata"
@@ -35752,9 +35777,8 @@ msgid "Traffic Shaper Limiters configuration "
 msgstr "Configuration des limitations du régulation de flux"
 
 #: src/usr/local/www/system_hasync.php:313
-#, fuzzy
 msgid "DNS Forwarder and DNS Resolver configurations "
-msgstr "Configuration ..."
+msgstr "Configurations du DNS Forwarder et du DNS Resolver"
 
 #: src/usr/local/www/system_hasync.php:321
 msgid "Captive Portal "

@@ -1343,7 +1343,7 @@ function gateway_is_gwgroup_member($name) {
 // $id - the index of the gateway proposed to be modified (otherwise "" if adding a new gateway)
 // Return completed $input_errors array if there is any problem.
 // Otherwise return an empty $input_errors array
-function validate_gateway($gateway_settings, $id) {
+function validate_gateway($gateway_settings, $id = "") {
 	global $config;
 
 	$a_gateways = return_gateways_array(true, false, true, true);
@@ -1391,7 +1391,7 @@ function validate_gateway($gateway_settings, $id) {
 		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
-	if ($gateway_settings['gateway'] && (is_ipaddr($gateway_settings['gateway'])) && !$_REQUEST['isAjax']) {
+	if ($gateway_settings['gateway'] && (is_ipaddr($gateway_settings['gateway'])) && !$gateway_settings['isAjax']) {
 		if (is_ipaddrv4($gateway_settings['gateway'])) {
 			$parent_ip = get_interface_ip($gateway_settings['interface']);
 			$parent_sn = get_interface_subnet($gateway_settings['interface']);
@@ -1644,5 +1644,149 @@ function validate_gateway($gateway_settings, $id) {
 	}
 
 	return $input_errors;
+}
+
+// Save gateway settings.
+// $gateway_settings - the array of gateway setting parameters
+// $realid - the index of the gateway to be modified (otherwise "" if adding a new gateway)
+
+// This function is responsible to:
+//   Setup the gateway parameter structure from the gateway settings input parameter
+//   Save the structure into the config
+//   Remove any run-time settings from gateway parameters that are changed (e.g. remove routes to addresses that are changing)
+
+// A subsequent "apply" step will implement the added/changed gateway.
+
+function save_gateway($gateway_settings, $realid = "") {
+	global $config;
+
+	$a_gateway_item = &$config['gateways']['gateway_item'];
+	$reloadif = "";
+	$gateway = array();
+
+	if (empty($gateway_settings['interface'])) {
+		$gateway['interface'] = $gateway_settings['friendlyiface'];
+	} else {
+		$gateway['interface'] = $gateway_settings['interface'];
+	}
+	if (is_ipaddr($gateway_settings['gateway'])) {
+		$gateway['gateway'] = $gateway_settings['gateway'];
+	} else {
+		$gateway['gateway'] = "dynamic";
+	}
+	$gateway['name'] = $gateway_settings['name'];
+	$gateway['weight'] = $gateway_settings['weight'];
+	$gateway['ipprotocol'] = $gateway_settings['ipprotocol'];
+	if ($gateway_settings['interval']) {
+		$gateway['interval'] = $gateway_settings['interval'];
+	}
+
+	if ($gateway_settings['time_period']) {
+		$gateway['time_period'] = $gateway_settings['time_period'];
+	}
+	if ($gateway_settings['alert_interval']) {
+		$gateway['alert_interval'] = $gateway_settings['alert_interval'];
+	}
+
+	$gateway['descr'] = $gateway_settings['descr'];
+	if ($gateway_settings['monitor_disable'] == "yes") {
+		$gateway['monitor_disable'] = true;
+	}
+	if ($gateway_settings['action_disable'] == "yes") {
+		$gateway['action_disable'] = true;
+	}
+	if ($gateway_settings['nonlocalgateway'] == "yes") {
+		$gateway['nonlocalgateway'] = true;
+	}
+	if ($gateway_settings['force_down'] == "yes") {
+		$gateway['force_down'] = true;
+	}
+	if (is_ipaddr($gateway_settings['monitor'])) {
+		$gateway['monitor'] = $gateway_settings['monitor'];
+	}
+	if (isset($gateway_settings['data_payload']) && $gateway_settings['data_payload'] > 0) {
+		$gateway['data_payload'] = $gateway_settings['data_payload'];
+	}
+
+	/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
+	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+		$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+		isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+		$realif = get_real_interface($a_gateway_item[$realid]['interface']);
+		$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
+		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
+		mwexec($cmd);
+	}
+
+	/* NOTE: If monitor ip is changed need to cleanup the old static route */
+	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+		$gateway_settings['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+		if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
+			mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+		} else {
+			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+		}
+	}
+
+	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
+		$i = 0;
+		/* remove the default gateway bits for all gateways with the same address family */
+		foreach ($a_gateway_item as $gw) {
+			if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
+				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+				if ($gw['interface'] != $gateway_settings['interface'] && $gw['defaultgw']) {
+					$reloadif = $gw['interface'];
+				}
+			}
+			$i++;
+		}
+		$gateway['defaultgw'] = true;
+	}
+
+	if ($gateway_settings['latencylow']) {
+		$gateway['latencylow'] = $gateway_settings['latencylow'];
+	}
+	if ($gateway_settings['latencyhigh']) {
+		$gateway['latencyhigh'] = $gateway_settings['latencyhigh'];
+	}
+	if ($gateway_settings['losslow']) {
+		$gateway['losslow'] = $gateway_settings['losslow'];
+	}
+	if ($gateway_settings['losshigh']) {
+		$gateway['losshigh'] = $gateway_settings['losshigh'];
+	}
+	if ($gateway_settings['loss_interval']) {
+		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
+	}
+
+	if (isset($gateway_settings['disabled'])) {
+		$gateway['disabled'] = true;
+		/* Check if the gateway was enabled but changed to disabled. */
+		if ((isset($realid) && $a_gateway_item[$realid]) && ($a_gateway_item[$realid]['disabled'] == false)) {
+			/*  If the disabled gateway was the default route, remove the default route */
+			if (is_ipaddr($gateway['gateway']) &&
+				isset($gateway['defaultgw'])) {
+				$inet = (!is_ipaddrv4($gateway['gateway']) ? '-inet6' : '-inet');
+				mwexec("/sbin/route delete {$inet} default");
+			}
+		}
+	} else {
+		unset($gateway['disabled']);
+	}
+
+	/* when saving the manual gateway we use the attribute which has the corresponding id */
+	if (isset($realid) && $a_gateway_item[$realid]) {
+		$a_gateway_item[$realid] = $gateway;
+	} else {
+		$a_gateway_item[] = $gateway;
+	}
+
+	mark_subsystem_dirty('staticroutes');
+
+	write_config();
+
+	if (!empty($reloadif)) {
+		send_event("interface reconfigure {$reloadif}");
+	}
 }
 ?>

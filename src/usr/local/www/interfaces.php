@@ -3429,7 +3429,7 @@ events.push(function() {
 			defaultgw = '&defaultgw=on';
 		}
 		var url_v6 = "system_gateways_edit.php";
-		var pars_v6 = 'isAjax=true&ipprotocol=inet6' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+		var pars_v6 = 'isAjax=true&save=true&ipprotocol=inet6' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 		$.ajax(
 			url_v6,
 			{

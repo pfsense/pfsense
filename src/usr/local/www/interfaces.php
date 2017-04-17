@@ -1822,11 +1822,11 @@ $group->add(new Form_Select(
 ));
 
 $group->add(new Form_Button(
-	'addgw',
+	'addgw4',
 	'Add a new gateway',
 	null,
 	'fa-plus'
-))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
 				'On local area network interfaces the upstream gateway should be "none". ' .
@@ -1879,7 +1879,7 @@ $modal->addInput(new Form_Checkbox(
 ));
 
 $modal->addInput(new Form_Input(
-	'name6',
+	'gatewayname6',
 	'Gateway name',
 	'text',
 	$wancfg['descr'] . "GWv6"
@@ -3193,56 +3193,56 @@ $form->addGlobal(new Form_Input(
 
 
 // Add new gateway modal pop-up
-$modal = new Modal('New Gateway', 'newgateway', 'large');
+$modal = new Modal('New IPv4 Gateway', 'newgateway4', 'large');
 
 $modal->addInput(new Form_Checkbox(
-	'defaultgw',
+	'defaultgw4',
 	'Default',
 	'Default gateway',
 	($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
-	'name',
+	'gatewayname4',
 	'Gateway name',
 	'text',
 	$wancfg['descr'] . "GW"
 ));
 
 $modal->addInput(new Form_IpAddress(
-	'gatewayip',
+	'gatewayip4',
 	'Gateway IPv4',
 	null,
 	'V4'
 ));
 
 $modal->addInput(new Form_Input(
-	'gatewaydescr',
+	'gatewaydescr4',
 	'Description',
 	'text'
 ));
 
-$btnaddgw = new Form_Button(
-	'add',
+$btnaddgw4 = new Form_Button(
+	'add4',
 	'Add',
 	null,
 	'fa-plus'
 );
 
-$btnaddgw->setAttribute('type','button')->addClass('btn-success');
+$btnaddgw4->setAttribute('type','button')->addClass('btn-success');
 
-$btncnxgw = new Form_Button(
-	'cnx',
+$btncnxgw4 = new Form_Button(
+	'cnx4',
 	'Cancel',
 	null,
 	'fa-undo'
 );
 
-$btncnxgw->setAttribute('type','button')->addClass('btn-warning');
+$btncnxgw4->setAttribute('type','button')->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
-	$btnaddgw . $btncnxgw
+	$btnaddgw4 . $btncnxgw4
 ));
 
 $form->add($modal);
@@ -3365,14 +3365,14 @@ events.push(function() {
 	}
 
 	// Create the new gateway from the data entered in the modal pop-up
-	function hide_add_gatewaysave() {
+	function hide_add_gatewaysave_v4() {
 		var iface = $('#if').val();
-		name = $('#name').val();
-		var descr = $('#gatewaydescr').val();
-		gatewayip = $('#gatewayip').val();
+		name = $('#gatewayname4').val();
+		var descr = $('#gatewaydescr4').val();
+		gatewayip = $('#gatewayip4').val();
 
 		var defaultgw = '';
-		if ($('#defaultgw').is(':checked')) {
+		if ($('#defaultgw4').is(':checked')) {
 			defaultgw = '&defaultgw=on';
 		}
 
@@ -3383,23 +3383,23 @@ events.push(function() {
 			{
 				type: 'post',
 				data: pars,
-				error: report_failure,
-				complete: save_callback
+				error: report_failure_v4,
+				complete: save_callback_v4
 			});
 		}
 
-	function save_callback(response) {
-		if (response) {
-			var gwtext = escape(name) + " - " + gatewayip;
-			addOption($('#gateway'), gwtext, name);
+	function save_callback_v4(response_v4) {
+		if (response_v4) {
+			var gwtext_v4 = escape(name) + " - " + gatewayip;
+			addOption_v4($('#gateway'), gwtext_v4, name);
 		} else {
-			report_failure();
+			report_failure_v4();
 		}
 
-		$("#newgateway").modal('hide');
+		$("#newgateway4").modal('hide');
 	}
 
-	function report_failure(request, textStatus, errorThrown) {
+	function report_failure_v4(request, textStatus, errorThrown) {
 		contenttype = ";"+request.getResponseHeader("Content-Type")+";";
 		if (textStatus === "error" && contenttype.indexOf(";text/plain;") !== -1) {
 			alert(request.responseText);
@@ -3407,10 +3407,10 @@ events.push(function() {
 			alert("The IPv4 gateway could not be created.");
 		}
 
-		$("#newgateway").modal('hide');
+		$("#newgateway4").modal('hide');
 	}
 
-	function addOption(selectbox, text, value) {
+	function addOption_v4(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3421,7 +3421,7 @@ events.push(function() {
 	function hide_add_gatewaysave_v6() {
 
 		var iface = $('#if').val();
-		name = $('#name6').val();
+		name = $('#gatewayname6').val();
 		var descr = $('#gatewaydescr6').val();
 		gatewayip = $('#gatewayip6').val();
 		var defaultgw = '';
@@ -3663,12 +3663,12 @@ events.push(function() {
 		show_reset_settings(this.value);
 	});
 
-	$("#add").click(function() {
-		hide_add_gatewaysave();
+	$("#add4").click(function() {
+		hide_add_gatewaysave_v4();
 	});
 
-	$("#cnx").click(function() {
-		$("#newgateway").modal('hide');
+	$("#cnx4").click(function() {
+		$("#newgateway4").modal('hide');
 	});
 
 	$("#add6").click(function() {

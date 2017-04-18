@@ -1396,7 +1396,7 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
-	if ($gateway_settings['gateway'] && (is_ipaddr($gateway_settings['gateway'])) && !$gateway_settings['isAjax']) {
+	if ($gateway_settings['gateway'] && is_ipaddr($gateway_settings['gateway'])) {
 		if (is_ipaddrv4($gateway_settings['gateway'])) {
 			if ($parent_ip == '') {
 				$parent_ip = get_interface_ip($gateway_settings['interface']);

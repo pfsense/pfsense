@@ -98,24 +98,9 @@ if ($_POST['save']) {
 
 	if (count($input_errors) == 0) {
 		save_gateway($_POST, $realid);
-
-		if ($_REQUEST['isAjax']) {
-			echo $_POST['name'];
-			exit;
-		}
-
 		header("Location: system_gateways.php");
 		exit;
 	} else {
-		if ($_REQUEST['isAjax']) {
-			header("HTTP/1.0 500 Internal Server Error");
-			header("Content-type: text/plain");
-			foreach ($input_errors as $error) {
-				echo("$error\n");
-			}
-			exit;
-		}
-
 		$pconfig = $_POST;
 		if (empty($_POST['friendlyiface'])) {
 			$pconfig['friendlyiface'] = $_POST['interface'];

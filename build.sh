@@ -129,6 +129,7 @@ while test "$1" != ""; do
 			;;
 		--rsync-repos)
 			BUILDACTION="rsync_repos"
+			export DO_NOT_SIGN_PKG_REPO=YES
 			;;
 		--build-kernels)
 			BUILDACTION="buildkernels"

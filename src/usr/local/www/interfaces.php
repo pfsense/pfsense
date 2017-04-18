@@ -3422,7 +3422,7 @@ events.push(function() {
 
 	function addOption_v6() {
 		var gwtext_v6 = escape($("#gatewayname6").val()) + " - " + $("#gatewayip6").val();
-		addSelectboxOption($('#gateway'), gwtext_v6, $("#gatewayname6").val());
+		addSelectboxOption($('#gatewayv6'), gwtext_v6, $("#gatewayname6").val());
 	}
 
 	function addSelectboxOption(selectbox, text, value) {

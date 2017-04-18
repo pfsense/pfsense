@@ -73,6 +73,7 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			export NO_CLEAN_FREEBSD_OBJ=YES
+			export DO_NOT_SIGN_PKG_REPO=YES
 			_SKIP_REBUILD_PRESTAGE=YES
 			_USE_OLD_DATESTRING=YES
 			;;

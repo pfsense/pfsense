@@ -1924,27 +1924,28 @@ $modal->addInput(new Form_Checkbox(
 	'defaultgw6',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings6['defaultgw']) ? $gateway_settings6['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewayname6',
 	'Gateway name',
 	'text',
-	$defgatewayname6
+	($gateway_settings6['name'] == "") ? $defgatewayname6 : $gateway_settings6['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
 	'Gateway IPv6',
-	null,
+	$gateway_settings6['gateway'],
 	'V6'
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewaydescr6',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings6['descr']
 ));
 
 $btnaddgw6 = new Form_Button(
@@ -3248,27 +3249,28 @@ $modal->addInput(new Form_Checkbox(
 	'defaultgw4',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings4['defaultgw']) ? $gateway_settings4['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewayname4',
 	'Gateway name',
 	'text',
-	$defgatewayname4
+	($gateway_settings4['name'] == "") ? $defgatewayname4 : $gateway_settings4['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip4',
 	'Gateway IPv4',
-	null,
+	$gateway_settings4['gateway'],
 	'V4'
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewaydescr4',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings4['descr']
 ));
 
 $btnaddgw4 = new Form_Button(
@@ -3413,15 +3415,17 @@ events.push(function() {
 		$('#track6-prefix-id-range').html(track6_prefix_ids);
 	}
 
-	function addOption_v4(selectbox, text, value) {
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.append(optn);
-		selectbox.prop('selectedIndex', selectbox.children().length - 1);
+	function addOption_v4() {
+		var gwtext_v4 = escape($("#gatewayname4").val()) + " - " + $("#gatewayip4").val();
+		addSelectboxOption($('#gateway'), gwtext_v4, $("#gatewayname4").val());
 	}
 
-	function addOption_v6(selectbox, text, value) {
+	function addOption_v6() {
+		var gwtext_v6 = escape($("#gatewayname6").val()) + " - " + $("#gatewayip6").val();
+		addSelectboxOption($('#gateway'), gwtext_v6, $("#gatewayname6").val());
+	}
+
+	function addSelectboxOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3603,6 +3607,14 @@ events.push(function() {
 	// Set preset from value
 	setPresets(sv);
 
+	// If the user wants to add a gateway, then add that to the gateway selection
+	if ($("#gatewayip4").val() != '') {
+		addOption_v4();
+	}
+	if ($("#gatewayip6").val() != '') {
+		addOption_v6();
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#type').on('change', function() {
@@ -3622,8 +3634,7 @@ events.push(function() {
 	});
 
 	$("#add4").click(function() {
-		var gwtext_v4 = escape($("#gatewayname4").val()) + " - " + $("#gatewayip4").val();
-		addOption_v4($('#gateway'), gwtext_v4, $("#gatewayname4").val());
+		addOption_v4();
 		$("#newgateway4").modal('hide');
 	});
 
@@ -3631,12 +3642,12 @@ events.push(function() {
 		$("#gatewayname4").val('<?=$defgatewayname4;?>');
 		$("#gatewayip4").val('');
 		$("#gatewaydescr4").val('');
+		$("#defaultgw4").prop("checked", false);
 		$("#newgateway4").modal('hide');
 	});
 
 	$("#add6").click(function() {
-		var gwtext_v6 = escape($("#gatewayname6").val()) + " - " + $("#gatewayip6").val();
-		addOption_v6($('#gatewayv6'), gwtext_v6, $("#gatewayname6").val());
+		addOption_v6();
 		$("#newgateway6").modal('hide');
 	});
 
@@ -3644,6 +3655,7 @@ events.push(function() {
 		$("#gatewayname6").val('<?=$defgatewayname6;?>');
 		$("#gatewayip6").val('');
 		$("#gatewaydescr6").val('');
+		$("#defaultgw6").prop("checked", false);
 		$("#newgateway6").modal('hide');
 	});
 

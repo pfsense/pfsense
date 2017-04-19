@@ -542,12 +542,7 @@ function register_all_installed_packages() {
 
 	$pkg_info = get_pkg_info('all', true, true);
 
-
 	foreach ($pkg_info as $pkg) {
-		if (!isset($pkg['installed'])) {
-			continue;
-		}
-
 		pkg_remove_prefix($pkg['name']);
 
 		if (is_package_installed($pkg['name'])) {

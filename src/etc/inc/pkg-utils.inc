@@ -337,8 +337,8 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $installed_pkgs_only = false) {
-
+function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
+    $installed_pkgs_only = false) {
 	global $g, $input_errors;
 
 	$out = $err = $extra_param = '';
@@ -375,30 +375,47 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 	}
 
 	if (!$installed_pkgs_only) {
-		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
+		$rc = pkg_exec(
+		    "search {$extra_param}-R --raw-format json-compact " .
+		    $pkgs, $out, $err);
 	}
-	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled)) && is_pkg_installed($pkgs)) {
-		/* Fall back on pkg info to return locally installed matching pkgs instead, if 
+	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled))
+	    && is_pkg_installed($pkgs)) {
+		/*
+		 * Fall back on pkg info to return locally installed matching
+		 * pkgs instead, if:
 		 *
 		 *   (1) only installed pkgs needed, or
-		 *       we tried to check the local catalog copy (implying that we would have accepted incomplete/outdated pkg info)
-		 *       but it didn't have any contents, or for other reasons returned an error. 
+		 *       we tried to check the local catalog copy (implying that
+		 *       we would have accepted incomplete/outdated pkg info)
+		 *       but it didn't have any contents, or for other reasons
+		 *       returned an error.
 		 *   AND
 		 *   (2) at least some pkgs matching <pattern> are installed
 		 *
-		 * Following an unsuccessful attempt to access a remote repo catalog, the local copy is wiped clear. Thereafter any
-		 * "pkg search" will return an error until online+updated again. If the calling code would have accepted local copy info
-		 * (which could be incomplete/out of date), then it makes sense to fall back on pkg info to at least return the known
-		 * info about installed pkgs (pkg info should still work), instead of failing and returning no info at all. 
-		 * For example, this at least enables offline view + management of installed pkgs in GUI/console.
+		 * Following an unsuccessful attempt to access a remote repo
+		 * catalog, the local copy is wiped clear. Thereafter any
+		 * "pkg search" will return an error until online+updated again.
+		 * If the calling code would have accepted local copy info
+		 * (which could be incomplete/out of date), then it makes sense
+		 * to fall back on pkg info to at least return the known
+		 * info about installed pkgs (pkg info should still work),
+		 * instead of failing and returning no info at all. 
+		 * For example, this at least enables offline view + management
+		 * of installed pkgs in GUI/console.
 		 *
-		 * We skip this step if no matching pkgs are installed, because then pkg info would return a "no matching pkgs"
-		 * RC code, even though this wouldn't be considered an "error" (and $out+$err would be correct empty strings if none match).
-		 * Note that is_pkg_installed() is a wrapper for pkg info -e <pattern> which is what we need here.
+		 * We skip this step if no matching pkgs are installed, because
+		 * then pkg info would return a "no matching pkgs" RC code,
+		 * even though this wouldn't be considered an "error" (and
+		 * $out+$err would be correct empty strings if none match).
+		 *
+		 * Note that is_pkg_installed() is a wrapper for pkg info -e
+		 * <pattern> which is what we need here.
 		*/
 		
 		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
-		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);  
+		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs,
+		    $out, $err);
 	}
 
 	if ($lock) {
@@ -410,8 +427,10 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 		    "ERROR: Error trying to get packages list. Aborting...")
 		    . "\n");
 		update_status($err);
-		$input_errors[] =  gettext("ERROR: Error trying to get packages list. Aborting...") . "\n";
-		$input_errors[] =  $err;
+		$input_errors[] = gettext(
+		    "ERROR: Error trying to get packages list. Aborting...") .
+		    "\n";
+		$input_errors[] = $err;
 		return array();
 	}
 
@@ -423,7 +442,8 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 			continue;
 		}
 
-		if (isset($pkg_filter) && !in_array($pkg_info['name'], $pkg_filter)) {
+		if (isset($pkg_filter) && !in_array($pkg_info['name'],
+		    $pkg_filter)) {
 			continue;
 		}
 
@@ -438,24 +458,29 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
 
-			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err);
+			$rc = pkg_exec("query %v {$pkg_info['name']}", $out,
+			    $err);
 
 			if ($rc != 0) {
 				update_status("\n" . gettext(
 				    "ERROR: Error trying to get package version. Aborting...")
 				    . "\n");
 				update_status($err);
-				$input_errors[] =  gettext("ERROR: Error trying to get package version. Aborting...") . "\n";
-				$input_errors[] =  $err;
+				$input_errors[] = gettext(
+				    "ERROR: Error trying to get package version. Aborting...") .
+				    "\n";
+				$input_errors[] = $err;
 				return array();
 			}
 
-			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+			$pkg_info['installed_version'] = str_replace("\n", "",
+			    $out);
 		} else if (is_package_installed($pkg_info['shortname'])) {
 			$pkg_info['broken'] = true;
 		}
 
-		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '', $pkg_info['desc']);
+		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '',
+		    $pkg_info['desc']);
 
 		$result[] = $pkg_info;
 		unset($pkg_info);

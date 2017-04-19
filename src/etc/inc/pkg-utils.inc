@@ -377,7 +377,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 	if (!$installed_pkgs_only) {
 		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
 	}
-	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled)) && is_package_installed($pkgs)) {
+	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled)) && is_pkg_installed($pkgs)) {
 		/* Fall back on pkg info to return locally installed matching pkgs instead, if 
 		 *
 		 *   (1) only installed pkgs needed, or
@@ -394,7 +394,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $insta
 		 *
 		 * We skip this step if no matching pkgs are installed, because then pkg info would return a "no matching pkgs"
 		 * RC code, even though this wouldn't be considered an "error" (and $out+$err would be correct empty strings if none match).
-		 * Note that is_package_installed() is a wrapper for pkg info -e <pattern> which is what we need here.
+		 * Note that is_pkg_installed() is a wrapper for pkg info -e <pattern> which is what we need here.
 		*/
 		
 		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  

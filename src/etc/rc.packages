@@ -20,6 +20,11 @@
  * limitations under the License.
  */
 
+/* If PHP is not running, silently abort and run registration during boot */
+if (!file_exists('/var/run/php-fpm.pid')) {
+	exit;
+}
+
 require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -38,11 +43,6 @@ $pkg_interface = "console";
 /* Keep old behavior: with no params, sync all and exit */
 if ($argc == 1) {
 	resync_all_package_configs(true);
-	exit;
-}
-
-/* If PHP is not running, silently abort and run registration during boot */
-if (!isvalidpid('/var/run/php-fpm.pid')) {
 	exit;
 }
 

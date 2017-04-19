@@ -304,7 +304,7 @@ foreach ($networkacl as $item) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning btn-xs')->addClass(($counter == 0) ? "nowarn":"");
+	))->addClass('btn-warning btn-xs')->addClass("nowarn");
 
 	$group->addClass('repeatable');
 

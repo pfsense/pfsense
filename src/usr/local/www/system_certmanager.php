@@ -241,7 +241,7 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
 
-			if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
 		}
@@ -549,12 +549,12 @@ if ($_POST['save']) {
 //				$subject_mismatch = true;
 //			}
 //		}
-		$mod_csr = csr_get_modulus($pconfig['csr'], false);
-		$mod_cert = cert_get_modulus($pconfig['cert'], false);
+		$mod_csr = cert_get_publickey($pconfig['csr'], false, 'csr');
+		$mod_cert = cert_get_publickey($pconfig['cert'], false);
 
 		if (strcmp($mod_csr, $mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match
-			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."), $subj_cert);
+			$input_errors[] = sprintf(gettext("The certificate public key does not match the signing request public key."), $subj_cert);
 			$subject_mismatch = true;
 		}
 

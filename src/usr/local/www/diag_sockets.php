@@ -102,7 +102,13 @@ $showAllOption = $showAll ? "" : "?showAll";
 ?>
 
 <div>
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+  echo '<div class="infoblock" style="display: none;">';
+} else {
+  echo '<div class="infoblock">';
+}
+?>
 <?php
 print_info_box(
 	gettext('Socket Information') .
@@ -128,5 +134,3 @@ print_info_box(
 <?php
 
 include('foot.inc');
-
-

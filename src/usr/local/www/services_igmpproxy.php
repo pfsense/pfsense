@@ -137,7 +137,13 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 <?php print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces for the proxy to allow. ' .
 					   'Only one "upstream" interface can be configured.'), 'info', false); ?>
 </div>

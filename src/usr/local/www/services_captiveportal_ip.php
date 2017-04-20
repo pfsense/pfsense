@@ -155,7 +155,13 @@ endif;
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 <?php print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .
 					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'), 'info', false); ?>
 </div>

@@ -246,7 +246,13 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(gettext('Schedules act as placeholders for time ranges to be used in firewall rules.'), 'info', false); ?>
 </div>
 

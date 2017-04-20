@@ -380,7 +380,13 @@ events.push(function() {
 //]]>
 </script>
 
-<div class="infoblock blockopen">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 <?php
 print_info_box(sprintf(gettext('Local IPv6 peers use %1$sNDP%2$s instead of ARP.'), '<a href="diag_ndp.php">', '</a>') . '<br />' .
    '<br />' . gettext('Permanent ARP entries are shown for local interfaces or static ARP entries.') .

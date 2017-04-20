@@ -1658,8 +1658,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
-$mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n", "", $mymac);
+$mymac = arp_get_mac_by_ip($ip, false);
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -1769,7 +1768,9 @@ $btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
 
 $group = new Form_Group('MAC Address');
 $group->add($macaddress);
-// $group->add($btnmymac);
+if (!empty($mymac)) {
+	$group->add($btnmymac);
+}
 $group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.%s' .
 				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.', '<br />');
 $section->add($group);
@@ -3718,6 +3719,10 @@ events.push(function() {
 
 	$('#pppoe_resetdate').datepicker();
 
+	// On click, copy the hidden 'mymac' text to the 'mac' input
+	$("#btnmymac").click(function() {
+		$('#spoofmac').val('<?=$mymac?>');
+	});
 });
 //]]>
 </script>

@@ -575,7 +575,13 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(sprintf(gettext('If the DNS Resolver is enabled, the DHCP'.
 		' service (if enabled) will automatically serve the LAN IP'.
 		' address as a DNS server to DHCP clients so they will use'.

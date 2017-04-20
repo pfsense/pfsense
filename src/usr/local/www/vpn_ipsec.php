@@ -528,7 +528,13 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 	</nav>
 </form>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(sprintf(gettext('The IPsec status can be checked at %1$s%2$s%3$s.'), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
 	sprintf(gettext('IPsec debug mode can be enabled at %1$s%2$s%3$s.'), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
 	sprintf(gettext('IPsec can be set to prefer older SAs at %1$s%2$s%3$s.'), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false); ?>

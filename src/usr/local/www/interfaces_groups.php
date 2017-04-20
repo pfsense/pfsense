@@ -127,7 +127,13 @@ display_top_tabs($tab_array);
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(sprintf(gettext('Interface Groups allow setting up rules for multiple interfaces without duplicating the rules.%s' .
 					   'If members are removed from an interface group, the group rules are no longer applicable to that interface.'), '<br />'), 'info', false); ?>
 

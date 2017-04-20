@@ -508,12 +508,11 @@ display_top_tabs($tab_array);
 <?php
 unset($status);
 
-if (ipsec_enabled()) {
-	print('<div class="infoblock">');
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
 } else {
-	print('<div class="infoblock blockopen">');
+	echo '<div class="infoblock">';
 }
-
 print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>

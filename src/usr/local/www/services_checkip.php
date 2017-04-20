@@ -162,7 +162,13 @@ endforeach; ?>
 	</a>
 </nav>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
 	<?php print_info_box(gettext('The server must return the client IP address ' .
 	'as a string in the following format: ') .
 	'<pre>Current IP Address: x.x.x.x</pre>' .

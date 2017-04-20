@@ -250,7 +250,13 @@ display_top_tabs($tab_array);
 	</nav>
 </form>
 
-<div class="infoblock">
+<?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+  echo '<div class="infoblock" style="display: none;">';
+} else {
+  echo '<div class="infoblock">';
+}
+?>
 <?php print_info_box(sprintf(gettext('Depending on the way the WAN connection is setup, this may also need a %1$sVirtual IP%2$s.'), '<a href="firewall_virtual_ip.php">', '</a>') .
 			   '<br />' .
 			   gettext('If a 1:1 NAT entry is added for any of the interface IPs on this system, ' .

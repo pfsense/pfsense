@@ -454,6 +454,7 @@ foreach ($portlist as $portname => $portinfo) {
 		$unused_portlist[$portname] = $portinfo;
 	}
 }
+ksort($unused_portlist);
 
 include("head.inc");
 
@@ -515,19 +516,27 @@ display_top_tabs($tab_array);
 	</thead>
 	<tbody>
 <?php
-	foreach ($config['interfaces'] as $ifname => $iface):
-		if ($iface['descr']) {
-			$ifdescr = $iface['descr'];
+	foreach ($config['interfaces'] as $ifname => $ifdata):
+		if ($ifdata['descr']) {
+			$ifdescr = $ifdata['descr'];
 		} else {
 			$ifdescr = strtoupper($ifname);
 		}
+		$ifport = $ifdata['if'];
+		$assigned_interfaces[] = array(htmlspecialchars($ifdescr), $ifname, $ifport);
+		asort($assigned_interfaces);
+	endforeach;
+
+ksort($portlist);
+
+foreach ($assigned_interfaces as $ifidx => $ifdata):
 ?>
 		<tr>
-			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
+			<td><a href="/interfaces.php?if=<?=$ifdata[1]?>"><?=$ifdata[0]?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
 <?php foreach ($portlist as $portname => $portinfo):?>
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
+					<option value="<?=$portname?>" <?=($portname == $ifdata[2]) ? ' selected': ''?>>
 						<?=interface_assign_description($portinfo, $portname)?>
 					</option>
 <?php endforeach;?>
@@ -575,6 +584,11 @@ display_top_tabs($tab_array);
 <br />
 
 <?php
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
 print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.") .
     '<br/><br/>' .
     gettext("Wireless interfaces must be created on the Wireless tab before they can be assigned."), 'info', false);

@@ -649,15 +649,20 @@ foreach ($a_user as $i => $userent):
 
 </nav>
 </form>
-<div class="infoblock">
 <?php
-	print_callout('<p>' . gettext("Additional users can be added here. User permissions for accessing " .
+if (isset($config['system']['webgui']['webguihelphidden'])) {
+	echo '<div class="infoblock" style="display: none;">';
+} else {
+	echo '<div class="infoblock">';
+}
+?>
+<?php
+	print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
 		"the webConfigurator can be assigned directly or inherited from group memberships. " .
-		"Some system object properties can be modified but they cannot be deleted.") . '</p>' .
-		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
-		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
-	);
-
+		"Some system object properties can be modified but they cannot be deleted.") .
+		'<br/><br/>' .
+		gettext("Accounts added here are also used for other parts of the system " .
+		"such as OpenVPN, IPsec, and Captive Portal."), 'info', false);
 ?></div>
 
 <?php

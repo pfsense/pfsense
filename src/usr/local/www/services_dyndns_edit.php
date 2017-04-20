@@ -295,6 +295,7 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
+			'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
@@ -353,6 +354,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
+	    		'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
@@ -363,6 +365,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+	    		'DNS Made Easy: Dynamic DNS Password%1$s' . 
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'DNSimple: Enter the API token.', '<br />');

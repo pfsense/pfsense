@@ -29,6 +29,7 @@
 require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
 global $openssl_crl_status;

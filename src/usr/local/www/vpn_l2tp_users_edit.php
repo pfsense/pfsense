@@ -45,6 +45,7 @@ function l2tp_users_sort() {
 }
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['user'])) {

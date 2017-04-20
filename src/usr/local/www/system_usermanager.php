@@ -35,6 +35,7 @@
 
 require_once("certs.inc");
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 // start admin user code
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {

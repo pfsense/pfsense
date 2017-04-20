@@ -130,6 +130,37 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+/****f* pfsense-utils/pfSenseHeader
+ * NAME
+ *   pfSenseHeader
+ * INPUTS
+ *   none
+ * RESULT
+ *   Javascript header change or browser Location:
+ ******/
+function pfSenseHeader($text) {
+	global $_SERVER;
+	if (isAjax()) {
+		if ($_SERVER['HTTPS'] == "on") {
+			$protocol = "https";
+		} else {
+			$protocol = "http";
+		}
+
+		$port = ":{$_SERVER['SERVER_PORT']}";
+		if ($_SERVER['SERVER_PORT'] == "80" && $protocol == "http") {
+			$port = "";
+		}
+		if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https") {
+			$port = "";
+		}
+		$complete_url = "{$protocol}://{$_SERVER['HTTP_HOST']}{$port}/{$text}";
+		echo "\ndocument.location.href = '{$complete_url}';\n";
+	} else {
+		header("Location: $text");
+	}
+}
+
 /****f* pfsense-utils/get_css_files
  * NAME
  *   get_css_files - get a list of the available CSS files (themes)

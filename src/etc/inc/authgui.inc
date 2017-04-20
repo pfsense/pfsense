@@ -27,6 +27,7 @@ include_once("priv.inc");
 if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
 }
+require_once('pfsense-utils.inc');
 
 /* Authenticate user - exit if failed */
 if (!session_auth()) {

@@ -23,47 +23,17 @@
  * limitations under the License.
  */
 
-/* BEGIN compatibility goo with HEAD */
-if (!function_exists("pfSenseHeader")) {
-	/****f* pfsense-utils/pfSenseHeader
-	 * NAME
-	 *   pfSenseHeader
-	 * INPUTS
-	 *   none
-	 * RESULT
-	 *   Javascript header change or browser Location:
-	 ******/
-	function pfSenseHeader($text) {
-		global $_SERVER;
-		if (isAjax()) {
-			if ($_SERVER['HTTPS'] == "on") {
-				$protocol = "https";
-			} else {
-				$protocol = "http";
-			}
-
-			$port = ":{$_SERVER['SERVER_PORT']}";
-			if ($_SERVER['SERVER_PORT'] == "80" && $protocol == "http") {
-				$port = "";
-			}
-			if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https") {
-				$port = "";
-			}
-			$complete_url = "{$protocol}://{$_SERVER['HTTP_HOST']}{$port}/{$text}";
-			echo "\ndocument.location.href = '{$complete_url}';\n";
-		} else {
-			header("Location: $text");
-		}
-	}
-}
-/* END compatibility goo with HEAD */
+/*
+ * DEPRECATED! DO NOT INCLUDE THIS FILE!
+ * Use individual .inc files containing the required functions instead.
+ */
 
 /* include all configuration functions */
-require_once("interfaces.inc");
-require_once("gwlb.inc");
-require_once("services.inc");
-require_once("pfsense-utils.inc");
 require_once("certs.inc");
+require_once("gwlb.inc");
+require_once("interfaces.inc");
+require_once("pfsense-utils.inc");
+require_once("services.inc");
 require_once("system.inc");
 require_once("vslb.inc");
 

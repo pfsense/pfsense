@@ -72,7 +72,7 @@ require_once("guiconfig.inc");
 if (isset($_POST['deleteentry'])) {
 	$ip = $_POST['deleteentry'];
 	if (is_ipaddrv6($ip)) {
-		$commandReturnValue = mwexec(NDP_BINARY_PATH . " -d " . $ip, true);
+		$commandReturnValue = mwexec(NDP_BINARY_PATH . " -d " . escapeshellarg($ip), true);
 		$deleteSucceededFlag = ($commandReturnValue == 0);
 	} else {
 		$deleteSucceededFlag = false;

@@ -871,11 +871,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	}
 
 	if ($integer_index) {
-		$gateways_arr_temp = array();
-		foreach ($gateways_arr as $gw) {
-			$gateways_arr_temp[] = $gw;
-		}
-		$gateways_arr = $gateways_arr_temp;
+		$gateways_arr = array_values($gateways_arr);
 	}
 
 	return($gateways_arr);

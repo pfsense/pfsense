@@ -447,6 +447,16 @@ function openvpn_get_digestlist() {
 	return $digests;
 }
 
+function openvpn_get_keydirlist() {
+	$keydirs = array(
+		'-1' => gettext('Use default keydir direction'),
+		'2' => gettext('No keydir direction'),
+		'0'  => gettext('Use keydir direction 0'),
+		'1'  => gettext('Use keydir direction 1'),
+	);
+	return $keydirs;
+}
+
 function openvpn_get_engines() {
 	$openssl_engines = array('none' => gettext('No Hardware Crypto Acceleration'));
 	exec("/usr/bin/openssl engine -t -c", $openssl_engine_output);
@@ -1096,8 +1106,32 @@ function openvpn_reconfigure($mode, $settings) {
 					$tls_directive = "tls-auth";
 					if ($mode == "server") {
 						$tlsopt = 0;
+						//switch($settings['tlsauth_keydir']){
+							//case '-1':
+							//case '0':
+								//$tlsopt = 0;
+								//break;
+							//case '1':
+								//$tlsopt = 1;
+								//break;
+							//case '2':
+								//$tlsopt = '';
+								//break;
+						//}
 					} else {
 						$tlsopt = 1;
+						switch($settings['tlsauth_keydir']){
+							case '-1':
+							case '1':
+								$tlsopt = 1;
+								break;
+							case '0':
+								$tlsopt = 0;
+								break;
+							case '2':
+								$tlsopt = '';
+								break;
+						}
 					}
 				}
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);

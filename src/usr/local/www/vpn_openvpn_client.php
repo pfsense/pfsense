@@ -91,6 +91,7 @@ if ($act == "new") {
 	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
+	$pconfig['tlsauth_keydir'] = -1;
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['interface'] = "wan";
 	$pconfig['server_port'] = 1194;
@@ -150,6 +151,8 @@ if ($act == "edit") {
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
 		}
+		// OpenVPN Defaults to -1 if unset
+		$pconfig['tlsauth_keydir'] = !(empty($a_client[$id]['tlsauth_keydir'])) ? $a_client[$id]['tlsauth_keydir'] : -1;
 		$pconfig['crypto'] = $a_client[$id]['crypto'];
 		// OpenVPN Defaults to SHA1 if unset
 		$pconfig['digest'] = !empty($a_client[$id]['digest']) ? $a_client[$id]['digest'] : "SHA1";
@@ -399,6 +402,7 @@ if ($_POST['save']) {
 				}
 				$client['tls'] = base64_encode($pconfig['tls']);
 				$client['tls_type'] = $pconfig['tls_type'];
+				$client['tlsauth_keydir'] = $pconfig['tlsauth_keydir'];
 			}
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
@@ -636,6 +640,13 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['tls']
 	))->setHelp('Paste the TLS key here.%1$s' .
 	    'This key is used to sign control channel packets with an HMAC signature for authentication when establishing the tunnel. ', '<br/>');
+
+	$section->addInput(new Form_Select(
+		'tlsauth_keydir',
+		'*TLS keydir direction',
+		$pconfig['tlsauth_keydir'],
+		openvpn_get_keydirlist()
+	))->setHelp('Leave this unchecked if you are not sure');
 
 	$section->addInput(new Form_Select(
 		'tls_type',

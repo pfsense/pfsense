@@ -263,8 +263,11 @@ if (!isset($config['system']['webgui']['noassigninterfaces'])) {
 
 $platform = system_identify_specific_platform();
 
-if ($platform['name'] == "uFW") {
-	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
+switch ($platform['name']) {
+	case "ROGUE-1":
+	case "uFW":
+		$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
+		break;
 }
 
 $opts = get_configured_interface_with_descr(false, true);

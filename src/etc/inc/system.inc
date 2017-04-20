@@ -2260,6 +2260,7 @@ function has_hw_watchdog() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+		case 'ROGUE-1':
 		case 'RCC-VE':
 		case 'RCC-DFF':
 		case 'uFW':
@@ -2453,6 +2454,10 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv uboot.board_name 2>/dev/null', $board);
 	if ($board[0] === "A335uFW") {
 		return (array('name' => 'uFW', 'descr' => 'Netgate SG-1000'));
+	}
+
+	if (strpos($hw_model, "Cortex A9-") !== false) {
+		return array('name' => 'ROGUE-1', 'descr' => gettext('Rogue-1'));
 	}
 
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {

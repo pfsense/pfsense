@@ -516,6 +516,11 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT1'
 		);
 		break;
+	case 'ROGUE-1':
+		$config['interfaces']['wan']['if'] = 'mvneta2';
+		$config['interfaces']['lan']['if'] = 'mvneta0';
+		$config['interfaces']['opt1']['if'] = 'mvneta1';
+		break;
 	case 'RCC-VE':
 	case 'RCC-DFF':
 		/* SG-4860 or SG-8860 */

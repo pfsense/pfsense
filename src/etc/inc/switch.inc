@@ -114,8 +114,9 @@ function switch_get_devices() {
 		return ($swdevices);
 
 	switch ($platform['name']) {
+	case "ROGUE-1":
 	case "uFW":
-		/* Only one switch on uFW. */
+		/* Only one switch. */
 		$swdevices[] = "/dev/etherswitch0";
 		break;
 	}
@@ -130,6 +131,9 @@ function switch_get_title() {
 		return ("");
 
 	switch ($platform['name']) {
+	case "ROGUE-1":
+		return ("ROGUE-1");
+		break;
 	case "uFW":
 		return ("SG-1000");
 		break;

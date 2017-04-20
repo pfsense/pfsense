@@ -1170,25 +1170,7 @@ foreach ($a_cert as $i => $cert):
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							<?=gettext("Captive Portal")?>
 						<?php endif?>
-<?php
-							$refid = $cert['refid'];
-							if (is_array($certificates_used_by_packages)) {
-								foreach ($certificates_used_by_packages as $name => $package) {
-									if (isset($package['certificatelist'][$refid])) {
-										$hint = "" ;
-										if (is_array($package['certificatelist'][$refid])) {
-											foreach ($package['certificatelist'][$refid] as $cert_used) {
-												$hint = $hint . $cert_used['usedby']."\n";
-											}
-										}
-										$count = count($package['certificatelist'][$refid]);
-										echo "<div title='".htmlspecialchars($hint)."'>";
-										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
-										echo "</div>";
-									}
-								}
-							}
-?>
+						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>

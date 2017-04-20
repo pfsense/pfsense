@@ -372,6 +372,11 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 			</thead>
 			<tbody>
 <?php
+$pluginparams = array();
+$pluginparams['type'] = 'certificates';
+$pluginparams['event'] = 'used_ca';
+$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
 foreach ($a_ca as $i => $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
@@ -428,6 +433,7 @@ foreach ($a_ca as $i => $ca):
 						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
 							<?=gettext("LDAP Server")?>
 						<?php endif?>
+						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>

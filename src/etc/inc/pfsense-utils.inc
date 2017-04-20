@@ -2078,6 +2078,37 @@ function update_progress_bar($percent, $first_time) {
 	}
 }
 
+function update_alias_name($new_alias_name, $orig_alias_name) {
+	if (!$orig_alias_name) {
+		return;
+	}
+
+	// Firewall rules
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	// NAT Rules
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $new_alias_name, $orig_alias_name);
+	// NAT 1:1 Rules
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $new_alias_name, $orig_alias_name);
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	// NAT Outbound Rules
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	// Alias in an alias
+	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
+}
+
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
 	if (!$origname) {

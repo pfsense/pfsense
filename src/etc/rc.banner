@@ -32,7 +32,7 @@ $machine = trim(`uname -m`);
 
 print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 foreach ($iflist as $ifname => $friendly) {
 	/* point to this interface's config */
 	$ifconf = $config['interfaces'][$ifname];

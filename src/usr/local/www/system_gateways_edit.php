@@ -596,7 +596,7 @@ $section->addInput(new Form_Select(
 	'interface',
 	'*Interface',
 	$pconfig['friendlyiface'],
-	get_configured_interface_with_descr(false, true)
+	get_configured_interface_with_descr(true)
 ))->setHelp('Choose which interface this gateway applies to.');
 
 $section->addInput(new Form_Select(

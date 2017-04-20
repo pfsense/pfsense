@@ -638,7 +638,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	if ($disabled == false) {
 		$iflist = get_configured_interface_with_descr();
 	} else {
-		$iflist = get_configured_interface_with_descr(false, true);
+		$iflist = get_configured_interface_with_descr(true);
 	}
 
 	/* Process/add dynamic v4 gateways. */

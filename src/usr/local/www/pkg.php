@@ -143,7 +143,7 @@ if ($_REQUEST['act'] == "del") {
 
 ob_start();
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($pkg['custom_php_global_functions'] != "") {

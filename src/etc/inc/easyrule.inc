@@ -30,7 +30,7 @@ require_once("config.inc");
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
-	$iflist = get_configured_interface_with_descr(false, true);
+	$iflist = get_configured_interface_with_descr(true);
 
 	if ($config['pppoe']['mode'] == "server") {
 		$iflist['pppoe'] = "PPPoE Server";

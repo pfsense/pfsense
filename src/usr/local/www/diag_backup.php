@@ -317,7 +317,7 @@ if ($_POST) {
 									}
 									unset($config['shaper']);
 									/* optional if list */
-									$ifdescrs = get_configured_interface_list(true, true);
+									$ifdescrs = get_configured_interface_list(true);
 									/* remove special characters from interface descriptions */
 									if (is_array($ifdescrs)) {
 										foreach ($ifdescrs as $iface) {

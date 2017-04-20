@@ -38,7 +38,7 @@ $a_gres = &$config['gres']['gre'] ;
 function gre_inuse($num) {
 	global $config, $a_gres;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_gres[$num]['greif']) {
 			return true;

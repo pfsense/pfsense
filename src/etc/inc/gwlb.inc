@@ -597,6 +597,12 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$gateway['action_disable'] = true;
 			}
 
+			if (isset($gateway['no_defgw_switch'])) {
+				$gateway['no_defgw_switch'] = true;
+			} else {
+				$gateway['no_defgw_switch'] = false;
+			}
+
 			$gateway['friendlyiface'] = $gateway['interface'];
 
 			/* special treatment for tunnel interfaces */
@@ -888,7 +894,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		/* Keep a record of the last up gateway */
 		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
 		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
-			$upgw = $gwname;
+			if ($gwsttng['no_defgw_switch']) {
+				// do not elect this gateway if the `skip` option is set
+				log_error(sprintf(gettext('Found UP gateway %1$s but it was administratively skipped due to gateway settings'), $gwname));
+			} else {
+				// log_error(sprintf(gettext('Found UP gateway %1$s'), $gwname));
+				$upgw = $gwname;
+			}
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
 			break;
@@ -905,7 +917,6 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 		}
 		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
-			log_error("Default gateway down setting {$upgw} as default!");
 			if (is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
 				$inetfamily = "-inet6";
 				if (is_linklocal($gateways_arr[$upgw]['gateway']) && get_ll_scope($gateways_arr[$upgw]['gateway']) == '') {
@@ -914,6 +925,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			} else {
 				$inetfamily = "-inet";
 			}
+			log_error(sprintf(gettext('Default gateway down, setting default to %1$s'), $upgw));
 			route_add_or_change("{$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
 	} else if (!empty($dfltgwname)) {
@@ -933,6 +945,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 		}
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway']) {
+			log_error(sprintf(gettext('Default gateway down, setting default to %1$s'), $gateways_arr[$dfltgwname]));
 			route_add_or_change("-{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
 		}
 	}

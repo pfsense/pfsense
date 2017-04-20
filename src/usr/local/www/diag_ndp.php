@@ -33,10 +33,28 @@
 
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
-
+define('NDP_BINARY_PATH', '/usr/sbin/ndp');
 require_once("guiconfig.inc");
 
-exec("/usr/sbin/ndp -na", $rawdata);
+// Delete ndp entry.
+if (isset($_POST['deleteentry'])) {
+	$ip = $_POST['deleteentry'];
+	if (is_ipaddrv6($ip)) {
+		$commandReturnValue = mwexec(NDP_BINARY_PATH . " -d " . escapeshellarg($ip), true);
+		$deleteSucceededFlag = ($commandReturnValue == 0);
+	} else {
+		$deleteSucceededFlag = false;
+	}
+
+	$deleteResultMessage = ($deleteSucceededFlag)
+		? sprintf(gettext("The NDP entry for %s has been deleted."), $ip)
+		: sprintf(gettext("%s is not a valid IPv6 address or could not be deleted."), $ip);
+	$deleteResultMessageType = ($deleteSucceededFlag)
+		? 'success'
+		: 'alert-warning';
+}
+
+exec(NDP_BINARY_PATH . " -na", $rawdata);
 
 $i = 0;
 
@@ -95,6 +113,11 @@ $mac_man = load_mac_manufacturer_table();
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
+
+// Show message if defined.
+if (isset($deleteResultMessage, $deleteResultMessageType)) {
+	print_info_box(htmlentities($deleteResultMessage), $deleteResultMessageType);
+}
 ?>
 
 <div class="panel panel-default">
@@ -109,6 +132,7 @@ include("head.inc");
 				<th><?= gettext("MAC address"); ?></th>
 				<th><?= gettext("Hostname"); ?></th>
 				<th><?= gettext("Interface"); ?></th>
+				<th data-sortable="false"><?=gettext("Actions")?></th>
 			</tr>
 	</thead>
 	<tbody>
@@ -138,6 +162,9 @@ include("head.inc");
 							echo $entry['interface'];
 						}
 						?>
+					</td>
+					<td>
+						<a class="fa fa-trash" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

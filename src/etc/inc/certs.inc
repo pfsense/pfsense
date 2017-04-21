@@ -281,6 +281,42 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	return true;
 }
 
+function ca_trustedcerts_generate() {
+	global $config, $g;
+	if (isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "ca_trustedcerts_generate() being called $mt\n";
+	}
+
+	safe_mkdir("{$g['etc_path']}/ssl/certs");
+	/* Remove all certs in the directory (but leave symlinks in place to allow power users to add trusted certs outside the Certificate Manager) */
+	array_map('unlink', array_filter(glob("{$g['etc_path']}/ssl/certs/*"),function($x) { return is_file($x) && !is_link($x); }));
+
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as & $ca) {
+			if (isset($ca['trusted'])) {
+				$ca_hash = cert_get_hash($ca['crt']);
+				$ca_certfile = "{$g['etc_path']}/ssl/certs/{$ca_hash}.0";
+
+				/* Try again to unlink the specific cert file just in case a non-regular file (e.g. symlink) with the same hash exists */
+				unlink_if_exists($ca_certfile);
+				$fd = fopen($ca_certfile, "w");
+				if (!$fd) {
+					log_error(gettext(
+						"Error: cannot open {$g['etc_path']}/ssl/certs/{$ca_hash}.0 file in ca_trustedcerts_generate()."
+						));
+					return 1;
+				}
+
+				fwrite($fd, base64_decode($ca['crt']));
+				fclose($fd);
+			}
+		}
+	}
+
+	return 0;
+}
+
 function cert_import(& $cert, $crt_str, $key_str) {
 
 	$cert['crt'] = base64_encode($crt_str);
@@ -509,6 +545,11 @@ function cert_get_subject_hash($crt) {
 	$str_crt = base64_decode($crt);
 	$inf_crt = openssl_x509_parse($str_crt);
 	return $inf_crt['subject'];
+}
+
+function cert_get_hash($crt) {
+	$inf_crt = openssl_x509_parse(base64_decode($crt));
+	return $inf_crt['hash'];
 }
 
 function cert_get_issuer($str_crt, $decode = true) {

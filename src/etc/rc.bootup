@@ -54,6 +54,8 @@ require_once("/etc/inc/filter.inc");
 echo ".";
 require_once("/etc/inc/shaper.inc");
 echo ".";
+require_once("/etc/inc/certs.inc");
+echo ".";
 require_once("/etc/inc/ipsec.inc");
 echo ".";
 require_once("/etc/inc/vpn.inc");
@@ -231,6 +233,9 @@ if (!$debugging) {
 
 /* re-make hosts file after configuring interfaces */
 system_hosts_generate();
+
+/* add configured trusted CA certificates to /etc/ssl/certs */
+ca_trustedcerts_generate();
 
 /* start OpenVPN server & clients */
 echo "Syncing OpenVPN settings...";

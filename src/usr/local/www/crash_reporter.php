@@ -40,13 +40,9 @@ function upload_crash_report($files) {
 		$post["file{$counter}"] = "@{$file}";
 		$counter++;
 	}
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	$ch = get_curl_handle($g['crashreporterurl']);
+	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
-	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 	$response = curl_exec($ch);

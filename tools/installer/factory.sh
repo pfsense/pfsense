@@ -22,6 +22,47 @@ get_if_mac() {
 	echo "${_if_mac}"
 }
 
+get_cur_model() {
+	local _cur_model=""
+
+	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
+	local _hw_model=$(sysctl -b hw.model)
+
+	case "${_product}" in
+		RCC-VE)
+			if ! ifconfig igb4 >/dev/null 2>&1; then
+				_cur_model="SG-2440"
+			elif echo $_hw_model | grep -q C2558; then
+				_cur_model="SG-4860"
+			elif echo $_hw_model | grep -q C2758; then
+				_cur_model="SG-8860"
+			else
+				_cur_model="RCC-VE"
+			fi
+			;;
+		RCC)
+			_cur_model="XG-2758"
+			;;
+		DFFv2)
+			_cur_model="SG-2220"
+			;;
+		FW7541)
+			_cur_model="FW7541"
+			;;
+		APU)
+			_cur_model="APU"
+			;;
+		SYS-5018A-FTN4|A1SAi)
+			_cur_model="C2758"
+			;;
+		SYS-5018D-FN4T)
+			_cur_model="XG-1540"
+			;;
+	esac
+
+	echo "$_cur_model"
+}
+
 hostname="factory-logger.pfmechanics.com"
 
 if ! pgrep -q dhclient; then
@@ -86,25 +127,36 @@ if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
 fi
 
 unset selected_model
+cur_model=$(get_cur_model)
+
 if [ -n "${is_adi}" ]; then
-	models="\
-	\"SG-2220\" \"SG-2220\" \
-	\"SG-2440\" \"SG-2440\" \
-	\"SG-4860\" \"SG-4860\" \
-	\"SG-4860-1U\" \"SG-4860-1U\" \
-	\"SG-8860\" \"SG-8860\" \
-	\"SG-8860-1U\" \"SG-8860-1U\" \
-	\"XG-2758\" \"XG-2758\" \
-	\"Default\" \"Other / not listed\" \
-	"
+	case "${cur_model}" in
+		SG-2220|SG-2440|XG-2758)
+			selected_model="${cur_model}"
+			;;
+		SG-4860|SG-8860)
+			models="\
+				\"${cur_model}\" \"${cur_model}\" \
+				\"${cur_model}-1U\" \"${cur_model}-1U\" \
+			"
+			;;
+		*)
+			selected_model="Default"
+	esac
 elif [ "${machine_arch}" != "armv6" ]; then
-	models="\
-	\"C2758\" \"C2758\" \
-	\"APU\" \"APU\" \
-	\"XG-1540\" \"XG-1540\" \
-	\"XG-1541\" \"XG-1541\" \
-	\"Default\" \"Other / not listed\" \
-	"
+	case "${cur_model}" in
+		C2758|APU)
+			selected_model="${cur_model}"
+			;;
+		XG-1540)
+			models="\
+			\"XG-1540\" \"XG-1540\" \
+			\"XG-1541\" \"XG-1541\" \
+			"
+			;;
+		*)
+			selected_model="Default"
+	esac
 else
 	selected_model="SG-1000"
 fi

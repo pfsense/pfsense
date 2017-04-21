@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>15.4</version>
+	<version>16.4</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -264,8 +264,14 @@
 		</monitor_type>
 	</load_balancer>
 	<widgets>
-		<sequence>system_information:col1:show,interfaces:col2:show</sequence>
+		<sequence>system_information:col1:open:0,interfaces:col2:open:0,system_information:col2:open:1</sequence>
 		<period>10</period>
+		<system_information-0>
+			<filter>state_table_size,mbuf_usage,temperature,load_average,cpu_usage,memory_usage,swap_usage,disk_usage</filter>
+		</system_information-0>
+		<system_information-1>
+			<filter>name,system,bios,version,cpu_type,hwcrypto,uptime,current_datetime,dns_servers,last_config_change</filter>
+		</system_information-1>
 	</widgets>
 	<openvpn/>
 	<dnshaper/>

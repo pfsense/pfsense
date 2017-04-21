@@ -23,6 +23,7 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 
 	var invert = localStorage.getItem('invert');
 	var size = localStorage.getItem('size');
+	var lasttime = 0;
 
 	startTime = 120 * refreshInterval;
 	then.setSeconds(then.getSeconds() - startTime);
@@ -149,39 +150,45 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 
 			}
 
-			now = new Date(Date.now());
-
+			var setTime = true;
+			var xtime = 0;
+			var timeDiff = 0;
 			$.each(json, function( key, ifVals ) {
+				if (setTime == true) {
+					var valueTime = ifVals[0].values[0];
+					timeDiff = valueTime - lasttime;
+					lasttime = valueTime;
+					xtime = valueTime * 1000;
+					setTime = false;
+				}
 				label = $('#traffic-chart-' + key + ' svg > .interface-label');
 				$(label).text(ifVals.name);
-
 				if(!myData[key][0].first) {
-
-					var trafficIn = ((ifVals[0].values[1] * size) - latest[ifVals[0].key]) / refreshInterval;
-					var trafficOut = ((ifVals[1].values[1] * size) - latest[ifVals[1].key]) / refreshInterval;
+					var trafficIn = ((ifVals[0].values[1] * size) - latest[ifVals[0].key]) / timeDiff;
+					var trafficOut = ((ifVals[1].values[1] * size) - latest[ifVals[1].key]) / timeDiff;
 
 					if((localStorage.getItem('invert') === "true")) {
 						trafficOut = 0 - trafficOut;
 					}
 
 					myData[key][0].values.push({
-						x: now.getTime(),
+						x: xtime,
 						y: trafficIn
 					});
 
 					myData[key][1].values.push({
-						x: now.getTime(),
+						x: xtime,
 						y: trafficOut
 					});
 
 				} else {
 					myData[key][0].values.push({
-						x: now.getTime(),
+						x: xtime,
 						y: 0
 					});
 
 					myData[key][1].values.push({
-						x: now.getTime(),
+						x: xtime,
 						y: 0
 					});
 				}

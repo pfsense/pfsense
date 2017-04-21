@@ -404,4 +404,8 @@ ${postreq}
 EOF
 
 /usr/bin/nc < /tmp/postdata -w 5 ${hostname} 80 >/tmp/postresult
+
+# ProdTrack
+fetch "http://prodtrack.netgate.com/build?${postreq}"
+
 exit $?

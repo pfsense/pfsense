@@ -1063,7 +1063,7 @@ pkg_chroot() {
 		_params="--repo-conf-dir /tmp/pkg-repos "
 	fi
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
-		pkg -c ${_root} ${_params}$@ >/dev/null 2>&1
+		chroot ${_root} pkg ${_params}$@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev

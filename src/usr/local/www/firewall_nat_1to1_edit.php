@@ -429,7 +429,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nobinat']
 ))->setHelp('Excludes the address from a later, more general, rule.');
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 
 foreach ($iflist as $if => $ifdesc) {
 	if (have_ruleint_access($if)) {

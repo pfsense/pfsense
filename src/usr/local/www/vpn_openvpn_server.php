@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
@@ -1754,7 +1755,7 @@ events.push(function() {
 	});
 
 	 // Tun/tap mode
-	$('#dev_mode, #serverbridge_dhcp').click(function () {
+	$('#dev_mode, #serverbridge_dhcp').change(function () {
 		tuntap_change();
 	});
 

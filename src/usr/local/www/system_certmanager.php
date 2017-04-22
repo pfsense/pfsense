@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $cert_methods = array(
 	"import" => gettext("Import an existing Certificate"),
@@ -241,7 +242,7 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
 
-			if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
 		}
@@ -549,12 +550,12 @@ if ($_POST['save']) {
 //				$subject_mismatch = true;
 //			}
 //		}
-		$mod_csr = csr_get_modulus($pconfig['csr'], false);
-		$mod_cert = cert_get_modulus($pconfig['cert'], false);
+		$mod_csr = cert_get_publickey($pconfig['csr'], false, 'csr');
+		$mod_cert = cert_get_publickey($pconfig['cert'], false);
 
 		if (strcmp($mod_csr, $mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match
-			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."), $subj_cert);
+			$input_errors[] = sprintf(gettext("The certificate public key does not match the signing request public key."), $subj_cert);
 			$subject_mismatch = true;
 		}
 
@@ -1169,25 +1170,7 @@ foreach ($a_cert as $i => $cert):
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							<?=gettext("Captive Portal")?>
 						<?php endif?>
-<?php
-							$refid = $cert['refid'];
-							if (is_array($certificates_used_by_packages)) {
-								foreach ($certificates_used_by_packages as $name => $package) {
-									if (isset($package['certificatelist'][$refid])) {
-										$hint = "" ;
-										if (is_array($package['certificatelist'][$refid])) {
-											foreach ($package['certificatelist'][$refid] as $cert_used) {
-												$hint = $hint . $cert_used['usedby']."\n";
-											}
-										}
-										$count = count($package['certificatelist'][$refid]);
-										echo "<div title='".htmlspecialchars($hint)."'>";
-										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
-										echo "</div>";
-									}
-								}
-							}
-?>
+						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>

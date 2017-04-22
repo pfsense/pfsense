@@ -130,6 +130,37 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+/****f* pfsense-utils/pfSenseHeader
+ * NAME
+ *   pfSenseHeader
+ * INPUTS
+ *   none
+ * RESULT
+ *   Javascript header change or browser Location:
+ ******/
+function pfSenseHeader($text) {
+	global $_SERVER;
+	if (isAjax()) {
+		if ($_SERVER['HTTPS'] == "on") {
+			$protocol = "https";
+		} else {
+			$protocol = "http";
+		}
+
+		$port = ":{$_SERVER['SERVER_PORT']}";
+		if ($_SERVER['SERVER_PORT'] == "80" && $protocol == "http") {
+			$port = "";
+		}
+		if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https") {
+			$port = "";
+		}
+		$complete_url = "{$protocol}://{$_SERVER['HTTP_HOST']}{$port}/{$text}";
+		echo "\ndocument.location.href = '{$complete_url}';\n";
+	} else {
+		header("Location: $text");
+	}
+}
+
 /****f* pfsense-utils/get_css_files
  * NAME
  *   get_css_files - get a list of the available CSS files (themes)
@@ -605,7 +636,7 @@ function is_schedule_inuse($schedule) {
 function setup_microcode() {
 
 	/* if list */
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if => $ifdescr) {
 		enable_hardware_offloading($if);
 	}
@@ -2078,6 +2109,37 @@ function update_progress_bar($percent, $first_time) {
 	}
 }
 
+function update_alias_name($new_alias_name, $orig_alias_name) {
+	if (!$orig_alias_name) {
+		return;
+	}
+
+	// Firewall rules
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	// NAT Rules
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $new_alias_name, $orig_alias_name);
+	// NAT 1:1 Rules
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $new_alias_name, $orig_alias_name);
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	// NAT Outbound Rules
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	// Alias in an alias
+	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
+}
+
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
 	global $g, $config, $pconfig, $debug;
 	if (!$origname) {
@@ -2834,6 +2896,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
 		"nb" => gettext("Norwegian Bokmål"),
+		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);

@@ -286,7 +286,7 @@ function delete_row(rowDelBtn) {
 }
 
 function checkLastRow() {
-	if ($('.repeatable').length <= 1) {
+	if (($('.repeatable').length <= 1) && (! $('#deleterow0').hasClass("nowarn"))) {
 		$('#deleterow0').hide();
 	} else {
 		$('[id^=deleterow]').show();
@@ -378,11 +378,12 @@ function add_row() {
 				moveHelpText($(this).attr("id"));
 
 			delete_row($(this).attr("id"));
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
 		} else {
 			alert('The last row may not be deleted.');
 		}
 	});
-
 }
 
 // These are action buttons, not submit buttons
@@ -400,10 +401,17 @@ $('[id^=delete]').click(function(event) {
 			moveHelpText($(this).attr("id"));
 
 		delete_row($(this).attr("id"));
-	} else {
-		alert('The last row may not be deleted.');
-	}
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
+		} else {
+			alert('The last row may not be deleted.');
+		}
 });
+
+function clearRow0() {
+	$('#deleterow0').parent('div').parent().find('input[type=text]').val('');
+	$('#deleterow0').parent('div').parent().find('input[type=checkbox]:checked').removeAttr('checked');
+}
 
 // "More information" handlers --------------------------------------------------------------------
 

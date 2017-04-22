@@ -28,17 +28,13 @@
 
 ini_set('max_execution_time', '0');
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
 require_once("filter.inc");
+require_once("functions.inc");
+require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
+require_once("pfsense-utils.inc");
 require_once("util.inc");
-
-/* dummy stubs needed by some code that was MFC'd */
-function pfSenseHeader($location) {
-	header("Location: " . $location);
-}
 
 $xml = htmlspecialchars($_REQUEST['xml']);
 

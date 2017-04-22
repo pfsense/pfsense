@@ -28,6 +28,7 @@
 ##|-PRIV
 
 define('NUMACLS', 50); // The maximum number of configurable ACLs
+
 require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
@@ -47,6 +48,12 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	for ($x=0, $numacls=0; $x < NUMACLS; $x++) {
+		if (array_key_exists("acl_network{$x}", $_POST)) {
+			$numacls++;
+		}
+	}
+
 	for ($x = 0; $x < NUMACLS; $x++) {
 		if (isset($pconfig["acl_network{$x}"])) {
 			$networkacl[$x] = array();
@@ -54,33 +61,38 @@ if ($_POST) {
 			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
 
 			/* ACL Flags */
-			if (!empty($pconfig["kod{$x}"])) {
-				$networkacl[$x]['kod'] = $pconfig["kod{$x}"];
+			if (array_key_exists("kod{$x}", $pconfig)) {
+				$networkacl[$x]['kod'] = "yes";
 			} elseif (isset($networkacl[$x]['kod'])) {
 				unset($networkacl[$x]['kod']);
 			}
-			if (!empty($pconfig["nomodify{$x}"])) {
-				$networkacl[$x]['nomodify'] = $pconfig["nomodify{$x}"];
+
+			if (array_key_exists("nomodify{$x}", $pconfig)) {
+				$networkacl[$x]['nomodify'] = "yes";
 			} elseif (isset($networkacl[$x]['nomodify'])) {
 				unset($networkacl[$x]['nomodify']);
 			}
-			if (!empty($pconfig["noquery{$x}"])) {
-				$networkacl[$x]['noquery'] = $pconfig["noquery{$x}"];
+
+			if (array_key_exists("noquery{$x}", $pconfig)) {
+				$networkacl[$x]['noquery'] = "yes";
 			} elseif (isset($networkacl[$x]['noquery'])) {
 				unset($networkacl[$x]['noquery']);
 			}
-			if (!empty($pconfig["noserve{$x}"])) {
-				$networkacl[$x]['noserve'] = $pconfig["noserve{$x}"];
+
+			if (array_key_exists("noserve{$x}", $pconfig)) {
+				$networkacl[$x]['noserve'] = "yes";
 			} elseif (isset($networkacl[$x]['noserve'])) {
 				unset($networkacl[$x]['noserve']);
 			}
-			if (!empty($pconfig["nopeer{$x}"])) {
-				$networkacl[$x]['nopeer'] = $pconfig["nopeer{$x}"];
+
+			if (array_key_exists("nopeer{$x}", $pconfig)) {
+				$networkacl[$x]['nopeer'] = "yes";
 			} elseif (isset($networkacl[$x]['nopeer'])) {
 				unset($networkacl[$x]['nopeer']);
 			}
-			if (!empty($pconfig["notrap{$x}"])) {
-				$networkacl[$x]['notrap'] = $pconfig["notrap{$x}"];
+
+			if (array_key_exists("notrap{$x}", $pconfig)) {
+				$networkacl[$x]['notrap'] = "yes";
 			} elseif (isset($networkacl[$x]['notrap'])) {
 				unset($networkacl[$x]['notrap']);
 			}
@@ -99,6 +111,8 @@ if ($_POST) {
 						$input_errors[] = sprintf(gettext("A valid IPv6 netmask must be entered for IPv6 row %s under Networks."), $networkacl[$x]['acl_network']);
 					}
 				}
+			} else if ((strlen($networkacl[$x]['acl_network']) == 0) && ($numacls > 1)) {
+				unset($networkacl[$x]);
 			}
 		} else if (isset($networkacl[$x])) {
 			unset($networkacl[$x]);
@@ -290,7 +304,7 @@ foreach ($networkacl as $item) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning btn-xs');
+	))->addClass('btn-warning btn-xs')->addClass("nowarn");
 
 	$group->addClass('repeatable');
 
@@ -316,7 +330,6 @@ print($form);
 //<![CDATA[
 events.push(function(){
 	retainhelp = false;
-	checkLastRow();
 });
 //]]>
 </script>

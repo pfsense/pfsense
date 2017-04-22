@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3220,12 +3220,12 @@ msgid "Spanish"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
-msgstr "ポルトガル語（ブラジル）"
+msgid "Norwegian Bokmål"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
-msgstr "トルコ語"
+msgid "Russian"
+msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2838
 msgid "Chinese (Simplified, China)"
@@ -7225,7 +7225,7 @@ msgid ""
 "(pfsense.%s)."
 msgstr ""
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr ""
 

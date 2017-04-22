@@ -71,7 +71,7 @@ EOD;
 			else
 				$status = "(down)";
 			$ifsmallist = $ifsmallist . $iface. " ";
-			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
+			echo sprintf("%-7s %s %s %s\n", $iface, $ifa['mac'],
 				$status, substr($ifa['dmesg'], 0, 48));
 		}
 	}

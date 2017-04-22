@@ -37,7 +37,7 @@ $a_laggs = &$config['laggs']['lagg'] ;
 function lagg_inuse($num) {
 	global $config, $a_laggs;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_laggs[$num]['laggif']) {
 			return true;

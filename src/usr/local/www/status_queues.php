@@ -173,7 +173,7 @@ else: ?>
 				</thead>
 				<tbody>
 <?php
-	$if_queue_list = get_configured_interface_list_by_realif(false, true);
+	$if_queue_list = get_configured_interface_list_by_realif(true);
 	processQueues($altqstats, 0, "");
 ?>
 <?php endif; ?>

@@ -262,7 +262,7 @@ display_top_tabs($tab_array);
 			</thead>
 			<tbody>
 <?php
-$interfaces = get_configured_interface_with_descr(false, true);
+$interfaces = get_configured_interface_with_descr(true);
 $viplist = get_configured_vip_list();
 
 foreach ($viplist as $vipname => $address) {

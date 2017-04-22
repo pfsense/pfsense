@@ -1,14 +1,15 @@
+# Abdul Aziz Amar <abdulaziz.amar@gmail.com>, 2017. #zanata
 # Sugiono <anatta.net@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-04 11:45-0300\n"
+"POT-Creation-Date: 2017-04-17 10:03-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-04 05:02-0400\n"
-"Last-Translator: Sugiono <anatta.net@gmail.com>\n"
+"PO-Revision-Date: 2017-04-11 12:12-0400\n"
+"Last-Translator: Abdul Aziz Amar <abdulaziz.amar@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "Language: id\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -411,7 +412,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Mengatur VLAN sekarang [y/t]?"
+msgstr "Mengatur VLAN sekarang [y/n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
@@ -438,11 +439,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sMasukkan nama interface LAN atau 'a' untuk deteksi otomatis %2$sCATATAN: "
+"Ini mengaktifkan mode Firewall/NAT.%3$s(%4$s a atau tidak ada jika sudah "
+"selesai):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sInterface opsional %2$s ditemukan deskripsi: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -450,72 +454,76 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sMasukkan nama interface Opsional %2$s atau 'a' untuk deteksi "
+"otomatis%3$s(%4$s a atau tidak ada jika sudah selesai):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr ""
+msgstr "Opsional"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Interface interface akan di tetapkan sebagai berikut:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "Apakah Anda akan melanjutkan [y|n]"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "Anda memilih untuk menghapus interface LAN"
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
 msgstr ""
+"Apakah anda ingin menghapus alamat IP LAN dan membongkar interface sekarang "
+"[y/n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr ""
+msgstr "%sSedang menulis configurasi..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Console penentuan antarmuka"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "selesai. %s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Tunggu sebentar sementara pengaturan dimuat ulang..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr "selesai!"
 
 #: src/etc/inc/config.console.inc:400
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "Hubungan terdeteksi di antarmuka %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Tidak ada hubungan yang terdeteksi. %s"
 
 #: src/etc/inc/config.console.inc:422
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "PERINGATAN: semua VLAN yang ada akan dihapus jika anda melanjutkan!"
 
 #: src/etc/inc/config.console.inc:438
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "Antarmuka yang mampu VLAN:"
 
 #: src/etc/inc/config.console.inc:453
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "Tidak ada antarmuka terdeteksi yang mampu VLAN"
 
 #: src/etc/inc/config.console.inc:457
 msgid ""
@@ -524,12 +532,12 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:470
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "Masukkan tag VLAN (1-4094):"
 
 #: src/etc/inc/config.console.inc:474
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sTag VLAN tidak benar '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:481
 #, php-format
@@ -538,16 +546,16 @@ msgstr ""
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "Meningkatkan pengaturan m0n0wall ke pfSense"
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "KESALAHAN! Tidak dapat mengubah m0n0wall -> pfSense di config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "Pengaturan ditemukan di %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -555,18 +563,22 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"Config.xml tidak ditemukan, mencoba memulihkan pengaturan terakhir yang "
+"dikenal"
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"Config.xml atau cadangan pengaturan tidak ditemukan, mengembalikan ke "
+"pengaturan pabrik..."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "Config.xml terbuka."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "Salah memasukkan sandi. Harap coba lagi."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -574,105 +586,117 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml rusak dan berukuran 0 bita. Tidak dapat memulihkan ke cadangan "
+"sebelumnya."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:496
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Tidak dapat memulihkan config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s sedang memulihkan pengaturan %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
 msgstr ""
+"Berkas pengaturan XML tidak ditemukan. %s tidak dapat meneruskan proses "
+"booting."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Pengaturan terakhir yang dikenal telah ditemukan dan dipulihkan. Harap "
+"periksa kembali file pengaturan untuk akurasi."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
 msgstr ""
+"Tidak dapat menemukan file konfigurasi yang dapat digunakan! Keluar...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Memulai  peningkatan konfigurasi pada %s, mengatur waktu habis ke 15 menit"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Telah memperbaharui frekuensi pembaharuan bogon ke 3am"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Pembaruan Konfigurasi berakhir pada %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Tingkat versi konfig diperbarui dari %1s ke %2s"
 
 #: src/etc/inc/config.lib.inc:473
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
+"PERINGATAN: Isi konfig tidak dapat disimpan. Tidak dapat membuka file!"
 
 #: src/etc/inc/config.lib.inc:475
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr ""
+"Tidak dapat membuka %1$s/config.xml untuk di tulis dalam write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:595
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Kembali ke %s"
 
 #: src/etc/inc/config.lib.inc:612
 msgid "Installing configuration..."
-msgstr ""
+msgstr "Memasang konfigurasi...."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "Memasang konfigurasi...."
 
 #: src/etc/inc/config.lib.inc:665
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "error XML: tidak dapat membuka file"
 
 #: src/etc/inc/config.lib.inc:671
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s pada baris %2sd"
 
 #: src/etc/inc/config.lib.inc:724 src/etc/inc/config.lib.inc:726
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Cadangan cache file %s terkorupsi. Menghapus tautan."
 
 #: src/etc/inc/config.lib.inc:877
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "%s melakukan perubahan yang tidak diketahui"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "Gagal untuk mengenkripsi/dekripsi data!"
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "DNS dinamis: mulai updatedns() "
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"DNS dinamis (%1$s): menjalankan get_failover_interface untuk %2$s. Ditemukan "
+"%3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -680,11 +704,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"DNS dinamis (%1$s) Terdapat kesalahan sewaktu mencoba menentukan IP publik "
+"untuk interface -%2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "DNS dinamis %1$s (%2$s): memulai _update()"
 
 #: src/etc/inc/dyndns.class:445
 #, php-format
@@ -696,25 +722,25 @@ msgstr ""
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Mengirimkan permintaan ke: %s"
 
 #: src/etc/inc/dyndns.class:842
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "DNS Dinamis %1$s (%2$s): _checkStatus() dimulai."
 
 #: src/etc/inc/dyndns.class:845 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "Sukses"
 
 #: src/etc/inc/dyndns.class:846 src/etc/inc/dyndns.class:1518
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
-msgstr ""
+msgstr "Kesalahan"
 
 #: src/etc/inc/dyndns.class:850
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Kesalahan curl terjadi:"
 
 #: src/etc/inc/dyndns.class:859 src/etc/inc/dyndns.class:880
 #: src/etc/inc/dyndns.class:899 src/etc/inc/dyndns.class:917
@@ -725,7 +751,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1394 src/etc/inc/dyndns.class:1415
 #: src/etc/inc/dyndns.class:1460 src/etc/inc/dyndns.class:1472
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "Penggantian Alamat IP Sukses!"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -742,7 +768,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
 msgid "Unknown Response"
-msgstr ""
+msgstr "Respon tak diketahui"
 
 #: src/etc/inc/dyndns.class:863 src/etc/inc/dyndns.class:886
 #: src/etc/inc/dyndns.class:905 src/etc/inc/dyndns.class:923
@@ -766,18 +792,24 @@ msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"Nama pengguna atau sandi DNS-O-Matic yang dimasukkan salah. Tidak ada "
+"pembaruan yang disebarkan ke layanan sampai hal ini diatasi."
 
 #: src/etc/inc/dyndns.class:872
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Hostname yang dimasukkan bukanlah nama domain yang memenuhi syarat. Jika "
+"tidak ada hostname yang disertakan, notfqdn akan dibalas sekali."
 
 #: src/etc/inc/dyndns.class:874
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Hostname yang disebarkan tidak dapat disamakan dengan semua nama layanan "
+"yang telah diatur. Kode balasan kolom layanan akan kosong."
 
 #: src/etc/inc/dyndns.class:876
 msgid ""
@@ -787,22 +819,22 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:878
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Hostname diblokir karena penyalahgunaan pembaruan."
 
 #: src/etc/inc/dyndns.class:883
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "Terjadi kesalahan DNS. Hentikan pembaruan selama 30 menit."
 
 #: src/etc/inc/dyndns.class:892 src/etc/inc/dyndns.class:912
 #: src/etc/inc/dyndns.class:929 src/etc/inc/dyndns.class:946
 #: src/etc/inc/dyndns.class:1267 src/etc/inc/dyndns.class:1331
 #: src/etc/inc/dyndns.class:1453
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "Bukanlah FQDN!"
 
 #: src/etc/inc/dyndns.class:894 src/etc/inc/dyndns.class:1455
 msgid "No such host"
-msgstr ""
+msgstr "Host tidak tersedia"
 
 #: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:914
 #: src/etc/inc/dyndns.class:931 src/etc/inc/dyndns.class:948
@@ -811,7 +843,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1434
 #: src/etc/inc/dyndns.class:1457
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "Tidak Ada Perubahan di Alamat IP"
 
 #: src/etc/inc/dyndns.class:902 src/etc/inc/dyndns.class:920
 #: src/etc/inc/dyndns.class:937 src/etc/inc/dyndns.class:954
@@ -819,88 +851,97 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1339 src/etc/inc/dyndns.class:1397
 #: src/etc/inc/dyndns.class:1463
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Otorisasi Pengguna Gagal"
 
 #: src/etc/inc/dyndns.class:968
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "Alamat IP sudah terbaru, pembaruan tidak dilakukan."
 
 #: src/etc/inc/dyndns.class:972
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "Pembaruan hostname DNS sukses."
 
 #: src/etc/inc/dyndns.class:976
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Hostname yang dimasukkan tidak ada."
 
 #: src/etc/inc/dyndns.class:979
 msgid "Invalid Username."
-msgstr ""
+msgstr "Nama pengguna tidak valid."
 
 #: src/etc/inc/dyndns.class:982
 msgid "Invalid Password."
-msgstr ""
+msgstr "Sandi tidak valid."
 
 #: src/etc/inc/dyndns.class:985
 msgid "Too many updates sent."
-msgstr ""
+msgstr "Terlalu banyak pembaruan yang dikirim."
 
 #: src/etc/inc/dyndns.class:988
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr ""
+msgstr "Akun dimatikan karena pelanggaran terhadap aturan penggunaan NO-IP."
 
 #: src/etc/inc/dyndns.class:991
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"IP tidak valid. Format alamat IP yang dimasukkan tak sesuai atau merupakan "
+"alamat IP pribadi atau berada di daftar hitam."
 
 #: src/etc/inc/dyndns.class:994
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Hostname Dimatikan / Dikunci."
 
 #: src/etc/inc/dyndns.class:997
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
-msgstr ""
+msgstr "Host diperbarui sebagai web redirect dan pembaruan tidak dilakukan."
 
 #: src/etc/inc/dyndns.class:1000
 msgid "Group supplied does not exist."
-msgstr ""
+msgstr "Grup yang dimasukkan tidak ada."
 
 #: src/etc/inc/dyndns.class:1003
 msgid "DNS group update is successful."
-msgstr ""
+msgstr "Pembaruan grup DNS sukses."
 
 #: src/etc/inc/dyndns.class:1007
 msgid "DNS group is current, no update performed."
-msgstr ""
+msgstr "Grup DNS sudah terbaru, pembaruan tidak dilakukan."
 
 #: src/etc/inc/dyndns.class:1011
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Dukungan klien pembaruan tidak tersedia untuk nama hostname atau grup yang "
+"dimasukkan."
 
 #: src/etc/inc/dyndns.class:1014
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
+"Hostname yang dimasukkan tidak memiliki pengaturan offline sebelumnya."
 
 #: src/etc/inc/dyndns.class:1017 src/etc/inc/dyndns.class:1020
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Klien dimatikan. Klien harusnya keluar dan tidak melakukan pembaruan apapun "
+"lagi tanpa intervensi pengguna."
 
 #: src/etc/inc/dyndns.class:1024
 msgid "Unknown Response:"
-msgstr ""
+msgstr "Respon tak diketahui:"
 
 #: src/etc/inc/dyndns.class:1030
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr ""
+msgstr "Otentikasi gagal: Nama pengguna dan/atau Sandi salah."
 
 #: src/etc/inc/dyndns.class:1032
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
+"Layanan tidak tersedia: Layanan DNS Dinamis telah dimatikan untuk domain ini."
+""
 
 #: src/etc/inc/dyndns.class:1034
 msgid "Illegal Input: Self-Explanatory"
@@ -909,22 +950,23 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1036
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
+"Terlalu Cepat: Jarak Waktu Tak Cukup Jauh Semenjak Pembaruan Terakhir."
 
 #: src/etc/inc/dyndns.class:1038
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "Pembaruan IP Sukses!"
 
 #: src/etc/inc/dyndns.class:1051
 msgid "Error 799"
-msgstr ""
+msgstr "Kesalahan 799"
 
 #: src/etc/inc/dyndns.class:1051 src/etc/inc/dyndns.class:1053
 msgid "Update Failed!"
-msgstr ""
+msgstr "Pembaruan Gagal!"
 
 #: src/etc/inc/dyndns.class:1053
 msgid "Error 700"
-msgstr ""
+msgstr "Kesalahan 700"
 
 #: src/etc/inc/dyndns.class:1055 src/etc/inc/dyndns.class:1058
 #: src/etc/inc/dyndns.class:1076 src/etc/inc/dyndns.class:1086
@@ -933,71 +975,79 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1254 src/etc/inc/dyndns.class:1309
 #: src/etc/inc/dyndns.class:1356 src/etc/inc/dyndns.class:1370
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "Pembaruan Alamat IP Sukses!"
 
 #: src/etc/inc/dyndns.class:1068
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Permintaan Tidak Valid - URL-nya cacat. Parameter yang diperlukan tidak "
+"dimasukkan."
 
 #: src/etc/inc/dyndns.class:1070
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Pembaruan Terlalu Cepat - Percobaan pembaruan terlalu cepat semenjak "
+"perubahan terakhir."
 
 #: src/etc/inc/dyndns.class:1072
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Kesalahan Basis Data - Terdapat kesalahan di sisi server basis data."
 
 #: src/etc/inc/dyndns.class:1074
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
-msgstr ""
+msgstr "Kesalahan Hostname - Hostname (%1$s) bukanlah milik pengguna (%2$s)."
 
 #: src/etc/inc/dyndns.class:1138
 msgid "Not a valid username or password!"
-msgstr ""
+msgstr "Nama pengguna atau sandi tidak valid!"
 
 #: src/etc/inc/dyndns.class:1140
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Hostname yang dimasukkan tidak ada."
 
 #: src/etc/inc/dyndns.class:1146
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
+"Hostname yang dimasukkan ada, tapi tidak dimiliki oleh nama pengguna yang "
+"dimasukkan."
 
 #: src/etc/inc/dyndns.class:1148
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Terlalu banyak memperbarui, ditetapkan sebagai penyalahgunaan."
 
 #: src/etc/inc/dyndns.class:1157 src/etc/inc/dyndns.class:1221
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Permintaan Tidak Valid - IP yang dimasukkan tidak valid."
 
 #: src/etc/inc/dyndns.class:1159
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Permintaan Tidak Valid - Parameter yang diperlukan tidak dimasukkan."
 
 #: src/etc/inc/dyndns.class:1161
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
+"Permintaan tidak valid - Terdapat karakter ilegal di antara nama pengguna "
+"atau sandinya."
 
 #: src/etc/inc/dyndns.class:1163
 msgid "Invalid password."
-msgstr ""
+msgstr "Sandi tidak valid."
 
 #: src/etc/inc/dyndns.class:1165
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Akun ini telah dikunci secara administratif."
 
 #: src/etc/inc/dyndns.class:1167
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Terlalu cepat memperbarui."
 
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1183
 #: src/etc/inc/dyndns.class:1201
 msgid "Server side error."
-msgstr ""
+msgstr "Kesalahan di sisi server."
 
 #: src/etc/inc/dyndns.class:1185
 msgid "Badly Formed Request (check the settings)."
@@ -1005,29 +1055,29 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1223
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Permintaan tidak valid - Tidak ada hostname yang disertakan."
 
 #: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1225
 #: src/etc/inc/dyndns.class:1252
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Nama pengguna atau sandi tidak valid."
 
 #: src/etc/inc/dyndns.class:1210 src/etc/inc/dyndns.class:1230
 #: src/etc/inc/dyndns.class:1257 src/etc/inc/dyndns.class:1269
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "Tidak Ada Perubahan di Alamat IP."
 
 #: src/etc/inc/dyndns.class:1248
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Permintaan Tidak Valid - Terdapat Parameter yang Hilang/Tidak Valid."
 
 #: src/etc/inc/dyndns.class:1250
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Permintaan Tidak Valid - Tunnel ID Tidak Valid."
 
 #: src/etc/inc/dyndns.class:1284
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Pemanggilan API Route53 gagal."
 
 #: src/etc/inc/dyndns.class:1288
 msgid "IP address changed successfully"
@@ -1062,7 +1112,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1350
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "Nama pengguna tidak diketahui - Pengguna tidak ada."
 
 #: src/etc/inc/dyndns.class:1352
 msgid "Wrong password - Remember password is case sensitive."
@@ -1070,95 +1120,95 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1354
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "Pengguna tidak dapat mengatur domain yang dipilih."
 
 #: src/etc/inc/dyndns.class:1389
 msgid "Not A FQDN"
-msgstr ""
+msgstr "Bukanlah FQDN"
 
 #: src/etc/inc/dyndns.class:1399
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "Hostname tidak ada atau DynDNS belum dinyalakan"
 
 #: src/etc/inc/dyndns.class:1401
 msgid "Bad request"
-msgstr ""
+msgstr "Permintaan tidak valid"
 
 #: src/etc/inc/dyndns.class:1403
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "Akses DNS Dinamis telah diblokir!"
 
 #: src/etc/inc/dyndns.class:1405
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "Kesalahan terjadi di sisi Google, mencoba kembali dalam 5 menit"
 
 #: src/etc/inc/dyndns.class:1419 src/etc/inc/dyndns.class:1477
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Nama pengguna atau sandi tidak valid"
 
 #: src/etc/inc/dyndns.class:1422
 msgid "Account suspended"
-msgstr ""
+msgstr "Akun ditahan"
 
 #: src/etc/inc/dyndns.class:1425
 msgid "Account revoked"
-msgstr ""
+msgstr "Akun dicabut"
 
 #: src/etc/inc/dyndns.class:1428
 msgid "Record does not exist in the system. Unable to update record"
-msgstr ""
+msgstr "Catatan tidak tersedia di sistem. Tidak dapat memperbarui catatan"
 
 #: src/etc/inc/dyndns.class:1431
 msgid "User does not have access to this record"
-msgstr ""
+msgstr "Pengguna tidak memiliki akses ke catatan ini"
 
 #: src/etc/inc/dyndns.class:1438
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "Kesalahan sistem umum dikenali oleh sistem"
 
 #: src/etc/inc/dyndns.class:1441
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "Kesalahan sistem umum tidak dikenali oleh sistem"
 
 #: src/etc/inc/dyndns.class:1493
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS memperbarui alamat IP di %1$s (%2$s) ke %3$s"
 
 #: src/etc/inc/dyndns.class:1494 src/etc/inc/dyndns.class:1502
 #: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr ""
+msgstr "phpDynDNS: memperbarui berkas cache %1$s: %2$s"
 
 #: src/etc/inc/dyndns.class:1501
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS memperbarui alamat IPv6 di %1$s (%2$s) ke %3$s"
 
 #: src/etc/inc/dyndns.class:1517
 msgid "ERROR!"
-msgstr ""
+msgstr "KESALAHAN!"
 
 #: src/etc/inc/dyndns.class:1523
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Tidak ada penyedia Layanan DNS Dinamis yang dipilih."
 
 #: src/etc/inc/dyndns.class:1526
 msgid "No Username Provided."
-msgstr ""
+msgstr "Tidak ada nama pengguna yang dimasukkan."
 
 #: src/etc/inc/dyndns.class:1529
 msgid "No Password Provided."
-msgstr ""
+msgstr "Tidak ada sandi yang dimasukkan."
 
 #: src/etc/inc/dyndns.class:1532
 msgid "No Hostname Provided."
-msgstr ""
+msgstr "Tidak ada Hostname yang dimasukkan."
 
 #: src/etc/inc/dyndns.class:1535
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "Layanan DNS Dinamis yang dimasukkan belum didukung saat ini."
 
 #: src/etc/inc/dyndns.class:1538
 msgid "No Update URL Provided."
@@ -1212,34 +1262,34 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1601
 #, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "IP di Cache: %s"
 
 #: src/etc/inc/dyndns.class:1607
 msgid "No Cached IP found."
-msgstr ""
+msgstr "IP di Cache tidak ditemukan."
 
 #: src/etc/inc/dyndns.class:1621
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "DNS Dinamis: cacheIP != wan_ip. Memperbarui."
 
 #: src/etc/inc/dyndns.class:1622
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "IP di Cache: %1$s IP WAN: %2$s"
 
 #: src/etc/inc/dyndns.class:1627
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "DNS Dinamis: Lebih dari %s hari. Memperbarui."
 
 #: src/etc/inc/dyndns.class:1632
 msgid "Initial update."
-msgstr ""
+msgstr "Pembaruan awal."
 
 #: src/etc/inc/dyndns.class:1669
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "DNS Dinamis %1$s (%2$s): memulai _checkIP()."
 
 #: src/etc/inc/dyndns.class:1694
 #, php-format
@@ -1251,34 +1301,34 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1713
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "DNS Dinamis %1$s (%2$s): %3$s diekstrak dari %4$s"
 
 #: src/etc/inc/dyndns.class:1716
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "DNS Dinamis %1$s (%2$s): Alamat IP tidak dapat diekstrak dari %3$s"
 
 #: src/etc/inc/dyndns.class:1721
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "DNS Dinamis %1$s (%2$s): %3$s diekstrak dari sistem lokal."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "Aturan Mudah: Diblokir dari Tampilan Catatan Firewall"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "Entri ditambahkan"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "Host diblokir lewat tampilan catatan Firewall."
 
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "Host %s diblokir via aturan mudah"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
@@ -1286,137 +1336,137 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Mencoba memblokir IP yang tidak valid."
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Aturan blokir antarmuka yang tidak valid:"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "Host sukses ditambahkan"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "Gagal membuat aturan blokir, alias atau menambahkan host."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
-msgstr ""
+msgstr "Mencoba blokir tapi tidak ada IP atau antarmuka host"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "Kesalahan blokir tidak diketahui."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Mencoba membuka blokir IP tidak valid:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr ""
+msgstr "Aturan blokir tidak diterapkan di antarmuka:"
 
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "Blokir Host %s dibuka via aturan mudah"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "Blokir Host berhasil dibuka."
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "Host tidak berada di daftar blokir:"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr ""
+msgstr "Pembukaan blokir dicoba, akan tetapi tidak ada IP atau antarmuka host"
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "Antarmuka untuk aturan luluskan yang tidak valid:"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "Protokol untuk aturan luluskan tidak valid:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "Mencoba meluluskan IP sumber yang tidak valid:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "Mencoba meluluskan IP tujuan yang tidak valid:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "Port tujuan hilang:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "Mencoba meluluskan port tujuan yang tidak valid:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "Aturan pass berhasil ditambahkan!"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "Gagal menambahkan aturan pass."
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "Parameter aturan pass hilang."
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Kesalahan pass tak dikenal"
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr ""
+msgstr "Host lainnya"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Kesalahan konversi datagram"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr ""
+msgstr "Balasan echo"
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr ""
+msgstr "Permintaan echo"
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "Balasan FQDN"
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "Permintaan FQDN"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr ""
+msgstr "Permintaan keanggotaan grup"
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "Laporan keanggotaan grup"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "Pencabutan keanggotaan grup"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr ""
+msgstr "Balasan informasi"
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr ""
+msgstr "Permintaan informasi"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
@@ -1516,74 +1566,74 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr ""
+msgstr "Balasan cap waktu"
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "Cap waktu"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr ""
+msgstr "Waktu terlampaui"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "Paket terlalu besar"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
 msgid "Traceroute"
-msgstr ""
+msgstr "Tracerroute"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "Destinasi tidak dapat dijangkau"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "Balasan siapa kamu"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "Permintaan siapa kamu"
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
-msgstr ""
+msgstr "Inisialisasi"
 
 #: src/etc/inc/filter.inc:240
 msgid "Configuring firewall"
-msgstr ""
+msgstr "Mengatur firewall"
 
 #: src/etc/inc/filter.inc:247
 msgid "Creating aliases"
-msgstr ""
+msgstr "Membuat alias-alias"
 
 #: src/etc/inc/filter.inc:253
 msgid "Generating Limiter rules"
-msgstr ""
+msgstr "Membuat aturan pembatas"
 
 #: src/etc/inc/filter.inc:256
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "Membuat aturan NAT"
 
 #: src/etc/inc/filter.inc:262
 msgid "Generating filter rules"
-msgstr ""
+msgstr "Membuat aturan filter"
 
 #: src/etc/inc/filter.inc:269
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "Membuat aturan ALTQ"
 
 #: src/etc/inc/filter.inc:274
 msgid "Loading filter rules"
-msgstr ""
+msgstr "Memuat aturan filter"
 
 #: src/etc/inc/filter.inc:281
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "Filter dimatikan. Aturan tidak dimuat."
 
 #: src/etc/inc/filter.inc:283 src/etc/inc/filter.inc:535
 #: src/etc/inc/interfaces.inc:198 src/etc/inc/interfaces.inc:222
@@ -1604,33 +1654,33 @@ msgstr ""
 #: src/etc/inc/system.inc:1316 src/etc/inc/system.inc:1619
 #: src/etc/inc/system.inc:2191
 msgid "done."
-msgstr ""
+msgstr "selesai."
 
 #: src/etc/inc/filter.inc:379
 msgid "Setting up logging information"
-msgstr ""
+msgstr "Menyiapkan informasi pencatatan"
 
 #: src/etc/inc/filter.inc:384
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "Menyiapakan informasi SCRUB"
 
 #: src/etc/inc/filter.inc:430
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "Baris yang ditanyakan berbunyi [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:437
 msgid "PF was wedged/busy and has been reset."
-msgstr ""
+msgstr "PF terjepit/sibuk dan telah dimulai ulang."
 
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Terdapat kesalahan sewaktu memuat aturan: : %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
-msgstr ""
+msgstr "Sedang memproses keadaan antarmuka."
 
 #: src/etc/inc/filter.inc:524
 msgid "Running plugins"
@@ -1739,15 +1789,15 @@ msgstr ""
 #: src/etc/inc/filter.inc:2029
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr ""
+msgstr "Membuat aturan lanjutan outbound %s."
 
 #: src/etc/inc/filter.inc:2076
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "Membuat aturan NAT outbound"
 
 #: src/etc/inc/filter.inc:2083
 msgid "Creating automatic outbound rules"
-msgstr ""
+msgstr "Membuat aturan otomatis outbound"
 
 #: src/etc/inc/filter.inc:2113
 msgid "Setting up TFTP helper"
@@ -1756,12 +1806,12 @@ msgstr ""
 #: src/etc/inc/filter.inc:2157
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "Membuat aturan NAT %s"
 
 #: src/etc/inc/filter.inc:2387
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "Membuat aturan filter %s"
 
 #: src/etc/inc/filter.inc:2411
 #, php-format
@@ -1771,7 +1821,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:2648
 #, php-format
 msgid "Creating filter rules %s ..."
-msgstr ""
+msgstr "Membuat aturan filter %s ..."
 
 #: src/etc/inc/filter.inc:2703
 #, php-format
@@ -3240,11 +3290,11 @@ msgid "Spanish"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2836
-msgid "Portuguese (Brazil)"
+msgid "Norwegian Bokmål"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2837
-msgid "Turkish"
+msgid "Russian"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2838
@@ -7240,7 +7290,7 @@ msgid ""
 "(pfsense.%s)."
 msgstr ""
 
-#: src/etc/inc/xmlrpc_client.inc:125
+#: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
 msgstr ""
 

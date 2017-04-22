@@ -290,7 +290,7 @@ include("head.inc");
 function build_if_list() {
 	$list = array();
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$carplist = get_configured_vip_list('all', VIP_CARP);
 
 	foreach ($carplist as $vipname => $address) {

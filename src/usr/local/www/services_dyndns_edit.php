@@ -365,6 +365,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
@@ -416,12 +417,12 @@ if (isset($id) && $a_dyndns[$id]) {
 		$id
 ));
 
-    $form->addGlobal(new Form_Button(
+$form->addGlobal(new Form_Button(
 		'force',
 		'Save & Force Update',
 		null,
 		'fa-refresh'
-))->removeClass('btn-primary')->addClass('btn-info');
+	))->removeClass('btn-primary')->addClass('btn-info');
 }
 
 $form->add($section);

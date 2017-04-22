@@ -416,9 +416,9 @@ if (isset($id) && $a_dyndns[$id]) {
 		null,
 		'hidden',
 		$id
-));
+	));
 
-$form->addGlobal(new Form_Button(
+	$form->addGlobal(new Form_Button(
 		'force',
 		'Save & Force Update',
 		null,

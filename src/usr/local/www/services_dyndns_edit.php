@@ -31,7 +31,7 @@ function is_dyndns_username($uname) {
 	if (!is_string($uname)) {
 		return false;
 	}
-	
+
 	if (preg_match("/[^a-z0-9\-\+.@_:]/i", $uname)) {
 		return false;
 	} else {
@@ -74,17 +74,17 @@ if ($_POST['save'] || $_POST['force']) {
 	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;
-	
+
 	if (($pconfig['type'] == "freedns" || $pconfig['type'] == "namecheap") && $_POST['username'] == "") {
 		$_POST['username'] = "none";
 	}
-	
+
 	/* input validation */
 	$reqdfields = array();
 	$reqdfieldsn = array();
 	$reqdfields = array("type");
 	$reqdfieldsn = array(gettext("Service type"));
-	
+
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 		$reqdfields[] = "host";
 		$reqdfieldsn[] = gettext("Hostname");
@@ -100,13 +100,13 @@ if ($_POST['save'] || $_POST['force']) {
 		$reqdfields[] = "updateurl";
 		$reqdfieldsn[] = gettext("Update URL");
 	}
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
 	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
-	
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
@@ -115,24 +115,24 @@ if ($_POST['save'] || $_POST['force']) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
-			
+
 			/* No-ip can have a @ in hostname */
 			if (substr($pconfig['type'], 0, 4) == "noip") {
 				$last_to_check = strrpos($host_to_check, '@');
 				if ($last_to_check !== false) {
 					$host_to_check = substr_replace(
-							$host_to_check, '.', $last_to_check, 1);
+						$host_to_check, '.', $last_to_check, 1);
 				}
 				unset($last_to_check);
 			}
 		}
-		
+
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 			if (!is_domain($host_to_check)) {
 				$input_errors[] = gettext("The hostname contains invalid characters.");
 			}
 		}
-		
+
 		unset($host_to_check);
 	}
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) {
@@ -141,7 +141,7 @@ if ($_POST['save'] || $_POST['force']) {
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
-	
+
 	if (!$input_errors) {
 		$dyndns = array();
 		$dyndns['type'] = $_POST['type'];
@@ -174,28 +174,28 @@ if ($_POST['save'] || $_POST['force']) {
 		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
-		
+
 		if ($dyndns['username'] == "none") {
 			$dyndns['username'] = "";
 		}
-		
+
 		if (isset($id) && $a_dyndns[$id]) {
 			$a_dyndns[$id] = $dyndns;
 		} else {
 			$a_dyndns[] = $dyndns;
 			$id = count($a_dyndns) - 1;
 		}
-		
+
 		$dyndns['id'] = $id;
 		//Probably overkill, but its better to be safe
 		for ($i = 0; $i < count($a_dyndns); $i++) {
 			$a_dyndns[$i]['id'] = $i;
 		}
-		
+
 		write_config(gettext("Dynamic DNS client configured."));
-		
+
 		services_dyndns_configure_client($dyndns);
-		
+
 		header("Location: services_dyndns.php");
 		exit;
 	}
@@ -205,33 +205,33 @@ function build_type_list() {
 	$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 	$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 	$typelist = array();
-	
+
 	for ($j = 0; $j < count($vals); $j++) {
 		$typelist[$vals[$j]] = htmlspecialchars($types[$j]);
 	}
-	
+
 	return($typelist);
 }
 
 function build_if_list() {
 	$list = array();
-	
+
 	$iflist = get_configured_interface_with_descr();
-	
+
 	foreach ($iflist as $if => $ifdesc) {
 		$list[$if] = $ifdesc;
 	}
-	
+
 	unset($iflist);
-	
+
 	$grouplist = return_gateway_groups_array();
-	
+
 	foreach ($grouplist as $name => $group) {
 		$list[$name] = 'GW Group ' . $name;
 	}
-	
+
 	unset($grouplist);
-	
+
 	return($list);
 }
 
@@ -254,14 +254,14 @@ $section->addInput(new Form_Checkbox(
 		'Disable',
 		'Disable this client',
 		$pconfig['enable']
-		));
+));
 
 $section->addInput(new Form_Select(
 		'type',
 		'*Service Type',
 		$pconfig['type'],
 		build_type_list()
-		));
+));
 
 $interfacelist = build_if_list();
 
@@ -270,166 +270,166 @@ $section->addInput(new Form_Select(
 		'*Interface to monitor',
 		$pconfig['interface'],
 		$interfacelist
-		))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
+))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
 		
-		$section->addInput(new Form_Select(
-				'requestif',
-				'*Interface to send update from',
-				$pconfig['requestif'],
-				$interfacelist
-				))->setHelp('This is almost always the same as the Interface to Monitor. ');
+$section->addInput(new Form_Select(
+		'requestif',
+		'*Interface to send update from',
+		$pconfig['requestif'],
+$interfacelist
+))->setHelp('This is almost always the same as the Interface to Monitor. ');
 				
-				$group = new Form_Group('*Hostname');
+$group = new Form_Group('*Hostname');
 				
-				$group->add(new Form_Input(
-						'host',
-						'Hostname',
-						'text',
-						$pconfig['host']
-						));
-				$group->add(new Form_Input(
-						'domainname',
-						'Domain name',
-						'text',
-						$pconfig['domainname']
-						));
+$group->add(new Form_Input(
+		'host',
+		'Hostname',
+		'text',
+		$pconfig['host']
+));
+$group->add(new Form_Input(
+		'domainname',
+		'Domain name',
+		'text',
+		$pconfig['domainname']
+));
+
+$group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
+		'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
+		'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
+		'GleSYS: Enter the record ID.%1$s' .
+		'DNSimple: Enter only the domain name.%1$s' .
+		'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', array('<br />'));
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+		'mx',
+		'MX',
+		'text',
+		$pconfig['mx']
+))->setHelp('Note: With DynDNS service only a hostname can be used, not an IP address. '.
+		'Set this option only if a special MX record is needed. Not all services support this.');
+
+$section->addInput(new Form_Checkbox(
+		'wildcard',
+		'Wildcards',
+		'Enable Wildcard',
+		$pconfig['wildcard']
+));
+
+$section->addInput(new Form_Checkbox(
+		'proxied',
+		'CloudFlare Proxy',
+		'Enable Proxy',
+		$pconfig['proxied']
+))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
+		'through their servers. By Default this is disabled and your Real IP is exposed.'.
+		'More info: %s', array('<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>'));
+
+$section->addInput(new Form_Checkbox(
+		'verboselog',
+		'Verbose logging',
+		'Enable verbose logging',
+		$pconfig['verboselog']
+));
+
+$section->addInput(new Form_Checkbox(
+		'curl_ipresolve_v4',
+		'CURL options',
+		'Force IPv4 resolving',
+		$pconfig['curl_ipresolve_v4']
+));
+
+$section->addInput(new Form_Checkbox(
+		'curl_ssl_verifypeer',
+		null,
+		'Verify SSL peer',
+		$pconfig['curl_ssl_verifypeer']
+));
+
+$section->addInput(new Form_Input(
+		'username',
+		'Username',
+		'text',
+		$pconfig['username']
+))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
+		'Route 53: Enter the Access Key ID.%1$s' .
+		'GleSYS: Enter the API user.%1$s' .
+		'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+		'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', array('<br />'));
+
+$section->addPassword(new Form_Input(
+		'passwordfld',
+		'Password',
+		'password',
+		$pconfig['password']
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+		'Route 53: Enter the Secret Access Key.%1$s' .
+		'GleSYS: Enter the API key.%1$s' .
+		'Dreamhost: Enter the API Key.%1$s' .
+		'DNSimple: Enter the API token.', array('<br />'));
+		
+$section->addInput(new Form_Input(
+		'zoneid',
+		'Zone ID',
+		'text',
+		$pconfig['zoneid']
+))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
+			'DNSimple: Enter the Record ID of record to update.', '<br />');
 				
-				$group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
-						'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
-						'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
-						'GleSYS: Enter the record ID.%1$s' .
-						'DNSimple: Enter only the domain name.%1$s' .
-						'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
-				
-				$section->add($group);
-				
-				$section->addInput(new Form_Input(
-						'mx',
-						'MX',
-						'text',
-						$pconfig['mx']
-						))->setHelp('Note: With DynDNS service only a hostname can be used, not an IP address. '.
-								'Set this option only if a special MX record is needed. Not all services support this.');
+$section->addInput(new Form_Input(
+		'updateurl',
+		'Update URL',
+		'text',
+		$pconfig['updateurl']
+))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.');
 						
-						$section->addInput(new Form_Checkbox(
-								'wildcard',
-								'Wildcards',
-								'Enable Wildcard',
-								$pconfig['wildcard']
-								));
-						
-						$section->addInput(new Form_Checkbox(
-								'proxied',
-								'CloudFlare Proxy',
-								'Enable Proxy',
-								$pconfig['proxied']
-								))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
-										'through their servers. By Default this is disabled and your Real IP is exposed.'.
-										'More info: %s', array('<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>'));
-								
-								$section->addInput(new Form_Checkbox(
-										'verboselog',
-										'Verbose logging',
-										'Enable verbose logging',
-										$pconfig['verboselog']
-										));
-								
-								$section->addInput(new Form_Checkbox(
-										'curl_ipresolve_v4',
-										'CURL options',
-										'Force IPv4 resolving',
-										$pconfig['curl_ipresolve_v4']
-										));
-								
-								$section->addInput(new Form_Checkbox(
-										'curl_ssl_verifypeer',
-										null,
-										'Verify SSL peer',
-										$pconfig['curl_ssl_verifypeer']
-										));
-								
-								$section->addInput(new Form_Input(
-										'username',
-										'Username',
-										'text',
-										$pconfig['username']
-										))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
-												'Route 53: Enter the Access Key ID.%1$s' .
-												'GleSYS: Enter the API user.%1$s' .
-												'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
-												'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', array('<br />'));
-										
-										$section->addPassword(new Form_Input(
-												'passwordfld',
-												'Password',
-												'password',
-												$pconfig['password']
-												))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
-														'Route 53: Enter the Secret Access Key.%1$s' .
-														'GleSYS: Enter the API key.%1$s' .
-														'Dreamhost: Enter the API Key.%1$s' .
-														'DNSimple: Enter the API token.', array('<br />'));
-												
-												$section->addInput(new Form_Input(
-														'zoneid',
-														'Zone ID',
-														'text',
-														$pconfig['zoneid']
-														))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
-																'DNSimple: Enter the Record ID of record to update.', '<br />');
-														
-														$section->addInput(new Form_Input(
-																'updateurl',
-																'Update URL',
-																'text',
-																$pconfig['updateurl']
-																))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.');
-																
-																$section->addInput(new Form_Textarea(
-																		'resultmatch',
-																		'Result Match',
-																		$pconfig['resultmatch']
-																		))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.%1$s' .
-																				'To include the new IP in the request, put %%IP%% in its place.%1$s' .
-																				'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)%1$s' .
-																				'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', array('<br />'));
-																		
-																		$section->addInput(new Form_Input(
-																				'ttl',
-																				'TTL',
-																				'text',
-																				$pconfig['ttl']
-																				))->setHelp('Choose TTL for the dns record.');
-																				
-																				$section->addInput(new Form_Input(
-																						'descr',
-																						'Description',
-																						'text',
-																						$pconfig['descr']
-																						))->setHelp('A description may be entered here for administrative reference (not parsed).');
-																						
-																						if (isset($id) && $a_dyndns[$id]) {
-																							$section->addInput(new Form_Input(
-																									'id',
-																									null,
-																									'hidden',
-																									$id
-																									));
-																							
-																							$form->addGlobal(new Form_Button(
-																									'force',
-																									'Save & Force Update',
-																									null,
-																									'fa-refresh'
-																									))->removeClass('btn-primary')->addClass('btn-info');
-																						}
-																						
-																						$form->add($section);
-																						
-																						print($form);
-																						
-																						// Certain input elements are hidden/shown based on the service type in the following script
-																						?>
+$section->addInput(new Form_Textarea(
+		'resultmatch',
+		'Result Match',
+		$pconfig['resultmatch']
+))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.%1$s' .
+			'To include the new IP in the request, put %%IP%% in its place.%1$s' .
+			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)%1$s' .
+			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', array('<br />'));
+
+$section->addInput(new Form_Input(
+		'ttl',
+		'TTL',
+		'text',
+		$pconfig['ttl']
+))->setHelp('Choose TTL for the dns record.');
+
+$section->addInput(new Form_Input(
+		'descr',
+		'Description',
+		'text',
+		$pconfig['descr']
+		))->setHelp('A description may be entered here for administrative reference (not parsed).');
+		
+if (isset($id) && $a_dyndns[$id]) {
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
+));
+			
+    $form->addGlobal(new Form_Button(
+		'force',
+		'Save & Force Update',
+		null,
+		'fa-refresh'
+))->removeClass('btn-primary')->addClass('btn-info');
+}
+		
+$form->add($section);
+
+print($form);
+
+// Certain input elements are hidden/shown based on the service type in the following script
+?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -472,6 +472,7 @@ events.push(function() {
 			case "cloudflare-v6":
 			case "cloudflare":
 			case "gratisdns":
+			case "hover":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);

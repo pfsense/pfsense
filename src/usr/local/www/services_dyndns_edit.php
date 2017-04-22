@@ -299,7 +299,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', array('<br />'));
+			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
 
@@ -325,7 +325,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['proxied']
 ))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
 			'through their servers. By Default this is disabled and your Real IP is exposed.'.
-			'More info: %s', array('<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>'));
+			'More info: %s', '<a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>');
 
 $section->addInput(new Form_Checkbox(
 	'verboselog',
@@ -358,7 +358,7 @@ $section->addInput(new Form_Input(
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
-			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', array('<br />'));
+			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
 	'passwordfld',
@@ -370,7 +370,7 @@ $section->addPassword(new Form_Input(
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
-			'DNSimple: Enter the API token.', array('<br />'));
+			'DNSimple: Enter the API token.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',
@@ -394,7 +394,7 @@ $section->addInput(new Form_Textarea(
 ))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.%1$s' .
 			'To include the new IP in the request, put %%IP%% in its place.%1$s' .
 			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)%1$s' .
-			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', array('<br />'));
+			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.', '<br />');
 
 $section->addInput(new Form_Input(
 	'ttl',

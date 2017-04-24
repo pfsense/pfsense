@@ -2893,6 +2893,7 @@ function set_language() {
 
 function get_locale_list() {
 	$locales = array(
+		"de_DE" => gettext("German (Germany)"),
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
 		"nb" => gettext("Norwegian Bokmål"),

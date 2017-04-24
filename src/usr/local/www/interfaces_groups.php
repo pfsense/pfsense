@@ -91,7 +91,7 @@ display_top_tabs($tab_array);
 						<td>
 <?php
 		$members_arr = explode(" ", $ifgroupentry['members']);
-		$iflist = get_configured_interface_with_descr(false, true);
+		$iflist = get_configured_interface_with_descr(true);
 		$memberses_arr = array();
 		foreach ($members_arr as $memb) {
 			$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;

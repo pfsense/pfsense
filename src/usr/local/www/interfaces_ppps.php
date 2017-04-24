@@ -36,7 +36,7 @@ require_once("functions.inc");
 function ppp_inuse($num) {
 	global $config, $g;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	if (!is_array($config['ppps']['ppp'])) {
 		return false;
 	}

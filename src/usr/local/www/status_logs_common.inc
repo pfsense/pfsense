@@ -548,7 +548,7 @@ function filter_form_firewall() {
 
 
 function status_logs_build_if_list() {
-	$iflist = get_configured_interface_with_descr(false, true);
+	$iflist = get_configured_interface_with_descr(true);
 	//$iflist = get_interface_list();
 	// Allow extending of the firewall edit interfaces
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");

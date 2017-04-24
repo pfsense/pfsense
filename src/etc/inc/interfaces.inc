@@ -2547,7 +2547,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	$baseif = interface_get_wireless_base($ifcfg['if']);
 
 	// Sync shared settings for assigned clones
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
 			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
@@ -4830,7 +4830,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan", $
 
 	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];
-	//$ifdescrs = get_configured_interface_list(false, true);
+	//$ifdescrs = get_configured_interface_list(true);
 
 	foreach ($ifdescrs as $if => $ifname) {
 		if ($if == $interface || $ifname['if'] == $interface) {
@@ -4907,7 +4907,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 				return get_interface_linklocal($interface);
 			} else {
 				/* if list */
-				$ifdescrs = get_configured_interface_with_descr(false, true);
+				$ifdescrs = get_configured_interface_with_descr(true);
 				foreach ($ifdescrs as $if => $ifname) {
 					if ($if == $interface || $ifname == $interface) {
 						return $ifname;

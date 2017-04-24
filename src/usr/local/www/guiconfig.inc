@@ -230,7 +230,7 @@ $specialnets = array(
 	"pppoe" => gettext("PPPoE clients"),
 	"l2tp" => gettext("L2TP clients"));
 
-$spiflist = get_configured_interface_with_descr(false, true);
+$spiflist = get_configured_interface_with_descr(true);
 foreach ($spiflist as $ifgui => $ifdesc) {
 	$specialnets[$ifgui] = $ifdesc . " net";
 	$specialnets[$ifgui . 'ip'] = $ifdesc . " address";
@@ -258,7 +258,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
+		if ($postdata[$reqdfields[$i]] == "") {
 			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
 		}
 	}

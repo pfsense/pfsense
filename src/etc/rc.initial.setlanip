@@ -134,7 +134,7 @@ function get_interface_config_description($iface) {
 $fp = fopen('php://stdin', 'r');
 
 /* build an interface collection */
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 $count = count($ifdescrs);
 
 /* grab interface that we will operate on, unless there is only one interface */

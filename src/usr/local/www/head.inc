@@ -270,7 +270,7 @@ switch ($platform['name']) {
 		break;
 }
 
-$opts = get_configured_interface_with_descr(false, true);
+$opts = get_configured_interface_with_descr(true);
 
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {

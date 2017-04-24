@@ -50,7 +50,7 @@ if (isset($_POST['referer'])) {
 }
 
 // Get configured interface list
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 
 $if = "wan";
 
@@ -767,20 +767,29 @@ if ($_POST['apply']) {
 	if ($_POST['dhcprejectfrom'] && !validate_ipv4_list($_POST['dhcprejectfrom'])) {
 		$input_errors[] = gettext("An invalid IP address was detected in the 'Reject leases from' field.");
 	}
-	if (($_POST['gateway'] != "none") || ($_POST['gatewayv6'] != "none")) {
+
+	// Only check the IPv4 gateway already exists if it is not "none" and it is not a gateway that the user is adding
+	if (($_POST['gateway'] != "none") && (!$_POST['gatewayip4'] || ($_POST['gateway'] != $_POST['gatewayname4']))) {
 		$match = false;
 		foreach ($a_gateways as $gateway) {
 			if (in_array($_POST['gateway'], $gateway)) {
 				$match = true;
 			}
 		}
+		if (!$match) {
+			$input_errors[] = gettext("A valid IPv4 gateway must be specified.");
+		}
+	}
+	// Only check the IPv6 gateway already exists if it is not "none" and it is not a gateway that the user is adding
+	if (($_POST['gatewayv6'] != "none") && (!$_POST['gatewayip6'] || ($_POST['gatewayv6'] != $_POST['gatewayname6']))) {
+		$match = false;
 		foreach ($a_gateways as $gateway) {
 			if (in_array($_POST['gatewayv6'], $gateway)) {
 				$match = true;
 			}
 		}
 		if (!$match) {
-			$input_errors[] = gettext("A valid gateway must be specified.");
+			$input_errors[] = gettext("A valid IPv6 gateway must be specified.");
 		}
 	}
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) {
@@ -970,6 +979,36 @@ if ($_POST['apply']) {
 
 	if ($_POST['pptp_password'] != $_POST['pptp_password_confirm']) {
 		$input_errors[] = gettext("PTPP Password and confirmed password must match!");
+	}
+
+	if ($_POST['gatewayip4']) {
+		// The user wants to add an IPv4 gateway - validate the settings
+		$gateway_settings4 = array();
+
+		$gateway_settings4['name'] = $_POST['gatewayname4'];
+		$gateway_settings4['interface'] = $_POST['if'];
+		$gateway_settings4['gateway'] = $_POST['gatewayip4'];
+		$gateway_settings4['descr'] = $_POST['gatewaydescr4'];
+		$gateway_settings4['defaultgw'] = $_POST['defaultgw4'];
+		$gw_input_errors = validate_gateway($gateway_settings4, '', $_POST['ipaddr'], $_POST['subnet']);
+		foreach ($gw_input_errors as $input_error_text) {
+			$input_errors[] = $input_error_text;
+		}
+	}
+
+	if ($_POST['gatewayip6']) {
+		// The user wants to add an IPv6 gateway - validate the settings
+		$gateway_settings6 = array();
+
+		$gateway_settings6['name'] = $_POST['gatewayname6'];
+		$gateway_settings6['interface'] = $_POST['if'];
+		$gateway_settings6['gateway'] = $_POST['gatewayip6'];
+		$gateway_settings6['descr'] = $_POST['gatewaydescr6'];
+		$gateway_settings6['defaultgw'] = $_POST['defaultgw6'];
+		$gw_input_errors = validate_gateway($gateway_settings6, '', $_POST['ipaddrv6'], $_POST['subnetv6']);
+		foreach ($gw_input_errors as $input_error_text) {
+			$input_errors[] = $input_error_text;
+		}
 	}
 
 	if (!$input_errors) {
@@ -1430,6 +1469,14 @@ if ($_POST['apply']) {
 
 		write_config();
 
+		if ($_POST['gatewayip4']) {
+			save_gateway($gateway_settings4);
+		}
+
+		if ($_POST['gatewayip6']) {
+			save_gateway($gateway_settings6);
+		}
+
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 		} else {
@@ -1660,6 +1707,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
 $mymac = str_replace("\n", "", $mymac);
+$defgatewayname4 = $wancfg['descr'] . "GW";
+$defgatewayname6 = $wancfg['descr'] . "GWv6";
 
 function build_mediaopts_list() {
 	global $mediaopts_list;
@@ -1822,11 +1871,11 @@ $group->add(new Form_Select(
 ));
 
 $group->add(new Form_Button(
-	'addgw',
+	'addgw4',
 	'Add a new gateway',
 	null,
 	'fa-plus'
-))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway4')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%1$s' .
 				'On local area network interfaces the upstream gateway should be "none". ' .
@@ -1875,27 +1924,28 @@ $modal->addInput(new Form_Checkbox(
 	'defaultgw6',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings6['defaultgw']) ? $gateway_settings6['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
-	'name6',
+	'gatewayname6',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GWv6"
+	($gateway_settings6['name'] == "") ? $defgatewayname6 : $gateway_settings6['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
 	'Gateway IPv6',
-	null,
+	$gateway_settings6['gateway'],
 	'V6'
 ));
 
 $modal->addInput(new Form_Input(
 	'gatewaydescr6',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings6['descr']
 ));
 
 $btnaddgw6 = new Form_Button(
@@ -2441,7 +2491,7 @@ function build_ipv6interface_list() {
 
 	$list = array('' => '');
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$dynv6ifs = array();
 
 	foreach ($interfaces as $iface => $ifacename) {
@@ -3193,56 +3243,57 @@ $form->addGlobal(new Form_Input(
 
 
 // Add new gateway modal pop-up
-$modal = new Modal('New Gateway', 'newgateway', 'large');
+$modal = new Modal('New IPv4 Gateway', 'newgateway4', 'large');
 
 $modal->addInput(new Form_Checkbox(
-	'defaultgw',
+	'defaultgw4',
 	'Default',
 	'Default gateway',
-	($if == "wan" || $if == "WAN")
+	isset($gateway_settings4['defaultgw']) ? $gateway_settings4['defaultgw'] : ($if == "wan" || $if == "WAN")
 ));
 
 $modal->addInput(new Form_Input(
-	'name',
+	'gatewayname4',
 	'Gateway name',
 	'text',
-	$wancfg['descr'] . "GW"
+	($gateway_settings4['name'] == "") ? $defgatewayname4 : $gateway_settings4['name']
 ));
 
 $modal->addInput(new Form_IpAddress(
-	'gatewayip',
+	'gatewayip4',
 	'Gateway IPv4',
-	null,
+	$gateway_settings4['gateway'],
 	'V4'
 ));
 
 $modal->addInput(new Form_Input(
-	'gatewaydescr',
+	'gatewaydescr4',
 	'Description',
-	'text'
+	'text',
+	$gateway_settings4['descr']
 ));
 
-$btnaddgw = new Form_Button(
-	'add',
+$btnaddgw4 = new Form_Button(
+	'add4',
 	'Add',
 	null,
 	'fa-plus'
 );
 
-$btnaddgw->setAttribute('type','button')->addClass('btn-success');
+$btnaddgw4->setAttribute('type','button')->addClass('btn-success');
 
-$btncnxgw = new Form_Button(
-	'cnx',
+$btncnxgw4 = new Form_Button(
+	'cnx4',
 	'Cancel',
 	null,
 	'fa-undo'
 );
 
-$btncnxgw->setAttribute('type','button')->addClass('btn-warning');
+$btncnxgw4->setAttribute('type','button')->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
-	$btnaddgw . $btncnxgw
+	$btnaddgw4 . $btncnxgw4
 ));
 
 $form->add($modal);
@@ -3364,111 +3415,22 @@ events.push(function() {
 		$('#track6-prefix-id-range').html(track6_prefix_ids);
 	}
 
-	// Create the new gateway from the data entered in the modal pop-up
-	function hide_add_gatewaysave() {
-		var iface = $('#if').val();
-		name = $('#name').val();
-		var descr = $('#gatewaydescr').val();
-		gatewayip = $('#gatewayip').val();
-
-		var defaultgw = '';
-		if ($('#defaultgw').is(':checked')) {
-			defaultgw = '&defaultgw=on';
-		}
-
-		var url = "system_gateways_edit.php";
-		var pars = 'isAjax=true&save=true&ipprotocol=inet' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		$.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				error: report_failure,
-				complete: save_callback
-			});
-		}
-
-	function save_callback(response) {
-		if (response) {
-			var gwtext = escape(name) + " - " + gatewayip;
-			addOption($('#gateway'), gwtext, name);
-		} else {
-			report_failure();
-		}
-
-		$("#newgateway").modal('hide');
+	function addOption_v4() {
+		var gwtext_v4 = escape($("#gatewayname4").val()) + " - " + $("#gatewayip4").val();
+		addSelectboxOption($('#gateway'), gwtext_v4, $("#gatewayname4").val());
 	}
 
-	function report_failure(request, textStatus, errorThrown) {
-		contenttype = ";"+request.getResponseHeader("Content-Type")+";";
-		if (textStatus === "error" && contenttype.indexOf(";text/plain;") !== -1) {
-			alert(request.responseText);
-		} else {
-			alert("The IPv4 gateway could not be created.");
-		}
-
-		$("#newgateway").modal('hide');
+	function addOption_v6() {
+		var gwtext_v6 = escape($("#gatewayname6").val()) + " - " + $("#gatewayip6").val();
+		addSelectboxOption($('#gatewayv6'), gwtext_v6, $("#gatewayname6").val());
 	}
 
-	function addOption(selectbox, text, value) {
+	function addSelectboxOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
 		selectbox.append(optn);
 		selectbox.prop('selectedIndex', selectbox.children().length - 1);
-	}
-
-	function hide_add_gatewaysave_v6() {
-
-		var iface = $('#if').val();
-		name = $('#name6').val();
-		var descr = $('#gatewaydescr6').val();
-		gatewayip = $('#gatewayip6').val();
-		var defaultgw = '';
-		if ($('#defaultgw6').is(':checked')) {
-			defaultgw = '&defaultgw=on';
-		}
-		var url_v6 = "system_gateways_edit.php";
-		var pars_v6 = 'isAjax=true&save=true&ipprotocol=inet6' + defaultgw + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-		$.ajax(
-			url_v6,
-			{
-				type: 'post',
-				data: pars_v6,
-				error: report_failure_v6,
-				success: save_callback_v6
-			});
-	}
-
-
-	function addOption_v6(selectbox, text, value) {
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.append(optn);
-		selectbox.prop('selectedIndex', selectbox.children().length - 1);
-	}
-
-	function report_failure_v6(request, textStatus, errorThrown) {
-		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
-			alert(request.responseText);
-		} else {
-			alert("The IPv6 gateway could not be created.");
-		}
-
-		$("#newgateway6").modal('hide');
-	}
-
-	function save_callback_v6(response_v6) {
-		if (response_v6) {
-
-			var gwtext_v6 = escape(name) + " - " + gatewayip;
-			addOption_v6($('#gatewayv6'), gwtext_v6, name);
-		} else {
-			report_failure_v6();
-		}
-
-		$("#newgateway6").modal('hide');
 	}
 
 	function country_list() {
@@ -3645,6 +3607,14 @@ events.push(function() {
 	// Set preset from value
 	setPresets(sv);
 
+	// If the user wants to add a gateway, then add that to the gateway selection
+	if ($("#gatewayip4").val() != '') {
+		addOption_v4();
+	}
+	if ($("#gatewayip6").val() != '') {
+		addOption_v6();
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#type').on('change', function() {
@@ -3663,19 +3633,29 @@ events.push(function() {
 		show_reset_settings(this.value);
 	});
 
-	$("#add").click(function() {
-		hide_add_gatewaysave();
+	$("#add4").click(function() {
+		addOption_v4();
+		$("#newgateway4").modal('hide');
 	});
 
-	$("#cnx").click(function() {
-		$("#newgateway").modal('hide');
+	$("#cnx4").click(function() {
+		$("#gatewayname4").val('<?=$defgatewayname4;?>');
+		$("#gatewayip4").val('');
+		$("#gatewaydescr4").val('');
+		$("#defaultgw4").prop("checked", false);
+		$("#newgateway4").modal('hide');
 	});
 
 	$("#add6").click(function() {
-		hide_add_gatewaysave_v6();
+		addOption_v6();
+		$("#newgateway6").modal('hide');
 	});
 
 	$("#cnx6").click(function() {
+		$("#gatewayname6").val('<?=$defgatewayname6;?>');
+		$("#gatewayip6").val('');
+		$("#gatewaydescr6").val('');
+		$("#defaultgw6").prop("checked", false);
 		$("#newgateway6").modal('hide');
 	});
 

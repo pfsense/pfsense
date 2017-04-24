@@ -32,12 +32,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-$a_gateways = return_gateways_array(true, false, true);
-$a_gateways_arr = array();
-foreach ($a_gateways as $gw) {
-	$a_gateways_arr[] = $gw;
-}
-$a_gateways = $a_gateways_arr;
+$a_gateways = return_gateways_array(true, false, true, true);
 
 if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();

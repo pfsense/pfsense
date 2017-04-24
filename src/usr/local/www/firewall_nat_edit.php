@@ -667,7 +667,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nordr']
 ))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 
 foreach ($iflist as $if => $ifdesc) {
 	if (have_ruleint_access($if)) {

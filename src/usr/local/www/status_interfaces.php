@@ -94,7 +94,7 @@ $pgtitle = array(gettext("Status"), gettext("Interfaces"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-$ifdescrs = get_configured_interface_with_descr(false, true);
+$ifdescrs = get_configured_interface_with_descr(true);
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);

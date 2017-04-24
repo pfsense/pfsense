@@ -229,7 +229,12 @@ SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
+
+# turn off the immutable flag, set /var/empty to read-only, make it immutable again
+chflags noschg /var/empty
 chmod 0555 /var/empty
+chflags schg /var/empty
+
 /bin/rm -rf $varrunpath/*
 
 # Cleanup configuration files from previous instance

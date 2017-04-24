@@ -42,7 +42,7 @@ $a_vlans = &$config['vlans']['vlan'] ;
 function vlan_inuse($num) {
 	global $config, $a_vlans;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif']) {
 			return true;

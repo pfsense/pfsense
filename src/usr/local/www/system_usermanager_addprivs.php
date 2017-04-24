@@ -33,6 +33,7 @@ function admusercmp($a, $b) {
 }
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];

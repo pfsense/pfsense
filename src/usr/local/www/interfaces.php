@@ -692,7 +692,7 @@ if ($_POST['apply']) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
-	if ($_POST['ipaddr']) {
+	if (($_POST['type'] == 'staticv4') && $_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		} else {
@@ -724,7 +724,7 @@ if ($_POST['apply']) {
 			}
 		}
 	}
-	if ($_POST['ipaddrv6']) {
+	if (($_POST['type'] == 'staticv6') && $_POST['ipaddrv6']) {
 		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
 
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {

@@ -72,8 +72,10 @@ if ($_POST) {
 
 	$validNames = array();
 
-	foreach ($config['wol']['wolentry'] as $wolent) {
-		array_push($validNames, get_wolent_key($wolent));
+	if (is_array($config['wol']['wolentry'])) {
+		foreach ($config['wol']['wolentry'] as $wolent) {
+			array_push($validNames, get_wolent_key($wolent));
+		}
 	}
 
 	if (is_array($_POST['show'])) {

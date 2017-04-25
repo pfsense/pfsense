@@ -579,7 +579,7 @@ function genhtmltitle($title, $links=true) {
 
 function gen_customwidgettitle_div($widgettitle) {
 	$divstr = '<div class="form-group">';
-	$divstr .= '  <label for="customwidgettitle" class="col-sm-4 control-label">' . gettext('Widget titley'). '</label>';
+	$divstr .= '  <label for="customwidgettitle" class="col-sm-4 control-label">' . gettext('Widget title'). '</label>';
 	$divstr .= '  <div class="col-sm-4">';
 	$divstr .= '    <input type="text" name="customwidgettitle" id="customwidgettitle" value="'. $widgettitle . '" class="form-control" />';
 	$divstr .= '  </div>';

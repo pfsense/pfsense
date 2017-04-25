@@ -3217,19 +3217,15 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 		return $results;
 	}
 	foreach ($config['installedpackages']['package'] as $package) {
-		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-			continue;
-		}
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
-		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
-		if (is_array($pkg_config['plugins']['item'])) {
-			foreach ($pkg_config['plugins']['item'] as $plugin) {
+		if (is_array($package['plugins']['item'])) {
+			foreach ($package['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {
-					if (file_exists($pkg_config['include_file'])) {
-						require_once($pkg_config['include_file']);
+					if (file_exists($package['include_file'])) {
+						require_once($package['include_file']);
 					} else {
 						continue;
 					}
+					$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
 					$plugin_function = $pkgname . '_'. $plugin_type;
 					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 				}

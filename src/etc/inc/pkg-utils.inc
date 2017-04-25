@@ -835,6 +835,13 @@ function install_package_xml($package_name) {
  		if (is_array($pkg_config['tabs'])) {
  			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];			
  		}
+		/* plugins */
+		if (isset($pkg_config['include_file'])) {
+			$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
+		}
+		if (is_array($pkg_config['plugins']['item'])) {
+			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];			
+		}
 	} else {
 		pkg_debug("Unable to find config file\n");
 		update_status(gettext("Loading package configuration... failed!") . "\n\n" . gettext("Installation aborted."));

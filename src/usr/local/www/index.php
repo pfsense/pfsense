@@ -302,16 +302,19 @@ if ($user_settings['widgets']['sequence'] != "") {
 		if (false !== $offset) {
 			$basename = substr($basename, 0, $offset);
 		}
-
-		// Get the widget title that should be in a var defined in the widget's inc file.
-		$widgettitle = ${$basename . '_title'};
-
-		if (empty(trim($widgettitle))) {
-			// Fall back to constructing a title from the file name of the widget.
-			$widgettitle = ucwords(str_replace('_', ' ', $basename));
-		}
-
 		$widgetkey = $basename . '-' . $copynum;
+
+		if (isset($user_settings['widgets'][$widgetkey]['customwidgettitle'])) {
+			$widgettitle = htmlentities($user_settings['widgets'][$widgetkey]['customwidgettitle']);
+		} else {
+			// Get the widget title that should be in a var defined in the widget's inc file.
+			$widgettitle = ${$basename . '_title'};
+
+			if (empty(trim($widgettitle))) {
+				// Fall back to constructing a title from the file name of the widget.
+				$widgettitle = ucwords(str_replace('_', ' ', $basename));
+			}
+		}
 
 		$widgetsfromconfig[$widgetkey] = array(
 			'basename' => $basename,

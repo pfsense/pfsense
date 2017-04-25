@@ -105,6 +105,7 @@ if (!function_exists('getBoolValueFromConfig')) {
 //=========================================================================
 //save widget config settings on POST
 if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
 
@@ -166,95 +167,72 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 <input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
 
 <div id="<?=$widget_panel_footer_id?>" class="widgetconfigdiv panel-footer collapse" >
-	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" id="iform_thermal_sensors_settings" name="iform_thermal_sensors_settings">
-	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
-	<table>
-		<tr>
-			<td class="text-left" colspan="2">
-				<strong><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></strong>
-			</td>
-			<td class="text-right" colspan="1">
-				<strong><?=gettext('Display settings:')?></strong>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<?=gettext('Zone Warning:')?>
-			</td>
-			<td>
-				<input type="text" maxlength="3" size="3" class="formfld unknown"
-					name="thermal_sensors_widget_zone_warning_threshold"
-					id="thermal_sensors_widget_zone_warning_threshold"
-					value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
-			</td>
-			<td class="text-right">
-				<label for="thermal_sensors_widget_show_raw_output"><?=gettext('Show raw output (no graph):')?> </label>
-				<input type="checkbox"
-					id="thermal_sensors_widget_show_raw_output"
-					name="thermal_sensors_widget_show_raw_output"
-					value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked" : ""; ?> />
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<?=gettext('Zone Critical:')?>
-			</td>
-			<td>
-				<input type="text" maxlength="3" size="3" class="formfld unknown"
-					name="thermal_sensors_widget_zone_critical_threshold"
-					id="thermal_sensors_widget_zone_critical_threshold"
-					value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
-			</td>
-			<td class="text-right">
-				<label for="thermal_sensors_widget_show_full_sensor_name"><?=gettext('Show full sensor name:')?> </label>
-				<input type="checkbox"
-					id="thermal_sensors_widget_show_full_sensor_name"
-					name="thermal_sensors_widget_show_full_sensor_name"
-					value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked" : ""; ?> />
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<?=gettext('Core Warning:')?>
-			</td>
-			<td>
-				<input type="text" maxlength="3" size="3" class="formfld unknown"
-					name="thermal_sensors_widget_core_warning_threshold"
-					id="thermal_sensors_widget_core_warning_threshold"
-					value="<?= $thermal_sensors_widget_coreWarningTempThreshold ?>" />
-			</td>
-			<td class="text-right">
+	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" class="form-horizontal">
+		<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+		<div class="form-group">
+			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></label>
+		</div>
 
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<?=gettext('Core Critical:')?>
-			</td>
-			<td>
-				<input type="text" maxlength="3" size="3" class="formfld unknown"
-					name="thermal_sensors_widget_core_critical_threshold"
-					id="thermal_sensors_widget_core_critical_threshold"
-					value="<?= $thermal_sensors_widget_coreCriticalTempThreshold ?>" />
-			</td>
-			<td class="text-right">
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('Zone Warning')?></label>
+			<div class="col-sm-2">
+				<input type="text" name="thermal_sensors_widget_zone_warning_threshold" id="thermal_sensors_widget_zone_warning_threshold" value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
 
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right" colspan="3">
-				<button type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="btn btn-primary btn-sm" value="Save">
-					<i class="fa fa-save icon-embed-btn"></i>
-					<?=gettext("Save")?>
-				</button>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-left" colspan="3">
-				<span><?=gettext('* A proper Thermal Sensor / Module can be configured under')?> <br />
-				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php"><?=gettext('System')?> &gt; <?=gettext('Advanced')?> &gt; <?=gettext('Miscellaneous')?> : <?=gettext('Thermal Sensors')?> <?=gettext('section')?></a>.</span>
-			</td>
-		</tr>
-	</table>
-</form>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('Zone Critical')?></label>
+			<div class="col-sm-2">
+				<input type="text" name="thermal_sensors_widget_zone_critical_threshold" id="thermal_sensors_widget_zone_critical_threshold" value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
 
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('Core Warning')?></label>
+			<div class="col-sm-2">
+				<input type="text" name="thermal_sensors_widget_core_warning_threshold" id="thermal_sensors_widget_core_warning_threshold" value="<?= $thermal_sensors_widget_coreWarningTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><?=gettext('Core Critical')?></label>
+			<div class="col-sm-2">
+				<input type="text" name="thermal_sensors_widget_core_critical_threshold" id="thermal_sensors_widget_core_critical_threshold" value="<?= $thermal_sensors_widget_coreCriticalTempThreshold; ?>" class="form-control" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-6 control-label"><?=gettext('Display settings:')?></label>
+		</div>
+
+		<div class="form-group">
+			<label for="thermal_sensors_widget_show_raw_output" class="col-sm-4 control-label"><?=gettext('Show raw output')?></label>
+			<div class="col-sm-6 checkbox">
+				<label>
+					<input type="checkbox" name="thermal_sensors_widget_show_raw_output" id="thermal_sensors_widget_show_raw_output" value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked" : ""; ?>/>
+					<?=gettext('(no graph)')?>
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="thermal_sensors_widget_show_full_sensor_name" class="col-sm-4 control-label"><?=gettext('Show full sensor name')?></label>
+			<div class="col-sm-6 checkbox">
+				<label>
+					<input type="checkbox" name="thermal_sensors_widget_show_full_sensor_name" id="thermal_sensors_widget_show_full_sensor_name" value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked" : ""; ?>/>
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-6">
+				<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<span><?=gettext('* A proper Thermal Sensor / Module can be configured under')?> <br />
+			&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php"><?=gettext('System')?> &gt; <?=gettext('Advanced')?> &gt; <?=gettext('Miscellaneous')?> : <?=gettext('Thermal Sensors')?> <?=gettext('section')?></a>.</span>
+		</div>
+	</form>

@@ -26,6 +26,7 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
 	$user_settings['widgets'][$_POST['widgetkey']]['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
 	$user_settings['widgets'][$_POST['widgetkey']]['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
 	$user_settings['widgets'][$_POST['widgetkey']]['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
@@ -128,29 +129,30 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
 	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
-		<label for="rssfeed" class="col-sm-3 control-label"><?=gettext('Feeds')?></label>
+		<label for="rssfeed" class="col-sm-4 control-label"><?=gettext('Feeds')?></label>
 		<div class="col-sm-6">
 			<textarea id="rssfeed" name="rssfeed" class="form-control"><?=$textarea_txt;?></textarea>
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rssmaxitems" class="col-sm-3 control-label"><?=gettext('# Stories')?></label>
+		<label for="rssmaxitems" class="col-sm-4 control-label"><?=gettext('# Stories')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rssmaxitems" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rsswidgetheight" class="col-sm-3 control-label"><?=gettext('Widget height')?></label>
+		<label for="rsswidgetheight" class="col-sm-4 control-label"><?=gettext('Widget height')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rsswidgetheight" name="rsswidgetheight" value="<?=$rsswidgetheight?>" min="100" max="2500" step="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rsswidgettextlength" class="col-sm-3 control-label"><?=gettext('Content limit')?></label>
+		<label for="rsswidgettextlength" class="col-sm-4 control-label"><?=gettext('Content limit')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rsswidgettextlength" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="10" class="form-control" />
 		</div>

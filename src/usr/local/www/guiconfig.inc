@@ -577,6 +577,25 @@ function genhtmltitle($title, $links=true) {
 	return $bc;
 }
 
+function gen_customwidgettitle_div($widgettitle) {
+	$divstr = '<div class="form-group">';
+	$divstr .= '  <label for="customwidgettitle" class="col-sm-4 control-label">' . gettext('Widget titley'). '</label>';
+	$divstr .= '  <div class="col-sm-4">';
+	$divstr .= '    <input type="text" name="customwidgettitle" id="customwidgettitle" value="'. $widgettitle . '" class="form-control" />';
+	$divstr .= '  </div>';
+	$divstr .= '</div>';
+
+	return $divstr;
+}
+
+function set_customwidgettitle(& $user_settings) {
+	if ($_POST['customwidgettitle']) {
+		$user_settings['widgets'][$_POST['widgetkey']]['customwidgettitle'] = trim($_POST['customwidgettitle']);
+	} else {
+		unset($user_settings['widgets'][$_POST['widgetkey']]['customwidgettitle']);
+	}
+}
+
 /* update the changedesc and changecount(er) variables */
 function update_changedesc($update) {
 	global $changedesc;

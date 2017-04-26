@@ -406,6 +406,6 @@ EOF
 /usr/bin/nc < /tmp/postdata -w 5 ${hostname} 80 >/tmp/postresult
 
 # ProdTrack
-fetch "http://prodtrack.netgate.com/build?${postreq}"
+fetch -o /dev/null "http://prodtrack.netgate.com/build?${postreq}" >/dev/null 2>&1
 
 exit $?

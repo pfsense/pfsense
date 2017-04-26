@@ -327,11 +327,11 @@ if (count($pools) > 0) {
 		<tbody>
 <?php foreach ($pools as $data):?>
 			<tr>
-				<td><?=$data['name']?></td>
-				<td><?=$data['mystate']?></td>
-				<td><?=adjust_gmt($data['mydate'])?></td>
-				<td><?=$data['peerstate']?></td>
-				<td><?=adjust_gmt($data['peerdate'])?></td>
+				<td><?=htmlspecialchars($data['name'])?></td>
+				<td><?=htmlspecialchars($data['mystate'])?></td>
+				<td><?=htmlspecialchars(adjust_gmt($data['mydate']))?></td>
+				<td><?=htmlspecialchars($data['peerstate'])?></td>
+				<td><?=htmlspecialchars(adjust_gmt($data['peerdate']))?></td>
 			</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -431,46 +431,46 @@ foreach ($leases as $data):
 ?>
 				<tr>
 					<td><i class="fa <?=$icon?>"></i></td>
-					<td><?=$data['ip']?></td>
+					<td><?=htmlspecialchars($data['ip'])?></td>
 					<td>
-						<?=$mac?>
+						<?=htmlspecialchars($mac)?>
 
 						<?php if (isset($mac_man[$mac_hi])):?>
-							(<?=$mac_man[$mac_hi]?>)
+							(<?=htmlspecialchars($mac_man[$mac_hi])?>)
 						<?php endif; ?>
 					</td>
 <?php
 /* only make CID column when we have one */
 if ($got_cid) {
 ?>
-					<td><?=$data['cid']?></td>
+					<td><?=htmlspecialchars($data['cid'])?></td>
 <?php
 }
 ?>
-					<td><?=$data['hostname']?></td>
-					<td><?=$data['descr']?></td>
+					<td><?=htmlspecialchars($data['hostname'])?></td>
+					<td><?=htmlspecialchars($data['descr'])?></td>
 					<? if ($data['type'] != "static"): ?>
-						<td><?=adjust_gmt($data['start'])?></td>
-						<td><?=adjust_gmt($data['end'])?></td>
+						<td><?=htmlspecialchars(adjust_gmt($data['start']))?></td>
+						<td><?=htmlspecialchars(adjust_gmt($data['end']))?></td>
 					<? else: ?>
 						<td><?=gettext("n/a")?></td>
 						<td><?=gettext("n/a")?></td>
 					<? endif; ?>
-					<td><?=$data['online']?></td>
-					<td><?=$data['act']?></td>
+					<td><?=htmlspecialchars($data['online'])?></td>
+					<td><?=htmlspecialchars($data['act'])?></td>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php else: ?>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
 <?php endif; ?>
-						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=$data['hostname']?>"></a>
+						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;descr=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php if ($data['online'] != $online_string):?>
-						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
+						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>"></a>
 <?php endif; ?>
 
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_POST['all'])?>" usepost></a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_POST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>

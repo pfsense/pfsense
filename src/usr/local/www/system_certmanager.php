@@ -451,12 +451,20 @@ if ($_POST['save']) {
 					if (!empty($pconfig['dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 					}
+					if (is_ipaddr($pconfig['dn_commonname'])) {
+						$altnames_tmp = array("IP:{$pconfig['dn_commonname']}");
+					} else {
+						$altnames_tmp = array("DNS:{$pconfig['dn_commonname']}");
+					}
 					if (count($altnames)) {
-						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
-							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+							// The CN is added as a SAN automatically, do not add it again.
+							if ($altname['value'] != $pconfig['dn_commonname']) {
+								$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+							}
 						}
-
+					}
+					if (!empty($altnames_tmp)) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
@@ -888,6 +896,8 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		))->addClass('btn-warning');
 
 		$group->addClass('repeatable');
+
+		$group->setHelp('Enter additional identifiers for the certificate in this list. The Common Name field is automatically added to the certificate as an Alternative Name.');
 
 		$section->add($group);
 

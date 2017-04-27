@@ -169,6 +169,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
 
 	if (!is_array($user_settings["widgets"][$_POST['widgetkey']])) {
 		$user_settings["widgets"][$_POST['widgetkey']] = array();
@@ -222,8 +223,9 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 <form action="/widgets/widgets/gateways.widget.php" method="post" class="form-horizontal">
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
-		<label class="col-sm-3 control-label"><?=gettext('Display')?></label>
+		<label class="col-sm-4 control-label"><?=gettext('Display')?></label>
 		<?php
 			$display_type_gw_ip = "checked";
 			$display_type_monitor_ip = "";

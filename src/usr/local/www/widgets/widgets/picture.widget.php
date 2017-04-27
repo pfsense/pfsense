@@ -39,6 +39,8 @@ if ($_GET['getpic']=="true") {
 }
 
 if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
+
 	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 		/* read the file contents */
 		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
@@ -54,11 +56,12 @@ if ($_POST['widgetkey']) {
 			$picname = basename($_FILES['uploadedfile']['name']);
 			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = base64_encode($data);
 			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
-			save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
-			header("Location: /index.php");
-			exit;
 		}
 	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
+	header("Location: /index.php");
+	exit;
 }
 
 ?>
@@ -69,12 +72,18 @@ if ($_POST['widgetkey']) {
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
-<form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
+<form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-horizontal">
 	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
-	<label for="pictfile"><?=gettext('New picture:')?> </label>
-	<input id="pictfile" name="pictfile" type="file" class="form-control" />
-	<button type="submit" class="btn btn-primary btn-xs">
-		<i class="fa fa-upload icon-embed-btn"></i>
-		<?=gettext('Upload')?>
-	</button>
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+	<div class="form-group">
+		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New picture:')?> </label>
+		<div class="col-sm-6">
+			<input id="pictfile" name="pictfile" type="file" class="form-control" />
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+		</div>
+	</div>
 </form>

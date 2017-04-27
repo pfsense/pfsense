@@ -579,9 +579,9 @@ function genhtmltitle($title, $links=true) {
 
 function gen_customwidgettitle_div($widgettitle) {
 	$divstr = '<div class="form-group">';
-	$divstr .= '  <label for="customwidgettitle" class="col-sm-4 control-label">' . gettext('Widget title'). '</label>';
+	$divstr .= '  <label for="descr" class="col-sm-4 control-label">' . gettext('Widget title'). '</label>';
 	$divstr .= '  <div class="col-sm-4">';
-	$divstr .= '    <input type="text" name="customwidgettitle" id="customwidgettitle" value="'. $widgettitle . '" class="form-control" />';
+	$divstr .= '    <input type="text" name="descr" id="descr" value="'. $widgettitle . '" class="form-control" />';
 	$divstr .= '  </div>';
 	$divstr .= '</div>';
 
@@ -589,10 +589,10 @@ function gen_customwidgettitle_div($widgettitle) {
 }
 
 function set_customwidgettitle(& $user_settings) {
-	if ($_POST['customwidgettitle']) {
-		$user_settings['widgets'][$_POST['widgetkey']]['customwidgettitle'] = trim($_POST['customwidgettitle']);
+	if ($_POST['descr']) {
+		$user_settings['widgets'][$_POST['widgetkey']]['descr'] = trim($_POST['descr']);
 	} else {
-		unset($user_settings['widgets'][$_POST['widgetkey']]['customwidgettitle']);
+		unset($user_settings['widgets'][$_POST['widgetkey']]['descr']);
 	}
 }
 

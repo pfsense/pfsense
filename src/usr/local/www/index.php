@@ -304,8 +304,8 @@ if ($user_settings['widgets']['sequence'] != "") {
 		}
 		$widgetkey = $basename . '-' . $copynum;
 
-		if (isset($user_settings['widgets'][$widgetkey]['customwidgettitle'])) {
-			$widgettitle = htmlentities($user_settings['widgets'][$widgetkey]['customwidgettitle']);
+		if (isset($user_settings['widgets'][$widgetkey]['descr'])) {
+			$widgettitle = htmlentities($user_settings['widgets'][$widgetkey]['descr']);
 		} else {
 			// Get the widget title that should be in a var defined in the widget's inc file.
 			$widgettitle = ${$basename . '_title'};

@@ -56,12 +56,10 @@ if ($_POST['widgetkey']) {
 			$picname = basename($_FILES['uploadedfile']['name']);
 			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget'] = base64_encode($data);
 			$user_settings['widgets'][$_POST['widgetkey']]['picturewidget_filename'] = $_FILES['pictfile']['name'];
-			save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
-			header("Location: /index.php");
-			exit;
 		}
 	}
 
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
 	header("Location: /index.php");
 	exit;
 }

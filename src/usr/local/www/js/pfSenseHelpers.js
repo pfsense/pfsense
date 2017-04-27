@@ -220,6 +220,12 @@ function moveHelpText(id) {
 }
 
 // Increment the number at the end of the string
+function getStringInt( str )	{
+  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+  return Number( data[ 2 ] );
+}
+
+// Increment the number at the end of the string
 function bumpStringInt( str )	{
   var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
@@ -293,23 +299,7 @@ function checkLastRow() {
 	}
 }
 
-function add_row() {
-	// Find the last repeatable group
-	var lastRepeatableGroup = $('.repeatable:last');
-
-	// If the number of repeats exceeds the maximum, do not add another clone
-	if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
-		// Alert user if alert message is specified
-		if (typeof lastRepeatableGroup.attr('max_repeats_alert') !== 'undefined') {
-			alert(lastRepeatableGroup.attr('max_repeats_alert'));
-		}
-		return;
-	}
-
-	// Clone it
-	var newGroup = lastRepeatableGroup.clone();
-
-	// Increment the suffix number for each input element in the new group
+function bump_input_id(newGroup) {
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));
@@ -339,6 +329,25 @@ function add_row() {
 			}
 		}
 	});
+}
+function add_row() {
+	// Find the last repeatable group
+	var lastRepeatableGroup = $('.repeatable:last');
+
+	// If the number of repeats exceeds the maximum, do not add another clone
+	if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
+		// Alert user if alert message is specified
+		if (typeof lastRepeatableGroup.attr('max_repeats_alert') !== 'undefined') {
+			alert(lastRepeatableGroup.attr('max_repeats_alert'));
+		}
+		return;
+	}
+
+	// Clone it
+	var newGroup = lastRepeatableGroup.clone();
+
+	// Increment the suffix number for each input element in the new group
+	bump_input_id(newGroup);
 
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));

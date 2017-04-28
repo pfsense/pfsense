@@ -145,7 +145,7 @@ GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e '
 
 # gnid
 export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}
-export GNID_SRC_BASE=${GNID_SRC_BASE:-"${SCRATCHDIR}/gnid"}
+export GNID_SRC_DIR=${GNID_SRC_DIR:-"${SCRATCHDIR}/gnid"}
 export GNID_BRANCH=${GNID_BRANCH:-"master"}
 
 # This is used for using svn for retrieving src

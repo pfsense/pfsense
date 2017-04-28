@@ -535,6 +535,17 @@ make_world() {
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
+	if [ "${PRODUCT_NAME}" = "pfSense" -a -n "${GNID_REPO_BASE}" ]; then
+		echo ">>> Building gnid... " | tee -a ${LOGFILE}
+		(cd ${GNID_SRC_DIR} && make clean gnid) || print_error_pfS
+		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
+			${STAGE_CHROOT_DIR}/usr/sbin \
+			|| print_error_pfS
+		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
+			${INSTALLER_CHROOT_DIR}/usr/sbin \
+			|| print_error_pfS
+	fi
+
 	unset makeargs
 }
 
@@ -1726,6 +1737,30 @@ update_freebsd_sources() {
 		( cd ${FREEBSD_SRC_DIR} && git checkout ${GIT_FREEBSD_COSHA1} ) 2>&1 | grep -C3 -i -E 'error|fatal'
 	fi
 	echo "Done!"
+
+	if [ "${PRODUCT_NAME}" = "pfSense" -a -n "${GNID_REPO_BASE}" ]; then
+		echo ">>> Obtaining gnid sources..."
+
+		_CLONE=1
+		if [ -d "${GNID_SRC_DIR}/.git" ]; then
+			CUR_BRANCH=$(cd ${GNID_SRC_DIR} && git branch | grep '^\*' | cut -d' ' -f2)
+			if [ "${CUR_BRANCH}" = "${GNID_BRANCH}" ]; then
+				_CLONE=0
+				( cd ${GNID_SRC_DIR} && git clean -fd; git fetch origin; git reset --hard origin/${GNID_BRANCH} ) 2>&1 | grep -C3 -i -E 'error|fatal'
+			else
+				rm -rf ${GNID_SRC_DIR}
+			fi
+		fi
+
+		if [ ${_CLONE} -eq 1 ]; then
+			( git clone --branch ${GNID_BRANCH} ${GNID_REPO_BASE} ${GNID_SRC_DIR} ) 2>&1 | grep -C3 -i -E 'error|fatal'
+		fi
+
+		if [ ! -d "${GNID_SRC_DIR}/.git" ]; then
+			echo ">>> ERROR: It was not possible to clone gnid src repo"
+			print_error_pfS
+		fi
+	fi
 }
 
 pkg_chroot() {

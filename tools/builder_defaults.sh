@@ -143,6 +143,11 @@ POUDRIERE_BRANCH=$(echo "${GIT_REPO_BRANCH_OR_TAG}" | sed 's,RELENG_,v,; s,\.,_,
 
 GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e 's,/[^/]*$,,')
 
+# gnid
+export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}
+export GNID_SRC_BASE=${GNID_SRC_BASE:-"${SCRATCHDIR}/gnid"}
+export GNID_BRANCH=${GNID_BRANCH:-"master"}
+
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"RELENG_2_3"}

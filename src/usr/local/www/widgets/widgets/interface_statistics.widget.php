@@ -34,22 +34,23 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
+$ifstats = array(
+	'inpkts' => gettext('Packets In'),
+	'outpkts' => gettext('Packets Out'),
+	'inbytes' => gettext('Bytes In'),
+	'outbytes' => gettext('Bytes Out'),
+	'inerrs' => gettext('Errors In'),
+	'outerrs' => gettext('Errors Out'),
+	'collisions' => gettext('Collisions'),
+);
 
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
-	$rows = array(
-		'inpkts' => gettext('Packets In'),
-		'outpkts' => gettext('Packets Out'),
-		'inbytes' => gettext('Bytes In'),
-		'outbytes' => gettext('Bytes Out'),
-		'inerrs' => gettext('Errors In'),
-		'outerrs' => gettext('Errors Out'),
-		'collisions' => gettext('Collisions'),
-	);
-
 	$skipinterfaces = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['iffilter']);
+	$skipifstats = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['ifstatsfilter']);
 	$interface_is_displayed = false;
+	$ifstat_is_displayed = false;
 
 	print("<thead>");
 	print(	"<tr>");
@@ -70,7 +71,11 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	print(	"</thead>");
 	print(	"<tbody>");
 
-	foreach ($rows as $key => $name) {
+	foreach ($ifstats as $key => $name) {
+		if (in_array($key, $skipifstats)) {
+			continue;
+		}
+
 		print("<tr>");
 		print(	"<td><b>" . $name . "</b></td>");
 
@@ -93,7 +98,13 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		print(		"</td>");
 		print(	"</tr>");
+		$ifstat_is_displayed = true;
 	}
+
+	if (!$ifstat_is_displayed) {
+		print("<tr><td><b>" . gettext('All statistics are hidden.') . "</b></td></tr>");
+	}
+
 	print(	"</tbody>");
 	exit;
 } else if ($_POST['widgetkey']) {
@@ -108,6 +119,18 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
 		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', $validNames);
+	}
+
+	$validStats = array();
+
+	foreach ($ifstats as $statkey => $statname) {
+		array_push($validStats, $statkey);
+	}
+
+	if (is_array($_POST['showifstat'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['ifstatsfilter'] = implode(',', array_diff($validStats, $_POST['showifstat']));
+	} else {
+		$user_settings['widgets'][$_POST['widgetkey']]['ifstatsfilter'] = implode(',', $validStats);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));
@@ -154,6 +177,31 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 					</tbody>
 				</table>
 			</div>
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Stats Item")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$skipifstats = explode(",", $user_settings['widgets'][$widgetkey]['ifstatsfilter']);
+				$idx = 0;
+
+				foreach ($ifstats as $statkey => $statname):
+?>
+						<tr>
+							<td><?=$statname?></td>
+							<td class="col-sm-2"><input id="showifstat[]" name ="showifstat[]" value="<?=$statkey?>" type="checkbox" <?=(!in_array($statkey, $skipifstats) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
@@ -187,6 +235,9 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 	}
 
 	events.push(function(){
+		// Note: This manages all settings checkboxes with id starting with "show"
+		// (i.e. both the interface and stats item selection groups)
+		// using a single All/None button
 		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't

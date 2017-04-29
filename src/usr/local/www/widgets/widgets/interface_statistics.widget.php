@@ -49,65 +49,119 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	$skipinterfaces = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['iffilter']);
 	$skipifstats = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['ifstatsfilter']);
-	$interface_is_displayed = false;
-	$ifstat_is_displayed = false;
+	$an_interface_is_selected = false; // decide if at least 1 interface is selected for display
+	$an_interface_is_displayed = false; // decide if at least 1 interface is displayed (i.e. not down)
+	$an_ifstat_is_displayed = false;
 
-	print("<thead>");
-	print(	"<tr>");
-	print(		"<th></th>");
+	if (isset($user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"])) {
+		$orientation_type = $user_settings["widgets"][$_REQUEST['widgetkey']]["orientation_type"];
+	} else {
+		$orientation_type = "if_columns";
+	}
 
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if (!in_array($ifdescr, $skipinterfaces)) {
-			print(		"<th>" . $ifname . "</th>");
-			$interface_is_displayed = true;
+	$ifstats_arr = array();
+
+	// Construct an array of only the selected stats items
+	foreach ($ifstats as $key => $name) {
+		if (!in_array($key, $skipifstats)) {
+			$ifstats_arr[$key] = $name;
+			$an_ifstat_is_displayed = true;
 		}
 	}
 
-	if (!$interface_is_displayed) {
-		print("<th>" . gettext('All interfaces are hidden.') . "</th>");
-	}
+	$ifinfo_arr = array();
 
-	print(		"</tr>");
-	print(	"</thead>");
-	print(	"<tbody>");
-
-	foreach ($ifstats as $key => $name) {
-		if (in_array($key, $skipifstats)) {
+	// Gather the stats info for the required interfaces
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		if (in_array($ifdescr, $skipinterfaces)) {
 			continue;
 		}
 
-		print("<tr>");
-		print(	"<td><b>" . $name . "</b></td>");
+		$ifinfo = get_interface_info($ifdescr);
+		$an_interface_is_selected = true;
 
-		foreach ($ifdescrs as $ifdescr => $ifname) {
-			if (in_array($ifdescr, $skipinterfaces)) {
-				continue;
-			}
-
-			$ifinfo = get_interface_info($ifdescr);
-
-			if ($ifinfo['status'] == "down") {
-				continue;
-			}
-
+		if ($ifinfo_arr[$ifdescr]['status'] != "down") {
 			$ifinfo['inbytes'] = format_bytes($ifinfo['inbytes']);
 			$ifinfo['outbytes'] = format_bytes($ifinfo['outbytes']);
-
-			print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
+			$ifinfo['name'] = $ifname;
+			$ifinfo_arr[$ifdescr] = $ifinfo;
+			$an_interface_is_displayed = true;
 		}
-
-		print(		"</td>");
-		print(	"</tr>");
-		$ifstat_is_displayed = true;
 	}
 
-	if (!$ifstat_is_displayed) {
-		print("<tr><td><b>" . gettext('All statistics are hidden.') . "</b></td></tr>");
+	print("<thead>");
+	print("<tr>");
+	print("<th></th>");
+
+	if ($orientation_type == "if_columns") {
+		// Put interface names as column headings
+		foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+			print("<th>" . $ifinfo['name'] . "</th>");
+		}
+
+		if (!$an_interface_is_selected) {
+			print("<th>" . gettext('All interfaces are hidden.') . "</th>");
+		} else if (!$an_interface_is_displayed) {
+			print("<th>" . gettext('All selected interfaces are down.') . "</th>");
+		}
+	} else {
+		// Put stats item names as column headings
+		foreach ($ifstats_arr as $key => $name) {
+			print("<th>" . $name . "</th>");
+		}
+
+		if (!$an_ifstat_is_displayed) {
+			print("<th>" . gettext('All statistics are hidden.') . "</th>");
+		}
+	}
+
+	print("</tr>");
+	print("</thead>");
+	print("<tbody>");
+
+	if ($orientation_type == "if_columns") {
+		//Construct the table with stats as rows and interfaces as columns
+		foreach ($ifstats_arr as $key => $name) {
+			print("<tr>");
+			print("<td><b>" . $name . "</b></td>");
+
+			foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+				print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
+			}
+
+			print("</tr>");
+		}
+
+		if (!$an_ifstat_is_displayed) {
+			print("<tr><td><b>" . gettext('All statistics are hidden.') . "</b></td></tr>");
+		}
+	} else {
+		//Construct the table with interfaces as rows and stats as columns
+		foreach ($ifinfo_arr as $ifdescr => $ifinfo) {
+			print("<tr>");
+			print("<td><b>" . $ifinfo['name'] . "</b></td>");
+
+			foreach ($ifstats_arr as $key => $name) {
+				print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
+			}
+
+			print("</tr>");
+		}
+
+		if (!$an_interface_is_selected) {
+			print("<tr><td><b>" . gettext('All interfaces are hidden.') . "</b></td></tr>");
+		} else if (!$an_interface_is_displayed) {
+			print("<tr><td><b>" . gettext('All selected interfaces are down.') . "</b></td></tr>");
+		}
 	}
 
 	print(	"</tbody>");
 	exit;
 } else if ($_POST['widgetkey']) {
+
+	if (isset($_POST['orientation_type'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['orientation_type'] = $_POST['orientation_type'];
+	}
 
 	$validNames = array();
 
@@ -149,6 +203,32 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
+	<div class="form-group">
+		<label class="col-sm-3 control-label"><?=gettext('Orientation')?></label>
+		<?php
+			$orientation_type_if_columns = "checked";
+			$orientation_type_if_rows = "";
+			if (isset($user_settings["widgets"][$widgetkey]["orientation_type"])) {
+				$selected_radio = $user_settings["widgets"][$widgetkey]["orientation_type"];
+				if ($selected_radio == "if_columns") {
+					$orientation_type_if_columns = "checked";
+					$orientation_type_if_rows = "";
+				} else if ($selected_radio == "if_rows") {
+					$orientation_type_if_columns = "";
+					$orientation_type_if_rows = "checked";
+				}
+			}
+?>
+		<div class="col-sm-6">
+			<div class="radio">
+				<label><input name="orientation_type" type="radio" id="orientation_type_if_columns" value="if_columns" <?=$orientation_type_if_columns;?> /> <?=gettext('Each interface in a column')?></label>
+			</div>
+			<div class="radio">
+				<label><input name="orientation_type" type="radio" id="orientation_type_if_rows" value="if_rows" <?=$orientation_type_if_rows;?> /><?=gettext('Each interface in a row')?></label>
+			</div>
+		</div>
+	</div>
+
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">

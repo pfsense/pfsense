@@ -56,9 +56,16 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	print(		"<th></th>");
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if (!in_array($ifdescr, $skipinterfaces)) {
-			print(		"<th>" . $ifname . "</th>");
-			$interface_is_displayed = true;
+		if (in_array($ifdescr, $skipinterfaces)) {
+			continue;
+		}
+
+		$interface_is_displayed = true;
+		$ifinfo_arr[$ifdescr] = get_interface_info($ifdescr);
+		$ifinfo_arr[$ifdescr]['inbytes'] = format_bytes($ifinfo_arr[$ifdescr]['inbytes']);
+		$ifinfo_arr[$ifdescr]['outbytes'] = format_bytes($ifinfo_arr[$ifdescr]['outbytes']);
+		if ($ifinfo_arr[$ifdescr]['status'] != "down") {
+			print("<th>q" . $ifname . "</th>");
 		}
 	}
 
@@ -79,16 +86,10 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				continue;
 			}
 
-			$ifinfo = get_interface_info($ifdescr);
-
-			if ($ifinfo['status'] == "down") {
-				continue;
+			if ($ifinfo_arr[$ifdescr]['status'] != "down") {
+				print("<td>" . (isset($ifinfo_arr[$ifdescr][$key]) ? htmlspecialchars($ifinfo_arr[$ifdescr][$key]) : 'n/a') . "</td>");
 			}
 
-			$ifinfo['inbytes'] = format_bytes($ifinfo['inbytes']);
-			$ifinfo['outbytes'] = format_bytes($ifinfo['outbytes']);
-
-			print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
 		}
 
 		print(		"</td>");

@@ -2336,7 +2336,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
 			break;
 		case 'APU':
-			return (array('name' => 'APU', 'descr' => 'Netgate APU'));
+			return (array('name' => 'APU', 'descr' => 'PC Engines APU'));
 			break;
 		case 'RCC-VE':
 			$result = array();

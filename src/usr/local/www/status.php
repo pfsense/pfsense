@@ -319,6 +319,13 @@ if (is_module_loaded("zfs.ko")) {
 }
 defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
+/* Basic PHP config + modules */
+defCmdT("PHP general config", "/usr/local/bin/php -r 'phpinfo(INFO_GENERAL | INFO-CONFIGURATION);'");
+defCmdT("PHP modules", "/usr/local/bin/php -r 'phpinfo(INFO_MODULES);'");
+
+
+/* generate page */
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 

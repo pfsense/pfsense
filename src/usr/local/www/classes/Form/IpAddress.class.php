@@ -63,6 +63,23 @@ class Form_IpAddress extends Form_Input
 			case "HOSTV6":
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or a host name like myhost.example.com';
 				break;
+
+			case "HOSTV4V6":
+				$this->_attributes['pattern'] = '[.:a-zA-Z0-9-]+';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or a host name like myhost.example.com';
+				$this->_attributes['onChange'] = 'javascript:if (this.value.indexOf(":") > -1) {this.value=this.value.toLowerCase();}';
+				break;
+
+			case "HOSTV4":
+				$this->_attributes['pattern'] = '[.a-zA-Z0-9-]+';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or a host name like myhost.example.com';
+				break;
+
+			case "HOSTV6":
+				$this->_attributes['pattern'] = '[.:a-zA-Z0-9-]+';
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or a host name like myhost.example.com';
+				$this->_attributes['onChange'] = 'javascript:if (this.value.indexOf(":") > -1) {this.value=this.value.toLowerCase();}';
+				break;
 		}
 	}
 

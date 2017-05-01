@@ -808,7 +808,7 @@ class altq_root_queue {
 
 		$section->addInput(new Form_Select(
 			'scheduler',
-			'Scheduler Type',
+			'*Scheduler Type',
 			$this->GetScheduler(),
 			array('HFSC' => 'HFSC',
 				  'CBQ' => 'CBQ',
@@ -817,7 +817,7 @@ class altq_root_queue {
 				  'PRIQ' => 'PRIQ')
 		))->setHelp('Changing this changes all child queues! Beware information can be lost.');
 
-		$group = new Form_group('Bandwidth');
+		$group = new Form_group('*Bandwidth');
 
 		$group->add(new Form_Input(
 			'bandwidth',
@@ -1425,7 +1425,7 @@ class priq_queue {
 
 		$section->addInput(new Form_Input(
 			'priority',
-			'Priority',
+			'*Priority',
 			'number',
 			$this->GetQpriority(),
 			['min' => '0', 'max'=> '7']
@@ -2261,7 +2261,7 @@ EOJS;
 
 		$section = new Form_Section('Service Curve (sc)');
 
-		$group = new Form_Group('Bandwidth');
+		$group = new Form_Group('*Bandwidth');
 
 		$group->add(new Form_Input(
 			'bandwidth',
@@ -2775,7 +2775,7 @@ class cbq_queue extends priq_queue {
 
 		$section = new Form_Section('NOTITLE');
 
-		$group = new Form_Group('Bandwidth');
+		$group = new Form_Group('*Bandwidth');
 
 		$group->add(new Form_Input(
 			'bandwidth',
@@ -3048,7 +3048,7 @@ class fairq_queue extends priq_queue {
 
 		$section = new Form_Section('');
 
-		$group = new Form_Group('Bandwidth');
+		$group = new Form_Group('*Bandwidth');
 
 		$group->add(new Form_Input(
 			'bandwidth',
@@ -3852,7 +3852,7 @@ EOD;
 
 		if (is_array($bandwidth)) {
 				$section->addInput(new Form_StaticText(
-				'Bandwidth',
+				'*Bandwidth',
 				$this->build_bwtable()
 			));
 		}

@@ -30,6 +30,9 @@ $message = "";
 if ($options['s'] <> "") {
 	$subject = $options['s'];
 }
+else if (!empty($_GET['subject'])) {
+        $subject = $_GET['subject'];
+}
 
 
 $in = file("php://stdin");

@@ -754,7 +754,7 @@ function captiveportal_prune_old() {
 
 	/* Is there any job to do? */
 	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) &&
-	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable'])) {
+	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable']) && !isset($cpcfg["radacct_enable"])  ) {
 		return;
 	}
 

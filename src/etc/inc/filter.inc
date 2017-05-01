@@ -3124,6 +3124,11 @@ function filter_rules_generate() {
 	if (isset($config['syslog']['nologdefaultpass'])) {
 		$log['pass'] = "log";
 	}
+	if (!isset($config['system']['fwblockreturn'])) {
+		$block_rule = "block";
+	} else {
+		$block_rule = "block return";
+	}
 
 	$saved_tracker = $tracker;
 
@@ -3154,10 +3159,10 @@ EOD;
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------
-block in {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
-block out {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
-block in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
-block out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
+{$block_rule} in {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+{$block_rule} out {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+{$block_rule} in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
+{$block_rule} out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
 EOD;
 

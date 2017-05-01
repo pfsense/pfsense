@@ -449,6 +449,14 @@ if ($_POST['save']) {
 	}
 
 	/* input validation */
+	
+	
+	/* implode need if floating | explode $pconfig['interface']selectbox on L1216 when $input_errors = true */
+	if ($if == "FloatingRules" || isset($_POST['floating'])) {
+		if (isset($_POST['interface']) && count($_POST['interface']) > 0) {
+			$pconfig['interface'] = implode(",", $_POST['interface']);
+		}
+	}
 	$reqdfields = explode(" ", "type proto");
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {
 		$reqdfields[] = "src";

@@ -57,8 +57,8 @@ if ($_POST['save']) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
+	$reqdfields = explode(" ", "host domain ip");
+	$reqdfieldsn = array(gettext("Host"), gettext("Domain"), gettext("IP address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 

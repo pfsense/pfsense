@@ -59,6 +59,16 @@ if ($_SERVER['REQUEST_URI'] == "/") {
 if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
+		if ($page == "help.php") {
+			// This user has page-help-all as the first page in their list.
+			// We do not want to use that as the default page, it will redirect off to Dashboard help.
+			if (isset($allowedpages[1])) {
+				$page = str_replace('*', '', $allowedpages[1]);
+			} else {
+				display_error_form("201", gettext("Only the help page is assigned to this user! Click here to logout."));
+				exit;
+			}
+		}
 		$_SESSION['Post_Login'] = true;
 		require_once("functions.inc");
 		pfSenseHeader("/{$page}");

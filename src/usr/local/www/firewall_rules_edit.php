@@ -1510,7 +1510,7 @@ $section->addInput(new Form_Select(
 	'dscp',
 	'Diffserv Code Point',
 	$pconfig['dscp'],
-	["" => ''] + array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
+	["" => 'any'] + array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
 ));
 
 $section->addInput(new Form_Checkbox(

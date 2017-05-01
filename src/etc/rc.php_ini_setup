@@ -101,6 +101,25 @@ else
 	fi
 fi
 
+# Workaround extension load order bug ensuring session.so always loads first
+if [ -f /usr/local/etc/php/extensions.ini ]; then
+	/usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
+
+	if [ `/bin/cat /usr/local/etc/php/extensions.ini | /usr/bin/grep session.so` ]; then
+		/bin/cat /usr/local/etc/php/extensions.ini | /usr/bin/grep -v session.so > /tmp/php-extensions.ini
+		/bin/rm -f /usr/local/etc/php/extensions.ini
+		/bin/mv /tmp/php-extensions.ini /usr/local/etc/php/extensions.ini
+
+		if ! [ -f /usr/local/etc/php/ext-10-session.ini ]; then
+			/usr/bin/touch /usr/local/etc/php/ext-10-session.ini
+			/bin/chmod 0644 /usr/local/etc/php/ext-10-session.ini
+			echo "extension=session.so" >> /usr/local/etc/php/ext-10-session.ini
+		fi
+	fi
+
+	/bin/chmod 0644 /usr/local/etc/php/extensions.ini
+fi
+
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR=$(/usr/local/sbin/read_global_var upload_path "/root")

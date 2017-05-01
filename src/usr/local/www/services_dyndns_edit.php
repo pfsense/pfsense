@@ -504,8 +504,6 @@ events.push(function() {
 				hideInput('ttl', false);
 				break;
 			case "namecheap":
-			case "cloudflare-v6":
-			case "cloudflare":
 			case "gratisdns":
 			case "hover":
 				hideGroupInput('domainname', false);
@@ -523,7 +521,7 @@ events.push(function() {
 				break;
 			case "cloudflare-v6":
 			case "cloudflare":
-				hideGroupInput('domainname', true);
+				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
 				hideInput('requestif', true);

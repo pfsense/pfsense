@@ -5293,4 +5293,15 @@ function upgrade_163_to_164() {
 		));
 	convert_widget_164('wol', 'wake_on_lan-0', array('filter' => ''));
 }
+
+/* Work around broken wizard rules. See https://redmine.pfsense.org/issues/7434 */
+function upgrade_164_to_165() {
+	global $config;
+	foreach ($config['filter']['rule'] as & $rule) {
+		if ($rule['destination']['port'] == "137-139-137-139") {
+			$rule['destination']['port'] = "137-139";
+		}
+	}
+}
+
 ?>

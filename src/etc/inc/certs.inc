@@ -571,6 +571,7 @@ function cert_get_purpose($str_crt, $decode = true) {
 	$purpose = array();
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
 	$purpose['server'] = (strpos($crt_details['extensions']['nsCertType'], 'SSL Server') !== FALSE) ? 'Yes': 'No';
+	$purpose['EKU'] = explode(',',$crt_details['extensions']['extendedKeyUsage']);
 	return $purpose;
 }
 

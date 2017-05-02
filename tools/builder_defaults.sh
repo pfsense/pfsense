@@ -190,7 +190,7 @@ fi
 export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}
 export GNID_SRC_DIR=${GNID_SRC_DIR:-"${SCRATCHDIR}/gnid"}
 export GNID_BRANCH=${GNID_BRANCH:-"master"}
-export GNID_INCLUDE_DIR=${GNID_INCLUDE_DIR:-"${MAKEOBJDIRPREFIX}/usr/src/lib32/usr/include"}
+export GNID_INCLUDE_DIR=${GNID_INCLUDE_DIR:-"${MAKEOBJDIRPREFIX}/usr/src/tmp/usr/include"}
 export GNID_LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR:-"${MAKEOBJDIRPREFIX}/usr/src/secure/lib/libcrypto"}
 
 # Area that the final image will appear in

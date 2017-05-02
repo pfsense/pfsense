@@ -1154,8 +1154,6 @@ foreach ($a_cert as $i => $cert):
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
-						<br />
-
 						<?php
 						$certextinfo = "";
 						if (is_array($sans) && !empty($sans)) {
@@ -1171,22 +1169,16 @@ foreach ($a_cert as $i => $cert):
 						if (is_array($purpose) && !empty($purpose['eku'])) {
 							$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
 							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
-							$certextinfo .= '<br/>';
 						}
 						?>
-						<?php if (!empty($certextinfo)): ?>
-							<br />
-							<?= $certextinfo ?>
-						<?php endif?>
-						<!-- FIXME: Infoblock does not currently work inside a table
 						<?php if (!empty($certextinfo)): ?>
 							<div class="infoblock">
 							<? print_info_box($certextinfo, 'info', false); ?>
 							</div>
 						<?php endif?>
-						-->
 
 						<?php if (!empty($startdate) || !empty($enddate)): ?>
+						<br />
 						<small>
 							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 						</small>

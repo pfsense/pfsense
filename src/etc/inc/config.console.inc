@@ -508,6 +508,10 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT2'
 		);
 		break;
+	case 'Turbot Dual-E':
+		$config['interfaces']['wan']['if'] = 'igb0';
+		$config['interfaces']['lan']['if'] = 'igb1';
+		break;
 	case 'APU':
 		$config['interfaces']['wan']['if'] = 're1';
 		$config['interfaces']['lan']['if'] = 're2';

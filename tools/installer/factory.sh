@@ -27,6 +27,7 @@ get_cur_model() {
 
 	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
+	local _hw_ncpu=$(sysctl -b hw.ncpu)
 
 	case "${_product}" in
 		RCC-VE)
@@ -57,6 +58,16 @@ get_cur_model() {
 			;;
 		SYS-5018D-FN4T)
 			_cur_model="XG-1540"
+			;;
+		"Turbot Dual-E")
+			case "${hw_ncpu}" in
+				4)
+					_cur_model="SG-2340"
+					;;
+				2)
+					_cur_model="SG-2320"
+					;;
+			esac
 			;;
 	esac
 
@@ -94,6 +105,7 @@ fi
 # Try to read serial
 machine_arch=$(uname -p)
 unset is_adi
+unset is_turbot
 case "${machine_arch}" in
 	amd64)
 		serial=$(kenv smbios.system.serial)
@@ -101,6 +113,9 @@ case "${machine_arch}" in
 		case "${product}" in
 			RCC-VE|DFFv2|RCC)
 				is_adi=1
+				;;
+			"Turbot Dual-E")
+				is_turbot=1
 				;;
 		esac
 		;;
@@ -143,7 +158,7 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" ]; then
 	case "${cur_model}" in
-		C2758|APU)
+		C2758|APU|SG-2320|SG-2340)
 			selected_model="${cur_model}"
 			;;
 		XG-1540)
@@ -170,20 +185,24 @@ if [ -z "${selected_model}" ]; then
 fi
 
 if [ "${machine_arch}" != "armv6" ]; then
-	echo 'boot_serial="YES"' > /tmp/loader.conf.pfSense
-	if [ -n "${is_adi}" ]; then
-		echo "-S115200 -h" > /tmp/boot.config
-		echo 'console="comconsole"' >> /tmp/loader.conf.pfSense
-		echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
-		echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
-		echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
-		echo 'kern.cam.boot_delay="10000"' >> /tmp/loader.conf.local.pfSense
+	if [ -n "${is_turbot}" ]; then
+		echo 'console="vidconsole"' > /tmp/loader.conf.pfSense
 	else
-		echo "-S115200 -D" > /tmp/boot.config
-		echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense
-		echo 'console="comconsole,vidconsole"' >> /tmp/loader.conf.pfSense
+		echo 'boot_serial="YES"' > /tmp/loader.conf.pfSense
+		if [ -n "${is_adi}" ]; then
+			echo "-S115200 -h" > /tmp/boot.config
+			echo 'console="comconsole"' >> /tmp/loader.conf.pfSense
+			echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
+			echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
+			echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
+			echo 'kern.cam.boot_delay="10000"' >> /tmp/loader.conf.local.pfSense
+		else
+			echo "-S115200 -D" > /tmp/boot.config
+			echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense
+			echo 'console="comconsole,vidconsole"' >> /tmp/loader.conf.pfSense
+		fi
+		echo 'comconsole_speed="115200"' >> /tmp/loader.conf.pfSense
 	fi
-	echo 'comconsole_speed="115200"' >> /tmp/loader.conf.pfSense
 	echo 'kern.ipc.nmbclusters="1000000"' >> /tmp/loader.conf.pfSense
 	echo 'kern.ipc.nmbjumbop="524288"' >> /tmp/loader.conf.pfSense
 	echo 'kern.ipc.nmbjumbo9="524288"' >> /tmp/loader.conf.pfSense

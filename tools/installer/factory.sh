@@ -392,19 +392,6 @@ fi
 
 postreq="${postreq}&submit=Submit"
 
-postreq_len=$(echo "${postreq}" | wc -c)
-
-cat <<EOF > /tmp/postdata
-POST http://${hostname}/log.php HTTP/1.0
-Content-Type: application/x-www-form-urlencoded
-Content-Length: ${postreq_len}
-
-${postreq}
-
-EOF
-
-/usr/bin/nc < /tmp/postdata -w 5 ${hostname} 80 >/tmp/postresult
-
 # ProdTrack
 fetch -o /dev/null "http://prodtrack.netgate.com/builder?${postreq}" >/dev/null 2>&1
 

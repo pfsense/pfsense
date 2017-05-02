@@ -545,9 +545,6 @@ make_world() {
 		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
 			${STAGE_CHROOT_DIR}/usr/sbin \
 			|| print_error_pfS
-		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
-			${INSTALLER_CHROOT_DIR}/usr/sbin \
-			|| print_error_pfS
 	fi
 
 	unset makeargs

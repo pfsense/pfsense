@@ -156,6 +156,13 @@ $rows_displayed = false;
 			?>
 			<br />
 			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
+<?php
+		// If the uniqueID is available, display it here
+		$idfile = "/var/db/uniqueid";
+		if (file_exists($idfile)) {
+			print("<br />" . gettext("Netgate Unique ID:") . " <strong>" . file_get_contents($idfile) . "</strong>");
+		}
+?>
 			</td>
 		</tr>
 <?php

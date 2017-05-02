@@ -78,28 +78,19 @@ if (($_REQUEST) && ($_REQUEST['ajax'])) {
 }
 
 function get_pkg_table() {
-	$installed_packages = array();
-	$package_list = get_pkg_info();
+	$installed_packages = get_pkg_info('all', false, true);
 
-	if (!$package_list) {
+	if (is_array($input_errors)) {
 		print("error");
 		exit;
 	}
-
-	foreach ($package_list as $pkg) {
-		if (!isset($pkg['installed']) && !isset($pkg['broken'])) {
-			continue;
-		}
-		$installed_packages[] = $pkg;
-	}
-
-	$pkgtbl = "";
 
 	if (empty($installed_packages)) {
 		print ("nopkg");
 		exit;
 	}
 
+	$pkgtbl = "";
 	$pkgtbl .='		<div class="table-responsive">';
 	$pkgtbl .='		<table class="table table-striped table-hover table-condensed">';
 	$pkgtbl .='			<thead>';

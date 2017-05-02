@@ -389,6 +389,12 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	}
 
 	
+	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
+		// Return early if the caller wants just installed packages and there are none.
+		// Saves doing any calls that might access a remote package repo.
+		return array();
+	}
+
 	if (!function_exists('is_subsystem_dirty')) {
 		require_once("util.inc");
 	}
@@ -409,13 +415,18 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$extra_param = "-U ";
 	}
 
-	if (!$installed_pkgs_only) {
+	// If we want more than just the currently installed packages or
+	//    we want up-to-date remote repo info
+	// then do a full pkg search
+	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
 		$rc = pkg_exec(
 		    "search {$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $out, $err);
 	}
-	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled))
-	    && is_pkg_installed($pkgs)) {
+
+	if (($installed_pkgs_only || $rc != 0) &&
+	    $remote_repo_usage_disabled &&
+	    is_pkg_installed($pkgs)) {
 		/*
 		 * Fall back on pkg info to return locally installed matching
 		 * pkgs instead, if:
@@ -426,7 +437,9 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		 *       but it didn't have any contents, or for other reasons
 		 *       returned an error.
 		 *   AND
-		 *   (2) at least some pkgs matching <pattern> are installed
+		 *   (2) remote repo data is not required
+		 *   AND
+		 *   (3) at least some pkgs matching <pattern> are installed
 		 *
 		 * Following an unsuccessful attempt to access a remote repo
 		 * catalog, the local copy is wiped clear. Thereafter any
@@ -490,8 +503,11 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		    "https://github.com/pfsense/FreeBSD-ports/commits/devel/" .
 		    $pkg_info['categories'][0] . '/' . $pkg_info['name'];
 
+		$pkg_is_installed = false;
+
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
+			$pkg_is_installed = true;
 
 			$rc = pkg_exec("query %v {$pkg_info['name']}", $out,
 			    $err);
@@ -512,12 +528,15 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 			    $out);
 		} else if (is_package_installed($pkg_info['shortname'])) {
 			$pkg_info['broken'] = true;
+			$pkg_is_installed = true;
 		}
 
 		$pkg_info['desc'] = preg_replace('/\n+WWW:.*$/', '',
 		    $pkg_info['desc']);
 
-		$result[] = $pkg_info;
+		if (!$installed_pkgs_only || $pkg_is_installed) {
+			$result[] = $pkg_info;
+		}
 		unset($pkg_info);
 	}
 

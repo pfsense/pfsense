@@ -87,18 +87,8 @@ main() {
 
 # Try to read serial
 machine_arch=$(uname -p)
-unset is_adi
 case "${machine_arch}" in
-	amd64)
-		serial=$(/bin/kenv smbios.system.serial)
-		product=$(/bin/kenv -q smbios.system.product)
-		case "${product}" in
-			RCC-VE|DFFv2|RCC)
-				is_adi=1
-				;;
-		esac
-		;;
-        armv6)
+	armv6)
 		product=$(/bin/kenv -q uboot.board_name)
 		/bin/dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16 \
 		    2> /dev/null

@@ -1,4 +1,4 @@
-# Moshe Katz <kohenkatz@gmail.com>, 2017. #zanata
+# Terror <miguel.a.terron@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -7,10 +7,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-13 03:33-0500\n"
-"Last-Translator: Moshe Katz <kohenkatz@gmail.com>\n"
-"Language-Team: Hebrew\n"
-"Language: he\n"
+"PO-Revision-Date: 2017-04-18 06:42-0400\n"
+"Last-Translator: Terror <miguel.a.terron@gmail.com>\n"
+"Language-Team: Spanish (Argentina)\n"
+"Language: es-AR\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
@@ -20,37 +20,43 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
+"Posible ataque de \"DNS Rebind\" detectado, vea https://es.wikipedia.org/"
+"wiki/DNS_rebinding<br />Ingrese acceder al router usando la dirección IP en "
+"lugar del nombre de host."
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr ""
+msgstr "Redirigiendo..."
 
 #: src/etc/inc/auth.inc:121
 msgid "Redirecting to the dashboard..."
-msgstr ""
+msgstr "Redirigiendo al panel de control..."
 
 #: src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:445 src/etc/inc/auth.inc:522
 #: src/etc/inc/auth.inc:563 src/etc/inc/auth.inc:632 src/etc/inc/auth.inc:790
 #: src/etc/inc/auth.inc:803
 #, php-format
 msgid "Running: %s"
-msgstr ""
+msgstr "Ejecutando: %s"
 
 #: src/etc/inc/auth.inc:844 src/etc/inc/auth.inc:925 src/etc/inc/auth.inc:1013
 #: src/etc/inc/auth.inc:1325
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr ""
+msgstr "ERROR! No se pudo conectar al servidor %s."
 
 #: src/etc/inc/auth.inc:862
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr ""
+"LDAP: no se puede buscar una referencia a la autoridad certificante (CA) "
+"para el host %s."
 
 #: src/etc/inc/auth.inc:937
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr ""
+"¡ERROR! ldap_test_bind() no se puede conectar (STARTTLS) al servidor %s."
 
 #: src/etc/inc/auth.inc:999
 msgid ""
@@ -201,38 +207,37 @@ msgid "Error: %1$s Description: %2$s"
 msgstr ""
 
 #: src/etc/inc/authgui.inc:123
-#, fuzzy
 msgid "Error: not allowed"
-msgstr "שגיאה: אסור"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:150
 msgid "unknown reason"
-msgstr "סיבה לא ידועה"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:151
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "Login inválido (%s)."
 
 #: src/etc/inc/authgui.inc:156
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "El dispositivo esta siendo mantenido por: %s."
 
 #: src/etc/inc/authgui.inc:225
-#, fuzzy, php-format
+#, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr "היכנס ל%1$s על %2$s.%3$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:227
 #, php-format
 msgid "Login to %1$s"
-msgstr "היכנס ל%1$s"
+msgstr ""
 
 #: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
 #: src/usr/local/www/services_captiveportal.php:1015
 msgid "Login"
-msgstr "היכנס"
+msgstr "Login"
 
 #: src/etc/inc/authgui.inc:250
 msgid ""
@@ -241,10 +246,14 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
+"La dirección IP usada para acceder a éste router no está configurada "
+"localmente. Puede ser redirigida mediante NAT u otros medios.<br /><br />Si "
+"esta redirección es inesperada, por favor verifique que no está siendo "
+"atacado mediante \"man-in-the-middle\"."
 
 #: src/etc/inc/authgui.inc:265
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "Su navegador debe soportar cookies para ingresar."
 
 #: src/etc/inc/authgui.inc:269 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -267,11 +276,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:600
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
-msgstr "שם משתמש"
+msgstr "Usuario:"
 
 #: src/etc/inc/authgui.inc:271
 msgid "Enter your username"
-msgstr "הזין את שם המשתמש שלך"
+msgstr "Ingrese su usuario"
 
 #: src/etc/inc/authgui.inc:276 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
@@ -296,46 +305,46 @@ msgstr "הזין את שם המשתמש שלך"
 #: src/usr/local/www/vpn_openvpn_client.php:582
 #: src/usr/local/www/vpn_openvpn_client.php:607
 msgid "Password"
-msgstr "סיסמה"
+msgstr "Contraseña"
 
 #: src/etc/inc/authgui.inc:278
 msgid "Enter your password"
-msgstr "הזין את הסיסמה שלך"
+msgstr "Ingrese su contraseña"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr ""
+msgstr "Portal cautivo de %s"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr ""
+msgstr "¡Bienvenido al Portal cautivo de %s!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "שם משתמש:"
+msgstr "Usuario:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "סיסמה:"
+msgstr "Contraseña:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Ingrese su código:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr "המשך"
+msgstr "Continuar"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr "מעביר לאתר"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
 #: src/usr/local/www/head.inc:521
 msgid "Logout"
-msgstr "ניתוק"
+msgstr ""
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
@@ -367,15 +376,15 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "Presione ENTER para continuar."
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:440
 msgid "No interfaces found!"
-msgstr ""
+msgstr "¡No se encontraron interfaces!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "¿Desea configurar VLANs?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -386,11 +395,11 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "¿Desea configurar VLANs ahora? [Y (si)|N (no)]"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "Interfaces VLAN:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
@@ -436,7 +445,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
-msgstr "האם ברצונך להמשיח [כן=y|לא=n]"
+msgstr ""
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
@@ -553,7 +562,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:496
 msgid "Could not restore config.xml."
-msgstr "אי אפשר לשחזר את config.xml"
+msgstr ""
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
@@ -671,7 +680,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:688
 #, php-format
 msgid "Sending request to: %s"
-msgstr "שולח בקשה ל-%s"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:892
 #, php-format
@@ -685,11 +694,11 @@ msgstr ""
 #: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:1578
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
-msgstr "שגיאה"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:900
 msgid "Curl error occurred:"
-msgstr "אירעה שגיאה ב-Curl"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:909 src/etc/inc/dyndns.class:930
 #: src/etc/inc/dyndns.class:949 src/etc/inc/dyndns.class:967
@@ -813,11 +822,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1029
 msgid "Invalid Username."
-msgstr "שם משתמש לא חוקי"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1032
 msgid "Invalid Password."
-msgstr "סיסמה לא חוקי"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Too many updates sent."
@@ -894,15 +903,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1101
 msgid "Error 799"
-msgstr "שגיאה 799"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1101 src/etc/inc/dyndns.class:1103
 msgid "Update Failed!"
-msgstr "העדכון נכשל!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1103
 msgid "Error 700"
-msgstr "שגיאה 700"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1105 src/etc/inc/dyndns.class:1108
 #: src/etc/inc/dyndns.class:1126 src/etc/inc/dyndns.class:1136
@@ -933,15 +942,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1188
 msgid "Not a valid username or password!"
-msgstr "שם משתמש או סיסמה לא חוקיים!"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1190
 msgid "Hostname specified does not exist."
-msgstr "המארח שציינת לא קיים"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1196
 msgid "Hostname specified exists, but not under the username specified."
-msgstr "המארח שציינת קיים, אבל לא בתוך חשבון של השם משתמש שציינת"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1198
 msgid "Updating too frequently, considered abuse."
@@ -962,7 +971,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1213
 msgid "Invalid password."
-msgstr "סיסמה לא חוקי"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1215
 msgid "This account has been administratively locked."
@@ -975,7 +984,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1219 src/etc/inc/dyndns.class:1233
 #: src/etc/inc/dyndns.class:1251
 msgid "Server side error."
-msgstr "שגיאת שרת"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1235
 msgid "Badly Formed Request (check the settings)."
@@ -988,12 +997,12 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1255 src/etc/inc/dyndns.class:1275
 #: src/etc/inc/dyndns.class:1302
 msgid "Invalid username or password."
-msgstr "שם משתמש או סיסמה לא חוקיים."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1260 src/etc/inc/dyndns.class:1280
 #: src/etc/inc/dyndns.class:1307 src/etc/inc/dyndns.class:1319
 msgid "No Change In IP Address."
-msgstr "אין שינוי ב‏כתובת IP"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1298
 msgid "Bad Request - Missing/Invalid Parameters."
@@ -1009,7 +1018,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1338
 msgid "IP address changed successfully"
-msgstr "כתובת ה-IP שונתה בהצלחה"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1361 src/etc/inc/dyndns.class:1525
 msgid "Result did not match."
@@ -1032,7 +1041,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1375
 msgid "UNKNOWN ERROR"
-msgstr "אירעה שגיאה לא מוכרת"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1398
 msgid "Wrong values - Update could not be completed."
@@ -1040,7 +1049,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1400
 msgid "Unknown username - User does not exist."
-msgstr "משתמש לא מזוהה"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1402
 msgid "Wrong password - Remember password is case sensitive."
@@ -1072,7 +1081,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1469 src/etc/inc/dyndns.class:1527
 msgid "Invalid username or password"
-msgstr "שם משתמש או סיסמה לא חוקיים."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1472
 msgid "Account suspended"
@@ -1124,15 +1133,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1586
 msgid "No Username Provided."
-msgstr "לא ציינת שם משתמש."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1589
 msgid "No Password Provided."
-msgstr "לא ציינת סיסמה."
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1592
 msgid "No Hostname Provided."
-msgstr "לא ציינת מארח"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1595
 msgid "The Dynamic DNS Service provided is not yet supported."
@@ -1144,11 +1153,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1601
 msgid "Invalid ZoneID"
-msgstr "ZoneID לא חוקי"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1604
 msgid "Invalid TTL"
-msgstr "TTL לא חוקי"
+msgstr ""
 
 #: src/etc/inc/dyndns.class:1607
 #, php-format
@@ -1247,7 +1256,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr "הכניסה נוספה"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1273,7 +1282,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr "מארח נוסף"
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
@@ -1284,9 +1293,8 @@ msgid "Tried to block but had no host IP or interface"
 msgstr ""
 
 #: src/etc/inc/easyrule.inc:368
-#, fuzzy
 msgid "Unknown block error."
-msgstr "שגיאת חסום לא ידועה."
+msgstr ""
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
@@ -1395,7 +1403,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr "בקשת מידע"
+msgstr ""
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
@@ -1486,9 +1494,8 @@ msgid "Router renumbering"
 msgstr ""
 
 #: src/etc/inc/filter.inc:81
-#, fuzzy
 msgid "SKIP"
-msgstr "דלג"
+msgstr ""
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
@@ -1674,11 +1681,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
-msgstr "localhost"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1580
 msgid "static route"
-msgstr "מסלול סטטית"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
@@ -1686,23 +1693,23 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1626
 msgid "PPPoE server"
-msgstr "שרת PPPoE"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1637
 msgid "L2TP server"
-msgstr "שרת L2TP"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1646
 msgid "OpenVPN server"
-msgstr "שרת OpenVPN"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1655
 msgid "OpenVPN client"
-msgstr "לקוח OpenVPN"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1665
 msgid "IPsec client"
-msgstr "לקוח IPsec"
+msgstr ""
 
 #: src/etc/inc/filter.inc:1701
 msgid "Auto created rule for ISAKMP"
@@ -1839,9 +1846,8 @@ msgid "There was an error while parsing the package filter rules for %s."
 msgstr ""
 
 #: src/etc/inc/filter.inc:4362
-#, fuzzy
 msgid "delete this separator"
-msgstr "מחק את הפריט הזה"
+msgstr ""
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295

@@ -412,18 +412,30 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
-	if ($_POST['enable'] && isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false)) {
-		$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
-	}
-
-	/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
-	if (!$_POST['enable']) {
-		if (isset($config['dnsmasq']['enable']) && (isset($config['dnsmasq']['regdhcp']) || isset($config['dnsmasq']['regdhcpstatic']) || isset($config['dnsmasq']['dhcpfirst']))) {
-			$input_errors[] = gettext("Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+	if ((!isset($pool) || !is_numeric($pool)) && $act != "newpool") {
+		/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
+		if ($_POST['enable'] && isset($config['dhcrelay']['enable']) &&
+		    (stristr($config['dhcrelay']['interface'], $if) !== false)) {
+			$input_errors[] = sprintf(gettext(
+			    "The DHCP relay on the %s interface must be disabled before enabling the DHCP server."),
+			    $iflist[$if]);
 		}
-		if (isset($config['unbound']['enable']) && (isset($config['unbound']['regdhcp']) || isset($config['unbound']['regdhcpstatic']))) {
-			$input_errors[] = gettext("Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+
+		/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
+		if (!$_POST['enable']) {
+			if (isset($config['dnsmasq']['enable']) &&
+			    (isset($config['dnsmasq']['regdhcp']) ||
+			    isset($config['dnsmasq']['regdhcpstatic']) ||
+			    isset($config['dnsmasq']['dhcpfirst']))) {
+				$input_errors[] = gettext(
+				    "Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+			}
+			if (isset($config['unbound']['enable']) &&
+			    (isset($config['unbound']['regdhcp']) ||
+			    isset($config['unbound']['regdhcpstatic']))) {
+				$input_errors[] = gettext(
+				    "Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+			}
 		}
 	}
 

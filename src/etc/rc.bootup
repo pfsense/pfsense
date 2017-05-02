@@ -132,6 +132,7 @@ if (mwexec("/bin/kenv -q pfSense.boot 2>/dev/null") != 0) {
 		@file_put_contents("{$g['vardb_path']}/vendor_mac", $vendor_mac_arr_json);
 	}
 	unset($ifs, $if, $vendor_mac_arr, $vendor_mac_arr_json);
+	mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
 	mwexec("/bin/kenv pfSense.boot=1");
 }
 

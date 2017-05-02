@@ -1013,6 +1013,10 @@ function check_for_alternate_interfaces() {
 				$config['interfaces']['lan']['if'] = 'igb1';
 			}
 			break;
+		case 'Turbot Dual-E':
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
+			break;
 		default:
 			$default_device['wan'] = "";
 			$default_device['lan'] = "";

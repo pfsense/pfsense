@@ -1083,7 +1083,8 @@ function setup_serial_port($when = "save", $path = "") {
 	$vga_only = false;
 
 	$specific_platform = system_identify_specific_platform();
-	if ($specific_platform['name'] == 'XG-1540') {
+	if ($specific_platform['name'] == 'XG-1540' ||
+	    $specific_platform['name'] == 'Turbot Dual-E') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||

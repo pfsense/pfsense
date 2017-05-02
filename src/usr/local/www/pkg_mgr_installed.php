@@ -71,7 +71,7 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-// We are being called only to get the pacakge data, not to display anything
+// We are being called only to get the package data, not to display anything
 if (($_REQUEST) && ($_REQUEST['ajax'])) {
 	print(get_pkg_table());
 	exit;
@@ -269,7 +269,7 @@ display_top_tabs($tab_array);
 
 events.push(function() {
 
-	// Retrieve the table formatted pacakge information and display it in the "Packages" panel
+	// Retrieve the table formatted package information and display it in the "Packages" panel
 	// (Or display an appropriate error message)
 	var ajaxRequest;
 

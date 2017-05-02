@@ -63,8 +63,6 @@ get_cur_model() {
 	echo "$_cur_model"
 }
 
-hostname="factory-logger.pfmechanics.com"
-
 if ! pgrep -q dhclient; then
 	# First, find a connected interface
 	if=$(ifconfig \
@@ -245,7 +243,7 @@ fi
 wlan_mac=$(get_if_mac wlan0)
 
 if [ "${selected_model}" = "SG-1000" ]; then
-	image_default_url="http://${hostname}/pfSense-netgate-sg-1000-latest.img.gz"
+	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-sg-1000-latest.img.gz"
 	image_url=$(kenv -q ufw.install.image.url)
 	image_url=${image_url:-${image_default_url}}
 

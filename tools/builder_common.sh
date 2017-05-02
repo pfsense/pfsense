@@ -537,7 +537,11 @@ make_world() {
 
 	if [ "${PRODUCT_NAME}" = "pfSense" -a -n "${GNID_REPO_BASE}" ]; then
 		echo ">>> Building gnid... " | tee -a ${LOGFILE}
-		(cd ${GNID_SRC_DIR} && make clean gnid) || print_error_pfS
+		(\
+			cd ${GNID_SRC_DIR} && \
+			make INCLUDE_DIR=${GNID_INCLUDE_DIR} \
+			LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} clean gnid \
+		) || print_error_pfS
 		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
 			${STAGE_CHROOT_DIR}/usr/sbin \
 			|| print_error_pfS

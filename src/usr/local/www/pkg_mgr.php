@@ -43,14 +43,14 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-// We are being called only to get the pacakge data, not to display anything
+// We are being called only to get the package data, not to display anything
 if (($_REQUEST) && ($_REQUEST['ajax'])) {
 	print(get_pkg_table());
 	exit;
 }
 
-// THe content for the table of packages is created here and fetched by Ajax. This allows us to draw the page and dispay
-// any required messages while the table it being downloaded/populated. On very small/slow systems, that can take a while
+// The content for the table of packages is created here and fetched by Ajax. This allows us to draw the page and display
+// any required messages while the table is being downloaded/populated. On very small/slow systems, that can take a while
 function get_pkg_table() {
 
 	$pkg_info = get_pkg_info();
@@ -249,7 +249,7 @@ events.push(function() {
 	    }
 	});
 
-	// Retrieve the table formatted pacakge information and display it in the "Packages" panel
+	// Retrieve the table formatted package information and display it in the "Packages" panel
 	// (Or display an appropriate error message)
 	var ajaxRequest;
 

@@ -437,16 +437,16 @@ $('.infoblock').each(function() {
 // Show the help on clicking the info icon
 $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
-
 	$('.' + "infoblock" + id.substr(8)).toggle();
 	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
 // ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
-$('tbody').each(function(){
-	$(this).html($.trim($(this).html()))
-});
+// Commented out due to https://redmine.pfsense.org/issues/7504
+//$('tbody').each(function(){
+//	$(this).html($.trim($(this).html()))
+//});
 
 $('tbody:empty').html("<tr><td></td></tr>");
 

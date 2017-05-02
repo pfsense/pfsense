@@ -49,7 +49,7 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 
 // set default language if unset
 if (!isset($config['system']['language'])) {
-	$config['system']['language'] = 'en_US';
+	$config['system']['language'] = $g['language'];
 }
 
 $dnsgw_counter = 1;

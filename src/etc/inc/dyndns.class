@@ -1781,20 +1781,14 @@
 						$successful_update = true;
 						break;
 					case 'no_record':
-						$status = $status_intro . $error_str . gettext("No record exists.");
-						break;
-					case 'no_type':
-						$status = $status_intro . $error_str . gettext("No type exists.");
-						break;
-					case 'no_value':
-						$status = $status_intro . $error_str . gettext("No value exists.");
-						break;
 					case 'no_such_record ':
 						$status = $status_intro . $error_str . gettext("No record exists.");
 						break;
+					case 'no_type':
 					case 'no_such_type ':
 						$status = $status_intro . $error_str . gettext("No type exists.");
 						break;
+					case 'no_value':
 					case 'no_such_value ':
 						$status = $status_intro . $error_str . gettext("No value exists.");
 						break;

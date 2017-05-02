@@ -932,6 +932,7 @@
 		 * @param unknown $existing_ip If required, an existing IP address for the record.
 		 */
 		function _remove($existing_ip = NULL) {
+			$remove_allowed = false;
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
 			}
@@ -949,12 +950,10 @@
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
 			
-			if ($this->_dnsService != 'ods') {
-				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-			}
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 			
 			switch ($this->_dnsService) {
 			case 'dreamhost':
@@ -977,11 +976,12 @@
 				}
 				curl_setopt($ch, CURLOPT_URL, $server . $port);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+				$remove_allowed = true;
 				break;
 			default:
 				break;
 			}
-			if ($this->_dnsService != 'ods') {
+			if ($remove_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -994,12 +994,13 @@
 		
 		/**
 		 * Private Function (added 23 Feb 17)
-		 * Retrieves current DNS records.
+		 * Retrieves current DNS records from an external API source.
 		 * 
 		 * Some services cannot perform new operations without the caller 
 		 * providing existing record information. 
 		 */
 		function _lookup_current() {
+			$lookup_allowed = false;
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
 			}
@@ -1017,12 +1018,10 @@
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
 				
-			if ($this->_dnsService != 'ods') {
-				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-			}
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
 				
 			switch ($this->_dnsService) {
 			case 'dreamhost':
@@ -1041,11 +1040,12 @@
 				}
 				curl_setopt($ch, CURLOPT_URL, $server . $port);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+				$lookup_allowed = true;
 				break;
 			default:
 				break;
 			}
-			if ($this->_dnsService != 'ods') {
+			if ($lookup_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -1057,8 +1057,8 @@
 		}
 
 		/*
-		 * Private Function (added 12 July 2005) [beta]
-		 *   Retrieve Lookup Status
+		 * Private Function (added 23 Feb 17) 
+		 *   Retrieve Lookup Status from the provided data and/or header
 		 */
 		function _checkLookupStatus($ch, $data, $header) {
 			if ($this->_dnsVerboseLog) {

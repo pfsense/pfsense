@@ -511,6 +511,18 @@ function cert_get_subject_hash($crt) {
 	return $inf_crt['subject'];
 }
 
+function cert_get_sans($str_crt, $decode = true) {
+	if ($decode) {
+		$str_crt = base64_decode($str_crt);
+	}
+	$sans = array();
+	$crt_details = openssl_x509_parse($str_crt);
+	if (!empty($crt_details['extensions']['subjectAltName'])) {
+		$sans = explode(',', $crt_details['extensions']['subjectAltName']);
+	}
+	return $sans;
+}
+
 function cert_get_issuer($str_crt, $decode = true) {
 
 	if ($decode) {
@@ -564,13 +576,39 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 }
 
 function cert_get_purpose($str_crt, $decode = true) {
+	$extended_oids = array(
+		"1.3.6.1.5.5.8.2.2" => "IP Security IKE Intermediate",
+	);
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
 	$purpose = array();
+	if (!empty($crt_details['extensions']['keyUsage'])) {
+		$purpose['ku'] = explode(',', $crt_details['extensions']['keyUsage']);
+		foreach ($purpose['ku'] as & $ku) {
+			$ku = trim($ku);
+			if (array_key_exists($ku, $extended_oids)) {
+				$ku = $extended_oids[$ku];
+			}
+		}
+	} else {
+		$purpose['ku'] = array();
+	}
+	if (!empty($crt_details['extensions']['extendedKeyUsage'])) {
+		$purpose['eku'] = explode(',', $crt_details['extensions']['extendedKeyUsage']);
+		foreach ($purpose['eku'] as & $eku) {
+			$eku = trim($eku);
+			if (array_key_exists($eku, $extended_oids)) {
+				$eku = $extended_oids[$eku];
+			}
+		}
+	} else {
+		$purpose['eku'] = array();
+	}
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
-	$purpose['server'] = (strpos($crt_details['extensions']['nsCertType'], 'SSL Server') !== FALSE) ? 'Yes': 'No';
+	$purpose['server'] = (in_array('TLS Web Server Authentication', $purpose['eku'])) ? 'Yes': 'No';
+
 	return $purpose;
 }
 

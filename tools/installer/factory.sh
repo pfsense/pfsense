@@ -371,14 +371,7 @@ sync; sync; sync
 trap "-" 1 2 15 EXIT
 
 # Calculate the "Unique ID" for support and tracking purposes
-# Hash the concatenated MAC addresses - Assume there are only physical
-# interfaces present during the build and use last 20 chars
-UID=$(ifconfig -a \
-	| awk '/ether / { gsub(/:/, "", $2); print $2 }' \
-	| sort \
-	| tr -d '\n' \
-	| sha256 \
-	| cut -c 45-)
+UID=$(/usr/sbin/gnid)
 
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"

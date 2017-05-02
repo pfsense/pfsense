@@ -47,6 +47,11 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
+// set default language if unset
+if (!isset($config['system']['language'])) {
+	$config['system']['language'] = 'en_US';
+}
+
 $dnsgw_counter = 1;
 
 while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {

@@ -728,13 +728,6 @@ $section->addInput(new Form_StaticText(
 $group = new Form_Group('Source');
 $group->addClass('srcadv');
 
-$group->add(new Form_Checkbox(
-	'srcnot',
-	'Source not',
-	'Invert match.',
-	$pconfig['srcnot']
-))->setWidth(2);
-
 $group->add(new Form_Select(
 	'srctype',
 	null,
@@ -796,13 +789,6 @@ $section->add($group);
 
 $group = new Form_Group('*Destination');
 
-$group->add(new Form_Checkbox(
-	'dstnot',
-	'Destination not',
-	'Invert match.',
-	$pconfig['dstnot']
-))->setWidth(2);
-
 $group->add(new Form_Select(
 	'dsttype',
 	null,
@@ -854,6 +840,14 @@ $group->setHelp('Specify the port or port range for the destination of the packe
 				'The \'to\' field may be left empty if only mapping a single port. ');
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'dstnot',
+	null,
+	'Not (Invert the sense of the match)',
+	$pconfig['dstnot'],
+	'yes'
+));
 
 $section->addInput(new Form_IpAddress(
 	'localip',

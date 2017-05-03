@@ -309,12 +309,13 @@ foreach ($iflist as $ifent => $ifname) {
 foreach ($tab_array as $dtab) {
 	if ($dtab[1]) {
 		$bctab = $dtab[0];
+		$bclink = $dtab[2];
 		break;
 	}
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), $bctab);
-$pglinks = array("", "firewall_rules.php", "@self");
+$pglinks = array("", "firewall_rules.php", $bclink);
 $shortcut_section = "firewall";
 
 include("head.inc");

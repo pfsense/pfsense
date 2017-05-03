@@ -390,7 +390,8 @@ sync; sync; sync
 trap "-" 1 2 15 EXIT
 
 # Calculate the "Unique ID" for support and tracking purposes
-UID=$(/usr/sbin/gnid)
+/usr/sbin/gnid
+UID=$(/bin/kenv -q pfSense.uniqueid)
 
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"

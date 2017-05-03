@@ -456,6 +456,15 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		}
 	}
 
+	if (isset($config['reset_factory_defaults'])) {
+		/*
+		   We have put a default config.xml on disk and are about to reboot
+		   or reload it. Do not let any system or package code try to save
+		   state to config because that would overwrite the default config
+		   with the running config.
+		*/
+		return false;
+	}
 
 	if ($backup) {
 		backup_config();
@@ -525,7 +534,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
  *   integer	- indicates completion
  ******/
 function reset_factory_defaults($lock = false, $reboot_required = true) {
-	global $g;
+	global $config, $g;
 
 
 	/* Remove all additional packages */
@@ -555,6 +564,17 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	    "{$g['cf_conf_path']}/config.xml");
 
 	disable_security_checks();
+
+	/*
+	   Let write_config know that we are awaiting reload of the current config
+	   to factory defaults. Either the system is about to reboot, throwing away
+	   the current in-memory config as it shuts down, or the in-memory config
+	   is about to be reloaded on-the-fly by parse_config.
+
+	   In both cases, we want to ensure that write_config does not flush the
+	   in-memory config back to disk.
+	*/
+	$config['reset_factory_defaults'] = true;
 
 	/* call the wizard */
 	if ($reboot_required) {

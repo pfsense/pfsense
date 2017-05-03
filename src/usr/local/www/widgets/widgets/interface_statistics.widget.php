@@ -91,7 +91,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
 		}
 
-		print(		"</td>");
 		print(	"</tr>");
 	}
 	print(	"</tbody>");

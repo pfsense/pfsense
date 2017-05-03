@@ -479,6 +479,12 @@ function firewall_check_for_advanced_options(&$item) {
 	if (isset($item['nosync'])) {
 		$item_set .= "no XMLRPC Sync ";
 	}
+	if ($item['xmlrpcmodification'] == "enable") {
+		$item_set .= "XMLRPC Enable rule on backup ";
+	}
+	if ($item['xmlrpcmodification'] == "disable") {
+		$item_set .= "XMLRPC Disable rule on backup ";
+	}
 	if ($item['max-src-conn-rate']) {
 		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
 	}

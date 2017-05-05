@@ -4647,4 +4647,18 @@ $shaper_msg = gettext("Buttons at the bottom represent %s actions and are activa
 $default_shaper_msg .= sprintf($shaper_msg, gettext("queue"));
 $dn_default_shaper_msg .= sprintf($shaper_msg, gettext("limiter"));
 
+// Check to see if the specified interface has a queue configured
+function interface_has_queue($if) {
+	global $config;
+
+	if ($config['shaper']) {
+		foreach ($config['shaper']['queue'] as $queue) {
+			if ($queue['interface'] === $if) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 ?>

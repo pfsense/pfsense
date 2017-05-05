@@ -51,7 +51,7 @@ if (is_array($config['load_balancer']['lbpool'])) {
 	}
 }
 
-$reserved_ifs = get_configured_interface_list(false, true);
+$reserved_ifs = get_configured_interface_list(true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 $max_alias_addresses = 5000;
 
@@ -59,10 +59,6 @@ if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
 $a_aliases = &$config['aliases']['alias'];
-
-if ($_POST['save']) {
-	$origname = $_POST['origname'];
-}
 
 // Debugging
 if ($debug) {
@@ -122,6 +118,14 @@ if (isset($id) && $a_aliases[$id]) {
 			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
 		}
 	}
+}
+
+if ($_POST['save']) {
+	// Remember the original name on an attempt to save
+	$origname = $_POST['origname'];
+} else {
+	// Set the original name on edit (or add, when this will be blank)
+	$origname = $pconfig['name'];
 }
 
 $tab = $_REQUEST['tab'];
@@ -429,7 +433,7 @@ if ($_POST['save']) {
 					}
 				}
 			} else if ($_POST['type'] == "port") {
-				if (!is_port($input_address) && !is_portrange($input_address)) {
+				if (!is_port_or_range($input_address)) {
 					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
@@ -468,31 +472,8 @@ if ($_POST['save']) {
 		/*	 Check to see if alias name needs to be
 		 *	 renamed on referenced rules and such
 		 */
-		if ($_POST['name'] <> $_POST['origname']) {
-			// Firewall rules
-			update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $_POST['name'], $origname);
-			// NAT Rules
-			update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('target'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $_POST['name'], $origname);
-			// NAT 1:1 Rules
-			//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $_POST['name'], $origname);
-			//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $_POST['name'], $origname);
-			// NAT Outbound Rules
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $_POST['name'], $origname);
-			update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $_POST['name'], $origname);
-			// Alias in an alias
-			update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $_POST['name'], $origname);
+		if ($_POST['name'] <> $origname) {
+			update_alias_name($_POST['name'], $origname);
 		}
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_write_config");
@@ -523,7 +504,7 @@ if ($_POST['save']) {
 		// Sort list
 		$a_aliases = msort($a_aliases, "name");
 
-		if (write_config()) {
+		if (write_config(gettext("Edited a firewall alias."))) {
 			mark_subsystem_dirty('aliases');
 		}
 
@@ -611,6 +592,26 @@ $pattern_str = array(
 	'urltable_ports'	=> '.*'					// Alias Name or URL
 );
 
+$title_str = array(
+	'network'			=> 'An IPv4 network address like 1.2.3.0, an IPv6 network address like 1:2a:3b:ffff::0, IP address range, FQDN or an alias',
+	'host'				=> 'An IPv4 address like 1.2.3.4, an IPv6 address like 1:2a:3b:ffff::1, IP address range, FQDN or an alias',
+	'port'				=> 'A port number, port number range or an alias',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
+);
+
+$placeholder_str = array(
+	'network'			=> 'Address',
+	'host'				=> 'Address',
+	'port'				=> 'Port',
+	'url'				=> 'URL',
+	'url_ports'			=> 'URL',
+	'urltable'			=> 'URL',
+	'urltable_ports'	=> 'URL'
+);
+
 $types = array(
 	'host'	=> gettext("Host(s)"),
 	'network' => gettext("Network(s)"),
@@ -638,7 +639,7 @@ $form->addGlobal(new Form_Input(
 	'origname',
 	null,
 	'hidden',
-	$pconfig['name']
+	$origname
 ));
 
 if (isset($id) && $a_aliases[$id]) {
@@ -715,7 +716,7 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		$tab == 'port' ? 'Port':'Address',
+		'Address',
 		$address,
 		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
@@ -787,9 +788,15 @@ events.push(function() {
 
 		// Set the input field pattern by tab type
 		var patternstr = <?=json_encode($pattern_str);?>;
-		for (i = 0; i < <?=$counter;?>; i++) {
-			$('#address' + i).prop('pattern', patternstr[tab]);
-		}
+		var titlestr = <?=json_encode($title_str);?>;
+		var placeholderstr = <?=json_encode($placeholder_str);?>;
+		$("[id^='address']").each(function () {
+			if (/^address[0-9]+$/.test(this.id)) {
+				$('#' + this.id).prop('pattern', patternstr[tab]);
+				$('#' + this.id).prop('title', titlestr[tab]);
+				$('#' + this.id).prop('placeholder', placeholderstr[tab]);
+			}
+		});
 
 		// Hide and disable rows other than the first
 		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));

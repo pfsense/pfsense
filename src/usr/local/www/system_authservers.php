@@ -30,6 +30,7 @@
 
 require_once("guiconfig.inc");
 require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 // Have we been called to populate the "Select a container" modal?
 if ($_REQUEST['ajax']) {
@@ -283,6 +284,13 @@ if ($_POST['save']) {
 		$to_field = "{$pconfig['type']}_timeout";
 		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {
 			$input_errors[] = sprintf(gettext("%s Timeout value must be numeric and positive."), strtoupper($pconfig['type']));
+		}
+	}
+
+	// https://redmine.pfsense.org/issues/4154
+	if ($pconfig['type'] == "radius") {
+		if (is_ipaddrv6($_POST['radius_host'])) {
+			$input_errors[] = gettext("IPv6 does not work for RADIUS authentication, see Bug #4154.");
 		}
 	}
 

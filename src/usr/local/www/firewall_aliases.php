@@ -97,7 +97,7 @@ if ($_POST['act'] == "del") {
 				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_POST['id']]['name'] . ".txt");
 			}
 			unset($a_aliases[$_POST['id']]);
-			if (write_config()) {
+			if (write_config(gettext("Deleted a firewall alias."))) {
 				filter_configure();
 				mark_subsystem_dirty('aliases');
 			}

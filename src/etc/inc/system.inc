@@ -327,13 +327,15 @@ function system_hosts_local_entries() {
 			);
 			$hosts_if_found = true;
 		}
-		$cfgipv6 = get_interface_ipv6($sysif);
-		if (is_ipaddrv6($cfgipv6)) {
-			$hosts[] = array(
-			    'ipaddr' => $cfgipv6,
-			    'fqdn' => $local_fqdn
-			);
-			$hosts_if_found = true;
+		if (!isset($syscfg['ipv6dontcreatelocaldns'])) {
+			$cfgipv6 = get_interface_ipv6($sysif);
+			if (is_ipaddrv6($cfgipv6)) {
+				$hosts[] = array(
+					'ipaddr' => $cfgipv6,
+					'fqdn' => $local_fqdn
+				);
+				$hosts_if_found = true;
+			}
 		}
 		if ($hosts_if_found == true) {
 			break;
@@ -570,12 +572,15 @@ function system_hosts_generate() {
 
 function system_dhcpleases_configure() {
 	global $config, $g;
-
+	if (!function_exists('is_dhcp_server_enabled')) {
+		require_once('pfsense-utils.inc');
+	}
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if ((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
-	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) {
+	if (((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
+	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) &&
+	    (is_dhcp_server_enabled())) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases")) {
@@ -1232,6 +1237,7 @@ function system_webgui_create_certificate() {
 	$cert = array();
 	$cert['refid'] = uniqid();
 	$cert['descr'] = sprintf(gettext("webConfigurator default (%s)"), $cert['refid']);
+	$cert_hostname = "{$config['system']['hostname']}-{$cert['refid']}";
 
 	$dn = array(
 		'countryName' => "US",
@@ -1239,7 +1245,8 @@ function system_webgui_create_certificate() {
 		'localityName' => "Locality",
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
 		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
-		'commonName' => "{$config['system']['hostname']}-{$cert['refid']}");
+		'commonName' => $cert_hostname,
+		'subjectAltName' => "DNS:{$cert_hostname}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")) {
 		while ($ssl_err = openssl_error_string()) {
@@ -1515,7 +1522,7 @@ EOD;
 			printf(gettext("Error: cannot open certificate file in system_webgui_start().%s"), "\n");
 			return 1;
 		}
-		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
+		chmod("{$g['varetc_path']}/{$cert_location}", 0644);
 		if ($ca <> "") {
 			$cert_chain = $cert . "\n" . $ca;
 		} else {
@@ -2318,6 +2325,7 @@ function system_identify_specific_platform() {
 	global $g;
 
 	$hw_model = get_single_sysctl('hw.model');
+	$hw_ncpu = get_single_sysctl('hw.ncpu');
 
 	/* Try to guess from smbios strings */
 	unset($product);
@@ -2356,6 +2364,24 @@ function system_identify_specific_platform() {
 			break;
 		case 'RCC':
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
+			break;
+		case 'Minnowboard Turbot D0 PLATFORM':
+			$result = array();
+			$result['name'] = 'Turbot Dual-E';
+			/* Detect specific model */
+			switch ($hw_ncpu) {
+			case '4':
+				$result['model'] = 'SG-2340';
+				break;
+			case '2':
+				$result['model'] = 'SG-2320';
+				break;
+			default:
+				$result['model'] = $result['name'];
+				break;
+			}
+			$result['descr'] = 'Netgate ' . $result['model'];
+			return $result;
 			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':

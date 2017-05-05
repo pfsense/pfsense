@@ -27,7 +27,7 @@ require_once("config.inc");
 require_once("functions.inc");
 
 if (update_alias_url_data()) {
-	write_config();
+	write_config(gettext("URL alias data updated via minicron"));
 	send_event("filter reload");
 }
 ?>

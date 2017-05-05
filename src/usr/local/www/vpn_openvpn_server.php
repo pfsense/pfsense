@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies, $openvpn_tls_modes;
@@ -85,9 +86,12 @@ if ($_POST['act'] == "del") {
 	}
 	if (!empty($a_server[$id])) {
 		openvpn_delete('server', $a_server[$id]);
+		$wc_msg = sprintf(gettext('Deleted OpenVPN server from %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($a_server[$id]['interface']), $a_server[$id]['local_port'], $a_server[$id]['description']);
+	} else {
+		$wc_msg = gettext('Deleted empty OpenVPN server');
 	}
 	unset($a_server[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Server successfully deleted.");
 }
 
@@ -605,11 +609,13 @@ if ($_POST['save']) {
 
 		if (isset($id) && $a_server[$id]) {
 			$a_server[$id] = $server;
+			$wc_msg = sprintf(gettext('Updated OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		} else {
 			$a_server[] = $server;
+			$wc_msg = sprintf(gettext('Added OpenVPN server on %1$s:%2$s %3$s'), convert_friendly_interface_to_friendly_descr($server['interface']), $server['local_port'], $server['description']);
 		}
 
-		write_config();
+		write_config($wc_msg);
 		openvpn_resync('server', $server);
 		openvpn_resync_csc_all();
 
@@ -1434,6 +1440,7 @@ events.push(function() {
 				hideInput('shared_key', false);
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
+				hideCheckbox('duplicate_cn', false);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1447,6 +1454,7 @@ events.push(function() {
 				hideInput('shared_key', true);
 				hideInput('topology', false);
 				hideCheckbox('compression_push', false);
+				hideCheckbox('duplicate_cn', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1465,6 +1473,7 @@ events.push(function() {
 				hideInput('shared_key', false);
 				hideInput('topology', true);
 				hideCheckbox('compression_push', true);
+				hideCheckbox('duplicate_cn', true);
 			break;
 		}
 
@@ -1488,7 +1497,7 @@ events.push(function() {
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
-				hideCheckbox('client2client', true);
+				hideCheckbox('client2client', false);
 			break;
 			case "server_user":
 			case "server_tls_user":
@@ -1746,7 +1755,7 @@ events.push(function() {
 	});
 
 	 // Tun/tap mode
-	$('#dev_mode, #serverbridge_dhcp').click(function () {
+	$('#dev_mode, #serverbridge_dhcp').change(function () {
 		tuntap_change();
 	});
 

@@ -118,38 +118,6 @@ function restore_rrddata() {
 	}
 }
 
-function add_base_packages_menu_items() {
-	global $g, $config;
-	$base_packages = explode(",", $g['base_packages']);
-	$modified_config = false;
-	foreach ($base_packages as $bp) {
-		$basepkg_path = "/usr/local/pkg/{$bp}";
-		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION);
-		if ($tmpinfo['extension'] == "xml" && file_exists($basepkg_path)) {
-			$pkg_config = parse_xml_config_pkg($basepkg_path, "packagegui");
-			if ($pkg_config['menu'] != "") {
-				if (is_array($pkg_config['menu'])) {
-					foreach ($pkg_config['menu'] as $menu) {
-						if (is_array($config['installedpackages']['menu'])) {
-							foreach ($config['installedpackages']['menu'] as $amenu) {
-								if ($amenu['name'] == $menu['name']) {
-									continue;
-								}
-							}
-						}
-						$config['installedpackages']['menu'][] = $menu;
-						$modified_config = true;
-					}
-				}
-			}
-		}
-	}
-	if ($modified_config) {
-		write_config(gettext("Restored base_package menus after configuration restore."));
-		$config = parse_config(true);
-	}
-}
-
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z_0-9]/i', '', $string);
 }
@@ -305,8 +273,7 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
-									add_base_packages_menu_items();
+									write_config(sprintf(gettext("Unset RRD data from configuration after restoring %s configuration area"), $_POST['restorearea']));
 									convert_config();
 								}
 								filter_configure();
@@ -341,8 +308,7 @@ if ($_POST) {
 									restore_rrddata();
 									unset($config['rrddata']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
-									write_config();
-									add_base_packages_menu_items();
+									write_config(gettext("Unset RRD data from configuration after restoring full configuration"));
 									convert_config();
 								}
 								if ($m0n0wall_upgrade == true) {
@@ -351,7 +317,7 @@ if ($_POST) {
 									}
 									unset($config['shaper']);
 									/* optional if list */
-									$ifdescrs = get_configured_interface_list(true, true);
+									$ifdescrs = get_configured_interface_list(true);
 									/* remove special characters from interface descriptions */
 									if (is_array($ifdescrs)) {
 										foreach ($ifdescrs as $iface) {
@@ -362,17 +328,8 @@ if ($_POST) {
 									if (is_array($ifdescrs)) {
 										foreach ($ifdescrs as $iface) {
 											if (is_alias($config['interfaces'][$iface]['descr'])) {
-												// Firewall rules
 												$origname = $config['interfaces'][$iface]['descr'];
-												$newname = $config['interfaces'][$iface]['descr'] . "Alias";
-												update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $newname, $origname);
-												// NAT Rules
-												update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $newname, $origname);
-												update_alias_names_upon_change(array('nat', 'rule'), array('target'), $newname, $origname);
-												// Alias in an alias
-												update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $newname, $origname);
+												update_alias_name($origname . "Alias", $origname);
 											}
 										}
 									}
@@ -402,8 +359,7 @@ if ($_POST) {
 										}
 									}
 									$config['diag']['ipv6nat'] = true;
-									write_config();
-									add_base_packages_menu_items();
+									write_config(gettext("Imported m0n0wall configuration"));
 									convert_config();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");

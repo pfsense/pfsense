@@ -104,6 +104,10 @@ if ($_POST['save']) {
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
@@ -275,7 +279,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -425,7 +429,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nobinat']
 ))->setHelp('Excludes the address from a later, more general, rule.');
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 
 foreach ($iflist as $if => $ifdesc) {
 	if (have_ruleint_access($if)) {

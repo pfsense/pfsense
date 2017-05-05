@@ -412,9 +412,31 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-	/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
-	if ($_POST['enable'] && isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false)) {
-		$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
+	if ((!isset($pool) || !is_numeric($pool)) && $act != "newpool") {
+		/* If enabling DHCP Server, make sure that the DHCP Relay isn't enabled on this interface */
+		if ($_POST['enable'] && isset($config['dhcrelay']['enable']) &&
+		    (stristr($config['dhcrelay']['interface'], $if) !== false)) {
+			$input_errors[] = sprintf(gettext(
+			    "The DHCP relay on the %s interface must be disabled before enabling the DHCP server."),
+			    $iflist[$if]);
+		}
+
+		/* If disabling DHCP Server, make sure that DHCP registration isn't enabled for DNS forwarder/resolver */
+		if (!$_POST['enable']) {
+			if (isset($config['dnsmasq']['enable']) &&
+			    (isset($config['dnsmasq']['regdhcp']) ||
+			    isset($config['dnsmasq']['regdhcpstatic']) ||
+			    isset($config['dnsmasq']['dhcpfirst']))) {
+				$input_errors[] = gettext(
+				    "Disable DHCP Registration features in DNS Forwarder before disabling DHCP Server.");
+			}
+			if (isset($config['unbound']['enable']) &&
+			    (isset($config['unbound']['regdhcp']) ||
+			    isset($config['unbound']['regdhcpstatic']))) {
+				$input_errors[] = gettext(
+				    "Disable DHCP Registration features in DNS Resolver before disabling DHCP Server.");
+			}
+		}
 	}
 
 	// If nothing is wrong so far, and we have range from and to, then check conditions related to the values of range from and to.
@@ -628,6 +650,31 @@ if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 		$retvaldhcp |= services_dhcpd_configure();
 		if ($retvaldhcp == 0) {
 			clear_subsystem_dirty('staticmaps');
+		}
+	}
+	/* BIND package - Bug #3710 */
+	if (!function_exists('is_package_installed')) {
+		require_once('pkg-utils.inc');
+	}
+	if (is_package_installed('pfSense-pkg-bind') && isset($config['installedpackages']['bind']['config'][0]['enable_bind'])) {
+		$reloadbind = false;
+		if (is_array($config['installedpackages']['bindzone'])) {
+			$bindzone = $config['installedpackages']['bindzone']['config'];
+		} else {
+			$bindzone = array();
+		}
+		for ($x = 0; $x < sizeof($bindzone); $x++) {
+			$zone = $bindzone[$x];
+			if ($zone['regdhcpstatic'] == 'on') {
+				$reloadbind = true;
+				break;
+			}
+		}
+		if ($reloadbind === true) {
+			if (file_exists("/usr/local/pkg/bind.inc")) {
+				require_once("/usr/local/pkg/bind.inc");
+				bind_sync();
+			}
 		}
 	}
 	if ($dhcpd_enable_changed) {

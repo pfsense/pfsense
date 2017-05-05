@@ -60,6 +60,7 @@
 	 *    - All-Inkl (all-inkl.com)
 	 *    - DuiaDNS (www.duiadns.net)
 	 *    - DuiaDNS IPv6 (www.duiadns.net)
+	 *    - Hover (www.hover.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -113,6 +114,7 @@
 	 *  All-Inkl        - Last Tested: 12 November 2016
 	 *  DuiaDNS         - Last Tested: 25 November 2016
 	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
+	 *  Hover           - Last Tested: 15 February 2017
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -210,6 +212,7 @@
 			case "cloudflare-v6":
 			case "cloudflare":
 			case "gratisdns":
+			case "hover":
 				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
@@ -319,6 +322,7 @@
 					case 'spdyn':
 					case 'spdyn-v6':
 					case 'all-inkl':
+					case 'hover':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -650,10 +654,9 @@
 				case 'route53':		
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
-					list($r53_regionId, $r53_zoneId) = split('/', $this->_dnsZoneID);
-					$apiurl = $r53->getApiUrl($r53_zoneId);
+					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
 					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
-					$httphead = $r53->getHttpPostHeaders($r53_zoneId, $r53_regionId, hash("sha256",$xmlreq));
+					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
 						log_error(sprintf("Sending reuquest to: %s", $apiurl));
@@ -688,6 +691,7 @@
 					break;
 				case 'cloudflare-v6':
 				case 'cloudflare':
+					$this->_FQDN = ltrim($this->_FQDN, '@.');
 					$isv6 = ($this->_dnsService === 'cloudflare-v6');
 					$recordType = $isv6 ? "AAAA" : "A";
 					$needsIP = TRUE;
@@ -818,6 +822,52 @@
 					$server = 'https://dyndns.kasserver.com/';
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'myip=' . $this->_dnsIP);
+					break;
+				case 'hover':
+					$needsIP = FALSE;
+					$port = "";
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+					//step 1: login to API
+					$post_data['username'] = $this->_dnsUser;
+					$post_data['password'] = $this->_dnsPass;
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/login");
+					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
+					$output = curl_exec($ch);
+
+					//extract the cookies
+					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
+					if( count($cookies[1]) > 0 ){
+						$cookie_data = implode("; ",$cookies[1]);
+					}
+
+					//step 2: find the id of the A record
+					$post_data = null;
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
+					curl_setopt($ch, CURLOPT_HEADER, 0);
+					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns");
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+
+					$output = curl_exec($ch);
+					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$this->_dnsDomain}.*?entries.*?{\"id\":\"([^\"]*?)\",\"name\":\"{$this->_dnsHost}\".*?\$/", $output, $hostID);
+					$hostID = $hostID[1];
+					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$this->_dnsDomain}.*?entries.*?{[^\}]*?\"name\":\"{$this->_dnsHost}\".*?content\":\"([^\"]*?)\".*?\$/", $output, $hostIP);
+					$hostIP = $hostIP[1];
+
+					//step 3: update the IP
+					if ($hostID) {
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+						curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
+						$post_data['content'] = $this->_dnsIP;
+						curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+						curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns/{$hostID}");
+						log_error("HostID:{$hostID}, OldIP:{$hostIP}");
+					}
 					break;
 				default:
 					break;
@@ -1483,6 +1533,16 @@
  							$this->_debug($header);
  					}
  					break;
+				case 'hover':
+					if (preg_match('/succeeded":true/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
 			}
 
 			if ($successful_update == true) {
@@ -1492,7 +1552,7 @@
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile, $wan_ip));
-					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
+					@file_put_contents($this->_cacheFile, "{$wan_ip}|{$currentTime}");
 				} else {
 					@unlink($this->_cacheFile);
 				}
@@ -1595,13 +1655,13 @@
 			} else {
 				if (file_exists($this->_cacheFile)) {
 					$contents = file_get_contents($this->_cacheFile);
-					list($cacheIP, $cacheTime) = explode(':', $contents);
+					list($cacheIP, $cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP.'/'.$cacheTime);
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IP: %s"), $cacheIP);
 				} else {
 					$cacheIP = '0.0.0.0';
-					@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
+					@file_put_contents($this->_cacheFile, "0.0.0.0|{$currentTime}");
 					$cacheTime = $currentTime;
 					$initial = true;
 					$log_error .= gettext("No Cached IP found.");

@@ -29,11 +29,13 @@
 
 require_once("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $cert_methods = array(
 	"import" => gettext("Import an existing Certificate"),
 	"internal" => gettext("Create an internal Certificate"),
 	"external" => gettext("Create a Certificate Signing Request"),
+	"sign" => gettext("Sign a Certificate Signing Request")
 );
 
 $cert_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
@@ -42,9 +44,9 @@ $cert_types = array(
 	"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+global $openssl_digest_algs;
 
-if (isset($_REQUEST['userid']) && is_numericint(REQUEST['userid'])) {
+if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
 	$userid = $_REQUEST['userid'];
 }
 
@@ -81,7 +83,6 @@ foreach ($a_ca as $ca) {
 
 $act = $_REQUEST['act'];
 
-
 if ($_POST['act'] == "del") {
 
 	if (!isset($a_cert[$id])) {
@@ -95,7 +96,6 @@ if ($_POST['act'] == "del") {
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
-
 
 if ($act == "new") {
 	$pconfig['method'] = $_POST['method'];
@@ -172,6 +172,7 @@ if ($act == "p12") {
 	$args['friendly_name'] = $a_cert[$id]['descr'];
 
 	$ca = lookup_ca($a_cert[$id]['caref']);
+
 	if ($ca) {
 		$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
 	}
@@ -212,6 +213,24 @@ if ($_POST['save']) {
 		$pconfig = $_POST;
 
 		/* input validation */
+		if ($pconfig['method'] == "sign") {
+			$reqdfields = explode(" ",
+				"descr catosignwith");
+			$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("CA to sign with"));
+
+			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST"))) {
+				$input_errors[] = gettext("This signing request does not appear to be valid.");
+			}
+
+			if ( (($_POST['csrtosign'] === "new") && (strlen($_POST['keypaste']) > 0)) && (!strstr($_POST['keypaste'], "BEGIN PRIVATE KEY") || !strstr($_POST['keypaste'], "END PRIVATE KEY"))) {
+				$input_errors[] = gettext("This private does not appear to be valid.");
+				$input_errors[] = gettext("Key data field should be blank, or a valid x509 private key");
+			}
+
+		}
+
 		if ($pconfig['method'] == "import") {
 			$reqdfields = explode(" ",
 				"descr cert key");
@@ -222,7 +241,8 @@ if ($_POST['save']) {
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
-			if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+
+			if (cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 			}
 		}
@@ -267,6 +287,7 @@ if ($_POST['save']) {
 
 		$altnames = array();
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
 		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
 			foreach ($_POST as $key => $value) {
@@ -362,6 +383,48 @@ if ($_POST['save']) {
 				if ($cert && $a_user) {
 					$a_user[$userid]['cert'][] = $cert['refid'];
 				}
+			} else if ($pconfig['method'] == "sign") { // Sign a CSR
+				$csrid = lookup_cert($pconfig['csrtosign']);
+				$caid =  lookup_ca($pconfig['catosignwith']);
+
+				// Read the CSR from $config, or if a new one, from the textarea
+				if ($pconfig['csrtosign'] === "new") {
+					$csr = $pconfig['csrpaste'];
+				} else {
+					$csr = base64_decode($csrid['csr']);
+				}
+
+				$old_err_level = error_reporting(0);
+
+				// Gather the information required for signed cert
+				$ca = base64_decode($caid['crt']);
+				$key = base64_decode($caid['prv']);
+				$duration = $pconfig['duration'];
+				$caref = $pconfig['catosignwith'];
+				$type = (cert_get_purpose($csrid)['server'] === "Yes") ? "server":"user";
+
+				// Sign the new cert and export it in x509 format
+				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
+
+				// Gather the details required to save the new cert
+				$newcert = array();
+				$newcert['refid'] = uniqid();
+				$newcert['caref'] = $caref;
+				$newcert['descr'] = $pconfig['descr'];
+				$newcert['type'] = $type;
+				$newcert['crt'] = base64_encode($n509);
+
+				if ($pconfig['csrtosign'] === "new") {
+					$newcert['prv'] = base64_encode($pconfig['keypaste']);
+				} else {
+					$newcert['prv'] = $csrid['prv'];
+				}
+
+				// Add it to the config file
+				$config['cert'][] = $newcert;
+
+				error_reporting($old_err_level);
+
 			} else {
 				$cert = array();
 				$cert['refid'] = uniqid();
@@ -388,19 +451,29 @@ if ($_POST['save']) {
 					if (!empty($pconfig['dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 					}
+					if (is_ipaddr($pconfig['dn_commonname'])) {
+						$altnames_tmp = array("IP:{$pconfig['dn_commonname']}");
+					} else {
+						$altnames_tmp = array("DNS:{$pconfig['dn_commonname']}");
+					}
 					if (count($altnames)) {
-						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
-							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+							// The CN is added as a SAN automatically, do not add it again.
+							if ($altname['value'] != $pconfig['dn_commonname']) {
+								$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+							}
 						}
-
+					}
+					if (!empty($altnames_tmp)) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])) {
+						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
-							$input_errors = array();
-							array_push($input_errors, "openssl library returns: " . $ssl_err);
+							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+								array_push($input_errors, "openssl library returns: " . $ssl_err);
+							}
 						}
 					}
 				}
@@ -425,12 +498,15 @@ if ($_POST['save']) {
 					}
 
 					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])) {
+						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
-							$input_errors = array();
-							array_push($input_errors, "openssl library returns: " . $ssl_err);
+							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+								array_push($input_errors, "openssl library returns: " . $ssl_err);
+							}
 						}
 					}
 				}
+
 				error_reporting($old_err_level);
 
 				if (isset($id) && $a_cert[$id]) {
@@ -482,12 +558,12 @@ if ($_POST['save']) {
 //				$subject_mismatch = true;
 //			}
 //		}
-		$mod_csr = csr_get_modulus($pconfig['csr'], false);
-		$mod_cert = cert_get_modulus($pconfig['cert'], false);
+		$mod_csr = cert_get_publickey($pconfig['csr'], false, 'csr');
+		$mod_cert = cert_get_publickey($pconfig['cert'], false);
 
 		if (strcmp($mod_csr, $mod_cert)) {
 			// simply: if the moduli don't match, then the private key and public key won't match
-			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."), $subj_cert);
+			$input_errors[] = sprintf(gettext("The certificate public key does not match the signing request public key."), $subj_cert);
 			$subject_mismatch = true;
 		}
 
@@ -565,7 +641,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		));
 	}
 
-	$section = new Form_Section('Add a New Certificate');
+	$section = new Form_Section('Add/Sign a New Certificate');
 
 	if (!isset($id)) {
 		$section->addInput(new Form_Select(
@@ -584,6 +660,73 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	))->addClass('toggle-existing');
 
 	$form->add($section);
+
+	// Return an array containing the IDs od all CAs
+	function list_cas() {
+		global $a_ca;
+		$allCas = array();
+
+		foreach ($a_ca as $ca) {
+			if ($ca['prv']) {
+				$allCas[$ca['refid']] = $ca['descr'];
+			}
+		}
+
+		return $allCas;
+	}
+
+	// Return an array containing the IDs od all CSRs
+	function list_csrs() {
+		global $config;
+		$allCsrs = array();
+
+		foreach ($config['cert'] as $cert) {
+			if ($cert['csr']) {
+				$allCsrs[$cert['refid']] = $cert['descr'];
+			}
+		}
+
+		return ['new' => gettext('New CSR (Paste below)')] + $allCsrs;
+	}
+
+	$section = new Form_Section('Sign CSR');
+	$section->addClass('toggle-sign collapse');
+
+	$section->AddInput(new Form_Select(
+		'catosignwith',
+		'*CA to sign with',
+		$pconfig['catosignwith'],
+		list_cas()
+	));
+
+	$section->AddInput(new Form_Select(
+		'csrtosign',
+		'*CSR to sign',
+		isset($pconfig['csrtosign']) ? $pconfig['csrtosign'] : 'new',
+		list_csrs()
+	));
+
+	$section->addInput(new Form_Input(
+		'duration',
+		'*Certificate duration (days)',
+		'number',
+		$pconfig['duration'] ? $pconfig['duration']:'3650'
+	));
+
+	$section->addInput(new Form_Textarea(
+		'csrpaste',
+		'CSR data',
+		$pconfig['csrpaste']
+	))->setHelp('Paste a Certificate Signing Request in X.509 PEM format here.');
+
+	$section->addInput(new Form_Textarea(
+		'keypaste',
+		'Key data',
+		$pconfig['keypaste']
+	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in pfSense');
+
+	$form->add($section);
+
 	$section = new Form_Section('Import Certificate');
 	$section->addClass('toggle-import collapse');
 
@@ -754,6 +897,8 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 		$group->addClass('repeatable');
 
+		$group->setHelp('Enter additional identifiers for the certificate in this list. The Common Name field is automatically added to the certificate as an Alternative Name.');
+
 		$section->add($group);
 
 		$counter++;
@@ -860,10 +1005,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		}
 
 		if (cert_in_use($cert['refid'])) {
-			$cert['descr'] .= " <i>In Use</i>";
+			$cert['descr'] .= " (In Use)";
 		}
 		if (is_cert_revoked($cert)) {
-			$cert['descr'] .= " <b>Revoked</b>";
+			$cert['descr'] .= " (Revoked)";
 		}
 
 		$existCerts[ $cert['refid'] ] = $cert['descr'];
@@ -965,6 +1110,7 @@ foreach ($a_cert as $i => $cert):
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);
 		$purpose = cert_get_purpose($cert['crt']);
+		$sans = cert_get_sans($cert['crt']);
 		list($startdate, $enddate) = cert_get_dates($cert['crt']);
 
 		if ($subj == $issuer) {
@@ -985,6 +1131,7 @@ foreach ($a_cert as $i => $cert):
 
 	if ($cert['csr']) {
 		$subj = htmlspecialchars(csr_get_subject($cert['csr']));
+		$sans = cert_get_sans($cert['crt']);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
 
@@ -1000,12 +1147,36 @@ foreach ($a_cert as $i => $cert):
 							<i><?=$cert_types[$cert['type']]?></i><br />
 						<?php endif?>
 						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b>
+							CA: <b><?=$purpose['ca']?></b><br/>
+							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
+						<?php
+						$certextinfo = "";
+						if (is_array($sans) && !empty($sans)) {
+							$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $sans));
+							$certextinfo .= '<br/>';
+						}
+						if (is_array($purpose) && !empty($purpose['ku'])) {
+							$certextinfo .= '<b>' . gettext("KU: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $purpose['ku']));
+							$certextinfo .= '<br/>';
+						}
+						if (is_array($purpose) && !empty($purpose['eku'])) {
+							$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
+						}
+						?>
+						<?php if (!empty($certextinfo)): ?>
+							<div class="infoblock">
+							<? print_info_box($certextinfo, 'info', false); ?>
+							</div>
+						<?php endif?>
+
 						<?php if (!empty($startdate) || !empty($enddate)): ?>
 						<br />
 						<small>
@@ -1035,30 +1206,14 @@ foreach ($a_cert as $i => $cert):
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							<?=gettext("Captive Portal")?>
 						<?php endif?>
-<?php
-							$refid = $cert['refid'];
-							if (is_array($certificates_used_by_packages)) {
-								foreach ($certificates_used_by_packages as $name => $package) {
-									if (isset($package['certificatelist'][$refid])) {
-										$hint = "" ;
-										if (is_array($package['certificatelist'][$refid])) {
-											foreach ($package['certificatelist'][$refid] as $cert_used) {
-												$hint = $hint . $cert_used['usedby']."\n";
-											}
-										}
-										$count = count($package['certificatelist'][$refid]);
-										echo "<div title='".htmlspecialchars($hint)."'>";
-										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
-										echo "</div>";
-									}
-								}
-							}
-?>
+						<?php echo cert_usedby_description($cert['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-certificate" title="<?=gettext("Export Certificate")?>"></a>
-							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<?php if ($cert['prv']): ?>
+								<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<?php endif?>
 							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-archive" title="<?=gettext("Export P12")?>"></a>
 						<?php else: ?>
 							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
@@ -1082,7 +1237,7 @@ foreach ($a_cert as $i => $cert):
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
-		<?=gettext("Add")?>
+		<?=gettext("Add/Sign")?>
 	</a>
 </nav>
 <?php
@@ -1109,7 +1264,6 @@ events.push(function() {
 				}
 
 				$subject = cert_get_subject_array($ca['crt']);
-
 ?>
 				case "<?=$ca['refid'];?>":
 					$('#dn_country').val("<?=$subject[0]['v'];?>");
@@ -1125,15 +1279,28 @@ events.push(function() {
 		}
 	}
 
+	function set_csr_ro() {
+		var newcsr = ($('#csrtosign').val() == "new");
+
+		$('#csrpaste').attr('readonly', !newcsr);
+		$('#keypaste').attr('readonly', !newcsr);
+		setRequired('csrpaste', newcsr);
+	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#caref').on('change', function() {
 		internalca_change();
 	});
 
+	$('#csrtosign').change(function () {
+		set_csr_ro();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	internalca_change();
+	set_csr_ro();
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

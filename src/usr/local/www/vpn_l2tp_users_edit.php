@@ -45,6 +45,7 @@ function l2tp_users_sort() {
 }
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['user'])) {
@@ -126,7 +127,7 @@ if ($_POST['save']) {
 		}
 		l2tp_users_sort();
 
-		write_config();
+		write_config(gettext("Configured a L2TP VPN user."));
 
 		$retval = vpn_l2tp_configure();
 

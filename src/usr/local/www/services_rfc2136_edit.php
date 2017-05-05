@@ -63,7 +63,7 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] || $_POST['force']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

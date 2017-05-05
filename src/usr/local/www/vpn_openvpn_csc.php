@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
@@ -53,9 +54,10 @@ if ($_POST['act'] == "del") {
 		exit;
 	}
 
+	$wc_msg = sprintf(gettext('Deleted OpenVPN client specific override %1$s %2$s'), $a_csc[$id]['common_name'], $a_csc[$id]['description']);
 	openvpn_delete_csc($a_csc[$id]);
 	unset($a_csc[$id]);
-	write_config();
+	write_config($wc_msg);
 	$savemsg = gettext("Client specific override successfully deleted.");
 }
 
@@ -260,15 +262,17 @@ if ($_POST['save']) {
 		if (isset($id) && $a_csc[$id]) {
 			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
+			$wc_msg = sprintf(gettext('Updated OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		} else {
 			$a_csc[] = $csc;
+			$wc_msg = sprintf(gettext('Added OpenVPN client specific override %1$s %2$s'), $csc['common_name'], $csc['description']);
 		}
 
 		if (!empty($old_csc['common_name'])) {
 			openvpn_delete_csc($old_csc);
 		}
 		openvpn_resync_csc($csc);
-		write_config();
+		write_config($wc_msg);
 
 		header("Location: vpn_openvpn_csc.php");
 		exit;

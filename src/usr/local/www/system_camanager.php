@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),
@@ -36,7 +37,7 @@ $ca_methods = array(
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
 $ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+global $openssl_digest_algs;
 
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -171,7 +172,7 @@ if ($_POST['save']) {
 		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
 		}
-		if (!$input_errors && !empty($_POST['key']) && cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 		}
 	}
@@ -274,9 +275,11 @@ if ($_POST['save']) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			} else if ($pconfig['method'] == "intermediate") {
@@ -291,9 +294,11 @@ if ($_POST['save']) {
 					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
 				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
+					$input_errors = array();
 					while ($ssl_err = openssl_error_string()) {
-						$input_errors = array();
-						array_push($input_errors, "openssl library returns: " . $ssl_err);
+						if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
+							array_push($input_errors, "openssl library returns: " . $ssl_err);
+						}
 					}
 				}
 			}
@@ -308,9 +313,8 @@ if ($_POST['save']) {
 
 		if (!$input_errors) {
 			write_config();
+			pfSenseHeader("system_camanager.php");
 		}
-
-		pfSenseHeader("system_camanager.php");
 	}
 }
 
@@ -368,6 +372,11 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 			</thead>
 			<tbody>
 <?php
+$pluginparams = array();
+$pluginparams['type'] = 'certificates';
+$pluginparams['event'] = 'used_ca';
+$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
 foreach ($a_ca as $i => $ca):
 	$name = htmlspecialchars($ca['descr']);
 	$subj = cert_get_subject($ca['crt']);
@@ -424,6 +433,7 @@ foreach ($a_ca as $i => $ca):
 						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
 							<?=gettext("LDAP Server")?>
 						<?php endif?>
+						<?php echo cert_usedby_description($ca['refid'], $certificates_used_by_packages); ?>
 					</td>
 					<td class="text-nowrap">
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>

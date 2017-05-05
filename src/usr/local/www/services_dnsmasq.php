@@ -34,6 +34,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("pfsense-utils.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 
@@ -145,6 +146,10 @@ if ($_POST['save']) {
 		if ($_POST['port'] == $config['unbound']['port']) {
 			$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
 		}
+	}
+
+	if ((isset($_POST['regdhcp']) || isset($_POST['regdhcpstatic']) || isset($_POST['dhcpfirst'])) && !is_dhcp_server_enabled()) {
+		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder.");
 	}
 
 	if ($_POST['port']) {

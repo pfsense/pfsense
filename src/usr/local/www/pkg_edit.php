@@ -28,16 +28,13 @@
 
 ini_set('max_execution_time', '0');
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
 require_once("filter.inc");
+require_once("functions.inc");
+require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
-
-/* dummy stubs needed by some code that was MFC'd */
-function pfSenseHeader($location) {
-	header("Location: " . $location);
-}
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
 $xml = htmlspecialchars($_REQUEST['xml']);
 
@@ -159,7 +156,6 @@ if ($_POST) {
 		}
 	}
 
-	// donotsave is enabled.  lets simply exit.
 	if (empty($pkg['donotsave'])) {
 
 		// store values in xml configuration file.
@@ -175,11 +171,24 @@ if ($_POST) {
 							foreach ($_POST as $key => $value) {
 								$matches = array();
 								if (preg_match("/^{$rowhelperfield['fieldname']}(\d+)$/", $key, $matches)) {
-									$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
+									if ($rowhelperfield['type'] == "textarea") {
+										$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = unixnewlines($value);
+									} else {
+										$pkgarr[$rowhelpername][$matches[1]][$rowhelperfield['fieldname']] = $value;
+									}
 								}
 							}
 						}
 						break;
+					case "textarea":
+						$fieldname = $fields['fieldname'];
+						$fieldvalue = unixnewlines(trim($_POST[$fieldname]));
+						if ($fields['encoding'] == 'base64') {
+							$fieldvalue = base64_encode($fieldvalue);
+						}
+						if ($fieldname) {
+							$pkgarr[$fieldname] = $fieldvalue;
+						}
 					default:
 						$fieldname = $fields['fieldname'];
 						if ($fieldname == "interface_array") {
@@ -243,6 +252,7 @@ if ($_POST) {
 			$get_from_post = true;
 		}
 	} elseif (!$input_errors) {
+		// donotsave is enabled.  lets simply exit.
 		exit;
 	}
 }

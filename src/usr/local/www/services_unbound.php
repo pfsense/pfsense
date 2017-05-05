@@ -29,6 +29,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("pfsense-utils.inc");
 require_once("system.inc");
 
 if (!is_array($config['unbound'])) {
@@ -153,6 +154,10 @@ if ($_POST['save']) {
 		$pconfig['active_interface'] = implode(",", $pconfig['active_interface']);
 	}
 
+	if ((isset($pconfig['regdhcp']) || isset($pconfig['regdhcpstatic'])) && !is_dhcp_server_enabled()) {
+		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Resolver.");
+	}
+
 	$display_custom_options = $pconfig['custom_options'];
 	$pconfig['custom_options'] = base64_encode(str_replace("\r\n", "\n", $pconfig['custom_options']));
 
@@ -199,7 +204,7 @@ if ($_POST['act'] == "del") {
 	if ($_POST['type'] == 'host') {
 		if ($a_hosts[$_POST['id']]) {
 			unset($a_hosts[$_POST['id']]);
-			write_config();
+			write_config(gettext("Host override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
@@ -207,7 +212,7 @@ if ($_POST['act'] == "del") {
 	} elseif ($_POST['type'] == 'doverride') {
 		if ($a_domainOverrides[$_POST['id']]) {
 			unset($a_domainOverrides[$_POST['id']]);
-			write_config();
+			write_config(gettext("Domain override deleted from DNS Resolver."));
 			mark_subsystem_dirty('unbound');
 			header("Location: services_unbound.php");
 			exit;
@@ -436,8 +441,8 @@ events.push(function() {
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
-					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("Parent domain of host")?></th>
+					<th><?=gettext("IP to return for host")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -499,6 +504,14 @@ endforeach;
 	</div>
 </div>
 
+<span class="help-block">
+	Enter any individual hosts for which the resolver's standard DNS lookup process should be overridden and a specific
+	IPv4 or IPv6 address should automatically be returned by the resolver. Standard and also non-standard names and parent domains 
+	can be entered, such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. Any lookup attempt for 
+	the host will automatically return the given IP address, and the usual lookup server for the domain will not be queried for 
+	the host's records.
+</span>
+
 <nav class="action-buttons">
 	<a href="services_unbound_host_edit.php" class="btn btn-sm btn-success">
 		<i class="fa fa-plus icon-embed-btn"></i>
@@ -513,7 +526,7 @@ endforeach;
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
-					<th><?=gettext("IP")?></th>
+					<th><?=gettext("Lookup Server IP Address")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -547,6 +560,13 @@ endforeach;
 		</table>
 	</div>
 </div>
+
+<span class="help-block">
+	Enter any domains for which the resolver's standard DNS lookup process should be overridden and a different (non-standard) 
+	lookup server should be queried instead. Non-standard, 'invalid' and local domains, and subdomains, can also be entered, 
+	such as 'test', 'mycompany.localdomain', '1.168.192.in-addr.arpa', or 'somesite.com'. The IP address is treated as the 
+	authoritative lookup server for the domain (including all of its subdomains), and other lookup servers will not be queried.
+</span>
 
 <nav class="action-buttons">
 	<a href="services_unbound_domainoverride_edit.php" class="btn btn-sm btn-success">

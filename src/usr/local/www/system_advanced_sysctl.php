@@ -32,6 +32,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();

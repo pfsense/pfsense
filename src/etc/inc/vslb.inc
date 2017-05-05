@@ -147,6 +147,7 @@ function relayd_configure($kill_first=false) {
 	if (!function_exists('filter_expand_alias_array')) {
 		require_once("filter.inc");
 	}
+	require_once("util.inc");
 
 	$vs_a = $config['load_balancer']['virtual_server'];
 	$pool_a = $config['load_balancer']['lbpool'];
@@ -350,7 +351,7 @@ function relayd_configure($kill_first=false) {
 	if (is_process_running('relayd')) {
 		if (!empty($vs_a)) {
 			if ($kill_first) {
-				mwexec('pkill relayd');
+				sigkillbyname("relayd", "TERM");
 				/* Remove all active relayd anchors now that relayd is no longer running. */
 				cleanup_lb_anchor("*");
 				mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
@@ -366,7 +367,7 @@ function relayd_configure($kill_first=false) {
 			 * mwexec('/usr/local/sbin/relayctl stop');
 			 *  returns "command failed"
 			 */
-			mwexec('pkill relayd');
+			sigkillbyname("relayd", "TERM");
 			/* Remove all active relayd anchors now that relayd is no longer running. */
 			cleanup_lb_anchor("*");
 		}
@@ -485,6 +486,10 @@ function get_lb_anchors() {
 function cleanup_lb_anchor($anchorname = "*") {
 	$lbanchors = get_lb_anchors();
 	foreach ($lbanchors as $lba) {
+		/* Skip empty/blank results */
+		if (empty($lba)) {
+			continue;
+		}
 		if (($anchorname == "*") || ($lba == "relayd/{$anchorname}")) {
 			/* Flush both the NAT and the Table for the anchor, so it will be completely removed by pf. */
 			mwexec("/sbin/pfctl -a " . escapeshellarg($lba) . " -F nat");

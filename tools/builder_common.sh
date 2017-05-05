@@ -261,6 +261,21 @@ make_world() {
 #	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
+	if [ "${PRODUCT_NAME}" = "pfSense" -a -n "${GNID_REPO_BASE}" ]; then
+		echo ">>> Building gnid... " | tee -a ${LOGFILE}
+		(\
+			cd ${GNID_SRC_DIR} && \
+			make INCLUDE_DIR=${GNID_INCLUDE_DIR} \
+			LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR} clean gnid \
+		) || print_error_pfS
+		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
+			${STAGE_CHROOT_DIR}/usr/sbin \
+			|| print_error_pfS
+		install -o root -g wheel -m 0700 ${GNID_SRC_DIR}/gnid \
+			${INSTALLER_CHROOT_DIR}/usr/sbin \
+			|| print_error_pfS
+	fi
+
 	unset makeargs
 }
 
@@ -1035,6 +1050,14 @@ update_freebsd_sources() {
 			grep -C3 -i -E 'error|fatal'
 		echo "Done!"
 	fi
+
+	if [ "${PRODUCT_NAME}" = "pfSense" -a -n "${GNID_REPO_BASE}" ]; then
+		echo ">>> Obtaining gnid sources..."
+		${BUILDER_SCRIPTS}/git_checkout.sh \
+			-r ${GNID_REPO_BASE} \
+			-d ${GNID_SRC_DIR} \
+			-b ${GNID_BRANCH}
+	fi
 }
 
 pkg_chroot() {
@@ -1063,7 +1086,7 @@ pkg_chroot() {
 		_params="--repo-conf-dir /tmp/pkg-repos "
 	fi
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
-		pkg -c ${_root} ${_params}$@ >/dev/null 2>&1
+		chroot ${_root} pkg ${_params}$@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev

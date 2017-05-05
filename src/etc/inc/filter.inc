@@ -102,6 +102,8 @@ $icmptypes = array(
 define("ANTILOCKOUT_TRACKER", 10000);
 define("BOGONS_TRACKER", 11000);
 define("RFC1918_TRACKER", 12000);
+define("PFLABEL_MAXLEN", 63);
+define("USER_LABEL_INTRO", "USER_RULE: ");
 
 $tracker = 1000000000;
 $negate_tracker = 10000000;
@@ -119,10 +121,15 @@ function filter_negaterule_tracker() {
         return "tracker {$negate_tracker} ";
 }
 
+function user_rule_descr_maxlen() {
+	return PFLABEL_MAXLEN - strlen(USER_LABEL_INTRO);
+}
+
 function fix_rule_label($descr) {
 	$descr = str_replace('"', '', $descr);
-	if (strlen($descr) > 63) {
-		return substr($descr, 0, 60) . "...";
+	if (strlen($descr) > PFLABEL_MAXLEN) {
+		$dots = "...";
+		return substr($descr, 0, PFLABEL_MAXLEN - strlen($dots)) . $dots;
 	} else {
 		return $descr;
 	}
@@ -580,7 +587,20 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
+function filter_generate_nested_alias($name) {
+	global $aliastable;
+
+	$aliasnesting = array();
+	$aliasaddrnesting = array();
+
+	if (($name == "") || !isset($aliastable[$name])) {
+		return "";
+	}
+
+	return filter_generate_nested_alias_recurse($name, $aliastable[$name], $aliasnesting, $aliasaddrnesting);
+}
+
+function filter_generate_nested_alias_recurse($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
@@ -597,7 +617,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$tmpline = "";
 		if (is_alias($address)) {
 			if (alias_get_type($address) == 'urltable') {
-				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias. Just load IPs from the file.
+				// Feature#1603. For this type of alias we do not need to recursively call filter_generate_nested_alias_recurse. Just load IPs from the file.
 				$urltable_nesting = alias_expand_urltable($address);
 				if (!empty($urltable_nesting)) {
 					$urlfile_as_arr = file($urltable_nesting);
@@ -613,10 +633,10 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no necessity to do it again. */
 			else if (!isset($aliasnesting[$address])) {
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
+				$tmpline = filter_generate_nested_alias_recurse($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && is_port_or_range($address)) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"])) {
 					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
@@ -657,9 +677,7 @@ function filter_expand_alias($alias_name) {
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			if ($aliased['name'] == $alias_name) {
-				$aliasnesting = array();
-				$aliasaddrnesting = array();
-				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+				return filter_generate_nested_alias($aliased['name']);
 			}
 		}
 	}
@@ -743,14 +761,12 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$aliasnesting = array();
-			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
 				// skip aliases with numeric-only names. redmine #4289
 				file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));
 				continue;
 			}
-			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+			$addrlist = filter_generate_nested_alias($aliased['name']);
 			switch ($aliased['type']) {
 			case "host":
 			case "network":
@@ -2374,7 +2390,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if ($rule['descr'] != "" and $line != "") {
-		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['descr']}") . "\"";
+		$ret['descr'] = "label \"" . fix_rule_label(USER_LABEL_INTRO . "{$rule['descr']}") . "\"";
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";
 	}
@@ -2678,7 +2694,7 @@ function filter_generate_user_rule($rule) {
 			$aline['ipprotocol'] = "inet6";
 			break;
 		default:
-			$aline['ipprotocol'] = "";
+			$aline['ipprotocol'] = "inet";
 			break;
 	}
 
@@ -2692,6 +2708,38 @@ function filter_generate_user_rule($rule) {
 		$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $rule['destination']['address'], $rule['descr']);
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
+	}
+	if ($rule['source']['port']
+	    && !is_port_or_range(str_replace("-", ":", $rule['source']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['source']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['source']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty source port alias '%1\$s' for rule '%2\$s'"), $rule['source']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
+	}
+	if ($rule['destination']['port']
+	    && !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
+		$error_text = "";
+
+		// It is not a literal port or port range, so alias should exist, and expand to something non-empty
+		if (!alias_expand($rule['destination']['port'])) {
+			$error_text = sprintf(gettext("Unresolvable destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		} else if (trim(filter_generate_nested_alias($rule['destination']['port'])) == "") {
+			$error_text = sprintf(gettext("Empty destination port alias '%1\$s' for rule '%2\$s'"), $rule['destination']['port'], $rule['descr']);
+		}
+
+		if ($error_text) {
+			file_notice("Filter_Reload", $error_text);
+			return "# {$error_text}";
+		}
 	}
 	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];
@@ -2786,7 +2834,9 @@ function filter_generate_user_rule($rule) {
 
 	if ($rule['protocol'] == "icmp" && $rule['icmptype'] && ($rule['icmptype'] != 'any')) {
 		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
-		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+		// XXX: Bug #7372
+		$icmptype_text = replace_element_in_list($rule['icmptype'], ',', 'skip', '39');
+		$icmptype_text = (strpos($icmptype_text, ",") === false ? $icmptype_text : '{ ' . $icmptype_text . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
 	
@@ -3780,12 +3830,6 @@ function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
 	$tracker++;
 
 	return $ipfrules;
-}
-
-/* COMPAT Function */
-function tdr_install_cron($should_install) {
-	log_error(gettext("Please use filter_tdr_install_cron() function tdr_install_cron will be deprecated!"));
-	filter_tdr_install_cron($should_install);
 }
 
 /****f* filter/filter_tdr_install_cron

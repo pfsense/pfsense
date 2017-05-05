@@ -286,7 +286,7 @@ function delete_row(rowDelBtn) {
 }
 
 function checkLastRow() {
-	if ($('.repeatable').length <= 1) {
+	if (($('.repeatable').length <= 1) && (! $('#deleterow0').hasClass("nowarn"))) {
 		$('#deleterow0').hide();
 	} else {
 		$('[id^=deleterow]').show();
@@ -378,11 +378,12 @@ function add_row() {
 				moveHelpText($(this).attr("id"));
 
 			delete_row($(this).attr("id"));
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
 		} else {
 			alert('The last row may not be deleted.');
 		}
 	});
-
 }
 
 // These are action buttons, not submit buttons
@@ -400,10 +401,17 @@ $('[id^=delete]').click(function(event) {
 			moveHelpText($(this).attr("id"));
 
 		delete_row($(this).attr("id"));
-	} else {
-		alert('The last row may not be deleted.');
-	}
+		} else if ($(this).hasClass("nowarn")) {
+			clearRow0();
+		} else {
+			alert('The last row may not be deleted.');
+		}
 });
+
+function clearRow0() {
+	$('#deleterow0').parent('div').parent().find('input[type=text]').val('');
+	$('#deleterow0').parent('div').parent().find('input[type=checkbox]:checked').removeAttr('checked');
+}
 
 // "More information" handlers --------------------------------------------------------------------
 
@@ -429,16 +437,16 @@ $('.infoblock').each(function() {
 // Show the help on clicking the info icon
 $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
-
 	$('.' + "infoblock" + id.substr(8)).toggle();
 	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
 // ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
-$('tbody').each(function(){
-	$(this).html($.trim($(this).html()))
-});
+// Commented out due to https://redmine.pfsense.org/issues/7504
+//$('tbody').each(function(){
+//	$(this).html($.trim($(this).html()))
+//});
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
@@ -664,14 +672,15 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 		name = args[0];
 		mode_zone = args[2];
 		id = args[3];
-	} else if (args[0] == "cpativeportal") {
+	} else if (args[0] == "captiveportal") {
 		action = args[1];
 		name = args[0];
 		mode_zone = args[2];
 		id = args[3];
 	} else {
 		action = args[0];
-		name = args[1];
+		args.shift();
+		name = args.join('-');
 	}
 
 	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
@@ -704,35 +713,40 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 
 // Any time an anchor is clicked and the "usepost" attibute is present, convert the href attribute
 // to POST format, make a POST form and submit it
-$('a').click(function(e) {
-	// Does the clicked anchor have the "usepost" attribute?
-	var attr = $(this).attr('usepost');
 
-	if (typeof attr !== typeof undefined && attr !== false) {
-		// Automatically apply a confirmation dialog to "Delete" icons
-		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-		   ($(this).hasClass('fa-trash'))) {
-			var msg = $.trim(this.textContent).toLowerCase();
+interceptGET();
 
-			if (!msg)
-				var msg = $.trim(this.value).toLowerCase();
+function interceptGET() {
+	$('a').click(function(e) {
+		// Does the clicked anchor have the "usepost" attribute?
+		var attr = $(this).attr('usepost');
 
-			var q = 'Are you sure you wish to '+ msg +'?';
+		if (typeof attr !== typeof undefined && attr !== false) {
+			// Automatically apply a confirmation dialog to "Delete" icons
+			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
+			   ($(this).hasClass('fa-trash'))) {
+				var msg = $.trim(this.textContent).toLowerCase();
 
-			if ($(this).attr('title') != undefined)
-				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+				if (!msg)
+					var msg = $.trim(this.value).toLowerCase();
 
-			if (!confirm(q)) {
-				return false;
+				var q = 'Are you sure you wish to '+ msg +'?';
+
+				if ($(this).attr('title') != undefined)
+					q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+				if (!confirm(q)) {
+					return false;
+				}
 			}
+
+			var target = $(this).attr("href").split("?");
+
+			postSubmit(get2post(target[1]),target[0]);
+			return false;
 		}
-
-		var target = $(this).attr("href").split("?");
-
-		postSubmit(get2post(target[1]),target[0]);
-		return false;
-	}
-});
+	});
+}
 
 // Convert a GET argument list such as ?name=fred&action=delete into an array of POST
 // parameters such as [[name, fred],[action, delete]]

@@ -31,6 +31,7 @@ $pglinks = array("", "vpn_l2tp.php", "@self");
 $shortcut_section = "l2tps";
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['user'])) {
@@ -56,7 +57,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	if ($a_secret[$_POST['id']]) {
 		unset($a_secret[$_POST['id']]);
-		write_config();
+		write_config(gettext("Deleted a L2TP VPN user."));
 		mark_subsystem_dirty('l2tpusers');
 		pfSenseHeader("vpn_l2tp_users.php");
 		exit;

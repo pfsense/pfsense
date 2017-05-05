@@ -101,7 +101,7 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 	}
 }
 
-$checklist = get_configured_interface_list(false, true);
+$checklist = get_configured_interface_list(true);
 
 foreach ($checklist as $tmpif) {
 	$realifchecklist[get_real_interface($tmpif)] = $tmpif;

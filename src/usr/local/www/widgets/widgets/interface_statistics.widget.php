@@ -48,16 +48,33 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		'collisions' => gettext('Collisions'),
 	);
 
-	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+	$skipinterfaces = explode(",", $user_settings['widgets'][$_REQUEST['widgetkey']]['iffilter']);
+	$an_interface_is_selected = false; // decide if at least 1 interface is selected for display
+	$an_interface_is_displayed = false; // decide if at least 1 interface is displayed (i.e. not down)
 
 	print("<thead>");
 	print(	"<tr>");
 	print(		"<th></th>");
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if (!in_array($ifdescr, $skipinterfaces)) {
-			print(		"<th>" . $ifname . "</th>");
+		if (in_array($ifdescr, $skipinterfaces)) {
+			continue;
 		}
+
+		$an_interface_is_selected = true;
+		$ifinfo_arr[$ifdescr] = get_interface_info($ifdescr);
+		$ifinfo_arr[$ifdescr]['inbytes'] = format_bytes($ifinfo_arr[$ifdescr]['inbytes']);
+		$ifinfo_arr[$ifdescr]['outbytes'] = format_bytes($ifinfo_arr[$ifdescr]['outbytes']);
+		if ($ifinfo_arr[$ifdescr]['status'] != "down") {
+			$an_interface_is_displayed = true;
+			print("<th>" . $ifname . "</th>");
+		}
+	}
+
+	if (!$an_interface_is_selected) {
+		print("<th>" . gettext('All interfaces are hidden.') . "</th>");
+	} else if (!$an_interface_is_displayed) {
+		print("<th>" . gettext('All selected interfaces are down.') . "</th>");
 	}
 
 	print(		"</tr>");
@@ -73,24 +90,17 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				continue;
 			}
 
-			$ifinfo = get_interface_info($ifdescr);
-
-			if ($ifinfo['status'] == "down") {
-				continue;
+			if ($ifinfo_arr[$ifdescr]['status'] != "down") {
+				print("<td>" . (isset($ifinfo_arr[$ifdescr][$key]) ? htmlspecialchars($ifinfo_arr[$ifdescr][$key]) : 'n/a') . "</td>");
 			}
 
-			$ifinfo['inbytes'] = format_bytes($ifinfo['inbytes']);
-			$ifinfo['outbytes'] = format_bytes($ifinfo['outbytes']);
-
-			print("<td>" . (isset($ifinfo[$key]) ? htmlspecialchars($ifinfo[$key]) : 'n/a') . "</td>");
 		}
 
-		print(		"</td>");
 		print(	"</tr>");
 	}
 	print(	"</tbody>");
 	exit;
-} else if ($_POST) {
+} else if ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -99,9 +109,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));
@@ -109,18 +119,20 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
-<table id="iftbl" class="table table-striped table-hover">
+<table id="<?=$widgetkey?>-iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -131,7 +143,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 					</thead>
 					<tbody>
 <?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+				$skipinterfaces = explode(",", $user_settings['widgets'][$widgetkey]['iffilter']);
 				$idx = 0;
 
 				foreach ($ifdescrs as $ifdescr => $ifname):
@@ -152,7 +164,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfacesforstats" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
@@ -160,34 +172,30 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 <script type="text/javascript">
 //<![CDATA[
 
-	function get_if_stats() {
+	function get_if_stats_<?=$widgetkey_nodash?>() {
 		var ajaxRequest;
 
 		ajaxRequest = $.ajax({
 				url: "/widgets/widgets/interface_statistics.widget.php",
 				type: "post",
-				data: { ajax: "ajax"}
+				data: { ajax: "ajax", widgetkey: "<?=$widgetkey?>"}
 			});
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#iftbl').html(response);
+			$('#<?=$widgetkey?>-iftbl').html(response);
 
 			// and do it again
-			setTimeout(get_if_stats, "<?=$widgetperiod?>");
+			setTimeout(get_if_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
-		$("#showallinterfacesforstats").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
+		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
-		setTimeout(get_if_stats, Math.floor((Math.random() * 10000) + 1000));
+		setTimeout(get_if_stats_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

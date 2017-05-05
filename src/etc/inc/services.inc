@@ -23,8 +23,8 @@
  * limitations under the License.
  */
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -2524,8 +2524,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
+			$bindip = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);
+			$bindip = $wanip;
 		}
 
 		$wanipv6 = get_interface_ipv6($if);
@@ -2533,7 +2535,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
 		    escapeshellarg($dnsupdate['host']) .
 		    "_{$dnsupdate['server']}.cache";
-		$cacheFilev6 = $cacheFile . ".ipv6";
+		$cacheFilev6 = $g['conf_path'] .
+		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
+		    escapeshellarg($dnsupdate['host']) .
+		    "_{$dnsupdate['server']}_v6.cache";
 		$currentTime = time();
 
 		if (!$wanip && !$wanipv6) {
@@ -2617,6 +2622,7 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
+				$upinst .= "local {$bindip}\n";
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(
@@ -2864,6 +2870,8 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		if ($is_installed == true) {
 			unset($config['cron']['item'][$x]);
 			$change_message = "Removed cron job for %s";
+		} else {
+			$cron_changed = false;
 		}
 	}
 

@@ -33,10 +33,28 @@
 
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
-
+define('NDP_BINARY_PATH', '/usr/sbin/ndp');
 require_once("guiconfig.inc");
 
-exec("/usr/sbin/ndp -na", $rawdata);
+// Delete ndp entry.
+if (isset($_POST['deleteentry'])) {
+	$ip = $_POST['deleteentry'];
+	if (is_ipaddrv6($ip)) {
+		$commandReturnValue = mwexec(NDP_BINARY_PATH . " -d " . escapeshellarg($ip), true);
+		$deleteSucceededFlag = ($commandReturnValue == 0);
+	} else {
+		$deleteSucceededFlag = false;
+	}
+
+	$deleteResultMessage = ($deleteSucceededFlag)
+		? sprintf(gettext("The NDP entry for %s has been deleted."), $ip)
+		: sprintf(gettext("%s is not a valid IPv6 address or could not be deleted."), $ip);
+	$deleteResultMessageType = ($deleteSucceededFlag)
+		? 'success'
+		: 'alert-warning';
+}
+
+exec(NDP_BINARY_PATH . " -na", $rawdata);
 
 $i = 0;
 
@@ -47,9 +65,15 @@ foreach ($ifdescrs as $key =>$interface) {
 	$hwif[$config['interfaces'][$key]['if']] = $interface;
 }
 
-/* Array ( [0] => Neighbor [1] => Linklayer [2] => Address
-[3] => Netif [4] => Expire [5] => S
-[6] => Flags ) */
+/*
+ * Key map for each element in $rawdata
+ * 0 => Neighbor IP
+ * 1 => Physical address (MAC)
+ * 2 => Interface
+ * 3 => Expiration
+ * 4 => State
+ * 5 => Flags
+ */
 $data = array();
 array_shift($rawdata);
 foreach ($rawdata as $line) {
@@ -59,6 +83,7 @@ foreach ($rawdata as $line) {
 	$ndpent['ipv6'] = trim($elements[0]);
 	$ndpent['mac'] = trim($elements[1]);
 	$ndpent['interface'] = trim($elements[2]);
+	$ndpent['expiration'] = trim($elements[3]);
 	$data[] = $ndpent;
 }
 
@@ -95,6 +120,11 @@ $mac_man = load_mac_manufacturer_table();
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
+
+// Show message if defined.
+if (isset($deleteResultMessage, $deleteResultMessageType)) {
+	print_info_box(htmlentities($deleteResultMessage), $deleteResultMessageType);
+}
 ?>
 
 <div class="panel panel-default">
@@ -105,10 +135,12 @@ include("head.inc");
 	<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
-				<th><?= gettext("IPv6 address"); ?></th>
-				<th><?= gettext("MAC address"); ?></th>
-				<th><?= gettext("Hostname"); ?></th>
-				<th><?= gettext("Interface"); ?></th>
+				<th><?=gettext("IPv6 address")?></th>
+				<th><?=gettext("MAC address")?></th>
+				<th><?=gettext("Hostname")?></th>
+				<th><?=gettext("Interface")?></th>
+				<th><?=gettext("Expiration")?></th>
+				<th data-sortable="false"><?=gettext("Actions")?></th>
 			</tr>
 	</thead>
 	<tbody>
@@ -138,6 +170,12 @@ include("head.inc");
 							echo $entry['interface'];
 						}
 						?>
+					</td>
+					<td>
+						<?=$entry['expiration']?>
+					</td>
+					<td>
+						<a class="fa fa-trash" title="<?=gettext('Delete NDP entry')?>"	href="diag_ndp.php?deleteentry=<?=$entry['ipv6']?>" usepost></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

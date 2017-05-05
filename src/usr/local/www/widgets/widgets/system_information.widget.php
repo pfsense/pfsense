@@ -33,6 +33,7 @@ include_once("includes/functions.inc.php");
 $sysinfo_items = array(
 	'name' => gettext('Name'),
 	'system' => gettext('System'),
+	'bios' => gettext('BIOS'),
 	'version' => gettext('Version'),
 	'cpu_type' => gettext('CPU Type'),
 	'hwcrypto' => gettext('Hardware Crypto'),
@@ -96,7 +97,7 @@ if ($_REQUEST['getupdatestatus']) {
 	}
 
 	exit;
-} elseif ($_POST) {
+} elseif ($_POST['widgetkey']) {
 
 	$validNames = array();
 
@@ -105,9 +106,9 @@ if ($_REQUEST['getupdatestatus']) {
 	}
 
 	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['system_information']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['system_information']['filter'] = "";
+		$user_settings['widgets'][$_POST['widgetkey']]['filter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved System Information Widget Filter via Dashboard."));
@@ -122,7 +123,8 @@ $widgetperiod += 1000;
 
 $filesystems = get_mounted_filesystems();
 
-$skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']['filter']);
+$skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
+$rows_displayed = false;
 ?>
 
 <div class="table-responsive">
@@ -130,6 +132,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 	<tbody>
 <?php
 	if (!in_array('name', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Name");?></th>
@@ -138,6 +141,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('system', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("System");?></th>
@@ -152,11 +156,47 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 			?>
 			<br />
 			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
+<?php
+		// If the uniqueID is available, display it here
+		$idfile = "/var/db/uniqueid";
+		if (file_exists($idfile)) {
+			print("<br />" . gettext("Netgate Device ID:") . " <strong>" . file_get_contents($idfile) . "</strong>");
+		}
+?>
 			</td>
 		</tr>
 <?php
 	endif;
+	if (!in_array('bios', $skipsysinfoitems)):
+		$rows_displayed = true;
+		unset($biosvendor);
+		unset($biosversion);
+		unset($biosdate);
+		$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
+		$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
+		$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
+		/* Only display BIOS information if there is any to show. */
+		if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])):
+?>
+		<tr>
+			<th><?=gettext("BIOS");?></th>
+			<td>
+			<?php if (!empty($biosvendor[0])): ?>
+				<?=gettext("Vendor: ");?><strong><?=$biosvendor[0];?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($biosversion[0])): ?>
+				<?=gettext("Version: ");?><strong><?=$biosversion[0];?></strong><br/>
+			<?php endif; ?>
+			<?php if (!empty($biosdate[0])): ?>
+				<?=gettext("Release Date: ");?><strong><?=$biosdate[0];?></strong><br/>
+			<?php endif; ?>
+			</td>
+		</tr>
+<?php
+		endif;
+	endif;
 	if (!in_array('version', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Version");?></th>
@@ -178,6 +218,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('cpu_type', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
@@ -195,6 +236,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('hwcrypto', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($hwcrypto): ?>
 		<tr>
@@ -205,6 +247,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('uptime', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Uptime");?></th>
@@ -213,6 +256,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('current_datetime', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Current date/time");?></th>
@@ -221,6 +265,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('dns_servers', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
@@ -238,6 +283,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('last_config_change', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($config['revision']): ?>
 		<tr>
@@ -248,6 +294,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('state_table_size', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("State table size");?></th>
@@ -266,13 +313,13 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('mbuf_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
-					$mbufstext = get_mbuf();
-					$mbufusage = get_mbuf(true);
+					get_mbuf($mbufstext, $mbufusage);
 				?>
 				<div class="progress">
 					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
@@ -284,6 +331,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('temperature', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if (get_temp() != ""): ?>
 		<tr>
@@ -301,6 +349,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('load_average', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Load average");?></th>
@@ -311,6 +360,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('cpu_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("CPU usage");?></th>
@@ -326,6 +376,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('memory_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<tr>
 			<th><?=gettext("Memory usage");?></th>
@@ -342,6 +393,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('swap_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 ?>
 		<?php if ($showswap == true): ?>
 		<tr>
@@ -360,6 +412,7 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 <?php
 	endif;
 	if (!in_array('disk_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
 		$diskidx = 0;
 		foreach ($filesystems as $fs):
 ?>
@@ -377,17 +430,27 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 			$diskidx++;
 		endforeach;
 	endif;
+	if (!$rows_displayed):
+?>
+		<tr>
+			<td class="text-center">
+				<?=gettext('All System Information items are hidden.');?>
+			</td>
+		</tr>
+<?php
+	endif;
 ?>
 
 	</tbody>
 </table>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
+			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -416,13 +479,14 @@ $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
 
 <script type="text/javascript">
 //<![CDATA[
+<?php if ($widget_first_instance): ?>
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 function systemStatusGetUpdateStatus() {
 	$.ajax({
@@ -435,13 +499,19 @@ function systemStatusGetUpdateStatus() {
 		},
 		dataType: 'html',
 		success: function(data){
-			$('#widget-system_information #updatestatus').html(data);
+			$('[id^=widget-system_information] #updatestatus').html(data);
 		}
 	});
 }
-<?php endif; ?>
 
+setTimeout('systemStatusGetUpdateStatus()', 4000);
+<?php endif; ?>
+var updateMeters_running = false;
 function updateMeters() {
+	if (updateMeters_running) {
+		return;
+	}
+	updateMeters_running = true;
 	url = '/getstats.php';
 
 	$.ajax(url, {
@@ -450,33 +520,15 @@ function updateMeters() {
 			response = data || "";
 			if (response != "")
 				stats(data);
+			updateMeters_running = false;
 		}
 	});
-
-	setTimer();
-
 }
-
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-events.push(function(){
-	$("#showallsysinfoitems").click(function() {
-		$("[id^=show]").each(function() {
-			$(this).prop("checked", true);
-		});
-	});
-
-	setTimeout('systemStatusGetUpdateStatus()', 4000);
-});
-<?php endif; ?>
 
 var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
-	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
-}
-
-function setTimer() {
-	timeout = window.setTimeout('updateMeters()', update_interval);
+	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
 }
 
 function stats(x) {
@@ -494,18 +546,16 @@ function stats(x) {
 	updateMemory(values[1]);
 	updateState(values[3]);
 	updateTemp(values[4]);
-	updateInterfaceStats(values[6]);
-	updateInterfaces(values[7]);
-	updateCpuFreq(values[8]);
-	updateLoadAverage(values[9]);
-	updateMbuf(values[10]);
-	updateMbufMeter(values[11]);
-	updateStateMeter(values[12]);
+	updateCpuFreq(values[6]);
+	updateLoadAverage(values[7]);
+	updateMbuf(values[8]);
+	updateMbufMeter(values[9]);
+	updateStateMeter(values[10]);
 }
 
 function updateMemory(x) {
 	if ($('#memusagemeter')) {
-		$("#memusagemeter").html(x);
+		$('[id="memusagemeter"]').html(x);
 	}
 	if ($('#memUsagePB')) {
 		setProgress('memUsagePB', parseInt(x));
@@ -514,13 +564,13 @@ function updateMemory(x) {
 
 function updateMbuf(x) {
 	if ($('#mbuf')) {
-		$("#mbuf").html('(' + x + ')');
+		$('[id="mbuf"]').html('(' + x + ')');
 	}
 }
 
 function updateMbufMeter(x) {
 	if ($('#mbufusagemeter')) {
-		$("#mbufusagemeter").html(x + '%');
+		$('[id="mbufusagemeter"]').html(x + '%');
 	}
 	if ($('#mbufPB')) {
 		setProgress('mbufPB', parseInt(x));
@@ -530,7 +580,7 @@ function updateMbufMeter(x) {
 function updateCPU(x) {
 
 	if ($('#cpumeter')) {
-		$("#cpumeter").html(x + '%');
+		$('[id="cpumeter"]').html(x + '%');
 	}
 	if ($('#cpuPB')) {
 		setProgress('cpuPB', parseInt(x));
@@ -544,7 +594,7 @@ function updateCPU(x) {
 
 function updateTemp(x) {
 	if ($("#tempmeter")) {
-		$("#tempmeter").html(x + '&deg;' + 'C');
+		$('[id="tempmeter"]').html(x + '&deg;' + 'C');
 	}
 	if ($('#tempPB')) {
 		setProgress('tempPB', parseInt(x));
@@ -553,25 +603,25 @@ function updateTemp(x) {
 
 function updateDateTime(x) {
 	if ($('#datetime')) {
-		$("#datetime").html(x);
+		$('[id="datetime"]').html(x);
 	}
 }
 
 function updateUptime(x) {
 	if ($('#uptime')) {
-		$("#uptime").html(x);
+		$('[id="uptime"]').html(x);
 	}
 }
 
 function updateState(x) {
 	if ($('#pfstate')) {
-		$("#pfstate").html('(' + x + ')');
+		$('[id="pfstate"]').html('(' + x + ')');
 	}
 }
 
 function updateStateMeter(x) {
 	if ($('#pfstateusagemeter')) {
-		$("#pfstateusagemeter").html(x + '%');
+		$('[id="pfstateusagemeter"]').html(x + '%');
 	}
 	if ($('#statePB')) {
 		setProgress('statePB', parseInt(x));
@@ -580,63 +630,13 @@ function updateStateMeter(x) {
 
 function updateCpuFreq(x) {
 	if ($('#cpufreq')) {
-		$("#cpufreq").html(x);
+		$('[id="cpufreq"]').html(x);
 	}
 }
 
 function updateLoadAverage(x) {
 	if ($('#load_average')) {
-		$("#load_average").html(x);
-	}
-}
-
-function updateInterfaceStats(x) {
-	if (widgetActive("interface_statistics")) {
-		statistics_split = x.split(",");
-		var counter = 1;
-		for (var y=0; y<statistics_split.length-1; y++) {
-			if ($('#stat' + counter)) {
-				$('#stat' + counter).html(statistics_split[y]);
-				counter++;
-			}
-		}
-	}
-}
-
-function updateInterfaces(x) {
-	if (widgetActive("interfaces")) {
-		interfaces_split = x.split("~");
-		interfaces_split.each(function(iface){
-			details = iface.split("^");
-			if (details[2] == '') {
-				ipv4_details = '';
-			} else {
-				ipv4_details = details[2] + '<br />';
-			}
-			switch (details[1]) {
-				case "up":
-					$('#' + details[0] + '-up').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
-					break;
-				case "down":
-					$('#' + details[0] + '-down').css("display","inline");
-					$('#' + details[0] + '-up').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
-					break;
-				case "block":
-					$('#' + details[0] + '-block').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-up').css("display","none");
-					break;
-			}
-		});
+		$('[id="load_average"]').html(x);
 	}
 }
 
@@ -651,7 +651,11 @@ function widgetActive(x) {
 
 /* start updater */
 events.push(function(){
-	setTimer();
+	timeout = window.setInterval(updateMeters, update_interval);
+});
+<?php endif; // $widget_first_instance ?>
+events.push(function(){
+	set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 });
 //]]>
 </script>

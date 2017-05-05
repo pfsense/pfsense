@@ -26,6 +26,7 @@
  * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
  * file courtesy of Michael Retterklieber.
  */
+include_once('phpsessionmanager.inc');
 if (!$do_not_include_config_gui_inc) {
 	require_once("config.gui.inc");
 }
@@ -1580,9 +1581,11 @@ function get_user_settings($username) {
 	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
+	$settings['webgui']['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
 	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
 	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+	$settings['webgui']['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 	$settings['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 	$settings['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 	$settings['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
@@ -1603,9 +1606,11 @@ function get_user_settings($username) {
 		if (isset($user['webguihostnamemenu'])) {
 			$settings['webgui']['webguihostnamemenu'] = $user['webguihostnamemenu'];
 		}
+		$settings['webgui']['interfacessort'] = isset($user['interfacessort']);
 		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
 		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
 		$settings['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);
+		$settings['webgui']['disablealiaspopupdetail'] = isset($user['disablealiaspopupdetail']);
 		$settings['webgui']['systemlogsfilterpanel'] = isset($user['systemlogsfilterpanel']);
 		$settings['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
 		$settings['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);
@@ -1747,12 +1752,11 @@ function session_auth() {
 		true
 	);
 
-	if (!session_id()) {
-		session_start();
-	}
+	phpsession_begin();
 
 	// Detect protocol change
 	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != $config['system']['webgui']['protocol']) {
+		phpsession_end();
 		return false;
 	}
 
@@ -1770,6 +1774,7 @@ function session_auth() {
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();
 			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
+			phpsession_end(true);
 			if (!isset($config['system']['webgui']['quietlogin'])) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}
@@ -1795,6 +1800,7 @@ function session_auth() {
 
 	/* Show login page if they aren't logged in */
 	if (empty($_SESSION['Logged_In'])) {
+		phpsession_end(true);
 		return false;
 	}
 
@@ -1842,7 +1848,7 @@ function session_auth() {
 		}
 
 		/* and destroy it */
-		session_destroy();
+		phpsession_destroy();
 
 		$scriptName = explode("/", $_SERVER["SCRIPT_FILENAME"]);
 		$scriptElms = count($scriptName);
@@ -1873,7 +1879,7 @@ function session_auth() {
 	if ($_REQUEST['enable_ajax']) {
 		unset($_SESSION['NO_AJAX']);
 	}
-
+	phpsession_end(true);
 	return true;
 }
 

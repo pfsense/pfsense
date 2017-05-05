@@ -70,7 +70,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
 }
 
-if ($_POST['save']) {
+if ($_POST['save'] || $_POST['force']) {
 	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -110,6 +110,8 @@ if ($_POST['save']) {
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. and *. in hostname */
 		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
+			$host_to_check = $_POST['domainname'];
+		} elseif ((($pconfig['type'] == "cloudflare") || ($pconfig['type'] == "cloudflare-v6")) && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];
@@ -190,7 +192,7 @@ if ($_POST['save']) {
 			$a_dyndns[$i]['id'] = $i;
 		}
 
-		write_config();
+		write_config(gettext("Dynamic DNS client configured."));
 
 		services_dyndns_configure_client($dyndns);
 
@@ -268,7 +270,7 @@ $section->addInput(new Form_Select(
 	'*Interface to monitor',
 	$pconfig['interface'],
 	$interfacelist
-));
+))->setHelp('If the interface IP address is private the public IP address will be fetched and used instead.');
 
 $section->addInput(new Form_Select(
 	'requestif',
@@ -293,10 +295,11 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org%1$s' .
+			'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
+			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
 
@@ -351,6 +354,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
+	    		'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
@@ -361,6 +365,7 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
+	    		'DNS Made Easy: Dynamic DNS Password%1$s' . 
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'DNSimple: Enter the API token.', '<br />');
@@ -370,7 +375,7 @@ $section->addInput(new Form_Input(
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Route53: Enter AWS Region and Zone ID in the form REGION/ZONEID (example: "us-east-1/A1B2C3D4E5F6Z").%1$s' .
+))->setHelp('Route53: Enter AWS Zone ID.%1$s' .
 			'DNSimple: Enter the Record ID of record to update.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -467,6 +472,7 @@ events.push(function() {
 			case "cloudflare-v6":
 			case "cloudflare":
 			case "gratisdns":
+			case "hover":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);

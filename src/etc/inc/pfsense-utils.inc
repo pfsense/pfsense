@@ -130,6 +130,37 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+/****f* pfsense-utils/pfSenseHeader
+ * NAME
+ *   pfSenseHeader
+ * INPUTS
+ *   none
+ * RESULT
+ *   Javascript header change or browser Location:
+ ******/
+function pfSenseHeader($text) {
+	global $_SERVER;
+	if (isAjax()) {
+		if ($_SERVER['HTTPS'] == "on") {
+			$protocol = "https";
+		} else {
+			$protocol = "http";
+		}
+
+		$port = ":{$_SERVER['SERVER_PORT']}";
+		if ($_SERVER['SERVER_PORT'] == "80" && $protocol == "http") {
+			$port = "";
+		}
+		if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https") {
+			$port = "";
+		}
+		$complete_url = "{$protocol}://{$_SERVER['HTTP_HOST']}{$port}/{$text}";
+		echo "\ndocument.location.href = '{$complete_url}';\n";
+	} else {
+		header("Location: $text");
+	}
+}
+
 /****f* pfsense-utils/get_css_files
  * NAME
  *   get_css_files - get a list of the available CSS files (themes)
@@ -255,6 +286,25 @@ function gen_dashboardcolumns_field(&$section, $value) {
 	));
 }
 
+/****f* pfsense-utils/gen_interfacessort_field
+ * NAME
+ *   gen_interfacessort_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_interfacessort_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'interfacessort',
+		'Interfaces Sort',
+		'Sort Alphabetically',
+		$value
+	))->setHelp('If selected, lists of interfaces will be sorted by description, otherwise they are listed wan,lan,optn...');
+}
+
 /****f* pfsense-utils/gen_associatedpanels_fields
  * NAME
  *   gen_associatedpanels_fields
@@ -320,6 +370,25 @@ function gen_webguileftcolumnhyper_field(&$section, $value) {
 	))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 }
 
+/****f* pfsense-utils/gen_disablealiaspopupdetail_field
+ * NAME
+ *   gen_disablealiaspopupdetail_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_disablealiaspopupdetail_field(&$section, $value) {
+
+	$section->addInput(new Form_Checkbox(
+		'disablealiaspopupdetail',
+		'Alias Popups',
+		'Disable details in alias popups',
+		$value
+	))->setHelp('If selected, the details in alias popups will not be shown, just the alias description (e.g. in Firewall Rules).');
+}
+
 /****f* pfsense-utils/gen_pagenamefirst_field
  * NAME
  *   gen_pagenamefirst_field
@@ -356,6 +425,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 	gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 	gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 	gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+	gen_interfacessort_field($section, $pconfig['interfacessort']);
 	gen_associatedpanels_fields(
 		$section,
 		$pconfig['dashboardavailablewidgetspanel'],
@@ -363,6 +433,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 		$pconfig['systemlogsmanagelogpanel'],
 		$pconfig['statusmonitoringsettingspanel']);
 	gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+	gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 	gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 }
 
@@ -565,7 +636,7 @@ function is_schedule_inuse($schedule) {
 function setup_microcode() {
 
 	/* if list */
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if => $ifdescr) {
 		enable_hardware_offloading($if);
 	}
@@ -1009,9 +1080,13 @@ function setup_serial_port($when = "save", $path = "") {
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	$serial_only = false;
+	$vga_only = false;
 
 	$specific_platform = system_identify_specific_platform();
-	if ($specific_platform['name'] == 'RCC-VE' ||
+	if ($specific_platform['name'] == 'XG-1540' ||
+	    $specific_platform['name'] == 'Turbot Dual-E') {
+		$vga_only = true;
+	} elseif ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||
 	    $specific_platform['name'] == 'apu2') {
@@ -1067,7 +1142,9 @@ function setup_serial_port($when = "save", $path = "") {
 	if ($serial_only === true) {
 		$data[] = 'boot_serial="YES"';
 		$data[] = 'console="comconsole"';
-	} else if (is_serial_enabled()) {
+	} elseif ($vga_only === true) {
+		$data[] = 'console="vidconsole"';
+	} elseif (is_serial_enabled()) {
 		$data[] = 'boot_multicons="YES"';
 		$data[] = 'boot_serial="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
@@ -1084,10 +1161,9 @@ function setup_serial_port($when = "save", $path = "") {
 	}
 	$data[] = 'comconsole_speed="' . $serialspeed . '"';
 
-	$specplatform = system_identify_specific_platform();
-	if ($specplatform['name'] == 'RCC-VE' ||
-	    $specplatform['name'] == 'RCC' ||
-	    $specplatform['name'] == 'RCC-DFF') {
+	if ($specific_platform['name'] == 'RCC-VE' ||
+	    $specific_platform['name'] == 'RCC' ||
+	    $specific_platform['name'] == 'RCC-DFF') {
 		$data[] = 'comconsole_port="0x2F8"';
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';
@@ -1751,7 +1827,7 @@ function compare_hostname_to_dnscache($hostname) {
  */
 function load_crypto() {
 	global $config, $g;
-	$crypto_modules = array('aesni');
+	$crypto_modules = array('aesni', 'cryptodev');
 
 	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
 		return false;
@@ -2034,12 +2110,35 @@ function update_progress_bar($percent, $first_time) {
 	}
 }
 
-/* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
-if (!function_exists("split")) {
-	function split($separator, $haystack, $limit = null) {
-		log_error("deprecated split() call with separator '{$separator}'");
-		return preg_split($separator, $haystack, $limit);
+function update_alias_name($new_alias_name, $orig_alias_name) {
+	if (!$orig_alias_name) {
+		return;
 	}
+
+	// Firewall rules
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	// NAT Rules
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $new_alias_name, $orig_alias_name);
+	// NAT 1:1 Rules
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $new_alias_name, $orig_alias_name);
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	// NAT Outbound Rules
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	// Alias in an alias
+	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {
@@ -2137,7 +2236,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 				$tmp = $tmp_str;
 			}
 			$valid = (($type == "url" || $type == "urltable") && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-				(($type == "url_ports" || $type == "urltable_ports") && (is_port($tmp) || is_portrange($tmp)));
+				(($type == "url_ports" || $type == "urltable_ports") && is_port_or_range($tmp));
 			if ($valid) {
 				$items[] = $tmp;
 				if (count($items) == $max_items) {
@@ -2795,11 +2894,13 @@ function set_language() {
 
 function get_locale_list() {
 	$locales = array(
+		"de_DE" => gettext("German (Germany)"),
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
-		"pt_BR" => gettext("Portuguese (Brazil)"),
-		"tr" => gettext("Turkish"),
+		"nb" => gettext("Norwegian Bokmål"),
+		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
+		"zh_TW" => gettext("Chinese (Taiwan)"),
 	);
 
 	// If the locales are sorted, the order changes depending on the language selected. If the user accidentally
@@ -3014,6 +3115,7 @@ function huawei_service_to_string($state) {
 	$modes[2] = gettext("Valid Service");
 	$modes[3] = gettext("Restricted Regional Service");
 	$modes[4] = gettext("Powersaving Service");
+	$modes[255] = gettext("Unknown Service");
 	$string = $modes[$state];
 	return $string;
 }
@@ -3116,19 +3218,15 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 		return $results;
 	}
 	foreach ($config['installedpackages']['package'] as $package) {
-		if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-			continue;
-		}
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
-		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
-		if (is_array($pkg_config['plugins']['item'])) {
-			foreach ($pkg_config['plugins']['item'] as $plugin) {
+		if (is_array($package['plugins']['item'])) {
+			foreach ($package['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {
-					if (file_exists($pkg_config['include_file'])) {
-						require_once($pkg_config['include_file']);
+					if (file_exists($package['include_file'])) {
+						require_once($package['include_file']);
 					} else {
 						continue;
 					}
+					$pkgname = substr(reverse_strrchr($package['configurationfile'], "."), 0, -1);
 					$plugin_function = $pkgname . '_'. $plugin_type;
 					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 				}

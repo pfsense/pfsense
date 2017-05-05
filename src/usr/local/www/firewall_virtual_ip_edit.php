@@ -270,7 +270,7 @@ if ($_POST['save']) {
 
 		$a_vip[$id] = $vipent;
 
-		if (write_config()) {
+		if (write_config(gettext("Saved/edited a virtual IP."))) {
 			mark_subsystem_dirty('vip');
 			file_put_contents("{$g['tmp_path']}/.firewall_virtual_ip.apply", serialize($toapplylist));
 		}
@@ -290,7 +290,7 @@ include("head.inc");
 function build_if_list() {
 	$list = array();
 
-	$interfaces = get_configured_interface_with_descr(false, true);
+	$interfaces = get_configured_interface_with_descr(true);
 	$carplist = get_configured_vip_list('all', VIP_CARP);
 
 	foreach ($carplist as $vipname => $address) {

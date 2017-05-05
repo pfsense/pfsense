@@ -41,7 +41,7 @@ $a_vlans = &$config['vlans']['vlan'] ;
 function vlan_inuse($num) {
 	global $config, $a_vlans;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif']) {
 			return true;
@@ -130,7 +130,7 @@ display_top_tabs($tab_array);
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>" usepost></a>
+								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php

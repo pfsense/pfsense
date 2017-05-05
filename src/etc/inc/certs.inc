@@ -25,7 +25,7 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 require_once("functions.inc");
 
 global $openssl_digest_algs;
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 global $openssl_crl_status;
 $openssl_crl_status = array(
@@ -427,11 +427,9 @@ function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 }
 
 function csr_complete(& $cert, $str_crt) {
-
-	// return our request information
-	$cert['crt'] = base64_encode($str_crt);
+	$str_key = base64_decode($cert['prv']);
+	cert_import($cert, $str_crt, $str_key);
 	unset($cert['csr']);
-
 	return true;
 }
 
@@ -513,6 +511,18 @@ function cert_get_subject_hash($crt) {
 	return $inf_crt['subject'];
 }
 
+function cert_get_sans($str_crt, $decode = true) {
+	if ($decode) {
+		$str_crt = base64_decode($str_crt);
+	}
+	$sans = array();
+	$crt_details = openssl_x509_parse($str_crt);
+	if (!empty($crt_details['extensions']['subjectAltName'])) {
+		$sans = explode(',', $crt_details['extensions']['subjectAltName']);
+	}
+	return $sans;
+}
+
 function cert_get_issuer($str_crt, $decode = true) {
 
 	if ($decode) {
@@ -543,39 +553,62 @@ function cert_get_issuer($str_crt, $decode = true) {
 	return $issuer;
 }
 
-/* this function works on x509 (crt), rsa key (prv), and req(csr) */
-function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
+/* Works for both RSA and ECC (crt) and key (prv) */
+function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
-
-	$modulus = "";
-	if (in_array($type, array("crt", "prv", "csr"))) {
-		$type = str_replace(array("crt", "prv", "csr"), array("x509", "rsa", "req"), $type);
-		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
+	switch ($type) {
+		case 'prv':
+			exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
+			break;
+		case 'crt':
+			exec("echo \"{$str_crt}\" | openssl x509 -inform pem -noout -pubkey", $out);
+			break;
+		case 'csr':
+			exec("echo \"{$str_crt}\" | openssl req -inform pem -noout -pubkey", $out);
+			break;
+		default:
+			$out = array();
+			break;
 	}
-	return $modulus;
-}
-
-/* Same but returns modulus keysize not modulus itself */
-function cert_get_modulus_keysize($str_crt, $decode = true, $type = "crt") {
-	// modulus usually returned as "modulus=.....". Remove anything before an "=" and return 4 x (hex string length)
-	$raw_modulus = explode('=', cert_get_modulus($str_crt, $decode, $type));
-	return strlen(array_pop($raw_modulus))*4;
-}
-
-function csr_get_modulus($str_crt, $decode = true) {
-	return cert_get_modulus($str_crt, $decode, "csr");
+	return implode("\n", $out);
 }
 
 function cert_get_purpose($str_crt, $decode = true) {
+	$extended_oids = array(
+		"1.3.6.1.5.5.8.2.2" => "IP Security IKE Intermediate",
+	);
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
 	$crt_details = openssl_x509_parse($str_crt);
 	$purpose = array();
+	if (!empty($crt_details['extensions']['keyUsage'])) {
+		$purpose['ku'] = explode(',', $crt_details['extensions']['keyUsage']);
+		foreach ($purpose['ku'] as & $ku) {
+			$ku = trim($ku);
+			if (array_key_exists($ku, $extended_oids)) {
+				$ku = $extended_oids[$ku];
+			}
+		}
+	} else {
+		$purpose['ku'] = array();
+	}
+	if (!empty($crt_details['extensions']['extendedKeyUsage'])) {
+		$purpose['eku'] = explode(',', $crt_details['extensions']['extendedKeyUsage']);
+		foreach ($purpose['eku'] as & $eku) {
+			$eku = trim($eku);
+			if (array_key_exists($eku, $extended_oids)) {
+				$eku = $extended_oids[$eku];
+			}
+		}
+	} else {
+		$purpose['eku'] = array();
+	}
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
-	$purpose['server'] = (strpos($crt_details['extensions']['nsCertType'], 'SSL Server') !== FALSE) ? 'Yes': 'No';
+	$purpose['server'] = (in_array('TLS Web Server Authentication', $purpose['eku'])) ? 'Yes': 'No';
+
 	return $purpose;
 }
 
@@ -603,10 +636,6 @@ function cert_get_serial($str_crt, $decode = true) {
 	} else {
 		return NULL;
 	}
-}
-
-function prv_get_modulus($str_crt, $decode = true) {
-	return cert_get_modulus($str_crt, $decode, "prv");
 }
 
 function is_openvpn_server_ca($caref) {
@@ -773,6 +802,27 @@ function cert_in_use($certref) {
 		is_package_cert($certref));
 }
 
+function cert_usedby_description($refid, $certificates_used_by_packages) {
+	$result = "";
+	if (is_array($certificates_used_by_packages)) {
+		foreach ($certificates_used_by_packages as $name => $package) {
+			if (isset($package['certificatelist'][$refid])) {
+				$hint = "" ;
+				if (is_array($package['certificatelist'][$refid])) {
+					foreach ($package['certificatelist'][$refid] as $cert_used) {
+						$hint = $hint . $cert_used['usedby']."\n";
+					}
+				}
+				$count = count($package['certificatelist'][$refid]);
+				$result .= "<div title='".htmlspecialchars($hint)."'>";
+				$result .= htmlspecialchars($package['pkgname'])." ($count)<br />";
+				$result .= "</div>";
+			}
+		}
+	}
+	return $result;
+}
+
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {
 	global $config;
 	$ca =& lookup_ca($caref);
@@ -863,7 +913,7 @@ function cert_compare($cert1, $cert2) {
 	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false)) &&
 	    (cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
 	    (cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
-	    (cert_get_modulus($c1, false) == cert_get_modulus($c2, false))) {
+	    (cert_get_publickey($c1, false) == cert_get_publickey($c2, false))) {
 		return true;
 	}
 	return false;

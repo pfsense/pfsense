@@ -105,13 +105,6 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
-function config_lock() {
-	return;
-}
-function config_unlock() {
-	return;
-}
-
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;
@@ -1124,8 +1117,13 @@ function is_portrange($portrange) {
 	return (count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]));
 }
 
-/* returns true if $port is a valid port number or an alias thereof */
-function is_portoralias($port) {
+/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") */
+function is_port_or_range($port) {
+	return (is_port($port) || is_portrange($port));
+}
+
+/* returns true if $port is an alias that is a port type */
+function is_portalias($port) {
 	global $config;
 
 	if (is_alias($port)) {
@@ -1136,10 +1134,18 @@ function is_portoralias($port) {
 				}
 			}
 		}
-		return false;
-	} else {
-		return is_port($port);
 	}
+	return false;
+}
+
+/* returns true if $port is a valid port number or an alias thereof */
+function is_port_or_alias($port) {
+	return (is_port($port) || is_portalias($port));
+}
+
+/* returns true if $port is a valid TCP/UDP port number or range ("<port>:<port>") or an alias thereof */
+function is_port_or_range_or_alias($port) {
+	return (is_port($port) || is_portrange($port) || is_portalias($port));
 }
 
 /* create ranges of sequential port numbers (200:215) and remove duplicates */
@@ -1361,16 +1367,13 @@ function compare_interface_friendly_names($a, $b) {
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list($only_opt = false, $withdisabled = false) {
+function get_configured_interface_list($withdisabled = false) {
 	global $config;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$iflist[$if] = $if;
 		}
@@ -1380,16 +1383,13 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list_by_realif($only_opt = false, $withdisabled = false) {
+function get_configured_interface_list_by_realif($withdisabled = false) {
 	global $config;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			$tmpif = get_real_interface($if);
 			if (!empty($tmpif)) {
@@ -1402,16 +1402,13 @@ function get_configured_interface_list_by_realif($only_opt = false, $withdisable
 }
 
 /* return the configured interfaces list with their description. */
-function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
-	global $config;
+function get_configured_interface_with_descr($withdisabled = false) {
+	global $config, $user_settings;
 
 	$iflist = array();
 
 	/* if list */
 	foreach ($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt && ($if == "wan" || $if == "lan")) {
-			continue;
-		}
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			if (empty($ifdetail['descr'])) {
 				$iflist[$if] = strtoupper($if);
@@ -1419,6 +1416,10 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 				$iflist[$if] = strtoupper($ifdetail['descr']);
 			}
 		}
+	}
+
+	if ($user_settings['webgui']['interfacessort']) {
+		asort($iflist);
 	}
 
 	return $iflist;
@@ -1780,7 +1781,7 @@ function alias_expand($name) {
 			}
 		}
 		return "\${$name}";
-	} else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name)) {
+	} else if (is_ipaddr($name) || is_subnet($name) || is_port_or_range($name)) {
 		return "{$name}";
 	} else {
 		return null;
@@ -2152,7 +2153,7 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;
@@ -2366,6 +2367,23 @@ function explode_assoc($delimiter, $string) {
 		$result[$array[$i * 2]] = $array[$i * 2 + 1];
 	}
 	return $result;
+}
+
+/*
+ * Given a string of text with some delimiter, look for occurrences
+ * of some string and replace all of those.
+ * $text - the text string (e.g. "abc,defg,x123,ipv4,xyz")
+ * $delimiter - the delimiter (e.g. ",")
+ * $element - the element to match (e.g. "defg")
+ * $replacement - the string to replace it with (e.g. "42")
+ * Returns the resulting delimited string (e.g. "abc,42,x123,ipv4,xyz")
+ */
+function replace_element_in_list($text, $delimiter, $element, $replacement) {
+	$textArray = explode($delimiter, $text);
+	while (($entry = array_search($element, $textArray)) !== false) {
+		$textArray[$entry] = $replacement;
+	}
+	return implode(',', $textArray);
 }
 
 /* Try to change a static route, if it doesn't exist, add it */
@@ -2689,4 +2707,10 @@ function get_duid_from_file() {
 	}
 	return($duid_ASCII);
 }
+
+/* Replaces the Mac OS 9 and earlier (\r) and DOS/Windows (\r\n) newlines with the Unix equivalent (\n). */
+function unixnewlines($text) {
+	return preg_replace('/\r\n?/', "\n", $text);
+}
+
 ?>

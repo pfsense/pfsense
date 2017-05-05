@@ -71,7 +71,7 @@ EOD;
 			else
 				$status = "(down)";
 			$ifsmallist = $ifsmallist . $iface. " ";
-			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
+			echo sprintf("%-7s %s %s %s\n", $iface, $ifa['mac'],
 				$status, substr($ifa['dmesg'], 0, 48));
 		}
 	}
@@ -377,6 +377,10 @@ EOD;
 
 		touch("{$g['tmp_path']}/assign_complete");
 
+		if (file_exists("/conf/trigger_initial_wizard")) {
+			// Let the system know that the interface assign part of initial setup has been done.
+			touch("{$g['conf_path']}/assign_complete");
+		}
 	}
 }
 
@@ -514,6 +518,10 @@ function check_for_alternate_interfaces() {
 				$config['interfaces']['wan']['if'] = 'igb0';
 				$config['interfaces']['lan']['if'] = 'igb1';
 			}
+			break;
+		case 'Turbot Dual-E':
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
 			break;
 		default:
 			$default_device['wan'] = "";

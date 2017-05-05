@@ -124,7 +124,7 @@ filter_form_firewall();
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
-	$iflist = get_configured_interface_with_descr(false, true);
+	$iflist = get_configured_interface_with_descr(true);
 
 	if ($iflist[$interfacefilter]) {
 		$interfacefilter = $iflist[$interfacefilter];

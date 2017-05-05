@@ -38,7 +38,7 @@ $a_qinqs = &$config['qinqs']['qinqentry'];
 function qinq_inuse($num) {
 	global $config, $a_qinqs;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list(true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $a_qinqs[$num]['qinqif']) {
 			return true;

@@ -47,6 +47,11 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
+// set default language if unset
+if (!isset($config['system']['language'])) {
+	$config['system']['language'] = $g['language'];
+}
+
 $dnsgw_counter = 1;
 
 while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {
@@ -62,7 +67,9 @@ $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+$pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+$pconfig['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
@@ -271,8 +278,14 @@ if ($_POST) {
 			set_language();
 		}
 
+		unset($config['system']['webgui']['interfacessort']);
+		$config['system']['webgui']['interfacessort'] = $_POST['interfacessort'] ? true : false;
+
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+
+		unset($config['system']['webgui']['disablealiaspopupdetail']);
+		$config['system']['webgui']['disablealiaspopupdetail'] = $_POST['disablealiaspopupdetail'] ? true : false;
 
 		unset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
@@ -572,6 +585,7 @@ gen_webguicss_field($section, $pconfig['webguicss']);
 gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
 gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+gen_interfacessort_field($section, $pconfig['interfacessort']);
 gen_associatedpanels_fields(
 	$section,
 	$pconfig['dashboardavailablewidgetspanel'],
@@ -580,6 +594,7 @@ gen_associatedpanels_fields(
 	$pconfig['statusmonitoringsettingspanel']);
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',

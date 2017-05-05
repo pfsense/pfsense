@@ -267,7 +267,7 @@ if ($platform['name'] == "uFW") {
 	$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");
 }
 
-$opts = get_configured_interface_with_descr(false, true);
+$opts = get_configured_interface_with_descr(true);
 
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
@@ -275,8 +275,14 @@ foreach ($opts as $oif => $odescr) {
 	}
 }
 
+$interfaces_bottom = array_merge($interfaces_bottom, return_ext_menu("Interfaces"));
+
+if ($user_settings['webgui']['interfacessort']) {
+	$interfaces_bottom = msort($interfaces_bottom, 0);
+}
+
 // Combine the top section, the divider and the bottom section of this menu
-$interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], msort(array_merge($interfaces_bottom, return_ext_menu("Interfaces")), 0));
+$interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], $interfaces_bottom);
 
 // Firewall
 $firewall_menu = array();

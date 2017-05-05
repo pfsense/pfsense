@@ -521,8 +521,13 @@ function return_gateways_status_text($byname = false, $brief = false) {
 	return $output;
 }
 
-/* Return all configured gateways on the system */
-function return_gateways_array($disabled = false, $localhost = false, $inactive = false) {
+/* Return all configured gateways on the system
+   $disabled = true - include gateways that are disabled
+   $localhost = true - include "Null" entries for localhost IP addresses
+   $inactive = true - include gateways on inactive interfaces
+   $integer_index = true - index the returned array by integers 0,1,2,... instead of by GW name
+*/
+function return_gateways_array($disabled = false, $localhost = false, $inactive = false, $integer_index = false) {
 	global $config, $g;
 
 	$gateways_arr = array();
@@ -630,12 +635,15 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
+	
+	//Sort the array by GW name before moving on.
+	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false) {
 		$iflist = get_configured_interface_with_descr();
 	} else {
-		$iflist = get_configured_interface_with_descr(false, true);
+		$iflist = get_configured_interface_with_descr(true);
 	}
 
 	/* Process/add dynamic v4 gateways. */
@@ -861,6 +869,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		$gateways_arr['Null4'] = $gwlo4;
 		$gateways_arr['Null6'] = $gwlo6;
 	}
+
+	if ($integer_index) {
+		$gateways_arr = array_values($gateways_arr);
+	}
+
 	return($gateways_arr);
 }
 
@@ -1319,5 +1332,466 @@ function gateway_is_gwgroup_member($name) {
 	}
 
 	return $members;
+}
+/*
+  Check the proposed gateway settings to see if they are valid.
+  $gateway_settings - the proposed array of proposed gateway settings
+  $id - the index of the gateway proposed to be modified (otherwise "" if adding a new gateway)
+  $parent_ip - the IP (v4 or v6) address about to be set on the corresponding interface (if any)
+  $parent_sn - the subnet about to be set on the corresponding interface (if any)
+  (Note: the above 2 parameters allow gateway parameters to be validated concurrently with saving
+   an interface, before the new interface parameters are actually saved in the config.)
+  Return completed $input_errors array if there is any problem.
+  Otherwise return an empty $input_errors array
+*/
+function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_sn = "") {
+	global $config;
+
+	$a_gateways = return_gateways_array(true, false, true, true);
+	$input_errors = array();
+
+	/* input validation */
+	$reqdfields = explode(" ", "name interface");
+	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
+
+	do_input_validation($gateway_settings, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!isset($gateway_settings['name'])) {
+		$input_errors[] = "A valid gateway name must be specified.";
+	}
+	if (!is_validaliasname($gateway_settings['name'])) {
+		$input_errors[] = invalidaliasnamemsg($gateway_settings['name'], gettext("gateway"));
+	} else if (isset($gateway_settings['disabled'])) {
+		// We have a valid gateway name that the user wants to mark as disabled.
+		// Check if the gateway name is used in any gateway group.
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				foreach ($group['item'] as $item) {
+					$items = explode("|", $item);
+					if ($items[0] == $gateway_settings['name']) {
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $gateway_settings['name'], $group['name']);
+					}
+				}
+			}
+		}
+
+		// Check if the gateway name is used in any enabled Static Route.
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['gateway'] == $gateway_settings['name']) {
+					if (!isset($route['disabled'])) {
+						// There is a static route that uses this gateway and is enabled (not disabled).
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $gateway_settings['name'], $route['network']);
+					}
+				}
+			}
+		}
+	}
+	/* skip system gateways which have been automatically added */
+	if (($gateway_settings['gateway'] && (!is_ipaddr($gateway_settings['gateway'])) && ($gateway_settings['attribute'] !== "system")) && ($gateway_settings['gateway'] != "dynamic")) {
+		$input_errors[] = gettext("A valid gateway IP address must be specified.");
+	}
+
+	if ($gateway_settings['gateway'] && is_ipaddr($gateway_settings['gateway'])) {
+		if (is_ipaddrv4($gateway_settings['gateway'])) {
+			if ($parent_ip == '') {
+				$parent_ip = get_interface_ip($gateway_settings['interface']);
+				$parent_sn = get_interface_subnet($gateway_settings['interface']);
+			}
+			if (empty($parent_ip) || empty($parent_sn)) {
+				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
+			} elseif (!isset($gateway_settings["nonlocalgateway"])) {
+				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
+				$vips = link_interface_to_vips($gateway_settings['interface']);
+				if (is_array($vips)) {
+					foreach ($vips as $vip) {
+						if (!is_ipaddrv4($vip['subnet'])) {
+							continue;
+						}
+						$subnets[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+					}
+				}
+
+				$found = false;
+				foreach ($subnets as $subnet) {
+					if (ip_in_subnet($gateway_settings['gateway'], $subnet)) {
+						$found = true;
+						break;
+					}
+				}
+
+				if ($found === false) {
+					$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $gateway_settings['gateway']);
+				}
+			}
+		} else if (is_ipaddrv6($gateway_settings['gateway'])) {
+			/* do not do a subnet match on a link local address, it's valid */
+			if (!is_linklocal($gateway_settings['gateway'])) {
+				if ($parent_ip == '') {
+					$parent_ip = get_interface_ipv6($gateway_settings['interface']);
+					$parent_sn = get_interface_subnetv6($gateway_settings['interface']);
+				}
+				if (empty($parent_ip) || empty($parent_sn)) {
+					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
+				} elseif (!isset($gateway_settings["nonlocalgateway"])) {
+					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
+					$vips = link_interface_to_vips($gateway_settings['interface']);
+					if (is_array($vips)) {
+						foreach ($vips as $vip) {
+							if (!is_ipaddrv6($vip['subnet'])) {
+								continue;
+							}
+							$subnets[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+						}
+					}
+
+					$found = false;
+					foreach ($subnets as $subnet) {
+						if (ip_in_subnet($gateway_settings['gateway'], $subnet)) {
+							$found = true;
+							break;
+						}
+					}
+
+					if ($found === false) {
+						$input_errors[] = sprintf(gettext("The gateway address %s does not lie within one of the chosen interface's subnets."), $gateway_settings['gateway']);
+					}
+				}
+			}
+		}
+
+		if (!empty($config['interfaces'][$gateway_settings['interface']]['ipaddr'])) {
+			if (is_ipaddr($config['interfaces'][$gateway_settings['interface']]['ipaddr']) && (empty($gateway_settings['gateway']) || $gateway_settings['gateway'] == "dynamic")) {
+				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv4 configuration.");
+			}
+		}
+		if (!empty($config['interfaces'][$gateway_settings['interface']]['ipaddrv6'])) {
+			if (is_ipaddr($config['interfaces'][$gateway_settings['interface']]['ipaddrv6']) && (empty($gateway_settings['gateway']) || $gateway_settings['gateway'] == "dynamic")) {
+				$input_errors[] = gettext("Dynamic gateway values cannot be specified for interfaces with a static IPv6 configuration.");
+			}
+		}
+	}
+	if (($gateway_settings['monitor'] != "") && ($gateway_settings['monitor'] != "dynamic")) {
+		validateipaddr($gateway_settings['monitor'], IPV4V6, "Monitor IP", $input_errors, false);
+	}
+	if (isset($gateway_settings['data_payload']) && is_numeric($gateway_settings['data_payload']) && $gateway_settings['data_payload'] < 0) {
+		$input_errors[] = gettext("A valid data payload must be specified.");
+	}
+	/* only allow correct IPv4 and IPv6 gateway addresses */
+	if (($gateway_settings['gateway'] <> "") && is_ipaddr($gateway_settings['gateway']) && $gateway_settings['gateway'] != "dynamic") {
+		if (is_ipaddrv6($gateway_settings['gateway']) && ($gateway_settings['ipprotocol'] == "inet")) {
+			$input_errors[] = sprintf(gettext("The IPv6 gateway address '%s' can not be used as a IPv4 gateway."), $gateway_settings['gateway']);
+		}
+		if (is_ipaddrv4($gateway_settings['gateway']) && ($gateway_settings['ipprotocol'] == "inet6")) {
+			$input_errors[] = sprintf(gettext("The IPv4 gateway address '%s' can not be used as a IPv6 gateway."), $gateway_settings['gateway']);
+		}
+	}
+	/* only allow correct IPv4 and IPv6 monitor addresses */
+	if (($gateway_settings['monitor'] <> "") && is_ipaddr($gateway_settings['monitor']) && $gateway_settings['monitor'] != "dynamic") {
+		if (is_ipaddrv6($gateway_settings['monitor']) && ($gateway_settings['ipprotocol'] == "inet")) {
+			$input_errors[] = sprintf(gettext("The IPv6 monitor address '%s' can not be used on a IPv4 gateway."), $gateway_settings['monitor']);
+		}
+		if (is_ipaddrv4($gateway_settings['monitor']) && ($gateway_settings['ipprotocol'] == "inet6")) {
+			$input_errors[] = sprintf(gettext("The IPv4 monitor address '%s' can not be used on a IPv6 gateway."), $gateway_settings['monitor']);
+		}
+	}
+
+	if (isset($gateway_settings['name'])) {
+		/* check for overlaps */
+		foreach ($a_gateways as $gateway) {
+			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
+				if ($gateway['name'] != $gateway_settings['name']) {
+					$input_errors[] = gettext("Changing name on a gateway is not allowed.");
+				}
+				continue;
+			}
+			if ($gateway_settings['name'] <> "") {
+				if (($gateway['name'] <> "") && ($gateway_settings['name'] == $gateway['name']) && ($gateway['attribute'] !== "system")) {
+					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $gateway_settings['name']);
+					break;
+				}
+			}
+			if (is_ipaddr($gateway_settings['gateway'])) {
+				if (($gateway['gateway'] <> "") && ($gateway_settings['gateway'] == $gateway['gateway']) && ($gateway['attribute'] !== "system")) {
+					$input_errors[] = sprintf(gettext('The gateway IP address "%s" already exists.'), $gateway_settings['gateway']);
+					break;
+				}
+			}
+			if (is_ipaddr($gateway_settings['monitor'])) {
+				if (($gateway['monitor'] <> "") && ($gateway_settings['monitor'] == $gateway['monitor']) && ($gateway['attribute'] !== "system")) {
+					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. A different monitor IP must be chosen.'), $gateway_settings['monitor']);
+					break;
+				}
+			}
+		}
+	}
+
+	/* input validation of dpinger advanced parameters */
+
+	$dpinger_default = return_dpinger_defaults();
+	$latencylow = $dpinger_default['latencylow'];
+	if ($gateway_settings['latencylow']) {
+		if (!is_numeric($gateway_settings['latencylow'])) {
+			$input_errors[] = gettext("The low latency threshold needs to be a numeric value.");
+		} else if ($gateway_settings['latencylow'] < 1) {
+			$input_errors[] = gettext("The low latency threshold needs to be positive.");
+		} else {
+			$latencylow = $gateway_settings['latencylow'];
+		}
+	}
+
+	$latencyhigh = $dpinger_default['latencyhigh'];
+	if ($gateway_settings['latencyhigh']) {
+		if (!is_numeric($gateway_settings['latencyhigh'])) {
+			$input_errors[] = gettext("The high latency threshold needs to be a numeric value.");
+		} else if ($gateway_settings['latencyhigh'] < 1) {
+			$input_errors[] = gettext("The high latency threshold needs to be positive.");
+		} else {
+			$latencyhigh = $gateway_settings['latencyhigh'];
+		}
+	}
+
+	$losslow = $dpinger_default['losslow'];
+	if ($gateway_settings['losslow']) {
+		if (!is_numeric($gateway_settings['losslow'])) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be a numeric value.");
+		} else if ($gateway_settings['losslow'] < 1) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be positive.");
+		} else if ($gateway_settings['losslow'] >= 100) {
+			$input_errors[] = gettext("The low Packet Loss threshold needs to be less than 100.");
+		} else {
+			$losslow = $gateway_settings['losslow'];
+		}
+	}
+
+	$losshigh = $dpinger_default['losshigh'];
+	if ($gateway_settings['losshigh']) {
+		if (!is_numeric($gateway_settings['losshigh'])) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be a numeric value.");
+		} else if ($gateway_settings['losshigh'] < 1) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be positive.");
+		} else if ($gateway_settings['losshigh'] > 100) {
+			$input_errors[] = gettext("The high Packet Loss threshold needs to be 100 or less.");
+		} else {
+			$losshigh = $gateway_settings['losshigh'];
+		}
+	}
+
+	$time_period = $dpinger_default['time_period'];
+	if ($gateway_settings['time_period']) {
+		if (!is_numeric($gateway_settings['time_period'])) {
+			$input_errors[] = gettext("The time period over which results are averaged needs to be a numeric value.");
+		} else if ($gateway_settings['time_period'] < 1) {
+			$input_errors[] = gettext("The time period over which results are averaged needs to be positive.");
+		} else {
+			$time_period = $gateway_settings['time_period'];
+		}
+	}
+
+	$interval = $dpinger_default['interval'];
+	if ($gateway_settings['interval']) {
+		if (!is_numeric($gateway_settings['interval'])) {
+			$input_errors[] = gettext("The probe interval needs to be a numeric value.");
+		} else if ($gateway_settings['interval'] < 1) {
+			$input_errors[] = gettext("The probe interval needs to be positive.");
+		} else {
+			$interval = $gateway_settings['interval'];
+		}
+	}
+
+	$loss_interval = $dpinger_default['loss_interval'];
+	if ($gateway_settings['loss_interval']) {
+		if (!is_numeric($gateway_settings['loss_interval'])) {
+			$input_errors[] = gettext("The loss interval needs to be a numeric value.");
+		} else if ($gateway_settings['loss_interval'] < 1) {
+			$input_errors[] = gettext("The loss interval setting needs to be positive.");
+		} else {
+			$loss_interval = $gateway_settings['loss_interval'];
+		}
+	}
+
+	$alert_interval = $dpinger_default['alert_interval'];
+	if ($gateway_settings['alert_interval']) {
+		if (!is_numeric($gateway_settings['alert_interval'])) {
+			$input_errors[] = gettext("The alert interval needs to be a numeric value.");
+		} else if ($gateway_settings['alert_interval'] < 1) {
+			$input_errors[] = gettext("The alert interval setting needs to be positive.");
+		} else {
+			$alert_interval = $gateway_settings['alert_interval'];
+		}
+	}
+
+	if ($latencylow >= $latencyhigh) {
+		$input_errors[] = gettext(
+		    "The high latency threshold needs to be greater than the low latency threshold");
+	}
+
+	if ($losslow >= $losshigh) {
+		$input_errors[] = gettext(
+		    "The high packet loss threshold needs to be higher than the low packet loss threshold");
+	}
+
+	// If the loss interval is less than latencyhigh, then high latency could never be recorded
+	// because those high latency packets would be considered as lost. So do not allow that.
+	if ($latencyhigh > $loss_interval) {
+		$input_errors[] = gettext("The loss interval needs to be greater than or equal to the high latency threshold.");
+	}
+
+	// Ensure that the time period is greater than 2 times the probe interval plus the loss interval.
+	if (($interval * 2 + $loss_interval) >= $time_period) {
+		$input_errors[] = gettext("The time period needs to be greater than twice the probe interval plus the loss interval.");
+	}
+
+	// There is no point recalculating the average latency and loss more often than the probe interval.
+	// So the alert interval needs to be >= probe interval.
+	if ($interval > $alert_interval) {
+		$input_errors[] = gettext("The alert interval needs to be greater than or equal to the probe interval.");
+	}
+
+	return $input_errors;
+}
+
+// Save gateway settings.
+// $gateway_settings - the array of gateway setting parameters
+// $realid - the index of the gateway to be modified (otherwise "" if adding a new gateway)
+
+// This function is responsible to:
+//   Setup the gateway parameter structure from the gateway settings input parameter
+//   Save the structure into the config
+//   Remove any run-time settings from gateway parameters that are changed (e.g. remove routes to addresses that are changing)
+
+// A subsequent "apply" step will implement the added/changed gateway.
+
+function save_gateway($gateway_settings, $realid = "") {
+	global $config;
+
+	$a_gateway_item = &$config['gateways']['gateway_item'];
+	$reloadif = "";
+	$gateway = array();
+
+	if (empty($gateway_settings['interface'])) {
+		$gateway['interface'] = $gateway_settings['friendlyiface'];
+	} else {
+		$gateway['interface'] = $gateway_settings['interface'];
+	}
+	if (is_ipaddr($gateway_settings['gateway'])) {
+		$gateway['gateway'] = $gateway_settings['gateway'];
+	} else {
+		$gateway['gateway'] = "dynamic";
+	}
+	$gateway['name'] = $gateway_settings['name'];
+	$gateway['weight'] = $gateway_settings['weight'];
+	$gateway['ipprotocol'] = $gateway_settings['ipprotocol'];
+	if ($gateway_settings['interval']) {
+		$gateway['interval'] = $gateway_settings['interval'];
+	}
+
+	if ($gateway_settings['time_period']) {
+		$gateway['time_period'] = $gateway_settings['time_period'];
+	}
+	if ($gateway_settings['alert_interval']) {
+		$gateway['alert_interval'] = $gateway_settings['alert_interval'];
+	}
+
+	$gateway['descr'] = $gateway_settings['descr'];
+	if ($gateway_settings['monitor_disable'] == "yes") {
+		$gateway['monitor_disable'] = true;
+	}
+	if ($gateway_settings['action_disable'] == "yes") {
+		$gateway['action_disable'] = true;
+	}
+	if ($gateway_settings['nonlocalgateway'] == "yes") {
+		$gateway['nonlocalgateway'] = true;
+	}
+	if ($gateway_settings['force_down'] == "yes") {
+		$gateway['force_down'] = true;
+	}
+	if (is_ipaddr($gateway_settings['monitor'])) {
+		$gateway['monitor'] = $gateway_settings['monitor'];
+	}
+	if (isset($gateway_settings['data_payload']) && $gateway_settings['data_payload'] > 0) {
+		$gateway['data_payload'] = $gateway_settings['data_payload'];
+	}
+
+	/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
+	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+		$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+		isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+		$realif = get_real_interface($a_gateway_item[$realid]['interface']);
+		$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
+		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
+		mwexec($cmd);
+	}
+
+	/* NOTE: If monitor ip is changed need to cleanup the old static route */
+	if ($gateway_settings['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+		$gateway_settings['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+		if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
+			mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+		} else {
+			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+		}
+	}
+
+	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
+		$i = 0;
+		/* remove the default gateway bits for all gateways with the same address family */
+		foreach ($a_gateway_item as $gw) {
+			if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
+				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+				if ($gw['interface'] != $gateway_settings['interface'] && $gw['defaultgw']) {
+					$reloadif = $gw['interface'];
+				}
+			}
+			$i++;
+		}
+		$gateway['defaultgw'] = true;
+	}
+
+	if ($gateway_settings['latencylow']) {
+		$gateway['latencylow'] = $gateway_settings['latencylow'];
+	}
+	if ($gateway_settings['latencyhigh']) {
+		$gateway['latencyhigh'] = $gateway_settings['latencyhigh'];
+	}
+	if ($gateway_settings['losslow']) {
+		$gateway['losslow'] = $gateway_settings['losslow'];
+	}
+	if ($gateway_settings['losshigh']) {
+		$gateway['losshigh'] = $gateway_settings['losshigh'];
+	}
+	if ($gateway_settings['loss_interval']) {
+		$gateway['loss_interval'] = $gateway_settings['loss_interval'];
+	}
+
+	if (isset($gateway_settings['disabled'])) {
+		$gateway['disabled'] = true;
+		/* Check if the gateway was enabled but changed to disabled. */
+		if ((isset($realid) && $a_gateway_item[$realid]) && ($a_gateway_item[$realid]['disabled'] == false)) {
+			/*  If the disabled gateway was the default route, remove the default route */
+			if (is_ipaddr($gateway['gateway']) &&
+				isset($gateway['defaultgw'])) {
+				$inet = (!is_ipaddrv4($gateway['gateway']) ? '-inet6' : '-inet');
+				mwexec("/sbin/route delete {$inet} default");
+			}
+		}
+	} else {
+		unset($gateway['disabled']);
+	}
+
+	/* when saving the manual gateway we use the attribute which has the corresponding id */
+	if (isset($realid) && $a_gateway_item[$realid]) {
+		$a_gateway_item[$realid] = $gateway;
+	} else {
+		$a_gateway_item[] = $gateway;
+	}
+
+	mark_subsystem_dirty('staticroutes');
+
+	write_config();
+
+	if (!empty($reloadif)) {
+		send_event("interface reconfigure {$reloadif}");
+	}
 }
 ?>

@@ -28,6 +28,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 require_once("unbound.inc");
 
 if (!is_array($config['unbound']['acls'])) {
@@ -56,7 +57,7 @@ if ($_POST['act'] == "del") {
 	}
 
 	unset($a_acls[$id]);
-	write_config();
+	write_config(gettext("Access list deleted from DNS Resolver."));
 	mark_subsystem_dirty('unbound');
 }
 
@@ -142,7 +143,7 @@ if ($_POST['save']) {
 			}
 
 			mark_subsystem_dirty("unbound");
-			write_config();
+			write_config(gettext("Access list configured for DNS Resolver."));
 
 			pfSenseHeader("/services_unbound_acls.php");
 			exit;

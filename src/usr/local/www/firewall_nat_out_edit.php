@@ -146,6 +146,10 @@ if ($_POST['save']) {
 	 *  cannot think he is slick and perform a XSS attack on the unwilling
 	 */
 	foreach ($_POST as $key => $value) {
+		if ($key == 'descr') {
+			continue;
+		}
+
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 		if ($newpost <> $temp) {
@@ -185,15 +189,15 @@ if ($_POST['save']) {
 		$_POST['target'] = substr($_POST['target'], 1);
 	}
 
-	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
+	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !is_port_or_range_or_alias($_POST['sourceport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the source port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
+	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !is_port_or_range_or_alias($_POST['dstport'])) {
 		$input_errors[] = gettext("A valid port or port alias must be supplied for the destination port entry.");
 	}
 
-	if ($protocol_uses_ports && $_POST['natport'] <> "" && !(is_portoralias($_POST['natport']) || is_portrange($_POST['natport'])) && !isset($_POST['nonat'])) {
+	if ($protocol_uses_ports && $_POST['natport'] <> "" && !is_port_or_range_or_alias($_POST['natport']) && !isset($_POST['nonat'])) {
 		$input_errors[] = gettext("A valid port must be supplied for the NAT port entry.");
 	}
 
@@ -378,7 +382,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Outbound - saved/edited outbound NAT mapping."))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_out.php");
@@ -406,10 +410,12 @@ function build_target_list() {
 
 	$list[""] = gettext('Interface Address');
 
+	//Temporary array so we can sort IPs
+	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
 			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
-				$list['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				$templist['S' . $sn['subnet'] . '/' . $sn['subnet_bits']] = gettext('Subnet: ') . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -419,13 +425,17 @@ function build_target_list() {
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
-					$list['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
+					$templist['I' . $snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
 			} else {
-				$list['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
+				$templist['I' . $sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
 	}
+	asort($templist);
+	//Append sorted IP array onto main array
+	$list = array_merge($list, $templist);
+	unset($templist);
 
 	foreach ($a_aliases as $alias) {
 		if ($alias['type'] != "host") {
@@ -462,7 +472,7 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['nonat'])
 ))->setHelp('In most cases this option is not required.');
 
-$iflist = get_configured_interface_with_descr(false, true);
+$iflist = get_configured_interface_with_descr(true);
 
 foreach ($iflist as $if => $ifdesc) {
 	if (have_ruleint_access($if)) {

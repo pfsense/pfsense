@@ -186,7 +186,7 @@ if ($_POST['save']) {
 
 		schedule_sort();
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall schedule configured."))) {
 			filter_configure();
 		}
 

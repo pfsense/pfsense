@@ -24,20 +24,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-
 require_once("/usr/local/www/widgets/include/ntp_status.inc");
-
-function getServerDateItems($inDate) {
-	return date('Y,n,j,G,', $inDate) . intval(date('i', $inDate)) . ',' . intval(date('s', $inDate));
-	// year (4-digit),month,day,hours (0-23),minutes,seconds
-	// use intval to strip leading zero from minutes and seconds
-	// so JavaScript won't try to interpret them in octal
-	// (use intval instead of ltrim, which translates '00' to '')
-}
-
-function clockTimeString($inDate, $showSeconds) {
-	return date($showSeconds ? 'G:i:s' : 'g:i', $inDate) . ' ';
-}
 
 // For this widget the update period is 6 x larger than most others. It typically defaults
 // to once per 60 seconds, not once per 10 seconds
@@ -162,14 +149,9 @@ if ($_REQUEST['updateme']) {
 <table id="ntp_status_widget" class="table table-striped table-hover">
 	<tr>
 		<th><?=gettext('Server Time')?></th>
-		<td id="ClockTime"> <!-- ntpStatusClock -->
-			<script type="text/javascript">
-			//<![CDATA[
-			var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');
-			//]]>
-			</script>
-			<!-- display initial value before javascript takes over -->
-			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
+		<td id="ClockTime">
+			<!-- will be replaced by javascript -->
+			<span id="ntpStatusClock"></span>
 		</td>
 	</tr>
 	<tr>
@@ -212,268 +194,27 @@ if ($_REQUEST['updateme']) {
 	exit;
 }
 ?>
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-function ntpWidgetUpdateFromServer() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/ntp_status.widget.php',
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		dataType: 'html',
-		success: function(data){
-			console.log(data);
-			$('#ntp_status_widget').html(data);
-		}
-	});
-}
+var d = new Date('<?=date_format(date_create(), 'c')?>');
+var tz = '<?=date('T');?>';
 
-function ntpWidgetUpdateDisplay() {
-	// Javascript handles overflowing
-	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
+setInterval(function() {
+	d.setSeconds(d.getSeconds() + 1);
+	var thisSecond = d.getSeconds();
+	var thisMinute = d.getMinutes();
+	var thisHour = d.getHours();
 
-	$('#ntpStatusClock').html(ntpServerTime.toString());
-}
+	// Add leading zeros to minutes and seconds as required
+	thisMinute = thisMinute < 10 ? "0" + thisMinute : thisMinute;
+	thisSecond = thisSecond < 10 ? "0" + thisSecond : thisSecond;
+
+	$('[id="ntpStatusClock"]').html(thisHour +':' + thisMinute + ':' + thisSecond + ' ' + tz);
+}, 1000);
 //]]>
 </script>
-
-<script type="text/javascript">
-//<![CDATA[
-/* set up variables used to init clock in BODY's onLoad handler;
-   should be done as early as possible */
-var clockLocalStartTime = new Date();
-var clockServerStartTime = new Date(<?php echo(getServerDateItems($gDate))?>);
-
-/* stub functions for older browsers;
-   will be overridden by next JavaScript1.2 block */
-function clockInit() {
-}
-//]]>
-</script>
-
-<script type="text/javascript">
-//<![CDATA[
-/*** simpleFindObj, by Andrew Shearer
-
-Efficiently finds an object by name/id, using whichever of the IE,
-classic Netscape, or Netscape 6/W3C DOM methods is available.
-The optional inLayer argument helps Netscape 4 find objects in
-the named layer or floating DIV. */
-function simpleFindObj(name, inLayer) {
-	return document[name] || (document.all && document.all[name])
-		|| (document.getElementById && document.getElementById(name))
-		|| (document.layers && inLayer && document.layers[inLayer].document[name]);
-}
-
-/*** Beginning of Clock 2.1.2, by Andrew Shearer
-See: http://www.shearersoftware.com/software/web-tools/clock/
-Redistribution is permitted with the above notice intact.
-
-Client-side clock, based on computed time differential between browser &
-server. The server time is inserted by server-side JavaScript, and local
-time is subtracted from it by client-side JavaScript while the page is
-loading.
-
-Cookies: The local and remote times are saved in cookies named
-localClock and remoteClock, so that when the page is loaded from local
-cache (e.g. by the Back button) the clock will know that the embedded
-server time is stale compared to the local time, since it already
-matches its cookie. It can then base the calculations on both cookies,
-without reloading the page from the server. (IE 4 & 5 for Windows didn't
-respect Response.Expires = 0, so if cookies weren't used, the clock
-would be wrong after going to another page then clicking Back. Netscape
-& Mac IE were OK.)
-
-Every so often (by default, one hour) the clock will reload the page, to
-make sure the clock is in sync (as well as to update the rest of the
-page content).
-
-Compatibility: IE 4.x and 5.0, Netscape 4.x and 6.0, Mozilla 1.0. Mac & Windows.
-
-History:  1.0	2000-05-09 GIF-image digits
-		  2.0	2000-06-29 Uses text DIV layers (so 4.0 browsers req'd), &
-						 cookies to work around Win IE stale-time bug
-		  2.1	2002-10-12 Noted Mozilla 1.0 compatibility; released PHP version.
-		  2.1.1 2002-10-20 Fixed octal bug in the PHP translation; the number of
-						minutes & seconds were misinterpreted when less than 10
-		  2.1.2 2003-08-07 The previous fix had introduced a bug when the
-						minutes or seconds were exactly 0. Thanks to Man Bui
-						for reporting the bug.
-*/
-var clockIncrementMillis = 1000;
-var localTime;
-var clockOffset;
-var clockExpirationLocal;
-var clockShowsSeconds = true;
-var clockTimerID = null;
-
-function clockInit(localDateObject, serverDateObject)
-{
-	var origRemoteClock = parseInt(clockGetCookieData("remoteClock"));
-	var origLocalClock = parseInt(clockGetCookieData("localClock"));
-	var newRemoteClock = serverDateObject.getTime();
-	// May be stale (WinIE); will check against cookie later
-	// Can't use the millisec. ctor here because of client inconsistencies.
-	var newLocalClock = localDateObject.getTime();
-	var maxClockAge = 60 * 60 * 1000;	// get new time from server every 1hr
-
-	if (newRemoteClock != origRemoteClock) {
-		// new clocks are up-to-date (newer than any cookies)
-		document.cookie = "remoteClock=" + newRemoteClock;
-		document.cookie = "localClock=" + newLocalClock;
-		clockOffset = newRemoteClock - newLocalClock;
-		clockExpirationLocal = newLocalClock + maxClockAge;
-		localTime = newLocalClock;	// to keep clockUpdate() happy
-	} else if (origLocalClock != origLocalClock) {
-		// error; localClock cookie is invalid (parsed as NaN)
-		clockOffset = null;
-		clockExpirationLocal = null;
-	} else {
-		// fall back to clocks in cookies
-		clockOffset = origRemoteClock - origLocalClock;
-		clockExpirationLocal = origLocalClock + maxClockAge;
-		localTime = origLocalClock;
-		// so clockUpdate() will reload if newLocalClock
-		// is earlier (clock was reset)
-	}
-	/* Reload page at server midnight to display the new date,
-	   by expiring the clock then */
-	var nextDayLocal = (new Date(serverDateObject.getFullYear(),
-			serverDateObject.getMonth(),
-			serverDateObject.getDate() + 1)).getTime() - clockOffset;
-	if (nextDayLocal < clockExpirationLocal) {
-		clockExpirationLocal = nextDayLocal;
-	}
-}
-
-function clockOnLoad()
-{
-	clockUpdate();
-}
-
-function clockOnUnload() {
-	clockClearTimeout();
-}
-
-function clockClearTimeout() {
-	if (clockTimerID) {
-		clearTimeout(clockTimerID);
-		clockTimerID = null;
-	}
-}
-
-function clockToggleSeconds()
-{
-	clockClearTimeout();
-	if (clockShowsSeconds) {
-		clockShowsSeconds = false;
-		clockIncrementMillis = 60000;
-	} else {
-		clockShowsSeconds = true;
-		clockIncrementMillis = 1000;
-	}
-	clockUpdate();
-}
-
-function clockTimeString(inHours, inMinutes, inSeconds) {
-	return inHours
-	+ (inMinutes < 10 ? ":0" : ":") + inMinutes
-	+ (inSeconds < 10 ? ":0" : ":") + inSeconds;
-}
-
-function clockDisplayTime(inHours, inMinutes, inSeconds) {
-	clockWriteToDiv("ClockTime", clockTimeString(inHours, inMinutes, inSeconds));
-}
-
-function clockWriteToDiv(divName, newValue) // APS 6/29/00
-{
-	var divObject = simpleFindObj(divName);
-	newValue =	newValue + ' (' + new Date().toString().match(/([A-Z]+[\+-][0-9]+)/)[1] + ')';
-	if (divObject && divObject.innerHTML) {
-		divObject.innerHTML = newValue;
-	} else if (divObject && divObject.document) {
-		divObject.document.writeln(newValue);
-		divObject.document.close();
-	}
-	// else divObject wasn't found; it's only a clock, so don't bother complaining
-}
-
-function clockGetCookieData(label) {
-	/* find the value of the specified cookie in the document's
-	semicolon-delimited collection. For IE Win98 compatibility, search
-	from the end of the string (to find most specific host/path) and
-	don't require "=" between cookie name & empty cookie values. Returns
-	null if cookie not found. One remaining problem: Under IE 5 [Win98],
-	setting a cookie with no equals sign creates a cookie with no name,
-	just data, which is indistinguishable from a cookie with that name
-	but no data but can't be overwritten by any cookie with an equals
-	sign. */
-	var c = document.cookie;
-	if (c) {
-		var labelLen = label.length, cEnd = c.length;
-		while (cEnd > 0) {
-			var cStart = c.lastIndexOf(';',cEnd-1) + 1;
-			/* bug fix to Danny Goodman's code: calculate cEnd, to
-			prevent walking the string char-by-char & finding cookie
-			labels that contained the desired label as suffixes */
-			// skip leading spaces
-			while (cStart < cEnd && c.charAt(cStart)==" ") {
-				cStart++;
-			}
-			if (cStart + labelLen <= cEnd && c.substr(cStart,labelLen) == label) {
-				if (cStart + labelLen == cEnd) {
-					return ""; // empty cookie value, no "="
-				} else if (c.charAt(cStart+labelLen) == "=") {
-					// has "=" after label
-					return unescape(c.substring(cStart + labelLen + 1,cEnd));
-				}
-			}
-			cEnd = cStart - 1;	// skip semicolon
-		}
-	}
-	return null;
-}
-
-/* Called regularly to update the clock display as well as onLoad (user
-   may have clicked the Back button to arrive here, so the clock would need
-   an immediate update) */
-function clockUpdate()
-{
-	var lastLocalTime = localTime;
-	localTime = (new Date()).getTime();
-
-	// Sanity-check the diff. in local time between successive calls;
-	//	 reload if user has reset system clock
-	if (clockOffset == null) {
-		clockDisplayTime(null, null, null);
-	} else if (localTime < lastLocalTime || clockExpirationLocal < localTime) {
-		// Clock expired, or time appeared to go backward (user reset
-		// the clock). Reset cookies to prevent infinite reload loop if
-		// server doesn't give a new time.
-		document.cookie = 'remoteClock=-';
-		document.cookie = 'localClock=-';
-		location.reload();		// will refresh time values in cookies
-	} else {
-		// Compute what time would be on server
-		var serverTime = new Date(localTime);
-		clockDisplayTime(serverTime.getHours(), serverTime.getMinutes(),
-			serverTime.getSeconds());
-
-		// Reschedule this func to run on next even clockIncrementMillis boundary
-		clockTimerID = setTimeout("clockUpdate()",
-			clockIncrementMillis - (serverTime.getTime() % clockIncrementMillis));
-	}
-}
-
-/*** End of Clock ***/
-window.onload=clockInit(clockLocalStartTime, clockServerStartTime);clockOnLoad();
-window.onunload=clockOnUnload()
-clockUpdate();
-//]]>
-</script>
-
+<?php endif; ?>
 <table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
@@ -483,11 +224,10 @@ clockUpdate();
 		</tr>
 	</tbody>
 </table>
-
+<?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
 	function ntp_getstatus() {
-		scroll(0,0);
 		var url = "/widgets/widgets/ntp_status.widget.php";
 		var pars = 'updateme=yes';
 		$.ajax(
@@ -502,7 +242,7 @@ clockUpdate();
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText
-		$('#ntpstatus').prop('innerHTML',responseStringNtp);
+		$('[id="ntpstatus"]').prop('innerHTML',responseStringNtp);
 
 		// Refresh the status at the configured interval
 		setTimeout('ntp_getstatus()', "<?=$widgetperiod?>");
@@ -514,3 +254,4 @@ clockUpdate();
 
 //]]>
 </script>
+<?php endif; ?>

@@ -65,7 +65,7 @@ if ($_POST['apply']) {
 		foreach ($_POST['p1entry'] as $p1entrydel) {
 			unset($a_phase1[$p1entrydel]);
 		}
-		if (write_config()) {
+		if (write_config(gettext("Deleted selected IPsec Phase 1 entries."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
@@ -75,7 +75,7 @@ if ($_POST['apply']) {
 		foreach ($_POST['p2entry'] as $p2entrydel) {
 			unset($a_phase2[$p2entrydel]);
 		}
-		if (write_config()) {
+		if (write_config(gettext("Deleted selected IPsec Phase 2 entries."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
@@ -209,7 +209,7 @@ if ($_POST['apply']) {
 	}
 
 	if ($save === 1) {
-		if (write_config()) {
+		if (write_config(gettext("Saved configuration changes for IPsec tunnels."))) {
 			mark_subsystem_dirty('ipsec');
 		}
 	}
@@ -257,8 +257,27 @@ if (is_subsystem_dirty('ipsec')) {
 					</tr>
 				</thead>
 				<tbody class="p1-entries">
-<?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
+$iflabels = get_configured_interface_with_descr(false, true);
+$viplist = get_configured_vip_list();
+foreach ($viplist as $vip => $address) {
+	$iflabels[$vip] = $address;
+	if (get_vip_descr($address)) {
+		$iflabels[$vip] .= " (". get_vip_descr($address) .")";
+	}
+}
+$grouplist = return_gateway_groups_array();
+foreach ($grouplist as $name => $group) {
+	if ($group[0]['vip'] != "") {
+		$vipif = $group[0]['vip'];
+	} else {
+		$vipif = $group[0]['int'];
+	}
+	$iflabels[$name] = "GW Group {$name}";
+}
+
+$i = 0; foreach ($a_phase1 as $ph1ent): 
+
 	$iconfn = "pass";
 
 	$entryStatus = (isset($ph1ent['disabled']) ? 'disabled' : 'enabled');
@@ -289,26 +308,11 @@ if (is_subsystem_dirty('ipsec')) {
 						<td>
 <?php
 			if ($ph1ent['interface']) {
-				$iflabels = get_configured_interface_with_descr();
-
-				$viplist = get_configured_vip_list();
-				foreach ($viplist as $vip => $address) {
-					$iflabels[$vip] = $address;
-					if (get_vip_descr($address)) {
-						$iflabels[$vip] .= " (". get_vip_descr($address) .")";
-					}
+				if (isset($iflabels[$ph1ent['interface']])) {
+					$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+				} else {
+					$if = sprintf("Interface not found: '%s'", $ph1ent['interface']);
 				}
-
-				$grouplist = return_gateway_groups_array();
-				foreach ($grouplist as $name => $group) {
-					if ($group[0]['vip'] != "") {
-						$vipif = $group[0]['vip'];
-					} else {
-						$vipif = $group[0]['int'];
-					}
-					$iflabels[$name] = "GW Group {$name}";
-				}
-				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
 			} else {
 				$if = "WAN";
 			}

@@ -827,7 +827,7 @@
 					$needsIP = FALSE;
 					$port = "";
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 
 					//step 1: login to API
 					$post_data['username'] = $this->_dnsUser;
@@ -860,7 +860,7 @@
 					//step 3: update the IP
 					if ($hostID) {
 						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 						curl_setopt($ch, CURLOPT_COOKIE, $cookie_data);
 						$post_data['content'] = $this->_dnsIP;
 						curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);

@@ -539,31 +539,39 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $config, $g;
 
-	// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
-	if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
-		$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
-	} else {
-		$system_domain_local_zone_type = "transparent";
-	}
-
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
-
-	$hosts = system_hosts_entries($config['unbound']);
-	$added_ptr = array();
-	foreach ($hosts as $host) {
-		if (is_ipaddrv4($host['ipaddr'])) {
-			$type = 'A';
-		} else if (is_ipaddrv6($host['ipaddr'])) {
-			$type = 'AAAA';
+	// Check if auto add host entries is not set
+	if (!isset($config['unbound']['disable_auto_added_host_entries'])) {
+		// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
+		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
+			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
 		} else {
-			continue;
+			$system_domain_local_zone_type = "transparent";
 		}
 
-		if (!$added_ptr[$host['ipaddr']]) {
-			$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
-			$added_ptr[$host['ipaddr']] = true;
+		$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
+
+		$hosts = system_hosts_entries($config['unbound']);
+		$added_ptr = array();
+		foreach ($hosts as $host) {
+			if (is_ipaddrv4($host['ipaddr'])) {
+				$type = 'A';
+			} else if (is_ipaddrv6($host['ipaddr'])) {
+				$type = 'AAAA';
+			} else {
+				continue;
+			}
+
+			if (!$added_ptr[$host['ipaddr']]) {
+				$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
+				$added_ptr[$host['ipaddr']] = true;
+			}
+			$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
 		}
-		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
+	}
+	else {
+		// Adds a comment to the file to make it clear it's there for a reason and to clear the file
+		// when the user enables this option.
+		$unbound_entries = "# Empty since file generation has been disabled in the options.";
 	}
 
 	// Write out entries

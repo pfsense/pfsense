@@ -71,6 +71,10 @@ if (isset($config['unbound']['disable_auto_added_access_control'])) {
 	$pconfig['disable_auto_added_access_control'] = true;
 }
 
+if (isset($config['unbound']['disable_auto_host_entries'])) {
+	$pconfig['disable_auto_added_host_entries'] = true;
+}
+
 if (isset($config['unbound']['use_caps'])) {
 	$pconfig['use_caps'] = true;
 }
@@ -169,6 +173,12 @@ if ($_POST) {
 				$config['unbound']['disable_auto_added_access_control'] = true;
 			} else {
 				unset($config['unbound']['disable_auto_added_access_control']);
+			}
+
+			if (isset($_POST['disable_auto_added_host_entries'])) {
+				$config['unbound']['disable_auto_added_host_entries'] = true;
+			} else {
+				unset($config['unbound']['disable_auto_added_host_entries']);
 			}
 
 			if (isset($_POST['use_caps'])) {
@@ -348,6 +358,14 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disable_auto_added_access_control']
 ))->setHelp('By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. ' .
 			'Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.');
+
+$section->addInput(new Form_Checkbox(
+	'disable_auto_added_host_entries',
+	'Disable Auto-added Host Entries',
+	'Disable the automatically-added host entries',
+	$pconfig['disable_auto_added_host_entries']
+))->setHelp('By default, the primary IPv4 and IPv6 addresses of the pfsense machine are added as records for the pfSense system domain (System | General Setup | Domain). ' .
+			'This disables the auto generation of these entries.');
 
 $section->addInput(new Form_Checkbox(
 	'use_caps',

@@ -117,7 +117,12 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 		$widgettitle = ucwords(str_replace('_', ' ', $basename));
 	}
 
-	$known_widgets[$basename . '-0'] = array('basename' => $basename, 'title' => $widgettitle, 'display' => 'none');
+	$known_widgets[$basename . '-0'] = array(
+		'basename' => $basename,
+		'title' => $widgettitle,
+		'display' => 'none',
+		'multicopy' => ${$basename . '_allow_multiple_widget_copies'}
+	);
 }
 
 ##if no config entry found, initialize config entry
@@ -319,7 +324,11 @@ if ($user_settings['widgets']['sequence'] != "") {
 			'col' => $col,
 			'display' => $display,
 			'copynum' => $copynum,
+			'multicopy' => ${$basename . '_allow_multiple_widget_copies'}
 		);
+
+		// Update the known_widgets entry so we know if any copy of the widget is being displayed
+		$known_widgets[$basename . '-0']['display'] = $display;
 	}
 
 	// add widgets that may not be in the saved configuration, in case they are to be displayed later
@@ -376,8 +385,11 @@ $available = $known_widgets;
 uasort($available, function($a, $b){ return strcasecmp($a['title'], $b['title']); });
 
 foreach ($available as $widgetkey => $widgetconfig):
+	// If the widget supports multiple copies, or no copies are displayed yet, then it is available to add
+	if (($widgetconfig['multicopy']) || ($widgetconfig['display'] == 'none')):
 ?>
 		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa fa-plus"></i> <?=$widgetconfig['title']?></a></div>
+	<?php endif; ?>
 <?php endforeach; ?>
 			</div>
 		</div>

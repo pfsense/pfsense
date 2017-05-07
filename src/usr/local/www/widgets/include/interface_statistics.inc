@@ -22,4 +22,5 @@
 //set variable for custom title
 $interface_statistics_title = gettext("Interface Statistics");
 $interface_statistics_title_link = "status_interfaces.php";
+$interface_statistics_allow_multiple_widget_copies = true;
 ?>

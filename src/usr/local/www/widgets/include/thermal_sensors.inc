@@ -23,6 +23,7 @@
 //set variable for custom title
 $thermal_sensors_widget_title = gettext("Thermal Sensors");
 //$thermal_sensors_widget_link = "thermal_sensors.php";
+$thermal_sensors_allow_multiple_widget_copies = true;
 
 
 //returns core temp data (from coretemp.ko or amdtemp.ko driver) as "|"-delimited string.

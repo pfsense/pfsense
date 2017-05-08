@@ -973,7 +973,9 @@ $section->addInput(new Form_Checkbox(
 	'Reauthenticate connected users every minute',
 	$pconfig['reauthenticate']
 ))->setHelp('If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is logged in every minute. ' .
-			'If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately.');
+			'If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately. ' .
+			'Reauthentication requires user credentials to be cached in the captive portal database while a user is logged in; ' .
+			'The cached credentials are necessary for the portal to perform automatic reauthentication requests.');
 
 $section->addInput(new Form_Checkbox(
 	'radmac_enable',

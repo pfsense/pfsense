@@ -549,29 +549,24 @@ function unbound_add_host_entries($cfgsubdir = "") {
 		}
 
 		$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
-
-		$hosts = system_hosts_entries($config['unbound']);
-		$added_ptr = array();
-		foreach ($hosts as $host) {
-			if (is_ipaddrv4($host['ipaddr'])) {
-				$type = 'A';
-			} else if (is_ipaddrv6($host['ipaddr'])) {
-				$type = 'AAAA';
-			} else {
-				continue;
-			}
-
-			if (!$added_ptr[$host['ipaddr']]) {
-				$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
-				$added_ptr[$host['ipaddr']] = true;
-			}
-			$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
-		}
 	}
-	else {
-		// Adds a comment to the file to make it clear it's there for a reason and to clear the file
-		// when the user enables this option.
-		$unbound_entries = "# Empty since file generation has been disabled in the options.";
+
+	$hosts = system_hosts_entries($config['unbound']);
+	$added_ptr = array();
+	foreach ($hosts as $host) {
+		if (is_ipaddrv4($host['ipaddr'])) {
+			$type = 'A';
+		} else if (is_ipaddrv6($host['ipaddr'])) {
+			$type = 'AAAA';
+		} else {
+			continue;
+		}
+
+		if (!$added_ptr[$host['ipaddr']]) {
+			$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
+			$added_ptr[$host['ipaddr']] = true;
+		}
+		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
 	}
 
 	// Write out entries

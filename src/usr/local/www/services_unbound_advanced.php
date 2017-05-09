@@ -71,7 +71,7 @@ if (isset($config['unbound']['disable_auto_added_access_control'])) {
 	$pconfig['disable_auto_added_access_control'] = true;
 }
 
-if (isset($config['unbound']['disable_auto_host_entries'])) {
+if (isset($config['unbound']['disable_auto_added_host_entries'])) {
 	$pconfig['disable_auto_added_host_entries'] = true;
 }
 
@@ -364,8 +364,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable Auto-added Host Entries',
 	'Disable the automatically-added host entries',
 	$pconfig['disable_auto_added_host_entries']
-))->setHelp('By default, the primary IPv4 and IPv6 addresses of the pfsense machine are added as records for the pfSense system domain (System | General Setup | Domain). ' .
-			'This disables the auto generation of these entries.');
+))->setHelp('By default, the primary IPv4 and IPv6 addresses of of this firewall are added as records for the system domain of this firewall as configured in %1$sSystem: General Setup%2$s. This disables the auto generation of these entries.', '<a href="system.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'use_caps',

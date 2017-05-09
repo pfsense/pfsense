@@ -489,7 +489,10 @@ function system_hosts_dhcpd_entries() {
 
 /* Concatenate local, dnsmasq/unbound and dhcpd/dhcpdv6 hosts entries */
 function system_hosts_entries($dnscfg) {
-	$local = system_hosts_local_entries();
+	$local = array();
+	if (!isset($dnscfg['disable_auto_added_host_entries'])) {
+		$local = system_hosts_local_entries();
+	}
 
 	$dns = array();
 	$dhcpd = array();
@@ -1192,7 +1195,7 @@ EOD;
 			}
 		}
 	}
-	
+
 	$syslogd_sockets = "";
 	foreach ($log_sockets as $log_socket) {
 		// Ensure that the log directory exists
@@ -2155,7 +2158,7 @@ function system_dmesg_save() {
 
 	fclose($fd);
 	unset($dmesg);
-	
+
 	// vm-bhyve expects dmesg.boot at the standard location
 	@symlink("{$g['varlog_path']}/dmesg.boot", "{$g['varrun_path']}/dmesg.boot");
 

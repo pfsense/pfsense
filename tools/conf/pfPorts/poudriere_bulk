@@ -17,6 +17,7 @@ net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
 net-mgmt/net-snmp
+net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 sysutils/htop
 sysutils/grub2-bhyve
 sysutils/pstree

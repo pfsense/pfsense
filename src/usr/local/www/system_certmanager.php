@@ -1110,6 +1110,7 @@ foreach ($a_cert as $i => $cert):
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);
 		$purpose = cert_get_purpose($cert['crt']);
+		$sans = cert_get_sans($cert['crt']);
 		list($startdate, $enddate) = cert_get_dates($cert['crt']);
 
 		if ($subj == $issuer) {
@@ -1130,6 +1131,7 @@ foreach ($a_cert as $i => $cert):
 
 	if ($cert['csr']) {
 		$subj = htmlspecialchars(csr_get_subject($cert['csr']));
+		$sans = cert_get_sans($cert['crt']);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
 
@@ -1145,12 +1147,36 @@ foreach ($a_cert as $i => $cert):
 							<i><?=$cert_types[$cert['type']]?></i><br />
 						<?php endif?>
 						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b>
+							CA: <b><?=$purpose['ca']?></b><br/>
+							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>
 					<td>
 						<?=$subj?>
+						<?php
+						$certextinfo = "";
+						if (is_array($sans) && !empty($sans)) {
+							$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $sans));
+							$certextinfo .= '<br/>';
+						}
+						if (is_array($purpose) && !empty($purpose['ku'])) {
+							$certextinfo .= '<b>' . gettext("KU: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $purpose['ku']));
+							$certextinfo .= '<br/>';
+						}
+						if (is_array($purpose) && !empty($purpose['eku'])) {
+							$certextinfo .= '<b>' . gettext("EKU: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(implode(', ', $purpose['eku']));
+						}
+						?>
+						<?php if (!empty($certextinfo)): ?>
+							<div class="infoblock">
+							<? print_info_box($certextinfo, 'info', false); ?>
+							</div>
+						<?php endif?>
+
 						<?php if (!empty($startdate) || !empty($enddate)): ?>
 						<br />
 						<small>

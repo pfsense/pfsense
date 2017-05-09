@@ -1,14 +1,16 @@
 # Moshe Katz <kohenkatz@gmail.com>, 2017. #zanata
+# Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
+# Shmuel Shoshtari <shmuelpro@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-24 06:51-0300\n"
+"POT-Creation-Date: 2017-05-08 16:32-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-13 03:33-0500\n"
-"Last-Translator: Moshe Katz <kohenkatz@gmail.com>\n"
+"PO-Revision-Date: 2017-05-08 03:43-0400\n"
+"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -20,27 +22,29 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
+"התקפה פוטנציאלית מסוג DNS Rebind אותרה, ראה http://en.wikipedia.org/wiki/"
+"DNS_rebinding <br />  נסה להגיע לנתב ע\"י כתובת IP במקום שם הוסט"
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr ""
+msgstr "מעביר..."
 
 #: src/etc/inc/auth.inc:121
 msgid "Redirecting to the dashboard..."
-msgstr ""
+msgstr "מעביר לדשבורד..."
 
 #: src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:445 src/etc/inc/auth.inc:522
 #: src/etc/inc/auth.inc:563 src/etc/inc/auth.inc:632 src/etc/inc/auth.inc:790
 #: src/etc/inc/auth.inc:803
 #, php-format
 msgid "Running: %s"
-msgstr ""
+msgstr "מריץ: %s"
 
 #: src/etc/inc/auth.inc:844 src/etc/inc/auth.inc:925 src/etc/inc/auth.inc:1013
 #: src/etc/inc/auth.inc:1325
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr ""
+msgstr "שגיעה! התחברות לשרת %s נכשלה."
 
 #: src/etc/inc/auth.inc:862
 #, php-format
@@ -50,7 +54,7 @@ msgstr ""
 #: src/etc/inc/auth.inc:937
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr ""
+msgstr "שגיאה! ldap_test_bind()  לא הצליח לעשות STARTTLS לשרת %s."
 
 #: src/etc/inc/auth.inc:999
 msgid ""
@@ -170,11 +174,11 @@ msgstr ""
 #: src/etc/inc/auth.inc:1641
 #, php-format
 msgid "(User %s)"
-msgstr ""
+msgstr "(משתמש %s)"
 
 #: src/etc/inc/auth.inc:1659 src/etc/inc/auth.inc:1675
 msgid "Local Database"
-msgstr ""
+msgstr "מסד נתונים מקומי"
 
 #: src/etc/inc/auth.inc:1779
 #, php-format
@@ -193,17 +197,16 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:74
 msgid "No page assigned to this user! Click here to logout."
-msgstr ""
+msgstr "שום דף לא הוקצה למשתמש זה! לחץ כאן כדי להתנתק"
 
 #: src/etc/inc/authgui.inc:105
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr ""
+msgstr "שגיאה: %1$s   סיבה: %2$"
 
 #: src/etc/inc/authgui.inc:123
-#, fuzzy
 msgid "Error: not allowed"
-msgstr "שגיאה: אסור"
+msgstr "שגיאה: פעולה לא חוקית"
 
 #: src/etc/inc/authgui.inc:150
 msgid "unknown reason"
@@ -212,27 +215,27 @@ msgstr "סיבה לא ידועה"
 #: src/etc/inc/authgui.inc:151
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "התחברות שגויה (%s)."
 
 #: src/etc/inc/authgui.inc:156
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "המכשיר כרגע נתמך ע\"י: %s."
 
 #: src/etc/inc/authgui.inc:225
-#, fuzzy, php-format
+#, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr "היכנס ל%1$s על %2$s.%3$s"
+msgstr "התחבר ל%1$s על %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:227
 #, php-format
 msgid "Login to %1$s"
-msgstr "היכנס ל%1$s"
+msgstr "התחבר ל%1$s"
 
 #: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
-#: src/usr/local/www/services_captiveportal.php:1015
+#: src/usr/local/www/services_captiveportal.php:1017
 msgid "Login"
-msgstr "היכנס"
+msgstr "התחברות"
 
 #: src/etc/inc/authgui.inc:250
 msgid ""
@@ -241,10 +244,14 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
+"כתובת הIP הנמצאת בשימוש להתחברות לראוטר אינה מוגדרת מקומית, מה שעלול לגרום "
+"לה להיות מועברת בעזרת NAT או דרכים אחרות.\n"
+"<br /><br />\n"
+"אם ההעברה לא צפויה צריך לוודא שלא מתבצע התקפת אדם בתווך."
 
 #: src/etc/inc/authgui.inc:265
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "הדפדפן חייב לתמוך בקוקיז כדי להתחבר."
 
 #: src/etc/inc/authgui.inc:269 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -271,7 +278,7 @@ msgstr "שם משתמש"
 
 #: src/etc/inc/authgui.inc:271
 msgid "Enter your username"
-msgstr "הזין את שם המשתמש שלך"
+msgstr "הכנס שם המשתמש"
 
 #: src/etc/inc/authgui.inc:276 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
@@ -300,7 +307,7 @@ msgstr "סיסמה"
 
 #: src/etc/inc/authgui.inc:278
 msgid "Enter your password"
-msgstr "הזין את הסיסמה שלך"
+msgstr "הכנס סיסמה"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -322,7 +329,7 @@ msgstr "סיסמה:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "הכנס קוד שובר:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
@@ -335,7 +342,7 @@ msgstr "מעביר לאתר"
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
 #: src/usr/local/www/head.inc:521
 msgid "Logout"
-msgstr "ניתוק"
+msgstr "התנתק"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
@@ -436,7 +443,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
-msgstr "האם ברצונך להמשיח [כן=y|לא=n]"
+msgstr "האם ברצונך להמשיך [כן=y|לא=n]"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
@@ -460,7 +467,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "הסתיים. %s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
@@ -468,7 +475,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr "הסתיים!"
 
 #: src/etc/inc/config.console.inc:400
 #, php-format
@@ -482,7 +489,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:422
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "אזהרה: כל ה VLANים הקיימים ימחקו אם תמשיך!"
 
 #: src/etc/inc/config.console.inc:438
 msgid "VLAN Capable interfaces:"
@@ -513,11 +520,11 @@ msgstr ""
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "משדרג קונפיגוריציית m0n0wall ל pfSense... "
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "שגיאה! ההמרה מm0n0wall לpfsense בconfig.xml נכשלה"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
@@ -551,7 +558,7 @@ msgid ""
 msgstr ""
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
-#: src/etc/inc/config.lib.inc:496
+#: src/etc/inc/config.lib.inc:505
 msgid "Could not restore config.xml."
 msgstr "אי אפשר לשחזר את config.xml"
 
@@ -594,43 +601,43 @@ msgstr ""
 msgid "Upgraded config version level from %1$s to %2$s"
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:473
+#: src/etc/inc/config.lib.inc:482
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:475
+#: src/etc/inc/config.lib.inc:484
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:595
+#: src/etc/inc/config.lib.inc:615
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "מחזיר ל %s."
 
-#: src/etc/inc/config.lib.inc:612
+#: src/etc/inc/config.lib.inc:632
 msgid "Installing configuration..."
-msgstr ""
+msgstr "מתקין תצורה..."
 
-#: src/etc/inc/config.lib.inc:614
+#: src/etc/inc/config.lib.inc:634
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "מתקין תצורה..."
 
-#: src/etc/inc/config.lib.inc:665
+#: src/etc/inc/config.lib.inc:685
 msgid "XML error: unable to open file"
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:671
+#: src/etc/inc/config.lib.inc:691
 #, php-format
 msgid "%1$s at line %2$d"
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:724 src/etc/inc/config.lib.inc:726
+#: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr ""
 
-#: src/etc/inc/config.lib.inc:877
+#: src/etc/inc/config.lib.inc:897
 #, php-format
 msgid "%s made unknown change"
 msgstr ""
@@ -641,7 +648,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:196
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "DNS דינמי: updatedns() מתחיל"
 
 #: src/etc/inc/dyndns.class:264
 #, php-format
@@ -680,7 +687,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:895 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "הצלחה"
 
 #: src/etc/inc/dyndns.class:896 src/etc/inc/dyndns.class:1578
 #: src/usr/local/www/diag_smart.php:374
@@ -701,7 +708,7 @@ msgstr "אירעה שגיאה ב-Curl"
 #: src/etc/inc/dyndns.class:1510 src/etc/inc/dyndns.class:1522
 #: src/etc/inc/dyndns.class:1538
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "כתובת IP עודכנה בהצלחה!"
 
 #: src/etc/inc/dyndns.class:912 src/etc/inc/dyndns.class:935
 #: src/etc/inc/dyndns.class:954 src/etc/inc/dyndns.class:972
@@ -719,7 +726,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1515 src/etc/inc/dyndns.class:1530
 #: src/etc/inc/dyndns.class:1541
 msgid "Unknown Response"
-msgstr ""
+msgstr "תגובה לא ידועה"
 
 #: src/etc/inc/dyndns.class:913 src/etc/inc/dyndns.class:936
 #: src/etc/inc/dyndns.class:955 src/etc/inc/dyndns.class:973
@@ -776,11 +783,11 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1317 src/etc/inc/dyndns.class:1381
 #: src/etc/inc/dyndns.class:1503
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "לא FQDN!"
 
 #: src/etc/inc/dyndns.class:944 src/etc/inc/dyndns.class:1505
 msgid "No such host"
-msgstr ""
+msgstr "הוסט לא קיים"
 
 #: src/etc/inc/dyndns.class:946 src/etc/inc/dyndns.class:964
 #: src/etc/inc/dyndns.class:981 src/etc/inc/dyndns.class:998
@@ -789,7 +796,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1441 src/etc/inc/dyndns.class:1484
 #: src/etc/inc/dyndns.class:1507
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "אין שינוי בכתובת הIP"
 
 #: src/etc/inc/dyndns.class:952 src/etc/inc/dyndns.class:970
 #: src/etc/inc/dyndns.class:987 src/etc/inc/dyndns.class:1004
@@ -797,19 +804,19 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1389 src/etc/inc/dyndns.class:1447
 #: src/etc/inc/dyndns.class:1513
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "אימות משתמש נכשל"
 
 #: src/etc/inc/dyndns.class:1018
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "כתובת ה-IP עדכני, לא מבצע עידכון. "
 
 #: src/etc/inc/dyndns.class:1022
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "DNS hostname עודכן בהצלחה."
 
 #: src/etc/inc/dyndns.class:1026
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "הHostname שניתן לא קיים"
 
 #: src/etc/inc/dyndns.class:1029
 msgid "Invalid Username."
@@ -817,11 +824,11 @@ msgstr "שם משתמש לא חוקי"
 
 #: src/etc/inc/dyndns.class:1032
 msgid "Invalid Password."
-msgstr "סיסמה לא חוקי"
+msgstr "סיסמה לא חוקית"
 
 #: src/etc/inc/dyndns.class:1035
 msgid "Too many updates sent."
-msgstr ""
+msgstr "נשלחו יותר מדי עדכונים."
 
 #: src/etc/inc/dyndns.class:1038
 msgid "Account disabled due to violation of No-IP terms of service."
@@ -870,7 +877,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1074
 msgid "Unknown Response:"
-msgstr ""
+msgstr "תגובה לא ידועה:"
 
 #: src/etc/inc/dyndns.class:1080
 msgid "Authentication Failed: Username and/or Password was Incorrect."
@@ -890,7 +897,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1088
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "עדכון  IP נעשתה בהצלחה"
 
 #: src/etc/inc/dyndns.class:1101
 msgid "Error 799"
@@ -911,7 +918,7 @@ msgstr "שגיאה 700"
 #: src/etc/inc/dyndns.class:1304 src/etc/inc/dyndns.class:1359
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1420
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "עדכון כתובת IP נעשתה בהצלחה"
 
 #: src/etc/inc/dyndns.class:1118
 msgid ""
@@ -924,7 +931,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1122
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "שגיעת מסד נתונים - הייתה שגיעת מסד נתונים בצד השרת."
 
 #: src/etc/inc/dyndns.class:1124
 #, php-format
@@ -937,11 +944,11 @@ msgstr "שם משתמש או סיסמה לא חוקיים!"
 
 #: src/etc/inc/dyndns.class:1190
 msgid "Hostname specified does not exist."
-msgstr "המארח שציינת לא קיים"
+msgstr "הHostname שציינת לא קיים"
 
 #: src/etc/inc/dyndns.class:1196
 msgid "Hostname specified exists, but not under the username specified."
-msgstr "המארח שציינת קיים, אבל לא בתוך חשבון של השם משתמש שציינת"
+msgstr "הHostname שציינת קיים, אך לא בתוך חשבון של השם משתמש שציינת"
 
 #: src/etc/inc/dyndns.class:1198
 msgid "Updating too frequently, considered abuse."
@@ -966,16 +973,16 @@ msgstr "סיסמה לא חוקי"
 
 #: src/etc/inc/dyndns.class:1215
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "החשבון ננעל ע\"י מנהל."
 
 #: src/etc/inc/dyndns.class:1217
 msgid "Updating too frequently."
-msgstr ""
+msgstr "עידכון בתכיפות גבוהה מדי."
 
 #: src/etc/inc/dyndns.class:1219 src/etc/inc/dyndns.class:1233
 #: src/etc/inc/dyndns.class:1251
 msgid "Server side error."
-msgstr "שגיאת שרת"
+msgstr "שגיאת צד שרת"
 
 #: src/etc/inc/dyndns.class:1235
 msgid "Badly Formed Request (check the settings)."
@@ -1013,7 +1020,7 @@ msgstr "כתובת ה-IP שונתה בהצלחה"
 
 #: src/etc/inc/dyndns.class:1361 src/etc/inc/dyndns.class:1525
 msgid "Result did not match."
-msgstr ""
+msgstr "התוצאה לא תאמה "
 
 #: src/etc/inc/dyndns.class:1368
 #, php-format
@@ -1052,7 +1059,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1439
 msgid "Not A FQDN"
-msgstr ""
+msgstr "לא FQDN"
 
 #: src/etc/inc/dyndns.class:1449
 msgid "Hostname does not exist or DynDNS not enabled"
@@ -1060,7 +1067,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1451
 msgid "Bad request"
-msgstr ""
+msgstr "בקשה  שגוייה"
 
 #: src/etc/inc/dyndns.class:1453
 msgid "Dynamic DNS access has been blocked!"
@@ -1068,7 +1075,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1455
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "בעיה בצד של גוגל, נסה עוד 5 דקות"
 
 #: src/etc/inc/dyndns.class:1469 src/etc/inc/dyndns.class:1527
 msgid "Invalid username or password"
@@ -1076,11 +1083,11 @@ msgstr "שם משתמש או סיסמה לא חוקיים."
 
 #: src/etc/inc/dyndns.class:1472
 msgid "Account suspended"
-msgstr ""
+msgstr "חשבון מושעה"
 
 #: src/etc/inc/dyndns.class:1475
 msgid "Account revoked"
-msgstr ""
+msgstr "חשבון בוטל"
 
 #: src/etc/inc/dyndns.class:1478
 msgid "Record does not exist in the system. Unable to update record"
@@ -1088,15 +1095,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1481
 msgid "User does not have access to this record"
-msgstr ""
+msgstr "למשתמש אין הרשאות לרשומה זו."
 
 #: src/etc/inc/dyndns.class:1488
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "שגיעת מערכת כללית המוכרת ע\"י המערכת"
 
 #: src/etc/inc/dyndns.class:1491
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "שגיעת מערכת כללית הלא מוכרת ע\"י המערכת"
 
 #: src/etc/inc/dyndns.class:1553
 #, php-format
@@ -1116,7 +1123,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1577
 msgid "ERROR!"
-msgstr ""
+msgstr "שגיאה!"
 
 #: src/etc/inc/dyndns.class:1583
 msgid "No Dynamic DNS Service provider was selected."
@@ -1124,15 +1131,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1586
 msgid "No Username Provided."
-msgstr "לא ציינת שם משתמש."
+msgstr "שם משתמש לא צויין"
 
 #: src/etc/inc/dyndns.class:1589
 msgid "No Password Provided."
-msgstr "לא ציינת סיסמה."
+msgstr "סיסמה לא צוינה"
 
 #: src/etc/inc/dyndns.class:1592
 msgid "No Hostname Provided."
-msgstr "לא ציינת מארח"
+msgstr "Hostname לא צויין"
 
 #: src/etc/inc/dyndns.class:1595
 msgid "The Dynamic DNS Service provided is not yet supported."
@@ -1140,7 +1147,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1598
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "לא צויין URL עידכון"
 
 #: src/etc/inc/dyndns.class:1601
 msgid "Invalid ZoneID"
@@ -1159,7 +1166,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1610
 msgid "Unknown Response."
-msgstr ""
+msgstr "תגובה לא ידועה"
 
 #: src/etc/inc/dyndns.class:1629
 #, php-format
@@ -1247,7 +1254,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr "הכניסה נוספה"
+msgstr "הרשומה נוספה"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1264,7 +1271,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "ניסה לחסום כתובת IP שגויה"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
@@ -1273,20 +1280,19 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr "מארח נוסף"
+msgstr "Host התווסף בהצלחה"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "נכשל ביצירת כלל חסימה, כינוי או להוסיף Host"
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
 msgstr ""
 
 #: src/etc/inc/easyrule.inc:368
-#, fuzzy
 msgid "Unknown block error."
-msgstr "שגיאת חסום לא ידועה."
+msgstr "שגיאת חסימה לא ידועה"
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
@@ -1339,11 +1345,11 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "הוספת כלל מעבר נעשתה בהצלחה!"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "נכשל בהוספת כלל מעבר"
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
@@ -1351,15 +1357,15 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "שגיאת מעבר לא ידועה"
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr ""
+msgstr "Host חלופי"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "שגיעת המרת Datagram"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
@@ -1371,11 +1377,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "תגובת FQDN"
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "שאילתת FQDN"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
@@ -1439,7 +1445,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "הודעות mtrace"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
@@ -1471,11 +1477,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
-msgstr ""
+msgstr "הפנה"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "פרסומת נתב"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
@@ -1483,10 +1489,9 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "מיספור מחדש של נתב"
 
 #: src/etc/inc/filter.inc:81
-#, fuzzy
 msgid "SKIP"
 msgstr "דלג"
 
@@ -1508,7 +1513,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "פקטה גדולה מדי"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
 #: src/usr/local/www/diag_traceroute.php:37
@@ -1519,19 +1524,19 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "לא ניתן להגיע ליעד"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "מי אתה השב"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "מי אתה בקש"
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
-msgstr ""
+msgstr "מאתחל"
 
 #: src/etc/inc/filter.inc:240
 msgid "Configuring firewall"
@@ -1547,11 +1552,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:256
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "מייצר כללי NAT"
 
 #: src/etc/inc/filter.inc:262
 msgid "Generating filter rules"
-msgstr ""
+msgstr "מייצר כללי פילטר"
 
 #: src/etc/inc/filter.inc:269
 msgid "Generating ALTQ queues"
@@ -1559,7 +1564,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:274
 msgid "Loading filter rules"
-msgstr ""
+msgstr "טוען כללי פילטר"
 
 #: src/etc/inc/filter.inc:281
 msgid "Filter is disabled.  Not loading rules."
@@ -1575,16 +1580,16 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:752 src/etc/inc/pkg-utils.inc:788
 #: src/etc/inc/pkg-utils.inc:793 src/etc/inc/pkg-utils.inc:798
 #: src/etc/inc/pkg-utils.inc:816 src/etc/inc/pkg-utils.inc:833
-#: src/etc/inc/pkg-utils.inc:858 src/etc/inc/pkg-utils.inc:899
-#: src/etc/inc/pkg-utils.inc:925 src/etc/inc/pkg-utils.inc:968
-#: src/etc/inc/pkg-utils.inc:987 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:865 src/etc/inc/pkg-utils.inc:906
+#: src/etc/inc/pkg-utils.inc:932 src/etc/inc/pkg-utils.inc:975
+#: src/etc/inc/pkg-utils.inc:994 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1218
-#: src/etc/inc/system.inc:1316 src/etc/inc/system.inc:1619
-#: src/etc/inc/system.inc:2191
+#: src/etc/inc/system.inc:1318 src/etc/inc/system.inc:1621
+#: src/etc/inc/system.inc:2193
 msgid "done."
-msgstr ""
+msgstr "הסתיים."
 
 #: src/etc/inc/filter.inc:379
 msgid "Setting up logging information"
@@ -1614,19 +1619,19 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:524
 msgid "Running plugins"
-msgstr ""
+msgstr "מריץ פלאגאינים"
 
 #: src/etc/inc/filter.inc:528
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "מריץ פלאגינים (pf)"
 
 #: src/etc/inc/filter.inc:530
 msgid "Plugins completed."
-msgstr ""
+msgstr "פלאגינים הסתיימו"
 
 #: src/etc/inc/filter.inc:533
 msgid "Done"
-msgstr ""
+msgstr "הסתיים"
 
 #: src/etc/inc/filter.inc:766
 #, php-format
@@ -1670,7 +1675,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1490
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr ""
+msgstr "מתקין כללי השתקפות NAT חלקיים. הגיעו ל1,000 המקסימלי"
 
 #: src/etc/inc/filter.inc:1571
 msgid "localhost"
@@ -1678,7 +1683,7 @@ msgstr "localhost"
 
 #: src/etc/inc/filter.inc:1580
 msgid "static route"
-msgstr "מסלול סטטית"
+msgstr "מסלול סטטי"
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
@@ -1871,7 +1876,7 @@ msgstr ""
 
 #: src/etc/inc/gmirror.inc:65
 msgid "No mirrors found."
-msgstr ""
+msgstr "לא נמצאו מירורים"
 
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/gwlb.inc:1355
 #: src/etc/inc/shaper.inc:1201 src/etc/inc/shaper.inc:3283
@@ -1901,7 +1906,7 @@ msgstr ""
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1080
+#: src/usr/local/www/system_certmanager.php:1090
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -1913,7 +1918,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:34
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:138
 msgid "Name"
-msgstr ""
+msgstr "שם"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
@@ -1965,9 +1970,9 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:212
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:68
 msgid "Status"
-msgstr ""
+msgstr "מצב"
 
 #: src/etc/inc/gmirror.inc:75 src/usr/local/www/diag_gmirror.php:223
 msgid "Component"
@@ -2038,7 +2043,7 @@ msgstr ""
 #: src/etc/inc/gwlb.inc:1355 src/usr/local/www/diag_arp.php:332
 #: src/usr/local/www/diag_dump_states.php:132
 #: src/usr/local/www/diag_dump_states.php:181
-#: src/usr/local/www/diag_ndp.php:134 src/usr/local/www/easyrule.php:80
+#: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:149
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
@@ -2079,17 +2084,17 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:251
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:237
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:140
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:167
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:151
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
 msgid "Interface"
-msgstr ""
+msgstr "ממשק"
 
 #: src/etc/inc/gwlb.inc:1363
 msgid "gateway"
-msgstr ""
+msgstr "גייטווי"
 
 #: src/etc/inc/gwlb.inc:1372 src/usr/local/www/system_gateways.php:78
 #, php-format
@@ -2600,11 +2605,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:635
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
-msgstr ""
+msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
-msgstr ""
+msgstr "Daemon"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
@@ -2639,7 +2644,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:140
 msgid "Networking"
-msgstr ""
+msgstr "רשתות"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
@@ -2675,7 +2680,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr ""
+msgstr "שקט"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
@@ -2699,21 +2704,21 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:76
 msgid "My IP address"
-msgstr ""
+msgstr "כתובת הIP שלי"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
-#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1432
+#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:64
 #: src/usr/local/www/services_dnsmasq_edit.php:61
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
-#: src/usr/local/www/system_certmanager.php:870
+#: src/usr/local/www/system_certmanager.php:878
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "IP address"
-msgstr ""
+msgstr "כתובת IP"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
@@ -2734,7 +2739,7 @@ msgstr ""
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:1075
+#: src/usr/local/www/services_dhcp.php:1087
 #: src/usr/local/www/services_dhcp_edit.php:583
 #: src/usr/local/www/services_dhcpv6.php:773
 #: src/usr/local/www/services_dyndns.php:70
@@ -2742,7 +2747,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136.php:58
 #: src/usr/local/www/services_rfc2136_edit.php:145
 msgid "Dynamic DNS"
-msgstr ""
+msgstr "DNS דינמי"
 
 #: src/etc/inc/ipsec.inc:87 src/usr/local/www/diag_traceroute.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
@@ -2756,7 +2761,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1506
 #: src/usr/local/www/interfaces.php:3025
 msgid "Any"
-msgstr ""
+msgstr "הכל"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
@@ -2808,7 +2813,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:197
 msgid "off"
-msgstr ""
+msgstr "כבוי"
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
@@ -2824,65 +2829,65 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr ""
+msgstr "14 (2048 bit)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr ""
+msgstr "15 (3072 bit)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr ""
+msgstr "16 (4096 bit)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr ""
+msgstr "17 (6144 bit)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr ""
+msgstr "18 (8192 bit)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
-msgstr ""
+msgstr "19 (nist ecp256)"
 
 #: src/etc/inc/ipsec.inc:207
 msgid "20 (nist ecp384)"
-msgstr ""
+msgstr "20 (nist ecp384)"
 
 #: src/etc/inc/ipsec.inc:208
 msgid "21 (nist ecp521)"
-msgstr ""
+msgstr "21 (nist ecp521)"
 
 #: src/etc/inc/ipsec.inc:209
 msgid "22 (1024(sub 160) bit)"
-msgstr ""
+msgstr "22 (1024(sub 160) bit)"
 
 #: src/etc/inc/ipsec.inc:210
 msgid "23 (2048(sub 224) bit)"
-msgstr ""
+msgstr "23 (2048(sub 224) bit)"
 
 #: src/etc/inc/ipsec.inc:211
 msgid "24 (2048(sub 256) bit)"
-msgstr ""
+msgstr "24 (2048(sub 256) bit)"
 
 #: src/etc/inc/ipsec.inc:212
 msgid "28 (brainpool ecp256)"
-msgstr ""
+msgstr "28 (brainpool ecp256)"
 
 #: src/etc/inc/ipsec.inc:213
 msgid "29 (brainpool ecp384)"
-msgstr ""
+msgstr "29 (brainpool ecp384)"
 
 #: src/etc/inc/ipsec.inc:214
 msgid "30 (brainpool ecp512)"
-msgstr ""
+msgstr "30 (brainpool ecp512)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:323
 msgid "Mobile Client"
-msgstr ""
+msgstr "מכשיר נייד"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3088
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -2895,7 +2900,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
-msgstr ""
+msgstr "ללא"
 
 #: src/etc/inc/ipsec.inc:612
 msgid ""
@@ -2951,7 +2956,7 @@ msgstr ""
 #: src/etc/inc/notices.inc:327
 #, php-format
 msgid "Message sent to %s OK"
-msgstr ""
+msgstr "הודעה נשלחה ל%s OK"
 
 #: src/etc/inc/notices.inc:364 src/etc/inc/notices.inc:420
 msgid ""
@@ -2982,13 +2987,13 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:570
 msgid "none"
-msgstr ""
+msgstr "ללא"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
-#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_captiveportal.php:968
 msgid "default"
-msgstr ""
+msgstr "ברירת מחדל"
 
 #: src/etc/inc/openvpn.inc:56
 msgid "3 (recommended)"
@@ -2996,7 +3001,7 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
-msgstr ""
+msgstr "אחד ( שרת + לקוח)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
@@ -3115,12 +3120,12 @@ msgid "CA: %s"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:369
-#: src/usr/local/www/system_certmanager.php:1083
+#: src/usr/local/www/system_certmanager.php:1093
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr ""
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1153
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1189
 msgid "Revoked"
 msgstr ""
 
@@ -3207,7 +3212,7 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:221
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Theme"
-msgstr ""
+msgstr "עיצוב"
 
 #: src/etc/inc/pfsense-utils.inc:224
 #, php-format
@@ -3238,7 +3243,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Hostname only"
-msgstr ""
+msgstr "רק Hostname"
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Fully Qualified Domain Name"
@@ -3376,124 +3381,128 @@ msgstr ""
 msgid "Cleaning up Interfaces"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1429
+#: src/etc/inc/pfsense-utils.inc:1430
 msgid "No history data found!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1561
+#: src/etc/inc/pfsense-utils.inc:1562
 msgid "device not present! Is the modem attached to the system?"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1630
+#: src/etc/inc/pfsense-utils.inc:1631
 msgid "running"
-msgstr ""
+msgstr "רץ"
 
-#: src/etc/inc/pfsense-utils.inc:1631 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
 msgid "up"
-msgstr ""
+msgstr "בפעולה"
 
-#: src/etc/inc/pfsense-utils.inc:1676
+#: src/etc/inc/pfsense-utils.inc:1677
 msgid "blocking"
-msgstr ""
+msgstr "חוסם"
 
-#: src/etc/inc/pfsense-utils.inc:1676
+#: src/etc/inc/pfsense-utils.inc:1677
 msgid "check for ethernet loops"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1679
+#: src/etc/inc/pfsense-utils.inc:1680
 msgid "learning"
-msgstr ""
+msgstr "לומד"
 
-#: src/etc/inc/pfsense-utils.inc:1682
+#: src/etc/inc/pfsense-utils.inc:1683
 msgid "forwarding"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1816
+#: src/etc/inc/pfsense-utils.inc:1817
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1836
+#: src/etc/inc/pfsense-utils.inc:1837
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1853
+#: src/etc/inc/pfsense-utils.inc:1854
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1930 src/etc/inc/pfsense-utils.inc:1986
+#: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2205
+#: src/etc/inc/pfsense-utils.inc:2206
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2210
+#: src/etc/inc/pfsense-utils.inc:2211
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2215
+#: src/etc/inc/pfsense-utils.inc:2216
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2272
+#: src/etc/inc/pfsense-utils.inc:2273
 #, php-format
 msgid "Failed to download alias %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2301
+#: src/etc/inc/pfsense-utils.inc:2302
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2311
+#: src/etc/inc/pfsense-utils.inc:2312
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2317
+#: src/etc/inc/pfsense-utils.inc:2318
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2896
-msgid "English"
-msgstr ""
-
 #: src/etc/inc/pfsense-utils.inc:2897
-msgid "Spanish"
+msgid "German (Germany)"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2898
-msgid "Norwegian Bokmål"
-msgstr ""
+msgid "English"
+msgstr "אנגלית"
 
 #: src/etc/inc/pfsense-utils.inc:2899
-msgid "Russian"
-msgstr ""
+msgid "Spanish"
+msgstr "ספרדית"
 
 #: src/etc/inc/pfsense-utils.inc:2900
-msgid "Chinese (Simplified, China)"
-msgstr ""
+msgid "Norwegian Bokmål"
+msgstr "נורבגית"
 
 #: src/etc/inc/pfsense-utils.inc:2901
+msgid "Russian"
+msgstr "רוסית"
+
+#: src/etc/inc/pfsense-utils.inc:2902
+msgid "Chinese (Simplified, China)"
+msgstr "סינית (מופשט, סין )"
+
+#: src/etc/inc/pfsense-utils.inc:2903
 msgid "Chinese (Taiwan)"
-msgstr ""
+msgstr "סינית (טיוואן)"
 
-#: src/etc/inc/pfsense-utils.inc:3096 src/etc/inc/pfsense-utils.inc:3111
-#: src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
+#: src/etc/inc/pfsense-utils.inc:3139
 msgid "No Service"
-msgstr ""
+msgstr "שרות לא פעיל"
 
-#: src/etc/inc/pfsense-utils.inc:3106 src/etc/inc/pfsense-utils.inc:3149
+#: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3507,85 +3516,85 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:134 src/usr/local/www/vpn_ipsec.php:252
 #: src/usr/local/www/vpn_ipsec.php:398
 msgid "Mode"
-msgstr ""
+msgstr "מצב"
 
-#: src/etc/inc/pfsense-utils.inc:3112
+#: src/etc/inc/pfsense-utils.inc:3114
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3113
+#: src/etc/inc/pfsense-utils.inc:3115
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3114
+#: src/etc/inc/pfsense-utils.inc:3116
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3115
+#: src/etc/inc/pfsense-utils.inc:3117
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3116
+#: src/etc/inc/pfsense-utils.inc:3118
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3122
+#: src/etc/inc/pfsense-utils.inc:3124
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3123
+#: src/etc/inc/pfsense-utils.inc:3125
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3124
+#: src/etc/inc/pfsense-utils.inc:3126
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3125
+#: src/etc/inc/pfsense-utils.inc:3127
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3126
+#: src/etc/inc/pfsense-utils.inc:3128
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3127
+#: src/etc/inc/pfsense-utils.inc:3129
 msgid "Missing SIM State"
-msgstr ""
+msgstr "חסר מצב SIM"
 
-#: src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/pfsense-utils.inc:3140
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3154
+#: src/etc/inc/pfsense-utils.inc:3156
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3155
+#: src/etc/inc/pfsense-utils.inc:3157
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3158
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3168
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -3665,7 +3674,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:733
 msgid "overwrite!"
-msgstr ""
+msgstr "שכתב!"
 
 #: src/etc/inc/pkg-utils.inc:736
 #, php-format
@@ -3678,13 +3687,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:744 src/etc/inc/pkg-utils.inc:776
-#: src/etc/inc/pkg-utils.inc:845
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "Failed to install package: %s."
 msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:777
-#: src/etc/inc/pkg-utils.inc:846
+#: src/etc/inc/pkg-utils.inc:853
 msgid "Failed to install package."
 msgstr ""
 
@@ -3696,7 +3705,7 @@ msgstr ""
 msgid "Configuring package components..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:940
+#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:947
 msgid "Loading package instructions..."
 msgstr ""
 
@@ -3721,103 +3730,103 @@ msgstr ""
 msgid "Executing custom_php_resync_config_command()..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:803 src/etc/inc/pkg-utils.inc:888
+#: src/etc/inc/pkg-utils.inc:803 src/etc/inc/pkg-utils.inc:895
 msgid "Menu items... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:820 src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:820 src/etc/inc/pkg-utils.inc:910
 msgid "Services... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:840
+#: src/etc/inc/pkg-utils.inc:847
 msgid "Loading package configuration... failed!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:840
+#: src/etc/inc/pkg-utils.inc:847
 msgid "Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:841
+#: src/etc/inc/pkg-utils.inc:848
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Writing configuration... "
-msgstr ""
+msgstr "כותב הגדרות..."
 
-#: src/etc/inc/pkg-utils.inc:857
+#: src/etc/inc/pkg-utils.inc:864
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:879
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:877
+#: src/etc/inc/pkg-utils.inc:884
 #, php-format
 msgid "Removing %s package... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:885
 #, php-format
 msgid "Removing %s components..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:931
+#: src/etc/inc/pkg-utils.inc:938
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:954
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:972
 msgid "Deinstall commands... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:970
+#: src/etc/inc/pkg-utils.inc:977
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:977
+#: src/etc/inc/pkg-utils.inc:984
 msgid "Syslog entries... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:985
+#: src/etc/inc/pkg-utils.inc:992
 msgid "Configuration... "
-msgstr ""
+msgstr "הגדרות..."
 
-#: src/etc/inc/pkg-utils.inc:988
+#: src/etc/inc/pkg-utils.inc:995
 #, php-format
 msgid "Removed %s package."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1013
+#: src/etc/inc/pkg-utils.inc:1020
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1026 src/etc/inc/pkg-utils.inc:1065
+#: src/etc/inc/pkg-utils.inc:1033 src/etc/inc/pkg-utils.inc:1072
 msgid "Package reinstall"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1027
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1066
+#: src/etc/inc/pkg-utils.inc:1073
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:1087
+#: src/etc/inc/pkg-utils.inc:1094
 msgid "Stopping all packages."
 msgstr ""
 
@@ -5350,7 +5359,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1006
 msgid "WebCfg - Status: OpenVPN"
-msgstr ""
+msgstr "WebCfg  - מצב:  OpenVPN"
 
 #: src/etc/inc/priv.defs.inc:1007
 msgid "Allow access to the 'Status: OpenVPN' page."
@@ -5828,7 +5837,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1171
+#: src/usr/local/www/system_certmanager.php:1207
 msgid "Captive Portal"
 msgstr ""
 
@@ -6321,8 +6330,8 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones.php:77
 #: src/usr/local/www/services_checkip.php:96
 #: src/usr/local/www/services_checkip_edit.php:162
-#: src/usr/local/www/services_dhcp.php:716
-#: src/usr/local/www/services_dhcp.php:1434
+#: src/usr/local/www/services_dhcp.php:728
+#: src/usr/local/www/services_dhcp.php:1446
 #: src/usr/local/www/services_dhcp_edit.php:469
 #: src/usr/local/www/services_dhcpv6.php:1032
 #: src/usr/local/www/services_dhcpv6_edit.php:235
@@ -6382,7 +6391,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:76
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:150
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
 msgid "Description"
 msgstr ""
 
@@ -6575,7 +6584,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:1116
 #: src/usr/local/www/interfaces_assign.php:540
 #: src/usr/local/www/interfaces_qinq_edit.php:309
-#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1355
+#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1367
 #: src/usr/local/www/services_dhcp_relay.php:186
 #: src/usr/local/www/services_dhcpv6.php:973
 #: src/usr/local/www/services_dnsmasq_edit.php:278
@@ -6586,8 +6595,8 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:421
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/system.php:512
-#: src/usr/local/www/system_certmanager.php:885
+#: src/usr/local/www/system.php:517
+#: src/usr/local/www/system_certmanager.php:893
 #: src/usr/local/www/system_usermanager.php:647
 msgid "Delete"
 msgstr ""
@@ -6612,9 +6621,9 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:535
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
 #: src/usr/local/www/services_checkip_edit.php:120
-#: src/usr/local/www/services_dhcp.php:826
-#: src/usr/local/www/services_dhcp.php:833
-#: src/usr/local/www/services_dhcp.php:1241
+#: src/usr/local/www/services_dhcp.php:838
+#: src/usr/local/www/services_dhcp.php:845
+#: src/usr/local/www/services_dhcp.php:1253
 #: src/usr/local/www/services_dhcp_relay.php:148
 #: src/usr/local/www/services_dhcpv6_relay.php:148
 #: src/usr/local/www/services_dnsmasq.php:255
@@ -6846,63 +6855,63 @@ msgstr ""
 msgid "webConfigurator default (%s)"
 msgstr ""
 
-#: src/etc/inc/system.inc:1251
+#: src/etc/inc/system.inc:1253
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1260
+#: src/etc/inc/system.inc:1262
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
 msgstr ""
 
-#: src/etc/inc/system.inc:1268
+#: src/etc/inc/system.inc:1270
 msgid "Starting webConfigurator..."
 msgstr ""
 
-#: src/etc/inc/system.inc:1318 src/etc/inc/system.inc:2194
-#: src/etc/inc/system.inc:2197
+#: src/etc/inc/system.inc:1320 src/etc/inc/system.inc:2196
+#: src/etc/inc/system.inc:2199
 msgid "failed!"
 msgstr ""
 
-#: src/etc/inc/system.inc:1520
+#: src/etc/inc/system.inc:1522
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1533
+#: src/etc/inc/system.inc:1535
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1560
+#: src/etc/inc/system.inc:1562
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr ""
 
-#: src/etc/inc/system.inc:1609
+#: src/etc/inc/system.inc:1611
 msgid "Setting timezone..."
 msgstr ""
 
-#: src/etc/inc/system.inc:2026
+#: src/etc/inc/system.inc:2028
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr ""
 
-#: src/etc/inc/system.inc:2146
+#: src/etc/inc/system.inc:2148
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr ""
 
-#: src/etc/inc/system.inc:2173
+#: src/etc/inc/system.inc:2175
 msgid "Setting hard disk standby... "
 msgstr ""
 
-#: src/etc/inc/system.inc:2388
+#: src/etc/inc/system.inc:2409
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2392 src/etc/inc/system.inc:2411
+#: src/etc/inc/system.inc:2413 src/etc/inc/system.inc:2432
 msgid "PC Engines ALIX"
 msgstr ""
 
@@ -7538,23 +7547,23 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:324
 #: src/usr/local/www/system_camanager.php:355
 #: src/usr/local/www/system_certmanager.php:211
-#: src/usr/local/www/system_certmanager.php:583
-#: src/usr/local/www/system_certmanager.php:614
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:265
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:297
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:162
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:166
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:193
 #: src/usr/local/www/widgets/widgets/log.widget.php:272
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:387
 #: src/usr/local/www/widgets/widgets/rss.widget.php:161
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:159
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:158
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:474
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:481
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:248
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:239
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:180
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 msgid "Save"
 msgstr ""
 
@@ -7568,7 +7577,7 @@ msgstr ""
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/diag_gmirror.php:33
 #: src/usr/local/www/diag_halt.php:45
 #: src/usr/local/www/diag_limiter_info.php:31
-#: src/usr/local/www/diag_ndp.php:114
+#: src/usr/local/www/diag_ndp.php:121
 #: src/usr/local/www/diag_packet_capture.php:106
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
@@ -7658,10 +7667,10 @@ msgstr ""
 msgid " Loading, please wait..."
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:132
+#: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:139
 #: src/usr/local/www/services_captiveportal_mac.php:174
 #: src/usr/local/www/services_captiveportal_mac_edit.php:95
-#: src/usr/local/www/services_dhcp.php:1424
+#: src/usr/local/www/services_dhcp.php:1436
 #: src/usr/local/www/services_wol.php:171
 #: src/usr/local/www/services_wol_edit.php:73
 #: src/usr/local/www/status_captiveportal.php:193
@@ -7671,10 +7680,10 @@ msgstr ""
 msgid "MAC address"
 msgstr ""
 
-#: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:133
+#: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:140
 #: src/usr/local/www/interfaces.php:2001
 #: src/usr/local/www/services_captiveportal_hostname.php:115
-#: src/usr/local/www/services_dhcp.php:1433
+#: src/usr/local/www/services_dhcp.php:1445
 #: src/usr/local/www/services_dhcp_edit.php:446
 #: src/usr/local/www/services_dhcpv6.php:1031
 #: src/usr/local/www/services_dhcpv6_edit.php:228
@@ -7685,7 +7694,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:75
 #: src/usr/local/www/status_dhcp_leases.php:362
 #: src/usr/local/www/status_dhcpv6_leases.php:441
-#: src/usr/local/www/system.php:152
+#: src/usr/local/www/system.php:157
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:178
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
 msgid "Hostname"
@@ -7696,7 +7705,7 @@ msgid "Link Type"
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:338 src/usr/local/www/diag_confbak.php:222
-#: src/usr/local/www/diag_ndp.php:135
+#: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
 #: src/usr/local/www/firewall_nat_1to1.php:154
@@ -7725,7 +7734,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_vouchers.php:394
 #: src/usr/local/www/services_captiveportal_zones.php:78
 #: src/usr/local/www/services_checkip.php:97
-#: src/usr/local/www/services_dhcp.php:717
+#: src/usr/local/www/services_dhcp.php:729
 #: src/usr/local/www/services_dnsmasq.php:374
 #: src/usr/local/www/services_dnsmasq.php:448
 #: src/usr/local/www/services_dyndns.php:97
@@ -7744,7 +7753,7 @@ msgstr ""
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:446
 #: src/usr/local/www/system_camanager.php:370
-#: src/usr/local/www/system_certmanager.php:1085
+#: src/usr/local/www/system_certmanager.php:1095
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -7945,7 +7954,7 @@ msgid "Captive Portal Vouchers"
 msgstr ""
 
 #: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
-#: src/usr/local/www/services_dhcp.php:752
+#: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
 msgstr ""
@@ -8038,8 +8047,8 @@ msgstr ""
 #: src/usr/local/www/status_logs.php:96
 #: src/usr/local/www/status_logs_common.inc:88
 #: src/usr/local/www/status_logs_settings.php:216
-#: src/usr/local/www/system.php:90 src/usr/local/www/system.php:420
-#: src/usr/local/www/system.php:435
+#: src/usr/local/www/system.php:95 src/usr/local/www/system.php:425
+#: src/usr/local/www/system.php:440
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -8048,7 +8057,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:409
 #: src/usr/local/www/system_camanager.php:321
-#: src/usr/local/www/system_certmanager.php:580
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -8113,14 +8122,14 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:266
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:298
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:163
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:167
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:194
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:388
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:159
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:475
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:482
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:240
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:181
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
 msgstr ""
@@ -8284,9 +8293,9 @@ msgid "Download File"
 msgstr ""
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1091
-#: src/usr/local/www/services_captiveportal.php:1125
-#: src/usr/local/www/services_captiveportal.php:1157
+#: src/usr/local/www/services_captiveportal.php:1093
+#: src/usr/local/www/services_captiveportal.php:1127
+#: src/usr/local/www/services_captiveportal.php:1159
 msgid "Download"
 msgstr ""
 
@@ -8400,7 +8409,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:37
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:195
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:202
 msgid "Version"
 msgstr ""
 
@@ -8578,7 +8587,7 @@ msgstr ""
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1138
+#: src/usr/local/www/system_certmanager.php:1151
 #: src/usr/local/www/vpn_openvpn_client.php:905
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -8607,7 +8616,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
 #: src/usr/local/www/services_dyndns_edit.php:282
 #: src/usr/local/www/services_rfc2136_edit.php:177
-#: src/usr/local/www/system.php:438
+#: src/usr/local/www/system.php:443
 msgid "*Hostname"
 msgstr ""
 
@@ -9139,19 +9148,23 @@ msgstr ""
 msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr ""
 
-#: src/usr/local/www/diag_ndp.php:114 src/usr/local/www/diag_ndp.php:124
+#: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
 #: src/usr/local/www/head.inc:389
 msgid "NDP Table"
 msgstr ""
 
-#: src/usr/local/www/diag_ndp.php:131 src/usr/local/www/interfaces.php:612
+#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:612
 #: src/usr/local/www/services_dhcpv6.php:1030
 #: src/usr/local/www/services_dhcpv6_edit.php:220
 #: src/usr/local/www/status_dhcpv6_leases.php:437
 msgid "IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/diag_ndp.php:167
+#: src/usr/local/www/diag_ndp.php:142
+msgid "Expiration"
+msgstr ""
+
+#: src/usr/local/www/diag_ndp.php:178
 msgid "Delete NDP entry"
 msgstr ""
 
@@ -9166,13 +9179,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1162
+#: src/usr/local/www/system_certmanager.php:1198
 msgid "OpenVPN Server"
 msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:428
-#: src/usr/local/www/system_certmanager.php:1165
+#: src/usr/local/www/system_certmanager.php:1201
 msgid "OpenVPN Client"
 msgstr ""
 
@@ -9494,9 +9507,9 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1084
-#: src/usr/local/www/services_captiveportal.php:1118
-#: src/usr/local/www/services_captiveportal.php:1150
+#: src/usr/local/www/services_captiveportal.php:1086
+#: src/usr/local/www/services_captiveportal.php:1120
+#: src/usr/local/www/services_captiveportal.php:1152
 msgid "View"
 msgstr ""
 
@@ -9725,10 +9738,10 @@ msgstr ""
 #: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:220
-#: src/usr/local/www/system_certmanager.php:526
-#: src/usr/local/www/system_certmanager.php:583
-#: src/usr/local/www/system_certmanager.php:1017
-#: src/usr/local/www/system_certmanager.php:1065
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1027
+#: src/usr/local/www/system_certmanager.php:1075
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -10347,7 +10360,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server.php:120
 #: src/usr/local/www/services_captiveportal_mac.php:157
 #: src/usr/local/www/services_captiveportal_zones.php:64
-#: src/usr/local/www/services_dhcp.php:772
+#: src/usr/local/www/services_dhcp.php:784
 #: src/usr/local/www/services_dhcpv6.php:527
 #: src/usr/local/www/services_dnsmasq.php:246
 #: src/usr/local/www/services_igmpproxy.php:71
@@ -10418,9 +10431,9 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_vouchers.php:429
 #: src/usr/local/www/services_captiveportal_zones.php:118
 #: src/usr/local/www/services_checkip.php:161
-#: src/usr/local/www/services_dhcp.php:952
-#: src/usr/local/www/services_dhcp.php:1367
-#: src/usr/local/www/services_dhcp.php:1493
+#: src/usr/local/www/services_dhcp.php:964
+#: src/usr/local/www/services_dhcp.php:1379
+#: src/usr/local/www/services_dhcp.php:1505
 #: src/usr/local/www/services_dhcpv6.php:1075
 #: src/usr/local/www/services_dnsmasq.php:435
 #: src/usr/local/www/services_dnsmasq.php:482
@@ -10437,7 +10450,7 @@ msgstr ""
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:472
 #: src/usr/local/www/system_camanager.php:459
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:909
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -10542,7 +10555,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:413
 #: src/usr/local/www/system_camanager.php:325
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -10830,7 +10843,7 @@ msgid "Hint"
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:719
-#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:464
+#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:469
 #: src/usr/local/www/vpn_ipsec_phase2.php:524
 #: src/usr/local/www/vpn_ipsec_phase2.php:531
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
@@ -11406,8 +11419,8 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
-#: src/usr/local/www/services_captiveportal.php:964
-#: src/usr/local/www/services_dhcp.php:1344
+#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_dhcp.php:1356
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
 #: src/usr/local/www/status_logs_vpn.php:408
@@ -11415,8 +11428,8 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:227
 #: src/usr/local/www/system_authservers.php:250
 #: src/usr/local/www/system_authservers.php:444
-#: src/usr/local/www/system_certmanager.php:866
 #: src/usr/local/www/system_certmanager.php:874
+#: src/usr/local/www/system_certmanager.php:882
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -11615,20 +11628,20 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:822
 #: src/usr/local/www/interfaces_ppps_edit.php:1049
-#: src/usr/local/www/services_dhcp.php:1067
-#: src/usr/local/www/services_dhcp.php:1125
-#: src/usr/local/www/services_dhcp.php:1154
-#: src/usr/local/www/services_dhcp.php:1183
-#: src/usr/local/www/services_dhcp.php:1205
-#: src/usr/local/www/services_dhcp.php:1227
-#: src/usr/local/www/services_dhcp.php:1285
-#: src/usr/local/www/services_dhcp.php:1535
-#: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp.php:1605
-#: src/usr/local/www/services_dhcp.php:1639
-#: src/usr/local/www/services_dhcp.php:1673
-#: src/usr/local/www/services_dhcp.php:1708
-#: src/usr/local/www/services_dhcp.php:1747
+#: src/usr/local/www/services_dhcp.php:1079
+#: src/usr/local/www/services_dhcp.php:1137
+#: src/usr/local/www/services_dhcp.php:1166
+#: src/usr/local/www/services_dhcp.php:1195
+#: src/usr/local/www/services_dhcp.php:1217
+#: src/usr/local/www/services_dhcp.php:1239
+#: src/usr/local/www/services_dhcp.php:1297
+#: src/usr/local/www/services_dhcp.php:1547
+#: src/usr/local/www/services_dhcp.php:1582
+#: src/usr/local/www/services_dhcp.php:1617
+#: src/usr/local/www/services_dhcp.php:1651
+#: src/usr/local/www/services_dhcp.php:1685
+#: src/usr/local/www/services_dhcp.php:1720
+#: src/usr/local/www/services_dhcp.php:1759
 #: src/usr/local/www/services_dhcp_edit.php:575
 #: src/usr/local/www/services_dhcp_edit.php:631
 #: src/usr/local/www/services_dhcp_edit.php:667
@@ -11823,13 +11836,13 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1881
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
-#: src/usr/local/www/services_dhcp.php:1533
-#: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp.php:1603
-#: src/usr/local/www/services_dhcp.php:1637
-#: src/usr/local/www/services_dhcp.php:1671
-#: src/usr/local/www/services_dhcp.php:1706
-#: src/usr/local/www/services_dhcp.php:1745
+#: src/usr/local/www/services_dhcp.php:1545
+#: src/usr/local/www/services_dhcp.php:1580
+#: src/usr/local/www/services_dhcp.php:1615
+#: src/usr/local/www/services_dhcp.php:1649
+#: src/usr/local/www/services_dhcp.php:1683
+#: src/usr/local/www/services_dhcp.php:1718
+#: src/usr/local/www/services_dhcp.php:1757
 #: src/usr/local/www/services_dhcp_edit.php:723
 #: src/usr/local/www/services_dhcp_edit.php:758
 #: src/usr/local/www/services_dhcp_edit.php:792
@@ -12402,10 +12415,10 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:387
 #: src/usr/local/www/firewall_rules_edit.php:1685
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
-#: src/usr/local/www/services_dhcp.php:997
+#: src/usr/local/www/services_dhcp.php:1009
 #: src/usr/local/www/services_dhcp_edit.php:540
-#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:466
-#: src/usr/local/www/system.php:504
+#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:471
+#: src/usr/local/www/system.php:509
 #: src/usr/local/www/system_gateway_groups_edit.php:303
 #: src/usr/local/www/system_gateways.php:252
 #: src/usr/local/www/system_gateways_edit.php:184
@@ -13180,7 +13193,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1434
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:927
+#: src/usr/local/www/services_dhcp.php:939
 #: src/usr/local/www/services_dhcpv6.php:649
 #: src/usr/local/www/services_dhcpv6.php:674
 #: src/usr/local/www/system_gateways_edit.php:287
@@ -13195,7 +13208,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1448
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:934
+#: src/usr/local/www/services_dhcp.php:946
 #: src/usr/local/www/services_dhcpv6.php:658
 #: src/usr/local/www/services_dhcpv6.php:683
 #: src/usr/local/www/system_gateways_edit.php:294
@@ -14164,10 +14177,10 @@ msgid "listing only first 10k items"
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:1158
-#: src/usr/local/www/services_dhcp.php:1351
+#: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:881
+#: src/usr/local/www/system_certmanager.php:889
 msgid "Value"
 msgstr ""
 
@@ -14184,7 +14197,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:420
+#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:425
 msgid "General Setup"
 msgstr ""
 
@@ -14262,7 +14275,7 @@ msgid "Load Balancer"
 msgstr ""
 
 #: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
-#: src/usr/local/www/services_dhcp.php:1162
+#: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
 #: src/usr/local/www/services_ntpd_gps.php:310
@@ -14358,7 +14371,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:752
+#: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 #: src/usr/local/www/services_dhcp_relay.php:124
 #: src/usr/local/www/services_dhcpv6.php:505
@@ -17092,7 +17105,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
-#: src/usr/local/www/services_dhcp.php:881
+#: src/usr/local/www/services_dhcp.php:893
 #: src/usr/local/www/services_dhcpv6.php:618
 msgid "Subnet"
 msgstr ""
@@ -17950,7 +17963,7 @@ msgid "HTTP Code"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1010
+#: src/usr/local/www/services_captiveportal.php:1012
 msgid "HTTPS Options"
 msgstr ""
 
@@ -17985,7 +17998,7 @@ msgid "Pool"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_pool.php:119
-#: src/usr/local/www/services_dhcp.php:966
+#: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
 #: src/usr/local/www/vpn_openvpn_client.php:473
@@ -17996,7 +18009,7 @@ msgid "Servers"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_pool.php:160
-#: src/usr/local/www/services_dhcp.php:736
+#: src/usr/local/www/services_dhcp.php:748
 msgid "Edit pool"
 msgstr ""
 
@@ -18005,7 +18018,7 @@ msgid "Copy pool"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_pool.php:162
-#: src/usr/local/www/services_dhcp.php:738
+#: src/usr/local/www/services_dhcp.php:750
 msgid "Delete pool"
 msgstr ""
 
@@ -18393,7 +18406,7 @@ msgstr ""
 msgid "Advanced Features"
 msgstr ""
 
-#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:820
+#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:832
 msgid "General Options"
 msgstr ""
 
@@ -19176,44 +19189,46 @@ msgid ""
 "If reauthentication is enabled, Access-Requests will be sent to the RADIUS "
 "server for each user that is logged in every minute. If an Access-Reject is "
 "received for a user, that user is disconnected from the captive portal "
-"immediately."
+"immediately. Reauthentication requires user credentials to be cached in the "
+"captive portal database while a user is logged in; The cached credentials "
+"are necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:935
+#: src/usr/local/www/services_captiveportal.php:937
 msgid "RADIUS MAC Authentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:938
+#: src/usr/local/www/services_captiveportal.php:940
 msgid ""
 "If this option is enabled, the captive portal will try to authenticate users "
 "by sending their MAC address as the username and the password entered below "
 "to the RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:943
+#: src/usr/local/www/services_captiveportal.php:945
 msgid "MAC authentication secret"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:950
+#: src/usr/local/www/services_captiveportal.php:952
 msgid "RADIUS NAS IP Attribute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:953
+#: src/usr/local/www/services_captiveportal.php:955
 msgid "Choose the IP to use for calling station attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:957
+#: src/usr/local/www/services_captiveportal.php:959
 #: src/usr/local/www/system_usermanager_settings.php:199
 msgid "Session timeout"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:962
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:967
+#: src/usr/local/www/services_captiveportal.php:969
 msgid ""
 "If RADIUS type is set to Cisco, in Access-Requests the value of Calling-"
 "Station-ID will be set to the client's IP address and the Called-Station-Id "
@@ -19221,22 +19236,22 @@ msgid ""
 "client's MAC address and Called-Station-ID = pfSense's WAN IP address."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:973
+#: src/usr/local/www/services_captiveportal.php:975
 msgid "Accounting style"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:976
+#: src/usr/local/www/services_captiveportal.php:978
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
 "download, and Acct-Output-Octets will represent upload."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:983
 msgid "Idle time accounting"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:984
+#: src/usr/local/www/services_captiveportal.php:986
 msgid ""
 "When enabled, if a client is disconnected for exceeding the idle timeout the "
 "time spent idle is included in the total session time. Otherwise the session "
@@ -19244,28 +19259,28 @@ msgid ""
 "started and when the last activity was recorded."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:990
+#: src/usr/local/www/services_captiveportal.php:992
 msgid "NAS Identifier"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:993
+#: src/usr/local/www/services_captiveportal.php:995
 msgid ""
 "Specify a NAS identifier to override the default value (pfSense.localdomain)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "Single dash"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "Unformatted"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:997
+#: src/usr/local/www/services_captiveportal.php:999
 msgid "MAC address format"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1000
+#: src/usr/local/www/services_captiveportal.php:1002
 #, php-format
 msgid ""
 "This option changes the MAC address format used in the whole RADIUS system. "
@@ -19275,18 +19290,18 @@ msgid ""
 " 001122334455"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1018
+#: src/usr/local/www/services_captiveportal.php:1020
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1023
+#: src/usr/local/www/services_captiveportal.php:1025
 msgid "*HTTPS server name"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1026
+#: src/usr/local/www/services_captiveportal.php:1028
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -19295,22 +19310,22 @@ msgid ""
 "resolves to the correct interface IP on pfSense."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1032
+#: src/usr/local/www/services_captiveportal.php:1034
 msgid "*SSL Certificate"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1035
+#: src/usr/local/www/services_captiveportal.php:1037
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
 "Cert. Manager%2$s"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1039
+#: src/usr/local/www/services_captiveportal.php:1041
 msgid "HTTPS Forwards"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1042
+#: src/usr/local/www/services_captiveportal.php:1044
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -19320,15 +19335,15 @@ msgid ""
 "to the HTTPS login page."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1049
+#: src/usr/local/www/services_captiveportal.php:1051
 msgid "HTML Page Contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1054
+#: src/usr/local/www/services_captiveportal.php:1056
 msgid "Portal page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1057
+#: src/usr/local/www/services_captiveportal.php:1059
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -19353,21 +19368,21 @@ msgid ""
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1081
+#: src/usr/local/www/services_captiveportal.php:1083
 msgid "Current Portal Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1098
-#: src/usr/local/www/services_captiveportal.php:1132
-#: src/usr/local/www/services_captiveportal.php:1164
+#: src/usr/local/www/services_captiveportal.php:1100
+#: src/usr/local/www/services_captiveportal.php:1134
+#: src/usr/local/www/services_captiveportal.php:1166
 msgid "Restore Default Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1107
+#: src/usr/local/www/services_captiveportal.php:1109
 msgid "Auth error page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1110
+#: src/usr/local/www/services_captiveportal.php:1112
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -19375,25 +19390,25 @@ msgid ""
 "any."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1115
+#: src/usr/local/www/services_captiveportal.php:1117
 msgid "Current Auth Error Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1141
+#: src/usr/local/www/services_captiveportal.php:1143
 msgid "Logout page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1144
+#: src/usr/local/www/services_captiveportal.php:1146
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1147
+#: src/usr/local/www/services_captiveportal.php:1149
 msgid "Current Logout Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1180
+#: src/usr/local/www/services_captiveportal.php:1182
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -19590,8 +19605,8 @@ msgid "Allowed IP address"
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:89
-#: src/usr/local/www/services_dhcp.php:886
-#: src/usr/local/www/services_dhcp.php:914
+#: src/usr/local/www/services_dhcp.php:898
+#: src/usr/local/www/services_dhcp.php:926
 msgid "Subnet mask"
 msgstr ""
 
@@ -20487,7 +20502,7 @@ msgstr ""
 msgid "IP address or host type must be an IP address or host name."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:417
+#: src/usr/local/www/services_dhcp.php:420
 #: src/usr/local/www/services_dhcpv6.php:374
 #, php-format
 msgid ""
@@ -20495,181 +20510,181 @@ msgid ""
 "server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:423
+#: src/usr/local/www/services_dhcp.php:431
 msgid ""
 "Disable DHCP Registration features in DNS Forwarder before disabling DHCP "
 "Server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:426
+#: src/usr/local/www/services_dhcp.php:437
 msgid ""
 "Disable DHCP Registration features in DNS Resolver before disabling DHCP "
 "Server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:434
+#: src/usr/local/www/services_dhcp.php:446
 #: src/usr/local/www/services_dhcpv6.php:391
 msgid "The range is invalid (first element higher than second element)."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:439
+#: src/usr/local/www/services_dhcp.php:451
 #: src/usr/local/www/services_dhcpv6.php:386
 msgid "The specified range lies outside of the current subnet."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:449
+#: src/usr/local/www/services_dhcp.php:461
 msgid ""
 "The specified range must not be within the DHCP range for this interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:462
+#: src/usr/local/www/services_dhcp.php:474
 msgid ""
 "The specified range must not be within the range configured on a DHCP pool "
 "for this interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:473
+#: src/usr/local/www/services_dhcp.php:485
 #: src/usr/local/www/services_dhcpv6.php:407
 #, php-format
 msgid "The DHCP range cannot overlap any static DHCP mappings."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:714
+#: src/usr/local/www/services_dhcp.php:726
 #: src/usr/local/www/status_dhcp_leases.php:496
 msgid "Pool Start"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:715
+#: src/usr/local/www/services_dhcp.php:727
 #: src/usr/local/www/status_dhcp_leases.php:497
 msgid "Pool End"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:772
+#: src/usr/local/www/services_dhcp.php:784
 #: src/usr/local/www/services_dhcpv6.php:527
 msgid "The static mapping configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:807
+#: src/usr/local/www/services_dhcp.php:819
 #, php-format
 msgid "%1$s has a CIDR mask of %2$s, which does not contain enough addresses."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:809
+#: src/usr/local/www/services_dhcp.php:821
 msgid "This system has no interfaces configured with a static IPv4 address."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:811
+#: src/usr/local/www/services_dhcp.php:823
 msgid ""
 "The DHCP Server requires a static IPv4 subnet large enough to serve "
 "addresses to clients."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:827
+#: src/usr/local/www/services_dhcp.php:839
 msgid ""
 "DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
 "Relay is enabled on any interface."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:834
+#: src/usr/local/www/services_dhcp.php:846
 #, php-format
 msgid "Enable DHCP server on %s interface"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:839
+#: src/usr/local/www/services_dhcp.php:851
 msgid ""
 "Editing pool-specific options. To return to the Interface, click its tab "
 "above."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:844
+#: src/usr/local/www/services_dhcp.php:856
 msgid "BOOTP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:851
+#: src/usr/local/www/services_dhcp.php:863
 msgid "Deny unknown clients"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:858
+#: src/usr/local/www/services_dhcp.php:870
 msgid "Ignore denied clients"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:861
+#: src/usr/local/www/services_dhcp.php:873
 msgid ""
 "This option is not compatible with failover and cannot be enabled when a "
 "Failover Peer IP address is configured."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:865
+#: src/usr/local/www/services_dhcp.php:877
 msgid "Ignore client identifiers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:868
+#: src/usr/local/www/services_dhcp.php:880
 msgid ""
 "This option may be useful when a client can dual boot using different client "
 "identifiers but the same hardware (MAC) address.  Note that the resulting "
 "server behavior violates the official DHCP specification."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:874
+#: src/usr/local/www/services_dhcp.php:886
 msgid "Pool Description"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:894
+#: src/usr/local/www/services_dhcp.php:906
 msgid "In-use DHCP Pool Ranges:"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:907
+#: src/usr/local/www/services_dhcp.php:919
 msgid "Available range"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:920
+#: src/usr/local/www/services_dhcp.php:932
 #: src/usr/local/www/services_dhcpv6.php:660
 msgid "*Range"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:941
+#: src/usr/local/www/services_dhcp.php:953
 msgid "Additional Pools"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:945
+#: src/usr/local/www/services_dhcp.php:957
 msgid "Add pool"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:954
+#: src/usr/local/www/services_dhcp.php:966
 msgid ""
 "If additional pools of addresses are needed inside of this subnet outside "
 "the above Range, they may be specified here."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:970
+#: src/usr/local/www/services_dhcp.php:982
 #: src/usr/local/www/vpn_openvpn_csc.php:554
 msgid "WINS servers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:985
+#: src/usr/local/www/services_dhcp.php:997
 #: src/usr/local/www/status_interfaces.php:152
 msgid "DNS servers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:988
+#: src/usr/local/www/services_dhcp.php:1000
 msgid ""
 "Leave blank to use the system default DNS servers: this interface's IP if "
 "DNS Forwarder or Resolver is enabled, otherwise the servers configured on "
 "the System / General Setup page."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:993
+#: src/usr/local/www/services_dhcp.php:1005
 msgid "Other Options"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1001
+#: src/usr/local/www/services_dhcp.php:1013
 msgid ""
 "The default is to use the IP on this interface of the firewall as the "
 "gateway. Specify an alternate gateway here if this is not the correct "
 "gateway for the network. Type \"none\" for no gateway assignment."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1005
+#: src/usr/local/www/services_dhcp.php:1017
 #: src/usr/local/www/services_dhcp_edit.php:547
 #: src/usr/local/www/services_dhcpv6.php:726
 #: src/usr/local/www/services_dyndns_edit.php:97
@@ -20677,20 +20692,20 @@ msgstr ""
 msgid "Domain name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1008
+#: src/usr/local/www/services_dhcp.php:1020
 msgid ""
 "The default is to use the domain name of this system as the default domain "
 "name provided by DHCP. An alternate domain name may be specified here."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1012
+#: src/usr/local/www/services_dhcp.php:1024
 #: src/usr/local/www/services_dhcp_edit.php:554
 #: src/usr/local/www/services_dhcpv6.php:733
 #: src/usr/local/www/services_router_advertisements.php:455
 msgid "Domain search list"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1015
+#: src/usr/local/www/services_dhcp.php:1027
 #: src/usr/local/www/services_dhcp_edit.php:557
 #: src/usr/local/www/services_dhcpv6.php:736
 msgid ""
@@ -20698,33 +20713,33 @@ msgid ""
 "semicolon character as separator."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1019
+#: src/usr/local/www/services_dhcp.php:1031
 #: src/usr/local/www/services_dhcpv6.php:740
 msgid "Default lease time"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1022
+#: src/usr/local/www/services_dhcp.php:1034
 msgid ""
 "This is used for clients that do not ask for a specific expiration time. The "
 "default is 7200 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1026
+#: src/usr/local/www/services_dhcp.php:1038
 msgid "Maximum lease time"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1029
+#: src/usr/local/www/services_dhcp.php:1041
 #: src/usr/local/www/services_dhcp_edit.php:571
 msgid ""
 "This is the maximum lease time for clients that ask for a specific "
 "expiration time. The default is 86400 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1034
+#: src/usr/local/www/services_dhcp.php:1046
 msgid "Failover peer IP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1037
+#: src/usr/local/www/services_dhcp.php:1049
 msgid ""
 "Leave blank to disable. Enter the interface IP address of the other machine. "
 "Machines must be using CARP. Interface's advskew determines whether the "
@@ -20732,281 +20747,281 @@ msgid ""
 "(and the other is &gt; 20)."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1044
-#: src/usr/local/www/services_dhcp.php:1423
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:98
+#: src/usr/local/www/services_dhcp.php:1056
+#: src/usr/local/www/services_dhcp.php:1435
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:100
 msgid "Static ARP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1047
+#: src/usr/local/www/services_dhcp.php:1059
 msgid ""
 "This option persists even if DHCP server is disabled. Only the machines "
 "listed below will be able to communicate with the firewall on this interface."
 ""
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1051
+#: src/usr/local/www/services_dhcp.php:1063
 msgid "Time format change"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1054
+#: src/usr/local/www/services_dhcp.php:1066
 msgid ""
 "By default DHCP leases are displayed in UTC time.\tBy checking this box DHCP "
 "lease time will be displayed in local time and set to the time zone selected."
 " This will be used for all DHCP interfaces lease time."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1058
+#: src/usr/local/www/services_dhcp.php:1070
 msgid "Statistics graphs"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1061
+#: src/usr/local/www/services_dhcp.php:1073
 msgid ""
 "Enable this to add DHCP leases statistics to the RRD graphs. Disabled by "
 "default."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1088
+#: src/usr/local/www/services_dhcp.php:1100
 #: src/usr/local/www/services_dhcp_edit.php:603
 #: src/usr/local/www/services_dhcpv6.php:786
 msgid "DDNS Domain"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1091
+#: src/usr/local/www/services_dhcp.php:1103
 #, php-format
 msgid ""
 "Leave blank to disable dynamic DNS registration.%1$sEnter the dynamic DNS "
 "domain which will be used to register client names in the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1096
+#: src/usr/local/www/services_dhcp.php:1108
 #: src/usr/local/www/services_dhcpv6.php:793
 msgid "DDNS Hostnames"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1099
+#: src/usr/local/www/services_dhcp.php:1111
 #: src/usr/local/www/services_dhcpv6.php:796
 msgid "Default registers host name option supplied by DHCP client."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1103
+#: src/usr/local/www/services_dhcp.php:1115
 msgid "Primary DDNS address"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1106
+#: src/usr/local/www/services_dhcp.php:1118
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1110
+#: src/usr/local/www/services_dhcp.php:1122
 msgid "DNS Domain key"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1113
+#: src/usr/local/www/services_dhcp.php:1125
 msgid ""
 "Dynamic DNS domain key name which will be used to register client names in "
 "the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1117
+#: src/usr/local/www/services_dhcp.php:1129
 msgid "DNS Domain key secret"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1120
+#: src/usr/local/www/services_dhcp.php:1132
 msgid ""
 "Dynamic DNS domain key secret (HMAC-MD5) which will be used to register "
 "client names in the DNS server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1133
+#: src/usr/local/www/services_dhcp.php:1145
 msgid "MAC address control"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1139
+#: src/usr/local/www/services_dhcp.php:1151
 msgid "MAC Allow"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1142
+#: src/usr/local/www/services_dhcp.php:1154
 msgid ""
 "List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:"
 "00:00,01:E5:FF"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1146
+#: src/usr/local/www/services_dhcp.php:1158
 msgid "MAC Deny"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1149
+#: src/usr/local/www/services_dhcp.php:1161
 msgid ""
 "List of partial MAC addresses to deny access, comma separated, no spaces, e."
 "g.: 00:00:00,01:E5:FF"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1168
+#: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:857
 #: src/usr/local/www/vpn_openvpn_server.php:1220
 msgid "NTP Server 1"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1175
+#: src/usr/local/www/services_dhcp.php:1187
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:865
 #: src/usr/local/www/vpn_openvpn_server.php:1227
 msgid "NTP Server 2"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1191
+#: src/usr/local/www/services_dhcp.php:1203
 msgid "TFTP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1197
+#: src/usr/local/www/services_dhcp.php:1209
 #: src/usr/local/www/services_dhcp_edit.php:681
 msgid "TFTP Server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1200
+#: src/usr/local/www/services_dhcp.php:1212
 msgid ""
 "Leave blank to disable. Enter a valid IP address, hostname or URL for the "
 "TFTP server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1213
+#: src/usr/local/www/services_dhcp.php:1225
 #: src/usr/local/www/services_dhcpv6.php:885
 msgid "LDAP"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1219
+#: src/usr/local/www/services_dhcp.php:1231
 msgid "LDAP Server URI"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1222
+#: src/usr/local/www/services_dhcp.php:1234
 msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1235
+#: src/usr/local/www/services_dhcp.php:1247
 msgid "Network Booting"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1248
+#: src/usr/local/www/services_dhcp.php:1260
 msgid "Next Server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1251
+#: src/usr/local/www/services_dhcp.php:1263
 msgid "Enter the IP address of the next server"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1255
+#: src/usr/local/www/services_dhcp.php:1267
 msgid "Default BIOS file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1262
+#: src/usr/local/www/services_dhcp.php:1274
 msgid "UEFI 32 bit file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1269
+#: src/usr/local/www/services_dhcp.php:1281
 msgid "UEFI 64 bit file name"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1272
+#: src/usr/local/www/services_dhcp.php:1284
 msgid ""
 "Both a filename and a boot server must be configured for this to work! All "
 "three filenames and a configured boot server are necessary for UEFI to work! "
 ""
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1277
+#: src/usr/local/www/services_dhcp.php:1289
 #: src/usr/local/www/services_dhcpv6_edit.php:250
 msgid "Root path"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1292
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1293
-#: src/usr/local/www/services_dhcp.php:1299
+#: src/usr/local/www/services_dhcp.php:1305
+#: src/usr/local/www/services_dhcp.php:1311
 #: src/usr/local/www/services_dhcpv6.php:934
 msgid "Additional BOOTP/DHCP Options"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1304
+#: src/usr/local/www/services_dhcp.php:1316
 msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1305
+#: src/usr/local/www/services_dhcp.php:1317
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "Text"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "String"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "Boolean"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 8-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 16-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 32-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 8-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 16-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 32-bit integer"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "IP address or host"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1328
+#: src/usr/local/www/services_dhcp.php:1340
 msgid "Option"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1336
+#: src/usr/local/www/services_dhcp.php:1348
 #: src/usr/local/www/services_dhcpv6.php:962
 msgid "Number"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1418
+#: src/usr/local/www/services_dhcp.php:1430
 msgid "DHCP Static Mappings for this Interface"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1428
+#: src/usr/local/www/services_dhcp.php:1440
 #: src/usr/local/www/status_dhcp_leases.php:358
 msgid "Client Id"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1474
+#: src/usr/local/www/services_dhcp.php:1486
 #: src/usr/local/www/services_dhcpv6.php:1057
 #: src/usr/local/www/status_dhcp_leases.php:465
 msgid "Edit static mapping"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1475
+#: src/usr/local/www/services_dhcp.php:1487
 #: src/usr/local/www/services_dhcpv6.php:1058
 msgid "Delete static mapping"
 msgstr ""
@@ -21024,7 +21039,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:113
 #: src/usr/local/www/services_dnsmasq_edit.php:70
 #: src/usr/local/www/services_unbound_host_edit.php:81
-#: src/usr/local/www/system.php:193
+#: src/usr/local/www/system.php:198
 msgid ""
 "A valid hostname is specified, but the domain name part should be omitted"
 msgstr ""
@@ -21167,7 +21182,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:500
 #: src/usr/local/www/services_dhcpv6.php:709
 #: src/usr/local/www/services_pppoe_edit.php:350
-#: src/usr/local/www/system.php:477 src/usr/local/www/vpn_ipsec_mobile.php:607
+#: src/usr/local/www/system.php:482 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:462
 msgid "DNS Servers"
 msgstr ""
@@ -21774,7 +21789,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/services_unbound_host_edit.php:273
-#: src/usr/local/www/system.php:152
+#: src/usr/local/www/system.php:157
 msgid "Domain"
 msgstr ""
 
@@ -21862,7 +21877,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:210
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:121
 #: src/usr/local/www/services_unbound_host_edit.php:204
-#: src/usr/local/www/system.php:446
+#: src/usr/local/www/system.php:451
 msgid "*Domain"
 msgstr ""
 
@@ -21893,7 +21908,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
-#: src/usr/local/www/system.php:190
+#: src/usr/local/www/system.php:195
 msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
@@ -24498,7 +24513,7 @@ msgstr ""
 #: src/usr/local/www/status_gateways.php:147
 #: src/usr/local/www/status_ipsec_leases.php:54
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:131
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:96
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:98
 msgid "Online"
 msgstr ""
 
@@ -24631,7 +24646,7 @@ msgstr ""
 #: src/usr/local/www/status_gateway_groups.php:120
 #: src/usr/local/www/status_gateways.php:129
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:113
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:100
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:102
 #: src/usr/local/www/diag_smart.php:301
 msgid "Offline"
 msgstr ""
@@ -24811,7 +24826,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:122
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:246
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:253
 msgid "Uptime"
 msgstr ""
 
@@ -26104,7 +26119,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:248
 msgid "Loading"
-msgstr ""
+msgstr "טוען"
 
 #: src/usr/local/www/status_services.php:144
 msgid "No services found."
@@ -26162,108 +26177,108 @@ msgid ""
 "time."
 msgstr ""
 
-#: src/usr/local/www/system.php:121
+#: src/usr/local/www/system.php:126
 msgid "AHEAD of"
 msgstr ""
 
-#: src/usr/local/www/system.php:124
+#: src/usr/local/www/system.php:129
 msgid "BEHIND"
 msgstr ""
 
-#: src/usr/local/www/system.php:132
+#: src/usr/local/www/system.php:137
 #, php-format
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/usr/local/www/system.php:198
+#: src/usr/local/www/system.php:203
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
 msgstr ""
 
-#: src/usr/local/www/system.php:211
+#: src/usr/local/www/system.php:216
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
 msgstr ""
 
-#: src/usr/local/www/system.php:217
+#: src/usr/local/www/system.php:222
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
 msgstr ""
 
-#: src/usr/local/www/system.php:220
+#: src/usr/local/www/system.php:225
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
 msgstr ""
 
-#: src/usr/local/www/system.php:233
+#: src/usr/local/www/system.php:238
 msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
 msgstr ""
 
-#: src/usr/local/www/system.php:245
+#: src/usr/local/www/system.php:250
 #, php-format
 msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
 "connected network."
 msgstr ""
 
-#: src/usr/local/www/system.php:258
+#: src/usr/local/www/system.php:263
 msgid ""
 "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'."
 ""
 msgstr ""
 
-#: src/usr/local/www/system.php:442
+#: src/usr/local/www/system.php:447
 msgid "Name of the firewall host, without domain part"
 msgstr ""
 
-#: src/usr/local/www/system.php:450
+#: src/usr/local/www/system.php:455
 msgid ""
 "Do not use 'local' as a domain name. It will cause local hosts running mDNS "
 "(avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."
 msgstr ""
 
-#: src/usr/local/www/system.php:456
+#: src/usr/local/www/system.php:461
 msgid "DNS Server Settings"
 msgstr ""
 
-#: src/usr/local/www/system.php:464
+#: src/usr/local/www/system.php:469
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
 
-#: src/usr/local/www/system.php:465
+#: src/usr/local/www/system.php:470
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
 msgstr ""
 
-#: src/usr/local/www/system.php:466
+#: src/usr/local/www/system.php:471
 msgid "Optionally select the gateway for each DNS server."
 msgstr ""
 
-#: src/usr/local/www/system.php:467
+#: src/usr/local/www/system.php:472
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
 
-#: src/usr/local/www/system.php:482
+#: src/usr/local/www/system.php:487
 msgid "DNS Server"
-msgstr ""
+msgstr "שרת DNS"
 
-#: src/usr/local/www/system.php:523
+#: src/usr/local/www/system.php:528
 msgid "Add DNS Server"
 msgstr ""
 
-#: src/usr/local/www/system.php:530
+#: src/usr/local/www/system.php:535
 msgid "DNS Server Override"
 msgstr ""
 
-#: src/usr/local/www/system.php:533
+#: src/usr/local/www/system.php:538
 #, php-format
 msgid ""
 "If this option is set, %s will use DNS servers assigned by a DHCP/PPP server "
@@ -26271,11 +26286,11 @@ msgid ""
 "However, they will not be assigned to DHCP clients."
 msgstr ""
 
-#: src/usr/local/www/system.php:540
+#: src/usr/local/www/system.php:545
 msgid "Disable DNS Forwarder"
 msgstr ""
 
-#: src/usr/local/www/system.php:543
+#: src/usr/local/www/system.php:548
 msgid ""
 "By default localhost (127.0.0.1) will be used as the first DNS server where "
 "the DNS Forwarder or DNS Resolver is enabled and set to listen on localhost, "
@@ -26283,15 +26298,15 @@ msgid ""
 "box omits localhost from the list of DNS servers in resolv.conf."
 msgstr ""
 
-#: src/usr/local/www/system.php:550
+#: src/usr/local/www/system.php:555
 msgid "Localization"
 msgstr ""
 
-#: src/usr/local/www/system.php:554
+#: src/usr/local/www/system.php:559
 msgid "*Timezone"
 msgstr ""
 
-#: src/usr/local/www/system.php:557
+#: src/usr/local/www/system.php:562
 #, php-format
 msgid ""
 "Select a geographic region name (Continent/Location) to determine the "
@@ -26300,46 +26315,46 @@ msgid ""
 "required for this firewall."
 msgstr ""
 
-#: src/usr/local/www/system.php:562
+#: src/usr/local/www/system.php:567
 msgid "Timeservers"
 msgstr ""
 
-#: src/usr/local/www/system.php:565
+#: src/usr/local/www/system.php:570
 msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
 msgstr ""
 
-#: src/usr/local/www/system.php:570
+#: src/usr/local/www/system.php:575
 msgid "*Language"
 msgstr ""
 
-#: src/usr/local/www/system.php:573
+#: src/usr/local/www/system.php:578
 msgid "Choose a language for the webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:577
+#: src/usr/local/www/system.php:582
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1156
+#: src/usr/local/www/system_certmanager.php:1192
 msgid "webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:596
+#: src/usr/local/www/system.php:601
 msgid "Login hostname"
 msgstr ""
 
-#: src/usr/local/www/system.php:603
+#: src/usr/local/www/system.php:608
 msgid "Dashboard update period"
 msgstr ""
 
-#: src/usr/local/www/system.php:607
+#: src/usr/local/www/system.php:612
 msgid ""
 "Time in seconds between dashboard widget updates. Small values cause more "
 "frequent updates but increase the load on the web server. Minimum is 5 "
 "seconds, maximum 600 seconds"
 msgstr ""
 
-#: src/usr/local/www/system.php:615
+#: src/usr/local/www/system.php:620
 #: src/usr/local/www/system_user_settings.php:168
 #: src/usr/local/www/system_usermanager.php:974
 #, php-format
@@ -26386,7 +26401,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:211
 #: src/usr/local/www/system_advanced_sysctl.php:139
 msgid "Firewall & NAT"
-msgstr ""
+msgstr "פיירוול ו NAT"
 
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_firewall.php:381
@@ -26418,7 +26433,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:215
 #: src/usr/local/www/system_advanced_sysctl.php:143
 msgid "Notifications"
-msgstr ""
+msgstr "התראות"
 
 #: src/usr/local/www/system_advanced_admin.php:328
 #, php-format
@@ -26444,7 +26459,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:358
 msgid "Max Processes"
-msgstr ""
+msgstr "מקסימום תהליך"
 
 #: src/usr/local/www/system_advanced_admin.php:361
 msgid ""
@@ -26543,11 +26558,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:447
 msgid "Secure Shell"
-msgstr ""
+msgstr "SSH"
 
 #: src/usr/local/www/system_advanced_admin.php:451
 msgid "Secure Shell Server"
-msgstr ""
+msgstr "שרת SSH"
 
 #: src/usr/local/www/system_advanced_admin.php:458
 msgid "Authentication Method"
@@ -26562,7 +26577,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:467
 msgid "SSH port"
-msgstr ""
+msgstr "פורט SSH"
 
 #: src/usr/local/www/system_advanced_admin.php:471
 msgid "Note: Leave this blank for the default of 22."
@@ -26570,11 +26585,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:475
 msgid "Serial Communications"
-msgstr ""
+msgstr "תקשורת סיריאלית"
 
 #: src/usr/local/www/system_advanced_admin.php:480
 msgid "Serial Terminal"
-msgstr ""
+msgstr "טרמינאל סיריאלי"
 
 #: src/usr/local/www/system_advanced_admin.php:483
 #, php-format
@@ -26587,7 +26602,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:491
 msgid "Serial Speed"
-msgstr ""
+msgstr "מהירות סיריאל"
 
 #: src/usr/local/www/system_advanced_admin.php:494
 msgid "Allows selection of different speeds for the serial console port."
@@ -26595,15 +26610,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:502
 msgid "Serial Console"
-msgstr ""
+msgstr "קונסול סיראלי"
 
 #: src/usr/local/www/system_advanced_admin.php:503
 msgid "VGA Console"
-msgstr ""
+msgstr "קונסול VGA"
 
 #: src/usr/local/www/system_advanced_admin.php:499
 msgid "Primary Console"
-msgstr ""
+msgstr "קונסול ראשי"
 
 #: src/usr/local/www/system_advanced_admin.php:505
 msgid ""
@@ -26759,7 +26774,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_firewall.php:418
 #: src/usr/local/www/vpn_ipsec_phase1.php:714
 msgid "Aggressive"
-msgstr ""
+msgstr "אגרסבי"
 
 #: src/usr/local/www/system_advanced_firewall.php:419
 msgid "Conservative"
@@ -26890,7 +26905,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:528
 msgid "Disable Negate rules"
-msgstr ""
+msgstr "בטל כללי Netgate"
 
 #: src/usr/local/www/system_advanced_firewall.php:531
 msgid ""
@@ -26927,19 +26942,19 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Monthly"
-msgstr ""
+msgstr "חודשי"
 
 #: src/usr/local/www/system_advanced_firewall.php:562
 msgid "Weekly"
-msgstr ""
+msgstr "שבועי"
 
 #: src/usr/local/www/system_advanced_firewall.php:563
 msgid "Daily"
-msgstr ""
+msgstr "יומי"
 
 #: src/usr/local/www/system_advanced_firewall.php:558
 msgid "Update Frequency"
-msgstr ""
+msgstr "תדירות עדכון"
 
 #: src/usr/local/www/system_advanced_firewall.php:565
 msgid ""
@@ -26953,15 +26968,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:586
 msgid "disabled"
-msgstr ""
+msgstr "מבוטל"
 
 #: src/usr/local/www/system_advanced_firewall.php:587
 msgid "NAT + proxy"
-msgstr ""
+msgstr "NAT + פרוקסי"
 
 #: src/usr/local/www/system_advanced_firewall.php:588
 msgid "Pure NAT"
-msgstr ""
+msgstr "רק NAT"
 
 #: src/usr/local/www/system_advanced_firewall.php:583
 msgid "NAT Reflection mode for port forwards"
@@ -27035,15 +27050,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:655
 msgid "TCP "
-msgstr ""
+msgstr "TCP "
 
 #: src/usr/local/www/system_advanced_firewall.php:666
 msgid "UDP "
-msgstr ""
+msgstr "UDP "
 
 #: src/usr/local/www/system_advanced_firewall.php:677
 msgid "ICMP "
-msgstr ""
+msgstr "ICMP "
 
 #: src/usr/local/www/system_advanced_firewall.php:688
 msgid "Other "
@@ -27120,11 +27135,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:318
 msgid "Proxy Support"
-msgstr ""
+msgstr "תמיכת פרוקסי"
 
 #: src/usr/local/www/system_advanced_misc.php:322
 msgid "Proxy URL"
-msgstr ""
+msgstr "URL פרוקסי"
 
 #: src/usr/local/www/system_advanced_misc.php:325
 msgid ""
@@ -27152,7 +27167,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
-msgstr ""
+msgstr "סיסמת פרוקסי"
 
 #: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
@@ -27204,7 +27219,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:391
 msgid "Power Savings"
-msgstr ""
+msgstr "חסכון בחשמל"
 
 #: src/usr/local/www/system_advanced_misc.php:395
 msgid "PowerD"
@@ -27229,23 +27244,23 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:413
 msgid "Hiadaptive"
-msgstr ""
+msgstr "Hiadaptive"
 
 #: src/usr/local/www/system_advanced_misc.php:414
 msgid "Adaptive"
-msgstr ""
+msgstr "מתאם"
 
 #: src/usr/local/www/system_advanced_misc.php:415
 msgid "Minimum"
-msgstr ""
+msgstr "מינימום"
 
 #: src/usr/local/www/system_advanced_misc.php:416
 msgid "Maximum"
-msgstr ""
+msgstr "מקסימום"
 
 #: src/usr/local/www/system_advanced_misc.php:421
 msgid "AC Power"
-msgstr ""
+msgstr "מקור מתח משתנה (AC)"
 
 #: src/usr/local/www/system_advanced_misc.php:428
 msgid "Battery Power"
@@ -27385,7 +27400,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:559
 msgid "Log Directory"
-msgstr ""
+msgstr "תקיית לוג"
 
 #: src/usr/local/www/system_advanced_misc.php:561
 msgid ""
@@ -27397,15 +27412,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:569
 msgid "Hardware Settings"
-msgstr ""
+msgstr "הגדרות חומרה"
 
 #: src/usr/local/www/system_advanced_misc.php:578
 msgid "Always on"
-msgstr ""
+msgstr "תמיד דלוק"
 
 #: src/usr/local/www/system_advanced_misc.php:576
 msgid "Hard disk standby time"
-msgstr ""
+msgstr "זמן סטנדביי להארד דיסק"
 
 #: src/usr/local/www/system_advanced_misc.php:579
 #, php-format
@@ -27445,11 +27460,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:171
 msgid "IPv6 Options"
-msgstr ""
+msgstr "אפשרויות IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:175
 msgid "Allow IPv6"
-msgstr ""
+msgstr "אפשר IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:178
 msgid ""
@@ -27506,11 +27521,11 @@ msgstr ""
 #: src/usr/local/www/system_advanced_network.php:223
 #: src/usr/local/www/system_advanced_network.php:227
 msgid "DHCP6 DUID"
-msgstr ""
+msgstr "DHCP6 DUID"
 
 #: src/usr/local/www/system_advanced_network.php:235
 msgid "Copy DUID"
-msgstr ""
+msgstr "העתק DUID"
 
 #: src/usr/local/www/system_advanced_network.php:243
 #, php-format
@@ -27528,7 +27543,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:253
 msgid "Network Interfaces"
-msgstr ""
+msgstr "ממשקי רשת"
 
 #: src/usr/local/www/system_advanced_network.php:257
 msgid "Hardware Checksum Offloading"
@@ -27570,7 +27585,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:288
 msgid "ARP Handling"
-msgstr ""
+msgstr "ניהול ARP"
 
 #: src/usr/local/www/system_advanced_network.php:291
 msgid ""
@@ -27617,11 +27632,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:220
 msgid "E-Mail"
-msgstr ""
+msgstr "דוא\"ל"
 
 #: src/usr/local/www/system_advanced_notifications.php:224
 msgid "Disable SMTP"
-msgstr ""
+msgstr "בטל SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:227
 msgid ""
@@ -27632,7 +27647,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:233
 msgid "E-Mail server"
-msgstr ""
+msgstr "שרת דוא\"ל"
 
 #: src/usr/local/www/system_advanced_notifications.php:236
 msgid ""
@@ -27666,11 +27681,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:257
 msgid "Enable SSL/TLS"
-msgstr ""
+msgstr "אפשר SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:266
 msgid "From e-mail address"
-msgstr ""
+msgstr "מדוא\"ל"
 
 #: src/usr/local/www/system_advanced_notifications.php:269
 msgid "This is the e-mail address that will appear in the from field."
@@ -27712,7 +27727,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:303
 msgid "Test SMTP Settings"
-msgstr ""
+msgstr "בדוק הגדרות SMTP"
 
 #: src/usr/local/www/system_advanced_notifications.php:306
 msgid ""
@@ -27722,23 +27737,23 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:311
 msgid "Sounds"
-msgstr ""
+msgstr "צלילים"
 
 #: src/usr/local/www/system_advanced_notifications.php:315
 msgid "Startup/Shutdown Sound"
-msgstr ""
+msgstr "צליל כיבוי/הדלקה"
 
 #: src/usr/local/www/system_advanced_notifications.php:318
 msgid "When this is checked, startup and shutdown sounds will no longer play."
-msgstr ""
+msgstr "כשזה נבחר, צלילי הדלקה וכיבוי לא ינגנו"
 
 #: src/usr/local/www/system_advanced_notifications.php:323
 msgid "Growl"
-msgstr ""
+msgstr "Growl"
 
 #: src/usr/local/www/system_advanced_notifications.php:327
 msgid "Disable Growl"
-msgstr ""
+msgstr "בטל Growl"
 
 #: src/usr/local/www/system_advanced_notifications.php:330
 msgid ""
@@ -27748,7 +27763,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:335
 msgid "Registration Name"
-msgstr ""
+msgstr "שם רישום"
 
 #: src/usr/local/www/system_advanced_notifications.php:339
 msgid "Enter the name to register with the Growl server."
@@ -27756,7 +27771,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:343
 msgid "Notification Name"
-msgstr ""
+msgstr "שם התראה"
 
 #: src/usr/local/www/system_advanced_notifications.php:348
 msgid "Enter a name for the Growl notifications."
@@ -27793,7 +27808,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:154
 msgid "NOTE: "
-msgstr ""
+msgstr "הערה:"
 
 #: src/usr/local/www/system_advanced_sysctl.php:154
 msgid "The options on this page are intended for use by advanced users only."
@@ -27805,7 +27820,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:160
 msgid "New"
-msgstr ""
+msgstr "חדש"
 
 #: src/usr/local/www/system_advanced_sysctl.php:180
 msgid "Edit tunable"
@@ -27825,7 +27840,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:208
 msgid "*Value"
-msgstr ""
+msgstr "ערך*"
 
 #: src/usr/local/www/system_authservers.php:57
 msgid "Select LDAP containers for authentication"
@@ -27849,7 +27864,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:238
 #: src/usr/local/www/system_certmanager.php:255
 #: src/usr/local/www/system_certmanager.php:273
-#: src/usr/local/www/system_certmanager.php:533
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:189
@@ -27860,11 +27875,11 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:228
 #: src/usr/local/www/system_authservers.php:252
 msgid "Hostname or IP"
-msgstr ""
+msgstr "Hostname או IP"
 
 #: src/usr/local/www/system_authservers.php:229
 msgid "Port value"
-msgstr ""
+msgstr "מספר פורט"
 
 #: src/usr/local/www/system_authservers.php:231
 msgid "Protocol version"
@@ -27872,7 +27887,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:232
 msgid "Search level"
-msgstr ""
+msgstr "רמת חיפוש"
 
 #: src/usr/local/www/system_authservers.php:233
 msgid "User naming Attribute"
@@ -27948,7 +27963,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:84
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "משתמשים"
 
 #: src/usr/local/www/system_authservers.php:429
 #: src/usr/local/www/system_groupmanager.php:269
@@ -27961,21 +27976,21 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:131
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
-msgstr ""
+msgstr "קבוצות"
 
 #: src/usr/local/www/system_authservers.php:443
 msgid "Server Name"
-msgstr ""
+msgstr "שם שרת"
 
 #: src/usr/local/www/system_authservers.php:457
 #: src/usr/local/www/vpn_openvpn_server.php:1374
 msgid "Edit server"
-msgstr ""
+msgstr "ערוך שרת"
 
 #: src/usr/local/www/system_authservers.php:458
 #: src/usr/local/www/vpn_openvpn_server.php:1375
 msgid "Delete server"
-msgstr ""
+msgstr "מחק שרת"
 
 #: src/usr/local/www/system_authservers.php:490
 msgid "Server Settings"
@@ -27983,8 +27998,8 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:494
 #: src/usr/local/www/system_camanager.php:491
-#: src/usr/local/www/system_certmanager.php:649
-#: src/usr/local/www/system_certmanager.php:1025
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1035
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
@@ -28043,7 +28058,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:579
 msgid "*Level"
-msgstr ""
+msgstr "רמה*"
 
 #: src/usr/local/www/system_authservers.php:586
 msgid "Base DN"
@@ -28133,7 +28148,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:716
 msgid "UTF8 Encode"
-msgstr ""
+msgstr "קודד UTF8"
 
 #: src/usr/local/www/system_authservers.php:719
 msgid ""
@@ -28230,7 +28245,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:191
 #: src/usr/local/www/system_usermanager.php:917
 msgid "Key length"
-msgstr ""
+msgstr "אורך מפתח"
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
@@ -28239,7 +28254,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:937
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Lifetime"
-msgstr ""
+msgstr "אורך חיים"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
@@ -28316,30 +28331,30 @@ msgid "Please select a valid Digest Algorithm."
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:321
-#: src/usr/local/www/system_certmanager.php:580
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:321
 #: src/usr/local/www/system_camanager.php:350
-#: src/usr/local/www/system_certmanager.php:598
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:351
 #: src/usr/local/www/system_camanager.php:367
-#: src/usr/local/www/system_certmanager.php:580
-#: src/usr/local/www/system_certmanager.php:599
-#: src/usr/local/www/system_certmanager.php:1074
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1084
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:352
-#: src/usr/local/www/system_certmanager.php:600
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
@@ -28355,55 +28370,55 @@ msgid "Internal"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:366
-#: src/usr/local/www/system_certmanager.php:1081
+#: src/usr/local/www/system_certmanager.php:1091
 msgid "Issuer"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:368
-#: src/usr/local/www/system_certmanager.php:1082
+#: src/usr/local/www/system_certmanager.php:1092
 msgid "Distinguished Name"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:386
-#: src/usr/local/www/system_certmanager.php:1106
+#: src/usr/local/www/system_certmanager.php:1117
 msgid "self-signed"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:388
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "external"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:420
-#: src/usr/local/www/system_certmanager.php:1147
+#: src/usr/local/www/system_certmanager.php:1183
 msgid "Valid From"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:420
-#: src/usr/local/www/system_certmanager.php:1147
+#: src/usr/local/www/system_certmanager.php:1183
 msgid "Valid Until"
-msgstr ""
+msgstr "תקף עד"
 
 #: src/usr/local/www/system_camanager.php:431
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1204
 msgid "IPsec Tunnel"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:434
 msgid "LDAP Server"
-msgstr ""
+msgstr "שרת LDAP"
 
 #: src/usr/local/www/system_camanager.php:439
 msgid "Edit CA"
-msgstr ""
+msgstr "ערוך CA"
 
 #: src/usr/local/www/system_camanager.php:440
 msgid "Export CA"
-msgstr ""
+msgstr "ייצא CA"
 
 #: src/usr/local/www/system_camanager.php:442
 msgid "Export key"
-msgstr ""
+msgstr "ייצא מפתח"
 
 #: src/usr/local/www/system_camanager.php:445
 msgid "Delete CA and its CRLs"
@@ -28414,7 +28429,7 @@ msgid "Create / Edit CA"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:499
-#: src/usr/local/www/system_certmanager.php:641
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
 msgstr ""
@@ -28424,12 +28439,12 @@ msgid "Existing Certificate Authority"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:512
-#: src/usr/local/www/system_certmanager.php:727
+#: src/usr/local/www/system_certmanager.php:735
 msgid "*Certificate data"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:514
-#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:737
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr ""
 
@@ -28446,7 +28461,7 @@ msgstr ""
 
 #: src/usr/local/www/system_camanager.php:526
 msgid "Serial for next certificate"
-msgstr ""
+msgstr "סיריאל לסרטיפיקט הבא"
 
 #: src/usr/local/www/system_camanager.php:529
 msgid ""
@@ -28467,62 +28482,62 @@ msgid "*Key length (bits)"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:565
-#: src/usr/local/www/system_certmanager.php:775
-#: src/usr/local/www/system_certmanager.php:918
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:928
 msgid "*Digest Algorithm"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:568
-#: src/usr/local/www/system_certmanager.php:778
+#: src/usr/local/www/system_certmanager.php:786
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:573
-#: src/usr/local/www/system_certmanager.php:791
+#: src/usr/local/www/system_certmanager.php:799
 msgid "*Lifetime (days)"
-msgstr ""
+msgstr "אורך חיים (ימים) *"
 
 #: src/usr/local/www/system_camanager.php:580
-#: src/usr/local/www/system_certmanager.php:798
-#: src/usr/local/www/system_certmanager.php:926
+#: src/usr/local/www/system_certmanager.php:806
+#: src/usr/local/www/system_certmanager.php:936
 msgid "*Country Code"
-msgstr ""
+msgstr "קוד מדינה*"
 
 #: src/usr/local/www/system_camanager.php:587
-#: src/usr/local/www/system_certmanager.php:805
-#: src/usr/local/www/system_certmanager.php:933
+#: src/usr/local/www/system_certmanager.php:813
+#: src/usr/local/www/system_certmanager.php:943
 msgid "*State or Province"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:595
-#: src/usr/local/www/system_certmanager.php:813
-#: src/usr/local/www/system_certmanager.php:941
+#: src/usr/local/www/system_certmanager.php:821
+#: src/usr/local/www/system_certmanager.php:951
 msgid "*City"
-msgstr ""
+msgstr "עיר*"
 
 #: src/usr/local/www/system_camanager.php:603
-#: src/usr/local/www/system_certmanager.php:821
-#: src/usr/local/www/system_certmanager.php:949
+#: src/usr/local/www/system_certmanager.php:829
+#: src/usr/local/www/system_certmanager.php:959
 msgid "*Organization"
-msgstr ""
+msgstr "אירגון*"
 
 #: src/usr/local/www/system_camanager.php:611
-#: src/usr/local/www/system_certmanager.php:829
-#: src/usr/local/www/system_certmanager.php:957
+#: src/usr/local/www/system_certmanager.php:837
+#: src/usr/local/www/system_certmanager.php:967
 msgid "Organizational Unit"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:619
-#: src/usr/local/www/system_certmanager.php:837
-#: src/usr/local/www/system_certmanager.php:965
+#: src/usr/local/www/system_certmanager.php:845
+#: src/usr/local/www/system_certmanager.php:975
 msgid "*Email Address"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:627
-#: src/usr/local/www/system_certmanager.php:845
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:853
+#: src/usr/local/www/system_certmanager.php:983
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
 msgstr ""
@@ -28569,7 +28584,7 @@ msgid "Key data field should be blank, or a valid x509 private key"
 msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:240
-#: src/usr/local/www/system_certmanager.php:716
+#: src/usr/local/www/system_certmanager.php:724
 msgid "Key data"
 msgstr ""
 
@@ -28587,199 +28602,217 @@ msgstr ""
 msgid "Existing Certificate Choice"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:558
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:636
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:681
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:684
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:689
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:696
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:703
+#: src/usr/local/www/system_certmanager.php:711
 msgid "*Certificate duration (days)"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:710
+#: src/usr/local/www/system_certmanager.php:718
 msgid "CSR data"
-msgstr ""
+msgstr "מידע CSR"
 
-#: src/usr/local/www/system_certmanager.php:712
+#: src/usr/local/www/system_certmanager.php:720
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:718
+#: src/usr/local/www/system_certmanager.php:726
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:722
+#: src/usr/local/www/system_certmanager.php:730
 msgid "Import Certificate"
-msgstr ""
+msgstr "ייבא סרטיפיקט"
 
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:741
 msgid "*Private key data"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:735
+#: src/usr/local/www/system_certmanager.php:743
 msgid "Paste a private key in X.509 PEM format here."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:738
+#: src/usr/local/www/system_certmanager.php:746
 msgid "Internal Certificate"
-msgstr ""
+msgstr "סירטיפיקט פנימי"
 
-#: src/usr/local/www/system_certmanager.php:744
+#: src/usr/local/www/system_certmanager.php:752
 msgid "No internal Certificate Authorities have been defined. "
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:745
+#: src/usr/local/www/system_certmanager.php:753
 msgid ""
 "An internal CA must be defined in order to create an internal certificate. "
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:746
+#: src/usr/local/www/system_certmanager.php:754
 #, php-format
 msgid "%1$sCreate%2$s an internal CA."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:743
-#: src/usr/local/www/system_certmanager.php:760
+#: src/usr/local/www/system_certmanager.php:751
+#: src/usr/local/www/system_certmanager.php:768
 msgid "*Certificate authority"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:768
-#: src/usr/local/www/system_certmanager.php:911
+#: src/usr/local/www/system_certmanager.php:776
+#: src/usr/local/www/system_certmanager.php:921
 msgid "*Key length"
-msgstr ""
+msgstr "אורך מפתח*"
 
-#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:791
 msgid "*Certificate Type"
-msgstr ""
+msgstr "סוג סרטיפיקט"
 
-#: src/usr/local/www/system_certmanager.php:786
+#: src/usr/local/www/system_certmanager.php:794
 msgid ""
 "Type of certificate to generate. Used for placing restrictions on the usage "
 "of the generated certificate."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:862
+#: src/usr/local/www/system_certmanager.php:870
 msgid "Alternative Names"
-msgstr ""
+msgstr "שמות חלופיים"
 
-#: src/usr/local/www/system_certmanager.php:869
+#: src/usr/local/www/system_certmanager.php:877
 msgid "FQDN or Hostname"
-msgstr ""
+msgstr "FQDN או Hostname"
 
-#: src/usr/local/www/system_certmanager.php:871
+#: src/usr/local/www/system_certmanager.php:879
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
-#: src/usr/local/www/system_certmanager.php:872
+#: src/usr/local/www/system_certmanager.php:880
 msgid "email address"
+msgstr "דוא\"ל"
+
+#: src/usr/local/www/system_certmanager.php:900
+msgid ""
+"Enter additional identifiers for the certificate in this list. The Common "
+"Name field is automatically added to the certificate as an Alternative Name."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:906
+#: src/usr/local/www/system_certmanager.php:916
 msgid "External Signing Request"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:921
+#: src/usr/local/www/system_certmanager.php:931
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:980
+#: src/usr/local/www/system_certmanager.php:990
 msgid "Choose an Existing Certificate"
-msgstr ""
+msgstr "בחר סרטיפיקט קיים"
 
-#: src/usr/local/www/system_certmanager.php:1009
+#: src/usr/local/www/system_certmanager.php:1019
 msgid "*Existing Certificates"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1021
+#: src/usr/local/www/system_certmanager.php:1031
 msgid "Complete Signing Request for "
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1032
+#: src/usr/local/www/system_certmanager.php:1042
 msgid "Signing request data"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1036
+#: src/usr/local/www/system_certmanager.php:1046
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1040
+#: src/usr/local/www/system_certmanager.php:1050
 msgid "*Final certificate data"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1043
+#: src/usr/local/www/system_certmanager.php:1053
 msgid "Paste the certificate received from the certificate authority here."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1118
+#: src/usr/local/www/system_certmanager.php:1129
 msgid "private key only"
-msgstr ""
+msgstr "מפתח פרטי בלבד"
 
-#: src/usr/local/www/system_certmanager.php:1123
+#: src/usr/local/www/system_certmanager.php:1135
 msgid "external - signature pending"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1159
+#: src/usr/local/www/system_certmanager.php:1160
+msgid "SAN: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1165
+msgid "KU: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1170
+msgid "EKU: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1195
 msgid "User Cert"
-msgstr ""
+msgstr "סרטיפיקט משתמש"
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1213
 msgid "Export Certificate"
-msgstr ""
+msgstr "ייצא סרטיפיקט"
 
-#: src/usr/local/www/system_certmanager.php:1179
-#: src/usr/local/www/system_certmanager.php:1185
+#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1221
 msgid "Export Key"
-msgstr ""
+msgstr "ייצא מפתח"
 
-#: src/usr/local/www/system_certmanager.php:1181
+#: src/usr/local/www/system_certmanager.php:1217
 msgid "Export P12"
-msgstr ""
+msgstr "ייצא P12"
 
-#: src/usr/local/www/system_certmanager.php:1183
+#: src/usr/local/www/system_certmanager.php:1219
 msgid "Update CSR"
-msgstr ""
+msgstr "עדכן CSR"
 
-#: src/usr/local/www/system_certmanager.php:1184
+#: src/usr/local/www/system_certmanager.php:1220
 msgid "Export Request"
-msgstr ""
+msgstr "ייצא בקשה"
 
-#: src/usr/local/www/system_certmanager.php:1188
+#: src/usr/local/www/system_certmanager.php:1224
 msgid "Delete Certificate"
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1204
+#: src/usr/local/www/system_certmanager.php:1240
 msgid "Add/Sign"
-msgstr ""
+msgstr "הוסף/חתום"
 
 #: src/usr/local/www/system_crlmanager.php:38
 msgid "Create an internal Certificate Revocation List"
@@ -28864,11 +28897,11 @@ msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:388
 msgid "Lifetime (Days)"
-msgstr ""
+msgstr "אורך חיים (ימים)"
 
 #: src/usr/local/www/system_crlmanager.php:396
 msgid "Serial"
-msgstr ""
+msgstr "סיריאלי"
 
 #: src/usr/local/www/system_crlmanager.php:419
 msgid "Edit Imported Certificate Revocation List"
@@ -28884,7 +28917,7 @@ msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:469
 msgid "Certificate Name"
-msgstr ""
+msgstr "שם סרטיפיקט"
 
 #: src/usr/local/www/system_crlmanager.php:470
 msgid "Revocation Reason"
@@ -28911,11 +28944,11 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
 #: src/usr/local/www/vpn_openvpn_server.php:440
 msgid "Certificate"
-msgstr ""
+msgstr "סרטיפיקט"
 
 #: src/usr/local/www/system_crlmanager.php:533
 msgid "Reason"
-msgstr ""
+msgstr "סיבה"
 
 #: src/usr/local/www/system_crlmanager.php:573
 msgid "Additional Certificate Revocation Lists"
@@ -28924,20 +28957,20 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:617
 #: src/usr/local/www/system_crlmanager.php:624
 msgid "Add or Import CRL"
-msgstr ""
+msgstr "הוסף או ייבא CRL"
 
 #: src/usr/local/www/system_crlmanager.php:646
 msgid "Export CRL"
-msgstr ""
+msgstr "ייצא CRL"
 
 #: src/usr/local/www/system_crlmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:653
 msgid "Edit CRL"
-msgstr ""
+msgstr "ערוך CRL"
 
 #: src/usr/local/www/system_crlmanager.php:657
 msgid "Delete CRL"
-msgstr ""
+msgstr "מחק CRL"
 
 #: src/usr/local/www/system_gateway_groups.php:72
 #, php-format
@@ -28965,11 +28998,11 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups.php:169
 msgid "Copy gateway group"
-msgstr ""
+msgstr "העתק קבוצת Gateway"
 
 #: src/usr/local/www/system_gateway_groups.php:170
 msgid "Delete gateway group"
-msgstr ""
+msgstr "מחק קבוצת Gateway"
 
 #: src/usr/local/www/system_gateway_groups.php:191
 #, php-format
@@ -29003,7 +29036,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:81
 msgid "gateway group"
-msgstr ""
+msgstr "קבוצת Gateway"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:90
 msgid "Changing name on a gateway group is not allowed."
@@ -29031,13 +29064,13 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:214
 msgid "*Gateway Priority"
-msgstr ""
+msgstr "*עדיפות Gateway"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:268
 #: src/usr/local/www/system_gateway_groups_edit.php:271
 #: src/usr/local/www/system_gateway_groups_edit.php:304
 msgid "Tier"
-msgstr ""
+msgstr "שכבה"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:310
 msgid "Link Priority"
@@ -29090,27 +29123,27 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways.php:298
 msgid "Edit gateway"
-msgstr ""
+msgstr "ערוך Gateway"
 
 #: src/usr/local/www/system_gateways.php:299
 msgid "Copy gateway"
-msgstr ""
+msgstr "העתק Gateway"
 
 #: src/usr/local/www/system_gateways.php:304
 msgid "Enable gateway"
-msgstr ""
+msgstr "אפשר Gateway"
 
 #: src/usr/local/www/system_gateways.php:307
 msgid "Disable gateway"
-msgstr ""
+msgstr "נתק Gateway"
 
 #: src/usr/local/www/system_gateways.php:310
 msgid "Delete gateway"
-msgstr ""
+msgstr "מחק Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:149
 msgid "Edit Gateway"
-msgstr ""
+msgstr "ערוך Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:156
 msgid ""
@@ -29127,11 +29160,11 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:189
 msgid "Gateway IP address"
-msgstr ""
+msgstr "כתובת IP Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:199
 msgid "Default Gateway"
-msgstr ""
+msgstr "Gateway ברירת מחדל"
 
 #: src/usr/local/www/system_gateways_edit.php:209
 msgid "This will consider this gateway as always being up."
@@ -29139,7 +29172,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:213
 msgid "Gateway Action"
-msgstr ""
+msgstr "פעולת Gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:216
 msgid ""
@@ -29156,7 +29189,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:237
 msgid "Force state"
-msgstr ""
+msgstr "כפה מצב"
 
 #: src/usr/local/www/system_gateways_edit.php:240
 msgid "This will force this gateway to be considered down."
@@ -29219,7 +29252,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:343
 msgid "Time Period"
-msgstr ""
+msgstr "פרק זמן"
 
 #: src/usr/local/www/system_gateways_edit.php:353
 #, php-format
@@ -29442,7 +29475,7 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager_addprivs.php:162
 #: src/usr/local/www/system_usermanager_addprivs.php:151
 msgid "Shadow"
-msgstr ""
+msgstr "צל"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:174
 #: src/usr/local/www/system_usermanager_addprivs.php:163
@@ -29567,7 +29600,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:174
 msgid "Remote System Password"
-msgstr ""
+msgstr "סיסמת מערכת מרוחקת"
 
 #: src/usr/local/www/system_hasync.php:177
 #, php-format
@@ -29708,7 +29741,7 @@ msgstr ""
 
 #: src/usr/local/www/system_routes_edit.php:75
 msgid "Destination network"
-msgstr ""
+msgstr "רשת יעד"
 
 #: src/usr/local/www/system_routes_edit.php:76
 msgid "Destination network bit count"
@@ -29808,7 +29841,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:165
 msgid "Updates"
-msgstr ""
+msgstr "עדכונים"
 
 #: src/usr/local/www/system_update_settings.php:169
 msgid "Dashboard check"
@@ -29816,7 +29849,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:177
 msgid "GitSync"
-msgstr ""
+msgstr "GitSync"
 
 #: src/usr/local/www/system_update_settings.php:181
 msgid "Auto sync on update"
@@ -29851,7 +29884,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:223
 msgid "Sync options"
-msgstr ""
+msgstr "אופציות סנכרון"
 
 #: src/usr/local/www/system_update_settings.php:230
 msgid "Copy of only the updated files."
@@ -29930,13 +29963,13 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:203
 msgid "The username is longer than 16 characters."
-msgstr ""
+msgstr "שם המשתמש ארוך מ16 תווים"
 
 #: src/usr/local/www/system_usermanager.php:207
 #: src/usr/local/www/system_usermanager_passwordmg.php:44
 #: src/usr/local/www/vpn_l2tp_users_edit.php:94
 msgid "The passwords do not match."
-msgstr ""
+msgstr "הסיסמאות אינן תואמות"
 
 #: src/usr/local/www/system_usermanager.php:211
 msgid "IPsec Pre-Shared Key contains invalid characters."
@@ -29973,7 +30006,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:519
 msgid "CA"
-msgstr ""
+msgstr "CA"
 
 #: src/usr/local/www/system_usermanager.php:538
 msgid "Remove this certificate association? (Certificate will not be deleted)"
@@ -29982,26 +30015,26 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:598
 #: src/usr/local/www/system_usermanager.php:766
 msgid "Full name"
-msgstr ""
+msgstr "שם מלא"
 
 #: src/usr/local/www/system_usermanager.php:624
 msgid "Enabled"
-msgstr ""
+msgstr "מאופשר"
 
 #: src/usr/local/www/system_usermanager.php:627
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:110
 msgid "Edit user"
-msgstr ""
+msgstr "ערוך משתמש"
 
 #: src/usr/local/www/system_usermanager.php:629
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Delete user"
-msgstr ""
+msgstr "מחק משתמש"
 
 #: src/usr/local/www/system_usermanager.php:645
 msgid "Delete selected users"
-msgstr ""
+msgstr "מחק משתמשים שנבחרו"
 
 #: src/usr/local/www/system_usermanager.php:654
 msgid ""
@@ -30018,15 +30051,15 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:705
 msgid "User Properties"
-msgstr ""
+msgstr "הגדרות משתמש"
 
 #: src/usr/local/www/system_usermanager.php:708
 msgid "Defined by"
-msgstr ""
+msgstr "הוגדר ע\"י"
 
 #: src/usr/local/www/system_usermanager.php:758
 msgid "Confirm Password"
-msgstr ""
+msgstr "אשר סיסמה"
 
 #: src/usr/local/www/system_usermanager.php:769
 msgid "User's full name, for administrative information only"
@@ -30048,19 +30081,19 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:818
 msgid "Not member of"
-msgstr ""
+msgstr "לא חלק מקבוצת"
 
 #: src/usr/local/www/system_usermanager.php:826
 msgid "Member of"
-msgstr ""
+msgstr "חלק מקבוצת"
 
 #: src/usr/local/www/system_usermanager.php:834
 msgid "Move to \"Member of\" list"
-msgstr ""
+msgstr "העבר לרשימת \"חלק מהקבוצה\""
 
 #: src/usr/local/www/system_usermanager.php:841
 msgid "Move to \"Not member of\" list"
-msgstr ""
+msgstr "העבר לרשימת \" לא חלק מהקבוצה\""
 
 #: src/usr/local/www/system_usermanager.php:866
 msgid "Effective Privileges"
@@ -30068,7 +30101,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:876
 msgid "User Certificates"
-msgstr ""
+msgstr "סירטיפיקט משתמש"
 
 #: src/usr/local/www/system_usermanager.php:888
 msgid "Create Certificate for User"
@@ -30086,7 +30119,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:948
 msgid "Keys"
-msgstr ""
+msgstr "מפתחות"
 
 #: src/usr/local/www/system_usermanager.php:952
 msgid "Authorized keys"
@@ -30122,7 +30155,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 msgid "User Password"
-msgstr ""
+msgstr "סיסמת משתמש"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:59
 msgid "Password successfully changed."
@@ -30159,7 +30192,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:63
 #: src/usr/local/www/uploadconfig.php:49
 msgid "OK"
-msgstr ""
+msgstr "אישור"
 
 #: src/usr/local/www/system_usermanager_settings.php:55
 #, php-format
@@ -30179,7 +30212,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:83
 #: src/usr/local/www/system_usermanager_settings.php:87
 msgid "failed"
-msgstr ""
+msgstr "נכשל"
 
 #: src/usr/local/www/system_usermanager_settings.php:121
 msgid "Session timeout must be an integer value."
@@ -30223,7 +30256,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_settings.php:230
 msgid "Save & Test"
-msgstr ""
+msgstr "שמור ובדוק"
 
 #: src/usr/local/www/system_usermanager_settings.php:237
 msgid "LDAP settings"
@@ -30231,7 +30264,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_settings.php:240
 msgid "Test results"
-msgstr ""
+msgstr "תוצאות בדיקה"
 
 #: src/usr/local/www/uploadconfig.php:43
 msgid "ERR Could not save configuration."
@@ -30327,11 +30360,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:341 src/usr/local/www/vpn_ipsec.php:457
 msgid "auto"
-msgstr ""
+msgstr "אוטומטי"
 
 #: src/usr/local/www/vpn_ipsec.php:343 src/usr/local/www/vpn_ipsec.php:459
 msgid "bits"
-msgstr ""
+msgstr "ביטים"
 
 #: src/usr/local/www/vpn_ipsec.php:357
 msgid "Edit phase1 entry"
@@ -30352,11 +30385,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:399
 msgid "Local Subnet"
-msgstr ""
+msgstr "סאבנט מקומי"
 
 #: src/usr/local/www/vpn_ipsec.php:400
 msgid "Remote Subnet"
-msgstr ""
+msgstr "סאבנט מרוחק"
 
 #: src/usr/local/www/vpn_ipsec.php:401
 msgid "P2 Protocol"
@@ -30456,7 +30489,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_keys.php:155
 msgid "Edit key"
-msgstr ""
+msgstr "ערוך מפתח"
 
 #: src/usr/local/www/vpn_ipsec_keys.php:156
 msgid "Delete key"
@@ -30619,11 +30652,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:451
 msgid "*User Authentication"
-msgstr ""
+msgstr "אימות משתמש*"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:463
 msgid "system"
-msgstr ""
+msgstr "מערכת"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:459
 msgid "*Group Authentication"
@@ -30647,7 +30680,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:525
 msgid "IPv6 Network"
-msgstr ""
+msgstr "רשת IPv6"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:528
 msgid "Network configuration for Virtual IPv6 Address Pool"
@@ -30702,7 +30735,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_mobile.php:663
 #: src/usr/local/www/vpn_ipsec_mobile.php:672
 msgid "Group"
-msgstr ""
+msgstr "קבוצה"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:681
 msgid "Login Banner"
@@ -30722,7 +30755,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:227
 msgid "Remote gateway"
-msgstr ""
+msgstr "גייטווי מרוחק"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:238
 msgid "The P1 lifetime must be an integer."
@@ -30919,7 +30952,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:705
 msgid "*Authentication Method"
-msgstr ""
+msgstr "צורת אימות*"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:806
@@ -30929,7 +30962,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:714
 msgid "Main"
-msgstr ""
+msgstr "ראשי"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:712
 msgid "*Negotiation mode"
@@ -32011,7 +32044,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:830
 #: src/usr/local/www/vpn_openvpn_server.php:1136
 msgid "Topology"
-msgstr ""
+msgstr "טופולוגיה"
 
 #: src/usr/local/www/vpn_openvpn_client.php:833
 msgid "Specifies the method used to configure a virtual adapter IP address."
@@ -32024,7 +32057,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:844
 msgid "Don't pull routes"
-msgstr ""
+msgstr "אל תמשוך ראוטים"
 
 #: src/usr/local/www/vpn_openvpn_client.php:847
 msgid ""
@@ -32034,7 +32067,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:851
 msgid "Don't add/remove routes"
-msgstr ""
+msgstr "אל תוסיף/תמחק ראוטים"
 
 #: src/usr/local/www/vpn_openvpn_client.php:854
 msgid "Pass routes to --route-upscript using environmental variables."
@@ -32065,7 +32098,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:899
 msgid "OpenVPN Clients"
-msgstr ""
+msgstr "משתמשי OpenVPN"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:57
 #, php-format
@@ -32142,7 +32175,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:318
 #, php-format
 msgid "OpenVPN Server %d: %s"
-msgstr ""
+msgstr "שרת OpenVPN %d: %s"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:329
 msgid ""
@@ -32168,7 +32201,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Connection blocking"
-msgstr ""
+msgstr "חסימת התחברויות"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:358
 msgid ""
@@ -32199,7 +32232,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:385
 msgid "IPv4 Local Network/s"
-msgstr ""
+msgstr "רשתות IPv4 מקומיים"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:388
 #, php-format
@@ -32212,7 +32245,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:394
 msgid "IPv6 Local Network/s"
-msgstr ""
+msgstr "רשתות IPv6 מקומיים"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:397
 #, php-format
@@ -32225,7 +32258,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:403
 msgid "IPv4 Remote Network/s"
-msgstr ""
+msgstr "רשתות IPv4 מרוחקים"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:406
 #, php-format
@@ -32240,7 +32273,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:413
 msgid "IPv6 Remote Network/s"
-msgstr ""
+msgstr "רשתות IPv6 מרוחקים"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:416
 #, php-format
@@ -32261,7 +32294,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:430
 #: src/usr/local/www/vpn_openvpn_server.php:1117
 msgid "Client Settings"
-msgstr ""
+msgstr "הגדרות לקוח"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:435
 msgid "Server Definitions"
@@ -32274,7 +32307,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:496
 msgid "Server 4"
-msgstr ""
+msgstr "שרת 4"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:531
 msgid "NetBIOS Options"
@@ -32429,11 +32462,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:738
 msgid "*Local port"
-msgstr ""
+msgstr "פורט מקומי*"
 
 #: src/usr/local/www/vpn_openvpn_server.php:742
 msgid "The port used by OpenVPN to receive client connections."
-msgstr ""
+msgstr "הפורט שיהיה בשימוש OpenVPN כדי לאפשר התחברות לקוח"
 
 #: src/usr/local/www/vpn_openvpn_server.php:830
 #: src/usr/local/www/vpn_openvpn_server.php:1767
@@ -32453,15 +32486,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:844
 msgid "*Server certificate"
-msgstr ""
+msgstr "סרטיפיקט שרת*"
 
 #: src/usr/local/www/vpn_openvpn_server.php:851
 msgid "*DH Parameter Length"
-msgstr ""
+msgstr "אורך פרמטר DH*"
 
 #: src/usr/local/www/vpn_openvpn_server.php:856
 msgid "Only DH parameter sets which exist in /etc/ are shown."
-msgstr ""
+msgstr "רק פרמטרים של DH שקיימים ב /etc/ מוצגים"
 
 #: src/usr/local/www/vpn_openvpn_server.php:858
 msgid ""
@@ -32632,7 +32665,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
-msgstr ""
+msgstr "IP דינמי"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Address Pool"
@@ -32759,7 +32792,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1336
 msgid "OpenVPN Servers"
-msgstr ""
+msgstr "שרתי OpenVPN"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1341
 msgid "Protocol / Port"
@@ -32771,7 +32804,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1343
 msgid "Crypto"
-msgstr ""
+msgstr "הצפנה"
 
 #: src/usr/local/www/widgets/include/captiveportal.inc:22
 msgid "Captive Portal Status"
@@ -32779,11 +32812,11 @@ msgstr ""
 
 #: src/usr/local/www/widgets/include/carp_status.inc:24
 msgid "CARP Status"
-msgstr ""
+msgstr "מצב CARP "
 
 #: src/usr/local/www/widgets/include/dyn_dns_status.inc:24
 msgid "Dynamic DNS Status"
-msgstr ""
+msgstr "מצב DNS דינאמי"
 
 #: src/usr/local/www/widgets/include/gmirror_status.inc:22
 msgid "GEOM Mirror Status"
@@ -32848,16 +32881,16 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:240
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:271
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:137
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:141
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:168
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:345
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:132
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:136
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:452
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:459
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:215
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
-msgstr ""
+msgstr "הצג"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:116
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:119
@@ -32940,16 +32973,20 @@ msgstr ""
 msgid "Errors Out"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:66
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:75
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:146
 msgid "All interfaces are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:113
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
+msgid "All selected interfaces are down."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:117
 msgid "Saved Interface Statistics Filter via Dashboard."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:122
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:126
 msgid "Retrieving interface data"
 msgstr ""
 
@@ -32972,11 +33009,11 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:193
 msgid "Inactive Tunnels"
-msgstr ""
+msgstr "TUNNELים לא פעילים"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:194
 msgid "Mobile Users"
-msgstr ""
+msgstr "משתמשי מובייל"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Retrieving overview data "
@@ -33052,19 +33089,19 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:169
 msgid "Clock location"
-msgstr ""
+msgstr "מיקום שעון"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:183
 msgid "in view"
-msgstr ""
+msgstr "בצפייה"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
 msgid "in use"
-msgstr ""
+msgstr "בשימוש"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
 msgid "Updating..."
-msgstr ""
+msgstr "מעדכן..."
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:54
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:127
@@ -33099,7 +33136,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:74
 msgid "New picture:"
-msgstr ""
+msgstr "תמונה חדשה:"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:33
 msgid "Saved RSS Widget feed via Dashboard."
@@ -33131,7 +33168,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:114
 msgid "No services found"
-msgstr ""
+msgstr "שירותים לא נמצאו"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:53
 msgid "Saved SMART Status Filter via Dashboard."
@@ -33140,7 +33177,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:64
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:135
 msgid "Drive"
-msgstr ""
+msgstr "דיסק"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:65
 msgid "Ident"
@@ -33148,43 +33185,43 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:114
 msgid "All SMART drives are hidden."
-msgstr ""
+msgstr "כל דיסקי הSMART מוסתרים"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:182
 msgid "BIOS"
-msgstr ""
+msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:217
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:224
 msgid "CPU Type"
-msgstr ""
+msgstr "סוג מעבד"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:41
 msgid "Current Date/Time"
-msgstr ""
+msgstr "תאריך/שעה נוכחי"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:42
 msgid "DNS Server(s)"
-msgstr ""
+msgstr "שרתי DNS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:43
 msgid "Last Config Change"
-msgstr ""
+msgstr "שינוי הגדרות אחרון"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:44
 msgid "State Table Size"
-msgstr ""
+msgstr "גודל טבלאת מצבים"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:45
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:312
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:319
 msgid "MBUF Usage"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:331
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:338
 msgid "Temperature"
-msgstr ""
+msgstr "טמפרטורה"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:47
 msgid "Load Average"
@@ -33192,19 +33229,19 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:48
 msgid "CPU Usage"
-msgstr ""
+msgstr "שימוש במעבד"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:49
 msgid "Memory Usage"
-msgstr ""
+msgstr "שימוש בזיכרון"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:50
 msgid "Swap Usage"
-msgstr ""
+msgstr "שימוש SWAP"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:51
 msgid "Disk Usage"
-msgstr ""
+msgstr "שימוש בדיסק"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:64
 msgid "<i>Unable to check for updates</i>"
@@ -33216,15 +33253,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:82
 msgid "Version "
-msgstr ""
+msgstr "גרסה"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:83
 msgid "is available."
-msgstr ""
+msgstr "זמין"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:89
 msgid "The system is on the latest version."
-msgstr ""
+msgstr "המערכת בגרסה האחרונה"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:92
 msgid "The system is on a later version than<br />the official release."
@@ -33240,102 +33277,106 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:154
 msgid "Unknown system"
-msgstr ""
+msgstr "מערכת לא ידועה"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:158
 msgid "Serial: "
+msgstr "סיריאלי:"
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:163
+msgid "Netgate Device ID:"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:178
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:185
 msgid "Vendor: "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:181
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:188
 msgid "Version: "
-msgstr ""
+msgstr "גרסה:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:184
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:191
 msgid "Release Date: "
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:200
-msgid "built on"
-msgstr ""
+msgstr "תאריך שחרור:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:207
+msgid "built on"
+msgstr "בנוי על"
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:214
 msgid "Obtaining update status "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:224
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:231
 msgid "CPUs"
-msgstr ""
+msgstr "מעבדים"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:236
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:243
 msgid "Hardware crypto"
-msgstr ""
+msgstr "הצפנת חומרה"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:255
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:262
 msgid "Current date/time"
-msgstr ""
+msgstr "תאריך/שעה עכשיו"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:264
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:271
 msgid "DNS server(s)"
-msgstr ""
+msgstr "שרתי DNS"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:283
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
 msgid "Last config change"
-msgstr ""
+msgstr "שינוי הגדרות אחרון"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:293
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:300
 msgid "State table size"
-msgstr ""
+msgstr "גודל טבלאת מצבים"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:303
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:310
 msgid "Show states"
-msgstr ""
+msgstr "הראה מצבים"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:348
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:355
 msgid "Load average"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:350
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:357
 msgid "Last 1, 5 and 15 minutes"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:359
-msgid "CPU usage"
-msgstr ""
+msgstr " ה 1, 5 , 15 דקות האחרונות"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:366
+msgid "CPU usage"
+msgstr "שימוש במעבד"
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 #, php-format
 msgid "Updating in %s seconds"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:375
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:382
 msgid "Memory usage"
-msgstr ""
+msgstr "שימוש בזיכרון"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:393
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "SWAP usage"
-msgstr ""
+msgstr "שימוש SWAP"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:413
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:420
 msgid "Disk usage"
-msgstr ""
+msgstr "שימוש בדיסק"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:426
 msgid " of "
-msgstr ""
+msgstr "של"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:426
 msgid "in RAM"
-msgstr ""
+msgstr "בראם"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:430
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:437
 msgid "All System Information items are hidden."
-msgstr ""
+msgstr "כל פריטי המידע על המערכת מוסתרים"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:451
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:458
 msgid "Item"
 msgstr ""
 
@@ -33345,7 +33386,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:162
 msgid "(Updating...)"
-msgstr ""
+msgstr "(מעדכן...)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:174
 msgid "Thresholds in"
@@ -33353,7 +33394,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:174
 msgid "(1 to 100):"
-msgstr ""
+msgstr "(1 ל 100)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:177
 msgid "Display settings:"
@@ -33373,7 +33414,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:209
 msgid "Show full sensor name:"
-msgstr ""
+msgstr "הראה שם חיישן מלא:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:218
 msgid "Core Warning:"
@@ -33411,37 +33452,37 @@ msgstr ""
 msgid "Unit Size"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:55
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:57
 msgid "Saved Wake on LAN Filter via Dashboard."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:64
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 msgid "Device"
-msgstr ""
+msgstr "התקן"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:69
 msgid "Wake"
-msgstr ""
+msgstr "התעורר"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:105
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:107
 msgid "Wake up!"
-msgstr ""
+msgstr "התעורר!"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:113
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:115
 msgid "All WoL entries are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:118
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:120
 msgid "No saved WoL addresses"
-msgstr ""
+msgstr "לא נמצאו כתובות WoL שמורות"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:136
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:138
 msgid "DHCP Leases Status"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:154
 msgid "MAC"
-msgstr ""
+msgstr "MAC"
 
 #: src/usr/local/www/wizard.php:53 src/usr/local/www/wizard.php:65
 #, php-format
@@ -33617,11 +33658,11 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:303
 msgid "Sort Alphabetically"
-msgstr ""
+msgstr "סדר לפי שם"
 
 #: src/etc/inc/pfsense-utils.inc:338
 msgid "Manage Log"
-msgstr ""
+msgstr "נהל לוג"
 
 #: src/etc/inc/pfsense-utils.inc:345
 msgid "Monitoring Settings"
@@ -33633,11 +33674,11 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:406
 msgid "Display page name first in browser tab"
-msgstr ""
+msgstr "הצד שם בהתחלה בטאב הדפדפן"
 
 #: src/etc/inc/pfsense-utils.inc:453
 msgid "Do not display state table without a filter"
-msgstr ""
+msgstr "אל תציג טבלת מצב ללא פילטר"
 
 #: src/etc/inc/shaper.inc:799 src/etc/inc/shaper.inc:1407
 msgid "Enable/disable discipline and its children"
@@ -33645,15 +33686,15 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:2294
 msgid "Upper Limit"
-msgstr ""
+msgstr "גבול עליון"
 
 #: src/etc/inc/shaper.inc:2327
 msgid "Real Time"
-msgstr ""
+msgstr "זמן אמת"
 
 #: src/etc/inc/shaper.inc:2359
 msgid "Link Share"
-msgstr ""
+msgstr "שתף קישור"
 
 #: src/etc/inc/shaper.inc:2805
 msgid "Borrow from other queues when available"
@@ -33683,7 +33724,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:565
 msgid "Configuration file is encrypted."
-msgstr ""
+msgstr "קובץ ההגדרות מוצפן"
 
 #: src/usr/local/www/diag_packet_capture.php:316
 msgid "Enable promiscuous mode"
@@ -33707,27 +33748,27 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:221
 msgid "Info"
-msgstr ""
+msgstr "מידע"
 
 #: src/usr/local/www/diag_smart.php:229
 msgid "Health"
-msgstr ""
+msgstr "בריאות"
 
 #: src/usr/local/www/diag_smart.php:237
 msgid "S.M.A.R.T. Capabilities"
-msgstr ""
+msgstr "יכולות S.M.A.R.T"
 
 #: src/usr/local/www/diag_smart.php:245
 msgid "Attributes"
-msgstr ""
+msgstr "תכונות"
 
 #: src/usr/local/www/diag_smart.php:309
 msgid "Short"
-msgstr ""
+msgstr "קצר"
 
 #: src/usr/local/www/diag_smart.php:317
 msgid "Long"
-msgstr ""
+msgstr "ארוך"
 
 #: src/usr/local/www/diag_smart.php:325
 msgid "Conveyance"
@@ -33735,15 +33776,15 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:382
 msgid "Self-test"
-msgstr ""
+msgstr "בדיקה עצמית"
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
-msgstr ""
+msgstr "הראה טקסט מרוחק"
 
 #: src/usr/local/www/firewall_aliases_edit.php:686
 msgid "<span class=\"helptext\">"
-msgstr ""
+msgstr "<span class=\"helptext\">"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:421
 #: src/usr/local/www/firewall_nat_edit.php:659
@@ -33751,11 +33792,11 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:464
 #: src/usr/local/www/firewall_rules_edit.php:1196
 msgid "Disable this rule"
-msgstr ""
+msgstr "בטל כלל זה"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:428
 msgid "Do not perform binat for the specified address"
-msgstr ""
+msgstr "אל תבצע binat עבור הכתובת שנבחרה"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:506
@@ -33763,7 +33804,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:219
 #: src/usr/local/www/firewall_nat_out_edit.php:572
 msgid "Not"
-msgstr ""
+msgstr "לא"
 
 #: src/usr/local/www/firewall_nat_edit.php:666
 msgid "Disable redirection for traffic matching this rule"
@@ -33827,27 +33868,27 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1776
 msgid "Enable interface"
-msgstr ""
+msgstr "אפשר ממשק"
 
 #: src/usr/local/www/interfaces.php:1926 src/usr/local/www/interfaces.php:3251
 msgid "Default gateway"
-msgstr ""
+msgstr "גיטווי ברירת מחדל"
 
 #: src/usr/local/www/interfaces.php:1993 src/usr/local/www/interfaces.php:2178
 msgid "Configuration Override"
-msgstr ""
+msgstr "שיכתוב הגדרות"
 
 #: src/usr/local/www/interfaces.php:2076
 msgid "FreeBSD default"
-msgstr ""
+msgstr "FreeBSD ברירת מחדל"
 
 #: src/usr/local/www/interfaces.php:2092
 msgid "pfSense Default"
-msgstr ""
+msgstr "pfSense ברירת מחדל"
 
 #: src/usr/local/www/interfaces.php:2100
 msgid "Saved Cfg"
-msgstr ""
+msgstr "שמור Cfg"
 
 #: src/usr/local/www/interfaces.php:2187
 msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
@@ -33933,7 +33974,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3069
 msgid "Enable WPA"
-msgstr ""
+msgstr "אפשר WPA"
 
 #: src/usr/local/www/interfaces.php:3121
 msgid "Force the AP to rekey whenever a client disassociates"
@@ -33941,7 +33982,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3133
 msgid "Enable 802.1X authentication"
-msgstr ""
+msgstr "אפשר אימות 802.1X"
 
 #: src/usr/local/www/interfaces_gif_edit.php:208
 msgid ""
@@ -33981,7 +34022,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:805
 msgid "Daily (0 0 * * *)"
-msgstr ""
+msgstr "יומי (0 0 * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:813
 msgid "Hourly (0 * * * *)"
@@ -33997,7 +34038,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:869
 msgid "Disable tcpmssfix (enabled by default)."
-msgstr ""
+msgstr "כבה tcpmssfix  ( מאופשר כברירת מחדל)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:880
 msgid "Disable shortseq (auto-negotiated by default)."
@@ -34013,7 +34054,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:941
 msgid "<span id=\"linkparamhelp\">"
-msgstr ""
+msgstr "<span id=\"linkparamhelp\">"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:259
 msgid "Adds interface to QinQ interface groups"
@@ -34039,7 +34080,7 @@ msgstr ""
 #: src/usr/local/www/pkg_edit.php:1317 src/usr/local/www/pkg_edit.php:1323
 #: src/usr/local/www/pkg_edit.php:1328
 msgid "<br />"
-msgstr ""
+msgstr "<br />"
 
 #: src/usr/local/www/services_captiveportal.php:536
 msgid "Enable Captive Portal"
@@ -34075,7 +34116,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:693
 msgid "No Authentication"
-msgstr ""
+msgstr "ללא אימות"
 
 #: src/usr/local/www/services_captiveportal.php:701
 msgid "Local User Manager / Vouchers"
@@ -34091,19 +34132,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:729
 msgid "PAP"
-msgstr ""
+msgstr "PAP"
 
 #: src/usr/local/www/services_captiveportal.php:737
 msgid "CHAP-MD5"
-msgstr ""
+msgstr "CHAP-MD5"
 
 #: src/usr/local/www/services_captiveportal.php:745
 msgid "MSCHAPv1"
-msgstr ""
+msgstr "MSCHAPv1"
 
 #: src/usr/local/www/services_captiveportal.php:753
 msgid "MSCHAPv2"
-msgstr ""
+msgstr "MSCHAPv2"
 
 #: src/usr/local/www/services_captiveportal.php:873
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
@@ -34111,15 +34152,15 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:889
 msgid "No updates"
-msgstr ""
+msgstr "אין עדכונים"
 
 #: src/usr/local/www/services_captiveportal.php:897
 msgid "Stop/Start"
-msgstr ""
+msgstr "התחל/הפסק"
 
 #: src/usr/local/www/services_captiveportal.php:905
 msgid "Stop/Start (FreeRADIUS)"
-msgstr ""
+msgstr "(FreeRADIUS)התחל/הפסק"
 
 #: src/usr/local/www/services_captiveportal.php:913
 msgid "Interim"
@@ -34129,82 +34170,82 @@ msgstr ""
 msgid "Reauthenticate connected users every minute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:936
+#: src/usr/local/www/services_captiveportal.php:938
 msgid "Enable RADIUS MAC authentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:958
+#: src/usr/local/www/services_captiveportal.php:960
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:974
+#: src/usr/local/www/services_captiveportal.php:976
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:982
+#: src/usr/local/www/services_captiveportal.php:984
 msgid "Include idle time in session time"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1016
+#: src/usr/local/www/services_captiveportal.php:1018
 msgid "Enable HTTPS login"
-msgstr ""
+msgstr "אפשר התחברות HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1040
+#: src/usr/local/www/services_captiveportal.php:1042
 msgid "Disable HTTPS Forwards"
-msgstr ""
+msgstr "בטל התחברות HTTPS"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:442
 msgid "Enable the creation, generation and activation of rolls with vouchers"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:845
+#: src/usr/local/www/services_dhcp.php:857
 msgid "Ignore BOOTP queries"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:852
+#: src/usr/local/www/services_dhcp.php:864
 msgid "Only the clients defined below will get DHCP leases from this server."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:859
+#: src/usr/local/www/services_dhcp.php:871
 msgid "Denied clients will be ignored rather than rejected."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:866
+#: src/usr/local/www/services_dhcp.php:878
 msgid ""
 "If a client includes a unique identifier in its DHCP request, that UID will "
 "not be recorded in its lease."
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1045
+#: src/usr/local/www/services_dhcp.php:1057
 msgid "Enable Static ARP entries"
-msgstr ""
+msgstr "אפשר רשומות ARP סטטיות"
 
-#: src/usr/local/www/services_dhcp.php:1052
+#: src/usr/local/www/services_dhcp.php:1064
 msgid "Change DHCP display lease time from UTC to local time"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1059
+#: src/usr/local/www/services_dhcp.php:1071
 msgid "Enable RRD statistics graphs"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1082
+#: src/usr/local/www/services_dhcp.php:1094
 msgid "Enable registration of DHCP client names in DNS"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1097
+#: src/usr/local/www/services_dhcp.php:1109
 #: src/usr/local/www/services_dhcpv6.php:794
 msgid ""
 "Force dynamic DNS hostname to be the same as configured hostname for Static "
 "Mappings"
 msgstr ""
 
-#: src/usr/local/www/services_dhcp.php:1242
+#: src/usr/local/www/services_dhcp.php:1254
 msgid "Enables network booting"
-msgstr ""
+msgstr "אפשר איתחול דרך הרשת"
 
-#: src/usr/local/www/services_dhcp.php:1304
+#: src/usr/local/www/services_dhcp.php:1316
 msgid "<div class=\"alert alert-info\"> "
-msgstr ""
+msgstr "<div class=\"alert alert-info\"> "
 
 #: src/usr/local/www/services_dhcp_edit.php:477
 msgid "Create an ARP Table Static Entry for this MAC & IP Address pair."
@@ -34234,11 +34275,11 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:624
 msgid " bits"
-msgstr ""
+msgstr "ביטים"
 
 #: src/usr/local/www/services_dhcpv6.php:629
 msgid " to "
-msgstr ""
+msgstr "ל"
 
 #: src/usr/local/www/services_dhcpv6.php:757
 msgid "Change DHCPv6 display lease time from UTC to local time"
@@ -34250,7 +34291,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:913
 msgid "Enable Network Booting"
-msgstr ""
+msgstr "אפשר איתחול דרך הרשת"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:149
 msgid "Enable DHCPv6 relay on interface"
@@ -34278,7 +34319,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dnsmasq.php:307
 msgid "Require domain"
-msgstr ""
+msgstr "צריך דומיין"
 
 #: src/usr/local/www/services_dnsmasq.php:316
 msgid "Do not forward private reverse lookups"
@@ -34287,19 +34328,19 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:255
 #: src/usr/local/www/vpn_openvpn_client.php:488
 msgid "Disable this client"
-msgstr ""
+msgstr "בטל את המכשיר"
 
 #: src/usr/local/www/services_dyndns_edit.php:317
 msgid "Enable Wildcard"
-msgstr ""
+msgstr "אפשר כל תו"
 
 #: src/usr/local/www/services_dyndns_edit.php:324
 msgid "Enable Proxy"
-msgstr ""
+msgstr "אפשר פרוקסי"
 
 #: src/usr/local/www/services_dyndns_edit.php:333
 msgid "Enable verbose logging"
-msgstr ""
+msgstr "אפשר לוגים עם כל הנתונים"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
 msgid "Force IPv4 resolving"
@@ -34307,7 +34348,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:347
 msgid "Verify SSL peer"
-msgstr ""
+msgstr "אמת פיר SSL"
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -34439,7 +34480,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:293
 msgid "Enable PPPoE Server"
-msgstr ""
+msgstr "אפשר שרת PPPoE"
 
 #: src/usr/local/www/services_pppoe_edit.php:364
 msgid "Use RADIUS Authentication"
@@ -34459,7 +34500,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:539
 msgid "&nbsp;"
-msgstr ""
+msgstr "&nbsp;"
 
 #: src/usr/local/www/services_rfc2136_edit.php:241
 msgid "Use TCP instead of UDP"
@@ -34473,15 +34514,15 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:257
 msgid "A (IPv4)"
-msgstr ""
+msgstr "A (IPv4)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:265
 msgid "AAAA (IPv6)"
-msgstr ""
+msgstr "AAAA (IPv6)"
 
 #: src/usr/local/www/services_router_advertisements.php:463
 msgid "Use same settings as DHCPv6 server"
-msgstr ""
+msgstr "DHCPv6השתמש באותם הגדרות של שרת ה"
 
 #: src/usr/local/www/services_snmp.php:216
 msgid "Enable the SNMP Daemon and its controls"
@@ -34493,27 +34534,27 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:303
 msgid "MibII"
-msgstr ""
+msgstr "MibII"
 
 #: src/usr/local/www/services_snmp.php:310
 msgid "Netgraph"
-msgstr ""
+msgstr "Netgraph"
 
 #: src/usr/local/www/services_snmp.php:317
 msgid "PF"
-msgstr ""
+msgstr "PF"
 
 #: src/usr/local/www/services_snmp.php:325
 msgid "Host Resources"
-msgstr ""
+msgstr "משאבי Host"
 
 #: src/usr/local/www/services_snmp.php:333
 msgid "UCD"
-msgstr ""
+msgstr "UCD"
 
 #: src/usr/local/www/services_snmp.php:340
 msgid "Regex"
-msgstr ""
+msgstr "Regex"
 
 #: src/usr/local/www/services_unbound.php:276
 msgid "Enable DNS resolver"
@@ -34645,7 +34686,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:394
 msgid "Everything"
-msgstr ""
+msgstr "הכל"
 
 #: src/usr/local/www/status_logs_settings.php:401
 msgid "System Events"
@@ -34695,16 +34736,16 @@ msgstr ""
 msgid "Wireless Events (hostapd)"
 msgstr ""
 
-#: src/usr/local/www/system.php:531
+#: src/usr/local/www/system.php:536
 msgid "Allow DNS server list to be overridden by DHCP/PPP on WAN"
 msgstr ""
 
-#: src/usr/local/www/system.php:541
+#: src/usr/local/www/system.php:546
 msgid ""
 "Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall"
 msgstr ""
 
-#: src/usr/local/www/system.php:597
+#: src/usr/local/www/system.php:602
 msgid "Show hostname on login banner"
 msgstr ""
 
@@ -34734,7 +34775,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:452
 msgid "Enable Secure Shell"
-msgstr ""
+msgstr "אפשר SSH"
 
 #: src/usr/local/www/system_advanced_admin.php:459
 msgid "Disable password login for Secure Shell (RSA/DSA key only)"
@@ -34886,7 +34927,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:594
 msgid "Level "
-msgstr ""
+msgstr "רמה"
 
 #: src/usr/local/www/system_authservers.php:619
 msgid "Enable extended query"
@@ -34968,7 +35009,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:209
 msgid "Firewall rules "
-msgstr ""
+msgstr "כללי פיירוול"
 
 #: src/usr/local/www/system_hasync.php:217
 msgid "Firewall schedules "
@@ -34976,15 +35017,15 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:225
 msgid "Firewall aliases "
-msgstr ""
+msgstr "כינוי פיירוול"
 
 #: src/usr/local/www/system_hasync.php:233
 msgid "NAT configuration "
-msgstr ""
+msgstr "הגדרת NAT"
 
 #: src/usr/local/www/system_hasync.php:241
 msgid "IPsec configuration "
-msgstr ""
+msgstr "הגדרת IPsec"
 
 #: src/usr/local/www/system_hasync.php:249
 msgid "OpenVPN configuration "
@@ -35008,7 +35049,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:289
 msgid "Virtual IPs "
-msgstr ""
+msgstr "IP וירטואלי"
 
 #: src/usr/local/www/system_hasync.php:297
 msgid "Traffic Shaper configuration "
@@ -35040,15 +35081,15 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:228
 msgid "Minimal"
-msgstr ""
+msgstr "מינימאלי"
 
 #: src/usr/local/www/system_update_settings.php:242
 msgid "Show Files"
-msgstr ""
+msgstr "הצג קבצים"
 
 #: src/usr/local/www/system_update_settings.php:249
 msgid "Show Command"
-msgstr ""
+msgstr "הראה פקודות"
 
 #: src/usr/local/www/system_update_settings.php:256
 msgid "Dry Run"
@@ -35065,7 +35106,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:854
 msgid "Click to create a user certificate"
-msgstr ""
+msgstr "לחץ כדי לייצר תעודת משתמש"
 
 #: src/usr/local/www/system_usermanager.php:953
 msgid "Click to paste an authorized key"
@@ -35180,7 +35221,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:315
 msgid "Enable Unity Plugin"
-msgstr ""
+msgstr "אפשר פלאגין Unity"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:322
 msgid "Enable strict Certificate Revocation List checking"
@@ -35217,7 +35258,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:619
 #: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
-msgstr ""
+msgstr "השתמש במפתח TLS"
 
 #: src/usr/local/www/vpn_openvpn_client.php:629
 #: src/usr/local/www/vpn_openvpn_server.php:768

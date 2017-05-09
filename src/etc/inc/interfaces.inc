@@ -2251,7 +2251,9 @@ function interface_proxyarp_configure($interface = "") {
 			if (!is_ipaddr($paaifip)) {
 				return;
 			}
-			$args = get_real_interface($interface) . " auto";
+			$vipif = get_real_interface($interface);
+			$args  = "-p {$g['varrun_path']}/choparp_{$vipif}.pid ";
+			$args .= $vipif . " auto";
 			foreach ($paa[$interface] as $paent) {
 				if (isset($paent['subnet'])) {
 					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
@@ -2267,7 +2269,9 @@ function interface_proxyarp_configure($interface = "") {
 			if (!is_ipaddr($paaifip)) {
 				continue;
 			}
-			$args = get_real_interface($paif) . " auto";
+			$vipif = get_real_interface($paif);
+			$args  = "-p {$g['varrun_path']}/choparp_{$vipif}.pid ";
+			$args .= $vipif . " auto";
 			foreach ($paents as $paent) {
 				if (isset($paent['subnet'])) {
 					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");

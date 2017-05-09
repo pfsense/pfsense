@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-24 06:51-0300\n"
+"POT-Creation-Date: 2017-05-08 16:32-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -257,7 +257,7 @@ msgid "Login to %1$s"
 msgstr "Логин в %1$s"
 
 #: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
-#: src/usr/local/www/services_captiveportal.php:1015
+#: src/usr/local/www/services_captiveportal.php:1017
 msgid "Login"
 msgstr "Логин"
 
@@ -602,7 +602,7 @@ msgstr ""
 "конфигурацию. "
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
-#: src/etc/inc/config.lib.inc:496
+#: src/etc/inc/config.lib.inc:505
 msgid "Could not restore config.xml."
 msgstr "Не могу восстановить config.xml."
 
@@ -647,43 +647,43 @@ msgstr "Обновление конфигурации закончено в %s"
 msgid "Upgraded config version level from %1$s to %2$s"
 msgstr "Обнавлена версия конфигурации с %1$s до %2$s"
 
-#: src/etc/inc/config.lib.inc:473
+#: src/etc/inc/config.lib.inc:482
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr "ВНИМАНИЕ: Изменения не могут быть сохранены. Не могу открыть файл. "
 
-#: src/etc/inc/config.lib.inc:475
+#: src/etc/inc/config.lib.inc:484
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr "Не могу открыть %1$s/config.xml для записи в  write_config()%2$s"
 
-#: src/etc/inc/config.lib.inc:595
+#: src/etc/inc/config.lib.inc:615
 #, php-format
 msgid "Reverted to %s."
 msgstr "Возврат к %s."
 
-#: src/etc/inc/config.lib.inc:612
+#: src/etc/inc/config.lib.inc:632
 msgid "Installing configuration..."
 msgstr "Установка конфигурации..."
 
-#: src/etc/inc/config.lib.inc:614
+#: src/etc/inc/config.lib.inc:634
 msgid "Installing configuration ...."
 msgstr "Установка конфигурации ...."
 
-#: src/etc/inc/config.lib.inc:665
+#: src/etc/inc/config.lib.inc:685
 msgid "XML error: unable to open file"
 msgstr "XML ошибка: невозможно открыть файл"
 
-#: src/etc/inc/config.lib.inc:671
+#: src/etc/inc/config.lib.inc:691
 #, php-format
 msgid "%1$s at line %2$d"
 msgstr "%1$s на строке %2$d"
 
-#: src/etc/inc/config.lib.inc:724 src/etc/inc/config.lib.inc:726
+#: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr "Файл восстановления кэша %s повреждён. Отключение."
 
-#: src/etc/inc/config.lib.inc:877
+#: src/etc/inc/config.lib.inc:897
 #, php-format
 msgid "%s made unknown change"
 msgstr "%s выполнено неизвестное изменение"
@@ -1670,14 +1670,14 @@ msgstr "Фильтр отключен. Правила не загружаем."
 #: src/etc/inc/pkg-utils.inc:752 src/etc/inc/pkg-utils.inc:788
 #: src/etc/inc/pkg-utils.inc:793 src/etc/inc/pkg-utils.inc:798
 #: src/etc/inc/pkg-utils.inc:816 src/etc/inc/pkg-utils.inc:833
-#: src/etc/inc/pkg-utils.inc:858 src/etc/inc/pkg-utils.inc:899
-#: src/etc/inc/pkg-utils.inc:925 src/etc/inc/pkg-utils.inc:968
-#: src/etc/inc/pkg-utils.inc:987 src/etc/inc/rrd.inc:970
+#: src/etc/inc/pkg-utils.inc:865 src/etc/inc/pkg-utils.inc:906
+#: src/etc/inc/pkg-utils.inc:932 src/etc/inc/pkg-utils.inc:975
+#: src/etc/inc/pkg-utils.inc:994 src/etc/inc/rrd.inc:970
 #: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
 #: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
 #: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1218
-#: src/etc/inc/system.inc:1316 src/etc/inc/system.inc:1619
-#: src/etc/inc/system.inc:2191
+#: src/etc/inc/system.inc:1318 src/etc/inc/system.inc:1621
+#: src/etc/inc/system.inc:2193
 msgid "done."
 msgstr "Готово."
 
@@ -2009,7 +2009,7 @@ msgstr "Зеркала не найдены"
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1080
+#: src/usr/local/www/system_certmanager.php:1090
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -2073,7 +2073,7 @@ msgstr "Имя"
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:212
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:68
 msgid "Status"
 msgstr "Статус"
 
@@ -2154,7 +2154,7 @@ msgstr "Обновляем шлюзы для группы шлюзов %1$s  - �
 #: src/etc/inc/gwlb.inc:1355 src/usr/local/www/diag_arp.php:332
 #: src/usr/local/www/diag_dump_states.php:132
 #: src/usr/local/www/diag_dump_states.php:181
-#: src/usr/local/www/diag_ndp.php:134 src/usr/local/www/easyrule.php:80
+#: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:149
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
@@ -2195,11 +2195,11 @@ msgstr "Обновляем шлюзы для группы шлюзов %1$s  - �
 #: src/usr/local/www/system_gateways.php:251
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:237
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:140
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:167
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:151
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
 msgid "Interface"
 msgstr "Интерфейс"
 
@@ -2872,14 +2872,14 @@ msgid "My IP address"
 msgstr "Мой IP адрес"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
-#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1432
+#: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:64
 #: src/usr/local/www/services_dnsmasq_edit.php:61
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
-#: src/usr/local/www/system_certmanager.php:870
+#: src/usr/local/www/system_certmanager.php:878
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "IP address"
@@ -2904,7 +2904,7 @@ msgstr "тег KeyID"
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:1075
+#: src/usr/local/www/services_dhcp.php:1087
 #: src/usr/local/www/services_dhcp_edit.php:583
 #: src/usr/local/www/services_dhcpv6.php:773
 #: src/usr/local/www/services_dyndns.php:70
@@ -3052,7 +3052,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Мобильный Клиент"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3088
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3160,7 +3160,7 @@ msgstr "ничего"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
-#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_captiveportal.php:968
 msgid "default"
 msgstr "по умолчанию"
 
@@ -3292,12 +3292,12 @@ msgid "CA: %s"
 msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:369
-#: src/usr/local/www/system_certmanager.php:1083
+#: src/usr/local/www/system_certmanager.php:1093
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr "Используется"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1153
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1189
 msgid "Revoked"
 msgstr "Отозван"
 
@@ -3579,79 +3579,79 @@ msgstr "Включаем системную маршрутизацию"
 msgid "Cleaning up Interfaces"
 msgstr "Очистка интерфейсов"
 
-#: src/etc/inc/pfsense-utils.inc:1429
+#: src/etc/inc/pfsense-utils.inc:1430
 msgid "No history data found!"
 msgstr "История данных не найдена!"
 
-#: src/etc/inc/pfsense-utils.inc:1561
+#: src/etc/inc/pfsense-utils.inc:1562
 msgid "device not present! Is the modem attached to the system?"
 msgstr "Устройство не представлено! Модем подключен к системе?"
 
-#: src/etc/inc/pfsense-utils.inc:1630
+#: src/etc/inc/pfsense-utils.inc:1631
 msgid "running"
 msgstr "В процессе..."
 
-#: src/etc/inc/pfsense-utils.inc:1631 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr "работает"
 
-#: src/etc/inc/pfsense-utils.inc:1676
+#: src/etc/inc/pfsense-utils.inc:1677
 msgid "blocking"
 msgstr "блокировка"
 
-#: src/etc/inc/pfsense-utils.inc:1676
+#: src/etc/inc/pfsense-utils.inc:1677
 msgid "check for ethernet loops"
 msgstr "проверка на коммутационное кольцо "
 
-#: src/etc/inc/pfsense-utils.inc:1679
+#: src/etc/inc/pfsense-utils.inc:1680
 msgid "learning"
 msgstr "обучение"
 
-#: src/etc/inc/pfsense-utils.inc:1682
+#: src/etc/inc/pfsense-utils.inc:1683
 msgid "forwarding"
 msgstr "пересылка"
 
-#: src/etc/inc/pfsense-utils.inc:1816
+#: src/etc/inc/pfsense-utils.inc:1817
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNSCACHE:  Найден старый IP %1$s и новый IP %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:1836
+#: src/etc/inc/pfsense-utils.inc:1837
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr "Загрузка %s  модуля криптографичкеского ускорителя."
 
-#: src/etc/inc/pfsense-utils.inc:1853
+#: src/etc/inc/pfsense-utils.inc:1854
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr "Загрузка %s модуля термического монитора"
 
-#: src/etc/inc/pfsense-utils.inc:1930 src/etc/inc/pfsense-utils.inc:1986
+#: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr "Загрузка файла не удалась с кодом статуса %1$s. URL: %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2205
+#: src/etc/inc/pfsense-utils.inc:2206
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr "Невозможно обработать несуществующий файл из алиаса: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2210
+#: src/etc/inc/pfsense-utils.inc:2211
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr "Невозможно обработать пустой файл из алиаса: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2215
+#: src/etc/inc/pfsense-utils.inc:2216
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr "Невозможно обработать алиасы из алиаса: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2272
+#: src/etc/inc/pfsense-utils.inc:2273
 #, php-format
 msgid "Failed to download alias %s"
 msgstr "Не удалось загрузить алиас %s"
 
-#: src/etc/inc/pfsense-utils.inc:2301
+#: src/etc/inc/pfsense-utils.inc:2302
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
@@ -3659,46 +3659,50 @@ msgstr ""
 "Архив алиасов имеет расширение .tar/tgz, и он не может быть распакован по "
 "причине отсутствия  утилиты!"
 
-#: src/etc/inc/pfsense-utils.inc:2311
+#: src/etc/inc/pfsense-utils.inc:2312
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr "Невозможно открыть %s/алиасы на запись!"
 
-#: src/etc/inc/pfsense-utils.inc:2317
+#: src/etc/inc/pfsense-utils.inc:2318
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr "Следующий файл не может быть прочтен %1$s из %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2896
+#: src/etc/inc/pfsense-utils.inc:2897
+msgid "German (Germany)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2898
 msgid "English"
 msgstr "Английский"
 
-#: src/etc/inc/pfsense-utils.inc:2897
+#: src/etc/inc/pfsense-utils.inc:2899
 msgid "Spanish"
 msgstr "Испанский"
 
-#: src/etc/inc/pfsense-utils.inc:2898
+#: src/etc/inc/pfsense-utils.inc:2900
 msgid "Norwegian Bokmål"
 msgstr "Норвежский"
 
-#: src/etc/inc/pfsense-utils.inc:2899
+#: src/etc/inc/pfsense-utils.inc:2901
 msgid "Russian"
 msgstr "Русский"
 
-#: src/etc/inc/pfsense-utils.inc:2900
+#: src/etc/inc/pfsense-utils.inc:2902
 msgid "Chinese (Simplified, China)"
 msgstr "Китайский (Упрощённый, Китай)"
 
-#: src/etc/inc/pfsense-utils.inc:2901
+#: src/etc/inc/pfsense-utils.inc:2903
 msgid "Chinese (Taiwan)"
 msgstr "Китайский (Тайвань)"
 
-#: src/etc/inc/pfsense-utils.inc:3096 src/etc/inc/pfsense-utils.inc:3111
-#: src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
+#: src/etc/inc/pfsense-utils.inc:3139
 msgid "No Service"
 msgstr "Нет Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3106 src/etc/inc/pfsense-utils.inc:3149
+#: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3714,83 +3718,83 @@ msgstr "Нет Сервиса"
 msgid "Mode"
 msgstr "Режим"
 
-#: src/etc/inc/pfsense-utils.inc:3112
+#: src/etc/inc/pfsense-utils.inc:3114
 msgid "Restricted Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3113
+#: src/etc/inc/pfsense-utils.inc:3115
 msgid "Valid Service"
 msgstr "Валидный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3114
+#: src/etc/inc/pfsense-utils.inc:3116
 msgid "Restricted Regional Service"
 msgstr "Ограниченный Региональный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3115
+#: src/etc/inc/pfsense-utils.inc:3117
 msgid "Powersaving Service"
 msgstr "Сервис сбережения электроэнергии"
 
-#: src/etc/inc/pfsense-utils.inc:3116
+#: src/etc/inc/pfsense-utils.inc:3118
 msgid "Unknown Service"
 msgstr "Неизвестный сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3122
+#: src/etc/inc/pfsense-utils.inc:3124
 msgid "Invalid SIM/locked State"
 msgstr "Невалидный SIM/заблокированное состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3123
+#: src/etc/inc/pfsense-utils.inc:3125
 msgid "Valid SIM State"
 msgstr "Валидное SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3124
+#: src/etc/inc/pfsense-utils.inc:3126
 msgid "Invalid SIM CS State"
 msgstr "Валидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3125
+#: src/etc/inc/pfsense-utils.inc:3127
 msgid "Invalid SIM PS State"
 msgstr "Невалидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3126
+#: src/etc/inc/pfsense-utils.inc:3128
 msgid "Invalid SIM CS/PS State"
 msgstr "Невалидное SIM CS/PS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3127
+#: src/etc/inc/pfsense-utils.inc:3129
 msgid "Missing SIM State"
 msgstr "Недостающее SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/pfsense-utils.inc:3140
 msgid "Limited Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3154
+#: src/etc/inc/pfsense-utils.inc:3156
 msgid "Initializing Service"
 msgstr "Инициализация Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3155
+#: src/etc/inc/pfsense-utils.inc:3157
 msgid "Network Lock error Service"
 msgstr "Сетевая блокировка ошибка Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3158
 msgid "Network Locked Service"
 msgstr "Сервис, заблокированный по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Разблокируйте или поправьте MCC/MNC Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "No action State"
 msgstr "Состояние бездействия"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Network lock State"
 msgstr "Состояние блокировки по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "(U)SIM card lock State"
 msgstr "Состояние блокировки (U)SIM карта"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3168
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Состояние блокировки (U)SIM карта по сети"
 
@@ -3889,13 +3893,13 @@ msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Пакет %1$s не установлен. %2$s Отмена установки."
 
 #: src/etc/inc/pkg-utils.inc:744 src/etc/inc/pkg-utils.inc:776
-#: src/etc/inc/pkg-utils.inc:845
+#: src/etc/inc/pkg-utils.inc:852
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Не удалось установить пакет: %s."
 
 #: src/etc/inc/pkg-utils.inc:745 src/etc/inc/pkg-utils.inc:777
-#: src/etc/inc/pkg-utils.inc:846
+#: src/etc/inc/pkg-utils.inc:853
 msgid "Failed to install package."
 msgstr "Не удалось установить пакет"
 
@@ -3907,7 +3911,7 @@ msgstr "Загрузка настроек пакета..."
 msgid "Configuring package components..."
 msgstr "Настройка компонентов пакета..."
 
-#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:940
+#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:947
 msgid "Loading package instructions..."
 msgstr "Загрузка инструкций пакета..."
 
@@ -3932,85 +3936,85 @@ msgstr "Выполняем вызов custom_php_install_command()..."
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Выполняем вызов custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:803 src/etc/inc/pkg-utils.inc:888
+#: src/etc/inc/pkg-utils.inc:803 src/etc/inc/pkg-utils.inc:895
 msgid "Menu items... "
 msgstr "Пункты меню..."
 
-#: src/etc/inc/pkg-utils.inc:820 src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:820 src/etc/inc/pkg-utils.inc:910
 msgid "Services... "
 msgstr "Сервисы...."
 
-#: src/etc/inc/pkg-utils.inc:840
+#: src/etc/inc/pkg-utils.inc:847
 msgid "Loading package configuration... failed!"
 msgstr "Загрузка настроек пакета... Не удалось!"
 
-#: src/etc/inc/pkg-utils.inc:840
+#: src/etc/inc/pkg-utils.inc:847
 msgid "Installation aborted."
 msgstr "Установка отменена."
 
-#: src/etc/inc/pkg-utils.inc:841
+#: src/etc/inc/pkg-utils.inc:848
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "Невозможно загрузить настройки пакета. Установка отменена."
 
-#: src/etc/inc/pkg-utils.inc:855
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Writing configuration... "
 msgstr "Сохраняю конфигурацию..."
 
-#: src/etc/inc/pkg-utils.inc:857
+#: src/etc/inc/pkg-utils.inc:864
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Пакет успешно установлен: %s"
 
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:879
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "%1$s пакет не установлен.%2$s Удаление отменено."
 
-#: src/etc/inc/pkg-utils.inc:877
+#: src/etc/inc/pkg-utils.inc:884
 #, php-format
 msgid "Removing %s package... "
 msgstr "Удаляю %s пакет... "
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:885
 #, php-format
 msgid "Removing %s components..."
 msgstr "Удаляю %s компоненты..."
 
-#: src/etc/inc/pkg-utils.inc:931
+#: src/etc/inc/pkg-utils.inc:938
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "В процессе удаления пакета сохранен промеждуточный файл конфигурации для %s."
 
-#: src/etc/inc/pkg-utils.inc:947
+#: src/etc/inc/pkg-utils.inc:954
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Не удаётся найти включительный файл %s для включения "
 
-#: src/etc/inc/pkg-utils.inc:965
+#: src/etc/inc/pkg-utils.inc:972
 msgid "Deinstall commands... "
 msgstr "Команды удаления..."
 
-#: src/etc/inc/pkg-utils.inc:970
+#: src/etc/inc/pkg-utils.inc:977
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 "Не выполняется пользовательский deinstall hook, потому что отсутствует "
 "include."
 
-#: src/etc/inc/pkg-utils.inc:977
+#: src/etc/inc/pkg-utils.inc:984
 msgid "Syslog entries... "
 msgstr "Записи Syslog"
 
-#: src/etc/inc/pkg-utils.inc:985
+#: src/etc/inc/pkg-utils.inc:992
 msgid "Configuration... "
 msgstr "Конфигурация..."
 
-#: src/etc/inc/pkg-utils.inc:988
+#: src/etc/inc/pkg-utils.inc:995
 #, php-format
 msgid "Removed %s package."
 msgstr "Пакет %s удалён"
 
-#: src/etc/inc/pkg-utils.inc:1013
+#: src/etc/inc/pkg-utils.inc:1020
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -4018,24 +4022,24 @@ msgstr ""
 "Ожидаю подключения к сети Internet для обноления мета данных pkg и "
 "завершения переустановки пакета"
 
-#: src/etc/inc/pkg-utils.inc:1026 src/etc/inc/pkg-utils.inc:1065
+#: src/etc/inc/pkg-utils.inc:1033 src/etc/inc/pkg-utils.inc:1072
 msgid "Package reinstall"
 msgstr "Переустановить пакет"
 
-#: src/etc/inc/pkg-utils.inc:1027
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Переустановка пакета была ОТМЕНЕНА из-за отсутствия подключения к сети "
 "Internet"
 
-#: src/etc/inc/pkg-utils.inc:1066
+#: src/etc/inc/pkg-utils.inc:1073
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "Пакет %s не существует в текущей %s версии и был удален."
 
-#: src/etc/inc/pkg-utils.inc:1087
+#: src/etc/inc/pkg-utils.inc:1094
 msgid "Stopping all packages."
 msgstr "Отсанавливаю все пакеты."
 
@@ -6225,7 +6229,7 @@ msgstr "Демон системного журнала"
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1171
+#: src/usr/local/www/system_certmanager.php:1207
 msgid "Captive Portal"
 msgstr "Портал Авторизации"
 
@@ -6738,8 +6742,8 @@ msgstr "Выберите опции для данной очереди"
 #: src/usr/local/www/services_captiveportal_zones.php:77
 #: src/usr/local/www/services_checkip.php:96
 #: src/usr/local/www/services_checkip_edit.php:162
-#: src/usr/local/www/services_dhcp.php:716
-#: src/usr/local/www/services_dhcp.php:1434
+#: src/usr/local/www/services_dhcp.php:728
+#: src/usr/local/www/services_dhcp.php:1446
 #: src/usr/local/www/services_dhcp_edit.php:469
 #: src/usr/local/www/services_dhcpv6.php:1032
 #: src/usr/local/www/services_dhcpv6_edit.php:235
@@ -6799,7 +6803,7 @@ msgstr "Выберите опции для данной очереди"
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:76
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:150
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
 msgid "Description"
 msgstr "Описание"
 
@@ -7007,7 +7011,7 @@ msgstr "Значение задержки должно быть целым чи�
 #: src/usr/local/www/firewall_schedule_edit.php:1116
 #: src/usr/local/www/interfaces_assign.php:540
 #: src/usr/local/www/interfaces_qinq_edit.php:309
-#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1355
+#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1367
 #: src/usr/local/www/services_dhcp_relay.php:186
 #: src/usr/local/www/services_dhcpv6.php:973
 #: src/usr/local/www/services_dnsmasq_edit.php:278
@@ -7018,8 +7022,8 @@ msgstr "Значение задержки должно быть целым чи�
 #: src/usr/local/www/services_router_advertisements.php:421
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/system.php:512
-#: src/usr/local/www/system_certmanager.php:885
+#: src/usr/local/www/system.php:517
+#: src/usr/local/www/system_certmanager.php:893
 #: src/usr/local/www/system_usermanager.php:647
 msgid "Delete"
 msgstr "Удалить"
@@ -7044,9 +7048,9 @@ msgstr "Лимитеры"
 #: src/usr/local/www/services_captiveportal.php:535
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
 #: src/usr/local/www/services_checkip_edit.php:120
-#: src/usr/local/www/services_dhcp.php:826
-#: src/usr/local/www/services_dhcp.php:833
-#: src/usr/local/www/services_dhcp.php:1241
+#: src/usr/local/www/services_dhcp.php:838
+#: src/usr/local/www/services_dhcp.php:845
+#: src/usr/local/www/services_dhcp.php:1253
 #: src/usr/local/www/services_dhcp_relay.php:148
 #: src/usr/local/www/services_dhcpv6_relay.php:148
 #: src/usr/local/www/services_dnsmasq.php:255
@@ -7301,65 +7305,65 @@ msgstr "Создаю сертификат SSL для данного хоста"
 msgid "webConfigurator default (%s)"
 msgstr "ВебКонфигуратор по умолчанию (%s)"
 
-#: src/etc/inc/system.inc:1251
+#: src/etc/inc/system.inc:1253
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
 "Ошибка создания сертификата  ВебИнтерфейса: библиотека openssl вернула: %s"
 
-#: src/etc/inc/system.inc:1260
+#: src/etc/inc/system.inc:1262
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
 msgstr "Создаю новый самоподписный HTTPS сертификат (%s)"
 
-#: src/etc/inc/system.inc:1268
+#: src/etc/inc/system.inc:1270
 msgid "Starting webConfigurator..."
 msgstr "Запускаю ВебКонфигуратор"
 
-#: src/etc/inc/system.inc:1318 src/etc/inc/system.inc:2194
-#: src/etc/inc/system.inc:2197
+#: src/etc/inc/system.inc:1320 src/etc/inc/system.inc:2196
+#: src/etc/inc/system.inc:2199
 msgid "failed!"
 msgstr "неудалось!"
 
-#: src/etc/inc/system.inc:1520
+#: src/etc/inc/system.inc:1522
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr "Ошибка: не могу открыть файл сертификата в system_webgui_start().%s"
 
-#: src/etc/inc/system.inc:1533
+#: src/etc/inc/system.inc:1535
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
 "Ошибка: не могу открыть файл ключа сертификата в system_webgui_start().%s"
 
-#: src/etc/inc/system.inc:1560
+#: src/etc/inc/system.inc:1562
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr "Ошибка: не могу открыть %1$s в system_generate_nginx_config().%2$s"
 
-#: src/etc/inc/system.inc:1609
+#: src/etc/inc/system.inc:1611
 msgid "Setting timezone..."
 msgstr "Устанавливаю временную зону..."
 
-#: src/etc/inc/system.inc:2026
+#: src/etc/inc/system.inc:2028
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
 msgstr "Не удаётся открыть %s/ntpd.conf для записи"
 
-#: src/etc/inc/system.inc:2146
+#: src/etc/inc/system.inc:2148
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr "Ошибка: не могу открыть dmesg.boot в system_dmesg_save().%s"
 
-#: src/etc/inc/system.inc:2173
+#: src/etc/inc/system.inc:2175
 msgid "Setting hard disk standby... "
 msgstr "Установка режима ожидания жесткого диска ..."
 
-#: src/etc/inc/system.inc:2388
+#: src/etc/inc/system.inc:2409
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2392 src/etc/inc/system.inc:2411
+#: src/etc/inc/system.inc:2413 src/etc/inc/system.inc:2432
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -8053,23 +8057,23 @@ msgstr "Подтверждение"
 #: src/usr/local/www/system_camanager.php:324
 #: src/usr/local/www/system_camanager.php:355
 #: src/usr/local/www/system_certmanager.php:211
-#: src/usr/local/www/system_certmanager.php:583
-#: src/usr/local/www/system_certmanager.php:614
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:265
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:297
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:162
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:166
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:193
 #: src/usr/local/www/widgets/widgets/log.widget.php:272
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:387
 #: src/usr/local/www/widgets/widgets/rss.widget.php:161
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:159
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:158
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:474
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:481
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:248
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:239
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:180
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 msgid "Save"
 msgstr "Сохранение"
 
@@ -8083,7 +8087,7 @@ msgstr "Сохранение"
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/diag_gmirror.php:33
 #: src/usr/local/www/diag_halt.php:45
 #: src/usr/local/www/diag_limiter_info.php:31
-#: src/usr/local/www/diag_ndp.php:114
+#: src/usr/local/www/diag_ndp.php:121
 #: src/usr/local/www/diag_packet_capture.php:106
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
@@ -8177,10 +8181,10 @@ msgstr "ARP таблица"
 msgid " Loading, please wait..."
 msgstr "Загрузка, пожалуйста, подождите..."
 
-#: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:132
+#: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:139
 #: src/usr/local/www/services_captiveportal_mac.php:174
 #: src/usr/local/www/services_captiveportal_mac_edit.php:95
-#: src/usr/local/www/services_dhcp.php:1424
+#: src/usr/local/www/services_dhcp.php:1436
 #: src/usr/local/www/services_wol.php:171
 #: src/usr/local/www/services_wol_edit.php:73
 #: src/usr/local/www/status_captiveportal.php:193
@@ -8190,10 +8194,10 @@ msgstr "Загрузка, пожалуйста, подождите..."
 msgid "MAC address"
 msgstr " MAC адрес"
 
-#: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:133
+#: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:140
 #: src/usr/local/www/interfaces.php:2001
 #: src/usr/local/www/services_captiveportal_hostname.php:115
-#: src/usr/local/www/services_dhcp.php:1433
+#: src/usr/local/www/services_dhcp.php:1445
 #: src/usr/local/www/services_dhcp_edit.php:446
 #: src/usr/local/www/services_dhcpv6.php:1031
 #: src/usr/local/www/services_dhcpv6_edit.php:228
@@ -8204,7 +8208,7 @@ msgstr " MAC адрес"
 #: src/usr/local/www/services_rfc2136_edit.php:75
 #: src/usr/local/www/status_dhcp_leases.php:362
 #: src/usr/local/www/status_dhcpv6_leases.php:441
-#: src/usr/local/www/system.php:152
+#: src/usr/local/www/system.php:157
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:178
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
 msgid "Hostname"
@@ -8215,7 +8219,7 @@ msgid "Link Type"
 msgstr "Тип соединения"
 
 #: src/usr/local/www/diag_arp.php:338 src/usr/local/www/diag_confbak.php:222
-#: src/usr/local/www/diag_ndp.php:135
+#: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
 #: src/usr/local/www/firewall_nat_1to1.php:154
@@ -8244,7 +8248,7 @@ msgstr "Тип соединения"
 #: src/usr/local/www/services_captiveportal_vouchers.php:394
 #: src/usr/local/www/services_captiveportal_zones.php:78
 #: src/usr/local/www/services_checkip.php:97
-#: src/usr/local/www/services_dhcp.php:717
+#: src/usr/local/www/services_dhcp.php:729
 #: src/usr/local/www/services_dnsmasq.php:374
 #: src/usr/local/www/services_dnsmasq.php:448
 #: src/usr/local/www/services_dyndns.php:97
@@ -8263,7 +8267,7 @@ msgstr "Тип соединения"
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:446
 #: src/usr/local/www/system_camanager.php:370
-#: src/usr/local/www/system_certmanager.php:1085
+#: src/usr/local/www/system_certmanager.php:1095
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -8478,7 +8482,7 @@ msgid "Captive Portal Vouchers"
 msgstr "Ваучеры Портала Авторизации"
 
 #: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
-#: src/usr/local/www/services_dhcp.php:752
+#: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
 msgstr "DHCP Сервер"
@@ -8571,8 +8575,8 @@ msgstr "Системный журнал"
 #: src/usr/local/www/status_logs.php:96
 #: src/usr/local/www/status_logs_common.inc:88
 #: src/usr/local/www/status_logs_settings.php:216
-#: src/usr/local/www/system.php:90 src/usr/local/www/system.php:420
-#: src/usr/local/www/system.php:435
+#: src/usr/local/www/system.php:95 src/usr/local/www/system.php:425
+#: src/usr/local/www/system.php:440
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -8581,7 +8585,7 @@ msgstr "Системный журнал"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:409
 #: src/usr/local/www/system_camanager.php:321
-#: src/usr/local/www/system_certmanager.php:580
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -8646,14 +8650,14 @@ msgstr "Пробуждение по сигналу из Локальной се�
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:266
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:298
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:163
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:167
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:194
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:388
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:159
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:475
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:482
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:240
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:181
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
 msgstr "Все"
@@ -8825,9 +8829,9 @@ msgid "Download File"
 msgstr "Скачать Файл"
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1091
-#: src/usr/local/www/services_captiveportal.php:1125
-#: src/usr/local/www/services_captiveportal.php:1157
+#: src/usr/local/www/services_captiveportal.php:1093
+#: src/usr/local/www/services_captiveportal.php:1127
+#: src/usr/local/www/services_captiveportal.php:1159
 msgid "Download"
 msgstr "Скачать"
 
@@ -8947,7 +8951,7 @@ msgstr "Дата"
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:37
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:195
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:202
 msgid "Version"
 msgstr "Версия"
 
@@ -9134,7 +9138,7 @@ msgstr "Имя Хоста"
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1138
+#: src/usr/local/www/system_certmanager.php:1151
 #: src/usr/local/www/vpn_openvpn_client.php:905
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -9163,7 +9167,7 @@ msgstr "Алиас был успешно создан."
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
 #: src/usr/local/www/services_dyndns_edit.php:282
 #: src/usr/local/www/services_rfc2136_edit.php:177
-#: src/usr/local/www/system.php:438
+#: src/usr/local/www/system.php:443
 msgid "*Hostname"
 msgstr "*Имя хоста"
 
@@ -9724,19 +9728,23 @@ msgstr ""
 msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr ""
 
-#: src/usr/local/www/diag_ndp.php:114 src/usr/local/www/diag_ndp.php:124
+#: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
 #: src/usr/local/www/head.inc:389
 msgid "NDP Table"
 msgstr "Таблица NDP"
 
-#: src/usr/local/www/diag_ndp.php:131 src/usr/local/www/interfaces.php:612
+#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:612
 #: src/usr/local/www/services_dhcpv6.php:1030
 #: src/usr/local/www/services_dhcpv6_edit.php:220
 #: src/usr/local/www/status_dhcpv6_leases.php:437
 msgid "IPv6 address"
 msgstr "IPv6 адрес"
 
-#: src/usr/local/www/diag_ndp.php:167
+#: src/usr/local/www/diag_ndp.php:142
+msgid "Expiration"
+msgstr ""
+
+#: src/usr/local/www/diag_ndp.php:178
 msgid "Delete NDP entry"
 msgstr ""
 
@@ -9751,13 +9759,13 @@ msgstr "Захват Пакетов"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1162
+#: src/usr/local/www/system_certmanager.php:1198
 msgid "OpenVPN Server"
 msgstr "Сервер OpenVPN"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:428
-#: src/usr/local/www/system_certmanager.php:1165
+#: src/usr/local/www/system_certmanager.php:1201
 msgid "OpenVPN Client"
 msgstr "Клиент OpenVPN"
 
@@ -10107,9 +10115,9 @@ msgstr "время"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1084
-#: src/usr/local/www/services_captiveportal.php:1118
-#: src/usr/local/www/services_captiveportal.php:1150
+#: src/usr/local/www/services_captiveportal.php:1086
+#: src/usr/local/www/services_captiveportal.php:1120
+#: src/usr/local/www/services_captiveportal.php:1152
 msgid "View"
 msgstr "Просмотр"
 
@@ -10361,10 +10369,10 @@ msgstr "Используйте регулярные выражения что б
 #: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:220
-#: src/usr/local/www/system_certmanager.php:526
-#: src/usr/local/www/system_certmanager.php:583
-#: src/usr/local/www/system_certmanager.php:1017
-#: src/usr/local/www/system_certmanager.php:1065
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1027
+#: src/usr/local/www/system_certmanager.php:1075
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -11021,7 +11029,7 @@ msgstr "Список алиасов изменился."
 #: src/usr/local/www/load_balancer_virtual_server.php:120
 #: src/usr/local/www/services_captiveportal_mac.php:157
 #: src/usr/local/www/services_captiveportal_zones.php:64
-#: src/usr/local/www/services_dhcp.php:772
+#: src/usr/local/www/services_dhcp.php:784
 #: src/usr/local/www/services_dhcpv6.php:527
 #: src/usr/local/www/services_dnsmasq.php:246
 #: src/usr/local/www/services_igmpproxy.php:71
@@ -11092,9 +11100,9 @@ msgstr "Удалить алиас"
 #: src/usr/local/www/services_captiveportal_vouchers.php:429
 #: src/usr/local/www/services_captiveportal_zones.php:118
 #: src/usr/local/www/services_checkip.php:161
-#: src/usr/local/www/services_dhcp.php:952
-#: src/usr/local/www/services_dhcp.php:1367
-#: src/usr/local/www/services_dhcp.php:1493
+#: src/usr/local/www/services_dhcp.php:964
+#: src/usr/local/www/services_dhcp.php:1379
+#: src/usr/local/www/services_dhcp.php:1505
 #: src/usr/local/www/services_dhcpv6.php:1075
 #: src/usr/local/www/services_dnsmasq.php:435
 #: src/usr/local/www/services_dnsmasq.php:482
@@ -11111,7 +11119,7 @@ msgstr "Удалить алиас"
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:472
 #: src/usr/local/www/system_camanager.php:459
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:909
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -11224,7 +11232,7 @@ msgstr "Таблица единых указателей ресурса (Пор�
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:413
 #: src/usr/local/www/system_camanager.php:325
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -11556,7 +11564,7 @@ msgid "Hint"
 msgstr "Подсказка"
 
 #: src/usr/local/www/firewall_aliases_edit.php:719
-#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:464
+#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:469
 #: src/usr/local/www/vpn_ipsec_phase2.php:524
 #: src/usr/local/www/vpn_ipsec_phase2.php:531
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
@@ -12167,8 +12175,8 @@ msgstr "Обратить смысл соответствия."
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
-#: src/usr/local/www/services_captiveportal.php:964
-#: src/usr/local/www/services_dhcp.php:1344
+#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_dhcp.php:1356
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
 #: src/usr/local/www/status_logs_vpn.php:408
@@ -12176,8 +12184,8 @@ msgstr "Обратить смысл соответствия."
 #: src/usr/local/www/system_authservers.php:227
 #: src/usr/local/www/system_authservers.php:250
 #: src/usr/local/www/system_authservers.php:444
-#: src/usr/local/www/system_certmanager.php:866
 #: src/usr/local/www/system_certmanager.php:874
+#: src/usr/local/www/system_certmanager.php:882
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -12398,20 +12406,20 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:822
 #: src/usr/local/www/interfaces_ppps_edit.php:1049
-#: src/usr/local/www/services_dhcp.php:1067
-#: src/usr/local/www/services_dhcp.php:1125
-#: src/usr/local/www/services_dhcp.php:1154
-#: src/usr/local/www/services_dhcp.php:1183
-#: src/usr/local/www/services_dhcp.php:1205
-#: src/usr/local/www/services_dhcp.php:1227
-#: src/usr/local/www/services_dhcp.php:1285
-#: src/usr/local/www/services_dhcp.php:1535
-#: src/usr/local/www/services_dhcp.php:1570
-#: src/usr/local/www/services_dhcp.php:1605
-#: src/usr/local/www/services_dhcp.php:1639
-#: src/usr/local/www/services_dhcp.php:1673
-#: src/usr/local/www/services_dhcp.php:1708
-#: src/usr/local/www/services_dhcp.php:1747
+#: src/usr/local/www/services_dhcp.php:1079
+#: src/usr/local/www/services_dhcp.php:1137
+#: src/usr/local/www/services_dhcp.php:1166
+#: src/usr/local/www/services_dhcp.php:1195
+#: src/usr/local/www/services_dhcp.php:1217
+#: src/usr/local/www/services_dhcp.php:1239
+#: src/usr/local/www/services_dhcp.php:1297
+#: src/usr/local/www/services_dhcp.php:1547
+#: src/usr/local/www/services_dhcp.php:1582
+#: src/usr/local/www/services_dhcp.php:1617
+#: src/usr/local/www/services_dhcp.php:1651
+#: src/usr/local/www/services_dhcp.php:1685
+#: src/usr/local/www/services_dhcp.php:1720
+#: src/usr/local/www/services_dhcp.php:1759
 #: src/usr/local/www/services_dhcp_edit.php:575
 #: src/usr/local/www/services_dhcp_edit.php:631
 #: src/usr/local/www/services_dhcp_edit.php:667
@@ -12622,13 +12630,13 @@ msgstr "Обновлено"
 #: src/usr/local/www/firewall_rules_edit.php:1881
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
-#: src/usr/local/www/services_dhcp.php:1533
-#: src/usr/local/www/services_dhcp.php:1568
-#: src/usr/local/www/services_dhcp.php:1603
-#: src/usr/local/www/services_dhcp.php:1637
-#: src/usr/local/www/services_dhcp.php:1671
-#: src/usr/local/www/services_dhcp.php:1706
-#: src/usr/local/www/services_dhcp.php:1745
+#: src/usr/local/www/services_dhcp.php:1545
+#: src/usr/local/www/services_dhcp.php:1580
+#: src/usr/local/www/services_dhcp.php:1615
+#: src/usr/local/www/services_dhcp.php:1649
+#: src/usr/local/www/services_dhcp.php:1683
+#: src/usr/local/www/services_dhcp.php:1718
+#: src/usr/local/www/services_dhcp.php:1757
 #: src/usr/local/www/services_dhcp_edit.php:723
 #: src/usr/local/www/services_dhcp_edit.php:758
 #: src/usr/local/www/services_dhcp_edit.php:792
@@ -13282,10 +13290,10 @@ msgstr "Правила (Перетащите для изменения поря�
 #: src/usr/local/www/firewall_rules.php:387
 #: src/usr/local/www/firewall_rules_edit.php:1685
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
-#: src/usr/local/www/services_dhcp.php:997
+#: src/usr/local/www/services_dhcp.php:1009
 #: src/usr/local/www/services_dhcp_edit.php:540
-#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:466
-#: src/usr/local/www/system.php:504
+#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:471
+#: src/usr/local/www/system.php:509
 #: src/usr/local/www/system_gateway_groups_edit.php:303
 #: src/usr/local/www/system_gateways.php:252
 #: src/usr/local/www/system_gateways_edit.php:184
@@ -14171,7 +14179,7 @@ msgstr "порт начинается"
 #: src/usr/local/www/firewall_rules_edit.php:1434
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:927
+#: src/usr/local/www/services_dhcp.php:939
 #: src/usr/local/www/services_dhcpv6.php:649
 #: src/usr/local/www/services_dhcpv6.php:674
 #: src/usr/local/www/system_gateways_edit.php:287
@@ -14186,7 +14194,7 @@ msgstr "порт заканчивается"
 #: src/usr/local/www/firewall_rules_edit.php:1448
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
-#: src/usr/local/www/services_dhcp.php:934
+#: src/usr/local/www/services_dhcp.php:946
 #: src/usr/local/www/services_dhcpv6.php:658
 #: src/usr/local/www/services_dhcpv6.php:683
 #: src/usr/local/www/system_gateways_edit.php:294
@@ -15233,10 +15241,10 @@ msgid "listing only first 10k items"
 msgstr "Просматриваем только первые 10 тысяч пунктов"
 
 #: src/usr/local/www/guiconfig.inc:1158
-#: src/usr/local/www/services_dhcp.php:1351
+#: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:881
+#: src/usr/local/www/system_certmanager.php:889
 msgid "Value"
 msgstr "Значение"
 
@@ -15253,7 +15261,7 @@ msgstr "Значение"
 msgid "Advanced"
 msgstr "Расширенные"
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:420
+#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:425
 msgid "General Setup"
 msgstr "Основная настройка"
 
@@ -15331,7 +15339,7 @@ msgid "Load Balancer"
 msgstr "Балансировщик Нагрузки"
 
 #: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
-#: src/usr/local/www/services_dhcp.php:1162
+#: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
 #: src/usr/local/www/services_ntpd_gps.php:310
@@ -15427,7 +15435,7 @@ msgstr "Логи Пакетов"
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
-#: src/usr/local/www/services_dhcp.php:752
+#: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 #: src/usr/local/www/services_dhcp_relay.php:124
 #: src/usr/local/www/services_dhcpv6.php:505
@@ -18471,7 +18479,7 @@ msgstr "Локальный IP адрес"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
-#: src/usr/local/www/services_dhcp.php:881
+#: src/usr/local/www/services_dhcp.php:893
 #: src/usr/local/www/services_dhcpv6.php:618
 msgid "Subnet"
 msgstr "Подсеть"
@@ -19443,7 +19451,7 @@ msgid "HTTP Code"
 msgstr "Код HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1010
+#: src/usr/local/www/services_captiveportal.php:1012
 msgid "HTTPS Options"
 msgstr "Опции HTTPS"
 
@@ -19480,7 +19488,7 @@ msgid "Pool"
 msgstr "Пул"
 
 #: src/usr/local/www/load_balancer_pool.php:119
-#: src/usr/local/www/services_dhcp.php:966
+#: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
 #: src/usr/local/www/vpn_openvpn_client.php:473
@@ -19491,7 +19499,7 @@ msgid "Servers"
 msgstr "Серверы"
 
 #: src/usr/local/www/load_balancer_pool.php:160
-#: src/usr/local/www/services_dhcp.php:736
+#: src/usr/local/www/services_dhcp.php:748
 msgid "Edit pool"
 msgstr "Редактировать пул"
 
@@ -19500,7 +19508,7 @@ msgid "Copy pool"
 msgstr "Копировать пул"
 
 #: src/usr/local/www/load_balancer_pool.php:162
-#: src/usr/local/www/services_dhcp.php:738
+#: src/usr/local/www/services_dhcp.php:750
 msgid "Delete pool"
 msgstr "Удалить пул"
 
@@ -19920,7 +19928,7 @@ msgstr "Добавить новый элемент"
 msgid "Advanced Features"
 msgstr "Дополнительные Возможности"
 
-#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:820
+#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:832
 msgid "General Options"
 msgstr "Основные Опции"
 
@@ -20780,18 +20788,16 @@ msgid ""
 "If reauthentication is enabled, Access-Requests will be sent to the RADIUS "
 "server for each user that is logged in every minute. If an Access-Reject is "
 "received for a user, that user is disconnected from the captive portal "
-"immediately."
+"immediately. Reauthentication requires user credentials to be cached in the "
+"captive portal database while a user is logged in; The cached credentials "
+"are necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
-"Если повторная аутентификация активна, Запросы-На-Доступ будут отправлены к "
-"серверу РАДИУС для каждого пользователя, который подключается каждую минуту. "
-"Если получен Запрет-На-Доступ  для пользователя, то данный пользователь "
-"будет отключен от портала захвата немедленно."
 
-#: src/usr/local/www/services_captiveportal.php:935
+#: src/usr/local/www/services_captiveportal.php:937
 msgid "RADIUS MAC Authentication"
 msgstr "МАС аутентификация РАДИУСа"
 
-#: src/usr/local/www/services_captiveportal.php:938
+#: src/usr/local/www/services_captiveportal.php:940
 msgid ""
 "If this option is enabled, the captive portal will try to authenticate users "
 "by sending their MAC address as the username and the password entered below "
@@ -20801,24 +20807,24 @@ msgstr ""
 "пользователей, отправляя их MAC адрес  как имя пользователя и пароль, "
 "указанные ниже РАДИУС сервера."
 
-#: src/usr/local/www/services_captiveportal.php:943
+#: src/usr/local/www/services_captiveportal.php:945
 msgid "MAC authentication secret"
 msgstr "Пароль МАС аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:950
+#: src/usr/local/www/services_captiveportal.php:952
 msgid "RADIUS NAS IP Attribute"
 msgstr "IP Атрибут сервера сетевого доступа РАДИУСа"
 
-#: src/usr/local/www/services_captiveportal.php:953
+#: src/usr/local/www/services_captiveportal.php:955
 msgid "Choose the IP to use for calling station attribute."
 msgstr "Выбрать IP атрибута станции вызова."
 
-#: src/usr/local/www/services_captiveportal.php:957
+#: src/usr/local/www/services_captiveportal.php:959
 #: src/usr/local/www/system_usermanager_settings.php:199
 msgid "Session timeout"
 msgstr "Таймаут сессии"
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:962
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
@@ -20826,7 +20832,7 @@ msgstr ""
 " При включении клиенты будут отключены после периода времени, полученного от "
 "атрибута Сессия-Таймаут РАДИУСа."
 
-#: src/usr/local/www/services_captiveportal.php:967
+#: src/usr/local/www/services_captiveportal.php:969
 msgid ""
 "If RADIUS type is set to Cisco, in Access-Requests the value of Calling-"
 "Station-ID will be set to the client's IP address and the Called-Station-Id "
@@ -20840,11 +20846,11 @@ msgstr ""
 "MAC адресу клиента и начение идентификатора Вызванной-Станции равен IP "
 "адресу WAN pfsense."
 
-#: src/usr/local/www/services_captiveportal.php:973
+#: src/usr/local/www/services_captiveportal.php:975
 msgid "Accounting style"
 msgstr "Стиль Учёта."
 
-#: src/usr/local/www/services_captiveportal.php:976
+#: src/usr/local/www/services_captiveportal.php:978
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
@@ -20854,11 +20860,11 @@ msgstr ""
 "точки зрения клиента, а не Сервера сетевого доступа. Acct-Input-Octets будут "
 "показывать  входящие пакеты и Acct-Output-Octets  - исходящие."
 
-#: src/usr/local/www/services_captiveportal.php:981
+#: src/usr/local/www/services_captiveportal.php:983
 msgid "Idle time accounting"
 msgstr "Время простоя учёта"
 
-#: src/usr/local/www/services_captiveportal.php:984
+#: src/usr/local/www/services_captiveportal.php:986
 msgid ""
 "When enabled, if a client is disconnected for exceeding the idle timeout the "
 "time spent idle is included in the total session time. Otherwise the session "
@@ -20870,30 +20876,30 @@ msgstr ""
 "РАДИУС сервером, будет временным периодом от начала сессии до последней "
 "зафиксированной активности."
 
-#: src/usr/local/www/services_captiveportal.php:990
+#: src/usr/local/www/services_captiveportal.php:992
 msgid "NAS Identifier"
 msgstr "Идентификатор Сервера сетевого доступа"
 
-#: src/usr/local/www/services_captiveportal.php:993
+#: src/usr/local/www/services_captiveportal.php:995
 msgid ""
 "Specify a NAS identifier to override the default value (pfSense.localdomain)"
 msgstr ""
 "Указать идентификатор Сервера сетевого доступа, чтоб перезаписать значение "
 "по умолчанию (pfSense.localdomain)"
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "Single dash"
 msgstr "Один символ \"тире\""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "Unformatted"
 msgstr "Неотформатированный"
 
-#: src/usr/local/www/services_captiveportal.php:997
+#: src/usr/local/www/services_captiveportal.php:999
 msgid "MAC address format"
 msgstr "Формат MAC адреса"
 
-#: src/usr/local/www/services_captiveportal.php:1000
+#: src/usr/local/www/services_captiveportal.php:1002
 #, php-format
 msgid ""
 "This option changes the MAC address format used in the whole RADIUS system. "
@@ -20908,7 +20914,7 @@ msgstr ""
 "\"тире\": 001122-334455 %1$sIETF: 00-11-22-33-44-55 %1$sCisco: 0011.2233."
 "4455 %1$sНеотформатирован: 001122334455"
 
-#: src/usr/local/www/services_captiveportal.php:1018
+#: src/usr/local/www/services_captiveportal.php:1020
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
@@ -20918,11 +20924,11 @@ msgstr ""
 "соединению, чтобы предотвратить их перехват. Имя сервера и сертификат также "
 "должны быть указаны."
 
-#: src/usr/local/www/services_captiveportal.php:1023
+#: src/usr/local/www/services_captiveportal.php:1025
 msgid "*HTTPS server name"
 msgstr "*Имя сервера HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1026
+#: src/usr/local/www/services_captiveportal.php:1028
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -20937,11 +20943,11 @@ msgstr ""
 "проверьте на клиенте, что IP разрешается к правильному IP интерфейса на "
 "pfSense."
 
-#: src/usr/local/www/services_captiveportal.php:1032
+#: src/usr/local/www/services_captiveportal.php:1034
 msgid "*SSL Certificate"
 msgstr "*SSL сертификат"
 
-#: src/usr/local/www/services_captiveportal.php:1035
+#: src/usr/local/www/services_captiveportal.php:1037
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
@@ -20950,11 +20956,11 @@ msgstr ""
 "Если не определён ни один сертификат, его можно указать здесь: %1$sСистема  "
 "&gt; Менеджер Сертификатов%2$s"
 
-#: src/usr/local/www/services_captiveportal.php:1039
+#: src/usr/local/www/services_captiveportal.php:1041
 msgid "HTTPS Forwards"
 msgstr "Перенаправление HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1042
+#: src/usr/local/www/services_captiveportal.php:1044
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -20970,15 +20976,15 @@ msgstr ""
 "чтобы получить перенаправление к порталу перехвата. Если включён логин к "
 "HTTPS, пользователи будут перенаправлены к странице логина HTTPS."
 
-#: src/usr/local/www/services_captiveportal.php:1049
+#: src/usr/local/www/services_captiveportal.php:1051
 msgid "HTML Page Contents"
 msgstr "Содержание страницы HTML"
 
-#: src/usr/local/www/services_captiveportal.php:1054
+#: src/usr/local/www/services_captiveportal.php:1056
 msgid "Portal page contents"
 msgstr "Содержание страницы портала"
 
-#: src/usr/local/www/services_captiveportal.php:1057
+#: src/usr/local/www/services_captiveportal.php:1059
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -21023,21 +21029,21 @@ msgstr ""
 "&quot;accept&quot; type=&quot;submit&quot; value="
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 
-#: src/usr/local/www/services_captiveportal.php:1081
+#: src/usr/local/www/services_captiveportal.php:1083
 msgid "Current Portal Page"
 msgstr "Текущая Страницу Портала"
 
-#: src/usr/local/www/services_captiveportal.php:1098
-#: src/usr/local/www/services_captiveportal.php:1132
-#: src/usr/local/www/services_captiveportal.php:1164
+#: src/usr/local/www/services_captiveportal.php:1100
+#: src/usr/local/www/services_captiveportal.php:1134
+#: src/usr/local/www/services_captiveportal.php:1166
 msgid "Restore Default Page"
 msgstr "Восстановить Страницу по Умолчанию"
 
-#: src/usr/local/www/services_captiveportal.php:1107
+#: src/usr/local/www/services_captiveportal.php:1109
 msgid "Auth error page contents"
 msgstr "Содержание страницы ошибок аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:1110
+#: src/usr/local/www/services_captiveportal.php:1112
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -21049,15 +21055,15 @@ msgstr ""
 "\"$PORTAL_MESSAGE$\",  которые будут заменены ошибками или ответными "
 "сообщениями от сервера РАДИУС. "
 
-#: src/usr/local/www/services_captiveportal.php:1115
+#: src/usr/local/www/services_captiveportal.php:1117
 msgid "Current Auth Error Page"
 msgstr "Текущая Страница Ошибок Аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:1141
+#: src/usr/local/www/services_captiveportal.php:1143
 msgid "Logout page contents"
 msgstr "Содержание страницы Выхода"
 
-#: src/usr/local/www/services_captiveportal.php:1144
+#: src/usr/local/www/services_captiveportal.php:1146
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
@@ -21065,11 +21071,11 @@ msgstr ""
 "Содержание загруженного файла HTML/PHP отображается при успешной "
 "аутентификации, если включено выскакивающее окно выхода."
 
-#: src/usr/local/www/services_captiveportal.php:1147
+#: src/usr/local/www/services_captiveportal.php:1149
 msgid "Current Logout Page"
 msgstr "Текущая Страница Выхода"
 
-#: src/usr/local/www/services_captiveportal.php:1180
+#: src/usr/local/www/services_captiveportal.php:1182
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -21293,8 +21299,8 @@ msgid "Allowed IP address"
 msgstr "Разрешенные IP адреса"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:89
-#: src/usr/local/www/services_dhcp.php:886
-#: src/usr/local/www/services_dhcp.php:914
+#: src/usr/local/www/services_dhcp.php:898
+#: src/usr/local/www/services_dhcp.php:926
 msgid "Subnet mask"
 msgstr "Маска подсети"
 
@@ -22301,7 +22307,7 @@ msgstr ""
 msgid "IP address or host type must be an IP address or host name."
 msgstr "IP-адрес или тип хоста должны быть IP-адресом или именем хоста."
 
-#: src/usr/local/www/services_dhcp.php:417
+#: src/usr/local/www/services_dhcp.php:420
 #: src/usr/local/www/services_dhcpv6.php:374
 #, php-format
 msgid ""
@@ -22311,7 +22317,7 @@ msgstr ""
 "Перед включением DHCP-сервера на интерфейсе %s должна быть отключена DHCP-"
 "Трасляция."
 
-#: src/usr/local/www/services_dhcp.php:423
+#: src/usr/local/www/services_dhcp.php:431
 msgid ""
 "Disable DHCP Registration features in DNS Forwarder before disabling DHCP "
 "Server."
@@ -22319,7 +22325,7 @@ msgstr ""
 "Отключите функции регистрации DHCP в DNS Forwarder перед отключением DHCP-"
 "сервера."
 
-#: src/usr/local/www/services_dhcp.php:426
+#: src/usr/local/www/services_dhcp.php:437
 msgid ""
 "Disable DHCP Registration features in DNS Resolver before disabling DHCP "
 "Server."
@@ -22327,24 +22333,24 @@ msgstr ""
 "Перед отключением сервера DHCP отключите функции регистрации DHCP в DNS "
 "Resolver."
 
-#: src/usr/local/www/services_dhcp.php:434
+#: src/usr/local/www/services_dhcp.php:446
 #: src/usr/local/www/services_dhcpv6.php:391
 msgid "The range is invalid (first element higher than second element)."
 msgstr "Недопустимый диапазон (первый элемент больше второго)."
 
-#: src/usr/local/www/services_dhcp.php:439
+#: src/usr/local/www/services_dhcp.php:451
 #: src/usr/local/www/services_dhcpv6.php:386
 msgid "The specified range lies outside of the current subnet."
 msgstr "Указанный диапазон находится вне текущей подсети."
 
-#: src/usr/local/www/services_dhcp.php:449
+#: src/usr/local/www/services_dhcp.php:461
 msgid ""
 "The specified range must not be within the DHCP range for this interface."
 msgstr ""
 "Указанный диапазон не должен быть в пределах диапазона DHCP для данного "
 "интерфейса."
 
-#: src/usr/local/www/services_dhcp.php:462
+#: src/usr/local/www/services_dhcp.php:474
 msgid ""
 "The specified range must not be within the range configured on a DHCP pool "
 "for this interface."
@@ -22352,7 +22358,7 @@ msgstr ""
 "Указанный диапазон не должен быть в пределах диапазона, указанного для пула "
 "DHCP pool  для данного интерфейса."
 
-#: src/usr/local/www/services_dhcp.php:473
+#: src/usr/local/www/services_dhcp.php:485
 #: src/usr/local/www/services_dhcpv6.php:407
 #, php-format
 msgid "The DHCP range cannot overlap any static DHCP mappings."
@@ -22360,33 +22366,33 @@ msgstr ""
 "Диапазон DHCP не может пересекаться ни с одним статическим DHCP "
 "соответствием."
 
-#: src/usr/local/www/services_dhcp.php:714
+#: src/usr/local/www/services_dhcp.php:726
 #: src/usr/local/www/status_dhcp_leases.php:496
 msgid "Pool Start"
 msgstr "Начало пула"
 
-#: src/usr/local/www/services_dhcp.php:715
+#: src/usr/local/www/services_dhcp.php:727
 #: src/usr/local/www/status_dhcp_leases.php:497
 msgid "Pool End"
 msgstr "Конец пула"
 
-#: src/usr/local/www/services_dhcp.php:772
+#: src/usr/local/www/services_dhcp.php:784
 #: src/usr/local/www/services_dhcpv6.php:527
 msgid "The static mapping configuration has been changed."
 msgstr "Настройки статического соответствия изменены."
 
-#: src/usr/local/www/services_dhcp.php:807
+#: src/usr/local/www/services_dhcp.php:819
 #, php-format
 msgid "%1$s has a CIDR mask of %2$s, which does not contain enough addresses."
 msgstr ""
 "%1$s имеет маску CIDR %2$s, которая не содержит достаточное количество "
 "адресов."
 
-#: src/usr/local/www/services_dhcp.php:809
+#: src/usr/local/www/services_dhcp.php:821
 msgid "This system has no interfaces configured with a static IPv4 address."
 msgstr "У системы не настроены интерфейсы со статическими IPv4 адресами."
 
-#: src/usr/local/www/services_dhcp.php:811
+#: src/usr/local/www/services_dhcp.php:823
 msgid ""
 "The DHCP Server requires a static IPv4 subnet large enough to serve "
 "addresses to clients."
@@ -22394,7 +22400,7 @@ msgstr ""
 "Серверу DHCP требуется статическая IPv4 подсеть, достаточно большая для "
 "того, чтобы выдавать адреса клиентам."
 
-#: src/usr/local/www/services_dhcp.php:827
+#: src/usr/local/www/services_dhcp.php:839
 msgid ""
 "DHCP Relay is currently enabled. DHCP Server canot be enabled while the DHCP "
 "Relay is enabled on any interface."
@@ -22402,12 +22408,12 @@ msgstr ""
 "DHCP Релей  в текущий момент активирован. Сервер DHCP не может быть включён "
 "до тех пор, пока включён DHCP Релей хотя бы на одном интерфейсе."
 
-#: src/usr/local/www/services_dhcp.php:834
+#: src/usr/local/www/services_dhcp.php:846
 #, php-format
 msgid "Enable DHCP server on %s interface"
 msgstr "Включить Сервер DHCP на интерфейсе %s"
 
-#: src/usr/local/www/services_dhcp.php:839
+#: src/usr/local/www/services_dhcp.php:851
 msgid ""
 "Editing pool-specific options. To return to the Interface, click its tab "
 "above."
@@ -22415,19 +22421,19 @@ msgstr ""
 "Редактирование опций, специфических для пула. Чтобы вернуться к интерфейсу, "
 "нажмите на вкладку выше."
 
-#: src/usr/local/www/services_dhcp.php:844
+#: src/usr/local/www/services_dhcp.php:856
 msgid "BOOTP"
 msgstr "BOOTP"
 
-#: src/usr/local/www/services_dhcp.php:851
+#: src/usr/local/www/services_dhcp.php:863
 msgid "Deny unknown clients"
 msgstr "Отклонить неизвестных клиентов"
 
-#: src/usr/local/www/services_dhcp.php:858
+#: src/usr/local/www/services_dhcp.php:870
 msgid "Ignore denied clients"
 msgstr "Игнорировать неизвестных клиентов"
 
-#: src/usr/local/www/services_dhcp.php:861
+#: src/usr/local/www/services_dhcp.php:873
 msgid ""
 "This option is not compatible with failover and cannot be enabled when a "
 "Failover Peer IP address is configured."
@@ -22435,11 +22441,11 @@ msgstr ""
 "Данная опция несовместима с аварийным переключением и не может быть "
 "активирована, если указан IP адрес Узла Аварийного переключения."
 
-#: src/usr/local/www/services_dhcp.php:865
+#: src/usr/local/www/services_dhcp.php:877
 msgid "Ignore client identifiers"
 msgstr "Игнорировать  идентификаторы клиента"
 
-#: src/usr/local/www/services_dhcp.php:868
+#: src/usr/local/www/services_dhcp.php:880
 msgid ""
 "This option may be useful when a client can dual boot using different client "
 "identifiers but the same hardware (MAC) address.  Note that the resulting "
@@ -22450,32 +22456,32 @@ msgstr ""
 "физическом (МАС) адресе. Обратите внимание, что данное поведение сервера "
 "нарушает официальную спецификацию DHCP."
 
-#: src/usr/local/www/services_dhcp.php:874
+#: src/usr/local/www/services_dhcp.php:886
 msgid "Pool Description"
 msgstr "Описание Пула"
 
-#: src/usr/local/www/services_dhcp.php:894
+#: src/usr/local/www/services_dhcp.php:906
 msgid "In-use DHCP Pool Ranges:"
 msgstr "Используемые Диапазоны Пулов DHCP:"
 
-#: src/usr/local/www/services_dhcp.php:907
+#: src/usr/local/www/services_dhcp.php:919
 msgid "Available range"
 msgstr "Доступный диапазон"
 
-#: src/usr/local/www/services_dhcp.php:920
+#: src/usr/local/www/services_dhcp.php:932
 #: src/usr/local/www/services_dhcpv6.php:660
 msgid "*Range"
 msgstr "*Диапазон"
 
-#: src/usr/local/www/services_dhcp.php:941
+#: src/usr/local/www/services_dhcp.php:953
 msgid "Additional Pools"
 msgstr "Дополнительные Пулы"
 
-#: src/usr/local/www/services_dhcp.php:945
+#: src/usr/local/www/services_dhcp.php:957
 msgid "Add pool"
 msgstr "Добавить пул"
 
-#: src/usr/local/www/services_dhcp.php:954
+#: src/usr/local/www/services_dhcp.php:966
 msgid ""
 "If additional pools of addresses are needed inside of this subnet outside "
 "the above Range, they may be specified here."
@@ -22483,17 +22489,17 @@ msgstr ""
 "Если дополнительные пулы адресов необходимы внутри данной подсети, но вне "
 "пределов указанного выше Диапазона, они могут быть заданы здесь."
 
-#: src/usr/local/www/services_dhcp.php:970
+#: src/usr/local/www/services_dhcp.php:982
 #: src/usr/local/www/vpn_openvpn_csc.php:554
 msgid "WINS servers"
 msgstr "WINS сервер"
 
-#: src/usr/local/www/services_dhcp.php:985
+#: src/usr/local/www/services_dhcp.php:997
 #: src/usr/local/www/status_interfaces.php:152
 msgid "DNS servers"
 msgstr "DNS сервер"
 
-#: src/usr/local/www/services_dhcp.php:988
+#: src/usr/local/www/services_dhcp.php:1000
 msgid ""
 "Leave blank to use the system default DNS servers: this interface's IP if "
 "DNS Forwarder or Resolver is enabled, otherwise the servers configured on "
@@ -22504,11 +22510,11 @@ msgstr ""
 "резольвер, иначе это будут серверы, настроенные на странице Система / Общие "
 "Настройки."
 
-#: src/usr/local/www/services_dhcp.php:993
+#: src/usr/local/www/services_dhcp.php:1005
 msgid "Other Options"
 msgstr "Другие Опции"
 
-#: src/usr/local/www/services_dhcp.php:1001
+#: src/usr/local/www/services_dhcp.php:1013
 msgid ""
 "The default is to use the IP on this interface of the firewall as the "
 "gateway. Specify an alternate gateway here if this is not the correct "
@@ -22518,7 +22524,7 @@ msgstr ""
 "качестве шлюза. Укажите альтернативный шлюз, если этот IP не является "
 "правильным шлюзом для сети. Укажите \"none\", если не хотите назначить шлюз."
 
-#: src/usr/local/www/services_dhcp.php:1005
+#: src/usr/local/www/services_dhcp.php:1017
 #: src/usr/local/www/services_dhcp_edit.php:547
 #: src/usr/local/www/services_dhcpv6.php:726
 #: src/usr/local/www/services_dyndns_edit.php:97
@@ -22526,7 +22532,7 @@ msgstr ""
 msgid "Domain name"
 msgstr "Имя домена"
 
-#: src/usr/local/www/services_dhcp.php:1008
+#: src/usr/local/www/services_dhcp.php:1020
 msgid ""
 "The default is to use the domain name of this system as the default domain "
 "name provided by DHCP. An alternate domain name may be specified here."
@@ -22535,14 +22541,14 @@ msgstr ""
 "по умолчанию, сообщаемое по протоколу DHCP. Альтернативное доменное имя "
 "можно указать здесь."
 
-#: src/usr/local/www/services_dhcp.php:1012
+#: src/usr/local/www/services_dhcp.php:1024
 #: src/usr/local/www/services_dhcp_edit.php:554
 #: src/usr/local/www/services_dhcpv6.php:733
 #: src/usr/local/www/services_router_advertisements.php:455
 msgid "Domain search list"
 msgstr "Список поиска доменов"
 
-#: src/usr/local/www/services_dhcp.php:1015
+#: src/usr/local/www/services_dhcp.php:1027
 #: src/usr/local/www/services_dhcp_edit.php:557
 #: src/usr/local/www/services_dhcpv6.php:736
 msgid ""
@@ -22552,12 +22558,12 @@ msgstr ""
 "Сервер DHCP опционально может сообщить список поиска доменов. Используйте "
 "двоеточие в качестве разделителя."
 
-#: src/usr/local/www/services_dhcp.php:1019
+#: src/usr/local/www/services_dhcp.php:1031
 #: src/usr/local/www/services_dhcpv6.php:740
 msgid "Default lease time"
 msgstr "Время аренды по умолчанию"
 
-#: src/usr/local/www/services_dhcp.php:1022
+#: src/usr/local/www/services_dhcp.php:1034
 msgid ""
 "This is used for clients that do not ask for a specific expiration time. The "
 "default is 7200 seconds."
@@ -22565,11 +22571,11 @@ msgstr ""
 "Это используется для клиентов, которые не запрашивают определённый срок "
 "аренды. По умолчанию - 7200 секунд."
 
-#: src/usr/local/www/services_dhcp.php:1026
+#: src/usr/local/www/services_dhcp.php:1038
 msgid "Maximum lease time"
 msgstr "Максимальное время аренды"
 
-#: src/usr/local/www/services_dhcp.php:1029
+#: src/usr/local/www/services_dhcp.php:1041
 #: src/usr/local/www/services_dhcp_edit.php:571
 msgid ""
 "This is the maximum lease time for clients that ask for a specific "
@@ -22578,11 +22584,11 @@ msgstr ""
 "Это максимальное время аренды для клиентов, которые запрашивают определённый "
 "срок аренды.  По умолчанию - 86400 секунд."
 
-#: src/usr/local/www/services_dhcp.php:1034
+#: src/usr/local/www/services_dhcp.php:1046
 msgid "Failover peer IP"
 msgstr "IP узла аварийного переключения"
 
-#: src/usr/local/www/services_dhcp.php:1037
+#: src/usr/local/www/services_dhcp.php:1049
 msgid ""
 "Leave blank to disable. Enter the interface IP address of the other machine. "
 "Machines must be using CARP. Interface's advskew determines whether the "
@@ -22594,13 +22600,13 @@ msgstr ""
 "DHCPd процесс Первичным или Вторичным. Удостоверьтесь, что  advskew  одной "
 "машины &lt; 20 (а другой &gt; 20)."
 
-#: src/usr/local/www/services_dhcp.php:1044
-#: src/usr/local/www/services_dhcp.php:1423
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:98
+#: src/usr/local/www/services_dhcp.php:1056
+#: src/usr/local/www/services_dhcp.php:1435
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:100
 msgid "Static ARP"
 msgstr "Статический ARP"
 
-#: src/usr/local/www/services_dhcp.php:1047
+#: src/usr/local/www/services_dhcp.php:1059
 msgid ""
 "This option persists even if DHCP server is disabled. Only the machines "
 "listed below will be able to communicate with the firewall on this interface."
@@ -22610,11 +22616,11 @@ msgstr ""
 "указанные ниже, смогут коммуницировать с межсетевым экраном на данной "
 "интерфейсе."
 
-#: src/usr/local/www/services_dhcp.php:1051
+#: src/usr/local/www/services_dhcp.php:1063
 msgid "Time format change"
 msgstr "Изменить формат времени"
 
-#: src/usr/local/www/services_dhcp.php:1054
+#: src/usr/local/www/services_dhcp.php:1066
 msgid ""
 "By default DHCP leases are displayed in UTC time.\tBy checking this box DHCP "
 "lease time will be displayed in local time and set to the time zone selected."
@@ -22625,11 +22631,11 @@ msgstr ""
 "и устанавливаться в выбранной часовой зоне. Это будет использоваться для "
 "времени всех аренд интерфейсов DHCP."
 
-#: src/usr/local/www/services_dhcp.php:1058
+#: src/usr/local/www/services_dhcp.php:1070
 msgid "Statistics graphs"
 msgstr "Статистические графики"
 
-#: src/usr/local/www/services_dhcp.php:1061
+#: src/usr/local/www/services_dhcp.php:1073
 msgid ""
 "Enable this to add DHCP leases statistics to the RRD graphs. Disabled by "
 "default."
@@ -22637,13 +22643,13 @@ msgstr ""
 "Включить это, чтобы добавить статистику DHCP аренд к графикам RRD. Отключено "
 "по умолчанию."
 
-#: src/usr/local/www/services_dhcp.php:1088
+#: src/usr/local/www/services_dhcp.php:1100
 #: src/usr/local/www/services_dhcp_edit.php:603
 #: src/usr/local/www/services_dhcpv6.php:786
 msgid "DDNS Domain"
 msgstr "Домен DDNS"
 
-#: src/usr/local/www/services_dhcp.php:1091
+#: src/usr/local/www/services_dhcp.php:1103
 #, php-format
 msgid ""
 "Leave blank to disable dynamic DNS registration.%1$sEnter the dynamic DNS "
@@ -22653,30 +22659,30 @@ msgstr ""
 "домен динамического DNS, который будет использоваться для регистрации имён "
 "клиентов в DNS сервере."
 
-#: src/usr/local/www/services_dhcp.php:1096
+#: src/usr/local/www/services_dhcp.php:1108
 #: src/usr/local/www/services_dhcpv6.php:793
 msgid "DDNS Hostnames"
 msgstr "Имена хостов DDNS"
 
-#: src/usr/local/www/services_dhcp.php:1099
+#: src/usr/local/www/services_dhcp.php:1111
 #: src/usr/local/www/services_dhcpv6.php:796
 msgid "Default registers host name option supplied by DHCP client."
 msgstr ""
 "По умолчанию регистрирует опции имён хостов, предоставленные клиентом DHCP."
 
-#: src/usr/local/www/services_dhcp.php:1103
+#: src/usr/local/www/services_dhcp.php:1115
 msgid "Primary DDNS address"
 msgstr "Основной адрес DDNS"
 
-#: src/usr/local/www/services_dhcp.php:1106
+#: src/usr/local/www/services_dhcp.php:1118
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr "IP-адрес основного DNS сервера для динамического имени домена."
 
-#: src/usr/local/www/services_dhcp.php:1110
+#: src/usr/local/www/services_dhcp.php:1122
 msgid "DNS Domain key"
 msgstr "Ключ Домена DNS"
 
-#: src/usr/local/www/services_dhcp.php:1113
+#: src/usr/local/www/services_dhcp.php:1125
 msgid ""
 "Dynamic DNS domain key name which will be used to register client names in "
 "the DNS server."
@@ -22684,11 +22690,11 @@ msgstr ""
 "Имя ключа домена динамического DNS, которое будет использоваться для "
 "регистрации имен клиентов на DNS-сервере."
 
-#: src/usr/local/www/services_dhcp.php:1117
+#: src/usr/local/www/services_dhcp.php:1129
 msgid "DNS Domain key secret"
 msgstr "Секретный ключ Домена DNS"
 
-#: src/usr/local/www/services_dhcp.php:1120
+#: src/usr/local/www/services_dhcp.php:1132
 msgid ""
 "Dynamic DNS domain key secret (HMAC-MD5) which will be used to register "
 "client names in the DNS server."
@@ -22696,15 +22702,15 @@ msgstr ""
 "Секретный ключ домена (HMAC-MD5) динамического DNS , который будет "
 "использоваться для регистрации имен клиентов на DNS-сервере."
 
-#: src/usr/local/www/services_dhcp.php:1133
+#: src/usr/local/www/services_dhcp.php:1145
 msgid "MAC address control"
 msgstr "Контроль MAC адреса"
 
-#: src/usr/local/www/services_dhcp.php:1139
+#: src/usr/local/www/services_dhcp.php:1151
 msgid "MAC Allow"
 msgstr "Разрешить MAC адреса"
 
-#: src/usr/local/www/services_dhcp.php:1142
+#: src/usr/local/www/services_dhcp.php:1154
 msgid ""
 "List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:"
 "00:00,01:E5:FF"
@@ -22712,11 +22718,11 @@ msgstr ""
 "Перечислите частичные MAC-адреса которые будут разрешены, разделитель "
 "запятая, без пробелов, например.: 00:00:00,01:E5:FF"
 
-#: src/usr/local/www/services_dhcp.php:1146
+#: src/usr/local/www/services_dhcp.php:1158
 msgid "MAC Deny"
 msgstr "Запртить MAC адреса"
 
-#: src/usr/local/www/services_dhcp.php:1149
+#: src/usr/local/www/services_dhcp.php:1161
 msgid ""
 "List of partial MAC addresses to deny access, comma separated, no spaces, e."
 "g.: 00:00:00,01:E5:FF"
@@ -22724,30 +22730,30 @@ msgstr ""
 "Перечислите частичные MAC-адреса которые будут запрещены, разделитель "
 "запятая, без пробелов, например.: 00:00:00,01:E5:FF"
 
-#: src/usr/local/www/services_dhcp.php:1168
+#: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:857
 #: src/usr/local/www/vpn_openvpn_server.php:1220
 msgid "NTP Server 1"
 msgstr "Сервер NTP 1"
 
-#: src/usr/local/www/services_dhcp.php:1175
+#: src/usr/local/www/services_dhcp.php:1187
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:865
 #: src/usr/local/www/vpn_openvpn_server.php:1227
 msgid "NTP Server 2"
 msgstr "Сервер NTP 2"
 
-#: src/usr/local/www/services_dhcp.php:1191
+#: src/usr/local/www/services_dhcp.php:1203
 msgid "TFTP"
 msgstr "TFTP"
 
-#: src/usr/local/www/services_dhcp.php:1197
+#: src/usr/local/www/services_dhcp.php:1209
 #: src/usr/local/www/services_dhcp_edit.php:681
 msgid "TFTP Server"
 msgstr "Сервер TFTP"
 
-#: src/usr/local/www/services_dhcp.php:1200
+#: src/usr/local/www/services_dhcp.php:1212
 msgid ""
 "Leave blank to disable. Enter a valid IP address, hostname or URL for the "
 "TFTP server."
@@ -22755,16 +22761,16 @@ msgstr ""
 "Оставьте пустым, чтобы отключить. Введите допустимый IP-адрес, имя хоста или "
 "URL-адрес для TFTP-сервера."
 
-#: src/usr/local/www/services_dhcp.php:1213
+#: src/usr/local/www/services_dhcp.php:1225
 #: src/usr/local/www/services_dhcpv6.php:885
 msgid "LDAP"
 msgstr "LDAP"
 
-#: src/usr/local/www/services_dhcp.php:1219
+#: src/usr/local/www/services_dhcp.php:1231
 msgid "LDAP Server URI"
 msgstr "URI LDAP Сервера"
 
-#: src/usr/local/www/services_dhcp.php:1222
+#: src/usr/local/www/services_dhcp.php:1234
 msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
@@ -22772,31 +22778,31 @@ msgstr ""
 "Оставьте пустым, чтобы отключить. Введите полный URI для LDAP-сервера в "
 "форме ldap: //ldap.example.com/dc=example,dc=com"
 
-#: src/usr/local/www/services_dhcp.php:1235
+#: src/usr/local/www/services_dhcp.php:1247
 msgid "Network Booting"
 msgstr "Сетевая Загрузка"
 
-#: src/usr/local/www/services_dhcp.php:1248
+#: src/usr/local/www/services_dhcp.php:1260
 msgid "Next Server"
 msgstr "Следующий Сервер"
 
-#: src/usr/local/www/services_dhcp.php:1251
+#: src/usr/local/www/services_dhcp.php:1263
 msgid "Enter the IP address of the next server"
 msgstr "Введите IP-адрес следующего сервера"
 
-#: src/usr/local/www/services_dhcp.php:1255
+#: src/usr/local/www/services_dhcp.php:1267
 msgid "Default BIOS file name"
 msgstr "Имя файла BIOS по умолчанию"
 
-#: src/usr/local/www/services_dhcp.php:1262
+#: src/usr/local/www/services_dhcp.php:1274
 msgid "UEFI 32 bit file name"
 msgstr "Имя файла UEFI в формате 32 бита"
 
-#: src/usr/local/www/services_dhcp.php:1269
+#: src/usr/local/www/services_dhcp.php:1281
 msgid "UEFI 64 bit file name"
 msgstr "Имя файла UEFI в формате 64 бита"
 
-#: src/usr/local/www/services_dhcp.php:1272
+#: src/usr/local/www/services_dhcp.php:1284
 msgid ""
 "Both a filename and a boot server must be configured for this to work! All "
 "three filenames and a configured boot server are necessary for UEFI to work! "
@@ -22806,24 +22812,24 @@ msgstr ""
 "Файла и  Загрузочный Сервер! Для работы UEFI необходимы все три имени файла "
 "и настроенный загрузочный сервер!"
 
-#: src/usr/local/www/services_dhcp.php:1277
+#: src/usr/local/www/services_dhcp.php:1289
 #: src/usr/local/www/services_dhcpv6_edit.php:250
 msgid "Root path"
 msgstr "Корневой путь"
 
-#: src/usr/local/www/services_dhcp.php:1280
+#: src/usr/local/www/services_dhcp.php:1292
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
 msgstr ""
 "формат-строки: iscsi: (имя_сервера) :( протокол) :( порт) :( LUN): "
 "целевое_имя"
 
-#: src/usr/local/www/services_dhcp.php:1293
-#: src/usr/local/www/services_dhcp.php:1299
+#: src/usr/local/www/services_dhcp.php:1305
+#: src/usr/local/www/services_dhcp.php:1311
 #: src/usr/local/www/services_dhcpv6.php:934
 msgid "Additional BOOTP/DHCP Options"
 msgstr "Дополнительные BOOTP/DHCP Опции"
 
-#: src/usr/local/www/services_dhcp.php:1304
+#: src/usr/local/www/services_dhcp.php:1316
 msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
@@ -22831,77 +22837,77 @@ msgstr ""
 "Введите номер опции DHCP и значение для каждого элемента для включения в "
 "информацию аренды DHCP."
 
-#: src/usr/local/www/services_dhcp.php:1305
+#: src/usr/local/www/services_dhcp.php:1317
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
 msgstr ""
 "Список доступных опций можно найти на этой странице. %1$s URL%2$s.%3$s"
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "Text"
 msgstr "Текст"
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "String"
 msgstr "Строка"
 
-#: src/usr/local/www/services_dhcp.php:1313
+#: src/usr/local/www/services_dhcp.php:1325
 msgid "Boolean"
 msgstr "Логический"
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 8-bit integer"
 msgstr "Беззнаковый 8-разрядный целочисленный "
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 16-bit integer"
 msgstr "Беззнаковый 16-разрядный целочисленный "
 
-#: src/usr/local/www/services_dhcp.php:1314
+#: src/usr/local/www/services_dhcp.php:1326
 msgid "Unsigned 32-bit integer"
 msgstr "Беззнаковый 32-разрядный целочисленный "
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 8-bit integer"
 msgstr "Подписанный 8-разрядный целочисленный"
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 16-bit integer"
 msgstr "Подписанный 16-разрядный целочисленный"
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "Signed 32-bit integer"
 msgstr "Подписанный 32-разрядный целочисленный"
 
-#: src/usr/local/www/services_dhcp.php:1315
+#: src/usr/local/www/services_dhcp.php:1327
 msgid "IP address or host"
 msgstr "IP-адрес или хост"
 
-#: src/usr/local/www/services_dhcp.php:1328
+#: src/usr/local/www/services_dhcp.php:1340
 msgid "Option"
 msgstr "Опция "
 
-#: src/usr/local/www/services_dhcp.php:1336
+#: src/usr/local/www/services_dhcp.php:1348
 #: src/usr/local/www/services_dhcpv6.php:962
 msgid "Number"
 msgstr "Число"
 
-#: src/usr/local/www/services_dhcp.php:1418
+#: src/usr/local/www/services_dhcp.php:1430
 msgid "DHCP Static Mappings for this Interface"
 msgstr "Статическая запись DHCP для данного интерфейса"
 
-#: src/usr/local/www/services_dhcp.php:1428
+#: src/usr/local/www/services_dhcp.php:1440
 #: src/usr/local/www/status_dhcp_leases.php:358
 msgid "Client Id"
 msgstr "Идентификатор клиента"
 
-#: src/usr/local/www/services_dhcp.php:1474
+#: src/usr/local/www/services_dhcp.php:1486
 #: src/usr/local/www/services_dhcpv6.php:1057
 #: src/usr/local/www/status_dhcp_leases.php:465
 msgid "Edit static mapping"
 msgstr "Редактировать статическую привязку"
 
-#: src/usr/local/www/services_dhcp.php:1475
+#: src/usr/local/www/services_dhcp.php:1487
 #: src/usr/local/www/services_dhcpv6.php:1058
 msgid "Delete static mapping"
 msgstr "Удалить статическую привязку"
@@ -22919,7 +22925,7 @@ msgstr "Имя хоста не может заканчиваться дефис�
 #: src/usr/local/www/services_dhcpv6_edit.php:113
 #: src/usr/local/www/services_dnsmasq_edit.php:70
 #: src/usr/local/www/services_unbound_host_edit.php:81
-#: src/usr/local/www/system.php:193
+#: src/usr/local/www/system.php:198
 msgid ""
 "A valid hostname is specified, but the domain name part should be omitted"
 msgstr "Допустимое имя хоста указано, но доменная часть должна быть опущена"
@@ -23087,7 +23093,7 @@ msgstr "WINS Серверы"
 #: src/usr/local/www/services_dhcp_edit.php:500
 #: src/usr/local/www/services_dhcpv6.php:709
 #: src/usr/local/www/services_pppoe_edit.php:350
-#: src/usr/local/www/system.php:477 src/usr/local/www/vpn_ipsec_mobile.php:607
+#: src/usr/local/www/system.php:482 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:462
 msgid "DNS Servers"
 msgstr "DNS Серверы"
@@ -23807,7 +23813,7 @@ msgstr "Переопределения хоста"
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/services_unbound_host_edit.php:273
-#: src/usr/local/www/system.php:152
+#: src/usr/local/www/system.php:157
 msgid "Domain"
 msgstr "Домен"
 
@@ -23906,7 +23912,7 @@ msgstr "Опции Переопределения Домена"
 #: src/usr/local/www/services_dnsmasq_edit.php:210
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:121
 #: src/usr/local/www/services_unbound_host_edit.php:204
-#: src/usr/local/www/system.php:446
+#: src/usr/local/www/system.php:451
 msgid "*Domain"
 msgstr "*Домен"
 
@@ -23947,7 +23953,7 @@ msgstr ""
 "Оставьте поле пустым, если только DNS-сервер не доступен через туннель VPN."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
-#: src/usr/local/www/system.php:190
+#: src/usr/local/www/system.php:195
 msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
@@ -26913,7 +26919,7 @@ msgstr "Конец"
 #: src/usr/local/www/status_gateways.php:147
 #: src/usr/local/www/status_ipsec_leases.php:54
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:131
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:96
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:98
 msgid "Online"
 msgstr "В сети"
 
@@ -27048,7 +27054,7 @@ msgstr "Уровень %s"
 #: src/usr/local/www/status_gateway_groups.php:120
 #: src/usr/local/www/status_gateways.php:129
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:113
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:100
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:102
 #: src/usr/local/www/diag_smart.php:301
 msgid "Offline"
 msgstr "Не в сети"
@@ -27232,7 +27238,7 @@ msgstr "Подключение"
 
 #: src/usr/local/www/status_interfaces.php:122
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:246
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:253
 msgid "Uptime"
 msgstr "Аптайм"
 
@@ -28679,15 +28685,15 @@ msgstr ""
 "инфраструктуры),  I = IBSS (режим ad-hoc), P = конфиденциальность (WEP/TKIP/"
 "AES),  S =  Короткая преамбула,  s = Время короткого интервала."
 
-#: src/usr/local/www/system.php:121
+#: src/usr/local/www/system.php:126
 msgid "AHEAD of"
 msgstr "ВПЕРЕДИ"
 
-#: src/usr/local/www/system.php:124
+#: src/usr/local/www/system.php:129
 msgid "BEHIND"
 msgstr "ПОЗАДИ"
 
-#: src/usr/local/www/system.php:132
+#: src/usr/local/www/system.php:137
 #, php-format
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
@@ -28695,28 +28701,28 @@ msgstr[0] "(%1$s час %2$s GMT)"
 msgstr[1] "(%1$s часы %2$s GMT)"
 msgstr[2] "(%1$s часы %2$s GMT)"
 
-#: src/usr/local/www/system.php:198
+#: src/usr/local/www/system.php:203
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
 msgstr "Домен может содержать только символы a-z, 0-9, '-' и '.'."
 
-#: src/usr/local/www/system.php:211
+#: src/usr/local/www/system.php:216
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
 msgstr "Для DNS-сервера %s должен быть указан действительный IP-адрес."
 
-#: src/usr/local/www/system.php:217
+#: src/usr/local/www/system.php:222
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
 msgstr "Шлюз IPv6 «%1$s» не может быть указан для DNS-сервера IPv4 «%2$s»."
 
-#: src/usr/local/www/system.php:220
+#: src/usr/local/www/system.php:225
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
 msgstr "Шлюз IPv4 «%1$s» не может быть указан для DNS-сервера IPv6 «%2$s»."
 
-#: src/usr/local/www/system.php:233
+#: src/usr/local/www/system.php:238
 msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
@@ -28724,7 +28730,7 @@ msgstr ""
 "Каждый настроенный DNS-сервер должен иметь уникальный IP-адрес. Удалите "
 "дублированный IP-адрес."
 
-#: src/usr/local/www/system.php:245
+#: src/usr/local/www/system.php:250
 #, php-format
 msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
@@ -28733,7 +28739,7 @@ msgstr ""
 "Шлюз не может быть назначен серверу DNS '%s', который находится в "
 "непосредственно подключенной сети."
 
-#: src/usr/local/www/system.php:258
+#: src/usr/local/www/system.php:263
 msgid ""
 "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'."
 ""
@@ -28741,11 +28747,11 @@ msgstr ""
 "Имя сервера времени (NTP) может содержать только символы a-z, 0-9, '-' и '.'."
 ""
 
-#: src/usr/local/www/system.php:442
+#: src/usr/local/www/system.php:447
 msgid "Name of the firewall host, without domain part"
 msgstr "Имя хоста брандмауэра, без доменной части"
 
-#: src/usr/local/www/system.php:450
+#: src/usr/local/www/system.php:455
 msgid ""
 "Do not use 'local' as a domain name. It will cause local hosts running mDNS "
 "(avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."
@@ -28754,16 +28760,16 @@ msgstr ""
 "локальные узлы, работающие под управлением mDNS (avahi, bonjour и т. д.), Не "
 "смогут разрешать локальные узлы, на которых не работает mDNS."
 
-#: src/usr/local/www/system.php:456
+#: src/usr/local/www/system.php:461
 msgid "DNS Server Settings"
 msgstr "Настройки DNS сервера"
 
-#: src/usr/local/www/system.php:464
+#: src/usr/local/www/system.php:469
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
 "Введите IP-адреса, которые будут использоваться системой для разрешения DNS."
 
-#: src/usr/local/www/system.php:465
+#: src/usr/local/www/system.php:470
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
@@ -28771,11 +28777,11 @@ msgstr ""
 "Они также используются для службы DHCP, DNS Forwarder и DNS Resolver, когда "
 "включена пересылка DNS-запросов."
 
-#: src/usr/local/www/system.php:466
+#: src/usr/local/www/system.php:471
 msgid "Optionally select the gateway for each DNS server."
 msgstr "При необходимости выберите шлюз для каждого DNS-сервера."
 
-#: src/usr/local/www/system.php:467
+#: src/usr/local/www/system.php:472
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
@@ -28783,19 +28789,19 @@ msgstr ""
 "При использовании нескольких соединений WAN на каждый шлюз должен быть по "
 "крайней мере один уникальный DNS-сервер."
 
-#: src/usr/local/www/system.php:482
+#: src/usr/local/www/system.php:487
 msgid "DNS Server"
 msgstr "DNS Сервер"
 
-#: src/usr/local/www/system.php:523
+#: src/usr/local/www/system.php:528
 msgid "Add DNS Server"
 msgstr "Добавить DNS Сервер"
 
-#: src/usr/local/www/system.php:530
+#: src/usr/local/www/system.php:535
 msgid "DNS Server Override"
 msgstr "Переопределение DNS-сервера"
 
-#: src/usr/local/www/system.php:533
+#: src/usr/local/www/system.php:538
 #, php-format
 msgid ""
 "If this option is set, %s will use DNS servers assigned by a DHCP/PPP server "
@@ -28807,11 +28813,11 @@ msgstr ""
 "(включая DNS Forwarder/DNS Resolver). Тем не менее, они не будут назначаться "
 "клиентам DHCP."
 
-#: src/usr/local/www/system.php:540
+#: src/usr/local/www/system.php:545
 msgid "Disable DNS Forwarder"
 msgstr "Отключить DNS Forwarder"
 
-#: src/usr/local/www/system.php:543
+#: src/usr/local/www/system.php:548
 msgid ""
 "By default localhost (127.0.0.1) will be used as the first DNS server where "
 "the DNS Forwarder or DNS Resolver is enabled and set to listen on localhost, "
@@ -28824,15 +28830,15 @@ msgstr ""
 "службу DNS для выполнения поиска. При установке этого флажка localhost "
 "отсутствует в списке DNS-серверов в файле resolv.conf."
 
-#: src/usr/local/www/system.php:550
+#: src/usr/local/www/system.php:555
 msgid "Localization"
 msgstr "Локализация"
 
-#: src/usr/local/www/system.php:554
+#: src/usr/local/www/system.php:559
 msgid "*Timezone"
 msgstr "*ВременнаяЗона"
 
-#: src/usr/local/www/system.php:557
+#: src/usr/local/www/system.php:562
 #, php-format
 msgid ""
 "Select a geographic region name (Continent/Location) to determine the "
@@ -28845,11 +28851,11 @@ msgstr ""
 "зону \"Etc\" только в тех случаях, когда географические зоны неправильно "
 "обрабатывают смещение часов, необходимое для этого брандмауэра."
 
-#: src/usr/local/www/system.php:562
+#: src/usr/local/www/system.php:567
 msgid "Timeservers"
 msgstr "СерверыВремени"
 
-#: src/usr/local/www/system.php:565
+#: src/usr/local/www/system.php:570
 msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
@@ -28857,29 +28863,29 @@ msgstr ""
 "Используйте пробел для разделения нескольких узлов (требуется только один). "
 "Не забудьте настроить хотя бы один DNS-сервер, если здесь введено имя хоста!"
 
-#: src/usr/local/www/system.php:570
+#: src/usr/local/www/system.php:575
 msgid "*Language"
 msgstr "*Язык"
 
-#: src/usr/local/www/system.php:573
+#: src/usr/local/www/system.php:578
 msgid "Choose a language for the webConfigurator"
 msgstr "Выберите язык для ВебКонфигуратора"
 
-#: src/usr/local/www/system.php:577
+#: src/usr/local/www/system.php:582
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1156
+#: src/usr/local/www/system_certmanager.php:1192
 msgid "webConfigurator"
 msgstr "ВебКонфигуратор"
 
-#: src/usr/local/www/system.php:596
+#: src/usr/local/www/system.php:601
 msgid "Login hostname"
 msgstr "Логин имя хоста"
 
-#: src/usr/local/www/system.php:603
+#: src/usr/local/www/system.php:608
 msgid "Dashboard update period"
 msgstr "Период обновления панели мониторинга"
 
-#: src/usr/local/www/system.php:607
+#: src/usr/local/www/system.php:612
 msgid ""
 "Time in seconds between dashboard widget updates. Small values cause more "
 "frequent updates but increase the load on the web server. Minimum is 5 "
@@ -28889,7 +28895,7 @@ msgstr ""
 "значения вызывают более частые обновления, но увеличивают нагрузку на веб-"
 "сервер. Минимум 5 секунд, максимум 600 секунд"
 
-#: src/usr/local/www/system.php:615
+#: src/usr/local/www/system.php:620
 #: src/usr/local/www/system_user_settings.php:168
 #: src/usr/local/www/system_usermanager.php:974
 #, php-format
@@ -30696,7 +30702,7 @@ msgstr "Сервер Аутентификации %s удалён."
 #: src/usr/local/www/system_certmanager.php:238
 #: src/usr/local/www/system_certmanager.php:255
 #: src/usr/local/www/system_certmanager.php:273
-#: src/usr/local/www/system_certmanager.php:533
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:189
@@ -30830,8 +30836,8 @@ msgstr "Настройки сервера"
 
 #: src/usr/local/www/system_authservers.php:494
 #: src/usr/local/www/system_camanager.php:491
-#: src/usr/local/www/system_certmanager.php:649
-#: src/usr/local/www/system_certmanager.php:1025
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1035
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
@@ -31191,30 +31197,30 @@ msgid "Please select a valid Digest Algorithm."
 msgstr "Пожалуйста, выберите валидный Дайджест Алгоритм."
 
 #: src/usr/local/www/system_camanager.php:321
-#: src/usr/local/www/system_certmanager.php:580
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
 msgstr "Менеджер Сертификатов"
 
 #: src/usr/local/www/system_camanager.php:321
 #: src/usr/local/www/system_camanager.php:350
-#: src/usr/local/www/system_certmanager.php:598
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
 msgstr "Центры Сертификации"
 
 #: src/usr/local/www/system_camanager.php:351
 #: src/usr/local/www/system_camanager.php:367
-#: src/usr/local/www/system_certmanager.php:580
-#: src/usr/local/www/system_certmanager.php:599
-#: src/usr/local/www/system_certmanager.php:1074
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1084
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
 msgstr "Сертификаты"
 
 #: src/usr/local/www/system_camanager.php:352
-#: src/usr/local/www/system_certmanager.php:600
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
@@ -31230,37 +31236,37 @@ msgid "Internal"
 msgstr "Внутренний"
 
 #: src/usr/local/www/system_camanager.php:366
-#: src/usr/local/www/system_certmanager.php:1081
+#: src/usr/local/www/system_certmanager.php:1091
 msgid "Issuer"
 msgstr "Издатель"
 
 #: src/usr/local/www/system_camanager.php:368
-#: src/usr/local/www/system_certmanager.php:1082
+#: src/usr/local/www/system_certmanager.php:1092
 msgid "Distinguished Name"
 msgstr "Определённое Имя"
 
 #: src/usr/local/www/system_camanager.php:386
-#: src/usr/local/www/system_certmanager.php:1106
+#: src/usr/local/www/system_certmanager.php:1117
 msgid "self-signed"
 msgstr "самоподписанный"
 
 #: src/usr/local/www/system_camanager.php:388
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "external"
 msgstr "внешний"
 
 #: src/usr/local/www/system_camanager.php:420
-#: src/usr/local/www/system_certmanager.php:1147
+#: src/usr/local/www/system_certmanager.php:1183
 msgid "Valid From"
 msgstr "Валиден От"
 
 #: src/usr/local/www/system_camanager.php:420
-#: src/usr/local/www/system_certmanager.php:1147
+#: src/usr/local/www/system_certmanager.php:1183
 msgid "Valid Until"
 msgstr "Валиден До"
 
 #: src/usr/local/www/system_camanager.php:431
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1204
 msgid "IPsec Tunnel"
 msgstr "IPsec Туннель"
 
@@ -31289,7 +31295,7 @@ msgid "Create / Edit CA"
 msgstr "Создать / Редактировать Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:499
-#: src/usr/local/www/system_certmanager.php:641
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
 msgstr "*Метод"
@@ -31299,12 +31305,12 @@ msgid "Existing Certificate Authority"
 msgstr "Существующий Центр Сертификации"
 
 #: src/usr/local/www/system_camanager.php:512
-#: src/usr/local/www/system_certmanager.php:727
+#: src/usr/local/www/system_certmanager.php:735
 msgid "*Certificate data"
 msgstr "*Данные сертификата"
 
 #: src/usr/local/www/system_camanager.php:514
-#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:737
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr "Вставьте здесь сертификат в формате X.509 PEM"
 
@@ -31347,13 +31353,13 @@ msgid "*Key length (bits)"
 msgstr "*Длина ключа (в битах)"
 
 #: src/usr/local/www/system_camanager.php:565
-#: src/usr/local/www/system_certmanager.php:775
-#: src/usr/local/www/system_certmanager.php:918
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:928
 msgid "*Digest Algorithm"
 msgstr "*Алгоритм Дайджеста"
 
 #: src/usr/local/www/system_camanager.php:568
-#: src/usr/local/www/system_certmanager.php:778
+#: src/usr/local/www/system_certmanager.php:786
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
@@ -31362,49 +31368,49 @@ msgstr ""
 "сильного, чем SHA1."
 
 #: src/usr/local/www/system_camanager.php:573
-#: src/usr/local/www/system_certmanager.php:791
+#: src/usr/local/www/system_certmanager.php:799
 msgid "*Lifetime (days)"
 msgstr "*Время жизни (в днях)"
 
 #: src/usr/local/www/system_camanager.php:580
-#: src/usr/local/www/system_certmanager.php:798
-#: src/usr/local/www/system_certmanager.php:926
+#: src/usr/local/www/system_certmanager.php:806
+#: src/usr/local/www/system_certmanager.php:936
 msgid "*Country Code"
 msgstr "*Код Страны"
 
 #: src/usr/local/www/system_camanager.php:587
-#: src/usr/local/www/system_certmanager.php:805
-#: src/usr/local/www/system_certmanager.php:933
+#: src/usr/local/www/system_certmanager.php:813
+#: src/usr/local/www/system_certmanager.php:943
 msgid "*State or Province"
 msgstr "*Штат или Провинция"
 
 #: src/usr/local/www/system_camanager.php:595
-#: src/usr/local/www/system_certmanager.php:813
-#: src/usr/local/www/system_certmanager.php:941
+#: src/usr/local/www/system_certmanager.php:821
+#: src/usr/local/www/system_certmanager.php:951
 msgid "*City"
 msgstr "*Город"
 
 #: src/usr/local/www/system_camanager.php:603
-#: src/usr/local/www/system_certmanager.php:821
-#: src/usr/local/www/system_certmanager.php:949
+#: src/usr/local/www/system_certmanager.php:829
+#: src/usr/local/www/system_certmanager.php:959
 msgid "*Organization"
 msgstr "*Организация"
 
 #: src/usr/local/www/system_camanager.php:611
-#: src/usr/local/www/system_certmanager.php:829
-#: src/usr/local/www/system_certmanager.php:957
+#: src/usr/local/www/system_certmanager.php:837
+#: src/usr/local/www/system_certmanager.php:967
 msgid "Organizational Unit"
 msgstr "Организационное подразделение"
 
 #: src/usr/local/www/system_camanager.php:619
-#: src/usr/local/www/system_certmanager.php:837
-#: src/usr/local/www/system_certmanager.php:965
+#: src/usr/local/www/system_certmanager.php:845
+#: src/usr/local/www/system_certmanager.php:975
 msgid "*Email Address"
 msgstr "*Email  адрес"
 
 #: src/usr/local/www/system_camanager.php:627
-#: src/usr/local/www/system_certmanager.php:845
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:853
+#: src/usr/local/www/system_certmanager.php:983
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
 msgstr "*Обычное Имя (CN)"
@@ -31452,7 +31458,7 @@ msgstr ""
 "Поле данных ключа должно быть пустым или валидным частным ключом x509 "
 
 #: src/usr/local/www/system_certmanager.php:240
-#: src/usr/local/www/system_certmanager.php:716
+#: src/usr/local/www/system_certmanager.php:724
 msgid "Key data"
 msgstr "Данные ключа"
 
@@ -31470,49 +31476,49 @@ msgstr "Тип сертификата"
 msgid "Existing Certificate Choice"
 msgstr "Выбор Существующего Сертификата"
 
-#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
 msgstr "Конечные данные Сертификата"
 
-#: src/usr/local/www/system_certmanager.php:558
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:636
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr "Добавить/Подписать Новый Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:681
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
 msgstr "Новый CSR (Вставьте ниже)"
 
-#: src/usr/local/www/system_certmanager.php:684
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
 msgstr "Подписать CSR"
 
-#: src/usr/local/www/system_certmanager.php:689
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
 msgstr "* CA для подписания с"
 
-#: src/usr/local/www/system_certmanager.php:696
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
 msgstr "*CSR для подписания"
 
-#: src/usr/local/www/system_certmanager.php:703
+#: src/usr/local/www/system_certmanager.php:711
 msgid "*Certificate duration (days)"
 msgstr "*Срок действия сертификата (дней)"
 
-#: src/usr/local/www/system_certmanager.php:710
+#: src/usr/local/www/system_certmanager.php:718
 msgid "CSR data"
 msgstr "Данные CSR"
 
-#: src/usr/local/www/system_certmanager.php:712
+#: src/usr/local/www/system_certmanager.php:720
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
 msgstr "Вставьте здесь запрос подписи сертификата в формате X.509 PEM."
 
-#: src/usr/local/www/system_certmanager.php:718
+#: src/usr/local/www/system_certmanager.php:726
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
@@ -31520,53 +31526,53 @@ msgstr ""
 "При желании вставьте здесь закрытый ключ. Ключ будет связан с новым "
 "подписанным сертификатом в pfSense"
 
-#: src/usr/local/www/system_certmanager.php:722
+#: src/usr/local/www/system_certmanager.php:730
 msgid "Import Certificate"
 msgstr "Импортировать Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:741
 msgid "*Private key data"
 msgstr "*Данные закрытого ключа"
 
-#: src/usr/local/www/system_certmanager.php:735
+#: src/usr/local/www/system_certmanager.php:743
 msgid "Paste a private key in X.509 PEM format here."
 msgstr "Вставьте закрытый ключ в формате X.509 PEM."
 
-#: src/usr/local/www/system_certmanager.php:738
+#: src/usr/local/www/system_certmanager.php:746
 msgid "Internal Certificate"
 msgstr "Внутренний Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:744
+#: src/usr/local/www/system_certmanager.php:752
 msgid "No internal Certificate Authorities have been defined. "
 msgstr "Внутренние центры сертификации (CA) не определены."
 
-#: src/usr/local/www/system_certmanager.php:745
+#: src/usr/local/www/system_certmanager.php:753
 msgid ""
 "An internal CA must be defined in order to create an internal certificate. "
 msgstr ""
 "Внутренний центр сертификации (CA) должен быть определен для создания "
 "внутреннего сертификата."
 
-#: src/usr/local/www/system_certmanager.php:746
+#: src/usr/local/www/system_certmanager.php:754
 #, php-format
 msgid "%1$sCreate%2$s an internal CA."
 msgstr "%1$sСоздать%2$s внутренний центр сертификации (CA)."
 
-#: src/usr/local/www/system_certmanager.php:743
-#: src/usr/local/www/system_certmanager.php:760
+#: src/usr/local/www/system_certmanager.php:751
+#: src/usr/local/www/system_certmanager.php:768
 msgid "*Certificate authority"
 msgstr "*Центр сертификации"
 
-#: src/usr/local/www/system_certmanager.php:768
-#: src/usr/local/www/system_certmanager.php:911
+#: src/usr/local/www/system_certmanager.php:776
+#: src/usr/local/www/system_certmanager.php:921
 msgid "*Key length"
 msgstr "*Длина ключа"
 
-#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:791
 msgid "*Certificate Type"
 msgstr "*Тип Сертификата"
 
-#: src/usr/local/www/system_certmanager.php:786
+#: src/usr/local/www/system_certmanager.php:794
 msgid ""
 "Type of certificate to generate. Used for placing restrictions on the usage "
 "of the generated certificate."
@@ -31574,50 +31580,56 @@ msgstr ""
 "Тип сертификата для генерации. Используется для ограничения использования "
 "сгенерированного сертификата."
 
-#: src/usr/local/www/system_certmanager.php:862
+#: src/usr/local/www/system_certmanager.php:870
 msgid "Alternative Names"
 msgstr "Альтернативные Имена"
 
-#: src/usr/local/www/system_certmanager.php:869
+#: src/usr/local/www/system_certmanager.php:877
 msgid "FQDN or Hostname"
 msgstr "Полное доменное имя или имя хоста"
 
-#: src/usr/local/www/system_certmanager.php:871
+#: src/usr/local/www/system_certmanager.php:879
 msgid "URI"
 msgstr "URI"
 
-#: src/usr/local/www/system_certmanager.php:872
+#: src/usr/local/www/system_certmanager.php:880
 msgid "email address"
 msgstr "почтовый адрес"
 
-#: src/usr/local/www/system_certmanager.php:906
+#: src/usr/local/www/system_certmanager.php:900
+msgid ""
+"Enter additional identifiers for the certificate in this list. The Common "
+"Name field is automatically added to the certificate as an Alternative Name."
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:916
 msgid "External Signing Request"
 msgstr "Внешний запрос на подпись"
 
-#: src/usr/local/www/system_certmanager.php:921
+#: src/usr/local/www/system_certmanager.php:931
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr ""
 "ПРИМЕЧАНИЕ: Рекомендуется использовать алгоритм, более сильный, чем SHA1, "
 "когда это возможно"
 
-#: src/usr/local/www/system_certmanager.php:980
+#: src/usr/local/www/system_certmanager.php:990
 msgid "Choose an Existing Certificate"
 msgstr "Выберите Существующий Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:1009
+#: src/usr/local/www/system_certmanager.php:1019
 msgid "*Existing Certificates"
 msgstr "*Существующие Сертификаты"
 
-#: src/usr/local/www/system_certmanager.php:1021
+#: src/usr/local/www/system_certmanager.php:1031
 msgid "Complete Signing Request for "
 msgstr "Полный запрос на подпись для"
 
-#: src/usr/local/www/system_certmanager.php:1032
+#: src/usr/local/www/system_certmanager.php:1042
 msgid "Signing request data"
 msgstr "Данные запроса подписи"
 
-#: src/usr/local/www/system_certmanager.php:1036
+#: src/usr/local/www/system_certmanager.php:1046
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
@@ -31625,52 +31637,64 @@ msgstr ""
 "Скопируйте данные подписания сертификата отсюда и отправьте его в центр "
 "сертификации для подписания."
 
-#: src/usr/local/www/system_certmanager.php:1040
+#: src/usr/local/www/system_certmanager.php:1050
 msgid "*Final certificate data"
 msgstr "*Данные окончательного сертификата"
 
-#: src/usr/local/www/system_certmanager.php:1043
+#: src/usr/local/www/system_certmanager.php:1053
 msgid "Paste the certificate received from the certificate authority here."
 msgstr "Вставьте сюда сертификат, полученный от центра сертификации."
 
-#: src/usr/local/www/system_certmanager.php:1118
+#: src/usr/local/www/system_certmanager.php:1129
 msgid "private key only"
 msgstr "только закрытый ключ"
 
-#: src/usr/local/www/system_certmanager.php:1123
+#: src/usr/local/www/system_certmanager.php:1135
 msgid "external - signature pending"
 msgstr "Внешний -  ожидает подпись"
 
-#: src/usr/local/www/system_certmanager.php:1159
+#: src/usr/local/www/system_certmanager.php:1160
+msgid "SAN: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1165
+msgid "KU: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1170
+msgid "EKU: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1195
 msgid "User Cert"
 msgstr "Пользовательский Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1213
 msgid "Export Certificate"
 msgstr "Экспортировать Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:1179
-#: src/usr/local/www/system_certmanager.php:1185
+#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1221
 msgid "Export Key"
 msgstr "Экспортировать Ключ"
 
-#: src/usr/local/www/system_certmanager.php:1181
+#: src/usr/local/www/system_certmanager.php:1217
 msgid "Export P12"
 msgstr "Экспортировать P12"
 
-#: src/usr/local/www/system_certmanager.php:1183
+#: src/usr/local/www/system_certmanager.php:1219
 msgid "Update CSR"
 msgstr "Обновить CSR"
 
-#: src/usr/local/www/system_certmanager.php:1184
+#: src/usr/local/www/system_certmanager.php:1220
 msgid "Export Request"
 msgstr "Экспортировать Запрос"
 
-#: src/usr/local/www/system_certmanager.php:1188
+#: src/usr/local/www/system_certmanager.php:1224
 msgid "Delete Certificate"
 msgstr "Удалить Сертификат"
 
-#: src/usr/local/www/system_certmanager.php:1204
+#: src/usr/local/www/system_certmanager.php:1240
 msgid "Add/Sign"
 msgstr "Добавить/Подписать"
 
@@ -36274,14 +36298,14 @@ msgstr "Все записи Динамического DNS скрыты."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:240
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:271
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:137
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:141
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:168
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:345
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:132
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:136
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:452
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:459
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:215
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
 msgstr "Показать"
 
@@ -36368,16 +36392,20 @@ msgstr "Входящие Ошибки"
 msgid "Errors Out"
 msgstr "Исходящие Ошибки"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:66
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:75
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:146
 msgid "All interfaces are hidden."
 msgstr "Все интерфейсы скрыты."
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:113
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
+msgid "All selected interfaces are down."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:117
 msgid "Saved Interface Statistics Filter via Dashboard."
 msgstr "Фильтр Статистики Интерфейсов сохранён через приборную панель."
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:122
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:126
 msgid "Retrieving interface data"
 msgstr "Получение данных интерфеса"
 
@@ -36579,12 +36607,12 @@ msgid "All SMART drives are hidden."
 msgstr "Все приводы SMART скрыты"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:182
 msgid "BIOS"
 msgstr "SMART"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:217
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:224
 msgid "CPU Type"
 msgstr "Тип Процессора"
 
@@ -36605,12 +36633,12 @@ msgid "State Table Size"
 msgstr "Размер Таблицы Соединений"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:45
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:312
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:319
 msgid "MBUF Usage"
 msgstr "Использование MBUF"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:331
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:338
 msgid "Temperature"
 msgstr "Температура"
 
@@ -36676,96 +36704,100 @@ msgstr "Неизвестная система"
 msgid "Serial: "
 msgstr "Серийной номер:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:178
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:163
+msgid "Netgate Device ID:"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:185
 msgid "Vendor: "
 msgstr "Производитель:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:181
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:188
 msgid "Version: "
 msgstr "Версия:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:184
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:191
 msgid "Release Date: "
 msgstr "Дата Релиза:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:200
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:207
 msgid "built on"
 msgstr "сделан"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:207
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:214
 msgid "Obtaining update status "
 msgstr "Получение статуса обновления"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:224
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:231
 msgid "CPUs"
 msgstr "Процессоры"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:236
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:243
 msgid "Hardware crypto"
 msgstr "Аппаратное шифрование"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:255
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:262
 msgid "Current date/time"
 msgstr "Текущие дата/время"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:264
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:271
 msgid "DNS server(s)"
 msgstr "Серверы DNS"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:283
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
 msgid "Last config change"
 msgstr "Последнее изменение конфигурации"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:293
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:300
 msgid "State table size"
 msgstr "Размер таблицы соединений"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:303
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:310
 msgid "Show states"
 msgstr "Показать соединения"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:348
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:355
 msgid "Load average"
 msgstr "Средняя загрузка"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:350
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:357
 msgid "Last 1, 5 and 15 minutes"
 msgstr "Последние 1, 5 и 15 минут"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:359
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:366
 msgid "CPU usage"
 msgstr "Использование процессора"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:366
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:373
 #, php-format
 msgid "Updating in %s seconds"
 msgstr "Обновление в %s секунд"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:375
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:382
 msgid "Memory usage"
 msgstr "Использование памяти"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:393
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "SWAP usage"
 msgstr "Использование  подкачки"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:413
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:420
 msgid "Disk usage"
 msgstr "Использование диска"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:426
 msgid " of "
 msgstr "от"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:426
 msgid "in RAM"
 msgstr "в оперативной памяти"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:430
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:437
 msgid "All System Information items are hidden."
 msgstr "Все пункты информации о Системе скрыты."
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:451
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:458
 msgid "Item"
 msgstr "Пункт"
 
@@ -36842,35 +36874,35 @@ msgstr "Обратный"
 msgid "Unit Size"
 msgstr "Размер Элемента"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:55
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:57
 msgid "Saved Wake on LAN Filter via Dashboard."
 msgstr "Фильтр Пробуждения по Сигналу из LAN сохранён через Приборную Панель."
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:64
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 msgid "Device"
 msgstr "Устройство"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:69
 msgid "Wake"
 msgstr "Разбудить"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:105
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:107
 msgid "Wake up!"
 msgstr "Просыпайся!"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:113
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:115
 msgid "All WoL entries are hidden."
 msgstr "Все записи Пробуждения по Сигналу из LAN скрыты."
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:118
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:120
 msgid "No saved WoL addresses"
 msgstr "Нет сохранённых адресов Пробуждения по Сигналу из LAN "
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:136
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:138
 msgid "DHCP Leases Status"
 msgstr "Статус аренд DHCP"
 
-#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
+#: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:154
 msgid "MAC"
 msgstr "МАС"
 
@@ -37628,27 +37660,27 @@ msgstr "Временный"
 msgid "Reauthenticate connected users every minute"
 msgstr "Повторно проводить аутентификацию пользователей каждую минуту"
 
-#: src/usr/local/www/services_captiveportal.php:936
+#: src/usr/local/www/services_captiveportal.php:938
 msgid "Enable RADIUS MAC authentication"
 msgstr "Включить аутентификацию RADIUS по MAC-адресу"
 
-#: src/usr/local/www/services_captiveportal.php:958
+#: src/usr/local/www/services_captiveportal.php:960
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr "Использовать атрибуты тайм-аута RADIUS "
 
-#: src/usr/local/www/services_captiveportal.php:974
+#: src/usr/local/www/services_captiveportal.php:976
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr "Инвертировать  Входящие-Учетные-Окстеты и Исходящие-Учетные-Октеты"
 
-#: src/usr/local/www/services_captiveportal.php:982
+#: src/usr/local/www/services_captiveportal.php:984
 msgid "Include idle time in session time"
 msgstr "Включить время простоя в время сеанса"
 
-#: src/usr/local/www/services_captiveportal.php:1016
+#: src/usr/local/www/services_captiveportal.php:1018
 msgid "Enable HTTPS login"
 msgstr "Включить HTTPS-вход"
 
-#: src/usr/local/www/services_captiveportal.php:1040
+#: src/usr/local/www/services_captiveportal.php:1042
 msgid "Disable HTTPS Forwards"
 msgstr "Отключить HTTPS Форвардинг"
 
@@ -37656,21 +37688,21 @@ msgstr "Отключить HTTPS Форвардинг"
 msgid "Enable the creation, generation and activation of rolls with vouchers"
 msgstr "Включить создание, генерацию и активацию роллов с ваучерами"
 
-#: src/usr/local/www/services_dhcp.php:845
+#: src/usr/local/www/services_dhcp.php:857
 msgid "Ignore BOOTP queries"
 msgstr "Игнорировать BOOTP запросы"
 
-#: src/usr/local/www/services_dhcp.php:852
+#: src/usr/local/www/services_dhcp.php:864
 msgid "Only the clients defined below will get DHCP leases from this server."
 msgstr ""
 "Только клиенты, определенные ниже, будут получать DHCP аренду с этого "
 "сервера."
 
-#: src/usr/local/www/services_dhcp.php:859
+#: src/usr/local/www/services_dhcp.php:871
 msgid "Denied clients will be ignored rather than rejected."
 msgstr "Клиенты, которым отказано будут проигнорированы, а не отклонены."
 
-#: src/usr/local/www/services_dhcp.php:866
+#: src/usr/local/www/services_dhcp.php:878
 msgid ""
 "If a client includes a unique identifier in its DHCP request, that UID will "
 "not be recorded in its lease."
@@ -37678,23 +37710,23 @@ msgstr ""
 "Если клиент в своем запросе DHCP содержит уникальный идентификатор, этот UID "
 "не будет записываться в его аренду."
 
-#: src/usr/local/www/services_dhcp.php:1045
+#: src/usr/local/www/services_dhcp.php:1057
 msgid "Enable Static ARP entries"
 msgstr "Включить статические записи ARP"
 
-#: src/usr/local/www/services_dhcp.php:1052
+#: src/usr/local/www/services_dhcp.php:1064
 msgid "Change DHCP display lease time from UTC to local time"
 msgstr "Измените время отображения аренды DHCP с UTC на местное время."
 
-#: src/usr/local/www/services_dhcp.php:1059
+#: src/usr/local/www/services_dhcp.php:1071
 msgid "Enable RRD statistics graphs"
 msgstr "Включить графы статистики RRD"
 
-#: src/usr/local/www/services_dhcp.php:1082
+#: src/usr/local/www/services_dhcp.php:1094
 msgid "Enable registration of DHCP client names in DNS"
 msgstr "Включить регистрацию имен клиентов DHCP в DNS"
 
-#: src/usr/local/www/services_dhcp.php:1097
+#: src/usr/local/www/services_dhcp.php:1109
 #: src/usr/local/www/services_dhcpv6.php:794
 msgid ""
 "Force dynamic DNS hostname to be the same as configured hostname for Static "
@@ -37703,11 +37735,11 @@ msgstr ""
 "Принудительно использовать те же имена хостов для динамического DNS, что и "
 "имена хоста для Статической Привязки"
 
-#: src/usr/local/www/services_dhcp.php:1242
+#: src/usr/local/www/services_dhcp.php:1254
 msgid "Enables network booting"
 msgstr "Включает сетевую загрузку"
 
-#: src/usr/local/www/services_dhcp.php:1304
+#: src/usr/local/www/services_dhcp.php:1316
 msgid "<div class=\"alert alert-info\"> "
 msgstr "<div class=\"alert alert-info\"> "
 
@@ -38257,19 +38289,19 @@ msgstr "События Протокола Сетевого Времени (де�
 msgid "Wireless Events (hostapd)"
 msgstr " События Беспроводной Сети (hostapd)"
 
-#: src/usr/local/www/system.php:531
+#: src/usr/local/www/system.php:536
 msgid "Allow DNS server list to be overridden by DHCP/PPP on WAN"
 msgstr ""
 "Разрешить переопределять список DNS-серверов  по средством DHCP/PPP на WAN"
 
-#: src/usr/local/www/system.php:541
+#: src/usr/local/www/system.php:546
 msgid ""
 "Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall"
 msgstr ""
 "Не использовать DNS Форвардер/DNS Резолвер в качестве DNS-сервера для "
 "брандмауэра"
 
-#: src/usr/local/www/system.php:597
+#: src/usr/local/www/system.php:602
 msgid "Show hostname on login banner"
 msgstr "Показывать имя хоста на баннере входа"
 

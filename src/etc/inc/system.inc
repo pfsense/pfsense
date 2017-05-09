@@ -2325,6 +2325,7 @@ function system_identify_specific_platform() {
 	global $g;
 
 	$hw_model = get_single_sysctl('hw.model');
+	$hw_ncpu = get_single_sysctl('hw.ncpu');
 
 	/* Try to guess from smbios strings */
 	unset($product);
@@ -2364,6 +2365,24 @@ function system_identify_specific_platform() {
 		case 'RCC':
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
 			break;
+		case 'Minnowboard Turbot D0 PLATFORM':
+			$result = array();
+			$result['name'] = 'Turbot Dual-E';
+			/* Detect specific model */
+			switch ($hw_ncpu) {
+			case '4':
+				$result['model'] = 'SG-2340';
+				break;
+			case '2':
+				$result['model'] = 'SG-2320';
+				break;
+			default:
+				$result['model'] = $result['name'];
+				break;
+			}
+			$result['descr'] = 'Netgate ' . $result['model'];
+			return $result;
+			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
@@ -2372,6 +2391,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;
 		case 'apu2':
+		case 'APU2':
 			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
 			break;
 		case 'Virtual Machine':

@@ -2391,6 +2391,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;
 		case 'apu2':
+		case 'APU2':
 			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
 			break;
 		case 'Virtual Machine':

@@ -163,6 +163,7 @@ if ($act == "edit") {
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
+		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
 		$pconfig['topology'] = $a_client[$id]['topology'];
 
 		// just in case the modes switch
@@ -342,6 +343,23 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("Password and confirmation must match.");
 	}
 
+	/* UDP Fast I/O is not compatible with TCP, so toss the option out when
+	   submitted since it can't be set this way legitimately. This also avoids
+	   having to perform any more trickery on the stored option to not preserve
+	   the value when changing modes. */
+	if ($pconfig['udp_fast_io'] && (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp")) {
+		unset($pconfig['udp_fast_io']);
+	}
+
+	if ($pconfig['udp_fast_io'] && (!empty($pconfig['use_shaper']))) {
+		/* Only warn if the user is set to UDP, otherwise it isn't relevant (See above) */
+		if (strtolower(substr($pconfig['protocol'], 0, 3)) == "udp") {
+			$input_errors[] = gettext("Limit Outgoing Bandwidth is not compatible with UDP Fast I/O.");
+		} else {
+			unset($pconfig['udp_fast_io']);
+		}
+	}
+
 	if (!$input_errors) {
 
 		$client = array();
@@ -415,6 +433,7 @@ if ($_POST['save']) {
 		$client['use_shaper'] = $pconfig['use_shaper'];
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
+		$client['udp_fast_io'] = $pconfig['udp_fast_io'];
 
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
@@ -816,7 +835,8 @@ if ($act=="new" || $act=="edit"):
 		'number',
 		$pconfig['use_shaper'],
 		['min' => 100, 'max' => 100000000, 'placeholder' => 'Between 100 and 100,000,000 bytes/sec']
-	))->setHelp('Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The input value has to be something between 100 bytes/sec and 100 Mbytes/sec (entered as bytes per second).');
+	))->setHelp('Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The input value has to be something between 100 bytes/sec and 100 Mbytes/sec (entered as bytes per second). ' .
+				'Not compatible with UDP Fast I/O.');
 
 	$section->addInput(new Form_Select(
 		'compression',
@@ -863,6 +883,14 @@ if ($act=="new" || $act=="edit"):
 		'Custom options',
 		$pconfig['custom_options']
 	))->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
+
+	$section->addInput(new Form_Checkbox(
+		'udp_fast_io',
+		'UDP Fast I/O',
+		'Use fast I/O operations with UDP writes to tun/tap. Experimental.',
+		$pconfig['udp_fast_io']
+	))->setHelp('Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%. ' .
+		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',
@@ -995,6 +1023,14 @@ events.push(function() {
 		hideInput('topology',  ($('#dev_mode').val() == 'tap') || $('#mode').val() == "p2p_shared_key");
 	}
 
+	function protocol_change() {
+		if ($('#protocol').val().substring(0, 3).toLowerCase() == 'udp') {
+			hideCheckbox('udp_fast_io', false);
+		} else {
+			hideCheckbox('udp_fast_io', true);
+		}
+	}
+
 	// Process "Automatically generate a shared key" checkbox
 	function autokey_change() {
 		hideInput('shared_key', $('#autokey_enable').prop('checked'));
@@ -1032,6 +1068,11 @@ events.push(function() {
 	 // Mode
 	$('#mode').change(function () {
 		mode_change();
+	});
+
+	// Protocol
+	$('#protocol').change(function () {
+		protocol_change();
 	});
 
 	 // Use proxy
@@ -1090,6 +1131,7 @@ events.push(function() {
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------
 	mode_change();
+	protocol_change();
 	autokey_change();
 	tlsauth_change();
 	useproxy_changed();

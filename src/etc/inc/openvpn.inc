@@ -1180,6 +1180,13 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 
+	/* UDP Fast I/O. Only compatible with UDP and also not compatible with OpenVPN's "shaper" directive. */
+	if ($settings['udp_fast_io']
+	    && (strtolower(substr($settings['protocol'], 0, 3)) == "udp")
+	    && (empty($settings['use_shaper']))) {
+		$conf .= "fast-io\n";
+	}
+
 	openvpn_add_custom($settings, $conf);
 
 	openvpn_create_dirs();

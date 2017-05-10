@@ -364,7 +364,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable Auto-added Host Entries',
 	'Disable the automatically-added host entries',
 	$pconfig['disable_auto_added_host_entries']
-))->setHelp('By default, the primary IPv4 and IPv6 addresses of of this firewall are added as records for the system domain of this firewall as configured in %1$sSystem: General Setup%2$s. This disables the auto generation of these entries.', '<a href="system.php">', '</a>');
+))->setHelp('By default, the primary IPv4 and IPv6 addresses of this firewall are added as records for the system domain of this firewall as configured in %1$sSystem: General Setup%2$s. This disables the auto generation of these entries.', '<a href="system.php">', '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'use_caps',

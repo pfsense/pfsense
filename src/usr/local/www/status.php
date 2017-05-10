@@ -257,6 +257,7 @@ defCmdT("Network-Routing tables", "/usr/bin/netstat -nWr");
 defCmdT("Network-Gateway Status", 'get_gateway_status', "php_func");
 defCmdT("Network-Mbuf Usage", "/usr/bin/netstat -mb");
 defCmdT("Network-Protocol Statistics", "/usr/bin/netstat -s");
+defCmdT("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");

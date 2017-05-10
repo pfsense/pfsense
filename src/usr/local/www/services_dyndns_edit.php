@@ -121,7 +121,7 @@ if ($_POST['save'] || $_POST['force']) {
 				$last_to_check = strrpos($host_to_check, '@');
 				if ($last_to_check !== false) {
 					$host_to_check = substr_replace(
-					    $host_to_check, '.', $last_to_check, 1);
+						$host_to_check, '.', $last_to_check, 1);
 				}
 				unset($last_to_check);
 			}
@@ -354,9 +354,10 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.%1$s' .
-	    		'DNS Made Easy: Dynamic DNS ID%1$s' .
+			'DNS Made Easy: Dynamic DNS ID%1$s' .
 			'Route 53: Enter the Access Key ID.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
+			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.', '<br />');
 
 $section->addPassword(new Form_Input(
@@ -365,9 +366,10 @@ $section->addPassword(new Form_Input(
 	'password',
 	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.%1$s' .
-	    		'DNS Made Easy: Dynamic DNS Password%1$s' . 
+			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
+			'Dreamhost: Enter the API Key.%1$s' .
 			'DNSimple: Enter the API token.', '<br />');
 
 $section->addInput(new Form_Input(
@@ -482,6 +484,21 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
+				break;
+			case 'dreamhost':
+			case 'dreamhost-v6':
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', true);
+				hideCheckbox('wildcard', true);
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);

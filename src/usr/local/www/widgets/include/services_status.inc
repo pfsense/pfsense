@@ -23,5 +23,6 @@
 //set variable for custom title
 $services_status_title = gettext("Services Status");
 $services_status_title_link = "status_services.php";
+$services_status_allow_multiple_widget_copies = true;
 
 ?>

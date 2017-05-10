@@ -11,7 +11,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-gwled
 sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 security/%%PRODUCT_NAME%%-pkg-snort
 security/%%PRODUCT_NAME%%-pkg-suricata
-sysutils/%%PRODUCT_NAME%%-pkg-Netgate-Coreboot-Upgrade
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
 net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf

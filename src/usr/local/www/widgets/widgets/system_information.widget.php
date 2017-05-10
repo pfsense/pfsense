@@ -98,6 +98,7 @@ if ($_REQUEST['getupdatestatus']) {
 
 	exit;
 } elseif ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
 
 	$validNames = array();
 
@@ -448,6 +449,7 @@ $rows_displayed = false;
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">

@@ -252,6 +252,7 @@ if ($act == "edit") {
 
 		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
 		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
+		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
 }
@@ -479,6 +480,10 @@ if ($_POST['save']) {
 		unset($pconfig['udp_fast_io']);
 	}
 
+	if (!empty($pconfig['sndrcvbuf']) && !array_key_exists($pconfig['sndrcvbuf'], openvpn_get_buffer_values())) {
+		$input_errors[] = gettext("The supplied Send/Receive Buffer size is invalid.");
+	}
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
@@ -578,6 +583,7 @@ if ($_POST['save']) {
 		if ($pconfig['udp_fast_io']) {
 			$server['udp_fast_io'] = $pconfig['udp_fast_io'];
 		}
+		$server['sndrcvbuf'] = $pconfig['sndrcvbuf'];
 		if ($pconfig['push_register_dns']) {
 			$server['push_register_dns'] = $pconfig['push_register_dns'];
 		}
@@ -1319,6 +1325,16 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['udp_fast_io']
 	))->setHelp('Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%. ' .
 		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
+
+	$section->addInput(new Form_Select(
+		'sndrcvbuf',
+		'Send/Receive Buffer',
+		$pconfig['sndrcvbuf'],
+		openvpn_get_buffer_values()
+		))->setHelp('Configure a Send and Receive Buffer size for OpenVPN. ' .
+				'The default buffer size can be too small in many cases, depending on hardware and network uplink speeds. ' .
+				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
+				'512KiB and test higher and lower values.');
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',

@@ -484,6 +484,18 @@ function openvpn_get_engines() {
 	return $openssl_engines;
 }
 
+function openvpn_get_buffer_values() {
+	$sendbuf_max = get_single_sysctl('net.inet.tcp.sendbuf_max');
+	$recvbuf_max = get_single_sysctl('net.inet.tcp.recvbuf_max');
+	/* Usually these two are equal, but if they are not, take whichever one is lower. */
+	$buffer_max = ($sendbuf_max <= $recvbuf_max) ? $sendbuf_max : $recvbuf_max;
+	$buffer_values = array('' => gettext('Default'));
+	for ($bs = 32; $bs >= 1; $bs /= 2) {
+		$buffer_values[$buffer_max/$bs] = format_bytes($buffer_max/$bs);
+	}
+	return $buffer_values;
+}
+
 function openvpn_validate_engine($engine) {
 	$engines = openvpn_get_engines();
 	return array_key_exists($engine, $engines);
@@ -1185,6 +1197,15 @@ function openvpn_reconfigure($mode, $settings) {
 	    && (strtolower(substr($settings['protocol'], 0, 3)) == "udp")
 	    && (empty($settings['use_shaper']))) {
 		$conf .= "fast-io\n";
+	}
+
+	/* Send and Receive Buffer Settings */
+	if (is_numericint($settings['sndrcvbuf'])
+	    && ($settings['sndrcvbuf'] > 0)
+	    && ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.sendbuf_max'))
+	    && ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.recvbuf_max'))) {
+		$conf .= "sndbuf {$settings['sndrcvbuf']}\n";
+		$conf .= "rcvbuf {$settings['sndrcvbuf']}\n";
 	}
 
 	openvpn_add_custom($settings, $conf);

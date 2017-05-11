@@ -393,8 +393,9 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}${PRODUCT_REVISION:+-p}${PRODUCT_REVISION}-%%SIZE%%-${TARGET}-%%TYPE%%-upgrade${TIMESTAMP_SUFFIX}.img"}
 
 # Rsync data to send snapshots
-export RSYNCUSER=${RSYNCUSER:-"snapshots"}
-export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
+export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
+export RSYNCPATH=${RSYNCPATH:-"/storage/files/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 
 # staging area used on snapshots build
 STAGINGAREA=${STAGINGAREA:-"${SCRATCHDIR}/staging"}

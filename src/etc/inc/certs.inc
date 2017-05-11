@@ -995,4 +995,20 @@ function cert_get_cn($crt, $isref = false) {
 	return "";
 }
 
+function cert_escape_x509_chars($str, $reverse = false) {
+	/* Characters which need escaped when present in x.509 fields.
+	 * See https://www.ietf.org/rfc/rfc4514.txt
+	 *
+	 * The backslash (\) must be listed first in these arrays!
+	 */
+	$cert_directory_string_special_chars = array('\\', '"', '#', '+', ',', ';', '<', '=', '>');
+	$cert_directory_string_special_chars_esc = array('\\\\', '\"', '\#', '\+', '\,', '\;', '\<', '\=', '\>');
+	if ($reverse) {
+		return str_replace($cert_directory_string_special_chars_esc, $cert_directory_string_special_chars, $str);
+	} else {
+		/* First unescape and then escape again, to prevent possible double escaping. */
+		return str_replace($cert_directory_string_special_chars, $cert_directory_string_special_chars_esc, cert_escape_x509_chars($str, true));
+	}
+}
+
 ?>

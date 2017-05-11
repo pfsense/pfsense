@@ -351,12 +351,6 @@ if ($_POST['save']) {
 					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
 						array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
 					}
-				} else if (preg_match('/commonname/', $reqdfields[$i])) { /* dn_commonname or csr_dn_commonname */
-					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
-						array_push($input_errors, gettext("The field 'Distinguished name Common Name' contains invalid characters."));
-					}
-				} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]])) {
-					array_push($input_errors, sprintf(gettext("The field '%s' contains invalid characters."), $reqdfieldsn[$i]));
 				}
 			}
 
@@ -443,13 +437,13 @@ if ($_POST['save']) {
 				if ($pconfig['method'] == "internal") {
 					$dn = array(
 						'countryName' => $pconfig['dn_country'],
-						'stateOrProvinceName' => $pconfig['dn_state'],
-						'localityName' => $pconfig['dn_city'],
-						'organizationName' => $pconfig['dn_organization'],
-						'emailAddress' => $pconfig['dn_email'],
-						'commonName' => $pconfig['dn_commonname']);
+						'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
+						'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
+						'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
+						'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
+						'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 					if (!empty($pconfig['dn_organizationalunit'])) {
-						$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 					}
 					if (is_ipaddr($pconfig['dn_commonname'])) {
 						$altnames_tmp = array("IP:{$pconfig['dn_commonname']}");
@@ -481,13 +475,13 @@ if ($_POST['save']) {
 				if ($pconfig['method'] == "external") {
 					$dn = array(
 						'countryName' => $pconfig['csr_dn_country'],
-						'stateOrProvinceName' => $pconfig['csr_dn_state'],
-						'localityName' => $pconfig['csr_dn_city'],
-						'organizationName' => $pconfig['csr_dn_organization'],
-						'emailAddress' => $pconfig['csr_dn_email'],
-						'commonName' => $pconfig['csr_dn_commonname']);
+						'stateOrProvinceName' => cert_escape_x509_chars($pconfig['csr_dn_state']),
+						'localityName' => cert_escape_x509_chars($pconfig['csr_dn_city']),
+						'organizationName' => cert_escape_x509_chars($pconfig['csr_dn_organization']),
+						'emailAddress' => cert_escape_x509_chars($pconfig['csr_dn_email']),
+						'commonName' => cert_escape_x509_chars($pconfig['csr_dn_commonname']));
 					if (!empty($pconfig['csr_dn_organizationalunit'])) {
-						$dn['organizationalUnitName'] = $pconfig['csr_dn_organizationalunit'];
+						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
 					}
 					if (count($altnames)) {
 						$altnames_tmp = "";
@@ -1119,7 +1113,7 @@ foreach ($a_cert as $i => $cert):
 			$caname = '<i>'. gettext("external").'</i>';
 		}
 
-		$subj = htmlspecialchars($subj);
+		$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
 	} else {
 		$subj = "";
 		$issuer = "";
@@ -1130,7 +1124,7 @@ foreach ($a_cert as $i => $cert):
 	}
 
 	if ($cert['csr']) {
-		$subj = htmlspecialchars(csr_get_subject($cert['csr']));
+		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
 		$sans = cert_get_sans($cert['crt']);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
@@ -1266,12 +1260,12 @@ events.push(function() {
 				$subject = cert_get_subject_array($ca['crt']);
 ?>
 				case "<?=$ca['refid'];?>":
-					$('#dn_country').val("<?=$subject[0]['v'];?>");
-					$('#dn_state').val("<?=$subject[1]['v'];?>");
-					$('#dn_city').val("<?=$subject[2]['v'];?>");
-					$('#dn_organization').val("<?=$subject[3]['v'];?>");
-					$('#dn_email').val("<?=$subject[4]['v'];?>");
-					$('#dn_organizationalunit').val("<?=$subject[6]['v'];?>");
+					$('#dn_country').val(<?=json_encode(cert_escape_x509_chars($subject[0]['v'], true));?>);
+					$('#dn_state').val(<?=json_encode(cert_escape_x509_chars($subject[1]['v'], true));?>);
+					$('#dn_city').val(<?=json_encode(cert_escape_x509_chars($subject[2]['v'], true));?>);
+					$('#dn_organization').val(<?=json_encode(cert_escape_x509_chars($subject[3]['v'], true));?>);
+					$('#dn_email').val(<?=json_encode(cert_escape_x509_chars($subject[4]['v'], true));?>);
+					$('#dn_organizationalunit').val(<?=json_encode(cert_escape_x509_chars($subject[6]['v'], true));?>);
 					break;
 <?php
 			endforeach;

@@ -220,12 +220,6 @@ if ($_POST['save']) {
 				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
 					array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
 				}
-			} else if ($reqdfields[$i] == 'dn_commonname') {
-				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"])) {
-					array_push($input_errors, gettext("The field 'Distinguished name Common Name' contains invalid characters."));
-				}
-			} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"])) {
-				array_push($input_errors, sprintf(gettext("The field '%s' contains invalid characters."), $reqdfieldsn[$i]));
 			}
 		}
 		if (!in_array($_POST["keylen"], $ca_keylens)) {
@@ -266,13 +260,13 @@ if ($_POST['save']) {
 			} else if ($pconfig['method'] == "internal") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => $pconfig['dn_state'],
-					'localityName' => $pconfig['dn_city'],
-					'organizationName' => $pconfig['dn_organization'],
-					'emailAddress' => $pconfig['dn_email'],
-					'commonName' => $pconfig['dn_commonname']);
+					'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
+					'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
+					'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
+					'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
+					'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
 					$input_errors = array();
@@ -285,13 +279,13 @@ if ($_POST['save']) {
 			} else if ($pconfig['method'] == "intermediate") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
-					'stateOrProvinceName' => $pconfig['dn_state'],
-					'localityName' => $pconfig['dn_city'],
-					'organizationName' => $pconfig['dn_organization'],
-					'emailAddress' => $pconfig['dn_email'],
-					'commonName' => $pconfig['dn_commonname']);
+					'stateOrProvinceName' => cert_escape_x509_chars($pconfig['dn_state']),
+					'localityName' => cert_escape_x509_chars($pconfig['dn_city']),
+					'organizationName' => cert_escape_x509_chars($pconfig['dn_organization']),
+					'emailAddress' => cert_escape_x509_chars($pconfig['dn_email']),
+					'commonName' => cert_escape_x509_chars($pconfig['dn_commonname']));
 				if (!empty($pconfig['dn_organizationalunit'])) {
-					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+					$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
 					$input_errors = array();
@@ -387,7 +381,7 @@ foreach ($a_ca as $i => $ca):
 	} else {
 		$issuer_name = gettext("external");
 	}
-	$subj = htmlspecialchars($subj);
+	$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
 	$issuer = htmlspecialchars($issuer);
 	$certcount = 0;
 

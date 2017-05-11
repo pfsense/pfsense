@@ -61,6 +61,7 @@
 	 *    - DuiaDNS (www.duiadns.net)
 	 *    - DuiaDNS IPv6 (www.duiadns.net)
 	 *    - Hover (www.hover.com)
+	 *    - DreamHost DNS (www.dreamhost.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -115,6 +116,8 @@
 	 *  DuiaDNS         - Last Tested: 25 November 2016
 	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
 	 *  Hover           - Last Tested: 15 February 2017
+	 *  DreamHost       - Last Tested: 30 April 2017
+	 *  DreamHost IPv6  - Not Yet Tested
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -162,6 +165,7 @@
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
 		var $_useIPv6;
+		var $_existingRecords;
 
 		/*
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -238,6 +242,7 @@
 				case 'duiadns-v6':
 				case 'freedns-v6':
 				case 'cloudflare-v6':
+				case 'dreamhost-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -330,6 +335,17 @@
 							// If the address has not changed recently, or the user did "Force Update", then the code does
 							// a dummy address change for providers like this.
 							sleep(10);
+							$this->_update();
+						}
+						break;
+					case 'dreamhost':
+					case 'dreamhost-v6':
+						$this->_lookup_current();
+						if (isset($this->status)) {
+							return;
+						}
+						foreach ($this->_existingRecords as $record) {
+							$this->_remove($record['existing_val']);
 							$this->_update();
 						}
 						break;
@@ -869,6 +885,29 @@
 						log_error("HostID:{$hostID}, OldIP:{$hostIP}");
 					}
 					break;
+				case 'dreamhost':
+				case 'dreamhost-v6':
+					$needsIP = TRUE;
+					$isv6 = ($this->_dnsService === 'dreamhost-v6');
+					$server = 'https://api.dreamhost.com/';
+					$post_data['key'] = $this->_dnsPass;
+					$post_data['unique_id'] = uniqid($this->_dnsHost);
+					$post_data['cmd'] = 'dns-add_record';
+					$post_data['format'] = 'json';
+					$post_data['value'] = $this->_dnsIP;
+					$post_data['record'] = $this->_dnsHost;
+					$post_data['type'] = $isv6 ? 'AAAA' : 'A';
+					$post_data['comment'] = "Updated by pfSense:$this->_dnsUser on ".date('c');
+					$port = "";
+					if ($this->_dnsServer) {
+						$server = $this->_dnsServer;
+					}
+					if ($this->_dnsPort) {
+						$port = ":" . $this->_dnsPort;
+					}
+					curl_setopt($ch, CURLOPT_URL, $server . $port);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
 				default:
 					break;
 			}
@@ -880,6 +919,191 @@
 				$data = substr($response, $header_size);
 				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
+			}
+		}
+		
+		/**
+		 * Private Function (added 23 Feb 17)
+		 *   Send Removal To Selected Service.
+		 *   
+		 *   Some services do not perform an inplace upgrade.  If they do not then the solution
+		 *   is to remove the existing record and add a new record.
+		 *   
+		 * @param unknown $existing_ip If required, an existing IP address for the record.
+		 */
+		function _remove($existing_ip = NULL) {
+			$remove_allowed = false;
+			if ($this->_dnsVerboseLog) {
+				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
+			}
+			
+			if (strstr($this->_dnsRequestIf, "_vip")) {
+				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
+				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
+			} else {
+				$realparentif = $this->_dnsRequestIf;
+			}
+			
+			$ch = curl_init();
+			
+			if ($this->_useIPv6 == false) {
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+			
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
+			
+			switch ($this->_dnsService) {
+			case 'dreamhost':
+			case 'dreamhost-v6':
+				$server = 'https://api.dreamhost.com/';
+				$post_data['key'] = $this->_dnsPass;
+				$post_data['unique_id'] = uniqid($this->_dnsHost);
+				$post_data['cmd'] = 'dns-remove_record';
+				$post_data['format'] = 'json';
+				$post_data['value'] = $existing_ip;
+				$post_data['record'] = $this->_dnsHost;
+				$isv6 = ($this->_dnsService === 'dreamhost-v6');
+				$post_data['type'] = $isv6 ? 'AAAA' : 'A';
+				$port = "";
+				if ($this->_dnsServer) {
+					$server = $this->_dnsServer;
+				}
+				if ($this->_dnsPort) {
+					$port = ":" . $this->_dnsPort;
+				}
+				curl_setopt($ch, CURLOPT_URL, $server . $port);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+				$remove_allowed = true;
+				break;
+			default:
+				break;
+			}
+			if ($remove_allowed) {
+				curl_setopt($ch, CURLOPT_HEADER, 1);
+				$response = curl_exec($ch);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+				$header = substr($response, 0, $header_size);
+				$data = substr($response, $header_size);
+				$this->_checkStatus($ch, $data, $header);
+				@curl_close($ch);
+			}
+		}
+		
+		/**
+		 * Private Function (added 23 Feb 17)
+		 * Retrieves current DNS records from an external API source.
+		 * 
+		 * Some services cannot perform new operations without the caller 
+		 * providing existing record information. 
+		 */
+		function _lookup_current() {
+			$lookup_allowed = false;
+			if ($this->_dnsVerboseLog) {
+				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
+			}
+				
+			if (strstr($this->_dnsRequestIf, "_vip")) {
+				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
+				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
+			} else {
+				$realparentif = $this->_dnsRequestIf;
+			}
+				
+			$ch = curl_init();
+				
+			if ($this->_useIPv6 == false) {
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+				
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
+				
+			switch ($this->_dnsService) {
+			case 'dreamhost':
+			case 'dreamhost-v6':
+				$server = 'https://api.dreamhost.com/';
+				$post_data['key'] = $this->_dnsPass;
+				$post_data['unique_id'] = uniqid($this->_dnsHost);
+				$post_data['cmd'] = 'dns-list_records';
+				$post_data['format'] = 'json';
+				$port = "";
+				if ($this->_dnsServer) {
+					$server = $this->_dnsServer;
+				}
+				if ($this->_dnsPort) {
+					$port = ":" . $this->_dnsPort;
+				}
+				curl_setopt($ch, CURLOPT_URL, $server . $port);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+				$lookup_allowed = true;
+				break;
+			default:
+				break;
+			}
+			if ($lookup_allowed) {
+				curl_setopt($ch, CURLOPT_HEADER, 1);
+				$response = curl_exec($ch);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+				$header = substr($response, 0, $header_size);
+				$data = substr($response, $header_size);
+				$this->_checkLookupStatus($ch, $data, $header);
+				@curl_close($ch);
+			}
+		}
+
+		/*
+		 * Private Function (added 23 Feb 17) 
+		 *   Retrieve Lookup Status from the provided data and/or header
+		 */
+		function _checkLookupStatus($ch, $data, $header) {
+			if ($this->_dnsVerboseLog) {
+				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting.'), $this->_dnsService, $this->_FQDN));
+			}
+			$success_str = "(" . gettext("Success") . ") ";
+			$error_str = "(" . gettext("Error") . ") ";
+			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
+
+			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
+				$status = gettext("Curl error occurred:") . " " . curl_error($ch);
+				log_error($status);
+				$this->status = $status;
+				return;
+			}
+			switch ($this->_dnsService) {
+			case 'dreamhost':
+			case 'dreamhost-v6':
+				$result = json_decode($data,true);
+				if($result["result"] != "success") {
+					log_error($status_intro . gettext("PAYLOAD:") . " {$data}");
+					$this->_debug($data);
+					return;
+				} else {
+					foreach($result["data"] as $key => $row) {
+						if($row["record"] == $this->_dnsHost && 
+								(($row["type"] == "A" && !$this->_useIPv6)
+										|| ($row["type"] == "AAAA" && $this->_useIPv6)
+								)) {
+							if($row["editable"] == 0) {
+								log_error($status_intro . "host " . $this->_dnsHost . " is not editable.");
+								continue;
+							}
+							$this->_existingRecords[]=array("record"=>$row["type"], "type"=>$row["type"], "existing_val"=>$row["value"]);
+						}
+					}
+				}
+				if (!is_array($this->_existingRecords)){
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records found.'), $this->_dnsService, $this->_FQDN));
+					}
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1542,6 +1766,72 @@
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
 					}
+					break;
+				case 'dreamhost':
+				case 'dreamhost-v6':
+					$result = json_decode($data,true);
+					if ($this->_dnsVerboseLog) {
+						log_error(sprintf(gettext('_checkStatus() results: %1$s'), $data));
+					}
+					switch ($result['data']) {
+					case 'success':
+					case 'record_added':
+					case 'record_removed':
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+						break;
+					case 'no_record':
+					case 'no_such_record ':
+						$status = $status_intro . $error_str . gettext("No record exists.");
+						break;
+					case 'no_type':
+					case 'no_such_type ':
+						$status = $status_intro . $error_str . gettext("No type exists.");
+						break;
+					case 'no_value':
+					case 'no_such_value ':
+						$status = $status_intro . $error_str . gettext("No value exists.");
+						break;
+					case 'no_such_zone':
+						$status = $status_intro . $error_str . gettext("No such zone exists.");
+						break;
+					case 'invalid_record':
+						$status = $status_intro . $error_str . gettext("The specified record is invalid.");
+						break;
+					case 'invalid_type':
+						$status = $status_intro . $error_str . gettext("The specified type is invalid.");
+						break;
+					case 'invalid_value':
+						$status = $status_intro . $error_str . gettext("The specified value is invalid.");
+						break;
+					case 'not_editable ':
+						$status = $status_intro . $error_str . gettext("Record is not editable.");
+						break;
+					case 'record_already_exists_not_editable':
+						$status = $status_intro . $error_str . gettext("Record exists but is not editable.");
+						break;
+					case 'record_already_exists_remove_first':
+						$status = $status_intro . $error_str . gettext("Record exists and must be removed before adding.");
+						break;
+					case 'internal_error_updating_zone':
+						$status = $status_intro . $error_str . gettext("A remote server error occurred updating the zone.");
+						break;
+					case 'internal_error_could_not_load_zone':
+						$status = $status_intro . $error_str . gettext("A remote server error occurred loading the zone.");
+						break;
+					case 'internal_error_could_not_update_zone':
+						$status = $status_intro . $error_str . gettext("A remote server error occurred updating the zone.");
+						break;
+					case 'internal_error_could_not_add_record':
+						$status = $status_intro . $error_str . gettext("A remote server error occurred adding a new record.");
+						break;
+					case 'internal_error_could_not_destroy_record ':
+						$status = $status_intro . $error_str . gettext("A remote server error occurred removing an existing record.");
+						break;
+					default:
+						break;
+					}
+				default:
 					break;
 			}
 

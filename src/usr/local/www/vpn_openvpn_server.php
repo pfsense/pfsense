@@ -251,6 +251,8 @@ if ($act == "edit") {
 		}
 
 		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
+		$pconfig['udp_fast_io'] = $a_server[$id]['udp_fast_io'];
+		$pconfig['sndrcvbuf'] = $a_server[$id]['sndrcvbuf'];
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
 }
@@ -470,6 +472,18 @@ if ($_POST['save']) {
 		}
 	}
 
+	/* UDP Fast I/O is not compatible with TCP, so toss the option out when
+	   submitted since it can't be set this way legitimately. This also avoids
+	   having to perform any more trickery on the stored option to not preserve
+	   the value when changing modes. */
+	if ($pconfig['udp_fast_io'] && (strtolower(substr($pconfig['protocol'], 0, 3)) != "udp")) {
+		unset($pconfig['udp_fast_io']);
+	}
+
+	if (!empty($pconfig['sndrcvbuf']) && !array_key_exists($pconfig['sndrcvbuf'], openvpn_get_buffer_values())) {
+		$input_errors[] = gettext("The supplied Send/Receive Buffer size is invalid.");
+	}
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
@@ -566,6 +580,10 @@ if ($_POST['save']) {
 		if ($pconfig['push_blockoutsidedns']) {
 			$server['push_blockoutsidedns'] = $pconfig['push_blockoutsidedns'];
 		}
+		if ($pconfig['udp_fast_io']) {
+			$server['udp_fast_io'] = $pconfig['udp_fast_io'];
+		}
+		$server['sndrcvbuf'] = $pconfig['sndrcvbuf'];
 		if ($pconfig['push_register_dns']) {
 			$server['push_register_dns'] = $pconfig['push_register_dns'];
 		}
@@ -1300,6 +1318,24 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.%1$s' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"', '<br />');
 
+	$section->addInput(new Form_Checkbox(
+		'udp_fast_io',
+		'UDP Fast I/O',
+		'Use fast I/O operations with UDP writes to tun/tap. Experimental.',
+		$pconfig['udp_fast_io']
+	))->setHelp('Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%. ' .
+		'Not compatible with all platforms, and not compatible with OpenVPN bandwidth limiting.');
+
+	$section->addInput(new Form_Select(
+		'sndrcvbuf',
+		'Send/Receive Buffer',
+		$pconfig['sndrcvbuf'],
+		openvpn_get_buffer_values()
+		))->setHelp('Configure a Send and Receive Buffer size for OpenVPN. ' .
+				'The default buffer size can be too small in many cases, depending on hardware and network uplink speeds. ' .
+				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
+				'512KiB and test higher and lower values.');
+
 	$section->addInput(new Form_Select(
 		'verbosity_level',
 		'Verbosity level',
@@ -1532,6 +1568,14 @@ events.push(function() {
 		autokey_change();
 	}
 
+	function protocol_change() {
+		if ($('#protocol').val().substring(0, 3).toLowerCase() == 'udp') {
+			hideCheckbox('udp_fast_io', false);
+		} else {
+			hideCheckbox('udp_fast_io', true);
+		}
+	}
+
 	// Process "Enable authentication of TLS packets" checkbox
 	function tlsauth_change() {
 		autotls_change();
@@ -1754,6 +1798,11 @@ events.push(function() {
 		tuntap_change();
 	});
 
+	// Protocol
+	$('#protocol').change(function () {
+		protocol_change();
+	});
+
 	 // Tun/tap mode
 	$('#dev_mode, #serverbridge_dhcp').change(function () {
 		tuntap_change();
@@ -1811,6 +1860,7 @@ events.push(function() {
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------
 	mode_change();
+	protocol_change();
 	autokey_change();
 	tlsauth_change();
 	gwredir_change();

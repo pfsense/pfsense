@@ -158,6 +158,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	print(	"</tbody>");
 	exit;
 } else if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
 
 	if (isset($_POST['orientation_type'])) {
 		$user_settings['widgets'][$_POST['widgetkey']]['orientation_type'] = $_POST['orientation_type'];
@@ -203,6 +204,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
+	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
 		<label class="col-sm-3 control-label"><?=gettext('Orientation')?></label>
 		<?php

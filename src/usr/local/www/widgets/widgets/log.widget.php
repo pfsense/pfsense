@@ -30,6 +30,8 @@ require_once("functions.inc");
 require_once("filter_log.inc");
 
 if ($_POST['widgetkey']) {
+	set_customwidgettitle($user_settings);
+
 	if (is_numeric($_POST['filterlogentries'])) {
 		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentries'] = $_POST['filterlogentries'];
 	} else {
@@ -217,6 +219,8 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
 		<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+
 		<div class="form-group">
 			<label for="filterlogentries" class="col-sm-4 control-label"><?=gettext('Number of entries')?></label>
 			<div class="col-sm-6">

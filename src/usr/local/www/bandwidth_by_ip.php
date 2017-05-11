@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-require_once('guiconfig.inc');
+require_once('auth_check.inc');
 require_once('interfaces.inc');
 require_once('pfsense-utils.inc');
 require_once('util.inc');

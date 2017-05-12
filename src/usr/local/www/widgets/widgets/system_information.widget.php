@@ -224,6 +224,10 @@ $rows_displayed = false;
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
+		<?php if ($platform['name'] == "uFW" || $platform['name'] == "ROGUE-1"): ?>
+			<br />
+			<?=htmlspecialchars(get_single_sysctl("hw.cpuinfo"));?>
+		<?php endif; ?>
 		<?php if ($platform['name'] == "uFW"): ?>
 			<br />
 			<?=htmlspecialchars(get_single_sysctl("hw.ti_soc_model"));?>

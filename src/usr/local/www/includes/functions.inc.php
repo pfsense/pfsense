@@ -150,6 +150,10 @@ function get_mbuf(&$mbuf, &$mbufpercent) {
 
 function get_temp() {
 
+        $platform = system_identify_specific_platform();
+        if (isset($platform) && is_array($platform) && $platform['name'] == "ROGUE-1") {
+		$temp_out = get_single_sysctl("dev.armada_thermal.0.temperature");
+	}
 	if ($temp_out == "") {
 		$temp_out = get_single_sysctl("dev.cpu.0.temperature");
 	}

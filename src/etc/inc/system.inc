@@ -2478,7 +2478,7 @@ function system_identify_specific_platform() {
 		return (array('name' => 'uFW', 'descr' => 'Netgate SG-1000'));
 	}
 
-	if (strpos($hw_model, "Cortex A9-") !== false) {
+	if (strpos($hw_model, "Cortex-A9") !== false) {
 		return array('name' => 'ROGUE-1', 'descr' => gettext('Rogue-1'));
 	}
 

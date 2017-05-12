@@ -226,7 +226,7 @@ $rows_displayed = false;
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
 		<?php if ($platform['name'] == "uFW"): ?>
 			<br />
-			<?=htmlspecialchars(get_single_sysctl("hw.ti_model"));?>
+			<?=htmlspecialchars(get_single_sysctl("hw.ti_soc_model"));?>
 		<?php endif; ?>
 				<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
@@ -234,6 +234,10 @@ $rows_displayed = false;
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
 					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
+				<?php if ($platform['name'] == "ROGUE-1"): ?>
+					<br />
+					<?=htmlspecialchars(get_single_sysctl("hw.mv_soc_model"));?>
+				<?php endif; ?>
 				</div>
 		<?php endif; ?>
 			</td>

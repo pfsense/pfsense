@@ -232,6 +232,9 @@ $rows_displayed = false;
 					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
 				</div>
 		<?php endif; ?>
+				<div id="cpucrypto">
+					<?= get_cpu_crypto_support(); ?>
+				</div>
 			</td>
 		</tr>
 <?php

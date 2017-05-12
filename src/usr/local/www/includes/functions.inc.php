@@ -239,6 +239,39 @@ function get_cpufreq() {
 	return $out;
 }
 
+function get_cpu_crypto_support() {
+	$machine = get_single_sysctl('hw.machine');
+	$accelerated_arm_platforms = array('am335x');
+	$cpucrypto_type = "";
+
+	switch ($machine) {
+		case 'amd64':
+			$cpucrypto_type = "AES-NI CPU Crypto: ";
+			exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
+			if ($cpucrypto_present[0] > 0) {
+				$cpucrypto_type .= "Yes ";
+				$cpucrypto_type .= ($cpucrypto_active) ? "(active)" : "(inactive)";
+			} else {
+				$cpucrypto_type .= "No";
+			}
+			$cpucrypto_active = is_module_loaded('aesni');
+		case 'arm':
+			$armplatform = get_single_sysctl('hw.platform');
+			if (in_array($armplatform, $accelerated_arm_platforms)) {
+				/* No drivers yet, so mark inactive! */
+				$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
+			}
+		default:
+			/* Unknown/unidentified platform */
+	}
+
+	if (!empty($cpucrypto_type)) {
+		return $cpucrypto_type;
+	} else {
+		return "CPU Crypto: None/Unknown Platform";
+	}
+}
+
 function get_cpu_count($show_detail = false) {
 	$cpucount = get_single_sysctl('kern.smp.cpus');
 

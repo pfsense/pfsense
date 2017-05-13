@@ -250,11 +250,10 @@ function get_cpu_crypto_support() {
 			exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
 			if ($cpucrypto_present[0] > 0) {
 				$cpucrypto_type .= "Yes ";
-				$cpucrypto_type .= ($cpucrypto_active) ? "(active)" : "(inactive)";
+				$cpucrypto_type .= (is_module_loaded('aesni')) ? "(active)" : "(inactive)";
 			} else {
 				$cpucrypto_type .= "No";
 			}
-			$cpucrypto_active = is_module_loaded('aesni');
 		case 'arm':
 			$armplatform = get_single_sysctl('hw.platform');
 			if (in_array($armplatform, $accelerated_arm_platforms)) {

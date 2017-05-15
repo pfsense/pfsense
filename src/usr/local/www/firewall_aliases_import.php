@@ -31,9 +31,8 @@
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
 require_once("guiconfig.inc");
+require_once("config.inc");
 require_once("util.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 

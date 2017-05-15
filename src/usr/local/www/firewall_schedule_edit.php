@@ -30,12 +30,17 @@
 ##|*MATCH=firewall_schedule_edit.php*
 ##|-PRIV
 
+require_once("guiconfig.inc");
+require_once("config.inc");
+require_once("filter.inc");
+require_once("util.inc");
+
 function schedulecmp($a, $b) {
 	return strcmp($a['name'], $b['name']);
 }
 
 function schedule_sort() {
-	global $g, $config;
+	global $config;
 
 	if (!is_array($config['schedules']['schedule'])) {
 		return;
@@ -43,11 +48,6 @@ function schedule_sort() {
 
 	usort($config['schedules']['schedule'], "schedulecmp");
 }
-
-require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"), gettext("Edit"));
 $pglinks = array("", "firewall_schedule.php", "@self");

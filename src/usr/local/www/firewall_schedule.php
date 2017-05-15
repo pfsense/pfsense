@@ -36,8 +36,8 @@ $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thu
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
 require_once("guiconfig.inc");
+require_once("config.inc");
 require_once("filter.inc");
-require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 

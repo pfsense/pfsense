@@ -112,7 +112,7 @@ $shortcut_section = "trafficshaper";
 include("head.inc");
 
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
-	print_info_box(gettext("Traffic shaping is not configured."));
+	print_info_box(sprintf(gettext('Traffic shaping is not configured. It can be configured here: %1$s%2$s%3$s.'), '<a href="/firewall_shaper.php">', gettext('Firewall &gt; Traffic Shaper'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;
 }

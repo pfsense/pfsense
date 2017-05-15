@@ -17,7 +17,7 @@ if [ -n "$IP" -a "$(basename $IP)" = "$IP" ]; then
 	
 		add|update)
 			# Remove all configs which mention the FQDN
-			grep -l -null -F "local-data: \"${CN}.${DOMAIN} A ${IP}\"" $DIR/openvpn.client.*.conf | xargs -0 rm
+			grep -l -null "^local-data: \"${CN}.${DOMAIN} A " $DIR/openvpn.client.*.conf | xargs -0 rm
 			rm -f "$CONF"
 	
 			TMPCONF=$(mktemp "$CONF.XXXXXX")

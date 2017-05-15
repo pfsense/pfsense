@@ -266,6 +266,15 @@ EOF;
 	$verbosity = isset($unboundcfg['log_verbosity']) ? $unboundcfg['log_verbosity'] : 1;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
 
+	if (isset($unboundcfg['regovpnclients'])) {
+		$openvpn_clients_conf .=<<<EOD
+# OpenVPN client entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+EOD;
+	} else {
+		$openvpn_clients_conf = '';
+	}
+
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
 		$dnsservers = array();
@@ -376,8 +385,7 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
 
-# OpenVPN client entries
-include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+{$openvpn_clients_conf}
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf

@@ -86,7 +86,7 @@ function pkg_env($extra_env = array()) {
 	);
 
 	if (!empty($config['system']['proxyurl'])) {
-		$http_proxy = $config['system']['proxyurl'];
+		$http_proxy = rtrim($config['system']['proxyurl'], '/');
 		if (!empty($config['system']['proxyport'])) {
 			$http_proxy .= ':' . $config['system']['proxyport'];
 		}

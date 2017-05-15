@@ -2743,7 +2743,7 @@ function configure_cron() {
 		$crontab_contents .= "#\n";
 
 		if (isset($config['system']['proxyurl']) && !empty($config['system']['proxyurl'])) {
-			$http_proxy = $config['system']['proxyurl'];
+			$http_proxy = rtrim($config['system']['proxyurl'], '/');
 			if (isset($config['system']['proxyport']) && !empty($config['system']['proxyport'])) {
 				$http_proxy .= ':' . $config['system']['proxyport'];
 			}

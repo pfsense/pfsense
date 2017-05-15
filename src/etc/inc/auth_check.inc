@@ -18,43 +18,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Light weight authentication check thats ment as a substitute for guiconfig.inc
+ * in cases where frequent automatic requests are made like graphs and widget pages.
+ */
 
-// this function is a duplicate from cmp_page_matches() in priv.inc
-// however unconditionally including priv.inc takes significant more time/cpu
-function cmp_page_matches2($page, & $matches, $fullwc = true) {
-
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
-
-	if (!is_array($matches)) {
-		return false;
-	}
-
-	/* skip any leading fwdslash */
-	$test = strpos($page, "/");
-	if ($test !== false && $test == 0) {
-		$page = substr($page, 1);
-	}
-
-	/* look for a match */
-	foreach ($matches as $match) {
-
-		/* possibly ignore full wildcard match */
-		if (!$fullwc && !strcmp($match , "*")) {
-			continue;
-		}
-
-		/* compare exact or wildcard match */
-		$match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
-		$result = preg_match("@^/{$match}$@", "/{$page}");
-
-		if ($result) {
-			return true;
-		}
-	}
-
-	return false;
-}
+require_once("auth_func.inc");
 
 function session_read_single_var($varname) {
 	$session_started = false;
@@ -73,7 +42,7 @@ function session_read_single_var($varname) {
 $session_pagematch = session_read_single_var("page-match");
 
 $pageuri = $_SERVER['REQUEST_URI'];
-if (cmp_page_matches2($pageuri, $session_pagematch)) {	
+if (cmp_page_matches($pageuri, $session_pagematch)) {	
 	return; // auth OK
 }
 require_once("authgui.inc");

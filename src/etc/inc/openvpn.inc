@@ -1957,7 +1957,7 @@ function openvpn_gen_route_ipv4($network, $iroute = false) {
 function openvpn_gen_route_ipv6($network, $iroute = false) {
 	$i = ($iroute) ? "i" : "";
 	list($ipv6, $prefix) = explode('/', trim($network));
-	if (empty($prefix) && !($prefix === "0")) {
+	if (empty($prefix) && !is_numeric($prefix)) {
 		$prefix = "128";
 	}
 	return "{$i}route-ipv6 ${ipv6}/${prefix}";

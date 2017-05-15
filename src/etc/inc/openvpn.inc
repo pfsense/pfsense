@@ -782,7 +782,9 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls':
 			case 'server_tls_user':
 				$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
-				$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+				if (is_domain($domain)) {
+					$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+				}
 				break;
 		}
 	}

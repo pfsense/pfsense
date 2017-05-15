@@ -355,7 +355,7 @@ $section->addInput(new Form_Checkbox(
 	'OpenVPN Clients',
 	'Register connected OpenVPN clients in the DNS Resolver',
 	$pconfig['regovpnclients']
-))->setHelp(sprintf('If this option is set, then the common name (CN) of connected OpenVPN clients will be registered in the DNS Resolver, so that their name can be resolved. '.
+))->setHelp(sprintf('If this option is set, then the common name (CN) of connected OpenVPN clients will be registered in the DNS Resolver, so that their name can be resolved. This only works for OpenVPN servers (Remote Access SSL/TLS) operating in "tun" mode. '.
 					'The domain in %sSystem: General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $btnadv = new Form_Button(

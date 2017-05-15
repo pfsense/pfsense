@@ -8,14 +8,14 @@ IP="$3"
 CN="$4"
 
 DIR="/var/unbound"
-CONF="$DIR/openvpn.client.$IP.conf"
+CONF="${DIR}/openvpn.client.${IP}.conf"
 PIDFILE="/var/run/unbound.pid"
 
 case "$OP" in
 
 	add|update)
 		# Remove all configs which mention the FQDN
-		grep -l -null -F "local-data: \"$CN.$DOMAIN A $IP\"" $DIR/openvpn.client.*.conf | xargs -0 rm
+		grep -l -null -F "local-data: \"${CN}.${DOMAIN} A ${IP}\"" $DIR/openvpn.client.*.conf | xargs -0 rm
 		rm -f "$CONF"
 
 		TMPCONF=$(mktemp "$CONF.XXXXXX")
@@ -23,17 +23,17 @@ case "$OP" in
 
 		# Add new local-data entry.
 		(
-			echo "local-data-ptr: \"$IP $CN.$DOMAIN\"" &&
-			echo "local-data: \"$CN.$DOMAIN A $IP\"" &&
-			echo "local-data: \"$CN A $IP\""
+			echo "local-data-ptr: \"${IP} ${CN}.${DOMAIN}\"" &&
+			echo "local-data: \"${CN}.${DOMAIN} A ${IP}\"" &&
+			echo "local-data: \"${CN} A ${IP}\""
 		) > "$TMPCONF"
 
 		# Check syntax, install configuration and restart unbound.
 		(
 			echo "server:" &&
-			echo "chroot: $DIR" &&
-			echo "directory: $DIR" &&
-			echo "include: $TMPCONF"
+			echo "chroot: ${DIR}" &&
+			echo "directory: ${DIR}" &&
+			echo "include: ${TMPCONF}"
 		) > "$TMPSRV"
 
 		chmod 644 "$TMPCONF" "$TMPSRV"

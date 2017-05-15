@@ -873,17 +873,17 @@ function install_package_xml($package_name) {
 		return false;
 	}
 
-	/* set up package logging streams */
-	if ($pkg_info['logging']) {
-		system_syslogd_start();
-	}
-
 	update_status(gettext("Writing configuration... "));
 	write_config($changedesc);
 	log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
 	update_status(gettext("done.") . "\n");
 	if ($pkg_info['after_install_info']) {
 		update_status($pkg_info['after_install_info']);
+	}
+
+	/* set up package logging streams */
+	if ($pkg_info['logging']) {
+		system_syslogd_start(true);
 	}
 
 	return true;
@@ -1015,7 +1015,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		/* remove package entry from /etc/syslog.conf if needed */
 		/* this must be done after removing the entries from config.xml */
 		if ($need_syslog_restart) {
-			system_syslogd_start();
+			system_syslogd_start(true);
 		}
 	}
 }

@@ -931,8 +931,12 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
+
 	if ($restart_syslogd) {
-		exec("/usr/bin/killall syslogd");
+		/* syslogd does not react well to clog rewriting the file while it is running. */
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+		}
 	}
 	if (isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
@@ -953,7 +957,12 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 
 function clear_all_log_files($restart = false) {
 	global $g;
-	exec("/usr/bin/killall syslogd");
+	if ($restart) {
+		/* syslogd does not react well to clog rewriting the file while it is running. */
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+		}
+	}
 
 	$log_files = array("system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
 	foreach ($log_files as $lfile) {
@@ -973,7 +982,7 @@ function clear_all_log_files($restart = false) {
 	return;
 }
 
-function system_syslogd_start() {
+function system_syslogd_start($sighup = false) {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1204,18 +1213,27 @@ EOD;
 		$syslogd_sockets .= " -l {$log_socket}";
 	}
 
-	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
-		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+	/* If HUP was requested, but syslogd is not running, restart it instead. */
+	if ($sighup && !isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+		$sighup = false;
 	}
 
-	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-		// if it still hasn't responded to the TERM, KILL it.
-		sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-		usleep(100000);
-	}
+	if (!$sighup) {
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+		}
 
-	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			// if it still hasn't responded to the TERM, KILL it.
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+			usleep(100000);
+		}
+
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+	} else {
+		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
+	}
 
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";

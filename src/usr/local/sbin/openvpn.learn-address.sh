@@ -10,14 +10,14 @@ CN="${4}"
 DIR="/var/unbound"
 PIDFILE="/var/run/unbound.pid"
 
-if [ -n "${IP}" -a "$(basename ${IP})" = "${IP}" ]; then
+if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 	CONF="${DIR}/openvpn.client.${IP}.conf"
 
 	case "${OP}" in
 
 		add|update)
-			TMPCONF=$(mktemp "${CONF}.XXXXXX")
-			TMPSRV=$(mktemp "${CONF}.XXXXXX")
+			TMPCONF=$(/usr/bin/mktemp "${CONF}.XXXXXX")
+			TMPSRV=$(/usr/bin/mktemp "${CONF}.XXXXXX")
 
 			if [ -f "${TMPCONF}" -a -f "${TMPSRV}" ]; then
 				# Remove all configs which mention the FQDN

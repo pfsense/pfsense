@@ -274,6 +274,7 @@ function build_if_list() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"), gettext("Edit"));
+$pglinks = array("", "services_dyndns.php", "services_dyndns.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

@@ -669,6 +669,7 @@ function dsttype_selected() {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

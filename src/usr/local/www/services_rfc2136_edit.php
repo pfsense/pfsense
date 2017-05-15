@@ -178,6 +178,7 @@ function build_if_list() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"), gettext("Edit"));
+$pglinks = array("", "services_dyndns.php", "services_rfc2136.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

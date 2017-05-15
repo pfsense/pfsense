@@ -308,9 +308,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
+$pglinks = array("", "vpn_openvpn_server.php", "vpn_openvpn_csc.php");
 
 if ($act=="new" || $act=="edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 $shortcut_section = "openvpn";
 

@@ -666,8 +666,10 @@ function build_eal_list() {
 
 if ($pconfig['mobile']) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
+	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
 } else {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 1"));
+	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec.php", "@self");
 }
 
 $shortcut_section = "ipsec";

@@ -177,6 +177,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"), gettext("Edit"));
+$pglinks = array("", "system_gateways.php", "system_gateway_groups.php", "@self");
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {

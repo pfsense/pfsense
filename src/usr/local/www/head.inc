@@ -516,7 +516,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		print('<br />');
 		unset($notitle);
 	} else {
-		print(genhtmltitle($pgtitle));
+		if (isset($pglinks)) {
+			print(genhtmltitle($pgtitle, $pglinks));	
+		} else {
+			print(genhtmltitle($pgtitle));
+		}
 	}
 ?>
 		<ul class="context-links">

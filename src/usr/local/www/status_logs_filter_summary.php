@@ -97,6 +97,7 @@ status_logs_common_code();
 
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+$pglinks = array("", "status_logs.php", "status_logs_filter.php", "@self");
 include("head.inc");
 
 if (!$input_errors && $savemsg) {

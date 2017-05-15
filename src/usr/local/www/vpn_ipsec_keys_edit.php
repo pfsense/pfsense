@@ -152,6 +152,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"), gettext("Edit"));
+$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_keys.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");

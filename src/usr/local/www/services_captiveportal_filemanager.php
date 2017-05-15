@@ -97,6 +97,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("File Manager"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 if (!is_array($a_cp[$cpzone]['element'])) {

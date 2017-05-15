@@ -17,8 +17,8 @@ if [ -n "$IP" -a "$(basename $IP)" = "$IP" ]; then
 
 		add|update)
 			# Remove all configs which mention the FQDN
-			grep -l -null "^local-data: \"${CN}.${DOMAIN} A " $DIR/openvpn.client.*.conf | xargs -0 rm
-			rm -f "$CONF"
+			/usr/bin/grep -l -null "^local-data: \"${CN}.${DOMAIN} A " $DIR/openvpn.client.*.conf | /usr/bin/xargs -0 /bin/rm
+			/bin/rm -f "$CONF"
 
 			TMPCONF=$(mktemp "$CONF.XXXXXX")
 			TMPSRV=$(mktemp "$CONF.XXXXXX")
@@ -38,16 +38,16 @@ if [ -n "$IP" -a "$(basename $IP)" = "$IP" ]; then
 				echo "include: ${TMPCONF}"
 			) > "$TMPSRV"
 
-			chmod 644 "$TMPCONF" "$TMPSRV"
-			/usr/local/sbin/unbound-checkconf "$TMPSRV" && mv "$TMPCONF" "$CONF"
-			rm -f "$TMPCONF" "$TMPSRV"
+			/bin/chmod 644 "$TMPCONF" "$TMPSRV"
+			/usr/local/sbin/unbound-checkconf "$TMPSRV" && /bin/mv "$TMPCONF" "$CONF"
+			/bin/rm -f "$TMPCONF" "$TMPSRV"
 
 			/bin/pkill -HUP -F "$PIDFILE"
 		;;
 
 		delete)
 			# CN is not set on delete.
-			rm -f "$CONF" && /bin/pkill -HUP -F "$PIDFILE"
+			/bin/rm -f "$CONF" && /bin/pkill -HUP -F "$PIDFILE"
 		;;
 
 	esac

@@ -276,7 +276,7 @@ function get_cpu_count($show_detail = false) {
 
 	if ($show_detail) {
 		$cpudetail = "";
-		exec("/usr/bin/grep 'SMP.*package.*core' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
+		exec("/usr/bin/grep 'FreeBSD/SMP:.*package' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
 		$cpucount = $cpudetail[0];
 	}
 	return $cpucount;

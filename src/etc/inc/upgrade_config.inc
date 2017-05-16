@@ -653,7 +653,7 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][1]['value'] =   "default";
 
 		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
-		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
+		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 1: Assign random IP IDs)");
 		$config['sysctl']['item'][2]['value'] =   "default";
 
 		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";

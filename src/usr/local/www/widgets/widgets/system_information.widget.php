@@ -244,6 +244,9 @@ $rows_displayed = false;
 				<?php endif; ?>
 				</div>
 		<?php endif; ?>
+				<div id="cpucrypto">
+					<?= get_cpu_crypto_support(); ?>
+				</div>
 			</td>
 		</tr>
 <?php

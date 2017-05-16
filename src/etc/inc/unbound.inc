@@ -539,14 +539,17 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $config, $g;
 
-	// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
-	if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
-		$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
-	} else {
-		$system_domain_local_zone_type = "transparent";
-	}
+	// Check if auto add host entries is not set
+	if (!isset($config['unbound']['disable_auto_added_host_entries'])) {
+		// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
+		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
+			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+		} else {
+			$system_domain_local_zone_type = "transparent";
+		}
 
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
+		$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
+	}
 
 	$hosts = system_hosts_entries($config['unbound']);
 	$added_ptr = array();

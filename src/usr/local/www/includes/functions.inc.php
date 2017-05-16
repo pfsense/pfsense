@@ -246,12 +246,44 @@ function get_cpufreq() {
 	return $out;
 }
 
+function get_cpu_crypto_support() {
+	$machine = get_single_sysctl('hw.machine');
+	$accelerated_arm_platforms = array('am335x');
+	$cpucrypto_type = "";
+
+	switch ($machine) {
+		case 'amd64':
+			$cpucrypto_type = "AES-NI CPU Crypto: ";
+			exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
+			if ($cpucrypto_present[0] > 0) {
+				$cpucrypto_type .= "Yes ";
+				$cpucrypto_type .= (is_module_loaded('aesni')) ? "(active)" : "(inactive)";
+			} else {
+				$cpucrypto_type .= "No";
+			}
+		case 'arm':
+			$armplatform = get_single_sysctl('hw.platform');
+			if (in_array($armplatform, $accelerated_arm_platforms)) {
+				/* No drivers yet, so mark inactive! */
+				$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
+			}
+		default:
+			/* Unknown/unidentified platform */
+	}
+
+	if (!empty($cpucrypto_type)) {
+		return $cpucrypto_type;
+	} else {
+		return "CPU Crypto: None/Unknown Platform";
+	}
+}
+
 function get_cpu_count($show_detail = false) {
 	$cpucount = get_single_sysctl('kern.smp.cpus');
 
 	if ($show_detail) {
 		$cpudetail = "";
-		exec("/usr/bin/grep 'SMP.*package.*core' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
+		exec("/usr/bin/grep 'FreeBSD/SMP:.*package' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
 		$cpucount = $cpudetail[0];
 	}
 	return $cpucount;

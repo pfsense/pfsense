@@ -125,6 +125,9 @@ export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.c
 export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src-env.conf"}
 export __MAKE_CONF=${__MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
+# Increase EFI_STAGING_SIZE to fit mfsroot
+export EFI_STAGING_SIZE=768
+
 # Extra tools to be added to ITOOLS
 export LOCAL_ITOOLS=${LOCAL_ITOOLS:-"uuencode uudecode ex"}
 

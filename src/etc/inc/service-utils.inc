@@ -20,13 +20,15 @@
  * limitations under the License.
  */
 
-require_once("globals.inc");
 require_once("captiveportal.inc");
-require_once("openvpn.inc");
+require_once("globals.inc");
+require_once("gwlb.inc");
 require_once("ipsec.inc");
+require_once("openvpn.inc");
+require_once("system.inc");
+require_once("util.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
-require_once("gwlb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -259,6 +261,11 @@ function get_services() {
 	$pconfig = array();
 	$pconfig['name'] = "ntpd";
 	$pconfig['description'] = gettext("NTP clock sync");
+	$services[] = $pconfig;
+
+	$pconfig = array();
+	$pconfig['name'] = "syslogd";
+	$pconfig['description'] = gettext("System Logger Daemon");
 	$services[] = $pconfig;
 
 	if (is_array($config['captiveportal'])) {
@@ -620,6 +627,9 @@ function service_control_start($name, $extras) {
 			relayd_configure();
 			filter_configure();
 			break;
+		case 'syslogd':
+			system_syslogd_start();
+			break;
 		default:
 			start_service($name);
 			break;
@@ -690,6 +700,16 @@ function service_control_stop($name, $extras) {
 		case 'relayd':
 			mwexec('pkill relayd');
 			break;
+		case 'syslogd':
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+				usleep(100000);
+			}
+			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+				usleep(100000);
+			}
+			break;
 		default:
 			stop_service($name);
 			break;
@@ -759,6 +779,9 @@ function service_control_restart($name, $extras) {
 		case 'relayd':
 			relayd_configure(true);
 			filter_configure();
+			break;
+		case 'syslogd':
+			system_syslogd_start();
 			break;
 		default:
 			restart_service($name);

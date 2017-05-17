@@ -295,6 +295,11 @@ $shortcuts['snmp'] = array();
 $shortcuts['snmp']['main'] = "services_snmp.php";
 $shortcuts['snmp']['service'] = "bsnmpd";
 
+$shortcuts['syslogd'] = array();
+$shortcuts['syslogd']['main'] = "status_logs_settings.php";
+$shortcuts['syslogd']['log'] = "status_logs.php";
+$shortcuts['syslogd']['service'] = "syslogd";
+
 $shortcuts['authentication'] = array();
 $shortcuts['authentication']['main'] = "system_authservers.php";
 // $shortcuts['authentication']['status'] = "diag_authentication.php";

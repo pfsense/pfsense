@@ -768,7 +768,7 @@ if ($act=="new" || $act=="edit"):
 		true
 	))->setReadonly()
 	  ->setAttribute('size', '10')
-	  ->setHelp('Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from the list');
+	  ->setHelp('Algorithm list.<br />Click an algorithm name to remove it from the list');
 
 	$group->setHelp('The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
 					'%1$s%2$s%3$s',

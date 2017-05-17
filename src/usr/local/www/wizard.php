@@ -409,13 +409,16 @@ if ($_REQUEST['message'] != "") {
 }
 
 $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
+$pbclass = ($completion == 100) ? "progress-bar progress-bar-success":"progress-bar progress-bar-danger";
 ?>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">
-	<div class="progress-bar" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%">
+	<div class="<?=$pbclass?>" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%; line-height: 15px;">
+		<?php print(sprintf(gettext("Step %s of %s"), $stepid, $totalsteps-1)); ?>
 	</div>
 </div>
+<br />
 
 <?php
 

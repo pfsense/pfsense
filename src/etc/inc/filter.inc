@@ -2838,6 +2838,9 @@ function filter_generate_user_rule($rule) {
 		$icmptype_text = replace_element_in_list($rule['icmptype'], ',', 'skip', '39');
 		$icmptype_text = (strpos($icmptype_text, ",") === false ? $icmptype_text : '{ ' . $icmptype_text . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
+		if ($rule['ipprotocol'] == '') {
+			$aline['ipprotocol'] = 'inet';
+		}
 	}
 	
 	if (!empty($rule['tag'])) {

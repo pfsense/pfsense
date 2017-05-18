@@ -159,73 +159,81 @@ function display_login_form() {
 		exit;
 	}
 
-/* Check against locally configured IP addresses, which will catch when someone
-   port forwards WebGUI access from WAN to an internal IP on the router. */
-global $FilterIflist, $nifty_background;
-$local_ip = false;
-if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
-	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
-	$http_host = $http_host_port[0];
-} else {
-	$http_host = $_SERVER['HTTP_HOST'];
-}
-if (empty($FilterIflist)) {
-	require_once('filter.inc');
-	require_once('shaper.inc');
-	filter_generate_optcfg_array();
-}
-foreach ($FilterIflist as $iflist) {
-	if ($iflist['ip'] == $http_host) {
-		$local_ip = true;
-	} else if ($iflist['ipv6'] == $http_host) {
-		$local_ip = true;
-	} else if (is_array($iflist['vips'])) {
-		foreach ($iflist['vips'] as $vip) {
-			if ($vip['ip'] == $http_host) {
-				$local_ip = true;
-				break;
-			}
-		}
-		unset($vip);
-	}
-	if ($local_ip == true) {
-		break;
-	}
-}
-unset($FilterIflist);
-unset($iflist);
+	/* Check against locally configured IP addresses, which will catch when someone
+	   port forwards WebGUI access from WAN to an internal IP on the router. */
+	global $FilterIflist, $nifty_background;
 
-if ($local_ip == false) {
-	if (is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-			if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-				$local_ip = true;
-			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-				$local_ip = true;
+	$local_ip = false;
+
+	if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
+		$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
+		$http_host = $http_host_port[0];
+	} else {
+		$http_host = $_SERVER['HTTP_HOST'];
+	}
+
+	if (empty($FilterIflist)) {
+		require_once('filter.inc');
+		require_once('shaper.inc');
+		filter_generate_optcfg_array();
+	}
+
+	foreach ($FilterIflist as $iflist) {
+		if ($iflist['ip'] == $http_host) {
+			$local_ip = true;
+		} else if ($iflist['ipv6'] == $http_host) {
+			$local_ip = true;
+		} else if (is_array($iflist['vips'])) {
+			foreach ($iflist['vips'] as $vip) {
+				if ($vip['ip'] == $http_host) {
+					$local_ip = true;
+					break;
+				}
 			}
-			if ($local_ip == true) {
-				break;
-			}
+
+			unset($vip);
+		}
+
+		if ($local_ip == true) {
+			break;
 		}
 	}
-}
 
-// For the login form, get the settings of no particular user.
-// That ensures we will use the system default theme for the login form.
-$user_settings = get_user_settings("");
-$cssfile = "/css/pfSense.css";
+	unset($FilterIflist);
+	unset($iflist);
 
-if (isset($user_settings['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
+	if ($local_ip == false) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+				if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+					$local_ip = true;
+				} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+					$local_ip = true;
+				}
+
+				if ($local_ip == true) {
+					break;
+				}
+			}
+		}
 	}
-}
 
-if (isset($config['system']['webgui']['loginshowhost'])) {
-	$loginbannerstr = sprintf(gettext('Login to %1$s on %2$s.%3$s'), $g['product_name'], htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
-} else {
-	$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
-}
+	// For the login form, get the settings of no particular user.
+	// That ensures we will use the system default theme for the login form.
+	$user_settings = get_user_settings("");
+	$cssfile = "/css/pfSense.css";
+
+	if (isset($user_settings['webgui']['webguicss'])) {
+		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
+		}
+	}
+
+	if (isset($config['system']['webgui']['loginshowhost'])) {
+		$loginbannerstr = sprintf(gettext('Login to %1$s on %2$s.%3$s'), $g['product_name'], htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+	} else {
+		$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
+	}
 
 ?>
 <!DOCTYPE html>

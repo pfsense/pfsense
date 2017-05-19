@@ -109,32 +109,7 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
-/* If pfSense.boot kenv is set, it's a reroot */
-if (mwexec("/bin/kenv -q pfSense.boot 2>/dev/null") != 0) {
-	/* Collect vendor MAC address for all interfaces */
-	$ifs = pfSense_interface_listget();
-	foreach ($ifs as $if) {
-		$if_details = pfSense_get_interface_addresses($if);
-		if (isset($if_details['iftype']) &&
-		    $if_details['iftype'] == 'virtual') {
-			continue;
-		}
-
-		if (empty($if_details['macaddr']) ||
-		    $if_details['macaddr'] == "00:00:00:00:00:00") {
-			continue;
-		}
-
-		$vendor_mac_arr[$if] = $if_details['macaddr'];
-	}
-	$vendor_mac_arr_json = json_encode($vendor_mac_arr);
-	if (@file_get_contents("{$g['vardb_path']}/vendor_mac") !== $vendor_mac_arr_json) {
-		@file_put_contents("{$g['vardb_path']}/vendor_mac", $vendor_mac_arr_json);
-	}
-	unset($ifs, $if, $vendor_mac_arr, $vendor_mac_arr_json);
-	mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
-	mwexec("/bin/kenv pfSense.boot=1");
-}
+mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
 
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);

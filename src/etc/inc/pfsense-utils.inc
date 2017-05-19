@@ -457,6 +457,47 @@ function gen_requirestatefilter_field(&$section, $value) {
 		'before the states are displayed. Useful for systems with large state tables.');
 }
 
+/****f* pfsense-utils/gen_created_updated_fields
+ * NAME
+ *   gen_created_updated_fields
+ * INPUTS
+ *   Pointer to form object
+ *   Array of created time and username
+ *   Array of updated time and username
+ * RESULT
+ *   no return value, section object is added to form if needed
+ ******/
+function gen_created_updated_fields(&$form, $created, $updated) {
+	$has_created_time = (isset($created['time']) && isset($created['username']));
+	$has_updated_time = (isset($updated['time']) && isset($updated['username']));
+
+	if ($has_created_time || $has_updated_time) {
+		$section = new Form_Section('Rule Information');
+
+		if ($has_created_time) {
+			$section->addInput(new Form_StaticText(
+				'Created',
+				sprintf(
+					gettext('%1$s by %2$s'),
+					date(gettext("n/j/y H:i:s"), $created['time']),
+					$created['username'])
+			));
+		}
+
+		if ($has_updated_time) {
+			$section->addInput(new Form_StaticText(
+				'Updated',
+				sprintf(
+					gettext('%1$s by %2$s'),
+					date(gettext("n/j/y H:i:s"), $updated['time']),
+					$updated['username'])
+			));
+		}
+
+		$form->add($section);
+	}
+}
+
 function hardware_offloading_applyflags($iface) {
 	global $config;
 

@@ -986,28 +986,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 
 $form->add($section);
 
-$has_created_time = (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']));
-$has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']));
-
-if ($has_created_time || $has_updated_time) {
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext(" by ") . $a_nat[$id]['created']['username']
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext(" by ") . $a_nat[$id]['updated']['username']
-		));
-	}
-
-	$form->add($section);
-}
+gen_created_updated_fields($form, $a_nat[$id]['created'], $a_nat[$id]['updated']);
 
 if (isset($id) && $a_nat[$id]) {
 	$form->addGlobal(new Form_Input(

@@ -6166,16 +6166,8 @@ function get_interface_mac($interface) {
 }
 
 function get_interface_vendor_mac($interface) {
-	global $g;
-
-	$mac = "";
-	$mac_file = "{$g['vardb_path']}/vendor_mac";
-	if (file_exists($mac_file)) {
-		$vendor_mac_arr = json_decode(file_get_contents($mac_file), true);
-		$mac = (is_macaddr($vendor_mac_arr[$interface])) ? $vendor_mac_arr[$interface] : '';
-	}
-
-	return $mac;
+	$macinfo = pfSense_get_interface_addresses($interface);
+	return $macinfo["hwaddr"] ?: '';
 }
 
 /****f* pfsense-utils/generate_random_mac_address

@@ -1872,12 +1872,12 @@ function filter_nat_rules_generate() {
 
 			$srcaddr = filter_generate_address($rule, 'source');
 			$dstaddr = filter_generate_address($rule, 'destination');
-			if (!$dstaddr) {
-				$dstaddr = $FilterIflist[$natif]['ip'];
-			}
-
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
+			
+			if (empty($srcaddr) || empty($dstaddr)) {
+				continue;
+			}
 
 			$tmp = explode('/', $srcaddr);
 			$srcip = $tmp[0];

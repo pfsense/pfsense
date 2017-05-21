@@ -212,6 +212,8 @@ if ($createdalias) {
 	} else {
 		print_info_box(gettext("Alias was created successfully."), 'success');
 	}
+
+	$alias_exists = true;
 }
 
 $form = new Form(false);

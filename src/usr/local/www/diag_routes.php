@@ -59,12 +59,12 @@
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
 
-require_once('guiconfig.inc');
-
 $limit = '100';
 $filter = '';
 
 if (isset($_REQUEST['isAjax'])) {
+	require_once('auth_check.inc');
+	
 	$netstat = "/usr/bin/netstat -rnW";
 	if (isset($_REQUEST['IPv6'])) {
 		$netstat .= " -f inet6";
@@ -126,6 +126,7 @@ if (isset($_REQUEST['isAjax'])) {
 	echo htmlspecialchars_decode($output_text);
 	exit;
 }
+require_once('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Routes"));
 $shortcut_section = "routing";

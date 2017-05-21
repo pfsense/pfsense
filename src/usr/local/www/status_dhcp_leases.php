@@ -300,6 +300,8 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 				$slease['staticmap_array_index'] = $idx;
 				$leases[] = $slease;
 			}
+
+			$staticmap_array_index++;
 		}
 	}
 }

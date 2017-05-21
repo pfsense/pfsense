@@ -716,7 +716,12 @@ if ($_POST['apply']) {
 
 			foreach ($staticroutes as $route_subnet) {
 				list($network, $subnet) = explode("/", $route_subnet);
-				if ($_POST['subnet'] == $subnet && $network == gen_subnet($_POST['ipaddr'], $_POST['subnet'])) {
+				// If the proposed interface subnet is equal in size, or greater in size (CIDR is smaller) than the static route subnet
+				// and the network address of the static route subnet is in the proposed interface subnet, then there is a problem.
+				// The static routed addresses are contained in the proposed interface subnet, which will be messy!
+				// Note: If the static routed range is bigger than the proposed interface subnet, that is OK.
+				// Addresses in the interface are delivered locally, and outside use the static route.
+				if (($_POST['subnet'] <= $subnet) && ip_in_subnet($network, gen_subnet($_POST['ipaddr'], $_POST['subnet']) . "/" . $_POST['subnet'])) {
 					$input_errors[] = gettext("This IPv4 address conflicts with a Static Route.");
 					break;
 				}
@@ -744,7 +749,8 @@ if ($_POST['apply']) {
 
 			foreach ($staticroutes as $route_subnet) {
 				list($network, $subnet) = explode("/", $route_subnet);
-				if ($_POST['subnetv6'] == $subnet && $network == gen_subnetv6($_POST['ipaddrv6'], $_POST['subnetv6'])) {
+				// See comments above for IPv4 static route checks, the reasoning is the same.
+				if (($_POST['subnetv6'] <= $subnet) && ip_in_subnet($network, gen_subnet($_POST['ipaddrv6'], $_POST['subnetv6']) . "/" . $_POST['subnetv6'])) {
 					$input_errors[] = gettext("This IPv6 address conflicts with a Static Route.");
 					break;
 				}

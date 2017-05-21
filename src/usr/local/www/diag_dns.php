@@ -116,7 +116,7 @@ function resolve_host_addresses($host) {
 	return $resolved;
 }
 
-if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
+if (isAllowedPage('firewall_aliases_edit.php') && isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
@@ -281,7 +281,7 @@ $form->addGlobal(new Form_Button(
         'fa-search'
 ))->addClass('btn-primary');
 
-if (!empty($resolved)) {
+if (!empty($resolved) && isAllowedPage('firewall_aliases_edit.php')) {
 	if ($alias_exists) {
 		$button_text = gettext("Update alias");
 	} else {

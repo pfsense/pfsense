@@ -877,7 +877,7 @@ if ($act=="new" || $act=="edit"):
 		'Don\'t add/remove routes',
 		'Don\'t add or remove routes automatically',
 		$pconfig['route_no_exec']
-	))->setHelp('Pass routes to --route-upscript using environmental variables.');
+	))->setHelp('Do not execute operating system commands to install routes. Instead, pass routes to --route-up script using environmental variables.');
 
 	$form->add($section);
 

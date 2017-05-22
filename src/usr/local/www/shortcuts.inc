@@ -253,7 +253,7 @@ $shortcuts['pppoes']['log'] = "status_logs_vpn.php?vpntype=poes";
 
 $shortcuts['l2tps'] = array();
 $shortcuts['l2tps']['main'] = "vpn_l2tp.php";
-$shortcuts['l2tps']['log'] = "status_logs_vpn.php?vpntype=l2tp";
+$shortcuts['l2tps']['log'] = "status_logs_vpn.php?logfile=l2tps&vpntype=l2tp";
 
 $shortcuts['carp'] = array();
 $shortcuts['carp']['main'] = "system_hasync.php";

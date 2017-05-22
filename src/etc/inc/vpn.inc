@@ -1844,6 +1844,7 @@ EOD;
 	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
 	set radius retries 3
 	set radius timeout 10
+	set auth disable internal
 	set auth enable radius-auth
 
 EOD;

@@ -30,7 +30,7 @@ require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("pfTop"));
 
-$sorttypes = array('age', 'bytes', 'dest', 'dport', 'exp', 'none', 'peak', 'pkt', 'rate', 'size', 'sport', 'src');
+$sorttypes = array('age', 'bytes', 'dest', 'dport', 'exp', 'none', 'peak', 'pkt', 'rate', 'sport', 'src');
 $viewtypes = array('default', 'label', 'long', 'queue', 'rules', 'size', 'speed', 'state', 'time');
 $viewall = array('queue', 'label', 'rules');
 $numstates = array('50', '100', '200', '500', '1000', 'all');

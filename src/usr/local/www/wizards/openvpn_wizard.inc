@@ -29,6 +29,13 @@ function has_special_chars($text) {
 	return preg_match('/[^A-Za-z0-9 _-]/', $text);
 }
 
+function step1_stepsubmitbeforesave() {
+	global $stepid, $config;
+	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
+		unset($config['ovpnserver']['step2']);
+	}
+}
+
 function step1_submitphpaction() {
 	global $stepid, $config;
 	if ($_POST['authtype'] == "local") {

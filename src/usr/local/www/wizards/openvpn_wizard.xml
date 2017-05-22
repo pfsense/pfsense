@@ -58,6 +58,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>step1_stepsubmitbeforesave();</stepsubmitbeforesave>
 	<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>

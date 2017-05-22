@@ -509,10 +509,13 @@ function openvpn_validate_host($value, $name) {
 	return false;
 }
 
-function openvpn_validate_port($value, $name) {
+function openvpn_validate_port($value, $name, $first_port = 0) {
 	$value = trim($value);
-	if (empty($value) || !is_numeric($value) || $value < 0 || ($value > 65535)) {
-		return sprintf(gettext("The field '%s' must contain a valid port, ranging from 0 to 65535."), $name);
+	if (!is_numeric($first_port)) {
+		$first_port = 0;
+	}
+	if (empty($value) || !is_numeric($value) || $value < $first_port || ($value > 65535)) {
+		return sprintf(gettext("The field '%s' must contain a valid port, ranging from {$first_port} to 65535."), $name);
 	}
 	return false;
 }

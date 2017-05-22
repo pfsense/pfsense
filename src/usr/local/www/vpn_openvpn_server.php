@@ -105,7 +105,6 @@ if ($act == "new") {
 	$pconfig['dev_mode'] = "tun";
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
-	$pconfig['pool_enable'] = "yes";
 	$pconfig['cert_depth'] = 1;
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
@@ -183,7 +182,6 @@ if ($act == "edit") {
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
-		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
 		$pconfig['topology'] = $a_server[$id]['topology'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
@@ -547,7 +545,6 @@ if ($_POST['save']) {
 		$server['client2client'] = $pconfig['client2client'];
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
-		$server['pool_enable'] = $pconfig['pool_enable'];
 		$server['topology'] = $pconfig['topology'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
@@ -982,8 +979,8 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
 				'hosts expressed using CIDR (e.g. 10.0.8.0/24). The first network address will be assigned to ' .
-				'the server virtual interface. The remaining network addresses can optionally be assigned ' .
-				'to connecting clients (see Address Pool).');
+				'the server virtual interface. The remaining network addresses will be assigned ' .
+				'to connecting clients.');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -993,7 +990,7 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('This is the IPv6 virtual network used for private ' .
 				'communications between this server and client hosts expressed using CIDR (e.g. fe80::/64). ' .
 				'The first network address will be assigned to the server virtual interface. The remaining ' .
-				'network addresses can optionally be assigned to connecting clients (see Address Pool).');
+				'network addresses will be assigned to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -1125,13 +1122,6 @@ if ($act=="new" || $act=="edit"):
 		'Dynamic IP',
 		'Allow connected clients to retain their connections if their IP address changes.',
 		$pconfig['dynamic_ip']
-	));
-
-	$section->addInput(new Form_Checkbox(
-		'pool_enable',
-		'Address Pool',
-		'Provide a virtual adapter IP address to clients (see Tunnel Network).',
-		$pconfig['pool_enable']
 	));
 
 	$section->addInput(new Form_Select(

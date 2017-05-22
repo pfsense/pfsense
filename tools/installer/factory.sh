@@ -27,7 +27,7 @@ get_cur_model() {
 
 	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
-	local _hw_ncpu=$(sysctl -b hw.ncpu)
+	local _hw_ncpu=$(sysctl -n hw.ncpu)
 
 	case "${_product}" in
 		RCC-VE)
@@ -60,7 +60,7 @@ get_cur_model() {
 			_cur_model="XG-1540"
 			;;
 		"Minnowboard Turbot D0 PLATFORM")
-			case "${hw_ncpu}" in
+			case "${_hw_ncpu}" in
 				4)
 					_cur_model="SG-2340"
 					;;

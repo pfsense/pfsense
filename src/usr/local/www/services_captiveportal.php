@@ -647,7 +647,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
 			'%1$sMAC tab%2$s or send a POST from another system. '  .
-			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">', '</a>');
+			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', "<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'passthrumacaddusername',
@@ -656,7 +656,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['passthrumacaddusername']
 ))->setHelp('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
 			'To remove the passthrough MAC entry either log in and remove it manually from the %1$sMAC tab%2$s or send a POST from another system.',
-			'<a href="services_captiveportal_mac.php">', '</a>');
+			"<a href=\"services_captiveportal_mac.php?zone={$cpzone}\">", '</a>');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',

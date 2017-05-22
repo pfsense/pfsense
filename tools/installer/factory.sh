@@ -59,7 +59,7 @@ get_cur_model() {
 		SYS-5018D-FN4T)
 			_cur_model="XG-1540"
 			;;
-		"Turbot Dual-E")
+		"Minnowboard Turbot D0 PLATFORM")
 			case "${hw_ncpu}" in
 				4)
 					_cur_model="SG-2340"
@@ -114,7 +114,7 @@ case "${machine_arch}" in
 			RCC-VE|DFFv2|RCC)
 				is_adi=1
 				;;
-			"Turbot Dual-E")
+			"Minnowboard Turbot D0 PLATFORM")
 				is_turbot=1
 				;;
 		esac

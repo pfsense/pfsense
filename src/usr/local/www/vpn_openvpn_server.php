@@ -978,8 +978,8 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
-				'hosts expressed using CIDR (e.g. 10.0.8.0/24). The first network address will be assigned to ' .
-				'the server virtual interface. The remaining network addresses will be assigned ' .
+				'hosts expressed using CIDR notation (e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
+				'the server virtual interface. The remaining usable addresses will be assigned ' .
 				'to connecting clients.');
 
 	$section->addInput(new Form_Input(
@@ -988,9 +988,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this server and client hosts expressed using CIDR (e.g. fe80::/64). ' .
-				'The first network address will be assigned to the server virtual interface. The remaining ' .
-				'network addresses will be assigned to connecting clients.');
+				'communications between this server and client hosts expressed using CIDR notation (e.g. fe80::/64). ' .
+				'The ::1 address in the network will be assigned to the server virtual interface. The remaining ' .
+				'addresses will be assigned to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',

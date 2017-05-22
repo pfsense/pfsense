@@ -53,6 +53,7 @@ if (!is_array($a_group['priv'])) {
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
+uasort($spriv_list, "compare_by_name");
 
 if ($_POST['save']) {
 
@@ -146,7 +147,17 @@ if (isset($groupid)) {
 	));
 }
 
-$section = new Form_Section('Add Privileges for '. $a_group['name']);
+$section = new Form_Section('Group Privileges');
+
+$name_string = $a_group['name'];
+if (!empty($a_group['descr'])) {
+	$name_string .= " ({$a_group['descr']})";
+}
+
+$section->addInput(new Form_StaticText(
+	'Group',
+	$name_string
+));
 
 $section->addInput(new Form_Select(
 	'sysprivs',

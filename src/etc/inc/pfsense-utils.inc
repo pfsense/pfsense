@@ -3244,4 +3244,8 @@ function addrtolower($ip) {
 		return($ip);
 	}
 }
+
+function compare_by_name($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
 ?>

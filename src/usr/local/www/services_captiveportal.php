@@ -685,13 +685,13 @@ $form->add($section);
 $section = new Form_Section('Authentication');
 $section->addClass('Authentication');
 
-$group = new Form_Group('*Authentication method');
+$group = new Form_Group('*Authentication Method');
 
 $group->add(new Form_Checkbox(
 	'auth_method',
 	null,
 	'No Authentication',
-	$pconfig['auth_method'] == 'none',
+	$pconfig['auth_method'] == 'none' || empty($pconfig['auth_method']),
 	'none'
 ))->displayasRadio();
 
@@ -710,6 +710,8 @@ $group->add(new Form_Checkbox(
 	$pconfig['auth_method'] == 'radius',
 	'radius'
 ))->displayasRadio();
+
+$group->setHelp('Select an Authentication Method to use for this zone. One method must be selected.');
 
 $section->add($group);
 

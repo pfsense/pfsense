@@ -228,11 +228,6 @@ if ($act == "edit") {
 			$pconfig['wins_server_enable'] = true;
 		}
 
-		$pconfig['client_mgmt_port'] = $a_server[$id]['client_mgmt_port'];
-		if ($pconfig['client_mgmt_port']) {
-			$pconfig['client_mgmt_port_enable'] = true;
-		}
-
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
 		if ($pconfig['nbdd_server1']) {
 			$pconfig['nbdd_server_enable'] = true;
@@ -399,12 +394,6 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
-		}
-	}
-
-	if ($pconfig['client_mgmt_port_enable']) {
-		if ($result = openvpn_validate_port($pconfig['client_mgmt_port'], 'Client management port')) {
-			$input_errors[] = $result;
 		}
 	}
 
@@ -609,10 +598,6 @@ if ($_POST['save']) {
 			if ($pconfig['dns_server_enable']) {
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
 			}
-		}
-
-		if ($pconfig['client_mgmt_port_enable']) {
-			$server['client_mgmt_port'] = $pconfig['client_mgmt_port'];
 		}
 
 		if ($_POST['duplicate_cn'] == "yes") {
@@ -1292,21 +1277,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['wins_server2']
 	));
 
-	$section->addInput(new Form_Checkbox(
-		'client_mgmt_port_enable',
-		'Enable custom port ',
-		'Use a different management port for clients.',
-		$pconfig['client_mgmt_port_enable']
-	));
-
-	$section->addInput(new Form_Input(
-		'client_mgmt_port',
-		'Management port',
-		'number',
-		$pconfig['client_mgmt_port']
-	))->setHelp('The default port is 166. Specify a different port if the client machines need to select from multiple OpenVPN links.');
-
-
 	$form->add($section);
 
 	$section = new Form_Section('Advanced Configuration');
@@ -1641,11 +1611,6 @@ events.push(function() {
 		hideInput('wins_server2', hide);
 	}
 
-	function client_mgmt_port_change() {
-		var hide  = ! $('#client_mgmt_port_enable').prop('checked')
-
-		hideInput('client_mgmt_port', hide);
-	}
 
 	function ntp_server_change() {
 		var hide  = ! $('#ntp_server_enable').prop('checked')
@@ -1661,8 +1626,6 @@ events.push(function() {
 		hideInput('netbios_scope', hide);
 		hideCheckbox('wins_server_enable', hide);
 		wins_server_change();
-//		hideCheckbox('client_mgmt_port_enable', hide);
-//		client_mgmt_port_change();
 	}
 
 	function tuntap_change() {
@@ -1750,11 +1713,6 @@ events.push(function() {
 	// Netbios
 	$('#netbios_enable').click(function () {
 		netbios_change();
-	});
-
-	// Client management port
-	$('#client_mgmt_port_enable').click(function () {
-		client_mgmt_port_change();
 	});
 
 	 // Wins server port
@@ -1867,7 +1825,6 @@ events.push(function() {
 	dns_domain_change();
 	dns_server_change();
 	wins_server_change();
-	client_mgmt_port_change();
 	ntp_server_change();
 	netbios_change();
 	tuntap_change();

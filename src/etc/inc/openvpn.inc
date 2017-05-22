@@ -1163,9 +1163,7 @@ function openvpn_reconfigure($mode, $settings) {
 		$conf .= "passtos\n";
 	}
 
-	if ($settings['resolve_retry']) {
-		$conf .= "resolv-retry infinite\n";
-	} else if ($mode == 'client') {
+	if ($mode == 'client') {
 		$conf .= "resolv-retry infinite\n";
 	}
 

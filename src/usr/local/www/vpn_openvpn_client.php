@@ -119,7 +119,6 @@ if ($act == "edit") {
 		$pconfig['local_port'] = $a_client[$id]['local_port'];
 		$pconfig['server_addr'] = $a_client[$id]['server_addr'];
 		$pconfig['server_port'] = $a_client[$id]['server_port'];
-		$pconfig['resolve_retry'] = $a_client[$id]['resolve_retry'];
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
 		$pconfig['proxy_user'] = $a_client[$id]['proxy_user'];
@@ -401,7 +400,6 @@ if ($_POST['save']) {
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
 		$client['server_port'] = $pconfig['server_port'];
-		$client['resolve_retry'] = $pconfig['resolve_retry'];
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
@@ -557,14 +555,6 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['server_addr']
 	))->setHelp("The IP address or hostname of the OpenVPN server.");
-
-	$section->addInput(new Form_Checkbox(
-		'resolve_retry',
-		'Server hostname resolution',
-		'Infinitely resolve server ',
-		$pconfig['resolve_retry']
-	))->setHelp('Continuously attempt to resolve the server host name. ' .
-	    'Useful when communicating with a server that is not permanently connected to the Internet.');
 
 	$section->addInput(new Form_Input(
 		'server_port',

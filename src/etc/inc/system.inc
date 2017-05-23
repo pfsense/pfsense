@@ -2378,11 +2378,15 @@ EOD;
 }
 
 function system_get_serial() {
-
 	$platform = system_identify_specific_platform();
 
 	unset($output);
-	if ($platform['name'] == 'uFW') {
+	if ($platform['name'] == 'Turbot Dual-E') {
+		$if_info = pfSense_get_interface_addresses('igb0');
+		if (!empty($if_info['hwaddr'])) {
+			$serial = str_replace(":", "", $if_info['hwaddr']);
+		}
+	} elseif ($platform['name'] == 'uFW') {
 		$fd = fopen('/dev/icee0', 'rb');
 		if ($fd) {
 			fseek($fd, 16);

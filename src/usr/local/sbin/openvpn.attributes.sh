@@ -18,7 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo $script_type > /tmp/script
 if [ "$script_type" = "client-connect" ]; then
 	if [ -f /tmp/$common_name ]; then
 		/bin/cat /tmp/$common_name > $1

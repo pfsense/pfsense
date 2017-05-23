@@ -684,34 +684,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$has_created_time = (isset($a_out[$id]['created']) && is_array($a_out[$id]['created']));
-$has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']));
-
-if ($has_created_time || $has_updated_time) {
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			sprintf(
-				gettext('%1$s by %2$s'),
-				date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']),
-				$a_out[$id]['created']['username'])
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			sprintf(
-				gettext('%1$s by %2$s'),
-				date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']),
-				$a_out[$id]['updated']['username'])
-		));
-	}
-
-	$form->add($section);
-}
+gen_created_updated_fields($form, $a_out[$id]['created'], $a_out[$id]['updated']);
 
 print($form);
 

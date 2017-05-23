@@ -645,7 +645,8 @@ events.push(function() {
 <?php
 //build list of javascript include files
 foreach (glob('widgets/javascript/*.js') as $file) {
-	echo '<script src="'.$file.'"></script>';
+	$mtime = filemtime("/usr/local/www/{$file}");
+	echo '<script src="'.$file.'?v='.$mtime.'"></script>';
 }
 
 include("foot.inc");

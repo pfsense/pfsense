@@ -333,4 +333,21 @@ if (!$input_errors && $type) {
 </div>
 <?php
 }
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	var original_host = "<?=$host;?>";
+
+	$('input[name="host"]').on('input', function() {
+		if ($('#host').val() == original_host) {
+			disableInput('create_alias', false);
+		} else {
+			disableInput('create_alias', true);
+		}
+	});
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

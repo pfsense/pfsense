@@ -115,6 +115,8 @@ case "${machine_arch}" in
 				is_adi=1
 				;;
 			"Minnowboard Turbot D0 PLATFORM")
+				serial=$(ifconfig igb0 | \
+					sed -n '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
 				is_turbot=1
 				;;
 		esac

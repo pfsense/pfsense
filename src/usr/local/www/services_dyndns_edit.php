@@ -336,17 +336,17 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'curl_ipresolve_v4',
-	'CURL options',
-	'Force IPv4 resolving',
+	'HTTP API DNS Options',
+	'Force IPv4 DNS Resolution',
 	$pconfig['curl_ipresolve_v4']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'curl_ssl_verifypeer',
-	null,
-	'Verify SSL peer',
+	'HTTP API SSL Options',
+	'Verify SSL Certificate Trust',
 	$pconfig['curl_ssl_verifypeer']
-));
+))->setHelp('When set, the server must provide a valid certificate trust chain which can be verified by this firewall.');
 
 $section->addInput(new Form_Input(
 	'username',

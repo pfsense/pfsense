@@ -6,12 +6,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-16 09:23-0300\n"
+"POT-Creation-Date: 2017-05-23 10:02-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-16 04:06-0400\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-05-18 03:07-0400\n"
+"Last-Translator: polz <aditzxxx@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "Language: id\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -236,22 +236,22 @@ msgstr "Masuk tidak sah (%s)."
 msgid "This device is currently being maintained by: %s."
 msgstr "Perangkat ini sekarang di kelola oleh: %s."
 
-#: src/etc/inc/authgui.inc:225
+#: src/etc/inc/authgui.inc:233
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
 msgstr "Masuk ke %1$s on %2$s.%3$s"
 
-#: src/etc/inc/authgui.inc:227
+#: src/etc/inc/authgui.inc:235
 #, php-format
 msgid "Login to %1$s"
 msgstr "Masuk ke %1$s"
 
-#: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
-#: src/usr/local/www/services_captiveportal.php:1017
+#: src/etc/inc/authgui.inc:244 src/etc/inc/authgui.inc:292
+#: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "Masuk"
 
-#: src/etc/inc/authgui.inc:250
+#: src/etc/inc/authgui.inc:258
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means. <br /><br />If this forwarding "
@@ -263,11 +263,11 @@ msgstr ""
 "<br /><br />Jika penerusan ini tidak diharapkan, harus diverifikasi bahwa "
 "serangan man-in-the-middle-attack tidak terjadi."
 
-#: src/etc/inc/authgui.inc:265
+#: src/etc/inc/authgui.inc:273
 msgid "The browser must support cookies to login."
 msgstr "Browser harus mendukung cookies untuk masuk."
 
-#: src/etc/inc/authgui.inc:269 src/usr/local/www/interfaces.php:2581
+#: src/etc/inc/authgui.inc:277 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -277,24 +277,24 @@ msgstr "Browser harus mendukung cookies untuk masuk."
 #: src/usr/local/www/services_dyndns_edit.php:353
 #: src/usr/local/www/services_pppoe_edit.php:500
 #: src/usr/local/www/status_captiveportal.php:197
-#: src/usr/local/www/system_usermanager.php:177
-#: src/usr/local/www/system_usermanager.php:182
-#: src/usr/local/www/system_usermanager.php:187
-#: src/usr/local/www/system_usermanager.php:597
+#: src/usr/local/www/system_usermanager.php:189
+#: src/usr/local/www/system_usermanager.php:194
+#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:609
 #: src/usr/local/www/vpn_l2tp_users.php:94
 #: src/usr/local/www/vpn_l2tp_users_edit.php:77
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
-#: src/usr/local/www/vpn_openvpn_client.php:600
-#: src/usr/local/www/vpn_openvpn_client.php:625
+#: src/usr/local/www/vpn_openvpn_client.php:590
+#: src/usr/local/www/vpn_openvpn_client.php:615
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
 msgstr "Nama Pengguna"
 
-#: src/etc/inc/authgui.inc:271
+#: src/etc/inc/authgui.inc:279
 msgid "Enter your username"
 msgstr "Masukkan nama pengguna Anda"
 
-#: src/etc/inc/authgui.inc:276 src/usr/local/www/diag_backup.php:524
+#: src/etc/inc/authgui.inc:284 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
@@ -307,19 +307,19 @@ msgstr "Masukkan nama pengguna Anda"
 #: src/usr/local/www/services_pppoe_edit.php:507
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/usr/local/www/system_authservers.php:654
-#: src/usr/local/www/system_usermanager.php:183
-#: src/usr/local/www/system_usermanager.php:188
-#: src/usr/local/www/system_usermanager.php:750
-#: src/usr/local/www/system_usermanager.php:753
+#: src/usr/local/www/system_usermanager.php:195
+#: src/usr/local/www/system_usermanager.php:200
+#: src/usr/local/www/system_usermanager.php:762
+#: src/usr/local/www/system_usermanager.php:765
 #: src/usr/local/www/system_usermanager_passwordmg.php:40
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_l2tp_users_edit.php:159
-#: src/usr/local/www/vpn_openvpn_client.php:607
-#: src/usr/local/www/vpn_openvpn_client.php:632
+#: src/usr/local/www/vpn_openvpn_client.php:597
+#: src/usr/local/www/vpn_openvpn_client.php:622
 msgid "Password"
 msgstr "Sandi"
 
-#: src/etc/inc/authgui.inc:278
+#: src/etc/inc/authgui.inc:286
 msgid "Enter your password"
 msgstr "Masukkan sandi Anda"
 
@@ -732,17 +732,17 @@ msgstr "Mengirimkan permintaan ke: %s"
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Dinamik dns %1$s (%2$s):_hapus() mulai."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "dinamik DNS %1$s (%2$s):_daftarArus() mulai."
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s):_cekStatusPencarian() mulai."
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -782,6 +782,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Dinamik DNS %1$s (%2$s):_cekStatusPencarian() akhir. Tidak ada data "
+"pencarian ditemukan."
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
@@ -1209,63 +1211,63 @@ msgstr "Kesalahan sistem umum tidak dikenali oleh sistem"
 #: src/etc/inc/dyndns.class:1774
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_cekStatus() hasil:%1$s"
 
 #: src/etc/inc/dyndns.class:1785
 msgid "No record exists."
-msgstr ""
+msgstr "Tidak ada data yang ditemukan."
 
 #: src/etc/inc/dyndns.class:1789
 msgid "No type exists."
-msgstr ""
+msgstr "Tidak ada kata"
 
 #: src/etc/inc/dyndns.class:1793
 msgid "No value exists."
-msgstr ""
+msgstr "Tidak ada nilai"
 
 #: src/etc/inc/dyndns.class:1796
 msgid "No such zone exists."
-msgstr ""
+msgstr "tidak ada zona"
 
 #: src/etc/inc/dyndns.class:1799
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "Data yang ditentukan tidak valid,"
 
 #: src/etc/inc/dyndns.class:1802
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "Kata yang ditentukan tidak valid."
 
 #: src/etc/inc/dyndns.class:1805
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "Nilai yang dtentukan tidak valid."
 
 #: src/etc/inc/dyndns.class:1808
 msgid "Record is not editable."
-msgstr ""
+msgstr "Catatan tidak dapat diedit kembali."
 
 #: src/etc/inc/dyndns.class:1811
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "Catatan ada tapi tidak dapat diedit kembali."
 
 #: src/etc/inc/dyndns.class:1814
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "Catatan ada dan harus dihapus sebelum ditambahkan."
 
 #: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Sebuah remote server gagal memperbarui zona."
 
 #: src/etc/inc/dyndns.class:1820
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Sebuah remote server gagal memulai zona."
 
 #: src/etc/inc/dyndns.class:1826
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Sebuah remote server gagal memulai sebuah catatan."
 
 #: src/etc/inc/dyndns.class:1829
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "Sebuah remote server gagal menghapus sebuah catatan."
 
 #: src/etc/inc/dyndns.class:1843
 #, php-format
@@ -1596,9 +1598,8 @@ msgid "Address mask reply"
 msgstr "Alamat masker balasan"
 
 #: src/etc/inc/filter.inc:65
-#, fuzzy
 msgid "Address mask request"
-msgstr "Alamat permintaan mask"
+msgstr "Meminta alamat mask"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
@@ -1621,9 +1622,8 @@ msgid "mtrace resp"
 msgstr "respon mtrace"
 
 #: src/etc/inc/filter.inc:71
-#, fuzzy
 msgid "Neighbor advertisement"
-msgstr "Iklan tetangga"
+msgstr "Ikan tetangga"
 
 #: src/etc/inc/filter.inc:72
 #, fuzzy
@@ -1651,14 +1651,12 @@ msgid "Redirect"
 msgstr "Pengalihan"
 
 #: src/etc/inc/filter.inc:78
-#, fuzzy
 msgid "Router advertisement"
-msgstr "Iklan router"
+msgstr "Ruter advertise"
 
 #: src/etc/inc/filter.inc:79
-#, fuzzy
 msgid "Router solicitation"
-msgstr "Ajakan router"
+msgstr "Ajakan ruter"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
@@ -1835,14 +1833,14 @@ msgstr ""
 "ditambahkan."
 
 #: src/etc/inc/filter.inc:1265
-#, fuzzy, php-format
+#, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr "Membuat rule reflection NAT untuk %s ..."
+msgstr "Membuat aturan refleksi NAT untuk %s ..."
 
 #: src/etc/inc/filter.inc:1363
-#, fuzzy, php-format
+#, php-format
 msgid "Creating reflection rule for %s..."
-msgstr "Membuat reflection rule untuk %s ..."
+msgstr "Membuat aturan refleksi untuk %s ..."
 
 #: src/etc/inc/filter.inc:1484
 msgid "Not installing NAT reflection rules for a port range > 500"
@@ -1885,19 +1883,16 @@ msgid "IPsec client"
 msgstr "Klien IPsec"
 
 #: src/etc/inc/filter.inc:1701
-#, fuzzy
 msgid "Auto created rule for ISAKMP"
-msgstr "Rule dibuat otomatis untuk ISAKMP"
+msgstr "Aturan dibuat otomatis untuk ISAKMP"
 
 #: src/etc/inc/filter.inc:1711
-#, fuzzy
 msgid "Auto created rule"
-msgstr "Rule dibuat otomatis"
+msgstr "Aturan dibuat otomatis"
 
 #: src/etc/inc/filter.inc:1844
-#, fuzzy
 msgid "Creating 1:1 rules..."
-msgstr "Membuat rule 1: 1 ..."
+msgstr "Membuat aturan 1: 1 ..."
 
 #: src/etc/inc/filter.inc:2029
 #, php-format
@@ -1988,9 +1983,9 @@ msgid "Creating rule %s"
 msgstr "Membuat rule %s"
 
 #: src/etc/inc/filter.inc:3059
-#, fuzzy, php-format
+#, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr "[TDR DEBUG] status true - tipe rule '%s'"
+msgstr "[TDR DEBUG] status benar - tipe aturan '%s'"
 
 #: src/etc/inc/filter.inc:3103
 msgid "Creating default rules"
@@ -2001,14 +1996,12 @@ msgid "Creating IPsec rules..."
 msgstr "Membuat rules IPsec..."
 
 #: src/etc/inc/filter.inc:3880
-#, fuzzy
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr "Dipasang 15 menit penyaring ulang untuk Rule Berbasis Waktu"
+msgstr "Dipasang 15 menit penyaring ulang untuk Aturan Berbasis Waktu"
 
 #: src/etc/inc/filter.inc:3887
-#, fuzzy
 msgid "Removed 15 minute filter reload for Time Based Rules"
-msgstr "Dihapus 15 menit penyaring ulang untuk Rule Berbasis Waktu"
+msgstr "Dihapus 15 menit penyaring ulang untuk Aturan Berbasis Waktu"
 
 #: src/etc/inc/filter.inc:4271
 #, php-format
@@ -2057,9 +2050,9 @@ msgstr ""
 "forum."
 
 #: src/etc/inc/filter_log.inc:450
-#, fuzzy, php-format
+#, php-format
 msgid "Service %1$s/%2$s: %3$s"
-msgstr "Service %1$s/%2$s: %3$s"
+msgstr "Layanan %1$s/%2$s: %3$s"
 
 #: src/etc/inc/gmirror.inc:65
 #, fuzzy
@@ -2098,8 +2091,8 @@ msgstr "Tidak ditemukan cermin."
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
-#: src/usr/local/www/system_usermanager.php:451
-#: src/usr/local/www/system_usermanager.php:518
+#: src/usr/local/www/system_usermanager.php:463
+#: src/usr/local/www/system_usermanager.php:530
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:209
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:50
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:346
@@ -2153,7 +2146,7 @@ msgstr "Nama"
 #: src/usr/local/www/status_upnp.php:42
 #: src/usr/local/www/status_wireless.php:31
 #: src/usr/local/www/status_wireless.php:58
-#: src/usr/local/www/system_usermanager.php:599
+#: src/usr/local/www/system_usermanager.php:611
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
@@ -2286,9 +2279,8 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
-#, fuzzy
 msgid "Interface"
-msgstr "antarmuka"
+msgstr "Antarmuka"
 
 #: src/etc/inc/gwlb.inc:1363
 msgid "gateway"
@@ -2304,13 +2296,13 @@ msgstr ""
 "\"%2$s\""
 
 #: src/etc/inc/gwlb.inc:1384 src/usr/local/www/system_gateways.php:94
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
-"Gateway \"%1$s\" tidak dapat dinonaktifkan karena digunakan di Static Route "
-"\"%2$s\""
+"Gateway \"%1$s\" tidak dapat dinonaktifkan karena digunakan pada Static "
+"Route \"%2$s\""
 
 #: src/etc/inc/gwlb.inc:1392
 msgid "A valid gateway IP address must be specified."
@@ -2574,59 +2566,64 @@ msgstr "Tidak ada anggota yang ditemukan di %s"
 
 #: src/etc/inc/interfaces.inc:547
 msgid "realif not defined in interfaces bridge - up"
-msgstr ""
+msgstr "realif tidak terdefinisi pada jembatan antarmuka - naik"
 
 #: src/etc/inc/interfaces.inc:566
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr ""
+"Jembatan antarmuka tidak terdefinisi -- tidak dapat membawa antarmuka naik"
 
 #: src/etc/inc/interfaces.inc:721
 msgid "Configuring LAGG interfaces..."
-msgstr ""
+msgstr "Konfigurasi antarmuka LAGG..."
 
 #: src/etc/inc/interfaces.inc:872
 msgid "Could not bring greif up -- variable not defined."
-msgstr ""
+msgstr "tidak dapat membawa naik antarmuka GRE -- variabel tidak terdefinisi"
 
 #: src/etc/inc/interfaces.inc:955
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
+"tidak dapat membawa naik realif -- variabel tidak terdefinisi -- "
+"interface_gif_configure()"
 
 #: src/etc/inc/interfaces.inc:1002
 msgid "could not bring gifif up -- variable not defined"
-msgstr ""
+msgstr "tidak dapat membawa naik GIF antarmuka -- variabel tidak terdefinisi"
 
 #: src/etc/inc/interfaces.inc:1084 src/etc/inc/interfaces.inc:1114
 #: src/etc/inc/interfaces.inc:1138 src/etc/inc/interfaces.inc:1156
 #, php-format
 msgid "Configuring %s interface..."
-msgstr ""
+msgstr "Mengkonfigurasi %s antarmuka..."
 
 #: src/etc/inc/interfaces.inc:1088 src/etc/inc/interfaces.inc:1117
 #: src/etc/inc/interfaces.inc:1141 src/etc/inc/interfaces.inc:1159
 #, php-format
 msgid "Configuring %s"
-msgstr ""
+msgstr "mengkonfigurasi %s"
 
 #: src/etc/inc/interfaces.inc:1242
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr ""
+msgstr "Memanggil antarmuka turun untuk antarmuka %1$s, hancur adalah %2$s"
 
 #: src/etc/inc/interfaces.inc:1256
 msgid "Wrong parameters used during interface_bring_down"
-msgstr ""
+msgstr "Kesalahan parameter yang digunakan selama interface_bring_down"
 
 #: src/etc/inc/interfaces.inc:1427
 msgid "Enter CARP maintenance mode"
-msgstr ""
+msgstr "Masuk CARP mode perbaikan"
 
 #: src/etc/inc/interfaces.inc:1631
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
+"Tidak dapat menemukam konfigurasi PPP untuk %s dalam "
+"interface_pps_confifgure()."
 
 #: src/etc/inc/interfaces.inc:1689
 #, php-format
@@ -2634,6 +2631,8 @@ msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
+"Tidak dapat mendapatkan alamat IP lokal untuk PPTP/L2TP tautan dalam %s "
+"dalam interfaces_pps_configure. menggunakan ip 0.0.0.0 !"
 
 #: src/etc/inc/interfaces.inc:1696
 #, php-format
@@ -2641,44 +2640,50 @@ msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
+"tidak dapat mendapatkan PPTP/L2TP alamat Remote IP dari %1$s untuk %2$s "
+"dalam interfaces_ppps_configure."
 
 #: src/etc/inc/interfaces.inc:1703
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
+"Perangakat %s tidak tersedia PPP tautan tidak dapat dimulai tanpa perangkat "
+"modem."
 
 #: src/etc/inc/interfaces.inc:1708
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr ""
+msgstr "Tidak diketahui %s  dikonfigurasi sebagai antarmuka ppp."
 
 #: src/etc/inc/interfaces.inc:2028
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
+"Kesalahan: tidak dapat membuka mpd_%1$s.conf in interface_pps_configure()."
+"%2$s"
 
 #: src/etc/inc/interfaces.inc:2123
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr ""
+msgstr "Memulai 3gstats.php di perangkat '%1$s' untuk antarmuka '%2$s'"
 
 #: src/etc/inc/interfaces.inc:2140
 msgid "Configuring CARP settings..."
-msgstr ""
+msgstr "Mengkonfigurasi setelan CARP..."
 
 #: src/etc/inc/interfaces.inc:2181
 msgid "waiting for pfsync..."
-msgstr ""
+msgstr "menunggu untuk pfsync..."
 
 #: src/etc/inc/interfaces.inc:2187
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr ""
+msgstr "pfsnyc selesai dalam %s detik."
 
 #: src/etc/inc/interfaces.inc:2188
 msgid "Configuring CARP settings finalize..."
-msgstr ""
+msgstr "Mengkonfigurasi CARP setelan akhir..."
 
 #: src/etc/inc/interfaces.inc:2415
 #, php-format
@@ -2686,55 +2691,58 @@ msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
+"Antarmuka ditentukan untuk alamat virtual IP %s tidak ditemukan.  Melewati "
+"ini VIP."
 
 #: src/etc/inc/interfaces.inc:2475
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr ""
+msgstr "Antarmuka %s diubah pada mode hostap"
 
 #: src/etc/inc/interfaces.inc:2479
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr ""
+msgstr "Antarmuka %s diubah pada mode adhoc"
 
 #: src/etc/inc/interfaces.inc:2483
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
-msgstr ""
+msgstr "Antarmuka %s diubah pada mode infrastruktur"
 
 #: src/etc/inc/interfaces.inc:2496
 #, php-format
 msgid "Cloning new wireless interface %s"
-msgstr ""
+msgstr "Membuat kloning antarmuka nirkabel %s"
 
 #: src/etc/inc/interfaces.inc:2501
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
+"Gagal membuat kloning antarmuka %1$s dengan kode kesalahan %2$s, hasil %3$s"
 
 #: src/etc/inc/interfaces.inc:3157
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
-msgstr ""
+msgstr "Memulai klien dhcp6 untuk antarmuka wan %s dalam DHCP6 tanpa mode RA"
 
 #: src/etc/inc/interfaces.inc:3178
 #, php-format
 msgid "OpenVPN: Resync server %s"
-msgstr ""
+msgstr "OpenVPN: Sinkronasi kembali server %s"
 
 #: src/etc/inc/interfaces.inc:3191
 #, php-format
 msgid "OpenVPN: Resync client %s"
-msgstr ""
+msgstr "OpenVPN: Sinkronasi kembali klien %s"
 
 #: src/etc/inc/interfaces.inc:3326
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr ""
+msgstr "Menolak advertises ruter intuk antarmuka %s"
 
 #: src/etc/inc/interfaces.inc:3358
 msgid "Generating new MAC address."
-msgstr ""
+msgstr "Menghasilkan Alamat MAC baru."
 
 #: src/etc/inc/interfaces.inc:3363 src/etc/inc/interfaces.inc:3364
 #, php-format
@@ -2742,22 +2750,24 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"Alamat MAC tidak cocok (ff:ff:ff:ff:ff:ff) dalam antarmuka %1$s secara "
+"otomatis diganti dengan %2$s"
 
 #: src/etc/inc/interfaces.inc:3429
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
-msgstr ""
+msgstr "Terjadi konflik dalam MTU diantara %1$s dan VLAN (%2$s)"
 
 #: src/etc/inc/interfaces.inc:3620 src/etc/inc/interfaces.inc:3690
 #: src/etc/inc/interfaces.inc:3754
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
-msgstr ""
+msgstr "Antarmuka %1$s pelacakan tidak ada antarmuka %2$s"
 
 #: src/etc/inc/interfaces.inc:3627 src/etc/inc/interfaces.inc:3633
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
-msgstr ""
+msgstr "Antarmuka %1$s dikonfigurasi melalui %2$s tipe %3$s"
 
 #: src/etc/inc/interfaces.inc:3696
 #, php-format
@@ -2765,6 +2775,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
+"Antarmuka IPv4 '%1$s' alamat antarmuka '%2$s' tidak cocok, tidak "
+"dikonfigurasi 6RD terowongan"
 
 #: src/etc/inc/interfaces.inc:3732
 #, php-format
@@ -2778,20 +2790,24 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
+"Antarmuka OPv4 '%1$s' alamat pada antarmuka '%2$s' tidak untuk publik, tidak "
+"dikonfigurasi terowongan 6RD"
 
 #: src/etc/inc/interfaces.inc:3792
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
-msgstr ""
+msgstr "sixto4 %1$s dengan alamat IPv6 %2$s berdasarkan %3$s ipv4 %4$s"
 
 #: src/etc/inc/interfaces.inc:4007
 msgid "Failed to write user DUID file!"
-msgstr ""
+msgstr "Gagal menuliskan berkas DUID"
 
 #: src/etc/inc/interfaces.inc:4481
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
+"Kesalahan: tidak dapat membuka %s pada DHCP6_config_file_override() untuk "
+"dibaca."
 
 #: src/etc/inc/interfaces.inc:4509
 #, php-format
@@ -2799,21 +2815,24 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
+"Kesalahan: tidak dapat membuka dhclient_%s.conf pada "
+"interface_dhcp_configure() untuk menulis."
 
 #: src/etc/inc/interfaces.inc:4522
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
-msgstr ""
+msgstr "Antarmuka tidak valid \"%s\" pada interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4578
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
-msgstr ""
+msgstr "Tidak dapat membawa naik %s pada antarmuka interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4671
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
+"Kesalahan: tidak dapat membuka %s pada DHCP_Config_override() untuk dibaca."
 
 #: src/etc/inc/interfaces.inc:5711 src/etc/inc/service-utils.inc:365
 #: src/usr/local/www/diag_backup.php:432
@@ -2827,40 +2846,40 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/status_openvpn.php:30
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
-msgstr ""
+msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
-msgstr ""
+msgstr "Daemon"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
-msgstr ""
+msgstr "Manajer SA"
 
 #: src/etc/inc/ipsec.inc:28 src/etc/inc/ipsec.inc:58
 msgid "IKE SA"
-msgstr ""
+msgstr "IKE SA"
 
 #: src/etc/inc/ipsec.inc:29 src/etc/inc/ipsec.inc:59
 msgid "IKE Child SA"
-msgstr ""
+msgstr "IKE Child SA"
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr ""
+msgstr "Pekerjaan Diproses"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
-msgstr ""
+msgstr "Konfigurasi backend"
 
 #: src/etc/inc/ipsec.inc:32 src/etc/inc/ipsec.inc:62
 msgid "Kernel Interface"
-msgstr ""
+msgstr "Antarmuka Kernel"
 
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 #: src/usr/local/www/system_advanced_admin.php:299
@@ -2871,67 +2890,67 @@ msgstr ""
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:140
 msgid "Networking"
-msgstr ""
+msgstr "Jaringan"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
-msgstr ""
+msgstr "menyandi ASN"
 
 #: src/etc/inc/ipsec.inc:35 src/etc/inc/ipsec.inc:65
 msgid "Message encoding"
-msgstr ""
+msgstr "menyandi pesan"
 
 #: src/etc/inc/ipsec.inc:36 src/etc/inc/ipsec.inc:66
 msgid "Integrity checker"
-msgstr ""
+msgstr "diperiksa Integritas"
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr ""
+msgstr "Pemeriksa Integritas"
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
-msgstr ""
+msgstr "Platform Layanan Kepercayaan"
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
-msgstr ""
+msgstr "TLS pembawa"
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
-msgstr ""
+msgstr "IPsec trafik"
 
 #: src/etc/inc/ipsec.inc:41 src/etc/inc/ipsec.inc:71
 msgid "StrongSwan Lib"
-msgstr ""
+msgstr "Pustaka StrongSwan"
 
 #: src/etc/inc/ipsec.inc:46
 msgid "Silent"
-msgstr ""
+msgstr "Senyap"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
-msgstr ""
+msgstr "Memeriksa"
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
-msgstr ""
+msgstr "Kontrol"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr ""
+msgstr "Diagnosa"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr ""
+msgstr "Mentah"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
-msgstr ""
+msgstr "Tertinggi"
 
 #: src/etc/inc/ipsec.inc:76
 msgid "My IP address"
-msgstr ""
+msgstr "alamat IP Saya"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
@@ -2945,23 +2964,23 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "IP address"
-msgstr ""
+msgstr "alamat IP"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
-msgstr ""
+msgstr "nama Dibedakan"
 
 #: src/etc/inc/ipsec.inc:79 src/etc/inc/ipsec.inc:91
 msgid "User distinguished name"
-msgstr ""
+msgstr "nama Pengguna Dibedakan"
 
 #: src/etc/inc/ipsec.inc:80 src/etc/inc/ipsec.inc:92
 msgid "ASN.1 distinguished Name"
-msgstr ""
+msgstr "ASN.1 NAma Dibedakan"
 
 #: src/etc/inc/ipsec.inc:81 src/etc/inc/ipsec.inc:93
 msgid "KeyID tag"
-msgstr ""
+msgstr "KeyID-tag"
 
 #: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_checkip.php:70
@@ -2974,7 +2993,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136.php:58
 #: src/usr/local/www/services_rfc2136_edit.php:145
 msgid "Dynamic DNS"
-msgstr ""
+msgstr "Dinamis DNS"
 
 #: src/etc/inc/ipsec.inc:87 src/usr/local/www/diag_traceroute.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
@@ -2988,131 +3007,131 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1506
 #: src/usr/local/www/interfaces.php:3025
 msgid "Any"
-msgstr ""
+msgstr "Mana saja"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
-msgstr ""
+msgstr "Peer alamat IP"
 
 #: src/etc/inc/ipsec.inc:166
 msgid "Hybrid RSA + Xauth"
-msgstr ""
+msgstr "Hybrid RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:167
 msgid "Mutual RSA + Xauth"
-msgstr ""
+msgstr "Kombinasi RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:168
 msgid "Mutual PSK + Xauth"
-msgstr ""
+msgstr "Kombinasi RSA + Xauth"
 
 #: src/etc/inc/ipsec.inc:169
 msgid "EAP-TLS"
-msgstr ""
+msgstr "EAP-TLS"
 
 #: src/etc/inc/ipsec.inc:170
 msgid "EAP-RADIUS"
-msgstr ""
+msgstr "EAP-RADIUS"
 
 #: src/etc/inc/ipsec.inc:171
 msgid "EAP-MSChapv2"
-msgstr ""
+msgstr "EAP-MSCHapv2"
 
 #: src/etc/inc/ipsec.inc:172
 msgid "Mutual RSA"
-msgstr ""
+msgstr "Kombinasi RSA"
 
 #: src/etc/inc/ipsec.inc:173
 msgid "Mutual PSK"
-msgstr ""
+msgstr "Kombinasi PSK"
 
 #: src/etc/inc/ipsec.inc:184
 msgid "Tunnel IPv4"
-msgstr ""
+msgstr "Terowongan IPv4"
 
 #: src/etc/inc/ipsec.inc:185
 msgid "Tunnel IPv6"
-msgstr ""
+msgstr "Terowongan IPv6"
 
 #: src/etc/inc/ipsec.inc:186 src/usr/local/www/system_authservers.php:230
 msgid "Transport"
-msgstr ""
+msgstr "Mengangkut"
 
 #: src/etc/inc/ipsec.inc:197
 msgid "off"
-msgstr ""
+msgstr "mati"
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
-msgstr ""
+msgstr "1 (768 bita)"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "2 (1024 bit)"
-msgstr ""
+msgstr "2 (1024 bita)"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "5 (1536 bit)"
-msgstr ""
+msgstr "5 (1536 bita)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr ""
+msgstr "14 (2048 bita)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr ""
+msgstr "15 (3072 bita)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr ""
+msgstr "16 (4096 bita)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr ""
+msgstr "17 (6144 bita)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr ""
+msgstr "18 (8192 bita)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
-msgstr ""
+msgstr "19 (nist ecp256)"
 
 #: src/etc/inc/ipsec.inc:207
 msgid "20 (nist ecp384)"
-msgstr ""
+msgstr "20 (nist ecp384)"
 
 #: src/etc/inc/ipsec.inc:208
 msgid "21 (nist ecp521)"
-msgstr ""
+msgstr "21 (nist ecp521)"
 
 #: src/etc/inc/ipsec.inc:209
 msgid "22 (1024(sub 160) bit)"
-msgstr ""
+msgstr "22 (1024(sub 160) bita)"
 
 #: src/etc/inc/ipsec.inc:210
 msgid "23 (2048(sub 224) bit)"
-msgstr ""
+msgstr "23 (2048(sub 224) bita)"
 
 #: src/etc/inc/ipsec.inc:211
 msgid "24 (2048(sub 256) bit)"
-msgstr ""
+msgstr "24 (2048(sub 256) bita)"
 
 #: src/etc/inc/ipsec.inc:212
 msgid "28 (brainpool ecp256)"
-msgstr ""
+msgstr "28 (brainpool ecp256)"
 
 #: src/etc/inc/ipsec.inc:213
 msgid "29 (brainpool ecp384)"
-msgstr ""
+msgstr "29 (brainpool ecp384)"
 
 #: src/etc/inc/ipsec.inc:214
 msgid "30 (brainpool ecp512)"
-msgstr ""
+msgstr "30 (brainpool ecp512)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:323
 msgid "Mobile Client"
-msgstr ""
+msgstr "Klien Mobile"
 
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
@@ -3127,84 +3146,89 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
-msgstr ""
+msgstr "Tidak satupun"
 
 #: src/etc/inc/ipsec.inc:612
 msgid ""
 "Unable to find IPsec daemon leases file. Could not display mobile user "
 "stats!"
 msgstr ""
+"Tidak dapat menemukan IPsec daemon penyewa berkas. Tidak dapat menampilkan "
+"statistik pengguna mobile!"
 
 #: src/etc/inc/meta.inc:61
 #, php-format
 msgid "list_phpfiles: unable to examine path %s"
-msgstr ""
+msgstr "list_phpfiles: tidak dapat menampilkan jalur %s"
 
 #: src/etc/inc/meta.inc:97
 #, php-format
 msgid "unable to read %s"
-msgstr ""
+msgstr "tidak dapat membaca %s"
 
 #: src/etc/inc/meta.inc:134
 #, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr ""
+msgstr "Kesalahan:  tanda tidak cocok (%1$s!=%2$s) pada '%3$s'%4$s"
 
 #: src/etc/inc/meta.inc:145
 #, php-format
 msgid "warning: tag %1$s has no data in '%2$s'%3$s"
-msgstr ""
+msgstr "memperingatkan: tanda %1$s tidak mempunyai data pada '%2$s'%3$s"
 
 #: src/etc/inc/meta.inc:168
 #, php-format
 msgid "warning: tag %1$s has malformed data in '%2$s'%3$s"
-msgstr ""
+msgstr "memperingatkan: tanda %1$s ditemukan kecacatan data pada '%2$s'%3$s"
 
 #: src/etc/inc/meta.inc:190
 #, php-format
 msgid "warning: tag %1$s has invalid data in '%2$s'%3$s"
-msgstr ""
+msgstr "memperingatkan: tanda %1$s ditemukan data tidak valid pada '%2$s;%3$s"
 
 #: src/etc/inc/notices.inc:74
 #, php-format
 msgid "Could not open %s for writing"
-msgstr ""
+msgstr "Tidak dapat membuka %s untuk menulis"
 
 #: src/etc/inc/notices.inc:79
 #, php-format
 msgid "New alert found: %s"
-msgstr ""
+msgstr "Peringatan baru ditemukan: %s"
 
 #: src/etc/inc/notices.inc:321
 #, php-format
 msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Tidak dapat mengirim pesan kepada %1$s -- Kesalahan : %2$s"
 
 #: src/etc/inc/notices.inc:327
 #, php-format
 msgid "Message sent to %s OK"
-msgstr ""
+msgstr "Pesan dikirim kepada %s OK"
 
 #: src/etc/inc/notices.inc:364 src/etc/inc/notices.inc:420
 msgid ""
 "Growl IP Address is invalid. Check the setting in System Advanced "
 "Notifications."
 msgstr ""
+"Alamat Growl IP tidak valid. Periksa pengaturan pada sistem lanjutan "
+"pemberitahuan."
 
 #: src/etc/inc/notices.inc:383
 #, php-format
 msgid "%1$s (%2$s) - Notification"
-msgstr ""
+msgstr "%1$s (%2$s) - Pemberitahuan"
 
 #: src/etc/inc/notices.inc:387
 #, php-format
 msgid "Could not send Growl notification to %1$s -- Error: %2$s"
 msgstr ""
+"Tidak dapat mengirim  pemberitahuan Growl kepada %1$s -- kesalahan:%2$s"
 
 #: src/etc/inc/notices.inc:445
 #, php-format
 msgid "Could not send register Growl on %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Tidak dapat mengirim pendaftaran Growl pada %1$s -- Kesalahan: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:760
 #: src/usr/local/www/firewall_rules_edit.php:1656
@@ -3212,165 +3236,168 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1704
 #: src/usr/local/www/status_ipsec.php:338
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "none"
-msgstr ""
+msgstr "Tidak ada"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
-#: src/usr/local/www/services_captiveportal.php:968
+#: src/usr/local/www/services_captiveportal.php:970
 msgid "default"
-msgstr ""
+msgstr "standar"
 
 #: src/etc/inc/openvpn.inc:56
 msgid "3 (recommended)"
-msgstr ""
+msgstr "3 (disarankan)"
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
-msgstr ""
+msgstr "Satu (Client+Server)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
-msgstr ""
+msgstr "Dua (Client+Intermediate+Server)"
 
 #: src/etc/inc/openvpn.inc:102
 msgid "Three (Client+2xIntermediate+Server)"
-msgstr ""
+msgstr "Tiga (Client+2xIntermediate+Server)"
 
 #: src/etc/inc/openvpn.inc:103
 msgid "Four (Client+3xIntermediate+Server)"
-msgstr ""
+msgstr "Empat (Client+3xIntermediate+Server)"
 
 #: src/etc/inc/openvpn.inc:104
 msgid "Five (Client+4xIntermediate+Server)"
-msgstr ""
+msgstr "Lima (Client+4xIntermediate+Server)"
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
-msgstr ""
+msgstr "Peer to Peer  ( SSL/TLS )"
 
 #: src/etc/inc/openvpn.inc:110 src/etc/inc/openvpn.inc:121
 msgid "Peer to Peer ( Shared Key )"
-msgstr ""
+msgstr "Peer to Peer ( Shared Key )"
 
 #: src/etc/inc/openvpn.inc:111
 msgid "Remote Access ( SSL/TLS )"
-msgstr ""
+msgstr "Akses Remot ( SSL/TLS )"
 
 #: src/etc/inc/openvpn.inc:112
 msgid "Remote Access ( User Auth )"
-msgstr ""
+msgstr "Akses Remot ( User Auth )"
 
 #: src/etc/inc/openvpn.inc:113
 msgid "Remote Access ( SSL/TLS + User Auth )"
-msgstr ""
+msgstr "Akses Remot ( SSL/TLS + User Auth )"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
-msgstr ""
+msgstr "Mengabaikan Preferensi (Gunakan OpenVPN Standar)"
 
 #: src/etc/inc/openvpn.inc:126
 msgid "LZ4 Compression [compress lz4]"
-msgstr ""
+msgstr "LZ4 Kompresi [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "LZ4 Kompresi v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
 "LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"
 msgstr ""
+"LZO kompresi [compress lzo, equivalent to comp-lzo yes for compatibility]"
 
 #: src/etc/inc/openvpn.inc:129
 msgid "Enable Compression (stub) [compress]"
-msgstr ""
+msgstr "Mengijinkan kompresi (stub) [compress]"
 
 #: src/etc/inc/openvpn.inc:130
 msgid ""
 "Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-"
 "noadapt]"
 msgstr ""
+"Mengabaikan Preferensi, + tidak mengijinkan kompresi adaptif LZO [Legacy "
+"style, comp-noadapt]"
 
 #: src/etc/inc/openvpn.inc:131
 msgid "Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"
-msgstr ""
+msgstr "Adaptif LZO Kompresi [Legacy style, comp-lzo adaptive]"
 
 #: src/etc/inc/openvpn.inc:132
 msgid "LZO Compression [Legacy style, comp-lzo yes]"
-msgstr ""
+msgstr "LZO Kompresi [Legacy style, comp-lzo yes]"
 
 #: src/etc/inc/openvpn.inc:133
 msgid "No LZO Compression [Legacy style, comp-lzo no]"
-msgstr ""
+msgstr "Tanpa LZO Kompresi [Legacy style, comp-lzo no]"
 
 #: src/etc/inc/openvpn.inc:138
 msgid "Subnet -- One IP address per client in a common subnet"
-msgstr ""
+msgstr "Subnet -- Satu alamat IP setiap klien dalam suatu subnet"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr ""
+msgstr "net30 -- terisolasi/30 jaringan setiap klien"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
-msgstr ""
+msgstr "TLS Autentikasi"
 
 #: src/etc/inc/openvpn.inc:146
 msgid "TLS Encryption and Authentication"
-msgstr ""
+msgstr "TLS Enkripsi dan Autentikasi"
 
 #: src/etc/inc/openvpn.inc:219
 msgid "None (Username and/or Password required)"
-msgstr ""
+msgstr "Tidak ada (Nama pengguna dan/atau kata sandi diperlukan)"
 
 #: src/etc/inc/openvpn.inc:227
 msgid "===== Server Certificates ====="
-msgstr ""
+msgstr "===== Sertifikat Server ====="
 
 #: src/etc/inc/openvpn.inc:228
 msgid "===== Non-Server Certificates ====="
-msgstr ""
+msgstr "===== Tanpa-Sertifikan Server ====="
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
-msgstr ""
+msgstr "Server:Ya"
 
 #: src/etc/inc/openvpn.inc:240
 msgid "Server: NO"
-msgstr ""
+msgstr "Server:Tidak"
 
 #: src/etc/inc/openvpn.inc:243
 #, php-format
 msgid "CA: %s"
-msgstr ""
+msgstr "CA:%s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:363
 #: src/usr/local/www/system_certmanager.php:1087
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
-msgstr ""
+msgstr "Sedang Digunakan"
 
 #: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1183
 msgid "Revoked"
-msgstr ""
+msgstr "Dicabut"
 
 #: src/etc/inc/openvpn.inc:413
 msgid "None (No Encryption)"
-msgstr ""
+msgstr "Tidak ada (Tanpa Enkripsi)"
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr ""
+msgstr "Gunakan Standar"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
-msgstr ""
+msgstr "Tidak ada (Tanpa Autentikasi"
 
 #: src/etc/inc/openvpn.inc:451
 msgid "No Hardware Crypto Acceleration"
-msgstr ""
+msgstr "Tidak ada Akselerasi Perangkat Keras Krypto"
 
 #: src/etc/inc/openvpn.inc:492 src/usr/local/www/firewall_nat_out_edit.php:603
 #: src/usr/local/www/interfaces.php:1925 src/usr/local/www/interfaces.php:2919
@@ -3378,76 +3405,76 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2995 src/usr/local/www/interfaces.php:3250
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Default"
-msgstr ""
+msgstr "Standar"
 
 #: src/etc/inc/openvpn.inc:507
 #, php-format
 msgid "The field '%s' must contain a valid IP address or domain name."
-msgstr ""
+msgstr "Bidang '%s' harus berisi alamat IP atau nama domain yang valid."
 
-#: src/etc/inc/openvpn.inc:515
-#, php-format
-msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr ""
-
-#: src/etc/inc/openvpn.inc:529
+#: src/etc/inc/openvpn.inc:532
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
-msgstr ""
+msgstr "Bidang '%1$s' harus berisi rentang CIDR %2$s yang valid."
 
-#: src/etc/inc/openvpn.inc:544
+#: src/etc/inc/openvpn.inc:547
 #, php-format
 msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
 "commas."
 msgstr ""
+"Bidang '%1$s' hanya berisi rentang CIDR %2$s yang benar yang dipisahkan "
+"dengan tanda koma."
 
-#: src/etc/inc/openvpn.inc:1086
+#: src/etc/inc/openvpn.inc:1089
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr ""
+"Gagal membuat konfigurasi server OpenVPN. Panjang Parameter DH yang dipilih "
+"tidak dapat digunakan."
 
-#: src/etc/inc/openvpn.inc:1256
+#: src/etc/inc/openvpn.inc:1257
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr ""
+msgstr "OpenVPN ID %1$s PID %2$s masih berjalan, sedang mematikan."
 
-#: src/etc/inc/openvpn.inc:1491
-#, php-format
+#: src/etc/inc/openvpn.inc:1492
+#, fuzzy, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
-msgstr ""
+msgstr "Resyncing contoh OpenVPN untuk antarmuka %s."
 
-#: src/etc/inc/openvpn.inc:1493
+#: src/etc/inc/openvpn.inc:1494
+#, fuzzy
 msgid "Resyncing OpenVPN instances."
-msgstr ""
+msgstr "Resyncing contoh OpenVPN."
 
-#: src/etc/inc/openvpn.inc:1526
+#: src/etc/inc/openvpn.inc:1527
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
-msgstr ""
+msgstr "Resyncing OpenVPN untuk grup gateway %1$s server %2$s."
 
-#: src/etc/inc/openvpn.inc:1535
+#: src/etc/inc/openvpn.inc:1536
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
-msgstr ""
+msgstr "Resyncing OpenVPN untuk grup gateway %1$s klien %2$s."
 
-#: src/etc/inc/openvpn.inc:1544
+#: src/etc/inc/openvpn.inc:1545
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
-msgstr ""
-
-#: src/etc/inc/openvpn.inc:1650 src/etc/inc/openvpn.inc:1781
-msgid "Unable to contact daemon"
-msgstr ""
+msgstr "Openvpn_resync_gwgroup dipanggil dengan parameter null gwgroup."
 
 #: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
+msgid "Unable to contact daemon"
+msgstr "Tidak dapat menghubungi daemon"
+
+#: src/etc/inc/openvpn.inc:1652 src/etc/inc/openvpn.inc:1783
 msgid "Service not running?"
-msgstr ""
+msgstr "Layanan tidak berjalan?"
 
 #: src/etc/inc/pfsense-utils.inc:221
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/etc/inc/pfsense-utils.inc:224
 #, php-format
@@ -3455,108 +3482,121 @@ msgid ""
 "Choose an alternative css file (if installed) to change the appearance of "
 "the webConfigurator. css files are located in /usr/local/www/css/%s"
 msgstr ""
+"Plih sebuah alternatif file css (apabila terpasang) untuk merubah tampilan "
+"webConfigurator.css terletak pada /usr/local/www/css%s"
 
 #: src/etc/inc/pfsense-utils.inc:242
 msgid "Scrolls with page"
-msgstr ""
+msgstr "Gulir dengan halaman"
 
 #: src/etc/inc/pfsense-utils.inc:242
 msgid "Fixed (Remains visible at top of page)"
-msgstr ""
+msgstr "Tetap (Tetap terlihat di bagian atas halaman)"
 
 #: src/etc/inc/pfsense-utils.inc:240
 msgid "Top Navigation"
-msgstr ""
+msgstr "Navigasi teratas"
 
 #: src/etc/inc/pfsense-utils.inc:243
 msgid "The fixed option is intended for large screens only."
-msgstr ""
+msgstr "Pilihan tetap hanya ditujukan untuk layar besar."
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Default (No hostname)"
-msgstr ""
+msgstr "Default (Tidak ada nama host)"
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Hostname only"
-msgstr ""
+msgstr "Nama host saja"
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Fully Qualified Domain Name"
-msgstr ""
+msgstr "Nama Domain Berkualitas"
 
 #: src/etc/inc/pfsense-utils.inc:259
 msgid "Hostname in Menu"
-msgstr ""
+msgstr "Nama host di menu"
 
 #: src/etc/inc/pfsense-utils.inc:262
 msgid ""
 "Replaces the Help menu title in the Navbar with the system hostname or FQDN."
 msgstr ""
+"Mengganti Menu bantuan judul pada tombol navigasi bersama sistem hostname "
+"atai FQDN."
 
 #: src/etc/inc/pfsense-utils.inc:282
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Dashboard Columns"
-msgstr ""
+msgstr "Kolom Dasbor"
 
 #: src/etc/inc/pfsense-utils.inc:302
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "Antarmuka Pendek"
 
 #: src/etc/inc/pfsense-utils.inc:305
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
+"Apabila Telah dipilih. daftar antarmuka akan menjadi pendek berdasarkan "
+"deskripsi, jika tidak akan menjadi wan,lan,optn..."
 
 #: src/etc/inc/pfsense-utils.inc:319
 msgid "Associated Panels Show/Hide"
-msgstr ""
+msgstr "Panel Berkaitan Muncul/Sembunyi"
 
 #: src/etc/inc/pfsense-utils.inc:326
 msgid "Show the Available Widgets panel on the Dashboard."
-msgstr ""
+msgstr "Memunculkan Panel Widget Yang Tersedia pada Dasbor"
 
 #: src/etc/inc/pfsense-utils.inc:333
 msgid "Show the Log Filter panel in System Logs."
-msgstr ""
+msgstr "Memunculkan panel catatan Saring pada sistem catatan."
 
 #: src/etc/inc/pfsense-utils.inc:340
 msgid "Show the Manage Log panel in System Logs."
-msgstr ""
+msgstr "Memunculkan panel Pengelolaan pada sistem catatan"
 
 #: src/etc/inc/pfsense-utils.inc:347
 msgid "Show the Settings panel in Status Monitoring."
-msgstr ""
+msgstr "Memunculkan panel pengaturan pada Status Pengawasan"
 
 #: src/etc/inc/pfsense-utils.inc:349
 msgid ""
 "These options allow certain panels to be automatically hidden on page load. "
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
+"Pilihan ini mengizinkan panel tertentu menjadi otomatis tidak terlihat saat "
+"halaman dimuat. Sebuah kontrol disediakan pada bar atas untuk memunculkan "
+"panel."
 
 #: src/etc/inc/pfsense-utils.inc:367
 msgid "Left Column Labels"
-msgstr ""
+msgstr "Kolom Label Kiri"
 
 #: src/etc/inc/pfsense-utils.inc:370
 msgid ""
 "If selected, clicking a label in the left column will select/toggle the "
 "first item of the group."
 msgstr ""
+"Jika dipilih, klik sebuah label di kiri kolom akan memilih/toggle barang "
+"pertama pada grup."
 
 #: src/etc/inc/pfsense-utils.inc:386
 msgid "Alias Popups"
-msgstr ""
+msgstr "Alias Popups"
 
 #: src/etc/inc/pfsense-utils.inc:389
 msgid ""
 "If selected, the details in alias popups will not be shown, just the alias "
 "description (e.g. in Firewall Rules)."
 msgstr ""
+"Jika dipilih, detil pada alias popups tidak akan muncul, hanya deskripsi "
+"alias (e.g. pada aturan Tembok api)."
 
 #: src/etc/inc/pfsense-utils.inc:405
 msgid "Browser tab text"
-msgstr ""
+msgstr "Label Peramban teks"
 
 #: src/etc/inc/pfsense-utils.inc:408
 msgid ""
@@ -3564,10 +3604,13 @@ msgid ""
 "current page. Check this box to display the current page followed by the "
 "host name."
 msgstr ""
+"Ketika hal ini dicentang, label peramban memunculkan nama host mengikuti "
+"halaman saat ini. Periksa kotak ini untuk menampilkan halaman diikuti oleh "
+"nama host."
 
 #: src/etc/inc/pfsense-utils.inc:452
 msgid "Require State Filter"
-msgstr ""
+msgstr "Memerlukan State Filter"
 
 #: src/etc/inc/pfsense-utils.inc:455
 msgid ""
@@ -3575,167 +3618,173 @@ msgid ""
 "States. This option requires a filter to be entered before the states are "
 "displayed. Useful for systems with large state tables."
 msgstr ""
+"Secara default, seluruh tabel negara ditampilkan saat memasuki Diagnostics> "
+"Status. Pilihan ini memerlukan filter yang akan dimasukkan sebelum status "
+"ditampilkan. Berguna untuk sistem dengan tabel status."
 
 #: src/etc/inc/pfsense-utils.inc:743
+#, fuzzy
 msgid "After synch increase advertising skew"
-msgstr ""
+msgstr "Setelah sync peningkatan iklan condong"
 
 #: src/etc/inc/pfsense-utils.inc:793
 msgid "Error creating socket!"
-msgstr ""
+msgstr "Kesalahan dalam membuat socket!"
 
 #: src/etc/inc/pfsense-utils.inc:794
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
-msgstr ""
+msgstr "Kode yang salah adalah '%1$s' - %2$s'"
 
 #: src/etc/inc/pfsense-utils.inc:799
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr ""
+msgstr "setsockopt() gagal, kesalahan: %s"
 
 #: src/etc/inc/pfsense-utils.inc:803
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
-msgstr ""
+msgstr "Paket sihir dikirim (%1$s) kepada (%2$s) MAC=%3$s"
 
 #: src/etc/inc/pfsense-utils.inc:866 src/etc/inc/pfsense-utils.inc:886
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
-msgstr ""
+msgstr "Pulihkan %s file konfigurasi (mungkin dari mitra CARP)"
 
 #: src/etc/inc/pfsense-utils.inc:973
 msgid "reload_interfaces_sync() is starting."
-msgstr ""
+msgstr "Reload_interfaces_sync () mulai."
 
 #: src/etc/inc/pfsense-utils.inc:982
 msgid "Enabling system routing"
-msgstr ""
+msgstr "Mengaktifkan sistem perutean"
 
 #: src/etc/inc/pfsense-utils.inc:986
 msgid "Cleaning up Interfaces"
-msgstr ""
+msgstr "Membersihkan Antarmuka"
 
 #: src/etc/inc/pfsense-utils.inc:1430
 msgid "No history data found!"
-msgstr ""
+msgstr "Tidak ada data riwayat yang ditemukan!"
 
 #: src/etc/inc/pfsense-utils.inc:1562
 msgid "device not present! Is the modem attached to the system?"
-msgstr ""
+msgstr "Perangkat tidak hadir Apakah modem terpasang pada sistem?"
 
 #: src/etc/inc/pfsense-utils.inc:1631
 msgid "running"
-msgstr ""
+msgstr "sedang berjalan"
 
 #: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
 msgid "up"
-msgstr ""
+msgstr "naik"
 
 #: src/etc/inc/pfsense-utils.inc:1677
 msgid "blocking"
-msgstr ""
+msgstr "pemblokiran"
 
 #: src/etc/inc/pfsense-utils.inc:1677
 msgid "check for ethernet loops"
-msgstr ""
+msgstr "Periksa ethernet loops"
 
 #: src/etc/inc/pfsense-utils.inc:1680
 msgid "learning"
-msgstr ""
+msgstr "Belajar"
 
 #: src/etc/inc/pfsense-utils.inc:1683
 msgid "forwarding"
-msgstr ""
+msgstr "Meneruskan"
 
 #: src/etc/inc/pfsense-utils.inc:1817
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
-msgstr ""
+msgstr "DNSCACHE: Menemukan IP Tua %1$s dan alamat IP baru %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:1837
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
-msgstr ""
+msgstr "Pemuatan %s Modul akselerasi kriptografi"
 
 #: src/etc/inc/pfsense-utils.inc:1854
 #, php-format
 msgid "Loading %s thermal monitor module."
-msgstr ""
+msgstr "Pemuatan %s modul pemonitor panas"
 
 #: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
-msgstr ""
+msgstr "Unduh berkas gagal dengan kode status %1$s. URL: %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2206
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
-msgstr ""
+msgstr "Tidak dapat memproses berkas yang tidak ada dari alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2211
 #, php-format
 msgid "Could not process empty file from alias: %s"
-msgstr ""
+msgstr "Tidak dapat memproses berkas kosong dari alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2216
 #, php-format
 msgid "Could not process aliases from alias: %s"
-msgstr ""
+msgstr "Tidak dapat memproses aliases dari alias: %s"
 
 #: src/etc/inc/pfsense-utils.inc:2273
 #, php-format
 msgid "Failed to download alias %s"
-msgstr ""
+msgstr "Gagal mengunduh alias %s"
 
 #: src/etc/inc/pfsense-utils.inc:2302
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
+"Arsip Alias adalah file .tar / tgz yang tidak dapat didekompresi karena "
+"utilitas hilang!"
 
 #: src/etc/inc/pfsense-utils.inc:2312
 #, php-format
 msgid "Could not open %s/aliases for writing!"
-msgstr ""
+msgstr "Tidak dapat membuka %s/aliases untuk ditulis!"
 
 #: src/etc/inc/pfsense-utils.inc:2318
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
-msgstr ""
+msgstr "Beberapa berkas tidak dapat dibaca %1$s dari %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2897
 msgid "German (Germany)"
-msgstr ""
+msgstr "Jerman"
 
 #: src/etc/inc/pfsense-utils.inc:2898
 msgid "English"
-msgstr ""
+msgstr "Inggris"
 
 #: src/etc/inc/pfsense-utils.inc:2899
 msgid "Spanish"
-msgstr ""
+msgstr "Spanyol"
 
 #: src/etc/inc/pfsense-utils.inc:2900
 msgid "Norwegian Bokmål"
-msgstr ""
+msgstr "Norwegia Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2901
 msgid "Russian"
-msgstr ""
+msgstr "Russia"
 
 #: src/etc/inc/pfsense-utils.inc:2902
 msgid "Chinese (Simplified, China)"
-msgstr ""
+msgstr "Cina (Sederhana, cina)"
 
 #: src/etc/inc/pfsense-utils.inc:2903
 msgid "Chinese (Taiwan)"
-msgstr ""
+msgstr "Cina (Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
 #: src/etc/inc/pfsense-utils.inc:3139
 msgid "No Service"
-msgstr ""
+msgstr "Tidak ada Layanan"
 
 #: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
 #: src/usr/local/www/firewall_nat_out.php:230
@@ -3751,83 +3800,83 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:134 src/usr/local/www/vpn_ipsec.php:252
 #: src/usr/local/www/vpn_ipsec.php:398
 msgid "Mode"
-msgstr ""
+msgstr "Mode"
 
 #: src/etc/inc/pfsense-utils.inc:3114
 msgid "Restricted Service"
-msgstr ""
+msgstr "Layanan Terbatas"
 
 #: src/etc/inc/pfsense-utils.inc:3115
 msgid "Valid Service"
-msgstr ""
+msgstr "Layanan Sah"
 
 #: src/etc/inc/pfsense-utils.inc:3116
 msgid "Restricted Regional Service"
-msgstr ""
+msgstr "Layanan Regional Terbatas"
 
 #: src/etc/inc/pfsense-utils.inc:3117
 msgid "Powersaving Service"
-msgstr ""
+msgstr "Layanan Penghemat energi"
 
 #: src/etc/inc/pfsense-utils.inc:3118
 msgid "Unknown Service"
-msgstr ""
+msgstr "Layanan Tidak diketahui"
 
 #: src/etc/inc/pfsense-utils.inc:3124
 msgid "Invalid SIM/locked State"
-msgstr ""
+msgstr "Sim tidak sah/locked State"
 
 #: src/etc/inc/pfsense-utils.inc:3125
 msgid "Valid SIM State"
-msgstr ""
+msgstr "Sah SIM State"
 
 #: src/etc/inc/pfsense-utils.inc:3126
 msgid "Invalid SIM CS State"
-msgstr ""
+msgstr "Tidak Sah SIM CS State"
 
 #: src/etc/inc/pfsense-utils.inc:3127
 msgid "Invalid SIM PS State"
-msgstr ""
+msgstr "Status SIM PS tidak valid"
 
 #: src/etc/inc/pfsense-utils.inc:3128
 msgid "Invalid SIM CS/PS State"
-msgstr ""
+msgstr "Status SIM CS/PS tidak valid"
 
 #: src/etc/inc/pfsense-utils.inc:3129
 msgid "Missing SIM State"
-msgstr ""
+msgstr "Status SIM yang hilang"
 
 #: src/etc/inc/pfsense-utils.inc:3140
 msgid "Limited Service"
-msgstr ""
+msgstr "Layanan Terbatas"
 
 #: src/etc/inc/pfsense-utils.inc:3156
 msgid "Initializing Service"
-msgstr ""
+msgstr "Inisialisasi layanan"
 
 #: src/etc/inc/pfsense-utils.inc:3157
 msgid "Network Lock error Service"
-msgstr ""
+msgstr "Kesalahan pada Layanan jaringan terkunci"
 
 #: src/etc/inc/pfsense-utils.inc:3158
 msgid "Network Locked Service"
-msgstr ""
+msgstr "Layanan jaringan terkunci"
 
 #: src/etc/inc/pfsense-utils.inc:3159
 msgid "Unlocked or correct MCC/MNC Service"
-msgstr ""
+msgstr "Layanan MCC / MNC yang tidak terkunci atau benar"
 
 #: src/etc/inc/pfsense-utils.inc:3165
 msgid "No action State"
-msgstr ""
+msgstr "Tidak ada status tindakan"
 
 #: src/etc/inc/pfsense-utils.inc:3166
 msgid "Network lock State"
-msgstr ""
+msgstr "Status jaringan terkunci"
 
 #: src/etc/inc/pfsense-utils.inc:3167
 msgid "(U)SIM card lock State"
-msgstr ""
+msgstr "(U) Kartu SIM Terkunci State"
 
 #: src/etc/inc/pfsense-utils.inc:3168
 msgid "Network Lock and (U)SIM card Lock State"
@@ -3835,72 +3884,75 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:45
 msgid "Warning, could not open log for writing."
-msgstr ""
+msgstr "Peringatan, tidak bisa membuka log untuk menulis."
 
 #: src/etc/inc/pkg-utils.inc:187
 #, php-format
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr ""
+"KESALAHAN!!! Telah terjadi kesalahan di dalam pkg eksekusi (rc = %d) dengan "
+"parameter '%s'"
 
 #: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr ""
+"ERROR: Kesalahan mencoba untuk mendapatkan daftar paket. Membatalkan ..."
 
 #: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
 msgid "ERROR: Error trying to get package version. Aborting..."
-msgstr ""
+msgstr "ERROR: Kesalahan saat mencoba mendapatkan versi paket Membatalkan..."
 
 #: src/etc/inc/pkg-utils.inc:537
 #, php-format
 msgid "Running last steps of %s installation."
-msgstr ""
+msgstr "Menjalankan Langkah akhir dari %s pemasangan."
 
 #: src/etc/inc/pkg-utils.inc:550
 msgid "Resyncing configuration for all packages."
-msgstr ""
+msgstr "Resyncing konfigurasi untuk semua paket."
 
 #: src/etc/inc/pkg-utils.inc:572
 msgid "Syncing packages..."
-msgstr ""
+msgstr "Menyinkronkan paket ..."
 
 #: src/etc/inc/pkg-utils.inc:594
 msgid "Removing package..."
-msgstr ""
+msgstr "Menghapus paket ..."
 
 #: src/etc/inc/pkg-utils.inc:627
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
-msgstr ""
+msgstr "%s Berkas konfigurasi paket kosong dan harus di pasang ulang."
 
 #: src/etc/inc/pkg-utils.inc:643
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
-msgstr ""
+msgstr "Pasang ulang paket %1$s karena ini memuat berkas (%2$s) yang hiang!"
 
 #: src/etc/inc/pkg-utils.inc:646
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
-msgstr ""
+msgstr "Pasang ulang paket %s gagal. sesuaikan dengan ukuran!!!"
 
 #: src/etc/inc/pkg-utils.inc:739
 msgid "Beginning package installation."
-msgstr ""
+msgstr "Instalasi paket awal"
 
 #: src/etc/inc/pkg-utils.inc:740
 #, php-format
 msgid "Beginning package installation for %s ."
-msgstr ""
+msgstr "Memulai pemasangan paket untuk %s"
 
 #: src/etc/inc/pkg-utils.inc:744
 msgid "Saving updated package information..."
-msgstr ""
+msgstr "Menyimpan informasi paket yang diperbarui ..."
 
 #: src/etc/inc/pkg-utils.inc:747
 #, php-format
 msgid "Installed %s package."
-msgstr ""
+msgstr "Terpasang %s paket."
 
 #: src/etc/inc/pkg-utils.inc:751
 #, php-format
@@ -3909,151 +3961,155 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:752
 msgid "overwrite!"
-msgstr ""
+msgstr "Menimpa!"
 
 #: src/etc/inc/pkg-utils.inc:755
 #, php-format
 msgid "Intermediate config write during package install for %s."
-msgstr ""
+msgstr "Tulis konfigurasi Menengah selagi memasang paket untuk %s"
 
 #: src/etc/inc/pkg-utils.inc:759
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
-msgstr ""
+msgstr "%1$s paket tidak terpasang.%2$spemasangan dibatalkan."
 
 #: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
 #: src/etc/inc/pkg-utils.inc:871
 #, php-format
 msgid "Failed to install package: %s."
-msgstr ""
+msgstr "Gagal memasang paket: %s"
 
 #: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
 #: src/etc/inc/pkg-utils.inc:872
 msgid "Failed to install package."
-msgstr ""
+msgstr "Gagal memasang paket."
 
 #: src/etc/inc/pkg-utils.inc:769
 msgid "Loading package configuration... "
-msgstr ""
+msgstr "Memuat konfigurasi paket..."
 
 #: src/etc/inc/pkg-utils.inc:772
 msgid "Configuring package components..."
-msgstr ""
+msgstr "Mengkonfigurasi komponen paket..."
 
 #: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
 msgid "Loading package instructions..."
-msgstr ""
+msgstr "Memuat petunjuk paket..."
 
 #: src/etc/inc/pkg-utils.inc:791
 #, php-format
 msgid "Include %s is missing!"
-msgstr ""
+msgstr "Termasuk %s hilang!"
 
 #: src/etc/inc/pkg-utils.inc:802
 msgid "Custom commands..."
-msgstr ""
+msgstr "Perintah khusus..."
 
 #: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_global_functions()..."
-msgstr ""
+msgstr "Menjalankan custom_php_global_functions()..."
 
 #: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_install_command()..."
-msgstr ""
+msgstr "Melaksanakan custom_php_install_command()..."
 
 #: src/etc/inc/pkg-utils.inc:815
 msgid "Executing custom_php_resync_config_command()..."
-msgstr ""
+msgstr "Menjalankan custom_php_resync_config_command()..."
 
 #: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
 msgid "Menu items... "
-msgstr ""
+msgstr "Item menu..."
 
 #: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
 msgid "Services... "
-msgstr ""
+msgstr "Layanan ..."
 
 #: src/etc/inc/pkg-utils.inc:866
 msgid "Loading package configuration... failed!"
-msgstr ""
+msgstr "Memuat konfigurasi paket ... gagal!"
 
 #: src/etc/inc/pkg-utils.inc:866
 msgid "Installation aborted."
-msgstr ""
+msgstr "Instalasi dibatalkan"
 
 #: src/etc/inc/pkg-utils.inc:867
 msgid "Unable to load package configuration. Installation aborted."
-msgstr ""
+msgstr "Tidak dapat memuat konfigurasi paket. Instalasi dibatalkan"
 
 #: src/etc/inc/pkg-utils.inc:876
 msgid "Writing configuration... "
-msgstr ""
+msgstr "Menulis konfigurasi ..."
 
 #: src/etc/inc/pkg-utils.inc:878
 #, php-format
 msgid "Successfully installed package: %s."
-msgstr ""
+msgstr "Sukses memasang paket: %s"
 
 #: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
-msgstr ""
+msgstr "%1$s paket tidak terpasang.%2$spenghapusan dibatalkan."
 
 #: src/etc/inc/pkg-utils.inc:903
 #, php-format
 msgid "Removing %s package... "
-msgstr ""
+msgstr "Menghapus %s paket..."
 
 #: src/etc/inc/pkg-utils.inc:904
 #, php-format
 msgid "Removing %s components..."
-msgstr ""
+msgstr "Menghapus %s komponen..."
 
 #: src/etc/inc/pkg-utils.inc:957
 #, php-format
 msgid "Intermediate config write during package removal for %s."
-msgstr ""
+msgstr "Tulis konfigurasi Menengah selagi paket dihapus suntuk %s"
 
 #: src/etc/inc/pkg-utils.inc:973
 #, php-format
 msgid "Include file %s could not be found for inclusion."
-msgstr ""
+msgstr "Termasuk berkas %s tidak dapat ditemukan untk disertakan."
 
 #: src/etc/inc/pkg-utils.inc:991
 msgid "Deinstall commands... "
-msgstr ""
+msgstr "Deinstall perintah ..."
 
 #: src/etc/inc/pkg-utils.inc:996
+#, fuzzy
 msgid "Not executing custom deinstall hook because an include is missing."
-msgstr ""
+msgstr "Tidak mengeksekusi hook deinstall kustom karena termasuk yang hilang."
 
 #: src/etc/inc/pkg-utils.inc:1003
 msgid "Syslog entries... "
-msgstr ""
+msgstr "Entri syslog ..."
 
 #: src/etc/inc/pkg-utils.inc:1011
 msgid "Configuration... "
-msgstr ""
+msgstr "Konfigurasi..."
 
 #: src/etc/inc/pkg-utils.inc:1014
 #, php-format
 msgid "Removed %s package."
-msgstr ""
+msgstr "Dihapus %s paket."
 
 #: src/etc/inc/pkg-utils.inc:1039
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
+"Menunggu koneksi Internet untuk memperbarui metadata pkg dan menyelesaikan "
+"penginstalan ulang paket"
 
 #: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
 msgid "Package reinstall"
-msgstr ""
+msgstr "instal ulang paket"
 
 #: src/etc/inc/pkg-utils.inc:1053
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
+"Proses instal ulang paket dibatalkan karena kurangnya konektivitas internet"
 
 #: src/etc/inc/pkg-utils.inc:1092
 #, php-format
@@ -4063,89 +4119,95 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1113
 msgid "Stopping all packages."
-msgstr ""
+msgstr "Menghentikan semua paket."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
-msgstr ""
+msgstr "Sistem - Sinkronisasi node HA"
 
 #: src/etc/inc/priv/user.priv.inc:7
 msgid "Allow access to authenticate this user for HA sync via XMLRPC"
 msgstr ""
+"Ijinkan akses untuk autentikasi pengguna ini pada HA sync melalui XMLRPC"
 
 #: src/etc/inc/priv/user.priv.inc:10
 msgid "User - Services: Captive Portal login"
-msgstr ""
+msgstr "Pengguna - Layanan: Masuk pintu captive portal"
 
 #: src/etc/inc/priv/user.priv.inc:11
 msgid "Indicates whether the user is able to login on the captive portal."
-msgstr ""
+msgstr "Indikasi apakah pengguna bisa masuk pada captive portal"
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr ""
+msgstr "WebCfg - Halaman Bantu"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
 msgstr ""
+"Memunculkan semua tombol pada menu bantu dan mengijinkan akses tautan "
+"peluncur bantuan"
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr ""
+msgstr "WebCfg - Dasbor (semua)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
-msgstr ""
+msgstr "Izinkan akses ke semua halaman yang dibutuhkan untuk dasbor."
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr ""
+msgstr "WebCfg - Widget dasbor (akses langsung)."
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
 "Allow direct access to all Dashboard widget pages, required for some widgets "
 "using AJAX."
 msgstr ""
+"Izinkan akses langsung ke semua halaman widget Dasbor, yang diperlukan untuk "
+"beberapa widget menggunakan AJAX."
 
 #: src/etc/inc/priv/user.priv.inc:38
 msgid "User - Config: Deny Config Write"
-msgstr ""
+msgstr "User - Config: Deny Config Write"
 
 #: src/etc/inc/priv/user.priv.inc:39
 msgid "If present, ignores requests from this user to write config.xml."
 msgstr ""
+"Jika ada, abaikan permintaan dari pengguna ini untuk menulis config.xml."
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr ""
+msgstr "User - Pemberitahuan: Lihat"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
-msgstr ""
+msgstr "Pengguna ini dapat melihat pemberitahuan sistem."
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr ""
+msgstr "User - Pemberitahuan: Lihat dan Hapus"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
-msgstr ""
+msgstr "Pengguna ini dapat melihat dan menghapus pemberitahuan sistem."
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr ""
+msgstr "User - System: akses akun Shell"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
-msgstr ""
+msgstr "Menunjukkan apakah pengguna bisa login misalnya melalui SSH."
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
-msgstr ""
+msgstr "User - System: Copy file (scp)"
 
 #: src/etc/inc/priv/user.priv.inc:60
 msgid "User - System: Copy files to home directory (chrooted scp)"
-msgstr ""
+msgstr "User - System: Menyalin file ke direktori home (chrooted scp)"
 
 #: src/etc/inc/priv/user.priv.inc:61
 msgid ""
@@ -4154,10 +4216,14 @@ msgid ""
 "privilege.Warning: Manual chroot setup required, see /usr/local/etc/rc.d/"
 "scponlyc."
 msgstr ""
+"Menunjukkan apakah pengguna ini diperbolehkan untuk menyalin file ke "
+"direktori home melalui SCP / SFTP.Note: User - System - Copy files (scp) "
+"bertentangan dengan hak istimewa ini.Peringatan: Pengaturan chroot manual "
+"diperlukan, lihat / usr / local / etc / rc .d / scponlyc."
 
 #: src/etc/inc/priv/user.priv.inc:66
 msgid "User - System: SSH tunneling"
-msgstr ""
+msgstr "User - System: SSH tunneling"
 
 #: src/etc/inc/priv/user.priv.inc:67
 msgid ""
@@ -4165,192 +4231,202 @@ msgid ""
 "have no shell access. Note: User - System - Copy files (scp) and System: "
 "Copy files to home directory (chrooted scp) conflict with this privilege."
 msgstr ""
+"Menunjukkan apakah pengguna dapat masuk untuk melakukan tunneling melalui "
+"SSH saat mereka tidak memiliki akses shell. Catatan: User - System - Copy "
+"file (scp) dan System: Copy file ke direktori home (chrooted scp) "
+"bertentangan dengan privilege ini."
 
 #: src/etc/inc/priv/user.priv.inc:74
 msgid "User - VPN: IPsec xauth Dialin"
-msgstr ""
+msgstr "Pengguna - VPN: IPsec xauth Dialin"
 
 #: src/etc/inc/priv/user.priv.inc:75
 msgid ""
 "Indicates whether the user is allowed to dial in via IPsec xauth (Note: Does "
 "not allow shell access, but may allow the user to create SSH tunnels)"
 msgstr ""
+"Menunjukkan apakah pengguna diizinkan untuk menghubungi melalui IPsec xauth "
+"(Catatan: Tidak mengizinkan akses shell, namun memungkinkan pengguna membuat "
+"tunnel SSH)"
 
 #: src/etc/inc/priv/user.priv.inc:80
 msgid "User - VPN: L2TP Dialin"
-msgstr ""
+msgstr "Pengguna - VPN: Dialin L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:81
 msgid "Indicates whether the user is allowed to dial in via L2TP"
-msgstr ""
+msgstr "Menunjukkan apakah pengguna diizinkan untuk menghubungi melalui L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:84
 msgid "User - VPN: PPPOE Dialin"
-msgstr ""
+msgstr "Pengguna - VPN: PPPOE Dialin"
 
 #: src/etc/inc/priv/user.priv.inc:85
 msgid "Indicates whether the user is allowed to dial in via PPPOE"
-msgstr ""
+msgstr "Menunjukkan apakah pengguna diizinkan untuk menghubungi melalui PPPOE"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr ""
+msgstr "WebCfg - Status: Log Sistem: Portal Auth"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
-msgstr ""
+msgstr "Izinkan akses ke halaman 'Status: System Logs: Portal Auth'."
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr ""
+msgstr "WebCfg - status: Catatan:DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
-msgstr ""
+msgstr "Ijinkan akses pada 'Tatus:Catatan:DHCP' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr ""
+msgstr "WebCfg - Status:Catatan: Pintu gerbang"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Catatan:Sistem:Pintu Gerbang' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr ""
+msgstr "WebCfg - Status:Catatan: Resolver"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Catatan:Sistem:Resolver' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr ""
+msgstr "WebCfg - Status: catatan sistem: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status: Catatan Sistem: IPsec VPN' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Sistem: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Sistem Catatan: NTP' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr ""
+msgstr "WebCfg - Status :Catatan Sistem: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Catatan Sistem: OpenVPN' halaman"
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Sistem: Penyeimbang Beban"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
 msgstr ""
+"Ijinkan akses untuk 'Status:Catatan Sistem: Penyeimbang Beban' halaman"
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr ""
+msgstr "WebCfg - Status: Catatan Sistem: Rute"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Catatan Sistem:Sistem:Rute' halaman"
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Sistem: Nirkabel"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Ststus:Catatan Sistem:Sistem:Nirkabel' halaman."
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr ""
+msgstr "Webcfg - Layanan:UPnP"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Layanan:UPnP' halaman."
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr ""
+msgstr "WebCfg - Semua halaman"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
-msgstr ""
+msgstr "Ijinkan akses untuk semua halaman"
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr ""
+msgstr "WebCfg - Laporan Kerusakan"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
 msgstr ""
+"Unggah laporan kerusakan kepada pfSense dan atau menghapus laporan kerusakan."
+""
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr ""
+msgstr "WebCfg - Diagnosis:ARP Tabel"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis:ARP Tabel' halaman."
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr ""
+msgstr "WebCfg - Diagnosis:Autentikasi"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diaknosis:Autentikasi' halaman."
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr ""
+msgstr "WebCfg Diagnosis: Pencadangan & Pemulihan"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Pencadangan:Pemulihan' halaman."
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr ""
+msgstr "WebCfg - Diagnosis:Perintah"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
-msgstr ""
+msgstr "Ijinkan akses untuk ;Diagnosis: Perintah' halaman."
 
 #: src/etc/inc/priv.defs.inc:56
 msgid "WebCfg - Diagnostics: Configuration History"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Konfigurasi Riwayat"
 
 #: src/etc/inc/priv.defs.inc:57
 msgid "Allow access to the 'Diagnostics: Configuration History' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Konfigurasi Riwayat' halaman."
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Standar Pabrik"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis:Tandar Pabrik' halaman."
 
 #: src/etc/inc/priv.defs.inc:69
 msgid "WebCfg - Diagnostics: DNS Lookup"
-msgstr ""
+msgstr "WebCfg - Diagnosis: DNS Lookup"
 
 #: src/etc/inc/priv.defs.inc:70
 msgid "Allow access to the 'Diagnostics: DNS Lookup' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: DNS Lookup' halaman."
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
@@ -4362,19 +4438,20 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Memunculkan Sumber Pelacakan"
 
 #: src/etc/inc/priv.defs.inc:82
 msgid "Allow access to the 'Diagnostics: Show Source Tracking' page."
 msgstr ""
+"Ijinkan akses untuk 'Diagnosis: Memunculkan SUmber Pelacakan' halaman."
 
 #: src/etc/inc/priv.defs.inc:87
 msgid "WebCfg - Diagnostics: Edit File"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Perbaiki Berkas"
 
 #: src/etc/inc/priv.defs.inc:88
 msgid "Allow access to the 'Diagnostics: Edit File' page."
-msgstr ""
+msgstr "jinkan akses untuk 'Diagnosis:Perbaiki Berkas' halaman."
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
@@ -4386,67 +4463,67 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:102
 msgid "WebCfg - Diagnostics: Halt system"
-msgstr ""
+msgstr "WebCfg Diagnosis: menghentikan sistem"
 
 #: src/etc/inc/priv.defs.inc:103
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: menghentikan sistem' halaman."
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Pembatas Info"
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Pembatas Info' halaman."
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
-msgstr ""
+msgstr "WebCfg - Diagnosis: NDP tabel"
 
 #: src/etc/inc/priv.defs.inc:115
 msgid "Allow access to the 'Diagnostics: NDP Table' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: NDP tabel' halaman."
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Tangkapan Paket"
 
 #: src/etc/inc/priv.defs.inc:121
 msgid "Allow access to the 'Diagnostics: Packet Capture' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Tangkapan Paket' halaman."
 
 #: src/etc/inc/priv.defs.inc:126
 msgid "WebCfg - Diagnostics: pfInfo"
-msgstr ""
+msgstr "WebCfg Diagnosis: pfInfo"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: pfInfo' halaman."
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
-msgstr ""
+msgstr "WebCfg - Diagnosis: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis:pfTop' halaman"
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
-msgstr ""
+msgstr "WebCfg Diagnosis: Ping"
 
 #: src/etc/inc/priv.defs.inc:139
 msgid "Allow access to the 'Diagnostics: Ping' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Ping' halaman."
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Mulai Ulang Sistem"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Mulai Ulang Sistem' halaman."
 
 #: src/etc/inc/priv.defs.inc:150
 msgid "WebCfg - Diagnostics: Reset states"
@@ -4490,35 +4567,35 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Aktivitas Sistem"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Aktivitas Sistem' halaman"
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
-msgstr ""
+msgstr "WebCfg - Diagnosis: pf Tabel alamat IP"
 
 #: src/etc/inc/priv.defs.inc:187
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Tabel' halaman."
 
 #: src/etc/inc/priv.defs.inc:192
 msgid "WebCfg - Diagnostics: Test Port"
-msgstr ""
+msgstr "WebCfg - Diagnosis: Tes Port"
 
 #: src/etc/inc/priv.defs.inc:193
 msgid "Allow access to the 'Diagnostics: Test Port' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Tes Port' halaman."
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr ""
+msgstr "WebCfg- Diagnosis: Traceroute"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Diagnosis: Traceroute' halaman."
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
@@ -4738,11 +4815,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:367
 msgid "WebCfg - System: Login / Logout / Dashboard"
-msgstr ""
+msgstr "WebCfg - Sistem: Masuk / Keluar / Dasbor"
 
 #: src/etc/inc/priv.defs.inc:368
 msgid "Allow access to the 'System: Login / Logout' page and Dashboard."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Sistem: Masuk / Keluar' halaman dan Dasbor."
 
 #: src/etc/inc/priv.defs.inc:373
 msgid "WebCfg - Interfaces: WAN"
@@ -5537,52 +5614,56 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:964
 msgid "WebCfg - Status: Logs: System"
-msgstr ""
+msgstr "WebCfg - Status:Catatan:Sistem"
 
 #: src/etc/inc/priv.defs.inc:965
 msgid "Allow access to the 'Status: System Logs: General' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Ststus:Catatan Sistem: Umum' halaman."
 
 #: src/etc/inc/priv.defs.inc:970
 msgid "WebCfg - Status: Logs: Firewall"
-msgstr ""
+msgstr "WebCfg _ Status:Catatan: Tembok api"
 
 #: src/etc/inc/priv.defs.inc:971
 msgid "Allow access to the 'Status: Logs: Firewall' page."
-msgstr ""
+msgstr "Ijinkan akses untuk 'Status:Catatan:Tembok api' halaman."
 
 #: src/etc/inc/priv.defs.inc:976
 msgid "WebCfg - Status: System Logs: Firewall (Dynamic View)"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Sistem:Tembok api (Tampilan Dinamis)"
 
 #: src/etc/inc/priv.defs.inc:977
 msgid ""
 "Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page"
 msgstr ""
+"Ijinkan akses untuk;Status:Catatan Sistem:Tembok api (Tampilan Dinamis)' "
+"halaman"
 
 #: src/etc/inc/priv.defs.inc:982
 msgid "WebCfg - Status: System Logs: Firewall Log Summary"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Sistem:Ringkasan Catatan Tembok Api"
 
 #: src/etc/inc/priv.defs.inc:983
 msgid "Allow access to the 'Status: System Logs: Firewall Log Summary' page"
 msgstr ""
+"Ijinkan akses untuk 'Status:Catatan Sistem:Ringkasan Catatan Tembok Api' "
+"halaman"
 
 #: src/etc/inc/priv.defs.inc:988
 msgid "WebCfg - Status: Logs: Settings"
-msgstr ""
+msgstr "WebCfg -  Status:Catatan:Pengaturan"
 
 #: src/etc/inc/priv.defs.inc:989
 msgid "Allow access to the 'Status: Logs: Settings' page."
-msgstr ""
+msgstr "Ijinkan akses untuk ;Status:Catatan:Pengaturan' halaman"
 
 #: src/etc/inc/priv.defs.inc:994
 msgid "WebCfg - Status: Logs: VPN"
-msgstr ""
+msgstr "WebCfg - Status:Catatan: VPN"
 
 #: src/etc/inc/priv.defs.inc:995
 msgid "Allow access to the 'Status: Logs: VPN' page."
-msgstr ""
+msgstr "Ijinkan akses untuk ;Status:Catatan:VPN' halaman."
 
 #: src/etc/inc/priv.defs.inc:1000
 msgid "WebCfg - Status: NTP"
@@ -5602,11 +5683,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1012
 msgid "WebCfg - Status: Package logs"
-msgstr ""
+msgstr "WebCfg - Status:Catatan Paket"
 
 #: src/etc/inc/priv.defs.inc:1013
 msgid "Allow access to the 'Status: Package logs' page."
-msgstr ""
+msgstr "Ijinkan Akses untuk 'Status:Catatan Paket' halaman."
 
 #: src/etc/inc/priv.defs.inc:1018
 msgid "WebCfg - Status: Traffic Shaper: Queues"
@@ -6051,7 +6132,7 @@ msgstr ""
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "Sistem Pencatatan Daemon"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -6143,13 +6224,13 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:126
 #: src/usr/local/www/system_gateways_edit.php:153
 #: src/usr/local/www/system_routes_edit.php:262
-#: src/usr/local/www/system_usermanager.php:624
-#: src/usr/local/www/system_usermanager.php:721
+#: src/usr/local/www/system_usermanager.php:636
+#: src/usr/local/www/system_usermanager.php:733
 #: src/usr/local/www/vpn_ipsec_phase1.php:657
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
-#: src/usr/local/www/vpn_openvpn_client.php:512
+#: src/usr/local/www/vpn_openvpn_client.php:510
 #: src/usr/local/www/vpn_openvpn_csc.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:693
+#: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disabled"
 msgstr ""
 
@@ -6613,15 +6694,15 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager.php:409
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/system_routes_edit.php:270
-#: src/usr/local/www/system_usermanager.php:452
+#: src/usr/local/www/system_usermanager.php:464
 #: src/usr/local/www/vpn_ipsec_phase1.php:694
 #: src/usr/local/www/vpn_ipsec_phase2.php:584
-#: src/usr/local/www/vpn_openvpn_client.php:614
-#: src/usr/local/www/vpn_openvpn_client.php:950
+#: src/usr/local/www/vpn_openvpn_client.php:604
+#: src/usr/local/www/vpn_openvpn_client.php:941
 #: src/usr/local/www/vpn_openvpn_csc.php:348
 #: src/usr/local/www/vpn_openvpn_csc.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:764
-#: src/usr/local/www/vpn_openvpn_server.php:1380
+#: src/usr/local/www/vpn_openvpn_server.php:746
+#: src/usr/local/www/vpn_openvpn_server.php:1340
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
@@ -6831,7 +6912,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:517
 #: src/usr/local/www/system_certmanager.php:887
-#: src/usr/local/www/system_usermanager.php:647
+#: src/usr/local/www/system_usermanager.php:659
 msgid "Delete"
 msgstr ""
 
@@ -6867,7 +6948,7 @@ msgstr ""
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
-#: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
+#: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
 msgstr ""
@@ -6931,8 +7012,8 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/vpn_ipsec_phase1.php:697
 #: src/usr/local/www/vpn_ipsec_phase2.php:587
-#: src/usr/local/www/vpn_openvpn_client.php:617
-#: src/usr/local/www/vpn_openvpn_server.php:767
+#: src/usr/local/www/vpn_openvpn_client.php:607
+#: src/usr/local/www/vpn_openvpn_server.php:749
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr ""
@@ -7073,12 +7154,13 @@ msgstr ""
 
 #: src/etc/inc/system.inc:997
 msgid "Starting syslog..."
-msgstr ""
+msgstr "Memulai syslog..."
 
 #: src/etc/inc/system.inc:1170
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
 msgstr ""
+"Kesalahan: Tidak dapat membuka syslog.conf pada system_syslogd_start().%s"
 
 #: src/etc/inc/system.inc:1256
 msgid "Creating SSL Certificate for this host"
@@ -7250,7 +7332,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:623
 msgid "Indicates whether this user is able to login for example via SSH."
-msgstr ""
+msgstr "Mengindikasikan apakah pengguna dapat masuk contohnya melalui SSH."
 
 #: src/etc/inc/upgrade_config.inc:626
 #, php-format
@@ -7671,7 +7753,7 @@ msgstr ""
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1872
+#: src/etc/inc/vpn.inc:1867
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
 msgstr ""
@@ -7856,6 +7938,8 @@ msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
 msgstr ""
+"Laporan catatan pemrograman dapat dilaporkan kepada pengembang pfSense untuk "
+"keperluan inspeksi."
 
 #: src/usr/local/www/crash_reporter.php:129
 msgid ""
@@ -7995,12 +8079,12 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:255
 #: src/usr/local/www/system_groupmanager.php:306
 #: src/usr/local/www/system_routes.php:246
-#: src/usr/local/www/system_usermanager.php:601
+#: src/usr/local/www/system_usermanager.php:613
 #: src/usr/local/www/vpn_ipsec.php:256 src/usr/local/www/vpn_ipsec_keys.php:104
 #: src/usr/local/www/vpn_l2tp_users.php:96
-#: src/usr/local/www/vpn_openvpn_client.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:942
 #: src/usr/local/www/vpn_openvpn_csc.php:664
-#: src/usr/local/www/vpn_openvpn_server.php:1381
+#: src/usr/local/www/vpn_openvpn_server.php:1341
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 msgid "Actions"
 msgstr ""
@@ -8074,7 +8158,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:98
 #: src/usr/local/www/interfaces.php:2648 src/usr/local/www/interfaces.php:2773
-#: src/usr/local/www/system_usermanager.php:728
+#: src/usr/local/www/system_usermanager.php:740
 #: src/usr/local/www/vpn_l2tp_users_edit.php:152
 msgid "*Username"
 msgstr ""
@@ -8272,7 +8356,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:436
 msgid "Syslog"
-msgstr ""
+msgstr "Syslog"
 
 #: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
@@ -8306,8 +8390,8 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/system_user_settings.php:32
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
@@ -8518,8 +8602,8 @@ msgid "Clear command entry"
 msgstr ""
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
-#: src/usr/local/www/system_groupmanager_addprivs.php:202
-#: src/usr/local/www/system_usermanager_addprivs.php:191
+#: src/usr/local/www/system_groupmanager_addprivs.php:213
+#: src/usr/local/www/system_usermanager_addprivs.php:197
 #: src/usr/local/www/interfaces.php:2084
 msgid "Clear"
 msgstr ""
@@ -8529,9 +8613,9 @@ msgid "Download File"
 msgstr ""
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1093
-#: src/usr/local/www/services_captiveportal.php:1127
-#: src/usr/local/www/services_captiveportal.php:1159
+#: src/usr/local/www/services_captiveportal.php:1095
+#: src/usr/local/www/services_captiveportal.php:1129
+#: src/usr/local/www/services_captiveportal.php:1161
 msgid "Download"
 msgstr ""
 
@@ -8823,7 +8907,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
-#: src/usr/local/www/vpn_openvpn_client.php:949
+#: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
 msgstr ""
@@ -8965,10 +9049,10 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
-#: src/usr/local/www/system_groupmanager_addprivs.php:171
-#: src/usr/local/www/system_groupmanager_addprivs.php:191
-#: src/usr/local/www/system_usermanager_addprivs.php:160
-#: src/usr/local/www/system_usermanager_addprivs.php:180
+#: src/usr/local/www/system_groupmanager_addprivs.php:182
+#: src/usr/local/www/system_groupmanager_addprivs.php:202
+#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_usermanager_addprivs.php:186
 msgid "Filter"
 msgstr ""
 
@@ -9004,7 +9088,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:309
 #: src/usr/local/www/system_advanced_admin.php:313
 #: src/usr/local/www/system_advanced_admin.php:321
-#: src/usr/local/www/vpn_openvpn_client.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:939
 msgid "Protocol"
 msgstr ""
 
@@ -9509,9 +9593,9 @@ msgstr ""
 #: src/usr/local/www/services_wol_edit.php:134
 #: src/usr/local/www/system_gateways_edit.php:160
 #: src/usr/local/www/vpn_ipsec_phase1.php:678
-#: src/usr/local/www/vpn_l2tp.php:211
-#: src/usr/local/www/vpn_openvpn_client.php:541
-#: src/usr/local/www/vpn_openvpn_server.php:749
+#: src/usr/local/www/vpn_l2tp.php:222
+#: src/usr/local/www/vpn_openvpn_client.php:539
+#: src/usr/local/www/vpn_openvpn_server.php:731
 msgid "*Interface"
 msgstr ""
 
@@ -9555,8 +9639,8 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1297
 #: src/usr/local/www/system_authservers.php:737
 #: src/usr/local/www/vpn_ipsec_phase2.php:595
-#: src/usr/local/www/vpn_openvpn_client.php:526
-#: src/usr/local/www/vpn_openvpn_server.php:734
+#: src/usr/local/www/vpn_openvpn_client.php:524
+#: src/usr/local/www/vpn_openvpn_server.php:716
 msgid "*Protocol"
 msgstr ""
 
@@ -9742,9 +9826,9 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1086
-#: src/usr/local/www/services_captiveportal.php:1120
-#: src/usr/local/www/services_captiveportal.php:1152
+#: src/usr/local/www/services_captiveportal.php:1088
+#: src/usr/local/www/services_captiveportal.php:1122
+#: src/usr/local/www/services_captiveportal.php:1154
 msgid "View"
 msgstr ""
 
@@ -10066,7 +10150,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:160
 msgid "Logs"
-msgstr ""
+msgstr "Catatan"
 
 #: src/usr/local/www/diag_smart.php:216
 msgid "Info type"
@@ -10091,11 +10175,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:360
 msgid "View Logs"
-msgstr ""
+msgstr "Lihat Catatan"
 
 #: src/usr/local/www/diag_smart.php:369
 msgid "Log type"
-msgstr ""
+msgstr "Tipe Catatan"
 
 #: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:398
 msgid "Sockets"
@@ -10550,7 +10634,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:187
 #: src/usr/local/www/status_logs_vpn.php:84
 msgid "System Logs"
-msgstr ""
+msgstr "Catatan Sistem"
 
 #: src/usr/local/www/easyrule.php:122
 msgid "Firewall Tab"
@@ -10692,14 +10776,14 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager.php:263
 #: src/usr/local/www/system_groupmanager.php:347
 #: src/usr/local/www/system_routes.php:298
-#: src/usr/local/www/system_usermanager.php:505
-#: src/usr/local/www/system_usermanager.php:551
-#: src/usr/local/www/system_usermanager.php:642
+#: src/usr/local/www/system_usermanager.php:517
+#: src/usr/local/www/system_usermanager.php:563
+#: src/usr/local/www/system_usermanager.php:654
 #: src/usr/local/www/vpn_ipsec_keys.php:169
 #: src/usr/local/www/vpn_l2tp_users.php:123
-#: src/usr/local/www/vpn_openvpn_client.php:988
+#: src/usr/local/www/vpn_openvpn_client.php:979
 #: src/usr/local/www/vpn_openvpn_csc.php:700
-#: src/usr/local/www/vpn_openvpn_server.php:1426
+#: src/usr/local/www/vpn_openvpn_server.php:1386
 msgid "Add"
 msgstr ""
 
@@ -10797,13 +10881,13 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager.php:273
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_usermanager.php:561
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:573
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:478
+#: src/usr/local/www/vpn_openvpn_client.php:476
 #: src/usr/local/www/vpn_openvpn_csc.php:286
-#: src/usr/local/www/vpn_openvpn_server.php:657
+#: src/usr/local/www/vpn_openvpn_server.php:639
 msgid "Edit"
 msgstr ""
 
@@ -11654,7 +11738,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
-#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_captiveportal.php:968
 #: src/usr/local/www/services_dhcp.php:1356
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
@@ -12693,9 +12777,9 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:226
 #: src/usr/local/www/system_authservers.php:430
 #: src/usr/local/www/system_groupmanager.php:290
-#: src/usr/local/www/system_groupmanager_addprivs.php:135
-#: src/usr/local/www/system_usermanager.php:582
-#: src/usr/local/www/system_usermanager_addprivs.php:132
+#: src/usr/local/www/system_groupmanager_addprivs.php:136
+#: src/usr/local/www/system_usermanager.php:594
+#: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
@@ -12745,7 +12829,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:514
 msgid "traffic is logged"
-msgstr ""
+msgstr "Trafik didata"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
@@ -13905,9 +13989,9 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:373
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/firewall_shaper_wizards.php:76
-#: src/usr/local/www/vpn_openvpn_client.php:501
+#: src/usr/local/www/vpn_openvpn_client.php:499
 #: src/usr/local/www/vpn_openvpn_csc.php:305
-#: src/usr/local/www/vpn_openvpn_server.php:680
+#: src/usr/local/www/vpn_openvpn_server.php:662
 msgid "Wizards"
 msgstr ""
 
@@ -14306,8 +14390,8 @@ msgid "Authentication and Accounting"
 msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:163
-#: src/usr/local/www/services_captiveportal.php:867
-#: src/usr/local/www/vpn_l2tp.php:285
+#: src/usr/local/www/services_captiveportal.php:869
+#: src/usr/local/www/vpn_l2tp.php:296
 msgid "Accounting"
 msgstr ""
 
@@ -14459,8 +14543,8 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:409
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_settings.php:109
 msgid "User Manager"
 msgstr ""
@@ -14529,7 +14613,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1703
 #: src/usr/local/www/interfaces_ppps_edit.php:456
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr ""
@@ -16626,8 +16710,8 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:426
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
-#: src/usr/local/www/vpn_openvpn_client.php:884
-#: src/usr/local/www/vpn_openvpn_server.php:1312
+#: src/usr/local/www/vpn_openvpn_client.php:875
+#: src/usr/local/www/vpn_openvpn_server.php:1272
 #: src/usr/local/www/interfaces.php:1986 src/usr/local/www/interfaces.php:2171
 msgid "Advanced Configuration"
 msgstr ""
@@ -17589,8 +17673,8 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:858
-#: src/usr/local/www/vpn_openvpn_client.php:849
-#: src/usr/local/www/vpn_openvpn_server.php:1098
+#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_server.php:1080
 msgid "Compression"
 msgstr ""
 
@@ -18194,7 +18278,7 @@ msgid "HTTP Code"
 msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1012
+#: src/usr/local/www/services_captiveportal.php:1014
 msgid "HTTPS Options"
 msgstr ""
 
@@ -18232,10 +18316,10 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
-#: src/usr/local/www/vpn_openvpn_client.php:498
+#: src/usr/local/www/vpn_openvpn_client.php:496
 #: src/usr/local/www/vpn_openvpn_csc.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:653
-#: src/usr/local/www/vpn_openvpn_server.php:677
+#: src/usr/local/www/vpn_openvpn_server.php:635
+#: src/usr/local/www/vpn_openvpn_server.php:659
 msgid "Servers"
 msgstr ""
 
@@ -18985,8 +19069,8 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip.php:94
 #: src/usr/local/www/services_captiveportal_mac.php:161
 #: src/usr/local/www/services_captiveportal_vouchers.php:373
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
-#: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:83
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:217 src/usr/local/www/vpn_l2tp_users.php:83
 msgid "Configuration"
 msgstr ""
 
@@ -19344,78 +19428,85 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:688
-msgid "*Authentication method"
+#: src/usr/local/www/vpn_ipsec_phase1.php:705
+msgid "*Authentication Method"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:723
+#: src/usr/local/www/services_captiveportal.php:714
+msgid ""
+"Select an Authentication Method to use for this zone. One method must be "
+"selected."
+msgstr ""
+
+#: src/usr/local/www/services_captiveportal.php:725
 msgid "*RADIUS protocol"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:762
+#: src/usr/local/www/services_captiveportal.php:764
 msgid "Primary Authentication Source"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:765
+#: src/usr/local/www/services_captiveportal.php:767
 msgid "*Primary RADIUS server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:789
-#: src/usr/local/www/services_captiveportal.php:842
+#: src/usr/local/www/services_captiveportal.php:791
+#: src/usr/local/www/services_captiveportal.php:844
 msgid "Secondary RADIUS server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:795
-#: src/usr/local/www/services_captiveportal.php:848
+#: src/usr/local/www/services_captiveportal.php:797
+#: src/usr/local/www/services_captiveportal.php:850
 msgid "IP address of the RADIUS server to authenticate against."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:802
-#: src/usr/local/www/services_captiveportal.php:855
+#: src/usr/local/www/services_captiveportal.php:804
+#: src/usr/local/www/services_captiveportal.php:857
 msgid "RADIUS port. Leave blank for default (1812)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:809
-#: src/usr/local/www/services_captiveportal.php:862
+#: src/usr/local/www/services_captiveportal.php:811
+#: src/usr/local/www/services_captiveportal.php:864
 msgid ""
 "RADIUS shared secret. Leave blank to not use a shared secret (not "
 "recommended)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:815
+#: src/usr/local/www/services_captiveportal.php:817
 msgid "Secondary Authentication Source"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:818
+#: src/usr/local/www/services_captiveportal.php:820
 msgid "Primary RADIUS server"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:872
+#: src/usr/local/www/services_captiveportal.php:874
 #: src/usr/local/www/services_pppoe_edit.php:363
-#: src/usr/local/www/vpn_l2tp.php:273
+#: src/usr/local/www/vpn_l2tp.php:284
 msgid "RADIUS"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:879
+#: src/usr/local/www/services_captiveportal.php:881
 msgid "Accounting Port"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:882
+#: src/usr/local/www/services_captiveportal.php:884
 msgid "Leave blank to use the default port (1813)."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:884
+#: src/usr/local/www/services_captiveportal.php:886
 msgid "Accounting updates"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:922
+#: src/usr/local/www/services_captiveportal.php:924
 msgid "RADIUS Options"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:927
+#: src/usr/local/www/services_captiveportal.php:929
 msgid "Reauthentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:930
+#: src/usr/local/www/services_captiveportal.php:932
 msgid ""
 "If reauthentication is enabled, Access-Requests will be sent to the RADIUS "
 "server for each user that is logged in every minute. If an Access-Reject is "
@@ -19425,41 +19516,41 @@ msgid ""
 "are necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:937
+#: src/usr/local/www/services_captiveportal.php:939
 msgid "RADIUS MAC Authentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:940
+#: src/usr/local/www/services_captiveportal.php:942
 msgid ""
 "If this option is enabled, the captive portal will try to authenticate users "
 "by sending their MAC address as the username and the password entered below "
 "to the RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:945
+#: src/usr/local/www/services_captiveportal.php:947
 msgid "MAC authentication secret"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:952
+#: src/usr/local/www/services_captiveportal.php:954
 msgid "RADIUS NAS IP Attribute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:955
+#: src/usr/local/www/services_captiveportal.php:957
 msgid "Choose the IP to use for calling station attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:959
+#: src/usr/local/www/services_captiveportal.php:961
 #: src/usr/local/www/system_usermanager_settings.php:199
 msgid "Session timeout"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:962
+#: src/usr/local/www/services_captiveportal.php:964
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:969
+#: src/usr/local/www/services_captiveportal.php:971
 msgid ""
 "If RADIUS type is set to Cisco, in Access-Requests the value of Calling-"
 "Station-ID will be set to the client's IP address and the Called-Station-Id "
@@ -19467,22 +19558,22 @@ msgid ""
 "client's MAC address and Called-Station-ID = pfSense's WAN IP address."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:975
+#: src/usr/local/www/services_captiveportal.php:977
 msgid "Accounting style"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:978
+#: src/usr/local/www/services_captiveportal.php:980
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
 "download, and Acct-Output-Octets will represent upload."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:983
+#: src/usr/local/www/services_captiveportal.php:985
 msgid "Idle time accounting"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:986
+#: src/usr/local/www/services_captiveportal.php:988
 msgid ""
 "When enabled, if a client is disconnected for exceeding the idle timeout the "
 "time spent idle is included in the total session time. Otherwise the session "
@@ -19490,28 +19581,28 @@ msgid ""
 "started and when the last activity was recorded."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:992
+#: src/usr/local/www/services_captiveportal.php:994
 msgid "NAS Identifier"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:995
+#: src/usr/local/www/services_captiveportal.php:997
 msgid ""
 "Specify a NAS identifier to override the default value (pfSense.localdomain)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Single dash"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Unformatted"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "MAC address format"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1002
+#: src/usr/local/www/services_captiveportal.php:1004
 #, php-format
 msgid ""
 "This option changes the MAC address format used in the whole RADIUS system. "
@@ -19521,18 +19612,18 @@ msgid ""
 " 001122334455"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1020
+#: src/usr/local/www/services_captiveportal.php:1022
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1025
+#: src/usr/local/www/services_captiveportal.php:1027
 msgid "*HTTPS server name"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1028
+#: src/usr/local/www/services_captiveportal.php:1030
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -19541,22 +19632,22 @@ msgid ""
 "resolves to the correct interface IP on pfSense."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1034
+#: src/usr/local/www/services_captiveportal.php:1036
 msgid "*SSL Certificate"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1037
+#: src/usr/local/www/services_captiveportal.php:1039
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
 "Cert. Manager%2$s"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1041
+#: src/usr/local/www/services_captiveportal.php:1043
 msgid "HTTPS Forwards"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1044
+#: src/usr/local/www/services_captiveportal.php:1046
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -19566,15 +19657,15 @@ msgid ""
 "to the HTTPS login page."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1051
+#: src/usr/local/www/services_captiveportal.php:1053
 msgid "HTML Page Contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1056
+#: src/usr/local/www/services_captiveportal.php:1058
 msgid "Portal page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1059
+#: src/usr/local/www/services_captiveportal.php:1061
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -19599,21 +19690,21 @@ msgid ""
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1083
+#: src/usr/local/www/services_captiveportal.php:1085
 msgid "Current Portal Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1100
-#: src/usr/local/www/services_captiveportal.php:1134
-#: src/usr/local/www/services_captiveportal.php:1166
+#: src/usr/local/www/services_captiveportal.php:1102
+#: src/usr/local/www/services_captiveportal.php:1136
+#: src/usr/local/www/services_captiveportal.php:1168
 msgid "Restore Default Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1109
+#: src/usr/local/www/services_captiveportal.php:1111
 msgid "Auth error page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1112
+#: src/usr/local/www/services_captiveportal.php:1114
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -19621,25 +19712,25 @@ msgid ""
 "any."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1117
+#: src/usr/local/www/services_captiveportal.php:1119
 msgid "Current Auth Error Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1143
+#: src/usr/local/www/services_captiveportal.php:1145
 msgid "Logout page contents"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1146
+#: src/usr/local/www/services_captiveportal.php:1148
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1149
+#: src/usr/local/www/services_captiveportal.php:1151
 msgid "Current Logout Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1182
+#: src/usr/local/www/services_captiveportal.php:1184
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -19916,7 +20007,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:139
 #: src/usr/local/www/status_logs_vpn.php:366
 #: src/usr/local/www/system_groupmanager.php:226
-#: src/usr/local/www/system_usermanager.php:453
+#: src/usr/local/www/system_usermanager.php:465
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:78
 msgid "Action"
 msgstr ""
@@ -21090,14 +21181,14 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:857
-#: src/usr/local/www/vpn_openvpn_server.php:1238
+#: src/usr/local/www/vpn_openvpn_server.php:1213
 msgid "NTP Server 1"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1187
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:865
-#: src/usr/local/www/vpn_openvpn_server.php:1245
+#: src/usr/local/www/vpn_openvpn_server.php:1220
 msgid "NTP Server 2"
 msgstr ""
 
@@ -21995,8 +22086,8 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:355
 #: src/usr/local/www/services_unbound.php:351
 #: src/usr/local/www/services_unbound.php:365
-#: src/usr/local/www/vpn_openvpn_client.php:889
-#: src/usr/local/www/vpn_openvpn_server.php:1316
+#: src/usr/local/www/vpn_openvpn_client.php:880
+#: src/usr/local/www/vpn_openvpn_server.php:1276
 msgid "Custom options"
 msgstr ""
 
@@ -22281,7 +22372,7 @@ msgid "The MX contains invalid characters."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:142
-#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:211
 #: src/usr/local/www/vpn_l2tp_users_edit.php:86
 msgid "The username contains invalid characters."
 msgstr ""
@@ -22359,7 +22450,17 @@ msgid "Verbose logging"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:339
-msgid "CURL options"
+msgid "HTTP API DNS Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:346
+msgid "HTTP API SSL Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:349
+msgid ""
+"When set, the server must provide a valid certificate trust chain which can "
+"be verified by this firewall."
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:356
@@ -22987,7 +23088,7 @@ msgid "*Remote Address Range"
 msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:332
-#: src/usr/local/www/vpn_l2tp.php:230
+#: src/usr/local/www/vpn_l2tp.php:241
 msgid "Specify the starting address for the client IP address subnet."
 msgstr ""
 
@@ -23012,7 +23113,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:374
-#: src/usr/local/www/vpn_l2tp.php:288
+#: src/usr/local/www/vpn_l2tp.php:299
 msgid "Sends accounting packets to the RADIUS server."
 msgstr ""
 
@@ -23066,7 +23167,7 @@ msgid "Primary RADIUS Server Shared Secret"
 msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:434
-#: src/usr/local/www/vpn_l2tp.php:301
+#: src/usr/local/www/vpn_l2tp.php:312
 msgid ""
 "Enter the shared secret that will be used to authenticate to the RADIUS "
 "server."
@@ -23104,7 +23205,7 @@ msgid "RFC2136 Clients"
 msgstr ""
 
 #: src/usr/local/www/services_rfc2136.php:177
-#: src/usr/local/www/vpn_openvpn_client.php:972
+#: src/usr/local/www/vpn_openvpn_client.php:963
 msgid "Edit client"
 msgstr ""
 
@@ -23117,7 +23218,7 @@ msgid "Enable client"
 msgstr ""
 
 #: src/usr/local/www/services_rfc2136.php:186
-#: src/usr/local/www/vpn_openvpn_client.php:973
+#: src/usr/local/www/vpn_openvpn_client.php:964
 msgid "Delete client"
 msgstr ""
 
@@ -25516,11 +25617,11 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_settings.php:186
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 msgid "VPN"
 msgstr ""
 
@@ -26084,6 +26185,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_vpn.php:140
 #: src/usr/local/www/status_logs_vpn.php:385
+#: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:217
@@ -26600,7 +26702,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:620
 #: src/usr/local/www/system_user_settings.php:168
-#: src/usr/local/www/system_usermanager.php:974
+#: src/usr/local/www/system_usermanager.php:985
 #, php-format
 msgid "%sUser-created themes are unsupported, use at your own risk."
 msgstr ""
@@ -28111,8 +28213,8 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:535
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
-#: src/usr/local/www/system_usermanager.php:189
-#: src/usr/local/www/system_usermanager.php:903
+#: src/usr/local/www/system_usermanager.php:201
+#: src/usr/local/www/system_usermanager.php:914
 msgid "Descriptive name"
 msgstr ""
 
@@ -28187,23 +28289,23 @@ msgstr ""
 #: src/usr/local/www/system_authservers.php:431
 #: src/usr/local/www/system_authservers.php:437
 #: src/usr/local/www/system_groupmanager.php:291
-#: src/usr/local/www/system_groupmanager_addprivs.php:136
-#: src/usr/local/www/system_usermanager.php:583
-#: src/usr/local/www/system_usermanager_addprivs.php:133
+#: src/usr/local/www/system_groupmanager_addprivs.php:137
+#: src/usr/local/www/system_usermanager.php:595
+#: src/usr/local/www/system_usermanager_addprivs.php:129
 #: src/usr/local/www/system_usermanager_settings.php:185
 msgid "Authentication Servers"
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:288
-#: src/usr/local/www/system_groupmanager_addprivs.php:133
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager.php:580
-#: src/usr/local/www/system_usermanager.php:590
-#: src/usr/local/www/system_usermanager_addprivs.php:42
-#: src/usr/local/www/system_usermanager_addprivs.php:130
+#: src/usr/local/www/system_groupmanager_addprivs.php:134
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager.php:592
+#: src/usr/local/www/system_usermanager.php:602
+#: src/usr/local/www/system_usermanager_addprivs.php:38
+#: src/usr/local/www/system_usermanager_addprivs.php:126
 #: src/usr/local/www/system_usermanager_settings.php:182
-#: src/usr/local/www/vpn_l2tp.php:183 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:194 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users.php:84
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
@@ -28214,10 +28316,10 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager.php:289
 #: src/usr/local/www/system_groupmanager.php:297
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_groupmanager_addprivs.php:134
-#: src/usr/local/www/system_usermanager.php:581
-#: src/usr/local/www/system_usermanager.php:600
-#: src/usr/local/www/system_usermanager_addprivs.php:131
+#: src/usr/local/www/system_groupmanager_addprivs.php:135
+#: src/usr/local/www/system_usermanager.php:593
+#: src/usr/local/www/system_usermanager.php:612
+#: src/usr/local/www/system_usermanager_addprivs.php:127
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
 msgstr ""
@@ -28227,12 +28329,12 @@ msgid "Server Name"
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:457
-#: src/usr/local/www/vpn_openvpn_server.php:1410
+#: src/usr/local/www/vpn_openvpn_server.php:1370
 msgid "Edit server"
 msgstr ""
 
 #: src/usr/local/www/system_authservers.php:458
-#: src/usr/local/www/vpn_openvpn_server.php:1411
+#: src/usr/local/www/vpn_openvpn_server.php:1371
 msgid "Delete server"
 msgstr ""
 
@@ -28486,16 +28588,16 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:201
 #: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_certmanager.php:274
-#: src/usr/local/www/system_usermanager.php:191
-#: src/usr/local/www/system_usermanager.php:917
+#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:928
 msgid "Key length"
 msgstr ""
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
 #: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_usermanager.php:192
-#: src/usr/local/www/system_usermanager.php:937
+#: src/usr/local/www/system_usermanager.php:204
+#: src/usr/local/www/system_usermanager.php:948
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Lifetime"
 msgstr ""
@@ -28827,8 +28929,8 @@ msgid "Key data"
 msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:256
-#: src/usr/local/www/system_usermanager.php:190
-#: src/usr/local/www/system_usermanager.php:910
+#: src/usr/local/www/system_usermanager.php:202
+#: src/usr/local/www/system_usermanager.php:921
 msgid "Certificate authority"
 msgstr ""
 
@@ -29102,8 +29204,8 @@ msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:205
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_client.php:330
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_client.php:329
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
 msgstr ""
 
@@ -29178,9 +29280,10 @@ msgid "Choose a Certificate to Revoke"
 msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:526
-#: src/usr/local/www/system_usermanager.php:853
+#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:872
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate"
 msgstr ""
 
@@ -29621,12 +29724,12 @@ msgid "Another entry with the same group name already exists."
 msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:238
-#: src/usr/local/www/system_usermanager.php:472
+#: src/usr/local/www/system_usermanager.php:484
 msgid "(admin privilege)"
 msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:242
-#: src/usr/local/www/system_usermanager.php:478
+#: src/usr/local/www/system_usermanager.php:490
 msgid "Delete Privilege"
 msgstr ""
 
@@ -29662,7 +29765,7 @@ msgid "Group description, for administrative information only"
 msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:419
-#: src/usr/local/www/system_usermanager.php:793
+#: src/usr/local/www/system_usermanager.php:805
 msgid "Group membership"
 msgstr ""
 
@@ -29679,11 +29782,11 @@ msgid "Move to \"Not members"
 msgstr ""
 
 #: src/usr/local/www/system_groupmanager.php:468
-#: src/usr/local/www/system_groupmanager_addprivs.php:158
-#: src/usr/local/www/system_groupmanager_addprivs.php:167
-#: src/usr/local/www/system_usermanager.php:846
-#: src/usr/local/www/system_usermanager_addprivs.php:147
-#: src/usr/local/www/system_usermanager_addprivs.php:156
+#: src/usr/local/www/system_groupmanager_addprivs.php:169
+#: src/usr/local/www/system_groupmanager_addprivs.php:178
+#: src/usr/local/www/system_usermanager.php:858
+#: src/usr/local/www/system_usermanager_addprivs.php:153
+#: src/usr/local/www/system_usermanager_addprivs.php:162
 msgid "Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items."
 msgstr ""
 
@@ -29692,65 +29795,71 @@ msgid "Assigned Privileges"
 msgstr ""
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 msgid "Add Privileges"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:64
-#: src/usr/local/www/system_usermanager_addprivs.php:66
+#: src/usr/local/www/system_groupmanager_addprivs.php:65
+#: src/usr/local/www/system_usermanager_addprivs.php:62
 msgid "Selected privileges"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:149
-msgid "Add Privileges for "
+#: src/usr/local/www/system_groupmanager_addprivs.php:150
+msgid "Group Privileges"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:153
-#: src/usr/local/www/system_usermanager_addprivs.php:142
+#: src/usr/local/www/system_groupmanager_addprivs.php:158
+#: src/usr/local/www/vpn_ipsec_mobile.php:663
+#: src/usr/local/www/vpn_ipsec_mobile.php:672
+msgid "Group"
+msgstr ""
+
+#: src/usr/local/www/system_groupmanager_addprivs.php:164
+#: src/usr/local/www/system_usermanager_addprivs.php:148
 msgid "*Assigned privileges"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:162
-#: src/usr/local/www/system_usermanager_addprivs.php:151
+#: src/usr/local/www/system_groupmanager_addprivs.php:173
+#: src/usr/local/www/system_usermanager_addprivs.php:157
 msgid "Shadow"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:174
-#: src/usr/local/www/system_usermanager_addprivs.php:163
+#: src/usr/local/www/system_groupmanager_addprivs.php:185
+#: src/usr/local/www/system_usermanager_addprivs.php:169
 msgid "Show only the choices containing this term"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:177
-#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_groupmanager_addprivs.php:188
+#: src/usr/local/www/system_usermanager_addprivs.php:172
 msgid "Privilege information"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:179
+#: src/usr/local/www/system_groupmanager_addprivs.php:190
 msgid ""
 "The following privileges effectively give administrator-level access to "
 "users in the group because the user gains access to execute general "
 "commands, edit system files,  modify users, change passwords or similar:"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:185
-#: src/usr/local/www/system_usermanager_addprivs.php:174
+#: src/usr/local/www/system_groupmanager_addprivs.php:196
+#: src/usr/local/www/system_usermanager_addprivs.php:180
 msgid "Please take care when granting these privileges."
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:215
-#: src/usr/local/www/system_usermanager_addprivs.php:214
+#: src/usr/local/www/system_groupmanager_addprivs.php:226
+#: src/usr/local/www/system_usermanager_addprivs.php:220
 msgid "Select a privilege from the list above for a description"
 msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:235
+#: src/usr/local/www/system_groupmanager_addprivs.php:246
 msgid ""
 "(This privilege effectively gives administrator-level access to users in the "
 "group)"
 msgstr ""
 
 #: src/usr/local/www/system_hasync.php:73
-#: src/usr/local/www/vpn_openvpn_client.php:266
-#: src/usr/local/www/vpn_openvpn_client.php:344
+#: src/usr/local/www/vpn_openvpn_client.php:265
+#: src/usr/local/www/vpn_openvpn_client.php:343
 msgid "Password and confirmation must match."
 msgstr ""
 
@@ -30167,185 +30276,191 @@ msgid "User Settings for "
 msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:92
-#: src/usr/local/www/system_usermanager.php:122
+#: src/usr/local/www/system_usermanager.php:134
 #, php-format
 msgid ""
 "Cannot delete user %s because you are currently logged in as that user."
 msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:98
-#: src/usr/local/www/system_usermanager.php:137
+#: src/usr/local/www/system_usermanager.php:149
 #, php-format
 msgid "User %s successfully deleted."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:131
+#: src/usr/local/www/system_usermanager.php:143
 #, php-format
 msgid "Cannot delete user %s because it is a system user."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:139
+#: src/usr/local/www/system_usermanager.php:151
 #, php-format
 msgid "Users %s successfully deleted."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:158
+#: src/usr/local/www/system_usermanager.php:170
 #, php-format
 msgid "Certificate %s association removed."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:167
+#: src/usr/local/www/system_usermanager.php:179
 #, php-format
 msgid "Privilege %s removed."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:215
 msgid "The username is longer than 16 characters."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:207
+#: src/usr/local/www/system_usermanager.php:219
 #: src/usr/local/www/system_usermanager_passwordmg.php:44
 #: src/usr/local/www/vpn_l2tp_users_edit.php:94
 msgid "The passwords do not match."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:211
+#: src/usr/local/www/system_usermanager.php:223
 msgid "IPsec Pre-Shared Key contains invalid characters."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:218
+#: src/usr/local/www/system_usermanager.php:230
 msgid "One or more invalid groups was submitted."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:232
+#: src/usr/local/www/system_usermanager.php:244
 #: src/usr/local/www/vpn_l2tp_users_edit.php:104
 msgid "Another entry with the same username already exists."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:243
+#: src/usr/local/www/system_usermanager.php:255
 msgid "That username is reserved by the system."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:263
+#: src/usr/local/www/system_usermanager.php:275
 msgid "Invalid expiration date format; use MM/DD/YYYY instead."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:270
+#: src/usr/local/www/system_usermanager.php:282
 msgid "Invalid internal Certificate Authority"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:450
+#: src/usr/local/www/system_usermanager.php:462
 msgid "Inherited from"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:492
+#: src/usr/local/www/system_usermanager.php:504
 msgid "Security notice: This user effectively has administrator-level access"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:519
+#: src/usr/local/www/system_usermanager.php:531
 msgid "CA"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:538
+#: src/usr/local/www/system_usermanager.php:550
 msgid "Remove this certificate association? (Certificate will not be deleted)"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:598
-#: src/usr/local/www/system_usermanager.php:766
+#: src/usr/local/www/system_usermanager.php:610
+#: src/usr/local/www/system_usermanager.php:778
 msgid "Full name"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:624
+#: src/usr/local/www/system_usermanager.php:636
 msgid "Enabled"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:627
+#: src/usr/local/www/system_usermanager.php:639
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:110
 msgid "Edit user"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:629
+#: src/usr/local/www/system_usermanager.php:641
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Delete user"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:645
+#: src/usr/local/www/system_usermanager.php:657
 msgid "Delete selected users"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:654
+#: src/usr/local/www/system_usermanager.php:666
 msgid ""
 "Additional users can be added here. User permissions for accessing the "
 "webConfigurator can be assigned directly or inherited from group memberships."
 " Some system object properties can be modified but they cannot be deleted."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:657
+#: src/usr/local/www/system_usermanager.php:669
 msgid ""
 "Accounts added here are also used for other parts of the system such as "
 "OpenVPN, IPsec, and Captive Portal."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:705
+#: src/usr/local/www/system_usermanager.php:717
 msgid "User Properties"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:708
+#: src/usr/local/www/system_usermanager.php:720
 msgid "Defined by"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:758
+#: src/usr/local/www/system_usermanager.php:770
 msgid "Confirm Password"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:769
+#: src/usr/local/www/system_usermanager.php:781
 msgid "User's full name, for administrative information only"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:777
+#: src/usr/local/www/system_usermanager.php:789
 msgid "Expiration date"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:780
+#: src/usr/local/www/system_usermanager.php:792
 msgid ""
 "Leave blank if the account shouldn't expire, otherwise enter the expiration "
 "date as MM/DD/YYYY"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:785
+#: src/usr/local/www/system_usermanager.php:797
 msgid "Custom Settings"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:818
+#: src/usr/local/www/system_usermanager.php:830
 msgid "Not member of"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:826
+#: src/usr/local/www/system_usermanager.php:838
 msgid "Member of"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:834
+#: src/usr/local/www/system_usermanager.php:846
 msgid "Move to \"Member of\" list"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:841
+#: src/usr/local/www/system_usermanager.php:853
 msgid "Move to \"Not member of\" list"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:873
+msgid ""
+"No private CAs found. A private CA is required to create a new user "
+"certificate. Save the user first to import an external certificate."
+msgstr ""
+
+#: src/usr/local/www/system_usermanager.php:886
 msgid "Effective Privileges"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:876
+#: src/usr/local/www/system_usermanager.php:896
 msgid "User Certificates"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:888
+#: src/usr/local/www/system_usermanager.php:908
 msgid "Create Certificate for User"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:930
+#: src/usr/local/www/system_usermanager.php:941
 #, php-format
 msgid ""
 "The larger the key, the more security it offers, but larger keys take "
@@ -30355,38 +30470,38 @@ msgid ""
 "and 4096 is the maximum in common use. For more information see %1$s."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:948
+#: src/usr/local/www/system_usermanager.php:959
 msgid "Keys"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:952
+#: src/usr/local/www/system_usermanager.php:963
 msgid "Authorized keys"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:959
+#: src/usr/local/www/system_usermanager.php:970
 msgid "Authorized SSH Keys"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:961
+#: src/usr/local/www/system_usermanager.php:972
 msgid "Enter authorized SSH keys for this user"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:965
+#: src/usr/local/www/system_usermanager.php:976
 msgid "IPsec Pre-Shared Key"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager_addprivs.php:138
+#: src/usr/local/www/system_usermanager_addprivs.php:134
 msgid "User Privileges"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager_addprivs.php:168
+#: src/usr/local/www/system_usermanager_addprivs.php:174
 msgid ""
 "The following privileges effectively give the user administrator-level "
 "access  because the user gains access to execute general commands, edit "
 "system files,  modify users, change passwords or similar:"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager_addprivs.php:234
+#: src/usr/local/www/system_usermanager_addprivs.php:240
 msgid ""
 "(This privilege effectively gives administrator-level access to the user)"
 msgstr ""
@@ -30940,8 +31055,8 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:561
 #: src/usr/local/www/vpn_openvpn_csc.php:442
-#: src/usr/local/www/vpn_openvpn_server.php:1168
-#: src/usr/local/www/vpn_openvpn_server.php:1175
+#: src/usr/local/www/vpn_openvpn_server.php:1143
+#: src/usr/local/www/vpn_openvpn_server.php:1150
 msgid "DNS Default Domain"
 msgstr ""
 
@@ -30968,11 +31083,6 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:658
 msgid "Phase2 PFS Group"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_mobile.php:663
-#: src/usr/local/www/vpn_ipsec_mobile.php:672
-msgid "Group"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:681
@@ -31148,9 +31258,9 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:653
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
-#: src/usr/local/www/vpn_openvpn_client.php:508
+#: src/usr/local/www/vpn_openvpn_client.php:506
 #: src/usr/local/www/vpn_openvpn_csc.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:689
+#: src/usr/local/www/vpn_openvpn_server.php:671
 msgid "General Information"
 msgstr ""
 
@@ -31186,10 +31296,6 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:701
 msgid "Phase 1 Proposal (Authentication)"
-msgstr ""
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:705
-msgid "*Authentication Method"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
@@ -31236,10 +31342,10 @@ msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:774
-#: src/usr/local/www/vpn_openvpn_client.php:682
-#: src/usr/local/www/vpn_openvpn_client.php:688
-#: src/usr/local/www/vpn_openvpn_server.php:817
-#: src/usr/local/www/vpn_openvpn_server.php:823
+#: src/usr/local/www/vpn_openvpn_client.php:672
+#: src/usr/local/www/vpn_openvpn_client.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:799
+#: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
 msgstr ""
 
@@ -31254,8 +31360,8 @@ msgid "Phase 1 Proposal (Algorithms)"
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:783
-#: src/usr/local/www/vpn_openvpn_client.php:731
-#: src/usr/local/www/vpn_openvpn_server.php:910
+#: src/usr/local/www/vpn_openvpn_client.php:721
+#: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr ""
 
@@ -31672,19 +31778,34 @@ msgstr ""
 msgid "The specified server address is equal to the LAN interface address."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:160
+#: src/usr/local/www/vpn_l2tp.php:107
+msgid "The field 'Primary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:110
+msgid ""
+"The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:113
+msgid ""
+"The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
+"is empty."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:188
+#: src/usr/local/www/vpn_l2tp.php:199
 msgid "Enable L2TP"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:218
+#: src/usr/local/www/vpn_l2tp.php:229
 msgid "*Server address"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:221
+#: src/usr/local/www/vpn_l2tp.php:232
 #, php-format
 msgid ""
 "Enter the IP address the L2TP server should give to clients for use as their "
@@ -31693,63 +31814,63 @@ msgid ""
 "currently in use on this firewall."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:227
+#: src/usr/local/www/vpn_l2tp.php:238
 msgid "*Remote address range"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:234
+#: src/usr/local/www/vpn_l2tp.php:245
 msgid "*Number of L2TP users"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:241
+#: src/usr/local/www/vpn_l2tp.php:252
 msgid "Secret"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:244
+#: src/usr/local/www/vpn_l2tp.php:255
 msgid ""
 "Specify optional secret shared between peers. Required on some devices/"
 "setups."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:248
+#: src/usr/local/www/vpn_l2tp.php:259
 msgid "*Authentication type"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:255
+#: src/usr/local/www/vpn_l2tp.php:266
 msgid "Specifies the protocol to use for authentication."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:259
+#: src/usr/local/www/vpn_l2tp.php:270
 msgid "Primary L2TP DNS server"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:266
+#: src/usr/local/www/vpn_l2tp.php:277
 msgid "Secondary L2TP DNS server"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:281
+#: src/usr/local/www/vpn_l2tp.php:292
 msgid ""
 "When set, all users will be authenticated using the RADIUS server specified "
 "below. The local user database will not be used."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:292
+#: src/usr/local/www/vpn_l2tp.php:303
 msgid "*Server"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:294
+#: src/usr/local/www/vpn_l2tp.php:305
 msgid "Enter the IP address of the RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:298
+#: src/usr/local/www/vpn_l2tp.php:309
 msgid "*Secret"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:305
+#: src/usr/local/www/vpn_l2tp.php:316
 msgid "RADIUS issued IPs"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:316
+#: src/usr/local/www/vpn_l2tp.php:327
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from L2TP clients."
 msgstr ""
@@ -31811,144 +31932,144 @@ msgstr ""
 msgid "Client successfully deleted."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:272
+#: src/usr/local/www/vpn_openvpn_client.php:196
+#: src/usr/local/www/vpn_openvpn_server.php:265
 msgid "The selected Encryption Algorithm is not valid."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:202
-#: src/usr/local/www/vpn_openvpn_server.php:277
+#: src/usr/local/www/vpn_openvpn_client.php:201
+#: src/usr/local/www/vpn_openvpn_server.php:270
 msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
 "IP address cannot be selected."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:204
-#: src/usr/local/www/vpn_openvpn_server.php:279
+#: src/usr/local/www/vpn_openvpn_client.php:203
+#: src/usr/local/www/vpn_openvpn_server.php:272
 msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
 "IP address cannot be selected."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:209
-#: src/usr/local/www/vpn_openvpn_server.php:284
+#: src/usr/local/www/vpn_openvpn_client.php:208
+#: src/usr/local/www/vpn_openvpn_server.php:277
 msgid ""
 "An IPv4 protocol was selected, but the selected interface has no IPv4 "
 "address."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:215
-#: src/usr/local/www/vpn_openvpn_server.php:290
+#: src/usr/local/www/vpn_openvpn_client.php:214
+#: src/usr/local/www/vpn_openvpn_server.php:283
 msgid ""
 "An IPv6 protocol was selected, but the selected interface has no IPv6 "
 "address."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:234
-#: src/usr/local/www/vpn_openvpn_server.php:335
+#: src/usr/local/www/vpn_openvpn_client.php:233
+#: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:247
-#: src/usr/local/www/vpn_openvpn_server.php:416
+#: src/usr/local/www/vpn_openvpn_client.php:246
+#: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:262
+#: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:292
+#: src/usr/local/www/vpn_openvpn_client.php:291
 msgid "The bandwidth limit must be a positive numeric value."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:345
+#: src/usr/local/www/vpn_openvpn_client.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:338
 msgid "The field 'Shared Key' does not appear to be valid"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:309
-#: src/usr/local/www/vpn_openvpn_server.php:352
+#: src/usr/local/www/vpn_openvpn_client.php:308
+#: src/usr/local/www/vpn_openvpn_server.php:345
 msgid "The field 'TLS Key' does not appear to be valid"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:355
+#: src/usr/local/www/vpn_openvpn_client.php:311
+#: src/usr/local/www/vpn_openvpn_server.php:348
 msgid "The field 'TLS Key Usage Mode' is not valid"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:317
-#: src/usr/local/www/vpn_openvpn_server.php:450
+#: src/usr/local/www/vpn_openvpn_client.php:316
+#: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:325
-#: src/usr/local/www/vpn_openvpn_server.php:436
+#: src/usr/local/www/vpn_openvpn_client.php:324
+#: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:334
-#: src/usr/local/www/vpn_openvpn_server.php:446
-#: src/usr/local/www/vpn_openvpn_server.php:896
+#: src/usr/local/www/vpn_openvpn_client.php:333
+#: src/usr/local/www/vpn_openvpn_server.php:433
+#: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Shared key"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:340
+#: src/usr/local/www/vpn_openvpn_client.php:339
 msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:358
+#: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:365
-#: src/usr/local/www/vpn_openvpn_server.php:484
+#: src/usr/local/www/vpn_openvpn_client.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:456
+#: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
 msgid "Updated OpenVPN client to server %1$s:%2$s %3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:459
+#: src/usr/local/www/vpn_openvpn_client.php:457
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:474
-#: src/usr/local/www/vpn_openvpn_client.php:499
+#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:497
 #: src/usr/local/www/vpn_openvpn_csc.php:303
-#: src/usr/local/www/vpn_openvpn_server.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:500
+#: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/vpn_openvpn_csc.php:282
 #: src/usr/local/www/vpn_openvpn_csc.php:304
-#: src/usr/local/www/vpn_openvpn_server.php:679
+#: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Client Specific Overrides"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:515
+#: src/usr/local/www/vpn_openvpn_client.php:513
 msgid ""
 "Set this option to disable this client without removing it from the list."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:519
-#: src/usr/local/www/vpn_openvpn_server.php:700
+#: src/usr/local/www/vpn_openvpn_client.php:517
+#: src/usr/local/www/vpn_openvpn_server.php:682
 msgid "*Server mode"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:533
-#: src/usr/local/www/vpn_openvpn_server.php:741
+#: src/usr/local/www/vpn_openvpn_client.php:531
+#: src/usr/local/www/vpn_openvpn_server.php:723
 msgid "*Device mode"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:536
-#: src/usr/local/www/vpn_openvpn_server.php:744
+#: src/usr/local/www/vpn_openvpn_client.php:534
+#: src/usr/local/www/vpn_openvpn_server.php:726
 #, php-format
 msgid ""
 "\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and "
@@ -31956,104 +32077,93 @@ msgid ""
 "802.3 (OSI Layer 2.)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:544
+#: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
 "The interface used by the firewall to originate this OpenVPN client "
 "connection"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:548
+#: src/usr/local/www/vpn_openvpn_client.php:546
 msgid "Local port"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:552
+#: src/usr/local/www/vpn_openvpn_client.php:550
 msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:556
+#: src/usr/local/www/vpn_openvpn_client.php:554
 msgid "*Server host or address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:559
+#: src/usr/local/www/vpn_openvpn_client.php:557
 msgid "The IP address or hostname of the OpenVPN server."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:563
-msgid "Server hostname resolution"
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_client.php:566
-msgid ""
-"Continuously attempt to resolve the server host name. Useful when "
-"communicating with a server that is not permanently connected to the "
-"Internet."
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_client.php:571
+#: src/usr/local/www/vpn_openvpn_client.php:561
 msgid "*Server port"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:574
+#: src/usr/local/www/vpn_openvpn_client.php:564
 msgid "The port used by the server to receive client connections."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:578
+#: src/usr/local/www/vpn_openvpn_client.php:568
 msgid "Proxy host or address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:581
+#: src/usr/local/www/vpn_openvpn_client.php:571
 #, php-format
 msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
 "server.%1$sTCP must be used for the client and server protocol."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:586
+#: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "basic"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "ntlm"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:593
+#: src/usr/local/www/vpn_openvpn_client.php:583
 msgid "Proxy Authentication"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:596
+#: src/usr/local/www/vpn_openvpn_client.php:586
 msgid "The type of authentication used by the proxy server."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:620
+#: src/usr/local/www/vpn_openvpn_client.php:610
 msgid "User Authentication Settings"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:628
+#: src/usr/local/www/vpn_openvpn_client.php:618
 msgid "Leave empty when no user name is needed"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:635
+#: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:639
-#: src/usr/local/www/vpn_openvpn_server.php:771
+#: src/usr/local/www/vpn_openvpn_client.php:629
+#: src/usr/local/www/vpn_openvpn_server.php:753
 msgid "Cryptographic Settings"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:643
-#: src/usr/local/www/vpn_openvpn_server.php:775
+#: src/usr/local/www/vpn_openvpn_client.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:646
-#: src/usr/local/www/vpn_openvpn_server.php:778
+#: src/usr/local/www/vpn_openvpn_client.php:636
+#: src/usr/local/www/vpn_openvpn_server.php:760
 msgid ""
 "A TLS key enhances security of an OpenVPN connection by requiring both "
 "parties to have a common key before a peer can perform a TLS handshake. This "
@@ -32062,26 +32172,26 @@ msgid ""
 "connections.The TLS Key does not have any effect on tunnel data."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:793
+#: src/usr/local/www/vpn_openvpn_client.php:651
+#: src/usr/local/www/vpn_openvpn_server.php:775
 msgid "*TLS Key"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:795
+#: src/usr/local/www/vpn_openvpn_client.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:777
 #, php-format
 msgid ""
 "Paste the TLS key here.%1$sThis key is used to sign control channel packets "
 "with an HMAC signature for authentication when establishing the tunnel. "
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:668
-#: src/usr/local/www/vpn_openvpn_server.php:801
+#: src/usr/local/www/vpn_openvpn_client.php:658
+#: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:671
-#: src/usr/local/www/vpn_openvpn_server.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:661
+#: src/usr/local/www/vpn_openvpn_server.php:786
 #, php-format
 msgid ""
 "In Authentication mode the TLS key is used only as HMAC authentication for "
@@ -32091,57 +32201,57 @@ msgid ""
 "obfuscation."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:696
-#: src/usr/local/www/vpn_openvpn_client.php:702
-#: src/usr/local/www/vpn_openvpn_server.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:837
+#: src/usr/local/www/vpn_openvpn_client.php:686
+#: src/usr/local/www/vpn_openvpn_client.php:692
+#: src/usr/local/www/vpn_openvpn_server.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:819
 msgid "Peer Certificate Revocation list"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:709
+#: src/usr/local/www/vpn_openvpn_client.php:699
 msgid "Auto generate"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:716
-#: src/usr/local/www/vpn_openvpn_server.php:904
+#: src/usr/local/www/vpn_openvpn_client.php:706
+#: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:718
-#: src/usr/local/www/vpn_openvpn_server.php:906
+#: src/usr/local/www/vpn_openvpn_client.php:708
+#: src/usr/local/www/vpn_openvpn_server.php:888
 msgid "Paste the shared key here"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_client.php:714
 msgid "Client Certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:734
-#: src/usr/local/www/vpn_openvpn_server.php:913
+#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_server.php:895
 msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
 "Cryptographic Parameter (NCP) support is not available."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:738
-#: src/usr/local/www/vpn_openvpn_server.php:917
+#: src/usr/local/www/vpn_openvpn_client.php:728
+#: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable NCP"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:745
-#: src/usr/local/www/vpn_openvpn_server.php:923
+#: src/usr/local/www/vpn_openvpn_client.php:735
+#: src/usr/local/www/vpn_openvpn_server.php:905
 msgid ""
 "When both peers support NCP and have it enabled, NCP overrides the "
 "Encryption Algorithm above."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:746
-#: src/usr/local/www/vpn_openvpn_server.php:924
+#: src/usr/local/www/vpn_openvpn_client.php:736
+#: src/usr/local/www/vpn_openvpn_server.php:906
 msgid "When disabled, only the selected Encryption Algorithm is allowed."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:741
-#: src/usr/local/www/vpn_openvpn_server.php:920
+#: src/usr/local/www/vpn_openvpn_client.php:731
+#: src/usr/local/www/vpn_openvpn_server.php:902
 #, php-format
 msgid ""
 "Check this option to allow OpenVPN clients and servers to negotiate a "
@@ -32149,28 +32259,28 @@ msgid ""
 "selected in the NCP Algorithms list below.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:752
-#: src/usr/local/www/vpn_openvpn_server.php:927
+#: src/usr/local/www/vpn_openvpn_client.php:742
+#: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:761
-#: src/usr/local/www/vpn_openvpn_server.php:936
+#: src/usr/local/www/vpn_openvpn_client.php:751
+#: src/usr/local/www/vpn_openvpn_server.php:918
 #, php-format
 msgid ""
 "Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm "
 "from the list"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:771
-#: src/usr/local/www/vpn_openvpn_server.php:946
+#: src/usr/local/www/vpn_openvpn_client.php:761
+#: src/usr/local/www/vpn_openvpn_server.php:928
 msgid ""
 "Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from "
 "the list"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:776
-#: src/usr/local/www/vpn_openvpn_server.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:766
+#: src/usr/local/www/vpn_openvpn_server.php:933
 msgid ""
 "For backward compatibility, when an older peer connects that does not "
 "support NCP, OpenVPN will use the Encryption Algorithm requested by the peer "
@@ -32178,20 +32288,20 @@ msgid ""
 ""
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:773
-#: src/usr/local/www/vpn_openvpn_server.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:763
+#: src/usr/local/www/vpn_openvpn_server.php:930
 #, php-format
 msgid ""
 "The order of the selected NCP Encryption Algorithms is respected by OpenVPN."
 "%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:784
-#: src/usr/local/www/vpn_openvpn_server.php:959
+#: src/usr/local/www/vpn_openvpn_client.php:774
+#: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:787
+#: src/usr/local/www/vpn_openvpn_client.php:777
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -32201,51 +32311,55 @@ msgid ""
 "different value. SHA1 is the default for OpenVPN. "
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:793
-#: src/usr/local/www/vpn_openvpn_server.php:969
+#: src/usr/local/www/vpn_openvpn_client.php:783
+#: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:800
+#: src/usr/local/www/vpn_openvpn_client.php:790
 #: src/usr/local/www/vpn_openvpn_csc.php:362
-#: src/usr/local/www/vpn_openvpn_server.php:991
+#: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:794
 #: src/usr/local/www/vpn_openvpn_csc.php:366
-#: src/usr/local/www/vpn_openvpn_server.php:995
+#: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:807
+#: src/usr/local/www/vpn_openvpn_client.php:797
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. 10.0.8.0/24). The "
-"second network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). "
+"The second usable address in the network will be assigned to the client "
+"virtual interface. Leave blank if the server is capable of providing "
+"addresses to clients."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
-#: src/usr/local/www/vpn_openvpn_server.php:1005
+#: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. fe80::/64). The second "
-"network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. fe80::/64). "
+"When set static using this field, the ::2 address in the network will be "
+"assigned to the client virtual interface. Leave blank if the server is "
+"capable of providing addresses to clients."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:822
-#: src/usr/local/www/vpn_openvpn_server.php:1073
+#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:825
-#: src/usr/local/www/vpn_openvpn_server.php:1076
+#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_server.php:1058
 msgid ""
 "IPv4 networks that will be routed through the tunnel, so that a site-to-site "
 "VPN can be established without manually changing the routing tables. "
@@ -32254,13 +32368,13 @@ msgid ""
 "site-to-site VPN."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:1082
+#: src/usr/local/www/vpn_openvpn_client.php:822
+#: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:834
-#: src/usr/local/www/vpn_openvpn_server.php:1085
+#: src/usr/local/www/vpn_openvpn_client.php:825
+#: src/usr/local/www/vpn_openvpn_server.php:1067
 msgid ""
 "These are the IPv6 networks that will be routed through the tunnel, so that "
 "a site-to-site VPN can be established without manually changing the routing "
@@ -32269,83 +32383,85 @@ msgid ""
 "for non site-to-site VPN."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_client.php:831
 msgid "Limit outgoing bandwidth"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:844
+#: src/usr/local/www/vpn_openvpn_client.php:835
 msgid ""
 "Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The "
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:852
-#: src/usr/local/www/vpn_openvpn_server.php:1101
+#: src/usr/local/www/vpn_openvpn_client.php:843
+#: src/usr/local/www/vpn_openvpn_server.php:1083
 msgid ""
 "Compress tunnel packets using the LZO algorithm. Adaptive compression will "
 "dynamically disable compression for a period of time if OpenVPN detects that "
 "the data in the packets is not being compressed efficiently."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:856
-#: src/usr/local/www/vpn_openvpn_server.php:1154
+#: src/usr/local/www/vpn_openvpn_client.php:847
+#: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:859
+#: src/usr/local/www/vpn_openvpn_client.php:850
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:863
-#: src/usr/local/www/vpn_openvpn_server.php:1114
+#: src/usr/local/www/vpn_openvpn_client.php:854
+#: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:870
+#: src/usr/local/www/vpn_openvpn_client.php:861
 msgid "Don't pull routes"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:873
+#: src/usr/local/www/vpn_openvpn_client.php:864
 msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:877
+#: src/usr/local/www/vpn_openvpn_client.php:868
 msgid "Don't add/remove routes"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:880
-msgid "Pass routes to --route-upscript using environmental variables."
+#: src/usr/local/www/vpn_openvpn_client.php:871
+msgid ""
+"Do not execute operating system commands to install routes. Instead, pass "
+"routes to --route-up script using environmental variables."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:891
+#: src/usr/local/www/vpn_openvpn_client.php:882
 msgid ""
 "Enter any additional options to add to the OpenVPN client configuration "
 "here, separated by semicolon."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:895
-#: src/usr/local/www/vpn_openvpn_server.php:1323
+#: src/usr/local/www/vpn_openvpn_client.php:886
+#: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:898
-#: src/usr/local/www/vpn_openvpn_server.php:1326
+#: src/usr/local/www/vpn_openvpn_client.php:889
+#: src/usr/local/www/vpn_openvpn_server.php:1286
 msgid ""
 "Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%."
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:903
-#: src/usr/local/www/vpn_openvpn_server.php:1331
+#: src/usr/local/www/vpn_openvpn_client.php:894
+#: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:906
-#: src/usr/local/www/vpn_openvpn_server.php:1334
+#: src/usr/local/www/vpn_openvpn_client.php:897
+#: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
 "Configure a Send and Receive Buffer size for OpenVPN. The default buffer "
 "size can be too small in many cases, depending on hardware and network "
@@ -32354,13 +32470,13 @@ msgid ""
 "values."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:913
-#: src/usr/local/www/vpn_openvpn_server.php:1341
+#: src/usr/local/www/vpn_openvpn_client.php:904
+#: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:916
-#: src/usr/local/www/vpn_openvpn_server.php:1344
+#: src/usr/local/www/vpn_openvpn_client.php:907
+#: src/usr/local/www/vpn_openvpn_server.php:1304
 #, php-format
 msgid ""
 "Each level shows all info from the previous levels. Level 3 is recommended "
@@ -32371,7 +32487,7 @@ msgid ""
 "TUN/TAP packets.%1$s6-11: Debug info range"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:943
+#: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
 msgstr ""
 
@@ -32401,37 +32517,37 @@ msgid "The field 'DNS Server #4' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:173
-#: src/usr/local/www/vpn_openvpn_server.php:376
+#: src/usr/local/www/vpn_openvpn_server.php:369
 msgid "The field 'NTP Server #1' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:176
-#: src/usr/local/www/vpn_openvpn_server.php:379
+#: src/usr/local/www/vpn_openvpn_server.php:372
 msgid "The field 'NTP Server #2' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:179
-#: src/usr/local/www/vpn_openvpn_server.php:382
+#: src/usr/local/www/vpn_openvpn_server.php:375
 msgid "The field 'NTP Server #3' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:182
-#: src/usr/local/www/vpn_openvpn_server.php:385
+#: src/usr/local/www/vpn_openvpn_server.php:378
 msgid "The field 'NTP Server #4' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:189
-#: src/usr/local/www/vpn_openvpn_server.php:392
+#: src/usr/local/www/vpn_openvpn_server.php:385
 msgid "The field 'WINS Server #1' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:192
-#: src/usr/local/www/vpn_openvpn_server.php:395
+#: src/usr/local/www/vpn_openvpn_server.php:388
 msgid "The field 'WINS Server #2' must contain a valid IP address"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:400
+#: src/usr/local/www/vpn_openvpn_server.php:393
 msgid ""
 "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP "
 "address"
@@ -32562,12 +32678,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:423
-#: src/usr/local/www/vpn_openvpn_server.php:1047
+#: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Redirect Gateway"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:430
-#: src/usr/local/www/vpn_openvpn_server.php:1135
+#: src/usr/local/www/vpn_openvpn_server.php:1117
 msgid "Client Settings"
 msgstr ""
 
@@ -32595,7 +32711,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:538
-#: src/usr/local/www/vpn_openvpn_server.php:1259
+#: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Node Type"
 msgstr ""
 
@@ -32646,154 +32762,154 @@ msgstr ""
 msgid "Server successfully deleted."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:294
 msgid ""
 "A Backend for Authentication must be selected if the server mode requires "
 "User Auth."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:361
+#: src/usr/local/www/vpn_openvpn_server.php:354
 msgid "The field 'DNS Server #1' must contain a valid IPv4 or IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:357
 msgid "The field 'DNS Server #2' must contain a valid IPv4 or IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:367
+#: src/usr/local/www/vpn_openvpn_server.php:360
 msgid "The field 'DNS Server #3' must contain a valid IPv4 or IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:370
+#: src/usr/local/www/vpn_openvpn_server.php:363
 msgid "The field 'DNS Server #4' must contain a valid IPv4 or IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:412
+#: src/usr/local/www/vpn_openvpn_server.php:399
 msgid "The field 'Concurrent connections' must be numeric."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:422
+#: src/usr/local/www/vpn_openvpn_server.php:409
 msgid "The selected certificate is not valid"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:426
+#: src/usr/local/www/vpn_openvpn_server.php:413
 msgid ""
 "The specified DH Parameter length is invalid or the DH file does not exist."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:430
+#: src/usr/local/www/vpn_openvpn_server.php:417
 msgid "The specified ECDH Curve is invalid."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:455
+#: src/usr/local/www/vpn_openvpn_server.php:442
 msgid "IPv4 Tunnel network"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:458
+#: src/usr/local/www/vpn_openvpn_server.php:445
 msgid ""
 "Using a tunnel network and server bridge settings together is not allowed."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:462
+#: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "Server Bridge DHCP Start and End must both be empty, or defined."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:465
+#: src/usr/local/www/vpn_openvpn_server.php:452
 msgid "Server Bridge DHCP Start must be an IPv4 address."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:468
+#: src/usr/local/www/vpn_openvpn_server.php:455
 msgid "Server Bridge DHCP End must be an IPv4 address."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:471
+#: src/usr/local/www/vpn_openvpn_server.php:458
 msgid "The Server Bridge DHCP range is invalid (start higher than end)."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:630
+#: src/usr/local/www/vpn_openvpn_server.php:612
 #, php-format
 msgid "Updated OpenVPN server on %1$s:%2$s %3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:615
 #, php-format
 msgid "Added OpenVPN server on %1$s:%2$s %3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:696
+#: src/usr/local/www/vpn_openvpn_server.php:678
 msgid ""
 "Set this option to disable this server without removing it from the list."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:726
+#: src/usr/local/www/vpn_openvpn_server.php:708
 msgid "*Backend for authentication"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:752
+#: src/usr/local/www/vpn_openvpn_server.php:734
 msgid ""
 "The interface or Virtual IP address where OpenVPN will receive client "
 "connections."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:756
+#: src/usr/local/www/vpn_openvpn_server.php:738
 msgid "*Local port"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:760
+#: src/usr/local/www/vpn_openvpn_server.php:742
 msgid "The port used by OpenVPN to receive client connections."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:848
-#: src/usr/local/www/vpn_openvpn_server.php:1816
+#: src/usr/local/www/vpn_openvpn_server.php:830
+#: src/usr/local/www/vpn_openvpn_server.php:1764
 msgid ""
 "Warning: The selected server certificate was not created as an SSL Server "
 "certificate and may not work as expected"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 #, php-format
 msgid "No Certificates defined. One may be created here: %1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 msgid "System &gt; Cert. Manager"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:862
+#: src/usr/local/www/vpn_openvpn_server.php:844
 msgid "*Server certificate"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:869
+#: src/usr/local/www/vpn_openvpn_server.php:851
 msgid "*DH Parameter Length"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:874
+#: src/usr/local/www/vpn_openvpn_server.php:856
 msgid "Only DH parameter sets which exist in /etc/ are shown."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:876
+#: src/usr/local/www/vpn_openvpn_server.php:858
 msgid ""
 "Generating new or stronger DH parameters is CPU-intensive and must be "
 "performed manually."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:877
+#: src/usr/local/www/vpn_openvpn_server.php:859
 #, php-format
 msgid ""
 "Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on "
 "generating new or stronger paramater sets."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:872
+#: src/usr/local/www/vpn_openvpn_server.php:854
 #, php-format
 msgid "Diffie-Hellman (DH) parameter set used for key exchange.%1$s%2$s%3$s"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:885
+#: src/usr/local/www/vpn_openvpn_server.php:867
 msgid "ECDH Curve"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:888
+#: src/usr/local/www/vpn_openvpn_server.php:870
 #, php-format
 msgid ""
 "The Elliptic Curve to use for key exchange. %1$sThe curve from the server "
@@ -32801,7 +32917,7 @@ msgid ""
 "Otherwise, secp384r1 is used as a fallback."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:962
+#: src/usr/local/www/vpn_openvpn_server.php:944
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -32811,58 +32927,57 @@ msgid ""
 "to match. SHA1 is the default for OpenVPN. "
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:978
+#: src/usr/local/www/vpn_openvpn_server.php:960
 msgid "Do Not Check"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:976
+#: src/usr/local/www/vpn_openvpn_server.php:958
 msgid "*Certificate Depth"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:979
+#: src/usr/local/www/vpn_openvpn_server.php:961
 msgid ""
 "When a certificate-based client logs in, do not accept certificates below "
 "this depth. Useful for denying certificates made with intermediate CAs "
 "generated from the same CA as the server."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:984
+#: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Strict User-CN Matching"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:987
+#: src/usr/local/www/vpn_openvpn_server.php:969
 msgid ""
 "When authenticating users, enforce a match between the common name of the "
 "client certificate and the username given at login."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:998
+#: src/usr/local/www/vpn_openvpn_server.php:980
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. 10.0.8.0/24). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. 10.0.8.0/"
+"24). The first usable address in the network will be assigned to the server "
+"virtual interface. The remaining usable addresses will be assigned to "
+"connecting clients."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1008
+#: src/usr/local/www/vpn_openvpn_server.php:990
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. fe80::/64). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. fe80::/64). "
+"The ::1 address in the network will be assigned to the server virtual "
+"interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1015
+#: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1022
+#: src/usr/local/www/vpn_openvpn_server.php:1004
 msgid "Bridge Interface"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1025
+#: src/usr/local/www/vpn_openvpn_server.php:1007
 msgid ""
 "The interface to which this TAP instance will be bridged. This is not done "
 "automatically. This interface must be assigned and the bridge created "
@@ -32871,11 +32986,11 @@ msgid ""
 "Server Bridge DHCP settings below to be ignored."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1031
+#: src/usr/local/www/vpn_openvpn_server.php:1013
 msgid "Server Bridge DHCP Start"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1034
+#: src/usr/local/www/vpn_openvpn_server.php:1016
 msgid ""
 "When using TAP mode as a multi-point server, a DHCP range may optionally be "
 "supplied to use on the interface to which this TAP instance is bridged. If "
@@ -32883,15 +32998,15 @@ msgid ""
 "the interface setting above will be ignored."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1040
+#: src/usr/local/www/vpn_openvpn_server.php:1022
 msgid "Server Bridge DHCP End"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1054
+#: src/usr/local/www/vpn_openvpn_server.php:1036
 msgid "IPv4 Local network(s)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1057
+#: src/usr/local/www/vpn_openvpn_server.php:1039
 msgid ""
 "IPv4 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more CIDR ranges. This may be left blank if "
@@ -32899,11 +33014,11 @@ msgid ""
 "machine. This is generally set to the LAN network."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1064
+#: src/usr/local/www/vpn_openvpn_server.php:1046
 msgid "IPv6 Local network(s)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1067
+#: src/usr/local/www/vpn_openvpn_server.php:1049
 msgid ""
 "IPv6 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more IP/PREFIX. This may be left blank if "
@@ -32911,42 +33026,38 @@ msgid ""
 "machine. This is generally set to the LAN network."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1091
+#: src/usr/local/www/vpn_openvpn_server.php:1073
 msgid "Concurrent connections"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1094
+#: src/usr/local/www/vpn_openvpn_server.php:1076
 msgid ""
 "Specify the maximum number of clients allowed to concurrently connect to "
 "this server."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1107
+#: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push Compression"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1121
+#: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Inter-client communication"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1128
+#: src/usr/local/www/vpn_openvpn_server.php:1110
 msgid "Duplicate Connection"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1131
+#: src/usr/local/www/vpn_openvpn_server.php:1113
 msgid ""
 "(This is not generally recommended, but may be needed for some scenarios.)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1140
+#: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1147
-msgid "Address Pool"
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1157
+#: src/usr/local/www/vpn_openvpn_server.php:1132
 #, php-format
 msgid ""
 "Specifies the method used to supply a virtual adapter IP address to clients "
@@ -32956,108 +33067,94 @@ msgid ""
 "require \"net30\"."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1163
+#: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1182
+#: src/usr/local/www/vpn_openvpn_server.php:1157
 msgid "DNS Server enable"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1189
+#: src/usr/local/www/vpn_openvpn_server.php:1164
 msgid "DNS Server 1"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1196
+#: src/usr/local/www/vpn_openvpn_server.php:1171
 msgid "DNS Server 2"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1203
+#: src/usr/local/www/vpn_openvpn_server.php:1178
 msgid "DNS Server 3"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1210
+#: src/usr/local/www/vpn_openvpn_server.php:1185
 msgid "DNS Server 4"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1217
+#: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1220
+#: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
 "Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to "
 "DNS leakage in this way, other clients will ignore the option as they are "
 "not affected."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1224
+#: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid "Force DNS cache update"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1227
+#: src/usr/local/www/vpn_openvpn_server.php:1202
 msgid "This is known to kick Windows into recognizing pushed DNS servers."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1231
+#: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid "NTP Server enable"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1252
+#: src/usr/local/www/vpn_openvpn_server.php:1227
 msgid "NetBIOS enable"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1255
+#: src/usr/local/www/vpn_openvpn_server.php:1230
 msgid ""
 "If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) "
 "will be disabled."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1262
+#: src/usr/local/www/vpn_openvpn_server.php:1237
 msgid ""
 "Possible options: b-node (broadcasts), p-node (point-to-point name queries "
 "to a WINS server), m-node (broadcast then query name server), and h-node "
 "(query name server, then broadcast)"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1267
+#: src/usr/local/www/vpn_openvpn_server.php:1242
 msgid "Scope ID"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1270
+#: src/usr/local/www/vpn_openvpn_server.php:1245
 msgid ""
 "A NetBIOS Scope ID provides an extended naming service for NetBIOS over TCP/"
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
 "only those nodes with the same NetBIOS scope ID"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1276
+#: src/usr/local/www/vpn_openvpn_server.php:1251
 msgid "WINS server enable"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1283
+#: src/usr/local/www/vpn_openvpn_server.php:1258
 msgid "WINS Server 1"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1290
+#: src/usr/local/www/vpn_openvpn_server.php:1265
 msgid "WINS Server 2"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1297
-msgid "Enable custom port "
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1304
-msgid "Management port"
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1307
-msgid ""
-"The default port is 166. Specify a different port if the client machines "
-"need to select from multiple OpenVPN links."
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1318
+#: src/usr/local/www/vpn_openvpn_server.php:1278
 #, php-format
 msgid ""
 "Enter any additional options to add to the OpenVPN server configuration "
@@ -33065,19 +33162,19 @@ msgid ""
 "0\""
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1372
+#: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1377
+#: src/usr/local/www/vpn_openvpn_server.php:1337
 msgid "Protocol / Port"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1378
+#: src/usr/local/www/vpn_openvpn_server.php:1338
 msgid "Tunnel Network"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1379
+#: src/usr/local/www/vpn_openvpn_server.php:1339
 msgid "Crypto"
 msgstr ""
 
@@ -33797,18 +33894,23 @@ msgstr ""
 msgid "Wizard"
 msgstr ""
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:632
-#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizard.php:418
+#, php-format
+msgid "Step %s of %s"
+msgstr ""
+
+#: src/usr/local/www/wizards/openvpn_wizard.inc:637
+#: src/usr/local/www/wizards/openvpn_wizard.inc:654
 #, php-format
 msgid "OpenVPN %s wizard"
 msgstr ""
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:644
-#: src/usr/local/www/wizards/openvpn_wizard.inc:659
+#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizards/openvpn_wizard.inc:664
 msgid "OpenVPN Wizard"
 msgstr ""
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:669
+#: src/usr/local/www/wizards/openvpn_wizard.inc:674
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr ""
@@ -34417,71 +34519,71 @@ msgstr ""
 msgid "RADIUS Authentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:719
+#: src/usr/local/www/services_captiveportal.php:721
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:729
+#: src/usr/local/www/services_captiveportal.php:731
 msgid "PAP"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:737
+#: src/usr/local/www/services_captiveportal.php:739
 msgid "CHAP-MD5"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:745
+#: src/usr/local/www/services_captiveportal.php:747
 msgid "MSCHAPv1"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:753
+#: src/usr/local/www/services_captiveportal.php:755
 msgid "MSCHAPv2"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:873
+#: src/usr/local/www/services_captiveportal.php:875
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:889
+#: src/usr/local/www/services_captiveportal.php:891
 msgid "No updates"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:897
+#: src/usr/local/www/services_captiveportal.php:899
 msgid "Stop/Start"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:905
+#: src/usr/local/www/services_captiveportal.php:907
 msgid "Stop/Start (FreeRADIUS)"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:913
+#: src/usr/local/www/services_captiveportal.php:915
 msgid "Interim"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:928
+#: src/usr/local/www/services_captiveportal.php:930
 msgid "Reauthenticate connected users every minute"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:938
+#: src/usr/local/www/services_captiveportal.php:940
 msgid "Enable RADIUS MAC authentication"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:962
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:976
+#: src/usr/local/www/services_captiveportal.php:978
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:984
+#: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1018
+#: src/usr/local/www/services_captiveportal.php:1020
 msgid "Enable HTTPS login"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1042
+#: src/usr/local/www/services_captiveportal.php:1044
 msgid "Disable HTTPS Forwards"
 msgstr ""
 
@@ -34617,7 +34719,7 @@ msgid "Do not forward private reverse lookups"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:255
-#: src/usr/local/www/vpn_openvpn_client.php:513
+#: src/usr/local/www/vpn_openvpn_client.php:511
 msgid "Disable this client"
 msgstr ""
 
@@ -34634,11 +34736,11 @@ msgid "Enable verbose logging"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:340
-msgid "Force IPv4 resolving"
+msgid "Force IPv4 DNS Resolution"
 msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:347
-msgid "Verify SSL peer"
+msgid "Verify SSL Certificate Trust"
 msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:303
@@ -34908,8 +35010,8 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
 #: src/usr/local/www/system_gateways_edit.php:373
-#: src/usr/local/www/system_groupmanager_addprivs.php:178
-#: src/usr/local/www/system_usermanager_addprivs.php:167
+#: src/usr/local/www/system_groupmanager_addprivs.php:189
+#: src/usr/local/www/system_usermanager_addprivs.php:173
 msgid "<span class=\"help-block\">"
 msgstr ""
 
@@ -35390,20 +35492,20 @@ msgstr ""
 msgid "Dry Run"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:722
+#: src/usr/local/www/system_usermanager.php:734
 msgid "This user cannot login"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:786
+#: src/usr/local/www/system_usermanager.php:798
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:854
+#: src/usr/local/www/system_usermanager.php:867
 msgid "Click to create a user certificate"
 msgstr ""
 
-#: src/usr/local/www/system_usermanager.php:953
+#: src/usr/local/www/system_usermanager.php:964
 msgid "Click to paste an authorized key"
 msgstr ""
 
@@ -35431,7 +35533,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:443
-#: src/usr/local/www/vpn_openvpn_server.php:1169
+#: src/usr/local/www/vpn_openvpn_server.php:1144
 msgid "Provide a default domain name to clients"
 msgstr ""
 
@@ -35448,7 +35550,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:555
-#: src/usr/local/www/vpn_openvpn_server.php:1277
+#: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
 msgstr ""
 
@@ -35530,63 +35632,59 @@ msgstr ""
 msgid "Enable bypass for LAN interface IP"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:204
 msgid "Enable L2TP server"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:279
+#: src/usr/local/www/vpn_l2tp.php:290
 msgid "Use a RADIUS server for authentication"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:286
+#: src/usr/local/www/vpn_l2tp.php:297
 msgid "Enable RADIUS accounting"
 msgstr ""
 
-#: src/usr/local/www/vpn_l2tp.php:306
+#: src/usr/local/www/vpn_l2tp.php:317
 msgid "Issue IP Addresses via RADIUS server."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:564
-msgid "Infinitely resolve server "
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_client.php:644
-#: src/usr/local/www/vpn_openvpn_server.php:776
+#: src/usr/local/www/vpn_openvpn_client.php:634
+#: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:654
-#: src/usr/local/www/vpn_openvpn_server.php:786
+#: src/usr/local/www/vpn_openvpn_client.php:644
+#: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:710
-#: src/usr/local/www/vpn_openvpn_server.php:897
+#: src/usr/local/www/vpn_openvpn_client.php:700
+#: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:739
-#: src/usr/local/www/vpn_openvpn_server.php:918
+#: src/usr/local/www/vpn_openvpn_client.php:729
+#: src/usr/local/www/vpn_openvpn_server.php:900
 msgid "Enable Negotiable Cryptographic Parameters"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:864
-#: src/usr/local/www/vpn_openvpn_server.php:1115
+#: src/usr/local/www/vpn_openvpn_client.php:855
+#: src/usr/local/www/vpn_openvpn_server.php:1097
 msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
 "packet value."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:871
+#: src/usr/local/www/vpn_openvpn_client.php:862
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:878
+#: src/usr/local/www/vpn_openvpn_client.php:869
 msgid "Don't add or remove routes automatically"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:896
-#: src/usr/local/www/vpn_openvpn_server.php:1324
+#: src/usr/local/www/vpn_openvpn_client.php:887
+#: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
 
@@ -35599,7 +35697,7 @@ msgid "Block this client connection based on its common name."
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:424
-#: src/usr/local/www/vpn_openvpn_server.php:1048
+#: src/usr/local/www/vpn_openvpn_server.php:1030
 msgid "Force all client generated traffic through the tunnel."
 msgstr ""
 
@@ -35609,67 +35707,59 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:504
-#: src/usr/local/www/vpn_openvpn_server.php:1232
+#: src/usr/local/www/vpn_openvpn_server.php:1207
 msgid "Provide an NTP server list to clients"
 msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:532
-#: src/usr/local/www/vpn_openvpn_server.php:1253
+#: src/usr/local/www/vpn_openvpn_server.php:1228
 msgid "Enable NetBIOS over TCP/IP"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:694
+#: src/usr/local/www/vpn_openvpn_server.php:676
 msgid "Disable this server"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:985
+#: src/usr/local/www/vpn_openvpn_server.php:967
 msgid "Enforce match"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1016
+#: src/usr/local/www/vpn_openvpn_server.php:998
 msgid "Allow clients on the bridge to obtain DHCP."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1108
+#: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1122
+#: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1129
+#: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1141
+#: src/usr/local/www/vpn_openvpn_server.php:1123
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1148
-msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1183
+#: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1218
+#: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1225
+#: src/usr/local/www/vpn_openvpn_server.php:1200
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
-msgstr ""
-
-#: src/usr/local/www/vpn_openvpn_server.php:1298
-msgid "Use a different management port for clients."
 msgstr ""

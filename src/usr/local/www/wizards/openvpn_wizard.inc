@@ -29,6 +29,13 @@ function has_special_chars($text) {
 	return preg_match('/[^A-Za-z0-9 _-]/', $text);
 }
 
+function step1_stepsubmitbeforesave() {
+	global $stepid, $config;
+	if (($_POST['authtype'] != NULL) && ($_POST['authtype'] != $config['ovpnserver']['step1']['type'])) {
+		unset($config['ovpnserver']['step2']);
+	}
+}
+
 function step1_submitphpaction() {
 	global $stepid, $config;
 	if ($_POST['authtype'] == "local") {
@@ -597,8 +604,6 @@ function step12_submitphpaction() {
 		$server['duplicate_cn'] = $pconfig['step10']['duplicate_cn'];
 	if (isset($pconfig['step10']['dynip']))
 		$server['dynamic_ip'] = $pconfig['step10']['dynip'];
-	if (isset($pconfig['step10']['addrpool']))
-		$server['pool_enable'] = $pconfig['step10']['addrpool'];
 	if (isset($pconfig['step10']['defaultdomain']))
 		$server['dns_domain'] = $pconfig['step10']['defaultdomain'];
 	if (isset($pconfig['step10']['dns1']))

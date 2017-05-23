@@ -119,7 +119,6 @@ if ($act == "edit") {
 		$pconfig['local_port'] = $a_client[$id]['local_port'];
 		$pconfig['server_addr'] = $a_client[$id]['server_addr'];
 		$pconfig['server_port'] = $a_client[$id]['server_port'];
-		$pconfig['resolve_retry'] = $a_client[$id]['resolve_retry'];
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
 		$pconfig['proxy_user'] = $a_client[$id]['proxy_user'];
@@ -401,7 +400,6 @@ if ($_POST['save']) {
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
 		$client['server_port'] = $pconfig['server_port'];
-		$client['resolve_retry'] = $pconfig['resolve_retry'];
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
@@ -557,14 +555,6 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['server_addr']
 	))->setHelp("The IP address or hostname of the OpenVPN server.");
-
-	$section->addInput(new Form_Checkbox(
-		'resolve_retry',
-		'Server hostname resolution',
-		'Infinitely resolve server ',
-		$pconfig['resolve_retry']
-	))->setHelp('Continuously attempt to resolve the server host name. ' .
-	    'Useful when communicating with a server that is not permanently connected to the Internet.');
 
 	$section->addInput(new Form_Input(
 		'server_port',
@@ -805,8 +795,8 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this client and the server ' .
-				'expressed using CIDR (e.g. 10.0.8.0/24). The second network address will be assigned to ' .
-				'the client virtual interface.');
+				'expressed using CIDR notation (e.g. 10.0.8.0/24). The second usable address in the network will be assigned to ' .
+				'the client virtual interface. Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -814,8 +804,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this client and the server expressed using CIDR (e.g. fe80::/64). ' .
-				'The second network address will be assigned to the client virtual interface.');
+				'communications between this client and the server expressed using CIDR notation (e.g. fe80::/64). ' .
+				'When set static using this field, the ::2 address in the network will be assigned to the client virtual interface. ' .
+				'Leave blank if the server is capable of providing addresses to clients.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -877,7 +868,7 @@ if ($act=="new" || $act=="edit"):
 		'Don\'t add/remove routes',
 		'Don\'t add or remove routes automatically',
 		$pconfig['route_no_exec']
-	))->setHelp('Pass routes to --route-upscript using environmental variables.');
+	))->setHelp('Do not execute operating system commands to install routes. Instead, pass routes to --route-up script using environmental variables.');
 
 	$form->add($section);
 

@@ -106,6 +106,18 @@ if ($_POST['act'] == "deluser") {
 	 */
 	$pconfig['utype'] = "user";
 	$pconfig['lifetime'] = 3650;
+
+	$nonPrvCas = array();
+	if (is_array($config['ca']) && count($config['ca']) > 0) {
+		foreach ($config['ca'] as $ca) {
+			if (!$ca['prv']) {
+				continue;
+			}
+
+			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
+		}
+	}
+
 }
 
 if (isset($_POST['dellall'])) {
@@ -848,12 +860,20 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	// ==== Button for adding user certificate ================================
 	if ($act == 'new') {
-		$section->addInput(new Form_Checkbox(
-			'showcert',
-			'Certificate',
-			'Click to create a user certificate',
-			false
-		));
+		if (count($nonPrvCas) > 0) {
+			$section->addInput(new Form_Checkbox(
+				'showcert',
+				'Certificate',
+				'Click to create a user certificate',
+				false
+			));
+		} else {
+			$section->addInput(new Form_StaticText(
+				'Certificate',
+				gettext('No private CAs found. A private CA is required to create a new user certificate. ' .
+					'Save the user first to import an external certificate.')
+			));
+		}
 	}
 
 	$form->add($section);
@@ -887,15 +907,6 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	if (is_array($config['ca']) && count($config['ca']) > 0) {
 		$section = new Form_Section('Create Certificate for User');
 		$section->addClass('cert-options');
-
-		$nonPrvCas = array();
-		foreach ($config['ca'] as $ca) {
-			if (!$ca['prv']) {
-				continue;
-			}
-
-			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
-		}
 
 		if (!empty($nonPrvCas)) {
 			$section->addInput(new Form_Input(

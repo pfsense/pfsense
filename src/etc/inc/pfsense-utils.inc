@@ -2894,6 +2894,7 @@ function set_language() {
 
 function get_locale_list() {
 	$locales = array(
+		"bs" => gettext("Bosnian"),
 		"de_DE" => gettext("German (Germany)"),
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
@@ -3243,5 +3244,9 @@ function addrtolower($ip) {
 	} else {
 		return($ip);
 	}
+}
+
+function compare_by_name($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
 }
 ?>

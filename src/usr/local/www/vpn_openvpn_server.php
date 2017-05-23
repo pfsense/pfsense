@@ -105,7 +105,6 @@ if ($act == "new") {
 	$pconfig['dev_mode'] = "tun";
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
-	$pconfig['pool_enable'] = "yes";
 	$pconfig['cert_depth'] = 1;
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
@@ -183,7 +182,6 @@ if ($act == "edit") {
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
-		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
 		$pconfig['topology'] = $a_server[$id]['topology'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
@@ -226,11 +224,6 @@ if ($act == "edit") {
 		if ($pconfig['wins_server1'] ||
 		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
-		}
-
-		$pconfig['client_mgmt_port'] = $a_server[$id]['client_mgmt_port'];
-		if ($pconfig['client_mgmt_port']) {
-			$pconfig['client_mgmt_port_enable'] = true;
 		}
 
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
@@ -302,7 +295,7 @@ if ($_POST['save']) {
 	}
 
 	/* input validation */
-	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port')) {
+	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port', 1)) {
 		$input_errors[] = $result;
 	}
 
@@ -399,12 +392,6 @@ if ($_POST['save']) {
 			if (!empty($pconfig['nbdd_server1']) && !is_ipaddr(trim($pconfig['nbdd_server1']))) {
 				$input_errors[] = gettext("The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address");
 			}
-		}
-	}
-
-	if ($pconfig['client_mgmt_port_enable']) {
-		if ($result = openvpn_validate_port($pconfig['client_mgmt_port'], 'Client management port')) {
-			$input_errors[] = $result;
 		}
 	}
 
@@ -558,7 +545,6 @@ if ($_POST['save']) {
 		$server['client2client'] = $pconfig['client2client'];
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
-		$server['pool_enable'] = $pconfig['pool_enable'];
 		$server['topology'] = $pconfig['topology'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
@@ -609,10 +595,6 @@ if ($_POST['save']) {
 			if ($pconfig['dns_server_enable']) {
 				$server['nbdd_server1'] = $pconfig['nbdd_server1'];
 			}
-		}
-
-		if ($pconfig['client_mgmt_port_enable']) {
-			$server['client_mgmt_port'] = $pconfig['client_mgmt_port'];
 		}
 
 		if ($_POST['duplicate_cn'] == "yes") {
@@ -996,9 +978,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
-				'hosts expressed using CIDR (e.g. 10.0.8.0/24). The first network address will be assigned to ' .
-				'the server virtual interface. The remaining network addresses can optionally be assigned ' .
-				'to connecting clients (see Address Pool).');
+				'hosts expressed using CIDR notation (e.g. 10.0.8.0/24). The first usable address in the network will be assigned to ' .
+				'the server virtual interface. The remaining usable addresses will be assigned ' .
+				'to connecting clients.');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -1006,9 +988,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this server and client hosts expressed using CIDR (e.g. fe80::/64). ' .
-				'The first network address will be assigned to the server virtual interface. The remaining ' .
-				'network addresses can optionally be assigned to connecting clients (see Address Pool).');
+				'communications between this server and client hosts expressed using CIDR notation (e.g. fe80::/64). ' .
+				'The ::1 address in the network will be assigned to the server virtual interface. The remaining ' .
+				'addresses will be assigned to connecting clients.');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -1140,13 +1122,6 @@ if ($act=="new" || $act=="edit"):
 		'Dynamic IP',
 		'Allow connected clients to retain their connections if their IP address changes.',
 		$pconfig['dynamic_ip']
-	));
-
-	$section->addInput(new Form_Checkbox(
-		'pool_enable',
-		'Address Pool',
-		'Provide a virtual adapter IP address to clients (see Tunnel Network).',
-		$pconfig['pool_enable']
 	));
 
 	$section->addInput(new Form_Select(
@@ -1291,21 +1266,6 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['wins_server2']
 	));
-
-	$section->addInput(new Form_Checkbox(
-		'client_mgmt_port_enable',
-		'Enable custom port ',
-		'Use a different management port for clients.',
-		$pconfig['client_mgmt_port_enable']
-	));
-
-	$section->addInput(new Form_Input(
-		'client_mgmt_port',
-		'Management port',
-		'number',
-		$pconfig['client_mgmt_port']
-	))->setHelp('The default port is 166. Specify a different port if the client machines need to select from multiple OpenVPN links.');
-
 
 	$form->add($section);
 
@@ -1641,11 +1601,6 @@ events.push(function() {
 		hideInput('wins_server2', hide);
 	}
 
-	function client_mgmt_port_change() {
-		var hide  = ! $('#client_mgmt_port_enable').prop('checked')
-
-		hideInput('client_mgmt_port', hide);
-	}
 
 	function ntp_server_change() {
 		var hide  = ! $('#ntp_server_enable').prop('checked')
@@ -1661,8 +1616,6 @@ events.push(function() {
 		hideInput('netbios_scope', hide);
 		hideCheckbox('wins_server_enable', hide);
 		wins_server_change();
-//		hideCheckbox('client_mgmt_port_enable', hide);
-//		client_mgmt_port_change();
 	}
 
 	function tuntap_change() {
@@ -1750,11 +1703,6 @@ events.push(function() {
 	// Netbios
 	$('#netbios_enable').click(function () {
 		netbios_change();
-	});
-
-	// Client management port
-	$('#client_mgmt_port_enable').click(function () {
-		client_mgmt_port_change();
 	});
 
 	 // Wins server port
@@ -1867,7 +1815,6 @@ events.push(function() {
 	dns_domain_change();
 	dns_server_change();
 	wins_server_change();
-	client_mgmt_port_change();
 	ntp_server_change();
 	netbios_change();
 	tuntap_change();

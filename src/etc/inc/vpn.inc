@@ -1785,11 +1785,6 @@ function vpn_l2tp_configure() {
 				$issue_ip_type .= "ippool p0";
 			}
 
-			$ipcp_nbns = '';
-			if (is_ipaddr($l2tpcfg['wins'])) {
-				$ipcp_nbns = "set ipcp nbns {$l2tpcfg['wins']}";
-			}
-
 			$ipcp_dns = '';
 			if (is_ipaddr($l2tpcfg['dns1'])) {
 				$ipcp_dns = "set ipcp dns " . $l2tpcfg['dns1'];
@@ -1828,7 +1823,6 @@ l2tps:
 
 	set ipcp yes vjcomp
 	{$issue_ip_type}
-	{$ipcp_nbns}
 	{$ipcp_dns}
 
 	create link template l2tp_l l2tp
@@ -1850,6 +1844,7 @@ EOD;
 	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
 	set radius retries 3
 	set radius timeout 10
+	set auth disable internal
 	set auth enable radius-auth
 
 EOD;

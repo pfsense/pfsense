@@ -102,6 +102,17 @@ if ($_POST['save']) {
 				$input_errors[] = gettext("The specified server address is equal to the LAN interface address.");
 			}
 		}
+
+		if (!empty($_POST['l2tp_dns1']) && !is_ipaddrv4(trim($_POST['l2tp_dns1']))) {
+			$input_errors[] = gettext("The field 'Primary L2TP DNS Server' must contain a valid IPv4 address.");
+		}
+		if (!empty($_POST['l2tp_dns2']) && !is_ipaddrv4(trim($_POST['l2tp_dns2']))) {
+			$input_errors[] = gettext("The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address.");
+		}
+		if (!empty($_POST['l2tp_dns2']) && empty($_POST['l2tp_dns1'])) {
+			$input_errors[] = gettext("The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server is empty.");
+		}
+
 	}
 
 	if (!$input_errors) {

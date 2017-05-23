@@ -10,12 +10,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-16 09:23-0300\n"
+"POT-Creation-Date: 2017-05-23 10:02-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-22 07:51-0400\n"
-"Last-Translator: Denis Karpushin <denis@netgate.com>\n"
+"PO-Revision-Date: 2017-05-23 09:09-0400\n"
+"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -246,22 +246,22 @@ msgstr "Неверный логин (%s)."
 msgid "This device is currently being maintained by: %s."
 msgstr "Данное устройство сейчас поддерживается : %s."
 
-#: src/etc/inc/authgui.inc:225
+#: src/etc/inc/authgui.inc:233
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
 msgstr "Логин в %1$s на %2$s.%3$s"
 
-#: src/etc/inc/authgui.inc:227
+#: src/etc/inc/authgui.inc:235
 #, php-format
 msgid "Login to %1$s"
 msgstr "Логин в %1$s"
 
-#: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
-#: src/usr/local/www/services_captiveportal.php:1017
+#: src/etc/inc/authgui.inc:244 src/etc/inc/authgui.inc:292
+#: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "Логин"
 
-#: src/etc/inc/authgui.inc:250
+#: src/etc/inc/authgui.inc:258
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means. <br /><br />If this forwarding "
@@ -273,11 +273,11 @@ msgstr ""
 "NAT или иным способом. <br /><br />Если трансляция адреса не используется, "
 "убедитесь, что не осуществляется man-in-the-middle атака. "
 
-#: src/etc/inc/authgui.inc:265
+#: src/etc/inc/authgui.inc:273
 msgid "The browser must support cookies to login."
 msgstr "Ваш браузер должен поддерживать cookie, чтобы войти в систему."
 
-#: src/etc/inc/authgui.inc:269 src/usr/local/www/interfaces.php:2581
+#: src/etc/inc/authgui.inc:277 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -287,24 +287,24 @@ msgstr "Ваш браузер должен поддерживать cookie, чт
 #: src/usr/local/www/services_dyndns_edit.php:353
 #: src/usr/local/www/services_pppoe_edit.php:500
 #: src/usr/local/www/status_captiveportal.php:197
-#: src/usr/local/www/system_usermanager.php:177
-#: src/usr/local/www/system_usermanager.php:182
-#: src/usr/local/www/system_usermanager.php:187
-#: src/usr/local/www/system_usermanager.php:597
+#: src/usr/local/www/system_usermanager.php:189
+#: src/usr/local/www/system_usermanager.php:194
+#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:609
 #: src/usr/local/www/vpn_l2tp_users.php:94
 #: src/usr/local/www/vpn_l2tp_users_edit.php:77
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
-#: src/usr/local/www/vpn_openvpn_client.php:600
-#: src/usr/local/www/vpn_openvpn_client.php:625
+#: src/usr/local/www/vpn_openvpn_client.php:590
+#: src/usr/local/www/vpn_openvpn_client.php:615
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: src/etc/inc/authgui.inc:271
+#: src/etc/inc/authgui.inc:279
 msgid "Enter your username"
 msgstr "Введите имя пользователя"
 
-#: src/etc/inc/authgui.inc:276 src/usr/local/www/diag_backup.php:524
+#: src/etc/inc/authgui.inc:284 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
@@ -317,19 +317,19 @@ msgstr "Введите имя пользователя"
 #: src/usr/local/www/services_pppoe_edit.php:507
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/usr/local/www/system_authservers.php:654
-#: src/usr/local/www/system_usermanager.php:183
-#: src/usr/local/www/system_usermanager.php:188
-#: src/usr/local/www/system_usermanager.php:750
-#: src/usr/local/www/system_usermanager.php:753
+#: src/usr/local/www/system_usermanager.php:195
+#: src/usr/local/www/system_usermanager.php:200
+#: src/usr/local/www/system_usermanager.php:762
+#: src/usr/local/www/system_usermanager.php:765
 #: src/usr/local/www/system_usermanager_passwordmg.php:40
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_l2tp_users_edit.php:159
-#: src/usr/local/www/vpn_openvpn_client.php:607
-#: src/usr/local/www/vpn_openvpn_client.php:632
+#: src/usr/local/www/vpn_openvpn_client.php:597
+#: src/usr/local/www/vpn_openvpn_client.php:622
 msgid "Password"
 msgstr "Пароль"
 
-#: src/etc/inc/authgui.inc:278
+#: src/etc/inc/authgui.inc:286
 msgid "Enter your password"
 msgstr "Введите пароль"
 
@@ -735,17 +735,17 @@ msgstr "Отправка запроса к: %s"
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Динамический DNS %1$s (%2$s): запускается _remove()."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Динамический DNS %1$s (%2$s): запускается _listCurrent() "
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Динамический DNS %1$s (%2$s): запускается _checkLookupStatus() "
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -785,6 +785,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Динамический DNS  %1$s (%2$s): завершение _checkLookupStatus(). "
+"Соответствующие записи не найдены."
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
@@ -1215,63 +1217,63 @@ msgstr "Обнаружена неизвестная общая ошибка си
 #: src/etc/inc/dyndns.class:1774
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "Результат _checkStatus(): %1$s"
 
 #: src/etc/inc/dyndns.class:1785
 msgid "No record exists."
-msgstr ""
+msgstr "Ни одной записи нет."
 
 #: src/etc/inc/dyndns.class:1789
 msgid "No type exists."
-msgstr ""
+msgstr "Ни одного типа нет."
 
 #: src/etc/inc/dyndns.class:1793
 msgid "No value exists."
-msgstr ""
+msgstr "Ни одного значения нет."
 
 #: src/etc/inc/dyndns.class:1796
 msgid "No such zone exists."
-msgstr ""
+msgstr "Такой зоны не существует."
 
 #: src/etc/inc/dyndns.class:1799
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "Указанная запись невалидна"
 
 #: src/etc/inc/dyndns.class:1802
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "Указанный тип невалиден."
 
 #: src/etc/inc/dyndns.class:1805
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "Указанное значение невалидно."
 
 #: src/etc/inc/dyndns.class:1808
 msgid "Record is not editable."
-msgstr ""
+msgstr "Запись нередактируема. "
 
 #: src/etc/inc/dyndns.class:1811
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "Запись существует, но она нередактируема. ."
 
 #: src/etc/inc/dyndns.class:1814
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "Запись существует и она должна быть удалена перед добавлением."
 
 #: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Произошла ошибка удалённого сервера при обновлении зоны."
 
 #: src/etc/inc/dyndns.class:1820
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Произошла ошибка удалённого сервера при загрузке зоны."
 
 #: src/etc/inc/dyndns.class:1826
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Произошла ошибка удалённого сервера при добавлении новой записи."
 
 #: src/etc/inc/dyndns.class:1829
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "Произошла ошибка удалённого сервера при удалении существующей записи."
 
 #: src/etc/inc/dyndns.class:1843
 #, php-format
@@ -2097,8 +2099,8 @@ msgstr "Зеркала не найдены"
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
-#: src/usr/local/www/system_usermanager.php:451
-#: src/usr/local/www/system_usermanager.php:518
+#: src/usr/local/www/system_usermanager.php:463
+#: src/usr/local/www/system_usermanager.php:530
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:209
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:50
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:346
@@ -2152,7 +2154,7 @@ msgstr "Имя"
 #: src/usr/local/www/status_upnp.php:42
 #: src/usr/local/www/status_wireless.php:31
 #: src/usr/local/www/status_wireless.php:58
-#: src/usr/local/www/system_usermanager.php:599
+#: src/usr/local/www/system_usermanager.php:611
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
@@ -2849,9 +2851,9 @@ msgstr "Ошибка: не удалось открыть %s в DHCP_Config_File_
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/status_openvpn.php:30
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
 msgstr "OpenVPN"
@@ -3238,13 +3240,13 @@ msgstr "Не удалось отправить регистр Growl на %1$s --
 #: src/usr/local/www/firewall_rules_edit.php:1704
 #: src/usr/local/www/status_ipsec.php:338
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "none"
 msgstr "ничего"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
-#: src/usr/local/www/services_captiveportal.php:968
+#: src/usr/local/www/services_captiveportal.php:970
 msgid "default"
 msgstr "по умолчанию"
 
@@ -3414,18 +3416,12 @@ msgstr "По умолчанию"
 msgid "The field '%s' must contain a valid IP address or domain name."
 msgstr "Поле '%s' должно содержать правильный IP адрес или имя домена."
 
-#: src/etc/inc/openvpn.inc:515
-#, php-format
-msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr ""
-"Поле '%s' должно содержать правильный номер порта, в диапазоне от 0 до 65535"
-
-#: src/etc/inc/openvpn.inc:529
+#: src/etc/inc/openvpn.inc:532
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
 msgstr "Поле '%1$s' должно содержать один допустимый %2$s CIDR диапазон."
 
-#: src/etc/inc/openvpn.inc:544
+#: src/etc/inc/openvpn.inc:547
 #, php-format
 msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
@@ -3434,7 +3430,7 @@ msgstr ""
 "Поле '%1$s' должно содержать только допустимый %2$s CIDR диапазон(ы) "
 "разделенные запятыми. "
 
-#: src/etc/inc/openvpn.inc:1086
+#: src/etc/inc/openvpn.inc:1089
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
@@ -3442,39 +3438,39 @@ msgstr ""
 "Не удалось применить конфигурацию OpenVPN сервера. Выбранные DH парметр не "
 "может быть использован. "
 
-#: src/etc/inc/openvpn.inc:1256
+#: src/etc/inc/openvpn.inc:1257
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
 msgstr "OpenVPN ID %1$s PID %2$s всё ещё запущен, завершаю процесс."
 
-#: src/etc/inc/openvpn.inc:1491
+#: src/etc/inc/openvpn.inc:1492
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
 msgstr "Ресинхронизирую OpenVPN инстанции для интерфейса %s."
 
-#: src/etc/inc/openvpn.inc:1493
+#: src/etc/inc/openvpn.inc:1494
 msgid "Resyncing OpenVPN instances."
 msgstr "Ресинхронизирую OpenVPN инстанции"
 
-#: src/etc/inc/openvpn.inc:1526
+#: src/etc/inc/openvpn.inc:1527
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
 msgstr "Ресинхронизирую OpenVPN для группы шлюзов %1$s сервер %2$s"
 
-#: src/etc/inc/openvpn.inc:1535
+#: src/etc/inc/openvpn.inc:1536
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
 msgstr "Ресинхронизирую OpenVPN для группы шлюзов %1$s клиент %2$s"
 
-#: src/etc/inc/openvpn.inc:1544
+#: src/etc/inc/openvpn.inc:1545
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
 msgstr "openvpn_resync_gwgroup вызвана с нулевым параметром gwgroup."
 
-#: src/etc/inc/openvpn.inc:1650 src/etc/inc/openvpn.inc:1781
+#: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
 msgid "Unable to contact daemon"
 msgstr "Не Удаётся связаться со службой"
 
-#: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
+#: src/etc/inc/openvpn.inc:1652 src/etc/inc/openvpn.inc:1783
 msgid "Service not running?"
 msgstr "Сервис не запущен?"
 
@@ -3763,7 +3759,7 @@ msgstr "Следующий файл не может быть прочтен %1$s
 
 #: src/etc/inc/pfsense-utils.inc:2897
 msgid "German (Germany)"
-msgstr ""
+msgstr "Немецкий (Германия)"
 
 #: src/etc/inc/pfsense-utils.inc:2898
 msgid "English"
@@ -6392,13 +6388,13 @@ msgstr "Остановлено"
 #: src/usr/local/www/services_router_advertisements.php:126
 #: src/usr/local/www/system_gateways_edit.php:153
 #: src/usr/local/www/system_routes_edit.php:262
-#: src/usr/local/www/system_usermanager.php:624
-#: src/usr/local/www/system_usermanager.php:721
+#: src/usr/local/www/system_usermanager.php:636
+#: src/usr/local/www/system_usermanager.php:733
 #: src/usr/local/www/vpn_ipsec_phase1.php:657
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
-#: src/usr/local/www/vpn_openvpn_client.php:512
+#: src/usr/local/www/vpn_openvpn_client.php:510
 #: src/usr/local/www/vpn_openvpn_csc.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:693
+#: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disabled"
 msgstr "Не активно"
 
@@ -6882,15 +6878,15 @@ msgstr "Выберите опции для данной очереди"
 #: src/usr/local/www/system_groupmanager.php:409
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/system_routes_edit.php:270
-#: src/usr/local/www/system_usermanager.php:452
+#: src/usr/local/www/system_usermanager.php:464
 #: src/usr/local/www/vpn_ipsec_phase1.php:694
 #: src/usr/local/www/vpn_ipsec_phase2.php:584
-#: src/usr/local/www/vpn_openvpn_client.php:614
-#: src/usr/local/www/vpn_openvpn_client.php:950
+#: src/usr/local/www/vpn_openvpn_client.php:604
+#: src/usr/local/www/vpn_openvpn_client.php:941
 #: src/usr/local/www/vpn_openvpn_csc.php:348
 #: src/usr/local/www/vpn_openvpn_csc.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:764
-#: src/usr/local/www/vpn_openvpn_server.php:1380
+#: src/usr/local/www/vpn_openvpn_server.php:746
+#: src/usr/local/www/vpn_openvpn_server.php:1340
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
@@ -7115,7 +7111,7 @@ msgstr "Значение задержки должно быть целым чи�
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:517
 #: src/usr/local/www/system_certmanager.php:887
-#: src/usr/local/www/system_usermanager.php:647
+#: src/usr/local/www/system_usermanager.php:659
 msgid "Delete"
 msgstr "Удалить"
 
@@ -7151,7 +7147,7 @@ msgstr "Лимитеры"
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
-#: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
+#: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
 msgstr "Включить"
@@ -7220,8 +7216,8 @@ msgstr "IPv6 битовая маска, биты %1$s%2$s"
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/vpn_ipsec_phase1.php:697
 #: src/usr/local/www/vpn_ipsec_phase2.php:587
-#: src/usr/local/www/vpn_openvpn_client.php:617
-#: src/usr/local/www/vpn_openvpn_server.php:767
+#: src/usr/local/www/vpn_openvpn_client.php:607
+#: src/usr/local/www/vpn_openvpn_server.php:749
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr ""
@@ -7608,6 +7604,8 @@ msgstr ""
 msgid ""
 "Randomize the ID field in IP packets (default is 1: Assign random IP IDs)"
 msgstr ""
+"Сделать случайным поле идентификатор в IP пакетах (по умолчанию 1: Назначить "
+"случайные идентификатор IP)"
 
 #: src/etc/inc/upgrade_config.inc:660
 msgid "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)"
@@ -8033,7 +8031,7 @@ msgstr "Настраиваем сервис l2tp VPN..."
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
 msgstr "Ошибка: невозможно открыть mpd.conf в vpn_l2tp_configure()."
 
-#: src/etc/inc/vpn.inc:1872
+#: src/etc/inc/vpn.inc:1867
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
 msgstr "Ошибка: невозможно открыть mpd.secret в vpn_l2tp_configure()."
@@ -8364,12 +8362,12 @@ msgstr "Тип соединения"
 #: src/usr/local/www/system_gateways.php:255
 #: src/usr/local/www/system_groupmanager.php:306
 #: src/usr/local/www/system_routes.php:246
-#: src/usr/local/www/system_usermanager.php:601
+#: src/usr/local/www/system_usermanager.php:613
 #: src/usr/local/www/vpn_ipsec.php:256 src/usr/local/www/vpn_ipsec_keys.php:104
 #: src/usr/local/www/vpn_l2tp_users.php:96
-#: src/usr/local/www/vpn_openvpn_client.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:942
 #: src/usr/local/www/vpn_openvpn_csc.php:664
-#: src/usr/local/www/vpn_openvpn_server.php:1381
+#: src/usr/local/www/vpn_openvpn_server.php:1341
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 msgid "Actions"
 msgstr "Действия"
@@ -8449,7 +8447,7 @@ msgstr "Выберите сервер аутентификации для про
 
 #: src/usr/local/www/diag_authentication.php:98
 #: src/usr/local/www/interfaces.php:2648 src/usr/local/www/interfaces.php:2773
-#: src/usr/local/www/system_usermanager.php:728
+#: src/usr/local/www/system_usermanager.php:740
 #: src/usr/local/www/vpn_l2tp_users_edit.php:152
 msgid "*Username"
 msgstr "*Имя пользователя"
@@ -8689,8 +8687,8 @@ msgstr "Системный журнал"
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/system_user_settings.php:32
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
@@ -8909,8 +8907,8 @@ msgid "Clear command entry"
 msgstr "Очистить введённую команду "
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
-#: src/usr/local/www/system_groupmanager_addprivs.php:202
-#: src/usr/local/www/system_usermanager_addprivs.php:191
+#: src/usr/local/www/system_groupmanager_addprivs.php:213
+#: src/usr/local/www/system_usermanager_addprivs.php:197
 #: src/usr/local/www/interfaces.php:2084
 msgid "Clear"
 msgstr "Очистить"
@@ -8920,9 +8918,9 @@ msgid "Download File"
 msgstr "Скачать Файл"
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1093
-#: src/usr/local/www/services_captiveportal.php:1127
-#: src/usr/local/www/services_captiveportal.php:1159
+#: src/usr/local/www/services_captiveportal.php:1095
+#: src/usr/local/www/services_captiveportal.php:1129
+#: src/usr/local/www/services_captiveportal.php:1161
 msgid "Download"
 msgstr "Скачать"
 
@@ -9229,7 +9227,7 @@ msgstr "Имя Хоста"
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
-#: src/usr/local/www/vpn_openvpn_client.php:949
+#: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
 msgstr "Сервер"
@@ -9373,10 +9371,10 @@ msgstr "Фильтр выражений"
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
-#: src/usr/local/www/system_groupmanager_addprivs.php:171
-#: src/usr/local/www/system_groupmanager_addprivs.php:191
-#: src/usr/local/www/system_usermanager_addprivs.php:160
-#: src/usr/local/www/system_usermanager_addprivs.php:180
+#: src/usr/local/www/system_groupmanager_addprivs.php:182
+#: src/usr/local/www/system_groupmanager_addprivs.php:202
+#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_usermanager_addprivs.php:186
 msgid "Filter"
 msgstr "Фильтр"
 
@@ -9413,7 +9411,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:309
 #: src/usr/local/www/system_advanced_admin.php:313
 #: src/usr/local/www/system_advanced_admin.php:321
-#: src/usr/local/www/vpn_openvpn_client.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:939
 msgid "Protocol"
 msgstr "Протокол"
 
@@ -9811,12 +9809,12 @@ msgstr "Собираю информацию об Ограничителе, по�
 #: src/usr/local/www/diag_ndp.php:50
 #, php-format
 msgid "The NDP entry for %s has been deleted."
-msgstr ""
+msgstr "Запись NDP  для  %s удалена."
 
 #: src/usr/local/www/diag_ndp.php:51
 #, php-format
 msgid "%s is not a valid IPv6 address or could not be deleted."
-msgstr ""
+msgstr " %s не является валидным IPv6 адресом или не может быть удалена."
 
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
 #: src/usr/local/www/head.inc:389
@@ -9832,11 +9830,11 @@ msgstr "IPv6 адрес"
 
 #: src/usr/local/www/diag_ndp.php:142
 msgid "Expiration"
-msgstr ""
+msgstr "Срок окончания"
 
 #: src/usr/local/www/diag_ndp.php:178
 msgid "Delete NDP entry"
-msgstr ""
+msgstr "Удалить запись NDP "
 
 #: src/usr/local/www/diag_packet_capture.php:102
 #: src/usr/local/www/diag_packet_capture.php:434
@@ -9946,9 +9944,9 @@ msgstr "Опции Захвата Пакетов"
 #: src/usr/local/www/services_wol_edit.php:134
 #: src/usr/local/www/system_gateways_edit.php:160
 #: src/usr/local/www/vpn_ipsec_phase1.php:678
-#: src/usr/local/www/vpn_l2tp.php:211
-#: src/usr/local/www/vpn_openvpn_client.php:541
-#: src/usr/local/www/vpn_openvpn_server.php:749
+#: src/usr/local/www/vpn_l2tp.php:222
+#: src/usr/local/www/vpn_openvpn_client.php:539
+#: src/usr/local/www/vpn_openvpn_server.php:731
 msgid "*Interface"
 msgstr "*Интерфейс"
 
@@ -9995,8 +9993,8 @@ msgstr "Выберите тип трафика для захвата."
 #: src/usr/local/www/firewall_rules_edit.php:1297
 #: src/usr/local/www/system_authservers.php:737
 #: src/usr/local/www/vpn_ipsec_phase2.php:595
-#: src/usr/local/www/vpn_openvpn_client.php:526
-#: src/usr/local/www/vpn_openvpn_server.php:734
+#: src/usr/local/www/vpn_openvpn_client.php:524
+#: src/usr/local/www/vpn_openvpn_server.php:716
 msgid "*Protocol"
 msgstr "*Протокол"
 
@@ -10205,9 +10203,9 @@ msgstr "время"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1086
-#: src/usr/local/www/services_captiveportal.php:1120
-#: src/usr/local/www/services_captiveportal.php:1152
+#: src/usr/local/www/services_captiveportal.php:1088
+#: src/usr/local/www/services_captiveportal.php:1122
+#: src/usr/local/www/services_captiveportal.php:1154
 msgid "View"
 msgstr "Просмотр"
 
@@ -10622,7 +10620,7 @@ msgstr "Сведения, перечисленные для каждого со�
 #, php-format
 msgid "%1$sUSER%2$s\t%3$sThe user who owns the socket.%4$s"
 msgstr ""
-"%1$sПОЛЬЗОВАТЕЛЬ%2$s  %3$sПользователь, которому принадлежит сокет. %4$s"
+"%1$sПОЛЬЗОВАТЕЛЬ%2$s    %3$sПользователь, которому принадлежит сокет.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:116
 #, php-format
@@ -10661,7 +10659,7 @@ msgid ""
 "%1$sFOREIGN ADDRESS%2$s\t%3$sThe address the foreign end of the socket is "
 "bound to.%4$s"
 msgstr ""
-"%1$sУДАЛЁННЫЙ АДРЕС%2$s %3$sАдрес удалённого конца сокета связан с..%4$s"
+"%1$sУДАЛЁННЫЙ АДРЕС%2$s %3$sАдрес удалённого конца сокета связан с.%4$s"
 
 #: src/usr/local/www/diag_states_summary.php:147
 msgid "Protocol counts"
@@ -11216,14 +11214,14 @@ msgstr "Удалить алиас"
 #: src/usr/local/www/system_groupmanager.php:263
 #: src/usr/local/www/system_groupmanager.php:347
 #: src/usr/local/www/system_routes.php:298
-#: src/usr/local/www/system_usermanager.php:505
-#: src/usr/local/www/system_usermanager.php:551
-#: src/usr/local/www/system_usermanager.php:642
+#: src/usr/local/www/system_usermanager.php:517
+#: src/usr/local/www/system_usermanager.php:563
+#: src/usr/local/www/system_usermanager.php:654
 #: src/usr/local/www/vpn_ipsec_keys.php:169
 #: src/usr/local/www/vpn_l2tp_users.php:123
-#: src/usr/local/www/vpn_openvpn_client.php:988
+#: src/usr/local/www/vpn_openvpn_client.php:979
 #: src/usr/local/www/vpn_openvpn_csc.php:700
-#: src/usr/local/www/vpn_openvpn_server.php:1426
+#: src/usr/local/www/vpn_openvpn_server.php:1386
 msgid "Add"
 msgstr "Добавить"
 
@@ -11329,13 +11327,13 @@ msgstr "Таблица единых указателей ресурса (Пор�
 #: src/usr/local/www/system_groupmanager.php:273
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_usermanager.php:561
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:573
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:478
+#: src/usr/local/www/vpn_openvpn_client.php:476
 #: src/usr/local/www/vpn_openvpn_csc.php:286
-#: src/usr/local/www/vpn_openvpn_server.php:657
+#: src/usr/local/www/vpn_openvpn_server.php:639
 msgid "Edit"
 msgstr "Редактировать"
 
@@ -11716,7 +11714,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_import.php:224
 msgid "443 HTTPS port"
-msgstr "443 HTTPS портв"
+msgstr "443 HTTPS порт"
 
 #: src/usr/local/www/firewall_aliases_import.php:226
 msgid "4000:4099 Description of a port range"
@@ -12265,7 +12263,7 @@ msgstr "Обратить смысл соответствия."
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
-#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_captiveportal.php:968
 #: src/usr/local/www/services_dhcp.php:1356
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
@@ -13187,8 +13185,8 @@ msgid ""
 "must be defined in one or more %1$sVirtual IP%2$s addresses."
 msgstr ""
 "Подсеть должна быть смаршрутизирована к межсетевому экрану или каждый адрес "
-"подсети должен быть определён  в одном или более адресах %4$sВиртуального "
-"IP%5$s"
+"подсети должен быть определён  в одном или более адресах %1$sВиртуального "
+"IP%2$s"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:604
 msgid "Round Robin"
@@ -13423,9 +13421,9 @@ msgstr "Правило Анти-Блокировки"
 #: src/usr/local/www/status_logs_settings.php:226
 #: src/usr/local/www/system_authservers.php:430
 #: src/usr/local/www/system_groupmanager.php:290
-#: src/usr/local/www/system_groupmanager_addprivs.php:135
-#: src/usr/local/www/system_usermanager.php:582
-#: src/usr/local/www/system_usermanager_addprivs.php:132
+#: src/usr/local/www/system_groupmanager_addprivs.php:136
+#: src/usr/local/www/system_usermanager.php:594
+#: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
@@ -14791,9 +14789,9 @@ msgstr "По Очереди"
 #: src/usr/local/www/firewall_shaper_vinterface.php:373
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/firewall_shaper_wizards.php:76
-#: src/usr/local/www/vpn_openvpn_client.php:501
+#: src/usr/local/www/vpn_openvpn_client.php:499
 #: src/usr/local/www/vpn_openvpn_csc.php:305
-#: src/usr/local/www/vpn_openvpn_server.php:680
+#: src/usr/local/www/vpn_openvpn_server.php:662
 msgid "Wizards"
 msgstr "Мастер установки"
 
@@ -15223,8 +15221,8 @@ msgid "Authentication and Accounting"
 msgstr "Аутентификация и Учёт"
 
 #: src/usr/local/www/guiconfig.inc:163
-#: src/usr/local/www/services_captiveportal.php:867
-#: src/usr/local/www/vpn_l2tp.php:285
+#: src/usr/local/www/services_captiveportal.php:869
+#: src/usr/local/www/vpn_l2tp.php:296
 msgid "Accounting"
 msgstr "Учёт"
 
@@ -15307,7 +15305,7 @@ msgstr "%1$sМониторить%2$s прогресс перезагрузки �
 
 #: src/usr/local/www/guiconfig.inc:582
 msgid "Widget title"
-msgstr ""
+msgstr "Заголовок виджета"
 
 #: src/usr/local/www/guiconfig.inc:629 src/usr/local/www/guiconfig.inc:680
 #, php-format
@@ -15378,8 +15376,8 @@ msgstr "Менеджер Сертификатов"
 #: src/usr/local/www/system_authservers.php:409
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_settings.php:109
 msgid "User Manager"
 msgstr "Менеджер Пользователей"
@@ -15448,7 +15446,7 @@ msgstr "UPnP &amp; NAT-PM"
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1703
 #: src/usr/local/www/interfaces_ppps_edit.php:456
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
@@ -16006,11 +16004,11 @@ msgstr "Неверный IP адрес был обнаружен в поле 'О
 
 #: src/usr/local/www/interfaces.php:780
 msgid "A valid IPv4 gateway must be specified."
-msgstr ""
+msgstr "Должен быть указан валидный  IPv4 шлюз."
 
 #: src/usr/local/www/interfaces.php:792
 msgid "A valid IPv6 gateway must be specified."
-msgstr ""
+msgstr "Должен быть указан валидный  IPv6 шлюз."
 
 #: src/usr/local/www/interfaces.php:796
 msgid "The service name contains invalid characters."
@@ -17258,7 +17256,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3246
 msgid "New IPv4 Gateway"
-msgstr ""
+msgstr "Новый IPv4 шлюз"
 
 #: src/usr/local/www/interfaces.php:3264
 #: src/usr/local/www/status_interfaces.php:142
@@ -17744,8 +17742,8 @@ msgstr "Интерфейсы, объединенные в сетевой мос�
 #: src/usr/local/www/interfaces_bridge_edit.php:426
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
-#: src/usr/local/www/vpn_openvpn_client.php:884
-#: src/usr/local/www/vpn_openvpn_server.php:1312
+#: src/usr/local/www/vpn_openvpn_client.php:875
+#: src/usr/local/www/vpn_openvpn_server.php:1272
 #: src/usr/local/www/interfaces.php:1986 src/usr/local/www/interfaces.php:2171
 msgid "Advanced Configuration"
 msgstr "Расширенные настройки"
@@ -18858,8 +18856,8 @@ msgstr ""
 "отключен и все связанные маршруты будут удалены."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:858
-#: src/usr/local/www/vpn_openvpn_client.php:849
-#: src/usr/local/www/vpn_openvpn_server.php:1098
+#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_server.php:1080
 msgid "Compression"
 msgstr "Сжатие"
 
@@ -19537,7 +19535,7 @@ msgid "HTTP Code"
 msgstr "Код HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1012
+#: src/usr/local/www/services_captiveportal.php:1014
 msgid "HTTPS Options"
 msgstr "Опции HTTPS"
 
@@ -19577,10 +19575,10 @@ msgstr "Пул"
 #: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
-#: src/usr/local/www/vpn_openvpn_client.php:498
+#: src/usr/local/www/vpn_openvpn_client.php:496
 #: src/usr/local/www/vpn_openvpn_csc.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:653
-#: src/usr/local/www/vpn_openvpn_server.php:677
+#: src/usr/local/www/vpn_openvpn_server.php:635
+#: src/usr/local/www/vpn_openvpn_server.php:659
 msgid "Servers"
 msgstr "Серверы"
 
@@ -20367,8 +20365,8 @@ msgstr "Пакет настроен не установлен (полность�
 #: src/usr/local/www/services_captiveportal_ip.php:94
 #: src/usr/local/www/services_captiveportal_mac.php:161
 #: src/usr/local/www/services_captiveportal_vouchers.php:373
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
-#: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:83
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:217 src/usr/local/www/vpn_l2tp_users.php:83
 msgid "Configuration"
 msgstr "Настройки"
 
@@ -20796,38 +20794,45 @@ msgstr ""
 "поле пустым что бы не вводить ограничений."
 
 #: src/usr/local/www/services_captiveportal.php:688
-msgid "*Authentication method"
-msgstr "Метод авторизации"
+#: src/usr/local/www/vpn_ipsec_phase1.php:705
+msgid "*Authentication Method"
+msgstr "*Метод Аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:723
+#: src/usr/local/www/services_captiveportal.php:714
+msgid ""
+"Select an Authentication Method to use for this zone. One method must be "
+"selected."
+msgstr ""
+
+#: src/usr/local/www/services_captiveportal.php:725
 msgid "*RADIUS protocol"
 msgstr "*RADIUS протокол"
 
-#: src/usr/local/www/services_captiveportal.php:762
+#: src/usr/local/www/services_captiveportal.php:764
 msgid "Primary Authentication Source"
 msgstr "Источник первичной авторизации"
 
-#: src/usr/local/www/services_captiveportal.php:765
+#: src/usr/local/www/services_captiveportal.php:767
 msgid "*Primary RADIUS server"
 msgstr "*Первичный РАДИУС сервер"
 
-#: src/usr/local/www/services_captiveportal.php:789
-#: src/usr/local/www/services_captiveportal.php:842
+#: src/usr/local/www/services_captiveportal.php:791
+#: src/usr/local/www/services_captiveportal.php:844
 msgid "Secondary RADIUS server"
 msgstr "Вторичный РАДИУС сервер"
 
-#: src/usr/local/www/services_captiveportal.php:795
-#: src/usr/local/www/services_captiveportal.php:848
+#: src/usr/local/www/services_captiveportal.php:797
+#: src/usr/local/www/services_captiveportal.php:850
 msgid "IP address of the RADIUS server to authenticate against."
 msgstr "IP адрес РАДИУС сервера, на котором пройти аутентификацию."
 
-#: src/usr/local/www/services_captiveportal.php:802
-#: src/usr/local/www/services_captiveportal.php:855
+#: src/usr/local/www/services_captiveportal.php:804
+#: src/usr/local/www/services_captiveportal.php:857
 msgid "RADIUS port. Leave blank for default (1812)"
 msgstr "РАДИУС порт. Оставить пустым для значения по умолчанию (1812)"
 
-#: src/usr/local/www/services_captiveportal.php:809
-#: src/usr/local/www/services_captiveportal.php:862
+#: src/usr/local/www/services_captiveportal.php:811
+#: src/usr/local/www/services_captiveportal.php:864
 msgid ""
 "RADIUS shared secret. Leave blank to not use a shared secret (not "
 "recommended)"
@@ -20835,41 +20840,41 @@ msgstr ""
 "Распределённый пароль РАДИУСа. Оставить пустым, чтобы не использовать "
 "распределённый пароль (не рекомендуется)"
 
-#: src/usr/local/www/services_captiveportal.php:815
+#: src/usr/local/www/services_captiveportal.php:817
 msgid "Secondary Authentication Source"
 msgstr "Вторичный Источник Аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:818
+#: src/usr/local/www/services_captiveportal.php:820
 msgid "Primary RADIUS server"
 msgstr "Первичный РАДИУС сервер"
 
-#: src/usr/local/www/services_captiveportal.php:872
+#: src/usr/local/www/services_captiveportal.php:874
 #: src/usr/local/www/services_pppoe_edit.php:363
-#: src/usr/local/www/vpn_l2tp.php:273
+#: src/usr/local/www/vpn_l2tp.php:284
 msgid "RADIUS"
 msgstr "РАДИУС"
 
-#: src/usr/local/www/services_captiveportal.php:879
+#: src/usr/local/www/services_captiveportal.php:881
 msgid "Accounting Port"
 msgstr "Порт Учёта"
 
-#: src/usr/local/www/services_captiveportal.php:882
+#: src/usr/local/www/services_captiveportal.php:884
 msgid "Leave blank to use the default port (1813)."
 msgstr "Оставить пустым для значения порта умолчанию (1813)."
 
-#: src/usr/local/www/services_captiveportal.php:884
+#: src/usr/local/www/services_captiveportal.php:886
 msgid "Accounting updates"
 msgstr "Обновления учёта"
 
-#: src/usr/local/www/services_captiveportal.php:922
+#: src/usr/local/www/services_captiveportal.php:924
 msgid "RADIUS Options"
 msgstr "Опции РАДИУСа"
 
-#: src/usr/local/www/services_captiveportal.php:927
+#: src/usr/local/www/services_captiveportal.php:929
 msgid "Reauthentication"
 msgstr "Повторная аутентификация"
 
-#: src/usr/local/www/services_captiveportal.php:930
+#: src/usr/local/www/services_captiveportal.php:932
 msgid ""
 "If reauthentication is enabled, Access-Requests will be sent to the RADIUS "
 "server for each user that is logged in every minute. If an Access-Reject is "
@@ -20878,12 +20883,20 @@ msgid ""
 "captive portal database while a user is logged in; The cached credentials "
 "are necessary for the portal to perform automatic reauthentication requests."
 msgstr ""
+"Если включена ре-аутентификация, Access-Requests будут отправляться к "
+"серверу RADIUS для каждого пользователя, который залогинивается каждую "
+"минуту. Если для пользователя получен Access-Reject, данный пользователь "
+"отключается от портала захвата немедленно. Ре-аутентификация требует "
+"кэишрование имени пользователя и пароля в базе данных портала захвата, когда "
+"пользователь залогинивается; закэшированные имя пользователя и пароль "
+"необходимы для портала, чтобы выполнять автоматические запросы на  ре-"
+"аутентификацию."
 
-#: src/usr/local/www/services_captiveportal.php:937
+#: src/usr/local/www/services_captiveportal.php:939
 msgid "RADIUS MAC Authentication"
 msgstr "МАС аутентификация РАДИУСа"
 
-#: src/usr/local/www/services_captiveportal.php:940
+#: src/usr/local/www/services_captiveportal.php:942
 msgid ""
 "If this option is enabled, the captive portal will try to authenticate users "
 "by sending their MAC address as the username and the password entered below "
@@ -20893,24 +20906,24 @@ msgstr ""
 "пользователей, отправляя их MAC адрес  как имя пользователя и пароль, "
 "указанные ниже РАДИУС сервера."
 
-#: src/usr/local/www/services_captiveportal.php:945
+#: src/usr/local/www/services_captiveportal.php:947
 msgid "MAC authentication secret"
 msgstr "Пароль МАС аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:952
+#: src/usr/local/www/services_captiveportal.php:954
 msgid "RADIUS NAS IP Attribute"
 msgstr "IP Атрибут сервера сетевого доступа РАДИУСа"
 
-#: src/usr/local/www/services_captiveportal.php:955
+#: src/usr/local/www/services_captiveportal.php:957
 msgid "Choose the IP to use for calling station attribute."
 msgstr "Выбрать IP атрибута станции вызова."
 
-#: src/usr/local/www/services_captiveportal.php:959
+#: src/usr/local/www/services_captiveportal.php:961
 #: src/usr/local/www/system_usermanager_settings.php:199
 msgid "Session timeout"
 msgstr "Таймаут сессии"
 
-#: src/usr/local/www/services_captiveportal.php:962
+#: src/usr/local/www/services_captiveportal.php:964
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
@@ -20918,7 +20931,7 @@ msgstr ""
 " При включении клиенты будут отключены после периода времени, полученного от "
 "атрибута Сессия-Таймаут РАДИУСа."
 
-#: src/usr/local/www/services_captiveportal.php:969
+#: src/usr/local/www/services_captiveportal.php:971
 msgid ""
 "If RADIUS type is set to Cisco, in Access-Requests the value of Calling-"
 "Station-ID will be set to the client's IP address and the Called-Station-Id "
@@ -20932,11 +20945,11 @@ msgstr ""
 "MAC адресу клиента и начение идентификатора Вызванной-Станции равен IP "
 "адресу WAN pfsense."
 
-#: src/usr/local/www/services_captiveportal.php:975
+#: src/usr/local/www/services_captiveportal.php:977
 msgid "Accounting style"
 msgstr "Стиль Учёта."
 
-#: src/usr/local/www/services_captiveportal.php:978
+#: src/usr/local/www/services_captiveportal.php:980
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
@@ -20946,11 +20959,11 @@ msgstr ""
 "точки зрения клиента, а не Сервера сетевого доступа. Acct-Input-Octets будут "
 "показывать  входящие пакеты и Acct-Output-Octets  - исходящие."
 
-#: src/usr/local/www/services_captiveportal.php:983
+#: src/usr/local/www/services_captiveportal.php:985
 msgid "Idle time accounting"
 msgstr "Время простоя учёта"
 
-#: src/usr/local/www/services_captiveportal.php:986
+#: src/usr/local/www/services_captiveportal.php:988
 msgid ""
 "When enabled, if a client is disconnected for exceeding the idle timeout the "
 "time spent idle is included in the total session time. Otherwise the session "
@@ -20962,30 +20975,30 @@ msgstr ""
 "РАДИУС сервером, будет временным периодом от начала сессии до последней "
 "зафиксированной активности."
 
-#: src/usr/local/www/services_captiveportal.php:992
+#: src/usr/local/www/services_captiveportal.php:994
 msgid "NAS Identifier"
 msgstr "Идентификатор Сервера сетевого доступа"
 
-#: src/usr/local/www/services_captiveportal.php:995
+#: src/usr/local/www/services_captiveportal.php:997
 msgid ""
 "Specify a NAS identifier to override the default value (pfSense.localdomain)"
 msgstr ""
 "Указать идентификатор Сервера сетевого доступа, чтоб перезаписать значение "
 "по умолчанию (pfSense.localdomain)"
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Single dash"
 msgstr "Один символ \"тире\""
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Unformatted"
 msgstr "Неотформатированный"
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "MAC address format"
 msgstr "Формат MAC адреса"
 
-#: src/usr/local/www/services_captiveportal.php:1002
+#: src/usr/local/www/services_captiveportal.php:1004
 #, php-format
 msgid ""
 "This option changes the MAC address format used in the whole RADIUS system. "
@@ -21000,7 +21013,7 @@ msgstr ""
 "\"тире\": 001122-334455 %1$sIETF: 00-11-22-33-44-55 %1$sCisco: 0011.2233."
 "4455 %1$sНеотформатирован: 001122334455"
 
-#: src/usr/local/www/services_captiveportal.php:1020
+#: src/usr/local/www/services_captiveportal.php:1022
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
@@ -21010,11 +21023,11 @@ msgstr ""
 "соединению, чтобы предотвратить их перехват. Имя сервера и сертификат также "
 "должны быть указаны."
 
-#: src/usr/local/www/services_captiveportal.php:1025
+#: src/usr/local/www/services_captiveportal.php:1027
 msgid "*HTTPS server name"
 msgstr "*Имя сервера HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1028
+#: src/usr/local/www/services_captiveportal.php:1030
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -21029,11 +21042,11 @@ msgstr ""
 "проверьте на клиенте, что IP разрешается к правильному IP интерфейса на "
 "pfSense."
 
-#: src/usr/local/www/services_captiveportal.php:1034
+#: src/usr/local/www/services_captiveportal.php:1036
 msgid "*SSL Certificate"
 msgstr "*SSL сертификат"
 
-#: src/usr/local/www/services_captiveportal.php:1037
+#: src/usr/local/www/services_captiveportal.php:1039
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
@@ -21042,11 +21055,11 @@ msgstr ""
 "Если не определён ни один сертификат, его можно указать здесь: %1$sСистема  "
 "&gt; Менеджер Сертификатов%2$s"
 
-#: src/usr/local/www/services_captiveportal.php:1041
+#: src/usr/local/www/services_captiveportal.php:1043
 msgid "HTTPS Forwards"
 msgstr "Перенаправление HTTPS"
 
-#: src/usr/local/www/services_captiveportal.php:1044
+#: src/usr/local/www/services_captiveportal.php:1046
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -21062,15 +21075,15 @@ msgstr ""
 "чтобы получить перенаправление к порталу перехвата. Если включён логин к "
 "HTTPS, пользователи будут перенаправлены к странице логина HTTPS."
 
-#: src/usr/local/www/services_captiveportal.php:1051
+#: src/usr/local/www/services_captiveportal.php:1053
 msgid "HTML Page Contents"
 msgstr "Содержание страницы HTML"
 
-#: src/usr/local/www/services_captiveportal.php:1056
+#: src/usr/local/www/services_captiveportal.php:1058
 msgid "Portal page contents"
 msgstr "Содержание страницы портала"
 
-#: src/usr/local/www/services_captiveportal.php:1059
+#: src/usr/local/www/services_captiveportal.php:1061
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -21115,21 +21128,21 @@ msgstr ""
 "&quot;accept&quot; type=&quot;submit&quot; value="
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 
-#: src/usr/local/www/services_captiveportal.php:1083
+#: src/usr/local/www/services_captiveportal.php:1085
 msgid "Current Portal Page"
 msgstr "Текущая Страницу Портала"
 
-#: src/usr/local/www/services_captiveportal.php:1100
-#: src/usr/local/www/services_captiveportal.php:1134
-#: src/usr/local/www/services_captiveportal.php:1166
+#: src/usr/local/www/services_captiveportal.php:1102
+#: src/usr/local/www/services_captiveportal.php:1136
+#: src/usr/local/www/services_captiveportal.php:1168
 msgid "Restore Default Page"
 msgstr "Восстановить Страницу по Умолчанию"
 
-#: src/usr/local/www/services_captiveportal.php:1109
+#: src/usr/local/www/services_captiveportal.php:1111
 msgid "Auth error page contents"
 msgstr "Содержание страницы ошибок аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:1112
+#: src/usr/local/www/services_captiveportal.php:1114
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -21141,15 +21154,15 @@ msgstr ""
 "\"$PORTAL_MESSAGE$\",  которые будут заменены ошибками или ответными "
 "сообщениями от сервера РАДИУС. "
 
-#: src/usr/local/www/services_captiveportal.php:1117
+#: src/usr/local/www/services_captiveportal.php:1119
 msgid "Current Auth Error Page"
 msgstr "Текущая Страница Ошибок Аутентификации"
 
-#: src/usr/local/www/services_captiveportal.php:1143
+#: src/usr/local/www/services_captiveportal.php:1145
 msgid "Logout page contents"
 msgstr "Содержание страницы Выхода"
 
-#: src/usr/local/www/services_captiveportal.php:1146
+#: src/usr/local/www/services_captiveportal.php:1148
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
@@ -21157,11 +21170,11 @@ msgstr ""
 "Содержание загруженного файла HTML/PHP отображается при успешной "
 "аутентификации, если включено выскакивающее окно выхода."
 
-#: src/usr/local/www/services_captiveportal.php:1149
+#: src/usr/local/www/services_captiveportal.php:1151
 msgid "Current Logout Page"
 msgstr "Текущая Страница Выхода"
 
-#: src/usr/local/www/services_captiveportal.php:1182
+#: src/usr/local/www/services_captiveportal.php:1184
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -21469,7 +21482,7 @@ msgstr "MAC адрес Портала Авторизации был изменё
 #: src/usr/local/www/status_logs_vpn.php:139
 #: src/usr/local/www/status_logs_vpn.php:366
 #: src/usr/local/www/system_groupmanager.php:226
-#: src/usr/local/www/system_usermanager.php:453
+#: src/usr/local/www/system_usermanager.php:465
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:78
 msgid "Action"
 msgstr "Действие"
@@ -22819,14 +22832,14 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:857
-#: src/usr/local/www/vpn_openvpn_server.php:1238
+#: src/usr/local/www/vpn_openvpn_server.php:1213
 msgid "NTP Server 1"
 msgstr "Сервер NTP 1"
 
 #: src/usr/local/www/services_dhcp.php:1187
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:865
-#: src/usr/local/www/vpn_openvpn_server.php:1245
+#: src/usr/local/www/vpn_openvpn_server.php:1220
 msgid "NTP Server 2"
 msgstr "Сервер NTP 2"
 
@@ -23872,8 +23885,8 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:355
 #: src/usr/local/www/services_unbound.php:351
 #: src/usr/local/www/services_unbound.php:365
-#: src/usr/local/www/vpn_openvpn_client.php:889
-#: src/usr/local/www/vpn_openvpn_server.php:1316
+#: src/usr/local/www/vpn_openvpn_client.php:880
+#: src/usr/local/www/vpn_openvpn_server.php:1276
 msgid "Custom options"
 msgstr "Особые параметры"
 
@@ -24193,7 +24206,7 @@ msgid "The MX contains invalid characters."
 msgstr "MX запись содержит навалидные символы."
 
 #: src/usr/local/www/services_dyndns_edit.php:142
-#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:211
 #: src/usr/local/www/vpn_l2tp_users_edit.php:86
 msgid "The username contains invalid characters."
 msgstr "Имя пользователя содержит навалидные символы."
@@ -24240,6 +24253,12 @@ msgid ""
 "hostname and the domain separately, with the domain being the domain or "
 "subdomain zone being handled by the provider."
 msgstr ""
+"Укажите полностью определённое имя домена. Например: myhost.dyndns."
+"org%1$sDNS Made Easy: идентификатор динамического DNS (НЕ доменное "
+"имя)%1$she.net туннельный брокер: Укажите идентификатор туннеля.%1$sGleSYS: "
+"Укажите идентификатор записи. %1$sDNSimple: Укажите только доменное имя. "
+"%1$sNamecheap, Cloudflare, GratisDNS, Hover:  Укажите доменное имя и домен "
+"отдельно, причем зона домена или субдомена обслуживается провайдером."
 
 #: src/usr/local/www/services_dyndns_edit.php:308
 msgid "MX"
@@ -24280,8 +24299,18 @@ msgid "Verbose logging"
 msgstr "Подробное журналирование"
 
 #: src/usr/local/www/services_dyndns_edit.php:339
-msgid "CURL options"
-msgstr "опции CURL"
+msgid "HTTP API DNS Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:346
+msgid "HTTP API SSL Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:349
+msgid ""
+"When set, the server must provide a valid certificate trust chain which can "
+"be verified by this firewall."
+msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:356
 #, php-format
@@ -24292,6 +24321,12 @@ msgid ""
 "the DNS record comment.%1$sFor Custom Entries, Username and Password "
 "represent HTTP Authentication username and passwords."
 msgstr ""
+"Имя пользователя требуется для всех типов, кроме Namecheap, FreeDNS и "
+"частных записей. %1$sDNS Made Easy: идентификатор динамического DNS%1$sRoute "
+"53: Укажите идентификатор ключа доступа.%1$sGleSYS: Укажите пользоваетля API."
+" %1$sDreamhost: Укажите значение, которое появится в комментарии к записи "
+"DNS. %1$sДля Частных записей Имя пользователя и Пароль представляют из себя "
+"bмя пользователя и пароль для аутентификации HTTP."
 
 #: src/usr/local/www/services_dyndns_edit.php:368
 #, php-format
@@ -24301,6 +24336,10 @@ msgid ""
 "Secret Access Key.%1$sGleSYS: Enter the API key.%1$sDreamhost: Enter the API "
 "Key.%1$sDNSimple: Enter the API token."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Укажите \"Токен аутентификации\", данный вам "
+"FreeDNS. %1$sDNS Made Easy: Пароль Динамического DNS%1$sRoute 53: Укажите "
+"Секрет Ключа Доступа.%1$sGleSYS: Укажите ключ API.%1$sDreamhost: Укажите "
+"ключ API.%1$sDNSimple: Укажите токен API.  "
 
 #: src/usr/local/www/services_dyndns_edit.php:377
 msgid "Zone ID"
@@ -24846,7 +24885,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_pps.php:162
 #: src/usr/local/www/status_ntpd.php:298
 msgid "Stratum"
-msgstr "Стара"
+msgstr "Страта"
 
 #: src/usr/local/www/services_ntpd_pps.php:165
 msgid ""
@@ -24997,7 +25036,7 @@ msgid "*Remote Address Range"
 msgstr "*Удаленный диапазон адресов"
 
 #: src/usr/local/www/services_pppoe_edit.php:332
-#: src/usr/local/www/vpn_l2tp.php:230
+#: src/usr/local/www/vpn_l2tp.php:241
 msgid "Specify the starting address for the client IP address subnet."
 msgstr "Укажите начальный адрес подсети IP-адресов клиента."
 
@@ -25027,7 +25066,7 @@ msgstr ""
 ""
 
 #: src/usr/local/www/services_pppoe_edit.php:374
-#: src/usr/local/www/vpn_l2tp.php:288
+#: src/usr/local/www/vpn_l2tp.php:299
 msgid "Sends accounting packets to the RADIUS server."
 msgstr "Отправляет учетные пакеты на сервер RADIUS."
 
@@ -25083,7 +25122,7 @@ msgid "Primary RADIUS Server Shared Secret"
 msgstr "Секретный Ключ Основного RADIUS Сервера"
 
 #: src/usr/local/www/services_pppoe_edit.php:434
-#: src/usr/local/www/vpn_l2tp.php:301
+#: src/usr/local/www/vpn_l2tp.php:312
 msgid ""
 "Enter the shared secret that will be used to authenticate to the RADIUS "
 "server."
@@ -25127,7 +25166,7 @@ msgid "RFC2136 Clients"
 msgstr "Клиенты RFC2136"
 
 #: src/usr/local/www/services_rfc2136.php:177
-#: src/usr/local/www/vpn_openvpn_client.php:972
+#: src/usr/local/www/vpn_openvpn_client.php:963
 msgid "Edit client"
 msgstr "Редактировать клиента"
 
@@ -25140,7 +25179,7 @@ msgid "Enable client"
 msgstr "Активировать клиента"
 
 #: src/usr/local/www/services_rfc2136.php:186
-#: src/usr/local/www/vpn_openvpn_client.php:973
+#: src/usr/local/www/vpn_openvpn_client.php:964
 msgid "Delete client"
 msgstr "Удалить клиента"
 
@@ -26332,7 +26371,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:364
 msgid "Disable Auto-added Host Entries"
-msgstr ""
+msgstr "Отключить Автоматическое добавление Записей Хостов."
 
 #: src/usr/local/www/services_unbound_advanced.php:367
 #, php-format
@@ -26342,6 +26381,10 @@ msgid ""
 "%1$sSystem: General Setup%2$s. This disables the auto generation of these "
 "entries."
 msgstr ""
+"По умолчанию, первичные адреса IPv4 и IPv6  межсетевого экрана добавляются в "
+"качестве записей для системного домена данного межсетевого экрана, как это "
+"настроено в %1$sСистема: Общие Настройки%2$s. Данная опция отключает "
+"автоматическое создание таких записей."
 
 #: src/usr/local/www/services_unbound_advanced.php:371
 msgid "Experimental Bit 0x20 Support"
@@ -27788,11 +27831,11 @@ msgstr "Нет логов для отображения на экране."
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_settings.php:186
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 msgid "VPN"
 msgstr "VPN"
 
@@ -28431,6 +28474,7 @@ msgstr "Логины VPN"
 
 #: src/usr/local/www/status_logs_vpn.php:140
 #: src/usr/local/www/status_logs_vpn.php:385
+#: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:217
@@ -28997,7 +29041,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:620
 #: src/usr/local/www/system_user_settings.php:168
-#: src/usr/local/www/system_usermanager.php:974
+#: src/usr/local/www/system_usermanager.php:985
 #, php-format
 msgid "%sUser-created themes are unsupported, use at your own risk."
 msgstr ""
@@ -30805,8 +30849,8 @@ msgstr "Сервер Аутентификации %s удалён."
 #: src/usr/local/www/system_certmanager.php:535
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
-#: src/usr/local/www/system_usermanager.php:189
-#: src/usr/local/www/system_usermanager.php:903
+#: src/usr/local/www/system_usermanager.php:201
+#: src/usr/local/www/system_usermanager.php:914
 msgid "Descriptive name"
 msgstr "Описательное имя"
 
@@ -30881,23 +30925,23 @@ msgstr "IPv6 не работает для аутентификации РАДИ�
 #: src/usr/local/www/system_authservers.php:431
 #: src/usr/local/www/system_authservers.php:437
 #: src/usr/local/www/system_groupmanager.php:291
-#: src/usr/local/www/system_groupmanager_addprivs.php:136
-#: src/usr/local/www/system_usermanager.php:583
-#: src/usr/local/www/system_usermanager_addprivs.php:133
+#: src/usr/local/www/system_groupmanager_addprivs.php:137
+#: src/usr/local/www/system_usermanager.php:595
+#: src/usr/local/www/system_usermanager_addprivs.php:129
 #: src/usr/local/www/system_usermanager_settings.php:185
 msgid "Authentication Servers"
 msgstr "Серверы Аутентификации"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:288
-#: src/usr/local/www/system_groupmanager_addprivs.php:133
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager.php:580
-#: src/usr/local/www/system_usermanager.php:590
-#: src/usr/local/www/system_usermanager_addprivs.php:42
-#: src/usr/local/www/system_usermanager_addprivs.php:130
+#: src/usr/local/www/system_groupmanager_addprivs.php:134
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager.php:592
+#: src/usr/local/www/system_usermanager.php:602
+#: src/usr/local/www/system_usermanager_addprivs.php:38
+#: src/usr/local/www/system_usermanager_addprivs.php:126
 #: src/usr/local/www/system_usermanager_settings.php:182
-#: src/usr/local/www/vpn_l2tp.php:183 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:194 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users.php:84
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
@@ -30908,10 +30952,10 @@ msgstr "Пользователи"
 #: src/usr/local/www/system_groupmanager.php:289
 #: src/usr/local/www/system_groupmanager.php:297
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_groupmanager_addprivs.php:134
-#: src/usr/local/www/system_usermanager.php:581
-#: src/usr/local/www/system_usermanager.php:600
-#: src/usr/local/www/system_usermanager_addprivs.php:131
+#: src/usr/local/www/system_groupmanager_addprivs.php:135
+#: src/usr/local/www/system_usermanager.php:593
+#: src/usr/local/www/system_usermanager.php:612
+#: src/usr/local/www/system_usermanager_addprivs.php:127
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
 msgstr "Группы"
@@ -30921,12 +30965,12 @@ msgid "Server Name"
 msgstr "Имя Сервера"
 
 #: src/usr/local/www/system_authservers.php:457
-#: src/usr/local/www/vpn_openvpn_server.php:1410
+#: src/usr/local/www/vpn_openvpn_server.php:1370
 msgid "Edit server"
 msgstr "Редактировать серверы"
 
 #: src/usr/local/www/system_authservers.php:458
-#: src/usr/local/www/vpn_openvpn_server.php:1411
+#: src/usr/local/www/vpn_openvpn_server.php:1371
 msgid "Delete server"
 msgstr "Удалить сервер"
 
@@ -31206,16 +31250,16 @@ msgstr ""
 #: src/usr/local/www/system_camanager.php:201
 #: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_certmanager.php:274
-#: src/usr/local/www/system_usermanager.php:191
-#: src/usr/local/www/system_usermanager.php:917
+#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:928
 msgid "Key length"
 msgstr "Длина ключа"
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
 #: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_usermanager.php:192
-#: src/usr/local/www/system_usermanager.php:937
+#: src/usr/local/www/system_usermanager.php:204
+#: src/usr/local/www/system_usermanager.php:948
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Lifetime"
 msgstr "Время жизни"
@@ -31555,8 +31599,8 @@ msgid "Key data"
 msgstr "Данные ключа"
 
 #: src/usr/local/www/system_certmanager.php:256
-#: src/usr/local/www/system_usermanager.php:190
-#: src/usr/local/www/system_usermanager.php:910
+#: src/usr/local/www/system_usermanager.php:202
+#: src/usr/local/www/system_usermanager.php:921
 msgid "Certificate authority"
 msgstr "Центр сертификации"
 
@@ -31577,6 +31621,8 @@ msgstr "Конечные данные Сертификата"
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr ""
+"Публичный ключ сертификата не соответствует запросу на подписание публичного "
+"ключа."
 
 #: src/usr/local/www/system_certmanager.php:638
 msgid "Add/Sign a New Certificate"
@@ -31693,6 +31739,9 @@ msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name."
 msgstr ""
+"Укажите дополнительные идентификаторы для сертификата в списке. Поле "
+"Обычного Имени (CN) автоматически добавляется к сертификату как "
+"Альтернативное Имя."
 
 #: src/usr/local/www/system_certmanager.php:910
 msgid "External Signing Request"
@@ -31747,15 +31796,15 @@ msgstr "Внешний -  ожидает подпись"
 
 #: src/usr/local/www/system_certmanager.php:1154
 msgid "SAN: "
-msgstr ""
+msgstr "SAN: "
 
 #: src/usr/local/www/system_certmanager.php:1159
 msgid "KU: "
-msgstr ""
+msgstr "KU: "
 
 #: src/usr/local/www/system_certmanager.php:1164
 msgid "EKU: "
-msgstr ""
+msgstr "EKU: "
 
 #: src/usr/local/www/system_certmanager.php:1189
 msgid "User Cert"
@@ -31843,8 +31892,8 @@ msgstr "Данные списка отозванных сертификатов"
 
 #: src/usr/local/www/system_crlmanager.php:205
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_client.php:330
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_client.php:329
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
 msgstr "Центр Сертификации"
 
@@ -31919,9 +31968,10 @@ msgid "Choose a Certificate to Revoke"
 msgstr "Выберите Сертификат который нужно Отозвать"
 
 #: src/usr/local/www/system_crlmanager.php:526
-#: src/usr/local/www/system_usermanager.php:853
+#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:872
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate"
 msgstr "Сертификат"
 
@@ -32416,12 +32466,12 @@ msgid "Another entry with the same group name already exists."
 msgstr "Другая запись с таким именем группы уже существует."
 
 #: src/usr/local/www/system_groupmanager.php:238
-#: src/usr/local/www/system_usermanager.php:472
+#: src/usr/local/www/system_usermanager.php:484
 msgid "(admin privilege)"
 msgstr "(привилегия администратора)"
 
 #: src/usr/local/www/system_groupmanager.php:242
-#: src/usr/local/www/system_usermanager.php:478
+#: src/usr/local/www/system_usermanager.php:490
 msgid "Delete Privilege"
 msgstr "Удалить Привилегию"
 
@@ -32459,7 +32509,7 @@ msgid "Group description, for administrative information only"
 msgstr "Описание группы, только для административной информации"
 
 #: src/usr/local/www/system_groupmanager.php:419
-#: src/usr/local/www/system_usermanager.php:793
+#: src/usr/local/www/system_usermanager.php:805
 msgid "Group membership"
 msgstr "Членство в группе"
 
@@ -32476,11 +32526,11 @@ msgid "Move to \"Not members"
 msgstr "Переместить в \"Не Участники\""
 
 #: src/usr/local/www/system_groupmanager.php:468
-#: src/usr/local/www/system_groupmanager_addprivs.php:158
-#: src/usr/local/www/system_groupmanager_addprivs.php:167
-#: src/usr/local/www/system_usermanager.php:846
-#: src/usr/local/www/system_usermanager_addprivs.php:147
-#: src/usr/local/www/system_usermanager_addprivs.php:156
+#: src/usr/local/www/system_groupmanager_addprivs.php:169
+#: src/usr/local/www/system_groupmanager_addprivs.php:178
+#: src/usr/local/www/system_usermanager.php:858
+#: src/usr/local/www/system_usermanager_addprivs.php:153
+#: src/usr/local/www/system_usermanager_addprivs.php:162
 msgid "Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items."
 msgstr ""
 "Удерживайте нажатой клавишу CTRL (ПК) / COMMAND (Mac), чтобы выбрать "
@@ -32491,40 +32541,46 @@ msgid "Assigned Privileges"
 msgstr "Назначенные Привилегии"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 msgid "Add Privileges"
 msgstr "Добавить Привелегии"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:64
-#: src/usr/local/www/system_usermanager_addprivs.php:66
+#: src/usr/local/www/system_groupmanager_addprivs.php:65
+#: src/usr/local/www/system_usermanager_addprivs.php:62
 msgid "Selected privileges"
 msgstr "Выбрать Привелегии"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:149
-msgid "Add Privileges for "
-msgstr "Добавить Привелегии для"
+#: src/usr/local/www/system_groupmanager_addprivs.php:150
+msgid "Group Privileges"
+msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:153
-#: src/usr/local/www/system_usermanager_addprivs.php:142
+#: src/usr/local/www/system_groupmanager_addprivs.php:158
+#: src/usr/local/www/vpn_ipsec_mobile.php:663
+#: src/usr/local/www/vpn_ipsec_mobile.php:672
+msgid "Group"
+msgstr "Группа"
+
+#: src/usr/local/www/system_groupmanager_addprivs.php:164
+#: src/usr/local/www/system_usermanager_addprivs.php:148
 msgid "*Assigned privileges"
 msgstr "*Назначенные Привилегии"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:162
-#: src/usr/local/www/system_usermanager_addprivs.php:151
+#: src/usr/local/www/system_groupmanager_addprivs.php:173
+#: src/usr/local/www/system_usermanager_addprivs.php:157
 msgid "Shadow"
 msgstr "Тень"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:174
-#: src/usr/local/www/system_usermanager_addprivs.php:163
+#: src/usr/local/www/system_groupmanager_addprivs.php:185
+#: src/usr/local/www/system_usermanager_addprivs.php:169
 msgid "Show only the choices containing this term"
 msgstr "Показать только варианты, содержащие это условие"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:177
-#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_groupmanager_addprivs.php:188
+#: src/usr/local/www/system_usermanager_addprivs.php:172
 msgid "Privilege information"
 msgstr "Информация о привилегии"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:179
+#: src/usr/local/www/system_groupmanager_addprivs.php:190
 msgid ""
 "The following privileges effectively give administrator-level access to "
 "users in the group because the user gains access to execute general "
@@ -32535,18 +32591,18 @@ msgstr ""
 "общих команд, редактированию системных файлов, изменению пользователей, "
 "смене паролей или тому подобному:"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:185
-#: src/usr/local/www/system_usermanager_addprivs.php:174
+#: src/usr/local/www/system_groupmanager_addprivs.php:196
+#: src/usr/local/www/system_usermanager_addprivs.php:180
 msgid "Please take care when granting these privileges."
 msgstr "Будьте осторожны при предоставлении этих привилегий."
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:215
-#: src/usr/local/www/system_usermanager_addprivs.php:214
+#: src/usr/local/www/system_groupmanager_addprivs.php:226
+#: src/usr/local/www/system_usermanager_addprivs.php:220
 msgid "Select a privilege from the list above for a description"
 msgstr ""
 "Выберите привилегию из приведенного выше списка для предоставления описания"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:235
+#: src/usr/local/www/system_groupmanager_addprivs.php:246
 msgid ""
 "(This privilege effectively gives administrator-level access to users in the "
 "group)"
@@ -32555,8 +32611,8 @@ msgstr ""
 "группе)"
 
 #: src/usr/local/www/system_hasync.php:73
-#: src/usr/local/www/vpn_openvpn_client.php:266
-#: src/usr/local/www/vpn_openvpn_client.php:344
+#: src/usr/local/www/vpn_openvpn_client.php:265
+#: src/usr/local/www/vpn_openvpn_client.php:343
 msgid "Password and confirmation must match."
 msgstr "Пароль и его подтверждение должны совпадать."
 
@@ -33019,7 +33075,7 @@ msgid "User Settings for "
 msgstr "Настройки Пользователя для"
 
 #: src/usr/local/www/system_usermanager.php:92
-#: src/usr/local/www/system_usermanager.php:122
+#: src/usr/local/www/system_usermanager.php:134
 #, php-format
 msgid ""
 "Cannot delete user %s because you are currently logged in as that user."
@@ -33028,110 +33084,110 @@ msgstr ""
 "пользователем."
 
 #: src/usr/local/www/system_usermanager.php:98
-#: src/usr/local/www/system_usermanager.php:137
+#: src/usr/local/www/system_usermanager.php:149
 #, php-format
 msgid "User %s successfully deleted."
 msgstr "Пользователь %s успешно удалён."
 
-#: src/usr/local/www/system_usermanager.php:131
+#: src/usr/local/www/system_usermanager.php:143
 #, php-format
 msgid "Cannot delete user %s because it is a system user."
 msgstr "Не могу удалить пользователя %s, так как это системный пользователь. "
 
-#: src/usr/local/www/system_usermanager.php:139
+#: src/usr/local/www/system_usermanager.php:151
 #, php-format
 msgid "Users %s successfully deleted."
 msgstr "Пользователи %s успешно удалены."
 
-#: src/usr/local/www/system_usermanager.php:158
+#: src/usr/local/www/system_usermanager.php:170
 #, php-format
 msgid "Certificate %s association removed."
 msgstr "Ассоциация с сертификатом %s удалена."
 
-#: src/usr/local/www/system_usermanager.php:167
+#: src/usr/local/www/system_usermanager.php:179
 #, php-format
 msgid "Privilege %s removed."
 msgstr "Привилегия %s удалена."
 
-#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:215
 msgid "The username is longer than 16 characters."
 msgstr "Имя пользователя длиннее 16 символов."
 
-#: src/usr/local/www/system_usermanager.php:207
+#: src/usr/local/www/system_usermanager.php:219
 #: src/usr/local/www/system_usermanager_passwordmg.php:44
 #: src/usr/local/www/vpn_l2tp_users_edit.php:94
 msgid "The passwords do not match."
 msgstr "Пароли не совпадают"
 
-#: src/usr/local/www/system_usermanager.php:211
+#: src/usr/local/www/system_usermanager.php:223
 msgid "IPsec Pre-Shared Key contains invalid characters."
 msgstr "Заданный ключ IPsec содержит недопустимые символы."
 
-#: src/usr/local/www/system_usermanager.php:218
+#: src/usr/local/www/system_usermanager.php:230
 msgid "One or more invalid groups was submitted."
 msgstr "Была указана одна или несколько недействительных групп."
 
-#: src/usr/local/www/system_usermanager.php:232
+#: src/usr/local/www/system_usermanager.php:244
 #: src/usr/local/www/vpn_l2tp_users_edit.php:104
 msgid "Another entry with the same username already exists."
 msgstr "Другая запись с таким именем пользователя уже существует."
 
-#: src/usr/local/www/system_usermanager.php:243
+#: src/usr/local/www/system_usermanager.php:255
 msgid "That username is reserved by the system."
 msgstr "Это имя пользователя зарезервировано системой."
 
-#: src/usr/local/www/system_usermanager.php:263
+#: src/usr/local/www/system_usermanager.php:275
 msgid "Invalid expiration date format; use MM/DD/YYYY instead."
 msgstr ""
 "Недопустимый формат срока действия; Используйте вместо этого ММ/ДД/ГГГГ."
 
-#: src/usr/local/www/system_usermanager.php:270
+#: src/usr/local/www/system_usermanager.php:282
 msgid "Invalid internal Certificate Authority"
 msgstr "Недопустимый внутренний Центр Сертификации"
 
-#: src/usr/local/www/system_usermanager.php:450
+#: src/usr/local/www/system_usermanager.php:462
 msgid "Inherited from"
 msgstr "Унаследовано от"
 
-#: src/usr/local/www/system_usermanager.php:492
+#: src/usr/local/www/system_usermanager.php:504
 msgid "Security notice: This user effectively has administrator-level access"
 msgstr ""
 "Уведомление о безопасности. Этот пользователь имеет доступ на уровня "
 "администратора."
 
-#: src/usr/local/www/system_usermanager.php:519
+#: src/usr/local/www/system_usermanager.php:531
 msgid "CA"
 msgstr "Центр Сертификации"
 
-#: src/usr/local/www/system_usermanager.php:538
+#: src/usr/local/www/system_usermanager.php:550
 msgid "Remove this certificate association? (Certificate will not be deleted)"
 msgstr "Удалить эту ассоциацию сертификатов? (Сертификат не будет удален)"
 
-#: src/usr/local/www/system_usermanager.php:598
-#: src/usr/local/www/system_usermanager.php:766
+#: src/usr/local/www/system_usermanager.php:610
+#: src/usr/local/www/system_usermanager.php:778
 msgid "Full name"
 msgstr "Полное имя"
 
-#: src/usr/local/www/system_usermanager.php:624
+#: src/usr/local/www/system_usermanager.php:636
 msgid "Enabled"
 msgstr "Включен"
 
-#: src/usr/local/www/system_usermanager.php:627
+#: src/usr/local/www/system_usermanager.php:639
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:110
 msgid "Edit user"
 msgstr "Редактировать пользователя"
 
-#: src/usr/local/www/system_usermanager.php:629
+#: src/usr/local/www/system_usermanager.php:641
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Delete user"
 msgstr "Удалить пользователя"
 
-#: src/usr/local/www/system_usermanager.php:645
+#: src/usr/local/www/system_usermanager.php:657
 msgid "Delete selected users"
 msgstr "Удалить выбранных пользователей"
 
-#: src/usr/local/www/system_usermanager.php:654
+#: src/usr/local/www/system_usermanager.php:666
 msgid ""
 "Additional users can be added here. User permissions for accessing the "
 "webConfigurator can be assigned directly or inherited from group memberships."
@@ -33142,7 +33198,7 @@ msgstr ""
 "наследоваться от членства в группах. Некоторые свойства системных объектов "
 "могут быть изменены, но не могут быть удалены."
 
-#: src/usr/local/www/system_usermanager.php:657
+#: src/usr/local/www/system_usermanager.php:669
 msgid ""
 "Accounts added here are also used for other parts of the system such as "
 "OpenVPN, IPsec, and Captive Portal."
@@ -33150,27 +33206,27 @@ msgstr ""
 "Добавленные здесь учетные записи также используются для других частей "
 "системы, таких как OpenVPN, IPsec и Портал Авторизации."
 
-#: src/usr/local/www/system_usermanager.php:705
+#: src/usr/local/www/system_usermanager.php:717
 msgid "User Properties"
 msgstr "Свойства Пользователя"
 
-#: src/usr/local/www/system_usermanager.php:708
+#: src/usr/local/www/system_usermanager.php:720
 msgid "Defined by"
 msgstr "Определено"
 
-#: src/usr/local/www/system_usermanager.php:758
+#: src/usr/local/www/system_usermanager.php:770
 msgid "Confirm Password"
 msgstr "Подтвердить Пароль"
 
-#: src/usr/local/www/system_usermanager.php:769
+#: src/usr/local/www/system_usermanager.php:781
 msgid "User's full name, for administrative information only"
 msgstr "Полное имя пользователя, только для административной информации"
 
-#: src/usr/local/www/system_usermanager.php:777
+#: src/usr/local/www/system_usermanager.php:789
 msgid "Expiration date"
 msgstr "Дата истечения срока действия"
 
-#: src/usr/local/www/system_usermanager.php:780
+#: src/usr/local/www/system_usermanager.php:792
 msgid ""
 "Leave blank if the account shouldn't expire, otherwise enter the expiration "
 "date as MM/DD/YYYY"
@@ -33178,39 +33234,45 @@ msgstr ""
 "Оставьте поле пустым, если срок действия учетной записи не истекает, в "
 "противном случае введите дату истечения срока действия в формате ММ/ДД/ГГГГ"
 
-#: src/usr/local/www/system_usermanager.php:785
+#: src/usr/local/www/system_usermanager.php:797
 msgid "Custom Settings"
 msgstr "Пользовательские Настройки"
 
-#: src/usr/local/www/system_usermanager.php:818
+#: src/usr/local/www/system_usermanager.php:830
 msgid "Not member of"
 msgstr "Не участник"
 
-#: src/usr/local/www/system_usermanager.php:826
+#: src/usr/local/www/system_usermanager.php:838
 msgid "Member of"
 msgstr "Участник"
 
-#: src/usr/local/www/system_usermanager.php:834
+#: src/usr/local/www/system_usermanager.php:846
 msgid "Move to \"Member of\" list"
 msgstr "Переместить в список \"Участник\""
 
-#: src/usr/local/www/system_usermanager.php:841
+#: src/usr/local/www/system_usermanager.php:853
 msgid "Move to \"Not member of\" list"
 msgstr "Переместить в список \"Не участник\""
 
-#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:873
+msgid ""
+"No private CAs found. A private CA is required to create a new user "
+"certificate. Save the user first to import an external certificate."
+msgstr ""
+
+#: src/usr/local/www/system_usermanager.php:886
 msgid "Effective Privileges"
 msgstr "Активные Привелегии"
 
-#: src/usr/local/www/system_usermanager.php:876
+#: src/usr/local/www/system_usermanager.php:896
 msgid "User Certificates"
 msgstr "Сертификаты Пользователя"
 
-#: src/usr/local/www/system_usermanager.php:888
+#: src/usr/local/www/system_usermanager.php:908
 msgid "Create Certificate for User"
 msgstr "Создать Сертификат для Пользователя"
 
-#: src/usr/local/www/system_usermanager.php:930
+#: src/usr/local/www/system_usermanager.php:941
 #, php-format
 msgid ""
 "The larger the key, the more security it offers, but larger keys take "
@@ -33226,31 +33288,31 @@ msgstr ""
 "наиболее общий выбор - 2048 бит, а максимальный - 4096. Для получения "
 "дополнительной информации смотрите %1$s."
 
-#: src/usr/local/www/system_usermanager.php:948
+#: src/usr/local/www/system_usermanager.php:959
 msgid "Keys"
 msgstr "Ключи"
 
-#: src/usr/local/www/system_usermanager.php:952
+#: src/usr/local/www/system_usermanager.php:963
 msgid "Authorized keys"
 msgstr "Авторизованные ключи"
 
-#: src/usr/local/www/system_usermanager.php:959
+#: src/usr/local/www/system_usermanager.php:970
 msgid "Authorized SSH Keys"
 msgstr "Авторизованные ключи SSH"
 
-#: src/usr/local/www/system_usermanager.php:961
+#: src/usr/local/www/system_usermanager.php:972
 msgid "Enter authorized SSH keys for this user"
 msgstr "Введите для этого пользователя авторизованные ключи SSH"
 
-#: src/usr/local/www/system_usermanager.php:965
+#: src/usr/local/www/system_usermanager.php:976
 msgid "IPsec Pre-Shared Key"
 msgstr "Предварительно созданный ключ IPsec"
 
-#: src/usr/local/www/system_usermanager_addprivs.php:138
+#: src/usr/local/www/system_usermanager_addprivs.php:134
 msgid "User Privileges"
 msgstr "Привелегии Пользователя"
 
-#: src/usr/local/www/system_usermanager_addprivs.php:168
+#: src/usr/local/www/system_usermanager_addprivs.php:174
 msgid ""
 "The following privileges effectively give the user administrator-level "
 "access  because the user gains access to execute general commands, edit "
@@ -33261,7 +33323,7 @@ msgstr ""
 "команд, редактированию системных файлов, изменению пользователей, смене "
 "паролей или тому подобному:"
 
-#: src/usr/local/www/system_usermanager_addprivs.php:234
+#: src/usr/local/www/system_usermanager_addprivs.php:240
 msgid ""
 "(This privilege effectively gives administrator-level access to the user)"
 msgstr ""
@@ -33621,7 +33683,7 @@ msgstr "Редактировать ключ"
 
 #: src/usr/local/www/vpn_ipsec_keys.php:156
 msgid "Delete key"
-msgstr "Удалиьт ключ"
+msgstr "Удалить ключ"
 
 #: src/usr/local/www/vpn_ipsec_keys.php:174
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:168
@@ -33849,8 +33911,8 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:561
 #: src/usr/local/www/vpn_openvpn_csc.php:442
-#: src/usr/local/www/vpn_openvpn_server.php:1168
-#: src/usr/local/www/vpn_openvpn_server.php:1175
+#: src/usr/local/www/vpn_openvpn_server.php:1143
+#: src/usr/local/www/vpn_openvpn_server.php:1150
 msgid "DNS Default Domain"
 msgstr "Домен DNS по Умолчанию"
 
@@ -33880,11 +33942,6 @@ msgstr "Сервер #"
 #: src/usr/local/www/vpn_ipsec_mobile.php:658
 msgid "Phase2 PFS Group"
 msgstr "PFS Группа Фазы2"
-
-#: src/usr/local/www/vpn_ipsec_mobile.php:663
-#: src/usr/local/www/vpn_ipsec_mobile.php:672
-msgid "Group"
-msgstr "Группа"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:681
 msgid "Login Banner"
@@ -34088,9 +34145,9 @@ msgstr "Редактировать Фазу 1"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:653
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
-#: src/usr/local/www/vpn_openvpn_client.php:508
+#: src/usr/local/www/vpn_openvpn_client.php:506
 #: src/usr/local/www/vpn_openvpn_csc.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:689
+#: src/usr/local/www/vpn_openvpn_server.php:671
 msgid "General Information"
 msgstr "Общая Информация"
 
@@ -34130,10 +34187,6 @@ msgstr "Введите публичный IP-адрес или имя хоста
 #: src/usr/local/www/vpn_ipsec_phase1.php:701
 msgid "Phase 1 Proposal (Authentication)"
 msgstr "Предложение по Фазе 1 (Аутентификация)"
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:705
-msgid "*Authentication Method"
-msgstr "*Метод Аутентификации"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:806
@@ -34181,10 +34234,10 @@ msgstr ""
 "Выберите сертификат, ранее сконфигурированный в Менеджере Сертификатов."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:774
-#: src/usr/local/www/vpn_openvpn_client.php:682
-#: src/usr/local/www/vpn_openvpn_client.php:688
-#: src/usr/local/www/vpn_openvpn_server.php:817
-#: src/usr/local/www/vpn_openvpn_server.php:823
+#: src/usr/local/www/vpn_openvpn_client.php:672
+#: src/usr/local/www/vpn_openvpn_client.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:799
+#: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
 msgstr "*Центра Авторизации Удаленного Узла"
 
@@ -34201,8 +34254,8 @@ msgid "Phase 1 Proposal (Algorithms)"
 msgstr "Предложение по Фазе 1 (Алгоритмы)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:783
-#: src/usr/local/www/vpn_openvpn_client.php:731
-#: src/usr/local/www/vpn_openvpn_server.php:910
+#: src/usr/local/www/vpn_openvpn_client.php:721
+#: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr "*Алгоритм Шифрования"
 
@@ -34683,19 +34736,34 @@ msgstr "Количество пользователей L2TP должно быт
 msgid "The specified server address is equal to the LAN interface address."
 msgstr "Указанный адрес сервера совпадает с адресом интерфейса LAN."
 
-#: src/usr/local/www/vpn_l2tp.php:160
+#: src/usr/local/www/vpn_l2tp.php:107
+msgid "The field 'Primary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:110
+msgid ""
+"The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:113
+msgid ""
+"The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
+"is empty."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
 msgstr "Конфигурация L2TP VPN изменнена."
 
-#: src/usr/local/www/vpn_l2tp.php:188
+#: src/usr/local/www/vpn_l2tp.php:199
 msgid "Enable L2TP"
 msgstr "Включить L2TP"
 
-#: src/usr/local/www/vpn_l2tp.php:218
+#: src/usr/local/www/vpn_l2tp.php:229
 msgid "*Server address"
 msgstr "*Адрес сервера"
 
-#: src/usr/local/www/vpn_l2tp.php:221
+#: src/usr/local/www/vpn_l2tp.php:232
 #, php-format
 msgid ""
 "Enter the IP address the L2TP server should give to clients for use as their "
@@ -34709,19 +34777,19 @@ msgstr ""
 "следует указывать IP адрес, используемый в данный момент на этом межсетевом "
 "экране."
 
-#: src/usr/local/www/vpn_l2tp.php:227
+#: src/usr/local/www/vpn_l2tp.php:238
 msgid "*Remote address range"
 msgstr "*Удаленный диапазон адресов"
 
-#: src/usr/local/www/vpn_l2tp.php:234
+#: src/usr/local/www/vpn_l2tp.php:245
 msgid "*Number of L2TP users"
 msgstr "*Количество пользователей L2TP"
 
-#: src/usr/local/www/vpn_l2tp.php:241
+#: src/usr/local/www/vpn_l2tp.php:252
 msgid "Secret"
 msgstr "Пароль"
 
-#: src/usr/local/www/vpn_l2tp.php:244
+#: src/usr/local/www/vpn_l2tp.php:255
 msgid ""
 "Specify optional secret shared between peers. Required on some devices/"
 "setups."
@@ -34729,23 +34797,23 @@ msgstr ""
 "Укажите секретный пароль, который будет использоваться между узлами. "
 "Требуется для некоторых устройств/установок."
 
-#: src/usr/local/www/vpn_l2tp.php:248
+#: src/usr/local/www/vpn_l2tp.php:259
 msgid "*Authentication type"
 msgstr "*Тип аутентификации"
 
-#: src/usr/local/www/vpn_l2tp.php:255
+#: src/usr/local/www/vpn_l2tp.php:266
 msgid "Specifies the protocol to use for authentication."
 msgstr "Определяет протокол, используемый для аутентификации."
 
-#: src/usr/local/www/vpn_l2tp.php:259
+#: src/usr/local/www/vpn_l2tp.php:270
 msgid "Primary L2TP DNS server"
 msgstr "Первичный  L2TP DNS сервер"
 
-#: src/usr/local/www/vpn_l2tp.php:266
+#: src/usr/local/www/vpn_l2tp.php:277
 msgid "Secondary L2TP DNS server"
 msgstr "Вторичный L2TP DNS сервер"
 
-#: src/usr/local/www/vpn_l2tp.php:281
+#: src/usr/local/www/vpn_l2tp.php:292
 msgid ""
 "When set, all users will be authenticated using the RADIUS server specified "
 "below. The local user database will not be used."
@@ -34754,23 +34822,23 @@ msgstr ""
 "сервер, указанный ниже. Локальная база данных пользователей не будет "
 "использоваться."
 
-#: src/usr/local/www/vpn_l2tp.php:292
+#: src/usr/local/www/vpn_l2tp.php:303
 msgid "*Server"
 msgstr "*Сервер"
 
-#: src/usr/local/www/vpn_l2tp.php:294
+#: src/usr/local/www/vpn_l2tp.php:305
 msgid "Enter the IP address of the RADIUS server."
 msgstr "Введите IP адрес РАДИУС сервера."
 
-#: src/usr/local/www/vpn_l2tp.php:298
+#: src/usr/local/www/vpn_l2tp.php:309
 msgid "*Secret"
 msgstr "*Пароль"
 
-#: src/usr/local/www/vpn_l2tp.php:305
+#: src/usr/local/www/vpn_l2tp.php:316
 msgid "RADIUS issued IPs"
 msgstr "IP адреса, выданные РАДИУС'ом"
 
-#: src/usr/local/www/vpn_l2tp.php:316
+#: src/usr/local/www/vpn_l2tp.php:327
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from L2TP clients."
 msgstr ""
@@ -34835,13 +34903,13 @@ msgstr "Удалён пустой клиент OpenVPN"
 msgid "Client successfully deleted."
 msgstr "Клиент успешно удалён."
 
-#: src/usr/local/www/vpn_openvpn_client.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:272
+#: src/usr/local/www/vpn_openvpn_client.php:196
+#: src/usr/local/www/vpn_openvpn_server.php:265
 msgid "The selected Encryption Algorithm is not valid."
 msgstr "Выбранный Алгоритм Шифрования невалиден."
 
-#: src/usr/local/www/vpn_openvpn_client.php:202
-#: src/usr/local/www/vpn_openvpn_server.php:277
+#: src/usr/local/www/vpn_openvpn_client.php:201
+#: src/usr/local/www/vpn_openvpn_server.php:270
 msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
 "IP address cannot be selected."
@@ -34849,8 +34917,8 @@ msgstr ""
 "Семейство протокола и IP адреса не совпадают. Протокол IPv6 и адрес IPv4 не "
 "могут быть выбраны."
 
-#: src/usr/local/www/vpn_openvpn_client.php:204
-#: src/usr/local/www/vpn_openvpn_server.php:279
+#: src/usr/local/www/vpn_openvpn_client.php:203
+#: src/usr/local/www/vpn_openvpn_server.php:272
 msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
 "IP address cannot be selected."
@@ -34858,74 +34926,74 @@ msgstr ""
 "Семейство протокола и IP адреса не совпадают. Протокол IPv4 и адрес IPv6 не "
 "могут быть выбраны."
 
-#: src/usr/local/www/vpn_openvpn_client.php:209
-#: src/usr/local/www/vpn_openvpn_server.php:284
+#: src/usr/local/www/vpn_openvpn_client.php:208
+#: src/usr/local/www/vpn_openvpn_server.php:277
 msgid ""
 "An IPv4 protocol was selected, but the selected interface has no IPv4 "
 "address."
 msgstr "Выбран протокол IPv4, но у выбранного интерфейса нет адреса IPv4."
 
-#: src/usr/local/www/vpn_openvpn_client.php:215
-#: src/usr/local/www/vpn_openvpn_server.php:290
+#: src/usr/local/www/vpn_openvpn_client.php:214
+#: src/usr/local/www/vpn_openvpn_server.php:283
 msgid ""
 "An IPv6 protocol was selected, but the selected interface has no IPv6 "
 "address."
 msgstr "Выбран протокол IPv6, но у выбранного интерфейса нет адреса IPv6."
 
-#: src/usr/local/www/vpn_openvpn_client.php:234
-#: src/usr/local/www/vpn_openvpn_server.php:335
+#: src/usr/local/www/vpn_openvpn_client.php:233
+#: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr ""
 "Указанный \"Локальный порт\" уже используется. Пожалуйста, выберите другое "
 "значение."
 
-#: src/usr/local/www/vpn_openvpn_client.php:247
-#: src/usr/local/www/vpn_openvpn_server.php:416
+#: src/usr/local/www/vpn_openvpn_client.php:246
+#: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
 msgstr "Поле \"Топология\" содержит невалидный выбор."
 
-#: src/usr/local/www/vpn_openvpn_client.php:262
+#: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
 msgstr "Имя пользователя и пароль требуются для прокси с аутентификацией."
 
-#: src/usr/local/www/vpn_openvpn_client.php:292
+#: src/usr/local/www/vpn_openvpn_client.php:291
 msgid "The bandwidth limit must be a positive numeric value."
 msgstr ""
 "Значение лимита полосы пропускания должно быть бытьположительным числом."
 
-#: src/usr/local/www/vpn_openvpn_client.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:345
+#: src/usr/local/www/vpn_openvpn_client.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:338
 msgid "The field 'Shared Key' does not appear to be valid"
 msgstr "Поле \"Общий Ключ\" невалидно."
 
-#: src/usr/local/www/vpn_openvpn_client.php:309
-#: src/usr/local/www/vpn_openvpn_server.php:352
+#: src/usr/local/www/vpn_openvpn_client.php:308
+#: src/usr/local/www/vpn_openvpn_server.php:345
 msgid "The field 'TLS Key' does not appear to be valid"
 msgstr "Поле \"Ключ TLS\" невалидно."
 
-#: src/usr/local/www/vpn_openvpn_client.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:355
+#: src/usr/local/www/vpn_openvpn_client.php:311
+#: src/usr/local/www/vpn_openvpn_server.php:348
 msgid "The field 'TLS Key Usage Mode' is not valid"
 msgstr "Поле \"Режим Использования Ключа TLS\" невалидно."
 
-#: src/usr/local/www/vpn_openvpn_client.php:317
-#: src/usr/local/www/vpn_openvpn_server.php:450
+#: src/usr/local/www/vpn_openvpn_client.php:316
+#: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
 "Алгоритм Шифрования GCM не может быть использовано в режиме Общего ключа."
 
-#: src/usr/local/www/vpn_openvpn_client.php:325
-#: src/usr/local/www/vpn_openvpn_server.php:436
+#: src/usr/local/www/vpn_openvpn_client.php:324
+#: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
 msgstr "Один или более из выбранных Алгоритмов NCP невалидны."
 
-#: src/usr/local/www/vpn_openvpn_client.php:334
-#: src/usr/local/www/vpn_openvpn_server.php:446
-#: src/usr/local/www/vpn_openvpn_server.php:896
+#: src/usr/local/www/vpn_openvpn_client.php:333
+#: src/usr/local/www/vpn_openvpn_server.php:433
+#: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Shared key"
 msgstr "Общий ключ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:340
+#: src/usr/local/www/vpn_openvpn_client.php:339
 msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
@@ -34933,58 +35001,58 @@ msgstr ""
 "Если не выбран Сертификат Клиента, должны быть указаны имя пользователя и/"
 "или пароль."
 
-#: src/usr/local/www/vpn_openvpn_client.php:358
+#: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
-msgstr ""
+msgstr "Ограничение Исходящей Полосы пропускания несовместимо с UDP Fast I/O."
 
-#: src/usr/local/www/vpn_openvpn_client.php:365
-#: src/usr/local/www/vpn_openvpn_server.php:484
+#: src/usr/local/www/vpn_openvpn_client.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
-msgstr ""
+msgstr "Заданный размер Буфера Отправки/Получения  невалиден."
 
-#: src/usr/local/www/vpn_openvpn_client.php:456
+#: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
 msgid "Updated OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Клиент OpenVPN  обновлён для сервера: %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:459
+#: src/usr/local/www/vpn_openvpn_client.php:457
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Клиент OpenVPN  добавлен для сервера: %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:474
-#: src/usr/local/www/vpn_openvpn_client.php:499
+#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:497
 #: src/usr/local/www/vpn_openvpn_csc.php:303
-#: src/usr/local/www/vpn_openvpn_server.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
 msgstr "Клиенты"
 
-#: src/usr/local/www/vpn_openvpn_client.php:500
+#: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/vpn_openvpn_csc.php:282
 #: src/usr/local/www/vpn_openvpn_csc.php:304
-#: src/usr/local/www/vpn_openvpn_server.php:679
+#: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Client Specific Overrides"
 msgstr "Специфические Настройки Клиента"
 
-#: src/usr/local/www/vpn_openvpn_client.php:515
+#: src/usr/local/www/vpn_openvpn_client.php:513
 msgid ""
 "Set this option to disable this client without removing it from the list."
 msgstr ""
 "Задайте данную опцию, чтобы отключить данный клиент, не удаляя его из списка."
 ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:519
-#: src/usr/local/www/vpn_openvpn_server.php:700
+#: src/usr/local/www/vpn_openvpn_client.php:517
+#: src/usr/local/www/vpn_openvpn_server.php:682
 msgid "*Server mode"
 msgstr "*Режим Сервера"
 
-#: src/usr/local/www/vpn_openvpn_client.php:533
-#: src/usr/local/www/vpn_openvpn_server.php:741
+#: src/usr/local/www/vpn_openvpn_client.php:531
+#: src/usr/local/www/vpn_openvpn_server.php:723
 msgid "*Device mode"
 msgstr "*Режим Устройства"
 
-#: src/usr/local/www/vpn_openvpn_client.php:536
-#: src/usr/local/www/vpn_openvpn_server.php:744
+#: src/usr/local/www/vpn_openvpn_client.php:534
+#: src/usr/local/www/vpn_openvpn_server.php:726
 #, php-format
 msgid ""
 "\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and "
@@ -34995,7 +35063,7 @@ msgstr ""
 "распространённым и совместимым со многими платформами режимом. %1$s\"tap\" "
 "режим способен нести в себе 802.3 (2 уровень ВОЛС)."
 
-#: src/usr/local/www/vpn_openvpn_client.php:544
+#: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
 "The interface used by the firewall to originate this OpenVPN client "
 "connection"
@@ -35003,11 +35071,11 @@ msgstr ""
 "Интерфейс, с которого  межсетевой экран устанавливает соединение для данного "
 "клиента OpenVPN "
 
-#: src/usr/local/www/vpn_openvpn_client.php:548
+#: src/usr/local/www/vpn_openvpn_client.php:546
 msgid "Local port"
 msgstr "Локальный порт"
 
-#: src/usr/local/www/vpn_openvpn_client.php:552
+#: src/usr/local/www/vpn_openvpn_client.php:550
 msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
@@ -35015,40 +35083,27 @@ msgstr ""
 "Задайте данную опцию, чтобы привязать к определённому порту. Оставьте  его "
 "пустым или укажите 0 для случайного динамического порта."
 
-#: src/usr/local/www/vpn_openvpn_client.php:556
+#: src/usr/local/www/vpn_openvpn_client.php:554
 msgid "*Server host or address"
 msgstr "*Узел или адрес сервера."
 
-#: src/usr/local/www/vpn_openvpn_client.php:559
+#: src/usr/local/www/vpn_openvpn_client.php:557
 msgid "The IP address or hostname of the OpenVPN server."
 msgstr "IP-адрес или имя хоста сервера OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:563
-msgid "Server hostname resolution"
-msgstr "Разрешение имени хоста сервера"
-
-#: src/usr/local/www/vpn_openvpn_client.php:566
-msgid ""
-"Continuously attempt to resolve the server host name. Useful when "
-"communicating with a server that is not permanently connected to the "
-"Internet."
-msgstr ""
-"Постоянно пытаться разрешить имя хоста сервера. Полезно при общении с "
-"сервером, не постоянно подключенным к Интернету."
-
-#: src/usr/local/www/vpn_openvpn_client.php:571
+#: src/usr/local/www/vpn_openvpn_client.php:561
 msgid "*Server port"
 msgstr "*Порт сервера"
 
-#: src/usr/local/www/vpn_openvpn_client.php:574
+#: src/usr/local/www/vpn_openvpn_client.php:564
 msgid "The port used by the server to receive client connections."
 msgstr "Порт, используемый сервером для получения клиентских подключений."
 
-#: src/usr/local/www/vpn_openvpn_client.php:578
+#: src/usr/local/www/vpn_openvpn_client.php:568
 msgid "Proxy host or address"
 msgstr "Прокси хост или адрес"
 
-#: src/usr/local/www/vpn_openvpn_client.php:581
+#: src/usr/local/www/vpn_openvpn_client.php:571
 #, php-format
 msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
@@ -35058,50 +35113,50 @@ msgstr ""
 "удаленному серверу.%1$sTCP протокол должен использоваться для клиента и "
 "сервера."
 
-#: src/usr/local/www/vpn_openvpn_client.php:586
+#: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
 msgstr "Порт прокси"
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "basic"
 msgstr "освновной"
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "ntlm"
 msgstr "ntlm"
 
-#: src/usr/local/www/vpn_openvpn_client.php:593
+#: src/usr/local/www/vpn_openvpn_client.php:583
 msgid "Proxy Authentication"
 msgstr "Аутентификаци Прокси"
 
-#: src/usr/local/www/vpn_openvpn_client.php:596
+#: src/usr/local/www/vpn_openvpn_client.php:586
 msgid "The type of authentication used by the proxy server."
 msgstr "Тип аутентификации, используемый прокси сервером."
 
-#: src/usr/local/www/vpn_openvpn_client.php:620
+#: src/usr/local/www/vpn_openvpn_client.php:610
 msgid "User Authentication Settings"
 msgstr "Настройки Аутентификации Пользователя"
 
-#: src/usr/local/www/vpn_openvpn_client.php:628
+#: src/usr/local/www/vpn_openvpn_client.php:618
 msgid "Leave empty when no user name is needed"
 msgstr "Оставьте поле пустым, если имя пользователя не требуется"
 
-#: src/usr/local/www/vpn_openvpn_client.php:635
+#: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
 msgstr "Оставьте поле пустым, если пароль не требуется"
 
-#: src/usr/local/www/vpn_openvpn_client.php:639
-#: src/usr/local/www/vpn_openvpn_server.php:771
+#: src/usr/local/www/vpn_openvpn_client.php:629
+#: src/usr/local/www/vpn_openvpn_server.php:753
 msgid "Cryptographic Settings"
 msgstr "Криптографические Настройки"
 
-#: src/usr/local/www/vpn_openvpn_client.php:643
-#: src/usr/local/www/vpn_openvpn_server.php:775
+#: src/usr/local/www/vpn_openvpn_client.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
 msgstr "Конфигурация TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:646
-#: src/usr/local/www/vpn_openvpn_server.php:778
+#: src/usr/local/www/vpn_openvpn_client.php:636
+#: src/usr/local/www/vpn_openvpn_server.php:760
 msgid ""
 "A TLS key enhances security of an OpenVPN connection by requiring both "
 "parties to have a common key before a peer can perform a TLS handshake. This "
@@ -35116,13 +35171,13 @@ msgstr ""
 "несанкционированных подключений. Ключ TLS не оказывает никакого влияния на "
 "данные туннеля."
 
-#: src/usr/local/www/vpn_openvpn_client.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:793
+#: src/usr/local/www/vpn_openvpn_client.php:651
+#: src/usr/local/www/vpn_openvpn_server.php:775
 msgid "*TLS Key"
 msgstr "*TLS Ключ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:795
+#: src/usr/local/www/vpn_openvpn_client.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:777
 #, php-format
 msgid ""
 "Paste the TLS key here.%1$sThis key is used to sign control channel packets "
@@ -35132,13 +35187,13 @@ msgstr ""
 "пакетов канала управления с сигнатурой HMAC для аутентификации при создании "
 "туннеля."
 
-#: src/usr/local/www/vpn_openvpn_client.php:668
-#: src/usr/local/www/vpn_openvpn_server.php:801
+#: src/usr/local/www/vpn_openvpn_client.php:658
+#: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
 msgstr "*Режим Использования TLS Ключа"
 
-#: src/usr/local/www/vpn_openvpn_client.php:671
-#: src/usr/local/www/vpn_openvpn_server.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:661
+#: src/usr/local/www/vpn_openvpn_server.php:786
 #, php-format
 msgid ""
 "In Authentication mode the TLS key is used only as HMAC authentication for "
@@ -35153,33 +35208,33 @@ msgstr ""
 "управления каналом, обеспечивая больше секретности и обфускации канала "
 "управления трафиком"
 
-#: src/usr/local/www/vpn_openvpn_client.php:696
-#: src/usr/local/www/vpn_openvpn_client.php:702
-#: src/usr/local/www/vpn_openvpn_server.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:837
+#: src/usr/local/www/vpn_openvpn_client.php:686
+#: src/usr/local/www/vpn_openvpn_client.php:692
+#: src/usr/local/www/vpn_openvpn_server.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:819
 msgid "Peer Certificate Revocation list"
 msgstr "Список Анулированных Сертификатов Удаленных Узлов"
 
-#: src/usr/local/www/vpn_openvpn_client.php:709
+#: src/usr/local/www/vpn_openvpn_client.php:699
 msgid "Auto generate"
 msgstr "Автоматическая генерация"
 
-#: src/usr/local/www/vpn_openvpn_client.php:716
-#: src/usr/local/www/vpn_openvpn_server.php:904
+#: src/usr/local/www/vpn_openvpn_client.php:706
+#: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
 msgstr "*Общий Ключ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:718
-#: src/usr/local/www/vpn_openvpn_server.php:906
+#: src/usr/local/www/vpn_openvpn_client.php:708
+#: src/usr/local/www/vpn_openvpn_server.php:888
 msgid "Paste the shared key here"
 msgstr "Вставьте общий ключ сюда"
 
-#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_client.php:714
 msgid "Client Certificate"
 msgstr "Сертификат Клиента"
 
-#: src/usr/local/www/vpn_openvpn_client.php:734
-#: src/usr/local/www/vpn_openvpn_server.php:913
+#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_server.php:895
 msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
 "Cryptographic Parameter (NCP) support is not available."
@@ -35187,13 +35242,13 @@ msgstr ""
 "Алгоритм шифрования, используемый для канальных пакетов данных, когда "
 "недоступна поддержка Согласования Параметров Шифрования (NCP)."
 
-#: src/usr/local/www/vpn_openvpn_client.php:738
-#: src/usr/local/www/vpn_openvpn_server.php:917
+#: src/usr/local/www/vpn_openvpn_client.php:728
+#: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable NCP"
 msgstr "Включить NCP"
 
-#: src/usr/local/www/vpn_openvpn_client.php:745
-#: src/usr/local/www/vpn_openvpn_server.php:923
+#: src/usr/local/www/vpn_openvpn_client.php:735
+#: src/usr/local/www/vpn_openvpn_server.php:905
 msgid ""
 "When both peers support NCP and have it enabled, NCP overrides the "
 "Encryption Algorithm above."
@@ -35201,13 +35256,13 @@ msgstr ""
 "Когда оба узла поддерживают NCP и он включен, NCP переопределяет алгоритм "
 "шифрования."
 
-#: src/usr/local/www/vpn_openvpn_client.php:746
-#: src/usr/local/www/vpn_openvpn_server.php:924
+#: src/usr/local/www/vpn_openvpn_client.php:736
+#: src/usr/local/www/vpn_openvpn_server.php:906
 msgid "When disabled, only the selected Encryption Algorithm is allowed."
 msgstr "Если отключено, разрешен только выбранный Алгоритм Шифрования."
 
-#: src/usr/local/www/vpn_openvpn_client.php:741
-#: src/usr/local/www/vpn_openvpn_server.php:920
+#: src/usr/local/www/vpn_openvpn_client.php:731
+#: src/usr/local/www/vpn_openvpn_server.php:902
 #, php-format
 msgid ""
 "Check this option to allow OpenVPN clients and servers to negotiate a "
@@ -35218,13 +35273,13 @@ msgstr ""
 "согласовывать совместимый набор приемлемых криптографических алгоритмов "
 "шифрования с теми, которые указаны в списке алгоритмов NCP.%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:752
-#: src/usr/local/www/vpn_openvpn_server.php:927
+#: src/usr/local/www/vpn_openvpn_client.php:742
+#: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
 msgstr "NCP Алгоритмы"
 
-#: src/usr/local/www/vpn_openvpn_client.php:761
-#: src/usr/local/www/vpn_openvpn_server.php:936
+#: src/usr/local/www/vpn_openvpn_client.php:751
+#: src/usr/local/www/vpn_openvpn_server.php:918
 #, php-format
 msgid ""
 "Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm "
@@ -35233,8 +35288,8 @@ msgstr ""
 "Доступные алгоритмы шифрования NCP%1$s Нажмите, чтобы добавить или удалить "
 "алгоритм из списка"
 
-#: src/usr/local/www/vpn_openvpn_client.php:771
-#: src/usr/local/www/vpn_openvpn_server.php:946
+#: src/usr/local/www/vpn_openvpn_client.php:761
+#: src/usr/local/www/vpn_openvpn_server.php:928
 msgid ""
 "Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from "
 "the list"
@@ -35242,8 +35297,8 @@ msgstr ""
 "Разрешенные алгоритмы шифрования NCP. Нажмите имя алгоритма, чтобы удалить "
 "его из списка."
 
-#: src/usr/local/www/vpn_openvpn_client.php:776
-#: src/usr/local/www/vpn_openvpn_server.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:766
+#: src/usr/local/www/vpn_openvpn_server.php:933
 msgid ""
 "For backward compatibility, when an older peer connects that does not "
 "support NCP, OpenVPN will use the Encryption Algorithm requested by the peer "
@@ -35255,8 +35310,8 @@ msgstr ""
 "запрошенный удаленным узлом, если он выбран в этом списке или выбран в "
 "качестве алгоритма шифрования."
 
-#: src/usr/local/www/vpn_openvpn_client.php:773
-#: src/usr/local/www/vpn_openvpn_server.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:763
+#: src/usr/local/www/vpn_openvpn_server.php:930
 #, php-format
 msgid ""
 "The order of the selected NCP Encryption Algorithms is respected by OpenVPN."
@@ -35264,12 +35319,12 @@ msgid ""
 msgstr ""
 "Порядок выбранных алгоритмов шифрования NCP соблюдается OpenVPN.%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:784
-#: src/usr/local/www/vpn_openvpn_server.php:959
+#: src/usr/local/www/vpn_openvpn_client.php:774
+#: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
 msgstr "*Алгоритм перебора аутентификации"
 
-#: src/usr/local/www/vpn_openvpn_client.php:787
+#: src/usr/local/www/vpn_openvpn_client.php:777
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -35285,57 +35340,55 @@ msgstr ""
 "SHA1, если сервер не использует другое значение. SHA1 используется по "
 "умолчанию для OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:793
-#: src/usr/local/www/vpn_openvpn_server.php:969
+#: src/usr/local/www/vpn_openvpn_client.php:783
+#: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
 msgstr "Аппаратное Шифрование"
 
-#: src/usr/local/www/vpn_openvpn_client.php:800
+#: src/usr/local/www/vpn_openvpn_client.php:790
 #: src/usr/local/www/vpn_openvpn_csc.php:362
-#: src/usr/local/www/vpn_openvpn_server.php:991
+#: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
 msgstr "Настройки Туннеля"
 
-#: src/usr/local/www/vpn_openvpn_client.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:794
 #: src/usr/local/www/vpn_openvpn_csc.php:366
-#: src/usr/local/www/vpn_openvpn_server.php:995
+#: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
 msgstr "IPv4 Сеть Туннеля"
 
-#: src/usr/local/www/vpn_openvpn_client.php:807
+#: src/usr/local/www/vpn_openvpn_client.php:797
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. 10.0.8.0/24). The "
-"second network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). "
+"The second usable address in the network will be assigned to the client "
+"virtual interface. Leave blank if the server is capable of providing "
+"addresses to clients."
 msgstr ""
-"Это виртуальная сеть IPv4, используемая для частных сообщений между этим "
-"клиентом и сервером, в виде CIDR (например, 10.0.8.0/24). Второй сетевой "
-"адрес будет назначен виртуальному интерфейсу клиента."
 
-#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
-#: src/usr/local/www/vpn_openvpn_server.php:1005
+#: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
 msgstr "IPv6 Сеть Туннеля"
 
-#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. fe80::/64). The second "
-"network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. fe80::/64). "
+"When set static using this field, the ::2 address in the network will be "
+"assigned to the client virtual interface. Leave blank if the server is "
+"capable of providing addresses to clients."
 msgstr ""
-"Это виртуальная сеть IPv6, используемая для частных сообщений между этим "
-"клиентом и сервером, в виде CIDR (например, fe80 :: / 64). Второй сетевой "
-"адрес будет назначен виртуальному интерфейсу клиента."
 
-#: src/usr/local/www/vpn_openvpn_client.php:822
-#: src/usr/local/www/vpn_openvpn_server.php:1073
+#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
 msgstr "Удаленная IPv4 сеть(ти)"
 
-#: src/usr/local/www/vpn_openvpn_client.php:825
-#: src/usr/local/www/vpn_openvpn_server.php:1076
+#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_server.php:1058
 msgid ""
 "IPv4 networks that will be routed through the tunnel, so that a site-to-site "
 "VPN can be established without manually changing the routing tables. "
@@ -35350,13 +35403,13 @@ msgstr ""
 "введите сюда удаленные локальные сети. Может быть оставлен пустым для не "
 "«site-to-site» VPN-соединений."
 
-#: src/usr/local/www/vpn_openvpn_client.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:1082
+#: src/usr/local/www/vpn_openvpn_client.php:822
+#: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
 msgstr "Удаленная IPv6 сеть(ти)"
 
-#: src/usr/local/www/vpn_openvpn_client.php:834
-#: src/usr/local/www/vpn_openvpn_server.php:1085
+#: src/usr/local/www/vpn_openvpn_client.php:825
+#: src/usr/local/www/vpn_openvpn_server.php:1067
 msgid ""
 "These are the IPv6 networks that will be routed through the tunnel, so that "
 "a site-to-site VPN can be established without manually changing the routing "
@@ -35371,19 +35424,23 @@ msgstr ""
 "сюда удаленные локальные сети. Может быть оставлен пустым для не «site-to-"
 "site» VPN-соединений."
 
-#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_client.php:831
 msgid "Limit outgoing bandwidth"
 msgstr "Ограничение исходящей пропускной способности"
 
-#: src/usr/local/www/vpn_openvpn_client.php:844
+#: src/usr/local/www/vpn_openvpn_client.php:835
 msgid ""
 "Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The "
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
+"Максимальная исходящаая полоса пропускания для данного туннеля. Оставьте "
+"пустым, чтобы не было ограничений. Вводимое значение должно быть между 100 "
+"Байт/с и 100 МБайт/с (указанное в байтах в секунду). Несовместимо с UDP Fast "
+"I/O."
 
-#: src/usr/local/www/vpn_openvpn_client.php:852
-#: src/usr/local/www/vpn_openvpn_server.php:1101
+#: src/usr/local/www/vpn_openvpn_client.php:843
+#: src/usr/local/www/vpn_openvpn_server.php:1083
 msgid ""
 "Compress tunnel packets using the LZO algorithm. Adaptive compression will "
 "dynamically disable compression for a period of time if OpenVPN detects that "
@@ -35393,27 +35450,27 @@ msgstr ""
 "динамичесик выключит сжатие на некоторый  период времени, если OpenVPN "
 "определит, что сжатие данных в пакетах  просиходит неэффективно."
 
-#: src/usr/local/www/vpn_openvpn_client.php:856
-#: src/usr/local/www/vpn_openvpn_server.php:1154
+#: src/usr/local/www/vpn_openvpn_client.php:847
+#: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
 msgstr "Топология"
 
-#: src/usr/local/www/vpn_openvpn_client.php:859
+#: src/usr/local/www/vpn_openvpn_client.php:850
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr ""
 "Определяет метод, использующийся для настройки виртуального адаптера IP "
 "адреса"
 
-#: src/usr/local/www/vpn_openvpn_client.php:863
-#: src/usr/local/www/vpn_openvpn_server.php:1114
+#: src/usr/local/www/vpn_openvpn_client.php:854
+#: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
 msgstr "Тип Сервиса"
 
-#: src/usr/local/www/vpn_openvpn_client.php:870
+#: src/usr/local/www/vpn_openvpn_client.php:861
 msgid "Don't pull routes"
 msgstr "Не получать маршруты"
 
-#: src/usr/local/www/vpn_openvpn_client.php:873
+#: src/usr/local/www/vpn_openvpn_client.php:864
 msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
@@ -35421,16 +35478,17 @@ msgstr ""
 "Данная опция не запрещает серверу устаналивать свойства TCP/IP  TUN/TAP "
 "интерфейса клиента."
 
-#: src/usr/local/www/vpn_openvpn_client.php:877
+#: src/usr/local/www/vpn_openvpn_client.php:868
 msgid "Don't add/remove routes"
 msgstr "Не добавляйте/удаляйте маршруты"
 
-#: src/usr/local/www/vpn_openvpn_client.php:880
-msgid "Pass routes to --route-upscript using environmental variables."
+#: src/usr/local/www/vpn_openvpn_client.php:871
+msgid ""
+"Do not execute operating system commands to install routes. Instead, pass "
+"routes to --route-up script using environmental variables."
 msgstr ""
-"Отправьте маршруты к --route-upscript, используя переменные окружения."
 
-#: src/usr/local/www/vpn_openvpn_client.php:891
+#: src/usr/local/www/vpn_openvpn_client.php:882
 msgid ""
 "Enter any additional options to add to the OpenVPN client configuration "
 "here, separated by semicolon."
@@ -35438,26 +35496,29 @@ msgstr ""
 "Введите любые дополнительные опции, чтобы добавить их к настройкам клиента "
 "OpenVPN, используя двоеточие в качестве разделителя."
 
-#: src/usr/local/www/vpn_openvpn_client.php:895
-#: src/usr/local/www/vpn_openvpn_server.php:1323
+#: src/usr/local/www/vpn_openvpn_client.php:886
+#: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
-msgstr ""
+msgstr "UDP Fast I/O"
 
-#: src/usr/local/www/vpn_openvpn_client.php:898
-#: src/usr/local/www/vpn_openvpn_server.php:1326
+#: src/usr/local/www/vpn_openvpn_client.php:889
+#: src/usr/local/www/vpn_openvpn_server.php:1286
 msgid ""
 "Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%."
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
 msgstr ""
+"Оптимизирует цикл событий записи пакетов, улучшая производительность "
+"процессора от 5 до 10 процентов. Совместима не со всеми платформами и "
+"несовместима с ограничением трафика OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:903
-#: src/usr/local/www/vpn_openvpn_server.php:1331
+#: src/usr/local/www/vpn_openvpn_client.php:894
+#: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
-msgstr ""
+msgstr "Буфер Отправки/Получения"
 
-#: src/usr/local/www/vpn_openvpn_client.php:906
-#: src/usr/local/www/vpn_openvpn_server.php:1334
+#: src/usr/local/www/vpn_openvpn_client.php:897
+#: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
 "Configure a Send and Receive Buffer size for OpenVPN. The default buffer "
 "size can be too small in many cases, depending on hardware and network "
@@ -35465,14 +35526,20 @@ msgid ""
 "To test the best value for a site, start at 512KiB and test higher and lower "
 "values."
 msgstr ""
+"Настроить размер Буфера Получения и Отправки для OpenVPN. Размер буфера по "
+"умолчанию может быть слишком маленьким во многих случаях, в зависимости от "
+"аппаратного  обеспечния и восходящей скорости сети. Поиск наилучшего "
+"значения размера буфера достигается в процессе некоторого эксперимента. "
+"Чтобы найти лучшее значения для стороны, начните с 512КБ и тестируйте "
+"бОльшие и меньшие значения."
 
-#: src/usr/local/www/vpn_openvpn_client.php:913
-#: src/usr/local/www/vpn_openvpn_server.php:1341
+#: src/usr/local/www/vpn_openvpn_client.php:904
+#: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
 msgstr "Уровень подробности"
 
-#: src/usr/local/www/vpn_openvpn_client.php:916
-#: src/usr/local/www/vpn_openvpn_server.php:1344
+#: src/usr/local/www/vpn_openvpn_client.php:907
+#: src/usr/local/www/vpn_openvpn_server.php:1304
 #, php-format
 msgid ""
 "Each level shows all info from the previous levels. Level 3 is recommended "
@@ -35490,7 +35557,7 @@ msgstr ""
 "буквы используются для пакетов TCP/UDP, а строчные буквы используются для "
 "пакетов TUN/TAP. %1$s6-11:  Диапазон сведений отладки."
 
-#: src/usr/local/www/vpn_openvpn_client.php:943
+#: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
 msgstr "Клиенты OpenVPN"
 
@@ -35520,37 +35587,37 @@ msgid "The field 'DNS Server #4' must contain a valid IP address"
 msgstr "Поле 'DNS Сервер #4' должен содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:173
-#: src/usr/local/www/vpn_openvpn_server.php:376
+#: src/usr/local/www/vpn_openvpn_server.php:369
 msgid "The field 'NTP Server #1' must contain a valid IP address"
 msgstr "Поле 'NTP Сервер #1' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:176
-#: src/usr/local/www/vpn_openvpn_server.php:379
+#: src/usr/local/www/vpn_openvpn_server.php:372
 msgid "The field 'NTP Server #2' must contain a valid IP address"
 msgstr "Поле 'NTP Сервер #2' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:179
-#: src/usr/local/www/vpn_openvpn_server.php:382
+#: src/usr/local/www/vpn_openvpn_server.php:375
 msgid "The field 'NTP Server #3' must contain a valid IP address"
 msgstr "Поле 'NTP Сервер #3' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:182
-#: src/usr/local/www/vpn_openvpn_server.php:385
+#: src/usr/local/www/vpn_openvpn_server.php:378
 msgid "The field 'NTP Server #4' must contain a valid IP address"
 msgstr "Поле 'NTP Сервер #4' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:189
-#: src/usr/local/www/vpn_openvpn_server.php:392
+#: src/usr/local/www/vpn_openvpn_server.php:385
 msgid "The field 'WINS Server #1' must contain a valid IP address"
 msgstr "Поле 'WINS Сервер #1' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:192
-#: src/usr/local/www/vpn_openvpn_server.php:395
+#: src/usr/local/www/vpn_openvpn_server.php:388
 msgid "The field 'WINS Server #2' must contain a valid IP address"
 msgstr "Поле 'WINS Сервер #2' должно содержать валидный IP адрес"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:400
+#: src/usr/local/www/vpn_openvpn_server.php:393
 msgid ""
 "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP "
 "address"
@@ -35724,12 +35791,12 @@ msgstr ""
 "список IPv6 удаленных сетей в соответствующих настройках сервера OpenVPN."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:423
-#: src/usr/local/www/vpn_openvpn_server.php:1047
+#: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Redirect Gateway"
 msgstr "Перенаправление шлюза"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:430
-#: src/usr/local/www/vpn_openvpn_server.php:1135
+#: src/usr/local/www/vpn_openvpn_server.php:1117
 msgid "Client Settings"
 msgstr "Настройки Клиента"
 
@@ -35759,7 +35826,7 @@ msgstr ""
 "будут отключены."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:538
-#: src/usr/local/www/vpn_openvpn_server.php:1259
+#: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Node Type"
 msgstr "Тип Узла"
 
@@ -35820,7 +35887,7 @@ msgstr "Пустой OpenVPN  сервер удалён"
 msgid "Server successfully deleted."
 msgstr "Сервер успешно удалён."
 
-#: src/usr/local/www/vpn_openvpn_server.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:294
 msgid ""
 "A Backend for Authentication must be selected if the server mode requires "
 "User Auth."
@@ -35828,93 +35895,93 @@ msgstr ""
 "Бекэнд для аутентификации должен быть выбран, если режим сервера требует "
 "Аутентифкацию Пользователя."
 
-#: src/usr/local/www/vpn_openvpn_server.php:361
+#: src/usr/local/www/vpn_openvpn_server.php:354
 msgid "The field 'DNS Server #1' must contain a valid IPv4 or IPv6 address"
 msgstr "Поле 'DNS Сервер #1' должен содержать валидный адрес IPv4 или IPv6 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:357
 msgid "The field 'DNS Server #2' must contain a valid IPv4 or IPv6 address"
 msgstr "Поле 'DNS Сервер #2' должен содержать валидный адрес IPv4 или IPv6 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:367
+#: src/usr/local/www/vpn_openvpn_server.php:360
 msgid "The field 'DNS Server #3' must contain a valid IPv4 or IPv6 address"
 msgstr "Поле 'DNS Сервер #3' должен содержать валидный адрес IPv4 или IPv6 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:370
+#: src/usr/local/www/vpn_openvpn_server.php:363
 msgid "The field 'DNS Server #4' must contain a valid IPv4 or IPv6 address"
 msgstr "Поле 'DNS Сервер #4' должен содержать валидный адрес IPv4 или IPv6 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:412
+#: src/usr/local/www/vpn_openvpn_server.php:399
 msgid "The field 'Concurrent connections' must be numeric."
 msgstr "Значение поля \"Параллельные соединения\" должно быть числом."
 
-#: src/usr/local/www/vpn_openvpn_server.php:422
+#: src/usr/local/www/vpn_openvpn_server.php:409
 msgid "The selected certificate is not valid"
 msgstr "Выбранный сертификат невалиден"
 
-#: src/usr/local/www/vpn_openvpn_server.php:426
+#: src/usr/local/www/vpn_openvpn_server.php:413
 msgid ""
 "The specified DH Parameter length is invalid or the DH file does not exist."
 msgstr ""
 "Указанная длина параметра Ди́ффи-Хе́ллмана невалидна или файл DH не "
 "существует."
 
-#: src/usr/local/www/vpn_openvpn_server.php:430
+#: src/usr/local/www/vpn_openvpn_server.php:417
 msgid "The specified ECDH Curve is invalid."
 msgstr "Указанная эллиптическая кривая Ди́ффи-Хе́ллмана невалидна"
 
-#: src/usr/local/www/vpn_openvpn_server.php:455
+#: src/usr/local/www/vpn_openvpn_server.php:442
 msgid "IPv4 Tunnel network"
 msgstr "IPv4 Туннельная сеть"
 
-#: src/usr/local/www/vpn_openvpn_server.php:458
+#: src/usr/local/www/vpn_openvpn_server.php:445
 msgid ""
 "Using a tunnel network and server bridge settings together is not allowed."
 msgstr ""
 "Совместное использование настроек туннельной сети и серверного моста  не "
 "разрешено."
 
-#: src/usr/local/www/vpn_openvpn_server.php:462
+#: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "Server Bridge DHCP Start and End must both be empty, or defined."
 msgstr ""
 "Начало и Конец пула DHCP cерверного моста  должны быть либо оба пустыми, "
 "либо быть определены."
 
-#: src/usr/local/www/vpn_openvpn_server.php:465
+#: src/usr/local/www/vpn_openvpn_server.php:452
 msgid "Server Bridge DHCP Start must be an IPv4 address."
 msgstr "Начало пула DHCP cерверного моста должно быть адресом IPv4."
 
-#: src/usr/local/www/vpn_openvpn_server.php:468
+#: src/usr/local/www/vpn_openvpn_server.php:455
 msgid "Server Bridge DHCP End must be an IPv4 address."
 msgstr "Конец пула DHCP cерверного моста должно быть адресом IPv4."
 
-#: src/usr/local/www/vpn_openvpn_server.php:471
+#: src/usr/local/www/vpn_openvpn_server.php:458
 msgid "The Server Bridge DHCP range is invalid (start higher than end)."
 msgstr ""
 "Диапазон пула DHCP cерверного моста невалиден (начало выше, чем конец)."
 
-#: src/usr/local/www/vpn_openvpn_server.php:630
+#: src/usr/local/www/vpn_openvpn_server.php:612
 #, php-format
 msgid "Updated OpenVPN server on %1$s:%2$s %3$s"
 msgstr "OpenVPN сервер обновлён на %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:615
 #, php-format
 msgid "Added OpenVPN server on %1$s:%2$s %3$s"
 msgstr "Добавлен OpenVPN сервер на %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:696
+#: src/usr/local/www/vpn_openvpn_server.php:678
 msgid ""
 "Set this option to disable this server without removing it from the list."
 msgstr ""
 "Установите данную опцию, чтобы отключить данный сервер, не удаляя его из "
 "списка."
 
-#: src/usr/local/www/vpn_openvpn_server.php:726
+#: src/usr/local/www/vpn_openvpn_server.php:708
 msgid "*Backend for authentication"
 msgstr "*Бекэнд для аутентификации"
 
-#: src/usr/local/www/vpn_openvpn_server.php:752
+#: src/usr/local/www/vpn_openvpn_server.php:734
 msgid ""
 "The interface or Virtual IP address where OpenVPN will receive client "
 "connections."
@@ -35922,17 +35989,17 @@ msgstr ""
 "Адрес интерфейса или Виртуального IP, который будет принимать подключения "
 "клиентов OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_server.php:756
+#: src/usr/local/www/vpn_openvpn_server.php:738
 msgid "*Local port"
 msgstr "*Локальный порт"
 
-#: src/usr/local/www/vpn_openvpn_server.php:760
+#: src/usr/local/www/vpn_openvpn_server.php:742
 msgid "The port used by OpenVPN to receive client connections."
 msgstr ""
 "Порт, который использовался OpenVPN  для входящих подключений клиентовю"
 
-#: src/usr/local/www/vpn_openvpn_server.php:848
-#: src/usr/local/www/vpn_openvpn_server.php:1816
+#: src/usr/local/www/vpn_openvpn_server.php:830
+#: src/usr/local/www/vpn_openvpn_server.php:1764
 msgid ""
 "Warning: The selected server certificate was not created as an SSL Server "
 "certificate and may not work as expected"
@@ -35940,30 +36007,30 @@ msgstr ""
 "Предупреждение: выбранный сертификат сервера не был создан как SSL "
 "сертификат  сервера и не может работать как ожидается."
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 #, php-format
 msgid "No Certificates defined. One may be created here: %1$s%2$s%3$s"
 msgstr ""
 "Сертификаты не определены. Сертифика можно создать здесь: %1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 msgid "System &gt; Cert. Manager"
 msgstr "Система &gt; Менеджер Сертификатов"
 
-#: src/usr/local/www/vpn_openvpn_server.php:862
+#: src/usr/local/www/vpn_openvpn_server.php:844
 msgid "*Server certificate"
 msgstr "*Сертификат Сервера"
 
-#: src/usr/local/www/vpn_openvpn_server.php:869
+#: src/usr/local/www/vpn_openvpn_server.php:851
 msgid "*DH Parameter Length"
 msgstr "Длина Параметров DH"
 
-#: src/usr/local/www/vpn_openvpn_server.php:874
+#: src/usr/local/www/vpn_openvpn_server.php:856
 msgid "Only DH parameter sets which exist in /etc/ are shown."
 msgstr ""
 "Будут представлены только наборы параметров DH, представленные в /etc/"
 
-#: src/usr/local/www/vpn_openvpn_server.php:876
+#: src/usr/local/www/vpn_openvpn_server.php:858
 msgid ""
 "Generating new or stronger DH parameters is CPU-intensive and must be "
 "performed manually."
@@ -35971,7 +36038,7 @@ msgstr ""
 "Генерирование новых или более сильных параметров DH затратно с точки зрения "
 "потребления процессорного времени и поэтому должно выполняться вручную."
 
-#: src/usr/local/www/vpn_openvpn_server.php:877
+#: src/usr/local/www/vpn_openvpn_server.php:859
 #, php-format
 msgid ""
 "Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on "
@@ -35981,18 +36048,18 @@ msgstr ""
 "Хе́ллмана%2$s для сведений, как сгенерировать новый или более сильный "
 "параметр DH."
 
-#: src/usr/local/www/vpn_openvpn_server.php:872
+#: src/usr/local/www/vpn_openvpn_server.php:854
 #, php-format
 msgid "Diffie-Hellman (DH) parameter set used for key exchange.%1$s%2$s%3$s"
 msgstr ""
 "Установлен Ди́ффи-Хе́ллман (DH) параметр, использованный для обмена ключами. "
 "%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:885
+#: src/usr/local/www/vpn_openvpn_server.php:867
 msgid "ECDH Curve"
 msgstr "Эллиптическая Кривая Ди́ффи-Хе́ллмана"
 
-#: src/usr/local/www/vpn_openvpn_server.php:888
+#: src/usr/local/www/vpn_openvpn_server.php:870
 #, php-format
 msgid ""
 "The Elliptic Curve to use for key exchange. %1$sThe curve from the server "
@@ -36003,7 +36070,7 @@ msgstr ""
 "сертификата сервера используется по умолчанию, когда сервер использует "
 "сертификат ECDSA. Иначе secp384r1 используется как запасной вариант. "
 
-#: src/usr/local/www/vpn_openvpn_server.php:962
+#: src/usr/local/www/vpn_openvpn_server.php:944
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -36019,15 +36086,15 @@ msgstr ""
 "поле SHA1, если все клиенты не настроены на соответствие. SHA1 является "
 "значением по умолчанию для OpenVPN. "
 
-#: src/usr/local/www/vpn_openvpn_server.php:978
+#: src/usr/local/www/vpn_openvpn_server.php:960
 msgid "Do Not Check"
 msgstr "Не Проверять"
 
-#: src/usr/local/www/vpn_openvpn_server.php:976
+#: src/usr/local/www/vpn_openvpn_server.php:958
 msgid "*Certificate Depth"
 msgstr "*Глубина Сертификата"
 
-#: src/usr/local/www/vpn_openvpn_server.php:979
+#: src/usr/local/www/vpn_openvpn_server.php:961
 msgid ""
 "When a certificate-based client logs in, do not accept certificates below "
 "this depth. Useful for denying certificates made with intermediate CAs "
@@ -36038,11 +36105,11 @@ msgstr ""
 "промежуточным Центром Сертификации, который в свою очередь сгенерирован тем "
 "же Центром Сертификации, что и сервер."
 
-#: src/usr/local/www/vpn_openvpn_server.php:984
+#: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Strict User-CN Matching"
 msgstr "Строгое соответствие Обычного Имени (CN) пользователя"
 
-#: src/usr/local/www/vpn_openvpn_server.php:987
+#: src/usr/local/www/vpn_openvpn_server.php:969
 msgid ""
 "When authenticating users, enforce a match between the common name of the "
 "client certificate and the username given at login."
@@ -36050,41 +36117,32 @@ msgstr ""
 "При аутентификации пользователей, требовать соответствия имени пользователя "
 "Обычному Имени (CN) сертификата клиента."
 
-#: src/usr/local/www/vpn_openvpn_server.php:998
+#: src/usr/local/www/vpn_openvpn_server.php:980
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. 10.0.8.0/24). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. 10.0.8.0/"
+"24). The first usable address in the network will be assigned to the server "
+"virtual interface. The remaining usable addresses will be assigned to "
+"connecting clients."
 msgstr ""
-"Виртуальная сеть IPv4, используемая для связи данного сервера с клиентами, "
-"заданная в виде CIDR (например, 10.0.8.0/24). Первый адрес сети будет "
-"назначен виртуальному интерфейсу сервера. Остальные адреса сети по выбору "
-"(см. 'Пул адресов') могут назначаться подключающимся клиентам."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1008
+#: src/usr/local/www/vpn_openvpn_server.php:990
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. fe80::/64). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. fe80::/64). "
+"The ::1 address in the network will be assigned to the server virtual "
+"interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
-"Виртуальная сеть IPv6, используемая для связи данного сервера с клиентами, "
-"заданная в виде CIDR (например, fe80::/64). Первый адрес сети будет назначен "
-"виртуальному интерфейсу сервера. Остальные адреса сети по выбору (см. 'Пул "
-"адресов') могут назначаться подключающимся клиентам."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1015
+#: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
 msgstr "Мост DHCP"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1022
+#: src/usr/local/www/vpn_openvpn_server.php:1004
 msgid "Bridge Interface"
 msgstr "Интерфейс Моста"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1025
+#: src/usr/local/www/vpn_openvpn_server.php:1007
 msgid ""
 "The interface to which this TAP instance will be bridged. This is not done "
 "automatically. This interface must be assigned and the bridge created "
@@ -36098,11 +36156,11 @@ msgstr ""
 "IP адресов и масок подсети используются OpenVPN для моста. Если установить "
 "её на \"none\", настройки Серверного Моста DHCP ниже буздут игнорироваться."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1031
+#: src/usr/local/www/vpn_openvpn_server.php:1013
 msgid "Server Bridge DHCP Start"
 msgstr "Начало пула Серверного Моста DHCP "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1034
+#: src/usr/local/www/vpn_openvpn_server.php:1016
 msgid ""
 "When using TAP mode as a multi-point server, a DHCP range may optionally be "
 "supplied to use on the interface to which this TAP instance is bridged. If "
@@ -36114,15 +36172,15 @@ msgstr ""
 "инстанция TAP объединена в мост. Если оставить данное поле пустым, DHCP "
 "будет пропускаться к LAN, и настройки интеофейса выше будут игнорироваться."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1040
+#: src/usr/local/www/vpn_openvpn_server.php:1022
 msgid "Server Bridge DHCP End"
 msgstr "Конец пула Серверного Моста DHCP"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1054
+#: src/usr/local/www/vpn_openvpn_server.php:1036
 msgid "IPv4 Local network(s)"
 msgstr "Локальные сети IPv4"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1057
+#: src/usr/local/www/vpn_openvpn_server.php:1039
 msgid ""
 "IPv4 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more CIDR ranges. This may be left blank if "
@@ -36134,11 +36192,11 @@ msgstr ""
 "чтобы маршрут в локальные сети сервера через данный туннель был установлен "
 "на клиентах. Как правило, здесь указывается сеть LAN."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1064
+#: src/usr/local/www/vpn_openvpn_server.php:1046
 msgid "IPv6 Local network(s)"
 msgstr "Локальные сети IPv6"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1067
+#: src/usr/local/www/vpn_openvpn_server.php:1049
 msgid ""
 "IPv6 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more IP/PREFIX. This may be left blank if "
@@ -36150,11 +36208,11 @@ msgstr ""
 "чтобы маршрут в локальные сети сервера через данный туннель был установлен "
 "на клиентах. Как правило, здесь указывается сеть LAN."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1091
+#: src/usr/local/www/vpn_openvpn_server.php:1073
 msgid "Concurrent connections"
 msgstr "Параллельные соединения"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1094
+#: src/usr/local/www/vpn_openvpn_server.php:1076
 msgid ""
 "Specify the maximum number of clients allowed to concurrently connect to "
 "this server."
@@ -36162,34 +36220,30 @@ msgstr ""
 "Укажите максимальное количество клиентов, которые смогут одновременно "
 "подключаться к данному серверу."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1107
+#: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push Compression"
 msgstr "Сообщить Сжатие"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1121
+#: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Inter-client communication"
 msgstr "Коммуникация между клиентами"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1128
+#: src/usr/local/www/vpn_openvpn_server.php:1110
 msgid "Duplicate Connection"
 msgstr "Дублированное Соединение"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1131
+#: src/usr/local/www/vpn_openvpn_server.php:1113
 msgid ""
 "(This is not generally recommended, but may be needed for some scenarios.)"
 msgstr ""
 "(Как правило, это не рекомендуется, но может потребоваться в некоторых "
 "случаях)"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1140
+#: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
 msgstr "Динамический IP"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1147
-msgid "Address Pool"
-msgstr "Пул адресов"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1157
+#: src/usr/local/www/vpn_openvpn_server.php:1132
 #, php-format
 msgid ""
 "Specifies the method used to supply a virtual adapter IP address to clients "
@@ -36205,35 +36259,35 @@ msgstr ""
 "2.0.9) или клиентам, таким как телефоны Yealink, может потребоваться "
 "\"net30\"."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1163
+#: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
 msgstr "Расширенные Настройки Клиента"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1182
+#: src/usr/local/www/vpn_openvpn_server.php:1157
 msgid "DNS Server enable"
 msgstr "Включить DNS Сервер"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1189
+#: src/usr/local/www/vpn_openvpn_server.php:1164
 msgid "DNS Server 1"
 msgstr "DNS Сервер 1"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1196
+#: src/usr/local/www/vpn_openvpn_server.php:1171
 msgid "DNS Server 2"
 msgstr "DNS Сервер 2"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1203
+#: src/usr/local/www/vpn_openvpn_server.php:1178
 msgid "DNS Server 3"
 msgstr "DNS Сервер 3"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1210
+#: src/usr/local/www/vpn_openvpn_server.php:1185
 msgid "DNS Server 4"
 msgstr "DNS Сервер 4"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1217
+#: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
 msgstr "Блокировать Внешний DNS"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1220
+#: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
 "Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to "
 "DNS leakage in this way, other clients will ignore the option as they are "
@@ -36243,25 +36297,25 @@ msgstr ""
 "10  подверждена утечке DNS в этом случае, другие клиенты будут игнорировать "
 "данную опцию, так как их это не затрагивает."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1224
+#: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid "Force DNS cache update"
 msgstr "Принудительное обновление кэша DNS"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1227
+#: src/usr/local/www/vpn_openvpn_server.php:1202
 msgid "This is known to kick Windows into recognizing pushed DNS servers."
 msgstr ""
 "Данная опция известна тем, что заставляет Windows распознавать сообщаемые "
 "серверы DNS."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1231
+#: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid "NTP Server enable"
 msgstr "Включить NTP Сервер"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1252
+#: src/usr/local/www/vpn_openvpn_server.php:1227
 msgid "NetBIOS enable"
 msgstr "Включить NetBIOS "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1255
+#: src/usr/local/www/vpn_openvpn_server.php:1230
 msgid ""
 "If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) "
 "will be disabled."
@@ -36269,7 +36323,7 @@ msgstr ""
 "Если данная опция не задана, все опции NetBIOS-через-TCP/IP  (включая WINS) "
 "будут отключены."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1262
+#: src/usr/local/www/vpn_openvpn_server.php:1237
 msgid ""
 "Possible options: b-node (broadcasts), p-node (point-to-point name queries "
 "to a WINS server), m-node (broadcast then query name server), and h-node "
@@ -36280,11 +36334,11 @@ msgstr ""
 "сервер имён) и h-узел (опросить сервер имён, а потом отправить "
 "широковещательный запрос)"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1267
+#: src/usr/local/www/vpn_openvpn_server.php:1242
 msgid "Scope ID"
 msgstr "ID Зоны Видимости"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1270
+#: src/usr/local/www/vpn_openvpn_server.php:1245
 msgid ""
 "A NetBIOS Scope ID provides an extended naming service for NetBIOS over TCP/"
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
@@ -36294,35 +36348,19 @@ msgstr ""
 "NetBIOS  через TCP/IP. ID области видимости NetBIOS изолирует трафик NetBIOS "
 " на единичной сети только к узлам с одинаковым ID области видимости NetBIOS."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1276
+#: src/usr/local/www/vpn_openvpn_server.php:1251
 msgid "WINS server enable"
 msgstr "Включить WINS Сервер"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1283
+#: src/usr/local/www/vpn_openvpn_server.php:1258
 msgid "WINS Server 1"
 msgstr "WINS Сервер 1"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1290
+#: src/usr/local/www/vpn_openvpn_server.php:1265
 msgid "WINS Server 2"
 msgstr "WINS Сервер 2"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1297
-msgid "Enable custom port "
-msgstr "Включить частный порт"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1304
-msgid "Management port"
-msgstr "Порт Управления"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1307
-msgid ""
-"The default port is 166. Specify a different port if the client machines "
-"need to select from multiple OpenVPN links."
-msgstr ""
-"Порт по  умолчанию - 166. Укажите другой порт, если машинам клиентов нужно "
-"выбрать из множества подключений OpenVPN."
-
-#: src/usr/local/www/vpn_openvpn_server.php:1318
+#: src/usr/local/www/vpn_openvpn_server.php:1278
 #, php-format
 msgid ""
 "Enter any additional options to add to the OpenVPN server configuration "
@@ -36333,19 +36371,19 @@ msgstr ""
 "настройкам клиента, используя в двоеточие в качестве разделителя. "
 "%1$sНапример: push \"route 10.0.0.0 255.255.255.0\"; "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1372
+#: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
 msgstr "Серверы OpenVPN"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1377
+#: src/usr/local/www/vpn_openvpn_server.php:1337
 msgid "Protocol / Port"
 msgstr "Протокол / Порт"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1378
+#: src/usr/local/www/vpn_openvpn_server.php:1338
 msgid "Tunnel Network"
 msgstr "Туннельная Сеть"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1379
+#: src/usr/local/www/vpn_openvpn_server.php:1339
 msgid "Crypto"
 msgstr "Шифрование"
 
@@ -36383,11 +36421,11 @@ msgstr "Статус NTP"
 
 #: src/usr/local/www/widgets/include/picture.inc:22
 msgid "Picture"
-msgstr ""
+msgstr "Картинка"
 
 #: src/usr/local/www/widgets/include/rss.inc:22
 msgid "RSS"
-msgstr ""
+msgstr "RSS"
 
 #: src/usr/local/www/widgets/include/services_status.inc:24
 msgid "Services Status"
@@ -36395,7 +36433,7 @@ msgstr "Статус Сервисов"
 
 #: src/usr/local/www/widgets/include/system_information.inc:22
 msgid "System Information"
-msgstr ""
+msgstr "Информация Системы"
 
 #: src/usr/local/www/widgets/include/traffic_graph.inc:22
 msgid "Traffic Graphs"
@@ -36537,7 +36575,7 @@ msgstr "Все интерфейсы скрыты."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
 msgid "All selected interfaces are down."
-msgstr ""
+msgstr "Все выбранные интерфейсы неактивны."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:118
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -36844,7 +36882,7 @@ msgstr "Серийной номер:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:164
 msgid "Netgate Device ID:"
-msgstr ""
+msgstr "Идентификатор Устройства Netgate:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:186
 msgid "Vendor: "
@@ -36958,19 +36996,19 @@ msgstr "(1 до 100):"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:178
 msgid "Zone Warning"
-msgstr ""
+msgstr "Предупреждение Зоны"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:185
 msgid "Zone Critical"
-msgstr ""
+msgstr "Критическое событие Зоны"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:192
 msgid "Core Warning"
-msgstr ""
+msgstr "Предупреждение Ядра"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:199
 msgid "Core Critical"
-msgstr ""
+msgstr "Критическое событие Ядра"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Display settings:"
@@ -36978,15 +37016,15 @@ msgstr "Настройки экрана:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Show raw output"
-msgstr ""
+msgstr "Показать неотформатированный вывод"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:214
 msgid "(no graph)"
-msgstr ""
+msgstr "(нет графы)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:220
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Показать полное имя датчика"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:235
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -37070,18 +37108,23 @@ msgstr "Настройки изменены через подсистему ма
 msgid "Wizard"
 msgstr "Мастер"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:632
-#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizard.php:418
+#, php-format
+msgid "Step %s of %s"
+msgstr ""
+
+#: src/usr/local/www/wizards/openvpn_wizard.inc:637
+#: src/usr/local/www/wizards/openvpn_wizard.inc:654
 #, php-format
 msgid "OpenVPN %s wizard"
 msgstr "Мастер %s OpenVPN"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:644
-#: src/usr/local/www/wizards/openvpn_wizard.inc:659
+#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizards/openvpn_wizard.inc:664
 msgid "OpenVPN Wizard"
 msgstr "Мастер OpenVPN"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:669
+#: src/usr/local/www/wizards/openvpn_wizard.inc:674
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr ""
@@ -37756,73 +37799,73 @@ msgstr "Локальный Пользовательский Менеджер / �
 msgid "RADIUS Authentication"
 msgstr "Аутентификация через RADIUS"
 
-#: src/usr/local/www/services_captiveportal.php:719
+#: src/usr/local/www/services_captiveportal.php:721
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
 msgstr ""
 "Разрешить только пользователям/группам с привилегией «Вход через Портал "
 "Авторизации»"
 
-#: src/usr/local/www/services_captiveportal.php:729
+#: src/usr/local/www/services_captiveportal.php:731
 msgid "PAP"
 msgstr "PAP"
 
-#: src/usr/local/www/services_captiveportal.php:737
+#: src/usr/local/www/services_captiveportal.php:739
 msgid "CHAP-MD5"
 msgstr "CHAP-MD5"
 
-#: src/usr/local/www/services_captiveportal.php:745
+#: src/usr/local/www/services_captiveportal.php:747
 msgid "MSCHAPv1"
 msgstr "MSCHAPv1"
 
-#: src/usr/local/www/services_captiveportal.php:753
+#: src/usr/local/www/services_captiveportal.php:755
 msgid "MSCHAPv2"
 msgstr "MSCHAPv2"
 
-#: src/usr/local/www/services_captiveportal.php:873
+#: src/usr/local/www/services_captiveportal.php:875
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
 msgstr "Отправьте учетные пакеты RADIUS на основной сервер RADIUS."
 
-#: src/usr/local/www/services_captiveportal.php:889
+#: src/usr/local/www/services_captiveportal.php:891
 msgid "No updates"
 msgstr "Нет обновлений"
 
-#: src/usr/local/www/services_captiveportal.php:897
+#: src/usr/local/www/services_captiveportal.php:899
 msgid "Stop/Start"
 msgstr "Стоп/Старт"
 
-#: src/usr/local/www/services_captiveportal.php:905
+#: src/usr/local/www/services_captiveportal.php:907
 msgid "Stop/Start (FreeRADIUS)"
 msgstr "Стоп/Старт (FreeRADIUS)"
 
-#: src/usr/local/www/services_captiveportal.php:913
+#: src/usr/local/www/services_captiveportal.php:915
 msgid "Interim"
 msgstr "Временный"
 
-#: src/usr/local/www/services_captiveportal.php:928
+#: src/usr/local/www/services_captiveportal.php:930
 msgid "Reauthenticate connected users every minute"
 msgstr "Повторно проводить аутентификацию пользователей каждую минуту"
 
-#: src/usr/local/www/services_captiveportal.php:938
+#: src/usr/local/www/services_captiveportal.php:940
 msgid "Enable RADIUS MAC authentication"
 msgstr "Включить аутентификацию RADIUS по MAC-адресу"
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:962
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr "Использовать атрибуты тайм-аута RADIUS "
 
-#: src/usr/local/www/services_captiveportal.php:976
+#: src/usr/local/www/services_captiveportal.php:978
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr "Инвертировать  Входящие-Учетные-Окстеты и Исходящие-Учетные-Октеты"
 
-#: src/usr/local/www/services_captiveportal.php:984
+#: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
 msgstr "Включить время простоя в время сеанса"
 
-#: src/usr/local/www/services_captiveportal.php:1018
+#: src/usr/local/www/services_captiveportal.php:1020
 msgid "Enable HTTPS login"
 msgstr "Включить HTTPS-вход"
 
-#: src/usr/local/www/services_captiveportal.php:1042
+#: src/usr/local/www/services_captiveportal.php:1044
 msgid "Disable HTTPS Forwards"
 msgstr "Отключить HTTPS Форвардинг"
 
@@ -37967,7 +38010,7 @@ msgid "Do not forward private reverse lookups"
 msgstr "Не отправлять частные обратные запросы"
 
 #: src/usr/local/www/services_dyndns_edit.php:255
-#: src/usr/local/www/vpn_openvpn_client.php:513
+#: src/usr/local/www/vpn_openvpn_client.php:511
 msgid "Disable this client"
 msgstr "Отключить этого клиента"
 
@@ -37984,12 +38027,12 @@ msgid "Enable verbose logging"
 msgstr "Включить подробное журналирование"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
-msgid "Force IPv4 resolving"
-msgstr "Принудительное разрешение IPv4"
+msgid "Force IPv4 DNS Resolution"
+msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:347
-msgid "Verify SSL peer"
-msgstr "Проверка SSL удаленного узла"
+msgid "Verify SSL Certificate Trust"
+msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -38291,7 +38334,7 @@ msgstr "Отключить автоматически добавленные з�
 
 #: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Disable the automatically-added host entries"
-msgstr ""
+msgstr "Отключить автоматически добавляемые записи хостов"
 
 #: src/usr/local/www/services_unbound_advanced.php:372
 msgid ""
@@ -38304,8 +38347,8 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
 #: src/usr/local/www/system_gateways_edit.php:373
-#: src/usr/local/www/system_groupmanager_addprivs.php:178
-#: src/usr/local/www/system_usermanager_addprivs.php:167
+#: src/usr/local/www/system_groupmanager_addprivs.php:189
+#: src/usr/local/www/system_usermanager_addprivs.php:173
 msgid "<span class=\"help-block\">"
 msgstr "<span class=\"help-block\">"
 
@@ -38825,22 +38868,22 @@ msgstr "Показать Команды"
 msgid "Dry Run"
 msgstr "Сухой Прогон"
 
-#: src/usr/local/www/system_usermanager.php:722
+#: src/usr/local/www/system_usermanager.php:734
 msgid "This user cannot login"
 msgstr "Этот пользователь не может войти"
 
-#: src/usr/local/www/system_usermanager.php:786
+#: src/usr/local/www/system_usermanager.php:798
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr ""
 "Использовать для этого пользователя индивидуальные настраиваемые параметры "
 "графического интерфейса и макет панели мониторинга."
 
-#: src/usr/local/www/system_usermanager.php:854
+#: src/usr/local/www/system_usermanager.php:867
 msgid "Click to create a user certificate"
 msgstr "Нажмите, чтобы создать сертификат пользователя."
 
-#: src/usr/local/www/system_usermanager.php:953
+#: src/usr/local/www/system_usermanager.php:964
 msgid "Click to paste an authorized key"
 msgstr "Нажмите, чтобы вставить авторизованный ключ."
 
@@ -38871,7 +38914,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:443
-#: src/usr/local/www/vpn_openvpn_server.php:1169
+#: src/usr/local/www/vpn_openvpn_server.php:1144
 msgid "Provide a default domain name to clients"
 msgstr "Предоставить клиенту доменное имя по умолчанию"
 
@@ -38890,7 +38933,7 @@ msgstr "Предоставлять клиентам список DNS серве�
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:555
-#: src/usr/local/www/vpn_openvpn_server.php:1277
+#: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
 msgstr "Предоставлять клиентам список WINS серверов"
 
@@ -38985,48 +39028,44 @@ msgstr ""
 msgid "Enable bypass for LAN interface IP"
 msgstr "Включить байпас для интерфейса LAN"
 
-#: src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:204
 msgid "Enable L2TP server"
 msgstr "Включить сервер L2TP"
 
-#: src/usr/local/www/vpn_l2tp.php:279
+#: src/usr/local/www/vpn_l2tp.php:290
 msgid "Use a RADIUS server for authentication"
 msgstr "Использовать сервер RADIUS для аутентификации"
 
-#: src/usr/local/www/vpn_l2tp.php:286
+#: src/usr/local/www/vpn_l2tp.php:297
 msgid "Enable RADIUS accounting"
 msgstr "Включить учет RADIUS"
 
-#: src/usr/local/www/vpn_l2tp.php:306
+#: src/usr/local/www/vpn_l2tp.php:317
 msgid "Issue IP Addresses via RADIUS server."
 msgstr "Выдать IP адреса через RADIUS сервер."
 
-#: src/usr/local/www/vpn_openvpn_client.php:564
-msgid "Infinitely resolve server "
-msgstr "Бесконечно разрешающий сервер"
-
-#: src/usr/local/www/vpn_openvpn_client.php:644
-#: src/usr/local/www/vpn_openvpn_server.php:776
+#: src/usr/local/www/vpn_openvpn_client.php:634
+#: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
 msgstr "Использовать ключ TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:654
-#: src/usr/local/www/vpn_openvpn_server.php:786
+#: src/usr/local/www/vpn_openvpn_client.php:644
+#: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
 msgstr "Автоматически сгенерировать TLS ключ."
 
-#: src/usr/local/www/vpn_openvpn_client.php:710
-#: src/usr/local/www/vpn_openvpn_server.php:897
+#: src/usr/local/www/vpn_openvpn_client.php:700
+#: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
 msgstr "Автоматически создавать общий ключ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:739
-#: src/usr/local/www/vpn_openvpn_server.php:918
+#: src/usr/local/www/vpn_openvpn_client.php:729
+#: src/usr/local/www/vpn_openvpn_server.php:900
 msgid "Enable Negotiable Cryptographic Parameters"
 msgstr "Включить Согласуемые Криптографические Параметры"
 
-#: src/usr/local/www/vpn_openvpn_client.php:864
-#: src/usr/local/www/vpn_openvpn_server.php:1115
+#: src/usr/local/www/vpn_openvpn_client.php:855
+#: src/usr/local/www/vpn_openvpn_server.php:1097
 msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
 "packet value."
@@ -39034,18 +39073,20 @@ msgstr ""
 "Задать значение TOS IP заголовка  для туннельных пакетов в соответствии с "
 "инкапсулированным значением пакета."
 
-#: src/usr/local/www/vpn_openvpn_client.php:871
+#: src/usr/local/www/vpn_openvpn_client.php:862
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr "Запрещать серверу добавлять маршруты в таблицу маршрутизации клиента"
 
-#: src/usr/local/www/vpn_openvpn_client.php:878
+#: src/usr/local/www/vpn_openvpn_client.php:869
 msgid "Don't add or remove routes automatically"
 msgstr "Не добавлять и не удалять маршруты автоматически"
 
-#: src/usr/local/www/vpn_openvpn_client.php:896
-#: src/usr/local/www/vpn_openvpn_server.php:1324
+#: src/usr/local/www/vpn_openvpn_client.php:887
+#: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
+"Используйте операции fast I/O для записи UDP на  tun/tap. На стадии "
+"эксперимента."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable this override"
@@ -39056,7 +39097,7 @@ msgid "Block this client connection based on its common name."
 msgstr "Заблокируйте это клиентское соединение на основе его общего имени."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:424
-#: src/usr/local/www/vpn_openvpn_server.php:1048
+#: src/usr/local/www/vpn_openvpn_server.php:1030
 msgid "Force all client generated traffic through the tunnel."
 msgstr "Направлять весь трафик, создаваемый клиентом в туннель."
 
@@ -39068,36 +39109,36 @@ msgstr ""
 "сервером."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:504
-#: src/usr/local/www/vpn_openvpn_server.php:1232
+#: src/usr/local/www/vpn_openvpn_server.php:1207
 msgid "Provide an NTP server list to clients"
 msgstr "Предоставлять клиентам список серверов NTP"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:532
-#: src/usr/local/www/vpn_openvpn_server.php:1253
+#: src/usr/local/www/vpn_openvpn_server.php:1228
 msgid "Enable NetBIOS over TCP/IP"
 msgstr "Включить NetBIOS через TCP/IP"
 
-#: src/usr/local/www/vpn_openvpn_server.php:694
+#: src/usr/local/www/vpn_openvpn_server.php:676
 msgid "Disable this server"
 msgstr "Отключить этот сервер"
 
-#: src/usr/local/www/vpn_openvpn_server.php:985
+#: src/usr/local/www/vpn_openvpn_server.php:967
 msgid "Enforce match"
 msgstr "Обеспечить соответствие"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1016
+#: src/usr/local/www/vpn_openvpn_server.php:998
 msgid "Allow clients on the bridge to obtain DHCP."
 msgstr "Разрешить клиентам на мосту получать DHCP."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1108
+#: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
 msgstr "Нажмите выбранную настройку сжатия для подключения клиентов."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1122
+#: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
 msgstr "Разрешить связь между клиентами, подключенными к этому серверу"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1129
+#: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
@@ -39105,7 +39146,7 @@ msgstr ""
 "Разрешить несколько одновременных подключений от клиентов с использованием "
 "одного и того же общего имени."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1141
+#: src/usr/local/www/vpn_openvpn_server.php:1123
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
@@ -39113,17 +39154,12 @@ msgstr ""
 "Разрешить подключенным клиентам сохранять свои подключения, если их IP адрес "
 "изменился."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1148
-msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
-msgstr ""
-"Предоставлять клиентам IP-адрес виртуального адаптера (см. «Сеть Туннеля»)."
-
-#: src/usr/local/www/vpn_openvpn_server.php:1183
+#: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
 "Предоставлять клиентам список DNS серверов. Адреса могут быть IPv4 или IPv6."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1218
+#: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
@@ -39132,14 +39168,10 @@ msgstr ""
 "исключением OpenVPN, вынуждая клиентов использовать только DNS серверы VPN "
 "соединения."
 
-#: src/usr/local/www/vpn_openvpn_server.php:1225
+#: src/usr/local/www/vpn_openvpn_server.php:1200
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
 "Запускать «net stop dnscache», «net start dnscache», «ipconfig/flushdns» и "
 "«ipconfig/registerdns» при запуске подключения."
-
-#: src/usr/local/www/vpn_openvpn_server.php:1298
-msgid "Use a different management port for clients."
-msgstr "Использовать другой порт управления для клиентов."

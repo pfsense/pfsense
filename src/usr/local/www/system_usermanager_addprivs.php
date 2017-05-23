@@ -28,10 +28,6 @@
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
 
-function admusercmp($a, $b) {
-	return strcasecmp($a['name'], $b['name']);
-}
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
@@ -55,7 +51,7 @@ if (!is_array($a_user['priv'])) {
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
-uasort($spriv_list, "admusercmp");
+uasort($spriv_list, "compare_by_name");
 
 if ($_POST['save']) {
 	unset($input_errors);
@@ -136,6 +132,16 @@ display_top_tabs($tab_array);
 $form = new Form();
 
 $section = new Form_Section('User Privileges');
+
+$name_string = $a_user['name'];
+if (!empty($a_user['descr'])) {
+	$name_string .= " ({$a_user['descr']})";
+}
+
+$section->addInput(new Form_StaticText(
+	'User',
+	$name_string
+));
 
 $section->addInput(new Form_Select(
 	'sysprivs',

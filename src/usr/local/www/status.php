@@ -74,6 +74,25 @@ require_once("gwlb.inc");
 $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
+if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
+	session_cache_limiter('public');
+	$fd = fopen($output_file, "rb");
+	header("Content-Type: application/octet-stream");
+	header("Content-Length: " . filesize($output_file));
+	header("Content-Disposition: attachment; filename=\"" .
+		trim(htmlentities(basename($output_file))) . "\"");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
+
+	fpassthru($fd);
+	exit;
+}
+
 if (is_dir($output_path)) {
 	unlink_if_exists("{$output_path}/*");
 	@rmdir($output_path);
@@ -371,17 +390,24 @@ exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
 $pgtitle = array($g['product_name'], "Status");
-include("head.inc");
+include("head.inc"); ?>
 
-print_info_box(
+<form action="status.php" method="post">
+
+<?php print_info_box(
 	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places (like mailing lists).") .
 	'<br />' .
 	gettext("Common password fields in config.xml have been automatically redacted.") .
 	'<br />' .
-	sprintf(gettext('When the page has finished loading, the output will be stored in %1$s. It may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s.'),
-	$output_file, '<a href="/diag_command.php?dlPath=' . $output_file . '">', '</a>'));
+	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
+	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
+	'<i class="fa fa-download icon-embed-btn"></i>' .
+	gettext("Download") .
+	'</button>'); ?>
 
-print_info_box(get_firewall_info(), 'info', false);
+</form>
+
+<?php print_info_box(get_firewall_info(), 'info', false);
 
 listCmds();
 execCmds();

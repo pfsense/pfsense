@@ -201,6 +201,14 @@ function get_firewall_info() {
 	if (!empty($platform['descr'])) {
 		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
 	}
+
+	if (file_exists('/var/db/uniqueid')) {
+		$ngid = file_get_contents('/var/db/uniqueid');
+		if (!empty($ngid)) {
+			$firewall_info .= "<br/>Netgate Device ID: " . htmlspecialchars($ngid);
+		}
+	}
+
 	$serial = system_get_serial();
 	if (!empty($serial)) {
 		$firewall_info .= "<br/>SN/UUID: " . htmlspecialchars($serial);

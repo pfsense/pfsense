@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-16 09:23-0300\n"
+"POT-Creation-Date: 2017-05-23 10:02-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-14 08:50-0400\n"
+"PO-Revision-Date: 2017-05-16 11:12-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -222,22 +222,22 @@ msgstr "登錄無效 (%s)."
 msgid "This device is currently being maintained by: %s."
 msgstr "該設備目前由以下帳號維護: %s."
 
-#: src/etc/inc/authgui.inc:225
+#: src/etc/inc/authgui.inc:233
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
 msgstr "通過 %2$s登錄到 %1$s .%3$s"
 
-#: src/etc/inc/authgui.inc:227
+#: src/etc/inc/authgui.inc:235
 #, php-format
 msgid "Login to %1$s"
 msgstr "登錄到 %1$s"
 
-#: src/etc/inc/authgui.inc:236 src/etc/inc/authgui.inc:284
-#: src/usr/local/www/services_captiveportal.php:1017
+#: src/etc/inc/authgui.inc:244 src/etc/inc/authgui.inc:292
+#: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "登錄"
 
-#: src/etc/inc/authgui.inc:250
+#: src/etc/inc/authgui.inc:258
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means. <br /><br />If this forwarding "
@@ -246,11 +246,11 @@ msgid ""
 msgstr ""
 "用於訪問此路由器的IP地址不是本地配置的，可以通過NAT或其他方式轉發。 <br /> <br />如果此轉發是意外的，應該認證中間人攻擊沒有發生。"
 
-#: src/etc/inc/authgui.inc:265
+#: src/etc/inc/authgui.inc:273
 msgid "The browser must support cookies to login."
 msgstr "您的流覽器必須支持cookies才能登錄。"
 
-#: src/etc/inc/authgui.inc:269 src/usr/local/www/interfaces.php:2581
+#: src/etc/inc/authgui.inc:277 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -260,24 +260,24 @@ msgstr "您的流覽器必須支持cookies才能登錄。"
 #: src/usr/local/www/services_dyndns_edit.php:353
 #: src/usr/local/www/services_pppoe_edit.php:500
 #: src/usr/local/www/status_captiveportal.php:197
-#: src/usr/local/www/system_usermanager.php:177
-#: src/usr/local/www/system_usermanager.php:182
-#: src/usr/local/www/system_usermanager.php:187
-#: src/usr/local/www/system_usermanager.php:597
+#: src/usr/local/www/system_usermanager.php:189
+#: src/usr/local/www/system_usermanager.php:194
+#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:609
 #: src/usr/local/www/vpn_l2tp_users.php:94
 #: src/usr/local/www/vpn_l2tp_users_edit.php:77
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
-#: src/usr/local/www/vpn_openvpn_client.php:600
-#: src/usr/local/www/vpn_openvpn_client.php:625
+#: src/usr/local/www/vpn_openvpn_client.php:590
+#: src/usr/local/www/vpn_openvpn_client.php:615
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
 msgstr "用戶名"
 
-#: src/etc/inc/authgui.inc:271
+#: src/etc/inc/authgui.inc:279
 msgid "Enter your username"
 msgstr "輸入用戶名"
 
-#: src/etc/inc/authgui.inc:276 src/usr/local/www/diag_backup.php:524
+#: src/etc/inc/authgui.inc:284 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
@@ -290,19 +290,19 @@ msgstr "輸入用戶名"
 #: src/usr/local/www/services_pppoe_edit.php:507
 #: src/usr/local/www/system_advanced_notifications.php:359
 #: src/usr/local/www/system_authservers.php:654
-#: src/usr/local/www/system_usermanager.php:183
-#: src/usr/local/www/system_usermanager.php:188
-#: src/usr/local/www/system_usermanager.php:750
-#: src/usr/local/www/system_usermanager.php:753
+#: src/usr/local/www/system_usermanager.php:195
+#: src/usr/local/www/system_usermanager.php:200
+#: src/usr/local/www/system_usermanager.php:762
+#: src/usr/local/www/system_usermanager.php:765
 #: src/usr/local/www/system_usermanager_passwordmg.php:40
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_l2tp_users_edit.php:159
-#: src/usr/local/www/vpn_openvpn_client.php:607
-#: src/usr/local/www/vpn_openvpn_client.php:632
+#: src/usr/local/www/vpn_openvpn_client.php:597
+#: src/usr/local/www/vpn_openvpn_client.php:622
 msgid "Password"
 msgstr "密碼"
 
-#: src/etc/inc/authgui.inc:278
+#: src/etc/inc/authgui.inc:286
 msgid "Enter your password"
 msgstr "輸入密碼"
 
@@ -683,17 +683,17 @@ msgstr "發送請求到: %s"
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "動態DNS %1$s (%2$s): _remove() starting."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "動態DNS %1$s (%2$s): _listCurrent() starting."
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "動態DNS %1$s (%2$s): _checkLookupStatus() starting."
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -732,7 +732,7 @@ msgstr "有效載荷："
 msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
-msgstr ""
+msgstr "動態DNS %1$s (%2$s): _checkLookupStatus() ending。找不到匹配的記錄。"
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
@@ -1132,63 +1132,63 @@ msgstr "系統無法識別的常規系統錯誤"
 #: src/etc/inc/dyndns.class:1774
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_checkStatus() 結果: %1$s"
 
 #: src/etc/inc/dyndns.class:1785
 msgid "No record exists."
-msgstr ""
+msgstr "記錄不存在。"
 
 #: src/etc/inc/dyndns.class:1789
 msgid "No type exists."
-msgstr ""
+msgstr "類型不存在。"
 
 #: src/etc/inc/dyndns.class:1793
 msgid "No value exists."
-msgstr ""
+msgstr "值不存在。"
 
 #: src/etc/inc/dyndns.class:1796
 msgid "No such zone exists."
-msgstr ""
+msgstr "區域不存在。"
 
 #: src/etc/inc/dyndns.class:1799
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "指定的記錄無效。"
 
 #: src/etc/inc/dyndns.class:1802
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "指定的類型無效。"
 
 #: src/etc/inc/dyndns.class:1805
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "指定的值無效。"
 
 #: src/etc/inc/dyndns.class:1808
 msgid "Record is not editable."
-msgstr ""
+msgstr "記錄不可編輯。"
 
 #: src/etc/inc/dyndns.class:1811
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "記錄存在但不可編輯。"
 
 #: src/etc/inc/dyndns.class:1814
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "記錄已存在，必須在添加前刪除。"
 
 #: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "更新區域時遠程伺服器發生錯誤。"
 
 #: src/etc/inc/dyndns.class:1820
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "加載區域時遠程伺服器發生錯誤。"
 
 #: src/etc/inc/dyndns.class:1826
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "添加新記錄時遠程伺服器發生錯誤。"
 
 #: src/etc/inc/dyndns.class:1829
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "刪除現有記錄時遠程伺服器發生錯誤。"
 
 #: src/etc/inc/dyndns.class:1843
 #, php-format
@@ -1996,8 +1996,8 @@ msgstr "未找到鏡像。"
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
-#: src/usr/local/www/system_usermanager.php:451
-#: src/usr/local/www/system_usermanager.php:518
+#: src/usr/local/www/system_usermanager.php:463
+#: src/usr/local/www/system_usermanager.php:530
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:209
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:50
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:346
@@ -2051,7 +2051,7 @@ msgstr "名稱"
 #: src/usr/local/www/status_upnp.php:42
 #: src/usr/local/www/status_wireless.php:31
 #: src/usr/local/www/status_wireless.php:58
-#: src/usr/local/www/system_usermanager.php:599
+#: src/usr/local/www/system_usermanager.php:611
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
@@ -2686,9 +2686,9 @@ msgstr "錯誤：無法在 DHCP_Config_File_Override() 中打開%s進行讀取�
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
 #: src/usr/local/www/status_openvpn.php:30
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
 msgstr "OpenVPN"
@@ -3071,13 +3071,13 @@ msgstr "無法在%1$s上發送註冊Grow  -- 錯誤: %2$s"
 #: src/usr/local/www/firewall_rules_edit.php:1704
 #: src/usr/local/www/status_ipsec.php:338
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "none"
 msgstr "沒有"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1659
-#: src/usr/local/www/services_captiveportal.php:968
+#: src/usr/local/www/services_captiveportal.php:970
 msgid "default"
 msgstr "默認值"
 
@@ -3244,62 +3244,57 @@ msgstr "默認"
 msgid "The field '%s' must contain a valid IP address or domain name."
 msgstr "字段'%s'必須包含有效的IP地址或功能變數名稱。"
 
-#: src/etc/inc/openvpn.inc:515
-#, php-format
-msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr "字段'%s' 必須包含有效的端口，範圍從0到65535。"
-
-#: src/etc/inc/openvpn.inc:529
+#: src/etc/inc/openvpn.inc:532
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
 msgstr "字段'%1$s' 必須包含單個有效的 %2$s CIDR範圍。"
 
-#: src/etc/inc/openvpn.inc:544
+#: src/etc/inc/openvpn.inc:547
 #, php-format
 msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
 "commas."
 msgstr "字段'%1$s' 必須只包含有效的 %2$s CIDR範圍，用逗號分隔。"
 
-#: src/etc/inc/openvpn.inc:1086
+#: src/etc/inc/openvpn.inc:1089
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr "無法構建OpenVPN伺服器配置。 不能使用所選的DH參數長度。"
 
-#: src/etc/inc/openvpn.inc:1256
+#: src/etc/inc/openvpn.inc:1257
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
 msgstr "OpenVPN ID %1$s PID %2$s 仍在運行，終止它。"
 
-#: src/etc/inc/openvpn.inc:1491
+#: src/etc/inc/openvpn.inc:1492
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
 msgstr "為介面重新同步OpenVPN實例。 %s."
 
-#: src/etc/inc/openvpn.inc:1493
+#: src/etc/inc/openvpn.inc:1494
 msgid "Resyncing OpenVPN instances."
 msgstr "重新同步OpenVPN實例。"
 
-#: src/etc/inc/openvpn.inc:1526
+#: src/etc/inc/openvpn.inc:1527
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
 msgstr "為網關組%1$s伺服器%2$s.重新同步OpenVPN。"
 
-#: src/etc/inc/openvpn.inc:1535
+#: src/etc/inc/openvpn.inc:1536
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
 msgstr "為網關組%1$s客戶端%2$s.重新同步OpenVPN。"
 
-#: src/etc/inc/openvpn.inc:1544
+#: src/etc/inc/openvpn.inc:1545
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
 msgstr "openvpn_resync_gwgroup使用null gwgroup參數調用。"
 
-#: src/etc/inc/openvpn.inc:1650 src/etc/inc/openvpn.inc:1781
+#: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
 msgid "Unable to contact daemon"
 msgstr "無法聯繫守護程式"
 
-#: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
+#: src/etc/inc/openvpn.inc:1652 src/etc/inc/openvpn.inc:1783
 msgid "Service not running?"
 msgstr "服務未運行？"
 
@@ -6006,13 +6001,13 @@ msgstr "停止"
 #: src/usr/local/www/services_router_advertisements.php:126
 #: src/usr/local/www/system_gateways_edit.php:153
 #: src/usr/local/www/system_routes_edit.php:262
-#: src/usr/local/www/system_usermanager.php:624
-#: src/usr/local/www/system_usermanager.php:721
+#: src/usr/local/www/system_usermanager.php:636
+#: src/usr/local/www/system_usermanager.php:733
 #: src/usr/local/www/vpn_ipsec_phase1.php:657
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
-#: src/usr/local/www/vpn_openvpn_client.php:512
+#: src/usr/local/www/vpn_openvpn_client.php:510
 #: src/usr/local/www/vpn_openvpn_csc.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:693
+#: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disabled"
 msgstr "禁用"
 
@@ -6476,15 +6471,15 @@ msgstr "選擇此佇列的選項"
 #: src/usr/local/www/system_groupmanager.php:409
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/system_routes_edit.php:270
-#: src/usr/local/www/system_usermanager.php:452
+#: src/usr/local/www/system_usermanager.php:464
 #: src/usr/local/www/vpn_ipsec_phase1.php:694
 #: src/usr/local/www/vpn_ipsec_phase2.php:584
-#: src/usr/local/www/vpn_openvpn_client.php:614
-#: src/usr/local/www/vpn_openvpn_client.php:950
+#: src/usr/local/www/vpn_openvpn_client.php:604
+#: src/usr/local/www/vpn_openvpn_client.php:941
 #: src/usr/local/www/vpn_openvpn_csc.php:348
 #: src/usr/local/www/vpn_openvpn_csc.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:764
-#: src/usr/local/www/vpn_openvpn_server.php:1380
+#: src/usr/local/www/vpn_openvpn_server.php:746
+#: src/usr/local/www/vpn_openvpn_server.php:1340
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
@@ -6694,7 +6689,7 @@ msgstr "延遲必須為整數。"
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:517
 #: src/usr/local/www/system_certmanager.php:887
-#: src/usr/local/www/system_usermanager.php:647
+#: src/usr/local/www/system_usermanager.php:659
 msgid "Delete"
 msgstr "刪除"
 
@@ -6730,7 +6725,7 @@ msgstr "限制"
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
-#: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
+#: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
 msgstr "啟用"
@@ -6796,8 +6791,8 @@ msgstr "IPv6掩碼位%1$s%2$s"
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/vpn_ipsec_phase1.php:697
 #: src/usr/local/www/vpn_ipsec_phase2.php:587
-#: src/usr/local/www/vpn_openvpn_client.php:617
-#: src/usr/local/www/vpn_openvpn_server.php:767
+#: src/usr/local/www/vpn_openvpn_client.php:607
+#: src/usr/local/www/vpn_openvpn_server.php:749
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr "在這裏輸入描述以供參考。"
@@ -7142,7 +7137,7 @@ msgstr "不要為封閉的UDP端口發送ICMP端口不可達消息"
 #: src/etc/inc/upgrade_config.inc:656
 msgid ""
 "Randomize the ID field in IP packets (default is 1: Assign random IP IDs)"
-msgstr ""
+msgstr "將IP數據包中的ID字段隨機化（默認為1：分配隨機IP IDs）"
 
 #: src/etc/inc/upgrade_config.inc:660
 msgid "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)"
@@ -7537,7 +7532,7 @@ msgstr "配置l2tp VPN服務..."
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
 msgstr "錯誤：無法在vpn_l2tp_configure（）中打開mpd.conf。"
 
-#: src/etc/inc/vpn.inc:1872
+#: src/etc/inc/vpn.inc:1867
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
 msgstr "錯誤：無法在vpn_l2tp_configure().中打開mpd.secret。"
@@ -7863,12 +7858,12 @@ msgstr "鏈接類型"
 #: src/usr/local/www/system_gateways.php:255
 #: src/usr/local/www/system_groupmanager.php:306
 #: src/usr/local/www/system_routes.php:246
-#: src/usr/local/www/system_usermanager.php:601
+#: src/usr/local/www/system_usermanager.php:613
 #: src/usr/local/www/vpn_ipsec.php:256 src/usr/local/www/vpn_ipsec_keys.php:104
 #: src/usr/local/www/vpn_l2tp_users.php:96
-#: src/usr/local/www/vpn_openvpn_client.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:942
 #: src/usr/local/www/vpn_openvpn_csc.php:664
-#: src/usr/local/www/vpn_openvpn_server.php:1381
+#: src/usr/local/www/vpn_openvpn_server.php:1341
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 msgid "Actions"
 msgstr "動作"
@@ -7942,7 +7937,7 @@ msgstr "選擇要測試的認證伺服器。"
 
 #: src/usr/local/www/diag_authentication.php:98
 #: src/usr/local/www/interfaces.php:2648 src/usr/local/www/interfaces.php:2773
-#: src/usr/local/www/system_usermanager.php:728
+#: src/usr/local/www/system_usermanager.php:740
 #: src/usr/local/www/vpn_l2tp_users_edit.php:152
 msgid "*Username"
 msgstr "*用戶名"
@@ -8174,8 +8169,8 @@ msgstr "系統日誌"
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/system_user_settings.php:32
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
@@ -8386,8 +8381,8 @@ msgid "Clear command entry"
 msgstr "清除命令條目"
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
-#: src/usr/local/www/system_groupmanager_addprivs.php:202
-#: src/usr/local/www/system_usermanager_addprivs.php:191
+#: src/usr/local/www/system_groupmanager_addprivs.php:213
+#: src/usr/local/www/system_usermanager_addprivs.php:197
 #: src/usr/local/www/interfaces.php:2084
 msgid "Clear"
 msgstr "清除"
@@ -8397,9 +8392,9 @@ msgid "Download File"
 msgstr "下載檔"
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1093
-#: src/usr/local/www/services_captiveportal.php:1127
-#: src/usr/local/www/services_captiveportal.php:1159
+#: src/usr/local/www/services_captiveportal.php:1095
+#: src/usr/local/www/services_captiveportal.php:1129
+#: src/usr/local/www/services_captiveportal.php:1161
 msgid "Download"
 msgstr "下載"
 
@@ -8691,7 +8686,7 @@ msgstr "主機名"
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
-#: src/usr/local/www/vpn_openvpn_client.php:949
+#: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
 msgstr "伺服器"
@@ -8833,10 +8828,10 @@ msgstr "過濾運算式"
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
-#: src/usr/local/www/system_groupmanager_addprivs.php:171
-#: src/usr/local/www/system_groupmanager_addprivs.php:191
-#: src/usr/local/www/system_usermanager_addprivs.php:160
-#: src/usr/local/www/system_usermanager_addprivs.php:180
+#: src/usr/local/www/system_groupmanager_addprivs.php:182
+#: src/usr/local/www/system_groupmanager_addprivs.php:202
+#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_usermanager_addprivs.php:186
 msgid "Filter"
 msgstr "篩檢程式"
 
@@ -8872,7 +8867,7 @@ msgstr "刪除已過濾地址的所有狀態"
 #: src/usr/local/www/system_advanced_admin.php:309
 #: src/usr/local/www/system_advanced_admin.php:313
 #: src/usr/local/www/system_advanced_admin.php:321
-#: src/usr/local/www/vpn_openvpn_client.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:939
 msgid "Protocol"
 msgstr "協議"
 
@@ -9377,9 +9372,9 @@ msgstr "數據捕獲選項"
 #: src/usr/local/www/services_wol_edit.php:134
 #: src/usr/local/www/system_gateways_edit.php:160
 #: src/usr/local/www/vpn_ipsec_phase1.php:678
-#: src/usr/local/www/vpn_l2tp.php:211
-#: src/usr/local/www/vpn_openvpn_client.php:541
-#: src/usr/local/www/vpn_openvpn_server.php:749
+#: src/usr/local/www/vpn_l2tp.php:222
+#: src/usr/local/www/vpn_openvpn_client.php:539
+#: src/usr/local/www/vpn_openvpn_server.php:731
 msgid "*Interface"
 msgstr "*介面"
 
@@ -9423,8 +9418,8 @@ msgstr "選擇要捕獲的流量類型。"
 #: src/usr/local/www/firewall_rules_edit.php:1297
 #: src/usr/local/www/system_authservers.php:737
 #: src/usr/local/www/vpn_ipsec_phase2.php:595
-#: src/usr/local/www/vpn_openvpn_client.php:526
-#: src/usr/local/www/vpn_openvpn_server.php:734
+#: src/usr/local/www/vpn_openvpn_client.php:524
+#: src/usr/local/www/vpn_openvpn_server.php:716
 msgid "*Protocol"
 msgstr "*協議"
 
@@ -9614,9 +9609,9 @@ msgstr "時間"
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1086
-#: src/usr/local/www/services_captiveportal.php:1120
-#: src/usr/local/www/services_captiveportal.php:1152
+#: src/usr/local/www/services_captiveportal.php:1088
+#: src/usr/local/www/services_captiveportal.php:1122
+#: src/usr/local/www/services_captiveportal.php:1154
 msgid "View"
 msgstr "視圖"
 
@@ -10571,14 +10566,14 @@ msgstr "刪除別名"
 #: src/usr/local/www/system_groupmanager.php:263
 #: src/usr/local/www/system_groupmanager.php:347
 #: src/usr/local/www/system_routes.php:298
-#: src/usr/local/www/system_usermanager.php:505
-#: src/usr/local/www/system_usermanager.php:551
-#: src/usr/local/www/system_usermanager.php:642
+#: src/usr/local/www/system_usermanager.php:517
+#: src/usr/local/www/system_usermanager.php:563
+#: src/usr/local/www/system_usermanager.php:654
 #: src/usr/local/www/vpn_ipsec_keys.php:169
 #: src/usr/local/www/vpn_l2tp_users.php:123
-#: src/usr/local/www/vpn_openvpn_client.php:988
+#: src/usr/local/www/vpn_openvpn_client.php:979
 #: src/usr/local/www/vpn_openvpn_csc.php:700
-#: src/usr/local/www/vpn_openvpn_server.php:1426
+#: src/usr/local/www/vpn_openvpn_server.php:1386
 msgid "Add"
 msgstr "增加"
 
@@ -10676,13 +10671,13 @@ msgstr "網址表（端口）"
 #: src/usr/local/www/system_groupmanager.php:273
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_usermanager.php:561
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:573
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:478
+#: src/usr/local/www/vpn_openvpn_client.php:476
 #: src/usr/local/www/vpn_openvpn_csc.php:286
-#: src/usr/local/www/vpn_openvpn_server.php:657
+#: src/usr/local/www/vpn_openvpn_server.php:639
 msgid "Edit"
 msgstr "編輯"
 
@@ -11543,7 +11538,7 @@ msgstr "反轉匹配"
 #: src/usr/local/www/load_balancer_monitor.php:106
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/load_balancer_monitor_edit.php:278
-#: src/usr/local/www/services_captiveportal.php:966
+#: src/usr/local/www/services_captiveportal.php:968
 #: src/usr/local/www/services_dhcp.php:1356
 #: src/usr/local/www/services_igmpproxy.php:84
 #: src/usr/local/www/status_logs_vpn.php:178
@@ -12588,9 +12583,9 @@ msgstr "防鎖規則"
 #: src/usr/local/www/status_logs_settings.php:226
 #: src/usr/local/www/system_authservers.php:430
 #: src/usr/local/www/system_groupmanager.php:290
-#: src/usr/local/www/system_groupmanager_addprivs.php:135
-#: src/usr/local/www/system_usermanager.php:582
-#: src/usr/local/www/system_usermanager_addprivs.php:132
+#: src/usr/local/www/system_groupmanager_addprivs.php:136
+#: src/usr/local/www/system_usermanager.php:594
+#: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/system_usermanager_settings.php:184
 #: src/usr/local/www/system_usermanager_settings.php:195
@@ -13811,9 +13806,9 @@ msgstr "按佇列"
 #: src/usr/local/www/firewall_shaper_vinterface.php:373
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/firewall_shaper_wizards.php:76
-#: src/usr/local/www/vpn_openvpn_client.php:501
+#: src/usr/local/www/vpn_openvpn_client.php:499
 #: src/usr/local/www/vpn_openvpn_csc.php:305
-#: src/usr/local/www/vpn_openvpn_server.php:680
+#: src/usr/local/www/vpn_openvpn_server.php:662
 msgid "Wizards"
 msgstr "嚮導"
 
@@ -14212,8 +14207,8 @@ msgid "Authentication and Accounting"
 msgstr "認證和計帳"
 
 #: src/usr/local/www/guiconfig.inc:163
-#: src/usr/local/www/services_captiveportal.php:867
-#: src/usr/local/www/vpn_l2tp.php:285
+#: src/usr/local/www/services_captiveportal.php:869
+#: src/usr/local/www/vpn_l2tp.php:296
 msgid "Accounting"
 msgstr "計帳"
 
@@ -14294,7 +14289,7 @@ msgstr "%1$s監視%2$s 篩檢程式重新加載進度。"
 
 #: src/usr/local/www/guiconfig.inc:582
 msgid "Widget title"
-msgstr ""
+msgstr "小部件標題"
 
 #: src/usr/local/www/guiconfig.inc:629 src/usr/local/www/guiconfig.inc:680
 #, php-format
@@ -14365,8 +14360,8 @@ msgstr "證書管理"
 #: src/usr/local/www/system_authservers.php:409
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_settings.php:109
 msgid "User Manager"
 msgstr "用戶管理"
@@ -14435,7 +14430,7 @@ msgstr "即插即用"
 
 #: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1703
 #: src/usr/local/www/interfaces_ppps_edit.php:456
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
@@ -16551,8 +16546,8 @@ msgstr "參與橋接的介面。"
 #: src/usr/local/www/interfaces_bridge_edit.php:426
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
-#: src/usr/local/www/vpn_openvpn_client.php:884
-#: src/usr/local/www/vpn_openvpn_server.php:1312
+#: src/usr/local/www/vpn_openvpn_client.php:875
+#: src/usr/local/www/vpn_openvpn_server.php:1272
 #: src/usr/local/www/interfaces.php:1986 src/usr/local/www/interfaces.php:2171
 msgid "Advanced Configuration"
 msgstr "高級配置"
@@ -17532,8 +17527,8 @@ msgstr ""
 "否則，介面被關閉，所有相關的路由被刪除。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:858
-#: src/usr/local/www/vpn_openvpn_client.php:849
-#: src/usr/local/www/vpn_openvpn_server.php:1098
+#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_server.php:1080
 msgid "Compression"
 msgstr "壓縮"
 
@@ -18146,7 +18141,7 @@ msgid "HTTP Code"
 msgstr "HTTP代碼"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
-#: src/usr/local/www/services_captiveportal.php:1012
+#: src/usr/local/www/services_captiveportal.php:1014
 msgid "HTTPS Options"
 msgstr "HTTPS 選項"
 
@@ -18184,10 +18179,10 @@ msgstr "地址池"
 #: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_pool.php:135
 #: src/usr/local/www/status_lb_vs.php:65
-#: src/usr/local/www/vpn_openvpn_client.php:498
+#: src/usr/local/www/vpn_openvpn_client.php:496
 #: src/usr/local/www/vpn_openvpn_csc.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:653
-#: src/usr/local/www/vpn_openvpn_server.php:677
+#: src/usr/local/www/vpn_openvpn_server.php:635
+#: src/usr/local/www/vpn_openvpn_server.php:659
 msgid "Servers"
 msgstr "伺服器"
 
@@ -18938,8 +18933,8 @@ msgstr "插件已配置，但沒有（完全）安裝."
 #: src/usr/local/www/services_captiveportal_ip.php:94
 #: src/usr/local/www/services_captiveportal_mac.php:161
 #: src/usr/local/www/services_captiveportal_vouchers.php:373
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
-#: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:83
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:217 src/usr/local/www/vpn_l2tp_users.php:83
 msgid "Configuration"
 msgstr "配置 "
 
@@ -19307,78 +19302,85 @@ msgid ""
 msgstr "如果設置此選項，入網門戶將限制每個登錄的用戶帶寬。 RADIUS可以覆蓋默認設置。 留空為無限制。"
 
 #: src/usr/local/www/services_captiveportal.php:688
-msgid "*Authentication method"
-msgstr "*驗證方法"
+#: src/usr/local/www/vpn_ipsec_phase1.php:705
+msgid "*Authentication Method"
+msgstr "*認證方法"
 
-#: src/usr/local/www/services_captiveportal.php:723
+#: src/usr/local/www/services_captiveportal.php:714
+msgid ""
+"Select an Authentication Method to use for this zone. One method must be "
+"selected."
+msgstr ""
+
+#: src/usr/local/www/services_captiveportal.php:725
 msgid "*RADIUS protocol"
 msgstr "*RADIUS 協議"
 
-#: src/usr/local/www/services_captiveportal.php:762
+#: src/usr/local/www/services_captiveportal.php:764
 msgid "Primary Authentication Source"
 msgstr "主認證源"
 
-#: src/usr/local/www/services_captiveportal.php:765
+#: src/usr/local/www/services_captiveportal.php:767
 msgid "*Primary RADIUS server"
 msgstr "*主RADIUS 伺服器"
 
-#: src/usr/local/www/services_captiveportal.php:789
-#: src/usr/local/www/services_captiveportal.php:842
+#: src/usr/local/www/services_captiveportal.php:791
+#: src/usr/local/www/services_captiveportal.php:844
 msgid "Secondary RADIUS server"
 msgstr "輔助RADIUS伺服器"
 
-#: src/usr/local/www/services_captiveportal.php:795
-#: src/usr/local/www/services_captiveportal.php:848
+#: src/usr/local/www/services_captiveportal.php:797
+#: src/usr/local/www/services_captiveportal.php:850
 msgid "IP address of the RADIUS server to authenticate against."
 msgstr "認證RADIUS伺服器的IP地址。"
 
-#: src/usr/local/www/services_captiveportal.php:802
-#: src/usr/local/www/services_captiveportal.php:855
+#: src/usr/local/www/services_captiveportal.php:804
+#: src/usr/local/www/services_captiveportal.php:857
 msgid "RADIUS port. Leave blank for default (1812)"
 msgstr "此處留空時將使用默認RADIUS端口號(1812)"
 
-#: src/usr/local/www/services_captiveportal.php:809
-#: src/usr/local/www/services_captiveportal.php:862
+#: src/usr/local/www/services_captiveportal.php:811
+#: src/usr/local/www/services_captiveportal.php:864
 msgid ""
 "RADIUS shared secret. Leave blank to not use a shared secret (not "
 "recommended)"
 msgstr "RADIUS共用密鑰。 留空以不使用共用密鑰（不推薦）"
 
-#: src/usr/local/www/services_captiveportal.php:815
+#: src/usr/local/www/services_captiveportal.php:817
 msgid "Secondary Authentication Source"
 msgstr "輔助認證源"
 
-#: src/usr/local/www/services_captiveportal.php:818
+#: src/usr/local/www/services_captiveportal.php:820
 msgid "Primary RADIUS server"
 msgstr "主RADIUS 伺服器"
 
-#: src/usr/local/www/services_captiveportal.php:872
+#: src/usr/local/www/services_captiveportal.php:874
 #: src/usr/local/www/services_pppoe_edit.php:363
-#: src/usr/local/www/vpn_l2tp.php:273
+#: src/usr/local/www/vpn_l2tp.php:284
 msgid "RADIUS"
 msgstr "RADIUS"
 
-#: src/usr/local/www/services_captiveportal.php:879
+#: src/usr/local/www/services_captiveportal.php:881
 msgid "Accounting Port"
 msgstr "計帳端口 "
 
-#: src/usr/local/www/services_captiveportal.php:882
+#: src/usr/local/www/services_captiveportal.php:884
 msgid "Leave blank to use the default port (1813)."
 msgstr "留空則使用默認端口號 (1813)"
 
-#: src/usr/local/www/services_captiveportal.php:884
+#: src/usr/local/www/services_captiveportal.php:886
 msgid "Accounting updates"
 msgstr "記帳更新"
 
-#: src/usr/local/www/services_captiveportal.php:922
+#: src/usr/local/www/services_captiveportal.php:924
 msgid "RADIUS Options"
 msgstr "RADIUS選項"
 
-#: src/usr/local/www/services_captiveportal.php:927
+#: src/usr/local/www/services_captiveportal.php:929
 msgid "Reauthentication"
 msgstr "重新認證"
 
-#: src/usr/local/www/services_captiveportal.php:930
+#: src/usr/local/www/services_captiveportal.php:932
 msgid ""
 "If reauthentication is enabled, Access-Requests will be sent to the RADIUS "
 "server for each user that is logged in every minute. If an Access-Reject is "
@@ -19390,41 +19392,41 @@ msgstr ""
 "如果啟用重新認證，對於每分鐘登錄的每個用戶，訪問請求將被發送到RADIUS伺服器。 如果拒絕用戶訪問，入網門戶將立即斷開與用戶的連接。 "
 "重新認證要求用戶登錄時將用戶憑證緩存在入網門戶資料庫中; 緩存的憑證對門戶執行自動重新認證請求是必要的。"
 
-#: src/usr/local/www/services_captiveportal.php:937
+#: src/usr/local/www/services_captiveportal.php:939
 msgid "RADIUS MAC Authentication"
 msgstr "RADIUS MAC地址驗證"
 
-#: src/usr/local/www/services_captiveportal.php:940
+#: src/usr/local/www/services_captiveportal.php:942
 msgid ""
 "If this option is enabled, the captive portal will try to authenticate users "
 "by sending their MAC address as the username and the password entered below "
 "to the RADIUS server."
 msgstr "如果啟用此選項，入網門戶將嘗試通過將其MAC地址作為下麵輸入的用戶名和密碼發送到RADIUS伺服器來驗證用戶。"
 
-#: src/usr/local/www/services_captiveportal.php:945
+#: src/usr/local/www/services_captiveportal.php:947
 msgid "MAC authentication secret"
 msgstr "MAC認證密鑰"
 
-#: src/usr/local/www/services_captiveportal.php:952
+#: src/usr/local/www/services_captiveportal.php:954
 msgid "RADIUS NAS IP Attribute"
 msgstr "RADIUS NAS IP屬性"
 
-#: src/usr/local/www/services_captiveportal.php:955
+#: src/usr/local/www/services_captiveportal.php:957
 msgid "Choose the IP to use for calling station attribute."
 msgstr "選擇要用於呼叫站屬性的IP。"
 
-#: src/usr/local/www/services_captiveportal.php:959
+#: src/usr/local/www/services_captiveportal.php:961
 #: src/usr/local/www/system_usermanager_settings.php:199
 msgid "Session timeout"
 msgstr "會話超時"
 
-#: src/usr/local/www/services_captiveportal.php:962
+#: src/usr/local/www/services_captiveportal.php:964
 msgid ""
 "When enabled, clients will be disconnected after the amount of time "
 "retrieved from the RADIUS Session-Timeout attribute."
 msgstr "若啟用此項，防火牆會按照從RADIUS伺服器收到的會話超時時長斷開用戶的連接."
 
-#: src/usr/local/www/services_captiveportal.php:969
+#: src/usr/local/www/services_captiveportal.php:971
 msgid ""
 "If RADIUS type is set to Cisco, in Access-Requests the value of Calling-"
 "Station-ID will be set to the client's IP address and the Called-Station-Id "
@@ -19435,11 +19437,11 @@ msgstr ""
 "Id設置為客戶端的MAC地址。默認是 Calling-Station-Id = 客戶端的MAC地址和 Called-Station-ID = "
 "pfSense's WAN IP 地址。"
 
-#: src/usr/local/www/services_captiveportal.php:975
+#: src/usr/local/www/services_captiveportal.php:977
 msgid "Accounting style"
 msgstr "記帳方式"
 
-#: src/usr/local/www/services_captiveportal.php:978
+#: src/usr/local/www/services_captiveportal.php:980
 msgid ""
 "When enabled, data counts for RADIUS accounting packets will be taken from "
 "the client perspective, not the NAS. Acct-Input-Octets will represent "
@@ -19448,11 +19450,11 @@ msgstr ""
 "啟用後，RADIUS計帳數據包的數據計數將從客戶端角度獲取，而不是NAS。 Acct-Input-Octets表示下載，Acct-Output-"
 "Octets表示上傳。"
 
-#: src/usr/local/www/services_captiveportal.php:983
+#: src/usr/local/www/services_captiveportal.php:985
 msgid "Idle time accounting"
 msgstr "空閒時間計帳處理"
 
-#: src/usr/local/www/services_captiveportal.php:986
+#: src/usr/local/www/services_captiveportal.php:988
 msgid ""
 "When enabled, if a client is disconnected for exceeding the idle timeout the "
 "time spent idle is included in the total session time. Otherwise the session "
@@ -19462,28 +19464,28 @@ msgstr ""
 "啟用時，如果客戶端超過空閒超時斷開連接，則閒置時間包括在總會話時間中。 "
 "否則，向RADIUS伺服器報告的會話時間是會話開始時間與記錄最後一個活動之間的時間。"
 
-#: src/usr/local/www/services_captiveportal.php:992
+#: src/usr/local/www/services_captiveportal.php:994
 msgid "NAS Identifier"
 msgstr "NAS識別字"
 
-#: src/usr/local/www/services_captiveportal.php:995
+#: src/usr/local/www/services_captiveportal.php:997
 msgid ""
 "Specify a NAS identifier to override the default value (pfSense.localdomain)"
 msgstr "指定NAS識別字以覆蓋默認值"
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Single dash"
 msgstr "單破折號"
 
-#: src/usr/local/www/services_captiveportal.php:1001
+#: src/usr/local/www/services_captiveportal.php:1003
 msgid "Unformatted"
 msgstr "未格式化"
 
-#: src/usr/local/www/services_captiveportal.php:999
+#: src/usr/local/www/services_captiveportal.php:1001
 msgid "MAC address format"
 msgstr "MAC地址格式"
 
-#: src/usr/local/www/services_captiveportal.php:1002
+#: src/usr/local/www/services_captiveportal.php:1004
 #, php-format
 msgid ""
 "This option changes the MAC address format used in the whole RADIUS system. "
@@ -19496,18 +19498,18 @@ msgstr ""
 "%1$s默認：00：11：22：33：44：55%1$sSingle dash：001122-334455%1$sIETF：00-11-22-33-44-"
 "55%1$sCisco：0011.2233.4455%1$sUnformatted：001122334455"
 
-#: src/usr/local/www/services_captiveportal.php:1020
+#: src/usr/local/www/services_captiveportal.php:1022
 msgid ""
 "When enabled, the username and password will be transmitted over an HTTPS "
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr "如果啟用，用戶名和密碼將通過HTTPS連接傳輸，以防止洩密。還必須在下面指定伺服器名稱和證書。"
 
-#: src/usr/local/www/services_captiveportal.php:1025
+#: src/usr/local/www/services_captiveportal.php:1027
 msgid "*HTTPS server name"
 msgstr "*HTTPS伺服器名稱"
 
-#: src/usr/local/www/services_captiveportal.php:1028
+#: src/usr/local/www/services_captiveportal.php:1030
 msgid ""
 "This name will be used in the form action for the HTTPS POST and should "
 "match the Common Name (CN) in the certificate (otherwise, the client browser "
@@ -19518,22 +19520,22 @@ msgstr ""
 "此名稱將用於HTTPS POST的表單操作中，並應與證書中的公用名（CN）匹配（否則，客戶端流覽器很可能顯示安全警告）。 "
 "確保入網門戶網站客戶端可以在DNS中解析此名稱，並在客戶端上驗證IP解析到pfSense上的正確介面IP。"
 
-#: src/usr/local/www/services_captiveportal.php:1034
+#: src/usr/local/www/services_captiveportal.php:1036
 msgid "*SSL Certificate"
 msgstr "*SSL 證書"
 
-#: src/usr/local/www/services_captiveportal.php:1037
+#: src/usr/local/www/services_captiveportal.php:1039
 #, php-format
 msgid ""
 "If no certificates are defined, one may be defined here: %1$sSystem &gt; "
 "Cert. Manager%2$s"
 msgstr "如果沒有定義證書，可以在這裏定義： %1$s系統 &gt;證書管理%2$s"
 
-#: src/usr/local/www/services_captiveportal.php:1041
+#: src/usr/local/www/services_captiveportal.php:1043
 msgid "HTTPS Forwards"
 msgstr "HTTPS轉發"
 
-#: src/usr/local/www/services_captiveportal.php:1044
+#: src/usr/local/www/services_captiveportal.php:1046
 msgid ""
 "If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites "
 "will not be forwarded to the captive portal. This prevents certificate "
@@ -19545,15 +19547,15 @@ msgstr ""
 "如果設置此選項，則嘗試連接到SSL / HTTPS（端口443）站點將不會轉發到入網門戶。 這將防止證書錯誤顯示給用戶，即使啟用了HTTPS登錄。 "
 "用戶必須嘗試連接到HTTP（端口80）站點才能轉發到入網門戶。 如果啟用了HTTPS登錄，則用戶將被重定向到HTTPS登錄頁面。"
 
-#: src/usr/local/www/services_captiveportal.php:1051
+#: src/usr/local/www/services_captiveportal.php:1053
 msgid "HTML Page Contents"
 msgstr "HTML頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:1056
+#: src/usr/local/www/services_captiveportal.php:1058
 msgid "Portal page contents"
 msgstr "門戶頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:1059
+#: src/usr/local/www/services_captiveportal.php:1061
 #, php-format
 msgid ""
 "Upload an HTML/PHP file for the portal page here (leave blank to keep the "
@@ -19595,21 +19597,21 @@ msgstr ""
 "&quot;accept&quot; type=&quot;submit&quot; value="
 "&quot;Continue&quot;&gt;%1$s&lt;/form&gt;"
 
-#: src/usr/local/www/services_captiveportal.php:1083
+#: src/usr/local/www/services_captiveportal.php:1085
 msgid "Current Portal Page"
 msgstr "當前頁"
 
-#: src/usr/local/www/services_captiveportal.php:1100
-#: src/usr/local/www/services_captiveportal.php:1134
-#: src/usr/local/www/services_captiveportal.php:1166
+#: src/usr/local/www/services_captiveportal.php:1102
+#: src/usr/local/www/services_captiveportal.php:1136
+#: src/usr/local/www/services_captiveportal.php:1168
 msgid "Restore Default Page"
 msgstr "恢復默認頁面"
 
-#: src/usr/local/www/services_captiveportal.php:1109
+#: src/usr/local/www/services_captiveportal.php:1111
 msgid "Auth error page contents"
 msgstr "認證錯誤頁"
 
-#: src/usr/local/www/services_captiveportal.php:1112
+#: src/usr/local/www/services_captiveportal.php:1114
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
@@ -19619,25 +19621,25 @@ msgstr ""
 "當發生身份認證錯誤時，將顯示此處上傳的HTML / PHP檔的內容。 它可以包括“$ PORTAL_MESSAGE "
 "$”。如果有RADIUS伺服器，它將被來自RADIUS伺服器的錯誤或應答消息替換。"
 
-#: src/usr/local/www/services_captiveportal.php:1117
+#: src/usr/local/www/services_captiveportal.php:1119
 msgid "Current Auth Error Page"
 msgstr "當前認證錯誤頁"
 
-#: src/usr/local/www/services_captiveportal.php:1143
+#: src/usr/local/www/services_captiveportal.php:1145
 msgid "Logout page contents"
 msgstr "註銷頁面內容"
 
-#: src/usr/local/www/services_captiveportal.php:1146
+#: src/usr/local/www/services_captiveportal.php:1148
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
 msgstr "當啟用註銷彈出窗口時，將顯示在此處上傳的HTML / PHP檔的內容。"
 
-#: src/usr/local/www/services_captiveportal.php:1149
+#: src/usr/local/www/services_captiveportal.php:1151
 msgid "Current Logout Page"
 msgstr "當前註銷頁面"
 
-#: src/usr/local/www/services_captiveportal.php:1182
+#: src/usr/local/www/services_captiveportal.php:1184
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -19923,7 +19925,7 @@ msgstr "入網門戶MAC地址配置已更改。"
 #: src/usr/local/www/status_logs_vpn.php:139
 #: src/usr/local/www/status_logs_vpn.php:366
 #: src/usr/local/www/system_groupmanager.php:226
-#: src/usr/local/www/system_usermanager.php:453
+#: src/usr/local/www/system_usermanager.php:465
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:78
 msgid "Action"
 msgstr "行動"
@@ -21106,14 +21108,14 @@ msgstr "拒絕訪問的部分MAC地址列表，以逗號分隔，不含空格，
 #: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
 #: src/usr/local/www/services_dhcpv6.php:857
-#: src/usr/local/www/vpn_openvpn_server.php:1238
+#: src/usr/local/www/vpn_openvpn_server.php:1213
 msgid "NTP Server 1"
 msgstr "NTP伺服器1"
 
 #: src/usr/local/www/services_dhcp.php:1187
 #: src/usr/local/www/services_dhcp_edit.php:655
 #: src/usr/local/www/services_dhcpv6.php:865
-#: src/usr/local/www/vpn_openvpn_server.php:1245
+#: src/usr/local/www/vpn_openvpn_server.php:1220
 msgid "NTP Server 2"
 msgstr "NTP伺服器2"
 
@@ -22027,8 +22029,8 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:355
 #: src/usr/local/www/services_unbound.php:351
 #: src/usr/local/www/services_unbound.php:365
-#: src/usr/local/www/vpn_openvpn_client.php:889
-#: src/usr/local/www/vpn_openvpn_server.php:1316
+#: src/usr/local/www/vpn_openvpn_client.php:880
+#: src/usr/local/www/vpn_openvpn_server.php:1276
 msgid "Custom options"
 msgstr "自定義選項"
 
@@ -22320,7 +22322,7 @@ msgid "The MX contains invalid characters."
 msgstr "MX包含無效字元。 "
 
 #: src/usr/local/www/services_dyndns_edit.php:142
-#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:211
 #: src/usr/local/www/vpn_l2tp_users_edit.php:86
 msgid "The username contains invalid characters."
 msgstr "用戶名包含無效字元 "
@@ -22404,8 +22406,18 @@ msgid "Verbose logging"
 msgstr "詳細記錄"
 
 #: src/usr/local/www/services_dyndns_edit.php:339
-msgid "CURL options"
-msgstr "CURL 選項"
+msgid "HTTP API DNS Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:346
+msgid "HTTP API SSL Options"
+msgstr ""
+
+#: src/usr/local/www/services_dyndns_edit.php:349
+msgid ""
+"When set, the server must provide a valid certificate trust chain which can "
+"be verified by this firewall."
+msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:356
 #, php-format
@@ -22416,6 +22428,9 @@ msgid ""
 "the DNS record comment.%1$sFor Custom Entries, Username and Password "
 "represent HTTP Authentication username and passwords."
 msgstr ""
+"除了Namecheap，FreeDNS和自定義條目之外，所有類型都需要用戶名。%1$sDNS Made Easy: 動態DNS ID%1$sRoute "
+"53: 輸入訪問密鑰ID。%1$sGleSYS: 輸入API用戶名。%1$sDreamhost:"
+"輸入DNS記錄注釋的值。%1$s對於自定義條目，用戶名和密碼表示HTTP身份驗證用戶名和密碼。"
 
 #: src/usr/local/www/services_dyndns_edit.php:368
 #, php-format
@@ -22425,6 +22440,9 @@ msgid ""
 "Secret Access Key.%1$sGleSYS: Enter the API key.%1$sDreamhost: Enter the API "
 "Key.%1$sDNSimple: Enter the API token."
 msgstr ""
+"FreeDNS (freedns.afraid.org): 輸入FreeDNS提供的“認證令牌”。%1$sDNS Made Easy: "
+"動態DNS密碼%1$sRoute 53: 輸入安全訪問密鑰。%1$sGleSYS: 輸入 API 密鑰。%1$sDreamhost: "
+"輸入API密鑰。%1$sDNSimple:輸入API 令牌。"
 
 #: src/usr/local/www/services_dyndns_edit.php:377
 msgid "Zone ID"
@@ -23044,7 +23062,7 @@ msgid "*Remote Address Range"
 msgstr "*遠程地址範圍 "
 
 #: src/usr/local/www/services_pppoe_edit.php:332
-#: src/usr/local/www/vpn_l2tp.php:230
+#: src/usr/local/www/vpn_l2tp.php:241
 msgid "Specify the starting address for the client IP address subnet."
 msgstr "指定客戶端IP地址子網的起始地址。"
 
@@ -23069,7 +23087,7 @@ msgid ""
 msgstr "用戶將使用以下指定的RADIUS伺服器進行身份認證，而不會使用本地用戶數據庫。"
 
 #: src/usr/local/www/services_pppoe_edit.php:374
-#: src/usr/local/www/vpn_l2tp.php:288
+#: src/usr/local/www/vpn_l2tp.php:299
 msgid "Sends accounting packets to the RADIUS server."
 msgstr "向RADIUS伺服器發送計帳資訊。"
 
@@ -23123,7 +23141,7 @@ msgid "Primary RADIUS Server Shared Secret"
 msgstr "主RADIUS共用密鑰"
 
 #: src/usr/local/www/services_pppoe_edit.php:434
-#: src/usr/local/www/vpn_l2tp.php:301
+#: src/usr/local/www/vpn_l2tp.php:312
 msgid ""
 "Enter the shared secret that will be used to authenticate to the RADIUS "
 "server."
@@ -23161,7 +23179,7 @@ msgid "RFC2136 Clients"
 msgstr "RFC2136 客戶端"
 
 #: src/usr/local/www/services_rfc2136.php:177
-#: src/usr/local/www/vpn_openvpn_client.php:972
+#: src/usr/local/www/vpn_openvpn_client.php:963
 msgid "Edit client"
 msgstr "編輯客戶端 "
 
@@ -23174,7 +23192,7 @@ msgid "Enable client"
 msgstr "啟用客戶端"
 
 #: src/usr/local/www/services_rfc2136.php:186
-#: src/usr/local/www/vpn_openvpn_client.php:973
+#: src/usr/local/www/vpn_openvpn_client.php:964
 msgid "Delete client"
 msgstr "刪除客戶端 "
 
@@ -24216,7 +24234,7 @@ msgstr "默認情況下，允許位於本系統內部介面上的IPv4和IPv6網�
 
 #: src/usr/local/www/services_unbound_advanced.php:364
 msgid "Disable Auto-added Host Entries"
-msgstr ""
+msgstr "禁用自動添加的主機條目"
 
 #: src/usr/local/www/services_unbound_advanced.php:367
 #, php-format
@@ -24226,6 +24244,8 @@ msgid ""
 "%1$sSystem: General Setup%2$s. This disables the auto generation of these "
 "entries."
 msgstr ""
+"如在 %1$s系統：常規設置%2$s中已配置，默認情況下，此防火牆的主IPv4和IPv6地址將作為該防火牆系統域的記錄進行添加。 "
+"這將禁用這些條目的自動生成。"
 
 #: src/usr/local/www/services_unbound_advanced.php:371
 msgid "Experimental Bit 0x20 Support"
@@ -25615,11 +25635,11 @@ msgstr "沒有要顯示的日誌"
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_settings.php:186
-#: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
-#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_csc.php:282
-#: src/usr/local/www/vpn_openvpn_server.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:635
 msgid "VPN"
 msgstr "VPN"
 
@@ -26187,6 +26207,7 @@ msgstr "VPN登錄"
 
 #: src/usr/local/www/status_logs_vpn.php:140
 #: src/usr/local/www/status_logs_vpn.php:385
+#: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/services_rfc2136_edit.php:217
@@ -26711,7 +26732,7 @@ msgstr "儀錶板部件資訊更新的時間週期（秒）。 數值越小更�
 
 #: src/usr/local/www/system.php:620
 #: src/usr/local/www/system_user_settings.php:168
-#: src/usr/local/www/system_usermanager.php:974
+#: src/usr/local/www/system_usermanager.php:985
 #, php-format
 msgid "%sUser-created themes are unsupported, use at your own risk."
 msgstr "%s用戶創建的主題不受支持，請自行承擔使用風險。"
@@ -28284,8 +28305,8 @@ msgstr "已刪除認證伺服器 %s。"
 #: src/usr/local/www/system_certmanager.php:535
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
-#: src/usr/local/www/system_usermanager.php:189
-#: src/usr/local/www/system_usermanager.php:903
+#: src/usr/local/www/system_usermanager.php:201
+#: src/usr/local/www/system_usermanager.php:914
 msgid "Descriptive name"
 msgstr "描述名稱 "
 
@@ -28360,23 +28381,23 @@ msgstr "IPv6不能用於RADIUS身份驗證，請參閱Bug #4154。"
 #: src/usr/local/www/system_authservers.php:431
 #: src/usr/local/www/system_authservers.php:437
 #: src/usr/local/www/system_groupmanager.php:291
-#: src/usr/local/www/system_groupmanager_addprivs.php:136
-#: src/usr/local/www/system_usermanager.php:583
-#: src/usr/local/www/system_usermanager_addprivs.php:133
+#: src/usr/local/www/system_groupmanager_addprivs.php:137
+#: src/usr/local/www/system_usermanager.php:595
+#: src/usr/local/www/system_usermanager_addprivs.php:129
 #: src/usr/local/www/system_usermanager_settings.php:185
 msgid "Authentication Servers"
 msgstr "認證伺服器"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:288
-#: src/usr/local/www/system_groupmanager_addprivs.php:133
-#: src/usr/local/www/system_usermanager.php:557
-#: src/usr/local/www/system_usermanager.php:580
-#: src/usr/local/www/system_usermanager.php:590
-#: src/usr/local/www/system_usermanager_addprivs.php:42
-#: src/usr/local/www/system_usermanager_addprivs.php:130
+#: src/usr/local/www/system_groupmanager_addprivs.php:134
+#: src/usr/local/www/system_usermanager.php:569
+#: src/usr/local/www/system_usermanager.php:592
+#: src/usr/local/www/system_usermanager.php:602
+#: src/usr/local/www/system_usermanager_addprivs.php:38
+#: src/usr/local/www/system_usermanager_addprivs.php:126
 #: src/usr/local/www/system_usermanager_settings.php:182
-#: src/usr/local/www/vpn_l2tp.php:183 src/usr/local/www/vpn_l2tp_users.php:29
+#: src/usr/local/www/vpn_l2tp.php:194 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users.php:84
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
@@ -28387,10 +28408,10 @@ msgstr "用戶"
 #: src/usr/local/www/system_groupmanager.php:289
 #: src/usr/local/www/system_groupmanager.php:297
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_groupmanager_addprivs.php:134
-#: src/usr/local/www/system_usermanager.php:581
-#: src/usr/local/www/system_usermanager.php:600
-#: src/usr/local/www/system_usermanager_addprivs.php:131
+#: src/usr/local/www/system_groupmanager_addprivs.php:135
+#: src/usr/local/www/system_usermanager.php:593
+#: src/usr/local/www/system_usermanager.php:612
+#: src/usr/local/www/system_usermanager_addprivs.php:127
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
 msgstr "組"
@@ -28400,12 +28421,12 @@ msgid "Server Name"
 msgstr "伺服器名稱"
 
 #: src/usr/local/www/system_authservers.php:457
-#: src/usr/local/www/vpn_openvpn_server.php:1410
+#: src/usr/local/www/vpn_openvpn_server.php:1370
 msgid "Edit server"
 msgstr "編輯伺服器 "
 
 #: src/usr/local/www/system_authservers.php:458
-#: src/usr/local/www/vpn_openvpn_server.php:1411
+#: src/usr/local/www/vpn_openvpn_server.php:1371
 msgid "Delete server"
 msgstr "刪除伺服器 "
 
@@ -28666,16 +28687,16 @@ msgstr "提交的私鑰與提交的證書數據不匹配。"
 #: src/usr/local/www/system_camanager.php:201
 #: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_certmanager.php:274
-#: src/usr/local/www/system_usermanager.php:191
-#: src/usr/local/www/system_usermanager.php:917
+#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:928
 msgid "Key length"
 msgstr "密鑰長度 "
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
 #: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_usermanager.php:192
-#: src/usr/local/www/system_usermanager.php:937
+#: src/usr/local/www/system_usermanager.php:204
+#: src/usr/local/www/system_usermanager.php:948
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
 msgid "Lifetime"
 msgstr "有效期"
@@ -29007,8 +29028,8 @@ msgid "Key data"
 msgstr "密鑰數據 "
 
 #: src/usr/local/www/system_certmanager.php:256
-#: src/usr/local/www/system_usermanager.php:190
-#: src/usr/local/www/system_usermanager.php:910
+#: src/usr/local/www/system_usermanager.php:202
+#: src/usr/local/www/system_usermanager.php:921
 msgid "Certificate authority"
 msgstr "證書頒發機構"
 
@@ -29282,8 +29303,8 @@ msgstr "證書吊銷列表數據 "
 
 #: src/usr/local/www/system_crlmanager.php:205
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_client.php:330
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_client.php:329
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
 msgstr "證書頒發機構"
 
@@ -29358,9 +29379,10 @@ msgid "Choose a Certificate to Revoke"
 msgstr "選擇要吊銷的證書"
 
 #: src/usr/local/www/system_crlmanager.php:526
-#: src/usr/local/www/system_usermanager.php:853
+#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:872
 #: src/usr/local/www/vpn_ipsec_phase1.php:219
-#: src/usr/local/www/vpn_openvpn_server.php:442
+#: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate"
 msgstr "證書 "
 
@@ -29801,12 +29823,12 @@ msgid "Another entry with the same group name already exists."
 msgstr "具有相同組名的另一個條目已存在。"
 
 #: src/usr/local/www/system_groupmanager.php:238
-#: src/usr/local/www/system_usermanager.php:472
+#: src/usr/local/www/system_usermanager.php:484
 msgid "(admin privilege)"
 msgstr "（管理員許可權）"
 
 #: src/usr/local/www/system_groupmanager.php:242
-#: src/usr/local/www/system_usermanager.php:478
+#: src/usr/local/www/system_usermanager.php:490
 msgid "Delete Privilege"
 msgstr "刪除許可權"
 
@@ -29842,7 +29864,7 @@ msgid "Group description, for administrative information only"
 msgstr "組的描述，僅用於管理資訊。"
 
 #: src/usr/local/www/system_groupmanager.php:419
-#: src/usr/local/www/system_usermanager.php:793
+#: src/usr/local/www/system_usermanager.php:805
 msgid "Group membership"
 msgstr "組成員資格"
 
@@ -29859,11 +29881,11 @@ msgid "Move to \"Not members"
 msgstr "移至“非成員”"
 
 #: src/usr/local/www/system_groupmanager.php:468
-#: src/usr/local/www/system_groupmanager_addprivs.php:158
-#: src/usr/local/www/system_groupmanager_addprivs.php:167
-#: src/usr/local/www/system_usermanager.php:846
-#: src/usr/local/www/system_usermanager_addprivs.php:147
-#: src/usr/local/www/system_usermanager_addprivs.php:156
+#: src/usr/local/www/system_groupmanager_addprivs.php:169
+#: src/usr/local/www/system_groupmanager_addprivs.php:178
+#: src/usr/local/www/system_usermanager.php:858
+#: src/usr/local/www/system_usermanager_addprivs.php:153
+#: src/usr/local/www/system_usermanager_addprivs.php:162
 msgid "Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items."
 msgstr "按住CTRL（PC）/ Command鍵（Mac）鍵來選擇多個專案 "
 
@@ -29872,65 +29894,71 @@ msgid "Assigned Privileges"
 msgstr "分配權限 "
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
-#: src/usr/local/www/system_usermanager_addprivs.php:42
+#: src/usr/local/www/system_usermanager_addprivs.php:38
 msgid "Add Privileges"
 msgstr "添加許可權 "
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:64
-#: src/usr/local/www/system_usermanager_addprivs.php:66
+#: src/usr/local/www/system_groupmanager_addprivs.php:65
+#: src/usr/local/www/system_usermanager_addprivs.php:62
 msgid "Selected privileges"
 msgstr "分配權限 "
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:149
-msgid "Add Privileges for "
-msgstr "添加許可權 "
+#: src/usr/local/www/system_groupmanager_addprivs.php:150
+msgid "Group Privileges"
+msgstr ""
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:153
-#: src/usr/local/www/system_usermanager_addprivs.php:142
+#: src/usr/local/www/system_groupmanager_addprivs.php:158
+#: src/usr/local/www/vpn_ipsec_mobile.php:663
+#: src/usr/local/www/vpn_ipsec_mobile.php:672
+msgid "Group"
+msgstr "組 "
+
+#: src/usr/local/www/system_groupmanager_addprivs.php:164
+#: src/usr/local/www/system_usermanager_addprivs.php:148
 msgid "*Assigned privileges"
 msgstr "*分配權限"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:162
-#: src/usr/local/www/system_usermanager_addprivs.php:151
+#: src/usr/local/www/system_groupmanager_addprivs.php:173
+#: src/usr/local/www/system_usermanager_addprivs.php:157
 msgid "Shadow"
 msgstr "影子"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:174
-#: src/usr/local/www/system_usermanager_addprivs.php:163
+#: src/usr/local/www/system_groupmanager_addprivs.php:185
+#: src/usr/local/www/system_usermanager_addprivs.php:169
 msgid "Show only the choices containing this term"
 msgstr "僅顯示包含此術語的選項"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:177
-#: src/usr/local/www/system_usermanager_addprivs.php:166
+#: src/usr/local/www/system_groupmanager_addprivs.php:188
+#: src/usr/local/www/system_usermanager_addprivs.php:172
 msgid "Privilege information"
 msgstr "特權資訊"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:179
+#: src/usr/local/www/system_groupmanager_addprivs.php:190
 msgid ""
 "The following privileges effectively give administrator-level access to "
 "users in the group because the user gains access to execute general "
 "commands, edit system files,  modify users, change passwords or similar:"
 msgstr "以下許可權有效地為組中的用戶提供管理員級別訪問許可權，因為用戶可以訪問執行常規命令，編輯系統檔，修改用戶，更改密碼或類似內容："
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:185
-#: src/usr/local/www/system_usermanager_addprivs.php:174
+#: src/usr/local/www/system_groupmanager_addprivs.php:196
+#: src/usr/local/www/system_usermanager_addprivs.php:180
 msgid "Please take care when granting these privileges."
 msgstr "請謹慎授予這些許可權。"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:215
-#: src/usr/local/www/system_usermanager_addprivs.php:214
+#: src/usr/local/www/system_groupmanager_addprivs.php:226
+#: src/usr/local/www/system_usermanager_addprivs.php:220
 msgid "Select a privilege from the list above for a description"
 msgstr "從上面的列表中選擇一個許可權作為描述"
 
-#: src/usr/local/www/system_groupmanager_addprivs.php:235
+#: src/usr/local/www/system_groupmanager_addprivs.php:246
 msgid ""
 "(This privilege effectively gives administrator-level access to users in the "
 "group)"
 msgstr "（此許可權將向組中的用戶提供管理員級別的訪問許可權）"
 
 #: src/usr/local/www/system_hasync.php:73
-#: src/usr/local/www/vpn_openvpn_client.php:266
-#: src/usr/local/www/vpn_openvpn_client.php:344
+#: src/usr/local/www/vpn_openvpn_client.php:265
+#: src/usr/local/www/vpn_openvpn_client.php:343
 msgid "Password and confirmation must match."
 msgstr "密碼兩次輸入必須一致"
 
@@ -30355,185 +30383,191 @@ msgid "User Settings for "
 msgstr "用戶設置 for "
 
 #: src/usr/local/www/system_usermanager.php:92
-#: src/usr/local/www/system_usermanager.php:122
+#: src/usr/local/www/system_usermanager.php:134
 #, php-format
 msgid ""
 "Cannot delete user %s because you are currently logged in as that user."
 msgstr "不能刪除用戶 %s ，因為您當前以該用戶身份登錄。"
 
 #: src/usr/local/www/system_usermanager.php:98
-#: src/usr/local/www/system_usermanager.php:137
+#: src/usr/local/www/system_usermanager.php:149
 #, php-format
 msgid "User %s successfully deleted."
 msgstr "用戶%s已刪除。"
 
-#: src/usr/local/www/system_usermanager.php:131
+#: src/usr/local/www/system_usermanager.php:143
 #, php-format
 msgid "Cannot delete user %s because it is a system user."
 msgstr "不能刪除用戶%s，因為他是系統管理員。"
 
-#: src/usr/local/www/system_usermanager.php:139
+#: src/usr/local/www/system_usermanager.php:151
 #, php-format
 msgid "Users %s successfully deleted."
 msgstr "已刪除用戶 %s 。"
 
-#: src/usr/local/www/system_usermanager.php:158
+#: src/usr/local/www/system_usermanager.php:170
 #, php-format
 msgid "Certificate %s association removed."
 msgstr "已刪除證書%s的關聯。"
 
-#: src/usr/local/www/system_usermanager.php:167
+#: src/usr/local/www/system_usermanager.php:179
 #, php-format
 msgid "Privilege %s removed."
 msgstr "已刪除許可權%s。"
 
-#: src/usr/local/www/system_usermanager.php:203
+#: src/usr/local/www/system_usermanager.php:215
 msgid "The username is longer than 16 characters."
 msgstr "用戶名長度超過16個字元。 "
 
-#: src/usr/local/www/system_usermanager.php:207
+#: src/usr/local/www/system_usermanager.php:219
 #: src/usr/local/www/system_usermanager_passwordmg.php:44
 #: src/usr/local/www/vpn_l2tp_users_edit.php:94
 msgid "The passwords do not match."
 msgstr "密碼不匹配。 "
 
-#: src/usr/local/www/system_usermanager.php:211
+#: src/usr/local/www/system_usermanager.php:223
 msgid "IPsec Pre-Shared Key contains invalid characters."
 msgstr "IPsec預共用密鑰包含無效字元。 "
 
-#: src/usr/local/www/system_usermanager.php:218
+#: src/usr/local/www/system_usermanager.php:230
 msgid "One or more invalid groups was submitted."
 msgstr "提交了一個或多個無效組。"
 
-#: src/usr/local/www/system_usermanager.php:232
+#: src/usr/local/www/system_usermanager.php:244
 #: src/usr/local/www/vpn_l2tp_users_edit.php:104
 msgid "Another entry with the same username already exists."
 msgstr "另一個具有相同用戶名的記錄已經存在。 "
 
-#: src/usr/local/www/system_usermanager.php:243
+#: src/usr/local/www/system_usermanager.php:255
 msgid "That username is reserved by the system."
 msgstr "該用戶名被系統保留。 "
 
-#: src/usr/local/www/system_usermanager.php:263
+#: src/usr/local/www/system_usermanager.php:275
 msgid "Invalid expiration date format; use MM/DD/YYYY instead."
 msgstr "截止日期格式無效；使用MM / DD / YYYY的代替。 "
 
-#: src/usr/local/www/system_usermanager.php:270
+#: src/usr/local/www/system_usermanager.php:282
 msgid "Invalid internal Certificate Authority"
 msgstr "無效的內部證書頒發機構"
 
-#: src/usr/local/www/system_usermanager.php:450
+#: src/usr/local/www/system_usermanager.php:462
 msgid "Inherited from"
 msgstr "繼承自 "
 
-#: src/usr/local/www/system_usermanager.php:492
+#: src/usr/local/www/system_usermanager.php:504
 msgid "Security notice: This user effectively has administrator-level access"
 msgstr "安全提示：此用戶具有管理員級訪問許可權。"
 
-#: src/usr/local/www/system_usermanager.php:519
+#: src/usr/local/www/system_usermanager.php:531
 msgid "CA"
 msgstr "證書頒發機構"
 
-#: src/usr/local/www/system_usermanager.php:538
+#: src/usr/local/www/system_usermanager.php:550
 msgid "Remove this certificate association? (Certificate will not be deleted)"
 msgstr "你真的要刪除此證書關聯嗎？ （證書不會被刪除）"
 
-#: src/usr/local/www/system_usermanager.php:598
-#: src/usr/local/www/system_usermanager.php:766
+#: src/usr/local/www/system_usermanager.php:610
+#: src/usr/local/www/system_usermanager.php:778
 msgid "Full name"
 msgstr "全名 "
 
-#: src/usr/local/www/system_usermanager.php:624
+#: src/usr/local/www/system_usermanager.php:636
 msgid "Enabled"
 msgstr "啟用"
 
-#: src/usr/local/www/system_usermanager.php:627
+#: src/usr/local/www/system_usermanager.php:639
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:110
 msgid "Edit user"
 msgstr "編輯用戶"
 
-#: src/usr/local/www/system_usermanager.php:629
+#: src/usr/local/www/system_usermanager.php:641
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Delete user"
 msgstr "刪除用戶 "
 
-#: src/usr/local/www/system_usermanager.php:645
+#: src/usr/local/www/system_usermanager.php:657
 msgid "Delete selected users"
 msgstr "刪除選擇的用戶"
 
-#: src/usr/local/www/system_usermanager.php:654
+#: src/usr/local/www/system_usermanager.php:666
 msgid ""
 "Additional users can be added here. User permissions for accessing the "
 "webConfigurator can be assigned directly or inherited from group memberships."
 " Some system object properties can be modified but they cannot be deleted."
 msgstr "可以在此處添加其他用戶。 用於訪問Web配置器的用戶許可權可以直接分配或繼承自組成員身份。 某些系統對象屬性可以修改，但不能刪除。"
 
-#: src/usr/local/www/system_usermanager.php:657
+#: src/usr/local/www/system_usermanager.php:669
 msgid ""
 "Accounts added here are also used for other parts of the system such as "
 "OpenVPN, IPsec, and Captive Portal."
 msgstr "此處添加的帳戶還用於系統的其他部分，如OpenVPN，IPsec和入網門戶。 "
 
-#: src/usr/local/www/system_usermanager.php:705
+#: src/usr/local/www/system_usermanager.php:717
 msgid "User Properties"
 msgstr "用戶屬性"
 
-#: src/usr/local/www/system_usermanager.php:708
+#: src/usr/local/www/system_usermanager.php:720
 msgid "Defined by"
 msgstr "被定義為"
 
-#: src/usr/local/www/system_usermanager.php:758
+#: src/usr/local/www/system_usermanager.php:770
 msgid "Confirm Password"
 msgstr "確認密碼"
 
-#: src/usr/local/www/system_usermanager.php:769
+#: src/usr/local/www/system_usermanager.php:781
 msgid "User's full name, for administrative information only"
 msgstr "用戶的全名，僅用於管理描述。"
 
-#: src/usr/local/www/system_usermanager.php:777
+#: src/usr/local/www/system_usermanager.php:789
 msgid "Expiration date"
 msgstr "截止日期"
 
-#: src/usr/local/www/system_usermanager.php:780
+#: src/usr/local/www/system_usermanager.php:792
 msgid ""
 "Leave blank if the account shouldn't expire, otherwise enter the expiration "
 "date as MM/DD/YYYY"
 msgstr "如果帳戶不過期，請留空。否則輸入截止日期MM / DD / YYYY"
 
-#: src/usr/local/www/system_usermanager.php:785
+#: src/usr/local/www/system_usermanager.php:797
 msgid "Custom Settings"
 msgstr "自定義設置"
 
-#: src/usr/local/www/system_usermanager.php:818
+#: src/usr/local/www/system_usermanager.php:830
 msgid "Not member of"
 msgstr "非成員 "
 
-#: src/usr/local/www/system_usermanager.php:826
+#: src/usr/local/www/system_usermanager.php:838
 msgid "Member of"
 msgstr "成員 "
 
-#: src/usr/local/www/system_usermanager.php:834
+#: src/usr/local/www/system_usermanager.php:846
 msgid "Move to \"Member of\" list"
 msgstr "移至“成員”列表"
 
-#: src/usr/local/www/system_usermanager.php:841
+#: src/usr/local/www/system_usermanager.php:853
 msgid "Move to \"Not member of\" list"
 msgstr "移至“非成員”列表"
 
-#: src/usr/local/www/system_usermanager.php:866
+#: src/usr/local/www/system_usermanager.php:873
+msgid ""
+"No private CAs found. A private CA is required to create a new user "
+"certificate. Save the user first to import an external certificate."
+msgstr ""
+
+#: src/usr/local/www/system_usermanager.php:886
 msgid "Effective Privileges"
 msgstr "有效特權"
 
-#: src/usr/local/www/system_usermanager.php:876
+#: src/usr/local/www/system_usermanager.php:896
 msgid "User Certificates"
 msgstr "用戶證書 "
 
-#: src/usr/local/www/system_usermanager.php:888
+#: src/usr/local/www/system_usermanager.php:908
 msgid "Create Certificate for User"
 msgstr "創建用戶證書"
 
-#: src/usr/local/www/system_usermanager.php:930
+#: src/usr/local/www/system_usermanager.php:941
 #, php-format
 msgid ""
 "The larger the key, the more security it offers, but larger keys take "
@@ -30545,38 +30579,38 @@ msgstr ""
 "密鑰越大，其提供的安全性越高，但是更大的密鑰需要更多的時間來生成，並且需要更長的時間來驗證。 "
 "截至2016年，2048位是最小的選擇，4096位使用最多。更多資訊請參閱 %1$s。"
 
-#: src/usr/local/www/system_usermanager.php:948
+#: src/usr/local/www/system_usermanager.php:959
 msgid "Keys"
 msgstr "密鑰"
 
-#: src/usr/local/www/system_usermanager.php:952
+#: src/usr/local/www/system_usermanager.php:963
 msgid "Authorized keys"
 msgstr "認證密鑰"
 
-#: src/usr/local/www/system_usermanager.php:959
+#: src/usr/local/www/system_usermanager.php:970
 msgid "Authorized SSH Keys"
 msgstr "認證SSH密鑰"
 
-#: src/usr/local/www/system_usermanager.php:961
+#: src/usr/local/www/system_usermanager.php:972
 msgid "Enter authorized SSH keys for this user"
 msgstr "為這個用戶輸入認證的SSH密鑰。"
 
-#: src/usr/local/www/system_usermanager.php:965
+#: src/usr/local/www/system_usermanager.php:976
 msgid "IPsec Pre-Shared Key"
 msgstr "IPsec的預共用密鑰"
 
-#: src/usr/local/www/system_usermanager_addprivs.php:138
+#: src/usr/local/www/system_usermanager_addprivs.php:134
 msgid "User Privileges"
 msgstr "用戶許可權"
 
-#: src/usr/local/www/system_usermanager_addprivs.php:168
+#: src/usr/local/www/system_usermanager_addprivs.php:174
 msgid ""
 "The following privileges effectively give the user administrator-level "
 "access  because the user gains access to execute general commands, edit "
 "system files,  modify users, change passwords or similar:"
 msgstr "以下許可權實際為用戶提供了管理員級訪問，請謹慎添加："
 
-#: src/usr/local/www/system_usermanager_addprivs.php:234
+#: src/usr/local/www/system_usermanager_addprivs.php:240
 msgid ""
 "(This privilege effectively gives administrator-level access to the user)"
 msgstr "（此許可權實際向用戶提供了管理員級別的訪問許可權）"
@@ -31130,8 +31164,8 @@ msgstr "注意：對於iPhone客戶端，通過iPhone配置實用程式部署時
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:561
 #: src/usr/local/www/vpn_openvpn_csc.php:442
-#: src/usr/local/www/vpn_openvpn_server.php:1168
-#: src/usr/local/www/vpn_openvpn_server.php:1175
+#: src/usr/local/www/vpn_openvpn_server.php:1143
+#: src/usr/local/www/vpn_openvpn_server.php:1150
 msgid "DNS Default Domain"
 msgstr "DNS默認域 "
 
@@ -31159,11 +31193,6 @@ msgstr "伺服器 "
 #: src/usr/local/www/vpn_ipsec_mobile.php:658
 msgid "Phase2 PFS Group"
 msgstr "Phase2 PFS組"
-
-#: src/usr/local/www/vpn_ipsec_mobile.php:663
-#: src/usr/local/www/vpn_ipsec_mobile.php:672
-msgid "Group"
-msgstr "組 "
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:681
 msgid "Login Banner"
@@ -31338,9 +31367,9 @@ msgstr "編輯Phase 1 "
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:653
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
-#: src/usr/local/www/vpn_openvpn_client.php:508
+#: src/usr/local/www/vpn_openvpn_client.php:506
 #: src/usr/local/www/vpn_openvpn_csc.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:689
+#: src/usr/local/www/vpn_openvpn_server.php:671
 msgid "General Information"
 msgstr "一般資訊"
 
@@ -31377,10 +31406,6 @@ msgstr "輸入遠程網關的公有IP地址或主機名。"
 #: src/usr/local/www/vpn_ipsec_phase1.php:701
 msgid "Phase 1 Proposal (Authentication)"
 msgstr "Phase 1提案（認證）"
-
-#: src/usr/local/www/vpn_ipsec_phase1.php:705
-msgid "*Authentication Method"
-msgstr "*認證方法"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 #: src/usr/local/www/vpn_ipsec_phase1.php:806
@@ -31426,10 +31451,10 @@ msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr "選擇以前在證書管理器中配置的證書。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:774
-#: src/usr/local/www/vpn_openvpn_client.php:682
-#: src/usr/local/www/vpn_openvpn_client.php:688
-#: src/usr/local/www/vpn_openvpn_server.php:817
-#: src/usr/local/www/vpn_openvpn_server.php:823
+#: src/usr/local/www/vpn_openvpn_client.php:672
+#: src/usr/local/www/vpn_openvpn_client.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:799
+#: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
 msgstr "*同等證書頒發機構"
 
@@ -31444,8 +31469,8 @@ msgid "Phase 1 Proposal (Algorithms)"
 msgstr "Phase 1提案（演算法）"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:783
-#: src/usr/local/www/vpn_openvpn_client.php:731
-#: src/usr/local/www/vpn_openvpn_server.php:910
+#: src/usr/local/www/vpn_openvpn_client.php:721
+#: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr "*加密演算法"
 
@@ -31872,19 +31897,34 @@ msgstr "L2TP用戶數必須在1到255之間"
 msgid "The specified server address is equal to the LAN interface address."
 msgstr "指定的伺服器地址等於LAN介面地址。"
 
-#: src/usr/local/www/vpn_l2tp.php:160
+#: src/usr/local/www/vpn_l2tp.php:107
+msgid "The field 'Primary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:110
+msgid ""
+"The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:113
+msgid ""
+"The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
+"is empty."
+msgstr ""
+
+#: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
 msgstr "已更改L2TP VPN 配置。"
 
-#: src/usr/local/www/vpn_l2tp.php:188
+#: src/usr/local/www/vpn_l2tp.php:199
 msgid "Enable L2TP"
 msgstr "啟用L2TP伺服器"
 
-#: src/usr/local/www/vpn_l2tp.php:218
+#: src/usr/local/www/vpn_l2tp.php:229
 msgid "*Server address"
 msgstr "*伺服器地址"
 
-#: src/usr/local/www/vpn_l2tp.php:221
+#: src/usr/local/www/vpn_l2tp.php:232
 #, php-format
 msgid ""
 "Enter the IP address the L2TP server should give to clients for use as their "
@@ -31895,63 +31935,63 @@ msgstr ""
 "輸入L2TP伺服器應提供給客戶端用作其“網關”的IP地址。  "
 "%1$s通常這被設置為在客戶端範圍之外的未使用的IP。%1$s%1$s注意：這不應設置為此防火牆上當前使用的任何IP地址。"
 
-#: src/usr/local/www/vpn_l2tp.php:227
+#: src/usr/local/www/vpn_l2tp.php:238
 msgid "*Remote address range"
 msgstr "*遠程地址範圍"
 
-#: src/usr/local/www/vpn_l2tp.php:234
+#: src/usr/local/www/vpn_l2tp.php:245
 msgid "*Number of L2TP users"
 msgstr "*L2TP的用戶數"
 
-#: src/usr/local/www/vpn_l2tp.php:241
+#: src/usr/local/www/vpn_l2tp.php:252
 msgid "Secret"
 msgstr "密鑰 "
 
-#: src/usr/local/www/vpn_l2tp.php:244
+#: src/usr/local/www/vpn_l2tp.php:255
 msgid ""
 "Specify optional secret shared between peers. Required on some devices/"
 "setups."
 msgstr "指定可選的對端之間共用的秘密。某些設備/設置上需要。"
 
-#: src/usr/local/www/vpn_l2tp.php:248
+#: src/usr/local/www/vpn_l2tp.php:259
 msgid "*Authentication type"
 msgstr "*認證類型"
 
-#: src/usr/local/www/vpn_l2tp.php:255
+#: src/usr/local/www/vpn_l2tp.php:266
 msgid "Specifies the protocol to use for authentication."
 msgstr "指定用於認證協議類型。"
 
-#: src/usr/local/www/vpn_l2tp.php:259
+#: src/usr/local/www/vpn_l2tp.php:270
 msgid "Primary L2TP DNS server"
 msgstr "主L2TP DNS伺服器"
 
-#: src/usr/local/www/vpn_l2tp.php:266
+#: src/usr/local/www/vpn_l2tp.php:277
 msgid "Secondary L2TP DNS server"
 msgstr "副L2TP DNS伺服器"
 
-#: src/usr/local/www/vpn_l2tp.php:281
+#: src/usr/local/www/vpn_l2tp.php:292
 msgid ""
 "When set, all users will be authenticated using the RADIUS server specified "
 "below. The local user database will not be used."
 msgstr "設置時，所有用戶都將使用下麵指定的RADIUS伺服器進行身份認證。本地用戶數據庫將不能使用。 "
 
-#: src/usr/local/www/vpn_l2tp.php:292
+#: src/usr/local/www/vpn_l2tp.php:303
 msgid "*Server"
 msgstr "*伺服器"
 
-#: src/usr/local/www/vpn_l2tp.php:294
+#: src/usr/local/www/vpn_l2tp.php:305
 msgid "Enter the IP address of the RADIUS server."
 msgstr "輸入RADIUS伺服器的IP地址。 "
 
-#: src/usr/local/www/vpn_l2tp.php:298
+#: src/usr/local/www/vpn_l2tp.php:309
 msgid "*Secret"
 msgstr "*加密"
 
-#: src/usr/local/www/vpn_l2tp.php:305
+#: src/usr/local/www/vpn_l2tp.php:316
 msgid "RADIUS issued IPs"
 msgstr "RADIUS頒發的IP"
 
-#: src/usr/local/www/vpn_l2tp.php:316
+#: src/usr/local/www/vpn_l2tp.php:327
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from L2TP clients."
 msgstr "不要忘記添加防火牆規則以允許來自L2TP客戶端的流量。"
@@ -32013,144 +32053,144 @@ msgstr "已刪除OpenVPN客戶端條目。"
 msgid "Client successfully deleted."
 msgstr "成功刪除客戶端"
 
-#: src/usr/local/www/vpn_openvpn_client.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:272
+#: src/usr/local/www/vpn_openvpn_client.php:196
+#: src/usr/local/www/vpn_openvpn_server.php:265
 msgid "The selected Encryption Algorithm is not valid."
 msgstr "所選的加密演算法無效。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:202
-#: src/usr/local/www/vpn_openvpn_server.php:277
+#: src/usr/local/www/vpn_openvpn_client.php:201
+#: src/usr/local/www/vpn_openvpn_server.php:270
 msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
 "IP address cannot be selected."
 msgstr "協議和IP地址系列不匹配。 不能選擇IPv6協議和IPv4 IP地址。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:204
-#: src/usr/local/www/vpn_openvpn_server.php:279
+#: src/usr/local/www/vpn_openvpn_client.php:203
+#: src/usr/local/www/vpn_openvpn_server.php:272
 msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
 "IP address cannot be selected."
 msgstr "協議和IP地址系列不匹配。 不能選擇IPv4協議和IPv6 IP地址。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:209
-#: src/usr/local/www/vpn_openvpn_server.php:284
+#: src/usr/local/www/vpn_openvpn_client.php:208
+#: src/usr/local/www/vpn_openvpn_server.php:277
 msgid ""
 "An IPv4 protocol was selected, but the selected interface has no IPv4 "
 "address."
 msgstr "選擇了IPv4協議，但所選介面沒有IPv4地址。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:215
-#: src/usr/local/www/vpn_openvpn_server.php:290
+#: src/usr/local/www/vpn_openvpn_client.php:214
+#: src/usr/local/www/vpn_openvpn_server.php:283
 msgid ""
 "An IPv6 protocol was selected, but the selected interface has no IPv6 "
 "address."
 msgstr "選擇了IPv6協議，但選定的介面沒有IPv6地址。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:234
-#: src/usr/local/www/vpn_openvpn_server.php:335
+#: src/usr/local/www/vpn_openvpn_client.php:233
+#: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr "指定的“本地端口”正在使用中。 請選擇其他端口值"
 
-#: src/usr/local/www/vpn_openvpn_client.php:247
-#: src/usr/local/www/vpn_openvpn_server.php:416
+#: src/usr/local/www/vpn_openvpn_client.php:246
+#: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
 msgstr "字段 '拓撲' 包含無效的選擇"
 
-#: src/usr/local/www/vpn_openvpn_client.php:262
+#: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
 msgstr "身份驗證代理需要用戶名和密碼。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:292
+#: src/usr/local/www/vpn_openvpn_client.php:291
 msgid "The bandwidth limit must be a positive numeric value."
 msgstr "帶寬限制必須是正值。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:302
-#: src/usr/local/www/vpn_openvpn_server.php:345
+#: src/usr/local/www/vpn_openvpn_client.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:338
 msgid "The field 'Shared Key' does not appear to be valid"
 msgstr "字段“共用密鑰”無效"
 
-#: src/usr/local/www/vpn_openvpn_client.php:309
-#: src/usr/local/www/vpn_openvpn_server.php:352
+#: src/usr/local/www/vpn_openvpn_client.php:308
+#: src/usr/local/www/vpn_openvpn_server.php:345
 msgid "The field 'TLS Key' does not appear to be valid"
 msgstr "字段“TLS密鑰”無效"
 
-#: src/usr/local/www/vpn_openvpn_client.php:312
-#: src/usr/local/www/vpn_openvpn_server.php:355
+#: src/usr/local/www/vpn_openvpn_client.php:311
+#: src/usr/local/www/vpn_openvpn_server.php:348
 msgid "The field 'TLS Key Usage Mode' is not valid"
 msgstr "字段“TLS密鑰使用模式”無效"
 
-#: src/usr/local/www/vpn_openvpn_client.php:317
-#: src/usr/local/www/vpn_openvpn_server.php:450
+#: src/usr/local/www/vpn_openvpn_client.php:316
+#: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr "GCM加密演算法不能與共享密鑰模式一起使用。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:325
-#: src/usr/local/www/vpn_openvpn_server.php:436
+#: src/usr/local/www/vpn_openvpn_client.php:324
+#: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
 msgstr "所選NCP演算法中的一個或多個無效。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:334
-#: src/usr/local/www/vpn_openvpn_server.php:446
-#: src/usr/local/www/vpn_openvpn_server.php:896
+#: src/usr/local/www/vpn_openvpn_client.php:333
+#: src/usr/local/www/vpn_openvpn_server.php:433
+#: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Shared key"
 msgstr "共用密鑰 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:340
+#: src/usr/local/www/vpn_openvpn_client.php:339
 msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
 msgstr "如果未選擇客戶端證書，則必須輸入用戶名和密碼。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:358
+#: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
-msgstr ""
+msgstr "限制輸出帶寬與UDP快速I / O不相容。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:365
-#: src/usr/local/www/vpn_openvpn_server.php:484
+#: src/usr/local/www/vpn_openvpn_client.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
-msgstr ""
+msgstr "設置的發送/接收緩衝區大小無效。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:456
+#: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
 msgid "Updated OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "已更新OpenVPN 客戶端到伺服器%1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:459
+#: src/usr/local/www/vpn_openvpn_client.php:457
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "已添加OpenVPN客戶端到到伺服器%1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:474
-#: src/usr/local/www/vpn_openvpn_client.php:499
+#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:497
 #: src/usr/local/www/vpn_openvpn_csc.php:303
-#: src/usr/local/www/vpn_openvpn_server.php:678
+#: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
 msgstr "客戶端"
 
-#: src/usr/local/www/vpn_openvpn_client.php:500
+#: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/vpn_openvpn_csc.php:282
 #: src/usr/local/www/vpn_openvpn_csc.php:304
-#: src/usr/local/www/vpn_openvpn_server.php:679
+#: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Client Specific Overrides"
 msgstr "客戶端特定覆蓋"
 
-#: src/usr/local/www/vpn_openvpn_client.php:515
+#: src/usr/local/www/vpn_openvpn_client.php:513
 msgid ""
 "Set this option to disable this client without removing it from the list."
 msgstr "設置此選項以禁用此客戶端，而不將其從列表中刪除。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:519
-#: src/usr/local/www/vpn_openvpn_server.php:700
+#: src/usr/local/www/vpn_openvpn_client.php:517
+#: src/usr/local/www/vpn_openvpn_server.php:682
 msgid "*Server mode"
 msgstr "*服務模式"
 
-#: src/usr/local/www/vpn_openvpn_client.php:533
-#: src/usr/local/www/vpn_openvpn_server.php:741
+#: src/usr/local/www/vpn_openvpn_client.php:531
+#: src/usr/local/www/vpn_openvpn_server.php:723
 msgid "*Device mode"
 msgstr "*設備模式"
 
-#: src/usr/local/www/vpn_openvpn_client.php:536
-#: src/usr/local/www/vpn_openvpn_server.php:744
+#: src/usr/local/www/vpn_openvpn_client.php:534
+#: src/usr/local/www/vpn_openvpn_server.php:726
 #, php-format
 msgid ""
 "\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and "
@@ -32159,104 +32199,93 @@ msgid ""
 msgstr ""
 "“tun”模式攜帶IPv4和IPv6（OSI第3層），是所有平臺中最常見和相容的模式。%1$s\"tap\" 模式能夠承載802.3（OSI第2層）"
 
-#: src/usr/local/www/vpn_openvpn_client.php:544
+#: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
 "The interface used by the firewall to originate this OpenVPN client "
 "connection"
 msgstr "用於發起此OpenVPN客戶端連接的防火牆介面"
 
-#: src/usr/local/www/vpn_openvpn_client.php:548
+#: src/usr/local/www/vpn_openvpn_client.php:546
 msgid "Local port"
 msgstr "本地端口 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:552
+#: src/usr/local/www/vpn_openvpn_client.php:550
 msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
 msgstr "設置此選項以綁定到特定端口。 將此空白或對隨機動態端口輸入0。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:556
+#: src/usr/local/www/vpn_openvpn_client.php:554
 msgid "*Server host or address"
 msgstr "*伺服器主機或地址"
 
-#: src/usr/local/www/vpn_openvpn_client.php:559
+#: src/usr/local/www/vpn_openvpn_client.php:557
 msgid "The IP address or hostname of the OpenVPN server."
 msgstr "OpenVPN伺服器的IP地址或主機名。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:563
-msgid "Server hostname resolution"
-msgstr "伺服器主機名解析"
-
-#: src/usr/local/www/vpn_openvpn_client.php:566
-msgid ""
-"Continuously attempt to resolve the server host name. Useful when "
-"communicating with a server that is not permanently connected to the "
-"Internet."
-msgstr "繼續嘗試解析伺服器主機名。 在與未掛線連接到Internet的伺服器通信時很有用。"
-
-#: src/usr/local/www/vpn_openvpn_client.php:571
+#: src/usr/local/www/vpn_openvpn_client.php:561
 msgid "*Server port"
 msgstr "*伺服器端口"
 
-#: src/usr/local/www/vpn_openvpn_client.php:574
+#: src/usr/local/www/vpn_openvpn_client.php:564
 msgid "The port used by the server to receive client connections."
 msgstr "伺服器用於接收客戶端連接的端口。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:578
+#: src/usr/local/www/vpn_openvpn_client.php:568
 msgid "Proxy host or address"
 msgstr "代理主機或地址 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:581
+#: src/usr/local/www/vpn_openvpn_client.php:571
 #, php-format
 msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
 "server.%1$sTCP must be used for the client and server protocol."
 msgstr "此客戶端可用於連接到遠程伺服器的HTTP代理的地址，%1$s客戶端和服務器協議必須使用TCP。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:586
+#: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
 msgstr "代理端口"
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "basic"
 msgstr "basic"
 
-#: src/usr/local/www/vpn_openvpn_client.php:595
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "ntlm"
 msgstr "ntlm"
 
-#: src/usr/local/www/vpn_openvpn_client.php:593
+#: src/usr/local/www/vpn_openvpn_client.php:583
 msgid "Proxy Authentication"
 msgstr "代理認證"
 
-#: src/usr/local/www/vpn_openvpn_client.php:596
+#: src/usr/local/www/vpn_openvpn_client.php:586
 msgid "The type of authentication used by the proxy server."
 msgstr "代理伺服器使用的身份驗證類型。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:620
+#: src/usr/local/www/vpn_openvpn_client.php:610
 msgid "User Authentication Settings"
 msgstr "用戶認證設置"
 
-#: src/usr/local/www/vpn_openvpn_client.php:628
+#: src/usr/local/www/vpn_openvpn_client.php:618
 msgid "Leave empty when no user name is needed"
 msgstr "不需要用戶名時留空"
 
-#: src/usr/local/www/vpn_openvpn_client.php:635
+#: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
 msgstr "不需要密碼時留空"
 
-#: src/usr/local/www/vpn_openvpn_client.php:639
-#: src/usr/local/www/vpn_openvpn_server.php:771
+#: src/usr/local/www/vpn_openvpn_client.php:629
+#: src/usr/local/www/vpn_openvpn_server.php:753
 msgid "Cryptographic Settings"
 msgstr "加密設置 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:643
-#: src/usr/local/www/vpn_openvpn_server.php:775
+#: src/usr/local/www/vpn_openvpn_client.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
 msgstr "TLS 配置"
 
-#: src/usr/local/www/vpn_openvpn_client.php:646
-#: src/usr/local/www/vpn_openvpn_server.php:778
+#: src/usr/local/www/vpn_openvpn_client.php:636
+#: src/usr/local/www/vpn_openvpn_server.php:760
 msgid ""
 "A TLS key enhances security of an OpenVPN connection by requiring both "
 "parties to have a common key before a peer can perform a TLS handshake. This "
@@ -32267,26 +32296,26 @@ msgstr ""
 "TLS密鑰通過要求雙方在對等體可以執行TLS握手之前具有公共密鑰來增強OpenVPN連接的安全性。 "
 "該層的HMAC認證允許沒有正確密鑰的控制通道分組被丟棄，保護對等體免受攻擊或未授權的連接。TLS密鑰對隧道數據沒有任何影響。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:661
-#: src/usr/local/www/vpn_openvpn_server.php:793
+#: src/usr/local/www/vpn_openvpn_client.php:651
+#: src/usr/local/www/vpn_openvpn_server.php:775
 msgid "*TLS Key"
 msgstr "*TLS 密鑰"
 
-#: src/usr/local/www/vpn_openvpn_client.php:663
-#: src/usr/local/www/vpn_openvpn_server.php:795
+#: src/usr/local/www/vpn_openvpn_client.php:653
+#: src/usr/local/www/vpn_openvpn_server.php:777
 #, php-format
 msgid ""
 "Paste the TLS key here.%1$sThis key is used to sign control channel packets "
 "with an HMAC signature for authentication when establishing the tunnel. "
 msgstr "在此處粘貼TLS密鑰。%1$s此密鑰用於在建立隧道時使用HMAC簽名對控制通道分組進行認證。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:668
-#: src/usr/local/www/vpn_openvpn_server.php:801
+#: src/usr/local/www/vpn_openvpn_client.php:658
+#: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
 msgstr "*TLS密鑰使用模式"
 
-#: src/usr/local/www/vpn_openvpn_client.php:671
-#: src/usr/local/www/vpn_openvpn_server.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:661
+#: src/usr/local/www/vpn_openvpn_server.php:786
 #, php-format
 msgid ""
 "In Authentication mode the TLS key is used only as HMAC authentication for "
@@ -32298,57 +32327,57 @@ msgstr ""
 "在認證模式下，TLS密鑰僅用作控制通道的HMAC認證，保護對等體免受未經授權的連接。 "
 "%1$s加密和認證模式還加密控制通道通信，提供更多的隱私和流量控制通道混淆。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:696
-#: src/usr/local/www/vpn_openvpn_client.php:702
-#: src/usr/local/www/vpn_openvpn_server.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:837
+#: src/usr/local/www/vpn_openvpn_client.php:686
+#: src/usr/local/www/vpn_openvpn_client.php:692
+#: src/usr/local/www/vpn_openvpn_server.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:819
 msgid "Peer Certificate Revocation list"
 msgstr "對等證書吊銷列表"
 
-#: src/usr/local/www/vpn_openvpn_client.php:709
+#: src/usr/local/www/vpn_openvpn_client.php:699
 msgid "Auto generate"
 msgstr "自動生成"
 
-#: src/usr/local/www/vpn_openvpn_client.php:716
-#: src/usr/local/www/vpn_openvpn_server.php:904
+#: src/usr/local/www/vpn_openvpn_client.php:706
+#: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
 msgstr "*共用密鑰"
 
-#: src/usr/local/www/vpn_openvpn_client.php:718
-#: src/usr/local/www/vpn_openvpn_server.php:906
+#: src/usr/local/www/vpn_openvpn_client.php:708
+#: src/usr/local/www/vpn_openvpn_server.php:888
 msgid "Paste the shared key here"
 msgstr "在此處粘貼共用密鑰"
 
-#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_client.php:714
 msgid "Client Certificate"
 msgstr "客戶端證書 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:734
-#: src/usr/local/www/vpn_openvpn_server.php:913
+#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_server.php:895
 msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
 "Cryptographic Parameter (NCP) support is not available."
 msgstr "當可協商加密參數（NCP）支持時，用於數據通道分組的加密演算法不可用。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:738
-#: src/usr/local/www/vpn_openvpn_server.php:917
+#: src/usr/local/www/vpn_openvpn_client.php:728
+#: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable NCP"
 msgstr "啟用 NCP"
 
-#: src/usr/local/www/vpn_openvpn_client.php:745
-#: src/usr/local/www/vpn_openvpn_server.php:923
+#: src/usr/local/www/vpn_openvpn_client.php:735
+#: src/usr/local/www/vpn_openvpn_server.php:905
 msgid ""
 "When both peers support NCP and have it enabled, NCP overrides the "
 "Encryption Algorithm above."
 msgstr "當兩個對等體都支持NCP並啟用它時，NCP覆蓋上面的加密演算法。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:746
-#: src/usr/local/www/vpn_openvpn_server.php:924
+#: src/usr/local/www/vpn_openvpn_client.php:736
+#: src/usr/local/www/vpn_openvpn_server.php:906
 msgid "When disabled, only the selected Encryption Algorithm is allowed."
 msgstr "禁用時，僅允許選擇的加密演算法。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:741
-#: src/usr/local/www/vpn_openvpn_server.php:920
+#: src/usr/local/www/vpn_openvpn_client.php:731
+#: src/usr/local/www/vpn_openvpn_server.php:902
 #, php-format
 msgid ""
 "Check this option to allow OpenVPN clients and servers to negotiate a "
@@ -32356,28 +32385,28 @@ msgid ""
 "selected in the NCP Algorithms list below.%1$s%2$s%3$s"
 msgstr "選中此選項可允許OpenVPN客戶端和服務器協商一組相容的可接受的加密演算法，從下麵的NCP演算法列表中選擇。%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:752
-#: src/usr/local/www/vpn_openvpn_server.php:927
+#: src/usr/local/www/vpn_openvpn_client.php:742
+#: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
 msgstr "NCP演算法"
 
-#: src/usr/local/www/vpn_openvpn_client.php:761
-#: src/usr/local/www/vpn_openvpn_server.php:936
+#: src/usr/local/www/vpn_openvpn_client.php:751
+#: src/usr/local/www/vpn_openvpn_server.php:918
 #, php-format
 msgid ""
 "Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm "
 "from the list"
 msgstr "可用的NCP加密演算法%1$s，單擊從列表中添加或刪除演算法"
 
-#: src/usr/local/www/vpn_openvpn_client.php:771
-#: src/usr/local/www/vpn_openvpn_server.php:946
+#: src/usr/local/www/vpn_openvpn_client.php:761
+#: src/usr/local/www/vpn_openvpn_server.php:928
 msgid ""
 "Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from "
 "the list"
 msgstr "允許的NCP加密演算法。 單擊演算法名稱將其從列表中刪除"
 
-#: src/usr/local/www/vpn_openvpn_client.php:776
-#: src/usr/local/www/vpn_openvpn_server.php:951
+#: src/usr/local/www/vpn_openvpn_client.php:766
+#: src/usr/local/www/vpn_openvpn_server.php:933
 msgid ""
 "For backward compatibility, when an older peer connects that does not "
 "support NCP, OpenVPN will use the Encryption Algorithm requested by the peer "
@@ -32385,20 +32414,20 @@ msgid ""
 ""
 msgstr "為了向後相容，當較舊的對等體連接不支持NCP時，OpenVPN將使用對等體請求的加密演算法，只要在此列表中選擇或選擇作為加密演算法。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:773
-#: src/usr/local/www/vpn_openvpn_server.php:948
+#: src/usr/local/www/vpn_openvpn_client.php:763
+#: src/usr/local/www/vpn_openvpn_server.php:930
 #, php-format
 msgid ""
 "The order of the selected NCP Encryption Algorithms is respected by OpenVPN."
 "%1$s%2$s%3$s"
 msgstr "所選的NCP加密演算法的順序由OpenVPN遵守。%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:784
-#: src/usr/local/www/vpn_openvpn_server.php:959
+#: src/usr/local/www/vpn_openvpn_client.php:774
+#: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
 msgstr "*認證摘要演算法"
 
-#: src/usr/local/www/vpn_openvpn_client.php:787
+#: src/usr/local/www/vpn_openvpn_client.php:777
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -32410,53 +32439,55 @@ msgstr ""
 "用於驗證數據通道分組的演算法，以及在存在TLS密鑰時控制通道分組。%1$s當使用AEAD加密演算法模式（例如AES-"
 "GCM）時，此摘要僅用於控制通道，而不是 數據通道。一般%1$s設置為SHA1，除非伺服器使用不同的值。 SHA1是OpenVPN的默認值。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:793
-#: src/usr/local/www/vpn_openvpn_server.php:969
+#: src/usr/local/www/vpn_openvpn_client.php:783
+#: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
 msgstr "硬體加密"
 
-#: src/usr/local/www/vpn_openvpn_client.php:800
+#: src/usr/local/www/vpn_openvpn_client.php:790
 #: src/usr/local/www/vpn_openvpn_csc.php:362
-#: src/usr/local/www/vpn_openvpn_server.php:991
+#: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
 msgstr "隧道設置 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:804
+#: src/usr/local/www/vpn_openvpn_client.php:794
 #: src/usr/local/www/vpn_openvpn_csc.php:366
-#: src/usr/local/www/vpn_openvpn_server.php:995
+#: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
 msgstr "IPv4 隧道網路"
 
-#: src/usr/local/www/vpn_openvpn_client.php:807
+#: src/usr/local/www/vpn_openvpn_client.php:797
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. 10.0.8.0/24). The "
-"second network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). "
+"The second usable address in the network will be assigned to the client "
+"virtual interface. Leave blank if the server is capable of providing "
+"addresses to clients."
 msgstr ""
-"這是用於在此客戶端和服務器之間的私有通信使用CIDR（例如10.0.8.0/24）表示的IPv4虛擬網路。 第二個網路地址將被分配給客戶端虛擬介面。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
-#: src/usr/local/www/vpn_openvpn_server.php:1005
+#: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
 msgstr "IPv6 隧道網路"
 
-#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this client and the server expressed using CIDR (e.g. fe80::/64). The second "
-"network address will be assigned to the client virtual interface."
+"this client and the server expressed using CIDR notation (e.g. fe80::/64). "
+"When set static using this field, the ::2 address in the network will be "
+"assigned to the client virtual interface. Leave blank if the server is "
+"capable of providing addresses to clients."
 msgstr ""
-"這是用於此客戶端和服務器之間的私有通信使用CIDR（例如fe80 :: / 64）表示的IPv6虛擬網路。 第二個網路地址將被分配給客戶端虛擬介面。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:822
-#: src/usr/local/www/vpn_openvpn_server.php:1073
+#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
 msgstr "IPv4遠程網路"
 
-#: src/usr/local/www/vpn_openvpn_client.php:825
-#: src/usr/local/www/vpn_openvpn_server.php:1076
+#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_server.php:1058
 msgid ""
 "IPv4 networks that will be routed through the tunnel, so that a site-to-site "
 "VPN can be established without manually changing the routing tables. "
@@ -32467,13 +32498,13 @@ msgstr ""
 "將通過隧道路由的IPv4網路，以便可以在不手動更改路由表的情況下建立站點到站點VPN。 表示為一個或多個CIDR範圍的逗號分隔列表。 "
 "如果這是站點到站點VPN，請在此輸入遠程LAN。 對於非站點到站點VPN，可以留空。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:831
-#: src/usr/local/www/vpn_openvpn_server.php:1082
+#: src/usr/local/www/vpn_openvpn_client.php:822
+#: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
 msgstr "IPv6遠程網路"
 
-#: src/usr/local/www/vpn_openvpn_client.php:834
-#: src/usr/local/www/vpn_openvpn_server.php:1085
+#: src/usr/local/www/vpn_openvpn_client.php:825
+#: src/usr/local/www/vpn_openvpn_server.php:1067
 msgid ""
 "These are the IPv6 networks that will be routed through the tunnel, so that "
 "a site-to-site VPN can be established without manually changing the routing "
@@ -32484,83 +32515,87 @@ msgstr ""
 "這些是將通過隧道路由的IPv6網路，以便可以在不手動更改路由表的情況下建立站點到站點VPN。 表示為一個或多個IP/首碼的逗號分隔列表。 "
 "如果這是站點到站點VPN，請在此輸入遠程LAN。 對於非站點到站點VPN，可以留空。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_client.php:831
 msgid "Limit outgoing bandwidth"
 msgstr "限制輸出帶寬 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:844
+#: src/usr/local/www/vpn_openvpn_client.php:835
 msgid ""
 "Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The "
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
+"此隧道的最大出站帶寬。 留空為無限制。 輸入值必須在100bytes/秒到100 Mbytes/秒之間（以每秒位元組數表示）。 不相容UDP快速I / "
+"O。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:852
-#: src/usr/local/www/vpn_openvpn_server.php:1101
+#: src/usr/local/www/vpn_openvpn_client.php:843
+#: src/usr/local/www/vpn_openvpn_server.php:1083
 msgid ""
 "Compress tunnel packets using the LZO algorithm. Adaptive compression will "
 "dynamically disable compression for a period of time if OpenVPN detects that "
 "the data in the packets is not being compressed efficiently."
 msgstr "使用LZO演算法壓縮隧道報文。 如果OpenVPN檢測到分組中的數據沒有被有效地壓縮，自適應壓縮將動態禁用壓縮一段時間。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:856
-#: src/usr/local/www/vpn_openvpn_server.php:1154
+#: src/usr/local/www/vpn_openvpn_client.php:847
+#: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
 msgstr "拓撲"
 
-#: src/usr/local/www/vpn_openvpn_client.php:859
+#: src/usr/local/www/vpn_openvpn_client.php:850
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr "指定用於配置虛擬適配器IP地址的方法。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:863
-#: src/usr/local/www/vpn_openvpn_server.php:1114
+#: src/usr/local/www/vpn_openvpn_client.php:854
+#: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
 msgstr "服務類型 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:870
+#: src/usr/local/www/vpn_openvpn_client.php:861
 msgid "Don't pull routes"
 msgstr "阻止添加路由"
 
-#: src/usr/local/www/vpn_openvpn_client.php:873
+#: src/usr/local/www/vpn_openvpn_client.php:864
 msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
 msgstr "此選項仍允許伺服器設置客戶端的TUN / TAP介面的TCP / IP屬性。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:877
+#: src/usr/local/www/vpn_openvpn_client.php:868
 msgid "Don't add/remove routes"
 msgstr "不添加/刪除路由"
 
-#: src/usr/local/www/vpn_openvpn_client.php:880
-msgid "Pass routes to --route-upscript using environmental variables."
-msgstr "使用環境變數將路由傳遞到路由腳本。"
+#: src/usr/local/www/vpn_openvpn_client.php:871
+msgid ""
+"Do not execute operating system commands to install routes. Instead, pass "
+"routes to --route-up script using environmental variables."
+msgstr ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:891
+#: src/usr/local/www/vpn_openvpn_client.php:882
 msgid ""
 "Enter any additional options to add to the OpenVPN client configuration "
 "here, separated by semicolon."
 msgstr "輸入要添加到OpenVPN客戶端配置的任何其他選項，以分號分隔。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:895
-#: src/usr/local/www/vpn_openvpn_server.php:1323
+#: src/usr/local/www/vpn_openvpn_client.php:886
+#: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
-msgstr ""
+msgstr "UDP快速 I/O"
 
-#: src/usr/local/www/vpn_openvpn_client.php:898
-#: src/usr/local/www/vpn_openvpn_server.php:1326
+#: src/usr/local/www/vpn_openvpn_client.php:889
+#: src/usr/local/www/vpn_openvpn_server.php:1286
 msgid ""
 "Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%."
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
-msgstr ""
+msgstr "優化包寫入事件迴圈，能提高CPU效率5％至10％。 但與所有平臺不相容，與OpenVPN帶寬限制不相容。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:903
-#: src/usr/local/www/vpn_openvpn_server.php:1331
+#: src/usr/local/www/vpn_openvpn_client.php:894
+#: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
-msgstr ""
+msgstr "發送/接收緩衝區"
 
-#: src/usr/local/www/vpn_openvpn_client.php:906
-#: src/usr/local/www/vpn_openvpn_server.php:1334
+#: src/usr/local/www/vpn_openvpn_client.php:897
+#: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
 "Configure a Send and Receive Buffer size for OpenVPN. The default buffer "
 "size can be too small in many cases, depending on hardware and network "
@@ -32568,14 +32603,16 @@ msgid ""
 "To test the best value for a site, start at 512KiB and test higher and lower "
 "values."
 msgstr ""
+"配置OpenVPN的發送和接收緩衝區大小。 在許多情況下，默認緩衝區大小可能太小，這取決於硬體和網路上行鏈路速度。 "
+"找到最佳的緩衝區大小可以進行一些實驗。 要測試一個站點的最佳值，可以從512KB開始測試。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:913
-#: src/usr/local/www/vpn_openvpn_server.php:1341
+#: src/usr/local/www/vpn_openvpn_client.php:904
+#: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
 msgstr "資訊級別"
 
-#: src/usr/local/www/vpn_openvpn_client.php:916
-#: src/usr/local/www/vpn_openvpn_server.php:1344
+#: src/usr/local/www/vpn_openvpn_client.php:907
+#: src/usr/local/www/vpn_openvpn_server.php:1304
 #, php-format
 msgid ""
 "Each level shows all info from the previous levels. Level 3 is recommended "
@@ -32589,7 +32626,7 @@ msgstr ""
 "建議使用級別3，以便對發生的情況進行良好的摘要，而不會受到輸出的影響。%1$s%1$sNone：只顯示致命錯誤。%1$s默認值為4：正常使用範圍%1$s。5：將R和W字元輸出到控制臺用於對於每個數據包讀取和寫入。 "
 "大寫用於TCP / UDP數據包，小寫用於TUN / TAP數據包。。%1$s6-11：調試資訊範圍"
 
-#: src/usr/local/www/vpn_openvpn_client.php:943
+#: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
 msgstr "OpenVPN 客戶端"
 
@@ -32619,37 +32656,37 @@ msgid "The field 'DNS Server #4' must contain a valid IP address"
 msgstr "字段'DNS 伺服器4'必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:173
-#: src/usr/local/www/vpn_openvpn_server.php:376
+#: src/usr/local/www/vpn_openvpn_server.php:369
 msgid "The field 'NTP Server #1' must contain a valid IP address"
 msgstr "字段 'NTP 伺服器1' 必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:176
-#: src/usr/local/www/vpn_openvpn_server.php:379
+#: src/usr/local/www/vpn_openvpn_server.php:372
 msgid "The field 'NTP Server #2' must contain a valid IP address"
 msgstr "字段'NTP 伺服器2'必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:179
-#: src/usr/local/www/vpn_openvpn_server.php:382
+#: src/usr/local/www/vpn_openvpn_server.php:375
 msgid "The field 'NTP Server #3' must contain a valid IP address"
 msgstr "字段 'NTP 伺服器3'必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:182
-#: src/usr/local/www/vpn_openvpn_server.php:385
+#: src/usr/local/www/vpn_openvpn_server.php:378
 msgid "The field 'NTP Server #4' must contain a valid IP address"
 msgstr "字段'NTP 伺服器4' 必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:189
-#: src/usr/local/www/vpn_openvpn_server.php:392
+#: src/usr/local/www/vpn_openvpn_server.php:385
 msgid "The field 'WINS Server #1' must contain a valid IP address"
 msgstr "字段 'WINS 伺服器1' 必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:192
-#: src/usr/local/www/vpn_openvpn_server.php:395
+#: src/usr/local/www/vpn_openvpn_server.php:388
 msgid "The field 'WINS Server #2' must contain a valid IP address"
 msgstr "字段'WINS 伺服器2' 必須包含一個有效的IP地址。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:197
-#: src/usr/local/www/vpn_openvpn_server.php:400
+#: src/usr/local/www/vpn_openvpn_server.php:393
 msgid ""
 "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP "
 "address"
@@ -32793,12 +32830,12 @@ msgstr ""
 "如果沒有要路由的客戶端網路，可以留空。%1$s注意：請記住將這些子網添加到相應OpenVPN伺服器設置上的IPv6遠程網路列表中。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:423
-#: src/usr/local/www/vpn_openvpn_server.php:1047
+#: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Redirect Gateway"
 msgstr "重定向網關 "
 
 #: src/usr/local/www/vpn_openvpn_csc.php:430
-#: src/usr/local/www/vpn_openvpn_server.php:1135
+#: src/usr/local/www/vpn_openvpn_server.php:1117
 msgid "Client Settings"
 msgstr "客戶端設置 "
 
@@ -32826,7 +32863,7 @@ msgid ""
 msgstr "如果未設置此選項，則將禁用所有NetBIOS over TCP / IP選項（包括WINS）。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:538
-#: src/usr/local/www/vpn_openvpn_server.php:1259
+#: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Node Type"
 msgstr "節點類型"
 
@@ -32881,154 +32918,154 @@ msgstr "已刪除 OpenVPN伺服器條目"
 msgid "Server successfully deleted."
 msgstr "已成功刪除伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:301
+#: src/usr/local/www/vpn_openvpn_server.php:294
 msgid ""
 "A Backend for Authentication must be selected if the server mode requires "
 "User Auth."
 msgstr "如果伺服器模式需要用戶認證，則必須選擇認證的後臺。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:361
+#: src/usr/local/www/vpn_openvpn_server.php:354
 msgid "The field 'DNS Server #1' must contain a valid IPv4 or IPv6 address"
 msgstr "字段 'DNS 伺服器1'必須包含有效的IPv4或IPv6地址"
 
-#: src/usr/local/www/vpn_openvpn_server.php:364
+#: src/usr/local/www/vpn_openvpn_server.php:357
 msgid "The field 'DNS Server #2' must contain a valid IPv4 or IPv6 address"
 msgstr "字段 'DNS 伺服器2'必須包含有效的IPv4或IPv6地址"
 
-#: src/usr/local/www/vpn_openvpn_server.php:367
+#: src/usr/local/www/vpn_openvpn_server.php:360
 msgid "The field 'DNS Server #3' must contain a valid IPv4 or IPv6 address"
 msgstr "字段 'DNS 伺服器3'必須包含有效的IPv4或IPv6地址"
 
-#: src/usr/local/www/vpn_openvpn_server.php:370
+#: src/usr/local/www/vpn_openvpn_server.php:363
 msgid "The field 'DNS Server #4' must contain a valid IPv4 or IPv6 address"
 msgstr "字段 'DNS 伺服器4'必須包含有效的IPv4或IPv6地址"
 
-#: src/usr/local/www/vpn_openvpn_server.php:412
+#: src/usr/local/www/vpn_openvpn_server.php:399
 msgid "The field 'Concurrent connections' must be numeric."
 msgstr "字段“併發連接”必須是數字。 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:422
+#: src/usr/local/www/vpn_openvpn_server.php:409
 msgid "The selected certificate is not valid"
 msgstr "所選證書無效"
 
-#: src/usr/local/www/vpn_openvpn_server.php:426
+#: src/usr/local/www/vpn_openvpn_server.php:413
 msgid ""
 "The specified DH Parameter length is invalid or the DH file does not exist."
 msgstr "指定的DH參數長度無效或DH檔不存在。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:430
+#: src/usr/local/www/vpn_openvpn_server.php:417
 msgid "The specified ECDH Curve is invalid."
 msgstr "指定的ECDH曲線無效。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:455
+#: src/usr/local/www/vpn_openvpn_server.php:442
 msgid "IPv4 Tunnel network"
 msgstr "IPv4 隧道網路"
 
-#: src/usr/local/www/vpn_openvpn_server.php:458
+#: src/usr/local/www/vpn_openvpn_server.php:445
 msgid ""
 "Using a tunnel network and server bridge settings together is not allowed."
 msgstr "不允許一起使用隧道網路和服務器網橋設置。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:462
+#: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "Server Bridge DHCP Start and End must both be empty, or defined."
 msgstr "伺服器網橋DHCP起始和結束都必須為空或定義。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:465
+#: src/usr/local/www/vpn_openvpn_server.php:452
 msgid "Server Bridge DHCP Start must be an IPv4 address."
 msgstr "伺服器網橋DHCP起始地址必須是IPv4地址。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:468
+#: src/usr/local/www/vpn_openvpn_server.php:455
 msgid "Server Bridge DHCP End must be an IPv4 address."
 msgstr "伺服器網橋DHCP結束地址必須是IPv4地址。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:471
+#: src/usr/local/www/vpn_openvpn_server.php:458
 msgid "The Server Bridge DHCP range is invalid (start higher than end)."
 msgstr "伺服器網橋DHCP的範圍無效（結束地址高於起始地址）。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:630
+#: src/usr/local/www/vpn_openvpn_server.php:612
 #, php-format
 msgid "Updated OpenVPN server on %1$s:%2$s %3$s"
 msgstr "已在%1$s上更新了OpenVPN伺服器：%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:633
+#: src/usr/local/www/vpn_openvpn_server.php:615
 #, php-format
 msgid "Added OpenVPN server on %1$s:%2$s %3$s"
 msgstr "已在%1$s上添加了OpenVPN伺服器：%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:696
+#: src/usr/local/www/vpn_openvpn_server.php:678
 msgid ""
 "Set this option to disable this server without removing it from the list."
 msgstr "設置此選項以禁用此伺服器，而不將其從列表中刪除。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:726
+#: src/usr/local/www/vpn_openvpn_server.php:708
 msgid "*Backend for authentication"
 msgstr "*認證後臺"
 
-#: src/usr/local/www/vpn_openvpn_server.php:752
+#: src/usr/local/www/vpn_openvpn_server.php:734
 msgid ""
 "The interface or Virtual IP address where OpenVPN will receive client "
 "connections."
 msgstr "OpenVPN將接收客戶端連接的介面或虛擬IP地址。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:756
+#: src/usr/local/www/vpn_openvpn_server.php:738
 msgid "*Local port"
 msgstr "*本地端口"
 
-#: src/usr/local/www/vpn_openvpn_server.php:760
+#: src/usr/local/www/vpn_openvpn_server.php:742
 msgid "The port used by OpenVPN to receive client connections."
 msgstr "OpenVPN用於接收客戶端連接的端口。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:848
-#: src/usr/local/www/vpn_openvpn_server.php:1816
+#: src/usr/local/www/vpn_openvpn_server.php:830
+#: src/usr/local/www/vpn_openvpn_server.php:1764
 msgid ""
 "Warning: The selected server certificate was not created as an SSL Server "
 "certificate and may not work as expected"
 msgstr "警告：所選的伺服器證書不是作為SSL伺服器證書創建的，可能無法正常工作"
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 #, php-format
 msgid "No Certificates defined. One may be created here: %1$s%2$s%3$s"
 msgstr "未定義證書。 可以在這裏創建一個:%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:852
+#: src/usr/local/www/vpn_openvpn_server.php:834
 msgid "System &gt; Cert. Manager"
 msgstr "系統＆gt; 證書管理"
 
-#: src/usr/local/www/vpn_openvpn_server.php:862
+#: src/usr/local/www/vpn_openvpn_server.php:844
 msgid "*Server certificate"
 msgstr "*伺服器證書"
 
-#: src/usr/local/www/vpn_openvpn_server.php:869
+#: src/usr/local/www/vpn_openvpn_server.php:851
 msgid "*DH Parameter Length"
 msgstr "*DH參數長度"
 
-#: src/usr/local/www/vpn_openvpn_server.php:874
+#: src/usr/local/www/vpn_openvpn_server.php:856
 msgid "Only DH parameter sets which exist in /etc/ are shown."
 msgstr "只顯示/ etc /中存在的DH參數集。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:876
+#: src/usr/local/www/vpn_openvpn_server.php:858
 msgid ""
 "Generating new or stronger DH parameters is CPU-intensive and must be "
 "performed manually."
 msgstr "生成新的或更強的DH參數是CPU密集型的，必須手動執行。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:877
+#: src/usr/local/www/vpn_openvpn_server.php:859
 #, php-format
 msgid ""
 "Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on "
 "generating new or stronger paramater sets."
 msgstr "有關生成新的或更強的參數集的資訊，請參閱%1$s關於DH參數的doc 維基文章%2$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:872
+#: src/usr/local/www/vpn_openvpn_server.php:854
 #, php-format
 msgid "Diffie-Hellman (DH) parameter set used for key exchange.%1$s%2$s%3$s"
 msgstr "用於密鑰交換的Diffie-Hellman（DH）參數集。%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_server.php:885
+#: src/usr/local/www/vpn_openvpn_server.php:867
 msgid "ECDH Curve"
 msgstr "ECDH曲線"
 
-#: src/usr/local/www/vpn_openvpn_server.php:888
+#: src/usr/local/www/vpn_openvpn_server.php:870
 #, php-format
 msgid ""
 "The Elliptic Curve to use for key exchange. %1$sThe curve from the server "
@@ -33036,7 +33073,7 @@ msgid ""
 "Otherwise, secp384r1 is used as a fallback."
 msgstr "橢圓曲線用於密鑰交換。 %1$s伺服器使用ECDSA證書時，默認使用伺服器證書的曲線。 否則，將把secp384r1當作後備。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:962
+#: src/usr/local/www/vpn_openvpn_server.php:944
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -33048,62 +33085,57 @@ msgstr ""
 "用於驗證數據通道分組的演算法，以及在存在TLS密鑰時控制通道分組。%1$s當使用AEAD加密演算法模式（如AES-GCM）時，此摘要僅用於控制通道， "
 "%1$s將此集設置為SHA1，除非所有客戶端都設置為匹配。 SHA1是OpenVPN的默認值。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:978
+#: src/usr/local/www/vpn_openvpn_server.php:960
 msgid "Do Not Check"
 msgstr "不檢查"
 
-#: src/usr/local/www/vpn_openvpn_server.php:976
+#: src/usr/local/www/vpn_openvpn_server.php:958
 msgid "*Certificate Depth"
 msgstr "*證書深度"
 
-#: src/usr/local/www/vpn_openvpn_server.php:979
+#: src/usr/local/www/vpn_openvpn_server.php:961
 msgid ""
 "When a certificate-based client logs in, do not accept certificates below "
 "this depth. Useful for denying certificates made with intermediate CAs "
 "generated from the same CA as the server."
 msgstr "基於證書的客戶端登錄時，不接受這個深度以下的證書。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:984
+#: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Strict User-CN Matching"
 msgstr "嚴格的用戶-CN匹配"
 
-#: src/usr/local/www/vpn_openvpn_server.php:987
+#: src/usr/local/www/vpn_openvpn_server.php:969
 msgid ""
 "When authenticating users, enforce a match between the common name of the "
 "client certificate and the username given at login."
 msgstr "在驗證用戶時，強制在客戶端證書的通用名稱和登錄時提供的用戶名之間匹配。 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:998
+#: src/usr/local/www/vpn_openvpn_server.php:980
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. 10.0.8.0/24). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. 10.0.8.0/"
+"24). The first usable address in the network will be assigned to the server "
+"virtual interface. The remaining usable addresses will be assigned to "
+"connecting clients."
 msgstr ""
-"這是用於此伺服器和客戶端主機之間的私有通信的IPv4虛擬網路，使用CIDR（例如10.0.8.0/24）表示。 第一個網路地址將被分配給伺服器虛擬介面。 "
-"可以選擇將其餘網路地址分配給連接的客戶端（請參閱地址池）。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1008
+#: src/usr/local/www/vpn_openvpn_server.php:990
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
-"this server and client hosts expressed using CIDR (e.g. fe80::/64). The "
-"first network address will be assigned to the server virtual interface. The "
-"remaining network addresses can optionally be assigned to connecting clients "
-"(see Address Pool)."
+"this server and client hosts expressed using CIDR notation (e.g. fe80::/64). "
+"The ::1 address in the network will be assigned to the server virtual "
+"interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
-"這是用於此伺服器和客戶端主機之間的私有通信的IPv6虛擬網路，使用CIDR（例如fe80 :: / 64）表示。 "
-"第一個網路地址將被分配給伺服器虛擬介面。 可以選擇將其餘網路地址分配給連接的客戶端（請參閱地址池）。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1015
+#: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
 msgstr "橋接DHCP"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1022
+#: src/usr/local/www/vpn_openvpn_server.php:1004
 msgid "Bridge Interface"
 msgstr "橋接介面"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1025
+#: src/usr/local/www/vpn_openvpn_server.php:1007
 msgid ""
 "The interface to which this TAP instance will be bridged. This is not done "
 "automatically. This interface must be assigned and the bridge created "
@@ -33114,11 +33146,11 @@ msgstr ""
 "將橋接此TAP實例的介面。 這不是自動完成的。 必須分配此介面並分別創建橋接。 此設置控制OpenVPN為網橋使用的現有IP地址和子網掩碼。 "
 "將此設置為“none”將導致下麵的伺服器網橋DHCP設置被忽略。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1031
+#: src/usr/local/www/vpn_openvpn_server.php:1013
 msgid "Server Bridge DHCP Start"
 msgstr "伺服器網橋DHCP開始"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1034
+#: src/usr/local/www/vpn_openvpn_server.php:1016
 msgid ""
 "When using TAP mode as a multi-point server, a DHCP range may optionally be "
 "supplied to use on the interface to which this TAP instance is bridged. If "
@@ -33128,15 +33160,15 @@ msgstr ""
 "當使用TAP模式作為多點伺服器時，可以可選地提供DHCP範圍以在該TAP實例所橋接的介面上使用。 "
 "如果這些設置保留為空，DHCP將傳遞到LAN，並且上面的介面設置將被忽略。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1040
+#: src/usr/local/www/vpn_openvpn_server.php:1022
 msgid "Server Bridge DHCP End"
 msgstr "伺服器網橋DHCP結束"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1054
+#: src/usr/local/www/vpn_openvpn_server.php:1036
 msgid "IPv4 Local network(s)"
 msgstr "IPv4本地網路"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1057
+#: src/usr/local/www/vpn_openvpn_server.php:1039
 msgid ""
 "IPv4 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more CIDR ranges. This may be left blank if "
@@ -33146,11 +33178,11 @@ msgstr ""
 "可以從遠程端點訪問的IPv4網路。 表示為一個或多個CIDR範圍的逗號分隔列表。 如果未在遠程電腦上通過此隧道將路由添加到本地網路，則可以將其留空。 "
 "這通常設置為LAN網路。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1064
+#: src/usr/local/www/vpn_openvpn_server.php:1046
 msgid "IPv6 Local network(s)"
 msgstr "IPv6本地網路"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1067
+#: src/usr/local/www/vpn_openvpn_server.php:1049
 msgid ""
 "IPv6 networks that will be accessible from the remote endpoint. Expressed as "
 "a comma-separated list of one or more IP/PREFIX. This may be left blank if "
@@ -33160,42 +33192,38 @@ msgstr ""
 "IPv6網路，可以從遠程端點訪問。 表示為一個或多個IP / 首碼的逗號分隔列表。 如果未在遠程電腦上通過此隧道將路由添加到本地網路，則可以將其留空。 "
 "這通常設置為LAN網路。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1091
+#: src/usr/local/www/vpn_openvpn_server.php:1073
 msgid "Concurrent connections"
 msgstr "併發連接 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1094
+#: src/usr/local/www/vpn_openvpn_server.php:1076
 msgid ""
 "Specify the maximum number of clients allowed to concurrently connect to "
 "this server."
 msgstr "指定同時連接到此伺服器的最大客戶端數。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1107
+#: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push Compression"
 msgstr "推送"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1121
+#: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Inter-client communication"
 msgstr "客戶端間通信 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1128
+#: src/usr/local/www/vpn_openvpn_server.php:1110
 msgid "Duplicate Connection"
 msgstr "重複連接"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1131
+#: src/usr/local/www/vpn_openvpn_server.php:1113
 msgid ""
 "(This is not generally recommended, but may be needed for some scenarios.)"
 msgstr "（這通常不推薦，但在某些情況下可能需要）。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1140
+#: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
 msgstr "動態IP "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1147
-msgid "Address Pool"
-msgstr "地址池"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1157
+#: src/usr/local/www/vpn_openvpn_server.php:1132
 #, php-format
 msgid ""
 "Specifies the method used to supply a virtual adapter IP address to clients "
@@ -33207,35 +33235,35 @@ msgstr ""
 "指定在IPv4上使用TUN模式時，為客戶端提供虛擬適配器IP地址的方法。%1$s某些客戶端可能要求將其設置為“subnet”，即使是對於IPv6，例如OpenVPN "
 "Connect（iOS / Android）。 舊版本的OpenVPN（2.0.9之前）或客戶端（如Yealink手機）可能需要“net30”。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1163
+#: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
 msgstr "高級客戶端設置"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1182
+#: src/usr/local/www/vpn_openvpn_server.php:1157
 msgid "DNS Server enable"
 msgstr "啟用DNS伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1189
+#: src/usr/local/www/vpn_openvpn_server.php:1164
 msgid "DNS Server 1"
 msgstr "DNS 伺服器 1"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1196
+#: src/usr/local/www/vpn_openvpn_server.php:1171
 msgid "DNS Server 2"
 msgstr "DNS 伺服器 2"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1203
+#: src/usr/local/www/vpn_openvpn_server.php:1178
 msgid "DNS Server 3"
 msgstr "DNS 伺服器 3"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1210
+#: src/usr/local/www/vpn_openvpn_server.php:1185
 msgid "DNS Server 4"
 msgstr "DNS 伺服器 4"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1217
+#: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
 msgstr "阻止外部DNS"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1220
+#: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
 "Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to "
 "DNS leakage in this way, other clients will ignore the option as they are "
@@ -33244,29 +33272,29 @@ msgstr ""
 "需要Windows 10和OpenVPN 2.3.9或更高版本。 只有Windows "
 "10以這種方式容易發生DNS洩漏，其他客戶端將忽略該選項，因為它們不受影響。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1224
+#: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid "Force DNS cache update"
 msgstr "強制DNS緩存更新"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1227
+#: src/usr/local/www/vpn_openvpn_server.php:1202
 msgid "This is known to kick Windows into recognizing pushed DNS servers."
 msgstr "這會使Windows進入識別推送的DNS伺服器。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1231
+#: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid "NTP Server enable"
 msgstr "啟動NTP伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1252
+#: src/usr/local/www/vpn_openvpn_server.php:1227
 msgid "NetBIOS enable"
 msgstr "啟動 NetBIOS"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1255
+#: src/usr/local/www/vpn_openvpn_server.php:1230
 msgid ""
 "If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) "
 "will be disabled."
 msgstr "如果未設置此選項，則將禁用所有NetBIOS over TCP / IP選項（包括WINS）。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1262
+#: src/usr/local/www/vpn_openvpn_server.php:1237
 msgid ""
 "Possible options: b-node (broadcasts), p-node (point-to-point name queries "
 "to a WINS server), m-node (broadcast then query name server), and h-node "
@@ -33274,11 +33302,11 @@ msgid ""
 msgstr ""
 "可能的選擇：B-節點（廣播），P-節點（點至點名稱查詢WINS伺服器），M-節點（廣播，然後查詢名稱伺服器），H-節點（查詢名稱伺服器，然後播出） "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1267
+#: src/usr/local/www/vpn_openvpn_server.php:1242
 msgid "Scope ID"
 msgstr "範圍 ID"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1270
+#: src/usr/local/www/vpn_openvpn_server.php:1245
 msgid ""
 "A NetBIOS Scope ID provides an extended naming service for NetBIOS over TCP/"
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
@@ -33287,33 +33315,19 @@ msgstr ""
 "NetBIOS範圍ID通過TCP / IP為NetBIOS提供擴展的命名服務。 "
 "NetBIOS範圍ID將單個網路上的NetBIOS流量僅隔離到具有相同NetBIOS範圍ID的那些節點"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1276
+#: src/usr/local/www/vpn_openvpn_server.php:1251
 msgid "WINS server enable"
 msgstr "啟用WINS 伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1283
+#: src/usr/local/www/vpn_openvpn_server.php:1258
 msgid "WINS Server 1"
 msgstr "WINS 伺服器 1"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1290
+#: src/usr/local/www/vpn_openvpn_server.php:1265
 msgid "WINS Server 2"
 msgstr "WINS 伺服器 2"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1297
-msgid "Enable custom port "
-msgstr "啟用自定義端口"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1304
-msgid "Management port"
-msgstr "管理端口"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1307
-msgid ""
-"The default port is 166. Specify a different port if the client machines "
-"need to select from multiple OpenVPN links."
-msgstr "默認端口為166，如果客戶端電腦需要從多個OpenVPN鏈路中選擇，請指定不同的端口。"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1318
+#: src/usr/local/www/vpn_openvpn_server.php:1278
 #, php-format
 msgid ""
 "Enter any additional options to add to the OpenVPN server configuration "
@@ -33323,19 +33337,19 @@ msgstr ""
 "輸入要添加到OpenVPN伺服器配置的任何其他選項，以分號分隔。%1$s例子: push \"route 10.0.0.0 255.255.255."
 "0\""
 
-#: src/usr/local/www/vpn_openvpn_server.php:1372
+#: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
 msgstr "OpenVPN 伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1377
+#: src/usr/local/www/vpn_openvpn_server.php:1337
 msgid "Protocol / Port"
 msgstr "協議/端口 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1378
+#: src/usr/local/www/vpn_openvpn_server.php:1338
 msgid "Tunnel Network"
 msgstr "隧道網路 "
 
-#: src/usr/local/www/vpn_openvpn_server.php:1379
+#: src/usr/local/www/vpn_openvpn_server.php:1339
 msgid "Crypto"
 msgstr "加密硬體"
 
@@ -33373,11 +33387,11 @@ msgstr "NTP狀態"
 
 #: src/usr/local/www/widgets/include/picture.inc:22
 msgid "Picture"
-msgstr ""
+msgstr "圖像"
 
 #: src/usr/local/www/widgets/include/rss.inc:22
 msgid "RSS"
-msgstr ""
+msgstr "RSS"
 
 #: src/usr/local/www/widgets/include/services_status.inc:24
 msgid "Services Status"
@@ -33385,7 +33399,7 @@ msgstr "服務狀態"
 
 #: src/usr/local/www/widgets/include/system_information.inc:22
 msgid "System Information"
-msgstr ""
+msgstr "系統資訊"
 
 #: src/usr/local/www/widgets/include/traffic_graph.inc:22
 msgid "Traffic Graphs"
@@ -33943,19 +33957,19 @@ msgstr "（1〜100）："
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:178
 msgid "Zone Warning"
-msgstr ""
+msgstr "區域警告"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:185
 msgid "Zone Critical"
-msgstr ""
+msgstr "區域臨界"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:192
 msgid "Core Warning"
-msgstr ""
+msgstr "核心警告"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:199
 msgid "Core Critical"
-msgstr ""
+msgstr "核心臨界"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Display settings:"
@@ -33963,15 +33977,15 @@ msgstr "顯示設置："
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Show raw output"
-msgstr ""
+msgstr "顯示原始輸出"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:214
 msgid "(no graph)"
-msgstr ""
+msgstr "(無圖表)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:220
 msgid "Show full sensor name"
-msgstr ""
+msgstr "顯示完整的感測器名稱"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:235
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -34055,18 +34069,23 @@ msgstr "配置通過pfSense嚮導子系統更改。"
 msgid "Wizard"
 msgstr "嚮導"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:632
-#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizard.php:418
+#, php-format
+msgid "Step %s of %s"
+msgstr ""
+
+#: src/usr/local/www/wizards/openvpn_wizard.inc:637
+#: src/usr/local/www/wizards/openvpn_wizard.inc:654
 #, php-format
 msgid "OpenVPN %s wizard"
 msgstr "OpenVPN %s 嚮導"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:644
-#: src/usr/local/www/wizards/openvpn_wizard.inc:659
+#: src/usr/local/www/wizards/openvpn_wizard.inc:649
+#: src/usr/local/www/wizards/openvpn_wizard.inc:664
 msgid "OpenVPN Wizard"
 msgstr "OpenVPN嚮導"
 
-#: src/usr/local/www/wizards/openvpn_wizard.inc:669
+#: src/usr/local/www/wizards/openvpn_wizard.inc:674
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr "OpenVPN配置通過OpenVPN遠程訪問伺服器安裝嚮導保存。"
@@ -34675,71 +34694,71 @@ msgstr "本地用戶管理器/憑證"
 msgid "RADIUS Authentication"
 msgstr "RADIUS認證 "
 
-#: src/usr/local/www/services_captiveportal.php:719
+#: src/usr/local/www/services_captiveportal.php:721
 msgid "Allow only users/groups with \"Captive portal login\" privilege set"
 msgstr "僅允許具有“入網門戶登錄”許可權的用戶/組"
 
-#: src/usr/local/www/services_captiveportal.php:729
+#: src/usr/local/www/services_captiveportal.php:731
 msgid "PAP"
 msgstr "PAP "
 
-#: src/usr/local/www/services_captiveportal.php:737
+#: src/usr/local/www/services_captiveportal.php:739
 msgid "CHAP-MD5"
 msgstr "CHAP-MD5"
 
-#: src/usr/local/www/services_captiveportal.php:745
+#: src/usr/local/www/services_captiveportal.php:747
 msgid "MSCHAPv1"
 msgstr "MSCHAPv1"
 
-#: src/usr/local/www/services_captiveportal.php:753
+#: src/usr/local/www/services_captiveportal.php:755
 msgid "MSCHAPv2"
 msgstr "MSCHAPv2"
 
-#: src/usr/local/www/services_captiveportal.php:873
+#: src/usr/local/www/services_captiveportal.php:875
 msgid "Send RADIUS accounting packets to the primary RADIUS server."
 msgstr "發送RADIUS計帳數據到主RADIUS伺服器。"
 
-#: src/usr/local/www/services_captiveportal.php:889
+#: src/usr/local/www/services_captiveportal.php:891
 msgid "No updates"
 msgstr "不更新"
 
-#: src/usr/local/www/services_captiveportal.php:897
+#: src/usr/local/www/services_captiveportal.php:899
 msgid "Stop/Start"
 msgstr "停止/啟動"
 
-#: src/usr/local/www/services_captiveportal.php:905
+#: src/usr/local/www/services_captiveportal.php:907
 msgid "Stop/Start (FreeRADIUS)"
 msgstr "停止/啟動（FreeRADIUS）"
 
-#: src/usr/local/www/services_captiveportal.php:913
+#: src/usr/local/www/services_captiveportal.php:915
 msgid "Interim"
 msgstr "臨時"
 
-#: src/usr/local/www/services_captiveportal.php:928
+#: src/usr/local/www/services_captiveportal.php:930
 msgid "Reauthenticate connected users every minute"
 msgstr "對連接的用戶每分鐘認證一次 "
 
-#: src/usr/local/www/services_captiveportal.php:938
+#: src/usr/local/www/services_captiveportal.php:940
 msgid "Enable RADIUS MAC authentication"
 msgstr "開啟RADIUS MAC地址認證 "
 
-#: src/usr/local/www/services_captiveportal.php:960
+#: src/usr/local/www/services_captiveportal.php:962
 msgid "Use RADIUS Session-Timeout attributes"
 msgstr "使用RADIUS會話超時屬性 "
 
-#: src/usr/local/www/services_captiveportal.php:976
+#: src/usr/local/www/services_captiveportal.php:978
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
 msgstr "反相輸入八位位元組和輸出八位位元組"
 
-#: src/usr/local/www/services_captiveportal.php:984
+#: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
 msgstr "在會話時間中包括空閒時間"
 
-#: src/usr/local/www/services_captiveportal.php:1018
+#: src/usr/local/www/services_captiveportal.php:1020
 msgid "Enable HTTPS login"
 msgstr "啟用HTTPS登錄 "
 
-#: src/usr/local/www/services_captiveportal.php:1042
+#: src/usr/local/www/services_captiveportal.php:1044
 msgid "Disable HTTPS Forwards"
 msgstr "禁用HTTPS轉發"
 
@@ -34875,7 +34894,7 @@ msgid "Do not forward private reverse lookups"
 msgstr "不要轉發私人反向查找"
 
 #: src/usr/local/www/services_dyndns_edit.php:255
-#: src/usr/local/www/vpn_openvpn_client.php:513
+#: src/usr/local/www/vpn_openvpn_client.php:511
 msgid "Disable this client"
 msgstr "禁止此客戶端 "
 
@@ -34892,12 +34911,12 @@ msgid "Enable verbose logging"
 msgstr "啟用詳細日誌記錄"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
-msgid "Force IPv4 resolving"
-msgstr "強制IPv4解析"
+msgid "Force IPv4 DNS Resolution"
+msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:347
-msgid "Verify SSL peer"
-msgstr "驗證SSL對等體"
+msgid "Verify SSL Certificate Trust"
+msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -35163,7 +35182,7 @@ msgstr "禁用自動添加的訪問控制項"
 
 #: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Disable the automatically-added host entries"
-msgstr ""
+msgstr "禁用自動添加主機條目"
 
 #: src/usr/local/www/services_unbound_advanced.php:372
 msgid ""
@@ -35174,8 +35193,8 @@ msgstr "在DNS查詢中使用0x-20編碼的隨機比特來進行欺騙嘗試。"
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
 #: src/usr/local/www/system_gateways_edit.php:373
-#: src/usr/local/www/system_groupmanager_addprivs.php:178
-#: src/usr/local/www/system_usermanager_addprivs.php:167
+#: src/usr/local/www/system_groupmanager_addprivs.php:189
+#: src/usr/local/www/system_usermanager_addprivs.php:173
 msgid "<span class=\"help-block\">"
 msgstr "<span class=\"help-block\">"
 
@@ -35660,20 +35679,20 @@ msgstr "顯示命令"
 msgid "Dry Run"
 msgstr "模擬運行"
 
-#: src/usr/local/www/system_usermanager.php:722
+#: src/usr/local/www/system_usermanager.php:734
 msgid "This user cannot login"
 msgstr "此用戶無法登錄"
 
-#: src/usr/local/www/system_usermanager.php:786
+#: src/usr/local/www/system_usermanager.php:798
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr "為此用戶使用個性化的自定義GUI選項和儀錶板佈局。"
 
-#: src/usr/local/www/system_usermanager.php:854
+#: src/usr/local/www/system_usermanager.php:867
 msgid "Click to create a user certificate"
 msgstr "單擊創建用戶證書"
 
-#: src/usr/local/www/system_usermanager.php:953
+#: src/usr/local/www/system_usermanager.php:964
 msgid "Click to paste an authorized key"
 msgstr "單擊以粘貼授權密鑰"
 
@@ -35701,7 +35720,7 @@ msgstr "允許客戶端保存擴展認證(XAuth)密碼（僅Cisco VPN客戶端�
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:443
-#: src/usr/local/www/vpn_openvpn_server.php:1169
+#: src/usr/local/www/vpn_openvpn_server.php:1144
 msgid "Provide a default domain name to clients"
 msgstr "為客戶端提供默認功能變數名稱"
 
@@ -35718,7 +35737,7 @@ msgstr "向客戶端提供DNS伺服器列表"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:555
-#: src/usr/local/www/vpn_openvpn_server.php:1277
+#: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
 msgstr "向客戶端提供WINS伺服器列表 "
 
@@ -35800,65 +35819,61 @@ msgstr "使用先建後刪啟動IKEv2重新認證"
 msgid "Enable bypass for LAN interface IP"
 msgstr "為LAN介面IP啟用旁路"
 
-#: src/usr/local/www/vpn_l2tp.php:193
+#: src/usr/local/www/vpn_l2tp.php:204
 msgid "Enable L2TP server"
 msgstr "啟用L2TP伺服器"
 
-#: src/usr/local/www/vpn_l2tp.php:279
+#: src/usr/local/www/vpn_l2tp.php:290
 msgid "Use a RADIUS server for authentication"
 msgstr "使用RADIUS伺服器進行認證 "
 
-#: src/usr/local/www/vpn_l2tp.php:286
+#: src/usr/local/www/vpn_l2tp.php:297
 msgid "Enable RADIUS accounting"
 msgstr "啟用RADIUS計帳"
 
-#: src/usr/local/www/vpn_l2tp.php:306
+#: src/usr/local/www/vpn_l2tp.php:317
 msgid "Issue IP Addresses via RADIUS server."
 msgstr "通過RADIUS伺服器頒佈IP地址。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:564
-msgid "Infinitely resolve server "
-msgstr "無限解析伺服器"
-
-#: src/usr/local/www/vpn_openvpn_client.php:644
-#: src/usr/local/www/vpn_openvpn_server.php:776
+#: src/usr/local/www/vpn_openvpn_client.php:634
+#: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
 msgstr "用一個TLS密鑰"
 
-#: src/usr/local/www/vpn_openvpn_client.php:654
-#: src/usr/local/www/vpn_openvpn_server.php:786
+#: src/usr/local/www/vpn_openvpn_client.php:644
+#: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
 msgstr "自動生成TLS密鑰。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:710
-#: src/usr/local/www/vpn_openvpn_server.php:897
+#: src/usr/local/www/vpn_openvpn_client.php:700
+#: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
 msgstr "自動生成一個共用密鑰 "
 
-#: src/usr/local/www/vpn_openvpn_client.php:739
-#: src/usr/local/www/vpn_openvpn_server.php:918
+#: src/usr/local/www/vpn_openvpn_client.php:729
+#: src/usr/local/www/vpn_openvpn_server.php:900
 msgid "Enable Negotiable Cryptographic Parameters"
 msgstr "啟用可協商的加密參數"
 
-#: src/usr/local/www/vpn_openvpn_client.php:864
-#: src/usr/local/www/vpn_openvpn_server.php:1115
+#: src/usr/local/www/vpn_openvpn_client.php:855
+#: src/usr/local/www/vpn_openvpn_server.php:1097
 msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
 "packet value."
 msgstr "設置隧道報文的TOS IP頭值與封裝後的報文值匹配。"
 
-#: src/usr/local/www/vpn_openvpn_client.php:871
+#: src/usr/local/www/vpn_openvpn_client.php:862
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr "阻止伺服器將路由添加到客戶端的路由表"
 
-#: src/usr/local/www/vpn_openvpn_client.php:878
+#: src/usr/local/www/vpn_openvpn_client.php:869
 msgid "Don't add or remove routes automatically"
 msgstr "不要自動添加或刪除路由"
 
-#: src/usr/local/www/vpn_openvpn_client.php:896
-#: src/usr/local/www/vpn_openvpn_server.php:1324
+#: src/usr/local/www/vpn_openvpn_client.php:887
+#: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
-msgstr ""
+msgstr "使用快速I / O操作與UDP寫入到tun / tap。實驗性。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable this override"
@@ -35869,7 +35884,7 @@ msgid "Block this client connection based on its common name."
 msgstr "基於其公用名稱阻止此客戶端連接。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:424
-#: src/usr/local/www/vpn_openvpn_server.php:1048
+#: src/usr/local/www/vpn_openvpn_server.php:1030
 msgid "Force all client generated traffic through the tunnel."
 msgstr "強制所有客戶端生成的流量通過隧道。"
 
@@ -35879,69 +35894,61 @@ msgid ""
 msgstr "防止此客戶端接收任何伺服器定義的客戶端設置。"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:504
-#: src/usr/local/www/vpn_openvpn_server.php:1232
+#: src/usr/local/www/vpn_openvpn_server.php:1207
 msgid "Provide an NTP server list to clients"
 msgstr "向客戶端提供NTP伺服器列表"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:532
-#: src/usr/local/www/vpn_openvpn_server.php:1253
+#: src/usr/local/www/vpn_openvpn_server.php:1228
 msgid "Enable NetBIOS over TCP/IP"
 msgstr "啟用TCP / IP上的NetBIOS "
 
-#: src/usr/local/www/vpn_openvpn_server.php:694
+#: src/usr/local/www/vpn_openvpn_server.php:676
 msgid "Disable this server"
 msgstr "禁用此伺服器"
 
-#: src/usr/local/www/vpn_openvpn_server.php:985
+#: src/usr/local/www/vpn_openvpn_server.php:967
 msgid "Enforce match"
 msgstr "強制匹配"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1016
+#: src/usr/local/www/vpn_openvpn_server.php:998
 msgid "Allow clients on the bridge to obtain DHCP."
 msgstr "允許網橋上的客戶端獲取DHCP。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1108
+#: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
 msgstr "將所選的“壓縮”設置推送到連接的客戶端。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1122
+#: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
 msgstr "允許連接到該伺服器的客戶機之間的通信"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1129
+#: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr "允許來自使用相同通用名稱的客戶端的多個併發連接。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1141
+#: src/usr/local/www/vpn_openvpn_server.php:1123
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr "允許連接的客戶端在IP地址更改時保留其連接。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1148
-msgid "Provide a virtual adapter IP address to clients (see Tunnel Network)."
-msgstr "向客戶端提供虛擬適配器IP地址（請參閱隧道網路）。"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1183
+#: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr "向客戶端提供DNS伺服器列表。 地址可以是IPv4或IPv6。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1218
+#: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid ""
 "Make Windows 10 Clients Block access to DNS servers except across OpenVPN "
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr "使Windows 10客戶端在連接時阻止對除OpenVPN之外的DNS伺服器的訪問，強制客戶端僅使用VPN DNS伺服器。"
 
-#: src/usr/local/www/vpn_openvpn_server.php:1225
+#: src/usr/local/www/vpn_openvpn_server.php:1200
 msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
 "在連接啟動時運行“net stop dnscache”，“net start dnscache”，“ipconfig / "
 "flushdns”和“ipconfig / registerdns”。"
-
-#: src/usr/local/www/vpn_openvpn_server.php:1298
-msgid "Use a different management port for clients."
-msgstr "為客戶端使用不同的管理端口。"

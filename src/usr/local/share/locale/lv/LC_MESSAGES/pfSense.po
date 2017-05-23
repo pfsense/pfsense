@@ -1,4 +1,4 @@
-# Besmir Zanaj <besmir.zanaj@cloudalbania.com>, 2017. #zanata
+# Zintis Zilbers <zintis.zilbers@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -7,12 +7,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-03-31 08:10-0400\n"
-"Last-Translator: Besmir Zanaj <besmir.zanaj@cloudalbania.com>\n"
-"Language-Team: Albanian\n"
-"Language: sq\n"
+"PO-Revision-Date: 2017-05-19 03:53-0400\n"
+"Last-Translator: Zintis Zilbers <zintis.zilbers@gmail.com>\n"
+"Language-Team: Latvian\n"
+"Language: lv\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2)\n"
 
 #: src/etc/inc/auth.inc:96
 msgid ""
@@ -20,242 +21,230 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Eshte detektuar nje sulm DNS Rebind i mundshem, shiko http://en.wikipedia."
-"org/wiki/DNS_rebinding<br />Perpiqu te aksesosh routerin nepermjet adreses "
-"IP ne vend te hostname ose FQDN."
+"Fiksēts potenciāls DNS Rebind uzbrukums, skatīt http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br /> Mēģiniet piekļūt rūterim pēc IP adreses, nevis "
+"resursdatora nosaukuma. "
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Duke ju ridrejtuar..."
+msgstr "Pāradresē..."
 
 #: src/etc/inc/auth.inc:121
 msgid "Redirecting to the dashboard..."
-msgstr "Duke ju ridrejtuar tek pamja kryesore..."
+msgstr "Pāradresē uz informācijas paneli..."
 
 #: src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:445 src/etc/inc/auth.inc:522
 #: src/etc/inc/auth.inc:563 src/etc/inc/auth.inc:632 src/etc/inc/auth.inc:790
 #: src/etc/inc/auth.inc:803
 #, php-format
 msgid "Running: %s"
-msgstr "Duke punuar: %s"
+msgstr "Palaiž: %s"
 
 #: src/etc/inc/auth.inc:844 src/etc/inc/auth.inc:925 src/etc/inc/auth.inc:1013
 #: src/etc/inc/auth.inc:1325
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "GABIM!_Nuk u arrit lidhja me serverin %s."
+msgstr "KĻŪDA! Nevarēja pieslēgties serverim %s."
 
 #: src/etc/inc/auth.inc:862
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Nuk mund te marr informacion nga CA per hostin %s."
+msgstr "LDAP: Nevarēja uzmeklēt CA pēc atsauces resursam %s."
 
 #: src/etc/inc/auth.inc:937
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr ""
-"GABIM! ldap_test_bind() nuk arriti te kryeje nje lidhje STARTTLS drejt "
-"serverit %s."
+msgstr "KĻŪDA! ldap_test_bind() nevarēja izveidot STARTTLS ar severi %s."
 
 #: src/etc/inc/auth.inc:999
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"GABIM! ldap_get_user_ous() u zgjodh pa percaktuar nje server autentifikimi "
-"LDAP."
 
 #: src/etc/inc/auth.inc:1027
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
-msgstr ""
-"GABIM! ldap_get_user_ous() nuk arriti te kryeje nje lidhje STARTTLS drejt "
-"serverit %s."
+msgstr "KĻŪDA! ldap_get_user_ous() nevarēja savienot STARTTLS ar severi %s."
 
 #: src/etc/inc/auth.inc:1037
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
-"GABIM! ldap_get_user_ous() nuk arriti te kryeje nje lidhje ne menyre anonime "
-"drejt serverit %s."
+"KĻŪDA! ldap_get_user_ous() nevarēja izveidot anonīmu saikni ar severi %s."
 
 #: src/etc/inc/auth.inc:1042
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "GABIM! ldap_get_user_ous() nuk arriti te kape drejt serverin %s."
+msgstr "KĻŪDA! ldap_get_user_ous() nevarēja izveidot saikni ar severi %s."
 
 #: src/etc/inc/auth.inc:1158
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "GABIM! ldap_get_groups() Nuk u arrit lidhja me serverin %s."
+msgstr "KĻŪDA! ldap_get_groups() nevarēja pieslēgties serverim %s."
 
 #: src/etc/inc/auth.inc:1170
-#, php-format
+#, fuzzy, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
-msgstr ""
-"GABIM! ldap_get_groups() nuk arriti te kryeje nje lidhje STARTTLS drejt "
-"serverit %s."
+msgstr "KĻŪDA! ldap_get_groups() nevarēja izveidot STARTTLS ar serveri %s."
 
 #: src/etc/inc/auth.inc:1181
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
-"GABIM! ldap_get_groups() nuk arriti te kape ne menyre anonime serverin %s."
+"KĻŪDA! ldap_get_groups() nevarēja izveidot anonīmu saikni ar severi %s."
 
 #: src/etc/inc/auth.inc:1186
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr "GABIM! ldap_get_groups() nuk arriti te kape  serverin %s."
+msgstr "KĻŪDA! ldap_get_groups nevarēja izveidot saikni ar severi %s."
 
 #: src/etc/inc/auth.inc:1292
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"GABIM! ldap_backed() u therrit pa percaktuar nje server autentifikimi LDAP. "
-"Duke perdorur si baze databazen e perdoruesve lokale.\n"
-"Vizito Sistemi-> Menaxhimi i Perdoruesve."
+"KĻŪDA! ldap_backed() izsaukts bez nodefinēta LDAP autentifikācijas servera. "
+"Tiek iestatīta lokālo lietotāju datubāze pēc noklusējuma. Apmeklējiet "
+"Sistēma -> Lietotāju pārvaldība."
 
 #: src/etc/inc/auth.inc:1295
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"GABIM! ldap_backed() u therrit pa percaktuar nje server autentifikimi LDAP."
+"KĻŪDA! ldap_backed() izsaukts bez nodefinēta LDAP autentifikācijas servera."
 
 #: src/etc/inc/auth.inc:1318
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr ""
-"GABIM! ldap_backed() nuk arriti te kryeje nje lidhje STARTTLS drejt serverit "
-"%s."
+msgstr "KĻŪDA! ldap_backed() nevarēja izveidot STARTTLS ar severi %s."
 
 #: src/etc/inc/auth.inc:1343
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "GABIM! Nuk u arrit te kapet serveri %s."
+msgstr "KĻŪDA! Nevarēja izveidot saikni ar severi %s."
 
 #: src/etc/inc/auth.inc:1361
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Duke kerkuar per %s ne direktori."
+msgstr "Tagad meklē %s direktorijā."
 
 #: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Duke kerkuar ne server %1$s, container %2$s me filter %3$s."
+msgstr "Tagad meklē serverī %1$s, konteinerā %2$s ar filtru %3$s."
 
 #: src/etc/inc/auth.inc:1384
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Kerkimi rezultoi me gabim: %s"
+msgstr "Meklēšana atgrieza kļūdu: %s"
 
 #: src/etc/inc/auth.inc:1400
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr "GABIM! Kerkimi LADP deshtoi ose u gjeten perdoruesa te shumefishte."
+msgstr ""
+"KĻŪDA! LDAP meklēšana bija neveiksmīga, vai arī tika atrasti vairāki "
+"lietotāji."
 
 #: src/etc/inc/auth.inc:1407
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr ""
-"GABIM! Nuk mund te kryhet login ne serverin  %1$s me emrin e perdoruesit "
-"%2$s: %3$s"
+msgstr "KĻŪDA! Nevarēja pieteikties serverī %1$s kā lietotājs %2$s: %3$s."
 
 #: src/etc/inc/auth.inc:1414
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr ""
-"U krye hyrje e seksesshme me perdoruesin %1$s nepermjet serverit LDAP %2$s "
-"me DN = %3$s"
+msgstr "Veiksmīga pieteikšanās kā %1$s caur LDAP serveri %2$s ar DN = %3$s."
 
 #: src/etc/inc/auth.inc:1489
 #, php-format
 msgid "RADIUS start: %s"
-msgstr "RADIUS ndezje: %s"
+msgstr "RADIUS uzsākt: %s"
 
 #: src/etc/inc/auth.inc:1501
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr "RADIUS dergimi deshtoi: %s"
+msgstr "RADIUS sūtījums nesekmīgs: %s"
 
 #: src/etc/inc/auth.inc:1509
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Autentkim i suksesshem"
+msgstr "RADIUS autentifikācija sekmīga"
 
 #: src/etc/inc/auth.inc:1515
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Authentikimi u refuzua"
+msgstr "RADIUS autentifikācija atteikta"
 
 #: src/etc/inc/auth.inc:1636
 msgid "Widget configuration has been changed."
-msgstr "Konfigurimi i seksionit u ndryshua."
+msgstr "Logrīka konfigurācija tika izmainīta."
 
 #: src/etc/inc/auth.inc:1641
 #, php-format
 msgid "(User %s)"
-msgstr "(Perdorues %s)"
+msgstr "(Lietotājs %s)"
 
 #: src/etc/inc/auth.inc:1659 src/etc/inc/auth.inc:1675
 msgid "Local Database"
-msgstr "Databaze Lokale"
+msgstr "Lokālā datubāze"
 
 #: src/etc/inc/auth.inc:1779
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Hyrje e suksesshme per perdoruesin  '%1$s' nga: %2$s"
+msgstr "Veiksmīga pieteikšanās lietotājam '%1$s' no: %2$s"
 
 #: src/etc/inc/auth.inc:1838
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr "Sesioni ka skaduar per perdoruesin '%1$s' nga: %2$s"
+msgstr "Sesija sasniedza noildzi lietotājam '%1$s' no: %2$s"
 
 #: src/etc/inc/auth.inc:1840
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr "Doli nga puna perdoruesi  '%1$s' nga: %2$s"
+msgstr "Lietotājs izlogojies lietotājam '%1$s' no: %2$s"
 
 #: src/etc/inc/authgui.inc:74
 msgid "No page assigned to this user! Click here to logout."
-msgstr "Asnje faqe e caktuar per kete perdorues! Kliko ketu per logout."
+msgstr ""
+"Šim lietotājam nav piesaistīta neviena lapa! Klikšķiniet šeit lai izlogotos."
 
 #: src/etc/inc/authgui.inc:105
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr "Gabim:  %1$s Pershkrimi: %2$s"
+msgstr "Kļūda: %1$s Apraksts: %2$s"
 
 #: src/etc/inc/authgui.inc:123
 msgid "Error: not allowed"
-msgstr "Gabim: Nuk është e lejuar"
+msgstr "Kļūda: nav atļauts"
 
 #: src/etc/inc/authgui.inc:150
 msgid "unknown reason"
-msgstr "arsye e panjohur"
+msgstr "nezināms iemesls"
 
 #: src/etc/inc/authgui.inc:151
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "Kļūdaina pieteikšanās (%s)."
 
 #: src/etc/inc/authgui.inc:156
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Kjo pajisje eshte duke u mirembajtur nga: %s."
+msgstr "Šo ierīci šobrīd uztur: %s."
 
 #: src/etc/inc/authgui.inc:233
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr "Kyçu tek %1$s ne ora %2$s.%3$s"
+msgstr "Pieteikšanās %1$s uz %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:235
 #, php-format
 msgid "Login to %1$s"
-msgstr "Kyçu tek %1$s"
+msgstr "Pieteikšanās %1$s"
 
 #: src/etc/inc/authgui.inc:244 src/etc/inc/authgui.inc:292
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
-msgstr "Kyçu"
+msgstr "Pieteikties"
 
 #: src/etc/inc/authgui.inc:258
 msgid ""
@@ -264,14 +253,10 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
-"Adresa IP qe po perdoret per te aksesuar kete router nuk eshte konfiguruar "
-"lokalisht, e cila mund te jete duke u ridrejtuar nga NAT ose me menyra te "
-"tjera. <br /><br />Nese ky ridrejtim nuk pritej, duhet verifikuar qe nuk "
-"eshte duke u kryer nje sulm man-in-the-middle."
 
 #: src/etc/inc/authgui.inc:273
 msgid "The browser must support cookies to login."
-msgstr "Shfletuesi duhet te suportoje cookie per te lejuar kycjen."
+msgstr "Lai pieteiktos, pārlūkam ir jāatbalsta sīkdatnes."
 
 #: src/etc/inc/authgui.inc:277 src/usr/local/www/interfaces.php:2581
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -294,11 +279,11 @@ msgstr "Shfletuesi duhet te suportoje cookie per te lejuar kycjen."
 #: src/usr/local/www/vpn_openvpn_client.php:615
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
 msgid "Username"
-msgstr "Perdoruesi"
+msgstr "Lietotājvārds"
 
 #: src/etc/inc/authgui.inc:279
 msgid "Enter your username"
-msgstr "Vendosni emrin e perdoruesit"
+msgstr "Ievadiet lietotājvārdu"
 
 #: src/etc/inc/authgui.inc:284 src/usr/local/www/diag_backup.php:524
 #: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
@@ -323,11 +308,11 @@ msgstr "Vendosni emrin e perdoruesit"
 #: src/usr/local/www/vpn_openvpn_client.php:597
 #: src/usr/local/www/vpn_openvpn_client.php:622
 msgid "Password"
-msgstr "Fjalëkalimi"
+msgstr "Parole"
 
 #: src/etc/inc/authgui.inc:286
 msgid "Enter your password"
-msgstr "Vendosni fjalekalimin"
+msgstr "Ievadiet paroli"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -341,32 +326,32 @@ msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr ""
+msgstr "Lietotājvārds:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr ""
+msgstr "Parole:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Ievadiet kupona kodu:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr ""
+msgstr "Turpināt"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "Pāradresē uz ..."
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
 #: src/usr/local/www/head.inc:521
 msgid "Logout"
-msgstr ""
+msgstr "Izlogoties"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "Klikšķiniet uz pogas zemāk, lai atslēgtos"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
@@ -379,30 +364,33 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "BĪSTAMI! UZMANĪBU! ACHTUNG!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
 msgstr ""
+"%1$s nepieciešami *VISMAZ* %2$s RAM atmiņas, lai funkcionētu korekti.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
 msgstr ""
+"Tikai (%1$s) MB RAM atmiņas ir detektēti, tajā skaitā (%2$s) pieejami priekš "
+"%3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "Spiediet ENTER, lai turpinātu"
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:440
 msgid "No interfaces found!"
-msgstr ""
+msgstr "Neviens interfeiss nav atrasts!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "Vai VLANiem vajadzētu būt uzstādītiem vispirms?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -410,29 +398,33 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
+"Ja VLANi netiks izmantoti, vai arī tikai priekš izvēles interfeisiem, ir "
+"ierasts šeit teikt Nē un izmantot webConfigurator, lai nokonfigurētu VLANus "
+"vēlāk, ja nepieciešams."
 
 #: src/etc/inc/config.console.inc:85
+#, fuzzy
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "Vai VLANiem vajadzētu tikt uzstādītiem tagad [j|n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "VLAN interfeisi:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr ""
+msgstr "Ievadiet WAN interfeisa vārdu vai 'a' automātiskai uztveršanai"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr ""
+msgstr "%1$s(%2$s vai a): "
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:463
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sKļūdains interfeisa nosaukums '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -440,11 +432,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sIevadiet WAN interfeisa vārdu vai 'a' automātiskai uztveršanai "
+"%2$sPIEZĪME: šis iespējo pilnīgu Ugunsmūra/NAt režīmu.%3$s(%4$s a vai neko, "
+"ja pabeigts):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sIzvēles interfeisa %2$s apraksts atrasts: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -452,104 +447,109 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sIevadiet izvēles %2$s interfeisa vārdu vai 'a' automātiskai "
+"uztveršanai%3$s(%4$s a vai neko, ja pabeigts):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr ""
+msgstr "Izvēles"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Intefeisi tiks piesaistīti sekojoši:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "Vai vēlaties turpināt [j|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "Ir izvēlēts noņemt LAN interfeisu."
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
 msgstr ""
+"Vai vēlaties noņemt LAN IP adresi un \n"
+"atspējot interfeisu tagad [j|n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr ""
+msgstr "%sPieraksta konfigurāciju..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Interfeisu piesaiste terminālī"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "pabeigts.%s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Uzgaidiet līdz iestatījumi tiek pārlādēti..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr " pabeigts!"
 
 #: src/etc/inc/config.console.inc:400
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "Piefiksēts savienojums interfeisā %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Savienojums nav piefiksēts.%s"
 
 #: src/etc/inc/config.console.inc:422
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "UZMANĪBU: Ja turpināsiet, visi eksistējoši VLANi tiks dzēsti!"
 
 #: src/etc/inc/config.console.inc:438
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "VLAN Spējīgi interfeisi:"
 
 #: src/etc/inc/config.console.inc:453
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "VLAN spējīgi interfeisi nav atrasti."
 
 #: src/etc/inc/config.console.inc:457
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"Ievadiet mātes interfeisa nosaukumu jaunajam VLAN (vai neko, ja pabeigts):"
 
 #: src/etc/inc/config.console.inc:470
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "Ievadiet VLAN birku (1-4094)"
 
 #: src/etc/inc/config.console.inc:474
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sKļūdaina VLAN birka '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:481
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "Šis mātes interfeiss un VLAN jau ir izveidoti."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "Uzlabo m0n0wall konfigurāciju priekš pfSense... "
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "KĻŪDA!  Nevarēja pārkonvertēt m0n0wall -> pfsense iekš config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "Atrasta konfigurācija uz %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -557,6 +557,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"Nav atrasts config.xml. Mēģina atjaunināt pēdējo zināmo konfigurāciju."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
@@ -564,11 +565,11 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "Config.xml atslēgts."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "Ievadīta nederīga parole. Lūdzu mēģiniet vēlreiz."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -576,105 +577,113 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml ir bojāts un ir 0 baitu izmērā. Nevarēja atjaunot no iepriekšējas "
+"rezerves kopijas."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:505
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Nevarēja atjaunot config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s atjauno konfigurāciju %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "XML konfigurācijas fails nav atrasts.  %s nevar turpināt ieslēgšanu."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Pēdējā zināmā konfigurācija atrasta un atjaunota. Lūdzu vēlreiz pārbaudiet "
+"konfigurācijas faila pareizību."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Nevarēja atrast derīgu konfigurācijas failu! Iziet..."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Uzsāk konfigurācijas atjaunošanu %s, uzstāda izpildes pārtraukumu uz 15 "
+"minūtēm"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Atjaunoja viltus IP atjaunošanas periodu uz 3:00"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Pabeidza konfigurācijas uzlabošanu plkst. %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Uzlaboja konfigurācijas versijas līmeni no %1$s uz %2$s"
 
 #: src/etc/inc/config.lib.inc:482
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
+"UZMANĪBU: Konfigurācijas saturu nevarēja saglabāt. Nevarēja atvērt failu!"
 
 #: src/etc/inc/config.lib.inc:484
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "Nevar atvērt %1$s/config.xml, lai pierakstītu iekš write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:615
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Atgrieza uz %s."
 
 #: src/etc/inc/config.lib.inc:632
 msgid "Installing configuration..."
-msgstr ""
+msgstr "Uzstāda konfigurāciju..."
 
 #: src/etc/inc/config.lib.inc:634
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "Uzstāda konfigurāciju ...."
 
 #: src/etc/inc/config.lib.inc:685
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "XML kļūda: nevarēja atvērt failu"
 
 #: src/etc/inc/config.lib.inc:691
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s rindā %2$d"
 
 #: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Rezerves kopiju keša fails %s ir bojāts. Atsaista."
 
 #: src/etc/inc/config.lib.inc:897
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "%s veica nezināmas izmaiņas"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "Neizdevās šifrēt/atšifrēt datus!"
 
 #: src/etc/inc/dyndns.class:200
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "Dinamiskais DNS: updatedns() uzsākts"
 
 #: src/etc/inc/dyndns.class:269
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dinamiskais DNS (%1$s): darbina get_failover_interface jau %2$s. Atrada %3$s"
 
 #: src/etc/inc/dyndns.class:278
 #, php-format
@@ -682,11 +691,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dinamiskais DNS (%1$s) Radās kļūda mēģinot noskaidrot publisko IP priekš "
+"interfeisa - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:368
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dinamiskais DNS %1$s (%2$s): _update() uzsākts."
 
 #: src/etc/inc/dyndns.class:465
 #, php-format
@@ -694,40 +705,42 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dinamiskais DNS %1$s (%2$s): Apstrādā maketa atjauninājumu uz No-IP "
+"bezmaksas konta. Pagaidu IP iestatīta kā %3$s"
 
 #: src/etc/inc/dyndns.class:704
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Sūta pieprasījumu uz: %s"
 
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Dinamiskais DNS %1$s (%2$s): _remove() uzsākts."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _listCurrent() uzsākts."
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkLookupStatus() uzsākts."
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "Gatavs!"
 
 #: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/etc/inc/dyndns.class:1868 src/usr/local/www/diag_smart.php:374
 msgid "Error"
-msgstr ""
+msgstr "Kļūda"
 
 #: src/etc/inc/dyndns.class:1072 src/etc/inc/dyndns.class:1124
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Notika curl kļūda:"
 
 #: src/etc/inc/dyndns.class:1082 src/etc/inc/dyndns.class:1137
 #: src/etc/inc/dyndns.class:1160 src/etc/inc/dyndns.class:1179
@@ -745,7 +758,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1719 src/etc/inc/dyndns.class:1740
 #: src/etc/inc/dyndns.class:1755 src/etc/inc/dyndns.class:1766
 msgid "PAYLOAD:"
-msgstr ""
+msgstr "Derīgā krava:"
 
 #: src/etc/inc/dyndns.class:1101
 #, php-format
@@ -753,11 +766,13 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Dinamiskais DNS %1$s (%2$s): _checkLookupStatus() pabeigts.  Nav atrasti "
+"atbilstīgi ieraksti."
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkStatus() uzsākts."
 
 #: src/etc/inc/dyndns.class:1133 src/etc/inc/dyndns.class:1154
 #: src/etc/inc/dyndns.class:1173 src/etc/inc/dyndns.class:1191
@@ -769,7 +784,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1734 src/etc/inc/dyndns.class:1746
 #: src/etc/inc/dyndns.class:1762 src/etc/inc/dyndns.class:1780
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "IP adrese nomainīta veiksmīgi!"
 
 #: src/etc/inc/dyndns.class:1136 src/etc/inc/dyndns.class:1159
 #: src/etc/inc/dyndns.class:1178 src/etc/inc/dyndns.class:1196
@@ -787,50 +802,62 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1739 src/etc/inc/dyndns.class:1754
 #: src/etc/inc/dyndns.class:1765
 msgid "Unknown Response"
-msgstr ""
+msgstr "Nezināma atbilde"
 
 #: src/etc/inc/dyndns.class:1144
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"Norādītais DNS-O-Matic lietotājvārds un parole nav pareizi. Pakalpojumu "
+"atjauninājumi netiks izplatīti, kamēr tas netiks atrisināts."
 
 #: src/etc/inc/dyndns.class:1146
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Norādītais resursdatora nosaukums nav pilnībā kvalificēts domēna vārds. Ja "
+"netiks iekļauti neviens resursdatora nosaukums, notfqdn tiks atgriezts "
+"vienreiz."
 
 #: src/etc/inc/dyndns.class:1148
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Padotais resursdatora nosaukums nebija atbilstošs nevienam uzstādītajam "
+"pakalpojumam. Atgriešanas koda pakalpojuma lauks tiks atstāts tukšs."
 
 #: src/etc/inc/dyndns.class:1150
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"Līdz 20 resurdatoru nosaukumiem var tikt atgriezti. Tiek atgriezts numhost, "
+"ja notiek mēģinājums atjaunināt vairāk kā 20 vai tiek atjaunināts round-"
+"robin."
 
 #: src/etc/inc/dyndns.class:1152
 msgid "The hostname is blocked for update abuse."
 msgstr ""
+"Resursdatora nosaukums ir bloķēts dēļ atjauninājumu ļaunprātīgas "
+"izmantošanas."
 
 #: src/etc/inc/dyndns.class:1157
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "DNS kļūda. Pārtrauc atjaunināšanu uz 30 minūtēm."
 
 #: src/etc/inc/dyndns.class:1166 src/etc/inc/dyndns.class:1186
 #: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1220
 #: src/etc/inc/dyndns.class:1541 src/etc/inc/dyndns.class:1605
 #: src/etc/inc/dyndns.class:1727
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "Nav Pilnībā Kvalificēts Domēna Vārds (FQDN)!"
 
 #: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1729
 msgid "No such host"
-msgstr ""
+msgstr "Šāds saimniekdators neeksistē"
 
 #: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1188
 #: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1222
@@ -839,7 +866,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1665 src/etc/inc/dyndns.class:1708
 #: src/etc/inc/dyndns.class:1731
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "Nav izmaiņu IP adresē"
 
 #: src/etc/inc/dyndns.class:1176 src/etc/inc/dyndns.class:1194
 #: src/etc/inc/dyndns.class:1211 src/etc/inc/dyndns.class:1228
@@ -847,7 +874,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1613 src/etc/inc/dyndns.class:1671
 #: src/etc/inc/dyndns.class:1737
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Lietotāja autorizācija neizdevās"
 
 #: src/etc/inc/dyndns.class:1242
 msgid "IP address is current, no update performed."
@@ -855,104 +882,114 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1246
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "DNS resursdatora vārda atjaunināšana veiksmīga."
 
 #: src/etc/inc/dyndns.class:1250
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Norādītais resursdatora vārds neeksistē."
 
 #: src/etc/inc/dyndns.class:1253
 msgid "Invalid Username."
-msgstr ""
+msgstr "Nederīgs lietotājvārds."
 
 #: src/etc/inc/dyndns.class:1256
 msgid "Invalid Password."
-msgstr ""
+msgstr "Nederīga parole."
 
 #: src/etc/inc/dyndns.class:1259
 msgid "Too many updates sent."
-msgstr ""
+msgstr "Pārāk daudz atjauninājumu nosūtīts."
 
 #: src/etc/inc/dyndns.class:1262
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr ""
+msgstr "Konts atslēgts dēļ No-IP lietošanas noteikumu pārkāpuma."
 
 #: src/etc/inc/dyndns.class:1265
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"Nederīga IP. Norādītā IP adrese ir nekoreka formāta vai tā ir privātā IP, "
+"vai tā ir melnajā sarakstā."
 
 #: src/etc/inc/dyndns.class:1268
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Atslēgts / Aizslēgts resursdatora nosaukums"
 
 #: src/etc/inc/dyndns.class:1271
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
+"Atjauninātais resursdators ir iestatīts tīmekļa pārvirzīšanas režīmā un "
+"nekādi atjauninājumi netika veikti."
 
 #: src/etc/inc/dyndns.class:1274
 msgid "Group supplied does not exist."
-msgstr ""
+msgstr "Norādītā grupa neeksistē."
 
 #: src/etc/inc/dyndns.class:1277
 msgid "DNS group update is successful."
-msgstr ""
+msgstr "DNS grupas atjaunināšana veiksmīga."
 
 #: src/etc/inc/dyndns.class:1281
 msgid "DNS group is current, no update performed."
-msgstr ""
+msgstr "DNS grupa ir tekošā. Atjaunināšana nav veikta."
 
 #: src/etc/inc/dyndns.class:1285
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Atjaunināšanas klienta atbalsts nav pieejams norādītajam resursdatora "
+"nosaukumam vai grupai."
 
 #: src/etc/inc/dyndns.class:1288
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
+"Norādītajam resursdatora vārdam nav nokonfigurēti bezsaistes iestatījumi."
 
 #: src/etc/inc/dyndns.class:1291 src/etc/inc/dyndns.class:1294
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Klients atslēgts. Klientam vajadzētu iziet un atjaunināšanu vairs neveikt "
+"bez lietotāja iejaukšanās."
 
 #: src/etc/inc/dyndns.class:1298
 msgid "Unknown Response:"
-msgstr ""
+msgstr "Nezināma atbilde:"
 
 #: src/etc/inc/dyndns.class:1304
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr ""
+msgstr "Autentifikācija neizdevās: Nepareizs lietotājvārds un/vai parole."
 
 #: src/etc/inc/dyndns.class:1306
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
-msgstr ""
+msgstr "Nav pakalpojuma: Dinamiskā DNS pakalpojums šim domēnam ir izslēgts."
 
 #: src/etc/inc/dyndns.class:1308
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Nelikumīga ievade: Pašsaprotami"
 
 #: src/etc/inc/dyndns.class:1310
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
+"Pārāk agri: Nav pagājis pietiekoši daudz laika kopš pēdējās atjaunināšanas"
 
 #: src/etc/inc/dyndns.class:1312
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "IP atjaunināta veiksmīgi."
 
 #: src/etc/inc/dyndns.class:1325
 msgid "Error 799"
-msgstr ""
+msgstr "Kļūda 799"
 
 #: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:1327
 msgid "Update Failed!"
-msgstr ""
+msgstr "Atjaunināšana nesekmīga!"
 
 #: src/etc/inc/dyndns.class:1327
 msgid "Error 700"
-msgstr ""
+msgstr "Kļūda 700"
 
 #: src/etc/inc/dyndns.class:1329 src/etc/inc/dyndns.class:1332
 #: src/etc/inc/dyndns.class:1350 src/etc/inc/dyndns.class:1360
@@ -961,168 +998,179 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1528 src/etc/inc/dyndns.class:1583
 #: src/etc/inc/dyndns.class:1630 src/etc/inc/dyndns.class:1644
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "IP adrese atjaunināta veiksmīgi."
 
 #: src/etc/inc/dyndns.class:1342
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
+"Sliks pieprasījums - URL ir nekorekts. Nepieciešamie parametri nebija "
+"norādīti."
 
 #: src/etc/inc/dyndns.class:1344
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Atjaunināšana pārāk agri - Mēģināts atjaunināt pārāk agri kopš pēdējām "
+"izmaiņām/"
 
 #: src/etc/inc/dyndns.class:1346
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Datubāzes kļūda - Fiksēta servera puses datubāzes kļūda."
 
 #: src/etc/inc/dyndns.class:1348
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
+"Resursdatora nosaukuma kļūda - Resursdatora nosaukums (%1$s) nepieder "
+"lietotājam (%2$s)."
 
 #: src/etc/inc/dyndns.class:1412
 msgid "Not a valid username or password!"
-msgstr ""
+msgstr "Nav derīgs lietotājvārds vai parole."
 
 #: src/etc/inc/dyndns.class:1414
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Norādītais resursdatora nosaukums neeksistē."
 
 #: src/etc/inc/dyndns.class:1420
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
+"Norādītais resursdatora nosaukums eksistē, bet ne zem norādītā lietotājvārda."
+""
 
 #: src/etc/inc/dyndns.class:1422
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Atjaunina pārāk bieži. Uzskatāma kā ļaunprātīga rīcība."
 
 #: src/etc/inc/dyndns.class:1431 src/etc/inc/dyndns.class:1495
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Slikts pieprasījums - norādītā IP nebija derīga."
 
 #: src/etc/inc/dyndns.class:1433
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Slikts pieprasījums - nepieciešamie parametri nebija norādīti."
 
 #: src/etc/inc/dyndns.class:1435
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
-msgstr ""
+msgstr "Slikts pieprasījums - nederīgas rakstzīmes lietotājvārdā vai parolē."
 
 #: src/etc/inc/dyndns.class:1437
 msgid "Invalid password."
-msgstr ""
+msgstr "Nederīga parole."
 
 #: src/etc/inc/dyndns.class:1439
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Šis konts ir administratīvi bloķēts."
 
 #: src/etc/inc/dyndns.class:1441
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Atjaunina pārāk bieži."
 
 #: src/etc/inc/dyndns.class:1443 src/etc/inc/dyndns.class:1457
 #: src/etc/inc/dyndns.class:1475
 msgid "Server side error."
-msgstr ""
+msgstr "Servera puses kļūda."
 
 #: src/etc/inc/dyndns.class:1459
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Slikti noformēts pieprasījums (pārbaudiet iestatījumus)."
 
 #: src/etc/inc/dyndns.class:1477 src/etc/inc/dyndns.class:1497
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Slikts pieprasījums - Resursdatora vārds netika norādīts."
 
 #: src/etc/inc/dyndns.class:1479 src/etc/inc/dyndns.class:1499
 #: src/etc/inc/dyndns.class:1526
 msgid "Invalid username or password."
-msgstr ""
+msgstr "Kļūdains lietotājvārds vai parole."
 
 #: src/etc/inc/dyndns.class:1484 src/etc/inc/dyndns.class:1504
 #: src/etc/inc/dyndns.class:1531 src/etc/inc/dyndns.class:1543
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "Nav izmaiņu IP adresē."
 
 #: src/etc/inc/dyndns.class:1522
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Slikts pieprasījums - trūkstoši/kļūdaini parametri."
 
 #: src/etc/inc/dyndns.class:1524
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Slikts pieprasījums - nekorekts Tuneļa ID."
 
 #: src/etc/inc/dyndns.class:1558
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Route53 API izsaukšana neizdevās"
 
 #: src/etc/inc/dyndns.class:1562
 msgid "IP address changed successfully"
-msgstr ""
+msgstr "IP adrese veiksmīgi izmainīta"
 
 #: src/etc/inc/dyndns.class:1585 src/etc/inc/dyndns.class:1749
 msgid "Result did not match."
-msgstr ""
+msgstr "Rezultāts nesakrita."
 
 #: src/etc/inc/dyndns.class:1592
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr ""
+msgstr "%1$s atjaunināts uz %2$s"
 
 #: src/etc/inc/dyndns.class:1595
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Nederīgi pieejas dati! Atcerieties izmantot API atslēgu paroles laukā, ja "
+"izmantojiet CloudFlare."
 
 #: src/etc/inc/dyndns.class:1597
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr ""
+"Zonas vai resursdatora ID nav atrasti. Pārbaudiet resursdatora nosaukumu."
 
 #: src/etc/inc/dyndns.class:1599
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "NEZINĀMA KĻŪDA"
 
 #: src/etc/inc/dyndns.class:1622
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "Nepareizas vērtības - atjaunināšana nevarēja tikt pabeigta."
 
 #: src/etc/inc/dyndns.class:1624
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "Nezināms lietotājvārds - lietotājs neeksistē."
 
 #: src/etc/inc/dyndns.class:1626
 msgid "Wrong password - Remember password is case sensitive."
-msgstr ""
+msgstr "Nepareiza parole - atcerieties, ka parole ir reģistrjūtīga."
 
 #: src/etc/inc/dyndns.class:1628
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "Lietotājs nevar administrēt izvēlēto domēnu."
 
 #: src/etc/inc/dyndns.class:1663
 msgid "Not A FQDN"
-msgstr ""
+msgstr "Nav FQDN"
 
 #: src/etc/inc/dyndns.class:1673
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "Resursdatora nosaukums neeksistē vai arī DynDNS nav iespējots"
 
 #: src/etc/inc/dyndns.class:1675
 msgid "Bad request"
-msgstr ""
+msgstr "Slikts pieprasījums"
 
 #: src/etc/inc/dyndns.class:1677
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "Dinamiskā DNS pieeja ir bloķēta!"
 
 #: src/etc/inc/dyndns.class:1679
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "Kļūda Google pusē. Mēģiniet vēlreiz pēc 5 minūtēm."
 
 #: src/etc/inc/dyndns.class:1693 src/etc/inc/dyndns.class:1751
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Kļūdains lietotājvārds vai parole."
 
 #: src/etc/inc/dyndns.class:1696
 msgid "Account suspended"
@@ -1239,7 +1287,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1879
 msgid "No Password Provided."
-msgstr ""
+msgstr "Parole nav norādīta."
 
 #: src/etc/inc/dyndns.class:1882
 msgid "No Hostname Provided."
@@ -5705,11 +5753,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1191
 msgid "WebCfg - System: User Password Manager"
-msgstr ""
+msgstr "WebCfg - Sistēma: Lietotāju paroļu pārvaldnieks"
 
 #: src/etc/inc/priv.defs.inc:1192
 msgid "Allow access to the 'System: User Password Manager' page."
-msgstr ""
+msgstr "Atļaut pieeju 'Sistēma: Lietotāju paroļu pārvaldnieks' lapai"
 
 #: src/etc/inc/priv.defs.inc:1197
 msgid "WebCfg - System: User Manager: Settings"
@@ -7909,7 +7957,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:42
 msgid "A username and password must be specified."
-msgstr ""
+msgstr "Jābūt norādītam lietotājvārdam un parolei."
 
 #: src/usr/local/www/diag_authentication.php:48
 #, php-format
@@ -7954,7 +8002,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2655 src/usr/local/www/interfaces.php:2780
 #: src/usr/local/www/system_usermanager_passwordmg.php:97
 msgid "*Password"
-msgstr ""
+msgstr "*Parole"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:280 src/usr/local/www/diag_testport.php:269
@@ -7979,11 +8027,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:161
 msgid "A password for encryption must be supplied and confirmed."
-msgstr ""
+msgstr "Parolei priekš šifrēšanas ir jābūt norādītai un apstiprinātai."
 
 #: src/usr/local/www/diag_backup.php:236
 msgid "A password for decryption must be supplied and confirmed."
-msgstr ""
+msgstr "Parolei priekš atšifrēšanas ir jābūt norādītai un apstiprinātai."
 
 #: src/usr/local/www/diag_backup.php:246
 #, php-format
@@ -8622,7 +8670,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:69
 #, php-format
 msgid "webConfigurator admin password will be reset to '%s'"
-msgstr ""
+msgstr "webConfigurator administratora parole tiks atjaunota uz '%s'"
 
 #: src/usr/local/www/diag_defaults.php:71
 msgid "Are you sure you want to proceed?"
@@ -13973,11 +14021,11 @@ msgstr ""
 msgid ""
 "A CARP password that is shared between the two VHID members must be "
 "specified."
-msgstr ""
+msgstr "Ir jānorāda CARP parole, kura tiek dalīta starp diviem VHID bieriem."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:171
 msgid "Password and confirm password must match"
-msgstr ""
+msgstr "Paroles un paroles apstiprinājuma laukos ievadītajam ir jāsakrīt"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:175
 #: src/usr/local/www/firewall_virtual_ip_edit.php:195
@@ -14034,11 +14082,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
 msgid "Virtual IP Password"
-msgstr ""
+msgstr "Virtuālās IP parole"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:392
 msgid "Enter the VHID group password."
-msgstr ""
+msgstr "Ievadiet VHID grupas paroli."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:396
 msgid "VHID Group"
@@ -14767,7 +14815,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:584
 msgid "PPPoE password"
-msgstr ""
+msgstr "PPPoE parole"
 
 #: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:591
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:2669
@@ -14790,7 +14838,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
 msgid "PPTP password"
-msgstr ""
+msgstr "PPTP parole"
 
 #: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
 msgid "PPTP local IP address"
@@ -14810,7 +14858,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
 msgid "L2TP password"
-msgstr ""
+msgstr "L2TP parole"
 
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
 msgid "L2TP remote IP address"
@@ -15067,15 +15115,17 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:973
 msgid "PPP Password and confirmed password must match!"
-msgstr ""
+msgstr "PPP Parolei un apstiprinātajai parolei ir jāsakrīt!"
 
 #: src/usr/local/www/interfaces.php:977
 msgid "PPPoE Password and confirmed password must match!"
 msgstr ""
+"PPOE paroles un paroles apstiprinājuma laukos ievadītajam ir jāsakrīt!"
 
 #: src/usr/local/www/interfaces.php:981
 msgid "PTPP Password and confirmed password must match!"
 msgstr ""
+"PPTP paroles un paroles apstiprinājuma laukos ievadītajam ir jāsakrīt!"
 
 #: src/usr/local/www/interfaces.php:1677
 #, php-format
@@ -17226,7 +17276,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip_edit.php:74
 #: src/usr/local/www/services_dyndns_edit.php:107
 msgid "Password and confirmed password must match."
-msgstr ""
+msgstr "Paroles un paroles apstiprinājuma laukos ievadītajam ir jāsakrīt."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:242
 msgid ""
@@ -19405,6 +19455,9 @@ msgid ""
 "connection to protect against eavesdroppers. A server name and certificate "
 "must also be specified below."
 msgstr ""
+"Kad iespējots, lietotājvārds un parole tiks pārraidīti caur HTTPS "
+"pieslēgumu, lai aizsargātu tos no noklausīšanās. Servera vārdam un "
+"sertifikātam arī ir jābūt norādītiem zemāk."
 
 #: src/usr/local/www/services_captiveportal.php:1027
 msgid "*HTTPS server name"
@@ -19914,7 +19967,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:211
 msgid "Sync password"
-msgstr ""
+msgstr "Sinhronizēt paroli"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:211
 msgid "Sync username"
@@ -22825,7 +22878,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:145
 #, php-format
 msgid "No password specified for username %s"
-msgstr ""
+msgstr "Lietotājam %s nav norādīta parole"
 
 #: src/usr/local/www/services_pppoe_edit.php:148
 #, php-format
@@ -24260,6 +24313,9 @@ msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
+"Pārliecinaties, ka visa sensitīvā informācija (paroles, utt.) ir izņemta "
+"pirms ievadiet informāciju no šīs lapas publiskās vietās (piemēram, e-pastu "
+"izsūtnes grupās)."
 
 #: src/usr/local/www/status.php:332
 msgid "Common password fields in config.xml have been automatically redacted."
@@ -26325,6 +26381,7 @@ msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: src/usr/local/www/system.php:203
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
@@ -27301,11 +27358,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
-msgstr ""
+msgstr "Starpniekservera parole"
 
 #: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
-msgstr ""
+msgstr "Parole autentifikācijai starpniekserverī"
 
 #: src/usr/local/www/system_advanced_misc.php:351
 #: src/usr/local/www/system_advanced_misc.php:353
@@ -27744,7 +27801,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:137
 msgid "SMTP passwords must match"
-msgstr ""
+msgstr "SMTP parolēm ir jāsakrīt"
 
 #: src/usr/local/www/system_advanced_notifications.php:172
 #, php-format
@@ -27847,7 +27904,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:292
 msgid "Enter the e-mail account password for SMTP authentication."
-msgstr ""
+msgstr "Ievadiet e-pasta konta paroli SMTP autentifikācijai."
 
 #: src/usr/local/www/system_advanced_notifications.php:296
 msgid "Notification E-Mail auth mechanism"

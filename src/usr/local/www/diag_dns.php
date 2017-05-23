@@ -90,6 +90,7 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	if ($resolved) {
 		$resolved = resolve_host_addresses($host);
 		$isfirst = true;
+		$addresses = "";
 		foreach ($resolved as $re) {
 			if ($re['data'] != "") {
 				if (!$isfirst) {
@@ -107,18 +108,24 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 				$isfirst = false;
 			}
 		}
-		$newalias = array();
-		$newalias['name'] = $aliasname;
-		$newalias['type'] = "network";
-		$newalias['address'] = $addresses;
-		$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
-		if ($alias_exists) {
-			$a_aliases[$id] = $newalias;
+		if ($addresses == "") {
+			$couldnotcreatealias = true;
 		} else {
-			$a_aliases[] = $newalias;
+			$newalias = array();
+			$newalias['name'] = $aliasname;
+			$newalias['type'] = "network";
+			$newalias['address'] = $addresses;
+			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
+			if ($alias_exists) {
+				$a_aliases[$id] = $newalias;
+			} else {
+				$a_aliases[] = $newalias;
+			}
+			write_config(gettext("Created an alias from Diagnostics - DNS Lookup page."));
+			$createdalias = true;
 		}
-		write_config(gettext("Created an alias from Diagnostics - DNS Lookup page."));
-		$createdalias = true;
+	} else {
+		$couldnotcreatealias = true;
 	}
 }
 
@@ -211,6 +218,14 @@ if ($createdalias) {
 		print_info_box(gettext("Alias was updated successfully."), 'success');
 	} else {
 		print_info_box(gettext("Alias was created successfully."), 'success');
+	}
+}
+
+if ($couldnotcreatealias) {
+	if ($alias_exists) {
+		print_info_box(sprintf(gettext("Could not update alias for %s"), $host), 'warning', false);
+	} else {
+		print_info_box(sprintf(gettext("Could not create alias for %s"), $host), 'warning', false);
 	}
 }
 

@@ -2322,9 +2322,18 @@ EOD;
 }
 
 function system_get_serial() {
+	$platform = system_identify_specific_platform();
+
 	unset($output);
-	$_gb = exec('/bin/kenv -q smbios.system.serial 2>/dev/null', $output);
-	$serial = $output[0];
+	if ($platform['name'] == 'Turbot Dual-E') {
+		$if_info = pfSense_get_interface_addresses('igb0');
+		if (!empty($if_info['hwaddr'])) {
+			$serial = str_replace(":", "", $if_info['hwaddr']);
+		}
+	} else {
+		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+		$serial = $output[0];
+	}
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
 

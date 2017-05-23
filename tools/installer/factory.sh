@@ -134,11 +134,6 @@ if [ "${serial}" = "123456789" ]; then
 	serial=""
 fi
 
-# Bad serial
-if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
-	serial=""
-fi
-
 unset selected_model
 cur_model=$(get_cur_model)
 

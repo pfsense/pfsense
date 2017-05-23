@@ -131,11 +131,6 @@ case "${machine_arch}" in
 		exit 1
 esac
 
-# XXX is it really necessary?
-if [ "${serial}" = "123456789" ]; then
-	serial=""
-fi
-
 unset selected_model
 cur_model=$(get_cur_model)
 
@@ -208,6 +203,11 @@ fi
 
 if [ -z "${buildroom}" ]; then
 	exit 0
+fi
+
+# Abort with error when serial is not detected
+if [ -z "${serial}" ]; then
+	exit 1
 fi
 
 # Get WAN mac address
@@ -307,69 +307,6 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	touch /mnt/root/factory_boot
 fi
 
-default_serial="${serial}"
-serial_size=0
-sticker=1
-# Serial is empty, let operator edit it
-if [ -z "${default_serial}" ]; then
-	serial_size=16
-fi
-while [ "${selected_model}" != "SG-1000" ]; do
-	exec 3>&1
-	col=30
-	factory_raw_data=$(dialog --nocancel \
-		--backtitle "pfSense installer" \
-		--title "Register Serial Number" \
-		--form "Enter system information" 0 0 0 \
-		"Model" 1 0 "${selected_model}" 1 $col 0 0 \
-		"Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
-		"Order Number" 3 0 "" 3 $col 16 0 \
-		"Print sticker (0/1)" 4 0 "${sticker}" 4 $col 2 1 \
-		"Builder Initials" 5 0 "" 5 $col 16 0 \
-		2>&1 1>&3)
-	exec 3>&-
-
-	factory_data=$(echo "$factory_raw_data" \
-		| sed 's,#,,g' \
-		| paste -d'#' -s -)
-
-	if [ ${serial_size} -eq 0 ]; then
-		set_vars=$(echo "$factory_data" | \
-			awk '
-			BEGIN { FS="#" }
-			{
-				print "order=\""$1"\""
-				print "sticker=\""$2"\"";
-				print "builder=\""$3"\"";
-			}')
-	else
-		set_vars=$(echo "$factory_data" | \
-			awk '
-			BEGIN { FS="#" }
-			{
-				print "serial=\""$1"\"";
-				print "order=\""$2"\""
-				print "sticker=\""$3"\"";
-				print "builder=\""$4"\"";
-			}')
-	fi
-
-	eval "${set_vars}"
-
-	if [ "${sticker}" != "0" ]; then
-		sticker=1
-	fi
-
-	if [ -n "${serial}" -a -n "${order}" -a -n "${builder}" ]; then
-		break
-	fi
-
-	dialog --backtitle "pfSense installer" --title "Error" \
-		--msgbox \
-		"Serial, Order Number and Builder Initials are mandatory" \
-		0 0
-done
-
 release_ver="UNKNOWN"
 if [ -f /mnt/etc/version ]; then
 	release_ver=$(cat /mnt/etc/version)
@@ -391,11 +328,11 @@ trap "-" 1 2 15 EXIT
 UID=$(/bin/kenv -q pfSense.uniqueid)
 
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
-postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"
+postreq="${postreq}&wan_mac=${wan_mac}&print=1"
 postreq="${postreq}&uniqueid=${UID}"
 
 if [ "${selected_model}" != "SG-1000" ]; then
-	postreq="${postreq}&wlan_mac=${wlan_mac}&order=${order}&builder=${builder}"
+	postreq="${postreq}&wlan_mac=${wlan_mac}"
 fi
 
 postreq="${postreq}&submit=Submit"

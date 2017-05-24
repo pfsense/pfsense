@@ -18,6 +18,7 @@ net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
 net-mgmt/net-snmp
+net-mgmt/iprange
 sysutils/htop
 sysutils/grub2-bhyve
 sysutils/pstree

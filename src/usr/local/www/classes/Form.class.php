@@ -41,7 +41,7 @@ class Form extends Form_Element
 		if (gettype($submit) == 'string') {
 			$submit = new Form_Button(
 				'save',
-				$submit,
+				gettext($submit),
 				null,
 				'fa-save'
 			);

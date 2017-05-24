@@ -50,7 +50,7 @@ class Form_Input extends Form_Element
 		switch ($type)
 		{
 			case 'number':
-				$attributes += array('min' => 1, 'step' => 1);
+				$attributes += array('min' => 0, 'step' => 1);
 			break;
 			case 'file':
 				unset($this->_attributes['class']['form-control']);

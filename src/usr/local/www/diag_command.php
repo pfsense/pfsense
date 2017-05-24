@@ -300,39 +300,85 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 		</div>
 	</div>
 <?php
+	
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if ($_POST['submit'] == "EXECPHP" && !isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP Response</h2></div>");
 
-		$tmpname = tempnam("/tmp", "");
-		$phpfile = fopen($tmpname, "w");
-		fwrite($phpfile, "<?php\n");
-		fwrite($phpfile, "require_once(\"/etc/inc/config.inc\");\n");
-		fwrite($phpfile, "require_once(\"/etc/inc/functions.inc\");\n\n");
-		fwrite($phpfile, $_POST['txtPHPCommand'] . "\n");
-		fwrite($phpfile, "?>\n");
-		fclose($phpfile);
+		$tmpfile = tempnam("/tmp", "");
+		$phpcode = <<<END_FILE
+<?php
+require_once("/etc/inc/config.inc");
+require_once("/etc/inc/functions.inc");
 
-		$output = array();
-		exec("/usr/local/bin/php -d log_errors=off " . $tmpname, $output);
+// USER CODE STARTS HERE:
 
-		unlink($tmpname);
+%s
+?>
+END_FILE;
+		$lineno_correction = 6;  // line numbering correction, this should be the number of lines added above, BEFORE the user's code
+
+		file_put_contents($tmpfile, sprintf($phpcode, $_POST['txtPHPCommand']));
+
+		$output = $matches = array();
+		$retval = 0;
+		exec("/usr/local/bin/php -d log_errors=off {$tmpfile}", $output, $ret_val);
+
+		puts('<div class="panel panel-success responsive"><div class="panel-heading"><h2 class="panel-title">PHP Response</h2></div>');
+
+		// Help user to find bad code line, if it gave an error
+
+		$errmsg_found = preg_match("`error.*:.* (?:in|File:) {$tmpfile}(?: on line|, Line:) (\d+)(?:$|, Message:)`i", implode("\n", $output), $matches);
+
+		if ($retval || $errmsg_found) {
+			/* Trap failed code - test both retval and output message
+			 * Typical messages as at 2.3.x:
+			 *   "Parse error: syntax error, ERR_DETAILS in FILE on line NN"
+			 *   "PHP ERROR: Type: NN, File: FILE, Line: NN, Message: ERR_DETAILS" 
+			*/
+			$errline = $matches[1] - $lineno_correction;
+			$syntax_output = array();
+			$html = "";
+			exec("/usr/local/bin/php -s -d log_errors=off {$tmpfile}", $syntax_output);
+			// Lines 0, 2 and 3 are CSS wrapper for the syntax highlighted code which is at line 1 <br> separated.
+			$syntax_output = explode("<br />", $syntax_output[1]);
+			$chars = strlen(count($syntax_output)) + 1;
+			for ($lineno = 1; $lineno < count($syntax_output) - $lineno_correction; $lineno++) {
+				if ($lineno == $errline) {
+					$lineno_prefix = "&gt;&gt;&gt;" . str_repeat('&nbsp;', $chars - strlen($lineno));
+				} else {
+					$lineno_prefix = str_repeat('&nbsp;', ($chars + 3) - strlen($lineno));
+				}
+				$html .= "<span style='color:black;backgroundcolor:lightgrey'><tt>" . $lineno_prefix . $lineno . ":</tt></span>&nbsp;&nbsp;{$syntax_output[$lineno + $lineno_correction - 1]}<br/>\n";
+			}
+			echo sprintf(gettext('Line %s appears to have generated an error, and has been highlighted. The full response is below.<br/>' .
+				'Note that the line number in the full PHP response will be %s lines too large.'), $errline, $lineno_correction);
+			echo "<div style='margin:20px'><b>" . gettext("Error locator:") . "</b>\n";
+			echo "<div id='errdiv' style='height:7em; width:60%; overflow:auto; white-space: nowrap; border:darkgrey solid 1px; margin-top: 20px'>\n";
+			echo $html . "\n</div></div>\n";
+		}
 
 		$output = implode("\n", $output);
 		print("<pre>" . htmlspecialchars($output) . "</pre>");
 
 //		echo eval($_POST['txtPHPCommand']);
+
 		puts("</div>");
+
+		unlink($tmpfile);
 ?>
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function() {
+		// scroll error locator if needed (does nothing if no error)
+		$('#errdiv').scrollTop(<?=max($errline - ($lineno_correction - 3.5), 0);?> * parseFloat($('#errdiv').css('line-height')));
+
 		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
 		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
 	});
 //]]>
 </script>
+
 <?php
 }
 ?>

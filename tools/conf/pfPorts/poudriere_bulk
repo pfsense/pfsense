@@ -74,6 +74,7 @@ ftp/%%PRODUCT_NAME%%-pkg-tftpd
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
 net/%%PRODUCT_NAME%%-pkg-ntopng
+net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD

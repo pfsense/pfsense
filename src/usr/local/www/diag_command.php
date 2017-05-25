@@ -277,7 +277,7 @@ END_FILE;
 
 		$output = $matches = array();
 		$retval = 0;
-		exec("/usr/local/bin/php -d log_errors=off {$tmpfile}", $output, $ret_val);
+		exec("/usr/local/bin/php -d log_errors=off {$tmpfile}", $output, $retval);
 
 		puts('<div class="panel panel-success responsive"><div class="panel-heading"><h2 class="panel-title">PHP Response</h2></div>');
 

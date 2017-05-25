@@ -21,6 +21,7 @@ net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
 net-mgmt/net-snmp
+net-mgmt/iprange
 net-mgmt/%%PRODUCT_NAME%%-pkg-net-snmp
 net-mgmt/%%PRODUCT_NAME%%-pkg-snmptt
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
@@ -80,6 +81,7 @@ ftp/%%PRODUCT_NAME%%-pkg-tftpd
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
 net/%%PRODUCT_NAME%%-pkg-ntopng
+net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD

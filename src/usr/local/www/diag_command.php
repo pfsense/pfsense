@@ -297,6 +297,7 @@ END_FILE;
 			exec("/usr/local/bin/php -s -d log_errors=off {$tmpfile}", $syntax_output);
 			// Lines 0, 2 and 3 are CSS wrapper for the syntax highlighted code which is at line 1 <br> separated.
 			$syntax_output = explode("<br />", $syntax_output[1]);
+			// Align line numbers right padded when building html
 			$chars = strlen(count($syntax_output)) + 1;
 			for ($lineno = 1; $lineno < count($syntax_output) - $lineno_correction; $lineno++) {
 				if ($lineno == $errline) {

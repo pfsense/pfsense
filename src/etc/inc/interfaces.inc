@@ -5132,7 +5132,8 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 							case 'ppp':
 							case 'l2tp':
 							case 'pptp':
-								if (isset($cfg['dhcp6usev4iface']) && $realv6iface === false) {
+								// Added catch for static v6 but using v4 link. Sets things to use pppoe link
+								if ((isset($cfg['dhcp6usev4iface']) && $realv6iface === false) || isset($cfg['ipv6usev4iface'])) {
 									$wanif = $cfg['if'];
 								} else {
 									$parents = get_parent_interface($interface);

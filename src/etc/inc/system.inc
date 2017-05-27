@@ -2470,7 +2470,7 @@ function system_identify_specific_platform() {
 		// if $g['platform'] contains the software/firmware name rather than a hardware name, don't use it.
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 	} else {
-		return array('name' => 'Unknown platform', 'descr' => 'Unknown platform');
+		return array('name' => 'Generic/unknown', 'descr' => 'Generic/unknown');
 	}
 }
 

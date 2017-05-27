@@ -511,7 +511,7 @@ if (count($data) == 0) {
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

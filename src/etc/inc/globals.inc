@@ -82,6 +82,7 @@ $g = array(
 	"varlog_path" => "/var/log",
 	"etc_path" => "/etc",
 	"tmp_path" => "/tmp",
+	"tmp_path_user_code" => "/tmp/user_code",
 	"conf_path" => "/conf",
 	"conf_default_path" => "/conf.default",
 	"cf_path" => "/cf",

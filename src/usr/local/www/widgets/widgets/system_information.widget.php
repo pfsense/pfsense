@@ -531,7 +531,7 @@ function systemStatusGetUpdateStatus() {
 		},
 		dataType: 'html',
 		success: function(data){
-			$('[id^=widget-system_information] #updatestatus').html(data);
+			$('#system-information-widget-updatestatus').html(data);
 		}
 	});
 }

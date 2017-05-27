@@ -201,4 +201,11 @@ $factory_default_checkipservice = array(
 );
 
 $dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns");
+
+// PHP error types lookup
+$taglist = 'E_ERROR;E_WARNING;E_PARSE;E_NOTICE;E_CORE_ERROR;E_CORE_WARNING;E_CORE_ERROR;E_CORE_WARNING;E_USER_ERROR;E_USER_WARNING;E_USER_NOTICE;E_STRICT;E_RECOVERABLE_ERROR;E_DEPRECATED;E_USER_DEPRECATED';
+$PHP_error_types = array();
+foreach (explode(';', $taglist) as $tag) {
+	$error_codes[eval("return {$tag};")] = $tag;
+}
 ?>

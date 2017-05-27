@@ -1442,8 +1442,11 @@ function is_pppoe_server_enabled() {
 	return $pppoeenable;
 }
 
-/* Optional arg forces hh:mm:ss without days */
-function convert_seconds_to_dhms($sec, $showhoursonly = false) {
+/* Optional args:
+ * $showhoursonly forces hh:mm:ss without days
+ * $showHMS outputs 30h 20m 15s rather than the default 30:20:15
+*/
+function convert_seconds_to_dhms($sec, $showhoursonly = false, $showHMS = false) {
 	if (!is_numericint($sec)) {
 		return '-';
 	}
@@ -1453,7 +1456,7 @@ function convert_seconds_to_dhms($sec, $showhoursonly = false) {
 					(int)(($sec % 3600)/60),
 					$sec % 60
 				);
-	return ($d > 0 ? $d . 'd ' : '') . sprintf('%02d:%02d:%02d', $h, $m, $s);
+	return ($d > 0 ? $d . 'd ' : '') . sprintf(($showHMS ? '%02dh %02dm %02ds' : '%02d:%02d:%02d'), $h, $m, $s);
 }
 
 /* Compute the total uptime from the ppp uptime log file in the conf directory */

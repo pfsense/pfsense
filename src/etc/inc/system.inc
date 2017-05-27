@@ -2346,10 +2346,12 @@ function system_get_serial() {
 }
 
 /*
- * attempt to identify the specific platform (for embedded systems)
+ * attempt to identify the specific physical/virtual platform (for embedded systems)
  * Returns an array with two elements:
- * name => platform string (e.g. 'wrap', 'alix' etc.)
- * descr => human-readable description (e.g. "PC Engines WRAP")
+ *   name => platform string (e.g. 'wrap', 'alix', 'vmware', etc.)
+ *   descr => human-readable description (e.g. "PC Engines WRAP")
+ * If no specific platform is identified, it returns the strings in $g['platform'] as 
+ * a fallback, and if that's empty then returns 'Unknown platform'.
  */
 function system_identify_specific_platform() {
 	global $g;
@@ -2464,7 +2466,11 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	return array('name' => $g['platform'], 'descr' => $g['platform']);
+	if (strlen($g['platform']) > 0) {
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	} else {
+		return array('name' => 'Unknown platform', 'descr' => 'Unknown platform');
+	}
 }
 
 function system_get_dmesg_boot() {

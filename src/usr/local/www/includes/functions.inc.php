@@ -44,7 +44,7 @@ function get_stats() {
 function get_uptime() {
 	$uptime_sec = get_uptime_sec();
 
-	if (intval($uptime) > 0) {
+	if (intval($uptime_sec) > 0) {
 		return convert_seconds_to_dhms($uptime_sec);
 	} else {
 		return;

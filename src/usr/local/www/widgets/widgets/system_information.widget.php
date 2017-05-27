@@ -30,26 +30,322 @@ require_once('notices.inc');
 require_once('system.inc');
 include_once("includes/functions.inc.php");
 
-$sysinfo_items = array(
-	'name' => gettext('Name'),
-	'system' => gettext('System'),
-	'bios' => gettext('BIOS'),
-	'version' => gettext('Version'),
-	'cpu_type' => gettext('CPU Type'),
-	'hwcrypto' => gettext('Hardware Crypto'),
-	'uptime' => gettext('Uptime'),
-	'current_datetime' => gettext('Current Date/Time'),
-	'dns_servers' => gettext('DNS Server(s)'),
-	'last_config_change' => gettext('Last Config Change'),
-	'state_table_size' => gettext('State Table Size'),
-	'mbuf_usage' => gettext('MBUF Usage'),
-	'temperature' => gettext('Temperature'),
-	'load_average' => gettext('Load Average'),
-	'cpu_usage' => gettext('CPU Usage'),
-	'memory_usage' => gettext('Memory Usage'),
-	'swap_usage' => gettext('Swap Usage'),
-	'disk_usage' => gettext('Disk Usage')
+$sysinfo_categories = array(
+	'router_firmware' => array('cattitle' => gettext('Router'), 'catsort' => 1),
+	'physical_platform' => array('cattitle' => gettext('Hardware Platform'), 'catsort' => 2),
+	'router_status' => array('cattitle' => gettext('System Status'), 'catsort' => 3),
+	'security' => array('cattitle' => gettext('Security'), 'catsort' => 4),
+	'resource_usage' => array('cattitle' => gettext('Resource Usage'), 'catsort' => 5)
 	);
+
+// Within categories, items are sorted by their sort #
+$sysinfo_items = array(
+	'name' => array('itemtitle' => gettext('Name'), 'category' => 'router_firmware', 'itemsort' => 1),
+	'system' => array('itemtitle' => gettext('System'), 'category' => 'router_firmware', 'itemsort' => 2),
+	'firmware' => array('itemtitle' => gettext('Firmware'), 'category' => 'router_firmware', 'itemsort' => 3),
+	'identifiers' => array('itemtitle' => gettext('Install IDs'), 'category' => 'router_firmware', 'itemsort' => 4),
+	'platform' => array('itemtitle' => gettext('Platform'), 'category' => 'physical_platform', 'itemsort' => 5),
+	'baseboard' => array('itemtitle' => gettext('Baseboard'), 'category' => 'physical_platform', 'itemsort' => 6),
+	'cpu_type' => array('itemtitle' => gettext('CPU Type'), 'category' => 'physical_platform', 'itemsort' => 8),
+	'hwcrypto' => array('itemtitle' => gettext('Hardware Crypto'), 'category' => 'physical_platform', 'itemsort' => 9),
+	'uptime' => array('itemtitle' => gettext('Uptime'), 'category' => 'router_status', 'itemsort' => 10),
+	'current_datetime' => array('itemtitle' => gettext('Current Date/Time'), 'category' => 'router_status', 'itemsort' => 11),
+	'dns_servers' => array('itemtitle' => gettext('DNS Server(s)'), 'category' => 'router_status', 'itemsort' => 12),
+	'last_config_change' => array('itemtitle' => gettext('Last Config Change'), 'category' => 'router_status', 'itemsort' => 13),
+	'state_table_size' => array('itemtitle' => gettext('State Table Size'), 'category' => 'resource_usage', 'itemsort' => 14),
+	'mbuf_usage' => array('itemtitle' => gettext('MBUF Usage'), 'category' => 'resource_usage', 'itemsort' => 15),
+	'temperature' => array('itemtitle' => gettext('Temperature'), 'category' => 'resource_usage', 'itemsort' => 16),
+	'load_average' => array('itemtitle' => gettext('Load Average'), 'category' => 'resource_usage', 'itemsort' => 17),
+	'cpu_usage' => array('itemtitle' => gettext('CPU Usage'), 'category' => 'resource_usage', 'itemsort' => 18),
+	'memory_usage' => array('itemtitle' => gettext('Memory Usage'), 'category' => 'resource_usage', 'itemsort' => 19),
+	'swap_usage' => array('itemtitle' => gettext('Swap Usage'), 'category' => 'resource_usage', 'itemsort' => 20),
+	'disk_usage' => array('itemtitle' => gettext('Disk Usage'), 'category' => 'resource_usage', 'itemsort' => 21),
+	'admin_access_methods' => array('itemtitle' => gettext('Admin Lockdown'), 'category' => 'security', 'itemsort' => 22),
+	'admin_users' => array('itemtitle' => gettext('Users with Admin Access'), 'category' => 'security', 'itemsort' => 23)
+	);
+
+$validNames = array_keys($sysinfo_items);
+
+
+// get HTML for a sysinfo item
+
+
+function get_item_html($itemkey) {
+	global $config, $g, $sysinfo_items;
+
+	$title_content = $sysinfo_items[$itemkey]['itemtitle']; // correct in almost all cases, override if not
+	$data_template = '';
+	$args = array();
+
+	switch ($itemkey) {
+
+		case 'name':
+			$data_template = "<strong>%s</strong>";
+			$args[] = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+			break;
+
+
+		case 'identifiers':
+			$data_template = "%s%s";
+			$args[] = sprintf('%s: <strong>%s</strong>', gettext("Serial"), system_get_serial());
+			$idfile = "/var/db/uniqueid";
+			$args[] = (file_exists($idfile) ? $args[] = sprintf("<br />\n%s: <strong>%s</strong>", gettext("Netgate Unique ID"), file_get_contents($idfile)) : "");
+			break;
+
+
+		case 'baseboard':
+			$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
+			$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
+			$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
+			$_gb = exec('/bin/kenv -q smbios.planar.maker 2>/dev/null', $boardmaker);
+			$_gb = exec('/bin/kenv -q smbios.planar.product 2>/dev/null', $boardmodel);
+			$_gb = exec('/bin/kenv -q smbios.planar.version 2>/dev/null', $boardversion);
+			$_gb = exec('/bin/kenv -q smbios.planar.serial 2>/dev/null', $boardserial);
+
+			/* Only display information if there is any to show. */
+			if (strlen($boardmaker[0] . $boardmodel[0] . $boardserial[0]) != 0) {
+				$data_template = '%s<br/>%s%s';
+				$args[] = gettext('Vendor') . ': <strong>' . (empty($boardmaker[0]) ? gettext("Unknown") : $boardmaker[0]) . "</strong>";
+				$args[] = gettext('Model') . ': <strong>' . (empty($boardmodel[0]) ? gettext("Unknown") : $boardmodel[0] . (!empty($boardversion[0]) ? " ({$boardversion[0]})" : '')) . "</strong>";
+				$args[] = (empty($boardserial[0]) ? '' : '<br/>' . gettext('Serial') . ': <strong>' . $boardserial[0]  . "</strong>");
+			}
+			if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])) {
+				$data_template .= '<br/>' . gettext('BIOS') . ":<div style='margin-left:20px'>%s<br/>\n%s</div>";
+				$args[] = gettext('Vendor') . ': <strong>' . (!empty($biosvendor[0]) ? "{$biosvendor[0]}" : "Unknown") . "</strong>";
+				$args[] = gettext('Version') . ': <strong>' . (!empty($biosversion[0]) ? $biosversion[0] : "Unknown") . (!empty($biosdate[0]) ? " ({$biosdate[0]})" : "") . "</strong>";
+			}
+			//  else nothing shown
+			break;
+
+
+		case 'firmware':
+			$data_template = "%s<br/><strong>%s</strong> (%s)<br />\n%s\n%s\n%s";
+			$args[] = $g['product_name'];
+			$args[] = $g['product_version_string'];
+			$args[] = php_uname("m");
+			$args[] = gettext('built on') . ' '. file_get_contents("/etc/version.buildtime");
+			$args[] = (!$g['hideuname'] ? '<br /><span title="' . php_uname("a") . '">(' . php_uname("s") . ' ' . php_uname("r") . ")</span>" : "");
+			$args[] = (!isset($config['system']['firmware']['disablecheck']) ? "<br /><br /><div id='system-information-widget-updatestatus'>" . gettext("Obtaining update status ") . '<i class="fa fa-cog fa-spin"></i></div>' : "");
+			break;
+
+
+		case 'platform':
+			if (!$g['hideplatform']) {
+				$is_nano = ($g['platform'] == "nanobsd");
+				// there's extra info (boot slice) if it's nanobsd
+				$data_template = "%s" . ($is_nano ? "\n<br/>nanobsd: <strong>%s</strong>:<br/>\n%s\n%s\n%s" : '');
+				$platform = system_identify_specific_platform();
+				$args[] = htmlspecialchars($platform['descr']) . (($g['platform'] == "nanobsd" && file_exists("/etc/nanosize.txt")) ? " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")" : "");
+				if ($is_nano) {
+					global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+					global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+					global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+					nanobsd_detect_slice_info();
+					$rw = is_writable("/") ? "(rw)" : "(ro)";
+					$args[] = gettext("NanoBSD Boot Slice");
+					$args[] = htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE)) . ' / ' . htmlspecialchars($BOOTFLASH) . $rw;
+					$args[] = ($BOOTFLASH != $ACTIVE_SLICE ? "<br /><br />" . gettext('Next Boot') . ":<br />" . htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE)) . ' / ' . htmlspecialchars($ACTIVE_SLICE) : "");
+				}
+			}
+			break;
+
+
+		case 'cpu_type':
+			$data_template = "%s\n<div id='cpufreq'>%s</div>\n%s";
+			$args[] = htmlspecialchars(get_single_sysctl("hw.model"));
+			$args[] = get_cpufreq();
+			$cpucount = get_cpu_count();
+			$args[] = ($cpucount > 1 ? '<div id="cpucount">' . htmlspecialchars($cpucount) . ' ' . gettext('CPUs') . ': ' . htmlspecialchars(get_cpu_count(true)) . '</div>' : "");
+			break;
+
+
+		case 'hwcrypto':
+			$data_template ="%s";
+			$args[] = htmlspecialchars($hwcrypto);
+			break;
+
+
+		case 'uptime':
+			$data_template = "<span id='uptime'>%s</span>";
+			$args[] = htmlspecialchars(get_uptime());
+			break;
+
+
+		case 'current_datetime':
+			$data_template = "<div id='datetime'>%s</div>";
+			$args[] = date("D M j G:i:s T Y");
+			break;
+
+
+		case 'dns_servers':
+			$data_template ="<ul style='margin-bottom:0px'>\n%s\n</ul>";
+			$svr_list_html = '';
+			foreach (get_dns_servers() as $dns) {
+				$svr_list_html .= "\t\t\t\t<li>{$dns}</li>\n";
+			}
+			$args[] = $svr_list_html;
+			break;
+
+
+		case 'last_config_change':
+			if ($config['revision']) {
+				$data_template = "%s";
+				$args[] = htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));
+			}
+			break;
+
+
+		case 'state_table_size':
+			$data_template = <<<END
+	<div class="progress">
+		<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+		</div>
+	</div>
+	<span id="pfstateusagemeter">%s</span>&nbsp;<span id="pfstate">(%s)</span>&nbsp;<span><a href="diag_dump_states.php">%s</a></span>
+END;
+			$pfstatetext = get_pfstate();
+			$pfstateusage = get_pfstate(true);
+			$args[] = $pfstateusage;
+			$args[] = $pfstateusage . '%';
+			$args[] = $pfstateusage . '%';
+			$args[] = htmlspecialchars($pfstatetext);
+			$args[] = gettext("Show states");
+			break;
+
+
+		case 'mbuf_usage':
+			$data_template = <<<END
+	<div class="progress">
+		<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+		</div>
+	</div>
+	<span id="mbufusagemeter">%s</span>&nbsp;<span id="mbuf">(%s)</span>
+END;
+			$mbufstext = get_mbuf();
+			$mbufusage = get_mbuf(true);
+			$args[] = $mbufusage;
+			$args[] = $mbufusage . '%';
+			$args[] = $mbufusage . '%';
+			$args[] = htmlspecialchars($mbufstext);
+			break;
+
+
+		case 'temperature':
+			if (get_temp() != "") {
+				$data_template = <<<END
+	<div class="progress">
+		<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+		</div>
+	</div>
+	<span id="tempmeter">%s&deg;C</span>
+END;
+				$temp_deg_c = get_temp();
+				$args[] = $temp_deg_c;
+				$args[] = $temp_deg_c . '%';
+				$args[] = $temp_deg_c;
+			}
+			break;
+
+
+		case 'load_average':
+			$data_template = "<div id='load_average' title='%s'>%s</div>";
+			$args[] = gettext('Last 1, 5 and 15 minutes');
+			$args[] = get_load_average();
+			break;
+
+
+
+		case 'cpu_usage':
+			$data_template = <<<END
+	<div class="progress">
+		<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+		</div>
+	</div>
+	<span id="cpumeter">%s</span>
+END;
+			$update_period = !empty($config['widgets']['period']) ? $config['widgets']['period'] : "10";
+			$args[] = sprintf(gettext("Updating in %s seconds"), $update_period);
+			break;
+
+
+
+		case 'memory_usage':
+			$data_template = <<<END
+	<div class="progress" >
+		<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+		</div>
+	</div>
+	<span id="memusagemeter">%s</span><span>%% of %s MiB</span>
+END;
+			$memUsage = mem_usage();
+			$args[] = $memUsage;
+			$args[] = $memUsage . '%';
+			$args[] = $memUsage;
+			$args[] = sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024));
+			break;
+
+
+		case 'swap_usage':
+			if ($showswap == true) {
+				$data_template = <<<END
+	<div class="progress">
+		<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+		</div>
+	</div>
+	<span>%s of %s MiB</span>
+END;
+				$swapusage = swap_usage();
+				$args[] = $swapusage;
+				$args[] = $swapusage . '%';
+				$args[] = $swapusage . '%';
+				$args[] = sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`);
+			}
+			break;
+
+
+		case 'disk_usage':
+			$diskidx = 0;
+			foreach ($filesystems as $fs) {
+				$data_template .= <<<END
+				<strong>%s  %s:</strong><br />
+					<div class="progress" >
+						<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="%s" aria-valuemin="0" aria-valuemax="100" style="width: %s">
+						</div>
+					</div>
+					<span>%s %s %siB - %s</span><br />
+END;
+				$args[] = gettext('Mountpoint');
+				$args[] = $fs['mountpoint'];
+				$args[] = $fs['percent_used'];
+				$args[] = $fs['percent_used'] . '%';
+				$args[] = $fs['percent_used'] . '%';
+				$args[] = gettext("of");
+				$args[] = $fs['total_size'];
+				$args[] = $fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "");
+				$diskidx++;
+			}
+			break;
+
+
+		case 'ALL_HIDDEN':
+			$data_template = "<div class='text-center'>\n%s</div>";
+			$args[] = gettext('All System Information items are hidden or can not be shown.');
+			break;
+	}
+
+	// merge data into html template, indent HTML, and return
+
+	$data = vsprintf($data_template, $args);
+	if (strlen($data) > 0) {
+		$html = "<th><span style='font-weight:normal; margin-left:20px'>{$title_content}</span></th>\n" .
+			"<td>\n{$data}\n</td>\n";
+		return str_replace("\n", "\n\t\t\t", $html);
+	} else {
+		return '';
+	}
+}
+
+
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -124,325 +420,56 @@ $widgetperiod += 1000;
 
 $filesystems = get_mounted_filesystems();
 
-$skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
-$rows_displayed = false;
+if (strlen($user_settings['widgets']['system_information']['filter']) > 0) {
+	$itemsshown = array_diff($validNames, explode(",", $user_settings['widgets']['system_information']['filter']));
+} else {
+	$itemsshown = $validNames;
+}
+
+$data = array();
+foreach ($itemsshown as $itemkey) {
+	$item_html = get_item_html($itemkey);  // get sysinfo data for this item
+	// Handle if an item returns blank data (eg can't be used, or isn't available on platform)
+	if (strlen($item_html) > 0) {
+		$itemdata = $sysinfo_items[$itemkey];
+		$itemsort = $itemdata['itemsort'];
+		$catdata = $sysinfo_categories[$itemdata['category']];
+		$catsort = $catdata['catsort'];
+		$data[$catsort]['cattitle'] = $catdata['cattitle']; // add key for category and get category title
+		$data[$catsort]['itemstoshow'][$itemsort] = $itemdata;  // create a key for item and add static item data
+		$data[$catsort]['itemstoshow'][$itemsort]['item_html'] = '<tr>' . $item_html . '<tr>';
+	}
+}
+if (count($data) == 0) {
+	// adds a single item containing the special key for the "no sysinfo selected" item if nothing else will display
+	$data[0] = array(
+		'cattitle' => '',
+		'itemstoshow' => array('itemsort' => '', 'item_html' => '<tr>' . get_item_html('ALL_HIDDEN') . '<tr>')
+		);
+}
+
+// Now we have the HTML for each category and items within categories, or a "nothing to show" section if none
+
 ?>
 
 <div class="table-responsive">
 <table class="table table-hover table-striped table-condensed">
 	<tbody>
 <?php
-	if (!in_array('name', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Name");?></th>
-			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('system', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("System");?></th>
-			<td>
-			<?php
-				$platform = system_identify_specific_platform();
-				if (isset($platform['descr'])) {
-					echo $platform['descr'];
-				} else {
-					echo gettext('Unknown system');
-				}
-			?>
-			<br />
-			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
-<?php
-		// If the uniqueID is available, display it here
-		$idfile = "/var/db/uniqueid";
-		if (file_exists($idfile)) {
-			print("<br />" . gettext("Netgate Device ID:") . " <strong>" . file_get_contents($idfile) . "</strong>");
+	// print sysinfo items
+
+	//sort categories
+	ksort($data);
+	foreach ($data as $cat => $cat_data) {
+		// display title for this category
+		echo "<tr><th><strong>{$cat_data['cattitle']}</strong></th>\n<td>&nbsp;</td></tr>";
+		// sort and output items within category
+		ksort($cat_data);
+		foreach($cat_data['itemstoshow'] as $itemsort => $itemdata) {
+			echo "\n\n\t\t<!-- {$cat_data['cattitle']} -> {$itemdata['itemtitle']} -->\n";
+			echo $itemdata['item_html'];
 		}
-?>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('bios', $skipsysinfoitems)):
-		$rows_displayed = true;
-		unset($biosvendor);
-		unset($biosversion);
-		unset($biosdate);
-		$_gb = exec('/bin/kenv -q smbios.bios.vendor 2>/dev/null', $biosvendor);
-		$_gb = exec('/bin/kenv -q smbios.bios.version 2>/dev/null', $biosversion);
-		$_gb = exec('/bin/kenv -q smbios.bios.reldate 2>/dev/null', $biosdate);
-		/* Only display BIOS information if there is any to show. */
-		if (!empty($biosvendor[0]) || !empty($biosversion[0]) || !empty($biosdate[0])):
-?>
-		<tr>
-			<th><?=gettext("BIOS");?></th>
-			<td>
-			<?php if (!empty($biosvendor[0])): ?>
-				<?=gettext("Vendor: ");?><strong><?=$biosvendor[0];?></strong><br/>
-			<?php endif; ?>
-			<?php if (!empty($biosversion[0])): ?>
-				<?=gettext("Version: ");?><strong><?=$biosversion[0];?></strong><br/>
-			<?php endif; ?>
-			<?php if (!empty($biosdate[0])): ?>
-				<?=gettext("Release Date: ");?><strong><?=$biosdate[0];?></strong><br/>
-			<?php endif; ?>
-			</td>
-		</tr>
-<?php
-		endif;
-	endif;
-	if (!in_array('version', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Version");?></th>
-			<td>
-				<strong><?=$g['product_version_string']?></strong>
-				(<?php echo php_uname("m"); ?>)
-				<br />
-				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
-			<?php if (!$g['hideuname']): ?>
-				<br />
-				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
-			<?php endif; ?>
-			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-				<br /><br />
-				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
-			<?php endif; ?>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('cpu_type', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("CPU Type");?></th>
-			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
-				<div id="cpufreq"><?= get_cpufreq(); ?></div>
-		<?php
-			$cpucount = get_cpu_count();
-			if ($cpucount > 1): ?>
-				<div id="cpucount">
-					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
-				</div>
-		<?php endif; ?>
-				<div id="cpucrypto">
-					<?= get_cpu_crypto_support(); ?>
-				</div>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('hwcrypto', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<?php if ($hwcrypto): ?>
-		<tr>
-			<th><?=gettext("Hardware crypto");?></th>
-			<td><?=htmlspecialchars($hwcrypto);?></td>
-		</tr>
-		<?php endif; ?>
-<?php
-	endif;
-	if (!in_array('uptime', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Uptime");?></th>
-			<td id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('current_datetime', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Current date/time");?></th>
-			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('dns_servers', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("DNS server(s)");?></th>
-			<td>
-				<ul style="margin-bottom:0px">
-				<?php
-					$dns_servers = get_dns_servers();
-					foreach ($dns_servers as $dns) {
-						echo "<li>{$dns}</li>";
-					}
-				?>
-				</ul>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('last_config_change', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<?php if ($config['revision']): ?>
-		<tr>
-			<th><?=gettext("Last config change");?></th>
-			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
-		</tr>
-		<?php endif; ?>
-<?php
-	endif;
-	if (!in_array('state_table_size', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("State table size");?></th>
-			<td>
-				<?php
-					$pfstatetext = get_pfstate();
-					$pfstateusage = get_pfstate(true);
-				?>
-				<div class="progress">
-					<div id="statePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
-					</div>
-				</div>
-				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('mbuf_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("MBUF Usage");?></th>
-			<td>
-				<?php
-					get_mbuf($mbufstext, $mbufusage);
-				?>
-				<div class="progress">
-					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
-					</div>
-				</div>
-				<span id="mbufusagemeter"><?=$mbufusage?>%</span>&nbsp;<span id="mbuf">(<?= htmlspecialchars($mbufstext)?>)</span>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('temperature', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<?php if (get_temp() != ""): ?>
-		<tr>
-			<th><?=gettext("Temperature");?></th>
-			<td>
-				<?php $temp_deg_c = get_temp(); ?>
-				<div class="progress">
-					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$temp_deg_c?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_deg_c?>%">
-					</div>
-				</div>
-				<span id="tempmeter"><?= $temp_deg_c . "&deg;C"; ?></span>
-			</td>
-		</tr>
-		<?php endif; ?>
-<?php
-	endif;
-	if (!in_array('load_average', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Load average");?></th>
-			<td>
-				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('cpu_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("CPU usage");?></th>
-			<td>
-				<div class="progress">
-					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-					</div>
-				</div>
-				<?php $update_period = (!empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
-				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('memory_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Memory usage");?></th>
-			<td>
-				<?php $memUsage = mem_usage(); ?>
-
-				<div class="progress" >
-					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
-					</div>
-				</div>
-				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('swap_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<?php if ($showswap == true): ?>
-		<tr>
-			<th><?=gettext("SWAP usage");?></th>
-			<td>
-				<?php $swapusage = swap_usage(); ?>
-				<div class="progress">
-					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
-					</div>
-				</div>
-				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
-			</td>
-		</tr>
-		<?php endif; ?>
-
-<?php
-	endif;
-	if (!in_array('disk_usage', $skipsysinfoitems)):
-		$rows_displayed = true;
-		$diskidx = 0;
-		foreach ($filesystems as $fs):
-?>
-		<tr>
-			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
-			<td>
-				<div class="progress" >
-					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
-					</div>
-				</div>
-				<span><?=$fs['percent_used']?>%<?=gettext(" of ")?><?=$fs['total_size']?>iB - <?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></span>
-			</td>
-		</tr>
-<?php
-			$diskidx++;
-		endforeach;
-	endif;
-	if (!$rows_displayed):
-?>
-		<tr>
-			<td class="text-center">
-				<?=gettext('All System Information items are hidden.');?>
-			</td>
-		</tr>
-<?php
-	endif;
+	}
 ?>
 
 	</tbody>
@@ -466,11 +493,11 @@ $rows_displayed = false;
 					</thead>
 					<tbody>
 <?php
-				foreach ($sysinfo_items as $sysinfo_item_key => $sysinfo_item_name):
+				foreach ($sysinfo_items as $sysinfo_item_key => $sysinfo_item_data):
 ?>
 						<tr>
-							<td><?=gettext($sysinfo_item_name)?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sysinfo_item_key?>" type="checkbox" <?=(!in_array($sysinfo_item_key, $skipsysinfoitems) ? 'checked':'')?>></td>
+							<td><?=$sysinfo_item_data['itemtitle']?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sysinfo_item_key?>" type="checkbox" <?=(in_array($sysinfo_item_key, $itemsshown) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -484,7 +511,7 @@ $rows_displayed = false;
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="<?=$widget_showallnone_id?>" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>

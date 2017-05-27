@@ -42,41 +42,14 @@ function get_stats() {
 }
 
 function get_uptime() {
-	$uptime = get_uptime_sec();
+	$uptime_sec = get_uptime_sec();
 
-	if (intval($uptime) == 0) {
+	if (intval($uptime_sec) > 0) {
+		return convert_seconds_to_dhms($uptime_sec, false, true);
+	} else {
 		return;
 	}
 
-	$updays = (int)($uptime / 86400);
-	$uptime %= 86400;
-	$uphours = (int)($uptime / 3600);
-	$uptime %= 3600;
-	$upmins = (int)($uptime / 60);
-	$uptime %= 60;
-	$upsecs = (int)($uptime);
-
-	$uptimestr = "";
-	if ($updays > 1) {
-		$uptimestr .= "$updays Days ";
-	} else if ($updays > 0) {
-		$uptimestr .= "1 Day ";
-	}
-
-	if ($uphours > 1) {
-		$hours = "s";
-	}
-
-	if ($upmins > 1) {
-		$minutes = "s";
-	}
-
-	if ($upmins > 1) {
-		$seconds = "s";
-	}
-
-	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
-	return $uptimestr;
 }
 
 /* Calculates non-idle CPU time and returns as a percentage */

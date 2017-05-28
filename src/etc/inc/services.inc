@@ -1663,6 +1663,119 @@ EOD;
 	return 0;
 }
 
+function get_realinterface_for_destination($destip) {
+	/*
+	 * Returns the realinterface that traffic will be send out on for the destination $destip
+	 * This is is checked against the items below (first match applies), final resort the default gateway.
+	 * 1-interface subnets (todo VIPs?)
+	 * 2-static routes configured in pfSense
+	 * 3-current routing table
+	 * 4-the default gateway
+	 * 
+	 * DESIGN QUESTION, is it right to use this 'first match' ??
+	 * as routing table could contain a smaller subnet that also matches which could point to a different interface..
+	 * should the routing table always be used skipping options 1 and 2
+	 * 
+	 */
+	global $config;
+			
+	if (is_ipaddrv4($destip)) {
+		$family = 'inet';
+	} else {
+		$family = 'inet6';
+	}
+
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $ifname) {
+		$subnet = get_interface_ip_family($ifname, $family);
+		if (!is_ipaddr($subnet)) {
+			continue;
+		}
+		$subnet .= "/" . get_interface_subnet_family($ifname, $family);
+		if (ip_in_subnet($destip, $subnet)) {
+			$destif = get_real_interface($ifname);
+			break;
+		}
+	}
+	if (!isset($destif)) {
+		// For each enabled static route
+		foreach (get_staticroutes(false, false, true) as $rtent) {
+			if (ip_in_subnet($destip, $rtent['network'])) {
+				$a_gateways = return_gateways_array(true);
+				$destif = $a_gateways[$rtent['gateway']]['interface'];
+				break;
+			}
+		}
+	}
+ 
+	if (!isset($destif)) {
+		$smallestsubnet = -1;
+		/* Create a array from the existing route table */
+		exec("/usr/bin/netstat -rnWf {$family}", $route_str);
+		array_shift($route_str);
+		array_shift($route_str);
+		array_shift($route_str);
+		array_shift($route_str);
+		foreach ($route_str as $routeline) {
+			$items = preg_split("/[ ]+/i", $routeline);
+			$subnet = $items[0];
+			
+			switch ($family) {
+				case 'inet':
+					if ($subnet == 'default') {
+						$subnet = "0.0.0.0/0";
+					} else if (!is_subnetv4($subnet)) {
+						if (is_ipaddrv4($subnet)) {
+							$subnet .= "/32";
+						} else {
+							continue;
+						}
+					}
+					break;
+				case 'inet6':
+					if ($subnet == 'default') {
+						$subnet = "::/0";
+					} else 
+						if (!is_subnetv6($subnet)) {
+						if (is_ipaddrv6($subnet)) {
+							$subnet .= "/128";
+						} else {
+							continue;
+						}
+					}
+					break;
+				default:
+					continue;
+			}
+			if (ip_in_subnet($destip, $subnet)) {
+				list($ip, $mask) = explode('/', $subnet);
+				if ($mask > $smallestsubnet) {
+					$smallestsubnet = $mask;
+					$destif = trim($items[5]);
+				}
+			}
+		}
+	}
+
+	if (!isset($destif)) {
+		if (is_array($config['gateways']['gateway_item'])) {
+			foreach ($config['gateways']['gateway_item'] as $gateway) {
+				if ($gateway['ipprotocol'] != $family) {
+					continue;
+				}
+				if (isset($gateway['defaultgw'])) {
+					$destif = get_real_interface($gateway['interface']);
+					break;
+				}
+			}
+		} else {
+			$destif = get_real_interface("wan");
+		}
+	}
+	
+	return $destif;
+}
+
 function services_dhcrelay_configure() {
 	global $config, $g;
 
@@ -1712,67 +1825,7 @@ function services_dhcrelay_configure() {
 	}
 
 	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ip($ifname);
-			if (!is_ipaddr($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnet($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			// For each enabled static route
-			foreach (get_staticroutes(false, false, true) as $rtent) {
-				if (ip_in_subnet($srvip, $rtent['network'])) {
-					$a_gateways = return_gateways_array(true);
-					$destif = $a_gateways[$rtent['gateway']]['interface'];
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (is_subnetv4($items[0])) {
-					$subnet = $items[0];
-				} elseif (is_ipaddrv4($items[0])) {
-					$subnet = "{$items[0]}/32";
-				} else {
-					// Not a subnet or IP address, skip to the next line.
-					continue;
-				}
-				if (ip_in_subnet($srvip, $subnet)) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
+		$destif = get_realinterface_for_destination($srvip);
 		if (!empty($destif)) {
 			$dhcrelayifs[] = $destif;
 		}
@@ -1844,63 +1897,7 @@ function services_dhcrelay6_configure() {
 	$srvips = explode(",", $dhcrelaycfg['server']);
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ipv6($ifname);
-			if (!is_ipaddrv6($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnetv6($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			if (is_array($config['staticroutes']['route'])) {
-				foreach ($config['staticroutes']['route'] as $rtent) {
-					if (isset($rtent['disabled'])) {
-						continue;
-					}
-					if (ip_in_subnet($srvip, $rtent['network'])) {
-						$a_gateways = return_gateways_array(true);
-						$destif = $a_gateways[$rtent['gateway']]['interface'];
-						break;
-					}
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet6", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (ip_in_subnet($srvip, $items[0])) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
+		$destif = get_realinterface_for_destination($srvip);
 		if (!empty($destif)) {
 			$srvifaces[] = "{$srvip}%{$destif}";
 		}

@@ -131,7 +131,7 @@ if ($_REQUEST['del']) {
 		$input_errors[] = gettext('Can not delete Authentication Server: server ID is missing, invalid or unrecognised.');
 	} else {
 		/* Remove server from main list. */
-		$serverdeleted = $a_server[$_GET['id']]['name'];
+		$serverdeleted = $a_server[$id]['name'];
 		foreach ($config['system']['authserver'] as $k => $as) {
 			if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
 				unset($config['system']['authserver'][$k]);
@@ -139,7 +139,7 @@ if ($_REQUEST['del']) {
 		}
 
 		/* Remove server from temp list used later on this page. */
-		unset($a_server[$_GET['id']]);
+		unset($a_server[$id]);
 
 		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 		write_config($savemsg);

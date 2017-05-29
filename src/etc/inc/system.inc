@@ -2346,7 +2346,7 @@ function system_get_serial() {
 }
 
 /*
- * attempt to identify the specific physical/virtual platform (for embedded systems)
+ * attempt to identify the specific physical/virtual platform (in particular for embedded systems)
  * Returns an array with two elements:
  *   name => platform string (e.g. 'wrap', 'alix', 'vmware', etc.)
  *   descr => human-readable description (e.g. "PC Engines WRAP")

@@ -1173,6 +1173,12 @@ $priv_list['page-system-update-settings']['descr'] = gettext("Allow access to th
 $priv_list['page-system-update-settings']['match'] = array();
 $priv_list['page-system-update-settings']['match'][] = "system_update_settings.php*";
 
+$priv_list['page-system-user-settings'] = array();
+$priv_list['page-system-user-settings']['name'] = gettext("WebCfg - System: User Settings");
+$priv_list['page-system-user-settings']['descr'] = gettext("Allow access to the 'System: User Settings' page.");
+$priv_list['page-system-user-settings']['match'] = array();
+$priv_list['page-system-user-settings']['match'][] = "system_user_settings.php*";
+
 $priv_list['page-system-usermanager'] = array();
 $priv_list['page-system-usermanager']['name'] = gettext("WebCfg - System: User Manager");
 $priv_list['page-system-usermanager']['descr'] = gettext("Allow access to the 'System: User Manager' page.");
@@ -1192,12 +1198,6 @@ $priv_list['page-system-usermanager-passwordmg']['name'] = gettext("WebCfg - Sys
 $priv_list['page-system-usermanager-passwordmg']['descr'] = gettext("Allow access to the 'System: User Password Manager' page.");
 $priv_list['page-system-usermanager-passwordmg']['match'] = array();
 $priv_list['page-system-usermanager-passwordmg']['match'][] = "system_usermanager_passwordmg.php*";
-
-$priv_list['page-system-user-settings'] = array();
-$priv_list['page-system-user-settings']['name'] = gettext("WebCfg - System: User Settings");
-$priv_list['page-system-user-settings']['descr'] = gettext("Allow access to the 'System: User Settings' page.");
-$priv_list['page-system-user-settings']['match'] = array();
-$priv_list['page-system-user-settings']['match'][] = "system_user_settings.php*";
 
 $priv_list['page-hidden-uploadconfiguration'] = array();
 $priv_list['page-hidden-uploadconfiguration']['name'] = gettext("WebCfg - Hidden: Upload Configuration");

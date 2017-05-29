@@ -44,6 +44,7 @@ $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttp
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
+$pconfig['session_timeout'] = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : '';
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
@@ -78,6 +79,13 @@ if ($_POST) {
 	if ($_POST['webguiport']) {
 		if (!is_port($_POST['webguiport'])) {
 			$input_errors[] = gettext("A valid webConfigurator port number must be specified");
+		}
+	}
+
+	if (isset($_POST['session_timeout'])) {
+		$timeout = intval($_POST['session_timeout']);
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0)) {
+			$input_errors[] = gettext("Session timeout must be a non-negative integer or empty.");
 		}
 	}
 
@@ -159,6 +167,12 @@ if ($_POST) {
 			$config['system']['webgui']['noantilockout'] = true;
 		} else {
 			unset($config['system']['webgui']['noantilockout']);
+		}
+
+		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
+			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
+		} else {
+			unset($config['system']['webgui']['session_timeout']);
 		}
 
 		if ($_POST['enableserial'] == "yes" || $g['enableserial_force']) {
@@ -419,6 +433,16 @@ $section->addInput(new Form_Checkbox(
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in the environment.',
 	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
+
+$section->addInput(new Form_Input(
+	'session_timeout',
+	'Session timeout',
+	'number',
+	$pconfig['session_timeout'],
+	['min' => 0]
+))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
+	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
+	'risk!');
 
 $section->addInput(new Form_Input(
 	'althostnames',

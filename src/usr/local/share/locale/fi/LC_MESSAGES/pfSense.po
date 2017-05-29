@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-23 10:02-0300\n"
+"POT-Creation-Date: 2017-05-29 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1674,7 +1674,7 @@ msgstr "Aika ylittyi"
 msgid "Packet too big"
 msgstr "Liian suuri paketti"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
@@ -2264,7 +2264,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:251
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:142
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:241
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
@@ -3112,7 +3112,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiili Asiakas"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3132
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3598,120 +3598,145 @@ msgstr ""
 "vaihtoehto vaatii että suodatin on käytössä ennen kuin tilat näytetään. "
 "Hyödyllinen suurille tila tauluille."
 
-#: src/etc/inc/pfsense-utils.inc:743
+#: src/etc/inc/pfsense-utils.inc:475
+msgid "Rule Information"
+msgstr "Säännön tiedot"
+
+#: src/etc/inc/pfsense-utils.inc:481 src/etc/inc/pfsense-utils.inc:491
+#, php-format
+msgid "%1$s by %2$s"
+msgstr "%1$s: by %2$s"
+
+#: src/etc/inc/pfsense-utils.inc:482 src/etc/inc/pfsense-utils.inc:492
+#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
+#: src/usr/local/www/diag_confbak.php:123
+#: src/usr/local/www/diag_confbak.php:232
+#: src/usr/local/www/diag_confbak.php:243
+msgid "n/j/y H:i:s"
+msgstr "n/j/y H:i:s"
+
+#: src/etc/inc/pfsense-utils.inc:479
+msgid "Created"
+msgstr "Luotu"
+
+#: src/etc/inc/pfsense-utils.inc:489
+msgid "Updated"
+msgstr "Päivitetty"
+
+#: src/etc/inc/pfsense-utils.inc:784
 msgid "After synch increase advertising skew"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:793
+#: src/etc/inc/pfsense-utils.inc:834
 msgid "Error creating socket!"
 msgstr "Virhe pistoketta luotaessa."
 
-#: src/etc/inc/pfsense-utils.inc:794
+#: src/etc/inc/pfsense-utils.inc:835
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
 msgstr "Virhe koodi on '%1$s' - %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:799
+#: src/etc/inc/pfsense-utils.inc:840
 #, php-format
 msgid "setsockopt() failed, error: %s"
 msgstr "setsockopt() epäonnistui, virhe: %s"
 
-#: src/etc/inc/pfsense-utils.inc:803
+#: src/etc/inc/pfsense-utils.inc:844
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
 msgstr "Taikapaketti (%1$s) lähetetty (%2$s) MAC=%3$s"
 
-#: src/etc/inc/pfsense-utils.inc:866 src/etc/inc/pfsense-utils.inc:886
+#: src/etc/inc/pfsense-utils.inc:907 src/etc/inc/pfsense-utils.inc:927
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
 msgstr ""
 "Palautettiin %s konfigurointi tiedosto (Mahdollisesti CARP osakkaalta)"
 
-#: src/etc/inc/pfsense-utils.inc:973
+#: src/etc/inc/pfsense-utils.inc:1014
 msgid "reload_interfaces_sync() is starting."
 msgstr "reload_interfaces_sync() alkaa."
 
-#: src/etc/inc/pfsense-utils.inc:982
+#: src/etc/inc/pfsense-utils.inc:1023
 msgid "Enabling system routing"
 msgstr "Käytä järjestelmän reititystä"
 
-#: src/etc/inc/pfsense-utils.inc:986
+#: src/etc/inc/pfsense-utils.inc:1027
 msgid "Cleaning up Interfaces"
 msgstr "Siivotaan verkkorajapintoja"
 
-#: src/etc/inc/pfsense-utils.inc:1430
+#: src/etc/inc/pfsense-utils.inc:1471
 msgid "No history data found!"
 msgstr "Historiaa ei löytynyt"
 
-#: src/etc/inc/pfsense-utils.inc:1562
+#: src/etc/inc/pfsense-utils.inc:1603
 msgid "device not present! Is the modem attached to the system?"
 msgstr "Laitetta ei löytynyt. Onko modeemi yhdistetty järjestelmään"
 
-#: src/etc/inc/pfsense-utils.inc:1631
+#: src/etc/inc/pfsense-utils.inc:1672
 msgid "running"
 msgstr "Suoritetaan"
 
-#: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1673 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr "up"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "blocking"
 msgstr "Estetään"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "check for ethernet loops"
 msgstr "Etsi verkkosilmukoita"
 
-#: src/etc/inc/pfsense-utils.inc:1680
+#: src/etc/inc/pfsense-utils.inc:1721
 msgid "learning"
 msgstr "Opetellaan"
 
-#: src/etc/inc/pfsense-utils.inc:1683
+#: src/etc/inc/pfsense-utils.inc:1724
 msgid "forwarding"
 msgstr "Edelleenlähetetään"
 
-#: src/etc/inc/pfsense-utils.inc:1817
+#: src/etc/inc/pfsense-utils.inc:1858
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNS välimuisti: Löydettiin vanha IP %1$s  ja uusi IP %2$s "
 
-#: src/etc/inc/pfsense-utils.inc:1837
+#: src/etc/inc/pfsense-utils.inc:1878
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr "Ladataan %s salauksen avustus moduulia"
 
-#: src/etc/inc/pfsense-utils.inc:1854
+#: src/etc/inc/pfsense-utils.inc:1895
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr "Ladataan %s lämpötilan seuranta moduulia"
 
-#: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
+#: src/etc/inc/pfsense-utils.inc:1972 src/etc/inc/pfsense-utils.inc:2028
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr "Lataus epäonnistui virheellä %1$s. Osoite: %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2206
+#: src/etc/inc/pfsense-utils.inc:2247
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr "Olematonta tiedostoa ei voitu prosessoida aliakselle: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2211
+#: src/etc/inc/pfsense-utils.inc:2252
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr "Tyhjää tiedostoa ei voitu prosessoida aliakselle: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2216
+#: src/etc/inc/pfsense-utils.inc:2257
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr "Aliasta ei voitu prosessoida aliakselta: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2273
+#: src/etc/inc/pfsense-utils.inc:2314
 #, php-format
 msgid "Failed to download alias %s"
 msgstr "Aliaksen %s lataus epäonnistui"
 
-#: src/etc/inc/pfsense-utils.inc:2302
+#: src/etc/inc/pfsense-utils.inc:2343
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
@@ -3719,50 +3744,54 @@ msgstr ""
 "Aliaksen tiedosto on .tar/tgz tiedosto jota ei voida prosessoida koska "
 "sopiva ohjelma puuttuu!"
 
-#: src/etc/inc/pfsense-utils.inc:2312
+#: src/etc/inc/pfsense-utils.inc:2353
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr "Aliaksia %s ei voitu avata kirjoitusta varten"
 
-#: src/etc/inc/pfsense-utils.inc:2318
+#: src/etc/inc/pfsense-utils.inc:2359
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr "Tiedoston %1$s lukeminen epäonnistui sijainnista %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2897
+#: src/etc/inc/pfsense-utils.inc:2938
+msgid "Bosnian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2939
 msgid "German (Germany)"
 msgstr "Saksa"
 
-#: src/etc/inc/pfsense-utils.inc:2898
+#: src/etc/inc/pfsense-utils.inc:2940
 msgid "English"
 msgstr "Englanti"
 
-#: src/etc/inc/pfsense-utils.inc:2899
+#: src/etc/inc/pfsense-utils.inc:2941
 msgid "Spanish"
 msgstr "Espanja"
 
-#: src/etc/inc/pfsense-utils.inc:2900
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Norwegian Bokmål"
 msgstr "Norja"
 
-#: src/etc/inc/pfsense-utils.inc:2901
+#: src/etc/inc/pfsense-utils.inc:2943
 msgid "Russian"
 msgstr "Venäjä"
 
-#: src/etc/inc/pfsense-utils.inc:2902
+#: src/etc/inc/pfsense-utils.inc:2944
 msgid "Chinese (Simplified, China)"
 msgstr "Kiina (Yksinkertaistettu)"
 
-#: src/etc/inc/pfsense-utils.inc:2903
+#: src/etc/inc/pfsense-utils.inc:2945
 msgid "Chinese (Taiwan)"
 msgstr "Kiina (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
-#: src/etc/inc/pfsense-utils.inc:3139
+#: src/etc/inc/pfsense-utils.inc:3140 src/etc/inc/pfsense-utils.inc:3155
+#: src/etc/inc/pfsense-utils.inc:3181
 msgid "No Service"
 msgstr "Ei palvelua"
 
-#: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
+#: src/etc/inc/pfsense-utils.inc:3150 src/etc/inc/pfsense-utils.inc:3193
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3778,83 +3807,83 @@ msgstr "Ei palvelua"
 msgid "Mode"
 msgstr "Tila"
 
-#: src/etc/inc/pfsense-utils.inc:3114
+#: src/etc/inc/pfsense-utils.inc:3156
 msgid "Restricted Service"
 msgstr "Rajoitettu palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3115
+#: src/etc/inc/pfsense-utils.inc:3157
 msgid "Valid Service"
 msgstr "Validi palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3116
+#: src/etc/inc/pfsense-utils.inc:3158
 msgid "Restricted Regional Service"
 msgstr "Rajoitettu alueellinen palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3117
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Powersaving Service"
 msgstr "Virransäästöpalvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3118
+#: src/etc/inc/pfsense-utils.inc:3160
 msgid "Unknown Service"
 msgstr "Tunnistamaton palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3124
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Invalid SIM/locked State"
 msgstr "Virheellinen SIM tai lukittu tila"
 
-#: src/etc/inc/pfsense-utils.inc:3125
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Valid SIM State"
 msgstr "Validi SIM tila"
 
-#: src/etc/inc/pfsense-utils.inc:3126
+#: src/etc/inc/pfsense-utils.inc:3168
 msgid "Invalid SIM CS State"
 msgstr "Virheellinen  SIM CS tila"
 
-#: src/etc/inc/pfsense-utils.inc:3127
+#: src/etc/inc/pfsense-utils.inc:3169
 msgid "Invalid SIM PS State"
 msgstr "Virheellinen SIM PS tila"
 
-#: src/etc/inc/pfsense-utils.inc:3128
+#: src/etc/inc/pfsense-utils.inc:3170
 msgid "Invalid SIM CS/PS State"
 msgstr "Virheellinen SIM CS/PS tila"
 
-#: src/etc/inc/pfsense-utils.inc:3129
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Missing SIM State"
 msgstr "Puuttuva SIM tila"
 
-#: src/etc/inc/pfsense-utils.inc:3140
+#: src/etc/inc/pfsense-utils.inc:3182
 msgid "Limited Service"
 msgstr "Rajoitettu Palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3198
 msgid "Initializing Service"
 msgstr "Aloitetaan palvelua"
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3199
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3158
+#: src/etc/inc/pfsense-utils.inc:3200
 msgid "Network Locked Service"
 msgstr "Verkkopalvelu lukittu"
 
-#: src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3201
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Lukitsematon tai oikea MMC/MNC palvelu"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "No action State"
 msgstr "Ei toimintaa tila"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Network lock State"
 msgstr "Verkon lukon tila"
 
-#: src/etc/inc/pfsense-utils.inc:3167
+#: src/etc/inc/pfsense-utils.inc:3209
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM kortin lukon tila"
 
-#: src/etc/inc/pfsense-utils.inc:3168
+#: src/etc/inc/pfsense-utils.inc:3210
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Verkko ja U(SIM) kortin lukon tila"
 
@@ -6961,7 +6990,7 @@ msgstr "Rajoittimet"
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
 #: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
-#: src/usr/local/www/diag_routes.php:82
+#: src/usr/local/www/diag_routes.php:83
 msgid "Enable"
 msgstr "Ota käyttöön"
 
@@ -7255,11 +7284,11 @@ msgstr "Virhe: ystem_dmesg_save() ei voinut avata dmesg.boot. %s"
 msgid "Setting hard disk standby... "
 msgstr "Asetetaan levyn valmiustila..."
 
-#: src/etc/inc/system.inc:2431
+#: src/etc/inc/system.inc:2440
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2435 src/etc/inc/system.inc:2454
+#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -7932,7 +7961,7 @@ msgstr "Vahvista"
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:267
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:168
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:292
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:195
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
@@ -7962,7 +7991,7 @@ msgstr "Tallenna"
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
 #: src/usr/local/www/diag_resetstate.php:56
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/diag_smart.php:36
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_sockets.php:31
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
@@ -8513,7 +8542,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:300
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:169
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:293
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:196
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
@@ -8693,6 +8722,7 @@ msgstr "Lataa Tiedosto"
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
+#: src/usr/local/www/status.php:366
 msgid "Download"
 msgstr "Lataa"
 
@@ -8734,19 +8764,6 @@ msgstr "Muutettiin varmuuskopion versio numeroon: %s"
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
 msgstr "Onnistuneesti palattiin aikamerkintään %1$s kuvauksella \"%2$s\"."
-
-#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
-#: src/usr/local/www/diag_confbak.php:123
-#: src/usr/local/www/diag_confbak.php:232
-#: src/usr/local/www/diag_confbak.php:243
-#: src/usr/local/www/firewall_nat_edit.php:972
-#: src/usr/local/www/firewall_nat_edit.php:982
-#: src/usr/local/www/firewall_nat_out_edit.php:698
-#: src/usr/local/www/firewall_nat_out_edit.php:708
-#: src/usr/local/www/firewall_rules_edit.php:1762
-#: src/usr/local/www/firewall_rules_edit.php:1772
-msgid "n/j/y H:i:s"
-msgstr "n/j/y H:i:s"
 
 #: src/usr/local/www/diag_confbak.php:55
 msgid "Unable to revert to the selected configuration."
@@ -8945,28 +8962,28 @@ msgstr "Palaa hallintapaneeliin"
 msgid "Keep Configuration"
 msgstr "Pidä asetukset"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:379
 msgid "DNS Lookup"
 msgstr "DNS-haku"
 
-#: src/usr/local/www/diag_dns.php:114
+#: src/usr/local/www/diag_dns.php:118
 msgid "Created from Diagnostics-> DNS Lookup"
 msgstr "Luotu sivulta Diagnostiikka -> DNS haku"
 
-#: src/usr/local/www/diag_dns.php:120
+#: src/usr/local/www/diag_dns.php:124
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr "Luotiin alias sivulta Diagnostiikka -> DNS haku"
 
-#: src/usr/local/www/diag_dns.php:134
+#: src/usr/local/www/diag_dns.php:141
 msgid "Host must be a valid hostname or IP address."
 msgstr "Isäntä nimen täytyy olla kelvollinen isäntä nimi tai IP osoite"
 
-#: src/usr/local/www/diag_dns.php:143
+#: src/usr/local/www/diag_dns.php:150
 msgid "No response"
 msgstr "Ei vastausta"
 
-#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8986,12 +9003,12 @@ msgstr "Ei vastausta"
 msgid "IP Address"
 msgstr "IP-osoite"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:192 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:445
 msgid "Host Name"
 msgstr "Verkkonimi"
 
-#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
@@ -9000,24 +9017,34 @@ msgstr "Verkkonimi"
 msgid "Server"
 msgstr "Palvelin"
 
-#: src/usr/local/www/diag_dns.php:188
+#: src/usr/local/www/diag_dns.php:195
 msgid "Query Time"
 msgstr "Kyselyn aika"
 
-#: src/usr/local/www/diag_dns.php:206
+#: src/usr/local/www/diag_dns.php:213
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr "Isäntää %s ei voitu selvittää"
 
-#: src/usr/local/www/diag_dns.php:211
+#: src/usr/local/www/diag_dns.php:218
 msgid "Alias was updated successfully."
 msgstr "Alias onnistuneesti päivitetty"
 
-#: src/usr/local/www/diag_dns.php:213
+#: src/usr/local/www/diag_dns.php:220
 msgid "Alias was created successfully."
 msgstr "Alias onnistuneesti luotu"
 
-#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:228
+#, php-format
+msgid "Could not update alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:230
+#, php-format
+msgid "Could not create alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -9027,55 +9054,55 @@ msgstr "Alias onnistuneesti luotu"
 msgid "*Hostname"
 msgstr "* Isäntänimi"
 
-#: src/usr/local/www/diag_dns.php:232
+#: src/usr/local/www/diag_dns.php:249
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr "Hae"
 
-#: src/usr/local/www/diag_dns.php:239
+#: src/usr/local/www/diag_dns.php:256
 msgid "Update alias"
 msgstr "Päivitä alias"
 
-#: src/usr/local/www/diag_dns.php:241
+#: src/usr/local/www/diag_dns.php:258
 msgid "Add alias"
 msgstr "Lisää alias"
 
-#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:274 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr "Tulokset"
 
-#: src/usr/local/www/diag_dns.php:263
+#: src/usr/local/www/diag_dns.php:280
 msgid "Result"
 msgstr "Tulos"
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:281
 msgid "Record type"
 msgstr "Tietueen tyyppi"
 
-#: src/usr/local/www/diag_dns.php:281
+#: src/usr/local/www/diag_dns.php:298
 msgid "Timings"
 msgstr "Ajoitukset"
 
-#: src/usr/local/www/diag_dns.php:286
+#: src/usr/local/www/diag_dns.php:303
 msgid "Name server"
 msgstr "Nimipalvelin"
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:304
 msgid "Query time"
 msgstr "Kyselyn aika"
 
-#: src/usr/local/www/diag_dns.php:304
+#: src/usr/local/www/diag_dns.php:321
 msgid "More Information"
 msgstr "Lisätiedot"
 
-#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:391
 msgid "Ping"
 msgstr "Ping"
 
-#: src/usr/local/www/diag_dns.php:310
+#: src/usr/local/www/diag_dns.php:327
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
@@ -9083,11 +9110,11 @@ msgstr ""
 "HUOMAA: Linkit ovat ulkoisiin palveluihin, joiden luotettavuutta ei voida "
 "taata."
 
-#: src/usr/local/www/diag_dns.php:312
+#: src/usr/local/www/diag_dns.php:329
 msgid "IP WHOIS @ DNS Stuff"
 msgstr "IP WHOIS @ DNS Stuff"
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:330
 msgid "IP Info @ DNS Stuff"
 msgstr "IP Info @ DNS Stuff"
 
@@ -9137,7 +9164,7 @@ msgstr "Suodattimen määritys"
 
 #: src/usr/local/www/diag_dump_states.php:147
 #: src/usr/local/www/diag_dump_states_sources.php:106
-#: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
+#: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_groupmanager_addprivs.php:202
@@ -10141,19 +10168,19 @@ msgstr "Valitse ainakin yksi vaihtoehto."
 msgid "Do you really want to reset the selected states?"
 msgstr "Haluatko todella alustaa valitut tilat?"
 
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
 msgid "Routes"
 msgstr "Reitittimet"
 
-#: src/usr/local/www/diag_routes.php:77
+#: src/usr/local/www/diag_routes.php:78
 msgid "Routing Table Display Options"
 msgstr "Reititys taulun asetukset"
 
-#: src/usr/local/www/diag_routes.php:81
+#: src/usr/local/www/diag_routes.php:82
 msgid "Resolve names"
 msgstr "Selvitä nimet"
 
-#: src/usr/local/www/diag_routes.php:84
+#: src/usr/local/www/diag_routes.php:85
 msgid ""
 "Enabling name resolution may cause the query to take longer. It can be "
 "stopped at any time by clicking the Stop button in the browser."
@@ -10161,15 +10188,15 @@ msgstr ""
 "Tiedustelut kestävät kauemmin jos nimen selvitys on käytössa. Selvistys "
 "voidaan lopettaa milloin tahansa painamalle selaimen pysäytys painiketta."
 
-#: src/usr/local/www/diag_routes.php:90
+#: src/usr/local/www/diag_routes.php:91
 msgid "Rows to display"
 msgstr "Rivien Määrä"
 
-#: src/usr/local/www/diag_routes.php:100
+#: src/usr/local/www/diag_routes.php:101
 msgid "Use a regular expression to filter the tables."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
+#: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:528
@@ -10181,15 +10208,15 @@ msgstr ""
 msgid "Update"
 msgstr "Päivitä"
 
-#: src/usr/local/www/diag_routes.php:191
+#: src/usr/local/www/diag_routes.php:192
 msgid "IPv4 Routes"
 msgstr "IPv4-reitit"
 
-#: src/usr/local/www/diag_routes.php:201 src/usr/local/www/diag_routes.php:219
+#: src/usr/local/www/diag_routes.php:202 src/usr/local/www/diag_routes.php:220
 msgid "Gathering data, please wait..."
 msgstr "Kerätään aineistoa, odota..."
 
-#: src/usr/local/www/diag_routes.php:209
+#: src/usr/local/www/diag_routes.php:210
 msgid "IPv6 Routes"
 msgstr "IPv6-reitit"
 
@@ -12123,10 +12150,10 @@ msgstr ""
 "\"TCP\"."
 
 #: src/usr/local/www/firewall_nat_edit.php:716
-#: src/usr/local/www/firewall_nat_edit.php:1175
+#: src/usr/local/www/firewall_nat_edit.php:1148
 #: src/usr/local/www/firewall_rules_edit.php:1485
-#: src/usr/local/www/firewall_rules_edit.php:1811
-#: src/usr/local/www/firewall_rules_edit.php:1883
+#: src/usr/local/www/firewall_rules_edit.php:1785
+#: src/usr/local/www/firewall_rules_edit.php:1857
 #: src/usr/local/www/interfaces_bridge_edit.php:412
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:822
@@ -12309,37 +12336,9 @@ msgid ""
 "work on an interface containing the default gateway."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:965
-#: src/usr/local/www/firewall_nat_out_edit.php:691
-#: src/usr/local/www/firewall_rules_edit.php:1755
-msgid "Rule Information"
-msgstr "Säännön tiedot"
-
-#: src/usr/local/www/firewall_nat_edit.php:971
-#: src/usr/local/www/firewall_nat_edit.php:981
-#: src/usr/local/www/firewall_nat_out_edit.php:697
-#: src/usr/local/www/firewall_nat_out_edit.php:707
-#: src/usr/local/www/firewall_rules_edit.php:1761
-#: src/usr/local/www/firewall_rules_edit.php:1771
-#, php-format
-msgid "%1$s by %2$s"
-msgstr "%1$s: by %2$s"
-
-#: src/usr/local/www/firewall_nat_edit.php:969
-#: src/usr/local/www/firewall_nat_out_edit.php:695
-#: src/usr/local/www/firewall_rules_edit.php:1759
-msgid "Created"
-msgstr "Luotu"
-
-#: src/usr/local/www/firewall_nat_edit.php:979
-#: src/usr/local/www/firewall_nat_out_edit.php:705
-#: src/usr/local/www/firewall_rules_edit.php:1769
-msgid "Updated"
-msgstr "Päivitetty"
-
-#: src/usr/local/www/firewall_nat_edit.php:1177
-#: src/usr/local/www/firewall_rules_edit.php:1809
-#: src/usr/local/www/firewall_rules_edit.php:1881
+#: src/usr/local/www/firewall_nat_edit.php:1150
+#: src/usr/local/www/firewall_rules_edit.php:1783
+#: src/usr/local/www/firewall_rules_edit.php:1855
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
 #: src/usr/local/www/services_dhcp.php:1545
@@ -25095,37 +25094,37 @@ msgstr "Liittyvät tilat"
 msgid "Related log entries"
 msgstr "Liittyvät loki merkinnät"
 
-#: src/usr/local/www/status.php:141
+#: src/usr/local/www/status.php:160
 #, php-format
 msgid "Firewall Status on %s"
 msgstr "Palomuurin tila %s"
 
-#: src/usr/local/www/status.php:144
+#: src/usr/local/www/status.php:163
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:330
+#: src/usr/local/www/status.php:359
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:332
+#: src/usr/local/www/status.php:361
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:334
+#: src/usr/local/www/status.php:363
 #, php-format
 msgid ""
-"When the page has finished loading, the output will be stored in %1$s. It "
-"may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s."
+"When the page has finished loading, the output is stored in %1$s. It may be "
+"downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:342
+#: src/usr/local/www/status.php:376
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:350
+#: src/usr/local/www/status.php:384
 msgid "Done."
 msgstr "Valmis"
 
@@ -25905,7 +25904,7 @@ msgid "In/out errors"
 msgstr "sisään/ulos virheet"
 
 #: src/usr/local/www/status_interfaces.php:174
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:48
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
 msgstr "Törmäyksiä"
 
@@ -33939,7 +33938,8 @@ msgstr "Kaikki Dyn DNS merkinnät piilotettu"
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:242
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:143
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:242
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:267
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:170
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
@@ -34009,46 +34009,69 @@ msgstr "Haetaan paketin informaatiota"
 msgid "Packages may be added/managed here: "
 msgstr "Paketteja voidaan lisätä/hallita täällä:"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:38
 msgid "Packets In"
 msgstr "Paketteja sisään"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:39
 msgid "Packets Out"
 msgstr "Paketteja ulos"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:40
 msgid "Bytes In"
 msgstr "Bittejä sisään"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:45
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:41
 msgid "Bytes Out"
 msgstr "Bittejä ulos"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:46
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Errors In"
 msgstr "Virheitä sisään"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:47
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
 msgid "Errors Out"
 msgstr "Virheitä ulos"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:75
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:103
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:152
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:147
 msgid "All interfaces are hidden."
 msgstr "Kaikki rajapinnat piilotettu"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:105
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:154
 msgid "All selected interfaces are down."
 msgstr "Kaikki rajapinnat alhaalla"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:118
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
+msgid "All statistics are hidden."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
 msgstr "Tallennettiin rajapinna statistiikka hallintapaneelin kautta"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:127
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:200
 msgid "Retrieving interface data"
 msgstr "Haetaan rajapinnan informaatiota"
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
+msgid "Orientation"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
+msgid "Each interface in a column"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
+msgid "Each interface in a row"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
+msgid "Stats Item"
+msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."

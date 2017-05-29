@@ -1,6 +1,7 @@
 # Aniss <zanata@bellator.se>, 2017. #zanata
 # Bosse <bomca75@hotmail.com>, 2017. #zanata
 # Christian Ståhlfors <christian@wheatgra.in>, 2017. #zanata
+# Christoffer Lans <christoffer.lantz@filmskaparna.se>, 2017. #zanata
 # Ivan Pedersen <ivan@alpe.se>, 2017. #zanata
 # Mårten Grönlund <martengooz@gmail.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
@@ -8,12 +9,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-23 10:02-0300\n"
+"POT-Creation-Date: 2017-05-29 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-17 12:57-0400\n"
-"Last-Translator: Mårten Grönlund <martengooz@gmail.com>\n"
+"PO-Revision-Date: 2017-05-25 08:55-0400\n"
+"Last-Translator: Christoffer Lans <christoffer.lantz@filmskaparna.se>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -717,17 +718,17 @@ msgstr "Skickar förfråga till: %s"
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _remove() startar."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _remove() startar."
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _remove() startar."
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -767,6 +768,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Dynamic DNS %1$s (%2$s): _checkLookupStatus() slutfördes.  Inga poster "
+"hittades."
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
@@ -829,7 +832,6 @@ msgstr ""
 "Tjänstefältet kommer att vara blankt i returkoden."
 
 #: src/etc/inc/dyndns.class:1150
-#, fuzzy
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
@@ -1191,63 +1193,63 @@ msgstr "Generellt systemfel oidentifierat av systemet"
 #: src/etc/inc/dyndns.class:1774
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_checkStatus() results: %1$s"
 
 #: src/etc/inc/dyndns.class:1785
 msgid "No record exists."
-msgstr ""
+msgstr "Inga poster hittades."
 
 #: src/etc/inc/dyndns.class:1789
 msgid "No type exists."
-msgstr ""
+msgstr "Typen existerar inte"
 
 #: src/etc/inc/dyndns.class:1793
 msgid "No value exists."
-msgstr ""
+msgstr "Värdet existerar inte"
 
 #: src/etc/inc/dyndns.class:1796
 msgid "No such zone exists."
-msgstr ""
+msgstr "Zonen existerar inte"
 
 #: src/etc/inc/dyndns.class:1799
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "Posten är ogiltig"
 
 #: src/etc/inc/dyndns.class:1802
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "Typen är ogiltig"
 
 #: src/etc/inc/dyndns.class:1805
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "Värdet är ogiltigt"
 
 #: src/etc/inc/dyndns.class:1808
 msgid "Record is not editable."
-msgstr ""
+msgstr "Posten kan inte redigeras"
 
 #: src/etc/inc/dyndns.class:1811
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "Posten existerar, men kan ej redigeras"
 
 #: src/etc/inc/dyndns.class:1814
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "Posten existerar och måste tas bort innan du lägger till en ny."
 
 #: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Ett fel i fjärrservern inträffade när zonen skulle uppdateras."
 
 #: src/etc/inc/dyndns.class:1820
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Ett fel i fjärrservern inträffade när zonen skulle laddas."
 
 #: src/etc/inc/dyndns.class:1826
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Ett fel i fjärrservern inträffade när zonen skulle läggas till."
 
 #: src/etc/inc/dyndns.class:1829
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "Ett fel i fjärrservern inträffade när posten skulle tas bort."
 
 #: src/etc/inc/dyndns.class:1843
 #, php-format
@@ -1399,9 +1401,8 @@ msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr "Dynamisk DNS %1$s (%2$s): %3$s extraherat från lokala systemet."
 
 #: src/etc/inc/easyrule.inc:113
-#, fuzzy
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr "Enkel regel: Blockerad från vyn Brandväggslogg"
+msgstr "Enkel regel: Blockerad vyn från Brandväggslogg"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
@@ -1476,9 +1477,8 @@ msgid "Invalid interface for pass rule:"
 msgstr "Ogiltigt gränssnitt för pass-regel:"
 
 #: src/etc/inc/easyrule.inc:463
-#, fuzzy
 msgid "Invalid protocol for pass rule:"
-msgstr "Ogiltigt protokoll för pass-regel:"
+msgstr "Ogiltigt protokoll för tillåtnings-regeln:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
@@ -1608,11 +1608,11 @@ msgstr "mtrace svar"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Annonsera till grannar"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr ""
+msgstr "Värva granne"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
@@ -1623,9 +1623,8 @@ msgid "Node information reply"
 msgstr "Nod informationssvar"
 
 #: src/etc/inc/filter.inc:75
-#, fuzzy
 msgid "Parameter problem (invalid IP header)"
-msgstr "Parameterproblem (ogiltigt IP-huvud)"
+msgstr "Parameterproblem (ogiltig IP-header)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
@@ -1671,7 +1670,7 @@ msgstr "Tid överskriden"
 msgid "Packet too big"
 msgstr "Paket för stort"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
@@ -1797,8 +1796,9 @@ msgstr ""
 "Alias med namn endast bestående av siffror är ogiltiga. Skippar alias %s"
 
 #: src/etc/inc/filter.inc:844
+#, fuzzy
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "Skapar grupp artikel för portgång"
 
 #: src/etc/inc/filter.inc:884
 #, php-format
@@ -2257,7 +2257,7 @@ msgstr "Uppdaterar gateway-grupp gateway för %1$s ny gateway är %2$s"
 #: src/usr/local/www/system_gateways.php:251
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:142
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:241
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
@@ -2432,12 +2432,14 @@ msgstr ""
 "positivt.  "
 
 #: src/etc/inc/gwlb.inc:1594
+#, fuzzy
 msgid "The probe interval needs to be a numeric value."
-msgstr ""
+msgstr "Intervallet för probe-värdet måste vara numeriskt"
 
 #: src/etc/inc/gwlb.inc:1596
+#, fuzzy
 msgid "The probe interval needs to be positive."
-msgstr ""
+msgstr "Intervallet för probe-värdet måste vara positivt"
 
 #: src/etc/inc/gwlb.inc:1605
 msgid "The loss interval needs to be a numeric value."
@@ -2477,15 +2479,20 @@ msgstr ""
 "Förlustintervallet måste vara högre eller lika med gränsen för hög latens.  "
 
 #: src/etc/inc/gwlb.inc:1642
+#, fuzzy
 msgid ""
 "The time period needs to be greater than twice the probe interval plus the "
 "loss interval."
 msgstr ""
+"Tidsvärdet måste vara dubbelt så stort som probe-intervallet plus förlust-"
+"intervallet."
 
 #: src/etc/inc/gwlb.inc:1648
+#, fuzzy
 msgid ""
 "The alert interval needs to be greater than or equal to the probe interval."
 msgstr ""
+"Varnings-Intervallet för måste vara större eller lika med probe-intervallet."
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
@@ -3102,7 +3109,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobil klient"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3132
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3549,7 +3556,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:405
 msgid "Browser tab text"
-msgstr ""
+msgstr "Flik-text i webbläsare"
 
 #: src/etc/inc/pfsense-utils.inc:408
 msgid ""
@@ -3557,6 +3564,8 @@ msgid ""
 "current page. Check this box to display the current page followed by the "
 "host name."
 msgstr ""
+"När det här är avmarkerad så ska fliken i webbläsaren visa värdnamnet följt "
+"av sidtiteln. Markera rutan för att visa sidtiteln följt av värdnamnet."
 
 #: src/etc/inc/pfsense-utils.inc:452
 msgid "Require State Filter"
@@ -3569,119 +3578,144 @@ msgid ""
 "displayed. Useful for systems with large state tables."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:743
+#: src/etc/inc/pfsense-utils.inc:475
+msgid "Rule Information"
+msgstr "Regelinformation"
+
+#: src/etc/inc/pfsense-utils.inc:481 src/etc/inc/pfsense-utils.inc:491
+#, php-format
+msgid "%1$s by %2$s"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:482 src/etc/inc/pfsense-utils.inc:492
+#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
+#: src/usr/local/www/diag_confbak.php:123
+#: src/usr/local/www/diag_confbak.php:232
+#: src/usr/local/www/diag_confbak.php:243
+msgid "n/j/y H:i:s"
+msgstr "n/j/y H:i:s"
+
+#: src/etc/inc/pfsense-utils.inc:479
+msgid "Created"
+msgstr "Skapad"
+
+#: src/etc/inc/pfsense-utils.inc:489
+msgid "Updated"
+msgstr "Uppdaterad"
+
+#: src/etc/inc/pfsense-utils.inc:784
 msgid "After synch increase advertising skew"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:793
+#: src/etc/inc/pfsense-utils.inc:834
 msgid "Error creating socket!"
 msgstr "Fel vid skapande av socket!"
 
-#: src/etc/inc/pfsense-utils.inc:794
+#: src/etc/inc/pfsense-utils.inc:835
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
 msgstr "Felkoden är '%1$s' - %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:799
+#: src/etc/inc/pfsense-utils.inc:840
 #, php-format
 msgid "setsockopt() failed, error: %s"
 msgstr "setsockopt() misslyckades, fel: %s"
 
-#: src/etc/inc/pfsense-utils.inc:803
+#: src/etc/inc/pfsense-utils.inc:844
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
 msgstr "Magiskt paket skickat %1$s) till (%2$s) MAC=%3$s"
 
-#: src/etc/inc/pfsense-utils.inc:866 src/etc/inc/pfsense-utils.inc:886
+#: src/etc/inc/pfsense-utils.inc:907 src/etc/inc/pfsense-utils.inc:927
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
 msgstr "Återställde %s av konfigurationsfilen (eventuellt från CARP-partner)"
 
-#: src/etc/inc/pfsense-utils.inc:973
+#: src/etc/inc/pfsense-utils.inc:1014
 msgid "reload_interfaces_sync() is starting."
 msgstr "reload_interfaces_sync() startar."
 
-#: src/etc/inc/pfsense-utils.inc:982
+#: src/etc/inc/pfsense-utils.inc:1023
 msgid "Enabling system routing"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:986
+#: src/etc/inc/pfsense-utils.inc:1027
 msgid "Cleaning up Interfaces"
 msgstr "Städar upp Gränssnitt"
 
-#: src/etc/inc/pfsense-utils.inc:1430
+#: src/etc/inc/pfsense-utils.inc:1471
 msgid "No history data found!"
 msgstr "Ingen historik hittad!"
 
-#: src/etc/inc/pfsense-utils.inc:1562
+#: src/etc/inc/pfsense-utils.inc:1603
 msgid "device not present! Is the modem attached to the system?"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1631
+#: src/etc/inc/pfsense-utils.inc:1672
 msgid "running"
 msgstr "kör"
 
-#: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1673 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr "uppe"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "blocking"
 msgstr "blockerar"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "check for ethernet loops"
 msgstr "Kolla efter ethernet loopar"
 
-#: src/etc/inc/pfsense-utils.inc:1680
+#: src/etc/inc/pfsense-utils.inc:1721
 msgid "learning"
-msgstr ""
+msgstr "lär"
 
-#: src/etc/inc/pfsense-utils.inc:1683
+#: src/etc/inc/pfsense-utils.inc:1724
 msgid "forwarding"
 msgstr "vidarebefodrar"
 
-#: src/etc/inc/pfsense-utils.inc:1817
+#: src/etc/inc/pfsense-utils.inc:1858
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNSCACHE: Hittade gammal IP %1$s och ny IP  %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:1837
+#: src/etc/inc/pfsense-utils.inc:1878
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr "Laddar %s kryptografisk accelerationsmodul. "
 
-#: src/etc/inc/pfsense-utils.inc:1854
+#: src/etc/inc/pfsense-utils.inc:1895
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr "Laddar %s värmemonitoreringsmodul."
 
-#: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
+#: src/etc/inc/pfsense-utils.inc:1972 src/etc/inc/pfsense-utils.inc:2028
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr "Nedladdning av fil misslyckades med statuskoden %1$s. URL: %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2206
+#: src/etc/inc/pfsense-utils.inc:2247
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr "Kunde inte behandla icke-existerande fil från alias: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2211
+#: src/etc/inc/pfsense-utils.inc:2252
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr "Kunde inte bearbeta tom fil från alias: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2216
+#: src/etc/inc/pfsense-utils.inc:2257
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr "Kunde inte bearbeta alias från alias: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2273
+#: src/etc/inc/pfsense-utils.inc:2314
 #, php-format
 msgid "Failed to download alias %s"
 msgstr "Hämtning av alias %s misslyckades"
 
-#: src/etc/inc/pfsense-utils.inc:2302
+#: src/etc/inc/pfsense-utils.inc:2343
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
@@ -3689,50 +3723,54 @@ msgstr ""
 "Aliasarkriv är en tar/tgz fil som ej kan okomprimeras eftersom verktyg "
 "saknas! "
 
-#: src/etc/inc/pfsense-utils.inc:2312
+#: src/etc/inc/pfsense-utils.inc:2353
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr "Kunde inte öppna %s/aliases för skrivning!"
 
-#: src/etc/inc/pfsense-utils.inc:2318
+#: src/etc/inc/pfsense-utils.inc:2359
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr "Följande fil kunde inte läsas %1$s från %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2897
+#: src/etc/inc/pfsense-utils.inc:2938
+msgid "Bosnian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2939
 msgid "German (Germany)"
 msgstr "Tyska (Tyskland)"
 
-#: src/etc/inc/pfsense-utils.inc:2898
+#: src/etc/inc/pfsense-utils.inc:2940
 msgid "English"
 msgstr "Engelska"
 
-#: src/etc/inc/pfsense-utils.inc:2899
+#: src/etc/inc/pfsense-utils.inc:2941
 msgid "Spanish"
 msgstr "Spanska"
 
-#: src/etc/inc/pfsense-utils.inc:2900
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Norwegian Bokmål"
 msgstr "Norska Bokmål"
 
-#: src/etc/inc/pfsense-utils.inc:2901
+#: src/etc/inc/pfsense-utils.inc:2943
 msgid "Russian"
 msgstr "Ryska"
 
-#: src/etc/inc/pfsense-utils.inc:2902
+#: src/etc/inc/pfsense-utils.inc:2944
 msgid "Chinese (Simplified, China)"
 msgstr "Kinesiska (Förenklad, Kina)"
 
-#: src/etc/inc/pfsense-utils.inc:2903
+#: src/etc/inc/pfsense-utils.inc:2945
 msgid "Chinese (Taiwan)"
 msgstr "Kinesiska (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
-#: src/etc/inc/pfsense-utils.inc:3139
+#: src/etc/inc/pfsense-utils.inc:3140 src/etc/inc/pfsense-utils.inc:3155
+#: src/etc/inc/pfsense-utils.inc:3181
 msgid "No Service"
 msgstr "Ingen tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
+#: src/etc/inc/pfsense-utils.inc:3150 src/etc/inc/pfsense-utils.inc:3193
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3748,83 +3786,83 @@ msgstr "Ingen tjänst"
 msgid "Mode"
 msgstr "Läge"
 
-#: src/etc/inc/pfsense-utils.inc:3114
+#: src/etc/inc/pfsense-utils.inc:3156
 msgid "Restricted Service"
 msgstr "Begränsad Tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3115
+#: src/etc/inc/pfsense-utils.inc:3157
 msgid "Valid Service"
 msgstr "Giltig tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3116
+#: src/etc/inc/pfsense-utils.inc:3158
 msgid "Restricted Regional Service"
 msgstr "Begränsad Regional Tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3117
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Powersaving Service"
 msgstr "Strömsparartjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3118
+#: src/etc/inc/pfsense-utils.inc:3160
 msgid "Unknown Service"
 msgstr "Okänd tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3124
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Invalid SIM/locked State"
 msgstr "Ogiltigt SIM/Låst tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3125
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Valid SIM State"
 msgstr "Giltigt SIM-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3126
+#: src/etc/inc/pfsense-utils.inc:3168
 msgid "Invalid SIM CS State"
 msgstr "Ogiltigt SIM CS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3127
+#: src/etc/inc/pfsense-utils.inc:3169
 msgid "Invalid SIM PS State"
 msgstr "Ogiltigt SIM PS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3128
+#: src/etc/inc/pfsense-utils.inc:3170
 msgid "Invalid SIM CS/PS State"
 msgstr "Ogiltigt SIM CS/PS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3129
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Missing SIM State"
 msgstr "Saknar SIM-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3140
+#: src/etc/inc/pfsense-utils.inc:3182
 msgid "Limited Service"
 msgstr "Begränsad tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3198
 msgid "Initializing Service"
 msgstr "Initierar tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3199
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3158
+#: src/etc/inc/pfsense-utils.inc:3200
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3201
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Upplåst eller korrekt MCC/MNC-tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3167
+#: src/etc/inc/pfsense-utils.inc:3209
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3168
+#: src/etc/inc/pfsense-utils.inc:3210
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -5004,86 +5042,95 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:559
 msgid "WebCfg - System: Package Manager: Install Package"
-msgstr ""
+msgstr "WebCfg - System: Pakethanterare: Installera Paket"
 
 #: src/etc/inc/priv.defs.inc:560
 msgid "Allow access to the 'System: Package Manager: Install Package' page."
 msgstr ""
+"Tillåt åtkomst till 'System: Pakethanterare: Installera Paket' -sidan och "
+"Dashboard."
 
 #: src/etc/inc/priv.defs.inc:565
 msgid "WebCfg - System: Package Manager: Installed"
-msgstr ""
+msgstr "WebCfg - System: Pakethanterare: Installerade"
 
 #: src/etc/inc/priv.defs.inc:566
 msgid "Allow access to the 'System: Package Manager: Installed' page."
 msgstr ""
+"Tillåt åtkomst till 'System: Pakethanterare: Installerade' -sidan och "
+"Dashboard."
 
 #: src/etc/inc/priv.defs.inc:571
 msgid "WebCfg - Services: Captive Portal"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal"
 
 #: src/etc/inc/priv.defs.inc:572
 msgid "Allow access to the 'Services: Captive Portal' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Captive Portal'-sidan"
 
 #: src/etc/inc/priv.defs.inc:577
 msgid "WebCfg - Services: Captive Portal: File Manager"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Filhanterare"
 
 #: src/etc/inc/priv.defs.inc:578
 msgid "Allow access to the 'Services: Captive Portal: File Manager' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Captive Portal: Filhanterare'-sidan"
 
 #: src/etc/inc/priv.defs.inc:583
 msgid "WebCfg - Services: Captive Portal: Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Tillåtna Värdnamn"
 
 #: src/etc/inc/priv.defs.inc:584
 msgid ""
 "Allow access to the 'Services: Captive Portal: Allowed Hostnames' page."
 msgstr ""
+"Tillåt åtkomst till 'Tjänster: Captive Portal: Tillåtna Värdnämn'-sidan"
 
 #: src/etc/inc/priv.defs.inc:589
 msgid "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Redigera Tillåtna Värdnamn"
 
 #: src/etc/inc/priv.defs.inc:590
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
 msgstr ""
+"Tillåt åtkomst till 'Tjänster: Captive Portal: Redigera Tillåtna Värdnämn'-"
+"sidan"
 
 #: src/etc/inc/priv.defs.inc:595
 msgid "WebCfg - Services: Captive Portal: Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Tillåtna IP"
 
 #: src/etc/inc/priv.defs.inc:596
 msgid "Allow access to the 'Services: Captive Portal: Allowed IPs' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Captive Portal: Tillåtna IP'-sidan"
 
 #: src/etc/inc/priv.defs.inc:601
 msgid "WebCfg - Services: Captive Portal: Edit Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Redigera Tillåtna IP"
 
 #: src/etc/inc/priv.defs.inc:602
 msgid "Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
 msgstr ""
+"Tillåt åtkomst till 'Tjänster: Captive Portal: Redigera Tillåtna IP'-sidan"
 
 #: src/etc/inc/priv.defs.inc:607
 msgid "WebCfg - Services: Captive Portal: Mac Addresses"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: Mac-adresser"
 
 #: src/etc/inc/priv.defs.inc:608
 msgid "Allow access to the 'Services: Captive Portal: Mac Addresses' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Captive Portal: MAC-adresser'-sidan"
 
 #: src/etc/inc/priv.defs.inc:613
 msgid "WebCfg - Services: Captive Portal: Edit MAC Addresses"
-msgstr ""
+msgstr "WebCfg - Tjänster: Captive Portal: MAC-adresser"
 
 #: src/etc/inc/priv.defs.inc:614
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
 msgstr ""
+"Tillåt åtkomst till 'Tjänster: Captive Portal: Redigera MAC-adresser'-sidan"
 
 #: src/etc/inc/priv.defs.inc:619
 msgid "WebCfg - Services: Captive Portal Vouchers"
@@ -5290,19 +5337,19 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:769
 msgid "WebCfg - Services: RFC 2136 Clients"
-msgstr ""
+msgstr "WebCfg - Tjänster: RFC 2136 Klienter"
 
 #: src/etc/inc/priv.defs.inc:770
 msgid "Allow access to the 'Services: RFC 2136 Clients' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: RFC 2136 Klienter'-sidan"
 
 #: src/etc/inc/priv.defs.inc:775
 msgid "WebCfg - Services: RFC 2136 Client: Edit"
-msgstr ""
+msgstr "WebCfg - Tjänster: RFC 2136 Klienter: Redigera"
 
 #: src/etc/inc/priv.defs.inc:776
 msgid "Allow access to the 'Services: RFC 2136 Client: Edit' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: RFC 2136 Klienter: Redigera'-sidan"
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
@@ -5314,11 +5361,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:787
 msgid "WebCfg - Services: SNMP"
-msgstr ""
+msgstr "WebCfg - Tjänster: SNMP"
 
 #: src/etc/inc/priv.defs.inc:788
 msgid "Allow access to the 'Services: SNMP' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: SNMP'-sidan"
 
 #: src/etc/inc/priv.defs.inc:793
 msgid "WebCfg - Services: DNS Resolver"
@@ -5363,31 +5410,31 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:823
 msgid "WebCfg - Services: Wake-on-LAN"
-msgstr ""
+msgstr "WebCfg - Tjänster: Wake-on-LAN"
 
 #: src/etc/inc/priv.defs.inc:824
 msgid "Allow access to the 'Services: Wake-on-LAN' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Wake-on-LAN'-sidan"
 
 #: src/etc/inc/priv.defs.inc:829
 msgid "WebCfg - Services: Wake-on-LAN: Edit"
-msgstr ""
+msgstr "WebCfg - Tjänster: Wake-on-LAN: Redigera"
 
 #: src/etc/inc/priv.defs.inc:830
 msgid "Allow access to the 'Services: Wake-on-LAN: Edit' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Tjänster: Wake-on-LAN: Redigera'-sidan"
 
 #: src/etc/inc/priv.defs.inc:835
 msgid "WebCfg - Hidden: Detailed Status"
-msgstr ""
+msgstr "WebCfg - Dolt: Detaljerad Status"
 
 #: src/etc/inc/priv.defs.inc:836
 msgid "Allow access to the 'Hidden: Detailed Status' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Dolt: Detaljerad Status'-sidan"
 
 #: src/etc/inc/priv.defs.inc:841
 msgid "WebCfg - Status: Captive Portal"
-msgstr ""
+msgstr "WebCfg - Status: Captive Portal"
 
 #: src/etc/inc/priv.defs.inc:842
 msgid "Allow access to the 'Status: Captive Portal' page."
@@ -5427,19 +5474,19 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:871
 msgid "WebCfg - Status: CARP"
-msgstr ""
+msgstr "WebCfg - Status: CARP"
 
 #: src/etc/inc/priv.defs.inc:872
 msgid "Allow access to the 'Status: CARP' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: CARP'-sidan"
 
 #: src/etc/inc/priv.defs.inc:877
 msgid "WebCfg - Status: DHCP leases"
-msgstr ""
+msgstr "WebCfg - Status: DHCP leases"
 
 #: src/etc/inc/priv.defs.inc:878
 msgid "Allow access to the 'Status: DHCP leases' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: DHCP leases'-sidan"
 
 #: src/etc/inc/priv.defs.inc:883
 msgid "WebCfg - Status: DHCPv6 leases"
@@ -5459,47 +5506,47 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
-msgstr ""
+msgstr "WebCfg - Status: Gateway-grupper"
 
 #: src/etc/inc/priv.defs.inc:896
 msgid "Allow access to the 'Status: Gateway Groups' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status:  Gateway-grupper'-sidan"
 
 #: src/etc/inc/priv.defs.inc:901
 msgid "WebCfg - Status: Gateways"
-msgstr ""
+msgstr "WebCfg - Status: Gateways"
 
 #: src/etc/inc/priv.defs.inc:902
 msgid "Allow access to the 'Status: Gateways' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: Gateways'-sidan"
 
 #: src/etc/inc/priv.defs.inc:907
 msgid "WebCfg - Status: Traffic Graph"
-msgstr ""
+msgstr "WebCfg - Status: Trafikgraf"
 
 #: src/etc/inc/priv.defs.inc:908
 msgid "Allow access to the 'Status: Traffic Graph' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: Trafikgraf'-sidan"
 
 #: src/etc/inc/priv.defs.inc:916
 msgid "WebCfg - Status: CPU load"
-msgstr ""
+msgstr "WebCfg - Status: CPU-belastning"
 
 #: src/etc/inc/priv.defs.inc:917
 msgid "Allow access to the 'Status: CPU load' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: CPU-belastning'-sidan"
 
 #: src/etc/inc/priv.defs.inc:922
 msgid "WebCfg - Status: Interfaces"
-msgstr ""
+msgstr "WebCfg - Status: Gränssnitt"
 
 #: src/etc/inc/priv.defs.inc:923
 msgid "Allow access to the 'Status: Interfaces' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'Status: Gränssnitt'-sidan"
 
 #: src/etc/inc/priv.defs.inc:928
 msgid "WebCfg - Status: IPsec"
-msgstr ""
+msgstr "WebCfg - Status: IPsec"
 
 #: src/etc/inc/priv.defs.inc:929
 msgid "Allow access to the 'Status: IPsec' page."
@@ -6880,7 +6927,7 @@ msgstr "Begränsare"
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
 #: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
-#: src/usr/local/www/diag_routes.php:82
+#: src/usr/local/www/diag_routes.php:83
 msgid "Enable"
 msgstr "Aktivera"
 
@@ -7153,11 +7200,11 @@ msgstr ""
 msgid "Setting hard disk standby... "
 msgstr ""
 
-#: src/etc/inc/system.inc:2431
+#: src/etc/inc/system.inc:2440
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2435 src/etc/inc/system.inc:2454
+#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
 msgid "PC Engines ALIX"
 msgstr ""
 
@@ -7810,7 +7857,7 @@ msgstr "Bekräfta"
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:267
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:168
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:292
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:195
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
@@ -7840,7 +7887,7 @@ msgstr "Spara"
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
 #: src/usr/local/www/diag_resetstate.php:56
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/diag_smart.php:36
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_sockets.php:31
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
@@ -8380,7 +8427,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:300
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:169
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:293
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:196
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
@@ -8557,6 +8604,7 @@ msgstr "Ladda ner fil"
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
+#: src/usr/local/www/status.php:366
 msgid "Download"
 msgstr "Ladda ned"
 
@@ -8598,19 +8646,6 @@ msgstr ""
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
 msgstr "Återställning av tidsstämpel %1$s med beskrivning \"%2$s\" lyckades."
-
-#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
-#: src/usr/local/www/diag_confbak.php:123
-#: src/usr/local/www/diag_confbak.php:232
-#: src/usr/local/www/diag_confbak.php:243
-#: src/usr/local/www/firewall_nat_edit.php:972
-#: src/usr/local/www/firewall_nat_edit.php:982
-#: src/usr/local/www/firewall_nat_out_edit.php:698
-#: src/usr/local/www/firewall_nat_out_edit.php:708
-#: src/usr/local/www/firewall_rules_edit.php:1762
-#: src/usr/local/www/firewall_rules_edit.php:1772
-msgid "n/j/y H:i:s"
-msgstr "n/j/y H:i:s"
 
 #: src/usr/local/www/diag_confbak.php:55
 msgid "Unable to revert to the selected configuration."
@@ -8803,28 +8838,28 @@ msgstr "Återgå till dashboard "
 msgid "Keep Configuration"
 msgstr "Spara konfigurationen"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:379
 msgid "DNS Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:114
+#: src/usr/local/www/diag_dns.php:118
 msgid "Created from Diagnostics-> DNS Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:120
+#: src/usr/local/www/diag_dns.php:124
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:134
+#: src/usr/local/www/diag_dns.php:141
 msgid "Host must be a valid hostname or IP address."
 msgstr "Värd måste vara ett giltigt värdnamn eller IP-adress."
 
-#: src/usr/local/www/diag_dns.php:143
+#: src/usr/local/www/diag_dns.php:150
 msgid "No response"
 msgstr "Inget svar"
 
-#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8844,12 +8879,12 @@ msgstr "Inget svar"
 msgid "IP Address"
 msgstr "IP-adress"
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:192 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:445
 msgid "Host Name"
 msgstr "Värdnamn"
 
-#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
@@ -8858,24 +8893,34 @@ msgstr "Värdnamn"
 msgid "Server"
 msgstr "Server"
 
-#: src/usr/local/www/diag_dns.php:188
+#: src/usr/local/www/diag_dns.php:195
 msgid "Query Time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:206
+#: src/usr/local/www/diag_dns.php:213
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr "Värden %s kunde inte slås upp."
 
-#: src/usr/local/www/diag_dns.php:211
+#: src/usr/local/www/diag_dns.php:218
 msgid "Alias was updated successfully."
 msgstr "Uppdatering av alias lyckades."
 
-#: src/usr/local/www/diag_dns.php:213
+#: src/usr/local/www/diag_dns.php:220
 msgid "Alias was created successfully."
 msgstr "Skapande av alias lyckades."
 
-#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:228
+#, php-format
+msgid "Could not update alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:230
+#, php-format
+msgid "Could not create alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8885,65 +8930,65 @@ msgstr "Skapande av alias lyckades."
 msgid "*Hostname"
 msgstr "* Värdnamn"
 
-#: src/usr/local/www/diag_dns.php:232
+#: src/usr/local/www/diag_dns.php:249
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:239
+#: src/usr/local/www/diag_dns.php:256
 msgid "Update alias"
 msgstr "Uppdatera alias"
 
-#: src/usr/local/www/diag_dns.php:241
+#: src/usr/local/www/diag_dns.php:258
 msgid "Add alias"
 msgstr "Lägg till alias"
 
-#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:274 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr "Resultat"
 
-#: src/usr/local/www/diag_dns.php:263
+#: src/usr/local/www/diag_dns.php:280
 msgid "Result"
 msgstr "Resultat"
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:281
 msgid "Record type"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:281
+#: src/usr/local/www/diag_dns.php:298
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:286
+#: src/usr/local/www/diag_dns.php:303
 msgid "Name server"
 msgstr "Namnserver"
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:304
 msgid "Query time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:304
+#: src/usr/local/www/diag_dns.php:321
 msgid "More Information"
 msgstr "Mer information"
 
-#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:391
 msgid "Ping"
 msgstr "Ping"
 
-#: src/usr/local/www/diag_dns.php:310
+#: src/usr/local/www/diag_dns.php:327
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:312
+#: src/usr/local/www/diag_dns.php:329
 msgid "IP WHOIS @ DNS Stuff"
 msgstr "IP WHOIS @ DNS Stuff"
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:330
 msgid "IP Info @ DNS Stuff"
 msgstr "IP Information @ DNS Stuff"
 
@@ -8993,7 +9038,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_dump_states.php:147
 #: src/usr/local/www/diag_dump_states_sources.php:106
-#: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
+#: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_groupmanager_addprivs.php:202
@@ -9980,33 +10025,33 @@ msgstr ""
 msgid "Do you really want to reset the selected states?"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
 msgid "Routes"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:77
+#: src/usr/local/www/diag_routes.php:78
 msgid "Routing Table Display Options"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:81
+#: src/usr/local/www/diag_routes.php:82
 msgid "Resolve names"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:84
+#: src/usr/local/www/diag_routes.php:85
 msgid ""
 "Enabling name resolution may cause the query to take longer. It can be "
 "stopped at any time by clicking the Stop button in the browser."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:90
+#: src/usr/local/www/diag_routes.php:91
 msgid "Rows to display"
 msgstr "Rader att visa"
 
-#: src/usr/local/www/diag_routes.php:100
+#: src/usr/local/www/diag_routes.php:101
 msgid "Use a regular expression to filter the tables."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
+#: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:528
@@ -10018,15 +10063,15 @@ msgstr ""
 msgid "Update"
 msgstr "Uppdatera"
 
-#: src/usr/local/www/diag_routes.php:191
+#: src/usr/local/www/diag_routes.php:192
 msgid "IPv4 Routes"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:201 src/usr/local/www/diag_routes.php:219
+#: src/usr/local/www/diag_routes.php:202 src/usr/local/www/diag_routes.php:220
 msgid "Gathering data, please wait..."
 msgstr "Samlar data, var god vänta..."
 
-#: src/usr/local/www/diag_routes.php:209
+#: src/usr/local/www/diag_routes.php:210
 msgid "IPv6 Routes"
 msgstr ""
 
@@ -11905,10 +11950,10 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:716
-#: src/usr/local/www/firewall_nat_edit.php:1175
+#: src/usr/local/www/firewall_nat_edit.php:1148
 #: src/usr/local/www/firewall_rules_edit.php:1485
-#: src/usr/local/www/firewall_rules_edit.php:1811
-#: src/usr/local/www/firewall_rules_edit.php:1883
+#: src/usr/local/www/firewall_rules_edit.php:1785
+#: src/usr/local/www/firewall_rules_edit.php:1857
 #: src/usr/local/www/interfaces_bridge_edit.php:412
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:822
@@ -12088,37 +12133,9 @@ msgid ""
 "work on an interface containing the default gateway."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:965
-#: src/usr/local/www/firewall_nat_out_edit.php:691
-#: src/usr/local/www/firewall_rules_edit.php:1755
-msgid "Rule Information"
-msgstr "Regelinformation"
-
-#: src/usr/local/www/firewall_nat_edit.php:971
-#: src/usr/local/www/firewall_nat_edit.php:981
-#: src/usr/local/www/firewall_nat_out_edit.php:697
-#: src/usr/local/www/firewall_nat_out_edit.php:707
-#: src/usr/local/www/firewall_rules_edit.php:1761
-#: src/usr/local/www/firewall_rules_edit.php:1771
-#, php-format
-msgid "%1$s by %2$s"
-msgstr ""
-
-#: src/usr/local/www/firewall_nat_edit.php:969
-#: src/usr/local/www/firewall_nat_out_edit.php:695
-#: src/usr/local/www/firewall_rules_edit.php:1759
-msgid "Created"
-msgstr "Skapad"
-
-#: src/usr/local/www/firewall_nat_edit.php:979
-#: src/usr/local/www/firewall_nat_out_edit.php:705
-#: src/usr/local/www/firewall_rules_edit.php:1769
-msgid "Updated"
-msgstr "Uppdaterad"
-
-#: src/usr/local/www/firewall_nat_edit.php:1177
-#: src/usr/local/www/firewall_rules_edit.php:1809
-#: src/usr/local/www/firewall_rules_edit.php:1881
+#: src/usr/local/www/firewall_nat_edit.php:1150
+#: src/usr/local/www/firewall_rules_edit.php:1783
+#: src/usr/local/www/firewall_rules_edit.php:1855
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
 #: src/usr/local/www/services_dhcp.php:1545
@@ -24432,37 +24449,37 @@ msgstr ""
 msgid "Related log entries"
 msgstr ""
 
-#: src/usr/local/www/status.php:141
+#: src/usr/local/www/status.php:160
 #, php-format
 msgid "Firewall Status on %s"
 msgstr ""
 
-#: src/usr/local/www/status.php:144
+#: src/usr/local/www/status.php:163
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:330
+#: src/usr/local/www/status.php:359
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:332
+#: src/usr/local/www/status.php:361
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:334
+#: src/usr/local/www/status.php:363
 #, php-format
 msgid ""
-"When the page has finished loading, the output will be stored in %1$s. It "
-"may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s."
+"When the page has finished loading, the output is stored in %1$s. It may be "
+"downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:342
+#: src/usr/local/www/status.php:376
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:350
+#: src/usr/local/www/status.php:384
 msgid "Done."
 msgstr "Klar."
 
@@ -25242,7 +25259,7 @@ msgid "In/out errors"
 msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:174
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:48
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
 msgstr ""
 
@@ -33242,7 +33259,8 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:242
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:143
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:242
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:267
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:170
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
@@ -33310,46 +33328,69 @@ msgstr ""
 msgid "Packages may be added/managed here: "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:38
 msgid "Packets In"
 msgstr "Paket in"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:39
 msgid "Packets Out"
 msgstr "Paket ut"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:40
 msgid "Bytes In"
 msgstr "Bytes in"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:45
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:41
 msgid "Bytes Out"
 msgstr "Bytes ut"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:46
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Errors In"
 msgstr "Fel in"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:47
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
 msgid "Errors Out"
 msgstr "Fel ut"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:75
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:103
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:152
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:147
 msgid "All interfaces are hidden."
 msgstr "Alla gränssnitt är dolda."
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:105
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:154
 msgid "All selected interfaces are down."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:118
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
+msgid "All statistics are hidden."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
 msgstr "Sparade Filter för Gränssnittstatistik via Dashboard."
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:127
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:200
 msgid "Retrieving interface data"
 msgstr "Hämtar gränssnittsdata"
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
+msgid "Orientation"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
+msgid "Each interface in a column"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
+msgid "Each interface in a row"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
+msgid "Stats Item"
+msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."

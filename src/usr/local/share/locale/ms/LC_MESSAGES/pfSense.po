@@ -1,16 +1,17 @@
 # Mitchell <wheaton.mc@gmail.com>, 2017. #zanata
+# Muhammad Faiz bin Mohd Rosli <nekoprog@gmail.com>, 2017. #zanata
 # Xuan You <xuanyou@gmail.com>, 2017. #zanata
 # tepung <tepung@blake-srebe.net>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-23 10:02-0300\n"
+"POT-Creation-Date: 2017-05-29 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-07 02:37-0400\n"
-"Last-Translator: Xuan You <xuanyou@gmail.com>\n"
+"PO-Revision-Date: 2017-05-26 05:29-0400\n"
+"Last-Translator: Muhammad Faiz bin Mohd Rosli <nekoprog@gmail.com>\n"
 "Language-Team: Malay\n"
 "Language: ms\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -318,11 +319,11 @@ msgstr "Masukkan nama pengguna anda "
 #: src/usr/local/www/vpn_openvpn_client.php:597
 #: src/usr/local/www/vpn_openvpn_client.php:622
 msgid "Password"
-msgstr "Katalaluan"
+msgstr "Kata laluan"
 
 #: src/etc/inc/authgui.inc:286
 msgid "Enter your password"
-msgstr "Masukkan katalaluan anda"
+msgstr "Masukkan kata laluan anda"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -450,7 +451,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sAntaramuka Opsyenal %2$s penerangan dijumpai: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -467,7 +468,7 @@ msgstr "Tidak wajib"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Antaramuka akan ditugaskan seperti berikut:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
 msgid "Do you want to proceed [y|n]?"
@@ -482,6 +483,8 @@ msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
 msgstr ""
+"Adakah anda ingin alih keluar alamat IP LAN dan hapus antaramuka sekarang "
+"[y|t]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
@@ -490,7 +493,7 @@ msgstr "%sMenuliskan konfigurasi..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Tugasan konsol antaramuka"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
@@ -499,7 +502,7 @@ msgstr "Selesai. %s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Tunggu sebentar sementara tetapan sedang dimuat semula..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
@@ -508,12 +511,12 @@ msgstr "Selesai!"
 #: src/etc/inc/config.console.inc:400
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "Mengesan sambungan pada antaramuka %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Tiada sambungan dikesan.%s"
 
 #: src/etc/inc/config.console.inc:422
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
@@ -522,16 +525,17 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:438
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "Antaramuka berkemampuan VLAN:"
 
 #: src/etc/inc/config.console.inc:453
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "Tiada antaramuka berkemampuan VLAN dikesan."
 
 #: src/etc/inc/config.console.inc:457
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"Masukkan nama antaramuka induk untuk VLAN baru (atau kosong untuk tamatkan):"
 
 #: src/etc/inc/config.console.inc:470
 msgid "Enter the VLAN tag (1-4094):"
@@ -545,7 +549,7 @@ msgstr "%1$sTag VLAN '%2$s' tidak sah.%3$s"
 #: src/etc/inc/config.console.inc:481
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "Antaramuka induk dan VLAN ini sudah diwujudkan."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
@@ -553,7 +557,7 @@ msgstr "Menaiktaraf konfigurasi m0n0wall untuk pfSense..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "RALAT! Gagal mengubah m0n0wall -> pfsense di dalam config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
@@ -566,10 +570,14 @@ msgstr "Konfigurasi ditemui pada %1$s.%2$s"
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"config.xml tidak dijumpai, cubaan untuk pulihkan tetapan terakhir yang "
+"diketahui."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"Tiada config.xml atau tetapan sandaran dijumpai, mengeset semula kepada "
+"tetapan kilang."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
@@ -585,6 +593,8 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml telah rosak dan ialah 0 bytes. Tidak dapat memulihkan dari "
+"sandaran sebelumnya."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:505
@@ -599,31 +609,34 @@ msgstr "%1$s sedang memulihkan konfigurasi %2$s"
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "Fail tetapan XML tidak ditemui. %s tidak dapat meneruskan but."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Tetapan terakhir yang diketahui dijumpai dan dipulihkan. Untuk ketepatan, "
+"sila semak fail tetapan."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Keluar.... Tidak dapat menemukan fail tetapan yang berguna."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Mula naik taraf tetapan pada %s, set masa tamat pelaksanaan kepada 15 minit"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Telah dikemaskini kekerapan kemaskini bogon kepada 3 pagi"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Kemaskini tetapan ditamatkan pada %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
@@ -666,7 +679,7 @@ msgstr "%1$s di baris %2$d"
 #: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Menyahpautkan. Fail sandaran cache %s telah rosak."
 
 #: src/etc/inc/config.lib.inc:897
 #, php-format
@@ -675,7 +688,7 @@ msgstr "%s membuat perubahan yang tidak dikenali"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "Gagal untuk menyulis/menyahsulit data!"
 
 #: src/etc/inc/dyndns.class:200
 msgid "Dynamic DNS: updatedns() starting"
@@ -695,11 +708,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"DNS Dinamik (%1$s) Telah berlaku ralat semasa cubaan menentukan IP awam "
+"untuk antaramuka. - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:368
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Memulakan DNS Dinamik %1$s (%2$s): _update()."
 
 #: src/etc/inc/dyndns.class:465
 #, php-format
@@ -707,26 +722,28 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"DNS Dinamik %1$s (%2$s): Sedang memproses replika kemaskini pada akaun "
+"percuma No-IP. IP diset sementara kepada %3$s"
 
 #: src/etc/inc/dyndns.class:704
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Menghantar permintaan kepada: %s"
 
 #: src/etc/inc/dyndns.class:937
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Memulakan DNS Dinamik %1$s (%2$s): _remove()."
 
 #: src/etc/inc/dyndns.class:1005
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Memulakan DNS Dinamik %1$s (%2$s): _listCurrent()"
 
 #: src/etc/inc/dyndns.class:1065
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Memulakan DNS Dinamik %1$s (%2$s): _checkLookupStatus()"
 
 #: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -766,6 +783,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Menamatkan DNS Dinamik %1$s (%2$s): _checkLookupStatus(). Tiada padanan "
+"rekod dijumpai."
 
 #: src/etc/inc/dyndns.class:1116
 #, php-format
@@ -807,32 +826,42 @@ msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"Nama pengguna atau kata laluan DNS-O-Matic  yang diberikan tidak betul. "
+"Tiada kemaskini akan dibahagikan kepada perkhidmatan sehingga ia "
+"diselesaikan."
 
 #: src/etc/inc/dyndns.class:1146
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Nama hos yang diberikan tidak memenuhi kelayakan nama domain. Jika tiada "
+"nama hos disertakan, notfqdn akan dikembalikan sekali sahaja."
 
 #: src/etc/inc/dyndns.class:1148
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Nama hos yang diserah tidak dapat dipadankan dengan mana-mana perkhidmatan "
+"yang telah ditetapkan. Ruangan perkhidmatan akan menjadi kosong di dalam kod "
+"kembali."
 
 #: src/etc/inc/dyndns.class:1150
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"Sehingga 20 nama hos boleh dikemaskini. numhost akan dikembalikan jika "
+"kemaskini dicuba lebih dari 20 kali atau kemaskini round-robin."
 
 #: src/etc/inc/dyndns.class:1152
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Nama hos telah disekat kerana penderaan kemaskini."
 
 #: src/etc/inc/dyndns.class:1157
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "Ralat DNS ditemui. Kemaskini dihentikan selama 30 minit."
 
 #: src/etc/inc/dyndns.class:1166 src/etc/inc/dyndns.class:1186
 #: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1220
@@ -864,15 +893,15 @@ msgstr "Keizinan Pengguna Gagal"
 
 #: src/etc/inc/dyndns.class:1242
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "Alamat IP adalah yang terkini, tiada kemaskini dilakukan."
 
 #: src/etc/inc/dyndns.class:1246
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "Kemaskini nama hos DNS telah berjaya."
 
 #: src/etc/inc/dyndns.class:1250
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Nama hos yang diberikan tidak wujud."
 
 #: src/etc/inc/dyndns.class:1253
 msgid "Invalid Username."
@@ -888,26 +917,30 @@ msgstr "Terlalu banyak kemaskini dihantar."
 
 #: src/etc/inc/dyndns.class:1262
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr ""
+msgstr "Akaun telah dinyahaktifkan kerana melanggar terma perkhidmatan No-IP."
 
 #: src/etc/inc/dyndns.class:1265
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
+"IP tidak sah. Alamat IP yang diberikan tidak diformatkan dengan betul atau "
+"ia adalah alamat IP persendirian atau ia didalam senarai hitam."
 
 #: src/etc/inc/dyndns.class:1268
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "Nama hos dinyahaktif / dikunci."
 
 #: src/etc/inc/dyndns.class:1271
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
+"Hos yang dikemaskini ditetapkan sebagai web pengganti dan tiada kemaskini "
+"dilakukan."
 
 #: src/etc/inc/dyndns.class:1274
 msgid "Group supplied does not exist."
-msgstr ""
+msgstr "Kumpulan yang diberikan tidak wujud."
 
 #: src/etc/inc/dyndns.class:1277
 msgid "DNS group update is successful."
@@ -915,21 +948,24 @@ msgstr "Kemaskini DNS kumpulan telah berjaya."
 
 #: src/etc/inc/dyndns.class:1281
 msgid "DNS group is current, no update performed."
-msgstr ""
+msgstr "Kumpulan DNS adalah yang semasa, tiada kemaskini dilakukan."
 
 #: src/etc/inc/dyndns.class:1285
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Tiada kemaskini sokongan pelanggan diberikan kepada nama hos atau kumpulan."
 
 #: src/etc/inc/dyndns.class:1288
 msgid "Hostname supplied does not have offline settings configured."
-msgstr ""
+msgstr "Nama hos yang diberikan tiada pelarasan tetapan luar talian."
 
 #: src/etc/inc/dyndns.class:1291 src/etc/inc/dyndns.class:1294
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"Pelanggan dinyahaktifkan. Pelanggan harus keluar dan tidak melakukan "
+"sebarang kemaskini tanpa campur tangan pengguna."
 
 #: src/etc/inc/dyndns.class:1298
 msgid "Unknown Response:"
@@ -938,18 +974,22 @@ msgstr "Respon tidak dikenali:"
 #: src/etc/inc/dyndns.class:1304
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr ""
+"Pengesahan tidak berjaya: Nama pengguna dan/atau kata laluan tidak tepat."
 
 #: src/etc/inc/dyndns.class:1306
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
+"Tiada Perkhidmatan: Perkhidmatan DNS Dinamik telah dinyahaktifkan untuk "
+"domain ini."
 
 #: src/etc/inc/dyndns.class:1308
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Input tidak sah: Sendiri faham, tidak perlu penjelasan."
 
 #: src/etc/inc/dyndns.class:1310
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
+"Terlalu cepat: Tidak cukup masa telah berlalu sejak kemaskini terakhir."
 
 #: src/etc/inc/dyndns.class:1312
 msgid "IP Updated Successfully!"
@@ -984,15 +1024,19 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1344
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Kemaskini terlalu cepat: Cubaan untuk kemaskini terlalu cepat sejak "
+"perubahan terakhir."
 
 #: src/etc/inc/dyndns.class:1346
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Ralat pengkalan data - Terdapat ralat pada bahagian pelayan."
 
 #: src/etc/inc/dyndns.class:1348
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
+"Ralat nama hos - Nama hos (%1$s) tidak dipunyai oleh mana-mana pengguna "
+"(%2$s)."
 
 #: src/etc/inc/dyndns.class:1412
 msgid "Not a valid username or password!"
@@ -1000,28 +1044,31 @@ msgstr "Nama pengguna atau kata laluan tidak sah!"
 
 #: src/etc/inc/dyndns.class:1414
 msgid "Hostname specified does not exist."
-msgstr ""
+msgstr "Nama hos yang diberikan tidak wujud."
 
 #: src/etc/inc/dyndns.class:1420
 msgid "Hostname specified exists, but not under the username specified."
 msgstr ""
+"Nama hos yang diberikan wujud, tetapi bukan dibawah nama pengguna yang "
+"diberikan."
 
 #: src/etc/inc/dyndns.class:1422
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Kemaskini terlalu kerap, dianggap sebagai penderaan."
 
 #: src/etc/inc/dyndns.class:1431 src/etc/inc/dyndns.class:1495
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Permintaan Buruk - IP yang dibekalkan tidak sah."
 
 #: src/etc/inc/dyndns.class:1433
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Permintaan Buruk - Parameter yang diperlukan tidak dibekalkan."
 
 #: src/etc/inc/dyndns.class:1435
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr ""
+"Permintaan Buruk - Aksara tidak sah didalam nama pengguna atau kata laluan."
 
 #: src/etc/inc/dyndns.class:1437
 msgid "Invalid password."
@@ -1029,7 +1076,7 @@ msgstr "Kata laluan tidak sah."
 
 #: src/etc/inc/dyndns.class:1439
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Akaun ini telah dikunci oleh pentadbiran."
 
 #: src/etc/inc/dyndns.class:1441
 msgid "Updating too frequently."
@@ -1038,15 +1085,15 @@ msgstr "Kemaskini terlalu kerap"
 #: src/etc/inc/dyndns.class:1443 src/etc/inc/dyndns.class:1457
 #: src/etc/inc/dyndns.class:1475
 msgid "Server side error."
-msgstr ""
+msgstr "Ralat pada bahagian pelayan."
 
 #: src/etc/inc/dyndns.class:1459
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Permintaan Berbentuk Buruk (sila semak tetapan)."
 
 #: src/etc/inc/dyndns.class:1477 src/etc/inc/dyndns.class:1497
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Permintaan Buruk - Nama hos tidak dibekalkan."
 
 #: src/etc/inc/dyndns.class:1479 src/etc/inc/dyndns.class:1499
 #: src/etc/inc/dyndns.class:1526
@@ -1060,15 +1107,15 @@ msgstr "Tiada perubahan pada alamat IP"
 
 #: src/etc/inc/dyndns.class:1522
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Permintaan Buruk - Parameter Hilang/Tidak Sah"
 
 #: src/etc/inc/dyndns.class:1524
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Permintaan Buruk - ID Terowong tidak sah."
 
 #: src/etc/inc/dyndns.class:1558
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Gagal memanggil Route53 API"
 
 #: src/etc/inc/dyndns.class:1562
 msgid "IP address changed successfully"
@@ -1091,7 +1138,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1597
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "Zon atau ID Hos tidak dijumpai, sila semak nama hos."
 
 #: src/etc/inc/dyndns.class:1599
 msgid "UNKNOWN ERROR"
@@ -1099,7 +1146,7 @@ msgstr "RALAT TIDAK DIKETAHUI"
 
 #: src/etc/inc/dyndns.class:1622
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "Nilai Salah - Kemaskini tidak dapat diselesaikan."
 
 #: src/etc/inc/dyndns.class:1624
 msgid "Unknown username - User does not exist."
@@ -1112,7 +1159,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1628
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "Pengguna gagal mentadbir domain yang dipilih."
 
 #: src/etc/inc/dyndns.class:1663
 msgid "Not A FQDN"
@@ -1128,11 +1175,11 @@ msgstr "Permohonan tidak sah"
 
 #: src/etc/inc/dyndns.class:1677
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "Capaian DNS Dinamik telah disekat!"
 
 #: src/etc/inc/dyndns.class:1679
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "Ralat pada pihak Google, cuba semula dalam tempoh 5 minit"
 
 #: src/etc/inc/dyndns.class:1693 src/etc/inc/dyndns.class:1751
 msgid "Invalid username or password"
@@ -1165,63 +1212,63 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1774
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "Keputusan _checkStatus(): %1$s"
 
 #: src/etc/inc/dyndns.class:1785
 msgid "No record exists."
-msgstr ""
+msgstr "Tiada rekod yang wujud."
 
 #: src/etc/inc/dyndns.class:1789
 msgid "No type exists."
-msgstr ""
+msgstr "Tiada jenis yang wujud."
 
 #: src/etc/inc/dyndns.class:1793
 msgid "No value exists."
-msgstr ""
+msgstr "Tiada nilai yang wujud."
 
 #: src/etc/inc/dyndns.class:1796
 msgid "No such zone exists."
-msgstr ""
+msgstr "Tiada zon seperti itu yang wujud."
 
 #: src/etc/inc/dyndns.class:1799
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "Rekod yang diberikan tidak sah."
 
 #: src/etc/inc/dyndns.class:1802
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "Jenis yang diberikan tidak sah."
 
 #: src/etc/inc/dyndns.class:1805
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "Nilai yang diberikan tidak sah."
 
 #: src/etc/inc/dyndns.class:1808
 msgid "Record is not editable."
-msgstr ""
+msgstr "Rekod tidak boleh disunting."
 
 #: src/etc/inc/dyndns.class:1811
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "Rekod wujud, tetapi tidak boleh disunting."
 
 #: src/etc/inc/dyndns.class:1814
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "Rekod wujud dan perlu dihapus sebelum ditambah."
 
 #: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Ralat kemaskini zon telah berlaku pada pelayan luar."
 
 #: src/etc/inc/dyndns.class:1820
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Ralat memuat zon telah berlaku pada pelayan luar."
 
 #: src/etc/inc/dyndns.class:1826
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Ralat menambah rekod baru telah berlaku pada pelayan luar."
 
 #: src/etc/inc/dyndns.class:1829
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "Ralat menghapus rekod sedia ada telah berlaku pada pelayan luar."
 
 #: src/etc/inc/dyndns.class:1843
 #, php-format
@@ -1245,7 +1292,7 @@ msgstr "RALAT!"
 
 #: src/etc/inc/dyndns.class:1873
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Tiada penyedia Perkhidmatan DNS Dinamik telah dipilih."
 
 #: src/etc/inc/dyndns.class:1876
 msgid "No Username Provided."
@@ -1261,7 +1308,7 @@ msgstr "Tiada nama hos diperuntukkan"
 
 #: src/etc/inc/dyndns.class:1885
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "Penyedia Perkhidmatan DNS Dinamik belum disokong."
 
 #: src/etc/inc/dyndns.class:1888
 msgid "No Update URL Provided."
@@ -1369,7 +1416,7 @@ msgstr "Dinamik DNS %1$s (%2$s): %3$s diekstrak daripada sistem tempatan."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "Easy Rule: Disekat dari Paparan Log Firewall"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
@@ -1377,37 +1424,37 @@ msgstr "Kemasukan ditambah"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "Hos Disekat dari Paparan Log Firewall"
 
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "Hos %s disekat melalui easy rule"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr ""
+msgstr "Easy Rule: Dihantar dari Paparan Log Firewall"
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "Cubaan untuk menyekat IP yang tidak sah:"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "Antaramuka tidak sah untuk peraturan sekatan:"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "Hos ditambah dengan jayanya"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "Gagal mencipta peraturan sekatan, alias, atau tambah hos."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
-msgstr ""
+msgstr "Cubaan untuk menyekat, tetapi tiada IP hos atau antaramuka"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
@@ -1415,7 +1462,7 @@ msgstr "Ralat sekat diketahui."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "Cubaan untuk membuka IP tidah sah:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
@@ -1424,35 +1471,35 @@ msgstr "Tiada peraturan sekat ditetapkan pada antara muka:"
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "Hos %s dibuka melalui easy rule"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "Hos dibuka dengan jayanya"
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "Hos tiada dalam senarai sekatan:"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr ""
+msgstr "Cubaan untuk membuka, tetapi tiada IP hos atau antaramuka"
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "Antaramuka tidak sah untuk peraturan laluan:"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "Protokol tidak sah untuk peraturan laluan:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "Cubaan untuk memberi laluan sumber IP tidak sah:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "Cubaan untuk memberi laluan destinasi IP tidak sah:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
@@ -1460,23 +1507,23 @@ msgstr "Hilang port destinasi:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "Cubaan untuk memberi laluan destinasi port tidak sah:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "Berjaya menambah peraturan laluan!"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "Gagal menambah peraturan laluan."
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "Parameter hilang untuk peraturan laluan."
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Ralat laluan yang tidak diketahui."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
@@ -1508,11 +1555,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "Laporan keahlian kumpulan"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "Penamatan keahlian kumpulan"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
@@ -1544,11 +1591,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr ""
+msgstr "Jawapan alamat topeng"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr ""
+msgstr "Permintaan alamat topeng"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
@@ -1564,15 +1611,15 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "Mesej mtrace"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr ""
+msgstr "mtrace resp"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Iklan jiran"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
@@ -1580,7 +1627,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "Permintaan maklumat nod"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
@@ -1634,7 +1681,7 @@ msgstr "Masa terlebih"
 msgid "Packet too big"
 msgstr "Paket terlau besar"
 
-#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:308
+#: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
@@ -1647,11 +1694,11 @@ msgstr "Destinasi tidak dapat dihubungi"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "Jawapan siapakah anda"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "Permintaan siapakah anda"
 
 #: src/etc/inc/filter.inc:228
 msgid "Initializing"
@@ -1712,11 +1759,11 @@ msgstr "selesai."
 
 #: src/etc/inc/filter.inc:379
 msgid "Setting up logging information"
-msgstr ""
+msgstr "Sedang memasang maklumat pengelogan"
 
 #: src/etc/inc/filter.inc:384
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "Sedang memasang maklumat SCRUB"
 
 #: src/etc/inc/filter.inc:430
 #, php-format
@@ -1730,7 +1777,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Telah berlaku ralat semasa memuat peraturan: %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
@@ -1738,19 +1785,19 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:524
 msgid "Running plugins"
-msgstr ""
+msgstr "Menjalankan plugin"
 
 #: src/etc/inc/filter.inc:528
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "Menjalankan plugin (pf)"
 
 #: src/etc/inc/filter.inc:530
 msgid "Plugins completed."
-msgstr ""
+msgstr "Plugin berjaya."
 
 #: src/etc/inc/filter.inc:533
 msgid "Done"
-msgstr ""
+msgstr "Selesai"
 
 #: src/etc/inc/filter.inc:766
 #, php-format
@@ -1759,17 +1806,19 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:844
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "Mewujudkan item kumpulan get laluan..."
 
 #: src/etc/inc/filter.inc:884
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "Sedang memasang laluan %1$s kepada %2$s"
 
 #: src/etc/inc/filter.inc:888
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
+"Terlalu banyak ahli di dalam kumpulan %s,  kumpulan get laluan telah "
+"dipangkas dari set peraturan."
 
 #: src/etc/inc/filter.inc:900
 #, php-format
@@ -1808,7 +1857,7 @@ msgstr "penghalaan statik"
 
 #: src/etc/inc/filter.inc:1592
 msgid "DHCP alias address"
-msgstr ""
+msgstr "Alamat alias DHCP"
 
 #: src/etc/inc/filter.inc:1626
 msgid "PPPoE server"
@@ -1832,11 +1881,11 @@ msgstr "IPsec klien"
 
 #: src/etc/inc/filter.inc:1701
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr "Peraturan diwujudkan secara auto untuk ISAKMP"
 
 #: src/etc/inc/filter.inc:1711
 msgid "Auto created rule"
-msgstr ""
+msgstr "Peraturan diwujudkan secara auto"
 
 #: src/etc/inc/filter.inc:1844
 msgid "Creating 1:1 rules..."
@@ -1857,7 +1906,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:2113
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "Sedang memasang pembantu TFTP"
 
 #: src/etc/inc/filter.inc:2157
 #, php-format
@@ -1911,17 +1960,17 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:2744
 msgid "Setting up pass/block rules"
-msgstr ""
+msgstr "Sedang memasang peraturan lalu/sekat"
 
 #: src/etc/inc/filter.inc:2771
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr ""
+msgstr "Sedang memasang peraturan lalu/sekat %s"
 
 #: src/etc/inc/filter.inc:2795
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr ""
+msgstr "Get laluan %s tidak sah atau tidak dikenali, tidak menggunakannya."
 
 #: src/etc/inc/filter.inc:2814
 #, php-format
@@ -1931,11 +1980,11 @@ msgstr "Membuat peraturan %s"
 #: src/etc/inc/filter.inc:3059
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr ""
+msgstr "[NYAHPEPIJAT TDR] status benar -- jenis peraturan '%s'"
 
 #: src/etc/inc/filter.inc:3103
 msgid "Creating default rules"
-msgstr ""
+msgstr "Mencipta peraturan lalai"
 
 #: src/etc/inc/filter.inc:3784
 msgid "Creating IPsec rules..."
@@ -1966,7 +2015,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:4362
 msgid "delete this separator"
-msgstr ""
+msgstr "hapus pembahagi ini"
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -2100,7 +2149,7 @@ msgstr "Komponen"
 
 #: src/etc/inc/gwlb.inc:185
 msgid "No gateways to monitor. dpinger will not run."
-msgstr ""
+msgstr "Tiada get laluan untuk dipantau, dpinger tidak akan dilaksanakan."
 
 #: src/etc/inc/gwlb.inc:233 src/etc/inc/gwlb.inc:274
 #, php-format
@@ -2111,12 +2160,12 @@ msgstr ""
 #: src/etc/inc/gwlb.inc:302
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr ""
+msgstr "Ralat memulakan pemantauan get laluan untuk %s"
 
 #: src/etc/inc/gwlb.inc:315
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr ""
+msgstr "dpinger: Tiada sesi dpinger dilaksanakan untuk get laluan %s"
 
 #: src/etc/inc/gwlb.inc:329
 #, php-format
@@ -2149,6 +2198,8 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
+"Status get laluan tidak dapat dikenalpasti, menganggap ia sebagai terbit/"
+"aktif. (Kumpulan: %s)"
 
 #: src/etc/inc/gwlb.inc:1088
 #, php-format
@@ -2204,7 +2255,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:251
 #: src/usr/local/www/system_routes.php:244
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:142
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:241
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
@@ -2232,13 +2283,15 @@ msgstr ""
 
 #: src/etc/inc/gwlb.inc:1392
 msgid "A valid gateway IP address must be specified."
-msgstr ""
+msgstr "Alamat IP get laluan yang sah harus diberi."
 
 #: src/etc/inc/gwlb.inc:1402
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
+"Tidak dapat menambah alamat IPv4 get laluan kerana tiada alamat IPv4 "
+"dijumpai pada antaramuka"
 
 #: src/etc/inc/gwlb.inc:1424 src/etc/inc/gwlb.inc:1457
 #, php-format
@@ -2246,12 +2299,16 @@ msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
 msgstr ""
+"Alamat get laluan %s tidak bersandar pada salah satu subnet antaramuka yang "
+"dipilih."
 
 #: src/etc/inc/gwlb.inc:1435
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
+"Tidak dapat menambah alamat IPv6 get laluan kerana tiada alamat IPv6 "
+"dijumpai pada antaramuka"
 
 #: src/etc/inc/gwlb.inc:1465
 msgid ""
@@ -2273,25 +2330,27 @@ msgstr ""
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
 msgstr ""
+"Alamat IPv6 get laluan '%s' tidak boleh digunakan sebagai get laluan IPv4."
 
 #: src/etc/inc/gwlb.inc:1486
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
 msgstr ""
+"Alamat IPv4 get laluan '%s' tidak boleh digunakan sebagai get laluan IPv6."
 
 #: src/etc/inc/gwlb.inc:1492
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
-msgstr ""
+msgstr "Alamat pemantau IPv6 '%s' tidak boleh digunakan pada get laluan IPv4."
 
 #: src/etc/inc/gwlb.inc:1495
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
-msgstr ""
+msgstr "Alamat pemantau IPv4 '%s' tidak boleh digunakan pada get laluan IPv6."
 
 #: src/etc/inc/gwlb.inc:1504
 msgid "Changing name on a gateway is not allowed."
-msgstr ""
+msgstr "Penukaran nama pada get laluan adalah tidak dibenarkan."
 
 #: src/etc/inc/gwlb.inc:1510
 #, php-format
@@ -2741,7 +2800,7 @@ msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
-msgstr ""
+msgstr "Daemon"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
@@ -2757,7 +2816,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr ""
+msgstr "Pemprosesan Kerja"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
@@ -2765,7 +2824,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:32 src/etc/inc/ipsec.inc:62
 msgid "Kernel Interface"
-msgstr ""
+msgstr "Antaramuka Kernel"
 
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 #: src/usr/local/www/system_advanced_admin.php:299
@@ -2800,7 +2859,7 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
-msgstr ""
+msgstr "Pengendali TLS"
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
@@ -2901,15 +2960,15 @@ msgstr "Alamat IP sebaya"
 
 #: src/etc/inc/ipsec.inc:166
 msgid "Hybrid RSA + Xauth"
-msgstr ""
+msgstr "RSA + Xauth kacukan"
 
 #: src/etc/inc/ipsec.inc:167
 msgid "Mutual RSA + Xauth"
-msgstr ""
+msgstr "RSA + Xauth Bersama"
 
 #: src/etc/inc/ipsec.inc:168
 msgid "Mutual PSK + Xauth"
-msgstr ""
+msgstr "PSK + Xauth Bersama"
 
 #: src/etc/inc/ipsec.inc:169
 msgid "EAP-TLS"
@@ -3019,7 +3078,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Klien Mudah Alih"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3090
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3132
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:919
@@ -3083,7 +3142,7 @@ msgstr "Amaran baru dijumpai: %s"
 #: src/etc/inc/notices.inc:321
 #, php-format
 msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Gagal menghantar pesanan kepada %1$s -- Ralat: %2$s"
 
 #: src/etc/inc/notices.inc:327
 #, php-format
@@ -3161,15 +3220,15 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:111
 msgid "Remote Access ( SSL/TLS )"
-msgstr ""
+msgstr "Akses Luar ( SSL/TLS )"
 
 #: src/etc/inc/openvpn.inc:112
 msgid "Remote Access ( User Auth )"
-msgstr ""
+msgstr "Akses Luar ( User Auth )"
 
 #: src/etc/inc/openvpn.inc:113
 msgid "Remote Access ( SSL/TLS + User Auth )"
-msgstr ""
+msgstr "Akses Luar ( SSL/TLS + User Auth )"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
@@ -3338,11 +3397,11 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:1651 src/etc/inc/openvpn.inc:1782
 msgid "Unable to contact daemon"
-msgstr ""
+msgstr "Tidak dapat menghubungi daemon"
 
 #: src/etc/inc/openvpn.inc:1652 src/etc/inc/openvpn.inc:1783
 msgid "Service not running?"
-msgstr ""
+msgstr "Perkhidmatan tidak berjalan?"
 
 #: src/etc/inc/pfsense-utils.inc:221
 #: src/usr/local/www/system_user_settings.php:64
@@ -3366,7 +3425,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:240
 msgid "Top Navigation"
-msgstr ""
+msgstr "Navigasi Atas"
 
 #: src/etc/inc/pfsense-utils.inc:243
 msgid "The fixed option is intended for large screens only."
@@ -3374,7 +3433,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Default (No hostname)"
-msgstr ""
+msgstr "Lalai (Tiada nama hos)"
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Hostname only"
@@ -3396,11 +3455,11 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:282
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Dashboard Columns"
-msgstr ""
+msgstr "Ruangan Papan Pemuka"
 
 #: src/etc/inc/pfsense-utils.inc:302
 msgid "Interfaces Sort"
-msgstr ""
+msgstr "Susun Antaramuka"
 
 #: src/etc/inc/pfsense-utils.inc:305
 msgid ""
@@ -3456,7 +3515,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:405
 msgid "Browser tab text"
-msgstr ""
+msgstr "Tulisan tab pelayar"
 
 #: src/etc/inc/pfsense-utils.inc:408
 msgid ""
@@ -3476,168 +3535,197 @@ msgid ""
 "displayed. Useful for systems with large state tables."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:743
+#: src/etc/inc/pfsense-utils.inc:475
+msgid "Rule Information"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:481 src/etc/inc/pfsense-utils.inc:491
+#, php-format
+msgid "%1$s by %2$s"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:482 src/etc/inc/pfsense-utils.inc:492
+#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
+#: src/usr/local/www/diag_confbak.php:123
+#: src/usr/local/www/diag_confbak.php:232
+#: src/usr/local/www/diag_confbak.php:243
+msgid "n/j/y H:i:s"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:479
+msgid "Created"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:489
+msgid "Updated"
+msgstr "Dikemaskini"
+
+#: src/etc/inc/pfsense-utils.inc:784
 msgid "After synch increase advertising skew"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:793
+#: src/etc/inc/pfsense-utils.inc:834
 msgid "Error creating socket!"
-msgstr ""
+msgstr "Ralat mencipta soket!"
 
-#: src/etc/inc/pfsense-utils.inc:794
+#: src/etc/inc/pfsense-utils.inc:835
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
 msgstr "Kod ralat ialah '%1$s' - %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:799
+#: src/etc/inc/pfsense-utils.inc:840
 #, php-format
 msgid "setsockopt() failed, error: %s"
 msgstr "setsockopt() gagal, ralat: %s"
 
-#: src/etc/inc/pfsense-utils.inc:803
+#: src/etc/inc/pfsense-utils.inc:844
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:866 src/etc/inc/pfsense-utils.inc:886
+#: src/etc/inc/pfsense-utils.inc:907 src/etc/inc/pfsense-utils.inc:927
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:973
+#: src/etc/inc/pfsense-utils.inc:1014
 msgid "reload_interfaces_sync() is starting."
 msgstr "reload_interfaces_sync() bermula."
 
-#: src/etc/inc/pfsense-utils.inc:982
+#: src/etc/inc/pfsense-utils.inc:1023
 msgid "Enabling system routing"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:986
+#: src/etc/inc/pfsense-utils.inc:1027
 msgid "Cleaning up Interfaces"
-msgstr ""
+msgstr "Membersihkan antaramuka"
 
-#: src/etc/inc/pfsense-utils.inc:1430
+#: src/etc/inc/pfsense-utils.inc:1471
 msgid "No history data found!"
 msgstr "Tiada data sejarah ditemui!"
 
-#: src/etc/inc/pfsense-utils.inc:1562
+#: src/etc/inc/pfsense-utils.inc:1603
 msgid "device not present! Is the modem attached to the system?"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1631
+#: src/etc/inc/pfsense-utils.inc:1672
 msgid "running"
 msgstr "dijalankan"
 
-#: src/etc/inc/pfsense-utils.inc:1632 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1673 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr "atas"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "blocking"
 msgstr "menyekat"
 
-#: src/etc/inc/pfsense-utils.inc:1677
+#: src/etc/inc/pfsense-utils.inc:1718
 msgid "check for ethernet loops"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1680
+#: src/etc/inc/pfsense-utils.inc:1721
 msgid "learning"
 msgstr "pembelajaran"
 
-#: src/etc/inc/pfsense-utils.inc:1683
+#: src/etc/inc/pfsense-utils.inc:1724
 msgid "forwarding"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1817
+#: src/etc/inc/pfsense-utils.inc:1858
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNSCACHE: Lama IP %1$s dan baru IP %2$s dijumpai."
 
-#: src/etc/inc/pfsense-utils.inc:1837
+#: src/etc/inc/pfsense-utils.inc:1878
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1854
+#: src/etc/inc/pfsense-utils.inc:1895
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1931 src/etc/inc/pfsense-utils.inc:1987
+#: src/etc/inc/pfsense-utils.inc:1972 src/etc/inc/pfsense-utils.inc:2028
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2206
+#: src/etc/inc/pfsense-utils.inc:2247
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2211
+#: src/etc/inc/pfsense-utils.inc:2252
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2216
+#: src/etc/inc/pfsense-utils.inc:2257
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2273
+#: src/etc/inc/pfsense-utils.inc:2314
 #, php-format
 msgid "Failed to download alias %s"
-msgstr ""
+msgstr "Gagal muat turun alias %s"
 
-#: src/etc/inc/pfsense-utils.inc:2302
+#: src/etc/inc/pfsense-utils.inc:2343
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2312
+#: src/etc/inc/pfsense-utils.inc:2353
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2318
+#: src/etc/inc/pfsense-utils.inc:2359
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2897
-msgid "German (Germany)"
+#: src/etc/inc/pfsense-utils.inc:2938
+msgid "Bosnian"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2898
+#: src/etc/inc/pfsense-utils.inc:2939
+msgid "German (Germany)"
+msgstr "German (Germany)"
+
+#: src/etc/inc/pfsense-utils.inc:2940
 msgid "English"
 msgstr "Bahasa Inggeris"
 
-#: src/etc/inc/pfsense-utils.inc:2899
+#: src/etc/inc/pfsense-utils.inc:2941
 msgid "Spanish"
 msgstr "Bahasa Sepanyol"
 
-#: src/etc/inc/pfsense-utils.inc:2900
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Norwegian Bokmål"
 msgstr "Bahasa Norway Bokmål"
 
-#: src/etc/inc/pfsense-utils.inc:2901
+#: src/etc/inc/pfsense-utils.inc:2943
 msgid "Russian"
 msgstr "Bahasa Rusia"
 
-#: src/etc/inc/pfsense-utils.inc:2902
+#: src/etc/inc/pfsense-utils.inc:2944
 msgid "Chinese (Simplified, China)"
 msgstr "Bahasa Cina (Mudah, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2903
+#: src/etc/inc/pfsense-utils.inc:2945
 msgid "Chinese (Taiwan)"
 msgstr "Bahasa Cina (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3098 src/etc/inc/pfsense-utils.inc:3113
-#: src/etc/inc/pfsense-utils.inc:3139
+#: src/etc/inc/pfsense-utils.inc:3140 src/etc/inc/pfsense-utils.inc:3155
+#: src/etc/inc/pfsense-utils.inc:3181
 msgid "No Service"
 msgstr "Tiada Perkhidmatan"
 
-#: src/etc/inc/pfsense-utils.inc:3108 src/etc/inc/pfsense-utils.inc:3151
+#: src/etc/inc/pfsense-utils.inc:3150 src/etc/inc/pfsense-utils.inc:3193
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3653,83 +3741,83 @@ msgstr "Tiada Perkhidmatan"
 msgid "Mode"
 msgstr "Mod"
 
-#: src/etc/inc/pfsense-utils.inc:3114
+#: src/etc/inc/pfsense-utils.inc:3156
 msgid "Restricted Service"
 msgstr "Perkhidmatan Terhad"
 
-#: src/etc/inc/pfsense-utils.inc:3115
+#: src/etc/inc/pfsense-utils.inc:3157
 msgid "Valid Service"
 msgstr "Perkhidmatan Sah"
 
-#: src/etc/inc/pfsense-utils.inc:3116
+#: src/etc/inc/pfsense-utils.inc:3158
 msgid "Restricted Regional Service"
 msgstr "Perkhidmatan Serantau Terhad"
 
-#: src/etc/inc/pfsense-utils.inc:3117
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Powersaving Service"
 msgstr "Perkhidmatan Penjimat Kuasa"
 
-#: src/etc/inc/pfsense-utils.inc:3118
+#: src/etc/inc/pfsense-utils.inc:3160
 msgid "Unknown Service"
 msgstr "Perkhidmatan Tidak Dikenali"
 
-#: src/etc/inc/pfsense-utils.inc:3124
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Invalid SIM/locked State"
 msgstr "SIM Tidak Sah / Keadaan Dikunci"
 
-#: src/etc/inc/pfsense-utils.inc:3125
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Valid SIM State"
 msgstr "SIM Keadaan Sah"
 
-#: src/etc/inc/pfsense-utils.inc:3126
+#: src/etc/inc/pfsense-utils.inc:3168
 msgid "Invalid SIM CS State"
 msgstr "SIM Keadaan CS Tidak Sah"
 
-#: src/etc/inc/pfsense-utils.inc:3127
+#: src/etc/inc/pfsense-utils.inc:3169
 msgid "Invalid SIM PS State"
 msgstr "SIM Keadaan PS Tidak Sah"
 
-#: src/etc/inc/pfsense-utils.inc:3128
+#: src/etc/inc/pfsense-utils.inc:3170
 msgid "Invalid SIM CS/PS State"
 msgstr "SIM Keadaan CS/PS Tidak Sah"
 
-#: src/etc/inc/pfsense-utils.inc:3129
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Missing SIM State"
 msgstr "Hilang SIM Keadaan"
 
-#: src/etc/inc/pfsense-utils.inc:3140
+#: src/etc/inc/pfsense-utils.inc:3182
 msgid "Limited Service"
 msgstr "Perkhidmatan Terhad"
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3198
 msgid "Initializing Service"
 msgstr "Perkhidmatan Memulakan"
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3199
 msgid "Network Lock error Service"
 msgstr "Perkhidmatan Ralat Kunci Rangkaian"
 
-#: src/etc/inc/pfsense-utils.inc:3158
+#: src/etc/inc/pfsense-utils.inc:3200
 msgid "Network Locked Service"
 msgstr "Perkhidmatan Rangkaian Dikunci"
 
-#: src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3201
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3167
+#: src/etc/inc/pfsense-utils.inc:3209
 msgid "(U)SIM card lock State"
 msgstr "Kad (U)SIM Keadaan Dikunci"
 
-#: src/etc/inc/pfsense-utils.inc:3168
+#: src/etc/inc/pfsense-utils.inc:3210
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -3766,7 +3854,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:594
 msgid "Removing package..."
-msgstr ""
+msgstr "Menghapus pakej..."
 
 #: src/etc/inc/pkg-utils.inc:627
 #, php-format
@@ -3786,21 +3874,21 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:739
 msgid "Beginning package installation."
-msgstr ""
+msgstr "Memulakan pemasangan pakej."
 
 #: src/etc/inc/pkg-utils.inc:740
 #, php-format
 msgid "Beginning package installation for %s ."
-msgstr ""
+msgstr "Memulakan pemasangan pakej untuk %s ."
 
 #: src/etc/inc/pkg-utils.inc:744
 msgid "Saving updated package information..."
-msgstr ""
+msgstr "Menyimpan maklumat pakej yang telah dikemaskini..."
 
 #: src/etc/inc/pkg-utils.inc:747
 #, php-format
 msgid "Installed %s package."
-msgstr ""
+msgstr "Pakej %s telah dipasang."
 
 #: src/etc/inc/pkg-utils.inc:751
 #, php-format
@@ -3825,16 +3913,16 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:871
 #, php-format
 msgid "Failed to install package: %s."
-msgstr ""
+msgstr "Gagal memasang pakej: %s."
 
 #: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
 #: src/etc/inc/pkg-utils.inc:872
 msgid "Failed to install package."
-msgstr ""
+msgstr "Gagal memasang pakej."
 
 #: src/etc/inc/pkg-utils.inc:769
 msgid "Loading package configuration... "
-msgstr ""
+msgstr "Memuat tetapan pakej..."
 
 #: src/etc/inc/pkg-utils.inc:772
 msgid "Configuring package components..."
@@ -3842,7 +3930,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
 msgid "Loading package instructions..."
-msgstr ""
+msgstr "Memuat arahan pakej..."
 
 #: src/etc/inc/pkg-utils.inc:791
 #, php-format
@@ -3921,7 +4009,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:991
 msgid "Deinstall commands... "
-msgstr ""
+msgstr "Arahan membuang pemasangan..."
 
 #: src/etc/inc/pkg-utils.inc:996
 msgid "Not executing custom deinstall hook because an include is missing."
@@ -3929,7 +4017,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1003
 msgid "Syslog entries... "
-msgstr ""
+msgstr "Kemasukan Syslog..."
 
 #: src/etc/inc/pkg-utils.inc:1011
 msgid "Configuration... "
@@ -3938,7 +4026,7 @@ msgstr "Konfigurasi..."
 #: src/etc/inc/pkg-utils.inc:1014
 #, php-format
 msgid "Removed %s package."
-msgstr ""
+msgstr "Pakej %s telah dihapuskan."
 
 #: src/etc/inc/pkg-utils.inc:1039
 msgid ""
@@ -3948,7 +4036,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
 msgid "Package reinstall"
-msgstr ""
+msgstr "Pemasangan semula pakej"
 
 #: src/etc/inc/pkg-utils.inc:1053
 msgid ""
@@ -3963,7 +4051,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1113
 msgid "Stopping all packages."
-msgstr ""
+msgstr "Menghentikan semua pakej."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
@@ -3983,11 +4071,13 @@ msgstr "Menujukkan sama ada pengguna dapat log masuk ke Portal Tawanan"
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr ""
+msgstr "WebCfg - Halaman bantuan"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
 msgstr ""
+"Papar semua item di dalam menu bantuan dan benarkan akses ke pautan pintasan "
+"Bantuan"
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
@@ -5358,7 +5448,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
-msgstr ""
+msgstr "WebCfg - Status: Kumpulan Get Laluan"
 
 #: src/etc/inc/priv.defs.inc:896
 msgid "Allow access to the 'Status: Gateway Groups' page."
@@ -5743,7 +5833,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1191
 msgid "WebCfg - System: User Password Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Pengurus Kata Laluan Pengguna"
 
 #: src/etc/inc/priv.defs.inc:1192
 msgid "Allow access to the 'System: User Password Manager' page."
@@ -5887,7 +5977,7 @@ msgstr ""
 
 #: src/etc/inc/radius.inc:416
 msgid "Error sending request:"
-msgstr ""
+msgstr "Ralat menghantar permintaan:"
 
 #: src/etc/inc/radius.inc:422
 msgid "RADIUS_ACCESS_ACCEPT is unexpected for accounting"
@@ -6780,7 +6870,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound.php:275
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
 #: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
-#: src/usr/local/www/diag_routes.php:82
+#: src/usr/local/www/diag_routes.php:83
 msgid "Enable"
 msgstr "Dayakan"
 
@@ -7056,11 +7146,11 @@ msgstr "Ralat: tidak dapat membuka dmesg.boot dalam system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr ""
 
-#: src/etc/inc/system.inc:2431
+#: src/etc/inc/system.inc:2440
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2435 src/etc/inc/system.inc:2454
+#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
 msgid "PC Engines ALIX"
 msgstr ""
 
@@ -7714,7 +7804,7 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:267
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:168
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:292
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:195
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
@@ -7744,7 +7834,7 @@ msgstr ""
 #: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/diag_pftop.php:31
 #: src/usr/local/www/diag_ping.php:35 src/usr/local/www/diag_reboot.php:43
 #: src/usr/local/www/diag_resetstate.php:56
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/diag_smart.php:36
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_sockets.php:31
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
@@ -7964,7 +8054,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:42
 msgid "A username and password must be specified."
-msgstr ""
+msgstr "Nama pengguna dan kata laluan mesti diberikan."
 
 #: src/usr/local/www/diag_authentication.php:48
 #, php-format
@@ -8009,7 +8099,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2655 src/usr/local/www/interfaces.php:2780
 #: src/usr/local/www/system_usermanager_passwordmg.php:97
 msgid "*Password"
-msgstr ""
+msgstr "*Kata Laluan"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:280 src/usr/local/www/diag_testport.php:269
@@ -8101,7 +8191,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:397
 msgid "The configuration could not be restored (file upload error)."
-msgstr ""
+msgstr "Tetapan gagal dipulihkan (ralat muat naik fail)."
 
 #: src/usr/local/www/diag_backup.php:421
 #: src/usr/local/www/firewall_aliases.php:161
@@ -8284,7 +8374,7 @@ msgstr ""
 #: src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:300
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:169
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:293
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:196
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
@@ -8458,6 +8548,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
+#: src/usr/local/www/status.php:366
 msgid "Download"
 msgstr ""
 
@@ -8484,7 +8575,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:34
 msgid "Invalid Backup Count specified"
-msgstr ""
+msgstr "Kiraan sandaran yang diberikan tidak sah"
 
 #: src/usr/local/www/diag_confbak.php:43
 msgid "(platform default)"
@@ -8498,19 +8589,6 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:53
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
-msgstr ""
-
-#: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
-#: src/usr/local/www/diag_confbak.php:123
-#: src/usr/local/www/diag_confbak.php:232
-#: src/usr/local/www/diag_confbak.php:243
-#: src/usr/local/www/firewall_nat_edit.php:972
-#: src/usr/local/www/firewall_nat_edit.php:982
-#: src/usr/local/www/firewall_nat_out_edit.php:698
-#: src/usr/local/www/firewall_nat_out_edit.php:708
-#: src/usr/local/www/firewall_rules_edit.php:1762
-#: src/usr/local/www/firewall_rules_edit.php:1772
-msgid "n/j/y H:i:s"
 msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:55
@@ -8699,28 +8777,28 @@ msgstr ""
 msgid "Keep Configuration"
 msgstr "Simpan Konfigurasi"
 
-#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
+#: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:379
 msgid "DNS Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:114
+#: src/usr/local/www/diag_dns.php:118
 msgid "Created from Diagnostics-> DNS Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:120
+#: src/usr/local/www/diag_dns.php:124
 msgid "Created an alias from Diagnostics - DNS Lookup page."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:134
+#: src/usr/local/www/diag_dns.php:141
 msgid "Host must be a valid hostname or IP address."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:143
+#: src/usr/local/www/diag_dns.php:150
 msgid "No response"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8740,12 +8818,12 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:155
+#: src/usr/local/www/diag_dns.php:192 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:445
 msgid "Host Name"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
+#: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/system_certmanager.php:1145
@@ -8754,24 +8832,34 @@ msgstr ""
 msgid "Server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:188
+#: src/usr/local/www/diag_dns.php:195
 msgid "Query Time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:206
+#: src/usr/local/www/diag_dns.php:213
 #, php-format
 msgid "Host \"%s\" could not be resolved."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:211
+#: src/usr/local/www/diag_dns.php:218
 msgid "Alias was updated successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:213
+#: src/usr/local/www/diag_dns.php:220
 msgid "Alias was created successfully."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:222 src/usr/local/www/diag_ping.php:131
+#: src/usr/local/www/diag_dns.php:228
+#, php-format
+msgid "Could not update alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:230
+#, php-format
+msgid "Could not create alias for %s"
+msgstr ""
+
+#: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
 #: src/usr/local/www/diag_traceroute.php:125
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
@@ -8781,65 +8869,65 @@ msgstr ""
 msgid "*Hostname"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:232
+#: src/usr/local/www/diag_dns.php:249
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:239
+#: src/usr/local/www/diag_dns.php:256
 msgid "Update alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:241
+#: src/usr/local/www/diag_dns.php:258
 msgid "Add alias"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:257 src/usr/local/www/diag_ping.php:173
+#: src/usr/local/www/diag_dns.php:274 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:263
+#: src/usr/local/www/diag_dns.php:280
 msgid "Result"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:264
+#: src/usr/local/www/diag_dns.php:281
 msgid "Record type"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:281
+#: src/usr/local/www/diag_dns.php:298
 msgid "Timings"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:286
+#: src/usr/local/www/diag_dns.php:303
 msgid "Name server"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:287
+#: src/usr/local/www/diag_dns.php:304
 msgid "Query time"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:304
+#: src/usr/local/www/diag_dns.php:321
 msgid "More Information"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
+#: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:391
 msgid "Ping"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:310
+#: src/usr/local/www/diag_dns.php:327
 msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:312
+#: src/usr/local/www/diag_dns.php:329
 msgid "IP WHOIS @ DNS Stuff"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:313
+#: src/usr/local/www/diag_dns.php:330
 msgid "IP Info @ DNS Stuff"
 msgstr ""
 
@@ -8889,7 +8977,7 @@ msgstr "Ungkapan tapis"
 
 #: src/usr/local/www/diag_dump_states.php:147
 #: src/usr/local/www/diag_dump_states_sources.php:106
-#: src/usr/local/www/diag_routes.php:97 src/usr/local/www/pkg.php:352
+#: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_groupmanager_addprivs.php:202
@@ -9022,7 +9110,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
-msgstr ""
+msgstr "Tiada nama fail diberikan."
 
 #: src/usr/local/www/diag_edit.php:44
 msgid "Loading a directory is not supported."
@@ -9042,7 +9130,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:83
 msgid "Error while writing file."
-msgstr ""
+msgstr "Ralat semasa menulis fail."
 
 #: src/usr/local/www/diag_edit.php:87
 msgid "File saved successfully."
@@ -9387,7 +9475,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:198
 msgid "Invalid value specified for port."
-msgstr ""
+msgstr "Nilai tidah sah diberikan untuk port"
 
 #: src/usr/local/www/diag_packet_capture.php:206
 msgid "Invalid value specified for packet length."
@@ -9870,33 +9958,33 @@ msgstr ""
 msgid "Do you really want to reset the selected states?"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:65 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
 msgid "Routes"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:77
+#: src/usr/local/www/diag_routes.php:78
 msgid "Routing Table Display Options"
 msgstr "Pilihan Dipaparkan Jadual Penghalaan"
 
-#: src/usr/local/www/diag_routes.php:81
+#: src/usr/local/www/diag_routes.php:82
 msgid "Resolve names"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:84
+#: src/usr/local/www/diag_routes.php:85
 msgid ""
 "Enabling name resolution may cause the query to take longer. It can be "
 "stopped at any time by clicking the Stop button in the browser."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:90
+#: src/usr/local/www/diag_routes.php:91
 msgid "Rows to display"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:100
+#: src/usr/local/www/diag_routes.php:101
 msgid "Use a regular expression to filter the tables."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:106 src/usr/local/www/diag_tables.php:147
+#: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:147
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:528
@@ -9908,15 +9996,15 @@ msgstr ""
 msgid "Update"
 msgstr "Kemaskini"
 
-#: src/usr/local/www/diag_routes.php:191
+#: src/usr/local/www/diag_routes.php:192
 msgid "IPv4 Routes"
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:201 src/usr/local/www/diag_routes.php:219
+#: src/usr/local/www/diag_routes.php:202 src/usr/local/www/diag_routes.php:220
 msgid "Gathering data, please wait..."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:209
+#: src/usr/local/www/diag_routes.php:210
 msgid "IPv6 Routes"
 msgstr ""
 
@@ -9936,7 +10024,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:59
 msgid "PASSED"
-msgstr ""
+msgstr "Dibenarkan"
 
 #: src/usr/local/www/diag_smart.php:60
 msgid "FAILED"
@@ -10370,7 +10458,7 @@ msgstr ""
 
 #: src/usr/local/www/easyrule.php:53 src/usr/local/www/easyrule.php:101
 msgid "Invalid action specified."
-msgstr ""
+msgstr "Perbuatan diberikan tidak sah."
 
 #: src/usr/local/www/easyrule.php:61 src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:143
@@ -11270,7 +11358,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/log.widget.php:238
 #: src/usr/local/www/status_logs_common.inc:419
 msgid "Pass"
-msgstr ""
+msgstr "Lulus"
 
 #: src/usr/local/www/firewall_nat.php:541
 msgid "Linked rule"
@@ -11729,7 +11817,7 @@ msgstr "Sumber perlu menjadi IPv4."
 #: src/usr/local/www/firewall_nat_out_edit.php:211
 #: src/usr/local/www/firewall_rules_edit.php:559
 msgid "A valid source bit count must be specified."
-msgstr ""
+msgstr "Kiraan bit sumber yang sah harus diberi."
 
 #: src/usr/local/www/firewall_nat_edit.php:299
 #: src/usr/local/www/firewall_rules_edit.php:564
@@ -11785,10 +11873,10 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:716
-#: src/usr/local/www/firewall_nat_edit.php:1175
+#: src/usr/local/www/firewall_nat_edit.php:1148
 #: src/usr/local/www/firewall_rules_edit.php:1485
-#: src/usr/local/www/firewall_rules_edit.php:1811
-#: src/usr/local/www/firewall_rules_edit.php:1883
+#: src/usr/local/www/firewall_rules_edit.php:1785
+#: src/usr/local/www/firewall_rules_edit.php:1857
 #: src/usr/local/www/interfaces_bridge_edit.php:412
 #: src/usr/local/www/interfaces_bridge_edit.php:657
 #: src/usr/local/www/interfaces_ppps_edit.php:822
@@ -11968,37 +12056,9 @@ msgid ""
 "work on an interface containing the default gateway."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:965
-#: src/usr/local/www/firewall_nat_out_edit.php:691
-#: src/usr/local/www/firewall_rules_edit.php:1755
-msgid "Rule Information"
-msgstr ""
-
-#: src/usr/local/www/firewall_nat_edit.php:971
-#: src/usr/local/www/firewall_nat_edit.php:981
-#: src/usr/local/www/firewall_nat_out_edit.php:697
-#: src/usr/local/www/firewall_nat_out_edit.php:707
-#: src/usr/local/www/firewall_rules_edit.php:1761
-#: src/usr/local/www/firewall_rules_edit.php:1771
-#, php-format
-msgid "%1$s by %2$s"
-msgstr ""
-
-#: src/usr/local/www/firewall_nat_edit.php:969
-#: src/usr/local/www/firewall_nat_out_edit.php:695
-#: src/usr/local/www/firewall_rules_edit.php:1759
-msgid "Created"
-msgstr ""
-
-#: src/usr/local/www/firewall_nat_edit.php:979
-#: src/usr/local/www/firewall_nat_out_edit.php:705
-#: src/usr/local/www/firewall_rules_edit.php:1769
-msgid "Updated"
-msgstr "Dikemaskini"
-
-#: src/usr/local/www/firewall_nat_edit.php:1177
-#: src/usr/local/www/firewall_rules_edit.php:1809
-#: src/usr/local/www/firewall_rules_edit.php:1881
+#: src/usr/local/www/firewall_nat_edit.php:1150
+#: src/usr/local/www/firewall_rules_edit.php:1783
+#: src/usr/local/www/firewall_rules_edit.php:1855
 #: src/usr/local/www/interfaces_bridge_edit.php:655
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
 #: src/usr/local/www/services_dhcp.php:1545
@@ -12293,11 +12353,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:206
 msgid "A valid source must be specified."
-msgstr ""
+msgstr "Sumber sah harus diberi."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:216
 msgid "A valid destination must be specified."
-msgstr ""
+msgstr "Destinasi yang sah harus diberi."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:226
 msgid "Negating destination address of \"any\" is invalid."
@@ -12305,7 +12365,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:231
 msgid "A valid target IP address must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah harus diberi."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:236
 msgid ""
@@ -12598,7 +12658,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:405
 #: src/usr/local/www/firewall_rules.php:496
 msgid "traffic is passed"
-msgstr ""
+msgstr "trafik dibenarkan"
 
 #: src/usr/local/www/firewall_rules.php:415
 msgid "Anti-Lockout Rule"
@@ -14036,7 +14096,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:171
 msgid "Password and confirm password must match"
-msgstr ""
+msgstr "Kata laluan dan pengesahan kata laluan haruslah padan"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:175
 #: src/usr/local/www/firewall_virtual_ip_edit.php:195
@@ -14093,11 +14153,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
 msgid "Virtual IP Password"
-msgstr ""
+msgstr "Kata laluan IP Maya"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:392
 msgid "Enter the VHID group password."
-msgstr ""
+msgstr "Masukkan kata laluan kumpulan VHID"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:396
 msgid "VHID Group"
@@ -14653,7 +14713,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:639
 msgid "Help for items on this page"
-msgstr ""
+msgstr "Bantuan untuk item di halaman ini"
 
 #: src/usr/local/www/head.inc:650
 #, php-format
@@ -14691,21 +14751,26 @@ msgstr ""
 
 #: src/usr/local/www/help.php:529
 msgid "Help"
-msgstr ""
+msgstr "Bantuan"
 
 #: src/usr/local/www/help.php:534
 msgid "The Help page is the only page this user has privilege for."
 msgstr ""
+"Halaman Bantuan adalah satu-satunya halaman yang dibenarkan untuk pengguna "
+"ini."
 
 #: src/usr/local/www/help.php:536
 msgid ""
 "Displaying the Help page because it is the first page this user has "
 "privilege for."
 msgstr ""
+"Memaparkan halaman Bantuan kerana ia adalah halaman pertama yang dibenarkan "
+"untuk pengguna ini."
 
 #: src/usr/local/www/help.php:539
 msgid "Help page accessed directly without any page parameter."
 msgstr ""
+"Halaman bantuan diakses secara terus tanpa sebarang parameter halaman."
 
 #: src/usr/local/www/index.php:77
 #, php-format
@@ -14756,7 +14821,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:502
 msgid "An interface with the specified description already exists."
-msgstr ""
+msgstr "Antara muka dengan keterangan yang diberikan telah wujud."
 
 #: src/usr/local/www/interfaces.php:511
 #, php-format
@@ -14826,7 +14891,7 @@ msgstr "Nama pengguna PPPoE"
 
 #: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:584
 msgid "PPPoE password"
-msgstr "Katalaluan PPPoE"
+msgstr "Kata laluan PPPoE"
 
 #: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:591
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:2669
@@ -14849,7 +14914,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
 msgid "PPTP password"
-msgstr ""
+msgstr "Kata laluan PPTP"
 
 #: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
 msgid "PPTP local IP address"
@@ -14869,7 +14934,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
 msgid "L2TP password"
-msgstr ""
+msgstr "Kata laluan L2TP"
 
 #: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
 msgid "L2TP remote IP address"
@@ -14926,7 +14991,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:697
 #: src/usr/local/www/services_dhcp_edit.php:173
 msgid "A valid IPv4 address must be specified."
-msgstr ""
+msgstr "Alamat IPv4 yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:701
 #, php-format
@@ -14948,7 +15013,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:731
 #: src/usr/local/www/services_dhcpv6_edit.php:120
 msgid "A valid IPv6 address must be specified."
-msgstr ""
+msgstr "Alamat IPv6 yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:734
 msgid "IPv6 link local addresses cannot be configured as an interface IP."
@@ -14965,15 +15030,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:756 src/usr/local/www/interfaces.php:759
 msgid "A valid subnet bit count must be specified."
-msgstr ""
+msgstr "Kiraan bit subnet yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:762
 msgid "A valid alias IP address must be specified."
-msgstr ""
+msgstr "Alamat IP alias yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:765
 msgid "A valid alias subnet bit count must be specified."
-msgstr ""
+msgstr "Kiraan bit subnet alias yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:768
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
@@ -15013,22 +15078,22 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:813
 msgid "A valid PPTP local IP address must be specified."
-msgstr ""
+msgstr "Alamat IP PPTP tempatan yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:816
 msgid "A valid PPTP subnet bit count must be specified."
-msgstr ""
+msgstr "Kiraan bit subnet PPTP yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:819
 msgid "A valid PPTP remote IP address must be specified."
-msgstr ""
+msgstr "Alamat IP PPTP luar yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:825
 #: src/usr/local/www/services_dhcp_edit.php:177
 #: src/usr/local/www/services_wol.php:73
 #: src/usr/local/www/services_wol_edit.php:81
 msgid "A valid MAC address must be specified."
-msgstr ""
+msgstr "Alamat MAC yang sah harus diberi."
 
 #: src/usr/local/www/interfaces.php:840
 #, php-format
@@ -15094,7 +15159,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:934
 msgid "Invalid channel specified."
-msgstr ""
+msgstr "Saluran yang diberikan tidak sah."
 
 #: src/usr/local/www/interfaces.php:937
 msgid "Channel must be between 0-255."
@@ -16101,7 +16166,7 @@ msgid ""
 "generally be turned on, unless this network interface resides in such a "
 "private address space, too."
 msgstr ""
-"Blok trafik daripada alamat IP yang dikhaskan untuk rangkaian persendirian "
+"Sekat trafik daripada alamat IP yang dikhaskan untuk rangkaian persendirian "
 "mengikut RFC 1918 (10/8, 172.16/12, 192.168/16) dan unik alamat tempatan "
 "mengikut RFC 4193 (fc00::/7) serta alamat gelung balik (127/8). Pilihan ini "
 "amnya hendaklah dihidupkan, kecuali antara muka rangkaian ini tetap berada "
@@ -17290,7 +17355,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip_edit.php:74
 #: src/usr/local/www/services_dyndns_edit.php:107
 msgid "Password and confirmed password must match."
-msgstr ""
+msgstr "Kata laluan dan kata laluan yang disahkan haruslah padan"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:242
 msgid ""
@@ -18881,7 +18946,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:108
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:91
 msgid "Error comparing version"
-msgstr ""
+msgstr "Ralat membezakan versi"
 
 #: src/usr/local/www/pkg_mgr_installed.php:155
 #, php-format
@@ -19020,7 +19085,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:94
 #, php-format
 msgid "A valid IP address must be specified. [%s]"
-msgstr ""
+msgstr "Alamat IP yang sah harus diberi. [%s]"
 
 #: src/usr/local/www/services_captiveportal.php:309
 #: src/usr/local/www/services_captiveportal.php:313
@@ -19029,7 +19094,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:325
 #, php-format
 msgid "A valid port number must be specified. [%s]"
-msgstr ""
+msgstr "Nombor port yang sah harus diberi. [%s]"
 
 #: src/usr/local/www/services_captiveportal.php:329
 msgid ""
@@ -19699,7 +19764,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:97
 #, php-format
 msgid "A valid Hostname must be specified. [%s]"
-msgstr ""
+msgstr "Nama hos yang sah harus diberi. [%s]"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:101
 #: src/usr/local/www/services_captiveportal_ip_edit.php:102
@@ -19791,7 +19856,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:98
 msgid "A valid subnet mask must be specified"
-msgstr ""
+msgstr "Topeng subnet yang sah harus diberi"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:110
 #: src/usr/local/www/services_captiveportal_mac_edit.php:121
@@ -19892,7 +19957,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:111
 #, php-format
 msgid "A valid MAC address must be specified. [%s]"
-msgstr ""
+msgstr "Alamat MAC yang sah harus diberi. [%s]"
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:133
 #, php-format
@@ -20581,7 +20646,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:333
 #: src/usr/local/www/services_router_advertisements.php:172
 msgid "A valid domain search list must be specified."
-msgstr ""
+msgstr "Senarai carian domain yang sah harus diberi."
 
 #: src/usr/local/www/services_dhcp.php:338
 msgid ""
@@ -20604,7 +20669,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:348
 #: src/usr/local/www/services_dhcpv6.php:343
 msgid "A valid domain name must be specified for the DNS domain."
-msgstr ""
+msgstr "Nama domain yang sah harus diberi untuk domain DNS."
 
 #: src/usr/local/www/services_dhcp.php:351
 msgid ""
@@ -21301,7 +21366,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_edit.php:290
 msgid "A valid IPv4 address must be specified for use with static ARP."
-msgstr ""
+msgstr "Alamat IPv4 yang sah harus diberi untuk diguna bersama ARP statik."
 
 #: src/usr/local/www/services_dhcp_edit.php:390
 #: src/usr/local/www/services_dhcpv6_edit.php:194
@@ -21747,7 +21812,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_edit.php:134
 msgid "A valid DUID must be specified."
-msgstr ""
+msgstr "DUID yang sah harus diberi."
 
 #: src/usr/local/www/services_dhcpv6_edit.php:144
 msgid "This Hostname, IP or DUID already exists."
@@ -21827,7 +21892,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:159
 #: src/usr/local/www/services_unbound.php:149
 msgid "A valid port number must be specified."
-msgstr ""
+msgstr "Nombor port yang sah harus diberi."
 
 #: src/usr/local/www/services_dnsmasq.php:178
 msgid "Invalid custom options"
@@ -22031,7 +22096,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:71
 #: src/usr/local/www/services_unbound_host_edit.php:87
 msgid "A valid domain must be specified."
-msgstr ""
+msgstr "Domain yang sah harus diberi."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:83
 msgid ""
@@ -22115,7 +22180,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:122
 #: src/usr/local/www/services_unbound_host_edit.php:133
 msgid "A valid domain must be specified in alias list."
-msgstr ""
+msgstr "Domain yang sah harus diberi di dalam senarai alias."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:136
 #: src/usr/local/www/services_unbound_host_edit.php:147
@@ -22861,7 +22926,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:116
 #: src/usr/local/www/vpn_l2tp.php:72
 msgid "A valid server address must be specified."
-msgstr ""
+msgstr "Alamat pelayan yang sah harus diberi."
 
 #: src/usr/local/www/services_pppoe_edit.php:119
 #: src/usr/local/www/vpn_l2tp.php:78
@@ -22871,7 +22936,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:122
 #: src/usr/local/www/vpn_l2tp.php:81
 msgid "A valid RADIUS server address must be specified."
-msgstr ""
+msgstr "Alamat pelayan RADIUS yang sah harus diberi."
 
 #: src/usr/local/www/services_pppoe_edit.php:125
 msgid "Number of PPPoE users must be between 1 and 255"
@@ -22888,21 +22953,21 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:136
 #: src/usr/local/www/vpn_l2tp.php:99
 msgid "The specified server address lies in the remote subnet."
-msgstr ""
+msgstr "Alamat pelayan yang diberi berada di subnet luar."
 
 #: src/usr/local/www/services_pppoe_edit.php:139
 msgid "The specified server address is equal to an interface ip address."
-msgstr ""
+msgstr "Alamat pelayan yang diberi adalah sama dengan alamat ip antaramuka."
 
 #: src/usr/local/www/services_pppoe_edit.php:145
 #, php-format
 msgid "No password specified for username %s"
-msgstr ""
+msgstr "Tiada kata laluan yang diberikan untuk nama pengguna %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:148
 #, php-format
 msgid "Incorrect ip address specified for username %s"
-msgstr ""
+msgstr "Alamat ip tidak tepat untuk nama pengguna %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:155
 msgid "Wrong data submitted"
@@ -23276,7 +23341,7 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:160
 #, php-format
 msgid "An invalid subnet or alias was specified. [%1$s/%2$s]"
-msgstr ""
+msgstr "Subnet atau alias yang tidak sah telah diberi. [%1$s/%2$s]"
 
 #: src/usr/local/www/services_router_advertisements.php:179
 msgid ""
@@ -24223,7 +24288,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:77
 msgid "A valid interface must be specified."
-msgstr ""
+msgstr "Antaramuka yang sah harus diberi."
 
 #: src/usr/local/www/services_wol.php:84
 msgid "A valid ip could not be found!"
@@ -24323,37 +24388,37 @@ msgstr ""
 msgid "Related log entries"
 msgstr ""
 
-#: src/usr/local/www/status.php:141
+#: src/usr/local/www/status.php:160
 #, php-format
 msgid "Firewall Status on %s"
 msgstr "Tembok Api Status di %s"
 
-#: src/usr/local/www/status.php:144
+#: src/usr/local/www/status.php:163
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:330
+#: src/usr/local/www/status.php:359
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:332
+#: src/usr/local/www/status.php:361
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:334
+#: src/usr/local/www/status.php:363
 #, php-format
 msgid ""
-"When the page has finished loading, the output will be stored in %1$s. It "
-"may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s."
+"When the page has finished loading, the output is stored in %1$s. It may be "
+"downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:342
+#: src/usr/local/www/status.php:376
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:350
+#: src/usr/local/www/status.php:384
 msgid "Done."
 msgstr ""
 
@@ -25122,7 +25187,7 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:169
 msgid "In/out packets (pass)"
-msgstr ""
+msgstr "Paket masuk/keluar (Lulus)"
 
 #: src/usr/local/www/status_interfaces.php:171
 msgid "In/out packets (block)"
@@ -25130,10 +25195,10 @@ msgstr ""
 
 #: src/usr/local/www/status_interfaces.php:173
 msgid "In/out errors"
-msgstr ""
+msgstr "Ralat masuk/keluar"
 
 #: src/usr/local/www/status_interfaces.php:174
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:48
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
 msgstr ""
 
@@ -25808,15 +25873,15 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_filter.php:247
 msgid "Easy Rule: Pass this traffic"
-msgstr ""
+msgstr "Easy Rule: Benarkan trafik ini"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Add to block list"
-msgstr ""
+msgstr "Tambah ke senarai sekatan"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Pass traffic"
-msgstr ""
+msgstr "Benarkan trafik"
 
 #: src/usr/local/www/status_logs_filter.php:332
 msgid "Resolve"
@@ -26409,7 +26474,7 @@ msgstr ""
 #: src/usr/local/www/system.php:216
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
-msgstr ""
+msgstr "Alamat IP yang sah harus diberi untuk pelayan DNS %s."
 
 #: src/usr/local/www/system.php:222
 #, php-format
@@ -26537,11 +26602,11 @@ msgstr ""
 
 #: src/usr/local/www/system.php:575
 msgid "*Language"
-msgstr ""
+msgstr "*Bahasa"
 
 #: src/usr/local/www/system.php:578
 msgid "Choose a language for the webConfigurator"
-msgstr ""
+msgstr "Sila pilih bahasa untuk webConfigurator"
 
 #: src/usr/local/www/system.php:582
 #: src/usr/local/www/system_advanced_admin.php:308
@@ -26573,7 +26638,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:80
 msgid "A valid webConfigurator port number must be specified"
-msgstr ""
+msgstr "Nombor port webConfigurator yang sah harus diberi."
 
 #: src/usr/local/www/system_advanced_admin.php:86
 msgid "Max Processes must be a number 1 or greater"
@@ -26586,7 +26651,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:101
 msgid "A valid port number must be specified"
-msgstr ""
+msgstr "Nombor port yang sah harus diberi"
 
 #: src/usr/local/www/system_advanced_admin.php:271
 #, php-format
@@ -27252,7 +27317,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:643
 msgid "Choose the interfaces on which to enable TFTP proxy helper."
-msgstr ""
+msgstr "Sila pilih antaramuka yang ingin diaktifkan pembantu TFTP proxy"
 
 #: src/usr/local/www/system_advanced_firewall.php:648
 msgid "State Timeouts (seconds - blank for default)"
@@ -27377,7 +27442,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
-msgstr ""
+msgstr "Kata laluan proksi"
 
 #: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
@@ -27666,7 +27731,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:64
 msgid "A valid DUID must be specified"
-msgstr ""
+msgstr "DUID yang sah harus diberi"
 
 #: src/usr/local/www/system_advanced_network.php:171
 msgid "IPv6 Options"
@@ -27816,11 +27881,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:104
 msgid "Growl passwords must match"
-msgstr ""
+msgstr "Kata laluan Growl mestilah padan"
 
 #: src/usr/local/www/system_advanced_notifications.php:137
 msgid "SMTP passwords must match"
-msgstr ""
+msgstr "Kata laluan SMTP mestilah padan"
 
 #: src/usr/local/www/system_advanced_notifications.php:172
 #, php-format
@@ -28006,7 +28071,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:93
 msgid "Both a name and a value must be specified."
-msgstr ""
+msgstr "Kedua-dua nama dan nilai harus diberikan."
 
 #: src/usr/local/www/system_advanced_sysctl.php:95
 msgid "The value may only contain alphanumeric characters, -, _, %, and /."
@@ -28121,7 +28186,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:242
 msgid "Bind Password"
-msgstr ""
+msgstr "Ikat Kata laluan"
 
 #: src/usr/local/www/system_authservers.php:251
 msgid "Radius Protocol"
@@ -28409,7 +28474,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:825
 msgid "Please fill the bind username/password."
-msgstr ""
+msgstr "Sila isi nama pengguna/kata laluan ikatan"
 
 #: src/usr/local/www/system_camanager.php:35
 msgid "Import an existing Certificate Authority"
@@ -29725,7 +29790,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:265
 #: src/usr/local/www/vpn_openvpn_client.php:343
 msgid "Password and confirmation must match."
-msgstr ""
+msgstr "Kata laluan dan kata laluan yang disahkan haruslah padan"
 
 #: src/usr/local/www/system_hasync.php:78
 msgid "pfsync Synchronize Peer IP must be an IPv4 IP."
@@ -29811,7 +29876,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:174
 msgid "Remote System Password"
-msgstr ""
+msgstr "Kata laluan Sistem Luan"
 
 #: src/usr/local/www/system_hasync.php:177
 #, php-format
@@ -30180,7 +30245,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_passwordmg.php:44
 #: src/usr/local/www/vpn_l2tp_users_edit.php:94
 msgid "The passwords do not match."
-msgstr ""
+msgstr "Kata laluan tidak padan"
 
 #: src/usr/local/www/system_usermanager.php:223
 msgid "IPsec Pre-Shared Key contains invalid characters."
@@ -30270,7 +30335,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:770
 msgid "Confirm Password"
-msgstr ""
+msgstr "Sahkan kata laluan"
 
 #: src/usr/local/www/system_usermanager.php:781
 msgid "User's full name, for administrative information only"
@@ -30372,19 +30437,19 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 msgid "User Password"
-msgstr ""
+msgstr "Kata laluan pengguna"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:59
 msgid "Password successfully changed."
-msgstr ""
+msgstr "Kata laluan telah berjaya ditukar."
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:86
 msgid "The password cannot be changed for a non-local user."
-msgstr ""
+msgstr "Kata laluan tidak boleh ditukar untuk pengguna bukan tempatan."
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:93
 msgid "Update Password"
-msgstr ""
+msgstr "Kemaskini kata laluan"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:103
 msgid "*Confirmation"
@@ -30392,7 +30457,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:105
 msgid "Select a new password"
-msgstr ""
+msgstr "Sila pilih kata laluan baru"
 
 #: src/usr/local/www/system_usermanager_settings.php:44
 #, php-format
@@ -30799,19 +30864,19 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:194
 msgid "A valid IP address for 'DNS Server #1' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan DNS #1' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:197
 msgid "A valid IP address for 'DNS Server #2' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan DNS #2' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:200
 msgid "A valid IP address for 'DNS Server #3' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan DNS #3' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:203
 msgid "A valid IP address for 'DNS Server #4' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan DNS #4' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:209
 msgid ""
@@ -30820,11 +30885,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:212
 msgid "A valid IP address for 'WINS Server #1' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan WINS #1' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:215
 msgid "A valid IP address for 'WINS Server #2' must be specified."
-msgstr ""
+msgstr "Alamat IP yang sah untuk 'Pelayan WINS #2' harus diberi."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:221
 msgid "A valid value for 'Login Banner' must be specified."
@@ -30909,7 +30974,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:554
 msgid "Save Xauth Password"
-msgstr ""
+msgstr "Simpan kata laluan Xauth"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:557
 msgid ""
@@ -31765,7 +31830,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:90
 msgid "The password contains invalid characters."
-msgstr ""
+msgstr "Kata laluan mengandungi aksara yang tidak sah."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:97
 msgid "The IP address entered is not valid."
@@ -31777,7 +31842,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:165
 msgid "To change the users password, enter it here."
-msgstr ""
+msgstr "Sila masuk disini untuk menukar kata laluan pengguna."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:174
 msgid "To assign the user a specific IP address, enter it here."
@@ -31841,7 +31906,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
-msgstr ""
+msgstr "Nama pengguna dan kata laluan diperlukan untuk pengesahan proksi."
 
 #: src/usr/local/www/vpn_openvpn_client.php:291
 msgid "The bandwidth limit must be a positive numeric value."
@@ -32014,7 +32079,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
-msgstr ""
+msgstr "Biarkan kosong jika kata laluan tidak diperlukan"
 
 #: src/usr/local/www/vpn_openvpn_client.php:629
 #: src/usr/local/www/vpn_openvpn_server.php:753
@@ -32456,7 +32521,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Connection blocking"
-msgstr ""
+msgstr "Sambungan menyekat"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:358
 msgid ""
@@ -32959,7 +33024,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
-msgstr ""
+msgstr "Sekat DNS Luar"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
@@ -33131,7 +33196,8 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:242
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:143
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:242
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:267
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:170
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
@@ -33199,45 +33265,68 @@ msgstr ""
 msgid "Packages may be added/managed here: "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:38
 msgid "Packets In"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:39
 msgid "Packets Out"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:40
 msgid "Bytes In"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:45
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:41
 msgid "Bytes Out"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:46
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Errors In"
-msgstr ""
+msgstr "Ralat Masuk"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:47
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
 msgid "Errors Out"
-msgstr ""
+msgstr "Ralat Keluar"
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:75
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:103
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:152
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:147
 msgid "All interfaces are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:77
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:105
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:154
 msgid "All selected interfaces are down."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:118
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
+msgid "All statistics are hidden."
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:127
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:200
 msgid "Retrieving interface data"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
+msgid "Orientation"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
+msgid "Each interface in a column"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
+msgid "Each interface in a row"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
+msgid "Stats Item"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
@@ -33499,7 +33588,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Error in version information</i>"
-msgstr ""
+msgstr "<i>Ralat di dalam maklumat versi</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:82
 msgid "Version "
@@ -33903,7 +33992,7 @@ msgstr ""
 
 #: src/usr/local/www/xmlrpc.php:68
 msgid "Authentication failed: Invalid username or password"
-msgstr ""
+msgstr "Pengesahan tidak berjaya: nama pengguna atau kata laluan tidak sah"
 
 #: src/usr/local/www/xmlrpc.php:85
 msgid "Authentication failed: not enough privileges"
@@ -34055,7 +34144,7 @@ msgstr "Lumpuhkan peraturan ini"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:428
 msgid "Do not perform binat for the specified address"
-msgstr ""
+msgstr "Dilarang melakukan binat untuk alamat yang diberi."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:506
@@ -34905,7 +34994,7 @@ msgstr "Diformatkan"
 #: src/usr/local/www/status_logs_common.inc:884
 #: src/usr/local/www/status_logs_settings.php:287
 msgid "Log errors from the web server process"
-msgstr ""
+msgstr "Log ralat dari proses web pelayan"
 
 #: src/usr/local/www/status_logs_common.inc:895
 #: src/usr/local/www/status_logs_settings.php:259
@@ -35396,6 +35485,8 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_mobile.php:555
 msgid "Allow clients to save Xauth passwords (Cisco VPN client only)."
 msgstr ""
+"Benarkan pelanggan untuk menyimpan kata laluan Xauth (Untuk pelanggan VPN "
+"Cisco sahaja)."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:443
@@ -35412,13 +35503,13 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_mobile.php:608
 #: src/usr/local/www/vpn_openvpn_csc.php:463
 msgid "Provide a DNS server list to clients"
-msgstr ""
+msgstr "Sediakan senarai pelayan DNS untuk pelanggan"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:555
 #: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
-msgstr ""
+msgstr "Sediakan senarai pelayan WINS untuk pelanggan"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:659
 msgid ""
@@ -35496,7 +35587,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:338
 msgid "Enable bypass for LAN interface IP"
-msgstr ""
+msgstr "Benarkan pintasan untuk antaramuka IP LAN"
 
 #: src/usr/local/www/vpn_l2tp.php:204
 msgid "Enable L2TP server"
@@ -35527,7 +35618,7 @@ msgstr "Secara automatik menjana Kunci TLS."
 #: src/usr/local/www/vpn_openvpn_client.php:700
 #: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
-msgstr ""
+msgstr "Jana kunci kongsi secara automatik"
 
 #: src/usr/local/www/vpn_openvpn_client.php:729
 #: src/usr/local/www/vpn_openvpn_server.php:900
@@ -35560,7 +35651,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:356
 msgid "Block this client connection based on its common name."
-msgstr ""
+msgstr "Sekat sambungan pelanggan ini berdasarkan nama umumnya."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:424
 #: src/usr/local/www/vpn_openvpn_server.php:1030
@@ -35571,11 +35662,13 @@ msgstr ""
 msgid ""
 "Prevent this client from receiving any server-defined client settings. "
 msgstr ""
+"Halang pelanggan ini dari menerima sebarang takrifan pelayan dari tetapan "
+"pelangan."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:504
 #: src/usr/local/www/vpn_openvpn_server.php:1207
 msgid "Provide an NTP server list to clients"
-msgstr ""
+msgstr "Menyediakan senarai pelayan NTP kepada pelanggan"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:532
 #: src/usr/local/www/vpn_openvpn_server.php:1228
@@ -35588,35 +35681,42 @@ msgstr "Lumpuhkan pelayan ini"
 
 #: src/usr/local/www/vpn_openvpn_server.php:967
 msgid "Enforce match"
-msgstr ""
+msgstr "Kuatkuasakan sepadan"
 
 #: src/usr/local/www/vpn_openvpn_server.php:998
 msgid "Allow clients on the bridge to obtain DHCP."
-msgstr ""
+msgstr "Benarkan pelanggan dalam jambatan untuk mendapatkan DHCP."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
-msgstr ""
+msgstr "Tolak tetapan Pemampat yang dipilih kepada pelanggan yang disambung."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
 msgstr ""
+"Benarkan komunikasi antara pelanggan yang disambung kepada pelayan ini."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
+"Benarkan berbilang sambungan sejajar dari pelanggan menggunakan nama umum "
+"yang sama."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1123
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
+"Benarkan pelanggan yang disambung untuk mengekalkan sambungan jika alamat IP "
+"mereka telah berubah."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
+"Menyediakan senarai pelayan DNS untuk pelanggan. Mungkin dalam bentuk IPv4 "
+"atau IPv6."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid ""
@@ -35629,3 +35729,5 @@ msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
+"Laksanakan \"net stop dnscache\", \"net start dnscache\", \"ipconfig /"
+"flushdns\" dan \"ipconfig /registerdns\" semasa sambungan sedang dijalankan."

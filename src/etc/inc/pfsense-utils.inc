@@ -3351,20 +3351,20 @@ global $config, $g;
 }
 
 /* Scrape a doc page in HTML format, sanitised so it can be trusted to be displayed to the user in the router GUI context.
- * (Although we control the docs website, we don't want any issue of hack to create a vulnerability due to trusting the docs pages and
- *  displaying content from them in-router, especially if we don't actually *have* to trust it.)
+ * (Although we control the docs website, we don't want any doc pages issue to open a vulnerability due to trusting the doc pages
+ * content and displaying in-router, so treat the doc pages as *untrusted* and sanitise accordingly.)
  * Useful if we want to provide help pages or changelogs within the GUI at any time. 
  *
- * The tags allowed can be formatted with CSS or str_replace() if formatting is needed, but that's separate.
+ * The permitted tags are "bare". They can be formatted with CSS or str_replace() if formatting is needed, but that's separate.
  
  * Keeping this function very simple right now, as it's mainly intended for changelogs/release notes which don't use complex formatting
- * or images. So it might need enhancing if used for other doc pages.
+ * or images. So it might need more richness if used for other doc pages.
  *
- * The sanitising used is as follows:
- * 1) use strip_tags() to remove all but a few "well known" tags likely to be used in doc pages (most aren't used right now)
- * 2) remove any comments
- * 3) remove any attribs or other content from all tags, after the <ALPHA or </ALPHA opening, except for "<a ..."
- * 4) With <a>, we need to preserve HREF but handle a few possible pathological issues (e.g., hrefs in title="...", href javascript).
+ * The sanitising method is as follows:
+ * 1) use strip_tags() to remove all but a few "well known" tags likely to be used in doc pages (even though most aren't actually in common use)
+ * 2) remove comments
+ * 3) remove attribs or other content from all tags, after the <ALPHA or </ALPHA opening, except for "<a ..."
+ * 4) With "<a>", we need to preserve HREF but handle a few possible pathological HREF issues (e.g., hrefs in title="...", href javascript).
  *    We do this by:
  *    4.1) ensure the token string "valid-href" isn't being used (it shouldn't be)
  *    4.2) detect and rename any VALID hrefs that start with ftp/http(s) or / or # values, to "valid-href"

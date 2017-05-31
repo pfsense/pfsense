@@ -3290,4 +3290,58 @@ function addrtolower($ip) {
 function compare_by_name($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
+// Get list of releases and relevant data for each, from doc pages
+function get_release_list() {
+global $config, $g;
+
+//get raw markup for the release versions page
+$url = 'https://' . $g['doc_root_url'] . 'Versions_of_pfSense_and_FreeBSD?action=raw';
+$h = file_get_contents($url);
+if ($h === false) {
+  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+}
+
+// get bare table lines for the first table on the page
+$null_strings = array("|-\n", "|}\n");
+$h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
+
+$patterns = array(
+	'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
+	'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
+	'/^.*\|\|[^[|]+$/m',				// remove future releases where final column doesn't contain [[REL_TITLE | REL_STATUS]]
+	'/\|\|\s*\[\[([^|\]]+)\|([^|\]]+)\]\]\s*$/m',	// convert [[REL_TITLE | REL_STATUS]] in final column to 2 columns
+	'/\|[^|\]]*\]\]/m',				// remove the narrative portion from any other "[[PAGE | NARRATIVE]]" page links
+	'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'       
+							// split narrative portion of [http(s):* NARRATIVE] external links to a separate column
+);
+
+$replace = array(
+	'', 
+	'', 
+	'', 
+	'|| \1 || \2',
+	']]',
+	'\1 \2 || \3 \4'
+);
+
+$h = preg_replace($patterns, $replace, $h);
+
+$rel_list = array();
+foreach (explode("\n", $h) as $rel_line) {
+  $r = preg_split("/\s+\|\|\s+/", $rel_line);
+  if (strlen($r[0] > 1)) {
+    $rel_list[] = array(
+        'release_version' => $r[0],
+        'date' => $r[7],
+        'github_branch' => $r[3],
+        'freebsd_version' => $r[5],
+        'doc_url' => $url = 'https://' . ($config2['lang'] == 'en' ? '' : $config2['lang'] . '.') . $g2['doc_url_template'] . str_replace(' ', '_', $r[8]),
+        'status' => $r[9]
+    );
+  }
+}
+
+return $rel_list;
+}
 ?>

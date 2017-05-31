@@ -3293,12 +3293,12 @@ function compare_by_name($a, $b) {
 
 /* Get list of releases and relevant data for each, from doc pages
  * NOTE: RETURN STRINGS NOT SANITISED (ALTHOUGH FROM OUR OWN WEBSITE), 
- * other than a crude replacing of "<" ">" "&" and <0x20 by html entities using filter_var().
+ * other than a crude replacing of "<" ">" "&" by html entities.
  * (These chars are rare and not much expected anyway, and probably not an issue if replaced)
- * CALLING CODE MUST SANITISE AS NEEDED
+ * CALLING CODE MUST SANITISE AS NEEDED. MIGHT NEED MORE HERE.
 */
 function get_release_list() {
-global $config, $g;
+global $g;
 
 //get raw markup for the release versions page
 	$url = 'https://' . $g['doc_root_url'] . 'Versions_of_pfSense_and_FreeBSD?action=raw';
@@ -3310,7 +3310,8 @@ global $config, $g;
 	// get bare table lines for the first table on the page
 	$null_strings = array("|-\n", "|}\n");
 	$h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
-	$h = filter_var(FILTER_SANITIZE_SPECIAL_CHARS, $h);
+	$h = str_replace(['<', '&', '>'], ['&lt;', '&amp;', '&gt;'], $h);
+	
 	$patterns = array(
 		'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
 		'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
@@ -3332,19 +3333,38 @@ global $config, $g;
 
 	$h = preg_replace($patterns, $replace, $h);
 
-	$rel_list = array();
+	$rel_list = $pagelookup = array();
+	
+	// build table of release info
+	
 	foreach (explode("\n", $h) as $rel_line) {
-	  $r = preg_split("/\s+\|\|\s+/", $rel_line);
-	  if (strlen($r[0] > 1)) {
-	    $rel_list[] = array(
-		'release_version' => $r[0],
-		'date' => $r[7],
-		'github_branch' => $r[3],
-		'freebsd_version' => $r[5],
-		'doc_url' => $url = 'https://' . ($config2['lang'] == 'en' ? '' : $config2['lang'] . '.') . $g2['doc_url_template'] . str_replace(' ', '_', $r[8]),
-		'status' => $r[9]
-	    );
-	  }
+		$r = preg_split("/\s+\|\|\s+/", $rel_line);
+		if (strlen($r[0] > 1)) {
+			$rel_list[] = array(
+				'release_version' => $r[0],
+				'release_date' => $r[7], 		 //FIXME: NOT IN STD TIME FORMAT
+				'page_modified_date' => '',		// will fill via API if accessible
+				'github_branch' => $r[3],
+				'freebsd_version' => $r[5],
+				'doc_title' => $r[8],
+				'doc_url' => $url = 'https://' . $g['doc_root_url'] . str_replace(' ', '_', $r[8]),	// 'en' only at the moment
+				'status' => $r[9]
+			    );
+			$pagelookup[$r[8]] = count($rel_list) - 1;
+		}
+	}
+	
+	// add info only available through API. Currently only the "page last modified" timestamp. If inaccessible, ignore the extra data
+
+	$titlelist = str_replace(' ', '_', implode('|', array_keys($pagelookup)));
+	$apiurl = "https://{$g['doc_api_url']}action=query&format=json&prop=revisions&formatversion=2&titles={$titlelist}&rvprop=timestamp&redirects";
+	$h = file_get_contents($apiurl);
+	if ($h !== false) {
+		$apidata = json_decode($h, true);
+		foreach ($apidata['query']['pages'] as $p) {
+			$pageidx = $pagelookup[$p['title']];
+			$rel_list[$pageidx]['page_modified_date'] = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
+		}
 	}
 
 	return $rel_list;

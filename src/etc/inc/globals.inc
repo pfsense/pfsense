@@ -85,7 +85,8 @@ $g = array(
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
-	"default_config_backup_count" => 30
+	"default_config_backup_count" => 30,
+	'doc_root_url' => 'doc.pfsense.org/index.php/'
 );
 
 /* IP TOS flags */

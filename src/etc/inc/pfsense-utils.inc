@@ -3372,8 +3372,9 @@ global $config, $g;
  *    4.4) Ensuring any links kept, open in a new tab.
  */
 function get_sanitised_doc_page($doc_page) {
-
-	$url = 'https://' . $g2['doc_root_url'] . str_replace(' ', '_', $doc_page);
+	global $g;
+	
+	$url = 'https://' . $g['doc_root_url'] . str_replace(' ', '_', $doc_page);
 	$h = file_get_contents($url);
 	if ($h === false) {
 	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');

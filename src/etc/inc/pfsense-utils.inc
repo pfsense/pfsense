@@ -3369,6 +3369,7 @@ global $config, $g;
  *    4.1) ensure the token string "valid-href" isn't being used (it shouldn't be)
  *    4.2) detect and rename any VALID hrefs that start with ftp/http(s) or / or # values, to "valid-href"
  *    4.3) Delete *all other content* before/after the *first* "valid-href" clause in every <a> tag, and rename back to href
+ *    4.4) Ensuring any links kept, open in a new tab.
  */
 function get_sanitised_doc_page($doc_page) {
 
@@ -3394,7 +3395,7 @@ function get_sanitised_doc_page($doc_page) {
 		'<\1>',
 		'',
 		' valid-href="\1" ',
-		'<a href="\2">'
+		'<a href="\2" target="_blank">'
 	);
 
 	return preg_replace($patterns, $replace, $h);

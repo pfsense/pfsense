@@ -3366,7 +3366,7 @@ global $g;
 			$pageidx = $pagelookup[$p['title']];
 			$timestamp = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
 			$rel_list[$pageidx]['page_modified_date'] = $timestamp;
-			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p) . '@' . $timestamp;
+			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p) . '@' . $timestamp . '.html';
 		}
 	}
 

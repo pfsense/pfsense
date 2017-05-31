@@ -3348,7 +3348,8 @@ global $g;
 				'freebsd_version' => $r[5],
 				'doc_title' => $r[8],
 				'doc_url' => $url = 'https://' . $g['doc_root_url'] . str_replace(' ', '_', $r[8]),	// 'en' only at the moment
-				'status' => $r[9]
+				'status' => $r[9],
+				'cachefile' => 	''			// will fill via API if accessible
 			    );
 			$pagelookup[$r[8]] = count($rel_list) - 1;
 		}
@@ -3363,7 +3364,9 @@ global $g;
 		$apidata = json_decode($h, true);
 		foreach ($apidata['query']['pages'] as $p) {
 			$pageidx = $pagelookup[$p['title']];
-			$rel_list[$pageidx]['page_modified_date'] = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
+			$timestamp = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
+			$rel_list[$pageidx]['page_modified_date'] = $timestamp;
+			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p) . '@' . $timestamp;
 		}
 	}
 

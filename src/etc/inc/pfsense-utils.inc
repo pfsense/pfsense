@@ -3291,7 +3291,11 @@ function compare_by_name($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
 
-// Get list of releases and relevant data for each, from doc pages
+/* Get list of releases and relevant data for each, from doc pages
+ * NOTE: RETURN STRINGS NOT SANITISED (ALTHOUGH FROM OUR OWN WEBSITE), other than a crude replacing of "<" ">" "&" by html entities
+ * (These chars are rare and not much expected anyway, and probably not an issue if replaced)
+ * CALLING CODE MUST SANITISE AS NEEDED
+*/
 function get_release_list() {
 global $config, $g;
 
@@ -3305,14 +3309,14 @@ if ($h === false) {
 // get bare table lines for the first table on the page
 $null_strings = array("|-\n", "|}\n");
 $h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
-
+$h = str_replace(['<', '&', '>'], ['&lt;', '&amp;', '&gt;'], $h);
 $patterns = array(
 	'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
 	'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
 	'/^.*\|\|[^[|]+$/m',				// remove future releases where final column doesn't contain [[REL_TITLE | REL_STATUS]]
 	'/\|\|\s*\[\[([^|\]]+)\|([^|\]]+)\]\]\s*$/m',	// convert [[REL_TITLE | REL_STATUS]] in final column to 2 columns
 	'/\|[^|\]]*\]\]/m',				// remove the narrative portion from any other "[[PAGE | NARRATIVE]]" page links
-	'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'       
+	'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'
 							// split narrative portion of [http(s):* NARRATIVE] external links to a separate column
 );
 

@@ -3292,7 +3292,8 @@ function compare_by_name($a, $b) {
 }
 
 /* Get list of releases and relevant data for each, from doc pages
- * NOTE: RETURN STRINGS NOT SANITISED (ALTHOUGH FROM OUR OWN WEBSITE), other than a crude replacing of "<" ">" "&" by html entities
+ * NOTE: RETURN STRINGS NOT SANITISED (ALTHOUGH FROM OUR OWN WEBSITE), 
+ * other than a crude replacing of "<" ">" "&" and <0x20 by html entities using filter_var().
  * (These chars are rare and not much expected anyway, and probably not an issue if replaced)
  * CALLING CODE MUST SANITISE AS NEEDED
 */
@@ -3309,7 +3310,7 @@ if ($h === false) {
 // get bare table lines for the first table on the page
 $null_strings = array("|-\n", "|}\n");
 $h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
-$h = str_replace(['<', '&', '>'], ['&lt;', '&amp;', '&gt;'], $h);
+$h = filter_var(FILTER_SANITIZE_SPECIAL_CHARS, $h);
 $patterns = array(
 	'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
 	'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"

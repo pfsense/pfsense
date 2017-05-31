@@ -87,7 +87,8 @@ $g = array(
 	"language" => "en_US",
 	"default_config_backup_count" => 30,
 	'doc_root_url' => 'doc.pfsense.org/index.php/',
-	'doc_api_url' => 'doc.pfsense.org/api.php?'
+	'doc_api_url' => 'doc.pfsense.org/api.php?',
+	'doc_pages_cache' => '/tmp/doc_pages_cache/';
 );
 
 /* IP TOS flags */

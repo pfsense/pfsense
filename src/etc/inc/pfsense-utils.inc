@@ -3373,6 +3373,25 @@ global $g;
 	return $rel_list;
 }
 
+/* Update cache of known changelogs.
+ * As these doc pages are mostly static, once cached we rarely update, so it should be very fast (immediate) after the 1st run.
+ * Also as these pages are small and relatively few, and rarely added to, the cache won't grow large, nor will old pages become irrelevant easily,
+ * so no need for complex caching code. Pretty much check for updates and not much more.
+ */
+function update_all_release_details() {
+	global $g;
+
+	$rel_list = get_release_list($from);
+
+	foreach ($rel_list as $relnum => $reldata) {
+		if (!file_exists($reldata['cachefile'])) {
+			@array_map('unlink', glob($g['doc_pages_cache'] . str_replace(' ', '_', $reldata['doc_title']) . '@*.html'));
+			$html = get_sanitised_doc_page($reldata['doc_title']);
+			file_put_contents($reldata['cachefile'], $html);
+		}
+	}
+}
+
 /* Scrape a doc page in HTML format, sanitised so it can be trusted to be displayed to the user in the router GUI context.
  * (Although we control the docs website, we don't want any doc pages issue to open a vulnerability due to trusting the doc pages
  * content and displaying in-router, so treat the doc pages as *untrusted* and sanitise accordingly.)

@@ -3301,52 +3301,102 @@ function get_release_list() {
 global $config, $g;
 
 //get raw markup for the release versions page
-$url = 'https://' . $g['doc_root_url'] . 'Versions_of_pfSense_and_FreeBSD?action=raw';
-$h = file_get_contents($url);
-if ($h === false) {
-  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+	$url = 'https://' . $g['doc_root_url'] . 'Versions_of_pfSense_and_FreeBSD?action=raw';
+	$h = file_get_contents($url);
+	if ($h === false) {
+	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+	}
+
+	// get bare table lines for the first table on the page
+	$null_strings = array("|-\n", "|}\n");
+	$h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
+	$h = filter_var(FILTER_SANITIZE_SPECIAL_CHARS, $h);
+	$patterns = array(
+		'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
+		'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
+		'/^.*\|\|[^[|]+$/m',				// remove future releases where final column doesn't contain [[REL_TITLE | REL_STATUS]]
+		'/\|\|\s*\[\[([^|\]]+)\|([^|\]]+)\]\]\s*$/m',	// convert [[REL_TITLE | REL_STATUS]] in final column to 2 columns
+		'/\|[^|\]]*\]\]/m',				// remove the narrative portion from any other "[[PAGE | NARRATIVE]]" page links
+		'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'
+								// split narrative portion of [http(s):* NARRATIVE] external links to a separate column
+	);
+
+	$replace = array(
+		'', 
+		'', 
+		'', 
+		'|| \1 || \2',
+		']]',
+		'\1 \2 || \3 \4'
+	);
+
+	$h = preg_replace($patterns, $replace, $h);
+
+	$rel_list = array();
+	foreach (explode("\n", $h) as $rel_line) {
+	  $r = preg_split("/\s+\|\|\s+/", $rel_line);
+	  if (strlen($r[0] > 1)) {
+	    $rel_list[] = array(
+		'release_version' => $r[0],
+		'date' => $r[7],
+		'github_branch' => $r[3],
+		'freebsd_version' => $r[5],
+		'doc_url' => $url = 'https://' . ($config2['lang'] == 'en' ? '' : $config2['lang'] . '.') . $g2['doc_url_template'] . str_replace(' ', '_', $r[8]),
+		'status' => $r[9]
+	    );
+	  }
+	}
+
+	return $rel_list;
 }
 
-// get bare table lines for the first table on the page
-$null_strings = array("|-\n", "|}\n");
-$h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
-$h = filter_var(FILTER_SANITIZE_SPECIAL_CHARS, $h);
-$patterns = array(
-	'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
-	'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
-	'/^.*\|\|[^[|]+$/m',				// remove future releases where final column doesn't contain [[REL_TITLE | REL_STATUS]]
-	'/\|\|\s*\[\[([^|\]]+)\|([^|\]]+)\]\]\s*$/m',	// convert [[REL_TITLE | REL_STATUS]] in final column to 2 columns
-	'/\|[^|\]]*\]\]/m',				// remove the narrative portion from any other "[[PAGE | NARRATIVE]]" page links
-	'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'
-							// split narrative portion of [http(s):* NARRATIVE] external links to a separate column
-);
+/* Scrape a doc page in HTML format, sanitised so it can be trusted to be displayed to the user in the router GUI context.
+ * (Although we control the docs website, we don't want any issue of hack to create a vulnerability due to trusting the docs pages and
+ *  displaying content from them in-router, especially if we don't actually *have* to trust it.)
+ * Useful if we want to provide help pages or changelogs within the GUI at any time. 
+ *
+ * The tags allowed can be formatted with CSS or str_replace() if formatting is needed, but that's separate.
+ 
+ * Keeping this function very simple right now, as it's mainly intended for changelogs/release notes which don't use complex formatting
+ * or images. So it might need enhancing if used for other doc pages.
+ *
+ * The sanitising used is as follows:
+ * 1) use strip_tags() to remove all but a few "well known" tags likely to be used in doc pages (most aren't used right now)
+ * 2) remove any comments
+ * 3) remove any attribs or other content from all tags, after the <ALPHA or </ALPHA opening, except for "<a ..."
+ * 4) With <a>, we need to preserve HREF but handle a few possible pathological issues (e.g., hrefs in title="...", href javascript).
+ *    We do this by:
+ *    4.1) ensure the token string "valid-href" isn't being used (it shouldn't be)
+ *    4.2) detect and rename any VALID hrefs that start with ftp/http(s) or / or # values, to "valid-href"
+ *    4.3) Delete *all other content* before/after the *first* "valid-href" clause in every <a> tag, and rename back to href
+ */
+function get_sanitised_doc_page($doc_page) {
 
-$replace = array(
-	'', 
-	'', 
-	'', 
-	'|| \1 || \2',
-	']]',
-	'\1 \2 || \3 \4'
-);
+	$url = 'https://' . $g2['doc_root_url'] . str_replace(' ', '_', $doc_page);
+	$h = file_get_contents($url);
+	if ($h === false) {
+	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+	}
 
-$h = preg_replace($patterns, $replace, $h);
+	$h = strstr(strstr($h, '<h1>'),	'<div class="printfooter">', true);
+	$h = strip_tags($h, '<h1><h2><h3><h4><ul><ol><li><p><br><a><b><u><i><sup><sub><table><th><tr><td><blockquote>');	
 
-$rel_list = array();
-foreach (explode("\n", $h) as $rel_line) {
-  $r = preg_split("/\s+\|\|\s+/", $rel_line);
-  if (strlen($r[0] > 1)) {
-    $rel_list[] = array(
-        'release_version' => $r[0],
-        'date' => $r[7],
-        'github_branch' => $r[3],
-        'freebsd_version' => $r[5],
-        'doc_url' => $url = 'https://' . ($config2['lang'] == 'en' ? '' : $config2['lang'] . '.') . $g2['doc_url_template'] . str_replace(' ', '_', $r[8]),
-        'status' => $r[9]
-    );
-  }
-}
+	$patterns = array(
+		'%<!--.*-->%',				// remove comments
+		'%<([^a>][a-z1-9]*|a[^ >]+|/[a-z1-9]+)[^a-z1-9>][^>]*>%im',	// remove all attributes from any opening tag except <a> and from any closing tag
+		'/valid-href/',				// sanitise "href" in <a>: Ensure nothing's using the fake attribute "valid-href"...
+		'/href\s*=\s*[\'"]([https?|ftp|\/|#]:[^\'">]*)[\'"]/im',		// ...retag anything that's strictly capable of being an href attribute as 'valid-href'
+		'/<a (.*? |)valid-href="([^"]*)" [^>]*>/im'	// ...then remove all text except the first valid-href tag (if any) from <a> and rename to "href" again
+	);
 
-return $rel_list;
+	$replace = array(
+		'',
+		'<\1>',
+		'',
+		' valid-href="\1" ',
+		'<a href="\2">'
+	);
+
+	return preg_replace($patterns, $replace, $h);
 }
 ?>

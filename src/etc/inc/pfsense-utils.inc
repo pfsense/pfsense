@@ -3384,7 +3384,7 @@ function update_all_release_details() {
 	$rel_list = get_release_list($from);
 
 	foreach ($rel_list as $relnum => $reldata) {
-		if (!file_exists($reldata['cachefile'])) {
+		if ($reldata['cachefile'] != '' && !file_exists($reldata['cachefile'])) {
 			@array_map('unlink', glob($g['doc_pages_cache'] . str_replace(' ', '_', $reldata['doc_title']) . '@*.html'));
 			$html = get_sanitised_doc_page($reldata['doc_title']);
 			file_put_contents($reldata['cachefile'], $html);

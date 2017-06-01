@@ -3366,7 +3366,7 @@ global $g;
 			$pageidx = $pagelookup[$p['title']];
 			$timestamp = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
 			$rel_list[$pageidx]['page_modified_date'] = $timestamp;
-			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p) . '@' . str_replace(':', '.', $timestamp) . '.html';
+			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p['title']) . '@' . str_replace(':', '.', $timestamp) . '.html';
 		}
 	}
 
@@ -3382,7 +3382,8 @@ function update_all_release_details() {
 	global $g;
 
 	$rel_list = get_release_list($from);
-
+	safe_mkdir($g['doc_pages_cache']);
+	
 	foreach ($rel_list as $relnum => $reldata) {
 		if ($reldata['cachefile'] != '' && !file_exists($reldata['cachefile'])) {
 			@array_map('unlink', glob($g['doc_pages_cache'] . str_replace(' ', '_', $reldata['doc_title']) . '@*.html'));
@@ -3422,7 +3423,7 @@ function get_sanitised_doc_page($doc_page) {
 	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
 	}
 
-	$h = strstr(strstr($h, '<h1>'),	'<div class="printfooter">', true);
+	$h = strstr(strstr(strstr($h, 'id="toc"'), '<h'), '<div class="printfooter">', true);
 	$h = strip_tags($h, '<h1><h2><h3><h4><ul><ol><li><p><br><a><b><u><i><sup><sub><table><th><tr><td><blockquote>');	
 
 	$patterns = array(

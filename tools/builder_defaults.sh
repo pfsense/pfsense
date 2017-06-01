@@ -208,9 +208,6 @@ export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
 # iso staging area.
 export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"${SCRATCHDIR}/final-dir"}
 
-# 400M is not enough for amd64
-export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"1024M"}
-
 # OVF/vmdk parms
 # Name of ovf file included inside OVA archive
 export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}

@@ -219,62 +219,6 @@ print_error_pfS() {
 	exit 1
 }
 
-prestage_on_ram_setup() {
-	# Do not use memory disks for release build
-	if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
-		return
-	fi
-
-	[ -d "${STAGE_CHROOT_DIR}" ] \
-		|| mkdir -p ${STAGE_CHROOT_DIR}
-	[ -d "${FINAL_CHROOT_DIR}" ] \
-		|| mkdir -p ${FINAL_CHROOT_DIR}
-
-	_AVAIL_MEM=$(($(sysctl -n hw.usermem) / 1024 / 1024))
-	if [ $_AVAIL_MEM -lt 2000 ]; then
-		echo ">>> Builder has less than 2GiB RAM skipping memory disks"
-		return
-	else
-		echo "######################################################################################"
-		echo
-		echo ">>> Builder has more than 2GiB RAM enabling memory disks"
-		echo ">>> WARNING: Remember to remove these memory disks by running $0 --disable-memorydisks"
-		echo
-		echo "######################################################################################"
-	fi
-
-	if df /dev/ufs/prestagebacking >/dev/null 2>&1; then
-		echo ">>> Detected preexisting memory disk enabled for ${STAGE_CHROOT_DIR}."
-	else
-		mdconfig -a -t swap -u 10001 -s ${MEMORYDISK_SIZE}
-		newfs -L prestagebacking -U /dev/md10001
-		mount /dev/ufs/prestagebacking ${STAGE_CHROOT_DIR}
-	fi
-
-	if df /dev/ufs/finalstagebacking >/dev/null 2>&1; then
-		echo ">>> Detected preexisting memory disk enabled for ${FINAL_CHROOT_DIR}."
-	else
-		mdconfig -a -t swap -u 10002 -s ${MEMORYDISK_SIZE}
-		newfs -L finalstagebacking -U /dev/md10002
-		mount /dev/ufs/finalstagebacking ${FINAL_CHROOT_DIR}
-	fi
-}
-
-prestage_on_ram_cleanup() {
-	if [ -c /dev/md10001 ]; then
-		if [ -d ${STAGE_CHROOT_DIR} ]; then
-			umount ${STAGE_CHROOT_DIR}
-		fi
-		mdconfig -d -u 10001
-	fi
-	if [ -c /dev/md10002 ]; then
-		if [ -d ${FINAL_CHROOT_DIR} ]; then
-			umount ${FINAL_CHROOT_DIR}
-		fi
-		mdconfig -d -u 10002
-	fi
-}
-
 # This routine will verify that the kernel has been
 # installed OK to the staging area.
 ensure_kernel_exists() {

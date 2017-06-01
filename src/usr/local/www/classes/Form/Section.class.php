@@ -130,8 +130,8 @@ EOT;
 	</div>
 EOT2;
 		} else {
-		// If an ID has been specified for this section, include an anchor tag in the header to that hrefs can
-		// jump directly to it
+		// If an ID has been specified for this section, include an anchor tag in the header named with the ID
+		// so that hrefs can jump directly to it
 
 			return <<<EOT3
 	{$element}

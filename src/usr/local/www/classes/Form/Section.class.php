@@ -94,14 +94,15 @@ class Form_Section extends Form_Element
 		$body = implode('', $this->_groups);
 		$hdricon = "";
 		$bodyclass = '<div class="panel-body">';
+		$id = $this->_attributes['id'];
 
 		if ($this->_collapsible & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
-				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . '_panel-body">' .
+				'<a data-toggle="collapse" href="#' . $id . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
-			$bodyclass = '<div id="' . $this->_attributes['id'] . '_panel-body" class="panel-body collapse ';
+			$bodyclass = '<div id="' . $id . '_panel-body" class="panel-body collapse ';
 			if (($this->_collapsible & SEC_CLOSED)) {
 				$bodyclass .= 'out">';
 			} else {
@@ -117,7 +118,7 @@ class Form_Section extends Form_Element
 		</div>
 	</div>
 EOT;
-		} else {
+		} else if ($id == "") {
 			return <<<EOT2
 	{$element}
 		<div class="panel-heading">
@@ -128,6 +129,20 @@ EOT;
 		</div>
 	</div>
 EOT2;
-	}
+		} else {
+		// If an ID has been specified for this section, include an anchor tag in the header to that hrefs can
+		// jump directly to it
+
+			return <<<EOT3
+	{$element}
+		<div class="panel-heading">
+			<h2 class="panel-title"><a name="{$id}">{$title}{$hdricon}</a></h2>
+		</div>
+		{$bodyclass}
+			{$body}
+		</div>
+	</div>
+EOT3;
+		}
 	}
 }

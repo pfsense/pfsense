@@ -5716,14 +5716,6 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 	return $sourceips;
 }
 
-function get_interface_ip_family($interface = "wan", $family = 'inet') {
-	if ($family == 'inet') {
-		return get_interface_ip($interface = "wan");
-	} else {
-		return get_interface_ipv6($interface = "wan");
-	}
-}
-
 function get_interface_ip($interface = "wan") {
 
 	if (substr($interface, 0, 4) == '_vip') {
@@ -5840,14 +5832,6 @@ function get_interface_linklocal($interface = "wan") {
 		return $curip;
 	} else {
 		return null;
-	}
-}
-
-function get_interface_subnet_family($interface = "wan", $family = 'inet') {
-	if ($family == 'inet') {
-		return get_interface_subnet($interface = "wan");
-	} else {
-		return get_interface_subnetv6($interface = "wan");
 	}
 }
 

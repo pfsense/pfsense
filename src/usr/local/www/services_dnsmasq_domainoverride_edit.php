@@ -53,6 +53,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		$pconfig['dnssrcip'] = $dnsmasqpieces[1];
 	}
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
+	$pconfig['id'] = $id;
 }
 
 if ($_POST['save']) {

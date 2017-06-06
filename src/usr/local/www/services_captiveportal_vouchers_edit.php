@@ -69,6 +69,7 @@ if (isset($id) && $a_roll[$id]) {
 	$pconfig['count'] = $a_roll[$id]['count'];
 	$pconfig['minutes'] = $a_roll[$id]['minutes'];
 	$pconfig['descr'] = $a_roll[$id]['descr'];
+	$pconfig['id'] = $id;
 }
 
 $maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;	// Highest Roll#

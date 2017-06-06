@@ -61,6 +61,7 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['ip'] = $a_hosts[$id]['ip'];
 	$pconfig['descr'] = $a_hosts[$id]['descr'];
 	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
+	$pconfig['id'] = $id;
 }
 
 if ($_POST['save']) {

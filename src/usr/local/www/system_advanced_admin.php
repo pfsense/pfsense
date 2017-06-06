@@ -45,6 +45,8 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['session_timeout'] = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : '';
+$pconfig['auth_refresh_time'] = iset($config['system']['webgui']['auth_refresh_time'] ? $config['system']['webgui']['auth_refresh_time'] : 30);
+// default refresh time = 30 is taken from priv.inc
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
@@ -89,6 +91,13 @@ if ($_POST) {
 		}
 	}
 
+	if (isset($_POST['auth_refresh_time'])) {
+		$timeout = intval($_POST['auth_refresh_time']);
+		if (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 ) {
+			$input_errors[] = gettext("Authentication refresh time must be an integer between 0 and 3600 (inclusive).");
+		}
+	}
+	
 	if ($_POST['max_procs']) {
 		if (!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500)) {
 			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
@@ -175,6 +184,12 @@ if ($_POST) {
 			unset($config['system']['webgui']['session_timeout']);
 		}
 
+		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
+			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+		} else {
+			unset($config['system']['webgui']['auth_refresh_time']);
+		}
+		
 		if ($_POST['enableserial'] == "yes" || $g['enableserial_force']) {
 			$config['system']['enableserial'] = true;
 		} else {
@@ -444,6 +459,16 @@ $section->addInput(new Form_Input(
 	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
 	'risk!');
 
+$section->addInput(new Form_Input(
+	'auth_refresh_time',
+	'Auth Refresh Time',
+	'number',
+	$pconfig['auth_refresh_time'],
+	['min' => 0, 'max' => 3600]
+))->setHelp('Time in seconds to cache management session authentication results. The default is 30 seconds, ' .
+	and the maximum is 3600 seconds (one hour). Larger intervals can help to reduce the load on authentication ' .
+	'servers. Shorter intervals result in more frequent queries to authentication servers.');
+	
 $section->addInput(new Form_Input(
 	'althostnames',
 	'Alternate Hostnames',

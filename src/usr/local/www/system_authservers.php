@@ -57,7 +57,7 @@ foreach ($a_servers as $servers) {
 			    Commenting this out for now - may need to remove when reviewed.
 
 		$pconfig['backend'] = &$config['system']['webgui']['backend'];
-		/* Default to pfsense backend type if none is defined */
+		// Default to pfsense backend type if none is defined
 		if (!$pconfig['backend']) {
 			$pconfig['backend'] = "pfsense";
 		}

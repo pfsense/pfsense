@@ -650,11 +650,11 @@ $html_auth_server = (new Form_Select(
 ));
 
 $html_button = (new Form_Button(
-	'savetest',
-	'<span id="Test connection',
+	'testbtn',
+	'Test connection',
 	null,
 	'fa-wrench'
-))->addClass('btn-info')->setHelp('<div id="test_button_msg">The selected server type cannot be tested</div>');
+))->addClass('btn-info');
 
 $group->add(new Form_StaticText(
 	null,
@@ -776,15 +776,15 @@ events.push(function() {
 		});
 	}
 
-	// enable/disable auth test button based on whether selected authmode can be tested
 	function enable_disable_auth_test() {
 		if (testable_servers.indexOf($('#authmode').val()) < 0) {
-			$('#test_button').prop("disabled", true);
-			$('#test_button_msg').removeClass('hidden');
+			$('#testbtn').prop("disabled", true);
+			var newcaption = ($('#testbtn').html()).replace(/<\/i>.*$/, '</i>(<?=gettext('Live Test disabled for this server type')?>)');
 		} else {
-			$('#test_button').prop("disabled", false);
-			$('#test_button_msg').addClass('hidden');
+			$('#testbtn').prop("disabled", false);
+			var newcaption = ($('#testbtn').html()).replace(/<\/i>.*$/, '</i><?=gettext('Test Connection')?>');
 		}
+		$('#testbtn').html(newcaption);
 	}
 	
 	// ---------- On initial page load ------------------------------------------------------------
@@ -812,12 +812,13 @@ events.push(function() {
 
 	$('[name=authmode]').change(function () {
 		enable_disable_auth_test();
-	}
+	});
 
 	$('[name=authmode]').click(function () {
-		start_auth_test();
+// FIXME: ENABLE THIS WHEN READY
+//		start_auth_test();
 		$('#testresults').modal('show');
-	}
+	});
 
 });
 //]]>

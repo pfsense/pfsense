@@ -60,17 +60,14 @@ $sysinfo_items = array(
 	'memory_usage' => array('itemtitle' => gettext('Memory Usage'), 'category' => 'resource_usage', 'itemsort' => 19),
 	'swap_usage' => array('itemtitle' => gettext('Swap Usage'), 'category' => 'resource_usage', 'itemsort' => 20),
 	'disk_usage' => array('itemtitle' => gettext('Disk Usage'), 'category' => 'resource_usage', 'itemsort' => 21),
-	'admin_access_methods' => array('itemtitle' => gettext('Admin Lockdown'), 'category' => 'security', 'itemsort' => 22),
-	'admin_users' => array('itemtitle' => gettext('Users with Admin Access'), 'category' => 'security', 'itemsort' => 23)
 	);
 
 $validNames = array_keys($sysinfo_items);
 
-
+if (!function_exists('get_sysinfo_item_html')) {
 // get HTML for a sysinfo item
 
-
-function get_item_html($itemkey) {
+function get_sysinfo_item_html($itemkey) {
 	global $config, $g, $sysinfo_items;
 
 	$title_content = $sysinfo_items[$itemkey]['itemtitle']; // correct in almost all cases, override if not
@@ -133,7 +130,7 @@ function get_item_html($itemkey) {
 			if (!$g['hideplatform']) {
 				$is_nano = ($g['platform'] == "nanobsd");
 				// there's extra info (boot slice) if it's nanobsd
-				$data_template = "%s" . ($is_nano ? "\n<br/>nanobsd: <strong>%s</strong>:<br/>\n%s\n%s\n%s" : '');
+				$data_template = "%s" . ($is_nano ? "\n<br/>nanobsd: <strong>%s</strong>:<br/>\n%s\n%s" : '');
 				$platform = system_identify_specific_platform();
 				$args[] = htmlspecialchars($platform['descr']) . (($g['platform'] == "nanobsd" && file_exists("/etc/nanosize.txt")) ? " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")" : "");
 				if ($is_nano) {
@@ -221,8 +218,7 @@ END;
 	</div>
 	<span id="mbufusagemeter">%s</span>&nbsp;<span id="mbuf">(%s)</span>
 END;
-			$mbufstext = get_mbuf();
-			$mbufusage = get_mbuf(true);
+			get_mbuf($mbufstext, $mbufusage);
 			$args[] = $mbufusage;
 			$args[] = $mbufusage . '%';
 			$args[] = $mbufusage . '%';
@@ -258,7 +254,7 @@ END;
 		case 'cpu_usage':
 			$data_template = <<<END
 	<div class="progress">
-		<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+		<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%%">
 		</div>
 	</div>
 	<span id="cpumeter">%s</span>
@@ -305,6 +301,7 @@ END;
 
 		case 'disk_usage':
 			$diskidx = 0;
+			$filesystems = get_mounted_filesystems();
 			foreach ($filesystems as $fs) {
 				$data_template .= <<<END
 				<strong>%s  %s:</strong><br />
@@ -335,16 +332,19 @@ END;
 
 	// merge data into html template, indent HTML, and return
 
-	$data = vsprintf($data_template, $args);
-	if (strlen($data) > 0) {
-		$html = "<th><span style='font-weight:normal; margin-left:20px'>{$title_content}</span></th>\n" .
-			"<td>\n{$data}\n</td>\n";
-		return str_replace("\n", "\n\t\t\t", $html);
-	} else {
-		return '';
-	}
-}
+	if (strlen($data_template) > 0) {
+		$data = vsprintf($data_template, $args);
 
+		if (strlen($data) > 0) {
+			$html = "<th><span style='font-weight:normal; margin-left:20px'>{$title_content}</span></th>\n" .
+				"<td>\n{$data}\n</td>\n";
+			return str_replace("\n", "\n\t\t\t", $html);
+		}
+	}
+
+	return '';
+}
+}
 
 
 if ($_REQUEST['getupdatestatus']) {
@@ -418,17 +418,15 @@ if ($_REQUEST['getupdatestatus']) {
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 $widgetperiod += 1000;
 
-$filesystems = get_mounted_filesystems();
-
-if (strlen($user_settings['widgets']['system_information']['filter']) > 0) {
-	$itemsshown = array_diff($validNames, explode(",", $user_settings['widgets']['system_information']['filter']));
+if (strlen($user_settings['widgets'][$widgetkey]['filter']) > 0) {
+	$itemsshown = array_diff($validNames, explode(",", $user_settings['widgets'][$widgetkey]['filter']));
 } else {
 	$itemsshown = $validNames;
 }
 
 $data = array();
 foreach ($itemsshown as $itemkey) {
-	$item_html = get_item_html($itemkey);  // get sysinfo data for this item
+	$item_html = get_sysinfo_item_html($itemkey);  // get sysinfo data for this item
 	// Handle if an item returns blank data (eg can't be used, or isn't available on platform)
 	if (strlen($item_html) > 0) {
 		$itemdata = $sysinfo_items[$itemkey];
@@ -444,7 +442,7 @@ if (count($data) == 0) {
 	// adds a single item containing the special key for the "no sysinfo selected" item if nothing else will display
 	$data[0] = array(
 		'cattitle' => '',
-		'itemstoshow' => array('itemsort' => '', 'item_html' => '<tr>' . get_item_html('ALL_HIDDEN') . '<tr>')
+		'itemstoshow' => array('itemsort' => '', 'item_html' => '<tr>' . get_sysinfo_item_html('ALL_HIDDEN') . '<tr>')
 		);
 }
 
@@ -531,7 +529,7 @@ function systemStatusGetUpdateStatus() {
 		},
 		dataType: 'html',
 		success: function(data){
-			$('#system-information-widget-updatestatus').html(data);
+			$('[id^=widget-system_information] #system-information-widget-updatestatus').html(data);
 		}
 	});
 }

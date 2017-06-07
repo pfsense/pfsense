@@ -332,14 +332,12 @@ END;
 
 	// merge data into html template, indent HTML, and return
 
-	if (strlen($data_template) > 0) {
-		$data = vsprintf($data_template, $args);
+	$data = vsprintf($data_template, $args);  // no need to test zero length template, it'll be detected since $data will be zero length
 
-		if (strlen($data) > 0) {
-			$html = "<th><span style='font-weight:normal; margin-left:20px'>{$title_content}</span></th>\n" .
-				"<td>\n{$data}\n</td>\n";
-			return str_replace("\n", "\n\t\t\t", $html);
-		}
+	if (strlen($data) > 0) {
+		$html = "<th><span style='font-weight:normal; margin-left:20px'>{$title_content}</span></th>\n" .
+			"<td>\n{$data}\n</td>\n";
+		return str_replace("\n", "\n\t\t\t", $html);
 	}
 
 	return '';

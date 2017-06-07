@@ -646,7 +646,7 @@ $html_auth_server = (new Form_Select(
 	'authmode',
 	'',
 	$pconfig['authmode'],
-	array_column($auth_servers, 'name')
+	array_column($auth_servers_list, 'name')
 ));
 
 $html_button = (new Form_Button(

@@ -106,89 +106,70 @@ if ($_POST['ajax'] && $_POST['act'] == 'test_auth') {
 
 	if (isset($config['system']['authserver'][0]['host'])) {
 		$auth_server = $config['system']['authserver'][0]['host'];
-		$authserver = $_POST['authserver'];
-		$authcfg = auth_get_authserver($authserver);
+		$selected_authserver = $_POST['authserver'];
+		$authcfg = $auth_servers_list($selected_authserver);
 	}
 
 	if (!$authcfg) {
-		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
 		exit;
-	} else {
-		print("<pre>");
+	}
 
-		print('<table class="table table-hover table-striped table-condensed">');
+	if ($authcfg['type'] != 'ldap') {
+		printf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+		exit;
+	}
 
-		print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-		if (ldap_test_connection($authcfg)) {
-			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
 
-			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-			if (ldap_test_bind($authcfg)) {
+	//auth server is defined and is LDAP, carry on
+	
+	print("<pre>");
+
+	print('<table class="table table-hover table-striped table-condensed">');
+
+	print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+	if (ldap_test_connection($authcfg)) {
+		print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
+
+		print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		if (ldap_test_bind($authcfg)) {
+			print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+
+			print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			$ous = ldap_get_user_ous(true, $authcfg);
+
+			if (count($ous)>1) {
 				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+				print('<tr ><td colspan="3">');
 
-				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-				$ous = ldap_get_user_ous(true, $authcfg);
-
-				if (count($ous)>1) {
-					print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
-					print('<tr ><td colspan="3">');
-
-					if (is_array($ous)) {
-						print("<b>" . gettext("Organization units found") . "</b>");
-						print('<table class="table table-hover">');
-						foreach ($ous as $ou) {
-							print("<tr><td>" . $ou . "</td></tr>");
-						}
-
-					print("</td></tr>");
-					print("</table>");
+				if (is_array($ous)) {
+					print("<b>" . gettext("Organization units found") . "</b>");
+					print('<table class="table table-hover">');
+					foreach ($ous as $ou) {
+						print("<tr><td>" . $ou . "</td></tr>");
 					}
-				} else {
-					print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+
+				print("</td></tr>");
+				print("</table>");
 				}
-
-				print("</table><p/>");
-
 			} else {
-				print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
-				print("</table><p/>");
+				print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
 			}
+
+			print("</table><p/>");
+
 		} else {
 			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
 			print("</table><p/>");
 		}
-
-		print("</pre>");
-		exit;
+	} else {
+		print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
+		print("</table><p/>");
 	}
+
+	print("</pre>");
+	exit;
 }
-
-/* 
-		//FIXME: RAW LDAP SAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
-
-		if ($_POST) {
-			$pconfig = $_POST;
-
-			if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
-				$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
-			}
-
-			if (!$input_errors) {
-				if ($_POST['authmode'] != "Local Database") {
-					$authsrv = $auth_servers_list[$_POST['authmode']];
-					if ($_POST['savetest']) {
-						if ($authsrv['type'] == "ldap") {
-							$save_and_test_auth = true;
-						} else {
-							$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
-						}
-					}
-				}
-
-		//		write_config();
-			}
-		}
-*/
 
 
 if ($_POST) {
@@ -254,6 +235,21 @@ if ($_POST) {
 	flush();
 
 	if (!$input_errors) {
+
+/* 
+		//FIXME: RAW LDAP SAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
+		if ($_POST['savemsg']) {
+			if ($_POST['authmode'] == "Local Database") {
+				$extra_save_msg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
+			} elseif ($auth_servers_list[$_POST['authmode']]['type'] == "ldap") {
+				$save_and_test_auth = true;
+			} else {
+				$extra_save_msg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
+			}
+		}
+
+*/
+
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}

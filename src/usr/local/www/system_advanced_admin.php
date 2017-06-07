@@ -50,7 +50,6 @@ $pconfig['session_timeout'] = isset($config['system']['webgui']['session_timeout
 $pconfig['auth_refresh_time'] = isset($config['system']['webgui']['auth_refresh_time']) ? $config['system']['webgui']['auth_refresh_time'] : 30;
 // default refresh time = 30 is taken from priv.inc
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
-$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -347,12 +346,6 @@ if ($_POST) {
 			unset($config['system']['webgui']['nohttpreferercheck']);
 		}
 
-		if ($_POST['pagenamefirst'] == "yes") {
-			$config['system']['webgui']['pagenamefirst'] = true;
-		} else {
-			unset($config['system']['webgui']['pagenamefirst']);
-		}
-
 		if ($_POST['loginautocomplete'] == "yes") {
 			$config['system']['webgui']['loginautocomplete'] = true;
 		} else {
@@ -606,8 +599,6 @@ $section->addInput(new Form_Checkbox(
 	'corner cases such as using external scripts to interact with this system. More '.
 	'information on HTTP_REFERER is available from %1$sWikipedia%2$s',
 	'<a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
-
-gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 
 $form->add($section);
 $section = new Form_Section('Secure Shell');

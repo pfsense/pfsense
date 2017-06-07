@@ -586,53 +586,6 @@ $section->addInput(new Form_Input(
 	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
 	'risk!');
 
-$group = new Form_Group('Login authentication server for this router');
-
-$html_auth_server = (new Form_Select(
-	'authmode',
-	'',
-	$pconfig['authmode'],
-	array_column($auth_servers, 'name')
-));
-
-$html_button = (new Form_Button(
-	'savetest',
-	'Test connection',
-	null,
-	'fa-wrench'
-))->addClass('btn-info')->setHelp('<div id="test_button_msg">The selected server type cannot be tested</div>');
-
-$group->add(new Form_StaticText(
-	null,
-	sprintf('<table width="100%%"><tr><td>%s</td><td>%s</td></tr></table>', $html_auth_server, $html_button)
-))->setHelp('Select the server used for authenticating WebConfigurator login attempts on this router. ' .
-	'By default, the same server will be used to authenticate Console logins if password protection is enabled, ' .
-	'and other remote logins such as SSH and Telnet if they are enabled. <br/><br/>' .
-	'Click the button to test authentication server responses (LDAP only).<br/>' .
-	'Click <a href="system_authservers.php">here</a> to configure authentication servers.');
-
-$section->add($group);
-
-$section->addInput(new Form_Input(
-	'auth_refresh_time',
-	'Authentication Refresh Time',
-	'number',
-	$pconfig['auth_refresh_time'],
-	['min' => 0, 'max' => 3600]
-))->setHelp('Time in seconds to cache management session authentication results. The default is 30 seconds, ' .
-	'and the maximum is 3600 (one hour). Larger intervals can help to reduce authentication server load. ' .
-	'Shorter intervals result in more frequent queries.');
-
-
-
-$modal = new Modal("Authentication settings test results", "testresults", true);
-$modal->addInput(new Form_StaticText(
-	'Test results',
-	'<span id="testauth_output">Testing pfSense LDAP authentication settings for this server... One moment please...' . $g['product_name'] . '</span>'
-));
-
-$form->add($modal);
-
 $section->addInput(new Form_Input(
 	'althostnames',
 	'Alternate Hostnames',
@@ -683,6 +636,56 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 65535, 'placeholder' => 22]
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
+
+$form->add($section);
+$section = new Form_Section('Admin login authentication method');
+
+$group = new Form_Group('Authentication server');
+
+$html_auth_server = (new Form_Select(
+	'authmode',
+	'',
+	$pconfig['authmode'],
+	array_column($auth_servers, 'name')
+));
+
+$html_button = (new Form_Button(
+	'savetest',
+	'Test connection',
+	null,
+	'fa-wrench'
+))->addClass('btn-info')->setHelp('<div id="test_button_msg">The selected server type cannot be tested</div>');
+
+$group->add(new Form_StaticText(
+	null,
+	sprintf('<table width="100%%"><tr><td>%s</td><td>%s</td></tr></table>', $html_auth_server, $html_button)
+))->setHelp('Select the server used for authenticating WebConfigurator login attempts on this router. ' .
+	'By default, the same server will be used to authenticate Console logins if password protection is enabled, ' .
+	'and other remote logins such as SSH and Telnet if they are enabled. <br/><br/>' .
+	'Click the button to test authentication server responses (LDAP only).<br/>' .
+	'Click <a href="system_authservers.php">here</a> to configure authentication servers.');
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'auth_refresh_time',
+	'Authentication Refresh Time',
+	'number',
+	$pconfig['auth_refresh_time'],
+	['min' => 0, 'max' => 3600]
+))->setHelp('Time in seconds to cache management session authentication results. The default is 30 seconds, ' .
+	'and the maximum is 3600 (one hour). Larger intervals can help to reduce authentication server load. ' .
+	'Shorter intervals result in more frequent queries.');
+
+
+
+$modal = new Modal("Authentication settings test results", "testresults", true);
+$modal->addInput(new Form_StaticText(
+	'Test results',
+	'<span id="testauth_output">Testing pfSense LDAP authentication settings for this server... One moment please...' . $g['product_name'] . '</span>'
+));
+
+$form->add($modal);
 
 $form->add($section);
 $section = new Form_Section('Serial Communications');

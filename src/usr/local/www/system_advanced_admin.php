@@ -99,10 +99,10 @@ if (isset($config['system']['webgui']['authmode'])) {
 
 $auth_servers_list = auth_get_authserver_list();
 
-$save_and_test_LDAP = false;
+$save_and_test_auth = false;
 
-// Test LDAP settings in response to an AJAX request from this page.
-if ($_POST['ajax'] && $_POST['act'] == 'test_ldap') {
+// Test auth settings in response to an AJAX request from this page.
+if ($_POST['ajax'] && $_POST['act'] == 'test_auth') {
 
 	if (isset($config['system']['authserver'][0]['host'])) {
 		$auth_server = $config['system']['authserver'][0]['host'];
@@ -164,7 +164,7 @@ if ($_POST['ajax'] && $_POST['act'] == 'test_ldap') {
 }
 
 /* 
-		//FIXME: RAW LDAP TSAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
+		//FIXME: RAW LDAP SAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
 
 		if ($_POST) {
 			$pconfig = $_POST;
@@ -178,7 +178,7 @@ if ($_POST['ajax'] && $_POST['act'] == 'test_ldap') {
 					$authsrv = $auth_servers_list[$_POST['authmode']];
 					if ($_POST['savetest']) {
 						if ($authsrv['type'] == "ldap") {
-							$save_and_test_LDAP = true;
+							$save_and_test_auth = true;
 						} else {
 							$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
 						}
@@ -629,10 +629,10 @@ $section->addInput(new Form_Input(
 
 
 
-$modal = new Modal("LDAP settings", "testresults", true);
+$modal = new Modal("Authentication settings test results", "testresults", true);
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="testauth_output">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+	'<span id="testauth_output">Testing pfSense LDAP authentication settings for this server... One moment please...' . $g['product_name'] . '</span>'
 ));
 
 $form->add($modal);
@@ -765,7 +765,7 @@ events.push(function() {
 				type: "post",
 				data: {
 					ajax: "ajax",
-					act: 'test_ldap',
+					act: 'test_auth',
 					authserver: authserver
 				}
 			}
@@ -796,9 +796,9 @@ events.push(function() {
 /*
 			//FIXME:  MAY MOVE TO TEST ONLY, NOT SAVE & TEST, IN WHICH CASE THIS IS REMOVED
 			
-			// If the user clicked "Save & Test" show the modal and populate it with the LDAP test results via AJAX
+			// If the user clicked "Save & Test" show the modal and populate it with the auth test results via AJAX
 			<?php 
-				if ($save_and_test_LDAP) {
+				if ($save_and_test_auth) {
 					print "start_auth_test();\n";
 					print "\$('#testresults').modal('show');\n";
 				}

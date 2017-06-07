@@ -574,7 +574,7 @@ $section->addInput(new Form_Checkbox(
 	'This blocks private IP responses from the configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in the environment.',
-	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
+	'<a href="https://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
 
 $section->addInput(new Form_Input(
 	'session_timeout',

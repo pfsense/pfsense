@@ -32,68 +32,6 @@ require_once("guiconfig.inc");
 require_once("auth.inc");
 require_once("pfsense-utils.inc");
 
-// Test LDAP settings in response to an AJAX request from this page.
-if ($_REQUEST['ajax'] && $_REQUEST['act'] == 'test_ldap') {
-
-	if (isset($config['system']['authserver'][0]['host'])) {
-		$auth_server = $config['system']['authserver'][0]['host'];
-		$authserver = $_REQUEST['authserver'];
-		$authcfg = auth_get_authserver($authserver);
-	}
-
-	if (!$authcfg) {
-		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
-		exit;
-	} else {
-		print("<pre>");
-
-		print('<table class="table table-hover table-striped table-condensed">');
-
-		print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-		if (ldap_test_connection($authcfg)) {
-			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
-
-			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-			if (ldap_test_bind($authcfg)) {
-				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
-
-				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-				$ous = ldap_get_user_ous(true, $authcfg);
-
-				if (count($ous)>1) {
-					print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
-					print('<tr ><td colspan="3">');
-
-					if (is_array($ous)) {
-						print("<b>" . gettext("Organization units found") . "</b>");
-						print('<table class="table table-hover">');
-						foreach ($ous as $ou) {
-							print("<tr><td>" . $ou . "</td></tr>");
-						}
-
-					print("</td></tr>");
-					print("</table>");
-					}
-				} else {
-					print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
-				}
-
-				print("</table><p/>");
-
-			} else {
-				print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
-				print("</table><p/>");
-			}
-		} else {
-			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
-			print("</table><p/>");
-		}
-
-		print("</pre>");
-		exit;
-	}
-}
-
 if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
@@ -103,25 +41,27 @@ foreach ($a_servers as $servers) {
 	$a_server[] = $servers;
 }
 
-if (!is_array($config['ca'])) {
-	$config['ca'] = array();
-}
-$a_ca =& $config['ca'];
+/* 
+		// FIXME:   Nothing actually seems to use $config['ca'] in this code any more.
+			    Commenting this out for now - may need to remove when reviewed.
 
-if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
-} else {
-	$pconfig['authmode'] = "Local Database";
-}
+		if (!is_array($config['ca'])) {
+			$config['ca'] = array();
+		}
+		$a_ca =& $config['ca'];
+*/
 
-$pconfig['backend'] = &$config['system']['webgui']['backend'];
 
-/* Default to pfsense backend type if none is defined */
-if (!$pconfig['backend']) {
-	$pconfig['backend'] = "pfsense";
-}
+/* 
+		// FIXME:   Nothing actually seems to use $config['system']['webgui']['backend']
+			    Commenting this out for now - may need to remove when reviewed.
 
-$save_and_test = false;
+		$pconfig['backend'] = &$config['system']['webgui']['backend'];
+		/* Default to pfsense backend type if none is defined */
+		if (!$pconfig['backend']) {
+			$pconfig['backend'] = "pfsense";
+		}
+*/
 
 unset($input_errors);
 
@@ -144,34 +84,7 @@ if ($_REQUEST['del']) {
 		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 		write_config($savemsg);
 	}
-} elseif ($_REQUEST) {
-	$pconfig = $_REQUEST;
-
-	if (($_REQUEST['authmode'] == "Local Database") && $_REQUEST['savetest']) {
-		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
-	}
-
-	if (!$input_errors) {
-		if ($_REQUEST['authmode'] != "Local Database") {
-			$authsrv = auth_get_authserver($_REQUEST['authmode']);
-			if ($_REQUEST['savetest']) {
-				if ($authsrv['type'] == "ldap") {
-					$save_and_test = true;
-				} else {
-					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
-				}
-			}
-		}
-
-		if ($_REQUEST['authmode']) {
-			$config['system']['webgui']['authmode'] = $_REQUEST['authmode'];
-		} else {
-			unset($config['system']['webgui']['authmode']);
-		}
-
-		write_config();
-	}
-}
+} 
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
 $pglinks = array("", "system_usermanager.php", "@self");
@@ -192,44 +105,6 @@ $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Authentication Servers"), true, "system_authservers.php");
 display_top_tabs($tab_array);
-
-
-$form = new Form;
-
-$section = new Form_Section('Login Authentication for this router');
-
-$auth_servers = array();
-foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
-	$auth_servers[ $idx_authserver ] = $auth_server['name'];
-}
-
-$section->addInput(new Form_Select(
-	'authmode',
-	'',
-	$pconfig['authmode'],
-	$auth_servers
-))->sethelp('Select the server used for authenticating WebConfigurator login attempts on this router.<br/><br/>Note: By default, the same server will be used to authenticate Console logins if password protection is enabled, and other remote logins such as SSH and Telnet if they are enabled.');
-
-$form->addGlobal(new Form_Button(
-	'savetest',
-	'Save & Test',
-	null,
-	'fa-wrench'
-))->addClass('btn-info');
-
-$form->add($section);
-
-$modal = new Modal("LDAP settings", "testresults", true);
-
-$modal->addInput(new Form_StaticText(
-	'Test results',
-	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
-));
-
-$form->add($modal);
-
-print $form;
-
 ?>
 
 <div class="panel panel-default">
@@ -267,49 +142,10 @@ print $form;
 </div>
 
 <nav class="action-buttons">
-	<a href="system_authservers_edit.php?act=new" class="btn btn-success btn-sm">
+	<a href="system_authservers_edit.php" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add")?>
 	</a>
 </nav>
-
 <?php
-// If the user clicked "Save & Test" show the modal and populate it with the test results via AJAX
-if ($save_and_test):
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-
-	function test_LDAP() {
-		var ajaxRequest;
-		var authserver = $('#authmode').val();
-
-		ajaxRequest = $.ajax(
-			{
-				url: "/system_authservers.php",
-				type: "post",
-				data: {
-					ajax: "ajax",
-					act: 'test_ldap',
-					authserver: authserver
-				}
-			}
-		);
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#ldaptestop').html(response);
-		});
-	}
-
-	$('#testresults').modal('show');
-
-	test_LDAP();
-});
-</script>
-<?php
-endif;
-
 include("foot.inc");

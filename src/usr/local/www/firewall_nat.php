@@ -31,10 +31,11 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once("config.inc");
 require_once("filter.inc");
-require_once("shaper.inc");
 require_once("itemid.inc");
+require_once("pfsense-utils.inc");
+require_once("util.inc");
 
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
@@ -64,7 +65,7 @@ if (array_key_exists('order-store', $_REQUEST)) {
 			}
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - reordered port forward rules."))) {
 			mark_subsystem_dirty('filter');
 		}
 
@@ -109,7 +110,7 @@ if ($_POST['act'] == "del") {
 		$mvnrows = -1;
 		move_separators($a_separators, $ridx, $mvnrows);
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - deleted a port forward rule."))) {
 			mark_subsystem_dirty('natconf');
 			if ($want_dirty_filter) {
 				mark_subsystem_dirty('filter');
@@ -147,7 +148,7 @@ if (isset($_POST['del_x'])) {
 			$num_deleted++;
 		}
 
-		if (write_config()) {
+		if (write_config(gettext("Firewall: NAT: Port Forward - deleted selected port forward rules."))) {
 			mark_subsystem_dirty('natconf');
 		}
 
@@ -159,9 +160,11 @@ if (isset($_POST['del_x'])) {
 		if (isset($a_nat[$_POST['id']]['disabled'])) {
 			unset($a_nat[$_POST['id']]['disabled']);
 			$rule_status = true;
+			$wc_msg = gettext('Firewall: NAT: Port Forward - enabled a port forward rule.');
 		} else {
 			$a_nat[$_POST['id']]['disabled'] = true;
 			$rule_status = false;
+			$wc_msg = gettext('Firewall: NAT: Port Forward - disabled a port forward rule.');
 		}
 
 		// Check for filter rule associations
@@ -172,7 +175,7 @@ if (isset($_POST['del_x'])) {
 			mark_subsystem_dirty('filter');
 		}
 
-		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
+		if (write_config($wc_msg)) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat.php");

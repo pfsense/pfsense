@@ -65,13 +65,14 @@ foreach ($a_servers as $servers) {
 
 unset($input_errors);
 
+// TO CHECK - IF THERE'S ONLY ONE AUTH SERVER, SHOULD THE USER BE PREVENTED FROM DELETING?
 if ($_REQUEST['del']) {
 	$id = $_REQUEST['id'];
-	if (!isset($_REQUEST['id']) || !is_numericint($id) || !$a_server[$id]) {
+	$serverdeleted = $a_server[$id]['name'];
+	if (!isset($_REQUEST['id']) || !is_numericint($id) || !$a_server[$id] || $serverdeleted == 'Local Database') {
 		$input_errors[] = gettext('Can not delete Authentication Server: server ID is missing, invalid or unrecognised.');
 	} else {
 		/* Remove server from main list. */
-		$serverdeleted = $a_server[$id]['name'];
 		foreach ($config['system']['authserver'] as $k => $as) {
 			if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
 				unset($config['system']['authserver'][$k]);

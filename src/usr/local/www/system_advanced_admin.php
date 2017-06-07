@@ -97,10 +97,7 @@ if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = "Local Database";
 }
 
-$auth_servers = array();
-foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
-	$auth_servers[$idx_authserver] = $auth_server['name'];
-}
+$auth_servers_list = auth_get_authserver_list();
 
 $save_and_test_LDAP = false;
 
@@ -178,7 +175,7 @@ if ($_POST['ajax'] && $_POST['act'] == 'test_ldap') {
 
 			if (!$input_errors) {
 				if ($_POST['authmode'] != "Local Database") {
-					$authsrv = auth_get_authserver($_POST['authmode']);
+					$authsrv = $auth_servers_list[$_POST['authmode']];
 					if ($_POST['savetest']) {
 						if ($authsrv['type'] == "ldap") {
 							$save_and_test_LDAP = true;
@@ -213,7 +210,7 @@ if ($_POST) {
 		}
 	}
 
-	if (!array_key_exists($_POST['authmode'], $auth_servers)) {
+	if (!array_key_exists($_POST['authmode'], $auth_servers_list)) {
 		// set a reasonable fallback value.
 		$_POST['authmode'] = $pconfig['authmode'];
 		$input_errors[] = gettext('A recognised authentication server must be selected.');
@@ -599,15 +596,15 @@ $html_auth_server = (new Form_Select(
 	'authmode',
 	'',
 	$pconfig['authmode'],
-	$auth_servers
+	array_column($auth_servers, 'name')
 ));
 
 $html_button = (new Form_Button(
 	'savetest',
-	'Test LDAP',
+	'Test connection',
 	null,
 	'fa-wrench'
-))->addClass('btn-info');
+))->addClass('btn-info')->setHelp('<div id="test_button_msg">The selected server type cannot be tested</div>');
 
 $group->add(new Form_StaticText(
 	null,
@@ -635,7 +632,7 @@ $section->addInput(new Form_Input(
 $modal = new Modal("LDAP settings", "testresults", true);
 $modal->addInput(new Form_StaticText(
 	'Test results',
-	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+	'<span id="testauth_output">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
 ));
 
 $form->add($modal);
@@ -740,13 +737,25 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 print $form;
 
+// Build a JS string containing auth servers we can test using AJAX.
+$testable_servers_list = array();
+foreach ($auth_servers_list as $authsvrid => $authsvrdata) {
+	if ($authsvrdata['type'] == 'ldap') {
+		$testable_servers[] = $authsvrid;
+	}
+}
+$testable_servers_JS = (count($testable_servers_list) > 0 ? "['" . implode("', '", $testable_servers_list) . "']" : "[]");
+
 ?>
 </div>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
-	function test_LDAP() {
+	// List of defined authservers we can test using AJAX
+	var testable_servers = <?=$testable_servers_JS?>;
+	
+	function start_auth_test() {
 		var ajaxRequest;
 		var authserver = $('#authmode').val();
 
@@ -764,30 +773,52 @@ events.push(function() {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#ldaptestop').html(response);
+			$('#testauth_output').html(response);
 		});
 	}
 
+	// enable/disable auth test button based on whether selected authmode can be tested
+	function enable_disable_auth_test() {
+		if (testable_servers.indexOf($('#authmode').val()) < 0) {
+			$('#test_button').prop("disabled", true);
+			$('#test_button_msg').removeClass('hidden');
+		} else {
+			$('#test_button').prop("disabled", false);
+			$('#test_button_msg').addClass('hidden');
+		}
+	}
+	
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+	enable_disable_auth_test();
+	
+/*
+			//FIXME:  MAY MOVE TO TEST ONLY, NOT SAVE & TEST, IN WHICH CASE THIS IS REMOVED
+			
+			// If the user clicked "Save & Test" show the modal and populate it with the LDAP test results via AJAX
+			<?php 
+				if ($save_and_test_LDAP) {
+					print "start_auth_test();\n";
+					print "\$('#testresults').modal('show');\n";
+				}
+			?>
+*/
+	
+	// ---------- Click and change handlers ---------------------------------------------------------
 
-	// ---------- Click checkbox handlers ---------------------------------------------------------
-
-	 $('[name=webguiproto]').click(function () {
+	$('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	});
 
-<?php
-// If the user clicked "Save & Test" show the modal and populate it with the LDAP test results via AJAX
-if ($save_and_test_LDAP):
-?>
-	$('#testresults').modal('show');
+	$('[name=authmode]').change(function () {
+		enable_disable_auth_test();
+	}
 
-	test_LDAP();
-<?php
-endif;
-?>
+	$('[name=authmode]').click(function () {
+		start_auth_test();
+		$('#testresults').modal('show');
+	}
 
 });
 //]]>

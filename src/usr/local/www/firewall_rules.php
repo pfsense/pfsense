@@ -31,10 +31,12 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once("config.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");
+require_once("pfsense-utils.inc");
 require_once("shaper.inc");
+require_once("util.inc");
 
 $XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
 $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");

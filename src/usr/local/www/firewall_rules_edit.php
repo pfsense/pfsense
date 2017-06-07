@@ -31,9 +31,13 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("ipsec.inc");
+require_once("config.inc");
 require_once("filter.inc");
+require_once("gwlb.inc");
+require_once("ipsec.inc");
+require_once("pfsense-utils.inc");
 require_once("shaper.inc");
+require_once("util.inc");
 
 /* build icmptypes valid for IPv4, IPv6 and IPv<any> */
 $icmptypes4 = array('any' => gettext('any'));

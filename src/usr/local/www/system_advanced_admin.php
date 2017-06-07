@@ -35,6 +35,8 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
@@ -68,9 +70,129 @@ if (is_array($a_cert) && count($a_cert)) {
 	$a_cert = array();
 }
 
+
+/* 
+		// FIXME:   Nothing actually seems to use $config['ca'] in this code.
+			    Commenting this out for now - may need to remove when reviewed.
+
+		if (!is_array($config['ca'])) {
+			$config['ca'] = array();
+		}
+		$a_ca =& $config['ca'];
+*/
+
+
+
 if (!$pconfig['webguiproto'] || !$certs_available) {
 	$pconfig['webguiproto'] = "http";
 }
+
+if (!is_array($config['system']['authserver'])) {
+	$config['system']['authserver'] = array();
+}
+
+if (isset($config['system']['webgui']['authmode'])) {
+	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
+} else {
+	$pconfig['authmode'] = "Local Database";
+}
+
+$auth_servers = array();
+foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
+	$auth_servers[$idx_authserver] = $auth_server['name'];
+}
+
+$save_and_test_LDAP = false;
+
+// Test LDAP settings in response to an AJAX request from this page.
+if ($_POST['ajax'] && $_POST['act'] == 'test_ldap') {
+
+	if (isset($config['system']['authserver'][0]['host'])) {
+		$auth_server = $config['system']['authserver'][0]['host'];
+		$authserver = $_POST['authserver'];
+		$authcfg = auth_get_authserver($authserver);
+	}
+
+	if (!$authcfg) {
+		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		exit;
+	} else {
+		print("<pre>");
+
+		print('<table class="table table-hover table-striped table-condensed">');
+
+		print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		if (ldap_test_connection($authcfg)) {
+			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
+
+			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			if (ldap_test_bind($authcfg)) {
+				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+
+				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+				$ous = ldap_get_user_ous(true, $authcfg);
+
+				if (count($ous)>1) {
+					print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+					print('<tr ><td colspan="3">');
+
+					if (is_array($ous)) {
+						print("<b>" . gettext("Organization units found") . "</b>");
+						print('<table class="table table-hover">');
+						foreach ($ous as $ou) {
+							print("<tr><td>" . $ou . "</td></tr>");
+						}
+
+					print("</td></tr>");
+					print("</table>");
+					}
+				} else {
+					print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+				}
+
+				print("</table><p/>");
+
+			} else {
+				print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
+				print("</table><p/>");
+			}
+		} else {
+			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
+			print("</table><p/>");
+		}
+
+		print("</pre>");
+		exit;
+	}
+}
+
+/* 
+		//FIXME: RAW LDAP TSAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
+
+		if ($_POST) {
+			$pconfig = $_POST;
+
+			if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
+				$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
+			}
+
+			if (!$input_errors) {
+				if ($_POST['authmode'] != "Local Database") {
+					$authsrv = auth_get_authserver($_POST['authmode']);
+					if ($_POST['savetest']) {
+						if ($authsrv['type'] == "ldap") {
+							$save_and_test_LDAP = true;
+						} else {
+							$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
+						}
+					}
+				}
+
+		//		write_config();
+			}
+		}
+*/
+
 
 if ($_POST) {
 
@@ -91,6 +213,12 @@ if ($_POST) {
 		}
 	}
 
+	if (!array_key_exists($_POST['authmode'], $auth_servers)) {
+		// set a reasonable fallback value.
+		$_POST['authmode'] = $pconfig['authmode'];
+		$input_errors[] = gettext('A recognised authentication server must be selected.');
+	}
+	
 	if (isset($_POST['auth_refresh_time'])) {
 		$timeout = intval($_POST['auth_refresh_time']);
 		if (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 ) {
@@ -182,6 +310,12 @@ if ($_POST) {
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		} else {
 			unset($config['system']['webgui']['session_timeout']);
+		}
+
+		if ($_POST['authmode']) {
+			$config['system']['webgui']['authmode'] = $_POST['authmode'];
+		} else {
+			unset($config['system']['webgui']['authmode']);
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
@@ -459,16 +593,53 @@ $section->addInput(new Form_Input(
 	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
 	'risk!');
 
+$group = new Form_Group('Login authentication server for this router');
+
+$html_auth_server = (new Form_Select(
+	'authmode',
+	'',
+	$pconfig['authmode'],
+	$auth_servers
+));
+
+$html_button = (new Form_Button(
+	'savetest',
+	'Test LDAP',
+	null,
+	'fa-wrench'
+))->addClass('btn-info');
+
+$group->add(new Form_StaticText(
+	null,
+	sprintf('<table width="100%%"><tr><td>%s</td><td>%s</td></tr></table>', $html_auth_server, $html_button)
+))->setHelp('Select the server used for authenticating WebConfigurator login attempts on this router. ' .
+	'By default, the same server will be used to authenticate Console logins if password protection is enabled, ' .
+	'and other remote logins such as SSH and Telnet if they are enabled. <br/><br/>' .
+	'Click the button to test authentication server responses (LDAP only).<br/>' .
+	'Click <a href="system_authservers.php">here</a> to configure authentication servers.');
+
+$section->add($group);
+
 $section->addInput(new Form_Input(
 	'auth_refresh_time',
-	'Auth Refresh Time',
+	'Authentication Refresh Time',
 	'number',
 	$pconfig['auth_refresh_time'],
 	['min' => 0, 'max' => 3600]
 ))->setHelp('Time in seconds to cache management session authentication results. The default is 30 seconds, ' .
-	and the maximum is 3600 seconds (one hour). Larger intervals can help to reduce the load on authentication ' .
-	'servers. Shorter intervals result in more frequent queries to authentication servers.');
-	
+	'and the maximum is 3600 (one hour). Larger intervals can help to reduce authentication server load. ' .
+	'Shorter intervals result in more frequent queries.');
+
+
+
+$modal = new Modal("LDAP settings", "testresults", true);
+$modal->addInput(new Form_StaticText(
+	'Test results',
+	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+));
+
+$form->add($modal);
+
 $section->addInput(new Form_Input(
 	'althostnames',
 	'Alternate Hostnames',
@@ -575,6 +746,28 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
+	function test_LDAP() {
+		var ajaxRequest;
+		var authserver = $('#authmode').val();
+
+		ajaxRequest = $.ajax(
+			{
+				url: "/system_authservers.php",
+				type: "post",
+				data: {
+					ajax: "ajax",
+					act: 'test_ldap',
+					authserver: authserver
+				}
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#ldaptestop').html(response);
+		});
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
@@ -584,6 +777,18 @@ events.push(function() {
 	 $('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	});
+
+<?php
+// If the user clicked "Save & Test" show the modal and populate it with the LDAP test results via AJAX
+if ($save_and_test_LDAP):
+?>
+	$('#testresults').modal('show');
+
+	test_LDAP();
+<?php
+endif;
+?>
+
 });
 //]]>
 </script>

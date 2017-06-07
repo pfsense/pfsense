@@ -47,7 +47,7 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['session_timeout'] = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : '';
-$pconfig['auth_refresh_time'] = iset($config['system']['webgui']['auth_refresh_time'] ? $config['system']['webgui']['auth_refresh_time'] : 30);
+$pconfig['auth_refresh_time'] = isset($config['system']['webgui']['auth_refresh_time'] ? $config['system']['webgui']['auth_refresh_time'] : 30);
 // default refresh time = 30 is taken from priv.inc
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
@@ -651,7 +651,7 @@ $html_auth_server = (new Form_Select(
 
 $html_button = (new Form_Button(
 	'savetest',
-	'Test connection',
+	'<span id="Test connection',
 	null,
 	'fa-wrench'
 ))->addClass('btn-info')->setHelp('<div id="test_button_msg">The selected server type cannot be tested</div>');

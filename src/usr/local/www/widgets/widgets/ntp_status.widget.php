@@ -21,6 +21,7 @@
 
 $nocsrf = true;
 
+require_once("config.inc");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
@@ -30,7 +31,7 @@ require_once("/usr/local/www/widgets/include/ntp_status.inc");
 // to once per 60 seconds, not once per 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
-if ($_REQUEST['updateme']) {
+if ($_REQUEST['updateme'] && is_array($config['ntpd']) && $config['ntpd']['enable'] != "off") {
 //this block displays only on ajax refresh
 	if (isset($config['system']['ipv6allow'])) {
 		$inet_version = "";
@@ -147,6 +148,7 @@ if ($_REQUEST['updateme']) {
 ?>
 
 <table id="ntp_status_widget" class="table table-striped table-hover">
+<?php if (is_array($config['ntpd']) && $config['ntpd']['enable'] != "off"): ?>
 	<tr>
 		<th><?=gettext('Server Time')?></th>
 		<td id="ClockTime">
@@ -188,6 +190,11 @@ if ($_REQUEST['updateme']) {
 			</tr>
 		<?php endif; ?>
 	<?php endif; ?>
+<?php else: ?>
+	<tr>
+		<td class="text-danger"><?=gettext('NTP Server is disabled')?></td>
+	</tr>
+<?php endif; ?>
 </table>
 
 <?php
@@ -218,9 +225,11 @@ setInterval(function() {
 <table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<td>
-				<?=gettext('Updating...')?>
-			</td>
+		<?php if (is_array($config['ntpd']) && $config['ntpd']['enable'] != "off"): ?>
+			<td><?=gettext('Updating...')?></td>
+		<?php else: ?>
+			<td class="text-danger"><?=gettext('NTP Server is disabled')?></td>
+		<?php endif; ?>
 		</tr>
 	</tbody>
 </table>

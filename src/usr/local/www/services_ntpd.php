@@ -37,14 +37,7 @@ if (!is_array($config['ntpd'])) {
 }
 
 if (empty($config['ntpd']['interface'])) {
-	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
-		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
-		unset($config['installedpackages']['openntpd']);
-		write_config(gettext("Upgraded settings from openttpd"));
-	} else {
-		$pconfig['interface'] = array();
-	}
+	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
 }
@@ -209,6 +202,13 @@ $form = new Form;
 $form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('NTP Server Configuration');
+
+$section->addInput(new Form_Select(
+	'enable',
+	'Enable NTP Server',
+	$pconfig['enable'],
+	array('enabled' => 'Enabled', 'off' => 'Disabled')
+));
 
 $iflist = build_interface_list();
 

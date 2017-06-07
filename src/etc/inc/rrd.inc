@@ -795,7 +795,7 @@ function enable_rrd_graphing() {
 		/* End Captive Portal statistics */
 
 		/* NTP, set up the ntpd rrd file */
-		if (isset($config['ntpd']['statsgraph'])) {
+		if (isset($config['ntpd']['statsgraph']) && $config['ntpd']['enable'] != "off") {
 			/* set up the ntpd rrd file */
 			if (!file_exists("$rrddbpath$ntpd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";

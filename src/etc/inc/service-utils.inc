@@ -258,10 +258,12 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	$pconfig = array();
-	$pconfig['name'] = "ntpd";
-	$pconfig['description'] = gettext("NTP clock sync");
-	$services[] = $pconfig;
+	if (is_array($config['ntpd']) && $config['ntpd']['enable'] != "off") {
+		$pconfig = array();
+		$pconfig['name'] = "ntpd";
+		$pconfig['description'] = gettext("NTP clock sync");
+		$services[] = $pconfig;
+	}
 
 	$pconfig = array();
 	$pconfig['name'] = "syslogd";

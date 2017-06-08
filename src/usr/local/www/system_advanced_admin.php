@@ -142,17 +142,16 @@ if ($_POST['ajax'] && $_POST['act'] == 'test_auth') {
 				print('<tr ><td colspan="3">');
 
 				if (is_array($ous)) {
-					print("<b>" . gettext("Organization units found") . "</b>");
-					print('<table class="table table-hover">');
-					foreach ($ous as $ou) {
-						print("<tr><td>" . $ou . "</td></tr>");
+					print("<b>" . gettext("Organization units found") . "</b><br/>");
+					// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
+					$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
+							array_map(
+								function($ou) { return '<span style="white-space: nowrap">&bullet;&nbsp;' . htmlspecialchars($ou) . '</span>'; }, 
+								$ous
+						     ));
 					}
-
-				print("</td></tr>");
-				print("</table>");
-				}
 			} else {
-				print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+				print("<td><span class=\"text-alert\">" . gettext("failed - no Organizational Units found") . "</span></td></tr>");
 			}
 
 			print("</table><p/>");

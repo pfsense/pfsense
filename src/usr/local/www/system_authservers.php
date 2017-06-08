@@ -65,12 +65,14 @@ foreach ($a_servers as $servers) {
 
 unset($input_errors);
 
-// TO CHECK - IF THERE'S ONLY ONE AUTH SERVER, SHOULD THE USER BE PREVENTED FROM DELETING?
 if ($_REQUEST['del']) {
 	$id = $_REQUEST['id'];
 	$serverdeleted = $a_server[$id]['name'];
 	if (!isset($_REQUEST['id']) || !is_numericint($id) || !$a_server[$id] || $serverdeleted == 'Local Database') {
 		$input_errors[] = gettext('Can not delete Authentication Server: server ID is missing, invalid or unrecognised.');
+	} elseif (count($a_server) <= 1) {
+		// Shouldn't be possible as "local database" should always exist and isn't deletable here, but "just in case"
+		$input_errors[] = gettext('You must define at least one Authentication Server before deleting this server, as one server must be defined at all times.');
 	} else {
 		/* Remove server from main list. */
 		foreach ($config['system']['authserver'] as $k => $as) {
@@ -85,7 +87,56 @@ if ($_REQUEST['del']) {
 		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 		write_config($savemsg);
 	}
-} 
+} elseif ($_REQUEST['test']) {
+	// Test auth settings
+	if (isset($config['system']['authserver'][0]['host'])) {
+		$auth_server = $config['system']['authserver'][0]['host'];
+		$selected_authserver = $_POST['authserver'];
+		$authcfg = $auth_servers_list($selected_authserver);
+	}
+	if (!$authcfg) {
+		$savemsg = sprintf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+	} elseif ($authcfg['type'] != 'ldap') {
+		$savemsg = sprintf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+	} else {
+		//auth server is defined and is LDAP, carry on
+		$savemsg = sprintf(gettext('Server Connection test results') . ":<br/>\n";
+		$savemsg .= sprintf(gettext('Attempting connection to %s ... '),  htmlspecialchars($auth_server));
+		if (ldap_test_connection($authcfg)) {
+			// connection OK
+			$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+			$savemsg .= sprintf(gettext('Attempting bind to %s ... '), htmlspecialchars($auth_server));
+			if (ldap_test_bind($authcfg)) {
+				// bind OK
+				$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+				$savemsg .= sprintf(gettext('Attempting to fetch Organizational Units from %s ... '),  htmlspecialchars($auth_server));
+				$ous = ldap_get_user_ous(true, $authcfg);
+				if (count($ous)>1) {
+					// OUs OK
+					$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+					if (is_array($ous)) {
+						$savemsg .=  "<b>" . gettext("Organization units found") . "</b><br/>";
+						// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
+						$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
+								array_map(
+									function($ou) { return '<span style="white-space: nowrap">&bullet;&nbsp;' . htmlspecialchars($ou) . '</span>'; }, 
+									$ous
+							     ));
+					}
+				} else {
+					// fetch OUs failed
+					$savemsg .= '<span class="text-alert">' . gettext("failed - no Organizational Units found") . '</span>';
+				}
+			} else {
+				// bind failed
+				$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+			}
+		} else {
+			// connection failed
+			$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+		}
+	}
+}
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
 $pglinks = array("", "system_usermanager.php", "@self");
@@ -129,7 +180,12 @@ display_top_tabs($tab_array);
 						<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
 						<td><?=htmlspecialchars($server['host'])?></td>
 						<td>
-						<?php if ($i < (count($a_server) - 1)): ?>
+						<?php 
+						if ($i < (count($a_server) - 1)):
+						     if ($auth_server_types[$server['type']] == 'ldap') {
+						?>
+							<a class="fa fa-wrench"  title="<?=gettext("Test Connection")?>" href="system_authservers.php?act=test&amp;id=<?=$i?>"></a>
+						<?php endif;?>
 							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers_edit.php?id=<?=$i?>"></a>
 							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
 						<?php endif?>

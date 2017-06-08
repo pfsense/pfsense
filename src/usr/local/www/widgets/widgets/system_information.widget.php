@@ -156,7 +156,7 @@ if (!function_exists('get_sysinfo_item_html')) {
 				if (!$g['hideplatform']) {
 					$is_nano = ($g['platform'] == "nanobsd");
 					// there's extra info (boot slice) if it's nanobsd
-					$data_template = "%s" . ($is_nano ? "\n<br/>nanobsd: <strong>%s</strong>:<br/>\n%s\n%s" : '');
+					$data_template = "%s" . ($is_nano ? "\n<br/>%s:<br/>%s\n%s" : '');
 					$platform = system_identify_specific_platform();
 					$args[] = htmlspecialchars($platform['descr']) . (($g['platform'] == "nanobsd" && file_exists("/etc/nanosize.txt")) ? " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")" : "");
 					if ($is_nano) {

@@ -100,72 +100,64 @@ $auth_servers_list = auth_get_authserver_list();
 
 $save_and_test_auth = false;
 
-// Test auth settings in response to an AJAX request from this page.
-if ($_POST['ajax'] && $_POST['act'] == 'test_auth') {
 
+// FIXME:  Check what variable to use here, to be sure the AJAX call picks up the arg (selected svr) from the calling code.
+
+// Test auth settings in response to an AJAX request from this page.
+// Using $savemsg as that helps us sync with similar code at system_authservers.php
+if ($_POST['ajax'] && $_POST['act'] == 'test') {
+
+	// Test auth settings
 	if (isset($config['system']['authserver'][0]['host'])) {
 		$auth_server = $config['system']['authserver'][0]['host'];
 		$selected_authserver = $_POST['authserver'];
 		$authcfg = $auth_servers_list($selected_authserver);
 	}
-
+	// Validate auth server and if OK, test
 	if (!$authcfg) {
-		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
-		exit;
-	}
-
-	if ($authcfg['type'] != 'ldap') {
-		printf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
-		exit;
-	}
-
-
-	//auth server is defined and is LDAP, carry on
-	
-	print("<pre>");
-
-	print('<table class="table table-hover table-striped table-condensed">');
-
-	print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-	if (ldap_test_connection($authcfg)) {
-		print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
-
-		print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-		if (ldap_test_bind($authcfg)) {
-			print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
-
-			print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
-			$ous = ldap_get_user_ous(true, $authcfg);
-
-			if (count($ous)>1) {
-				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
-				print('<tr ><td colspan="3">');
-
-				if (is_array($ous)) {
-					print("<b>" . gettext("Organization units found") . "</b><br/>");
-					// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
-					$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
-							array_map(
-								function($ou) { return '<span style="white-space: nowrap">&bullet;&nbsp;' . htmlspecialchars($ou) . '</span>'; }, 
-								$ous
-						     ));
-					}
-			} else {
-				print("<td><span class=\"text-alert\">" . gettext("failed - no Organizational Units found") . "</span></td></tr>");
-			}
-
-			print("</table><p/>");
-
-		} else {
-			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
-			print("</table><p/>");
-		}
+		$savemsg = sprintf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+	} elseif ($authcfg['type'] != 'ldap') {
+		$savemsg = sprintf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
 	} else {
-		print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
-		print("</table><p/>");
+		// auth server is defined and is LDAP, carry on
+		$savemsg = sprintf(gettext('Server Connection test results') . ":<br/>\n";
+		$savemsg .= sprintf(gettext('Attempting connection to %s ... '),  htmlspecialchars($auth_server));
+		if (ldap_test_connection($authcfg)) {
+			// connection OK
+			$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+			$savemsg .= sprintf(gettext('Attempting bind to %s ... '), htmlspecialchars($auth_server));
+			if (ldap_test_bind($authcfg)) {
+				// bind OK
+				$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+				$savemsg .= sprintf(gettext('Attempting to fetch Organizational Units from %s ... '),  htmlspecialchars($auth_server));
+				$ous = ldap_get_user_ous(true, $authcfg);
+				if (count($ous)>1) {
+					// OUs OK
+					$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+					if (is_array($ous)) {
+						$savemsg .=  "<b>" . gettext("Organization units found") . "</b><br/>";
+						// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
+						$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
+								array_map(
+									function($ou) { return '<span style="white-space: nowrap">&bullet;&nbsp;' . htmlspecialchars($ou) . '</span>'; }, 
+									$ous
+							     ));
+					}
+				} else {
+					// fetch OUs failed
+					$savemsg .= '<span class="text-alert">' . gettext("failed - no Organizational Units found") . '</span>';
+				}
+			} else {
+				// bind failed
+				$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+			}
+		} else {
+			// connection failed
+			$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+		}
 	}
 
-	print("</pre>");
+	print("<pre>\n{$savemsg}\n</pre>\n");
 	exit;
 }
 
@@ -754,7 +746,7 @@ events.push(function() {
 				type: "post",
 				data: {
 					ajax: "ajax",
-					act: 'test_auth',
+					act: 'test',
 					authserver: authserver
 				}
 			}

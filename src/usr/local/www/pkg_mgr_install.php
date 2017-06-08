@@ -312,7 +312,19 @@ if (!$confirmed && !$completed &&
 			<div class="content">
 				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
-	if ($firmwareupdate):
+	if (isset($config['system']['block_external_services'])):
+?>
+				<div class="form-group">
+					<div class="col-sm-10">
+<?php
+		printf(gettext("System is configured to not contact external " .
+		    "services. You can disable this protection %shere%s."),
+		    '<a href=/system_advanced_misc.php>', '</a>');
+?>
+					</div>
+				</div>
+<?php
+	elseif ($firmwareupdate):
 ?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">

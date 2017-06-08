@@ -685,6 +685,7 @@ function netgate_hardware_setup() {
 	switch ($g['default-config-flavor']) {
 	case "ec2":
 	case "ec2-csm":
+	case "ec2-ic":
 	case "azure":
 	case "kvm":
 	case "bhyve":
@@ -720,6 +721,7 @@ function netgate_hardware_setup() {
 	case "azure":
 	case "ec2":
 	case "ec2-csm":
+	case "ec2-ic":
 		unset($config['interfaces']['wan']['ipaddrv6']);
 
 		if (is_array($config['system']['user'])) {
@@ -810,7 +812,7 @@ function netgate_hardware_setup() {
 		$rule['tracker'] = (int)microtime(true);
 		$rules[] = $rule;
 
-		if ($flavor == 'ec2') {
+		if ($flavor == 'ec2' || $flavor == 'ec2-ic') {
 			$rule = array();
 			$rule['type'] = 'pass';
 			$rule['interface'] = 'wan';
@@ -891,8 +893,8 @@ function netgate_hardware_setup() {
 		$config['virtualip']['vip'][] = $vip;
 		unset($vip);
 
-		if ($flavor != 'ec2') {
-			/* following changes are ec2 only */
+		if ($flavor != 'ec2' && $flavor != 'ec2-ic') {
+			/* following changes are ec2 and ec2-ic only */
 			break;
 		}
 

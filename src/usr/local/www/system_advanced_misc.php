@@ -59,6 +59,7 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['do_not_send_host_uuid'] = isset($config['system']['do_not_send_host_uuid']);
+$pconfig['block_external_services'] = isset($config['system']['block_external_services']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -201,6 +202,12 @@ if ($_POST) {
 			$config['system']['do_not_send_host_uuid'] = true;
 		} else {
 			unset($config['system']['do_not_send_host_uuid']);
+		}
+
+		if ($_POST['block_external_services'] == "yes") {
+			$config['system']['block_external_services'] = true;
+		} else {
+			unset($config['system']['block_external_services']);
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -634,6 +641,19 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Enable this option to not send HOST UUID to pfSense as part of User-Agent header.');
 
 $form->add($section);
+
+if ($g['default-config-flavor'] == "ec2-ic") {
+	$section = new Form_Section('Contact external servers');
+
+	$section->addInput(new Form_Checkbox(
+		'block_external_services',
+		'Contact pfSense servers',
+		'Do NOT contact pfSense servers',
+		$pconfig['block_external_services']
+	))->setHelp('Enable this option to not contact external pfSense servers to obtain updates and bogons list.');
+
+	$form->add($section);
+}
 
 print $form;
 

@@ -523,6 +523,7 @@ function local_user_set(& $user) {
 		case "azure":
 		case "ec2":
 		case "ec2-csm":
+		case "ec2-ic":
 		case "openstack-csm":
 			$lock_root = true;
 			break;

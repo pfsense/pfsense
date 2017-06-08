@@ -68,7 +68,11 @@ function pkg_remove_prefix(&$pkg_name) {
 
 /* Execute pkg update when it's necessary */
 function pkg_update($force = false) {
-	global $g;
+	global $g, $config;
+
+	if (isset($config['system']['block_external_services'])) {
+		return true;
+	}
 
 	return pkg_call("update" . ($force ? " -f" : ""));
 }
@@ -339,10 +343,14 @@ function get_package_internal_name($package_data) {
 // Get information about packages.
 function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
     $installed_pkgs_only = false) {
-	global $g, $input_errors;
+	global $g, $config, $input_errors;
 
 	$out = $err = $extra_param = '';
 	$rc = 0;
+
+	if (isset($config['system']['block_external_services'])) {
+		$remote_repo_usage_disabled = true;
+	}
 
 	unset($pkg_filter);
 
@@ -1266,7 +1274,7 @@ function pkg_list_repos() {
 
 /* Switch between stable and devel repos */
 function pkg_switch_repo($path) {
-	global $g;
+	global $g, $config;
 
 	safe_mkdir("/usr/local/etc/pkg/repos");
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
@@ -1285,6 +1293,10 @@ function pkg_switch_repo($path) {
 		);
 
 		file_put_contents("/usr/local/etc/pkg.conf", $pkg_conf);
+	}
+
+	if (isset($config['system']['block_external_services'])) {
+		return true;
 	}
 
 	return pkg_update(true);

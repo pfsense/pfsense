@@ -814,6 +814,16 @@ clone_to_staging_area() {
 	core_pkg_create default-config "ec2" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "ec2-csm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
+	# ec2 IC variant
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/block_external_services" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "block_external_services" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config "ec2-ic" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	# Remove ec2 IC variant customization
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/block_external_services" ${DEFAULTCONF}
+
 	# Activate serial console in config.xml
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "115200" ${DEFAULTCONF}

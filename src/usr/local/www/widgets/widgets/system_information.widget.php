@@ -60,6 +60,13 @@ if ($_REQUEST['getupdatestatus']) {
 
 	$system_version = get_system_pkg_version();
 
+	if (isset($config['system']['block_external_services'])) {
+		printf(gettext("System is configured to not contact external " .
+		    "services. You can disable this protection %shere%s."),
+		    '<a href=/system_advanced_misc.php>', '</a>');
+		exit;
+	}
+
 	if ($system_version === false) {
 		print(gettext("<i>Unable to check for updates</i>"));
 		exit;

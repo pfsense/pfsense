@@ -70,6 +70,15 @@ process_url() {
 
 echo "rc.update_bogons.sh is starting up." | logger
 
+block_external_services=$(/usr/local/sbin/read_xml_tag.sh boolean \
+	system/block_external_services)
+
+if [ "${block_external_services}" = "true" ]; then
+	echo "rc.update_bogons.sh aborted due to block_external_services flag" \
+		| logger
+	exit 0
+fi
+
 # Sleep for some time, unless an argument is specified.
 if [ "$1" = "" ]; then
 	# Grab a random value

@@ -145,7 +145,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|ec2|ec2-csm|ec2-ic|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -295,7 +295,7 @@ if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
-		memstickserial memstickadi ova ec2 azure \
+		memstickserial memstickadi ova ec2 ec2-ic azure \
 		kvm bhyve"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
@@ -399,7 +399,7 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			export custom_package_list="${old_custom_package_list}"
 			install_pkg_install_ports
 			;;
-		ec2)
+		ec2|ec2-ic)
 			old_custom_package_list="${custom_package_list}"
 			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-ec2_setup \
 				${PRODUCT_NAME}-openvpn_connect_profile"

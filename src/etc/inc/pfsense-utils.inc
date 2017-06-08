@@ -3290,4 +3290,158 @@ function addrtolower($ip) {
 function compare_by_name($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
+/* Get list of releases and relevant data for each, from doc pages
+ * NOTE: RETURN STRINGS NOT SANITISED (ALTHOUGH FROM OUR OWN WEBSITE), 
+ * other than a crude replacing of "<" ">" "&" by html entities.
+ * (These chars are rare and not much expected anyway, and probably not an issue if replaced)
+ * CALLING CODE MUST SANITISE AS NEEDED. MIGHT NEED MORE HERE.
+*/
+function get_release_list() {
+global $g;
+
+//get raw markup for the release versions page
+	$url = 'https://' . $g['doc_root_url'] . 'Versions_of_pfSense_and_FreeBSD?action=raw';
+	$h = file_get_contents($url);
+	if ($h === false) {
+	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+	}
+
+	// get bare table lines for the first table on the page
+	$null_strings = array("|-\n", "|}\n");
+	$h = str_replace($null_strings, "", strstr(strstr($h, "\n|-\n"), "\n|}\n", true));
+	$h = str_replace(['<', '&', '>'], ['&lt;', '&amp;', '&gt;'], $h);
+	
+	$patterns = array(
+		'/^\|\s+/m',					// remove initial "|" (and any spaces following it) on each line
+		'/(?<=^|\|\|)[^|]+\|(?!\|)/m',			// remove any cell-formatting sections such as align="center"
+		'/^.*\|\|[^[|]+$/m',				// remove future releases where final column doesn't contain [[REL_TITLE | REL_STATUS]]
+		'/\|\|\s*\[\[([^|\]]+)\|([^|\]]+)\]\]\s*$/m',	// convert [[REL_TITLE | REL_STATUS]] in final column to 2 columns
+		'/\|[^|\]]*\]\]/m',				// remove the narrative portion from any other "[[PAGE | NARRATIVE]]" page links
+		'/(^|[^[])\[https?:\/\/([^\s|[\]]+)\s+([^\s|[\]]+)\]([^]]|$)/im'
+								// split narrative portion of [http(s):* NARRATIVE] external links to a separate column
+	);
+
+	$replace = array(
+		'', 
+		'', 
+		'', 
+		'|| \1 || \2',
+		']]',
+		'\1 \2 || \3 \4'
+	);
+
+	$h = preg_replace($patterns, $replace, $h);
+
+	$rel_list = $pagelookup = array();
+	
+	// build table of release info
+	
+	foreach (explode("\n", $h) as $rel_line) {
+		$r = preg_split("/\s+\|\|\s+/", $rel_line);
+		if (strlen($r[0] > 1)) {
+			$rel_list[] = array(
+				'release_version' => $r[0],
+				'release_date' => $r[7], 		 //FIXME: NOT IN STD TIME FORMAT
+				'page_modified_date' => '',		// will fill via API if accessible
+				'github_branch' => $r[3],
+				'freebsd_version' => $r[5],
+				'doc_title' => $r[8],
+				'doc_url' => $url = 'https://' . $g['doc_root_url'] . str_replace(' ', '_', $r[8]),	// 'en' only at the moment
+				'status' => $r[9],
+				'cachefile' => 	''			// will fill via API if accessible
+			    );
+			$pagelookup[$r[8]] = count($rel_list) - 1;
+		}
+	}
+	
+	// add info only available through API. Currently only the "page last modified" timestamp. If inaccessible, ignore the extra data
+
+	$titlelist = str_replace(' ', '_', implode('|', array_keys($pagelookup)));
+	$apiurl = "https://{$g['doc_api_url']}action=query&format=json&prop=revisions&formatversion=2&titles={$titlelist}&rvprop=timestamp&redirects";
+	$h = file_get_contents($apiurl);
+	if ($h !== false) {
+		$apidata = json_decode($h, true);
+		foreach ($apidata['query']['pages'] as $p) {
+			$pageidx = $pagelookup[$p['title']];
+			$timestamp = $p['revisions'][0]['timestamp']; 	 //FIXME: NOT IN STD TIME FORMAT
+			$rel_list[$pageidx]['page_modified_date'] = $timestamp;
+			$rel_list[$pageidx]['cachefile'] = $g['doc_pages_cache'] . str_replace(' ', '_', $p['title']) . '@' . str_replace(':', '.', $timestamp) . '.html';
+		}
+	}
+
+	return $rel_list;
+}
+
+/* Update cache of known changelogs.
+ * As these doc pages are mostly static, once cached we rarely update, so it should be very fast (immediate) after the 1st run.
+ * Also as these pages are small and relatively few, and rarely added to, the cache won't grow large, nor will old pages become irrelevant easily,
+ * so no need for complex caching code. Pretty much check for updates and not much more.
+ */
+function update_all_release_details() {
+	global $g;
+
+	$rel_list = get_release_list($from);
+	safe_mkdir($g['doc_pages_cache']);
+	
+	foreach ($rel_list as $relnum => $reldata) {
+		if ($reldata['cachefile'] != '' && !file_exists($reldata['cachefile'])) {
+			@array_map('unlink', glob($g['doc_pages_cache'] . str_replace(' ', '_', $reldata['doc_title']) . '@*.html'));
+			$html = get_sanitised_doc_page($reldata['doc_title']);
+			file_put_contents($reldata['cachefile'], $html);
+		}
+	}
+}
+
+/* Scrape a doc page in HTML format, sanitised so it can be trusted to be displayed to the user in the router GUI context.
+ * (Although we control the docs website, we don't want any doc pages issue to open a vulnerability due to trusting the doc pages
+ * content and displaying in-router, so treat the doc pages as *untrusted* and sanitise accordingly.)
+ * Useful if we want to provide help pages or changelogs within the GUI at any time. 
+ *
+ * The permitted tags are "bare". They can be formatted with CSS or str_replace() if formatting is needed, but that's separate.
+ 
+ * Keeping this function very simple right now, as it's mainly intended for changelogs/release notes which don't use complex formatting
+ * or images. So it might need more richness if used for other doc pages.
+ *
+ * The sanitising method is as follows:
+ * 1) use strip_tags() to remove all but a few "well known" tags likely to be used in doc pages (even though most aren't actually in common use)
+ * 2) remove comments
+ * 3) remove attribs or other content from all tags, after the <ALPHA or </ALPHA opening, except for "<a ..."
+ * 4) With "<a>", we need to preserve HREF but handle a few possible pathological HREF issues (e.g., hrefs in title="...", href javascript).
+ *    We do this by:
+ *    4.1) ensure the token string "valid-href" isn't being used (it shouldn't be)
+ *    4.2) detect and rename any VALID hrefs that start with ftp/http(s) or / or # values, to "valid-href"
+ *    4.3) Delete *all other content* before/after the *first* "valid-href" clause in every <a> tag, and rename back to href
+ *    4.4) Ensuring any links kept, open in a new tab.
+ */
+function get_sanitised_doc_page($doc_page) {
+	global $g;
+	
+	$url = 'https://' . $g['doc_root_url'] . str_replace(' ', '_', $doc_page);
+	$h = file_get_contents($url);
+	if ($h === false) {
+	  return array('errmsg' => 'Could not retrieve list of releases and changelog details');
+	}
+
+	$h = strstr(strstr(strstr($h, 'id="toc"'), '<h'), '<div class="printfooter">', true);
+	$h = strip_tags($h, '<h1><h2><h3><h4><ul><ol><li><p><br><a><b><u><i><sup><sub><table><th><tr><td><blockquote>');	
+
+	$patterns = array(
+		'%<!--.*-->%',				// remove comments
+		'%<([^a>][a-z1-9]*|a[^ >]+|/[a-z1-9]+)[^a-z1-9>][^>]*>%im',	// remove all attributes from any opening tag except <a> and from any closing tag
+		'/valid-href/',				// sanitise "href" in <a>: Ensure nothing's using the fake attribute "valid-href"...
+		'/href\s*=\s*[\'"]([https?|ftp|\/|#]:[^\'">]*)[\'"]/im',		// ...retag anything that's strictly capable of being an href attribute as 'valid-href'
+		'/<a (.*? |)valid-href="([^"]*)" [^>]*>/im'	// ...then remove all text except the first valid-href tag (if any) from <a> and rename to "href" again
+	);
+
+	$replace = array(
+		'',
+		'<\1>',
+		'',
+		' valid-href="\1" ',
+		'<a href="\2" target="_blank">'
+	);
+
+	return preg_replace($patterns, $replace, $h);
+}
 ?>

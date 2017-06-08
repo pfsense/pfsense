@@ -135,6 +135,18 @@ function system_resolvconf_generate($dynupdate = false) {
 		$resolvconf .= "nameserver 127.0.0.1\n";
 	}
 
+	if (isset($config['system']['dnslocalhost'])) {
+		file_put_contents('/etc/nsswitch.conf', str_replace(
+			'hosts: file dns', 'hosts: dns files',
+			file_get_contents('/etc/nsswitch.conf')
+		));
+	} else {
+		file_put_contents('/etc/nsswitch.conf', str_replace(
+			'hosts: dns files', 'hosts: files dns',
+			file_get_contents('/etc/nsswitch.conf')
+		));
+	}
+
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_searchdomains());

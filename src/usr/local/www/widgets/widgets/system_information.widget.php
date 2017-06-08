@@ -128,21 +128,9 @@ function get_sysinfo_item_html($itemkey) {
 
 		case 'platform':
 			if (!$g['hideplatform']) {
-				$is_nano = ($g['platform'] == "nanobsd");
-				// there's extra info (boot slice) if it's nanobsd
-				$data_template = "%s" . ($is_nano ? "\n<br/>nanobsd: <strong>%s</strong>:<br/>\n%s\n%s" : '');
+				$data_template = "%s";
 				$platform = system_identify_specific_platform();
-				$args[] = htmlspecialchars($platform['descr']) . (($g['platform'] == "nanobsd" && file_exists("/etc/nanosize.txt")) ? " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")" : "");
-				if ($is_nano) {
-					global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-					global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-					global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-					nanobsd_detect_slice_info();
-					$rw = is_writable("/") ? "(rw)" : "(ro)";
-					$args[] = gettext("NanoBSD Boot Slice");
-					$args[] = htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE)) . ' / ' . htmlspecialchars($BOOTFLASH) . $rw;
-					$args[] = ($BOOTFLASH != $ACTIVE_SLICE ? "<br /><br />" . gettext('Next Boot') . ":<br />" . htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE)) . ' / ' . htmlspecialchars($ACTIVE_SLICE) : "");
-				}
+				$args[] = htmlspecialchars($platform['descr']);
 			}
 			break;
 

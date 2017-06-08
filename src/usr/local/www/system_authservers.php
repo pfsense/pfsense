@@ -36,10 +36,31 @@ if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
-$a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers) {
-	$a_server[] = $servers;
+$auth_servers_list = auth_get_authserver_list();
+
+/*
+ * FIXME (1): Auth server name validation to tighten.  This is enough for this code page and for the moment.
+ *	Temp fix ensures we can treat auth server names as lacking spaces and "&", and still unique.
+ *
+ * FIXME (2): auth_get_authserver_list() needs not to add "Local Database" as the key, it breaks assumptions.
+ *
+ * FIXME (3): whatever replaces "LOCAL DATABASE" isn't a valid server name
+ *
+ * This is crude but allows us to test the PR more easily without adding too much temp code. Once resolved:
+ * 		Replace and clean up all occurances of $config_MOD by $config
+ *		Remove the 8 lines following this comment, which overrides the line above (defining $auth_servers_list[]) and which defines $config_MOD[]
+ */
+
+$config_MOD['system']['authserver'] = $auth_servers_list = array();
+foreach ($config['system']['authserver'] as $svridx => $svrdata) {
+	$config_MOD['system']['authserver'][htmlsafechars($svridx)] = $svrdata;
+	$config_MOD['system']['authserver'][htmlsafechars($svridx)]['original_key'] = $svridx;
 }
+foreach (auth_get_authserver_list() as $svridx => $svrdata) {
+	$auth_servers_list[htmlsafechars($svridx)] = $svrdata;
+	$auth_servers_list[htmlsafechars($svridx)]['original_key'] = $svridx;
+}
+
 
 /* 
 		// FIXME:   Nothing actually seems to use $config['ca'] in this code any more.
@@ -65,61 +86,54 @@ foreach ($a_servers as $servers) {
 
 unset($input_errors);
 
-if ($_REQUEST['del']) {
+if (isset($_REQUEST['id'])) {
+	// Used quite a bit, keeps rest of code simple
 	$id = $_REQUEST['id'];
-	$serverdeleted = $a_server[$id]['name'];
-	if (!isset($_REQUEST['id']) || !is_numericint($id) || !$a_server[$id] || $serverdeleted == 'Local Database') {
+//	FIXME: DELETE THE NEXT LINE AFTER BUG FIXED, AND REPLACE BY $id ELSEWHERE, AS IT IS TEMPORARY ONLY
+	$id_actually_in_config = $auth_servers_list[$id]['original_key'];
+}
+	
+if ($_REQUEST['del']) {
+	if (!isset($id) || !in_array($id, $config_MOD['system']['authserver'])) {
 		$input_errors[] = gettext('Can not delete Authentication Server: server ID is missing, invalid or unrecognised.');
-	} elseif (count($a_server) <= 1) {
-		// Shouldn't be possible as "local database" should always exist and isn't deletable here, but "just in case"
-		$input_errors[] = gettext('You must define at least one Authentication Server before deleting this server, as one server must be defined at all times.');
 	} else {
 		/* Remove server from main list. */
-		foreach ($config['system']['authserver'] as $k => $as) {
-			if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
-				unset($config['system']['authserver'][$k]);
-			}
-		}
+//	FIXME: PROPER CODE, USE AFTER BUG FIXED
+//		unset($config['system']['authserver'][$id]);
+//	FIXME: DELETE THE NEXT LINE AFTER BUG FIXED, AS IT IS TEMPORARY ONLY
+		unset($config['system']['authserver'][$id_actually_in_config];
+		
+		/* Remove server from temp list used on this page. */
+		unset($auth_servers_list[$id]);
 
-		/* Remove server from temp list used later on this page. */
-		unset($a_server[$id]);
-
-		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
+		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($id));
 		write_config($savemsg);
 	}
 } elseif ($_REQUEST['test']) {
 	// Test auth settings. Also see similar code at system_admin_advanced.php
-
-// FIXME:  Should use $id here, or (more likely) the server should be present in $_REQUEST['authserver']
-//		at the moment this won't pick up the arg (selected svr) from the calling code.
-	
-	if (isset($config['system']['authserver'][0]['host'])) {
-		$auth_server = $config['system']['authserver'][0]['host'];
-		$selected_authserver = $_POST['authserver'];
-		$authcfg = $auth_servers_list($selected_authserver);
-	}
+	$authcfg = $config_MOD['system']['authserver'][$id];
 	if (!$authcfg) {
-		$savemsg = sprintf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+		$savemsg = sprintf(gettext("%sError: Could not find settings for server '%s'%s"), '<span class="text-danger">', htmlspecialchars($id), "</span>");
 	} elseif ($authcfg['type'] != 'ldap') {
-		$savemsg = sprintf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+		$savemsg = sprintf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($id), "</span>");
 	} else {
 		//auth server is defined and is LDAP, carry on
-		$savemsg = sprintf(gettext('Server Connection test results') . ":<br/>\n";
-		$savemsg .= sprintf(gettext('Attempting connection to %s ... '),  htmlspecialchars($auth_server));
+		$savemsg = sprintf(gettext('Server connection test results') . ":<br/>\n";
+		$savemsg .= sprintf(gettext('Attempting connection to %s (%s:%s) ... '),  htmlspecialchars($id), htmlspecialchars($authcfg['host']), htmlspecialchars($authcfg['port']), );
 		if (ldap_test_connection($authcfg)) {
 			// connection OK
 			$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
-			$savemsg .= sprintf(gettext('Attempting bind to %s ... '), htmlspecialchars($auth_server));
+			$savemsg .= sprintf(gettext('Attempting bind to %s (%s:%s) ... '),  htmlspecialchars($id), htmlspecialchars($authcfg['host']), htmlspecialchars($authcfg['port']), );
 			if (ldap_test_bind($authcfg)) {
 				// bind OK
 				$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
-				$savemsg .= sprintf(gettext('Attempting to fetch Organizational Units from %s ... '),  htmlspecialchars($auth_server));
+				$savemsg .= sprintf(gettext('Attempting to fetch Organizational Units from %s ... '),  htmlspecialchars($id));
 				$ous = ldap_get_user_ous(true, $authcfg);
 				if (count($ous)>1) {
 					// OUs OK
 					$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
 					if (is_array($ous)) {
-						$savemsg .=  "<b>" . gettext("Organization units found") . "</b><br/>";
+						$savemsg .=  "<b>" . gettext("Organization units found") . ":</b>&nbsp; ";
 						// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
 						$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
 								array_map(
@@ -178,21 +192,23 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-			<?php foreach ($a_server as $i => $server): ?>
+			<?php foreach ($auth_servers_list as $serveridx => $servercfg): ?>
 					<tr>
-						<td><?=htmlspecialchars($server['name'])?></td>
-						<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
-						<td><?=htmlspecialchars($server['host'])?></td>
+						<td><?=htmlspecialchars($servercfg['name'])?></td>
+						<td><?=htmlspecialchars($auth_server_types[$servercfg['type']])?></td>
+						<td><?=htmlspecialchars($servercfg['host'])?></td>
 						<td>
-						<?php 
-						if ($i < (count($a_server) - 1)):
-						     if ($auth_server_types[$server['type']] == 'ldap') {
-						?>
-							<a class="fa fa-wrench"  title="<?=gettext("Test Connection")?>" href="system_authservers.php?act=test&amp;id=<?=$i?>"></a>
-						<?php endif;?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
-						<?php endif?>
+						<?php if ($auth_server_types[$servercfg['type']] == 'ldap'): ?>
+							// We can test any LDAP server
+							<a class="fa fa-wrench"  title="<?=gettext("Test Connection")?>" href="system_authservers.php?act=test&amp;id=<?=$serveridx?>"></a>
+						<php elseif ($servercfg['type'] != 'Local Database'): ?>
+							// We can edit anything except local database
+							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers_edit.php?id=<?=$serveridx?>"></a>
+						<php if (count($auth_servers_list) >= 2): ?>
+							// We can delete anything except local database *if* there's at least one other server defined (which there should be)
+							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$serveridx?>"></a>
+						<?php endif; ?>
+						<?php endif; ?>
 						</td>
 					</tr>
 			<?php endforeach; ?>

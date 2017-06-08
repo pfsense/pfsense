@@ -88,7 +88,11 @@ if ($_REQUEST['del']) {
 		write_config($savemsg);
 	}
 } elseif ($_REQUEST['test']) {
-	// Test auth settings
+	// Test auth settings. Also see similar code at system_admin_advanced.php
+
+// FIXME:  Should use $id here, or (more likely) the server should be present in $_REQUEST['authserver']
+//		at the moment this won't pick up the arg (selected svr) from the calling code.
+	
 	if (isset($config['system']['authserver'][0]['host'])) {
 		$auth_server = $config['system']['authserver'][0]['host'];
 		$selected_authserver = $_POST['authserver'];

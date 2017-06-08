@@ -149,7 +149,7 @@ if (!function_exists('get_sysinfo_item_html')) {
 				$args[] = php_uname("m");
 				$args[] = gettext('built on') . ' '. file_get_contents("/etc/version.buildtime");
 				$args[] = (!$g['hideuname'] ? '<br /><span title="' . php_uname("a") . '">(' . php_uname("s") . ' ' . php_uname("r") . ")</span>" : "");
-				$args[] = (!isset($config['system']['firmware']['disablecheck']) ? "<br /><br /><div id='system-information-widget-updatestatus'>" . gettext("Obtaining update status ") . '<i class="fa fa-cog fa-spin"></i></div>' : "");
+				$args[] = (!isset($config['system']['firmware']['disablecheck']) ? "<br /><br /><div id='updatestatus'>" . gettext("Obtaining update status ") . '<i class="fa fa-cog fa-spin"></i></div>' : "");
 				break;
 
 			case 'platform':
@@ -236,7 +236,8 @@ END;
 		</div>
 		<span id="mbufusagemeter">%s</span>&nbsp;<span id="mbuf">(%s)</span>
 END;
-				get_mbuf($mbufstext, $mbufusage);
+				$mbufstext = get_mbuf();
+				$mbufusage = get_mbuf(true);
 				$args[] = $mbufusage;
 				$args[] = $mbufusage . '%';
 				$args[] = $mbufusage . '%';
@@ -334,6 +335,7 @@ END;
 				break;
 
 			case 'ALL_HIDDEN':
+				$title_content = gettext('Empty');
 				$data_template = "<div class='text-center'>\n%s</div>";
 				$args[] = gettext('All System Information items are hidden or can not be shown.');
 				break;
@@ -435,15 +437,14 @@ foreach ($itemsshown as $itemkey) {
 		$catsort = $catdata['catsort'];
 		$data[$catsort]['cattitle'] = $catdata['cattitle']; // add key for category and get category title
 		$data[$catsort]['itemstoshow'][$itemsort] = $itemdata;  // create a key for item and add static item data
-		$data[$catsort]['itemstoshow'][$itemsort]['item_html'] = '<tr>' . $item_html . '<tr>';
+		$data[$catsort]['itemstoshow'][$itemsort]['item_html'] = '<tr>' . $item_html . '</tr>';
 	}
 }
 if (count($data) == 0) {
 	// adds a single item containing the special key for the "no sysinfo selected" item if nothing else will display
-	$data[0] = array(
-		'cattitle' => '',
-		'itemstoshow' => array('itemsort' => '', 'item_html' => '<tr>' . get_sysinfo_item_html('ALL_HIDDEN') . '<tr>')
-		);
+	$data[0]['cattitle'] = '';
+	$data[0]['itemstoshow'][0]['itemtitle'] = '';
+	$data[0]['itemstoshow'][0]['item_html'] = '<tr>' . get_sysinfo_item_html('ALL_HIDDEN') . '</tr>';
 }
 // Now we have the HTML for each category and items within categories, or a "nothing to show" section if none
 ?>
@@ -456,8 +457,10 @@ if (count($data) == 0) {
 	//sort categories
 	ksort($data);
 	foreach ($data as $cat => $cat_data) {
-		// display title for this category
-		echo "<tr><th><strong>{$cat_data['cattitle']}</strong></th>\n<td>&nbsp;</td></tr>";
+		if (strlen($cat_data['cattitle']) > 0) {
+			// display title for this category
+			echo "<tr><th><strong>{$cat_data['cattitle']}</strong></th>\n<td>&nbsp;</td></tr>";
+		}
 		// sort and output items within category
 		ksort($cat_data);
 		foreach($cat_data['itemstoshow'] as $itemsort => $itemdata) {
@@ -473,7 +476,6 @@ if (count($data) == 0) {
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
-<form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">

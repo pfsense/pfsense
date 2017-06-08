@@ -747,6 +747,8 @@ function netgate_hardware_setup() {
 			$replace_msg = '';
 			$config['interfaces']['wan']['if'] = 'hn0';
 			$config['system']['webgui']['ssl-certref'] = '51b5ec443d315';
+		} elseif (does_interface_exist('ixv0')) {
+			$config['interfaces']['wan']['if'] = 'ixv0';
 		} else {
 			$config['interfaces']['wan']['if'] = 'xn0';
 		}

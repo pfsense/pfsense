@@ -136,7 +136,7 @@ EOT2;
 			return <<<EOT3
 	{$element}
 		<div class="panel-heading">
-			<h2 class="panel-title"><a name="{$id}">{$title}{$hdricon}</a></h2>
+			<h2 class="panel-title"><a name="{$id}">{$title}</a>{$hdricon}</h2>
 		</div>
 		{$bodyclass}
 			{$body}

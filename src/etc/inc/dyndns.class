@@ -571,8 +571,9 @@
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard);
 					break;
 				case 'opendns':
 					$needsIP = FALSE;

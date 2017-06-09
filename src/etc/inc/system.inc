@@ -137,7 +137,7 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	if (isset($config['system']['dnslocalhost'])) {
 		file_put_contents('/etc/nsswitch.conf', str_replace(
-			'hosts: file dns', 'hosts: dns files',
+			'hosts: files dns', 'hosts: dns files',
 			file_get_contents('/etc/nsswitch.conf')
 		));
 	} else {

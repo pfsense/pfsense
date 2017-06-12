@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 08:25-0300\n"
+"POT-Creation-Date: 2017-06-09 16:39-0400\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-27 04:04-0400\n"
+"PO-Revision-Date: 2017-06-03 02:11-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
@@ -557,7 +557,7 @@ msgid ""
 msgstr "Config.xml已损坏，为0字节。无法还原先前的备份。"
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
-#: src/etc/inc/config.lib.inc:505
+#: src/etc/inc/config.lib.inc:506
 msgid "Could not restore config.xml."
 msgstr "无法还原config.xml。"
 
@@ -600,43 +600,50 @@ msgstr "在%s处结束配置升级"
 msgid "Upgraded config version level from %1$s to %2$s"
 msgstr "已将配置版本级别从%1$s升级到%2$s"
 
-#: src/etc/inc/config.lib.inc:482
+#: src/etc/inc/config.lib.inc:450
+#, php-format
+msgid ""
+"Save config permission denied by the 'User - Config: Deny Config Write' "
+"permission for user '%s'."
+msgstr ""
+
+#: src/etc/inc/config.lib.inc:483
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr "警告：无法保存配置内容。无法打开文件！"
 
-#: src/etc/inc/config.lib.inc:484
+#: src/etc/inc/config.lib.inc:485
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr "不能打开 %1$s/config.xml 以写入write_config()%2$s"
 
-#: src/etc/inc/config.lib.inc:615
+#: src/etc/inc/config.lib.inc:616
 #, php-format
 msgid "Reverted to %s."
 msgstr "还原到 %s."
 
-#: src/etc/inc/config.lib.inc:632
+#: src/etc/inc/config.lib.inc:633
 msgid "Installing configuration..."
 msgstr "正在安装配置..."
 
-#: src/etc/inc/config.lib.inc:634
+#: src/etc/inc/config.lib.inc:635
 msgid "Installing configuration ...."
 msgstr "正在安装配置..."
 
-#: src/etc/inc/config.lib.inc:685
+#: src/etc/inc/config.lib.inc:686
 msgid "XML error: unable to open file"
 msgstr "XML错误：无法打开文件"
 
-#: src/etc/inc/config.lib.inc:691
+#: src/etc/inc/config.lib.inc:692
 #, php-format
 msgid "%1$s at line %2$d"
 msgstr "%1$s 在行 %2$d"
 
-#: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
+#: src/etc/inc/config.lib.inc:745 src/etc/inc/config.lib.inc:747
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr "备份缓存文件 %s已损坏，取消链接。"
 
-#: src/etc/inc/config.lib.inc:897
+#: src/etc/inc/config.lib.inc:898
 #, php-format
 msgid "%s made unknown change"
 msgstr "%s 发生未知变化"
@@ -674,661 +681,661 @@ msgid ""
 "temporarily set to %3$s"
 msgstr "动态DNS%1$s (%2$s):在No-IP的帐户上处理虚拟更新。 IP临时设置为%3$s"
 
-#: src/etc/inc/dyndns.class:704
+#: src/etc/inc/dyndns.class:705
 #, php-format
 msgid "Sending request to: %s"
 msgstr "发送请求到: %s"
 
-#: src/etc/inc/dyndns.class:937
+#: src/etc/inc/dyndns.class:938
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
 msgstr "动态DNS %1$s (%2$s): _remove() starting。"
 
-#: src/etc/inc/dyndns.class:1005
+#: src/etc/inc/dyndns.class:1006
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
 msgstr "动态DNS %1$s (%2$s): _listCurrent() starting。"
 
-#: src/etc/inc/dyndns.class:1065
+#: src/etc/inc/dyndns.class:1066
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
 msgstr "动态DNS %1$s (%2$s): _checkLookupStatus() starting。"
 
-#: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
+#: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
 msgstr "成功"
 
-#: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
-#: src/etc/inc/dyndns.class:1868 src/usr/local/www/diag_smart.php:374
+#: src/etc/inc/dyndns.class:1069 src/etc/inc/dyndns.class:1121
+#: src/etc/inc/dyndns.class:1869 src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "错误"
 
-#: src/etc/inc/dyndns.class:1072 src/etc/inc/dyndns.class:1124
+#: src/etc/inc/dyndns.class:1073 src/etc/inc/dyndns.class:1125
 msgid "Curl error occurred:"
 msgstr "发生错误"
 
-#: src/etc/inc/dyndns.class:1082 src/etc/inc/dyndns.class:1137
-#: src/etc/inc/dyndns.class:1160 src/etc/inc/dyndns.class:1179
-#: src/etc/inc/dyndns.class:1197 src/etc/inc/dyndns.class:1214
-#: src/etc/inc/dyndns.class:1231 src/etc/inc/dyndns.class:1316
-#: src/etc/inc/dyndns.class:1336 src/etc/inc/dyndns.class:1354
-#: src/etc/inc/dyndns.class:1364 src/etc/inc/dyndns.class:1378
-#: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1406
-#: src/etc/inc/dyndns.class:1425 src/etc/inc/dyndns.class:1449
-#: src/etc/inc/dyndns.class:1468 src/etc/inc/dyndns.class:1488
-#: src/etc/inc/dyndns.class:1508 src/etc/inc/dyndns.class:1535
-#: src/etc/inc/dyndns.class:1552 src/etc/inc/dyndns.class:1600
-#: src/etc/inc/dyndns.class:1616 src/etc/inc/dyndns.class:1634
-#: src/etc/inc/dyndns.class:1657 src/etc/inc/dyndns.class:1682
-#: src/etc/inc/dyndns.class:1719 src/etc/inc/dyndns.class:1740
-#: src/etc/inc/dyndns.class:1755 src/etc/inc/dyndns.class:1766
+#: src/etc/inc/dyndns.class:1083 src/etc/inc/dyndns.class:1138
+#: src/etc/inc/dyndns.class:1161 src/etc/inc/dyndns.class:1180
+#: src/etc/inc/dyndns.class:1198 src/etc/inc/dyndns.class:1215
+#: src/etc/inc/dyndns.class:1232 src/etc/inc/dyndns.class:1317
+#: src/etc/inc/dyndns.class:1337 src/etc/inc/dyndns.class:1355
+#: src/etc/inc/dyndns.class:1365 src/etc/inc/dyndns.class:1379
+#: src/etc/inc/dyndns.class:1392 src/etc/inc/dyndns.class:1407
+#: src/etc/inc/dyndns.class:1426 src/etc/inc/dyndns.class:1450
+#: src/etc/inc/dyndns.class:1469 src/etc/inc/dyndns.class:1489
+#: src/etc/inc/dyndns.class:1509 src/etc/inc/dyndns.class:1536
+#: src/etc/inc/dyndns.class:1553 src/etc/inc/dyndns.class:1601
+#: src/etc/inc/dyndns.class:1617 src/etc/inc/dyndns.class:1635
+#: src/etc/inc/dyndns.class:1658 src/etc/inc/dyndns.class:1683
+#: src/etc/inc/dyndns.class:1720 src/etc/inc/dyndns.class:1741
+#: src/etc/inc/dyndns.class:1756 src/etc/inc/dyndns.class:1767
 msgid "PAYLOAD:"
 msgstr "有效载荷："
 
-#: src/etc/inc/dyndns.class:1101
+#: src/etc/inc/dyndns.class:1102
 #, php-format
 msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr "动态DNS %1$s (%2$s): _checkLookupStatus() ending。找不到匹配的记录。"
 
-#: src/etc/inc/dyndns.class:1116
+#: src/etc/inc/dyndns.class:1117
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
 msgstr "动态 DNS %1$s (%2$s): _checkStatus() starting."
 
-#: src/etc/inc/dyndns.class:1133 src/etc/inc/dyndns.class:1154
-#: src/etc/inc/dyndns.class:1173 src/etc/inc/dyndns.class:1191
-#: src/etc/inc/dyndns.class:1208 src/etc/inc/dyndns.class:1225
-#: src/etc/inc/dyndns.class:1374 src/etc/inc/dyndns.class:1387
-#: src/etc/inc/dyndns.class:1400 src/etc/inc/dyndns.class:1417
-#: src/etc/inc/dyndns.class:1546 src/etc/inc/dyndns.class:1610
-#: src/etc/inc/dyndns.class:1668 src/etc/inc/dyndns.class:1689
-#: src/etc/inc/dyndns.class:1734 src/etc/inc/dyndns.class:1746
-#: src/etc/inc/dyndns.class:1762 src/etc/inc/dyndns.class:1780
+#: src/etc/inc/dyndns.class:1134 src/etc/inc/dyndns.class:1155
+#: src/etc/inc/dyndns.class:1174 src/etc/inc/dyndns.class:1192
+#: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1226
+#: src/etc/inc/dyndns.class:1375 src/etc/inc/dyndns.class:1388
+#: src/etc/inc/dyndns.class:1401 src/etc/inc/dyndns.class:1418
+#: src/etc/inc/dyndns.class:1547 src/etc/inc/dyndns.class:1611
+#: src/etc/inc/dyndns.class:1669 src/etc/inc/dyndns.class:1690
+#: src/etc/inc/dyndns.class:1735 src/etc/inc/dyndns.class:1747
+#: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1781
 msgid "IP Address Changed Successfully!"
 msgstr "IP地址已成功更改！"
 
-#: src/etc/inc/dyndns.class:1136 src/etc/inc/dyndns.class:1159
-#: src/etc/inc/dyndns.class:1178 src/etc/inc/dyndns.class:1196
-#: src/etc/inc/dyndns.class:1213 src/etc/inc/dyndns.class:1230
-#: src/etc/inc/dyndns.class:1297 src/etc/inc/dyndns.class:1315
-#: src/etc/inc/dyndns.class:1335 src/etc/inc/dyndns.class:1353
-#: src/etc/inc/dyndns.class:1363 src/etc/inc/dyndns.class:1377
-#: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1405
-#: src/etc/inc/dyndns.class:1424 src/etc/inc/dyndns.class:1448
-#: src/etc/inc/dyndns.class:1467 src/etc/inc/dyndns.class:1487
-#: src/etc/inc/dyndns.class:1507 src/etc/inc/dyndns.class:1534
-#: src/etc/inc/dyndns.class:1551 src/etc/inc/dyndns.class:1615
-#: src/etc/inc/dyndns.class:1633 src/etc/inc/dyndns.class:1656
-#: src/etc/inc/dyndns.class:1681 src/etc/inc/dyndns.class:1718
-#: src/etc/inc/dyndns.class:1739 src/etc/inc/dyndns.class:1754
-#: src/etc/inc/dyndns.class:1765
+#: src/etc/inc/dyndns.class:1137 src/etc/inc/dyndns.class:1160
+#: src/etc/inc/dyndns.class:1179 src/etc/inc/dyndns.class:1197
+#: src/etc/inc/dyndns.class:1214 src/etc/inc/dyndns.class:1231
+#: src/etc/inc/dyndns.class:1298 src/etc/inc/dyndns.class:1316
+#: src/etc/inc/dyndns.class:1336 src/etc/inc/dyndns.class:1354
+#: src/etc/inc/dyndns.class:1364 src/etc/inc/dyndns.class:1378
+#: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1406
+#: src/etc/inc/dyndns.class:1425 src/etc/inc/dyndns.class:1449
+#: src/etc/inc/dyndns.class:1468 src/etc/inc/dyndns.class:1488
+#: src/etc/inc/dyndns.class:1508 src/etc/inc/dyndns.class:1535
+#: src/etc/inc/dyndns.class:1552 src/etc/inc/dyndns.class:1616
+#: src/etc/inc/dyndns.class:1634 src/etc/inc/dyndns.class:1657
+#: src/etc/inc/dyndns.class:1682 src/etc/inc/dyndns.class:1719
+#: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1755
+#: src/etc/inc/dyndns.class:1766
 msgid "Unknown Response"
 msgstr "未知响应"
 
-#: src/etc/inc/dyndns.class:1144
+#: src/etc/inc/dyndns.class:1145
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr "指定的DNS-O-Matic用户名或密码不正确。 在解决此问题之前，不会将更新分发到服务。"
 
-#: src/etc/inc/dyndns.class:1146
+#: src/etc/inc/dyndns.class:1147
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr "指定的主机名不是完全合格域名(FQDN)。FQDN是指主机名加上全路径，全路径中列出了序列中所有域成员，是主机名的一种完全表示形式。"
 
-#: src/etc/inc/dyndns.class:1148
+#: src/etc/inc/dyndns.class:1149
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr "传递的主机名无法与配置的任何服务匹配。 服务字段在返回代码中将为空。"
 
-#: src/etc/inc/dyndns.class:1150
+#: src/etc/inc/dyndns.class:1151
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr "最多可以更新20个主机。 如果尝试更新超过20或更新循环，则返回空主机。"
 
-#: src/etc/inc/dyndns.class:1152
+#: src/etc/inc/dyndns.class:1153
 msgid "The hostname is blocked for update abuse."
 msgstr "主机名被阻止更新。"
 
-#: src/etc/inc/dyndns.class:1157
+#: src/etc/inc/dyndns.class:1158
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr "遇到DNS错误。 停止更新30分钟。"
 
-#: src/etc/inc/dyndns.class:1166 src/etc/inc/dyndns.class:1186
-#: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1220
-#: src/etc/inc/dyndns.class:1541 src/etc/inc/dyndns.class:1605
-#: src/etc/inc/dyndns.class:1727
+#: src/etc/inc/dyndns.class:1167 src/etc/inc/dyndns.class:1187
+#: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1221
+#: src/etc/inc/dyndns.class:1542 src/etc/inc/dyndns.class:1606
+#: src/etc/inc/dyndns.class:1728
 msgid "Not A FQDN!"
 msgstr "不是一个完全合格域名（FQDN）！"
 
-#: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1729
+#: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1730
 msgid "No such host"
 msgstr "没有这样的主机"
 
-#: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1188
-#: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1222
-#: src/etc/inc/dyndns.class:1371 src/etc/inc/dyndns.class:1384
-#: src/etc/inc/dyndns.class:1397 src/etc/inc/dyndns.class:1607
-#: src/etc/inc/dyndns.class:1665 src/etc/inc/dyndns.class:1708
-#: src/etc/inc/dyndns.class:1731
+#: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1189
+#: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1223
+#: src/etc/inc/dyndns.class:1372 src/etc/inc/dyndns.class:1385
+#: src/etc/inc/dyndns.class:1398 src/etc/inc/dyndns.class:1608
+#: src/etc/inc/dyndns.class:1666 src/etc/inc/dyndns.class:1709
+#: src/etc/inc/dyndns.class:1732
 msgid "No Change In IP Address"
 msgstr "没有更改IP地址"
 
-#: src/etc/inc/dyndns.class:1176 src/etc/inc/dyndns.class:1194
-#: src/etc/inc/dyndns.class:1211 src/etc/inc/dyndns.class:1228
-#: src/etc/inc/dyndns.class:1403 src/etc/inc/dyndns.class:1549
-#: src/etc/inc/dyndns.class:1613 src/etc/inc/dyndns.class:1671
-#: src/etc/inc/dyndns.class:1737
+#: src/etc/inc/dyndns.class:1177 src/etc/inc/dyndns.class:1195
+#: src/etc/inc/dyndns.class:1212 src/etc/inc/dyndns.class:1229
+#: src/etc/inc/dyndns.class:1404 src/etc/inc/dyndns.class:1550
+#: src/etc/inc/dyndns.class:1614 src/etc/inc/dyndns.class:1672
+#: src/etc/inc/dyndns.class:1738
 msgid "User Authorization Failed"
 msgstr "用户授权失败"
 
-#: src/etc/inc/dyndns.class:1242
+#: src/etc/inc/dyndns.class:1243
 msgid "IP address is current, no update performed."
 msgstr "IP地址是当前的，不执行更新。"
 
-#: src/etc/inc/dyndns.class:1246
+#: src/etc/inc/dyndns.class:1247
 msgid "DNS hostname update successful."
 msgstr "DNS主机名更新成功。"
 
-#: src/etc/inc/dyndns.class:1250
+#: src/etc/inc/dyndns.class:1251
 msgid "Hostname supplied does not exist."
 msgstr "提供的主机名不存在。"
 
-#: src/etc/inc/dyndns.class:1253
+#: src/etc/inc/dyndns.class:1254
 msgid "Invalid Username."
 msgstr "用户名无效。"
 
-#: src/etc/inc/dyndns.class:1256
+#: src/etc/inc/dyndns.class:1257
 msgid "Invalid Password."
 msgstr "输入的密码无效。"
 
-#: src/etc/inc/dyndns.class:1259
+#: src/etc/inc/dyndns.class:1260
 msgid "Too many updates sent."
 msgstr "发送的更新太多。"
 
-#: src/etc/inc/dyndns.class:1262
+#: src/etc/inc/dyndns.class:1263
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr "帐户因违反No-IP服务条款而被停用。"
 
-#: src/etc/inc/dyndns.class:1265
+#: src/etc/inc/dyndns.class:1266
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr "IP无效。 提交的IP地址格式不正确，或者是一个私有IP地址或在黑名单上。"
 
-#: src/etc/inc/dyndns.class:1268
+#: src/etc/inc/dyndns.class:1269
 msgid "Disabled / Locked Hostname."
 msgstr "禁用/锁定主机名。"
 
-#: src/etc/inc/dyndns.class:1271
+#: src/etc/inc/dyndns.class:1272
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr "已更新的主机配置为Web重定向，并且未执行更新。"
 
-#: src/etc/inc/dyndns.class:1274
+#: src/etc/inc/dyndns.class:1275
 msgid "Group supplied does not exist."
 msgstr "提供的组不存在。"
 
-#: src/etc/inc/dyndns.class:1277
+#: src/etc/inc/dyndns.class:1278
 msgid "DNS group update is successful."
 msgstr "DNS组更新成功。"
 
-#: src/etc/inc/dyndns.class:1281
+#: src/etc/inc/dyndns.class:1282
 msgid "DNS group is current, no update performed."
 msgstr "DNS组是当前的，没有执行更新。"
 
-#: src/etc/inc/dyndns.class:1285
+#: src/etc/inc/dyndns.class:1286
 msgid "Update client support not available for supplied hostname or group."
 msgstr "更新客户端支持不可用于提供的主机名或组。"
 
-#: src/etc/inc/dyndns.class:1288
+#: src/etc/inc/dyndns.class:1289
 msgid "Hostname supplied does not have offline settings configured."
 msgstr "提供的主机名没有配置离线设置。"
 
-#: src/etc/inc/dyndns.class:1291 src/etc/inc/dyndns.class:1294
+#: src/etc/inc/dyndns.class:1292 src/etc/inc/dyndns.class:1295
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr "客户端已禁用。 客户端应退出，不执行任何更新，无需用户干预。"
 
-#: src/etc/inc/dyndns.class:1298
+#: src/etc/inc/dyndns.class:1299
 msgid "Unknown Response:"
 msgstr "未知响应："
 
-#: src/etc/inc/dyndns.class:1304
+#: src/etc/inc/dyndns.class:1305
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr "认证失败：用户名和/或密码不正确。"
 
-#: src/etc/inc/dyndns.class:1306
+#: src/etc/inc/dyndns.class:1307
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr "无服务：此域已禁用动态DNS服务。"
 
-#: src/etc/inc/dyndns.class:1308
+#: src/etc/inc/dyndns.class:1309
 msgid "Illegal Input: Self-Explanatory"
 msgstr "非法输入：自解释"
 
-#: src/etc/inc/dyndns.class:1310
+#: src/etc/inc/dyndns.class:1311
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr "太快：自从上次更新以来，时间已经过去了"
 
-#: src/etc/inc/dyndns.class:1312
+#: src/etc/inc/dyndns.class:1313
 msgid "IP Updated Successfully!"
 msgstr "IP已成功更新！"
 
-#: src/etc/inc/dyndns.class:1325
+#: src/etc/inc/dyndns.class:1326
 msgid "Error 799"
 msgstr "错误 799"
 
-#: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:1327
+#: src/etc/inc/dyndns.class:1326 src/etc/inc/dyndns.class:1328
 msgid "Update Failed!"
 msgstr "更新失败！"
 
-#: src/etc/inc/dyndns.class:1327
+#: src/etc/inc/dyndns.class:1328
 msgid "Error 700"
 msgstr "错误 700"
 
-#: src/etc/inc/dyndns.class:1329 src/etc/inc/dyndns.class:1332
-#: src/etc/inc/dyndns.class:1350 src/etc/inc/dyndns.class:1360
-#: src/etc/inc/dyndns.class:1445 src/etc/inc/dyndns.class:1461
-#: src/etc/inc/dyndns.class:1481 src/etc/inc/dyndns.class:1501
-#: src/etc/inc/dyndns.class:1528 src/etc/inc/dyndns.class:1583
-#: src/etc/inc/dyndns.class:1630 src/etc/inc/dyndns.class:1644
+#: src/etc/inc/dyndns.class:1330 src/etc/inc/dyndns.class:1333
+#: src/etc/inc/dyndns.class:1351 src/etc/inc/dyndns.class:1361
+#: src/etc/inc/dyndns.class:1446 src/etc/inc/dyndns.class:1462
+#: src/etc/inc/dyndns.class:1482 src/etc/inc/dyndns.class:1502
+#: src/etc/inc/dyndns.class:1529 src/etc/inc/dyndns.class:1584
+#: src/etc/inc/dyndns.class:1631 src/etc/inc/dyndns.class:1645
 msgid "IP Address Updated Successfully!"
 msgstr "IP地址已成功更改！"
 
-#: src/etc/inc/dyndns.class:1342
+#: src/etc/inc/dyndns.class:1343
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr "错误请求 - 网址格式不正确。 未提供必需的参数。"
 
-#: src/etc/inc/dyndns.class:1344
+#: src/etc/inc/dyndns.class:1345
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr "更新太快 - 尝试自上次更改后更新太快。"
 
-#: src/etc/inc/dyndns.class:1346
+#: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
 msgstr "数据库错误 - 有一个服务器端数据库错误。"
 
-#: src/etc/inc/dyndns.class:1348
+#: src/etc/inc/dyndns.class:1349
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr "主机名错误 - 主机名 (%1$s) 不属于用户 (%2$s)."
 
-#: src/etc/inc/dyndns.class:1412
+#: src/etc/inc/dyndns.class:1413
 msgid "Not a valid username or password!"
 msgstr "不是有效的用户名或密码！"
 
-#: src/etc/inc/dyndns.class:1414
+#: src/etc/inc/dyndns.class:1415
 msgid "Hostname specified does not exist."
 msgstr "指定的主机名不存在。"
 
-#: src/etc/inc/dyndns.class:1420
+#: src/etc/inc/dyndns.class:1421
 msgid "Hostname specified exists, but not under the username specified."
 msgstr "指定的主机名存在，但不在指定的用户名下。"
 
-#: src/etc/inc/dyndns.class:1422
+#: src/etc/inc/dyndns.class:1423
 msgid "Updating too frequently, considered abuse."
 msgstr "更新频率过高，被视为滥用。"
 
-#: src/etc/inc/dyndns.class:1431 src/etc/inc/dyndns.class:1495
+#: src/etc/inc/dyndns.class:1432 src/etc/inc/dyndns.class:1496
 msgid "Bad Request - The IP provided was invalid."
 msgstr "错误请求 - 提供的IP无效。"
 
-#: src/etc/inc/dyndns.class:1433
+#: src/etc/inc/dyndns.class:1434
 msgid "Bad Request - Required parameters were not provided."
 msgstr "错误请求 - 未提供必需的参数。"
 
-#: src/etc/inc/dyndns.class:1435
+#: src/etc/inc/dyndns.class:1436
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr "错误请求 - 用户名或密码中存在非法字符。"
 
-#: src/etc/inc/dyndns.class:1437
+#: src/etc/inc/dyndns.class:1438
 msgid "Invalid password."
 msgstr "密码无效。"
 
-#: src/etc/inc/dyndns.class:1439
+#: src/etc/inc/dyndns.class:1440
 msgid "This account has been administratively locked."
 msgstr "此帐户已被管理员锁定。"
 
-#: src/etc/inc/dyndns.class:1441
+#: src/etc/inc/dyndns.class:1442
 msgid "Updating too frequently."
 msgstr "更新频率过高。"
 
-#: src/etc/inc/dyndns.class:1443 src/etc/inc/dyndns.class:1457
-#: src/etc/inc/dyndns.class:1475
+#: src/etc/inc/dyndns.class:1444 src/etc/inc/dyndns.class:1458
+#: src/etc/inc/dyndns.class:1476
 msgid "Server side error."
 msgstr "服务器端错误。"
 
-#: src/etc/inc/dyndns.class:1459
+#: src/etc/inc/dyndns.class:1460
 msgid "Badly Formed Request (check the settings)."
 msgstr "严重形成的请求（检查设置）。"
 
-#: src/etc/inc/dyndns.class:1477 src/etc/inc/dyndns.class:1497
+#: src/etc/inc/dyndns.class:1478 src/etc/inc/dyndns.class:1498
 msgid "Bad Request - A hostname was not provided."
 msgstr "错误请求 - 未提供主机名。"
 
-#: src/etc/inc/dyndns.class:1479 src/etc/inc/dyndns.class:1499
-#: src/etc/inc/dyndns.class:1526
+#: src/etc/inc/dyndns.class:1480 src/etc/inc/dyndns.class:1500
+#: src/etc/inc/dyndns.class:1527
 msgid "Invalid username or password."
 msgstr "用户名包含无效字符"
 
-#: src/etc/inc/dyndns.class:1484 src/etc/inc/dyndns.class:1504
-#: src/etc/inc/dyndns.class:1531 src/etc/inc/dyndns.class:1543
+#: src/etc/inc/dyndns.class:1485 src/etc/inc/dyndns.class:1505
+#: src/etc/inc/dyndns.class:1532 src/etc/inc/dyndns.class:1544
 msgid "No Change In IP Address."
 msgstr "IP地址没有改变。"
 
-#: src/etc/inc/dyndns.class:1522
+#: src/etc/inc/dyndns.class:1523
 msgid "Bad Request - Missing/Invalid Parameters."
 msgstr "错误请求 - 缺少/无效的参数。"
 
-#: src/etc/inc/dyndns.class:1524
+#: src/etc/inc/dyndns.class:1525
 msgid "Bad Request - Invalid Tunnel ID."
 msgstr "错误请求 - 隧道ID无效。"
 
-#: src/etc/inc/dyndns.class:1558
+#: src/etc/inc/dyndns.class:1559
 msgid "Route53 API call failed"
 msgstr "Route53 API调用失败"
 
-#: src/etc/inc/dyndns.class:1562
+#: src/etc/inc/dyndns.class:1563
 msgid "IP address changed successfully"
 msgstr "IP地址已成功更改！"
 
-#: src/etc/inc/dyndns.class:1585 src/etc/inc/dyndns.class:1749
+#: src/etc/inc/dyndns.class:1586 src/etc/inc/dyndns.class:1750
 msgid "Result did not match."
 msgstr "结果不匹配。"
 
-#: src/etc/inc/dyndns.class:1592
+#: src/etc/inc/dyndns.class:1593
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr "%1$s 已更新为 %2$s"
 
-#: src/etc/inc/dyndns.class:1595
+#: src/etc/inc/dyndns.class:1596
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr "无效证书！ 不要忘记使用API Key for CloudFlare的密码字段。"
 
-#: src/etc/inc/dyndns.class:1597
+#: src/etc/inc/dyndns.class:1598
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr "找不到区域或主机ID，请检查主机名。"
 
-#: src/etc/inc/dyndns.class:1599
+#: src/etc/inc/dyndns.class:1600
 msgid "UNKNOWN ERROR"
 msgstr "未知错误。"
 
-#: src/etc/inc/dyndns.class:1622
+#: src/etc/inc/dyndns.class:1623
 msgid "Wrong values - Update could not be completed."
 msgstr "值错误 - 无法完成更新。"
 
-#: src/etc/inc/dyndns.class:1624
+#: src/etc/inc/dyndns.class:1625
 msgid "Unknown username - User does not exist."
 msgstr "未知用户名 - 用户不存在。"
 
-#: src/etc/inc/dyndns.class:1626
+#: src/etc/inc/dyndns.class:1627
 msgid "Wrong password - Remember password is case sensitive."
 msgstr "密码错误 - 记住密码区分大小写。"
 
-#: src/etc/inc/dyndns.class:1628
+#: src/etc/inc/dyndns.class:1629
 msgid "User unable to administer the selected domain."
 msgstr "用户无法管理所选域。"
 
-#: src/etc/inc/dyndns.class:1663
+#: src/etc/inc/dyndns.class:1664
 msgid "Not A FQDN"
 msgstr "不是一个FQDN（完全合格域名）"
 
-#: src/etc/inc/dyndns.class:1673
+#: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr "主机名不存在或动态DNS未启用"
 
-#: src/etc/inc/dyndns.class:1675
+#: src/etc/inc/dyndns.class:1676
 msgid "Bad request"
 msgstr "错误的请求"
 
-#: src/etc/inc/dyndns.class:1677
+#: src/etc/inc/dyndns.class:1678
 msgid "Dynamic DNS access has been blocked!"
 msgstr "动态DNS访问已被阻止！"
 
-#: src/etc/inc/dyndns.class:1679
+#: src/etc/inc/dyndns.class:1680
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr "在Google结束时发生错误，请在5分钟后重试"
 
-#: src/etc/inc/dyndns.class:1693 src/etc/inc/dyndns.class:1751
+#: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1752
 msgid "Invalid username or password"
 msgstr "用户名或密码无效"
 
-#: src/etc/inc/dyndns.class:1696
+#: src/etc/inc/dyndns.class:1697
 msgid "Account suspended"
 msgstr "帐户已暂停"
 
-#: src/etc/inc/dyndns.class:1699
+#: src/etc/inc/dyndns.class:1700
 msgid "Account revoked"
 msgstr "帐户已撤销"
 
-#: src/etc/inc/dyndns.class:1702
+#: src/etc/inc/dyndns.class:1703
 msgid "Record does not exist in the system. Unable to update record"
 msgstr "记录不在系统中。 无法更新记录"
 
-#: src/etc/inc/dyndns.class:1705
+#: src/etc/inc/dyndns.class:1706
 msgid "User does not have access to this record"
 msgstr "用户无权访问此记录"
 
-#: src/etc/inc/dyndns.class:1712
+#: src/etc/inc/dyndns.class:1713
 msgid "General system error recognized by the system"
 msgstr "系统识别的常规系统错误"
 
-#: src/etc/inc/dyndns.class:1715
+#: src/etc/inc/dyndns.class:1716
 msgid "General system error unrecognized by the system"
 msgstr "系统无法识别的常规系统错误"
 
-#: src/etc/inc/dyndns.class:1774
+#: src/etc/inc/dyndns.class:1775
 #, php-format
 msgid "_checkStatus() results: %1$s"
 msgstr "_checkStatus() 结果: %1$s"
 
-#: src/etc/inc/dyndns.class:1785
+#: src/etc/inc/dyndns.class:1786
 msgid "No record exists."
 msgstr "记录不存在。"
 
-#: src/etc/inc/dyndns.class:1789
+#: src/etc/inc/dyndns.class:1790
 msgid "No type exists."
 msgstr "类型不存在。"
 
-#: src/etc/inc/dyndns.class:1793
+#: src/etc/inc/dyndns.class:1794
 msgid "No value exists."
 msgstr "值不存在。"
 
-#: src/etc/inc/dyndns.class:1796
+#: src/etc/inc/dyndns.class:1797
 msgid "No such zone exists."
 msgstr "区域不存在。"
 
-#: src/etc/inc/dyndns.class:1799
+#: src/etc/inc/dyndns.class:1800
 msgid "The specified record is invalid."
 msgstr "指定的记录无效。"
 
-#: src/etc/inc/dyndns.class:1802
+#: src/etc/inc/dyndns.class:1803
 msgid "The specified type is invalid."
 msgstr "指定的类型无效。"
 
-#: src/etc/inc/dyndns.class:1805
+#: src/etc/inc/dyndns.class:1806
 msgid "The specified value is invalid."
 msgstr "指定的值无效。"
 
-#: src/etc/inc/dyndns.class:1808
+#: src/etc/inc/dyndns.class:1809
 msgid "Record is not editable."
 msgstr "记录不可编辑。"
 
-#: src/etc/inc/dyndns.class:1811
+#: src/etc/inc/dyndns.class:1812
 msgid "Record exists but is not editable."
 msgstr "记录存在但不可编辑。"
 
-#: src/etc/inc/dyndns.class:1814
+#: src/etc/inc/dyndns.class:1815
 msgid "Record exists and must be removed before adding."
 msgstr "记录已存在，必须在添加前删除。"
 
-#: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
+#: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1824
 msgid "A remote server error occurred updating the zone."
 msgstr "更新区域时远程服务器发生错误。"
 
-#: src/etc/inc/dyndns.class:1820
+#: src/etc/inc/dyndns.class:1821
 msgid "A remote server error occurred loading the zone."
 msgstr "加载区域时远程服务器发生错误。"
 
-#: src/etc/inc/dyndns.class:1826
+#: src/etc/inc/dyndns.class:1827
 msgid "A remote server error occurred adding a new record."
 msgstr "添加新记录时远程服务器发生错误。"
 
-#: src/etc/inc/dyndns.class:1829
+#: src/etc/inc/dyndns.class:1830
 msgid "A remote server error occurred removing an existing record."
 msgstr "删除现有记录时远程服务器发生错误。"
 
-#: src/etc/inc/dyndns.class:1843
+#: src/etc/inc/dyndns.class:1844
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "动态DNS已将%1$s (%2$s) 上的IP地址更新为%3$s"
 
-#: src/etc/inc/dyndns.class:1844 src/etc/inc/dyndns.class:1852
+#: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "php 动态DNS：更新缓存文件%1$s: %2$s"
 
-#: src/etc/inc/dyndns.class:1851
+#: src/etc/inc/dyndns.class:1852
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr "动态DNS已将 %1$s (%2$s) 上的IPv6地址更新为 %3$s"
 
-#: src/etc/inc/dyndns.class:1867
+#: src/etc/inc/dyndns.class:1868
 msgid "ERROR!"
 msgstr "错误！"
 
-#: src/etc/inc/dyndns.class:1873
+#: src/etc/inc/dyndns.class:1874
 msgid "No Dynamic DNS Service provider was selected."
 msgstr "未选择动态DNS服务提供商。"
 
-#: src/etc/inc/dyndns.class:1876
+#: src/etc/inc/dyndns.class:1877
 msgid "No Username Provided."
 msgstr "没有提供用户名。"
 
-#: src/etc/inc/dyndns.class:1879
+#: src/etc/inc/dyndns.class:1880
 msgid "No Password Provided."
 msgstr "没有提供密码。"
 
-#: src/etc/inc/dyndns.class:1882
+#: src/etc/inc/dyndns.class:1883
 msgid "No Hostname Provided."
 msgstr "没有提供主机名。"
 
-#: src/etc/inc/dyndns.class:1885
+#: src/etc/inc/dyndns.class:1886
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr "尚不支持提供的动态DNS服务。"
 
-#: src/etc/inc/dyndns.class:1888
+#: src/etc/inc/dyndns.class:1889
 msgid "No Update URL Provided."
 msgstr "没有提供更新网址。"
 
-#: src/etc/inc/dyndns.class:1891
+#: src/etc/inc/dyndns.class:1892
 msgid "Invalid ZoneID"
 msgstr "区域ID无效"
 
-#: src/etc/inc/dyndns.class:1894
+#: src/etc/inc/dyndns.class:1895
 msgid "Invalid TTL"
 msgstr ""
 "无效的TTL（TTL是 Time To Live的缩写，该字段指定IP包被路由器丢弃之前允许通过的最大网段数量。TTL是IPv4包头的一个8 "
 "bit字段。）"
 
-#: src/etc/inc/dyndns.class:1897
+#: src/etc/inc/dyndns.class:1898
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr "我的IP地址%s 天没有变化，不能通过。不能更新动态DNS条目。"
 
-#: src/etc/inc/dyndns.class:1900
+#: src/etc/inc/dyndns.class:1901
 msgid "Unknown Response."
 msgstr "未知响应"
 
-#: src/etc/inc/dyndns.class:1919
+#: src/etc/inc/dyndns.class:1920
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr "动态DNS %1$s (%2$s): _checkStatus() starting."
 
-#: src/etc/inc/dyndns.class:1926
+#: src/etc/inc/dyndns.class:1927
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr "动态DNS(%s)：无法确定当前WAN IP，跳过更新过程。"
 
-#: src/etc/inc/dyndns.class:1929
+#: src/etc/inc/dyndns.class:1930
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr "动态Dns(%1$s): ：当前WAN IP： %2$s"
 
-#: src/etc/inc/dyndns.class:1937
+#: src/etc/inc/dyndns.class:1938
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr "缓存 IPv6: %s"
 
-#: src/etc/inc/dyndns.class:1943
+#: src/etc/inc/dyndns.class:1944
 msgid "No Cached IPv6 found."
 msgstr "找不到缓存IPv6。"
 
-#: src/etc/inc/dyndns.class:1951
+#: src/etc/inc/dyndns.class:1952
 #, php-format
 msgid "Cached IP: %s"
 msgstr "缓存IP: %s"
 
-#: src/etc/inc/dyndns.class:1957
+#: src/etc/inc/dyndns.class:1958
 msgid "No Cached IP found."
 msgstr "没找到缓存的IP。"
 
-#: src/etc/inc/dyndns.class:1971
+#: src/etc/inc/dyndns.class:1972
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr "动态 Dns: cacheIP != wan_ip. Updating."
 
-#: src/etc/inc/dyndns.class:1972
+#: src/etc/inc/dyndns.class:1973
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr "缓存IP：%1$s WAN IP: %2$s"
 
-#: src/etc/inc/dyndns.class:1977
+#: src/etc/inc/dyndns.class:1978
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr "动态Dns：超过%s天。 更新。"
 
-#: src/etc/inc/dyndns.class:1982
+#: src/etc/inc/dyndns.class:1983
 msgid "Initial update."
 msgstr "初始更新。"
 
-#: src/etc/inc/dyndns.class:2019
+#: src/etc/inc/dyndns.class:2020
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr "动态DNS %1$s (%2$s): _checkIP() starting."
 
-#: src/etc/inc/dyndns.class:2044
+#: src/etc/inc/dyndns.class:2045
 #, php-format
 msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr "动态DNS％%1$s调试信息(%2$s):：无法使用接口IP％%4$s.解析%3$s 到IP。"
 
-#: src/etc/inc/dyndns.class:2063
+#: src/etc/inc/dyndns.class:2064
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
 msgstr "动态DNS%1$s (%2$s):从%4$s中提取%3$s "
 
-#: src/etc/inc/dyndns.class:2066
+#: src/etc/inc/dyndns.class:2067
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
 msgstr "动态DNS％%1$s (%2$s)：无法从%3$s提取IP地址"
 
-#: src/etc/inc/dyndns.class:2071
+#: src/etc/inc/dyndns.class:2072
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr "动态DNS％%1$s (%2$s):从本地系统提取%3$s 。"
@@ -3583,11 +3590,11 @@ msgstr "无法从%2$s读取%1$s的以下文件"
 
 #: src/etc/inc/pfsense-utils.inc:2938
 msgid "Bosnian"
-msgstr ""
+msgstr "波斯尼亚"
 
 #: src/etc/inc/pfsense-utils.inc:2939
 msgid "German (Germany)"
-msgstr "German (Germany)"
+msgstr "德语（德国）"
 
 #: src/etc/inc/pfsense-utils.inc:2940
 msgid "English"
@@ -3599,11 +3606,11 @@ msgstr "西班牙"
 
 #: src/etc/inc/pfsense-utils.inc:2942
 msgid "Norwegian Bokmål"
-msgstr "Norwegian Bokmål"
+msgstr "挪威博克马尔"
 
 #: src/etc/inc/pfsense-utils.inc:2943
 msgid "Russian"
-msgstr "Russian"
+msgstr "俄语"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Chinese (Simplified, China)"
@@ -6703,7 +6710,7 @@ msgstr "延迟必须为整数。"
 #: src/usr/local/www/firewall_schedule_edit.php:1116
 #: src/usr/local/www/interfaces_assign.php:540
 #: src/usr/local/www/interfaces_qinq_edit.php:309
-#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1367
+#: src/usr/local/www/pkg_edit.php:1458 src/usr/local/www/services_dhcp.php:1367
 #: src/usr/local/www/services_dhcp_relay.php:186
 #: src/usr/local/www/services_dhcpv6.php:973
 #: src/usr/local/www/services_dnsmasq_edit.php:278
@@ -7664,7 +7671,7 @@ msgstr "确认"
 #: src/usr/local/www/firewall_rules.php:833
 #: src/usr/local/www/firewall_rules.php:884
 #: src/usr/local/www/interfaces_assign.php:573 src/usr/local/www/pkg.php:598
-#: src/usr/local/www/pkg_edit.php:601 src/usr/local/www/status_lb_pool.php:244
+#: src/usr/local/www/pkg_edit.php:611 src/usr/local/www/status_lb_pool.php:244
 #: src/usr/local/www/status_lb_pool.php:246
 #: src/usr/local/www/status_logs_common.inc:940
 #: src/usr/local/www/system_advanced_sysctl.php:88
@@ -8241,7 +8248,7 @@ msgstr "网络唤醒"
 
 #: src/usr/local/www/diag_backup.php:446
 #: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:560
-#: src/usr/local/www/pkg_edit.php:1198
+#: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/services_unbound.php:227
@@ -8395,7 +8402,7 @@ msgid "Execute the entered command"
 msgstr "执行输入的命令"
 
 #: src/usr/local/www/diag_command.php:211
-#: src/usr/local/www/diag_command.php:302
+#: src/usr/local/www/diag_command.php:349
 msgid "Execute"
 msgstr "执行"
 
@@ -8435,15 +8442,39 @@ msgstr "上传文件"
 msgid "Upload"
 msgstr "上传"
 
-#: src/usr/local/www/diag_command.php:295
+#: src/usr/local/www/diag_command.php:296
+#, php-format
+msgid ""
+"Line %s appears to have generated an error, and has been highlighted. The "
+"full response is below."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:299
+msgid ""
+"The code appears to have generated an error, but the line responsible cannot "
+"be identified. The full response is below."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:301
+#, php-format
+msgid ""
+"Note that the line number in the full PHP response will be %s lines too "
+"large. Nested code and eval() errors may incorrectly point to \"line 1\"."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:313
+msgid "Error locator:"
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
 msgstr "执行PHP命令"
 
-#: src/usr/local/www/diag_command.php:300
+#: src/usr/local/www/diag_command.php:347
 msgid "Execute this PHP Code"
 msgstr "执行此PHP代码"
 
-#: src/usr/local/www/diag_command.php:304
+#: src/usr/local/www/diag_command.php:351
 msgid "Example"
 msgstr "例子"
 
@@ -8726,12 +8757,12 @@ msgstr "别名已成功创建。"
 #: src/usr/local/www/diag_dns.php:228
 #, php-format
 msgid "Could not update alias for %s"
-msgstr ""
+msgstr "无法更新%s的别名"
 
 #: src/usr/local/www/diag_dns.php:230
 #, php-format
 msgid "Could not create alias for %s"
-msgstr ""
+msgstr "无法创建%s的别名"
 
 #: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -10557,7 +10588,7 @@ msgstr "删除别名"
 #: src/usr/local/www/load_balancer_monitor.php:145
 #: src/usr/local/www/load_balancer_pool.php:178
 #: src/usr/local/www/load_balancer_virtual_server.php:202
-#: src/usr/local/www/pkg.php:580 src/usr/local/www/pkg_edit.php:1460
+#: src/usr/local/www/pkg.php:580 src/usr/local/www/pkg_edit.php:1470
 #: src/usr/local/www/services_captiveportal_filemanager.php:235
 #: src/usr/local/www/services_captiveportal_hostname.php:160
 #: src/usr/local/www/services_captiveportal_ip.php:154
@@ -18490,12 +18521,12 @@ msgstr "不要忘记在完成设置后为虚拟服务器/地址池添加防火�
 
 #: src/usr/local/www/pkg.php:39 src/usr/local/www/pkg.php:170
 #: src/usr/local/www/pkg.php:174 src/usr/local/www/pkg_edit.php:44
-#: src/usr/local/www/pkg_edit.php:519 src/usr/local/www/pkg_edit.php:523
+#: src/usr/local/www/pkg_edit.php:529 src/usr/local/www/pkg_edit.php:533
 msgid "Package"
 msgstr "插件"
 
 #: src/usr/local/www/pkg.php:39 src/usr/local/www/pkg.php:174
-#: src/usr/local/www/pkg_edit.php:44 src/usr/local/www/pkg_edit.php:523
+#: src/usr/local/www/pkg_edit.php:44 src/usr/local/www/pkg_edit.php:533
 msgid "Editor"
 msgstr "编辑器"
 
@@ -18579,27 +18610,27 @@ msgstr "下一页"
 msgid "Add a new item"
 msgstr "添加一个条目"
 
-#: src/usr/local/www/pkg_edit.php:652
+#: src/usr/local/www/pkg_edit.php:662
 msgid "Advanced Features"
 msgstr "高级功能"
 
-#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:832
+#: src/usr/local/www/pkg_edit.php:743 src/usr/local/www/services_dhcp.php:832
 msgid "General Options"
 msgstr "常规选项"
 
-#: src/usr/local/www/pkg_edit.php:1198
+#: src/usr/local/www/pkg_edit.php:1208
 msgid "Listen on All interfaces/ip addresses "
 msgstr "侦听所有接口/ IP地址"
 
-#: src/usr/local/www/pkg_edit.php:1202
+#: src/usr/local/www/pkg_edit.php:1212
 msgid "loopback"
 msgstr "loopback"
 
-#: src/usr/local/www/pkg_edit.php:1503 src/usr/local/www/pkg_edit.php:1522
+#: src/usr/local/www/pkg_edit.php:1513 src/usr/local/www/pkg_edit.php:1532
 msgid "Show Advanced Options"
 msgstr "显示高级选项"
 
-#: src/usr/local/www/pkg_edit.php:1523
+#: src/usr/local/www/pkg_edit.php:1533
 msgid "Hide Advanced Options"
 msgstr "隐藏高级选项"
 
@@ -24492,7 +24523,7 @@ msgstr "config.xml中的公共密码字段已自动编辑。"
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
-msgstr ""
+msgstr "页面加载完成后，输出文件将保存在%1$s中。 它可以通过scp或使用此按钮下载："
 
 #: src/usr/local/www/status.php:376
 msgid "Saving output to archive..."
@@ -33551,7 +33582,7 @@ msgstr "所有选定的接口都已关闭。"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
 msgid "All statistics are hidden."
-msgstr ""
+msgstr "隐藏所有统计信息。"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -33563,19 +33594,19 @@ msgstr "检索接口数据"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
 msgid "Orientation"
-msgstr ""
+msgstr "方向"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
 msgid "Each interface in a column"
-msgstr ""
+msgstr "每个接口一列"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
 msgid "Each interface in a row"
-msgstr ""
+msgstr "每个接口一行"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
 msgid "Stats Item"
-msgstr ""
+msgstr "统计项目"
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."
@@ -34673,8 +34704,8 @@ msgstr "请在监视选项卡上添加监视IP地址以使用此功能。"
 msgid "Please add a pool on the \"Pools\" tab to use this feature. "
 msgstr "请在“地址池”选项卡上添加池以使用此功能。"
 
-#: src/usr/local/www/pkg_edit.php:1317 src/usr/local/www/pkg_edit.php:1323
-#: src/usr/local/www/pkg_edit.php:1328
+#: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
+#: src/usr/local/www/pkg_edit.php:1338
 msgid "<br />"
 msgstr "<br />"
 

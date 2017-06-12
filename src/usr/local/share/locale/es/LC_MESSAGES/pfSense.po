@@ -16,12 +16,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 08:25-0300\n"
+"POT-Creation-Date: 2017-06-09 16:39-0400\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-09 04:01-0400\n"
-"Last-Translator: FERNANDO ZAPATA <fzapata16@hotmail.com>\n"
+"PO-Revision-Date: 2017-06-04 10:25-0400\n"
+"Last-Translator: Enrique Sánchez <kikesan7@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -608,7 +608,7 @@ msgstr ""
 "anterior."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
-#: src/etc/inc/config.lib.inc:505
+#: src/etc/inc/config.lib.inc:506
 msgid "Could not restore config.xml."
 msgstr "No se puede restaurar config.xml"
 
@@ -657,45 +657,52 @@ msgstr "Finalizando actualización de configuración en %s"
 msgid "Upgraded config version level from %1$s to %2$s"
 msgstr "Actualizando nivel de configuración de  %1$s a %2$s"
 
-#: src/etc/inc/config.lib.inc:482
+#: src/etc/inc/config.lib.inc:450
+#, php-format
+msgid ""
+"Save config permission denied by the 'User - Config: Deny Config Write' "
+"permission for user '%s'."
+msgstr ""
+
+#: src/etc/inc/config.lib.inc:483
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
 "ADVERTENCIA: No se pudo guardar el contenido de la configuración. ¡No se "
 "pudo abrir el archivo!"
 
-#: src/etc/inc/config.lib.inc:484
+#: src/etc/inc/config.lib.inc:485
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr "No se pudo abrir %1$s/config.xml para escritura en write_config()%2$s"
 
-#: src/etc/inc/config.lib.inc:615
+#: src/etc/inc/config.lib.inc:616
 #, php-format
 msgid "Reverted to %s."
 msgstr "Volviendo a %s."
 
-#: src/etc/inc/config.lib.inc:632
+#: src/etc/inc/config.lib.inc:633
 msgid "Installing configuration..."
 msgstr "Instalando configuración ..."
 
-#: src/etc/inc/config.lib.inc:634
+#: src/etc/inc/config.lib.inc:635
 msgid "Installing configuration ...."
 msgstr "Instalando configuración ...."
 
-#: src/etc/inc/config.lib.inc:685
+#: src/etc/inc/config.lib.inc:686
 msgid "XML error: unable to open file"
 msgstr "Error en XML: no se puede abrir el archivo"
 
-#: src/etc/inc/config.lib.inc:691
+#: src/etc/inc/config.lib.inc:692
 #, php-format
 msgid "%1$s at line %2$d"
 msgstr "%1$s en la línea %2$d"
 
-#: src/etc/inc/config.lib.inc:744 src/etc/inc/config.lib.inc:746
+#: src/etc/inc/config.lib.inc:745 src/etc/inc/config.lib.inc:747
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
 msgstr "La copia de seguridad del archivo caché %s está dañado. Separándose."
 
-#: src/etc/inc/config.lib.inc:897
+#: src/etc/inc/config.lib.inc:898
 #, php-format
 msgid "%s made unknown change"
 msgstr "%s realizó cambios desconocidos."
@@ -739,101 +746,103 @@ msgstr ""
 "DNS Dinámico %1$s (%2$s): Procesando actualización simulada para cuenta "
 "gratis de No-IP. IP configurada temporalmente en %3$s"
 
-#: src/etc/inc/dyndns.class:704
+#: src/etc/inc/dyndns.class:705
 #, php-format
 msgid "Sending request to: %s"
 msgstr "Enviando solicitud a: %s"
 
-#: src/etc/inc/dyndns.class:937
+#: src/etc/inc/dyndns.class:938
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "DNS dinámico %1$s (%2$s):_remove() iniciando."
 
-#: src/etc/inc/dyndns.class:1005
+#: src/etc/inc/dyndns.class:1006
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "DNS dinámico %1$s (%2$s):listCurrent() iniciando."
 
-#: src/etc/inc/dyndns.class:1065
+#: src/etc/inc/dyndns.class:1066
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "DNS dinámico %1$s (%2$s): _checkLookupStatus() iniciando."
 
-#: src/etc/inc/dyndns.class:1067 src/etc/inc/dyndns.class:1119
+#: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
 msgstr "Exitoso"
 
-#: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
-#: src/etc/inc/dyndns.class:1868 src/usr/local/www/diag_smart.php:374
+#: src/etc/inc/dyndns.class:1069 src/etc/inc/dyndns.class:1121
+#: src/etc/inc/dyndns.class:1869 src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "Error"
 
-#: src/etc/inc/dyndns.class:1072 src/etc/inc/dyndns.class:1124
+#: src/etc/inc/dyndns.class:1073 src/etc/inc/dyndns.class:1125
 msgid "Curl error occurred:"
 msgstr "Ocurrió un error con curl:"
 
-#: src/etc/inc/dyndns.class:1082 src/etc/inc/dyndns.class:1137
-#: src/etc/inc/dyndns.class:1160 src/etc/inc/dyndns.class:1179
-#: src/etc/inc/dyndns.class:1197 src/etc/inc/dyndns.class:1214
-#: src/etc/inc/dyndns.class:1231 src/etc/inc/dyndns.class:1316
+#: src/etc/inc/dyndns.class:1083 src/etc/inc/dyndns.class:1138
+#: src/etc/inc/dyndns.class:1161 src/etc/inc/dyndns.class:1180
+#: src/etc/inc/dyndns.class:1198 src/etc/inc/dyndns.class:1215
+#: src/etc/inc/dyndns.class:1232 src/etc/inc/dyndns.class:1317
+#: src/etc/inc/dyndns.class:1337 src/etc/inc/dyndns.class:1355
+#: src/etc/inc/dyndns.class:1365 src/etc/inc/dyndns.class:1379
+#: src/etc/inc/dyndns.class:1392 src/etc/inc/dyndns.class:1407
+#: src/etc/inc/dyndns.class:1426 src/etc/inc/dyndns.class:1450
+#: src/etc/inc/dyndns.class:1469 src/etc/inc/dyndns.class:1489
+#: src/etc/inc/dyndns.class:1509 src/etc/inc/dyndns.class:1536
+#: src/etc/inc/dyndns.class:1553 src/etc/inc/dyndns.class:1601
+#: src/etc/inc/dyndns.class:1617 src/etc/inc/dyndns.class:1635
+#: src/etc/inc/dyndns.class:1658 src/etc/inc/dyndns.class:1683
+#: src/etc/inc/dyndns.class:1720 src/etc/inc/dyndns.class:1741
+#: src/etc/inc/dyndns.class:1756 src/etc/inc/dyndns.class:1767
+msgid "PAYLOAD:"
+msgstr "Carga (PAYLOAD):"
+
+#: src/etc/inc/dyndns.class:1102
+#, php-format
+msgid ""
+"Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
+"found."
+msgstr ""
+"DNS dinámico %1$s (%2$s): _checkLookupStatus() finalizando.  No se han "
+"encontrado registros correspondientes."
+
+#: src/etc/inc/dyndns.class:1117
+#, php-format
+msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
+msgstr "DNS Dinámico %1$s (%2$s): _checkStatus() iniciado."
+
+#: src/etc/inc/dyndns.class:1134 src/etc/inc/dyndns.class:1155
+#: src/etc/inc/dyndns.class:1174 src/etc/inc/dyndns.class:1192
+#: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1226
+#: src/etc/inc/dyndns.class:1375 src/etc/inc/dyndns.class:1388
+#: src/etc/inc/dyndns.class:1401 src/etc/inc/dyndns.class:1418
+#: src/etc/inc/dyndns.class:1547 src/etc/inc/dyndns.class:1611
+#: src/etc/inc/dyndns.class:1669 src/etc/inc/dyndns.class:1690
+#: src/etc/inc/dyndns.class:1735 src/etc/inc/dyndns.class:1747
+#: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1781
+msgid "IP Address Changed Successfully!"
+msgstr "Dirección IP actualizada satisfactoriamente!"
+
+#: src/etc/inc/dyndns.class:1137 src/etc/inc/dyndns.class:1160
+#: src/etc/inc/dyndns.class:1179 src/etc/inc/dyndns.class:1197
+#: src/etc/inc/dyndns.class:1214 src/etc/inc/dyndns.class:1231
+#: src/etc/inc/dyndns.class:1298 src/etc/inc/dyndns.class:1316
 #: src/etc/inc/dyndns.class:1336 src/etc/inc/dyndns.class:1354
 #: src/etc/inc/dyndns.class:1364 src/etc/inc/dyndns.class:1378
 #: src/etc/inc/dyndns.class:1391 src/etc/inc/dyndns.class:1406
 #: src/etc/inc/dyndns.class:1425 src/etc/inc/dyndns.class:1449
 #: src/etc/inc/dyndns.class:1468 src/etc/inc/dyndns.class:1488
 #: src/etc/inc/dyndns.class:1508 src/etc/inc/dyndns.class:1535
-#: src/etc/inc/dyndns.class:1552 src/etc/inc/dyndns.class:1600
-#: src/etc/inc/dyndns.class:1616 src/etc/inc/dyndns.class:1634
-#: src/etc/inc/dyndns.class:1657 src/etc/inc/dyndns.class:1682
-#: src/etc/inc/dyndns.class:1719 src/etc/inc/dyndns.class:1740
-#: src/etc/inc/dyndns.class:1755 src/etc/inc/dyndns.class:1766
-msgid "PAYLOAD:"
-msgstr "Carga (PAYLOAD):"
-
-#: src/etc/inc/dyndns.class:1101
-#, php-format
-msgid ""
-"Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
-"found."
-msgstr ""
-
-#: src/etc/inc/dyndns.class:1116
-#, php-format
-msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr "DNS Dinámico %1$s (%2$s): _checkStatus() iniciado."
-
-#: src/etc/inc/dyndns.class:1133 src/etc/inc/dyndns.class:1154
-#: src/etc/inc/dyndns.class:1173 src/etc/inc/dyndns.class:1191
-#: src/etc/inc/dyndns.class:1208 src/etc/inc/dyndns.class:1225
-#: src/etc/inc/dyndns.class:1374 src/etc/inc/dyndns.class:1387
-#: src/etc/inc/dyndns.class:1400 src/etc/inc/dyndns.class:1417
-#: src/etc/inc/dyndns.class:1546 src/etc/inc/dyndns.class:1610
-#: src/etc/inc/dyndns.class:1668 src/etc/inc/dyndns.class:1689
-#: src/etc/inc/dyndns.class:1734 src/etc/inc/dyndns.class:1746
-#: src/etc/inc/dyndns.class:1762 src/etc/inc/dyndns.class:1780
-msgid "IP Address Changed Successfully!"
-msgstr "Dirección IP actualizada satisfactoriamente!"
-
-#: src/etc/inc/dyndns.class:1136 src/etc/inc/dyndns.class:1159
-#: src/etc/inc/dyndns.class:1178 src/etc/inc/dyndns.class:1196
-#: src/etc/inc/dyndns.class:1213 src/etc/inc/dyndns.class:1230
-#: src/etc/inc/dyndns.class:1297 src/etc/inc/dyndns.class:1315
-#: src/etc/inc/dyndns.class:1335 src/etc/inc/dyndns.class:1353
-#: src/etc/inc/dyndns.class:1363 src/etc/inc/dyndns.class:1377
-#: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1405
-#: src/etc/inc/dyndns.class:1424 src/etc/inc/dyndns.class:1448
-#: src/etc/inc/dyndns.class:1467 src/etc/inc/dyndns.class:1487
-#: src/etc/inc/dyndns.class:1507 src/etc/inc/dyndns.class:1534
-#: src/etc/inc/dyndns.class:1551 src/etc/inc/dyndns.class:1615
-#: src/etc/inc/dyndns.class:1633 src/etc/inc/dyndns.class:1656
-#: src/etc/inc/dyndns.class:1681 src/etc/inc/dyndns.class:1718
-#: src/etc/inc/dyndns.class:1739 src/etc/inc/dyndns.class:1754
-#: src/etc/inc/dyndns.class:1765
+#: src/etc/inc/dyndns.class:1552 src/etc/inc/dyndns.class:1616
+#: src/etc/inc/dyndns.class:1634 src/etc/inc/dyndns.class:1657
+#: src/etc/inc/dyndns.class:1682 src/etc/inc/dyndns.class:1719
+#: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1755
+#: src/etc/inc/dyndns.class:1766
 msgid "Unknown Response"
 msgstr "Respuesta desconocida"
 
-#: src/etc/inc/dyndns.class:1144
+#: src/etc/inc/dyndns.class:1145
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
@@ -842,7 +851,7 @@ msgstr ""
 "incorrectos. No se distribuirán actualizaciones a los servicios hasta que "
 "esto se resuelva."
 
-#: src/etc/inc/dyndns.class:1146
+#: src/etc/inc/dyndns.class:1147
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
@@ -850,7 +859,7 @@ msgstr ""
 "El nombre del host especificado, no es correcto. Si no incluye un nombre de "
 "host válido, seguida viendo este error. "
 
-#: src/etc/inc/dyndns.class:1148
+#: src/etc/inc/dyndns.class:1149
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
@@ -859,7 +868,7 @@ msgstr ""
 "configurados. El campo de servicio quedará en blanco en el código de retorno."
 ""
 
-#: src/etc/inc/dyndns.class:1150
+#: src/etc/inc/dyndns.class:1151
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
@@ -867,73 +876,73 @@ msgstr ""
 "Se pueden actualizar hasta 20 hosts. Numhost se devuelve si intenta "
 "actualizar más de 20 o actualizar un round-robin."
 
-#: src/etc/inc/dyndns.class:1152
+#: src/etc/inc/dyndns.class:1153
 msgid "The hostname is blocked for update abuse."
 msgstr "El nombre del host está bloqueado por abuso del servicio."
 
-#: src/etc/inc/dyndns.class:1157
+#: src/etc/inc/dyndns.class:1158
 msgid "DNS error encountered. Stop updating for 30 minutes."
 msgstr "Error en DNS. Se detuvo actualización por 30 minutos."
 
-#: src/etc/inc/dyndns.class:1166 src/etc/inc/dyndns.class:1186
-#: src/etc/inc/dyndns.class:1203 src/etc/inc/dyndns.class:1220
-#: src/etc/inc/dyndns.class:1541 src/etc/inc/dyndns.class:1605
-#: src/etc/inc/dyndns.class:1727
+#: src/etc/inc/dyndns.class:1167 src/etc/inc/dyndns.class:1187
+#: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1221
+#: src/etc/inc/dyndns.class:1542 src/etc/inc/dyndns.class:1606
+#: src/etc/inc/dyndns.class:1728
 msgid "Not A FQDN!"
 msgstr "No es un FQDN!"
 
-#: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1729
+#: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1730
 msgid "No such host"
 msgstr "Ese nombre de host no existe"
 
-#: src/etc/inc/dyndns.class:1170 src/etc/inc/dyndns.class:1188
-#: src/etc/inc/dyndns.class:1205 src/etc/inc/dyndns.class:1222
-#: src/etc/inc/dyndns.class:1371 src/etc/inc/dyndns.class:1384
-#: src/etc/inc/dyndns.class:1397 src/etc/inc/dyndns.class:1607
-#: src/etc/inc/dyndns.class:1665 src/etc/inc/dyndns.class:1708
-#: src/etc/inc/dyndns.class:1731
+#: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1189
+#: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1223
+#: src/etc/inc/dyndns.class:1372 src/etc/inc/dyndns.class:1385
+#: src/etc/inc/dyndns.class:1398 src/etc/inc/dyndns.class:1608
+#: src/etc/inc/dyndns.class:1666 src/etc/inc/dyndns.class:1709
+#: src/etc/inc/dyndns.class:1732
 msgid "No Change In IP Address"
 msgstr "No hay cambios en dirección IP"
 
-#: src/etc/inc/dyndns.class:1176 src/etc/inc/dyndns.class:1194
-#: src/etc/inc/dyndns.class:1211 src/etc/inc/dyndns.class:1228
-#: src/etc/inc/dyndns.class:1403 src/etc/inc/dyndns.class:1549
-#: src/etc/inc/dyndns.class:1613 src/etc/inc/dyndns.class:1671
-#: src/etc/inc/dyndns.class:1737
+#: src/etc/inc/dyndns.class:1177 src/etc/inc/dyndns.class:1195
+#: src/etc/inc/dyndns.class:1212 src/etc/inc/dyndns.class:1229
+#: src/etc/inc/dyndns.class:1404 src/etc/inc/dyndns.class:1550
+#: src/etc/inc/dyndns.class:1614 src/etc/inc/dyndns.class:1672
+#: src/etc/inc/dyndns.class:1738
 msgid "User Authorization Failed"
 msgstr "Fallo en autorización de usuario "
 
-#: src/etc/inc/dyndns.class:1242
+#: src/etc/inc/dyndns.class:1243
 msgid "IP address is current, no update performed."
 msgstr "La dirección IP es la misma, no se actualizó."
 
-#: src/etc/inc/dyndns.class:1246
+#: src/etc/inc/dyndns.class:1247
 msgid "DNS hostname update successful."
 msgstr "nombre de host DNS actualizado correctamente."
 
-#: src/etc/inc/dyndns.class:1250
+#: src/etc/inc/dyndns.class:1251
 msgid "Hostname supplied does not exist."
 msgstr "El nombre de host no existe."
 
-#: src/etc/inc/dyndns.class:1253
+#: src/etc/inc/dyndns.class:1254
 msgid "Invalid Username."
 msgstr "Usuario incorrecto."
 
-#: src/etc/inc/dyndns.class:1256
+#: src/etc/inc/dyndns.class:1257
 msgid "Invalid Password."
 msgstr "Clave incorrecta."
 
-#: src/etc/inc/dyndns.class:1259
+#: src/etc/inc/dyndns.class:1260
 msgid "Too many updates sent."
 msgstr "Demasiadas actualizaciones enviadas."
 
-#: src/etc/inc/dyndns.class:1262
+#: src/etc/inc/dyndns.class:1263
 msgid "Account disabled due to violation of No-IP terms of service."
 msgstr ""
 "Cuenta inhabilitada debido a la violación de los términos de servicio de No-"
 "IP."
 
-#: src/etc/inc/dyndns.class:1265
+#: src/etc/inc/dyndns.class:1266
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
@@ -941,41 +950,41 @@ msgstr ""
 "IP no válida. La dirección IP enviada, está formateada incorrectamente o es "
 "una dirección IP privada o está en una lista negra."
 
-#: src/etc/inc/dyndns.class:1268
+#: src/etc/inc/dyndns.class:1269
 msgid "Disabled / Locked Hostname."
 msgstr "El nombre de host está inhabilitado o bloqueado"
 
-#: src/etc/inc/dyndns.class:1271
+#: src/etc/inc/dyndns.class:1272
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
 "El Host actualizado fue configurado como un redireccionamiento web y no se "
 "realizó ninguna actualización."
 
-#: src/etc/inc/dyndns.class:1274
+#: src/etc/inc/dyndns.class:1275
 msgid "Group supplied does not exist."
 msgstr "El grupo suministrado no existe."
 
-#: src/etc/inc/dyndns.class:1277
+#: src/etc/inc/dyndns.class:1278
 msgid "DNS group update is successful."
 msgstr "Actualización del grupo de DNS correcta."
 
-#: src/etc/inc/dyndns.class:1281
+#: src/etc/inc/dyndns.class:1282
 msgid "DNS group is current, no update performed."
 msgstr ""
 "Grupo de DNS está actualizado, no se ha realizado ninguna actualización."
 
-#: src/etc/inc/dyndns.class:1285
+#: src/etc/inc/dyndns.class:1286
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
 "Actualización de cliente no está disponible para el nombre o grupo de host "
 "suministado"
 
-#: src/etc/inc/dyndns.class:1288
+#: src/etc/inc/dyndns.class:1289
 msgid "Hostname supplied does not have offline settings configured."
 msgstr "Hostname entregado no tiene configuración sin conexión configurada."
 
-#: src/etc/inc/dyndns.class:1291 src/etc/inc/dyndns.class:1294
+#: src/etc/inc/dyndns.class:1292 src/etc/inc/dyndns.class:1295
 msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
@@ -983,168 +992,168 @@ msgstr ""
 "Cliente desactivado. El cliente debería salir y no realizar más "
 "actualizaciones sin la intervención del usuario."
 
-#: src/etc/inc/dyndns.class:1298
+#: src/etc/inc/dyndns.class:1299
 msgid "Unknown Response:"
 msgstr "Respuesta desconocida:"
 
-#: src/etc/inc/dyndns.class:1304
+#: src/etc/inc/dyndns.class:1305
 msgid "Authentication Failed: Username and/or Password was Incorrect."
 msgstr "Error de autenticación: Usuario y/o Contraseña no válidos."
 
-#: src/etc/inc/dyndns.class:1306
+#: src/etc/inc/dyndns.class:1307
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
 msgstr ""
 "Sin servicio: El Servicio DNS Dinámico ha sido desactivado para este dominio."
 ""
 
-#: src/etc/inc/dyndns.class:1308
+#: src/etc/inc/dyndns.class:1309
 msgid "Illegal Input: Self-Explanatory"
 msgstr "Entrada ilegal: Se explica por si solo"
 
-#: src/etc/inc/dyndns.class:1310
+#: src/etc/inc/dyndns.class:1311
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
 msgstr ""
 "Muy rápido: No a pasado suficiente tiempo desde la última actualización"
 
-#: src/etc/inc/dyndns.class:1312
+#: src/etc/inc/dyndns.class:1313
 msgid "IP Updated Successfully!"
 msgstr "IP actualizada correctamente!"
 
-#: src/etc/inc/dyndns.class:1325
+#: src/etc/inc/dyndns.class:1326
 msgid "Error 799"
 msgstr "Error 799"
 
-#: src/etc/inc/dyndns.class:1325 src/etc/inc/dyndns.class:1327
+#: src/etc/inc/dyndns.class:1326 src/etc/inc/dyndns.class:1328
 msgid "Update Failed!"
 msgstr "Actualización fallida!"
 
-#: src/etc/inc/dyndns.class:1327
+#: src/etc/inc/dyndns.class:1328
 msgid "Error 700"
 msgstr "Error 700"
 
-#: src/etc/inc/dyndns.class:1329 src/etc/inc/dyndns.class:1332
-#: src/etc/inc/dyndns.class:1350 src/etc/inc/dyndns.class:1360
-#: src/etc/inc/dyndns.class:1445 src/etc/inc/dyndns.class:1461
-#: src/etc/inc/dyndns.class:1481 src/etc/inc/dyndns.class:1501
-#: src/etc/inc/dyndns.class:1528 src/etc/inc/dyndns.class:1583
-#: src/etc/inc/dyndns.class:1630 src/etc/inc/dyndns.class:1644
+#: src/etc/inc/dyndns.class:1330 src/etc/inc/dyndns.class:1333
+#: src/etc/inc/dyndns.class:1351 src/etc/inc/dyndns.class:1361
+#: src/etc/inc/dyndns.class:1446 src/etc/inc/dyndns.class:1462
+#: src/etc/inc/dyndns.class:1482 src/etc/inc/dyndns.class:1502
+#: src/etc/inc/dyndns.class:1529 src/etc/inc/dyndns.class:1584
+#: src/etc/inc/dyndns.class:1631 src/etc/inc/dyndns.class:1645
 msgid "IP Address Updated Successfully!"
 msgstr "Dirección IP actualizada correctamente!"
 
-#: src/etc/inc/dyndns.class:1342
+#: src/etc/inc/dyndns.class:1343
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
 msgstr ""
 "Solicitud incorrecta: La URL está mal confeccionada. No se proporcionaron "
 "los parámetros requeridos."
 
-#: src/etc/inc/dyndns.class:1344
+#: src/etc/inc/dyndns.class:1345
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
 "Actualización muy rápida: Ha intentado actualización demasiado pronto desde "
 "la última vez."
 
-#: src/etc/inc/dyndns.class:1346
+#: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
 msgstr ""
 "Error de Base de Datos: Hubo un error de Dase de Batos del lado del servidor."
 ""
 
-#: src/etc/inc/dyndns.class:1348
+#: src/etc/inc/dyndns.class:1349
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr "Error hostname -  El hostname (%1$s) no pertenece al usuario (%2$s)."
 
-#: src/etc/inc/dyndns.class:1412
+#: src/etc/inc/dyndns.class:1413
 msgid "Not a valid username or password!"
 msgstr "Usuario y/o contraseña no válidos"
 
-#: src/etc/inc/dyndns.class:1414
+#: src/etc/inc/dyndns.class:1415
 msgid "Hostname specified does not exist."
 msgstr "El nombre de host especificado no existe."
 
-#: src/etc/inc/dyndns.class:1420
+#: src/etc/inc/dyndns.class:1421
 msgid "Hostname specified exists, but not under the username specified."
 msgstr "El nombre de host ya existe, pero no bajo el usuario especificado."
 
-#: src/etc/inc/dyndns.class:1422
+#: src/etc/inc/dyndns.class:1423
 msgid "Updating too frequently, considered abuse."
 msgstr "Las actualizaciones muy frecuentes, son consideradas un abuso."
 
-#: src/etc/inc/dyndns.class:1431 src/etc/inc/dyndns.class:1495
+#: src/etc/inc/dyndns.class:1432 src/etc/inc/dyndns.class:1496
 msgid "Bad Request - The IP provided was invalid."
 msgstr "Solicitud incorrecta: la IP proporcionada no es válida."
 
-#: src/etc/inc/dyndns.class:1433
+#: src/etc/inc/dyndns.class:1434
 msgid "Bad Request - Required parameters were not provided."
 msgstr "Solicitud incorrecta - No se especificaron los parámetros requeridos."
 
-#: src/etc/inc/dyndns.class:1435
+#: src/etc/inc/dyndns.class:1436
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
 msgstr "Solicitud incorrecta - Caracteres ilegales en usuario y/o contraseña"
 
-#: src/etc/inc/dyndns.class:1437
+#: src/etc/inc/dyndns.class:1438
 msgid "Invalid password."
 msgstr "Contraseña inválida."
 
-#: src/etc/inc/dyndns.class:1439
+#: src/etc/inc/dyndns.class:1440
 msgid "This account has been administratively locked."
 msgstr "Esta cuenta a sido bloqueada  por la administración."
 
-#: src/etc/inc/dyndns.class:1441
+#: src/etc/inc/dyndns.class:1442
 msgid "Updating too frequently."
 msgstr "Actualizando con mucha frecuencia."
 
-#: src/etc/inc/dyndns.class:1443 src/etc/inc/dyndns.class:1457
-#: src/etc/inc/dyndns.class:1475
+#: src/etc/inc/dyndns.class:1444 src/etc/inc/dyndns.class:1458
+#: src/etc/inc/dyndns.class:1476
 msgid "Server side error."
 msgstr "Error del lado del servidor"
 
-#: src/etc/inc/dyndns.class:1459
+#: src/etc/inc/dyndns.class:1460
 msgid "Badly Formed Request (check the settings)."
 msgstr "Solicitud mal estructurada (compruebe los ajustes)."
 
-#: src/etc/inc/dyndns.class:1477 src/etc/inc/dyndns.class:1497
+#: src/etc/inc/dyndns.class:1478 src/etc/inc/dyndns.class:1498
 msgid "Bad Request - A hostname was not provided."
 msgstr "Solicitud incorrecta: No se proporcionó un nombre de host."
 
-#: src/etc/inc/dyndns.class:1479 src/etc/inc/dyndns.class:1499
-#: src/etc/inc/dyndns.class:1526
+#: src/etc/inc/dyndns.class:1480 src/etc/inc/dyndns.class:1500
+#: src/etc/inc/dyndns.class:1527
 msgid "Invalid username or password."
 msgstr "Usuario y/o contraseña invalido."
 
-#: src/etc/inc/dyndns.class:1484 src/etc/inc/dyndns.class:1504
-#: src/etc/inc/dyndns.class:1531 src/etc/inc/dyndns.class:1543
+#: src/etc/inc/dyndns.class:1485 src/etc/inc/dyndns.class:1505
+#: src/etc/inc/dyndns.class:1532 src/etc/inc/dyndns.class:1544
 msgid "No Change In IP Address."
 msgstr "Dirección IP sin cambios."
 
-#: src/etc/inc/dyndns.class:1522
+#: src/etc/inc/dyndns.class:1523
 msgid "Bad Request - Missing/Invalid Parameters."
 msgstr "Solicitud incorrecta: Parámetros no válidos o faltantes."
 
-#: src/etc/inc/dyndns.class:1524
+#: src/etc/inc/dyndns.class:1525
 msgid "Bad Request - Invalid Tunnel ID."
 msgstr "Solicitud incorrecta: Tunel ID inválido."
 
-#: src/etc/inc/dyndns.class:1558
+#: src/etc/inc/dyndns.class:1559
 msgid "Route53 API call failed"
 msgstr "Invocación a la API Route53 a fallado"
 
-#: src/etc/inc/dyndns.class:1562
+#: src/etc/inc/dyndns.class:1563
 msgid "IP address changed successfully"
 msgstr "La dirección IP se ha cambiada satisfactoriamente"
 
-#: src/etc/inc/dyndns.class:1585 src/etc/inc/dyndns.class:1749
+#: src/etc/inc/dyndns.class:1586 src/etc/inc/dyndns.class:1750
 msgid "Result did not match."
 msgstr "Resultado no coincide."
 
-#: src/etc/inc/dyndns.class:1592
+#: src/etc/inc/dyndns.class:1593
 #, php-format
 msgid "%1$s updated to %2$s"
 msgstr "%1$s actualizado a %2$s"
 
-#: src/etc/inc/dyndns.class:1595
+#: src/etc/inc/dyndns.class:1596
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
@@ -1152,196 +1161,197 @@ msgstr ""
 "¡Credenciales no válidas! No olvide usar la Clave de la API para el campo de "
 "contraseña con CloudFlare."
 
-#: src/etc/inc/dyndns.class:1597
+#: src/etc/inc/dyndns.class:1598
 msgid "Zone or Host ID was not found, check the hostname."
 msgstr "Zona o Host ID no fueron encontrados, compruebe el nombre de host."
 
-#: src/etc/inc/dyndns.class:1599
+#: src/etc/inc/dyndns.class:1600
 msgid "UNKNOWN ERROR"
 msgstr "ERROR DESCONOCIDO"
 
-#: src/etc/inc/dyndns.class:1622
+#: src/etc/inc/dyndns.class:1623
 msgid "Wrong values - Update could not be completed."
 msgstr "Valores incorrectos - La actualización no pudo ser completada."
 
-#: src/etc/inc/dyndns.class:1624
+#: src/etc/inc/dyndns.class:1625
 msgid "Unknown username - User does not exist."
 msgstr "Usuario desconocido - Usuario no existe."
 
-#: src/etc/inc/dyndns.class:1626
+#: src/etc/inc/dyndns.class:1627
 msgid "Wrong password - Remember password is case sensitive."
 msgstr ""
 "Contraseña incorrecta - Recuerde que la clave es sensible a las mayúsculas y "
 "minúsculas."
 
-#: src/etc/inc/dyndns.class:1628
+#: src/etc/inc/dyndns.class:1629
 msgid "User unable to administer the selected domain."
 msgstr "El usuario no puede administrar el dominio seleccionado."
 
-#: src/etc/inc/dyndns.class:1663
+#: src/etc/inc/dyndns.class:1664
 msgid "Not A FQDN"
 msgstr ""
 "No es un FQDN (Fully Qualified Domain Name/ Nombre de Dominio Totalmente "
 "Calificado)"
 
-#: src/etc/inc/dyndns.class:1673
+#: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
 msgstr "Nombre de host no existe o DynDNS no está habilitado"
 
-#: src/etc/inc/dyndns.class:1675
+#: src/etc/inc/dyndns.class:1676
 msgid "Bad request"
 msgstr "Solicitud incorrecta"
 
-#: src/etc/inc/dyndns.class:1677
+#: src/etc/inc/dyndns.class:1678
 msgid "Dynamic DNS access has been blocked!"
 msgstr "El acceso de DNS Dinámico ha sido bloqueado!"
 
-#: src/etc/inc/dyndns.class:1679
+#: src/etc/inc/dyndns.class:1680
 msgid "Error on Google's end, retry in 5 minutes"
 msgstr "Error de Google, reintentando en 5 minutos."
 
-#: src/etc/inc/dyndns.class:1693 src/etc/inc/dyndns.class:1751
+#: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1752
 msgid "Invalid username or password"
 msgstr "Usuario y/o contraseña inválido."
 
-#: src/etc/inc/dyndns.class:1696
+#: src/etc/inc/dyndns.class:1697
 msgid "Account suspended"
 msgstr "Cuenta suspendida"
 
-#: src/etc/inc/dyndns.class:1699
+#: src/etc/inc/dyndns.class:1700
 msgid "Account revoked"
 msgstr "Cuenta revocada"
 
-#: src/etc/inc/dyndns.class:1702
+#: src/etc/inc/dyndns.class:1703
 msgid "Record does not exist in the system. Unable to update record"
 msgstr "El registro no existe en el sistema. Imposible actualizar."
 
-#: src/etc/inc/dyndns.class:1705
+#: src/etc/inc/dyndns.class:1706
 msgid "User does not have access to this record"
 msgstr "El usuario no tiene acceso a este registro"
 
-#: src/etc/inc/dyndns.class:1712
+#: src/etc/inc/dyndns.class:1713
 msgid "General system error recognized by the system"
 msgstr "Error general del sistema identificado"
 
-#: src/etc/inc/dyndns.class:1715
+#: src/etc/inc/dyndns.class:1716
 msgid "General system error unrecognized by the system"
 msgstr "Error general no identificado por el sistema."
 
-#: src/etc/inc/dyndns.class:1774
+#: src/etc/inc/dyndns.class:1775
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_checkStatus() resultados: %1$s"
 
-#: src/etc/inc/dyndns.class:1785
+#: src/etc/inc/dyndns.class:1786
 msgid "No record exists."
-msgstr ""
+msgstr "No existen registros."
 
-#: src/etc/inc/dyndns.class:1789
+#: src/etc/inc/dyndns.class:1790
 msgid "No type exists."
-msgstr ""
+msgstr "No existen tipos."
 
-#: src/etc/inc/dyndns.class:1793
+#: src/etc/inc/dyndns.class:1794
 msgid "No value exists."
-msgstr ""
+msgstr "No existen valores."
 
-#: src/etc/inc/dyndns.class:1796
+#: src/etc/inc/dyndns.class:1797
 msgid "No such zone exists."
-msgstr ""
+msgstr "No existe la zona."
 
-#: src/etc/inc/dyndns.class:1799
+#: src/etc/inc/dyndns.class:1800
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "El registro especificado es inválido."
 
-#: src/etc/inc/dyndns.class:1802
+#: src/etc/inc/dyndns.class:1803
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "El tipo especificado es inválido."
 
-#: src/etc/inc/dyndns.class:1805
+#: src/etc/inc/dyndns.class:1806
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "El valor especificado es inválido."
 
-#: src/etc/inc/dyndns.class:1808
+#: src/etc/inc/dyndns.class:1809
 msgid "Record is not editable."
-msgstr ""
+msgstr "El registro no puede ser editado."
 
-#: src/etc/inc/dyndns.class:1811
+#: src/etc/inc/dyndns.class:1812
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "El registro existe pero no puede ser editado."
 
-#: src/etc/inc/dyndns.class:1814
+#: src/etc/inc/dyndns.class:1815
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "El registro existe y debe ser eliminado antes de agregarse."
 
-#: src/etc/inc/dyndns.class:1817 src/etc/inc/dyndns.class:1823
+#: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1824
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Ocurrió un error de servidor remoto al actualizar la zona."
 
-#: src/etc/inc/dyndns.class:1820
+#: src/etc/inc/dyndns.class:1821
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Ocurrió un error de servidor remoto al cargar la zona."
 
-#: src/etc/inc/dyndns.class:1826
+#: src/etc/inc/dyndns.class:1827
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Ocurrió un error de servidor remoto al agregar un nuevo registro."
 
-#: src/etc/inc/dyndns.class:1829
+#: src/etc/inc/dyndns.class:1830
 msgid "A remote server error occurred removing an existing record."
 msgstr ""
+"Ocurrió un error de servidor remoto al eliminar un registro existente."
 
-#: src/etc/inc/dyndns.class:1843
+#: src/etc/inc/dyndns.class:1844
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS actualizó la dirección IP en  %1$s (%2$s) a %3$s"
 
-#: src/etc/inc/dyndns.class:1844 src/etc/inc/dyndns.class:1852
+#: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: actualizando archivo cache  %1$s: %2$s"
 
-#: src/etc/inc/dyndns.class:1851
+#: src/etc/inc/dyndns.class:1852
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS actualizando dirección IPv6 en %1$s (%2$s) a %3$s"
 
-#: src/etc/inc/dyndns.class:1867
+#: src/etc/inc/dyndns.class:1868
 msgid "ERROR!"
 msgstr "!ERROR!"
 
-#: src/etc/inc/dyndns.class:1873
+#: src/etc/inc/dyndns.class:1874
 msgid "No Dynamic DNS Service provider was selected."
 msgstr "No se ha seleccionado un proveedor de DNS Dinámico"
 
-#: src/etc/inc/dyndns.class:1876
+#: src/etc/inc/dyndns.class:1877
 msgid "No Username Provided."
 msgstr "No se proporcionó un nombre de usuario."
 
-#: src/etc/inc/dyndns.class:1879
+#: src/etc/inc/dyndns.class:1880
 msgid "No Password Provided."
 msgstr "No se proporcionó la contraseña."
 
-#: src/etc/inc/dyndns.class:1882
+#: src/etc/inc/dyndns.class:1883
 msgid "No Hostname Provided."
 msgstr "No se proporcionó el nombre de host."
 
-#: src/etc/inc/dyndns.class:1885
+#: src/etc/inc/dyndns.class:1886
 msgid "The Dynamic DNS Service provided is not yet supported."
 msgstr "El servicio de DNS Dinámico proporcionado no está soportado aún."
 
-#: src/etc/inc/dyndns.class:1888
+#: src/etc/inc/dyndns.class:1889
 msgid "No Update URL Provided."
 msgstr "La URL proporcionada, no se puede actualizar."
 
-#: src/etc/inc/dyndns.class:1891
+#: src/etc/inc/dyndns.class:1892
 msgid "Invalid ZoneID"
 msgstr "ZonaID no válida."
 
-#: src/etc/inc/dyndns.class:1894
+#: src/etc/inc/dyndns.class:1895
 msgid "Invalid TTL"
 msgstr "TTL no válido."
 
-#: src/etc/inc/dyndns.class:1897
+#: src/etc/inc/dyndns.class:1898
 #, php-format
 msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
@@ -1350,16 +1360,16 @@ msgstr ""
 "No se ha producido ningún cambio en la dirección IP en %s días. No se "
 "actualiza la entrada de DNS Dinámico."
 
-#: src/etc/inc/dyndns.class:1900
+#: src/etc/inc/dyndns.class:1901
 msgid "Unknown Response."
 msgstr "Respuesta desconocida."
 
-#: src/etc/inc/dyndns.class:1919
+#: src/etc/inc/dyndns.class:1920
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
 msgstr "DNS Dinámico %1$s (%2$s): _detectChange() iniciando."
 
-#: src/etc/inc/dyndns.class:1926
+#: src/etc/inc/dyndns.class:1927
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
@@ -1368,53 +1378,53 @@ msgstr ""
 "DNS Dinámico (%s): La IP actual de WAN no puede ser definir, saltando "
 "proceso actualización."
 
-#: src/etc/inc/dyndns.class:1929
+#: src/etc/inc/dyndns.class:1930
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
 msgstr "DNS Dinámico (%1$s): IP de WAN actual: %2$s"
 
-#: src/etc/inc/dyndns.class:1937
+#: src/etc/inc/dyndns.class:1938
 #, php-format
 msgid "Cached IPv6: %s"
 msgstr "IPv6 en caché: %s"
 
-#: src/etc/inc/dyndns.class:1943
+#: src/etc/inc/dyndns.class:1944
 msgid "No Cached IPv6 found."
 msgstr "No se encontró cambio de IPv6 en caché."
 
-#: src/etc/inc/dyndns.class:1951
+#: src/etc/inc/dyndns.class:1952
 #, php-format
 msgid "Cached IP: %s"
 msgstr "IP en caché: %s"
 
-#: src/etc/inc/dyndns.class:1957
+#: src/etc/inc/dyndns.class:1958
 msgid "No Cached IP found."
 msgstr "No se encontró IP en caché."
 
-#: src/etc/inc/dyndns.class:1971
+#: src/etc/inc/dyndns.class:1972
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
 msgstr "DNS Dinámico: cacheIP != wan_ip. Actualizando."
 
-#: src/etc/inc/dyndns.class:1972
+#: src/etc/inc/dyndns.class:1973
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
 msgstr "IP en caché %1$s WAN IP: %2$s"
 
-#: src/etc/inc/dyndns.class:1977
+#: src/etc/inc/dyndns.class:1978
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
 msgstr "DNS Dinámico: Más de  %s días. Actualizando."
 
-#: src/etc/inc/dyndns.class:1982
+#: src/etc/inc/dyndns.class:1983
 msgid "Initial update."
 msgstr "Actualización inicial."
 
-#: src/etc/inc/dyndns.class:2019
+#: src/etc/inc/dyndns.class:2020
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
 msgstr "DNS Dinámico %1$s (%2$s): _checkIP() iniciando."
 
-#: src/etc/inc/dyndns.class:2044
+#: src/etc/inc/dyndns.class:2045
 #, php-format
 msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
@@ -1423,17 +1433,17 @@ msgstr ""
 "DNS Dinámico %1$s información depuración (%2$s): No se pudo resolver %3$s a "
 "IP usando interfaz IP %4$s."
 
-#: src/etc/inc/dyndns.class:2063
+#: src/etc/inc/dyndns.class:2064
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
 msgstr "DNS Dinámico %1$s (%2$s): %3$s extraído de %4$s"
 
-#: src/etc/inc/dyndns.class:2066
+#: src/etc/inc/dyndns.class:2067
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
 msgstr "DNS Dinámico %1$s (%2$s): Dirección IP no pudo ser extraída de %3$s"
 
-#: src/etc/inc/dyndns.class:2071
+#: src/etc/inc/dyndns.class:2072
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
 msgstr "DNS Dinámico %1$s (%2$s): %3$s extraída del sistema local."
@@ -3814,7 +3824,7 @@ msgstr "El siguiente archivo no se puede leer %1$s de %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2938
 msgid "Bosnian"
-msgstr ""
+msgstr "Bosnio"
 
 #: src/etc/inc/pfsense-utils.inc:2939
 msgid "German (Germany)"
@@ -7113,7 +7123,7 @@ msgstr "Delay debe ser un entero."
 #: src/usr/local/www/firewall_schedule_edit.php:1116
 #: src/usr/local/www/interfaces_assign.php:540
 #: src/usr/local/www/interfaces_qinq_edit.php:309
-#: src/usr/local/www/pkg_edit.php:1448 src/usr/local/www/services_dhcp.php:1367
+#: src/usr/local/www/pkg_edit.php:1458 src/usr/local/www/services_dhcp.php:1367
 #: src/usr/local/www/services_dhcp_relay.php:186
 #: src/usr/local/www/services_dhcpv6.php:973
 #: src/usr/local/www/services_dnsmasq_edit.php:278
@@ -7627,6 +7637,8 @@ msgstr ""
 msgid ""
 "Randomize the ID field in IP packets (default is 1: Assign random IP IDs)"
 msgstr ""
+"Aleatorizar el campo ID en los paquetes IP (predeterminado es 1: Asignar IDs "
+"de IP aleatorios)"
 
 #: src/etc/inc/upgrade_config.inc:660
 msgid "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)"
@@ -8162,7 +8174,7 @@ msgstr "Confirmar"
 #: src/usr/local/www/firewall_rules.php:833
 #: src/usr/local/www/firewall_rules.php:884
 #: src/usr/local/www/interfaces_assign.php:573 src/usr/local/www/pkg.php:598
-#: src/usr/local/www/pkg_edit.php:601 src/usr/local/www/status_lb_pool.php:244
+#: src/usr/local/www/pkg_edit.php:611 src/usr/local/www/status_lb_pool.php:244
 #: src/usr/local/www/status_lb_pool.php:246
 #: src/usr/local/www/status_logs_common.inc:940
 #: src/usr/local/www/system_advanced_sysctl.php:88
@@ -8763,7 +8775,7 @@ msgstr "Activación de la LAN"
 
 #: src/usr/local/www/diag_backup.php:446
 #: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:560
-#: src/usr/local/www/pkg_edit.php:1198
+#: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/services_unbound.php:227
@@ -8926,7 +8938,7 @@ msgid "Execute the entered command"
 msgstr "Ejecutar la orden introducida"
 
 #: src/usr/local/www/diag_command.php:211
-#: src/usr/local/www/diag_command.php:302
+#: src/usr/local/www/diag_command.php:349
 msgid "Execute"
 msgstr "Ejecutar"
 
@@ -8966,15 +8978,39 @@ msgstr "Subir Archivo"
 msgid "Upload"
 msgstr "Cargar "
 
-#: src/usr/local/www/diag_command.php:295
+#: src/usr/local/www/diag_command.php:296
+#, php-format
+msgid ""
+"Line %s appears to have generated an error, and has been highlighted. The "
+"full response is below."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:299
+msgid ""
+"The code appears to have generated an error, but the line responsible cannot "
+"be identified. The full response is below."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:301
+#, php-format
+msgid ""
+"Note that the line number in the full PHP response will be %s lines too "
+"large. Nested code and eval() errors may incorrectly point to \"line 1\"."
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:313
+msgid "Error locator:"
+msgstr ""
+
+#: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
 msgstr "Ejecutar comandos PHP"
 
-#: src/usr/local/www/diag_command.php:300
+#: src/usr/local/www/diag_command.php:347
 msgid "Execute this PHP Code"
 msgstr "Ejecutar este Código PHP"
 
-#: src/usr/local/www/diag_command.php:304
+#: src/usr/local/www/diag_command.php:351
 msgid "Example"
 msgstr "Ejemplo"
 
@@ -9277,12 +9313,12 @@ msgstr "Alias ​​se ha creado correctamente."
 #: src/usr/local/www/diag_dns.php:228
 #, php-format
 msgid "Could not update alias for %s"
-msgstr ""
+msgstr "No se pudo actualizar alias para %s"
 
 #: src/usr/local/www/diag_dns.php:230
 #, php-format
 msgid "Could not create alias for %s"
-msgstr ""
+msgstr "No se pudo crear alias para %s"
 
 #: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -11224,7 +11260,7 @@ msgstr "eliminar alias"
 #: src/usr/local/www/load_balancer_monitor.php:145
 #: src/usr/local/www/load_balancer_pool.php:178
 #: src/usr/local/www/load_balancer_virtual_server.php:202
-#: src/usr/local/www/pkg.php:580 src/usr/local/www/pkg_edit.php:1460
+#: src/usr/local/www/pkg.php:580 src/usr/local/www/pkg_edit.php:1470
 #: src/usr/local/www/services_captiveportal_filemanager.php:235
 #: src/usr/local/www/services_captiveportal_hostname.php:160
 #: src/usr/local/www/services_captiveportal_ip.php:154
@@ -15323,7 +15359,7 @@ msgstr "%1$s Monitor de %2$s el progreso de recarga filtro."
 
 #: src/usr/local/www/guiconfig.inc:582
 msgid "Widget title"
-msgstr ""
+msgstr "Título del Widget"
 
 #: src/usr/local/www/guiconfig.inc:629 src/usr/local/www/guiconfig.inc:680
 #, php-format
@@ -19978,12 +20014,12 @@ msgstr ""
 
 #: src/usr/local/www/pkg.php:39 src/usr/local/www/pkg.php:170
 #: src/usr/local/www/pkg.php:174 src/usr/local/www/pkg_edit.php:44
-#: src/usr/local/www/pkg_edit.php:519 src/usr/local/www/pkg_edit.php:523
+#: src/usr/local/www/pkg_edit.php:529 src/usr/local/www/pkg_edit.php:533
 msgid "Package"
 msgstr "Paquete"
 
 #: src/usr/local/www/pkg.php:39 src/usr/local/www/pkg.php:174
-#: src/usr/local/www/pkg_edit.php:44 src/usr/local/www/pkg_edit.php:523
+#: src/usr/local/www/pkg_edit.php:44 src/usr/local/www/pkg_edit.php:533
 msgid "Editor"
 msgstr "Editor"
 
@@ -20071,27 +20107,27 @@ msgstr "Siguiente página"
 msgid "Add a new item"
 msgstr "Añadir un nuevo tema"
 
-#: src/usr/local/www/pkg_edit.php:652
+#: src/usr/local/www/pkg_edit.php:662
 msgid "Advanced Features"
 msgstr "Funciones Avanzadas"
 
-#: src/usr/local/www/pkg_edit.php:733 src/usr/local/www/services_dhcp.php:832
+#: src/usr/local/www/pkg_edit.php:743 src/usr/local/www/services_dhcp.php:832
 msgid "General Options"
 msgstr "Opciones generales"
 
-#: src/usr/local/www/pkg_edit.php:1198
+#: src/usr/local/www/pkg_edit.php:1208
 msgid "Listen on All interfaces/ip addresses "
 msgstr "Escuchar en todas las interfaces / direcciones IP "
 
-#: src/usr/local/www/pkg_edit.php:1202
+#: src/usr/local/www/pkg_edit.php:1212
 msgid "loopback"
 msgstr "loopback"
 
-#: src/usr/local/www/pkg_edit.php:1503 src/usr/local/www/pkg_edit.php:1522
+#: src/usr/local/www/pkg_edit.php:1513 src/usr/local/www/pkg_edit.php:1532
 msgid "Show Advanced Options"
 msgstr "Mostrar opciones avanzadas"
 
-#: src/usr/local/www/pkg_edit.php:1523
+#: src/usr/local/www/pkg_edit.php:1533
 msgid "Hide Advanced Options"
 msgstr "Ocultar opciones avanzadas"
 
@@ -20879,6 +20915,8 @@ msgid ""
 "Select an Authentication Method to use for this zone. One method must be "
 "selected."
 msgstr ""
+"Seleccione un Método de Autenticación para esta zona. Un método debe ser "
+"seleccionado."
 
 #: src/usr/local/www/services_captiveportal.php:725
 msgid "*RADIUS protocol"
@@ -24451,17 +24489,19 @@ msgstr "El registro detallado"
 
 #: src/usr/local/www/services_dyndns_edit.php:339
 msgid "HTTP API DNS Options"
-msgstr ""
+msgstr "Opciones HTTP API DNS"
 
 #: src/usr/local/www/services_dyndns_edit.php:346
 msgid "HTTP API SSL Options"
-msgstr ""
+msgstr "Opciones HTTP API SSL"
 
 #: src/usr/local/www/services_dyndns_edit.php:349
 msgid ""
 "When set, the server must provide a valid certificate trust chain which can "
 "be verified by this firewall."
 msgstr ""
+"Cuando se selecciona, el servidor debe proveer de una cadena de certificado "
+"válido el cual pueda ser verificado por este Firewall."
 
 #: src/usr/local/www/services_dyndns_edit.php:356
 #, php-format
@@ -24472,6 +24512,13 @@ msgid ""
 "the DNS record comment.%1$sFor Custom Entries, Username and Password "
 "represent HTTP Authentication username and passwords."
 msgstr ""
+"Nombre de usuario necesario para todos los tipos, excepto Namecheap, FreeDNS "
+"y entradas personalizadas.%1$sDNS Made Easy: ID de DNS Dinámico%1$sRoute 53: "
+"Ingrese el ID de la Llave de Acceso.%1$sGleSYS: Ingrese el usuario de la API."
+"%1$sDreamhost: Ingrese un valor para que aparezca en el registro de "
+"comentarios DNS.%1$sPara entradas personalizadas, Nombre de Usuario y "
+"Contraseña representan el nombre de usuario y contraseña utilizado en la "
+"Autenticación HTTP."
 
 #: src/usr/local/www/services_dyndns_edit.php:368
 #, php-format
@@ -24481,6 +24528,11 @@ msgid ""
 "Secret Access Key.%1$sGleSYS: Enter the API key.%1$sDreamhost: Enter the API "
 "Key.%1$sDNSimple: Enter the API token."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Ingrese el \"Token de Autenticación\" "
+"proporcionado por FreeDNS.%1$sDNS Made Easy: Contraseña de DNS Dinámico."
+"%1$sRoute 53: Ingrese la Llave Secreta de Acceso.%1$sGleSYS: Ingrese la "
+"llave de la API.%1$sDreamhost: Ingrese la llave de la API.%1$sDNSimple: "
+"Ingrese el token de la API."
 
 #: src/usr/local/www/services_dyndns_edit.php:377
 msgid "Zone ID"
@@ -26524,7 +26576,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:364
 msgid "Disable Auto-added Host Entries"
-msgstr ""
+msgstr "Desactivar entradas de host agregadas automáticamente"
 
 #: src/usr/local/www/services_unbound_advanced.php:367
 #, php-format
@@ -26534,6 +26586,10 @@ msgid ""
 "%1$sSystem: General Setup%2$s. This disables the auto generation of these "
 "entries."
 msgstr ""
+"Por defecto, las direcciones primarias IPv4 e IPv6 de este Firewall se "
+"agregan como registros para el dominio del sistema de este Firewall, tal "
+"como se encuentra configurado en %1$sSistema: Configuración General%2$s. "
+"Esto desactiva la auto generación de estas entradas."
 
 #: src/usr/local/www/services_unbound_advanced.php:371
 msgid "Experimental Bit 0x20 Support"
@@ -26828,6 +26884,8 @@ msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
+"Cuando la página termina de cargar, el resultado será guardado en %1$s. Este "
+"puede ser descargado vía scp o usando este botón:"
 
 #: src/usr/local/www/status.php:376
 msgid "Saving output to archive..."
@@ -32764,7 +32822,7 @@ msgstr "privilegios seleccionados"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:150
 msgid "Group Privileges"
-msgstr ""
+msgstr "Privilegios de grupo"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:158
 #: src/usr/local/www/vpn_ipsec_mobile.php:663
@@ -33478,6 +33536,9 @@ msgid ""
 "No private CAs found. A private CA is required to create a new user "
 "certificate. Save the user first to import an external certificate."
 msgstr ""
+"Ningún CA privado encontrado. Un CA privado es requerido para crear un nuevo "
+"certificado de usuario. Guarde el usuario primero para importar un "
+"certificado externo."
 
 #: src/usr/local/www/system_usermanager.php:886
 msgid "Effective Privileges"
@@ -34987,17 +35048,23 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:107
 msgid "The field 'Primary L2TP DNS Server' must contain a valid IPv4 address."
 msgstr ""
+"El campo \"Servidor DNS L2TP primario\" debe contener una dirección IPv4 "
+"válida."
 
 #: src/usr/local/www/vpn_l2tp.php:110
 msgid ""
 "The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address."
 msgstr ""
+"El campo \"Servidor DNS L2TP secundario\" debe contener una dirección IPv4 "
+"válida."
 
 #: src/usr/local/www/vpn_l2tp.php:113
 msgid ""
 "The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
 "is empty."
 msgstr ""
+"El Servidor DNS L2TP secundario no puede ser configurado cuando el Servidor "
+"DNS L2TP primario está vacío."
 
 #: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
@@ -35256,11 +35323,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr ""
+"Limitar el ancho de banda de salida no es compatible con UDP I/O rápido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:364
 #: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
-msgstr ""
+msgstr "El tamaño de búfer Enviar/Recibir ingresado es inválido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
@@ -35624,6 +35692,11 @@ msgid ""
 "virtual interface. Leave blank if the server is capable of providing "
 "addresses to clients."
 msgstr ""
+"Esta es la red virtual IPv4 utilizada para las comunicaciones privadas para "
+"este cliente y el servidor expresada en notación CIDR (ejemplo 10.0.8.0/24). "
+"La segunda dirección utilizable en la red será asignada a la interfaz "
+"virtual del cliente. Deje en blanco si el servidor es capaz de proveer "
+"direcciones a los clientes."
 
 #: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
@@ -35639,6 +35712,11 @@ msgid ""
 "assigned to the client virtual interface. Leave blank if the server is "
 "capable of providing addresses to clients."
 msgstr ""
+"Esta es la red virtual IPv6 utilizada para las comunicaciones privadas para "
+"este cliente y el servidor expresada en notación CIDR (ejemplo fe80::/64). "
+"Cuando se configura como estático usando este campo, la dirección ::2 será "
+"asignada a la interfaz virtual del cliente. Deje en blanco si el servidor es "
+"capaz de proveer direcciones a los clientes."
 
 #: src/usr/local/www/vpn_openvpn_client.php:813
 #: src/usr/local/www/vpn_openvpn_server.php:1055
@@ -35691,6 +35769,9 @@ msgid ""
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
+"Ancho de banda de salida máximo para este túnel. Deje en blanco para ningún "
+"límite. El valor de entrada debe ser algo entre 100 byres/seg y 100Mbytes/"
+"seg (ingresado como bytes por segundo). No es compatible con UDP I/O rápido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:843
 #: src/usr/local/www/vpn_openvpn_server.php:1083
@@ -35741,6 +35822,8 @@ msgid ""
 "Do not execute operating system commands to install routes. Instead, pass "
 "routes to --route-up script using environmental variables."
 msgstr ""
+"No ejecute comandos del sistema operativo para instalar rutas. En su lugar, "
+"agregue las rutas al script --route-up utilizando variables del entorno."
 
 #: src/usr/local/www/vpn_openvpn_client.php:882
 msgid ""
@@ -35753,7 +35836,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:886
 #: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
-msgstr ""
+msgstr "UPD I/O rápido."
 
 #: src/usr/local/www/vpn_openvpn_client.php:889
 #: src/usr/local/www/vpn_openvpn_server.php:1286
@@ -35762,11 +35845,14 @@ msgid ""
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
 msgstr ""
+"Optimiza el ciclo de escritura de paquetes, mejorando la eficiencia del CPU "
+"en un 5% a 10%. No es compatible con todas las plataformas, y no es "
+"compatible con el límite de ancho de banda de OpenVPN."
 
 #: src/usr/local/www/vpn_openvpn_client.php:894
 #: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
-msgstr ""
+msgstr "Búfer Enviar/Recibir"
 
 #: src/usr/local/www/vpn_openvpn_client.php:897
 #: src/usr/local/www/vpn_openvpn_server.php:1294
@@ -35777,6 +35863,11 @@ msgid ""
 "To test the best value for a site, start at 512KiB and test higher and lower "
 "values."
 msgstr ""
+"Configure un tamaño de búfer Enviar y Recibir para OpenVPN. El tamaño "
+"predeterminado puede ser muy pequeño en muchos casos, dependiendo en el "
+"hardware y la velocidad de los enlaces. Encontrar el mejor tamaño de búfer "
+"puede tomar algo de experimentación. Para probar el mejor valor para un "
+"sitio, inicie con 512KiB y pruebe valores mayores o menores."
 
 #: src/usr/local/www/vpn_openvpn_client.php:904
 #: src/usr/local/www/vpn_openvpn_server.php:1301
@@ -36368,6 +36459,11 @@ msgid ""
 "virtual interface. The remaining usable addresses will be assigned to "
 "connecting clients."
 msgstr ""
+"Esta es la red virtual IPv4 utilizada para las comunicaciones privadas "
+"utilizadas entre este servidor y los clientes utilizando la notación CIDR "
+"(por ejemplo 10.0.8.0/24). La primer dirección utilizable se asignará a la "
+"interfaz virtual de este servidor. Las direcciones restantes se asignarán a "
+"los clientes que se conecten."
 
 #: src/usr/local/www/vpn_openvpn_server.php:990
 msgid ""
@@ -36376,6 +36472,11 @@ msgid ""
 "The ::1 address in the network will be assigned to the server virtual "
 "interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
+"Esta es la red virtual IPv6 utilizada para las comunicaciones privadas "
+"utilizadas entre este servidor y los clientes utilizando la notación CIDR "
+"(por ejemplo fe80::/64). La dirección ::1 se asignará a la interfaz virtual "
+"de este servidor. Las direcciones restantes se asignarán a los clientes que "
+"se conecten."
 
 #: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
@@ -36662,11 +36763,11 @@ msgstr "NTP Estado"
 
 #: src/usr/local/www/widgets/include/picture.inc:22
 msgid "Picture"
-msgstr ""
+msgstr "Imagen"
 
 #: src/usr/local/www/widgets/include/rss.inc:22
 msgid "RSS"
-msgstr ""
+msgstr "RSS"
 
 #: src/usr/local/www/widgets/include/services_status.inc:24
 msgid "Services Status"
@@ -36674,7 +36775,7 @@ msgstr "Estado de servicios"
 
 #: src/usr/local/www/widgets/include/system_information.inc:22
 msgid "System Information"
-msgstr ""
+msgstr "Información del sistema"
 
 #: src/usr/local/www/widgets/include/traffic_graph.inc:22
 msgid "Traffic Graphs"
@@ -36826,7 +36927,7 @@ msgstr "Todas las interfaces seleccionadas están caídas."
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
 msgid "All statistics are hidden."
-msgstr ""
+msgstr "Todas las estadísticas están ocultas."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -36840,19 +36941,19 @@ msgstr "Recuperando datos de la interfaz"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
 msgid "Orientation"
-msgstr ""
+msgstr "Orientación"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
 msgid "Each interface in a column"
-msgstr ""
+msgstr "Cada interfaz en una columna"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
 msgid "Each interface in a row"
-msgstr ""
+msgstr "Cada interfaz en una fila"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
 msgid "Stats Item"
-msgstr ""
+msgstr "Ítem de estadísticas"
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."
@@ -37270,19 +37371,19 @@ msgstr "Para "
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:178
 msgid "Zone Warning"
-msgstr ""
+msgstr "Advertencia de Zona"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:185
 msgid "Zone Critical"
-msgstr ""
+msgstr "Zona crítica"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:192
 msgid "Core Warning"
-msgstr ""
+msgstr "Advertencia de núcleo"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:199
 msgid "Core Critical"
-msgstr ""
+msgstr "Núcleo crítico"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Display settings:"
@@ -37290,15 +37391,15 @@ msgstr "Ajustes de visualización"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Show raw output"
-msgstr ""
+msgstr "Mostrar salida bruta:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:214
 msgid "(no graph)"
-msgstr ""
+msgstr "(sin gráfico)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:220
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Mostrar nombre completo del sensor"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:235
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -37387,7 +37488,7 @@ msgstr "Asistente"
 #: src/usr/local/www/wizard.php:418
 #, php-format
 msgid "Step %s of %s"
-msgstr ""
+msgstr "Paso %s de %s"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:637
 #: src/usr/local/www/wizards/openvpn_wizard.inc:654
@@ -38026,8 +38127,8 @@ msgstr ""
 "Por favor, añada una piscina en las piscinas \\ \"\" ficha para utilizar "
 "esta función. "
 
-#: src/usr/local/www/pkg_edit.php:1317 src/usr/local/www/pkg_edit.php:1323
-#: src/usr/local/www/pkg_edit.php:1328
+#: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
+#: src/usr/local/www/pkg_edit.php:1338
 msgid "<br />"
 msgstr "- ¥ 60. ¥ 60 ..."
 
@@ -38311,11 +38412,11 @@ msgstr "Habilitar el registro detallado"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
 msgid "Force IPv4 DNS Resolution"
-msgstr ""
+msgstr "Forzar resolución DNS IPv4"
 
 #: src/usr/local/www/services_dyndns_edit.php:347
 msgid "Verify SSL Certificate Trust"
-msgstr ""
+msgstr "Verificar confianza del Certificado SSL"
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -38624,7 +38725,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Disable the automatically-added host entries"
-msgstr ""
+msgstr "Desactivar las entradas de host agregadas automáticamente"
 
 #: src/usr/local/www/services_unbound_advanced.php:372
 msgid ""
@@ -39381,6 +39482,8 @@ msgstr "No añadir o eliminar rutas de forma automática"
 #: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
+"Utilizar operaciones rápidas de I/O con escrituras UDP para tun/tap. "
+"Experimental."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable this override"

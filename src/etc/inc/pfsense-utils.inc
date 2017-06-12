@@ -2939,6 +2939,7 @@ function get_locale_list() {
 		"de_DE" => gettext("German (Germany)"),
 		"en_US" => gettext("English"),
 		"es" => gettext("Spanish"),
+		"es_AR" => gettext("Spanish (Argentina)"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),

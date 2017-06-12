@@ -1,4 +1,5 @@
 devel/aws-sdk-php
+sysutils/azure-agent
 sysutils/htop
 sysutils/lsof
 sysutils/vm-bhyve

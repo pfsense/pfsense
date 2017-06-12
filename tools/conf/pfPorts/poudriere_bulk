@@ -1,5 +1,6 @@
 astro/gpsd
 sysutils/pfSense-azure
+sysutils/azure-agent
 sysutils/pfSense-ec2_setup
 sysutils/pfSense-openvpn_connect_profile
 sysutils/vm-bhyve

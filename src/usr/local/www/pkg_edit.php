@@ -212,7 +212,7 @@ if ($_POST) {
 					}
 			}
 
-			/* If the user supplied an ID and it eixsts, or if id=0
+			/* If the user supplied an ID and it exists, or if id=0
 			 * and the settings are invalid, overwrite.
 			 * See https://redmine.pfsense.org/issues/7624
 			 */
@@ -687,7 +687,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			));
 
 			$advfield_count++;
-		}  else {
+		} else {
 			if (isset($section)) {
 				$form->add($section);
 			}

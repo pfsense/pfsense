@@ -111,6 +111,8 @@ function doCmdT($title, $command, $method) {
 				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
 				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
+				$line = preg_replace("/<md5sigpass>.*?<\\/md5sigpass>/", "<md5sigpass>xxxxx</md5sigpass>", $line);
+				$line = preg_replace("/<md5sigkey>.*?<\\/md5sigkey>/", "<md5sigkey>xxxxx</md5sigkey>", $line);
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line, ENT_NOQUOTES);
 				fwrite($ofd, $line);

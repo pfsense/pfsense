@@ -878,72 +878,38 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 }
 
 function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
-	global $config, $g;
 	/*
 	 * NOTE: The code below is meant to replace the default gateway when it goes down.
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
 	 */
-	$upgw = '';
-	$dfltgwname = '';
-	$dfltgwdown = false;
-	$dfltgwfound = false;
+	$best_available_gw = '';
+	$bestfoundpriority = 7;
 	foreach ($gateways_arr as $gwname => $gwsttng) {
-		if (($gwsttng['ipprotocol'] == $ipprotocol) && isset($gwsttng['defaultgw'])) {
-			$dfltgwfound = true;
-			$dfltgwname = $gwname;
-			if (!isset($gwsttng['monitor_disable']) && !isset($gwsttng['action_disable']) && $gateways_status[$gwname]['status'] != "none") {
-				$dfltgwdown = true;
+		if ($gwsttng['ipprotocol'] != $ipprotocol) {
+			continue;
+		}
+		$gwprio = empty($gwsttng['priority']) ? 0 : intval($gwsttng['priority']);
+		if ((isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none")) {
+			if (($gwprio < $bestfoundpriority) ||
+				(($gwprio <= $bestfoundpriority) && isset($gwsttng['defaultgw']))) {
+				$bestfoundpriority = $gwprio;
+				$best_available_gw = $gwname;
 			}
 		}
-		/* Keep a record of the last up gateway */
-		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
-			$upgw = $gwname;
-		}
-		if ($dfltgwdown == true && !empty($upgw)) {
-			break;
-		}
 	}
-	if ($dfltgwfound == false) {
-		$gwname = convert_friendly_interface_to_friendly_descr("wan");
-		if (!empty($gateways_status[$gwname]) && stristr($gateways_status[$gwname]['status'], "down")) {
-			$dfltgwdown = true;
-		}
-	}
-	if ($dfltgwdown == true && !empty($upgw)) {
-		if ($gateways_arr[$upgw]['gateway'] == "dynamic") {
-			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
-		}
-		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
-			log_error("Default gateway down setting {$upgw} as default!");
-			if (is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
-				$inetfamily = "-inet6";
-				if (is_linklocal($gateways_arr[$upgw]['gateway']) && get_ll_scope($gateways_arr[$upgw]['gateway']) == '') {
-					$gateways_arr[$upgw]['gateway'] .= "%" . $gateways_arr[$upgw]['interface'];
-				}
-			} else {
-				$inetfamily = "-inet";
-			}
-			route_add_or_change("{$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
-		}
-	} else if (!empty($dfltgwname)) {
-		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
-		if ($ipprotocol == 'inet6' && !is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
-			return;
-		}
-		if ($ipprotocol == 'inet' && !is_ipaddrv4($gateways_arr[$dfltgwname]['gateway'])) {
-			return;
+	if (!empty($best_available_gw)) {
+		if ($gateways_arr[$best_available_gw]['gateway'] == "dynamic") {
+			$gateways_arr[$best_available_gw]['gateway'] = get_interface_gateway($gateways_arr[$best_available_gw]['friendlyiface']);
 		}
 		if ($ipprotocol == 'inet6') {
-			if (is_linklocal($gateways_arr[$upgw]['gateway']) && get_ll_scope($gateways_arr[$upgw]['gateway']) == '') {
-				$gateways_arr[$upgw]['gateway'] .= "%" . $gateways_arr[$upgw]['interface'];
-			}
-			if (is_linklocal($gateways_arr[$dfltgwname]['gateway']) && get_ll_scope($gateways_arr[$dfltgwname]['gateway']) == '') {
-				$gateways_arr[$dfltgwname]['gateway'] .= "%" . $gateways_arr[$dfltgwname]['interface'];
+			if (is_linklocal($gateways_arr[$best_available_gw]['gateway']) && get_ll_scope($gateways_arr[$best_available_gw]['gateway']) == '') {
+				$gateways_arr[$best_available_gw]['gateway'] .= "%" . $gateways_arr[$best_available_gw]['interface'];
 			}
 		}
-		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway']) {
-			route_add_or_change("-{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
+		$current_default_gw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
+		if ($current_default_gw != $gateways_arr[$best_available_gw]['gateway']) {
+			log_error("Changing gateway, setting {$best_available_gw} as default!");
+			route_add_or_change("-{$ipprotocol} default {$gateways_arr[$best_available_gw]['gateway']}");
 		}
 	}
 }
@@ -1746,6 +1712,9 @@ function save_gateway($gateway_settings, $realid = "") {
 			$i++;
 		}
 		$gateway['defaultgw'] = true;
+	}
+	if ($gateway_settings['priority']) {
+		$gateway['priority'] = $gateway_settings['priority'];
 	}
 
 	if ($gateway_settings['latencylow']) {

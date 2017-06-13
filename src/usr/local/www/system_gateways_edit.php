@@ -68,6 +68,7 @@ if (isset($id) && $a_gateways[$id]) {
 	}
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
+	$pconfig['priority'] = $a_gateways[$id]['priority'];
 	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
 	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
@@ -200,6 +201,26 @@ $section->addInput(new Form_Checkbox(
 	'This will select the above gateway as the default gateway.',
 	$pconfig['defaultgw']
 ));
+
+$tr = gettext("Backup gateway");
+$section->addInput(new Form_Select(
+	'priority',
+	'Priority',
+	$pconfig['priority'],
+	array(
+		'' => gettext('Default'),
+		'1' => $tr . ' 1',
+		'2' => $tr . ' 2',
+		'3' => $tr . ' 3',
+		'4' => $tr . ' 4',
+		'5' => $tr . ' 5',
+		'never' => gettext('Never'))
+	)
+)->setHelp('This will prioritize a gateway to be set as the default when one becomes unreachable. '
+		. 'For example with dual wan you might have a 3g fallback connection which should only be used '
+		. 'when the main gateway is unreachable, also a gateway to a private router can be set to never '
+		. 'become the default route. Gateways with the same priority will not switch unless the currently '
+		. 'active gateway becomes unreachable or a higher priority gateway comes online.'.$pconfig['priority'].'.');
 
 $section->addInput(new Form_Checkbox(
 	'monitor_disable',

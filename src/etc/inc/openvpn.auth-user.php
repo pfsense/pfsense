@@ -32,6 +32,8 @@ require_once("radius.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
+parse_str(implode('&', array_slice($argv, 1)), $_GET);
+
 /**
  * Get the NAS-Identifier
  *

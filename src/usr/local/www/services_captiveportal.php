@@ -1084,8 +1084,15 @@ if ($pconfig['httpslogin_enable']) {
 if ($pconfig['page']['htmltext']) {
 	$group = new Form_Group('Current Portal Page');
 	$group->add(new Form_Button(
+		'btnliveview',
+		'Live View',
+		$href,
+		'fa-file-text-o'
+	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
+
+	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
@@ -1119,7 +1126,7 @@ if ($pconfig['page']['errtext']) {
 	$group = new Form_Group('Current Auth Error Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewerrhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
@@ -1151,7 +1158,7 @@ if ($pconfig['page']['logouttext']) {
 	$group = new Form_Group('Current Logout Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewlogouthtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");

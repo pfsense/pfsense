@@ -65,6 +65,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
+$pconfig['logincss'] = $config['system']['webgui']['logincss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
@@ -166,6 +167,12 @@ if ($_POST) {
 		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
 	} else {
 		unset($config['system']['webgui']['webguicss']);
+	}
+
+	if ($_POST['logincss']) {
+		$config['system']['webgui']['logincss'] = $_POST['logincss'];
+	} else {
+		unset($config['system']['webgui']['logincss']);
 	}
 
 	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
@@ -595,6 +602,14 @@ gen_associatedpanels_fields(
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
+
+$section->addInput(new Form_Select(
+	'logincss',
+	'Login page CSS',
+	$pconfig['logincss'],
+	["login_blue.css" => gettext("Blue"), "login_green.css" => gettext("Green"), "login_red.css" => gettext("Red"),
+	 "login_purple.css" => gettext("Purple"), "login_gray.css" => gettext("Gray"), "login_brown.css" => gettext("Brown" )]
+))->setHelp('Choose a CSS file for the login page');
 
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',

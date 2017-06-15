@@ -119,10 +119,7 @@ $section->addInput(new Form_Select(
 		'dest' => gettext('Destination Address'),
 		'dport' => gettext('Destination Port'),
 		'exp' => gettext('Expiry'),
-		'peak' => gettext('Peak'),
 		'pkt' => gettext('Packet'),
-		'rate' => gettext('Rate'),
-		'size' => gettext('Size'),
 		'sport' => gettext('Source Port'),
 		'src' => gettext('Source Address'),
 	)

@@ -81,7 +81,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				foreach ($ipsec_status as $id => $ikesa) {
 					if (isset($ikesa['child-sas'])) {
 						foreach ($ikesa['child-sas'] as $childid => $childsa) {
-							if ($ikeid == $childid) {
+							list($childcid, $childsid) = explode('-', $childid, 2);
+							if ($ikeid == $childcid) {
 								$found = true;
 								break;
 							}

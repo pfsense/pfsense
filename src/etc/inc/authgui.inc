@@ -291,7 +291,7 @@ function display_login_form() {
 	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 		print_info_box(gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.<br />If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place."), "warning", false);
 	} else {
-		print("<div class=\"alert alert-warning\">This login page is experiment/work in progress.</div>");
+		print("<div class=\"alert alert-warning\">This login page is an experiment/work in progress. Change the background color on the \"System->General Setup\" page.</div>");
 	}
 ?>
 		</div>

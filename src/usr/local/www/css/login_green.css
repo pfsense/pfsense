@@ -1,5 +1,10 @@
-html, body {
-    height: 100%;
+html {
+  height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  height: 100%;
 }
 
 .cont {
@@ -133,18 +138,8 @@ form.login a:hover
 }
 
 .footer {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    width: 100%;
     height: 60px;
     background-color: #212121;
     padding-top: 10px;
     text-align: center;
-}
-
-.footer {
-    bottom: 0;
-    width: 100%;
-    height: 60px;
 }

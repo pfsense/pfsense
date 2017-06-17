@@ -52,6 +52,34 @@ if (!is_array($config['nat']['rule'])) {
 
 $a_nat = &$config['nat']['rule'];
 
+$iflist = get_configured_interface_with_descr(true);
+
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
+		$interfaces[$if] = $ifdesc;
+	}
+}
+
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
+		$interfaces['l2tp'] = gettext("L2TP VPN");
+	}
+}
+
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+	$interfaces['pppoe'] = gettext("PPPoE Server");
+}
+
+/* add ipsec interfaces */
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	$interfaces["enc0"] = gettext("IPsec");
+}
+
+/* add openvpn/tun interfaces */
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	$interfaces["openvpn"] = gettext("OpenVPN");
+}
+
 if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
@@ -249,6 +277,10 @@ if ($_POST['save']) {
 	}
 	if ($_POST['localip']) {
 		$_POST['localip'] = trim($_POST['localip']);
+	}
+
+	if (!array_key_exists($_POST['interface'], $interfaces)) {
+		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 
 	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
@@ -666,34 +698,6 @@ $section->addInput(new Form_Checkbox(
 	'Disable redirection for traffic matching this rule',
 	$pconfig['nordr']
 ))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
-
-$iflist = get_configured_interface_with_descr(true);
-
-foreach ($iflist as $if => $ifdesc) {
-	if (have_ruleint_access($if)) {
-		$interfaces[$if] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = gettext("PPPoE Server");
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = gettext("OpenVPN");
-}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -1210,7 +1214,7 @@ events.push(function() {
 <?php
 if (!$_POST) {
 ?>
-	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
+	dst_change($('#interface').val(),'<?=htmlspecialchars(addslashes($pconfig['interface']))?>','<?=htmlspecialchars($pconfig['dst'])?>');
 <?php
 }
 ?>

@@ -251,10 +251,8 @@ function display_login_form() {
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css">
-        <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="<?=$logincssfile?>" type="text/css">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="<?=$logincssfile?>" type="text/css">
 	<title><?=gettext("Login"); ?></title>
 	<script type="text/javascript">
 	//<![CDATA{
@@ -262,6 +260,7 @@ function display_login_form() {
 	//]]>
 	</script>
 </head>
+
 <body id="login" >
 	<div class="row " style="background-color: #ffffff;">
 		<div class="col-sm-5" >
@@ -317,7 +316,14 @@ function display_login_form() {
         </div>
     </div>
 
-<div>
+	<footer class="navbar-fixed-bottom footer">
+			<p class="text-muted">
+				<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
+				2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+				[<a href="/license.php" class="tblnk">view license</a>]
+			</p>
+	</footer>
+
 	<script type="text/javascript">
 	//!<[CDATA[
 	events.push(function() {
@@ -337,6 +343,5 @@ function display_login_form() {
 	</script>
 
 <?php
-require_once('foot.inc');
 
 } // end function

@@ -229,11 +229,11 @@ function display_login_form() {
 		}
 	}
 
-	$logincssfile = "/css/login_blue.css";
+	$logincssfile = "/css/login/login_blue.css";
 
 	if (isset($user_settings['webgui']['logincss'])) {
-		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['logincss'])) {
-			$logincssfile = "/css/" . $user_settings['webgui']['logincss'];
+		if (file_exists("/usr/local/www/css/login/" . $user_settings['webgui']['logincss'])) {
+			$logincssfile = "/css/login/" . $user_settings['webgui']['logincss'];
 		}
 	}
 

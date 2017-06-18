@@ -1,0 +1,30 @@
+
+@import url("/css/login/login_blue.css");
+
+.cont {
+    background: #4b1263;
+}
+
+.logoRow {
+    background: #4b1263;
+}
+
+.logoCol {
+    background: #4b1263;
+}
+
+.loginCont {
+    background: #4b1263;
+}
+
+.logoCont {
+    background: #4b1263;
+}
+
+.list-group{
+	    background: #4b1263 !important;
+}
+
+.list-group-item {
+	    background: #4b1263 !important;
+}

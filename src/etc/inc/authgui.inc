@@ -231,7 +231,7 @@ function display_login_form() {
 
 	$logincssfile = "1e3f75";
 
-	if (isset($user_settings['webgui']['logincss'])) {
+	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
 
 	}

@@ -19,7 +19,7 @@ header {
     background-color: white;
 }
 
-#bb {
+.bb {
     position: absolute;
     top:90px;
     bottom:25px;
@@ -27,7 +27,15 @@ header {
     color: white;
 }
 
-.bbbb {
+.bb2 {
+    position: absolute;
+    top:140px;
+    bottom:25px;
+    width: 100%;
+    color: white;
+}
+
+.nowarning {
 	height: 80px;
 	padding-top: 10px;
 }
@@ -35,10 +43,11 @@ header {
 #hostspan {
 	text-align: right;
 }
-	.msgbox {
-		padding-right: 30px;
-		padding-top: 25px;
-	}
+
+.msgbox {
+	padding-right: 60px;
+	padding-top: 25px;
+}
 
 @media only screen and (max-width : 768px) {
     /* only size 'xs' and below */
@@ -46,11 +55,15 @@ header {
         height: 100px;
     }
 
-    #bb {
+    .bb {
     	top: 100px;
     }
 
-    .bbbb {
+    .bb2 {
+		top: 250px;
+    }
+
+    .nowarning {
 		height: 60px;
 	}
 

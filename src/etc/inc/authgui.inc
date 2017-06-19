@@ -243,7 +243,11 @@ function display_login_form() {
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 
-
+	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+		$warnclass = "bb2";
+	} else {
+		$warnclass = "bb";
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -261,38 +265,40 @@ function display_login_form() {
 
 <body id="login" >
 	<div id="total">
-        <header id="1">
-            <div id="a">
-            	<div class="row ">
-            		<div class="col-sm-4">
-						<div id="logodiv" style="text-align:center" class="bbbb">
+		<header id="1">
+			<div id="a">
+				<div class="row">
+					<div class="col-sm-4">
+						<div id="logodiv" style="text-align:center" class="nowarning">
 							<img src="pfsense-trans.png" height="100%"/>
 						</div>
-            		</div>
+					</div>
 
-            		<div class="col-sm-8 bbbb msgbox text-center">
-            			<span id="hostspan">
+					<div class="col-sm-8 nowarning msgbox text-center">
+						<span id="hostspan">
 							<a><h4><?=$loginbannerstr?></h4></a>
 						</span
-            		</div>
+					</div>
+				</div>
+<?php
+	if ($warnclass == "bb2") {
+?>
 
-<!--
-            		<div class="col-sm-8 bbbb msgbox text-center">
-            			<div class="alert alert-warning">
-							The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means. If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="alert alert-warning" class="<?=$warnclass?>">
+							<?=gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.
+							If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.")?>
 						</div>
-            		</div>
--->
-<!--
-            		<div class="col-sm-4 text-center bbbb" style="padding-top: 2%">
-            			<a><h4>something.pfsense.com</h4></a>
-            		</div>
--->
-                </div>
+					</div>
+				</div>
+<?php
+}
+?>
             </div>
         </header>
 
-        <div id="bb" style="background: <?=$logincssfile?>;">
+        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
         	<div class="col-sm-4">
             </div>
 

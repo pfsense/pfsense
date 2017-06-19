@@ -1,26 +1,77 @@
-html {
-  height: 100%;
+body, html {
+    height: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 body {
-  margin-bottom: 60px;
-  height: 100%;
+    width: 100%;
 }
 
-.cont {
-    height: 100%;
-    background: #1e3f75;
+header {
+}
+
+#a {
+    position: fixed;
+    height: 90px;
+    top: 0;
+    width: 100%;
+    background-color: white;
+}
+
+#bb {
+    position: absolute;
+    top:90px;
+    bottom:25px;
+    width: 100%;
     color: white;
 }
 
-.logoRow {
-    height: 100%;
-    background: #1e3f75;
+.bbbb {
+	height: 80px;
+	padding-top: 10px;
 }
 
-.logoCol {
-    height: 100%;
-    background: #1e3f75;
+#hostspan {
+	text-align: right;
+}
+	.msgbox {
+		padding-right: 30px;
+		padding-top: 25px;
+	}
+
+@media only screen and (max-width : 768px) {
+    /* only size 'xs' and below */
+    #a {
+        height: 100px;
+    }
+
+    #bb {
+    	top: 100px;
+    }
+
+    .bbbb {
+		height: 60px;
+	}
+
+	.msgbox {
+		padding-right: 0px;
+		padding-top: 0px;
+	}
+
+	#hostspan {
+		text-align: center;
+	}
+}
+
+#c {
+    position: fixed;
+    height: 25px;
+    bottom: 0;
+    width: 100%;
+    background-color: #212121;
+    color: white;
+    text-align: center;
 }
 
 .loginCont {
@@ -29,33 +80,6 @@ body {
     transform: translate(-50%,-50%);
     height: 55%;
     width: 80%;
-    background: #1e3f75;
-}
-
-.logoCont {
-    position: absolute;
-    top: 40%; left: 60%;
-    transform: translate(-50%,-50%);
-    height: 55%;
-    width: 80%;
-    background: #1e3f75;
-}
-
-.list-group{
-	    background: #1e3f75 !important;
-	    color: white !important;
-}
-
-.list-group-item {
-	    background: #1e3f75 !important;
-	    color: white !important;
-	    border: none;
-	    font-weight: 200;
-}
-
-.list-group-item-heading {
-	    color: white !important;
-	    font-weight: 350 !important;
 }
 
 p.form-title
@@ -68,12 +92,6 @@ p.form-title
     margin-top: 5%;
     text-transform: uppercase;
     letter-spacing: 4px;
-}
-
-p.rsstitle {
-	font-size: 30px;
-	font-weight: 150;
-	color: #ffffff;
 }
 
 form.login
@@ -110,8 +128,8 @@ form.login input[type="submit"]
     outline: 0;
     cursor: pointer;
     letter-spacing: 1px;
-                display: block;
-             margin : 0 auto;
+    display: block;
+    margin : 0 auto;
     margin-top: 36px;
 }
 
@@ -137,9 +155,6 @@ form.login a:hover
     color: #2ecc71;
 }
 
-.footer {
-    height: 60px;
-    background-color: #212121;
-    padding-top: 10px;
-    text-align: center;
+.logoCol {
+    height: 100%;
 }

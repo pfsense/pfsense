@@ -605,11 +605,11 @@ gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail'])
 
 $section->addInput(new Form_Select(
 	'logincss',
-	'Login page CSS',
+	'Login page color',
 	$pconfig['logincss'],
-	["login_blue.css" => gettext("Blue"), "login_green.css" => gettext("Green"), "login_red.css" => gettext("Red"),
-	 "login_purple.css" => gettext("Purple"), "login_gray.css" => gettext("Gray"), "login_brown.css" => gettext("Brown" )]
-))->setHelp('Choose a CSS file for the login page');
+	["1e3f75;" => gettext("Blue"), "003300" => gettext("Green"), "770101" => gettext("Red"),
+	 "4b1263" => gettext("Purple"), "424142" => gettext("Gray"), "633215" => gettext("Brown" )]
+))->setHelp('Choose a color for the login page');
 
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',

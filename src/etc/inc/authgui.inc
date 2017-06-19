@@ -272,7 +272,7 @@ function display_login_form() {
 
             		<div class="col-sm-8 bbbb msgbox text-center">
             			<span id="hostspan">
-							<a><h4>pfsense.local.com</h4></a>
+							<a><h4><?=$loginbannerstr?></h4></a>
 						</span
             		</div>
 

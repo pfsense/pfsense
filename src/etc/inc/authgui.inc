@@ -229,11 +229,10 @@ function display_login_form() {
 		}
 	}
 
-	$logincssfile = "1e3f75";
+	$logincssfile = "#1e3f75";
 
 	if (isset($user_settings['webgui']['logincss']) && strlen($user_settings['webgui']['logincss']) == 6) {
 		$logincssfile = "#" . $user_settings['webgui']['logincss'];
-
 	}
 
 	if (isset($config['system']['webgui']['loginshowhost'])) {
@@ -254,9 +253,9 @@ function display_login_form() {
     <link rel="stylesheet" href="css/login.css" type="text/css">
 	<title><?=gettext("Login"); ?></title>
 	<script type="text/javascript">
-	//<![CDATA{
-	var events = events || [];
-	//]]>
+		//<![CDATA{
+		var events = events || [];
+		//]]>
 	</script>
 </head>
 
@@ -325,6 +324,10 @@ function display_login_form() {
         </footer>
     </div>
 
+	<script src="/vendor/jquery/jquery-1.12.0.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-1.12.0.min.js')?>"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
+	<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
+
 	<script type="text/javascript">
 	//!<[CDATA[
 	events.push(function() {
@@ -332,10 +335,9 @@ function display_login_form() {
 			"cookie_test=1" +
 			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-		if (document.cookie.indexOf("cookie_test") == -1)
-			document.getElementById("no_cookies").style.display="";
-		else
-			document.getElementById("no_cookies").style.display="none";
+		if (document.cookie.indexOf("cookie_test") == -1) {
+			alert("<?=gettext('The browser must support cookies to login.')?>");
+		}
 
 		// Delete it
 		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
@@ -343,6 +345,9 @@ function display_login_form() {
 	//]]>
 	</script>
 
+</body>
+</html>
 <?php
 
 } // end function
+

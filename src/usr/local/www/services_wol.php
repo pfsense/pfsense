@@ -131,7 +131,7 @@ $form = new Form(false);
 $section = new Form_Section('Wake-on-LAN');
 
 $section->addInput(new Form_Select(
-	'interface',
+	'if',
 	'*Interface',
 	(link_interface_to_bridge($if) ? null : $if),
 	get_configured_interface_with_descr()
@@ -180,7 +180,7 @@ print $form;
 								<?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
 							</td>
 							<td>
-								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
+								<a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>" usepost><?=strtolower($wolent['mac']);?></a>
 							</td>
 							<td>
 								<?=htmlspecialchars($wolent['descr']);?>

@@ -102,7 +102,7 @@ if (count($wolcomputers) > 0):
 		<?php endif; ?>
 			</td>
 			<td>
-				<a href="services_wol.php?mac=<?= $wolent['mac'] ?>&amp;if=<?= $wolent['interface']?>">
+				<a href="services_wol.php?mac=<?= $wolent['mac'] ?>&amp;if=<?= $wolent['interface']?>" usepost>
 				<i class="fa fa-power-off" data-toggle="tooltip" title="<?= gettext("Wake up!") ?>"></i>
 				</a>
 			</td>

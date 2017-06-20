@@ -1903,7 +1903,7 @@ $section->addInput(new Form_IpAddress(
 $section->addInput(new Form_Checkbox(
 	'ipv6usev4iface',
 	'Use IPv4 connectivity as parent interface',
-	'IPV6 will use  the IPv4 connectivity link (PPPoE)',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
 	$pconfig['ipv6usev4iface']
 ));
 

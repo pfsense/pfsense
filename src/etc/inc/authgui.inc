@@ -244,7 +244,7 @@ function display_login_form() {
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 
 	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-		$warnclass = "pagebodywarn";	// Amke room for a warning display row
+		$warnclass = "pagebodywarn";	// Make room for a warning display row
 	} else {
 		$warnclass = "pagebody";
 	}

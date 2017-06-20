@@ -305,6 +305,35 @@ if [ "${selected_model}" = "SG-1000" ]; then
 
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
+else
+	support_types=$(fetch -o - http://prodtrack.netgate.com/listspt 2>/dev/null)
+	if [ -z "${support_types}" ]; then
+		echo "Error: Unable to get the list of support plans"
+		exit 1
+	fi
+
+	OIFS="${IFS}"
+	IFS="
+"
+
+	unset support_menu
+	for item in ${support_types}; do
+		code=$(echo "${item}" | cut -d',' -f1)
+		desc=$(echo "${item}" | sed 's/^[^,]*,//')
+		support_menu="${support_menu}${support_menu:+ }\"${code}\" \"${desc}\""
+	done
+
+	IFS="${OIFS}"
+
+	if [ -n "${support_menu}" ]; then
+		exec 3>&1
+		support_type=$(echo $support_menu | xargs dialog \
+			--backtitle "pfSense installer" \
+			--title "Support type" \
+			--menu "Select corresponding support type" \
+			0 0 0 2>&1 1>&3) || exit 1
+		exec 3>&-
+	fi
 fi
 
 release_ver="UNKNOWN"
@@ -332,6 +361,10 @@ postreq="${postreq}&uniqueid=${UID}"
 
 if [ "${selected_model}" != "SG-1000" ]; then
 	postreq="${postreq}&wlan_mac=${wlan_mac}"
+fi
+
+if [ -n "${support_type}" ]; then
+	postreq="${postreq}&support=${support_type}"
 fi
 
 postreq="${postreq}&submit=Submit"

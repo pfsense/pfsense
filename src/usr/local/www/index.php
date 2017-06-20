@@ -87,27 +87,16 @@ if ($g['disablecrashreporter'] != true) {
 
 $platform = system_identify_specific_platform();
 
-##build list of php include files
-$phpincludefiles = array();
+## Include each widget php include file.
+## These define vars that specify the widget title and title link.
+
 $directory = "/usr/local/www/widgets/include/";
 $dirhandle = opendir($directory);
 $filename = "";
 
-while (false !== ($filename = readdir($dirhandle))) {
-	if (!stristr($filename, ".inc")) {
-		continue;
-	}
-	if ($platform['name'] == "uFW" && $filename == "smart_status.inc") {
-		continue;
-	}
-	$phpincludefiles[] = $filename;
-}
-
-## Include each widget include file.
-## These define vars that specify the widget title and title link.
-foreach ($phpincludefiles as $includename) {
-	if (file_exists($directory . $includename)) {
-		include_once($directory . $includename);
+while (($filename = readdir($dirhandle)) !== false) {
+	if (strtolower(substr($filename, -4)) == ".inc" && file_exists($directory . $filename)) {
+		include_once($directory . $filename);
 	}
 }
 
@@ -398,8 +387,11 @@ foreach ($available as $widgetkey => $widgetconfig):
 ?>
 		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa fa-plus"></i> <?=$widgetconfig['title']?></a></div>
 	<?php endif; ?>
-<?php endforeach; ?>
+<?php 
+endforeach;
+?>
 			</div>
+<p style="text-align:center"><?=sprintf(gettext('Other dashboard settings are available from the <a href="%s">General Setup</a> page.'), '/system.php')?></p>
 		</div>
 	</div>
 </div>
@@ -413,19 +405,12 @@ foreach ($available as $widgetkey => $widgetconfig):
 <?php
 $widgetColumns = array();
 foreach ($widgets as $widgetkey => $widgetconfig) {
-	if ($widgetconfig['display'] == 'none') {
-		continue;
+	if ($widgetconfig['display'] != 'none' && file_exists("/usr/local/www/widgets/widgets/{$widgetconfig['basename']}.widget.php")) {
+		if (!isset($widgetColumns[$widgetconfig['col']])) {
+			$widgetColumns[$widgetconfig['col']] = array();
+		}
+		$widgetColumns[$widgetconfig['col']][$widgetkey] = $widgetconfig;
 	}
-
-	if (!file_exists('/usr/local/www/widgets/widgets/'. $widgetconfig['basename'].'.widget.php')) {
-		continue;
-	}
-
-	if (!isset($widgetColumns[$widgetconfig['col']])) {
-		$widgetColumns[$widgetconfig['col']] = array();
-	}
-
-	$widgetColumns[$widgetconfig['col']][$widgetkey] = $widgetconfig;
 }
 ?>
 

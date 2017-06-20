@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-09 16:39-0400\n"
+"POT-Creation-Date: 2017-06-20 14:17-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-17 05:47-0400\n"
+"PO-Revision-Date: 2017-06-11 04:32-0400\n"
 "Last-Translator: Ruan Müller <zn.x0@0x.vc>\n"
 "Language-Team: Afrikaans\n"
 "Language: af\n"
@@ -23,7 +23,7 @@ msgid ""
 "hostname."
 msgstr ""
 "Potensiële DNS Rebind aanval bespeur, sien http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Probeer toegang na die router met IP-adres inplaas van "
+"DNS_rebinding<br />Probeer toegang na die roeteerde met IP-adres inplaas van "
 "masjien naam."
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
@@ -175,30 +175,30 @@ msgstr "RADIUS verifikasie geslaag"
 msgid "RADIUS Auth rejected"
 msgstr "RADIUS verifikasie verwerp"
 
-#: src/etc/inc/auth.inc:1636
+#: src/etc/inc/auth.inc:1637
 msgid "Widget configuration has been changed."
 msgstr "Koppelvlakgeriefie opset het verander."
 
-#: src/etc/inc/auth.inc:1641
+#: src/etc/inc/auth.inc:1642
 #, php-format
 msgid "(User %s)"
 msgstr "(Gebruiker %s)"
 
-#: src/etc/inc/auth.inc:1659 src/etc/inc/auth.inc:1675
+#: src/etc/inc/auth.inc:1660 src/etc/inc/auth.inc:1676
 msgid "Local Database"
 msgstr "Plaaslike Databasis"
 
-#: src/etc/inc/auth.inc:1779
+#: src/etc/inc/auth.inc:1780
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
 msgstr "Suksesvolle aantekening vir gebruiker '%1$s' vanaf: %2$s"
 
-#: src/etc/inc/auth.inc:1838
+#: src/etc/inc/auth.inc:1839
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
 msgstr ""
 
-#: src/etc/inc/auth.inc:1840
+#: src/etc/inc/auth.inc:1841
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
 msgstr ""
@@ -230,88 +230,32 @@ msgstr "Ongeldige aantekening (%s)."
 msgid "This device is currently being maintained by: %s."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:233
+#: src/etc/inc/authgui.inc:239
 #, php-format
-msgid "Login to %1$s on %2$s.%3$s"
-msgstr "Aantekening aan %1$s op %2$s. %3$s"
+msgid "%1$s.%2$s"
+msgstr ""
 
-#: src/etc/inc/authgui.inc:235
+#: src/etc/inc/authgui.inc:241
 #, php-format
 msgid "Login to %1$s"
 msgstr "Aantekening by %1$s"
 
-#: src/etc/inc/authgui.inc:244 src/etc/inc/authgui.inc:292
+#: src/etc/inc/authgui.inc:258
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "Aanteken"
 
-#: src/etc/inc/authgui.inc:258
+#: src/etc/inc/authgui.inc:290
 msgid ""
 "The IP address being used to access this router is not configured locally, "
-"which may be forwarded by NAT or other means. <br /><br />If this forwarding "
-"is unexpected, it should be verified that a man-in-the-middle attack is not "
-"taking place."
+"which may be forwarded by NAT or other means.\n"
+"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
+"man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:273
+#: src/etc/inc/authgui.inc:345
 msgid "The browser must support cookies to login."
 msgstr "Die webblaaier moet koekies onderstuen om te kan aanteken."
-
-#: src/etc/inc/authgui.inc:277 src/usr/local/www/interfaces.php:2581
-#: src/usr/local/www/interfaces_ppps_edit.php:210
-#: src/usr/local/www/interfaces_ppps_edit.php:213
-#: src/usr/local/www/interfaces_ppps_edit.php:221
-#: src/usr/local/www/interfaces_ppps_edit.php:224
-#: src/usr/local/www/interfaces_ppps_edit.php:610
-#: src/usr/local/www/services_dyndns_edit.php:94
-#: src/usr/local/www/services_dyndns_edit.php:353
-#: src/usr/local/www/services_pppoe_edit.php:500
-#: src/usr/local/www/status_captiveportal.php:197
-#: src/usr/local/www/system_usermanager.php:189
-#: src/usr/local/www/system_usermanager.php:194
-#: src/usr/local/www/system_usermanager.php:199
-#: src/usr/local/www/system_usermanager.php:609
-#: src/usr/local/www/vpn_l2tp_users.php:94
-#: src/usr/local/www/vpn_l2tp_users_edit.php:77
-#: src/usr/local/www/vpn_l2tp_users_edit.php:80
-#: src/usr/local/www/vpn_openvpn_client.php:590
-#: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
-msgid "Username"
-msgstr "Gebruikersnaam"
-
-#: src/etc/inc/authgui.inc:279
-msgid "Enter your username"
-msgstr "Tik jou gebruikersnaam"
-
-#: src/etc/inc/authgui.inc:284 src/usr/local/www/diag_backup.php:524
-#: src/usr/local/www/diag_backup.php:571 src/usr/local/www/interfaces.php:2588
-#: src/usr/local/www/interfaces_ppps_edit.php:210
-#: src/usr/local/www/interfaces_ppps_edit.php:213
-#: src/usr/local/www/interfaces_ppps_edit.php:221
-#: src/usr/local/www/interfaces_ppps_edit.php:224
-#: src/usr/local/www/interfaces_ppps_edit.php:611
-#: src/usr/local/www/services_checkip_edit.php:148
-#: src/usr/local/www/services_dyndns_edit.php:92
-#: src/usr/local/www/services_dyndns_edit.php:365
-#: src/usr/local/www/services_pppoe_edit.php:507
-#: src/usr/local/www/system_advanced_notifications.php:359
-#: src/usr/local/www/system_authservers.php:654
-#: src/usr/local/www/system_usermanager.php:195
-#: src/usr/local/www/system_usermanager.php:200
-#: src/usr/local/www/system_usermanager.php:762
-#: src/usr/local/www/system_usermanager.php:765
-#: src/usr/local/www/system_usermanager_passwordmg.php:40
-#: src/usr/local/www/vpn_l2tp_users_edit.php:80
-#: src/usr/local/www/vpn_l2tp_users_edit.php:159
-#: src/usr/local/www/vpn_openvpn_client.php:597
-#: src/usr/local/www/vpn_openvpn_client.php:622
-msgid "Password"
-msgstr "Wagwoord"
-
-#: src/etc/inc/authgui.inc:286
-msgid "Enter your password"
-msgstr "Tik jou wagwoord"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -362,34 +306,34 @@ msgstr ""
 msgid "Captive Portal allowed users configuration changed"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:40
+#: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
 msgstr "GEVAAR! WAARKSUWING! ACHTUNG!"
 
-#: src/etc/inc/config.console.inc:41
+#: src/etc/inc/config.console.inc:46
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
 msgstr "%1$s vereis *MINSTENS* %2$s RAM om reg te funktioneer.%3$s"
 
-#: src/etc/inc/config.console.inc:42
+#: src/etc/inc/config.console.inc:47
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:43
+#: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
 msgstr "Druk ENTER om vroot te gaan."
 
-#: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:440
+#: src/etc/inc/config.console.inc:66 src/etc/inc/config.console.inc:445
 msgid "No interfaces found!"
 msgstr "Geen koppelvlakke gevind nie!"
 
-#: src/etc/inc/config.console.inc:79
+#: src/etc/inc/config.console.inc:84
 msgid "Do VLANs need to be set up first?"
 msgstr "Moet VLANs eerste opgestel wees?"
 
-#: src/etc/inc/config.console.inc:82
+#: src/etc/inc/config.console.inc:87
 msgid ""
 "If VLANs will not be used, or only for optional interfaces, it is typical to\n"
 "say no here and use the webConfigurator to configure VLANs later, if "
@@ -400,129 +344,129 @@ msgstr ""
 "nee te sê hierso, en dan die webConfigurator gebruik om VLANs later te "
 "instel, indien nodig."
 
-#: src/etc/inc/config.console.inc:85
+#: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:96
+#: src/etc/inc/config.console.inc:101
 msgid "VLAN interfaces:"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:116
+#: src/etc/inc/config.console.inc:121
 msgid "Enter the WAN interface name or 'a' for auto-detection"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:117
+#: src/etc/inc/config.console.inc:122
 #, php-format
 msgid "%1$s(%2$s or a): "
 msgstr ""
 
-#: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
-#: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:463
+#: src/etc/inc/config.console.inc:130 src/etc/inc/config.console.inc:156
+#: src/etc/inc/config.console.inc:192 src/etc/inc/config.console.inc:468
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:133
+#: src/etc/inc/config.console.inc:138
 #, php-format
 msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:170
+#: src/etc/inc/config.console.inc:175
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:173
+#: src/etc/inc/config.console.inc:178
 #, php-format
 msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:180
+#: src/etc/inc/config.console.inc:185
 msgid "Optional"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:216
+#: src/etc/inc/config.console.inc:221
 msgid "The interfaces will be assigned as follows:"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:423
+#: src/etc/inc/config.console.inc:231 src/etc/inc/config.console.inc:428
 msgid "Do you want to proceed [y|n]?"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:243
+#: src/etc/inc/config.console.inc:248
 msgid "You have chosen to remove the LAN interface."
 msgstr ""
 
-#: src/etc/inc/config.console.inc:244
+#: src/etc/inc/config.console.inc:249
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:365
+#: src/etc/inc/config.console.inc:370
 #, php-format
 msgid "%sWriting configuration..."
 msgstr ""
 
-#: src/etc/inc/config.console.inc:366
+#: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:367
+#: src/etc/inc/config.console.inc:372
 #, php-format
 msgid "done.%s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:375
+#: src/etc/inc/config.console.inc:380
 msgid "One moment while the settings are reloading..."
 msgstr ""
 
-#: src/etc/inc/config.console.inc:376
+#: src/etc/inc/config.console.inc:381
 msgid " done!"
-msgstr ""
-
-#: src/etc/inc/config.console.inc:400
-#, php-format
-msgid "Detected link-up on interface %1$s.%2$s"
 msgstr ""
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
+msgid "Detected link-up on interface %1$s.%2$s"
+msgstr ""
+
+#: src/etc/inc/config.console.inc:410
+#, php-format
 msgid "No link-up detected.%s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:422
+#: src/etc/inc/config.console.inc:427
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
 msgstr "WAARSKUWING: alle bestaande VLANs word verlore as jy voortgaan!"
 
-#: src/etc/inc/config.console.inc:438
+#: src/etc/inc/config.console.inc:443
 msgid "VLAN Capable interfaces:"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:453
+#: src/etc/inc/config.console.inc:458
 msgid "No VLAN capable interfaces detected."
 msgstr ""
 
-#: src/etc/inc/config.console.inc:457
+#: src/etc/inc/config.console.inc:462
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:470
+#: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:474
+#: src/etc/inc/config.console.inc:479
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
 msgstr ""
 
-#: src/etc/inc/config.console.inc:481
+#: src/etc/inc/config.console.inc:486
 #, php-format
 msgid "This parent interface and VLAN already created."
 msgstr ""
@@ -974,12 +918,13 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
-msgstr ""
+msgstr "Databasis Fout - Daar was 'n databasis fout aan die bediener se kant."
 
 #: src/etc/inc/dyndns.class:1349
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
+"Host naam fout - Die host naam (%1$s) behoort nie aan gebruiker (%2$s) nie."
 
 #: src/etc/inc/dyndns.class:1413
 msgid "Not a valid username or password!"
@@ -1197,19 +1142,29 @@ msgstr ""
 #, fuzzy
 msgid "A remote server error occurred updating the zone."
 msgstr ""
-"'N fout met 'n afstande bediener get gebeur terwyl die sone opdateer was."
+"'N fout met 'n afgeleë  bediener het gebeur terwyl die sone probeer "
+"geopdateer was."
 
 #: src/etc/inc/dyndns.class:1821
+#, fuzzy
 msgid "A remote server error occurred loading the zone."
 msgstr ""
+"'N fout met 'n afgeleë bediener het gebeur terwyl die sone probeer gelaai "
+"was."
 
 #: src/etc/inc/dyndns.class:1827
+#, fuzzy
 msgid "A remote server error occurred adding a new record."
 msgstr ""
+"'N fout met 'n afgeleë bediener het gebeur terwyl n' nuwe rekord probeer "
+"beygevoeg word."
 
 #: src/etc/inc/dyndns.class:1830
+#, fuzzy
 msgid "A remote server error occurred removing an existing record."
 msgstr ""
+"'N fout met 'n afgeleë bediener het gebeur terwyl n' rekord probeer verwyder "
+"word."
 
 #: src/etc/inc/dyndns.class:1844
 #, php-format
@@ -1229,7 +1184,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1868
 msgid "ERROR!"
-msgstr ""
+msgstr "FOUT!"
 
 #: src/etc/inc/dyndns.class:1874
 msgid "No Dynamic DNS Service provider was selected."
@@ -1398,7 +1353,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "Onbekende blok fout."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
@@ -1463,7 +1418,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Onbekende pas fout."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
@@ -1471,7 +1426,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Datagram omskakelings fout."
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
@@ -1587,15 +1542,15 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "Roeteerder advertensie"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "Roeteerder werwing"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Roeteerder hernommering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
@@ -1717,7 +1672,7 @@ msgstr ""
 #: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "Daar was fout(e) om die volgende reëls te laai: %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:520
 msgid "Processing down interface states"
@@ -1746,7 +1701,7 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:844
 msgid "Creating gateway group item..."
-msgstr "Skep 'n deurgang groep item ..."
+msgstr "Skep 'n deurgangspoort groep item ..."
 
 #: src/etc/inc/filter.inc:884
 #, php-format
@@ -1756,7 +1711,8 @@ msgstr ""
 #: src/etc/inc/filter.inc:888
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
-msgstr "Te veel lede in die groep %s, deurgang groep gekap in reël stel."
+msgstr ""
+"Te veel lede in die groep %s, deurgangspoort groep gekap in reël stel."
 
 #: src/etc/inc/filter.inc:900
 #, php-format
@@ -1764,6 +1720,8 @@ msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
+"'N Fout het voorgekom terwyl die koppelvlak %s gesoek was. Die reël was nie "
+"bygevoeg nie."
 
 #: src/etc/inc/filter.inc:1265
 #, php-format
@@ -1907,7 +1865,8 @@ msgstr ""
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
 msgstr ""
-"Die duergang: %s is ongeldig of onbekend, en dit sal nie gebruik word nie."
+"Die duergangspoort: %s is ongeldig of onbekend, en dit sal nie gebruik word "
+"nie."
 
 #: src/etc/inc/filter.inc:2814
 #, php-format
@@ -1949,6 +1908,7 @@ msgstr ""
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
 msgstr ""
+"Daar was 'n fout tydens die ontleding van die pakketfilterreëls vir %s."
 
 #: src/etc/inc/filter.inc:4362
 msgid "delete this separator"
@@ -1956,11 +1916,13 @@ msgstr ""
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Daar was 'n fout om die meld inskrywing te ontleed: %s. Rapporteer asseblief "
+"na poslys of forum."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -1968,12 +1930,16 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Daar was 'n fout om die volgende reël nommer te ontleed: %s. Rapporteer "
+"asseblief na poslys of forum"
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
+"Daar was 'n fout om die volgende reël te ontleed: %s. Rapporteer asseblief "
+"na poslys of forum"
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
@@ -2028,7 +1994,7 @@ msgstr ""
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
-#: src/usr/local/www/index.php:360 src/usr/local/www/pkg_mgr_install.php:489
+#: src/usr/local/www/index.php:352 src/usr/local/www/pkg_mgr_install.php:489
 #: src/usr/local/www/status_captiveportal.php:127
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -2043,8 +2009,8 @@ msgstr ""
 #: src/usr/local/www/status_gateways.php:66
 #: src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph_cpu.php:33
-#: src/usr/local/www/status_interfaces.php:93
-#: src/usr/local/www/status_interfaces.php:115
+#: src/usr/local/www/status_interfaces.php:94
+#: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec.php:493
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -2074,8 +2040,8 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:611
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:226
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr ""
@@ -2086,7 +2052,8 @@ msgstr ""
 
 #: src/etc/inc/gwlb.inc:185
 msgid "No gateways to monitor. dpinger will not run."
-msgstr "Geen deurgange om monitor nie. dpinger sal nie uitgevoer word nie."
+msgstr ""
+"Geen deurgangspoorte om monitor nie. dpinger sal nie uitgevoer word nie."
 
 #: src/etc/inc/gwlb.inc:233 src/etc/inc/gwlb.inc:274
 #, php-format
@@ -2097,12 +2064,12 @@ msgstr ""
 #: src/etc/inc/gwlb.inc:302
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr "Fout wanner deurgang monitor begin vir %s"
+msgstr "Fout wanner deurgangspoort monitor begin vir %s"
 
 #: src/etc/inc/gwlb.inc:315
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr "dpinger: Geen dpinger sessie hardloop vir derugang %s nie"
+msgstr "dpinger: Geen dpinger sessie hardloop vir derugangspoort %s nie"
 
 #: src/etc/inc/gwlb.inc:329
 #, php-format
@@ -2135,18 +2102,20 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
-"Deurgang status kon nie vasgestel word nie, met inagneming van al soos op/"
-"aktief. (Groep: %s)"
+"Deurgangspoort status kon nie vasgestel word nie, met inagneming van al soos "
+"op/aktief. (Groep: %s)"
 
 #: src/etc/inc/gwlb.inc:1088
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
-msgstr "DEURGANGE: Groep %1$s het geen deurgange het op vlak %2$s nie!"
+msgstr ""
+"DEURGANGSPOORTE: Groep %1$s het geen deurgangspporte het op vlak %2$s nie!"
 
 #: src/etc/inc/gwlb.inc:1110
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
-msgstr "Opdatering deurgang groep deurgang vir %1$s - nuwe deurgang is %2$s"
+msgstr ""
+"Opdatering deurgangspoort groep deurgang vir %1$s - nuwe deurgang is %2$s"
 
 #: src/etc/inc/gwlb.inc:1355 src/usr/local/www/diag_arp.php:332
 #: src/usr/local/www/diag_dump_states.php:132
@@ -2156,8 +2125,8 @@ msgstr "Opdatering deurgang groep deurgang vir %1$s - nuwe deurgang is %2$s"
 #: src/usr/local/www/firewall_nat_1to1.php:149
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
-#: src/usr/local/www/firewall_nat_edit.php:211
-#: src/usr/local/www/firewall_nat_edit.php:214
+#: src/usr/local/www/firewall_nat_edit.php:239
+#: src/usr/local/www/firewall_nat_edit.php:242
 #: src/usr/local/www/firewall_nat_npt.php:148
 #: src/usr/local/www/firewall_nat_npt_edit.php:95
 #: src/usr/local/www/firewall_nat_out.php:279
@@ -2202,7 +2171,7 @@ msgstr ""
 
 #: src/etc/inc/gwlb.inc:1363
 msgid "gateway"
-msgstr ""
+msgstr "deurgangspoort"
 
 #: src/etc/inc/gwlb.inc:1372 src/usr/local/www/system_gateways.php:78
 #, php-format
@@ -2210,8 +2179,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
-"Deurgang \"%1$s\" kan nie afgeskakel word nie omdat dit in gebruik is op "
-"Deurgang Groep \"%2$s\""
+"Deurgangspoort \"%1$s\" kan nie afgeskakel word nie omdat dit in gebruik is "
+"op Deurgangspoort Groep \"%2$s\""
 
 #: src/etc/inc/gwlb.inc:1384 src/usr/local/www/system_gateways.php:94
 #, php-format
@@ -2219,18 +2188,20 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
-"Deurgang \"%1$s\" kan nie afgeskakel word nie omdat dit in gebruik is op "
-"Statiese Deurgang \"%2$s\""
+"Deurgangspoort \"%1$s\" kan nie afgeskakel word nie omdat dit in gebruik is "
+"op Statiese Deurgang \"%2$s\""
 
 #: src/etc/inc/gwlb.inc:1392
 msgid "A valid gateway IP address must be specified."
-msgstr ""
+msgstr "'N Geldige deurgangspoort-IP-adres moet gespesifiseer word."
 
 #: src/etc/inc/gwlb.inc:1402
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
+"Kan nie IPv4 Deurganfspoort-adres byvoeg nie, omdat geen IPv4-adres nie op "
+"die koppelvlak gevind kon word nie."
 
 #: src/etc/inc/gwlb.inc:1424 src/etc/inc/gwlb.inc:1457
 #, php-format
@@ -2238,24 +2209,32 @@ msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
 msgstr ""
+"Die deurganfspoort-adres %s lê nie binne een van die gekose koppelvlak se "
+"subnette nie."
 
 #: src/etc/inc/gwlb.inc:1435
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
+"Kan nie IPv6 deurganfspoort-adres byvoeg nie omdat geen IPv6-adres nie op "
+"die koppelvlak gevind kon word nie."
 
 #: src/etc/inc/gwlb.inc:1465
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
 msgstr ""
+"Dinamiese deurganfspoort waardes kan nie vir koppelvlakke met 'n statiese "
+"IPv4-konfigurasie gespesifiseer word nie."
 
 #: src/etc/inc/gwlb.inc:1470
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
 msgstr ""
+"Dinamiese deurganfspoort waardes kan nie vir koppelvlakke met 'n statiese "
+"IPv6-konfigurasie gespesifiseer word nie."
 
 #: src/etc/inc/gwlb.inc:1478
 msgid "A valid data payload must be specified."
@@ -2265,35 +2244,44 @@ msgstr ""
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
 msgstr ""
+"Die IPv6-deurgangspoort-adres '%s' kan nie as 'n IPv4-deurganfspoort gebruik "
+"word nie."
 
 #: src/etc/inc/gwlb.inc:1486
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
 msgstr ""
+"Die IPv4-deurgangspoort-adres '%s' kan nie as 'n IPv6-deurganfspoort gebruik "
+"word nie."
 
 #: src/etc/inc/gwlb.inc:1492
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
 msgstr ""
+"Die IPv6-monitor-adres '%s' kan nie as 'n IPv4-deurganfspoort gebruik word "
+"nie."
 
 #: src/etc/inc/gwlb.inc:1495
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
 msgstr ""
+"Die IPv4-monitor-adres '%s' kan nie as 'n IPv6-deurganfspoort gebruik word "
+"nie."
 
 #: src/etc/inc/gwlb.inc:1504
 msgid "Changing name on a gateway is not allowed."
 msgstr ""
+"Die verandering van die naam op 'n deurgangspoort is nie toegelaat nie."
 
 #: src/etc/inc/gwlb.inc:1510
 #, php-format
 msgid "The gateway name \"%s\" already exists."
-msgstr ""
+msgstr "Die deurgangspoort \"%s\" bestaan reeds."
 
 #: src/etc/inc/gwlb.inc:1516
 #, php-format
 msgid "The gateway IP address \"%s\" already exists."
-msgstr ""
+msgstr "Die deurgangspoort IP-adres \"%s\" bestaan reeds."
 
 #: src/etc/inc/gwlb.inc:1522
 #, php-format
@@ -2542,6 +2530,7 @@ msgstr ""
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
+"Fout: kan nie mpd_%1$s.conf oopmaak in interface_ppps_configure().%2$s nie."
 
 #: src/etc/inc/interfaces.inc:2123
 #, php-format
@@ -2595,7 +2584,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:2501
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
-msgstr ""
+msgstr "Kon nie koppelvlak %1$s met foutkode %2$s kloon nie. Uitset %3$s."
 
 #: src/etc/inc/interfaces.inc:3157
 #, php-format
@@ -2615,7 +2604,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:3326
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr ""
+msgstr "Ontken roeteeder advertensies vir koppelvlak %s"
 
 #: src/etc/inc/interfaces.inc:3358
 msgid "Generating new MAC address."
@@ -2677,6 +2666,7 @@ msgstr ""
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
+"Fout: kan %s nie in DHCP6_Config_File_Override() oopmaak vir lees nie."
 
 #: src/etc/inc/interfaces.inc:4509
 #, php-format
@@ -2684,6 +2674,8 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
+"Fout: kan nie dhclient_%s.conf in interface_dhcp_configure() oopmaak vir "
+"skryf nie."
 
 #: src/etc/inc/interfaces.inc:4522
 #, php-format
@@ -2698,12 +2690,12 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:4671
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
-msgstr ""
+msgstr "Fout: kan %s nie in DHCP_Config_File_Override() oopmaak vir lees nie."
 
 #: src/etc/inc/interfaces.inc:5711 src/etc/inc/service-utils.inc:365
 #: src/usr/local/www/diag_backup.php:432
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
-#: src/usr/local/www/firewall_nat_edit.php:695
+#: src/usr/local/www/firewall_nat_edit.php:80
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
 #: src/usr/local/www/firewall_rules_edit.php:1104
@@ -2864,9 +2856,9 @@ msgstr ""
 #: src/etc/inc/ipsec.inc:87 src/usr/local/www/diag_traceroute.php:142
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
-#: src/usr/local/www/firewall_nat_edit.php:535
-#: src/usr/local/www/firewall_nat_edit.php:575
-#: src/usr/local/www/firewall_nat_edit.php:754
+#: src/usr/local/www/firewall_nat_edit.php:567
+#: src/usr/local/www/firewall_nat_edit.php:607
+#: src/usr/local/www/firewall_nat_edit.php:758
 #: src/usr/local/www/firewall_nat_out_edit.php:525
 #: src/usr/local/www/firewall_nat_out_edit.php:550
 #: src/usr/local/www/firewall_rules_edit.php:1300
@@ -2999,12 +2991,12 @@ msgstr ""
 msgid "Mobile Client"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3132
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3135
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
-#: src/usr/local/www/firewall_nat_edit.php:919
+#: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:558 src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1703
 #: src/usr/local/www/interfaces.php:1704 src/usr/local/www/interfaces.php:1730
 #: src/usr/local/www/interfaces.php:1743
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -3031,9 +3023,9 @@ msgid "unable to read %s"
 msgstr ""
 
 #: src/etc/inc/meta.inc:134
-#, php-format
+#, fuzzy, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr ""
+msgstr "Fout: merk vergelyk nie (%1$s! = %2$s) in '%3$s'%4$s"
 
 #: src/etc/inc/meta.inc:145
 #, php-format
@@ -3063,7 +3055,7 @@ msgstr ""
 #: src/etc/inc/notices.inc:321
 #, php-format
 msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Kon nie die boodskap na %1$s stuur nie - Fout: %2$s"
 
 #: src/etc/inc/notices.inc:327
 #, php-format
@@ -3084,12 +3076,12 @@ msgstr ""
 #: src/etc/inc/notices.inc:387
 #, php-format
 msgid "Could not send Growl notification to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Kon nie Growl kennisgewing stuur na %1$s nie - Fout: %2$s"
 
 #: src/etc/inc/notices.inc:445
 #, php-format
 msgid "Could not send register Growl on %1$s -- Error: %2$s"
-msgstr ""
+msgstr "Kon nie register stuur aan Grow op %1$s nie - Fout: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:760
 #: src/usr/local/www/firewall_rules_edit.php:1656
@@ -3305,12 +3297,12 @@ msgstr ""
 #: src/etc/inc/openvpn.inc:1527
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
-msgstr "Hersinkroniseer OpenVPN vir deurgang groep %1$s bediener %2$s."
+msgstr "Hersinkroniseer OpenVPN vir deurgangspoort groep %1$s bediener %2$s."
 
 #: src/etc/inc/openvpn.inc:1536
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
-msgstr "Hersinkroniseer OpenVPN vir deurgang groep %1$s kliënt %2$s."
+msgstr "Hersinkroniseer OpenVPN vir deurgangspoort groep %1$s kliënt %2$s."
 
 #: src/etc/inc/openvpn.inc:1545
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
@@ -3324,148 +3316,148 @@ msgstr ""
 msgid "Service not running?"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:221
+#: src/etc/inc/pfsense-utils.inc:223
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Theme"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:224
+#: src/etc/inc/pfsense-utils.inc:226
 #, php-format
 msgid ""
 "Choose an alternative css file (if installed) to change the appearance of "
 "the webConfigurator. css files are located in /usr/local/www/css/%s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:242
+#: src/etc/inc/pfsense-utils.inc:244
 msgid "Scrolls with page"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:242
+#: src/etc/inc/pfsense-utils.inc:244
 msgid "Fixed (Remains visible at top of page)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:240
+#: src/etc/inc/pfsense-utils.inc:242
 msgid "Top Navigation"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:243
+#: src/etc/inc/pfsense-utils.inc:245
 msgid "The fixed option is intended for large screens only."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:261
+#: src/etc/inc/pfsense-utils.inc:263
 msgid "Default (No hostname)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:261
+#: src/etc/inc/pfsense-utils.inc:263
 msgid "Hostname only"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:261
+#: src/etc/inc/pfsense-utils.inc:263
 msgid "Fully Qualified Domain Name"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:259
+#: src/etc/inc/pfsense-utils.inc:261
 msgid "Hostname in Menu"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:262
+#: src/etc/inc/pfsense-utils.inc:264
 msgid ""
 "Replaces the Help menu title in the Navbar with the system hostname or FQDN."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:282
+#: src/etc/inc/pfsense-utils.inc:284
 #: src/usr/local/www/system_user_settings.php:64
 msgid "Dashboard Columns"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:302
+#: src/etc/inc/pfsense-utils.inc:304
 msgid "Interfaces Sort"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:305
+#: src/etc/inc/pfsense-utils.inc:307
 msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:319
+#: src/etc/inc/pfsense-utils.inc:321
 msgid "Associated Panels Show/Hide"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:326
+#: src/etc/inc/pfsense-utils.inc:328
 msgid "Show the Available Widgets panel on the Dashboard."
 msgstr "Wys die beskikbare Koppelvlakgeriefie paneel op die paneelbord."
 
-#: src/etc/inc/pfsense-utils.inc:333
+#: src/etc/inc/pfsense-utils.inc:335
 msgid "Show the Log Filter panel in System Logs."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:340
+#: src/etc/inc/pfsense-utils.inc:342
 msgid "Show the Manage Log panel in System Logs."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:347
+#: src/etc/inc/pfsense-utils.inc:349
 msgid "Show the Settings panel in Status Monitoring."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:349
+#: src/etc/inc/pfsense-utils.inc:351
 msgid ""
 "These options allow certain panels to be automatically hidden on page load. "
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:367
+#: src/etc/inc/pfsense-utils.inc:369
 msgid "Left Column Labels"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:370
+#: src/etc/inc/pfsense-utils.inc:372
 msgid ""
 "If selected, clicking a label in the left column will select/toggle the "
 "first item of the group."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:386
+#: src/etc/inc/pfsense-utils.inc:388
 msgid "Alias Popups"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:389
+#: src/etc/inc/pfsense-utils.inc:391
 msgid ""
 "If selected, the details in alias popups will not be shown, just the alias "
 "description (e.g. in Firewall Rules)."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:405
+#: src/etc/inc/pfsense-utils.inc:407
 msgid "Browser tab text"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:408
+#: src/etc/inc/pfsense-utils.inc:410
 msgid ""
 "When this is unchecked, the browser tab shows the host name followed by the "
 "current page. Check this box to display the current page followed by the "
 "host name."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:452
+#: src/etc/inc/pfsense-utils.inc:454
 msgid "Require State Filter"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:455
+#: src/etc/inc/pfsense-utils.inc:457
 msgid ""
 "By default, the entire state table is displayed when entering Diagnostics > "
 "States. This option requires a filter to be entered before the states are "
 "displayed. Useful for systems with large state tables."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:475
+#: src/etc/inc/pfsense-utils.inc:477
 msgid "Rule Information"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:481 src/etc/inc/pfsense-utils.inc:491
+#: src/etc/inc/pfsense-utils.inc:483 src/etc/inc/pfsense-utils.inc:493
 #, php-format
 msgid "%1$s by %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:482 src/etc/inc/pfsense-utils.inc:492
+#: src/etc/inc/pfsense-utils.inc:484 src/etc/inc/pfsense-utils.inc:494
 #: src/usr/local/www/diag_confbak.php:53 src/usr/local/www/diag_confbak.php:61
 #: src/usr/local/www/diag_confbak.php:123
 #: src/usr/local/www/diag_confbak.php:232
@@ -3473,180 +3465,184 @@ msgstr ""
 msgid "n/j/y H:i:s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:479
+#: src/etc/inc/pfsense-utils.inc:481
 msgid "Created"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:489
+#: src/etc/inc/pfsense-utils.inc:491
 msgid "Updated"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:784
+#: src/etc/inc/pfsense-utils.inc:786
 msgid "After synch increase advertising skew"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:834
+#: src/etc/inc/pfsense-utils.inc:836
 msgid "Error creating socket!"
-msgstr ""
+msgstr "Kon nie sok skep nie!"
 
-#: src/etc/inc/pfsense-utils.inc:835
+#: src/etc/inc/pfsense-utils.inc:837
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
-msgstr ""
+msgstr "Fout kode is '%1$s' - %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:840
+#: src/etc/inc/pfsense-utils.inc:842
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr ""
+msgstr "Setsockopt() misluk, fout: %s"
 
-#: src/etc/inc/pfsense-utils.inc:844
+#: src/etc/inc/pfsense-utils.inc:846
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:907 src/etc/inc/pfsense-utils.inc:927
+#: src/etc/inc/pfsense-utils.inc:909 src/etc/inc/pfsense-utils.inc:929
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1014
+#: src/etc/inc/pfsense-utils.inc:1016
 msgid "reload_interfaces_sync() is starting."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1023
+#: src/etc/inc/pfsense-utils.inc:1025
 msgid "Enabling system routing"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1027
+#: src/etc/inc/pfsense-utils.inc:1029
 msgid "Cleaning up Interfaces"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1471
+#: src/etc/inc/pfsense-utils.inc:1473
 msgid "No history data found!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1603
+#: src/etc/inc/pfsense-utils.inc:1605
 msgid "device not present! Is the modem attached to the system?"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1672
+#: src/etc/inc/pfsense-utils.inc:1674
 msgid "running"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1673 src/usr/local/www/graph.php:198
+#: src/etc/inc/pfsense-utils.inc:1675 src/usr/local/www/graph.php:198
 msgid "up"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1718
+#: src/etc/inc/pfsense-utils.inc:1720
 msgid "blocking"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1718
+#: src/etc/inc/pfsense-utils.inc:1720
 msgid "check for ethernet loops"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1721
+#: src/etc/inc/pfsense-utils.inc:1723
 msgid "learning"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1724
+#: src/etc/inc/pfsense-utils.inc:1726
 msgid "forwarding"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1858
+#: src/etc/inc/pfsense-utils.inc:1860
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1878
+#: src/etc/inc/pfsense-utils.inc:1880
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1895
+#: src/etc/inc/pfsense-utils.inc:1897
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:1972 src/etc/inc/pfsense-utils.inc:2028
+#: src/etc/inc/pfsense-utils.inc:1974 src/etc/inc/pfsense-utils.inc:2030
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2247
+#: src/etc/inc/pfsense-utils.inc:2249
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2252
+#: src/etc/inc/pfsense-utils.inc:2254
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2257
+#: src/etc/inc/pfsense-utils.inc:2259
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2314
+#: src/etc/inc/pfsense-utils.inc:2316
 #, php-format
 msgid "Failed to download alias %s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2343
+#: src/etc/inc/pfsense-utils.inc:2345
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2353
+#: src/etc/inc/pfsense-utils.inc:2355
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2359
+#: src/etc/inc/pfsense-utils.inc:2361
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2938
+#: src/etc/inc/pfsense-utils.inc:2940
 msgid "Bosnian"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2939
+#: src/etc/inc/pfsense-utils.inc:2941
 msgid "German (Germany)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2940
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "English"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2941
+#: src/etc/inc/pfsense-utils.inc:2943
 msgid "Spanish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2942
-msgid "Norwegian Bokmål"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2943
-msgid "Russian"
-msgstr ""
-
 #: src/etc/inc/pfsense-utils.inc:2944
-msgid "Chinese (Simplified, China)"
+msgid "Spanish (Argentina)"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2945
+msgid "Norwegian Bokmål"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
+msgid "Russian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2947
+msgid "Chinese (Simplified, China)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3140 src/etc/inc/pfsense-utils.inc:3155
-#: src/etc/inc/pfsense-utils.inc:3181
+#: src/etc/inc/pfsense-utils.inc:3143 src/etc/inc/pfsense-utils.inc:3158
+#: src/etc/inc/pfsense-utils.inc:3184
 msgid "No Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3150 src/etc/inc/pfsense-utils.inc:3193
+#: src/etc/inc/pfsense-utils.inc:3153 src/etc/inc/pfsense-utils.inc:3196
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
@@ -3662,83 +3658,83 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3156
+#: src/etc/inc/pfsense-utils.inc:3159
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3157
+#: src/etc/inc/pfsense-utils.inc:3160
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3158
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3169
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3167
+#: src/etc/inc/pfsense-utils.inc:3170
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3168
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3169
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3182
+#: src/etc/inc/pfsense-utils.inc:3185
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3201
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3202
 msgid "Network Lock error Service"
-msgstr ""
+msgstr "Netwerk Slot fout Diens"
 
-#: src/etc/inc/pfsense-utils.inc:3200
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3201
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3210
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3208
+#: src/etc/inc/pfsense-utils.inc:3211
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3209
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3210
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -3751,14 +3747,20 @@ msgstr "Waarskuwing, kon nie meld oopmaak vir skryf nie."
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr ""
+"FOUT !!! 'N Fout het op pkg-uitvoering plaasgevind (rc = %d) met parameters "
+"'%s' gebeur:"
 
 #: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr ""
+"FOUT: Fout gebeur terwyl die probeerslag om die pakket lys te kry. Aborteer.."
+"."
 
 #: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr ""
+"FOUT: Fout gebeur terwyl die probeerslag om die pakket versie te kry. "
+"Aborteer..."
 
 #: src/etc/inc/pkg-utils.inc:537
 #, php-format
@@ -4131,11 +4133,12 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr "WebCfg - Status: Meld: Deurgange"
+msgstr "WebCfg - Status: Logboek: Deurgangspoorte"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr "Laat toegang toe aan die 'Status: Melde stelsel: Gateways' bladsy."
+msgstr ""
+"Laat toegang toe aan die 'Status: Logboek Stelsel: Deurgangspoorte' bladsy."
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
@@ -5219,11 +5222,11 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
-msgstr ""
+msgstr "WebCfg - Dienste: Roeteerder Advertensies"
 
 #: src/etc/inc/priv.defs.inc:782
 msgid "Allow access to the 'Services: Router Advertisements' page."
-msgstr ""
+msgstr "Laat toegang tot die 'Services: Roeteerder Advertensies' bladsy."
 
 #: src/etc/inc/priv.defs.inc:787
 msgid "WebCfg - Services: SNMP"
@@ -5372,19 +5375,19 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
-msgstr "WebCfg - Status: Deurgang Groepe"
+msgstr "WebCfg - Status: Deurgangspoorte Groepe"
 
 #: src/etc/inc/priv.defs.inc:896
 msgid "Allow access to the 'Status: Gateway Groups' page."
-msgstr "Laat toegang toe aan die 'Status: Deurgang Groepe' bladsy."
+msgstr "Laat toegang toe aan die 'Status: Deurgangspoorte Groepe' bladsy."
 
 #: src/etc/inc/priv.defs.inc:901
 msgid "WebCfg - Status: Gateways"
-msgstr "WebCfg - Status: Deurgange"
+msgstr "WebCfg - Status: Deurgangspoorte"
 
 #: src/etc/inc/priv.defs.inc:902
 msgid "Allow access to the 'Status: Gateways' page."
-msgstr "Laat toegang toe aan die 'Status: Deurgange' bladsy."
+msgstr "Laat toegang toe aan die 'Status: Deurgangspoorte' bladsy."
 
 #: src/etc/inc/priv.defs.inc:907
 msgid "WebCfg - Status: Traffic Graph"
@@ -5653,36 +5656,39 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1109
 msgid "WebCfg - System: Gateway Groups"
-msgstr "WebCfg - Stelsel: Deurgang Groepe"
+msgstr "WebCfg - Stelsel: Deurgangspoorte Groepe"
 
 #: src/etc/inc/priv.defs.inc:1110
 msgid "Allow access to the 'System: Gateway Groups' page."
-msgstr "Laat toegang toe aan die 'Stelsel: Deurgang Groepe' bladsy."
+msgstr "Laat toegang toe aan die 'Stelsel: Deurgangspoorte Groepe' bladsy."
 
 #: src/etc/inc/priv.defs.inc:1115
 msgid "WebCfg - System: Gateways: Edit Gateway Groups"
-msgstr "WebCfg - Stelsel: Derugange: Wysig Deurgang Groepe"
+msgstr "WebCfg - Stelsel: Derugangspoorte: Wysig Deurgangspoorte Groepe"
 
 #: src/etc/inc/priv.defs.inc:1116
 msgid "Allow access to the 'System: Gateways: Edit Gateway Groups' page."
 msgstr ""
-"Laat toegang toe aan die 'Stelsel: Deurgange: Wysig Deurgang Groepe' bladsy."
+"Laat toegang toe aan die 'Stelsel: Deurgangspoorte: Wysig Deurgangspoorte "
+"Groepe' bladsy."
 
 #: src/etc/inc/priv.defs.inc:1121
 msgid "WebCfg - System: Gateways"
-msgstr "WebCfg - Stelsel: Deurgange"
+msgstr "WebCfg - Stelsel: Deurgangspoorte"
 
 #: src/etc/inc/priv.defs.inc:1122
 msgid "Allow access to the 'System: Gateways' page."
-msgstr "Laat toegang toe aan die 'Stelsel: Deurgange' bladsy."
+msgstr "Laat toegang toe aan die 'Stelsel: Deurgangspporte' bladsy."
 
 #: src/etc/inc/priv.defs.inc:1127
 msgid "WebCfg - System: Gateways: Edit Gateway"
-msgstr "WebCfg - Stelsel: Deurgange: Wysig Deurgang"
+msgstr "WebCfg - Stelsel: Deurgangspoorte: Wysig Deurgangspoort"
 
 #: src/etc/inc/priv.defs.inc:1128
 msgid "Allow access to the 'System: Gateways: Edit Gateway' page."
-msgstr "Laat toegang toe aan die \"Stelsel: Deurgange: Wysig Deurgang' bladsy."
+msgstr ""
+"Laat toegang toe aan die \"Stelsel: Deurgangspoorte: Wysig Deurgangpoort' "
+"bladsy."
 
 #: src/etc/inc/priv.defs.inc:1133
 msgid "WebCfg - System: Group Manager"
@@ -5902,7 +5908,7 @@ msgstr ""
 
 #: src/etc/inc/radius.inc:416
 msgid "Error sending request:"
-msgstr ""
+msgstr "Kon nie versoek stuur nie:"
 
 #: src/etc/inc/radius.inc:422
 msgid "RADIUS_ACCESS_ACCEPT is unexpected for accounting"
@@ -5918,14 +5924,14 @@ msgid "Unexpected return value: %s"
 msgstr ""
 
 #: src/etc/inc/rrd.inc:32
-#, php-format
+#, fuzzy, php-format
 msgid "RRD dump failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "RRD storty het misluk met %1$s, die fout is: %2$s"
 
 #: src/etc/inc/rrd.inc:43
-#, php-format
+#, fuzzy, php-format
 msgid "RRD create failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "RRD skep misluk het verlaat met %1$s, die fout is: %2$s"
 
 #: src/etc/inc/rrd.inc:58
 #, php-format
@@ -5949,7 +5955,7 @@ msgstr ""
 
 #: src/etc/inc/service-utils.inc:243
 msgid "Router Advertisement Daemon"
-msgstr ""
+msgstr "Roteerder Advertensie Daemoon"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
 #: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
@@ -6015,9 +6021,8 @@ msgid "DHCP Service"
 msgstr ""
 
 #: src/etc/inc/service-utils.inc:317
-#, fuzzy
 msgid "Gateway Monitoring Daemon"
-msgstr "Deurgang Moniteringsproses"
+msgstr "Deurgangspoort Moniteringsproses"
 
 #: src/etc/inc/service-utils.inc:324
 msgid "SNMP Service"
@@ -6057,7 +6062,7 @@ msgstr ""
 
 #: src/etc/inc/service-utils.inc:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
-#: src/usr/local/www/firewall_nat_edit.php:658
+#: src/usr/local/www/firewall_nat_edit.php:690
 #: src/usr/local/www/firewall_nat_npt_edit.php:188
 #: src/usr/local/www/firewall_nat_out_edit.php:463
 #: src/usr/local/www/firewall_rules_edit.php:1195
@@ -6120,11 +6125,11 @@ msgstr ""
 
 #: src/etc/inc/services.inc:382
 msgid "Error: cannot open radvd.conf in services_radvd_configure()."
-msgstr ""
+msgstr "Fout: kan nie radvd.conf oopmaak in services_radvd_configure() nie."
 
 #: src/etc/inc/services.inc:399
 msgid "Shutting down Router Advertisment daemon cleanly"
-msgstr ""
+msgstr "Sluit roeteerder advertensie daemoon skoon af"
 
 #: src/etc/inc/services.inc:501
 msgid "Starting DHCP service..."
@@ -6148,6 +6153,7 @@ msgstr ""
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
+"Fout: kan nie dhcpd.conf oopmaak in services_dhcpdv4_configure () nie.%s"
 
 #: src/etc/inc/services.inc:1648
 msgid "Could not write Igmpproxy configuration file!"
@@ -6197,6 +6203,7 @@ msgstr ""
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
+"Fout: kan nie snmpd.conf oopmaak in services_snmpd_configure () nie.%S"
 
 #: src/etc/inc/services.inc:2629
 #, php-format
@@ -6225,11 +6232,13 @@ msgstr ""
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
+"PhpDynDNS: FOUT terwyl die IP-adres (A) vir %1$s (%2$s) opgedateer word"
 
 #: src/etc/inc/services.inc:2708
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
+"PhpDynDNS: FOUT terwyl die IP-adres (AAAA) vir %1$s (%2$s) opgedateer word"
 
 #: src/etc/inc/services.inc:2742
 msgid "Created:"
@@ -6443,7 +6452,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:232
 #: src/usr/local/www/firewall_nat_1to1.php:153
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
-#: src/usr/local/www/firewall_nat_edit.php:890
+#: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
 #: src/usr/local/www/firewall_nat_npt_edit.php:232
 #: src/usr/local/www/firewall_nat_out.php:287
@@ -6550,7 +6559,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:209
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -6757,7 +6766,7 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:421
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/system.php:517
+#: src/usr/local/www/system.php:524
 #: src/usr/local/www/system_certmanager.php:887
 #: src/usr/local/www/system_usermanager.php:659
 msgid "Delete"
@@ -6834,7 +6843,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_edit.php:671
 #: src/usr/local/www/firewall_aliases_import.php:265
 #: src/usr/local/www/firewall_nat_1to1_edit.php:533
-#: src/usr/local/www/firewall_nat_edit.php:893
+#: src/usr/local/www/firewall_nat_edit.php:897
 #: src/usr/local/www/firewall_nat_npt_edit.php:235
 #: src/usr/local/www/firewall_nat_out_edit.php:667
 #: src/usr/local/www/firewall_virtual_ip_edit.php:425
@@ -6978,12 +6987,13 @@ msgstr ""
 
 #: src/etc/inc/system.inc:546
 msgid "Error: cannot open hosts file in system_hosts_generate()."
-msgstr ""
+msgstr "Fout: kan nie gashere lêer oopmaak in system_hosts_generate() nie."
 
 #: src/etc/inc/system.inc:716
 msgid "Not adding default route because OLSR dynamic gateway is enabled."
 msgstr ""
-"Voeg nie verstek roete by nie want OLSR dinamiese deurgang is aangeskakel."
+"Voeg nie verstek roete by nie want OLSR dinamiese deurgangspoort is "
+"aangeskakel."
 
 #: src/etc/inc/system.inc:740
 #, php-format
@@ -6998,7 +7008,7 @@ msgstr ""
 #: src/etc/inc/system.inc:772
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
-msgstr "Statiese Roetes: Deurgang IP kon nie gevind word vir %s nie"
+msgstr "Statiese Roetes: Deurgangspoort IP kon nie gevind word vir %s nie"
 
 #: src/etc/inc/system.inc:997
 msgid "Starting syslog..."
@@ -7007,7 +7017,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1170
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
-msgstr ""
+msgstr "Fout: kan nie syslog.conf oopmaak in system_syslogd_start() nie.%s"
 
 #: src/etc/inc/system.inc:1256
 msgid "Creating SSL Certificate for this host"
@@ -7022,6 +7032,7 @@ msgstr ""
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
+"Kon nie WebGUI Sertifikaat skep nie: openssl biblioteek opbrengste: %s"
 
 #: src/etc/inc/system.inc:1283
 #, php-format
@@ -7041,16 +7052,20 @@ msgstr ""
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr ""
+"Fout: kan nie sertifikaat lêer oopmaak in system_webgui_start() nie. %s"
 
 #: src/etc/inc/system.inc:1556
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
+"Fout: kan nie sertifikaat sleutel lêer oopmaak in system_webgui_start() nie. "
+"%s"
 
 #: src/etc/inc/system.inc:1583
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr ""
+"Fout: kan nie %1$s in system_generate_nginx_config () oopmaak nie.%2$s"
 
 #: src/etc/inc/system.inc:1632
 msgid "Setting timezone..."
@@ -7064,7 +7079,7 @@ msgstr ""
 #: src/etc/inc/system.inc:2169
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
-msgstr ""
+msgstr "Fout: kan nie dmesg.boot oopmaak in system_dmesg_save() nie. %s"
 
 #: src/etc/inc/system.inc:2196
 msgid "Setting hard disk standby... "
@@ -7284,12 +7299,12 @@ msgstr ""
 #: src/etc/inc/upgrade_config.inc:755
 #, php-format
 msgid "Interface %s Static Gateway"
-msgstr "Koppelvlak %s Statiese Deurgang"
+msgstr "Koppelvlak %s Statiese Deurgangspoort"
 
 #: src/etc/inc/upgrade_config.inc:758
 #, php-format
 msgid "Interface %s Dynamic Gateway"
-msgstr "Koppelvlak %s Dinamiese Deurgang"
+msgstr "Koppelvlak %s Dinamiese Deurgangspoort"
 
 #: src/etc/inc/upgrade_config.inc:825
 #, php-format
@@ -7349,7 +7364,7 @@ msgstr ""
 #: src/etc/inc/upgrade_config.inc:5090
 #, php-format
 msgid "RRD restore failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "RRD herstel misluk verlaat met %1$s, die fout is: %2$s"
 
 #: src/etc/inc/upgrade_config.inc:5099
 #, php-format
@@ -7442,11 +7457,11 @@ msgstr ""
 
 #: src/etc/inc/util.inc:2669
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
-msgstr ""
+msgstr "Fout: Poging om DUID lêer te skryf - Ongeldige DUID opgespoor"
 
 #: src/etc/inc/util.inc:2679
 msgid "Error: attempting to write DUID file - File write error"
-msgstr ""
+msgstr "Fout: probeer om DUID lêer te skryf - lêer skryffout"
 
 #: src/etc/inc/voucher.inc:105
 #, php-format
@@ -7504,7 +7519,7 @@ msgstr ""
 #: src/etc/inc/voucher.inc:464
 #, php-format
 msgid "Error: cannot write voucher.cfg"
-msgstr ""
+msgstr "Fout: kan nie voucher.cfg skryf nie"
 
 #: src/etc/inc/voucher.inc:519
 #, php-format
@@ -7535,11 +7550,14 @@ msgid ""
 "IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from "
 "configuration file."
 msgstr ""
+"IPsec ERROR: Kon nie fase 1 bron vir verbinding %s vind nie. Gaan weg laat "
+"van konfigurasielêer."
 
 #: src/etc/inc/vpn.inc:303
 #, php-format
 msgid "The remote gateway %s already exists on another phase 1 entry"
-msgstr "Die afgeleë deurgang %s bestaan reeds op 'n ander fase 1 inskrywing"
+msgstr ""
+"Die afgeleë deurgangspoort %s bestaan reeds op 'n ander fase 1 inskrywing"
 
 #: src/etc/inc/vpn.inc:620
 #, php-format
@@ -7549,32 +7567,32 @@ msgstr "Waarskuwing: Vermiste CRL data vir %s"
 #: src/etc/inc/vpn.inc:625
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
-msgstr ""
+msgstr "Fout: Kan nie IPsec CRL lêer vir %s skryf nie"
 
 #: src/etc/inc/vpn.inc:649
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
-msgstr ""
+msgstr "Fout: Ongeldige fase1 sertifikaat verwysing vir %s"
 
 #: src/etc/inc/vpn.inc:667
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
-msgstr ""
+msgstr "Fout: Kan nie fase1 sleutel lêer skryf vir %s nie"
 
 #: src/etc/inc/vpn.inc:674
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
-msgstr ""
+msgstr "Fout: Kan nie fase1 sertifikaatlêer vir %s skryf nie"
 
 #: src/etc/inc/vpn.inc:739
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
-msgstr ""
+msgstr "Fout: Ongeldige sertifikaat huts inligting vir %s"
 
 #: src/etc/inc/vpn.inc:744
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
-msgstr ""
+msgstr "Fout: Kan nie IPsec CA lêer vir %s skryf nie"
 
 #: src/etc/inc/vpn.inc:1363
 #, php-format
@@ -7597,12 +7615,12 @@ msgstr ""
 #: src/etc/inc/vpn.inc:1563
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_pppoe_configure()."
-msgstr ""
+msgstr "Fout: kan nie mpd.conf oopmaak in vpn_pppoe_configure () nie."
 
 #: src/etc/inc/vpn.inc:1680
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_pppoe_configure()."
-msgstr ""
+msgstr "Fout: kan nie mpd.secret oopmaak in vpn_pppoe_configure() nie."
 
 #: src/etc/inc/vpn.inc:1714
 msgid "done"
@@ -7615,41 +7633,41 @@ msgstr ""
 #: src/etc/inc/vpn.inc:1775
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
-msgstr ""
+msgstr "Fout: kan nie mpd.conf oopmaak in vpn_l2tp_configure() nie."
 
 #: src/etc/inc/vpn.inc:1867
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
-msgstr ""
+msgstr "Fout: kan nie mpd.secret oopmaak in vpn_l2tp_configure() nie."
 
 #: src/etc/inc/xmlparse.inc:87 src/etc/inc/xmlparse_attr.inc:72
 #, php-format
 msgid "XML error: %1$s at line %2$d cannot occur more than once"
-msgstr ""
+msgstr "XML fout: %1$s by lyn %2$d kan nie meer as een keer voorkom nie"
 
 #: src/etc/inc/xmlparse.inc:180 src/etc/inc/xmlparse_attr.inc:188
 msgid "Error: could not open XML input"
-msgstr ""
+msgstr "Fout: kon nie XML invoer oopmaak nie"
 
 #: src/etc/inc/xmlparse.inc:186
 #, php-format
 msgid "XML error: %1$s at line %2$d in %3$s"
-msgstr ""
+msgstr "XML fout: %1$s by lyn %2$d in %3$s"
 
 #: src/etc/inc/xmlparse.inc:206 src/etc/inc/xmlparse_attr.inc:211
 #, php-format
 msgid "XML error: no %s object found!"
-msgstr ""
+msgstr "XML fout: geen %s voorwerp gevind nie!"
 
 #: src/etc/inc/xmlparse_attr.inc:198
 #, php-format
 msgid "XML error: %1$s at line %2$d"
-msgstr ""
+msgstr "XML fout: %1$s op lyn %2$d"
 
 #: src/etc/inc/xmlreader.inc:161
 #, php-format
 msgid "Error returned while trying to parse %s"
-msgstr ""
+msgstr "Fout het teruggekom terwyl %s probeer om te ontleed was"
 
 #: src/etc/inc/xmlrpc_client.inc:91
 #, php-format
@@ -7662,10 +7680,12 @@ msgid ""
 "A communications error occurred while attempting XMLRPC sync with %s "
 "(pfsense.%s)."
 msgstr ""
+"'N Kommuni kasie fout het voorgekom terwyl XMLRPC sinkronisering met %s "
+"(pfsense.%s) probeer word."
 
 #: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
-msgstr ""
+msgstr "Fout kode ontvang"
 
 #: src/usr/local/bin/dhcpd_gather_stats.php:102
 #: src/usr/local/www/status_dhcp_leases.php:189
@@ -7876,7 +7896,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:75
 #: src/usr/local/www/status_dhcp_leases.php:362
 #: src/usr/local/www/status_dhcpv6_leases.php:441
-#: src/usr/local/www/system.php:157
+#: src/usr/local/www/system.php:158
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:179
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:241
 msgid "Hostname"
@@ -8121,7 +8141,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:397
 msgid "The configuration could not be restored (file upload error)."
-msgstr ""
+msgstr "Die konfigurasie kon nie herstel word nie (lêer oplaai fout)."
 
 #: src/usr/local/www/diag_backup.php:421
 #: src/usr/local/www/firewall_aliases.php:161
@@ -8177,7 +8197,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_wireless.php:71
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/services_captiveportal_zones.php:75
-#: src/usr/local/www/status_interfaces.php:93
+#: src/usr/local/www/status_interfaces.php:94
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/widgets/include/interfaces.inc:23
 msgid "Interfaces"
@@ -8190,7 +8210,7 @@ msgstr ""
 #: src/usr/local/www/diag_backup.php:431 src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
-#: src/usr/local/www/firewall_nat_edit.php:644
+#: src/usr/local/www/firewall_nat_edit.php:676
 #: src/usr/local/www/firewall_nat_npt.php:119
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
@@ -8229,8 +8249,8 @@ msgstr ""
 #: src/usr/local/www/status_logs.php:96
 #: src/usr/local/www/status_logs_common.inc:88
 #: src/usr/local/www/status_logs_settings.php:216
-#: src/usr/local/www/system.php:95 src/usr/local/www/system.php:425
-#: src/usr/local/www/system.php:440
+#: src/usr/local/www/system.php:96 src/usr/local/www/system.php:432
+#: src/usr/local/www/system.php:447
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -8296,7 +8316,7 @@ msgid "Wake-on-LAN"
 msgstr ""
 
 #: src/usr/local/www/diag_backup.php:446
-#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:560
+#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
 #: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
@@ -8355,6 +8375,31 @@ msgstr ""
 #: src/usr/local/www/diag_backup.php:517 src/usr/local/www/diag_backup.php:564
 msgid "Encryption"
 msgstr ""
+
+#: src/usr/local/www/diag_backup.php:524 src/usr/local/www/diag_backup.php:571
+#: src/usr/local/www/interfaces.php:2588
+#: src/usr/local/www/interfaces_ppps_edit.php:210
+#: src/usr/local/www/interfaces_ppps_edit.php:213
+#: src/usr/local/www/interfaces_ppps_edit.php:221
+#: src/usr/local/www/interfaces_ppps_edit.php:224
+#: src/usr/local/www/interfaces_ppps_edit.php:611
+#: src/usr/local/www/services_checkip_edit.php:148
+#: src/usr/local/www/services_dyndns_edit.php:92
+#: src/usr/local/www/services_dyndns_edit.php:365
+#: src/usr/local/www/services_pppoe_edit.php:507
+#: src/usr/local/www/system_advanced_notifications.php:359
+#: src/usr/local/www/system_authservers.php:654
+#: src/usr/local/www/system_usermanager.php:195
+#: src/usr/local/www/system_usermanager.php:200
+#: src/usr/local/www/system_usermanager.php:762
+#: src/usr/local/www/system_usermanager.php:765
+#: src/usr/local/www/system_usermanager_passwordmg.php:40
+#: src/usr/local/www/vpn_l2tp_users_edit.php:80
+#: src/usr/local/www/vpn_l2tp_users_edit.php:159
+#: src/usr/local/www/vpn_openvpn_client.php:597
+#: src/usr/local/www/vpn_openvpn_client.php:622
+msgid "Password"
+msgstr "Wagwoord"
 
 #: src/usr/local/www/diag_backup.php:533
 msgid "Download configuration as XML"
@@ -8477,10 +8522,10 @@ msgid "Download File"
 msgstr ""
 
 #: src/usr/local/www/diag_command.php:233
-#: src/usr/local/www/services_captiveportal.php:1095
-#: src/usr/local/www/services_captiveportal.php:1129
-#: src/usr/local/www/services_captiveportal.php:1161
-#: src/usr/local/www/status.php:366
+#: src/usr/local/www/services_captiveportal.php:1102
+#: src/usr/local/www/services_captiveportal.php:1136
+#: src/usr/local/www/services_captiveportal.php:1168
+#: src/usr/local/www/status.php:368
 msgid "Download"
 msgstr ""
 
@@ -8499,12 +8544,16 @@ msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
 msgstr ""
+"Lyn %s blyk 'n fout te hê, en is uitgelig. Die volledige reaksie is "
+"hieronder."
 
 #: src/usr/local/www/diag_command.php:299
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Die kode blyk 'n fout te hê, maar die verantwoordelike lyn kan nie "
+"geïdentifiseer word nie. Die volledige reaksie is hieronder"
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -8512,10 +8561,12 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Let daarop dat die reël nommer in die volle PHP reaksie sal %s lyne te groot "
+"wees. Nestige kode en eval() foute kan foutief na \"lyn 1\" verwys."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Fout verwysing:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
@@ -8609,7 +8660,7 @@ msgid "Version"
 msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:220
-#: src/usr/local/www/diag_gmirror.php:303 src/usr/local/www/diag_pftop.php:125
+#: src/usr/local/www/diag_gmirror.php:303
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
 msgstr ""
@@ -8754,7 +8805,7 @@ msgstr ""
 msgid "No response"
 msgstr ""
 
-#: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:261
+#: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:266
 #: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
@@ -8821,7 +8872,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:181
 #: src/usr/local/www/services_dyndns_edit.php:282
 #: src/usr/local/www/services_rfc2136_edit.php:177
-#: src/usr/local/www/system.php:443
+#: src/usr/local/www/system.php:450
 msgid "*Hostname"
 msgstr ""
 
@@ -8957,8 +9008,8 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:182
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/easyrule.php:90 src/usr/local/www/firewall_nat.php:225
-#: src/usr/local/www/firewall_nat_edit.php:211
-#: src/usr/local/www/firewall_nat_edit.php:214
+#: src/usr/local/www/firewall_nat_edit.php:239
+#: src/usr/local/www/firewall_nat_edit.php:242
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/firewall_rules.php:382
 #: src/usr/local/www/firewall_rules_edit.php:457
@@ -9036,8 +9087,7 @@ msgid "# Connections"
 msgstr ""
 
 #: src/usr/local/www/diag_dump_states_sources.php:123
-#: src/usr/local/www/diag_pftop.php:124
-#: src/usr/local/www/status_interfaces.php:165
+#: src/usr/local/www/status_interfaces.php:166
 msgid "Rate"
 msgstr ""
 
@@ -9086,7 +9136,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:83
 msgid "Error while writing file."
-msgstr ""
+msgstr "Kon nie lêer skryf nie."
 
 #: src/usr/local/www/diag_edit.php:87
 msgid "File saved successfully."
@@ -9195,6 +9245,8 @@ msgid ""
 "There was an error performing the chosen mirror operation. Check the System "
 "Log for details."
 msgstr ""
+"Kon nie die gekose spieël operasie uitoefen nie. Gaan na die stelsel logboek "
+"vir besonderhede."
 
 #: src/usr/local/www/diag_gmirror.php:176
 msgid "Confirm Action"
@@ -9466,7 +9518,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
-#: src/usr/local/www/firewall_nat_edit.php:700
+#: src/usr/local/www/firewall_nat_edit.php:704
 #: src/usr/local/www/firewall_nat_npt_edit.php:195
 #: src/usr/local/www/firewall_nat_out_edit.php:505
 #: src/usr/local/www/firewall_rules_edit.php:1250
@@ -9520,7 +9572,7 @@ msgid "Select the type of traffic to be captured."
 msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:337
-#: src/usr/local/www/firewall_nat_edit.php:709
+#: src/usr/local/www/firewall_nat_edit.php:713
 #: src/usr/local/www/firewall_nat_out_edit.php:514
 #: src/usr/local/www/firewall_rules_edit.php:1297
 #: src/usr/local/www/system_authservers.php:737
@@ -9554,7 +9606,7 @@ msgstr ""
 #: src/usr/local/www/diag_packet_capture.php:356
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/firewall_aliases_edit.php:558
-#: src/usr/local/www/firewall_nat_edit.php:873
+#: src/usr/local/www/firewall_nat_edit.php:877
 #: src/usr/local/www/firewall_rules.php:384
 #: src/usr/local/www/firewall_rules.php:386
 #: src/usr/local/www/interfaces.php:3148 src/usr/local/www/interfaces.php:3172
@@ -9666,7 +9718,7 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: src/usr/local/www/diag_pf_info.php:102 src/usr/local/www/diag_pftop.php:167
+#: src/usr/local/www/diag_pf_info.php:102 src/usr/local/www/diag_pftop.php:164
 msgid "Output"
 msgstr ""
 
@@ -9712,9 +9764,6 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:106 src/usr/local/www/diag_smart.php:200
 #: src/usr/local/www/diag_smart.php:353
-#: src/usr/local/www/services_captiveportal.php:1088
-#: src/usr/local/www/services_captiveportal.php:1122
-#: src/usr/local/www/services_captiveportal.php:1154
 msgid "View"
 msgstr ""
 
@@ -9738,21 +9787,17 @@ msgid "Expiry"
 msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:122
-msgid "Peak"
-msgstr ""
-
-#: src/usr/local/www/diag_pftop.php:123
 msgid "Packet"
 msgstr ""
 
-#: src/usr/local/www/diag_pftop.php:126 src/usr/local/www/diag_testport.php:237
+#: src/usr/local/www/diag_pftop.php:123 src/usr/local/www/diag_testport.php:237
 #: src/usr/local/www/firewall_nat_out.php:281
 #: src/usr/local/www/firewall_nat_out.php:534
 #: src/usr/local/www/status_logs_common.inc:436
 msgid "Source Port"
 msgstr ""
 
-#: src/usr/local/www/diag_pftop.php:127 src/usr/local/www/firewall_nat.php:226
+#: src/usr/local/www/diag_pftop.php:124 src/usr/local/www/firewall_nat.php:226
 #: src/usr/local/www/status_logs_settings.php:345
 msgid "Source Address"
 msgstr ""
@@ -9761,11 +9806,11 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: src/usr/local/www/diag_pftop.php:134
+#: src/usr/local/www/diag_pftop.php:131
 msgid "Maximum # of States"
 msgstr ""
 
-#: src/usr/local/www/diag_pftop.php:169
+#: src/usr/local/www/diag_pftop.php:166
 msgid "Gathering pfTOP activity, please wait..."
 msgstr ""
 
@@ -9940,7 +9985,7 @@ msgstr ""
 msgid "Use a regular expression to filter the tables."
 msgstr ""
 
-#: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:147
+#: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:528
@@ -10148,7 +10193,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:224
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
 msgid "IP"
 msgstr ""
 
@@ -10199,29 +10244,29 @@ msgstr ""
 msgid "Tables"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:110
+#: src/usr/local/www/diag_tables.php:116
 #, php-format
 msgid "The %s file contents have been updated."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:124
+#: src/usr/local/www/diag_tables.php:129
 msgid "webConfigurator Lockout Table"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:126
+#: src/usr/local/www/diag_tables.php:131
 #, php-format
 msgid "%s Table"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:131
+#: src/usr/local/www/diag_tables.php:136
 msgid "Table to Display"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:132
+#: src/usr/local/www/diag_tables.php:137
 msgid "Table"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:139
+#: src/usr/local/www/diag_tables.php:144
 #, php-format
 msgid ""
 "Select a user-defined alias name or system table name to view its contents. "
@@ -10230,45 +10275,45 @@ msgid ""
 "used by the firewall."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:154
+#: src/usr/local/www/diag_tables.php:159
 msgid "Empty Table"
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:184
+#: src/usr/local/www/diag_tables.php:189
 #, php-format
 msgid "Table last updated on %s."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:186
+#: src/usr/local/www/diag_tables.php:191
 msgid "Date of last update of table is unknown."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:189
+#: src/usr/local/www/diag_tables.php:194
 #, php-format
 msgid "%s records."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:189
+#: src/usr/local/www/diag_tables.php:194
 msgid "."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:189
+#: src/usr/local/www/diag_tables.php:194
 msgid ","
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:201
+#: src/usr/local/www/diag_tables.php:206
 msgid "Hide table comments."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:202
+#: src/usr/local/www/diag_tables.php:207
 msgid "Show table comments."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:251
+#: src/usr/local/www/diag_tables.php:256
 msgid "No entries exist in this table."
 msgstr ""
 
-#: src/usr/local/www/diag_tables.php:288
+#: src/usr/local/www/diag_tables.php:293
 msgid "Remove this entry"
 msgstr ""
 
@@ -10360,6 +10405,10 @@ msgid ""
 "is forced and a hostname is used that only returns an AAAA IPv6 IP address, "
 "it will not work."
 msgstr ""
+"As IPv4 of IPv6 gedwing word en 'n gasheernaam gebruik word wat nie 'n "
+"resultaat bevat met die protokol nie, sal dit 'n fout veroorsaak. "
+"Byvoorbeeld, as IPv4 gedwing word en 'n gasheernaam word gebruik wat slegs "
+"'n AAAA IPv6 IP-adres gee, sal dit nie werk nie."
 
 #: src/usr/local/www/diag_testport.php:281
 msgid "Received Remote Text"
@@ -10377,7 +10426,7 @@ msgstr ""
 #: src/usr/local/www/diag_traceroute.php:115
 #, php-format
 msgid "Error: %s could not be traced/resolved"
-msgstr ""
+msgstr "Fout: %s kon nie opgespoor / opgelos word nie"
 
 #: src/usr/local/www/diag_traceroute.php:136
 msgid "Select the protocol to use."
@@ -10411,6 +10460,9 @@ msgid ""
 "By default, traceroute uses UDP but that may be blocked by some routers. "
 "Check this box to use ICMP instead, which may succeed. "
 msgstr ""
+"By verstek gebruik Traceroute UDP, maar dit kan deur sommige roeteerder "
+"geblokkeer word. Merk hierdie boks in om ICMP eerder te gebruik, wat dalk "
+"kan slaag."
 
 #: src/usr/local/www/easyrule.php:53 src/usr/local/www/easyrule.php:101
 msgid "Invalid action specified."
@@ -10422,7 +10474,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
-#: src/usr/local/www/firewall_nat_edit.php:644
+#: src/usr/local/www/firewall_nat_edit.php:676
 #: src/usr/local/www/firewall_nat_npt.php:119
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
@@ -10455,8 +10507,8 @@ msgid "Rule Type"
 msgstr ""
 
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:92
-#: src/usr/local/www/firewall_nat_edit.php:724
 #: src/usr/local/www/firewall_nat_edit.php:728
+#: src/usr/local/www/firewall_nat_edit.php:732
 #: src/usr/local/www/firewall_nat_out.php:280
 #: src/usr/local/www/firewall_nat_out.php:533
 #: src/usr/local/www/firewall_nat_out_edit.php:162
@@ -10469,7 +10521,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:206
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:207
 #: src/usr/local/www/widgets/widgets/log.widget.php:115
 msgid "Source"
 msgstr ""
@@ -10489,7 +10541,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:207
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:208
 #: src/usr/local/www/widgets/widgets/log.widget.php:116
 msgid "Destination"
 msgstr ""
@@ -10499,12 +10551,16 @@ msgid ""
 "This is the Easy Rule status page, mainly used to display errors when adding "
 "rules."
 msgstr ""
+"Die is die Maklike Reël status bladsy, wat hoofsaaklik gebruik word om foute "
+"te vertoon wanneer reëls bygevoeg word"
 
 #: src/usr/local/www/easyrule.php:119
 msgid ""
 "There apparently was not an error, and this page was navigated to directly "
 "without any instructions for what it should do."
 msgstr ""
+"Daar was blykbaar nie 'n fout nie, en hierdie bladsy is direk na die hand "
+"gewys sonder enige instruksies vir wat dit moet doen"
 
 #: src/usr/local/www/easyrule.php:121
 msgid ""
@@ -10727,7 +10783,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
-#: src/usr/local/www/firewall_nat_edit.php:644
+#: src/usr/local/www/firewall_nat_edit.php:676
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out_edit.php:393
 #: src/usr/local/www/firewall_rules.php:776
@@ -11048,7 +11104,7 @@ msgid "Hint"
 msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:719
-#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:469
+#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:476
 #: src/usr/local/www/vpn_ipsec_phase2.php:524
 #: src/usr/local/www/vpn_ipsec_phase2.php:531
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
@@ -11075,6 +11131,7 @@ msgstr ""
 #, php-format
 msgid "%s is not an IP address. Please correct the error to continue"
 msgstr ""
+"%s is nie 'n IP adres nie. Korrigeer asseblief die fout om voort te gaan"
 
 #: src/usr/local/www/firewall_aliases_import.php:157
 msgid ""
@@ -11123,7 +11180,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_import.php:242
 msgid "192.168.1.254 Home router"
-msgstr ""
+msgstr "192.168.1.254 Tuisroeteerder"
 
 #: src/usr/local/www/firewall_aliases_import.php:244
 msgid "10.20.0.0/16 Office network"
@@ -11148,7 +11205,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat.php:197
 #: src/usr/local/www/firewall_nat_1to1.php:134
-#: src/usr/local/www/firewall_nat_edit.php:644
+#: src/usr/local/www/firewall_nat_edit.php:676
 #: src/usr/local/www/firewall_nat_npt.php:133
 #: src/usr/local/www/firewall_nat_out.php:220
 msgid "Port Forward"
@@ -11300,8 +11357,8 @@ msgid "Legend"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:540
-#: src/usr/local/www/firewall_nat_edit.php:919
-#: src/usr/local/www/firewall_nat_edit.php:954
+#: src/usr/local/www/firewall_nat_edit.php:923
+#: src/usr/local/www/firewall_nat_edit.php:958
 #: src/usr/local/www/firewall_rules.php:847
 #: src/usr/local/www/firewall_rules_edit.php:1173
 #: src/usr/local/www/services_captiveportal_mac.php:60
@@ -11429,17 +11486,17 @@ msgid "External subnet"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:130
-#: src/usr/local/www/firewall_nat_edit.php:219
+#: src/usr/local/www/firewall_nat_edit.php:247
 msgid "Source address"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
-#: src/usr/local/www/firewall_nat_edit.php:224
+#: src/usr/local/www/firewall_nat_edit.php:252
 msgid "Destination address"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
-#: src/usr/local/www/firewall_nat_edit.php:282
+#: src/usr/local/www/firewall_nat_edit.php:314
 msgid "Alias entries must specify a single host or alias."
 msgstr ""
 
@@ -11469,7 +11526,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
-#: src/usr/local/www/firewall_nat_edit.php:305
+#: src/usr/local/www/firewall_nat_edit.php:337
 #: src/usr/local/www/firewall_nat_out_edit.php:221
 #: src/usr/local/www/firewall_rules_edit.php:567
 msgid "A valid destination bit count must be specified."
@@ -11485,8 +11542,8 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
-#: src/usr/local/www/firewall_nat_edit.php:535
-#: src/usr/local/www/firewall_nat_edit.php:575
+#: src/usr/local/www/firewall_nat_edit.php:567
+#: src/usr/local/www/firewall_nat_edit.php:607
 #: src/usr/local/www/firewall_nat_out_edit.php:525
 #: src/usr/local/www/firewall_nat_out_edit.php:550
 #: src/usr/local/www/firewall_rules_edit.php:1366
@@ -11501,8 +11558,8 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:302
 #: src/usr/local/www/firewall_nat_1to1_edit.php:347
-#: src/usr/local/www/firewall_nat_edit.php:538
-#: src/usr/local/www/firewall_nat_edit.php:578
+#: src/usr/local/www/firewall_nat_edit.php:570
+#: src/usr/local/www/firewall_nat_edit.php:610
 #: src/usr/local/www/firewall_rules_edit.php:1377
 #: src/usr/local/www/guiconfig.inc:230
 msgid "PPPoE clients"
@@ -11510,16 +11567,16 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:306
 #: src/usr/local/www/firewall_nat_1to1_edit.php:351
-#: src/usr/local/www/firewall_nat_edit.php:542
-#: src/usr/local/www/firewall_nat_edit.php:582
+#: src/usr/local/www/firewall_nat_edit.php:574
+#: src/usr/local/www/firewall_nat_edit.php:614
 #: src/usr/local/www/firewall_rules_edit.php:1380
 #: src/usr/local/www/guiconfig.inc:231
 msgid "L2TP clients"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
-#: src/usr/local/www/firewall_nat_edit.php:535
-#: src/usr/local/www/firewall_nat_edit.php:575
+#: src/usr/local/www/firewall_nat_edit.php:567
+#: src/usr/local/www/firewall_nat_edit.php:607
 #: src/usr/local/www/firewall_rules_edit.php:1365
 msgid "Single host or alias"
 msgstr ""
@@ -11541,7 +11598,7 @@ msgid "Excludes the address from a later, more general, rule."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:442
-#: src/usr/local/www/firewall_nat_edit.php:680
+#: src/usr/local/www/firewall_nat_edit.php:65
 #: src/usr/local/www/firewall_nat_npt_edit.php:151
 #: src/usr/local/www/firewall_rules.php:140
 #: src/usr/local/www/firewall_rules_edit.php:1090
@@ -11549,7 +11606,7 @@ msgid "L2TP VPN"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:447
-#: src/usr/local/www/firewall_nat_edit.php:685
+#: src/usr/local/www/firewall_nat_edit.php:70
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
 #: src/usr/local/www/firewall_rules_edit.php:1094
@@ -11560,7 +11617,7 @@ msgid "PPPoE Server"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
-#: src/usr/local/www/firewall_nat_edit.php:690
+#: src/usr/local/www/firewall_nat_edit.php:75
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
@@ -11586,7 +11643,7 @@ msgid "IPsec"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:465
-#: src/usr/local/www/firewall_nat_edit.php:703
+#: src/usr/local/www/firewall_nat_edit.php:707
 msgid ""
 "Choose which interface this rule applies to. In most cases \"WAN\" is "
 "specified."
@@ -11614,8 +11671,8 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:488
 #: src/usr/local/www/firewall_nat_1to1_edit.php:515
-#: src/usr/local/www/firewall_nat_edit.php:743
-#: src/usr/local/www/firewall_nat_edit.php:811
+#: src/usr/local/www/firewall_nat_edit.php:747
+#: src/usr/local/www/firewall_nat_edit.php:815
 #: src/usr/local/www/firewall_nat_out_edit.php:526
 #: src/usr/local/www/firewall_nat_out_edit.php:551
 #: src/usr/local/www/firewall_rules_edit.php:457
@@ -11644,8 +11701,8 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:494
 #: src/usr/local/www/firewall_nat_1to1_edit.php:522
-#: src/usr/local/www/firewall_nat_edit.php:750
-#: src/usr/local/www/firewall_nat_edit.php:818
+#: src/usr/local/www/firewall_nat_edit.php:754
+#: src/usr/local/www/firewall_nat_edit.php:822
 msgid "Address/mask"
 msgstr ""
 
@@ -11656,7 +11713,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:501
-#: src/usr/local/www/firewall_nat_edit.php:797
+#: src/usr/local/www/firewall_nat_edit.php:801
 #: src/usr/local/www/firewall_nat_out_edit.php:544
 msgid "*Destination"
 msgstr ""
@@ -11668,12 +11725,12 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
-#: src/usr/local/www/firewall_nat_edit.php:909
+#: src/usr/local/www/firewall_nat_edit.php:913
 msgid "Use system default"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:542
-#: src/usr/local/www/firewall_nat_edit.php:912
+#: src/usr/local/www/firewall_nat_edit.php:916
 #: src/usr/local/www/firewall_rules.php:783
 #: src/usr/local/www/services_dyndns_edit.php:254
 #: src/usr/local/www/vpn_ipsec_phase1.php:859
@@ -11682,40 +11739,44 @@ msgid "Disable"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
-#: src/usr/local/www/firewall_nat_edit.php:906
+#: src/usr/local/www/firewall_nat_edit.php:910
 msgid "NAT reflection"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:125
+#: src/usr/local/www/firewall_nat_edit.php:153
 #, php-format
 msgid ""
 "Invalid characters detected %s. Please remove invalid characters and save "
 "again."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:211
+#: src/usr/local/www/firewall_nat_edit.php:239
 msgid "Destination port from"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:211
+#: src/usr/local/www/firewall_nat_edit.php:239
 msgid "Destination port to"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:229
+#: src/usr/local/www/firewall_nat_edit.php:257
 msgid "Redirect target IP"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:255
+#: src/usr/local/www/firewall_nat_edit.php:283
+msgid "The submitted interface does not exist."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
 msgid "\"%s\" is not a valid redirect target IP address or host alias."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:259
+#: src/usr/local/www/firewall_nat_edit.php:291
 #, php-format
 msgid "Redirect target IP must be IPv4."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:263
+#: src/usr/local/www/firewall_nat_edit.php:295
 #: src/usr/local/www/firewall_rules_edit.php:495
 #, php-format
 msgid ""
@@ -11723,7 +11784,7 @@ msgid ""
 "between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:266
+#: src/usr/local/www/firewall_nat_edit.php:298
 #: src/usr/local/www/firewall_rules_edit.php:498
 #, php-format
 msgid ""
@@ -11731,7 +11792,7 @@ msgid ""
 "between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:269
+#: src/usr/local/www/firewall_nat_edit.php:301
 #: src/usr/local/www/firewall_rules_edit.php:501
 #, php-format
 msgid ""
@@ -11739,7 +11800,7 @@ msgid ""
 "between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:272
+#: src/usr/local/www/firewall_nat_edit.php:304
 #: src/usr/local/www/firewall_rules_edit.php:504
 #, php-format
 msgid ""
@@ -11747,85 +11808,85 @@ msgid ""
 "between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:276
+#: src/usr/local/www/firewall_nat_edit.php:308
 #, php-format
 msgid ""
 "%s is not a valid redirect target port. It must be a port alias or integer "
 "between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:287
+#: src/usr/local/www/firewall_nat_edit.php:319
 #: src/usr/local/www/firewall_rules_edit.php:556
 #, php-format
 msgid "%s is not a valid source IP address or alias."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:290
+#: src/usr/local/www/firewall_nat_edit.php:322
 #, php-format
 msgid "Source must be IPv4."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:293
+#: src/usr/local/www/firewall_nat_edit.php:325
 #: src/usr/local/www/firewall_nat_out_edit.php:211
 #: src/usr/local/www/firewall_rules_edit.php:559
 msgid "A valid source bit count must be specified."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:299
+#: src/usr/local/www/firewall_nat_edit.php:331
 #: src/usr/local/www/firewall_rules_edit.php:564
 #, php-format
 msgid "%s is not a valid destination IP address or alias."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:302
+#: src/usr/local/www/firewall_nat_edit.php:334
 #, php-format
 msgid "Destination must be IPv4."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:325
+#: src/usr/local/www/firewall_nat_edit.php:357
 msgid "The target port range must be an integer between 1 and 65535."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:351
+#: src/usr/local/www/firewall_nat_edit.php:383
 msgid "The destination port range overlaps with an existing entry."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:480
+#: src/usr/local/www/firewall_nat_edit.php:512
 msgid "NAT Port Forward"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:523
+#: src/usr/local/www/firewall_nat_edit.php:555
 msgid "Firewall: NAT: Port Forward - saved/edited a port forward rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:575
+#: src/usr/local/www/firewall_nat_edit.php:607
 #: src/usr/local/www/firewall_nat_out_edit.php:525
 #: src/usr/local/www/firewall_rules_edit.php:1374
 msgid "This Firewall (self)"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:654
+#: src/usr/local/www/firewall_nat_edit.php:686
 msgid "Edit Redirect Entry"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:665
+#: src/usr/local/www/firewall_nat_edit.php:697
 msgid "No RDR (NOT)"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:668
+#: src/usr/local/www/firewall_nat_edit.php:700
 msgid ""
 "This option is rarely needed. Don't use this without thorough knowledge of "
 "the implications."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:712
+#: src/usr/local/www/firewall_nat_edit.php:716
 msgid ""
 "Choose which protocol this rule should match. In most cases \"TCP\" is "
 "specified."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:716
-#: src/usr/local/www/firewall_nat_edit.php:1148
+#: src/usr/local/www/firewall_nat_edit.php:720
+#: src/usr/local/www/firewall_nat_edit.php:1152
 #: src/usr/local/www/firewall_rules_edit.php:1485
 #: src/usr/local/www/firewall_rules_edit.php:1785
 #: src/usr/local/www/firewall_rules_edit.php:1857
@@ -11874,30 +11935,30 @@ msgstr ""
 msgid "Display Advanced"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:733
+#: src/usr/local/www/firewall_nat_edit.php:737
 msgid "Source not"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:754
+#: src/usr/local/www/firewall_nat_edit.php:758
 #: src/usr/local/www/firewall_virtual_ip.php:228
 #: src/usr/local/www/firewall_virtual_ip_edit.php:350
 msgid "Other"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:760
+#: src/usr/local/www/firewall_nat_edit.php:764
 msgid "Source port range"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:768
-#: src/usr/local/www/firewall_nat_edit.php:830
+#: src/usr/local/www/firewall_nat_edit.php:772
+#: src/usr/local/www/firewall_nat_edit.php:834
 msgid "From port"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:775
-#: src/usr/local/www/firewall_nat_edit.php:789
-#: src/usr/local/www/firewall_nat_edit.php:837
-#: src/usr/local/www/firewall_nat_edit.php:851
-#: src/usr/local/www/firewall_nat_edit.php:884
+#: src/usr/local/www/firewall_nat_edit.php:779
+#: src/usr/local/www/firewall_nat_edit.php:793
+#: src/usr/local/www/firewall_nat_edit.php:841
+#: src/usr/local/www/firewall_nat_edit.php:855
+#: src/usr/local/www/firewall_nat_edit.php:888
 #: src/usr/local/www/firewall_rules_edit.php:1441
 #: src/usr/local/www/firewall_rules_edit.php:1455
 #: src/usr/local/www/interfaces.php:2688
@@ -11906,48 +11967,48 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:782
-#: src/usr/local/www/firewall_nat_edit.php:844
+#: src/usr/local/www/firewall_nat_edit.php:786
+#: src/usr/local/www/firewall_nat_edit.php:848
 msgid "To port"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:791
+#: src/usr/local/www/firewall_nat_edit.php:795
 msgid ""
 "Specify the source port or port range for this rule. This is usually random "
 "and almost never equal to the destination port range (and should usually be "
 "'any'). The 'to' field may be left empty if only filtering a single port."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:801
+#: src/usr/local/www/firewall_nat_edit.php:805
 msgid "Destination not"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:822
+#: src/usr/local/www/firewall_nat_edit.php:826
 msgid "*Destination port range"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:853
+#: src/usr/local/www/firewall_nat_edit.php:857
 msgid ""
 "Specify the port or port range for the destination of the packet for this "
 "mapping. The 'to' field may be left empty if only mapping a single port. "
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:860
+#: src/usr/local/www/firewall_nat_edit.php:864
 msgid "*Redirect target IP"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:863
+#: src/usr/local/www/firewall_nat_edit.php:867
 #, php-format
 msgid ""
 "Enter the internal IP address of the server on which to map the ports.%s e.g."
 ": 192.168.1.12"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:865
+#: src/usr/local/www/firewall_nat_edit.php:869
 msgid "*Redirect target port"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:875
+#: src/usr/local/www/firewall_nat_edit.php:879
 #, php-format
 msgid ""
 "Specify the port on the machine with the IP address entered above. In case "
@@ -11956,62 +12017,61 @@ msgid ""
 "port\" above."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:898
+#: src/usr/local/www/firewall_nat_edit.php:902
 #: src/usr/local/www/firewall_nat_out_edit.php:655
 #: src/usr/local/www/firewall_rules_edit.php:1624
 msgid "No XMLRPC Sync"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:901
+#: src/usr/local/www/firewall_nat_edit.php:905
 msgid ""
 "This prevents the rule on Master from automatically syncing to other CARP "
 "members. This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:910
+#: src/usr/local/www/firewall_nat_edit.php:914
 msgid "Enable (NAT + Proxy)"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:911
+#: src/usr/local/www/firewall_nat_edit.php:915
 msgid "Enable (Pure NAT)"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:926
+#: src/usr/local/www/firewall_nat_edit.php:930
 #, php-format
 msgid "Rule %s"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:929
+#: src/usr/local/www/firewall_nat_edit.php:933
 msgid "View the filter rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:936
+#: src/usr/local/www/firewall_nat_edit.php:940
 msgid "Create new associated filter rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:941
-#: src/usr/local/www/firewall_nat_edit.php:948
+#: src/usr/local/www/firewall_nat_edit.php:945
+#: src/usr/local/www/firewall_nat_edit.php:952
 msgid "Filter rule association"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:952
+#: src/usr/local/www/firewall_nat_edit.php:956
 msgid "Add associated filter rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:953
+#: src/usr/local/www/firewall_nat_edit.php:957
 msgid "Add unassociated filter rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:956
-#, fuzzy
+#: src/usr/local/www/firewall_nat_edit.php:960
 msgid ""
 "The \"pass\" selection does not work properly with Multi-WAN. It will only "
 "work on an interface containing the default gateway."
 msgstr ""
-"Die \"pass\" seleksie werk nie behoorlik met Multi-WAN nie. Dit sal slegs "
-"werk op 'n koppelvlak met die standaarde deurgang."
+"Die \"slaag\" seleksie werk nie behoorlik met Multi-WAN nie. Dit sal slegs "
+"werk op 'n koppelvlak met die standaarde deurgangspoort."
 
-#: src/usr/local/www/firewall_nat_edit.php:1150
+#: src/usr/local/www/firewall_nat_edit.php:1154
 #: src/usr/local/www/firewall_rules_edit.php:1783
 #: src/usr/local/www/firewall_rules_edit.php:1855
 #: src/usr/local/www/interfaces_bridge_edit.php:655
@@ -12589,8 +12649,8 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
 #: src/usr/local/www/services_dhcp.php:1009
 #: src/usr/local/www/services_dhcp_edit.php:540
-#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:471
-#: src/usr/local/www/system.php:509
+#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:478
+#: src/usr/local/www/system.php:516
 #: src/usr/local/www/system_gateway_groups_edit.php:303
 #: src/usr/local/www/system_gateways.php:252
 #: src/usr/local/www/system_gateways_edit.php:184
@@ -12598,7 +12658,7 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:77
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:272
 msgid "Gateway"
-msgstr "Deurgang"
+msgstr "Deurgangspoort"
 
 #: src/usr/local/www/firewall_rules.php:388
 #: src/usr/local/www/status_queues.php:159
@@ -12961,24 +13021,24 @@ msgstr ""
 msgid ""
 "Gateways can not be assigned in a rule that applies to both IPv4 and IPv6."
 msgstr ""
-"Deurgange kan nie in 'n reël wat geld vir beide IPv4 en IPv6 toegeskryf word "
-"nie."
+"Deurgangspoort kan nie in 'n reël wat geld vir beide IPv4 en IPv6 toegeskryf "
+"word nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:352
 msgid "An IPv4 gateway group can not be assigned in IPv6 rules."
-msgstr "'N IPv4 deurgang groep kan nie IPv6 reëls toegeken word nie."
+msgstr "'N IPv4 deurgangspoort groep kan nie IPv6 reëls toegeken word nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:354
 msgid "An IPv6 gateway group can not be assigned in IPv4 rules."
-msgstr "'N IPv6 deurgang groep kan nie IPv4 reëls toegeken word nie."
+msgstr "'N IPv6 deurgangspoort groep kan nie IPv4 reëls toegeken word nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:365
 msgid "An IPv4 gateway can not be assigned in IPv6 rules."
-msgstr "'N IPv4 deurgang kan nie IPv6 reëls toegeken word nie."
+msgstr "'N IPv4 deurgangspoort kan nie IPv6 reëls toegeken word nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:368
 msgid "An IPv6 gateway can not be assigned in IPv4 rules."
-msgstr "'N IPv6 groep kan nie IPv4 reëls toegeken word nie."
+msgstr "'N IPv6 deurgangspoort kan nie IPv4 reëls toegeken word nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:465
 #, php-format
@@ -12988,7 +13048,8 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:468
 #, php-format
 msgid "%s is only valid if the gateway is set to 'default'."
-msgstr "%s is slegs geldig indien die derugang is ingestel op 'verstek'."
+msgstr ""
+"%s is slegs geldig indien die derugangspoort is ingestel op 'verstek'."
 
 #: src/usr/local/www/firewall_rules_edit.php:545
 #: src/usr/local/www/firewall_rules_edit.php:550
@@ -13049,8 +13110,8 @@ msgstr ""
 msgid ""
 "Gateways can not be used in Floating rules without choosing a direction."
 msgstr ""
-"Deurgange kan nie gebruik word in Drywende reëls sonder om 'n rigting te "
-"kies nie."
+"Deurgangspoorte kan nie gebruik word in Drywende reëls sonder om 'n rigting "
+"te kies nie."
 
 #: src/usr/local/www/firewall_rules_edit.php:652
 msgid ""
@@ -13074,8 +13135,8 @@ msgid ""
 "Please select a gateway, normally the interface selected gateway, so the "
 "limiters work correctly"
 msgstr ""
-"Kies 'n deurgang, gewoonlik die koppelvlak gekiesde deurgang, sodat die "
-"beperkers korrek werk"
+"Kies 'n deurgangspoort, gewoonlik die koppelvlak gekiesde deurgang, sodat "
+"die beperkers korrek werk"
 
 #: src/usr/local/www/firewall_rules_edit.php:665
 msgid "ID must be an integer"
@@ -13593,8 +13654,8 @@ msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
 msgstr ""
-"Laat as 'verstek' om die stelsel deurgang tafel gebruik. Of kies 'n deurgang "
-"om n' beleid gebaseerde deurgang te gebruik."
+"Laat as 'verstek' om die stelsel roete tafel gebruik. Of kies 'n deurgang om "
+"n' beleid gebaseerde deurgangspoort te gebruik."
 
 #: src/usr/local/www/firewall_rules_edit.php:1691
 msgid "In / Out pipe"
@@ -13965,8 +14026,8 @@ msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "Gateway."
 msgstr ""
-"Hierdie inskrywing kan nie geskrap word nie omdat dit nog gekla word deur "
-"ten minste een Deurgang."
+"Hierdie inskrywing kan nie geskrap word nie omdat dit nog verwys word deur "
+"ten minste een Deurgangspoort."
 
 #: src/usr/local/www/firewall_virtual_ip.php:182
 #, php-format
@@ -14331,7 +14392,7 @@ msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:269
 msgid "The following input errors were detected:"
-msgstr ""
+msgstr "Die volgende insette foute is opgespoor:"
 
 #: src/usr/local/www/guiconfig.inc:333
 msgid "Apply Changes"
@@ -14397,7 +14458,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:425
+#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:432
 msgid "General Setup"
 msgstr ""
 
@@ -14507,7 +14568,7 @@ msgstr ""
 msgid "CARP (failover)"
 msgstr ""
 
-#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:360
+#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:352
 msgid "Dashboard"
 msgstr ""
 
@@ -14529,7 +14590,7 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:228
 #: src/usr/local/www/widgets/include/gateways.inc:23
 msgid "Gateways"
-msgstr "Deurgange"
+msgstr "Deurgangspoorte"
 
 #: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
@@ -14761,31 +14822,38 @@ msgstr ""
 msgid "Contact a firewall administrator for more information."
 msgstr "Kontak 'n netskans administrateur vir meer inligting."
 
-#: src/usr/local/www/index.php:239
+#: src/usr/local/www/index.php:231
 #, php-format
 msgid "Welcome to %s!"
 msgstr ""
 
-#: src/usr/local/www/index.php:240
+#: src/usr/local/www/index.php:232
 msgid "One moment while the initial setup wizard starts."
 msgstr ""
 
-#: src/usr/local/www/index.php:241
+#: src/usr/local/www/index.php:233
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
 msgstr ""
 
-#: src/usr/local/www/index.php:242
+#: src/usr/local/www/index.php:234
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr ""
 
-#: src/usr/local/www/index.php:373 src/etc/inc/pfsense-utils.inc:324
+#: src/usr/local/www/index.php:365 src/etc/inc/pfsense-utils.inc:326
 msgid "Available Widgets"
 msgstr "Beskikbaare koppelvlakgeriefie"
 
-#: src/usr/local/www/index.php:624
+#: src/usr/local/www/index.php:392
+#, php-format
+msgid ""
+"Other dashboard settings are available from the <a href=\"%s\">General "
+"Setup</a> page."
+msgstr ""
+
+#: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 "Een of meer  koppelvlakgeriefie was verskuif, maar was nog nie gestoor nie."
@@ -15021,11 +15089,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:780
 msgid "A valid IPv4 gateway must be specified."
-msgstr ""
+msgstr "'N Geldige IPv4-deurgangspoort moet gespesifiseer word."
 
 #: src/usr/local/www/interfaces.php:792
 msgid "A valid IPv6 gateway must be specified."
-msgstr ""
+msgstr "'N Geldige IPv6-deurgangspoort moet gespesifiseer word."
 
 #: src/usr/local/www/interfaces.php:796
 msgid "The service name contains invalid characters."
@@ -15089,7 +15157,7 @@ msgid "The MSS must be an integer between 576 and 65535 bytes."
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3015
-#: src/usr/local/www/status_interfaces.php:163
+#: src/usr/local/www/status_interfaces.php:164
 msgid "SSID"
 msgstr ""
 
@@ -15281,7 +15349,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
 #: src/usr/local/www/services_dhcp_edit.php:406
 #: src/usr/local/www/services_dhcp_edit.php:421
-#: src/usr/local/www/status_interfaces.php:135
+#: src/usr/local/www/status_interfaces.php:136
 msgid "MAC Address"
 msgstr ""
 
@@ -15301,7 +15369,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1828
 #: src/usr/local/www/interfaces_ppps_edit.php:917
-#: src/usr/local/www/status_interfaces.php:158
+#: src/usr/local/www/status_interfaces.php:159
 msgid "MTU"
 msgstr ""
 
@@ -15347,15 +15415,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1864
 msgid "IPv4 Upstream gateway"
-msgstr "IPv4 Stroomop Deurgang"
+msgstr "IPv4 Stroomop Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1868
 msgid "IPv4 Upstream Gateway"
-msgstr "IPv4 Stroomop Deurgang"
+msgstr "IPv4 Stroomop Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1875 src/usr/local/www/interfaces.php:1909
 msgid "Add a new gateway"
-msgstr "Voeg 'n nuwe deurgang by"
+msgstr "Voeg 'n nuwe deurgangspoort by"
 
 #: src/usr/local/www/interfaces.php:1880
 #, php-format
@@ -15366,9 +15434,9 @@ msgid ""
 "by %2$sclicking here%3$s."
 msgstr ""
 "As hierdie koppelvlak is 'n internet konneksie is, kies 'n bestaande "
-"Deurgang uit die lys uit, of voeg 'n nuwe een deur die \"Add\" knoppie.%1$Op "
-"'n plaaslike area netwerk koppelvlak, moet die stroomop derugang \"geen\" "
-"wees. Deurgange kan bestuur word deur %2$shierso kliek%3$s."
+"Deurgangspoort uit die lys uit, of voeg 'n nuwe een deur die \"Add\" knoppie."
+"%1$Op 'n plaaslike area netwerk koppelvlak, moet die stroomop derugangspoort "
+"\"geen\" wees. Deurgangspoorte kan bestuur word deur %2$shierso kliek%3$s."
 
 #: src/usr/local/www/interfaces.php:1888
 msgid "Static IPv6 Configuration"
@@ -15380,11 +15448,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1898
 msgid "IPv6 Upstream gateway"
-msgstr "IPv6 Stroomop Deurgang"
+msgstr "IPv6 Stroomop Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1902
 msgid "IPv6 Upstream Gateway"
-msgstr ""
+msgstr "IPv6 Opstroom Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1914
 #, php-format
@@ -15393,20 +15461,23 @@ msgid ""
 "the list or add a new one using the \"Add\" button.%sOn local LANs the "
 "upstream gateway should be \"none\". "
 msgstr ""
+"As hierdie koppelvlak 'n internetverbinding is, kies 'n bestaande "
+"Deurgangspoort uit die lys uit of voeg 'n nuwe een by die \"Voeg\" knoppie."
+"%sOp plaaslike LAN's moet die stroomop deurgangspoort \"niks\" wees."
 
 #: src/usr/local/www/interfaces.php:1921
 msgid "New IPv6 Gateway"
-msgstr ""
+msgstr "Nuew IPv6 Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1932 src/usr/local/www/interfaces.php:3257
 #: src/usr/local/www/system_gateways_edit.php:180
 msgid "Gateway name"
-msgstr ""
+msgstr "Deurgangspoort naam"
 
 #: src/usr/local/www/interfaces.php:1939
-#: src/usr/local/www/status_interfaces.php:146
+#: src/usr/local/www/status_interfaces.php:147
 msgid "Gateway IPv6"
-msgstr ""
+msgstr "Deurgangspoort IPv6"
 
 #: src/usr/local/www/interfaces.php:1978
 msgid "DHCP Client Configuration"
@@ -15679,6 +15750,29 @@ msgstr ""
 msgid "Select to fill in service provider data."
 msgstr ""
 
+#: src/usr/local/www/interfaces.php:2581
+#: src/usr/local/www/interfaces_ppps_edit.php:210
+#: src/usr/local/www/interfaces_ppps_edit.php:213
+#: src/usr/local/www/interfaces_ppps_edit.php:221
+#: src/usr/local/www/interfaces_ppps_edit.php:224
+#: src/usr/local/www/interfaces_ppps_edit.php:610
+#: src/usr/local/www/services_dyndns_edit.php:94
+#: src/usr/local/www/services_dyndns_edit.php:353
+#: src/usr/local/www/services_pppoe_edit.php:500
+#: src/usr/local/www/status_captiveportal.php:197
+#: src/usr/local/www/system_usermanager.php:189
+#: src/usr/local/www/system_usermanager.php:194
+#: src/usr/local/www/system_usermanager.php:199
+#: src/usr/local/www/system_usermanager.php:609
+#: src/usr/local/www/vpn_l2tp_users.php:94
+#: src/usr/local/www/vpn_l2tp_users_edit.php:77
+#: src/usr/local/www/vpn_l2tp_users_edit.php:80
+#: src/usr/local/www/vpn_openvpn_client.php:590
+#: src/usr/local/www/vpn_openvpn_client.php:615
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+msgid "Username"
+msgstr "Gebruikersnaam"
+
 #: src/usr/local/www/interfaces.php:2595
 #: src/usr/local/www/interfaces_ppps_edit.php:663
 msgid "*Phone number"
@@ -15856,7 +15950,7 @@ msgid "Auto"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2904
-#: src/usr/local/www/status_interfaces.php:162
+#: src/usr/local/www/status_interfaces.php:163
 msgid "Channel"
 msgstr ""
 
@@ -16167,12 +16261,12 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3246
 msgid "New IPv4 Gateway"
-msgstr ""
+msgstr "Nuwe IPv4 Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:3264
-#: src/usr/local/www/status_interfaces.php:142
+#: src/usr/local/www/status_interfaces.php:143
 msgid "Gateway IPv4"
-msgstr ""
+msgstr "Deurgangspoort IPv4"
 
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_assign.php:494
@@ -16595,7 +16689,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_lagg_edit.php:163
 #: src/usr/local/www/interfaces_vlan_edit.php:133
 msgid "Error occurred creating interface, please retry."
-msgstr ""
+msgstr "Kon nie 'n koppelvlak skep nie, probeer asseblief weer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:390
 msgid "Bridge Configuration"
@@ -17379,6 +17473,8 @@ msgstr ""
 #, php-format
 msgid "A valid gateway IP address OR hostname must be specified for %s."
 msgstr ""
+"'N Geldige deurgangspoort IP-adres OF gasheernaam moet vir %s gespesifiseer "
+"word."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:284
 #, php-format
@@ -17434,7 +17530,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:638
 msgid "IP/Gateway ("
-msgstr ""
+msgstr "IP/Deurgangspoort"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:644
 msgid "Local IP Address"
@@ -17442,7 +17538,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:651
 msgid "Gateway IP or Hostname"
-msgstr ""
+msgstr "Deurganspoort IP of Gasheernaam"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:666
 msgid "Typically *99# for GSM networks and #777 for CDMA networks"
@@ -17608,6 +17704,18 @@ msgid ""
 "reduce the fragment size or drop the IP Don't Fragment option from its "
 "outgoing data."
 msgstr ""
+"Veroorsaak mpd om inkomende en uitgaande TCP SYN segmente aan te pas sodat "
+"die versoekte maksimum segment grootte nie groter is as die hoeveelheid wat "
+"deur die koppelvlak MTU toegelaat word nie. Dit is nodig in baie opstellings "
+"om probleme te voorkom wat veroorsaak word deur roeteerders wat ICMP "
+"Datagram te groot boodskappe laat val. Sonder hierdie boodskappe stuur die "
+"oorspronklike masjien data, dit verby die skelm roeteerder, en bereik dan 'n "
+"masjien met 'n MTU wat nie groot genoeg is vir die data nie. Omdat die opsie "
+"IP Monie Framenteer Nie ingestel is, stuur hierdie masjien 'n ICMP Datagram "
+"te groot boodskap terug na die oorspronklike masjien en laat die pakket val. "
+"Die skelm roeteerder laat die ICMP boodskap af val, en die ontvanger kan "
+"nooit ontdek dat dit die fragmentgrootte moet verminder of die opsie IP "
+"Monie Fragmenteer Nie van sy uitgaande data laat val nie."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:879
 msgid "ShortSeq"
@@ -17891,6 +17999,8 @@ msgid ""
 "Error creating interface with mode %1$s.\t The %2$s interface may not "
 "support creating more clones with the selected mode."
 msgstr ""
+"Kon nie koppelvlak skep met modus %1$s nie.\tDie %2$s koppelvlak ondersteun "
+"dalk nie meer klone skep met die gekose modus nie."
 
 #: src/usr/local/www/interfaces_wireless_edit.php:127
 #, php-format
@@ -18938,7 +19048,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:108
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:91
 msgid "Error comparing version"
-msgstr ""
+msgstr "Kon nie weergawe vergelyk nie"
 
 #: src/usr/local/www/pkg_mgr_installed.php:155
 #, php-format
@@ -18996,7 +19106,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:104
 #, php-format
 msgid "Captive Portal: zone %s: Restore default error page"
-msgstr ""
+msgstr "Captive Portal: zone %s: Herstel standaard fout bladsy"
 
 #: src/usr/local/www/services_captiveportal.php:124
 #, php-format
@@ -19254,6 +19364,9 @@ msgid ""
 "Use this field to set $PORTAL_REDIRURL$ variable which can be accessed using "
 "the custom captive portal index.php page or error pages."
 msgstr ""
+"Gebruik hierdie veld om $PORTAL_REDIRURL$ veranderlike in te stel wat verkry "
+"kan word deur gebruik te maak van die aangepas portaal index.php bladsy of "
+"foutbladsye."
 
 #: src/usr/local/www/services_captiveportal.php:613
 msgid "After authentication Redirection URL"
@@ -19300,6 +19413,11 @@ msgid ""
 "routers between pfSense and the clients). If this is enabled, RADIUS MAC "
 "authentication cannot be used."
 msgstr ""
+"As dit geaktiveer word, sal geen pogings aangewend word om te verseker dat "
+"die MAC-adres van kliënte dieselfde bly terwyl hulle ingeteken is nie. Dit "
+"is nodig wanneer die MAC-adres van die kliënt nie bepaal kan word nie "
+"(gewoonlik omdat daar toeteerders tussen pfSense en die kliënte is). As dit "
+"aangeskakel is, kan RADIUS MAC-verifikasie nie gebruik word nie."
 
 #: src/usr/local/www/services_captiveportal.php:644
 msgid "Pass-through MAC Auto Entry"
@@ -19630,33 +19748,47 @@ msgstr ""
 msgid "Current Portal Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1102
-#: src/usr/local/www/services_captiveportal.php:1136
-#: src/usr/local/www/services_captiveportal.php:1168
+#: src/usr/local/www/services_captiveportal.php:1088
+msgid "Live View"
+msgstr ""
+
+#: src/usr/local/www/services_captiveportal.php:1095
+#: src/usr/local/www/services_captiveportal.php:1129
+#: src/usr/local/www/services_captiveportal.php:1161
+msgid "View Page Contents"
+msgstr ""
+
+#: src/usr/local/www/services_captiveportal.php:1109
+#: src/usr/local/www/services_captiveportal.php:1143
+#: src/usr/local/www/services_captiveportal.php:1175
 msgid "Restore Default Page"
 msgstr ""
 
-#: src/usr/local/www/services_captiveportal.php:1111
+#: src/usr/local/www/services_captiveportal.php:1118
 msgid "Auth error page contents"
-msgstr ""
+msgstr "Verifikasie fout bladsy inhoud"
 
-#: src/usr/local/www/services_captiveportal.php:1114
+#: src/usr/local/www/services_captiveportal.php:1121
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed when "
 "an authentication error occurs. It may include \"$PORTAL_MESSAGE$\", which "
 "will be replaced by the error or reply messages from the RADIUS server, if "
 "any."
 msgstr ""
+"Die inhoud van die HTML/PHP lêer wat hier opgelaai word, word vertoon "
+"wanneer 'n verifikasie fout voorkom. Dit mag dalk \"$PORTAL_MESSAGE$\" "
+"insluit, wat sal vervang word deur die fout of antwoord boodskappe van die "
+"RADIUS bediener, indien enige boodskappe bestaan."
 
-#: src/usr/local/www/services_captiveportal.php:1119
+#: src/usr/local/www/services_captiveportal.php:1126
 msgid "Current Auth Error Page"
-msgstr ""
+msgstr "Huidige verifikasie fout bladsy"
 
-#: src/usr/local/www/services_captiveportal.php:1145
+#: src/usr/local/www/services_captiveportal.php:1152
 msgid "Logout page contents"
 msgstr "Afteken bladsy inhoud"
 
-#: src/usr/local/www/services_captiveportal.php:1148
+#: src/usr/local/www/services_captiveportal.php:1155
 msgid ""
 "The contents of the HTML/PHP file that is uploaded here are displayed on "
 "authentication success when the logout popup is enabled."
@@ -19664,11 +19796,11 @@ msgstr ""
 "Die inhoud van die HTML/PHP lêer wat hier gelaai word, is vertoon waneer die "
 "verifikasie sukses  aftekening opspring venster geaktiveer is."
 
-#: src/usr/local/www/services_captiveportal.php:1151
+#: src/usr/local/www/services_captiveportal.php:1158
 msgid "Current Logout Page"
 msgstr "Huidige Aftekening Bladsy"
 
-#: src/usr/local/www/services_captiveportal.php:1184
+#: src/usr/local/www/services_captiveportal.php:1191
 msgid ""
 "Don't forget to enable the DHCP server on the captive portal interface! Make "
 "sure that the default/maximum DHCP lease time is higher than the hard "
@@ -20256,6 +20388,8 @@ msgid ""
 "Error message displayed for invalid vouchers on captive portal error page "
 "($PORTAL_MESSAGE$)."
 msgstr ""
+"Fout boodskap vertoon vir ongeldige bewysstukke op gevangeportaal fout "
+"bladsy ($PORTAL_MESSAGE$)."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:511
 msgid "Expired voucher message"
@@ -20266,6 +20400,8 @@ msgid ""
 "Error message displayed for expired vouchers on captive portal error page "
 "($PORTAL_MESSAGE$)."
 msgstr ""
+"Foutboodskap vertoon vir vervalde bewysstukke op gevangeportaal fout bladsy "
+"($PORTAL_MESSAGE$)."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:518
 msgid "Voucher Database Synchronization"
@@ -20606,7 +20742,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:268
 msgid "A valid IP address must be specified for the gateway."
-msgstr ""
+msgstr "'N Gelidge IP-adres moet gespesifideer word vir die deurgangspoort."
 
 #: src/usr/local/www/services_dhcp.php:271
 msgid ""
@@ -20619,6 +20755,8 @@ msgstr ""
 msgid ""
 "The gateway address %s does not lie within the chosen interface's subnet."
 msgstr ""
+"Die deurgangspoortadres %s lê nie binne die subnet van die gekose koppelvlak "
+"nie."
 
 #: src/usr/local/www/services_dhcp.php:282
 msgid "A valid IP address must be specified for each of the DNS servers."
@@ -20929,7 +21067,7 @@ msgid "WINS servers"
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:997
-#: src/usr/local/www/status_interfaces.php:152
+#: src/usr/local/www/status_interfaces.php:153
 msgid "DNS servers"
 msgstr ""
 
@@ -20951,9 +21089,9 @@ msgid ""
 "gateway for the network. Type \"none\" for no gateway assignment."
 msgstr ""
 "Die verstek is om die IP te gebruik op hierdie koppelvlak van die netskans "
-"as die deurgang. Spesifiseer 'n alternatiewe derugang hier indien dit nie "
-"die korrekte deurgang vir die netwerk is nie. Tik \"none\" vir geen deurgang "
-"toewysing."
+"as die deurgangspoort. Spesifiseer 'n alternatiewe derugangspoort hier "
+"indien dit nie die korrekte deurgangspoort vir die netwerk is nie. Tik "
+"\"none\" vir geen deurgang toewysing."
 
 #: src/usr/local/www/services_dhcp.php:1017
 #: src/usr/local/www/services_dhcp_edit.php:547
@@ -21313,7 +21451,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:113
 #: src/usr/local/www/services_dnsmasq_edit.php:70
 #: src/usr/local/www/services_unbound_host_edit.php:81
-#: src/usr/local/www/system.php:198
+#: src/usr/local/www/system.php:205
 msgid ""
 "A valid hostname is specified, but the domain name part should be omitted"
 msgstr ""
@@ -21356,7 +21494,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_edit.php:231
 msgid "A valid IPv4 address must be specified for the gateway."
-msgstr ""
+msgstr "'N Geldige IPv4-adres moet vir die deurgangspoort gespesifiseer word."
 
 #: src/usr/local/www/services_dhcp_edit.php:234
 msgid ""
@@ -21456,7 +21594,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:500
 #: src/usr/local/www/services_dhcpv6.php:709
 #: src/usr/local/www/services_pppoe_edit.php:350
-#: src/usr/local/www/system.php:482 src/usr/local/www/vpn_ipsec_mobile.php:607
+#: src/usr/local/www/system.php:489 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:462
 msgid "DNS Servers"
 msgstr ""
@@ -21475,8 +21613,8 @@ msgid ""
 "gateway for the network."
 msgstr ""
 "Die verstek is na die IP gebruik op hierdie koppelvlak van die netskans as "
-"die duergang. Spesifiseer 'n alternatiewe duergang hier indien dit nie die "
-"korrekte deurgang vir die netwerk is nie."
+"die duergangspoort. Spesifiseer 'n alternatiewe duergang hier indien dit nie "
+"die korrekte deurgang vir die netwerk is nie."
 
 #: src/usr/local/www/services_dhcp_edit.php:550
 #: src/usr/local/www/services_dhcpv6.php:729
@@ -21655,7 +21793,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:304
 msgid "A valid IPv6 address must be specified for the gateway."
-msgstr ""
+msgstr "'N Geldige IPv6-adres moet vir die deurgangspoort gespesifiseer word."
 
 #: src/usr/local/www/services_dhcpv6.php:310
 #: src/usr/local/www/services_router_advertisements.php:166
@@ -21692,7 +21830,7 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:256
 #: src/usr/local/www/services_router_advertisements.php:303
 msgid "Router Advertisements"
-msgstr ""
+msgstr "Roeteerder Advertensies"
 
 #: src/usr/local/www/services_dhcpv6.php:592
 msgid "DHCPv6 Options"
@@ -21733,6 +21871,10 @@ msgid ""
 "for assigning networks to subrouters. The start and end of the range must "
 "end on boundaries of the prefix delegation size."
 msgstr ""
+"'N Voorvoegsul reeks kan hier gedefinieer word vir DHCP Voorvoegsel "
+"Afvaardiging. Dit maak dit moontlik om netwerke aan onderroeteerders toe te "
+"ken. Die begin en einde van die reeks moet eindig op grense van die "
+"voorvoegsel-afvaardigingsgrootte."
 
 #: src/usr/local/www/services_dhcpv6.php:721
 msgid ""
@@ -22066,7 +22208,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:57
 #: src/usr/local/www/services_unbound_host_edit.php:72
 #: src/usr/local/www/services_unbound_host_edit.php:273
-#: src/usr/local/www/system.php:157
+#: src/usr/local/www/system.php:158
 msgid "Domain"
 msgstr ""
 
@@ -22154,7 +22296,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:210
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:121
 #: src/usr/local/www/services_unbound_host_edit.php:204
-#: src/usr/local/www/system.php:451
+#: src/usr/local/www/system.php:458
 msgid "*Domain"
 msgstr ""
 
@@ -22185,7 +22327,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
-#: src/usr/local/www/system.php:195
+#: src/usr/local/www/system.php:202
 msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
@@ -23040,9 +23182,9 @@ msgid ""
 "currently in use on this firewall."
 msgstr ""
 "Voer die IP-adres van die PPPoE bediener moet gee aan kliënte vir gebruik as "
-"hul \"deurgang\".%1$s Tiepies is hierdie  ingestel op 'n ongebruikte IP net "
-"buite die kliënt reeks.%1$s NOOT: Dit moet NIE ingestel word om enige IP aan "
-"te spreek wat tans in gebruik op hierdie netskans nie."
+"hul \"deurgangspoort\".%1$s Tiepies is hierdie  ingestel op 'n ongebruikte "
+"IP net buite die kliënt reeks.%1$s NOOT: Dit moet NIE ingestel word om enige "
+"IP aan te spreek wat tans in gebruik op hierdie netskans nie."
 
 #: src/usr/local/www/services_pppoe_edit.php:330
 msgid "*Remote Address Range"
@@ -23281,28 +23423,36 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:105
 msgid "Router Only - RA Flags [none], Prefix Flags [router]"
-msgstr ""
+msgstr "Slegs Roeteerder - RA Vlae [geen], Voordele Vlae [roeteerder]"
 
 #: src/usr/local/www/services_router_advertisements.php:106
 msgid "Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"
 msgstr ""
+"Onbeheerde - RA Vlae [geen], Voordele Vlae [op skakel, outomaties, "
+"roeteerder]"
 
 #: src/usr/local/www/services_router_advertisements.php:107
 msgid ""
 "Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"
 msgstr ""
+"Bestuur - RA Vlae [bestuur, ander meldvol], Voordele Vlae [op skakel, "
+"roeteerder]"
 
 #: src/usr/local/www/services_router_advertisements.php:108
 msgid ""
 "Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
+"Bygestaan - RA Vlae [bestuur, ander meldvol], Voordele Vlae [op skakel, "
+"outomaties, roeteerder]"
 
 #: src/usr/local/www/services_router_advertisements.php:109
 msgid ""
 "Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
+"Staatloose DHCP - RA Vlae [ander medvol], Voordele Vlae [opskakel, "
+"outomaties, roeteerder]"
 
 #: src/usr/local/www/services_router_advertisements.php:111
 msgid "Low"
@@ -23316,10 +23466,15 @@ msgid ""
 "(RA) Daemon will advertise to the subnet to which the router's interface is "
 "assigned."
 msgstr ""
+"Subnets word gespesifiseer in CIDR-formaat. Kies die CIDR-masker wat "
+"betrekking het op elke item.\t/128 spesifiseer 'n enkele IPv6-gasheer; /64 "
+"spesifiseer 'n normale IPv6-netwerk; Ens. As daar geen subnets hier "
+"gespesifiseer word nie, sal die roeteerderadvertensie (RA) Daemon adverteer "
+"na die subnet waarop die roeteerder se koppelvlak toegewys is."
 
 #: src/usr/local/www/services_router_advertisements.php:123
 msgid "Select the Operating Mode for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Kies die modus vir die Roeteerder Advertensie (RA) Daemoon."
 
 #: src/usr/local/www/services_router_advertisements.php:126
 msgid "RADVD will not be enabled on this interface."
@@ -23327,11 +23482,11 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
-msgstr ""
+msgstr "Slegs Roeteerder"
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Will advertise this router."
-msgstr ""
+msgstr "Sal hierdie roeteerder adverteer."
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Unmanaged"
@@ -23340,6 +23495,7 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Will advertise this router with stateless autoconfig."
 msgstr ""
+"Sal hierdie roeteerder adverteer met statelose outomatiese konfigurasie."
 
 #: src/usr/local/www/services_router_advertisements.php:129
 msgid "Managed"
@@ -23349,6 +23505,8 @@ msgstr ""
 msgid ""
 "Will advertise this router with all configuration through a DHCPv6 server."
 msgstr ""
+"Sal hierdie roeteerder adverteer met alle konfigurasie deur 'n DHCPv6-"
+"bediener."
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
@@ -23359,6 +23517,8 @@ msgid ""
 "Will advertise this router with configuration through a DHCPv6 server and/or "
 "stateless autoconfig."
 msgstr ""
+"Sal hierdie roeteerder adverteer met 'n DHCPv6-bediener en/of staatlose "
+"outokonfig."
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
@@ -23369,6 +23529,8 @@ msgid ""
 "Will advertise this router with stateless autoconfig and other configuration "
 "information available via DHCPv6."
 msgstr ""
+"Sal hierdie roeteerder adverteer met staatlose outokonfig en ander "
+"konfigurasie inligting beskikbaar via DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:133
 msgid ""
@@ -23418,7 +23580,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:204
 msgid "Router lifetime must be an integer between 1 and 9000."
-msgstr ""
+msgstr "Roeteerder lewensduur moet 'n heelgetal wees tussen 1 en 9000."
 
 #: src/usr/local/www/services_router_advertisements.php:308
 msgid "Advertisements"
@@ -23426,15 +23588,15 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:312
 msgid "*Router mode"
-msgstr ""
+msgstr "*Roeteerder modus"
 
 #: src/usr/local/www/services_router_advertisements.php:319
 msgid "*Router priority"
-msgstr ""
+msgstr "*Roeteerder prioritiet"
 
 #: src/usr/local/www/services_router_advertisements.php:322
 msgid "Select the Priority for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Kies die Prioriteit vir die Roeteerder Advertensie (RA) Daemoon."
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
@@ -23442,7 +23604,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
-msgstr ""
+msgstr "Kies die koppelvlak vir die Roeteerder Advertensie (RA) Daemoon."
 
 #: src/usr/local/www/services_router_advertisements.php:354
 msgid "Default valid lifetime"
@@ -23477,6 +23639,8 @@ msgid ""
 "The minimum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
+"Die minimum tyd wat toegelaat word tussen die stuur van ongevraagde "
+"multicast-roeteerderadvertensies in sekondes."
 
 #: src/usr/local/www/services_router_advertisements.php:379
 msgid "Maximum RA interval"
@@ -23487,14 +23651,17 @@ msgid ""
 "The maximum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
+"Die maksimum tyd wat toegelaat word tussen die stuur van ongevraagde "
+"multicast-roeteerdeadvertensies in sekondes."
 
 #: src/usr/local/www/services_router_advertisements.php:387
 msgid "Router lifetime"
-msgstr ""
+msgstr "Roeteerde lewensduur"
 
 #: src/usr/local/www/services_router_advertisements.php:391
 msgid "The lifetime associated with the default router in seconds."
 msgstr ""
+"Die leeftyd wat in sekondes geassosieer word met die verstek roeteerder."
 
 #: src/usr/local/www/services_router_advertisements.php:394
 msgid "RA Subnets"
@@ -23663,6 +23830,8 @@ msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
+"Die gegenereerde konfigurasie lêer kan nie deur ongebonde ontleed word nie. "
+"Korrigeer asseblief die volgende foute:"
 
 #: src/usr/local/www/services_unbound.php:187
 #: src/usr/local/www/services_unbound_advanced.php:190
@@ -23855,6 +24024,9 @@ msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
+"%1$sWeier:%2$s Staak navrae van gashere in die netblok hieronder "
+"gedefinieer, maar stuur 'n DNS rkode GEWEIR fout boodskap terug na die "
+"kliënt.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:157
 #, php-format
@@ -23886,6 +24058,10 @@ msgid ""
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
+"%1$sWeier Nie Lokaal Nie:%2$s Laat slegs gesaghebbende plaaslike data navrae "
+"van gasheere toe binne die netblok wat hieronder gedefinieer word. Stuur 'n "
+"DNS kode GEWEIER foutboodskap terug na die kliënt vir boodskappe wat nie "
+"toegelaat word nie."
 
 #: src/usr/local/www/services_unbound_acls.php:193
 msgid "New Access List"
@@ -24428,37 +24604,37 @@ msgstr ""
 msgid "Related log entries"
 msgstr ""
 
-#: src/usr/local/www/status.php:160
+#: src/usr/local/www/status.php:162
 #, php-format
 msgid "Firewall Status on %s"
 msgstr "Netskans Status op %s"
 
-#: src/usr/local/www/status.php:163
+#: src/usr/local/www/status.php:165
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:359
+#: src/usr/local/www/status.php:361
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:361
+#: src/usr/local/www/status.php:363
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:363
+#: src/usr/local/www/status.php:365
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:376
+#: src/usr/local/www/status.php:378
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:384
+#: src/usr/local/www/status.php:386
 msgid "Done."
 msgstr ""
 
@@ -24951,7 +25127,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:238
 #: src/usr/local/www/system_routes.php:230
 msgid "Gateway Groups"
-msgstr ""
+msgstr "Deurgangspoort Groepe"
 
 #: src/usr/local/www/status_gateway_groups.php:92
 #, php-format
@@ -25101,157 +25277,157 @@ msgid ""
 "installed"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:104
+#: src/usr/local/www/status_interfaces.php:105
 msgid "Send a gratuitous DHCP release packet to the server."
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:104
+#: src/usr/local/www/status_interfaces.php:105
 msgid "Relinquish Lease"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:111
+#: src/usr/local/www/status_interfaces.php:112
 msgid " Interface "
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
+#: src/usr/local/www/status_interfaces.php:118
 msgid "Release"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:116
 #: src/usr/local/www/status_interfaces.php:117
+#: src/usr/local/www/status_interfaces.php:118
 msgid "Renew"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:118
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 #: src/usr/local/www/status_ipsec.php:239
 #: src/usr/local/www/status_ipsec.php:353
 msgid "Disconnect"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:118
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
+#: src/usr/local/www/status_interfaces.php:122
 msgid "Connect"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:257
 msgid "Uptime"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:122
+#: src/usr/local/www/status_interfaces.php:123
 msgid "(historical)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:123
+#: src/usr/local/www/status_interfaces.php:124
 msgid "Cell Signal (RSSI)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:124
+#: src/usr/local/www/status_interfaces.php:125
 msgid "Cell Mode"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:125
+#: src/usr/local/www/status_interfaces.php:126
 msgid "Cell SIM State"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:126
+#: src/usr/local/www/status_interfaces.php:127
 msgid "Cell Service"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:127
+#: src/usr/local/www/status_interfaces.php:128
 msgid "Cell Upstream"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:128
+#: src/usr/local/www/status_interfaces.php:129
 msgid "Cell Downstream"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:129
+#: src/usr/local/www/status_interfaces.php:130
 msgid "Cell Current Up"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:130
+#: src/usr/local/www/status_interfaces.php:131
 msgid "Cell Current Down"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:140
+#: src/usr/local/www/status_interfaces.php:141
 msgid "IPv4 Address"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:141
+#: src/usr/local/www/status_interfaces.php:142
 msgid "Subnet mask IPv4"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:143
+#: src/usr/local/www/status_interfaces.php:144
 msgid "IPv6 Link Local"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:144
+#: src/usr/local/www/status_interfaces.php:145
 msgid "IPv6 Address"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:145
+#: src/usr/local/www/status_interfaces.php:146
 msgid "Subnet mask IPv6"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:159
+#: src/usr/local/www/status_interfaces.php:160
 msgid "Media"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:160
+#: src/usr/local/www/status_interfaces.php:161
 msgid "LAGG Protocol"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:161
+#: src/usr/local/www/status_interfaces.php:162
 msgid "LAGG Ports"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:164
+#: src/usr/local/www/status_interfaces.php:165
 msgid "BSSID"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:166
+#: src/usr/local/www/status_interfaces.php:167
 msgid "RSSI"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:167
+#: src/usr/local/www/status_interfaces.php:168
 msgid "In/out packets"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:169
+#: src/usr/local/www/status_interfaces.php:170
 msgid "In/out packets (pass)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:171
+#: src/usr/local/www/status_interfaces.php:172
 msgid "In/out packets (block)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:173
-msgid "In/out errors"
-msgstr ""
-
 #: src/usr/local/www/status_interfaces.php:174
+msgid "In/out errors"
+msgstr "In/uit foute"
+
+#: src/usr/local/www/status_interfaces.php:175
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:177
+#: src/usr/local/www/status_interfaces.php:178
 #, php-format
 msgid "Bridge (%1$s)"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:194
+#: src/usr/local/www/status_interfaces.php:195
 msgid "Total interrupts"
 msgstr ""
 
-#: src/usr/local/www/status_interfaces.php:205
+#: src/usr/local/www/status_interfaces.php:206
 #, php-format
 msgid ""
 "Using dial-on-demand will bring the connection up again if any packet "
@@ -25348,7 +25524,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:177
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:178
 msgid "Overview"
 msgstr ""
 
@@ -25494,7 +25670,7 @@ msgstr ""
 
 #: src/usr/local/www/status_lb_vs.php:98
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
-#: src/etc/inc/pfsense-utils.inc:368
+#: src/etc/inc/pfsense-utils.inc:370
 msgid "Active"
 msgstr ""
 
@@ -25687,7 +25863,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:288
 #: src/usr/local/www/status_logs_common.inc:496
-#: src/usr/local/www/status_logs_vpn.php:447 src/etc/inc/pfsense-utils.inc:331
+#: src/usr/local/www/status_logs_vpn.php:447 src/etc/inc/pfsense-utils.inc:333
 msgid "Log Filter"
 msgstr ""
 
@@ -25828,6 +26004,9 @@ msgid ""
 "If this is checked, errors from the nginx web server process for the GUI or "
 "Captive Portal will appear in the system log."
 msgstr ""
+"As dit geselekteer is, sal foute van die nginx webbedienerproses vir die "
+"grafiese gebruikerskoppelvlak vir gevangeportaal in die stelsellogboek "
+"verskyn."
 
 #: src/usr/local/www/status_logs_common.inc:894
 #: src/usr/local/www/status_logs_settings.php:258
@@ -26075,6 +26254,8 @@ msgid ""
 "If this is checked, errors from the web server process for the GUI or "
 "Captive Portal will appear in the main system log."
 msgstr ""
+"As dit gekontroleer is, sal foute van die webbedienerproses vir die grafiese "
+"gebruikerskoppelvlak vir gevangeportaal in die hoofstelsellogboek verskyn."
 
 #: src/usr/local/www/status_logs_settings.php:293
 msgid "Raw Logs"
@@ -26160,7 +26341,7 @@ msgstr "VPN Aantekeninge"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:224
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr ""
@@ -26287,7 +26468,7 @@ msgstr ""
 #: src/usr/local/www/status_openvpn.php:81
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:409
 msgid "An error occurred."
-msgstr ""
+msgstr "'N Fout het voorgekom."
 
 #: src/usr/local/www/status_openvpn.php:98
 msgid "Client Connections"
@@ -26497,108 +26678,114 @@ msgid ""
 "time."
 msgstr ""
 
-#: src/usr/local/www/system.php:126
+#: src/usr/local/www/system.php:127
 msgid "AHEAD of"
 msgstr ""
 
-#: src/usr/local/www/system.php:129
+#: src/usr/local/www/system.php:130
 msgid "BEHIND"
 msgstr ""
 
-#: src/usr/local/www/system.php:137
+#: src/usr/local/www/system.php:138
 #, php-format
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/usr/local/www/system.php:203
+#: src/usr/local/www/system.php:210
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
 msgstr ""
 
-#: src/usr/local/www/system.php:216
+#: src/usr/local/www/system.php:223
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
 msgstr ""
 
-#: src/usr/local/www/system.php:222
+#: src/usr/local/www/system.php:229
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
 msgstr ""
+"Die IPv6-deurgangspoort \"%1$s\" kan nie vir IPv4 DNS-bediener \"%2$s\" "
+"gespesifiseer word nie."
 
-#: src/usr/local/www/system.php:225
+#: src/usr/local/www/system.php:232
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
 msgstr ""
+"Die IPv4-deurgangspoort \"%1$s\" kan nie vir IPv6 DNS-bediener \"%2$s\" "
+"gespesifiseer word nie."
 
-#: src/usr/local/www/system.php:238
+#: src/usr/local/www/system.php:245
 msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
 msgstr ""
 
-#: src/usr/local/www/system.php:250
+#: src/usr/local/www/system.php:257
 #, php-format
 msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
 "connected network."
 msgstr ""
+"'N Deurgangspoort kan nie toegeken word aan DNS '%s' bediener wat op 'n "
+"direk gekoppelde netwerk is nie."
 
-#: src/usr/local/www/system.php:263
+#: src/usr/local/www/system.php:270
 msgid ""
 "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'."
 ""
 msgstr ""
 
-#: src/usr/local/www/system.php:447
+#: src/usr/local/www/system.php:454
 msgid "Name of the firewall host, without domain part"
 msgstr "Naam van die netskans gasheer, sonder die domein deel"
 
-#: src/usr/local/www/system.php:455
+#: src/usr/local/www/system.php:462
 msgid ""
 "Do not use 'local' as a domain name. It will cause local hosts running mDNS "
 "(avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."
 msgstr ""
 
-#: src/usr/local/www/system.php:461
+#: src/usr/local/www/system.php:468
 msgid "DNS Server Settings"
 msgstr ""
 
-#: src/usr/local/www/system.php:469
+#: src/usr/local/www/system.php:476
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
 
-#: src/usr/local/www/system.php:470
+#: src/usr/local/www/system.php:477
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
 msgstr ""
 
-#: src/usr/local/www/system.php:471
+#: src/usr/local/www/system.php:478
 msgid "Optionally select the gateway for each DNS server."
-msgstr ""
+msgstr "Kies opsioneel die deurgangspoort vir elke DNS-bediener."
 
-#: src/usr/local/www/system.php:472
+#: src/usr/local/www/system.php:479
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
 
-#: src/usr/local/www/system.php:487
+#: src/usr/local/www/system.php:494
 msgid "DNS Server"
 msgstr ""
 
-#: src/usr/local/www/system.php:528
+#: src/usr/local/www/system.php:535
 msgid "Add DNS Server"
 msgstr ""
 
-#: src/usr/local/www/system.php:535
+#: src/usr/local/www/system.php:542
 msgid "DNS Server Override"
 msgstr ""
 
-#: src/usr/local/www/system.php:538
+#: src/usr/local/www/system.php:545
 #, php-format
 msgid ""
 "If this option is set, %s will use DNS servers assigned by a DHCP/PPP server "
@@ -26606,11 +26793,11 @@ msgid ""
 "However, they will not be assigned to DHCP clients."
 msgstr ""
 
-#: src/usr/local/www/system.php:545
+#: src/usr/local/www/system.php:552
 msgid "Disable DNS Forwarder"
 msgstr ""
 
-#: src/usr/local/www/system.php:548
+#: src/usr/local/www/system.php:555
 msgid ""
 "By default localhost (127.0.0.1) will be used as the first DNS server where "
 "the DNS Forwarder or DNS Resolver is enabled and set to listen on localhost, "
@@ -26618,15 +26805,15 @@ msgid ""
 "box omits localhost from the list of DNS servers in resolv.conf."
 msgstr ""
 
-#: src/usr/local/www/system.php:555
+#: src/usr/local/www/system.php:562
 msgid "Localization"
 msgstr ""
 
-#: src/usr/local/www/system.php:559
+#: src/usr/local/www/system.php:566
 msgid "*Timezone"
 msgstr ""
 
-#: src/usr/local/www/system.php:562
+#: src/usr/local/www/system.php:569
 #, php-format
 msgid ""
 "Select a geographic region name (Continent/Location) to determine the "
@@ -26639,39 +26826,75 @@ msgstr ""
 "waar die geografiese sones nie behoorlik die klok kan verreken wat nodig is "
 "vir hierdie netskans te hanteer nie."
 
-#: src/usr/local/www/system.php:567
+#: src/usr/local/www/system.php:574
 msgid "Timeservers"
 msgstr ""
 
-#: src/usr/local/www/system.php:570
+#: src/usr/local/www/system.php:577
 msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
 msgstr ""
 
-#: src/usr/local/www/system.php:575
+#: src/usr/local/www/system.php:582
 msgid "*Language"
 msgstr ""
 
-#: src/usr/local/www/system.php:578
+#: src/usr/local/www/system.php:585
 msgid "Choose a language for the webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:582
+#: src/usr/local/www/system.php:589
 #: src/usr/local/www/system_advanced_admin.php:308
 #: src/usr/local/www/system_certmanager.php:1186
 msgid "webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:601
-msgid "Login hostname"
-msgstr "Aanteken masjien naam"
+#: src/usr/local/www/system.php:610
+msgid "Blue"
+msgstr ""
 
-#: src/usr/local/www/system.php:608
-msgid "Dashboard update period"
+#: src/usr/local/www/system.php:610
+msgid "Green"
+msgstr ""
+
+#: src/usr/local/www/system.php:610
+msgid "Red"
+msgstr ""
+
+#: src/usr/local/www/system.php:611
+msgid "Purple"
+msgstr ""
+
+#: src/usr/local/www/system.php:611
+msgid "Gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:611
+msgid "Brown"
 msgstr ""
 
 #: src/usr/local/www/system.php:612
+msgid "Orange"
+msgstr ""
+
+#: src/usr/local/www/system.php:608
+msgid "Login page color"
+msgstr ""
+
+#: src/usr/local/www/system.php:613
+msgid "Choose a color for the login page"
+msgstr ""
+
+#: src/usr/local/www/system.php:617
+msgid "Login hostname"
+msgstr "Aanteken masjien naam"
+
+#: src/usr/local/www/system.php:624
+msgid "Dashboard update period"
+msgstr ""
+
+#: src/usr/local/www/system.php:628
 msgid ""
 "Time in seconds between dashboard widget updates. Small values cause more "
 "frequent updates but increase the load on the web server. Minimum is 5 "
@@ -26681,7 +26904,7 @@ msgstr ""
 "waardes veroorsaak meer gereelde opdatering, maar verhoog die las op die "
 "webbediener. Minimum 5 sekondes, maksimum 600 sekondes"
 
-#: src/usr/local/www/system.php:620
+#: src/usr/local/www/system.php:636
 #: src/usr/local/www/system_user_settings.php:168
 #: src/usr/local/www/system_usermanager.php:985
 #, php-format
@@ -26884,6 +27107,10 @@ msgid ""
 "alternate hostnames by which the router may be queried, to bypass the DNS "
 "Rebinding Attack checks. Separate hostnames with spaces."
 msgstr ""
+"Alternatiewe gasheer naame vir DNS Herbinding en HTTP_REFERER Verifikaase. "
+"Gee alternatiewe gasheer name aan waarmee die roeteerder kan gevra word om "
+"die DNS Herbinding Aanval-kontrole te omseilen. Skei gasheer name met "
+"spasies."
 
 #: src/usr/local/www/system_advanced_admin.php:434
 msgid "Browser HTTP_REFERER enforcement"
@@ -27066,7 +27293,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:140
 msgid "The ICMP error timeout value must be an integer."
-msgstr ""
+msgstr "Die ICMP foutuitsetwaarde moet 'n heelgetal wees."
 
 #: src/usr/local/www/system_advanced_firewall.php:143
 msgid "The Other first timeout value must be an integer."
@@ -27400,6 +27627,10 @@ msgid ""
 "assigned interfaces.  Other interfaces require manually creating the "
 "outbound NAT rules that direct the reply packets back through the router."
 msgstr ""
+"Benodig vir volle funksionaliteit van die suiwer NAT-modus van NAT-refleksie "
+"vir poort vorentoe of NAT-refleksie vir 1:1 NAT. Nota: dit werk slegs vir "
+"toegewysde koppelvlakke. Ander koppelvlakke vereis handmatig die uitgaande "
+"NAT-reëls wat die antwoordpakke terug deur die roeteerder stuur."
 
 #: src/usr/local/www/system_advanced_firewall.php:639
 msgid "TFTP Proxy"
@@ -27581,9 +27812,10 @@ msgid ""
 "available one. This is not enabled by default, as it's unnecessary in most "
 "all scenarios, which instead use gateway groups."
 msgstr ""
-"As die standaard deurgaan gaan af gaan, skakel die verstekte deurgaan na 'n "
-"ander beskikbare een. Dit is nie aangeskakel is by verstek nie, want dis "
-"onnodig in die meeste situasies, wat in plaas deurgang groupe gebruik."
+"As die standaard deurgaanspoort gaan af gaan, skakel die verstekte "
+"deurgaanspoort na 'n ander beskikbare een. Dit is nie aangeskakel by verstek "
+"nie, want dis onnodig in die meeste situasies, wat in plaas deurgang groupe "
+"gebruik."
 
 #: src/usr/local/www/system_advanced_misc.php:391
 msgid "Power Savings"
@@ -27686,23 +27918,23 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:206
 msgid "Gateway Monitoring"
-msgstr "Deurgang Monitering"
+msgstr "Deurgangspoort Monitering"
 
 #: src/usr/local/www/system_advanced_misc.php:485
 msgid "State Killing on Gateway Failure"
-msgstr "Staat Moord op Deurgang Misluk"
+msgstr "Staat Moord op Deurgangspoort Misluk"
 
 #: src/usr/local/www/system_advanced_misc.php:488
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
 msgstr ""
-"Die monitering proses sal alle state spoel wanneer 'n deurgang af gaan as "
-"hierdie boks is geselekteer is."
+"Die monitering proses sal alle state spoel wanneer 'n deurgangspoort af gaan "
+"as hierdie boks is geselekteer is."
 
 #: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
-msgstr "Slaan reëls oor wanneer derugang af is"
+msgstr "Slaan reëls oor wanneer derugangspoort af is"
 
 #: src/usr/local/www/system_advanced_misc.php:496
 #, fuzzy
@@ -29347,12 +29579,12 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups.php:72
 #, php-format
 msgid "removed gateway group %s"
-msgstr "verwyder deurgang groep %s"
+msgstr "verwyder deurgangspoort groep %s"
 
 #: src/usr/local/www/system_gateway_groups.php:112
 #: src/usr/local/www/system_gateways.php:232
 msgid "The gateway configuration has been changed."
-msgstr "Die deurgang opset het verander."
+msgstr "Die deurgangspoort opset het verander."
 
 #: src/usr/local/www/system_gateway_groups.php:117
 #: src/usr/local/www/system_gateways.php:237
@@ -29366,15 +29598,15 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups.php:168
 msgid "Edit gateway group"
-msgstr "Wysig derugang groep"
+msgstr "Wysig derugangspoort groep"
 
 #: src/usr/local/www/system_gateway_groups.php:169
 msgid "Copy gateway group"
-msgstr "Kopie deurgang groep"
+msgstr "Kopie deurgangspoort groep"
 
 #: src/usr/local/www/system_gateway_groups.php:170
 msgid "Delete gateway group"
-msgstr "Verwyder deurgang groep"
+msgstr "Verwyder deurgangspoort groep"
 
 #: src/usr/local/www/system_gateway_groups.php:191
 #, fuzzy, php-format
@@ -29408,21 +29640,22 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:78
 msgid "A valid gateway group name must be specified."
-msgstr "'N Geldige deurgang groepnaam moet gespesifiseer word."
+msgstr "'N Geldige deurgangspoort groepnaam moet gespesifiseer word."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:81
 msgid "gateway group"
-msgstr "deurgang groep"
+msgstr "deurgangspoort groep"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:90
 msgid "Changing name on a gateway group is not allowed."
 msgstr ""
-"Die verandering van die naam op 'n deurgang groep is nie toegelaat nie."
+"Die verandering van die naam op 'n deurgangspoort groep is nie toegelaat nie."
+""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:96
 #, php-format
 msgid "A gateway group with this name \"%s\" already exists."
-msgstr "'N deurgang groep met hierdie naam \"%s\" bestaan reeds."
+msgstr "'N deurgangspoort groep met hierdie naam \"%s\" bestaan reeds."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:113
 #, php-format
@@ -29430,21 +29663,21 @@ msgid ""
 "A gateway group cannot have the same name as a gateway \"%s\" please choose "
 "another name."
 msgstr ""
-"'N deurgaan groep kan nie met dieselfde naam as 'n deurgaan \"%s\" gebruik "
-"nie. Kies asseblief 'n ander naam."
+"'N deurgaanspoort groep kan nie met dieselfde naam as 'n deurgaan \"%s\" "
+"gebruik nie. Kies asseblief 'n ander naam."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:118
 msgid "No gateway(s) have been selected to be used in this group"
 msgstr ""
-"Geen deurgang(e) was gekies is om te gebruik word in hierdie groep nie"
+"Geen deurgangspoort(e) was gekies is om te gebruik word in hierdie groep nie"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:202
 msgid "Edit Gateway Group Entry"
-msgstr "Wysig Deurgang Groep Inskrywing"
+msgstr "Wysig Deurgangspoort Groep Inskrywing"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:214
 msgid "*Gateway Priority"
-msgstr "*Deurgang Prioriteit"
+msgstr "*Deurgangspoort Prioriteit"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:268
 #: src/usr/local/www/system_gateway_groups_edit.php:271
@@ -29478,8 +29711,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
-"Deurgang \"%1$s\" kan nie geskrap word nie omdat dit in gebruik is op "
-"Deurgang Groep \"%2$s\""
+"Deurgangspoort \"%1$s\" kan nie geskrap word nie omdat dit in gebruik is op "
+"Deurgangspoort Groep \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:90
 #, php-format
@@ -29487,8 +29720,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
-"Deurgang \"%1$s\" kan nie geskrap word nie omdat dit in gebruik is op "
-"Statiese Deurgang \"%2$s\""
+"Deurgangspoort \"%1$s\" kan nie geskrap word nie omdat dit in gebruik is op "
+"Statiese Deurgangspoort \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:177
 #, php-format
@@ -29594,6 +29827,8 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:282
 msgid "Define data payload to send on ICMP packets to gateway monitor IP."
 msgstr ""
+"Definieer data loonvrag om te stuur op ICMP pakkette na die deurgangspoorte "
+"monitor IP."
 
 #: src/usr/local/www/system_gateways_edit.php:284
 msgid "Latency thresholds"
@@ -29725,7 +29960,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:409
 msgid "Use non-local gateway"
-msgstr ""
+msgstr "Gebruik nie-plaaslike deurgangspoort"
 
 #: src/usr/local/www/system_gateways_edit.php:412
 msgid ""
@@ -29733,6 +29968,9 @@ msgid ""
 "usually indicative of a configuration error, but is required for some "
 "scenarios."
 msgstr ""
+"Dit sal toelaat dat 'n deurgangspoort buite hierdie koppelvlak se subnet "
+"gebruik word. Dit is gewoonlik 'n konfigurasie fout, maar is nodig vir "
+"sommige situasies."
 
 #: src/usr/local/www/system_groupmanager.php:74
 #, php-format
@@ -30089,7 +30327,7 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:137
 #, php-format
 msgid "gateway is disabled, cannot enable route to %s"
-msgstr ""
+msgstr "Deurgangspoort is gedeaktiveer, kan nie roete aan %s aktiveer nie"
 
 #: src/usr/local/www/system_routes.php:140
 #, php-format
@@ -30147,18 +30385,20 @@ msgstr ""
 
 #: src/usr/local/www/system_routes_edit.php:89
 msgid "A valid gateway must be specified."
-msgstr "'N Geldige deurgang moet gespesifiseer word."
+msgstr "'N Geldige deurgangspoort moet gespesifiseer word."
 
 #: src/usr/local/www/system_routes_edit.php:91
 msgid ""
 "The gateway is disabled but the route is not. The route must be disabled in "
 "order to choose a disabled gateway."
 msgstr ""
+"Die deurgangspoort is afgeskakel, maar die roete is nie. Die roete moet "
+"gedeaktiveer word om 'n gedeaktiveerde deurgangspoort te kies."
 
 #: src/usr/local/www/system_routes_edit.php:95
 #, php-format
 msgid "The gateway \"%1$s\" is a different Address Family than network \"%2$s\"."
-msgstr ""
+msgstr "Die deurgangspoort \"%1$s\" is 'n ander adresfamilie as netwerk \"%2$s\"."
 
 #: src/usr/local/www/system_routes_edit.php:109
 msgid "A IPv4 subnet can not be over 32 bits."
@@ -30192,13 +30432,15 @@ msgstr ""
 
 #: src/usr/local/www/system_routes_edit.php:254
 msgid "*Gateway"
-msgstr ""
+msgstr "*Deurgangspoort"
 
 #: src/usr/local/www/system_routes_edit.php:257
 #, php-format
 msgid ""
 "Choose which gateway this route applies to or %1$sadd a new one first%2$s"
 msgstr ""
+"Kies watter deurgangspoort hierdie roete van toepassing is of %1$sbevoeg 'n "
+"nuwe een eerste%2$s"
 
 #: src/usr/local/www/system_routes_edit.php:265
 msgid ""
@@ -30576,7 +30818,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_settings.php:44
 #, php-format
 msgid "%1$sError: Could not find settings for %2$s%3$s"
-msgstr ""
+msgstr "%1$sFout: Kon nie instellings vir %2$s%3$s vind nie"
 
 #: src/usr/local/www/system_usermanager_settings.php:51
 #, php-format
@@ -30694,7 +30936,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:178
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:179
 msgid "Tunnels"
 msgstr ""
 
@@ -30735,7 +30977,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:251
 msgid "Remote Gateway"
-msgstr ""
+msgstr "Afgeleë Deurgangspoort"
 
 #: src/usr/local/www/vpn_ipsec.php:253
 msgid "P1 Protocol"
@@ -31146,7 +31388,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:227
 msgid "Remote gateway"
-msgstr ""
+msgstr "Afgeleë Deurgangspoort"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:238
 msgid "The P1 lifetime must be an integer."
@@ -31155,23 +31397,30 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:243
 msgid "A valid remote gateway address or host name must be specified."
 msgstr ""
+"N Geldige afgeleë deurgangspoort-adres of gasheernaam moet gespesifiseer "
+"word."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:245
 msgid ""
 "A valid remote gateway IPv4 address must be specified or protocol needs to "
 "be changed to IPv6"
 msgstr ""
+"'N Geldige IPv4-adres vir 'n afgeleë deurgangspoort moet gespesifiseer word "
+"of die protokol moet verander word na IPv6"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:247
 msgid ""
 "A valid remote gateway IPv6 address must be specified or protocol needs to "
 "be changed to IPv4"
 msgstr ""
+"'N Geldige IPv6-adres vir 'n afgeleë deurgangspoort moet gespesifiseer word "
+"of die protokol moet verander word na IPv4"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:257
 #, php-format
 msgid "The remote gateway \"%1$s\" is already used by phase1 \"%2$s\"."
 msgstr ""
+"Die afgeleë deurgaanspoort \"%1$s\" word reeds deur fase1 \"%2$s\" gebruik."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:268
 msgid "There is a Phase 2 using IPv6, cannot use IPv4."
@@ -31331,11 +31580,12 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:686
 msgid "*Remote Gateway"
-msgstr ""
+msgstr "*Afgeleë Deurgangspoort"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:689
 msgid "Enter the public IP address or host name of the remote gateway."
 msgstr ""
+"Voer die publieke IP-adres of gasheernaam van die afgeleë deurgangspoort in."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:701
 msgid "Phase 1 Proposal (Authentication)"
@@ -31584,6 +31834,9 @@ msgid ""
 "The local and remote networks of a phase 2 entry cannot overlap the outside "
 "of the tunnel (interface and remote gateway) configured in its phase 1."
 msgstr ""
+"Die plaaslike en afgeleë netwerke van 'n fase 2 inskrywing kan nie die "
+"buitekant van die tonnel (koppelvlak en afgeleë deurgangspoort) wat in fase "
+"1 ingestel is, oorvleuel nie."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:336
 msgid "At least one encryption algorithm must be selected."
@@ -31856,6 +32109,10 @@ msgid ""
 "client range.%1$s%1$sNOTE: This should NOT be set to any IP address "
 "currently in use on this firewall."
 msgstr ""
+"Voer die IP-adres in wat die L2TP-bediener aan kliënte moet gee vir gebruik "
+"as hul \"deurgangspoort\". %1$s Dit is tipies ingestel op 'n ongebruikte IP "
+"net buite die kliëntreeks.%1$s%1$sNOTA: Dit moet NIE gestel word op enige IP-"
+"adres wat tans op hierdie netskans gebruik word nie."
 
 #: src/usr/local/www/vpn_l2tp.php:238
 msgid "*Remote address range"
@@ -32529,6 +32786,13 @@ msgid ""
 "and write. Uppercase is used for TCP/UDP packets and lowercase is used for "
 "TUN/TAP packets.%1$s6-11: Debug info range"
 msgstr ""
+"Elke vlak toon alle inligting vanaf die vorige vlakke. Vlak 3 word aanbeveel "
+"vir 'n goeie opsomming van wat gebeur sonder om deur uitset te oorval te "
+"wees.%1$s%1$sGeem: Slegs fatale foute%1$sDie standaard deur 4: Normale "
+"gebruiksreeks%1$s5: Uitset R en W karakters na die konsole vir elke pakkie "
+"lees en skryf. Die hoofletter word gebruik vir TCP/UDP pakkette en "
+"kleinletters word gebruik vir TUN/TAP pakkette.%1$s6-11: Ontfout informasie "
+"reeks"
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
@@ -32723,7 +32987,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:423
 #: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Redirect Gateway"
-msgstr ""
+msgstr "Lei Deurgangspoort"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:430
 #: src/usr/local/www/vpn_openvpn_server.php:1117
@@ -33341,19 +33605,20 @@ msgstr "Aanlyn<br/>(ongemoniteerde)"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:154
 msgid "All gateways are hidden."
-msgstr ""
+msgstr "Alle deurgangspoorte is verborge."
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:156
 msgid "No gateways found."
-msgstr ""
+msgstr "Geen deurgangspoorte gevind nie."
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:195
 msgid "Updated gateways widget settings via dashboard."
-msgstr "Opgedateer derugang koppelvlakgeriefie instellings deur paneelbord."
+msgstr ""
+"Opgedateerde derugangspoort koppelvlakgeriefie instellings deur paneelbord."
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:252
 msgid "Gateway IP"
-msgstr ""
+msgstr "Deurgangspoort IP"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:225
@@ -33400,11 +33665,11 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Errors In"
-msgstr ""
+msgstr "Foute In"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:43
 msgid "Errors Out"
-msgstr ""
+msgstr "Foute Uit"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:103
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:152
@@ -33455,39 +33720,39 @@ msgstr ""
 msgid "Uptime: %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:179
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:180
 msgid "Mobile"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:192
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:193
 msgid "Active Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:193
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:194
 msgid "Inactive Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:194
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:195
 msgid "Mobile Users"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
 msgid "Retrieving overview data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
 msgid "Retrieving tunnel data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
 msgid "Retrieving mobile data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:236
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:237
 msgid "There are no configured IPsec Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:237
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr ""
 
@@ -33705,7 +33970,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Error in version information</i>"
-msgstr ""
+msgstr "<i>Fout in weergawe inligting</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:82
 msgid "Version "
@@ -33726,6 +33991,8 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:95
 msgid "<i>Error comparing installed version<br />with latest available</i>"
 msgstr ""
+"<i>Fout met die vergelyking van die geïnstalleerde weergawe <br />met die "
+"nuutste beskikbaar</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:115
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -34121,27 +34388,27 @@ msgstr ""
 msgid "Merged in config (%s sections) from XMLRPC client."
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:303
+#: src/etc/inc/pfsense-utils.inc:305
 msgid "Sort Alphabetically"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:338
+#: src/etc/inc/pfsense-utils.inc:340
 msgid "Manage Log"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:345
+#: src/etc/inc/pfsense-utils.inc:347
 msgid "Monitoring Settings"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:387
+#: src/etc/inc/pfsense-utils.inc:389
 msgid "Disable details in alias popups"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:406
+#: src/etc/inc/pfsense-utils.inc:408
 msgid "Display page name first in browser tab"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:453
+#: src/etc/inc/pfsense-utils.inc:455
 msgid "Do not display state table without a filter"
 msgstr ""
 
@@ -34252,7 +34519,7 @@ msgid "<span class=\"helptext\">"
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:421
-#: src/usr/local/www/firewall_nat_edit.php:659
+#: src/usr/local/www/firewall_nat_edit.php:691
 #: src/usr/local/www/firewall_nat_npt_edit.php:189
 #: src/usr/local/www/firewall_nat_out_edit.php:464
 #: src/usr/local/www/firewall_rules_edit.php:1196
@@ -34271,17 +34538,17 @@ msgstr ""
 msgid "Not"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:666
+#: src/usr/local/www/firewall_nat_edit.php:698
 msgid "Disable redirection for traffic matching this rule"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:734
-#: src/usr/local/www/firewall_nat_edit.php:802
+#: src/usr/local/www/firewall_nat_edit.php:738
+#: src/usr/local/www/firewall_nat_edit.php:806
 #: src/usr/local/www/firewall_rules_edit.php:1341
 msgid "Invert match."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_edit.php:899
+#: src/usr/local/www/firewall_nat_edit.php:903
 msgid "Do not automatically sync to other CARP members"
 msgstr ""
 
@@ -34337,7 +34604,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1926 src/usr/local/www/interfaces.php:3251
 msgid "Default gateway"
-msgstr ""
+msgstr "Standaarde Deurgangspoort"
 
 #: src/usr/local/www/interfaces.php:1993 src/usr/local/www/interfaces.php:2178
 msgid "Configuration Override"
@@ -35113,7 +35380,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:884
 #: src/usr/local/www/status_logs_settings.php:287
 msgid "Log errors from the web server process"
-msgstr ""
+msgstr "Logfoute van die webbedienerproses"
 
 #: src/usr/local/www/status_logs_common.inc:895
 #: src/usr/local/www/status_logs_settings.php:259
@@ -35189,7 +35456,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:450
 msgid "Gateway Monitor Events"
-msgstr ""
+msgstr "Duergangspoorte Monitor Gebeure"
 
 #: src/usr/local/www/status_logs_settings.php:457
 msgid "Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)"
@@ -35207,16 +35474,16 @@ msgstr ""
 msgid "Wireless Events (hostapd)"
 msgstr ""
 
-#: src/usr/local/www/system.php:536
+#: src/usr/local/www/system.php:543
 msgid "Allow DNS server list to be overridden by DHCP/PPP on WAN"
 msgstr ""
 
-#: src/usr/local/www/system.php:546
+#: src/usr/local/www/system.php:553
 msgid ""
 "Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall"
 msgstr ""
 
-#: src/usr/local/www/system.php:602
+#: src/usr/local/www/system.php:618
 msgid "Show hostname on login banner"
 msgstr "Wys masjien naam op aantekening banier"
 
@@ -35318,7 +35585,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:384
 msgid "Enable default gateway switching"
-msgstr ""
+msgstr "Aktiveer verstek duergangspoort skakel"
 
 #: src/usr/local/www/system_advanced_misc.php:396
 msgid "Enable PowerD"
@@ -35330,11 +35597,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:486
 msgid "Flush all states when a gateway goes down"
-msgstr ""
+msgstr "Spoel alle state wanneer 'n deurgangs poort afgaan"
 
 #: src/usr/local/www/system_advanced_misc.php:494
 msgid "Do not create rules when gateway is down"
-msgstr ""
+msgstr "Moenie reëls skep wanneer die deurgangspoort af is nie"
 
 #: src/usr/local/www/system_advanced_misc.php:506
 msgid "Use memory file system for /tmp and /var"
@@ -35440,27 +35707,29 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:154
 msgid "Disable this gateway"
-msgstr ""
+msgstr "Deaktiveer hierdie deurgangspoort"
 
 #: src/usr/local/www/system_gateways_edit.php:200
 msgid "This will select the above gateway as the default gateway."
 msgstr ""
+"Dit sal die bogenoemde deurgangspoort as die verstek deurgangspoort kies."
 
 #: src/usr/local/www/system_gateways_edit.php:207
 msgid "Disable Gateway Monitoring"
-msgstr ""
+msgstr "Deaktiveer Deurgangspoort Moniteering"
 
 #: src/usr/local/www/system_gateways_edit.php:214
 msgid "Disable Gateway Monitoring Action"
-msgstr ""
+msgstr "Deaktiveer Deurgangspoort Moniteering Aksie"
 
 #: src/usr/local/www/system_gateways_edit.php:238
 msgid "Mark Gateway as Down"
-msgstr ""
+msgstr "Merk Deurgangspoort as Af"
 
 #: src/usr/local/www/system_gateways_edit.php:410
 msgid "Use non-local gateway through interface specific route."
 msgstr ""
+"Gebruik nie-plaaslike deurgangsgroupe deur die koppelvlak spesifieke roete."
 
 #: src/usr/local/www/system_hasync.php:124
 msgid ""

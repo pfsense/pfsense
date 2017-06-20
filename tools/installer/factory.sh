@@ -127,7 +127,7 @@ case "${machine_arch}" in
 			sed '1!d; s,\.*\|$,,; s,^.*\|,,')
 		;;
 	*)
-		echo "Unsuported platform"
+		echo "Unsupported platform"
 		exit 1
 esac
 

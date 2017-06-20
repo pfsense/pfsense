@@ -283,12 +283,11 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'ip_change_kill_states',
-	'Reset all states',
-	'Reset all states if WAN IP changes',
+	'Reset All States',
+	'Reset all states if WAN IP Address changes',
 	isset($pconfig['ip_change_kill_states'])
-))->setHelp('This option will reset all states if a WAN IP changes instead of only '.
-    'reset states associated to old IP. This can help to kill zombie states associated '.
-    'to outdate WAN IPs when WAN IPs change too often.');
+))->setHelp('This option resets all states when a WAN IP Address changes instead of only '.
+    'states associated with the previous IP Address.');
 
 if (get_freebsd_version() == 8) {
 	$section->addInput(new Form_Checkbox(

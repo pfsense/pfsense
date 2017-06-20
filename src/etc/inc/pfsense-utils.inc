@@ -725,7 +725,7 @@ function get_carp_interface_status($carpid) {
 
 	$vhid = $vip['vhid'];
 	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+	$_gb = exec("/sbin/ifconfig {$interface} | /usr/bin/grep \"carp:.* vhid {$vhid} \"", $carp_query);
 	foreach ($carp_query as $int) {
 		if (stripos($int, "MASTER"))
 			return "MASTER";

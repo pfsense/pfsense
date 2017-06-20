@@ -632,7 +632,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 
 
 	if ($i == $rows) {
-		$group->setHelp('Use 3DES for best compatibility or for a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
+		$group->setHelp('Note: Blowfish, 3DES, and CAST128 provide weak security and should not be used.');
 	}
 
 	$i++;
@@ -650,6 +650,8 @@ foreach ($p2_halgos as $algo => $algoname) {
 		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
 	))->addClass('multi')->setAttribute('id');
+
+	$group->setHelp('Note: MD5 and SHA1 provide weak security and should not be used.');
 }
 
 $section->add($group);

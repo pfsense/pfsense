@@ -11,7 +11,7 @@ body {
 header {
 }
 
-#a {
+#headerrow {
     position: fixed;
     height: 90px;
     top: 0;
@@ -19,7 +19,7 @@ header {
     background-color: white;
 }
 
-.bb {
+.pagebody {
     position: absolute;
     top:90px;
     bottom:25px;
@@ -27,7 +27,7 @@ header {
     color: white;
 }
 
-.bb2 {
+.pagebodywarn {
     position: absolute;
     top:140px;
     bottom:25px;
@@ -51,15 +51,15 @@ header {
 
 @media only screen and (max-width : 768px) {
     /* only size 'xs' and below */
-    #a {
+    #headerrow {
         height: 100px;
     }
 
-    .bb {
+    .pagebody {
     	top: 100px;
     }
 
-    .bb2 {
+    .pagebody2 {
 		top: 250px;
     }
 
@@ -77,7 +77,7 @@ header {
 	}
 }
 
-#c {
+#footertext {
     position: fixed;
     height: 25px;
     bottom: 0;

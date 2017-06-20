@@ -244,9 +244,9 @@ function display_login_form() {
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 
 	if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-		$warnclass = "bb2";
+		$warnclass = "pagebodywarn";	// Amke room for a warning display row
 	} else {
-		$warnclass = "bb";
+		$warnclass = "pagebody";
 	}
 ?>
 <!DOCTYPE html>
@@ -265,8 +265,8 @@ function display_login_form() {
 
 <body id="login" >
 	<div id="total">
-		<header id="1">
-			<div id="a">
+		<header>
+			<div id="headerrow">
 				<div class="row">
 					<div class="col-sm-4">
 						<div id="logodiv" style="text-align:center" class="nowarning">
@@ -281,7 +281,7 @@ function display_login_form() {
 					</div>
 				</div>
 <?php
-	if ($warnclass == "bb2") {
+	if ($warnclass == "pagebodywarn") {
 ?>
 
 				<div class="row">
@@ -320,7 +320,7 @@ function display_login_form() {
             </div>
         </div>
         <footer id="3">
-            <div id="c">
+            <div id="footertext">
 				<p class="text-muted">
 					<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
 					2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.

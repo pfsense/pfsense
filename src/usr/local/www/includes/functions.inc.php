@@ -259,6 +259,11 @@ function get_cpu_crypto_support() {
 			if (in_array($armplatform, $accelerated_arm_platforms)) {
 				/* No drivers yet, so mark inactive! */
 				$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
+				break;
+			}
+			$armmv = get_single_sysctl('hw.mv_soc_model');
+			if (strpos($armmv, "Marvell 88F682") != 0) {
+				$cpucrypto_type = "Crypto: ". get_single_sysctl('dev.cesa.0.%desc');
 			}
 		default:
 			/* Unknown/unidentified platform */

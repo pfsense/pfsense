@@ -132,7 +132,7 @@ function switch_get_title() {
 
 	switch ($platform['name']) {
 	case "ROGUE-1":
-		return ("ROGUE-1");
+		return ("SG-3100");
 		break;
 	case "uFW":
 		return ("SG-1000");

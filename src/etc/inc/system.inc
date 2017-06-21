@@ -2504,7 +2504,7 @@ function system_identify_specific_platform() {
 	}
 
 	if (strpos($hw_model, "Cortex-A9") !== false) {
-		return array('name' => 'ROGUE-1', 'descr' => gettext('Rogue-1'));
+		return array('name' => 'ROGUE-1', 'descr' => gettext('Netgate SG-3100'));
 	}
 
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {

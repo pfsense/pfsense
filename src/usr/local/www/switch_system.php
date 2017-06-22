@@ -86,6 +86,12 @@ foreach ($swdevices as $swdev) {
 		echo "$cap";
 		$comma = true;
 	}
+	foreach ($swinfo['switch_caps'] as $cap => $val) {
+		if ($comma)
+			echo ",";
+		echo "$cap";
+		$comma = true;
+	}
 ?>
 						</td>
 					</tr>

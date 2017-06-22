@@ -136,14 +136,34 @@ if ($input_errors) {
 	// Don't draw the table if there were hardware errors
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch VLANs')?></h2></div>
+<?
+	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
+?>
+	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch Port based VLANs')?></h2></div>
+<?
+	} else {
+?>
+	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch 802.1Q VLANs')?></h2></div>
+<?
+	}
+?>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("VLAN group"); ?></th>
+<?
+	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+?>
 						<th><?=gettext("VLAN ID"); ?></th>
+<?
+	} else {
+?>
+						<th><?=gettext("Port"); ?></th>
+<?
+	}
+?>
 						<th><?=gettext("Members"); ?></th>
 						<th><?=gettext("Description"); ?></th>
 						<th><?=gettext("Action"); ?></th>

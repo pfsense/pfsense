@@ -109,7 +109,13 @@ if ($input_errors) {
 					<tr>
 						<th><?=gettext("Port #"); ?></th>
 						<th><?=gettext("Port name"); ?></th>
+<?
+	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+?>
 						<th><?=gettext("Port VID"); ?></th>
+<?
+	}
+?>
 						<th><?=gettext("Flags"); ?></th>
 						<th><?=gettext("Media"); ?></th>
 						<th><?=gettext("Status"); ?></th>
@@ -118,8 +124,13 @@ if ($input_errors) {
 				<tbody>
 <?php
 
-
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
+		if (isset($swinfo['switch_caps']['PORTS_MASK']) &&
+		    $swinfo['switch_caps']['PORTS_MASK'] == 1 &&
+		    (!isset($swinfo['ports_mask'][$i]) ||
+		    $swinfo['ports_mask'][$i] != 1)) {
+			continue;
+		}
 		$port = pfSense_etherswitch_getport($swdevice, $i);
 		if ($port == NULL) {
 			continue;
@@ -134,28 +145,23 @@ if ($input_errors) {
 						</td>
 						<td>
 <?php
-		$host = false;
-
-		foreach ($port['flags'] as $flag => $val) {
-			if ($flag == "HOST") {
-				$host = true;
-				break;
-			}
-		}
-
-		if ($host == true) {
-			echo " host";
+		$swport = switch_map_port($port['port']);
+		if ($swport != NULL) {
+			echo "$swport";
 		} else {
-			$swport = switch_map_port($port['port']);
-			if ($swport != NULL) {
-				echo "$swport";
-			}
+			print(htmlspecialchars($port['port']));
 		}
 ?>
 						</td>
+<?
+		if ($swinfo['vlan_mode'] == "DOT1Q") {
+?>
 						<td>
 							<?= htmlspecialchars($port['pvid'])?>
 						</td>
+<?
+		}
+?>
 						<td>
 <?
 		$comma = false;

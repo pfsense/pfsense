@@ -5980,7 +5980,7 @@ function interface_has_gatewayv6($friendly) {
 
 function is_altq_capable($int) {
 	/* Per:
-	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+8.3-RELEASE&arch=default&format=html
+	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+11.0-RELEASE&arch=default&format=html
 	 * Only the following drivers have ALTQ support
 	 * 20150328 - removed wireless drivers - ath, awi, bwn, iwi, ipw, ral, rum, run, wi - for now. redmine #4406
 	 */

@@ -319,7 +319,7 @@ $section->addInput(new Form_Checkbox(
 			'Note: Some network adapters do not support or work well in promiscuous mode.%1$s' .
 			'More: %2$sPacket capture%3$s',
 			'<br />',
-			'<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">',
+			'<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">',
 			'</a>');
 
 $section->addInput(new Form_Select(

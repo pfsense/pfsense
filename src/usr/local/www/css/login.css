@@ -171,3 +171,15 @@ form.login a:hover
 .logoCol {
     height: 100%;
 }
+
+@-webkit-keyframes autofill {
+    to {
+        color: white;
+        background: transparent;
+    }
+}
+
+input:-webkit-autofill {
+    -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
+}

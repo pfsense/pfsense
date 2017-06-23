@@ -251,104 +251,104 @@ function display_login_form() {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/login.css" type="text/css">
-	<title><?=gettext("Login"); ?></title>
-	<script type="text/javascript">
-		//<![CDATA{
-		var events = events || [];
-		//]]>
-	</script>
-</head>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+	    <link rel="stylesheet" href="css/login.css" type="text/css">
+		<title><?=gettext("Login"); ?></title>
+		<script type="text/javascript">
+			//<![CDATA{
+			var events = events || [];
+			//]]>
+		</script>
+	</head>
 
-<body id="login" >
-	<div id="total">
-		<header>
-			<div id="headerrow">
-				<div class="row">
-					<div class="col-sm-4">
-						<div id="logodiv" style="text-align:center" class="nowarning">
-							<img src="pfsense-trans.png" height="100%"/>
+	<body id="login" >
+		<div id="total">
+			<header>
+				<div id="headerrow">
+					<div class="row">
+						<div class="col-sm-4">
+							<div id="logodiv" style="text-align:center" class="nowarning">
+								<img src="pfsense-trans.png" height="100%"/>
+							</div>
+						</div>
+
+						<div class="col-sm-8 nowarning msgbox text-center">
+							<span id="hostspan">
+								<a><h4><?=$loginbannerstr?></h4></a>
+							</span
 						</div>
 					</div>
-
-					<div class="col-sm-8 nowarning msgbox text-center">
-						<span id="hostspan">
-							<a><h4><?=$loginbannerstr?></h4></a>
-						</span
-					</div>
-				</div>
 <?php
 	if ($warnclass == "pagebodywarn") {
 ?>
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="alert alert-warning <?=$warnclass?>">
-							<?=gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.
-							If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.")?>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="alert alert-warning <?=$warnclass?>">
+								<?=gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.
+								If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.")?>
+							</div>
 						</div>
 					</div>
-				</div>
 <?php
 	}
 ?>
-            </div>
-        </header>
+	            </div>
+	        </header>
 
-        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
-        	<div class="col-sm-4"></div>
+	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+	        	<div class="col-sm-4"></div>
 
-        	<div class="col-sm-4 offset-md-4 logoCol">
-				<div class="loginCont center-block">
-	                <form method="post" class="login">
-		                <p class="form-title">Sign In</p>
-		                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" />
-		                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
-		                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
-	                </form>
-				</div>
-            </div>
+	        	<div class="col-sm-4 offset-md-4 logoCol">
+					<div class="loginCont center-block">
+		                <form method="post" class="login">
+			                <p class="form-title">Sign In</p>
+			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" />
+			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
+		                </form>
+					</div>
+	            </div>
 
-        	<div class="col-sm-4"></div>
-        </div>
+	        	<div class="col-sm-4"></div>
+	        </div>
 
-        <footer id="3">
-            <div id="footertext">
-				<p class="text-muted">
-					<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
-					2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
-					[<a href="/license.php" class="tblnk">view license</a>]
-				</p>
-            </div>
-        </footer>
-    </div>
+	        <footer id="3">
+	            <div id="footertext">
+					<p class="text-muted">
+						<a target="_blank" href="https://www.pfsense.org/?gui=bootstrap">pfSense</a> is &copy;
+						2004 - 2017 by <a href="https://pfsense.org/license" class="tblnk">Rubicon Communications, LLC (Netgate)</a>. All Rights Reserved.
+						[<a href="/license.php" class="tblnk">view license</a>]
+					</p>
+	            </div>
+	        </footer>
+	    </div>
 
-	<script src="/vendor/jquery/jquery-1.12.0.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-1.12.0.min.js')?>"></script>
-	<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
-	<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
+		<script src="/vendor/jquery/jquery-1.12.0.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-1.12.0.min.js')?>"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
+		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 
-	<script type="text/javascript">
-	//!<[CDATA[
-	events.push(function() {
-		document.cookie=
-			"cookie_test=1" +
-			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+		<script type="text/javascript">
+		//!<[CDATA[
+		events.push(function() {
+			document.cookie=
+				"cookie_test=1" +
+				"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
 
-		if (document.cookie.indexOf("cookie_test") == -1) {
-			alert("<?=gettext('The browser must support cookies to login.')?>");
-		}
+			if (document.cookie.indexOf("cookie_test") == -1) {
+				alert("<?=gettext('The browser must support cookies to login.')?>");
+			}
 
-		// Delete it
-		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-	});
-	//]]>
-	</script>
+			// Delete it
+			document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		});
+		//]]>
+		</script>
 
-</body>
+	</body>
 </html>
-<?php
 
+<?php
 } // end function
 

@@ -283,26 +283,24 @@ function display_login_form() {
 <?php
 	if ($warnclass == "pagebodywarn") {
 ?>
-
 				<div class="row">
 					<div class="col-sm-12">
-						<div class="alert alert-warning" class="<?=$warnclass?>">
+						<div class="alert alert-warning <?=$warnclass?>">
 							<?=gettext("The IP address being used to access this router is not configured locally, which may be forwarded by NAT or other means.
 							If this forwarding is unexpected, it should be verified that a man-in-the-middle attack is not taking place.")?>
 						</div>
 					</div>
 				</div>
 <?php
-}
+	}
 ?>
             </div>
         </header>
 
         <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
-        	<div class="col-sm-4">
-            </div>
+        	<div class="col-sm-4"></div>
 
-        	<div class="col-sm-4 logoCol">
+        	<div class="col-sm-4 offset-md-4 logoCol">
 				<div class="loginCont center-block">
 	                <form method="post" class="login">
 		                <p class="form-title">Sign In</p>
@@ -313,9 +311,9 @@ function display_login_form() {
 				</div>
             </div>
 
-        	<div class="col-sm-4">
-            </div>
+        	<div class="col-sm-4"></div>
         </div>
+
         <footer id="3">
             <div id="footertext">
 				<p class="text-muted">

@@ -302,7 +302,7 @@ function display_login_form() {
 
 	        	<div class="col-sm-4 offset-md-4 logoCol">
 					<div class="loginCont center-block">
-		                <form method="post" class="login">
+		                <form method="post" <?=$loginautocomplete?> class="login">
 			                <p class="form-title">Sign In</p>
 			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" />
 			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />

@@ -1736,14 +1736,16 @@ function save_gateway($gateway_settings, $realid = "") {
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {
 		$i = 0;
 		/* remove the default gateway bits for all gateways with the same address family */
-		foreach ($a_gateway_item as $gw) {
-			if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
-				unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-				if ($gw['interface'] != $gateway_settings['interface'] && $gw['defaultgw']) {
-					$reloadif = $gw['interface'];
+		if (is_array($a_gateway_item)) {
+			foreach ($a_gateway_item as $gw) {
+				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					if ($gw['interface'] != $gateway_settings['interface'] && $gw['defaultgw']) {
+						$reloadif = $gw['interface'];
+					}
 				}
+				$i++;
 			}
-			$i++;
 		}
 		$gateway['defaultgw'] = true;
 	}

@@ -215,7 +215,7 @@ else:
 <?php
 	if (count($mirror_status) > 0): ?>
 
-			<table class="table table-striped stable-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
@@ -296,7 +296,7 @@ else:
 		<div class="panel-body table-responsive">
 <?php
 	if (count($unused_consumers) > 0): ?>
-			<table class="table table-striped stable-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><?=gettext("Name"); ?></th>

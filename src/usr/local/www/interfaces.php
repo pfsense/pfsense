@@ -2450,7 +2450,7 @@ $group->add(new Form_Input(
 	$pconfig['adv_dhcp6_key_info_statement_expire']
 ))->sethelp('Expire');
 
-$group->setHelp('See %1$shere%2$s more information', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement">', '</a>');
+$group->setHelp('See %1$shere%2$s more information', '<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&sektion=5&apropos=0&manpath=FreeBSD+11.0-RELEASE+and+Ports#Interface_statement">', '</a>');
 
 $section->add($group);
 

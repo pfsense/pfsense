@@ -310,7 +310,6 @@ pm = ondemand
 pm.process_idle_timeout = 5
 pm.max_children = $PHPFPMMAX
 pm.max_requests = 500
-
 EOF
 
 elif [ $REALMEM -gt 1000 ]; then
@@ -323,7 +322,6 @@ pm.start_servers = 1
 pm.max_requests = 500
 pm.min_spare_servers=1
 pm.max_spare_servers=1
-
 EOF
 else
 
@@ -332,10 +330,15 @@ else
 pm = static
 pm.max_children = $PHPFPMMAX
 pm.max_requests = 500
-
 EOF
 
 fi
+
+# Add status url for php-fpm this will only be made available from localhost through nginx 'allow 127.0.0.1'
+	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
+pm.status_path = /status
+
+EOF
 
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then

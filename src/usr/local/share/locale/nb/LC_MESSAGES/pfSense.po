@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-06-27 07:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-24 07:05-0400\n"
+"PO-Revision-Date: 2017-06-22 12:06-0400\n"
 "Last-Translator: Knut Edvard Klock <knut@netgate.com>\n"
 "Language-Team: Norwegian Bokmål\n"
 "Language: nb\n"
@@ -234,7 +234,7 @@ msgstr "Enheten er foreløpig vedlikeholdt av: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -246,15 +246,15 @@ msgstr "Logg på %1$s"
 msgid "Login"
 msgstr "Logg på"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "Nettleseren må støtte Informasjonskapseler"
 
@@ -578,6 +578,8 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"Save config permission denied by the 'User - Config: Deny Config Write' "
+"permission for user '%s'."
 
 #: src/etc/inc/config.lib.inc:483
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -3683,7 +3685,7 @@ msgstr "Følgende fil kunne ikke leses %1$s fra %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2940
 msgid "Bosnian"
-msgstr ""
+msgstr "Bosnisk"
 
 #: src/etc/inc/pfsense-utils.inc:2941
 msgid "German (Germany)"
@@ -3699,7 +3701,7 @@ msgstr "Spansk"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Spansk (Argentina)"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -8719,12 +8721,16 @@ msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
 msgstr ""
+"Linjen %s ser ut til å ha generert en feil, og har blitt uthevet. Full "
+"respons er under."
 
 #: src/usr/local/www/diag_command.php:299
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Koden ser ut til å ha generert en feil, men den ansvarlige linjen kan ikke "
+"identifiseres. Full respons er under."
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -8732,10 +8738,12 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Merk at linjenummeret i full PHP-respons vil være %s  linjer for store. "
+"Nested code og eval () feil kan feilaktig peke til \"linje 1\"."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Feilsøker:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
@@ -9042,12 +9050,12 @@ msgstr "Alias ble opprettet."
 #: src/usr/local/www/diag_dns.php:228
 #, php-format
 msgid "Could not update alias for %s"
-msgstr ""
+msgstr "Kunne ikke oppdatere alias for %s"
 
 #: src/usr/local/www/diag_dns.php:230
 #, php-format
 msgid "Could not create alias for %s"
-msgstr ""
+msgstr "Kunne ikke opprette alias for %s"
 
 #: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -12114,7 +12122,7 @@ msgstr "Omdirigere målet IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "Det innsendte grensesnittet eksisterer ikke."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15425,6 +15433,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Andre dashbordinnstillinger er tilgjengelige fra <a href=\"%s\">General "
+"Setup</a> siden."
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -20758,13 +20768,13 @@ msgstr "Nåværende Portal Side"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Live visning"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Se sideinnhold"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -26212,6 +26222,8 @@ msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
+"Når siden er ferdig lastet, lagres utgangen. %1$s. Den kan lastes ned via "
+"scp eller ved hjelp av denne knappen:"
 
 #: src/usr/local/www/status.php:378
 msgid "Saving output to archive..."
@@ -28545,39 +28557,39 @@ msgstr "webConfigurator"
 
 #: src/usr/local/www/system.php:610
 msgid "Blue"
-msgstr ""
+msgstr "Blå"
 
 #: src/usr/local/www/system.php:610
 msgid "Green"
-msgstr ""
+msgstr "Grønn"
 
 #: src/usr/local/www/system.php:610
 msgid "Red"
-msgstr ""
+msgstr "Rød"
 
 #: src/usr/local/www/system.php:611
 msgid "Purple"
-msgstr ""
+msgstr "Lilla"
 
 #: src/usr/local/www/system.php:611
 msgid "Gray"
-msgstr ""
+msgstr "Grå"
 
 #: src/usr/local/www/system.php:611
 msgid "Brown"
-msgstr ""
+msgstr "Brun"
 
 #: src/usr/local/www/system.php:612
 msgid "Orange"
-msgstr ""
+msgstr "Oransje"
 
 #: src/usr/local/www/system.php:608
 msgid "Login page color"
-msgstr ""
+msgstr "Påloggingssiden farge"
 
 #: src/usr/local/www/system.php:613
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "Velg en farge for påloggingssiden"
 
 #: src/usr/local/www/system.php:617
 msgid "Login hostname"
@@ -36049,7 +36061,7 @@ msgstr "Alle valgte porter er nede."
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
 msgid "All statistics are hidden."
-msgstr ""
+msgstr "All statistikk er skjult."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -36061,19 +36073,19 @@ msgstr "Henter port data"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
 msgid "Orientation"
-msgstr ""
+msgstr "orientering"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
 msgid "Each interface in a column"
-msgstr ""
+msgstr "Hvert grensesnitt i en kolonne"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
 msgid "Each interface in a row"
-msgstr ""
+msgstr "Hvert grensesnitt på rad"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
 msgid "Stats Item"
-msgstr ""
+msgstr "Statistikkelement"
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."

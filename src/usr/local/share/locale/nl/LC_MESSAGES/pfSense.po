@@ -17,12 +17,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-06-27 07:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-19 10:57-0400\n"
-"Last-Translator: Arnon Hoogerwerf <admin@hoogerwerf.xyz>\n"
+"PO-Revision-Date: 2017-06-20 02:30-0400\n"
+"Last-Translator: Ronald <ronald@zelfbedacht.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -251,7 +251,7 @@ msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -263,15 +263,15 @@ msgstr "Inloggen op %1$s"
 msgid "Login"
 msgstr "Inloggen"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "De browser moet cookies ondersteunen om in te loggen."
 
@@ -3759,7 +3759,7 @@ msgstr "Spaans"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Spaans (Argentinië)"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -12312,7 +12312,7 @@ msgstr "Doorverwijzen van doel IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "De opgegeven interface bestaat niet."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15680,6 +15680,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Andere dashboard instelling zijn beschikbaar via de <a href=\"%s\">Algemene "
+"instellingen</a> pagina."
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -20677,7 +20679,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:644
 msgid "Pass-through MAC Auto Entry"
-msgstr ""
+msgstr "Doorvoer MAC automatische Regel"
 
 #: src/usr/local/www/services_captiveportal.php:647
 #, php-format
@@ -21034,13 +21036,13 @@ msgstr "Huidige portal pagina"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Live weergave"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Bekijk pagina inhoud"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -21645,7 +21647,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:472
 msgid "# of Roll bits"
-msgstr ""
+msgstr "# Rollende bits"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:475
 msgid ""
@@ -22247,6 +22249,8 @@ msgstr ""
 msgid ""
 "Signed 16-bit integer type must be a number in the range -32768 to 32767."
 msgstr ""
+"Signed 16-bit integer type moet een nummer bevatten in de reeks -32768 tot "
+"en met 32767."
 
 #: src/usr/local/www/services_dhcp.php:408
 msgid ""
@@ -22766,7 +22770,7 @@ msgstr "Rootpad"
 
 #: src/usr/local/www/services_dhcp.php:1292
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
-msgstr ""
+msgstr "string-format: iscsi:(servernaam):(protocol):(poort):(LUN):doelnaam "
 
 #: src/usr/local/www/services_dhcp.php:1305
 #: src/usr/local/www/services_dhcp.php:1311
@@ -23115,6 +23119,8 @@ msgstr "DDNS Server IP"
 msgid ""
 "Enter the primary domain name server IP address for the dynamic domain name."
 msgstr ""
+"Voer het primaire domeinnaamserver IP adres in voor de dynamische domeinnaam."
+""
 
 #: src/usr/local/www/services_dhcp_edit.php:617
 #: src/usr/local/www/services_dhcpv6.php:807
@@ -23170,7 +23176,7 @@ msgstr "IP adres van Doelsever %s is geen geldig IPv4 adres."
 #: src/usr/local/www/services_dhcp_relay.php:102
 #: src/usr/local/www/services_dhcpv6_relay.php:102
 msgid "At least one Destination Server IP address must be specified."
-msgstr ""
+msgstr "Minstends één Doel Server IP adres moet ingevuld zijn."
 
 #: src/usr/local/www/services_dhcp_relay.php:129
 msgid ""
@@ -23408,7 +23414,7 @@ msgstr "Negeren"
 
 #: src/usr/local/www/services_dhcpv6.php:821
 msgid "DDNS Client Updates"
-msgstr ""
+msgstr "DDNS Client Verniewingen"
 
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid ""
@@ -23421,7 +23427,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:834
 msgid "DDNS Reverse"
-msgstr ""
+msgstr "Omgekeerde DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:891
 msgid "LDAP URI"
@@ -24078,11 +24084,11 @@ msgstr "Verbose logging"
 
 #: src/usr/local/www/services_dyndns_edit.php:339
 msgid "HTTP API DNS Options"
-msgstr ""
+msgstr "HTTP API DNS Opties"
 
 #: src/usr/local/www/services_dyndns_edit.php:346
 msgid "HTTP API SSL Options"
-msgstr ""
+msgstr "HTTP API SSL Opties"
 
 #: src/usr/local/www/services_dyndns_edit.php:349
 msgid ""
@@ -24261,7 +24267,7 @@ msgstr "Tijdserver"
 #: src/usr/local/www/services_ntpd.php:232
 #, php-format
 msgid "%d is the maximum number of configured servers."
-msgstr ""
+msgstr "%d is het maximum te configureren servers."
 
 #: src/usr/local/www/services_ntpd.php:284
 #, php-format
@@ -24597,17 +24603,19 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_pps.php:124
 msgid "NTP Serial PPS Configuration"
-msgstr ""
+msgstr "NTP Serieel PPS Configuratie"
 
 #: src/usr/local/www/services_ntpd_pps.php:150
 msgid ""
 "All serial ports are listed, be sure to pick the port with the PPS source "
 "attached. "
 msgstr ""
+"Alle seriële poorten worden weergegeven. Wees er zeker van dat de poort "
+"wordt gekozen waaraan de PPS bron verbonden is."
 
 #: src/usr/local/www/services_ntpd_pps.php:155
 msgid "Fudge Time"
-msgstr ""
+msgstr "Fudge tijd"
 
 #: src/usr/local/www/services_ntpd_pps.php:158
 msgid ""
@@ -24657,17 +24665,17 @@ msgstr "Server adres"
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Remote start address"
-msgstr ""
+msgstr "Remote start adres"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS server address"
-msgstr ""
+msgstr "RADIUS server adres"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS shared secret"
-msgstr ""
+msgstr "RADIUS gedeeld geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:116
 #: src/usr/local/www/vpn_l2tp.php:72
@@ -24686,20 +24694,20 @@ msgstr "Een geldig RADIUS server adres moet worden gedefinieerd."
 
 #: src/usr/local/www/services_pppoe_edit.php:125
 msgid "Number of PPPoE users must be between 1 and 255"
-msgstr ""
+msgstr "Aantal PPoE gebruikers moet tussen 1 en 255 zitten."
 
 #: src/usr/local/www/services_pppoe_edit.php:128
 msgid "User Max Logins must be between 1 and 255"
-msgstr ""
+msgstr "Maximaal aantal logins moet tussen 1 en 255 zitten."
 
 #: src/usr/local/www/services_pppoe_edit.php:131
 msgid "Subnet mask must be an integer between 0 and 32"
-msgstr ""
+msgstr "Subnetmasker moet een integer zijn tussen 0 en 32."
 
 #: src/usr/local/www/services_pppoe_edit.php:136
 #: src/usr/local/www/vpn_l2tp.php:99
 msgid "The specified server address lies in the remote subnet."
-msgstr ""
+msgstr "Het gedefinieerde server adres ligt in het remote subnet."
 
 #: src/usr/local/www/services_pppoe_edit.php:139
 msgid "The specified server address is equal to an interface ip address."
@@ -24806,15 +24814,15 @@ msgstr "NAS IP adres verzonden naar de RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:391
 msgid "RADIUS Accounting Update"
-msgstr ""
+msgstr "RADIUS Accounting Update"
 
 #: src/usr/local/www/services_pppoe_edit.php:394
 msgid "RADIUS accounting update period in seconds"
-msgstr ""
+msgstr "RADIUS accounting update periode in secondes"
 
 #: src/usr/local/www/services_pppoe_edit.php:398
 msgid "RADIUS Issued IP Addresses"
-msgstr ""
+msgstr "RADIUS geleverde IP adres."
 
 #: src/usr/local/www/services_pppoe_edit.php:403
 msgid "Primary RADIUS Server"
@@ -24839,7 +24847,7 @@ msgstr "Standaard poorten zijn 1812 (authenticatie) en 1813 (boekhouding)."
 
 #: src/usr/local/www/services_pppoe_edit.php:431
 msgid "Primary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Primaire RADIUS server gedeeld geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:434
 #: src/usr/local/www/vpn_l2tp.php:312
@@ -24854,7 +24862,7 @@ msgstr "Secundaire RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:464
 msgid "Secondary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Secundaire RADIUS Server gedeelde geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:467
 msgid ""
@@ -24907,15 +24915,15 @@ msgstr "Sleutel"
 
 #: src/usr/local/www/services_rfc2136_edit.php:80
 msgid "The DNS update host name contains invalid characters."
-msgstr ""
+msgstr "De DNS update hostnaam bevat invalide tekens."
 
 #: src/usr/local/www/services_rfc2136_edit.php:83
 msgid "The DNS update TTL must be an integer."
-msgstr ""
+msgstr "De DNS update TTL moet een integer zijn."
 
 #: src/usr/local/www/services_rfc2136_edit.php:86
 msgid "The DNS update key name contains invalid characters."
-msgstr ""
+msgstr "De DNS update sleutel naam bevat invalide tekens."
 
 #: src/usr/local/www/services_rfc2136_edit.php:110
 msgid "New/Edited RFC2136 dnsupdate entry was posted."
@@ -24965,13 +24973,13 @@ msgstr "Gebruik publiek IP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:252
 msgid "*Record Type"
-msgstr ""
+msgstr "*Record type"
 
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/services_rfc2136_edit.php:264
 #: src/usr/local/www/services_rfc2136_edit.php:272
 msgid "Record Type"
-msgstr ""
+msgstr "Record type"
 
 #: src/usr/local/www/services_rfc2136_edit.php:306
 #, php-format
@@ -25039,11 +25047,11 @@ msgstr "RADVD zal niet worden geactiveerd op deze interface."
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
-msgstr ""
+msgstr "Alleen Router"
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Will advertise this router."
-msgstr ""
+msgstr "Zal de route adverteren"
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Unmanaged"
@@ -25064,7 +25072,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
-msgstr ""
+msgstr "Ondersteund"
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid ""
@@ -25074,7 +25082,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
-msgstr ""
+msgstr "Sessieonafhankelijke DHCP"
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid ""
@@ -25152,7 +25160,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
-msgstr ""
+msgstr "RA interface"
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
@@ -25187,7 +25195,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:371
 msgid "Minimum RA interval"
-msgstr ""
+msgstr "Minimum RA interval"
 
 #: src/usr/local/www/services_router_advertisements.php:375
 msgid ""
@@ -25197,7 +25205,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:379
 msgid "Maximum RA interval"
-msgstr ""
+msgstr "Maximum RA interval"
 
 #: src/usr/local/www/services_router_advertisements.php:383
 msgid ""
@@ -25207,7 +25215,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:387
 msgid "Router lifetime"
-msgstr ""
+msgstr "Route levensduur"
 
 #: src/usr/local/www/services_router_advertisements.php:391
 msgid "The lifetime associated with the default router in seconds."
@@ -25215,7 +25223,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:394
 msgid "RA Subnets"
-msgstr ""
+msgstr "RA subnets"
 
 #: src/usr/local/www/services_router_advertisements.php:410
 msgid "Subnets"
@@ -25249,12 +25257,12 @@ msgstr "Ongeldig letterteken '#' in de read community string"
 
 #: src/usr/local/www/services_snmp.php:100
 msgid "Community"
-msgstr ""
+msgstr "Gemeenschap"
 
 #: src/usr/local/www/services_snmp.php:104
 #: src/usr/local/www/services_snmp.php:226
 msgid "Polling Port"
-msgstr ""
+msgstr "Polling poort"
 
 #: src/usr/local/www/services_snmp.php:112
 msgid "Invalid character '#' in SNMP trap string"
@@ -25263,23 +25271,23 @@ msgstr "Ongeldig letterteken '#' in SNMP trap string"
 #: src/usr/local/www/services_snmp.php:116
 #: src/usr/local/www/services_snmp.php:275
 msgid "Trap server"
-msgstr ""
+msgstr "Trap server"
 
 #: src/usr/local/www/services_snmp.php:120
 msgid "Trap server port"
-msgstr ""
+msgstr "Trap server poort"
 
 #: src/usr/local/www/services_snmp.php:124
 msgid "Trap string"
-msgstr ""
+msgstr "Trap string"
 
 #: src/usr/local/www/services_snmp.php:211
 msgid "SNMP Daemon"
-msgstr ""
+msgstr "SNMP daemon"
 
 #: src/usr/local/www/services_snmp.php:222
 msgid "SNMP Daemon Settings"
-msgstr ""
+msgstr "SNPM Daemon instellingen"
 
 #: src/usr/local/www/services_snmp.php:229
 msgid "Enter the port to accept polling events on (default 161)."
@@ -25295,7 +25303,7 @@ msgstr "Systeem contact"
 
 #: src/usr/local/www/services_snmp.php:247
 msgid "Read Community String"
-msgstr ""
+msgstr "Lees gemeenschapsstring"
 
 #: src/usr/local/www/services_snmp.php:250
 msgid ""
@@ -25306,11 +25314,11 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:254
 msgid "SNMP Traps Enable"
-msgstr ""
+msgstr "SNPM Trap Inschakelen"
 
 #: src/usr/local/www/services_snmp.php:265
 msgid "SNMP Trap Settings"
-msgstr ""
+msgstr "SNMP Trap instellingen"
 
 #: src/usr/local/www/services_snmp.php:278
 msgid "Enter the trap server name"
@@ -25326,7 +25334,7 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:289
 msgid "SNMP Trap String"
-msgstr ""
+msgstr "SNMP Trap regel"
 
 #: src/usr/local/www/services_snmp.php:296
 msgid "SNMP Modules"
@@ -25338,11 +25346,11 @@ msgstr "SNMP modules"
 
 #: src/usr/local/www/services_snmp.php:355
 msgid "Interface Binding"
-msgstr ""
+msgstr "Verbonden interface"
 
 #: src/usr/local/www/services_snmp.php:361
 msgid "Bind Interfaces"
-msgstr ""
+msgstr "Bind interface"
 
 #: src/usr/local/www/services_unbound.php:109
 msgid ""
@@ -25429,7 +25437,7 @@ msgstr "Geavanceerde instellingen"
 #: src/usr/local/www/services_unbound_acls.php:186
 #: src/usr/local/www/services_unbound_advanced.php:217
 msgid "Access Lists"
-msgstr ""
+msgstr "Toegangslijst"
 
 #: src/usr/local/www/services_unbound.php:271
 msgid "General DNS Resolver Options"
@@ -25511,19 +25519,19 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:393
 msgid "Hide Custom Options"
-msgstr ""
+msgstr "Verberg Aangepaste Opties"
 
 #: src/usr/local/www/services_unbound.php:444
 msgid "Parent domain of host"
-msgstr ""
+msgstr "Bovenliggende domein van de ouder."
 
 #: src/usr/local/www/services_unbound.php:445
 msgid "IP to return for host"
-msgstr ""
+msgstr "IP om terug te keren van de host."
 
 #: src/usr/local/www/services_unbound.php:529
 msgid "Lookup Server IP Address"
-msgstr ""
+msgstr "Opzoek Server IP Adres"
 
 #: src/usr/local/www/services_unbound.php:579
 #, php-format
@@ -25613,19 +25621,19 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:193
 msgid "New Access List"
-msgstr ""
+msgstr "Nieuwe toegangslijst"
 
 #: src/usr/local/www/services_unbound_acls.php:211
 msgid "Access List name"
-msgstr ""
+msgstr "Toegangslijstnaam"
 
 #: src/usr/local/www/services_unbound_acls.php:214
 msgid "Provide an Access List name."
-msgstr ""
+msgstr "Geef een toegangsnaam op"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Allow Snoop"
-msgstr ""
+msgstr "Snoop toestaan"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Deny Nonlocal"
@@ -25722,7 +25730,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:226
 msgid "Hide Identity"
-msgstr ""
+msgstr "Verberg identiteit"
 
 #: src/usr/local/www/services_unbound_advanced.php:233
 msgid "Hide Version"
@@ -25762,7 +25770,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:261
 msgid "Message Cache Size"
-msgstr ""
+msgstr "Berichten cache omvang"
 
 #: src/usr/local/www/services_unbound_advanced.php:264
 msgid ""
@@ -25774,7 +25782,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:268
 msgid "Outgoing TCP Buffers"
-msgstr ""
+msgstr "Uitgaande TCP Buffers"
 
 #: src/usr/local/www/services_unbound_advanced.php:271
 msgid ""
@@ -25785,7 +25793,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:275
 msgid "Incoming TCP Buffers"
-msgstr ""
+msgstr "Inkomende TCP Buffers"
 
 #: src/usr/local/www/services_unbound_advanced.php:278
 msgid ""
@@ -25857,7 +25865,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:320
 msgid "minutes"
-msgstr ""
+msgstr "minuten"
 
 #: src/usr/local/www/services_unbound_advanced.php:323
 msgid "TTL for Host Cache Entries"
@@ -26054,7 +26062,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:84
 msgid "A valid ip could not be found!"
-msgstr ""
+msgstr "Er kon geen valide IP gevonden worden"
 
 #: src/usr/local/www/services_wol.php:89
 #, php-format
@@ -26153,7 +26161,7 @@ msgstr "Gerelateerde logregels"
 #: src/usr/local/www/status.php:162
 #, php-format
 msgid "Firewall Status on %s"
-msgstr ""
+msgstr "Firewall status over %s"
 
 #: src/usr/local/www/status.php:165
 msgid "This status page includes the following information"
@@ -26178,7 +26186,7 @@ msgstr ""
 
 #: src/usr/local/www/status.php:378
 msgid "Saving output to archive..."
-msgstr ""
+msgstr "Bezig met het opslaan van de uitkomst in een archief..."
 
 #: src/usr/local/www/status.php:386
 msgid "Done."
@@ -26186,7 +26194,7 @@ msgstr "Klaar"
 
 #: src/usr/local/www/status_captiveportal.php:42
 msgid "Session details"
-msgstr ""
+msgstr "Sessie details"
 
 #: src/usr/local/www/status_captiveportal.php:46
 #, php-format
@@ -26296,27 +26304,27 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:277
 msgid "Don't show last activity"
-msgstr ""
+msgstr "Laat laatste activiteit niet zien"
 
 #: src/usr/local/www/status_captiveportal.php:279
 msgid "Hide Last Activity"
-msgstr ""
+msgstr "Verberg laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:284
 msgid "Show last activity"
-msgstr ""
+msgstr "Toon laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:286
 msgid "Show Last Activity"
-msgstr ""
+msgstr "Toon laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:291
 msgid "Disconnect all active users"
-msgstr ""
+msgstr "Verbreek de verbinding met alle actieve gebruikers "
 
 #: src/usr/local/www/status_captiveportal.php:293
 msgid "Disconnect All Users"
-msgstr ""
+msgstr "Verbreek de verbinding met alle gebruikers"
 
 #: src/usr/local/www/status_captiveportal_expire.php:63
 msgid "Voucher(s) successfully marked."
@@ -26353,7 +26361,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:80
 msgid "Roll#"
-msgstr ""
+msgstr "Rol#"
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:84
 msgid "used"
@@ -26380,7 +26388,7 @@ msgstr "Coupon"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:109
 msgid "Roll"
-msgstr ""
+msgstr "Rol"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:110
 msgid "Activated at"
@@ -26636,7 +26644,7 @@ msgstr "IPv6 Prefix"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:586
 msgid "Routed To"
-msgstr ""
+msgstr "Geroeteerd naar"
 
 #: src/usr/local/www/status_filter_reload.php:63
 msgid "Reload Filter"
@@ -26717,7 +26725,7 @@ msgstr "RTTsd"
 #: src/usr/local/www/status_gateways.php:65
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:212
 msgid "Loss"
-msgstr ""
+msgstr "Verlies"
 
 #: src/usr/local/www/status_gateways.php:96
 #: src/usr/local/www/status_gateways.php:107
@@ -26945,7 +26953,7 @@ msgstr "BSSID"
 
 #: src/usr/local/www/status_interfaces.php:167
 msgid "RSSI"
-msgstr ""
+msgstr "RSSI"
 
 #: src/usr/local/www/status_interfaces.php:168
 msgid "In/out packets"
@@ -26966,7 +26974,7 @@ msgstr "In/uit fouten"
 #: src/usr/local/www/status_interfaces.php:175
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
-msgstr ""
+msgstr "Botsingen"
 
 #: src/usr/local/www/status_interfaces.php:178
 #, php-format
@@ -26993,7 +27001,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:198
 msgid " seconds ("
-msgstr ""
+msgstr "secondes ("
 
 #: src/usr/local/www/status_ipsec.php:221
 #, php-format
@@ -27016,11 +27024,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:288
 msgid "Local: "
-msgstr ""
+msgstr "Lokaal:"
 
 #: src/usr/local/www/status_ipsec.php:292
 msgid "Remote: "
-msgstr ""
+msgstr "Extern: "
 
 #: src/usr/local/www/status_ipsec.php:309
 #, php-format
@@ -27039,11 +27047,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:334
 msgid "IPComp: "
-msgstr ""
+msgstr "IPComp: "
 
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Bytes-In: "
-msgstr ""
+msgstr "Bytes-In: "
 
 #: src/usr/local/www/status_ipsec.php:345
 msgid "Packets-In: "
@@ -27067,7 +27075,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:448
 msgid "Disconnected"
-msgstr ""
+msgstr "Verbinding verbroken"
 
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec.php:472
@@ -27076,7 +27084,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:47
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:178
 msgid "Overview"
-msgstr ""
+msgstr "Overzicht"
 
 #: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -27084,7 +27092,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "SADs"
 
 #: src/usr/local/www/status_ipsec.php:475
 #: src/usr/local/www/status_ipsec_leases.php:43
@@ -27092,7 +27100,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "SPDs"
 
 #: src/usr/local/www/status_ipsec.php:480
 msgid "IPsec Status"
@@ -27100,19 +27108,19 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:486
 msgid "Local ID"
-msgstr ""
+msgstr "Lokaal ID"
 
 #: src/usr/local/www/status_ipsec.php:488
 msgid "Remote ID"
-msgstr ""
+msgstr "Extern ID"
 
 #: src/usr/local/www/status_ipsec.php:489
 msgid "Remote IP"
-msgstr ""
+msgstr "Extern IP"
 
 #: src/usr/local/www/status_ipsec.php:490
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: src/usr/local/www/status_ipsec.php:491
 msgid "Reauth"
@@ -27140,7 +27148,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "Gebruik"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
@@ -27152,7 +27160,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_sad.php:69
 msgid "SPI"
-msgstr ""
+msgstr "SPI"
 
 #: src/usr/local/www/status_ipsec_sad.php:70
 msgid "Enc. alg."
@@ -27184,7 +27192,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_spd.php:71
 msgid " Inbound"
-msgstr ""
+msgstr "Inkomend"
 
 #: src/usr/local/www/status_ipsec_spd.php:73
 msgid " Outbound"

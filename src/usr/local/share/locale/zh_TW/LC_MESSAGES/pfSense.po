@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-06-27 07:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-10 08:59-0400\n"
+"PO-Revision-Date: 2017-06-21 03:12-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -225,7 +225,7 @@ msgstr "該設備目前由以下帳號維護: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s。%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -237,15 +237,15 @@ msgstr "登錄到 %1$s"
 msgid "Login"
 msgstr "登錄"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "您的流覽器必須支持cookies才能登錄。"
 
@@ -3535,11 +3535,11 @@ msgstr "無法從%2$s讀取%1$s的以下檔"
 
 #: src/etc/inc/pfsense-utils.inc:2940
 msgid "Bosnian"
-msgstr "Bosnian"
+msgstr "波斯尼亞"
 
 #: src/etc/inc/pfsense-utils.inc:2941
 msgid "German (Germany)"
-msgstr "German (Germany)"
+msgstr "德語（德國）"
 
 #: src/etc/inc/pfsense-utils.inc:2942
 msgid "English"
@@ -3551,7 +3551,7 @@ msgstr "西班牙"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "西班牙語（阿根廷）"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -3559,7 +3559,7 @@ msgstr "挪威博克馬爾"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "Russian"
-msgstr "Russian"
+msgstr "俄語"
 
 #: src/etc/inc/pfsense-utils.inc:2947
 msgid "Chinese (Simplified, China)"
@@ -11643,7 +11643,7 @@ msgstr "重定向目標IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "提交的介面不存在。"
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -14720,7 +14720,7 @@ msgstr "可用的部件"
 msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
-msgstr ""
+msgstr "其他系統面板設置可從 <a href=\"%s\">常規設置</a>頁面獲得。"
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -19631,13 +19631,13 @@ msgstr "當前頁"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "實事查看"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "查看頁面類容"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -26755,39 +26755,39 @@ msgstr "WEB 配置器"
 
 #: src/usr/local/www/system.php:610
 msgid "Blue"
-msgstr ""
+msgstr "藍色"
 
 #: src/usr/local/www/system.php:610
 msgid "Green"
-msgstr ""
+msgstr "綠色"
 
 #: src/usr/local/www/system.php:610
 msgid "Red"
-msgstr ""
+msgstr "紅色"
 
 #: src/usr/local/www/system.php:611
 msgid "Purple"
-msgstr ""
+msgstr "紫色"
 
 #: src/usr/local/www/system.php:611
 msgid "Gray"
-msgstr ""
+msgstr "灰色"
 
 #: src/usr/local/www/system.php:611
 msgid "Brown"
-msgstr ""
+msgstr "棕色"
 
 #: src/usr/local/www/system.php:612
 msgid "Orange"
-msgstr ""
+msgstr "橙色"
 
 #: src/usr/local/www/system.php:608
 msgid "Login page color"
-msgstr ""
+msgstr "登陸頁面顏色"
 
 #: src/usr/local/www/system.php:613
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "選擇登陸頁面顏色"
 
 #: src/usr/local/www/system.php:617
 msgid "Login hostname"

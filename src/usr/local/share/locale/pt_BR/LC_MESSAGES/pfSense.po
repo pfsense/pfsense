@@ -17,18 +17,19 @@
 # Silvio Ap Silva <alvolivre@live.com>, 2017. #zanata
 # Stephen Beaver <sbeaver@netgate.com>, 2017. #zanata
 # Thiago Basilio <nanga@nanga.com.br>, 2017. #zanata
+# Tácio Andrade <tacioandrade@gmail.com>, 2017. #zanata
 # Wendell Borges <perlporter@gmail.com>, 2017. #zanata
 # clkw <leandro@fullonmorning.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-06-27 07:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-19 03:45-0400\n"
-"Last-Translator: Luiz Fernando Barros <lfb@outlook.com.br>\n"
+"PO-Revision-Date: 2017-06-26 03:23-0400\n"
+"Last-Translator: Tácio Andrade <tacioandrade@gmail.com>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -267,7 +268,7 @@ msgstr "O dispositivo atual esta sendo mantido por: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -279,15 +280,15 @@ msgstr "Login para %1$s"
 msgid "Login"
 msgstr "Login"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "O navegador precisa suportar cookies para efetuar login."
 
@@ -3770,7 +3771,7 @@ msgstr "Espanhol"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Espanhol (Argentina)"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -12272,7 +12273,7 @@ msgstr "Redirecionar IP de destino"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "A interface submetida não existe."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15624,6 +15625,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Outras configurações de painel estão disponíveis a partir da pagina <a href="
+"\"%s\">Configuração Geral</a> page."
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -21040,13 +21043,13 @@ msgstr "Página atual do Portal"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Visualização em tempo real"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Visualização de conteúdo de pagina"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -22469,6 +22472,10 @@ msgid ""
 "identifiers but the same hardware (MAC) address.  Note that the resulting "
 "server behavior violates the official DHCP specification."
 msgstr ""
+"Essa opção pode ser util quando um cliente pode usar dois tipos diferentes "
+"identificadores de inicialização desde que use o mesmo hardware (Endereço "
+"MAC). Veja que o resultado do comportamento do servidor viola a "
+"especificação oficial para DHCP."
 
 #: src/usr/local/www/services_dhcp.php:886
 msgid "Pool Description"
@@ -22476,7 +22483,7 @@ msgstr "Descrição do Pool"
 
 #: src/usr/local/www/services_dhcp.php:906
 msgid "In-use DHCP Pool Ranges:"
-msgstr ""
+msgstr "Ranges DHCP que estão em uso:"
 
 #: src/usr/local/www/services_dhcp.php:919
 msgid "Available range"
@@ -22500,6 +22507,8 @@ msgid ""
 "If additional pools of addresses are needed inside of this subnet outside "
 "the above Range, they may be specified here."
 msgstr ""
+"Se ranges adicionais de endereço forem necessários dentro desta subnet e "
+"fora do range acima, eles podem ser especificados aqui."
 
 #: src/usr/local/www/services_dhcp.php:982
 #: src/usr/local/www/vpn_openvpn_csc.php:554
@@ -22517,6 +22526,9 @@ msgid ""
 "DNS Forwarder or Resolver is enabled, otherwise the servers configured on "
 "the System / General Setup page."
 msgstr ""
+"Deixe em branco para usar o servidor DNS padrão do sistema: Este "
+"dispositivos IP, se o encaminhador DNS ou o revolvedor estiver habilitado, "
+"senão os servidores configurados na pagina de configuração geral."
 
 #: src/usr/local/www/services_dhcp.php:1005
 msgid "Other Options"
@@ -22528,6 +22540,9 @@ msgid ""
 "gateway. Specify an alternate gateway here if this is not the correct "
 "gateway for the network. Type \"none\" for no gateway assignment."
 msgstr ""
+"O padrão é usar o IP deste dispositivo do firewall como o gateway padrão. "
+"Especificando aqui se este não for o endereço de gateway correto para este "
+"rede. Use tipo \"Nenhum\" para não atribuir gateway."
 
 #: src/usr/local/www/services_dhcp.php:1017
 #: src/usr/local/www/services_dhcp_edit.php:547
@@ -22542,6 +22557,9 @@ msgid ""
 "The default is to use the domain name of this system as the default domain "
 "name provided by DHCP. An alternate domain name may be specified here."
 msgstr ""
+"Este é o padrão para usar este nome de domínio neste sistema como domínio "
+"padrão provido por DHCP.  Uma alternativa de nome de domínio pode ser "
+"especificada aqui."
 
 #: src/usr/local/www/services_dhcp.php:1024
 #: src/usr/local/www/services_dhcp_edit.php:554
@@ -22557,6 +22575,8 @@ msgid ""
 "The DHCP server can optionally provide a domain search list. Use the "
 "semicolon character as separator."
 msgstr ""
+"O Servidor DHCP pode opcionalmente prover uma lista de procura de domínio. "
+"Use ponto e virgula (;) como separador."
 
 #: src/usr/local/www/services_dhcp.php:1031
 #: src/usr/local/www/services_dhcpv6.php:740
@@ -22568,6 +22588,8 @@ msgid ""
 "This is used for clients that do not ask for a specific expiration time. The "
 "default is 7200 seconds."
 msgstr ""
+"Este é o padrão para clientes que não especificaram tempo de expiração. O "
+"tempo padrão é 7200 segundos."
 
 #: src/usr/local/www/services_dhcp.php:1038
 msgid "Maximum lease time"
@@ -22579,10 +22601,12 @@ msgid ""
 "This is the maximum lease time for clients that ask for a specific "
 "expiration time. The default is 86400 seconds."
 msgstr ""
+"Este é o tempo máximo de empréstimos para clientes que não especificaram "
+"tempo de expiração. O tempo padrão é 86400 segundos."
 
 #: src/usr/local/www/services_dhcp.php:1046
 msgid "Failover peer IP"
-msgstr ""
+msgstr "Ponto IP de tolerancia a falha."
 
 #: src/usr/local/www/services_dhcp.php:1049
 msgid ""
@@ -22591,6 +22615,10 @@ msgid ""
 "DHCPd process is Primary or Secondary. Ensure one machine's advskew &lt; 20 "
 "(and the other is &gt; 20)."
 msgstr ""
+"Deixe em branco para desabilitar. Entre com o endereço IP do dispositivo de "
+"outra maquina, maquinas devem estar usando CARP.  Dispositivos advskew "
+"determinam se o processo DHCP é primário ou secundário. Certifique-se que "
+"haja uma maquina advskew &lt; 20 (e a outra é &gt; 20)."
 
 #: src/usr/local/www/services_dhcp.php:1056
 #: src/usr/local/www/services_dhcp.php:1435
@@ -22604,6 +22632,9 @@ msgid ""
 "listed below will be able to communicate with the firewall on this interface."
 ""
 msgstr ""
+"Essa opção pesiste mesmo se o Servidor DHCP estiver desabilitado. Apenas "
+"maquinas lista abaixo estarão aptas para se comunicar com o firewall neste "
+"dispositivo."
 
 #: src/usr/local/www/services_dhcp.php:1063
 msgid "Time format change"
@@ -22615,16 +22646,22 @@ msgid ""
 "lease time will be displayed in local time and set to the time zone selected."
 " This will be used for all DHCP interfaces lease time."
 msgstr ""
+"Por padrão empréstimos DHCP serão exibidos usando UTC. Por checar esse box o "
+"empréstimo DHCP será exibido na hora local com de acordo com o timezone "
+"(UTC) selecionado. Isso será usado por todos os dispositivos que recebem "
+"IP's emprestados pelo DHCP"
 
 #: src/usr/local/www/services_dhcp.php:1070
 msgid "Statistics graphs"
-msgstr ""
+msgstr "Gráfico de estatísticas"
 
 #: src/usr/local/www/services_dhcp.php:1073
 msgid ""
 "Enable this to add DHCP leases statistics to the RRD graphs. Disabled by "
 "default."
 msgstr ""
+"Habilite estão função para adicionar empréstimos estáticos do DHCP nos "
+"gráficos RRD. Os mesmos são exibidos por padrão."
 
 #: src/usr/local/www/services_dhcp.php:1100
 #: src/usr/local/www/services_dhcp_edit.php:603
@@ -22638,6 +22675,9 @@ msgid ""
 "Leave blank to disable dynamic DNS registration.%1$sEnter the dynamic DNS "
 "domain which will be used to register client names in the DNS server."
 msgstr ""
+"Deixe em branco para desabilitar o registro de DNS dinâmico. %1$sEntre com o "
+"dominio de DNS dinâmico no qual será usado para registrar os nomes no "
+"servidor DNS."
 
 #: src/usr/local/www/services_dhcp.php:1108
 #: src/usr/local/www/services_dhcpv6.php:793
@@ -22648,6 +22688,7 @@ msgstr "Nome de Usuário DDNS"
 #: src/usr/local/www/services_dhcpv6.php:796
 msgid "Default registers host name option supplied by DHCP client."
 msgstr ""
+"Opção registradores padrão de nome de servidor fornecido por cliente DHCP."
 
 #: src/usr/local/www/services_dhcp.php:1115
 msgid "Primary DDNS address"
@@ -22656,30 +22697,36 @@ msgstr "Endereço primario DDNS"
 #: src/usr/local/www/services_dhcp.php:1118
 msgid "Primary domain name server IP address for the dynamic domain name."
 msgstr ""
+"Nome de domínio primario do servidor de endereço IP para nome de domínio "
+"dinâmico."
 
 #: src/usr/local/www/services_dhcp.php:1122
 msgid "DNS Domain key"
-msgstr ""
+msgstr "Chave de domínio DNS"
 
 #: src/usr/local/www/services_dhcp.php:1125
 msgid ""
 "Dynamic DNS domain key name which will be used to register client names in "
 "the DNS server."
 msgstr ""
+"Chave de domínio dinâmico DNS o qual será usado para registrar nomes de "
+"clientes no servidor DNS."
 
 #: src/usr/local/www/services_dhcp.php:1129
 msgid "DNS Domain key secret"
-msgstr ""
+msgstr "Chave de domínio secreta DNS"
 
 #: src/usr/local/www/services_dhcp.php:1132
 msgid ""
 "Dynamic DNS domain key secret (HMAC-MD5) which will be used to register "
 "client names in the DNS server."
 msgstr ""
+"Chave de domínio secreta DNS (HMAC-MD5) qual será usada para registrar nomes "
+"de clientes no servidor DNS."
 
 #: src/usr/local/www/services_dhcp.php:1145
 msgid "MAC address control"
-msgstr ""
+msgstr "Controle de endereço MAC"
 
 #: src/usr/local/www/services_dhcp.php:1151
 msgid "MAC Allow"
@@ -22690,6 +22737,8 @@ msgid ""
 "List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:"
 "00:00,01:E5:FF"
 msgstr ""
+"Lista parcial de endereços MAC permitidos, esperados por virgula, sem "
+"espaços, Ex:  00:00:00,01:E5:FF"
 
 #: src/usr/local/www/services_dhcp.php:1158
 msgid "MAC Deny"
@@ -22700,6 +22749,8 @@ msgid ""
 "List of partial MAC addresses to deny access, comma separated, no spaces, e."
 "g.: 00:00:00,01:E5:FF"
 msgstr ""
+"Lista parcial de endereços MAC não permitidos, esperados por virgula, sem "
+"espaços, Ex:  00:00:00,01:E5:FF"
 
 #: src/usr/local/www/services_dhcp.php:1180
 #: src/usr/local/www/services_dhcp_edit.php:647
@@ -22729,6 +22780,8 @@ msgid ""
 "Leave blank to disable. Enter a valid IP address, hostname or URL for the "
 "TFTP server."
 msgstr ""
+"Deixe em branco para desabilitar. Entre com um endereço IP valido, Nome de "
+"servidor ou URL para o servidor TFPT."
 
 #: src/usr/local/www/services_dhcp.php:1225
 #: src/usr/local/www/services_dhcpv6.php:885
@@ -22744,6 +22797,8 @@ msgid ""
 "Leave blank to disable. Enter a full URI for the LDAP server in the form "
 "ldap://ldap.example.com/dc=example,dc=com "
 msgstr ""
+"Deixe em branco para desabilitar. Entre com a URI completa do servidor LDAP "
+"de origem, Ex: ldap://ldap.example.com/dc=example,dc=com"
 
 #: src/usr/local/www/services_dhcp.php:1247
 msgid "Network Booting"
@@ -22755,19 +22810,19 @@ msgstr "proximo servidor"
 
 #: src/usr/local/www/services_dhcp.php:1263
 msgid "Enter the IP address of the next server"
-msgstr ""
+msgstr "Entre com o endereço IP do proximo servidor"
 
 #: src/usr/local/www/services_dhcp.php:1267
 msgid "Default BIOS file name"
-msgstr ""
+msgstr "Nome de arquivo padrão de BIOS"
 
 #: src/usr/local/www/services_dhcp.php:1274
 msgid "UEFI 32 bit file name"
-msgstr ""
+msgstr "Nome do arquivo UEFI 32 bits"
 
 #: src/usr/local/www/services_dhcp.php:1281
 msgid "UEFI 64 bit file name"
-msgstr ""
+msgstr "Nome do arquivo UEFI 64 bits"
 
 #: src/usr/local/www/services_dhcp.php:1284
 msgid ""
@@ -22775,6 +22830,9 @@ msgid ""
 "three filenames and a configured boot server are necessary for UEFI to work! "
 ""
 msgstr ""
+"Nome do arquivo e servidor de inicialização devem ser configurados para isto "
+"funcionar! Todos os três nomes de arquivo e um servidor de inicialização são "
+"necessários para que UEFI funcione."
 
 #: src/usr/local/www/services_dhcp.php:1289
 #: src/usr/local/www/services_dhcpv6_edit.php:250
@@ -22783,7 +22841,7 @@ msgstr "caminho raiz"
 
 #: src/usr/local/www/services_dhcp.php:1292
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
-msgstr ""
+msgstr "formato-string: iscsi:(nomedoservidor):(protocolo):(LUN):nomedolavo"
 
 #: src/usr/local/www/services_dhcp.php:1305
 #: src/usr/local/www/services_dhcp.php:1311
@@ -22796,11 +22854,13 @@ msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
 msgstr ""
+"Entre com o numero da opção DHCP e o valor para cada item para incluir na "
+"informação de empréstimo DHCP."
 
 #: src/usr/local/www/services_dhcp.php:1317
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
-msgstr ""
+msgstr "Para a lista de opções disponíveis visite %1$s URL%2$s.%3$s"
 
 #: src/usr/local/www/services_dhcp.php:1325
 msgid "Text"
@@ -22853,7 +22913,7 @@ msgstr "Número"
 
 #: src/usr/local/www/services_dhcp.php:1430
 msgid "DHCP Static Mappings for this Interface"
-msgstr ""
+msgstr "Mapeamento de estatísticas DHCP para esta interface"
 
 #: src/usr/local/www/services_dhcp.php:1440
 #: src/usr/local/www/status_dhcp_leases.php:358
@@ -22869,11 +22929,11 @@ msgstr "Editar mapeamento estático"
 #: src/usr/local/www/services_dhcp.php:1487
 #: src/usr/local/www/services_dhcpv6.php:1058
 msgid "Delete static mapping"
-msgstr ""
+msgstr "Deletar mapeamento estático"
 
 #: src/usr/local/www/services_dhcp_edit.php:152
 msgid "Either MAC address or Client identifier must be specified"
-msgstr ""
+msgstr "Deve ser especificado ou endereço MAC ou o identificador cliente"
 
 #: src/usr/local/www/services_dhcp_edit.php:161
 #: src/usr/local/www/services_dhcpv6_edit.php:107
@@ -22893,13 +22953,15 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_edit.php:180
 msgid "Static ARP is enabled.  An IP address must be specified."
-msgstr ""
+msgstr "ARP estático está habilitado. Um endereço IP deve ser especificado."
 
 #: src/usr/local/www/services_dhcp_edit.php:197
 msgid ""
 "This fully qualified hostname (Hostname + Domainname), IP, MAC address or "
 "Client identifier already exists."
 msgstr ""
+"O nome totalmente qualificado (nomedoservidor + nomededomínio), IP, Endereço "
+"MAC ou identificador cliente ja existe."
 
 #: src/usr/local/www/services_dhcp_edit.php:205
 #, php-format
@@ -22922,26 +22984,30 @@ msgstr "O endereço IP deve estar na subrede %s."
 #: src/usr/local/www/services_dhcp_edit.php:222
 #, php-format
 msgid "The IP address cannot be the %s network address."
-msgstr ""
+msgstr "O endereço IP não pode ser o %s endereço de rede."
 
 #: src/usr/local/www/services_dhcp_edit.php:226
 #, php-format
 msgid "The IP address cannot be the %s broadcast address."
-msgstr ""
+msgstr "O endereço IP não pode ser o endereço broadcast %s."
 
 #: src/usr/local/www/services_dhcp_edit.php:231
 msgid "A valid IPv4 address must be specified for the gateway."
-msgstr ""
+msgstr "Um endereço IPv4 válido deve ser especificado para o gateway."
 
 #: src/usr/local/www/services_dhcp_edit.php:234
 msgid ""
 "A valid IPv4 address must be specified for the primary/secondary WINS "
 "servers."
 msgstr ""
+"Um endereço IPv4 válido deve ser especificado os servidores WINS primário/"
+"secundário."
 
 #: src/usr/local/www/services_dhcp_edit.php:248
 msgid "A valid IPV4 address must be specified for each of the DNS servers."
 msgstr ""
+"Um endereço IPv4 válido deve ser especificado para cada um dos servidores "
+"DNS."
 
 #: src/usr/local/www/services_dhcp_edit.php:261
 #: src/usr/local/www/services_dhcpv6.php:323
@@ -22949,34 +23015,44 @@ msgid ""
 "A valid primary domain name server IPv4 address must be specified for the "
 "dynamic domain name."
 msgstr ""
+"Um endereço IPv4 do servidor de nomes de domínio principal válido deve ser "
+"especificado para o nome de domínio dinâmico."
 
 #: src/usr/local/www/services_dhcp_edit.php:278
 msgid ""
 "A valid IPv4 address must be specified for the primary/secondary NTP servers."
 ""
 msgstr ""
+"Um endereço IPv4 válido deve ser especificado para os servidores NTP "
+"primário/secundário."
 
 #: src/usr/local/www/services_dhcp_edit.php:281
 msgid ""
 "A valid IPv4 address, hostname or URL must be specified for the TFTP server."
 msgstr ""
+"Um endereço IPV4, hostname ou URL deve ser especificado para o servidor TFTP."
+""
 
 #: src/usr/local/www/services_dhcp_edit.php:284
 msgid "A valid IPv4 address must be specified for the network boot server."
 msgstr ""
+"Um endereço IPv4 válido deve ser especificado para o servidor de boot via "
+"rede."
 
 #: src/usr/local/www/services_dhcp_edit.php:287
 msgid "A valid MAC address must be specified for use with static ARP."
 msgstr ""
+"Um endereço MAC válido deve ser especificado para o uso do ARP estático."
 
 #: src/usr/local/www/services_dhcp_edit.php:290
 msgid "A valid IPv4 address must be specified for use with static ARP."
 msgstr ""
+"Um endereço IPv4 válido deve ser especificado para o uso do ARP estático."
 
 #: src/usr/local/www/services_dhcp_edit.php:390
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 msgid "Edit Static Mapping"
-msgstr ""
+msgstr "Editar mapeamento estático"
 
 #: src/usr/local/www/services_dhcp_edit.php:426
 msgid "MAC address (6 hex octets separated by colons)"
@@ -22993,6 +23069,8 @@ msgid ""
 "%1$sIf no IPv4 address is given, one will be dynamically allocated from the "
 "pool."
 msgstr ""
+"Se um endereço IPv4 for inserido, o endereço deve estar fora do pool.%1$slf "
+"se nenhum endereço IPv4 for passado, um será alocado dinamicamente do pool."
 
 #: src/usr/local/www/services_dhcp_edit.php:449
 #: src/usr/local/www/services_dhcpv6_edit.php:231
@@ -23010,14 +23088,18 @@ msgid ""
 "Name of the file that should be loaded when this host boots off of the "
 "network, overrides setting on main page."
 msgstr ""
+"O nome do arquivo que deve ser carregado quando o host inicializar fora da "
+"rede, a configuração na página principal será sobrescrita."
 
 #: src/usr/local/www/services_dhcp_edit.php:461
 msgid "Root Path"
-msgstr ""
+msgstr "Caminho raiz"
 
 #: src/usr/local/www/services_dhcp_edit.php:464
 msgid "Enter the root-path-string, overrides setting on main page."
 msgstr ""
+"Entre com o string-caminho-raiz, ignorando a configuração da pagina "
+"principal."
 
 #: src/usr/local/www/services_dhcp_edit.php:476
 msgid "ARP Table Static Entry"
@@ -23042,6 +23124,10 @@ msgid ""
 "IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured "
 "on the General page."
 msgstr ""
+"Nota: Deixe em branco para o usar o padrão de sistema para servidores DNS - "
+"estes dispositivos IP, se o encaminhador ou revolvedor DNS estiver "
+"habilitado, do contrario serão usados os servidores configurados na pagina "
+"principal ."
 
 #: src/usr/local/www/services_dhcp_edit.php:543
 msgid ""
@@ -23049,6 +23135,9 @@ msgid ""
 "gateway. Specify an alternate gateway here if this is not the correct "
 "gateway for the network."
 msgstr ""
+"O padrão é usar o endereço IP deste dispositivos do firewall como gateway "
+"padrão. Especifique um gateway alternativo aqui se este não for o endereço "
+"de gateway correto para esta rede."
 
 #: src/usr/local/www/services_dhcp_edit.php:550
 #: src/usr/local/www/services_dhcpv6.php:729
@@ -23056,20 +23145,25 @@ msgid ""
 "The default is to use the domain name of this system as the default domain "
 "name provided by DHCP. An alternate domain name may be specified here. "
 msgstr ""
+"Este é o padrão para usar este nome de domínio neste sistema como domínio "
+"padrão provido por DHCP.  Uma alternativa de nome de domínio pode ser "
+"especificada aqui."
 
 #: src/usr/local/www/services_dhcp_edit.php:561
 msgid "Default lease time (Seconds)"
-msgstr ""
+msgstr "Tempo de empréstimo padrão (Segundos) "
 
 #: src/usr/local/www/services_dhcp_edit.php:564
 msgid ""
 "Used for clients that do not ask for a specific expiration time. The default "
 "is 7200 seconds."
 msgstr ""
+"Este é o padrão para clientes que não especificaram tempo de expiração. O "
+"tempo padrão é 7200 segundos."
 
 #: src/usr/local/www/services_dhcp_edit.php:568
 msgid "Maximum lease time (Seconds)"
-msgstr ""
+msgstr "Tempo de empréstimo máximo (Segundos) "
 
 #: src/usr/local/www/services_dhcp_edit.php:589
 #: src/usr/local/www/services_dhcpv6.php:779
@@ -23088,6 +23182,9 @@ msgid ""
 "Leave blank to disable dynamic DNS registration. Enter the dynamic DNS "
 "domain which will be used to register client names in the DNS server."
 msgstr ""
+"Deixe em branco para desabilitar o registro de DNS dinâmico. Entre com o "
+"dominio de DNS dinâmico no qual será usado para registrar clientes no "
+"servidor DNS."
 
 #: src/usr/local/www/services_dhcp_edit.php:610
 #: src/usr/local/www/services_dhcpv6.php:800
@@ -23098,11 +23195,13 @@ msgstr "Servidor IP DDNS"
 msgid ""
 "Enter the primary domain name server IP address for the dynamic domain name."
 msgstr ""
+"Entre com o nome de domínio primario do servidor de endereço IP para nome de "
+"domínio dinâmico."
 
 #: src/usr/local/www/services_dhcp_edit.php:617
 #: src/usr/local/www/services_dhcpv6.php:807
 msgid "DDNS Domain Key name"
-msgstr ""
+msgstr "Nome de domínio chave DDNS"
 
 #: src/usr/local/www/services_dhcp_edit.php:620
 #: src/usr/local/www/services_dhcpv6.php:810
@@ -23110,11 +23209,13 @@ msgid ""
 "Enter the dynamic DNS domain key name which will be used to register client "
 "names in the DNS server."
 msgstr ""
+"Entre com a chave de domínio DNS secreta o qual será usada para registrar "
+"nomes de clientes no servidor DNS."
 
 #: src/usr/local/www/services_dhcp_edit.php:624
 #: src/usr/local/www/services_dhcpv6.php:814
 msgid "DDNS Domain Key secret"
-msgstr ""
+msgstr "Chave de domínio secreta DDNS"
 
 #: src/usr/local/www/services_dhcp_edit.php:627
 #: src/usr/local/www/services_dhcpv6.php:817
@@ -23122,6 +23223,8 @@ msgid ""
 "Enter the dynamic DNS domain key secret which will be used to register "
 "client names in the DNS server."
 msgstr ""
+"Entre com a chave de domínio DNS secreta o qual será usado para registrar "
+"nomes de clientes no servidor DNS."
 
 #: src/usr/local/www/services_dhcp_edit.php:639
 #: src/usr/local/www/services_dhcpv6.php:849
@@ -23142,26 +23245,32 @@ msgstr "Servidor TFTP"
 msgid ""
 "Leave blank to disable. Enter a full hostname or IP for the TFTP server."
 msgstr ""
+"Deixe em branco para desabilitar. Entre com o Nome de servidor completo para "
+"o servidor TFPT."
 
 #: src/usr/local/www/services_dhcp_relay.php:88
 #, php-format
 msgid "Destination Server IP address %s is not a valid IPv4 address."
-msgstr ""
+msgstr "IP do servidor de destino %s não é um endereço IPv4 valido."
 
 #: src/usr/local/www/services_dhcp_relay.php:102
 #: src/usr/local/www/services_dhcpv6_relay.php:102
 msgid "At least one Destination Server IP address must be specified."
 msgstr ""
+"Pelo menos um endereço IP de servidor de destino deve ser especificado"
 
 #: src/usr/local/www/services_dhcp_relay.php:129
 msgid ""
 "DHCP Server is currently enabled. Cannot enable the DHCP Relay service while "
 "the DHCP Server is enabled on any interface."
 msgstr ""
+"Retransmissor DHCP está habilitado. O servidor DHCP não pode estar "
+"habilitado enquanto o retransmissor DHCP estiver operando em qualquer uma "
+"das interfaces."
 
 #: src/usr/local/www/services_dhcp_relay.php:144
 msgid "DHCP Relay Configuration"
-msgstr ""
+msgstr "Configuração de retransmissor DHCP"
 
 #: src/usr/local/www/services_dhcp_relay.php:155
 #: src/usr/local/www/services_dhcpv6_relay.php:155
@@ -23195,6 +23304,7 @@ msgstr "Servidor de Destino"
 msgid ""
 "This is the IPv4 address of the server to which DHCP requests are relayed."
 msgstr ""
+"Este é o endereço de servidor IPv4 que será transmitido quando requisitado."
 
 #: src/usr/local/www/services_dhcp_relay.php:199
 msgid "Add server"
@@ -23209,11 +23319,14 @@ msgstr "Um intervalo válido deve ser especificado."
 #, php-format
 msgid "Prefix Delegation From address is not a valid IPv6 Netmask for %s"
 msgstr ""
+"endereço de prefixo de delegação de origem não é valido para mascara IPv6 %s"
 
 #: src/usr/local/www/services_dhcpv6.php:269
 #, php-format
 msgid "Prefix Delegation To address is not a valid IPv6 Netmask for %s"
 msgstr ""
+"endereço de prefixo de delegação de destino não é valido para mascara IPv6 "
+"%s"
 
 #: src/usr/local/www/services_dhcpv6.php:278
 #: src/usr/local/www/services_dhcpv6.php:290
@@ -23225,7 +23338,7 @@ msgstr "Um intervalo válido deve ser especificado."
 #: src/usr/local/www/services_dhcpv6_edit.php:127
 #, php-format
 msgid "The prefix (upper %1$s bits) must be zero.  Use the form %2$s"
-msgstr ""
+msgstr "O prefixo (Superior %1$s bits) deve ser zero. Use a origem %2$s"
 
 #: src/usr/local/www/services_dhcpv6.php:304
 msgid "A valid IPv6 address must be specified for the gateway."
@@ -23235,6 +23348,7 @@ msgstr "Um endereço IPv6 válido deve ser especificado para o gateway."
 #: src/usr/local/www/services_router_advertisements.php:166
 msgid "A valid IPv6 address must be specified for each of the DNS servers."
 msgstr ""
+"Um endereço IPv6 válido precisa ser especificado para cada servidor DNS."
 
 #: src/usr/local/www/services_dhcpv6.php:340
 msgid ""
@@ -23254,6 +23368,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:349
 msgid "A valid URL must be specified for the network bootfile."
 msgstr ""
+"Uma URL válida deve ser especificada para o servidor de arquivo de "
+"inicialização da rede."
 
 #: src/usr/local/www/services_dhcpv6.php:357
 #, php-format
@@ -23265,6 +23381,8 @@ msgid ""
 "The DHCPv6 Server can only be enabled on interfaces configured with a static "
 "IPv6 address. This system has none."
 msgstr ""
+"O Servidor DHCPv6 só pode ser habilitado em interfaces configuradas como "
+"endereço IPv6 estático. Esse sistema não possui nenhum."
 
 #: src/usr/local/www/services_dhcpv6.php:587
 #: src/usr/local/www/services_router_advertisements.php:256
@@ -23274,13 +23392,15 @@ msgstr "Router advertisements"
 
 #: src/usr/local/www/services_dhcpv6.php:592
 msgid "DHCPv6 Options"
-msgstr ""
+msgstr "Opções DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6.php:598
 msgid ""
 "DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr ""
+"DHCPv6 Relay está ativada atualmente. Servidor DHCPv6 não pode ser ativada "
+"enquanto o DHCPv6 Relay estiver ativo em alguma interface. "
 
 #: src/usr/local/www/services_dhcpv6.php:623
 #: src/usr/local/www/services_dhcpv6.php:636
@@ -23296,6 +23416,8 @@ msgid ""
 "Prefix Delegation subnet will be appended to the beginning of the defined "
 "range"
 msgstr ""
+"Delegação de prefixo de sub-rede deverá  será anexada ao início do intervalo "
+"definido"
 
 #: src/usr/local/www/services_dhcpv6.php:685
 msgid "Prefix Delegation Range"
@@ -23311,12 +23433,19 @@ msgid ""
 "for assigning networks to subrouters. The start and end of the range must "
 "end on boundaries of the prefix delegation size."
 msgstr ""
+"Um intervalo de Prefixo pode ser definido aqui para a Delegação de Prefixo "
+"DHCP. Isso permite atribuir redes a sub-roteadores. O início e o fim do "
+"intervalo devem terminar nos limites do tamanho da delegação de prefixo."
 
 #: src/usr/local/www/services_dhcpv6.php:721
+#, fuzzy
 msgid ""
 "Leave blank to use the system default DNS servers, this interface's IP if "
 "DNS forwarder is enabled, or the servers configured on the \"General\" page."
 msgstr ""
+"Deixe em branco para usar os servidores DNS padrão do sistema, se o IP dessa "
+"interface estiver configurado como DNS forwarder, os servidores configurados "
+"na página \"Geral\" serão utilizados."
 
 #: src/usr/local/www/services_dhcpv6.php:743
 #, php-format
@@ -23324,6 +23453,8 @@ msgid ""
 "Lease time in seconds. Used for clients that do not ask for a specific "
 "expiration time. %1$sThe default is 7200 seconds."
 msgstr ""
+"Tempo de locação em segundos.  Usado para clientes que não solicitam um "
+"tempo de expiração específico. %1$sO padrão é 7200 segundos."
 
 #: src/usr/local/www/services_dhcpv6.php:748
 msgid "Max lease time"
@@ -23335,6 +23466,8 @@ msgid ""
 "Maximum lease time for clients that ask for a specific expiration time. "
 "%1$sThe default is 86400 seconds."
 msgstr ""
+"Tempo de locação máximo para clientes que solicitem um tempo de expiração "
+"específico. %1$sO padrão é de 86400 segundos."
 
 #: src/usr/local/www/services_dhcpv6.php:756
 msgid "Time Format Change"
@@ -23346,12 +23479,18 @@ msgid ""
 "DHCPv6 lease time will be displayed in local time and set to time zone "
 "selected. This will be used for all DHCPv6 interfaces lease time."
 msgstr ""
+"Por padrão, as locações DHCPv6 são exibidas em horário UTC. Ao marcar esta "
+"caixa, o tempo de locação DHCPv6 será exibido na hora local e configurado "
+"para o fuso horário selecionado. Isso será usado para todo o tempo de "
+"locação de interfaces DHCPv6."
 
 #: src/usr/local/www/services_dhcpv6.php:803
 msgid ""
 "Enter the primary domain name server IPv4 address for the dynamic domain "
 "name."
 msgstr ""
+"Digite o endereço IPv4 do servidor de nomes de domínio principal para o nome "
+"de domínio dinâmico."
 
 #: src/usr/local/www/services_dhcpv6.php:824
 #: src/usr/local/www/services_unbound_acls.php:220
@@ -23364,7 +23503,7 @@ msgstr "Ignorar"
 
 #: src/usr/local/www/services_dhcpv6.php:821
 msgid "DDNS Client Updates"
-msgstr ""
+msgstr "Cliente de Updates do DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid ""
@@ -23377,7 +23516,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:834
 msgid "DDNS Reverse"
-msgstr ""
+msgstr "DDNS Reverso"
 
 #: src/usr/local/www/services_dhcpv6.php:891
 msgid "LDAP URI"
@@ -23386,11 +23525,11 @@ msgstr "URI LDAP"
 #: src/usr/local/www/services_dhcpv6.php:906
 #: src/usr/local/www/services_dhcpv6.php:912
 msgid "Network booting"
-msgstr ""
+msgstr "Inicialização via rede"
 
 #: src/usr/local/www/services_dhcpv6.php:919
 msgid "Bootfile URL"
-msgstr ""
+msgstr "URL do arquivo de inicialização"
 
 #: src/usr/local/www/services_dhcpv6.php:987
 msgid "Add Option"
@@ -23471,7 +23610,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_relay.php:144
 msgid "DHCPv6 Relay Configuration"
-msgstr ""
+msgstr "Configuração de retransmissão DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:159
 msgid "Interfaces without an IPv6 address will not be shown."

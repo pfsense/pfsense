@@ -1,4 +1,5 @@
 # Lorin Leonte <lorinleonte@gmail.com>, 2017. #zanata
+# MM <meri_yms@yahoo.com>, 2017. #zanata
 # Mihai Balaci <mihai.balaci@gmail.com>, 2017. #zanata
 # NoName <psaclubromania@gmail.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
@@ -7,12 +8,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-06-27 07:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-25 03:22-0400\n"
-"Last-Translator: Mihai Balaci <mihai.balaci@gmail.com>\n"
+"PO-Revision-Date: 2017-06-26 04:47-0400\n"
+"Last-Translator: MM <meri_yms@yahoo.com>\n"
 "Language-Team: Romanian\n"
 "Language: ro\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -25,9 +26,9 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Detectat un atac potențial \"DNS Rebind\" detectat, vezi http://en.wikipedia."
-"org/wiki/DNS_rebinding<br />Încercați să accesați routerul cu adresa IP în "
-"loc de hostname."
+"S-a detectat un potential atac de tip  \"DNS Rebind\" , vezi http://en."
+"wikipedia.org/wiki/DNS_rebinding<br />Încercați să accesați routerul cu "
+"adresa IP în loc de hostname."
 
 #: src/etc/inc/auth.inc:115 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
@@ -255,15 +256,15 @@ msgstr "Autentificare la %1$s"
 msgid "Login"
 msgstr "Autentificare"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "Browser-ul trebuie să accepte cookie-uri pentru autentificare."
 
@@ -1544,7 +1545,7 @@ msgstr "Address mask raspuns"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr "Address mask cerere"
+msgstr "Solicitare masca adresa"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
@@ -4153,38 +4154,41 @@ msgstr "Utilizator - Configuratie: Respinge scrierea configuratiei"
 #: src/etc/inc/priv/user.priv.inc:39
 msgid "If present, ignores requests from this user to write config.xml."
 msgstr ""
+"Dacă este present, se ignoră solicitările de scriere in config.xml pentru "
+"acest utilizator."
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr ""
+msgstr "Notificări - Utilizator: Afișare"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
-msgstr ""
+msgstr "Acest utilizator poate consulta notificările de sistem."
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr ""
+msgstr "Notificări - Utilizator: Afișare și Ștergere"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
-msgstr ""
+msgstr "Acest utilizator poate vedea și șterge notificările de sistem."
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr ""
+msgstr "Utilizator - Sistem: Acces la contul \"Shell\""
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
-msgstr ""
+msgstr "Indică dacă uilizatorul are drepturide conectare, de exemplu via SSH."
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
-msgstr ""
+msgstr "Utilizator - Sistem: Copiază fișiere (scp)"
 
 #: src/etc/inc/priv/user.priv.inc:60
 msgid "User - System: Copy files to home directory (chrooted scp)"
 msgstr ""
+"Utilizator - Sistem: Copiază fișiere in directorul personal (chrooted scp)"
 
 #: src/etc/inc/priv/user.priv.inc:61
 msgid ""
@@ -4193,10 +4197,14 @@ msgid ""
 "privilege.Warning: Manual chroot setup required, see /usr/local/etc/rc.d/"
 "scponlyc."
 msgstr ""
+"Indică dacă utilizatorului îi este permis să copieze fișiere in directorul "
+"personal via SCP/SFTP. NotăȘ Utilizator - Sistem - Copiază fișiere (scp) "
+"intră în conflict cu acest privilegiu. Atenționare: Este necesara setarea "
+"manuală a chroot, vezi /usr/local/etc/rc.d/scponlyc."
 
 #: src/etc/inc/priv/user.priv.inc:66
 msgid "User - System: SSH tunneling"
-msgstr ""
+msgstr "Utilizator - Sistem: Tunel SSH"
 
 #: src/etc/inc/priv/user.priv.inc:67
 msgid ""
@@ -4204,1843 +4212,1892 @@ msgid ""
 "have no shell access. Note: User - System - Copy files (scp) and System: "
 "Copy files to home directory (chrooted scp) conflict with this privilege."
 msgstr ""
+"Indică dacă utilizatorul este capabil să se conecteze pentru reaslizarea "
+"unui tunel via SSH atunci cănd nu are acces la shell. Notă: Utilizator - "
+"Sistem - Copiază fișiere (scp) și Sistem: Copiază fișiere în directorul "
+"personal (chrooted scp) intră în conflict cu acest privilegiu."
 
 #: src/etc/inc/priv/user.priv.inc:74
 msgid "User - VPN: IPsec xauth Dialin"
-msgstr ""
+msgstr "Utilizator - VPN: IPsec xauth Dialin"
 
 #: src/etc/inc/priv/user.priv.inc:75
 msgid ""
 "Indicates whether the user is allowed to dial in via IPsec xauth (Note: Does "
 "not allow shell access, but may allow the user to create SSH tunnels)"
 msgstr ""
+"Indică dacă utilizatorului îi este permis să se conecteze  via IPsec xauth "
+"(Notă: Nu permite accesul la shell, dar poate permite utilizatorului să "
+"creeze tuneluri SSH)"
 
 #: src/etc/inc/priv/user.priv.inc:80
 msgid "User - VPN: L2TP Dialin"
-msgstr ""
+msgstr "Utilizator -VPN: L2TP Dialin"
 
 #: src/etc/inc/priv/user.priv.inc:81
 msgid "Indicates whether the user is allowed to dial in via L2TP"
-msgstr ""
+msgstr "Indică dacă utilizatorului îi este permis să se conecteze via L2TP"
 
 #: src/etc/inc/priv/user.priv.inc:84
 msgid "User - VPN: PPPOE Dialin"
-msgstr ""
+msgstr "Utilizator - VPN: PPPOE Dialin"
 
 #: src/etc/inc/priv/user.priv.inc:85
 msgid "Indicates whether the user is allowed to dial in via PPPOE"
-msgstr ""
+msgstr "Indică dacă utilizatorului îi este permis să se conecteze via PPPOE"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale Sistem: Portal Auth"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare:Jurnale Sistem:Portal Auth'."
 
 #: src/etc/inc/priv/user.priv.inc:94
 msgid "WebCfg - Status: Logs: DHCP"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: DHCP"
 
 #: src/etc/inc/priv/user.priv.inc:95
 msgid "Allow access to the 'Status: Logs: DHCP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: DHCP'."
 
 #: src/etc/inc/priv/user.priv.inc:100
 msgid "WebCfg - Status: Logs: Gateways"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: Gateway-uri"
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: Sistem: Gateway-uri'."
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: Resolver"
 
 #: src/etc/inc/priv/user.priv.inc:107
 msgid "Allow access to the 'Status: Logs: System: Resolver' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: Sistem: Resolver'."
 
 #: src/etc/inc/priv/user.priv.inc:112 src/etc/inc/priv/user.priv.inc:130
 msgid "WebCfg - Status: System Logs: IPsec VPN"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: IPsec VPN"
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: IPsec VPN'."
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: NTP"
 
 #: src/etc/inc/priv/user.priv.inc:119
 msgid "Allow access to the 'Status: System Logs: NTP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: NTP'."
 
 #: src/etc/inc/priv/user.priv.inc:124
 msgid "WebCfg - Status: System Logs: OpenVPN"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: OpenVPN"
 
 #: src/etc/inc/priv/user.priv.inc:125
 msgid "Allow access to the 'Status: System Logs: OpenVPN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: OpenVPN'."
 
 #: src/etc/inc/priv/user.priv.inc:136
 msgid "WebCfg - Status: System Logs: Load Balancer"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: Load Balancer"
 
 #: src/etc/inc/priv/user.priv.inc:137
 msgid "Allow access to the 'Status: System Logs: Load Balancer' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: Load Balancer'."
 
 #: src/etc/inc/priv/user.priv.inc:142
 msgid "WebCfg - Status: System Logs: Routing"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: Routing"
 
 #: src/etc/inc/priv/user.priv.inc:143
 msgid "Allow access to the 'Status: System Logs: System: Routing' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: Routing'."
 
 #: src/etc/inc/priv/user.priv.inc:148
 msgid "WebCfg - Status: System Logs: Wireless"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: Wireless"
 
 #: src/etc/inc/priv/user.priv.inc:149
 msgid "Allow access to the 'Status: System Logs: System: Wireless' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale sistem: Wireless'."
 
 #: src/etc/inc/priv/user.priv.inc:154
 msgid "WebCfg - Services: UPnP"
-msgstr ""
+msgstr "WebCfg - Servicii: UPnP"
 
 #: src/etc/inc/priv/user.priv.inc:155
 msgid "Allow access to the 'Services: UPnP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: UPnP'."
 
 #: src/etc/inc/priv.defs.inc:17
 msgid "WebCfg - All pages"
-msgstr ""
+msgstr "WebCfg - Toate paginile"
 
 #: src/etc/inc/priv.defs.inc:18
 msgid "Allow access to all pages"
-msgstr ""
+msgstr "Permite accesul la toate paginile."
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr ""
+msgstr "WebCfg - Indicator eroare"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
 msgstr ""
+"Permite încarcarea rapoartelor de eroare în pfSense și/sau ștergerea "
+"rapoartelor de eroare."
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Tabela ARP"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Tabela ARP'."
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Autentificare"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr ""
+msgstr "Permite accesul la pagina ''Diagnoză: Autentificare."
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Backup & Restore"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: backup & Restore'."
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Comenzi"
 
 #: src/etc/inc/priv.defs.inc:50
 msgid "Allow access to the 'Diagnostics: Command' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Comenzi'."
 
 #: src/etc/inc/priv.defs.inc:56
 msgid "WebCfg - Diagnostics: Configuration History"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Istoric configurații"
 
 #: src/etc/inc/priv.defs.inc:57
 msgid "Allow access to the 'Diagnostics: Configuration History' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Istoric configurații'."
 
 #: src/etc/inc/priv.defs.inc:62
 msgid "WebCfg - Diagnostics: Factory defaults"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Reinițializare setări fabrică"
 
 #: src/etc/inc/priv.defs.inc:63
 msgid "Allow access to the 'Diagnostics: Factory defaults' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Reinițializare setări fabrică'."
 
 #: src/etc/inc/priv.defs.inc:69
 msgid "WebCfg - Diagnostics: DNS Lookup"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Căutare DNS"
 
 #: src/etc/inc/priv.defs.inc:70
 msgid "Allow access to the 'Diagnostics: DNS Lookup' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Căutare DNS'."
 
 #: src/etc/inc/priv.defs.inc:75
 msgid "WebCfg - Diagnostics: Show States"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Afișează stări"
 
 #: src/etc/inc/priv.defs.inc:76
 msgid "Allow access to the 'Diagnostics: Show States' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Afișează stări'."
 
 #: src/etc/inc/priv.defs.inc:81
 msgid "WebCfg - Diagnostics: Show Source Tracking"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Afișează monitorizarea sursei"
 
 #: src/etc/inc/priv.defs.inc:82
 msgid "Allow access to the 'Diagnostics: Show Source Tracking' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Afișează monitorizarea sursei'."
 
 #: src/etc/inc/priv.defs.inc:87
 msgid "WebCfg - Diagnostics: Edit File"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Editare fișier"
 
 #: src/etc/inc/priv.defs.inc:88
 msgid "Allow access to the 'Diagnostics: Edit File' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Editare fișier'."
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
-msgstr ""
+msgstr "WebCfg - Diagnoză: GEOM Mirrors"
 
 #: src/etc/inc/priv.defs.inc:97
 msgid "Allow access to the 'Diagnostics: GEOM Mirrors' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: GEOM Mirrors'."
 
 #: src/etc/inc/priv.defs.inc:102
 msgid "WebCfg - Diagnostics: Halt system"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Oprire sistem"
 
 #: src/etc/inc/priv.defs.inc:103
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Oprire sistem'."
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Informații \"Limiter\""
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Informații \"Limiter\"'."
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Tabela NDP"
 
 #: src/etc/inc/priv.defs.inc:115
 msgid "Allow access to the 'Diagnostics: NDP Table' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Tabela NDP'."
 
 #: src/etc/inc/priv.defs.inc:120
 msgid "WebCfg - Diagnostics: Packet Capture"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Captură pachete"
 
 #: src/etc/inc/priv.defs.inc:121
 msgid "Allow access to the 'Diagnostics: Packet Capture' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Captură pachete'."
 
 #: src/etc/inc/priv.defs.inc:126
 msgid "WebCfg - Diagnostics: pfInfo"
-msgstr ""
+msgstr "WebCfg - Diagnoză: pfInfo"
 
 #: src/etc/inc/priv.defs.inc:127
 msgid "Allows access to the 'Diagnostics: pfInfo' page"
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: pfInfo'."
 
 #: src/etc/inc/priv.defs.inc:132
 msgid "WebCfg - Diagnostics: pfTop"
-msgstr ""
+msgstr "WebCfg - Diagnoză: pfTop"
 
 #: src/etc/inc/priv.defs.inc:133
 msgid "Allows access to the 'Diagnostics: pfTop' page"
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: pfTop'."
 
 #: src/etc/inc/priv.defs.inc:138
 msgid "WebCfg - Diagnostics: Ping"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Ping"
 
 #: src/etc/inc/priv.defs.inc:139
 msgid "Allow access to the 'Diagnostics: Ping' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Ping'."
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Repornire sistem"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Repornire sistem'."
 
 #: src/etc/inc/priv.defs.inc:150
 msgid "WebCfg - Diagnostics: Reset states"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Reset stări"
 
 #: src/etc/inc/priv.defs.inc:151
 msgid "Allow access to the 'Diagnostics: Reset states' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Reset stări'."
 
 #: src/etc/inc/priv.defs.inc:156
 msgid "WebCfg - Diagnostics: Routing tables"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Tabele rutare"
 
 #: src/etc/inc/priv.defs.inc:157
 msgid "Allow access to the 'Diagnostics: Routing tables' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Tabele rutare'."
 
 #: src/etc/inc/priv.defs.inc:162
 msgid "WebCfg - Diagnostics: S.M.A.R.T. Status"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Stare S.M.A.R.T"
 
 #: src/etc/inc/priv.defs.inc:163
 msgid "Allow access to the 'Diagnostics: S.M.A.R.T. Status' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Stare S.M.A.R.T'."
 
 #: src/etc/inc/priv.defs.inc:168
 msgid "WebCfg - Diagnostics: Sockets"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Socket-uri"
 
 #: src/etc/inc/priv.defs.inc:169
 msgid "Allow access to the 'Diagnostics: Sockets' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Socket-uri'."
 
 #: src/etc/inc/priv.defs.inc:174
 msgid "WebCfg - Diagnostics: States Summary"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Sumar stări"
 
 #: src/etc/inc/priv.defs.inc:175
 msgid "Allow access to the 'Diagnostics: States Summary' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Sumar stări'."
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Activități ale sistemului"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Activități ale sistemului'."
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Adrese IP pfTable"
 
 #: src/etc/inc/priv.defs.inc:187
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' Diagnoză: Adrese IP pfTable'."
 
 #: src/etc/inc/priv.defs.inc:192
 msgid "WebCfg - Diagnostics: Test Port"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Test Port"
 
 #: src/etc/inc/priv.defs.inc:193
 msgid "Allow access to the 'Diagnostics: Test Port' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' Diagnoză: Test Port'."
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Traceroute"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Traceroute'."
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
-msgstr ""
+msgstr "WebCfg - Firewall: Easy Rule adăugare/stare"
 
 #: src/etc/inc/priv.defs.inc:205
 msgid "Allow access to the 'Firewall: Easy Rule' add/status page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Easy Rule adăugare/stare'."
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
-msgstr ""
+msgstr "WebCfg - Firewall: Alias-uri"
 
 #: src/etc/inc/priv.defs.inc:211
 msgid "Allow access to the 'Firewall: Aliases' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Alias-uri'."
 
 #: src/etc/inc/priv.defs.inc:216
 msgid "WebCfg - Firewall: Alias: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Alias: Editare"
 
 #: src/etc/inc/priv.defs.inc:217
 msgid "Allow access to the 'Firewall: Alias: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Alias: Editare'."
 
 #: src/etc/inc/priv.defs.inc:222
 msgid "WebCfg - Firewall: Alias: Import"
-msgstr ""
+msgstr "WebCfg - Firewall: Alias: Import"
 
 #: src/etc/inc/priv.defs.inc:223
 msgid "Allow access to the 'Firewall: Alias: Import' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Alias: Import'."
 
 #: src/etc/inc/priv.defs.inc:228
 msgid "WebCfg - Firewall: NAT: Port Forward"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Redirecționare port"
 
 #: src/etc/inc/priv.defs.inc:229
 msgid "Allow access to the 'Firewall: NAT: Port Forward' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: Redirecționare port'."
 
 #: src/etc/inc/priv.defs.inc:234
 msgid "WebCfg - Firewall: NAT: 1:1"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: 1:1"
 
 #: src/etc/inc/priv.defs.inc:235
 msgid "Allow access to the 'Firewall: NAT: 1:1' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: 1:1'."
 
 #: src/etc/inc/priv.defs.inc:240
 msgid "WebCfg - Firewall: NAT: 1:1: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: 1:1: Edit"
 
 #: src/etc/inc/priv.defs.inc:241
 msgid "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: 1:1: Edit'."
 
 #: src/etc/inc/priv.defs.inc:246
 msgid "WebCfg - Firewall: NAT: Port Forward: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Redirecționare port: Editare"
 
 #: src/etc/inc/priv.defs.inc:247
 msgid "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
 msgstr ""
+"Permite accesul la pagina 'Firewall: NAT: Redirecționare port: Editare'."
 
 #: src/etc/inc/priv.defs.inc:252
 msgid "WebCfg - Firewall: NAT: NPt"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: NPt"
 
 #: src/etc/inc/priv.defs.inc:253
 msgid "Allow access to the 'Firewall: NAT: NPt' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: NPt'."
 
 #: src/etc/inc/priv.defs.inc:258
 msgid "WebCfg - Firewall: NAT: NPt: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NPt: Editare"
 
 #: src/etc/inc/priv.defs.inc:259
 msgid "Allow access to the 'Firewall: NAT: NPt: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NPt: Editare'."
 
 #: src/etc/inc/priv.defs.inc:264
 msgid "WebCfg - Firewall: NAT: Outbound"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Outbound"
 
 #: src/etc/inc/priv.defs.inc:265
 msgid "Allow access to the 'Firewall: NAT: Outbound' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: Outbound'."
 
 #: src/etc/inc/priv.defs.inc:270
 msgid "WebCfg - Firewall: NAT: Outbound: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: NAT: Outbound: Editare"
 
 #: src/etc/inc/priv.defs.inc:271
 msgid "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: NAT: Outbound: Editare'."
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
-msgstr ""
+msgstr "WebCfg - Firewall: Reguli"
 
 #: src/etc/inc/priv.defs.inc:277
 msgid "Allow access to the 'Firewall: Rules' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Reguli'."
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Reguli: Editare"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Reguli: Editare'."
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
-msgstr ""
+msgstr "WebCfg - Firewall: Orar"
 
 #: src/etc/inc/priv.defs.inc:289
 msgid "Allow access to the 'Firewall: Schedules' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Orar'."
 
 #: src/etc/inc/priv.defs.inc:294
 msgid "WebCfg - Firewall: Schedules: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Orar: Editare"
 
 #: src/etc/inc/priv.defs.inc:295
 msgid "Allow access to the 'Firewall: Schedules: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Orar: Editare'."
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper"
 
 #: src/etc/inc/priv.defs.inc:301
 msgid "Allow access to the 'Firewall: Traffic Shaper' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Traffic Shaper'."
 
 #: src/etc/inc/priv.defs.inc:306
 msgid "WebCfg - Firewall: Traffic Shaper: Queues"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Cozi așteptare"
 
 #: src/etc/inc/priv.defs.inc:307
 msgid "Allow access to the 'Firewall: Traffic Shaper: Queues' page."
-msgstr ""
+msgstr "Pemite accesul la pagina 'Firewall: Traffic Shaper: Cozi așteptare'."
 
 #: src/etc/inc/priv.defs.inc:312
 msgid "WebCfg - Firewall: Traffic Shaper: Limiters"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Limitatori"
 
 #: src/etc/inc/priv.defs.inc:313
 msgid "Allow access to the 'Firewall: Traffic Shaper: Limiters' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Traffic Shaper: Limitatori'."
 
 #: src/etc/inc/priv.defs.inc:318
 msgid "WebCfg - Firewall: Traffic Shaper: Wizard"
-msgstr ""
+msgstr "WebCfg - Firewall: Traffic Shaper: Vrăjitor"
 
 #: src/etc/inc/priv.defs.inc:319
 msgid "Allow access to the 'Firewall: Traffic Shaper: Wizard' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Traffic Shaper: Vrăjitor'."
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
-msgstr ""
+msgstr "WebCfg - Firewall: Adrese IP virtuale"
 
 #: src/etc/inc/priv.defs.inc:325
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Adrese IP virtuale'."
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
-msgstr ""
+msgstr "WebCfg - Firewall: Adrese IP virtuale: Editare"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Firewall: Adrese IP virtuale: Editare'."
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
-msgstr ""
+msgstr "WebCfg - AJAX: Interogare furnizori servicii"
 
 #: src/etc/inc/priv.defs.inc:337
 msgid "Allow access to the 'AJAX: Service Providers' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'AJAX: Interogare furnizori servicii'."
 
 #: src/etc/inc/priv.defs.inc:342
 msgid "WebCfg - AJAX: Get Stats"
-msgstr ""
+msgstr "WebCfg - AJAX: Interogare statistici"
 
 #: src/etc/inc/priv.defs.inc:343
 msgid "Allow access to the 'AJAX: Get Stats' page."
-msgstr ""
+msgstr "Permite acccesul la pagina 'AJAX: Interogare statistici'."
 
 #: src/etc/inc/priv.defs.inc:348
 msgid "WebCfg - Diagnostics: Interface Traffic"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Trafic interfețe"
 
 #: src/etc/inc/priv.defs.inc:349
 msgid "Allow access to the 'Diagnostics: Interface Traffic' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Trafic interfețe'."
 
 #: src/etc/inc/priv.defs.inc:354
 msgid "WebCfg - Diagnostics: CPU Utilization"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Utilizare CPU"
 
 #: src/etc/inc/priv.defs.inc:355
 msgid "Allow access to the 'Diagnostics: CPU Utilization' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Utilizare CPU'."
 
 #: src/etc/inc/priv.defs.inc:361
 msgid "WebCfg - XMLRPC Interface Stats"
-msgstr ""
+msgstr "WebCfg - Diagnoză: Stare interfețe XMLRPC"
 
 #: src/etc/inc/priv.defs.inc:362
 msgid "Allow access to the 'XMLRPC Interface Stats' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Diagnoză: Stare interfețe XMLRPC'."
 
 #: src/etc/inc/priv.defs.inc:367
 msgid "WebCfg - System: Login / Logout / Dashboard"
-msgstr ""
+msgstr "WebCfg - Sistem: Login / Logout / Panou instrumente"
 
 #: src/etc/inc/priv.defs.inc:368
 msgid "Allow access to the 'System: Login / Logout' page and Dashboard."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Login / Logout' și la panoul de "
+"instrumente."
 
 #: src/etc/inc/priv.defs.inc:373
 msgid "WebCfg - Interfaces: WAN"
-msgstr ""
+msgstr "WebCfg - Interfețe: WAN"
 
 #: src/etc/inc/priv.defs.inc:374
 msgid "Allow access to the 'Interfaces' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: WAN'."
 
 #: src/etc/inc/priv.defs.inc:379
 msgid "WebCfg - Interfaces: Interface Assignments"
-msgstr ""
+msgstr "WebCfg - Interfețe: Asignare interfețe"
 
 #: src/etc/inc/priv.defs.inc:380
 msgid "Allow access to the 'Interfaces: Interface Assignments' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: Asignare interfețe'."
 
 #: src/etc/inc/priv.defs.inc:385
 msgid "WebCfg - Interfaces: Bridge"
-msgstr ""
+msgstr "WebCfg - Interfețe: Bridge"
 
 #: src/etc/inc/priv.defs.inc:386
 msgid "Allow access to the 'Interfaces: Bridge' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: Bridge'."
 
 #: src/etc/inc/priv.defs.inc:391
 msgid "WebCfg - Interfaces: Bridge edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: Editare bridge"
 
 #: src/etc/inc/priv.defs.inc:392
 msgid "Allow access to the 'Interfaces: Bridge : Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: Editare bridge'"
 
 #: src/etc/inc/priv.defs.inc:397
 msgid "WebCfg - Interfaces: GIF"
-msgstr ""
+msgstr "WebCfg - Interfețe: GIF"
 
 #: src/etc/inc/priv.defs.inc:398
 msgid "Allow access to the 'Interfaces: GIF' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: GIF'."
 
 #: src/etc/inc/priv.defs.inc:403
 msgid "WebCfg - Interfaces: GIF: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: GIF: Editare"
 
 #: src/etc/inc/priv.defs.inc:404
 msgid "Allow access to the 'Interfaces: GIF: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: GIF: Editare'."
 
 #: src/etc/inc/priv.defs.inc:409
 msgid "WebCfg - Interfaces: GRE"
-msgstr ""
+msgstr "WebCfg - Interfețe: GRE"
 
 #: src/etc/inc/priv.defs.inc:410
 msgid "Allow access to the 'Interfaces: GRE' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: GRE'."
 
 #: src/etc/inc/priv.defs.inc:415
 msgid "WebCfg - Interfaces: GRE: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: GRE: Editare"
 
 #: src/etc/inc/priv.defs.inc:416
 msgid "Allow access to the 'Interfaces: GRE: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: GRE: Editare'."
 
 #: src/etc/inc/priv.defs.inc:421
 msgid "WebCfg - Interfaces: Groups"
-msgstr ""
+msgstr "WebCfg - Interfețe: Grupuri"
 
 #: src/etc/inc/priv.defs.inc:422
 msgid "Create interface groups"
-msgstr ""
+msgstr "Permite crearea grupurilor de interfețe."
 
 #: src/etc/inc/priv.defs.inc:427
 msgid "WebCfg - Interfaces: Groups: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: Grupuri: Editare"
 
 #: src/etc/inc/priv.defs.inc:428
 msgid "Allow access to the 'Interfaces: Groups: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: Grupuri: Editare'."
 
 #: src/etc/inc/priv.defs.inc:433
 msgid "WebCfg - Interfaces: LAGG:"
-msgstr ""
+msgstr "WebCfg - Interfețe: LAGG:"
 
 #: src/etc/inc/priv.defs.inc:434
 msgid "Allow access to the 'Interfaces: LAGG' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: LAGG'."
 
 #: src/etc/inc/priv.defs.inc:439
 msgid "WebCfg - Interfaces: LAGG: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: LAGG: Editare"
 
 #: src/etc/inc/priv.defs.inc:440
 msgid "Allow access to the 'Interfaces: LAGG: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: LAGG: Editare'."
 
 #: src/etc/inc/priv.defs.inc:445
 msgid "WebCfg - Interfaces: PPPs"
-msgstr ""
+msgstr "WebCfg - Interfețe: PPPs"
 
 #: src/etc/inc/priv.defs.inc:446
 msgid "Allow access to the 'Interfaces: PPPs' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: PPPs'."
 
 #: src/etc/inc/priv.defs.inc:451
 msgid "WebCfg - Interfaces: PPPs: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: PPPs: Editare"
 
 #: src/etc/inc/priv.defs.inc:452
 msgid "Allow access to the 'Interfaces: PPPs: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: PPPs: Editare'."
 
 #: src/etc/inc/priv.defs.inc:457
 msgid "WebCfg - Interfaces: QinQ"
-msgstr ""
+msgstr "WebCfg - Interfețe: QinQ"
 
 #: src/etc/inc/priv.defs.inc:458
 msgid "Allow access to the 'Interfaces: QinQ' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: QinQ'."
 
 #: src/etc/inc/priv.defs.inc:463
 msgid "WebCfg - Interfaces: QinQ: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: QinQ: Editare"
 
 #: src/etc/inc/priv.defs.inc:464
 msgid "Allow access to 'Interfaces: QinQ: Edit' page"
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: QinQ: Editare'."
 
 #: src/etc/inc/priv.defs.inc:469
 msgid "WebCfg - Interfaces: VLAN"
-msgstr ""
+msgstr "WebCfg - Interfețe: VLAN"
 
 #: src/etc/inc/priv.defs.inc:470
 msgid "Allow access to the 'Interfaces: VLAN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: VLAN'."
 
 #: src/etc/inc/priv.defs.inc:475
 msgid "WebCfg - Interfaces: VLAN: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: VLAN: Editare"
 
 #: src/etc/inc/priv.defs.inc:476
 msgid "Allow access to the 'Interfaces: VLAN: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: VLAN: Editare'."
 
 #: src/etc/inc/priv.defs.inc:481
 msgid "WebCfg - Interfaces: Wireless"
-msgstr ""
+msgstr "WebCfg - Interfaces: Wireless"
 
 #: src/etc/inc/priv.defs.inc:482
 msgid "Allow access to the 'Interfaces: Wireless' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfaces: Wireless'."
 
 #: src/etc/inc/priv.defs.inc:487
 msgid "WebCfg - Interfaces: Wireless: Edit"
-msgstr ""
+msgstr "WebCfg - Interfețe: Wireless: Editare"
 
 #: src/etc/inc/priv.defs.inc:488
 msgid "Allow access to the 'Interfaces: Wireless: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Interfețe: Wireless: Editare'."
 
 #: src/etc/inc/priv.defs.inc:493
 msgid "WebCfg - System: License"
-msgstr ""
+msgstr "WebCfg - Sistem: Licență"
 
 #: src/etc/inc/priv.defs.inc:494
 msgid "Allow access to the 'System: License' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Licență'."
 
 #: src/etc/inc/priv.defs.inc:499
 msgid "WebCfg - Services: Load Balancer: Monitors"
-msgstr ""
+msgstr "WebCfg - Servicii: Load Balancer: Monitorizare"
 
 #: src/etc/inc/priv.defs.inc:500
 msgid "Allow access to the 'Services: Load Balancer: Monitors' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Load Balancer: Monitorizare'."
 
 #: src/etc/inc/priv.defs.inc:505
 msgid "WebCfg - Services: Load Balancer: Monitor: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: Load Balancer: Monitorizare: Editare"
 
 #: src/etc/inc/priv.defs.inc:506
 msgid "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Load Balancer: Monitorizare: Editare'."
 
 #: src/etc/inc/priv.defs.inc:511
 msgid "WebCfg - Load Balancer: Pool"
-msgstr ""
+msgstr "WebCfg - Load Balancer: Pool"
 
 #: src/etc/inc/priv.defs.inc:512
 msgid "Allow access to the 'Load Balancer: Pool' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' Load Balancer: Pool'."
 
 #: src/etc/inc/priv.defs.inc:517
 msgid "WebCfg - Load Balancer: Pool: Edit"
-msgstr ""
+msgstr "WebCfg - LoadBalancer: Pool: Editare"
 
 #: src/etc/inc/priv.defs.inc:518
 msgid "Allow access to the 'Load Balancer: Pool: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'LoadBalancer: Pool: Editare'."
 
 #: src/etc/inc/priv.defs.inc:523
 msgid "WebCfg - Services: Load Balancer: Settings"
-msgstr ""
+msgstr "WebCfg - Servicii: Load Balancer: Setări"
 
 #: src/etc/inc/priv.defs.inc:524
 msgid "Allow access to the 'Settings: Load Balancer: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Load Balancer: Setări'."
 
 #: src/etc/inc/priv.defs.inc:529
 msgid "WebCfg - Services: Load Balancer: Virtual Servers"
-msgstr ""
+msgstr "WebCfg - Servicii: Load Balancer: Servere virtuale"
 
 #: src/etc/inc/priv.defs.inc:530
 msgid "Allow access to the 'Services: Load Balancer: Virtual Servers' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Load Balancer: Servere virtuale'."
 
 #: src/etc/inc/priv.defs.inc:535
 msgid "WebCfg - Load Balancer: Virtual Server: Edit"
-msgstr ""
+msgstr "WebCfg - Load Balancer: Servere virtuale: Editare"
 
 #: src/etc/inc/priv.defs.inc:536
 msgid "Allow access to the 'Load Balancer: Virtual Server: Edit' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Load Balancer: Servere virtuale: "
+"Editare'."
 
 #: src/etc/inc/priv.defs.inc:541
 msgid "WebCfg - Package: Settings"
-msgstr ""
+msgstr "WebCfg - Pachete extensie: Setări"
 
 #: src/etc/inc/priv.defs.inc:542
 msgid "Allow access to the 'Package: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Pachete extensie: Setări'."
 
 #: src/etc/inc/priv.defs.inc:547
 msgid "WebCfg - Package: Edit"
-msgstr ""
+msgstr "WebCfg - Pachete extensie: Editare"
 
 #: src/etc/inc/priv.defs.inc:548
 msgid "Allow access to the 'Package: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Pachete extensie: Editare'."
 
 #: src/etc/inc/priv.defs.inc:553
 msgid "WebCfg - System: Package Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager pachete extensie"
 
 #: src/etc/inc/priv.defs.inc:554
 msgid "Allow access to the 'System: Package Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager pachete extensie'."
 
 #: src/etc/inc/priv.defs.inc:559
 msgid "WebCfg - System: Package Manager: Install Package"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager pachete extensie: Instaleaza pachet extensie"
 
 #: src/etc/inc/priv.defs.inc:560
 msgid "Allow access to the 'System: Package Manager: Install Package' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Manager pachete extensie: Instaleaza "
+"pachet extensie'."
 
 #: src/etc/inc/priv.defs.inc:565
 msgid "WebCfg - System: Package Manager: Installed"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager pachete extensie: Pachete extensie instalate"
 
 #: src/etc/inc/priv.defs.inc:566
 msgid "Allow access to the 'System: Package Manager: Installed' page."
 msgstr ""
+"Permiet accesul la pagina 'Sistem: Manager pachete extensie: Pachete "
+"extensie instalate'."
 
 #: src/etc/inc/priv.defs.inc:571
 msgid "WebCfg - Services: Captive Portal"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv"
 
 #: src/etc/inc/priv.defs.inc:572
 msgid "Allow access to the 'Services: Captive Portal' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:577
 msgid "WebCfg - Services: Captive Portal: File Manager"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Manager fișiere"
 
 #: src/etc/inc/priv.defs.inc:578
 msgid "Allow access to the 'Services: Captive Portal: File Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Portal captiv: Manager fișiere'."
 
 #: src/etc/inc/priv.defs.inc:583
 msgid "WebCfg - Services: Captive Portal: Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Nume gazdă permise"
 
 #: src/etc/inc/priv.defs.inc:584
 msgid ""
 "Allow access to the 'Services: Captive Portal: Allowed Hostnames' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Portal captiv: Nume gazdă permise'."
 
 #: src/etc/inc/priv.defs.inc:589
 msgid "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Editare nume gazdă permise"
 
 #: src/etc/inc/priv.defs.inc:590
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Portal captiv: Editare nume gazdă "
+"permise'."
 
 #: src/etc/inc/priv.defs.inc:595
 msgid "WebCfg - Services: Captive Portal: Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Adrese IP permise"
 
 #: src/etc/inc/priv.defs.inc:596
 msgid "Allow access to the 'Services: Captive Portal: Allowed IPs' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Portal captiv: Adrese IP permise'."
 
 #: src/etc/inc/priv.defs.inc:601
 msgid "WebCfg - Services: Captive Portal: Edit Allowed IPs"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Editare adrese IP permise"
 
 #: src/etc/inc/priv.defs.inc:602
 msgid "Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Portal captiv: Editare adrese IP "
+"permise'."
 
 #: src/etc/inc/priv.defs.inc:607
 msgid "WebCfg - Services: Captive Portal: Mac Addresses"
-msgstr ""
+msgstr "WebCfg - Servicii: Adrese MAC"
 
 #: src/etc/inc/priv.defs.inc:608
 msgid "Allow access to the 'Services: Captive Portal: Mac Addresses' page."
-msgstr ""
+msgstr "Permite acesul la pagina 'Servicii: Adrese MAC'."
 
 #: src/etc/inc/priv.defs.inc:613
 msgid "WebCfg - Services: Captive Portal: Edit MAC Addresses"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Editare adrese MAC"
 
 #: src/etc/inc/priv.defs.inc:614
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Portal captiv: Editare adrese MAC'."
 
 #: src/etc/inc/priv.defs.inc:619
 msgid "WebCfg - Services: Captive Portal Vouchers"
-msgstr ""
+msgstr "WebCfg - Servicii: Vouchere portal captiv"
 
 #: src/etc/inc/priv.defs.inc:620
 msgid "Allow access to the 'Services: Captive Portal Vouchers' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Vouchere portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:625
 msgid "WebCfg - Services: Captive Portal Voucher Rolls"
-msgstr ""
+msgstr "WebCfg - Servicii: Listă vouchere portal captiv"
 
 #: src/etc/inc/priv.defs.inc:626
 msgid ""
 "Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page."
 msgstr ""
+"Permite accesul la pagina ' Servicii: Editare listă vouchere portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:631
 msgid "WebCfg - Services: Captive Portal Zones"
-msgstr ""
+msgstr "WebCfg - Servicii: Zone portal captiv"
 
 #: src/etc/inc/priv.defs.inc:632
 msgid "Allow access to the 'Services: Captive Portal Zones' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Zone portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:637
 msgid "WebCfg - Services: Captive Portal: Edit Zones"
-msgstr ""
+msgstr "WebCfg - Servicii: Portal captiv: Editare zone"
 
 #: src/etc/inc/priv.defs.inc:638
 msgid "Allow access to the 'Services: Captive Portal: Edit Zones' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Portal captiv: Editare zone'."
 
 #: src/etc/inc/priv.defs.inc:643
 msgid "WebCfg - Services: Check IP Service"
-msgstr ""
+msgstr "WebCfg - Servicii: Serviciu verificare IP"
 
 #: src/etc/inc/priv.defs.inc:644
 msgid "Allow access to the 'Services: Check IP Service' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Serviciu verificare IP'."
 
 #: src/etc/inc/priv.defs.inc:649
 msgid "WebCfg - Services: Check IP Service: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: Editare serviciu verificare IP"
 
 #: src/etc/inc/priv.defs.inc:650
 msgid "Allow access to the 'Services: Check IP Service: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Editare serviciu verificare IP'."
 
 #: src/etc/inc/priv.defs.inc:655
 msgid "WebCfg - Services: DHCP Server"
-msgstr ""
+msgstr "WebCfg - Servicii: Server DHCP"
 
 #: src/etc/inc/priv.defs.inc:656
 msgid "Allow access to the 'Services: DHCP Server' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Server DHCP'."
 
 #: src/etc/inc/priv.defs.inc:661
 msgid "WebCfg - Services: DHCP Server: Edit static mapping"
-msgstr ""
+msgstr "WebCfg - Servicii: Server DHCP: Editare mapare statică"
 
 #: src/etc/inc/priv.defs.inc:662
 msgid "Allow access to the 'Services: DHCP Server: Edit static mapping' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Server DHCP: Editare mapare statică'."
 
 #: src/etc/inc/priv.defs.inc:667
 msgid "WebCfg - Services: DHCP Relay"
-msgstr ""
+msgstr "WebCfg - Servicii: Releu retransmisie DHCP"
 
 #: src/etc/inc/priv.defs.inc:668
 msgid "Allow access to the 'Services: DHCP Relay' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Releu retransmisie DHCP'."
 
 #: src/etc/inc/priv.defs.inc:673
 msgid "WebCfg - Services: DHCPv6 Server"
-msgstr ""
+msgstr "WebCfg - Servicii: Server DHCPv6"
 
 #: src/etc/inc/priv.defs.inc:674
 msgid "Allow access to the 'Services: DHCPv6 Server' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Server DHCPv6'."
 
 #: src/etc/inc/priv.defs.inc:679
 msgid "WebCfg - Services: DHCPv6 Server: Edit static mapping"
-msgstr ""
+msgstr "WebCfg - Servicii: Server DHCPv6: Editare mapare statică"
 
 #: src/etc/inc/priv.defs.inc:680
 msgid ""
 "Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Server DHCPv6: Editare mapare statică'."
 
 #: src/etc/inc/priv.defs.inc:685
 msgid "WebCfg - Services: DHCPv6 Relay"
-msgstr ""
+msgstr "WebCfg - Servicii: Releu retransmisie DHCPv6"
 
 #: src/etc/inc/priv.defs.inc:686
 msgid "Allow access to the 'Services: DHCPv6 Relay' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Releu retransmisie DHCPv6'."
 
 #: src/etc/inc/priv.defs.inc:691
 msgid "WebCfg - Services: DNS Forwarder"
-msgstr ""
+msgstr "WebCfg - Servicii: Redirecționare DNS"
 
 #: src/etc/inc/priv.defs.inc:692
 msgid "Allow access to the 'Services: DNS Forwarder' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Redirecționare DNS'."
 
 #: src/etc/inc/priv.defs.inc:697
 msgid "WebCfg - Services: DNS Forwarder: Edit Domain Override"
 msgstr ""
+"WebCfg - Servicii: Redirecționare DNS: Editare suprascriere setări domeniu"
 
 #: src/etc/inc/priv.defs.inc:698
 msgid ""
 "Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Redirecționare DNS: Editare "
+"suprascriere setări domeniu'."
 
 #: src/etc/inc/priv.defs.inc:703
 msgid "WebCfg - Services: DNS Forwarder: Edit host"
-msgstr ""
+msgstr "WebCfg - Servicii: Redirecționare DNS: Editare gazdă"
 
 #: src/etc/inc/priv.defs.inc:704
 msgid "Allow access to the 'Services: DNS Forwarder: Edit host' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: Redirecționare DNS: Editare gazdă'."
 
 #: src/etc/inc/priv.defs.inc:709
 msgid "WebCfg - Services: Dynamic DNS clients"
-msgstr ""
+msgstr "WebCfg - Servicii: Clienți DNS dinamic"
 
 #: src/etc/inc/priv.defs.inc:710
 msgid "Allow access to the 'Services: Dynamic DNS clients' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Clienți DNS dinamic'."
 
 #: src/etc/inc/priv.defs.inc:715
 msgid "WebCfg - Services: Dynamic DNS client"
-msgstr ""
+msgstr "WebCfg - Servicii: Client DNS Dinamic"
 
 #: src/etc/inc/priv.defs.inc:716
 msgid "Allow access to the 'Services: Dynamic DNS client' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Client DNS Dinamic'."
 
 #: src/etc/inc/priv.defs.inc:721
 msgid "WebCfg - Services: IGMP Proxy"
-msgstr ""
+msgstr "WebCfg - Servicii: IGMP Proxy"
 
 #: src/etc/inc/priv.defs.inc:722
 msgid "Allow access to the 'Services: IGMP Proxy' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: IGMP Proxy'."
 
 #: src/etc/inc/priv.defs.inc:727
 msgid "WebCfg - Services: IGMP Proxy: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: IGMP Proxy: Editare"
 
 #: src/etc/inc/priv.defs.inc:728
 msgid "Allow access to the 'Services: IGMP Proxy: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: IGMP Proxy: Editare'."
 
 #: src/etc/inc/priv.defs.inc:733
 msgid "WebCfg - Services: NTP Settings"
-msgstr ""
+msgstr "WebCfg - Servicii: Setări NTP"
 
 #: src/etc/inc/priv.defs.inc:734
 msgid "Allow access to the 'Services: NTP Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Setări NTP'."
 
 #: src/etc/inc/priv.defs.inc:739
 msgid "WebCfg - Services: NTP ACL Settings"
-msgstr ""
+msgstr "WebCfg - Servicii: Setări NTP ACL"
 
 #: src/etc/inc/priv.defs.inc:740
 msgid "Allow access to the 'Services: NTP ACL Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Setări NTP ACL'."
 
 #: src/etc/inc/priv.defs.inc:745
 msgid "WebCfg - Services: NTP Serial GPS"
-msgstr ""
+msgstr "WebCfg - Servicii: NTP port serial GPS"
 
 #: src/etc/inc/priv.defs.inc:746
 msgid "Allow access to the 'Services: NTP Serial GPS' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: NTP port serial GPS'."
 
 #: src/etc/inc/priv.defs.inc:751
 msgid "WebCfg - Services: NTP PPS"
-msgstr ""
+msgstr "WebCfg - Servicii: NTP PPS"
 
 #: src/etc/inc/priv.defs.inc:752
 msgid "Allow access to the 'Services: NTP PPS' page."
-msgstr ""
+msgstr "Permite accesul la apgina 'Servicii: NTP PPS'."
 
 #: src/etc/inc/priv.defs.inc:757
 msgid "WebCfg - Services: PPPoE Server"
-msgstr ""
+msgstr "WebCfg - Servicii: Server PPPoE"
 
 #: src/etc/inc/priv.defs.inc:758
 msgid "Allow access to the 'Services: PPPoE Server' page."
-msgstr ""
+msgstr "Permite accesul la pagina Servicii: Server PPPoE''"
 
 #: src/etc/inc/priv.defs.inc:763
 msgid "WebCfg - Services: PPPoE Server: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: Server PPPoe: Editare"
 
 #: src/etc/inc/priv.defs.inc:764
 msgid "Allow access to the 'Services: PPPoE Server: Edit' page."
-msgstr ""
+msgstr "Permite acccesul la pagina 'Servicii: Server PPPoe: Editare'."
 
 #: src/etc/inc/priv.defs.inc:769
 msgid "WebCfg - Services: RFC 2136 Clients"
-msgstr ""
+msgstr "webCfg - Servicii: Clienți RFC 2136"
 
 #: src/etc/inc/priv.defs.inc:770
 msgid "Allow access to the 'Services: RFC 2136 Clients' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Clienți RFC 2136'."
 
 #: src/etc/inc/priv.defs.inc:775
 msgid "WebCfg - Services: RFC 2136 Client: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: Client RFC2136: Editare"
 
 #: src/etc/inc/priv.defs.inc:776
 msgid "Allow access to the 'Services: RFC 2136 Client: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Client RFC2136: Editare'."
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
-msgstr ""
+msgstr "webCfg - Servicii: Informări router"
 
 #: src/etc/inc/priv.defs.inc:782
 msgid "Allow access to the 'Services: Router Advertisements' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Informări router'."
 
 #: src/etc/inc/priv.defs.inc:787
 msgid "WebCfg - Services: SNMP"
-msgstr ""
+msgstr "WebCfg - Servicii: SNMP"
 
 #: src/etc/inc/priv.defs.inc:788
 msgid "Allow access to the 'Services: SNMP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: SNMP'."
 
 #: src/etc/inc/priv.defs.inc:793
 msgid "WebCfg - Services: DNS Resolver"
-msgstr ""
+msgstr "WebCfg - Servicii: DNS Resolver"
 
 #: src/etc/inc/priv.defs.inc:794
 msgid "Allow access to the 'Services: DNS Resolver' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: DNS Resolver'."
 
 #: src/etc/inc/priv.defs.inc:799
 msgid "WebCfg - Services: DNS Resolver: Access Lists"
-msgstr ""
+msgstr "WebCfg - Servicii: DNS Resolver: Liste acces"
 
 #: src/etc/inc/priv.defs.inc:800
 msgid "Allow access to the 'Services: DNS Resolver: Access Lists' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: DNS Resolver: Liste acces'."
 
 #: src/etc/inc/priv.defs.inc:805
 msgid "WebCfg - Services: DNS Resolver: Advanced"
-msgstr ""
+msgstr "WebCfg - Servicii: DNS Resolver: Setări avansate"
 
 #: src/etc/inc/priv.defs.inc:806
 msgid "Allow access to the 'Services: DNS Resolver: Advanced' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: DNS Resolver: Setări avansate'."
 
 #: src/etc/inc/priv.defs.inc:811
 msgid "WebCfg - Services: DNS Resolver: Edit Domain Override"
-msgstr ""
+msgstr "WebCfg - Servicii: DNS Resolver: Editare suprascriere setări domeniu"
 
 #: src/etc/inc/priv.defs.inc:812
 msgid ""
 "Allow access to the 'Services: DNS Resolver: Edit Domain Override' page."
 msgstr ""
+"Permite accesul la pagina 'Servicii: DNS Resolver: Editare suprascriere "
+"setări domeniu'."
 
 #: src/etc/inc/priv.defs.inc:817
 msgid "WebCfg - Services: DNS Resolver: Edit host"
-msgstr ""
+msgstr "WebCfg - Servicii: DNS Resolver: Editare gazdă"
 
 #: src/etc/inc/priv.defs.inc:818
 msgid "Allow access to the 'Services: DNS Resolver: Edit host' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: DNS Resolver: Editare gazdă'."
 
 #: src/etc/inc/priv.defs.inc:823
 msgid "WebCfg - Services: Wake-on-LAN"
-msgstr ""
+msgstr "WebCfg - Servicii: Wake-on-LAN"
 
 #: src/etc/inc/priv.defs.inc:824
 msgid "Allow access to the 'Services: Wake-on-LAN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Wake-on-LAN'."
 
 #: src/etc/inc/priv.defs.inc:829
 msgid "WebCfg - Services: Wake-on-LAN: Edit"
-msgstr ""
+msgstr "WebCfg - Servicii: Wake-on-LAN: Editare"
 
 #: src/etc/inc/priv.defs.inc:830
 msgid "Allow access to the 'Services: Wake-on-LAN: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Servicii: Wake-on-LAN: Editare'."
 
 #: src/etc/inc/priv.defs.inc:835
 msgid "WebCfg - Hidden: Detailed Status"
-msgstr ""
+msgstr "WebCfg - Ascuns: Stare detaliată"
 
 #: src/etc/inc/priv.defs.inc:836
 msgid "Allow access to the 'Hidden: Detailed Status' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Ascuns: Stare detaliată'."
 
 #: src/etc/inc/priv.defs.inc:841
 msgid "WebCfg - Status: Captive Portal"
-msgstr ""
+msgstr "WebCfg - Stare: Portal captiv"
 
 #: src/etc/inc/priv.defs.inc:842
 msgid "Allow access to the 'Status: Captive Portal' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:847
 msgid "WebCfg - Status: Captive Portal: Expire Vouchers"
-msgstr ""
+msgstr "WebCfg - Stare: Portal captiv: Vouchere la limita de expirare"
 
 #: src/etc/inc/priv.defs.inc:848
 msgid "Allow access to the 'Status: Captive Portal: Expire Vouchers' page."
 msgstr ""
+"Permite accesul la pagina 'Stare: Portal captiv: Vouchere la limita de "
+"expirare'."
 
 #: src/etc/inc/priv.defs.inc:853
 msgid "WebCfg - Status: Captive Portal: Test Vouchers"
-msgstr ""
+msgstr "WebCfg - Stare: Portal captiv: Vouchere de test"
 
 #: src/etc/inc/priv.defs.inc:854
 msgid "Allow access to the 'Status: Captive Portal: Test Vouchers' page."
-msgstr ""
+msgstr "Permtie accesul la pagina 'Stare: Portal captiv: Vouchere de test'."
 
 #: src/etc/inc/priv.defs.inc:859
 msgid "WebCfg - Status: Captive Portal Voucher Rolls"
-msgstr ""
+msgstr "WebCfg - Stare: Portal captiv: Listă vouchere"
 
 #: src/etc/inc/priv.defs.inc:860
 msgid "Allow access to the 'Status: Captive Portal Voucher Rolls' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Portal captiv: Listă vouchere'."
 
 #: src/etc/inc/priv.defs.inc:865
 msgid "WebCfg - Status: Captive Portal Vouchers"
-msgstr ""
+msgstr "WebCfg - Stare: Vouchere portal captiv"
 
 #: src/etc/inc/priv.defs.inc:866
 msgid "Allow access to the 'Status: Captive Portal Vouchers' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Vouchere portal captiv'."
 
 #: src/etc/inc/priv.defs.inc:871
 msgid "WebCfg - Status: CARP"
-msgstr ""
+msgstr "WebCfg - Stare: CARP"
 
 #: src/etc/inc/priv.defs.inc:872
 msgid "Allow access to the 'Status: CARP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: CARP'."
 
 #: src/etc/inc/priv.defs.inc:877
 msgid "WebCfg - Status: DHCP leases"
-msgstr ""
+msgstr "WebCfg - Stare: Adrese DHCP utilizate"
 
 #: src/etc/inc/priv.defs.inc:878
 msgid "Allow access to the 'Status: DHCP leases' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Adrese DHCP utilizate'."
 
 #: src/etc/inc/priv.defs.inc:883
 msgid "WebCfg - Status: DHCPv6 leases"
-msgstr ""
+msgstr "WebCfg - Stare: Adrese DHCPv6 utilizate"
 
 #: src/etc/inc/priv.defs.inc:884
 msgid "Allow access to the 'Status: DHCPv6 leases' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Adrese DHCPv6 utilizate'."
 
 #: src/etc/inc/priv.defs.inc:889
 msgid "WebCfg - Status: Filter Reload Status"
-msgstr ""
+msgstr "WebCfg - Stare: Stare reînărcare filtru"
 
 #: src/etc/inc/priv.defs.inc:890
 msgid "Allow access to the 'Status: Filter Reload Status' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Stare reînărcare filtru'."
 
 #: src/etc/inc/priv.defs.inc:895
 msgid "WebCfg - Status: Gateway Groups"
-msgstr ""
+msgstr "WebCfg - Stare: Grupuri de gateway-uri"
 
 #: src/etc/inc/priv.defs.inc:896
 msgid "Allow access to the 'Status: Gateway Groups' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Grupuri de gateway-uri'."
 
 #: src/etc/inc/priv.defs.inc:901
 msgid "WebCfg - Status: Gateways"
-msgstr ""
+msgstr "WebCfg - Stare: Gateway-uri"
 
 #: src/etc/inc/priv.defs.inc:902
 msgid "Allow access to the 'Status: Gateways' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Gateway-uri'."
 
 #: src/etc/inc/priv.defs.inc:907
 msgid "WebCfg - Status: Traffic Graph"
-msgstr ""
+msgstr "WebCfg - Stare: Grafice trafic"
 
 #: src/etc/inc/priv.defs.inc:908
 msgid "Allow access to the 'Status: Traffic Graph' page."
-msgstr ""
+msgstr "Permiet accesul la pagina 'Stare: Grafice trafic'."
 
 #: src/etc/inc/priv.defs.inc:916
 msgid "WebCfg - Status: CPU load"
-msgstr ""
+msgstr "WebCfg - Stare: Încărcare CPU"
 
 #: src/etc/inc/priv.defs.inc:917
 msgid "Allow access to the 'Status: CPU load' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Încărcare CPU'."
 
 #: src/etc/inc/priv.defs.inc:922
 msgid "WebCfg - Status: Interfaces"
-msgstr ""
+msgstr "WebCfg - Stare: Interfețe"
 
 #: src/etc/inc/priv.defs.inc:923
 msgid "Allow access to the 'Status: Interfaces' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Interfețe'."
 
 #: src/etc/inc/priv.defs.inc:928
 msgid "WebCfg - Status: IPsec"
-msgstr ""
+msgstr "WebCfg - Stare: IPsec"
 
 #: src/etc/inc/priv.defs.inc:929
 msgid "Allow access to the 'Status: IPsec' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: IPsec'."
 
 #: src/etc/inc/priv.defs.inc:934
 msgid "WebCfg - Status: IPsec: Leases"
-msgstr ""
+msgstr "WebCfg - Stare: IPsec: Asignări"
 
 #: src/etc/inc/priv.defs.inc:935
 msgid "Allow access to the 'Status: IPsec: Leases' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: IPsec: Asignări'."
 
 #: src/etc/inc/priv.defs.inc:940
 msgid "WebCfg - Status: IPsec: SADs"
-msgstr ""
+msgstr "WebCfg - Stare: SAD-uri"
 
 #: src/etc/inc/priv.defs.inc:941
 msgid "Allow access to the 'Status: IPsec: SADs' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: SAD-uri'."
 
 #: src/etc/inc/priv.defs.inc:946
 msgid "WebCfg - Status: IPsec: SPD"
-msgstr ""
+msgstr "WebCfg - Stare: IPsec: SPD"
 
 #: src/etc/inc/priv.defs.inc:947
 msgid "Allow access to the 'Status: IPsec: SPD' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: IPsec: SPD'."
 
 #: src/etc/inc/priv.defs.inc:952
 msgid "WebCfg - Status: Load Balancer: Pool"
-msgstr ""
+msgstr "WebCfg - Stare: Load Balancer: Pool resurse"
 
 #: src/etc/inc/priv.defs.inc:953
 msgid "Allow access to the 'Status: Load Balancer: Pool' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' Stare: Load Balancer: Pool resurse'."
 
 #: src/etc/inc/priv.defs.inc:958
 msgid "WebCfg - Status: Load Balancer: Virtual Server"
-msgstr ""
+msgstr "WebCfg - Stare: Load Balancer: Server virtual"
 
 #: src/etc/inc/priv.defs.inc:959
 msgid "Allow access to the 'Status: Load Balancer: Virtual Server' page."
-msgstr ""
+msgstr "Permite acccesul la pagina 'Stare: Load Balancer: Server virtual'."
 
 #: src/etc/inc/priv.defs.inc:964
 msgid "WebCfg - Status: Logs: System"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: Sistem"
 
 #: src/etc/inc/priv.defs.inc:965
 msgid "Allow access to the 'Status: System Logs: General' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: Sistem'."
 
 #: src/etc/inc/priv.defs.inc:970
 msgid "WebCfg - Status: Logs: Firewall"
-msgstr ""
+msgstr "WebCfg - Status: Jurnale: Firewall"
 
 #: src/etc/inc/priv.defs.inc:971
 msgid "Allow access to the 'Status: Logs: Firewall' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Status: Jurnale: Firewall'."
 
 #: src/etc/inc/priv.defs.inc:976
 msgid "WebCfg - Status: System Logs: Firewall (Dynamic View)"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: Firewall (afișare dinamică)"
 
 #: src/etc/inc/priv.defs.inc:977
 msgid ""
 "Allow access to the 'Status: System Logs: Firewall (Dynamic View)' page"
 msgstr ""
+"Permite accesul la pagina 'Stare: Jurnale sistem: Firewall (afișare "
+"dinamică)'."
 
 #: src/etc/inc/priv.defs.inc:982
 msgid "WebCfg - Status: System Logs: Firewall Log Summary"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale sistem: Sumar jurnal firewall"
 
 #: src/etc/inc/priv.defs.inc:983
 msgid "Allow access to the 'Status: System Logs: Firewall Log Summary' page"
 msgstr ""
+"Permite accesul la pagina 'Stare: Jurnale sistem: Sumar jurnal firewall'."
 
 #: src/etc/inc/priv.defs.inc:988
 msgid "WebCfg - Status: Logs: Settings"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: Setări"
 
 #: src/etc/inc/priv.defs.inc:989
 msgid "Allow access to the 'Status: Logs: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: Setări'."
 
 #: src/etc/inc/priv.defs.inc:994
 msgid "WebCfg - Status: Logs: VPN"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale: VPN"
 
 #: src/etc/inc/priv.defs.inc:995
 msgid "Allow access to the 'Status: Logs: VPN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale: VPN'."
 
 #: src/etc/inc/priv.defs.inc:1000
 msgid "WebCfg - Status: NTP"
-msgstr ""
+msgstr "WebCfg - Stare: NTP"
 
 #: src/etc/inc/priv.defs.inc:1001
 msgid "Allow access to the 'Status: NTP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: NTP'."
 
 #: src/etc/inc/priv.defs.inc:1006
 msgid "WebCfg - Status: OpenVPN"
-msgstr ""
+msgstr "WebCfg - Stare: OpenVPN"
 
 #: src/etc/inc/priv.defs.inc:1007
 msgid "Allow access to the 'Status: OpenVPN' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: OpenVPN'."
 
 #: src/etc/inc/priv.defs.inc:1012
 msgid "WebCfg - Status: Package logs"
-msgstr ""
+msgstr "WebCfg - Stare: Jurnale pachete extensie"
 
 #: src/etc/inc/priv.defs.inc:1013
 msgid "Allow access to the 'Status: Package logs' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Jurnale pachete extensie'."
 
 #: src/etc/inc/priv.defs.inc:1018
 msgid "WebCfg - Status: Traffic Shaper: Queues"
-msgstr ""
+msgstr "WebCfg - Stare:Traffic Shaper: Cozi așteptare"
 
 #: src/etc/inc/priv.defs.inc:1019
 msgid "Allow access to the 'Status: Traffic Shaper: Queues' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare:Traffic Shaper: Cozi așteptare'."
 
 #: src/etc/inc/priv.defs.inc:1024
 msgid "WebCfg - Status: Services"
-msgstr ""
+msgstr "WebCfg - Stare: Servicii"
 
 #: src/etc/inc/priv.defs.inc:1025
 msgid "Allow access to the 'Status: Services' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Servicii'."
 
 #: src/etc/inc/priv.defs.inc:1030
 msgid "WebCfg - Status: UPnP Status"
-msgstr ""
+msgstr "WebCfg - Stare: Stare UPnP"
 
 #: src/etc/inc/priv.defs.inc:1031
 msgid "Allow access to the 'Status: UPnP Status' page."
-msgstr ""
+msgstr "Permite accesul la pagina  'Stare: Stare UPnP'."
 
 #: src/etc/inc/priv.defs.inc:1036
 msgid "WebCfg - Status: Wireless"
-msgstr ""
+msgstr "WebCfg - Stare: Wireless"
 
 #: src/etc/inc/priv.defs.inc:1037
 msgid "Allow access to the 'Status: Wireless' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Stare: Wireless'."
 
 #: src/etc/inc/priv.defs.inc:1042
 msgid "WebCfg - System: General Setup"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări generale"
 
 #: src/etc/inc/priv.defs.inc:1043
 msgid "Allow access to the 'System: General Setup' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări generale'."
 
 #: src/etc/inc/priv.defs.inc:1048
 msgid "WebCfg - System: Advanced: Admin Access Page"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Acces pagină administrare"
 
 #: src/etc/inc/priv.defs.inc:1049
 msgid "Allow access to the 'System: Advanced: Admin Access' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Setări avansate: Acces pagină "
+"administrare'."
 
 #: src/etc/inc/priv.defs.inc:1054
 msgid "WebCfg - System: Advanced: Firewall & NAT"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Firewall & NAT"
 
 #: src/etc/inc/priv.defs.inc:1055
 msgid "Allow access to the 'System: Advanced: Firewall & NAT' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări avansate: Firewall & NAT'."
 
 #: src/etc/inc/priv.defs.inc:1060
 msgid "WebCfg - System: Advanced: Miscellaneous"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Diverse"
 
 #: src/etc/inc/priv.defs.inc:1061
 msgid "Allow access to the 'System: Advanced: Miscellaneous' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări avansate: Diverse'."
 
 #: src/etc/inc/priv.defs.inc:1066
 msgid "WebCfg - System: Advanced: Networking"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Setări rețele"
 
 #: src/etc/inc/priv.defs.inc:1067
 msgid "Allow access to the 'System: Advanced: Networking' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări avansate: Setări rețele'."
 
 #: src/etc/inc/priv.defs.inc:1072
 msgid "WebCfg - System: Advanced: Notifications"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Notificări"
 
 #: src/etc/inc/priv.defs.inc:1073
 msgid "Allow access to the 'System: Advanced: Notifications' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări avansate: Notificări'."
 
 #: src/etc/inc/priv.defs.inc:1078
 msgid "WebCfg - System: Advanced: Tunables"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări avansate: Reglaj fin"
 
 #: src/etc/inc/priv.defs.inc:1079
 msgid "Allow access to the 'System: Advanced: Tunables' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări avansate: Reglaj fin'."
 
 #: src/etc/inc/priv.defs.inc:1084
 msgid "WebCfg - System: Authentication Servers"
-msgstr ""
+msgstr "WebCfg -  Sistem: Servere autentificare"
 
 #: src/etc/inc/priv.defs.inc:1085
 msgid "Allow access to the 'System: Authentication Servers' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Servere autentificare'."
 
 #: src/etc/inc/priv.defs.inc:1091
 msgid "WebCfg - System: CA Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager CA"
 
 #: src/etc/inc/priv.defs.inc:1092
 msgid "Allow access to the 'System: CA Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager CA'."
 
 #: src/etc/inc/priv.defs.inc:1097
 msgid "WebCfg - System: Certificate Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager certificate"
 
 #: src/etc/inc/priv.defs.inc:1098
 msgid "Allow access to the 'System: Certificate Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager certificate'."
 
 #: src/etc/inc/priv.defs.inc:1103
 msgid "WebCfg - System: CRL Manager"
-msgstr ""
+msgstr "WebCfg -  Sistem: Manager CRL"
 
 #: src/etc/inc/priv.defs.inc:1104
 msgid "Allow access to the 'System: CRL Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager CRL'."
 
 #: src/etc/inc/priv.defs.inc:1109
 msgid "WebCfg - System: Gateway Groups"
-msgstr ""
+msgstr "WebCfg - Sistem: Grupuri de gateway-uri"
 
 #: src/etc/inc/priv.defs.inc:1110
 msgid "Allow access to the 'System: Gateway Groups' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' Sistem: Grupuri de gateway-uri'."
 
 #: src/etc/inc/priv.defs.inc:1115
 msgid "WebCfg - System: Gateways: Edit Gateway Groups"
-msgstr ""
+msgstr "WebCfg - Sistem: Gateway-uri: Editare grupuri de gateway-uri"
 
 #: src/etc/inc/priv.defs.inc:1116
 msgid "Allow access to the 'System: Gateways: Edit Gateway Groups' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Gateway-uri: Editare grupuri de gateway-"
+"uri'."
 
 #: src/etc/inc/priv.defs.inc:1121
 msgid "WebCfg - System: Gateways"
-msgstr ""
+msgstr "WebCfg - Sistem: Gateway-uri"
 
 #: src/etc/inc/priv.defs.inc:1122
 msgid "Allow access to the 'System: Gateways' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Gateway-uri'."
 
 #: src/etc/inc/priv.defs.inc:1127
 msgid "WebCfg - System: Gateways: Edit Gateway"
-msgstr ""
+msgstr "WebCfg - Sistem: Gateway-uri: Editare gateway"
 
 #: src/etc/inc/priv.defs.inc:1128
 msgid "Allow access to the 'System: Gateways: Edit Gateway' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Gateway-uri: Editare gateway."
 
 #: src/etc/inc/priv.defs.inc:1133
 msgid "WebCfg - System: Group Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager grupuri"
 
 #: src/etc/inc/priv.defs.inc:1134
 msgid "Allow access to the 'System: Group Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager grupuri'."
 
 #: src/etc/inc/priv.defs.inc:1140
 msgid "WebCfg - System: Group Manager: Add Privileges"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager grupuri: Adăugare privilegii"
 
 #: src/etc/inc/priv.defs.inc:1141
 msgid "Allow access to the 'System: Group Manager: Add Privileges' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Manager grupuri: Adăugare privilegii'."
 
 #: src/etc/inc/priv.defs.inc:1147
 msgid "WebCfg - System: High Availability Sync"
-msgstr ""
+msgstr "WebCfg - Sistem: Sincronizare de înaltă fiabilitate"
 
 #: src/etc/inc/priv.defs.inc:1148
 msgid "Allow access to the 'System: High Availability Sync' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Sincronizare de înaltă fiabilitate'."
 
 #: src/etc/inc/priv.defs.inc:1153
 msgid "WebCfg - System: Static Routes"
-msgstr ""
+msgstr "WebCfg - Sistem: Rute statice"
 
 #: src/etc/inc/priv.defs.inc:1154
 msgid "Allow access to the 'System: Static Routes' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Rute statice'."
 
 #: src/etc/inc/priv.defs.inc:1159
 msgid "WebCfg - System: Static Routes: Edit route"
-msgstr ""
+msgstr "WebCfg - Sistem: Rute statice: Editare rută"
 
 #: src/etc/inc/priv.defs.inc:1160
 msgid "Allow access to the 'System: Static Routes: Edit route' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Rute statice: Editare rută'."
 
 #: src/etc/inc/priv.defs.inc:1165
 msgid "WebCfg - System: Update: Settings"
-msgstr ""
+msgstr "WebCfg - Sistem: Actualizare: Setări"
 
 #: src/etc/inc/priv.defs.inc:1166
 msgid "Allow access to the 'System: Update: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina '' Sistem: Actualizare: Setări."
 
 #: src/etc/inc/priv.defs.inc:1171
 msgid "WebCfg - System: User Settings"
-msgstr ""
+msgstr "WebCfg - Sistem: Setări utilizator"
 
 #: src/etc/inc/priv.defs.inc:1172
 msgid "Allow access to the 'System: User Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Setări utilizator'."
 
 #: src/etc/inc/priv.defs.inc:1177
 msgid "WebCfg - System: User Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager utilizatori"
 
 #: src/etc/inc/priv.defs.inc:1178
 msgid "Allow access to the 'System: User Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager utilizatori'."
 
 #: src/etc/inc/priv.defs.inc:1184
 msgid "WebCfg - System: User Manager: Add Privileges"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager utilizatori: Adăugare privilegii"
 
 #: src/etc/inc/priv.defs.inc:1185
 msgid "Allow access to the 'System: User Manager: Add Privileges' page."
 msgstr ""
+"Permite accesul la pagina 'Sistem: Manager utilizatori: Adăugare privilegii'."
+""
 
 #: src/etc/inc/priv.defs.inc:1191
 msgid "WebCfg - System: User Password Manager"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager parole utilizatori"
 
 #: src/etc/inc/priv.defs.inc:1192
 msgid "Allow access to the 'System: User Password Manager' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager parole utilizatori'."
 
 #: src/etc/inc/priv.defs.inc:1197
 msgid "WebCfg - System: User Manager: Settings"
-msgstr ""
+msgstr "WebCfg - Sistem: Manager utilizatori: Setări"
 
 #: src/etc/inc/priv.defs.inc:1198
 msgid "Allow access to the 'System: User Manager: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Sistem: Manager utilizatori: Setări'."
 
 #: src/etc/inc/priv.defs.inc:1204
 msgid "WebCfg - Hidden: Upload Configuration"
-msgstr ""
+msgstr "WebCfg - Ascuns: Înărcare configurație"
 
 #: src/etc/inc/priv.defs.inc:1205
 msgid "Allow access to the 'Hidden: Upload Configuration' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Ascuns: Înărcare configurație'."
 
 #: src/etc/inc/priv.defs.inc:1210
 msgid "WebCfg - VPN: IPsec"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec"
 
 #: src/etc/inc/priv.defs.inc:1211
 msgid "Allow access to the 'VPN: IPsec' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' VPN: IPsec'."
 
 #: src/etc/inc/priv.defs.inc:1216
 msgid "WebCfg - VPN: IPsec: Pre-Shared Keys List"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Listă chei pre-distribuite"
 
 #: src/etc/inc/priv.defs.inc:1217
 msgid "Allow access to the 'VPN: IPsec: Pre-Shared Keys List' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Listă chei pre-distribuite'."
 
 #: src/etc/inc/priv.defs.inc:1222
 msgid "WebCfg - VPN: IPsec: Edit Pre-Shared Keys"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Editare chei pre-distribuite"
 
 #: src/etc/inc/priv.defs.inc:1223
 msgid "Allow access to the 'VPN: IPsec: Edit Pre-Shared Keys' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Editare chei pre-distribuite'."
 
 #: src/etc/inc/priv.defs.inc:1228
 msgid "WebCfg - VPN: IPsec: Mobile"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Mobil"
 
 #: src/etc/inc/priv.defs.inc:1229
 msgid "Allow access to the 'VPN: IPsec: Mobile' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Mobil'."
 
 #: src/etc/inc/priv.defs.inc:1234
 msgid "WebCfg - VPN: IPsec: Edit Phase 1"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Editare faza 1"
 
 #: src/etc/inc/priv.defs.inc:1235
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 1' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Editare faza 1'."
 
 #: src/etc/inc/priv.defs.inc:1240
 msgid "WebCfg - VPN: IPsec: Edit Phase 2"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Editare faza 2"
 
 #: src/etc/inc/priv.defs.inc:1241
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 2' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Editare faza 2'."
 
 #: src/etc/inc/priv.defs.inc:1246
 msgid "WebCfg - VPN: IPsec: Settings"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec: Setări"
 
 #: src/etc/inc/priv.defs.inc:1247
 msgid "Allow access to the 'VPN: IPsec: Settings' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: IPsec: Setări'."
 
 #: src/etc/inc/priv.defs.inc:1252
 msgid "WebCfg - VPN: L2TP"
-msgstr ""
+msgstr "WebCfg - VPN: L2TP"
 
 #: src/etc/inc/priv.defs.inc:1253
 msgid "Allow access to the 'VPN: L2TP' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: L2TP'."
 
 #: src/etc/inc/priv.defs.inc:1258
 msgid "WebCfg - VPN: L2TP: Users"
-msgstr ""
+msgstr "WebCfg - VPN: L2TP: Utilizatori"
 
 #: src/etc/inc/priv.defs.inc:1259
 msgid "Allow access to the 'VPN: L2TP: Users' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: L2TP: Utilizatori'."
 
 #: src/etc/inc/priv.defs.inc:1264
 msgid "WebCfg - VPN: L2TP: Users: Edit"
-msgstr ""
+msgstr "WebCfg - VPN: L2TP: Utilizatori: Editare"
 
 #: src/etc/inc/priv.defs.inc:1265
 msgid "Allow access to the 'VPN: L2TP: Users: Edit' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'VPN: L2TP: Utilizatori: Editare'."
 
 #: src/etc/inc/priv.defs.inc:1270
 msgid "WebCfg - OpenVPN: Clients"
-msgstr ""
+msgstr "WebCfg - OpenVPN: Clienți"
 
 #: src/etc/inc/priv.defs.inc:1271
 msgid "Allow access to the 'OpenVPN: Clients' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' OpenVPN: Clienți'."
 
 #: src/etc/inc/priv.defs.inc:1276
 msgid "WebCfg - OpenVPN: Client Specific Override"
-msgstr ""
+msgstr "WebCfg - OpenVPN: Setări specifice client"
 
 #: src/etc/inc/priv.defs.inc:1277
 msgid "Allow access to the 'OpenVPN: Client Specific Override' page."
-msgstr ""
+msgstr "Permite accesul la pagina ' OpenVPN: Setări specifice client'."
 
 #: src/etc/inc/priv.defs.inc:1282
 msgid "WebCfg - OpenVPN: Servers"
-msgstr ""
+msgstr "WebCfg - OpenVPN: Servere"
 
 #: src/etc/inc/priv.defs.inc:1283
 msgid "Allow access to the 'OpenVPN: Servers' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'OpenVPN: Servere'."
 
 #: src/etc/inc/priv.defs.inc:1288
 msgid "WebCfg - pfSense wizard subsystem"
-msgstr ""
+msgstr "WebCfg - Subsistem vrăjitor pfSense"
 
 #: src/etc/inc/priv.defs.inc:1289
 msgid "Allow access to the 'pfSense wizard subsystem' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Subsistem vrăjitor pfSense'."
 
 #: src/etc/inc/priv.defs.inc:1294
 msgid "WebCfg - XMLRPC Library"
-msgstr ""
+msgstr "WebCfg - Bibliotecă XMLRPC"
 
 #: src/etc/inc/priv.defs.inc:1295
 msgid "Allow access to the 'XMLRPC Library' page."
-msgstr ""
+msgstr "Permite accesul la pagina 'Bibliotecă XMLRPC'."
 
 #: src/etc/inc/radius.inc:416
 msgid "Error sending request:"
-msgstr ""
+msgstr "Eroare la trimiterea solicitării:"
 
 #: src/etc/inc/radius.inc:422
 msgid "RADIUS_ACCESS_ACCEPT is unexpected for accounting"
-msgstr ""
+msgstr "RADIUS_ACCESS_ACCEPT este un răspuns neașteptat"
 
 #: src/etc/inc/radius.inc:431
 msgid "RADIUS_ACCOUNTING_RESPONSE is unexpected for authentication"
-msgstr ""
+msgstr "RADIUS_ACCOUNTING_RESPONSE nu este așteptat la autentificare"
 
 #: src/etc/inc/radius.inc:436
 #, php-format
 msgid "Unexpected return value: %s"
-msgstr ""
+msgstr "Valoare returnată neașteptată: %s"
 
 #: src/etc/inc/rrd.inc:32
 #, php-format
 msgid "RRD dump failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "RRD dump a eșuat returnând %1$s, eroarea este: %2$s"
 
 #: src/etc/inc/rrd.inc:43
 #, php-format
 msgid "RRD create failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "Crearea RRD a eșuat returnând %1$s., eroarea este: %2$s"
 
 #: src/etc/inc/rrd.inc:58
 #, php-format
@@ -6048,30 +6105,33 @@ msgid ""
 "Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has "
 "%3$s DS values and %4$s RRA databases"
 msgstr ""
+"RRD de importat conține %1$s valori DS si %2$s baze de date RRA, RRD în noul "
+"format conține %3$s valori DS și %4$s baze de date RRA"
 
 #: src/etc/inc/rrd.inc:142
 #, php-format
 msgid "The new RRD now has %1$s DS values and %2$s RRA databases"
-msgstr ""
+msgstr "Noul RRD are acum %1$s valori DS si %2$s baze de date RRA"
 
 #: src/etc/inc/rrd.inc:150
 msgid "Generating RRD graphs..."
-msgstr ""
+msgstr "Generare grafice RRD"
 
 #: src/etc/inc/rrd.inc:942
 msgid "Creating rrd update script"
-msgstr ""
+msgstr "Creare script actualizare rrd"
 
 #: src/etc/inc/service-utils.inc:243
 msgid "Router Advertisement Daemon"
-msgstr ""
+msgstr "Daemon anunțare router"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
 #: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
+#, fuzzy
 msgid "DNS Forwarder"
-msgstr ""
+msgstr "Serviciu redirecționare DNS"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
 #: src/usr/local/www/head.inc:301 src/usr/local/www/services_unbound.php:245
@@ -6082,15 +6142,15 @@ msgstr ""
 #: src/usr/local/www/status_logs.php:61
 #: src/usr/local/www/status_logs_common.inc:106
 msgid "DNS Resolver"
-msgstr ""
+msgstr "DNS Resolver"
 
 #: src/etc/inc/service-utils.inc:263
 msgid "NTP clock sync"
-msgstr ""
+msgstr "Sincronizare ceas NTP"
 
 #: src/etc/inc/service-utils.inc:268
 msgid "System Logger Daemon"
-msgstr ""
+msgstr "Daemon creare jurnale sistem"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
 #: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
@@ -6113,61 +6173,61 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
 #: src/usr/local/www/system_certmanager.php:1201
 msgid "Captive Portal"
-msgstr ""
+msgstr "Portal captiv"
 
 #: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:302
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
-msgstr ""
+msgstr "Releu retransmisie DHCP"
 
 #: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:303
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
-msgstr ""
+msgstr "Releu retransmisie DHCPv6"
 
 #: src/etc/inc/service-utils.inc:309
 msgid "DHCP Service"
-msgstr ""
+msgstr "Serviciu DHCP"
 
 #: src/etc/inc/service-utils.inc:317
 msgid "Gateway Monitoring Daemon"
-msgstr ""
+msgstr "Daemon monitorizare gateway"
 
 #: src/etc/inc/service-utils.inc:324
 msgid "SNMP Service"
-msgstr ""
+msgstr "Serviciu SNMP"
 
 #: src/etc/inc/service-utils.inc:331
 msgid "IGMP proxy"
-msgstr ""
+msgstr "IGMP proxy"
 
 #: src/etc/inc/service-utils.inc:338
 msgid "UPnP Service"
-msgstr ""
+msgstr "Serviciu UPnP"
 
 #: src/etc/inc/service-utils.inc:345
 msgid "IPsec VPN"
-msgstr ""
+msgstr "IPsec VPN"
 
 #: src/etc/inc/service-utils.inc:352
 msgid "Secure Shell Daemon"
-msgstr ""
+msgstr "Daemon Secure Shell"
 
 #: src/etc/inc/service-utils.inc:375
 msgid "Server load balancing daemon"
-msgstr ""
+msgstr "Daemon echilibrare înărcare server"
 
 #: src/etc/inc/service-utils.inc:434
 msgid "Not available."
-msgstr ""
+msgstr "Indisponibil"
 
 #: src/etc/inc/service-utils.inc:468
 msgid "Running"
-msgstr ""
+msgstr "În execuție"
 
 #: src/etc/inc/service-utils.inc:475
 msgid "Stopped"
-msgstr ""
+msgstr "Oprit"
 
 #: src/etc/inc/service-utils.inc:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
@@ -6190,63 +6250,66 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:661
 #: src/usr/local/www/vpn_openvpn_server.php:675
 msgid "Disabled"
-msgstr ""
+msgstr "Scoz din uz"
 
 #: src/etc/inc/service-utils.inc:491 src/etc/inc/service-utils.inc:493
 #, php-format
 msgid "%1$s Service is %2$s"
-msgstr ""
+msgstr "Serviciul %1$s este %2$s"
 
 #: src/etc/inc/service-utils.inc:495
 #, php-format
 msgid "%1$s, %2$s Service is %3$s"
-msgstr ""
+msgstr "Serviciul %1$s, %2$s este %3$s"
 
 #: src/etc/inc/service-utils.inc:542
 #, php-format
 msgid "Restart %sService"
-msgstr ""
+msgstr "Repornire serviciu%s"
 
 #: src/etc/inc/service-utils.inc:555
 #, php-format
 msgid "Stop %sService"
-msgstr ""
+msgstr "Oprire serviciu%s"
 
 #: src/etc/inc/service-utils.inc:561
 #, php-format
 msgid "Start %sService"
-msgstr ""
+msgstr "Pornire serviciu%s"
 
 #: src/etc/inc/service-utils.inc:636
 #, php-format
 msgid "%s has been started."
-msgstr ""
+msgstr "%s a fost pornit."
 
 #: src/etc/inc/service-utils.inc:716
 #, php-format
 msgid "%s has been stopped."
-msgstr ""
+msgstr "%s a fost oprit."
 
 #: src/etc/inc/service-utils.inc:789
 #, php-format
 msgid "%s has been restarted."
-msgstr ""
+msgstr "%s a fost repornit."
 
 #: src/etc/inc/services.inc:382
 msgid "Error: cannot open radvd.conf in services_radvd_configure()."
 msgstr ""
+"Eroare: nu se poate deschide radvd.conf in services_radvd_configure()."
 
 #: src/etc/inc/services.inc:399
 msgid "Shutting down Router Advertisment daemon cleanly"
-msgstr ""
+msgstr "Oprire daemon anunțare router."
 
 #: src/etc/inc/services.inc:501
 msgid "Starting DHCP service..."
-msgstr ""
+msgstr "Pornire serviciu DCHP..."
 
 #: src/etc/inc/services.inc:607
 msgid "Warning!  DHCP Failover setup and no CARP virtual IPs defined!"
 msgstr ""
+"Avertisment! DHCP Failover este setat fară definirea IP-urilor virtuale "
+"CARP!"
 
 #: src/etc/inc/services.inc:774
 #, php-format
@@ -6254,66 +6317,72 @@ msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
 "correct the settings in Services, DHCP Server"
 msgstr ""
+"Pool DHCP invalid %1$s - %2$s detectat pentru  %3$s subrețeaua %4$s/%5$s. Vă "
+"rugăm corectați setările in Servicii, server DHCP"
 
 #: src/etc/inc/services.inc:1145
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
+"Eroare: nu se poate deschide dhcpd.conf în services_dhcpdv4_configure().%s"
 
 #: src/etc/inc/services.inc:1648
 msgid "Could not write Igmpproxy configuration file!"
-msgstr ""
+msgstr "Nu se poate scrie fișierul de configurare lgmpproxy!"
 
 #: src/etc/inc/services.inc:1661
 msgid "Started IGMP proxy service."
-msgstr ""
+msgstr "S-a pornit serviciul IGMP proxy."
 
 #: src/etc/inc/services.inc:1685
 msgid "Starting DHCP relay service..."
-msgstr ""
+msgstr "Se pornește serviciul de releu retransmisie DHCP..."
 
 #: src/etc/inc/services.inc:1710
 msgid "No destination IP has been configured!"
-msgstr ""
+msgstr "Nu s-a configurat nici o adresă IP de destinație!"
 
 #: src/etc/inc/services.inc:1784
 msgid "No suitable interface found for running dhcrelay!"
-msgstr ""
+msgstr "Nu s-a găsit nici o interfață potrivită pentru rularea dhcrelay!"
 
 #: src/etc/inc/services.inc:1820
 msgid "Starting DHCPv6 relay service..."
-msgstr ""
+msgstr "Se pornește serviciul de releu retransmise DHCPv6..."
 
 #: src/etc/inc/services.inc:1911
 msgid "No suitable interface found for running dhcrelay -6!"
-msgstr ""
+msgstr "Nu s-a găsit nici o interfață potrivită pentru rularea dhcrelay -6!"
 
 #: src/etc/inc/services.inc:1972
 msgid "Starting DynDNS clients..."
-msgstr ""
+msgstr "Se pornește serviciul de clienți DynDNS..."
 
 #: src/etc/inc/services.inc:2078
 msgid "Starting DNS forwarder..."
-msgstr ""
+msgstr "Se pornește serviciul de redirecționare DNS..."
 
 #: src/etc/inc/services.inc:2244
 msgid "Starting DNS Resolver..."
-msgstr ""
+msgstr "Se pornește DNS Resolver..."
 
 #: src/etc/inc/services.inc:2289
 msgid "Starting SNMP daemon... "
-msgstr ""
+msgstr "Se pornește daemon-ul SNMP..."
 
 #: src/etc/inc/services.inc:2300
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
+"Eroare: nu se poate deschide snmpd.conf în services_snmpd_configure().%s"
 
 #: src/etc/inc/services.inc:2629
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr ""
+"phpDynDNS: Nu se face actualizarea %s A record pentru că adresa IP nu s-a "
+"schimbat."
 
 #: src/etc/inc/services.inc:2648
 #, php-format
@@ -6321,53 +6390,64 @@ msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr ""
+"phpDynDNS: Nu se face actualizarea %s AAAA record pentru că adresa de IPv6 "
+"nu s-a schimbat."
 
 #: src/etc/inc/services.inc:2683
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
+"DynDNS a actualizat adresa de IP (A) pentru %1$s pe %2$s (%3$s) până la %4$s"
 
 #: src/etc/inc/services.inc:2695
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
+"DynDNS a actualizat adresa de IPv6 (AAAA) pentru %1$s pe %2$s (%3$s) până la "
+"%4$s"
 
 #: src/etc/inc/services.inc:2703
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
+"phpDynDNS: EROARE în timpul actualizării adresei de IP (A) pentru %1$s "
+"(%2$s)"
 
 #: src/etc/inc/services.inc:2708
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
+"phpDynDNS: EROARE în timpul actualizării adresei de IPv6 (AAAA) pentru %1$s "
+"(%2$s)"
 
 #: src/etc/inc/services.inc:2742
 msgid "Created:"
-msgstr ""
+msgstr "S-a creat:"
 
 #: src/etc/inc/services.inc:2768
 msgid "If possible do not add items to this file manually."
-msgstr ""
+msgstr "Dacă este posibil nu adăugați manual intrări în acest fișier."
 
 #: src/etc/inc/services.inc:2769
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
+"Dacă ați făcut acest lucru, fișierul trebuie să fie terminat cu o linie "
+"blank (ex. o linie nouă)"
 
 #: src/etc/inc/services.inc:2819
 msgid "Starting UPnP service... "
-msgstr ""
+msgstr "Se pornește serviciul UPnP..."
 
 #: src/etc/inc/shaper.inc:263
 #, php-format
 msgid "The field '%s' contains invalid characters."
-msgstr ""
+msgstr "Câmpul '%s' conține caractere invalide."
 
 #: src/etc/inc/shaper.inc:269
 #, php-format
 msgid "The field '%s' is required."
-msgstr ""
+msgstr "Câmpul '%s' este obligatoriu."
 
 #: src/etc/inc/shaper.inc:436 src/etc/inc/shaper.inc:1901
 #: src/etc/inc/shaper.inc:2264 src/etc/inc/shaper.inc:2650
@@ -6377,65 +6457,69 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:163
 #: src/usr/local/www/status_queues.php:167
 msgid "Bandwidth"
-msgstr ""
+msgstr "Lărgime de bandă"
 
 #: src/etc/inc/shaper.inc:438 src/etc/inc/shaper.inc:1903
 #: src/etc/inc/shaper.inc:2652 src/etc/inc/shaper.inc:2934
 #: src/etc/inc/shaper.inc:3281
 msgid "Bandwidthtype"
-msgstr ""
+msgstr "Tip lărgime de bandă"
 
 #: src/etc/inc/shaper.inc:443
 msgid "Bandwidth must be set.  This is usually the interface speed."
 msgstr ""
+"Lărgimea de bandă trebuie setată. De obicei coincide cu viteza interfeței."
 
 #: src/etc/inc/shaper.inc:446 src/etc/inc/shaper.inc:1205
 #: src/etc/inc/shaper.inc:1909
 msgid "Bandwidth must be an integer."
-msgstr ""
+msgstr "Lărgimea de bandă trebuie să fie o valoare întreagă."
 
 #: src/etc/inc/shaper.inc:449 src/etc/inc/shaper.inc:1208
 #: src/etc/inc/shaper.inc:1913
 msgid "Bandwidth cannot be negative."
-msgstr ""
+msgstr "Valoarea lărgimii de bandă nu poate să fie negativă."
 
 #: src/etc/inc/shaper.inc:453 src/etc/inc/shaper.inc:1212
 #: src/etc/inc/shaper.inc:1918
 msgid "Bandwidth in percentage should be between 1 and 100."
 msgstr ""
+"Lărgimea de bandă în procente trebuie să aibă valori în intervalul 1 - 100. "
 
 #: src/etc/inc/shaper.inc:460
 msgid "Qlimit must be an integer."
-msgstr ""
+msgstr "Qlimit trebuie să fie o valoare întreagă."
 
 #: src/etc/inc/shaper.inc:463
 msgid "Qlimit must be positive."
-msgstr ""
+msgstr "Qlimit trebuie sa fie o valoare pozitivă."
 
 #: src/etc/inc/shaper.inc:466
 msgid "Tbrsize must be an integer."
-msgstr ""
+msgstr "Tbrsize trebuie să fie o valoare întreagă."
 
 #: src/etc/inc/shaper.inc:469
 msgid "Tbrsize must be positive."
-msgstr ""
+msgstr "Tbrsize trebuie sa fie o valoare pozitivă."
 
 #: src/etc/inc/shaper.inc:688
 #, php-format
 msgid "SHAPER: no default queue specified for interface %s."
 msgstr ""
+"SAHPER: nu s-a specificat nici o coadă de așteptare implicită pentru "
+"interfața %s."
 
 #: src/etc/inc/shaper.inc:688
 msgid "The interface queue will be enforced as default."
-msgstr ""
+msgstr "Coada de așteptare aferentă interfeței se va considera cea implicită."
 
 #: src/etc/inc/shaper.inc:774
 msgid "Remove shaper from this interface"
-msgstr ""
+msgstr "Se șterge shaper-ul aferent acestei interfețe."
 
 #: src/etc/inc/shaper.inc:798 src/etc/inc/shaper.inc:1406
 msgid "Enable/Disable"
-msgstr ""
+msgstr "Activat/Dezactivat"
 
 #: src/etc/inc/shaper.inc:805 src/etc/inc/shaper.inc:1414
 #: src/etc/inc/shaper.inc:3830 src/etc/inc/shaper.inc:4143
@@ -6446,105 +6530,116 @@ msgstr ""
 #: src/usr/local/www/services_checkip_edit.php:127
 #: src/usr/local/www/system_gateways_edit.php:177
 msgid "*Name"
-msgstr ""
+msgstr "*Nume"
 
 #: src/etc/inc/shaper.inc:811
 msgid "Scheduler Type"
-msgstr ""
+msgstr "Tip manager task-uri."
 
 #: src/etc/inc/shaper.inc:818
 msgid ""
 "Changing this changes all child queues! Beware information can be lost."
 msgstr ""
+"Această schimbare va schimba toate cozile de așteptare derivate! Procedați "
+"cu atenție deoarece se poate pierde informație."
 
 #: src/etc/inc/shaper.inc:844 src/etc/inc/shaper.inc:1436
 msgid "Queue Limit"
-msgstr ""
+msgstr "Limită coadă așteptare"
 
 #: src/etc/inc/shaper.inc:851
 msgid "TBR Size"
-msgstr ""
+msgstr "Mărime TBR"
 
 #: src/etc/inc/shaper.inc:854
 msgid ""
 "Adjusts the size, in bytes, of the token bucket regulator. If not specified, "
 "heuristics based on the interface bandwidth are used to determine the size."
 msgstr ""
+"Ajustează mărimea, în bytes, a regulatorului pentru token bucket. Dacă nu "
+"este specificată, pentru determinarea mărimii se vor utiliza metode "
+"heuristice bazate pe lărgimea de bandă a interfeței."
 
 #: src/etc/inc/shaper.inc:1219
 msgid "The priority must be an integer between 1 and 15."
-msgstr ""
+msgstr "Prioritatea trebuie sa fie o valoare întreagă cuprinsă între 1 și 15."
 
 #: src/etc/inc/shaper.inc:1222 src/etc/inc/shaper.inc:3296
 msgid "Queue limit must be an integer"
-msgstr ""
+msgstr "Limita cozii de așteptare trebuie să fie o valoare întreagă."
 
 #: src/etc/inc/shaper.inc:1225
 msgid "Queue limit must be positive"
-msgstr ""
+msgstr "Limita cozii de așteptare trebuie să fie o valoare pozitivă."
 
 #: src/etc/inc/shaper.inc:1228 src/etc/inc/shaper.inc:1231
 #: src/etc/inc/shaper.inc:3299 src/etc/inc/shaper.inc:3302
 msgid "Queue names must be alphanumeric and _ or - only."
 msgstr ""
+"Numele cozii de așteptare trebuie să fie strict alfanumeric sau _ și -."
 
 #: src/etc/inc/shaper.inc:1235
 msgid "Only one default queue per interface is allowed."
-msgstr ""
+msgstr "Este permisă o singură coadă de așteptare implicită per interfață."
 
 #: src/etc/inc/shaper.inc:1417
 msgid ""
 "Enter the name of the queue here. Do not use spaces and limit the size to 15 "
 "characters."
 msgstr ""
+"Introduceți aici numele cozii de așteptare. Nu folosiți spații și limitati "
+"lungimea numelui la 15 caractere."
 
 #: src/etc/inc/shaper.inc:1428 src/usr/local/www/interfaces_bridge_edit.php:579
 #: src/usr/local/www/interfaces_vlan.php:109
 #: src/usr/local/www/system_gateway_groups.php:130
 msgid "Priority"
-msgstr ""
+msgstr "Prioritate"
 
 #: src/etc/inc/shaper.inc:1432
 msgid ""
 "For hfsc, the range is 0 to 7. The default is 1. Hfsc queues with a higher "
 "priority are preferred in the case of overload."
 msgstr ""
+"Pentru hfsc, intervalul este între 0 si 7. Valoarea implicită este 1. Cozile "
+"de așteptare hfsc cu o prioritate mai mare for fi tratate preferențial în "
+"caz de supraîncărcare."
 
 #: src/etc/inc/shaper.inc:1439
 msgid "Queue limit in packets."
-msgstr ""
+msgstr "Limita cozii de așteptare în pachete."
 
 #: src/etc/inc/shaper.inc:1441
 msgid "Scheduler options"
-msgstr ""
+msgstr "Optiuni manager de task-uri"
 
 #: src/etc/inc/shaper.inc:1450 src/usr/local/www/firewall_rules_edit.php:1740
 msgid "Default Queue"
-msgstr ""
+msgstr "Coadă de așteptare implicită"
 
 #: src/etc/inc/shaper.inc:1458
 #, php-format
 msgid "%1$sRandom Early Detection%2$s"
-msgstr ""
+msgstr "%1$sDetecție timpurie aleatoare%2$s"
 
 #: src/etc/inc/shaper.inc:1465
 #, php-format
 msgid "%1$sRandom Early Detection In and Out%2$s"
-msgstr ""
+msgstr "%1$sDetecție timpurie aleatoare intrare și ieșire%2$s"
 
 #: src/etc/inc/shaper.inc:1472
 #, php-format
 msgid "%1$sExplicit Congestion Notification%2$s"
-msgstr ""
+msgstr "%1$sNotificare de congestie explicită%2$s"
 
 #: src/etc/inc/shaper.inc:1479
 #, php-format
 msgid "%1$sCodel Active Queue%2$s"
-msgstr ""
+msgstr "%1$sCoadă de așteptare Codel activă%2$s"
 
 #: src/etc/inc/shaper.inc:1481
 msgid "Select options for this queue"
-msgstr ""
+msgstr "Selectați opțiuni pentru această coadă de așteptare"
 
 #: src/etc/inc/shaper.inc:1487 src/etc/inc/shaper.inc:3891
 #: src/etc/inc/shaper.inc:4195 src/usr/local/www/firewall_aliases.php:192
@@ -6666,186 +6761,208 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
 msgid "Description"
-msgstr ""
+msgstr "Descriere"
 
 #: src/etc/inc/shaper.inc:1566
 msgid "Delete Queue from this Interface"
-msgstr ""
+msgstr "Șterge coada de așteptare aferentă acestei interfețe"
 
 #: src/etc/inc/shaper.inc:1924
 msgid "upperlimit service curve defined but missing (d) value"
 msgstr ""
+"curba de serviciu de tip limita superioară este definită dar valoarea (d) "
+"lipsește"
 
 #: src/etc/inc/shaper.inc:1927
 msgid ""
 "upperlimit service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"curba de serviciu de tip limita superioară este definită dar valoarea "
+"initială a largimii de bandă (m1) lipsește"
 
 #: src/etc/inc/shaper.inc:1930
 msgid "upperlimit m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea limitei superioare m1 trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:1933
 msgid "upperlimit d value needs to be numeric"
-msgstr ""
+msgstr "lilita superioară d trebuie să fie o valoare numerică"
 
 #: src/etc/inc/shaper.inc:1936
 msgid "upperlimit m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea limitei superioare m2 trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:1953
 msgid "linkshare service curve defined but missing (d) value"
-msgstr ""
+msgstr "curba de servicii linkshare este definită dar valoarea (d) lipsește"
 
 #: src/etc/inc/shaper.inc:1956
 msgid ""
 "linkshare service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"curba de servicii linkshare este definită dar valoarea inițială a lărgimii "
+"de bandă (m1) lipsește"
 
 #: src/etc/inc/shaper.inc:1959
 msgid "linkshare m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea  m1 a curbei  linkshare trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:1962
 msgid "linkshare d value needs to be numeric"
-msgstr ""
+msgstr "valoarea d a curbei linkshare trebuie sa fie numerică"
 
 #: src/etc/inc/shaper.inc:1965
 msgid "linkshare m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea  m2 a curbei linkshare trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:1968
 msgid "realtime service curve defined but missing (d) value"
 msgstr ""
+"curba de sevicii de tip realtime este definită dar valoarea (d) lipsește"
 
 #: src/etc/inc/shaper.inc:1971
 msgid ""
 "realtime service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"curba de sevicii de tip realtime este definită dar valoarea lărgimii de "
+"bandă inițiale (m1) lipsește"
 
 #: src/etc/inc/shaper.inc:1989
 msgid "realtime m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea  m1 a curbei realtime trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:1992
 msgid "realtime d value needs to be numeric"
-msgstr ""
+msgstr "valoarea d a curbei realtime trebuie sa fie numerică"
 
 #: src/etc/inc/shaper.inc:1995
 msgid "realtime m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "valoarea  m2 a curbei realtime trebuie sa fie în Kb, Mb, Gb sau %"
 
 #: src/etc/inc/shaper.inc:2262
 msgid "Service Curve (sc)"
-msgstr ""
+msgstr "Curbă de servicii (sc)"
 
 #: src/etc/inc/shaper.inc:2285 src/etc/inc/shaper.inc:2798
 #: src/etc/inc/shaper.inc:3071
 msgid "Choose the amount of bandwidth for this queue"
 msgstr ""
+"Alegeți dimensiunea lărgimii de bandă dorite pentru această coadă de "
+"așteptare"
 
 #: src/etc/inc/shaper.inc:2289
 msgid "Max bandwidth for queue."
-msgstr ""
+msgstr "Largimea de bandă maximă pentru coada de așteptare."
 
 #: src/etc/inc/shaper.inc:2303 src/etc/inc/shaper.inc:2336
 #: src/etc/inc/shaper.inc:2368
 msgid "m1"
-msgstr ""
+msgstr "m1"
 
 #: src/etc/inc/shaper.inc:2310 src/etc/inc/shaper.inc:2343
 #: src/etc/inc/shaper.inc:2375
 msgid "d"
-msgstr ""
+msgstr "d"
 
 #: src/etc/inc/shaper.inc:2317 src/etc/inc/shaper.inc:2350
 #: src/etc/inc/shaper.inc:2382
 msgid "m2"
-msgstr ""
+msgstr "m2"
 
 #: src/etc/inc/shaper.inc:2322
 msgid "Min bandwidth for queue."
-msgstr ""
+msgstr "Lărgimea de bandă minimă pentru curba de așteptare."
 
 #: src/etc/inc/shaper.inc:2354
+#, fuzzy
 msgid "B/W share of a backlogged queue."
-msgstr ""
+msgstr "Proporția B/W a unei cozi de așteptare cu execuția suspendată."
 
 #: src/etc/inc/shaper.inc:2647
 msgid "Priority must be an integer between 1 and 7."
-msgstr ""
+msgstr "Prioritatea trebuie sa fie o valoare întreagă în intervalul 1-7."
 
 #: src/etc/inc/shaper.inc:2776
 msgid "NOTITLE"
-msgstr ""
+msgstr "NOTITLE"
 
 #: src/etc/inc/shaper.inc:2804
 msgid "Scheduler option"
-msgstr ""
+msgstr "Opțiune manager task-uri"
 
 #: src/etc/inc/shaper.inc:2929
 msgid "Priority must be an integer between 1 and 255."
-msgstr ""
+msgstr "Prioritatea trebuie să fie o valoare întreagă în intervalul 1-255."
 
 #: src/etc/inc/shaper.inc:3077
 msgid "Scheduler specific options"
-msgstr ""
+msgstr "Opțiuni specifice managerului de task-uri"
 
 #: src/etc/inc/shaper.inc:3080
 msgid "Number of buckets available"
-msgstr ""
+msgstr "Numărul de buckets disponibile"
 
 #: src/etc/inc/shaper.inc:3087
 msgid "Bandwidth limit for hosts to not saturate link"
 msgstr ""
+"Limita de lărgime de bandă aferentă gazdelor pentru a nu se satura link-ul"
 
 #: src/etc/inc/shaper.inc:3289
 msgid "Packet Loss Rate must be a value between 0 and 1."
-msgstr ""
+msgstr "Rata de pachete pierdute trebuie sa fie o valoare în intervalul 0-1."
 
 #: src/etc/inc/shaper.inc:3293
 msgid "Buckets must be an integer between 16 and 65535."
-msgstr ""
+msgstr "Buckets trebuie sa fie o valoare întreagă în intervalul 16-65535."
 
 #: src/etc/inc/shaper.inc:3306
 msgid "IPv4 bit mask must be blank or numeric value between 1 and 32."
-msgstr ""
+msgstr "Valoarea măștii IPv4 trebuie sa fie goală sau în intervalul 1-32."
 
 #: src/etc/inc/shaper.inc:3311
 msgid "IPv6 bit mask must be blank or numeric value between 1 and 128."
-msgstr ""
+msgstr "Valoarea măștii IPv6 trebuie sa fie goală sau în intervalul 1-128."
 
 #: src/etc/inc/shaper.inc:3407
 #, php-format
 msgid "SHAPER: Could not create queue %1$s on interface %2$s because: %3$s"
 msgstr ""
+"SHAPER: Nu s-a putut crea coada de așteptare %1$s aferentă interfeței %2$s "
+"pentru că: %3$s"
 
 #: src/etc/inc/shaper.inc:3465
 #, php-format
 msgid "Bandwidth for schedule %s must be an integer."
 msgstr ""
+"Lărgime de bandă pentru programul/orarul %s trebuie să fie o valoare "
+"întreagă."
 
 #: src/etc/inc/shaper.inc:3467
 #, php-format
 msgid "Burst for schedule %s must be an integer."
 msgstr ""
+"Valoarea de burst pentru programul/orarul %s trebuie să fie o valoare "
+"întreagă."
 
 #: src/etc/inc/shaper.inc:3474
 msgid "A schedule needs to be specified for every additional entry."
 msgstr ""
+"Trebuie să fie specificat un program/orar pentru fiecare intrare adițională."
 
 #: src/etc/inc/shaper.inc:3477
 msgid ""
 "If more than one bandwidth configured all schedules need to be selected."
 msgstr ""
+"Dacă sunt cofigurate mai multe lărgimi de banda atunci trebui selectate "
+"toate programele/orarele."
 
 #: src/etc/inc/shaper.inc:3480
 msgid "At least one bw specification is necessary."
-msgstr ""
+msgstr "Este necesară cel puțin o specificație bw."
 
 #: src/etc/inc/shaper.inc:3483
 msgid "Delay must be an integer."
-msgstr ""
+msgstr "Întărzierea trebuie să fie o valoare întreagă."
 
 #: src/etc/inc/shaper.inc:3787 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
@@ -6872,11 +6989,11 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:887
 #: src/usr/local/www/system_usermanager.php:659
 msgid "Delete"
-msgstr ""
+msgstr "Șterge"
 
 #: src/etc/inc/shaper.inc:3795
 msgid "Add Schedule"
-msgstr ""
+msgstr "Adaugă program/orar"
 
 #: src/etc/inc/shaper.inc:3818 src/etc/inc/shaper.inc:4131
 #: src/usr/local/www/firewall_shaper.php:372
@@ -6885,7 +7002,7 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_vinterface.php:372
 #: src/usr/local/www/firewall_shaper_wizards.php:75
 msgid "Limiters"
-msgstr ""
+msgstr "Limitatori"
 
 #: src/etc/inc/shaper.inc:3822 src/etc/inc/shaper.inc:4135
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
@@ -6909,19 +7026,19 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/diag_routes.php:83
 msgid "Enable"
-msgstr ""
+msgstr "Activare"
 
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Source addresses"
-msgstr ""
+msgstr "Adresă sursă"
 
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 msgid "Destination addresses"
-msgstr ""
+msgstr "Adresă destinație"
 
 #: src/etc/inc/shaper.inc:3864 src/etc/inc/shaper.inc:4168
 msgid "Mask"
-msgstr ""
+msgstr "Mască"
 
 #: src/etc/inc/shaper.inc:3867 src/etc/inc/shaper.inc:4171
 msgid ""
@@ -6930,16 +7047,21 @@ msgid ""
 "each source/destination IP address encountered, respectively. This makes it "
 "possible to easily specify bandwidth limits per host."
 msgstr ""
+"Dacă sunt alese sloturi \"sursă\" sau \"destinație\" atunci va fi creat un "
+"pipe dinamic cu lărgimea de bandă, întârzierea, pierderea de pachete si "
+"mărimea cozii de așteptare specificate anterior pentru fiecare adresă de IP "
+"sursă/destinație întălnită. Această facilitate face posibilă specificarea cu "
+"usurință a lărgimii de bandă per gazdă."
 
 #: src/etc/inc/shaper.inc:3878 src/etc/inc/shaper.inc:4182
 #, php-format
 msgid "IPv4 mask bits%1$s%2$s"
-msgstr ""
+msgstr "Biții pentru masca IPv4%1$s%2$s"
 
 #: src/etc/inc/shaper.inc:3885 src/etc/inc/shaper.inc:4189
 #, php-format
 msgid "IPv6 mask bits%1$s%2$s"
-msgstr ""
+msgstr "Biții pentru masca IPv6%1$s%2$s"
 
 #: src/etc/inc/shaper.inc:3894 src/etc/inc/shaper.inc:4198
 #: src/usr/local/www/firewall_aliases_edit.php:671
@@ -6975,6 +7097,8 @@ msgstr ""
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
 msgstr ""
+"Aici poate fi adaugată o descriere pentru scopuri administrative (nu este "
+"interpretată ca și cod)."
 
 #: src/etc/inc/shaper.inc:3898 src/etc/inc/shaper.inc:4202
 #: src/usr/local/www/firewall_rules_edit.php:1493
@@ -6982,30 +7106,35 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:420
 #: src/usr/local/www/vpn_ipsec_phase1.php:824
 msgid "Advanced Options"
-msgstr ""
+msgstr "Opțiuni avansate"
 
 #: src/etc/inc/shaper.inc:3902
 msgid "Delay (ms)"
-msgstr ""
+msgstr "Întarziere (ms)"
 
 #: src/etc/inc/shaper.inc:3905
 msgid ""
 "In most cases, zero (0) should specified here (or leave the field empty)."
 msgstr ""
+"În cele mai multe dintre cazuri aici trebuie utilizată valoarea zero (0) "
+"(sau lăsați câmpul necompletat)."
 
 #: src/etc/inc/shaper.inc:3909 src/etc/inc/shaper.inc:4215
 msgid "Packet Loss Rate"
-msgstr ""
+msgstr "Rata de pierdere  de pachete"
 
 #: src/etc/inc/shaper.inc:3913
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped."
 msgstr ""
+"În cele mai multe dintre cazuri aici trebuie utilizată valoarea zero (0) "
+"(sau lăsați câmpul necompletat). O valoare de 0.001 înseamnă că este  "
+"ignorat un pachet la fiecare 1000 de pachete."
 
 #: src/etc/inc/shaper.inc:3918 src/etc/inc/shaper.inc:4224
 msgid "Queue size (slots)"
-msgstr ""
+msgstr "Dimensiunea cozii de așteptare (sloturi)"
 
 #: src/etc/inc/shaper.inc:3921 src/etc/inc/shaper.inc:4227
 msgid ""
@@ -7014,224 +7143,253 @@ msgid ""
 "specified in the Delay field, and then they are delivered to their "
 "destination."
 msgstr ""
+"În cele mai multe dintre cazuri câmpul trebuie lăsat gol.  Toate pachetele "
+"din pipe sunt plasate inițial într-o coadă de așteptare cu dimensiune fixă, "
+"apoi sunt întârziate cu valoarea specificată în câmpul Întârziere și apoi "
+"sunt livrate la destinație."
 
 #: src/etc/inc/shaper.inc:3926 src/etc/inc/shaper.inc:4232
 msgid "Bucket size (slots)"
-msgstr ""
+msgstr "Mărime bucket (slots)"
 
 #: src/etc/inc/shaper.inc:3929
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set."
 msgstr ""
+"În cele mai multe dintre cazuri, acest câmp trebuie lasat gol. Câmpul "
+"mărește dimesiunea setului hash."
 
 #: src/etc/inc/shaper.inc:4000
 msgid "Weight must be an integer between 1 and 100."
-msgstr ""
+msgstr "Ponderea trebuie sa fie o valoare întreagă în intervalul 1-100."
 
 #: src/etc/inc/shaper.inc:4206 src/usr/local/www/system_gateways_edit.php:271
 msgid "Weight"
-msgstr ""
+msgstr "Pondere"
 
 #: src/etc/inc/shaper.inc:4210
 msgid ""
 "For queues under the same parent this specifies the share that a queue "
 "gets(values range from 1 to 100), it can be left blank otherwise."
 msgstr ""
+"Pentru cozi de așteptare asignate aceluiași părinte aceasta specifică cota "
+"pe care o primește o coadă de așteptare (valorile sunt în intervalul 1-100), "
+"în caz contrar se poate lăsa necompletat."
 
 #: src/etc/inc/shaper.inc:4219
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped"
 msgstr ""
+"În cele mai multe dintre cazuri aici trebuie utilizată valoarea zero (0) "
+"(sau lăsați câmpul necompletat). O valoare de 0.001 înseamnă că este  "
+"ignorat un pachet la fiecare 1000 de pachete."
 
 #: src/etc/inc/shaper.inc:4235
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set"
 msgstr ""
+"În cele mai multe dintre cazuri, acest câmp trebuie lasat gol. Câmpul "
+"mărește dimesiunea setului hash."
 
 #: src/etc/inc/shaper.inc:4630
 msgid "Clone Shaper to this Interface"
-msgstr ""
+msgstr "Clonează shaper-ul pentru această interfață"
 
 #: src/etc/inc/shaper.inc:4639
 #, php-format
 msgid "Welcome to the %s Traffic Shaper."
-msgstr ""
+msgstr "Bine ați venit la %s Traffic Shaper."
 
 #: src/etc/inc/shaper.inc:4642
 #, php-format
 msgid "The tree on the left navigates through the %s."
-msgstr ""
+msgstr "Structura arborescentă din partea dreaptă navighează prin %s."
 
 #: src/etc/inc/shaper.inc:4643
 msgid "queues"
-msgstr ""
+msgstr "cozi de așteptare"
 
 #: src/etc/inc/shaper.inc:4644
 msgid "limiters"
-msgstr ""
+msgstr "limitatori"
 
 #: src/etc/inc/shaper.inc:4646
 #, php-format
 msgid ""
 "Buttons at the bottom represent %s actions and are activated accordingly."
 msgstr ""
+"Butoanele din partea de jos reprezintă acțiunile %s și sunt activate în "
+"concordanță."
 
 #: src/etc/inc/shaper.inc:4647 src/usr/local/www/diag_pftop.php:97
 msgid "queue"
-msgstr ""
+msgstr "coadă de așteptare"
 
 #: src/etc/inc/shaper.inc:4648
 msgid "limiter"
-msgstr ""
+msgstr "limitator"
 
 #: src/etc/inc/system.inc:546
 msgid "Error: cannot open hosts file in system_hosts_generate()."
 msgstr ""
+"Eroare: nu se poate deschide fișierul gazdă în system_hosts_generate()."
 
 #: src/etc/inc/system.inc:716
 msgid "Not adding default route because OLSR dynamic gateway is enabled."
 msgstr ""
+"Nu se adaugă rută implicită pentru că este activat gateway-ul dinamic OLSR."
 
 #: src/etc/inc/system.inc:740
 #, php-format
 msgid "ROUTING: setting default route to %s"
-msgstr ""
+msgstr "ROUTING: se setează ruta implictă la %s"
 
 #: src/etc/inc/system.inc:751
 #, php-format
 msgid "ROUTING: setting IPv6 default route to %s"
-msgstr ""
+msgstr "ROUTING: se setează ruta implicită IPv6 la %s"
 
 #: src/etc/inc/system.inc:772
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
 msgstr ""
+"Rute statice: Adresa de IP a gateway-ului nu poate fi găsită pentru %s"
 
 #: src/etc/inc/system.inc:997
 msgid "Starting syslog..."
-msgstr ""
+msgstr "Se pornește syslog..."
 
 #: src/etc/inc/system.inc:1170
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
-msgstr ""
+msgstr "Eroare: nu se poate deschide syslog.conf în system_syslogd_start().%s"
 
 #: src/etc/inc/system.inc:1256
 msgid "Creating SSL Certificate for this host"
-msgstr ""
+msgstr "Se crează certificatul SSL pentru această gazdă"
 
 #: src/etc/inc/system.inc:1260
 #, php-format
 msgid "webConfigurator default (%s)"
-msgstr ""
+msgstr "webConfigurator implicit (%s)"
 
 #: src/etc/inc/system.inc:1274
 #, php-format
 msgid "Error creating WebGUI Certificate: openssl library returns: %s"
 msgstr ""
+"Eroare la crearea certificatului WebGUI: biblioteca openssl returnează: %s"
 
 #: src/etc/inc/system.inc:1283
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
-msgstr ""
+msgstr "S-a generat un nou certificat HTTPS auto-semnat (%s)"
 
 #: src/etc/inc/system.inc:1291
 msgid "Starting webConfigurator..."
-msgstr ""
+msgstr "Se pornește webConfigurator..."
 
 #: src/etc/inc/system.inc:1341 src/etc/inc/system.inc:2217
 #: src/etc/inc/system.inc:2220
 msgid "failed!"
-msgstr ""
+msgstr "eșuat!"
 
 #: src/etc/inc/system.inc:1543
 #, php-format
 msgid "Error: cannot open certificate file in system_webgui_start().%s"
 msgstr ""
+"Eroare: nu se poate deschide fișierul cu certificatul în "
+"system_webgui_start().%s"
 
 #: src/etc/inc/system.inc:1556
 #, php-format
 msgid "Error: cannot open certificate key file in system_webgui_start().%s"
 msgstr ""
+"Eroare: nu se poate deschide fișierul cu cheia certificatului în "
+"system_webgui_start().%s"
 
 #: src/etc/inc/system.inc:1583
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
 msgstr ""
+"Eroare: nu se poate deschide %1$s în system_generate_nginx_config().%2$s"
 
 #: src/etc/inc/system.inc:1632
 msgid "Setting timezone..."
-msgstr ""
+msgstr "Se setează fusul orar..."
 
 #: src/etc/inc/system.inc:2049
 #, php-format
 msgid "Could not open %s/ntpd.conf for writing"
-msgstr ""
+msgstr "Nu se poate deschide %s/ntpd.com pentru scriere"
 
 #: src/etc/inc/system.inc:2169
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
-msgstr ""
+msgstr "Eroare: nu se poate deschide dmesg.boot în system_dmesg_save().%s"
 
 #: src/etc/inc/system.inc:2196
 msgid "Setting hard disk standby... "
-msgstr ""
+msgstr "Se setează standby pentru hard disk."
 
 #: src/etc/inc/system.inc:2440
 msgid "PC Engines WRAP"
-msgstr ""
+msgstr "PC Engines WRAP"
 
 #: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
 msgid "PC Engines ALIX"
-msgstr ""
+msgstr "PC Engines ALIX"
 
 #: src/etc/inc/unbound.inc:744 src/usr/local/www/services_dhcpv6.php:825
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Deny"
-msgstr ""
+msgstr "Respins"
 
 #: src/etc/inc/unbound.inc:745 src/usr/local/www/services_unbound_acls.php:220
 msgid "Refuse"
-msgstr ""
+msgstr "Refuzat"
 
 #: src/etc/inc/unbound.inc:746
 msgid "Static"
-msgstr ""
+msgstr "Static"
 
 #: src/etc/inc/unbound.inc:747
 msgid "Transparent"
-msgstr ""
+msgstr "Transparent"
 
 #: src/etc/inc/unbound.inc:748
 msgid "Type Transparent"
-msgstr ""
+msgstr "Tip transparent"
 
 #: src/etc/inc/unbound.inc:750
 msgid "Inform"
-msgstr ""
+msgstr "Informare"
 
 #: src/etc/inc/unbound.inc:751
 msgid "Inform Deny"
-msgstr ""
+msgstr "Refuz informare"
 
 #: src/etc/inc/unbound.inc:752
+#, fuzzy
 msgid "No Default"
-msgstr ""
+msgstr "Nu este implicit"
 
 #: src/etc/inc/upgrade_config.inc:102
 #, php-format
 msgid ""
 "%sWarning: filter rule removed (interface '%s' does not exist anymore)."
 msgstr ""
+"%sAtenționare: regulă de filtrare ștearsă (interfața '%s' nu mai există)."
 
 #: src/etc/inc/upgrade_config.inc:114
 #, php-format
 msgid ""
 "%sWarning: filter rule removed (source network '%s' does not exist anymore)."
 msgstr ""
+"%sAtenționare: regulă de filtrare ștearsă (rețeaua sursă '%s' nu mai există)."
+""
 
 #: src/etc/inc/upgrade_config.inc:127
 #, php-format
@@ -7239,6 +7397,8 @@ msgid ""
 "%sWarning: filter rule removed (destination network '%s' does not exist "
 "anymore)."
 msgstr ""
+"%sAtenționare: regulă de filtrare ștearsă (rețeaua destinație '%s' nu mai "
+"există)."
 
 #: src/etc/inc/upgrade_config.inc:147
 #, php-format
@@ -7246,6 +7406,8 @@ msgid ""
 "%sWarning: traffic shaper rule removed (interface '%s' does not exist "
 "anymore)."
 msgstr ""
+"%sAtenționare: regulă pentru traffic shaper ștearsă (interfața '%s' nu mai "
+"există)."
 
 #: src/etc/inc/upgrade_config.inc:159
 #, php-format
@@ -7253,6 +7415,8 @@ msgid ""
 "%sWarning: traffic shaper rule removed (source network '%s' does not exist "
 "anymore)."
 msgstr ""
+"%sAtenționare: regulă pentru traffic shaper ștearsă (rețeaua sursă '%s' nu "
+"mai există)."
 
 #: src/etc/inc/upgrade_config.inc:172
 #, php-format
@@ -7260,25 +7424,29 @@ msgid ""
 "%sWarning: traffic shaper rule removed (destination network '%s' does not "
 "exist anymore)."
 msgstr ""
+"%sAtenționare: regulă pentru traffic shaper ștearsă (rețeaua destinație '%s' "
+"nu mai există)."
 
 #: src/etc/inc/upgrade_config.inc:343
 #, php-format
 msgid "CARP vhid %s"
-msgstr ""
+msgstr "CARP vhid %s"
 
 #: src/etc/inc/upgrade_config.inc:523
 msgid "Permit IPsec traffic."
-msgstr ""
+msgstr "Se permite traficul IPsec."
 
 #: src/etc/inc/upgrade_config.inc:598
 msgid "System Administrators"
-msgstr ""
+msgstr "Administratori de sistem"
 
 #: src/etc/inc/upgrade_config.inc:617
 msgid ""
 "Indicates whether this user will lock access to the webConfigurator for "
 "other users."
 msgstr ""
+"Indică dacă acest utilizator va putea bloca accesul altor utilizatori la "
+"webConfigurator."
 
 #: src/etc/inc/upgrade_config.inc:620
 msgid ""
@@ -7286,10 +7454,14 @@ msgid ""
 "accessed a particular page (the lock will be freed if the user leaves or "
 "saves the page form)."
 msgstr ""
+"Indică dacă acest utilizator va putea bloca pagini HTML individuale după ce "
+"a accesat o anumită pagină (blocajul se va îndepărta dacă utilizatorul "
+"părăsește sau salvează formularul)."
 
 #: src/etc/inc/upgrade_config.inc:623
 msgid "Indicates whether this user is able to login for example via SSH."
 msgstr ""
+"Indică dacă utilizatorul este capabil sa se conecteze de exemplu via SSH."
 
 #: src/etc/inc/upgrade_config.inc:626
 #, php-format
@@ -7297,71 +7469,87 @@ msgid ""
 "Indicates whether this user is allowed to copy files onto the %s appliance "
 "via SCP/SFTP."
 msgstr ""
+"Indică dacă utilizatorul are permisiune de a copia fișiere pe dispozitivul "
+"%s via SCP/SFTP."
 
 #: src/etc/inc/upgrade_config.inc:629
 msgid ""
 "This user is associated with the UNIX root user (this privilege should only "
 "be associated with one single user)."
 msgstr ""
+"Acest utilizator este asociat cu utilizatorul UNIX root (acest privilegiu ar "
+"trebui asociat unui singur utilizator)."
 
 #: src/etc/inc/upgrade_config.inc:648
 msgid "Drop packets to closed TCP ports without returning a RST"
 msgstr ""
+"Ignoră pachetele adresate porturilor TCP închise fară să returneze RST"
 
 #: src/etc/inc/upgrade_config.inc:652
 msgid "Do not send ICMP port unreachable messages for closed UDP ports"
 msgstr ""
+"Nu se trimit mesaje ICMP port unreachable pentru porturile UDP închise"
 
 #: src/etc/inc/upgrade_config.inc:656
 msgid ""
 "Randomize the ID field in IP packets (default is 1: Assign random IP IDs)"
 msgstr ""
+"Generează câmpuri ID aleatoare în pachetele IP (implicit este 1: Asignează "
+"ID-uri IP aleatoare)"
 
 #: src/etc/inc/upgrade_config.inc:660
 msgid "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)"
 msgstr ""
+"Ignoră pachetele SYN-FIN (încalcă RFC1379 dar oricum nimeni nu folosește "
+"facilitatea)"
 
 #: src/etc/inc/upgrade_config.inc:664
 msgid "Sending of IPv4 ICMP redirects"
-msgstr ""
+msgstr "Se trimit redirecționări ICMP IPv4"
 
 #: src/etc/inc/upgrade_config.inc:668
 msgid "Sending of IPv6 ICMP redirects"
-msgstr ""
+msgstr "Se trimit redirecționări ICMP IPv6"
 
 #: src/etc/inc/upgrade_config.inc:672
 msgid "Generate SYN cookies for outbound SYN-ACK packets"
 msgstr ""
+"Se generază SYN cookies pentru pachetele SYN-ACK care pleacă spre exterior"
 
 #: src/etc/inc/upgrade_config.inc:676
 msgid "Maximum incoming TCP datagram size"
-msgstr ""
+msgstr "Dimesiunea maximă a TCP datagarm care vine din exterior"
 
 #: src/etc/inc/upgrade_config.inc:680
 msgid "Maximum outgoing TCP datagram size"
-msgstr ""
+msgstr "Dimensiunea maximă a TCP datagram care pleacă spre exterior"
 
 #: src/etc/inc/upgrade_config.inc:684
 msgid "Do not delay ACK to try and piggyback it onto a data packet"
 msgstr ""
+"Nu se întărzie ACK pentru a se încerca includerea lui intr-un pachet de date"
 
 #: src/etc/inc/upgrade_config.inc:688
 msgid "Maximum outgoing UDP datagram size"
-msgstr ""
+msgstr "Dimensiunea maximă a UDP datagram care pleacă spre exterior"
 
 #: src/etc/inc/upgrade_config.inc:692
 msgid ""
 "Handling of non-IP packets which are not passed to pfil (see if_bridge(4))"
 msgstr ""
+"Prelucrarea pachetelor non-IP care nu sunt încredințate pfil (see "
+"if_bridge(4))"
 
 #: src/etc/inc/upgrade_config.inc:696
 msgid "Allow unprivileged access to tap(4) device nodes"
-msgstr ""
+msgstr "Permite acces fară privilegii la nodurile dispozitivului tap(4)"
 
 #: src/etc/inc/upgrade_config.inc:700
 msgid ""
 "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())"
 msgstr ""
+"Generează PID-uri aleatoare (vezi src/sys/kern/kern_fork.c: "
+"sysctl_kern_randompid())"
 
 #: src/etc/inc/upgrade_config.inc:704
 msgid ""

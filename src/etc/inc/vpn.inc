@@ -978,6 +978,10 @@ EOD;
 				$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 			}
 
+			if ($ph1ent['rekeymargin']) {
+				$rekeymargin = "rekeymargin = {$ph1ent['rekeymargin']}s";
+			}
+
 			$rightsourceip = NULL;
 			if (isset($ph1ent['mobile'])) {
 				$rightsourceips = array();
@@ -1304,6 +1308,7 @@ EOD;
 	{$mobike}
 	{$tfc}
 	{$rekey}
+	{$rekeymargin}
 	installpolicy = yes
 	{$tunneltype}
 	{$dpdline}

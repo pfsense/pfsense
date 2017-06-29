@@ -131,6 +131,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
+	$pconfig['rekeymargin'] = $a_phase1[$p1index]['rekeymargin'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
 	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
@@ -190,6 +191,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
+	$pconfig['rekeymargin'] = "540";
 
 	/* mobile client */
 	if ($_GET['mobile']) {
@@ -268,6 +270,10 @@ if ($_POST) {
 	if (($pconfig['lifetime'] && !is_numericint($pconfig['lifetime']))) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
+
+	if (($pconfig['rekeymargin'] && !is_numericint($pconfig['rekeymargin']))) {
+	  $input_errors[] = gettext("Rekey Margin must be an integer.");
+  }
 
 	if ($pconfig['remotegw']) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
@@ -491,6 +497,7 @@ if ($_POST) {
 		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
 		$ph1ent['dhgroup'] = $pconfig['dhgroup'];
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
+		$ph1ent['rekeymargin'] = $pconfig['rekeymargin'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
 		$ph1ent['certref'] = $pconfig['certref'];
@@ -867,6 +874,13 @@ $section->addInput(new Form_Checkbox(
 	'Disable rekey',
 	'Disables renegotiation when a connection is about to expire.',
 	$pconfig['rekey_enable']
+));
+
+$section->addInput(new Form_Input(
+	'rekeymargin',
+	'*Rekey Margin (Seconds)',
+	'number',
+	$pconfig['rekeymargin']
 ));
 
 $section->addInput(new Form_Checkbox(

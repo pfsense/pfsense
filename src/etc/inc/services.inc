@@ -610,6 +610,7 @@ EOD;
 				$type = "secondary";
 				$my_port = "520";
 				$peer_port = "519";
+				$dhcpdconf_pri = '';
 			} else {
 				$my_port = "519";
 				$peer_port = "520";

@@ -2350,16 +2350,17 @@ function system_get_serial() {
 }
 
 /*
- * attempt to identify the specific platform (for embedded systems)
+ * attempt to identify the specific physical/virtual platform (for embedded systems)
  * Returns an array with two elements:
- * name => platform string (e.g. 'wrap', 'alix' etc.)
- * descr => human-readable description (e.g. "PC Engines WRAP")
+ *   name => platform string (e.g. 'wrap', 'alix', 'vmware', etc.)
+ *   descr => human-readable description (e.g. "PC Engines WRAP")
+ * If no specific platform is identified, it returns the strings in $g['platform'] as 
+ * a fallback, and if that's empty then returns 'Unknown platform'.
  */
 function system_identify_specific_platform() {
 	global $g;
-
 	$hw_model = get_single_sysctl('hw.model');
-
+	$hw_ncpu = get_single_sysctl('hw.ncpu');
 	/* Try to guess from smbios strings */
 	unset($product);
 	unset($maker);
@@ -2375,7 +2376,6 @@ function system_identify_specific_platform() {
 		case 'RCC-VE':
 			$result = array();
 			$result['name'] = 'RCC-VE';
-
 			/* Detect specific models */
 			if (!function_exists('does_interface_exist')) {
 				require_once("interfaces.inc");
@@ -2398,6 +2398,24 @@ function system_identify_specific_platform() {
 		case 'RCC':
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
 			break;
+		case 'Minnowboard Turbot D0 PLATFORM':
+			$result = array();
+			$result['name'] = 'Turbot Dual-E';
+			/* Detect specific model */
+			switch ($hw_ncpu) {
+			case '4':
+				$result['model'] = 'SG-2340';
+				break;
+			case '2':
+				$result['model'] = 'SG-2320';
+				break;
+			default:
+				$result['model'] = $result['name'];
+				break;
+			}
+			$result['descr'] = 'Netgate ' . $result['model'];
+			return $result;
+			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
@@ -2414,43 +2432,39 @@ function system_identify_specific_platform() {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 			}
 			break;
+		case 'VMware Virtual Platform':
+			if ($maker[0] == "VMware, Inc.") {
+				return (array('name' => 'VMware', 'descr' => 'VMware Virtual Machine'));
+			}
+			break;
 	}
-
-	/* the rest of the code only deals with 'embedded' platforms */
-	if ($g['platform'] != 'nanobsd') {
-		return array('name' => $g['platform'], 'descr' => $g['platform']);
-	}
-
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}
-
 	if (strpos($hw_model, "PC Engines ALIX") !== false) {
 		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
 	}
-
 	if (preg_match("/Soekris net45../", $hw_model, $matches)) {
 		return array('name' => 'net45xx', 'descr' => $matches[0]);
 	}
-
 	if (preg_match("/Soekris net48../", $hw_model, $matches)) {
 		return array('name' => 'net48xx', 'descr' => $matches[0]);
 	}
-
 	if (preg_match("/Soekris net55../", $hw_model, $matches)) {
 		return array('name' => 'net55xx', 'descr' => $matches[0]);
 	}
-
 	unset($hw_model);
-
 	$dmesg_boot = system_get_dmesg_boot();
 	if (strpos($dmesg_boot, "PC Engines ALIX") !== false) {
 		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
 	}
 	unset($dmesg_boot);
-
-	/* unknown embedded platform */
-	return array('name' => 'embedded', 'descr' => gettext('embedded (unknown)'));
+	if (strlen($g['platform']) > 0 && $g['platform'] != $g['product_name']) {
+		// if $g['platform'] contains the software/firmware name rather than a hardware name, don't use it.
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	} else {
+		return array('name' => 'Non-specific hardware', 'descr' => 'Non-specific hardware');
+	}
 }
 
 function system_get_dmesg_boot() {

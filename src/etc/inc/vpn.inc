@@ -489,12 +489,19 @@ EOD;
 		}
 	}
 
+	/* Activate RADIUS accounting if it was selected on the auth server view */
+	$radius_accounting = "";
+	if($auth_server && isset($auth_server['radius_acct_port'])){
+		$radius_accounting = 'accounting = yes';
+	}
+
 	/* write an eap-radius config section if appropriate */
 	if (strlen($radius_server_txt) && ($mobile_ipsec_auth === "eap-radius")) {
 		$strongswan .= <<<EOD
 		eap-radius {
 			class_group = yes
 			eap_start = no
+			{$radius_accounting}
 			servers {
 {$radius_server_txt}
 			}

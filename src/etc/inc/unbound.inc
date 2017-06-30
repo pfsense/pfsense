@@ -465,10 +465,10 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
 			break;
 		case "stop":
-			mwexec("echo '/usr/local/sbin/unbound-control stop' | /usr/bin/su -m unbound", true);
+			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf stop' | /usr/bin/su -m unbound", true);
 			break;
 		case "reload":
-			mwexec("echo '/usr/local/sbin/unbound-control reload' | /usr/bin/su -m unbound", true);
+			mwexec("echo '/usr/local/sbin/unbound-control -c {$g['unbound_chroot_path']}/unbound.conf reload' | /usr/bin/su -m unbound", true);
 			break;
 		case "unbound-anchor":
 			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";

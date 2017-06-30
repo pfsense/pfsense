@@ -2235,12 +2235,24 @@ function services_unbound_configure($restart_dhcp = true) {
 		echo "services_unbound_configure() being called $mt\n";
 	}
 
-	// kill any running Unbound instance
-	if (file_exists("{$g['varrun_path']}/unbound.pid")) {
-		sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
-	}
-
 	if (isset($config['unbound']['enable'])) {
+		require_once('/etc/inc/unbound.inc');
+
+		/* Attempt to stop unbound nicely */
+		do_as_unbound_user("stop");
+
+		/* kill Unbound if it did not stop cleanly */
+		if (file_exists("{$g['varrun_path']}/unbound.pid")) {
+			sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
+		}
+
+		/* If unbound is still running, wait up to 30 seconds for it to terminate. */
+		for ($i=1; $i <= 30; $i++) {
+			if (is_process_running('unbound')) {
+				sleep(1);
+			}
+		}
+
 		if (platform_booting()) {
 			echo gettext("Starting DNS Resolver...");
 		} else {
@@ -2252,13 +2264,17 @@ function services_unbound_configure($restart_dhcp = true) {
 			$return = 1;
 		}
 
-		require_once('/etc/inc/unbound.inc');
 		sync_unbound_service();
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";
 		}
 
 		system_dhcpleases_configure();
+	} else {
+		/* kill Unbound since it should not be enabled */
+		if (file_exists("{$g['varrun_path']}/unbound.pid")) {
+			sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
+		}
 	}
 
 	if (!platform_booting() && $restart_dhcp) {

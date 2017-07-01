@@ -2868,7 +2868,7 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		}
 	} else {
 		if ($is_installed == true) {
-			unset($config['cron']['item'][$x]);
+			array_splice($config['cron']['item'], $x, 1);
 			$change_message = "Removed cron job for %s";
 		} else {
 			$cron_changed = false;

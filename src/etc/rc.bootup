@@ -151,7 +151,7 @@ echo "Updating configuration...";
 convert_config();
 echo "done.\n";
 
-echo "Cleaning backup cache...";
+echo "Checking config backups consistency...";
 cleanup_backupcache(true);
 echo "done.\n";
 

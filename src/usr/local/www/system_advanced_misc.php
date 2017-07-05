@@ -55,7 +55,7 @@ $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
-$pconfig['do_not_send_host_uuid'] = isset($config['system']['do_not_send_host_uuid']);
+$pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -184,10 +184,10 @@ if ($_POST) {
 			unset($config['system']['pkg_nochecksig']);
 		}
 
-		if ($_POST['do_not_send_host_uuid'] == "yes") {
-			$config['system']['do_not_send_host_uuid'] = true;
+		if ($_POST['do_not_send_uniqueid'] == "yes") {
+			$config['system']['do_not_send_uniqueid'] = true;
 		} else {
-			unset($config['system']['do_not_send_host_uuid']);
+			unset($config['system']['do_not_send_uniqueid']);
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -584,11 +584,11 @@ $form->add($section);
 $section = new Form_Section('Installation Feedback');
 
 $section->addInput(new Form_Checkbox(
-	'do_not_send_host_uuid',
-	'Host UUID',
-	'Do NOT send HOST UUID with user agent',
-	$pconfig['do_not_send_host_uuid']
-))->setHelp('Enable this option to not send HOST UUID to pfSense as part of User-Agent header.');
+	'do_not_send_uniqueid',
+	'Netgate Device ID',
+	'Do NOT send Netgate Device ID with user agent',
+	$pconfig['do_not_send_uniqueid']
+))->setHelp('Enable this option to not send Netgate Device ID to pfSense as part of User-Agent header.');
 
 $form->add($section);
 

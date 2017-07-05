@@ -29,11 +29,13 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
+require_once("system.inc");
 
 define("FILE_SIZE", 450000);
 
 function upload_crash_report($files) {
-	global $g;
+	global $g, $config;
+
 	$post = array();
 	$counter = 0;
 	foreach ($files as $file) {
@@ -45,7 +47,11 @@ function upload_crash_report($files) {
 	curl_setopt($ch, CURLOPT_VERBOSE, 0);
 	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+	if (!isset($config['system']['do_not_send_uniqueid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . system_get_uniqueid());
+	} else {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+	}
 	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);

@@ -48,7 +48,7 @@ function upload_crash_report($files) {
 	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	if (!isset($config['system']['do_not_send_uniqueid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . system_get_uniqueid());
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}

@@ -229,6 +229,7 @@ nsComment			= "OpenSSL Generated User Certificate"
 subjectKeyIdentifier		= hash
 authorityKeyIdentifier		= keyid,issuer:always
 extendedKeyUsage		= clientAuth
+keyUsage			= nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName			= $ENV::SAN
 
 [ server ]
@@ -262,7 +263,6 @@ basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 
 [ v3_ca ]
-
 
 # Extensions for a typical CA
 

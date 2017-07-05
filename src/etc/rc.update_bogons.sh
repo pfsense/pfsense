@@ -23,6 +23,14 @@
 # Global variables
 proc_error=""
 
+do_not_send_uniqueid=$(/usr/local/sbin/read_xml_tag.sh boolean system/do_not_send_uniqueid)
+if [ "${do_not_send_uniqueid}" != "true" ]; then
+	uniqueid=$(/usr/sbin/gnid)
+	export HTTP_USER_AGENT="${product}/${product_version}:${uniqueid}"
+else
+	export HTTP_USER_AGENT="${product}/${product_version}"
+fi
+
 # Download and extract if necessary
 process_url() {
 	local file=$1

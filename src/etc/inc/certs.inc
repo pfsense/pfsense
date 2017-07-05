@@ -39,6 +39,15 @@ $openssl_crl_status = array(
 	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
 );
 
+global $cert_altname_types;
+$cert_altname_types = array(
+	'DNS' => gettext('FQDN or Hostname'),
+	'IP' => gettext('IP address'),
+	'URI' => gettext('URI'),
+	'email' => gettext('email address'),
+);
+
+
 function & lookup_ca($refid) {
 	global $config;
 
@@ -1008,6 +1017,24 @@ function cert_escape_x509_chars($str, $reverse = false) {
 	} else {
 		/* First unescape and then escape again, to prevent possible double escaping. */
 		return str_replace($cert_directory_string_special_chars, $cert_directory_string_special_chars_esc, cert_escape_x509_chars($str, true));
+	}
+}
+
+function cert_add_altname_type($str) {
+	$type = "";
+	if (is_ipaddr($str)) {
+		$type = "IP";
+	} elseif (is_hostname($str)) {
+		$type = "DNS";
+	} elseif (is_URL($str)) {
+		$type = "URI";
+	} elseif (filter_var($str, FILTER_VALIDATE_EMAIL)) {
+		$type = "email";
+	}
+	if (!empty($type)) {
+		return "{$type}:" . cert_escape_x509_chars($str);
+	} else {
+		return "";
 	}
 }
 

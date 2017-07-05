@@ -43,7 +43,7 @@ $cert_types = array(
 	"server" => "Server Certificate",
 	"user" => "User Certificate");
 
-$altname_types = array("DNS", "IP", "email", "URI");
+global $cert_altname_types;
 global $openssl_digest_algs;
 
 if (isset($_REQUEST['userid']) && is_numericint($_REQUEST['userid'])) {
@@ -445,16 +445,12 @@ if ($_POST['save']) {
 					if (!empty($pconfig['dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 					}
-					if (is_ipaddr($pconfig['dn_commonname'])) {
-						$altnames_tmp = array("IP:{$pconfig['dn_commonname']}");
-					} else {
-						$altnames_tmp = array("DNS:{$pconfig['dn_commonname']}");
-					}
+					$altnames_tmp = array(cert_add_altname_type($pconfig['dn_commonname']));
 					if (count($altnames)) {
 						foreach ($altnames as $altname) {
 							// The CN is added as a SAN automatically, do not add it again.
 							if ($altname['value'] != $pconfig['dn_commonname']) {
-								$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+								$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
 							}
 						}
 					}
@@ -867,12 +863,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 			'altname_type' . $counter,
 			'Type',
 			$item['type'],
-			array(
-				'DNS' => gettext('FQDN or Hostname'),
-				'IP' => gettext('IP address'),
-				'URI' => gettext('URI'),
-				'email' => gettext('email address'),
-			)
+			$cert_altname_types
 		))->setHelp(($counter == $numrows) ? 'Type':null);
 
 		$group->add(new Form_Input(
@@ -1152,7 +1143,7 @@ foreach ($a_cert as $i => $cert):
 						$certextinfo = "";
 						if (is_array($sans) && !empty($sans)) {
 							$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
-							$certextinfo .= htmlspecialchars(implode(', ', $sans));
+							$certextinfo .= htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true)));
 							$certextinfo .= '<br/>';
 						}
 						if (is_array($purpose) && !empty($purpose['ku'])) {

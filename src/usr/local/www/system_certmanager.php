@@ -479,15 +479,21 @@ if ($_POST['save']) {
 					if (!empty($pconfig['csr_dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
 					}
+
+					$altnames_tmp = array(cert_add_altname_type($pconfig['csr_dn_commonname']));
 					if (count($altnames)) {
-						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
-							$altnames_tmp[] = "{$altname['type']}:{$altname['value']}";
+							// The CN is added as a SAN automatically, do not add it again.
+							if ($altname['value'] != $pconfig['csr_dn_commonname']) {
+								$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+							}
 						}
+					}
+					if (!empty($altnames_tmp)) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 
-					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])) {
+					if (!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['type'], $pconfig['csr_digest_alg'])) {
 						$input_errors = array();
 						while ($ssl_err = openssl_error_string()) {
 							if (strpos($ssl_err, 'NCONF_get_string:no value') === false) {
@@ -917,6 +923,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'SHA1 when possible');
 
 	$section->addInput(new Form_Select(
+		'type',
+		'*Certificate Type',
+		$pconfig['type'],
+		$cert_types
+	))->setHelp('Type of certificate to generate. Used for placing '.
+		'restrictions on the usage of the generated certificate.');
+
+	$section->addInput(new Form_Select(
 		'csr_dn_country',
 		'*Country Code',
 		$pconfig['csr_dn_country'],
@@ -970,6 +984,56 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['csr_dn_commonname'],
 		['placeholder' => 'e.g. internal-ca']
 	));
+
+	if (empty($pconfig['altnames']['item'])) {
+		$pconfig['altnames']['item'] = array(
+			array('type' => null, 'value' => null)
+		);
+	}
+
+	$counter = 0;
+	$numrows = count($pconfig['altnames']['item']) - 1;
+
+	foreach ($pconfig['altnames']['item'] as $item) {
+
+		$group = new Form_Group($counter == 0 ? 'Alternative Names':'');
+
+		$group->add(new Form_Select(
+			'altname_type' . $counter,
+			'Type',
+			$item['type'],
+			$cert_altname_types
+		))->setHelp(($counter == $numrows) ? 'Type':null);
+
+		$group->add(new Form_Input(
+			'altname_value' . $counter,
+			null,
+			'text',
+			$item['value']
+		))->setHelp(($counter == $numrows) ? 'Value':null);
+
+		$group->add(new Form_Button(
+			'deleterow' . $counter,
+			'Delete',
+			null,
+			'fa-trash'
+		))->addClass('btn-warning');
+
+		$group->addClass('repeatable');
+
+		$group->setHelp('Enter additional identifiers for the certificate in this list. The Common Name field is automatically added to the certificate as an Alternative Name.');
+
+		$section->add($group);
+
+		$counter++;
+	}
+
+	$section->addInput(new Form_Button(
+		'addrow',
+		'Add',
+		null,
+		'fa-plus'
+	))->addClass('btn-success');
 
 	$form->add($section);
 	$section = new Form_Section('Choose an Existing Certificate');

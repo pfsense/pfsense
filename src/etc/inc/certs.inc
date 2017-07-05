@@ -401,10 +401,32 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 	return true;
 }
 
-function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
+function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256") {
+
+	switch ($type) {
+		case "ca":
+			$cert_type = "v3_ca";
+			break;
+		case "server":
+		case "self-signed":
+			$cert_type = "server";
+			break;
+		default:
+			$cert_type = "usr_cert";
+			break;
+	}
+
+	// in case of using Subject Alternative Names use other sections (with postfix '_san')
+	// pass subjectAltName over environment variable 'SAN'
+	if ($dn['subjectAltName']) {
+		putenv("SAN={$dn['subjectAltName']}"); // subjectAltName can be set _only_ via configuration file
+		$cert_type .= '_san';
+		unset($dn['subjectAltName']);
+	}
 
 	$args = array(
-		"x509_extensions" => "v3_req",
+		"x509_extensions" => $cert_type,
+		"req_extensions" => "req_{$cert_type}",
 		"digest_alg" => $digest_alg,
 		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,

@@ -159,9 +159,9 @@ $rows_displayed = false;
 			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
 <?php
 		// If the uniqueID is available, display it here
-		$idfile = "/var/db/uniqueid";
-		if (file_exists($idfile)) {
-			print("<br />" . gettext("Netgate Device ID:") . " <strong>" . file_get_contents($idfile) . "</strong>");
+		$uniqueid = system_get_uniqueid();
+		if (!empty($uniqueid)) {
+			print("<br />" . gettext("Netgate Device ID:") . " <strong>{$uniqueid}</strong>");
 		}
 ?>
 			</td>

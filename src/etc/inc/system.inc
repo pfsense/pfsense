@@ -2345,6 +2345,24 @@ function system_get_serial() {
 	return get_single_sysctl('kern.hostuuid');
 }
 
+function system_get_uniqueid() {
+	global $g;
+
+	$uniqueid_file="{$g['vardb_path']}/uniqueid";
+
+	if (empty($g['uniqueid'])) {
+		if (!file_exists($uniqueid_file)) {
+			mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid " .
+			    "2>/dev/null");
+		}
+		if (file_exists($uniqueid_file)) {
+			$g['uniqueid'] = @file_get_contents($uniqueid_file);
+		}
+	}
+
+	return ($g['uniqueid'] ?: '');
+}
+
 /*
  * attempt to identify the specific platform (for embedded systems)
  * Returns an array with two elements:

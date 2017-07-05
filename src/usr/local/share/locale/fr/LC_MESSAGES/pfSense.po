@@ -11,6 +11,7 @@
 # Furet Adrien <adrien@adrienfuret.fr>, 2017. #zanata
 # Jean-Marc ALBERT <jmarc.alb@gmail.com>, 2017. #zanata
 # Jimmy Caron-Bélanger <jim.caron2012@gmail.com>, 2017. #zanata
+# Johann Galloy <johann.galloy@gmail.com>, 2017. #zanata
 # Julien Dumur <julien.dumur@outlook.com>, 2017. #zanata
 # Laurent Paumier <laurent.paumier@fnac.net>, 2017. #zanata
 # Martin L <n@1e.ca>, 2017. #zanata
@@ -36,12 +37,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-27 07:37-0300\n"
+"POT-Creation-Date: 2017-07-05 14:41-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-05 08:01-0400\n"
-"Last-Translator: Damien Variclier <flyer331@gmail.com>\n"
+"PO-Revision-Date: 2017-07-03 04:29-0400\n"
+"Last-Translator: Johann Galloy <johann.galloy@gmail.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -96,7 +97,7 @@ msgid ""
 "server defined."
 msgstr ""
 "ERREUR ! ldap_get_user_ous() sélectionné sans serveur LDAP "
-"d'authentification."
+"d'authentification.t"
 
 #: src/etc/inc/auth.inc:1027
 #, php-format
@@ -229,7 +230,7 @@ msgstr "RADIUS Authentification rejetée"
 
 #: src/etc/inc/auth.inc:1637
 msgid "Widget configuration has been changed."
-msgstr "La configuration du gadget logiciel a été modifiée."
+msgstr "La configuration du Widget logiciel a été modifiée."
 
 #: src/etc/inc/auth.inc:1642
 #, php-format
@@ -284,9 +285,9 @@ msgid "This device is currently being maintained by: %s."
 msgstr "Cet appareil est actuellement géré par: %s."
 
 #: src/etc/inc/authgui.inc:239
-#, php-format
+#, fuzzy, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -299,12 +300,18 @@ msgid "Login"
 msgstr "Connexion"
 
 #: src/etc/inc/authgui.inc:289
+#, fuzzy
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"L'IP utilisée pour se connecter à ce routeur n'est pas configurée "
+"localement,  cela signifie qu'elle peut-être transmise par NAT ou par "
+"d'autres moyens.\n"
+"                                Si cette transmission n'est pas souhaité, "
+"vérifier qu'une attaque de type l'homme du milieu n'est pas en cours."
 
 #: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
@@ -332,7 +339,7 @@ msgstr "Mot de passe :"
 msgid "Enter Voucher Code:"
 msgstr "Entrer le code du bon :"
 
-#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
+#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
 msgstr "Continuer"
 
@@ -373,7 +380,7 @@ msgstr "%1$s Requiert *AU MOINS* %2$s RAM pour fonctionner correctement.%3$s"
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr "Seulement (%1$s) MB de RAM a été détectée, avec (%2$s) à %3$s.%4$s"
+msgstr "Seulement (%1$s) MB de RAM ont été détectée, avec (%2$s) à %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
@@ -393,13 +400,13 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Si aucun VLAN n'est utilisé, ou seulement pour les interfaces secondaires, "
+"Si aucun VLAN n'est utilisé, ou seulement pour les interfaces optionnelles, "
 "il est conseillé de choisir non ici. Si besoin, vous pourrez utiliser le "
 "webConfigurator plus tard pour configurer les VLANs."
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
-msgstr "Les VLANs doivent-ils être configurés maintenant [y|n] ?"
+msgstr "Les VLANs doivent-ils être configurés maintenant [o|n] ?"
 
 #: src/etc/inc/config.console.inc:101
 msgid "VLAN interfaces:"
@@ -633,11 +640,14 @@ msgid "Upgraded config version level from %1$s to %2$s"
 msgstr "Mise à niveau de la version de la configuration de %1$s vers %2$s"
 
 #: src/etc/inc/config.lib.inc:450
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"La sauvegarde des autorisations  de configuration a été refusé par le "
+"paramètre 'Utilisateur - Configuration: Refuser d'écrire la configuration' "
+"pour l'utilisateur '%s'."
 
 #: src/etc/inc/config.lib.inc:483
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -1289,7 +1299,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS a mis à jour l'adresse IP sur %1$s (%2$s) à %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
+#: src/etc/inc/services.inc:2697 src/etc/inc/services.inc:2709
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS : mise à jour du fichier cache %1$s : %2$s"
@@ -1769,16 +1779,16 @@ msgstr "Filtrage désactivé. Chargement des règles interrompu."
 #: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
 #: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
 #: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
-#: src/etc/inc/pkg-utils.inc:600 src/etc/inc/pkg-utils.inc:748
-#: src/etc/inc/pkg-utils.inc:771 src/etc/inc/pkg-utils.inc:807
-#: src/etc/inc/pkg-utils.inc:812 src/etc/inc/pkg-utils.inc:817
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:852
-#: src/etc/inc/pkg-utils.inc:879 src/etc/inc/pkg-utils.inc:925
-#: src/etc/inc/pkg-utils.inc:951 src/etc/inc/pkg-utils.inc:994
-#: src/etc/inc/pkg-utils.inc:1013 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
-#: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1239
+#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
+#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
+#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
+#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
+#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
+#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
+#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
+#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2269
+#: src/etc/inc/services.inc:2495 src/etc/inc/system.inc:1239
 #: src/etc/inc/system.inc:1339 src/etc/inc/system.inc:1642
 #: src/etc/inc/system.inc:2214
 msgid "done."
@@ -3865,7 +3875,7 @@ msgstr "Spanish"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Espagnol (Argentine)"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -3996,34 +4006,34 @@ msgstr ""
 "ERREUR!!! Une erreur est survenue dans l'exécution de la commande pkg (rc = "
 "%d) avec les paramètres '%s' :"
 
-#: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
+#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr ""
 "ERREUR: Erreur lors de l'obtention de la liste des paquets. Abandon..."
 
-#: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
+#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr ""
 "ERREUR: Erreur lors de l'obtention de la version du paquet. Abandon..."
 
-#: src/etc/inc/pkg-utils.inc:537
+#: src/etc/inc/pkg-utils.inc:532
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Exécution des dernières étapes de l'installation de %s."
 
-#: src/etc/inc/pkg-utils.inc:550
+#: src/etc/inc/pkg-utils.inc:545
 msgid "Resyncing configuration for all packages."
 msgstr "Resynchronisation de la configuration de tous les paquets."
 
-#: src/etc/inc/pkg-utils.inc:572
+#: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
 msgstr "Synchronisation des paquets..."
 
-#: src/etc/inc/pkg-utils.inc:594
+#: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
 msgstr "Suppression du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:627
+#: src/etc/inc/pkg-utils.inc:622
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
@@ -4031,183 +4041,183 @@ msgstr ""
 "Le fichier de configuration du paquet %s est manquant. Le paquet doit être "
 "réinstallé."
 
-#: src/etc/inc/pkg-utils.inc:643
+#: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
 "Reinstallation du paquet %1$s car son fichier d'inclusion(%2$s) est manquant "
 "!"
 
-#: src/etc/inc/pkg-utils.inc:646
+#: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr ""
 "La réinstallation du paquet %s a échoué. Prenez les mesures appropriées !!!"
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
 msgstr "Début de l'installation du paquet."
 
-#: src/etc/inc/pkg-utils.inc:740
+#: src/etc/inc/pkg-utils.inc:735
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "Début de l'installation du paquet %s ."
 
-#: src/etc/inc/pkg-utils.inc:744
+#: src/etc/inc/pkg-utils.inc:739
 msgid "Saving updated package information..."
 msgstr "Sauvegarde des informations de paquet mises à jour..."
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:742
 #, php-format
 msgid "Installed %s package."
 msgstr "Paquet %s installé."
 
-#: src/etc/inc/pkg-utils.inc:751
+#: src/etc/inc/pkg-utils.inc:746
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "Installation précédente de %s écrasée."
 
-#: src/etc/inc/pkg-utils.inc:752
+#: src/etc/inc/pkg-utils.inc:747
 msgid "overwrite!"
 msgstr "écrasé !"
 
-#: src/etc/inc/pkg-utils.inc:755
+#: src/etc/inc/pkg-utils.inc:750
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
 "Ecriture de la configuration intermédiaire durant l'installation du paquet "
 "%s."
 
-#: src/etc/inc/pkg-utils.inc:759
+#: src/etc/inc/pkg-utils.inc:754
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Le paquet %1$s n'est pas installé.%2$sInstallation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Échec d'installation du paquet : %s."
 
-#: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:867
 msgid "Failed to install package."
 msgstr "Échec d'installation du paquet."
 
-#: src/etc/inc/pkg-utils.inc:769
+#: src/etc/inc/pkg-utils.inc:764
 msgid "Loading package configuration... "
 msgstr "Chargement de la configuration du paquet... "
 
-#: src/etc/inc/pkg-utils.inc:772
+#: src/etc/inc/pkg-utils.inc:767
 msgid "Configuring package components..."
 msgstr "Configuration des composants du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
+#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
 msgid "Loading package instructions..."
 msgstr "Chargement des instructions du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
 msgstr "Le fichier d'inclusion %s est manquant !"
 
-#: src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
 msgstr "Commandes personnalisées..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:800
 msgid "Executing custom_php_global_functions()..."
 msgstr "Exécution de custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_install_command()..."
 msgstr "Exécution de custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:815
+#: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Exécution de custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
+#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
 msgid "Menu items... "
 msgstr "Éléments du menu... "
 
-#: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
+#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
 msgid "Services... "
 msgstr "Services..."
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Loading package configuration... failed!"
 msgstr "Chargement de la configuration du paquet... échec !"
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Installation aborted."
 msgstr "Installation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 "Impossible de charger la configuration du paquet. Installation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:876
+#: src/etc/inc/pkg-utils.inc:871
 msgid "Writing configuration... "
 msgstr "Enregistrement de la configuration... "
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Paquet installé avec succès : %s."
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Le paquet %1$s n'est pas installé.%2$sSuppression abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s package... "
 msgstr "Suppression du paquet %s... "
 
-#: src/etc/inc/pkg-utils.inc:904
+#: src/etc/inc/pkg-utils.inc:899
 #, php-format
 msgid "Removing %s components..."
 msgstr "Suppression des composants de %s..."
 
-#: src/etc/inc/pkg-utils.inc:957
+#: src/etc/inc/pkg-utils.inc:952
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "Ecriture de la configuration intermédiaire durant la suppression du paquet "
 "%s."
 
-#: src/etc/inc/pkg-utils.inc:973
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Le fichier d'inclusion %s n'a pas été trouvé."
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:986
 msgid "Deinstall commands... "
 msgstr "Commandes de désinstallation..."
 
-#: src/etc/inc/pkg-utils.inc:996
+#: src/etc/inc/pkg-utils.inc:991
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 "Commandes de désinstallation personnalisée non exécutées car un fichier "
 "d'inclusion est manquant."
 
-#: src/etc/inc/pkg-utils.inc:1003
+#: src/etc/inc/pkg-utils.inc:998
 msgid "Syslog entries... "
 msgstr "Enregistrements syslog... "
 
-#: src/etc/inc/pkg-utils.inc:1011
+#: src/etc/inc/pkg-utils.inc:1006
 msgid "Configuration... "
 msgstr "Configuration... "
 
-#: src/etc/inc/pkg-utils.inc:1014
+#: src/etc/inc/pkg-utils.inc:1009
 #, php-format
 msgid "Removed %s package."
 msgstr "Paquet %s supprimé."
 
-#: src/etc/inc/pkg-utils.inc:1039
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -4215,18 +4225,18 @@ msgstr ""
 "Attente de la connexion Internet pour mettre à jour les métadonnées de la "
 "commande pkg et terminer la réinstallation"
 
-#: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
+#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
 msgstr "Réinstallation du paquet"
 
-#: src/etc/inc/pkg-utils.inc:1053
+#: src/etc/inc/pkg-utils.inc:1048
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "La réinstallation du paquet a été ABANDONNÉE du fait de l'absence de "
 "connexion à Internet"
 
-#: src/etc/inc/pkg-utils.inc:1092
+#: src/etc/inc/pkg-utils.inc:1087
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
@@ -4234,7 +4244,7 @@ msgstr ""
 "Le paquet %s n'existe pas dans la version actuelle de %s et il a été "
 "supprimé."
 
-#: src/etc/inc/pkg-utils.inc:1113
+#: src/etc/inc/pkg-utils.inc:1108
 msgid "Stopping all packages."
 msgstr "Arrêt de tous les paquets."
 
@@ -6438,7 +6448,7 @@ msgid "%1$s Service is %2$s"
 msgstr "Le service %1$s est %2$s"
 
 #: src/etc/inc/service-utils.inc:495
-#, fuzzy, php-format
+#, php-format
 msgid "%1$s, %2$s Service is %3$s"
 msgstr "%1$s, Le service %2$s est %3$s"
 
@@ -6491,7 +6501,7 @@ msgstr ""
 "Attention! Le Failover du DHCP est configuré mais aucune IP virtuelle CARP "
 "n'est définie!"
 
-#: src/etc/inc/services.inc:774
+#: src/etc/inc/services.inc:775
 #, php-format
 msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
@@ -6500,64 +6510,64 @@ msgstr ""
 "Plage DHCP invalide détectée: %1$s - %2$s pour %3$s sous réseau %4$s %5$s . "
 "Veuillez corriger les paramètres dans Services:Serveur DHCP"
 
-#: src/etc/inc/services.inc:1145
+#: src/etc/inc/services.inc:1146
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
 "Erreur: Impossible d'ouvrir le fichier dhcpd.conf dans "
 "services_dhcpdv4_configure().%s"
 
-#: src/etc/inc/services.inc:1648
+#: src/etc/inc/services.inc:1649
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Impossible d'enregistrer le fichier de configuration lgmpproxy!"
 
-#: src/etc/inc/services.inc:1661
+#: src/etc/inc/services.inc:1662
 msgid "Started IGMP proxy service."
 msgstr "Service de proxy IGMP démarré."
 
-#: src/etc/inc/services.inc:1685
+#: src/etc/inc/services.inc:1686
 msgid "Starting DHCP relay service..."
 msgstr "Démarrage du service de relais DHCP..."
 
-#: src/etc/inc/services.inc:1710
+#: src/etc/inc/services.inc:1711
 msgid "No destination IP has been configured!"
 msgstr "Aucune IP de destination n'a été configurée!"
 
-#: src/etc/inc/services.inc:1784
+#: src/etc/inc/services.inc:1785
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Aucune interface convenable n'a été trouvée pour lancer dhcrelay!"
 
-#: src/etc/inc/services.inc:1820
+#: src/etc/inc/services.inc:1821
 msgid "Starting DHCPv6 relay service..."
 msgstr "Démarrage du service de relais DHCPv6..."
 
-#: src/etc/inc/services.inc:1911
+#: src/etc/inc/services.inc:1912
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "Aucune interface convenable n'a été trouvée pour lancer dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1972
+#: src/etc/inc/services.inc:1973
 msgid "Starting DynDNS clients..."
 msgstr "Démarrage des clients DynDNS..."
 
-#: src/etc/inc/services.inc:2078
+#: src/etc/inc/services.inc:2079
 msgid "Starting DNS forwarder..."
 msgstr "Démarrage du redirecteur DNS..."
 
-#: src/etc/inc/services.inc:2244
+#: src/etc/inc/services.inc:2257
 msgid "Starting DNS Resolver..."
 msgstr "Démarrage du résolveur DNS..."
 
-#: src/etc/inc/services.inc:2289
+#: src/etc/inc/services.inc:2306
 msgid "Starting SNMP daemon... "
 msgstr "Démarrage du démon SNMP..."
 
-#: src/etc/inc/services.inc:2300
+#: src/etc/inc/services.inc:2317
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 "Erreur: impossible d'ouvrir snmpd.conf dans services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2629
+#: src/etc/inc/services.inc:2646
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6565,7 +6575,7 @@ msgstr ""
 "phpDynDNS: L'enregistrement de type A %s non mis à jour car l'adresse IP n'a "
 "pas été modifiée"
 
-#: src/etc/inc/services.inc:2648
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6574,46 +6584,46 @@ msgstr ""
 "phpDynDNS: L'enregistrement de type AAAA %s non mis à jour car l'adresse "
 "IPv6 n'a pas été modifiée"
 
-#: src/etc/inc/services.inc:2683
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS a mis à jour l'adresse IP (A) pour %1$s de %2$s (%3$s) en %4$s"
 
-#: src/etc/inc/services.inc:2695
+#: src/etc/inc/services.inc:2712
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS a mis à jour l'adresse Ipv6 (AAAA) pour %1$s de %2$s (%3$s) en %4$s"
 
-#: src/etc/inc/services.inc:2703
+#: src/etc/inc/services.inc:2720
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: ERREUR de mise à jour de l'adresse IP (A) concernant %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2708
+#: src/etc/inc/services.inc:2725
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: ERREUR de mise à jour de l'adresse IP (AAAA) concernant %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2742
+#: src/etc/inc/services.inc:2759
 msgid "Created:"
 msgstr "Créé:"
 
-#: src/etc/inc/services.inc:2768
+#: src/etc/inc/services.inc:2785
 msgid "If possible do not add items to this file manually."
 msgstr "Si possible, éviter d'ajouter manuellement des éléments à ce fichier"
 
-#: src/etc/inc/services.inc:2769
+#: src/etc/inc/services.inc:2786
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Si configuré ainsi, le fichier doit se terminer par une ligne vide (ex: "
 "nouvelle ligne)"
 
-#: src/etc/inc/services.inc:2819
+#: src/etc/inc/services.inc:2836
 msgid "Starting UPnP service... "
 msgstr "Démarrage du service UPnP..."
 
@@ -7512,11 +7522,11 @@ msgstr "Erreur: impossible d'ouvrir dmesg.boot dans system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Configuration du délai de mise en veille du disque dur... "
 
-#: src/etc/inc/system.inc:2440
+#: src/etc/inc/system.inc:2458
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2462 src/etc/inc/system.inc:2481
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -7782,9 +7792,8 @@ msgid "Converted bridged %s"
 msgstr "Pont converti %s"
 
 #: src/etc/inc/upgrade_config.inc:1911
-#, fuzzy
 msgid "Auto added OpenVPN rule from config upgrade."
-msgstr "Ajout automatique de la règle OpenVPN depuis la mise a niveau config"
+msgstr "Règle OpenVPN auto-générée par une mise à jour de configuration"
 
 #: src/etc/inc/upgrade_config.inc:3972
 #, php-format
@@ -8233,7 +8242,7 @@ msgstr "Confirmer"
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
@@ -8257,31 +8266,31 @@ msgstr "Enregistrer"
 msgid "Diagnostics"
 msgstr "Diagnostics"
 
-#: src/usr/local/www/crash_reporter.php:56
+#: src/usr/local/www/crash_reporter.php:62
 msgid "Crash Reporter"
 msgstr "Rapporteur de panne"
 
-#: src/usr/local/www/crash_reporter.php:68
+#: src/usr/local/www/crash_reporter.php:74
 msgid "Processing..."
 msgstr "Traitement..."
 
-#: src/usr/local/www/crash_reporter.php:80
+#: src/usr/local/www/crash_reporter.php:86
 msgid "Uploading..."
 msgstr "Transmission..."
 
-#: src/usr/local/www/crash_reporter.php:91
+#: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
 msgstr "Supprimé les fichiers de rapport de panne du disque local."
 
-#: src/usr/local/www/crash_reporter.php:95
+#: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
 msgstr "Aucun fichier de panne trouvé."
 
-#: src/usr/local/www/crash_reporter.php:124
+#: src/usr/local/www/crash_reporter.php:130
 msgid "Unfortunately a Programming Bug has been detected"
 msgstr "Malheureusement, un bogue de programmation a été détecté."
 
-#: src/usr/local/www/crash_reporter.php:128
+#: src/usr/local/www/crash_reporter.php:134
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
@@ -8289,7 +8298,7 @@ msgstr ""
 "Les journaux de débogage peuvent être soumis aux développeurs de pfSense "
 "pour analyse."
 
-#: src/usr/local/www/crash_reporter.php:129
+#: src/usr/local/www/crash_reporter.php:135
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
@@ -8297,24 +8306,24 @@ msgstr ""
 "Assurez-vous bien que les informations présentes dans ce contenu peuvent "
 "être partagées à des tiers avant d'envoyer"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
 msgstr "Oui"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 msgid "Submit this to the developers for inspection"
 msgstr "Envoyer aux développeurs pour inspection"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
 msgstr "Non"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 msgid "Just delete the crash report and return to the Dashboard"
 msgstr "Supprimer le rapport de plantage et retourner au tableau de bord"
 
@@ -9034,17 +9043,22 @@ msgid "Upload"
 msgstr "Téléverser"
 
 #: src/usr/local/www/diag_command.php:296
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
 msgstr ""
+"La ligne %s semble avoir généré une erreur, et a été surligné. La réponse "
+"complète est ci-dessous."
 
 #: src/usr/local/www/diag_command.php:299
+#, fuzzy
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Le code semble avoir généré une erreur, cependant la ligne responsable n'a "
+"pu être identifiée. La réponse complète est ci-dessous."
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -10733,9 +10747,9 @@ msgid ""
 "and outbound connection sockets when %1$sShow all socket connections%2$s is "
 "clicked."
 msgstr ""
-"Cette page affiche toute les sockets d'écoute par défaut, et affiche à la "
-"fois les sockets d'écoute et les sockets de connexion sortante lorsque "
-"%1$sAfficher toutes les sockets%2$s est cliqué"
+"Cette page affiche tous les sockets d'écoute par défaut, et affiche à la "
+"fois ceux écoutant les connexions entrantes et ceux écoutant les connexions "
+"sortantes lorsque %1$sAfficher toutes les sockets%2$s est selectionné"
 
 #: src/usr/local/www/diag_sockets.php:112
 msgid "The information listed for each socket is:"
@@ -15878,6 +15892,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"D'autres paramètres pour le tableau de bord sont disponible depuis la page "
+"<a href=\"%s\">Configuration générale</a>"
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -16704,10 +16720,14 @@ msgid "DHCPv6 Prefix Delegation size"
 msgstr "taille du préfixe délégué DHCPv6"
 
 #: src/usr/local/www/interfaces.php:2203
+#, fuzzy
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
 msgstr ""
+"La valeur dans ce champs est la longueur du préfixe délégué fourni par le "
+"serveur DHCPv6.\n"
+"Le FAI fourni habituellement cette information."
 
 #: src/usr/local/www/interfaces.php:2207
 #, fuzzy
@@ -16728,7 +16748,7 @@ msgid "Do not allow PD/Address release"
 msgstr ""
 
 #: src/usr/local/www/interfaces.php:2235
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
 "configuration file.\t [/[dirname/[.../]]filename[.ext]] %1$sValue "
@@ -16737,6 +16757,13 @@ msgid ""
 "Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sSome ISPs "
 "may require certain options be or not be sent."
 msgstr ""
+"La valeur dans ce champs est le chemin absolue vers le fichier de "
+"configuration du client DHCP.\t [/[dirname/[.../]]filename[.ext]] %1$sValue "
+"Substitutions in Config File: {interface}, {hostname}, {mac_addr_asciiCD}, "
+"{mac_addr_hexCD} %1$sWhere C is U(pper) or L(ower) Case, and D is \" :-.\" "
+"Delimiter (space, colon, hyphen, or period) (omitted for none).%1$sQuelques "
+"FAI peuvent nécessiter que certaine options soient ou ne soient pas "
+"présentes."
 
 #: src/usr/local/www/interfaces.php:2244
 msgid "Advanced DHCP6 Client Configuration"
@@ -17227,6 +17254,9 @@ msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
 msgstr ""
+"Lorsque le point d'accès est en mode 802.11g, autoriser seulement les client "
+"compatible 802.11g à s'associer (les stations 802.11b seulement ne sont pas "
+"autorisées à s'associer)"
 
 #: src/usr/local/www/interfaces.php:3039
 msgid "Allow intra-BSS communication"
@@ -17237,6 +17267,8 @@ msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr ""
+"Fournir une sécurité supplémentaire en isolant les clients ainsi ils ne "
+"peuvent communiquer directement entre eux."
 
 #: src/usr/local/www/interfaces.php:3047
 msgid "Enable WME"
@@ -17383,9 +17415,14 @@ msgid ""
 "generally be turned on, unless this network interface resides in such a "
 "private address space, too."
 msgstr ""
+"Bloque le trafic depuis des adresses IP qui sont réservées pour les réseaux "
+"privés (RFC 1918: 10/8, 172.16/12, 192.168/16), les adresses locales uniques "
+"(RFC 4193: fc00::/7) et les adresses de boucle locale (127/8). Cette option "
+"doit généralement être activée, sauf si l'interface réseau est également "
+"dans un réseau privé."
 
 #: src/usr/local/www/interfaces.php:3215
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
 "assigned by IANA. Bogons are prefixes that should never appear in the "
@@ -17393,6 +17430,11 @@ msgid ""
 "any packets received.%1$sNote: The update frequency can be changed under "
 "System->Advanced Firewall/NAT settings."
 msgstr ""
+"Bloque le trafic depuis les adresses IP réservées (mais non RFC 1918) ou pas "
+"encore assignées par l'IANA. Les adresse non encore assignées ne devraient "
+"jamais apparaître dans la table de routage d'Internet, et donc ne jamais "
+"apparaître comme adresse source d'un paquet reçu.%1$sNote: La fréquence des "
+"mises à jour peut-être modifiée dans Système->Pare-feu avancé/Paramètre NAT."
 
 #: src/usr/local/www/interfaces.php:3246
 msgid "New IPv4 Gateway"
@@ -17492,6 +17534,8 @@ msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
 msgstr ""
+"L'interface a une file de priorisation de trafic configurée.\n"
+"Merci de supprimer toutes les files pour continuer."
 
 #: src/usr/local/www/interfaces_assign.php:437
 msgid "Interface has been deleted."
@@ -17734,8 +17778,9 @@ msgid "Forward Delay needs to be an integer between 4 and 30."
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:159
+#, fuzzy
 msgid "Hello time for STP needs to be an integer between 1 and 2."
-msgstr ""
+msgstr "Le \"Hello time\" pour le STP doit être un entier compris entre 1 et 2."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:162
 msgid "Priority for STP needs to be an integer between 0 and 61440."
@@ -17755,11 +17800,13 @@ msgstr ""
 "entre 0 et 240."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:177
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "%s interface path cost for STP needs to be an integer between 1 and "
 "200000000."
 msgstr ""
+"Le coût du STP pour l'interface %s doit être un entier compris entre 1 et "
+"200000000."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:183
 msgid "At least one member interface must be selected for a bridge."
@@ -18005,6 +18052,10 @@ msgid ""
 "support for the IEEE 802.1D Spanning Tree Protocol (STP). STP is used to "
 "detect and remove loops in a network topology."
 msgstr ""
+"Activer le protocole Spanning Tree (STP) sur l'interface. Le pilote "
+"if_bridge(4) prend en charge le protocole IEEE 802.1D Spanning Tree Protocol."
+" STP permet de détecter et supprimer les boucles dans la topologie du réseau."
+""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:554
 msgid "Valid time"
@@ -18029,8 +18080,9 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:570
+#, fuzzy
 msgid "Hello time"
-msgstr ""
+msgstr "Hello time\n"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:574
 msgid ""
@@ -28459,6 +28511,10 @@ msgid "Gray"
 msgstr ""
 
 #: src/usr/local/www/system.php:611
+msgid "Dark gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:612
 msgid "Brown"
 msgstr ""
 
@@ -29631,16 +29687,14 @@ msgid "Installation Feedback"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:588
-msgid "Host UUID"
-msgstr "UUID hôte"
+msgid "Netgate Device ID"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
-"Enable this option to not send HOST UUID to pfSense as part of User-Agent "
-"header."
+"Enable this option to not send Netgate Device ID to pfSense as part of User-"
+"Agent header."
 msgstr ""
-"Activer cette option pour ne pas envoyer l'UUID de l'hôte à pfSense en tant "
-"que partie de l'entête User-Agent."
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -37375,8 +37429,8 @@ msgid "Use memory file system for /tmp and /var"
 msgstr "Utilise le système de fichiers en mémoire pour /tmp et /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
-msgid "Do NOT send HOST UUID with user agent"
-msgstr "Ne PAS envoyer HOST UUID avec l'agent utilisateur"
+msgid "Do NOT send Netgate Device ID with user agent"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:176
 msgid ""

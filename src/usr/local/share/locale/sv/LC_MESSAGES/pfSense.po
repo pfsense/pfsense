@@ -3,18 +3,19 @@
 # Christian Ståhlfors <christian@wheatgra.in>, 2017. #zanata
 # Christoffer Lans <christoffer.lantz@filmskaparna.se>, 2017. #zanata
 # Ivan Pedersen <ivan@alpe.se>, 2017. #zanata
+# Lars Bemersjö <bemersjo@gmail.com>, 2017. #zanata
 # Mårten Grönlund <martengooz@gmail.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-27 07:37-0300\n"
+"POT-Creation-Date: 2017-07-05 14:41-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-12 03:58-0400\n"
-"Last-Translator: Mårten Grönlund <martengooz@gmail.com>\n"
+"PO-Revision-Date: 2017-06-30 05:32-0400\n"
+"Last-Translator: Lars Bemersjö <bemersjo@gmail.com>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -26,7 +27,7 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Potentiell DNS Rebind-attack upptäckt, läs http://en.wikipedia.org/wiki/"
+"Potentiell DNS Rebind-attack upptäckt, se http://en.wikipedia.org/wiki/"
 "DNS_rebinding<br /> Försök att nå routern med IP-adress istället för med "
 "värddatornamnet."
 
@@ -238,7 +239,7 @@ msgstr "Denna enhet underhålls för närvarande av: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -284,7 +285,7 @@ msgstr "Lösenord:"
 msgid "Enter Voucher Code:"
 msgstr "Fyll i  voucher kod:"
 
-#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
+#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
 msgstr "Fortsätt"
 
@@ -1204,7 +1205,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS uppdaterat IP adress på %1$s (%2$s) till %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
+#: src/etc/inc/services.inc:2697 src/etc/inc/services.inc:2709
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: uppdaterar chachefil %1$s: %2$s"
@@ -1679,16 +1680,16 @@ msgstr "Filter är inaktiverat. Laddar inga regler."
 #: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
 #: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
 #: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
-#: src/etc/inc/pkg-utils.inc:600 src/etc/inc/pkg-utils.inc:748
-#: src/etc/inc/pkg-utils.inc:771 src/etc/inc/pkg-utils.inc:807
-#: src/etc/inc/pkg-utils.inc:812 src/etc/inc/pkg-utils.inc:817
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:852
-#: src/etc/inc/pkg-utils.inc:879 src/etc/inc/pkg-utils.inc:925
-#: src/etc/inc/pkg-utils.inc:951 src/etc/inc/pkg-utils.inc:994
-#: src/etc/inc/pkg-utils.inc:1013 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
-#: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1239
+#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
+#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
+#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
+#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
+#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
+#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
+#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
+#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2269
+#: src/etc/inc/services.inc:2495 src/etc/inc/system.inc:1239
 #: src/etc/inc/system.inc:1339 src/etc/inc/system.inc:1642
 #: src/etc/inc/system.inc:2214
 msgid "done."
@@ -1737,10 +1738,11 @@ msgid "Done"
 msgstr "Färdig"
 
 #: src/etc/inc/filter.inc:766
-#, fuzzy, php-format
+#, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
 msgstr ""
-"Alias med namn endast bestående av siffror är ogiltiga. Skippar alias %s"
+"Alias med namn endast bestående av siffror är ogiltiga.  Hoppar över alias "
+"%s"
 
 #: src/etc/inc/filter.inc:844
 #, fuzzy
@@ -2540,7 +2542,7 @@ msgstr "Konfigurerar %s"
 #: src/etc/inc/interfaces.inc:1242
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr ""
+msgstr "Anropande gränssnitt nere för gränssnitt %1$s, förstörd är %2$s"
 
 #: src/etc/inc/interfaces.inc:1256
 msgid "Wrong parameters used during interface_bring_down"
@@ -2792,9 +2794,8 @@ msgid "IKE Child SA"
 msgstr "IKE Child SA"
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
-#, fuzzy
 msgid "Job Processing"
-msgstr "Bearbetning"
+msgstr "Bearbetar jobb"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
@@ -2872,8 +2873,9 @@ msgid "Highest"
 msgstr "Högst"
 
 #: src/etc/inc/ipsec.inc:76
+#, fuzzy
 msgid "My IP address"
-msgstr "Mitt IP"
+msgstr "Min IP-adress"
 
 #: src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
@@ -3827,204 +3829,204 @@ msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
+#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr "FEL: Misslyckades hämta paketlista. Avbryter..."
 
-#: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
+#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr "FEL: Misslyckades hämta paketversion. Avbryter..."
 
-#: src/etc/inc/pkg-utils.inc:537
+#: src/etc/inc/pkg-utils.inc:532
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Kör sista stegen för installationen av %s"
 
-#: src/etc/inc/pkg-utils.inc:550
+#: src/etc/inc/pkg-utils.inc:545
 msgid "Resyncing configuration for all packages."
 msgstr "Omsynkar konfiguration för alla paket. "
 
-#: src/etc/inc/pkg-utils.inc:572
+#: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
 msgstr "Synkroniserar paket..."
 
-#: src/etc/inc/pkg-utils.inc:594
+#: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
 msgstr "Tar bort paket..."
 
-#: src/etc/inc/pkg-utils.inc:627
+#: src/etc/inc/pkg-utils.inc:622
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
 msgstr "Paketet %s saknar sin konfigurationsfil och måste ominstalleras."
 
-#: src/etc/inc/pkg-utils.inc:643
+#: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr "Ominstallerar paketet %1$s på grund av att filen (%2$s) saknas!"
 
-#: src/etc/inc/pkg-utils.inc:646
+#: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
 msgstr "Påbörjar paketinstallation."
 
-#: src/etc/inc/pkg-utils.inc:740
+#: src/etc/inc/pkg-utils.inc:735
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "Påbörjar paketinstallation av %s."
 
-#: src/etc/inc/pkg-utils.inc:744
+#: src/etc/inc/pkg-utils.inc:739
 msgid "Saving updated package information..."
 msgstr "Sparar uppdaterad paketinformation..."
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:742
 #, php-format
 msgid "Installed %s package."
 msgstr "Installerade paketet %s"
 
-#: src/etc/inc/pkg-utils.inc:751
+#: src/etc/inc/pkg-utils.inc:746
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "Skrev över tidigare installation av %s."
 
-#: src/etc/inc/pkg-utils.inc:752
+#: src/etc/inc/pkg-utils.inc:747
 msgid "overwrite!"
 msgstr "skriv över!"
 
-#: src/etc/inc/pkg-utils.inc:755
+#: src/etc/inc/pkg-utils.inc:750
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:759
+#: src/etc/inc/pkg-utils.inc:754
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Paketet %1$s är inte installerat.%2$s installation avbryten."
 
-#: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Misslyckade att installera paket: %s"
 
-#: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:867
 msgid "Failed to install package."
 msgstr "Misslyckade att installera paket."
 
-#: src/etc/inc/pkg-utils.inc:769
+#: src/etc/inc/pkg-utils.inc:764
 msgid "Loading package configuration... "
 msgstr "Läser paketkonfiguration..."
 
-#: src/etc/inc/pkg-utils.inc:772
+#: src/etc/inc/pkg-utils.inc:767
 msgid "Configuring package components..."
 msgstr "Konfigurerar paketkomponenter..."
 
-#: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
+#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
 msgid "Loading package instructions..."
 msgstr "Läser paketinstruktioner..."
 
-#: src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
 msgstr "Include %s saknas!"
 
-#: src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
 msgstr "Anpassade kommandon..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:800
 msgid "Executing custom_php_global_functions()..."
 msgstr "Kör custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_install_command()..."
 msgstr "Kör custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:815
+#: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Kör custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
+#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
 msgid "Menu items... "
 msgstr "Menypunkter..."
 
-#: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
+#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
 msgid "Services... "
 msgstr "Tjänster..."
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Loading package configuration... failed!"
 msgstr "Läser in paketkonfiguration... misslyckades!"
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Installation aborted."
 msgstr "Installation avbryten."
 
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "Kunde ej ladda paketkonfiguration. Installationen avbröts."
 
-#: src/etc/inc/pkg-utils.inc:876
+#: src/etc/inc/pkg-utils.inc:871
 msgid "Writing configuration... "
 msgstr "Skriver konfigurationen..."
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Lyckad installation av paket: %s"
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Paketet %1$s är inte installerat. %2$s Borttagning avbröts."
 
-#: src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s package... "
 msgstr "Tar bort paket: %s..."
 
-#: src/etc/inc/pkg-utils.inc:904
+#: src/etc/inc/pkg-utils.inc:899
 #, php-format
 msgid "Removing %s components..."
 msgstr "Tar bort komponenter: %s..."
 
-#: src/etc/inc/pkg-utils.inc:957
+#: src/etc/inc/pkg-utils.inc:952
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:973
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Include fil %s kunde inte hittas för inkludering."
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:986
 msgid "Deinstall commands... "
 msgstr "Avinstallerar kommandon..."
 
-#: src/etc/inc/pkg-utils.inc:996
+#: src/etc/inc/pkg-utils.inc:991
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr "Anpassade deinstall hooks exekveras ej på grund av saknad include."
 
-#: src/etc/inc/pkg-utils.inc:1003
+#: src/etc/inc/pkg-utils.inc:998
 msgid "Syslog entries... "
 msgstr "Syslog innehåll..."
 
-#: src/etc/inc/pkg-utils.inc:1011
+#: src/etc/inc/pkg-utils.inc:1006
 msgid "Configuration... "
 msgstr "Konfiguration"
 
-#: src/etc/inc/pkg-utils.inc:1014
+#: src/etc/inc/pkg-utils.inc:1009
 #, php-format
 msgid "Removed %s package."
 msgstr "Tog bort paketet %s."
 
-#: src/etc/inc/pkg-utils.inc:1039
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -4032,23 +4034,23 @@ msgstr ""
 "Väntar på Internetuppkoppling för att uppdatera paket-metadata och avsluta "
 "ominstallation av paket."
 
-#: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
+#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
 msgstr "Paketominstallation"
 
-#: src/etc/inc/pkg-utils.inc:1053
+#: src/etc/inc/pkg-utils.inc:1048
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr "Ominstallation av paket AVBRÖTS pga ingen internetuppkoppling. "
 
-#: src/etc/inc/pkg-utils.inc:1092
+#: src/etc/inc/pkg-utils.inc:1087
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr ""
 "Paket %s existerar inte i nuvarande version %s och har blivit borttaget."
 
-#: src/etc/inc/pkg-utils.inc:1113
+#: src/etc/inc/pkg-utils.inc:1108
 msgid "Stopping all packages."
 msgstr "Stoppar alla paket."
 
@@ -6217,114 +6219,114 @@ msgstr "Startar DHCP-tjänst..."
 msgid "Warning!  DHCP Failover setup and no CARP virtual IPs defined!"
 msgstr ""
 
-#: src/etc/inc/services.inc:774
+#: src/etc/inc/services.inc:775
 #, php-format
 msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
 "correct the settings in Services, DHCP Server"
 msgstr ""
 
-#: src/etc/inc/services.inc:1145
+#: src/etc/inc/services.inc:1146
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
 
-#: src/etc/inc/services.inc:1648
+#: src/etc/inc/services.inc:1649
 msgid "Could not write Igmpproxy configuration file!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1661
+#: src/etc/inc/services.inc:1662
 msgid "Started IGMP proxy service."
 msgstr "Startade IGMP-proxytjänsten"
 
-#: src/etc/inc/services.inc:1685
+#: src/etc/inc/services.inc:1686
 msgid "Starting DHCP relay service..."
 msgstr ""
 
-#: src/etc/inc/services.inc:1710
+#: src/etc/inc/services.inc:1711
 msgid "No destination IP has been configured!"
 msgstr "Inget destinations-IP har konfigurerats!"
 
-#: src/etc/inc/services.inc:1784
+#: src/etc/inc/services.inc:1785
 msgid "No suitable interface found for running dhcrelay!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1820
+#: src/etc/inc/services.inc:1821
 msgid "Starting DHCPv6 relay service..."
 msgstr ""
 
-#: src/etc/inc/services.inc:1911
+#: src/etc/inc/services.inc:1912
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1972
+#: src/etc/inc/services.inc:1973
 msgid "Starting DynDNS clients..."
 msgstr "Startar DynDNS-klienter..."
 
-#: src/etc/inc/services.inc:2078
+#: src/etc/inc/services.inc:2079
 msgid "Starting DNS forwarder..."
 msgstr ""
 
-#: src/etc/inc/services.inc:2244
+#: src/etc/inc/services.inc:2257
 msgid "Starting DNS Resolver..."
 msgstr ""
 
-#: src/etc/inc/services.inc:2289
+#: src/etc/inc/services.inc:2306
 msgid "Starting SNMP daemon... "
 msgstr "Startar SNMP-demonen..."
 
-#: src/etc/inc/services.inc:2300
+#: src/etc/inc/services.inc:2317
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2629
+#: src/etc/inc/services.inc:2646
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2648
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2683
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2695
+#: src/etc/inc/services.inc:2712
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2703
+#: src/etc/inc/services.inc:2720
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2708
+#: src/etc/inc/services.inc:2725
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2742
+#: src/etc/inc/services.inc:2759
 msgid "Created:"
 msgstr "Skapad:"
 
-#: src/etc/inc/services.inc:2768
+#: src/etc/inc/services.inc:2785
 msgid "If possible do not add items to this file manually."
 msgstr "Om möjligt, lägg inte till rader i denna fil manuellt."
 
-#: src/etc/inc/services.inc:2769
+#: src/etc/inc/services.inc:2786
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2819
+#: src/etc/inc/services.inc:2836
 msgid "Starting UPnP service... "
 msgstr "Startar UPnP-tjänster..."
 
@@ -7151,11 +7153,11 @@ msgstr ""
 msgid "Setting hard disk standby... "
 msgstr ""
 
-#: src/etc/inc/system.inc:2440
+#: src/etc/inc/system.inc:2458
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2462 src/etc/inc/system.inc:2481
 msgid "PC Engines ALIX"
 msgstr ""
 
@@ -7823,7 +7825,7 @@ msgstr "Bekräfta"
 msgid "Save"
 msgstr "Spara"
 
-#: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
@@ -7847,60 +7849,60 @@ msgstr "Spara"
 msgid "Diagnostics"
 msgstr "Diagnostik"
 
-#: src/usr/local/www/crash_reporter.php:56
+#: src/usr/local/www/crash_reporter.php:62
 msgid "Crash Reporter"
 msgstr "Krashrapporterare"
 
-#: src/usr/local/www/crash_reporter.php:68
+#: src/usr/local/www/crash_reporter.php:74
 msgid "Processing..."
 msgstr "Bearbetar..."
 
-#: src/usr/local/www/crash_reporter.php:80
+#: src/usr/local/www/crash_reporter.php:86
 msgid "Uploading..."
 msgstr "Laddar upp..."
 
-#: src/usr/local/www/crash_reporter.php:91
+#: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
 msgstr "Tog bort krashrapporteringsfiler från lokala disken."
 
-#: src/usr/local/www/crash_reporter.php:95
+#: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
 msgstr "Kunde inte hitta några krashrapporteringsfiler."
 
-#: src/usr/local/www/crash_reporter.php:124
+#: src/usr/local/www/crash_reporter.php:130
 msgid "Unfortunately a Programming Bug has been detected"
 msgstr ""
 
-#: src/usr/local/www/crash_reporter.php:128
+#: src/usr/local/www/crash_reporter.php:134
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
 msgstr ""
 
-#: src/usr/local/www/crash_reporter.php:129
+#: src/usr/local/www/crash_reporter.php:135
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
 msgstr ""
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
 msgstr "Ja"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 msgid "Submit this to the developers for inspection"
 msgstr ""
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
 msgstr "Nej"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 msgid "Just delete the crash report and return to the Dashboard"
 msgstr "Radera krashrapporten och återgå till Dashboard."
 
@@ -13001,7 +13003,7 @@ msgstr "Logg"
 
 #: src/usr/local/www/firewall_rules.php:852
 msgid "Advanced filter"
-msgstr ""
+msgstr "Avancerat filter"
 
 #: src/usr/local/www/firewall_rules.php:858
 msgid ""
@@ -13044,7 +13046,7 @@ msgstr "En eller flera regler har flyttats, men har ännu inte sparats"
 #: src/usr/local/www/firewall_rules_edit.php:1364
 #: src/usr/local/www/firewall_rules_edit.php:1420
 msgid "any"
-msgstr ""
+msgstr "någon"
 
 #: src/usr/local/www/firewall_rules_edit.php:56
 msgid ""
@@ -13100,9 +13102,9 @@ msgid "%s is only valid with protocol TCP."
 msgstr "%s är endast giltig med TCP-protokollet."
 
 #: src/usr/local/www/firewall_rules_edit.php:468
-#, php-format
+#, fuzzy, php-format
 msgid "%s is only valid if the gateway is set to 'default'."
-msgstr ""
+msgstr "%s är endast giltig om gateway är satt som 'default'."
 
 #: src/usr/local/www/firewall_rules_edit.php:545
 #: src/usr/local/www/firewall_rules_edit.php:550
@@ -13134,8 +13136,9 @@ msgid "OS detection is only valid with protocol TCP."
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:603
+#, fuzzy
 msgid "Invalid OS detection selection. Please select a valid OS."
-msgstr ""
+msgstr "Ogiltigt val av OS upptäckt. Var snäll och välj ett giltigt OS."
 
 #: src/usr/local/www/firewall_rules_edit.php:611
 msgid "ICMP types expected to be a list if present, but is not."
@@ -13324,8 +13327,9 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1015
+#, fuzzy
 msgid "Firewall: Rules - saved/edited a firewall rule."
-msgstr ""
+msgstr "Brandvägg: Regler - sparad/uppdaterad en brandväggsregel."
 
 #: src/usr/local/www/firewall_rules_edit.php:1036
 msgid "set"
@@ -13336,8 +13340,9 @@ msgid "out of"
 msgstr "av"
 
 #: src/usr/local/www/firewall_rules_edit.php:1064
+#, fuzzy
 msgid " Any flags."
-msgstr ""
+msgstr "Någon flagga."
 
 #: src/usr/local/www/firewall_rules_edit.php:1135
 msgid "Edit Firewall Rule"
@@ -13380,6 +13385,8 @@ msgstr ""
 msgid ""
 "Set this option to disable this rule without removing it from the list."
 msgstr ""
+"Sätt alternativet för att inaktivera regeln utan att ta bort den från listan."
+""
 
 #: src/usr/local/www/firewall_rules_edit.php:1204
 msgid "Quick"
@@ -13390,6 +13397,8 @@ msgid ""
 "Set this option to apply this action to traffic that matches this rule "
 "immediately."
 msgstr ""
+"Sätt alternativet för att aktivera åtgärden för trafik som matchar regeln "
+"omedelbart."
 
 #: src/usr/local/www/firewall_rules_edit.php:1217
 msgid "View the NAT rule"
@@ -13431,7 +13440,7 @@ msgstr "Välj vilket IP-protokoll denna regel borde matcha."
 
 #: src/usr/local/www/firewall_rules_edit.php:1318
 msgid "ICMP Subtypes"
-msgstr ""
+msgstr "ICMP subtyp"
 
 #: src/usr/local/www/firewall_rules_edit.php:1337
 msgid "*"
@@ -13541,10 +13550,12 @@ msgstr "Käll-OS"
 msgid ""
 "Note: this only works for TCP rules. General OS choice matches all subtypes."
 msgstr ""
+"Notera: detta fungerar endast för TCP regler. Generella OS val matchar alla "
+"subtyper."
 
 #: src/usr/local/www/firewall_rules_edit.php:1511
 msgid "Diffserv Code Point"
-msgstr ""
+msgstr "Diffserv kod punkt"
 
 #: src/usr/local/www/firewall_rules_edit.php:1518
 msgid "Allow IP options"
@@ -13573,39 +13584,39 @@ msgstr "Taggad"
 
 #: src/usr/local/www/firewall_rules_edit.php:1544
 msgid "A packet can be matched on a mark placed before on another rule."
-msgstr ""
+msgstr "Ett paket kan matchas som måltavla innan en annan regel."
 
 #: src/usr/local/www/firewall_rules_edit.php:1548
 msgid "Max. states"
-msgstr ""
+msgstr "Max tillstånd"
 
 #: src/usr/local/www/firewall_rules_edit.php:1551
 msgid "Maximum state entries this rule can create."
-msgstr ""
+msgstr "Maximalt antal tillstånd denna regel kan skapa."
 
 #: src/usr/local/www/firewall_rules_edit.php:1555
 msgid "Max. src nodes"
-msgstr ""
+msgstr "Max källkods noder"
 
 #: src/usr/local/www/firewall_rules_edit.php:1558
 msgid "Maximum number of unique source hosts."
-msgstr ""
+msgstr "Maximalt antal unika käll värdar."
 
 #: src/usr/local/www/firewall_rules_edit.php:1562
 msgid "Max. connections"
-msgstr ""
+msgstr "Max förbindelser"
 
 #: src/usr/local/www/firewall_rules_edit.php:1565
 msgid "Maximum number of established connections per host (TCP only)."
-msgstr ""
+msgstr "Maximalt antal etablerade förbindelser per värd (endast TCP)."
 
 #: src/usr/local/www/firewall_rules_edit.php:1569
 msgid "Max. src. states"
-msgstr ""
+msgstr "Max källkod tillstånd"
 
 #: src/usr/local/www/firewall_rules_edit.php:1572
 msgid "Maximum state entries per host."
-msgstr ""
+msgstr "Maximalt antal tillstånd per värd."
 
 #: src/usr/local/www/firewall_rules_edit.php:1576
 msgid "Max. src. conn. Rate"
@@ -13625,11 +13636,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1591
 msgid "State timeout"
-msgstr ""
+msgstr "Tillstånd timeout"
 
 #: src/usr/local/www/firewall_rules_edit.php:1595
 msgid "State Timeout in seconds (TCP only)"
-msgstr ""
+msgstr "Tillstånd Timeout i sekunder (endast TCP)"
 
 #: src/usr/local/www/firewall_rules_edit.php:1598
 #: src/usr/local/www/status_logs_filter.php:331
@@ -13692,7 +13703,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1657
 msgid "Leave as 'none' to leave the rule enabled all the time."
-msgstr ""
+msgstr "Lämna som 'ingen' för att alltid tillåta regeln."
 
 #: src/usr/local/www/firewall_rules_edit.php:1688
 msgid ""
@@ -13702,7 +13713,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1691
 msgid "In / Out pipe"
-msgstr ""
+msgstr "In / Ut pipe"
 
 #: src/usr/local/www/firewall_rules_edit.php:1695
 msgid "DNpipe"
@@ -13725,11 +13736,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1716
 msgid "Ackqueue / Queue"
-msgstr ""
+msgstr "Ackkö / Kö"
 
 #: src/usr/local/www/firewall_rules_edit.php:1733
 msgid "Ackqueue"
-msgstr ""
+msgstr "Ackkö"
 
 #: src/usr/local/www/firewall_rules_edit.php:1745
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
@@ -13746,7 +13757,7 @@ msgstr "Scheman"
 #: src/usr/local/www/firewall_schedule.php:69
 #, php-format
 msgid "Cannot delete schedule. Currently in use by %s."
-msgstr ""
+msgstr "Kan inte ta bort schema. Används av %s."
 
 #: src/usr/local/www/firewall_schedule.php:72
 msgid "Firewall schedule deleted."
@@ -13770,7 +13781,7 @@ msgstr "Ta bort schema"
 
 #: src/usr/local/www/firewall_schedule.php:240
 msgid " Indicates that the schedule is currently active."
-msgstr ""
+msgstr "Indikerar att schemat för närvarande är aktivt."
 
 #: src/usr/local/www/firewall_schedule.php:250
 msgid ""
@@ -13809,7 +13820,7 @@ msgstr "Ogiltig stoptid - '%s'"
 
 #: src/usr/local/www/firewall_schedule_edit.php:170
 msgid "The schedule must have at least one time range configured."
-msgstr ""
+msgstr "Schemat måste ha minst en tidsperiod konfigurerad."
 
 #: src/usr/local/www/firewall_schedule_edit.php:189
 msgid "Firewall schedule configured."
@@ -13845,7 +13856,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:360
 msgid "This schedule is in use so the name may not be modified!"
-msgstr ""
+msgstr "Schemat används, därför kan inte namnet modifieras!"
 
 #: src/usr/local/www/firewall_schedule_edit.php:374
 #: src/usr/local/www/firewall_schedule_edit.php:427
@@ -13890,7 +13901,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:424
 msgid "Time range description"
-msgstr ""
+msgstr "Tidsperiod förklaring"
 
 #: src/usr/local/www/firewall_schedule_edit.php:433
 msgid "Add Time"
@@ -13922,7 +13933,7 @@ msgstr "Stopptid"
 #: src/usr/local/www/firewall_shaper_vinterface.php:370
 #: src/usr/local/www/firewall_shaper_wizards.php:73
 msgid "By Interface"
-msgstr ""
+msgstr "Gränssnitt"
 
 #: src/usr/local/www/firewall_shaper.php:129
 #: src/usr/local/www/firewall_shaper_vinterface.php:142
@@ -13962,7 +13973,7 @@ msgstr "Trafikformarens konfiguration har ändrats."
 #: src/usr/local/www/firewall_shaper_vinterface.php:371
 #: src/usr/local/www/firewall_shaper_wizards.php:74
 msgid "By Queue"
-msgstr ""
+msgstr "För Kö"
 
 #: src/usr/local/www/firewall_shaper.php:373
 #: src/usr/local/www/firewall_shaper_queues.php:206
@@ -13977,7 +13988,7 @@ msgstr "Guider"
 
 #: src/usr/local/www/firewall_shaper.php:392
 msgid "Remove Shaper"
-msgstr ""
+msgstr "Tag bort Shaper"
 
 #: src/usr/local/www/firewall_shaper.php:413
 #: src/usr/local/www/firewall_shaper_vinterface.php:402
@@ -14178,7 +14189,7 @@ msgstr ""
 #: src/usr/local/www/firewall_virtual_ip_edit.php:175
 #: src/usr/local/www/firewall_virtual_ip_edit.php:195
 msgid "For this type of vip localhost is not allowed."
-msgstr ""
+msgstr "För den här typen av vip är inte localhost tillåtet."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:177
 #: src/usr/local/www/firewall_virtual_ip_edit.php:197
@@ -14188,7 +14199,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:186
 msgid "An IPv4 Virtual IP cannot have an IPv6 CARP parent."
-msgstr ""
+msgstr "En IPv4 Virtuell IP kan inte ha en IPv6 CARP förälder."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:189
 msgid "An IPv6 Virtual IP cannot have an IPv4 CARP parent."
@@ -26733,6 +26744,10 @@ msgid "Gray"
 msgstr ""
 
 #: src/usr/local/www/system.php:611
+msgid "Dark gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:612
 msgid "Brown"
 msgstr ""
 
@@ -27846,13 +27861,13 @@ msgid "Installation Feedback"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:588
-msgid "Host UUID"
+msgid "Netgate Device ID"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
-"Enable this option to not send HOST UUID to pfSense as part of User-Agent "
-"header."
+"Enable this option to not send Netgate Device ID to pfSense as part of User-"
+"Agent header."
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:597
@@ -33510,9 +33525,8 @@ msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec kan konfigureras <a href=\"vpn_ipsec.php\">här</a>."
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:71
-#, fuzzy
 msgid "Saved Filter Log Entries via Dashboard."
-msgstr "Sparade Filtrera Loggposter via Dashboard."
+msgstr "Sparade Filterloggposter via Dashboard."
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:112
 msgid "Act"
@@ -35359,7 +35373,7 @@ msgid "Use memory file system for /tmp and /var"
 msgstr "Använd minnesfilsystem för /tmp och /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
-msgid "Do NOT send HOST UUID with user agent"
+msgid "Do NOT send Netgate Device ID with user agent"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:176
@@ -35754,7 +35768,7 @@ msgstr "Använd en TLS-nyckel"
 #: src/usr/local/www/vpn_openvpn_client.php:644
 #: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
-msgstr "Automatiskt generera en TLS-nyckel"
+msgstr "Automatiskt generera en TLS-nyckel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:700
 #: src/usr/local/www/vpn_openvpn_server.php:879

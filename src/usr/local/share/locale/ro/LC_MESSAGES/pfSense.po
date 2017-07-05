@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-27 07:37-0300\n"
+"POT-Creation-Date: 2017-07-05 14:41-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-26 04:47-0400\n"
+"PO-Revision-Date: 2017-07-04 04:07-0400\n"
 "Last-Translator: MM <meri_yms@yahoo.com>\n"
 "Language-Team: Romanian\n"
 "Language: ro\n"
@@ -290,7 +290,7 @@ msgstr "Parola:"
 msgid "Enter Voucher Code:"
 msgstr "Introduceți codul voucher:"
 
-#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
+#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
 msgstr "Continuă"
 
@@ -1221,7 +1221,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS a actualizat adresa IP în %1$s (%2$s) to %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
+#: src/etc/inc/services.inc:2697 src/etc/inc/services.inc:2709
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: actualizare fișiere cache %1$s: %2$s"
@@ -1692,16 +1692,16 @@ msgstr "Filtrare dezactivata. Regulile nu se încarcă."
 #: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
 #: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
 #: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
-#: src/etc/inc/pkg-utils.inc:600 src/etc/inc/pkg-utils.inc:748
-#: src/etc/inc/pkg-utils.inc:771 src/etc/inc/pkg-utils.inc:807
-#: src/etc/inc/pkg-utils.inc:812 src/etc/inc/pkg-utils.inc:817
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:852
-#: src/etc/inc/pkg-utils.inc:879 src/etc/inc/pkg-utils.inc:925
-#: src/etc/inc/pkg-utils.inc:951 src/etc/inc/pkg-utils.inc:994
-#: src/etc/inc/pkg-utils.inc:1013 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
-#: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1239
+#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
+#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
+#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
+#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
+#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
+#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
+#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
+#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2269
+#: src/etc/inc/services.inc:2495 src/etc/inc/system.inc:1239
 #: src/etc/inc/system.inc:1339 src/etc/inc/system.inc:1642
 #: src/etc/inc/system.inc:2214
 msgid "done."
@@ -3868,34 +3868,34 @@ msgid ""
 msgstr ""
 "EROARE!!! O eroare s-a produs la executia pkg (rc = %d) cu parametrii '%s':"
 
-#: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
+#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr ""
 "EROARE:  Eroare la incercarea de a lua lista de pachetele. Abandonare..."
 
-#: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
+#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr ""
 "EROARE: Eroare la incercarea de a lista versiunea pachetului. Abandonare..."
 
-#: src/etc/inc/pkg-utils.inc:537
+#: src/etc/inc/pkg-utils.inc:532
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Rulez ultimul pas din '%s' instalare."
 
-#: src/etc/inc/pkg-utils.inc:550
+#: src/etc/inc/pkg-utils.inc:545
 msgid "Resyncing configuration for all packages."
 msgstr "Resincronizarea configuratiei tuturor pachetelor."
 
-#: src/etc/inc/pkg-utils.inc:572
+#: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
 msgstr "Resincronizarea pachetelor..."
 
-#: src/etc/inc/pkg-utils.inc:594
+#: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
 msgstr "Eliminare pachet..."
 
-#: src/etc/inc/pkg-utils.inc:627
+#: src/etc/inc/pkg-utils.inc:622
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
@@ -3903,174 +3903,174 @@ msgstr ""
 "Pachetul %s lipseste iar fisierele lui de configurare trebuiesc  reinstalate."
 ""
 
-#: src/etc/inc/pkg-utils.inc:643
+#: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:646
+#: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:740
+#: src/etc/inc/pkg-utils.inc:735
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:744
+#: src/etc/inc/pkg-utils.inc:739
 msgid "Saving updated package information..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:742
 #, php-format
 msgid "Installed %s package."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:751
+#: src/etc/inc/pkg-utils.inc:746
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:752
+#: src/etc/inc/pkg-utils.inc:747
 msgid "overwrite!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:755
+#: src/etc/inc/pkg-utils.inc:750
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:759
+#: src/etc/inc/pkg-utils.inc:754
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 #, php-format
 msgid "Failed to install package: %s."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:867
 msgid "Failed to install package."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:769
+#: src/etc/inc/pkg-utils.inc:764
 msgid "Loading package configuration... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:772
+#: src/etc/inc/pkg-utils.inc:767
 msgid "Configuring package components..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
+#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
 msgid "Loading package instructions..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:800
 msgid "Executing custom_php_global_functions()..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_install_command()..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:815
+#: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_resync_config_command()..."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
+#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
 msgid "Menu items... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
+#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
 msgid "Services... "
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Loading package configuration... failed!"
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 
-#: src/etc/inc/pkg-utils.inc:876
+#: src/etc/inc/pkg-utils.inc:871
 msgid "Writing configuration... "
 msgstr "Se scrie configuratia..."
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Pachetul: %s s-a instalat cu success"
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Pachetul %1$s nu este instalat.%2$s Stergere anulata"
 
-#: src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s package... "
 msgstr "Eliminare pachet %s..."
 
-#: src/etc/inc/pkg-utils.inc:904
+#: src/etc/inc/pkg-utils.inc:899
 #, php-format
 msgid "Removing %s components..."
 msgstr "Eliminare componente %s..."
 
-#: src/etc/inc/pkg-utils.inc:957
+#: src/etc/inc/pkg-utils.inc:952
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr "Scriere configuratie intermediara in timpul eliminarii pachetului %s."
 
-#: src/etc/inc/pkg-utils.inc:973
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Fisierele pentru inclus %s nu au fost gasite "
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:986
 msgid "Deinstall commands... "
 msgstr "Comenzi de dezinstalare..."
 
-#: src/etc/inc/pkg-utils.inc:996
+#: src/etc/inc/pkg-utils.inc:991
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 "Nu se pot executa dezistalarea personalizata pentru ca un include lipseste."
 
-#: src/etc/inc/pkg-utils.inc:1003
+#: src/etc/inc/pkg-utils.inc:998
 msgid "Syslog entries... "
 msgstr "Intrari Syslog...."
 
-#: src/etc/inc/pkg-utils.inc:1011
+#: src/etc/inc/pkg-utils.inc:1006
 msgid "Configuration... "
 msgstr "Configuratie..."
 
-#: src/etc/inc/pkg-utils.inc:1014
+#: src/etc/inc/pkg-utils.inc:1009
 #, php-format
 msgid "Removed %s package."
 msgstr "Pachet %s eliminat"
 
-#: src/etc/inc/pkg-utils.inc:1039
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -4078,24 +4078,24 @@ msgstr ""
 "Se asteapta dupa conexiunea la Internet pentru a se updata pkg pachetului si "
 "pentru a se termina reinstalarea pachetului"
 
-#: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
+#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
 msgstr "Reinstalare pachet"
 
-#: src/etc/inc/pkg-utils.inc:1053
+#: src/etc/inc/pkg-utils.inc:1048
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Procesul de reinstalare pachet a fost anulata din cauza lipsei conexiunii la "
 "internet"
 
-#: src/etc/inc/pkg-utils.inc:1092
+#: src/etc/inc/pkg-utils.inc:1087
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "Pachetul %s nu exista in versiunea curenta %s si a fost sters"
 
-#: src/etc/inc/pkg-utils.inc:1113
+#: src/etc/inc/pkg-utils.inc:1108
 msgid "Stopping all packages."
 msgstr "Se opresc toate pachetele."
 
@@ -6311,7 +6311,7 @@ msgstr ""
 "Avertisment! DHCP Failover este setat fară definirea IP-urilor virtuale "
 "CARP!"
 
-#: src/etc/inc/services.inc:774
+#: src/etc/inc/services.inc:775
 #, php-format
 msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
@@ -6320,63 +6320,63 @@ msgstr ""
 "Pool DHCP invalid %1$s - %2$s detectat pentru  %3$s subrețeaua %4$s/%5$s. Vă "
 "rugăm corectați setările in Servicii, server DHCP"
 
-#: src/etc/inc/services.inc:1145
+#: src/etc/inc/services.inc:1146
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
 "Eroare: nu se poate deschide dhcpd.conf în services_dhcpdv4_configure().%s"
 
-#: src/etc/inc/services.inc:1648
+#: src/etc/inc/services.inc:1649
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Nu se poate scrie fișierul de configurare lgmpproxy!"
 
-#: src/etc/inc/services.inc:1661
+#: src/etc/inc/services.inc:1662
 msgid "Started IGMP proxy service."
 msgstr "S-a pornit serviciul IGMP proxy."
 
-#: src/etc/inc/services.inc:1685
+#: src/etc/inc/services.inc:1686
 msgid "Starting DHCP relay service..."
 msgstr "Se pornește serviciul de releu retransmisie DHCP..."
 
-#: src/etc/inc/services.inc:1710
+#: src/etc/inc/services.inc:1711
 msgid "No destination IP has been configured!"
 msgstr "Nu s-a configurat nici o adresă IP de destinație!"
 
-#: src/etc/inc/services.inc:1784
+#: src/etc/inc/services.inc:1785
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Nu s-a găsit nici o interfață potrivită pentru rularea dhcrelay!"
 
-#: src/etc/inc/services.inc:1820
+#: src/etc/inc/services.inc:1821
 msgid "Starting DHCPv6 relay service..."
 msgstr "Se pornește serviciul de releu retransmise DHCPv6..."
 
-#: src/etc/inc/services.inc:1911
+#: src/etc/inc/services.inc:1912
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "Nu s-a găsit nici o interfață potrivită pentru rularea dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1972
+#: src/etc/inc/services.inc:1973
 msgid "Starting DynDNS clients..."
 msgstr "Se pornește serviciul de clienți DynDNS..."
 
-#: src/etc/inc/services.inc:2078
+#: src/etc/inc/services.inc:2079
 msgid "Starting DNS forwarder..."
 msgstr "Se pornește serviciul de redirecționare DNS..."
 
-#: src/etc/inc/services.inc:2244
+#: src/etc/inc/services.inc:2257
 msgid "Starting DNS Resolver..."
 msgstr "Se pornește DNS Resolver..."
 
-#: src/etc/inc/services.inc:2289
+#: src/etc/inc/services.inc:2306
 msgid "Starting SNMP daemon... "
 msgstr "Se pornește daemon-ul SNMP..."
 
-#: src/etc/inc/services.inc:2300
+#: src/etc/inc/services.inc:2317
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 "Eroare: nu se poate deschide snmpd.conf în services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2629
+#: src/etc/inc/services.inc:2646
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6384,7 +6384,7 @@ msgstr ""
 "phpDynDNS: Nu se face actualizarea %s A record pentru că adresa IP nu s-a "
 "schimbat."
 
-#: src/etc/inc/services.inc:2648
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6393,49 +6393,49 @@ msgstr ""
 "phpDynDNS: Nu se face actualizarea %s AAAA record pentru că adresa de IPv6 "
 "nu s-a schimbat."
 
-#: src/etc/inc/services.inc:2683
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS a actualizat adresa de IP (A) pentru %1$s pe %2$s (%3$s) până la %4$s"
 
-#: src/etc/inc/services.inc:2695
+#: src/etc/inc/services.inc:2712
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS a actualizat adresa de IPv6 (AAAA) pentru %1$s pe %2$s (%3$s) până la "
 "%4$s"
 
-#: src/etc/inc/services.inc:2703
+#: src/etc/inc/services.inc:2720
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: EROARE în timpul actualizării adresei de IP (A) pentru %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2708
+#: src/etc/inc/services.inc:2725
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: EROARE în timpul actualizării adresei de IPv6 (AAAA) pentru %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2742
+#: src/etc/inc/services.inc:2759
 msgid "Created:"
 msgstr "S-a creat:"
 
-#: src/etc/inc/services.inc:2768
+#: src/etc/inc/services.inc:2785
 msgid "If possible do not add items to this file manually."
 msgstr "Dacă este posibil nu adăugați manual intrări în acest fișier."
 
-#: src/etc/inc/services.inc:2769
+#: src/etc/inc/services.inc:2786
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Dacă ați făcut acest lucru, fișierul trebuie să fie terminat cu o linie "
 "blank (ex. o linie nouă)"
 
-#: src/etc/inc/services.inc:2819
+#: src/etc/inc/services.inc:2836
 msgid "Starting UPnP service... "
 msgstr "Se pornește serviciul UPnP..."
 
@@ -7334,11 +7334,11 @@ msgstr "Eroare: nu se poate deschide dmesg.boot în system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Se setează standby pentru hard disk."
 
-#: src/etc/inc/system.inc:2440
+#: src/etc/inc/system.inc:2458
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2462 src/etc/inc/system.inc:2481
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -7557,57 +7557,62 @@ msgid ""
 "connection and limit the amount of data queued to the network to just the "
 "amount required to maintain optimum throughput. "
 msgstr ""
+"Sistemul va încerca sa calculeze produsul dintre lărgimea de bandă și "
+"întârziere pentru fiecare conexiune și să limiteze cantitatea de date "
+"plasată în coada de așteptare la limita necesară pentru a menține transferul "
+"optim."
 
 #: src/etc/inc/upgrade_config.inc:708
 msgid "Set ICMP Limits"
-msgstr ""
+msgstr "Setează limitele ICMP"
 
 #: src/etc/inc/upgrade_config.inc:712
 msgid "TCP Offload engine"
-msgstr ""
+msgstr "Mecanism pentru TCP Offload"
 
 #: src/etc/inc/upgrade_config.inc:755
 #, php-format
 msgid "Interface %s Static Gateway"
-msgstr ""
+msgstr "Interfața %s gateway static"
 
 #: src/etc/inc/upgrade_config.inc:758
 #, php-format
 msgid "Interface %s Dynamic Gateway"
-msgstr ""
+msgstr "Interfața %s gateway dinamic"
 
 #: src/etc/inc/upgrade_config.inc:825
 #, php-format
 msgid "Upgraded static route for %s"
-msgstr ""
+msgstr "S-a actualizat ruta statică pentru %s"
 
 #: src/etc/inc/upgrade_config.inc:923
-#, php-format
+#, fuzzy, php-format
 msgid "Sitedown pool for VS: %s"
-msgstr ""
+msgstr "Resursele sitedown pentru VS: %s"
 
 #: src/etc/inc/upgrade_config.inc:1086
 #, php-format
 msgid "phase2 for %s"
-msgstr ""
+msgstr "Faza 2 pentru %s"
 
 #: src/etc/inc/upgrade_config.inc:1323
 #, php-format
 msgid "Upgraded Dyndns %s"
-msgstr ""
+msgstr "S-a actualizat Dyndns %s"
 
 #: src/etc/inc/upgrade_config.inc:1377
 msgid "All Users"
-msgstr ""
+msgstr "Toți utilizatorii"
 
 #: src/etc/inc/upgrade_config.inc:1520
 #, php-format
 msgid "Converted bridged %s"
-msgstr ""
+msgstr "S-a convertit bridge-ul %s"
 
 #: src/etc/inc/upgrade_config.inc:1911
 msgid "Auto added OpenVPN rule from config upgrade."
 msgstr ""
+"S-a adăugat automat o regulă OpenVPN în urma actualizării configurației."
 
 #: src/etc/inc/upgrade_config.inc:3972
 #, php-format
@@ -7615,49 +7620,58 @@ msgid ""
 "WEP is no longer supported. It will be disabled on the %s interface and the "
 "interface will be disabled. Please reconfigure the interface."
 msgstr ""
+"WEP nu mai este suportat.  Va fi dezactivat pentru interfața %s iar "
+"interfața va fi dezactivată. Va rugăm reconfigurați interfața."
 
 #: src/etc/inc/upgrade_config.inc:4229
 #, php-format
 msgid "DES is no longer supported, IPsec phase 1 item '%s' is being disabled."
 msgstr ""
+"DES nu mai este suportat, elementul IPsec faza 1 '%s' va fi dezactivat."
 
 #: src/etc/inc/upgrade_config.inc:4246
 #, php-format
 msgid "DES is no longer supported, IPsec phase 2 item '%s' is being disabled."
 msgstr ""
+"DES nu mai este suportat, elementul IPsec faza 2 '%s' va fi dezactivat."
 
 #: src/etc/inc/upgrade_config.inc:4302
 msgid ""
 "Layer 7 shaping is no longer supported. Its configuration has been removed."
 msgstr ""
+"Formatarea de Layer 7 nu mai este suportată. Configurarea aferentă a fost "
+"îndeprtată."
 
 #: src/etc/inc/upgrade_config.inc:5090
 #, php-format
 msgid "RRD restore failed exited with %1$s, the error is: %2$s"
-msgstr ""
+msgstr "Recuperarea RRD a eșuat returnând %1$s, eroarea este: %2$s"
 
 #: src/etc/inc/upgrade_config.inc:5099
 #, php-format
 msgid "Could not extract %s RRD xml file from archive!"
-msgstr ""
+msgstr "Nu s-a putut extrage fisierul RRD xml %s din arhivă!"
 
 #: src/etc/inc/upgrade_config.inc:5104
 #, php-format
 msgid "rrdtool restore -f '%1$s' '%2$s' failed returning %3$s."
-msgstr ""
+msgstr "rrdtool restore -f '%1$s' '%2$s' a eșuat și a returnat %3$s."
 
 #: src/etc/inc/util.inc:98
 #, php-format
 msgid "WARNING: Could not mark subsystem: %s dirty"
-msgstr ""
+msgstr "ATENȚIONARE: Nu s-a putut marca sub-sistemul: %s murdar"
 
 #: src/etc/inc/util.inc:112
 msgid "WARNING: A name must be given as parameter to lock() function."
 msgstr ""
+"ATENȚIONARE: Funcția lock() trebuie să primească un nume ca și parametru."
 
 #: src/etc/inc/util.inc:130
 msgid "WARNING: A name must be given as parameter to try_lock() function."
 msgstr ""
+"ATENȚIONARE: Funcția try_lock() trebuie să primească un nume ca și parametru."
+""
 
 #: src/etc/inc/util.inc:1035
 #, php-format
@@ -7666,11 +7680,15 @@ msgid ""
 "numbers, may not consist of only underscores, and may only contain the "
 "following characters: %2$s"
 msgstr ""
+"Numele %1$s trebuie sa fie mai scurt de 32 de caractere, nu poate fi format "
+"exclusiv din numere, nu poate fi format exclusiv din underscore și poate "
+"conține doar următoarele caractere: %2$s"
 
 #: src/etc/inc/util.inc:1042
 #, php-format
 msgid "The %1$s name must not be either of the reserved words %2$s or %3$s."
 msgstr ""
+"Numele %1$s nu poate să fie unul dintre cuvintele rezervate %2$s sau %3$s."
 
 #: src/etc/inc/util.inc:1049
 #, php-format
@@ -7678,6 +7696,8 @@ msgid ""
 "The %1$s name must not be a well-known IP protocol name such as TCP, UDP, "
 "ICMP etc."
 msgstr ""
+"Numele %1$s nu poate să fie cel al unui protocol foarte cunoscut cum ar fi "
+"TCP, UDP, ICMP etc."
 
 #: src/etc/inc/util.inc:1056
 #, php-format
@@ -7685,130 +7705,138 @@ msgid ""
 "The %1$s name must not be a well-known TCP or UDP port name such as ssh, "
 "smtp, pop3, tftp, http, openvpn etc."
 msgstr ""
+"Numele %1$s nu poate fi cel al unui port foarte cunsocul TCP sau UDP cum ar "
+"fi ssh,smtp, pop3, tftp, http, openvpn etc."
 
 #: src/etc/inc/util.inc:1689
 #, php-format
 msgid "The command '%1$s' returned exit code '%2$d', the output was '%3$s' "
-msgstr ""
+msgstr "Comanda '%1$s' a returnat codul '%2$d', rezultatul a fost '%3$s'"
 
 #: src/etc/inc/util.inc:2576
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
-msgstr ""
+msgstr "%s trebuie să fie o adresă de IPv4 validă sau un alias valid."
 
 #: src/etc/inc/util.inc:2580
 #, php-format
 msgid "%s must be a valid IPv4 address."
-msgstr ""
+msgstr "%s trebuie să fie o adresă de IPv4 validă."
 
 #: src/etc/inc/util.inc:2592
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
-msgstr ""
+msgstr "%s trebuie să fie o adresă de IPv6 validă sau un alias valid."
 
 #: src/etc/inc/util.inc:2596
 #, php-format
 msgid "%s must be a valid IPv6 address."
-msgstr ""
+msgstr "%s trebuie să fie o adresă de IPv6 validă."
 
 #: src/etc/inc/util.inc:2610
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
 msgstr ""
+"%s trebuie să fie o adresă de IPv4 sau IPv6 validă sau un alias valid."
 
 #: src/etc/inc/util.inc:2614
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
-msgstr ""
+msgstr "%s trebuie să fie o adresă de IPv4 sau IPv6 validă."
 
 #: src/etc/inc/util.inc:2669
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
 msgstr ""
+"Eroare: S-a încercat scrierea fișierului DUID - S-a identificat un DUID "
+"invalid"
 
 #: src/etc/inc/util.inc:2679
 msgid "Error: attempting to write DUID file - File write error"
 msgstr ""
+"Eroare: S-a încercat scrierea fișierului DUID - Eroare de scriere în fișier"
 
 #: src/etc/inc/voucher.inc:105
 #, php-format
 msgid "Captive Portal Voucher database synchronized with %1$s:%2$s"
 msgstr ""
+"Baza de date cu voucherele pentru portalul captiv s-a sincronizat cu %1$s:"
+"%2$s"
 
 #: src/etc/inc/voucher.inc:192 src/etc/inc/voucher.inc:334
 #, php-format
 msgid "%1$s (%2$s/%3$s): not found on any registered Roll"
-msgstr ""
+msgstr "%1$s(%2$s/%3$s): nu s-a găsit în nici un set de înregistrări"
 
 #: src/etc/inc/voucher.inc:196
 #, php-format
 msgid "%1$s invalid: %2$s!!"
-msgstr ""
+msgstr "%1$s invalid: %2$s!!"
 
 #: src/etc/inc/voucher.inc:283
 #, php-format
 msgid "%s invalid: Too short!"
-msgstr ""
+msgstr "%s invalid: Prea scurt!"
 
 #: src/etc/inc/voucher.inc:309
 #, php-format
 msgid "%1$s (%2$s/%3$s) active and good for %4$d Minutes"
-msgstr ""
+msgstr "%1$s(%2$s/%3$s) a fost activ și valid pentru %4$d minute"
 
 #: src/etc/inc/voucher.inc:321
 #, php-format
 msgid "%1$s (%2$s/%3$s) already used and expired"
-msgstr ""
+msgstr "%1$s(%2$s/%3$s) a fost deja folosit și a expirat"
 
 #: src/etc/inc/voucher.inc:329
 #, php-format
 msgid "%1$s (%2$s/%3$s) good for %4$s Minutes"
-msgstr ""
+msgstr "%1$s(%2$s/%3$s) valid pentru %4$s minute"
 
 #: src/etc/inc/voucher.inc:340
 #, php-format
 msgid "%1$s invalid: %2$s !!"
-msgstr ""
+msgstr "%1$s invalid %2$s !!"
 
 #: src/etc/inc/voucher.inc:350
 msgid "Access denied!"
-msgstr ""
+msgstr "Acces refuzat!"
 
 #: src/etc/inc/voucher.inc:352
 #, php-format
 msgid "Access granted for %d Minutes in total."
-msgstr ""
+msgstr "Acces permis pentru un total de %d minute."
 
 #: src/etc/inc/voucher.inc:421
 msgid "Enabling voucher support... "
-msgstr ""
+msgstr "Se activează suportul pentru vouchere..."
 
 #: src/etc/inc/voucher.inc:464
 #, php-format
 msgid "Error: cannot write voucher.cfg"
-msgstr ""
+msgstr "Eroare: nu se poate scrie voucher.cfg"
 
 #: src/etc/inc/voucher.inc:519
 #, php-format
 msgid "cant write %1$s/voucher_%2$s_used_%3$s.db"
-msgstr ""
+msgstr "nu se poate scrie %1$s/voucher_%2$s_used_%3$s.db"
 
 #: src/etc/inc/voucher.inc:605
 #, php-format
 msgid "cant read %1$s/voucher_%2$s_used_%3$s.db"
-msgstr ""
+msgstr "nu se paote citi %1$s/voucher_%2$s_used_%3$s.db"
 
 #: src/etc/inc/voucher.inc:622
 #, php-format
 msgid "Voucher: %s"
-msgstr ""
+msgstr "Voucher: %s"
 
 #: src/etc/inc/voucher.inc:677
 msgid "Syncing vouchers"
-msgstr ""
+msgstr "Se sincronizează voucherele"
 
 #: src/etc/inc/vpn.inc:233
 msgid "Configuring IPsec VPN... "
-msgstr ""
+msgstr "Se configurează IPsec VPN..."
 
 #: src/etc/inc/vpn.inc:274
 #, php-format
@@ -7816,126 +7844,133 @@ msgid ""
 "IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from "
 "configuration file."
 msgstr ""
+"EROARE IPsec: Nu s-a putu găsi o sursă de fază 1 pentru conexiunea %s. Se "
+"omite din fișierul de configurare."
 
 #: src/etc/inc/vpn.inc:303
 #, php-format
 msgid "The remote gateway %s already exists on another phase 1 entry"
-msgstr ""
+msgstr "Gateway-ul remote %s există deja într-o altă intrare de fază 1"
 
 #: src/etc/inc/vpn.inc:620
 #, php-format
 msgid "Warning: Missing CRL data for %s"
-msgstr ""
+msgstr "Atenționare: Lipsesc datele CRL pentru %s"
 
 #: src/etc/inc/vpn.inc:625
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
-msgstr ""
+msgstr "Eroare: Nu se poate scrie fișierul IPsec CRL pentru %s"
 
 #: src/etc/inc/vpn.inc:649
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
-msgstr ""
+msgstr "Eroare: Referință certificat fază 1 invalidă pentru %s"
 
 #: src/etc/inc/vpn.inc:667
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr ""
+"Eroare: nu se poate scrie nu se poate scrie fișierul cheie de fază 1 pentru "
+"%s"
 
 #: src/etc/inc/vpn.inc:674
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr ""
+"Eroare: Nu se poate scrie fișierul cu certificatul de fază 1 pentru %s"
 
 #: src/etc/inc/vpn.inc:739
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
-msgstr ""
+msgstr "Eroare: Informație hash a certificatului invalidă pentru %s"
 
 #: src/etc/inc/vpn.inc:744
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
-msgstr ""
+msgstr "Eroare: Nu se poate scrie fișierul IPsec CA pentru %s"
 
 #: src/etc/inc/vpn.inc:1363
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
-msgstr ""
+msgstr "Nu există specificații de fază 2 pentru tunelul cu REQID = %s"
 
 #: src/etc/inc/vpn.inc:1482
 #, php-format
 msgid "Ignoring IPsec reload since there are no tunnels on interface %s"
 msgstr ""
+"Se ignoră reîncărcarea IPsec pentru că nu există tuneluri pentru interfața "
+"%s"
 
 #: src/etc/inc/vpn.inc:1488
 msgid "Forcefully reloading IPsec"
-msgstr ""
+msgstr "Se forțează reîncărcarea IPsec"
 
 #: src/etc/inc/vpn.inc:1538
 msgid "Configuring PPPoE Server service... "
-msgstr ""
+msgstr "Se configurează serviciul PPPoE Server"
 
 #: src/etc/inc/vpn.inc:1563
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_pppoe_configure()."
-msgstr ""
+msgstr "Eroare: nu se poate deschide mpd.conf în vpn_pppoe_configure()."
 
 #: src/etc/inc/vpn.inc:1680
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_pppoe_configure()."
-msgstr ""
+msgstr "Eroare: nu se poate deschide mpd.secret în vpn_pppoe_configure()."
 
 #: src/etc/inc/vpn.inc:1714
 msgid "done"
-msgstr ""
+msgstr "realizat"
 
 #: src/etc/inc/vpn.inc:1736
 msgid "Configuring l2tp VPN service... "
-msgstr ""
+msgstr "Se configurează serviciul VPN l2tp..."
 
 #: src/etc/inc/vpn.inc:1775
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
-msgstr ""
+msgstr "Eroare: nu se poate deschide mpd.conf în vpn_l2tp_configure()."
 
 #: src/etc/inc/vpn.inc:1867
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
-msgstr ""
+msgstr "Eroare: nu se poate deschide mpd.secret în vpn_l2tp_configure()."
 
 #: src/etc/inc/xmlparse.inc:87 src/etc/inc/xmlparse_attr.inc:72
 #, php-format
 msgid "XML error: %1$s at line %2$d cannot occur more than once"
-msgstr ""
+msgstr "Eroare XML: %1$s la linia %2$d nu poate să apară de mai multe ori"
 
 #: src/etc/inc/xmlparse.inc:180 src/etc/inc/xmlparse_attr.inc:188
 msgid "Error: could not open XML input"
-msgstr ""
+msgstr "Eroare: nu se poate deschide sursa XML"
 
 #: src/etc/inc/xmlparse.inc:186
 #, php-format
 msgid "XML error: %1$s at line %2$d in %3$s"
-msgstr ""
+msgstr "Eroare XML: %1$s la linia %2$d în %3$s"
 
 #: src/etc/inc/xmlparse.inc:206 src/etc/inc/xmlparse_attr.inc:211
 #, php-format
 msgid "XML error: no %s object found!"
-msgstr ""
+msgstr "Eroare XML: nu s-a găsit nici un obiect %s!"
 
 #: src/etc/inc/xmlparse_attr.inc:198
 #, php-format
 msgid "XML error: %1$s at line %2$d"
-msgstr ""
+msgstr "Eroare XML: %1$s la linia %2$d"
 
 #: src/etc/inc/xmlreader.inc:161
 #, php-format
 msgid "Error returned while trying to parse %s"
-msgstr ""
+msgstr "S-a returnat eroare în timpul procesării %s"
 
 #: src/etc/inc/xmlrpc_client.inc:91
 #, php-format
 msgid "Beginning XMLRPC sync data to %s."
-msgstr ""
+msgstr "Se începe sincronizarea datelor XMLRPC cu %s"
 
 #: src/etc/inc/xmlrpc_client.inc:94
 #, php-format
@@ -7943,43 +7978,48 @@ msgid ""
 "A communications error occurred while attempting XMLRPC sync with %s "
 "(pfsense.%s)."
 msgstr ""
+"A apărut o eroare de comunicație în timp ce se încerca sincronizarea XMLRPC "
+"cu %s (pfsense.%s)."
 
 #: src/etc/inc/xmlrpc_client.inc:126
 msgid "Error code received"
-msgstr ""
+msgstr "S-a primit un cod de eroare"
 
 #: src/usr/local/bin/dhcpd_gather_stats.php:102
 #: src/usr/local/www/status_dhcp_leases.php:189
 msgid "Never"
-msgstr ""
+msgstr "Niciodată"
 
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "Lista de mirror-uri s-a schimbat. Lista veche: (%s) Lista nouă: (%s)"
 
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr ""
+msgstr "Starea mirror-ului %s s-a schimbat din %s în %s."
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
 #, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
 msgstr ""
+"Numărul de consumatori aferent mirror-ului %s s-a schimbat de la %d la %d."
 
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
 msgstr ""
+"Starea drive-ului pentru mirror-ul %s s-a schimbat. Starea veche: (%s) "
+"Starea nouă: (%s)"
 
 #: src/usr/local/www/bandwidth_by_ip.php:34
 msgid "Wrong Interface"
-msgstr ""
+msgstr "Interfață incorectă"
 
 #: src/usr/local/www/bandwidth_by_ip.php:160
 msgid "no info"
-msgstr ""
+msgstr "lipsă informații"
 
 #: src/usr/local/www/classes/Form/Section.class.php:78
 #: src/usr/local/www/diag_gmirror.php:54 src/usr/local/www/diag_gmirror.php:198
@@ -7989,7 +8029,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_install.php:352
 #: src/usr/local/www/pkg_mgr_install.php:354
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmați"
 
 #: src/usr/local/www/classes/Form.class.php:38
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
@@ -8028,9 +8068,9 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:239
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 msgid "Save"
-msgstr ""
+msgstr "Salvați"
 
-#: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
@@ -8052,83 +8092,91 @@ msgstr ""
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:654
 msgid "Diagnostics"
-msgstr ""
+msgstr "Diagnosticare"
 
-#: src/usr/local/www/crash_reporter.php:56
+#: src/usr/local/www/crash_reporter.php:62
 msgid "Crash Reporter"
-msgstr ""
+msgstr "Raport disfuncționalități "
 
-#: src/usr/local/www/crash_reporter.php:68
+#: src/usr/local/www/crash_reporter.php:74
 msgid "Processing..."
-msgstr ""
+msgstr "Se procesează..."
 
-#: src/usr/local/www/crash_reporter.php:80
+#: src/usr/local/www/crash_reporter.php:86
 msgid "Uploading..."
-msgstr ""
+msgstr "Se încarcă..."
 
-#: src/usr/local/www/crash_reporter.php:91
+#: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
 msgstr ""
+"S-au șters fișierele cu rapoartele de disfuncționalități de pe disk-ul local."
+""
 
-#: src/usr/local/www/crash_reporter.php:95
+#: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
-msgstr ""
+msgstr "Nu s-a găsit nici un fișier de disfuncționalități ."
 
-#: src/usr/local/www/crash_reporter.php:124
+#: src/usr/local/www/crash_reporter.php:130
 msgid "Unfortunately a Programming Bug has been detected"
-msgstr ""
+msgstr "Din nefericire s-a detectat o eroare de programare."
 
-#: src/usr/local/www/crash_reporter.php:128
+#: src/usr/local/www/crash_reporter.php:134
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
 msgstr ""
+"Jurnalele de depanare aferente programului se pot transmite către "
+"dezvoltatorii pfsense pentru inspecție."
 
-#: src/usr/local/www/crash_reporter.php:129
+#: src/usr/local/www/crash_reporter.php:135
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
 msgstr ""
+"Verificați cu atenție conținutul  înainte de a trimite pentru a vă asigura "
+"că informația se poate face publică."
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
-msgstr ""
+msgstr "Da"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 msgid "Submit this to the developers for inspection"
-msgstr ""
+msgstr "Trimiteți aceasta către dezvoltatori pentru inspecție"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
-msgstr ""
+msgstr "Nu"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 msgid "Just delete the crash report and return to the Dashboard"
 msgstr ""
+"Doar stergeți raportul de disfuncționalități și întoarceți-vă la panoul de "
+"control"
 
 #: src/usr/local/www/diag_arp.php:47
 #, php-format
 msgid "%s is not a valid IPv4 address or could not be deleted."
-msgstr ""
+msgstr "%s nu este o adresă IPv4 validă sau nu a putut fi ștearsă."
 
 #: src/usr/local/www/diag_arp.php:50
 #, php-format
 msgid "The ARP cache entry for %s has been deleted."
-msgstr ""
+msgstr "ARP cache pentru intrarea %s a fost șters."
 
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_arp.php:325
 #: src/usr/local/www/head.inc:375
 msgid "ARP Table"
-msgstr ""
+msgstr "Tabel ARP"
 
 #: src/usr/local/www/diag_arp.php:280
 msgid " Loading, please wait..."
-msgstr ""
+msgstr "Se încarcă, vă rugăm așteptați..."
 
 #: src/usr/local/www/diag_arp.php:334 src/usr/local/www/diag_ndp.php:139
 #: src/usr/local/www/services_captiveportal_mac.php:174
@@ -8141,7 +8189,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:440
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
 msgid "MAC address"
-msgstr ""
+msgstr "Adresă MAC"
 
 #: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:140
 #: src/usr/local/www/interfaces.php:2001
@@ -8161,11 +8209,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:179
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:241
 msgid "Hostname"
-msgstr ""
+msgstr "Nume gazdă"
 
 #: src/usr/local/www/diag_arp.php:337
 msgid "Link Type"
-msgstr ""
+msgstr "Tip conexiune"
 
 #: src/usr/local/www/diag_arp.php:338 src/usr/local/www/diag_confbak.php:222
 #: src/usr/local/www/diag_ndp.php:143
@@ -8230,179 +8278,194 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:1341
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
 msgid "Actions"
-msgstr ""
+msgstr "Acțiuni"
 
 #: src/usr/local/www/diag_arp.php:363
 msgid "Delete arp cache entry"
-msgstr ""
+msgstr "Șterge înregistrarea din ARP cache"
 
 #: src/usr/local/www/diag_arp.php:385
 #, php-format
 msgid "Local IPv6 peers use %1$sNDP%2$s instead of ARP."
-msgstr ""
+msgstr "Perechile locale IPv6 folosesc %1$sNDP%2$s în loc de ARP."
 
 #: src/usr/local/www/diag_arp.php:386
 msgid ""
 "Permanent ARP entries are shown for local interfaces or static ARP entries."
 msgstr ""
+"Înregistrările ARP permanente sunt afișate pentru interfețele locale sau "
+"pentru înregistrările ARP statice."
 
 #: src/usr/local/www/diag_arp.php:387
 msgid ""
 "Normal dynamic ARP entries show a countdown timer until they will expire and "
 "then be re-checked."
 msgstr ""
+"Înregistrările ARP dinamice, normale, au atașat un numărător care indică "
+"timpul până la expirare, după care trebuie verificate din nou."
 
 #: src/usr/local/www/diag_arp.php:388
 msgid ""
 "Incomplete ARP entries indicate that the target host has not yet replied to "
 "an ARP request."
 msgstr ""
+"Înregistrările ARP incomplete indică faptul ca destinația nu a răspuns încă "
+"interogării ARP."
 
 #: src/usr/local/www/diag_authentication.php:38
 #, php-format
 msgid "%s is not a valid authentication server"
-msgstr ""
+msgstr "%s nu este un server de autentificare valid"
 
 #: src/usr/local/www/diag_authentication.php:42
 msgid "A username and password must be specified."
-msgstr ""
+msgstr "Trebuie specificat un nume de utilizator și o parolă."
 
 #: src/usr/local/www/diag_authentication.php:48
 #, php-format
 msgid "User %s authenticated successfully."
-msgstr ""
+msgstr "Utilizatorul %s a fost autentificat cu succes."
 
 #: src/usr/local/www/diag_authentication.php:50
 msgid "This user is a member of groups"
-msgstr ""
+msgstr "Utilizatorul este membru al unor grupuri."
 
 #: src/usr/local/www/diag_authentication.php:58
 msgid "Authentication failed."
-msgstr ""
+msgstr "Autentificarea a eșuat."
 
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:376
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
-msgstr ""
+msgstr "Autentificare"
 
 #: src/usr/local/www/diag_authentication.php:83
 msgid "Authentication Test"
-msgstr ""
+msgstr "Test autentificare"
 
 #: src/usr/local/www/diag_authentication.php:91
 #: src/usr/local/www/system_usermanager_settings.php:214
 msgid "*Authentication Server"
-msgstr ""
+msgstr "*Server autentificare"
 
 #: src/usr/local/www/diag_authentication.php:94
 msgid "Select the authentication server to test against."
-msgstr ""
+msgstr "Selectați serverul de autentificare pentru efectuarea testului."
 
 #: src/usr/local/www/diag_authentication.php:98
 #: src/usr/local/www/interfaces.php:2648 src/usr/local/www/interfaces.php:2773
 #: src/usr/local/www/system_usermanager.php:740
 #: src/usr/local/www/vpn_l2tp_users_edit.php:152
 msgid "*Username"
-msgstr ""
+msgstr "*Nume utilizator"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/interfaces.php:2655 src/usr/local/www/interfaces.php:2780
 #: src/usr/local/www/system_usermanager_passwordmg.php:97
 msgid "*Password"
-msgstr ""
+msgstr "*Parolă"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:280 src/usr/local/www/diag_testport.php:269
 #: src/usr/local/www/status_captiveportal_test.php:107
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: src/usr/local/www/diag_backup.php:79 src/usr/local/www/diag_backup.php:94
 #, php-format
 msgid "Cannot write %s"
-msgstr ""
+msgstr "Nu se poate scrie %s"
 
 #: src/usr/local/www/diag_backup.php:103 src/usr/local/www/diag_backup.php:109
 #, php-format
 msgid "fwrite %s failed"
-msgstr ""
+msgstr "fwrite %s a eșuat"
 
 #: src/usr/local/www/diag_backup.php:114
 #, php-format
 msgid "fclose %s failed"
-msgstr ""
+msgstr "fclose %s a eșuat"
 
 #: src/usr/local/www/diag_backup.php:161
 msgid "A password for encryption must be supplied and confirmed."
-msgstr ""
+msgstr "O parolă pentru criptare trebuie furnizată și confirmată."
 
 #: src/usr/local/www/diag_backup.php:236
 msgid "A password for decryption must be supplied and confirmed."
-msgstr ""
+msgstr "O parolă pentru decriptare trebuie furnizată și confirmată."
 
 #: src/usr/local/www/diag_backup.php:246
 #, php-format
 msgid "Warning, could not read file %s"
-msgstr ""
+msgstr "Atenționare, nu se poate citi fișierul %s"
 
 #: src/usr/local/www/diag_backup.php:252
 msgid ""
 "The uploaded file does not appear to contain an encrypted pfsense "
 "configuration."
-msgstr ""
+msgstr "Fișierul încărcat nu pare să conțină o configurație pfsense criptată."
 
 #: src/usr/local/www/diag_backup.php:259
 msgid "Upgrading m0n0wall configuration to pfsense."
-msgstr ""
+msgstr "Se actualizează configurația m0nowall la una pfsense."
 
 #: src/usr/local/www/diag_backup.php:267 src/usr/local/www/diag_backup.php:270
 msgid ""
 "An area to restore was selected but the correct xml tag could not be located."
 ""
 msgstr ""
+"A fost selectată o zonă pentru restabilire dar nu a putut fi localizat tag-"
+"ul xml corect."
 
 #: src/usr/local/www/diag_backup.php:276
 #, php-format
 msgid ""
 "Unset RRD data from configuration after restoring %s configuration area"
 msgstr ""
+"Dezactivați datele RRD din configurație după restabilirea zonei de "
+"configurație %s"
 
 #: src/usr/local/www/diag_backup.php:280
 msgid ""
 "The configuration area has been restored. The firewall may need to be "
 "rebooted."
-msgstr ""
+msgstr "Configurația a fost restabilită. Firewall-ul trebuie repornit."
 
 #: src/usr/local/www/diag_backup.php:285
 #, php-format
 msgid ""
 "A full configuration restore was selected but a %s tag could not be located."
 msgstr ""
+"A fost selectată o restabilire completă a configurației dar nu s-a putut "
+"localiza un marcaj %s."
 
 #: src/usr/local/www/diag_backup.php:302
 msgid "Restore serial console enabling in configuration."
-msgstr ""
+msgstr "Restabiliți activarea consolei seriale în configurație."
 
 #: src/usr/local/www/diag_backup.php:311
 msgid "Unset RRD data from configuration after restoring full configuration"
 msgstr ""
+"Dezactivați datele RRD din configurație după restabilirea completă a "
+"configurației"
 
 #: src/usr/local/www/diag_backup.php:362
 msgid "Imported m0n0wall configuration"
-msgstr ""
+msgstr "S-a importat configurația m0n0wall"
 
 #: src/usr/local/www/diag_backup.php:364
 msgid "The m0n0wall configuration has been restored and upgraded to pfSense."
-msgstr ""
+msgstr "Configurația m0nowall s-a restabilit și s-a actualizat la pfsense."
 
 #: src/usr/local/www/diag_backup.php:392
 msgid "The configuration could not be restored."
-msgstr ""
+msgstr "Configurația nu a putut fi restabilită."
 
 #: src/usr/local/www/diag_backup.php:397
 msgid "The configuration could not be restored (file upload error)."
 msgstr ""
+"Configurația nu a putu fi restabilită (eroare la încărcarea fișierului)."
 
 #: src/usr/local/www/diag_backup.php:421
 #: src/usr/local/www/firewall_aliases.php:161
@@ -8410,17 +8473,17 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_import.php:55
 #: src/usr/local/www/head.inc:289
 msgid "Aliases"
-msgstr ""
+msgstr "Alias-uri"
 
 #: src/usr/local/www/diag_backup.php:423
 msgid "Captive Portal Vouchers"
-msgstr ""
+msgstr "Vouchere portal captiv"
 
 #: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
-msgstr ""
+msgstr "Server DHCP"
 
 #: src/usr/local/www/diag_backup.php:427
 #: src/usr/local/www/services_dhcpv6.php:511
@@ -8430,11 +8493,11 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:302
 msgid "DHCPv6 Server"
-msgstr ""
+msgstr "Server DHCPv6"
 
 #: src/usr/local/www/diag_backup.php:428
 msgid "Firewall Rules"
-msgstr ""
+msgstr "Reguli firewall"
 
 #: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
 #: src/usr/local/www/interfaces.php:1700
@@ -8462,11 +8525,11 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/widgets/include/interfaces.inc:23
 msgid "Interfaces"
-msgstr ""
+msgstr "Interfețe"
 
 #: src/usr/local/www/diag_backup.php:430
 msgid "IPSEC"
-msgstr ""
+msgstr "IPSEC"
 
 #: src/usr/local/www/diag_backup.php:431 src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat_1to1.php:120
@@ -8478,7 +8541,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:393
 #: src/usr/local/www/head.inc:290
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 #: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:235
 #: src/usr/local/www/head.inc:652 src/usr/local/www/pkg_mgr.php:38
@@ -8486,20 +8549,20 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
 msgid "Package Manager"
-msgstr ""
+msgstr "Manager pachete"
 
 #: src/usr/local/www/diag_backup.php:434
 #: src/usr/local/www/system_advanced_misc.php:543
 msgid "RRD Data"
-msgstr ""
+msgstr "Date RRD"
 
 #: src/usr/local/www/diag_backup.php:435
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Task-uri programate"
 
 #: src/usr/local/www/diag_backup.php:436
 msgid "Syslog"
-msgstr ""
+msgstr "Syslog"
 
 #: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
@@ -8542,19 +8605,19 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
 msgid "System"
-msgstr ""
+msgstr "Sistem"
 
 #: src/usr/local/www/diag_backup.php:438
 msgid "Static routes"
-msgstr ""
+msgstr "Rute statice"
 
 #: src/usr/local/www/diag_backup.php:439
 msgid "System tunables"
-msgstr ""
+msgstr "Reglaj fin sistem"
 
 #: src/usr/local/www/diag_backup.php:440
 msgid "SNMP Server"
-msgstr ""
+msgstr "Server SNMP"
 
 #: src/usr/local/www/diag_backup.php:441
 #: src/usr/local/www/firewall_shaper.php:41
@@ -8563,18 +8626,18 @@ msgstr ""
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/head.inc:293
 msgid "Traffic Shaper"
-msgstr ""
+msgstr "Proces optimizare trafic"
 
 #: src/usr/local/www/diag_backup.php:442
 msgid "VLANS"
-msgstr ""
+msgstr "VLAN-uri"
 
 #: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:324
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
 msgid "Wake-on-LAN"
-msgstr ""
+msgstr "Wake-on-LAN"
 
 #: src/usr/local/www/diag_backup.php:446
 #: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
@@ -8595,47 +8658,47 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
-msgstr ""
+msgstr "Toate"
 
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:377
 #: src/usr/local/www/head.inc:654
 msgid "Backup & Restore"
-msgstr ""
+msgstr "Copie de sigurață & Restabilire"
 
 #: src/usr/local/www/diag_backup.php:478
 msgid "The firewall configuration has been changed."
-msgstr ""
+msgstr "Configurarea firewall-ului a fost schimbată."
 
 #: src/usr/local/www/diag_backup.php:478
 msgid "The firewall is now rebooting."
-msgstr ""
+msgstr "Firewall-ul este repornit."
 
 #: src/usr/local/www/diag_backup.php:486 src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:115
 msgid "Config History"
-msgstr ""
+msgstr "Istoric configurări"
 
 #: src/usr/local/www/diag_backup.php:492
 msgid "Backup Configuration"
-msgstr ""
+msgstr "Configurație de rezervă"
 
 #: src/usr/local/www/diag_backup.php:496
 msgid "Backup area"
-msgstr ""
+msgstr "Zonă de rezervă"
 
 #: src/usr/local/www/diag_backup.php:503
 msgid "Skip packages"
-msgstr ""
+msgstr "Omiteți pachetele de extensie"
 
 #: src/usr/local/www/diag_backup.php:510
 msgid "Skip RRD data"
-msgstr ""
+msgstr "Omiteți datele RRD"
 
 #: src/usr/local/www/diag_backup.php:517 src/usr/local/www/diag_backup.php:564
 msgid "Encryption"
-msgstr ""
+msgstr "Criptare"
 
 #: src/usr/local/www/diag_backup.php:524 src/usr/local/www/diag_backup.php:571
 #: src/usr/local/www/interfaces.php:2588
@@ -8664,11 +8727,11 @@ msgstr "Parola"
 
 #: src/usr/local/www/diag_backup.php:533
 msgid "Download configuration as XML"
-msgstr ""
+msgstr "Descărcați configurația ca XML"
 
 #: src/usr/local/www/diag_backup.php:541
 msgid "Restore Backup"
-msgstr ""
+msgstr "Restabiliți copia de rezervă"
 
 #: src/usr/local/www/diag_backup.php:545
 #, php-format
@@ -8676,109 +8739,117 @@ msgid ""
 "Open a %s configuration XML file and click the button below to restore the "
 "configuration."
 msgstr ""
+"Deschideți un fișier de configurație XML %s și apăsați butonul de mai jos "
+"pentru a restabili configurația."
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Restore area"
-msgstr ""
+msgstr "Zonă de restabilire"
 
 #: src/usr/local/www/diag_backup.php:557
 msgid "Configuration file"
-msgstr ""
+msgstr "Fișier de configurație"
 
 #: src/usr/local/www/diag_backup.php:581
 msgid "Restore Configuration"
-msgstr ""
+msgstr "Restabiliți configurația"
 
 #: src/usr/local/www/diag_backup.php:584
 msgid "The firewall will reboot after restoring the configuration."
-msgstr ""
+msgstr "Firewall-ul va reporni dupa restabilirea configurației."
 
 #: src/usr/local/www/diag_backup.php:591
 msgid "Package Functions"
-msgstr ""
+msgstr "Funcții pachete extensie"
 
 #: src/usr/local/www/diag_backup.php:598
 msgid "Reinstall Packages"
-msgstr ""
+msgstr "Se reinstalează pachetele de extensie"
 
 #: src/usr/local/www/diag_backup.php:601
 msgid ""
 "Click this button to reinstall all system packages.  This may take a while."
 msgstr ""
+"Apăsați acest buton pentru reinstalarea tuturor pacheteleor de extensie din "
+"sistem. Procesul s-ar putea să dureze destul de mult."
 
 #: src/usr/local/www/diag_backup.php:611
 msgid "Clear Package Lock"
-msgstr ""
+msgstr "Îndepărtați blocarea pachetului de extensie"
 
 #: src/usr/local/www/diag_backup.php:614
 msgid ""
 "Click this button to clear the package lock if a package fails to reinstall "
 "properly after an upgrade."
 msgstr ""
+"Apăsați acest buton pentru a îndepărta blocarea pachetului de extensie dacă "
+"pachetul nu se reinstalează corespunzător după o actualizare."
 
 #: src/usr/local/www/diag_command.php:61
 #, php-format
 msgid "Uploaded file to %s."
-msgstr ""
+msgstr "S-a încărat fișierul pe %s"
 
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
 msgid "Command Prompt"
-msgstr ""
+msgstr "Prompt comandă"
 
 #: src/usr/local/www/diag_command.php:139
 msgid "Nothing to recall"
-msgstr ""
+msgstr "Nu este nimic de revocat"
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid ""
 "The capabilities offered here can be dangerous. No support is available. Use "
 "them at your own risk!"
 msgstr ""
+"Posibilitățile oferite aici sunt periculoase. Nu este disponibil nici un fel "
+"de suport. Folosiți-le pe riscul dumneavoastră! "
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
-msgstr ""
+msgstr "Doar pentru utilizatorii avansați"
 
 #: src/usr/local/www/diag_command.php:179
 #, php-format
 msgid "Shell Output - %s"
-msgstr ""
+msgstr "Răspuns shell - %s"
 
 #: src/usr/local/www/diag_command.php:198
 msgid "Execute Shell Command"
-msgstr ""
+msgstr "Execută comandă shell"
 
 #: src/usr/local/www/diag_command.php:206
 msgid "Recall Previous Command"
-msgstr ""
+msgstr "Revocă comanda anterioară"
 
 #: src/usr/local/www/diag_command.php:209
 msgid "Execute the entered command"
-msgstr ""
+msgstr "Execută comanda introdusă"
 
 #: src/usr/local/www/diag_command.php:211
 #: src/usr/local/www/diag_command.php:349
 msgid "Execute"
-msgstr ""
+msgstr "Execută"
 
 #: src/usr/local/www/diag_command.php:213
 msgid "Recall Next Command"
-msgstr ""
+msgstr "Revocă comanda următoare"
 
 #: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
-msgstr ""
+msgstr "Ștergeți comanda introdusă"
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
 #: src/usr/local/www/system_groupmanager_addprivs.php:213
 #: src/usr/local/www/system_usermanager_addprivs.php:197
 #: src/usr/local/www/interfaces.php:2084
 msgid "Clear"
-msgstr ""
+msgstr "Stergeți"
 
 #: src/usr/local/www/diag_command.php:226
 msgid "Download File"
-msgstr ""
+msgstr "Descărcați fișierul"
 
 #: src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1102
@@ -8786,16 +8857,16 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:1168
 #: src/usr/local/www/status.php:368
 msgid "Download"
-msgstr ""
+msgstr "Descărcați"
 
 #: src/usr/local/www/diag_command.php:245
 msgid "Upload File"
-msgstr ""
+msgstr "Încărcați fișierul"
 
 #: src/usr/local/www/diag_command.php:252
 #: src/usr/local/www/services_captiveportal_filemanager.php:172
 msgid "Upload"
-msgstr ""
+msgstr "Încărcați"
 
 #: src/usr/local/www/diag_command.php:296
 #, php-format
@@ -8803,12 +8874,16 @@ msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
 msgstr ""
+"Linia %s pare să fi generat o eroare și a fost marcată. Răspunsul complet "
+"este prezentat mai jos."
 
 #: src/usr/local/www/diag_command.php:299
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Codul pare să fi generat o eroare dar linia responsabilă nu se poate "
+"identifica. Răspunsul complet este prezentat mai jos."
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -8816,62 +8891,66 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Luați în considerare că numărul de linii conținute în răspunsul PHP complet "
+"va fi cu %s linii prea mare. Codul imbricat si erorile de tip eval() pot "
+"indica incorect către \"linia 1\"."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Identificator erori:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
-msgstr ""
+msgstr "Execută comenzile PHP"
 
 #: src/usr/local/www/diag_command.php:347
 msgid "Execute this PHP Code"
-msgstr ""
+msgstr "Execută acest cod PHP"
 
 #: src/usr/local/www/diag_command.php:351
 msgid "Example"
-msgstr ""
+msgstr "Exemplu"
 
 #: src/usr/local/www/diag_confbak.php:34
 msgid "Invalid Backup Count specified"
-msgstr ""
+msgstr "Numărul de versiune specificat pentru backup este invalid"
 
 #: src/usr/local/www/diag_confbak.php:43
 msgid "(platform default)"
-msgstr ""
+msgstr "(implicit pentru platformă)"
 
 #: src/usr/local/www/diag_confbak.php:45
 #, php-format
 msgid "Changed backup revision count to %s"
-msgstr ""
+msgstr "S-a schimbat versiunea de revizie a backup-ului la %s"
 
 #: src/usr/local/www/diag_confbak.php:53
 #, php-format
 msgid "Successfully reverted to timestamp %1$s with description \"%2$s\"."
-msgstr ""
+msgstr "S-a revenit cu succes la momentul %1$s cu descrierea \"%2$s\"."
 
 #: src/usr/local/www/diag_confbak.php:55
 msgid "Unable to revert to the selected configuration."
-msgstr ""
+msgstr "Nu se poate reveni la configurația selectată."
 
 #: src/usr/local/www/diag_confbak.php:61
 #, php-format
 msgid "Deleted backup with timestamp %1$s and description \"%2$s\"."
 msgstr ""
+"S-a șters copia de siguranță de la momentul %1$s și cu descrierea \"%2$s\"."
 
 #: src/usr/local/www/diag_confbak.php:123
 #, php-format
 msgid "Configuration Diff from %1$s to %2$s"
-msgstr ""
+msgstr "Diferențele între configurații de la %1$s la %2$s"
 
 #: src/usr/local/www/diag_confbak.php:160
 msgid "Configuration Backup Cache Settings"
-msgstr ""
+msgstr "Setările de configurare pentru cache-ul copiei de siguranță"
 
 #: src/usr/local/www/diag_confbak.php:164
 msgid "Backup Count"
-msgstr ""
+msgstr "Versiune de backup"
 
 #: src/usr/local/www/diag_confbak.php:168
 #, php-format
@@ -8879,10 +8958,13 @@ msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
 "or leave blank for the default value (%s for the current platform)."
 msgstr ""
+"Num-rul maxim de configurații vechi care trebuie stocat în cache, 0 pentru "
+"dezactivarea backup-urilor sau lăsași necompletat pentru utilizarea valorii "
+"implicite (%s pentru platforma curentă)."
 
 #: src/usr/local/www/diag_confbak.php:173
 msgid "Current space used by backups"
-msgstr ""
+msgstr "Valoarea curentă a spațiului utilizat de backup-uri"
 
 #: src/usr/local/www/diag_confbak.php:194
 msgid ""
@@ -8891,6 +8973,10 @@ msgid ""
 "options and select the newer configuration in the right column, then press "
 "the \"Diff\" button."
 msgstr ""
+"Pentru a vizulaiza diferențele dintre o configurație mai veche și una mai "
+"nouă selectați configurația mai veche folosind butoanele radio din partea "
+"stângă, apoi selectați configurația mai nouă în coloana din dreapta după "
+"care apăsați butonul \"Diferență\". "
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
@@ -8898,11 +8984,11 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:279
 #: src/usr/local/www/system_update_settings.php:235
 msgid "Diff"
-msgstr ""
+msgstr "Diferență"
 
 #: src/usr/local/www/diag_confbak.php:218
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: src/usr/local/www/diag_confbak.php:219 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:69
@@ -8910,21 +8996,21 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:37
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:203
 msgid "Version"
-msgstr ""
+msgstr "Versiunea"
 
 #: src/usr/local/www/diag_confbak.php:220
 #: src/usr/local/www/diag_gmirror.php:303
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
-msgstr ""
+msgstr "Dimensiunea"
 
 #: src/usr/local/www/diag_confbak.php:221
 msgid "Configuration Change"
-msgstr ""
+msgstr "Schimbare de configurație"
 
 #: src/usr/local/www/diag_confbak.php:236
 msgid "Current configuration"
-msgstr ""
+msgstr "Configurația curentă"
 
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/pkg_mgr_installed.php:112
@@ -8942,121 +9028,131 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:92
 msgid "Unknown"
-msgstr ""
+msgstr "Necunoscut"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid "Revert config"
-msgstr ""
+msgstr "Reveniți la vechea configurație"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid ""
 "Confirmation Required to replace the current configuration with this backup."
 msgstr ""
+"Este necesară confirmarea pentru a se înlocui configurația curentă cu acest "
+"backup."
 
 #: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
-msgstr ""
+msgstr "Descărcați configurația"
 
 #: src/usr/local/www/diag_confbak.php:269
 msgid "Delete config"
-msgstr ""
+msgstr "Ștergeți configurația"
 
 #: src/usr/local/www/diag_confbak.php:286
 msgid "No backups found."
-msgstr ""
+msgstr "Nu s-au identificat backup-uri."
 
 #: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:381
 msgid "Factory Defaults"
-msgstr ""
+msgstr "Setările din fabrică"
 
 #: src/usr/local/www/diag_defaults.php:46
 msgid ""
 "The system has been reset to factory defaults and is now rebooting. This may "
 "take a few minutes, depending on the hardware."
 msgstr ""
+"Sistemul a fost adus la configurația de fabrică și este repornit. În funcție "
+"de hardware, procesul poate dura câteva minute."
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
-msgstr ""
+msgstr "Revenire la configurația de fabrică."
 
 #: src/usr/local/www/diag_defaults.php:61
 msgid ""
 "Resetting the system to factory defaults will remove all user configuration "
 "and apply the following settings:"
 msgstr ""
+"Revenirea la configurația de fabrică va șterge toate configurările făcute de "
+"utilizator și va aplica următoarele setări:"
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
-msgstr ""
+msgstr "Revenire la configurația de fabrică"
 
 #: src/usr/local/www/diag_defaults.php:64
 msgid "LAN IP address will be reset to 192.168.1.1"
-msgstr ""
+msgstr "Adresa de IP pentru LAN se va seta la  valoarea 192.168.1.1"
 
 #: src/usr/local/www/diag_defaults.php:65
 msgid ""
 "System will be configured as a DHCP server on the default LAN interface"
-msgstr ""
+msgstr "Sistemul se va configura ca și server DHCP pe interfața LAN implicită"
 
 #: src/usr/local/www/diag_defaults.php:66
 msgid "Reboot after changes are installed"
-msgstr ""
+msgstr "Reporniți după ce schimbările sunt efectuate"
 
 #: src/usr/local/www/diag_defaults.php:67
 msgid ""
 "WAN interface will be set to obtain an address automatically from a DHCP "
 "server"
 msgstr ""
+"Interfața WAN se va seta pentru a obține automat o adresă de la un server "
+"DHCP"
 
 #: src/usr/local/www/diag_defaults.php:68
 msgid "webConfigurator admin username will be reset to 'admin'"
 msgstr ""
+"Numele de utilizator pentru administrator aferent webConfigurator se va seta "
+"la 'admin'"
 
 #: src/usr/local/www/diag_defaults.php:69
 #, php-format
 msgid "webConfigurator admin password will be reset to '%s'"
-msgstr ""
+msgstr "Parola de admin aferentă webConfigurator se va reinițializa la '%s'"
 
 #: src/usr/local/www/diag_defaults.php:71
 msgid "Are you sure you want to proceed?"
-msgstr ""
+msgstr "Sunteți sigur că doriți să inițiați?"
 
 #: src/usr/local/www/diag_defaults.php:73
 msgid "Perform a factory reset"
-msgstr ""
+msgstr "Efectuați o revenire la setările din fabrică."
 
 #: src/usr/local/www/diag_defaults.php:75
 msgid "Factory Reset"
-msgstr ""
+msgstr "Revenire la setările din fabrică"
 
 #: src/usr/local/www/diag_defaults.php:77
 msgid "Return to the dashboard"
-msgstr ""
+msgstr "Reveniți la panoul de instrumente"
 
 #: src/usr/local/www/diag_defaults.php:79
 msgid "Keep Configuration"
-msgstr ""
+msgstr "Mențineti configurația"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:379
 msgid "DNS Lookup"
-msgstr ""
+msgstr "Identificare DNS"
 
 #: src/usr/local/www/diag_dns.php:118
 msgid "Created from Diagnostics-> DNS Lookup"
-msgstr ""
+msgstr "Creat din Diagnoză -> Identificare DNS"
 
 #: src/usr/local/www/diag_dns.php:124
 msgid "Created an alias from Diagnostics - DNS Lookup page."
-msgstr ""
+msgstr "Creat din pagina Diagnoză - Identificare DNS"
 
 #: src/usr/local/www/diag_dns.php:141
 msgid "Host must be a valid hostname or IP address."
-msgstr ""
+msgstr "Gazda trebuie să aibă un nume valid sau o adresă de IP validă."
 
 #: src/usr/local/www/diag_dns.php:150
 msgid "No response"
-msgstr ""
+msgstr "Nu s-a primit răspuns"
 
 #: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:266
 #: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
@@ -9076,12 +9172,12 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:172
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:38
 msgid "IP Address"
-msgstr ""
+msgstr "Adresă de IP"
 
 #: src/usr/local/www/diag_dns.php:192 src/usr/local/www/status_graph.php:155
 #: src/usr/local/www/system_authservers.php:445
 msgid "Host Name"
-msgstr ""
+msgstr "Nume gazdă"
 
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
@@ -9090,34 +9186,34 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/usr/local/www/diag_dns.php:195
 msgid "Query Time"
-msgstr ""
+msgstr "Timp de interogare"
 
 #: src/usr/local/www/diag_dns.php:213
 #, php-format
 msgid "Host \"%s\" could not be resolved."
-msgstr ""
+msgstr "Gazda \"%s\" nu a putut fi rezolvată."
 
 #: src/usr/local/www/diag_dns.php:218
 msgid "Alias was updated successfully."
-msgstr ""
+msgstr "Alias a fost actualizat cu succes."
 
 #: src/usr/local/www/diag_dns.php:220
 msgid "Alias was created successfully."
-msgstr ""
+msgstr "Alias a fost creat cu succes."
 
 #: src/usr/local/www/diag_dns.php:228
 #, php-format
 msgid "Could not update alias for %s"
-msgstr ""
+msgstr "Nu s-a pututl actualiza alias pentru %s"
 
 #: src/usr/local/www/diag_dns.php:230
 #, php-format
 msgid "Could not create alias for %s"
-msgstr ""
+msgstr "Nu s-a putut crea alias pentru %s"
 
 #: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -9127,37 +9223,37 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/system.php:450
 msgid "*Hostname"
-msgstr ""
+msgstr "*Nume gazdă"
 
 #: src/usr/local/www/diag_dns.php:249
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
-msgstr ""
+msgstr "Identificare"
 
 #: src/usr/local/www/diag_dns.php:256
 msgid "Update alias"
-msgstr ""
+msgstr "Actualizare alias"
 
 #: src/usr/local/www/diag_dns.php:258
 msgid "Add alias"
-msgstr ""
+msgstr "Adaugă alias"
 
 #: src/usr/local/www/diag_dns.php:274 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
-msgstr ""
+msgstr "Rezultate"
 
 #: src/usr/local/www/diag_dns.php:280
 msgid "Result"
-msgstr ""
+msgstr "Rezultat"
 
 #: src/usr/local/www/diag_dns.php:281
 msgid "Record type"
-msgstr ""
+msgstr "Tip înregistrare"
 
 #: src/usr/local/www/diag_dns.php:298
 msgid "Timings"
-msgstr ""
+msgstr "Temporizări"
 
 #: src/usr/local/www/diag_dns.php:303
 msgid "Name server"
@@ -26906,6 +27002,10 @@ msgid "Gray"
 msgstr ""
 
 #: src/usr/local/www/system.php:611
+msgid "Dark gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:612
 msgid "Brown"
 msgstr ""
 
@@ -28016,13 +28116,13 @@ msgid "Installation Feedback"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:588
-msgid "Host UUID"
+msgid "Netgate Device ID"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
-"Enable this option to not send HOST UUID to pfSense as part of User-Agent "
-"header."
+"Enable this option to not send Netgate Device ID to pfSense as part of User-"
+"Agent header."
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:597
@@ -35524,7 +35624,7 @@ msgid "Use memory file system for /tmp and /var"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:589
-msgid "Do NOT send HOST UUID with user agent"
+msgid "Do NOT send Netgate Device ID with user agent"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:176

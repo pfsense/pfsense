@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-27 07:37-0300\n"
+"POT-Creation-Date: 2017-07-05 14:41-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-21 03:12-0400\n"
+"PO-Revision-Date: 2017-07-01 03:41-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -244,6 +244,8 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"用於訪問此路由器的IP地址未在本地配置，可以通過NAT或其他方式轉發。\n"
+"\t\t\t\t\t\t\t\t如果這個轉發是意想不到的，應該驗證是否發生了中間人的攻擊。"
 
 #: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
@@ -271,7 +273,7 @@ msgstr "密碼:"
 msgid "Enter Voucher Code:"
 msgstr "輸入認證碼："
 
-#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
+#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
 msgstr "繼續"
 
@@ -1146,7 +1148,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "動態DNS已將%1$s (%2$s) 上的IP地址更新為%3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
+#: src/etc/inc/services.inc:2697 src/etc/inc/services.inc:2709
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "php 動態DNS：更新緩存檔%1$s: %2$s"
@@ -1613,16 +1615,16 @@ msgstr "篩檢程式已禁用。未加載規則。"
 #: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
 #: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
 #: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
-#: src/etc/inc/pkg-utils.inc:600 src/etc/inc/pkg-utils.inc:748
-#: src/etc/inc/pkg-utils.inc:771 src/etc/inc/pkg-utils.inc:807
-#: src/etc/inc/pkg-utils.inc:812 src/etc/inc/pkg-utils.inc:817
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:852
-#: src/etc/inc/pkg-utils.inc:879 src/etc/inc/pkg-utils.inc:925
-#: src/etc/inc/pkg-utils.inc:951 src/etc/inc/pkg-utils.inc:994
-#: src/etc/inc/pkg-utils.inc:1013 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
-#: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1239
+#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
+#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
+#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
+#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
+#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
+#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
+#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
+#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2269
+#: src/etc/inc/services.inc:2495 src/etc/inc/system.inc:1239
 #: src/etc/inc/system.inc:1339 src/etc/inc/system.inc:1642
 #: src/etc/inc/system.inc:2214
 msgid "done."
@@ -3680,225 +3682,225 @@ msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr "pkg執行（rc = %d) 時發生錯誤，參數為 '%s':"
 
-#: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
+#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr "錯誤：嘗試獲取插件列表時出錯。 正在中止..."
 
-#: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
+#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr "錯誤：嘗試獲取插件版本時出錯。 正在中止..."
 
-#: src/etc/inc/pkg-utils.inc:537
+#: src/etc/inc/pkg-utils.inc:532
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "運行 %s安裝的最後步驟。"
 
-#: src/etc/inc/pkg-utils.inc:550
+#: src/etc/inc/pkg-utils.inc:545
 msgid "Resyncing configuration for all packages."
 msgstr "重新同步所有插件的配置。"
 
-#: src/etc/inc/pkg-utils.inc:572
+#: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
 msgstr "同步插件："
 
-#: src/etc/inc/pkg-utils.inc:594
+#: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
 msgstr "移除插件...."
 
-#: src/etc/inc/pkg-utils.inc:627
+#: src/etc/inc/pkg-utils.inc:622
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
 msgstr "%s插件缺少配置檔，必須重新安裝。"
 
-#: src/etc/inc/pkg-utils.inc:643
+#: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr "重新安裝插件%1$s，因為它缺少包檔(%2$s)！"
 
-#: src/etc/inc/pkg-utils.inc:646
+#: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr "重裝插件 %s失敗， 請採取其他的辦法安裝!"
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
 msgstr "開始安裝插件。"
 
-#: src/etc/inc/pkg-utils.inc:740
+#: src/etc/inc/pkg-utils.inc:735
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "開始安裝插件 %s 。"
 
-#: src/etc/inc/pkg-utils.inc:744
+#: src/etc/inc/pkg-utils.inc:739
 msgid "Saving updated package information..."
 msgstr "正在保存插件更新資訊"
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:742
 #, php-format
 msgid "Installed %s package."
 msgstr "插件已安裝 %s"
 
-#: src/etc/inc/pkg-utils.inc:751
+#: src/etc/inc/pkg-utils.inc:746
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "覆蓋以前安裝的 %s。"
 
-#: src/etc/inc/pkg-utils.inc:752
+#: src/etc/inc/pkg-utils.inc:747
 msgid "overwrite!"
 msgstr "覆蓋！"
 
-#: src/etc/inc/pkg-utils.inc:755
+#: src/etc/inc/pkg-utils.inc:750
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr "中間配置在插件%s安裝期間寫入。"
 
-#: src/etc/inc/pkg-utils.inc:759
+#: src/etc/inc/pkg-utils.inc:754
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "插件 %1$s沒有安裝，%2$s安裝中止。"
 
-#: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "安裝出錯: %s."
 
-#: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:867
 msgid "Failed to install package."
 msgstr "安裝插件失敗。"
 
-#: src/etc/inc/pkg-utils.inc:769
+#: src/etc/inc/pkg-utils.inc:764
 msgid "Loading package configuration... "
 msgstr "正在載入插件配置..."
 
-#: src/etc/inc/pkg-utils.inc:772
+#: src/etc/inc/pkg-utils.inc:767
 msgid "Configuring package components..."
 msgstr "配置插件組件..."
 
-#: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
+#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
 msgid "Loading package instructions..."
 msgstr "正在加載插件說明..."
 
-#: src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
 msgstr "缺失包檔 %s ！"
 
-#: src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
 msgstr "自定義命令..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:800
 msgid "Executing custom_php_global_functions()..."
 msgstr "正在執行custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_install_command()..."
 msgstr "正在執行custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:815
+#: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "正在執行custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
+#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
 msgid "Menu items... "
 msgstr "菜單項..."
 
-#: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
+#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
 msgid "Services... "
 msgstr "服務..."
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Loading package configuration... failed!"
 msgstr "正在加載插件配置...失敗！"
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Installation aborted."
 msgstr "安裝中止。"
 
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "無法加載插件配置。安裝中止。"
 
-#: src/etc/inc/pkg-utils.inc:876
+#: src/etc/inc/pkg-utils.inc:871
 msgid "Writing configuration... "
 msgstr "正在寫入配置..."
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "插件 %s已成功安裝。"
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "插件 %1$s沒有安裝，%2$s刪除並中止。"
 
-#: src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s package... "
 msgstr "正在移除插件%s... "
 
-#: src/etc/inc/pkg-utils.inc:904
+#: src/etc/inc/pkg-utils.inc:899
 #, php-format
 msgid "Removing %s components..."
 msgstr "正在移除 %s組件..."
 
-#: src/etc/inc/pkg-utils.inc:957
+#: src/etc/inc/pkg-utils.inc:952
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr "中間配置在刪除%s期間插件寫入。"
 
-#: src/etc/inc/pkg-utils.inc:973
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "未找到包檔 %s。"
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:986
 msgid "Deinstall commands... "
 msgstr "卸載命令..."
 
-#: src/etc/inc/pkg-utils.inc:996
+#: src/etc/inc/pkg-utils.inc:991
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr "未執行自定義卸載，因為缺少包。"
 
-#: src/etc/inc/pkg-utils.inc:1003
+#: src/etc/inc/pkg-utils.inc:998
 msgid "Syslog entries... "
 msgstr "系統日誌條目...."
 
-#: src/etc/inc/pkg-utils.inc:1011
+#: src/etc/inc/pkg-utils.inc:1006
 msgid "Configuration... "
 msgstr "配置..."
 
-#: src/etc/inc/pkg-utils.inc:1014
+#: src/etc/inc/pkg-utils.inc:1009
 #, php-format
 msgid "Removed %s package."
 msgstr "已移除插件%s 。"
 
-#: src/etc/inc/pkg-utils.inc:1039
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr "正在等待Internet連接更新pkg元數據，並重新安裝插件。"
 
-#: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
+#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
 msgstr "重新安裝插件"
 
-#: src/etc/inc/pkg-utils.inc:1053
+#: src/etc/inc/pkg-utils.inc:1048
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr "由於缺少互聯網連接，插件安裝過程已被中止"
 
-#: src/etc/inc/pkg-utils.inc:1092
+#: src/etc/inc/pkg-utils.inc:1087
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "插件 %s 在當前%s版本中不存在，並且已被刪除。 "
 
-#: src/etc/inc/pkg-utils.inc:1113
+#: src/etc/inc/pkg-utils.inc:1108
 msgid "Stopping all packages."
 msgstr "停止所有插件。"
 
@@ -6050,114 +6052,114 @@ msgstr "正在啟動DHCP服務..."
 msgid "Warning!  DHCP Failover setup and no CARP virtual IPs defined!"
 msgstr "警告！ DHCP故障切換設置，沒有定義CARP虛擬IP！"
 
-#: src/etc/inc/services.inc:774
+#: src/etc/inc/services.inc:775
 #, php-format
 msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
 "correct the settings in Services, DHCP Server"
 msgstr "DHCP地址池無效 %1$s -  檢測到 %3$s 子網%4$s/%5$s的%2$s， 請在DHCP伺服器設置中更正服務。"
 
-#: src/etc/inc/services.inc:1145
+#: src/etc/inc/services.inc:1146
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr "錯誤：無法在services_dhcpdv4_configure().%s中打開dhcpd.conf"
 
-#: src/etc/inc/services.inc:1648
+#: src/etc/inc/services.inc:1649
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "無法寫入Igmpproxy配置檔！"
 
-#: src/etc/inc/services.inc:1661
+#: src/etc/inc/services.inc:1662
 msgid "Started IGMP proxy service."
 msgstr "啟動IGMP代理服務。"
 
-#: src/etc/inc/services.inc:1685
+#: src/etc/inc/services.inc:1686
 msgid "Starting DHCP relay service..."
 msgstr "正在啟動DHCP中繼服務..."
 
-#: src/etc/inc/services.inc:1710
+#: src/etc/inc/services.inc:1711
 msgid "No destination IP has been configured!"
 msgstr "未配置目標IP！"
 
-#: src/etc/inc/services.inc:1784
+#: src/etc/inc/services.inc:1785
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "沒有找到合適的介面運行dhcrelay！"
 
-#: src/etc/inc/services.inc:1820
+#: src/etc/inc/services.inc:1821
 msgid "Starting DHCPv6 relay service..."
 msgstr "正在啟動DHCPv6中繼服務..."
 
-#: src/etc/inc/services.inc:1911
+#: src/etc/inc/services.inc:1912
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "找不到合適的介面運行dhcrelay -6！"
 
-#: src/etc/inc/services.inc:1972
+#: src/etc/inc/services.inc:1973
 msgid "Starting DynDNS clients..."
 msgstr "正在啟動DynDNS客戶端..."
 
-#: src/etc/inc/services.inc:2078
+#: src/etc/inc/services.inc:2079
 msgid "Starting DNS forwarder..."
 msgstr "正在啟動DNS轉發器..."
 
-#: src/etc/inc/services.inc:2244
+#: src/etc/inc/services.inc:2257
 msgid "Starting DNS Resolver..."
 msgstr "正在啟動DNS解析器..."
 
-#: src/etc/inc/services.inc:2289
+#: src/etc/inc/services.inc:2306
 msgid "Starting SNMP daemon... "
 msgstr "啟動SNMP守護程式..."
 
-#: src/etc/inc/services.inc:2300
+#: src/etc/inc/services.inc:2317
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "錯誤：無法在services_snmpd_configure()%s中打開snmpd.conf"
 
-#: src/etc/inc/services.inc:2629
+#: src/etc/inc/services.inc:2646
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr "phpDynDNS: 不更新 %s 記錄，因為IP地址未更改。"
 
-#: src/etc/inc/services.inc:2648
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr "phpDynDNS: 不更新%s AAAA記錄，因為IPv6地址未更改。"
 
-#: src/etc/inc/services.inc:2683
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "動態DNS將%2$s (%3$s)上的%1$s的IP地址（A）更新為％ %4$s"
 
-#: src/etc/inc/services.inc:2695
+#: src/etc/inc/services.inc:2712
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS已將%2$s (%3$s) 上的%1$s的IPv6地址（AAAA）更新為%4$s"
 
-#: src/etc/inc/services.inc:2703
+#: src/etc/inc/services.inc:2720
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr "phpDynDNS: 在更新 %1$s的IP地址（A）時發生錯誤 (%2$s)"
 
-#: src/etc/inc/services.inc:2708
+#: src/etc/inc/services.inc:2725
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr "phpDynDNS: 在更新 %1$s的IP地址（AAAA）時發生錯誤 (%2$s)"
 
-#: src/etc/inc/services.inc:2742
+#: src/etc/inc/services.inc:2759
 msgid "Created:"
 msgstr "創建："
 
-#: src/etc/inc/services.inc:2768
+#: src/etc/inc/services.inc:2785
 msgid "If possible do not add items to this file manually."
 msgstr "如果可能，請不要手動將專案添加到這個檔。"
 
-#: src/etc/inc/services.inc:2769
+#: src/etc/inc/services.inc:2786
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr "如果這樣做，此檔必須以空行終止（例如，新行）"
 
-#: src/etc/inc/services.inc:2819
+#: src/etc/inc/services.inc:2836
 msgid "Starting UPnP service... "
 msgstr "正在啟動UPnP服務..."
 
@@ -6985,11 +6987,11 @@ msgstr "錯誤：無法在 system_dmesg_save().%s中打開dmesg.boot"
 msgid "Setting hard disk standby... "
 msgstr "設置硬碟待機..."
 
-#: src/etc/inc/system.inc:2440
+#: src/etc/inc/system.inc:2458
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2462 src/etc/inc/system.inc:2481
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -7649,7 +7651,7 @@ msgstr "確認"
 msgid "Save"
 msgstr "保存設置"
 
-#: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
@@ -7673,60 +7675,60 @@ msgstr "保存設置"
 msgid "Diagnostics"
 msgstr "系統診斷"
 
-#: src/usr/local/www/crash_reporter.php:56
+#: src/usr/local/www/crash_reporter.php:62
 msgid "Crash Reporter"
 msgstr "崩潰報告"
 
-#: src/usr/local/www/crash_reporter.php:68
+#: src/usr/local/www/crash_reporter.php:74
 msgid "Processing..."
 msgstr "正在處理..."
 
-#: src/usr/local/www/crash_reporter.php:80
+#: src/usr/local/www/crash_reporter.php:86
 msgid "Uploading..."
 msgstr "上傳中..."
 
-#: src/usr/local/www/crash_reporter.php:91
+#: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
 msgstr "從本地磁片中刪除崩潰報告檔。"
 
-#: src/usr/local/www/crash_reporter.php:95
+#: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
 msgstr "找不到任何崩潰檔。"
 
-#: src/usr/local/www/crash_reporter.php:124
+#: src/usr/local/www/crash_reporter.php:130
 msgid "Unfortunately a Programming Bug has been detected"
 msgstr "檢測到一個編程錯誤"
 
-#: src/usr/local/www/crash_reporter.php:128
+#: src/usr/local/www/crash_reporter.php:134
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
 msgstr "您要將編程調試日誌提交給pfSense開發人員進行檢查嗎？"
 
-#: src/usr/local/www/crash_reporter.php:129
+#: src/usr/local/www/crash_reporter.php:135
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
 msgstr "請仔細檢查內容，以確保此信息在提交前可以被披露。"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
 msgstr "是的"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 msgid "Submit this to the developers for inspection"
 msgstr "提交檢查報告給開發者"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
 msgstr "不"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 msgid "Just delete the crash report and return to the Dashboard"
 msgstr "刪除崩潰報告，並返回到首頁"
 
@@ -26774,6 +26776,10 @@ msgid "Gray"
 msgstr "灰色"
 
 #: src/usr/local/www/system.php:611
+msgid "Dark gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:612
 msgid "Brown"
 msgstr "棕色"
 
@@ -27933,14 +27939,14 @@ msgid "Installation Feedback"
 msgstr "安裝回饋"
 
 #: src/usr/local/www/system_advanced_misc.php:588
-msgid "Host UUID"
-msgstr "主機UUID"
+msgid "Netgate Device ID"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
-"Enable this option to not send HOST UUID to pfSense as part of User-Agent "
-"header."
-msgstr "啟用此選項不會將主機 UUID(通用唯一識別碼)作為用戶代理標題的一部分發送到pfSense。"
+"Enable this option to not send Netgate Device ID to pfSense as part of User-"
+"Agent header."
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -35553,8 +35559,8 @@ msgid "Use memory file system for /tmp and /var"
 msgstr "對/ tmp和/ var使用記憶體檔系統"
 
 #: src/usr/local/www/system_advanced_misc.php:589
-msgid "Do NOT send HOST UUID with user agent"
-msgstr "不要與用戶代理一起發送HOST UUID（主機通用唯一識別碼）"
+msgid "Do NOT send Netgate Device ID with user agent"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:176
 msgid ""

@@ -202,11 +202,6 @@ if ($act == "csr") {
 }
 
 if ($_POST['save']) {
-	// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
-	if ($_POST['altname_value0'] == "") {
-		unset($_POST['altname_type0']);
-		unset($_POST['altname_value0']);
-	}
 
 	if ($_POST['save'] == gettext("Save")) {
 		$input_errors = array();
@@ -290,13 +285,20 @@ if ($_POST['save']) {
 
 		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
+			$san_typevar = 'altname_type';
+			$san_valuevar = 'altname_value';
+			// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
+			if ($_POST["{$san_valuevar}0"] == "") {
+				unset($_POST["{$san_typevar}0"]);
+				unset($_POST["{$san_valuevar}0"]);
+			}
 			foreach ($_POST as $key => $value) {
 				$entry = '';
-				if (!substr_compare('altname_type', $key, 0, 12)) {
-					$entry = substr($key, 12);
+				if (!substr_compare($san_typevar, $key, 0, strlen($san_typevar))) {
+					$entry = substr($key, strlen($san_typevar));
 					$field = 'type';
-				} elseif (!substr_compare('altname_value', $key, 0, 13)) {
-					$entry = substr($key, 13);
+				} elseif (!substr_compare($san_valuevar, $key, 0, strlen($san_valuevar))) {
+					$entry = substr($key, strlen($san_valuevar));
 					$field = 'value';
 				}
 
@@ -379,7 +381,7 @@ if ($_POST['save']) {
 				}
 			} else if ($pconfig['method'] == "sign") { // Sign a CSR
 				$csrid = lookup_cert($pconfig['csrtosign']);
-				$caid =  lookup_ca($pconfig['catosignwith']);
+				$ca =  lookup_ca($pconfig['catosignwith']);
 
 				// Read the CSR from $config, or if a new one, from the textarea
 				if ($pconfig['csrtosign'] === "new") {
@@ -387,37 +389,33 @@ if ($_POST['save']) {
 				} else {
 					$csr = base64_decode($csrid['csr']);
 				}
-
-				$old_err_level = error_reporting(0);
-
-				// Gather the information required for signed cert
-				$ca = base64_decode($caid['crt']);
-				$key = base64_decode($caid['prv']);
-				$duration = $pconfig['duration'];
-				$caref = $pconfig['catosignwith'];
-				$type = (cert_get_purpose($csrid)['server'] === "Yes") ? "server":"user";
-
-				// Sign the new cert and export it in x509 format
-				openssl_x509_export(openssl_csr_sign($csr, $ca, $key, $duration, ['x509_extensions' => 'v3_req']), $n509);
-
-				// Gather the details required to save the new cert
-				$newcert = array();
-				$newcert['refid'] = uniqid();
-				$newcert['caref'] = $caref;
-				$newcert['descr'] = $pconfig['descr'];
-				$newcert['type'] = $type;
-				$newcert['crt'] = base64_encode($n509);
-
-				if ($pconfig['csrtosign'] === "new") {
-					$newcert['prv'] = base64_encode($pconfig['keypaste']);
-				} else {
-					$newcert['prv'] = $csrid['prv'];
+				if (count($altnames)) {
+					foreach ($altnames as $altname) {
+						$altnames_tmp[] = "{$altname['type']}:" . cert_escape_x509_chars($altname['value']);
+					}
+					$altname_str = implode(",", $altnames_tmp);
 				}
 
-				// Add it to the config file
-				$config['cert'][] = $newcert;
+				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], ($_POST['csrsign_copy'] == "yes"), $pconfig['type'], $altname_str);
 
-				error_reporting($old_err_level);
+				if ($n509) {
+					// Gather the details required to save the new cert
+					$newcert = array();
+					$newcert['refid'] = uniqid();
+					$newcert['caref'] = $pconfig['catosignwith'];
+					$newcert['descr'] = $pconfig['descr'];
+					$newcert['type'] = $pconfig['type'];
+					$newcert['crt'] = base64_encode($n509);
+
+					if ($pconfig['csrtosign'] === "new") {
+						$newcert['prv'] = base64_encode($pconfig['keypaste']);
+					} else {
+						$newcert['prv'] = $csrid['prv'];
+					}
+
+					// Add it to the config file
+					$config['cert'][] = $newcert;
+				}
 
 			} else {
 				$cert = array();
@@ -702,13 +700,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		list_csrs()
 	));
 
-	$section->addInput(new Form_Input(
-		'duration',
-		'*Certificate duration (days)',
-		'number',
-		$pconfig['duration'] ? $pconfig['duration']:'3650'
-	));
-
 	$section->addInput(new Form_Textarea(
 		'csrpaste',
 		'CSR data',
@@ -720,6 +711,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'Key data',
 		$pconfig['keypaste']
 	))->setHelp('Optionally paste a private key here. The key will be associated with the newly signed certificate in pfSense');
+
+	$section->addInput(new Form_Input(
+		'csrsign_lifetime',
+		'*Certificate Lifetime (days)',
+		'number',
+		$pconfig['duration'] ? $pconfig['duration']:'3650'
+	));
 
 	$form->add($section);
 
@@ -781,14 +779,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
 		'SHA1 when possible.');
-
-	$section->addInput(new Form_Select(
-		'type',
-		'*Certificate Type',
-		$pconfig['type'],
-		$cert_types
-	))->setHelp('Type of certificate to generate. Used for placing '.
-		'restrictions on the usage of the generated certificate.');
 
 	$section->addInput(new Form_Input(
 		'lifetime',
@@ -852,57 +842,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		['placeholder' => 'e.g. www.example.com']
 	));
 
-	if (empty($pconfig['altnames']['item'])) {
-		$pconfig['altnames']['item'] = array(
-			array('type' => null, 'value' => null)
-		);
-	}
-
-	$counter = 0;
-	$numrows = count($pconfig['altnames']['item']) - 1;
-
-	foreach ($pconfig['altnames']['item'] as $item) {
-
-		$group = new Form_Group($counter == 0 ? 'Alternative Names':'');
-
-		$group->add(new Form_Select(
-			'altname_type' . $counter,
-			'Type',
-			$item['type'],
-			$cert_altname_types
-		))->setHelp(($counter == $numrows) ? 'Type':null);
-
-		$group->add(new Form_Input(
-			'altname_value' . $counter,
-			null,
-			'text',
-			$item['value']
-		))->setHelp(($counter == $numrows) ? 'Value':null);
-
-		$group->add(new Form_Button(
-			'deleterow' . $counter,
-			'Delete',
-			null,
-			'fa-trash'
-		))->addClass('btn-warning');
-
-		$group->addClass('repeatable');
-
-		$group->setHelp('Enter additional identifiers for the certificate in this list. The Common Name field is automatically added to the certificate as an Alternative Name.');
-
-		$section->add($group);
-
-		$counter++;
-	}
-
-	$section->addInput(new Form_Button(
-		'addrow',
-		'Add',
-		null,
-		'fa-plus'
-	))->addClass('btn-success');
-
-
 	$form->add($section);
 	$section = new Form_Section('External Signing Request');
 	$section->addClass('toggle-external collapse');
@@ -921,14 +860,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
 		'SHA1 when possible');
-
-	$section->addInput(new Form_Select(
-		'type',
-		'*Certificate Type',
-		$pconfig['type'],
-		$cert_types
-	))->setHelp('Type of certificate to generate. Used for placing '.
-		'restrictions on the usage of the generated certificate.');
 
 	$section->addInput(new Form_Select(
 		'csr_dn_country',
@@ -985,56 +916,6 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		['placeholder' => 'e.g. internal-ca']
 	));
 
-	if (empty($pconfig['altnames']['item'])) {
-		$pconfig['altnames']['item'] = array(
-			array('type' => null, 'value' => null)
-		);
-	}
-
-	$counter = 0;
-	$numrows = count($pconfig['altnames']['item']) - 1;
-
-	foreach ($pconfig['altnames']['item'] as $item) {
-
-		$group = new Form_Group($counter == 0 ? 'Alternative Names':'');
-
-		$group->add(new Form_Select(
-			'altname_type' . $counter,
-			'Type',
-			$item['type'],
-			$cert_altname_types
-		))->setHelp(($counter == $numrows) ? 'Type':null);
-
-		$group->add(new Form_Input(
-			'altname_value' . $counter,
-			null,
-			'text',
-			$item['value']
-		))->setHelp(($counter == $numrows) ? 'Value':null);
-
-		$group->add(new Form_Button(
-			'deleterow' . $counter,
-			'Delete',
-			null,
-			'fa-trash'
-		))->addClass('btn-warning');
-
-		$group->addClass('repeatable');
-
-		$group->setHelp('Enter additional identifiers for the certificate in this list. The Common Name field is automatically added to the certificate as an Alternative Name.');
-
-		$section->add($group);
-
-		$counter++;
-	}
-
-	$section->addInput(new Form_Button(
-		'addrow',
-		'Add',
-		null,
-		'fa-plus'
-	))->addClass('btn-success');
-
 	$form->add($section);
 	$section = new Form_Section('Choose an Existing Certificate');
 	$section->addClass('toggle-existing collapse');
@@ -1071,6 +952,91 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	));
 
 	$form->add($section);
+
+	$section = new Form_Section('Certificate Attributes');
+	$section->addClass('toggle-external toggle-internal toggle-sign collapse');
+
+	$section->addInput(new Form_StaticText(
+		gettext('Attribute Notes'),
+		'<span class="help-block">'.
+		gettext('The following attributes are added to certificates and ' .
+		'requests when they are created or signed. These attributes behave ' .
+		'differently depending on the selected mode.') .
+		'<br/><br/>' .
+		'<span class="toggle-internal collapse">' . gettext('For Internal Certificates, these attributes are added directly to the certificate as shown.') . '</span>' .
+		'<span class="toggle-external collapse">' .
+		gettext('For Certificate Signing Requests, These attributes are added to the request but they may be ignored or changed by the CA that signs the request. ') .
+		'<br/><br/>' .
+		gettext('If this CSR will be signed using the Certificate Manager on this firewall, set the attributes when signing instead as they cannot be carried over.') . '</span>' .
+		'<span class="toggle-sign collapse">' . gettext('When Signing a Certificate Request, existing attributes in the request cannot be copied. The attributes below will be applied to the resulting certificate.') . '</span>' .
+		'</span>'
+	));
+
+	$section->addInput(new Form_Select(
+		'type',
+		'*Certificate Type',
+		$pconfig['type'],
+		$cert_types
+	))->setHelp('Add type-specific usage attributes to the signed certificate.' .
+		' Used for placing usage restrictions on, or granting abilities to, ' .
+		'the signed certificate.');
+
+	if (empty($pconfig['altnames']['item'])) {
+		$pconfig['altnames']['item'] = array(
+			array('type' => null, 'value' => null)
+		);
+	}
+
+	$counter = 0;
+	$numrows = count($pconfig['altnames']['item']) - 1;
+
+	foreach ($pconfig['altnames']['item'] as $item) {
+
+		$group = new Form_Group($counter == 0 ? 'Alternative Names':'');
+
+		$group->add(new Form_Select(
+			'altname_type' . $counter,
+			'Type',
+			$item['type'],
+			$cert_altname_types
+		))->setHelp(($counter == $numrows) ? 'Type':null);
+
+		$group->add(new Form_Input(
+			'altname_value' . $counter,
+			null,
+			'text',
+			$item['value']
+		))->setHelp(($counter == $numrows) ? 'Value':null);
+
+		$group->add(new Form_Button(
+			'deleterow' . $counter,
+			'Delete',
+			null,
+			'fa-trash'
+		))->addClass('btn-warning');
+
+		$group->addClass('repeatable');
+
+		$group->setHelp('Enter additional identifiers for the certificate ' .
+			'in this list. The Common Name field is automatically ' .
+			'added to the certificate as an Alternative Name. ' .
+			'The signing CA may ignore or change these values.');
+
+		$section->add($group);
+
+		$counter++;
+	}
+
+	$section->addInput(new Form_Button(
+		'addrow',
+		'Add',
+		null,
+		'fa-plus'
+	))->addClass('btn-success');
+
+	$form->add($section);
+
+
 	print $form;
 
 } else if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {

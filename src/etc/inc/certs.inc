@@ -332,18 +332,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		$ca_serial = ++$ca['serial'];
 	}
 
-	switch ($type) {
-		case "ca":
-			$cert_type = "v3_ca";
-			break;
-		case "server":
-		case "self-signed":
-			$cert_type = "server";
-			break;
-		default:
-			$cert_type = "usr_cert";
-			break;
-	}
+	$cert_type = cert_type_config_section($type);
 
 	// in case of using Subject Alternative Names use other sections (with postfix '_san')
 	// pass subjectAltName over environment variable 'SAN'
@@ -403,18 +392,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha256") {
 
-	switch ($type) {
-		case "ca":
-			$cert_type = "v3_ca";
-			break;
-		case "server":
-		case "self-signed":
-			$cert_type = "server";
-			break;
-		default:
-			$cert_type = "usr_cert";
-			break;
-	}
+	$cert_type = cert_type_config_section($type);
 
 	// in case of using Subject Alternative Names use other sections (with postfix '_san')
 	// pass subjectAltName over environment variable 'SAN'
@@ -455,6 +433,41 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 	$cert['prv'] = base64_encode($str_key);
 
 	return true;
+}
+
+function csr_sign($csr, $ca, $duration, $copyattributes = true, $type = "user", $altnames) {
+	global $config;
+	$old_err_level = error_reporting(0);
+
+	// Gather the information required for signed cert
+	$ca_str_crt = base64_decode($ca['crt']);
+	$ca_str_key = base64_decode($ca['prv']);
+	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+	if (!$ca_res_key) {
+		return false;
+	}
+	if (empty($ca['serial'])) {
+		$ca['serial'] = 0;
+	}
+	$ca_serial = ++$ca['serial'];
+
+	$cert_type = cert_type_config_section($type);
+
+	if (!empty($altnames)) {
+		putenv("SAN={$altnames}"); // subjectAltName can be set _only_ via configuration file
+		$cert_type .= '_san';
+	}
+
+	$args = array(
+		"x509_extensions" => $cert_type,
+		"req_extensions" => "req_{$cert_type}"
+	);
+
+	// Sign the new cert and export it in x509 format
+	openssl_x509_export(openssl_csr_sign($csr, $ca_str_crt, $ca_str_key, $duration, $args, $ca_serial), $n509);
+	error_reporting($old_err_level);
+
+	return $n509;
 }
 
 function csr_complete(& $cert, $str_crt) {
@@ -1058,6 +1071,22 @@ function cert_add_altname_type($str) {
 	} else {
 		return "";
 	}
+}
+
+function cert_type_config_section($type) {
+	switch ($type) {
+		case "ca":
+			$cert_type = "v3_ca";
+			break;
+		case "server":
+		case "self-signed":
+			$cert_type = "server";
+			break;
+		default:
+			$cert_type = "usr_cert";
+			break;
+	}
+	return $cert_type;
 }
 
 ?>

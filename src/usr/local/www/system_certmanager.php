@@ -215,7 +215,9 @@ if ($_POST['save']) {
 				gettext("Descriptive name"),
 				gettext("CA to sign with"));
 
-			if (($_POST['csrtosign'] === "new") && (!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST"))) {
+			if (($_POST['csrtosign'] === "new") &&
+			    ((!strstr($_POST['csrpaste'], "BEGIN CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END CERTIFICATE REQUEST")) &&
+			    (!strstr($_POST['csrpaste'], "BEGIN NEW CERTIFICATE REQUEST") || !strstr($_POST['csrpaste'], "END NEW CERTIFICATE REQUEST")))) {
 				$input_errors[] = gettext("This signing request does not appear to be valid.");
 			}
 

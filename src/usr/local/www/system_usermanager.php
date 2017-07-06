@@ -411,6 +411,10 @@ if ($_POST['save']) {
 					'organizationName' => $subject[3]['v'],
 					'emailAddress' => $subject[4]['v'],
 					'commonName' => $userent['name']);
+				$altnames_tmp = array(cert_add_altname_type($userent['name']));
+				if (!empty($altnames_tmp)) {
+					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
 					(int)$_POST['lifetime'], $dn);

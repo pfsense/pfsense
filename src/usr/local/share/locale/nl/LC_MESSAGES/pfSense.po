@@ -1,5 +1,6 @@
 # A. olde Kalter <arian@oldekalter.com>, 2017. #zanata
 # Arnon Hoogerwerf <admin@hoogerwerf.xyz>, 2017. #zanata
+# Biton Walstra <jobsbw-forum@yahoo.co.uk>, 2017. #zanata
 # Graham van der Wielen <zanata@gray-um.com>, 2017. #zanata
 # Jasper Backer <jasper@jbacker.nl>, 2017. #zanata
 # Kevin Nienhuis <kevin_nienhuis@hotmail.com>, 2017. #zanata
@@ -17,12 +18,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 14:17-0300\n"
+"POT-Creation-Date: 2017-07-05 14:41-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-19 10:57-0400\n"
-"Last-Translator: Arnon Hoogerwerf <admin@hoogerwerf.xyz>\n"
+"PO-Revision-Date: 2017-07-01 04:23-0400\n"
+"Last-Translator: Biton Walstra <jobsbw-forum@yahoo.co.uk>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -251,7 +252,7 @@ msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -263,15 +264,20 @@ msgstr "Inloggen op %1$s"
 msgid "Login"
 msgstr "Inloggen"
 
-#: src/etc/inc/authgui.inc:290
+#: src/etc/inc/authgui.inc:289
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
-"\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that a "
-"man-in-the-middle attack is not taking place."
+"\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
+"a man-in-the-middle attack is not taking place."
 msgstr ""
+"Het IP adres dat wordt gebruikt om toegang te krijgen tot deze router is "
+"niet lokaal geconfigureerd, mogelijk word deze  door de NAT of door ander "
+"methoden doorverwezen.\n"
+"\t\t\t\t\t\t\t\tAls deze door verwijzing onverwacht is, verifieer of er geen "
+"man-in-middle aanval plaats vind."
 
-#: src/etc/inc/authgui.inc:345
+#: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
 msgstr "De browser moet cookies ondersteunen om in te loggen."
 
@@ -297,7 +303,7 @@ msgstr "Wachtwoord:"
 msgid "Enter Voucher Code:"
 msgstr "Voer waardeboncode in:"
 
-#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
+#: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
 msgstr "Volgende"
 
@@ -1231,7 +1237,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS heeft IP Adres  %1$s (%2$s) bijgewerkt naar %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2680 src/etc/inc/services.inc:2692
+#: src/etc/inc/services.inc:2697 src/etc/inc/services.inc:2709
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: heeft buffer bestand %1$s: %2$s bijgewerkt."
@@ -1706,16 +1712,16 @@ msgstr "Filter is uitgeschakeld. Geen regels aan het laden."
 #: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
 #: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
 #: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
-#: src/etc/inc/pkg-utils.inc:600 src/etc/inc/pkg-utils.inc:748
-#: src/etc/inc/pkg-utils.inc:771 src/etc/inc/pkg-utils.inc:807
-#: src/etc/inc/pkg-utils.inc:812 src/etc/inc/pkg-utils.inc:817
-#: src/etc/inc/pkg-utils.inc:835 src/etc/inc/pkg-utils.inc:852
-#: src/etc/inc/pkg-utils.inc:879 src/etc/inc/pkg-utils.inc:925
-#: src/etc/inc/pkg-utils.inc:951 src/etc/inc/pkg-utils.inc:994
-#: src/etc/inc/pkg-utils.inc:1013 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1595 src/etc/inc/services.inc:1998
-#: src/etc/inc/services.inc:2215 src/etc/inc/services.inc:2257
-#: src/etc/inc/services.inc:2478 src/etc/inc/system.inc:1239
+#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
+#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
+#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
+#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
+#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
+#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
+#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
+#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2269
+#: src/etc/inc/services.inc:2495 src/etc/inc/system.inc:1239
 #: src/etc/inc/system.inc:1339 src/etc/inc/system.inc:1642
 #: src/etc/inc/system.inc:2214
 msgid "done."
@@ -3759,7 +3765,7 @@ msgstr "Spaans"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Spaans (Argentinië)"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "Norwegian Bokmål"
@@ -3890,32 +3896,32 @@ msgstr ""
 "Fout! Er is een fout opgetreden tijdens pkg uitvoering (rc = %d) met "
 "parameters '%s':"
 
-#: src/etc/inc/pkg-utils.inc:440 src/etc/inc/pkg-utils.inc:444
+#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr "FOUT: Fout bij het ophalen van de pakkettenlijst. Annuleren..."
 
-#: src/etc/inc/pkg-utils.inc:482 src/etc/inc/pkg-utils.inc:486
+#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr "FOUT: Fout bij het ophalen van pakket versie. Annuleren..."
 
-#: src/etc/inc/pkg-utils.inc:537
+#: src/etc/inc/pkg-utils.inc:532
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Uitvoeren van laatste stappen van %s installatie."
 
-#: src/etc/inc/pkg-utils.inc:550
+#: src/etc/inc/pkg-utils.inc:545
 msgid "Resyncing configuration for all packages."
 msgstr "Hersynchroniseren configuratie van alle pakketten."
 
-#: src/etc/inc/pkg-utils.inc:572
+#: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
 msgstr "Synchroniseren van pakketten..."
 
-#: src/etc/inc/pkg-utils.inc:594
+#: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
 msgstr "Verwijderen van pakket."
 
-#: src/etc/inc/pkg-utils.inc:627
+#: src/etc/inc/pkg-utils.inc:622
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
@@ -3923,180 +3929,180 @@ msgstr ""
 "Het configuratie bestand van pakket %s ontbreekt en moet opnieuw "
 "geinstalleerd worden."
 
-#: src/etc/inc/pkg-utils.inc:643
+#: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
 "Herinstalleren van pakket %1$s omdat het configuratiebestand (%2$s) "
 "ontbreekt."
 
-#: src/etc/inc/pkg-utils.inc:646
+#: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr "Herinstallatie van pakket %s mislukt. Neem gepaste actie!"
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
 msgstr "Begin met installatie van pakket."
 
-#: src/etc/inc/pkg-utils.inc:740
+#: src/etc/inc/pkg-utils.inc:735
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "Begin installatie van pakket %s."
 
-#: src/etc/inc/pkg-utils.inc:744
+#: src/etc/inc/pkg-utils.inc:739
 msgid "Saving updated package information..."
 msgstr "Opslaan van bijgewerkte pakket informatie..."
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:742
 #, php-format
 msgid "Installed %s package."
 msgstr "Installatie van pakket %s voltooid."
 
-#: src/etc/inc/pkg-utils.inc:751
+#: src/etc/inc/pkg-utils.inc:746
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "Vorige installatie van %s is overschreven."
 
-#: src/etc/inc/pkg-utils.inc:752
+#: src/etc/inc/pkg-utils.inc:747
 msgid "overwrite!"
 msgstr "overschrijven!"
 
-#: src/etc/inc/pkg-utils.inc:755
+#: src/etc/inc/pkg-utils.inc:750
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
 "Tussentijdse opslag van configuratie tijdens installatie van pakket voor %s."
 
-#: src/etc/inc/pkg-utils.inc:759
+#: src/etc/inc/pkg-utils.inc:754
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Het pakket %1$s is niet geinstalleerd. %2$s installatie afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:763 src/etc/inc/pkg-utils.inc:795
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Installatie mislukt van pakket: %s."
 
-#: src/etc/inc/pkg-utils.inc:764 src/etc/inc/pkg-utils.inc:796
-#: src/etc/inc/pkg-utils.inc:872
+#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:867
 msgid "Failed to install package."
 msgstr "Installatie van pakket mislukt."
 
-#: src/etc/inc/pkg-utils.inc:769
+#: src/etc/inc/pkg-utils.inc:764
 msgid "Loading package configuration... "
 msgstr "Laden van pakket configuratie..."
 
-#: src/etc/inc/pkg-utils.inc:772
+#: src/etc/inc/pkg-utils.inc:767
 msgid "Configuring package components..."
 msgstr "Configureren van componenten voor pakket..."
 
-#: src/etc/inc/pkg-utils.inc:784 src/etc/inc/pkg-utils.inc:966
+#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
 msgid "Loading package instructions..."
 msgstr "Laden van instructies voor pakket..."
 
-#: src/etc/inc/pkg-utils.inc:791
+#: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
 msgstr "Include %s ontbreekt!"
 
-#: src/etc/inc/pkg-utils.inc:802
+#: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
 msgstr "Gepersonaliseerde commando's..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:800
 msgid "Executing custom_php_global_functions()..."
 msgstr "Uitvoeren van custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:805
 msgid "Executing custom_php_install_command()..."
 msgstr "Uitvoeren van custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:815
+#: src/etc/inc/pkg-utils.inc:810
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Uitvoeren van custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:822 src/etc/inc/pkg-utils.inc:914
+#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
 msgid "Menu items... "
 msgstr "Menu items... "
 
-#: src/etc/inc/pkg-utils.inc:839 src/etc/inc/pkg-utils.inc:929
+#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
 msgid "Services... "
 msgstr "Diensten... "
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Loading package configuration... failed!"
 msgstr "Laden van pakket configuratie... mislukt!"
 
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Installation aborted."
 msgstr "Installatie afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:862
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 "Kon de configuratie van het pakket niet laden. Installatie afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:876
+#: src/etc/inc/pkg-utils.inc:871
 msgid "Writing configuration... "
 msgstr "Schrijven van configuratie..."
 
-#: src/etc/inc/pkg-utils.inc:878
+#: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Installatie succesvol van pakket: %s."
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Het pakket %1$s is niet geinstalleerd.%2$sVerwijderen afgebroken."
 
-#: src/etc/inc/pkg-utils.inc:903
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s package... "
 msgstr "Verwijderen van pakket %s..."
 
-#: src/etc/inc/pkg-utils.inc:904
+#: src/etc/inc/pkg-utils.inc:899
 #, php-format
 msgid "Removing %s components..."
 msgstr "Verwijderen van componenten voor %s..."
 
-#: src/etc/inc/pkg-utils.inc:957
+#: src/etc/inc/pkg-utils.inc:952
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "Tussentijdse opslag van configuratie tijdens verwijderen van pakket %s."
 
-#: src/etc/inc/pkg-utils.inc:973
+#: src/etc/inc/pkg-utils.inc:968
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Bijgesloten bestand %s kon niet worden gevonden om in te sluiten"
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:986
 msgid "Deinstall commands... "
 msgstr "De-installeer commando's..."
 
-#: src/etc/inc/pkg-utils.inc:996
+#: src/etc/inc/pkg-utils.inc:991
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 "De aangepaste de-installeer hook wordt niet uitgevoerd omdat een bijlage "
 "mist."
 
-#: src/etc/inc/pkg-utils.inc:1003
+#: src/etc/inc/pkg-utils.inc:998
 msgid "Syslog entries... "
 msgstr "Syslog regels..."
 
-#: src/etc/inc/pkg-utils.inc:1011
+#: src/etc/inc/pkg-utils.inc:1006
 msgid "Configuration... "
 msgstr "Configuratie..."
 
-#: src/etc/inc/pkg-utils.inc:1014
+#: src/etc/inc/pkg-utils.inc:1009
 #, php-format
 msgid "Removed %s package."
 msgstr "Pakket %s is verwijderd."
 
-#: src/etc/inc/pkg-utils.inc:1039
+#: src/etc/inc/pkg-utils.inc:1034
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -4104,24 +4110,24 @@ msgstr ""
 "Wachten op internet verbinding om pakket metadata bij te werken en de "
 "herinstallatie te voltooien"
 
-#: src/etc/inc/pkg-utils.inc:1052 src/etc/inc/pkg-utils.inc:1091
+#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
 msgstr "Pakket herinstallatie"
 
-#: src/etc/inc/pkg-utils.inc:1053
+#: src/etc/inc/pkg-utils.inc:1048
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Pakket herinstallatie was afgebroken vanwege een gebrek aan verbinding met "
 "het internet"
 
-#: src/etc/inc/pkg-utils.inc:1092
+#: src/etc/inc/pkg-utils.inc:1087
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "Pakket %s bestaat niet in de huidige versie %s en is verwijderd."
 
-#: src/etc/inc/pkg-utils.inc:1113
+#: src/etc/inc/pkg-utils.inc:1108
 msgid "Stopping all packages."
 msgstr "Alle pakketten aan het stoppen."
 
@@ -6340,7 +6346,7 @@ msgstr ""
 "Waarschuwing! Geen DHCP Failover instellingen en CARP virtuele IPs "
 "gedefineerd!"
 
-#: src/etc/inc/services.inc:774
+#: src/etc/inc/services.inc:775
 #, php-format
 msgid ""
 "Invalid DHCP pool %1$s - %2$s for %3$s subnet %4$s/%5$s detected. Please "
@@ -6349,63 +6355,63 @@ msgstr ""
 "Ongeldige DHCP pool %1$s - %2$s voor %3$s subnet %4$s/%5$s gedetecteerd. "
 "Corrigeer de instellingen in Diensten, DHCP Server"
 
-#: src/etc/inc/services.inc:1145
+#: src/etc/inc/services.inc:1146
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr "Fout: kan dhcpd.conf niet openen in services_dhcpdv4_configure(). %s"
 
-#: src/etc/inc/services.inc:1648
+#: src/etc/inc/services.inc:1649
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Kan het lgmpproxy configuratie bestand niet schrijven!"
 
-#: src/etc/inc/services.inc:1661
+#: src/etc/inc/services.inc:1662
 msgid "Started IGMP proxy service."
 msgstr "IGMP proxy service is gestart."
 
-#: src/etc/inc/services.inc:1685
+#: src/etc/inc/services.inc:1686
 msgid "Starting DHCP relay service..."
 msgstr "Bezig met het starten van de DHCP relay service..."
 
-#: src/etc/inc/services.inc:1710
+#: src/etc/inc/services.inc:1711
 msgid "No destination IP has been configured!"
 msgstr "Er is geen doel IP is geconfigureerd!"
 
-#: src/etc/inc/services.inc:1784
+#: src/etc/inc/services.inc:1785
 msgid "No suitable interface found for running dhcrelay!"
 msgstr ""
 "Er is geen geschikte interface gevonden voor het draaien van dhcrelay!"
 
-#: src/etc/inc/services.inc:1820
+#: src/etc/inc/services.inc:1821
 msgid "Starting DHCPv6 relay service..."
 msgstr "Bezig met het starten van de DHCPv6 relay service..."
 
-#: src/etc/inc/services.inc:1911
+#: src/etc/inc/services.inc:1912
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr ""
 "Er is geen geschikte interface gevonden voor het draaien van dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1972
+#: src/etc/inc/services.inc:1973
 msgid "Starting DynDNS clients..."
 msgstr "Bezig met het starten van de DynDNS clienten..."
 
-#: src/etc/inc/services.inc:2078
+#: src/etc/inc/services.inc:2079
 msgid "Starting DNS forwarder..."
 msgstr "Bezig met het starten van de DNS forwarder..."
 
-#: src/etc/inc/services.inc:2244
+#: src/etc/inc/services.inc:2257
 msgid "Starting DNS Resolver..."
 msgstr "Bezig met het starten van de DNS Resolver..."
 
-#: src/etc/inc/services.inc:2289
+#: src/etc/inc/services.inc:2306
 msgid "Starting SNMP daemon... "
 msgstr "Bezig met het starten van de SNMP daemon..."
 
-#: src/etc/inc/services.inc:2300
+#: src/etc/inc/services.inc:2317
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "Fout: kan snmpd.conf niet openen in services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2629
+#: src/etc/inc/services.inc:2646
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6413,7 +6419,7 @@ msgstr ""
 "phpDynDNS: Bijwerken van %s A record overgeslagen omdat het IP adres niet is "
 "veranderd."
 
-#: src/etc/inc/services.inc:2648
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6422,48 +6428,48 @@ msgstr ""
 "phpDynDNS: Bijwerken van %s AAAA record overgeslagen omdat het IPv6 adres "
 "niet is veranderd."
 
-#: src/etc/inc/services.inc:2683
+#: src/etc/inc/services.inc:2700
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS heeft het IP Adres (A) voor %1$s op %2$s (%3$s) naar %4$s bijgewerkt"
 
-#: src/etc/inc/services.inc:2695
+#: src/etc/inc/services.inc:2712
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS heeft het IPv6 Adres (AAAA) voor %1$s op %2$s (%3$s) naar %4$s "
 "bijgewerkt"
 
-#: src/etc/inc/services.inc:2703
+#: src/etc/inc/services.inc:2720
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: FOUT tijdens het bijwerken van het IP Adres (A) voor %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2708
+#: src/etc/inc/services.inc:2725
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: FOUT tijdens het bijwerken van het IP Adres (AAAA) voor %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2742
+#: src/etc/inc/services.inc:2759
 msgid "Created:"
 msgstr "Aangemaakt:"
 
-#: src/etc/inc/services.inc:2768
+#: src/etc/inc/services.inc:2785
 msgid "If possible do not add items to this file manually."
 msgstr "Voeg indien mogelijk geen items handmatig aan dit bestand toe."
 
-#: src/etc/inc/services.inc:2769
+#: src/etc/inc/services.inc:2786
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Indien dit toch is gedaan moet dit bestand worden beëindigd met een lege "
 "regel (dus: nieuwe regel)"
 
-#: src/etc/inc/services.inc:2819
+#: src/etc/inc/services.inc:2836
 msgid "Starting UPnP service... "
 msgstr "Bezig met het starten van de UPnP service..."
 
@@ -7349,11 +7355,11 @@ msgstr "Fout: kan dmesg.boot niet openen in system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Harddisk op standby aan het zetten..."
 
-#: src/etc/inc/system.inc:2440
+#: src/etc/inc/system.inc:2458
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2444 src/etc/inc/system.inc:2463
+#: src/etc/inc/system.inc:2462 src/etc/inc/system.inc:2481
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -8072,7 +8078,7 @@ msgstr "Bevestig"
 msgid "Save"
 msgstr "Bewaar"
 
-#: src/usr/local/www/crash_reporter.php:56 src/usr/local/www/diag_arp.php:269
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_command.php:78
 #: src/usr/local/www/diag_confbak.php:101
@@ -8096,31 +8102,31 @@ msgstr "Bewaar"
 msgid "Diagnostics"
 msgstr "Diagnostische gegevens"
 
-#: src/usr/local/www/crash_reporter.php:56
+#: src/usr/local/www/crash_reporter.php:62
 msgid "Crash Reporter"
 msgstr "Crash Reporter"
 
-#: src/usr/local/www/crash_reporter.php:68
+#: src/usr/local/www/crash_reporter.php:74
 msgid "Processing..."
 msgstr "Aan het verwerken..."
 
-#: src/usr/local/www/crash_reporter.php:80
+#: src/usr/local/www/crash_reporter.php:86
 msgid "Uploading..."
 msgstr "Aan het uploaden..."
 
-#: src/usr/local/www/crash_reporter.php:91
+#: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
 msgstr "Verwijder crash report bestanden van lokale schijf."
 
-#: src/usr/local/www/crash_reporter.php:95
+#: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
 msgstr "Geen crashbestanden gevonden."
 
-#: src/usr/local/www/crash_reporter.php:124
+#: src/usr/local/www/crash_reporter.php:130
 msgid "Unfortunately a Programming Bug has been detected"
 msgstr "Helaas is een programmeerfout gedetecteerd"
 
-#: src/usr/local/www/crash_reporter.php:128
+#: src/usr/local/www/crash_reporter.php:134
 msgid ""
 "The programming debug logs can be submitted to the pfSense developers for "
 "inspection."
@@ -8128,7 +8134,7 @@ msgstr ""
 "De programmeer debug log bestanden kunnen naar de pfSense ontwikkelaars "
 "worden gestuurd voor inspectie."
 
-#: src/usr/local/www/crash_reporter.php:129
+#: src/usr/local/www/crash_reporter.php:135
 msgid ""
 "Please double check the contents to ensure this information is acceptable to "
 "disclose before submitting."
@@ -8136,24 +8142,24 @@ msgstr ""
 "Controleer de inhoud om er zeker van te zijn dat deze informatie "
 "doorgestuurd kan worden."
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
 msgstr "Ja"
 
-#: src/usr/local/www/crash_reporter.php:138
+#: src/usr/local/www/crash_reporter.php:144
 msgid "Submit this to the developers for inspection"
 msgstr "Verzend dit aan de ontwikkelaars voor inspectie"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
 msgstr "Nee"
 
-#: src/usr/local/www/crash_reporter.php:142
+#: src/usr/local/www/crash_reporter.php:148
 msgid "Just delete the crash report and return to the Dashboard"
 msgstr "Verwijder alleen het crash report en keer terug naar het Dashboard"
 
@@ -12312,7 +12318,7 @@ msgstr "Doorverwijzen van doel IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "De opgegeven interface bestaat niet."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15680,6 +15686,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Andere dashboard instelling zijn beschikbaar via de <a href=\"%s\">Algemene "
+"instellingen</a> pagina."
 
 #: src/usr/local/www/index.php:612
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -18854,6 +18862,7 @@ msgid "TCPmssFix"
 msgstr "TCPmssFix"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:871
+#, fuzzy
 msgid ""
 "Causes mpd to adjust incoming and outgoing TCP SYN segments so that the "
 "requested maximum segment size is not greater than the amount allowed by the "
@@ -18867,6 +18876,20 @@ msgid ""
 "reduce the fragment size or drop the IP Don't Fragment option from its "
 "outgoing data."
 msgstr ""
+"Activeert de mpd om de inkomende and uitgaande TCP SYN segmenten aan te "
+"passen zodat de maximale aangevraagde segment waarde niet groter wordt dan "
+"de maximale MTU waarde van des betreffende interface. Dit is nodig in vele "
+"configuraties om te voorkomen dat er problemen ontstaan door routers die "
+"“ICMP Datagram Too Big” berichten verwijderen. Data die word verzonden door "
+"de oorspronkelijke verzender en dan door de des betreffende router passeert "
+"en dan zonder deze berichten verder gaan kan het een machine bereiken met "
+"een MTU die dan niet groot genoeg is. Omdat de optie “IP Don't Fragment” is "
+"ingesteld, stuurt deze machine een “ICMP Datagram Too Big” bericht terug "
+"naar de oorspronkelijke verzender en verwijdert het data pakket. Vervolgens "
+"wordt het “ICMP” bericht verwijderd door de des betreffende router en de "
+"oorspronkelijke verzender krijgt nooit het bericht door dat het de fragment "
+"grootte moet aanpassen of de optie “IP Don't Fragment” uit de uitgaande data "
+"te verwijderen."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:879
 msgid "ShortSeq"
@@ -20661,6 +20684,9 @@ msgid ""
 "Subsequent logins will cause machines previously logged in with the same "
 "username to be disconnected."
 msgstr ""
+"Indien geactiveerd is alleen de meest recente login per gebruikersnaam "
+"actief. Hierop volgend  zullen alle verbindingen met machines die met "
+"dezelfde gebruiker zijn ingelogd worden verbroken."
 
 #: src/usr/local/www/services_captiveportal.php:635
 msgid "MAC filtering"
@@ -20677,7 +20703,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:644
 msgid "Pass-through MAC Auto Entry"
-msgstr ""
+msgstr "Doorvoer MAC automatische Regel"
 
 #: src/usr/local/www/services_captiveportal.php:647
 #, php-format
@@ -21034,13 +21060,13 @@ msgstr "Huidige portal pagina"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Live weergave"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Bekijk pagina inhoud"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -21645,7 +21671,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:472
 msgid "# of Roll bits"
-msgstr ""
+msgstr "# Rollende bits"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:475
 msgid ""
@@ -22043,6 +22069,8 @@ msgstr "Eind van bereik"
 msgid ""
 "Ignore Denied Clients may not be used when a Failover Peer IP is defined."
 msgstr ""
+"Het negeren van geweigerde clients  mat niet worden gebruikt als er een "
+"Failover Peer IP is gedefinieerd."
 
 #: src/usr/local/www/services_dhcp.php:259
 msgid "A valid IPv4 address must be specified for range from."
@@ -22247,12 +22275,16 @@ msgstr ""
 msgid ""
 "Signed 16-bit integer type must be a number in the range -32768 to 32767."
 msgstr ""
+"Signed 16-bit integer type moet een nummer bevatten in de reeks -32768 tot "
+"en met 32767."
 
 #: src/usr/local/www/services_dhcp.php:408
 msgid ""
 "Signed 32-bit integer type must be a number in the range -2147483648 to "
 "2147483647."
 msgstr ""
+"Ondertekend 32-bits integer type moet een geheel getal tussen -2147483648 en "
+"2147483647 zijn."
 
 #: src/usr/local/www/services_dhcp.php:410
 msgid "IP address or host type must be an IP address or host name."
@@ -22766,7 +22798,7 @@ msgstr "Rootpad"
 
 #: src/usr/local/www/services_dhcp.php:1292
 msgid "string-format: iscsi:(servername):(protocol):(port):(LUN):targetname "
-msgstr ""
+msgstr "string-format: iscsi:(servernaam):(protocol):(poort):(LUN):doelnaam "
 
 #: src/usr/local/www/services_dhcp.php:1305
 #: src/usr/local/www/services_dhcp.php:1311
@@ -22779,6 +22811,8 @@ msgid ""
 "Enter the DHCP option number and the value for each item to include in the "
 "DHCP lease information."
 msgstr ""
+"Voer hier het DHCP optienummer en waarde in voor elk onderdeel dat moet "
+"worden toegevoegd aan de DHCP lease informatie."
 
 #: src/usr/local/www/services_dhcp.php:1317
 #, php-format
@@ -22882,6 +22916,8 @@ msgid ""
 "This fully qualified hostname (Hostname + Domainname), IP, MAC address or "
 "Client identifier already exists."
 msgstr ""
+"De ingevoerde volledige domeinnaam (hostnaam + domein), IP, MAC adres of "
+"Client identificatie bestaat al."
 
 #: src/usr/local/www/services_dhcp_edit.php:205
 #, php-format
@@ -23115,6 +23151,8 @@ msgstr "DDNS Server IP"
 msgid ""
 "Enter the primary domain name server IP address for the dynamic domain name."
 msgstr ""
+"Voer het primaire domeinnaamserver IP adres in voor de dynamische domeinnaam."
+""
 
 #: src/usr/local/www/services_dhcp_edit.php:617
 #: src/usr/local/www/services_dhcpv6.php:807
@@ -23127,6 +23165,8 @@ msgid ""
 "Enter the dynamic DNS domain key name which will be used to register client "
 "names in the DNS server."
 msgstr ""
+"Voer de dynamic DNS domeinsleutelnaam in die zal worden gebruikt om "
+"clientnamen te registreren in de DNS server."
 
 #: src/usr/local/www/services_dhcp_edit.php:624
 #: src/usr/local/www/services_dhcpv6.php:814
@@ -23139,6 +23179,8 @@ msgid ""
 "Enter the dynamic DNS domain key secret which will be used to register "
 "client names in the DNS server."
 msgstr ""
+"Voer de dynamic DNS domeinsleutel geheim reeks in die zal worden gebruikt om "
+"clientnamen te registreren in de DNS server."
 
 #: src/usr/local/www/services_dhcp_edit.php:639
 #: src/usr/local/www/services_dhcpv6.php:849
@@ -23170,13 +23212,16 @@ msgstr "IP adres van Doelsever %s is geen geldig IPv4 adres."
 #: src/usr/local/www/services_dhcp_relay.php:102
 #: src/usr/local/www/services_dhcpv6_relay.php:102
 msgid "At least one Destination Server IP address must be specified."
-msgstr ""
+msgstr "Minstends één Doel Server IP adres moet ingevuld zijn."
 
 #: src/usr/local/www/services_dhcp_relay.php:129
 msgid ""
 "DHCP Server is currently enabled. Cannot enable the DHCP Relay service while "
 "the DHCP Server is enabled on any interface."
 msgstr ""
+"DHCP Server is momenteel ingeschakeld. DHCP Relay dienst kan niet worden "
+"ingeschakeld, terwijl de DHCP Server is ingeschakeld op een van de "
+"interfaces."
 
 #: src/usr/local/www/services_dhcp_relay.php:144
 msgid "DHCP Relay Configuration"
@@ -23197,6 +23242,8 @@ msgid ""
 "If this is checked, the DHCP relay will append the circuit ID (%s interface "
 "number) and the agent ID to the DHCP request."
 msgstr ""
+"Wanneer ingeschakeld zal de DHCP relay het cicuit ID (%s interface nummer) "
+"en agent ID aan het DHCP verzoek  toevoegen."
 
 #: src/usr/local/www/services_dhcp_relay.php:173
 #: src/usr/local/www/services_dhcpv6_relay.php:173
@@ -23408,7 +23455,7 @@ msgstr "Negeren"
 
 #: src/usr/local/www/services_dhcpv6.php:821
 msgid "DDNS Client Updates"
-msgstr ""
+msgstr "DDNS Client Verniewingen"
 
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid ""
@@ -23421,7 +23468,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:834
 msgid "DDNS Reverse"
-msgstr ""
+msgstr "Omgekeerde DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:891
 msgid "LDAP URI"
@@ -23533,6 +23580,8 @@ msgid ""
 "If this is checked, the DHCPv6 relay will append the circuit ID (%s "
 "interface number) and the agent ID to the DHCPv6 request."
 msgstr ""
+"Wanneer ingeschakeld zal de DHCPv6 relay het cicuit ID (%s interface nummer) "
+"en agent ID aan het DHCPv6 verzoek  toevoegen."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:181
 msgid ""
@@ -24078,11 +24127,11 @@ msgstr "Verbose logging"
 
 #: src/usr/local/www/services_dyndns_edit.php:339
 msgid "HTTP API DNS Options"
-msgstr ""
+msgstr "HTTP API DNS Opties"
 
 #: src/usr/local/www/services_dyndns_edit.php:346
 msgid "HTTP API SSL Options"
-msgstr ""
+msgstr "HTTP API SSL Opties"
 
 #: src/usr/local/www/services_dyndns_edit.php:349
 msgid ""
@@ -24261,7 +24310,7 @@ msgstr "Tijdserver"
 #: src/usr/local/www/services_ntpd.php:232
 #, php-format
 msgid "%d is the maximum number of configured servers."
-msgstr ""
+msgstr "%d is het maximum te configureren servers."
 
 #: src/usr/local/www/services_ntpd.php:284
 #, php-format
@@ -24597,17 +24646,19 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_pps.php:124
 msgid "NTP Serial PPS Configuration"
-msgstr ""
+msgstr "NTP Serieel PPS Configuratie"
 
 #: src/usr/local/www/services_ntpd_pps.php:150
 msgid ""
 "All serial ports are listed, be sure to pick the port with the PPS source "
 "attached. "
 msgstr ""
+"Alle seriële poorten worden weergegeven. Wees er zeker van dat de poort "
+"wordt gekozen waaraan de PPS bron verbonden is."
 
 #: src/usr/local/www/services_ntpd_pps.php:155
 msgid "Fudge Time"
-msgstr ""
+msgstr "Fudge tijd"
 
 #: src/usr/local/www/services_ntpd_pps.php:158
 msgid ""
@@ -24657,17 +24708,17 @@ msgstr "Server adres"
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Remote start address"
-msgstr ""
+msgstr "Remote start adres"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS server address"
-msgstr ""
+msgstr "RADIUS server adres"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS shared secret"
-msgstr ""
+msgstr "RADIUS gedeeld geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:116
 #: src/usr/local/www/vpn_l2tp.php:72
@@ -24686,20 +24737,20 @@ msgstr "Een geldig RADIUS server adres moet worden gedefinieerd."
 
 #: src/usr/local/www/services_pppoe_edit.php:125
 msgid "Number of PPPoE users must be between 1 and 255"
-msgstr ""
+msgstr "Aantal PPoE gebruikers moet tussen 1 en 255 zitten."
 
 #: src/usr/local/www/services_pppoe_edit.php:128
 msgid "User Max Logins must be between 1 and 255"
-msgstr ""
+msgstr "Maximaal aantal logins moet tussen 1 en 255 zitten."
 
 #: src/usr/local/www/services_pppoe_edit.php:131
 msgid "Subnet mask must be an integer between 0 and 32"
-msgstr ""
+msgstr "Subnetmasker moet een integer zijn tussen 0 en 32."
 
 #: src/usr/local/www/services_pppoe_edit.php:136
 #: src/usr/local/www/vpn_l2tp.php:99
 msgid "The specified server address lies in the remote subnet."
-msgstr ""
+msgstr "Het gedefinieerde server adres ligt in het remote subnet."
 
 #: src/usr/local/www/services_pppoe_edit.php:139
 msgid "The specified server address is equal to an interface ip address."
@@ -24806,15 +24857,15 @@ msgstr "NAS IP adres verzonden naar de RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:391
 msgid "RADIUS Accounting Update"
-msgstr ""
+msgstr "RADIUS Accounting Update"
 
 #: src/usr/local/www/services_pppoe_edit.php:394
 msgid "RADIUS accounting update period in seconds"
-msgstr ""
+msgstr "RADIUS accounting update periode in secondes"
 
 #: src/usr/local/www/services_pppoe_edit.php:398
 msgid "RADIUS Issued IP Addresses"
-msgstr ""
+msgstr "RADIUS geleverde IP adres."
 
 #: src/usr/local/www/services_pppoe_edit.php:403
 msgid "Primary RADIUS Server"
@@ -24839,7 +24890,7 @@ msgstr "Standaard poorten zijn 1812 (authenticatie) en 1813 (boekhouding)."
 
 #: src/usr/local/www/services_pppoe_edit.php:431
 msgid "Primary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Primaire RADIUS server gedeeld geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:434
 #: src/usr/local/www/vpn_l2tp.php:312
@@ -24854,7 +24905,7 @@ msgstr "Secundaire RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:464
 msgid "Secondary RADIUS Server Shared Secret"
-msgstr ""
+msgstr "Secundaire RADIUS Server gedeelde geheim"
 
 #: src/usr/local/www/services_pppoe_edit.php:467
 msgid ""
@@ -24907,15 +24958,15 @@ msgstr "Sleutel"
 
 #: src/usr/local/www/services_rfc2136_edit.php:80
 msgid "The DNS update host name contains invalid characters."
-msgstr ""
+msgstr "De DNS update hostnaam bevat invalide tekens."
 
 #: src/usr/local/www/services_rfc2136_edit.php:83
 msgid "The DNS update TTL must be an integer."
-msgstr ""
+msgstr "De DNS update TTL moet een integer zijn."
 
 #: src/usr/local/www/services_rfc2136_edit.php:86
 msgid "The DNS update key name contains invalid characters."
-msgstr ""
+msgstr "De DNS update sleutel naam bevat invalide tekens."
 
 #: src/usr/local/www/services_rfc2136_edit.php:110
 msgid "New/Edited RFC2136 dnsupdate entry was posted."
@@ -24965,13 +25016,13 @@ msgstr "Gebruik publiek IP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:252
 msgid "*Record Type"
-msgstr ""
+msgstr "*Record type"
 
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/services_rfc2136_edit.php:264
 #: src/usr/local/www/services_rfc2136_edit.php:272
 msgid "Record Type"
-msgstr ""
+msgstr "Record type"
 
 #: src/usr/local/www/services_rfc2136_edit.php:306
 #, php-format
@@ -25039,11 +25090,11 @@ msgstr "RADVD zal niet worden geactiveerd op deze interface."
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
-msgstr ""
+msgstr "Alleen Router"
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Will advertise this router."
-msgstr ""
+msgstr "Zal de route adverteren"
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Unmanaged"
@@ -25064,7 +25115,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
-msgstr ""
+msgstr "Ondersteund"
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid ""
@@ -25074,7 +25125,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
-msgstr ""
+msgstr "Sessieonafhankelijke DHCP"
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid ""
@@ -25152,7 +25203,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
-msgstr ""
+msgstr "RA interface"
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
@@ -25187,7 +25238,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:371
 msgid "Minimum RA interval"
-msgstr ""
+msgstr "Minimum RA interval"
 
 #: src/usr/local/www/services_router_advertisements.php:375
 msgid ""
@@ -25197,7 +25248,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:379
 msgid "Maximum RA interval"
-msgstr ""
+msgstr "Maximum RA interval"
 
 #: src/usr/local/www/services_router_advertisements.php:383
 msgid ""
@@ -25207,7 +25258,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:387
 msgid "Router lifetime"
-msgstr ""
+msgstr "Route levensduur"
 
 #: src/usr/local/www/services_router_advertisements.php:391
 msgid "The lifetime associated with the default router in seconds."
@@ -25215,7 +25266,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:394
 msgid "RA Subnets"
-msgstr ""
+msgstr "RA subnets"
 
 #: src/usr/local/www/services_router_advertisements.php:410
 msgid "Subnets"
@@ -25249,12 +25300,12 @@ msgstr "Ongeldig letterteken '#' in de read community string"
 
 #: src/usr/local/www/services_snmp.php:100
 msgid "Community"
-msgstr ""
+msgstr "Gemeenschap"
 
 #: src/usr/local/www/services_snmp.php:104
 #: src/usr/local/www/services_snmp.php:226
 msgid "Polling Port"
-msgstr ""
+msgstr "Polling poort"
 
 #: src/usr/local/www/services_snmp.php:112
 msgid "Invalid character '#' in SNMP trap string"
@@ -25263,23 +25314,23 @@ msgstr "Ongeldig letterteken '#' in SNMP trap string"
 #: src/usr/local/www/services_snmp.php:116
 #: src/usr/local/www/services_snmp.php:275
 msgid "Trap server"
-msgstr ""
+msgstr "Trap server"
 
 #: src/usr/local/www/services_snmp.php:120
 msgid "Trap server port"
-msgstr ""
+msgstr "Trap server poort"
 
 #: src/usr/local/www/services_snmp.php:124
 msgid "Trap string"
-msgstr ""
+msgstr "Trap string"
 
 #: src/usr/local/www/services_snmp.php:211
 msgid "SNMP Daemon"
-msgstr ""
+msgstr "SNMP daemon"
 
 #: src/usr/local/www/services_snmp.php:222
 msgid "SNMP Daemon Settings"
-msgstr ""
+msgstr "SNPM Daemon instellingen"
 
 #: src/usr/local/www/services_snmp.php:229
 msgid "Enter the port to accept polling events on (default 161)."
@@ -25295,7 +25346,7 @@ msgstr "Systeem contact"
 
 #: src/usr/local/www/services_snmp.php:247
 msgid "Read Community String"
-msgstr ""
+msgstr "Lees gemeenschapsstring"
 
 #: src/usr/local/www/services_snmp.php:250
 msgid ""
@@ -25306,11 +25357,11 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:254
 msgid "SNMP Traps Enable"
-msgstr ""
+msgstr "SNPM Trap Inschakelen"
 
 #: src/usr/local/www/services_snmp.php:265
 msgid "SNMP Trap Settings"
-msgstr ""
+msgstr "SNMP Trap instellingen"
 
 #: src/usr/local/www/services_snmp.php:278
 msgid "Enter the trap server name"
@@ -25326,7 +25377,7 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:289
 msgid "SNMP Trap String"
-msgstr ""
+msgstr "SNMP Trap regel"
 
 #: src/usr/local/www/services_snmp.php:296
 msgid "SNMP Modules"
@@ -25338,11 +25389,11 @@ msgstr "SNMP modules"
 
 #: src/usr/local/www/services_snmp.php:355
 msgid "Interface Binding"
-msgstr ""
+msgstr "Verbonden interface"
 
 #: src/usr/local/www/services_snmp.php:361
 msgid "Bind Interfaces"
-msgstr ""
+msgstr "Bind interface"
 
 #: src/usr/local/www/services_unbound.php:109
 msgid ""
@@ -25429,7 +25480,7 @@ msgstr "Geavanceerde instellingen"
 #: src/usr/local/www/services_unbound_acls.php:186
 #: src/usr/local/www/services_unbound_advanced.php:217
 msgid "Access Lists"
-msgstr ""
+msgstr "Toegangslijst"
 
 #: src/usr/local/www/services_unbound.php:271
 msgid "General DNS Resolver Options"
@@ -25511,19 +25562,19 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:393
 msgid "Hide Custom Options"
-msgstr ""
+msgstr "Verberg Aangepaste Opties"
 
 #: src/usr/local/www/services_unbound.php:444
 msgid "Parent domain of host"
-msgstr ""
+msgstr "Bovenliggende domein van de ouder."
 
 #: src/usr/local/www/services_unbound.php:445
 msgid "IP to return for host"
-msgstr ""
+msgstr "IP om terug te keren van de host."
 
 #: src/usr/local/www/services_unbound.php:529
 msgid "Lookup Server IP Address"
-msgstr ""
+msgstr "Opzoek Server IP Adres"
 
 #: src/usr/local/www/services_unbound.php:579
 #, php-format
@@ -25613,19 +25664,19 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:193
 msgid "New Access List"
-msgstr ""
+msgstr "Nieuwe toegangslijst"
 
 #: src/usr/local/www/services_unbound_acls.php:211
 msgid "Access List name"
-msgstr ""
+msgstr "Toegangslijstnaam"
 
 #: src/usr/local/www/services_unbound_acls.php:214
 msgid "Provide an Access List name."
-msgstr ""
+msgstr "Geef een toegangsnaam op"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Allow Snoop"
-msgstr ""
+msgstr "Snoop toestaan"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Deny Nonlocal"
@@ -25722,7 +25773,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:226
 msgid "Hide Identity"
-msgstr ""
+msgstr "Verberg identiteit"
 
 #: src/usr/local/www/services_unbound_advanced.php:233
 msgid "Hide Version"
@@ -25762,7 +25813,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:261
 msgid "Message Cache Size"
-msgstr ""
+msgstr "Berichten cache omvang"
 
 #: src/usr/local/www/services_unbound_advanced.php:264
 msgid ""
@@ -25774,7 +25825,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:268
 msgid "Outgoing TCP Buffers"
-msgstr ""
+msgstr "Uitgaande TCP Buffers"
 
 #: src/usr/local/www/services_unbound_advanced.php:271
 msgid ""
@@ -25785,7 +25836,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:275
 msgid "Incoming TCP Buffers"
-msgstr ""
+msgstr "Inkomende TCP Buffers"
 
 #: src/usr/local/www/services_unbound_advanced.php:278
 msgid ""
@@ -25857,7 +25908,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:320
 msgid "minutes"
-msgstr ""
+msgstr "minuten"
 
 #: src/usr/local/www/services_unbound_advanced.php:323
 msgid "TTL for Host Cache Entries"
@@ -26054,7 +26105,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:84
 msgid "A valid ip could not be found!"
-msgstr ""
+msgstr "Er kon geen valide IP gevonden worden"
 
 #: src/usr/local/www/services_wol.php:89
 #, php-format
@@ -26153,7 +26204,7 @@ msgstr "Gerelateerde logregels"
 #: src/usr/local/www/status.php:162
 #, php-format
 msgid "Firewall Status on %s"
-msgstr ""
+msgstr "Firewall status over %s"
 
 #: src/usr/local/www/status.php:165
 msgid "This status page includes the following information"
@@ -26178,7 +26229,7 @@ msgstr ""
 
 #: src/usr/local/www/status.php:378
 msgid "Saving output to archive..."
-msgstr ""
+msgstr "Bezig met het opslaan van de uitkomst in een archief..."
 
 #: src/usr/local/www/status.php:386
 msgid "Done."
@@ -26186,7 +26237,7 @@ msgstr "Klaar"
 
 #: src/usr/local/www/status_captiveportal.php:42
 msgid "Session details"
-msgstr ""
+msgstr "Sessie details"
 
 #: src/usr/local/www/status_captiveportal.php:46
 #, php-format
@@ -26296,27 +26347,27 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:277
 msgid "Don't show last activity"
-msgstr ""
+msgstr "Laat laatste activiteit niet zien"
 
 #: src/usr/local/www/status_captiveportal.php:279
 msgid "Hide Last Activity"
-msgstr ""
+msgstr "Verberg laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:284
 msgid "Show last activity"
-msgstr ""
+msgstr "Toon laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:286
 msgid "Show Last Activity"
-msgstr ""
+msgstr "Toon laatste activiteit"
 
 #: src/usr/local/www/status_captiveportal.php:291
 msgid "Disconnect all active users"
-msgstr ""
+msgstr "Verbreek de verbinding met alle actieve gebruikers "
 
 #: src/usr/local/www/status_captiveportal.php:293
 msgid "Disconnect All Users"
-msgstr ""
+msgstr "Verbreek de verbinding met alle gebruikers"
 
 #: src/usr/local/www/status_captiveportal_expire.php:63
 msgid "Voucher(s) successfully marked."
@@ -26353,7 +26404,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:80
 msgid "Roll#"
-msgstr ""
+msgstr "Rol#"
 
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:84
 msgid "used"
@@ -26380,7 +26431,7 @@ msgstr "Coupon"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:109
 msgid "Roll"
-msgstr ""
+msgstr "Rol"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:110
 msgid "Activated at"
@@ -26636,7 +26687,7 @@ msgstr "IPv6 Prefix"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:586
 msgid "Routed To"
-msgstr ""
+msgstr "Geroeteerd naar"
 
 #: src/usr/local/www/status_filter_reload.php:63
 msgid "Reload Filter"
@@ -26717,7 +26768,7 @@ msgstr "RTTsd"
 #: src/usr/local/www/status_gateways.php:65
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:212
 msgid "Loss"
-msgstr ""
+msgstr "Verlies"
 
 #: src/usr/local/www/status_gateways.php:96
 #: src/usr/local/www/status_gateways.php:107
@@ -26945,7 +26996,7 @@ msgstr "BSSID"
 
 #: src/usr/local/www/status_interfaces.php:167
 msgid "RSSI"
-msgstr ""
+msgstr "RSSI"
 
 #: src/usr/local/www/status_interfaces.php:168
 msgid "In/out packets"
@@ -26966,7 +27017,7 @@ msgstr "In/uit fouten"
 #: src/usr/local/www/status_interfaces.php:175
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:44
 msgid "Collisions"
-msgstr ""
+msgstr "Botsingen"
 
 #: src/usr/local/www/status_interfaces.php:178
 #, php-format
@@ -26993,7 +27044,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:198
 msgid " seconds ("
-msgstr ""
+msgstr "secondes ("
 
 #: src/usr/local/www/status_ipsec.php:221
 #, php-format
@@ -27016,11 +27067,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:288
 msgid "Local: "
-msgstr ""
+msgstr "Lokaal:"
 
 #: src/usr/local/www/status_ipsec.php:292
 msgid "Remote: "
-msgstr ""
+msgstr "Extern: "
 
 #: src/usr/local/www/status_ipsec.php:309
 #, php-format
@@ -27039,11 +27090,11 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:334
 msgid "IPComp: "
-msgstr ""
+msgstr "IPComp: "
 
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Bytes-In: "
-msgstr ""
+msgstr "Bytes-In: "
 
 #: src/usr/local/www/status_ipsec.php:345
 msgid "Packets-In: "
@@ -27067,7 +27118,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:448
 msgid "Disconnected"
-msgstr ""
+msgstr "Verbinding verbroken"
 
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec.php:472
@@ -27076,7 +27127,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:47
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:178
 msgid "Overview"
-msgstr ""
+msgstr "Overzicht"
 
 #: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -27084,7 +27135,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "SADs"
 
 #: src/usr/local/www/status_ipsec.php:475
 #: src/usr/local/www/status_ipsec_leases.php:43
@@ -27092,7 +27143,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "SPDs"
 
 #: src/usr/local/www/status_ipsec.php:480
 msgid "IPsec Status"
@@ -27100,19 +27151,19 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec.php:486
 msgid "Local ID"
-msgstr ""
+msgstr "Lokaal ID"
 
 #: src/usr/local/www/status_ipsec.php:488
 msgid "Remote ID"
-msgstr ""
+msgstr "Extern ID"
 
 #: src/usr/local/www/status_ipsec.php:489
 msgid "Remote IP"
-msgstr ""
+msgstr "Extern IP"
 
 #: src/usr/local/www/status_ipsec.php:490
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: src/usr/local/www/status_ipsec.php:491
 msgid "Reauth"
@@ -27140,7 +27191,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "Gebruik"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
@@ -27152,7 +27203,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_sad.php:69
 msgid "SPI"
-msgstr ""
+msgstr "SPI"
 
 #: src/usr/local/www/status_ipsec_sad.php:70
 msgid "Enc. alg."
@@ -27184,7 +27235,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_spd.php:71
 msgid " Inbound"
-msgstr ""
+msgstr "Inkomend"
 
 #: src/usr/local/www/status_ipsec_spd.php:73
 msgid " Outbound"
@@ -28402,6 +28453,10 @@ msgid "Gray"
 msgstr ""
 
 #: src/usr/local/www/system.php:611
+msgid "Dark gray"
+msgstr ""
+
+#: src/usr/local/www/system.php:612
 msgid "Brown"
 msgstr ""
 
@@ -29514,13 +29569,13 @@ msgid "Installation Feedback"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:588
-msgid "Host UUID"
-msgstr "Host UUID"
+msgid "Netgate Device ID"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
-"Enable this option to not send HOST UUID to pfSense as part of User-Agent "
-"header."
+"Enable this option to not send Netgate Device ID to pfSense as part of User-"
+"Agent header."
 msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:597
@@ -37040,8 +37095,8 @@ msgid "Use memory file system for /tmp and /var"
 msgstr "Gebruik geheugen systeem bestand voor /tmp en /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
-msgid "Do NOT send HOST UUID with user agent"
-msgstr "GEEN HOST UUID versturen met user agent"
+msgid "Do NOT send Netgate Device ID with user agent"
+msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:176
 msgid ""

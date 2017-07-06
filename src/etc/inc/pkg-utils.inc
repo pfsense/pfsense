@@ -81,6 +81,11 @@ function pkg_update($force = false) {
 function pkg_env($extra_env = array()) {
 	global $config, $g;
 
+	$user_agent = $g['product_name'] . '/' . $g['product_version'];
+	if (!isset($config['system']['do_not_send_uniqueid'])) {
+		$user_agent .= ':' . system_get_uniqueid();
+	}
+
 	$pkg_env_vars = array(
 		"LANG" => "C",
 		"HTTP_USER_AGENT" => $user_agent,
@@ -119,11 +124,6 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 
 	if (empty($params)) {
 		return false;
-	}
-
-	$user_agent = $g['product_name'] . '/' . $g['product_version'];
-	if (!isset($config['system']['do_not_send_host_uuid'])) {
-		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
 	$descriptorspec = array(
@@ -201,11 +201,6 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 
 	if (empty($params)) {
 		return -1;
-	}
-
-	$user_agent = $g['product_name'] . '/' . $g['product_version'];
-	if (!isset($config['system']['do_not_send_host_uuid'])) {
-		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
 	$descriptorspec = array(

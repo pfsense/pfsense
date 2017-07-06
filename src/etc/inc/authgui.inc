@@ -277,7 +277,7 @@ function display_login_form() {
 						<div class="col-sm-8 nowarning msgbox text-center">
 							<span id="hostspan">
 								<a><h4><?=$loginbannerstr?></h4></a>
-							</span
+							</span>
 						</div>
 					</div>
 <?php

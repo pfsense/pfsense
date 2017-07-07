@@ -383,7 +383,7 @@ if ($_POST['save']) {
 				}
 			} else if ($pconfig['method'] == "sign") { // Sign a CSR
 				$csrid = lookup_cert($pconfig['csrtosign']);
-				$ca =  lookup_ca($pconfig['catosignwith']);
+				$ca = & lookup_ca($pconfig['catosignwith']);
 
 				// Read the CSR from $config, or if a new one, from the textarea
 				if ($pconfig['csrtosign'] === "new") {
@@ -398,7 +398,7 @@ if ($_POST['save']) {
 					$altname_str = implode(",", $altnames_tmp);
 				}
 
-				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], ($_POST['csrsign_copy'] == "yes"), $pconfig['type'], $altname_str);
+				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str);
 
 				if ($n509) {
 					// Gather the details required to save the new cert

@@ -62,6 +62,15 @@
 require_once("guiconfig.inc");
 require_once("auth.inc");
 
+function gen_auth_server_array() {
+	$a_servers = auth_get_authserver_list();
+	foreach ($a_servers as $servers) {
+		$auth_server_array[] = $servers;
+	}
+
+		return $auth_server_array;
+}
+
 // Have we been called to populate the "Select a container" modal?
 if ($_REQUEST['ajax']) {
 
@@ -139,10 +148,7 @@ if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
-$a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers) {
-	$a_server[] = $servers;
-}
+$a_server = gen_auth_server_array();
 
 if (!is_array($config['ca'])) {
 	$config['ca'] = array();
@@ -169,11 +175,11 @@ if ($act == "del") {
 		}
 	}
 
-	/* Remove server from temp list used later on this page. */
-	unset($a_server[$_GET['id']]);
-
 	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
+
+	/* Recreate the locally-used list to close up the deleted entry. */
+	$a_server = gen_auth_server_array();
 }
 
 if ($act == "edit") {

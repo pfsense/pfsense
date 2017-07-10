@@ -5304,4 +5304,23 @@ function upgrade_164_to_165() {
 	}
 }
 
+/* Fixup digest algorithm selection for OpenVPN clients and servers so they do not use aliased names. */
+function upgrade_165_to_166() {
+	require_once('openvpn.inc');
+	global $config;
+
+	if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+				$vpn['digest'] = openvpn_remap_digest($vpn['digest']);
+			}
+		}
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+				$vpn['digest'] = openvpn_remap_digest($vpn['digest']);
+			}
+		}
+	}
+}
+
 ?>

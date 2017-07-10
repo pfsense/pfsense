@@ -433,18 +433,53 @@ function openvpn_validate_curve($curve) {
 	return array_key_exists($curve, $curves);
 }
 
-function openvpn_get_digestlist() {
+/* Obtain the list of digest algorithms supported by openssl and their alternate names */
+function openvpn_get_openssldigestmappings() {
+	$digests = array();
+	$digest_out = shell_exec('/usr/bin/openssl list-message-digest-algorithms | /usr/bin/grep "=>"');
+	$digest_lines = explode("\n", trim($digest_out));
+	sort($digest_lines);
+	foreach ($digest_lines as $line) {
+		$words = explode(' => ', $line, 2);
+		$digests[$words[0]] = $words[1];
+	}
+	return $digests;
+}
 
+/* Obtain the list of digest algorithms supported by openvpn */
+function openvpn_get_digestlist() {
+	/* Grab the list from OpenSSL to check for duplicates or aliases */
+	$openssl_digest_mappings = openvpn_get_openssldigestmappings();
 	$digests = array();
 	$digest_out = shell_exec('/usr/local/sbin/openvpn --show-digests | /usr/bin/grep "digest size" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
 	$digest_lines = explode("\n", trim($digest_out));
 	sort($digest_lines);
 	foreach ($digest_lines as $line) {
 		$words = explode(' ', $line);
-		$digests[$words[0]] = "{$words[0]} {$words[1]}";
+		/* Only add the entry if it is NOT also listed as being an alias/mapping by OpenSSL */
+		if (!array_key_exists($words[0], $openssl_digest_mappings)) {
+			$digests[$words[0]] = "{$words[0]} {$words[1]}";
+		}
 	}
 	$digests["none"] = gettext("None (No Authentication)");
 	return $digests;
+}
+
+/* Check to see if a digest name is an alias and if so, find the actual digest
+ * algorithm instead. Useful for upgrade code that has to translate aliased
+ * algorithms to their actual names.
+ */
+function openvpn_remap_digest($digest) {
+	$openssl_digest_mappings = openvpn_get_openssldigestmappings();
+	if (array_key_exists($digest, $openssl_digest_mappings)) {
+		/* Some mappings point to other mappings, keep going until we find the actual digest algorithm */
+		if (array_key_exists($openssl_digest_mappings[$digest], $openssl_digest_mappings)) {
+			return openvpn_remap_digest($openssl_digest_mappings[$digest]);
+		} else {
+			return $openssl_digest_mappings[$digest];
+		}
+	}
+	return $digest;
 }
 
 function openvpn_get_engines() {

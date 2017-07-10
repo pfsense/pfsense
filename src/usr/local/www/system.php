@@ -70,6 +70,7 @@ $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['disablealiaspopupdetail'] = isset($config['system']['webgui']['disablealiaspopupdetail']);
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
@@ -290,6 +291,12 @@ if ($_POST) {
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+
+		if ($_POST['pagenamefirst'] == "yes") {
+			$config['system']['webgui']['pagenamefirst'] = true;
+		} else {
+			unset($config['system']['webgui']['pagenamefirst']);
+		}
 
 		unset($config['system']['webgui']['disablealiaspopupdetail']);
 		$config['system']['webgui']['disablealiaspopupdetail'] = $_POST['disablealiaspopupdetail'] ? true : false;
@@ -601,6 +608,7 @@ gen_associatedpanels_fields(
 	$pconfig['statusmonitoringsettingspanel']);
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
 
 $section->addInput(new Form_Select(

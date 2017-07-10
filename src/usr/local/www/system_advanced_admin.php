@@ -35,6 +35,8 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
@@ -44,8 +46,10 @@ $pconfig['disablehttpredirect'] = isset($config['system']['webgui']['disablehttp
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
+$pconfig['session_timeout'] = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : '';
+$pconfig['auth_refresh_time'] = isset($config['system']['webgui']['auth_refresh_time']) ? $config['system']['webgui']['auth_refresh_time'] : 30;
+// default refresh time = 30 is taken from priv.inc
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
-$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -65,9 +69,98 @@ if (is_array($a_cert) && count($a_cert)) {
 	$a_cert = array();
 }
 
+
+/* 
+		// FIXME:   Nothing actually seems to use $config['ca'] in this code.
+			    Commenting this out for now - may need to remove when reviewed.
+
+		if (!is_array($config['ca'])) {
+			$config['ca'] = array();
+		}
+		$a_ca =& $config['ca'];
+*/
+
+
+
 if (!$pconfig['webguiproto'] || !$certs_available) {
 	$pconfig['webguiproto'] = "http";
 }
+
+if (!is_array($config['system']['authserver'])) {
+	$config['system']['authserver'] = array();
+}
+
+if (isset($config['system']['webgui']['authmode'])) {
+	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
+} else {
+	$pconfig['authmode'] = "Local Database";
+}
+
+$auth_servers_list = auth_get_authserver_list();
+
+$save_and_test_auth = false;
+
+
+// FIXME:  Check what variable to use here, to be sure the AJAX call picks up the arg (selected svr) from the calling code.
+
+// Test auth settings in response to an AJAX request from this page.
+// Using $savemsg as that helps us sync with similar code at system_authservers.php
+if ($_POST['ajax'] && $_POST['act'] == 'test') {
+
+	// Test auth settings
+	if (isset($config['system']['authserver'][0]['host'])) {
+		$auth_server = $config['system']['authserver'][0]['host'];
+		$selected_authserver = $_POST['authserver'];
+		$authcfg = $auth_servers_list($selected_authserver);
+	}
+	// Validate auth server and if OK, test
+	if (!$authcfg) {
+		$savemsg = sprintf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+	} elseif ($authcfg['type'] != 'ldap') {
+		$savemsg = sprintf(gettext("%sError: %s is not an LDAP server, unable to test connection%s"), '<span class="text-danger">', htmlspecialchars($selected_authserver), "</span>");
+	} else {
+		// auth server is defined and is LDAP, carry on
+		$savemsg = sprintf(gettext('Server Connection test results') . ":<br/>\n";
+		$savemsg .= sprintf(gettext('Attempting connection to %s ... '),  htmlspecialchars($auth_server));
+		if (ldap_test_connection($authcfg)) {
+			// connection OK
+			$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+			$savemsg .= sprintf(gettext('Attempting bind to %s ... '), htmlspecialchars($auth_server));
+			if (ldap_test_bind($authcfg)) {
+				// bind OK
+				$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+				$savemsg .= sprintf(gettext('Attempting to fetch Organizational Units from %s ... '),  htmlspecialchars($auth_server));
+				$ous = ldap_get_user_ous(true, $authcfg);
+				if (count($ous)>1) {
+					// OUs OK
+					$savemsg .= '<span class="text-center text-success">' . gettext("OK") . '</span><br/>';
+					if (is_array($ous)) {
+						$savemsg .=  "<b>" . gettext("Organization units found") . "</b><br/>";
+						// format as bulleted inline list, so it doesn't sprawl over dozens of lines in the WebUI
+						$savemsg .=  implode("&nbsp;&nbsp;&nbsp;\n",
+								array_map(
+									function($ou) { return '<span style="white-space: nowrap">&bullet;&nbsp;' . htmlspecialchars($ou) . '</span>'; }, 
+									$ous
+							     ));
+					}
+				} else {
+					// fetch OUs failed
+					$savemsg .= '<span class="text-alert">' . gettext("failed - no Organizational Units found") . '</span>';
+				}
+			} else {
+				// bind failed
+				$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+			}
+		} else {
+			// connection failed
+			$savemsg .= '<span class="text-alert">' . gettext("failed") . '</span>';
+		}
+	}
+
+	print("<pre>\n{$savemsg}\n</pre>\n");
+	exit;
+}
+
 
 if ($_POST) {
 
@@ -81,6 +174,26 @@ if ($_POST) {
 		}
 	}
 
+	if (isset($_POST['session_timeout'])) {
+		$timeout = intval($_POST['session_timeout']);
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0)) {
+			$input_errors[] = gettext("Session timeout must be a non-negative integer or empty.");
+		}
+	}
+
+	if (!array_key_exists($_POST['authmode'], $auth_servers_list)) {
+		// set a reasonable fallback value.
+		$_POST['authmode'] = $pconfig['authmode'];
+		$input_errors[] = gettext('A recognised authentication server must be selected.');
+	}
+	
+	if (isset($_POST['auth_refresh_time'])) {
+		$timeout = intval($_POST['auth_refresh_time']);
+		if (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 ) {
+			$input_errors[] = gettext("Authentication refresh time must be an integer between 0 and 3600 (inclusive).");
+		}
+	}
+	
 	if ($_POST['max_procs']) {
 		if (!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500)) {
 			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
@@ -112,6 +225,21 @@ if ($_POST) {
 	flush();
 
 	if (!$input_errors) {
+
+/* 
+		//FIXME: RAW LDAP SAVE+TEST CODE MOVED FROM system_authservers.php. To integrate and clean up. 
+		if ($_POST['savemsg']) {
+			if ($_POST['authmode'] == "Local Database") {
+				$extra_save_msg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
+			} elseif ($auth_servers_list[$_POST['authmode']]['type'] == "ldap") {
+				$save_and_test_auth = true;
+			} else {
+				$extra_save_msg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
+			}
+		}
+
+*/
+
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}
@@ -161,6 +289,24 @@ if ($_POST) {
 			unset($config['system']['webgui']['noantilockout']);
 		}
 
+		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
+			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
+		} else {
+			unset($config['system']['webgui']['session_timeout']);
+		}
+
+		if ($_POST['authmode']) {
+			$config['system']['webgui']['authmode'] = $_POST['authmode'];
+		} else {
+			unset($config['system']['webgui']['authmode']);
+		}
+
+		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
+			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+		} else {
+			unset($config['system']['webgui']['auth_refresh_time']);
+		}
+		
 		if ($_POST['enableserial'] == "yes" || $g['enableserial_force']) {
 			$config['system']['enableserial'] = true;
 		} else {
@@ -189,12 +335,6 @@ if ($_POST) {
 			$config['system']['webgui']['nohttpreferercheck'] = true;
 		} else {
 			unset($config['system']['webgui']['nohttpreferercheck']);
-		}
-
-		if ($_POST['pagenamefirst'] == "yes") {
-			$config['system']['webgui']['pagenamefirst'] = true;
-		} else {
-			unset($config['system']['webgui']['pagenamefirst']);
 		}
 
 		if ($_POST['loginautocomplete'] == "yes") {
@@ -418,7 +558,17 @@ $section->addInput(new Form_Checkbox(
 	'This blocks private IP responses from the configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in the environment.',
-	'<a href="http://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
+	'<a href="https://en.wikipedia.org/wiki/DNS_rebinding">', '</a>');
+
+$section->addInput(new Form_Input(
+	'session_timeout',
+	'Session timeout',
+	'number',
+	$pconfig['session_timeout'],
+	['min' => 0]
+))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
+	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
+	'risk!');
 
 $section->addInput(new Form_Input(
 	'althostnames',
@@ -440,8 +590,6 @@ $section->addInput(new Form_Checkbox(
 	'corner cases such as using external scripts to interact with this system. More '.
 	'information on HTTP_REFERER is available from %1$sWikipedia%2$s',
 	'<a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_referrer">', '</a>.');
-
-gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 
 $form->add($section);
 $section = new Form_Section('Secure Shell');
@@ -470,6 +618,56 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 65535, 'placeholder' => 22]
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
+
+$form->add($section);
+$section = new Form_Section('Admin login authentication method');
+
+$group = new Form_Group('Authentication server');
+
+$html_auth_server = (new Form_Select(
+	'authmode',
+	'',
+	$pconfig['authmode'],
+	array_column($auth_servers_list, 'name')
+));
+
+$html_button = (new Form_Button(
+	'testbtn',
+	'Test connection',
+	null,
+	'fa-wrench'
+))->addClass('btn-info');
+
+$group->add(new Form_StaticText(
+	null,
+	sprintf('<table width="100%%"><tr><td>%s</td><td>%s</td></tr></table>', $html_auth_server, $html_button)
+))->setHelp('Select the server used for authenticating WebConfigurator login attempts on this router. ' .
+	'By default, the same server will be used to authenticate Console logins if password protection is enabled, ' .
+	'and other remote logins such as SSH and Telnet if they are enabled. <br/><br/>' .
+	'Click the button to test authentication server responses (LDAP only).<br/>' .
+	'Click <a href="system_authservers.php">here</a> to configure authentication servers.');
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'auth_refresh_time',
+	'Authentication Refresh Time',
+	'number',
+	$pconfig['auth_refresh_time'],
+	['min' => 0, 'max' => 3600]
+))->setHelp('Time in seconds to cache management session authentication results. The default is 30 seconds, ' .
+	'and the maximum is 3600 (one hour). Larger intervals can help to reduce authentication server load. ' .
+	'Shorter intervals result in more frequent queries.');
+
+
+
+$modal = new Modal("Authentication settings test results", "testresults", true);
+$modal->addInput(new Form_StaticText(
+	'Test results',
+	'<span id="testauth_output">Testing pfSense LDAP authentication settings for this server... One moment please...' . $g['product_name'] . '</span>'
+));
+
+$form->add($modal);
 
 $form->add($section);
 $section = new Form_Section('Serial Communications');
@@ -520,21 +718,90 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 print $form;
 
+// Build a JS string containing auth servers we can test using AJAX.
+$testable_servers_list = array();
+foreach ($auth_servers_list as $authsvrid => $authsvrdata) {
+	if ($authsvrdata['type'] == 'ldap') {
+		$testable_servers[] = $authsvrid;
+	}
+}
+$testable_servers_JS = (count($testable_servers_list) > 0 ? "['" . implode("', '", $testable_servers_list) . "']" : "[]");
+
 ?>
 </div>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
+	// List of defined authservers we can test using AJAX
+	var testable_servers = <?=$testable_servers_JS?>;
+	
+	function start_auth_test() {
+		var ajaxRequest;
+		var authserver = $('#authmode').val();
+
+		ajaxRequest = $.ajax(
+			{
+				url: "/system_authservers.php",
+				type: "post",
+				data: {
+					ajax: "ajax",
+					act: 'test',
+					authserver: authserver
+				}
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#testauth_output').html(response);
+		});
+	}
+
+	function enable_disable_auth_test() {
+		if (testable_servers.indexOf($('#authmode').val()) < 0) {
+			$('#testbtn').prop("disabled", true);
+			var newcaption = ($('#testbtn').html()).replace(/<\/i>.*$/, '</i>(<?=gettext('Live Test disabled for this server type')?>)');
+		} else {
+			$('#testbtn').prop("disabled", false);
+			var newcaption = ($('#testbtn').html()).replace(/<\/i>.*$/, '</i><?=gettext('Test Connection')?>');
+		}
+		$('#testbtn').html(newcaption);
+	}
+	
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
+	enable_disable_auth_test();
+	
+/*
+			//FIXME:  MAY MOVE TO TEST ONLY, NOT SAVE & TEST, IN WHICH CASE THIS IS REMOVED
+			
+			// If the user clicked "Save & Test" show the modal and populate it with the auth test results via AJAX
+			<?php 
+				if ($save_and_test_auth) {
+					print "start_auth_test();\n";
+					print "\$('#testresults').modal('show');\n";
+				}
+			?>
+*/
+	
+	// ---------- Click and change handlers ---------------------------------------------------------
 
-	// ---------- Click checkbox handlers ---------------------------------------------------------
-
-	 $('[name=webguiproto]').click(function () {
+	$('[name=webguiproto]').click(function () {
 		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	});
+
+	$('[name=authmode]').change(function () {
+		enable_disable_auth_test();
+	});
+
+	$('[name=authmode]').click(function () {
+// FIXME: ENABLE THIS WHEN READY
+//		start_auth_test();
+		$('#testresults').modal('show');
+	});
+
 });
 //]]>
 </script>

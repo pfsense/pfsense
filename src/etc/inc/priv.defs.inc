@@ -1087,6 +1087,12 @@ $priv_list['page-system-authservers']['warn'] = "standard-warning-root";
 $priv_list['page-system-authservers']['match'] = array();
 $priv_list['page-system-authservers']['match'][] = "system_authservers.php*";
 
+$priv_list['page-system-authservers-edit'] = array();
+$priv_list['page-system-authservers-edit']['name'] = gettext("WebCfg - System: Authentication Servers: Edit");
+$priv_list['page-system-authservers-edit']['descr'] = gettext("Allow access to the 'System: Authentication Servers: Edit' page.");
+$priv_list['page-system-authservers-edit']['match'] = array();
+$priv_list['page-system-authservers-edit']['match'][] = "system-authservers_edit.php*";
+
 $priv_list['page-system-camanager'] = array();
 $priv_list['page-system-camanager']['name'] = gettext("WebCfg - System: CA Manager");
 $priv_list['page-system-camanager']['descr'] = gettext("Allow access to the 'System: CA Manager' page.");
@@ -1192,13 +1198,6 @@ $priv_list['page-system-usermanager-passwordmg']['name'] = gettext("WebCfg - Sys
 $priv_list['page-system-usermanager-passwordmg']['descr'] = gettext("Allow access to the 'System: User Password Manager' page.");
 $priv_list['page-system-usermanager-passwordmg']['match'] = array();
 $priv_list['page-system-usermanager-passwordmg']['match'][] = "system_usermanager_passwordmg.php*";
-
-$priv_list['page-system-usermanager-settings'] = array();
-$priv_list['page-system-usermanager-settings']['name'] = gettext("WebCfg - System: User Manager: Settings");
-$priv_list['page-system-usermanager-settings']['descr'] = gettext("Allow access to the 'System: User Manager: Settings' page.");
-$priv_list['page-system-usermanager-settings']['warn'] = "standard-warning-root";
-$priv_list['page-system-usermanager-settings']['match'] = array();
-$priv_list['page-system-usermanager-settings']['match'][] = "system_usermanager_settings.php*";
 
 $priv_list['page-hidden-uploadconfiguration'] = array();
 $priv_list['page-hidden-uploadconfiguration']['name'] = gettext("WebCfg - Hidden: Upload Configuration");

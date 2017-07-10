@@ -139,10 +139,7 @@ if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
-$a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers) {
-	$a_server[] = $servers;
-}
+$a_server = array_values(auth_get_authserver_list());
 
 if (!is_array($config['ca'])) {
 	$config['ca'] = array();
@@ -171,6 +168,7 @@ if ($act == "del") {
 
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
+	$a_server = array_values($a_server);
 
 	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);

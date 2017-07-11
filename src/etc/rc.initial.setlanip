@@ -209,12 +209,8 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 		print_r($a_gateways);
 	}
 	$new_name = '';
-	$is_default = true;
 	foreach ($a_gateways as $item) {
 		if ($item['ipprotocol'] === $inet_type) {
-			if (isset($item['defaultgw'])) {
-				$is_default = false;
-			}
 			if (($item['interface'] === $interface) && ($item['gateway'] === $gatewayip)) {
 				$new_name = $item['name'];
 			}
@@ -229,13 +225,20 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 			"weight" => 1,
 			"ipprotocol" => $inet_type,
 			"interval" => true,
-			"descr" => "Interface $interface Gateway",
-			"defaultgw" => $is_default
+			"descr" => "Interface $interface Gateway"
 		);
 		if ($dry_run) {
 			print_r($item);
 		}
 		$a_gateways[] = $item;
+	}
+	
+	//set the new GW as the default if there isnt one set yet
+	if ($item['ipprotocol'] == "inet" && empty(isset$config['gateways']['defaultgw4'])) {
+		$config['gateways']['defaultgw4'] = $new_name;
+	}
+	if ($item['ipprotocol'] == "inet6" && empty(isset$config['gateways']['defaultgw6'])) {
+		$config['gateways']['defaultgw6'] = $new_name;
 	}
 
 	return $new_name;

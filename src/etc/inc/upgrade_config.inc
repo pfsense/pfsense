@@ -5557,6 +5557,90 @@ function upgrade_180_to_181() {
 	}
 }
 
+function upgrade_181_to_182() {
+	global $config;
+	if (isset($config['system']['gw_switch_default'])) {
+		// default gateway switching was enabled, convert gatewaygroup
+		$newgroup4 = array();
+		$newgroup6 = array();
+		$tiernr4 = 2;
+		$tiernr6 = 2;
+		if (is_array($config['gateways']['gateway_item'])) {
+			foreach($config['gateways']['gateway_item'] as &$item) {
+				if ($item['ipprotocol'] == 'inet') {
+					if (isset($item['defaultgw'])) {
+						$tier = 1;
+						unset($item['defaultgw']);
+					} else {
+						$tier = $tiernr4;
+					}
+					$newgroup4['item'][] = $item['name']."|$tier|address";
+					if ($tiernr4 < 5) {
+						$tiernr4++;
+					}
+				}
+				if ($item['ipprotocol'] == 'inet6') {
+					if (isset($item['defaultgw'])) {
+						$tier = 1;
+						unset($item['defaultgw']);
+					} else {
+						$tier = $tiernr6;
+					}
+					$newgroup6['item'][] = $item['name']."|$tier|address";
+					if ($tiernr6 < 5) {
+						$tiernr6++;
+					}
+				}
+			}
+		}
+		if (count($newgroup4['item']) > 0) {
+			$newname = "Default_Gateway_Group_ipv4";
+			if (gateway_or_gwgroup_exists($newname)) { //make sure we create a new name
+				$id = 2;
+				while (gateway_or_gwgroup_exists($newname."_".$id)) {
+					$id++;
+				}
+				$newname .= "_".$id;
+			}
+			$newgroup4['name'] = $newname;
+			$newgroup4['trigger'] = 0;
+			$newgroup4['descr'] = "Default gateway group IPv4";
+			$config['gateways']['gateway_group'][] = $newgroup4;
+			$config['gateways']['defaultgw4'] = $newname;
+		}
+		if (count($newgroup6['item']) > 0) {
+			$newname = "Default_Gateway_Group_ipv6";
+			if (gateway_or_gwgroup_exists($newname)) { //make sure we create a new name
+				$id = 2;
+				while (gateway_or_gwgroup_exists($newname."_".$id)) {
+					$id++;
+				}
+				$newname .= "_".$id;
+			}
+			$newgroup6['name'] = $newname;
+			$newgroup6['trigger'] = 0;
+			$newgroup6['descr'] = "Default gateway group IPv6";
+			$config['gateways']['gateway_group'][] = $newgroup6;
+			$config['gateways']['defaultgw6'] = $newname;
+		}
+		unset($config['system']['gw_switch_default']);// remove old setting, if a group is used switching is already implied
+	} else {
+		// set new defaultgw selection boxes to old selected default
+		if (is_array($config['gateways']['gateway_item'])) {
+			foreach($config['gateways']['gateway_item'] as &$item) {
+				if (isset($item['defaultgw'])) {
+					if ($item['ipprotocol'] == 'inet') {
+						$config['gateways']['defaultgw4'] = $item['name'];
+					} else {
+						$config['gateways']['defaultgw6'] = $item['name'];
+					}
+					unset($item['defaultgw']);
+				}
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

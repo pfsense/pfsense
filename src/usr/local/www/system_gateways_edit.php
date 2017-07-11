@@ -67,7 +67,6 @@ if (isset($id) && $a_gateways[$id]) {
 		$pconfig['dynamic'] = true;
 	}
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
-	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
 	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
@@ -193,13 +192,6 @@ if ($pconfig['dynamic']) {
 }
 
 $section->addInput($egw);
-
-$section->addInput(new Form_Checkbox(
-	'defaultgw',
-	'Default Gateway',
-	'This will select the above gateway as the default gateway.',
-	$pconfig['defaultgw']
-));
 
 $section->addInput(new Form_Checkbox(
 	'monitor_disable',

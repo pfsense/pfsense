@@ -31,6 +31,9 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("gwlb.inc");
+
+$simplefields = array('defaultgw4', 'defaultgw6');
 
 $a_gateways = return_gateways_array(true, false, true, true);
 
@@ -41,6 +44,16 @@ if (!is_array($config['gateways']['gateway_item'])) {
 $a_gateway_item = &$config['gateways']['gateway_item'];
 
 $pconfig = $_REQUEST;
+
+if ($_POST['save']) {
+	unset($input_errors);
+	$pconfig = $_POST;
+	foreach($simplefields as $field) {
+		$config['gateways'][$field] = $pconfig[$field];
+	}
+	mark_subsystem_dirty('staticroutes');
+	write_config("System - Gateways: save default gateway");
+}
 
 if ($_POST['apply']) {
 
@@ -114,8 +127,9 @@ function delete_gateway_item($id) {
 	/* If the removed gateway was the default route, remove the default route */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    !isset($a_gateways[$id]['disabled']) &&
-	    isset($a_gateways[$id]['defaultgw'])) {
+	    isset($a_gateways[$id]['isdefaultgw'])) {
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
+		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= delete {$inet} default");
 		mwexec("/sbin/route delete {$inet} default");
 	}
 
@@ -125,6 +139,7 @@ function delete_gateway_item($id) {
 	    isset($a_gateways[$id]["nonlocalgateway"])) {
 		$realif = get_real_interface($a_gateways[$id]['interface']);
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
+		file_put_contents("/dev/console", "\n[".getmypid()."] DEL_GW, route= $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif));
 		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif);
 		mwexec($cmd);
 	}
@@ -193,17 +208,7 @@ if (isset($_REQUEST['del_x'])) {
 		$ok_to_toggle = true;
 	}
 	if ($ok_to_toggle) {
-		if ($disable_gw) {
-			$a_gateway_item[$realid]['disabled'] = true;
-			/* If the disabled gateway was the default route, remove the default route */
-			if (!empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
-			    isset($a_gateway_item[$realid]['defaultgw'])) {
-				$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? '-inet6' : '-inet');
-				mwexec("/sbin/route delete {$inet} default");
-			}
-		} else {
-			unset($a_gateway_item[$realid]['disabled']);
-		}
+		gateway_set_enabled($a_gateway_item[$realid]['name'], !$disable_gw);
 
 		if (write_config("Gateways: enable/disable")) {
 			mark_subsystem_dirty('staticroutes');
@@ -212,6 +217,39 @@ if (isset($_REQUEST['del_x'])) {
 		header("Location: system_gateways.php");
 		exit;
 	}
+}
+
+foreach($simplefields as $field) {
+	$pconfig[$field] = $config['gateways'][$field];
+}
+
+function gateway_displaygwtiername($gwname) {
+	global $config;
+	$gw = lookup_gateway_or_group_by_name($gwname);
+	if ($config['gateways']['defaultgw4'] == $gwname || $config['gateways']['defaultgw6'] == $gwname) {
+		$result = "Default";
+	} else {
+		if ($gw['ipprotocol'] == 'inet') {
+			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw4']);
+		} else {
+			$defgw = lookup_gateway_or_group_by_name($config['gateways']['defaultgw6']);
+		}
+		if ($defgw['type'] == "gatewaygroup") {
+			$detail = gateway_is_gwgroup_member($gwname, true);
+			foreach($detail as $gwitem) {
+				if ($gwitem['name'] == $defgw['name']) {
+					if (isset($gwitem['tier'])) {
+						$result = "Tier " . $gwitem['tier'];
+						break;
+					}
+				}
+			}
+		}
+	}
+	if (!empty($result)) {
+		$result .= $gw['ipprotocol'] == "inet" ? " (IPv4)" : " (IPv6)";
+	}
+	return $result;
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
@@ -248,6 +286,7 @@ display_top_tabs($tab_array);
 					<tr>
 						<th></th>
 						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Default")?></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Gateway")?></th>
 						<th><?=gettext("Monitor IP")?></th>
@@ -277,10 +316,13 @@ foreach ($a_gateways as $i => $gateway):
 					<td>
 						<?=htmlspecialchars($gateway['name'])?>
 <?php
-			if (isset($gateway['defaultgw'])) {
-				echo " <strong>(default)</strong>";
-			}
+						if (isset($gateway['isdefaultgw'])) {
+							echo " <strong>(default)</strong>";
+						}
 ?>
+						</td>
+						<td>
+							<?=gateway_displaygwtiername($gateway['name'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
@@ -326,5 +368,47 @@ foreach ($a_gateways as $i => $gateway):
 	</a>
 </nav>
 <?php
+
+$form = new Form;
+$section = new Form_Section('Default gateway');
+
+$items4 = array();
+$items6 = array();
+$items4['-'] = "None";
+$items6['-'] = "None";
+foreach($a_gateways as $gw) {
+	$gwn = $gw['name'];
+	if ($gw['ipprotocol'] == "inet6") {
+		$items6[$gwn] = $gwn;
+	} else {
+		$items4[$gwn] = $gwn;
+	}
+}
+$groups = return_gateway_groups_array();
+foreach ($groups as $key => $group) {
+	$gwn = $group['descr'];
+	if ($group['ipprotocol'] == "inet6") {
+		$items6[$key] = "$key ($gwn)";
+	} else {
+		$items4[$key] = "$key ($gwn)";
+	}
+}
+
+$section->addInput(new Form_Select(
+	'defaultgw4',
+	'Default gateway IPv4',
+	$pconfig['defaultgw4'],
+	$items4
+))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+
+$section->addInput(new Form_Select(
+	'defaultgw6',
+	'Default gateway IPv6',
+	$pconfig['defaultgw6'],
+	$items6
+))->setHelp('Select the gateway or gatewaygroup to use as the default gateway.');
+
+$form->add($section);
+print $form;
 
 include("foot.inc");

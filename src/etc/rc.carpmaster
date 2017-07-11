@@ -57,7 +57,7 @@ restart_ppp_interfaces_using_interfaces($vips);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
-$a_groups = return_gateway_groups_array();
+$a_groups = return_gateway_groups_array(true);
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 	foreach ($config['openvpn']['openvpn-client'] as $settings) {
 		if (substr($settings['interface'], 0, 4) == '_vip') {

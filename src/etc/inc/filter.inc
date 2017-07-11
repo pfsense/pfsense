@@ -881,7 +881,7 @@ function filter_generate_gateways() {
 
 	/* Lookup Gateways to be used in filter rules once */
 	$GatewaysList = return_gateways_array();
-	$GatewayGroupsList = return_gateway_groups_array();
+	$GatewayGroupsList = return_gateway_groups_array(true);
 
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -4179,7 +4179,7 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			$a_groups = return_gateway_groups_array();
+			$a_groups = return_gateway_groups_array(true);
 			if (is_array($a_groups[$ph1ent['interface']])) {
 				// bound to gateway group
 				$parentinterface = get_failover_interface($ph1ent['interface']);

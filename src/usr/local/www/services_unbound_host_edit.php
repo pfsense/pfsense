@@ -328,7 +328,7 @@ if ($pconfig['aliases']['item']) {
 			'Delete',
 			null,
 			'fa-trash'
-		))->addClass('btn-warning');
+		))->addClass('btn-warning')->addClass('nowarn');
 
 		$section->add($group);
 		$counter++;

@@ -536,23 +536,13 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	}
 }
 
-function unbound_add_host_entries($cfgsubdir = "") {
-	global $config, $g;
-
-	// Check if auto add host entries is not set
-	if (!isset($config['unbound']['disable_auto_added_host_entries'])) {
-		// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
-		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
-			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
-		} else {
-			$system_domain_local_zone_type = "transparent";
-		}
-
-		$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
+function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "transparent", $write_domiain_zone_declaration = false, $always_add_short_names = false) {
+	global $config;
+	if ($write_domiain_zone_declaration) {
+		$zone_data = "local-zone: \"{$domain}.\" {$zone_type}\n";
+	} else {
+		$zone_data = "";
 	}
-
-	$hosts = system_hosts_entries($config['unbound']);
-	$added_ptr = array();
 	foreach ($hosts as $host) {
 		if (is_ipaddrv4($host['ipaddr'])) {
 			$type = 'A';
@@ -561,12 +551,69 @@ function unbound_add_host_entries($cfgsubdir = "") {
 		} else {
 			continue;
 		}
-
 		if (!$added_ptr[$host['ipaddr']]) {
-			$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
+			$zone_data .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
 			$added_ptr[$host['ipaddr']] = true;
 		}
-		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
+		/* For the system localhost entry, write an entry for just the hostname. */
+		if ((($host['name'] == "localhost") && ($domain == $config['system']['domain'])) || $always_add_short_names) {
+			$zone_data .= "local-data: \"{$host['name']}. {$type} {$host['ipaddr']}\"\n";
+		}
+		/* Redirect zones must have a zone declaration that matches the
+		 * local-data record exactly, it cannot have entries "under" the
+		 * domain.
+		 */
+		if ($zone_type == "redirect") {
+			$zone_data .= "local-zone: \"{$host['fqdn']}.\" {$zone_type}\n";;
+		}
+		$zone_data .= "local-data: \"{$host['fqdn']}. {$type} {$host['ipaddr']}\"\n";
+	}
+	return $zone_data;
+}
+
+function unbound_add_host_entries($cfgsubdir = "") {
+	global $config, $g;
+
+	$hosts = system_hosts_entries($config['unbound']);
+
+	/* Pass 1: Build domain list and hosts inside domains */
+	$hosts_by_domain = array();
+	foreach ($hosts as $host) {
+		if (!array_key_exists($host['domain'], $hosts_by_domain)) {
+			$hosts_by_domain[$host['domain']] = array();
+		}
+		$hosts_by_domain[$host['domain']][] = $host;
+	}
+
+	$added_ptr = array();
+	/* Build local zone data */
+	// Check if auto add host entries is not set
+	$system_domain_local_zone_type = "transparent";
+	if (!isset($config['unbound']['disable_auto_added_host_entries'])) {
+		// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
+		if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
+			$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+		}
+	}
+	/* Add entries for the system domain before all others */
+	if (array_key_exists($config['system']['domain'], $hosts_by_domain)) {
+		$unbound_entries .= unbound_generate_zone_data($config['system']['domain'],
+					$hosts_by_domain[$config['system']['domain']],
+					$added_ptr,
+					$system_domain_local_zone_type,
+					true);
+		/* Unset this so it isn't processed again by the loop below. */
+		unset($hosts_by_domain[$config['system']['domain']]);
+	}
+
+	/* Build zone data for other domain */
+	foreach ($hosts_by_domain as $domain => $hosts) {
+		$unbound_entries .= unbound_generate_zone_data($domain,
+					$hosts,
+					$added_ptr,
+					"transparent",
+					false,
+					isset($config['unbound']['always_add_short_names']));
 	}
 
 	// Write out entries

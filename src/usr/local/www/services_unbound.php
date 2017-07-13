@@ -158,6 +158,10 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("DHCP Server must be enabled for DHCP Registration to work in DNS Resolver.");
 	}
 
+	if (($pconfig['system_domain_local_zone_type'] == "redirect") && isset($pconfig['regdhcp'])) {
+		$input_errors[] = gettext('A System Domain Local Zone Type of "redirect" is not compatible with dynamic DHCP Registration.');
+	}
+
 	$display_custom_options = $pconfig['custom_options'];
 	$pconfig['custom_options'] = base64_encode(str_replace("\r\n", "\n", $pconfig['custom_options']));
 

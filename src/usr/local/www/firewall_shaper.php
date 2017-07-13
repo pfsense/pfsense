@@ -42,7 +42,7 @@ $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Int
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "trafficshaper";
 
-$shaperIFlist = get_configured_interface_with_descr();
+$shaperIFlist = get_configured_interface_with_descr(true);
 read_altq_config();
 /*
  * The whole logic in these code maybe can be specified.

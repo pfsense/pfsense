@@ -337,13 +337,15 @@ function system_hosts_local_entries() {
 	$hosts = array();
 	$hosts[] = array(
 	    'ipaddr' => '127.0.0.1',
-	    'fqdn' => 'localhost',
-	    'name' => 'localhost.' . $syscfg['domain']
+	    'fqdn' => 'localhost.' . $syscfg['domain'],
+	    'name' => 'localhost',
+	    'domain' => $syscfg['domain']
 	);
 	$hosts[] = array(
 	    'ipaddr' => '::1',
-	    'fqdn' => 'localhost',
-	    'name' => 'localhost.' . $syscfg['domain']
+	    'fqdn' => 'localhost.' . $syscfg['domain'],
+	    'name' => 'localhost',
+	    'domain' => $syscfg['domain']
 	);
 
 	if ($config['interfaces']['lan']) {
@@ -362,7 +364,9 @@ function system_hosts_local_entries() {
 		if (is_ipaddrv4($cfgip)) {
 			$hosts[] = array(
 			    'ipaddr' => $cfgip,
-			    'fqdn' => $local_fqdn
+			    'fqdn' => $local_fqdn,
+			    'name' => $syscfg['hostname'],
+			    'domain' => $syscfg['domain']
 			);
 			$hosts_if_found = true;
 		}
@@ -370,7 +374,9 @@ function system_hosts_local_entries() {
 		if (is_ipaddrv6($cfgipv6)) {
 			$hosts[] = array(
 			    'ipaddr' => $cfgipv6,
-			    'fqdn' => $local_fqdn
+			    'fqdn' => $local_fqdn,
+			    'name' => $syscfg['hostname'],
+			    'domain' => $syscfg['domain']
 			);
 			$hosts_if_found = true;
 		}
@@ -401,7 +407,9 @@ function system_hosts_override_entries($dnscfg) {
 
 		$hosts[] = array(
 		    'ipaddr' => $host['ip'],
-		    'fqdn' => $fqdn
+		    'fqdn' => $fqdn,
+		    'name' => $host['host'],
+		    'domain' => $host['domain']
 		);
 
 		if (!is_array($host['aliases']) ||
@@ -418,7 +426,9 @@ function system_hosts_override_entries($dnscfg) {
 
 			$hosts[] = array(
 			    'ipaddr' => $host['ip'],
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn,
+			    'name' => $alias['host'],
+			    'domain' => $alias['domain']
 			);
 		}
 	}
@@ -451,17 +461,20 @@ function system_hosts_dhcpd_entries() {
 			}
 
 			$fqdn = $host['hostname'] . ".";
+			$domain = "";
 			if ($host['domain']) {
-				$fqdn .= $host['domain'];
+				$domain = $host['domain'];
 			} elseif ($dhcpifconf['domain']) {
-				$fqdn .= $dhcpifconf['domain'];
+				$domain = $dhcpifconf['domain'];
 			} else {
-				$fqdn .= $syscfg['domain'];
+				$domain = $syscfg['domain'];
 			}
 
 			$hosts[] = array(
 			    'ipaddr' => $host['ipaddr'],
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn . $domain,
+			    'name' => $host['hostname'],
+			    'domain' => $domain
 			);
 		}
 	}
@@ -505,17 +518,20 @@ function system_hosts_dhcpd_entries() {
 			}
 
 			$fqdn = $host['hostname'] . ".";
+			$domain = "";
 			if ($host['domain']) {
-				$fqdn .= $host['domain'];
-			} else if ($dhcpifconf['domain']) {
-				$fqdn .= $dhcpifconf['domain'];
+				$domain = $host['domain'];
+			} elseif ($dhcpifconf['domain']) {
+				$domain = $dhcpifconf['domain'];
 			} else {
-				$fqdn .= $syscfg['domain'];
+				$domain = $syscfg['domain'];
 			}
 
 			$hosts[] = array(
 			    'ipaddr' => $ipaddrv6,
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn . $domain,
+			    'name' => $host['hostname'],
+			    'domain' => $domain
 			);
 		}
 	}
@@ -566,10 +582,11 @@ function system_hosts_generate() {
 
 	$hosts_array = system_hosts_entries($dnsmasqcfg);
 	foreach ($hosts_array as $host) {
-		$hosts .= "{$host['ipaddr']}\t{$host['fqdn']}";
+		$hosts .= "{$host['ipaddr']}\t";
 		if (!empty($host['name'])) {
-			$hosts .= " {$host['name']}";
+			$hosts .= "{$host['name']} ";
 		}
+		$hosts .= "{$host['fqdn']}";
 		$hosts .= "\n";
 	}
 	unset($hosts_array);

@@ -250,6 +250,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Name")?></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Priority")?></th>
 						<th><?=gettext("Monitor IP")?></th>
 						<th><?=gettext("Description")?></th>
 						<th><?=gettext("Actions")?></th>
@@ -287,6 +288,9 @@ foreach ($a_gateways as $i => $gateway):
 						</td>
 						<td>
 							<?=htmlspecialchars($gateway['gateway'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['priority'])?>
 						</td>
 						<td>
 							<?=htmlspecialchars($gateway['monitor'])?>

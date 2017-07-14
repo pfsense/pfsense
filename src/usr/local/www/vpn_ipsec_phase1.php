@@ -96,7 +96,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
-	$pconfig['rekeymargin'] = $a_phase1[$p1index]['rekeymargin'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
 	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
@@ -113,8 +112,9 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	if (isset($a_phase1[$p1index]['reauth_enable'])) {
 		$pconfig['reauth_enable'] = true;
 	}
-	if (isset($a_phase1[$p1index]['rekey_enable'])) {
+	if ($a_phase1[$p1index]['margintime']) {
 		$pconfig['rekey_enable'] = true;
+		$pconfig['margintime'] = $a_phase1[$p1index]['margintime'];
 	}
 	if (isset($a_phase1[$p1index]['responderonly'])) {
 		$pconfig['responderonly'] = true;
@@ -152,11 +152,11 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['halgo'] = "sha1";
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
+	$pconfig['rekey_enable'] = true;
 	$pconfig['nat_traversal'] = 'on';
 	$pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
-	$pconfig['rekeymargin'] = "540";
 
 	/* mobile client */
 	if ($_REQUEST['mobile']) {
@@ -240,8 +240,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
-	if (($pconfig['rekeymargin'] && !is_numericint($pconfig['rekeymargin']))) {
-	  $input_errors[] = gettext("Rekey Margin must be an integer.");
+	if (($pconfig['margintime'] && !is_numericint($pconfig['margintime']))) {
+	  $input_errors[] = gettext("The margintime must be an integer.");
   }
 
 	if ($pconfig['remotegw']) {
@@ -458,7 +458,6 @@ if ($_POST['save']) {
 		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
 		$ph1ent['dhgroup'] = $pconfig['dhgroup'];
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
-		$ph1ent['rekeymargin'] = $pconfig['rekeymargin'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
 		$ph1ent['certref'] = $pconfig['certref'];
@@ -474,9 +473,7 @@ if ($_POST['save']) {
 			unset($ph1ent['reauth_enable']);
 		}
 		if (isset($pconfig['rekey_enable'])) {
-			$ph1ent['rekey_enable'] = true;
-		} else {
-			unset($ph1ent['rekey_enable']);
+			$ph1ent['margintime'] = $pconfig['margintime'];
 		}
 
 		if (isset($pconfig['responderonly'])) {
@@ -832,17 +829,17 @@ $section = new Form_Section('Advanced Options');
 
 $section->addInput(new Form_Checkbox(
 	'rekey_enable',
-	'Disable rekey',
-	'Disables renegotiation when a connection is about to expire.',
+	'Enable rekey',
+	'Enables renegotiation when a connection is about to expire.',
 	$pconfig['rekey_enable']
 ));
 
 $section->addInput(new Form_Input(
-	'rekeymargin',
-	'*Rekey Margin (Seconds)',
+	'margintime',
+	'Margintime (Seconds)',
 	'number',
-	$pconfig['rekeymargin']
-));
+	$pconfig['margintime']
+))->setHelp('How long before connection expiry or keying-channel expiry should attempt to negotiate a replacement begin.');
 
 $section->addInput(new Form_Checkbox(
 	'reauth_enable',
@@ -1081,6 +1078,16 @@ events.push(function() {
 		}
 	}
 
+	function rekeychkbox_change() {
+		hide = !$('#rekey_enable').prop('checked');
+
+		hideInput('margintime', hide);
+
+		if (!$('#margintime').val()) {
+			$('#margintime').val('540')
+		}
+	}
+
 	function dpdchkbox_change() {
 		hide = !$('#dpd_enable').prop('checked');
 
@@ -1103,6 +1110,11 @@ events.push(function() {
 	//}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
+
+	 // Enable Rekey
+	$('#rekey_enable').click(function () {
+		rekeychkbox_change();
+	});
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
@@ -1145,6 +1157,7 @@ events.push(function() {
 	iketype_change();
 	methodsel_change();
 	ealgosel_change(<?=$keyset?>);
+	rekeychkbox_change();
 	dpdchkbox_change();
 
 	// ---------- On initial page load ------------------------------------------------------------

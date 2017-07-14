@@ -985,10 +985,6 @@ EOD;
 				$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 			}
 
-			if ($ph1ent['rekeymargin']) {
-				$rekeymargin = "rekeymargin = {$ph1ent['rekeymargin']}s";
-			}
-
 			$rightsourceip = NULL;
 			if (isset($ph1ent['mobile'])) {
 				$rightsourceips = array();
@@ -1112,10 +1108,12 @@ EOD;
 			} else {
 				$reauth = "reauth = yes";
 			}
-			if (isset($ph1ent['rekey_enable'])) {
-				$rekey = "rekey = no";
+
+			if ($ph1ent['margintime']) {
+				$rekeyline = "rekey = yes";
+				$rekeyline .= "\n\tmargintime = {$ph1ent['margintime']}s";
 			} else {
-				$rekey = "rekey = yes";
+				$rekeyline = "rekey = no";
 			}
 
 			if ($ph1ent['nat_traversal'] == 'off') {
@@ -1314,8 +1312,7 @@ EOD;
 	{$forceencaps}
 	{$mobike}
 	{$tfc}
-	{$rekey}
-	{$rekeymargin}
+	{$rekeyline}
 	installpolicy = yes
 	{$tunneltype}
 	{$dpdline}

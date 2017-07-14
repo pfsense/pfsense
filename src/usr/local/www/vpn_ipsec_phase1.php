@@ -246,7 +246,7 @@ if ($_POST['save']) {
 		} else if(intval($pconfig['margintime']) >= intval($pconfig['lifetime'])){
 			 $input_errors[] = gettext("The margintime must be smaller than the P1 lifetime.");
 		}
-  }
+	}
 
 	if ($pconfig['remotegw']) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {

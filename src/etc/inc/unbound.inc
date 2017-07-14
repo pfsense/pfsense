@@ -536,9 +536,9 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	}
 }
 
-function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "transparent", $write_domiain_zone_declaration = false, $always_add_short_names = false) {
+function unbound_generate_zone_data($domain, $hosts, &$added_ptr, $zone_type = "transparent", $write_domain_zone_declaration = false, $always_add_short_names = false) {
 	global $config;
-	if ($write_domiain_zone_declaration) {
+	if ($write_domain_zone_declaration) {
 		$zone_data = "local-zone: \"{$domain}.\" {$zone_type}\n";
 	} else {
 		$zone_data = "";

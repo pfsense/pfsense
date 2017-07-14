@@ -36,6 +36,31 @@ $security_passed = true;
 
 /* If this function doesn't exist, we're being called from Captive Portal or
    another internal subsystem which does not include authgui.inc */
+if (function_exists("display_error_form")) {
+	/* Extra layer of lockout protection. Check if the user is in the GUI
+	 * lockout table before processing a request */
+
+	/* Fetch the contents of the lockout table. */
+	exec("/sbin/pfctl -t 'webConfiguratorlockout' -T show", $entries);
+
+	/* If the client is in the lockout table, print an error, kill states, and exit */
+	if (in_array($_SERVER['REMOTE_ADDR'], array_map('trim', $entries))) {
+		if (!security_checks_disabled()) {
+			/* They may never see the error since the connection will be cut off, but try to be nice anyhow. */
+			display_error_form("501", gettext("Access Denied<br/><br/>Access attempt from a temporarily locked out client address.<br /><br />Try accessing the firewall again after the lockout expires."));
+			/* If they are locked out, they shouldn't have a state. Disconnect their connections. */
+			$retval = pfSense_kill_states($_SERVER['REMOTE_ADDR']);
+			if (is_ipaddrv4($_SERVER['REMOTE_ADDR'])) {
+				$retval = pfSense_kill_states("0.0.0.0/0", $_SERVER['REMOTE_ADDR']);
+			} elseif (is_ipaddrv6($_SERVER['REMOTE_ADDR'])) {
+				$retval = pfSense_kill_states("::", $_SERVER['REMOTE_ADDR']);
+			}
+			exit;
+		}
+		$security_passed = false;
+	}
+}
+
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
 	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
 	$found_host = false;

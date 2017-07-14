@@ -240,8 +240,12 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
-	if (($pconfig['margintime'] && !is_numericint($pconfig['margintime']))) {
-	  $input_errors[] = gettext("The margintime must be an integer.");
+	if ($pconfig['rekey_enable']) {
+		if(!is_numericint($pconfig['margintime'])){
+			 $input_errors[] = gettext("The margintime must be an integer.");
+		} else if(intval($pconfig['margintime']) >= intval($pconfig['lifetime'])){
+			 $input_errors[] = gettext("The margintime must be smaller than the P1 lifetime.");
+		}
   }
 
 	if ($pconfig['remotegw']) {

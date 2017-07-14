@@ -2246,10 +2246,6 @@ function filter_nat_rules_generate() {
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
 
-			if (!$dstaddr) {
-				$dstaddr = $FilterIflist[$natif]['ip'];
-			}
-
 			$dstaddr_port = explode(" ", $dstaddr);
 			if (empty($dstaddr_port[0]) || strtolower(trim($dstaddr_port[0])) == "port") {
 				continue; // Skip port forward if no destination address found

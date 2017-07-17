@@ -319,7 +319,7 @@ $section->addInput(new Form_Checkbox(
 	'%2$s%3$sPromiscuous mode%4$s ("sniffing") captures all data seen by the adapter, whether or not related to the host, ' .
 	'but in some cases may have undesirable side effects and not all adapters support this option. Click Info for details %5$s' .
 	'Promiscuous mode requires more kernel processing of packets. This puts a slightly higher demand on system resources, especially ' .
-	'on busy networks or low power processors. The change in packet processing may allow a hostile host to detect that an adapter is in promiscuous mode ' .
+	'on very busy networks or low power processors. The change in packet processing may allow a hostile host to detect that an adapter is in promiscuous mode ' .
 	'or to \'fingerprint\' the kernel (see %6$s). Some network adapters may not support or work well in promiscuous mode (see %7$s).%8$s',
 
 	'<p style="margin-bottom:2px;padding-bottom:0px">',

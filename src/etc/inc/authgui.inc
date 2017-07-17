@@ -253,8 +253,8 @@ function display_login_form() {
 <html lang="en">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-	    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-	    <link rel="stylesheet" href="css/login.css" type="text/css">
+	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+	    <link rel="stylesheet" href="/css/login.css" type="text/css">
 		<title><?=gettext("Login"); ?></title>
 		<script type="text/javascript">
 			//<![CDATA{
@@ -270,7 +270,7 @@ function display_login_form() {
 					<div class="row">
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
-								<img src="pfsense-trans.png" height="100%"/>
+								<img src="/pfsense-trans.png" height="100%"/>
 							</div>
 						</div>
 

@@ -1109,11 +1109,13 @@ EOD;
 				$reauth = "reauth = yes";
 			}
 
-			if ($ph1ent['margintime']) {
-				$rekeyline = "rekey = yes";
-				$rekeyline .= "\n\tmargintime = {$ph1ent['margintime']}s";
-			} else {
+			if (isset($ph1ent['rekey_enable'])) {
 				$rekeyline = "rekey = no";
+			} else {
+				$rekeyline = "rekey = yes";
+				if(!empty($ph1ent['margintime'])){
+					$rekeyline .= "\n\tmargintime = {$ph1ent['margintime']}s";
+				}
 			}
 
 			if ($ph1ent['nat_traversal'] == 'off') {

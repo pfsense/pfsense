@@ -112,10 +112,15 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	if (isset($a_phase1[$p1index]['reauth_enable'])) {
 		$pconfig['reauth_enable'] = true;
 	}
-	if ($a_phase1[$p1index]['margintime']) {
+
+	if (isset($a_phase1[$p1index]['rekey_enable'])) {
 		$pconfig['rekey_enable'] = true;
+	}
+
+	if ($a_phase1[$p1index]['margintime']) {
 		$pconfig['margintime'] = $a_phase1[$p1index]['margintime'];
 	}
+
 	if (isset($a_phase1[$p1index]['responderonly'])) {
 		$pconfig['responderonly'] = true;
 	}
@@ -240,7 +245,7 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
-	if ($pconfig['rekey_enable']) {
+	if (!isset($pconfig['rekey_enable']) && $pconfig['margintime']) {
 		if(!is_numericint($pconfig['margintime'])){
 			 $input_errors[] = gettext("The margintime must be an integer.");
 		} else if(intval($pconfig['margintime']) >= intval($pconfig['lifetime'])){
@@ -476,8 +481,17 @@ if ($_POST['save']) {
 		} else {
 			unset($ph1ent['reauth_enable']);
 		}
+
 		if (isset($pconfig['rekey_enable'])) {
+			$ph1ent['rekey_enable'] = true;
+		} else {
+			unset($ph1ent['rekey_enable']);
+		}
+
+		if (!isset($pconfig['rekey_enable'])) {
 			$ph1ent['margintime'] = $pconfig['margintime'];
+		} else {
+			unset($ph1ent['margintime']);
 		}
 
 		if (isset($pconfig['responderonly'])) {
@@ -833,8 +847,8 @@ $section = new Form_Section('Advanced Options');
 
 $section->addInput(new Form_Checkbox(
 	'rekey_enable',
-	'Enable rekey',
-	'Enables renegotiation when a connection is about to expire.',
+	'Disable rekey',
+	'Disables renegotiation when a connection is about to expire.',
 	$pconfig['rekey_enable']
 ));
 
@@ -1083,14 +1097,10 @@ events.push(function() {
 	}
 
 	function rekeychkbox_change() {
-		hide = !$('#rekey_enable').prop('checked');
+		hide = $('#rekey_enable').prop('checked');
 
 		hideInput('margintime', hide);
-
-		if (!$('#margintime').val()) {
-			$('#margintime').val('540')
-		}
-	}
+  }
 
 	function dpdchkbox_change() {
 		hide = !$('#dpd_enable').prop('checked');

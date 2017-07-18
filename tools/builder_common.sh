@@ -242,6 +242,10 @@ make_world() {
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# Copy additional installer scripts
+	install -o root -g wheel -m 0755 ${BUILDER_TOOLS}/installer/*.sh \
+		${INSTALLER_CHROOT_DIR}/root
+
 	# XXX set root password since we don't have nullok enabled
 	pw -R ${INSTALLER_CHROOT_DIR} usermod root -w yes
 

@@ -3,6 +3,7 @@
 ./boot/kernel
 ./boot/loader.conf
 ./boot/loader.conf.local
+./boot/loader.rc.local
 ./boot/modules/bwi_v3_ucode.ko
 ./cf/conf/config.xml
 ./cf/conf/enableserial_force
@@ -29,6 +30,7 @@
 ./media
 ./mnt
 ./proc
+./root/force_growfs
 ./sys
 ./tmp
 ./usr/lib/debug

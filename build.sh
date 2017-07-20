@@ -344,10 +344,10 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 
 	# Install packages needed for Product
 	install_pkg_install_ports
-fi
 
-# Create core repo
-core_pkg_create_repo
+	# Create core repo
+	core_pkg_create_repo
+fi
 
 # Send core repo to staging area
 pkg_repo_rsync "${CORE_PKG_PATH}" ignore_final_rsync

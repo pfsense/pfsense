@@ -176,20 +176,31 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	xml_set_character_data_handler($xml_parser, "cdata");
 	xml_parser_set_option($xml_parser, XML_OPTION_SKIP_WHITE, 1);
 
-	if (!($fp = fopen($cffile, "r"))) {
-		log_error(gettext("Error: could not open XML input") . "\n");
-		return -1;
-	}
-
-	while ($data = fread($fp, 4096)) {
-		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
+	if ($isstring === true) {
+		if (!xml_parse($xml_parser, $cffile, true)) {
+			log_error(sprintf(gettext('XML error: %1$s at line %2$d in XML-string') . "\n",
 				xml_error_string(xml_get_error_code($xml_parser)),
-				xml_get_current_line_number($xml_parser),
-				$cffile));
+				xml_get_current_line_number($xml_parser)));
 			return -1;
 		}
+	} else {
+		if (!($fp = fopen($cffile, "r"))) {
+			log_error(gettext("Error: could not open XML input") . "\n");
+			return -1;
+		}
+
+		while ($data = fread($fp, 4096)) {
+			if (!xml_parse($xml_parser, $data, feof($fp))) {
+				log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
+					xml_error_string(xml_get_error_code($xml_parser)),
+					xml_get_current_line_number($xml_parser),
+					$cffile));
+				return -1;
+			}
+		}
+		fclose($fp);
 	}
+	
 	xml_parser_free($xml_parser);
 
 	if ($rootobj) {

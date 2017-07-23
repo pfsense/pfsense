@@ -154,11 +154,19 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	$parsedcfg = array();
 
 	$par = new XMLReader();
-	if ($par->open($cffile, "UTF-8", LIBXML_NOERROR | LIBXML_NOWARNING)) {
-		add_elements($parsedcfg, $par);
-		$par->close();
+	if ($isstring === true) {
+		if ($par->xml($cffile, "UTF-8", LIBXML_NOERROR | LIBXML_NOWARNING)) {
+			add_elements($parsedcfg, $par);
+		} else {
+			log_error(sprintf(gettext("Error returned while trying to parse %s"), "XML-string"));
+		}
 	} else {
-		log_error(sprintf(gettext("Error returned while trying to parse %s"), $cffile));
+		if ($par->open($cffile, "UTF-8", LIBXML_NOERROR | LIBXML_NOWARNING)) {
+			add_elements($parsedcfg, $par);
+			$par->close();
+		} else {
+			log_error(sprintf(gettext("Error returned while trying to parse %s"), $cffile));
+		}
 	}
 
 	if ($rootobj) {

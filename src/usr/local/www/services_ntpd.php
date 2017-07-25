@@ -281,11 +281,19 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_StaticText(
 	null,
 	$btnaddrow
-))->setHelp('For best results three to five servers should be configured here, or at least one pool.%1$s' .
-			'The %2$sPrefer%3$s option indicates that NTP should favor the use of this server more than all others.%1$s' .
-			'The %2$sNo Select%3$s option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
-			'The %2$sIs a Pool%3$s option indicates this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
-			'<br />', '<b>', '</b>');
+))->setHelp(
+	'NTP will only sync if a majority of the servers agree on the time.  For best results you should configure between 3 and 5 servers ' .
+	'(%4$sNTP support pages recommend at least 4 or 5%5$s), or a pool. If only one server is configured, it %2$swill%3$s be believed, and if 2 servers ' .
+	'are configured and they disagree, %2$sneither%3$s will be believed. Options:%1$s' .
+	'%2$sPrefer%3$s - NTP should favor the use of this server more than all others.%1$s' .
+	'%2$sNo Select%3$s - NTP should not use this server for time, but stats for this server will be collected and displayed.%1$s' .
+	'%2$sIs a Pool%3$s - this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.',
+	'<br />', 
+	'<b>', 
+	'</b>', 
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">', 
+	'</a>'
+	);
 
 $section->addInput(new Form_Input(
 	'ntporphan',
@@ -368,8 +376,22 @@ $btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 $section->addInput(new Form_StaticText(
 	'Leap seconds',
 	$btnadv
-))->setHelp('A leap second file allows NTP to advertise an upcoming leap second addition or subtraction. ' .
-			'Normally this is only useful if this server is a stratum 1 time server. ');
+))->setHelp(
+	'Leap seconds may be added or subtracted at the end of June or December. Leap seconds are administered by the ' .
+	'%1$sIERS%2$s, who publish them in their Bulletin C approximately 6 - 12 months in advance.  Normally this correction ' .
+	'should only be needed if the server is a stratum 1 NTP server, but many NTP servers do not advertise an upcoming leap ' .
+	'second when other NTP servers synchronise to them.%3$s%4$sIf the leap second is important to your network services, ' .
+	'it is %6$sgood practice%2$s to download and add the leap second file at least a day in advance of any time correction%5$s.%3$s ' .
+	'More information and files for downloading can be found on their %1$swebsite%2$s, and also on the %7$NIST%2$s and %8$sNTP%2$s websites.',
+	'<a target="_blank" href="https://www.iers.org">',
+	'</a>',
+	'<br />',
+	'<b>',
+	'</b>',
+	'<a target="_blank" href="https://support.ntp.org/bin/view/Support/ConfiguringNTP">',
+	'<a target="_blank" href="https://www.nist.gov">',
+	'<a target="_blank" href="https://www.ntp.org">'
+);
 
 $section->addInput(new Form_Textarea(
 	'leaptext',

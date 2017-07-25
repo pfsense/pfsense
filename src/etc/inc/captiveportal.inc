@@ -800,7 +800,7 @@ function captiveportal_prune_old() {
 		$uidletimeout = (is_numeric($cpentry[8])) ? $cpentry[8] : $idletimeout;
 		/* if an idle timeout is specified, get last activity timestamp from ipfw */
 		if (!$timedout && $uidletimeout > 0) {
-			$lastact = captiveportal_get_last_activity($cpentry[2], $cpentry[3]);
+			$lastact = captiveportal_get_last_activity($cpentry[2]);
 			/*	If the user has logged on but not sent any traffic they will never be logged out.
 			 *	We "fix" this by setting lastact to the login timestamp.
 			 */
@@ -1385,7 +1385,7 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given client IP address */
-function captiveportal_get_last_activity($ip, $mac = NULL) {
+function captiveportal_get_last_activity($ip) {
 	global $cpzone;
 
 	/* Reading only from one of the tables is enough of approximation. */
@@ -1876,7 +1876,7 @@ function captiveportal_get_dn_passthru_ruleno($value) {
  *
  */
 
-function getVolume($ip, $mac = NULL) {
+function getVolume($ip) {
 	global $config, $cpzone;
 
 	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct'])

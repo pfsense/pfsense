@@ -67,7 +67,7 @@ foreach ($a_cp as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;
-		$cpent[11] = captiveportal_get_last_activity($cpent[2], $cpentry[3]);
+		$cpent[11] = captiveportal_get_last_activity($cpent[2]);
 		$cpdb_all[] = $cpent;
 	}
 }

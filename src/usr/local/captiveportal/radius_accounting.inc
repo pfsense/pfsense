@@ -164,7 +164,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac("wan"));
-    $volume = getVolume($clientip, $clientmac);
+    $volume = getVolume($clientip);
     $clientmac = mac_format($clientmac);
     $nas_port = intval($ruleno);
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;

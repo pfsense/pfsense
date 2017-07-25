@@ -861,9 +861,9 @@ function captiveportal_prune_old() {
 						false, // Not an interim request
 						$rastop_time); // Stop Time
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
-					/* XXX: Fix
-					$_gb = @pfSense_ipfw_table($cpzoneid, IP_FW_TABLE_XZEROENTRY, {$cpzone}_auth_up, $cpentry[2], $clientsn, $cpentry[3]);
-					$_gb = @pfSense_ipfw_table($cpzoneid, IP_FW_TABLE_XZEROENTRY, {$cpzone}_auth_down, $cpentry[2], $clientsn, $cpentry[3]);
+					/* XXX Fixme
+					$_gb = @pfSense_ipfw_table_zerocnt("{$cpzone}_auth_up", {$cpentry[2]/$clientsn});
+					$_gb = @pfSense_ipfw_table_zerocnt("{$cpzone}_auth_down", {$cpentry[2]/$clientsn});
 					*/
 					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
 						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
@@ -1020,7 +1020,11 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 	}
 
 	if (is_ipaddr($dbent[2])) {
-		/* Delete client's ip entry from tables auth_up and auth_down. */
+		/*
+		 * Delete client's ip entry from tables auth_up and auth_down.
+		 *
+		 * It's not necessary to explicit specify mac address here
+		 */
 		$clientsn = (is_ipaddrv6($dbent[2])) ? 128 : 32;
 		pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
 		pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
@@ -2292,9 +2296,12 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
-			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$clientip}/{$clientsn}", $bw_up_pipeno);
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$clientip}/{$clientsn}", $bw_down_pipeno);
+			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip)) ? "128" : "32";
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+				$rule_entry .= ",{$clientmac}";
+			}
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
 
 			if ($attributes['voucher']) {
 				$attributes['session_timeout'] = $remaining_time;

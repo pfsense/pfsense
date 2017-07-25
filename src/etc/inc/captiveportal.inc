@@ -2295,7 +2295,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
-			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip)) ? "128" : "32";
+			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 				$rule_entry .= ",{$clientmac}";
 			}

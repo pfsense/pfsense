@@ -860,10 +860,8 @@ function captiveportal_prune_old() {
 						false, // Not an interim request
 						$rastop_time); // Stop Time
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
-					/* XXX Fixme
-					$_gb = @pfSense_ipfw_table_zerocnt("{$cpzone}_auth_up", {$cpentry[2]/$clientsn});
-					$_gb = @pfSense_ipfw_table_zerocnt("{$cpzone}_auth_down", {$cpentry[2]/$clientsn});
-					*/
+					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_up", "{$cpentry[2]}/{$clientsn}");
+					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_down", "{$cpentry[2]}/{$clientsn}");
 					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
 						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
 						sleep(1);

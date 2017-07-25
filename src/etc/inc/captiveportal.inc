@@ -663,7 +663,6 @@ function captiveportal_init_rules($reinit = false) {
 	    "skipto 65534 all from any to any");
 
 	/* generate passthru mac database */
-	file_put_contents("/tmp/debug_antes", $cprules);
 	$cprules .= captiveportal_passthrumac_configure(true);
 	$cprules .= "\n";
 

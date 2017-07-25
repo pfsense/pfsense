@@ -459,10 +459,12 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['domain'],
 	['placeholder' => 'mycorp.com, home, office, private, etc.']
-))->setHelp('Do not use \'.local\' as the final part of the domain (TLD), The \'.local\' domain is <a target="_blank" ' .
-	'href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html")widely used</a> by mDNS (including Avahi), ' .
-	'Apple OS X (Bonjour/Rendezvous/Airprint/Airplay), and some Windows systems and network devices. These will not network ' .
-	'correctly if the router uses \'.local\'. Alternatives such as \'.local.lan\' or \'.mylocal\' are safe.');
+))->setHelp('Do not use \'.local\' as the final part of the domain (TLD), The \'.local\' domain is %1$swidely used%2$s by '.
+	'mDNS (including Avahi), Apple OS X (Bonjour/Rendezvous/Airprint/Airplay), and some Windows systems and network devices. ' .
+	'These will not network correctly if the router uses \'.local\'. Alternatives such as \'.local.lan\' or \'.mylocal\' are safe.',
+	 '<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
+	 '</a>'
+);
 
 $form->add($section);
 

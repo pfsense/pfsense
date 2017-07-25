@@ -67,6 +67,7 @@ if (!is_array($config['bridges']['bridged'])) {
 function is_aoadv_used($pconfig) {
 	if (($pconfig['static'] !="") ||
 	    ($pconfig['private'] != "") ||
+	    $pconfig['ip6linklocal'] ||
 	    ($pconfig['stp'] != "") ||
 	    ($pconfig['span'] != "") ||
 	    ($pconfig['edge'] != "") ||
@@ -106,6 +107,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 
 if (isset($id) && $a_bridges[$id]) {
 	$pconfig['enablestp'] = isset($a_bridges[$id]['enablestp']);
+	$pconfig['ip6linklocal'] = isset($a_bridges[$id]['ip6linklocal']);
 	$pconfig['descr'] = $a_bridges[$id]['descr'];
 	$pconfig['bridgeif'] = $a_bridges[$id]['bridgeif'];
 	$pconfig['members'] = $a_bridges[$id]['members'];
@@ -325,6 +327,10 @@ if ($_POST) {
 		$i = 0;
 		$ifpriority = "";
 		$ifpathcost = "";
+
+		if ($_POST['ip6linklocal']) {
+			$bridge['ip6linklocal'] = true;
+		}
 
 		foreach ($ifacelist as $ifn => $ifdescr) {
 			if ($_POST[$ifn] <> "") {
@@ -552,6 +558,13 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Mark an interface as a "private" interface. A private interface does not forward any traffic to any other port that is also a private interface. ');
+
+$section->addInput(new Form_Checkbox(
+	'ip6linklocal',
+	'Enable IPv6 auto linklocal',
+	null,
+	$pconfig['ip6linklocal']
+))->setHelp('When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and cleared on every member interface. This is required when the bridge interface is used for stateless autoconfiguration. ');
 
 //	STP section
 // ToDo: - Should disable spanning tree section when not checked

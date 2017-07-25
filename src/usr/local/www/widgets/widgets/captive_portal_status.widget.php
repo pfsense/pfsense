@@ -63,15 +63,11 @@ if (!function_exists('clientcmp')) {
 
 $cpdb_all = array();
 
-$showact = isset($_GET['showact']) ? 1 : 0;
-
 foreach ($a_cp as $cpzone => $cp) {
 	$cpdb = captiveportal_read_db();
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;
-		if ($showact == 1) {
-			$cpent[11] = captiveportal_get_last_activity($cpent[2], $cpentry[3]);
-		}
+		$cpent[11] = captiveportal_get_last_activity($cpent[2], $cpentry[3]);
 		$cpdb_all[] = $cpent;
 	}
 }
@@ -86,6 +82,7 @@ foreach ($a_cp as $cpzone => $cp) {
 			<th><?=gettext("Username");?></th>
 			<th><?=gettext("Session start");?></th>
 			<th><?=gettext("Last activity");?></th>
+			<th>&nbsp;</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -95,7 +92,15 @@ foreach ($a_cp as $cpzone => $cp) {
 			<td><?=$cpent[3];?></td>
 			<td><?=$cpent[4];?></td>
 			<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
-			<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
+			<td>
+<?php
+			if ($cpent[11] && ($cpent[11] > 0)):
+				echo date("m/d/Y H:i:s", $cpent[11]);
+			else:
+				echo "&nbsp;";
+			endif;
+?>
+			</td>
 			<td>
 				<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
 					<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>

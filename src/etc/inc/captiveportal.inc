@@ -1382,19 +1382,21 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given client IP address */
-function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
-	global $cpzoneid;
+function captiveportal_get_last_activity($ip, $mac = NULL) {
+	global $cpzone;
 
-	/* XXX Fix */
-	return 0;
-	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $table, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
-	if (is_array($ipfwoutput)) {
-		/* Workaround for #46652 */
-		if ($ipfwoutput['packets'] > 0) {
-			return $ipfwoutput['timestamp'];
-		} else {
-			return 0;
+	$tables = array("{$cpzone}_allowed_up", "{$cpzone}_auth_up");
+
+	foreach ($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup($table, $ip);
+		if (is_array($ipfw)) {
+			/* Workaround for #46652 */
+			if ($ipfw['packets'] > 0) {
+				return $ipfw['timestamp'];
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -1872,34 +1874,41 @@ function captiveportal_get_dn_passthru_ruleno($value) {
  */
 
 function getVolume($ip, $mac = NULL) {
-	global $config, $cpzone, $cpzoneid;
+	global $config, $cpzone;
 
-	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct'])
+	    ? true : false;
 	$volume = array();
 	// Initialize vars properly, since we don't want NULL vars
-	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
+	$volume['input_pkts'] = $volume['input_bytes'] = 0;
+	$volume['output_pkts'] = $volume['output_bytes'] = 0;
 
-	/* XXX Fix */
-	return $volume;
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 1, $ip, $mac);
-	if (is_array($ipfw)) {
+	$tables = array("allowed", "auth");
+
+	foreach($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup("{$cpzone}_{$table}_up", $ip);
+		if (!is_array($ipfw)) {
+			continue;
+		}
 		if ($reverse) {
 			$volume['output_pkts'] = $ipfw['packets'];
 			$volume['output_bytes'] = $ipfw['bytes'];
-		}
-		else {
+		} else {
 			$volume['input_pkts'] = $ipfw['packets'];
 			$volume['input_bytes'] = $ipfw['bytes'];
 		}
 	}
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 2, $ip, $mac);
-	if (is_array($ipfw)) {
+	foreach($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup("{$cpzone}_{$table}_down",
+		    $ip);
+		if (!is_array($ipfw)) {
+			continue;
+		}
 		if ($reverse) {
 			$volume['input_pkts'] = $ipfw['packets'];
 			$volume['input_bytes'] = $ipfw['bytes'];
-		}
-		else {
+		} else {
 			$volume['output_pkts'] = $ipfw['packets'];
 			$volume['output_bytes'] = $ipfw['bytes'];
 		}

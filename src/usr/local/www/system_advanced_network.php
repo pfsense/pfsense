@@ -178,36 +178,28 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
 	'blocks traffic.');
 
-
-$group = new Form_Group('IPv6 over IPv4');
-
-$group->add(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'ipv6nat_enable',
 	'IPv6 over IPv4 Tunneling',
 	'Enable IPv6 over IPv4 tunneling',
 	$pconfig['ipv6nat_enable']
-));
+))->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
+	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
+	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
 
-$group->add(new Form_Input(
+$section->addInput(new Form_Input(
 	'ipv6nat_ipaddr',
 	'IPv4 address of Tunnel Peer',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
 ));
 
-$group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
-	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
-	'IPv6 firewall rules are %1$salso required%2$s, to control and pass encapsulated traffic.', '<a href="firewall_rules.php">', '</a>');
-
-
-$section->add($group);
-
 $section->addInput(new Form_Checkbox(
 	'prefer_ipv4',
 	'Prefer IPv4 over IPv6',
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
-))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
+))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '.
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
 
 $section->addInput(new Form_Checkbox(
@@ -308,10 +300,26 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	// Show/hide IPv4 address of Tunnel Peer input field
+	function showHideIpv6nat() {
+		hideInput('ipv6nat_ipaddr', !$('#ipv6nat_enable').prop('checked'));
+	}
+
 	// On click, copy the placeholder DUID to the input field
 	$('#btncopyduid').click(function() {
 		$('#global-v6duid').val('<?=$duid?>');
 	});
+
+	// On clicking IPv6 over IPv4 Tunneling checkbox
+	$('#ipv6nat_enable').click(function () {
+		showHideIpv6nat();
+	});
+
+	// On page load
+	showHideIpv6nat();
+
+
 });
 //]]>
 </script>

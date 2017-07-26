@@ -630,9 +630,9 @@ function captiveportal_init_rules($reinit = false) {
 	$cprules .= "table {$cpzone}_auth_up create type addr valtype pipe\n";
 	$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from table({$cpzone}_auth_up) to any in");
+	    "pipe tablearg ip from table({$cpzone}_auth_up) to any layer2 in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from any to table({$cpzone}_auth_down) out");
+	    "pipe tablearg ip from any to table({$cpzone}_auth_down) layer2 out");
 
 	if (!empty($config['captiveportal'][$cpzone]['listenporthttp'])) {
 		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];
@@ -2294,13 +2294,11 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
 			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
-
-			/* Add MAC address on UP rule only */
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 				$rule_entry .= ",{$clientmac}";
 			}
 			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
 
 			if ($attributes['voucher']) {
 				$attributes['session_timeout'] = $remaining_time;

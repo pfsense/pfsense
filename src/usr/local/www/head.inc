@@ -263,17 +263,32 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
+// NOTE:
+// Special items at the top should not be sorted. Only the variable list of interfaces may be sorted.
 $interfaces_menu = array();
+$interfaces_top = array();
+$interfaces_bottom = array();
+
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_top[] = array(gettext("(assign)"), "/interfaces_assign.php");
 }
+
 $opts = get_configured_interface_with_descr(false, true);
+
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
-		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+		$interfaces_bottom[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+
+$interfaces_bottom = array_merge($interfaces_bottom, return_ext_menu("Interfaces"));
+
+if ($user_settings['webgui']['interfacessort']) {
+	$interfaces_bottom = msort($interfaces_bottom, 0);
+}
+
+// Combine the top bottom section of this menu
+$interfaces_menu = array_merge($interfaces_top, $interfaces_bottom);
 
 // Firewall
 $firewall_menu = array();

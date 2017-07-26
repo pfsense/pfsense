@@ -29,6 +29,7 @@ $nocsrf = true;
 $supportfile = "/var/db/support.json";
 $idfile = "/var/db/uniqueid";
 $FQDN = "https://ews.netgate.com/support";
+$refreshinterval = (24 * 3600);	// 24 hours
 
 // Write a dummy support file containg an error message
 function nosupportdata() {
@@ -36,6 +37,9 @@ function nosupportdata() {
 
 	file_put_contents($supportfile, sprintf(gettext("%sSupport information unavailable%s"),
 		"{\"summary\":\"<div class=\\\"alert alert-danger\\\">", "</div>\",\"htmltext\":\"\"}"));
+
+	// Make the file a day old so that the widget tries again on the next page load
+	touch($supportfile, (time() - $refreshinterval));
 }
 
 // Poll the Netgate server to obtain the JSON/HTML formatted support information
@@ -84,7 +88,7 @@ if ($_REQUEST['act'] == "refresh") {
 
 // Retrieve the support data from Netgate.com if the supprt data file does not exist,
 // or if it is more than a day old
-if (!file_exists($supportfile) || ( time()-filemtime($supportfile) > (24 * 3600))) {
+if (!file_exists($supportfile) || ( time()-filemtime($supportfile) > $refreshinterval)) {
 	updateSupport();
 }
 

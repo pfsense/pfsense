@@ -59,7 +59,7 @@ function print_details($cpent) {
 
 	/* print idle time and time left before disconnection if idle timeout is set */
 	if ($_REQUEST['showact']) {
-		$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+		$last_act = captiveportal_get_last_activity($cpent[2]);
 
 		/* if the user never sent traffic, set last activity time to the login time */
 		$last_act = $last_act ? $last_act : $cpent[0];
@@ -74,7 +74,7 @@ function print_details($cpent) {
 	}
 
 	/* print bytes sent and received, invert the values if reverse accounting is enabled */
-	$volume = getVolume($cpent[2], $cpent[3]);
+	$volume = getVolume($cpent[2]);
 	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
 	if ($reverse) {
 		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['output_bytes']), format_bytes($volume['input_bytes']));
@@ -233,7 +233,7 @@ if (!empty($cpzone)): ?>
 					<td><?php print_details($cpent); ?></td>
 <?php
 		if ($_REQUEST['showact']):
-			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+			$last_act = captiveportal_get_last_activity($cpent[2]);
 			/* if the user never sent traffic, set last activity time to the login time */
 			$last_act = $last_act ? $last_act : $cpent[0];
 ?>

@@ -630,9 +630,9 @@ function captiveportal_init_rules($reinit = false) {
 	$cprules .= "table {$cpzone}_auth_up create type addr valtype pipe\n";
 	$cprules .= "table {$cpzone}_auth_down create type addr valtype pipe\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from table({$cpzone}_auth_up) to any in");
+	    "pipe tablearg ip from table({$cpzone}_auth_up) to any layer2 in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
-	    "pipe tablearg ip from any to table({$cpzone}_auth_down) out");
+	    "pipe tablearg ip from any to table({$cpzone}_auth_down) layer2 out");
 
 	if (!empty($config['captiveportal'][$cpzone]['listenporthttp'])) {
 		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];
@@ -663,7 +663,6 @@ function captiveportal_init_rules($reinit = false) {
 	    "skipto 65534 all from any to any");
 
 	/* generate passthru mac database */
-	file_put_contents("/tmp/debug_antes", $cprules);
 	$cprules .= captiveportal_passthrumac_configure(true);
 	$cprules .= "\n";
 
@@ -801,7 +800,7 @@ function captiveportal_prune_old() {
 		$uidletimeout = (is_numeric($cpentry[8])) ? $cpentry[8] : $idletimeout;
 		/* if an idle timeout is specified, get last activity timestamp from ipfw */
 		if (!$timedout && $uidletimeout > 0) {
-			$lastact = captiveportal_get_last_activity($cpentry[2], $cpentry[3]);
+			$lastact = captiveportal_get_last_activity($cpentry[2]);
 			/*	If the user has logged on but not sent any traffic they will never be logged out.
 			 *	We "fix" this by setting lastact to the login timestamp.
 			 */
@@ -861,10 +860,8 @@ function captiveportal_prune_old() {
 						false, // Not an interim request
 						$rastop_time); // Stop Time
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
-					/* XXX: Fix
-					$_gb = @pfSense_ipfw_table($cpzoneid, IP_FW_TABLE_XZEROENTRY, {$cpzone}_auth_up, $cpentry[2], $clientsn, $cpentry[3]);
-					$_gb = @pfSense_ipfw_table($cpzoneid, IP_FW_TABLE_XZEROENTRY, {$cpzone}_auth_down, $cpentry[2], $clientsn, $cpentry[3]);
-					*/
+					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_up", "{$cpentry[2]}/{$clientsn}");
+					pfSense_ipfw_table_zerocnt("{$cpzone}_auth_down", "{$cpentry[2]}/{$clientsn}");
 					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
 						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
 						sleep(1);
@@ -1020,7 +1017,11 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 	}
 
 	if (is_ipaddr($dbent[2])) {
-		/* Delete client's ip entry from tables auth_up and auth_down. */
+		/*
+		 * Delete client's ip entry from tables auth_up and auth_down.
+		 *
+		 * It's not necessary to explicit specify mac address here
+		 */
 		$clientsn = (is_ipaddrv6($dbent[2])) ? 128 : 32;
 		pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
 		pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XDEL, "{$dbent[2]}/{$clientsn}");
@@ -1382,19 +1383,21 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given client IP address */
-function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
-	global $cpzoneid;
+function captiveportal_get_last_activity($ip) {
+	global $cpzone;
 
-	/* XXX Fix */
-	return 0;
-	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $table, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
-	if (is_array($ipfwoutput)) {
-		/* Workaround for #46652 */
-		if ($ipfwoutput['packets'] > 0) {
-			return $ipfwoutput['timestamp'];
-		} else {
-			return 0;
+	$tables = array("{$cpzone}_allowed_up", "{$cpzone}_auth_up");
+
+	foreach ($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup($table, $ip);
+		if (is_array($ipfw)) {
+			/* Workaround for #46652 */
+			if ($ipfw['packets'] > 0) {
+				return $ipfw['timestamp'];
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -1871,35 +1874,42 @@ function captiveportal_get_dn_passthru_ruleno($value) {
  *
  */
 
-function getVolume($ip, $mac = NULL) {
-	global $config, $cpzone, $cpzoneid;
+function getVolume($ip) {
+	global $config, $cpzone;
 
-	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct'])
+	    ? true : false;
 	$volume = array();
 	// Initialize vars properly, since we don't want NULL vars
-	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
+	$volume['input_pkts'] = $volume['input_bytes'] = 0;
+	$volume['output_pkts'] = $volume['output_bytes'] = 0;
 
-	/* XXX Fix */
-	return $volume;
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 1, $ip, $mac);
-	if (is_array($ipfw)) {
+	$tables = array("allowed", "auth");
+
+	foreach($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup("{$cpzone}_{$table}_up", $ip);
+		if (!is_array($ipfw)) {
+			continue;
+		}
 		if ($reverse) {
 			$volume['output_pkts'] = $ipfw['packets'];
 			$volume['output_bytes'] = $ipfw['bytes'];
-		}
-		else {
+		} else {
 			$volume['input_pkts'] = $ipfw['packets'];
 			$volume['input_bytes'] = $ipfw['bytes'];
 		}
 	}
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 2, $ip, $mac);
-	if (is_array($ipfw)) {
+	foreach($tables as $table) {
+		$ipfw = pfSense_ipfw_table_lookup("{$cpzone}_{$table}_down",
+		    $ip);
+		if (!is_array($ipfw)) {
+			continue;
+		}
 		if ($reverse) {
 			$volume['input_pkts'] = $ipfw['packets'];
 			$volume['input_bytes'] = $ipfw['bytes'];
-		}
-		else {
+		} else {
 			$volume['output_pkts'] = $ipfw['packets'];
 			$volume['output_bytes'] = $ipfw['bytes'];
 		}
@@ -2283,9 +2293,12 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
-			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$clientip}/{$clientsn}", $bw_up_pipeno);
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$clientip}/{$clientsn}", $bw_down_pipeno);
+			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
+			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+				$rule_entry .= ",{$clientmac}";
+			}
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
 
 			if ($attributes['voucher']) {
 				$attributes['session_timeout'] = $remaining_time;

@@ -4410,7 +4410,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 		if (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) {
 			$id_assoc_statement_prefix .= "\n\tprefix-interface";
-			$id_assoc_statement_prefix .= " {$wanif}";
+			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_prefix_selected_interface']}";
 			$id_assoc_statement_prefix .= " {\n";
 			$id_assoc_statement_prefix .= "\t\tsla-id {$wancfg['adv_dhcp6_prefix_interface_statement_sla_id']};\n";
 			if (($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] >= 0) &&

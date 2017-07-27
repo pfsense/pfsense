@@ -228,6 +228,7 @@ $pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $wancfg['adv_dhcp6_id_a
 
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_id'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_id'];
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_len'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_len'];
+$pconfig['adv_dhcp6_prefix_selected_interface'] = $wancfg['adv_dhcp6_prefix_selected_interface'];
 
 $pconfig['adv_dhcp6_authentication_statement_authname'] = $wancfg['adv_dhcp6_authentication_statement_authname'];
 $pconfig['adv_dhcp6_authentication_statement_protocol'] = $wancfg['adv_dhcp6_authentication_statement_protocol'];
@@ -1093,6 +1094,7 @@ if ($_POST['apply']) {
 
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']);
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_len']);
+		unset($wancfg['adv_dhcp6_prefix_selected_interface']);
 
 		unset($wancfg['adv_dhcp6_authentication_statement_authname']);
 		unset($wancfg['adv_dhcp6_authentication_statement_protocol']);
@@ -1356,7 +1358,9 @@ if ($_POST['apply']) {
 				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len'])) {
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
 				}
-
+				if (!empty($_POST['adv_dhcp6_prefix_selected_interface'])) {
+					$wancfg['adv_dhcp6_prefix_selected_interface'] = $_POST['adv_dhcp6_prefix_selected_interface'];
+				}
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname'])) {
 					$wancfg['adv_dhcp6_authentication_statement_authname'] = $_POST['adv_dhcp6_authentication_statement_authname'];
 				}
@@ -2374,6 +2378,17 @@ $group->add(new Form_Input(
 	'text',
 	$pconfig['adv_dhcp6_prefix_interface_statement_sla_len']
 ))->sethelp('sla-len');
+
+$section->add($group);
+
+$group = new Form_Group('Select prefix interface');
+
+$group->add(new Form_Input(
+	'adv_dhcp6_prefix_selected_interface',
+	null,
+	'text',
+	$pconfig['adv_dhcp6_prefix_selected_interface']
+))->sethelp('Select Prefix Interface');
 
 $section->add($group);
 

@@ -36,6 +36,8 @@ if [ -n "${_interactive}" ]; then
 	if [ -f ~/.profile.local ]; then
 		. ~/.profile.local
 	fi
+	[ "$(id -u)" = "0" -a -f /etc/motd-passwd ] \
+		&& cat /etc/motd-passwd
 	/etc/rc.initial
 	exit
 fi

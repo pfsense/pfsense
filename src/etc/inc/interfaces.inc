@@ -4410,7 +4410,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 		if (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) {
 			$id_assoc_statement_prefix .= "\n\tprefix-interface";
-			$id_assoc_statement_prefix .= " {$wanif}";
+			$id_assoc_statement_prefix .= " {$wancfg['adv_dhcp6_prefix_selected_interface']}";
 			$id_assoc_statement_prefix .= " {\n";
 			$id_assoc_statement_prefix .= "\t\tsla-id {$wancfg['adv_dhcp6_prefix_interface_statement_sla_id']};\n";
 			if (($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] >= 0) &&
@@ -5132,8 +5132,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 							case 'ppp':
 							case 'l2tp':
 							case 'pptp':
-								// Added catch for static v6 but using v4 link. Sets things to use pppoe link
-								if ((isset($cfg['dhcp6usev4iface']) && $realv6iface === false) || isset($cfg['ipv6usev4iface'])) {
+								if (isset($cfg['dhcp6usev4iface']) && $realv6iface === false) {
 									$wanif = $cfg['if'];
 								} else {
 									$parents = get_parent_interface($interface);

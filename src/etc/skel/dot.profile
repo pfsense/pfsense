@@ -30,6 +30,8 @@ else
 fi
 
 if [ -n "${_interactive}" ]; then
+	[ "$(id -u)" = "0" -a -f /etc/motd-passwd ] \
+		&& cat /etc/motd-passwd
 	/etc/rc.initial
 	exit
 fi

@@ -481,7 +481,7 @@ if (are_notices_pending()) {
 					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
 					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
 					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
-					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
+//					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
                     ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {

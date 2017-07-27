@@ -542,8 +542,8 @@ create_virt_images() {
 	if [ -z "${VIRT_SWAP_PART_SIZE_IN_GB}" -o "${VIRT_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
 		# first partition size (freebsd-ufs)
 		local VIRT_FIRST_PART_SIZE_IN_GB=${VIRT_DISK_CAPACITY_IN_GB}
-		# Calculate real first partition size, removing 128 blocks (65536 bytes) beginning/loader
-		local VIRT_FIRST_PART_SIZE=$((${VIRT_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real first partition size, removing 128 blocks (131072 bytes) beginning/loader
+		local VIRT_FIRST_PART_SIZE=$((${VIRT_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Unset swap partition size variable
 		unset VIRT_SWAP_PART_SIZE
 		# Parameter used by mkimg
@@ -553,8 +553,8 @@ create_virt_images() {
 		local VIRT_FIRST_PART_SIZE_IN_GB=$((VIRT_DISK_CAPACITY_IN_GB-VIRT_SWAP_PART_SIZE_IN_GB))
 		# Use first partition size in g
 		local VIRT_FIRST_PART_SIZE="${VIRT_FIRST_PART_SIZE_IN_GB}g"
-		# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
-		local VIRT_SWAP_PART_SIZE=$((${VIRT_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real swap size, removing 128 blocks (131072 bytes) beginning/loader
+		local VIRT_SWAP_PART_SIZE=$((${VIRT_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Parameter used by mkimg
 		local VIRT_SWAP_PART_PARAM="-p freebsd-swap/swap0::${VIRT_SWAP_PART_SIZE}"
 	fi

@@ -35,15 +35,15 @@ $refreshinterval = (24 * 3600);	// 24 hours
 function nosupportdata() {
 	global $supportfile;
 
-	file_put_contents($supportfile, sprintf(gettext("%sSupport information unavailable%s"),
+	file_put_contents($supportfile, sprintf(gettext("%sSupport information could not be retrieved%s"),
 		"{\"summary\":\"<div class=\\\"alert alert-danger\\\">", "</div>\",\"htmltext\":\"\"}"));
 
-	// Make the file a day old so that the widget tries again on the next page load
+	// Make the file {refreshinterval} old so that the widget tries again on the next page load
 	touch($supportfile, (time() - $refreshinterval));
 }
 
 // Poll the Netgate server to obtain the JSON/HTML formatted support information
-// and write it to the file /var/db/support.json
+// and write it to the JSON file
 function updateSupport() {
 	global $g, $supportfile, $idfile, $FQDN;
 
@@ -78,8 +78,8 @@ function updateSupport() {
 	}
 }
 
-// If the widget is called with act=refresh, delete the support.json file and reload hte page, thereby forcing the
-// widget to get a fresh copy of hte support information
+// If the widget is called with act=refresh, delete the JSON file and reload the page, thereby forcing the
+// widget to get a fresh copy of the support information
 if ($_REQUEST['act'] == "refresh") {
     unlink($supportfile);
     header("Location: /");

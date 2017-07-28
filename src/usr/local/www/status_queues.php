@@ -32,7 +32,18 @@ header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
 */
 
-require_once("guiconfig.inc");
+if (isset($_REQUEST['getactivity'])) {
+	require_once('auth_check.inc');
+	require_once('globals.inc');
+	if (file_exists("/cf/conf/use_xmlreader")) {
+		require_once("xmlreader.inc");
+	} else {
+		require_once("xmlparse.inc");
+	}
+	require_once("util.inc");
+} else {
+	require_once("guiconfig.inc");
+}
 class QueueStats {
 	public $queuename;
 	public $queuelength;
@@ -42,11 +53,33 @@ class QueueStats {
 	public $suspends;
 	public $drops;
 }
+if (is_numericint($_REQUEST['refreshrate'])) {
+	$refreshrate = $_REQUEST['refreshrate'];
+} else {
+	$refreshrate = 1000;
+}
+if (isset($_REQUEST['reinitialize'])) {
+	// when switching to a different update frequency the old accumulated average is nolonger valid
+	killbypid("{$g['varrun_path']}/qstats.pid");
+	usleep(50000);
+}
+
 if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_path']}/qstats.pid")) {
 	/* Start in the background so we don't hang up the GUI */
 	mwexec_bg("/usr/local/sbin/qstats -p {$g['varrun_path']}/qstats.pid");
 	/* Give it a moment to start up */
-	sleep(1);
+	usleep(500000);
+	/* Make sure that 'prev_bytes' are known from previous request and read/dump the output */
+	$fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
+	if (!$fd) {
+		$error = gettext("Something wrong happened during communication with stat gathering.");
+	} else {
+		while (!feof($fd)) {
+			fread($fd, 4096);
+		}
+		fclose($fd);
+		usleep($refreshrate * 1000); // make sure the stats retrieved are the proper time appart
+	}
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
@@ -57,19 +90,24 @@ if (!$fd) {
 		$stats .= fread($fd, 4096);
 	}
 	fclose($fd);
-	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
-	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
+	global $listtags;
+	$listtags['queue'] = true;
+	$altqstats = parse_xml_config_raw($stats, array("altqstats"), true);	
 	if ($altqstats == -1) {
 		$error = gettext("No queue statistics could be read.");
 	}
 }
+
 if ($_REQUEST['getactivity']) {
+	$ratemultiplier = 5000 / $refreshrate;
 	$statistics = array();
 	$bigger_stat = 0;
 	$stat_type = $_REQUEST['stats'];
 	/* build the queue stats. */
-	foreach ($altqstats['queue'] as $q) {
-		statsQueues($q);
+	if (is_array($altqstats['queue'])) {
+		foreach ($altqstats['queue'] as $q) {
+			statsQueues($q);
+		}
 	}
 	/* calculate the bigger amount of packets or bandwidth being moved through all queues. */
 	if ($stat_type == "0") {
@@ -94,9 +132,9 @@ if ($_REQUEST['getactivity']) {
 		} else {
 			$packet_s = 0;
 		}
-		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";
-		$finscript .= "$('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
-		$finscript .= "$('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
+		$finscript .= "$('#queue{$q->queuename}width').css('width','" . $packet_s * $ratemultiplier. "%');";
+		$finscript .= "$('#queue{$q->queuename}pps').val('" . number_format($q->pps * $ratemultiplier, 1) . "');";
+		$finscript .= "$('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth * $ratemultiplier) . "');";
 		$finscript .= "$('#queue{$q->queuename}borrows').val('{$q->borrows}');";
 		$finscript .= "$('#queue{$q->queuename}suspends').val('{$q->suspends}');";
 		$finscript .= "$('#queue{$q->queuename}drops').val('{$q->drops}');";
@@ -121,11 +159,21 @@ if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
 //<![CDATA[
+var refreshrate = <?=$refreshrate?>;
+var reinitialize = false;
 events.push(function() {
+	$('#updatespeed').on('change', function() {
+		refreshrate = $("#updatespeed").val();
+		reinitialize = true;
+	});
 
 	function getqueueactivity() {
 		var url = "/status_queues.php";
-		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
+		var pars = "getactivity=yes&stats=" + $("#selStatistic").val() + "&refreshrate=" + refreshrate;
+		if (reinitialize) {
+			pars = pars + "&reinitialize=true";
+			reinitialize = false;
+		}
 		$.ajax(
 			url,
 			{
@@ -136,7 +184,7 @@ events.push(function() {
 	}
 
 	function activitycallback(transport) {
-		setTimeout(getqueueactivity, 5100);
+		setTimeout(getqueueactivity, refreshrate);
 	}
 
 	$(document).ready(function() {
@@ -151,6 +199,20 @@ if ($error):
 	print_info_box($error);
 else: ?>
 	<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Settings"); ?></h2></div>
+		<div class="panel-body table-responsive">
+			<label class="col-sm-2 control-label">
+				<span>Refresh rate</span>
+			</label>
+			<div class="col-sm-10">
+				<select id="updatespeed" class="form-control">
+					<option value="500">0.5 <?=gettext("seconds");?></option>
+					<option value="1000" selected>1 <?=gettext("seconds");?></option>
+					<option value="2000">2 <?=gettext("seconds");?></option>
+					<option value="5000">5 <?=gettext("seconds");?></option>
+				</select>
+			</div>
+		</div>
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Status Queues"); ?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
@@ -182,7 +244,8 @@ else: ?>
 			<br />
 			<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data."), 'info', false);
+	print_info_box(gettext("Queue graphs show bandwidth/pps numbers added to the previous value * 7 devided by 8. "
+			. "As such it takes 18 updates to show 90% accurate numbers."), 'info', false);
 ?>
 			</div>
 		</div>
@@ -212,6 +275,12 @@ function processQueues($altqstats, $level, $parent_name) {
 
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
+	if (!is_array($altqstats)) {
+		print("<tr class={$parent_name}><td>");
+		print("No Queue data available");
+		print("</td></tr>");
+		return;
+	}
 	foreach ($altqstats['queue'] as $q) {
 		$if_name = "";
 		foreach ($if_queue_list as $oif => $real_name) {

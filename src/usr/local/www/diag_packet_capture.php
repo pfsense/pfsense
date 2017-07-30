@@ -315,9 +315,9 @@ $section->addInput(new Form_Checkbox(
 	'Promiscuous',
 	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('%1$sNon-promiscuous mode captures only traffic that is directly relevant to the host (sent by it, sent or broadcast to it, or routed through it). ' .
-	'%2$s%3$sPromiscuous mode%4$s ("sniffing") captures all data seen by the adapter, whether or not related to the host, ' .
-	'but in some cases may have undesirable side effects and not all adapters support this option. Click Info for details %5$s' .
+))->setHelp('%1$sNon-promiscuous mode captures only traffic that is directly relevant to the host (sent by it, sent or broadcast to it, or routed through it) and ' .
+	'does not show packets that are ignored at network adapter level.%2$s%3$sPromiscuous mode%4$s ("sniffing") captures all data seen by the adapter, whether ' .
+	'or not it is valid or related to the host, but in some cases may have undesirable side effects and not all adapters support this option. Click Info for details %5$s' .
 	'Promiscuous mode requires more kernel processing of packets. This puts a slightly higher demand on system resources, especially ' .
 	'on very busy networks or low power processors. The change in packet processing may allow a hostile host to detect that an adapter is in promiscuous mode ' .
 	'or to \'fingerprint\' the kernel (see %6$s). Some network adapters may not support or work well in promiscuous mode (see %7$s).%8$s',

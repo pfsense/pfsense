@@ -74,6 +74,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
 	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
 	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['interfacessort'] = isset($a_user[$id]['interfacessort']);
 	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
 	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
 	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
@@ -114,6 +115,13 @@ if (isset($_POST['save'])) {
 		}
 
 		$pconfig['dashboardcolumns'] = $userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
+
+		if ($_POST['interfacessort']) {
+			$pconfig['interfacessort'] = $userent['interfacessort'] = true;
+		} else {
+			$pconfig['interfacessort'] = false;
+			unset($userent['interfacessort']);
+		}
 
 		if ($_POST['dashboardavailablewidgetspanel']) {
 			$pconfig['dashboardavailablewidgetspanel'] = $userent['dashboardavailablewidgetspanel'] = true;

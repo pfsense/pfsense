@@ -560,6 +560,8 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	interface_bridge_configure_advanced($bridge);
 
+	interface_bridge_configure_ip6linklocal($bridge);
+
 	if ($bridge['bridgeif']) {
 		interfaces_bring_up($bridge['bridgeif']);
 	} else {
@@ -683,6 +685,25 @@ function interface_bridge_configure_advanced($bridge) {
 			$realif = get_real_interface($privateif);
 			mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
 		}
+	}
+}
+
+function interface_bridge_configure_ip6linklocal($bridge) {
+	$bridgeif = $bridge['bridgeif'];
+
+	$members = explode(',', $bridge['members']);
+	if (!count($members)) {
+		return;
+	}
+
+	$auto_linklocal = isset($bridge['ip6linklocal']);
+	$bridgeop = $auto_linklocal ? '' : '-';
+	$memberop = $auto_linklocal ? '-' : '';
+
+	mwexec("/usr/sbin/ndp -i {$bridgeif} -- {$bridgeop}auto_linklocal");
+	foreach ($members as $member) {
+		$realif = get_real_interface($member);
+		mwexec("/usr/sbin/ndp -i {$realif} -- {$memberop}auto_linklocal");
 	}
 }
 

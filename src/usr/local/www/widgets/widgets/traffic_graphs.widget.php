@@ -57,8 +57,12 @@ if ($_POST) {
 		$user_settings["widgets"]["traffic_graphs"]["backgroundupdate"] = $_POST["backgroundupdate"];
 	}
 
-	if (isset($_POST["size"])) {
+	if (isset($_POST["size"]) && ($_POST["size"] == 1 || $_POST["size"] == 8)) {
 		$user_settings["widgets"]["traffic_graphs"]["size"] = $_POST["size"];
+	}
+
+	if (isset($_POST["chartsize"]) && $_POST["chartsize"] >= 0.1 && $_POST["chartsize"] <= 1) {
+		$user_settings["widgets"]["traffic_graphs"]["chartsize"] = $_POST["chartsize"];
 	}
 
 	$validNames = array();
@@ -90,6 +94,12 @@ if (isset($user_settings['widgets']['traffic_graphs']['size'])) {
 	$tg_size = 1;
 }
 
+if (isset($user_settings['widgets']['traffic_graphs']['chartsize'])) {
+	$tg_chartsize = $user_settings['widgets']['traffic_graphs']['chartsize'];
+} else {
+	$tg_chartsize = 1;
+}
+
 if (isset($user_settings['widgets']['traffic_graphs']['invert'])) {
 	$tg_invert = $user_settings['widgets']['traffic_graphs']['invert'];
 } else {
@@ -113,27 +123,51 @@ $tg_displayed_ifs_array = [];
 	<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
 
 	<div id="traffic-chart-error" class="alert alert-danger" style="display: none;"></div>
-<?php
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if (in_array($ifdescr, $skip_tg_items)) {
-			continue;
-		}
 
+<?php
+	$cols = intval(1/$tg_chartsize);
+	$tbl_translate = 100 * (1-$tg_chartsize)* (0.5 * $cols);  
+		// Because translate() is based on the entire width of ($col) columns, of which 50% is added to the left when we zoomed the chart.
+?>
+
+<div style='zoom:<?=$tg_chartsize?> translate(-<?=$tbl_translate?>%,-<?=$tbl_translate?>%); -moz-transform:scale(<?=$tg_chartsize?>) translate(-<?=$tbl_translate?>%,-<?=$tbl_translate?>%);'>
+	<table cellspacing="10px" cellpadding="0px" width='<?=$cols * 100?>%'>
+		<tr>
+
+<?php
+	$count = 0;
+
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+
+		// Do not try to display the traffic graph of a down interface,
+		// even though it is selected for display.
 		$ifinfo = get_interface_info($ifdescr);
 
-		if ($ifinfo['status'] == "down") {
-			// Do not try to display the traffic graph of a down interface,
-			// even though it is selected for display.
-			continue;
+		if (!in_array($ifdescr, $skip_tg_items) && $ifinfo['status'] != "down") {
+			if ($count > 0 && $count % $cols == 0) {
+				echo "\n</tr>\n<tr>\n";
+			}
+			$tg_displayed = true;
+			$tg_displayed_ifs_array[] = $ifdescr;
+			echo "<td width='" . (100/$cols) . "%'>";
+			echo 	"<div id='traffic-chart-{$ifdescr}' class='d3-chart traffic-widget-chart'>\n" .
+				"<svg></svg>\n" . 
+				"</div>\n";
+			echo "</td>";
+			$count++;
 		}
-
-		$tg_displayed = true;
-		$tg_displayed_ifs_array[] = $ifdescr;
-		echo '<div id="traffic-chart-' . $ifdescr . '" class="d3-chart traffic-widget-chart">';
-		echo '	<svg></svg>';
-		echo '</div>';
 	}
+while ($count++ % $cols != 0) {
+	echo "<td>&nbsp;</td>\n";
+}
+?>
 
+	</tr>
+</table>
+
+</div>
+
+<?php
 	if (!$tg_displayed) {
 		echo '<div id="traffic-chartnone" class="d3-chart traffic-widget-chart">';
 		echo gettext('All traffic graphs are hidden.');
@@ -172,7 +206,7 @@ $tg_displayed_ifs_array = [];
 		</div>
 
 		<div class="form-group">
-			<label for="size" class="col-sm-3 control-label"><?=gettext('Unit Size')?></label>
+			<label for="size" class="col-sm-3 control-label"><?=gettext('Data size')?></label>
 			<div class="col-sm-9">
 				<select class="form-control" id="size" name="size">
 				<?php
@@ -187,6 +221,21 @@ $tg_displayed_ifs_array = [];
 				</select>
 			</div>
 		</div>
+
+
+		<div class="form-group">
+			<label for="chartsize" class="col-sm-3 control-label"><?=gettext('Chart size')?></label>
+			<div class="col-sm-9">
+				<select class="form-control" id="chartsize" name="chartsize">
+				<?php
+					foreach ([100,85,75,65,50,40,35,33,25] as $s) {
+						echo '<option value="' . ($s/100) . ($s/100 == $tg_chartsize ? '" selected':'"') . '>' . ($s == 100 ? gettext('Normal size') : sprintf(gettext('%s%% size'), $s)) . "</option>\n";
+					}
+				?>
+				</select>
+			</div>
+		</div>
+
 
 		<div class="form-group">
 			<label for="backgroundupdate" class="col-sm-3 control-label"><?=gettext('Background updates')?></label>
@@ -261,6 +310,7 @@ events.push(function() {
 	localStorage.setItem('interval', <?=$tg_refreshinterval?>);
 	localStorage.setItem('invert', <?=$tg_invert?>);
 	localStorage.setItem('size', <?=$tg_size?>);
+	localStorage.setItem('chartsize', <?=$tg_chartsize?>);
 	localStorage.setItem('backgroundupdate', <?=$tg_backgroundupdate?>);
 
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });

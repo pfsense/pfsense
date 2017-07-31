@@ -315,6 +315,7 @@ switch ($wancfg['ipaddrv6']) {
 	default:
 		if (is_ipaddrv6($wancfg['ipaddrv6'])) {
 			$pconfig['type6'] = "staticv6";
+			$pconfig['ipv6usev4iface'] = isset($wancfg['ipv6usev4iface']);
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
@@ -1049,6 +1050,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['ipv6usev4iface']);
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
@@ -1278,6 +1280,9 @@ if ($_POST['apply']) {
 			case "staticv6":
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
+				if ($_POST['ipv6usev4iface'] == "yes") {
+					$wancfg['ipv6usev4iface'] = true;
+				}
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -1899,6 +1904,13 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ipaddrv6'],
 	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
+
+$section->addInput(new Form_Checkbox(
+	'ipv6usev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	$pconfig['ipv6usev4iface']
+));
 
 $group = new Form_Group('IPv6 Upstream gateway');
 

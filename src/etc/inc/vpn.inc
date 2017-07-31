@@ -489,12 +489,19 @@ EOD;
 		}
 	}
 
+	/* Activate RADIUS accounting if it was selected on the auth server view */
+	$radius_accounting = "";
+	if($auth_server && isset($auth_server['radius_acct_port'])){
+		$radius_accounting = 'accounting = yes';
+	}
+
 	/* write an eap-radius config section if appropriate */
 	if (strlen($radius_server_txt) && ($mobile_ipsec_auth === "eap-radius")) {
 		$strongswan .= <<<EOD
 		eap-radius {
 			class_group = yes
 			eap_start = no
+			{$radius_accounting}
 			servers {
 {$radius_server_txt}
 			}
@@ -1101,10 +1108,14 @@ EOD;
 			} else {
 				$reauth = "reauth = yes";
 			}
+
 			if (isset($ph1ent['rekey_enable'])) {
-				$rekey = "rekey = no";
+				$rekeyline = "rekey = no";
 			} else {
-				$rekey = "rekey = yes";
+				$rekeyline = "rekey = yes";
+				if(!empty($ph1ent['margintime'])){
+					$rekeyline .= "\n\tmargintime = {$ph1ent['margintime']}s";
+				}
 			}
 
 			if ($ph1ent['nat_traversal'] == 'off') {
@@ -1303,7 +1314,7 @@ EOD;
 	{$forceencaps}
 	{$mobike}
 	{$tfc}
-	{$rekey}
+	{$rekeyline}
 	installpolicy = yes
 	{$tunneltype}
 	{$dpdline}

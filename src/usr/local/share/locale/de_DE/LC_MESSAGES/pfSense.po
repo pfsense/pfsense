@@ -36,12 +36,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 08:04-0300\n"
+"POT-Creation-Date: 2017-07-31 08:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-16 04:31-0400\n"
-"Last-Translator: Thomas Miller <bluehite@gmail.com>\n"
+"PO-Revision-Date: 2017-07-31 08:05-0400\n"
+"Last-Translator: Renato Botelho <garga@FreeBSD.org>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -53,6 +53,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Zugriff verweigert<br/><br/>Zugriffsversuch von einer temporär gesperrten "
+"Clientadresse.<br /><br />Versuchen Sie nach Ablauf der Sperre erneut auf "
+"die Firewall zuzugreifen."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -352,13 +355,13 @@ msgstr "Abmelden"
 msgid "Click the button below to disconnect"
 msgstr "Unten klicken, um die Verbindung zu trennen"
 
-#: src/etc/inc/captiveportal.inc:1749
+#: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr ""
 "Fehler: kann '%1$s' in captiveportal_write_elements()%2$s nicht öffnen."
 
-#: src/etc/inc/captiveportal.inc:2331
+#: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
 msgstr "Captive Portal erlaubt das Ändern der Benutzer-Konfiguration"
 
@@ -375,7 +378,7 @@ msgstr "FQDN oder Hostname"
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
 #: src/usr/local/www/vpn_l2tp_users.php:95
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
 msgstr "IP-Adresse"
 
@@ -8319,7 +8322,7 @@ msgstr "Lade, bitte warten..."
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:81
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
@@ -16860,7 +16863,7 @@ msgstr "Auswählen, um Provider-Daten einzugeben"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_openvpn_client.php:590
 #: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "Username"
 msgstr "Benutzername"
 
@@ -24116,6 +24119,8 @@ msgid ""
 "Enter any additional options to add to the dnsmasq configuration here, "
 "separated by a space or newline."
 msgstr ""
+"Hier können Sie zusätzliche Optionen, getrennt durch ein Leerzeichen oder "
+"eine Option je Zeile, für dnsmasq eingeben."
 
 #: src/usr/local/www/services_dnsmasq.php:365
 #: src/usr/local/www/services_unbound.php:442
@@ -26819,12 +26824,12 @@ msgid "Users Logged In (%d)"
 msgstr "Eingeloggte Benutzer (%d)"
 
 #: src/usr/local/www/status_captiveportal.php:198
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:87
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "Session start"
 msgstr "Sitzungsbeginn"
 
 #: src/usr/local/www/status_captiveportal.php:202
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:88
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Last activity"
 msgstr "Letzte Aktivität"
 
@@ -29040,43 +29045,43 @@ msgstr "webKonfigurator"
 
 #: src/usr/local/www/system.php:610
 msgid "Blue"
-msgstr ""
+msgstr "Blau"
 
 #: src/usr/local/www/system.php:610
 msgid "Green"
-msgstr ""
+msgstr "Grün"
 
 #: src/usr/local/www/system.php:610
 msgid "Red"
-msgstr ""
+msgstr "Rot"
 
 #: src/usr/local/www/system.php:611
 msgid "Purple"
-msgstr ""
+msgstr "Lila"
 
 #: src/usr/local/www/system.php:611
 msgid "Gray"
-msgstr ""
+msgstr "Grau"
 
 #: src/usr/local/www/system.php:611
 msgid "Dark gray"
-msgstr ""
+msgstr "Dunkelgrau"
 
 #: src/usr/local/www/system.php:612
 msgid "Brown"
-msgstr ""
+msgstr "Braun"
 
 #: src/usr/local/www/system.php:612
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #: src/usr/local/www/system.php:608
 msgid "Login page color"
-msgstr ""
+msgstr "Farbe der Loginseite"
 
 #: src/usr/local/www/system.php:613
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "Wähle eine Farbe für die Loginseite"
 
 #: src/usr/local/www/system.php:617
 msgid "Login hostname"
@@ -30307,7 +30312,7 @@ msgstr "Installationsfeedback"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Netgate Device ID"
-msgstr ""
+msgstr "Netgate Geräte ID"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
@@ -30349,19 +30354,11 @@ msgstr ""
 "HINWEIS: Diese Option deaktiviert keine IPv6 Funktionen der Firewall, es "
 "wird lediglich IPv6 Traffic blockiert."
 
-#: src/usr/local/www/system_advanced_network.php:182
-msgid "IPv6 over IPv4"
-msgstr "IPv6 über IPv4"
-
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:183
 msgid "IPv6 over IPv4 Tunneling"
 msgstr "IPv6 over IPv4 Tunnelung"
 
-#: src/usr/local/www/system_advanced_network.php:193
-msgid "IPv4 address of Tunnel Peer"
-msgstr "IPv4 Adresse der Tunnelgegenstelle"
-
-#: src/usr/local/www/system_advanced_network.php:198
+#: src/usr/local/www/system_advanced_network.php:186
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -30370,11 +30367,15 @@ msgid ""
 "to control and pass encapsulated traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:192
+msgid "IPv4 address of Tunnel Peer"
+msgstr "IPv4 Adresse der Tunnelgegenstelle"
+
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "Prefer IPv4 over IPv6"
 msgstr "IPv4 IPv6 vorziehen"
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:202
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
@@ -30384,11 +30385,11 @@ msgstr ""
 "über IPv4 auflösbar ist, wird IPv6 benutzt. Mit Auswahl dieser Option wird "
 "IPv4 IPv6 bevorzugt."
 
-#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "IPv6 DNS entry"
 msgstr "IPv6 DNS-Eintrag"
 
-#: src/usr/local/www/system_advanced_network.php:218
+#: src/usr/local/www/system_advanced_network.php:210
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -30398,16 +30399,16 @@ msgid ""
 "IPv6 records from being created."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:223
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:219
 msgid "DHCP6 DUID"
 msgstr "DHCP6 DUID"
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:227
 msgid "Copy DUID"
 msgstr "DUID kopieren."
 
-#: src/usr/local/www/system_advanced_network.php:243
+#: src/usr/local/www/system_advanced_network.php:235
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -30421,15 +30422,15 @@ msgid ""
 "Copy DUID button to copy the system detected DUID shown in the placeholder. "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:253
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Network Interfaces"
 msgstr "Netzwerkschnittstellen"
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:249
 msgid "Hardware Checksum Offloading"
 msgstr "Hardware Checksum Offloading"
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:252
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -30439,11 +30440,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:268
+#: src/usr/local/www/system_advanced_network.php:260
 msgid "Hardware TCP Segmentation Offloading"
 msgstr "Hardware TCP Segmentation Offloading"
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:263
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -30456,11 +30457,11 @@ msgstr ""
 "Netzwerkkarten führen. Diese Option wirkt erst nach einem Neustart des "
 "Systems oder der Neukonfiguration jeder Netzwerkkarte."
 
-#: src/usr/local/www/system_advanced_network.php:278
+#: src/usr/local/www/system_advanced_network.php:270
 msgid "Hardware Large Receive Offloading"
 msgstr "Hardware Large Receive Offloading"
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:273
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -30473,11 +30474,11 @@ msgstr ""
 "wirkt erst nach einem Neustart des Systems oder der Neukonfiguration jeder "
 "Netzwerkkarte."
 
-#: src/usr/local/www/system_advanced_network.php:288
+#: src/usr/local/www/system_advanced_network.php:280
 msgid "ARP Handling"
 msgstr "ARP Behandlung"
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:283
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
@@ -30485,11 +30486,11 @@ msgstr ""
 "Diese Option verhindert das Erstellen von ARP Systemprotokolleinträgen, "
 "falls sich mehrere Schnittstellen in der gleichen Broadcast Domain befinden."
 
-#: src/usr/local/www/system_advanced_network.php:297
+#: src/usr/local/www/system_advanced_network.php:289
 msgid "Enable flowtable support"
 msgstr "Aktiviere Flowtable Support"
 
-#: src/usr/local/www/system_advanced_network.php:299
+#: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -31628,7 +31629,7 @@ msgstr "*bestehendes Zertifikat"
 
 #: src/usr/local/www/system_certmanager.php:958
 msgid "Certificate Attributes"
-msgstr ""
+msgstr "Zertifikats-Attribute"
 
 #: src/usr/local/www/system_certmanager.php:962
 msgid "Attribute Notes"
@@ -31720,15 +31721,15 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1177
 msgid "SAN: "
-msgstr ""
+msgstr "SAN:"
 
 #: src/usr/local/www/system_certmanager.php:1182
 msgid "KU: "
-msgstr ""
+msgstr "KU:"
 
 #: src/usr/local/www/system_certmanager.php:1187
 msgid "EKU: "
-msgstr ""
+msgstr "EKU:"
 
 #: src/usr/local/www/system_certmanager.php:1212
 msgid "User Cert"
@@ -32484,7 +32485,7 @@ msgstr "ausgewählte Rechte"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:150
 msgid "Group Privileges"
-msgstr ""
+msgstr "Gruppenberechtigungen"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:158
 #: src/usr/local/www/vpn_ipsec_mobile.php:663
@@ -32500,7 +32501,7 @@ msgstr "*Zugewiesene Rechte"
 #: src/usr/local/www/system_groupmanager_addprivs.php:173
 #: src/usr/local/www/system_usermanager_addprivs.php:157
 msgid "Shadow"
-msgstr ""
+msgstr "Schatten"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:185
 #: src/usr/local/www/system_usermanager_addprivs.php:169
@@ -32549,7 +32550,7 @@ msgstr "Kennwort und Kennwort-Bestätigung müssen übereinstimmen."
 
 #: src/usr/local/www/system_hasync.php:78
 msgid "pfsync Synchronize Peer IP must be an IPv4 IP."
-msgstr ""
+msgstr "pfsync Synchronisierte Peer IP muss eine IPv4 IP sein."
 
 #: src/usr/local/www/system_hasync.php:102
 msgid "High Availability Sync"
@@ -32784,16 +32785,18 @@ msgid "Destination network"
 msgstr "Zielnetzwerk"
 
 #: src/usr/local/www/system_routes_edit.php:76
+#, fuzzy
 msgid "Destination network bit count"
-msgstr ""
+msgstr "Zielnetz Bitanzahl"
 
 #: src/usr/local/www/system_routes_edit.php:82
 msgid "A valid IPv4 or IPv6 destination network must be specified."
 msgstr "Ein gültiges IPv4- oder IPv6-Zielnetzwerk muss angegeben sein."
 
 #: src/usr/local/www/system_routes_edit.php:85
+#, fuzzy
 msgid "A valid destination network bit count must be specified."
-msgstr ""
+msgstr "Es muss eine gültige Zielnetzwerkbitanzahl angegeben werden."
 
 #: src/usr/local/www/system_routes_edit.php:89
 msgid "A valid gateway must be specified."
@@ -34840,7 +34843,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:364
 #: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
-msgstr ""
+msgstr "Die bereitgestellte Sende- / Empfangs-Puffergröße ist ungültig."
 
 #: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
@@ -35313,7 +35316,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:894
 #: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
-msgstr ""
+msgstr "Sende- / Empfangs-Puffer"
 
 #: src/usr/local/www/vpn_openvpn_client.php:897
 #: src/usr/local/www/vpn_openvpn_server.php:1294
@@ -35453,7 +35456,7 @@ msgstr "Eine Beschreibung für administrative Zwecke (wird nicht ausgewertet)."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Connection blocking"
-msgstr ""
+msgstr "Verbindung geblockt"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:358
 msgid ""
@@ -35541,7 +35544,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:423
 #: src/usr/local/www/vpn_openvpn_server.php:1029
 msgid "Redirect Gateway"
-msgstr ""
+msgstr "Gateway weiterleiten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:430
 #: src/usr/local/www/vpn_openvpn_server.php:1117
@@ -36132,11 +36135,11 @@ msgstr "NTP Status"
 
 #: src/usr/local/www/widgets/include/picture.inc:22
 msgid "Picture"
-msgstr ""
+msgstr "Bild"
 
 #: src/usr/local/www/widgets/include/rss.inc:22
 msgid "RSS"
-msgstr ""
+msgstr "RSS"
 
 #: src/usr/local/www/widgets/include/services_status.inc:24
 msgid "Services Status"
@@ -36144,7 +36147,7 @@ msgstr "Dienste-Status"
 
 #: src/usr/local/www/widgets/include/system_information.inc:22
 msgid "System Information"
-msgstr ""
+msgstr "System Information"
 
 #: src/usr/local/www/widgets/include/traffic_graph.inc:22
 msgid "Traffic Graphs"
@@ -36154,7 +36157,7 @@ msgstr "Traffic Graphen"
 msgid "Wake-on-Lan"
 msgstr "Wake-on-Lan"
 
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:101
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
 msgstr "löschen"
 
@@ -36289,12 +36292,12 @@ msgstr "Alle Interfaces sind verborgen"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:105
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:154
 msgid "All selected interfaces are down."
-msgstr ""
+msgstr "Alle ausgewählten Schnittstellen sind außer Betrieb."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
 msgid "All statistics are hidden."
-msgstr ""
+msgstr "Alle Statistiken sind ausgeblendet."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -36306,19 +36309,19 @@ msgstr "Rufe Netzwerkstatistik ab"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
 msgid "Orientation"
-msgstr ""
+msgstr "Orientierung"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
 msgid "Each interface in a column"
-msgstr ""
+msgstr "Jede Schnittstelle in einer Spalte"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
 msgid "Each interface in a row"
-msgstr ""
+msgstr "Jede Schnittstelle in einer Zeile"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
 msgid "Stats Item"
-msgstr ""
+msgstr "Artikel-Statistiken"
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."
@@ -36371,7 +36374,7 @@ msgstr "Filter für Log-Einträge über das Dashboard gespeichert"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:112
 msgid "Act"
-msgstr ""
+msgstr "Handlung"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:114
 msgid "IF"
@@ -36401,6 +36404,11 @@ msgstr "Filter Interface"
 msgid "Update interval"
 msgstr "Aktualisierungsintervall"
 
+#: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
+#, php-format
+msgid "%sSupport information could not be retrieved%s"
+msgstr ""
+
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr "stratum"
@@ -36423,7 +36431,7 @@ msgstr "Uhrenstandort"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:183
 msgid "in view"
-msgstr ""
+msgstr "im Hinblick auf"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
 msgid "in use"
@@ -36516,11 +36524,6 @@ msgstr "ID"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
 msgstr "Alle SMART Laufwerke sind verborgen"
-
-#: src/usr/local/www/widgets/widgets/support.widget.php:37
-#, php-format
-msgid "%sSupport information unavailable%s"
-msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:183
@@ -36622,7 +36625,7 @@ msgstr "Seriennummer: "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:164
 msgid "Netgate Device ID:"
-msgstr ""
+msgstr "Netgate Geräte ID:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:186
 msgid "Vendor: "
@@ -36735,19 +36738,19 @@ msgstr "(1 bis 100):"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:178
 msgid "Zone Warning"
-msgstr ""
+msgstr "Zonenwarnung"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:185
 msgid "Zone Critical"
-msgstr ""
+msgstr "Zone kritisch"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:192
 msgid "Core Warning"
-msgstr ""
+msgstr "Kernwarnung"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:199
 msgid "Core Critical"
-msgstr ""
+msgstr "Kern kritisch"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Display settings:"
@@ -36755,15 +36758,15 @@ msgstr "Anzeigeeinstellungen:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Show raw output"
-msgstr ""
+msgstr "Rohausgabe anzeigen"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:214
 msgid "(no graph)"
-msgstr ""
+msgstr "(kein Diagramm)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:220
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Den vollständigen Namen des Sensors anzeigen"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:235
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -36852,7 +36855,7 @@ msgstr "Assistent"
 #: src/usr/local/www/wizard.php:418
 #, php-format
 msgid "Step %s of %s"
-msgstr ""
+msgstr "Schritt %s von %s"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:637
 #: src/usr/local/www/wizards/openvpn_wizard.inc:654
@@ -37023,7 +37026,7 @@ msgstr "Authentifizierung fehlgeschlagen: Nicht genügend Rechte"
 #: src/usr/local/www/xmlrpc.php:445
 #, php-format
 msgid "Merged in config (%s sections) from XMLRPC client."
-msgstr ""
+msgstr "Vom XMLRPC-Client in Konfiguration (%s Abschnitte) zusammengeführt."
 
 #: src/etc/inc/pfsense-utils.inc:305
 msgid "Sort Alphabetically"
@@ -37411,7 +37414,7 @@ msgstr "Aktiviere das persistente Protokollieren der Verbindungslaufzeit."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:733
 msgid "Configure NULL service name"
-msgstr ""
+msgstr "Konfiguiere NULL Service Name"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:789
 msgid "Monthly (0 0 1 * *)"
@@ -37493,7 +37496,7 @@ msgstr "Captive Portal aktivieren"
 
 #: src/usr/local/www/services_captiveportal.php:592
 msgid "Enable waiting period reset on attempted access"
-msgstr ""
+msgstr "Wartezeit-Reset bei versuchtem Zugriff aktivieren"
 
 #: src/usr/local/www/services_captiveportal.php:599
 msgid "Enable logout popup window"
@@ -37570,7 +37573,7 @@ msgstr "Stop/Start (FreeRADIUS)"
 
 #: src/usr/local/www/services_captiveportal.php:915
 msgid "Interim"
-msgstr ""
+msgstr "Vorläufig"
 
 #: src/usr/local/www/services_captiveportal.php:930
 msgid "Reauthenticate connected users every minute"
@@ -37697,7 +37700,7 @@ msgstr "Ersetze UTC durch Lokalzeit in der DHCPv6 Lease Urzeit"
 
 #: src/usr/local/www/services_dhcpv6.php:835
 msgid "Add reverse dynamic DNS entries."
-msgstr ""
+msgstr "Hinzufügen von umgekehrten dynamischen DNS-Einträgen."
 
 #: src/usr/local/www/services_dhcpv6.php:913
 msgid "Enable Network Booting"
@@ -37733,7 +37736,7 @@ msgstr "Domain benötigt"
 
 #: src/usr/local/www/services_dnsmasq.php:316
 msgid "Do not forward private reverse lookups"
-msgstr ""
+msgstr "Keine privaten Reverse-Lookups weiterleiten"
 
 #: src/usr/local/www/services_dyndns_edit.php:255
 #: src/usr/local/www/vpn_openvpn_client.php:511
@@ -37754,11 +37757,11 @@ msgstr "Ausführliches Logging aktivieren"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
 msgid "Force IPv4 DNS Resolution"
-msgstr ""
+msgstr "Erzwinge IPv4 DNS-Auflösung"
 
 #: src/usr/local/www/services_dyndns_edit.php:347
 msgid "Verify SSL Certificate Trust"
-msgstr ""
+msgstr "Verifiziere Vertrauenswürdigkeit des SSL Zertifikats"
 
 #: src/usr/local/www/services_ntpd.php:303
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
@@ -37774,7 +37777,7 @@ msgstr "Logge Systemnachrichten (standardmäßig deaktiviert)."
 
 #: src/usr/local/www/services_ntpd.php:340
 msgid "Log reference clock statistics (default: disabled)."
-msgstr ""
+msgstr "Protokolltaktstatistiken protokollieren (Standard: deaktiviert)."
 
 #: src/usr/local/www/services_ntpd.php:347
 msgid "Log clock discipline statistics (default: disabled)."
@@ -37790,11 +37793,11 @@ msgstr "Aktiviere KOD Pakete."
 
 #: src/usr/local/www/services_ntpd_acls.php:209
 msgid "Deny run-time Configuration (nomodify) by ntpq and ntpdc."
-msgstr ""
+msgstr "Verweigern der Laufzeitkonfiguration (nomodify) von ntpq und ntpdc."
 
 #: src/usr/local/www/services_ntpd_acls.php:216
 msgid "Disable ntpq and ntpdc queries (noquery)."
-msgstr ""
+msgstr "Deaktivieren Sie ntpq- und ntpdc-Abfragen (noquery)."
 
 #: src/usr/local/www/services_ntpd_acls.php:223
 msgid "Disable all except ntpq and ntpdc queries (noserve)."
@@ -37909,6 +37912,7 @@ msgstr "Verwende Backup RADIUS Authentifizierungsserver"
 #: src/usr/local/www/services_pppoe_edit.php:399
 msgid "Assign IP Addresses to users via RADIUS server reply attributes"
 msgstr ""
+"Zuweisen von IP-Adressen zu Benutzern durch RADIUS-Server-Antwortattribute"
 
 #: src/usr/local/www/services_pppoe_edit.php:539
 msgid "&nbsp;"
@@ -38012,7 +38016,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:255
 msgid "DNSSEC data is required for trust-anchored zones."
-msgstr ""
+msgstr "DNSSEC-Daten sind für vertrauensverankerte Zonen erforderlich."
 
 #: src/usr/local/www/services_unbound_advanced.php:357
 msgid "Disable the automatically-added access control entries"
@@ -38317,7 +38321,7 @@ msgstr "Benutze Arbeitsspeicher Filesysteme für /tmp und /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
 msgid "Do NOT send Netgate Device ID with user agent"
-msgstr ""
+msgstr "Sende die Netgate Device ID NICHT mit dem User Agent"
 
 #: src/usr/local/www/system_advanced_network.php:176
 msgid ""
@@ -38326,31 +38330,31 @@ msgstr ""
 "Ist diese Option nicht aktiv, wird sämtlicher IPv6 Traffic wird von der "
 "Firewall blockiert"
 
-#: src/usr/local/www/system_advanced_network.php:187
+#: src/usr/local/www/system_advanced_network.php:184
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr "IPv6 über IPv4 Tunneling aktivieren"
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:200
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr "IPv4 bevorzugen, obwohl IPv6 vorhanden ist"
 
-#: src/usr/local/www/system_advanced_network.php:216
+#: src/usr/local/www/system_advanced_network.php:208
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr "Generiere keine lokalen IPv6 DNS-Einträge für LAN-Interfaces"
 
-#: src/usr/local/www/system_advanced_network.php:258
+#: src/usr/local/www/system_advanced_network.php:250
 msgid "Disable hardware checksum offload"
 msgstr "Hardware Checksum Offload deaktivieren"
 
-#: src/usr/local/www/system_advanced_network.php:269
+#: src/usr/local/www/system_advanced_network.php:261
 msgid "Disable hardware TCP segmentation offload"
 msgstr "Hardware TCP Segmentation Offload  deaktivieren"
 
-#: src/usr/local/www/system_advanced_network.php:279
+#: src/usr/local/www/system_advanced_network.php:271
 msgid "Disable hardware large receive offload"
 msgstr "Hardware Large Receive Offload  deaktivieren"
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:281
 msgid "Suppress ARP messages"
 msgstr "ARP Nachrichten unterdrücken"
 
@@ -38388,7 +38392,7 @@ msgstr "Erweiterte Suche aktivieren"
 
 #: src/usr/local/www/system_authservers.php:636
 msgid "Use anonymous binds to resolve distinguished names"
-msgstr ""
+msgstr "Verwenden Sie anonyme Bindungen, um distinguierte Namen zu lösen"
 
 #: src/usr/local/www/system_authservers.php:697
 msgid "LDAP Server uses RFC 2307 style group membership"
@@ -38661,6 +38665,9 @@ msgid ""
 " Required for remote endpoints that support only a single traffic selector "
 "per child SA."
 msgstr ""
+"Aktivieren Sie dies, um Verbindungseinträge mit mehreren Phase-2-"
+"Konfigurationen aufzuteilen. Erforderlich für Remote-Endpunkte, die nur "
+"einen einzelnen Traffic-Selektor pro Kind SA unterstützen."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:891
 msgid "Enable DPD"

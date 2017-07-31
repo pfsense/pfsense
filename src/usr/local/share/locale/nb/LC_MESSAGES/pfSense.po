@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 08:04-0300\n"
+"POT-Creation-Date: 2017-07-31 08:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-17 03:59-0400\n"
+"PO-Revision-Date: 2017-07-24 07:54-0400\n"
 "Last-Translator: Knut Edvard Klock <knut@netgate.com>\n"
 "Language-Team: Norwegian Bokmål\n"
 "Language: nb\n"
@@ -21,6 +21,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Ingen tilgang<br/><br/>Tilgang forsøk fra en midlertidig utestengt klient "
+"adresse.<br /><br />Prøv å få tilgang til brannmuren igjen etter at "
+"utelukkelsen er utløpt."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -308,12 +311,12 @@ msgstr "Logg ut"
 msgid "Click the button below to disconnect"
 msgstr "Klikk på knappen under for å koble fra"
 
-#: src/etc/inc/captiveportal.inc:1749
+#: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr "Feil: Kan ikke åpne '%1$s' i captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2331
+#: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
 msgstr "Captive Portal tillate brukere Konfigurasjonen er endret"
 
@@ -330,7 +333,7 @@ msgstr "FQDN eller Vertsnavn"
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
 #: src/usr/local/www/vpn_l2tp_users.php:95
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
 msgstr "IPadresse"
 
@@ -8053,7 +8056,7 @@ msgstr "Laster Vennligst vent..."
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:81
 msgid "MAC address"
 msgstr "MAC addresse"
 
@@ -16427,7 +16430,7 @@ msgstr "Velg å fylle tjenesteleverandøren data."
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_openvpn_client.php:590
 #: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "Username"
 msgstr "Brukernavn"
 
@@ -25309,6 +25312,8 @@ msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
 msgstr ""
+"En systemdomenet Lokal sone Type \"omdirigering\" er ikke kompatibel med "
+"dynamisk DHCP-registrering."
 
 #: src/usr/local/www/services_unbound.php:175
 msgid ""
@@ -26351,12 +26356,12 @@ msgid "Users Logged In (%d)"
 msgstr "Brukere logget inn (%d)"
 
 #: src/usr/local/www/status_captiveportal.php:198
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:87
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "Session start"
 msgstr "sesjons start"
 
 #: src/usr/local/www/status_captiveportal.php:202
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:88
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Last activity"
 msgstr "Siste aktivitet"
 
@@ -29955,19 +29960,11 @@ msgstr ""
 "MERK: Dette gjelder ikke deaktivere IPv6-funksjoner på brannmuren , den "
 "blokkerer bare trafikk."
 
-#: src/usr/local/www/system_advanced_network.php:182
-msgid "IPv6 over IPv4"
-msgstr "IPv6 over IPv4"
-
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:183
 msgid "IPv6 over IPv4 Tunneling"
 msgstr "IPv6 over IPv4 Tunneling"
 
-#: src/usr/local/www/system_advanced_network.php:193
-msgid "IPv4 address of Tunnel Peer"
-msgstr "IPv4-adressen Tunnel Peer"
-
-#: src/usr/local/www/system_advanced_network.php:198
+#: src/usr/local/www/system_advanced_network.php:186
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -29980,11 +29977,15 @@ msgstr ""
 "ruting infrastrukturer. IPv6-brannmurregler er %1$sogså nødvendig%2$s, å "
 "styre og passere innkapslet trafikk."
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:192
+msgid "IPv4 address of Tunnel Peer"
+msgstr "IPv4-adressen Tunnel Peer"
+
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "Prefer IPv4 over IPv6"
 msgstr "Foretrekker IPv4 over IPv6"
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:202
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
@@ -29994,11 +29995,11 @@ msgstr ""
 "adresser, IPv6 vil bli brukt. Hvis dette alternativet er valgt, vil IPv4 "
 "foretrekkes fremfor IPv6."
 
-#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "IPv6 DNS entry"
 msgstr "IPv6 DNS-oppføring"
 
-#: src/usr/local/www/system_advanced_network.php:218
+#: src/usr/local/www/system_advanced_network.php:210
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -30014,16 +30015,16 @@ msgstr ""
 "oppføringer legges til systemets DNS. Aktivering av dette alternativet "
 "forhindrer disse IPv6-postene blir opprettet."
 
-#: src/usr/local/www/system_advanced_network.php:223
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:219
 msgid "DHCP6 DUID"
 msgstr "DHCP6 DUID"
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:227
 msgid "Copy DUID"
 msgstr "Kopier DUID"
 
-#: src/usr/local/www/system_advanced_network.php:243
+#: src/usr/local/www/system_advanced_network.php:235
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -30046,15 +30047,15 @@ msgstr ""
 "hver omstart.%1$s%1$sDu kan bruke Kopier DUID knappen for å kopiere Systemet "
 "oppdaget DUID vist i plassholderen ."
 
-#: src/usr/local/www/system_advanced_network.php:253
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Network Interfaces"
 msgstr "Nettverksport"
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:249
 msgid "Hardware Checksum Offloading"
 msgstr "maskinvare sjekksum avlastning"
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:252
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -30069,11 +30070,11 @@ msgstr ""
 "avlastning og noen spesifikke nettverkskort. Dette vil tre i kraft etter en "
 "maskin omstart eller re-konfigurere for hver Port."
 
-#: src/usr/local/www/system_advanced_network.php:268
+#: src/usr/local/www/system_advanced_network.php:260
 msgid "Hardware TCP Segmentation Offloading"
 msgstr "Maskinvare TCP Segmentering avlastning"
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:263
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -30085,11 +30086,11 @@ msgstr ""
 "kan påvirke ytelsen med noen spesifikke nettverkskort. Dette vil tre i kraft "
 "etter en maskin omstart eller re-konfigurere for hver Port"
 
-#: src/usr/local/www/system_advanced_network.php:278
+#: src/usr/local/www/system_advanced_network.php:270
 msgid "Hardware Large Receive Offloading"
 msgstr "Maskinvare Store Motta avlastning"
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:273
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -30101,11 +30102,11 @@ msgstr ""
 "med noen spesifikke nettverkskort. Dette vil tre i kraft etter en maskin "
 "omstart eller re-konfigurere for hver Port"
 
-#: src/usr/local/www/system_advanced_network.php:288
+#: src/usr/local/www/system_advanced_network.php:280
 msgid "ARP Handling"
 msgstr "ARP Håndtering"
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:283
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
@@ -30113,11 +30114,11 @@ msgstr ""
 "Dette alternativet vil undertrykke ARP loggmeldinger når flere portrt ligger "
 "på samme broadcast domene"
 
-#: src/usr/local/www/system_advanced_network.php:297
+#: src/usr/local/www/system_advanced_network.php:289
 msgid "Enable flowtable support"
 msgstr "Aktiver flyt tabell støtte"
 
-#: src/usr/local/www/system_advanced_network.php:299
+#: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -31218,7 +31219,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:719
 msgid "*Certificate Lifetime (days)"
-msgstr ""
+msgstr "*Sertifikatets levetid (dager)"
 
 #: src/usr/local/www/system_certmanager.php:726
 msgid "Import Certificate"
@@ -31280,11 +31281,11 @@ msgstr "*Eksisterende sertifikater"
 
 #: src/usr/local/www/system_certmanager.php:958
 msgid "Certificate Attributes"
-msgstr ""
+msgstr "Sertifikatattributter"
 
 #: src/usr/local/www/system_certmanager.php:962
 msgid "Attribute Notes"
-msgstr ""
+msgstr "Attributtnotater"
 
 #: src/usr/local/www/system_certmanager.php:964
 msgid ""
@@ -31292,24 +31293,35 @@ msgid ""
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr ""
+"Følgende attributter legges til sertifikater og forespørsler når de blir "
+"opprettet eller signert. Disse egenskapene oppfører seg annerledes avhengig "
+"av den valgte modusen."
 
 #: src/usr/local/www/system_certmanager.php:968
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr ""
+"For interne sertifikater legges disse attributter direkte til sertifikatet "
+"som vist."
 
 #: src/usr/local/www/system_certmanager.php:970
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr ""
+"For sertifikatsigneringsforespørsler blir disse attributene lagt til i "
+"forespørselen, men de kan bli ignorert eller endret av CA som signerer "
+"forespørselen."
 
 #: src/usr/local/www/system_certmanager.php:972
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr ""
+"Hvis denne CSR-en vil bli signert ved hjelp av sertifikatbehandling på denne "
+"brannmuren, må du angi attributter når du logger i stedet som de ikke kan "
+"overføres."
 
 #: src/usr/local/www/system_certmanager.php:973
 msgid ""
@@ -31317,6 +31329,9 @@ msgid ""
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr ""
+"Når du signerer en sertifikatforespørsel, kan eksisterende attributter i "
+"forespørselen ikke kopieres. Attributtene nedenfor blir brukt på det "
+"resulterende sertifikatet."
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "*Certificate Type"
@@ -31328,6 +31343,9 @@ msgid ""
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr ""
+"Legg til typespesifikke bruksattributter til det signerte sertifikatet. "
+"Brukes til å plassere bruksbegrensninger på eller gi evner til det signerte "
+"sertifikatet."
 
 #: src/usr/local/www/system_certmanager.php:997
 msgid "Alternative Names"
@@ -31339,6 +31357,9 @@ msgid ""
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr ""
+"Skriv inn flere identifikatorer for sertifikatet i denne listen. Feltet "
+"Common Name blir automatisk lagt til sertifikatet som et alternativt navn. "
+"Signatur-CA kan ignorere eller endre disse verdiene."
 
 #: src/usr/local/www/system_certmanager.php:1048
 msgid "Complete Signing Request for "
@@ -35979,7 +36000,7 @@ msgstr "Trafikk Grafer"
 msgid "Wake-on-Lan"
 msgstr "Wake-on-Lan"
 
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:101
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
 msgstr "slette"
 
@@ -36226,6 +36247,11 @@ msgstr "filter-porter"
 msgid "Update interval"
 msgstr "oppdateringsintervallet"
 
+#: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
+#, php-format
+msgid "%sSupport information could not be retrieved%s"
+msgstr ""
+
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr "stratum"
@@ -36341,11 +36367,6 @@ msgstr "Ident"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
 msgstr "Alle SMART disker er skjult."
-
-#: src/usr/local/www/widgets/widgets/support.widget.php:37
-#, php-format
-msgid "%sSupport information unavailable%s"
-msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:183
@@ -38158,31 +38179,31 @@ msgstr ""
 "All IPv6-trafikk vil bli blokkert av brannmuren med mindre dette er krysset "
 "av"
 
-#: src/usr/local/www/system_advanced_network.php:187
+#: src/usr/local/www/system_advanced_network.php:184
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr "Aktiver IPv6 over IPv4 tunneling"
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:200
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr "Foretrekker å bruke IPv4 selv om IPv6 er tilgjengelig"
 
-#: src/usr/local/www/system_advanced_network.php:216
+#: src/usr/local/www/system_advanced_network.php:208
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr "Ikke generere lokale IPv6 DNS-oppføringer for LAN-grensesnitt"
 
-#: src/usr/local/www/system_advanced_network.php:258
+#: src/usr/local/www/system_advanced_network.php:250
 msgid "Disable hardware checksum offload"
 msgstr "Deaktivere maskinvare kontrollsum offload"
 
-#: src/usr/local/www/system_advanced_network.php:269
+#: src/usr/local/www/system_advanced_network.php:261
 msgid "Disable hardware TCP segmentation offload"
 msgstr "Deaktivere maskinvare TCP segmentering avlasting"
 
-#: src/usr/local/www/system_advanced_network.php:279
+#: src/usr/local/www/system_advanced_network.php:271
 msgid "Disable hardware large receive offload"
 msgstr "Deaktivere maskinvare store motta avlasting"
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:281
 msgid "Suppress ARP messages"
 msgstr "Undertrykke ARP meldinger"
 

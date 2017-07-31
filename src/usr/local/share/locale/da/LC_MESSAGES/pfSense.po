@@ -1,6 +1,7 @@
 # Bjarke Madsen <bjarke@klex.dk>, 2017. #zanata
 # Bjarne Damgaard Pedersen <bjarne.pedersen@gmail.com>, 2017. #zanata
 # Erik Pedersen <erikp@runevej.dk>, 2017. #zanata
+# Henrik Simonsen <cybermaze@gmail.com>, 2017. #zanata
 # Kenneth Holmqvist <kholmqvist88@gmail.com>, 2017. #zanata
 # Mads Clausen <masbakke65@gmail.com>, 2017. #zanata
 # Michael Sass <michael@fam-sass.dk>, 2017. #zanata
@@ -9,12 +10,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 08:04-0300\n"
+"POT-Creation-Date: 2017-07-31 08:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-12 05:45-0400\n"
-"Last-Translator: Kenneth Holmqvist <kholmqvist88@gmail.com>\n"
+"PO-Revision-Date: 2017-07-26 08:21-0400\n"
+"Last-Translator: Henrik Simonsen <cybermaze@gmail.com>\n"
 "Language-Team: Danish\n"
 "Language: da\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -26,6 +27,8 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Adgang nægtet<br/><br/>Adgang forsøgt fra en midlertidigt blokeret klient "
+"adresse.<br /><br />Prøv at forbinde igen efter at blokeringen udløber."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -33,17 +36,17 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Potentielt DNS Rebind angreb opdaget, se  http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br />Prøv at logge på routeren med IP adresse i stedet for "
-"hostnavn."
+"Potentielt DNS Rebind angreb opdaget, se http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br />Prøv at logge på routeren via IP adresse i stedet for "
+"host navn."
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Omdirigerer.."
+msgstr "Omdirigerer..."
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
-msgstr "Omdirigerer til dashboard.."
+msgstr "Omdirigerer til dashboard..."
 
 #: src/etc/inc/auth.inc:446 src/etc/inc/auth.inc:470 src/etc/inc/auth.inc:547
 #: src/etc/inc/auth.inc:588 src/etc/inc/auth.inc:657 src/etc/inc/auth.inc:815
@@ -56,25 +59,25 @@ msgstr "Kører: %s"
 #: src/etc/inc/auth.inc:1350
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FEJL! Kunne ikke få forbindelse til serveren %s."
+msgstr "FEJL! Kunne ikke oprette forbindelse til serveren %s."
 
 #: src/etc/inc/auth.inc:887
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: Kunne ikke slå CA op som henviser til host %s"
+msgstr "LDAP: Kunne ikke slå CA op som henviser til host %s."
 
 #: src/etc/inc/auth.inc:962
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr "FEJL! ldap_test_bind() kunne ikke forbinde med STTLS til server %s."
+msgstr "FEJL! ldap_test_bind() kunne ikke STARTTLS til server %s."
 
 #: src/etc/inc/auth.inc:1024
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FEJL! ldap_get_user_ous() backend valgt uden en LDAP autentificeringsserver "
-"defineret."
+"FEJL! ldap_get_user_ous() valgt uden en LDAP autentificeringserver defineret."
+""
 
 #: src/etc/inc/auth.inc:1052
 #, php-format
@@ -116,73 +119,73 @@ msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"FEJL! ldap_backed() kaldt uden en LDAP autentificeringsserver defineret. "
-"Skifter til lokal database. Besøg System -> Brugeradministration."
+"FEJL! ldap_backed() kaldt uden en LDAP autentificeringserver defineret. "
+"Skifter til lokal bruger database. Besøg System -> Brugeradministration."
 
 #: src/etc/inc/auth.inc:1320
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
-"FEJL! ldap_backed() kaldt uden en LDAP autentificeringsserver defineret."
+"FEJL! ldap_backed() kaldt uden en LDAP autentificeringserver defineret."
 
 #: src/etc/inc/auth.inc:1343
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
-msgstr "FEJL! ldap_backed() kunne ikke forbinde med STARTTLS til server %s."
+msgstr "FEJL! ldap_backed() kunne ikke STARTTLS til server %s."
 
 #: src/etc/inc/auth.inc:1368
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr "FEJL! Kunne ikke forbinde til serveren %s."
+msgstr "FEJL! Kunne ikke binde til serveren %s."
 
 #: src/etc/inc/auth.inc:1386
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Søger efter %s i mappen. "
+msgstr "Søger nu efter %s i mappen."
 
 #: src/etc/inc/auth.inc:1395
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Søger på server %1$s, container %2$s med filter %3$s."
+msgstr "Søger nu på server %1$s, container %2$s med filter %3$s."
 
 #: src/etc/inc/auth.inc:1409
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr "Fejl i søgningen: %s"
+msgstr "Søgningen gav fejlen: %s"
 
 #: src/etc/inc/auth.inc:1425
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr "FEJL! LDAP søgning fejlede, eller flere brugere blev fundet."
+msgstr "FEJL! Enten fejlede LDAP søgningen, eller flere brugere blev fundet."
 
 #: src/etc/inc/auth.inc:1432
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr "FEJL! Kunne ikke logge ind på serveren %1$s med bruger %2$s: %3$s"
+msgstr "FEJL! Kunne ikke logge ind på serveren %1$s som bruger %2$s: %3$s"
 
 #: src/etc/inc/auth.inc:1439
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr "Login udført som %1$s via LDAP server %2$s med DN=%3$s"
+msgstr "Loggede på som %1$s via LDAP server %2$s med DN=%3$s"
 
 #: src/etc/inc/auth.inc:1514
 #, php-format
 msgid "RADIUS start: %s"
-msgstr "RADIUS starter: %s8"
+msgstr "RADIUS starter: %s"
 
 #: src/etc/inc/auth.inc:1526
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr "RADIUS sende mislykkedes: %s"
+msgstr "RADIUS send fejlede: %s"
 
 #: src/etc/inc/auth.inc:1534
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Login lykkedes"
+msgstr "RADIUS autentifikation lykkedes"
 
 #: src/etc/inc/auth.inc:1540
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Login mislykkedes"
+msgstr "RADIUS autentifikation mislykkedes"
 
 #: src/etc/inc/auth.inc:1662
 msgid "Widget configuration has been changed."
@@ -210,7 +213,7 @@ msgstr "Sessionen er udløbet for bruger '%1$s' fra: %2$s"
 #: src/etc/inc/auth.inc:1866
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr "Bruger loggede ud for bruger '%1$s' fra: %2$s"
+msgstr "Brugeren loggede ud for bruger '%1$s' fra: %2$s"
 
 #: src/etc/inc/authgui.inc:74
 msgid "No page assigned to this user! Click here to logout."
@@ -232,7 +235,7 @@ msgstr "ukendt årsag"
 #: src/etc/inc/authgui.inc:151
 #, php-format
 msgid "Invalid login (%s)."
-msgstr "Forkert log ind (%s)."
+msgstr "Ugyldigt login (%s)."
 
 #: src/etc/inc/authgui.inc:156
 #, php-format
@@ -242,7 +245,7 @@ msgstr "Denne enhed bliver på nuværende tidspunkt vedligeholdt af: %s."
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -261,6 +264,10 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"IP adressen brugt til at tilgå denne router er ikke konfigureret lokalt, den "
+"er muligvis videresendt via NAT eller andre metoder.\n"
+"\t\t\t\t\t\t\t\tHvis denne videresending er uventet, så undersøg at der ikke "
+"er et man-in-the-middle angreb igang."
 
 #: src/etc/inc/authgui.inc:340
 msgid "The browser must support cookies to login."
@@ -282,7 +289,7 @@ msgstr "Brugernavn:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr "Kode:"
+msgstr "Adgangskode:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
@@ -305,18 +312,18 @@ msgstr "Log ud"
 msgid "Click the button below to disconnect"
 msgstr "Klik på knappen nedenunder for at afbryde forbindelsen"
 
-#: src/etc/inc/captiveportal.inc:1749
+#: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr "Fejl: kan ikke åbne '%1$s' i captiveportal_write_elements()%2$s"
+msgstr "Fejl: Kan ikke åbne '%1$s' i captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2331
+#: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
-msgstr "Captive Portal tilladte brugere konfiguration ændret"
+msgstr "Captive Portal tillod at bruger konfigurationen blev ændret"
 
 #: src/etc/inc/certs.inc:44
 msgid "FQDN or Hostname"
-msgstr ""
+msgstr "FQDN eller Host navn"
 
 #: src/etc/inc/certs.inc:45 src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
@@ -327,17 +334,17 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
 #: src/usr/local/www/vpn_l2tp_users.php:95
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
 msgstr "IP adresse"
 
 #: src/etc/inc/certs.inc:46
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr ""
+msgstr "email adresse"
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -372,8 +379,9 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Hvis VLANs eller valgfri interfaces ikke skal opsættes, skal der svares nej "
-"her. Begge kan konfigureres senere i webKonfiguratoren"
+"Hvis VLANs ikke anvendes, eller kun til valgfrie interfaces, skal der typisk "
+"svares 'nej' her, og så anvende webConfigurator til at opsætte VLANs senere, "
+"hvis nødvendigt."
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
@@ -385,7 +393,7 @@ msgstr "VLAN interfaces:"
 
 #: src/etc/inc/config.console.inc:121
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr "Indsæt WAN interface navnet eller tryk 'a' for auto-opdagelse"
+msgstr "Indtast WAN navnet eller tryk 'a' for auto-opdagelse"
 
 #: src/etc/inc/config.console.inc:122
 #, php-format
@@ -404,9 +412,9 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sIndsæt LAN interface navn eller tryk 'a' for auto-opdagelse %2$sNOTE: "
-"dette slår Firewall/NAT til.%3$s(%4$s a eller ingenting hvis du er færdig):"
-"%5$s"
+"%1$sIndtast LAN navn eller tryk 'a' for auto-opdagelse %2$sBEMÆRK: Dette "
+"aktiverer fuld Firewall/NAT tilstand.%3$s(%4$s a eller ingenting hvis du er "
+"færdig):%5$s"
 
 #: src/etc/inc/config.console.inc:175
 #, php-format
@@ -7895,7 +7903,7 @@ msgstr "Loader, vent venligst.."
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:81
 msgid "MAC address"
 msgstr ""
 
@@ -15725,7 +15733,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_openvpn_client.php:590
 #: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "Username"
 msgstr "Brugernavn"
 
@@ -24555,12 +24563,12 @@ msgid "Users Logged In (%d)"
 msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:198
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:87
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "Session start"
 msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:202
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:88
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Last activity"
 msgstr ""
 
@@ -27831,19 +27839,11 @@ msgid ""
 "blocks traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:182
-msgid "IPv6 over IPv4"
-msgstr ""
-
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:183
 msgid "IPv6 over IPv4 Tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:193
-msgid "IPv4 address of Tunnel Peer"
-msgstr ""
-
-#: src/usr/local/www/system_advanced_network.php:198
+#: src/usr/local/www/system_advanced_network.php:186
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -27852,22 +27852,26 @@ msgid ""
 "to control and pass encapsulated traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:192
+msgid "IPv4 address of Tunnel Peer"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "Prefer IPv4 over IPv6"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:202
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "IPv6 DNS entry"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:218
+#: src/usr/local/www/system_advanced_network.php:210
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -27877,16 +27881,16 @@ msgid ""
 "IPv6 records from being created."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:223
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:219
 msgid "DHCP6 DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:227
 msgid "Copy DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:243
+#: src/usr/local/www/system_advanced_network.php:235
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -27900,15 +27904,15 @@ msgid ""
 "Copy DUID button to copy the system detected DUID shown in the placeholder. "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:253
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:249
 msgid "Hardware Checksum Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:252
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -27918,11 +27922,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:268
+#: src/usr/local/www/system_advanced_network.php:260
 msgid "Hardware TCP Segmentation Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:263
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -27930,11 +27934,11 @@ msgid ""
 "machine reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:278
+#: src/usr/local/www/system_advanced_network.php:270
 msgid "Hardware Large Receive Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:273
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -27942,21 +27946,21 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:288
+#: src/usr/local/www/system_advanced_network.php:280
 msgid "ARP Handling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:283
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:297
+#: src/usr/local/www/system_advanced_network.php:289
 msgid "Enable flowtable support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:299
+#: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -33277,7 +33281,7 @@ msgstr ""
 msgid "Wake-on-Lan"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:101
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
 msgstr ""
 
@@ -33522,6 +33526,11 @@ msgstr ""
 msgid "Update interval"
 msgstr ""
 
+#: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
+#, php-format
+msgid "%sSupport information could not be retrieved%s"
+msgstr ""
+
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr ""
@@ -33636,11 +33645,6 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/support.widget.php:37
-#, php-format
-msgid "%sSupport information unavailable%s"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
@@ -35345,31 +35349,31 @@ msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:187
+#: src/usr/local/www/system_advanced_network.php:184
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:200
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:216
+#: src/usr/local/www/system_advanced_network.php:208
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:258
+#: src/usr/local/www/system_advanced_network.php:250
 msgid "Disable hardware checksum offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:269
+#: src/usr/local/www/system_advanced_network.php:261
 msgid "Disable hardware TCP segmentation offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:279
+#: src/usr/local/www/system_advanced_network.php:271
 msgid "Disable hardware large receive offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:281
 msgid "Suppress ARP messages"
 msgstr ""
 

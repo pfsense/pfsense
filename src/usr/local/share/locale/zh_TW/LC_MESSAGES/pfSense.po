@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 08:04-0300\n"
+"POT-Creation-Date: 2017-07-31 08:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-13 08:44-0400\n"
+"PO-Revision-Date: 2017-07-24 11:20-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -21,7 +21,7 @@ msgid ""
 "Access Denied<br/><br/>Access attempt from a temporarily locked out client "
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
-msgstr ""
+msgstr "訪問被拒絕<br/><br/>從臨時鎖定的客戶端地址嘗試訪問。<br /><br />在鎖定到期之後再嘗試訪問防火牆。"
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -297,12 +297,12 @@ msgstr "註銷"
 msgid "Click the button below to disconnect"
 msgstr "點擊下麵的按鈕斷開連接"
 
-#: src/etc/inc/captiveportal.inc:1749
+#: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr "錯誤：不能打開 '%1$s' 在 captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2331
+#: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
 msgstr "入網門戶已允許用戶配置已更改"
 
@@ -319,7 +319,7 @@ msgstr "FQDN或主機名"
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
 #: src/usr/local/www/vpn_l2tp_users.php:95
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
 msgstr "IP地址"
 
@@ -7778,7 +7778,7 @@ msgstr "載入中，請稍候... "
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:81
 msgid "MAC address"
 msgstr "MAC地址"
 
@@ -15656,7 +15656,7 @@ msgstr "選擇填寫您的服務提供商的數據"
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_openvpn_client.php:590
 #: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "Username"
 msgstr "用戶名"
 
@@ -23734,7 +23734,7 @@ msgstr "必須啟用DHCP伺服器才能在DNS解析器中使用DHCP註冊。"
 msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
-msgstr ""
+msgstr "系統域本地區域“重定向”類型與動態DHCP註冊不相容。"
 
 #: src/usr/local/www/services_unbound.php:175
 msgid ""
@@ -24661,12 +24661,12 @@ msgid "Users Logged In (%d)"
 msgstr "用戶 (%d)已登錄"
 
 #: src/usr/local/www/status_captiveportal.php:198
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:87
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "Session start"
 msgstr "會話開始"
 
 #: src/usr/local/www/status_captiveportal.php:202
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:88
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Last activity"
 msgstr "最近的活動"
 
@@ -28001,19 +28001,11 @@ msgid ""
 "blocks traffic."
 msgstr "注意：這不會禁用防火牆上的任何IPv6功能，它只阻止流量。"
 
-#: src/usr/local/www/system_advanced_network.php:182
-msgid "IPv6 over IPv4"
-msgstr "IPv6 over IPv4"
-
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:183
 msgid "IPv6 over IPv4 Tunneling"
 msgstr "IPv6 over IPv4隧道"
 
-#: src/usr/local/www/system_advanced_network.php:193
-msgid "IPv4 address of Tunnel Peer"
-msgstr "隧道同行的IPv4地址"
-
-#: src/usr/local/www/system_advanced_network.php:198
+#: src/usr/local/www/system_advanced_network.php:186
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -28024,22 +28016,26 @@ msgstr ""
 "這些選項為IPv6數據包的IPv4 NAT封裝創建了一個RFC 2893相容機制，可用於通過IPv4路由基礎設施對IPv6數據包進行隧道傳輸。 "
 "IPv6防火牆%1$s規則 %2$s也需要，以控制和傳遞封裝的流量。"
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:192
+msgid "IPv4 address of Tunnel Peer"
+msgstr "隧道同行的IPv4地址"
+
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "Prefer IPv4 over IPv6"
 msgstr "首選IPv4 over IPv6"
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:202
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr "默認情況下，如果配置了IPv6並且主機名解析IPv6和IPv4地址，將使用IPv6。 如果選擇此選項，IPv4將優先於IPv6。"
 
-#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "IPv6 DNS entry"
 msgstr "IPv6 DNS 條目"
 
-#: src/usr/local/www/system_advanced_network.php:218
+#: src/usr/local/www/system_advanced_network.php:210
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -28051,16 +28047,16 @@ msgstr ""
 "如果LAN介面的IPv6配置設置為“跟蹤”，並且跟蹤的介面失去連接，則可能導致通過主機名建立的防火牆的連接失敗。 "
 "當主機名訪問防火牆時，這可能會無意中發生，因為默認情況下，IPv4和IPv6條目都將添加到系統的DNS。 啟用此選項可防止創建這些IPv6記錄。"
 
-#: src/usr/local/www/system_advanced_network.php:223
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:219
 msgid "DHCP6 DUID"
 msgstr "DHCP6 DUID"
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:227
 msgid "Copy DUID"
 msgstr "複製 DUID"
 
-#: src/usr/local/www/system_advanced_network.php:243
+#: src/usr/local/www/system_advanced_network.php:235
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -28078,15 +28074,15 @@ msgstr ""
 "新的DUID將在重新啟動或WAN介面被防火牆重新配置後生效。%1$s如果防火牆配置為使用RAM磁片/ "
 "var，最佳做法是在這裏存儲一個DUID，否則DUID將在每次重新啟動時更改。%1$s%1$s您可以使用“複製DUID按鈕”複製占位符中顯示的系統檢測到的DUID。"
 
-#: src/usr/local/www/system_advanced_network.php:253
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Network Interfaces"
 msgstr "網路介面 "
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:249
 msgid "Hardware Checksum Offloading"
 msgstr "禁用硬體校驗和卸載"
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:252
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -28098,11 +28094,11 @@ msgstr ""
 "選擇此選項將禁用硬體校驗和卸載。%1$s校驗和卸載在一些硬體中斷，特別是一些Realtek卡很少。 驅動程式可能有校驗和卸載和一些特定的NIC的問題。 "
 "這將在機器重新啟動或重新配置每個介面後生效。"
 
-#: src/usr/local/www/system_advanced_network.php:268
+#: src/usr/local/www/system_advanced_network.php:260
 msgid "Hardware TCP Segmentation Offloading"
 msgstr "硬體TCP分段卸載"
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:263
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -28111,11 +28107,11 @@ msgid ""
 msgstr ""
 "選中此選項將禁用硬體TCP分段卸載（TSO，TSO4，TSO6）。 此卸載在某些硬體驅動程式中損壞，並可能會影響某些特定NIC的性能。重啟後生效。"
 
-#: src/usr/local/www/system_advanced_network.php:278
+#: src/usr/local/www/system_advanced_network.php:270
 msgid "Hardware Large Receive Offloading"
 msgstr "硬體大量接收卸載"
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:273
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -28123,21 +28119,21 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr "選中此選項將禁用硬體大量接收卸載（LRO）。 LRO在某些硬體驅動程式中損壞，並可能會影響某些特定NIC的性能。 重啟後生效。"
 
-#: src/usr/local/www/system_advanced_network.php:288
+#: src/usr/local/www/system_advanced_network.php:280
 msgid "ARP Handling"
 msgstr "ARP處理 "
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:283
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr "當多個介面駐留在同一廣播域上時，此選項將抑制ARP日誌消息。"
 
-#: src/usr/local/www/system_advanced_network.php:297
+#: src/usr/local/www/system_advanced_network.php:289
 msgid "Enable flowtable support"
 msgstr "啟用流量表支持"
 
-#: src/usr/local/www/system_advanced_network.php:299
+#: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -29191,7 +29187,7 @@ msgstr "可選擇在此處粘貼私鑰。 密鑰將與pfSense中新簽署的證�
 
 #: src/usr/local/www/system_certmanager.php:719
 msgid "*Certificate Lifetime (days)"
-msgstr ""
+msgstr "*證書有效期(天)"
 
 #: src/usr/local/www/system_certmanager.php:726
 msgid "Import Certificate"
@@ -29252,43 +29248,43 @@ msgstr "*現有證書 "
 
 #: src/usr/local/www/system_certmanager.php:958
 msgid "Certificate Attributes"
-msgstr ""
+msgstr "證書屬性"
 
 #: src/usr/local/www/system_certmanager.php:962
 msgid "Attribute Notes"
-msgstr ""
+msgstr "屬性注釋"
 
 #: src/usr/local/www/system_certmanager.php:964
 msgid ""
 "The following attributes are added to certificates and requests when they "
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
-msgstr ""
+msgstr "以下屬性在創建或簽名時添加到證書和請求中。 這些屬性根據所選模式的不同而有所不同。"
 
 #: src/usr/local/www/system_certmanager.php:968
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
-msgstr ""
+msgstr "對於內部證書，這些屬性將直接添加到證書中，如圖所示。"
 
 #: src/usr/local/www/system_certmanager.php:970
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
-msgstr ""
+msgstr "對於證書簽名請求，這些屬性被添加到請求中，但是它們可能被簽署請求的CA忽略或更改。"
 
 #: src/usr/local/www/system_certmanager.php:972
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
-msgstr ""
+msgstr "如果此CSR將使用此防火牆上的證書管理器進行簽名，請在簽署時設置屬性，因為它們無法繼承。"
 
 #: src/usr/local/www/system_certmanager.php:973
 msgid ""
 "When Signing a Certificate Request, existing attributes in the request "
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
-msgstr ""
+msgstr "簽名證書請求時，請求中的現有屬性無法複製。 以下屬性將應用於生成的證書。"
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "*Certificate Type"
@@ -29299,7 +29295,7 @@ msgid ""
 "Add type-specific usage attributes to the signed certificate. Used for "
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
-msgstr ""
+msgstr "將特定類型的使用屬性添加到簽名證書。 用於對簽署的證書設置使用限制或授予其他功能。"
 
 #: src/usr/local/www/system_certmanager.php:997
 msgid "Alternative Names"
@@ -29310,7 +29306,7 @@ msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
-msgstr ""
+msgstr "在此列表中輸入證書的其他識別字。 公用名稱字段將作為備用名稱自動添加到證書中。 簽名CA可以忽略或更改這些值。"
 
 #: src/usr/local/www/system_certmanager.php:1048
 msgid "Complete Signing Request for "
@@ -33551,7 +33547,7 @@ msgstr "流量圖表"
 msgid "Wake-on-Lan"
 msgstr "網路喚醒"
 
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:101
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
 msgstr "刪除"
 
@@ -33796,6 +33792,11 @@ msgstr "篩檢程式介面"
 msgid "Update interval"
 msgstr "更新間隔"
 
+#: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
+#, php-format
+msgid "%sSupport information could not be retrieved%s"
+msgstr ""
+
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr "層"
@@ -33911,11 +33912,6 @@ msgstr "標識"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
 msgstr "所有SMART驅動器都被隱藏。"
-
-#: src/usr/local/www/widgets/widgets/support.widget.php:37
-#, php-format
-msgid "%sSupport information unavailable%s"
-msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:183
@@ -35627,31 +35623,31 @@ msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr "除非選中此框，否則防火牆將阻止所有IPv6流量"
 
-#: src/usr/local/www/system_advanced_network.php:187
+#: src/usr/local/www/system_advanced_network.php:184
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr "啟用IPv6 over IPv4隧道"
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:200
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr "即使IPv6可用，也希望使用IPv4"
 
-#: src/usr/local/www/system_advanced_network.php:216
+#: src/usr/local/www/system_advanced_network.php:208
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr "不要為LAN介面生成本地IPv6 DNS條目"
 
-#: src/usr/local/www/system_advanced_network.php:258
+#: src/usr/local/www/system_advanced_network.php:250
 msgid "Disable hardware checksum offload"
 msgstr "禁用硬體校驗和卸載 "
 
-#: src/usr/local/www/system_advanced_network.php:269
+#: src/usr/local/www/system_advanced_network.php:261
 msgid "Disable hardware TCP segmentation offload"
 msgstr "禁用硬體TCP分段卸載 "
 
-#: src/usr/local/www/system_advanced_network.php:279
+#: src/usr/local/www/system_advanced_network.php:271
 msgid "Disable hardware large receive offload"
 msgstr "禁用硬體大量接收卸載"
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:281
 msgid "Suppress ARP messages"
 msgstr "抑制ARP消息"
 

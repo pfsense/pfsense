@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 08:04-0300\n"
+"POT-Creation-Date: 2017-07-31 08:49-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-23 06:12-0400\n"
+"PO-Revision-Date: 2017-07-25 03:27-0400\n"
 "Last-Translator: MM <meri_yms@yahoo.com>\n"
 "Language-Team: Romanian\n"
 "Language: ro\n"
@@ -314,12 +314,12 @@ msgstr "Logout"
 msgid "Click the button below to disconnect"
 msgstr "Apăsați butonul de mai jos pentru deconectare"
 
-#: src/etc/inc/captiveportal.inc:1749
+#: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
 msgstr "Eroare: nu pot deschide '%1$s' în captiveportal_write_elements()%2$s"
 
-#: src/etc/inc/captiveportal.inc:2331
+#: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
 msgstr "Captive Portal a permis schimbarea configuratiei userilor"
 
@@ -336,7 +336,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal.php:189
 #: src/usr/local/www/status_dhcp_leases.php:352
 #: src/usr/local/www/vpn_l2tp_users.php:95
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
 msgstr "Adresa IP"
 
@@ -8205,7 +8205,7 @@ msgstr "Se încarcă, vă rugăm așteptați..."
 #: src/usr/local/www/status_captiveportal.php:193
 #: src/usr/local/www/status_dhcp_leases.php:353
 #: src/usr/local/www/status_dhcpv6_leases.php:440
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:81
 msgid "MAC address"
 msgstr "Adresă MAC"
 
@@ -10621,13 +10621,13 @@ msgstr ""
 #: src/usr/local/www/diag_sockets.php:118
 #, php-format
 msgid "%1$sFD%2$s\t%3$sThe file descriptor number of the socket.%4$s"
-msgstr ""
+msgstr "%1$sFD%2$s %3$sNumărul handle-ului asociat socket-ului.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:119
 #, php-format
 msgid ""
 "%1$sPROTO%2$s\t%3$sThe transport protocol associated with the socket.%4$s"
-msgstr ""
+msgstr "%1$sPROTO%2$s %3$sProtocolul de transport asociat socket-ului.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:120
 #, php-format
@@ -10635,6 +10635,8 @@ msgid ""
 "%1$sLOCAL ADDRESS%2$s\t%3$sThe address the local end of the socket is bound "
 "to.%4$s"
 msgstr ""
+"%1$sLOCAL ADDRESS%2$s %3$sAdresa la care este conectat capătul local al "
+"socket-ului.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:121
 #, php-format
@@ -10642,10 +10644,13 @@ msgid ""
 "%1$sFOREIGN ADDRESS%2$s\t%3$sThe address the foreign end of the socket is "
 "bound to.%4$s"
 msgstr ""
+"%1$sFOREIGN ADDRESS%2$s %3$sAdresa la care este conectat capătul distant al "
+"socket-ului.%4$s"
 
 #: src/usr/local/www/diag_states_summary.php:147
+#, fuzzy
 msgid "Protocol counts"
-msgstr ""
+msgstr "Numărătoare de protocol"
 
 #: src/usr/local/www/diag_states_summary.php:151
 #: src/usr/local/www/firewall_aliases.php:149
@@ -10653,76 +10658,77 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:446
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:225
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/firewall_nat.php:227
 #: src/usr/local/www/status_logs_filter_summary.php:88
 msgid "Source Ports"
-msgstr ""
+msgstr "Porturi sursă"
 
 #: src/usr/local/www/diag_states_summary.php:156
 #: src/usr/local/www/firewall_nat.php:229
 msgid "Dest. Ports"
-msgstr ""
+msgstr "Porturi dest."
 
 #: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:400
 msgid "States Summary"
-msgstr ""
+msgstr "Sumar stări"
 
 #: src/usr/local/www/diag_states_summary.php:196
 msgid "By Source IP"
-msgstr ""
+msgstr "După IP-ul sursă"
 
 #: src/usr/local/www/diag_states_summary.php:197
 msgid "By Destination IP"
-msgstr ""
+msgstr "După IP-ul destinație"
 
 #: src/usr/local/www/diag_states_summary.php:198
 msgid "Total per IP"
-msgstr ""
+msgstr "Total per IP"
 
 #: src/usr/local/www/diag_states_summary.php:199
 msgid "By IP Pair"
-msgstr ""
+msgstr "După perechi de IP-uri"
 
 #: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:401
 msgid "System Activity"
-msgstr ""
+msgstr "Activitate sistem"
 
 #: src/usr/local/www/diag_system_activity.php:86
 msgid "CPU Activity"
-msgstr ""
+msgstr "Activitate CPU"
 
 #: src/usr/local/www/diag_system_activity.php:88
 msgid "Gathering CPU activity, please wait..."
-msgstr ""
+msgstr "Se colectează detalii despre activitatea CPU, vă rugăm așteptați..."
 
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:390
 msgid "Tables"
-msgstr ""
+msgstr "Tabele"
 
 #: src/usr/local/www/diag_tables.php:116
 #, php-format
 msgid "The %s file contents have been updated."
-msgstr ""
+msgstr "Conținutul fișierului %s a fost actualizat."
 
 #: src/usr/local/www/diag_tables.php:129
+#, fuzzy
 msgid "webConfigurator Lockout Table"
-msgstr ""
+msgstr "Tabel deconectări al webConfigurator"
 
 #: src/usr/local/www/diag_tables.php:131
 #, php-format
 msgid "%s Table"
-msgstr ""
+msgstr "Tabel %s"
 
 #: src/usr/local/www/diag_tables.php:136
 msgid "Table to Display"
-msgstr ""
+msgstr "Tabel de afișat"
 
 #: src/usr/local/www/diag_tables.php:137
 msgid "Table"
-msgstr ""
+msgstr "Tabel"
 
 #: src/usr/local/www/diag_tables.php:144
 #, php-format
@@ -10732,129 +10738,147 @@ msgid ""
 "contents displayed on this page reflect the current addresses inside tables "
 "used by the firewall."
 msgstr ""
+"Selectați un nume alias sau un nume de tabel sistem definite de utilizator "
+"pentru a vedea conținutul lor. Alias-urile %s devin tabele atunci când sunt "
+"încărcate intr-un set de reguli active ale firewall-ului. Conținutul afișat "
+"în această pagină reprezintă adresele curente din tabelele utilizate de "
+"firewall."
 
 #: src/usr/local/www/diag_tables.php:159
 msgid "Empty Table"
-msgstr ""
+msgstr "Tabel gol"
 
 #: src/usr/local/www/diag_tables.php:189
 #, php-format
 msgid "Table last updated on %s."
-msgstr ""
+msgstr "Ultima actualizare a tabelulul s-a făcut in %s."
 
 #: src/usr/local/www/diag_tables.php:191
 msgid "Date of last update of table is unknown."
-msgstr ""
+msgstr "Data ultimei actualizări a tabelului este necunoscută."
 
 #: src/usr/local/www/diag_tables.php:194
 #, php-format
 msgid "%s records."
-msgstr ""
+msgstr "%s înregistrări."
 
 #: src/usr/local/www/diag_tables.php:194
 msgid "."
-msgstr ""
+msgstr "."
 
 #: src/usr/local/www/diag_tables.php:194
 msgid ","
-msgstr ""
+msgstr ","
 
 #: src/usr/local/www/diag_tables.php:206
 msgid "Hide table comments."
-msgstr ""
+msgstr "Ascundeți comentariile din tabel."
 
 #: src/usr/local/www/diag_tables.php:207
 msgid "Show table comments."
-msgstr ""
+msgstr "Afișați comentariile din tabel."
 
 #: src/usr/local/www/diag_tables.php:256
 msgid "No entries exist in this table."
-msgstr ""
+msgstr "Nu existră intrări în tabel."
 
 #: src/usr/local/www/diag_tables.php:293
 msgid "Remove this entry"
-msgstr ""
+msgstr "Îndepărtați această intrare"
 
 #: src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:392
 msgid "Test Port"
-msgstr ""
+msgstr "Port de test"
 
 #: src/usr/local/www/diag_testport.php:56
 msgid "Please enter a valid IP or hostname."
-msgstr ""
+msgstr "Vă rugăm introduceți un IP sau un nume de gazdă valid."
 
 #: src/usr/local/www/diag_testport.php:60
 msgid "Please enter a valid port number."
-msgstr ""
+msgstr "Vă rugam introduceți un număr de port valid."
 
 #: src/usr/local/www/diag_testport.php:64
 msgid "Please enter a valid source port number, or leave the field blank."
 msgstr ""
+"Vă rugăm introduceți un număr valid pentru portul sursă sau lăsați câmpul "
+"necompletat."
 
 #: src/usr/local/www/diag_testport.php:68
 msgid "Cannot connect to an IPv4 address using IPv6."
-msgstr ""
+msgstr "Nu se poate conecta la o adresă de IPv4 folosind IPv6."
 
 #: src/usr/local/www/diag_testport.php:71
 msgid "Cannot connect to an IPv6 address using IPv4."
-msgstr ""
+msgstr "Nu se poate conecta la o adresă de IPv6 folosind IPv4."
 
 #: src/usr/local/www/diag_testport.php:195
 #, php-format
 msgid "Port test to host: %1$s Port: %2$s successful."
-msgstr ""
+msgstr "Test port către gazda: %1$s Portul: %2$s s-a finalizat cu succes."
 
 #: src/usr/local/www/diag_testport.php:197
 msgid "Any text received from the host will be shown below the form."
-msgstr ""
+msgstr "Orice text primit de la gazdă va fi afișat în formularul de mai jos."
 
 #: src/usr/local/www/diag_testport.php:203
+#, fuzzy
 msgid ""
 "No output received, or connection failed. Try with \"Show Remote Text\" "
 "unchecked first."
 msgstr ""
+"Nu s-a primit nici un răspuns sau conexiunea a eșuat. Încercați mai întâi cu "
+"opțiunea \"Afișați textul de la partenerul distant\" debifată."
 
 #: src/usr/local/www/diag_testport.php:205
 msgid "Connection failed."
-msgstr ""
+msgstr "Conexiunea a eșuat."
 
 #: src/usr/local/www/diag_testport.php:211
 msgid ""
 "This page performs a simple TCP connection test to determine if a host is up "
 "and accepting connections on a given port."
 msgstr ""
+"Această pagină efectuează un test simplu de conexiune TCP pentru a determina "
+"dacă o gazdă este activă și acceptă conexiuni pentru un port dat."
 
 #: src/usr/local/www/diag_testport.php:212
 msgid ""
 "This test does not function for UDP since there is no way to reliably "
 "determine if a UDP port accepts connections in this manner."
 msgstr ""
+"Acest test nu funcționează pentru UDP pentru că nu există o modalitate de a "
+"determina cu precizie dacă un port UDP acceptă conexiuni în acest mod."
 
 #: src/usr/local/www/diag_testport.php:229
 #: src/usr/local/www/load_balancer_pool_edit.php:326
 msgid "*Port"
-msgstr ""
+msgstr "*Port"
 
 #: src/usr/local/www/diag_testport.php:245
+#, fuzzy
 msgid "Remote text"
-msgstr ""
+msgstr "Text de la partenerul de comunicație."
 
 #: src/usr/local/www/diag_testport.php:248
 msgid ""
 "Shows the text given by the server when connecting to the port. If checked "
 "it will take 10+ seconds to display in a panel below this form."
 msgstr ""
+"Arată textul furnizat de server atunci când s-a conectat la port. Dacă este "
+"bifat va dura 10+ secunde pentru a se afișa în panel-ul de sub acest "
+"formular."
 
 #: src/usr/local/www/diag_testport.php:252
 #: src/usr/local/www/diag_traceroute.php:140
 msgid "*Source Address"
-msgstr ""
+msgstr "*Adresă sursă"
 
 #: src/usr/local/www/diag_testport.php:255
 #: src/usr/local/www/diag_traceroute.php:143
 msgid "Select source address for the trace."
-msgstr ""
+msgstr "Selectați adresa sursă pentru trace."
 
 #: src/usr/local/www/diag_testport.php:262
 msgid ""
@@ -16176,7 +16200,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_openvpn_client.php:590
 #: src/usr/local/www/vpn_openvpn_client.php:615
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:86
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "Username"
 msgstr "Nume utilizator"
 
@@ -24994,12 +25018,12 @@ msgid "Users Logged In (%d)"
 msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:198
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:87
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:83
 msgid "Session start"
 msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:202
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:88
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Last activity"
 msgstr ""
 
@@ -28271,19 +28295,11 @@ msgid ""
 "blocks traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:182
-msgid "IPv6 over IPv4"
-msgstr ""
-
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:183
 msgid "IPv6 over IPv4 Tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:193
-msgid "IPv4 address of Tunnel Peer"
-msgstr ""
-
-#: src/usr/local/www/system_advanced_network.php:198
+#: src/usr/local/www/system_advanced_network.php:186
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -28292,22 +28308,26 @@ msgid ""
 "to control and pass encapsulated traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:192
+msgid "IPv4 address of Tunnel Peer"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "Prefer IPv4 over IPv6"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:202
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "IPv6 DNS entry"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:218
+#: src/usr/local/www/system_advanced_network.php:210
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -28317,16 +28337,16 @@ msgid ""
 "IPv6 records from being created."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:223
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:215
+#: src/usr/local/www/system_advanced_network.php:219
 msgid "DHCP6 DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:227
 msgid "Copy DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:243
+#: src/usr/local/www/system_advanced_network.php:235
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -28340,15 +28360,15 @@ msgid ""
 "Copy DUID button to copy the system detected DUID shown in the placeholder. "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:253
+#: src/usr/local/www/system_advanced_network.php:245
 msgid "Network Interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:257
+#: src/usr/local/www/system_advanced_network.php:249
 msgid "Hardware Checksum Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:252
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -28358,11 +28378,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:268
+#: src/usr/local/www/system_advanced_network.php:260
 msgid "Hardware TCP Segmentation Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:263
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -28370,11 +28390,11 @@ msgid ""
 "machine reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:278
+#: src/usr/local/www/system_advanced_network.php:270
 msgid "Hardware Large Receive Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:273
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -28382,21 +28402,21 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:288
+#: src/usr/local/www/system_advanced_network.php:280
 msgid "ARP Handling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:283
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:297
+#: src/usr/local/www/system_advanced_network.php:289
 msgid "Enable flowtable support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:299
+#: src/usr/local/www/system_advanced_network.php:291
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -33717,7 +33737,7 @@ msgstr ""
 msgid "Wake-on-Lan"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:101
+#: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
 msgstr ""
 
@@ -33962,6 +33982,11 @@ msgstr ""
 msgid "Update interval"
 msgstr ""
 
+#: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
+#, php-format
+msgid "%sSupport information could not be retrieved%s"
+msgstr ""
+
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
 msgstr ""
@@ -34076,11 +34101,6 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/support.widget.php:37
-#, php-format
-msgid "%sSupport information unavailable%s"
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
@@ -35785,31 +35805,31 @@ msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:187
+#: src/usr/local/www/system_advanced_network.php:184
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:200
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:216
+#: src/usr/local/www/system_advanced_network.php:208
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:258
+#: src/usr/local/www/system_advanced_network.php:250
 msgid "Disable hardware checksum offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:269
+#: src/usr/local/www/system_advanced_network.php:261
 msgid "Disable hardware TCP segmentation offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:279
+#: src/usr/local/www/system_advanced_network.php:271
 msgid "Disable hardware large receive offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:281
 msgid "Suppress ARP messages"
 msgstr ""
 

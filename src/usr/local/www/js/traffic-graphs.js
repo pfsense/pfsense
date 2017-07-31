@@ -16,18 +16,111 @@
  * limitations under the License.
  */
 
-function draw_graph(refreshInterval, then, backgroundupdate) {
+function graph_init() {
+
+	window.charts = {};
+    window.myData = {};
+    window.updateIds = 0;
+    window.updateTimerIds = 0;
+    window.latest = [];
+    //TODO make it fall on a second value so it increments better
+    var now = then = new Date(Date.now());
+
+    var nowTime = now.getTime();
+
+	$.each(window.interfaces, function( key, value ) {
+
+		myData[value] = [];
+		updateIds = 0;
+		updateTimerIds = 0;
+
+		var itemIn = new Object();
+		var itemOut = new Object();
+
+		itemIn.key = value + " (in)";
+		if (window.invert) {
+			itemIn.area = true;
+		}
+		itemIn.first = true;
+		itemIn.values = [{x: nowTime, y: 0}];
+		myData[value].push(itemIn);
+
+		itemOut.key = value + " (out)";
+		if (window.invert) {
+			itemOut.area = true;
+		}
+		itemOut.first = true;
+		itemOut.values = [{x: nowTime, y: 0}];
+		myData[value].push(itemOut);
+
+	});
+
+	if (window.interfaces.length > 0) {
+		draw_graph(then);
+	}
+}
+
+function graph_visibilitycheck() {
+	//re-draw graph when the page goes from inactive (in it's window) to active
+	Visibility.change(function (e, state) {
+		if (window.graph_backgroundupdate) {
+			return;
+		}
+		if (state === "visible") {
+
+			now = then = new Date(Date.now());
+
+			var nowTime = now.getTime();
+
+			$.each(window.interfaces, function( key, value ) {
+
+				Visibility.stop(updateIds);
+				clearInterval(updateTimerIds);
+
+				myData[value] = [];
+
+				var itemIn = new Object();
+				var itemOut = new Object();
+
+				itemIn.key = value + " (in)";
+				if (window.invert) {
+					itemIn.area = true;
+				}
+				itemIn.first = true;
+				itemIn.values = [{x: nowTime, y: 0}];
+				myData[value].push(itemIn);
+
+				itemOut.key = value + " (out)";
+				if (window.invert) {
+					itemOut.area = true;
+				}
+				itemOut.first = true;
+				itemOut.values = [{x: nowTime, y: 0}];
+				myData[value].push(itemOut);
+
+			});
+
+			if (window.interfaces.length > 0) {
+				draw_graph(then);
+			}
+
+		}
+	});
+}
+
+function draw_graph(then) {
 
 	d3.select("div[id^=nvtooltip-]").remove();
 	d3.select(".interface-label").remove();
 
-	var invert = localStorage.getItem('invert');
-	var size = localStorage.getItem('size');
+	var invert = window.invert;
+	var size = window.size;
+	var refreshInterval = window.interval;
 	var lasttime = 0;
-
 	startTime = 120 * refreshInterval;
 	then.setSeconds(then.getSeconds() - startTime);
 	var thenTime = then.getTime();
+	var refreshGraphFunction_running = false;
 
 	$.each( window.interfaces, function( key, value ) {
 		myData[value]['interfacename'] = graph_interfacenames[value];
@@ -91,7 +184,7 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 			charts[value].interactiveLayer.tooltip.contentGenerator(function(data) {
 
 				var units = 'b/s';
-				if(localStorage.getItem('size') === "1") {
+				if(window.size === 1) {
 					units = 'B/s'
 				}
 
@@ -101,7 +194,7 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 
 					var rawValue = data.series[v].value;
 
-					if((invert === "true") && data.series[v].key.includes("(out)")) {
+					if(invert && data.series[v].key.includes("(out)")) {
 						rawValue = 0 - rawValue;
 					}
 
@@ -126,9 +219,13 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 	});
 
 	var refreshGraphFunction = function(){
+		if (refreshGraphFunction_running) {
+			return;
+		}
+		refreshGraphFunction_running = true;
 		d3.json("ifstats.php")
 		.header("Content-Type", "application/x-www-form-urlencoded")
-		.post('if='+window.interfaces.join('|'), function(error, json) { //TODO all ifs again
+		.post('if='+window.interfaces.join('|')+'&realif='+window.realinterfaces.join('|'), function(error, json) { //TODO all ifs again
 
 			if (error) {
 
@@ -167,7 +264,7 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 					var trafficIn = ((ifVals[0].values[1] * size) - latest[ifVals[0].key]) / timeDiff;
 					var trafficOut = ((ifVals[1].values[1] * size) - latest[ifVals[1].key]) / timeDiff;
 
-					if((localStorage.getItem('invert') === "true")) {
+					if(window.invert) {
 						trafficOut = 0 - trafficOut;
 					}
 
@@ -199,7 +296,6 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 				myData[key][0].first = false;
 				myData[key][1].first = false;
 
-
 				myData[key][0].values.shift();
 				myData[key][1].values.shift();
 
@@ -215,11 +311,12 @@ function draw_graph(refreshInterval, then, backgroundupdate) {
 
 			});
 
+			refreshGraphFunction_running = false;
 		});
 
 	}
 	
-	if(backgroundupdate) {
+	if(window.graph_backgroundupdate) {
 		updateTimerIds = setInterval(refreshGraphFunction, refreshInterval * 1000);
 	} else {
 		//only update the graphs when tab is active in window to save resources and prevent build up

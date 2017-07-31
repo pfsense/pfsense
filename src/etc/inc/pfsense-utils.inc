@@ -2943,6 +2943,7 @@ function get_locale_list() {
 		"es" => gettext("Spanish"),
 		"es_AR" => gettext("Spanish (Argentina)"),
 		"nb" => gettext("Norwegian Bokmål"),
+		"pt_BR" => gettext("Portuguese (Brazil)"),
 		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),

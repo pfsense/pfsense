@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-31 08:49-0300\n"
+"POT-Creation-Date: 2017-08-02 08:00-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1705,48 +1705,48 @@ msgstr "Who are you απαντηση"
 msgid "Who are you request"
 msgstr "Who are you αιτημα"
 
-#: src/etc/inc/filter.inc:228
+#: src/etc/inc/filter.inc:240
 msgid "Initializing"
 msgstr "Προετοιμασία"
 
-#: src/etc/inc/filter.inc:240
+#: src/etc/inc/filter.inc:252
 msgid "Configuring firewall"
 msgstr "Ρύθμιση του τείχους προστασίας"
 
-#: src/etc/inc/filter.inc:247
+#: src/etc/inc/filter.inc:259
 msgid "Creating aliases"
 msgstr "Δημιουργία ψευδώνυμων"
 
-#: src/etc/inc/filter.inc:253
+#: src/etc/inc/filter.inc:265
 msgid "Generating Limiter rules"
 msgstr ""
 
-#: src/etc/inc/filter.inc:256
+#: src/etc/inc/filter.inc:268
 msgid "Generating NAT rules"
 msgstr "Δημιουργία κανόνων NAT"
 
-#: src/etc/inc/filter.inc:262
+#: src/etc/inc/filter.inc:274
 msgid "Generating filter rules"
 msgstr "Δημιουργία κανόνων φίλτρου"
 
-#: src/etc/inc/filter.inc:269
+#: src/etc/inc/filter.inc:281
 msgid "Generating ALTQ queues"
 msgstr "Δημιουργία ουρών ALTQ"
 
-#: src/etc/inc/filter.inc:274
+#: src/etc/inc/filter.inc:286
 msgid "Loading filter rules"
 msgstr "Φόρτωση κανόνων φίλτρου"
 
-#: src/etc/inc/filter.inc:281
+#: src/etc/inc/filter.inc:293
 msgid "Filter is disabled.  Not loading rules."
 msgstr "Το φίλτρο έχει απενεργοποιηθεί. Δεν φορτονονται κανονες."
 
-#: src/etc/inc/filter.inc:283 src/etc/inc/filter.inc:535
+#: src/etc/inc/filter.inc:295 src/etc/inc/filter.inc:547
 #: src/etc/inc/interfaces.inc:198 src/etc/inc/interfaces.inc:222
 #: src/etc/inc/interfaces.inc:368 src/etc/inc/interfaces.inc:430
-#: src/etc/inc/interfaces.inc:738 src/etc/inc/interfaces.inc:1092
-#: src/etc/inc/interfaces.inc:1123 src/etc/inc/interfaces.inc:1147
-#: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:2202
+#: src/etc/inc/interfaces.inc:759 src/etc/inc/interfaces.inc:1113
+#: src/etc/inc/interfaces.inc:1144 src/etc/inc/interfaces.inc:1168
+#: src/etc/inc/interfaces.inc:1189 src/etc/inc/interfaces.inc:2223
 #: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
 #: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
 #: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
@@ -1762,259 +1762,259 @@ msgstr "Το φίλτρο έχει απενεργοποιηθεί. Δεν φορ
 msgid "done."
 msgstr "ολοκληρώθηκε. "
 
-#: src/etc/inc/filter.inc:379
+#: src/etc/inc/filter.inc:391
 msgid "Setting up logging information"
 msgstr "Ρύθμιση πληροφοριών καταγραφής"
 
-#: src/etc/inc/filter.inc:384
+#: src/etc/inc/filter.inc:396
 msgid "Setting up SCRUB information"
 msgstr "Ρύθμιση πληροφοριών SCRUB"
 
-#: src/etc/inc/filter.inc:430
+#: src/etc/inc/filter.inc:442
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
 msgstr "Η εν λόγω γραμμή διαβάζει [%1$d]: %2$s"
 
-#: src/etc/inc/filter.inc:437
+#: src/etc/inc/filter.inc:449
 msgid "PF was wedged/busy and has been reset."
 msgstr ""
 
-#: src/etc/inc/filter.inc:443 src/etc/inc/filter.inc:444
+#: src/etc/inc/filter.inc:455 src/etc/inc/filter.inc:456
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
 msgstr "Παρουσιάστηκε σφάλμα κατά την φόρτωση των κανόνων: %1$s - %2$s"
 
-#: src/etc/inc/filter.inc:520
+#: src/etc/inc/filter.inc:532
 msgid "Processing down interface states"
 msgstr ""
 
-#: src/etc/inc/filter.inc:524
+#: src/etc/inc/filter.inc:536
 msgid "Running plugins"
 msgstr "Τρέχοντα plugins"
 
-#: src/etc/inc/filter.inc:528
+#: src/etc/inc/filter.inc:540
 msgid "Running plugins (pf)"
 msgstr "Τρέχοντα plugins (pf)"
 
-#: src/etc/inc/filter.inc:530
+#: src/etc/inc/filter.inc:542
 msgid "Plugins completed."
 msgstr "Τα πρόσθετα ολοκληρώθηκαν."
 
-#: src/etc/inc/filter.inc:533
+#: src/etc/inc/filter.inc:545
 msgid "Done"
 msgstr "Ολοκληρώθηκε"
 
-#: src/etc/inc/filter.inc:763
+#: src/etc/inc/filter.inc:775
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:841
+#: src/etc/inc/filter.inc:853
 msgid "Creating gateway group item..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:881
+#: src/etc/inc/filter.inc:893
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:885
+#: src/etc/inc/filter.inc:897
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
 
-#: src/etc/inc/filter.inc:897
+#: src/etc/inc/filter.inc:909
 #, php-format
 msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
 
-#: src/etc/inc/filter.inc:1262
+#: src/etc/inc/filter.inc:1274
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:1360
+#: src/etc/inc/filter.inc:1372
 #, php-format
 msgid "Creating reflection rule for %s..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:1481
+#: src/etc/inc/filter.inc:1493
 msgid "Not installing NAT reflection rules for a port range > 500"
 msgstr ""
 
-#: src/etc/inc/filter.inc:1487
+#: src/etc/inc/filter.inc:1499
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
 msgstr ""
 
-#: src/etc/inc/filter.inc:1568
+#: src/etc/inc/filter.inc:1580
 msgid "localhost"
 msgstr "localhost"
 
-#: src/etc/inc/filter.inc:1577
+#: src/etc/inc/filter.inc:1589
 msgid "static route"
 msgstr "Στατικό δρομολόγιο"
 
-#: src/etc/inc/filter.inc:1589
+#: src/etc/inc/filter.inc:1601
 msgid "DHCP alias address"
 msgstr ""
 
-#: src/etc/inc/filter.inc:1623
+#: src/etc/inc/filter.inc:1635
 msgid "PPPoE server"
 msgstr "διακομιστής PPPoE"
 
-#: src/etc/inc/filter.inc:1634
+#: src/etc/inc/filter.inc:1646
 msgid "L2TP server"
 msgstr "διακομιστής L2TP"
 
-#: src/etc/inc/filter.inc:1643
+#: src/etc/inc/filter.inc:1655
 msgid "OpenVPN server"
 msgstr "διακομιστής OpenVPN"
 
-#: src/etc/inc/filter.inc:1652
+#: src/etc/inc/filter.inc:1664
 msgid "OpenVPN client"
 msgstr "υπολογιστής-πελάτης  OpenVPN"
 
-#: src/etc/inc/filter.inc:1662
+#: src/etc/inc/filter.inc:1674
 msgid "IPsec client"
 msgstr "υπολογιστής-πελάτης  IPsec"
 
-#: src/etc/inc/filter.inc:1698
+#: src/etc/inc/filter.inc:1710
 msgid "Auto created rule for ISAKMP"
 msgstr ""
 
-#: src/etc/inc/filter.inc:1708
+#: src/etc/inc/filter.inc:1720
 msgid "Auto created rule"
 msgstr ""
 
-#: src/etc/inc/filter.inc:1841
+#: src/etc/inc/filter.inc:1853
 msgid "Creating 1:1 rules..."
 msgstr "Δημιουργία κανόνων 1: 1 ..."
 
-#: src/etc/inc/filter.inc:2026
+#: src/etc/inc/filter.inc:2038
 #, php-format
 msgid "Creating advanced outbound rule %s"
 msgstr "Δημιουργία προηγμένου κανόνα εξερχομενων %s"
 
-#: src/etc/inc/filter.inc:2073
+#: src/etc/inc/filter.inc:2085
 msgid "Creating outbound NAT rules"
 msgstr "Δημιουργία κανόνων  εξερχομενων NAT"
 
-#: src/etc/inc/filter.inc:2080
+#: src/etc/inc/filter.inc:2092
 msgid "Creating automatic outbound rules"
 msgstr "Δημιουργία αυτόματων κανόνων εξερχόμενων "
 
-#: src/etc/inc/filter.inc:2110
+#: src/etc/inc/filter.inc:2122
 msgid "Setting up TFTP helper"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2154
+#: src/etc/inc/filter.inc:2166
 #, php-format
 msgid "Creating NAT rule %s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2380
+#: src/etc/inc/filter.inc:2392
 #, php-format
 msgid "Creating filter rule %s ..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:2404
+#: src/etc/inc/filter.inc:2416
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
 msgstr ""
 
-#: src/etc/inc/filter.inc:2641
+#: src/etc/inc/filter.inc:2653
 #, php-format
 msgid "Creating filter rules %s ..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:2696
+#: src/etc/inc/filter.inc:2708
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2701
+#: src/etc/inc/filter.inc:2713
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2711
+#: src/etc/inc/filter.inc:2723
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2713
+#: src/etc/inc/filter.inc:2725
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2727
+#: src/etc/inc/filter.inc:2739
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2729
+#: src/etc/inc/filter.inc:2741
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2737
+#: src/etc/inc/filter.inc:2749
 msgid "Setting up pass/block rules"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2764
+#: src/etc/inc/filter.inc:2776
 #, php-format
 msgid "Setting up pass/block rules %s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:2788
+#: src/etc/inc/filter.inc:2800
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
 msgstr ""
 
-#: src/etc/inc/filter.inc:2807
+#: src/etc/inc/filter.inc:2819
 #, php-format
 msgid "Creating rule %s"
 msgstr "Δημιουργείτε ο κανόνας %s"
 
-#: src/etc/inc/filter.inc:3052
+#: src/etc/inc/filter.inc:3064
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
 msgstr ""
 
-#: src/etc/inc/filter.inc:3096
+#: src/etc/inc/filter.inc:3108
 msgid "Creating default rules"
 msgstr ""
 
-#: src/etc/inc/filter.inc:3777
+#: src/etc/inc/filter.inc:3789
 msgid "Creating IPsec rules..."
 msgstr ""
 
-#: src/etc/inc/filter.inc:3873
+#: src/etc/inc/filter.inc:3885
 msgid "Installed 15 minute filter reload for Time Based Rules"
 msgstr ""
 
-#: src/etc/inc/filter.inc:3880
+#: src/etc/inc/filter.inc:3892
 msgid "Removed 15 minute filter reload for Time Based Rules"
 msgstr ""
 
-#: src/etc/inc/filter.inc:4264
+#: src/etc/inc/filter.inc:4276
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:4277
+#: src/etc/inc/filter.inc:4289
 #, php-format
 msgid "Processing early %1$s rules for package %2$s"
 msgstr ""
 
-#: src/etc/inc/filter.inc:4287
+#: src/etc/inc/filter.inc:4299
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
 msgstr ""
 
-#: src/etc/inc/filter.inc:4355
+#: src/etc/inc/filter.inc:4367
 msgid "delete this separator"
 msgstr "διαγραφή αυτού του δαχωριστικού"
 
@@ -2256,7 +2256,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:239
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:241
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:214
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:216
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
 msgid "Interface"
@@ -2519,246 +2519,246 @@ msgstr ""
 msgid "realif not defined in interfaces bridge - up"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:566
+#: src/etc/inc/interfaces.inc:568
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:721
+#: src/etc/inc/interfaces.inc:742
 msgid "Configuring LAGG interfaces..."
 msgstr "Ρύθμιση διεπαφών LAGG..."
 
-#: src/etc/inc/interfaces.inc:872
+#: src/etc/inc/interfaces.inc:893
 msgid "Could not bring greif up -- variable not defined."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:955
+#: src/etc/inc/interfaces.inc:976
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1002
+#: src/etc/inc/interfaces.inc:1023
 msgid "could not bring gifif up -- variable not defined"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1084 src/etc/inc/interfaces.inc:1114
-#: src/etc/inc/interfaces.inc:1138 src/etc/inc/interfaces.inc:1156
+#: src/etc/inc/interfaces.inc:1105 src/etc/inc/interfaces.inc:1135
+#: src/etc/inc/interfaces.inc:1159 src/etc/inc/interfaces.inc:1177
 #, php-format
 msgid "Configuring %s interface..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1088 src/etc/inc/interfaces.inc:1117
-#: src/etc/inc/interfaces.inc:1141 src/etc/inc/interfaces.inc:1159
+#: src/etc/inc/interfaces.inc:1109 src/etc/inc/interfaces.inc:1138
+#: src/etc/inc/interfaces.inc:1162 src/etc/inc/interfaces.inc:1180
 #, php-format
 msgid "Configuring %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1242
+#: src/etc/inc/interfaces.inc:1263
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1256
+#: src/etc/inc/interfaces.inc:1277
 msgid "Wrong parameters used during interface_bring_down"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1427
+#: src/etc/inc/interfaces.inc:1448
 msgid "Enter CARP maintenance mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1631
+#: src/etc/inc/interfaces.inc:1652
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1689
+#: src/etc/inc/interfaces.inc:1710
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1696
+#: src/etc/inc/interfaces.inc:1717
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1703
+#: src/etc/inc/interfaces.inc:1724
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:1708
+#: src/etc/inc/interfaces.inc:1729
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2028
+#: src/etc/inc/interfaces.inc:2049
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2123
+#: src/etc/inc/interfaces.inc:2144
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2140
+#: src/etc/inc/interfaces.inc:2161
 msgid "Configuring CARP settings..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2181
+#: src/etc/inc/interfaces.inc:2202
 msgid "waiting for pfsync..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2187
+#: src/etc/inc/interfaces.inc:2208
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2188
+#: src/etc/inc/interfaces.inc:2209
 msgid "Configuring CARP settings finalize..."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2415
+#: src/etc/inc/interfaces.inc:2436
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2475
+#: src/etc/inc/interfaces.inc:2496
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2479
+#: src/etc/inc/interfaces.inc:2500
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2483
+#: src/etc/inc/interfaces.inc:2504
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2496
+#: src/etc/inc/interfaces.inc:2517
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:2501
+#: src/etc/inc/interfaces.inc:2522
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3157
+#: src/etc/inc/interfaces.inc:3178
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3178
+#: src/etc/inc/interfaces.inc:3199
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3191
+#: src/etc/inc/interfaces.inc:3212
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3326
+#: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3358
+#: src/etc/inc/interfaces.inc:3379
 msgid "Generating new MAC address."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3363 src/etc/inc/interfaces.inc:3364
+#: src/etc/inc/interfaces.inc:3384 src/etc/inc/interfaces.inc:3385
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3429
+#: src/etc/inc/interfaces.inc:3450
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3620 src/etc/inc/interfaces.inc:3690
-#: src/etc/inc/interfaces.inc:3754
+#: src/etc/inc/interfaces.inc:3641 src/etc/inc/interfaces.inc:3711
+#: src/etc/inc/interfaces.inc:3775
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3627 src/etc/inc/interfaces.inc:3633
+#: src/etc/inc/interfaces.inc:3648 src/etc/inc/interfaces.inc:3654
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3696
+#: src/etc/inc/interfaces.inc:3717
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3732
+#: src/etc/inc/interfaces.inc:3753
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3760 src/etc/inc/interfaces.inc:3815
-#: src/etc/inc/interfaces.inc:3901
+#: src/etc/inc/interfaces.inc:3781 src/etc/inc/interfaces.inc:3836
+#: src/etc/inc/interfaces.inc:3922
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:3792
+#: src/etc/inc/interfaces.inc:3813
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4007
+#: src/etc/inc/interfaces.inc:4028
 msgid "Failed to write user DUID file!"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4481
+#: src/etc/inc/interfaces.inc:4503
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4509
+#: src/etc/inc/interfaces.inc:4531
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4522
+#: src/etc/inc/interfaces.inc:4544
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4578
+#: src/etc/inc/interfaces.inc:4600
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:4671
+#: src/etc/inc/interfaces.inc:4693
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
 
-#: src/etc/inc/interfaces.inc:5711 src/etc/inc/service-utils.inc:365
+#: src/etc/inc/interfaces.inc:5734 src/etc/inc/service-utils.inc:365
 #: src/usr/local/www/diag_backup.php:432
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
 #: src/usr/local/www/firewall_nat_edit.php:80
@@ -2809,8 +2809,8 @@ msgstr "Διεπαφή πυρήνα"
 #: src/usr/local/www/system_advanced_admin.php:299
 #: src/usr/local/www/system_advanced_firewall.php:380
 #: src/usr/local/www/system_advanced_misc.php:311
-#: src/usr/local/www/system_advanced_network.php:148
-#: src/usr/local/www/system_advanced_network.php:163
+#: src/usr/local/www/system_advanced_network.php:155
+#: src/usr/local/www/system_advanced_network.php:170
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:140
 msgid "Networking"
@@ -2915,7 +2915,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:550
 #: src/usr/local/www/firewall_rules_edit.php:1300
 #: src/usr/local/www/firewall_rules_edit.php:1506
-#: src/usr/local/www/interfaces.php:3025
+#: src/usr/local/www/interfaces.php:3050
 msgid "Any"
 msgstr "Οποιοδήποτε"
 
@@ -3043,14 +3043,14 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr ""
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3135
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3136
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1703
-#: src/usr/local/www/interfaces.php:1704 src/usr/local/www/interfaces.php:1730
-#: src/usr/local/www/interfaces.php:1743
+#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/interfaces.php:1714 src/usr/local/www/interfaces.php:1740
+#: src/usr/local/www/interfaces.php:1753
 #: src/usr/local/www/services_ntpd_gps.php:364
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:447
@@ -3136,9 +3136,9 @@ msgid "Could not send register Growl on %1$s -- Error: %2$s"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:760
-#: src/usr/local/www/firewall_rules_edit.php:1656
-#: src/usr/local/www/firewall_rules_edit.php:1697
-#: src/usr/local/www/firewall_rules_edit.php:1704
+#: src/usr/local/www/firewall_rules_edit.php:1665
+#: src/usr/local/www/firewall_rules_edit.php:1706
+#: src/usr/local/www/firewall_rules_edit.php:1713
 #: src/usr/local/www/status_ipsec.php:338
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:585
@@ -3146,7 +3146,7 @@ msgid "none"
 msgstr "κανένα"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
-#: src/usr/local/www/firewall_rules_edit.php:1659
+#: src/usr/local/www/firewall_rules_edit.php:1668
 #: src/usr/local/www/services_captiveportal.php:970
 msgid "default"
 msgstr "προεπιλογή"
@@ -3302,9 +3302,9 @@ msgid "No Hardware Crypto Acceleration"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:527 src/usr/local/www/firewall_nat_out_edit.php:603
-#: src/usr/local/www/interfaces.php:1925 src/usr/local/www/interfaces.php:2919
-#: src/usr/local/www/interfaces.php:2928 src/usr/local/www/interfaces.php:2937
-#: src/usr/local/www/interfaces.php:2995 src/usr/local/www/interfaces.php:3250
+#: src/usr/local/www/interfaces.php:1942 src/usr/local/www/interfaces.php:2944
+#: src/usr/local/www/interfaces.php:2953 src/usr/local/www/interfaces.php:2962
+#: src/usr/local/www/interfaces.php:3020 src/usr/local/www/interfaces.php:3275
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Default"
 msgstr "Προεπιλογή"
@@ -3678,26 +3678,30 @@ msgid "Norwegian Bokmål"
 msgstr "Νορβηγικά Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2946
+msgid "Portuguese (Brazil)"
+msgstr "Πορτογαλικά (Βραζιλίας)"
+
+#: src/etc/inc/pfsense-utils.inc:2947
 msgid "Russian"
 msgstr "Ρωσσικά"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Simplified, China)"
 msgstr "Κινέζικα (Απλοποιημένα, Κίνα)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Chinese (Taiwan)"
 msgstr "Κινέζικα (Ταιβάν)"
 
-#: src/etc/inc/pfsense-utils.inc:3143 src/etc/inc/pfsense-utils.inc:3158
-#: src/etc/inc/pfsense-utils.inc:3184
+#: src/etc/inc/pfsense-utils.inc:3144 src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3185
 msgid "No Service"
 msgstr "Δεν υπάρχει υπηρεσία "
 
-#: src/etc/inc/pfsense-utils.inc:3153 src/etc/inc/pfsense-utils.inc:3196
+#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3197
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
-#: src/usr/local/www/interfaces.php:885 src/usr/local/www/interfaces.php:3008
+#: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
 #: src/usr/local/www/interfaces_wireless.php:100
 #: src/usr/local/www/interfaces_wireless_edit.php:78
 #: src/usr/local/www/load_balancer_pool.php:118
@@ -3710,83 +3714,83 @@ msgstr "Δεν υπάρχει υπηρεσία "
 msgid "Mode"
 msgstr "Κατάσταση"
 
-#: src/etc/inc/pfsense-utils.inc:3159
+#: src/etc/inc/pfsense-utils.inc:3160
 msgid "Restricted Service"
 msgstr "Περιορισμένη Υπηρεσία "
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Valid Service"
 msgstr "Έγκυρη Υπηρεσία "
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Powersaving Service"
 msgstr "Υπηρεσία Εξοικονόμησης Ενέργειας "
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Unknown Service"
 msgstr "Άγνωστη Υπηρεσία"
 
-#: src/etc/inc/pfsense-utils.inc:3169
+#: src/etc/inc/pfsense-utils.inc:3170
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "Limited Service"
 msgstr "Περιορισμένη Υπηρεσία"
 
-#: src/etc/inc/pfsense-utils.inc:3201
+#: src/etc/inc/pfsense-utils.inc:3202
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3202
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3210
+#: src/etc/inc/pfsense-utils.inc:3211
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3211
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -6117,7 +6121,7 @@ msgstr "Έγινε διακοπή"
 #: src/usr/local/www/firewall_nat_npt_edit.php:188
 #: src/usr/local/www/firewall_nat_out_edit.php:463
 #: src/usr/local/www/firewall_rules_edit.php:1195
-#: src/usr/local/www/interfaces.php:2688
+#: src/usr/local/www/interfaces.php:2713
 #: src/usr/local/www/interfaces_ppps_edit.php:748
 #: src/usr/local/www/load_balancer_pool_edit.php:402
 #: src/usr/local/www/services_router_advertisements.php:104
@@ -6126,7 +6130,7 @@ msgstr "Έγινε διακοπή"
 #: src/usr/local/www/system_routes_edit.php:262
 #: src/usr/local/www/system_usermanager.php:640
 #: src/usr/local/www/system_usermanager.php:737
-#: src/usr/local/www/vpn_ipsec_phase1.php:657
+#: src/usr/local/www/vpn_ipsec_phase1.php:679
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
 #: src/usr/local/www/vpn_openvpn_client.php:510
 #: src/usr/local/www/vpn_openvpn_csc.php:661
@@ -6440,7 +6444,7 @@ msgid ""
 "characters."
 msgstr ""
 
-#: src/etc/inc/shaper.inc:1428 src/usr/local/www/interfaces_bridge_edit.php:579
+#: src/etc/inc/shaper.inc:1428 src/usr/local/www/interfaces_bridge_edit.php:592
 #: src/usr/local/www/interfaces_vlan.php:109
 #: src/usr/local/www/system_gateway_groups.php:130
 msgid "Priority"
@@ -6460,7 +6464,7 @@ msgstr ""
 msgid "Scheduler options"
 msgstr ""
 
-#: src/etc/inc/shaper.inc:1450 src/usr/local/www/firewall_rules_edit.php:1740
+#: src/etc/inc/shaper.inc:1450 src/usr/local/www/firewall_rules_edit.php:1749
 msgid "Default Queue"
 msgstr ""
 
@@ -6509,10 +6513,10 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:615
 #: src/usr/local/www/firewall_virtual_ip.php:259
 #: src/usr/local/www/firewall_virtual_ip_edit.php:422
-#: src/usr/local/www/guiconfig.inc:1177 src/usr/local/www/interfaces.php:495
-#: src/usr/local/www/interfaces.php:1946 src/usr/local/www/interfaces.php:3271
+#: src/usr/local/www/guiconfig.inc:1177 src/usr/local/www/interfaces.php:498
+#: src/usr/local/www/interfaces.php:1963 src/usr/local/www/interfaces.php:3296
 #: src/usr/local/www/interfaces_bridge.php:104
-#: src/usr/local/www/interfaces_bridge_edit.php:404
+#: src/usr/local/www/interfaces_bridge_edit.php:410
 #: src/usr/local/www/interfaces_gif.php:99
 #: src/usr/local/www/interfaces_gif_edit.php:221
 #: src/usr/local/www/interfaces_gre.php:99
@@ -6595,7 +6599,7 @@ msgstr ""
 #: src/usr/local/www/system_routes.php:245
 #: src/usr/local/www/system_routes_edit.php:270
 #: src/usr/local/www/system_usermanager.php:468
-#: src/usr/local/www/vpn_ipsec_phase1.php:694
+#: src/usr/local/www/vpn_ipsec_phase1.php:716
 #: src/usr/local/www/vpn_ipsec_phase2.php:584
 #: src/usr/local/www/vpn_openvpn_client.php:604
 #: src/usr/local/www/vpn_openvpn_client.php:941
@@ -6810,7 +6814,7 @@ msgstr ""
 #: src/usr/local/www/services_router_advertisements.php:421
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/system.php:524
+#: src/usr/local/www/system.php:527
 #: src/usr/local/www/system_certmanager.php:1015
 #: src/usr/local/www/system_usermanager.php:663
 msgid "Delete"
@@ -6832,7 +6836,7 @@ msgstr ""
 #: src/etc/inc/shaper.inc:3822 src/etc/inc/shaper.inc:4135
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
 #: src/usr/local/www/firewall_rules.php:780
-#: src/usr/local/www/interfaces.php:1775 src/usr/local/www/interfaces.php:3068
+#: src/usr/local/www/interfaces.php:1785 src/usr/local/www/interfaces.php:3093
 #: src/usr/local/www/services_captiveportal.php:535
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
 #: src/usr/local/www/services_checkip_edit.php:120
@@ -6847,7 +6851,7 @@ msgstr ""
 #: src/usr/local/www/services_snmp.php:215
 #: src/usr/local/www/services_snmp.php:258
 #: src/usr/local/www/services_unbound.php:279
-#: src/usr/local/www/vpn_ipsec_phase1.php:859
+#: src/usr/local/www/vpn_ipsec_phase1.php:888
 #: src/usr/local/www/vpn_l2tp.php:203 src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/diag_routes.php:83
 msgid "Enable"
@@ -6910,7 +6914,7 @@ msgstr ""
 #: src/usr/local/www/services_wol_edit.php:151
 #: src/usr/local/www/system_gateway_groups_edit.php:338
 #: src/usr/local/www/system_routes_edit.php:273
-#: src/usr/local/www/vpn_ipsec_phase1.php:697
+#: src/usr/local/www/vpn_ipsec_phase1.php:719
 #: src/usr/local/www/vpn_ipsec_phase2.php:587
 #: src/usr/local/www/vpn_openvpn_client.php:607
 #: src/usr/local/www/vpn_openvpn_server.php:749
@@ -6921,8 +6925,8 @@ msgstr ""
 #: src/etc/inc/shaper.inc:3898 src/etc/inc/shaper.inc:4202
 #: src/usr/local/www/firewall_rules_edit.php:1493
 #: src/usr/local/www/firewall_rules_edit.php:1499
-#: src/usr/local/www/interfaces_bridge_edit.php:420
-#: src/usr/local/www/vpn_ipsec_phase1.php:824
+#: src/usr/local/www/interfaces_bridge_edit.php:426
+#: src/usr/local/www/vpn_ipsec_phase1.php:846
 msgid "Advanced Options"
 msgstr ""
 
@@ -7576,83 +7580,83 @@ msgstr ""
 msgid "The remote gateway %s already exists on another phase 1 entry"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:620
+#: src/etc/inc/vpn.inc:627
 #, php-format
 msgid "Warning: Missing CRL data for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:625
+#: src/etc/inc/vpn.inc:632
 #, php-format
 msgid "Error: Cannot write IPsec CRL file for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:649
+#: src/etc/inc/vpn.inc:656
 #, php-format
 msgid "Error: Invalid phase1 certificate reference for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:667
+#: src/etc/inc/vpn.inc:674
 #, php-format
 msgid "Error: Cannot write phase1 key file for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:674
+#: src/etc/inc/vpn.inc:681
 #, php-format
 msgid "Error: Cannot write phase1 certificate file for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:739
+#: src/etc/inc/vpn.inc:746
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:744
+#: src/etc/inc/vpn.inc:751
 #, php-format
 msgid "Error: Cannot write IPsec CA file for %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1363
+#: src/etc/inc/vpn.inc:1374
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1482
+#: src/etc/inc/vpn.inc:1493
 #, php-format
 msgid "Ignoring IPsec reload since there are no tunnels on interface %s"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1488
+#: src/etc/inc/vpn.inc:1499
 msgid "Forcefully reloading IPsec"
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1538
+#: src/etc/inc/vpn.inc:1549
 msgid "Configuring PPPoE Server service... "
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1563
+#: src/etc/inc/vpn.inc:1574
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_pppoe_configure()."
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1680
+#: src/etc/inc/vpn.inc:1691
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_pppoe_configure()."
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1714
+#: src/etc/inc/vpn.inc:1725
 msgid "done"
 msgstr "ολοκληρώθηκε"
 
-#: src/etc/inc/vpn.inc:1736
+#: src/etc/inc/vpn.inc:1747
 msgid "Configuring l2tp VPN service... "
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1775
+#: src/etc/inc/vpn.inc:1786
 #, php-format
 msgid "Error: cannot open mpd.conf in vpn_l2tp_configure()."
 msgstr ""
 
-#: src/etc/inc/vpn.inc:1867
+#: src/etc/inc/vpn.inc:1878
 #, php-format
 msgid "Error: cannot open mpd.secret in vpn_l2tp_configure()."
 msgstr ""
@@ -7779,7 +7783,7 @@ msgstr "Επιβεβαίωση"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:486
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:230
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:239
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 msgid "Save"
 msgstr "Αποθήκευση"
@@ -7898,7 +7902,7 @@ msgid "MAC address"
 msgstr ""
 
 #: src/usr/local/www/diag_arp.php:335 src/usr/local/www/diag_ndp.php:140
-#: src/usr/local/www/interfaces.php:2001
+#: src/usr/local/www/interfaces.php:2018
 #: src/usr/local/www/services_captiveportal_hostname.php:115
 #: src/usr/local/www/services_dhcp.php:1445
 #: src/usr/local/www/services_dhcp_edit.php:446
@@ -8054,14 +8058,14 @@ msgid "Select the authentication server to test against."
 msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:98
-#: src/usr/local/www/interfaces.php:2648 src/usr/local/www/interfaces.php:2773
+#: src/usr/local/www/interfaces.php:2673 src/usr/local/www/interfaces.php:2798
 #: src/usr/local/www/system_usermanager.php:744
 #: src/usr/local/www/vpn_l2tp_users_edit.php:152
 msgid "*Username"
 msgstr "*Όνομα Χρήστη"
 
 #: src/usr/local/www/diag_authentication.php:106
-#: src/usr/local/www/interfaces.php:2655 src/usr/local/www/interfaces.php:2780
+#: src/usr/local/www/interfaces.php:2680 src/usr/local/www/interfaces.php:2805
 #: src/usr/local/www/system_usermanager_passwordmg.php:97
 msgid "*Password"
 msgstr "*Κωδικός Χρήστη"
@@ -8191,10 +8195,10 @@ msgid "Firewall Rules"
 msgstr ""
 
 #: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
-#: src/usr/local/www/interfaces.php:1700
+#: src/usr/local/www/interfaces.php:1710
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
-#: src/usr/local/www/interfaces_bridge_edit.php:379
+#: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/interfaces_gif_edit.php:160
 #: src/usr/local/www/interfaces_gre.php:70
@@ -8269,7 +8273,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
-#: src/usr/local/www/system_advanced_network.php:148
+#: src/usr/local/www/system_advanced_network.php:155
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:407
@@ -8345,7 +8349,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:487
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:240
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
@@ -8392,7 +8396,7 @@ msgid "Encryption"
 msgstr "Κρυπτογράφηση"
 
 #: src/usr/local/www/diag_backup.php:524 src/usr/local/www/diag_backup.php:571
-#: src/usr/local/www/interfaces.php:2588
+#: src/usr/local/www/interfaces.php:2613
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -8526,7 +8530,7 @@ msgstr ""
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:165
 #: src/usr/local/www/system_groupmanager_addprivs.php:213
 #: src/usr/local/www/system_usermanager_addprivs.php:197
-#: src/usr/local/www/interfaces.php:2084
+#: src/usr/local/www/interfaces.php:2101
 msgid "Clear"
 msgstr "Εκκαθάριση"
 
@@ -8813,7 +8817,7 @@ msgid "No response"
 msgstr "Καμία απάντηση "
 
 #: src/usr/local/www/diag_dns.php:191 src/usr/local/www/diag_tables.php:266
-#: src/usr/local/www/interfaces.php:3142 src/usr/local/www/interfaces.php:3166
+#: src/usr/local/www/interfaces.php:3167 src/usr/local/www/interfaces.php:3191
 #: src/usr/local/www/load_balancer_pool_edit.php:367
 #: src/usr/local/www/load_balancer_virtual_server.php:141
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:65
@@ -9020,7 +9024,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/firewall_rules.php:382
 #: src/usr/local/www/firewall_rules_edit.php:457
-#: src/usr/local/www/interfaces_bridge_edit.php:535
+#: src/usr/local/www/interfaces_bridge_edit.php:548
 #: src/usr/local/www/load_balancer_virtual_server.php:140
 #: src/usr/local/www/services_rfc2136_edit.php:240
 #: src/usr/local/www/status_ipsec_sad.php:68
@@ -9373,7 +9377,7 @@ msgstr "Απενεργοποίηση συστήματος και τερματι�
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/diag_reboot.php:119
 #: src/usr/local/www/firewall_nat.php:486
 #: src/usr/local/www/firewall_rules.php:883
-#: src/usr/local/www/interfaces.php:1962 src/usr/local/www/interfaces.php:3287
+#: src/usr/local/www/interfaces.php:1979 src/usr/local/www/interfaces.php:3312
 msgid "Cancel"
 msgstr "Ακύρωση"
 
@@ -9417,7 +9421,7 @@ msgstr ""
 msgid "NDP Table"
 msgstr ""
 
-#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:612
+#: src/usr/local/www/diag_ndp.php:138 src/usr/local/www/interfaces.php:615
 #: src/usr/local/www/services_dhcpv6.php:1030
 #: src/usr/local/www/services_dhcpv6_edit.php:220
 #: src/usr/local/www/status_dhcpv6_leases.php:437
@@ -9433,7 +9437,7 @@ msgid "Delete NDP entry"
 msgstr "Διαγραφή Εγγραφής NDP "
 
 #: src/usr/local/www/diag_packet_capture.php:102
-#: src/usr/local/www/diag_packet_capture.php:434
+#: src/usr/local/www/diag_packet_capture.php:445
 msgid "Download Capture"
 msgstr ""
 
@@ -9501,8 +9505,8 @@ msgid "Invalid value specified for packet count."
 msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:239
-#: src/usr/local/www/diag_packet_capture.php:411
-#: src/usr/local/www/diag_packet_capture.php:487
+#: src/usr/local/www/diag_packet_capture.php:422
+#: src/usr/local/www/diag_packet_capture.php:498
 #: src/usr/local/www/status_dhcp_leases.php:364
 #: src/usr/local/www/status_dhcpv6_leases.php:442
 #: src/usr/local/www/status_dhcpv6_leases.php:537
@@ -9510,8 +9514,8 @@ msgid "Start"
 msgstr "Έναρξη"
 
 #: src/usr/local/www/diag_packet_capture.php:247
-#: src/usr/local/www/diag_packet_capture.php:408
-#: src/usr/local/www/diag_packet_capture.php:418
+#: src/usr/local/www/diag_packet_capture.php:419
+#: src/usr/local/www/diag_packet_capture.php:429
 msgid "Stop"
 msgstr "Διακοπή"
 
@@ -9537,7 +9541,7 @@ msgstr ""
 #: src/usr/local/www/services_wol.php:135
 #: src/usr/local/www/services_wol_edit.php:134
 #: src/usr/local/www/system_gateways_edit.php:160
-#: src/usr/local/www/vpn_ipsec_phase1.php:678
+#: src/usr/local/www/vpn_ipsec_phase1.php:700
 #: src/usr/local/www/vpn_l2tp.php:222
 #: src/usr/local/www/vpn_openvpn_client.php:539
 #: src/usr/local/www/vpn_openvpn_server.php:731
@@ -9555,30 +9559,40 @@ msgstr ""
 #: src/usr/local/www/diag_packet_capture.php:318
 #, php-format
 msgid ""
-"The packet capture will be performed using promiscuous mode.%1$sNote: Some "
-"network adapters do not support or work well in promiscuous mode.%1$sMore: "
-"%2$sPacket capture%3$s"
+"%1$sNon-promiscuous mode captures only traffic that is directly relevant to "
+"the host (sent by it, sent or broadcast to it, or routed through it) and "
+"does not show packets that are ignored at network adapter level."
+"%2$s%3$sPromiscuous mode%4$s (\"sniffing\") captures all data seen by the "
+"adapter, whether or not it is valid or related to the host, but in some "
+"cases may have undesirable side effects and not all adapters support this "
+"option. Click Info for details %5$sPromiscuous mode requires more kernel "
+"processing of packets. This puts a slightly higher demand on system "
+"resources, especially on very busy networks or low power processors. The "
+"change in packet processing may allow a hostile host to detect that an "
+"adapter is in promiscuous mode or to 'fingerprint' the kernel (see %6$s). "
+"Some network adapters may not support or work well in promiscuous mode (see "
+"%7$s).%8$s"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:330
+#: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:331
+#: src/usr/local/www/diag_packet_capture.php:342
 msgid "IPv6 Only"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:327
+#: src/usr/local/www/diag_packet_capture.php:338
 #: src/usr/local/www/firewall_rules_edit.php:1286
 #: src/usr/local/www/system_gateways_edit.php:167
 msgid "*Address Family"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:333
+#: src/usr/local/www/diag_packet_capture.php:344
 msgid "Select the type of traffic to be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:337
+#: src/usr/local/www/diag_packet_capture.php:348
 #: src/usr/local/www/firewall_nat_edit.php:713
 #: src/usr/local/www/firewall_nat_out_edit.php:514
 #: src/usr/local/www/firewall_rules_edit.php:1297
@@ -9589,15 +9603,15 @@ msgstr ""
 msgid "*Protocol"
 msgstr "*Πρωτόκολλο"
 
-#: src/usr/local/www/diag_packet_capture.php:340
+#: src/usr/local/www/diag_packet_capture.php:351
 msgid "Select the protocol to capture, or \"Any\". "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:344
+#: src/usr/local/www/diag_packet_capture.php:355
 msgid "Host Address"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:347
+#: src/usr/local/www/diag_packet_capture.php:358
 #, php-format
 msgid ""
 "This value is either the Source or Destination IP address, subnet in CIDR "
@@ -9610,13 +9624,13 @@ msgid ""
 "is left blank, all packets on the specified interface will be captured."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:356
+#: src/usr/local/www/diag_packet_capture.php:367
 #: src/usr/local/www/diag_testport.php:52
 #: src/usr/local/www/firewall_aliases_edit.php:558
 #: src/usr/local/www/firewall_nat_edit.php:877
 #: src/usr/local/www/firewall_rules.php:384
 #: src/usr/local/www/firewall_rules.php:386
-#: src/usr/local/www/interfaces.php:3148 src/usr/local/www/interfaces.php:3172
+#: src/usr/local/www/interfaces.php:3173 src/usr/local/www/interfaces.php:3197
 #: src/usr/local/www/load_balancer_pool.php:120
 #: src/usr/local/www/load_balancer_pool_edit.php:69
 #: src/usr/local/www/load_balancer_virtual_server.php:142
@@ -9625,60 +9639,60 @@ msgstr ""
 msgid "Port"
 msgstr "Θύρα"
 
-#: src/usr/local/www/diag_packet_capture.php:359
+#: src/usr/local/www/diag_packet_capture.php:370
 msgid ""
 "The port can be either the source or destination port. The packet capture "
 "will look for this port in either field. Leave blank if not filtering by "
 "port."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:364
+#: src/usr/local/www/diag_packet_capture.php:375
 msgid "Packet Length"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:367
+#: src/usr/local/www/diag_packet_capture.php:378
 msgid ""
 "The Packet length is the number of bytes of each packet that will be "
 "captured. Default value is 0, which will capture the entire frame regardless "
 "of its size."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:372
+#: src/usr/local/www/diag_packet_capture.php:383
 #: src/usr/local/www/diag_ping.php:50
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:84
 msgid "Count"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:375
+#: src/usr/local/www/diag_packet_capture.php:386
 #, php-format
 msgid ""
 "This is the number of packets the packet capture will grab. Default value is "
 "100.%sEnter 0 (zero) for no count limit."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:383
+#: src/usr/local/www/diag_packet_capture.php:394
 #: src/usr/local/www/services_router_advertisements.php:112
 msgid "Normal"
 msgstr "Κανονικό"
 
-#: src/usr/local/www/diag_packet_capture.php:384
+#: src/usr/local/www/diag_packet_capture.php:395
 msgid "Medium"
 msgstr "Μέτριο"
 
-#: src/usr/local/www/diag_packet_capture.php:385
+#: src/usr/local/www/diag_packet_capture.php:396
 #: src/usr/local/www/services_router_advertisements.php:113
 msgid "High"
 msgstr "Υψηλό"
 
-#: src/usr/local/www/diag_packet_capture.php:386
+#: src/usr/local/www/diag_packet_capture.php:397
 msgid "Full"
 msgstr "Πλήρες"
 
-#: src/usr/local/www/diag_packet_capture.php:381
+#: src/usr/local/www/diag_packet_capture.php:392
 msgid "Level of detail"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:388
+#: src/usr/local/www/diag_packet_capture.php:399
 #, php-format
 msgid ""
 "This is the level of detail that will be displayed after hitting \"Stop\" "
@@ -9686,30 +9700,30 @@ msgid ""
 "of detail when downloading the packet capture. "
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:394
+#: src/usr/local/www/diag_packet_capture.php:405
 msgid "Reverse DNS Lookup"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:397
+#: src/usr/local/www/diag_packet_capture.php:408
 #, php-format
 msgid ""
 "The packet capture will perform a reverse DNS lookup associated with all IP "
 "addresses.%sThis option can cause delays for large packet captures."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:427
+#: src/usr/local/www/diag_packet_capture.php:438
 msgid "View Capture"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:440
+#: src/usr/local/www/diag_packet_capture.php:451
 msgid "Last capture"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:490
+#: src/usr/local/www/diag_packet_capture.php:501
 msgid "Packet capture is running."
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:500
+#: src/usr/local/www/diag_packet_capture.php:511
 msgid "Packets Captured"
 msgstr ""
 
@@ -9879,7 +9893,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:395
-#: src/usr/local/www/interfaces.php:2052
+#: src/usr/local/www/interfaces.php:2069
 msgid "Reboot"
 msgstr "Επανεκκίνηση"
 
@@ -10666,7 +10680,7 @@ msgstr "Διαγραφή ψευδώνυμου"
 #: src/usr/local/www/firewall_rules.php:825
 #: src/usr/local/www/firewall_schedule.php:245
 #: src/usr/local/www/firewall_virtual_ip.php:332
-#: src/usr/local/www/interfaces.php:1953 src/usr/local/www/interfaces.php:3278
+#: src/usr/local/www/interfaces.php:1970 src/usr/local/www/interfaces.php:3303
 #: src/usr/local/www/interfaces_assign.php:564
 #: src/usr/local/www/interfaces_bridge.php:156
 #: src/usr/local/www/interfaces_gif.php:130
@@ -10786,7 +10800,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1123
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
-#: src/usr/local/www/interfaces_bridge_edit.php:379
+#: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_gif_edit.php:160
 #: src/usr/local/www/interfaces_gre_edit.php:153
 #: src/usr/local/www/interfaces_groups_edit.php:33
@@ -11100,7 +11114,7 @@ msgid "Hint"
 msgstr "Υπόδειξη"
 
 #: src/usr/local/www/firewall_aliases_edit.php:719
-#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:476
+#: src/usr/local/www/status_lb_vs.php:64 src/usr/local/www/system.php:479
 #: src/usr/local/www/vpn_ipsec_phase2.php:524
 #: src/usr/local/www/vpn_ipsec_phase2.php:531
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
@@ -11617,7 +11631,7 @@ msgstr "Διακομιστής PPPoE"
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
 #: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:345
-#: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:332
+#: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:261
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_sad.php:36
@@ -11628,8 +11642,8 @@ msgstr "Διακομιστής PPPoE"
 #: src/usr/local/www/vpn_ipsec.php:219 src/usr/local/www/vpn_ipsec_keys.php:72
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
-#: src/usr/local/www/vpn_ipsec_phase1.php:629
-#: src/usr/local/www/vpn_ipsec_phase1.php:632
+#: src/usr/local/www/vpn_ipsec_phase1.php:651
+#: src/usr/local/www/vpn_ipsec_phase1.php:654
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_settings.php:186
@@ -11728,7 +11742,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:916
 #: src/usr/local/www/firewall_rules.php:783
 #: src/usr/local/www/services_dyndns_edit.php:254
-#: src/usr/local/www/vpn_ipsec_phase1.php:859
+#: src/usr/local/www/vpn_ipsec_phase1.php:888
 #: src/usr/local/www/vpn_openvpn_csc.php:334
 msgid "Disable"
 msgstr "Απενεργοποίηση"
@@ -11883,10 +11897,10 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:720
 #: src/usr/local/www/firewall_nat_edit.php:1152
 #: src/usr/local/www/firewall_rules_edit.php:1485
-#: src/usr/local/www/firewall_rules_edit.php:1785
-#: src/usr/local/www/firewall_rules_edit.php:1857
-#: src/usr/local/www/interfaces_bridge_edit.php:412
-#: src/usr/local/www/interfaces_bridge_edit.php:657
+#: src/usr/local/www/firewall_rules_edit.php:1794
+#: src/usr/local/www/firewall_rules_edit.php:1866
+#: src/usr/local/www/interfaces_bridge_edit.php:418
+#: src/usr/local/www/interfaces_bridge_edit.php:670
 #: src/usr/local/www/interfaces_ppps_edit.php:822
 #: src/usr/local/www/interfaces_ppps_edit.php:1049
 #: src/usr/local/www/services_dhcp.php:1079
@@ -11919,10 +11933,10 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:1191
 #: src/usr/local/www/services_dhcpv6.php:1226
 #: src/usr/local/www/services_dhcpv6.php:1262
-#: src/usr/local/www/services_ntpd.php:325
-#: src/usr/local/www/services_ntpd.php:361
-#: src/usr/local/www/services_ntpd.php:430
-#: src/usr/local/www/services_ntpd.php:467
+#: src/usr/local/www/services_ntpd.php:333
+#: src/usr/local/www/services_ntpd.php:369
+#: src/usr/local/www/services_ntpd.php:452
+#: src/usr/local/www/services_ntpd.php:489
 #: src/usr/local/www/services_ntpd_gps.php:481
 #: src/usr/local/www/services_ntpd_gps.php:683
 #: src/usr/local/www/system_gateways_edit.php:252
@@ -11956,7 +11970,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:888
 #: src/usr/local/www/firewall_rules_edit.php:1441
 #: src/usr/local/www/firewall_rules_edit.php:1455
-#: src/usr/local/www/interfaces.php:2688
+#: src/usr/local/www/interfaces.php:2713
 #: src/usr/local/www/interfaces_ppps_edit.php:749
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
@@ -12065,9 +12079,9 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:1154
-#: src/usr/local/www/firewall_rules_edit.php:1783
-#: src/usr/local/www/firewall_rules_edit.php:1855
-#: src/usr/local/www/interfaces_bridge_edit.php:655
+#: src/usr/local/www/firewall_rules_edit.php:1792
+#: src/usr/local/www/firewall_rules_edit.php:1864
+#: src/usr/local/www/interfaces_bridge_edit.php:668
 #: src/usr/local/www/interfaces_ppps_edit.php:1047
 #: src/usr/local/www/services_dhcp.php:1545
 #: src/usr/local/www/services_dhcp.php:1580
@@ -12084,8 +12098,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:1189
 #: src/usr/local/www/services_dhcpv6.php:1224
 #: src/usr/local/www/services_dhcpv6.php:1260
-#: src/usr/local/www/services_ntpd.php:428
-#: src/usr/local/www/services_ntpd.php:465
+#: src/usr/local/www/services_ntpd.php:450
+#: src/usr/local/www/services_ntpd.php:487
 #: src/usr/local/www/services_ntpd_gps.php:681
 #: src/usr/local/www/system_gateways_edit.php:453
 msgid "Hide Advanced"
@@ -12638,12 +12652,12 @@ msgid "Rules (Drag to Change Order)"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:387
-#: src/usr/local/www/firewall_rules_edit.php:1685
-#: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
+#: src/usr/local/www/firewall_rules_edit.php:1694
+#: src/usr/local/www/interfaces.php:564 src/usr/local/www/interfaces.php:615
 #: src/usr/local/www/services_dhcp.php:1009
 #: src/usr/local/www/services_dhcp_edit.php:540
-#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:478
-#: src/usr/local/www/system.php:516
+#: src/usr/local/www/status_gateways.php:61 src/usr/local/www/system.php:481
+#: src/usr/local/www/system.php:519
 #: src/usr/local/www/system_gateway_groups_edit.php:303
 #: src/usr/local/www/system_gateways.php:252
 #: src/usr/local/www/system_gateways_edit.php:184
@@ -12659,7 +12673,7 @@ msgid "Queue"
 msgstr "Ουρά αναμονής"
 
 #: src/usr/local/www/firewall_rules.php:389
-#: src/usr/local/www/firewall_rules_edit.php:1654
+#: src/usr/local/www/firewall_rules_edit.php:1663
 msgid "Schedule"
 msgstr "Χρονοδιάγραμμα"
 
@@ -12720,7 +12734,7 @@ msgid "Reserved%sNot assigned by IANA"
 msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:453
-#: src/usr/local/www/interfaces.php:3211
+#: src/usr/local/www/interfaces.php:3236
 msgid "Block bogon networks"
 msgstr ""
 
@@ -13608,45 +13622,45 @@ msgstr ""
 msgid "This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1633
+#: src/usr/local/www/firewall_rules_edit.php:1642
 msgid "VLAN Prio"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1636
+#: src/usr/local/www/firewall_rules_edit.php:1645
 msgid "Choose 802.1p priority to match on."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1640
+#: src/usr/local/www/firewall_rules_edit.php:1649
 msgid "VLAN Prio Set"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1643
+#: src/usr/local/www/firewall_rules_edit.php:1652
 msgid "Choose 802.1p priority to apply."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1657
+#: src/usr/local/www/firewall_rules_edit.php:1666
 msgid "Leave as 'none' to leave the rule enabled all the time."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1688
+#: src/usr/local/www/firewall_rules_edit.php:1697
 msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1691
+#: src/usr/local/www/firewall_rules_edit.php:1700
 msgid "In / Out pipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1695
+#: src/usr/local/www/firewall_rules_edit.php:1704
 msgid "DNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1702
+#: src/usr/local/www/firewall_rules_edit.php:1711
 msgid "PDNpipe"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1707
+#: src/usr/local/www/firewall_rules_edit.php:1716
 #, php-format
 msgid ""
 "Choose the Out queue/Virtual interface only if In is also selected. The Out "
@@ -13657,15 +13671,15 @@ msgid ""
 "is for incoming and In is for outgoing."
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1716
+#: src/usr/local/www/firewall_rules_edit.php:1725
 msgid "Ackqueue / Queue"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1733
+#: src/usr/local/www/firewall_rules_edit.php:1742
 msgid "Ackqueue"
 msgstr ""
 
-#: src/usr/local/www/firewall_rules_edit.php:1745
+#: src/usr/local/www/firewall_rules_edit.php:1754
 msgid "Choose the Acknowledge Queue only if there is a selected Queue."
 msgstr ""
 
@@ -14333,17 +14347,17 @@ msgstr ""
 msgid "10BASE-T half-duplex"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:247 src/usr/local/www/interfaces.php:3010
+#: src/usr/local/www/guiconfig.inc:247 src/usr/local/www/interfaces.php:3035
 #: src/usr/local/www/interfaces_wireless_edit.php:186
 msgid "Infrastructure (BSS)"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:248 src/usr/local/www/interfaces.php:3010
+#: src/usr/local/www/guiconfig.inc:248 src/usr/local/www/interfaces.php:3035
 #: src/usr/local/www/interfaces_wireless_edit.php:187
 msgid "Ad-hoc (IBSS)"
 msgstr ""
 
-#: src/usr/local/www/guiconfig.inc:249 src/usr/local/www/interfaces.php:3010
+#: src/usr/local/www/guiconfig.inc:249 src/usr/local/www/interfaces.php:3035
 #: src/usr/local/www/interfaces_wireless_edit.php:188
 msgid "Access Point"
 msgstr ""
@@ -14417,7 +14431,7 @@ msgstr "Τιμή"
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
-#: src/usr/local/www/system_advanced_network.php:148
+#: src/usr/local/www/system_advanced_network.php:155
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_gateways_edit.php:265
@@ -14525,7 +14539,7 @@ msgstr "SNMP"
 msgid "UPnP &amp; NAT-PMP"
 msgstr ""
 
-#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
@@ -14637,7 +14651,7 @@ msgid "Services"
 msgstr "Υπηρεσίες "
 
 #: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
-#: src/usr/local/www/status_graph.php:338
+#: src/usr/local/www/status_graph.php:267
 msgid "Traffic Graph"
 msgstr ""
 
@@ -14825,410 +14839,410 @@ msgstr ""
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:416
+#: src/usr/local/www/interfaces.php:419
 msgid "The settings have already been applied!"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:502
+#: src/usr/local/www/interfaces.php:505
 msgid "An interface with the specified description already exists."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:511
+#: src/usr/local/www/interfaces.php:514
 #, php-format
 msgid "Sorry, an alias with the name %s already exists."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:520
+#: src/usr/local/www/interfaces.php:523
 #, php-format
 msgid "Sorry, an interface group with the name %s already exists."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:526
+#: src/usr/local/www/interfaces.php:529
 msgid "The interface description cannot contain only numbers."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:535
+#: src/usr/local/www/interfaces.php:538
 msgid "The interface description cannot start with pkg_"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:541
+#: src/usr/local/www/interfaces.php:544
 msgid ""
 "The DHCP Server is active on this interface and it can be used only with a "
 "static IP configuration. Please disable the DHCP Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:547
+#: src/usr/local/www/interfaces.php:550
 msgid ""
 "The DHCP Server is active on this interface and it can be used only with "
 "IPv4 subnet < 31. Please disable the DHCP Server service on this interface "
 "first, then change the interface configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:555
+#: src/usr/local/www/interfaces.php:558
 msgid ""
 "The DHCP6 Server is active on this interface and it can be used only with a "
 "static IPv6 configuration. Please disable the DHCPv6 Server service on this "
 "interface first, then change the interface configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:561
+#: src/usr/local/www/interfaces.php:564
 msgid "IPv4 address"
 msgstr "Διεύθυνση IPv4"
 
-#: src/usr/local/www/interfaces.php:561 src/usr/local/www/interfaces.php:612
+#: src/usr/local/www/interfaces.php:564 src/usr/local/www/interfaces.php:615
 msgid "Subnet bit count"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:568
+#: src/usr/local/www/interfaces.php:571
 msgid ""
 "This interface is referenced by IPv4 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:575
+#: src/usr/local/www/interfaces.php:578
 msgid "Modem Port"
 msgstr "Θύρα μόντεμ"
 
-#: src/usr/local/www/interfaces.php:575
+#: src/usr/local/www/interfaces.php:578
 #: src/usr/local/www/interfaces_ppps_edit.php:204
 msgid "Phone Number"
 msgstr "Αριθμός τηλεφώνου"
 
-#: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:584
+#: src/usr/local/www/interfaces.php:584 src/usr/local/www/interfaces.php:587
 msgid "PPPoE username"
 msgstr "όνομα χρήστη PPPoE"
 
-#: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:584
+#: src/usr/local/www/interfaces.php:584 src/usr/local/www/interfaces.php:587
 msgid "PPPoE password"
 msgstr "κωδικός πρόσβασης PPPoE"
 
-#: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:591
-#: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:2669
-#: src/usr/local/www/interfaces.php:2801
+#: src/usr/local/www/interfaces.php:584 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:604 src/usr/local/www/interfaces.php:2694
+#: src/usr/local/www/interfaces.php:2826
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 msgid "Dial on demand"
 msgstr "Σύνδεση κατ' Απαίτηση"
 
-#: src/usr/local/www/interfaces.php:581 src/usr/local/www/interfaces.php:591
-#: src/usr/local/www/interfaces.php:601
+#: src/usr/local/www/interfaces.php:584 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:604
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 msgid "Idle timeout value"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:594 src/usr/local/www/interfaces.php:597
 msgid "PPTP username"
 msgstr "Όνομα χρήστη PPTP"
 
-#: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:594 src/usr/local/www/interfaces.php:597
 msgid "PPTP password"
 msgstr "Κωδικός πρόσβασης PPTP"
 
-#: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:594 src/usr/local/www/interfaces.php:597
 msgid "PPTP local IP address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:594 src/usr/local/www/interfaces.php:597
 msgid "PPTP subnet"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:591 src/usr/local/www/interfaces.php:594
+#: src/usr/local/www/interfaces.php:594 src/usr/local/www/interfaces.php:597
 msgid "PPTP remote IP address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
+#: src/usr/local/www/interfaces.php:604 src/usr/local/www/interfaces.php:607
 msgid "L2TP username"
 msgstr "Όνομα χρήστη L2TP"
 
-#: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
+#: src/usr/local/www/interfaces.php:604 src/usr/local/www/interfaces.php:607
 msgid "L2TP password"
 msgstr "Κωδικός πρόσβασης L2TP"
 
-#: src/usr/local/www/interfaces.php:601 src/usr/local/www/interfaces.php:604
+#: src/usr/local/www/interfaces.php:604 src/usr/local/www/interfaces.php:607
 msgid "L2TP remote IP address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:619
+#: src/usr/local/www/interfaces.php:622
 msgid ""
 "This interface is referenced by IPv6 VIPs. Please delete those before "
 "setting the interface to 'none' configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:626 src/usr/local/www/interfaces.php:645
-#: src/usr/local/www/interfaces.php:656 src/usr/local/www/interfaces.php:662
+#: src/usr/local/www/interfaces.php:629 src/usr/local/www/interfaces.php:648
+#: src/usr/local/www/interfaces.php:659 src/usr/local/www/interfaces.php:665
 #, php-format
 msgid "The interface must be reassigned to configure as %s."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:629
+#: src/usr/local/www/interfaces.php:632
 msgid ""
 "DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint "
 "flag is checked"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:636
+#: src/usr/local/www/interfaces.php:639
 msgid "Only one interface can be configured within a single 6rd prefix."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:642
+#: src/usr/local/www/interfaces.php:645
 msgid "6RD Border Relay must be an IPv4 address."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:651
+#: src/usr/local/www/interfaces.php:654
 #, php-format
 msgid "Only one interface can be configured as 6to4."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:666
+#: src/usr/local/www/interfaces.php:669
 msgid "A valid interface to track must be selected."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:670
+#: src/usr/local/www/interfaces.php:673
 msgid "A valid hexadecimal number must be entered for the IPv6 prefix ID."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:674
+#: src/usr/local/www/interfaces.php:677
 msgid "The specified IPv6 Prefix ID is out of range."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:684
+#: src/usr/local/www/interfaces.php:687
 #, php-format
 msgid "This track6 prefix ID is already being used in %s."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:697
+#: src/usr/local/www/interfaces.php:700
 #: src/usr/local/www/services_dhcp_edit.php:173
 msgid "A valid IPv4 address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:701
+#: src/usr/local/www/interfaces.php:704
 #, php-format
 msgid "IPv4 address %s is being used by or overlaps with:"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:711
+#: src/usr/local/www/interfaces.php:714
 msgid "This IPv4 address is the network address and cannot be used"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:713
+#: src/usr/local/www/interfaces.php:716
 msgid "This IPv4 address is the broadcast address and cannot be used"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:720
+#: src/usr/local/www/interfaces.php:723
 msgid "This IPv4 address conflicts with a Static Route."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:731
+#: src/usr/local/www/interfaces.php:734
 #: src/usr/local/www/services_dhcpv6_edit.php:120
 msgid "A valid IPv6 address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:734
+#: src/usr/local/www/interfaces.php:737
 msgid "IPv6 link local addresses cannot be configured as an interface IP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:738
+#: src/usr/local/www/interfaces.php:741
 #, php-format
 msgid "IPv6 address %s is being used by or overlaps with:"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:748
+#: src/usr/local/www/interfaces.php:751
 msgid "This IPv6 address conflicts with a Static Route."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:756 src/usr/local/www/interfaces.php:759
+#: src/usr/local/www/interfaces.php:759 src/usr/local/www/interfaces.php:762
 msgid "A valid subnet bit count must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:762
+#: src/usr/local/www/interfaces.php:765
 msgid "A valid alias IP address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:765
+#: src/usr/local/www/interfaces.php:768
 msgid "A valid alias subnet bit count must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:768
+#: src/usr/local/www/interfaces.php:771
 msgid "An invalid IP address was detected in the 'Reject leases from' field."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:780
+#: src/usr/local/www/interfaces.php:783
 msgid "A valid IPv4 gateway must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:792
+#: src/usr/local/www/interfaces.php:795
 msgid "A valid IPv6 gateway must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:796
+#: src/usr/local/www/interfaces.php:799
 msgid "The service name contains invalid characters."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:799 src/usr/local/www/interfaces.php:822
+#: src/usr/local/www/interfaces.php:802 src/usr/local/www/interfaces.php:825
 #: src/usr/local/www/interfaces_ppps_edit.php:248
 msgid "The idle timeout value must be an integer."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:803
+#: src/usr/local/www/interfaces.php:806
 #: src/usr/local/www/interfaces_ppps_edit.php:252
 msgid "A valid PPPoE reset hour must be specified (0-23)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:807
+#: src/usr/local/www/interfaces.php:810
 #: src/usr/local/www/interfaces_ppps_edit.php:256
 msgid "A valid PPPoE reset minute must be specified (0-59)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:810
+#: src/usr/local/www/interfaces.php:813
 #: src/usr/local/www/interfaces_ppps_edit.php:259
 msgid "A valid PPPoE reset date must be specified (mm/dd/yyyy)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:813
+#: src/usr/local/www/interfaces.php:816
 msgid "A valid PPTP local IP address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:816
+#: src/usr/local/www/interfaces.php:819
 msgid "A valid PPTP subnet bit count must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:819
+#: src/usr/local/www/interfaces.php:822
 msgid "A valid PPTP remote IP address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:825
+#: src/usr/local/www/interfaces.php:828
 #: src/usr/local/www/services_dhcp_edit.php:177
 #: src/usr/local/www/services_wol.php:73
 #: src/usr/local/www/services_wol_edit.php:81
 msgid "A valid MAC address must be specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:840
+#: src/usr/local/www/interfaces.php:843
 #, php-format
 msgid "The MTU must be between %d and %d bytes."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:856
+#: src/usr/local/www/interfaces.php:859
 msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:872
+#: src/usr/local/www/interfaces.php:875
 #, php-format
 msgid "Interface %s (VLAN) has MTU set to a larger value."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:879
+#: src/usr/local/www/interfaces.php:882
 msgid "The MSS must be an integer between 576 and 65535 bytes."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3015
+#: src/usr/local/www/interfaces.php:891 src/usr/local/www/interfaces.php:3040
 #: src/usr/local/www/status_interfaces.php:164
 msgid "SSID"
 msgstr "SSID"
 
-#: src/usr/local/www/interfaces.php:891
+#: src/usr/local/www/interfaces.php:894
 msgid "A specific channel, not auto, must be selected for Access Point mode."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:896
+#: src/usr/local/www/interfaces.php:899
 msgid "802.11n standards require enabling WME."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:902
+#: src/usr/local/www/interfaces.php:905
 msgid "Key Rotation must be an integer between 1 and 9999."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:905
+#: src/usr/local/www/interfaces.php:908
 msgid "Master Key Regeneration must be an integer between 1 and 9999."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:909
+#: src/usr/local/www/interfaces.php:912
 msgid "Master Key Regeneration must be greater than Key Rotation."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:914
+#: src/usr/local/www/interfaces.php:917
 msgid "802.1X Authentication Server must be an IP or hostname."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:919
+#: src/usr/local/www/interfaces.php:922
 msgid "Secondary 802.1X Authentication Server must be an IP or hostname."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:924
+#: src/usr/local/www/interfaces.php:927
 msgid ""
 "802.1X Authentication Server Port must be a valid port number (1-65535)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:929
+#: src/usr/local/www/interfaces.php:932
 msgid ""
 "Secondary 802.1X Authentication Server Port must be a valid port number (1-"
 "65535)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:934
+#: src/usr/local/www/interfaces.php:937
 msgid "Invalid channel specified."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:937
+#: src/usr/local/www/interfaces.php:940
 msgid "Channel must be between 0-255."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:942
+#: src/usr/local/www/interfaces.php:945
 msgid "Distance must be an integer."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:946
+#: src/usr/local/www/interfaces.php:949
 msgid "Channel selected is not valid for 802.11a or 802.11na."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:951
+#: src/usr/local/www/interfaces.php:954
 msgid "Channel selected is not valid for 802.11b or 802.11g."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:955
+#: src/usr/local/www/interfaces.php:958
 msgid "Invalid option chosen for OFDM Protection Mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:961
+#: src/usr/local/www/interfaces.php:964
 msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:967
+#: src/usr/local/www/interfaces.php:970
 msgid "A WPA Passphrase must be specified when WPA PSK is enabled."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:973
+#: src/usr/local/www/interfaces.php:976
 msgid "PPP Password and confirmed password must match!"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:977
+#: src/usr/local/www/interfaces.php:980
 msgid "PPPoE Password and confirmed password must match!"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:981
+#: src/usr/local/www/interfaces.php:984
 msgid "PTPP Password and confirmed password must match!"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1677
+#: src/usr/local/www/interfaces.php:1687
 #, php-format
 msgid ""
 "Unable to change mode to %s. The maximum number of wireless clones supported "
 "in this mode may have been reached."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/interfaces.php:1713
 msgid "Static IPv4"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1703 src/usr/local/www/status_logs.php:43
+#: src/usr/local/www/interfaces.php:1713 src/usr/local/www/status_logs.php:43
 #: src/usr/local/www/status_logs_common.inc:90
 #: src/usr/local/www/status_logs_settings.php:218
 msgid "DHCP"
 msgstr "DHCP"
 
-#: src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/status_logs.php:49
 #: src/usr/local/www/status_logs_common.inc:93
@@ -15236,83 +15250,83 @@ msgstr "DHCP"
 msgid "PPP"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 msgid "PPPoE"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1703
+#: src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 msgid "PPTP"
 msgstr "PPTP"
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "Static IPv6"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "DHCP6"
 msgstr "DHCP6"
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "SLAAC"
 msgstr "SLAAC"
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "6rd Tunnel"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "6to4 Tunnel"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1704
+#: src/usr/local/www/interfaces.php:1714
 msgid "Track Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1716
+#: src/usr/local/www/interfaces.php:1726
 msgid "Default (no preference, typically autoselect)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1717
+#: src/usr/local/www/interfaces.php:1727
 msgid "------- Media Supported by this interface -------"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1760
+#: src/usr/local/www/interfaces.php:1770
 #, php-format
 msgid "The %s configuration has been changed."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1761
+#: src/usr/local/www/interfaces.php:1771
 msgid "The changes must be applied to take effect."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1762
+#: src/usr/local/www/interfaces.php:1772
 msgid "Don't forget to adjust the DHCP Server range if needed after applying."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1771
+#: src/usr/local/www/interfaces.php:1781
 msgid "General Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1783
+#: src/usr/local/www/interfaces.php:1793
 #: src/usr/local/www/load_balancer_monitor_edit.php:271
 msgid "*Description"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1786
+#: src/usr/local/www/interfaces.php:1796
 msgid "Enter a description (name) for the interface here."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1790
+#: src/usr/local/www/interfaces.php:1800
 msgid "IPv4 Configuration Type"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1797
+#: src/usr/local/www/interfaces.php:1807
 msgid "IPv6 Configuration Type"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1804 src/usr/local/www/interfaces.php:1819
+#: src/usr/local/www/interfaces.php:1814 src/usr/local/www/interfaces.php:1829
 #: src/usr/local/www/services_captiveportal_mac_edit.php:205
 #: src/usr/local/www/services_dhcp_edit.php:406
 #: src/usr/local/www/services_dhcp_edit.php:421
@@ -15320,13 +15334,13 @@ msgstr ""
 msgid "MAC Address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1812
+#: src/usr/local/www/interfaces.php:1822
 #: src/usr/local/www/services_captiveportal_mac_edit.php:213
 #: src/usr/local/www/services_dhcp_edit.php:414
 msgid "Copy My MAC"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1822
+#: src/usr/local/www/interfaces.php:1832
 #, php-format
 msgid ""
 "This field can be used to modify (\"spoof\") the MAC address of this "
@@ -15334,33 +15348,33 @@ msgid ""
 "or leave blank."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1828
+#: src/usr/local/www/interfaces.php:1838
 #: src/usr/local/www/interfaces_ppps_edit.php:917
 #: src/usr/local/www/status_interfaces.php:159
 msgid "MTU"
 msgstr "MTU"
 
-#: src/usr/local/www/interfaces.php:1831
+#: src/usr/local/www/interfaces.php:1841
 msgid ""
 "If this field is blank, the adapter's default MTU will be used. This is "
 "typically 1500 bytes but can vary in some circumstances."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1836
+#: src/usr/local/www/interfaces.php:1846
 msgid "MSS"
 msgstr "MSS"
 
-#: src/usr/local/www/interfaces.php:1839
+#: src/usr/local/www/interfaces.php:1849
 msgid ""
 "If a value is entered in this field, then MSS clamping for TCP connections "
 "to the value entered above minus 40 (TCP/IP header size) will be in effect."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1845
+#: src/usr/local/www/interfaces.php:1855
 msgid "Speed and Duplex"
 msgstr "Ταχύτητα και αμφίδρομη λειτουργία"
 
-#: src/usr/local/www/interfaces.php:1848
+#: src/usr/local/www/interfaces.php:1858
 #, php-format
 msgid ""
 "Explicitly set speed and duplex mode for this interface.%sWARNING: MUST be "
@@ -15368,27 +15382,27 @@ msgid ""
 "interface connects to has its speed and duplex forced."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1854
+#: src/usr/local/www/interfaces.php:1864
 msgid "Static IPv4 Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1859
+#: src/usr/local/www/interfaces.php:1869
 msgid "*IPv4 Address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1864
+#: src/usr/local/www/interfaces.php:1874
 msgid "IPv4 Upstream gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1868
+#: src/usr/local/www/interfaces.php:1878
 msgid "IPv4 Upstream Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1875 src/usr/local/www/interfaces.php:1909
+#: src/usr/local/www/interfaces.php:1885 src/usr/local/www/interfaces.php:1926
 msgid "Add a new gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1880
+#: src/usr/local/www/interfaces.php:1890
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -15397,23 +15411,27 @@ msgid ""
 "by %2$sclicking here%3$s."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1888
+#: src/usr/local/www/interfaces.php:1898
 msgid "Static IPv6 Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1893
+#: src/usr/local/www/interfaces.php:1903
 msgid "*IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1898
+#: src/usr/local/www/interfaces.php:1910 src/usr/local/www/interfaces.php:2203
+msgid "Use IPv4 connectivity as parent interface"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:1915
 msgid "IPv6 Upstream gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1902
+#: src/usr/local/www/interfaces.php:1919
 msgid "IPv6 Upstream Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1914
+#: src/usr/local/www/interfaces.php:1931
 #, php-format
 msgid ""
 "If this interface is an Internet connection, select an existing Gateway from "
@@ -15421,58 +15439,58 @@ msgid ""
 "upstream gateway should be \"none\". "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1921
+#: src/usr/local/www/interfaces.php:1938
 msgid "New IPv6 Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1932 src/usr/local/www/interfaces.php:3257
+#: src/usr/local/www/interfaces.php:1949 src/usr/local/www/interfaces.php:3282
 #: src/usr/local/www/system_gateways_edit.php:180
 msgid "Gateway name"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1939
+#: src/usr/local/www/interfaces.php:1956
 #: src/usr/local/www/status_interfaces.php:147
 msgid "Gateway IPv6"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1978
+#: src/usr/local/www/interfaces.php:1995
 msgid "DHCP Client Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1981 src/usr/local/www/interfaces.php:2166
+#: src/usr/local/www/interfaces.php:1998 src/usr/local/www/interfaces.php:2183
 msgid "Options"
 msgstr "Επιλογές"
 
-#: src/usr/local/www/interfaces.php:1988
+#: src/usr/local/www/interfaces.php:2005
 msgid "Use advanced DHCP configuration options."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1995 src/usr/local/www/interfaces.php:2180
+#: src/usr/local/www/interfaces.php:2012 src/usr/local/www/interfaces.php:2197
 msgid "Override the configuration from this file."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2004
+#: src/usr/local/www/interfaces.php:2021
 msgid ""
 "The value in this field is sent as the DHCP client identifier and hostname "
 "when requesting a DHCP lease. Some ISPs may require this (for client "
 "identification)."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2008
+#: src/usr/local/www/interfaces.php:2025
 msgid "Alias IPv4 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2011
+#: src/usr/local/www/interfaces.php:2028
 msgid ""
 "The value in this field is used as a fixed alias IPv4 address by the DHCP "
 "client."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2015
+#: src/usr/local/www/interfaces.php:2032
 msgid "Reject leases from"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2018
+#: src/usr/local/www/interfaces.php:2035
 msgid ""
 "To have the DHCP client reject offers from specific DHCP servers, enter "
 "their IP addresses here (separate multiple entries with a comma). This is "
@@ -15480,110 +15498,106 @@ msgid ""
 "addresses when they lose upstream sync."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2022
+#: src/usr/local/www/interfaces.php:2039
 msgid "Protocol timing"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2030
+#: src/usr/local/www/interfaces.php:2047
 #: src/usr/local/www/load_balancer_setting.php:117
 msgid "Timeout"
 msgstr "Λήξη Χρόνου"
 
-#: src/usr/local/www/interfaces.php:2037
+#: src/usr/local/www/interfaces.php:2054
 #: src/usr/local/www/load_balancer_pool_edit.php:333
 msgid "Retry"
 msgstr "Προσπάθεια ξανά"
 
-#: src/usr/local/www/interfaces.php:2045
+#: src/usr/local/www/interfaces.php:2062
 msgid "Select timeout"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2059
+#: src/usr/local/www/interfaces.php:2076
 msgid "Backoff cutoff"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2066
+#: src/usr/local/www/interfaces.php:2083
 msgid "Initial interval"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2070
+#: src/usr/local/www/interfaces.php:2087
 msgid "Presets"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2105
+#: src/usr/local/www/interfaces.php:2122
 #, php-format
 msgid ""
 "The values in these fields are DHCP protocol timings used when requesting a "
 "lease.%1$sSee %2$shere%3$s for more information"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2112 src/usr/local/www/interfaces.php:2232
+#: src/usr/local/www/interfaces.php:2129 src/usr/local/www/interfaces.php:2249
 msgid "Configuration File Override"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2122
+#: src/usr/local/www/interfaces.php:2139
 msgid "Lease Requirements and Requests"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2127 src/usr/local/www/interfaces.php:2257
+#: src/usr/local/www/interfaces.php:2144 src/usr/local/www/interfaces.php:2274
 msgid "Send options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2137
+#: src/usr/local/www/interfaces.php:2154
 msgid "Request options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2145
+#: src/usr/local/www/interfaces.php:2162
 msgid "Require options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2152
+#: src/usr/local/www/interfaces.php:2169
 msgid "Option modifiers"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2163
+#: src/usr/local/www/interfaces.php:2180
 msgid "DHCP6 Client Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2173
+#: src/usr/local/www/interfaces.php:2190
 msgid "Use advanced DHCPv6 configuration options."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2186
-msgid "Use IPv4 connectivity as parent interface"
-msgstr ""
-
-#: src/usr/local/www/interfaces.php:2193
+#: src/usr/local/www/interfaces.php:2210
 msgid "Request only an IPv6 prefix"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2200
+#: src/usr/local/www/interfaces.php:2217
 msgid "DHCPv6 Prefix Delegation size"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2203
+#: src/usr/local/www/interfaces.php:2220
 msgid ""
 "The value in this field is the delegated prefix length provided by the "
 "DHCPv6 server. Normally specified by the ISP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2207
+#: src/usr/local/www/interfaces.php:2224
 msgid "Send IPv6 prefix hint"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2214
+#: src/usr/local/www/interfaces.php:2231
 msgid "Debug"
 msgstr "Αποσφαλμάτωση"
 
-#: src/usr/local/www/interfaces.php:2220
+#: src/usr/local/www/interfaces.php:2237
 msgid "Do not wait for a RA"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2226
+#: src/usr/local/www/interfaces.php:2243
 msgid "Do not allow PD/Address release"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2235
+#: src/usr/local/www/interfaces.php:2252
 #, php-format
 msgid ""
 "The value in this field is the full absolute path to a DHCP client "
@@ -15594,86 +15608,98 @@ msgid ""
 "may require certain options be or not be sent."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2244
+#: src/usr/local/www/interfaces.php:2261
 msgid "Advanced DHCP6 Client Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2249
+#: src/usr/local/www/interfaces.php:2266
 msgid "Information only"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2253
+#: src/usr/local/www/interfaces.php:2270
 msgid "Only exchange informational configuration parameters with servers."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2267
+#: src/usr/local/www/interfaces.php:2284
 msgid "Request Options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2275
+#: src/usr/local/www/interfaces.php:2292
 msgid "Scripts"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2281
+#: src/usr/local/www/interfaces.php:2298
 msgid "Identity Association Statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2362
+#: src/usr/local/www/interfaces.php:2379
 msgid "Prefix interface statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2380
+#: src/usr/local/www/interfaces.php:2397
+msgid "Select prefix interface"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:2400
+msgid "Prefix Interface"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:2403
+msgid "Select the interface on which to apply the prefix delegation."
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:2405
 msgid "Authentication statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2412
+#: src/usr/local/www/interfaces.php:2437
 msgid "Keyinfo statement"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2453
+#: src/usr/local/www/interfaces.php:2478
 #, php-format
 msgid "See %1$shere%2$s more information"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2459
+#: src/usr/local/www/interfaces.php:2484
 msgid "6RD Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2464
+#: src/usr/local/www/interfaces.php:2489
 msgid "6RD Prefix"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2471
+#: src/usr/local/www/interfaces.php:2496
 msgid "*6RD Border relay"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2478
+#: src/usr/local/www/interfaces.php:2503
 msgid "6RD IPv4 Prefix length"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2481
+#: src/usr/local/www/interfaces.php:2506
 msgid ""
 "6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means "
 "embed the entire IPv4 address in the 6RD prefix."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2486
+#: src/usr/local/www/interfaces.php:2511
 msgid "Track IPv6 Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2528
+#: src/usr/local/www/interfaces.php:2553
 msgid "*IPv6 Interface"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2531
+#: src/usr/local/www/interfaces.php:2556
 msgid "Selects the dynamic IPv6 WAN interface to track for configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2539
+#: src/usr/local/www/interfaces.php:2564
 msgid "IPv6 Prefix ID"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2542
+#: src/usr/local/www/interfaces.php:2567
 #, php-format
 msgid ""
 "(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the "
@@ -15681,32 +15707,32 @@ msgid ""
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2555
+#: src/usr/local/www/interfaces.php:2580
 #: src/usr/local/www/interfaces_ppps_edit.php:563
 msgid "PPP Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2560 src/usr/local/www/interfaces.php:2986
+#: src/usr/local/www/interfaces.php:2585 src/usr/local/www/interfaces.php:3011
 #: src/usr/local/www/interfaces_ppps_edit.php:591
 msgid "Country"
 msgstr "Χώρα"
 
-#: src/usr/local/www/interfaces.php:2567
+#: src/usr/local/www/interfaces.php:2592
 #: src/usr/local/www/interfaces_ppps_edit.php:598
 msgid "Provider"
 msgstr "Πάροχος"
 
-#: src/usr/local/www/interfaces.php:2574
+#: src/usr/local/www/interfaces.php:2599
 #: src/usr/local/www/interfaces_ppps_edit.php:605
 msgid "Plan"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2577
+#: src/usr/local/www/interfaces.php:2602
 #: src/usr/local/www/interfaces_ppps_edit.php:608
 msgid "Select to fill in service provider data."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2581
+#: src/usr/local/www/interfaces.php:2606
 #: src/usr/local/www/interfaces_ppps_edit.php:210
 #: src/usr/local/www/interfaces_ppps_edit.php:213
 #: src/usr/local/www/interfaces_ppps_edit.php:221
@@ -15729,117 +15755,117 @@ msgstr ""
 msgid "Username"
 msgstr "Όνομα Χρήστη"
 
-#: src/usr/local/www/interfaces.php:2595
+#: src/usr/local/www/interfaces.php:2620
 #: src/usr/local/www/interfaces_ppps_edit.php:663
 msgid "*Phone number"
 msgstr "*Αριθμός τηλεφώνου"
 
-#: src/usr/local/www/interfaces.php:2598
+#: src/usr/local/www/interfaces.php:2623
 msgid "Typically *99# for GSM networks and #777 for CDMA networks."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2602
+#: src/usr/local/www/interfaces.php:2627
 msgid "Access Point Name"
 msgstr "Όνομα σημείου πρόσβασης"
 
-#: src/usr/local/www/interfaces.php:2628
+#: src/usr/local/www/interfaces.php:2653
 msgid "*Modem port"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2635
+#: src/usr/local/www/interfaces.php:2660
 msgid "Advanced PPP"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2638
+#: src/usr/local/www/interfaces.php:2663
 msgid "Create a new PPP configuration."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2643
+#: src/usr/local/www/interfaces.php:2668
 msgid "PPPoE Configuration"
 msgstr "Ρυθμίσεις PPPoE"
 
-#: src/usr/local/www/interfaces.php:2662
+#: src/usr/local/www/interfaces.php:2687
 #: src/usr/local/www/interfaces_ppps_edit.php:720
 msgid "Service name"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2665
+#: src/usr/local/www/interfaces.php:2690
 msgid "This field can usually be left empty."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2677
+#: src/usr/local/www/interfaces.php:2702
 msgid "Idle timeout"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2681 src/usr/local/www/interfaces.php:2814
+#: src/usr/local/www/interfaces.php:2706 src/usr/local/www/interfaces.php:2839
 msgid ""
 "If no qualifying outgoing packets are transmitted for the specified number "
 "of seconds, the connection is brought down. An idle timeout of zero disables "
 "this feature."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2688
+#: src/usr/local/www/interfaces.php:2713
 #: src/usr/local/www/interfaces_ppps_edit.php:750
 msgid "Pre-set"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2686
+#: src/usr/local/www/interfaces.php:2711
 msgid "Periodic reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2689
+#: src/usr/local/www/interfaces.php:2714
 msgid "Select a reset timing type."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2691
+#: src/usr/local/www/interfaces.php:2716
 msgid "Custom reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2700
+#: src/usr/local/www/interfaces.php:2725
 msgid "Hour (0-23)"
 msgstr "Ωρα (0-23)"
 
-#: src/usr/local/www/interfaces.php:2708
+#: src/usr/local/www/interfaces.php:2733
 msgid "Minutes (0-59)"
 msgstr "Λεπτά (0-59)"
 
-#: src/usr/local/www/interfaces.php:2715
+#: src/usr/local/www/interfaces.php:2740
 msgid "Specific date (mm/dd/yyyy)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2717
+#: src/usr/local/www/interfaces.php:2742
 msgid ""
 "Leave the date field empty, for the reset to be executed each day at the "
 "time specified by the minutes and hour fields"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2721
+#: src/usr/local/www/interfaces.php:2746
 msgid "cron based reset"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2760 src/usr/local/www/interfaces.php:2825
+#: src/usr/local/www/interfaces.php:2785 src/usr/local/www/interfaces.php:2850
 msgid "Advanced and MLPPP"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2763
+#: src/usr/local/www/interfaces.php:2788
 msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2768
+#: src/usr/local/www/interfaces.php:2793
 msgid "PPTP/L2TP Configuration"
 msgstr "Ρυθμίσεις PPTP/L2TP"
 
-#: src/usr/local/www/interfaces.php:2787
+#: src/usr/local/www/interfaces.php:2812
 msgid "*Local IP address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2794
+#: src/usr/local/www/interfaces.php:2819
 msgid "*Remote IP address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2805
+#: src/usr/local/www/interfaces.php:2830
 msgid ""
 "This option causes the interface to operate in dial-on-demand mode, allowing "
 "it to be a virtual full time connection. The interface is configured, but "
@@ -15847,70 +15873,70 @@ msgid ""
 "traffic is detected."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2810
+#: src/usr/local/www/interfaces.php:2835
 msgid "Idle timeout (seconds)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2818
+#: src/usr/local/www/interfaces.php:2843
 msgid "There are additional Local and Remote IP addresses defined for MLPPP."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2828
+#: src/usr/local/www/interfaces.php:2853
 #, php-format
 msgid ""
 "%sClick for additional PPTP and L2TP configuration options. Save first if "
 "changes have been made."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2835
+#: src/usr/local/www/interfaces.php:2860
 msgid ""
 "Common Wireless Configuration - Settings apply to all wireless networks on "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2839
+#: src/usr/local/www/interfaces.php:2864
 msgid "Persist common settings"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2859
+#: src/usr/local/www/interfaces.php:2884
 msgid "Standard"
 msgstr "Τυπικό"
 
-#: src/usr/local/www/interfaces.php:2869 src/usr/local/www/interfaces.php:2919
+#: src/usr/local/www/interfaces.php:2894 src/usr/local/www/interfaces.php:2944
 msgid "Off"
 msgstr "Ανενεργό"
 
-#: src/usr/local/www/interfaces.php:2869
+#: src/usr/local/www/interfaces.php:2894
 msgid "CTS to self"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2869
+#: src/usr/local/www/interfaces.php:2894
 msgid "RTS and CTS"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2867
+#: src/usr/local/www/interfaces.php:2892
 msgid "802.11g OFDM Protection Mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2870
+#: src/usr/local/www/interfaces.php:2895
 msgid ""
 "For IEEE 802.11g, use the specified technique for protecting OFDM frames in "
 "a mixed 11b/11g network."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2880 src/usr/local/www/interfaces.php:2928
-#: src/usr/local/www/interfaces.php:2937
-#: src/usr/local/www/vpn_ipsec_phase1.php:666
-#: src/usr/local/www/vpn_ipsec_phase1.php:851
+#: src/usr/local/www/interfaces.php:2905 src/usr/local/www/interfaces.php:2953
+#: src/usr/local/www/interfaces.php:2962
+#: src/usr/local/www/vpn_ipsec_phase1.php:688
+#: src/usr/local/www/vpn_ipsec_phase1.php:880
 #: src/usr/local/www/vpn_ipsec_phase2.php:629
 msgid "Auto"
 msgstr "Αυτόματο"
 
-#: src/usr/local/www/interfaces.php:2904
+#: src/usr/local/www/interfaces.php:2929
 #: src/usr/local/www/status_interfaces.php:163
 msgid "Channel"
 msgstr "Κανάλι"
 
-#: src/usr/local/www/interfaces.php:2907
+#: src/usr/local/www/interfaces.php:2932
 #, php-format
 msgid ""
 "Legend: wireless standards - channel # (frequency @ max TX power / TX power "
@@ -15918,88 +15944,88 @@ msgid ""
 " Auto may override the wireless standard selected above."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2912
+#: src/usr/local/www/interfaces.php:2937
 msgid "Antenna Settings"
 msgstr "Ρυθμίσεις κεραίας"
 
-#: src/usr/local/www/interfaces.php:2919
+#: src/usr/local/www/interfaces.php:2944
 msgid "On"
 msgstr "Ενεργό"
 
-#: src/usr/local/www/interfaces.php:2920
+#: src/usr/local/www/interfaces.php:2945
 msgid "Diversity"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2928 src/usr/local/www/interfaces.php:2937
+#: src/usr/local/www/interfaces.php:2953 src/usr/local/www/interfaces.php:2962
 msgid "#1"
 msgstr "#1"
 
-#: src/usr/local/www/interfaces.php:2928 src/usr/local/www/interfaces.php:2937
+#: src/usr/local/www/interfaces.php:2953 src/usr/local/www/interfaces.php:2962
 msgid "#2"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2929
+#: src/usr/local/www/interfaces.php:2954
 msgid "Transmit antenna"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2938
+#: src/usr/local/www/interfaces.php:2963
 msgid "Receive antenna"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2941
+#: src/usr/local/www/interfaces.php:2966
 msgid ""
 "Note: The antenna numbers do not always match up with the labels on the card."
 ""
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2950
+#: src/usr/local/www/interfaces.php:2975
 msgid "Distance setting (meters)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2953
+#: src/usr/local/www/interfaces.php:2978
 msgid ""
 "This field can be used to tune ACK/CTS timers to fit the distance between AP "
 "and Client"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2959
+#: src/usr/local/www/interfaces.php:2984
 msgid "Regulatory Settings"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2971
+#: src/usr/local/www/interfaces.php:2996
 msgid "Regulatory domain"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2974
+#: src/usr/local/www/interfaces.php:2999
 msgid ""
 "Some cards have a default that is not recognized and require changing the "
 "regulatory domain to one in this list for the changes to other regulatory "
 "settings to work"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2989
+#: src/usr/local/www/interfaces.php:3014
 msgid ""
 "Any country setting other than \"Default\" will override the regulatory "
 "domain setting"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2995
+#: src/usr/local/www/interfaces.php:3020
 msgid "Indoor"
 msgstr "Εσωτερικού χώρου"
 
-#: src/usr/local/www/interfaces.php:2995
+#: src/usr/local/www/interfaces.php:3020
 msgid "Outdoor"
 msgstr "Εξωτερικού χώρου"
 
-#: src/usr/local/www/interfaces.php:2995
+#: src/usr/local/www/interfaces.php:3020
 msgid "Anywhere"
 msgstr "Οπουδήποτε"
 
-#: src/usr/local/www/interfaces.php:2993
+#: src/usr/local/www/interfaces.php:3018
 msgid "Location"
 msgstr "Τοποθεσία"
 
-#: src/usr/local/www/interfaces.php:2996
+#: src/usr/local/www/interfaces.php:3021
 #, php-format
 msgid ""
 "These settings may affect which channels are available and the maximum "
@@ -16011,75 +16037,75 @@ msgid ""
 "additional channels that are not already supported."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3004
+#: src/usr/local/www/interfaces.php:3029
 msgid "Network-Specific Wireless Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3025
+#: src/usr/local/www/interfaces.php:3050
 msgid "802.11g"
 msgstr "802.11g"
 
-#: src/usr/local/www/interfaces.php:3025
+#: src/usr/local/www/interfaces.php:3050
 msgid "802.11n"
 msgstr "802.11n"
 
-#: src/usr/local/www/interfaces.php:3023
+#: src/usr/local/www/interfaces.php:3048
 msgid "Minimum wireless standard"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3026
+#: src/usr/local/www/interfaces.php:3051
 msgid ""
 "When operating as an access point, allow only stations capable of the "
 "selected wireless standard to associate (stations not capable are not "
 "permitted to associate)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3030
+#: src/usr/local/www/interfaces.php:3055
 msgid "802.11g only"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3034
+#: src/usr/local/www/interfaces.php:3059
 msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3039
+#: src/usr/local/www/interfaces.php:3064
 msgid "Allow intra-BSS communication"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3043
+#: src/usr/local/www/interfaces.php:3068
 msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3047
+#: src/usr/local/www/interfaces.php:3072
 msgid "Enable WME"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3055
+#: src/usr/local/www/interfaces.php:3080
 msgid "Hide SSID"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3064 src/usr/local/www/interfaces.php:3085
+#: src/usr/local/www/interfaces.php:3089 src/usr/local/www/interfaces.php:3110
 msgid "WPA"
 msgstr "WPA"
 
-#: src/usr/local/www/interfaces.php:3076
+#: src/usr/local/www/interfaces.php:3101
 msgid "WPA Pre-Shared Key"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3079
+#: src/usr/local/www/interfaces.php:3104
 msgid "WPA Passphrase must be between 8 and 63 characters long"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3085
+#: src/usr/local/www/interfaces.php:3110
 msgid "WPA2"
 msgstr "WPA2"
 
-#: src/usr/local/www/interfaces.php:3085 src/usr/local/www/interfaces.php:3092
-#: src/usr/local/www/interfaces.php:3099 src/usr/local/www/pkg_mgr.php:160
+#: src/usr/local/www/interfaces.php:3110 src/usr/local/www/interfaces.php:3117
+#: src/usr/local/www/interfaces.php:3124 src/usr/local/www/pkg_mgr.php:160
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:151
 #: src/usr/local/www/services_captiveportal_ip_edit.php:194
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:258
@@ -16087,111 +16113,111 @@ msgstr "WPA2"
 msgid "Both"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3083
+#: src/usr/local/www/interfaces.php:3108
 msgid "WPA mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3092
+#: src/usr/local/www/interfaces.php:3117
 #: src/usr/local/www/vpn_ipsec_keys.php:103
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
-#: src/usr/local/www/vpn_ipsec_phase1.php:213
+#: src/usr/local/www/vpn_ipsec_phase1.php:220
 msgid "Pre-Shared Key"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3092
+#: src/usr/local/www/interfaces.php:3117
 msgid "Extensible Authentication Protocol"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3090
+#: src/usr/local/www/interfaces.php:3115
 msgid "WPA Key Management Mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3099
+#: src/usr/local/www/interfaces.php:3124
 msgid "AES (recommended)"
 msgstr "AES (προτείνεται)"
 
-#: src/usr/local/www/interfaces.php:3099
+#: src/usr/local/www/interfaces.php:3124
 msgid "TKIP"
 msgstr "TKIP"
 
-#: src/usr/local/www/interfaces.php:3097
+#: src/usr/local/www/interfaces.php:3122
 msgid "WPA Pairwise"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3104
+#: src/usr/local/www/interfaces.php:3129
 msgid "Group Key Rotation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3108
+#: src/usr/local/www/interfaces.php:3133
 msgid ""
 "Time between group rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be shorter than Master Key Regeneration time"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3112
+#: src/usr/local/www/interfaces.php:3137
 msgid "Group Master Key Regeneration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3116
+#: src/usr/local/www/interfaces.php:3141
 msgid ""
 "Time between GMK rekey events, specified in seconds. Allowed values are 1-"
 "9999. Must be longer than Group Key Rotation time"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3120
+#: src/usr/local/www/interfaces.php:3145
 msgid "Strict Key Regeneration"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3128
+#: src/usr/local/www/interfaces.php:3153
 msgid "802.1x RADIUS Options"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3132
+#: src/usr/local/www/interfaces.php:3157
 msgid "IEEE802.1X"
 msgstr "IEEE802.1X"
 
-#: src/usr/local/www/interfaces.php:3136
+#: src/usr/local/www/interfaces.php:3161
 msgid "This option requires that the \"Enable WPA box\" is checked"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3138
+#: src/usr/local/www/interfaces.php:3163
 msgid "Primary 802.1X server"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3144 src/usr/local/www/interfaces.php:3168
+#: src/usr/local/www/interfaces.php:3169 src/usr/local/www/interfaces.php:3193
 msgid "IP address of the RADIUS server"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3151 src/usr/local/www/interfaces.php:3175
+#: src/usr/local/www/interfaces.php:3176 src/usr/local/www/interfaces.php:3200
 msgid "Server auth port. Default is 1812"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3155 src/usr/local/www/interfaces.php:3179
+#: src/usr/local/www/interfaces.php:3180 src/usr/local/www/interfaces.php:3204
 #: src/usr/local/www/system_authservers.php:267
 msgid "Shared Secret"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3158 src/usr/local/www/interfaces.php:3182
+#: src/usr/local/www/interfaces.php:3183 src/usr/local/www/interfaces.php:3207
 msgid "RADIUS Shared secret for this firewall"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3162
+#: src/usr/local/www/interfaces.php:3187
 msgid "Secondary 802.1X server"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3188
+#: src/usr/local/www/interfaces.php:3213
 msgid "Authentication Roaming Preauth"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3197
+#: src/usr/local/www/interfaces.php:3222
 msgid "Reserved Networks"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3201
+#: src/usr/local/www/interfaces.php:3226
 msgid "Block private networks and loopback addresses"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3205
+#: src/usr/local/www/interfaces.php:3230
 msgid ""
 "Blocks traffic from IP addresses that are reserved for private networks per "
 "RFC 1918 (10/8, 172.16/12, 192.168/16) and unique local addresses per RFC "
@@ -16200,7 +16226,7 @@ msgid ""
 "private address space, too."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3215
+#: src/usr/local/www/interfaces.php:3240
 #, php-format
 msgid ""
 "Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet "
@@ -16210,11 +16236,11 @@ msgid ""
 "System->Advanced Firewall/NAT settings."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3246
+#: src/usr/local/www/interfaces.php:3271
 msgid "New IPv4 Gateway"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3264
+#: src/usr/local/www/interfaces.php:3289
 #: src/usr/local/www/status_interfaces.php:143
 msgid "Gateway IPv4"
 msgstr ""
@@ -16413,7 +16439,7 @@ msgstr "GIFs"
 #: src/usr/local/www/interfaces_assign.php:502
 #: src/usr/local/www/interfaces_bridge.php:75
 #: src/usr/local/www/interfaces_bridge.php:91
-#: src/usr/local/www/interfaces_bridge_edit.php:379
+#: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_gif.php:86
 #: src/usr/local/www/interfaces_gre.php:86
 #: src/usr/local/www/interfaces_groups.php:68
@@ -16507,131 +16533,131 @@ msgstr ""
 msgid "Delete interface bridge"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:142
+#: src/usr/local/www/interfaces_bridge_edit.php:144
 msgid "Member Interfaces"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:147
+#: src/usr/local/www/interfaces_bridge_edit.php:149
 msgid "Maxage needs to be an integer between 6 and 40."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:150
+#: src/usr/local/www/interfaces_bridge_edit.php:152
 msgid "Maxaddr needs to be an integer."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:153
+#: src/usr/local/www/interfaces_bridge_edit.php:155
 msgid "Timeout needs to be an integer."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:156
+#: src/usr/local/www/interfaces_bridge_edit.php:158
 msgid "Forward Delay needs to be an integer between 4 and 30."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:159
+#: src/usr/local/www/interfaces_bridge_edit.php:161
 msgid "Hello time for STP needs to be an integer between 1 and 2."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:162
+#: src/usr/local/www/interfaces_bridge_edit.php:164
 msgid "Priority for STP needs to be an integer between 0 and 61440."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:165
+#: src/usr/local/www/interfaces_bridge_edit.php:167
 msgid "Transmit Hold Count for STP needs to be an integer between 1 and 10."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:169
+#: src/usr/local/www/interfaces_bridge_edit.php:171
 #, php-format
 msgid ""
 "%s interface priority for STP needs to be an integer between 0 and 240."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:177
+#: src/usr/local/www/interfaces_bridge_edit.php:179
 #, php-format
 msgid ""
 "%s interface path cost for STP needs to be an integer between 1 and "
 "200000000."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:183
+#: src/usr/local/www/interfaces_bridge_edit.php:185
 msgid "At least one member interface must be selected for a bridge."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:189
+#: src/usr/local/www/interfaces_bridge_edit.php:191
 #, php-format
 msgid ""
 "Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
 "to continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:197
+#: src/usr/local/www/interfaces_bridge_edit.php:199
 #, php-format
 msgid ""
 "Private interface (%s) is not part of the bridge. Remove the private "
 "interface to continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:205
+#: src/usr/local/www/interfaces_bridge_edit.php:207
 #, php-format
 msgid ""
 "STP interface (%s) is not part of the bridge. Remove the STP interface to "
 "continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:216
+#: src/usr/local/www/interfaces_bridge_edit.php:218
 #, php-format
 msgid ""
 "Edge interface (%s) is not part of the bridge. Remove the edge interface to "
 "continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:224
+#: src/usr/local/www/interfaces_bridge_edit.php:226
 #, php-format
 msgid ""
 "Auto Edge interface (%s) is not part of the bridge. Remove the auto edge "
 "interface to continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:232
+#: src/usr/local/www/interfaces_bridge_edit.php:234
 #, php-format
 msgid ""
 "PTP interface (%s) is not part of the bridge. Remove the PTP interface to "
 "continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:240
+#: src/usr/local/www/interfaces_bridge_edit.php:242
 #, php-format
 msgid ""
 "Auto PTP interface (%s) is not part of the bridge. Remove the auto PTP "
 "interface to continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:248
+#: src/usr/local/www/interfaces_bridge_edit.php:250
 msgid "A member interface passed does not exist in configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:251
+#: src/usr/local/www/interfaces_bridge_edit.php:253
 msgid "A bridge interface cannot be a member of a bridge."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:255
+#: src/usr/local/www/interfaces_bridge_edit.php:257
 msgid "Bridging a wireless interface is only possible in hostap mode."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:258
+#: src/usr/local/www/interfaces_bridge_edit.php:260
 #, php-format
 msgid ""
 "Span interface (%s) cannot be part of the bridge. Remove the span interface "
 "from bridge members to continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:267
+#: src/usr/local/www/interfaces_bridge_edit.php:269
 #, php-format
 msgid ""
 "%s is part of another bridge. Remove the interface from bridge members to "
 "continue."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:339
+#: src/usr/local/www/interfaces_bridge_edit.php:345
 #: src/usr/local/www/interfaces_gif_edit.php:128
 #: src/usr/local/www/interfaces_gre_edit.php:121
 #: src/usr/local/www/interfaces_lagg_edit.php:163
@@ -16639,51 +16665,51 @@ msgstr ""
 msgid "Error occurred creating interface, please retry."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:390
+#: src/usr/local/www/interfaces_bridge_edit.php:396
 msgid "Bridge Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:396
+#: src/usr/local/www/interfaces_bridge_edit.php:402
 msgid "*Member Interfaces"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:400
+#: src/usr/local/www/interfaces_bridge_edit.php:406
 msgid "Interfaces participating in the bridge."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:426
+#: src/usr/local/www/interfaces_bridge_edit.php:432
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
 #: src/usr/local/www/vpn_openvpn_client.php:875
 #: src/usr/local/www/vpn_openvpn_server.php:1272
-#: src/usr/local/www/interfaces.php:1986 src/usr/local/www/interfaces.php:2171
+#: src/usr/local/www/interfaces.php:2003 src/usr/local/www/interfaces.php:2188
 msgid "Advanced Configuration"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:432
+#: src/usr/local/www/interfaces_bridge_edit.php:438
 msgid "Cache Size"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:435
+#: src/usr/local/www/interfaces_bridge_edit.php:441
 msgid "Set the size of the bridge address cache. The default is 2000 entries."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:439
+#: src/usr/local/www/interfaces_bridge_edit.php:445
 msgid "Cache expire time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:442
+#: src/usr/local/www/interfaces_bridge_edit.php:448
 msgid ""
 "Set the timeout of address cache entries to this number of seconds. If "
 "seconds is zero, then address cache entries will not be expired. The default "
 "is 1200 seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:448
+#: src/usr/local/www/interfaces_bridge_edit.php:454
 msgid "Span Port"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:452
+#: src/usr/local/www/interfaces_bridge_edit.php:458
 #, php-format
 msgid ""
 "Add the interface named by interface as a span port on the bridge. Span "
@@ -16693,22 +16719,22 @@ msgid ""
 "part of the bridge member interfaces.%3$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:460
+#: src/usr/local/www/interfaces_bridge_edit.php:466
 msgid "Edge Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:464
+#: src/usr/local/www/interfaces_bridge_edit.php:470
 msgid ""
 "Set interface as an edge port. An edge port connects directly to end "
 "stations and cannot create bridging loops in the network; this allows it to "
 "transition straight to forwarding."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:470
+#: src/usr/local/www/interfaces_bridge_edit.php:476
 msgid "Auto Edge Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:474
+#: src/usr/local/www/interfaces_bridge_edit.php:480
 #, php-format
 msgid ""
 "Allow interface to automatically detect edge status. This is the default for "
@@ -16716,22 +16742,22 @@ msgid ""
 "of interfaces. %2$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:481
+#: src/usr/local/www/interfaces_bridge_edit.php:487
 msgid "PTP Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:485
+#: src/usr/local/www/interfaces_bridge_edit.php:491
 msgid ""
 "Set the interface as a point-to-point link. This is required for straight "
 "transitions to forwarding and should be enabled on a direct link to another "
 "RSTP-capable switch."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:491
+#: src/usr/local/www/interfaces_bridge_edit.php:497
 msgid "Auto PTP Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:495
+#: src/usr/local/www/interfaces_bridge_edit.php:501
 #, php-format
 msgid ""
 "Automatically detect the point-to-point status on interface by checking the "
@@ -16740,11 +16766,11 @@ msgid ""
 "autoedge status. %2$s"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:502
+#: src/usr/local/www/interfaces_bridge_edit.php:508
 msgid "Sticky Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:506
+#: src/usr/local/www/interfaces_bridge_edit.php:512
 msgid ""
 "Mark an interface as a \"sticky\" interface. Dynamically learned address "
 "entries are treated as static once entered into the cache. Sticky entries "
@@ -16752,66 +16778,77 @@ msgid ""
 "a different interface."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:513
+#: src/usr/local/www/interfaces_bridge_edit.php:519
 msgid "Private Ports"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:517
+#: src/usr/local/www/interfaces_bridge_edit.php:523
 msgid ""
 "Mark an interface as a \"private\" interface. A private interface does not "
 "forward any traffic to any other port that is also a private interface. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:523
+#: src/usr/local/www/interfaces_bridge_edit.php:527
+msgid "Enable IPv6 auto linklocal"
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:530
+msgid ""
+"When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and "
+"cleared on every member interface. This is required when the bridge "
+"interface is used for stateless autoconfiguration. "
+msgstr ""
+
+#: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid "Enable RSTP/STP"
 msgstr "Ενεργοποίηση  RSTP/STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:530
+#: src/usr/local/www/interfaces_bridge_edit.php:543
 msgid "RSTP/STP"
 msgstr "RSTP/STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:539
+#: src/usr/local/www/interfaces_bridge_edit.php:552
 msgid "Protocol used for spanning tree."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:545
+#: src/usr/local/www/interfaces_bridge_edit.php:558
 msgid "STP Interfaces"
 msgstr "Διεπαφές STP"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:549
+#: src/usr/local/www/interfaces_bridge_edit.php:562
 msgid ""
 "Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has "
 "support for the IEEE 802.1D Spanning Tree Protocol (STP). STP is used to "
 "detect and remove loops in a network topology."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:554
+#: src/usr/local/www/interfaces_bridge_edit.php:567
 msgid "Valid time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:558
+#: src/usr/local/www/interfaces_bridge_edit.php:571
 msgid ""
 "Set the time that a Spanning Tree Protocol configuration is valid. The "
 "default is 20 seconds. The minimum is 6 seconds and the maximum is 40 "
 "seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:562
+#: src/usr/local/www/interfaces_bridge_edit.php:575
 msgid "Forward time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:566
+#: src/usr/local/www/interfaces_bridge_edit.php:579
 msgid ""
 "Set the time that must pass before an interface begins forwarding packets "
 "when Spanning Tree is enabled. The default is 15 seconds. The minimum is 4 "
 "seconds and the maximum is 30 seconds. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:570
+#: src/usr/local/www/interfaces_bridge_edit.php:583
 msgid "Hello time"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:574
+#: src/usr/local/www/interfaces_bridge_edit.php:587
 msgid ""
 "Set the time in seconds between broadcasting of Spanning Tree Protocol "
 "configuration messages. The hello time may only be changed when operating in "
@@ -16819,38 +16856,38 @@ msgid ""
 "maximum is 2 seconds."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:583
+#: src/usr/local/www/interfaces_bridge_edit.php:596
 msgid ""
 "Set the bridge priority for Spanning Tree. The default is 32768. The minimum "
 "is 0 and the maximum is 61440. "
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:587
+#: src/usr/local/www/interfaces_bridge_edit.php:600
 msgid "Hold Count"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:591
+#: src/usr/local/www/interfaces_bridge_edit.php:604
 msgid ""
 "Set the transmit hold count for Spanning Tree. This is the number of packets "
 "transmitted before being rate limited. The default is 6. The minimum is 1 "
 "and the maximum is 10."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:596
+#: src/usr/local/www/interfaces_bridge_edit.php:609
 msgid " Priority"
 msgstr "Προτεραιότητα"
 
-#: src/usr/local/www/interfaces_bridge_edit.php:600
+#: src/usr/local/www/interfaces_bridge_edit.php:613
 msgid ""
 "Set the Spanning Tree priority of interface to value. The default is 128. "
 "The minimum is 0 and the maximum is 240. Increments of 16."
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:607
+#: src/usr/local/www/interfaces_bridge_edit.php:620
 msgid " Path cost"
 msgstr ""
 
-#: src/usr/local/www/interfaces_bridge_edit.php:611
+#: src/usr/local/www/interfaces_bridge_edit.php:624
 msgid ""
 "Set the Spanning Tree path cost of interface to value. The default is "
 "calculated from the link speed. To change a previously selected path cost "
@@ -19375,7 +19412,7 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:688
-#: src/usr/local/www/vpn_ipsec_phase1.php:705
+#: src/usr/local/www/vpn_ipsec_phase1.php:727
 msgid "*Authentication Method"
 msgstr ""
 
@@ -21461,7 +21498,7 @@ msgstr "Διακομιστές WINS"
 #: src/usr/local/www/services_dhcp_edit.php:500
 #: src/usr/local/www/services_dhcpv6.php:709
 #: src/usr/local/www/services_pppoe_edit.php:350
-#: src/usr/local/www/system.php:489 src/usr/local/www/vpn_ipsec_mobile.php:607
+#: src/usr/local/www/system.php:492 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:462
 msgid "DNS Servers"
 msgstr "Διακομιστές DNS"
@@ -22590,23 +22627,26 @@ msgstr ""
 msgid "%d is the maximum number of configured servers."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:284
+#: src/usr/local/www/services_ntpd.php:285
 #, php-format
 msgid ""
-"For best results three to five servers should be configured here, or at "
-"least one pool.%1$sThe %2$sPrefer%3$s option indicates that NTP should favor "
-"the use of this server more than all others.%1$sThe %2$sNo Select%3$s option "
-"indicates that NTP should not use this server for time, but stats for this "
-"server will be collected and displayed.%1$sThe %2$sIs a Pool%3$s option "
-"indicates this entry is a pool of NTP servers and not a single address. This "
-"is assumed for *.pool.ntp.org."
+"NTP will only sync if a majority of the servers agree on the time.  For best "
+"results you should configure between 3 and 5 servers (%4$sNTP support pages "
+"recommend at least 4 or 5%5$s), or a pool. If only one server is configured, "
+"it %2$swill%3$s be believed, and if 2 servers are configured and they "
+"disagree, %2$sneither%3$s will be believed. Options:%1$s%2$sPrefer%3$s - NTP "
+"should favor the use of this server more than all others.%1$s%2$sNo "
+"Select%3$s - NTP should not use this server for time, but stats for this "
+"server will be collected and displayed.%1$s%2$sIs a Pool%3$s - this entry is "
+"a pool of NTP servers and not a single address. This is assumed for *.pool."
+"ntp.org."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:292
+#: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:296
+#: src/usr/local/www/services_ntpd.php:304
 msgid ""
 "Orphan mode allows the system clock to be used when no other clocks are "
 "available. The number here specifies the stratum reported during orphan mode "
@@ -22614,43 +22654,50 @@ msgid ""
 "servers available to clients are preferred over this server (default: 12)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:302
+#: src/usr/local/www/services_ntpd.php:310
 msgid "NTP Graphs"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:309
+#: src/usr/local/www/services_ntpd.php:317
 msgid "Logging"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:319
+#: src/usr/local/www/services_ntpd.php:327
 #, php-format
 msgid ""
 "These options enable additional messages from NTP to be written to the "
 "System Log %1$sStatus > System Logs > NTP%2$s"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:333
+#: src/usr/local/www/services_ntpd.php:341
 msgid "Statistics Logging"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:335
+#: src/usr/local/www/services_ntpd.php:343
 msgid ""
 "Warning: These options will create persistent daily log files in /var/log/"
 "ntp."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:369
+#: src/usr/local/www/services_ntpd.php:377
 msgid "Leap seconds"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:371
+#: src/usr/local/www/services_ntpd.php:380
 msgid ""
-"A leap second file allows NTP to advertise an upcoming leap second addition "
-"or subtraction. Normally this is only useful if this server is a stratum 1 "
-"time server. "
+"Leap seconds may be added or subtracted at the end of June or December. Leap "
+"seconds are administered by the %1$sIERS%2$s, who publish them in their "
+"Bulletin C approximately 6 - 12 months in advance.  Normally this correction "
+"should only be needed if the server is a stratum 1 NTP server, but many NTP "
+"servers do not advertise an upcoming leap second when other NTP servers "
+"synchronise to them.%3$s%4$sIf the leap second is important to your network "
+"services, it is %6$sgood practice%2$s to download and add the leap second "
+"file at least a day in advance of any time correction%5$s.%3$s More "
+"information and files for downloading can be found on their %1$swebsite%2$s, "
+"and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:378
+#: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
 msgstr ""
 
@@ -23698,7 +23745,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_advanced.php:216
 #: src/usr/local/www/vpn_ipsec.php:229 src/usr/local/www/vpn_ipsec_keys.php:90
 #: src/usr/local/www/vpn_ipsec_mobile.php:426
-#: src/usr/local/www/vpn_ipsec_phase1.php:648
+#: src/usr/local/www/vpn_ipsec_phase1.php:670
 #: src/usr/local/www/vpn_ipsec_phase2.php:491
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
@@ -25025,12 +25072,12 @@ msgid "Graph Settings"
 msgstr ""
 
 #: src/usr/local/www/status_graph.php:133
-#: src/usr/local/www/status_graph.php:351
+#: src/usr/local/www/status_graph.php:280
 msgid "Bandwidth In"
 msgstr ""
 
 #: src/usr/local/www/status_graph.php:134
-#: src/usr/local/www/status_graph.php:352
+#: src/usr/local/www/status_graph.php:281
 msgid "Bandwidth Out"
 msgstr ""
 
@@ -25062,20 +25109,20 @@ msgid "Keep graphs updated on inactive tab. (increases cpu usage)"
 msgstr ""
 
 #: src/usr/local/www/status_graph.php:169
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:192
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:194
 msgid "Background updates"
 msgstr ""
 
-#: src/usr/local/www/status_graph.php:308
-#: src/usr/local/www/status_graph.php:309
+#: src/usr/local/www/status_graph.php:237
+#: src/usr/local/www/status_graph.php:238
 msgid "Bits/sec"
 msgstr "Bits/sec"
 
-#: src/usr/local/www/status_graph.php:350
+#: src/usr/local/www/status_graph.php:279
 msgid "Host IP"
 msgstr ""
 
-#: src/usr/local/www/status_graph.php:350
+#: src/usr/local/www/status_graph.php:279
 msgid "Host Name or IP"
 msgstr ""
 
@@ -25575,8 +25622,8 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys.php:72
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
-#: src/usr/local/www/vpn_ipsec_phase1.php:629
-#: src/usr/local/www/vpn_ipsec_phase1.php:632
+#: src/usr/local/www/vpn_ipsec_phase1.php:651
+#: src/usr/local/www/vpn_ipsec_phase1.php:654
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_settings.php:186
@@ -26241,7 +26288,7 @@ msgid "Reach"
 msgstr ""
 
 #: src/usr/local/www/status_ntpd.php:303
-#: src/usr/local/www/vpn_ipsec_phase1.php:897
+#: src/usr/local/www/vpn_ipsec_phase1.php:926
 msgid "Delay"
 msgstr "Kαθυστέρηση"
 
@@ -26547,48 +26594,52 @@ msgid "Name of the firewall host, without domain part"
 msgstr ""
 
 #: src/usr/local/www/system.php:462
+#, php-format
 msgid ""
-"Do not use 'local' as a domain name. It will cause local hosts running mDNS "
-"(avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."
+"Do not use '.local' as the final part of the domain (TLD), The '.local' "
+"domain is %1$swidely used%2$s by mDNS (including Avahi and Apple OS X's "
+"Bonjour/Rendezvous/Airprint/Airplay), and some Windows systems and networked "
+"devices. These will not network correctly if the router uses '.local'. "
+"Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
 
-#: src/usr/local/www/system.php:468
+#: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
 msgstr ""
 
-#: src/usr/local/www/system.php:476
+#: src/usr/local/www/system.php:479
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
 
-#: src/usr/local/www/system.php:477
+#: src/usr/local/www/system.php:480
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
 msgstr ""
 
-#: src/usr/local/www/system.php:478
+#: src/usr/local/www/system.php:481
 msgid "Optionally select the gateway for each DNS server."
 msgstr ""
 
-#: src/usr/local/www/system.php:479
+#: src/usr/local/www/system.php:482
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
 
-#: src/usr/local/www/system.php:494
+#: src/usr/local/www/system.php:497
 msgid "DNS Server"
 msgstr "Διακομιστής DNS"
 
-#: src/usr/local/www/system.php:535
+#: src/usr/local/www/system.php:538
 msgid "Add DNS Server"
 msgstr "Προσθήκη Διακομιστή DNS"
 
-#: src/usr/local/www/system.php:542
+#: src/usr/local/www/system.php:545
 msgid "DNS Server Override"
 msgstr ""
 
-#: src/usr/local/www/system.php:545
+#: src/usr/local/www/system.php:548
 #, php-format
 msgid ""
 "If this option is set, %s will use DNS servers assigned by a DHCP/PPP server "
@@ -26596,11 +26647,11 @@ msgid ""
 "However, they will not be assigned to DHCP clients."
 msgstr ""
 
-#: src/usr/local/www/system.php:552
+#: src/usr/local/www/system.php:555
 msgid "Disable DNS Forwarder"
 msgstr ""
 
-#: src/usr/local/www/system.php:555
+#: src/usr/local/www/system.php:558
 msgid ""
 "By default localhost (127.0.0.1) will be used as the first DNS server where "
 "the DNS Forwarder or DNS Resolver is enabled and set to listen on localhost, "
@@ -26608,15 +26659,15 @@ msgid ""
 "box omits localhost from the list of DNS servers in resolv.conf."
 msgstr ""
 
-#: src/usr/local/www/system.php:562
+#: src/usr/local/www/system.php:565
 msgid "Localization"
 msgstr ""
 
-#: src/usr/local/www/system.php:566
+#: src/usr/local/www/system.php:569
 msgid "*Timezone"
 msgstr ""
 
-#: src/usr/local/www/system.php:569
+#: src/usr/local/www/system.php:572
 #, php-format
 msgid ""
 "Select a geographic region name (Continent/Location) to determine the "
@@ -26625,86 +26676,86 @@ msgid ""
 "required for this firewall."
 msgstr ""
 
-#: src/usr/local/www/system.php:574
+#: src/usr/local/www/system.php:577
 msgid "Timeservers"
 msgstr ""
 
-#: src/usr/local/www/system.php:577
+#: src/usr/local/www/system.php:580
 msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
 msgstr ""
 
-#: src/usr/local/www/system.php:582
+#: src/usr/local/www/system.php:585
 msgid "*Language"
 msgstr "*Γλώσσα"
 
-#: src/usr/local/www/system.php:585
+#: src/usr/local/www/system.php:588
 msgid "Choose a language for the webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:589
+#: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
 #: src/usr/local/www/system_certmanager.php:1209
 msgid "webConfigurator"
 msgstr ""
 
-#: src/usr/local/www/system.php:610
+#: src/usr/local/www/system.php:613
 msgid "Blue"
 msgstr ""
 
-#: src/usr/local/www/system.php:610
+#: src/usr/local/www/system.php:613
 msgid "Green"
 msgstr ""
 
-#: src/usr/local/www/system.php:610
+#: src/usr/local/www/system.php:613
 msgid "Red"
 msgstr ""
 
-#: src/usr/local/www/system.php:611
+#: src/usr/local/www/system.php:614
 msgid "Purple"
 msgstr ""
 
-#: src/usr/local/www/system.php:611
+#: src/usr/local/www/system.php:614
 msgid "Gray"
 msgstr ""
 
-#: src/usr/local/www/system.php:611
+#: src/usr/local/www/system.php:614
 msgid "Dark gray"
 msgstr ""
 
-#: src/usr/local/www/system.php:612
+#: src/usr/local/www/system.php:615
 msgid "Brown"
 msgstr ""
 
-#: src/usr/local/www/system.php:612
+#: src/usr/local/www/system.php:615
 msgid "Orange"
 msgstr ""
 
-#: src/usr/local/www/system.php:608
+#: src/usr/local/www/system.php:611
 msgid "Login page color"
 msgstr ""
 
-#: src/usr/local/www/system.php:613
+#: src/usr/local/www/system.php:616
 msgid "Choose a color for the login page"
 msgstr ""
 
-#: src/usr/local/www/system.php:617
+#: src/usr/local/www/system.php:620
 msgid "Login hostname"
 msgstr ""
 
-#: src/usr/local/www/system.php:624
+#: src/usr/local/www/system.php:627
 msgid "Dashboard update period"
 msgstr ""
 
-#: src/usr/local/www/system.php:628
+#: src/usr/local/www/system.php:631
 msgid ""
 "Time in seconds between dashboard widget updates. Small values cause more "
 "frequent updates but increase the load on the web server. Minimum is 5 "
 "seconds, maximum 600 seconds"
 msgstr ""
 
-#: src/usr/local/www/system.php:636
+#: src/usr/local/www/system.php:639
 #: src/usr/local/www/system_user_settings.php:168
 #: src/usr/local/www/system_usermanager.php:989
 #, php-format
@@ -26737,7 +26788,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:297
 #: src/usr/local/www/system_advanced_firewall.php:378
 #: src/usr/local/www/system_advanced_misc.php:309
-#: src/usr/local/www/system_advanced_network.php:161
+#: src/usr/local/www/system_advanced_network.php:168
 #: src/usr/local/www/system_advanced_notifications.php:210
 #: src/usr/local/www/system_advanced_sysctl.php:138
 msgid "Admin Access"
@@ -26747,7 +26798,7 @@ msgstr "Πρόσβαση Διαχειριστή"
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_firewall.php:379
 #: src/usr/local/www/system_advanced_misc.php:310
-#: src/usr/local/www/system_advanced_network.php:162
+#: src/usr/local/www/system_advanced_network.php:169
 #: src/usr/local/www/system_advanced_notifications.php:211
 #: src/usr/local/www/system_advanced_sysctl.php:139
 msgid "Firewall & NAT"
@@ -26757,7 +26808,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_firewall.php:381
 #: src/usr/local/www/system_advanced_misc.php:295
 #: src/usr/local/www/system_advanced_misc.php:312
-#: src/usr/local/www/system_advanced_network.php:164
+#: src/usr/local/www/system_advanced_network.php:171
 #: src/usr/local/www/system_advanced_notifications.php:213
 #: src/usr/local/www/system_advanced_sysctl.php:141
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
@@ -26767,7 +26818,7 @@ msgstr "Διάφορα"
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_firewall.php:382
 #: src/usr/local/www/system_advanced_misc.php:313
-#: src/usr/local/www/system_advanced_network.php:165
+#: src/usr/local/www/system_advanced_network.php:172
 #: src/usr/local/www/system_advanced_notifications.php:214
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_advanced_sysctl.php:142
@@ -26778,7 +26829,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_firewall.php:383
 #: src/usr/local/www/system_advanced_misc.php:314
-#: src/usr/local/www/system_advanced_network.php:166
+#: src/usr/local/www/system_advanced_network.php:173
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_advanced_notifications.php:215
 #: src/usr/local/www/system_advanced_sysctl.php:143
@@ -27122,7 +27173,7 @@ msgid "High-latency"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:418
-#: src/usr/local/www/vpn_ipsec_phase1.php:714
+#: src/usr/local/www/vpn_ipsec_phase1.php:736
 msgid "Aggressive"
 msgstr "Επιθετική"
 
@@ -27800,33 +27851,33 @@ msgid ""
 "confirm."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:57
+#: src/usr/local/www/system_advanced_network.php:58
 msgid "An IP address to NAT IPv6 packets must be specified."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:64
+#: src/usr/local/www/system_advanced_network.php:65
 msgid "A valid DUID must be specified"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:171
+#: src/usr/local/www/system_advanced_network.php:178
 msgid "IPv6 Options"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:175
+#: src/usr/local/www/system_advanced_network.php:182
 msgid "Allow IPv6"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:178
+#: src/usr/local/www/system_advanced_network.php:185
 msgid ""
 "NOTE: This does not disable any IPv6 features on the firewall, it only "
 "blocks traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:183
+#: src/usr/local/www/system_advanced_network.php:190
 msgid "IPv6 over IPv4 Tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:186
+#: src/usr/local/www/system_advanced_network.php:193
 #, php-format
 msgid ""
 "These options create an RFC 2893 compatible mechanism for IPv4 NAT "
@@ -27835,26 +27886,26 @@ msgid ""
 "to control and pass encapsulated traffic."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:192
+#: src/usr/local/www/system_advanced_network.php:199
 msgid "IPv4 address of Tunnel Peer"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:199
+#: src/usr/local/www/system_advanced_network.php:206
 msgid "Prefer IPv4 over IPv6"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:202
+#: src/usr/local/www/system_advanced_network.php:209
 msgid ""
 "By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 "
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:207
+#: src/usr/local/www/system_advanced_network.php:214
 msgid "IPv6 DNS entry"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:210
+#: src/usr/local/www/system_advanced_network.php:217
 msgid ""
 "If a LAN interface's IPv6 configuration is set to Track, and the tracked "
 "interface loses connectivity, it can cause connections to this firewall that "
@@ -27864,16 +27915,16 @@ msgid ""
 "IPv6 records from being created."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:215
-#: src/usr/local/www/system_advanced_network.php:219
+#: src/usr/local/www/system_advanced_network.php:222
+#: src/usr/local/www/system_advanced_network.php:226
 msgid "DHCP6 DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:227
+#: src/usr/local/www/system_advanced_network.php:234
 msgid "Copy DUID"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:235
+#: src/usr/local/www/system_advanced_network.php:242
 #, php-format
 msgid ""
 "This is the DHCPv6 Unique Identifier (DUID) used by the firewall when "
@@ -27887,15 +27938,15 @@ msgid ""
 "Copy DUID button to copy the system detected DUID shown in the placeholder. "
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:245
+#: src/usr/local/www/system_advanced_network.php:252
 msgid "Network Interfaces"
 msgstr "Διεπαφές Δικτύου"
 
-#: src/usr/local/www/system_advanced_network.php:249
+#: src/usr/local/www/system_advanced_network.php:256
 msgid "Hardware Checksum Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:252
+#: src/usr/local/www/system_advanced_network.php:259
 #, php-format
 msgid ""
 "Checking this option will disable hardware checksum offloading.%1$sChecksum "
@@ -27905,11 +27956,11 @@ msgid ""
 "interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:260
+#: src/usr/local/www/system_advanced_network.php:267
 msgid "Hardware TCP Segmentation Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:263
+#: src/usr/local/www/system_advanced_network.php:270
 msgid ""
 "Checking this option will disable hardware TCP segmentation offloading (TSO, "
 "TSO4, TSO6). This offloading is broken in some hardware drivers, and may "
@@ -27917,11 +27968,11 @@ msgid ""
 "machine reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:270
+#: src/usr/local/www/system_advanced_network.php:277
 msgid "Hardware Large Receive Offloading"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:273
+#: src/usr/local/www/system_advanced_network.php:280
 msgid ""
 "Checking this option will disable hardware large receive offloading (LRO). "
 "This offloading is broken in some hardware drivers, and may impact "
@@ -27929,21 +27980,31 @@ msgid ""
 "reboot or re-configure of each interface."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:280
+#: src/usr/local/www/system_advanced_network.php:287
 msgid "ARP Handling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:283
+#: src/usr/local/www/system_advanced_network.php:290
 msgid ""
 "This option will suppress ARP log messages when multiple interfaces reside "
 "on the same broadcast domain."
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:289
+#: src/usr/local/www/system_advanced_network.php:295
+msgid "Reset All States"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:298
+msgid ""
+"This option resets all states when a WAN IP Address changes instead of only "
+"states associated with the previous IP Address."
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:291
+#: src/usr/local/www/system_advanced_network.php:306
 msgid ""
 "Enables infrastructure for caching flows as a means of accelerating L3 and "
 "L2 lookups as well as providing stateful load balancing when used with "
@@ -29233,7 +29294,7 @@ msgid "Certificate Revocation List data"
 msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:205
-#: src/usr/local/www/vpn_ipsec_phase1.php:219
+#: src/usr/local/www/vpn_ipsec_phase1.php:226
 #: src/usr/local/www/vpn_openvpn_client.php:329
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
@@ -29312,7 +29373,7 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:526
 #: src/usr/local/www/system_usermanager.php:870
 #: src/usr/local/www/system_usermanager.php:876
-#: src/usr/local/www/vpn_ipsec_phase1.php:219
+#: src/usr/local/www/vpn_ipsec_phase1.php:226
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate"
 msgstr "Πιστοποιητικό"
@@ -30676,8 +30737,8 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec.php:219 src/usr/local/www/vpn_ipsec.php:226
 #: src/usr/local/www/vpn_ipsec_keys.php:87
 #: src/usr/local/www/vpn_ipsec_mobile.php:423
-#: src/usr/local/www/vpn_ipsec_phase1.php:632
-#: src/usr/local/www/vpn_ipsec_phase1.php:645
+#: src/usr/local/www/vpn_ipsec_phase1.php:654
+#: src/usr/local/www/vpn_ipsec_phase1.php:667
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
@@ -30688,8 +30749,8 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec.php:227 src/usr/local/www/vpn_ipsec_keys.php:88
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
 #: src/usr/local/www/vpn_ipsec_mobile.php:424
-#: src/usr/local/www/vpn_ipsec_phase1.php:629
-#: src/usr/local/www/vpn_ipsec_phase1.php:646
+#: src/usr/local/www/vpn_ipsec_phase1.php:651
+#: src/usr/local/www/vpn_ipsec_phase1.php:668
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:489
 #: src/usr/local/www/vpn_ipsec_settings.php:218
@@ -30701,7 +30762,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys.php:95
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_ipsec_mobile.php:425
-#: src/usr/local/www/vpn_ipsec_phase1.php:647
+#: src/usr/local/www/vpn_ipsec_phase1.php:669
 #: src/usr/local/www/vpn_ipsec_phase2.php:490
 #: src/usr/local/www/vpn_ipsec_settings.php:219
 msgid "Pre-Shared Keys"
@@ -30892,7 +30953,7 @@ msgid "A user with this name already exists. Add the key to the user instead."
 msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:79
-#: src/usr/local/www/vpn_ipsec_phase1.php:234
+#: src/usr/local/www/vpn_ipsec_phase1.php:241
 msgid "Pre-Shared Key contains invalid characters."
 msgstr ""
 
@@ -30927,7 +30988,7 @@ msgid "*Secret type"
 msgstr "*Τύπος μυστικού"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:148
-#: src/usr/local/www/vpn_ipsec_phase1.php:760
+#: src/usr/local/www/vpn_ipsec_phase1.php:782
 msgid "*Pre-Shared Key"
 msgstr "*Προ-Διαμοιρασμένο μυστικό κλειδί"
 
@@ -31119,174 +31180,182 @@ msgstr ""
 msgid "Login Banner"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:192
+#: src/usr/local/www/vpn_ipsec_phase1.php:199
 msgid "EAP-MSChapv2 can only be used with IKEv2 type VPNs."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:197
+#: src/usr/local/www/vpn_ipsec_phase1.php:204
 msgid "EAP-TLS can only be used with IKEv2 type VPNs."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:202
+#: src/usr/local/www/vpn_ipsec_phase1.php:209
 msgid "EAP-RADIUS can only be used with IKEv2 type VPNs."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:227
+#: src/usr/local/www/vpn_ipsec_phase1.php:234
 msgid "Remote gateway"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:238
+#: src/usr/local/www/vpn_ipsec_phase1.php:245
 msgid "The P1 lifetime must be an integer."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:243
+#: src/usr/local/www/vpn_ipsec_phase1.php:250
+msgid "The margintime must be an integer."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:252
+msgid "The margintime must be smaller than the P1 lifetime."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:245
+#: src/usr/local/www/vpn_ipsec_phase1.php:260
 msgid ""
 "A valid remote gateway IPv4 address must be specified or protocol needs to "
 "be changed to IPv6"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:247
+#: src/usr/local/www/vpn_ipsec_phase1.php:262
 msgid ""
 "A valid remote gateway IPv6 address must be specified or protocol needs to "
 "be changed to IPv4"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:257
+#: src/usr/local/www/vpn_ipsec_phase1.php:272
 #, php-format
 msgid "The remote gateway \"%1$s\" is already used by phase1 \"%2$s\"."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:268
+#: src/usr/local/www/vpn_ipsec_phase1.php:283
 msgid "There is a Phase 2 using IPv6, cannot use IPv4."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:272
+#: src/usr/local/www/vpn_ipsec_phase1.php:287
 msgid "There is a Phase 2 using IPv4, cannot use IPv6."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:286
+#: src/usr/local/www/vpn_ipsec_phase1.php:301
 msgid "Please enter an address for 'My Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:290
+#: src/usr/local/www/vpn_ipsec_phase1.php:305
 msgid "Please enter a keyid tag for 'My Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:294
+#: src/usr/local/www/vpn_ipsec_phase1.php:309
 msgid "Please enter a fully qualified domain name for 'My Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:298
+#: src/usr/local/www/vpn_ipsec_phase1.php:313
 msgid ""
 "Please enter a user and fully qualified domain name for 'My Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:302
+#: src/usr/local/www/vpn_ipsec_phase1.php:317
 msgid "Please enter a dynamic domain name for 'My Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:306
+#: src/usr/local/www/vpn_ipsec_phase1.php:321
 msgid "A valid IP address for 'My identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:310
+#: src/usr/local/www/vpn_ipsec_phase1.php:325
 msgid "A valid domain name for 'My identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:315
+#: src/usr/local/www/vpn_ipsec_phase1.php:330
 msgid "A valid FQDN for 'My identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:322
+#: src/usr/local/www/vpn_ipsec_phase1.php:337
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must "
 "be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:328
+#: src/usr/local/www/vpn_ipsec_phase1.php:343
 msgid "A valid Dynamic DNS address for 'My identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:341
+#: src/usr/local/www/vpn_ipsec_phase1.php:356
 msgid "Please enter an address for 'Peer Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:345
+#: src/usr/local/www/vpn_ipsec_phase1.php:360
 msgid "Please enter a keyid tag for 'Peer Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:349
+#: src/usr/local/www/vpn_ipsec_phase1.php:364
 msgid "Please enter a fully qualified domain name for 'Peer Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:353
+#: src/usr/local/www/vpn_ipsec_phase1.php:368
 msgid ""
 "Please enter a user and fully qualified domain name for 'Peer Identifier'"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:357
+#: src/usr/local/www/vpn_ipsec_phase1.php:372
 msgid "A valid IP address for 'Peer identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:361
+#: src/usr/local/www/vpn_ipsec_phase1.php:376
 msgid "A valid domain name for 'Peer identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:366
+#: src/usr/local/www/vpn_ipsec_phase1.php:381
 msgid "A valid FQDN for 'Peer identifier' must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:373
+#: src/usr/local/www/vpn_ipsec_phase1.php:388
 msgid ""
 "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' "
 "must be specified."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:380
+#: src/usr/local/www/vpn_ipsec_phase1.php:395
 msgid "A numeric value must be specified for DPD delay."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:384
+#: src/usr/local/www/vpn_ipsec_phase1.php:399
 msgid "A numeric value must be specified for DPD retries."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:389
+#: src/usr/local/www/vpn_ipsec_phase1.php:404
 msgid "A numeric value must be specified for TFC bytes."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:393
+#: src/usr/local/www/vpn_ipsec_phase1.php:408
 msgid "Valid arguments for IKE type are v1, v2 or auto"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:397
+#: src/usr/local/www/vpn_ipsec_phase1.php:412
 msgid "Encryption Algorithm AES-GCM can only be used with IKEv2"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:407
+#: src/usr/local/www/vpn_ipsec_phase1.php:422
 msgid ""
 "A valid RADIUS server must be selected for user authentication on the Mobile "
 "Clients tab in order to set EAP-RADIUS as the authentication method."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:511
+#: src/usr/local/www/vpn_ipsec_phase1.php:533
 msgid "Saved IPsec tunnel Phase 1 configuration."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:539
+#: src/usr/local/www/vpn_ipsec_phase1.php:561
 #, php-format
 msgid "GW Group %s"
 msgstr "Ομάδα GW %s"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:629
-#: src/usr/local/www/vpn_ipsec_phase1.php:632
+#: src/usr/local/www/vpn_ipsec_phase1.php:651
+#: src/usr/local/www/vpn_ipsec_phase1.php:654
 msgid "Edit Phase 1"
 msgstr "Επεξεργασία Φάσης 1"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:653
+#: src/usr/local/www/vpn_ipsec_phase1.php:675
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
 #: src/usr/local/www/vpn_openvpn_client.php:506
 #: src/usr/local/www/vpn_openvpn_csc.php:312
@@ -31294,84 +31363,84 @@ msgstr "Επεξεργασία Φάσης 1"
 msgid "General Information"
 msgstr "Γενικές πληροφορίες"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:664
+#: src/usr/local/www/vpn_ipsec_phase1.php:686
 msgid "*Key Exchange version"
 msgstr "*Έκδοση ανταλλαγής κλειδιών"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:667
+#: src/usr/local/www/vpn_ipsec_phase1.php:689
 msgid ""
 "Select the Internet Key Exchange protocol version to be used. Auto uses "
 "IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:671
+#: src/usr/local/www/vpn_ipsec_phase1.php:693
 msgid "*Internet Protocol"
 msgstr "*Πρωτόκολλο Διαδικτύου"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:674
+#: src/usr/local/www/vpn_ipsec_phase1.php:696
 msgid "Select the Internet Protocol family."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:681
+#: src/usr/local/www/vpn_ipsec_phase1.php:703
 msgid "Select the interface for the local endpoint of this phase1 entry."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:686
+#: src/usr/local/www/vpn_ipsec_phase1.php:708
 msgid "*Remote Gateway"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:689
+#: src/usr/local/www/vpn_ipsec_phase1.php:711
 msgid "Enter the public IP address or host name of the remote gateway."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:701
+#: src/usr/local/www/vpn_ipsec_phase1.php:723
 msgid "Phase 1 Proposal (Authentication)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:708
-#: src/usr/local/www/vpn_ipsec_phase1.php:806
-#: src/usr/local/www/vpn_ipsec_phase1.php:813
+#: src/usr/local/www/vpn_ipsec_phase1.php:730
+#: src/usr/local/www/vpn_ipsec_phase1.php:828
+#: src/usr/local/www/vpn_ipsec_phase1.php:835
 msgid "Must match the setting chosen on the remote side."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:714
+#: src/usr/local/www/vpn_ipsec_phase1.php:736
 msgid "Main"
 msgstr "Κύριο"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:712
+#: src/usr/local/www/vpn_ipsec_phase1.php:734
 msgid "*Negotiation mode"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:715
+#: src/usr/local/www/vpn_ipsec_phase1.php:737
 msgid "Aggressive is more flexible, but less secure."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:717
+#: src/usr/local/www/vpn_ipsec_phase1.php:739
 msgid "*My identifier"
 msgstr "*Το αναγνωριστικό μου"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:735
+#: src/usr/local/www/vpn_ipsec_phase1.php:757
 msgid "*Peer identifier"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:753
+#: src/usr/local/www/vpn_ipsec_phase1.php:775
 msgid ""
 "This is known as the \"group\" setting on some VPN client implementations"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:763
+#: src/usr/local/www/vpn_ipsec_phase1.php:785
 msgid "Enter the Pre-Shared Key string."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:767
+#: src/usr/local/www/vpn_ipsec_phase1.php:789
 msgid "*My Certificate"
 msgstr "*Το πιστοποιητικό μου"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:770
+#: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:774
+#: src/usr/local/www/vpn_ipsec_phase1.php:796
 #: src/usr/local/www/vpn_openvpn_client.php:672
 #: src/usr/local/www/vpn_openvpn_client.php:678
 #: src/usr/local/www/vpn_openvpn_server.php:799
@@ -31379,86 +31448,96 @@ msgstr ""
 msgid "*Peer Certificate Authority"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:777
+#: src/usr/local/www/vpn_ipsec_phase1.php:799
 msgid ""
 "Select a certificate authority previously configured in the Certificate "
 "Manager."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:781
+#: src/usr/local/www/vpn_ipsec_phase1.php:803
 msgid "Phase 1 Proposal (Algorithms)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:783
+#: src/usr/local/www/vpn_ipsec_phase1.php:805
 #: src/usr/local/www/vpn_openvpn_client.php:721
 #: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:803
+#: src/usr/local/www/vpn_ipsec_phase1.php:825
 msgid "*Hash Algorithm"
 msgstr "*Αλγόριθμος Hash"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:810
+#: src/usr/local/www/vpn_ipsec_phase1.php:832
 msgid "*DH Group"
 msgstr "*Ομάδα DH"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:817
+#: src/usr/local/www/vpn_ipsec_phase1.php:839
 msgid "*Lifetime (Seconds)"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:828
+#: src/usr/local/www/vpn_ipsec_phase1.php:850
 msgid "Disable rekey"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:835
+#: src/usr/local/www/vpn_ipsec_phase1.php:857
+msgid "Margintime (Seconds)"
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:860
+msgid ""
+"How long before connection expiry or keying-channel expiry should attempt to "
+"negotiate a replacement begin."
+msgstr ""
+
+#: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
 msgstr "Απενεργοποίηση Επαναυθεντικοποίησης"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:842
+#: src/usr/local/www/vpn_ipsec_phase1.php:871
 msgid "Responder Only"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:851
+#: src/usr/local/www/vpn_ipsec_phase1.php:880
 msgid "Force"
 msgstr "Δύναμη"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:849
+#: src/usr/local/www/vpn_ipsec_phase1.php:878
 msgid "NAT Traversal"
 msgstr "Διασταύρωση NAT"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:852
+#: src/usr/local/www/vpn_ipsec_phase1.php:881
 msgid ""
 "Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in "
 "UDP packets) if needed, which can help with clients that are behind "
 "restrictive firewalls."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:857
+#: src/usr/local/www/vpn_ipsec_phase1.php:886
 msgid "MOBIKE"
 msgstr "MOBIKE"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:860
+#: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "Set this option to control the use of MOBIKE"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:864
+#: src/usr/local/www/vpn_ipsec_phase1.php:893
 msgid "Split connections"
 msgstr "Χωρισμός συνδέσεων"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:890
+#: src/usr/local/www/vpn_ipsec_phase1.php:919
 msgid "Dead Peer Detection"
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:900
+#: src/usr/local/www/vpn_ipsec_phase1.php:929
 msgid "Delay between requesting peer acknowledgement."
 msgstr ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:904
+#: src/usr/local/www/vpn_ipsec_phase1.php:933
 msgid "Max failures"
 msgstr "Μέγιστος αριθμός αποτυχιών"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:907
+#: src/usr/local/www/vpn_ipsec_phase1.php:936
 msgid "Number of consecutive failures allowed before disconnect. "
 msgstr ""
 
@@ -33302,7 +33381,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:464
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:215
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
 msgstr "Εμφάνιση"
@@ -33883,19 +33962,19 @@ msgstr "τμήμα"
 msgid "Updated traffic graphs widget settings via dashboard."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:139
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:141
 msgid "All traffic graphs are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:151
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:153
 msgid "Refresh Interval"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:158
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:160
 msgid "Inverse"
 msgstr "Αντιστροφή"
 
-#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:175
+#: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:177
 msgid "Unit Size"
 msgstr ""
 
@@ -34182,7 +34261,7 @@ msgstr "Το αρχείο ρυθμίσεων είναι κρυπτογραφημ
 msgid "Enable promiscuous mode"
 msgstr ""
 
-#: src/usr/local/www/diag_packet_capture.php:395
+#: src/usr/local/www/diag_packet_capture.php:406
 msgid "Do reverse DNS lookup"
 msgstr ""
 
@@ -34318,121 +34397,125 @@ msgid ""
 "expands to 256 entries.) "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:1776
+#: src/usr/local/www/interfaces.php:1786
 msgid "Enable interface"
 msgstr "Ενεργοποίηση διεπαφής"
 
-#: src/usr/local/www/interfaces.php:1926 src/usr/local/www/interfaces.php:3251
+#: src/usr/local/www/interfaces.php:1911
+msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
+msgstr ""
+
+#: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
 msgstr "Προεπιλεγμένη πύλη δικτύου"
 
-#: src/usr/local/www/interfaces.php:1993 src/usr/local/www/interfaces.php:2178
+#: src/usr/local/www/interfaces.php:2010 src/usr/local/www/interfaces.php:2195
 msgid "Configuration Override"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2076
+#: src/usr/local/www/interfaces.php:2093
 msgid "FreeBSD default"
 msgstr "προεπιλογή FreeBSD"
 
-#: src/usr/local/www/interfaces.php:2092
+#: src/usr/local/www/interfaces.php:2109
 msgid "pfSense Default"
 msgstr "Προεπιλογή pfSense"
 
-#: src/usr/local/www/interfaces.php:2100
+#: src/usr/local/www/interfaces.php:2117
 msgid "Saved Cfg"
 msgstr "Αποθηκευμένο Cfg"
 
-#: src/usr/local/www/interfaces.php:2187
+#: src/usr/local/www/interfaces.php:2204
 msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2194
+#: src/usr/local/www/interfaces.php:2211
 msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2208
+#: src/usr/local/www/interfaces.php:2225
 msgid ""
 "Send an IPv6 prefix hint to indicate the desired prefix size for delegation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2215
+#: src/usr/local/www/interfaces.php:2232
 msgid "Start DHCP6 client in debug mode"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2221
+#: src/usr/local/www/interfaces.php:2238
 msgid "Required by some ISPs, especially those not using PPPoE"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2227
+#: src/usr/local/www/interfaces.php:2244
 msgid ""
 "dhcp6c will send a release to the ISP on exit, some ISPs then release the "
 "allocated address or prefix. This option prevents that signal ever being "
 "sent"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2250
+#: src/usr/local/www/interfaces.php:2267
 msgid "Exchange Information Only"
 msgstr "Ανταλλαγή Πληροφοριών Μόνο "
 
-#: src/usr/local/www/interfaces.php:2286
+#: src/usr/local/www/interfaces.php:2303
 msgid "Non-Temporary Address Allocation"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2327
+#: src/usr/local/www/interfaces.php:2344
 msgid "Prefix Delegation "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2670 src/usr/local/www/interfaces.php:2802
+#: src/usr/local/www/interfaces.php:2695 src/usr/local/www/interfaces.php:2827
 msgid "Enable Dial-On-Demand mode "
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:2727
+#: src/usr/local/www/interfaces.php:2752
 msgid "Reset at each month (\"0 0 1 * *\")"
 msgstr "Επαναφορά ανά μήνα (\"0 0 1 * *\")"
 
-#: src/usr/local/www/interfaces.php:2735
+#: src/usr/local/www/interfaces.php:2760
 msgid "Reset at each week (\"0 0 * * 0\")"
 msgstr "Επαναφορά ανά εβδομάδα (\"0 0 * * 0\")"
 
-#: src/usr/local/www/interfaces.php:2743
+#: src/usr/local/www/interfaces.php:2768
 msgid "Reset at each day (\"0 0 * * *\")"
 msgstr "Επαναφορά ανά ημέρα  (\"0 0 * * *\")"
 
-#: src/usr/local/www/interfaces.php:2751
+#: src/usr/local/www/interfaces.php:2776
 msgid "Reset at each hour (\"0 * * * *\")"
 msgstr "Επαναφορά ανά ώρα (\"0 * * * *\")"
 
-#: src/usr/local/www/interfaces.php:2840
+#: src/usr/local/www/interfaces.php:2865
 msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3040
+#: src/usr/local/www/interfaces.php:3065
 msgid ""
 "Allow packets to pass between wireless clients directly when operating as an "
 "access point"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3048
+#: src/usr/local/www/interfaces.php:3073
 msgid "Force the card to use WME (wireless QoS)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3056
+#: src/usr/local/www/interfaces.php:3081
 msgid ""
 "Disable broadcasting of the SSID for this network (This may cause problems "
 "for some clients, and the SSID may still be discovered by other means.)"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3069
+#: src/usr/local/www/interfaces.php:3094
 msgid "Enable WPA"
 msgstr "Ενεργοποίηση WPA"
 
-#: src/usr/local/www/interfaces.php:3121
+#: src/usr/local/www/interfaces.php:3146
 msgid "Force the AP to rekey whenever a client disassociates"
 msgstr ""
 
-#: src/usr/local/www/interfaces.php:3133
+#: src/usr/local/www/interfaces.php:3158
 msgid "Enable 802.1X authentication"
 msgstr "Ενεργοποίηση αυθεντικοποίησης 802.1X "
 
@@ -34802,28 +34885,28 @@ msgstr ""
 msgid "Verify SSL Certificate Trust"
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:303
+#: src/usr/local/www/services_ntpd.php:311
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:310
+#: src/usr/local/www/services_ntpd.php:318
 msgid "Log peer messages (default: disabled)."
 msgstr "Καταγραφή μηνυμάτων χρηστών (προεπιλογή: απενεργοποιημένο) "
 
-#: src/usr/local/www/services_ntpd.php:317
+#: src/usr/local/www/services_ntpd.php:325
 msgid "Log system messages (default: disabled)."
 msgstr "Καταγραφή μηνυμάτων συστήματος (προεπιλογή:απενεργοποιημένο) "
 
-#: src/usr/local/www/services_ntpd.php:340
+#: src/usr/local/www/services_ntpd.php:348
 msgid "Log reference clock statistics (default: disabled)."
 msgstr ""
 "Καταγραφή στατιστικών ρολογιού αναφοράς (προεπιλογή:απενεργοποιημένο) "
 
-#: src/usr/local/www/services_ntpd.php:347
+#: src/usr/local/www/services_ntpd.php:355
 msgid "Log clock discipline statistics (default: disabled)."
 msgstr ""
 
-#: src/usr/local/www/services_ntpd.php:354
+#: src/usr/local/www/services_ntpd.php:362
 msgid "Log NTP peer statistics (default: disabled)."
 msgstr ""
 
@@ -35196,16 +35279,16 @@ msgstr ""
 msgid "Wireless Events (hostapd)"
 msgstr ""
 
-#: src/usr/local/www/system.php:543
+#: src/usr/local/www/system.php:546
 msgid "Allow DNS server list to be overridden by DHCP/PPP on WAN"
 msgstr ""
 
-#: src/usr/local/www/system.php:553
+#: src/usr/local/www/system.php:556
 msgid ""
 "Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall"
 msgstr ""
 
-#: src/usr/local/www/system.php:618
+#: src/usr/local/www/system.php:621
 msgid "Show hostname on login banner"
 msgstr ""
 
@@ -35330,37 +35413,41 @@ msgstr ""
 msgid "Do NOT send Netgate Device ID with user agent"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:176
+#: src/usr/local/www/system_advanced_network.php:183
 msgid ""
 "All IPv6 traffic will be blocked by the firewall unless this box is checked"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:184
+#: src/usr/local/www/system_advanced_network.php:191
 msgid "Enable IPv6 over IPv4 tunneling"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:200
+#: src/usr/local/www/system_advanced_network.php:207
 msgid "Prefer to use IPv4 even if IPv6 is available"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:208
+#: src/usr/local/www/system_advanced_network.php:215
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:250
+#: src/usr/local/www/system_advanced_network.php:257
 msgid "Disable hardware checksum offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:261
+#: src/usr/local/www/system_advanced_network.php:268
 msgid "Disable hardware TCP segmentation offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:271
+#: src/usr/local/www/system_advanced_network.php:278
 msgid "Disable hardware large receive offload"
 msgstr ""
 
-#: src/usr/local/www/system_advanced_network.php:281
+#: src/usr/local/www/system_advanced_network.php:288
 msgid "Suppress ARP messages"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_network.php:296
+msgid "Reset all states if WAN IP Address changes"
 msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:225
@@ -35629,20 +35716,20 @@ msgstr ""
 msgid "Provide a login banner to clients"
 msgstr "Παροχή πανό σύνδεσης στους πελάτες"
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:658
+#: src/usr/local/www/vpn_ipsec_phase1.php:680
 msgid ""
 "Set this option to disable this phase1 without removing it from the list. "
 msgstr ""
 "Θέσατε αυτή την επιλογή ώστε να απενεργοποιήσετε αυτό το phase1 χωρίς να το "
 "αφαιρέσετε από τη λίστα."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:829
+#: src/usr/local/www/vpn_ipsec_phase1.php:851
 msgid "Disables renegotiation when a connection is about to expire."
 msgstr ""
 "Απενεργοποιεί την επαναδιαπραγμάτευση όταν μια σύνδεση είναι έτοιμη να λήξει."
 ""
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:836
+#: src/usr/local/www/vpn_ipsec_phase1.php:865
 msgid ""
 "Whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, "
 "reauthentication is always done."
@@ -35650,7 +35737,7 @@ msgstr ""
 "Αν η έκδοση νέων κλειδιών ενός IKE_SA θα πρέπει να επαναυθεντικοποιεί το "
 "άλλο μέλος. Στο IKEv1, γίνεται πάντα επαναυθεντικοποίηση."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:843
+#: src/usr/local/www/vpn_ipsec_phase1.php:872
 msgid ""
 "Enable this option to never initiate this connection from this side, only "
 "respond to incoming requests."
@@ -35658,7 +35745,7 @@ msgstr ""
 "Ενεργοποιείστε αυτήν την επιλογή ώστε αυτή η σύνδεση να μην ξεκινάει ποτέ "
 "από αυτήν την πλευρά, παρά μόνο να απαντιούνται εισερχόμενα αιτήματα."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:865
+#: src/usr/local/www/vpn_ipsec_phase1.php:894
 msgid ""
 "Enable this to split connection entries with multiple phase 2 configurations."
 " Required for remote endpoints that support only a single traffic selector "
@@ -35668,7 +35755,7 @@ msgstr ""
 "ρυθμίσεις φάσης 2. Απαιτείται για απομακρυσμένα τελικά σημεία που "
 "υποστηρίζουν μόνο έναν επιλογέα κίνησης ανα παιδί SA."
 
-#: src/usr/local/www/vpn_ipsec_phase1.php:891
+#: src/usr/local/www/vpn_ipsec_phase1.php:920
 msgid "Enable DPD"
 msgstr "Ενεργοποίηση DPD"
 

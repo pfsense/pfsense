@@ -588,6 +588,8 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	interface_bridge_configure_advanced($bridge);
 
+	interface_bridge_configure_ip6linklocal($bridge);
+
 	if ($bridge['bridgeif']) {
 		interfaces_bring_up($bridge['bridgeif']);
 	} else {
@@ -711,6 +713,25 @@ function interface_bridge_configure_advanced($bridge) {
 			$realif = get_real_interface($privateif);
 			mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
 		}
+	}
+}
+
+function interface_bridge_configure_ip6linklocal($bridge) {
+	$bridgeif = $bridge['bridgeif'];
+
+	$members = explode(',', $bridge['members']);
+	if (!count($members)) {
+		return;
+	}
+
+	$auto_linklocal = isset($bridge['ip6linklocal']);
+	$bridgeop = $auto_linklocal ? '' : '-';
+	$memberop = $auto_linklocal ? '-' : '';
+
+	mwexec("/usr/sbin/ndp -i {$bridgeif} -- {$bridgeop}auto_linklocal");
+	foreach ($members as $member) {
+		$realif = get_real_interface($member);
+		mwexec("/usr/sbin/ndp -i {$realif} -- {$memberop}auto_linklocal");
 	}
 }
 
@@ -4435,10 +4456,11 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 			}
 			$id_assoc_statement_prefix .= ";";
 		}
-
+		
+		$realif = get_real_interface($wancfg['adv_dhcp6_prefix_selected_interface']);
 		if (is_numeric($wancfg['adv_dhcp6_prefix_interface_statement_sla_id'])) {
 			$id_assoc_statement_prefix .= "\n\tprefix-interface";
-			$id_assoc_statement_prefix .= " {$wanif}";
+			$id_assoc_statement_prefix .= " {$realif}";
 			$id_assoc_statement_prefix .= " {\n";
 			$id_assoc_statement_prefix .= "\t\tsla-id {$wancfg['adv_dhcp6_prefix_interface_statement_sla_id']};\n";
 			if (($wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] >= 0) &&
@@ -5160,7 +5182,8 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 							case 'ppp':
 							case 'l2tp':
 							case 'pptp':
-								if (isset($cfg['dhcp6usev4iface']) && $realv6iface === false) {
+								// Added catch for static v6 but using v4 link. Sets things to use pppoe link
+								if ((isset($cfg['dhcp6usev4iface']) && $realv6iface === false) || isset($cfg['ipv6usev4iface'])) {
 									$wanif = $cfg['if'];
 								} else {
 									$parents = get_parent_interface($interface);

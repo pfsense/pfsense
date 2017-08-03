@@ -173,6 +173,7 @@ $section->add($group);
 $form->add($section);
 print $form;
 
+$realif = get_real_interface($curif);
 ?>
 
 <script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
@@ -183,94 +184,22 @@ print $form;
 
 <script type="text/javascript">
 
+
 //<![CDATA[
 events.push(function() {
 
 	var InterfaceString = "<?=$curif?>";
+	var RealInterfaceString = "<?=$realif?>";
+    window.graph_backgroundupdate = $('#backgroundupdate').val() === "true";
 
-	//store saved settings in a fresh localstorage
-	localStorage.clear();
-	localStorage.setItem('interval', 1);
-	localStorage.setItem('invert', "true");
-	localStorage.setItem('size', 1);
-	window.interfaces = InterfaceString.split("|");
-	window.charts = {};
-    window.myData = {};
-    window.updateIds = 0;
-    window.updateTimerIds = 0;
-    window.latest = [];
-    var refreshInterval = localStorage.getItem('interval');
+	window.interval = 1;
+	window.invert = "true";
+	window.size = 8;
+	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
+	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 
-    //TODO make it fall on a second value so it increments better
-    var now = then = new Date(Date.now());
-
-    var nowTime = now.getTime();
-
-	$.each( window.interfaces, function( key, value ) {
-
-		myData[value] = [];
-		updateIds = 0;
-		updateTimerIds = 0;
-
-		var itemIn = new Object();
-		var itemOut = new Object();
-
-		itemIn.key = value + " (in)";
-		if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-		itemIn.first = true;
-		itemIn.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemIn);
-
-		itemOut.key = value + " (out)";
-		if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-		itemOut.first = true;
-		itemOut.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemOut);
-
-	});
-
-    var backgroundupdate = $('#backgroundupdate').val() === "true";
-	draw_graph(refreshInterval, then, backgroundupdate);
-
-	//re-draw graph when the page goes from inactive (in it's window) to active
-	Visibility.change(function (e, state) {
-		if($('#backgroundupdate').val() === "true"){
-			return;
-		}
-		if(state === "visible") {
-
-			now = then = new Date(Date.now());
-
-			var nowTime = now.getTime();
-
-			$.each( window.interfaces, function( key, value ) {
-
-				Visibility.stop(updateIds);
-				clearInterval(updateTimerIds);
-
-				myData[value] = [];
-
-				var itemIn = new Object();
-				var itemOut = new Object();
-
-				itemIn.key = value + " (in)";
-				if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-				itemIn.first = true;
-				itemIn.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemIn);
-
-				itemOut.key = value + " (out)";
-				if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-				itemOut.first = true;
-				itemOut.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemOut);
-
-			});
-
-			draw_graph(refreshInterval, then, false);
-
-		}
-	});
+	graph_init();
+	graph_visibilitycheck();
 
 });
 //]]>

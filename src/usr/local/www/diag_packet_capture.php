@@ -315,12 +315,23 @@ $section->addInput(new Form_Checkbox(
 	'Promiscuous',
 	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('The packet capture will be performed using promiscuous mode.%1$s' .
-			'Note: Some network adapters do not support or work well in promiscuous mode.%1$s' .
-			'More: %2$sPacket capture%3$s',
-			'<br />',
-			'<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">',
-			'</a>');
+))->setHelp('%1$sNon-promiscuous mode captures only traffic that is directly relevant to the host (sent by it, sent or broadcast to it, or routed through it) and ' .
+	'does not show packets that are ignored at network adapter level.%2$s%3$sPromiscuous mode%4$s ("sniffing") captures all data seen by the adapter, whether ' .
+	'or not it is valid or related to the host, but in some cases may have undesirable side effects and not all adapters support this option. Click Info for details %5$s' .
+	'Promiscuous mode requires more kernel processing of packets. This puts a slightly higher demand on system resources, especially ' .
+	'on very busy networks or low power processors. The change in packet processing may allow a hostile host to detect that an adapter is in promiscuous mode ' .
+	'or to \'fingerprint\' the kernel (see %6$s). Some network adapters may not support or work well in promiscuous mode (see %7$s).%8$s',
+
+	'<p style="margin-bottom:2px;padding-bottom:0px">',
+	'</p><p style="margin:0px;padding:0px">',
+	'<a href="https://en.wikipedia.org/wiki/Promiscuous_mode">',
+	'</a>',
+	'<span class="infoblock" style="font-size:90%"><br />',
+	'&nbsp;<a target="_blank" href="https://security.stackexchange.com/questions/3630/how-to-find-out-that-a-nic-is-in-promiscuous-mode-on-a-lan">[1]</a>' .
+		'&nbsp;<a href="https://nmap.org/nsedoc/scripts/sniffer-detect.html">[2]</a>',
+	'&nbsp;<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+11.0-stable&amp;arch=default&amp;format=html">[3]</a>',
+	'</span></p>'
+);
 
 $section->addInput(new Form_Select(
 	'fam',

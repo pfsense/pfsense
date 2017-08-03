@@ -105,6 +105,7 @@ if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
 $tg_displayed = false;
 $tg_displayed_ifs_array = [];
+$tg_displayed_realifsarray = [];
 ?>
 	<script src="/vendor/d3/d3.min.js?v=<?=filemtime('/usr/local/www/vendor/d3/d3.min.js')?>"></script>
 	<script src="/vendor/nvd3/nv.d3.js?v=<?=filemtime('/usr/local/www/vendor/nvd3/nv.d3.js')?>"></script>
@@ -129,6 +130,7 @@ $tg_displayed_ifs_array = [];
 
 		$tg_displayed = true;
 		$tg_displayed_ifs_array[] = $ifdescr;
+		$tg_displayed_realifsarray[] = get_real_interface($ifdescr);
 		echo '<div id="traffic-chart-' . $ifdescr . '" class="d3-chart traffic-widget-chart">';
 		echo '	<svg></svg>';
 		echo '</div>';
@@ -255,98 +257,18 @@ var graph_interfacenames = <?php
 events.push(function() {
 
 	var InterfaceString = "<?=implode("|", $tg_displayed_ifs_array)?>";
+	var RealInterfaceString = "<?=implode("|", $tg_displayed_realifsarray)?>";
+    window.graph_backgroundupdate = <?=$tg_backgroundupdate?>;
 
-	//store saved settings in a fresh localstorage
-	localStorage.clear();
-	localStorage.setItem('interval', <?=$tg_refreshinterval?>);
-	localStorage.setItem('invert', <?=$tg_invert?>);
-	localStorage.setItem('size', <?=$tg_size?>);
-	localStorage.setItem('backgroundupdate', <?=$tg_backgroundupdate?>);
-
+	window.interval = <?=$tg_refreshinterval?>;
+	window.invert = <?=$tg_invert?>;
+	window.size = <?=$tg_size?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
-	window.charts = {};
-    window.myData = {};
-    window.updateIds = 0;
-    window.updateTimerIds = 0;
-    window.latest = [];
-    var refreshInterval = localStorage.getItem('interval');
-    var backgroundupdate = localStorage.getItem('backgroundupdate');
+	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 
-    var refreshInterval = localStorage.getItem('interval');
-    //TODO make it fall on a second value so it increments better
-    var now = then = new Date(Date.now());
-
-    var nowTime = now.getTime();
-
-	$.each(window.interfaces, function( key, value ) {
-
-		myData[value] = [];
-		updateIds = 0;
-		updateTimerIds = 0;
-
-		var itemIn = new Object();
-		var itemOut = new Object();
-
-		itemIn.key = value + " (in)";
-		if (localStorage.getItem('invert') === "true") { itemIn.area = true; }
-		itemIn.first = true;
-		itemIn.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemIn);
-
-		itemOut.key = value + " (out)";
-		if (localStorage.getItem('invert') === "true") { itemOut.area = true; }
-		itemOut.first = true;
-		itemOut.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemOut);
-
-	});
-
-	if (window.interfaces.length > 0) {
-		draw_graph(refreshInterval, then, backgroundupdate);
-	}
-
-	//re-draw graph when the page goes from inactive (in it's window) to active
-	Visibility.change(function (e, state) {
-		if (backgroundupdate) {
-			return;
-		}
-		if (state === "visible") {
-
-			now = then = new Date(Date.now());
-
-			var nowTime = now.getTime();
-
-			$.each(window.interfaces, function( key, value ) {
-
-				Visibility.stop(updateIds);
-				clearInterval(updateTimerIds);
-
-				myData[value] = [];
-
-				var itemIn = new Object();
-				var itemOut = new Object();
-
-				itemIn.key = value + " (in)";
-				if (localStorage.getItem('invert') === "true") { itemIn.area = true; }
-				itemIn.first = true;
-				itemIn.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemIn);
-
-				itemOut.key = value + " (out)";
-				if (localStorage.getItem('invert') === "true") { itemOut.area = true; }
-				itemOut.first = true;
-				itemOut.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemOut);
-
-			});
-
-			if (window.interfaces.length > 0) {
-				draw_graph(refreshInterval, then, backgroundupdate);
-			}
-
-		}
-	});
-
+	graph_init();
+	graph_visibilitycheck();
+	
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalltgitems");
 });
 //]]>

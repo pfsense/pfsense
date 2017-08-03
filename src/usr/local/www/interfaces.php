@@ -90,6 +90,7 @@ if (!is_array($config['gateways']['gateway_item'])) {
 
 $a_gateways = &$config['gateways']['gateway_item'];
 
+$interfaces = get_configured_interface_with_descr();
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
@@ -228,6 +229,7 @@ $pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $wancfg['adv_dhcp6_id_a
 
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_id'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_id'];
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_len'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_len'];
+$pconfig['adv_dhcp6_prefix_selected_interface'] = $wancfg['adv_dhcp6_prefix_selected_interface'];
 
 $pconfig['adv_dhcp6_authentication_statement_authname'] = $wancfg['adv_dhcp6_authentication_statement_authname'];
 $pconfig['adv_dhcp6_authentication_statement_protocol'] = $wancfg['adv_dhcp6_authentication_statement_protocol'];
@@ -313,6 +315,7 @@ switch ($wancfg['ipaddrv6']) {
 	default:
 		if (is_ipaddrv6($wancfg['ipaddrv6'])) {
 			$pconfig['type6'] = "staticv6";
+			$pconfig['ipv6usev4iface'] = isset($wancfg['ipv6usev4iface']);
 			$pconfig['ipaddrv6'] = $wancfg['ipaddrv6'];
 			$pconfig['subnetv6'] = $wancfg['subnetv6'];
 			$pconfig['gatewayv6'] = $wancfg['gatewayv6'];
@@ -1047,6 +1050,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['ipv6usev4iface']);
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
@@ -1093,6 +1097,7 @@ if ($_POST['apply']) {
 
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']);
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_len']);
+		unset($wancfg['adv_dhcp6_prefix_selected_interface']);
 
 		unset($wancfg['adv_dhcp6_authentication_statement_authname']);
 		unset($wancfg['adv_dhcp6_authentication_statement_protocol']);
@@ -1275,6 +1280,9 @@ if ($_POST['apply']) {
 			case "staticv6":
 				$wancfg['ipaddrv6'] = $_POST['ipaddrv6'];
 				$wancfg['subnetv6'] = $_POST['subnetv6'];
+				if ($_POST['ipv6usev4iface'] == "yes") {
+					$wancfg['ipv6usev4iface'] = true;
+				}
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
@@ -1356,7 +1364,9 @@ if ($_POST['apply']) {
 				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len'])) {
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
 				}
-
+				if (!empty($_POST['adv_dhcp6_prefix_selected_interface'])) {
+					$wancfg['adv_dhcp6_prefix_selected_interface'] = $_POST['adv_dhcp6_prefix_selected_interface'];
+				}
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname'])) {
 					$wancfg['adv_dhcp6_authentication_statement_authname'] = $_POST['adv_dhcp6_authentication_statement_authname'];
 				}
@@ -1895,6 +1905,13 @@ $section->addInput(new Form_IpAddress(
 	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
 
+$section->addInput(new Form_Checkbox(
+	'ipv6usev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	$pconfig['ipv6usev4iface']
+));
+
 $group = new Form_Group('IPv6 Upstream gateway');
 
 $group->add(new Form_Select(
@@ -2376,6 +2393,14 @@ $group->add(new Form_Input(
 ))->sethelp('sla-len');
 
 $section->add($group);
+
+$group = new Form_Group('Select prefix interface');
+$section->addInput(new Form_Select(
+	'adv_dhcp6_prefix_selected_interface',
+	'Prefix Interface',
+	$pconfig['adv_dhcp6_prefix_selected_interface'],
+	$interfaces
+))->setHelp('Select the interface on which to apply the prefix delegation.');
 
 $group = new Form_Group('Authentication statement');
 

@@ -110,7 +110,6 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 ?>
 	<a href="<?=$item->get_permalink()?>" target="_blank" class="list-group-item">
 		<h4 class="list-group-item-heading">
-			<img src="pfs-mini.png" title="Source: <?=$feed->get_title()?>" alt="" width="16" height="16" />
 			<?=$item->get_title()?>
 		</h4>
 		<p class="list-group-item-text">

@@ -90,6 +90,18 @@ $icmptypes = array(
  	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true) 
 );
 
+global $vlanprio_values;
+$vlanprio_values = array(
+	"bk" => 0,
+	"be" => 1,
+	"ee" => 2,
+	"ca" => 3,
+	"vi" => 4,
+	"vo" => 5,
+	"ic" => 6,
+	"nc" => 7
+);
+
 /*
  * Fixed tracker values (used to group and track usage in GUI):
  *
@@ -2628,7 +2640,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $dummynet_name_list;
+	global $dummynet_name_list, $vlanprio_values;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2874,10 +2886,10 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 	if (!empty($rule['vlanprio']) && ($rule['vlanprio'] != "none")) {
-		$aline['vlanprio'] = " ieee8021q-pcp " . $rule['vlanprio'] . " ";
+		$aline['vlanprio'] = " prio " . $vlanprio_values[$rule['vlanprio']] . " ";
 	}
 	if (!empty($rule['vlanprioset']) && ($rule['vlanprioset'] != "none")) {
-		$aline['vlanprioset'] = " ieee8021q-setpcp " . $rule['vlanprioset'] . " ";
+		$aline['vlanprioset'] = " set prio " . $vlanprio_values[$rule['vlanprioset']] . " ";
 	}
 	if ($type == "pass") {
 		if (isset($rule['allowopts'])) {

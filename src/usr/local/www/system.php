@@ -459,9 +459,12 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['domain'],
 	['placeholder' => 'mycorp.com, home, office, private, etc.']
-))->setHelp('Do not use \'local\' as a domain name. It will cause local '.
-	'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
-	'local hosts not running mDNS.');
+))->setHelp('Do not use \'.local\' as the final part of the domain (TLD), The \'.local\' domain is %1$swidely used%2$s by '.
+	'mDNS (including Avahi and Apple OS X\'s Bonjour/Rendezvous/Airprint/Airplay), and some Windows systems and networked devices. ' .
+	'These will not network correctly if the router uses \'.local\'. Alternatives such as \'.local.lan\' or \'.mylocal\' are safe.',
+	 '<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
+	 '</a>'
+);
 
 $form->add($section);
 

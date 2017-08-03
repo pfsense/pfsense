@@ -17,15 +17,28 @@
 # limitations under the License.
 
 GW="$1"
+alarm_addr="$2"
+alarm_flag="$3"
+alarm_rtt="$4"
+alarm_rttsd="$5"
+alarm_loss="$6"
 
 if [ -z "$GW" ]; then
 	exit 1
 fi
+
+echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:${alarm_rtt}ms RTTsd:${alarm_rttsd}ms Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
 
 /usr/local/sbin/pfSctl \
 	-c "service reload dyndns ${GW}" \
 	-c "service reload ipsecdns" \
 	-c "service reload openvpn ${GW}" \
 	-c "filter reload" >/dev/null 2>&1
+
+# after above signal the check_reload_status process calls the following scripts simultaneously.:
+# - "/etc/rc.dyndns.update", "dyndns=%s"
+# - "/etc/rc.newipsecdns"
+# - "/etc/rc.openvpn", "interface=%s"
+# - "/etc/rc.filter_configure_sync"
 
 exit $?

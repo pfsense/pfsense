@@ -44,6 +44,16 @@ body {
     background-color: #600;
 }
 
+.navbar-brand > svg {
+    max-width: 65px;
+}
+.navbar-brand > span {
+    font-size:.5em;
+}
+.navbar-brand {
+    line-heigth: 10px;
+}
+
 .navbar-brand > img {
     max-height: 26px;
 }

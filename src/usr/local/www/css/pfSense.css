@@ -146,6 +146,10 @@ tr.disabled a {
     line-height: .3em;
 }
 
+.factory.navbar-brand {
+    padding-top: 10px;
+}
+
 .nav>li>a {
     padding: 14px 19px 10px 19px;
     border-bottom: 5px solid #F5F5F5;

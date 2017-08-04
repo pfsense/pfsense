@@ -4746,7 +4746,7 @@ function upgrade_147_to_148() {
 		}
 
 		// if there was a space in a group name, there may be multiple
-		// groups with the same name in the group file. To prevent pw 
+		// groups with the same name in the group file. To prevent pw
 		// from getting into a neverending loop, delete all user-defined
 		// groups here. local_sync_accounts will run shortly after this
 		// and add them back. redmine #6012
@@ -5091,7 +5091,7 @@ function upgrade_160_to_161() {
 		} else {
 			foreach ($rrdrestore as $xml_file) {
 				$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
-				unlink_if_exists("{$rrd_file}"); 
+				unlink_if_exists("{$rrd_file}");
 
 				file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
 				$_gb = exec("LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -C / -T {$g['tmp_path']}/rrd_restore");
@@ -5323,4 +5323,14 @@ function upgrade_165_to_166() {
 	}
 }
 
+/* Force the Netgate Services and Support widget to be active on upgrade. */
+function upgrade_166_to_167() {
+	global $config;
+
+	$widget_sequence = $config['widgets']['sequence'];
+
+	if (strpos($widget_sequence, 'netgate_services_and_support') === false) {
+		$widget_sequence .= ',netgate_services_and_support:col2:open:0';
+	}
+}
 ?>

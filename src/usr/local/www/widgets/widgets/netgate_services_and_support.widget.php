@@ -106,7 +106,7 @@ if (strlen($json['htmltext']) > 0) {
 }
 
 // Print a low-key refresh link
-print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/support.widget.php?act=refresh" usepost>Refresh</a></div>');
+print('<div style="text-align:right;padding-right:15px;"><a href="/widgets/widgets/netgate_services_and_support.widget.php?act=refresh" usepost>Refresh</a></div>');
 
 print("</div>");
 

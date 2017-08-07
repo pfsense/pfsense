@@ -5331,4 +5331,8 @@ function upgrade_166_to_167() {
 		$config['widgets']['sequence'] .= ',netgate_services_and_support:col2:open:0';
 	}
 }
+
+function upgrade_167_to_168() {
+	upgrade_166_to_167();
+}
 ?>

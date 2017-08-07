@@ -525,13 +525,13 @@ g.nv-axis text, g.nv-legend text {
     stroke: #616161 !important;
 }
 
-.d3-chart .nvtooltip > h3 {
+.nvtooltip > h3 {
     background-color: rgba(66,66,66, 0.9);
     border-bottom: 1px solid #616161;
     color: #e0e0e0;
 }
 
-.d3-chart .nvtooltip {
+.nvtooltip {
     background: rgba(97,97,97, 0.9);
     color: #e0e0e0;
 }

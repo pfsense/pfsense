@@ -979,7 +979,7 @@ svg {
     border-bottom: 2px solid #ccc;
 }
 
-.d3-chart .nvtooltip > h3 {
+.nvtooltip > h3 {
     font-size: 14px;
 }
 

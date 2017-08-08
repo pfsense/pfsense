@@ -219,7 +219,9 @@ if ($_REQUEST['widgetkey']) {
 		}
 
 		// POST data to send via AJAX
-		var postdata = '{"widgetkey":"<?=$widgetkey?>"}';
+		var postdata = {
+			widgetkey :"<?=$widgetkey?>"
+		};
 
 		// Create an object defining the widget refresh AJAX call
 		var interfacesObject = new Object();

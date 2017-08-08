@@ -1,6 +1,6 @@
 <?php
 /*
- * support.widget.php
+ * netgate_serives_and_support.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)

@@ -221,9 +221,8 @@ if ($_REQUEST['widgetkey']) {
 		// POST data to send via AJAX
 		var postdata = '{"widgetkey":"<?=$widgetkey?>"}';
 
-		// Create aN object defining widget refresh AJAX call
+		// Create an object defining the widget refresh AJAX call
 		var interfacesObject = new Object();
-
 		interfacesObject.name = "Interfaces";
 		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
 		interfacesObject.callback = interfaces_callback;

@@ -291,32 +291,31 @@ function changeTabDIV(selectedDiv) {
 	}
 }
 
-function get_ipsec_stats_<?=$widgetkey_nodash?>() {
-	var ajaxRequest;
-
-	ajaxRequest = $.ajax({
-			url: "/widgets/widgets/ipsec.widget.php",
-			type: "post",
-			data: {
-					ajax: "ajax",
-					tab:  curtab
-				  }
-		});
-
-	// Deal with the results of the above ajax call
-	ajaxRequest.done(function (response, textStatus, jqXHR) {
-
-		$('tbody', '#<?=$widgetkey_nodash?>-' + curtab).html(response);
-
-		// and do it again
-		setTimeout(get_ipsec_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
-	});
-}
-
 events.push(function(){
-	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-	// hit the server at exactly the same time)
-	setTimeout(get_ipsec_stats_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function ipsec_callback(s) {
+		$('tbody', '#<?=$widgetkey_nodash?>-' + curtab).html(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	tab : curtab
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var ipsecObject = new Object();
+	ipsecObject.name = "IPsec";
+	ipsecObject.url = "/widgets/widgets/ipsec.widget.php";
+	ipsecObject.callback = ipsec_callback;
+	ipsecObject.parms = postdata;
+
+	// Register the AJAX object
+	register_ajax(ipsecObject);
+
+	// ---------------------------------------------------------------------------------------------------
 });
 //]]>
 </script>

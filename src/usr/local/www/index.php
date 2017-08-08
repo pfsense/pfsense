@@ -121,6 +121,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
+
 if (!is_array($user_settings['widgets'])) {
 	$user_settings['widgets'] = array();
 }
@@ -385,7 +386,7 @@ foreach ($available as $widgetkey => $widgetconfig):
 ?>
 		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetconfig['basename']?>"><i class="fa fa-plus"></i> <?=$widgetconfig['title']?></a></div>
 	<?php endif; ?>
-<?php 
+<?php
 endforeach;
 ?>
 			</div>
@@ -566,8 +567,19 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 		});
 }
 
-events.push(function() {
+// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+// These need to live outsie of the events.push() function to enable the widgets to see them
+var ajaxspecs = new Array();	// Array to hold each widget refresh specification (object)
+var ajaxidx = 0;
+var ajaxmutex = false;
 
+// Add a widget refresh object to the array list
+function register_ajax(ws) {
+  ajaxspecs.push(ws);
+}
+// ---------------------------------------------------------------------------------------------------
+
+events.push(function() {
 	// Make panels destroyable
 	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el) {
 		$(el).on('click', function(e) {
@@ -622,9 +634,50 @@ events.push(function() {
 			$('#btnstore').removeClass("invisible");
 		}
 	});
+
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	function make_ajax_call(wd) {
+		ajaxmutex = true;
+
+		$.ajax({
+			type: 'POST',
+			url: wd.url,
+			dataType: 'html',
+			data: wd.parms,
+
+			success: function(data){
+				wd.callback(data);
+				ajaxmutex = false;
+			},
+
+			error: function(e){
+				alert("Error: " + e)
+				ajaxmutex = false;
+			}
+		});
+	}
+
+	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
+	//results back to the widget's callback function
+	function executewidget() {
+		if (ajaxspecs.length > 0) {
+			if (!ajaxmutex) {
+			    make_ajax_call(ajaxspecs[ajaxidx]);
+			    ajaxidx = ++ajaxidx % ajaxspecs.length;
+			}
+
+		    setTimeout(function() { executewidget(); }, 2000);
+	  	}
+	}
+
+	// Kick it off
+	executewidget();
+
+	//----------------------------------------------------------------------------------------------------
 });
 //]]>
 </script>
+
 <?php
 //build list of javascript include files
 foreach (glob('widgets/javascript/*.js') as $file) {

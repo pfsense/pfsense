@@ -34,7 +34,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
-if ($_REQUEST && $_REQUEST['ajax']) {
+function get_pkg_stats() {
 	$package_list = get_pkg_info();
 	$installed_packages = array_filter($package_list, function($v) {
 		return (isset($v['installed']) || isset($v['broken']));
@@ -132,46 +132,15 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	print("</tbody>\n");
 
-	exit;
 }
 ?>
 
 <div class="table-responsive">
 	<table id="pkgtbl" class="table table-striped table-hover table-condensed">
-		<tr><td><?=gettext("Retrieving package data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
+		<?php get_pkg_stats(); ?>
 	</table>
 </div>
 
 <p class="text-center">
 	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php"><?=gettext("System")?> -&gt; <?=gettext("Packages")?></a>
 </p>
-
-<?php if ($widget_first_instance): ?>
-<script type="text/javascript">
-//<![CDATA[
-
-	function get_pkg_stats() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/installed_packages.widget.php",
-				type: "post",
-				data: { ajax: "ajax"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('[id="pkgtbl"]').html(response);
-
-			// and do it again
-			// NOT! There is no need to refresh this widget
-			// setTimeout(get_pkg_stats, 5000);
-		});
-	}
-
-	events.push(function(){
-		get_pkg_stats();
-	});
-//]]>
-</script>
-<?php endif; ?>

@@ -227,30 +227,34 @@ setInterval(function() {
 <?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-	function ntp_getstatus() {
-		var url = "/widgets/widgets/ntp_status.widget.php";
-		var pars = 'updateme=yes';
-		$.ajax(
-			url,
-			{
-				type: 'get',
-				data: pars,
-				complete: ntpstatuscallback
-			});
+
+events.push(function(){
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function ntp_callback(s) {
+		$('[id="ntpstatus"]').prop('innerHTML', s);
 	}
 
-	function ntpstatuscallback(transport) {
-		// The server returns formatted html code
-		var responseStringNtp = transport.responseText
-		$('[id="ntpstatus"]').prop('innerHTML',responseStringNtp);
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	updateme : "yes"
+	 };
 
-		// Refresh the status at the configured interval
-		setTimeout('ntp_getstatus()', "<?=$widgetperiod?>");
-	}
+	// Create an object defining the widget refresh AJAX call
+	var ntpObject = new Object();
+	ntpObject.name = "NTP";
+	ntpObject.url = "/widgets/widgets/ntp_status.widget.php";
+	ntpObject.callback = ntp_callback;
+	ntpObject.parms = postdata;
+	ntpObject.freq = 4;
 
-	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-	// hit the server at exactly the same time)
-	setTimeout(ntp_getstatus, Math.floor((Math.random() * 10000) + 1000));
+	// Register the AJAX object
+	register_ajax(ntpObject);
+
+	// ---------------------------------------------------------------------------------------------------
+});
 
 //]]>
 </script>

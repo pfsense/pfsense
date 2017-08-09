@@ -264,7 +264,7 @@ if (!function_exists('printPanel')) {
 		} else {
 			$none_to_display_text = "";
 		}
-		
+
 		if (strlen($none_to_display_text) > 0) {
 			print('<table class="table"><tbody><td class="text-center">' . $none_to_display_text . '</td></tbody></table>');
 		}
@@ -415,31 +415,34 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 		);
 	}
 
-	// Refresh the panel
-	function get_openvpn_update_<?=$widgetkey_nodash?>() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/openvpn.widget.php",
-				type: "post",
-				data: { ajax: "ajax", widgetkey: "<?=$widgetkey?>"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#<?=$widgetkey?>-openvpn-mainpanel').html(response);
-
-			// and do it again
-			setTimeout(get_openvpn_update_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
-		});
-	}
-
 	events.push(function(){
 		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 
-		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-		// hit the server at exactly the same time)
-		setTimeout(get_openvpn_update_<?=$widgetkey_nodash?>, Math.floor((Math.random() * 10000) + 1000));
+		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function openvpn_callback(s) {
+			$('#<?=$widgetkey?>-openvpn-mainpanel').html(s);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+		 	widgetkey: "<?=$widgetkey?>"
+		 };
+
+		// Create an object defining the widget refresh AJAX call
+		var openvpnObject = new Object();
+		openvpnObject.name = "OpenVPN";
+		openvpnObject.url = "/widgets/widgets/openvpn.widget.php";
+		openvpnObject.callback = openvpn_callback;
+		openvpnObject.parms = postdata;
+		openvpnObject.freq = 4;
+
+		// Register the AJAX object
+		register_ajax(openvpnObject);
+
+		// ---------------------------------------------------------------------------------------------------
 	});
 //]]>
 </script>

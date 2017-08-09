@@ -652,7 +652,7 @@ events.push(function() {
 			},
 
 			error: function(e){
-				alert("Error: " + e)
+//				alert("Error: " + e);
 				ajaxmutex = false;
 			}
 		});
@@ -678,7 +678,7 @@ events.push(function() {
 			    }
 			}
 
-		    setTimeout(function() { executewidget(); }, 2000);
+		    setTimeout(function() { executewidget(); }, 1000);
 	  	}
 	}
 

@@ -662,7 +662,7 @@ events.push(function(){
 	versionObject.url = "/widgets/widgets/system_information.widget.php";
 	versionObject.callback = version_callback;
 	versionObject.parms = postdata;
-	versionObject.freq = 10;
+	versionObject.freq = 100;
 
 	// Register the AJAX object
 	register_ajax(versionObject);

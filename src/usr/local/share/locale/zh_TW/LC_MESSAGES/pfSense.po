@@ -5,11 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-02 08:00-0300\n"
+"POT-Creation-Date: 2017-08-09 08:04-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-01 02:50-0400\n"
+"PO-Revision-Date: 2017-08-05 02:16-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -244,7 +244,7 @@ msgstr "登錄到 %1$s"
 msgid "Login"
 msgstr "登錄"
 
-#: src/etc/inc/authgui.inc:289
+#: src/etc/inc/authgui.inc:304
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -254,7 +254,7 @@ msgstr ""
 "用於訪問此路由器的IP地址未在本地配置，可以通過NAT或其他方式轉發。\n"
 "\t\t\t\t\t\t\t\t如果這個轉發是意想不到的，應該驗證是否發生了中間人的攻擊。"
 
-#: src/etc/inc/authgui.inc:340
+#: src/etc/inc/authgui.inc:355
 msgid "The browser must support cookies to login."
 msgstr "您的流覽器必須支持cookies才能登錄。"
 
@@ -288,8 +288,8 @@ msgstr "繼續"
 msgid "Redirecting to"
 msgstr "正在重新導向至"
 
-#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
-#: src/usr/local/www/head.inc:521
+#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:548
 msgid "Logout"
 msgstr "註銷"
 
@@ -1589,7 +1589,7 @@ msgstr "包太大"
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
-#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
+#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
 msgstr "跟蹤路由"
 
@@ -1992,7 +1992,7 @@ msgstr "名稱"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
-#: src/usr/local/www/index.php:352 src/usr/local/www/pkg_mgr_install.php:489
+#: src/usr/local/www/index.php:353 src/usr/local/www/pkg_mgr_install.php:489
 #: src/usr/local/www/status_captiveportal.php:127
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -2665,7 +2665,7 @@ msgstr "錯誤：無法在 DHCP_Config_File_Override() 中打開%s進行讀取�
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
 #: src/usr/local/www/firewall_rules_edit.php:1104
-#: src/usr/local/www/head.inc:330 src/usr/local/www/head.inc:348
+#: src/usr/local/www/head.inc:338 src/usr/local/www/head.inc:356
 #: src/usr/local/www/status_graph.php:49 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
@@ -2792,7 +2792,7 @@ msgstr "ASN.1區分名稱"
 msgid "KeyID tag"
 msgstr "KeyID 標記"
 
-#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
+#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:318
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
 #: src/usr/local/www/services_dhcp.php:1087
@@ -2948,7 +2948,7 @@ msgstr "移動客戶端"
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/index.php:547 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces.php:1714 src/usr/local/www/interfaces.php:1740
 #: src/usr/local/www/interfaces.php:1753
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -5893,14 +5893,14 @@ msgid "Router Advertisement Daemon"
 msgstr "路由器廣播守護進程"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
-#: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
+#: src/usr/local/www/head.inc:308 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 msgid "DNS Forwarder"
 msgstr "DNS轉發"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
-#: src/usr/local/www/head.inc:301 src/usr/local/www/services_unbound.php:249
+#: src/usr/local/www/head.inc:309 src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_advanced.php:197
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -5919,7 +5919,7 @@ msgid "System Logger Daemon"
 msgstr "系統記錄器守護進程"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
-#: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
+#: src/usr/local/www/head.inc:307 src/usr/local/www/head.inc:345
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -5941,12 +5941,12 @@ msgstr "系統記錄器守護進程"
 msgid "Captive Portal"
 msgstr "入網認證"
 
-#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:302
+#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
 msgstr "DHCP中繼"
 
-#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:303
+#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:311
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
 msgstr "DHCPv6中繼"
@@ -7663,7 +7663,7 @@ msgstr "確認"
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
 #: src/usr/local/www/widgets/widgets/picture.widget.php:86
-#: src/usr/local/www/widgets/widgets/rss.widget.php:163
+#: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:486
@@ -7693,7 +7693,7 @@ msgstr "保存設置"
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:681
 msgid "Diagnostics"
 msgstr "系統診斷"
 
@@ -7765,7 +7765,7 @@ msgid "The ARP cache entry for %s has been deleted."
 msgstr "已刪除。%s 的ARP緩存條目"
 
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_arp.php:325
-#: src/usr/local/www/head.inc:375
+#: src/usr/local/www/head.inc:383
 msgid "ARP Table"
 msgstr "ARP表"
 
@@ -7924,7 +7924,7 @@ msgid "Authentication failed."
 msgstr "認證失敗。"
 
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:376
+#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
 msgstr "認證檢測"
@@ -8051,7 +8051,7 @@ msgstr "無法還原配置（檔上傳錯誤）。"
 #: src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_aliases_import.php:55
-#: src/usr/local/www/head.inc:289
+#: src/usr/local/www/head.inc:297
 msgid "Aliases"
 msgstr "別名管理"
 
@@ -8059,7 +8059,7 @@ msgstr "別名管理"
 msgid "Captive Portal Vouchers"
 msgstr "入網門戶憑證"
 
-#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
+#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:314
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
@@ -8079,7 +8079,7 @@ msgstr "DHCPv6 服務"
 msgid "Firewall Rules"
 msgstr "防火牆規則"
 
-#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
+#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:352
 #: src/usr/local/www/interfaces.php:1710
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -8119,12 +8119,12 @@ msgstr "IPSEC"
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
 #: src/usr/local/www/firewall_nat_out_edit.php:393
-#: src/usr/local/www/head.inc:290
+#: src/usr/local/www/head.inc:298
 msgid "NAT"
 msgstr "地址轉換"
 
-#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:235
-#: src/usr/local/www/head.inc:652 src/usr/local/www/pkg_mgr.php:38
+#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:243
+#: src/usr/local/www/head.inc:679 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -8144,7 +8144,7 @@ msgstr "計畫任務"
 msgid "Syslog"
 msgstr "系統日誌"
 
-#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
+#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:679
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
@@ -8204,7 +8204,7 @@ msgstr "SNMP伺服器"
 #: src/usr/local/www/firewall_shaper_queues.php:180
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
 #: src/usr/local/www/firewall_shaper_wizards.php:57
-#: src/usr/local/www/head.inc:293
+#: src/usr/local/www/head.inc:301
 msgid "Traffic Shaper"
 msgstr "流量整形"
 
@@ -8212,7 +8212,7 @@ msgstr "流量整形"
 msgid "VLANS"
 msgstr "VLANS"
 
-#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:324
+#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:332
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
@@ -8220,7 +8220,7 @@ msgid "Wake-on-LAN"
 msgstr "網路喚醒"
 
 #: src/usr/local/www/diag_backup.php:446
-#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
+#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:549
 #: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
@@ -8242,8 +8242,8 @@ msgstr "全部"
 
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/diag_confbak.php:101
-#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:377
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:385
+#: src/usr/local/www/head.inc:681
 msgid "Backup & Restore"
 msgstr "備份恢復"
 
@@ -8364,7 +8364,7 @@ msgstr "如果插件在升級後無法正確重新安裝，請單擊此按鈕清
 msgid "Uploaded file to %s."
 msgstr "已上傳檔到%s。"
 
-#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
+#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:386
 msgid "Command Prompt"
 msgstr "命令行"
 
@@ -8608,7 +8608,7 @@ msgstr "刪除配置"
 msgid "No backups found."
 msgstr "未找到備份。"
 
-#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:381
+#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:389
 msgid "Factory Defaults"
 msgstr "出廠配置"
 
@@ -8681,7 +8681,7 @@ msgid "Keep Configuration"
 msgstr "保持配置"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
-#: src/usr/local/www/head.inc:379
+#: src/usr/local/www/head.inc:387
 msgid "DNS Lookup"
 msgstr "DNS查找"
 
@@ -8816,7 +8816,7 @@ msgstr "更多資訊"
 
 #: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
-#: src/usr/local/www/head.inc:391
+#: src/usr/local/www/head.inc:399
 msgid "Ping"
 msgstr "Ping "
 
@@ -8850,7 +8850,7 @@ msgstr "輸入無效"
 #: src/usr/local/www/diag_resetstate.php:81
 #: src/usr/local/www/diag_states_summary.php:152
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:399
+#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:407
 msgid "States"
 msgstr "狀態"
 
@@ -9006,7 +9006,7 @@ msgstr "清除 "
 msgid "No source tracking entries were found."
 msgstr "未找到源跟蹤條目"
 
-#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:380
+#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:388
 msgid "Edit File"
 msgstr "編輯檔"
 
@@ -9058,7 +9058,7 @@ msgstr "流覽 "
 msgid "GoTo Line #"
 msgstr "轉到行"
 
-#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:384
+#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:392
 msgid "GEOM Mirrors"
 msgstr "GEOM鏡像"
 
@@ -9225,7 +9225,7 @@ msgid ""
 "followed by an 'insert' action on the new consumer."
 msgstr "要修復失敗的鏡像，請首先在鏡像上執行“Forget”命令，然後在新消費者上執行“插入”操作。"
 
-#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:387
+#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:395
 msgid "Halt System"
 msgstr "關閉系統"
 
@@ -9264,7 +9264,7 @@ msgstr "關閉系統並關閉電源"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:388
+#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:396
 msgid "Limiter Info"
 msgstr "整流資訊"
 
@@ -9276,7 +9276,7 @@ msgstr "在此系統上找不到限制器。"
 msgid "Limiters:"
 msgstr "限制器："
 
-#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:350
+#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:358
 #: src/usr/local/www/status_queues.php:110
 msgid "Queues"
 msgstr "佇列狀態"
@@ -9300,7 +9300,7 @@ msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr "%s不是有效的IPv6地址或無法刪除。"
 
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
-#: src/usr/local/www/head.inc:389
+#: src/usr/local/www/head.inc:397
 msgid "NDP Table"
 msgstr "NDP表"
 
@@ -9324,7 +9324,7 @@ msgstr "刪除NDP條目"
 msgid "Download Capture"
 msgstr "下載抓包的數據"
 
-#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:403
+#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:411
 msgid "Packet Capture"
 msgstr "數據捕獲"
 
@@ -9456,6 +9456,11 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
+"%1$sNon-"
+"promiscuous（非混雜）模式僅捕獲與主機直接相關的流量（由其發送，發送或廣播或通過其路由），並且不顯示在網路適配器層被忽略的數據包。%2$s%3$sPromiscuous（混雜）模式e%4$s "
+"(\"sniffing\")捕獲適配器看到的所有數據，無論其是否有效或與主機相關，但在某些情況下可能會產生不良副作用，並且並非所有適配器都支持此選項。單擊%5$s獲取更多資訊。混雜模式需要更多的內核處理數據包。這對系統資源的需求略高，特別是在非常繁忙的網路或低功耗處理器上。 "
+"數據包處理的變化可能允許有敵意的主機檢測到適配器處於混雜模式或“fingerprint（指紋）”內核（請參閱 %6$s）。 "
+"某些網路適配器可能不支持在混雜模式下工作（參見 %7$s）。%8$s"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -9614,7 +9619,7 @@ msgstr "數據包捕獲正在運行。"
 msgid "Packets Captured"
 msgstr "捕獲的數據包"
 
-#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:393
+#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:401
 msgid "pfInfo"
 msgstr "pfsense資訊"
 
@@ -9634,7 +9639,7 @@ msgstr "輸出"
 msgid "Gathering PF information, please wait..."
 msgstr "收集pf資訊，請稍候..."
 
-#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:394
+#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:402
 msgid "pfTop"
 msgstr "pfTop"
 
@@ -9779,7 +9784,7 @@ msgid "Select the maximum number of pings."
 msgstr "選擇最大ping數。"
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
-#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
 #: src/usr/local/www/interfaces.php:2069
 msgid "Reboot"
 msgstr "重啟系統"
@@ -9871,7 +9876,7 @@ msgstr "請至少選擇一個重置選項"
 msgid "Do you really want to reset the selected states?"
 msgstr "你真的要重置所選狀態嗎？"
 
-#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:404
 msgid "Routes"
 msgstr "路由診斷"
 
@@ -9898,7 +9903,7 @@ msgid "Use a regular expression to filter the tables."
 msgstr "使用正則運算式過濾表。"
 
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
-#: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
+#: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:530
 #: src/usr/local/www/system_certmanager.php:587
@@ -9921,7 +9926,7 @@ msgstr "正在收集數據，請稍候..."
 msgid "IPv6 Routes"
 msgstr "IPV6路由"
 
-#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:405
 #: src/usr/local/www/widgets/include/smart_status.inc:23
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:67
 msgid "S.M.A.R.T. Status"
@@ -10024,7 +10029,7 @@ msgstr "查看日誌 "
 msgid "Log type"
 msgstr "登錄類型 "
 
-#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:406
 msgid "Sockets"
 msgstr "套接字"
 
@@ -10120,7 +10125,7 @@ msgstr "源端口"
 msgid "Dest. Ports"
 msgstr "目標端口"
 
-#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:400
+#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:408
 msgid "States Summary"
 msgstr "狀態摘要"
 
@@ -10140,7 +10145,7 @@ msgstr "每個IP總計 "
 msgid "By IP Pair"
 msgstr "按IP對 "
 
-#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
 msgstr "系統活動"
 
@@ -10152,7 +10157,7 @@ msgstr "CPU活動"
 msgid "Gathering CPU activity, please wait..."
 msgstr "收集CPU活動，請稍候... "
 
-#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:390
+#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:398
 msgid "Tables"
 msgstr "表"
 
@@ -10231,7 +10236,7 @@ msgid "Remove this entry"
 msgstr "刪除此條目"
 
 #: src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:392
+#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:400
 msgid "Test Port"
 msgstr "測試端口"
 
@@ -10472,7 +10477,7 @@ msgid ""
 "Logs page"
 msgstr "此頁面旨在調用防火牆日誌頁面上的“阻止/通過”按鈕"
 
-#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:352
+#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:360
 #: src/usr/local/www/status_logs.php:96 src/usr/local/www/status_logs.php:99
 #: src/usr/local/www/status_logs_filter.php:102
 #: src/usr/local/www/status_logs_filter_dynamic.php:82
@@ -11159,7 +11164,7 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_nat.php:216
 #: src/usr/local/www/firewall_rules.php:316
 #: src/usr/local/www/firewall_rules_edit.php:1110
-#: src/usr/local/www/head.inc:291
+#: src/usr/local/www/head.inc:299
 msgid "Rules"
 msgstr "規則策略"
 
@@ -11523,7 +11528,7 @@ msgstr "L2TP VPN"
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
 #: src/usr/local/www/firewall_rules_edit.php:1094
-#: src/usr/local/www/head.inc:314 src/usr/local/www/services_pppoe.php:78
+#: src/usr/local/www/head.inc:322 src/usr/local/www/services_pppoe.php:78
 #: src/usr/local/www/services_pppoe.php:92
 #: src/usr/local/www/services_pppoe_edit.php:277
 msgid "PPPoE Server"
@@ -11534,7 +11539,7 @@ msgstr "PPPoE服務"
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
-#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:345
+#: src/usr/local/www/head.inc:337 src/usr/local/www/head.inc:353
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:261
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -12598,7 +12603,7 @@ msgstr "防鎖規則"
 
 #: src/usr/local/www/firewall_rules.php:417
 #: src/usr/local/www/firewall_rules.php:436
-#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:586
+#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:613
 #: src/usr/local/www/load_balancer_monitor.php:94
 #: src/usr/local/www/load_balancer_pool.php:106
 #: src/usr/local/www/load_balancer_setting.php:85
@@ -13607,7 +13612,7 @@ msgstr "僅當選擇了佇列時，才選擇應答佇列。"
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 #: src/usr/local/www/firewall_schedule_edit.php:52
-#: src/usr/local/www/head.inc:292
+#: src/usr/local/www/head.inc:300
 #: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
 msgstr "時間計畫"
@@ -13971,7 +13976,7 @@ msgstr "IP別名"
 
 #: src/usr/local/www/firewall_virtual_ip.php:232
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
-#: src/usr/local/www/head.inc:294
+#: src/usr/local/www/head.inc:302
 msgid "Virtual IPs"
 msgstr "虛擬介面"
 
@@ -14348,7 +14353,7 @@ msgstr "只列出前10k專案"
 msgid "Value"
 msgstr "值"
 
-#: src/usr/local/www/head.inc:231
+#: src/usr/local/www/head.inc:239
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -14361,19 +14366,19 @@ msgstr "值"
 msgid "Advanced"
 msgstr "高級選項"
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:432
+#: src/usr/local/www/head.inc:241 src/usr/local/www/system.php:432
 msgid "General Setup"
 msgstr "常規設置"
 
-#: src/usr/local/www/head.inc:234
+#: src/usr/local/www/head.inc:242
 msgid "High Avail. Sync"
 msgstr "雙機備份"
 
-#: src/usr/local/www/head.inc:236
+#: src/usr/local/www/head.inc:244
 msgid "Setup Wizard"
 msgstr "配置嚮導"
 
-#: src/usr/local/www/head.inc:237 src/usr/local/www/status_logs.php:59
+#: src/usr/local/www/head.inc:245 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -14384,11 +14389,11 @@ msgstr "配置嚮導"
 msgid "Routing"
 msgstr "路由管理"
 
-#: src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:246
 msgid "Cert. Manager"
 msgstr "證書管理"
 
-#: src/usr/local/www/head.inc:240 src/usr/local/www/head.inc:242
+#: src/usr/local/www/head.inc:248 src/usr/local/www/head.inc:250
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
@@ -14398,32 +14403,32 @@ msgstr "證書管理"
 msgid "User Manager"
 msgstr "用戶管理"
 
-#: src/usr/local/www/head.inc:246 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:254 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
 msgstr "用戶設置"
 
-#: src/usr/local/www/head.inc:260
+#: src/usr/local/www/head.inc:268
 msgid "Assignments"
 msgstr "介面管理"
 
-#: src/usr/local/www/head.inc:267
+#: src/usr/local/www/head.inc:275
 msgid "Switches"
 msgstr "切換"
 
-#: src/usr/local/www/head.inc:307 src/usr/local/www/services_dhcpv6.php:505
+#: src/usr/local/www/head.inc:315 src/usr/local/www/services_dhcpv6.php:505
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:249
 msgid "DHCPv6 Server & RA"
 msgstr "DHCPv6服務"
 
-#: src/usr/local/www/head.inc:311 src/usr/local/www/services_igmpproxy.php:63
+#: src/usr/local/www/head.inc:319 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
 msgstr "IGMP代理"
 
-#: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:346
+#: src/usr/local/www/head.inc:320 src/usr/local/www/head.inc:354
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -14438,7 +14443,7 @@ msgstr "IGMP代理"
 msgid "Load Balancer"
 msgstr "負載均衡"
 
-#: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
+#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
@@ -14451,31 +14456,31 @@ msgstr "負載均衡"
 msgid "NTP"
 msgstr "NTP 服務"
 
-#: src/usr/local/www/head.inc:315 src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/head.inc:323 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
 msgstr "SNMP代理"
 
-#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:356
+#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:364
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
 msgstr "即插即用"
 
-#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/head.inc:340 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
 
-#: src/usr/local/www/head.inc:338
+#: src/usr/local/www/head.inc:346
 msgid "CARP (failover)"
 msgstr "CARP "
 
-#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:352
+#: src/usr/local/www/head.inc:347 src/usr/local/www/index.php:353
 msgid "Dashboard"
 msgstr "儀錶板"
 
-#: src/usr/local/www/head.inc:340
+#: src/usr/local/www/head.inc:348
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_gateway_groups.php:53
 #: src/usr/local/www/status_gateway_groups.php:65
@@ -14495,25 +14500,25 @@ msgstr "儀錶板"
 msgid "Gateways"
 msgstr "網關狀態"
 
-#: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
+#: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
 msgid "DHCP Leases"
 msgstr "DHCP租約"
 
-#: src/usr/local/www/head.inc:342 src/usr/local/www/status_dhcpv6_leases.php:37
+#: src/usr/local/www/head.inc:350 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
 msgstr "DHCPv6租約"
 
-#: src/usr/local/www/head.inc:343 src/usr/local/www/status_filter_reload.php:33
+#: src/usr/local/www/head.inc:351 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
 msgstr "重置過濾"
 
-#: src/usr/local/www/head.inc:349 src/usr/local/www/status_pkglogs.php:71
+#: src/usr/local/www/head.inc:357 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
 msgstr "插件日誌"
 
-#: src/usr/local/www/head.inc:351
+#: src/usr/local/www/head.inc:359
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -14571,12 +14576,12 @@ msgstr "插件日誌"
 msgid "Services"
 msgstr "系統服務"
 
-#: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
+#: src/usr/local/www/head.inc:361 src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph.php:267
 msgid "Traffic Graph"
 msgstr "流量圖表"
 
-#: src/usr/local/www/head.inc:368 src/usr/local/www/interfaces_assign.php:496
+#: src/usr/local/www/head.inc:376 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_gre.php:80
@@ -14594,85 +14599,85 @@ msgstr "流量圖表"
 msgid "Wireless"
 msgstr "無線"
 
-#: src/usr/local/www/head.inc:408
+#: src/usr/local/www/head.inc:416
 msgid "pfSense Gold"
 msgstr "會員服務"
 
-#: src/usr/local/www/head.inc:413 src/usr/local/www/help.php:529
+#: src/usr/local/www/head.inc:421 src/usr/local/www/help.php:529
 msgid "About this Page"
 msgstr "關於本頁"
 
-#: src/usr/local/www/head.inc:415
+#: src/usr/local/www/head.inc:423
 msgid "Bug Database"
 msgstr "問題提交"
 
-#: src/usr/local/www/head.inc:418
+#: src/usr/local/www/head.inc:426
 msgid "User Forum"
 msgstr "用戶論壇"
 
-#: src/usr/local/www/head.inc:419
+#: src/usr/local/www/head.inc:427
 msgid "Documentation"
 msgstr "線上幫助"
 
-#: src/usr/local/www/head.inc:420
+#: src/usr/local/www/head.inc:428
 msgid "Paid Support"
 msgstr "商業服務"
 
-#: src/usr/local/www/head.inc:421
+#: src/usr/local/www/head.inc:429
 msgid "pfSense Book"
 msgstr "pfSense摘要"
 
-#: src/usr/local/www/head.inc:422
+#: src/usr/local/www/head.inc:430
 msgid "FreeBSD Handbook"
 msgstr "FreeBSD手冊"
 
-#: src/usr/local/www/head.inc:512 src/usr/local/www/head.inc:684
+#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
 msgid "Notices"
 msgstr "通知"
 
-#: src/usr/local/www/head.inc:549
+#: src/usr/local/www/head.inc:576
 msgid "Save dashboard layout"
 msgstr "保存儀錶板佈局"
 
-#: src/usr/local/www/head.inc:557
+#: src/usr/local/www/head.inc:584
 msgid "Available widgets"
 msgstr "可用的部件"
 
-#: src/usr/local/www/head.inc:565
+#: src/usr/local/www/head.inc:592
 msgid "Log filter"
 msgstr "日誌篩檢程式"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:603
 msgid "Manage log"
 msgstr "管理日誌"
 
-#: src/usr/local/www/head.inc:594
+#: src/usr/local/www/head.inc:621
 msgid "Refresh Graph"
 msgstr "刷新圖表"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:626
 msgid "Export Graph"
 msgstr "導出圖表"
 
-#: src/usr/local/www/head.inc:639
+#: src/usr/local/www/head.inc:666
 msgid "Help for items on this page"
 msgstr "本頁幫助"
 
-#: src/usr/local/www/head.inc:650
+#: src/usr/local/www/head.inc:677
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
 "%2$s%1$sDo not make changes in the GUI until this is complete.%2$s"
 msgstr "%1$s%3$s正在啟動，插件將在後臺重新安裝。%2$s%1$s在完成之前，不要在GUI中進行更改。%2$s"
 
-#: src/usr/local/www/head.inc:653
+#: src/usr/local/www/head.inc:680
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
 "not make changes in the GUI until this is complete.%2$s"
 msgstr "%1$s插件正在後臺重新安裝。%2$s%1$s在完成之前，不要在GUI中進行更改。%2$s"
 
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/head.inc:681
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -14680,15 +14685,15 @@ msgid ""
 "%2$s"
 msgstr "%1$s如果上述消息在幾個小時後仍顯示，請使用 %3$s頁面上的“清除插件鎖定”按鈕，然後手動重新安裝插件。%2$s"
 
-#: src/usr/local/www/head.inc:664
+#: src/usr/local/www/head.inc:691
 msgid "This page is currently being managed by a remote machine."
 msgstr "此頁面當前由遠程電腦管理。"
 
-#: src/usr/local/www/head.inc:723
+#: src/usr/local/www/head.inc:750
 msgid "Close"
 msgstr "關閉"
 
-#: src/usr/local/www/head.inc:725
+#: src/usr/local/www/head.inc:752
 msgid "Mark All as Read"
 msgstr "標記為已讀"
 
@@ -14725,38 +14730,38 @@ msgstr "點擊 %1$s這裏%2$s 獲取更多資訊。"
 msgid "Contact a firewall administrator for more information."
 msgstr "有關詳細資訊，請聯繫防火牆管理員"
 
-#: src/usr/local/www/index.php:231
+#: src/usr/local/www/index.php:232
 #, php-format
 msgid "Welcome to %s!"
 msgstr "歡迎來到%s!"
 
-#: src/usr/local/www/index.php:232
+#: src/usr/local/www/index.php:233
 msgid "One moment while the initial setup wizard starts."
 msgstr "初始設置嚮導啟動時的一會兒。"
 
-#: src/usr/local/www/index.php:233
+#: src/usr/local/www/index.php:234
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
 msgstr "嵌入式平臺的用戶：請耐心等待，嚮導將比正常的GUI運行時間稍長。"
 
-#: src/usr/local/www/index.php:234
+#: src/usr/local/www/index.php:235
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr "繞過嚮導，單擊 %s 的初始頁面上的pfsense圖示。"
 
-#: src/usr/local/www/index.php:365 src/etc/inc/pfsense-utils.inc:326
+#: src/usr/local/www/index.php:366 src/etc/inc/pfsense-utils.inc:326
 msgid "Available Widgets"
 msgstr "可用的部件"
 
-#: src/usr/local/www/index.php:392
+#: src/usr/local/www/index.php:393
 #, php-format
 msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr "其他系統面板設置可從 <a href=\"%s\">常規設置</a>頁面獲得。"
 
-#: src/usr/local/www/index.php:612
+#: src/usr/local/www/index.php:624
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr "一個或多個部件已移動，但尚未保存"
 
@@ -15567,15 +15572,15 @@ msgstr "首碼介面語句"
 
 #: src/usr/local/www/interfaces.php:2397
 msgid "Select prefix interface"
-msgstr ""
+msgstr "選擇首碼介面"
 
 #: src/usr/local/www/interfaces.php:2400
 msgid "Prefix Interface"
-msgstr ""
+msgstr "首碼介面"
 
 #: src/usr/local/www/interfaces.php:2403
 msgid "Select the interface on which to apply the prefix delegation."
-msgstr ""
+msgstr "選擇應用首碼委派的介面。"
 
 #: src/usr/local/www/interfaces.php:2405
 msgid "Authentication statement"
@@ -16735,14 +16740,14 @@ msgstr "將介面標記為“Private”（專有）介面。專有 介面不將�
 
 #: src/usr/local/www/interfaces_bridge_edit.php:527
 msgid "Enable IPv6 auto linklocal"
-msgstr ""
+msgstr "啟用本地IPv6自動鏈路"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:530
 msgid ""
 "When enabled, the AUTO_LINKLOCAL flag is set on the bridge interface and "
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
-msgstr ""
+msgstr "啟用後，在橋介面上設置AUTO_LINKLOCAL標誌，並在每個成員介面上清除。 當橋介面用於無狀態自動配置時，這是必需的。"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid "Enable RSTP/STP"
@@ -22706,6 +22711,11 @@ msgid ""
 "a pool of NTP servers and not a single address. This is assumed for *.pool."
 "ntp.org."
 msgstr ""
+"NTP只有在大多數伺服器同意的情況下才能同步。 為了獲得最佳效果，您應該配置3到5個伺服器(%4$sNTP支持頁面至少推薦4或5%5$s), "
+"或一個地址池。如果僅配置了一個伺服器,它將 %2$s將會%3$s被信任, 如果配置了2臺伺服器，並且它們不同意， %2$s也不%3$s會被信任。選項:"
+"%1$s%2$sPrefer%3$s - 相比其他伺服器，NTP優先使用此伺服器。%1$s%2$sNo Select%3$s - "
+"NTP不使用此伺服器的時間，但是將收集並顯示此伺服器的統計資訊。%1$s%2$sIs a Pool%3$s -此條目是NTP伺服器池，而不是單個地址。 "
+"這假定為* .pool.ntp.org。"
 
 #: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
@@ -22763,6 +22773,10 @@ msgid ""
 "information and files for downloading can be found on their %1$swebsite%2$s, "
 "and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
+"6月或12月底可能會增加或減少閏秒。 閏秒由%1$sIERS%2$s管理，IERS在大約6-12個月提前公佈。 "
+"通常情況下，如果伺服器是層級1的NTP伺服器，則只需要進行此更正，但是當其他NTP伺服器與其同步時，許多NTP伺服器不會通告即將到來的閏秒。%3$s%4$s如果閏秒對您的網路服務很重要， "
+" %6$s良好的做法%2$s是在任何時候更正之前至少提前一天下載並添加閏秒檔%5$s。%3$s 更多的資訊和文件可以在他們的 "
+"%1$s網站%2$s上找到, 也可以在 %7$NIST%2$s 和%8$sNTP%2$s 網站上查閱。"
 
 #: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
@@ -26723,6 +26737,9 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
+"不要使用'.local'作為域的最終部分（TLD），'.local'域是%1$s被mDNS廣泛使用的%2$s（包括Avahi和Apple OS "
+"X的Bonjour / Rendezvous / Airprint / Airplay），以及一些Windows系統和網路設備。 如果路由器使用'."
+"local'，這些網路將無法正確連接。 諸如'.local.lan'或'.mylocal'的替代方案是安全的。"
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -28178,13 +28195,13 @@ msgstr "當多個介面駐留在同一廣播域上時，此選項將抑制ARP日
 
 #: src/usr/local/www/system_advanced_network.php:295
 msgid "Reset All States"
-msgstr ""
+msgstr "重置所有狀態"
 
 #: src/usr/local/www/system_advanced_network.php:298
 msgid ""
 "This option resets all states when a WAN IP Address changes instead of only "
 "states associated with the previous IP Address."
-msgstr ""
+msgstr "當WAN IP地址發生變化而不是僅與先前IP地址相關聯的狀態時，此選項將重置所有狀態。"
 
 #: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
@@ -31407,11 +31424,11 @@ msgstr "PHASE1有效期必須為整數。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:250
 msgid "The margintime must be an integer."
-msgstr ""
+msgstr "餘量時間必須是整數。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:252
 msgid "The margintime must be smaller than the P1 lifetime."
-msgstr ""
+msgstr "餘量時間必須小於P1有效期。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
@@ -31687,13 +31704,13 @@ msgstr "禁用預授密鑰"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 msgid "Margintime (Seconds)"
-msgstr ""
+msgstr "餘量時間 (秒)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:860
 msgid ""
 "How long before connection expiry or keying-channel expiry should attempt to "
 "negotiate a replacement begin."
-msgstr ""
+msgstr "連接到期或密鑰通道到期之前應該嘗試協商替換開始多長時間。"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
@@ -33696,7 +33713,6 @@ msgid "Gateway IP"
 msgstr "網關IP"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
-#: src/usr/local/www/widgets/widgets/interfaces.widget.php:225
 msgid "Unable to retrieve status"
 msgstr "無法檢索狀態"
 
@@ -33943,19 +33959,19 @@ msgstr "添加圖片："
 msgid "Saved RSS Widget feed via Dashboard."
 msgstr "在儀錶板保存RSS部件的資訊源更新網址。"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:134
+#: src/usr/local/www/widgets/widgets/rss.widget.php:133
 msgid "Feeds"
 msgstr "資訊源更新網址"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:141
+#: src/usr/local/www/widgets/widgets/rss.widget.php:140
 msgid "# Stories"
 msgstr "資訊條數限制"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:148
+#: src/usr/local/www/widgets/widgets/rss.widget.php:147
 msgid "Widget height"
 msgstr "部件高度"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:155
+#: src/usr/local/www/widgets/widgets/rss.widget.php:154
 msgid "Content limit"
 msgstr "內容限制"
 
@@ -34682,7 +34698,7 @@ msgstr "啟用介面"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv6將使用IPv4連接鏈路（PPPoE）"
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -35732,7 +35748,7 @@ msgstr "抑制ARP消息"
 
 #: src/usr/local/www/system_advanced_network.php:296
 msgid "Reset all states if WAN IP Address changes"
-msgstr ""
+msgstr "如果WAN IP地址更改，請重置所有狀態"
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"

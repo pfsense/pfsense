@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-02 08:00-0300\n"
+"POT-Creation-Date: 2017-08-09 08:04-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-02 04:36-0400\n"
+"PO-Revision-Date: 2017-08-08 04:21-0400\n"
 "Last-Translator: Patrik Zakhar <123patokt@gmail.com>\n"
 "Language-Team: Slovak\n"
 "Language: sk\n"
@@ -121,7 +121,7 @@ msgid ""
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
 "CHYBA! ldap_backed() vyvolaný bez zadaného LDAP autentifikačného servera. "
-"Použije sa predvolená lokálna používateľská databáza. Navštívte Systém -> "
+"Použije sa predvolená lokálna databáza užívateľov. Navštívte Systém -> "
 "Správca užívateľov."
 
 #: src/etc/inc/auth.inc:1320
@@ -262,7 +262,7 @@ msgstr "Prihlásenie do %1$s"
 msgid "Login"
 msgstr "Prihlásenie"
 
-#: src/etc/inc/authgui.inc:289
+#: src/etc/inc/authgui.inc:304
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -274,7 +274,7 @@ msgstr ""
 "\t\t\t\t\t\t\t\tAk je toto presmerovanie neočakávané, malo by byť overené, "
 "či sa nekoná man-in-the-middle útok."
 
-#: src/etc/inc/authgui.inc:340
+#: src/etc/inc/authgui.inc:355
 msgid "The browser must support cookies to login."
 msgstr "Prehliadač musí podporovať súbory cookies pre prihlásenie."
 
@@ -308,8 +308,8 @@ msgstr "Pokračovať"
 msgid "Redirecting to"
 msgstr "Presmerovanie na"
 
-#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
-#: src/usr/local/www/head.inc:521
+#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:548
 msgid "Logout"
 msgstr "Odhlásiť"
 
@@ -513,12 +513,12 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Zadajte VLAN tag (1-4094):"
+msgstr "Zadajte VLAN značku (1-4094):"
 
 #: src/etc/inc/config.console.inc:479
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr "%1$sNesprávny VLAN tag '%2$s'%3$s"
+msgstr "%1$sNesprávna VLAN značka '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:486
 #, php-format
@@ -1150,7 +1150,7 @@ msgstr "Toto nie je presne stanovené meno domény (FQDN)"
 
 #: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr "Hostname neexustije alebo DynDNS nie je povolený."
+msgstr "Hostname neexistuje alebo DynDNS nie je povolený."
 
 #: src/etc/inc/dyndns.class:1676
 msgid "Bad request"
@@ -1641,7 +1641,7 @@ msgstr "Presmerovanie"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr "Router reklama"
+msgstr "Reklama routra"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
@@ -1678,7 +1678,7 @@ msgstr "Paket príliš veľký"
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
-#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
+#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
 msgstr "Traceroute"
 
@@ -2097,7 +2097,7 @@ msgstr "Názov"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
-#: src/usr/local/www/index.php:352 src/usr/local/www/pkg_mgr_install.php:489
+#: src/usr/local/www/index.php:353 src/usr/local/www/pkg_mgr_install.php:489
 #: src/usr/local/www/status_captiveportal.php:127
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -2723,7 +2723,7 @@ msgstr "OpenVPN: Resynchronizácia klienta %s"
 #: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr "Router reklama odmietnutá pre rozhranie %s"
+msgstr "Reklama routra odmietnutá pre rozhranie %s"
 
 #: src/etc/inc/interfaces.inc:3379
 msgid "Generating new MAC address."
@@ -2824,7 +2824,7 @@ msgstr "Chyba: čítanie súboru %s v DHCP_Config_File_Override() zlyhalo."
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
 #: src/usr/local/www/firewall_rules_edit.php:1104
-#: src/usr/local/www/head.inc:330 src/usr/local/www/head.inc:348
+#: src/usr/local/www/head.inc:338 src/usr/local/www/head.inc:356
 #: src/usr/local/www/status_graph.php:49 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
@@ -2951,7 +2951,7 @@ msgstr "ASN.1 rozlišovacie meno"
 msgid "KeyID tag"
 msgstr "KeyID značka"
 
-#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
+#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:318
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
 #: src/usr/local/www/services_dhcp.php:1087
@@ -3107,7 +3107,7 @@ msgstr "Mobilný klient"
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/index.php:547 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces.php:1714 src/usr/local/www/interfaces.php:1740
 #: src/usr/local/www/interfaces.php:1753
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -3458,7 +3458,6 @@ msgstr ""
 "webConfigurator vzhľadu. css súbory sú umiestnenú v /usr/local/www/css/%s"
 
 #: src/etc/inc/pfsense-utils.inc:244
-#, fuzzy
 msgid "Scrolls with page"
 msgstr "Pohybuje sa so stránkou"
 
@@ -3774,7 +3773,7 @@ msgstr "Nórština (Bokmål)"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portugalsky (Brazília)"
 
 #: src/etc/inc/pfsense-utils.inc:2947
 msgid "Russian"
@@ -5362,11 +5361,12 @@ msgstr "Povoliť prístup k stránke \"Služby: NTP: Nastavenia\"."
 
 #: src/etc/inc/priv.defs.inc:739
 msgid "WebCfg - Services: NTP ACL Settings"
-msgstr "WebCfg - Služby: NTP: ACL nastavenia"
+msgstr "WebCfg - Služby: NTP: Nastavenia zoznamu prístupov"
 
 #: src/etc/inc/priv.defs.inc:740
 msgid "Allow access to the 'Services: NTP ACL Settings' page."
-msgstr "Povoliť prístup k stránke \"Služby: NTP: ACL nastavenia\"."
+msgstr ""
+"Povoliť prístup k stránke \"Služby: NTP: Nastavenia zoznamu prístupov\"."
 
 #: src/etc/inc/priv.defs.inc:745
 msgid "WebCfg - Services: NTP Serial GPS"
@@ -5418,11 +5418,11 @@ msgstr "Povoliť prístup k stránke \"Služby: RFC 2136 klient: Úprava\"."
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
-msgstr "WebCfg - Služby: Router reklama"
+msgstr "WebCfg - Služby: Reklama routra"
 
 #: src/etc/inc/priv.defs.inc:782
 msgid "Allow access to the 'Services: Router Advertisements' page."
-msgstr "Povoliť prístup k stránke \"Služby: Router reklama\"."
+msgstr "Povoliť prístup k stránke \"Služby: Reklama routra\"."
 
 #: src/etc/inc/priv.defs.inc:787
 msgid "WebCfg - Services: SNMP"
@@ -6165,17 +6165,17 @@ msgstr "Vytvára sa skript aktualizácie RRD"
 
 #: src/etc/inc/service-utils.inc:243
 msgid "Router Advertisement Daemon"
-msgstr "Démon router reklamy"
+msgstr "Démon reklamy routra"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
-#: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
+#: src/usr/local/www/head.inc:308 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 msgid "DNS Forwarder"
 msgstr "DNS Forwarder"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
-#: src/usr/local/www/head.inc:301 src/usr/local/www/services_unbound.php:249
+#: src/usr/local/www/head.inc:309 src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_advanced.php:197
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -6194,7 +6194,7 @@ msgid "System Logger Daemon"
 msgstr "Démon systémového denníka"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
-#: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
+#: src/usr/local/www/head.inc:307 src/usr/local/www/head.inc:345
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -6216,12 +6216,12 @@ msgstr "Démon systémového denníka"
 msgid "Captive Portal"
 msgstr "Captive Portal"
 
-#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:302
+#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
 msgstr "DHCP relé"
 
-#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:303
+#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:311
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
 msgstr "DHCPv6 relé"
@@ -6256,7 +6256,7 @@ msgstr "Secure Shell Daemon"
 
 #: src/etc/inc/service-utils.inc:375
 msgid "Server load balancing daemon"
-msgstr ""
+msgstr "Démon vyvažovača zaťaženia servera"
 
 #: src/etc/inc/service-utils.inc:434
 msgid "Not available."
@@ -6340,7 +6340,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:399
 msgid "Shutting down Router Advertisment daemon cleanly"
-msgstr ""
+msgstr "Vypína sa čisto démon reklamy routra"
 
 #: src/etc/inc/services.inc:501
 msgid "Starting DHCP service..."
@@ -7358,19 +7358,19 @@ msgstr "PC Engines ALIX"
 #: src/etc/inc/unbound.inc:791 src/usr/local/www/services_dhcpv6.php:825
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Deny"
-msgstr ""
+msgstr "Zakázať"
 
 #: src/etc/inc/unbound.inc:792 src/usr/local/www/services_unbound_acls.php:220
 msgid "Refuse"
-msgstr ""
+msgstr "Odmietnuť"
 
 #: src/etc/inc/unbound.inc:793
 msgid "Static"
-msgstr ""
+msgstr "Statické"
 
 #: src/etc/inc/unbound.inc:794
 msgid "Transparent"
-msgstr ""
+msgstr "Transparentné"
 
 #: src/etc/inc/unbound.inc:795
 msgid "Type Transparent"
@@ -7688,7 +7688,7 @@ msgstr ""
 #: src/etc/inc/util.inc:1042
 #, php-format
 msgid "The %1$s name must not be either of the reserved words %2$s or %3$s."
-msgstr "Názov %1$s nemôže byť ani jeden z rezervovaných slov %2$s alebo %3$s."
+msgstr "Názov %1$s nemôže byť ani jeden z vyhradených slov %2$s alebo %3$s."
 
 #: src/etc/inc/util.inc:1049
 #, php-format
@@ -8047,7 +8047,7 @@ msgstr "Potvrdiť"
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
 #: src/usr/local/www/widgets/widgets/picture.widget.php:86
-#: src/usr/local/www/widgets/widgets/rss.widget.php:163
+#: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:486
@@ -8077,7 +8077,7 @@ msgstr "Uložiť"
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:681
 msgid "Diagnostics"
 msgstr "Diagnostika"
 
@@ -8153,7 +8153,7 @@ msgid "The ARP cache entry for %s has been deleted."
 msgstr "Záznam ARP medzipamäte pre %s bol odstránený."
 
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_arp.php:325
-#: src/usr/local/www/head.inc:375
+#: src/usr/local/www/head.inc:383
 msgid "ARP Table"
 msgstr "ARP tabuľka"
 
@@ -8318,7 +8318,7 @@ msgid "Authentication failed."
 msgstr "Autentifikácia zlyhala."
 
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:376
+#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
 msgstr "Autentifikácia"
@@ -8449,7 +8449,7 @@ msgstr "Konfigurácia nemohla byť obnovená (chyba nahrávania súboru)."
 #: src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_aliases_import.php:55
-#: src/usr/local/www/head.inc:289
+#: src/usr/local/www/head.inc:297
 msgid "Aliases"
 msgstr "Aliasy"
 
@@ -8457,7 +8457,7 @@ msgstr "Aliasy"
 msgid "Captive Portal Vouchers"
 msgstr "Captive Portal poukazy"
 
-#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
+#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:314
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
@@ -8477,7 +8477,7 @@ msgstr "DHCPv6 server"
 msgid "Firewall Rules"
 msgstr "Firewall pravidlá"
 
-#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
+#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:352
 #: src/usr/local/www/interfaces.php:1710
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -8517,12 +8517,12 @@ msgstr "IPSEC"
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
 #: src/usr/local/www/firewall_nat_out_edit.php:393
-#: src/usr/local/www/head.inc:290
+#: src/usr/local/www/head.inc:298
 msgid "NAT"
 msgstr "NAT"
 
-#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:235
-#: src/usr/local/www/head.inc:652 src/usr/local/www/pkg_mgr.php:38
+#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:243
+#: src/usr/local/www/head.inc:679 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -8542,7 +8542,7 @@ msgstr "Naplánované úlohy"
 msgid "Syslog"
 msgstr "Syslog"
 
-#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
+#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:679
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
@@ -8602,7 +8602,7 @@ msgstr "SNMP server"
 #: src/usr/local/www/firewall_shaper_queues.php:180
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
 #: src/usr/local/www/firewall_shaper_wizards.php:57
-#: src/usr/local/www/head.inc:293
+#: src/usr/local/www/head.inc:301
 msgid "Traffic Shaper"
 msgstr "Traffic Shaper"
 
@@ -8610,7 +8610,7 @@ msgstr "Traffic Shaper"
 msgid "VLANS"
 msgstr "VLAN"
 
-#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:324
+#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:332
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
@@ -8618,7 +8618,7 @@ msgid "Wake-on-LAN"
 msgstr "Wake-on-LAN"
 
 #: src/usr/local/www/diag_backup.php:446
-#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
+#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:549
 #: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
@@ -8640,8 +8640,8 @@ msgstr "Všetky"
 
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/diag_confbak.php:101
-#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:377
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:385
+#: src/usr/local/www/head.inc:681
 msgid "Backup & Restore"
 msgstr "Záloha a obnovenie"
 
@@ -8768,7 +8768,7 @@ msgstr ""
 msgid "Uploaded file to %s."
 msgstr "Súbor nahratý do %s."
 
-#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
+#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:386
 msgid "Command Prompt"
 msgstr "Príkazový riadok"
 
@@ -9024,7 +9024,7 @@ msgstr "Vymazať konfiguráciu"
 msgid "No backups found."
 msgstr "Neboli nájdené žiadne zálohy."
 
-#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:381
+#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:389
 msgid "Factory Defaults"
 msgstr "Továrenské nastavenia"
 
@@ -9104,7 +9104,7 @@ msgid "Keep Configuration"
 msgstr "Ponechať konfiguráciu"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
-#: src/usr/local/www/head.inc:379
+#: src/usr/local/www/head.inc:387
 msgid "DNS Lookup"
 msgstr "DNS vyhľadávanie"
 
@@ -9239,7 +9239,7 @@ msgstr "Viac informácii"
 
 #: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
-#: src/usr/local/www/head.inc:391
+#: src/usr/local/www/head.inc:399
 msgid "Ping"
 msgstr "Ping"
 
@@ -9275,7 +9275,7 @@ msgstr "neplatný vstup"
 #: src/usr/local/www/diag_resetstate.php:81
 #: src/usr/local/www/diag_states_summary.php:152
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:399
+#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:407
 msgid "States"
 msgstr "Stavy"
 
@@ -9433,7 +9433,7 @@ msgstr "Odstrániť"
 msgid "No source tracking entries were found."
 msgstr "Neboli nájdené žiadne záznamy sledovania zdroja."
 
-#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:380
+#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:388
 msgid "Edit File"
 msgstr "Upraviť súbor"
 
@@ -9485,7 +9485,7 @@ msgstr "Prehľadávať"
 msgid "GoTo Line #"
 msgstr "Ísť na riadok číslo"
 
-#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:384
+#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:392
 msgid "GEOM Mirrors"
 msgstr "GEOM zrkadlá"
 
@@ -9648,25 +9648,29 @@ msgstr "Znovu aktivovať na %s"
 
 #: src/usr/local/www/diag_gmirror.php:331
 msgid "Clear Metadata"
-msgstr ""
+msgstr "Vyčistiť metadata"
 
 #: src/usr/local/www/diag_gmirror.php:360
 msgid "No unused consumers found"
-msgstr ""
+msgstr "Neboli nájdení žiadni nepoužití spotrebitelia"
 
 #: src/usr/local/www/diag_gmirror.php:366
 msgid ""
 "Consumers may only be added to a mirror if they are larger than the size of "
 "the mirror."
 msgstr ""
+"Spotrebitelia môžu byť pridaný do zrkadla iba ak ich veľkosť je väčšia, ako "
+"veľkosť zrkadla."
 
 #: src/usr/local/www/diag_gmirror.php:367
 msgid ""
 "To repair a failed mirror, first perform a 'Forget' command on the mirror, "
 "followed by an 'insert' action on the new consumer."
 msgstr ""
+"Pre opravu chybného zrkadla, najprv vykonajte príkaz \"Zabudnúť\" na "
+"zrkadle, nasledovaný akciou \"vložiť\" na novom spotrebiteľovi."
 
-#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:387
+#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:395
 msgid "Halt System"
 msgstr "Vypnúť systém"
 
@@ -9708,7 +9712,7 @@ msgstr "Vypnúť systém"
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:388
+#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:396
 msgid "Limiter Info"
 msgstr "Informácie limiterov"
 
@@ -9720,7 +9724,7 @@ msgstr "Neboli nájdené žiadne limitery na tom to systéme."
 msgid "Limiters:"
 msgstr "Limitery:"
 
-#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:350
+#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:358
 #: src/usr/local/www/status_queues.php:110
 msgid "Queues"
 msgstr "Fronty"
@@ -9744,7 +9748,7 @@ msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr "%s nie je platná IPv6 adresa alebo nemohla byť odstránená."
 
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
-#: src/usr/local/www/head.inc:389
+#: src/usr/local/www/head.inc:397
 msgid "NDP Table"
 msgstr "NDP tabuľka"
 
@@ -9768,7 +9772,7 @@ msgstr "Odstrániť záznam NDP"
 msgid "Download Capture"
 msgstr "Stiahnuť zachytenie"
 
-#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:403
+#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:411
 msgid "Packet Capture"
 msgstr "Zachytávač paketov"
 
@@ -10070,7 +10074,7 @@ msgstr "Zachytávač paketov je spustený."
 msgid "Packets Captured"
 msgstr "Pakety zachytené"
 
-#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:393
+#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:401
 msgid "pfInfo"
 msgstr "pfInfo"
 
@@ -10090,7 +10094,7 @@ msgstr "Výstup"
 msgid "Gathering PF information, please wait..."
 msgstr "Zhromažďujú sa informácie PF, prosím čakajte..."
 
-#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:394
+#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:402
 msgid "pfTop"
 msgstr "pfTop"
 
@@ -10237,7 +10241,7 @@ msgid "Select the maximum number of pings."
 msgstr "Zvoľte maximálny počet pingov."
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
-#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
 #: src/usr/local/www/interfaces.php:2069
 msgid "Reboot"
 msgstr "Reštart"
@@ -10341,34 +10345,36 @@ msgstr "Prosím zvoľte aspoň jednu možnosť vynulovania"
 msgid "Do you really want to reset the selected states?"
 msgstr "Ste si istý, že chcete vynulovať zvolené stavy?"
 
-#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:404
 msgid "Routes"
 msgstr "Smery"
 
 #: src/usr/local/www/diag_routes.php:78
 msgid "Routing Table Display Options"
-msgstr ""
+msgstr "Možnosti zobrazenia tabuľky smerovaní"
 
 #: src/usr/local/www/diag_routes.php:82
 msgid "Resolve names"
-msgstr ""
+msgstr "Vyriešiť názvy"
 
 #: src/usr/local/www/diag_routes.php:85
 msgid ""
 "Enabling name resolution may cause the query to take longer. It can be "
 "stopped at any time by clicking the Stop button in the browser."
 msgstr ""
+"Povolením vyriešenia názvov sa môže predĺžiť doba dopytu. Môže to byť "
+"kedykoľvek zastavené kliknutím tlačidla Zastaviť v prehliadači."
 
 #: src/usr/local/www/diag_routes.php:91
 msgid "Rows to display"
-msgstr ""
+msgstr "Zobrazené riadky"
 
 #: src/usr/local/www/diag_routes.php:101
 msgid "Use a regular expression to filter the tables."
-msgstr ""
+msgstr "Použite bežný výraz pre filtrovanie tabuliek."
 
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
-#: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
+#: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:530
 #: src/usr/local/www/system_certmanager.php:587
@@ -10377,7 +10383,7 @@ msgstr ""
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
-msgstr ""
+msgstr "Aktualizovať"
 
 #: src/usr/local/www/diag_routes.php:192
 msgid "IPv4 Routes"
@@ -10391,7 +10397,7 @@ msgstr "Zhromažďujú sa údaje, prosím čakajte..."
 msgid "IPv6 Routes"
 msgstr "IPv6 smery"
 
-#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:405
 #: src/usr/local/www/widgets/include/smart_status.inc:23
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:67
 msgid "S.M.A.R.T. Status"
@@ -10494,7 +10500,7 @@ msgstr "Zobraziť denník"
 msgid "Log type"
 msgstr "Druh záznamov denníka"
 
-#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:406
 msgid "Sockets"
 msgstr "Sokety"
 
@@ -10597,7 +10603,7 @@ msgstr "Zdrojové porty"
 msgid "Dest. Ports"
 msgstr "Cieľové porty"
 
-#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:400
+#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:408
 msgid "States Summary"
 msgstr "Súhrn stavov"
 
@@ -10617,7 +10623,7 @@ msgstr "Celkovo na IP"
 msgid "By IP Pair"
 msgstr "Podľa IP párov"
 
-#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
 msgstr "Systémová aktivita"
 
@@ -10629,7 +10635,7 @@ msgstr "Aktivita procesora"
 msgid "Gathering CPU activity, please wait..."
 msgstr "Zhromažďuje sa aktivita procesora, prosím čakajte..."
 
-#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:390
+#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:398
 msgid "Tables"
 msgstr "Tabuľky"
 
@@ -10711,7 +10717,7 @@ msgid "Remove this entry"
 msgstr "Odstrániť tento záznam"
 
 #: src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:392
+#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:400
 msgid "Test Port"
 msgstr "Test portu"
 
@@ -10970,7 +10976,7 @@ msgstr ""
 "Táto stránka má byť vyvolaná tlačidlami Zablokovať/Povoliť na stránke "
 "Firewall denník"
 
-#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:352
+#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:360
 #: src/usr/local/www/status_logs.php:96 src/usr/local/www/status_logs.php:99
 #: src/usr/local/www/status_logs_filter.php:102
 #: src/usr/local/www/status_logs_filter_dynamic.php:82
@@ -11702,7 +11708,7 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_nat.php:216
 #: src/usr/local/www/firewall_rules.php:316
 #: src/usr/local/www/firewall_rules_edit.php:1110
-#: src/usr/local/www/head.inc:291
+#: src/usr/local/www/head.inc:299
 msgid "Rules"
 msgstr "Pravidlá"
 
@@ -11804,8 +11810,8 @@ msgstr "Vložte popis, uložte, a potom potiahnite na konečnú pozíciu."
 msgid ""
 "One or more Port Forward rules have been moved but have not yet been saved"
 msgstr ""
-"Jendno alebo viac port forward pravidiel bolo posunutých, no zatiaľ nebolo "
-"uložených"
+"Bolo posunuté jedno alebo viac port forward pravidiel, no zatiaľ nebolo/-i "
+"uložené"
 
 #: src/usr/local/www/firewall_nat.php:539
 #: src/usr/local/www/firewall_rules.php:846
@@ -11931,8 +11937,8 @@ msgstr ""
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
-"Jeden alebo viac NAT 1:1 priradení bolo posunutých, no zatiaľ nebolo "
-"uložených"
+"Bolo posunuté jedno alebo viac NAT 1:1 priradení, no zatiaľ nebolo/-i "
+"uložené"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
@@ -12082,7 +12088,7 @@ msgstr "L2TP VPN"
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
 #: src/usr/local/www/firewall_rules_edit.php:1094
-#: src/usr/local/www/head.inc:314 src/usr/local/www/services_pppoe.php:78
+#: src/usr/local/www/head.inc:322 src/usr/local/www/services_pppoe.php:78
 #: src/usr/local/www/services_pppoe.php:92
 #: src/usr/local/www/services_pppoe_edit.php:277
 msgid "PPPoE Server"
@@ -12093,7 +12099,7 @@ msgstr "PPPoE server"
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
-#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:345
+#: src/usr/local/www/head.inc:337 src/usr/local/www/head.inc:353
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:261
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -12640,7 +12646,7 @@ msgstr "Interný prefix"
 #: src/usr/local/www/firewall_nat_npt.php:268
 msgid "One or more NPt mappings have been moved but have not yet been saved"
 msgstr ""
-"Jeden alebo viac NPt priradení bolo posunutých, no zatiaľ nebolo uložených"
+"Bolo posunuté jedno alebo viac NPt priradení, no zatiaľ nebolo/-i uložené"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:97
 msgid "Source prefix"
@@ -12700,6 +12706,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out.php:65
 msgid "Firewall: NAT: Outbound - reordered outbound NAT mappings."
 msgstr ""
+"Firewall: NAT: Odchádzajúce - zmenené poradnie odchádzajúcich NAT priradení."
 
 #: src/usr/local/www/firewall_nat_out.php:113
 #, php-format
@@ -12874,8 +12881,8 @@ msgid ""
 "One or more NAT outbound mappings have been moved but have not yet been "
 "saved"
 msgstr ""
-"Jeden alebo viac odchádzajúcich NAT priradení bolo posunutých, no zatiaľ "
-"nebolo uložených"
+"Bolo posunuté jedno alebo viac odchádzajúcich NAT priradení, no zatiaľ "
+"nebolo/-i uložené"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/firewall_rules_edit.php:475
@@ -13237,7 +13244,7 @@ msgstr "Pravidlo proti vymknutiu"
 
 #: src/usr/local/www/firewall_rules.php:417
 #: src/usr/local/www/firewall_rules.php:436
-#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:586
+#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:613
 #: src/usr/local/www/load_balancer_monitor.php:94
 #: src/usr/local/www/load_balancer_pool.php:106
 #: src/usr/local/www/load_balancer_setting.php:85
@@ -13550,7 +13557,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:989
 msgid "One or more rules have been moved but have not yet been saved"
 msgstr ""
-"Jedno alebo viac pravidiel bolo premiestnených, no zatiaľ nebolo uložených"
+"Bolo premiestnené jedno alebo viac pravidiel, no zatiaľ nebolo/-i uložené"
 
 #: src/usr/local/www/firewall_rules_edit.php:39
 #: src/usr/local/www/firewall_rules_edit.php:40
@@ -13566,14 +13573,14 @@ msgstr "akékoľvek"
 msgid ""
 "For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified."
 msgstr ""
-"Pre ICMP pravidlá na IPv4, môže byť uvedený jeden alebo viac týchto ICMP "
+"Pre ICMP pravidlá na IPv4 môže byť uvedený jeden alebo viac týchto ICMP "
 "podtypov."
 
 #: src/usr/local/www/firewall_rules_edit.php:57
 msgid ""
 "For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified."
 msgstr ""
-"Pre ICMP pravidlá na IPv6, môže byť uvedený jeden alebo viac týchto ICMP "
+"Pre ICMP pravidlá na IPv6 môže byť uvedený jeden alebo viac týchto ICMP "
 "podtypov."
 
 #: src/usr/local/www/firewall_rules_edit.php:58
@@ -14354,7 +14361,7 @@ msgstr "Zvoľte potvrdzovací front iba ak je zvolený aj front."
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 #: src/usr/local/www/firewall_schedule_edit.php:52
-#: src/usr/local/www/head.inc:292
+#: src/usr/local/www/head.inc:300
 #: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
 msgstr "Rozvrhy"
@@ -14741,7 +14748,7 @@ msgstr "IP alias"
 
 #: src/usr/local/www/firewall_virtual_ip.php:232
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
-#: src/usr/local/www/head.inc:294
+#: src/usr/local/www/head.inc:302
 msgid "Virtual IPs"
 msgstr "Virtuálne IP adresy"
 
@@ -15133,7 +15140,7 @@ msgstr "vypisujú sa iba prvých 10 000 položiek"
 msgid "Value"
 msgstr "Hodnota"
 
-#: src/usr/local/www/head.inc:231
+#: src/usr/local/www/head.inc:239
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -15146,19 +15153,19 @@ msgstr "Hodnota"
 msgid "Advanced"
 msgstr "Rozšírené"
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:432
+#: src/usr/local/www/head.inc:241 src/usr/local/www/system.php:432
 msgid "General Setup"
 msgstr "Všeobecné nastavenia"
 
-#: src/usr/local/www/head.inc:234
+#: src/usr/local/www/head.inc:242
 msgid "High Avail. Sync"
 msgstr "Synchronizácia HA"
 
-#: src/usr/local/www/head.inc:236
+#: src/usr/local/www/head.inc:244
 msgid "Setup Wizard"
 msgstr "Sprievodca nastavením"
 
-#: src/usr/local/www/head.inc:237 src/usr/local/www/status_logs.php:59
+#: src/usr/local/www/head.inc:245 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -15169,11 +15176,11 @@ msgstr "Sprievodca nastavením"
 msgid "Routing"
 msgstr "Smerovanie"
 
-#: src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:246
 msgid "Cert. Manager"
 msgstr "Správca certifikátov"
 
-#: src/usr/local/www/head.inc:240 src/usr/local/www/head.inc:242
+#: src/usr/local/www/head.inc:248 src/usr/local/www/head.inc:250
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
@@ -15183,32 +15190,32 @@ msgstr "Správca certifikátov"
 msgid "User Manager"
 msgstr "Správca užívateľov"
 
-#: src/usr/local/www/head.inc:246 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:254 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
 msgstr "Užívateľské nastavenia"
 
-#: src/usr/local/www/head.inc:260
+#: src/usr/local/www/head.inc:268
 msgid "Assignments"
 msgstr "Priradenia"
 
-#: src/usr/local/www/head.inc:267
+#: src/usr/local/www/head.inc:275
 msgid "Switches"
 msgstr "Switche"
 
-#: src/usr/local/www/head.inc:307 src/usr/local/www/services_dhcpv6.php:505
+#: src/usr/local/www/head.inc:315 src/usr/local/www/services_dhcpv6.php:505
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:249
 msgid "DHCPv6 Server & RA"
-msgstr "DHCPv6 server a RA"
+msgstr "DHCPv6 server a reklama routra"
 
-#: src/usr/local/www/head.inc:311 src/usr/local/www/services_igmpproxy.php:63
+#: src/usr/local/www/head.inc:319 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
 msgstr "IGMP Proxy"
 
-#: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:346
+#: src/usr/local/www/head.inc:320 src/usr/local/www/head.inc:354
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15223,7 +15230,7 @@ msgstr "IGMP Proxy"
 msgid "Load Balancer"
 msgstr "Vyvažovač zaťaženia"
 
-#: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
+#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
@@ -15236,31 +15243,31 @@ msgstr "Vyvažovač zaťaženia"
 msgid "NTP"
 msgstr "NTP"
 
-#: src/usr/local/www/head.inc:315 src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/head.inc:323 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
 msgstr "SNMP"
 
-#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:356
+#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:364
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
 msgstr "UPnP a NAT-PMP"
 
-#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/head.inc:340 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
 
-#: src/usr/local/www/head.inc:338
+#: src/usr/local/www/head.inc:346
 msgid "CARP (failover)"
 msgstr "CARP (záloha)"
 
-#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:352
+#: src/usr/local/www/head.inc:347 src/usr/local/www/index.php:353
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: src/usr/local/www/head.inc:340
+#: src/usr/local/www/head.inc:348
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_gateway_groups.php:53
 #: src/usr/local/www/status_gateway_groups.php:65
@@ -15280,25 +15287,25 @@ msgstr "Dashboard"
 msgid "Gateways"
 msgstr "Brány"
 
-#: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
+#: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
 msgid "DHCP Leases"
 msgstr "DHCP prenájmy"
 
-#: src/usr/local/www/head.inc:342 src/usr/local/www/status_dhcpv6_leases.php:37
+#: src/usr/local/www/head.inc:350 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
 msgstr "DHCPv6 prenájmy"
 
-#: src/usr/local/www/head.inc:343 src/usr/local/www/status_filter_reload.php:33
+#: src/usr/local/www/head.inc:351 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
 msgstr "Obnovenie filtra"
 
-#: src/usr/local/www/head.inc:349 src/usr/local/www/status_pkglogs.php:71
+#: src/usr/local/www/head.inc:357 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
 msgstr "Denník balíkov"
 
-#: src/usr/local/www/head.inc:351
+#: src/usr/local/www/head.inc:359
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15356,12 +15363,12 @@ msgstr "Denník balíkov"
 msgid "Services"
 msgstr "Služby"
 
-#: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
+#: src/usr/local/www/head.inc:361 src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph.php:267
 msgid "Traffic Graph"
 msgstr "Graf toku dát"
 
-#: src/usr/local/www/head.inc:368 src/usr/local/www/interfaces_assign.php:496
+#: src/usr/local/www/head.inc:376 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_gre.php:80
@@ -15379,71 +15386,71 @@ msgstr "Graf toku dát"
 msgid "Wireless"
 msgstr "Bezdrôtové"
 
-#: src/usr/local/www/head.inc:408
+#: src/usr/local/www/head.inc:416
 msgid "pfSense Gold"
 msgstr "pfSense Gold"
 
-#: src/usr/local/www/head.inc:413 src/usr/local/www/help.php:529
+#: src/usr/local/www/head.inc:421 src/usr/local/www/help.php:529
 msgid "About this Page"
 msgstr "O tejto stránke"
 
-#: src/usr/local/www/head.inc:415
+#: src/usr/local/www/head.inc:423
 msgid "Bug Database"
 msgstr "Databáza chýb"
 
-#: src/usr/local/www/head.inc:418
+#: src/usr/local/www/head.inc:426
 msgid "User Forum"
 msgstr "Užívateľské fórum"
 
-#: src/usr/local/www/head.inc:419
+#: src/usr/local/www/head.inc:427
 msgid "Documentation"
 msgstr "Dokumentácia"
 
-#: src/usr/local/www/head.inc:420
+#: src/usr/local/www/head.inc:428
 msgid "Paid Support"
 msgstr "Platená podpora"
 
-#: src/usr/local/www/head.inc:421
+#: src/usr/local/www/head.inc:429
 msgid "pfSense Book"
 msgstr "Kniha pfSense"
 
-#: src/usr/local/www/head.inc:422
+#: src/usr/local/www/head.inc:430
 msgid "FreeBSD Handbook"
 msgstr "Príručka FreeBSD"
 
-#: src/usr/local/www/head.inc:512 src/usr/local/www/head.inc:684
+#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
 msgid "Notices"
 msgstr "Upozornenia"
 
-#: src/usr/local/www/head.inc:549
+#: src/usr/local/www/head.inc:576
 msgid "Save dashboard layout"
 msgstr "Uložiť rozloženie dashboardu"
 
-#: src/usr/local/www/head.inc:557
+#: src/usr/local/www/head.inc:584
 msgid "Available widgets"
 msgstr "Dostupné widgety"
 
-#: src/usr/local/www/head.inc:565
+#: src/usr/local/www/head.inc:592
 msgid "Log filter"
 msgstr "Filter denníka"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:603
 msgid "Manage log"
 msgstr "Spravovať záznamy denníka"
 
-#: src/usr/local/www/head.inc:594
+#: src/usr/local/www/head.inc:621
 msgid "Refresh Graph"
 msgstr "Obnoviť graf"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:626
 msgid "Export Graph"
 msgstr "Exportovať graf"
 
-#: src/usr/local/www/head.inc:639
+#: src/usr/local/www/head.inc:666
 msgid "Help for items on this page"
 msgstr "Pomocník pre položky na tejto stránke"
 
-#: src/usr/local/www/head.inc:650
+#: src/usr/local/www/head.inc:677
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -15452,7 +15459,7 @@ msgstr ""
 "%1$s%3$s sa bootuje, potom budú balíky preinštalované v pozadí."
 "%2$s%1$sNevykonávajte žiadne zmeny v GUI kým sa toto nedokončí.%2$s"
 
-#: src/usr/local/www/head.inc:653
+#: src/usr/local/www/head.inc:680
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -15461,7 +15468,7 @@ msgstr ""
 "%1$sMomentálne prebieha preinštalovanie balíkov v pozadí."
 "%2$s%1$sNevykonávajte žiadne zmeny v GUI kým sa toto nedokončí.%2$s"
 
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/head.inc:681
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -15472,15 +15479,15 @@ msgstr ""
 "tlačidlo \"Vymazať zámok balíkov\" na stránke %3$s a ručne preinštalujte "
 "balíky.%2$s"
 
-#: src/usr/local/www/head.inc:664
+#: src/usr/local/www/head.inc:691
 msgid "This page is currently being managed by a remote machine."
 msgstr "Táto stránka je momentálne spravovaná vzdialeným zariadením."
 
-#: src/usr/local/www/head.inc:723
+#: src/usr/local/www/head.inc:750
 msgid "Close"
 msgstr "Zatvoriť"
 
-#: src/usr/local/www/head.inc:725
+#: src/usr/local/www/head.inc:752
 msgid "Mark All as Read"
 msgstr "Označ všetko ako prečítané"
 
@@ -15521,16 +15528,16 @@ msgstr "Kliknite %1$ssem%2$s pre viac informácií."
 msgid "Contact a firewall administrator for more information."
 msgstr "Kontaktujte administrátora firewallu pre viac informácií."
 
-#: src/usr/local/www/index.php:231
+#: src/usr/local/www/index.php:232
 #, php-format
 msgid "Welcome to %s!"
 msgstr "Víta Vás %s!"
 
-#: src/usr/local/www/index.php:232
+#: src/usr/local/www/index.php:233
 msgid "One moment while the initial setup wizard starts."
 msgstr "Chvíľku počkajte, kým sa spustí počiatočný sprievodca nastavením."
 
-#: src/usr/local/www/index.php:233
+#: src/usr/local/www/index.php:234
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
@@ -15538,17 +15545,17 @@ msgstr ""
 "Pre používateľov platformy embedded: Prosím buďte trpezlivý, spustenie "
 "sprievodcu trvá o niečo dlhšie ako bežného GUI."
 
-#: src/usr/local/www/index.php:234
+#: src/usr/local/www/index.php:235
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr ""
 "Pre preskočenie sprievodcu, kliknite na %s logo na počiatočnej stránke."
 
-#: src/usr/local/www/index.php:365 src/etc/inc/pfsense-utils.inc:326
+#: src/usr/local/www/index.php:366 src/etc/inc/pfsense-utils.inc:326
 msgid "Available Widgets"
 msgstr "Dostupné widgety"
 
-#: src/usr/local/www/index.php:392
+#: src/usr/local/www/index.php:393
 #, php-format
 msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
@@ -15557,10 +15564,10 @@ msgstr ""
 "Ostatné nastavenia dashboardu sú dostupné zo stránky <a href="
 "\"%s\">Všeobecné nastavenia</a>."
 
-#: src/usr/local/www/index.php:612
+#: src/usr/local/www/index.php:624
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
-"Jeden alebo viac widgetov bolo premiestnených, no zatiaľ nebolo uložených"
+"Bol premiestnený jeden alebo viac widgetov, no zatiaľ nebol/-i uložený/-é"
 
 #: src/usr/local/www/interfaces.php:419
 msgid "The settings have already been applied!"
@@ -15819,72 +15826,73 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:802 src/usr/local/www/interfaces.php:825
 #: src/usr/local/www/interfaces_ppps_edit.php:248
 msgid "The idle timeout value must be an integer."
-msgstr ""
+msgstr "Hodnota časového limitu nečinnosti musí byť celé číslo."
 
 #: src/usr/local/www/interfaces.php:806
 #: src/usr/local/www/interfaces_ppps_edit.php:252
 msgid "A valid PPPoE reset hour must be specified (0-23)."
-msgstr ""
+msgstr "Musí byť uvedená platná hodina pre reset PPPoE (0-23)."
 
 #: src/usr/local/www/interfaces.php:810
 #: src/usr/local/www/interfaces_ppps_edit.php:256
 msgid "A valid PPPoE reset minute must be specified (0-59)."
-msgstr ""
+msgstr "Musí byť uvedená platná minúta pre reset PPPoE (0-59)."
 
 #: src/usr/local/www/interfaces.php:813
 #: src/usr/local/www/interfaces_ppps_edit.php:259
 msgid "A valid PPPoE reset date must be specified (mm/dd/yyyy)."
-msgstr ""
+msgstr "Musí byť uvedený platný dátum pre reset PPPoE (mm/dd/rrrr)."
 
 #: src/usr/local/www/interfaces.php:816
 msgid "A valid PPTP local IP address must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná PPTP lokálna IP adresa."
 
 #: src/usr/local/www/interfaces.php:819
 msgid "A valid PPTP subnet bit count must be specified."
-msgstr ""
+msgstr "Musí byť uvedený platný počet bitov PPTP subnetu."
 
 #: src/usr/local/www/interfaces.php:822
 msgid "A valid PPTP remote IP address must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná PPTP vzdialená IP adresa."
 
 #: src/usr/local/www/interfaces.php:828
 #: src/usr/local/www/services_dhcp_edit.php:177
 #: src/usr/local/www/services_wol.php:73
 #: src/usr/local/www/services_wol_edit.php:81
 msgid "A valid MAC address must be specified."
-msgstr ""
+msgstr "Musí byť uvedený platná MAC adresa."
 
 #: src/usr/local/www/interfaces.php:843
 #, php-format
 msgid "The MTU must be between %d and %d bytes."
-msgstr ""
+msgstr "MTU musí byť medzi %d a %d bajtmi."
 
 #: src/usr/local/www/interfaces.php:859
 msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr ""
+"MTU rozhrania VLAN nemôže byť väčšie ako MTU jeho rodičovského rozhrania."
 
 #: src/usr/local/www/interfaces.php:875
 #, php-format
 msgid "Interface %s (VLAN) has MTU set to a larger value."
-msgstr ""
+msgstr "Rozhranie %s (VLAN) má nastavené MTU na vyššiu hodnotu."
 
 #: src/usr/local/www/interfaces.php:882
 msgid "The MSS must be an integer between 576 and 65535 bytes."
-msgstr ""
+msgstr "MSS musí byť celé číslo medzi 576 a 65535 bajtmi."
 
 #: src/usr/local/www/interfaces.php:891 src/usr/local/www/interfaces.php:3040
 #: src/usr/local/www/status_interfaces.php:164
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: src/usr/local/www/interfaces.php:894
 msgid "A specific channel, not auto, must be selected for Access Point mode."
-msgstr ""
+msgstr "Pre režim prístupového bodu musí byť zvolený určitý kanál, nie auto."
 
 #: src/usr/local/www/interfaces.php:899
 msgid "802.11n standards require enabling WME."
-msgstr ""
+msgstr "Štandardy 802.11n vyžadujú povolené WME."
 
 #: src/usr/local/www/interfaces.php:905
 msgid "Key Rotation must be an integer between 1 and 9999."
@@ -15900,42 +15908,46 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:917
 msgid "802.1X Authentication Server must be an IP or hostname."
-msgstr ""
+msgstr "802.1X autentifikačný server musí byť IP adresa alebo hostname."
 
 #: src/usr/local/www/interfaces.php:922
 msgid "Secondary 802.1X Authentication Server must be an IP or hostname."
 msgstr ""
+"Sekundárny 802.1X autentifikačný server musí byť IP adresa alebo hostname."
 
 #: src/usr/local/www/interfaces.php:927
 msgid ""
 "802.1X Authentication Server Port must be a valid port number (1-65535)."
 msgstr ""
+"Port 802.1X autentifikačného servera musí byť platné číslo portu (1-65535)."
 
 #: src/usr/local/www/interfaces.php:932
 msgid ""
 "Secondary 802.1X Authentication Server Port must be a valid port number (1-"
 "65535)."
 msgstr ""
+"Port sekundárneho 802.1X autentifikačného servera musí byť platné číslo "
+"portu (1-65535)."
 
 #: src/usr/local/www/interfaces.php:937
 msgid "Invalid channel specified."
-msgstr ""
+msgstr "Uvedený kanál nie je platný."
 
 #: src/usr/local/www/interfaces.php:940
 msgid "Channel must be between 0-255."
-msgstr ""
+msgstr "Kanál musí byť medzi 0-255."
 
 #: src/usr/local/www/interfaces.php:945
 msgid "Distance must be an integer."
-msgstr ""
+msgstr "Vzdialenosť musí byť celé číslo."
 
 #: src/usr/local/www/interfaces.php:949
 msgid "Channel selected is not valid for 802.11a or 802.11na."
-msgstr ""
+msgstr "Zvolený kanál nie je platný pre 802.11a alebo 802.11na."
 
 #: src/usr/local/www/interfaces.php:954
 msgid "Channel selected is not valid for 802.11b or 802.11g."
-msgstr ""
+msgstr "Zvolený kanál nie je platný pre 802.11b alebo 802.11g."
 
 #: src/usr/local/www/interfaces.php:958
 msgid "Invalid option chosen for OFDM Protection Mode"
@@ -15943,23 +15955,23 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:964
 msgid "The WPA passphrase must be between 8 and 63 characters long."
-msgstr ""
+msgstr "Heslo WPA musí byť 8 až 63 znakov dlhé."
 
 #: src/usr/local/www/interfaces.php:970
 msgid "A WPA Passphrase must be specified when WPA PSK is enabled."
-msgstr ""
+msgstr "WPA heslo musí byť uvedené, ak je povolené WPA PSK."
 
 #: src/usr/local/www/interfaces.php:976
 msgid "PPP Password and confirmed password must match!"
-msgstr ""
+msgstr "PPP heslo a potvrdenie hesla sa musia zhodovať!"
 
 #: src/usr/local/www/interfaces.php:980
 msgid "PPPoE Password and confirmed password must match!"
-msgstr ""
+msgstr "PPPoE heslo a potvrdenie hesla sa musia zhodovať!"
 
 #: src/usr/local/www/interfaces.php:984
 msgid "PTPP Password and confirmed password must match!"
-msgstr ""
+msgstr "PTPP heslo a potvrdenie hesla sa musia zhodovať!"
 
 #: src/usr/local/www/interfaces.php:1687
 #, php-format
@@ -15967,6 +15979,8 @@ msgid ""
 "Unable to change mode to %s. The maximum number of wireless clones supported "
 "in this mode may have been reached."
 msgstr ""
+"Nebolo možné zmeniť režim na %s. Maximálny počet bezdrôtových klonov "
+"podporovaných v tomto režime mohol byť dosiahnutý."
 
 #: src/usr/local/www/interfaces.php:1713
 msgid "Static IPv4"
@@ -16608,7 +16622,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2785 src/usr/local/www/interfaces.php:2850
 msgid "Advanced and MLPPP"
-msgstr ""
+msgstr "Rozšírené a MLPPP"
 
 #: src/usr/local/www/interfaces.php:2788
 msgid ""
@@ -16774,19 +16788,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3020
 msgid "Indoor"
-msgstr ""
+msgstr "Vo vnútri"
 
 #: src/usr/local/www/interfaces.php:3020
 msgid "Outdoor"
-msgstr ""
+msgstr "Vonku"
 
 #: src/usr/local/www/interfaces.php:3020
 msgid "Anywhere"
-msgstr ""
+msgstr "Kdekoľvek"
 
 #: src/usr/local/www/interfaces.php:3018
 msgid "Location"
-msgstr ""
+msgstr "Poloha"
 
 #: src/usr/local/www/interfaces.php:3021
 #, php-format
@@ -16799,22 +16813,29 @@ msgid ""
 "not be allowed by some cards.\tThese settings may not be able to add "
 "additional channels that are not already supported."
 msgstr ""
+"Tieto nastavenia môžu ovplyvniť, ktoré kanály sú dostupné a maximálnu "
+"povolenú silu prenosu povolenú na tých kanáloch. Je odporúčané použitie "
+"správnych nastavení, ktoré vyhovujú miestnym regulačným požiadavkam."
+"%1$sVšetky bezdrôtové siete na tomto rozhraní budú dočasne deaktivované "
+"počas zmeny regulačných nastavení. Niektoré z regulačných domén alebo kódov "
+"krajiny nemusia byť povolené niektorými sieťovými kartami.  Tieto nastavenia "
+"nemusia byť schopné pridať dodatočné kanály, ktoré už nie sú podporované."
 
 #: src/usr/local/www/interfaces.php:3029
 msgid "Network-Specific Wireless Configuration"
-msgstr ""
+msgstr "Bezdrôtová konfigurácia špecifická sieti"
 
 #: src/usr/local/www/interfaces.php:3050
 msgid "802.11g"
-msgstr ""
+msgstr "802.11g"
 
 #: src/usr/local/www/interfaces.php:3050
 msgid "802.11n"
-msgstr ""
+msgstr "802.11n"
 
 #: src/usr/local/www/interfaces.php:3048
 msgid "Minimum wireless standard"
-msgstr ""
+msgstr "Minimálny bezdrôtový štandard"
 
 #: src/usr/local/www/interfaces.php:3051
 msgid ""
@@ -16822,50 +16843,58 @@ msgid ""
 "selected wireless standard to associate (stations not capable are not "
 "permitted to associate)"
 msgstr ""
+"Pri prevádzke v režime prístupového bodu, povoliť priradenie iba tých "
+"staníc, ktoré podporujú zvolený bezdrôtový štandard (stanice, ktoré ho "
+"nepodporujú, nemajú povolené priradenie)"
 
 #: src/usr/local/www/interfaces.php:3055
 msgid "802.11g only"
-msgstr ""
+msgstr "Iba 802.11g"
 
 #: src/usr/local/www/interfaces.php:3059
 msgid ""
 "When operating as an access point in 802.11g mode, allow only 11g-capable "
 "stations to associate (11b-only stations are not permitted to associate)"
 msgstr ""
+"Pri prevádzke v režime prístupového bodu v režime 802.11g, povoliť "
+"priradenie iba tých staníc, ktoré podporujú režim 11g (stanice, ktoré "
+"podporujú iba 11b, nemajú povolené priradenie) "
 
 #: src/usr/local/www/interfaces.php:3064
 msgid "Allow intra-BSS communication"
-msgstr ""
+msgstr "Povoliť intra-BSS komunikáciu"
 
 #: src/usr/local/www/interfaces.php:3068
 msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr ""
+"Poskytuje extra bezpečnosť izoláciou klientov, aby neboli schopní "
+"komunikovať priamo medzi sebou"
 
 #: src/usr/local/www/interfaces.php:3072
 msgid "Enable WME"
-msgstr ""
+msgstr "Povoliť WME"
 
 #: src/usr/local/www/interfaces.php:3080
 msgid "Hide SSID"
-msgstr ""
+msgstr "Skryť SSID"
 
 #: src/usr/local/www/interfaces.php:3089 src/usr/local/www/interfaces.php:3110
 msgid "WPA"
-msgstr ""
+msgstr "WPA"
 
 #: src/usr/local/www/interfaces.php:3101
 msgid "WPA Pre-Shared Key"
-msgstr ""
+msgstr "WPA zdieľaný kľúč"
 
 #: src/usr/local/www/interfaces.php:3104
 msgid "WPA Passphrase must be between 8 and 63 characters long"
-msgstr ""
+msgstr "Heslo WPA musí byť 8 až 63 znakov dlhé."
 
 #: src/usr/local/www/interfaces.php:3110
 msgid "WPA2"
-msgstr ""
+msgstr "WPA2"
 
 #: src/usr/local/www/interfaces.php:3110 src/usr/local/www/interfaces.php:3117
 #: src/usr/local/www/interfaces.php:3124 src/usr/local/www/pkg_mgr.php:160
@@ -16874,42 +16903,42 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:258
 #: src/usr/local/www/services_rfc2136_edit.php:273
 msgid "Both"
-msgstr ""
+msgstr "Obidva"
 
 #: src/usr/local/www/interfaces.php:3108
 msgid "WPA mode"
-msgstr ""
+msgstr "Režim WPA"
 
 #: src/usr/local/www/interfaces.php:3117
 #: src/usr/local/www/vpn_ipsec_keys.php:103
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
 #: src/usr/local/www/vpn_ipsec_phase1.php:220
 msgid "Pre-Shared Key"
-msgstr ""
+msgstr "Zdieľaný kľúč"
 
 #: src/usr/local/www/interfaces.php:3117
 msgid "Extensible Authentication Protocol"
-msgstr ""
+msgstr "Rozšíriteľný autentifikačný protokol"
 
 #: src/usr/local/www/interfaces.php:3115
 msgid "WPA Key Management Mode"
-msgstr ""
+msgstr "Režim správy WPA kľúču"
 
 #: src/usr/local/www/interfaces.php:3124
 msgid "AES (recommended)"
-msgstr ""
+msgstr "AES (odporúčané)"
 
 #: src/usr/local/www/interfaces.php:3124
 msgid "TKIP"
-msgstr ""
+msgstr "TKIP"
 
 #: src/usr/local/www/interfaces.php:3122
 msgid "WPA Pairwise"
-msgstr ""
+msgstr "Párové WPA"
 
 #: src/usr/local/www/interfaces.php:3129
 msgid "Group Key Rotation"
-msgstr ""
+msgstr "Otočenie skupinového kľúča"
 
 #: src/usr/local/www/interfaces.php:3133
 msgid ""
@@ -16937,7 +16966,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3157
 msgid "IEEE802.1X"
-msgstr ""
+msgstr "IEEE802.1X"
 
 #: src/usr/local/www/interfaces.php:3161
 msgid "This option requires that the \"Enable WPA box\" is checked"
@@ -16974,11 +17003,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3222
 msgid "Reserved Networks"
-msgstr ""
+msgstr "Rezervované siete"
 
 #: src/usr/local/www/interfaces.php:3226
 msgid "Block private networks and loopback addresses"
-msgstr ""
+msgstr "Zablokovať súkromné siete a adresy loopback"
 
 #: src/usr/local/www/interfaces.php:3230
 msgid ""
@@ -17001,7 +17030,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3271
 msgid "New IPv4 Gateway"
-msgstr ""
+msgstr "Nová IPv4 brána"
 
 #: src/usr/local/www/interfaces.php:3289
 #: src/usr/local/www/status_interfaces.php:143
@@ -17279,7 +17308,7 @@ msgstr "Poskytnutý nesprávny index"
 
 #: src/usr/local/www/interfaces_bridge.php:58
 msgid "This bridge cannot be deleted because it is assigned as an interface."
-msgstr "Most nemôže byť odstránený, pretože je priradený ako rozhranie."
+msgstr "Tento most nemôže byť odstránený, pretože je priradený ako rozhranie."
 
 #: src/usr/local/www/interfaces_bridge.php:96
 msgid "Bridge Interfaces"
@@ -18673,63 +18702,70 @@ msgid ""
 "A QinQ VLAN exists on %s with this tag. Please remove it to use this tag for "
 "a normal VLAN."
 msgstr ""
+"QinQ VLAN s touto značkou už existuje na %s. Prosím odstráňte ho pre "
+"použitie tejto značky pre obyčajný VLAN."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:179
 msgid "VLAN Configuration"
-msgstr ""
+msgstr "VLAN konfigurácia"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:186
 msgid "Only VLAN capable interfaces will be shown."
-msgstr ""
+msgstr "Budú zobrazené iba rozhrania podporujúce VLAN."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:190
 msgid "*VLAN Tag"
-msgstr ""
+msgstr "*VLAN značka"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:194
 msgid "802.1Q VLAN tag (between 1 and 4094)."
-msgstr ""
+msgstr "802.1Q VLAN značka (medzi 1 a 4094)."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:198
 msgid "VLAN Priority"
-msgstr ""
+msgstr "VLAN priorita"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:202
 msgid "802.1Q VLAN Priority (between 0 and 7)."
-msgstr ""
+msgstr "802.1Q VLAN priorita (medzi 0 a 7)."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:214
 msgid "vlanif"
-msgstr ""
+msgstr "vlanif"
 
 #: src/usr/local/www/interfaces_wireless.php:58
 msgid ""
 "This wireless clone cannot be deleted because it is assigned as an interface."
 ""
 msgstr ""
+"Toto klonované bezdrôtové rozhranie nemôže byť odstránené, pretože je "
+"priradené ako rozhranie."
 
 #: src/usr/local/www/interfaces_wireless.php:93
 msgid "Wireless Interfaces"
-msgstr ""
+msgstr "Bezdrôtové rozhrania"
 
 #: src/usr/local/www/interfaces_wireless.php:123
 msgid "Edit WiFi interface"
-msgstr ""
+msgstr "Upraviť WiFi rozhranie"
 
 #: src/usr/local/www/interfaces_wireless.php:124
 msgid "Delete WiFi interface"
-msgstr ""
+msgstr "Odstrániť WiFi rozhranie"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:112
 msgid ""
 "This wireless clone cannot be modified because it is still assigned as an "
 "interface."
 msgstr ""
+"Toto klonované bezdrôtové rozhranie nemôže byť upravené, pretože je stále "
+"priradené ako rozhranie."
 
 #: src/usr/local/www/interfaces_wireless_edit.php:114
 msgid ""
 "Use the configuration page for the assigned interface to change the mode."
 msgstr ""
+"Použite konfiguračnú stránku pre priradené rozhrania pre zmenu režimu."
 
 #: src/usr/local/www/interfaces_wireless_edit.php:121
 #, php-format
@@ -18737,32 +18773,34 @@ msgid ""
 "Error creating interface with mode %1$s.\t The %2$s interface may not "
 "support creating more clones with the selected mode."
 msgstr ""
+"Chyba počas vytvárania rozhrania s režimom %1$s.\t Rozhranie %2$s nemusí "
+"podporovať vytváranie viacerých klonov so zvoleným režimom."
 
 #: src/usr/local/www/interfaces_wireless_edit.php:127
 #, php-format
 msgid "Created with id %s"
-msgstr ""
+msgstr "Vytvorené s id %s"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:130
 msgid "Created without id"
-msgstr ""
+msgstr "Vytvorené bez id"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:158
 msgid "None available"
-msgstr ""
+msgstr "Nie je k dispozícii"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:172
 msgid "Wireless Interface Configuration"
-msgstr ""
+msgstr "Konfigurácia bezdrôtového rozhrania"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:183
 #: src/usr/local/www/vpn_ipsec_phase2.php:507
 msgid "*Mode"
-msgstr ""
+msgstr "*Režim"
 
 #: src/usr/local/www/license.php:30 src/usr/local/www/license.php:34
 msgid "License"
-msgstr ""
+msgstr "Licencia"
 
 #: src/usr/local/www/license.php:36
 #, php-format
@@ -18823,40 +18861,40 @@ msgstr ""
 #: src/usr/local/www/license.php:182 src/usr/local/www/license.php:190
 #: src/usr/local/www/license.php:194
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: src/usr/local/www/license.php:52
 msgid "1992-2016 The FreeBSD Project. All rights reserved."
-msgstr ""
+msgstr "1992-2016 The FreeBSD Project. Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:55
 #, php-format
 msgid "This product includes %1$s, freely available from (%2$s)"
-msgstr ""
+msgstr "Tento produkt obsahuje %1$s, voľne dostupné z (%2$s)"
 
 #: src/usr/local/www/license.php:56
 msgid "1999-2016 The PHP Group. All rights reserved."
-msgstr ""
+msgstr "1999-2016 The PHP Group. Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:113
 msgid "2004-2013 Internet Software Consortium, Inc."
-msgstr ""
+msgstr "2004-2013 Internet Software Consortium, Inc."
 
 #: src/usr/local/www/license.php:114
 msgid "1995-2003 Internet Software Consortium"
-msgstr ""
+msgstr "1995-2003 Internet Software Consortium"
 
 #: src/usr/local/www/license.php:123 src/usr/local/www/license.php:128
 msgid "All rights reserved."
-msgstr ""
+msgstr "Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:127
 msgid "2011-2016 Nginx, Inc."
-msgstr ""
+msgstr "2011-2016 Nginx, Inc."
 
 #: src/usr/local/www/license.php:132
 msgid "Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved."
-msgstr ""
+msgstr "Copyright 2000, 2001, 2002 Edwin Groothuis. Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:133
 msgid "This product includes software developed by Edwin Groothuis."
@@ -18864,21 +18902,23 @@ msgstr ""
 
 #: src/usr/local/www/license.php:137
 msgid "2005-2016 University of Applied Sciences Rapperswil"
-msgstr ""
+msgstr "2005-2016 University of Applied Sciences Rapperswil"
 
 #: src/usr/local/www/license.php:149
 msgid "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
-msgstr ""
+msgstr "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
 
 #: src/usr/local/www/license.php:186
 msgid "Public Domain"
-msgstr ""
+msgstr "Verejná doména"
 
 #: src/usr/local/www/load_balancer_monitor.php:55
 msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "pool."
 msgstr ""
+"Tento záznam nemôže byť odstránený, pretože je stále používaný aspoň jedným "
+"združením."
 
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor.php:93
@@ -18887,14 +18927,14 @@ msgstr ""
 #: src/usr/local/www/load_balancer_setting.php:107
 #: src/usr/local/www/load_balancer_virtual_server.php:127
 msgid "Monitors"
-msgstr ""
+msgstr "Monitory"
 
 #: src/usr/local/www/load_balancer_monitor.php:86
 #: src/usr/local/www/load_balancer_pool.php:98
 #: src/usr/local/www/load_balancer_setting.php:100
 #: src/usr/local/www/status_lb_pool.php:110
 msgid "The load balancer configuration has been changed."
-msgstr ""
+msgstr "Konfigurácia vyvažovača zaťaženia bola zmenená."
 
 #: src/usr/local/www/load_balancer_monitor.php:91
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -18906,7 +18946,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:119
 #: src/usr/local/www/status_lb_vs.php:51
 msgid "Pools"
-msgstr ""
+msgstr "Združenia"
 
 #: src/usr/local/www/load_balancer_monitor.php:92
 #: src/usr/local/www/load_balancer_pool.php:104
@@ -18918,7 +18958,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:120
 #: src/usr/local/www/status_lb_vs.php:45 src/usr/local/www/status_lb_vs.php:52
 msgid "Virtual Servers"
-msgstr ""
+msgstr "Virtuálne servery"
 
 #: src/usr/local/www/load_balancer_monitor.php:100
 #: src/usr/local/www/load_balancer_pool.php:121
@@ -18928,137 +18968,140 @@ msgstr ""
 #: src/usr/local/www/status_gateways.php:62
 #: src/usr/local/www/status_lb_pool.php:136
 msgid "Monitor"
-msgstr ""
+msgstr "Monitor"
 
 #: src/usr/local/www/load_balancer_monitor.php:127
 msgid "Edit monitor"
-msgstr ""
+msgstr "Upraviť monitor"
 
 #: src/usr/local/www/load_balancer_monitor.php:128
 msgid "Copy monitor"
-msgstr ""
+msgstr "Kopírovať monitor"
 
 #: src/usr/local/www/load_balancer_monitor.php:129
 msgid "Delete monitor"
-msgstr ""
+msgstr "Odstrániť monitor"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:57
 msgid "Load Balancer: Monitor:"
-msgstr ""
+msgstr "Vyvažovač zaťaženia: Monitor:"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:86
 msgid ""
 "This monitor name has already been used.  Monitor names must be unique."
 msgstr ""
+"Tento názov monitora už bol použitý. Názvy monitorov musia byť jedinečné."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:91
 #: src/usr/local/www/load_balancer_pool_edit.php:81
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:84
 msgid "Spaces or slashes cannot be used in the 'name' field."
-msgstr ""
+msgstr "Medzery alebo lomky nemôžu byť použité v poli \"názov\"."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:95
 #: src/usr/local/www/load_balancer_pool_edit.php:85
 msgid "The 'name' field must be 16 characters or less."
-msgstr ""
+msgstr "Pole \"názov\" musí mať 16 alebo menej znakov."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:110
 #: src/usr/local/www/services_dhcp_edit.php:164
 #: src/usr/local/www/services_dhcpv6_edit.php:110
 msgid "The hostname can only contain the characters A-Z, 0-9 and '-'."
-msgstr ""
+msgstr "Hostname môže obsahovať znaky A-Z, 0-9 a \"-\"."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:116
 msgid "HTTP(s) codes must be from RFC2616."
-msgstr ""
+msgstr "HTTP(s) kódy musia byť z RFC2616."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:120
 msgid "The path to monitor must be set."
-msgstr ""
+msgstr "Cesta k monitoru musí byť nastavená."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:144
 #, php-format
 msgid "modified '%s' monitor:"
-msgstr ""
+msgstr "upravený \"%s\" monitor:"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 msgid "ICMP"
-msgstr ""
+msgstr "ICMP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 #: src/usr/local/www/system_advanced_admin.php:314
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 #: src/usr/local/www/system_advanced_admin.php:322
 msgid "HTTPS"
-msgstr ""
+msgstr "HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 msgid "Send/Expect"
-msgstr ""
+msgstr "Odoslať/očakávať"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:260
 msgid "Edit Load Balancer - Monitor Entry"
-msgstr ""
+msgstr "Upraviť záznam Vyvažovač zaťaženia - Monitor"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:285
 msgid "HTTP Options"
-msgstr ""
+msgstr "Možnosti HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:290
 #: src/usr/local/www/load_balancer_monitor_edit.php:316
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:300
 #: src/usr/local/www/load_balancer_monitor_edit.php:326
 msgid "Hostname for Host: header if needed."
-msgstr ""
+msgstr "Hostname pre Hostiteľ: hlavička, ak je potrebný."
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:304
 msgid "HTTP Code"
-msgstr ""
+msgstr "HTTP kód"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:311
 #: src/usr/local/www/services_captiveportal.php:1014
 msgid "HTTPS Options"
-msgstr ""
+msgstr "Možnosti HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:330
 msgid "HTTPS Code"
-msgstr ""
+msgstr "HTTPS kód"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:337
 msgid "Send/Expect Options"
-msgstr ""
+msgstr "Možnosti odoslania/očakávania"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:342
 #: src/usr/local/www/services_wol.php:151
 msgid "Send"
-msgstr ""
+msgstr "Odoslať"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:349
 msgid "Expect"
-msgstr ""
+msgstr "Očakávať"
 
 #: src/usr/local/www/load_balancer_pool.php:57
 msgid ""
 "This entry cannot be deleted because it is still referenced by at least one "
 "virtual server."
 msgstr ""
+"Tento záznam nemôže byť odstránený, pretože je stále používaný aspoň jedným "
+"virtuálnym serverom."
 
 #: src/usr/local/www/load_balancer_pool.php:112
 #: src/usr/local/www/load_balancer_virtual_server.php:143
 #: src/usr/local/www/status_ipsec_leases.php:52
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:61
 msgid "Pool"
-msgstr ""
+msgstr "Združenie"
 
 #: src/usr/local/www/load_balancer_pool.php:119
 #: src/usr/local/www/services_dhcp.php:978
@@ -19069,48 +19112,49 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:635
 #: src/usr/local/www/vpn_openvpn_server.php:659
 msgid "Servers"
-msgstr ""
+msgstr "Servery"
 
 #: src/usr/local/www/load_balancer_pool.php:160
 #: src/usr/local/www/services_dhcp.php:748
 msgid "Edit pool"
-msgstr ""
+msgstr "Upraviť združenie"
 
 #: src/usr/local/www/load_balancer_pool.php:161
 msgid "Copy pool"
-msgstr ""
+msgstr "Kopírovať združenie"
 
 #: src/usr/local/www/load_balancer_pool.php:162
 #: src/usr/local/www/services_dhcp.php:750
 msgid "Delete pool"
-msgstr ""
+msgstr "Odstrániť združenie"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:56
 msgid "Load Balancer: Pool:"
-msgstr ""
+msgstr "Vyvažovač zaťaženia: Združenie:"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:69
 #: src/usr/local/www/vpn_openvpn_csc.php:325
 msgid "Server List"
-msgstr ""
+msgstr "Zoznam serverov"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:76
 msgid "This pool name has already been used.  Pool names must be unique."
 msgstr ""
+"Tento názov združenia už bol použitý. Názvy združení musia byť jedinečné."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:89
 #, php-format
 msgid "The name '%s' is a reserved word and cannot be used."
-msgstr ""
+msgstr "Názov \"%s\" je vyhradené slovo a nemôže byť použité."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:93
 #, php-format
 msgid "Sorry, an alias is already named %s."
-msgstr ""
+msgstr "Prepáčte, alias s názvom %s už existuje."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:97
 msgid "The port must be an integer between 1 and 65535, or a port alias."
-msgstr ""
+msgstr "Číslo portu musí byť celé číslo medzi 1 a 65535 alebo alias portu."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:102
 msgid "The retry value must be an integer between 1 and 65535."
@@ -19777,38 +19821,38 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:155
 #, php-format
 msgid "Remove package %s"
-msgstr ""
+msgstr "Odstrániť balík %s"
 
 #: src/usr/local/www/pkg_mgr_installed.php:159
 #, php-format
 msgid "Update package %s"
-msgstr ""
+msgstr "Aktualizovať balík %s"
 
 #: src/usr/local/www/pkg_mgr_installed.php:162
 #, php-format
 msgid "Reinstall package %s"
-msgstr ""
+msgstr "Preinštalovať balík %s"
 
 #: src/usr/local/www/pkg_mgr_installed.php:205
 msgid "There are no packages currently installed."
-msgstr ""
+msgstr "Momentálne nie sú nainštalované žiadne balíky."
 
 #: src/usr/local/www/pkg_mgr_installed.php:212
 msgid "Current"
-msgstr ""
+msgstr "Aktuálny"
 
 #: src/usr/local/www/pkg_mgr_installed.php:217
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:122
 msgid "Reinstall"
-msgstr ""
+msgstr "Preinštalovať"
 
 #: src/usr/local/www/pkg_mgr_installed.php:220
 msgid "Newer version available"
-msgstr ""
+msgstr "Novšia verzia k dispozícii"
 
 #: src/usr/local/www/pkg_mgr_installed.php:222
 msgid "Package is configured but not (fully) installed"
-msgstr ""
+msgstr "Balík je nakonfigurovaný, ale nie je (úplne) nainštalovaný"
 
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal.php:520
@@ -19820,39 +19864,39 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp.php:193
 #: src/usr/local/www/vpn_l2tp.php:217 src/usr/local/www/vpn_l2tp_users.php:83
 msgid "Configuration"
-msgstr ""
+msgstr "Konfigurácia"
 
 #: src/usr/local/www/services_captiveportal.php:84
 #, php-format
 msgid "Captive Portal: zone %s: Restore default portal page"
-msgstr ""
+msgstr "Captive Portal: zóna %s: Obnoviť predvolenú stránku portálu"
 
 #: src/usr/local/www/services_captiveportal.php:104
 #, php-format
 msgid "Captive Portal: zone %s: Restore default error page"
-msgstr ""
+msgstr "Captive Portal: zóna %s: Obnoviť predvolenú stránku chyby"
 
 #: src/usr/local/www/services_captiveportal.php:124
 #, php-format
 msgid "Captive Portal: zone %s: Restore default logout page"
-msgstr ""
+msgstr "Captive Portal: zóna %s: Obnoviť predvolenú stránku odhlásenia"
 
 #: src/usr/local/www/services_captiveportal.php:215
 #: src/usr/local/www/services_captiveportal_zones_edit.php:51
 msgid "Zone name"
-msgstr ""
+msgstr "Názov zóny"
 
 #: src/usr/local/www/services_captiveportal.php:215
 msgid "Authentication method"
-msgstr ""
+msgstr "Metóda autentifikácie"
 
 #: src/usr/local/www/services_captiveportal.php:219
 msgid "RADIUS Protocol"
-msgstr ""
+msgstr "RADIUS protokol"
 
 #: src/usr/local/www/services_captiveportal.php:221
 msgid "Primary RADIUS server IP address"
-msgstr ""
+msgstr "Primárna IP adresa RADIUS servera"
 
 #: src/usr/local/www/services_captiveportal.php:230
 #, php-format
@@ -19860,6 +19904,7 @@ msgid ""
 "The captive portal cannot be used on interface %s since it is part of a "
 "bridge."
 msgstr ""
+"Captive Portal nemôže byť použitý na rozhraní %s, keďže je súčasťou mostu."
 
 #: src/usr/local/www/services_captiveportal.php:235
 #, php-format
@@ -19867,42 +19912,46 @@ msgid ""
 "The captive portal cannot be used on interface %1$s since it is used already "
 "on %2$s instance."
 msgstr ""
+"Captive Portal nemôže byť použitý na rozhraní %1$s, keďže je už používaný na "
+"inštancii %2$s."
 
 #: src/usr/local/www/services_captiveportal.php:243
 #, php-format
 msgid "Authentication method %s is invalid."
-msgstr ""
+msgstr "Metóda autentifikácie %s nie je platná."
 
 #: src/usr/local/www/services_captiveportal.php:248
 msgid "Certificate must be specified for HTTPS login."
-msgstr ""
+msgstr "Musí byť uvedený certifikát pre HTTPS prihlásenie."
 
 #: src/usr/local/www/services_captiveportal.php:251
 msgid "The HTTPS server name must be specified for HTTPS login."
-msgstr ""
+msgstr "Musí byť uvedený názov HTTPS servera pre HTTPS prihlásenie."
 
 #: src/usr/local/www/services_captiveportal.php:258
 msgid "The timeout must be at least 1 minute."
-msgstr ""
+msgstr "Čas vypršania musí byť aspoň 1 minúta."
 
 #: src/usr/local/www/services_captiveportal.php:274
 msgid ""
 "Hard timeout must be less than or equal to the Default lease time set on "
 "DHCP Server"
 msgstr ""
+"Tvrdý časový limit musí byť menej alebo rovnaký predvolenému času prenájmu "
+"nastavenému na DHCP serveri"
 
 #: src/usr/local/www/services_captiveportal.php:281
 msgid "The idle timeout must be at least 1 minute."
-msgstr ""
+msgstr "Časový limit nečinnosti musí byť aspoň 1 minúta."
 
 #: src/usr/local/www/services_captiveportal.php:285
 msgid "The pass-through credit count must be a number or left blank."
-msgstr ""
+msgstr "Počet pass-through kreditu musí byť číslo alebo ponechaný prázdny."
 
 #: src/usr/local/www/services_captiveportal.php:288
 msgid ""
 "The waiting period to restore pass-through credits must be above 0 hours."
-msgstr ""
+msgstr "Čas čakania na obnovu pass-though kreditov musí byť viac ako 0 hodín."
 
 #: src/usr/local/www/services_captiveportal.php:293
 #: src/usr/local/www/services_captiveportal.php:297
@@ -19911,7 +19960,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:94
 #, php-format
 msgid "A valid IP address must be specified. [%s]"
-msgstr ""
+msgstr "Musí byť uvedená platná IP adresa. [%s]"
 
 #: src/usr/local/www/services_captiveportal.php:309
 #: src/usr/local/www/services_captiveportal.php:313
@@ -19920,19 +19969,23 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal.php:325
 #, php-format
 msgid "A valid port number must be specified. [%s]"
-msgstr ""
+msgstr "Musí byť uvedené platné číslo portu. [%s]"
 
 #: src/usr/local/www/services_captiveportal.php:329
 msgid ""
 "The maximum number of concurrent connections per client IP address may not "
 "be larger than the global maximum."
 msgstr ""
+"Maximálny počet súčasných pripojení na jednu klientskú IP adresu nemôže byť "
+"vyšší ako globálne maximum."
 
 #: src/usr/local/www/services_captiveportal.php:333
 msgid ""
 "The NAS-Identifier must be 3-253 characters long and should only contain "
 "ASCII characters."
 msgstr ""
+"NAS identifikátor musí byť 3 až 253 znakov dlhý a mal by obsahovať iba ASCII "
+"znaky."
 
 #: src/usr/local/www/services_captiveportal.php:521
 #: src/usr/local/www/services_captiveportal_filemanager.php:140
@@ -19943,7 +19996,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:66
 #: src/usr/local/www/services_captiveportal_vouchers.php:374
 msgid "MACs"
-msgstr ""
+msgstr "MAC adresy"
 
 #: src/usr/local/www/services_captiveportal.php:522
 #: src/usr/local/www/services_captiveportal_filemanager.php:141
@@ -19954,7 +20007,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac.php:163
 #: src/usr/local/www/services_captiveportal_vouchers.php:375
 msgid "Allowed IP Addresses"
-msgstr ""
+msgstr "Povolené IP adresy"
 
 #: src/usr/local/www/services_captiveportal.php:523
 #: src/usr/local/www/services_captiveportal_filemanager.php:142
@@ -19965,7 +20018,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac.php:164
 #: src/usr/local/www/services_captiveportal_vouchers.php:376
 msgid "Allowed Hostnames"
-msgstr ""
+msgstr "Povolené názvy hostiteľov"
 
 #: src/usr/local/www/services_captiveportal.php:524
 #: src/usr/local/www/services_captiveportal_filemanager.php:143
@@ -19986,24 +20039,24 @@ msgstr "Poukazy"
 #: src/usr/local/www/services_captiveportal_mac.php:166
 #: src/usr/local/www/services_captiveportal_vouchers.php:378
 msgid "File Manager"
-msgstr ""
+msgstr "Správca súborov"
 
 #: src/usr/local/www/services_captiveportal.php:531
 msgid "Captive Portal Configuration"
-msgstr ""
+msgstr "Captive Portal konfigurácia"
 
 #: src/usr/local/www/services_captiveportal.php:542
 #: src/usr/local/www/services_dnsmasq.php:337
 msgid "*Interfaces"
-msgstr ""
+msgstr "*Rozhrania"
 
 #: src/usr/local/www/services_captiveportal.php:546
 msgid "Select the interface(s) to enable for captive portal."
-msgstr ""
+msgstr "Zvoľte rozhranie/-a pre povolenie Captive Portal."
 
 #: src/usr/local/www/services_captiveportal.php:550
 msgid "Maximum concurrent connections"
-msgstr ""
+msgstr "Maximálne súčasné pripojenia"
 
 #: src/usr/local/www/services_captiveportal.php:554
 msgid ""
@@ -20012,20 +20065,26 @@ msgid ""
 "portal, but rather how many connections a single IP can establish to the "
 "portal web server."
 msgstr ""
+"Obmedzuje počet súčasných pripojení k Captive Portal HTTP(S) serveru. Toto "
+"nenastavuje koľkí užívatelia môžu byť prihlásení do Captive Portal, ale skôr "
+"koľko pripojení môže jedna IP adresa zahájiť k webovému serveru portálu."
 
 #: src/usr/local/www/services_captiveportal.php:559
 msgid "Idle timeout (Minutes)"
-msgstr ""
+msgstr "Časový limit nečinnosti (minúty)"
 
 #: src/usr/local/www/services_captiveportal.php:562
 msgid ""
 "Clients will be disconnected after this amount of inactivity. They may log "
 "in again immediately, though. Leave this field blank for no idle timeout."
 msgstr ""
+"Klienti budú odpojení po tejto dĺžke nečinnosti. Avšak môžu sa ihneď "
+"prihlásiť naspäť. Ponechajte toto pole prázdne pre žiadny časový limit "
+"nečinnosti."
 
 #: src/usr/local/www/services_captiveportal.php:566
 msgid "Hard timeout (Minutes)"
-msgstr ""
+msgstr "Tvrdý časový limit (minúty)"
 
 #: src/usr/local/www/services_captiveportal.php:569
 msgid ""
@@ -20033,10 +20092,14 @@ msgid ""
 "activity. They may log in again immediately, though. Leave this field blank "
 "for no hard timeout (not recommended unless an idle timeout is set)."
 msgstr ""
+"Klienti budú odpojení po tomto množstve času, bez ohľadu na aktivitu. Avšak "
+"môžu sa ihneď prihlásiť naspäť. Ponechajte toto pole prázdne pre žiadny "
+"tvrdý časový limit (odporúčané iba v prípade, že je nastavený časový limit "
+"nečinnosti)."
 
 #: src/usr/local/www/services_captiveportal.php:574
 msgid "Pass-through credits per MAC address."
-msgstr ""
+msgstr "Pass-through kredity na MAC adresu."
 
 #: src/usr/local/www/services_captiveportal.php:577
 msgid ""
@@ -20049,7 +20112,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:583
 msgid "Waiting period to restore pass-through credits. (Hours)"
-msgstr ""
+msgstr "Čas čakania na obnovu pass-though kreditov. (hodiny)"
 
 #: src/usr/local/www/services_captiveportal.php:586
 msgid ""
@@ -22416,16 +22479,16 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_relay.php:144
 msgid "DHCP Relay Configuration"
-msgstr ""
+msgstr "DHCP relé konfigurácia"
 
 #: src/usr/local/www/services_dhcp_relay.php:155
 #: src/usr/local/www/services_dhcpv6_relay.php:155
 msgid "*Interface(s)"
-msgstr ""
+msgstr "*Rozhranie/-a"
 
 #: src/usr/local/www/services_dhcp_relay.php:159
 msgid "Interfaces without an IP address will not be shown."
-msgstr ""
+msgstr "Rozhrania bez IP adresy nebudú zobrazené."
 
 #: src/usr/local/www/services_dhcp_relay.php:167
 #, php-format
@@ -22433,30 +22496,32 @@ msgid ""
 "If this is checked, the DHCP relay will append the circuit ID (%s interface "
 "number) and the agent ID to the DHCP request."
 msgstr ""
+"Ak je táto možnosť označená, DHCP relé pridá ID obvodu (%s číslo rozhrania) "
+"a ID agenta k DHCP požiadavke."
 
 #: src/usr/local/www/services_dhcp_relay.php:173
 #: src/usr/local/www/services_dhcpv6_relay.php:173
 msgid "*Destination server"
-msgstr ""
+msgstr "*Cieľový server"
 
 #: src/usr/local/www/services_dhcp_relay.php:178
 #: src/usr/local/www/services_dhcpv6_relay.php:177
 msgid "Destination server"
-msgstr ""
+msgstr "Cieľový server"
 
 #: src/usr/local/www/services_dhcp_relay.php:182
 msgid ""
 "This is the IPv4 address of the server to which DHCP requests are relayed."
-msgstr ""
+msgstr "Toto je IPv4 adresa servera, na ktorý sú prenášané DHCP žiadosti."
 
 #: src/usr/local/www/services_dhcp_relay.php:199
 msgid "Add server"
-msgstr ""
+msgstr "Pridať server"
 
 #: src/usr/local/www/services_dhcpv6.php:243
 #: src/usr/local/www/services_dhcpv6.php:246
 msgid "A valid prefix range must be specified."
-msgstr ""
+msgstr "Musí byť uvedený platný rozsah prefixu."
 
 #: src/usr/local/www/services_dhcpv6.php:258
 #, php-format
@@ -22471,7 +22536,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:278
 #: src/usr/local/www/services_dhcpv6.php:290
 msgid "A valid range must be specified."
-msgstr ""
+msgstr "Musí byť uvedený platný rozsah."
 
 #: src/usr/local/www/services_dhcpv6.php:283
 #: src/usr/local/www/services_dhcpv6.php:295
@@ -22482,77 +22547,83 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:304
 msgid "A valid IPv6 address must be specified for the gateway."
-msgstr ""
+msgstr "Musí byť uvedená platná IPv6 adresa pre bránu."
 
 #: src/usr/local/www/services_dhcpv6.php:310
 #: src/usr/local/www/services_router_advertisements.php:166
 msgid "A valid IPv6 address must be specified for each of the DNS servers."
-msgstr ""
+msgstr "Musí byť uvedená platná IPv6 adresa pre každý DNS server."
 
 #: src/usr/local/www/services_dhcpv6.php:340
 msgid ""
 "A valid IPv6 address must be specified for the primary/secondary NTP servers."
 ""
 msgstr ""
+"Musí byť uvedená platná IPv6 adresa primárneho/sekundárneho TFTP servera."
 
 #: src/usr/local/www/services_dhcpv6.php:346
 msgid ""
 "A valid IPv6 address or hostname must be specified for the TFTP server."
-msgstr ""
+msgstr "Musí byť uvedená platná IPv6 adresa alebo hostname TFTP servera."
 
 #: src/usr/local/www/services_dhcpv6.php:349
 msgid "A valid URL must be specified for the network bootfile."
-msgstr ""
+msgstr "Musí byť uvedená platná webová adresa pre sieťový bootovací súbor."
 
 #: src/usr/local/www/services_dhcpv6.php:357
 #, php-format
 msgid "The subnet range cannot overlap with virtual IPv6 address %s."
-msgstr ""
+msgstr "Rozsah subnetu sa nemôže prekrývať s virtuálnou IPv6 adresou %s."
 
 #: src/usr/local/www/services_dhcpv6.php:578
 msgid ""
 "The DHCPv6 Server can only be enabled on interfaces configured with a static "
 "IPv6 address. This system has none."
 msgstr ""
+"DHCPv6 server môže byť povolený iba na rozhraniach so statickou IPv6 adresou."
+" Tento systém nemá žiadnu."
 
 #: src/usr/local/www/services_dhcpv6.php:587
 #: src/usr/local/www/services_router_advertisements.php:256
 #: src/usr/local/www/services_router_advertisements.php:303
 msgid "Router Advertisements"
-msgstr ""
+msgstr "Reklamy routra"
 
 #: src/usr/local/www/services_dhcpv6.php:592
 msgid "DHCPv6 Options"
-msgstr ""
+msgstr "Možnosti DHCPv6"
 
 #: src/usr/local/www/services_dhcpv6.php:598
 msgid ""
 "DHCPv6 Relay is currently enabled. DHCPv6 Server canot be enabled while the "
 "DHCPv6 Relay is enabled on any interface."
 msgstr ""
+"DHCPv6 relé je momentálne povolené. DHCPv6 server nemôže byť povolený, kým "
+"je DHCPv6 relé povolené na akomkoľvek rozhraní."
 
 #: src/usr/local/www/services_dhcpv6.php:623
 #: src/usr/local/www/services_dhcpv6.php:636
 msgid "Subnet Mask"
-msgstr ""
+msgstr "Maska subnetu"
 
 #: src/usr/local/www/services_dhcpv6.php:628
 msgid "Available Range"
-msgstr ""
+msgstr "Dostupný rozsah"
 
 #: src/usr/local/www/services_dhcpv6.php:630
 msgid ""
 "Prefix Delegation subnet will be appended to the beginning of the defined "
 "range"
 msgstr ""
+"Subnet delegácie prefixu bude pridelený k začiatku definovaného rozsahu"
 
 #: src/usr/local/www/services_dhcpv6.php:685
 msgid "Prefix Delegation Range"
-msgstr ""
+msgstr "Rozsah delegácie prefixu"
 
 #: src/usr/local/www/services_dhcpv6.php:694
 msgid "Prefix Delegation Size"
-msgstr ""
+msgstr "Veľkosť delegácie prefixu"
 
 #: src/usr/local/www/services_dhcpv6.php:707
 msgid ""
@@ -22560,12 +22631,18 @@ msgid ""
 "for assigning networks to subrouters. The start and end of the range must "
 "end on boundaries of the prefix delegation size."
 msgstr ""
+"Tu môžte definovať rozsah prefixu pre delegáciu prefixu DHCP. Toto povoľuje "
+"prideľovanie sietí k subrouterom. Začiatok a koniec rozsahu musia končiť na "
+"hraniciach veľkosti delegácie prefixu."
 
 #: src/usr/local/www/services_dhcpv6.php:721
 msgid ""
 "Leave blank to use the system default DNS servers, this interface's IP if "
 "DNS forwarder is enabled, or the servers configured on the \"General\" page."
 msgstr ""
+"Ponechajte prázdne pre použitie predvolených DNS serverov systému, IP adresy "
+"tohto rozhrania, ak je povolený DNS forwarder, alebo servery nakonfigurované "
+"na stránke \"Všeobecné\"."
 
 #: src/usr/local/www/services_dhcpv6.php:743
 #, php-format
@@ -22573,10 +22650,12 @@ msgid ""
 "Lease time in seconds. Used for clients that do not ask for a specific "
 "expiration time. %1$sThe default is 7200 seconds."
 msgstr ""
+"Čas prenájmu v sekundách. Použité pre klientov, ktorí nevyžadujú určitý čas "
+"vypršania. %1$sPredvolený je 7200 sekúnd."
 
 #: src/usr/local/www/services_dhcpv6.php:748
 msgid "Max lease time"
-msgstr ""
+msgstr "Maximálny čas prenájmu"
 
 #: src/usr/local/www/services_dhcpv6.php:751
 #, php-format
@@ -22584,10 +22663,12 @@ msgid ""
 "Maximum lease time for clients that ask for a specific expiration time. "
 "%1$sThe default is 86400 seconds."
 msgstr ""
+"Maximálny čas prenájmu pre klientov, ktorí vyžadujú určitý čas vypršania. "
+"%1$sPredvolený je 86400 sekúnd."
 
 #: src/usr/local/www/services_dhcpv6.php:756
 msgid "Time Format Change"
-msgstr ""
+msgstr "Zmena formátu času"
 
 #: src/usr/local/www/services_dhcpv6.php:759
 msgid ""
@@ -22595,25 +22676,28 @@ msgid ""
 "DHCPv6 lease time will be displayed in local time and set to time zone "
 "selected. This will be used for all DHCPv6 interfaces lease time."
 msgstr ""
+"Predvolene sú všetky DHCPv6 prenájmy zobrazené v UTC čase. Označením tejto "
+"možnosti sa zobrazia DHCPv6 prenájmy v miestnom čase a nastavené na zvolenú "
+"časovú zónu. Toto bude použité pre všetky časy DHCPv6 prenájmov rozhraní."
 
 #: src/usr/local/www/services_dhcpv6.php:803
 msgid ""
 "Enter the primary domain name server IPv4 address for the dynamic domain "
 "name."
-msgstr ""
+msgstr "Vložte IPv4 adresu serveru názvov domén pre dynamický názov domény."
 
 #: src/usr/local/www/services_dhcpv6.php:824
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Allow"
-msgstr ""
+msgstr "Povoliť"
 
 #: src/usr/local/www/services_dhcpv6.php:826
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorovať"
 
 #: src/usr/local/www/services_dhcpv6.php:821
 msgid "DDNS Client Updates"
-msgstr ""
+msgstr "Aktualizácie klientov DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid ""
@@ -22630,20 +22714,20 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:891
 msgid "LDAP URI"
-msgstr ""
+msgstr "LDAP URI"
 
 #: src/usr/local/www/services_dhcpv6.php:906
 #: src/usr/local/www/services_dhcpv6.php:912
 msgid "Network booting"
-msgstr ""
+msgstr "Sieťové bootovanie"
 
 #: src/usr/local/www/services_dhcpv6.php:919
 msgid "Bootfile URL"
-msgstr ""
+msgstr "Webová adresa bootovacieho súboru"
 
 #: src/usr/local/www/services_dhcpv6.php:987
 msgid "Add Option"
-msgstr ""
+msgstr "Pridať možnosť"
 
 #: src/usr/local/www/services_dhcpv6.php:1010
 #, php-format
@@ -22651,6 +22735,8 @@ msgid ""
 "The DNS servers entered in %1$sSystem: General Setup%3$s (or the %2$sDNS "
 "forwarder%3$s if enabled) will be assigned to clients by the DHCP server."
 msgstr ""
+"DNS servery zadané v %1$sSystém: Všeobecné nastavenia%3$s (alebo v %2$sDNS "
+"forwarderi%3$s, ak je povolený) budú priradené klientom DHCP serverom."
 
 #: src/usr/local/www/services_dhcpv6.php:1016
 #, php-format
@@ -22658,38 +22744,40 @@ msgid ""
 "The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page."
 ""
 msgstr ""
+"Tabuľka DHCP prenájmov môže byť zobrazená na stránke %1$sStav: DHCPv6 "
+"prenájmy%2$s."
 
 #: src/usr/local/www/services_dhcpv6.php:1024
 msgid "DHCPv6 Static Mappings for this Interface"
-msgstr ""
+msgstr "DHCPv6 statické priradenia pre toto rozhranie"
 
 #: src/usr/local/www/services_dhcpv6.php:1029
 #: src/usr/local/www/services_dhcpv6_edit.php:100
 #: src/usr/local/www/status_dhcpv6_leases.php:439
 #: src/usr/local/www/status_dhcpv6_leases.php:536
 msgid "DUID"
-msgstr ""
+msgstr "DUID"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:134
 msgid "A valid DUID must be specified."
-msgstr ""
+msgstr "Musí byť uvedené platné DUID."
 
 #: src/usr/local/www/services_dhcpv6_edit.php:144
 msgid "This Hostname, IP or DUID already exists."
-msgstr ""
+msgstr "Tento hostname, IP alebo DUID už existuje."
 
 #: src/usr/local/www/services_dhcpv6_edit.php:206
 msgid "Static DHCPv6 Mapping"
-msgstr ""
+msgstr "Statické DHCPv6 priradenie"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:210
 msgid "*DUID"
-msgstr ""
+msgstr "*DUID"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:214
 #, php-format
 msgid "Enter a DUID in the following format: %1$s %2$s"
-msgstr ""
+msgstr "Vložte DUID v nasledujúcom formáte: %1$s %2$s"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:223
 #, php-format
@@ -22698,6 +22786,8 @@ msgid ""
 "%1$sIf no IPv6 address is given, one will be dynamically allocated from the "
 "pool."
 msgstr ""
+"Ak je zadaná IPv6 adresa, táto adresa musí byť mimo rozsahu.%1$sAk nie je "
+"daná žiadna IPv6 adresa, bude dynamicky alokovaná jedna z rozsahu."
 
 #: src/usr/local/www/services_dhcpv6_edit.php:253
 msgid "Enter the root-path string. This overrides setting on main page."
@@ -22705,26 +22795,28 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_relay.php:79
 msgid "Destination Server"
-msgstr ""
+msgstr "Cieľový server"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:89
 #, php-format
 msgid "Destination Server IP address %s is not a valid IPv6 address."
-msgstr ""
+msgstr "IP adresa cieľového servera %s nie je platná IPv6 adresa."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:129
 msgid ""
 "DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service "
 "while the DHCPv6 Server is enabled on any interface."
 msgstr ""
+"DHCPv6 server je momentálne povolený. Nie je možné povoliť DCHPv6 relé, kým "
+"je DHCPv6 server povolený na akomkoľvek rozhraní."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:144
 msgid "DHCPv6 Relay Configuration"
-msgstr ""
+msgstr "DHCPv6 relé konfigurácia"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:159
 msgid "Interfaces without an IPv6 address will not be shown."
-msgstr ""
+msgstr "Rozhrania bez IPv6 adresy nebudú zobrazené."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:168
 #, php-format
@@ -22732,39 +22824,45 @@ msgid ""
 "If this is checked, the DHCPv6 relay will append the circuit ID (%s "
 "interface number) and the agent ID to the DHCPv6 request."
 msgstr ""
+"Ak je táto možnosť označená, DHCPv6 relé pridá ID obvodu (%s číslo "
+"rozhrania) a ID agenta k DHCPv6 požiadavke."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:181
 msgid ""
 "This is the IPv6 address of the server to which DHCPv6 requests are relayed."
-msgstr ""
+msgstr "Toto je IPv6 adresa servera, na ktorý sú prenášané DHCPv6 žiadosti."
 
 #: src/usr/local/www/services_dnsmasq.php:147
 msgid ""
 "The DNS Resolver is enabled using this port. Choose a non-conflicting port, "
 "or disable DNS Resolver."
 msgstr ""
+"DNS Resolver je povolený na tomto porte. Zvoľte iný, nekonfliktný port, "
+"alebo zakážte DNS Resolver."
 
 #: src/usr/local/www/services_dnsmasq.php:152
 msgid ""
 "DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder."
 msgstr ""
+"DHCP server musí byť povolený, aby fungovala DHCP registrácia v DNS "
+"Forwarderi."
 
 #: src/usr/local/www/services_dnsmasq.php:159
 #: src/usr/local/www/services_unbound.php:149
 msgid "A valid port number must be specified."
-msgstr ""
+msgstr "Musí byť uvedené platné číslo portu."
 
 #: src/usr/local/www/services_dnsmasq.php:178
 msgid "Invalid custom options"
-msgstr ""
+msgstr "Neplatné vlastné možnosti"
 
 #: src/usr/local/www/services_dnsmasq.php:246
 msgid "The DNS forwarder configuration has been changed."
-msgstr ""
+msgstr "Konfigurácia DNS Forwarder bola zmenená."
 
 #: src/usr/local/www/services_dnsmasq.php:251
 msgid "General DNS Forwarder Options"
-msgstr ""
+msgstr "Všeobecné možnosti DNS Forwardera"
 
 #: src/usr/local/www/services_dnsmasq.php:265
 #, php-format
@@ -22774,11 +22872,15 @@ msgid ""
 "be resolved. The domain in %1$sSystem: General Setup%2$s should also be set "
 "to the proper value."
 msgstr ""
+"Ak je táto možnosť povolená, zariadenia, ktoré uvádzajú svoj názov hostiteľa "
+"pri požadovaní o DHCP prenájom budú registrované v DNS forwarderi, aby ich "
+"názov mohol byť vyriešený. Doména v sekcii %1$sSystém: Všeobecné "
+"nastavenia%2$s by mala byť tiež nastavená na správnu hodnotu."
 
 #: src/usr/local/www/services_dnsmasq.php:274
 #: src/usr/local/www/services_unbound.php:347
 msgid "Static DHCP"
-msgstr ""
+msgstr "Statické DHCP"
 
 #: src/usr/local/www/services_dnsmasq.php:277
 #, php-format
@@ -22787,22 +22889,29 @@ msgid ""
 "forwarder, so that their name can be resolved. The domain in %1$sSystem: "
 "General Setup%2$s should also be set to the proper value."
 msgstr ""
+"Ak je táto možnosť povolená, DHCP statické priradenia budú registrované v "
+"DNS forwarderi, aby ich názov mohol byť vyriešený. Doména v sekcii "
+"%1$sSystém: Všeobecné nastavenia%2$s by mala byť tiež nastavená na správnu "
+"hodnotu."
 
 #: src/usr/local/www/services_dnsmasq.php:285
 msgid "Prefer DHCP"
-msgstr ""
+msgstr "Preferovať DHCP"
 
 #: src/usr/local/www/services_dnsmasq.php:288
 msgid ""
 "If this option is set DHCP mappings will be resolved before the manual list "
 "of names below. This only affects the name given for a reverse lookup (PTR)."
 msgstr ""
+"Ak je táto možnosť povolená, DHCP priradenia budú vyriešené pred manuálnym "
+"zoznamom názvov nižšie. Toto ovplyvňuje iba názov daný pre reverzné "
+"vyhľadávanie (PTR)."
 
 #: src/usr/local/www/services_dnsmasq.php:293
 #: src/usr/local/www/services_dnsmasq.php:297
 #: src/usr/local/www/services_unbound.php:329
 msgid "DNS Query Forwarding"
-msgstr ""
+msgstr "Presmerovanie DNS dopytov"
 
 #: src/usr/local/www/services_dnsmasq.php:300
 #, php-format
@@ -22811,6 +22920,9 @@ msgid ""
 "servers sequentially in the order specified (%2$sSystem - General Setup - "
 "DNS Servers%3$s), rather than all at once in parallel. "
 msgstr ""
+"Ak je táto možnosť povolená, %1$s DNS Forwarder (dnsmasq) odošle dopyt na "
+"DNS servery postupne v uvedenom poradí (%2$sSystém - Všeobecné nastavenia - "
+"DNS Servery%3$s), namiesto odoslania dopytu na všetky serveri naraz."
 
 #: src/usr/local/www/services_dnsmasq.php:309
 #, php-format
@@ -22820,6 +22932,10 @@ msgid ""
 "servers.\t If the name is not known from /etc/hosts or DHCP then a \"not "
 "found\" answer is returned. "
 msgstr ""
+"Ak je táto možnosť povolená, %s DNS Forwarder (dnsmasq) neodošle A alebo "
+"AAAA dopyty pre jednoduché názvy, bez bodiek alebo častí domény na "
+"upstreamové servery názvov domén.\t  Ak nie je názov zistený z /etc/hosts "
+"alebo DHCP, tak bude vrátená odpoveď \"nebolo nájdené\"."
 
 #: src/usr/local/www/services_dnsmasq.php:318
 #, php-format
@@ -22831,11 +22947,17 @@ msgid ""
 "name is not known from /etc/hosts, DHCP or a specific domain override then a "
 "\"not found\" answer is immediately returned. "
 msgstr ""
+"Ak je táto možnosť povolená, %s DNS Forwarder (dnsmasq) neodošle reverzné "
+"DNS vyhľadávania (PTR) pre súkromné adresy (RFC 1918) na upstreamové servery "
+"názvov domén. Akékoľvek záznamy v sekcii Potlačenia domény, ktoré "
+"presmerovávajú názvy \"n.n.n.in-addr.arpa\" na špecifický server, sú stále "
+"presmerované. Ak nie je názov zistený z /etc/hosts, DHCP alebo špecifického "
+"potlačenia domény, tak je okamžite vrátená odpoveď \"nebolo nájdené\"."
 
 #: src/usr/local/www/services_dnsmasq.php:327
 #: src/usr/local/www/services_unbound.php:286
 msgid "Listen Port"
-msgstr ""
+msgstr "Načúvajúci port"
 
 #: src/usr/local/www/services_dnsmasq.php:331
 #: src/usr/local/www/services_unbound.php:290
@@ -22843,6 +22965,9 @@ msgid ""
 "The port used for responding to DNS queries. It should normally be left "
 "blank unless another service needs to bind to TCP/UDP port 53."
 msgstr ""
+"Tento port je použitý pre odpovede na DNS dopyty. Zvyčajne by mal zostať "
+"prázdny, mal by sa uviesť iba v prípade, že iná služba sa musí naviazať na "
+"TCP/UDP port 53."
 
 #: src/usr/local/www/services_dnsmasq.php:341
 msgid ""
@@ -22851,10 +22976,14 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
+"IP adresy rozhrania použité DNS Forwarderom pre odpovede na dopyty od "
+"klientov. Ak má rozhranie aj IPv4 aj IPv6, obe sú použité. Dopyty na iné IP "
+"adresy rozhrania budú zahodené. Predvolene sa odpovedá na dopyty na všetkých "
+"dostupných IPv4 a IPv6 adresách."
 
 #: src/usr/local/www/services_dnsmasq.php:346
 msgid "Strict binding"
-msgstr ""
+msgstr "Prísne viazanie"
 
 #: src/usr/local/www/services_dnsmasq.php:349
 #, php-format
@@ -22864,6 +22993,10 @@ msgid ""
 "interfaces and discarding queries to other addresses.%1$sThis option does "
 "NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses."
 msgstr ""
+"Ak je táto možnosť označená, DNS forwarder sa bude viazať iba k rozhraniam "
+"obsahujúcim IP adresy zvolené vyššie namiesto toho, aby sa viazal k všetkým "
+"rozhraniam a zahodil dopyty na iné adresy.%1$sTáto možnosť NEfunguje s IPv6. "
+"Ak je povolené, dnsmasq sa nebude viazať k IPv6 adresám."
 
 #: src/usr/local/www/services_dnsmasq.php:355
 #: src/usr/local/www/services_unbound.php:355
@@ -22871,18 +23004,20 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:880
 #: src/usr/local/www/vpn_openvpn_server.php:1276
 msgid "Custom options"
-msgstr ""
+msgstr "Vlastné možnosti"
 
 #: src/usr/local/www/services_dnsmasq.php:357
 msgid ""
 "Enter any additional options to add to the dnsmasq configuration here, "
 "separated by a space or newline."
 msgstr ""
+"Vložte akékoľvek dodatočné možnosti, oddelené medzerou alebo novým riadkom, "
+"pre pridanie do konfigurácie dnsmasq."
 
 #: src/usr/local/www/services_dnsmasq.php:365
 #: src/usr/local/www/services_unbound.php:442
 msgid "Host Overrides"
-msgstr ""
+msgstr "Potlačenia hostiteľov"
 
 #: src/usr/local/www/services_dnsmasq.php:371
 #: src/usr/local/www/services_dnsmasq.php:445
@@ -22895,39 +23030,39 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:273
 #: src/usr/local/www/system.php:158
 msgid "Domain"
-msgstr ""
+msgstr "Doména"
 
 #: src/usr/local/www/services_dnsmasq.php:395
 #: src/usr/local/www/services_dnsmasq.php:419
 #: src/usr/local/www/services_unbound.php:473
 #: src/usr/local/www/services_unbound.php:497
 msgid "Edit host override"
-msgstr ""
+msgstr "Úprava potlačenia hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq.php:396
 #: src/usr/local/www/services_unbound.php:474
 msgid "Delete host override"
-msgstr ""
+msgstr "Odstránenie potlačenia hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq.php:412
 #: src/usr/local/www/services_unbound.php:490
 msgid "Alias for "
-msgstr ""
+msgstr "Alias pre"
 
 #: src/usr/local/www/services_dnsmasq.php:440
 #: src/usr/local/www/services_unbound.php:527
 msgid "Domain Overrides"
-msgstr ""
+msgstr "Potlačenia domény"
 
 #: src/usr/local/www/services_dnsmasq.php:467
 #: src/usr/local/www/services_unbound.php:555
 msgid "Edit domain override"
-msgstr ""
+msgstr "Úprava potlačenia domény"
 
 #: src/usr/local/www/services_dnsmasq.php:468
 #: src/usr/local/www/services_unbound.php:556
 msgid "Delete domain override"
-msgstr ""
+msgstr "Odstránenie potlačenia domény"
 
 #: src/usr/local/www/services_dnsmasq.php:489
 msgid ""
@@ -22935,6 +23070,9 @@ msgid ""
 "automatically serve the LAN IP address as a DNS server to DHCP clients so "
 "they will use the forwarder."
 msgstr ""
+"Ak je DNS forwarder povolený, služba DHCP (ak je povolená) bude automaticky "
+"slúžiť na LAN IP adrese ako DNS server pre DHCP klienov, aby používali "
+"forwarder."
 
 #: src/usr/local/www/services_dnsmasq.php:491
 #, php-format
@@ -22945,37 +23083,44 @@ msgid ""
 "not used (or if a static IP address is used on WAN), at least one DNS server "
 "must be manually specified on the %1$sSystem > General Setup%2$s page."
 msgstr ""
+"DNS forwarder použije DNS servery uvedené na stránke %1$sSystém > Všeobecné "
+"nastavenia%2$s alebo tie, ktoré boli získané cez DHCP alebo PPP na rozhraní "
+"WAN ak je možnosť &quot;Povoliť, aby DHCP/PPP na rozhraní WAN prepísalo "
+"zoznam DNS serverov&quot; povolená. Ak tá možnosť nie je použitá (alebo ak "
+"je použitá statická IP adresa na rozhraní WAN), musí byť aspoň jeden DNS "
+"server manuálne uvedený na stránke %1$sSystém > Všeobecné nastavenia%2$s."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:76
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:68
 msgid "A valid domain must be specified after _msdcs."
-msgstr ""
+msgstr "Musí byť uvedená platná doména po _msdcs."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:79
 #: src/usr/local/www/services_dnsmasq_edit.php:76
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:71
 #: src/usr/local/www/services_unbound_host_edit.php:87
 msgid "A valid domain must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná doména."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:83
 msgid ""
 "A valid IP address must be specified, or # for an exclusion or ! to not "
 "forward at all."
 msgstr ""
+"Musí byť uvedená IP adresa, # pre vylúčenie alebo ! pre žiadne odoslanie."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:87
 msgid "An interface IP address must be specified for the DNS query source."
-msgstr ""
+msgstr "Musí byť uvedená IP adresa rozhrania pre zdroj DNS dopytu."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 msgid "Edit Domain Override"
-msgstr ""
+msgstr "Úprava potlačenia domény"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:128
 msgid "Domain Override Options"
-msgstr ""
+msgstr "Možnosti potlačenia domény"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:132
 #: src/usr/local/www/services_dnsmasq_edit.php:210
@@ -22983,7 +23128,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_host_edit.php:204
 #: src/usr/local/www/system.php:458
 msgid "*Domain"
-msgstr ""
+msgstr "*Doména"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:135
 #, php-format
@@ -22991,25 +23136,31 @@ msgid ""
 "Domain to override (NOTE: this does not have to be a valid TLD!)%1$se.g.: "
 "test or mycompany.localdomain or 1.168.192.in-addr.arpa"
 msgstr ""
+"Doména na potlačenie (POZNÁMKA: toto nemusí byť platná TLD!)%1$snapr.: test "
+"alebo mycompany.localdomain alebo 1.168.192.in-addr.arpa"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:143
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "IP address of the authoritative DNS server for this domain%1$se.g.: 192.168."
 "100.100%1$sOr enter # for an exclusion to pass through this host/subdomain "
 "to standard nameservers instead of a previous override.%1$sOr enter ! for "
 "lookups for this host/subdomain to NOT be forwarded anywhere."
 msgstr ""
+"IP adresa autoritatívneho DNS servera pre túto doménu%1$snapr: 192.168.100."
+"100%1$sAlebo vložte # "
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:150
 msgid "Source IP"
-msgstr ""
+msgstr "Zdrojová IP"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:152
 msgid ""
 "Source IP address for queries to the DNS server for the override domain. "
 "Leave blank unless the DNS server is accessed through a VPN tunnel."
 msgstr ""
+"Zdrojová IP adresa pre dopyty na DNS server pre potlačenie domény. Vypĺňajte "
+"iba ak sa na DNS server pristupuje cez VPN tunel."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
 #: src/usr/local/www/system.php:202
@@ -23017,11 +23168,13 @@ msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
 msgstr ""
+"Hostname môže obsahovať znaky A-Z, 0-9 a \"-\". Nemôže začínať alebo končiť "
+"znakom \"-\"."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:108
 #: src/usr/local/www/services_unbound_host_edit.php:119
 msgid "Alias Domain"
-msgstr ""
+msgstr "Alias domény"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:113
 #: src/usr/local/www/services_unbound_host_edit.php:125
@@ -23036,75 +23189,78 @@ msgid ""
 "A valid alias hostname is specified, but the domain name part should be "
 "omitted"
 msgstr ""
+"Je uvedený platný alias hostname, ale doménová časť by mala byť vynechaná."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:122
 #: src/usr/local/www/services_unbound_host_edit.php:133
 msgid "A valid domain must be specified in alias list."
-msgstr ""
+msgstr "Musí byť uvedená platná doména v zozname aliasov."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:136
 #: src/usr/local/www/services_unbound_host_edit.php:147
 msgid ""
 "This host/domain override combination already exists with an IPv4 address."
 msgstr ""
+"Táto kombinácia potlačenia hostiteľa/domény už existuje s IPv4 adresou."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:140
 #: src/usr/local/www/services_unbound_host_edit.php:151
 msgid ""
 "This host/domain override combination already exists with an IPv6 address."
 msgstr ""
+"Táto kombinácia potlačenia hostiteľa/domény už existuje s IPv6 adresou."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "Edit Host Override"
-msgstr ""
+msgstr "Úprava potlačenia hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:198
 #: src/usr/local/www/services_unbound_host_edit.php:192
 msgid "Host Override Options"
-msgstr ""
+msgstr "Možnosti potlačenia hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:205
 #, php-format
 msgid "Name of the host, without the domain part%1$se.g.: \"myhost\""
-msgstr ""
+msgstr "Názov hostiteľa, bez doménovej časti%1$snapr.: \"myhost\""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:213
 #, php-format
 msgid "Domain of the host%1$se.g.: \"example.com\""
-msgstr ""
+msgstr "Doména hostiteľa%1$snapr: \"example.com\""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:220
 #, php-format
 msgid "IP address of the host%1$se.g.: 192.168.100.100 or fd00:abcd::1"
-msgstr ""
+msgstr "IP adresa hostiteľa%1$snapr.: 192.168.100.100 alebo fd00:abcd::1"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:241
 #: src/usr/local/www/services_unbound_host_edit.php:247
 msgid "Additional Names for this Host"
-msgstr ""
+msgstr "Dodatočné názvy pre tohto hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:260
 #: src/usr/local/www/services_unbound_host_edit.php:266
 msgid "Host name"
-msgstr ""
+msgstr "Názov hostiteľa"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:290
 #: src/usr/local/www/services_unbound_host_edit.php:296
 msgid "Add Host Name"
-msgstr ""
+msgstr "Pridať názov hostiteľa"
 
 #: src/usr/local/www/services_dyndns.php:48
 msgid "Dynamic DNS client deleted."
-msgstr ""
+msgstr "Klient Dynamického DNS vytvorený."
 
 #: src/usr/local/www/services_dyndns.php:57
 msgid "Dynamic DNS client disabled."
-msgstr ""
+msgstr "Klient Dynamického DNS zakázaný."
 
 #: src/usr/local/www/services_dyndns.php:60
 msgid "Dynamic DNS client enabled."
-msgstr ""
+msgstr "Klient Dynamického DNS povolený."
 
 #: src/usr/local/www/services_dyndns.php:93
 #: src/usr/local/www/services_ntpd_acls.php:222
@@ -23116,13 +23272,13 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:76
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:133
 msgid "Service"
-msgstr ""
+msgstr "Služba"
 
 #: src/usr/local/www/services_dyndns.php:95
 #: src/usr/local/www/services_rfc2136.php:84
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:180
 msgid "Cached IP"
-msgstr ""
+msgstr "IP v medzipamäti"
 
 #: src/usr/local/www/services_dyndns.php:222
 #, php-format
@@ -23130,64 +23286,69 @@ msgid ""
 "IP addresses appearing in %1$sgreen%2$s are up to date with Dynamic DNS "
 "provider. "
 msgstr ""
+"IP adresy, ktoré sú zobrazené na %1$szeleno%2$s sú aktualizované s "
+"poskytovateľom Dynamického DNS."
 
 #: src/usr/local/www/services_dyndns.php:223
 msgid ""
 "An update for an IP address can be forced on the edit page for that service."
 msgstr ""
+"Aktualizácia pre IP adresu môže byť vynútená na stránke úpravy danej služby."
 
 #: src/usr/local/www/services_dyndns_edit.php:86
 msgid "Service type"
-msgstr ""
+msgstr "Druh služby"
 
 #: src/usr/local/www/services_dyndns_edit.php:101
 #: src/usr/local/www/services_dyndns_edit.php:385
 msgid "Update URL"
-msgstr ""
+msgstr "Webová adresa aktualizácie"
 
 #: src/usr/local/www/services_dyndns_edit.php:132
 msgid "The hostname contains invalid characters."
-msgstr ""
+msgstr "Hostname obsahuje neplatné znaky."
 
 #: src/usr/local/www/services_dyndns_edit.php:139
 msgid "The MX contains invalid characters."
-msgstr ""
+msgstr "MX obsahuje neplatné znaky."
 
 #: src/usr/local/www/services_dyndns_edit.php:142
 #: src/usr/local/www/system_usermanager.php:211
 #: src/usr/local/www/vpn_l2tp_users_edit.php:86
 msgid "The username contains invalid characters."
-msgstr ""
+msgstr "Meno užívateľa obsahuje neplatné znaky."
 
 #: src/usr/local/www/services_dyndns_edit.php:195
 msgid "Dynamic DNS client configured."
-msgstr ""
+msgstr "Klient Dynamického DNS bol nakonfigurovaný."
 
 #: src/usr/local/www/services_dyndns_edit.php:248
 msgid "Dynamic DNS Client"
-msgstr ""
+msgstr "Klient Dynamického DNS"
 
 #: src/usr/local/www/services_dyndns_edit.php:261
 msgid "*Service Type"
-msgstr ""
+msgstr "*Druh služby"
 
 #: src/usr/local/www/services_dyndns_edit.php:270
 msgid "*Interface to monitor"
-msgstr ""
+msgstr "*Rozhranie, ktoré má byť monitorované"
 
 #: src/usr/local/www/services_dyndns_edit.php:273
 msgid ""
 "If the interface IP address is private the public IP address will be fetched "
 "and used instead."
 msgstr ""
+"Ak IP adresa rozhrania je súkromná, namiesto toho bude vyvolaná a použitá "
+"verejná IP adresa."
 
 #: src/usr/local/www/services_dyndns_edit.php:277
 msgid "*Interface to send update from"
-msgstr ""
+msgstr "*Rozhranie, z ktorého bude odoslaná aktualizácia"
 
 #: src/usr/local/www/services_dyndns_edit.php:280
 msgid "This is almost always the same as the Interface to Monitor. "
-msgstr ""
+msgstr "Toto je takmer vždy to isté ako rozhranie, ktoré má byť monitorované."
 
 #: src/usr/local/www/services_dyndns_edit.php:297
 #, php-format
@@ -23202,7 +23363,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:308
 msgid "MX"
-msgstr ""
+msgstr "MX"
 
 #: src/usr/local/www/services_dyndns_edit.php:311
 msgid ""
@@ -23210,14 +23371,17 @@ msgid ""
 "Set this option only if a special MX record is needed. Not all services "
 "support this."
 msgstr ""
+"Poznámka: So službou DynDNS môže byť použitý iba hostname, nie IP adresa. "
+"Použite túto možnosť iba ak je potrebný špeciálny MX záznam. Nie všetky "
+"služby toto podporujú."
 
 #: src/usr/local/www/services_dyndns_edit.php:316
 msgid "Wildcards"
-msgstr ""
+msgstr "Divoké karty"
 
 #: src/usr/local/www/services_dyndns_edit.php:323
 msgid "CloudFlare Proxy"
-msgstr ""
+msgstr "CloudFlare Proxy"
 
 #: src/usr/local/www/services_dyndns_edit.php:326
 #, php-format
@@ -23226,6 +23390,9 @@ msgid ""
 "route all traffic through their servers. By Default this is disabled and "
 "your Real IP is exposed.More info: %s"
 msgstr ""
+"Poznámka: Toto povoľuje CloudFlare virtuálne DNS proxy. Ak je možnosť "
+"povolená, všetok tok dát bude smerovaný cez ich servery. Predvolene je toto "
+"zakázané a Vaša skutočná IP je odhalená. Viac informácií: %s"
 
 #: src/usr/local/www/services_dyndns_edit.php:332
 msgid "Verbose logging"
@@ -23233,17 +23400,19 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:339
 msgid "HTTP API DNS Options"
-msgstr ""
+msgstr "HTTP API DNS možnosti"
 
 #: src/usr/local/www/services_dyndns_edit.php:346
 msgid "HTTP API SSL Options"
-msgstr ""
+msgstr "HTTP API SSL možnosti"
 
 #: src/usr/local/www/services_dyndns_edit.php:349
 msgid ""
 "When set, the server must provide a valid certificate trust chain which can "
 "be verified by this firewall."
 msgstr ""
+"Ak je možnosť povolená, server musí poskytnúť platný reťazec dôvery "
+"certifikátu, ktorý môže byť overený týmto firewallom."
 
 #: src/usr/local/www/services_dyndns_edit.php:356
 #, php-format
@@ -23374,7 +23543,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:321
 #: src/usr/local/www/services_ntpd_pps.php:117
 msgid "ACLs"
-msgstr ""
+msgstr "Zoznamy prístupov"
 
 #: src/usr/local/www/services_ntpd.php:204
 #: src/usr/local/www/services_ntpd_acls.php:191
@@ -23756,35 +23925,35 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe.php:87
 msgid "The PPPoE entry list has been changed."
-msgstr ""
+msgstr "Zoznam PPPoE záznamov bol zmenený."
 
 #: src/usr/local/www/services_pppoe.php:100
 #: src/usr/local/www/status_ipsec.php:487
 msgid "Local IP"
-msgstr ""
+msgstr "Lokálna IP"
 
 #: src/usr/local/www/services_pppoe.php:125
 msgid "Edit PPPoE instance"
-msgstr ""
+msgstr "Upraviť PPPoE inštanciu"
 
 #: src/usr/local/www/services_pppoe.php:126
 msgid "Delete PPPoE instance"
-msgstr ""
+msgstr "Odstrániť PPPoE inštanciu"
 
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Server address"
-msgstr ""
+msgstr "Adresa servera"
 
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
 msgid "Remote start address"
-msgstr ""
+msgstr "Vzdialená začiatočná adresa"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
 msgid "RADIUS server address"
-msgstr ""
+msgstr "Adresa RADIUS servera"
 
 #: src/usr/local/www/services_pppoe_edit.php:110
 #: src/usr/local/www/vpn_l2tp.php:66
@@ -23794,77 +23963,79 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:116
 #: src/usr/local/www/vpn_l2tp.php:72
 msgid "A valid server address must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná adresa servera."
 
 #: src/usr/local/www/services_pppoe_edit.php:119
 #: src/usr/local/www/vpn_l2tp.php:78
 msgid "A valid remote start address must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná vzdialená začiatočná adresa."
 
 #: src/usr/local/www/services_pppoe_edit.php:122
 #: src/usr/local/www/vpn_l2tp.php:81
 msgid "A valid RADIUS server address must be specified."
-msgstr ""
+msgstr "Musí byť uvedená platná adresa RADIUS servera."
 
 #: src/usr/local/www/services_pppoe_edit.php:125
 msgid "Number of PPPoE users must be between 1 and 255"
-msgstr ""
+msgstr "Počet PPPoE používateľov musí byť medzi 1 a 255"
 
 #: src/usr/local/www/services_pppoe_edit.php:128
 msgid "User Max Logins must be between 1 and 255"
-msgstr ""
+msgstr "Maximálny počet prihlásení užívateľa musí byť medzi 1 a 255"
 
 #: src/usr/local/www/services_pppoe_edit.php:131
 msgid "Subnet mask must be an integer between 0 and 32"
-msgstr ""
+msgstr "Maska subnetu musí byť celé číslo medzi 0 a 32"
 
 #: src/usr/local/www/services_pppoe_edit.php:136
 #: src/usr/local/www/vpn_l2tp.php:99
 msgid "The specified server address lies in the remote subnet."
-msgstr ""
+msgstr "Uvedená adresa servera leží vo vzdialenom subnete."
 
 #: src/usr/local/www/services_pppoe_edit.php:139
 msgid "The specified server address is equal to an interface ip address."
-msgstr ""
+msgstr "Uvedená adresa servera je rovná IP adrese rozhrania."
 
 #: src/usr/local/www/services_pppoe_edit.php:145
 #, php-format
 msgid "No password specified for username %s"
-msgstr ""
+msgstr "Nebolo uvedené žiadne heslo pre meno užívateľa %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:148
 #, php-format
 msgid "Incorrect ip address specified for username %s"
-msgstr ""
+msgstr "Nesprávna IP adresa uvedená pre meno užívateľa %s"
 
 #: src/usr/local/www/services_pppoe_edit.php:155
 msgid "Wrong data submitted"
-msgstr ""
+msgstr "Odoslané údaje sú neprávne"
 
 #: src/usr/local/www/services_pppoe_edit.php:288
 msgid "PPPoE Server Configuration"
-msgstr ""
+msgstr "Konfigurácia PPPoE servera"
 
 #: src/usr/local/www/services_pppoe_edit.php:308
 msgid "*Total User Count"
-msgstr ""
+msgstr "*Celkový počet užívateľov"
 
 #: src/usr/local/www/services_pppoe_edit.php:311
 msgid ""
 "The number of PPPoE users allowed to connect to this server simultaneously."
 msgstr ""
+"Počet PPPoE užívateľov, ktorím je povolené súčasné pripojenie k tomuto "
+"serveru."
 
 #: src/usr/local/www/services_pppoe_edit.php:315
 msgid "*User Max Logins"
-msgstr ""
+msgstr "*Maximálny počet prihlásení používateľa"
 
 #: src/usr/local/www/services_pppoe_edit.php:318
 msgid "The number of times a single user may be logged in at the same time."
-msgstr ""
+msgstr "Koľkokrát môže byť užívateľ naraz prihlásený."
 
 #: src/usr/local/www/services_pppoe_edit.php:322
 msgid "*Server Address"
-msgstr ""
+msgstr "*Adresa servera"
 
 #: src/usr/local/www/services_pppoe_edit.php:324
 #, php-format
@@ -23877,82 +24048,89 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:330
 msgid "*Remote Address Range"
-msgstr ""
+msgstr "*Vzdialený rozsah adries"
 
 #: src/usr/local/www/services_pppoe_edit.php:332
 #: src/usr/local/www/vpn_l2tp.php:241
 msgid "Specify the starting address for the client IP address subnet."
-msgstr ""
+msgstr "Uveďte začiatočnú adresu pre subnet klientskej IP adresy."
 
 #: src/usr/local/www/services_pppoe_edit.php:336
 msgid "*Subnet mask"
-msgstr ""
+msgstr "*Maska subnetu"
 
 #: src/usr/local/www/services_pppoe_edit.php:339
 msgid "Hint: 24 is 255.255.255.0"
-msgstr ""
+msgstr "Nápoveda: 24 je 255.255.255.0"
 
 #: src/usr/local/www/services_pppoe_edit.php:359
+#, fuzzy
 msgid ""
 "If entered these servers will be given to all PPPoE clients, otherwise LAN "
 "DNS and one WAN DNS will go to all clients."
 msgstr ""
+"Ak sú zadané, tieto servery budú stanovené všetkým PPPoE klientom, inak LAN "
+"DNS a jeden WAN DNS pôjde všetkým klientom."
 
 #: src/usr/local/www/services_pppoe_edit.php:366
 msgid ""
 "Users will be authenticated using the RADIUS server specified below. The "
 "local user database will not be used."
 msgstr ""
+"Používatelia budú autentifikovaní použitím RADIUS servera uvedeného nižšie. "
+"Lokálna databáza užívateľov nebude použitá."
 
 #: src/usr/local/www/services_pppoe_edit.php:374
 #: src/usr/local/www/vpn_l2tp.php:299
 msgid "Sends accounting packets to the RADIUS server."
-msgstr ""
+msgstr "Odosiela pakety účtovníctva na RADIUS server."
 
 #: src/usr/local/www/services_pppoe_edit.php:381
 msgid "If primary server fails all requests will be sent via backup server."
 msgstr ""
+"Ak primárny server zlyhá, všetky požiadavky budú odoslané cez záložný server."
+""
 
 #: src/usr/local/www/services_pppoe_edit.php:385
 msgid "NAS IP Address"
-msgstr ""
+msgstr "NAS IP adresa"
 
 #: src/usr/local/www/services_pppoe_edit.php:387
 msgid "NAS IP Address sent to the RADIUS Server"
-msgstr ""
+msgstr "NAS IP adresa odoslaná na RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:391
 msgid "RADIUS Accounting Update"
-msgstr ""
+msgstr "Aktualizácia RADIUS účtovníctva"
 
 #: src/usr/local/www/services_pppoe_edit.php:394
 msgid "RADIUS accounting update period in seconds"
-msgstr ""
+msgstr "Obdobie aktualizácie RADIUS účtovníctva v sekundách"
 
 #: src/usr/local/www/services_pppoe_edit.php:398
 msgid "RADIUS Issued IP Addresses"
-msgstr ""
+msgstr "IP adresy, ktoré vydal RADIUS"
 
 #: src/usr/local/www/services_pppoe_edit.php:403
 msgid "Primary RADIUS Server"
-msgstr ""
+msgstr "Primárny RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:416
 #: src/usr/local/www/services_pppoe_edit.php:449
 #: src/usr/local/www/system_authservers.php:256
 #: src/usr/local/www/system_authservers.php:763
 msgid "Authentication port"
-msgstr ""
+msgstr "Port pre autentifikáciu"
 
 #: src/usr/local/www/services_pppoe_edit.php:423
 #: src/usr/local/www/services_pppoe_edit.php:456
 msgid "Accounting port (optional)"
-msgstr ""
+msgstr "Port pre účtovníctvo (voliteľné)"
 
 #: src/usr/local/www/services_pppoe_edit.php:425
 #: src/usr/local/www/services_pppoe_edit.php:458
 msgid "Standard ports are 1812 (authentication) and 1813 (accounting)."
-msgstr ""
+msgstr "Štandardné porty sú 1812 (autentifikácia) a 1813 (účtovníctvo)."
 
 #: src/usr/local/www/services_pppoe_edit.php:431
 msgid "Primary RADIUS Server Shared Secret"
@@ -23967,7 +24145,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:436
 msgid "Secondary RADIUS Server"
-msgstr ""
+msgstr "Sekundárny RADIUS server"
 
 #: src/usr/local/www/services_pppoe_edit.php:464
 msgid "Secondary RADIUS Server Shared Secret"
@@ -23981,50 +24159,52 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:492
 msgid "User table"
-msgstr ""
+msgstr "Tabuľka užívateľov"
 
 #: src/usr/local/www/services_pppoe_edit.php:530
 msgid "Add user"
-msgstr ""
+msgstr "Pridať užívateľa"
 
 #: src/usr/local/www/services_pppoe_edit.php:565
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from PPPoE clients."
 msgstr ""
+"Nezabudnite pridať firewall pravidlo pre povolenie toku dát od PPPoE "
+"klientov."
 
 #: src/usr/local/www/services_rfc2136.php:75
 msgid "RFC2136 Clients"
-msgstr ""
+msgstr "RFC2136 klienti"
 
 #: src/usr/local/www/services_rfc2136.php:177
 #: src/usr/local/www/vpn_openvpn_client.php:963
 msgid "Edit client"
-msgstr ""
+msgstr "Upraviť klienta"
 
 #: src/usr/local/www/services_rfc2136.php:180
 msgid "Disable client"
-msgstr ""
+msgstr "Zakázať klienta"
 
 #: src/usr/local/www/services_rfc2136.php:183
 msgid "Enable client"
-msgstr ""
+msgstr "Povoliť klienta"
 
 #: src/usr/local/www/services_rfc2136.php:186
 #: src/usr/local/www/vpn_openvpn_client.php:964
 msgid "Delete client"
-msgstr ""
+msgstr "Odstrániť klienta"
 
 #: src/usr/local/www/services_rfc2136_edit.php:75
 msgid "Key name"
-msgstr ""
+msgstr "Názov kľúča"
 
 #: src/usr/local/www/services_rfc2136_edit.php:75
 msgid "Key"
-msgstr ""
+msgstr "Kľúč"
 
 #: src/usr/local/www/services_rfc2136_edit.php:80
 msgid "The DNS update host name contains invalid characters."
-msgstr ""
+msgstr "Názov hostiteľa aktualizácie DNS obsahuje neplatné znaky."
 
 #: src/usr/local/www/services_rfc2136_edit.php:83
 msgid "The DNS update TTL must be an integer."
@@ -24032,19 +24212,19 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:86
 msgid "The DNS update key name contains invalid characters."
-msgstr ""
+msgstr "Kľúč aktualizácie DNS obsahuje neplatné znaky."
 
 #: src/usr/local/www/services_rfc2136_edit.php:110
 msgid "New/Edited RFC2136 dnsupdate entry was posted."
-msgstr ""
+msgstr "Nový/upravený RFC2136 dnsupdate záznam bol odoslaný."
 
 #: src/usr/local/www/services_rfc2136_edit.php:155
 msgid "RFC 2136 Client"
-msgstr ""
+msgstr "RFC 2136 klient"
 
 #: src/usr/local/www/services_rfc2136_edit.php:180
 msgid "Fully qualified hostname of the host to be updated."
-msgstr ""
+msgstr "Presne stanovené meno domény hostiteľa, ktorý má byť aktualizovaný."
 
 #: src/usr/local/www/services_rfc2136_edit.php:184
 msgid "*TTL (seconds)"
@@ -24052,43 +24232,43 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:191
 msgid "*Key name"
-msgstr ""
+msgstr "*Názov kľúča"
 
 #: src/usr/local/www/services_rfc2136_edit.php:194
 msgid "This must match the setting on the DNS server."
-msgstr ""
+msgstr "Toto sa musí zhodovať s nastavením na DNS serveri."
 
 #: src/usr/local/www/services_rfc2136_edit.php:196
 msgid "*Key Type"
-msgstr ""
+msgstr "*Druh kľúča"
 
 #: src/usr/local/www/services_rfc2136_edit.php:200
 #: src/usr/local/www/services_rfc2136_edit.php:208
 #: src/usr/local/www/services_rfc2136_edit.php:216
 msgid "Key Type"
-msgstr ""
+msgstr "Druh kľúča"
 
 #: src/usr/local/www/services_rfc2136_edit.php:226
 msgid "*Key"
-msgstr ""
+msgstr "*Kľúč"
 
 #: src/usr/local/www/services_rfc2136_edit.php:229
 msgid "Paste an HMAC-MD5 key here."
-msgstr ""
+msgstr "Sem prilepte HMAC-MD5 kľúč."
 
 #: src/usr/local/www/services_rfc2136_edit.php:247
 msgid "Use public IP"
-msgstr ""
+msgstr "Použiť verejnú IP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:252
 msgid "*Record Type"
-msgstr ""
+msgstr "*Druh záznamu"
 
 #: src/usr/local/www/services_rfc2136_edit.php:256
 #: src/usr/local/www/services_rfc2136_edit.php:264
 #: src/usr/local/www/services_rfc2136_edit.php:272
 msgid "Record Type"
-msgstr ""
+msgstr "Druh záznamu"
 
 #: src/usr/local/www/services_rfc2136_edit.php:306
 #, php-format
@@ -24097,6 +24277,9 @@ msgid ""
 "the DNS server list to be overridden by DHCP/PPP on WAN for dynamic DNS "
 "updates to work."
 msgstr ""
+"Musí byť nakonfigurovaný DNS server v sekcii %1$sSystém: Všeobecné "
+"nastavenia %2$salebo povoľte, aby DHCP/PPP na rozhraní WAN prepísalo zoznam "
+"DNS serverov pre funkčnosť dynamických DNS aktualizácií."
 
 #: src/usr/local/www/services_router_advertisements.php:54
 msgid ""
@@ -24461,31 +24644,40 @@ msgid ""
 "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, "
 "or disable the DNS Forwarder."
 msgstr ""
+"DNS Forwarder je povolený na tomto porte. Zvoľte iný, nekonfliktný port, "
+"alebo zakážte DNS Forwarder."
 
 #: src/usr/local/www/services_unbound.php:134
 msgid ""
 "At least one DNS server must be specified under System &gt; General Setup to "
 "enable Forwarding mode."
 msgstr ""
+"Musí byť uvedený aspoň jeden DNS server v sekcii Systém &gt; Všeobecné "
+"nastavenia pre povolenie režimu presmerovania."
 
 #: src/usr/local/www/services_unbound.php:139
 msgid "One or more Network Interfaces must be selected for binding."
-msgstr ""
+msgstr "Musí byť zvolené jedno alebo viac sieťových rozhraní pre viazanie."
 
 #: src/usr/local/www/services_unbound.php:141
 msgid ""
 "This system is configured to use the DNS Resolver as its DNS server, so "
 "Localhost or All must be selected in Network Interfaces."
 msgstr ""
+"Tento systém je nakonfigurovaný na použitie DNS Resolvera ako jeho DNS "
+"server, takže možnosť \"Localhost\" alebo \"Všetky\" musí byť zvolená v "
+"sieťových rozrhraniach."
 
 #: src/usr/local/www/services_unbound.php:145
 msgid "One or more Outgoing Network Interfaces must be selected."
-msgstr ""
+msgstr "Musí byť zvolená jedna alebo viac odchádzajúcich sieťových rozhraní."
 
 #: src/usr/local/www/services_unbound.php:158
 msgid ""
 "DHCP Server must be enabled for DHCP Registration to work in DNS Resolver."
 msgstr ""
+"DHCP server musí byť povolený pre fungovanie DHCP registrácie v DNS "
+"Resolveri."
 
 #: src/usr/local/www/services_unbound.php:162
 msgid ""
@@ -24498,19 +24690,21 @@ msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
+"Unbound nemohol analyzovať vygenerovaný súbor konfigurácie. Prosím opravte "
+"nasledujúce chyby:"
 
 #: src/usr/local/www/services_unbound.php:191
 #: src/usr/local/www/services_unbound_advanced.php:190
 msgid "DNS Resolver configured."
-msgstr ""
+msgstr "DNS Resolved bol nakonfigurovaný."
 
 #: src/usr/local/www/services_unbound.php:211
 msgid "Host override deleted from DNS Resolver."
-msgstr ""
+msgstr "Potlačenie hostiteľa odstránené z DNS Resolvera."
 
 #: src/usr/local/www/services_unbound.php:219
 msgid "Domain override deleted from DNS Resolver."
-msgstr ""
+msgstr "Potlačenie domény odstránené z DNS Resolvera."
 
 #: src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound.php:268
@@ -24519,13 +24713,13 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "General Settings"
-msgstr ""
+msgstr "Všeobecné nastavenia"
 
 #: src/usr/local/www/services_unbound.php:264
 #: src/usr/local/www/services_unbound_acls.php:180
 #: src/usr/local/www/services_unbound_advanced.php:211
 msgid "The DNS resolver configuration has been changed."
-msgstr ""
+msgstr "Konfigurácia DNS resolvera bola zmenená."
 
 #: src/usr/local/www/services_unbound.php:269
 #: src/usr/local/www/services_unbound_acls.php:185
@@ -24538,22 +24732,22 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Rozšírené nastavenia"
 
 #: src/usr/local/www/services_unbound.php:270
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_acls.php:186
 #: src/usr/local/www/services_unbound_advanced.php:217
 msgid "Access Lists"
-msgstr ""
+msgstr "Zoznamy prístupov"
 
 #: src/usr/local/www/services_unbound.php:275
 msgid "General DNS Resolver Options"
-msgstr ""
+msgstr "Všeobecné možnosti DNS Resolvera"
 
 #: src/usr/local/www/services_unbound.php:296
 msgid "*Network Interfaces"
-msgstr ""
+msgstr "*Sieťové rozhrania"
 
 #: src/usr/local/www/services_unbound.php:300
 msgid ""
@@ -24562,10 +24756,14 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
+"IP adresy rozhrania použité DNS Resolverom pre odpovede na dopyty od "
+"klientov. Ak má rozhranie aj IPv4 aj IPv6, obe sú použité. Dopyty na iné IP "
+"adresy rozhrania budú zahodené. Predvolene sa odpovedá na dopyty na všetkých "
+"dostupných IPv4 a IPv6 adresách."
 
 #: src/usr/local/www/services_unbound.php:307
 msgid "*Outgoing Network Interfaces"
-msgstr ""
+msgstr "*Odchádzajúce sieťové rozhrania"
 
 #: src/usr/local/www/services_unbound.php:311
 msgid ""
@@ -24587,7 +24785,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:322
 msgid "DNSSEC"
-msgstr ""
+msgstr "DNSSEC"
 
 #: src/usr/local/www/services_unbound.php:332
 #, php-format
@@ -24596,6 +24794,10 @@ msgid ""
 "servers defined under %1$sSystem &gt; General Setup%2$s or those obtained "
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
+"Ak je táto možnosť označená, DNS dopyty budú presmerované na upstreamové DNS "
+"servery definované v sekcii %1$sSystém &gt; Všeobecné nastavenia%2$s alebo "
+"na tie, ktoré boli získané cez DHCP alebo PPP na rozhraní WAN (ak je tam "
+"povolené prepísanie DNS serverov)."
 
 #: src/usr/local/www/services_unbound.php:341
 #, php-format
@@ -24605,6 +24807,10 @@ msgid ""
 "their name can be resolved. The domain in %1$sSystem &gt; General Setup%2$s "
 "should also be set to the proper value."
 msgstr ""
+"Ak je táto možnosť povolená, zariadenia, ktoré uvádzajú svoj názov hostiteľa "
+"pri požadovaní o DHCP prenájom budú registrované v DNS Resolveri, aby ich "
+"názov mohol byť vyriešený. Doména v sekcii %1$sSystém &gt; Všeobecné "
+"nastavenia%2$s by mala byť tiež nastavená na správnu hodnotu."
 
 #: src/usr/local/www/services_unbound.php:350
 #, php-format
@@ -24613,25 +24819,30 @@ msgid ""
 "DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
+"Ak je táto možnosť povolená, DHCP statické priradenia budú registrované v "
+"DNS Resolveri, aby ich názov mohol byť vyriešený. Doména v sekcii %1$sSystém "
+"&gt; Všeobecné nastavenia%2$s by mala byť tiež nastavená na správnu hodnotu."
 
 #: src/usr/local/www/services_unbound.php:363
 #: src/usr/local/www/services_unbound.php:399
 msgid "Display Custom Options"
-msgstr ""
+msgstr "Zobraziť vlastné možnosti"
 
 #: src/usr/local/www/services_unbound.php:371
 msgid ""
 "Enter any additional configuration parameters to add to the DNS Resolver "
 "configuration here, separated by a newline."
 msgstr ""
+"Vložte akékoľvek dodatočné konfiguračné parametre, oddelené novým riadkom, "
+"pre pridanie do konfigurácie DNS Resolvera."
 
 #: src/usr/local/www/services_unbound.php:397
 msgid "Hide Custom Options"
-msgstr ""
+msgstr "Skryť vlastné možnosti"
 
 #: src/usr/local/www/services_unbound.php:448
 msgid "Parent domain of host"
-msgstr ""
+msgstr "Rodičovská doména hostiteľa"
 
 #: src/usr/local/www/services_unbound.php:449
 msgid "IP to return for host"
@@ -24651,31 +24862,39 @@ msgid ""
 "those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be "
 "overridden by DHCP/PPP on WAN&quot; is checked."
 msgstr ""
+"Ak je DNS Resolver povolený, služba DHCP (ak je povolená) bude automaticky "
+"slúžiť na LAN IP adrese ako DNS server pre DHCP klienov, aby používali DNS "
+"Resolver. Ak je presmerovanie povolené, DNS Resolver použije DNS servery "
+"uvedené na stránke %1$sSystém &gt; Všeobecné nastavenia%2$s alebo tie, ktoré "
+"boli získané cez DHCP alebo PPP na rozhraní WAN ak je možnosť &quot;Povoliť, "
+"aby DHCP/PPP na rozhraní WAN prepísalo zoznam DNS serverov&quot; povolená."
 
 #: src/usr/local/www/services_unbound_acls.php:60
 msgid "Access list deleted from DNS Resolver."
-msgstr ""
+msgstr "Zoznam prístupov bol odstránený z DNS Resolvera."
 
 #: src/usr/local/www/services_unbound_acls.php:104
 #: src/usr/local/www/services_unbound_acls.php:118
 msgid "A valid IP address must be entered for each row under Networks."
-msgstr ""
+msgstr "Musí byť zadaná platná IP adresa pre každý riadok v časti Siete."
 
 #: src/usr/local/www/services_unbound_acls.php:109
 msgid "A valid IPv4 netmask must be entered for each IPv4 row under Networks."
 msgstr ""
+"Musí byť zadaná platná IPv4 maska pre každý IPv4 riadok v časti Siete."
 
 #: src/usr/local/www/services_unbound_acls.php:115
 msgid "A valid IPv6 netmask must be entered for each IPv6 row under Networks."
 msgstr ""
+"Musí byť zadaná platná IPv6 maska pre každý IPv6 riadok v časti Siete."
 
 #: src/usr/local/www/services_unbound_acls.php:126
 msgid "save"
-msgstr ""
+msgstr "uložiť"
 
 #: src/usr/local/www/services_unbound_acls.php:146
 msgid "Access list configured for DNS Resolver."
-msgstr ""
+msgstr "Zoznam prístupov bol nakonfigurovaný pre DNS Resolver."
 
 #: src/usr/local/www/services_unbound_acls.php:155
 #, php-format
@@ -24683,6 +24902,8 @@ msgid ""
 "%1$sDeny:%2$s Stops queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
+"%1$sZakázať:%2$s Zastaví dopyty od hostiteľov vrámci netbloku definovaného "
+"nižšie.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:156
 #, php-format
@@ -24690,6 +24911,8 @@ msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
+"%1$sOdmietnuť:%2$s Zastaví dopyty od hostiteľov vrámci netbloku definovaného "
+"nižšie, ale odošle chybovú správu DNS rcode REFUSED späť klientovi.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:157
 #, php-format
@@ -24697,6 +24920,8 @@ msgid ""
 "%1$sAllow:%2$s Allow queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
+"%1$sPovoliť:%2$s Povolí dopyty od hostiteľov vrámci netbloku definovaného "
+"nižšie.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:158
 #, php-format
@@ -24705,6 +24930,10 @@ msgid ""
 "within the netblock defined below. Used for cache snooping and ideally "
 "should only be configured for the administrative host.%3$s"
 msgstr ""
+"%1$sPovoliť Snoop:%2$s Povoliť rekurzívny a nerekurzívny prístup z "
+"hostiteľov vrámci netbloku definovaného nižšie. Použité pre špehovanie "
+"medzipamäte a ideálne by malo byť nakonfigurované iba pre administratívneho "
+"hostiteľa.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:159
 #, php-format
@@ -24713,6 +24942,9 @@ msgid ""
 "hosts within the netblock defined below. Messages that are disallowed are "
 "dropped.%3$s"
 msgstr ""
+"%1$sZakázať Nonlocal:%2$s Povoliť iba autoritatívne dopyty lokálnych údajov "
+"z hostiteľov vrámci netbloku definovaného nižšie. Správy, ktoré sú "
+"nepovolené sú zahodené.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:160
 #, php-format
@@ -24721,54 +24953,57 @@ msgid ""
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
+"%1$sOdmietnuť Nonlocal:%2$s Povoliť iba autoritatívne dopyty lokálnych "
+"údajov z hostiteľov vrámci netbloku definovaného nižšie. Odošle chybovú "
+"správu DNS rcode REFUSED späť klientovi pre správy, ktoré sú nepovolené."
 
 #: src/usr/local/www/services_unbound_acls.php:193
 msgid "New Access List"
-msgstr ""
+msgstr "Nový zoznam prístupov"
 
 #: src/usr/local/www/services_unbound_acls.php:211
 msgid "Access List name"
-msgstr ""
+msgstr "Názov zoznamu prístupov"
 
 #: src/usr/local/www/services_unbound_acls.php:214
 msgid "Provide an Access List name."
-msgstr ""
+msgstr "Poskytnite názov zoznamu prístupov."
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Allow Snoop"
-msgstr ""
+msgstr "Povoliť Snoop"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Deny Nonlocal"
-msgstr ""
+msgstr "Zakázať Nonlocal"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Refuse Nonlocal"
-msgstr ""
+msgstr "Odmietnuť Nonlocal"
 
 #: src/usr/local/www/services_unbound_acls.php:228
 msgid "A description may be entered here for administrative reference."
-msgstr ""
+msgstr "Sem môžte zadať popis pre administratívne účely."
 
 #: src/usr/local/www/services_unbound_acls.php:238
 msgid "*Networks"
-msgstr ""
+msgstr "*Siete"
 
 #: src/usr/local/www/services_unbound_acls.php:279
 msgid "Access Lists to Control Access to the DNS Resolver"
-msgstr ""
+msgstr "Zoznamy prístupov pre ovládanie prístupu k DNS Resolveru."
 
 #: src/usr/local/www/services_unbound_acls.php:285
 msgid "Access List Name"
-msgstr ""
+msgstr "Názov zoznamu prístupov"
 
 #: src/usr/local/www/services_unbound_acls.php:307
 msgid "Edit ACL"
-msgstr ""
+msgstr "Upraviť zoznam prístupov"
 
 #: src/usr/local/www/services_unbound_acls.php:308
 msgid "Delete ACL"
-msgstr "Odstrániť prístupové zoznamy"
+msgstr "Odstrániť zoznam prístupov"
 
 #: src/usr/local/www/services_unbound_advanced.php:94
 msgid "A valid value for Message Cache Size must be specified."
@@ -24847,9 +25082,9 @@ msgid ""
 "traffic and load on the server, but frequently requested items will not "
 "expire from the cache."
 msgstr ""
-"Ak je povolená, táto možnosť môže spôsobiť asi 10%-né navýšenie toku dát DNS "
-"a zaťaženia na server, ale často vyžadovaným položkám nevyprší platnosť z "
-"medzipamäte. "
+"Ak je povolená, táto možnosť môže spôsobiť navýšenie toku dát DNS o asi 10% "
+"a zvýšenie zaťaženia servera, ale často vyžadovaným položkám nevyprší "
+"platnosť z medzipamäte. "
 
 #: src/usr/local/www/services_unbound_advanced.php:247
 msgid "Prefetch DNS Key Support"
@@ -25517,15 +25752,15 @@ msgstr "Zvitok"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:110
 msgid "Activated at"
-msgstr ""
+msgstr "Aktivovaný dňa/v čase"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:111
 msgid "Expires in"
-msgstr ""
+msgstr "Vyprší o"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:112
 msgid "Expires at"
-msgstr ""
+msgstr "Vyprší dňa/v čase"
 
 #: src/usr/local/www/status_captiveportal_vouchers.php:123
 msgid "min"
@@ -25756,7 +25991,7 @@ msgstr "Zobraziť všetky prenájmy"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:199
 msgid "released"
-msgstr ""
+msgstr "uvoľnený"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:426
 msgid "No leases file found. Is the DHCPv6 server active?"
@@ -26279,11 +26514,11 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr ""
+msgstr "IPsec môže byť nakonfigurované %1$stu%2$s."
 
 #: src/usr/local/www/status_ipsec.php:550
 msgid "No IPsec status information available."
-msgstr ""
+msgstr "Žiadne informácie o stave IPsec nie sú dostupné."
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
@@ -26295,11 +26530,11 @@ msgstr "Zatiaľ neexistujú žiadne prenájmy v tomto rozsahu."
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
-msgstr ""
+msgstr "Žiadne združenia IPsec."
 
 #: src/usr/local/www/status_ipsec_sad.php:69
 msgid "SPI"
-msgstr ""
+msgstr "SPI"
 
 #: src/usr/local/www/status_ipsec_sad.php:70
 msgid "Enc. alg."
@@ -26343,7 +26578,7 @@ msgstr "Nie sú nakonfigurované žiadne bezpečnostné IPsec politiky."
 
 #: src/usr/local/www/status_lb_pool.php:105
 msgid "Updated load balancer pools via status screen."
-msgstr ""
+msgstr "Združenia vyvažovača zaťaženia aktualizované cez stránku stavu."
 
 #: src/usr/local/www/status_lb_pool.php:128
 msgid "Load Balancer Pools"
@@ -26369,17 +26604,17 @@ msgstr "Neboli nastavené žiadne vyvažovače zaťaženia."
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
 #: src/etc/inc/pfsense-utils.inc:370
 msgid "Active"
-msgstr ""
+msgstr "Aktívne"
 
 #: src/usr/local/www/status_lb_vs.php:102
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:76
 msgid "Down"
-msgstr ""
+msgstr "Neaktívne"
 
 #: src/usr/local/www/status_lb_vs.php:106
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:80
 msgid "Unknown - relayd not running?"
-msgstr ""
+msgstr "Neznáme - relayd nie je spustené?"
 
 #: src/usr/local/www/status_lb_vs.php:118
 #, php-format
@@ -27300,7 +27535,7 @@ msgstr ""
 #: src/usr/local/www/status_openvpn.php:231
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:122
 msgid "Peer to Peer Server Instance Statistics"
-msgstr ""
+msgstr "Štatistika inštancie Peer to Peer serveru"
 
 #: src/usr/local/www/status_openvpn.php:240
 #: src/usr/local/www/status_openvpn.php:301
@@ -27460,30 +27695,32 @@ msgstr[2] ""
 
 #: src/usr/local/www/system.php:210
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
-msgstr ""
+msgstr "Doména môže obsahovať iba znaky a-z, 0-9, \"-\" a \".\"."
 
 #: src/usr/local/www/system.php:223
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
-msgstr ""
+msgstr "Musí byť uvedená platná IP adresa pre DNS server. [%s]"
 
 #: src/usr/local/www/system.php:229
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
-msgstr ""
+msgstr "IPv6 brána \"%1$s\" nemohla byť určená pre IPv4 DNS server \"%2$s\"."
 
 #: src/usr/local/www/system.php:232
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
-msgstr ""
+msgstr "IPv4 brána \"%1$s\" nemohla byť určená pre IPv6 DNS server \"%2$s\"."
 
 #: src/usr/local/www/system.php:245
 msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
 msgstr ""
+"Každý nakonfigurovaný DNS server musí mať jedinečnú IP adresu. Odstráňte "
+"duplikovanú IP adresu."
 
 #: src/usr/local/www/system.php:257
 #, php-format
@@ -27491,16 +27728,19 @@ msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
 "connected network."
 msgstr ""
+"Brána nemôže byť priradená k DNS \"%s\" serveru, ktorý je na priamo "
+"pripojenej sieti."
 
 #: src/usr/local/www/system.php:270
 msgid ""
 "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'."
 ""
 msgstr ""
+"Názov NTP časového servera môže obsahovať iba znaky a-z, 0-9, \"-\" a \".\"."
 
 #: src/usr/local/www/system.php:454
 msgid "Name of the firewall host, without domain part"
-msgstr ""
+msgstr "Názov firewall hostiteľa bez časti domény"
 
 #: src/usr/local/www/system.php:462
 #, php-format
@@ -27511,30 +27751,39 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
+"Nepoužite \".local\" ako koncovú časť domény (TLD), doména \".local\" je "
+"%1$sširoko používaná%2$s službou mDNS (vrátane Avahi a Bonjour/Rendezvous/"
+"Airprint/Airplay v Apple OS X) a niektorými Windows systémami a sieťovými "
+"zariadeniami. Tieto služby nebudú pracovať správne, ak router používa doménu "
+"\".local\". Alternatívy ako \".local.lan\" alebo \".mylocal\" sú bezpečné."
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
-msgstr ""
+msgstr "Nastavenia DNS servera"
 
 #: src/usr/local/www/system.php:479
 msgid "Enter IP addresses to be used by the system for DNS resolution."
-msgstr ""
+msgstr "Vložte IP adresu, ktorá má byť použitá systémom pre DNS vyriešenie."
 
 #: src/usr/local/www/system.php:480
 msgid ""
 "These are also used for the DHCP service, DNS Forwarder and DNS Resolver "
 "when it has DNS Query Forwarding enabled."
 msgstr ""
+"Tieto sú taktiež použité pre službu DHCP, DNS Forwarder a DNS Resolver ak "
+"majú povolené presmerovanie DNS dopytov."
 
 #: src/usr/local/www/system.php:481
 msgid "Optionally select the gateway for each DNS server."
-msgstr ""
+msgstr "Voliteľne označte bránu pre každý DNS server."
 
 #: src/usr/local/www/system.php:482
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
+"Ak sa používajú viaceré WAN pripojenia, mal by byť nastavený aspoň jeden "
+"jedinečný DNS server na bránu."
 
 #: src/usr/local/www/system.php:497
 msgid "DNS Server"
@@ -27570,6 +27819,11 @@ msgid ""
 "so system can use the local DNS service to perform lookups. Checking this "
 "box omits localhost from the list of DNS servers in resolv.conf."
 msgstr ""
+"Predvolene bude localhost (127.0.0.1) použitý ako prvý DNS server, kde DNS "
+"Forwarder alebo DNS Resolver je povolený a nastavený na načúvanie na "
+"localhoste, takže systém môže použiť lokálna službu DNS pre vykonávanie "
+"vyhľadávaní. Označením tejto možnosti sa vynechá localhost zo zoznamu DNS "
+"serverov v súbore resolv.conf."
 
 #: src/usr/local/www/system.php:565
 msgid "Localization"
@@ -27587,6 +27841,10 @@ msgid ""
 "cases where the geographic zones do not properly handle the clock offset "
 "required for this firewall."
 msgstr ""
+"Zvoľte názov geografického regiónu (Kontinent/Poloha) pre určenie časovej "
+"zóny pre firewall. %1$sZvoľte špeciálnu alebo \"Etc\" zónu iba v prípadoch, "
+"keď geografické zóny neovládajú správne odchýlku hodín požadovanú pre tento "
+"firewall."
 
 #: src/usr/local/www/system.php:577
 msgid "Timeservers"
@@ -27812,7 +28070,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:376
 msgid "WebGUI Login Autocomplete"
-msgstr ""
+msgstr "Automatické dokončovanie textov na stránke prihlásenia do WebGUI"
 
 #: src/usr/local/www/system_advanced_admin.php:379
 msgid ""
@@ -32920,7 +33178,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:74
 msgid "RADIUS is enabled. The local user database will not be used."
-msgstr ""
+msgstr "RADIUS je povolený. Lokálna databáza užívateľov nebude použitá."
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "The L2TP user list has been modified."
@@ -33829,56 +34087,63 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:409
 msgid "The selected certificate is not valid"
-msgstr ""
+msgstr "Zvolený certifikát nie je platný"
 
 #: src/usr/local/www/vpn_openvpn_server.php:413
 msgid ""
 "The specified DH Parameter length is invalid or the DH file does not exist."
-msgstr ""
+msgstr "Uvedená dĺžka parametra DH nie je platná alebo súbor DH neexistuje."
 
 #: src/usr/local/www/vpn_openvpn_server.php:417
 msgid "The specified ECDH Curve is invalid."
-msgstr ""
+msgstr "Uvedená krivka ECDH nie je platná."
 
 #: src/usr/local/www/vpn_openvpn_server.php:442
 msgid "IPv4 Tunnel network"
-msgstr ""
+msgstr "IPv4 sieťový tunel"
 
 #: src/usr/local/www/vpn_openvpn_server.php:445
 msgid ""
 "Using a tunnel network and server bridge settings together is not allowed."
 msgstr ""
+"Použitím nastavení sieťového tunela a serverového mosta spolu nie je "
+"povolené."
 
 #: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "Server Bridge DHCP Start and End must both be empty, or defined."
 msgstr ""
+"Začiatok a koniec DHCP serverového mosta nemôžu byť prázdne alebo definované."
+""
 
 #: src/usr/local/www/vpn_openvpn_server.php:452
 msgid "Server Bridge DHCP Start must be an IPv4 address."
-msgstr ""
+msgstr "Začiatok DHCP serverového mosta musí byť IPv4 adresa."
 
 #: src/usr/local/www/vpn_openvpn_server.php:455
 msgid "Server Bridge DHCP End must be an IPv4 address."
-msgstr ""
+msgstr "Koniec DHCP serverového mosta musí byť IPv4 adresa."
 
 #: src/usr/local/www/vpn_openvpn_server.php:458
 msgid "The Server Bridge DHCP range is invalid (start higher than end)."
 msgstr ""
+"Rozsah DHCP serverového mosta nie je platný (začiatok je vyšší ako koniec)."
 
 #: src/usr/local/www/vpn_openvpn_server.php:612
 #, php-format
 msgid "Updated OpenVPN server on %1$s:%2$s %3$s"
-msgstr ""
+msgstr "OpenVPN server \"%3$s\" aktualizovaný na rozhraní %1$s, porte %2$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:615
 #, php-format
 msgid "Added OpenVPN server on %1$s:%2$s %3$s"
-msgstr ""
+msgstr "OpenVPN server \"%3$s\" vytvorený na rozhraní %1$s, porte %2$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:678
 msgid ""
 "Set this option to disable this server without removing it from the list."
 msgstr ""
+"Zvoľte túto možnosť pre zakázanie tohto servera bez jeho odstránenia zo "
+"zoznamu."
 
 #: src/usr/local/www/vpn_openvpn_server.php:708
 msgid "*Backend for authentication"
@@ -34111,10 +34376,12 @@ msgstr ""
 msgid ""
 "(This is not generally recommended, but may be needed for some scenarios.)"
 msgstr ""
+"(Toto všeobecne nie je odporúčané, ale môže byť potrebné v niektorých "
+"prípadoch.)"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
-msgstr ""
+msgstr "Dynamická IP adresa"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1132
 #, php-format
@@ -34125,34 +34392,39 @@ msgid ""
 "versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may "
 "require \"net30\"."
 msgstr ""
+"Určuje metódu použitú na poskytnutie IP adresy virtuálneho adaptéra klientom "
+"pri použití režimu TUN na IPv4.%1$sNiektorí klienti môžu požadovať toto "
+"nastavené na \"subnet\" aj pre IPv6, ako napríklad OpenVPN Connect (iOS/"
+"Android). Staršie verzie OpenVPN (pred 2.0.9) alebo klienti ako Yealink "
+"telefóny môžu požadovať \"net30\"."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
-msgstr ""
+msgstr "Rozšírené nastavenia klienta"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1157
 msgid "DNS Server enable"
-msgstr ""
+msgstr "Povoliť DNS server"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1164
 msgid "DNS Server 1"
-msgstr ""
+msgstr "DNS server 1"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1171
 msgid "DNS Server 2"
-msgstr ""
+msgstr "DNS server 2"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1178
 msgid "DNS Server 3"
-msgstr ""
+msgstr "DNS server 3"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1185
 msgid "DNS Server 4"
-msgstr ""
+msgstr "DNS server 4"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
-msgstr ""
+msgstr "Blokovať vonkajšie DNS"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
@@ -34160,10 +34432,13 @@ msgid ""
 "DNS leakage in this way, other clients will ignore the option as they are "
 "not affected."
 msgstr ""
+"Požaduje sa Windows 10 alebo OpenVPN 2.3.9 alebo novší. Iba Windows 10 je "
+"náchylný na DNS úniky týmto spôsobom, iný klienti budú ignorovať možnosť, "
+"keďže nie sú ovplyvnené."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid "Force DNS cache update"
-msgstr ""
+msgstr "Vynútiť aktualizáciu DNS medzipamäte"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1202
 msgid "This is known to kick Windows into recognizing pushed DNS servers."
@@ -34191,10 +34466,13 @@ msgid ""
 "to a WINS server), m-node (broadcast then query name server), and h-node "
 "(query name server, then broadcast)"
 msgstr ""
+"Možné možnosti: b-node (vysielania), p-node (dopyty názvov point-to-point na "
+"WINS server), m-node (vysielanie, potom dopyt názvu na server) a h-node "
+"(dopyt názvu na server, potom vysielanie)"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1242
 msgid "Scope ID"
-msgstr ""
+msgstr "ID rozsahu"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1245
 msgid ""
@@ -34202,6 +34480,9 @@ msgid ""
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
 "only those nodes with the same NetBIOS scope ID"
 msgstr ""
+"ID rozsahu (Scope ID) NetBIOSu poskytuje rozšírenú názvovú službu pre "
+"NetBIOS cez TCP/IP. ID rozsahu NetBIOSu izoluje tok dát NetBIOSu na "
+"samostatnej sieti iba na uzly s tým istým ID rozsahu NetBIOSu"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1251
 msgid "WINS server enable"
@@ -34222,6 +34503,9 @@ msgid ""
 "here, separated by semicolon.%1$sEXAMPLE: push \"route 10.0.0.0 255.255.255."
 "0\""
 msgstr ""
+"Sem vložte dodatočné možnosti oddelené bodkočiarkou pre pridanie do "
+"konfigurácie OpenVPN servera.%1$sPRÍKLAD: push \"route 10.0.0.0 255.255.255."
+"0\""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
@@ -34369,7 +34653,6 @@ msgid "Gateway IP"
 msgstr "IP adresa brány"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
-#: src/usr/local/www/widgets/widgets/interfaces.widget.php:225
 msgid "Unable to retrieve status"
 msgstr "Nebolo možné získať stav"
 
@@ -34618,19 +34901,19 @@ msgstr "Nový obrázok:"
 msgid "Saved RSS Widget feed via Dashboard."
 msgstr "Widget RSS zdrojov uložený cez dashboard."
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:134
+#: src/usr/local/www/widgets/widgets/rss.widget.php:133
 msgid "Feeds"
 msgstr "Zdroje"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:141
+#: src/usr/local/www/widgets/widgets/rss.widget.php:140
 msgid "# Stories"
 msgstr "Počet príbehov"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:148
+#: src/usr/local/www/widgets/widgets/rss.widget.php:147
 msgid "Widget height"
 msgstr "Výška widgetu"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:155
+#: src/usr/local/www/widgets/widgets/rss.widget.php:154
 msgid "Content limit"
 msgstr "Limit obsahu"
 
@@ -34891,7 +35174,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Display settings:"
-msgstr ""
+msgstr "Nastavenia zobrazenia:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Show raw output"
@@ -34899,31 +35182,31 @@ msgstr "Zobraziť hrubé výstupy"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:214
 msgid "(no graph)"
-msgstr ""
+msgstr "(žiadny graf)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:220
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Zobraziť celý názov senzora"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:235
 msgid "* A proper Thermal Sensor / Module can be configured under"
-msgstr ""
+msgstr "* Riadny teplotný senzor/modul môže byť nastavený v sekcii"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
 msgid "section"
-msgstr ""
+msgstr " "
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:76
 msgid "Updated traffic graphs widget settings via dashboard."
-msgstr ""
+msgstr "Nastavenia widgetu grafov toku dát aktualizované cez dashboard."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:141
 msgid "All traffic graphs are hidden."
-msgstr ""
+msgstr "Všetky grafy toku dát sú skryté."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:153
 msgid "Refresh Interval"
-msgstr ""
+msgstr "Interval aktualizácie"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:160
 msgid "Inverse"
@@ -34931,92 +35214,94 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:177
 msgid "Unit Size"
-msgstr ""
+msgstr "Jednotka veľkosti"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:56
 msgid "Saved Wake on LAN Filter via Dashboard."
-msgstr ""
+msgstr "Filter Wake on LAN uložený cez dashboard."
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
 msgid "Device"
-msgstr ""
+msgstr "Zariadenie"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:68
 msgid "Wake"
-msgstr ""
+msgstr "Prebudenie"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:106
 msgid "Wake up!"
-msgstr ""
+msgstr "Prebudiť!"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:114
 msgid "All WoL entries are hidden."
-msgstr ""
+msgstr "Všetky záznamy WoL sú skryté."
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:119
 msgid "No saved WoL addresses"
-msgstr ""
+msgstr "Žiadne uložené WoL adresy"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:137
 msgid "DHCP Leases Status"
-msgstr ""
+msgstr "Stav DHCP prenájmov"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:154
 msgid "MAC"
-msgstr ""
+msgstr "MAC"
 
 #: src/usr/local/www/wizard.php:53 src/usr/local/www/wizard.php:65
 #, php-format
 msgid "Could not open %s."
-msgstr ""
+msgstr "Nebolo možné otvoriť %s."
 
 #: src/usr/local/www/wizard.php:59
 msgid "Invalid path specified."
-msgstr ""
+msgstr "Uvedená cesta nie je platná."
 
 #: src/usr/local/www/wizard.php:71
 #, php-format
 msgid "Could not parse %1$s/wizards/%2$s file."
-msgstr ""
+msgstr "Nebolo možné analyzovať súbor %1$s/wizards/%2$s."
 
 #: src/usr/local/www/wizard.php:119
 msgid "Configuration changed via the pfSense wizard subsystem."
-msgstr ""
+msgstr "Konfigurácia bola zmenená cez subsystém sprievodcu pfSense."
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
-msgstr ""
+msgstr "Sprievodca"
 
 #: src/usr/local/www/wizard.php:418
 #, php-format
 msgid "Step %s of %s"
-msgstr ""
+msgstr "Krok %s z %s"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:637
 #: src/usr/local/www/wizards/openvpn_wizard.inc:654
 #, php-format
 msgid "OpenVPN %s wizard"
-msgstr ""
+msgstr "OpenVPN %s sprievodca"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:649
 #: src/usr/local/www/wizards/openvpn_wizard.inc:664
 msgid "OpenVPN Wizard"
-msgstr ""
+msgstr "OpenVPN sprievodca"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:674
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr ""
+"OpenVPN konfigurácia uložená cez sprievodcu nastavením vzdialeného "
+"prístupového serveru OpenVPN."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:57
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:63
 msgid "The number of connections must be specified."
-msgstr ""
+msgstr "Musí byť určený počet pripojení."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:62
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:68
 msgid "The number of connections should be greater than 1."
-msgstr ""
+msgstr "Počet pripojení by mal byť viac ako 1."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:87
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:109
@@ -35025,6 +35310,8 @@ msgid ""
 "The specified number of connections is greater than the number of ALTQ-"
 "capable assigned interfaces!"
 msgstr ""
+"Daný počet pripojení je väčší ako počet ALTQ spôsobilých priradených "
+"rozhraní!"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:299
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:333
@@ -35275,7 +35562,7 @@ msgstr "Conveyance"
 
 #: src/usr/local/www/diag_smart.php:382
 msgid "Self-test"
-msgstr ""
+msgstr "Self-test"
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
@@ -35384,7 +35671,7 @@ msgstr "Povoliť rozšírenie"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv4 použije IPv4 link konektivity (PPPoE)"
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -35753,7 +36040,7 @@ msgstr "Povoliť statické ARP záznamy"
 
 #: src/usr/local/www/services_dhcp.php:1064
 msgid "Change DHCP display lease time from UTC to local time"
-msgstr "Zmeniť zobrazenie časov prenájmov DHCP z UTC na lokálny čas"
+msgstr "Zmeniť zobrazenie časov prenájmov DHCP z UTC na miestny čas"
 
 #: src/usr/local/www/services_dhcp.php:1071
 msgid "Enable RRD statistics graphs"

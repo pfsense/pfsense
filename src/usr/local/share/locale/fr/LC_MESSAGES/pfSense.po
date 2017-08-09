@@ -40,11 +40,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-02 08:00-0300\n"
+"POT-Creation-Date: 2017-08-09 08:04-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-01 10:51-0400\n"
+"PO-Revision-Date: 2017-08-03 11:04-0400\n"
 "Last-Translator: MrJacK <raph@jeudy.de>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -313,7 +313,7 @@ msgstr "Se connecter à %1$s"
 msgid "Login"
 msgstr "Connexion"
 
-#: src/etc/inc/authgui.inc:289
+#: src/etc/inc/authgui.inc:304
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -326,7 +326,7 @@ msgstr ""
 "                                Si cette transmission n'est pas souhaitée, "
 "vérifier qu'une attaque de type l'homme du milieu n'est pas en cours."
 
-#: src/etc/inc/authgui.inc:340
+#: src/etc/inc/authgui.inc:355
 msgid "The browser must support cookies to login."
 msgstr "Le navigateur doit prendre en charge les cookies pour se connecter."
 
@@ -360,8 +360,8 @@ msgstr "Continuer"
 msgid "Redirecting to"
 msgstr "Rediriger vers"
 
-#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
-#: src/usr/local/www/head.inc:521
+#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:548
 msgid "Logout"
 msgstr "Déconnexion"
 
@@ -1758,7 +1758,7 @@ msgstr "Paquet trop grand"
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
-#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
+#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
 msgstr "Traceroute"
 
@@ -2186,7 +2186,7 @@ msgstr "Nom"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
-#: src/usr/local/www/index.php:352 src/usr/local/www/pkg_mgr_install.php:489
+#: src/usr/local/www/index.php:353 src/usr/local/www/pkg_mgr_install.php:489
 #: src/usr/local/www/status_captiveportal.php:127
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -2943,7 +2943,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
 #: src/usr/local/www/firewall_rules_edit.php:1104
-#: src/usr/local/www/head.inc:330 src/usr/local/www/head.inc:348
+#: src/usr/local/www/head.inc:338 src/usr/local/www/head.inc:356
 #: src/usr/local/www/status_graph.php:49 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
@@ -3070,7 +3070,7 @@ msgstr "Nom unique ASN.1"
 msgid "KeyID tag"
 msgstr "étiquette KeyID"
 
-#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
+#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:318
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
 #: src/usr/local/www/services_dhcp.php:1087
@@ -3226,7 +3226,7 @@ msgstr "Client mobile"
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/index.php:547 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces.php:1714 src/usr/local/www/interfaces.php:1740
 #: src/usr/local/www/interfaces.php:1753
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -6344,14 +6344,14 @@ msgid "Router Advertisement Daemon"
 msgstr "Le Démon du 'Router Advertisement'"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
-#: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
+#: src/usr/local/www/head.inc:308 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 msgid "DNS Forwarder"
 msgstr "Transitaire DNS"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
-#: src/usr/local/www/head.inc:301 src/usr/local/www/services_unbound.php:249
+#: src/usr/local/www/head.inc:309 src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_advanced.php:197
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -6370,7 +6370,7 @@ msgid "System Logger Daemon"
 msgstr "Le Démon de la journalisation système"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
-#: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
+#: src/usr/local/www/head.inc:307 src/usr/local/www/head.inc:345
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -6392,12 +6392,12 @@ msgstr "Le Démon de la journalisation système"
 msgid "Captive Portal"
 msgstr "Portail Captif"
 
-#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:302
+#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
 msgstr "Relais DHCP"
 
-#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:303
+#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:311
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
 msgstr "Relais DHCPv6"
@@ -8259,7 +8259,7 @@ msgstr "Confirmer"
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
 #: src/usr/local/www/widgets/widgets/picture.widget.php:86
-#: src/usr/local/www/widgets/widgets/rss.widget.php:163
+#: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:486
@@ -8289,7 +8289,7 @@ msgstr "Enregistrer"
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:681
 msgid "Diagnostics"
 msgstr "Diagnostics"
 
@@ -8365,7 +8365,7 @@ msgid "The ARP cache entry for %s has been deleted."
 msgstr "L'entrée du cache ARP pour %s a été supprimée"
 
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_arp.php:325
-#: src/usr/local/www/head.inc:375
+#: src/usr/local/www/head.inc:383
 msgid "ARP Table"
 msgstr "Table ARP"
 
@@ -8530,7 +8530,7 @@ msgid "Authentication failed."
 msgstr "L'authentification a échoué."
 
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:376
+#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
 msgstr "Authentification"
@@ -8671,7 +8671,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_aliases_import.php:55
-#: src/usr/local/www/head.inc:289
+#: src/usr/local/www/head.inc:297
 msgid "Aliases"
 msgstr "Aliases"
 
@@ -8679,7 +8679,7 @@ msgstr "Aliases"
 msgid "Captive Portal Vouchers"
 msgstr "Ticket Portail Captif"
 
-#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
+#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:314
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
@@ -8699,7 +8699,7 @@ msgstr "Serveur DHCPv6"
 msgid "Firewall Rules"
 msgstr "Règles de pare-feu"
 
-#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
+#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:352
 #: src/usr/local/www/interfaces.php:1710
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -8739,12 +8739,12 @@ msgstr "IPsec"
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
 #: src/usr/local/www/firewall_nat_out_edit.php:393
-#: src/usr/local/www/head.inc:290
+#: src/usr/local/www/head.inc:298
 msgid "NAT"
 msgstr "NAT"
 
-#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:235
-#: src/usr/local/www/head.inc:652 src/usr/local/www/pkg_mgr.php:38
+#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:243
+#: src/usr/local/www/head.inc:679 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -8764,7 +8764,7 @@ msgstr "Tâches planifiées"
 msgid "Syslog"
 msgstr "Syslog"
 
-#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
+#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:679
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
@@ -8825,7 +8825,7 @@ msgstr "Serveur SNMP"
 #: src/usr/local/www/firewall_shaper_queues.php:180
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
 #: src/usr/local/www/firewall_shaper_wizards.php:57
-#: src/usr/local/www/head.inc:293
+#: src/usr/local/www/head.inc:301
 msgid "Traffic Shaper"
 msgstr "Régulateur de flux"
 
@@ -8833,7 +8833,7 @@ msgstr "Régulateur de flux"
 msgid "VLANS"
 msgstr "VLANs"
 
-#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:324
+#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:332
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
@@ -8841,7 +8841,7 @@ msgid "Wake-on-LAN"
 msgstr "Wake-on-LAN"
 
 #: src/usr/local/www/diag_backup.php:446
-#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
+#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:549
 #: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
@@ -8863,8 +8863,8 @@ msgstr "Tout"
 
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/diag_confbak.php:101
-#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:377
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:385
+#: src/usr/local/www/head.inc:681
 msgid "Backup & Restore"
 msgstr "Sauvegarde & Restauration"
 
@@ -8991,7 +8991,7 @@ msgstr ""
 msgid "Uploaded file to %s."
 msgstr "Fichier envoyé à %s."
 
-#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
+#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:386
 msgid "Command Prompt"
 msgstr "Invite de commande"
 
@@ -9251,7 +9251,7 @@ msgstr "Supprimer la conf."
 msgid "No backups found."
 msgstr "Aucune sauvegarde trouvée."
 
-#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:381
+#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:389
 msgid "Factory Defaults"
 msgstr "Paramètres d'usine"
 
@@ -9333,7 +9333,7 @@ msgid "Keep Configuration"
 msgstr "Conserver la configuration actuelle"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
-#: src/usr/local/www/head.inc:379
+#: src/usr/local/www/head.inc:387
 msgid "DNS Lookup"
 msgstr "Résolution DNS"
 
@@ -9468,7 +9468,7 @@ msgstr "Informations supplémentaires"
 
 #: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
-#: src/usr/local/www/head.inc:391
+#: src/usr/local/www/head.inc:399
 msgid "Ping"
 msgstr "Ping"
 
@@ -9504,7 +9504,7 @@ msgstr " Saisie invalide"
 #: src/usr/local/www/diag_resetstate.php:81
 #: src/usr/local/www/diag_states_summary.php:152
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:399
+#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:407
 msgid "States"
 msgstr "États"
 
@@ -9665,7 +9665,7 @@ msgstr "Supprimer"
 msgid "No source tracking entries were found."
 msgstr "Aucune entrée de session trouvée."
 
-#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:380
+#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:388
 msgid "Edit File"
 msgstr "Modifier le fichier"
 
@@ -9717,7 +9717,7 @@ msgstr "Parcourir"
 msgid "GoTo Line #"
 msgstr "Aller à la ligne"
 
-#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:384
+#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:392
 msgid "GEOM Mirrors"
 msgstr "Miroirs GEOM"
 
@@ -9905,7 +9905,7 @@ msgstr ""
 "'Forget' sur le miroir, suivie par une action 'insert' sur le nouveau "
 "consommateur."
 
-#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:387
+#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:395
 msgid "Halt System"
 msgstr "Arrêter le système"
 
@@ -9948,7 +9948,7 @@ msgstr "Arrêter le système et couper l'alimentation"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:388
+#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:396
 msgid "Limiter Info"
 msgstr "Info du limiteur"
 
@@ -9960,7 +9960,7 @@ msgstr "Aucun limiteur n'a été trouvé sur ce système"
 msgid "Limiters:"
 msgstr "Limiteurs:"
 
-#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:350
+#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:358
 #: src/usr/local/www/status_queues.php:110
 msgid "Queues"
 msgstr "Files d'attente"
@@ -9984,7 +9984,7 @@ msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr "%s n'est pas une adresse IPv6 valide ou ne peut être supprimée."
 
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
-#: src/usr/local/www/head.inc:389
+#: src/usr/local/www/head.inc:397
 msgid "NDP Table"
 msgstr "Table NDP"
 
@@ -10008,7 +10008,7 @@ msgstr "Supprimer l'entrée NDP"
 msgid "Download Capture"
 msgstr "Télécharger la capture"
 
-#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:403
+#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:411
 msgid "Packet Capture"
 msgstr "Capture réseau"
 
@@ -10322,7 +10322,7 @@ msgstr "Capture réseau en cours."
 msgid "Packets Captured"
 msgstr "Paquets capturés"
 
-#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:393
+#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:401
 msgid "pfInfo"
 msgstr "pfInfo"
 
@@ -10342,7 +10342,7 @@ msgstr "Sortie"
 msgid "Gathering PF information, please wait..."
 msgstr "Collecte des informations PF, veuillez patienter..."
 
-#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:394
+#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:402
 msgid "pfTop"
 msgstr "pfTop"
 
@@ -10491,7 +10491,7 @@ msgid "Select the maximum number of pings."
 msgstr "Sélectionnez le nombre maximal de pings."
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
-#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
 #: src/usr/local/www/interfaces.php:2069
 msgid "Reboot"
 msgstr "Redémarrer"
@@ -10598,7 +10598,7 @@ msgstr "Veuillez sélectionner au moins une option de réinitialisation"
 msgid "Do you really want to reset the selected states?"
 msgstr "Voulez-vous vraiment réinitialiser les états sélectionnés ?"
 
-#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:404
 msgid "Routes"
 msgstr "Routes"
 
@@ -10628,7 +10628,7 @@ msgid "Use a regular expression to filter the tables."
 msgstr "Utilisez une expression régulière pour filtrer les tables."
 
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
-#: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
+#: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:530
 #: src/usr/local/www/system_certmanager.php:587
@@ -10651,7 +10651,7 @@ msgstr "Récupération des données, veuillez patentier..."
 msgid "IPv6 Routes"
 msgstr "Routes IPv6"
 
-#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:405
 #: src/usr/local/www/widgets/include/smart_status.inc:23
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:67
 msgid "S.M.A.R.T. Status"
@@ -10754,7 +10754,7 @@ msgstr "Visualiser les journaux"
 msgid "Log type"
 msgstr "Type de journal"
 
-#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:406
 msgid "Sockets"
 msgstr "Sockets"
 
@@ -10860,7 +10860,7 @@ msgstr "Ports source"
 msgid "Dest. Ports"
 msgstr "Ports dest."
 
-#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:400
+#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:408
 msgid "States Summary"
 msgstr "Sommaire des états"
 
@@ -10880,7 +10880,7 @@ msgstr "Total par IP"
 msgid "By IP Pair"
 msgstr "Par couple d'IP"
 
-#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
 msgstr "Activité système"
 
@@ -10892,7 +10892,7 @@ msgstr "Activité processeur"
 msgid "Gathering CPU activity, please wait..."
 msgstr "Récupération de l'activité processeur, veuillez patentier..."
 
-#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:390
+#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:398
 msgid "Tables"
 msgstr "Tables"
 
@@ -10975,7 +10975,7 @@ msgid "Remove this entry"
 msgstr "Supprimer cette entrée"
 
 #: src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:392
+#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:400
 msgid "Test Port"
 msgstr "Port test"
 
@@ -11239,7 +11239,7 @@ msgstr ""
 "Cette page doit être appelée depuis les boutons \"Block/Pass\" sur la page "
 "des Journaux de Pare-feu"
 
-#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:352
+#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:360
 #: src/usr/local/www/status_logs.php:96 src/usr/local/www/status_logs.php:99
 #: src/usr/local/www/status_logs_filter.php:102
 #: src/usr/local/www/status_logs_filter_dynamic.php:82
@@ -11980,7 +11980,7 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_nat.php:216
 #: src/usr/local/www/firewall_rules.php:316
 #: src/usr/local/www/firewall_rules_edit.php:1110
-#: src/usr/local/www/head.inc:291
+#: src/usr/local/www/head.inc:299
 msgid "Rules"
 msgstr "Règles"
 
@@ -12361,7 +12361,7 @@ msgstr "VPN L2TP"
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
 #: src/usr/local/www/firewall_rules_edit.php:1094
-#: src/usr/local/www/head.inc:314 src/usr/local/www/services_pppoe.php:78
+#: src/usr/local/www/head.inc:322 src/usr/local/www/services_pppoe.php:78
 #: src/usr/local/www/services_pppoe.php:92
 #: src/usr/local/www/services_pppoe_edit.php:277
 msgid "PPPoE Server"
@@ -12372,7 +12372,7 @@ msgstr "Serveur PPPoE"
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
-#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:345
+#: src/usr/local/www/head.inc:337 src/usr/local/www/head.inc:353
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:261
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -13562,7 +13562,7 @@ msgstr "Règle anti-blocage"
 
 #: src/usr/local/www/firewall_rules.php:417
 #: src/usr/local/www/firewall_rules.php:436
-#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:586
+#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:613
 #: src/usr/local/www/load_balancer_monitor.php:94
 #: src/usr/local/www/load_balancer_pool.php:106
 #: src/usr/local/www/load_balancer_setting.php:85
@@ -14703,7 +14703,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 #: src/usr/local/www/firewall_schedule_edit.php:52
-#: src/usr/local/www/head.inc:292
+#: src/usr/local/www/head.inc:300
 #: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
 msgstr "Plannings"
@@ -15100,7 +15100,7 @@ msgstr "Alias IP"
 
 #: src/usr/local/www/firewall_virtual_ip.php:232
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
-#: src/usr/local/www/head.inc:294
+#: src/usr/local/www/head.inc:302
 msgid "Virtual IPs"
 msgstr "IPs virtuels"
 
@@ -15504,7 +15504,7 @@ msgstr "liste uniquement les 10 000 premiers items"
 msgid "Value"
 msgstr "Valeur"
 
-#: src/usr/local/www/head.inc:231
+#: src/usr/local/www/head.inc:239
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -15517,19 +15517,19 @@ msgstr "Valeur"
 msgid "Advanced"
 msgstr "Avancé"
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:432
+#: src/usr/local/www/head.inc:241 src/usr/local/www/system.php:432
 msgid "General Setup"
 msgstr "Configuration générale"
 
-#: src/usr/local/www/head.inc:234
+#: src/usr/local/www/head.inc:242
 msgid "High Avail. Sync"
 msgstr "Synchronisation à haute disponibilité"
 
-#: src/usr/local/www/head.inc:236
+#: src/usr/local/www/head.inc:244
 msgid "Setup Wizard"
 msgstr "Assistant de configuration"
 
-#: src/usr/local/www/head.inc:237 src/usr/local/www/status_logs.php:59
+#: src/usr/local/www/head.inc:245 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -15540,11 +15540,11 @@ msgstr "Assistant de configuration"
 msgid "Routing"
 msgstr "Aiguillage (routing)"
 
-#: src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:246
 msgid "Cert. Manager"
 msgstr "Gestionnaire de certificats"
 
-#: src/usr/local/www/head.inc:240 src/usr/local/www/head.inc:242
+#: src/usr/local/www/head.inc:248 src/usr/local/www/head.inc:250
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
@@ -15554,32 +15554,32 @@ msgstr "Gestionnaire de certificats"
 msgid "User Manager"
 msgstr "Gestionnaire d'usagers"
 
-#: src/usr/local/www/head.inc:246 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:254 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
 msgstr "Configurations usager"
 
-#: src/usr/local/www/head.inc:260
+#: src/usr/local/www/head.inc:268
 msgid "Assignments"
 msgstr "Affectations"
 
-#: src/usr/local/www/head.inc:267
+#: src/usr/local/www/head.inc:275
 msgid "Switches"
 msgstr "Commutateurs"
 
-#: src/usr/local/www/head.inc:307 src/usr/local/www/services_dhcpv6.php:505
+#: src/usr/local/www/head.inc:315 src/usr/local/www/services_dhcpv6.php:505
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:249
 msgid "DHCPv6 Server & RA"
 msgstr "Serveurs et RA DHCPv6"
 
-#: src/usr/local/www/head.inc:311 src/usr/local/www/services_igmpproxy.php:63
+#: src/usr/local/www/head.inc:319 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
 msgstr "Proxy IGMP"
 
-#: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:346
+#: src/usr/local/www/head.inc:320 src/usr/local/www/head.inc:354
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15594,7 +15594,7 @@ msgstr "Proxy IGMP"
 msgid "Load Balancer"
 msgstr "Équilibreur de charge"
 
-#: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
+#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
@@ -15607,31 +15607,31 @@ msgstr "Équilibreur de charge"
 msgid "NTP"
 msgstr "NTP"
 
-#: src/usr/local/www/head.inc:315 src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/head.inc:323 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
 msgstr "SNMP"
 
-#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:356
+#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:364
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
 msgstr "UPnP &amp; NAT-PMP"
 
-#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/head.inc:340 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
 
-#: src/usr/local/www/head.inc:338
+#: src/usr/local/www/head.inc:346
 msgid "CARP (failover)"
 msgstr "CARP (basculement)"
 
-#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:352
+#: src/usr/local/www/head.inc:347 src/usr/local/www/index.php:353
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: src/usr/local/www/head.inc:340
+#: src/usr/local/www/head.inc:348
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_gateway_groups.php:53
 #: src/usr/local/www/status_gateway_groups.php:65
@@ -15651,25 +15651,25 @@ msgstr "Tableau de bord"
 msgid "Gateways"
 msgstr "Passerelles"
 
-#: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
+#: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
 msgid "DHCP Leases"
 msgstr "Bails DHCP"
 
-#: src/usr/local/www/head.inc:342 src/usr/local/www/status_dhcpv6_leases.php:37
+#: src/usr/local/www/head.inc:350 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
 msgstr "Bails DHCPv6"
 
-#: src/usr/local/www/head.inc:343 src/usr/local/www/status_filter_reload.php:33
+#: src/usr/local/www/head.inc:351 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
 msgstr "Recharger les filtres"
 
-#: src/usr/local/www/head.inc:349 src/usr/local/www/status_pkglogs.php:71
+#: src/usr/local/www/head.inc:357 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
 msgstr "Journaux des modules"
 
-#: src/usr/local/www/head.inc:351
+#: src/usr/local/www/head.inc:359
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15727,12 +15727,12 @@ msgstr "Journaux des modules"
 msgid "Services"
 msgstr "Services"
 
-#: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
+#: src/usr/local/www/head.inc:361 src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph.php:267
 msgid "Traffic Graph"
 msgstr "Graphique du trafic"
 
-#: src/usr/local/www/head.inc:368 src/usr/local/www/interfaces_assign.php:496
+#: src/usr/local/www/head.inc:376 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_gre.php:80
@@ -15750,71 +15750,71 @@ msgstr "Graphique du trafic"
 msgid "Wireless"
 msgstr "Sans-fil"
 
-#: src/usr/local/www/head.inc:408
+#: src/usr/local/www/head.inc:416
 msgid "pfSense Gold"
 msgstr "pfSense Gold"
 
-#: src/usr/local/www/head.inc:413 src/usr/local/www/help.php:529
+#: src/usr/local/www/head.inc:421 src/usr/local/www/help.php:529
 msgid "About this Page"
 msgstr "À propos de cette page"
 
-#: src/usr/local/www/head.inc:415
+#: src/usr/local/www/head.inc:423
 msgid "Bug Database"
 msgstr "Base de données des bogues"
 
-#: src/usr/local/www/head.inc:418
+#: src/usr/local/www/head.inc:426
 msgid "User Forum"
 msgstr "Forum utilisateurs"
 
-#: src/usr/local/www/head.inc:419
+#: src/usr/local/www/head.inc:427
 msgid "Documentation"
 msgstr "Documentation"
 
-#: src/usr/local/www/head.inc:420
+#: src/usr/local/www/head.inc:428
 msgid "Paid Support"
 msgstr "Support payant"
 
-#: src/usr/local/www/head.inc:421
+#: src/usr/local/www/head.inc:429
 msgid "pfSense Book"
 msgstr "Livre pfSense"
 
-#: src/usr/local/www/head.inc:422
+#: src/usr/local/www/head.inc:430
 msgid "FreeBSD Handbook"
 msgstr "Livre FreeBSD"
 
-#: src/usr/local/www/head.inc:512 src/usr/local/www/head.inc:684
+#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
 msgid "Notices"
 msgstr "Avis"
 
-#: src/usr/local/www/head.inc:549
+#: src/usr/local/www/head.inc:576
 msgid "Save dashboard layout"
 msgstr "Sauvegarder la disposition du tableau de bord"
 
-#: src/usr/local/www/head.inc:557
+#: src/usr/local/www/head.inc:584
 msgid "Available widgets"
 msgstr "Widgets disponibles"
 
-#: src/usr/local/www/head.inc:565
+#: src/usr/local/www/head.inc:592
 msgid "Log filter"
 msgstr "Filtre du journal"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:603
 msgid "Manage log"
 msgstr "Gestion du journal"
 
-#: src/usr/local/www/head.inc:594
+#: src/usr/local/www/head.inc:621
 msgid "Refresh Graph"
 msgstr "Rafraîchir le graphique"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:626
 msgid "Export Graph"
 msgstr "Exporter le graphique"
 
-#: src/usr/local/www/head.inc:639
+#: src/usr/local/www/head.inc:666
 msgid "Help for items on this page"
 msgstr "Aide pour les éléments de cette page"
 
-#: src/usr/local/www/head.inc:650
+#: src/usr/local/www/head.inc:677
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -15824,7 +15824,7 @@ msgstr ""
 "arrière-plan. %2$s%1$sNe pas faire de modification dans le GUI avant la "
 "complétion.%2$s"
 
-#: src/usr/local/www/head.inc:653
+#: src/usr/local/www/head.inc:680
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -15834,7 +15834,7 @@ msgstr ""
 "%2$s%1$s Ne pas effectuer de changement dans l'interface tant que le "
 "processus n'est pas terminé.%2$s"
 
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/head.inc:681
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -15845,15 +15845,15 @@ msgstr ""
 "utiliser le bouton \"Corriger le blocage des paquets\" et la page %3$s et "
 "réinstaller les paquets manuellement.%2$s"
 
-#: src/usr/local/www/head.inc:664
+#: src/usr/local/www/head.inc:691
 msgid "This page is currently being managed by a remote machine."
 msgstr "Cette page est actuellement gérée par une machine distante."
 
-#: src/usr/local/www/head.inc:723
+#: src/usr/local/www/head.inc:750
 msgid "Close"
 msgstr "Fermer"
 
-#: src/usr/local/www/head.inc:725
+#: src/usr/local/www/head.inc:752
 msgid "Mark All as Read"
 msgstr "Marquer tous comme lu"
 
@@ -15893,16 +15893,16 @@ msgstr "Cliquez %1$sici%2$s pour plus d'informations"
 msgid "Contact a firewall administrator for more information."
 msgstr "Contactez un administrateur du pare-feu pour plus d'informations."
 
-#: src/usr/local/www/index.php:231
+#: src/usr/local/www/index.php:232
 #, php-format
 msgid "Welcome to %s!"
 msgstr "Bienvenue à %s !"
 
-#: src/usr/local/www/index.php:232
+#: src/usr/local/www/index.php:233
 msgid "One moment while the initial setup wizard starts."
 msgstr "Un instant SVP, l'assistant de configuration initiale démarre."
 
-#: src/usr/local/www/index.php:233
+#: src/usr/local/www/index.php:234
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
@@ -15910,17 +15910,17 @@ msgstr ""
 "Usagers de la plateforme intégrée: SVP soyez patient, l'assistant nécessite "
 "un peu plus de temps à démarrer que le GUI régulier."
 
-#: src/usr/local/www/index.php:234
+#: src/usr/local/www/index.php:235
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr ""
 "Pour contourner l'assistant, cliquez sur le logo %s sur la page initiale."
 
-#: src/usr/local/www/index.php:365 src/etc/inc/pfsense-utils.inc:326
+#: src/usr/local/www/index.php:366 src/etc/inc/pfsense-utils.inc:326
 msgid "Available Widgets"
 msgstr "Widgets disponibles"
 
-#: src/usr/local/www/index.php:392
+#: src/usr/local/www/index.php:393
 #, php-format
 msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
@@ -15929,7 +15929,7 @@ msgstr ""
 "D'autres paramètres pour le tableau de bord sont disponible depuis la page "
 "<a href=\"%s\">Configuration générale</a>"
 
-#: src/usr/local/www/index.php:612
+#: src/usr/local/www/index.php:624
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 "Un ou plusieurs widgets ont été déplacés, mais n'ont pas été sauvegardés"
@@ -16830,15 +16830,16 @@ msgstr "Déclaration de préfixe d'interface"
 
 #: src/usr/local/www/interfaces.php:2397
 msgid "Select prefix interface"
-msgstr ""
+msgstr "Sélectionnez le préfixe de l'interface"
 
 #: src/usr/local/www/interfaces.php:2400
 msgid "Prefix Interface"
-msgstr ""
+msgstr "Préfixe de l'interface"
 
 #: src/usr/local/www/interfaces.php:2403
 msgid "Select the interface on which to apply the prefix delegation."
 msgstr ""
+"Sélectionnez l'interface sur laquelle appliquer la délégation de préfixe."
 
 #: src/usr/local/www/interfaces.php:2405
 msgid "Authentication statement"
@@ -18204,6 +18205,8 @@ msgid ""
 "This gif TUNNEL cannot be deleted because it is still being used as an "
 "interface."
 msgstr ""
+"Ce tunnel GIF ne peut pas être supprimé car il est encore utilisé en tant "
+"qu'interface."
 
 #: src/usr/local/www/interfaces_gif.php:91
 msgid "GIF Interfaces"
@@ -18250,6 +18253,8 @@ msgstr "masque réseau distant du tunnel gif"
 msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses."
 msgstr ""
+"Les champs 'Tunnel local' et 'Tunnel distant' doivent avoir une adresse IP "
+"valide."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -18273,6 +18278,8 @@ msgid ""
 "The gif tunnel remote address must be IPv6 where tunnel local address is "
 "IPv6."
 msgstr ""
+"L'adresse distante du tunnel GIF doit être une IPv6 lorsque le tunnel local "
+"est en IPv6."
 
 #: src/usr/local/www/interfaces_gif_edit.php:88
 msgid "The gif tunnel subnet must be an integer between 1 and 128."
@@ -18288,7 +18295,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_gif_edit.php:105
 #, php-format
 msgid "A gif with the network %s is already defined."
-msgstr ""
+msgstr "Un tunnel GIF avec le réseau %s existe déjà."
 
 #: src/usr/local/www/interfaces_gif_edit.php:171
 msgid "GIF Configuration"
@@ -18320,7 +18327,7 @@ msgstr "*Adresse locale du tunnel GIF"
 
 #: src/usr/local/www/interfaces_gif_edit.php:190
 msgid "Local gif tunnel endpoint."
-msgstr ""
+msgstr "Adresse locale pour le tunnel GIF."
 
 #: src/usr/local/www/interfaces_gif_edit.php:194
 msgid "*GIF tunnel remote address"
@@ -18328,7 +18335,7 @@ msgstr "*Adresse distante du tunnel GIF"
 
 #: src/usr/local/www/interfaces_gif_edit.php:196
 msgid "Remote GIF address endpoint."
-msgstr ""
+msgstr "Adresse distante pour le tunnel GIF."
 
 #: src/usr/local/www/interfaces_gif_edit.php:200
 msgid "*GIF tunnel subnet"
@@ -18341,7 +18348,7 @@ msgstr "Le sous-réseau est utilisé pour déterminer le réseau tunnelisé."
 
 #: src/usr/local/www/interfaces_gif_edit.php:207
 msgid "ECN friendly behavior"
-msgstr ""
+msgstr "ECN 'friendly behavior'"
 
 #: src/usr/local/www/interfaces_gif_edit.php:214
 msgid "Outer Source Filtering"
@@ -18392,6 +18399,8 @@ msgid ""
 "The GRE Tunnel remote address must be IPv4 where tunnel local address is "
 "IPv4."
 msgstr ""
+"L'adresse distante du tunnel GRE doit être une IPv4 lorsque le tunnel local "
+"est en IPv4."
 
 #: src/usr/local/www/interfaces_gre_edit.php:82
 msgid "The GRE tunnel subnet must be an integer between 1 and 32."
@@ -18403,6 +18412,8 @@ msgid ""
 "The GRE Tunnel remote address must be IPv6 where tunnel local address is "
 "IPv6."
 msgstr ""
+"L'adresse distante du tunnel GRE doit être une IPv6 lorsque le tunnel local "
+"est en IPv6."
 
 #: src/usr/local/www/interfaces_gre_edit.php:91
 msgid "The GRE tunnel subnet must be an integer between 1 and 128."
@@ -18428,8 +18439,10 @@ msgid "*GRE Remote Address"
 msgstr "*Adresse distante GRE"
 
 #: src/usr/local/www/interfaces_gre_edit.php:177
+#, fuzzy
 msgid "Peer address where encapsulated GRE packets will be sent."
 msgstr ""
+"Adresse du pair vers laquelle les paquets GRE encapsulés seront envoyés."
 
 #: src/usr/local/www/interfaces_gre_edit.php:181
 msgid "*GRE tunnel local address"
@@ -18437,7 +18450,7 @@ msgstr "Adresse locale du tunnel GRE"
 
 #: src/usr/local/www/interfaces_gre_edit.php:183
 msgid "Local GRE tunnel endpoint."
-msgstr ""
+msgstr "Adresse locale pour le tunnel GRE."
 
 #: src/usr/local/www/interfaces_gre_edit.php:187
 msgid "*GRE tunnel remote address"
@@ -19088,7 +19101,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_qinq.php:58
 msgid "QinQ interface does not exist"
-msgstr ""
+msgstr "L'interface QinQ n'existe pas."
 
 #: src/usr/local/www/interfaces_qinq.php:103
 msgid "QinQ Interfaces"
@@ -19117,11 +19130,13 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_qinq_edit.php:73
 msgid "First level tag cannot be empty."
-msgstr ""
+msgstr "La balise de premier niveau ne peut pas être vide."
 
 #: src/usr/local/www/interfaces_qinq_edit.php:76
 msgid "Modifying the first level tag of an existing entry is not allowed."
 msgstr ""
+"Modifier la balise de premier niveau d'une entrée existante n'est pas "
+"autorisé."
 
 #: src/usr/local/www/interfaces_qinq_edit.php:79
 msgid "Modifying the interface of an existing entry is not allowed."
@@ -19145,7 +19160,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_qinq_edit.php:143
 msgid "At least one tag must be entered."
-msgstr ""
+msgstr "Au moins une balise doit être renseignée."
 
 #: src/usr/local/www/interfaces_qinq_edit.php:201
 msgid "QinQ VLANs group"
@@ -19153,7 +19168,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_qinq_edit.php:239
 msgid "QinQ Configuration"
-msgstr ""
+msgstr "Configuration QinQ"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:243
 msgid "*Parent interface"
@@ -19161,11 +19176,11 @@ msgstr "*Interface parent"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:246
 msgid "Only QinQ capable interfaces will be shown."
-msgstr ""
+msgstr "Seules les interfaces QinQ compatibles seront affichées."
 
 #: src/usr/local/www/interfaces_qinq_edit.php:250
 msgid "*First level tag"
-msgstr ""
+msgstr "*Balise de premier niveau"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:254
 msgid ""
@@ -19332,6 +19347,9 @@ msgid ""
 "Error creating interface with mode %1$s.\t The %2$s interface may not "
 "support creating more clones with the selected mode."
 msgstr ""
+"Erreur lors de la création de l'interface avec le mode %1$s.\t L'interface "
+"%2$s ne doit sans doute pas supporter la création de plus de clones avec le "
+"mode sélectionné."
 
 #: src/usr/local/www/interfaces_wireless_edit.php:127
 #, php-format
@@ -21294,13 +21312,13 @@ msgstr "Une nom d'hôte valide doit être spécifié. [%s]"
 #: src/usr/local/www/services_captiveportal_ip_edit.php:102
 #: src/usr/local/www/services_captiveportal_mac_edit.php:115
 msgid "Upload speed needs to be an integer"
-msgstr ""
+msgstr "La vitesse d'upload doit être un entier"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:104
 #: src/usr/local/www/services_captiveportal_ip_edit.php:106
 #: src/usr/local/www/services_captiveportal_mac_edit.php:118
 msgid "Download speed needs to be an integer"
-msgstr ""
+msgstr "La vitesse de téléchargement doit être un entier"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:113
 #, php-format
@@ -21390,7 +21408,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:114
 #: src/usr/local/www/services_captiveportal_mac_edit.php:124
 msgid "Download speed must be between 1 and 999999"
-msgstr ""
+msgstr "La vitesse de téléchargement doit être comprise entre 1 et 999999"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:123
 #, php-format
@@ -21404,6 +21422,8 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_ip_edit.php:225
 msgid "Enter a description here for reference only. (Not parsed)"
 msgstr ""
+"Entrez une description ici uniquement pour consultation. (ne sera pas "
+"analysée)"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:232
 msgid ""
@@ -21414,11 +21434,12 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:240
 msgid "Enter an upload limit to be enforced on this address in Kbit/s"
-msgstr ""
+msgstr "Entrez une limite d'upload imposée sur cette adresse, en Kbits/s"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:247
 msgid "Enter a download limit to be enforced on this address in Kbit/s"
 msgstr ""
+"Entrez une limite de téléchargement imposée sur cette adresse, en Kbits/s"
 
 #: src/usr/local/www/services_captiveportal_mac.php:85
 msgid "No entry exists yet!"
@@ -21824,7 +21845,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:84
 msgid "Minutes per ticket"
-msgstr ""
+msgstr "Minutes par ticket"
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:94
 #, php-format
@@ -21861,7 +21882,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:184
 msgid "*Minutes per ticket"
-msgstr ""
+msgstr "*Minutes par ticket"
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:187
 msgid ""
@@ -22324,6 +22345,8 @@ msgid ""
 "The DHCP relay on the %s interface must be disabled before enabling the DHCP "
 "server."
 msgstr ""
+"Le relai DHCP sur l'interface %s doit être désactivé avant d'activer le "
+"serveur DHCP."
 
 #: src/usr/local/www/services_dhcp.php:431
 msgid ""
@@ -22341,6 +22364,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:391
 msgid "The range is invalid (first element higher than second element)."
 msgstr ""
+"L'intervalle est incorrect (le premier élément est plus grand que le second)"
 
 #: src/usr/local/www/services_dhcp.php:451
 #: src/usr/local/www/services_dhcpv6.php:386
@@ -22383,10 +22407,12 @@ msgstr ""
 #, php-format
 msgid "%1$s has a CIDR mask of %2$s, which does not contain enough addresses."
 msgstr ""
+"%1$s possède un masque CIDR de %2$s, qui ne contient pas assez d'adresses."
 
 #: src/usr/local/www/services_dhcp.php:821
 msgid "This system has no interfaces configured with a static IPv4 address."
 msgstr ""
+"Ce système n'a pas d'interface configurée avec une adresse IPv4 statique."
 
 #: src/usr/local/www/services_dhcp.php:823
 msgid ""
@@ -23854,6 +23880,8 @@ msgid ""
 "The hostname can only contain the characters A-Z, 0-9 and '-'. It may not "
 "start or end with '-'."
 msgstr ""
+"Le nom d'hôte ne peut contenir que les caractères A-Z, 0-9 et '-'. Il ne "
+"doit pas commencer ou terminer par '-'."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:108
 #: src/usr/local/www/services_unbound_host_edit.php:119
@@ -23906,7 +23934,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:205
 #, php-format
 msgid "Name of the host, without the domain part%1$se.g.: \"myhost\""
-msgstr ""
+msgstr "Nom de l'hôte, sans le domaine%1$sp. ex.: \"monhote\""
 
 #: src/usr/local/www/services_dnsmasq_edit.php:213
 #, php-format
@@ -23916,7 +23944,7 @@ msgstr "Nom de domaine de l'hôtet%1$p. ex. : « example.com »"
 #: src/usr/local/www/services_dnsmasq_edit.php:220
 #, php-format
 msgid "IP address of the host%1$se.g.: 192.168.100.100 or fd00:abcd::1"
-msgstr ""
+msgstr "Adresse IP de l'hôte%1$sp. ex.: 192.168.100.100 ou fd00:abcd::1"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:241
 #: src/usr/local/www/services_unbound_host_edit.php:247
@@ -24019,6 +24047,8 @@ msgid ""
 "If the interface IP address is private the public IP address will be fetched "
 "and used instead."
 msgstr ""
+"Si l'adresse IP de l'interface est privée, l'adresse publique sera récupérée "
+"et utilisée à la place."
 
 #: src/usr/local/www/services_dyndns_edit.php:277
 msgid "*Interface to send update from"
@@ -24384,7 +24414,7 @@ msgstr "Association de pair"
 
 #: src/usr/local/www/services_ntpd_acls.php:236
 msgid "Trap Service"
-msgstr ""
+msgstr "Service Trap"
 
 #: src/usr/local/www/services_ntpd_acls.php:244
 msgid "Custom Access Restrictions"
@@ -25058,7 +25088,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:126
 msgid "RADVD will not be enabled on this interface."
-msgstr ""
+msgstr "RADVD ne sera pas activé sur cette interface."
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
@@ -25087,7 +25117,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
-msgstr ""
+msgstr "Assisté"
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid ""
@@ -25122,6 +25152,8 @@ msgid ""
 "A valid lifetime below 2 hours will be ignored by clients (RFC 4862 Section "
 "5.5.3 point e)"
 msgstr ""
+"Une durée de vie inférieure à 2 heures sera ignorée par les clients (RFC "
+"4862 Section 5.5.3 point e)"
 
 #: src/usr/local/www/services_router_advertisements.php:182
 msgid "Valid lifetime must be an integer."
@@ -25177,7 +25209,7 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
-msgstr ""
+msgstr "Interface RA"
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
@@ -25259,11 +25291,11 @@ msgstr ""
 
 #: src/usr/local/www/services_snmp.php:90
 msgid "Invalid character '#' in system location"
-msgstr ""
+msgstr "Caractère invalide '#' dans la localisation du système"
 
 #: src/usr/local/www/services_snmp.php:93
 msgid "Invalid character '#' in system contact"
-msgstr ""
+msgstr "Caractère invalide '#' dans le contact du système"
 
 #: src/usr/local/www/services_snmp.php:96
 msgid "Invalid character '#' in read community string"
@@ -26024,6 +26056,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:81
 msgid "A valid IP address must be specified, for example 192.168.100.10."
 msgstr ""
+"Une adresse IP valide doit être spécifiée, par exemple 192.168.100.10."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:99
 msgid "Domain override configured for DNS Resolver."
@@ -30634,17 +30667,18 @@ msgstr "Données de certificat"
 #: src/usr/local/www/system_camanager.php:170
 #: src/usr/local/www/system_certmanager.php:239
 msgid "This certificate does not appear to be valid."
-msgstr ""
+msgstr "Ce certificat ne semble pas valide."
 
 #: src/usr/local/www/system_camanager.php:173
 msgid "Encrypted private keys are not yet supported."
-msgstr ""
+msgstr "Les clefs privées chiffrées ne sont pas encore supportées."
 
 #: src/usr/local/www/system_camanager.php:176
 #: src/usr/local/www/system_certmanager.php:243
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr ""
+"La clef privée soumise ne correspond pas aux données du certificat soumis."
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
@@ -30956,11 +30990,11 @@ msgstr "Créer un certificat interne"
 
 #: src/usr/local/www/system_certmanager.php:37
 msgid "Create a Certificate Signing Request"
-msgstr ""
+msgstr "Créer un CSR (Certificate Signing Request)"
 
 #: src/usr/local/www/system_certmanager.php:38
 msgid "Sign a Certificate Signing Request"
-msgstr ""
+msgstr "Signer un CSR (Certificate Signing Request)"
 
 #: src/usr/local/www/system_certmanager.php:54
 msgid "Choose an existing certificate"
@@ -31205,15 +31239,15 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1177
 msgid "SAN: "
-msgstr ""
+msgstr "SAN: "
 
 #: src/usr/local/www/system_certmanager.php:1182
 msgid "KU: "
-msgstr ""
+msgstr "KU: "
 
 #: src/usr/local/www/system_certmanager.php:1187
 msgid "EKU: "
-msgstr ""
+msgstr "EKU: "
 
 #: src/usr/local/www/system_certmanager.php:1212
 msgid "User Cert"
@@ -31480,7 +31514,7 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups_edit.php:96
 #, php-format
 msgid "A gateway group with this name \"%s\" already exists."
-msgstr ""
+msgstr "Un groupe de passerelles avec le nom \"%s\" existe déjà."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:113
 #, php-format
@@ -31513,7 +31547,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:326
 msgid "Member down"
-msgstr ""
+msgstr "Membre H.S"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:329
 msgid "Packet Loss or High latency"
@@ -31521,11 +31555,11 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups_edit.php:323
 msgid "*Trigger Level"
-msgstr ""
+msgstr "*Seuil de déclenchement"
 
 #: src/usr/local/www/system_gateway_groups_edit.php:331
 msgid "When to trigger exclusion of a member"
-msgstr ""
+msgstr "Quand déclencher l'exclusion d'un membre"
 
 #: src/usr/local/www/system_gateways.php:76
 #, php-format
@@ -31533,6 +31567,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
+"La passerelle \"%1$s\"ne peut pas être supprimée car elle est en cours "
+"d'utilisation dans le groupe \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:90
 #, php-format
@@ -31550,7 +31586,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:218
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:255
 msgid "Monitor IP"
-msgstr ""
+msgstr "IP surveillée"
 
 #: src/usr/local/www/system_gateways.php:270
 msgid "This gateway is inactive because interface is missing"
@@ -35496,7 +35532,6 @@ msgid "Gateway IP"
 msgstr "IP de la Passerelle"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
-#: src/usr/local/www/widgets/widgets/interfaces.widget.php:225
 msgid "Unable to retrieve status"
 msgstr "Impossible de récupérer le statut"
 
@@ -35746,21 +35781,21 @@ msgstr "Nouvelle image:"
 msgid "Saved RSS Widget feed via Dashboard."
 msgstr "Widget Flux RSS sauvegardé via le Tableau de Bord"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:134
+#: src/usr/local/www/widgets/widgets/rss.widget.php:133
 msgid "Feeds"
 msgstr "Flux"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:141
+#: src/usr/local/www/widgets/widgets/rss.widget.php:140
 msgid "# Stories"
 msgstr ""
 "Ajout de deux nouvelles à jour est disponible uniquement pour la version "
 "complète de Game.~Histoires"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:148
+#: src/usr/local/www/widgets/widgets/rss.widget.php:147
 msgid "Widget height"
 msgstr "Hauteur du widget"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:155
+#: src/usr/local/www/widgets/widgets/rss.widget.php:154
 msgid "Content limit"
 msgstr "Limite de contenu"
 

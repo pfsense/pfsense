@@ -31,7 +31,7 @@ $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
-if ($_POST['widgetkey']) {
+if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
 
 	$validNames = array();
@@ -201,7 +201,7 @@ endif;
 <?php
 
 /* for AJAX response, we only need the panels */
-if ($_REQUEST['widgetkey']) {
+if ($_REQUEST['ajax']) {
 	exit;
 }
 ?>
@@ -220,7 +220,8 @@ if ($_REQUEST['widgetkey']) {
 
 		// POST data to send via AJAX
 		var postdata = {
-			widgetkey :"<?=$widgetkey?>"
+			widgetkey :"<?=$widgetkey?>",
+			ajax: "ajax"
 		};
 
 		// Create an object defining the widget refresh AJAX call

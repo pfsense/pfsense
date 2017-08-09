@@ -321,7 +321,7 @@ export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"
 # package names must be valid. Using non existent
 # package name would yield an error.
 #
-export custom_package_list=${custom_package_list:-"pfSense-pkg-AutoConfigBackup pfSense-pkg-aws-wizard pfSense-pkg-ipsec-profile-wizard"}
+export custom_package_list=${custom_package_list:-"pfSense-pkg-AutoConfigBackup pfSense-pkg-aws-wizard pfSense-pkg-ipsec-profile-wizard pfSense-pkg-Netgate_Coreboot_Upgrade"}
 
 # General builder output filenames
 export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/installer/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}${PRODUCT_REVISION:+-p}${PRODUCT_REVISION}-${TARGET}${TIMESTAMP_SUFFIX}.iso"}

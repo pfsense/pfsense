@@ -665,7 +665,7 @@ events.push(function() {
 			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
 
 			if (!ajaxmutex) {
-				if ((ajaxcntr % freq) === 0) {
+				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
 				    make_ajax_call(ajaxspecs[ajaxidx]);
 				}
 

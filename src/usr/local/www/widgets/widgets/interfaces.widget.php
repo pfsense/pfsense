@@ -31,7 +31,7 @@ $ifdescrs = get_configured_interface_with_descr();
 // Update once per minute by default, instead of every 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
-if ($_POST['widgetkey']) {
+if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
 
 	$validNames = array();
@@ -201,35 +201,43 @@ endif;
 <?php
 
 /* for AJAX response, we only need the panels */
-if ($_REQUEST['widgetkey']) {
+if ($_REQUEST['ajax']) {
 	exit;
 }
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-function getstatus_ifaces_<?=$widgetkey_nodash?>() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/interfaces.widget.php',
-		dataType: 'html',
-		data: { widgetkey: "<?=$widgetkey?>" },
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		success: function(data){
-			$('#ifaces_status_<?=$widgetkey?>').html(data);
-		},
-		error: function(){
-			$('#ifaces_status_<?=$widgetkey?>').html("<div class=\"alert alert-danger\"><?=gettext('Unable to retrieve status'); ?></div>");
-		}
-	});
-}
 
 	events.push(function(){
+
+		/// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function interfaces_callback(s) {
+			$('#ifaces_status_<?=$widgetkey?>').html(s);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			widgetkey :"<?=$widgetkey?>",
+			ajax: "ajax"
+		};
+
+		// Create an object defining the widget refresh AJAX call
+		var interfacesObject = new Object();
+		interfacesObject.name = "Interfaces";
+		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
+		interfacesObject.callback = interfaces_callback;
+		interfacesObject.parms = postdata;
+
+		// Register the AJAX object
+		register_ajax(interfacesObject);
+
+		// ---------------------------------------------------------------------------------------------------
+
 		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
-		setInterval('getstatus_ifaces_<?=$widgetkey_nodash?>()', "<?=$widgetperiod?>");
+
 	});
 //]]>
 </script>

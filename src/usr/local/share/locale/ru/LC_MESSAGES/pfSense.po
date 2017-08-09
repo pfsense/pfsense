@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-02 08:00-0300\n"
+"POT-Creation-Date: 2017-08-09 08:04-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -268,7 +268,7 @@ msgstr "Логин в %1$s"
 msgid "Login"
 msgstr "Логин"
 
-#: src/etc/inc/authgui.inc:289
+#: src/etc/inc/authgui.inc:304
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -276,7 +276,7 @@ msgid ""
 "a man-in-the-middle attack is not taking place."
 msgstr ""
 
-#: src/etc/inc/authgui.inc:340
+#: src/etc/inc/authgui.inc:355
 msgid "The browser must support cookies to login."
 msgstr "Ваш браузер должен поддерживать cookie, чтобы войти в систему."
 
@@ -310,8 +310,8 @@ msgstr "Продолжить"
 msgid "Redirecting to"
 msgstr "Перенаправляю..."
 
-#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:230
-#: src/usr/local/www/head.inc:521
+#: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:548
 msgid "Logout"
 msgstr "Выйти"
 
@@ -1673,7 +1673,7 @@ msgstr "Пакет слишком большой"
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
-#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:402
+#: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
 msgstr "Traceroute"
 
@@ -2090,7 +2090,7 @@ msgstr "Имя"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
-#: src/usr/local/www/index.php:352 src/usr/local/www/pkg_mgr_install.php:489
+#: src/usr/local/www/index.php:353 src/usr/local/www/pkg_mgr_install.php:489
 #: src/usr/local/www/status_captiveportal.php:127
 #: src/usr/local/www/status_captiveportal_expire.php:55
 #: src/usr/local/www/status_captiveportal_test.php:55
@@ -2825,7 +2825,7 @@ msgstr "Ошибка: не удалось открыть %s в DHCP_Config_File_
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
 #: src/usr/local/www/firewall_rules.php:159
 #: src/usr/local/www/firewall_rules_edit.php:1104
-#: src/usr/local/www/head.inc:330 src/usr/local/www/head.inc:348
+#: src/usr/local/www/head.inc:338 src/usr/local/www/head.inc:356
 #: src/usr/local/www/status_graph.php:49 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/status_logs_common.inc:96
 #: src/usr/local/www/status_logs_settings.php:224
@@ -2952,7 +2952,7 @@ msgstr "ASN.1  Определённое имя"
 msgid "KeyID tag"
 msgstr "тег KeyID"
 
-#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:310
+#: src/etc/inc/ipsec.inc:82 src/usr/local/www/head.inc:318
 #: src/usr/local/www/services_checkip.php:70
 #: src/usr/local/www/services_checkip_edit.php:106
 #: src/usr/local/www/services_dhcp.php:1087
@@ -3108,7 +3108,7 @@ msgstr "Мобильный Клиент"
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
-#: src/usr/local/www/index.php:546 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/index.php:547 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces.php:1714 src/usr/local/www/interfaces.php:1740
 #: src/usr/local/www/interfaces.php:1753
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -6275,14 +6275,14 @@ msgid "Router Advertisement Daemon"
 msgstr "Служба Объявления Маршрутизатора (RA)"
 
 #: src/etc/inc/service-utils.inc:250 src/usr/local/www/diag_backup.php:424
-#: src/usr/local/www/head.inc:300 src/usr/local/www/services_dnsmasq.php:233
+#: src/usr/local/www/head.inc:308 src/usr/local/www/services_dnsmasq.php:233
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 msgid "DNS Forwarder"
 msgstr "DNS форвардер"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
-#: src/usr/local/www/head.inc:301 src/usr/local/www/services_unbound.php:249
+#: src/usr/local/www/head.inc:309 src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_advanced.php:197
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
@@ -6301,7 +6301,7 @@ msgid "System Logger Daemon"
 msgstr "Демон системного журнала"
 
 #: src/etc/inc/service-utils.inc:277 src/usr/local/www/diag_backup.php:422
-#: src/usr/local/www/head.inc:299 src/usr/local/www/head.inc:337
+#: src/usr/local/www/head.inc:307 src/usr/local/www/head.inc:345
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/services_captiveportal_filemanager.php:66
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -6323,12 +6323,12 @@ msgstr "Демон системного журнала"
 msgid "Captive Portal"
 msgstr "Портал Авторизации"
 
-#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:302
+#: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:310
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
 msgstr "Трансляция DHCP"
 
-#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:303
+#: src/etc/inc/service-utils.inc:302 src/usr/local/www/head.inc:311
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
 msgstr "Трансляция DHCPv6"
@@ -8158,7 +8158,7 @@ msgstr "Подтверждение"
 #: src/usr/local/www/widgets/widgets/log.widget.php:276
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:389
 #: src/usr/local/www/widgets/widgets/picture.widget.php:86
-#: src/usr/local/www/widgets/widgets/rss.widget.php:163
+#: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:486
@@ -8188,7 +8188,7 @@ msgstr "Сохранение"
 #: src/usr/local/www/diag_states_summary.php:192
 #: src/usr/local/www/diag_system_activity.php:31
 #: src/usr/local/www/diag_tables.php:29 src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/head.inc:681
 msgid "Diagnostics"
 msgstr "Диагностика"
 
@@ -8264,7 +8264,7 @@ msgid "The ARP cache entry for %s has been deleted."
 msgstr "Запись ARP кэша для %s удалена."
 
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_arp.php:325
-#: src/usr/local/www/head.inc:375
+#: src/usr/local/www/head.inc:383
 msgid "ARP Table"
 msgstr "ARP таблица"
 
@@ -8429,7 +8429,7 @@ msgid "Authentication failed."
 msgstr "Аутентификация неуспешна "
 
 #: src/usr/local/www/diag_authentication.php:69
-#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:376
+#: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
 msgstr "Аутентификация"
@@ -8564,7 +8564,7 @@ msgstr "Не удаётся восстановить конфигурацию (�
 #: src/usr/local/www/firewall_aliases.php:161
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_aliases_import.php:55
-#: src/usr/local/www/head.inc:289
+#: src/usr/local/www/head.inc:297
 msgid "Aliases"
 msgstr "Алиасы "
 
@@ -8572,7 +8572,7 @@ msgstr "Алиасы "
 msgid "Captive Portal Vouchers"
 msgstr "Ваучеры Портала Авторизации"
 
-#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:306
+#: src/usr/local/www/diag_backup.php:426 src/usr/local/www/head.inc:314
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
 msgid "DHCP Server"
@@ -8592,7 +8592,7 @@ msgstr "DHCPv6 Сервер"
 msgid "Firewall Rules"
 msgstr "Правила межсетевого экрана"
 
-#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:344
+#: src/usr/local/www/diag_backup.php:429 src/usr/local/www/head.inc:352
 #: src/usr/local/www/interfaces.php:1710
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -8632,12 +8632,12 @@ msgstr "IPSEC"
 #: src/usr/local/www/firewall_nat_npt_edit.php:174
 #: src/usr/local/www/firewall_nat_out.php:202
 #: src/usr/local/www/firewall_nat_out_edit.php:393
-#: src/usr/local/www/head.inc:290
+#: src/usr/local/www/head.inc:298
 msgid "NAT"
 msgstr "Сетевая Трансляция Адресов"
 
-#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:235
-#: src/usr/local/www/head.inc:652 src/usr/local/www/pkg_mgr.php:38
+#: src/usr/local/www/diag_backup.php:433 src/usr/local/www/head.inc:243
+#: src/usr/local/www/head.inc:679 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr_install.php:249
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -8657,7 +8657,7 @@ msgstr "Запланированные Задачи"
 msgid "Syslog"
 msgstr "Системный журнал"
 
-#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:652
+#: src/usr/local/www/diag_backup.php:437 src/usr/local/www/head.inc:679
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:249
@@ -8717,7 +8717,7 @@ msgstr "SNMP Сервер"
 #: src/usr/local/www/firewall_shaper_queues.php:180
 #: src/usr/local/www/firewall_shaper_vinterface.php:39
 #: src/usr/local/www/firewall_shaper_wizards.php:57
-#: src/usr/local/www/head.inc:293
+#: src/usr/local/www/head.inc:301
 msgid "Traffic Shaper"
 msgstr "Трафик Шейпер"
 
@@ -8725,7 +8725,7 @@ msgstr "Трафик Шейпер"
 msgid "VLANS"
 msgstr "VLAN'ы"
 
-#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:324
+#: src/usr/local/www/diag_backup.php:443 src/usr/local/www/head.inc:332
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_wol.php:131
 #: src/usr/local/www/services_wol_edit.php:111
@@ -8733,7 +8733,7 @@ msgid "Wake-on-LAN"
 msgstr "Пробуждение по сигналу из Локальной сети"
 
 #: src/usr/local/www/diag_backup.php:446
-#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:548
+#: src/usr/local/www/firewall_aliases.php:152 src/usr/local/www/index.php:549
 #: src/usr/local/www/pkg_edit.php:1208
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/services_snmp.php:176
@@ -8755,8 +8755,8 @@ msgstr "Все"
 
 #: src/usr/local/www/diag_backup.php:461 src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/diag_confbak.php:101
-#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:377
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:385
+#: src/usr/local/www/head.inc:681
 msgid "Backup & Restore"
 msgstr "Резервное копирование и Восстановление"
 
@@ -8883,7 +8883,7 @@ msgstr ""
 msgid "Uploaded file to %s."
 msgstr "Выгружаю файл в %s"
 
-#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:378
+#: src/usr/local/www/diag_command.php:78 src/usr/local/www/head.inc:386
 msgid "Command Prompt"
 msgstr "Командная строка"
 
@@ -9137,7 +9137,7 @@ msgstr "Удалить кофигурацию"
 msgid "No backups found."
 msgstr "Резервная копия на найдена."
 
-#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:381
+#: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:389
 msgid "Factory Defaults"
 msgstr "Заводские Настройки"
 
@@ -9217,7 +9217,7 @@ msgid "Keep Configuration"
 msgstr "Сохранить Конфигурацию"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
-#: src/usr/local/www/head.inc:379
+#: src/usr/local/www/head.inc:387
 msgid "DNS Lookup"
 msgstr "DNS Запрос"
 
@@ -9352,7 +9352,7 @@ msgstr "Больше Информации"
 
 #: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
-#: src/usr/local/www/head.inc:391
+#: src/usr/local/www/head.inc:399
 msgid "Ping"
 msgstr "Пинг"
 
@@ -9388,7 +9388,7 @@ msgstr "неверный ввод"
 #: src/usr/local/www/diag_resetstate.php:81
 #: src/usr/local/www/diag_states_summary.php:152
 #: src/usr/local/www/diag_states_summary.php:154
-#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:399
+#: src/usr/local/www/firewall_rules.php:381 src/usr/local/www/head.inc:407
 msgid "States"
 msgstr "Состояния"
 
@@ -9550,7 +9550,7 @@ msgstr "Удалить"
 msgid "No source tracking entries were found."
 msgstr "Не найдено ни одной записи отслеживания адреса источника."
 
-#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:380
+#: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:388
 msgid "Edit File"
 msgstr "Редактировать файл"
 
@@ -9602,7 +9602,7 @@ msgstr "Обозревать"
 msgid "GoTo Line #"
 msgstr "Идите к строке #"
 
-#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:384
+#: src/usr/local/www/diag_gmirror.php:33 src/usr/local/www/head.inc:392
 msgid "GEOM Mirrors"
 msgstr "GEOM  зеркала"
 
@@ -9787,7 +9787,7 @@ msgstr ""
 "Для восстановления зеркала, сначала на зеркале выполните команду 'Forget', "
 "потом действие 'insert' на новом потребителе. "
 
-#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:387
+#: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:395
 msgid "Halt System"
 msgstr "Погасить Систему"
 
@@ -9829,7 +9829,7 @@ msgstr "Выключить систему и питание"
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:388
+#: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:396
 msgid "Limiter Info"
 msgstr "Информация об Ограничителе"
 
@@ -9841,7 +9841,7 @@ msgstr "Ограничители не были найдены для этой с
 msgid "Limiters:"
 msgstr "Ограничители:"
 
-#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:350
+#: src/usr/local/www/diag_limiter_info.php:43 src/usr/local/www/head.inc:358
 #: src/usr/local/www/status_queues.php:110
 msgid "Queues"
 msgstr "Очереди"
@@ -9865,7 +9865,7 @@ msgid "%s is not a valid IPv6 address or could not be deleted."
 msgstr " %s не является валидным IPv6 адресом или не может быть удалена."
 
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_ndp.php:131
-#: src/usr/local/www/head.inc:389
+#: src/usr/local/www/head.inc:397
 msgid "NDP Table"
 msgstr "Таблица NDP"
 
@@ -9889,7 +9889,7 @@ msgstr "Удалить запись NDP "
 msgid "Download Capture"
 msgstr "Загрузить Результат Захвата"
 
-#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:403
+#: src/usr/local/www/diag_packet_capture.php:106 src/usr/local/www/head.inc:411
 msgid "Packet Capture"
 msgstr "Захват Пакетов"
 
@@ -10200,7 +10200,7 @@ msgstr "Производится захват пакетов."
 msgid "Packets Captured"
 msgstr "Захваченные пакеты"
 
-#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:393
+#: src/usr/local/www/diag_pf_info.php:31 src/usr/local/www/head.inc:401
 msgid "pfInfo"
 msgstr "pfInfo"
 
@@ -10220,7 +10220,7 @@ msgstr "Вывод"
 msgid "Gathering PF information, please wait..."
 msgstr "Собираем сведения PF, пожалуйста, подождите..."
 
-#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:394
+#: src/usr/local/www/diag_pftop.php:31 src/usr/local/www/head.inc:402
 msgid "pfTop"
 msgstr "pfTop"
 
@@ -10369,7 +10369,7 @@ msgid "Select the maximum number of pings."
 msgstr "Выберите максимальное количество пингов"
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
-#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:395
+#: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
 #: src/usr/local/www/interfaces.php:2069
 msgid "Reboot"
 msgstr "Перезагрузка"
@@ -10473,7 +10473,7 @@ msgstr "Пожалуйста, выберите хотя бы одну опцию
 msgid "Do you really want to reset the selected states?"
 msgstr "Вы действительно хотите сбросить выбранные сессии?"
 
-#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:396
+#: src/usr/local/www/diag_routes.php:66 src/usr/local/www/head.inc:404
 msgid "Routes"
 msgstr "Маршруты"
 
@@ -10503,7 +10503,7 @@ msgid "Use a regular expression to filter the tables."
 msgstr "Используйте регулярные выражения что бы фильтровать данные таблицы"
 
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
-#: src/usr/local/www/head.inc:232 src/usr/local/www/pkg_mgr_install.php:244
+#: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
 #: src/usr/local/www/system_certmanager.php:530
 #: src/usr/local/www/system_certmanager.php:587
@@ -10526,7 +10526,7 @@ msgstr "Собираем данные, пожалуйста, подождите.
 msgid "IPv6 Routes"
 msgstr "IPv6 маршруты"
 
-#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:397
+#: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:405
 #: src/usr/local/www/widgets/include/smart_status.inc:23
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:67
 msgid "S.M.A.R.T. Status"
@@ -10629,7 +10629,7 @@ msgstr "Посмотреть Логи"
 msgid "Log type"
 msgstr "Тип лога"
 
-#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:398
+#: src/usr/local/www/diag_sockets.php:31 src/usr/local/www/head.inc:406
 msgid "Sockets"
 msgstr "Сокеты"
 
@@ -10732,7 +10732,7 @@ msgstr "Порты Источника"
 msgid "Dest. Ports"
 msgstr "Порты Назачения"
 
-#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:400
+#: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:408
 msgid "States Summary"
 msgstr "Сводка сессий"
 
@@ -10752,7 +10752,7 @@ msgstr "Итого на каждый IP"
 msgid "By IP Pair"
 msgstr "По IP Паре"
 
-#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:401
+#: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
 msgstr "Системная Активность"
 
@@ -10764,7 +10764,7 @@ msgstr "Активность ЦПУ"
 msgid "Gathering CPU activity, please wait..."
 msgstr "Собираю информацию активности ЦПУ, пожалуйста подождите..."
 
-#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:390
+#: src/usr/local/www/diag_tables.php:29 src/usr/local/www/head.inc:398
 msgid "Tables"
 msgstr "Таблицы"
 
@@ -10846,7 +10846,7 @@ msgid "Remove this entry"
 msgstr "Удалить данную запись"
 
 #: src/usr/local/www/diag_testport.php:38
-#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:392
+#: src/usr/local/www/diag_testport.php:217 src/usr/local/www/head.inc:400
 msgid "Test Port"
 msgstr "Тест Порта"
 
@@ -11112,7 +11112,7 @@ msgstr ""
 "Данная страница вызывается кнопками блокировать/разрешить со страницы Журнал "
 "Межсетевого Экрана"
 
-#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:352
+#: src/usr/local/www/easyrule.php:122 src/usr/local/www/head.inc:360
 #: src/usr/local/www/status_logs.php:96 src/usr/local/www/status_logs.php:99
 #: src/usr/local/www/status_logs_filter.php:102
 #: src/usr/local/www/status_logs_filter_dynamic.php:82
@@ -11856,7 +11856,7 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_nat.php:216
 #: src/usr/local/www/firewall_rules.php:316
 #: src/usr/local/www/firewall_rules_edit.php:1110
-#: src/usr/local/www/head.inc:291
+#: src/usr/local/www/head.inc:299
 msgid "Rules"
 msgstr "Правила"
 
@@ -12235,7 +12235,7 @@ msgstr "L2TP VPN"
 #: src/usr/local/www/firewall_nat_npt_edit.php:157
 #: src/usr/local/www/firewall_rules.php:147
 #: src/usr/local/www/firewall_rules_edit.php:1094
-#: src/usr/local/www/head.inc:314 src/usr/local/www/services_pppoe.php:78
+#: src/usr/local/www/head.inc:322 src/usr/local/www/services_pppoe.php:78
 #: src/usr/local/www/services_pppoe.php:92
 #: src/usr/local/www/services_pppoe_edit.php:277
 msgid "PPPoE Server"
@@ -12246,7 +12246,7 @@ msgstr "Сервер PPPoE"
 #: src/usr/local/www/firewall_nat_npt_edit.php:163
 #: src/usr/local/www/firewall_rules.php:154
 #: src/usr/local/www/firewall_rules_edit.php:1099
-#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:345
+#: src/usr/local/www/head.inc:337 src/usr/local/www/head.inc:353
 #: src/usr/local/www/status_graph.php:42 src/usr/local/www/status_graph.php:261
 #: src/usr/local/www/status_ipsec.php:465
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -13428,7 +13428,7 @@ msgstr "Правило Анти-Блокировки"
 
 #: src/usr/local/www/firewall_rules.php:417
 #: src/usr/local/www/firewall_rules.php:436
-#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:586
+#: src/usr/local/www/firewall_rules.php:455 src/usr/local/www/head.inc:613
 #: src/usr/local/www/load_balancer_monitor.php:94
 #: src/usr/local/www/load_balancer_pool.php:106
 #: src/usr/local/www/load_balancer_setting.php:85
@@ -14571,7 +14571,7 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 #: src/usr/local/www/firewall_schedule_edit.php:52
-#: src/usr/local/www/head.inc:292
+#: src/usr/local/www/head.inc:300
 #: src/usr/local/www/system_advanced_misc.php:469
 msgid "Schedules"
 msgstr "Расписания"
@@ -14960,7 +14960,7 @@ msgstr "IP Алиас"
 
 #: src/usr/local/www/firewall_virtual_ip.php:232
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
-#: src/usr/local/www/head.inc:294
+#: src/usr/local/www/head.inc:302
 msgid "Virtual IPs"
 msgstr "Виртуальные IPs"
 
@@ -15356,7 +15356,7 @@ msgstr "Просматриваем только первые 10 тысяч пу�
 msgid "Value"
 msgstr "Значение"
 
-#: src/usr/local/www/head.inc:231
+#: src/usr/local/www/head.inc:239
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -15369,19 +15369,19 @@ msgstr "Значение"
 msgid "Advanced"
 msgstr "Расширенные"
 
-#: src/usr/local/www/head.inc:233 src/usr/local/www/system.php:432
+#: src/usr/local/www/head.inc:241 src/usr/local/www/system.php:432
 msgid "General Setup"
 msgstr "Основная настройка"
 
-#: src/usr/local/www/head.inc:234
+#: src/usr/local/www/head.inc:242
 msgid "High Avail. Sync"
 msgstr "Синхронизация Высокой Доступности"
 
-#: src/usr/local/www/head.inc:236
+#: src/usr/local/www/head.inc:244
 msgid "Setup Wizard"
 msgstr "Мастер Настройки"
 
-#: src/usr/local/www/head.inc:237 src/usr/local/www/status_logs.php:59
+#: src/usr/local/www/head.inc:245 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -15392,11 +15392,11 @@ msgstr "Мастер Настройки"
 msgid "Routing"
 msgstr "Маршрутизация"
 
-#: src/usr/local/www/head.inc:238
+#: src/usr/local/www/head.inc:246
 msgid "Cert. Manager"
 msgstr "Менеджер Сертификатов"
 
-#: src/usr/local/www/head.inc:240 src/usr/local/www/head.inc:242
+#: src/usr/local/www/head.inc:248 src/usr/local/www/head.inc:250
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_groupmanager.php:269
 #: src/usr/local/www/system_groupmanager_addprivs.php:40
@@ -15406,32 +15406,32 @@ msgstr "Менеджер Сертификатов"
 msgid "User Manager"
 msgstr "Менеджер Пользователей"
 
-#: src/usr/local/www/head.inc:246 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:254 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
 msgstr "Пользовательские Настройки"
 
-#: src/usr/local/www/head.inc:260
+#: src/usr/local/www/head.inc:268
 msgid "Assignments"
 msgstr "Назначения"
 
-#: src/usr/local/www/head.inc:267
+#: src/usr/local/www/head.inc:275
 msgid "Switches"
 msgstr "Коммутаторы"
 
-#: src/usr/local/www/head.inc:307 src/usr/local/www/services_dhcpv6.php:505
+#: src/usr/local/www/head.inc:315 src/usr/local/www/services_dhcpv6.php:505
 #: src/usr/local/www/services_dhcpv6_edit.php:194
 #: src/usr/local/www/services_router_advertisements.php:249
 msgid "DHCPv6 Server & RA"
 msgstr "DHCPv6 Сервер & RA"
 
-#: src/usr/local/www/head.inc:311 src/usr/local/www/services_igmpproxy.php:63
+#: src/usr/local/www/head.inc:319 src/usr/local/www/services_igmpproxy.php:63
 #: src/usr/local/www/services_igmpproxy.php:77
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
 msgstr "IGMP Прокси"
 
-#: src/usr/local/www/head.inc:312 src/usr/local/www/head.inc:346
+#: src/usr/local/www/head.inc:320 src/usr/local/www/head.inc:354
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15446,7 +15446,7 @@ msgstr "IGMP Прокси"
 msgid "Load Balancer"
 msgstr "Балансировщик Нагрузки"
 
-#: src/usr/local/www/head.inc:313 src/usr/local/www/head.inc:347
+#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:355
 #: src/usr/local/www/services_dhcp.php:1174
 #: src/usr/local/www/services_ntpd.php:188
 #: src/usr/local/www/services_ntpd_acls.php:175
@@ -15459,31 +15459,31 @@ msgstr "Балансировщик Нагрузки"
 msgid "NTP"
 msgstr "NTP"
 
-#: src/usr/local/www/head.inc:315 src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/head.inc:323 src/usr/local/www/services_snmp.php:196
 msgid "SNMP"
 msgstr "SNMP"
 
-#: src/usr/local/www/head.inc:321 src/usr/local/www/head.inc:356
+#: src/usr/local/www/head.inc:329 src/usr/local/www/head.inc:364
 #: src/usr/local/www/status_upnp.php:42
 msgid "UPnP &amp; NAT-PMP"
 msgstr "UPnP &amp; NAT-PM"
 
-#: src/usr/local/www/head.inc:332 src/usr/local/www/interfaces.php:1713
+#: src/usr/local/www/head.inc:340 src/usr/local/www/interfaces.php:1713
 #: src/usr/local/www/interfaces_ppps_edit.php:456
 #: src/usr/local/www/vpn_l2tp.php:179 src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "L2TP"
 msgstr "L2TP"
 
-#: src/usr/local/www/head.inc:338
+#: src/usr/local/www/head.inc:346
 msgid "CARP (failover)"
 msgstr "CARP (аварийный переход)"
 
-#: src/usr/local/www/head.inc:339 src/usr/local/www/index.php:352
+#: src/usr/local/www/head.inc:347 src/usr/local/www/index.php:353
 msgid "Dashboard"
 msgstr "Приборная панель"
 
-#: src/usr/local/www/head.inc:340
+#: src/usr/local/www/head.inc:348
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_gateway_groups.php:53
 #: src/usr/local/www/status_gateway_groups.php:65
@@ -15503,25 +15503,25 @@ msgstr "Приборная панель"
 msgid "Gateways"
 msgstr "Шлюзы"
 
-#: src/usr/local/www/head.inc:341 src/usr/local/www/status_dhcp_leases.php:36
+#: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 #: src/usr/local/www/system_advanced_misc.php:551
 msgid "DHCP Leases"
 msgstr "Срок аренды DHCP"
 
-#: src/usr/local/www/head.inc:342 src/usr/local/www/status_dhcpv6_leases.php:37
+#: src/usr/local/www/head.inc:350 src/usr/local/www/status_dhcpv6_leases.php:37
 msgid "DHCPv6 Leases"
 msgstr "Срок аренды DHCPv6"
 
-#: src/usr/local/www/head.inc:343 src/usr/local/www/status_filter_reload.php:33
+#: src/usr/local/www/head.inc:351 src/usr/local/www/status_filter_reload.php:33
 #: src/usr/local/www/status_filter_reload.php:59
 msgid "Filter Reload"
 msgstr "Перезагрузка Фильтра"
 
-#: src/usr/local/www/head.inc:349 src/usr/local/www/status_pkglogs.php:71
+#: src/usr/local/www/head.inc:357 src/usr/local/www/status_pkglogs.php:71
 msgid "Package Logs"
 msgstr "Логи Пакетов"
 
-#: src/usr/local/www/head.inc:351
+#: src/usr/local/www/head.inc:359
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/load_balancer_pool.php:83
@@ -15579,12 +15579,12 @@ msgstr "Логи Пакетов"
 msgid "Services"
 msgstr "Сервисы"
 
-#: src/usr/local/www/head.inc:353 src/usr/local/www/status_graph.php:110
+#: src/usr/local/www/head.inc:361 src/usr/local/www/status_graph.php:110
 #: src/usr/local/www/status_graph.php:267
 msgid "Traffic Graph"
 msgstr "График трафика"
 
-#: src/usr/local/www/head.inc:368 src/usr/local/www/interfaces_assign.php:496
+#: src/usr/local/www/head.inc:376 src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:85
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_gre.php:80
@@ -15602,71 +15602,71 @@ msgstr "График трафика"
 msgid "Wireless"
 msgstr "Беспроводное"
 
-#: src/usr/local/www/head.inc:408
+#: src/usr/local/www/head.inc:416
 msgid "pfSense Gold"
 msgstr "pfSense Gold"
 
-#: src/usr/local/www/head.inc:413 src/usr/local/www/help.php:529
+#: src/usr/local/www/head.inc:421 src/usr/local/www/help.php:529
 msgid "About this Page"
 msgstr "Об этой странице"
 
-#: src/usr/local/www/head.inc:415
+#: src/usr/local/www/head.inc:423
 msgid "Bug Database"
 msgstr "База данных ошибок"
 
-#: src/usr/local/www/head.inc:418
+#: src/usr/local/www/head.inc:426
 msgid "User Forum"
 msgstr "Форум Пользователей"
 
-#: src/usr/local/www/head.inc:419
+#: src/usr/local/www/head.inc:427
 msgid "Documentation"
 msgstr "Документация"
 
-#: src/usr/local/www/head.inc:420
+#: src/usr/local/www/head.inc:428
 msgid "Paid Support"
 msgstr "Платная Поддержка"
 
-#: src/usr/local/www/head.inc:421
+#: src/usr/local/www/head.inc:429
 msgid "pfSense Book"
 msgstr "Книга о pfSense"
 
-#: src/usr/local/www/head.inc:422
+#: src/usr/local/www/head.inc:430
 msgid "FreeBSD Handbook"
 msgstr "Справочник по FreeBSD"
 
-#: src/usr/local/www/head.inc:512 src/usr/local/www/head.inc:684
+#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
 msgid "Notices"
 msgstr "Заметки"
 
-#: src/usr/local/www/head.inc:549
+#: src/usr/local/www/head.inc:576
 msgid "Save dashboard layout"
 msgstr "Сохранить раскладку приборной панели"
 
-#: src/usr/local/www/head.inc:557
+#: src/usr/local/www/head.inc:584
 msgid "Available widgets"
 msgstr "Доступные виджеты"
 
-#: src/usr/local/www/head.inc:565
+#: src/usr/local/www/head.inc:592
 msgid "Log filter"
 msgstr "Фильтр лога"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:603
 msgid "Manage log"
 msgstr "Управление логами"
 
-#: src/usr/local/www/head.inc:594
+#: src/usr/local/www/head.inc:621
 msgid "Refresh Graph"
 msgstr "Обновить график"
 
-#: src/usr/local/www/head.inc:599
+#: src/usr/local/www/head.inc:626
 msgid "Export Graph"
 msgstr "Экспортировать график"
 
-#: src/usr/local/www/head.inc:639
+#: src/usr/local/www/head.inc:666
 msgid "Help for items on this page"
 msgstr "Помочь с пунктами на этой странице"
 
-#: src/usr/local/www/head.inc:650
+#: src/usr/local/www/head.inc:677
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -15676,7 +15676,7 @@ msgstr ""
 "%2$s%1$sНе производите изменений в GUI до тех пор, пока переустановка не "
 "завершится.%2$s "
 
-#: src/usr/local/www/head.inc:653
+#: src/usr/local/www/head.inc:680
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -15686,7 +15686,7 @@ msgstr ""
 "производите изменений в GUI до тех пор, пока переустановка не завершится."
 "%2$s "
 
-#: src/usr/local/www/head.inc:654
+#: src/usr/local/www/head.inc:681
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -15697,15 +15697,15 @@ msgstr ""
 "часов, используйте книпку \"Снять Блокировку Пакета\" на странице %3$s  и "
 "переустановите пакеты вручную. %2$s"
 
-#: src/usr/local/www/head.inc:664
+#: src/usr/local/www/head.inc:691
 msgid "This page is currently being managed by a remote machine."
 msgstr "В данный момент эта  страница  управляется удалённой машиной."
 
-#: src/usr/local/www/head.inc:723
+#: src/usr/local/www/head.inc:750
 msgid "Close"
 msgstr "Закрыть"
 
-#: src/usr/local/www/head.inc:725
+#: src/usr/local/www/head.inc:752
 msgid "Mark All as Read"
 msgstr "Пометить всё как прочтённое"
 
@@ -15747,16 +15747,16 @@ msgid "Contact a firewall administrator for more information."
 msgstr ""
 "Свяжитесь с администратором межсетевого экрана для большей информации."
 
-#: src/usr/local/www/index.php:231
+#: src/usr/local/www/index.php:232
 #, php-format
 msgid "Welcome to %s!"
 msgstr "Добро пожаловать в %s!"
 
-#: src/usr/local/www/index.php:232
+#: src/usr/local/www/index.php:233
 msgid "One moment while the initial setup wizard starts."
 msgstr "Подождите, пока запускается мастер первоначальной настройки."
 
-#: src/usr/local/www/index.php:233
+#: src/usr/local/www/index.php:234
 msgid ""
 "Embedded platform users: Please be patient, the wizard takes a little longer "
 "to run than the normal GUI."
@@ -15765,23 +15765,23 @@ msgstr ""
 "настройки потребовал несколько больше времени, чем обычный графический "
 "пользовательский интерфейс."
 
-#: src/usr/local/www/index.php:234
+#: src/usr/local/www/index.php:235
 #, php-format
 msgid "To bypass the wizard, click on the %s logo on the initial page."
 msgstr "Чтобы пропустить мастер, нажмите на логотип %s на начальной странице."
 
-#: src/usr/local/www/index.php:365 src/etc/inc/pfsense-utils.inc:326
+#: src/usr/local/www/index.php:366 src/etc/inc/pfsense-utils.inc:326
 msgid "Available Widgets"
 msgstr "Доступные Виджеты"
 
-#: src/usr/local/www/index.php:392
+#: src/usr/local/www/index.php:393
 #, php-format
 msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
 
-#: src/usr/local/www/index.php:612
+#: src/usr/local/www/index.php:624
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr "Один или более виджетов передвинуты, но изменения ещё не сохранены"
 
@@ -36731,7 +36731,6 @@ msgid "Gateway IP"
 msgstr "IP шлюза"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
-#: src/usr/local/www/widgets/widgets/interfaces.widget.php:225
 msgid "Unable to retrieve status"
 msgstr "Не удаётся узнать статус"
 
@@ -36980,19 +36979,19 @@ msgstr "Новый рисунок:"
 msgid "Saved RSS Widget feed via Dashboard."
 msgstr "RSS  фид Виджет сохранён через Приборную панель."
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:134
+#: src/usr/local/www/widgets/widgets/rss.widget.php:133
 msgid "Feeds"
 msgstr "Фиды"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:141
+#: src/usr/local/www/widgets/widgets/rss.widget.php:140
 msgid "# Stories"
 msgstr "# Истории"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:148
+#: src/usr/local/www/widgets/widgets/rss.widget.php:147
 msgid "Widget height"
 msgstr "Высота виджета"
 
-#: src/usr/local/www/widgets/widgets/rss.widget.php:155
+#: src/usr/local/www/widgets/widgets/rss.widget.php:154
 msgid "Content limit"
 msgstr "Лимит контента"
 

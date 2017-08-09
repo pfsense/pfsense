@@ -5323,12 +5323,37 @@ function upgrade_165_to_166() {
 	}
 }
 
-/* Force the Netgate Services and Support widget to be active on upgrade. */
+/* Force the Netgate Services and Support widget to be active on upgrade.
+   New widget is added at the top of column 2 */
 function upgrade_166_to_167() {
 	global $config;
 
 	if (strpos($config['widgets']['sequence'], 'netgate_services_and_support') === false) {
-		$config['widgets']['sequence'] .= ',netgate_services_and_support:col2:open:0';
+
+		$widgets = explode(",", $config['widgets']['sequence']);
+		$cnt = count($widgets);
+		$col2 = $cnt;
+		$newsequence = array();
+
+		// Locate the firt column 2 widget
+		for ($idx=0;$idx<$cnt;$idx++) {
+		if (strpos($widgets[$idx], 'col2') !== false) {
+			$col2 = $idx;
+			break;
+			}
+		}
+
+		// Loop through the widgets inserting the new widget before the first col2 widget
+		for ($old=0,$new=0;$old<$cnt;$old++,$new++) {
+			$newsequence[$new] = $widgets[$old];
+
+			if ($old == ($col2 - 1)) {
+				$new++;
+				$newsequence[$new] = "netgate_services_and_support:col2:open:0";
+			}
+		}
+
+		$config['widgets']['sequence'] = implode(",", $newsequence);
 	}
 }
 

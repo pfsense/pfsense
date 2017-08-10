@@ -370,7 +370,8 @@ $section->addPassword(new Form_Input(
 			'Route 53: Enter the Secret Access Key.%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
-			'DNSimple: Enter the API token.', '<br />');
+			'DNSimple: Enter the API token.%1$s' .
+			'CloudFlare: Enter the Global API Key.', '<br />');
 
 $section->addInput(new Form_Input(
 	'zoneid',

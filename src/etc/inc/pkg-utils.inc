@@ -1282,7 +1282,9 @@ function pkg_switch_repo($path) {
 		file_put_contents("/usr/local/etc/pkg.conf", $pkg_conf);
 	}
 
-	return pkg_update(true);
+	/* Update pfSense_version cache */
+	mwexec_bg("/etc/rc.update_pkg_metadata now");
+	return;
 }
 
 ?>

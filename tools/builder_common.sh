@@ -808,6 +808,9 @@ clone_to_staging_area() {
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "9600" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
+	# Disable SSH Password Based Auth
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh/sshdkeyonly" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system/ssh" -t elem -n "sshdkeyonly" ${DEFAULTCONF}
 	## Format
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
@@ -823,6 +826,8 @@ clone_to_staging_area() {
 	core_pkg_create default-config "ec2-ic" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	# Remove ec2 IC variant customization
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/block_external_services" ${DEFAULTCONF}
+	# Re-enable SSH Password Based Auth
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh/sshdkeyonly" ${DEFAULTCONF}
 
 	# Activate serial console in config.xml
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}

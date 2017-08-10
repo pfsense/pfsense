@@ -26,12 +26,14 @@
 # Nomikos Zografakis <nomikos@zografakis.ca>, 2017. #zanata
 # Pascal Pagan <pythagore@intnet.mu>, 2017. #zanata
 # Pat <ptr0377@gmail.com>, 2017. #zanata
+# Pierre <ppuiseux@henix.fr>, 2017. #zanata
 # Pierre BRIENNE <pierre@brienne.io>, 2017. #zanata
 # Provya <contact@provya.fr>, 2017. #zanata
 # Quentin <quent.fleury@gmail.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 # Viatitude <info@viatitude.com>, 2017. #zanata
 # berthelot <ivanb@admin-systeme.com>, 2017. #zanata
+# chris <csanchez@montpellier-events.com>, 2017. #zanata
 # damien naviliat <naviliat.damien@cfai84.com>, 2017. #zanata
 # lilyus <pierrick.veran@openmailbox.org>, 2017. #zanata
 # noel corentin <noel.corentin@gmail.com>, 2017. #zanata
@@ -40,26 +42,25 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 08:04-0300\n"
+"POT-Creation-Date: 2017-08-10 10:45-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-03 11:04-0400\n"
-"Last-Translator: MrJacK <raph@jeudy.de>\n"
+"PO-Revision-Date: 2017-08-10 05:26-0400\n"
+"Last-Translator: chris <csanchez@montpellier-events.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: src/etc/inc/auth.inc:50
-#, fuzzy
 msgid ""
 "Access Denied<br/><br/>Access attempt from a temporarily locked out client "
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
 "Accès refusé<br/><br/>Tentative d'accès via un client dont l'adresse est "
-"temporairement isolée.<br /><br />Veuillez essayer d'accéder au firewall "
+"temporairement isolée.<br /><br />Veuillez essayer d'accéder au pare-feu "
 "après l'expiration du délai."
 
 #: src/etc/inc/auth.inc:121
@@ -74,7 +75,7 @@ msgstr ""
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Redirection en cours ..."
+msgstr "Redirection..."
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
@@ -320,7 +321,7 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
-"L'IP utilisée pour se connecter à ce routeur n'est pas configurée "
+"L'adresse IP utilisée pour se connecter à ce routeur n'est pas configurée "
 "localement,  cela signifie qu'elle peut-être transmise par NAT ou par "
 "d'autres moyens.\n"
 "                                Si cette transmission n'est pas souhaitée, "
@@ -403,7 +404,7 @@ msgstr "URI"
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr "Adresse courriel"
+msgstr "Adresse de courriel"
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -412,7 +413,8 @@ msgstr "DANGER ! ATTENTION ! ACHTUNG !"
 #: src/etc/inc/config.console.inc:46
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s Requiert *AU MOINS* %2$s RAM pour fonctionner correctement.%3$s"
+msgstr ""
+"%1$s Requiert *AU MOINS* %2$s de RAM pour fonctionner correctement.%3$s"
 
 #: src/etc/inc/config.console.inc:47
 #, php-format
@@ -3221,7 +3223,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Client mobile"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3136
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3885,47 +3887,51 @@ msgid "Bosnian"
 msgstr "Bosniaque"
 
 #: src/etc/inc/pfsense-utils.inc:2941
-msgid "German (Germany)"
-msgstr "Allemand (Allemagne)"
-
-#: src/etc/inc/pfsense-utils.inc:2942
-msgid "English"
-msgstr "English"
-
-#: src/etc/inc/pfsense-utils.inc:2943
-msgid "Spanish"
-msgstr "Spanish"
-
-#: src/etc/inc/pfsense-utils.inc:2944
-msgid "Spanish (Argentina)"
-msgstr "Espagnol (Argentine)"
-
-#: src/etc/inc/pfsense-utils.inc:2945
-msgid "Norwegian Bokmål"
-msgstr "Norvégien Bokmål"
-
-#: src/etc/inc/pfsense-utils.inc:2946
-msgid "Portuguese (Brazil)"
-msgstr "Portugais (Brésil)"
-
-#: src/etc/inc/pfsense-utils.inc:2947
-msgid "Russian"
-msgstr "Russe"
-
-#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Simplified, China)"
 msgstr "Chinese (Simplified, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
 msgstr "Chinese (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3144 src/etc/inc/pfsense-utils.inc:3159
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:2943
+msgid "Dutch"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2944
+msgid "English"
+msgstr "English"
+
+#: src/etc/inc/pfsense-utils.inc:2945
+msgid "German (Germany)"
+msgstr "Allemand (Allemagne)"
+
+#: src/etc/inc/pfsense-utils.inc:2946
+msgid "Norwegian Bokmål"
+msgstr "Norvégien Bokmål"
+
+#: src/etc/inc/pfsense-utils.inc:2947
+msgid "Portuguese (Brazil)"
+msgstr "Portugais (Brésil)"
+
+#: src/etc/inc/pfsense-utils.inc:2948
+msgid "Russian"
+msgstr "Russe"
+
+#: src/etc/inc/pfsense-utils.inc:2949
+msgid "Spanish"
+msgstr "Spanish"
+
+#: src/etc/inc/pfsense-utils.inc:2950
+msgid "Spanish (Argentina)"
+msgstr "Espagnol (Argentine)"
+
+#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "No Service"
 msgstr "Pas de service"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3197
+#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3941,83 +3947,83 @@ msgstr "Pas de service"
 msgid "Mode"
 msgstr "Mode"
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Restricted Service"
 msgstr "Service Limité"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Valid Service"
 msgstr "Service Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Regional Service"
 msgstr "Service de restriction regional"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Powersaving Service"
 msgstr "Service d'économie d'énergie"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Unknown Service"
 msgstr "Service inconnu"
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Invalid SIM/locked State"
 msgstr "Invalide SIM/Etat Bloqué"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Valid SIM State"
 msgstr "Etat de la SIM Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM CS State"
 msgstr "Etat de la SIM CS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM PS State"
 msgstr "Etat de la SIM PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS/PS State"
 msgstr "Etat de la SIM CS/PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Missing SIM State"
 msgstr "Etat de la SIM manquant"
 
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Limited Service"
 msgstr "Service limité"
 
-#: src/etc/inc/pfsense-utils.inc:3202
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Initializing Service"
 msgstr "Initialisation du service"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Network Lock error Service"
 msgstr "Service d'erreur de verrouillage réseau"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Locked Service"
 msgstr "Service Reseau Verrouillé"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Service MCC/MNC déverrouillé ou correct"
 
-#: src/etc/inc/pfsense-utils.inc:3211
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "No action State"
 msgstr "Aucun état d'action"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "Network lock State"
 msgstr "Etat des réseaux verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "(U)SIM card lock State"
 msgstr "Etat des cartes(U)SIM verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Etat des réseaux et des cartes (U)SIM verouillés"
 
@@ -7795,9 +7801,9 @@ msgid "Upgraded static route for %s"
 msgstr "Statique Route mis a jour pour %s"
 
 #: src/etc/inc/upgrade_config.inc:923
-#, fuzzy, php-format
+#, php-format
 msgid "Sitedown pool for VS: %s"
-msgstr "Site down pour le VS: %s"
+msgstr "Site éteint pour le VS: %s"
 
 #: src/etc/inc/upgrade_config.inc:1086
 #, php-format
@@ -8030,9 +8036,9 @@ msgid "cant read %1$s/voucher_%2$s_used_%3$s.db"
 msgstr "Impossible de lire %1$s/voucher_%2$s_used_%3$s.db"
 
 #: src/etc/inc/voucher.inc:622
-#, fuzzy, php-format
+#, php-format
 msgid "Voucher: %s"
-msgstr "Bon: %s"
+msgstr "Bon d'échange: %s"
 
 #: src/etc/inc/voucher.inc:677
 msgid "Syncing vouchers"
@@ -8794,13 +8800,13 @@ msgstr "Syslog"
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/system_routes.php:211
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:35
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
@@ -8812,9 +8818,8 @@ msgid "Static routes"
 msgstr "Routes statiques"
 
 #: src/usr/local/www/diag_backup.php:439
-#, fuzzy
 msgid "System tunables"
-msgstr "Réglages système"
+msgstr "Réglables pour le système"
 
 #: src/usr/local/www/diag_backup.php:440
 msgid "SNMP Server"
@@ -9070,7 +9075,7 @@ msgid "Upload"
 msgstr "Téléverser"
 
 #: src/usr/local/www/diag_command.php:296
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
@@ -9079,7 +9084,6 @@ msgstr ""
 "complète est ci-dessous."
 
 #: src/usr/local/www/diag_command.php:299
-#, fuzzy
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
@@ -9093,10 +9097,13 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Prenez note que le numéro de ligne dans la réponse complète PHP doit être %s "
+"lignes trop grande. Le code imbriqué et les les erreurs eval() peuvent "
+"pointer incorrectement à \"ligne 1\"."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Localisateur d'errreur:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
@@ -9180,7 +9187,7 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:215
 #: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
-#: src/usr/local/www/system_update_settings.php:235
+#: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
 msgstr "Diff"
 
@@ -9513,9 +9520,8 @@ msgstr "États"
 #: src/usr/local/www/diag_dump_states_sources.php:59
 #: src/usr/local/www/diag_resetstate.php:84
 #: src/usr/local/www/diag_resetstate.php:104
-#, fuzzy
 msgid "Source Tracking"
-msgstr "Affinité de session"
+msgstr "Surveillance de source"
 
 #: src/usr/local/www/diag_dump_states.php:111
 #: src/usr/local/www/diag_dump_states_sources.php:60
@@ -9624,7 +9630,6 @@ msgid "Filters"
 msgstr "Filtres"
 
 #: src/usr/local/www/diag_dump_states_sources.php:115
-#, fuzzy
 msgid "Current Source Tracking Entries"
 msgstr "Entrées de la table d'affinité de session"
 
@@ -10144,6 +10149,15 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
+"%1$s Le mode non-promiscuité capture seulement le trafic qui relève "
+"directement de l'hôte (envoyé par lui, envoyé ou broadcasté vers lui, ou "
+"routé à travers lui) et ne montre pas les paquets qui sont ignorés au niveau "
+"de l'adaptateur réseau.%2$s%3$sMode promiscuité%4$s (\"sniffing\") capture "
+"toutes les données vues par l'adaptateur, qu'ils soient ou pas valide ou en "
+"relation avec l'hôte,  mais dans certains cas peuvent avoir des effets "
+"collatéraux indésirable et pas tous les adaptateurs supportent cette option. "
+"Cliquez Info pour avoir des détails %5$sMode promiscuité requiert plus de "
+"process de noyeau"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -10634,7 +10648,7 @@ msgstr "Utilisez une expression régulière pour filtrer les tables."
 #: src/usr/local/www/system_certmanager.php:587
 #: src/usr/local/www/system_certmanager.php:1044
 #: src/usr/local/www/system_certmanager.php:1092
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
 msgstr "Mettre à jour"
@@ -10790,9 +10804,9 @@ msgid "The information listed for each socket is:"
 msgstr "L'information listée pour chaque socket est :"
 
 #: src/usr/local/www/diag_sockets.php:115
-#, fuzzy, php-format
+#, php-format
 msgid "%1$sUSER%2$s\t%3$sThe user who owns the socket.%4$s"
-msgstr "%1$sUSER%2$s    %3$sL'utilisateur propriétaire de la socket.%4$s"
+msgstr "%1$sUSER%2$s    %3$sL'utilisateur propriétaire du socket.%4$s"
 
 #: src/usr/local/www/diag_sockets.php:116
 #, php-format
@@ -11231,7 +11245,6 @@ msgstr ""
 "instruction sur ce qu'elle devrait faire."
 
 #: src/usr/local/www/easyrule.php:121
-#, fuzzy
 msgid ""
 "This page is meant to be called from the block/pass buttons on the Firewall "
 "Logs page"
@@ -12800,7 +12813,7 @@ msgid "*Redirect target port"
 msgstr "Port de redirection cible"
 
 #: src/usr/local/www/firewall_nat_edit.php:879
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Specify the port on the machine with the IP address entered above. In case "
 "of a port range, specify the beginning port of the range (the end port will "
@@ -12819,13 +12832,13 @@ msgid "No XMLRPC Sync"
 msgstr "Pas de synchronisation XMLRPC"
 
 #: src/usr/local/www/firewall_nat_edit.php:905
-#, fuzzy
 msgid ""
 "This prevents the rule on Master from automatically syncing to other CARP "
 "members. This does NOT prevent the rule from being overwritten on Slave."
 msgstr ""
-"Ceci empêche la régle sur Master de se synchroniser avec les autres membres "
-"CARP. Attention, cela n'empéche pas que la régle soit écraser sur les Slave."
+"Ceci empêche la règle sur Maitre de se synchroniser automatiquement avec les "
+"autres membres CARP. Cela n'empêche PAS que la règle soit écrasée sur "
+"l'Esclave."
 
 #: src/usr/local/www/firewall_nat_edit.php:914
 msgid "Enable (NAT + Proxy)"
@@ -12862,14 +12875,13 @@ msgid "Add unassociated filter rule"
 msgstr "Ajouter une règle de filtrage non associée"
 
 #: src/usr/local/www/firewall_nat_edit.php:960
-#, fuzzy
 msgid ""
 "The \"pass\" selection does not work properly with Multi-WAN. It will only "
 "work on an interface containing the default gateway."
 msgstr ""
-"Le \"pass\" sélectionné ne fonctionne pas correctement avec plusieurs WAN. "
-"Cela va seulement fonctionner avec l'interface qui contient la passerelle "
-"par défaut."
+"La sélection de \"pass\" ne fonctionne pas correctement avec plusieurs WAN. "
+"Cela fonctionnera uniquement sur une  interface ayant la passerelle par "
+"défaut."
 
 #: src/usr/local/www/firewall_nat_edit.php:1154
 #: src/usr/local/www/firewall_rules_edit.php:1792
@@ -12931,10 +12943,9 @@ msgid "Internal prefix"
 msgstr "Préfixe interne"
 
 #: src/usr/local/www/firewall_nat_npt.php:268
-#, fuzzy
 msgid "One or more NPt mappings have been moved but have not yet been saved"
 msgstr ""
-"Un ou plusieurs NPt mapping ont été déplacés mais n'ont pas encore été "
+"Une ou plusieurs assignations NPt ont été déplacés mais n'ont pas encore été "
 "sauvegardés"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:97
@@ -15929,7 +15940,7 @@ msgstr ""
 "D'autres paramètres pour le tableau de bord sont disponible depuis la page "
 "<a href=\"%s\">Configuration générale</a>"
 
-#: src/usr/local/www/index.php:624
+#: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 "Un ou plusieurs widgets ont été déplacés, mais n'ont pas été sauvegardés"
@@ -17268,6 +17279,8 @@ msgid ""
 "not be allowed by some cards.\tThese settings may not be able to add "
 "additional channels that are not already supported."
 msgstr ""
+"Ces réglages peuvent affecter quels canaux sont disponibles et la puissance "
+"maximum transmise autorisées sur ces canaux. "
 
 #: src/usr/local/www/interfaces.php:3029
 msgid "Network-Specific Wireless Configuration"
@@ -17828,7 +17841,7 @@ msgstr "Le délai d'attente doit être un nombre entier."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:158
 msgid "Forward Delay needs to be an integer between 4 and 30."
-msgstr ""
+msgstr "Le délais de transfert doit être un nombre entier entre 4 et 30"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:161
 msgid "Hello time for STP needs to be an integer between 1 and 2."
@@ -17842,6 +17855,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:167
 msgid "Transmit Hold Count for STP needs to be an integer between 1 and 10."
 msgstr ""
+"Le compte retenu pour stp transmis doit être un nombre entier entre 1 et 10"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:171
 #, php-format
@@ -17870,6 +17884,8 @@ msgid ""
 "Sticky interface (%s) is not part of the bridge. Remove the sticky interface "
 "to continue."
 msgstr ""
+"L'interface accolée (%s) n'est par partie prenante du pont. Supprimer "
+"l'interface accolée pour continuer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:199
 #, php-format
@@ -17895,6 +17911,8 @@ msgid ""
 "Edge interface (%s) is not part of the bridge. Remove the edge interface to "
 "continue."
 msgstr ""
+"L'interface de début (%s) n'est pas une part du pont. Supprimer l'interface "
+"de début pour continuer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:226
 #, php-format
@@ -17902,6 +17920,8 @@ msgid ""
 "Auto Edge interface (%s) is not part of the bridge. Remove the auto edge "
 "interface to continue."
 msgstr ""
+"L'interface automatique du début (%s) n'est pas une part du pont. Supprimer "
+"l'interface de début automatique pour continuer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:234
 #, php-format
@@ -17939,6 +17959,8 @@ msgid ""
 "Span interface (%s) cannot be part of the bridge. Remove the span interface "
 "from bridge members to continue."
 msgstr ""
+"L'interface d'espacement (%s) ne peut pas être une partie du pont. Supprimer "
+"l'interface d'écartement des membres du pont pour continuer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:269
 #, php-format
@@ -17946,6 +17968,8 @@ msgid ""
 "%s is part of another bridge. Remove the interface from bridge members to "
 "continue."
 msgstr ""
+"%s est une part d'un autre pont. Supprimer l'interface du membre du pont "
+"pour continuer."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:345
 #: src/usr/local/www/interfaces_gif_edit.php:128
@@ -17985,6 +18009,7 @@ msgstr "Taille du cache"
 #: src/usr/local/www/interfaces_bridge_edit.php:441
 msgid "Set the size of the bridge address cache. The default is 2000 entries."
 msgstr ""
+"Définit la taille du cache d'adresses du pont. Par défaut 2000 entrées."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:445
 msgid "Cache expire time"
@@ -18002,7 +18027,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:454
 msgid "Span Port"
-msgstr ""
+msgstr "Ecart de ports."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:458
 #, php-format
@@ -20200,7 +20225,7 @@ msgstr ""
 "rechercher dans les noms et description de paquets."
 
 #: src/usr/local/www/pkg_mgr.php:175
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages"
 msgstr "Paquets"
 
@@ -20220,13 +20245,13 @@ msgstr "Échec"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
-#: src/usr/local/www/system_update_settings.php:147
+#: src/usr/local/www/system_update_settings.php:138
 msgid "System Update"
 msgstr "Mise à jour système"
 
 #: src/usr/local/www/pkg_mgr_install.php:247
-#: src/usr/local/www/system_update_settings.php:107
-#: src/usr/local/www/system_update_settings.php:148
+#: src/usr/local/www/system_update_settings.php:98
+#: src/usr/local/www/system_update_settings.php:139
 msgid "Update Settings"
 msgstr "Paramètres de mise à jour"
 
@@ -32293,100 +32318,100 @@ msgid ""
 "list."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:99
+#: src/usr/local/www/system_update_settings.php:90
 msgid "Saved system update settings."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:101
+#: src/usr/local/www/system_update_settings.php:92
 msgid "Changes have been saved successfully"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:153
+#: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:157
+#: src/usr/local/www/system_update_settings.php:148
 msgid "*Branch"
 msgstr "*Branche"
 
-#: src/usr/local/www/system_update_settings.php:160
+#: src/usr/local/www/system_update_settings.php:151
 #, php-format
 msgid ""
 "Please select the stable, or the development branch from which to update the "
 "system firmware. %1$sUse of the development version is at your own risk!"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:165
+#: src/usr/local/www/system_update_settings.php:156
 msgid "Updates"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:169
+#: src/usr/local/www/system_update_settings.php:160
 msgid "Dashboard check"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:177
+#: src/usr/local/www/system_update_settings.php:168
 msgid "GitSync"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:181
+#: src/usr/local/www/system_update_settings.php:172
 msgid "Auto sync on update"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:184
+#: src/usr/local/www/system_update_settings.php:175
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:196
+#: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:199
+#: src/usr/local/www/system_update_settings.php:190
 #, php-format
 msgid ""
 "The most recently used repository was %s. This repository will be used if "
 "the field is left blank."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:217
+#: src/usr/local/www/system_update_settings.php:208
 msgid "Branch name"
 msgstr "Nom de la branche"
 
-#: src/usr/local/www/system_update_settings.php:220
+#: src/usr/local/www/system_update_settings.php:211
 #, php-format
 msgid ""
 "The most recently used branch was \"%1$s\". (Usually the branch name is "
 "master)%2$sNote: Sync will not be performed if a branch is not specified."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:223
+#: src/usr/local/www/system_update_settings.php:214
 msgid "Sync options"
 msgstr "Options de synchronisation"
 
-#: src/usr/local/www/system_update_settings.php:230
+#: src/usr/local/www/system_update_settings.php:221
 msgid "Copy of only the updated files."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:237
+#: src/usr/local/www/system_update_settings.php:228
 msgid "Copy of only the different or missing files."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:244
+#: src/usr/local/www/system_update_settings.php:235
 #, php-format
 msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:251
+#: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:258
+#: src/usr/local/www/system_update_settings.php:249
 #, php-format
 msgid "Dry-run only.%1$sNo files copied."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:260
+#: src/usr/local/www/system_update_settings.php:251
 msgid ""
 "See \"playback gitsync --help\" in console \"PHP Shell + pfSense tools\" for "
 "additional information."
@@ -35217,7 +35242,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1022
 msgid "Server Bridge DHCP End"
-msgstr ""
+msgstr "Fin du serveur pont DHCP"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1036
 msgid "IPv4 Local network(s)"
@@ -35551,11 +35576,7 @@ msgstr ""
 msgid "ok"
 msgstr "Valider"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:141
-msgid "Retrieving package data"
-msgstr "Récupération des données de paquet"
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
 msgstr "Les paquets peuvent être ajoutés/gérés ici:"
 
@@ -37713,7 +37734,7 @@ msgstr "Supprimer les messages ARP"
 
 #: src/usr/local/www/system_advanced_network.php:296
 msgid "Reset all states if WAN IP Address changes"
-msgstr ""
+msgstr "Remet à zéro tous les états si l'adresse IP WAN change."
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"
@@ -37902,27 +37923,27 @@ msgstr "Portail captif"
 msgid "Disable this static route"
 msgstr "Désactiver cette route statique"
 
-#: src/usr/local/www/system_update_settings.php:170
+#: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the automatic dashboard auto-update check"
 msgstr " Désactiver la mise à jour automatique du tableau de bord"
 
-#: src/usr/local/www/system_update_settings.php:182
+#: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
 msgstr "Activer la synchronisation des dépôts/branches avant un redémarrage"
 
-#: src/usr/local/www/system_update_settings.php:228
+#: src/usr/local/www/system_update_settings.php:219
 msgid "Minimal"
 msgstr "Minimal"
 
-#: src/usr/local/www/system_update_settings.php:242
+#: src/usr/local/www/system_update_settings.php:233
 msgid "Show Files"
 msgstr "Afficher les documents"
 
-#: src/usr/local/www/system_update_settings.php:249
+#: src/usr/local/www/system_update_settings.php:240
 msgid "Show Command"
 msgstr "Afficher les commandes"
 
-#: src/usr/local/www/system_update_settings.php:256
+#: src/usr/local/www/system_update_settings.php:247
 msgid "Dry Run"
 msgstr "Essai à vide"
 
@@ -37994,7 +38015,7 @@ msgstr "Renseigner une liste de serveur DNS aux clients"
 #: src/usr/local/www/vpn_openvpn_csc.php:555
 #: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
-msgstr "Fournisser une liste de serveur WINS pour les clients"
+msgstr "Fournir une liste de serveur WINS aux clients"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:659
 #, fuzzy
@@ -38070,7 +38091,7 @@ msgstr "Activer le nouage d'interface stricte"
 msgid "Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"
 msgstr ""
 "Accepter les charges utiles d'ID et de HASH non cryptées en mode principal "
-"IKEv1"
+"(Main Mode) IKEv1"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:289
 msgid "Enable MSS clamping on VPN traffic"
@@ -38152,8 +38173,8 @@ msgstr "N'ajoutez pas ou ne supprimez pas de routes automatiquement"
 #: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
-"Utilisez des opérations d'E / S rapides avec des écritures UDP sur tun / tap."
-" Expérimental."
+"Utilisez des opérations d'E/S rapides avec des écritures UDP sur tun / tap. "
+"Expérimental."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable this override"
@@ -38204,14 +38225,14 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
-msgstr "Autoriser la communication entre les clients connectés et ce serveur"
+msgstr "Autoriser la communication entre les clients connectés à ce serveur"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
-"Autoriser plusieurs connexions simultanées des clients qui utilise le même "
+"Autoriser plusieurs connexions simultanées des clients qui utilisent le même "
 "nom commun."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1123

@@ -10,12 +10,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 08:04-0300\n"
+"POT-Creation-Date: 2017-08-10 10:45-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-30 09:16-0400\n"
-"Last-Translator: Denis Karpushin <denis@netgate.com>\n"
+"PO-Revision-Date: 2017-08-10 08:38-0400\n"
+"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -28,6 +28,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Отказано в доступе <br/> <br/> при попытке доступа с временно "
+"заблокированного адреса клиента. <br /> <br /> Повторите попытку доступа к "
+"брандмауэру после истечения срока блокировки."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -256,7 +259,7 @@ msgstr "Данное устройство сейчас поддерживает�
 #: src/etc/inc/authgui.inc:239
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:241
 #, php-format
@@ -275,6 +278,11 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"IP-адрес, используемый для доступа к этому маршрутизатору, не настроен "
+"локально, это может быть следствием того, что запрос перенаправлен NAT или "
+"другими средствами.\n"
+"                                 Если эта пересылка неожиданна, следует "
+"проверить, что не происходит атака «man-in-the-midle» ."
 
 #: src/etc/inc/authgui.inc:355
 msgid "The browser must support cookies to login."
@@ -625,6 +633,8 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"Разрешение на сохранение настроек отклонено разрешением \"Пользователь - "
+"Настройки: Запрет записи конфигурации\"  для пользователя '%s'."
 
 #: src/etc/inc/config.lib.inc:483
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -3103,7 +3113,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Мобильный Клиент"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3136
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3752,47 +3762,51 @@ msgid "Bosnian"
 msgstr "Боснийский"
 
 #: src/etc/inc/pfsense-utils.inc:2941
-msgid "German (Germany)"
-msgstr "Немецкий (Германия)"
-
-#: src/etc/inc/pfsense-utils.inc:2942
-msgid "English"
-msgstr "Английский"
-
-#: src/etc/inc/pfsense-utils.inc:2943
-msgid "Spanish"
-msgstr "Испанский"
-
-#: src/etc/inc/pfsense-utils.inc:2944
-msgid "Spanish (Argentina)"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2945
-msgid "Norwegian Bokmål"
-msgstr "Норвежский"
-
-#: src/etc/inc/pfsense-utils.inc:2946
-msgid "Portuguese (Brazil)"
-msgstr "Португальский (Бразильский)"
-
-#: src/etc/inc/pfsense-utils.inc:2947
-msgid "Russian"
-msgstr "Русский"
-
-#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Simplified, China)"
 msgstr "Китайский (Упрощённый, Китай)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
 msgstr "Китайский (Тайвань)"
 
-#: src/etc/inc/pfsense-utils.inc:3144 src/etc/inc/pfsense-utils.inc:3159
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:2943
+msgid "Dutch"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2944
+msgid "English"
+msgstr "Английский"
+
+#: src/etc/inc/pfsense-utils.inc:2945
+msgid "German (Germany)"
+msgstr "Немецкий (Германия)"
+
+#: src/etc/inc/pfsense-utils.inc:2946
+msgid "Norwegian Bokmål"
+msgstr "Норвежский"
+
+#: src/etc/inc/pfsense-utils.inc:2947
+msgid "Portuguese (Brazil)"
+msgstr "Португальский (Бразильский)"
+
+#: src/etc/inc/pfsense-utils.inc:2948
+msgid "Russian"
+msgstr "Русский"
+
+#: src/etc/inc/pfsense-utils.inc:2949
+msgid "Spanish"
+msgstr "Испанский"
+
+#: src/etc/inc/pfsense-utils.inc:2950
+msgid "Spanish (Argentina)"
+msgstr "Испанский (Аргентина)"
+
+#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "No Service"
 msgstr "Нет Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3197
+#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3808,83 +3822,83 @@ msgstr "Нет Сервиса"
 msgid "Mode"
 msgstr "Режим"
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Restricted Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Valid Service"
 msgstr "Валидный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Regional Service"
 msgstr "Ограниченный Региональный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Powersaving Service"
 msgstr "Сервис сбережения электроэнергии"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Unknown Service"
 msgstr "Неизвестный сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Invalid SIM/locked State"
 msgstr "Невалидный SIM/заблокированное состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Valid SIM State"
 msgstr "Валидное SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM CS State"
 msgstr "Валидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM PS State"
 msgstr "Невалидное SIM CS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS/PS State"
 msgstr "Невалидное SIM CS/PS состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Missing SIM State"
 msgstr "Недостающее SIM состояние"
 
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Limited Service"
 msgstr "Ограниченный Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3202
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Initializing Service"
 msgstr "Инициализация Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Network Lock error Service"
 msgstr "Сетевая блокировка ошибка Сервиса"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Locked Service"
 msgstr "Сервис, заблокированный по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Разблокируйте или поправьте MCC/MNC Сервис"
 
-#: src/etc/inc/pfsense-utils.inc:3211
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "No action State"
 msgstr "Состояние бездействия"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "Network lock State"
 msgstr "Состояние блокировки по сети"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "(U)SIM card lock State"
 msgstr "Состояние блокировки (U)SIM карта"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Состояние блокировки (U)SIM карта по сети"
 
@@ -8687,13 +8701,13 @@ msgstr "Системный журнал"
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/system_routes.php:211
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:35
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
@@ -8966,13 +8980,15 @@ msgstr "Загрузить"
 msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
-msgstr ""
+msgstr "Строка %s вызвала ошибку и была выделена. Ниже приведен полный ответ."
 
 #: src/usr/local/www/diag_command.php:299
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Код вызвал ошибку, но не удалось идентифицировать строку содержащую причину. "
+"Ниже приведен полный ответ."
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -8980,10 +8996,13 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Обратите внимание, что номер строки в полном ответе PHP будет на %s строк "
+"слишком большим. Вложенный код и ошибки eval() могут некорректно указывать "
+"на \"строку 1\"."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Ошибка локатора:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
@@ -9066,7 +9085,7 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:215
 #: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
-#: src/usr/local/www/system_update_settings.php:235
+#: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
 msgstr "Разница"
 
@@ -10023,6 +10042,22 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
+"%1$sНе-промискуитетный режим производит захват трафика, имеющего только "
+"прямое отношение к хосту (отправлен от него, отправлен или широковещательно "
+"отправлен к нему, или смаршрутизирован через него); данный режим не "
+"показывает пакеты, которые игнорируются на уровне сетевого адаптера. "
+"%2$s%3$sПромискуитетный режим%4$s (\"прослушивание\") производит захват всех "
+"данных, которые находятся в поле зрения адаптера, вне зависимости от "
+"валидности этих данных относительно хоста. В некоторых случаях этот режим "
+"может иметь нежелательные побочные эффекты, и поэтому не все адаптеры "
+"поддерживают данную опцию. Нажмите Info для подробностей %5$sПромискуитетный "
+"режим требует больше обработки пакетов на уровне ядра. Это накладывает "
+"несколько более высокие требования к ресурсам системы, особенно к системам "
+"на очень загруженных сетях или со слабыми процессорами. Изменение в "
+"обработке пакетов может позволить стороннему хосту обнаружить, что адаптер "
+"находится в промискуитетном режиме или сделать слепок ядра (смотри %6$s). "
+"Некоторые сетевые адаптеры не поддерживают или работают некорректно в "
+"неразборчивом режиме (смотри %7$s).%8$s"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -10509,7 +10544,7 @@ msgstr "Используйте регулярные выражения что б
 #: src/usr/local/www/system_certmanager.php:587
 #: src/usr/local/www/system_certmanager.php:1044
 #: src/usr/local/www/system_certmanager.php:1092
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
 msgstr "Обновить"
@@ -12400,7 +12435,7 @@ msgstr "Перенаправить целевой IP "
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "Представленный интерфейс не существует."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15780,8 +15815,10 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Доступна другая настройка на приборной панели на странице <a href="
+"\"%s\">Общая Настройка</a> "
 
-#: src/usr/local/www/index.php:624
+#: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr "Один или более виджетов передвинуты, но изменения ещё не сохранены"
 
@@ -16655,15 +16692,15 @@ msgstr "Сообщение о префиксе интерфейса"
 
 #: src/usr/local/www/interfaces.php:2397
 msgid "Select prefix interface"
-msgstr ""
+msgstr "Выберите префикс интерфейса"
 
 #: src/usr/local/www/interfaces.php:2400
 msgid "Prefix Interface"
-msgstr ""
+msgstr "Префикс интерфейса"
 
 #: src/usr/local/www/interfaces.php:2403
 msgid "Select the interface on which to apply the prefix delegation."
-msgstr ""
+msgstr "Выберите интерфейс, к которому применить делегирование префикса."
 
 #: src/usr/local/www/interfaces.php:2405
 msgid "Authentication statement"
@@ -17948,7 +17985,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:527
 msgid "Enable IPv6 auto linklocal"
-msgstr ""
+msgstr "Включить автоматический  IPv6 локального линка"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:530
 msgid ""
@@ -17956,6 +17993,8 @@ msgid ""
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
 msgstr ""
+"Когда включено, флаг AUTO_LINKLOCAL устанавливается на интерфейса моста и "
+"удаляется на каждом интерфейсе - участнике моста."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid "Enable RSTP/STP"
@@ -20164,7 +20203,7 @@ msgstr ""
 "описаний пакетов."
 
 #: src/usr/local/www/pkg_mgr.php:175
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages"
 msgstr "Пакеты"
 
@@ -20184,13 +20223,13 @@ msgstr "Не удалось"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
-#: src/usr/local/www/system_update_settings.php:147
+#: src/usr/local/www/system_update_settings.php:138
 msgid "System Update"
 msgstr "Обновление Системы"
 
 #: src/usr/local/www/pkg_mgr_install.php:247
-#: src/usr/local/www/system_update_settings.php:107
-#: src/usr/local/www/system_update_settings.php:148
+#: src/usr/local/www/system_update_settings.php:98
+#: src/usr/local/www/system_update_settings.php:139
 msgid "Update Settings"
 msgstr "Настройки Обновлений"
 
@@ -21212,13 +21251,13 @@ msgstr "Текущая Страницу Портала"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Прямая трансляция"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Посмотреть Содержание Страницы"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -24616,6 +24655,18 @@ msgid ""
 "a pool of NTP servers and not a single address. This is assumed for *.pool."
 "ntp.org."
 msgstr ""
+"NTP будет синхронизирован, только если время большинства серверов "
+"согласовывается. Для наилучшего результата следует указать здесь от трёх до "
+"пяти серверов (%4$sстраницы техподдержки NTP рекомендуют по крайней мере 4 "
+"или 5%5$s), или целый пул. Если только один сервер настроен, он "
+"%2$sбудет%3$s принят как источник времени, а если 2 сервера настроены, и их "
+"время не согласуется, %2$sни один из них%3$s не будет принят к сведению в "
+"качестве источника времени. Опция %1$s %2$sПредпочесть%3$s означает, что NTP "
+"должен стремиться в первую очередь использовать данный сервер. Опция "
+"1$s%2$sНе выбирать%3$s означает, что NTP не должен использовать данный "
+"сервер, но статистики для данного сервера будут собираться и отображаться. "
+"Опция %1$s%2$sIs как Пул%3$s означает, что данная запись является пулом "
+"серверов NTP, а не одним адресом. Это предполагается для  *.pool.ntp.org."
 
 #: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
@@ -24680,6 +24731,17 @@ msgid ""
 "information and files for downloading can be found on their %1$swebsite%2$s, "
 "and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
+"Сдвиг в секундах может быть добавлен или вычтен в конце июня или декабря. "
+"Сдвиг в секундах находятся в ведении %1$sIERS%2$s, которая публикует "
+"значение сдвига в их Бюллетени С заблаговременно - примерно за 6-12 месяцев. "
+"Как правило, данная корректировка нужна, только если сервер является "
+"сервером 1 стратума NTP, но многие серверы не анонсируют последующий свдиг в "
+"секундах, когда другие серверы NTP синхронизируют к ним  этот сдвиг. "
+"%3$s%4$sЕсли сдвиг в секундах важен для ваших сетевых сервисов, будет "
+"%6$sхорошей практикой%2$s скачивать и добавлять сдвиг в секундах по крайней "
+"мере за день ранее для любой коррекции времени. %5$s.%3$s Больше информации "
+"и файлов для скачивания могут быть найдены на их %1$sвебсайте%2$s, а также "
+"на вебсайтах %7$NIST%2$s и %8$sNTP%2$s."
 
 #: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
@@ -25811,6 +25873,8 @@ msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
 msgstr ""
+"Тип Локальной Зоны Системного Домена «перенаправление» несовместим с "
+"динамической регистрацией DHCP."
 
 #: src/usr/local/www/services_unbound.php:175
 msgid ""
@@ -29001,6 +29065,12 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
+"Не используйте '.local' в качестве конечной части домена (TLD), домен '."
+"local' - это %1$sшироко используемый%2$s mDNS (включая Bonjour / Rendezvous /"
+" Airprint / Airplay от Avahi и Apple OS X. ), А также некоторые системы "
+"Windows и сетевые устройства. Они не будут корректно работать в сети, если "
+"маршрутизатор использует '.local'. Варианты, такие как '.local.lan' или '."
+"mylocal', являются безопасными."
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -29121,43 +29191,43 @@ msgstr "ВебКонфигуратор"
 
 #: src/usr/local/www/system.php:613
 msgid "Blue"
-msgstr ""
+msgstr "Синий"
 
 #: src/usr/local/www/system.php:613
 msgid "Green"
-msgstr ""
+msgstr "Зелёный"
 
 #: src/usr/local/www/system.php:613
 msgid "Red"
-msgstr ""
+msgstr "Красный"
 
 #: src/usr/local/www/system.php:614
 msgid "Purple"
-msgstr ""
+msgstr "Фиолетовый"
 
 #: src/usr/local/www/system.php:614
 msgid "Gray"
-msgstr ""
+msgstr "Серый"
 
 #: src/usr/local/www/system.php:614
 msgid "Dark gray"
-msgstr ""
+msgstr "Темно-Серый"
 
 #: src/usr/local/www/system.php:615
 msgid "Brown"
-msgstr ""
+msgstr "Коричневый"
 
 #: src/usr/local/www/system.php:615
 msgid "Orange"
-msgstr ""
+msgstr "Оранжевый"
 
 #: src/usr/local/www/system.php:611
 msgid "Login page color"
-msgstr ""
+msgstr "Цвет страницы входа"
 
 #: src/usr/local/www/system.php:616
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "Выберите цвет для страницы входа"
 
 #: src/usr/local/www/system.php:620
 msgid "Login hostname"
@@ -30481,13 +30551,15 @@ msgstr "Обратная связь по установке"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Netgate Device ID"
-msgstr ""
+msgstr "Идентификатор устройства Netgate"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
 msgstr ""
+"Включите эту опцию, чтобы не отправлять идентификатор устройства Netgate в "
+"pfSense как часть заголовка User-Agent."
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -30683,13 +30755,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:295
 msgid "Reset All States"
-msgstr ""
+msgstr "Сбросить Все Сессии"
 
 #: src/usr/local/www/system_advanced_network.php:298
 msgid ""
 "This option resets all states when a WAN IP Address changes instead of only "
 "states associated with the previous IP Address."
 msgstr ""
+"Эта опция сбрасывает все сессии при изменении IP-адреса WAN вместо того, что "
+"бы сбрасывать сессии связанные с предыдущим IP-адресом."
 
 #: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
@@ -31804,7 +31878,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:719
 msgid "*Certificate Lifetime (days)"
-msgstr ""
+msgstr "*Срок действия сертификата (дней)"
 
 #: src/usr/local/www/system_certmanager.php:726
 msgid "Import Certificate"
@@ -31869,11 +31943,11 @@ msgstr "*Существующие Сертификаты"
 
 #: src/usr/local/www/system_certmanager.php:958
 msgid "Certificate Attributes"
-msgstr ""
+msgstr "Атрибуты Сертификата"
 
 #: src/usr/local/www/system_certmanager.php:962
 msgid "Attribute Notes"
-msgstr ""
+msgstr "Примечания к атрибутам"
 
 #: src/usr/local/www/system_certmanager.php:964
 msgid ""
@@ -31881,24 +31955,35 @@ msgid ""
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr ""
+"Следующие атрибуты добавляются к сертификатам и запросам, когда они созданы "
+"или подписаны. Эти атрибуты ведут себя по-разному в зависимости от "
+"выбранного режима."
 
 #: src/usr/local/www/system_certmanager.php:968
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr ""
+"Для Внутренних Сертификатов эти атрибуты добавляются непосредственно в "
+"сертификат, как показано."
 
 #: src/usr/local/www/system_certmanager.php:970
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr ""
+"Для Запросов Подписи Сертификата эти атрибуты добавляются в запрос, но они "
+"могут быть проигнорированы или изменены Центром Сертификации (CA), который "
+"подписывает запрос."
 
 #: src/usr/local/www/system_certmanager.php:972
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr ""
+"Если этот CSR будет подписан с помощью Менеджера Сертификатов на данном "
+"брандмауэре, установите атрибуты при подписании, поскольку они не могут "
+"переноситься."
 
 #: src/usr/local/www/system_certmanager.php:973
 msgid ""
@@ -31906,6 +31991,9 @@ msgid ""
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr ""
+"При подписании запроса на сертификат существующие атрибуты запроса не могут "
+"быть скопированы. Приведенные ниже атрибуты будут применены к полученному "
+"сертификату."
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "*Certificate Type"
@@ -31917,6 +32005,9 @@ msgid ""
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr ""
+"Добавьте особый атрибуты типа к подписанному сертификату. Используется для "
+"ограничения использования или предоставления возможностей подписанному "
+"сертификату."
 
 #: src/usr/local/www/system_certmanager.php:997
 msgid "Alternative Names"
@@ -31928,6 +32019,9 @@ msgid ""
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr ""
+"Введите дополнительные идентификаторы для сертификата в этом списке. Поле "
+"Основное Имя автоматически добавляется в сертификат как Альтернативное Имя. "
+"Центер Сертификации (CA) может игнорировать или изменять эти значения."
 
 #: src/usr/local/www/system_certmanager.php:1048
 msgid "Complete Signing Request for "
@@ -33117,23 +33211,23 @@ msgstr ""
 "Установите этот параметр, чтобы отключить статический маршрут, не удаляя его "
 "из списка."
 
-#: src/usr/local/www/system_update_settings.php:99
+#: src/usr/local/www/system_update_settings.php:90
 msgid "Saved system update settings."
 msgstr "Сохраненные параметры обновления системы."
 
-#: src/usr/local/www/system_update_settings.php:101
+#: src/usr/local/www/system_update_settings.php:92
 msgid "Changes have been saved successfully"
 msgstr "Изменения успешно сохранены"
 
-#: src/usr/local/www/system_update_settings.php:153
+#: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
 msgstr "Ветвь прошивки"
 
-#: src/usr/local/www/system_update_settings.php:157
+#: src/usr/local/www/system_update_settings.php:148
 msgid "*Branch"
 msgstr "*Ветвь"
 
-#: src/usr/local/www/system_update_settings.php:160
+#: src/usr/local/www/system_update_settings.php:151
 #, php-format
 msgid ""
 "Please select the stable, or the development branch from which to update the "
@@ -33142,34 +33236,34 @@ msgstr ""
 "Выберите стабильную версию или ветвь разработки, из которой следует обновить "
 "прошивку системы. %1$sИспользуйте версию разработки на свой страх и риск!"
 
-#: src/usr/local/www/system_update_settings.php:165
+#: src/usr/local/www/system_update_settings.php:156
 msgid "Updates"
 msgstr "Обновления"
 
-#: src/usr/local/www/system_update_settings.php:169
+#: src/usr/local/www/system_update_settings.php:160
 msgid "Dashboard check"
 msgstr "Проверка информационной панели"
 
-#: src/usr/local/www/system_update_settings.php:177
+#: src/usr/local/www/system_update_settings.php:168
 msgid "GitSync"
 msgstr "GitSync"
 
-#: src/usr/local/www/system_update_settings.php:181
+#: src/usr/local/www/system_update_settings.php:172
 msgid "Auto sync on update"
 msgstr "Автоматическая синхронизация при обновлении"
 
-#: src/usr/local/www/system_update_settings.php:184
+#: src/usr/local/www/system_update_settings.php:175
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
 "После обновления выполните синхронизацию со следующим репозиторием/ветвью "
 "перед перезагрузкой."
 
-#: src/usr/local/www/system_update_settings.php:196
+#: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
 msgstr "URL Репозитория"
 
-#: src/usr/local/www/system_update_settings.php:199
+#: src/usr/local/www/system_update_settings.php:190
 #, php-format
 msgid ""
 "The most recently used repository was %s. This repository will be used if "
@@ -33178,11 +33272,11 @@ msgstr ""
 "Самый последний используемый репозиторий - %s. Этот репозиторий будет "
 "использоваться, если поле остается пустым."
 
-#: src/usr/local/www/system_update_settings.php:217
+#: src/usr/local/www/system_update_settings.php:208
 msgid "Branch name"
 msgstr "Имя ветви"
 
-#: src/usr/local/www/system_update_settings.php:220
+#: src/usr/local/www/system_update_settings.php:211
 #, php-format
 msgid ""
 "The most recently used branch was \"%1$s\". (Usually the branch name is "
@@ -33192,35 +33286,35 @@ msgstr ""
 "ведущим)%2$sПримечание: Синхронизация не будет выполняться, если ветка не "
 "указана."
 
-#: src/usr/local/www/system_update_settings.php:223
+#: src/usr/local/www/system_update_settings.php:214
 msgid "Sync options"
 msgstr "Опции синхронизации"
 
-#: src/usr/local/www/system_update_settings.php:230
+#: src/usr/local/www/system_update_settings.php:221
 msgid "Copy of only the updated files."
 msgstr "Копировать только обновленные файлы."
 
-#: src/usr/local/www/system_update_settings.php:237
+#: src/usr/local/www/system_update_settings.php:228
 msgid "Copy of only the different or missing files."
 msgstr "Копировать только различающиеся или отсутствующие файлы."
 
-#: src/usr/local/www/system_update_settings.php:244
+#: src/usr/local/www/system_update_settings.php:235
 #, php-format
 msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
 msgstr ""
 "Показывать различающиеся и отсутствующие файлы.%1$sС 'Diff/Minimal' опцией.."
 
-#: src/usr/local/www/system_update_settings.php:251
+#: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
 msgstr "Показать сконструированную команду.%1$sС 'Diff/Minimal' опцией."
 
-#: src/usr/local/www/system_update_settings.php:258
+#: src/usr/local/www/system_update_settings.php:249
 #, php-format
 msgid "Dry-run only.%1$sNo files copied."
 msgstr "Только сухой прогон.%1$sФайлы не скопированы"
 
-#: src/usr/local/www/system_update_settings.php:260
+#: src/usr/local/www/system_update_settings.php:251
 msgid ""
 "See \"playback gitsync --help\" in console \"PHP Shell + pfSense tools\" for "
 "additional information."
@@ -34139,11 +34233,11 @@ msgstr "Время жизни Ф1 должно быть целым числом.
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:250
 msgid "The margintime must be an integer."
-msgstr ""
+msgstr "Предельное время должно быть целым числом"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:252
 msgid "The margintime must be smaller than the P1 lifetime."
-msgstr ""
+msgstr "Предельное время должно быть меньше времени жизни Фазы1"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
@@ -34455,13 +34549,15 @@ msgstr "Отключить повторный обмен ключами"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 msgid "Margintime (Seconds)"
-msgstr ""
+msgstr "Передельное время (В Секундах)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:860
 msgid ""
 "How long before connection expiry or keying-channel expiry should attempt to "
 "negotiate a replacement begin."
 msgstr ""
+"Как долго необходимо попытаться договориться о начале замены, до сеодинение "
+"или канал обмена ключами будут разорваны. "
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
@@ -36750,11 +36846,7 @@ msgstr ""
 msgid "ok"
 msgstr "ок"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:141
-msgid "Retrieving package data"
-msgstr "Получение данных пакетов"
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
 msgstr "Пакеты могут быть добавлены/изменены здесь:"
 
@@ -36906,7 +36998,7 @@ msgstr "Интервал обновления"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:38
 #, php-format
 msgid "%sSupport information could not be retrieved%s"
-msgstr ""
+msgstr "%sНевозможно получить информацию о поддержке%s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -37755,7 +37847,7 @@ msgstr "Включить интерфейс"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv6 будет использовать IPv4 линк (PPPoE)"
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -38873,6 +38965,8 @@ msgstr "Используйте файловую систему памяти дл
 #: src/usr/local/www/system_advanced_misc.php:589
 msgid "Do NOT send Netgate Device ID with user agent"
 msgstr ""
+"НЕ отправляйте идентификатор устройства Netgate с помощью агента "
+"пользователя"
 
 #: src/usr/local/www/system_advanced_network.php:183
 msgid ""
@@ -38911,7 +39005,7 @@ msgstr "Подавление сообщений ARP"
 
 #: src/usr/local/www/system_advanced_network.php:296
 msgid "Reset all states if WAN IP Address changes"
-msgstr ""
+msgstr "Сброс всех сессий при изменении IP-адреса WAN"
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"
@@ -39095,27 +39189,27 @@ msgstr "Портал Авторизации"
 msgid "Disable this static route"
 msgstr "Отключить этот статический маршрут"
 
-#: src/usr/local/www/system_update_settings.php:170
+#: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the automatic dashboard auto-update check"
 msgstr "Отключить автоматическую проверку обновлени на панели мониторинга"
 
-#: src/usr/local/www/system_update_settings.php:182
+#: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
 msgstr "Включить синхронизацию репозитория/филиала до перезагрузки"
 
-#: src/usr/local/www/system_update_settings.php:228
+#: src/usr/local/www/system_update_settings.php:219
 msgid "Minimal"
 msgstr "Минимальный"
 
-#: src/usr/local/www/system_update_settings.php:242
+#: src/usr/local/www/system_update_settings.php:233
 msgid "Show Files"
 msgstr "Показать Файлы"
 
-#: src/usr/local/www/system_update_settings.php:249
+#: src/usr/local/www/system_update_settings.php:240
 msgid "Show Command"
 msgstr "Показать Команды"
 
-#: src/usr/local/www/system_update_settings.php:256
+#: src/usr/local/www/system_update_settings.php:247
 msgid "Dry Run"
 msgstr "Сухой Прогон"
 

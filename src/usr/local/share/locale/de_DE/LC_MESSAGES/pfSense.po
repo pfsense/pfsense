@@ -16,6 +16,7 @@
 # Michael <sonic@dersonic.org>, 2017. #zanata
 # Michael Köck <tysonm898@gmail.com>, 2017. #zanata
 # Mike Kellenberger <mike@kellyburger.com>, 2017. #zanata
+# Philipp <philipp@vlassakakis.de>, 2017. #zanata
 # Philipp Schenkl <Ps@ict-expert.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 # René Kühl <renekuehl@icloud.com>, 2017. #zanata
@@ -36,12 +37,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 08:04-0300\n"
+"POT-Creation-Date: 2017-08-10 10:45-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-04 03:21-0400\n"
-"Last-Translator: Robert Trapp <rbt.trapp@gmail.com>\n"
+"PO-Revision-Date: 2017-08-09 03:25-0400\n"
+"Last-Translator: Philipp <philipp@vlassakakis.de>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -69,11 +70,11 @@ msgstr ""
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Weiterleitung läuft..."
+msgstr "Sie werden weitergeleitet..."
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
-msgstr "Weiterleitung zum Dashboard läuft..."
+msgstr "Sie werden zum Dashboard weitergeleitet..."
 
 #: src/etc/inc/auth.inc:446 src/etc/inc/auth.inc:470 src/etc/inc/auth.inc:547
 #: src/etc/inc/auth.inc:588 src/etc/inc/auth.inc:657 src/etc/inc/auth.inc:815
@@ -86,7 +87,7 @@ msgstr "Fortschritt: %s"
 #: src/etc/inc/auth.inc:1350
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "FEHLER! Keine Verbindung zu Server %s."
+msgstr "FEHLER! Konnte keine Verbindung zu Server %s herstellen."
 
 #: src/etc/inc/auth.inc:887
 #, php-format
@@ -3181,7 +3182,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiler Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3136
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3837,47 +3838,51 @@ msgid "Bosnian"
 msgstr "Bosnisch"
 
 #: src/etc/inc/pfsense-utils.inc:2941
-msgid "German (Germany)"
-msgstr "Deutsch (Deutschland)"
-
-#: src/etc/inc/pfsense-utils.inc:2942
-msgid "English"
-msgstr "Englisch"
-
-#: src/etc/inc/pfsense-utils.inc:2943
-msgid "Spanish"
-msgstr "Spanisch"
-
-#: src/etc/inc/pfsense-utils.inc:2944
-msgid "Spanish (Argentina)"
-msgstr "Spanisch (Argentinien)"
-
-#: src/etc/inc/pfsense-utils.inc:2945
-msgid "Norwegian Bokmål"
-msgstr "norwegisch"
-
-#: src/etc/inc/pfsense-utils.inc:2946
-msgid "Portuguese (Brazil)"
-msgstr "Portugiesisch (Brasilien)"
-
-#: src/etc/inc/pfsense-utils.inc:2947
-msgid "Russian"
-msgstr "Russisch"
-
-#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Simplified, China)"
 msgstr "Chinesisch (Vereinfacht, China)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
 msgstr "Chinesisch (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:3144 src/etc/inc/pfsense-utils.inc:3159
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:2943
+msgid "Dutch"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2944
+msgid "English"
+msgstr "Englisch"
+
+#: src/etc/inc/pfsense-utils.inc:2945
+msgid "German (Germany)"
+msgstr "Deutsch (Deutschland)"
+
+#: src/etc/inc/pfsense-utils.inc:2946
+msgid "Norwegian Bokmål"
+msgstr "norwegisch"
+
+#: src/etc/inc/pfsense-utils.inc:2947
+msgid "Portuguese (Brazil)"
+msgstr "Portugiesisch (Brasilien)"
+
+#: src/etc/inc/pfsense-utils.inc:2948
+msgid "Russian"
+msgstr "Russisch"
+
+#: src/etc/inc/pfsense-utils.inc:2949
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: src/etc/inc/pfsense-utils.inc:2950
+msgid "Spanish (Argentina)"
+msgstr "Spanisch (Argentinien)"
+
+#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "No Service"
 msgstr "Kein Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3197
+#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3893,83 +3898,83 @@ msgstr "Kein Dienst"
 msgid "Mode"
 msgstr "Modus"
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Restricted Service"
 msgstr "Eingeschränkter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Valid Service"
 msgstr "Gültiger Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Regional Service"
 msgstr "Eingeschränkter regionaler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Powersaving Service"
 msgstr "Stromspar-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Unknown Service"
 msgstr "Unbekannter Service"
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Invalid SIM/locked State"
 msgstr "Ungültiger SIM/gesperrt Status"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Valid SIM State"
 msgstr "Gültiger SIM-Status"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM CS State"
 msgstr "Ungültiger SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM PS State"
 msgstr "Ungültiger SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS/PS State"
 msgstr "Ungültiger SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Missing SIM State"
 msgstr "Fehlender SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Limited Service"
 msgstr "Begrenzter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3202
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Initializing Service"
 msgstr "Initialisiere Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Network Lock error Service"
 msgstr "Netzwerksperre Fehler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Locked Service"
 msgstr "Netzwerk gesperrt Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Freigeschalteter oder zutreffender MCC/MNC-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3211
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "No action State"
 msgstr "Kein Aktionsstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "Network lock State"
 msgstr "Status Netzwerksperre"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "(U)SIM card lock State"
 msgstr "(U-)SIM-Karten-Sperrstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Netzwerksperre und (U)SIM-Kartensperrstatus"
 
@@ -8743,13 +8748,13 @@ msgstr "Systemprotokoll"
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/system_routes.php:211
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:35
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
@@ -9134,7 +9139,7 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:215
 #: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
-#: src/usr/local/www/system_update_settings.php:235
+#: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
 msgstr "Diff"
 
@@ -10582,7 +10587,7 @@ msgstr "Verwende eine Regular Expression um die Tabellen zu filtern."
 #: src/usr/local/www/system_certmanager.php:587
 #: src/usr/local/www/system_certmanager.php:1044
 #: src/usr/local/www/system_certmanager.php:1092
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
 msgstr "Update"
@@ -15873,7 +15878,7 @@ msgstr ""
 "Weitere Dashboard-Einstellungen sind über die <a href=\"%s\">Allgemeines "
 "Setup</a>-Seite erreichbar."
 
-#: src/usr/local/www/index.php:624
+#: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 "Ein oder mehrere Widgets wurden verschoben, aber bisher nicht abgespeichert"
@@ -18077,7 +18082,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:527
 msgid "Enable IPv6 auto linklocal"
-msgstr ""
+msgstr "Aktiviere IPv6 Auto-Link-Lokal"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:530
 msgid ""
@@ -20319,7 +20324,7 @@ msgstr ""
 "Beschreibungen zu suchen."
 
 #: src/usr/local/www/pkg_mgr.php:175
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages"
 msgstr "Pakete"
 
@@ -20339,13 +20344,13 @@ msgstr "Fehlgeschlagen"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
-#: src/usr/local/www/system_update_settings.php:147
+#: src/usr/local/www/system_update_settings.php:138
 msgid "System Update"
 msgstr "Systemaktualisierung"
 
 #: src/usr/local/www/pkg_mgr_install.php:247
-#: src/usr/local/www/system_update_settings.php:107
-#: src/usr/local/www/system_update_settings.php:148
+#: src/usr/local/www/system_update_settings.php:98
+#: src/usr/local/www/system_update_settings.php:139
 msgid "Update Settings"
 msgstr "Aktualisierungseinstellungen"
 
@@ -24557,6 +24562,9 @@ msgid ""
 "When set, the server must provide a valid certificate trust chain which can "
 "be verified by this firewall."
 msgstr ""
+"Falls diese Option aktiviert ist, muss der Server eine gültige "
+"Zertifikatskette (Chain of trust) vorweisen können, welche durch diese "
+"Firewall verifiziert werden kann."
 
 #: src/usr/local/www/services_dyndns_edit.php:356
 #, php-format
@@ -32917,102 +32925,102 @@ msgstr ""
 "Wählen Sie diese Option, um diese statische Route zu deaktivieren ohne sie "
 "aus der Liste zu löschen."
 
-#: src/usr/local/www/system_update_settings.php:99
+#: src/usr/local/www/system_update_settings.php:90
 msgid "Saved system update settings."
 msgstr "Einstellungen für System-Update gespeichert."
 
-#: src/usr/local/www/system_update_settings.php:101
+#: src/usr/local/www/system_update_settings.php:92
 msgid "Changes have been saved successfully"
 msgstr "Die Änderungen wurden erfolgreich gespeichert."
 
-#: src/usr/local/www/system_update_settings.php:153
+#: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
 msgstr "Firmware-Zweig"
 
-#: src/usr/local/www/system_update_settings.php:157
+#: src/usr/local/www/system_update_settings.php:148
 msgid "*Branch"
 msgstr "*Zweig"
 
-#: src/usr/local/www/system_update_settings.php:160
+#: src/usr/local/www/system_update_settings.php:151
 #, php-format
 msgid ""
 "Please select the stable, or the development branch from which to update the "
 "system firmware. %1$sUse of the development version is at your own risk!"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:165
+#: src/usr/local/www/system_update_settings.php:156
 msgid "Updates"
 msgstr "Aktualisierungen"
 
-#: src/usr/local/www/system_update_settings.php:169
+#: src/usr/local/www/system_update_settings.php:160
 msgid "Dashboard check"
 msgstr "Dashboard Check"
 
-#: src/usr/local/www/system_update_settings.php:177
+#: src/usr/local/www/system_update_settings.php:168
 msgid "GitSync"
 msgstr "GitSync"
 
-#: src/usr/local/www/system_update_settings.php:181
+#: src/usr/local/www/system_update_settings.php:172
 msgid "Auto sync on update"
 msgstr "Bei Aktualisierung automatisch synchronisieren"
 
-#: src/usr/local/www/system_update_settings.php:184
+#: src/usr/local/www/system_update_settings.php:175
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:196
+#: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
 msgstr "Repository URL"
 
-#: src/usr/local/www/system_update_settings.php:199
+#: src/usr/local/www/system_update_settings.php:190
 #, php-format
 msgid ""
 "The most recently used repository was %s. This repository will be used if "
 "the field is left blank."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:217
+#: src/usr/local/www/system_update_settings.php:208
 msgid "Branch name"
 msgstr "Zweigname"
 
-#: src/usr/local/www/system_update_settings.php:220
+#: src/usr/local/www/system_update_settings.php:211
 #, php-format
 msgid ""
 "The most recently used branch was \"%1$s\". (Usually the branch name is "
 "master)%2$sNote: Sync will not be performed if a branch is not specified."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:223
+#: src/usr/local/www/system_update_settings.php:214
 msgid "Sync options"
 msgstr "Synchronisierungs-Optionen"
 
-#: src/usr/local/www/system_update_settings.php:230
+#: src/usr/local/www/system_update_settings.php:221
 msgid "Copy of only the updated files."
 msgstr "Kopie nur der aktualisierten Dateien."
 
-#: src/usr/local/www/system_update_settings.php:237
+#: src/usr/local/www/system_update_settings.php:228
 msgid "Copy of only the different or missing files."
 msgstr "Kopiere nur unterschiedliche oder fehlende Dateien."
 
-#: src/usr/local/www/system_update_settings.php:244
+#: src/usr/local/www/system_update_settings.php:235
 #, php-format
 msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
 msgstr ""
 "Zeige unterschiedliche oder fehlende Dateien. %1$sMit 'Diff/Minimal' "
 "Schalter.."
 
-#: src/usr/local/www/system_update_settings.php:251
+#: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:258
+#: src/usr/local/www/system_update_settings.php:249
 #, php-format
 msgid "Dry-run only.%1$sNo files copied."
 msgstr "Nur Testlaut.%1$sKeine Dateien kopiert."
 
-#: src/usr/local/www/system_update_settings.php:260
+#: src/usr/local/www/system_update_settings.php:251
 msgid ""
 "See \"playback gitsync --help\" in console \"PHP Shell + pfSense tools\" for "
 "additional information."
@@ -36322,11 +36330,7 @@ msgstr ""
 msgid "ok"
 msgstr "OK"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:141
-msgid "Retrieving package data"
-msgstr "Rufe Paketdaten ab"
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
 msgstr "Pakete können hier hinzugefügt und verwaltet werden:"
 
@@ -38609,27 +38613,27 @@ msgstr "Captive Portal"
 msgid "Disable this static route"
 msgstr "Diese statische Route deaktivieren"
 
-#: src/usr/local/www/system_update_settings.php:170
+#: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the automatic dashboard auto-update check"
 msgstr "Deaktiviert die automatische Update-Überprüfung auf der Hauptseite"
 
-#: src/usr/local/www/system_update_settings.php:182
+#: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
 msgstr "Aktiviere Repository/Zweig-Synchronisation vor dem Neustart"
 
-#: src/usr/local/www/system_update_settings.php:228
+#: src/usr/local/www/system_update_settings.php:219
 msgid "Minimal"
 msgstr "Minimal"
 
-#: src/usr/local/www/system_update_settings.php:242
+#: src/usr/local/www/system_update_settings.php:233
 msgid "Show Files"
 msgstr "Zeige Dateien"
 
-#: src/usr/local/www/system_update_settings.php:249
+#: src/usr/local/www/system_update_settings.php:240
 msgid "Show Command"
 msgstr "Zeige Kommandos"
 
-#: src/usr/local/www/system_update_settings.php:256
+#: src/usr/local/www/system_update_settings.php:247
 msgid "Dry Run"
 msgstr "Trockenlauf"
 

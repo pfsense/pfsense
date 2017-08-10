@@ -4,18 +4,19 @@
 # Henrik Simonsen <cybermaze@gmail.com>, 2017. #zanata
 # Kenneth Holmqvist <kholmqvist88@gmail.com>, 2017. #zanata
 # Mads Clausen <masbakke65@gmail.com>, 2017. #zanata
+# Martin Dahlem <Md@netunit.dk>, 2017. #zanata
 # Michael Sass <michael@fam-sass.dk>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 08:04-0300\n"
+"POT-Creation-Date: 2017-08-10 10:45-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-26 08:21-0400\n"
-"Last-Translator: Henrik Simonsen <cybermaze@gmail.com>\n"
+"PO-Revision-Date: 2017-08-10 06:46-0400\n"
+"Last-Translator: Martin Dahlem <Md@netunit.dk>\n"
 "Language-Team: Danish\n"
 "Language: da\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -198,7 +199,7 @@ msgstr "(Bruger %s)"
 
 #: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
 msgid "Local Database"
-msgstr "Lokal Database"
+msgstr "Lokal database"
 
 #: src/etc/inc/auth.inc:1805
 #, php-format
@@ -363,7 +364,7 @@ msgstr "Kun (%1$s) MB RAM tilgængelig med (%2$s) ledig til %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
-msgstr "Tryk på ENTER for at fortsætte."
+msgstr "Tryk på RETUR for at fortsætte."
 
 #: src/etc/inc/config.console.inc:66 src/etc/inc/config.console.inc:445
 msgid "No interfaces found!"
@@ -419,7 +420,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:175
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sValgfri interface %2$s beskrivelse fundet: %3$s"
+msgstr "%1$sValgfrit interface %2$s beskrivelse fundet: %3$s"
 
 #: src/etc/inc/config.console.inc:178
 #, php-format
@@ -427,7 +428,7 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sIndsæt navnet på valgfri %2$s interface eller tryk 'a' for auto-"
+"%1$sIndsæt navnet på valgfrit %2$s interface eller tryk 'a' for auto-"
 "opdagelse%3$s(%4$s a eller ingenting hvis du er færdig):%5$s"
 
 #: src/etc/inc/config.console.inc:185
@@ -436,7 +437,7 @@ msgstr "Valgfri"
 
 #: src/etc/inc/config.console.inc:221
 msgid "The interfaces will be assigned as follows:"
-msgstr "Dine Interface vil blive tildelt som følger:"
+msgstr "Dine interfaces vil blive tildelt som følger:"
 
 #: src/etc/inc/config.console.inc:231 src/etc/inc/config.console.inc:428
 msgid "Do you want to proceed [y|n]?"
@@ -455,7 +456,7 @@ msgstr "Vil du fjerne LAN IP adressen og fjerne interfacet nu [y|n]?"
 #: src/etc/inc/config.console.inc:370
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sGemmer konfigurationen.."
+msgstr "%sGemmer konfigurationen..."
 
 #: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
@@ -468,7 +469,7 @@ msgstr "færdig.%s"
 
 #: src/etc/inc/config.console.inc:380
 msgid "One moment while the settings are reloading..."
-msgstr "Vent mens indstillingerne indlæses.."
+msgstr "Vent mens indstillingerne indlæses..."
 
 #: src/etc/inc/config.console.inc:381
 msgid " done!"
@@ -482,7 +483,7 @@ msgstr "forbindelse opdaget på interface %1$s.%2$s"
 #: src/etc/inc/config.console.inc:410
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Ingen forbindelse opdaget.%s"
+msgstr "Ingen link forbindelse opdaget.%s"
 
 #: src/etc/inc/config.console.inc:427
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
@@ -501,12 +502,12 @@ msgstr "Interfaces der understøtter VLAN er opdaget."
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Indsæt navnet på det interface du vil oprette VLAN på (eller ingenting hvis "
+"Indtast navnet på det interface du vil oprette VLAN på (eller ingenting hvis "
 "du er færdig):"
 
 #: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
-msgstr "Indsæt VLAN tag (1-4094)"
+msgstr "Indtast VLAN tag (1-4094):"
 
 #: src/etc/inc/config.console.inc:479
 #, php-format
@@ -588,13 +589,13 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kunne ikke finde en brugbar konfigurationsfil!"
+msgstr "Kunne ikke finde en brugbar konfigurationsfil! Afslutter..."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
-"Start konfigurations opdatering kl %s, set maximun udførelses tid til 15 "
+"Start konfigurations opdatering kl %s, set maximum udførelses tid til 15 "
 "minutter"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
@@ -642,7 +643,7 @@ msgstr "Installerer konfiguration..."
 
 #: src/etc/inc/config.lib.inc:635
 msgid "Installing configuration ...."
-msgstr "Installerer konfiguration..."
+msgstr "Installerer konfiguration ...."
 
 #: src/etc/inc/config.lib.inc:686
 msgid "XML error: unable to open file"
@@ -651,7 +652,7 @@ msgstr "XML fejl: kunne ikke åbne filen"
 #: src/etc/inc/config.lib.inc:692
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr "%1$s på linie %2$d"
+msgstr "%1$s på linje %2$d"
 
 #: src/etc/inc/config.lib.inc:745 src/etc/inc/config.lib.inc:747
 #, php-format
@@ -794,7 +795,7 @@ msgstr "Skift af IP-adresse lykkedes!"
 #: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1755
 #: src/etc/inc/dyndns.class:1766
 msgid "Unknown Response"
-msgstr "Ukendt Svar"
+msgstr "Ukendt svar"
 
 #: src/etc/inc/dyndns.class:1145
 msgid ""
@@ -845,7 +846,7 @@ msgstr "Ikke et FQDN!"
 
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1730
 msgid "No such host"
-msgstr "Værten findes ikke!"
+msgstr "Værten findes ikke"
 
 #: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1189
 #: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1223
@@ -1057,7 +1058,7 @@ msgstr "Server side fejl."
 
 #: src/etc/inc/dyndns.class:1460
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Forkert formateret forespørgsel (check indstillingerne)."
 
 #: src/etc/inc/dyndns.class:1478 src/etc/inc/dyndns.class:1498
 msgid "Bad Request - A hostname was not provided."
@@ -1633,7 +1634,7 @@ msgstr "Router anmodning"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Router renummerering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
@@ -1641,7 +1642,7 @@ msgstr "SKIP"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr ""
+msgstr "Dæmpning af kilde"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
@@ -1741,16 +1742,16 @@ msgstr "Konfigurerer login information"
 
 #: src/etc/inc/filter.inc:396
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "Opsætter SCRUB information"
 
 #: src/etc/inc/filter.inc:442
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "Den pågældende linje siger [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:449
 msgid "PF was wedged/busy and has been reset."
-msgstr ""
+msgstr "PF var fastlåst/optaget, og er blevet nulstillet."
 
 #: src/etc/inc/filter.inc:455 src/etc/inc/filter.inc:456
 #, php-format
@@ -1759,19 +1760,19 @@ msgstr "Der var en eller flere fejl under indlæsning af reglerne: %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:532
 msgid "Processing down interface states"
-msgstr ""
+msgstr "Behandler slukkede interface tilstande"
 
 #: src/etc/inc/filter.inc:536
 msgid "Running plugins"
-msgstr ""
+msgstr "Kører plugins"
 
 #: src/etc/inc/filter.inc:540
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "Kører plugins (pf)"
 
 #: src/etc/inc/filter.inc:542
 msgid "Plugins completed."
-msgstr ""
+msgstr "Plugins afsluttet."
 
 #: src/etc/inc/filter.inc:545
 msgid "Done"
@@ -1780,21 +1781,22 @@ msgstr "Færdig"
 #: src/etc/inc/filter.inc:775
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
-msgstr ""
+msgstr "Alias kun med numeriske navne er ikke gyldige. Springer over alias %s"
 
 #: src/etc/inc/filter.inc:853
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "Opretter gateway gruppe..."
 
 #: src/etc/inc/filter.inc:893
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "Opsætter router med %1$s på %2$s"
 
 #: src/etc/inc/filter.inc:897
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
+"For mange medlemmer i gruppe %s, gateway gruppe er afkortet i regelsættet."
 
 #: src/etc/inc/filter.inc:909
 #, php-format
@@ -1808,12 +1810,12 @@ msgstr ""
 #: src/etc/inc/filter.inc:1274
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr ""
+msgstr "Opretter NAT spejlings regel for %s..."
 
 #: src/etc/inc/filter.inc:1372
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr ""
+msgstr "Opretter spejlings regel for %s..."
 
 #: src/etc/inc/filter.inc:1493
 msgid "Not installing NAT reflection rules for a port range > 500"
@@ -3027,7 +3029,7 @@ msgstr ""
 msgid "Mobile Client"
 msgstr "Mobil Kunde"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3136
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
 #: src/etc/inc/shaper.inc:3866 src/etc/inc/shaper.inc:4170
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3642,47 +3644,51 @@ msgid "Bosnian"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2941
-msgid "German (Germany)"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2942
-msgid "English"
-msgstr "Engelsk"
-
-#: src/etc/inc/pfsense-utils.inc:2943
-msgid "Spanish"
-msgstr "Spansk"
-
-#: src/etc/inc/pfsense-utils.inc:2944
-msgid "Spanish (Argentina)"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2945
-msgid "Norwegian Bokmål"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2946
-msgid "Portuguese (Brazil)"
-msgstr "Portugisisk (Brasiliansk)"
-
-#: src/etc/inc/pfsense-utils.inc:2947
-msgid "Russian"
-msgstr ""
-
-#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Chinese (Simplified, China)"
 msgstr "Kinesisk (forenklet, Kina)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3144 src/etc/inc/pfsense-utils.inc:3159
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:2943
+msgid "Dutch"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2944
+msgid "English"
+msgstr "Engelsk"
+
+#: src/etc/inc/pfsense-utils.inc:2945
+msgid "German (Germany)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
+msgid "Norwegian Bokmål"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2947
+msgid "Portuguese (Brazil)"
+msgstr "Portugisisk (Brasiliansk)"
+
+#: src/etc/inc/pfsense-utils.inc:2948
+msgid "Russian"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2949
+msgid "Spanish"
+msgstr "Spansk"
+
+#: src/etc/inc/pfsense-utils.inc:2950
+msgid "Spanish (Argentina)"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "No Service"
 msgstr "Ingen Service"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3197
+#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3698,83 +3704,83 @@ msgstr "Ingen Service"
 msgid "Mode"
 msgstr "Tilstand"
 
-#: src/etc/inc/pfsense-utils.inc:3160
+#: src/etc/inc/pfsense-utils.inc:3161
 msgid "Restricted Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Valid Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Regional Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Powersaving Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3171
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Limited Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3202
+#: src/etc/inc/pfsense-utils.inc:3203
 msgid "Initializing Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3211
+#: src/etc/inc/pfsense-utils.inc:3212
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -8299,13 +8305,13 @@ msgstr ""
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/system_routes.php:211
 #: src/usr/local/www/system_routes_edit.php:219
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 #: src/usr/local/www/system_usermanager_settings.php:109
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:35
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:148
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:236
@@ -8664,7 +8670,7 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:215
 #: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
-#: src/usr/local/www/system_update_settings.php:235
+#: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
 msgstr "Forskel"
 
@@ -10021,7 +10027,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:587
 #: src/usr/local/www/system_certmanager.php:1044
 #: src/usr/local/www/system_certmanager.php:1092
-#: src/usr/local/www/system_update_settings.php:107
+#: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
 msgstr "Opdatering"
@@ -14843,7 +14849,7 @@ msgid ""
 "Setup</a> page."
 msgstr ""
 
-#: src/usr/local/www/index.php:624
+#: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 
@@ -18785,7 +18791,7 @@ msgstr ""
 "beskrivelse."
 
 #: src/usr/local/www/pkg_mgr.php:175
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages"
 msgstr "Pakker"
 
@@ -18805,13 +18811,13 @@ msgstr "Fejlede"
 
 #: src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_install.php:246
-#: src/usr/local/www/system_update_settings.php:147
+#: src/usr/local/www/system_update_settings.php:138
 msgid "System Update"
 msgstr "System opdatering"
 
 #: src/usr/local/www/pkg_mgr_install.php:247
-#: src/usr/local/www/system_update_settings.php:107
-#: src/usr/local/www/system_update_settings.php:148
+#: src/usr/local/www/system_update_settings.php:98
+#: src/usr/local/www/system_update_settings.php:139
 msgid "Update Settings"
 msgstr "Opdaterings opsætning"
 
@@ -30271,100 +30277,100 @@ msgid ""
 "list."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:99
+#: src/usr/local/www/system_update_settings.php:90
 msgid "Saved system update settings."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:101
+#: src/usr/local/www/system_update_settings.php:92
 msgid "Changes have been saved successfully"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:153
+#: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:157
+#: src/usr/local/www/system_update_settings.php:148
 msgid "*Branch"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:160
+#: src/usr/local/www/system_update_settings.php:151
 #, php-format
 msgid ""
 "Please select the stable, or the development branch from which to update the "
 "system firmware. %1$sUse of the development version is at your own risk!"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:165
+#: src/usr/local/www/system_update_settings.php:156
 msgid "Updates"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:169
+#: src/usr/local/www/system_update_settings.php:160
 msgid "Dashboard check"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:177
+#: src/usr/local/www/system_update_settings.php:168
 msgid "GitSync"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:181
+#: src/usr/local/www/system_update_settings.php:172
 msgid "Auto sync on update"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:184
+#: src/usr/local/www/system_update_settings.php:175
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:196
+#: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:199
+#: src/usr/local/www/system_update_settings.php:190
 #, php-format
 msgid ""
 "The most recently used repository was %s. This repository will be used if "
 "the field is left blank."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:217
+#: src/usr/local/www/system_update_settings.php:208
 msgid "Branch name"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:220
+#: src/usr/local/www/system_update_settings.php:211
 #, php-format
 msgid ""
 "The most recently used branch was \"%1$s\". (Usually the branch name is "
 "master)%2$sNote: Sync will not be performed if a branch is not specified."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:223
+#: src/usr/local/www/system_update_settings.php:214
 msgid "Sync options"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:230
+#: src/usr/local/www/system_update_settings.php:221
 msgid "Copy of only the updated files."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:237
+#: src/usr/local/www/system_update_settings.php:228
 msgid "Copy of only the different or missing files."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:244
+#: src/usr/local/www/system_update_settings.php:235
 #, php-format
 msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:251
+#: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:258
+#: src/usr/local/www/system_update_settings.php:249
 #, php-format
 msgid "Dry-run only.%1$sNo files copied."
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:260
+#: src/usr/local/www/system_update_settings.php:251
 msgid ""
 "See \"playback gitsync --help\" in console \"PHP Shell + pfSense tools\" for "
 "additional information."
@@ -33451,11 +33457,7 @@ msgstr ""
 msgid "ok"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:141
-msgid "Retrieving package data"
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:146
+#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
 msgstr ""
 
@@ -35631,27 +35633,27 @@ msgstr ""
 msgid "Disable this static route"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:170
+#: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the automatic dashboard auto-update check"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:182
+#: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:228
+#: src/usr/local/www/system_update_settings.php:219
 msgid "Minimal"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:242
+#: src/usr/local/www/system_update_settings.php:233
 msgid "Show Files"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:249
+#: src/usr/local/www/system_update_settings.php:240
 msgid "Show Command"
 msgstr ""
 
-#: src/usr/local/www/system_update_settings.php:256
+#: src/usr/local/www/system_update_settings.php:247
 msgid "Dry Run"
 msgstr ""
 

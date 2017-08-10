@@ -2261,8 +2261,26 @@ function services_unbound_configure($restart_dhcp = true) {
 			$return = 1;
 		}
 
+		/* Check here for dhcp6 complete - wait upto 10 seconds */
+		if($config['interfaces']["wan"]['ipaddrv6'] == 'dhcp6') {
+			$wanif = get_real_interface("wan", "inet6");
+			if (platform_booting()) {
+				for ($i=1; $i <= 10; $i++) {
+					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) { 
+						log_error(gettext("Unbound start waiting on dhcp6c."));
+						sleep(1);
+					} else {
+						unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
+						log_error(gettext("dhcp6 init complete. Continuing"));
+						break;
+					}						
+				}
+			}
+		}
+		
 		sync_unbound_service();
 		if (platform_booting()) {
+			log_error(gettext("sync unbound done."));
 			echo gettext("done.") . "\n";
 		}
 

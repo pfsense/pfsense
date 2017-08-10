@@ -5364,6 +5364,15 @@ function upgrade_167_to_168() {
 function upgrade_168_to_169() {
 	global $config;
 
+	$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $entry) {
+			if ($entry['command'] == $command) {
+				return;
+			}
+		}
+	}
+
 	$config['cron']['item'][] = array(
 		'minute' => '1',
 		'hour' => '0',
@@ -5371,7 +5380,7 @@ function upgrade_168_to_169() {
 		'month' => '*',
 		'wday' => '*',
 		'who' => 'root',
-		'command' => '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata'
+		'command' => $command
 	);
 }
 

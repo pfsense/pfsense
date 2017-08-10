@@ -34,15 +34,6 @@ $repos = pkg_list_repos();
 
 if ($_POST) {
 
-	// Set the firmware branch, but only if we are not using it already
-	if ($_POST['fwbranch']) {
-		if (($_POST['fwbranch'] == "development") && !is_pkg_installed($g['product_name'] . "-repo-devel")) {
-			pkg_switch_repo(true);
-		} else if (($_POST['fwbranch'] == "stable") && !is_pkg_installed($g['product_name'] . "-repo")) {
-			pkg_switch_repo(false);
-		}
-	}
-
 	if ($_POST['disablecheck'] == "yes") {
 		$config['system']['firmware']['disablecheck'] = true;
 	} elseif (isset($config['system']['firmware']['disablecheck'])) {

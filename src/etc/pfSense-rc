@@ -412,6 +412,9 @@ fi
 
 /usr/local/sbin/${product}-upgrade -y -b 3
 
+# Update pkg metadata
+/etc/rc.update_pkg_metadata now
+
 # Log product version to syslog
 get_version
 BUILDTIME=`cat /etc/version.buildtime`

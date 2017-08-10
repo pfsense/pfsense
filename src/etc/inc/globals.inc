@@ -172,6 +172,10 @@ if (file_exists("/etc/inc/globals_override.inc")) {
 /* Read all XML files in following dir and load menu entries */
 $g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
 
+/* Cache file used to store pfSense version */
+$g["version_cache_file"] = "{$g['varrun_path']}/{$g['product_name']}_version";
+$g['version_cache_refresh'] = 24 * 60 * 60; /* 24h */
+
 function platform_booting($on_console = false) {
 	global $g;
 

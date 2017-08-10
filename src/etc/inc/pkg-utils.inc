@@ -1202,7 +1202,7 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		return false;
 	}
 
-	$info = get_pkg_info($base_pkg, true);
+	$info = get_pkg_info($base_pkg, true, true);
 
 	$pkg_info = array();
 	foreach ($info as $item) {
@@ -1214,7 +1214,7 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 
 	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
 	    $pkg_info['installed_version']))) {
-		$info = get_pkg_info($meta_pkg, true);
+		$info = get_pkg_info($meta_pkg, true, true);
 
 		foreach ($info as $item) {
 			if ($item['name'] == $meta_pkg) {

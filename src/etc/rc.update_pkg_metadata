@@ -32,11 +32,15 @@ tmp_version=$(mktemp -q /tmp/${product}_version.XXXXXXXX) \
 	sleep $sleep_time \
 	&& /usr/local/sbin/${product}-upgrade -uf \
 	&& ( \
-		/usr/local/sbin/${product}-upgrade -Uc >> $tmp_version \
-		; test $? -eq 2 && return 0 \
+		/usr/local/sbin/${product}-upgrade -Uc > $tmp_version \
+		; rc=$? \
+		; echo $rc > ${tmp_version}.rc \
+		; test $rc -eq 2 && return 0 || return $rc \
 	) \
-	&& mv $tmp_version /var/run/${product}_version \
-	|| rm -f $tmp_version
+	&& ( \
+		mv $tmp_version /var/run/${product}_version \
+		&& mv ${tmp_version}.rc /var/run/${product}_version.rc \
+	) || rm -f $tmp_version ${tmp_version}.rc
 ) >/dev/null 2>&1 &
 
 exit 0

@@ -2938,16 +2938,16 @@ function set_language() {
 function get_locale_list() {
 	$locales = array(
 		"bs" => gettext("Bosnian"),
-		"de_DE" => gettext("German (Germany)"),
-		"en_US" => gettext("English"),
-		"es" => gettext("Spanish"),
-		"es_AR" => gettext("Spanish (Argentina)"),
-		"nb" => gettext("Norwegian Bokmål"),
-		"nl" => gettext("Dutch"),
-		"pt_BR" => gettext("Portuguese (Brazil)"),
-		"ru" => gettext("Russian"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
+		"nl" => gettext("Dutch"),
+		"en_US" => gettext("English"),
+		"de_DE" => gettext("German (Germany)"),
+		"nb" => gettext("Norwegian Bokmål"),
+		"pt_BR" => gettext("Portuguese (Brazil)"),
+		"ru" => gettext("Russian"),
+		"es" => gettext("Spanish"),
+		"es_AR" => gettext("Spanish (Argentina)"),
 	);
 
 	// If the locales are sorted, the order changes depending on the language selected. If the user accidentally

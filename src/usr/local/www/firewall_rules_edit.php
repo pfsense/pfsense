@@ -329,7 +329,7 @@ if ($_POST['save']) {
 	if (!(is_string($_POST['type'])  && in_array($_POST['type'], $valid))) {
 		$input_errors[] = gettext("A valid rule type is not selected.");
 		unset($_POST['type']);
-	}		
+	}
 
 	if (isset($_POST['tracker']) && !is_numericint($_POST['tracker'])) {
 		unset($_POST['tracker']);	// silently unset hidden input if invalid
@@ -1865,10 +1865,16 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
+
 		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
+		src_typesel_change();
+		dst_typesel_change();
+	}
+
+	function src_typesel_change() {
 		if (editenabled) {
 			switch ($('#srctype').find(":selected").index()) {
 				case 1: // single
@@ -1887,6 +1893,11 @@ events.push(function() {
 					disableInput('srcmask', true);
 					break;
 			}
+		}
+	}
+
+	function dst_typesel_change() {
+		if (editenabled) {
 			switch ($('#dsttype').find(":selected").index()) {
 				case 1: // single
 					disableInput('dst', false);
@@ -2037,11 +2048,11 @@ events.push(function() {
 	});
 
 	$('#srctype').on('change', function() {
-		typesel_change();
+		src_typesel_change();
 	});
 
 	$('#dsttype').on('change', function() {
-		typesel_change();
+		dst_typesel_change();
 	});
 
 	$('#ipprotocol').on('change', function() {

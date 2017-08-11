@@ -51,7 +51,7 @@ $sysinfo_items = array(
 	'disk_usage' => gettext('Disk Usage')
 	);
 
-// Declared here so that JavaScript cann access it
+// Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
 
 if ($_REQUEST['getupdatestatus']) {

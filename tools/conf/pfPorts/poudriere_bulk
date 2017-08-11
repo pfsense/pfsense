@@ -70,6 +70,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-nut
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 sysutils/%%PRODUCT_NAME%%-pkg-RRD_Summary
 net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF
+net/%%PRODUCT_NAME%%-pkg-frr
 net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
 net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
@@ -94,5 +95,4 @@ net/%%PRODUCT_NAME%%-pkg-aws-wizard
 net/%%PRODUCT_NAME%%-pkg-ipsec-profile-wizard
 sysutils/stress
 net/bird
-net/frr
 net/hping

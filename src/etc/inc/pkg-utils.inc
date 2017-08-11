@@ -1188,6 +1188,12 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		$output = exec(
 		    "/usr/local/sbin/{$g['product_name']}-upgrade -c", $_gc,
 		    $rc);
+
+		/* Update cache if it succeeded */
+		if ($rc == 0 || $rc == 2) {
+			@file_put_contents($cache_file, $output);
+			@file_put_contents($rc_file, $rc);
+		}
 	}
 
 	/* pfSense-upgrade returns 2 when there is a new version */

@@ -39,7 +39,6 @@ body.no-menu #jumbotron {
 }
 
 body.no-menu {
-    background: url("/logo-black.png") no-repeat center 30px;
     padding-top: 70px;
 }
 

@@ -67,7 +67,7 @@ if ($_REQUEST['ajax']) {
 	// If this is an ajax call to get the installed and newest versions, call that function,
 	// JSON encode the result, print it and exit
 	if ($_REQUEST['getversion']) {
-		$firmwareversions = get_system_pkg_version(true);
+		$firmwareversions = get_system_pkg_version(true, false);
 		print(json_encode($firmwareversions));
 		exit;
 	}

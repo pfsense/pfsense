@@ -718,7 +718,7 @@ events.push(function(){
 				// Display the returned data
 				$('[id^=widget-system_information] #updatestatus').html(data);
 
-				// Re-attach the click handler (The binding was lost when hte <div> content was replaced)
+				// Re-attach the click handler (The binding was lost when the <div> content was replaced)
 				$('#updver').click(function() {
 					updver_ajax();
 				});

@@ -65,6 +65,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-nut
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 sysutils/%%PRODUCT_NAME%%-pkg-RRD_Summary
 net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF
+net/%%PRODUCT_NAME%%-pkg-frr
 net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
 net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
@@ -87,5 +88,4 @@ sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 sysutils/stress
 net/bird
-net/frr
 net/hping

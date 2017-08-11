@@ -699,7 +699,6 @@ events.push(function(){
 
 	set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 
-
 	// AJAX function to update the version display with non-cached data
 	function updver_ajax() {
 
@@ -718,8 +717,8 @@ events.push(function(){
 			success: function(data){
 				// Display the returned data
 				$('[id^=widget-system_information] #updatestatus').html(data);
-				// Re-attach the click handler
 
+				// Re-attach the click handler (The binding was lost when hte <div> content was replaced)
 				$('#updver').click(function() {
 					updver_ajax();
 				});

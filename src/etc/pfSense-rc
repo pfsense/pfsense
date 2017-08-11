@@ -417,6 +417,9 @@ if [ -f /usr/local/sbin/ec2_setup.php ]; then
 	/usr/local/sbin/ec2_setup.php
 fi
 
+# Update pkg metadata
+/etc/rc.update_pkg_metadata now
+
 # Log product version to syslog
 get_version
 BUILDTIME=`cat /etc/version.buildtime`

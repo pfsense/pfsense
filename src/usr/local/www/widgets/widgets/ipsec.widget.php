@@ -311,6 +311,7 @@ events.push(function(){
 	ipsecObject.url = "/widgets/widgets/ipsec.widget.php";
 	ipsecObject.callback = ipsec_callback;
 	ipsecObject.parms = postdata;
+	ipsecObject.freq = 1;
 
 	// Register the AJAX object
 	register_ajax(ipsecObject);

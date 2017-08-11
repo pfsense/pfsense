@@ -574,6 +574,7 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
 var ajaxidx = 0;
 var ajaxmutex = false;
+var ajaxcntr = 0;
 
 // Add a widget refresh object to the array list
 function register_ajax(ws) {
@@ -653,7 +654,7 @@ events.push(function() {
 			},
 
 			error: function(e){
-				alert("Error: " + e)
+//				alert("Error: " + e);
 				ajaxmutex = false;
 			}
 		});
@@ -663,12 +664,23 @@ events.push(function() {
 	// results back to the widget's callback function
 	function executewidget() {
 		if (ajaxspecs.length > 0) {
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
+
 			if (!ajaxmutex) {
-			    make_ajax_call(ajaxspecs[ajaxidx]);
-			    ajaxidx = ++ajaxidx % ajaxspecs.length;
+				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
+				    make_ajax_call(ajaxspecs[ajaxidx]);
+				}
+
+			    if (++ajaxidx >= ajaxspecs.length) {
+					ajaxidx = 0;
+
+					if (++ajaxcntr >= 4096) {
+						ajaxcntr = 0;
+					}
+			    }
 			}
 
-		    setTimeout(function() { executewidget(); }, 2000);
+		    setTimeout(function() { executewidget(); }, 1000);
 	  	}
 	}
 

@@ -71,7 +71,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "16.8",
+	"latest_config" => "16.9",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -171,6 +171,10 @@ if (file_exists("/etc/inc/globals_override.inc")) {
 
 /* Read all XML files in following dir and load menu entries */
 $g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
+
+/* Cache file used to store pfSense version */
+$g["version_cache_file"] = "{$g['varrun_path']}/{$g['product_name']}_version";
+$g['version_cache_refresh'] = 24 * 60 * 60; /* 24h */
 
 function platform_booting($on_console = false) {
 	global $g;

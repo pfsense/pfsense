@@ -54,11 +54,15 @@ $sysinfo_items = array(
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
+	$cache_file = $g['version_cache_file'];
+
 	if (isset($config['system']['firmware']['disablecheck'])) {
 		exit;
 	}
 
-	$system_version = get_system_pkg_version();
+	/* If $_REQUEST['getupdatestatus'] == 2, force update */
+	$system_version = get_system_pkg_version(false,
+	    ($_REQUEST['getupdatestatus'] == 1));
 
 	if ($system_version === false) {
 		print(gettext("<i>Unable to check for updates</i>"));
@@ -86,15 +90,27 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		printf('<span class="text-success">%s</span>', gettext("The system is on the latest version."));
+		printf('<span class="text-success">%s</span>' . "\n",
+		    gettext("The system is on the latest version."));
 		break;
 	case '>':
-		print(gettext("The system is on a later version than<br />the official release."));
+		printf("%s\n", gettext(
+		    "The system is on a later version than official release."));
 		break;
 	default:
-		print(gettext( "<i>Error comparing installed version<br />with latest available</i>"));
+		printf("<i>%s</i>\n", gettext(
+		    "Error comparing installed with latest version available"));
 		break;
 	}
+
+	if (file_exists($cache_file)):
+?>
+	<div>
+		<?printf("%s %s", gettext("Version information updated at"),
+		    date("Y-m-d H:i", filemtime($cache_file)));?>
+	</div>
+<?php
+	endif;
 
 	exit;
 } elseif ($_POST['widgetkey']) {

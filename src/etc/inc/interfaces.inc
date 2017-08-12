@@ -3870,9 +3870,6 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 
 	/* XXX: need to extend to support variable prefix size for v4 */
-	if (!is_module_loaded("if_stf")) {
-		mwexec("/sbin/kldload if_stf.ko");
-	}
 	$stfiface = "{$interface}_stf";
 	if (does_interface_exist($stfiface)) {
 		pfSense_interface_destroy($stfiface);
@@ -3880,7 +3877,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$tmpstfiface = pfSense_interface_create("stf");
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
-	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
+	mwexec("/sbin/ifconfig {$stfiface} inet6 no_dad {$rd6prefix}/{$rd6prefixlen}");
 	mwexec("/sbin/ifconfig {$stfiface} stfv4br " . escapeshellarg($wancfg['gateway-6rd']));
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32) {
 		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));

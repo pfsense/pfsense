@@ -862,7 +862,7 @@ EOD;
 				if (is_ipaddr($right_spec)) {
 					$sourcehost = $right_spec;
 				} else {
-					$sourcehost = $rgmap['remote-gateway'];
+					$sourcehost = $rgmap[$right_spec];
 				}
 
 				if (substr($ph1ent['interface'], 0, 4) == "_vip") {
@@ -888,7 +888,8 @@ EOD;
 						$subnet_bits = get_interface_subnet($vpninterface);
 						$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
 						/* if the remote gateway is in the local subnet, then don't add a route */
-						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+						if (is_ipaddrv4($sourcehost) &&
+						    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv4($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 								route_add_or_change("-host {$sourcehost} {$gatewayip}");
@@ -902,7 +903,8 @@ EOD;
 						$subnet_bits = get_interface_subnetv6($vpninterface);
 						$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
 						/* if the remote gateway is in the local subnet, then don't add a route */
-						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+						if (is_ipaddrv6($sourcehost) &&
+						    !ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv6($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
 								route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");

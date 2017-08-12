@@ -92,7 +92,7 @@ function start_dpinger($gateway) {
 	global $g;
 
 	if (!isset($gateway['gwifip'])) {
-		return;
+		return (false);
 	}
 
 	$dpinger_defaults = return_dpinger_defaults();
@@ -166,8 +166,12 @@ function start_dpinger($gateway) {
 
 	/* Do not try to bind IPv6 where interface is in tentative state */
 	if (is_ipaddrv6($gateway['gwifip'])) {
-		interface_wait_tentative(get_real_interface(
+		$err = interface_wait_tentative(get_real_interface(
 		    $gateway['interface']));
+		if ($err == false) {
+			log_error(gettext("Timeout waiting for IPv6 address in tentative state.  dpinger will not run."));
+			return (false);
+		}
 	}
 
 	/* Redirect stdout to /dev/null to avoid exec() to wait for dpinger */

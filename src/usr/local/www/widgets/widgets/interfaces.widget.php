@@ -28,6 +28,13 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
+$swdevs = switch_get_devices();
+if (count($swdevs) > 0) {
+	foreach ($swdevs as $swdev) {
+		$swifs = switch_get_configured_interface_with_descr($swdev);
+		$ifdescrs = array_merge($ifdescrs, $swifs);
+	}
+}
 // Update once per minute by default, instead of every 10 seconds
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
@@ -73,25 +80,42 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	}
 
 	$interface_is_displayed = true;
-	$ifinfo = get_interface_info($ifdescr);
-	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
-		/* PPP link (non-cell) - looks like a modem */
-		$typeicon = 'hdd-o';
-	} else if ($ifinfo['ppplink']) {
-		/* PPP Link (usually cellular) */
-		$typeicon = 'signal';
-	} else if (is_interface_wireless($ifdescr)) {
-		/* Wi-Fi interface (hostap/client/etc) */
-		$typeicon = 'wifi';
-	} else {
-		/* Wired/other interface. */
+	if (strstr($ifdescr, "switch") != NULL) {
+		list($swdev, $swport) = sscanf($ifdescr, "switch%d.port%d");
+		if (!isset($swdev) || !isset($swport) || !is_numeric($swdev) || !is_numeric($swport)) {
+			continue;
+		}
+		$swdevice = "/dev/etherswitch$swdev";
+		$ifinfo = pfSense_etherswitch_getport($swdevice, $swport);
+		if ($ifinfo == NULL) {
+			continue;
+		}
 		$typeicon = 'sitemap';
+		$switchport = true;
+	} else {
+		$switchport = false;
+		$ifinfo = get_interface_info($ifdescr);
+		if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
+			/* PPP link (non-cell) - looks like a modem */
+			$typeicon = 'hdd-o';
+		} else if ($ifinfo['ppplink']) {
+			/* PPP Link (usually cellular) */
+			$typeicon = 'signal';
+		} else if (is_interface_wireless($ifdescr)) {
+			/* Wi-Fi interface (hostap/client/etc) */
+			$typeicon = 'wifi';
+		} else {
+			/* Wired/other interface. */
+			$typeicon = 'sitemap';
+		}
 	}
 
 	$known_status = true;
 
 	// Choose an icon by interface status
-	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+	if ($ifinfo['status'] == "up" ||
+	    $ifinfo['status'] == 'active' ||
+	    $ifinfo['status'] == "associated") {
 		$icon = 'arrow-up text-success';
 	} elseif ($ifinfo['status'] == "no carrier") {
 		$icon = 'times-circle text-danger';
@@ -103,10 +127,23 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 ?>
 	<tr>
+<?
+	if ($switchport) {
+?>
+		<td title="<?=htmlspecialchars($ifdescr)?>">
+			<i class="fa fa-<?=$typeicon?>"></i>
+			<a href="/switch_ports.php?if=<?=$ifdescr?>">
+				<?=htmlspecialchars($ifname);?>
+<?
+	} else {
+?>
 		<td title="<?=htmlspecialchars($ifinfo['macaddr'])?>">
 			<i class="fa fa-<?=$typeicon?>"></i>
 			<a href="/interfaces.php?if=<?=$ifdescr?>">
 				<?=htmlspecialchars($ifname);?>
+<?
+	}
+?>
 			</a>
 		</td>
 		<td>
@@ -119,6 +156,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		<td>
 			<?php if ($ifinfo['pppoelink'] == "up" || $ifinfo['pptplink'] == "up" || $ifinfo['l2tplink'] == "up"):?>
 				<?=sprintf(gettext("Uptime: %s"), htmlspecialchars($ifinfo['ppp_uptime']));?>
+			<?php elseif ($switchport): ?>
+				<?php if (strlen($ifinfo['media']['active']) > 0): ?>
+					<?=htmlspecialchars($ifinfo['media']['active']);?>
+				<?php else: ?>
+					<?=htmlspecialchars($ifinfo['media']['current']);?>
+				<?php endif; ?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>
 			<?php endif; ?>

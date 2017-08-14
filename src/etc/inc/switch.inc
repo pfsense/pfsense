@@ -221,4 +221,37 @@ function switch_findvgroup($swidx, $vlan) {
 	return (-1);
 }
 
+function switch_get_configured_interface_with_descr($swdevice = NULL) {
+
+	$rtrn = array();
+	if ($swdevice == NULL)
+		return ($rtrn);
+
+	if (strncasecmp($swdevice, "/dev/etherswitch", 16) != 0)
+		return ($rtrn);
+	$swdev = substr($swdevice, 16);
+	$swinfo = pfSense_etherswitch_getinfo($swdevice);
+	for ($i = 0; $i < $swinfo['nports']; $i++) {
+		if (isset($swinfo['switch_caps']['PORTS_MASK']) &&
+		    $swinfo['switch_caps']['PORTS_MASK'] == 1 &&
+		    (!isset($swinfo['ports_mask'][$i]) ||
+		    $swinfo['ports_mask'][$i] != 1)) {
+			continue;
+		}
+		$port = pfSense_etherswitch_getport($swdevice, $i);
+		if ($port == NULL) {
+			continue;
+		}
+
+		$swport = switch_map_port($port['port']);
+		if ($swport != NULL) {
+			$rtrn["switch".$swdev.".port".$i] = "$swport";
+		} else {
+			$rtrn["switch".$swdev.".port".$i] = htmlspecialchars($port['port']);
+		}
+	}
+
+	return ($rtrn);
+}
+
 ?>

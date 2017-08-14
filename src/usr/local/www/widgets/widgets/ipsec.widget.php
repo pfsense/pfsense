@@ -153,60 +153,63 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 
 	// Only generate the data for the tab that is currently being viewed
-	switch ($_REQUEST['tab']) {
-		case "Overview" :
-			print("	<tr>\n");
-			print(		"<td>" . $activecounter . "</td>\n");
-			print(		"<td>" . $inactivecounter . "</td>\n");
-			print(		"<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>\n");
-			print(	"</tr>\n");
-		break;
+	$jsondata = "{";
 
-		case "tunnel" :
-			foreach ($ipsec_detail_array as $ipsec) {
-				print("	<tr>\n");
-				print(		"<td>" . htmlspecialchars($ipsec['src']) . "</td>\n");
-				print(		"<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>\n");
-				print(		"<td>" . htmlspecialchars($ipsec['descr']) . "</td>\n");
+	$jsondata .= "\"overview\":\"";
+	$jsondata .= "<tr>";
+	$jsondata .= "<td>" . $activecounter . "</td>";
+	$jsondata .= "<td>" . $inactivecounter . "</td>";
+	$jsondata .= "<td>" . (is_array($mobile['pool']) ? htmlspecialchars($mobile['pool'][0]['usage']) : '0') . "</td>";
+	$jsondata .= "</tr>";
+	$jsondata .= "\",\n";
 
-				if ($ipsec['status'] == "true") {
-					print('<td><i class="fa fa-arrow-up text-success"></i></td>' . "\n");
-				} else {
-					print('<td><i class="fa fa-arrow-down text-danger"></i></td>' . "\n");
-				}
+	$jsondata .= "\"tunnel\":\"";
+	foreach ($ipsec_detail_array as $ipsec) {
+		$jsondata .= "<tr>";
+		$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
+		$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
+		$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
 
-				print(	"</tr>\n");
-			}
-		break;
+		if ($ipsec['status'] == "true") {
+			$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
+		} else {
+			$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
+		}
 
-		case "mobile" :
-			if (!is_array($mobile['pool'])) {
-				break;
-			}
-			foreach ($mobile['pool'] as $pool) {
-				if (!is_array($pool['lease'])) {
-					continue;
-				}
-
-				foreach ($pool['lease'] as $muser) {
-					print("	<tr>\n");
-					print(		"<td>" . htmlspecialchars($muser['id']) . "</td>\n");
-					print(		"<td>" . htmlspecialchars($muser['host']) . "</td>\n");
-					print(		"<td>" . htmlspecialchars($muser['status']) . "</td>\n");
-					print("	</tr>\n");
-				}
-			}
-		break;
+		$jsondata .= "</tr>";
 	}
 
+	$jsondata .= "\",\n";
+
+
+$jsondata .= "\"mobile\":\"";
+	if (is_array($mobile['pool'])) {
+		foreach ($mobile['pool'] as $pool) {
+			if (!is_array($pool['lease'])) {
+				continue;
+			}
+
+			foreach ($pool['lease'] as $muser) {
+				$jsondata .= "<tr>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
+				$jsondata .= "</tr>";
+			}
+		}
+	} else {
+		$jsondata .= "\"}";
+	}
+
+	print($jsondata);
 	exit;
 }
 
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
-	$tab_array[] = array(gettext("Overview"), true, "ipsec-Overview");
-	$tab_array[] = array(gettext("Tunnels"), false, "ipsec-tunnel");
-	$tab_array[] = array(gettext("Mobile"), false, "ipsec-mobile");
+	$tab_array[] = array(gettext("Overview"), true, "ipsec-Overviews");
+	$tab_array[] = array(gettext("Tunnels"), false, "ipsec-Tunnels");
+	$tab_array[] = array(gettext("Mobile"), false, "ipsec-Mobiles");
 
 	display_widget_tabs($tab_array);
 }
@@ -215,7 +218,7 @@ $mobile = ipsec_dump_mobile();
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
 if (isset($config['ipsec']['phase2'])): ?>
-<div id="ipsec-Overview" style="display:block;"  class="table-responsive">
+<div id="ipsec-Overviews" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -224,12 +227,12 @@ if (isset($config['ipsec']['phase2'])): ?>
 			<th><?=gettext("Mobile Users")?></th>
 		</tr>
 		</thead>
-		<tbody>
+		<tbody id="body-overview">
 			<tr><td colspan="3"><?=gettext("Retrieving overview data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 	</table>
 </div>
-<div class="table-responsive" id="ipsec-tunnel" style="display:none;">
+<div class="table-responsive" id="ipsec-Tunnels" style="display:none;">
 	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
@@ -239,14 +242,14 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<th><?=gettext("Status")?></th>
 	</tr>
 	</thead>
-	<tbody>
+	<tbody id="body-tunnel">
 		<tr><td colspan="4"><?=gettext("Retrieving tunnel data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 	</tbody>
 	</table>
 </div>
 
 	<?php if (is_array($mobile['pool'])): ?>
-<div id="ipsec-mobile" style="display:none;" class="table-responsive">
+<div id="ipsec-Mobiles" style="display:none;" class="table-responsive">
 		<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -255,11 +258,13 @@ if (isset($config['ipsec']['phase2'])): ?>
 			<th><?=gettext("Status")?></th>
 		</tr>
 		</thead>
-		<tbody>
+		<tbody id="body-mobile">
 			<tr><td colspan="3"><?=gettext("Retrieving mobile data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
 		</table>
 	</div>
+
+	<span id="poo"></span>
 	<?php endif;?>
 <?php else: ?>
 	<div>
@@ -320,32 +325,37 @@ function changeTabDIV(selectedDiv) {
 	}
 }
 
-function get_ipsec_stats() {
-	var ajaxRequest;
-
-	ajaxRequest = $.ajax({
-			url: "/widgets/widgets/ipsec.widget.php",
-			type: "post",
-			data: {
-					ajax: "ajax",
-					tab:  curtab
-				  }
-		});
-
-	// Deal with the results of the above ajax call
-	ajaxRequest.done(function (response, textStatus, jqXHR) {
-
-		$('tbody', '#ipsec-' + curtab).html(response);
-
-		// and do it again
-		setTimeout(get_ipsec_stats, "<?=$widgetperiod?>");
-	});
-}
-
 events.push(function(){
-	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-	// hit the server at exactly the same time)
-	setTimeout(get_ipsec_stats, Math.floor((Math.random() * 10000) + 1000));
+
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function ipsec_callback(s) {
+		var obj = JSON.parse(s);
+
+		$('tbody', '#ipsec-Overviews').html(obj.overview);
+		$('tbody', '#ipsec-Tunnels').html(obj.tunnel);
+		$('tbody', '#body-Mobiles').html(obj.mobile);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	tab : curtab
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var ipsecObject = new Object();
+	ipsecObject.name = "IPsec";
+	ipsecObject.url = "/widgets/widgets/ipsec.widget.php";
+	ipsecObject.callback = ipsec_callback;
+	ipsecObject.parms = postdata;
+	ipsecObject.freq = 4;
+
+	// Register the AJAX object
+	register_ajax(ipsecObject);
+
+	// ---------------------------------------------------------------------------------------------------
 });
 //]]>
 </script>

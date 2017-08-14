@@ -199,36 +199,6 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	</div>
 </form>
 
-<script>
-//<![CDATA[
-
-	function get_gw_stats() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/gateways.widget.php",
-				type: "post",
-				data: { ajax: "ajax"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#gwtblbody').html(response);
-			// and do it again
-			setTimeout(get_gw_stats, "<?=$widgetperiod?>");
-		});
-	}
-
-	events.push(function(){
-		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallgateways");
-
-		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-		// hit the server at exactly the same time)
-		setTimeout(get_gw_stats, Math.floor((Math.random() * 10000) + 1000));
-	});
-//]]>
-</script>
-
 <?php
 function compose_table_body_contents() {
 	global $user_settings;
@@ -359,3 +329,37 @@ function compose_table_body_contents() {
 	return($rtnstr);
 }
 ?>
+
+<script>
+//<![CDATA[
+
+events.push(function(){
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function gateways_callback(s) {
+		$('#gwtblbody').html(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	widgetkey : "<?=$widgetkey?>"
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var gatewaysObject = new Object();
+	gatewaysObject.name = "Gateways";
+	gatewaysObject.url = "/widgets/widgets/gateways.widget.php";
+	gatewaysObject.callback = gateways_callback;
+	gatewaysObject.parms = postdata;
+	gatewaysObject.freq = 1;
+
+	// Register the AJAX object
+	register_ajax(gatewaysObject);
+
+	// ---------------------------------------------------------------------------------------------------
+});
+
+//]]>
+</script>

@@ -105,7 +105,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "15.8",
+	"latest_config" => "15.9",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -147,11 +147,11 @@ if (file_exists("/etc/platform")) {
 	} else {
 		$g['default_config_backup_count'] = 30;
 	}
-} else { 
-	// shouldn't happen but "just in case" no platform were detected 
-	$g['platform'] = 'undetected'; 
-	$g['default_config_backup_count'] = 30; 
-} 
+} else {
+	// shouldn't happen but "just in case" no platform were detected
+	$g['platform'] = 'undetected';
+	$g['default_config_backup_count'] = 30;
+}
 
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {

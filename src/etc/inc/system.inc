@@ -549,10 +549,11 @@ function system_hosts_generate() {
 	$hosts_array = system_hosts_entries($dnsmasqcfg);
 	foreach ($hosts_array as $host) {
 		$hosts .= "{$host['ipaddr']}\t";
-		if (!empty($host['name'])) {
-			$hosts .= "{$host['name']} ";
+		if ($host['name'] == "localhost") {
+			$hosts .= "{$host['name']} {$host['fqdn']}";
+		} else {
+			$hosts .= "{$host['fqdn']} {$host['name']}";
 		}
-		$hosts .= "{$host['fqdn']}";
 		$hosts .= "\n";
 	}
 	unset($hosts_array);

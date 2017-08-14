@@ -97,6 +97,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
+$pconfig['logincss'] = $config['system']['webgui']['logincss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['interfacessort'] = isset($config['system']['webgui']['interfacessort']);
@@ -197,6 +198,13 @@ if ($_POST) {
 		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
 	} else {
 		unset($config['system']['webgui']['webguicss']);
+	}
+
+
+	if ($_POST['logincss']) {
+		$config['system']['webgui']['logincss'] = $_POST['logincss'];
+	} else {
+		unset($config['system']['webgui']['logincss']);
 	}
 
 	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
@@ -625,6 +633,15 @@ gen_associatedpanels_fields(
 	$pconfig['statusmonitoringsettingspanel']);
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+
+$section->addInput(new Form_Select(
+	'logincss',
+	'Login page color',
+	$pconfig['logincss'],
+	["1e3f75;" => gettext("Blue"), "003300" => gettext("Green"), "770101" => gettext("Red"),
+	 "4b1263" => gettext("Purple"), "424142" => gettext("Gray"), "333333" => gettext("Dark gray"),
+	 "633215" => gettext("Brown" ), "bf7703" => gettext("Orange")]
+))->setHelp('Choose a color for the login page');
 
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',

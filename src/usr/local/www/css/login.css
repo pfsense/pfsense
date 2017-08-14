@@ -95,6 +95,9 @@ header {
     width: 80%;
 }
 
+.error-panel a {
+	color: white;
+}
 p.form-title
 {
     font-family: 'Open Sans' , sans-serif;

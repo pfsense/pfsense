@@ -529,6 +529,19 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 		});
 }
 
+// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+// These need to live outsie of the events.push() function to enable the widgets to see them
+var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
+var ajaxidx = 0;
+var ajaxmutex = false;
+var ajaxcntr = 0;
+
+// Add a widget refresh object to the array list
+function register_ajax(ws) {
+  ajaxspecs.push(ws);
+}
+// ---------------------------------------------------------------------------------------------------
+
 events.push(function() {
 
 	// Make panels destroyable
@@ -585,6 +598,55 @@ events.push(function() {
 			$('#btnstore').removeClass("invisible");
 		}
 	});
+
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	function make_ajax_call(wd) {
+		ajaxmutex = true;
+
+		$.ajax({
+			type: 'POST',
+			url: wd.url,
+			dataType: 'html',
+			data: wd.parms,
+
+			success: function(data){
+				wd.callback(data);
+				ajaxmutex = false;
+			},
+
+			error: function(e){
+//				alert("Error: " + e);
+				ajaxmutex = false;
+			}
+		});
+	}
+
+	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
+	// results back to the widget's callback function
+	function executewidget() {
+		if (ajaxspecs.length > 0) {
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
+
+			if (!ajaxmutex) {
+				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
+				    make_ajax_call(ajaxspecs[ajaxidx]);
+				}
+
+			    if (++ajaxidx >= ajaxspecs.length) {
+					ajaxidx = 0;
+
+					if (++ajaxcntr >= 4096) {
+						ajaxcntr = 0;
+					}
+			    }
+			}
+
+		    setTimeout(function() { executewidget(); }, 1000);
+	  	}
+	}
+
+	// Kick it off
+	executewidget();
 });
 //]]>
 </script>

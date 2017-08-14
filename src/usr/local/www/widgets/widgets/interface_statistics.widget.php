@@ -201,31 +201,57 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 <script type="text/javascript">
 //<![CDATA[
-
-	function get_if_stats() {
+/*
+	function get_if_stats_<?=$widgetkey_nodash?>() {
 		var ajaxRequest;
 
 		ajaxRequest = $.ajax({
 				url: "/widgets/widgets/interface_statistics.widget.php",
 				type: "post",
-				data: { ajax: "ajax"}
+				data: { ajax: "ajax", widgetkey: "<?=$widgetkey?>"}
 			});
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#iftbl').html(response);
+			$('#<?=$widgetkey?>-iftbl').html(response);
 
 			// and do it again
-			setTimeout(get_if_stats, "<?=$widgetperiod?>");
+			setTimeout(get_if_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
 		});
 	}
+*/
+	events.push(function() {
+		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
 
-	events.push(function(){
+		// Callback function called by refresh system when data is retrieved
+		function interface_statistics_callback(s) {
+			$('#iftbl').html(s);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			ajax : "ajax",
+		 	widgetkey :"<?=$widgetkey?>"
+		 };
+
+		// Create an object defining the widget refresh AJAX call
+		var ifstatObject = new Object();
+		ifstatObject.name = "IFstats";
+		ifstatObject.url = "/widgets/widgets/interface_statistics.widget.php";
+		ifstatObject.callback = interface_statistics_callback;
+		ifstatObject.parms = postdata;
+		ifstatObject.freq = 1;
+
+		// Register the AJAX object
+		register_ajax(ifstatObject);
+
+		// ---------------------------------------------------------------------------------------------------
+		// Note: This manages all settings checkboxes with id starting with "show"
+		// (i.e. both the interface and stats item selection groups)
+		// using a single All/None button
 		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfacesforstats");
 
-		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-		// hit the server at exactly the same time)
-		setTimeout(get_if_stats, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>
+

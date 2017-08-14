@@ -61,7 +61,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
 
-if ($_POST) {
+if ($_POST && !$_REQUEST['ajax']) {
 
 	$validNames = array();
 
@@ -79,9 +79,11 @@ if ($_POST) {
 	header("Location: /index.php");
 }
 
+if (!$_REQUEST['ajax']) {
 ?>
 
-<div class="table-responsive">
+<div id="ifaces_status" class="table-responsive">
+	<?php } ?>
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 <?php
@@ -174,7 +176,15 @@ endif;
 ?>
 		</tbody>
 	</table>
+
+<?php
+/* for AJAX response, we only need the panels */
+if ($_REQUEST['ajax']) {
+	exit;
+}
+?>
 </div>
+
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
@@ -220,6 +230,32 @@ endif;
 <script>
 //<![CDATA[
 	events.push(function(){
+
+		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function interfaces_callback(s) {
+			$('#ifaces_status').html(s);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			widgetkey :"<?=$widgetkey?>",
+			ajax: "ajax"
+		};
+
+		// Create an object defining the widget refresh AJAX call
+		var interfacesObject = new Object();
+		interfacesObject.name = "Interfaces";
+		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
+		interfacesObject.callback = interfaces_callback;
+		interfacesObject.parms = postdata;
+		interfacesObject.freq = 1;
+
+		// Register the AJAX object
+		register_ajax(interfacesObject);
+
+		// ---------------------------------------------------------------------------------------------------
 		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfaces");
 	});
 //]]>

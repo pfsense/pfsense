@@ -553,41 +553,6 @@ $rows_displayed = false;
 
 <script type="text/javascript">
 //<![CDATA[
-<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
-function systemStatusGetUpdateStatus() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/system_information.widget.php',
-		data: 'getupdatestatus=1',
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		dataType: 'html',
-		success: function(data){
-			$('#widget-system_information #updatestatus').html(data);
-		}
-	});
-}
-
-setTimeout('systemStatusGetUpdateStatus()', 4000);
-<?php endif; ?>
-
-function updateMeters() {
-	url = '/getstats.php';
-
-	$.ajax(url, {
-		type: 'get',
-		success: function(data) {
-			response = data || "";
-			if (response != "")
-				stats(data);
-		}
-	});
-
-	setTimer();
-
-}
 
 events.push(function(){
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallsysinfoitems");
@@ -597,10 +562,6 @@ var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
-}
-
-function setTimer() {
-	timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -773,9 +734,33 @@ function widgetActive(x) {
 	}
 }
 
-/* start updater */
+
 events.push(function(){
-	setTimer();
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function meters_callback(s) {
+		stats(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax"
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var metersObject = new Object();
+	metersObject.name = "Meters";
+	metersObject.url = "/getstats.php";
+	metersObject.callback = meters_callback;
+	metersObject.parms = postdata;
+	metersObject.freq = 1;
+
+	// Register the AJAX object
+	register_ajax(metersObject);
+
+	//set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
+
 });
 //]]>
 </script>

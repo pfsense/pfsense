@@ -137,12 +137,6 @@ if ($_REQUEST['getupdatestatus']) {
 	header("Location: /index.php");
 }
 
-/*   Adding one second to the system widet update period
- *   will ensure that we update the GUI right after the stats are updated.
- */
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
-$widgetperiod += 1000;
-
 $filesystems = get_mounted_filesystems();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
@@ -692,7 +686,7 @@ events.push(function(){
 	versionObject.parms = postdata;
 	versionObject.freq = 100;
 
-	// Register the AJAX object
+	//Register the AJAX object
 	register_ajax(versionObject);
 <?php endif; ?>
 	// ---------------------------------------------------------------------------------------------------

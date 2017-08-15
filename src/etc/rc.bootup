@@ -331,6 +331,36 @@ if ($realmem > 0 and $realmem < 65) {
 	system_webgui_start();
 }
 
+/* Workaround to add pkg metadata update cronjob on 2.3 */
+if (!isset($config['cron']['rc_update_pkg_metadata'])) {
+	$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
+
+	$found = false;
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $entry) {
+			if ($entry['command'] == $command) {
+				$found = true;
+				break;
+			}
+		}
+	}
+
+	if (!$found) {
+		$config['cron']['item'][] = array(
+			'minute' => '1',
+			'hour' => '0',
+			'mday' => '*',
+			'month' => '*',
+			'wday' => '*',
+			'who' => 'root',
+			'command' => $command
+		);
+	}
+
+	$config['cron']['rc_update_pkg_metadata'] = true;
+	write_config("Registered rc.update_pkg_metadata cronjob");
+}
+
 /* configure cron service */
 echo "Configuring CRON...";
 configure_cron();

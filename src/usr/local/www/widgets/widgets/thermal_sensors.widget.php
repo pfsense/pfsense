@@ -52,14 +52,23 @@
  */
 
 require_once("guiconfig.inc");
-require_once("/usr/local/www/widgets/include/thermal_sensors.inc");
+
+//set variable for custom title
+$thermal_sensors_widget_title = gettext("Thermal Sensors");
 
 //=========================================================================
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
-if (isset($_GET["getThermalSensorsData"])) {
+if (isset($_REQUEST["getThermalSensorsData"])) {
 	//get Thermal Sensors data and return
-	echo getThermalSensorsData();
-	return;
+	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$dfout_filtered = array_filter($dfout, function($v) {
+		return strpos($negsign, ' -') === false;
+	});
+
+	print(join("|", $dfout_filtered));
+
+	exit;
+
 }
 //=========================================================================
 
@@ -177,7 +186,33 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	//start showing temp data
 	//NOTE: the refresh interval will be reset to a proper value in showThermalSensorsData() (thermal_sensors.js).
 	events.push(function(){
-		showThermalSensorsData();
+        // --------------------- Centralized widget refresh system ------------------------------
+
+        // Callback function called by refresh system when data is retrieved
+        function ts_callback(s) {
+                var thermalSensorsData = s || "";
+				buildThermalSensorsData(thermalSensorsData);
+        }
+
+        // POST data to send via AJAX
+        var postdata = {
+                ajax: "ajax",
+                getThermalSensorsData : "1"
+         };
+
+        // Create an object defining the widget refresh AJAX call
+        var tsObject = new Object();
+        tsObject.name = "Gateways";
+        tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
+        tsObject.callback = ts_callback;
+        tsObject.parms = postdata;
+        tsObject.freq = 4;
+
+        // Register the AJAX object
+        register_ajax(tsObject);
+
+        // ---------------------------------------------------------------------------------------------------
+		//showThermalSensorsData();
 	});
 //]]>
 </script>

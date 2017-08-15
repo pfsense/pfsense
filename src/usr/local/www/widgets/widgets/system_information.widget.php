@@ -84,6 +84,9 @@ $sysinfo_items = array(
 	'disk_usage' => gettext('Disk Usage')
 	);
 
+// Declared here so that JavaScript can access it
+$updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa fa-cog fa-spin'></i>");
+
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
@@ -256,7 +259,7 @@ $rows_displayed = false;
 			<?php endif; ?>
 			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 				<br /><br />
-				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
+				<div id='updatestatus'><?=$updtext?></div>
 			<?php endif; ?>
 			</td>
 		</tr>

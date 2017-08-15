@@ -141,6 +141,8 @@ if ($_REQUEST['getupdatestatus']) {
 	<div>
 		<?printf("%s %s", gettext("Version information updated at"),
 		    date("Y-m-d H:i", filemtime($cache_file)));?>
+		    &nbsp;
+		    <a id="updver" href="#" class="fa fa-refresh"></a>
 	</div>
 <?php
 	endif;

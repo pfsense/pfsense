@@ -292,34 +292,40 @@ function get_dyndns_service_text($dyndns_type) {
 
 <script type="text/javascript">
 //<![CDATA[
-	function dyndns_getstatus() {
-		scroll(0,0);
-		var url = "/widgets/widgets/dyn_dns_status.widget.php";
-		var pars = 'getdyndnsstatus=yes';
-		$.ajax(
-			url,
-			{
-				type: 'get',
-				data: pars,
-				complete: dyndnscallback
-			});
+	events.push(function(){
 
-	}
-	function dyndnscallback(transport) {
-		// The server returns a string of statuses separated by vertical bars
-		var responseStrings = transport.responseText.split("|");
-		for (var count=0; count<responseStrings.length; count++) {
-			var divlabel = '#dyndnsstatus' + count;
-			$(divlabel).prop('innerHTML',responseStrings[count]);
+		// ---------------------  centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function dyndnscallback(s) {
+			// The server returns a string of statuses separated by vertical bars
+			var responseStrings = s.split("|");
+			for (var count=0; count<responseStrings.length; count++) {
+				var divlabel = '#dyndnsstatus' + count;
+				$(divlabel).prop('innerHTML',responseStrings[count]);
+			}
 		}
 
-		// Refresh the status every 5 minutes
-		setTimeout('dyndns_getstatus()', 5*60*1000);
-	}
-	events.push(function(){
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+			getdyndnsstatus : "yes"
+		 };
+
+		// Create an object defining the widget refresh AJAX call
+		var dyndnsObject = new Object();
+		dyndnsObject.name = "DynDNS";
+		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
+		dyndnsObject.callback = dyndnscallback;
+		dyndnsObject.parms = postdata;
+		dyndnsObject.freq = 20;
+
+		// Register the AJAX object
+		register_ajax(dyndnsObject);
+
+		// ---------------------------------------------------------------------------------------------------
 		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalldyndns");
 	});
-	// Do the first status check 2 seconds after the dashboard opens
-	setTimeout('dyndns_getstatus()', 2000);
+
 //]]>
 </script>

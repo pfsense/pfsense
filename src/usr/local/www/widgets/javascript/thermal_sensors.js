@@ -22,35 +22,6 @@ warningTemp = 9999;
 criticalTemp = 100;
 ajaxBusy = false;
 
-//should be called from "thermal_sensors.widget.php"
-function showThermalSensorsData(widgetKey, tsParams, firstTime) {
-	if (!ajaxBusy) {
-		ajaxBusy = true;
-		//get data from thermal_sensors.widget.php
-		url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
-				//IE fix to disable cache when using http:// , just append timespan
-				+ new Date().getTime();
-
-		$.ajax(url, {
-			type: 'get',
-			success: function(data) {
-				var thermalSensorsData = data || "";
-				buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime);
-				firstTime = false;
-			},
-			error: function(jqXHR, status, error) {
-				firstTime = true;
-				warningTemp = 9999;
-				buildThermalSensorsDataRaw('<span class="alert-danger">Temperature data could not be read.</span>', widgetKey);
-			}
-		});
-
-		ajaxBusy = false;
-	}
-	//call itself in 11 seconds
-	window.setTimeout(function(){showThermalSensorsData(widgetKey, tsParams, firstTime);}, 11000);
-}
-
 function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
 	if (tsParams.showRawOutput) {
 		buildThermalSensorsDataRaw(thermalSensorsData, widgetKey);

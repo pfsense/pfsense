@@ -1,6 +1,6 @@
 <?php
 /*
- * netgate_serives_and_support.widget.php
+ * netgate_services_and_support.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
@@ -24,7 +24,7 @@
 	The connection is made using HTTPS/TLS. No other data is transmitted. If the widget
 	is not enabled, then no transmission is made
 
-	If the file ontaining the support data exists on the file system and is less than 24 hours old
+	If the file containing the support data exists on the file system and is less than 24 hours old
 	the file contents are displayed immediately. If not, an AJAX call is made to retrieve fresh information
 */
 
@@ -39,7 +39,7 @@ $refreshinterval = (24 * 3600);	// 24 hours
 
 if ($_REQUEST['ajax']) {
 
-	// Retrieve the support data from Netgate.com if the supprt data file does not exist,
+	// Retrieve the support data from Netgate.com if the support data file does not exist,
 	// or if it is more than a day old
 	if (!file_exists($supportfile) || ( time()-filemtime($supportfile) > $refreshinterval)) {
 		if (file_exists($supportfile)) {

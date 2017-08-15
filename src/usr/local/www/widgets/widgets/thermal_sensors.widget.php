@@ -20,14 +20,19 @@
  */
 
 require_once("guiconfig.inc");
-require_once("/usr/local/www/widgets/include/thermal_sensors.inc");
+
 
 //=========================================================================
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
-if (isset($_GET["getThermalSensorsData"])) {
-	//get Thermal Sensors data and return
-	echo getThermalSensorsData();
-	return;
+if (isset($_REQUEST["getThermalSensorsData"])) {
+
+	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$dfout_filtered = array_filter($dfout, function($v) {
+		return strpos($negsign, ' -') === false;
+	});
+
+	print(join("|", $dfout_filtered));
+	exit;
 }
 //=========================================================================
 
@@ -153,8 +158,35 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
 			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>
 		};
-		// showThermalSensorsData("<?=$widgetkey?>", true);
-		setTimeout(function(){showThermalSensorsData("<?=$widgetkey?>", tsParams, true);}, Math.floor((Math.random() * 10000) + 1000));
+
+	// --------------------- Centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function ts_callback(s) {
+			var thermalSensorsData = s || "";
+			buildThermalSensorsData(thermalSensorsData, "<?=$widgetkey?>", tsParams, true);
+			firstTime = false;
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	getThermalSensorsData : "1"
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var tsObject = new Object();
+	tsObject.name = "Gateways";
+	tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
+	tsObject.callback = ts_callback;
+	tsObject.parms = postdata;
+	tsObject.freq = 1;
+
+	// Register the AJAX object
+	register_ajax(tsObject);
+
+	// ---------------------------------------------------------------------------------------------------
+
 	});
 //]]>
 </script>

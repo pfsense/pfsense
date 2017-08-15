@@ -5364,6 +5364,9 @@ function upgrade_167_to_168() {
 function upgrade_168_to_169() {
 	global $config;
 
+	/* Remove workaround added in 2.3 */
+	unset($config['cron']['rc_update_pkg_metadata']);
+
 	$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
 	if (is_array($config['cron']['item'])) {
 		foreach ($config['cron']['item'] as $entry) {

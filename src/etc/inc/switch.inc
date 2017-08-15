@@ -22,7 +22,7 @@
 /* include all configuration functions */
 require_once("globals.inc");
 
-function switch_r1_get_system_vlans() {
+function switch_r1_get_system_vlans($dot1q_only) {
 
 	/* Only one switch on SG-3100. */
 	$swdevices = switch_get_devices();
@@ -35,6 +35,9 @@ function switch_r1_get_system_vlans() {
 		return (NULL);
 	}
 	$vlans = array();
+	if ($dot1q_only && isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
+		return ($vlans);
+	}
 	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
 		if ($vgroup == NULL) {
@@ -69,7 +72,7 @@ function ufw_get_system_vlans_array()
 	return ($vlans);
 }
 
-function switch_ufw_get_system_vlans() {
+function switch_ufw_get_system_vlans($dot1q_only) {
 
 	/* Only one switch on uFW. */
 	$swdevice = "/dev/etherswitch0";
@@ -96,15 +99,15 @@ function switch_ufw_get_system_vlans() {
 	return ($vlans);
 }
 
-function switch_get_system_vlans() {
+function switch_get_system_vlans($dot1q_only = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
 	case "ROGUE-1":
-		return (switch_r1_get_system_vlans());
+		return (switch_r1_get_system_vlans($dot1q_only));
 		break;
 	case "uFW":
-		return (switch_ufw_get_system_vlans());
+		return (switch_ufw_get_system_vlans($dot1q_only));
 		break;
 	}
 

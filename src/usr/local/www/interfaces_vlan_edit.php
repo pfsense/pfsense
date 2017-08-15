@@ -89,7 +89,7 @@ if ($_POST['save']) {
 			}
 		}
 	}
-	$swvlans = switch_get_system_vlans();
+	$swvlans = switch_get_system_vlans(true);
 	if ($swvlans != NULL && is_array($swvlans)) {
 		foreach($swvlans as $swvlan) {
 			if ($swvlan['vid'] != $_POST['tag'])

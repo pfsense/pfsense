@@ -91,7 +91,7 @@ if ($_GET['act'] == "del") {
 
 // List the available switches
 $swdevices = switch_get_devices();
-$vlans_system = switch_get_system_vlans();
+$vlans_system = switch_get_system_vlans(false);
 $swtitle = switch_get_title();
 
 // If there is more than one switch, draw a selector to allow the user to choose which one to look at

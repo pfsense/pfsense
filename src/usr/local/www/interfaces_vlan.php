@@ -115,7 +115,7 @@ display_top_tabs($tab_array);
 					<tbody>
 <?php
 
-	$swvlans = switch_get_system_vlans();
+	$swvlans = switch_get_system_vlans(true);
 	if ($swvlans != NULL && is_array($swvlans)) {
 		foreach($swvlans as $swvlan) {
 ?>

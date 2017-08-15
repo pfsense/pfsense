@@ -809,7 +809,8 @@ clone_to_staging_area() {
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
 	# Disable SSH Password Based Auth
-	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh/sshdkeyonly" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "ssh" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system/ssh" -t elem -n "sshdkeyonly" ${DEFAULTCONF}
 	## Format
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
@@ -827,7 +828,7 @@ clone_to_staging_area() {
 	# Remove ec2 IC variant customization
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/block_external_services" ${DEFAULTCONF}
 	# Re-enable SSH Password Based Auth
-	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh/sshdkeyonly" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/ssh" ${DEFAULTCONF}
 
 	# Activate serial console in config.xml
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}

@@ -148,12 +148,6 @@ if ($_REQUEST['getupdatestatus']) {
 	header("Location: /index.php");
 }
 
-/*   Adding one second to the system widet update period
- *   will ensure that we update the GUI right after the stats are updated.
- */
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
-$widgetperiod += 1000;
-
 $filesystems = get_mounted_filesystems();
 
 $skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']['filter']);
@@ -437,8 +431,8 @@ $rows_displayed = false;
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<?php $update_period = (!empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
-				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
+
+				<span id="cpumeter"></span>
 			</td>
 		</tr>
 <?php
@@ -557,8 +551,6 @@ $rows_displayed = false;
 events.push(function(){
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallsysinfoitems");
 });
-
-var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
@@ -736,7 +728,7 @@ function widgetActive(x) {
 
 
 events.push(function(){
-	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	// --------------------- Centralized widget refresh system ------------------------------
 
 	// Callback function called by refresh system when data is retrieved
 	function meters_callback(s) {
@@ -759,8 +751,67 @@ events.push(function(){
 	// Register the AJAX object
 	register_ajax(metersObject);
 
+	<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+
+	// Callback function called by refresh system when data is retrieved
+	function version_callback(s) {
+		$('[id^=widget-system_information] #updatestatus').html(s);
+
+		// The click handler has to be attached after the div is updated
+		$('#updver').click(function() {
+			updver_ajax();
+		});
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+		getupdatestatus: "1"
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var versionObject = new Object();
+	versionObject.name = "Version";
+	versionObject.url = "/widgets/widgets/system_information.widget.php";
+	versionObject.callback = version_callback;
+	versionObject.parms = postdata;
+	versionObject.freq = 100;
+
+	// Register the AJAX object
+	register_ajax(versionObject);
+<?php endif; ?>
+
 	//set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 
+	// AJAX function to update the version display with non-cached data
+	function updver_ajax() {
+
+		// Display the "updating" message
+		$('[id^=widget-system_information] #updatestatus').html("<?=$updtext?>"); // <?=$updtext?>");
+
+		$.ajax({
+			type: 'POST',
+			url: "/widgets/widgets/system_information.widget.php",
+			dataType: 'html',
+			data: {
+				ajax: "ajax",
+				getupdatestatus: "2"
+			},
+
+			success: function(data){
+				// Display the returned data
+				$('[id^=widget-system_information] #updatestatus').html(data);
+
+				// Re-attach the click handler (The binding was lost when the <div> content was replaced)
+				$('#updver').click(function() {
+					updver_ajax();
+				});
+			},
+
+			error: function(e){
+			}
+		});
+	}
 });
 //]]>
 </script>

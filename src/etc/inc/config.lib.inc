@@ -337,9 +337,6 @@ function convert_config() {
 			}
 		}
 	}
-	if ($config['version'] == $g['latest_config']) {
-		return;		/* already at latest version */
-	}
 
 	// Save off config version
 	$prev_version = $config['version'];
@@ -349,17 +346,37 @@ function convert_config() {
 	if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 		include_once("upgrade_config_custom.inc");
 	}
+
+	if ($config['version'] == $g['latest_config']) {
+		additional_config_upgrade();
+		return;		/* already at latest version */
+	}
+
+	if (!is_array($config['system']['already_run_config_upgrade'])) {
+		$config['system']['already_run_config_upgrade'] = array();
+	}
+	$already_run = $config['system']['already_run_config_upgrade'];
+
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
-		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
-		if (function_exists($migration_function)) {
-			$migration_function();
-		}
-		$migration_function = "{$migration_function}_custom";
-		if (function_exists($migration_function)) {
-			$migration_function();
+		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur,
+		    $next);
+
+		foreach (array("", "_custom") as $suffix) {
+			$migration_function .= $suffix;
+			if (!function_exists($migration_function)) {
+				continue;
+			}
+			if (isset($already_run[$migration_function])) {
+				/* Already executed, skip now */
+				unset($config['system']
+				    ['already_run_config_upgrade']
+				    [$migration_function]);
+			} else {
+				$migration_function();
+			}
 		}
 		$config['version'] = sprintf('%.1f', $next / 10);
 		if (platform_booting()) {
@@ -367,12 +384,14 @@ function convert_config() {
 		}
 	}
 
-	$now = date("H:i:s");
-	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
-
 	if ($prev_version != $config['version']) {
+		$now = date("H:i:s");
+		log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
+
 		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
 	}
+
+	additional_config_upgrade();
 }
 
 /****f* config/safe_write_file

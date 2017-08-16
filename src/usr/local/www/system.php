@@ -77,7 +77,7 @@ $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['system
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
-$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
+//$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
@@ -159,9 +159,9 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['dashboardperiod']) {
-		$config['widgets']['period'] = $_POST['dashboardperiod'];
-	}
+//	if ($_POST['dashboardperiod']) {
+//		$config['widgets']['period'] = $_POST['dashboardperiod'];
+//	}
 
 	if ($_POST['webguicss']) {
 		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
@@ -621,7 +621,7 @@ $section->addInput(new Form_Checkbox(
 	'Show hostname on login banner',
 	$pconfig['loginshowhost']
 ));
-
+/*
 $section->addInput(new Form_Input(
 	'dashboardperiod',
 	'Dashboard update period',
@@ -631,7 +631,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Time in seconds between dashboard widget updates. Small values cause ' .
 			'more frequent updates but increase the load on the web server. ' .
 			'Minimum is 5 seconds, maximum 600 seconds');
-
+*/
 $form->add($section);
 
 print $form;

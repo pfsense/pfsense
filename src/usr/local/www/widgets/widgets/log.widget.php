@@ -29,7 +29,7 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if ($_POST['widgetkey']) {
+if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
 
 	if (is_numeric($_POST['filterlogentries'])) {
@@ -99,12 +99,16 @@ $filter_logfile = "{$g['varlog_path']}/filter.log";
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
 
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
+
+if (!$_REQUEST['ajax']) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
 	var logWidgetLastRefresh<?=$widgetkey_nodash?> = <?=time()?>;
 //]]>
 </script>
+
+<?php } ?>
 
 <table class="table table-striped table-hover">
 	<thead>
@@ -179,31 +183,41 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 <?php
 
 /* for AJAX response, we only need the panel-body */
-if (isset($_GET['lastsawtime'])) {
+if ($_REQUEST['ajax']) {
 	exit;
 }
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-function logWidgetUpdateFromServer<?=$widgetkey_nodash?>() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/log.widget.php',
-		data: { lastsawtime: logWidgetLastRefresh<?=$widgetkey_nodash?>, widgetkey: "<?=$widgetkey?>"},
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		dataType: 'html',
-		success: function(data){
-			$('#widget-<?=$widgetkey?> .panel-body').html(data);
-		}
-	});
-}
 
 events.push(function(){
-	setInterval('logWidgetUpdateFromServer<?=$widgetkey_nodash?>()', <?=$nentriesinterval?>*1000);
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function logs_callback(s) {
+		$('#widget-<?=$widgetkey?> .panel-body').html(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+		widgetkey : "<?=$widgetkey?>",
+		lastsawtime: logWidgetLastRefresh<?=$widgetkey_nodash?>
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var logsObject = new Object();
+	logsObject.name = "Gateways";
+	logsObject.url = "/widgets/widgets/log.widget.php";
+	logsObject.callback = logs_callback;
+	logsObject.parms = postdata;
+	logsObject.freq = <?=$nentriesinterval?>/5;
+
+	// Register the AJAX object
+	register_ajax(logsObject);
+
+	// ---------------------------------------------------------------------------------------------------
 });
 //]]>
 </script>

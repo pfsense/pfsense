@@ -116,6 +116,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 			print('N/A ' . date("H:i:s"));
 		}
 	}
+
 	exit;
 } else if ($_POST['widgetkey']) {
 	set_customwidgettitle($user_settings);
@@ -272,34 +273,41 @@ if (!function_exists('get_dyndns_service_text')) {
 
 <script type="text/javascript">
 //<![CDATA[
-	function dyndns_getstatus_<?=$widgetkey_nodash?>() {
-		scroll(0,0);
-		var url = "/widgets/widgets/dyn_dns_status.widget.php";
-		var pars = 'getdyndnsstatus=<?=$widgetkey?>';
-		$.ajax(
-			url,
-			{
-				type: 'get',
-				data: pars,
-				complete: dyndnscallback_<?=$widgetkey_nodash?>
-			});
 
-	}
-	function dyndnscallback_<?=$widgetkey_nodash?>(transport) {
-		// The server returns a string of statuses separated by vertical bars
-		var responseStrings = transport.responseText.split("|");
-		for (var count=0; count<responseStrings.length; count++) {
-			var divlabel = '#widget-<?=$widgetkey?> #dyndnsstatus' + count;
-			$(divlabel).prop('innerHTML',responseStrings[count]);
+	events.push(function(){
+		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function dyndnscallback_<?=$widgetkey_nodash?>(s) {
+			// The server returns a string of statuses separated by vertical bars
+			var responseStrings = s.split("|");
+			for (var count=0; count<responseStrings.length; count++) {
+				var divlabel = '#widget-<?=$widgetkey?> #dyndnsstatus' + count;
+				$(divlabel).prop('innerHTML',responseStrings[count]);
+			}
 		}
 
-		// Refresh the status every 5 minutes
-		setTimeout('dyndns_getstatus_<?=$widgetkey_nodash?>()', 5*60*1000);
-	}
-	events.push(function(){
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+		 	getdyndnsstatus : "<?=$widgetkey?>"
+		 };
+
+		// Create an object defining the widget refresh AJAX call
+		var dyndnsObject = new Object();
+		dyndnsObject.name = "DynDNS";
+		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
+		dyndnsObject.callback =  dyndnscallback_<?=$widgetkey_nodash?>;
+		dyndnsObject.parms = postdata;
+		dyndnsObject.freq = 1;
+
+		// Register the AJAX object
+		register_ajax(dyndnsObject);
+
+		// ---------------------------------------------------------------------------------------------------
+
 		set_widget_checkbox_events("#<?=$widget_panel_footer_id?> [id^=show]", "<?=$widget_showallnone_id?>");
 	});
-	// Do the first status check 2 seconds after the dashboard opens
-	setTimeout('dyndns_getstatus_<?=$widgetkey_nodash?>()', 2000);
+
 //]]>
 </script>

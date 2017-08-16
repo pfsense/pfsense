@@ -1,6 +1,6 @@
 name: "%%PRODUCT_NAME%%-SG%%FLAVOR_DESC%%"
 version: "%%VERSION%%"
-origin: "security/%%PRODUCT_NAME%%-SG%%FLAVOR_DESC%%
+origin: "security/%%PRODUCT_NAME%%-SG%%FLAVOR_DESC%%"
 comment: <<EOD
 %%PRODUCT_NAME%% pfSense SG series compatibility files
 EOD

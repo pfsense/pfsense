@@ -367,6 +367,8 @@ function convert_config() {
 		}
 	}
 
+	additional_config_upgrade();
+
 	$now = date("H:i:s");
 	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 

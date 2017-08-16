@@ -5073,6 +5073,45 @@ function additional_config_upgrade() {
 	}
 	$already_run =& $config['system']['already_run_config_upgrade'];
 
+	/* Copy of upgrade_166_to_167 from 2.4 */
+	if (!isset($already_run['upgrade_166_to_167'])) {
+		if (strpos($config['widgets']['sequence'],
+		    'netgate_services_and_support') === false) {
+			$widgets = explode(",", $config['widgets']['sequence']);
+			$cnt = count($widgets);
+			$col2 = $cnt;
+			$newsequence = array();
+
+			// Locate the firt column 2 widget
+			for ($idx=0;$idx<$cnt;$idx++) {
+				if (strpos($widgets[$idx], 'col2') !== false) {
+					$col2 = $idx;
+					break;
+				}
+			}
+
+			/*
+			 * Loop through the widgets inserting the new widget
+			 * before the first col2 widget
+			 */
+			for ($old=0,$new=0;$old<$cnt;$old++,$new++) {
+				$newsequence[$new] = $widgets[$old];
+
+				if ($old != ($col2 - 1)) {
+					continue;
+				}
+				$new++;
+				$newsequence[$new] =
+				    "netgate_services_and_support:col2:open:0";
+			}
+
+			$config['widgets']['sequence'] = implode(",",
+			    $newsequence);
+		}
+
+		$already_run['upgrade_166_to_167'] = true;
+	}
+
 	/* Copy of upgrade_168_to_169() from 2.4 */
 	if (!isset($already_run['upgrade_168_to_169'])) {
 		$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
@@ -5101,7 +5140,6 @@ function additional_config_upgrade() {
 
 		$already_run['upgrade_168_to_169'] = true;
 	}
-
 }
 
 ?>

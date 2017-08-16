@@ -5122,6 +5122,8 @@ function additional_config_upgrade() {
 
 		$config['system']['already_run_config_upgrade']
 		    ['upgrade_166_to_167'] = true;
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_167_to_168'] = true;
 		write_config("Enabled Netgate Services and Support Widget");
 	}
 

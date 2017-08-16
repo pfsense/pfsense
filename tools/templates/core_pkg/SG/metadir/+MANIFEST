@@ -1,8 +1,8 @@
-name: "%%PRODUCT_NAME%%-rc"
+name: "%%PRODUCT_NAME%%-SG%%FLAVOR_DESC%%"
 version: "%%VERSION%%"
-origin: "security/%%PRODUCT_NAME%%-rc"
+origin: "security/%%PRODUCT_NAME%%-SG%%FLAVOR_DESC%%
 comment: <<EOD
-%%PRODUCT_NAME%% rc script and rc.initial shell
+%%PRODUCT_NAME%% pfSense SG series compatibility files
 EOD
 maintainer: development@pfsense.org
 prefix: /

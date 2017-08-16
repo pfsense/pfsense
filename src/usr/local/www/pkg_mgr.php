@@ -52,8 +52,7 @@ if (($_REQUEST) && ($_REQUEST['ajax'])) {
 // The content for the table of packages is created here and fetched by Ajax. This allows us to draw the page and display
 // any required messages while the table is being downloaded/populated. On very small/slow systems, that can take a while
 function get_pkg_table() {
-
-	$pkg_info = get_pkg_info();
+	$pkg_info = get_pkg_info('all', true, false);
 
 	if (!$pkg_info) {
 		print("error");

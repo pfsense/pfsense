@@ -2410,6 +2410,9 @@ function system_get_serial() {
 			fseek($fd, 16);
 			$serial = preg_replace('/[^0-9]/', '', fread($fd, 12));
 		}
+	} elseif ($platform['name'] == 'ROGUE-1') {
+		$_gb = exec('/bin/kenv uboot.boardsn 2>/dev/null', $output);
+		$serial = $output[0];
 	} else {
 		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
 		$serial = $output[0];
@@ -2539,7 +2542,10 @@ function system_identify_specific_platform() {
 		return (array('name' => 'uFW', 'descr' => 'Netgate SG-1000'));
 	}
 
-	if (strpos($hw_model, "Cortex-A9") !== false) {
+	$_gb = exec('/bin/kenv uboot.boardpn 2>/dev/null', $boardpn);
+	$_gb = exec('/bin/kenv uboot.boardrev 2>/dev/null', $boardrev);
+	if (strpos($hw_model, "Cortex-A9") !== false && $boardrev[0] === "R100" &&
+	    strpos($boardpn[0], "80500-0148-G") !== false) {
 		return array('name' => 'ROGUE-1', 'descr' => gettext('Netgate SG-3100'));
 	}
 

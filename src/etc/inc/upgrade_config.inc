@@ -5067,6 +5067,41 @@ function upgrade_157_to_158() {
  */
 function additional_config_upgrade() {
 	global $config;
+
+	if (!is_array($config['system']['already_run_config_upgrade'])) {
+		$config['system']['already_run_config_upgrade'] = array();
+	}
+	$already_run =& $config['system']['already_run_config_upgrade'];
+
+	/* Copy of upgrade_168_to_169() from 2.4 */
+	if (!isset($already_run['upgrade_168_to_169'])) {
+		$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
+
+		$found = false;
+		if (is_array($config['cron']['item'])) {
+			foreach ($config['cron']['item'] as $entry) {
+				if ($entry['command'] == $command) {
+					$found = true;
+					break;
+				}
+			}
+		}
+
+		if (!$found) {
+			$config['cron']['item'][] = array(
+				'minute' => '1',
+				'hour' => '0',
+				'mday' => '*',
+				'month' => '*',
+				'wday' => '*',
+				'who' => 'root',
+				'command' => $command
+			);
+		}
+
+		$already_run['upgrade_168_to_169'] = true;
+	}
+
 }
 
 ?>

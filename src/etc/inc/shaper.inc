@@ -1214,8 +1214,9 @@ class priq_queue {
 		}
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
-		if ($data['priority'] && (!is_numeric($data['priority']) ||
-		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
+		
+		if (isset($data['priority']) && (!is_numeric($data['priority']) ||
+		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
@@ -1256,7 +1257,7 @@ class priq_queue {
 		} else {
 			$this->SetQlimit(""); // Default
 		}
-		if (!empty($q['priority'])) {
+		if (is_numeric($q['priority'])) {
 			$this->SetQPriority($q['priority']);
 		} else {
 			$this->SetQpriority("");
@@ -1331,7 +1332,7 @@ class priq_queue {
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
 		}
 		$tmpvalue = $this->GetQpriority();
-		if (!empty($tmpvalue)) {
+		if (is_numeric($tmpvalue)) {
 			$pfq_rule .= " priority ".$this->GetQpriority();
 		}
 		$tmpvalue = $this->GetQlimit();
@@ -1423,13 +1424,15 @@ class priq_queue {
 			$this->GetQname()
 		));
 
-		$section->addInput(new Form_Input(
-			'priority',
-			'Priority',
-			'number',
-			$this->GetQpriority(),
-			['min' => '0', 'max'=> '7']
-		))->setHelp('For hfsc, the range is 0 to 7. The default is 1. Hfsc queues with a higher priority are preferred in the case of overload.');
+		if (!is_a($this, "hfsc_queue")) {
+			$section->addInput(new Form_Input(
+				'priority',
+				'Priority',
+				'number',
+				$this->GetQpriority(),
+				['min' => '0', 'max'=> '']
+			))->setHelp('For cbq and fairq the range is 0 to 7. The default is 1. For priq the range is 0 to 15, queues with a higher priority are preferred in the case of overload.');
+		}
 
 		$section->addInput(new Form_Input(
 			'qlimit',
@@ -1589,7 +1592,7 @@ class priq_queue {
 			unset($cflink['qlimit']);
 		}
 		$cflink['priority'] = trim($this->GetQpriority());
-		if (empty($cflink['priority'])) {
+		if (!is_numeric($cflink['priority'])) {
 			unset($cflink['priority']);
 		}
 		$cflink['description'] = trim($this->GetDescription());
@@ -2410,7 +2413,7 @@ EOJS;
 			unset($cflink['qlimit']);
 		}
 		$cflink['priority'] = $this->GetQpriority();
-		if (empty($cflink['priority'])) {
+		if (!is_numericint($cflink['priority'])) {
 			unset($cflink['priority']);
 		}
 		$cflink['description'] = $this->GetDescription();
@@ -2562,7 +2565,7 @@ class cbq_queue extends priq_queue {
 			unset($cflink['qlimit']);
 		}
 		$cflink['priority'] = trim($this->GetQpriority());
-		if (empty($cflink['priority'])) {
+		if (!is_numeric($cflink['priority'])) {
 			unset($cflink['priority']);
 		}
 		$cflink['name'] = $this->GetQname();
@@ -2644,7 +2647,7 @@ class cbq_queue extends priq_queue {
 		parent::validate_input($data, $input_errors);
 
 		if ($data['priority'] > 7) {
-				$input_errors[] = gettext("Priority must be an integer between 1 and 7.");
+				$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
 		}
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
@@ -2696,7 +2699,7 @@ class cbq_queue extends priq_queue {
 			$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 		}
 		$tmpvalue = $this->GetQpriority();
-		if (!empty($tmpvalue)) {
+		if (is_numeric($tmpvalue)) {
 			$pfq_rule .= " priority " . $this->GetQpriority();
 		}
 		$tmpvalue = trim($this->GetQlimit());
@@ -2826,7 +2829,7 @@ class cbq_queue extends priq_queue {
 			unset($cflink['qlimit']);
 		}
 		$cflink['priority'] = $this->GetQpriority();
-		if (empty($cflink['priority'])) {
+		if (!is_numeric($cflink['priority'])) {
 			unset($cflink['priority']);
 		}
 		$cflink['name'] = $this->GetQname();
@@ -2925,8 +2928,8 @@ class fairq_queue extends priq_queue {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
-		if ($data['priority'] > 255) {
-				$input_errors[] = gettext("Priority must be an integer between 1 and 255.");
+		if ($data['priority'] > 7) {
+				$input_errors[] = gettext("Priority must be an integer between 0 and 7.");
 		}
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
@@ -2977,7 +2980,7 @@ class fairq_queue extends priq_queue {
 			$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 		}
 		$tmpvalue = trim($this->GetQpriority());
-		if (!empty($tmpvalue)) {
+		if (is_numeric($tmpvalue)) {
 			$pfq_rule .= " priority " . $this->GetQpriority();
 		}
 		$tmpvalue = trim($this->GetQlimit());
@@ -3105,7 +3108,7 @@ class fairq_queue extends priq_queue {
 			unset($cflink['qlimit']);
 		}
 		$cflink['priority'] = trim($this->GetQpriority());
-		if (empty($cflink['priority'])) {
+		if (!is_numeric($cflink['priority'])) {
 			unset($cflink['priority']);
 		}
 		$cflink['name'] = $this->GetQname();

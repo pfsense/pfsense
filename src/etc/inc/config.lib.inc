@@ -355,7 +355,7 @@ function convert_config() {
 	if (!is_array($config['system']['already_run_config_upgrade'])) {
 		$config['system']['already_run_config_upgrade'] = array();
 	}
-	$already_run =& $config['system']['already_run_config_upgrade'];
+	$already_run = $config['system']['already_run_config_upgrade'];
 
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
@@ -371,7 +371,9 @@ function convert_config() {
 			}
 			if (isset($already_run[$migration_function])) {
 				/* Already executed, skip now */
-				unset($already_run[$migration_function]);
+				unset($config['system']
+				    ['already_run_config_upgrade']
+				    [$migration_function]);
 			} else {
 				$migration_function();
 			}

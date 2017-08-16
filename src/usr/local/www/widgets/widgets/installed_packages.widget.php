@@ -67,7 +67,7 @@ require_once("/usr/local/www/widgets/include/installed_packages.inc");
 require_once("pkg-utils.inc");
 
 if ($_REQUEST && $_REQUEST['ajax']) {
-	$package_list = get_pkg_info();
+	$package_list = get_pkg_info('all', true, true);
 	$installed_packages = array_filter($package_list, function($v) {
 		return (isset($v['installed']) || isset($v['broken']));
 	});

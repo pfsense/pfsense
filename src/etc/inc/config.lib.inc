@@ -337,9 +337,6 @@ function convert_config() {
 			}
 		}
 	}
-	if ($config['version'] == $g['latest_config']) {
-		return;		/* already at latest version */
-	}
 
 	// Save off config version
 	$prev_version = $config['version'];
@@ -348,6 +345,11 @@ function convert_config() {
 	include_once('upgrade_config.inc');
 	if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 		include_once("upgrade_config_custom.inc");
+	}
+
+	if ($config['version'] == $g['latest_config']) {
+		additional_config_upgrade();
+		return;		/* already at latest version */
 	}
 
 	if (!is_array($config['system']['already_run_config_upgrade'])) {
@@ -380,14 +382,14 @@ function convert_config() {
 		}
 	}
 
-	additional_config_upgrade();
-
-	$now = date("H:i:s");
-	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
-
 	if ($prev_version != $config['version']) {
+		$now = date("H:i:s");
+		log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
+
 		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
 	}
+
+	additional_config_upgrade();
 }
 
 /****f* config/safe_write_file

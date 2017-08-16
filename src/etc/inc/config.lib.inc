@@ -349,17 +349,30 @@ function convert_config() {
 	if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 		include_once("upgrade_config_custom.inc");
 	}
+
+	if (!is_array($config['system']['already_run_config_upgrade'])) {
+		$config['system']['already_run_config_upgrade'] = array();
+	}
+	$already_run =& $config['system']['already_run_config_upgrade'];
+
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
-		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
-		if (function_exists($migration_function)) {
-			$migration_function();
-		}
-		$migration_function = "{$migration_function}_custom";
-		if (function_exists($migration_function)) {
-			$migration_function();
+		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur,
+		    $next);
+
+		foreach (array("", "_custom") as $suffix) {
+			$migration_function .= $suffix;
+			if (!function_exists($migration_function)) {
+				continue;
+			}
+			if (isset($already_run[$migration_function])) {
+				/* Already executed, skip now */
+				unset($already_run[$migration_function]);
+			} else {
+				$migration_function();
+			}
 		}
 		$config['version'] = sprintf('%.1f', $next / 10);
 		if (platform_booting()) {

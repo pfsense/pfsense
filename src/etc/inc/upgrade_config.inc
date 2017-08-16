@@ -5328,8 +5328,8 @@ function upgrade_165_to_166() {
 function upgrade_166_to_167() {
 	global $config;
 
-	if (strpos($config['widgets']['sequence'], 'netgate_services_and_support') === false) {
-
+	if (strpos($config['widgets']['sequence'],
+	    'netgate_services_and_support') === false) {
 		$widgets = explode(",", $config['widgets']['sequence']);
 		$cnt = count($widgets);
 		$col2 = $cnt;
@@ -5337,20 +5337,25 @@ function upgrade_166_to_167() {
 
 		// Locate the firt column 2 widget
 		for ($idx=0;$idx<$cnt;$idx++) {
-		if (strpos($widgets[$idx], 'col2') !== false) {
-			$col2 = $idx;
-			break;
+			if (strpos($widgets[$idx], 'col2') !== false) {
+				$col2 = $idx;
+				break;
 			}
 		}
 
-		// Loop through the widgets inserting the new widget before the first col2 widget
+		/*
+		 * Loop through the widgets inserting the new widget before
+		 * the first col2 widget
+		 */
 		for ($old=0,$new=0;$old<$cnt;$old++,$new++) {
 			$newsequence[$new] = $widgets[$old];
 
-			if ($old == ($col2 - 1)) {
-				$new++;
-				$newsequence[$new] = "netgate_services_and_support:col2:open:0";
+			if ($old != ($col2 - 1)) {
+				continue;
 			}
+			$new++;
+			$newsequence[$new] =
+			    "netgate_services_and_support:col2:open:0";
 		}
 
 		$config['widgets']['sequence'] = implode(",", $newsequence);

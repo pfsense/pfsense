@@ -129,17 +129,15 @@ $(function() {
 
 			var attr = $(select).attr('disabled');
 
-			// DOn't do anything if the mask selector is disabled
+			// Don't do anything if the mask selector is disabled
 			if (typeof attr === typeof undefined || attr === false) {
-				// Remove all options
-				$(select).find('option').remove().end();
+				// Eat all of the options with a value greater than max. We don't want them to be available
+				while (select.options[0].value > max)
+					select.remove(0);
 
-				// Then re-install the required ones
 				if (select.options.length < max) {
-					for (var i=select.options.length; i<=max; i++) {
+					for (var i=select.options.length; i<=max; i++)
 						select.options.add(new Option(i, i), 0);
-					}
-
 					// Make sure index 0 is selected otherwise it will stay in "32" for V6
 					select.options.selectedIndex = "0";
 				}

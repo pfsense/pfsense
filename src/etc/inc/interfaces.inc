@@ -3515,6 +3515,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
 			// calls interface_dhcpv6_configure() for these connections after IPv6CP is up, whilst rc.newwanip
 			// handles all non-PPP connections with 'dhcp6usev4iface' set
+			/* Remove the check file. Should not be there but just in case */
+			unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
+			log_error(gettext("calling interface_dhcpv6_configure."));																																		  
 			if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
 				interface_dhcpv6_configure($interface, $wancfg);
 			}

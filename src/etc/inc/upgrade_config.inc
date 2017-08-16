@@ -5071,7 +5071,7 @@ function additional_config_upgrade() {
 	if (!is_array($config['system']['already_run_config_upgrade'])) {
 		$config['system']['already_run_config_upgrade'] = array();
 	}
-	$already_run =& $config['system']['already_run_config_upgrade'];
+	$already_run = $config['system']['already_run_config_upgrade'];
 
 	/* Copy of upgrade_166_to_167 from 2.4 */
 	if (!isset($already_run['upgrade_166_to_167'])) {
@@ -5120,7 +5120,9 @@ function additional_config_upgrade() {
 			    $newsequence);
 		}
 
-		$already_run['upgrade_166_to_167'] = true;
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_166_to_167'] = true;
+		write_config("Enabled Netgate Services and Support Widget");
 	}
 
 	/* Copy of upgrade_168_to_169() from 2.4 */
@@ -5156,7 +5158,9 @@ function additional_config_upgrade() {
 			);
 		}
 
-		$already_run['upgrade_168_to_169'] = true;
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_168_to_169'] = true;
+		write_config("Added pkg metadata update cronjob");
 	}
 }
 

@@ -2,7 +2,7 @@ name: "%%PRODUCT_NAME%%-SG%%FLAVOR%%"
 version: "%%VERSION%%"
 origin: "security/%%PRODUCT_NAME%%-SG%%FLAVOR%%"
 comment: <<EOD
-%%PRODUCT_NAME%% pfSense SG%%FLAVOR_DESC%%  series compatibility files
+%%PRODUCT_NAME%% pfSense SG%%FLAVOR_DESC%% series compatibility files
 EOD
 maintainer: development@pfsense.org
 prefix: /

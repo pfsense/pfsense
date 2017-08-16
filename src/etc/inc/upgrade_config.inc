@@ -5075,6 +5075,17 @@ function additional_config_upgrade() {
 
 	/* Copy of upgrade_166_to_167 from 2.4 */
 	if (!isset($already_run['upgrade_166_to_167'])) {
+		/*
+		 * If this box was updated during the small period of time
+		 * $config latest_version was set to 15.9, reset it to 15.8
+		 * so we are sure this upgrade will not be skipped when move
+		 * to 2.4
+		 */
+
+		if ($config['version'] == "15.9") {
+			$config['version'] = "15.8";
+		}
+
 		if (strpos($config['widgets']['sequence'],
 		    'netgate_services_and_support') === false) {
 			$widgets = explode(",", $config['widgets']['sequence']);
@@ -5114,10 +5125,17 @@ function additional_config_upgrade() {
 
 	/* Copy of upgrade_168_to_169() from 2.4 */
 	if (!isset($already_run['upgrade_168_to_169'])) {
+		$found = false;
+
+		/* Detect old temporary workaround */
+		if (isset($config['cron']['rc_update_pkg_metadata'])) {
+			unset($config['cron']['rc_update_pkg_metadata']);
+			$found = true;
+		}
+
 		$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
 
-		$found = false;
-		if (is_array($config['cron']['item'])) {
+		if (!$found && is_array($config['cron']['item'])) {
 			foreach ($config['cron']['item'] as $entry) {
 				if ($entry['command'] == $command) {
 					$found = true;

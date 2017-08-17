@@ -366,7 +366,8 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 	events.push(function(){
 		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallovpns");
-		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+
+		// --------------------- Centralized widget refresh system ------------------------------
 
 		// Callback function called by refresh system when data is retrieved
 		function openvpn_callback(s) {

@@ -221,7 +221,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 */
 	events.push(function() {
-		// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+		// --------------------- Centralized widget refresh system ------------------------------
 
 		// Callback function called by refresh system when data is retrieved
 		function interface_statistics_callback(s) {

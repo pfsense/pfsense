@@ -17,5 +17,3 @@ sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
 net/%%PRODUCT_NAME%%-pkg-ntopng
 net/%%PRODUCT_NAME%%-pkg-freeradius3
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
-net/%%PRODUCT_NAME%%-pkg-haproxy
-net/%%PRODUCT_NAME%%-pkg-haproxy-devel

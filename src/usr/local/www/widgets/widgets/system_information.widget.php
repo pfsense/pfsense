@@ -452,8 +452,7 @@ $rows_displayed = false;
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-
-				<span id="cpumeter"></span>
+				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -573,6 +572,9 @@ events.push(function(){
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallsysinfoitems");
 });
 
+var lastTotal = 0;
+var lastUsed = 0;
+
 function setProgress(barName, percent) {
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
 }
@@ -586,19 +588,23 @@ function stats(x) {
 			return false;
 	}))
 
-	updateUptime(values[2]);
-	updateDateTime(values[5]);
-	updateCPU(values[0]);
-	updateMemory(values[1]);
-	updateState(values[3]);
-	updateTemp(values[4]);
-	updateInterfaceStats(values[6]);
-	updateInterfaces(values[7]);
-	updateCpuFreq(values[8]);
-	updateLoadAverage(values[9]);
-	updateMbuf(values[10]);
-	updateMbufMeter(values[11]);
-	updateStateMeter(values[12]);
+	if (lastTotal === 0) {
+		lastTotal = values[0];
+		lastUsed = values[1];
+	} else {
+		updateCPU(values[0], values[1]);
+	}
+
+	updateUptime(values[3]);
+	updateDateTime(values[6]);
+	updateMemory(values[2]);
+	updateState(values[4]);
+	updateTemp(values[5]);
+	updateCpuFreq(values[7]);
+	updateLoadAverage(values[8]);
+	updateMbuf(values[9]);
+	updateMbufMeter(values[10]);
+	updateStateMeter(values[11]);
 }
 
 function updateMemory(x) {
@@ -625,19 +631,32 @@ function updateMbufMeter(x) {
 	}
 }
 
-function updateCPU(x) {
+function updateCPU(total, used) {
+	if ((lastTotal <= total) && (lastUsed <= used)) { // Just in case it wraps
+		// Calculate the total ticks and the used ticks sine the last time it was checked
+		var d_total = total - lastTotal;
+		var d_used = used - lastUsed;
 
-	if ($('#cpumeter')) {
-		$("#cpumeter").html(x + '%');
-	}
-	if ($('#cpuPB')) {
-		setProgress('cpuPB', parseInt(x));
+		// Convert to percent
+		var x = Math.trunc( ((d_total - d_used)/d_total) * 100);
+
+		if ($('#cpumeter')) {
+			$('[id="cpumeter"]').html(x + '%');
+		}
+
+		if ($('#cpuPB')) {
+			setProgress('cpuPB', parseInt(x));
+		}
+
+		/* Load CPU Graph widget if enabled */
+		if (widgetActive('cpu_graphs')) {
+			GraphValue(graph[0], x);
+		}
 	}
 
-	/* Load CPU Graph widget if enabled */
-	if (widgetActive('cpu_graphs')) {
-		GraphValue(graph[0], x);
-	}
+	// Update the saved "last" values
+	lastTotal = total;
+	lastUsed = used;
 }
 
 function updateTemp(x) {

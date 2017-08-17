@@ -140,6 +140,7 @@ setup_gateways_monitor();
 
 if (platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot
+	touch("/tmp/{$interface_real}_dhcp6_complete");
 	exit;
 }
 

@@ -79,29 +79,13 @@ function get_uptime() {
 	return $uptimestr;
 }
 
-/* Calculates non-idle CPU time and returns as a percentage */
+// Returns the current total ticks and user ticks. The dashboard widget calculates the load from that
 function cpu_usage() {
-	$duration = 1;
+
 	$diff = array('user', 'nice', 'sys', 'intr', 'idle');
 	$cpuTicks = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
-	sleep($duration);
-	$cpuTicks2 = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
 
-	$totalStart = array_sum($cpuTicks);
-	$totalEnd = array_sum($cpuTicks2);
-
-	// Something wrapped ?!?!
-	if ($totalEnd <= $totalStart) {
-		return 0;
-	}
-
-	// Calculate total cycles used
-	$totalUsed = ($totalEnd - $totalStart) - ($cpuTicks2['idle'] - $cpuTicks['idle']);
-
-	// Calculate the percentage used
-	$cpuUsage = floor(100 * ($totalUsed / ($totalEnd - $totalStart)));
-
-	return $cpuUsage;
+	return array_sum($cpuTicks) . "|" . $cpuTicks['idle'];
 }
 
 function get_pfstate($percent=false) {

@@ -568,9 +568,7 @@ function updateMbufMeter(x) {
 }
 
 function updateCPU(total, used) {
-
-	// Just in case it wraps
-	if ((lastTotal <= total) && (lastUsed <= used)) {
+	if ((lastTotal <= total) && (lastUsed <= used)) { // Just in case it wraps
 		// Calculate the total ticks and the used ticks sine the last time it was checked
 		var d_total = total - lastTotal;
 		var d_used = used - lastUsed;
@@ -592,6 +590,7 @@ function updateCPU(total, used) {
 		}
 	}
 
+	// Update the saved "last" values
 	lastTotal = total;
 	lastUsed = used;
 }

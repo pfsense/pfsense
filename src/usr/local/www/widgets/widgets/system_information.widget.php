@@ -389,7 +389,7 @@ $rows_displayed = false;
 					</div>
 				</div>
 				<?php $update_period = (!empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
-				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
+				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -508,7 +508,8 @@ $rows_displayed = false;
 //<![CDATA[
 <?php if ($widget_first_instance): ?>
 
-var update_interval = "<?=$widgetperiod?>";
+var lastTotal = 0;
+var lastUsed = 0;
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
@@ -523,17 +524,23 @@ function stats(x) {
 			return false;
 	}))
 
-	updateUptime(values[2]);
-	updateDateTime(values[5]);
-	updateCPU(values[0]);
-	updateMemory(values[1]);
-	updateState(values[3]);
-	updateTemp(values[4]);
-	updateCpuFreq(values[6]);
-	updateLoadAverage(values[7]);
-	updateMbuf(values[8]);
-	updateMbufMeter(values[9]);
-	updateStateMeter(values[10]);
+	if (lastTotal === 0) {
+		lastTotal = values[0];
+		lastUsed = values[1];
+	} else {
+		updateCPU(values[0], values[1]);
+	}
+
+	updateUptime(values[3]);
+	updateDateTime(values[6]);
+	updateMemory(values[2]);
+	updateState(values[4]);
+	updateTemp(values[5]);
+	updateCpuFreq(values[7]);
+	updateLoadAverage(values[8]);
+	updateMbuf(values[9]);
+	updateMbufMeter(values[10]);
+	updateStateMeter(values[11]);
 }
 
 function updateMemory(x) {
@@ -560,19 +567,33 @@ function updateMbufMeter(x) {
 	}
 }
 
-function updateCPU(x) {
+function updateCPU(total, used) {
 
-	if ($('#cpumeter')) {
-		$('[id="cpumeter"]').html(x + '%');
-	}
-	if ($('#cpuPB')) {
-		setProgress('cpuPB', parseInt(x));
+	// Just in case it wraps
+	if ((lastTotal <= total) && (lastUsed <= used)) {
+		// Calculate the total ticks and the used ticks sine the last time it was checked
+		var d_total = total - lastTotal;
+		var d_used = used - lastUsed;
+
+		// Convert to percent
+		var x = Math.trunc( ((d_total - d_used)/d_total) * 100);
+
+		if ($('#cpumeter')) {
+			$('[id="cpumeter"]').html(x + '%');
+		}
+
+		if ($('#cpuPB')) {
+			setProgress('cpuPB', parseInt(x));
+		}
+
+		/* Load CPU Graph widget if enabled */
+		if (widgetActive('cpu_graphs')) {
+			GraphValue(graph[0], x);
+		}
 	}
 
-	/* Load CPU Graph widget if enabled */
-	if (widgetActive('cpu_graphs')) {
-		GraphValue(graph[0], x);
-	}
+	lastTotal = total;
+	lastUsed = used;
 }
 
 function updateTemp(x) {

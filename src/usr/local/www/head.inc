@@ -215,24 +215,37 @@ function return_ext_menu($section) {
 }
 
 function output_menu($arrayitem, $target = null, $section = "") {
+
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
 		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
 			}
+
 			$class = "navlnk";
+
 			if ($item['class']) {
 				$class .= " {$item['class']}";
 			}
+
 			$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+
+			if ($item[0] == '-DIVIDER-') {
+				$output .= ' <li class="divider"></li>';
+			} else {
+				$output .= "<li>". sprintf("<a %s %s>%s</a>", $attr, ($item[1] == "/index.php?logout") ? "usepost":"",$item[0]) . "</li>\n";
+			}
 		}
 	}
+
+	print($output);
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
@@ -264,13 +277,15 @@ $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
 // NOTE:
-// Special items at the top should not be sorted. Only the variable list of interfaces may be sorted.
+// Now that menus are sorted, adding a DIVIDER must be done after the sorting so an array is formed of the
+// items above the divider and another for below it. These are then sorted and combined with the divider
 $interfaces_menu = array();
 $interfaces_top = array();
 $interfaces_bottom = array();
 
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_top[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_top[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$div = true;
 }
 
 $opts = get_configured_interface_with_descr(false, true);
@@ -287,8 +302,8 @@ if ($user_settings['webgui']['interfacessort']) {
 	$interfaces_bottom = msort($interfaces_bottom, 0);
 }
 
-// Combine the top bottom section of this menu
-$interfaces_menu = array_merge($interfaces_top, $interfaces_bottom);
+// Combine the top section, the divider and the bottom section of this menu
+$interfaces_menu = array_merge($interfaces_top, [array(0 => "-DIVIDER-")], $interfaces_bottom);
 
 // Firewall
 $firewall_menu = array();

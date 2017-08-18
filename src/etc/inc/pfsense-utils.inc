@@ -2944,6 +2944,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"de_DE" => gettext("German (Germany)"),
 		"nb" => gettext("Norwegian Bokmål"),
+		"pl" => gettext("Polish"),
 		"pt_BR" => gettext("Portuguese (Brazil)"),
 		"ru" => gettext("Russian"),
 		"es" => gettext("Spanish"),

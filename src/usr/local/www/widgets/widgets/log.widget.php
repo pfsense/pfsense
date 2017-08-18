@@ -192,7 +192,7 @@ if ($_REQUEST['ajax']) {
 //<![CDATA[
 
 events.push(function(){
-	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	// --------------------- Centralized widget refresh system ------------------------------
 
 	// Callback function called by refresh system when data is retrieved
 	function logs_callback(s) {

@@ -198,10 +198,9 @@ $jsondata .= "\"mobile\":\"";
 				$jsondata .= "</tr>";
 			}
 		}
-	} else {
-		$jsondata .= "\"}";
 	}
 
+	$jsondata .= "\"}";
 	print($jsondata);
 	exit;
 }

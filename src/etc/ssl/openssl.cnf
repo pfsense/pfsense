@@ -221,6 +221,7 @@ extendedKeyUsage=clientAuth
 
 # copy of [ usr_cert ] plus nonempty Subject Alternative Names
 basicConstraints=CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 nsComment                       = "OpenSSL Generated User Certificate"
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid,issuer:always

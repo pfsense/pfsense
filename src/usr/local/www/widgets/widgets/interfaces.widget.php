@@ -61,7 +61,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
 
-if ($_POST) {
+if ($_POST && !$_REQUEST['ajax']) {
 
 	$validNames = array();
 
@@ -72,26 +72,30 @@ if ($_POST) {
 	if (is_array($_POST['show'])) {
 		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings['widgets']['interfaces']['iffilter'] = "";
+		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
 	header("Location: /index.php");
 }
 
+if (!$_REQUEST['ajax']) {
 ?>
 
-<div class="table-responsive">
+<div id="ifaces_status" class="table-responsive">
+	<?php } ?>
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 <?php
 $skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+$interface_is_displayed = false;
 
 foreach ($ifdescrs as $ifdescr => $ifname):
 	if (in_array($ifdescr, $skipinterfaces)) {
 		continue;
 	}
 
+	$interface_is_displayed = true;
 	$ifinfo = get_interface_info($ifdescr);
 	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
@@ -159,10 +163,28 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	</tr>
 <?php
 endforeach;
+if (!$interface_is_displayed):
+?>
+	<tr>
+		<td class="text-center">
+			<?=gettext('All interfaces are hidden.');?>
+		</td>
+	</tr>
+
+<?php
+endif;
 ?>
 		</tbody>
 	</table>
+
+<?php
+/* for AJAX response, we only need the panels */
+if ($_REQUEST['ajax']) {
+	exit;
+}
+?>
 </div>
+
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
@@ -208,12 +230,33 @@ endforeach;
 <script>
 //<![CDATA[
 	events.push(function(){
-		$("#showallinterfaces").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
 
+		// --------------------- Centralized widget refresh system ------------------------------
+
+		// Callback function called by refresh system when data is retrieved
+		function interfaces_callback(s) {
+			$('#ifaces_status').html(s);
+		}
+
+		// POST data to send via AJAX
+		var postdata = {
+			widgetkey :"<?=$widgetkey?>",
+			ajax: "ajax"
+		};
+
+		// Create an object defining the widget refresh AJAX call
+		var interfacesObject = new Object();
+		interfacesObject.name = "Interfaces";
+		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
+		interfacesObject.callback = interfaces_callback;
+		interfacesObject.parms = postdata;
+		interfacesObject.freq = 1;
+
+		// Register the AJAX object
+		register_ajax(interfacesObject);
+
+		// ---------------------------------------------------------------------------------------------------
+		set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showallinterfaces");
 	});
 //]]>
 </script>

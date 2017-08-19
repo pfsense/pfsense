@@ -186,6 +186,8 @@ echo "Loading configuration...";
 parse_config_bootup();
 echo "done.\n";
 
+mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid 2>/dev/null");
+
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 

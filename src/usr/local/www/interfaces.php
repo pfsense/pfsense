@@ -720,7 +720,7 @@ if ($_POST['apply']) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
-	if ($_POST['ipaddr']) {
+	if (($_POST['type'] == 'staticv4') && $_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
 		} else {
@@ -752,7 +752,7 @@ if ($_POST['apply']) {
 			}
 		}
 	}
-	if ($_POST['ipaddrv6']) {
+	if (($_POST['type'] == 'staticv6') && $_POST['ipaddrv6']) {
 		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
 
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
@@ -792,8 +792,8 @@ if ($_POST['apply']) {
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
 		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
 	}
-	if ($_POST['dhcprejectfrom'] && !is_ipaddrv4($_POST['dhcprejectfrom'])) {
-		$input_errors[] = gettext("A valid alias IP address must be specified to reject DHCP Leases from.");
+	if ($_POST['dhcprejectfrom'] && !validate_ipv4_list($_POST['dhcprejectfrom'])) {
+		$input_errors[] = gettext("An invalid IP address was detected in the 'Reject leases from' field.");
 	}
 	if (($_POST['gateway'] != "none") || ($_POST['gatewayv6'] != "none")) {
 		$match = false;
@@ -1998,7 +1998,8 @@ $section->addInput(new Form_Input(
 	'Reject leases from',
 	'text',
 	$pconfig['dhcprejectfrom']
-))->setHelp('To make the DHCP client reject leases from an undesirable DHCP server, place the IP address of the DHCP server here. ' .
+))->setHelp('To have the DHCP client reject offers from specific DHCP servers, enter their IP addresses here ' .
+			'(separate multiple entries with a comma). ' .
 			'This is useful for rejecting leases from cable modems that offer private IP addresses when they lose upstream sync.');
 
 $group = new Form_Group('Protocol timing');

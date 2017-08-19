@@ -482,6 +482,66 @@ function updateWidgets(newWidget) {
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
+// Determine if all the checkboxes are checked
+function are_all_checked(checkbox_panel_ref) {
+	var allBoxesChecked = true;
+	$(checkbox_panel_ref).each(function() {
+		if ((this.type == 'checkbox') && !this.checked) {
+			allBoxesChecked = false;
+		}
+	});
+	return allBoxesChecked;
+}
+
+// If the checkboxes are all checked, then clear them all.
+// Otherwise set them all.
+function set_clear_checkboxes(checkbox_panel_ref) {
+	checkTheBoxes = !are_all_checked(checkbox_panel_ref);
+
+	$(checkbox_panel_ref).each(function() {
+		$(this).prop("checked", checkTheBoxes);
+	});
+}
+
+// Set the given id to All or None button depending if the checkboxes are all checked.
+function set_all_none_button(checkbox_panel_ref, all_none_button_id) {
+	if (are_all_checked(checkbox_panel_ref)) {
+		text = "<?=gettext('None')?>";
+	} else {
+		text = "<?=gettext('All')?>";
+	}
+
+	$("#" + all_none_button_id).html('<i class="fa fa-undo icon-embed-btn"></i>' + text);
+}
+
+// Setup the necessary events to manage the All/None button and included checkboxes
+// used for selecting the items to show on a widget.
+function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
+		set_all_none_button(checkbox_panel_ref, all_none_button_id);
+
+		$(checkbox_panel_ref).change(function() {
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
+
+		$("#" + all_none_button_id).click(function() {
+			set_clear_checkboxes(checkbox_panel_ref);
+			set_all_none_button(checkbox_panel_ref, all_none_button_id);
+		});
+}
+
+// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+// These need to live outsie of the events.push() function to enable the widgets to see them
+var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
+var ajaxidx = 0;
+var ajaxmutex = false;
+var ajaxcntr = 0;
+
+// Add a widget refresh object to the array list
+function register_ajax(ws) {
+  ajaxspecs.push(ws);
+}
+// ---------------------------------------------------------------------------------------------------
+
 events.push(function() {
 
 	// Make panels destroyable
@@ -538,6 +598,55 @@ events.push(function() {
 			$('#btnstore').removeClass("invisible");
 		}
 	});
+
+	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	function make_ajax_call(wd) {
+		ajaxmutex = true;
+
+		$.ajax({
+			type: 'POST',
+			url: wd.url,
+			dataType: 'html',
+			data: wd.parms,
+
+			success: function(data){
+				wd.callback(data);
+				ajaxmutex = false;
+			},
+
+			error: function(e){
+//				alert("Error: " + e);
+				ajaxmutex = false;
+			}
+		});
+	}
+
+	// Loop through each AJAX widget refresh object, make the AJAX call and pass the
+	// results back to the widget's callback function
+	function executewidget() {
+		if (ajaxspecs.length > 0) {
+			var freq = ajaxspecs[ajaxidx].freq;	// widget can specifify it should be called freq times around hte loop
+
+			if (!ajaxmutex) {
+				if (((ajaxcntr % freq) === 0) && (typeof ajaxspecs[ajaxidx].callback === "function" )) {
+				    make_ajax_call(ajaxspecs[ajaxidx]);
+				}
+
+			    if (++ajaxidx >= ajaxspecs.length) {
+					ajaxidx = 0;
+
+					if (++ajaxcntr >= 4096) {
+						ajaxcntr = 0;
+					}
+			    }
+			}
+
+		    setTimeout(function() { executewidget(); }, 1000);
+	  	}
+	}
+
+	// Kick it off
+	executewidget();
 });
 //]]>
 </script>

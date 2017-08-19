@@ -418,6 +418,47 @@ function gen_requirestatefilter_field(&$section, $value) {
 		'before the states are displayed. Useful for systems with large state tables.');
 }
 
+/****f* pfsense-utils/gen_created_updated_fields
+ * NAME
+ *   gen_created_updated_fields
+ * INPUTS
+ *   Pointer to form object
+ *   Array of created time and username
+ *   Array of updated time and username
+ * RESULT
+ *   no return value, section object is added to form if needed
+ ******/
+function gen_created_updated_fields(&$form, $created, $updated) {
+	$has_created_time = (isset($created['time']) && isset($created['username']));
+	$has_updated_time = (isset($updated['time']) && isset($updated['username']));
+
+	if ($has_created_time || $has_updated_time) {
+		$section = new Form_Section('Rule Information');
+
+		if ($has_created_time) {
+			$section->addInput(new Form_StaticText(
+				'Created',
+				sprintf(
+					gettext('%1$s by %2$s'),
+					date(gettext("n/j/y H:i:s"), $created['time']),
+					$created['username'])
+			));
+		}
+
+		if ($has_updated_time) {
+			$section->addInput(new Form_StaticText(
+				'Updated',
+				sprintf(
+					gettext('%1$s by %2$s'),
+					date(gettext("n/j/y H:i:s"), $updated['time']),
+					$updated['username'])
+			));
+		}
+
+		$form->add($section);
+	}
+}
+
 function hardware_offloading_applyflags($iface) {
 	global $config;
 
@@ -699,7 +740,7 @@ function get_carp_interface_status($carpid) {
 
 	$vhid = $vip['vhid'];
 	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+	$_gb = exec("/sbin/ifconfig {$interface} | /usr/bin/grep \"carp:.* vhid {$vhid} \"", $carp_query);
 	foreach ($carp_query as $int) {
 		if (stripos($int, "MASTER"))
 			return "MASTER";
@@ -1933,8 +1974,8 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	if (!isset($config['system']['do_not_send_host_uuid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
+	if (!isset($config['system']['do_not_send_uniqueid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}
@@ -1988,8 +2029,8 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	if (!isset($config['system']['do_not_send_host_uuid'])) {
-		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
+	if (!isset($config['system']['do_not_send_uniqueid'])) {
+		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ':' . system_get_uniqueid());
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	}
@@ -2144,6 +2185,37 @@ if (!function_exists("split")) {
 		log_error("deprecated split() call with separator '{$separator}'");
 		return preg_split($separator, $haystack, $limit);
 	}
+}
+
+function update_alias_name($new_alias_name, $orig_alias_name) {
+	if (!$orig_alias_name) {
+		return;
+	}
+
+	// Firewall rules
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('filter', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	// NAT Rules
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('source', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('destination', 'port'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'rule'), array('local-port'), $new_alias_name, $orig_alias_name);
+	// NAT 1:1 Rules
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('external'), $new_alias_name, $orig_alias_name);
+	//update_alias_names_upon_change(array('nat', 'onetoone'), array('source', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'onetoone'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	// NAT Outbound Rules
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('source', 'network'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('sourceport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('destination', 'address'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('dstport'), $new_alias_name, $orig_alias_name);
+	update_alias_names_upon_change(array('nat', 'outbound', 'rule'), array('target'), $new_alias_name, $orig_alias_name);
+	// Alias in an alias
+	update_alias_names_upon_change(array('aliases', 'alias'), array('address'), $new_alias_name, $orig_alias_name);
 }
 
 function update_alias_names_upon_change($section, $field, $new_alias_name, $origname) {

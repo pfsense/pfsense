@@ -70,6 +70,27 @@ function interfaces_bring_up($interface) {
 }
 
 /*
+ * Validate comma-separated list of IPv4 addresses
+ */
+function validate_ipv4_list($value) {
+	$value = trim($value);
+
+	if (empty($value)) {
+		return false;
+	}
+
+	$list = explode(',', $value);
+
+	foreach ($list as $ip) {
+		if (!is_ipaddrv4($ip)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
  * Return the interface array
  */
 function get_interface_arr($flush = false) {
@@ -2248,7 +2269,9 @@ function interface_proxyarp_configure($interface = "") {
 			if (!is_ipaddr($paaifip)) {
 				return;
 			}
-			$args = get_real_interface($interface) . " auto";
+			$vipif = get_real_interface($interface);
+			$args  = "-p {$g['varrun_path']}/choparp_{$vipif}.pid ";
+			$args .= $vipif . " auto";
 			foreach ($paa[$interface] as $paent) {
 				if (isset($paent['subnet'])) {
 					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
@@ -2264,7 +2287,9 @@ function interface_proxyarp_configure($interface = "") {
 			if (!is_ipaddr($paaifip)) {
 				continue;
 			}
-			$args = get_real_interface($paif) . " auto";
+			$vipif = get_real_interface($paif);
+			$args  = "-p {$g['varrun_path']}/choparp_{$vipif}.pid ";
+			$args .= $vipif . " auto";
 			foreach ($paents as $paent) {
 				if (isset($paent['subnet'])) {
 					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
@@ -3243,17 +3268,24 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	$mac = get_interface_mac($realhwif);
+	/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
+	$current_mac = get_interface_mac($realhwif);
+	if (platform_booting()) {
+		$vendor_mac = $current_mac;
+	} else {
+		$vendor_mac = get_interface_vendor_mac($realhwif);
+	}
+	$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
 	/*
-	 * Don't try to reapply the spoofed MAC if it's already applied.
+	 * Don't try to reapply the MAC if it's already applied.
 	 * When ifconfig link is used, it cycles the interface down/up, which triggers
-	 * the interface config again, which attempts to spoof the MAC again,
+	 * the interface config again, which attempts to apply the MAC again,
 	 * which cycles the link again...
 	 */
-	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
+	if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($wancfg['spoofmac']));
-	} elseif ($mac == "ff:ff:ff:ff:ff:ff") {
+			" link " . escapeshellarg($mac_addr));
+	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
 		/*   this is not a valid mac address.  generate a
 		 *   temporary mac address so the machine can get online.
 		 */
@@ -3933,7 +3965,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 			if (!isset($wancfg['dhcp6prefixonly'])) {
 				$dhcp6cconf .= "\tsend ia-na 0;\t# request stateful address\n";
 			}
-			if (is_numeric($wancfg['dhcp6-ia-pd-len']) && !empty($trackiflist)) {
+			if (is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 				$dhcp6cconf .= "\tsend ia-pd 0;\t# request prefix delegation\n";
 			}
 
@@ -4263,7 +4295,7 @@ initial-interval 1;
 	script "/sbin/dhclient-script";
 EOD;
 
-	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
+	if (validate_ipv4_list($wancfg['dhcprejectfrom'])) {
 		$dhclientconf .= <<<EOD
 
 	reject {$wancfg['dhcprejectfrom']};
@@ -5826,9 +5858,13 @@ function get_interface_mtu($interface) {
 }
 
 function get_interface_mac($interface) {
-
 	$macinfo = pfSense_get_interface_addresses($interface);
 	return $macinfo["macaddr"];
+}
+
+function get_interface_vendor_mac($interface) {
+	$macinfo = pfSense_get_interface_addresses($interface);
+	return $macinfo["hwaddr"] ?: '';
 }
 
 /****f* pfsense-utils/generate_random_mac_address

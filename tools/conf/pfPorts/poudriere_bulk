@@ -6,6 +6,7 @@ databases/php56-mysqli
 databases/php56-pdo_mysql
 benchmarks/iperf
 benchmarks/iperf3
+devel/aws-sdk-php
 dns/dnstop
 editors/vim-lite
 editors/nano
@@ -17,6 +18,7 @@ net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
 net-mgmt/net-snmp
+net-mgmt/iprange
 sysutils/htop
 sysutils/grub2-bhyve
 sysutils/pstree
@@ -32,7 +34,7 @@ net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
 net/%%PRODUCT_NAME%%-pkg-Avahi
-sysutils/%%PRODUCT_NAME%%-pkg-Netgate-Coreboot-Upgrade
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
 sysutils/%%PRODUCT_NAME%%-pkg-Notes
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
@@ -72,10 +74,12 @@ ftp/%%PRODUCT_NAME%%-pkg-tftpd
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
 net/%%PRODUCT_NAME%%-pkg-ntopng
+net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
+net/%%PRODUCT_NAME%%-pkg-freeradius3
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/hping

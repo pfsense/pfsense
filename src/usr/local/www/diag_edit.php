@@ -271,7 +271,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 		if (values.shift() == "0") {
 			var file = values.shift();
-			var fileContent = window.atob(values.join("|"));
+			var fileContent = window.Base64.decode(values.join("|"));
 
 			$("#fileContent").val(fileContent);
 		} else {

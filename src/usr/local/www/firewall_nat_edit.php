@@ -84,6 +84,34 @@ if (!is_array($config['nat']['rule'])) {
 
 $a_nat = &$config['nat']['rule'];
 
+$iflist = get_configured_interface_with_descr(false, true);
+
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
+		$interfaces[$if] = $ifdesc;
+	}
+}
+
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
+		$interfaces['l2tp'] = gettext("L2TP VPN");
+	}
+}
+
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+	$interfaces['pppoe'] = gettext("PPPoE Server");
+}
+
+/* add ipsec interfaces */
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	$interfaces["enc0"] = gettext("IPsec");
+}
+
+/* add openvpn/tun interfaces */
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	$interfaces["openvpn"] = gettext("OpenVPN");
+}
+
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -282,6 +310,10 @@ if ($_POST) {
 	}
 	if ($_POST['localip']) {
 		$_POST['localip'] = trim($_POST['localip']);
+	}
+
+	if (!array_key_exists($_POST['interface'], $interfaces)) {
+		$input_errors[] = gettext("The submitted interface does not exist.");
 	}
 
 	if (!isset($_POST['nordr']) && ($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
@@ -694,34 +726,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['nordr']
 ))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
 
-$iflist = get_configured_interface_with_descr(false, true);
-
-foreach ($iflist as $if => $ifdesc) {
-	if (have_ruleint_access($if)) {
-		$interfaces[$if] = $ifdesc;
-	}
-}
-
-if ($config['l2tp']['mode'] == "server") {
-	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = gettext("L2TP VPN");
-	}
-}
-
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = gettext("PPPoE Server");
-}
-
-/* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = gettext("IPsec");
-}
-
-/* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = gettext("OpenVPN");
-}
-
 $section->addInput(new Form_Select(
 	'interface',
 	'*Interface',
@@ -986,28 +990,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 
 $form->add($section);
 
-$has_created_time = (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']));
-$has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']));
-
-if ($has_created_time || $has_updated_time) {
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) . gettext(" by ") . $a_nat[$id]['created']['username']
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) . gettext(" by ") . $a_nat[$id]['updated']['username']
-		));
-	}
-
-	$form->add($section);
-}
+gen_created_updated_fields($form, $a_nat[$id]['created'], $a_nat[$id]['updated']);
 
 if (isset($id) && $a_nat[$id]) {
 	$form->addGlobal(new Form_Input(
@@ -1294,7 +1277,7 @@ events.push(function() {
 <?php
 if (!$_POST) {
 ?>
-	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
+	dst_change($('#interface').val(),'<?=htmlspecialchars(addslashes($pconfig['interface']))?>','<?=htmlspecialchars($pconfig['dst'])?>');
 <?php
 }
 ?>

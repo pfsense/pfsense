@@ -80,17 +80,17 @@ if ($_POST) {
 		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
 
+	$validNames = array();
+	$a_gateways = return_gateways_array();
+
+	foreach ($a_gateways as $gname => $gateway) {
+		array_push($validNames, $gname);
+	}
+
 	if (is_array($_POST['show'])) {
-		$validNames = array();
-		$a_gateways = return_gateways_array();
-
-		foreach ($a_gateways as $gname => $gateway) {
-			array_push($validNames, $gname);
-		}
-
 		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
-		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = "";
+		$user_settings["widgets"]["gateways_widget"]["gatewaysfilter"] = implode(',', $validNames);
 	}
 
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated gateways widget settings via dashboard."));
@@ -198,40 +198,6 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 		</div>
 	</div>
 </form>
-
-<script>
-//<![CDATA[
-
-	function get_gw_stats() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/gateways.widget.php",
-				type: "post",
-				data: { ajax: "ajax"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#gwtblbody').html(response);
-			// and do it again
-			setTimeout(get_gw_stats, "<?=$widgetperiod?>");
-		});
-	}
-
-	events.push(function(){
-		$("#showallgateways").click(function() {
-			$("#widget-<?=$widgetname?>_panel-footer [id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
-		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
-		// hit the server at exactly the same time)
-		setTimeout(get_gw_stats, Math.floor((Math.random() * 10000) + 1000));
-	});
-//]]>
-</script>
 
 <?php
 function compose_table_body_contents() {
@@ -351,7 +317,7 @@ function compose_table_body_contents() {
 
 	if (!$gw_displayed) {
 		$rtnstr .= '<tr>';
-		$rtnstr .= 	'<td colspan="5">';
+		$rtnstr .= 	'<td colspan="5" class="text-center">';
 		if (count($a_gateways)) {
 			$rtnstr .= gettext('All gateways are hidden.');
 		} else {
@@ -363,3 +329,37 @@ function compose_table_body_contents() {
 	return($rtnstr);
 }
 ?>
+
+<script>
+//<![CDATA[
+
+events.push(function(){
+	// --------------------- Centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function gateways_callback(s) {
+		$('#gwtblbody').html(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+	 	widgetkey : "<?=$widgetkey?>"
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var gatewaysObject = new Object();
+	gatewaysObject.name = "Gateways";
+	gatewaysObject.url = "/widgets/widgets/gateways.widget.php";
+	gatewaysObject.callback = gateways_callback;
+	gatewaysObject.parms = postdata;
+	gatewaysObject.freq = 1;
+
+	// Register the AJAX object
+	register_ajax(gatewaysObject);
+
+	// ---------------------------------------------------------------------------------------------------
+});
+
+//]]>
+</script>

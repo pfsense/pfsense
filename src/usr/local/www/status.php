@@ -74,6 +74,25 @@ require_once("gwlb.inc");
 $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
+if ($_POST['submit'] == "DOWNLOAD" && file_exists($output_file)) {
+	session_cache_limiter('public');
+	$fd = fopen($output_file, "rb");
+	header("Content-Type: application/octet-stream");
+	header("Content-Length: " . filesize($output_file));
+	header("Content-Disposition: attachment; filename=\"" .
+		trim(htmlentities(basename($output_file))) . "\"");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
+
+	fpassthru($fd);
+	exit;
+}
+
 if (is_dir($output_path)) {
 	unlink_if_exists("{$output_path}/*");
 	@rmdir($output_path);
@@ -124,6 +143,8 @@ function doCmdT($title, $command, $method) {
 				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
 				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
 				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
+				$line = preg_replace("/<md5sigpass>.*?<\\/md5sigpass>/", "<md5sigpass>xxxxx</md5sigpass>", $line);
+				$line = preg_replace("/<md5sigkey>.*?<\\/md5sigkey>/", "<md5sigkey>xxxxx</md5sigkey>", $line);
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line, ENT_NOQUOTES);
 				fwrite($ofd, $line);
@@ -201,6 +222,14 @@ function get_firewall_info() {
 	if (!empty($platform['descr'])) {
 		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
 	}
+
+	if (file_exists('/var/db/uniqueid')) {
+		$ngid = file_get_contents('/var/db/uniqueid');
+		if (!empty($ngid)) {
+			$firewall_info .= "<br/>Netgate Device ID: " . htmlspecialchars($ngid);
+		}
+	}
+
 	$serial = system_get_serial();
 	if (!empty($serial)) {
 		$firewall_info .= "<br/>SN/UUID: " . htmlspecialchars($serial);
@@ -257,6 +286,7 @@ defCmdT("Network-Routing tables", "/usr/bin/netstat -nWr");
 defCmdT("Network-Gateway Status", 'get_gateway_status', "php_func");
 defCmdT("Network-Mbuf Usage", "/usr/bin/netstat -mb");
 defCmdT("Network-Protocol Statistics", "/usr/bin/netstat -s");
+defCmdT("Network-Buffer and Timer Statistics", "/usr/bin/netstat -nWx");
 defCmdT("Network-Sockets", "/usr/bin/sockstat");
 defCmdT("Network-ARP Table", "/usr/sbin/arp -an");
 defCmdT("Network-NDP Table", "/usr/sbin/ndp -na");
@@ -362,17 +392,24 @@ exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
 $pgtitle = array($g['product_name'], "Status");
-include("head.inc");
+include("head.inc"); ?>
 
-print_info_box(
+<form action="status.php" method="post">
+
+<?php print_info_box(
 	gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting information from this page in public places (like mailing lists).") .
 	'<br />' .
 	gettext("Common password fields in config.xml have been automatically redacted.") .
 	'<br />' .
-	sprintf(gettext('When the page has finished loading, the output will be stored in %1$s. It may be downloaded via scp or %2$sDiagnostics > Command Prompt%3$s.'),
-	$output_file, '<a href="/diag_command.php?dlPath=' . $output_file . '">', '</a>'));
+	sprintf(gettext('When the page has finished loading, the output is stored in %1$s. It may be downloaded via scp or using this button: '), $output_file) .
+	' <button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">' .
+	'<i class="fa fa-download icon-embed-btn"></i>' .
+	gettext("Download") .
+	'</button>'); ?>
 
-print_info_box(get_firewall_info(), 'info', false);
+</form>
+
+<?php print_info_box(get_firewall_info(), 'info', false);
 
 listCmds();
 execCmds();

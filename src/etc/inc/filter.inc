@@ -591,10 +591,7 @@ function filter_generate_scrubing() {
 		}
 		/* set up MSS clamping */
 		if (($scrubcfg['mss'] <> "") &&
-		    (is_numeric($scrubcfg['mss'])) &&
-		    ($scrubcfg['if'] != "pppoe") &&
-		    ($scrubcfg['if'] != "pptp") &&
-		    ($scrubif['if'] != "l2tp")) {
+		    (is_numeric($scrubcfg['mss']))) {
 			$mssclamp = "max-mss " . (intval($scrubcfg['mss'] - 40));
 		} else {
 			$mssclamp = "";
@@ -2759,6 +2756,12 @@ function filter_generate_user_rule($rule) {
 			return "# {$error_text}";
 		}
 	}
+
+	/* Work around broken wizard rules. See https://redmine.pfsense.org/issues/7434 */
+	if ($rule['destination']['port'] == "137-139-137-139") {
+		$rule['destination']['port'] = "137-139";
+	}
+
 	if ($rule['destination']['port']
 	    && !is_port_or_range(str_replace("-", ":", $rule['destination']['port']))) {
 		$error_text = "";

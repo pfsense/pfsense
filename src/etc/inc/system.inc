@@ -337,13 +337,15 @@ function system_hosts_local_entries() {
 	$hosts = array();
 	$hosts[] = array(
 	    'ipaddr' => '127.0.0.1',
-	    'fqdn' => 'localhost',
-	    'name' => 'localhost.' . $syscfg['domain']
+	    'fqdn' => 'localhost.' . $syscfg['domain'],
+	    'name' => 'localhost',
+	    'domain' => $syscfg['domain']
 	);
 	$hosts[] = array(
 	    'ipaddr' => '::1',
-	    'fqdn' => 'localhost',
-	    'name' => 'localhost.' . $syscfg['domain']
+	    'fqdn' => 'localhost.' . $syscfg['domain'],
+	    'name' => 'localhost',
+	    'domain' => $syscfg['domain']
 	);
 
 	if ($config['interfaces']['lan']) {
@@ -362,7 +364,9 @@ function system_hosts_local_entries() {
 		if (is_ipaddrv4($cfgip)) {
 			$hosts[] = array(
 			    'ipaddr' => $cfgip,
-			    'fqdn' => $local_fqdn
+			    'fqdn' => $local_fqdn,
+			    'name' => $syscfg['hostname'],
+			    'domain' => $syscfg['domain']
 			);
 			$hosts_if_found = true;
 		}
@@ -370,7 +374,9 @@ function system_hosts_local_entries() {
 		if (is_ipaddrv6($cfgipv6)) {
 			$hosts[] = array(
 			    'ipaddr' => $cfgipv6,
-			    'fqdn' => $local_fqdn
+			    'fqdn' => $local_fqdn,
+			    'name' => $syscfg['hostname'],
+			    'domain' => $syscfg['domain']
 			);
 			$hosts_if_found = true;
 		}
@@ -401,7 +407,9 @@ function system_hosts_override_entries($dnscfg) {
 
 		$hosts[] = array(
 		    'ipaddr' => $host['ip'],
-		    'fqdn' => $fqdn
+		    'fqdn' => $fqdn,
+		    'name' => $host['host'],
+		    'domain' => $host['domain']
 		);
 
 		if (!is_array($host['aliases']) ||
@@ -418,7 +426,9 @@ function system_hosts_override_entries($dnscfg) {
 
 			$hosts[] = array(
 			    'ipaddr' => $host['ip'],
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn,
+			    'name' => $alias['host'],
+			    'domain' => $alias['domain']
 			);
 		}
 	}
@@ -451,17 +461,20 @@ function system_hosts_dhcpd_entries() {
 			}
 
 			$fqdn = $host['hostname'] . ".";
+			$domain = "";
 			if ($host['domain']) {
-				$fqdn .= $host['domain'];
+				$domain = $host['domain'];
 			} elseif ($dhcpifconf['domain']) {
-				$fqdn .= $dhcpifconf['domain'];
+				$domain = $dhcpifconf['domain'];
 			} else {
-				$fqdn .= $syscfg['domain'];
+				$domain = $syscfg['domain'];
 			}
 
 			$hosts[] = array(
 			    'ipaddr' => $host['ipaddr'],
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn . $domain,
+			    'name' => $host['hostname'],
+			    'domain' => $domain
 			);
 		}
 	}
@@ -505,17 +518,20 @@ function system_hosts_dhcpd_entries() {
 			}
 
 			$fqdn = $host['hostname'] . ".";
+			$domain = "";
 			if ($host['domain']) {
-				$fqdn .= $host['domain'];
-			} else if ($dhcpifconf['domain']) {
-				$fqdn .= $dhcpifconf['domain'];
+				$domain = $host['domain'];
+			} elseif ($dhcpifconf['domain']) {
+				$domain = $dhcpifconf['domain'];
 			} else {
-				$fqdn .= $syscfg['domain'];
+				$domain = $syscfg['domain'];
 			}
 
 			$hosts[] = array(
 			    'ipaddr' => $ipaddrv6,
-			    'fqdn' => $fqdn
+			    'fqdn' => $fqdn . $domain,
+			    'name' => $host['hostname'],
+			    'domain' => $domain
 			);
 		}
 	}
@@ -566,9 +582,11 @@ function system_hosts_generate() {
 
 	$hosts_array = system_hosts_entries($dnsmasqcfg);
 	foreach ($hosts_array as $host) {
-		$hosts .= "{$host['ipaddr']}\t{$host['fqdn']}";
-		if (!empty($host['name'])) {
-			$hosts .= " {$host['name']}";
+		$hosts .= "{$host['ipaddr']}\t";
+		if ($host['name'] == "localhost") {
+			$hosts .= "{$host['name']} {$host['fqdn']}";
+		} else {
+			$hosts .= "{$host['fqdn']} {$host['name']}";
 		}
 		$hosts .= "\n";
 	}
@@ -977,8 +995,12 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 
 function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
+
 	if ($restart_syslogd) {
-		exec("/usr/bin/killall syslogd");
+		/* syslogd does not react well to clog rewriting the file while it is running. */
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+		}
 	}
 	if (isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
@@ -995,7 +1017,12 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 
 function clear_all_log_files($restart = false) {
 	global $g;
-	exec("/usr/bin/killall syslogd");
+	if ($restart) {
+		/* syslogd does not react well to clog rewriting the file while it is running. */
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+		}
+	}
 
 	$log_files = array("system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
 	foreach ($log_files as $lfile) {
@@ -1014,7 +1041,7 @@ function clear_all_log_files($restart = false) {
 	return;
 }
 
-function system_syslogd_start() {
+function system_syslogd_start($sighup = false) {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1245,18 +1272,27 @@ EOD;
 		$syslogd_sockets .= " -l {$log_socket}";
 	}
 
-	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
-		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+	/* If HUP was requested, but syslogd is not running, restart it instead. */
+	if ($sighup && !isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+		$sighup = false;
 	}
 
-	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-		// if it still hasn't responded to the TERM, KILL it.
-		sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-		usleep(100000);
-	}
+	if (!$sighup) {
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+		}
 
-	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+			// if it still hasn't responded to the TERM, KILL it.
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+			usleep(100000);
+		}
+
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+	} else {
+		$retval = sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
+	}
 
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";
@@ -1281,6 +1317,7 @@ function system_webgui_create_certificate() {
 	$cert = array();
 	$cert['refid'] = uniqid();
 	$cert['descr'] = sprintf(gettext("webConfigurator default (%s)"), $cert['refid']);
+	$cert_hostname = "{$config['system']['hostname']}-{$cert['refid']}";
 
 	$dn = array(
 		'countryName' => "US",
@@ -1288,7 +1325,8 @@ function system_webgui_create_certificate() {
 		'localityName' => "Locality",
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
 		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
-		'commonName' => "{$config['system']['hostname']}-{$cert['refid']}");
+		'commonName' => $cert_hostname,
+		'subjectAltName' => "DNS:{$cert_hostname}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")) {
 		while ($ssl_err = openssl_error_string()) {
@@ -2329,6 +2367,24 @@ function system_get_serial() {
 	return get_single_sysctl('kern.hostuuid');
 }
 
+function system_get_uniqueid() {
+	global $g;
+
+	$uniqueid_file="{$g['vardb_path']}/uniqueid";
+
+	if (empty($g['uniqueid'])) {
+		if (!file_exists($uniqueid_file)) {
+			mwexec("/usr/sbin/gnid > {$g['vardb_path']}/uniqueid " .
+			    "2>/dev/null");
+		}
+		if (file_exists($uniqueid_file)) {
+			$g['uniqueid'] = @file_get_contents($uniqueid_file);
+		}
+	}
+
+	return ($g['uniqueid'] ?: '');
+}
+
 /*
  * attempt to identify the specific platform (for embedded systems)
  * Returns an array with two elements:
@@ -2386,6 +2442,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;
 		case 'apu2':
+		case 'APU2':
 			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
 			break;
 		case 'Virtual Machine':

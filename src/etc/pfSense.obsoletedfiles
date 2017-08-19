@@ -682,7 +682,6 @@
 /usr/local/share/dict
 /usr/local/share/doc
 /usr/local/share/emacs
-/usr/local/share/examples
 /usr/local/share/java
 /usr/local/share/locale/af
 /usr/local/share/locale/am
@@ -933,6 +932,7 @@
 /usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
+/usr/local/www/widgets/include/thermal_sensors.inc
 /usr/local/www/widgets/widgets/deactivated
 /usr/local/www/wizards/traffic_shaper_wizard.inc
 /usr/local/www/wizards/traffic_shaper_wizard.xml

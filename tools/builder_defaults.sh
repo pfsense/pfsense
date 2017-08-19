@@ -127,7 +127,7 @@ if [ -z "${PRODUCT_VERSION}" ]; then
 
 	export PRODUCT_VERSION=$(head -n 1 ${PRODUCT_SRC}/etc/version)
 fi
-export PRODUCT_REVISION=${PRODUCT_REVISION:-""}
+export PRODUCT_REVISION=${PRODUCT_REVISION:-"1"}
 
 # Product repository tag to build
 _cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)
@@ -145,7 +145,7 @@ GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e '
 
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
-export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"RELENG_2_3"}
+export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"RELENG_2_3_4"}
 export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"releng/10.3"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
@@ -185,6 +185,13 @@ if [ "${TARGET}" = "i386" ]; then
 else
 	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
 fi
+
+# gnid
+export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}
+export GNID_SRC_DIR=${GNID_SRC_DIR:-"${SCRATCHDIR}/gnid"}
+export GNID_BRANCH=${GNID_BRANCH:-"master"}
+export GNID_INCLUDE_DIR=${GNID_INCLUDE_DIR:-"${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/tmp/usr/include"}
+export GNID_LIBCRYPTO_DIR=${GNID_LIBCRYPTO_DIR:-"${MAKEOBJDIRPREFIX}/${FREEBSD_SRC_DIR}/secure/lib/libcrypto"}
 
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
@@ -273,7 +280,7 @@ export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
-export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"RELENG_2_3"}
+export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"RELENG_2_3_4"}
 
 unset _IS_RELEASE
 unset _IS_RC
@@ -310,8 +317,8 @@ export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/ce/packages/logs/${POUDRIERE_B
 
 # Final packages server
 if [ -n "${_IS_RELEASE}" ]; then
-	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"files01.nyi.netgate.com files02.nyi.netgate.com files03.nyi.netgate.com"}
-	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/pkg"}
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"nfs1.nyi.netgate.com"}
+	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/storage/files/pkg"}
 else
 	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"beta.pfsense.org"}
 	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
@@ -331,7 +338,7 @@ if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-"v2_3"}
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_RELEASE}}
 else
-	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_3_3"}
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_3_4"}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_DEVEL}}
 fi

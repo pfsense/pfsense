@@ -139,10 +139,7 @@ if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
 
-$a_servers = auth_get_authserver_list();
-foreach ($a_servers as $servers) {
-	$a_server[] = $servers;
-}
+$a_server = array_values(auth_get_authserver_list());
 
 if (!is_array($config['ca'])) {
 	$config['ca'] = array();
@@ -171,6 +168,7 @@ if ($act == "del") {
 
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
+	$a_server = array_values($a_server);
 
 	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
@@ -318,6 +316,13 @@ if ($_POST) {
 		$to_field = "{$pconfig['type']}_timeout";
 		if (isset($_POST[$to_field]) && !empty($_POST[$to_field]) && (!is_numeric($_POST[$to_field]) || (is_numeric($_POST[$to_field]) && ($_POST[$to_field] <= 0)))) {
 			$input_errors[] = sprintf(gettext("%s Timeout value must be numeric and positive."), strtoupper($pconfig['type']));
+		}
+	}
+
+	// https://redmine.pfsense.org/issues/4154
+	if ($pconfig['type'] == "radius") {
+		if (is_ipaddrv6($_POST['radius_host'])) {
+			$input_errors[] = gettext("IPv6 does not work for RADIUS authentication, see Bug #4154.");
 		}
 	}
 

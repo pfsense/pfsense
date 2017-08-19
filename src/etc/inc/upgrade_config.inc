@@ -685,7 +685,7 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][1]['value'] =   "default";
 
 		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
-		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 0: sequential IP IDs)");
+		$config['sysctl']['item'][2]['descr'] =    gettext("Randomize the ID field in IP packets (default is 1: Assign random IP IDs)");
 		$config['sysctl']['item'][2]['value'] =   "default";
 
 		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
@@ -4777,7 +4777,7 @@ function upgrade_147_to_148() {
 		}
 
 		// if there was a space in a group name, there may be multiple
-		// groups with the same name in the group file. To prevent pw 
+		// groups with the same name in the group file. To prevent pw
 		// from getting into a neverending loop, delete all user-defined
 		// groups here. local_sync_accounts will run shortly after this
 		// and add them back. redmine #6012
@@ -5054,6 +5054,115 @@ function upgrade_157_to_158() {
 
 	foreach ($a_dyndns as &$dyndns) {
 		$dyndns['password'] = base64_encode($dyndns['password']);
+	}
+}
+
+/*
+ * Special function that is called independent of current config version. It's
+ * a workaround to have config_upgrade running on older versions after next
+ * config version was already taken by newer pfSense.
+ *
+ * XXX Change the way we handle config version to make it based on product
+ *     version
+ */
+function additional_config_upgrade() {
+	global $config;
+
+	if (!is_array($config['system']['already_run_config_upgrade'])) {
+		$config['system']['already_run_config_upgrade'] = array();
+	}
+	$already_run = $config['system']['already_run_config_upgrade'];
+
+	/* Copy of upgrade_166_to_167 from 2.4 */
+	if (!isset($already_run['upgrade_166_to_167'])) {
+		/*
+		 * If this box was updated during the small period of time
+		 * $config latest_version was set to 15.9, reset it to 15.8
+		 * so we are sure this upgrade will not be skipped when move
+		 * to 2.4
+		 */
+
+		if ($config['version'] == "15.9") {
+			$config['version'] = "15.8";
+		}
+
+		if (strpos($config['widgets']['sequence'],
+		    'netgate_services_and_support') === false) {
+			$widgets = explode(",", $config['widgets']['sequence']);
+			$cnt = count($widgets);
+			$col2 = $cnt;
+			$newsequence = array();
+
+			// Locate the firt column 2 widget
+			for ($idx=0;$idx<$cnt;$idx++) {
+				if (strpos($widgets[$idx], 'col2') !== false) {
+					$col2 = $idx;
+					break;
+				}
+			}
+
+			/*
+			 * Loop through the widgets inserting the new widget
+			 * before the first col2 widget
+			 */
+			for ($old=0,$new=0;$old<$cnt;$old++,$new++) {
+				$newsequence[$new] = $widgets[$old];
+
+				if ($old != ($col2 - 1)) {
+					continue;
+				}
+				$new++;
+				$newsequence[$new] =
+				    "netgate_services_and_support:col2:open:0";
+			}
+
+			$config['widgets']['sequence'] = implode(",",
+			    $newsequence);
+		}
+
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_166_to_167'] = true;
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_167_to_168'] = true;
+		write_config("Enabled Netgate Services and Support Widget");
+	}
+
+	/* Copy of upgrade_168_to_169() from 2.4 */
+	if (!isset($already_run['upgrade_168_to_169'])) {
+		$found = false;
+
+		/* Detect old temporary workaround */
+		if (isset($config['cron']['rc_update_pkg_metadata'])) {
+			unset($config['cron']['rc_update_pkg_metadata']);
+			$found = true;
+		}
+
+		$command = '/usr/bin/nice -n20 /etc/rc.update_pkg_metadata';
+
+		if (!$found && is_array($config['cron']['item'])) {
+			foreach ($config['cron']['item'] as $entry) {
+				if ($entry['command'] == $command) {
+					$found = true;
+					break;
+				}
+			}
+		}
+
+		if (!$found) {
+			$config['cron']['item'][] = array(
+				'minute' => '1',
+				'hour' => '0',
+				'mday' => '*',
+				'month' => '*',
+				'wday' => '*',
+				'who' => 'root',
+				'command' => $command
+			);
+		}
+
+		$config['system']['already_run_config_upgrade']
+		    ['upgrade_168_to_169'] = true;
+		write_config("Added pkg metadata update cronjob");
 	}
 }
 

@@ -61,7 +61,7 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if ($_POST) {
+if ($_POST && !$_REQUEST['ajax']) {
 	if (is_numeric($_POST['filterlogentries'])) {
 		$user_settings['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 	} else {
@@ -121,6 +121,8 @@ $nentriesinterval = isset($user_settings['widgets']['filterlogentriesinterval'])
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
+
+if (!$_REQUEST['ajax']) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -128,6 +130,7 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 //]]>
 </script>
 
+<?php } ?>
 
 <table class="table table-striped table-hover">
 	<thead>
@@ -190,7 +193,7 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 	endforeach;
 
 	if (count($filterlog) == 0) {
-		print '<tr class="text-nowrap"><td colspan=5 class="text-center">';
+		print '<tr class="text-nowrap"><td colspan=5 class="text-center text-danger">';
 		print gettext('No logs to display');
 		print '</td></tr>';
 	}
@@ -202,31 +205,42 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 <?php
 
 /* for AJAX response, we only need the panel-body */
-if (isset($_GET['lastsawtime'])) {
+if ($_REQUEST['ajax']) {
 	exit;
 }
-?>
 
+?>
 <script type="text/javascript">
 //<![CDATA[
-function logWidgetUpdateFromServer() {
-	$.ajax({
-		type: 'get',
-		url: '/widgets/widgets/log.widget.php',
-		data: 'lastsawtime='+logWidgetLastRefresh,
-		dataFilter: function(raw){
-			// We reload the entire widget, strip this block of javascript from it
-			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
-		},
-		dataType: 'html',
-		success: function(data){
-			$('#widget-log .panel-body').html(data);
-		}
-	});
-}
 
 events.push(function(){
-	setInterval('logWidgetUpdateFromServer()', <?=$nentriesinterval?>*1000);
+	// --------------------- Centralized widget refresh system ------------------------------
+
+	// Callback function called by refresh system when data is retrieved
+	function logs_callback(s) {
+		$('#widget-log .panel-body').html(s);
+	}
+
+	// POST data to send via AJAX
+	var postdata = {
+		ajax: "ajax",
+		lastsawtime: logWidgetLastRefresh<?=$widgetkey_nodash?>
+	 };
+
+	// Create an object defining the widget refresh AJAX call
+	var logsObject = new Object();
+	logsObject.name = "Gateways";
+	logsObject.url = "/widgets/widgets/log.widget.php";
+	logsObject.callback = logs_callback;
+	logsObject.parms = postdata;
+	logsObject.freq = <?=$nentriesinterval?>/5; // This is not going to be exactly the number of seconds
+												// the user has specified, but at least it is respected
+												// to some extent
+
+	// Register the AJAX object
+	register_ajax(logsObject);
+
+	// ---------------------------------------------------------------------------------------------------
 });
 //]]>
 </script>

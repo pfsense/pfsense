@@ -1768,30 +1768,10 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a 
 	'selected Queue.'
 );
 
-$has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']));
-$has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));
-
-
-if ($has_created_time || $has_updated_time) {
-	$form->add($section);
-	$section = new Form_Section('Rule Information');
-
-	if ($has_created_time) {
-		$section->addInput(new Form_StaticText(
-			'Created',
-			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
-		));
-	}
-
-	if ($has_updated_time) {
-		$section->addInput(new Form_StaticText(
-			'Updated',
-			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
-		));
-	}
-}
-
 $form->add($section);
+
+gen_created_updated_fields($form, $a_filter[$id]['created'], $a_filter[$id]['updated']);
+
 echo $form;
 ?>
 

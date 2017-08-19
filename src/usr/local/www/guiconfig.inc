@@ -280,7 +280,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
+		if ($postdata[$reqdfields[$i]] == "") {
 			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
 		}
 	}

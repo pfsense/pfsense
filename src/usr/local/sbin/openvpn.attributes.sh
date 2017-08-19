@@ -50,7 +50,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-echo $script_type > /tmp/script
 if [ "$script_type" = "client-connect" ]; then
 	if [ -f /tmp/$common_name ]; then
 		/bin/cat /tmp/$common_name > $1

@@ -79,6 +79,11 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
+// set default language if unset
+if (!isset($config['system']['language'])) {
+	$config['system']['language'] = $g['language'];
+}
+
 $dnsgw_counter = 1;
 
 while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {
@@ -92,6 +97,7 @@ $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
 $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
+$pconfig['logincss'] = $config['system']['webgui']['logincss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
@@ -101,7 +107,7 @@ $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['system
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
-$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
+//$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
@@ -183,14 +189,21 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['dashboardperiod']) {
-		$config['widgets']['period'] = $_POST['dashboardperiod'];
-	}
+//	if ($_POST['dashboardperiod']) {
+//		$config['widgets']['period'] = $_POST['dashboardperiod'];
+//	}
 
 	if ($_POST['webguicss']) {
 		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
 	} else {
 		unset($config['system']['webgui']['webguicss']);
+	}
+
+
+	if ($_POST['logincss']) {
+		$config['system']['webgui']['logincss'] = $_POST['logincss'];
+	} else {
+		unset($config['system']['webgui']['logincss']);
 	}
 
 	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
@@ -614,13 +627,22 @@ gen_associatedpanels_fields(
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 
+$section->addInput(new Form_Select(
+	'logincss',
+	'Login page color',
+	$pconfig['logincss'],
+	["1e3f75;" => gettext("Blue"), "003300" => gettext("Green"), "770101" => gettext("Red"),
+	 "4b1263" => gettext("Purple"), "424142" => gettext("Gray"), "333333" => gettext("Dark gray"),
+	 "633215" => gettext("Brown" ), "bf7703" => gettext("Orange")]
+))->setHelp('Choose a color for the login page');
+
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',
 	'Login hostname',
 	'Show hostname on login banner',
 	$pconfig['loginshowhost']
 ));
-
+/*
 $section->addInput(new Form_Input(
 	'dashboardperiod',
 	'Dashboard update period',
@@ -630,7 +652,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Time in seconds between dashboard widget updates. Small values cause ' .
 			'more frequent updates but increase the load on the web server. ' .
 			'Minimum is 5 seconds, maximum 600 seconds');
-
+*/
 $form->add($section);
 
 print $form;

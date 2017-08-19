@@ -136,13 +136,6 @@ function clear_subsystem_dirty($subsystem = "") {
 	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
 }
 
-function config_lock() {
-	return;
-}
-function config_unlock() {
-	return;
-}
-
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
 	global $g;
@@ -2207,7 +2200,7 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

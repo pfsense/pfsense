@@ -438,9 +438,6 @@ function convert_config() {
 			}
 		}
 	}
-	if ($config['version'] == $g['latest_config']) {
-		return;		/* already at latest version */
-	}
 
 	// Save off config version
 	$prev_version = $config['version'];
@@ -450,17 +447,37 @@ function convert_config() {
 	if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 		include_once("upgrade_config_custom.inc");
 	}
+
+	if ($config['version'] == $g['latest_config']) {
+		additional_config_upgrade();
+		return;		/* already at latest version */
+	}
+
+	if (!is_array($config['system']['already_run_config_upgrade'])) {
+		$config['system']['already_run_config_upgrade'] = array();
+	}
+	$already_run = $config['system']['already_run_config_upgrade'];
+
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
-		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
-		if (function_exists($migration_function)) {
-			$migration_function();
-		}
-		$migration_function = "{$migration_function}_custom";
-		if (function_exists($migration_function)) {
-			$migration_function();
+		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur,
+		    $next);
+
+		foreach (array("", "_custom") as $suffix) {
+			$migration_function .= $suffix;
+			if (!function_exists($migration_function)) {
+				continue;
+			}
+			if (isset($already_run[$migration_function])) {
+				/* Already executed, skip now */
+				unset($config['system']
+				    ['already_run_config_upgrade']
+				    [$migration_function]);
+			} else {
+				$migration_function();
+			}
 		}
 		$config['version'] = sprintf('%.1f', $next / 10);
 		if (platform_booting()) {
@@ -468,12 +485,14 @@ function convert_config() {
 		}
 	}
 
-	$now = date("H:i:s");
-	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
-
 	if ($prev_version != $config['version']) {
+		$now = date("H:i:s");
+		log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
+
 		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
 	}
+
+	additional_config_upgrade();
 }
 
 /****f* config/safe_write_file
@@ -560,6 +579,16 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 		session_commit();
 	}
 
+	if (isset($config['reset_factory_defaults'])) {
+		/*
+		   We have put a default config.xml on disk and are about to reboot
+		   or reload it. Do not let any system or package code try to save
+		   state to config because that would overwrite the default config
+		   with the running config.
+		*/
+		return false;
+	}
+
 	if ($backup) {
 		backup_config();
 	}
@@ -634,7 +663,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
  *   integer	- indicates completion
  ******/
 function reset_factory_defaults($lock = false, $reboot_required = true) {
-	global $g;
+	global $config, $g;
 
 	conf_mount_rw();
 
@@ -665,6 +694,17 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	    "{$g['cf_conf_path']}/config.xml");
 
 	disable_security_checks();
+
+	/*
+	   Let write_config know that we are awaiting reload of the current config
+	   to factory defaults. Either the system is about to reboot, throwing away
+	   the current in-memory config as it shuts down, or the in-memory config
+	   is about to be reloaded on-the-fly by parse_config.
+
+	   In both cases, we want to ensure that write_config does not flush the
+	   in-memory config back to disk.
+	*/
+	$config['reset_factory_defaults'] = true;
 
 	/* call the wizard */
 	if ($reboot_required) {

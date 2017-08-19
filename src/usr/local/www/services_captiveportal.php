@@ -973,7 +973,9 @@ $section->addInput(new Form_Checkbox(
 	'Reauthenticate connected users every minute',
 	$pconfig['reauthenticate']
 ))->setHelp('If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is logged in every minute. ' .
-			'If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately.');
+			'If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately. ' .
+			'Reauthentication requires user credentials to be cached in the captive portal database while a user is logged in; ' .
+			'The cached credentials are necessary for the portal to perform automatic reauthentication requests.');
 
 $section->addInput(new Form_Checkbox(
 	'radmac_enable',
@@ -1125,8 +1127,15 @@ if ($pconfig['httpslogin_enable']) {
 if ($pconfig['page']['htmltext']) {
 	$group = new Form_Group('Current Portal Page');
 	$group->add(new Form_Button(
+		'btnliveview',
+		'Live View',
+		$href,
+		'fa-file-text-o'
+	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
+
+	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
@@ -1160,7 +1169,7 @@ if ($pconfig['page']['errtext']) {
 	$group = new Form_Group('Current Auth Error Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewerrhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
@@ -1192,7 +1201,7 @@ if ($pconfig['page']['logouttext']) {
 	$group = new Form_Group('Current Logout Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		'View Page Contents',
 		'?zone=' . $cpzone . '&act=viewlogouthtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");

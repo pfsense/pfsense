@@ -167,10 +167,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				$jsondata .= "</tr>";
 			}
 		}
-	} else {
-		$jsondata .= "\"}";
 	}
 
+	$jsondata .= "\"}";
 	print($jsondata);
 	exit;
 }

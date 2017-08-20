@@ -248,9 +248,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 	</table>
 </div>
 
-	<?php if (is_array($mobile['pool'])): ?>
 <div id="ipsec-Mobiles" style="display:none;" class="table-responsive">
-		<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover">
+<?php if (is_array($mobile['pool'])): ?>
 		<thead>
 		<tr>
 			<th><?=gettext("User")?></th>
@@ -258,14 +258,20 @@ if (isset($config['ipsec']['phase2'])): ?>
 			<th><?=gettext("Status")?></th>
 		</tr>
 		</thead>
-		<tbody id="body-mobile">
+		<tbody>
 			<tr><td colspan="3"><?=gettext("Retrieving mobile data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
 		</tbody>
+<?php else:?>
+		<thead>
+			<tr>
+				<th colspan="3" class="text-danger"><?=gettext("No mobile tunnels have been configured")?></th>
+			</tr>
+		</thead>
+<?php endif;?>
 		</table>
 	</div>
 
-	<span id="poo"></span>
-	<?php endif;?>
+
 <?php else: ?>
 	<div>
 		<h5 style="padding-left:10px;"><?=gettext("There are no configured IPsec Tunnels")?></h5>

@@ -2942,6 +2942,7 @@ function get_locale_list() {
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 		"nl" => gettext("Dutch"),
 		"en_US" => gettext("English"),
+		"fr" => gettext("French"),
 		"de_DE" => gettext("German (Germany)"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"pl" => gettext("Polish"),

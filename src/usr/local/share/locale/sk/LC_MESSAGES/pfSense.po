@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-14 11:59-0400\n"
+"PO-Revision-Date: 2017-08-20 05:17-0400\n"
 "Last-Translator: Patrik Zakhar <123patokt@gmail.com>\n"
 "Language-Team: Slovak\n"
 "Language: sk\n"
@@ -1343,7 +1343,7 @@ msgstr "IPv6 v medzipamäti: %s"
 
 #: src/etc/inc/dyndns.class:1944
 msgid "No Cached IPv6 found."
-msgstr "Žiadna IPv6 nebola v medzipamäti nájdená."
+msgstr "Nebola nájdená žiadna IPv6 adresa vo vyrovnávacej pamäti."
 
 #: src/etc/inc/dyndns.class:1952
 #, php-format
@@ -2140,8 +2140,8 @@ msgstr "Názov"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Stav"
@@ -3108,7 +3108,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobilný klient"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3782,27 +3782,31 @@ msgid "Norwegian Bokmål"
 msgstr "Nórština (Bokmål)"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portugalsky (Brazília)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Ruština"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Španielčina"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr "Španielsky (Argentína)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Žiadna služba"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3818,83 +3822,83 @@ msgstr "Žiadna služba"
 msgid "Mode"
 msgstr "Režim"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Obmedzená služba"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Platná služba"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Obmedzená regionálna služba"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Úsporná služba"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Neznáma služba"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Neplatná SIM/uzamknutý stav"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Platný SIM stav"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Neplatný SIM CS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Neplatný SIM PS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Neplatný SIM CS/PS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Chýbajúci SIM stav"
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Obmedzená služba"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Inicializácia služby"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -6810,7 +6814,7 @@ msgstr "Vyberte možnosti pre tento front"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -8067,7 +8071,7 @@ msgstr "Potvrdiť"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8648,7 +8652,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -10605,7 +10609,7 @@ msgstr "Počet protokolov"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -10946,7 +10950,7 @@ msgstr "Druh pravidla"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Zdroj"
@@ -10966,7 +10970,7 @@ msgstr "IP protokol"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Cieľ"
@@ -17497,11 +17501,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:1272
 #: src/usr/local/www/interfaces.php:2003 src/usr/local/www/interfaces.php:2188
 msgid "Advanced Configuration"
-msgstr ""
+msgstr "Rozšírená konfigurácia"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:438
 msgid "Cache Size"
-msgstr ""
+msgstr "Veľkosť vyrovnávacej pamäte"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:441
 msgid "Set the size of the bridge address cache. The default is 2000 entries."
@@ -18690,28 +18694,28 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_vlan.php:163
 msgid "Are you sure you want to delete this VLAN?"
-msgstr ""
+msgstr "Ste si istý, že chcete zmazať tento VLAN?"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:74
 msgid "The VLAN tag must be an integer between 1 and 4094."
-msgstr ""
+msgstr "VLAN značka musí byť celé číslo medzi 1 a 4094."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:77
 msgid "The VLAN Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "VLAN priorita musí byť celé číslo medzi 0 a 7."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:81
 msgid "Interface supplied as parent is invalid"
-msgstr ""
+msgstr "Rozhranie poskytnuté ako rodičovské nie je platné"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:87
 msgid "The VLAN tag cannot be changed while the interface is assigned."
-msgstr ""
+msgstr "VLAN značka nemôže byť zmenená, kým je rozhranie priradené."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:97
 #, php-format
 msgid "A VLAN with the tag %s is already defined on this interface."
-msgstr ""
+msgstr "VLAN so značkou %s je už definované na tomto rozhraní."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:104
 #, php-format
@@ -18822,13 +18826,15 @@ msgstr "Licencia"
 #: src/usr/local/www/license.php:36
 #, php-format
 msgid "%1$s is Copyright &copy; %2$s %3$s. All rights reserved."
-msgstr ""
+msgstr "%1$s - Copyright &copy; %2$s %3$s. Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:37
 msgid ""
 "m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All "
 "rights reserved."
 msgstr ""
+"m0n0wall - Copyright &copy; 2002-2015 Manuel Kasper (mk@neon1.net). Všetky "
+"práva vyhradené."
 
 #: src/usr/local/www/license.php:38
 #, php-format
@@ -18915,7 +18921,7 @@ msgstr "Copyright 2000, 2001, 2002 Edwin Groothuis. Všetky práva vyhradené."
 
 #: src/usr/local/www/license.php:133
 msgid "This product includes software developed by Edwin Groothuis."
-msgstr ""
+msgstr "Tento produkt obsahuje softvér vyvinutý Edwinom Groothuisom."
 
 #: src/usr/local/www/license.php:137
 msgid "2005-2016 University of Applied Sciences Rapperswil"
@@ -19270,43 +19276,48 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_setting.php:56
 msgid "Timeout must be a numeric value"
-msgstr ""
+msgstr "Čas vypršania musí mať číselnú hodnotu"
 
 #: src/usr/local/www/load_balancer_setting.php:60
 msgid "Interval must be a numeric value"
-msgstr ""
+msgstr "Interval musí mať číselnú hodnotu"
 
 #: src/usr/local/www/load_balancer_setting.php:65
 msgid "Prefork must be a numeric value"
-msgstr ""
+msgstr "Prefork musí mať číselnú hodnotu"
 
 #: src/usr/local/www/load_balancer_setting.php:68
 msgid "Prefork value must be between 1 and 32"
-msgstr ""
+msgstr "Hodnota prefork musí byť medzi 1 a 32"
 
 #: src/usr/local/www/load_balancer_setting.php:113
 msgid "Relayd Global Settings"
-msgstr ""
+msgstr "Globálne nastavenia Relayd"
 
 #: src/usr/local/www/load_balancer_setting.php:120
 msgid ""
 "Set the global timeout in milliseconds for checks. Leave blank to use the "
 "default value of 1000 ms."
 msgstr ""
+"Nastavte globálny čas vypršania v milisekundách pre kontroly. Ponechajte "
+"prázdne pre použitie predvolenej hodnoty 1000 ms."
 
 #: src/usr/local/www/load_balancer_setting.php:124
 msgid "Interval"
-msgstr ""
+msgstr "Interval"
 
 #: src/usr/local/www/load_balancer_setting.php:127
 msgid ""
 "Set the interval in seconds at which the member of a pool will be checked. "
 "Leave blank to use the default interval of 10 seconds."
 msgstr ""
+"Nastavte hodnotu intervalu v sekundách, po ktorom budú členovia združenia "
+"skontrolovaní. Ponechajte prázdne pre použitie predvoleného intervalu 10 "
+"sekúnd."
 
 #: src/usr/local/www/load_balancer_setting.php:131
 msgid "Prefork"
-msgstr ""
+msgstr "Prefork"
 
 #: src/usr/local/www/load_balancer_setting.php:134
 msgid ""
@@ -24536,11 +24547,11 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:442
 msgid "DNS Configuration"
-msgstr ""
+msgstr "Konfigurácia DNS"
 
 #: src/usr/local/www/services_router_advertisements.php:447
 msgid "Server "
-msgstr ""
+msgstr "Server "
 
 #: src/usr/local/www/services_router_advertisements.php:458
 msgid ""
@@ -26474,7 +26485,7 @@ msgstr "Odpojiť"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr "Prehľad"
 
@@ -27354,7 +27365,7 @@ msgstr "VPN prihlásenia"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Užívateľ"
@@ -31941,7 +31952,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr ""
 
@@ -34627,7 +34638,7 @@ msgstr "Všetky záznamy dynamického DNS sú skryté."
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -34760,39 +34771,43 @@ msgstr "Filter rozhraní uložený cez dashboard."
 msgid "Uptime: %s"
 msgstr "Doba prevádzky: %s"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Mobilné"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "Aktívne tunely"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Neaktívne tunely"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Mobilní užívatelia"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Získavajú sa údaje prehľadu"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Získavajú sa údaje tunelu"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Získavajú sa mobilných údajov"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Neboli nakonfigurované žiadne IPsec tunely"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec môže byť nakonfigurovaný <a href=\"vpn_ipsec.php\">tu</a>."
 
@@ -35118,36 +35133,36 @@ msgstr "Z poslednej minúty, 5 minút a 15 minút"
 msgid "CPU usage"
 msgstr "Využitie procesora"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Využitie pamäte"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "Využitie swap"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "Využitie disku"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr "z"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "v pamäti RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr "Všetky položky systémových informácií sú skryté."
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Položka"
 

@@ -11,12 +11,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-11 10:18-0400\n"
-"Last-Translator: Joachim Friberg <friberg.joachim@gmail.com>\n"
+"PO-Revision-Date: 2017-08-18 04:47-0400\n"
+"Last-Translator: Lars Bemersjö <bemersjo@gmail.com>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -1775,9 +1775,8 @@ msgstr ""
 "%s"
 
 #: src/etc/inc/filter.inc:853
-#, fuzzy
 msgid "Creating gateway group item..."
-msgstr "Skapar grupp artikel för portgång"
+msgstr "Skapar grupp artikel för Gateway"
 
 #: src/etc/inc/filter.inc:893
 #, php-format
@@ -1818,7 +1817,8 @@ msgstr "Installerar ej NAT-reflektionsregler för med ett portomfång > 500"
 #, fuzzy
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
 msgstr ""
-"Installerar delar av NAT-reflektionsregler. Maximum på 1,000 regler nådd."
+"Installerar delar av NAT reflektionsregler. Maximalt antal regler nått (max "
+"1000)."
 
 #: src/etc/inc/filter.inc:1580
 msgid "localhost"
@@ -2116,8 +2116,8 @@ msgstr "Namn"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Status"
@@ -3083,7 +3083,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobil klient"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3736,27 +3736,31 @@ msgid "Norwegian Bokmål"
 msgstr "Norska Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portugisiska (Brasilien)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Ryska"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Spanska"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr "Spanska (Argentina)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Ingen tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3772,83 +3776,83 @@ msgstr "Ingen tjänst"
 msgid "Mode"
 msgstr "Läge"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Begränsad Tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Giltig tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Begränsad Regional Tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Strömsparartjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Okänd tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Ogiltigt SIM/Låst tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Giltigt SIM-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Ogiltigt SIM CS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Ogiltigt SIM PS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Ogiltigt SIM CS/PS-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Saknar SIM-tillstånd"
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Begränsad tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Initierar tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Upplåst eller korrekt MCC/MNC-tjänst"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr "(U)SIMkortets låsstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Nätverks- och (U)SIMkortets låsstatus"
 
@@ -5239,16 +5243,18 @@ msgid ""
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:703
+#, fuzzy
 msgid "WebCfg - Services: DNS Forwarder: Edit host"
-msgstr ""
+msgstr "WebCfg - Tjänster: DNS Forwarder: Redigera"
 
 #: src/etc/inc/priv.defs.inc:704
 msgid "Allow access to the 'Services: DNS Forwarder: Edit host' page."
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:709
+#, fuzzy
 msgid "WebCfg - Services: Dynamic DNS clients"
-msgstr ""
+msgstr "WebCfg - Tjänster: Dynamisk DNS klienter"
 
 #: src/etc/inc/priv.defs.inc:710
 msgid "Allow access to the 'Services: Dynamic DNS clients' page."
@@ -5359,8 +5365,9 @@ msgid "Allow access to the 'Services: SNMP' page."
 msgstr "Tillåt åtkomst till 'Tjänster: SNMP'-sidan"
 
 #: src/etc/inc/priv.defs.inc:793
+#, fuzzy
 msgid "WebCfg - Services: DNS Resolver"
-msgstr ""
+msgstr "WebCfg - Tjänster: DNS Resolver"
 
 #: src/etc/inc/priv.defs.inc:794
 msgid "Allow access to the 'Services: DNS Resolver' page."
@@ -5432,8 +5439,9 @@ msgid "Allow access to the 'Status: Captive Portal' page."
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:847
+#, fuzzy
 msgid "WebCfg - Status: Captive Portal: Expire Vouchers"
-msgstr ""
+msgstr "WebCfg - Status: Captive Portal: Utgågna kuponger"
 
 #: src/etc/inc/priv.defs.inc:848
 msgid "Allow access to the 'Status: Captive Portal: Expire Vouchers' page."
@@ -5757,8 +5765,9 @@ msgid "WebCfg - System: CA Manager"
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1092
+#, fuzzy
 msgid "Allow access to the 'System: CA Manager' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'System: CA Manager' sidan."
 
 #: src/etc/inc/priv.defs.inc:1097
 msgid "WebCfg - System: Certificate Manager"
@@ -5857,12 +5866,14 @@ msgid "Allow access to the 'System: Update: Settings' page."
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1171
+#, fuzzy
 msgid "WebCfg - System: User Settings"
-msgstr ""
+msgstr "ebCfg - System: Användar Inställningar"
 
 #: src/etc/inc/priv.defs.inc:1172
+#, fuzzy
 msgid "Allow access to the 'System: User Settings' page."
-msgstr ""
+msgstr "Tillåt åtkomst till  'System: User Settings' sidan."
 
 #: src/etc/inc/priv.defs.inc:1177
 msgid "WebCfg - System: User Manager"
@@ -5905,12 +5916,14 @@ msgid "Allow access to the 'Hidden: Upload Configuration' page."
 msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1210
+#, fuzzy
 msgid "WebCfg - VPN: IPsec"
-msgstr ""
+msgstr "WebCfg - VPN: IPsec"
 
 #: src/etc/inc/priv.defs.inc:1211
+#, fuzzy
 msgid "Allow access to the 'VPN: IPsec' page."
-msgstr ""
+msgstr "Tillåt åtkomst till 'VPN: IPsec' sidan."
 
 #: src/etc/inc/priv.defs.inc:1216
 msgid "WebCfg - VPN: IPsec: Pre-Shared Keys List"
@@ -6685,7 +6698,7 @@ msgstr "Välj inställningar för denna kö"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -7135,18 +7148,18 @@ msgid "Starting syslog..."
 msgstr "Startar syslog..."
 
 #: src/etc/inc/system.inc:1188
-#, php-format
+#, fuzzy, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
-msgstr ""
+msgstr "Fel: kan inte öppna syslog.conf i system_syslogd_start().%s"
 
 #: src/etc/inc/system.inc:1274
 msgid "Creating SSL Certificate for this host"
 msgstr "Skapar SSL-certifikat för denna värd"
 
 #: src/etc/inc/system.inc:1278
-#, php-format
+#, fuzzy, php-format
 msgid "webConfigurator default (%s)"
-msgstr ""
+msgstr "webConfigurator standard (%s)"
 
 #: src/etc/inc/system.inc:1292
 #, php-format
@@ -7187,9 +7200,9 @@ msgid "Setting timezone..."
 msgstr "Ställer in tidszon..."
 
 #: src/etc/inc/system.inc:2067
-#, php-format
+#, fuzzy, php-format
 msgid "Could not open %s/ntpd.conf for writing"
-msgstr ""
+msgstr "Kunde inte öppna %s/ntpd.conf för skrivning"
 
 #: src/etc/inc/system.inc:2187
 #, php-format
@@ -7197,8 +7210,9 @@ msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
 msgstr ""
 
 #: src/etc/inc/system.inc:2214
+#, fuzzy
 msgid "Setting hard disk standby... "
-msgstr ""
+msgstr "Sätter hårddisken i standby..."
 
 #: src/etc/inc/system.inc:2476
 msgid "PC Engines WRAP"
@@ -7226,12 +7240,14 @@ msgid "Transparent"
 msgstr "Transparent"
 
 #: src/etc/inc/unbound.inc:795
+#, fuzzy
 msgid "Type Transparent"
-msgstr ""
+msgstr "Typ Transparent"
 
 #: src/etc/inc/unbound.inc:797
+#, fuzzy
 msgid "Inform"
-msgstr ""
+msgstr "Informera"
 
 #: src/etc/inc/unbound.inc:798
 msgid "Inform Deny"
@@ -7723,9 +7739,9 @@ msgid "Error: cannot open mpd.conf in vpn_pppoe_configure()."
 msgstr ""
 
 #: src/etc/inc/vpn.inc:1693
-#, php-format
+#, fuzzy, php-format
 msgid "Error: cannot open mpd.secret in vpn_pppoe_configure()."
-msgstr ""
+msgstr "Fel: kan inte öppna mpd.secret i vpn_pppoe_configure()."
 
 #: src/etc/inc/vpn.inc:1727
 msgid "done"
@@ -7865,7 +7881,7 @@ msgstr "Bekräfta"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8115,12 +8131,14 @@ msgid "User %s authenticated successfully."
 msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:50
+#, fuzzy
 msgid "This user is a member of groups"
-msgstr ""
+msgstr "Användaren är medlem i grupperna"
 
 #: src/usr/local/www/diag_authentication.php:58
+#, fuzzy
 msgid "Authentication failed."
-msgstr ""
+msgstr "Autentisering misslyckades."
 
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
@@ -8432,7 +8450,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -8585,21 +8603,24 @@ msgid "Advanced Users Only"
 msgstr "Endast avancerade användare"
 
 #: src/usr/local/www/diag_command.php:179
-#, php-format
+#, fuzzy, php-format
 msgid "Shell Output - %s"
-msgstr ""
+msgstr "Shell Output - %s"
 
 #: src/usr/local/www/diag_command.php:198
+#, fuzzy
 msgid "Execute Shell Command"
-msgstr ""
+msgstr "Exekvera Shell Kommando"
 
 #: src/usr/local/www/diag_command.php:206
+#, fuzzy
 msgid "Recall Previous Command"
-msgstr ""
+msgstr "Återkalla Föregående Kommando"
 
 #: src/usr/local/www/diag_command.php:209
+#, fuzzy
 msgid "Execute the entered command"
-msgstr ""
+msgstr "Kör hela instruktionen"
 
 #: src/usr/local/www/diag_command.php:211
 #: src/usr/local/www/diag_command.php:349
@@ -8607,12 +8628,13 @@ msgid "Execute"
 msgstr "Kör"
 
 #: src/usr/local/www/diag_command.php:213
+#, fuzzy
 msgid "Recall Next Command"
-msgstr ""
+msgstr "Återkalla Nästa Instruktion"
 
 #: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
-msgstr ""
+msgstr "Rensa instruktion"
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:164
 #: src/usr/local/www/system_groupmanager_addprivs.php:213
@@ -9250,8 +9272,9 @@ msgid "Save / Load a File from the Filesystem"
 msgstr ""
 
 #: src/usr/local/www/diag_edit.php:111
+#, fuzzy
 msgid "Path to file to be edited"
-msgstr ""
+msgstr "Sökväg till filen som ska uppdateras"
 
 #: src/usr/local/www/diag_edit.php:114 src/usr/local/www/diag_edit.php:116
 msgid "Load"
@@ -9270,28 +9293,34 @@ msgid "GEOM Mirrors"
 msgstr "GEOM-speglar"
 
 #: src/usr/local/www/diag_gmirror.php:38
+#, fuzzy
 msgid "Forget all formerly connected consumers"
-msgstr ""
+msgstr "Glöm alla tidigare konsumenter"
 
 #: src/usr/local/www/diag_gmirror.php:39
+#, fuzzy
 msgid "Remove metadata from disk"
-msgstr ""
+msgstr "Tag bor all metadata från lagring"
 
 #: src/usr/local/www/diag_gmirror.php:40
+#, fuzzy
 msgid "Insert consumer into mirror"
-msgstr ""
+msgstr "Spara konsument i spegel"
 
 #: src/usr/local/www/diag_gmirror.php:41
+#, fuzzy
 msgid "Remove consumer from mirror"
-msgstr ""
+msgstr "Tag bort konsument från spegel"
 
 #: src/usr/local/www/diag_gmirror.php:42
+#, fuzzy
 msgid "Reactivate consumer on mirror"
-msgstr ""
+msgstr "Återaktivera konsument från spegel"
 
 #: src/usr/local/www/diag_gmirror.php:43
+#, fuzzy
 msgid "Deactivate consumer from mirror"
-msgstr ""
+msgstr "Avaktivera konsument från spegel"
 
 #: src/usr/local/www/diag_gmirror.php:44
 msgid "Force rebuild of mirror consumer"
@@ -9362,8 +9391,9 @@ msgid "Mirror: "
 msgstr "Spegel:"
 
 #: src/usr/local/www/diag_gmirror.php:191
+#, fuzzy
 msgid "Consumer"
-msgstr ""
+msgstr "Konsument"
 
 #: src/usr/local/www/diag_gmirror.php:207
 msgid ""
@@ -9404,8 +9434,9 @@ msgid "Consumer Information - Available Consumers"
 msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:304
+#, fuzzy
 msgid "Add to Mirror"
-msgstr ""
+msgstr "Lägg till Spegel"
 
 #: src/usr/local/www/diag_gmirror.php:326
 #, php-format
@@ -10310,7 +10341,7 @@ msgstr "Protokollantal"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -10631,7 +10662,7 @@ msgstr "Regeltyp"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Källa"
@@ -10651,7 +10682,7 @@ msgstr "IP-Protokoll"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destination"
@@ -10880,12 +10911,14 @@ msgid "URL (Port)"
 msgstr "URL (Port)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:74
+#, fuzzy
 msgid "URL Table (IP)"
-msgstr ""
+msgstr "URL tabell (IP)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:75
+#, fuzzy
 msgid "URL Table (Port)"
-msgstr ""
+msgstr "URL tabell (Port)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -14297,8 +14330,9 @@ msgid "Expansion"
 msgstr "Expansion"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:389
+#, fuzzy
 msgid "Virtual IP Password"
-msgstr ""
+msgstr "Virtuell IP lösenord"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:392
 msgid "Enter the VHID group password."
@@ -14313,8 +14347,9 @@ msgid "Enter the VHID group that the machines will share."
 msgstr ""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:401
+#, fuzzy
 msgid "Advertising frequency"
-msgstr ""
+msgstr "Reklam frekvens"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:404
 #: src/usr/local/www/firewall_virtual_ip_edit.php:407
@@ -14348,12 +14383,12 @@ msgstr ""
 
 #: src/usr/local/www/foot.inc:31 src/usr/local/www/foot.inc:35
 msgid "Top of page"
-msgstr ""
+msgstr "Förstasidan"
 
 #: src/usr/local/www/graph.php:85
-#, php-format
+#, fuzzy, php-format
 msgid "Cannot get data about interface %s"
-msgstr ""
+msgstr "Kan inte erhålla data för interface %s"
 
 #: src/usr/local/www/graph.php:105
 msgid "In"
@@ -25518,7 +25553,7 @@ msgstr "Frånkopplad"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr "Översikt"
 
@@ -26326,7 +26361,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Användare"
@@ -30860,7 +30895,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr ""
 
@@ -33498,7 +33533,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -33629,39 +33664,43 @@ msgstr "Sparade Gränssnittsfilter via Dashboard."
 msgid "Uptime: %s"
 msgstr "Drifttid: %s"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Mobil"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "Aktiva tunnlar"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Inaktiva tunnlar"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Mobilanvändare"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Hämtar översiktsdata"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Hämtar tunneldata"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Hämtar mobildata"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Det finns inga konfigurerade IPsec-tunnlar"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec kan konfigureras <a href=\"vpn_ipsec.php\">här</a>."
 
@@ -33987,36 +34026,36 @@ msgstr ""
 msgid "CPU usage"
 msgstr "CPU-användning"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Minnesanvändning"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "SWAP-användning"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "Diskanvändning"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr "av"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "i RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Objekt"
 

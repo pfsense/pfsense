@@ -485,7 +485,6 @@ $rows_displayed = false;
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
-	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
@@ -587,12 +586,12 @@ function updateMbufMeter(x) {
 
 function updateCPU(total, used) {
 	if ((lastTotal <= total) && (lastUsed <= used)) { // Just in case it wraps
-		// Calculate the total ticks and the used ticks sine the last time it was checked
+		// Calculate the total ticks and the used ticks since the last time it was checked
 		var d_total = total - lastTotal;
 		var d_used = used - lastUsed;
 
 		// Convert to percent
-		var x = Math.trunc( ((d_total - d_used)/d_total) * 100);
+		var x = Math.trunc(((d_total - d_used)/d_total) * 100);
 
 		if ($('#cpumeter')) {
 			$('[id="cpumeter"]').html(x + '%');

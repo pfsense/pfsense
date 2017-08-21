@@ -8,11 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-15 08:55-0400\n"
+"PO-Revision-Date: 2017-08-19 05:17-0400\n"
 "Last-Translator: MM <meri_yms@yahoo.com>\n"
 "Language-Team: Romanian\n"
 "Language: ro\n"
@@ -2133,8 +2133,8 @@ msgstr "Nume"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Status"
@@ -3105,7 +3105,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Client Mobil"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3781,27 +3781,31 @@ msgid "Norwegian Bokmål"
 msgstr "Norvegiana (Norvegia)"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portugheza (Brazil)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Rusa"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Spaniola"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr "Spaniola (Argentina)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Fara serviciu"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3817,83 +3821,83 @@ msgstr "Fara serviciu"
 msgid "Mode"
 msgstr "Mod"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Serviciu restictionat"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Serviciu valid"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Serviciu regional restictionat"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Serviciul de economisire energie"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Serviciu Necunoscut"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Stare SIM blocata/invalida"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Stare SIM valida"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Stare SIM CS invalida"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Stare SIM PS invalida"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Stare SIM CS/PS invalida"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Nu se poate obtine starea cartelei SIM "
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Serviciu limitat"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Se initializeaza serviciul"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr "Brocare Retea eroare Serviciu"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr "Serviciu de Retea Blocat"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Deblocat sau corect Serviciu MMC/MNC "
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr "Nici o stare de actiune"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr "Stare retea Blocata"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM card blocat"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Retea blocata si (U)SIM card blocat"
 
@@ -6806,7 +6810,7 @@ msgstr "Selectați opțiuni pentru această coadă de așteptare"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -8109,7 +8113,7 @@ msgstr "Confirmați"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8699,7 +8703,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -10691,7 +10695,7 @@ msgstr "Numărătoare de protocol"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -11042,7 +11046,7 @@ msgstr "Tipul de regulă"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Sursă"
@@ -11062,7 +11066,7 @@ msgstr "Protocol IP"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destinație"
@@ -11488,84 +11492,86 @@ msgstr "%1$s/%2$s nu este o sub-rețea validă."
 msgid ""
 "The alias(es): %s cannot be nested because they are not of the same type."
 msgstr ""
+"Alias-ul(-urile): %s nu poate(pot) fi imbricat(e) pentru ca nu sunt de "
+"același tip"
 
 #: src/usr/local/www/firewall_aliases_edit.php:507
 msgid "Edited a firewall alias."
-msgstr ""
+msgstr "S-a editat un alias aferent firewall-ului."
 
 #: src/usr/local/www/firewall_aliases_edit.php:536
 #: src/usr/local/www/firewall_aliases_edit.php:617
 msgid "Network(s)"
-msgstr ""
+msgstr "Rețea(rețele)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:537
 #: src/usr/local/www/firewall_aliases_edit.php:616
 msgid "Host(s)"
-msgstr ""
+msgstr "Gazdă(gazde)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:538
 #: src/usr/local/www/firewall_aliases_edit.php:618
 msgid "Port(s)"
-msgstr ""
+msgstr "Port(porturi)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:539
 #: src/usr/local/www/firewall_aliases_edit.php:559
 #: src/usr/local/www/firewall_aliases_edit.php:619
 msgid "URL (IPs)"
-msgstr ""
+msgstr "URL(IP-uri)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:540
 #: src/usr/local/www/firewall_aliases_edit.php:560
 #: src/usr/local/www/firewall_aliases_edit.php:620
 msgid "URL (Ports)"
-msgstr ""
+msgstr "URL(Porturi)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:541
 #: src/usr/local/www/firewall_aliases_edit.php:561
 #: src/usr/local/www/firewall_aliases_edit.php:621
 msgid "URL Table (IPs)"
-msgstr ""
+msgstr "Tabel URL (IP-uri)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:542
 #: src/usr/local/www/firewall_aliases_edit.php:562
 #: src/usr/local/www/firewall_aliases_edit.php:622
 msgid "URL Table (Ports)"
-msgstr ""
+msgstr "Tabel URL (Porturi)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:546
 #: src/usr/local/www/services_unbound_acls.php:268
 msgid "Add Network"
-msgstr ""
+msgstr "Adaugă rețea"
 
 #: src/usr/local/www/firewall_aliases_edit.php:547
 msgid "Add Host"
-msgstr ""
+msgstr "Adaugă gazdă"
 
 #: src/usr/local/www/firewall_aliases_edit.php:548
 msgid "Add Port"
-msgstr ""
+msgstr "Adaugă port"
 
 #: src/usr/local/www/firewall_aliases_edit.php:549
 #: src/usr/local/www/firewall_aliases_edit.php:550
 msgid "Add URL"
-msgstr ""
+msgstr "Adaugă URL"
 
 #: src/usr/local/www/firewall_aliases_edit.php:551
 #: src/usr/local/www/firewall_aliases_edit.php:552
 msgid "Add URL Table"
-msgstr ""
+msgstr "Adaugă tabel URL"
 
 #: src/usr/local/www/firewall_aliases_edit.php:556
 msgid "Network or FQDN"
-msgstr ""
+msgstr "Rețea sau FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:557
 msgid "IP or FQDN"
-msgstr ""
+msgstr "IP sau FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:565
 msgid "The value after the \"/\" is the update frequency in days."
-msgstr ""
+msgstr "Valoarea de după \"/\" reprezintă frecvența în zile a actualizărilor"
 
 #: src/usr/local/www/firewall_aliases_edit.php:568
 msgid ""
@@ -11576,6 +11582,14 @@ msgid ""
 "for IPv6. An IP range such as 192.168.1.1-192.168.1.254 may also be entered "
 "and a list of CIDR networks will be derived to fill the range."
 msgstr ""
+"Rețelele sunt specificate în format CIDR. Selectați masca CIDR aferentă "
+"fiecărei intrări. /32 specifică o singură gazdă IPv4, /128 reprezintă o "
+"singură gazdă IPv6, /24 specifică 255.255.255.0, /64 specifică o rețea IPv6 "
+"normală, etc. Numele gazdelor (FQDN-uri) pot fi de asemenea specificate "
+"folosind o mască /32 pentru rețele IPv4 sau /128 pentru rețele IPv6. Poate "
+"fi specificat si un interval de IP-uri cum ar fi 192.168.1.1 - 192.168.1.254 "
+"și atunci se va deriva o listă  de rețele CIDR pentru a se completa "
+"intervalul."
 
 #: src/usr/local/www/firewall_aliases_edit.php:569
 msgid ""
@@ -11586,12 +11600,22 @@ msgid ""
 "192.168.1.16/28 may also be entered and a list of individual IP addresses "
 "will be generated."
 msgstr ""
+"Introduceți  câte gazde doriți. Gazdele trebuie specificate folosind adresa "
+"lor de IP sau numele întreg calificat de domeniu (FQDN). Numele de gazdă "
+"FQDN sunt în permanență rezolvate si actualizate. Dacă în timpul unei "
+"interogări DNS sunt returnate mai multe IP-uri, toate IP-urile vor fi "
+"utilizate. Se poate introduce și un interval de IP-uri cum ar fi 192.168.1.1 "
+"- 192.168.1.10 sau o sub-rețea mai mică cum ar fi 192.168.1.16/28 din care "
+"se va genera o listă de adrese individuale."
 
 #: src/usr/local/www/firewall_aliases_edit.php:570
 msgid ""
 "Enter ports as desired, with a single port or port range per entry. Port "
 "ranges can be expressed by separating with a colon."
 msgstr ""
+"Introduceți porturi după dorință, un singur port sau interval de porturi per "
+"intrare. Intervalul de porturi  se poate introduce folosinf separatorul două "
+"puncte (:)."
 
 #: src/usr/local/www/firewall_aliases_edit.php:571
 msgid ""
@@ -11599,6 +11623,9 @@ msgid ""
 "the items imported into the alias. Use only with small sets of IP addresses "
 "(less than 3000)."
 msgstr ""
+"Introduceți câte URL-uri doriți. După salvare, URL-uri vor fi descărcate și "
+"obiectele vor fi importate în alias. Folosiți doar cu seturi mici de adrese "
+"de IP (mai puțin de 3000)."
 
 #: src/usr/local/www/firewall_aliases_edit.php:572
 msgid ""
@@ -11606,6 +11633,9 @@ msgid ""
 "the items imported into the alias. Use only with small sets of Ports (less "
 "than 3000)."
 msgstr ""
+"Introduceți câte URL-uri doriți. După salvare, URL-uri vor fi descărcate și "
+"obiectele vor fi importate în alias. Folosiți doar cu seturi mici de porturi "
+"(mai puțin de 3000)."
 
 #: src/usr/local/www/firewall_aliases_edit.php:573
 msgid ""
@@ -25917,7 +25947,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr ""
 
@@ -26725,7 +26755,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr ""
@@ -31260,7 +31290,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr ""
 
@@ -33898,7 +33928,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -34029,39 +34059,43 @@ msgstr ""
 msgid "Uptime: %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr ""
 
@@ -34387,36 +34421,36 @@ msgstr ""
 msgid "CPU usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr ""
 

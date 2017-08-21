@@ -38,12 +38,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-16 05:35-0400\n"
-"Last-Translator: Alexander Franz <afranz@outlook.com>\n"
+"PO-Revision-Date: 2017-08-20 02:35-0400\n"
+"Last-Translator: Josef <zanata@veloc1ty.de>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -2193,8 +2193,8 @@ msgstr "Name"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Status"
@@ -2823,7 +2823,7 @@ msgstr ""
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "Rufe Funktion interface_dhcpv6_configure auf"
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
@@ -3189,7 +3189,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiler Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3869,27 +3869,31 @@ msgid "Norwegian Bokmål"
 msgstr "norwegisch"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portugiesisch (Brasilien)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Russisch"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr "Spanisch (Argentinien)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Kein Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3905,83 +3909,83 @@ msgstr "Kein Dienst"
 msgid "Mode"
 msgstr "Modus"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Eingeschränkter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Gültiger Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Eingeschränkter regionaler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Stromspar-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Unbekannter Service"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Ungültiger SIM/gesperrt Status"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Gültiger SIM-Status"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Ungültiger SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Ungültiger SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Ungültiger SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Fehlender SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Begrenzter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Initialisiere Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr "Netzwerksperre Fehler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr "Netzwerk gesperrt Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Freigeschalteter oder zutreffender MCC/MNC-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr "Kein Aktionsstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr "Status Netzwerksperre"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr "(U-)SIM-Karten-Sperrstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Netzwerksperre und (U)SIM-Kartensperrstatus"
 
@@ -6536,15 +6540,15 @@ msgstr "Strate DNS-Resolver..."
 
 #: src/etc/inc/services.inc:2270
 msgid "Unbound start waiting on dhcp6c."
-msgstr ""
+msgstr "Starten von Unbound wartet auf dhcp6c"
 
 #: src/etc/inc/services.inc:2274
 msgid "dhcp6 init complete. Continuing"
-msgstr ""
+msgstr "dhcp6 Initalisierung komplett. Mache weiter."
 
 #: src/etc/inc/services.inc:2283
 msgid "sync unbound done."
-msgstr ""
+msgstr "Unbound wurde synchronisiert."
 
 #: src/etc/inc/services.inc:2321
 msgid "Starting SNMP daemon... "
@@ -6779,6 +6783,9 @@ msgid ""
 "is 0 to 15, queues with a higher priority are preferred in the case of "
 "overload."
 msgstr ""
+"Für cbq un fairq ist der Bereich zwischen 0 und 7 gültig. Der Standardwert "
+"ist 1. Für priq ist der Bereich zwischen 0 und 15 gültig. Queues mit einer "
+"höheren Priorität werden bei einer Überlastung bevorzugt."
 
 #: src/etc/inc/shaper.inc:1442
 msgid "Queue limit in packets."
@@ -6931,7 +6938,7 @@ msgstr "Wählen Sie Optionen für diese Queue"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -7051,7 +7058,7 @@ msgstr "Bandbreitenanteil einer rückständigen Queue"
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "Priorität muss ein ganzzahliger Wert zwischen 0 und 7 sein."
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -7745,9 +7752,9 @@ msgid "Upgraded static route for %s"
 msgstr "Statische Route für %s aktualisiert"
 
 #: src/etc/inc/upgrade_config.inc:923
-#, php-format
+#, fuzzy, php-format
 msgid "Sitedown pool for VS: %s"
-msgstr ""
+msgstr "Sitedown Pool für VS: %s"
 
 #: src/etc/inc/upgrade_config.inc:1086
 #, php-format
@@ -8225,7 +8232,7 @@ msgstr "Bestätigen"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8821,7 +8828,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -10812,7 +10819,7 @@ msgstr "Protokoll Zähler"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -11158,7 +11165,7 @@ msgstr "Regeltyp"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Quelle"
@@ -11178,7 +11185,7 @@ msgstr "IP Protokoll"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Ziel"
@@ -24557,7 +24564,7 @@ msgid "This is almost always the same as the Interface to Monitor. "
 msgstr "Das entspricht fast immer der Schnittstelle zum Monitor."
 
 #: src/usr/local/www/services_dyndns_edit.php:297
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Enter the complete fully qualified domain name. Example: myhost.dyndns."
 "org%1$sDNS Made Easy: Dynamic DNS ID (NOT hostname)%1$she.net tunnelbroker: "
@@ -24566,6 +24573,12 @@ msgid ""
 "hostname and the domain separately, with the domain being the domain or "
 "subdomain zone being handled by the provider."
 msgstr ""
+"Gebe den FQDN ein. Beispiel: myhost.dyndns.org%1$sDNS Made Easy: Dynamic DNS "
+"ID (NICHT der Hostname)%1$she.tunnelbroker: Gebe die Tunnel ID ein."
+"%1$sGleSYS: Gebe die Datensatz ID ein.%1$sDNSimple: Gib nur die Domain ein."
+"%1$sNamecheap, Cloudflare, GratisDNS, Hover: Gib den Hostname und die Domain "
+"separat ein, wobei die Domain gleich die wirkliche Domain ist und die "
+"Subdomain vom Provider gesetzt wird."
 
 #: src/usr/local/www/services_dyndns_edit.php:308
 msgid "MX"
@@ -24623,7 +24636,7 @@ msgstr ""
 "Firewall verifiziert werden kann."
 
 #: src/usr/local/www/services_dyndns_edit.php:356
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "Username is required for all types except Namecheap, FreeDNS and Custom "
 "Entries.%1$sDNS Made Easy: Dynamic DNS ID%1$sRoute 53: Enter the Access Key "
@@ -24631,6 +24644,11 @@ msgid ""
 "the DNS record comment.%1$sFor Custom Entries, Username and Password "
 "represent HTTP Authentication username and passwords."
 msgstr ""
+"Der Benutzername ist für alle Provider nötig außer für Namecheap, FreeDNS "
+"und eigene Eintragungen.%1$sDNS Made Easy: Dynamic DNS ID%1sRoute 53: Gib "
+"den Access Key ein.%1$sGleSYS: Gib den API User ein.%1$sDreamhost: Gib den "
+"Wert für einen DNS Kommentar des Eintrages ein.%1$sFür eigene Eintragungen "
+"werden diese Werte für die HTTP Authentifizierung verwendet."
 
 #: src/usr/local/www/services_dyndns_edit.php:368
 #, php-format
@@ -24652,6 +24670,8 @@ msgid ""
 "Route53: Enter AWS Zone ID.%1$sDNSimple: Enter the Record ID of record to "
 "update."
 msgstr ""
+"Route53: Gib die AWS Zonen ID ein.%1$sDNSimple: Gib die Record ID des zu "
+"aktualisierenden Eintrages an."
 
 #: src/usr/local/www/services_dyndns_edit.php:389
 msgid ""
@@ -24812,7 +24832,7 @@ msgid "%d is the maximum number of configured servers."
 msgstr "%d ist die maximale Anzahl von Servern."
 
 #: src/usr/local/www/services_ntpd.php:285
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "NTP will only sync if a majority of the servers agree on the time.  For best "
 "results you should configure between 3 and 5 servers (%4$sNTP support pages "
@@ -24825,6 +24845,17 @@ msgid ""
 "a pool of NTP servers and not a single address. This is assumed for *.pool."
 "ntp.org."
 msgstr ""
+"NTP wird nur synchronisieren, wenn eine Mehrheit der Server sich auf eine "
+"Zeit einigen. Für die Besten Ergebnisse sollten 3 bis 5 Server konfiguriert "
+"werden(%4$sNTP Manual Page empfiehlt mindestens 4-5 Server%s), oder einen "
+"Pool. Wenn nur ein Server konfiguriert ist wird diesem automatisch geglaubt. "
+"Wenn zwei Server konfiguriert sind und einer nicht einverstanden ist, dass "
+"wird keinem geglaubt. Optionen:$1$s%2$sBevorzugen%3$s - NTP soll diesen "
+"Server vor allen anderen Bevorzugen.%1$s%2$sNicht zu Rate ziehen%3$s - NTP "
+"soll diesen Server nicht zum Zeitabgleich verwenden, aber Statistiken sollen "
+"gesammelt und angezeigt werden.%1$s%2$sIst ein Pool%3$s - Dieser Eintrag ist "
+"ein Pool aus NTP Servern und entspricht nicht einer einzelnen Adresse. *."
+"pool.ntp.org ist ein Beispiel hierfür."
 
 #: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
@@ -26084,6 +26115,11 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
+"Interface IPs die zur Beantwortung zu Client Anfragen an den DNS Resolver "
+"verwendet werden sollen. Wenn ein Interface eine IPv4 und eine IPv6 Adresse "
+"hat werden beide benutzt. Anfragen an nicht ausgewählte Interfaces werden "
+"verworfen. Standardmäßig werden alle Anfragen auf jedem verfügbaren IPv4 und "
+"IPv6 Adresse beantwortet."
 
 #: src/usr/local/www/services_unbound.php:307
 msgid "*Outgoing Network Interfaces"
@@ -26118,6 +26154,10 @@ msgid ""
 "servers defined under %1$sSystem &gt; General Setup%2$s or those obtained "
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
+"Wenn diese Option angewählt ist werden alle DNS Anfragen zu den Upstream DNS "
+"Server geschickt, die unter %1$sSystem &gt; General Setup%2$s konfiguriert "
+"oder die über DHCP/PPP auf WAN erhalten wurden (Wenn DNS Server "
+"überschreiben dort aktiviert ist)."
 
 #: src/usr/local/www/services_unbound.php:341
 #, php-format
@@ -26127,6 +26167,10 @@ msgid ""
 "their name can be resolved. The domain in %1$sSystem &gt; General Setup%2$s "
 "should also be set to the proper value."
 msgstr ""
+"Wenn diese Option angewählt ist werden alle Maschinen, die Ihren Hostname in "
+"der DHCP Anfrage mitsenden in den DNS Resolver eingetragen, damit die Namen "
+"aufgelöst werden können. Dazu muss die Domain unter %1$sSystem &gt; General "
+"Setup%2$s gesetzt sein."
 
 #: src/usr/local/www/services_unbound.php:350
 #, php-format
@@ -26225,11 +26269,14 @@ msgstr ""
 "Netzwerksegment.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:156
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
+"%1$sRefuse:%2$s Stoppt Anfragen von Hosts, die in den unten angegebenen "
+"Netzbereichen liegen, aber sendet den DNS rcode REFUSED Fehler zum Client "
+"zurück.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:157
 #, php-format
@@ -26299,7 +26346,7 @@ msgstr "*Netzwerke"
 
 #: src/usr/local/www/services_unbound_acls.php:279
 msgid "Access Lists to Control Access to the DNS Resolver"
-msgstr ""
+msgstr "Access Lists um den Zugriff auf den DNS Resolver zu regeln"
 
 #: src/usr/local/www/services_unbound_acls.php:285
 msgid "Access List Name"
@@ -26339,7 +26386,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:109
 msgid "A valid value must be specified for Jostle Timeout."
-msgstr ""
+msgstr "Ein valider Wert muss eingegeben werden für den Jostle Timeout."
 
 #: src/usr/local/www/services_unbound_advanced.php:112
 msgid "'Maximum TTL for RRsets and Messages' must be a positive integer."
@@ -26356,6 +26403,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_advanced.php:121
 msgid "A valid value must be specified for Number of Hosts to Cache."
 msgstr ""
+"Ein valider Wert muss eingegeben werden für die Anzahl an Hosts to Cache."
 
 #: src/usr/local/www/services_unbound_advanced.php:124
 msgid "A valid value must be specified for Unwanted Reply Threshold."
@@ -26369,6 +26417,8 @@ msgstr "Für Log Level muss ein gültiger Wert angegeben werden."
 msgid ""
 "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled."
 msgstr ""
+"\"Harden DNSSEC Data\" Option kann nur eingeschaltet werden, wenn DNSSEC "
+"aktiviert ist."
 
 #: src/usr/local/www/services_unbound_advanced.php:222
 msgid "Advanced Resolver Options"
@@ -26408,7 +26458,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:254
 msgid "Harden DNSSEC Data"
-msgstr ""
+msgstr "Harden DNSSEC Data"
 
 #: src/usr/local/www/services_unbound_advanced.php:257
 msgid ""
@@ -27796,7 +27846,7 @@ msgstr "Nicht verbunden"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr "Überblick"
 
@@ -28659,7 +28709,7 @@ msgstr "VPN Anmeldungen"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Benutzer"
@@ -30460,6 +30510,9 @@ msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
 "elapsed since the last access.%1$s%2$sDo not set this for CF cards.%3$s"
 msgstr ""
+"Versetzt die Festplatte in den Standy Modus wenn die ausgewählte Anzahl an "
+"Minuten ohne Zugriff verstrichen sind.%1$s%2$sSetzte diesen Wert nicht bei "
+"CF Karten.%3$s"
 
 #: src/usr/local/www/system_advanced_misc.php:584
 msgid "Installation Feedback"
@@ -30474,6 +30527,8 @@ msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
 msgstr ""
+"Aktiviere diese Option, damit die Netgate Device ID nicht zu pfSense im "
+"UserAgent Header mitgeschickt wird."
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -30643,13 +30698,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:295
 msgid "Reset All States"
-msgstr ""
+msgstr "Entferne alle States"
 
 #: src/usr/local/www/system_advanced_network.php:298
 msgid ""
 "This option resets all states when a WAN IP Address changes instead of only "
 "states associated with the previous IP Address."
 msgstr ""
+"Diese Option entfernt bei einem WAN IP Wechsel alle States und nicht nur die "
+"States, die mit der vorherigen Adresse zu tun hatten."
 
 #: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
@@ -30704,6 +30761,9 @@ msgid ""
 "below. Some other mechanisms, such as packages, may need these settings in "
 "place to function."
 msgstr ""
+"Aktiviere diese Option um die SMTP Benachrichtigung zu deaktivieren ohne die "
+"unteren Einstellungen dafür zu löschen. Andere Mechanismen wie Pakete "
+"brauchen eventuell diese um zu funktionieren."
 
 #: src/usr/local/www/system_advanced_notifications.php:233
 msgid "E-Mail server"
@@ -30788,6 +30848,9 @@ msgid ""
 "Select the authentication mechanism used by the SMTP server. Most work with "
 "PLAIN, some servers like Exchange or Office365 might require LOGIN. "
 msgstr ""
+"Wähle die zu verwendende Authentifizierungsmethode für den SMTP Server aus. "
+"Die meisten verwenden PLAIN, mache wie Exchange oder Office365 benötigen "
+"LOGIN."
 
 #: src/usr/local/www/system_advanced_notifications.php:303
 msgid "Test SMTP Settings"
@@ -30798,6 +30861,9 @@ msgid ""
 "A test notification will be sent even if the service is marked as disabled.  "
 "The last SAVED values will be used, not necessarily the values entered here."
 msgstr ""
+"Eine Test Benachrichtigung wird versendet auch wenn der Service als "
+"deaktiviert angezeigt wird. Dabei werden die zuletzt GESPEICHERTEN Werte "
+"benutzt. Das müssen nicht unbedingt die hier angezeigten Werte sein."
 
 #: src/usr/local/www/system_advanced_notifications.php:311
 msgid "Sounds"
@@ -33097,6 +33163,8 @@ msgstr "Bei Aktualisierung automatisch synchronisieren"
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
+"Synchronisiere vor dem Reboot mit dem folgenden Repository/Branch nach dem "
+"Update."
 
 #: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
@@ -33147,7 +33215,7 @@ msgstr ""
 #: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
-msgstr ""
+msgstr "Zeige das konstruierte Kommando.%1$sMit \"Diff/Minimal\" Option."
 
 #: src/usr/local/www/system_update_settings.php:249
 #, php-format
@@ -33163,6 +33231,8 @@ msgstr ""
 #: src/usr/local/www/system_user_settings.php:54
 msgid "The settings cannot be managed for a non-local user."
 msgstr ""
+"Diese Einstellung können nicht für einen nicht lokalen Benutzer gesetzt "
+"werden."
 
 #: src/usr/local/www/system_user_settings.php:145
 #, php-format
@@ -33567,7 +33637,7 @@ msgstr "Änderungen in den Einstellungen für  IPsec Tunnel gespeichert"
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr "Tunnel"
 
@@ -36443,7 +36513,7 @@ msgstr "Alle DNS-Einträge sind verborgen"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -36576,39 +36646,43 @@ msgstr "Interfaces Filter über Dashboard gespeichert."
 msgid "Uptime: %s"
 msgstr "Betriebszeit: %s"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Mobil"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "Aktive Tunnel"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Inaktive Tunnel"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Mobile Benutzer"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Sammle Übersichsdaten"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Sammle Tunnel Daten"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Rufe Mobile Daten ab"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Es gibt keine konfigurierten IPsec-Tunnel"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec kann <a href=\"vpn_ipsec.php\">hier</a> konfiguriert werden."
 
@@ -36934,36 +37008,36 @@ msgstr "Letzte 1, 5 und 15 Minuten"
 msgid "CPU usage"
 msgstr "CPU Auslastung"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Speicher Auslastung"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "SWAP Auslastung"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "HDD Auslastung"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr " von "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "im RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr "Alle Ellemente mit System Informationen sind verborgen"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Eintrag"
 

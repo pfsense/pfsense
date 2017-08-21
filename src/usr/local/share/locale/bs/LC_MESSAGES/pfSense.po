@@ -1,16 +1,17 @@
 # Adnan Brđanin <b.adnan33@gmail.com>, 2017. #zanata
+# Amar Kulo <amar@kulo.me>, 2017. #zanata
 # Ivor Kreso <ivor@netgate.com>, 2017. #zanata
 # Renato Botelho <garga@FreeBSD.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-20 09:26-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"PO-Revision-Date: 2017-08-18 09:10-0400\n"
+"Last-Translator: Amar Kulo <amar@kulo.me>\n"
 "Language-Team: Bosnian\n"
 "Language: bs\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -23,6 +24,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Pristup Onemogućen <br/><br/>Pokušaj pristupa sa trenutno zaključanog "
+"klijenta.<br /><br />Probajte pristupiti firewallu nakon što je period "
+"zaključavanja istekao."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -242,7 +246,7 @@ msgstr "Ovaj uređaj trenutno održava: %s"
 #: src/etc/inc/authgui.inc:283
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:285
 #, php-format
@@ -261,6 +265,10 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"IP adresa korištena za pristup ovom ruteru nije konfigurisana lokalno i može "
+"biti proslijeđena preko NAT ili nekog drugog načina.\n"
+"\t\t\t\t\t\t\t\tAko je ovo proslijeđivanje neočekivano, trebalo bi "
+"provjeriti da trenutno nije čovjek-u-sredini napad u toku."
 
 #: src/etc/inc/authgui.inc:399
 msgid "The browser must support cookies to login."
@@ -608,6 +616,8 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"Dozvola snimanja konfiguracije odbijena od strane 'Korisnik - Konfiguracija: "
+"Onemogući Snimanje Konfiguracije' za korisnika '%s'."
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -2098,8 +2108,8 @@ msgstr "Ime"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Status"
@@ -2112,6 +2122,8 @@ msgstr "Komponenta"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Vrijeme je isteklo čekajući na IPv6 adresu u privremenom stanju.  dpinger "
+"neće biti pokrenut."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2699,7 +2711,7 @@ msgstr "Pronađeno preklapanje na MTU između parenta %1$s i VLAN(%2$s)"
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "pozivam interface_dhcpv6_configure."
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
@@ -3061,7 +3073,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobilni klijent"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3715,7 +3727,7 @@ msgstr "Kineski (Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:2943
 msgid "Dutch"
-msgstr ""
+msgstr "Belgijski"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "English"
@@ -3730,27 +3742,31 @@ msgid "Norwegian Bokmål"
 msgstr "Norveški Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2947
-msgid "Portuguese (Brazil)"
+msgid "Polish"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2948
+msgid "Portuguese (Brazil)"
+msgstr "Portugalski (Brazil)"
+
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Ruski"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Španski"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Španski (Argentina)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Bez signala"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3766,83 +3782,83 @@ msgstr "Bez signala"
 msgid "Mode"
 msgstr "Način"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Zabranjena usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Ispravna usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Zabranjena regionalna usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Usluga štednje energije"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Nepoznat servis"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Pogrešan SIM/zaključano stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Validno SIM stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Pogrešno CIM CS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Pogrešno SIM PS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Pogrešno SIM CS/PS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Nedostatak SIM stanja"
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Limitirana usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Inicijalizacija usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr "Greška mrežnog zaključavanja usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr "Zaključana mreža usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Otključana ili tačna MCC/MNC usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr "Stanje bez radnji"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr "Stanje zaključavanja mreže"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM stanje zakjučavanja kartice"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Zaključavanje mreže i (USIM) stanje zaključavanja kartice"
 
@@ -5860,19 +5876,19 @@ msgstr "Dozvoli pristup stranici 'Sistem: Visokodostupno sinhroniziranje'."
 
 #: src/etc/inc/priv.defs.inc:1153
 msgid "WebCfg - System: Static Routes"
-msgstr ""
+msgstr "WebCfg - Sistem: Statične Rute"
 
 #: src/etc/inc/priv.defs.inc:1154
 msgid "Allow access to the 'System: Static Routes' page."
-msgstr ""
+msgstr "Dozvoli pristup 'Sistem: Statične Rute' stranici."
 
 #: src/etc/inc/priv.defs.inc:1159
 msgid "WebCfg - System: Static Routes: Edit route"
-msgstr ""
+msgstr "WebCfg - Sistem: Statične Rute: Izmjena rute"
 
 #: src/etc/inc/priv.defs.inc:1160
 msgid "Allow access to the 'System: Static Routes: Edit route' page."
-msgstr ""
+msgstr "Dozvoli pristup 'Sistem: Statične Rute: Izmjena rute' stranici."
 
 #: src/etc/inc/priv.defs.inc:1165
 msgid "WebCfg - System: Update: Settings"
@@ -6347,15 +6363,15 @@ msgstr "Startam DNS resolver..."
 
 #: src/etc/inc/services.inc:2270
 msgid "Unbound start waiting on dhcp6c."
-msgstr ""
+msgstr "Nepovezani start čeka na dhcp6c."
 
 #: src/etc/inc/services.inc:2274
 msgid "dhcp6 init complete. Continuing"
-msgstr ""
+msgstr "dhcp6 inicijalizacija gotova. Nastavljam"
 
 #: src/etc/inc/services.inc:2283
 msgid "sync unbound done."
-msgstr ""
+msgstr "završena sinhronizacija nepovezanih."
 
 #: src/etc/inc/services.inc:2321
 msgid "Starting SNMP daemon... "
@@ -6576,6 +6592,8 @@ msgid ""
 "is 0 to 15, queues with a higher priority are preferred in the case of "
 "overload."
 msgstr ""
+"Za cbq i fairq opseg je od 0 do 7.Defaultni je 1. Za priq opseg je od 0 do "
+"15, redovi sa većim prioritetom su prihvatljiviji u slučaju preopterećenja."
 
 #: src/etc/inc/shaper.inc:1442
 msgid "Queue limit in packets."
@@ -6728,7 +6746,7 @@ msgstr "Odaberi opcije za ovaj red"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -6847,7 +6865,7 @@ msgstr "B/W share backloggovanog reda"
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "Prioritet mora biti integer između 0 i 7."
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -7206,7 +7224,7 @@ msgstr "ROUTING: postavljam IPv6 zadanu rutu na %s"
 #: src/etc/inc/system.inc:790
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
-msgstr ""
+msgstr "Statične Rute: Gateway IP ne može biti pronađen za %s"
 
 #: src/etc/inc/system.inc:1015
 msgid "Starting syslog..."
@@ -7981,7 +7999,7 @@ msgstr "potvrdi"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8522,7 +8540,7 @@ msgstr "Sistem"
 
 #: src/usr/local/www/diag_backup.php:438
 msgid "Static routes"
-msgstr ""
+msgstr "Statične Rute"
 
 #: src/usr/local/www/diag_backup.php:439
 msgid "System tunables"
@@ -8566,7 +8584,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -8787,12 +8805,16 @@ msgid ""
 "Line %s appears to have generated an error, and has been highlighted. The "
 "full response is below."
 msgstr ""
+"Izgleda da je linija %s generisala grešku i zbog toga je označena. Potpuni "
+"odgovor je ispod."
 
 #: src/usr/local/www/diag_command.php:299
 msgid ""
 "The code appears to have generated an error, but the line responsible cannot "
 "be identified. The full response is below."
 msgstr ""
+"Izgleda da je kod generisao grešku, ali odgovorna linija ne može biti "
+"identifikovana. Potpuni odgovor je ispod."
 
 #: src/usr/local/www/diag_command.php:301
 #, php-format
@@ -8800,10 +8822,12 @@ msgid ""
 "Note that the line number in the full PHP response will be %s lines too "
 "large. Nested code and eval() errors may incorrectly point to \"line 1\"."
 msgstr ""
+"Upamtite da broj linija u punom PHP odgovoru će biti %s linija prevelik. "
+"Skupljeni kod i eval() greške mogu netačno pokazati na \"liniju 1\"."
 
 #: src/usr/local/www/diag_command.php:313
 msgid "Error locator:"
-msgstr ""
+msgstr "Lokator greške:"
 
 #: src/usr/local/www/diag_command.php:342
 msgid "Execute PHP Commands"
@@ -10523,7 +10547,7 @@ msgstr "Brojač protokola"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -10866,7 +10890,7 @@ msgstr "Tip pravila"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Izvor"
@@ -10886,7 +10910,7 @@ msgstr "IP protokol"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destinacija"
@@ -12181,7 +12205,7 @@ msgstr "Redirekcija traženog IPa"
 
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "The submitted interface does not exist."
-msgstr ""
+msgstr "Odabrani interfejs ne postoji."
 
 #: src/usr/local/www/firewall_nat_edit.php:287
 #, php-format
@@ -15506,6 +15530,8 @@ msgid ""
 "Other dashboard settings are available from the <a href=\"%s\">General "
 "Setup</a> page."
 msgstr ""
+"Druga podešavanja panela su dostupna sa <a href=\"%s\">Osnovna Podešavanja</"
+"a> stranice."
 
 #: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -16373,15 +16399,15 @@ msgstr "Iskaz prefiksa interfacea"
 
 #: src/usr/local/www/interfaces.php:2397
 msgid "Select prefix interface"
-msgstr ""
+msgstr "Odaberite prefix interfejs"
 
 #: src/usr/local/www/interfaces.php:2400
 msgid "Prefix Interface"
-msgstr ""
+msgstr "Prefix interfejs"
 
 #: src/usr/local/www/interfaces.php:2403
 msgid "Select the interface on which to apply the prefix delegation."
-msgstr ""
+msgstr "Odaberite interfejs na koji će prefiks deleacija biti urađena."
 
 #: src/usr/local/www/interfaces.php:2405
 msgid "Authentication statement"
@@ -17645,7 +17671,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:527
 msgid "Enable IPv6 auto linklocal"
-msgstr ""
+msgstr "Omogući IPv6 auto linklocal"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:530
 msgid ""
@@ -17653,6 +17679,9 @@ msgid ""
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
 msgstr ""
+"Kada je omogućen, AUTO_LINKLOCAL zastavica je postavljena na most interfejs "
+"i sklonjena sa svakog član interfejsa. Ovo je neophodno kad je most "
+"interfejs korišten za bez-stajnu auto-konfiguraciju. "
 
 #: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid "Enable RSTP/STP"
@@ -20864,13 +20893,13 @@ msgstr "Trenutna portal stranica"
 
 #: src/usr/local/www/services_captiveportal.php:1088
 msgid "Live View"
-msgstr ""
+msgstr "Prikaz uživo"
 
 #: src/usr/local/www/services_captiveportal.php:1095
 #: src/usr/local/www/services_captiveportal.php:1129
 #: src/usr/local/www/services_captiveportal.php:1161
 msgid "View Page Contents"
-msgstr ""
+msgstr "Prikaži Sadržaj Stranice"
 
 #: src/usr/local/www/services_captiveportal.php:1109
 #: src/usr/local/www/services_captiveportal.php:1143
@@ -25387,6 +25416,8 @@ msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
 msgstr ""
+"Sistemski Domen Lokalna Zona Tip redirekcije nije kompatibilan sa dinamičkom "
+"DHCP Registracijom."
 
 #: src/usr/local/www/services_unbound.php:175
 msgid ""
@@ -27251,7 +27282,7 @@ msgstr "Odspojeno"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr "Pregled"
 
@@ -28128,7 +28159,7 @@ msgstr "VPN Logini"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Korisnik"
@@ -28676,43 +28707,43 @@ msgstr "webConfigurator"
 
 #: src/usr/local/www/system.php:613
 msgid "Blue"
-msgstr ""
+msgstr "Plava"
 
 #: src/usr/local/www/system.php:613
 msgid "Green"
-msgstr ""
+msgstr "Zelena"
 
 #: src/usr/local/www/system.php:613
 msgid "Red"
-msgstr ""
+msgstr "Crvena"
 
 #: src/usr/local/www/system.php:614
 msgid "Purple"
-msgstr ""
+msgstr "Ljubičasta"
 
 #: src/usr/local/www/system.php:614
 msgid "Gray"
-msgstr ""
+msgstr "Siva"
 
 #: src/usr/local/www/system.php:614
 msgid "Dark gray"
-msgstr ""
+msgstr "Tamno siva"
 
 #: src/usr/local/www/system.php:615
 msgid "Brown"
-msgstr ""
+msgstr "Smeđa"
 
 #: src/usr/local/www/system.php:615
 msgid "Orange"
-msgstr ""
+msgstr "Narandžasta"
 
 #: src/usr/local/www/system.php:611
 msgid "Login page color"
-msgstr ""
+msgstr "Boja login stranice"
 
 #: src/usr/local/www/system.php:616
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "Odaberite boju za login stranicu"
 
 #: src/usr/local/www/system.php:620
 msgid "Login hostname"
@@ -29996,13 +30027,15 @@ msgstr "Instalacijski feedback"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Netgate Device ID"
-msgstr ""
+msgstr "Netgate Uređaj ID"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
 msgstr ""
+"Omogućite ovu opciju da ne šaljete Netgate Uređaj ID pfSense-u kao dio User-"
+"Agent headera."
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -30198,13 +30231,15 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:295
 msgid "Reset All States"
-msgstr ""
+msgstr "Resetuj Sva Stanja"
 
 #: src/usr/local/www/system_advanced_network.php:298
 msgid ""
 "This option resets all states when a WAN IP Address changes instead of only "
 "states associated with the previous IP Address."
 msgstr ""
+"Ova opcija resetuje sva stanja kad WAN IP Adresa se promjeni umjesto samo "
+"stanja asociranih sa prethodnom IP Adresom."
 
 #: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
@@ -31309,7 +31344,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:719
 msgid "*Certificate Lifetime (days)"
-msgstr ""
+msgstr "*Vrijeme trajanja certifikata (dana)"
 
 #: src/usr/local/www/system_certmanager.php:726
 msgid "Import Certificate"
@@ -31372,11 +31407,11 @@ msgstr "*Postojeći certifikati"
 
 #: src/usr/local/www/system_certmanager.php:958
 msgid "Certificate Attributes"
-msgstr ""
+msgstr "Atributi Certifikata"
 
 #: src/usr/local/www/system_certmanager.php:962
 msgid "Attribute Notes"
-msgstr ""
+msgstr "Zabilješke Atributa"
 
 #: src/usr/local/www/system_certmanager.php:964
 msgid ""
@@ -31384,24 +31419,35 @@ msgid ""
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr ""
+"Slijedeći atributi su dodani na certifikate i zahtjeve kad su oni kreirani "
+"ili potpisani. Ovi atributi se ponašaju drugačije u ovisnosti o odabranom "
+"modu."
 
 #: src/usr/local/www/system_certmanager.php:968
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr ""
+"Za Interne Certifikate, ovi atributi su dodani direktno na certifikate kao "
+"što je pokazano."
 
 #: src/usr/local/www/system_certmanager.php:970
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr ""
+"Za zahtjeve za potpis certifikata (CSR), ovi atributi su dodani na zahtjev "
+"ali mogu biti ignorisani ili promjenjeni od strane CA koji potpisuje zahtjev."
+""
 
 #: src/usr/local/www/system_certmanager.php:972
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr ""
+"Ako će ovaj CSR biti potpisan korišteći Certifikat Manadžer na ovom "
+"firewallu, postavite atribute kad radite potpisivanje inače oni ne mogu biti "
+"preneseni."
 
 #: src/usr/local/www/system_certmanager.php:973
 msgid ""
@@ -31409,6 +31455,8 @@ msgid ""
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr ""
+"Kad se certifikat potpisuje, postojeći atributi ne mogu biti kopirani. "
+"Atributi ispod će biti aplicirani na napravljeni certifikat."
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "*Certificate Type"
@@ -31420,6 +31468,9 @@ msgid ""
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr ""
+"Dodaj tip-specifične atribute korištenja na potpisani certifikat. Koristi se "
+"za postavljanje restrikcije korištenja ili davanje mogućnosti potpisanom "
+"certifikatu."
 
 #: src/usr/local/www/system_certmanager.php:997
 msgid "Alternative Names"
@@ -31431,6 +31482,9 @@ msgid ""
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr ""
+"Upiši dodane identifikatore za certifikat na listu. Polje uobičajeno ime  je "
+"automatski dodano na certifikat kao dodatno ime. Potpisujući CA može "
+"ignorisati ili promjeniti ove vrijednosti."
 
 #: src/usr/local/www/system_certmanager.php:1048
 msgid "Complete Signing Request for "
@@ -31686,7 +31740,7 @@ msgstr "Gateway konfiguracija je promijenjena. "
 #: src/usr/local/www/system_routes.php:235
 #: src/usr/local/www/system_routes_edit.php:219
 msgid "Static Routes"
-msgstr ""
+msgstr "Statične Rute"
 
 #: src/usr/local/www/system_gateway_groups.php:168
 msgid "Edit gateway group"
@@ -32451,7 +32505,7 @@ msgstr "Sinhroniziraj Wake-on-LAN"
 
 #: src/usr/local/www/system_hasync.php:272
 msgid "Synchronize Static Routes"
-msgstr ""
+msgstr "Sinhroniziraj Statične Rute"
 
 #: src/usr/local/www/system_hasync.php:280
 msgid "Synchronize Load Balancer"
@@ -32504,7 +32558,7 @@ msgstr "Isključena ruta ka %s"
 
 #: src/usr/local/www/system_routes.php:203
 msgid "Saved static routes configuration."
-msgstr ""
+msgstr "Spašena konfiguracija statičkih ruta. "
 
 #: src/usr/local/www/system_routes.php:224
 msgid "The static route configuration has been changed."
@@ -33154,7 +33208,7 @@ msgstr "Spašene konfiguracijske promjene za IPsec tunele. "
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr "Tuneli"
 
@@ -33634,11 +33688,11 @@ msgstr "Životni vijek P1 mora biti cijeli broj. "
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:250
 msgid "The margintime must be an integer."
-msgstr ""
+msgstr "Margintime mora biti integer."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:252
 msgid "The margintime must be smaller than the P1 lifetime."
-msgstr ""
+msgstr "Margintime mora biti manji od životnog vijeka P1."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
@@ -33937,13 +33991,15 @@ msgstr "Isključi ponovni unos"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 msgid "Margintime (Seconds)"
-msgstr ""
+msgstr "Margintime (Sekundi)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:860
 msgid ""
 "How long before connection expiry or keying-channel expiry should attempt to "
 "negotiate a replacement begin."
 msgstr ""
+"Koliko dugo prije nego konekcija ili ključni-kanal istekne, bi pokušaj za "
+"dogovor zamjene trebao početi."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
@@ -36149,7 +36205,7 @@ msgstr "Svi dinamički DNS unosi su skriveni"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -36282,39 +36338,43 @@ msgstr "Spašen interfejs filter preko kontrolne ploče. "
 msgid "Uptime: %s"
 msgstr "Pokrenuto: %s"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Mobilno"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "Aktivni tuneli"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Neaktivni tuneli"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Mobilni korisnici"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Preuzimanje podataka o pregledu "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Preuzimanje podataka o tunelu"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Preuzimanje mobilnih podataka"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Nema konfigurisanih IPsec tunela. "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec može biti konfigurisan <a href=\"vpn_ipsec.php\">ovdje</a>."
 
@@ -36357,7 +36417,7 @@ msgstr "Interval ažuriranja"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sUčitavam informaciju o podršci %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -36534,7 +36594,7 @@ msgstr "Korištenje diska"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Preuzimanje statusa ažuriranja %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -36558,15 +36618,15 @@ msgstr "Sistem je ažuriran na posljednju verziju. "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
-msgstr ""
+msgstr "System je na kasnijoj verziji od zvanično dostupne verzije."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
-msgstr ""
+msgstr "Greška u poređenju instalirane i zadnje dostupne verzije"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Informacija o verziji updatirana"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -36640,36 +36700,36 @@ msgstr "Posljednja 1, 5 i 15 minuta. "
 msgid "CPU usage"
 msgstr "CPU korištenje"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "Preuzimanje podataka o procesoru %s"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Korištenje memorije"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "SWAP korištenje"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "Korištenje diska"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr "od"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "u RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr "Sve sistemske informacije su skrivene. "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Predmet"
 
@@ -37202,7 +37262,7 @@ msgstr "Uključi interfejs"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv6 će koristiti IPv4 link za konekciju (PPPoE)"
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -38279,7 +38339,7 @@ msgstr "Koristi memorijski fajl sistem za /tmp i /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
 msgid "Do NOT send Netgate Device ID with user agent"
-msgstr ""
+msgstr "NE šalji Netgate Uređaj ID"
 
 #: src/usr/local/www/system_advanced_network.php:183
 msgid ""
@@ -38317,7 +38377,7 @@ msgstr "Zataškaj ARP poruke"
 
 #: src/usr/local/www/system_advanced_network.php:296
 msgid "Reset all states if WAN IP Address changes"
-msgstr ""
+msgstr "Resetuj sva stranja ako se WAN IP Adresa promjeni"
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"

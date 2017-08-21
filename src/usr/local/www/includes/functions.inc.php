@@ -65,8 +65,6 @@ function get_stats() {
 	$stats['states'] = get_pfstate();
 	$stats['temp'] = get_temp();
 	$stats['datetime'] = update_date_time();
-	$stats['interfacestatistics'] = get_interfacestats();
-	$stats['interfacestatus'] = get_interfacestatus();
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
 	$stats['mbuf'] = get_mbuf();

@@ -600,11 +600,14 @@ function stats(x) {
 	updateMemory(values[2]);
 	updateState(values[4]);
 	updateTemp(values[5]);
-	updateCpuFreq(values[7]);
-	updateLoadAverage(values[8]);
-	updateMbuf(values[9]);
-	updateMbufMeter(values[10]);
-	updateStateMeter(values[11]);
+	updateInterfaceStats(values[7]);
+	updateInterfaces(values[8]);
+	updateCpuFreq(values[9]);
+	updateLoadAverage(values[10]);
+	updateMbuf(values[11]);
+	updateMbufMeter(values[12]);
+	updateStateMeter(values[13]);
+
 }
 
 function updateMemory(x) {

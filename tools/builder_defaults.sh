@@ -265,7 +265,7 @@ export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/factory/packages"}
 
 # Final packages server
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"firmware.netgate.com"}
 	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/firmware/pkg"}
 else

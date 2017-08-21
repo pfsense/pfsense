@@ -4,16 +4,17 @@
 # Luca <luca.moncelli@multimediaitalia.eu>, 2017. #zanata
 # Luca Morisi <luca.morisi@tiscalinet.it>, 2017. #zanata
 # Marco <davyvandyne@gmail.com>, 2017. #zanata
+# Nicola Limelli <nicosuperwav@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-06-07 10:05-0400\n"
-"Last-Translator: Luca <luca.moncelli@multimediaitalia.eu>\n"
+"PO-Revision-Date: 2017-08-18 01:44-0400\n"
+"Last-Translator: Nicola Limelli <nicosuperwav@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -32,9 +33,9 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
-"Potenziale attacco Rebind DNS rilevato, vedere http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br /> Provare ad accedere al router con l'indirizzo IP anziché "
-"con hostname."
+"Potenziale attacco DNS rilevato\n"
+"http://en.wikipedia.org/wiki/DNS_rebinding<br /> Provare ad accedere al "
+"router con l'indirizzo IP anziché con hostname."
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
@@ -139,14 +140,15 @@ msgid "ERROR! Could not bind to server %s."
 msgstr "ERRORE! Non ho pouto collegarmi al server %s."
 
 #: src/etc/inc/auth.inc:1386
-#, php-format
+#, fuzzy, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Ricerca in corso  di %s nella cartella."
+msgstr "Ricerca in corso  di %s nella directory"
 
 #: src/etc/inc/auth.inc:1395
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr "Ora cerco nel server %1$s, oggetto contenitore %2$s con filtro %3$s."
+msgstr ""
+"Ricerca in corso nel server %1$s, oggetto contenitore %2$s con filtro %3$s."
 
 #: src/etc/inc/auth.inc:1409
 #, php-format
@@ -190,7 +192,7 @@ msgstr "Autenticazione RADIUS rifiutata."
 
 #: src/etc/inc/auth.inc:1662
 msgid "Widget configuration has been changed."
-msgstr "La configurazione del Widget e` cambiata."
+msgstr "La configurazione del Widget è cambiata."
 
 #: src/etc/inc/auth.inc:1667
 #, php-format
@@ -306,7 +308,7 @@ msgstr "Reindirizzamento a"
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
 #: src/usr/local/www/head.inc:548
 msgid "Logout"
-msgstr "Disconnetti"
+msgstr "Esci"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
@@ -344,7 +346,7 @@ msgstr ""
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr ""
+msgstr "indirizzo email"
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -461,7 +463,7 @@ msgstr "%sApplico la configurazione..."
 
 #: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
-msgstr "Assegnazione console delle interfacce"
+msgstr "Configurazione delle interfacce via consolle"
 
 #: src/etc/inc/config.console.inc:372
 #, php-format
@@ -492,18 +494,16 @@ msgstr "ATTENZIONE: tutte le VLAN esistenti saranno eliminate se presegui!"
 
 #: src/etc/inc/config.console.inc:443
 msgid "VLAN Capable interfaces:"
-msgstr "Interfacce capaci al VLAN"
+msgstr "Questa interfaccia è compatibile con le VLAN"
 
 #: src/etc/inc/config.console.inc:458
 msgid "No VLAN capable interfaces detected."
-msgstr "Nessuna interfaccia capace VLAN rilevata. "
+msgstr "Nessuna interfaccia VLAN compatibile è stata trovata "
 
 #: src/etc/inc/config.console.inc:462
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
-msgstr ""
-"Inserisci il nome dell'interfaccia genitrice per la nuova VLAN (oppure nulla "
-"se hai finito):"
+msgstr "Inserisci il nome della VLAN (oppure nulla se hai finito):"
 
 #: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
@@ -577,27 +577,25 @@ msgstr "%1$s sta ripristinando la configurazione %2$s"
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr "File di configurazione XML non trovato. %s non puo` avviarsi."
+msgstr ""
+"File di configurazione XML non trovato. %s il sistema non può avviarsi"
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
-"Ultima configurazione trovata e ripristinata. Prego ricontrolla la "
-"correttezza della configurazione."
+"Ripristinata l'ultima configurazione trovata... Controlla il corretto "
+"funzionamento del firewall"
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
-"Impossibile trovare un file di configurazione utilizzabile! Uscita in corso.."
-"."
+msgstr "Impossibile trovare un file di configurazione utilizzabile!"
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
-msgstr ""
-"Avvio upgrade configurazione a %s, timeout esecuzione impostato a 15 minuti"
+msgstr "Aggiornamento in corso a %s"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
@@ -623,7 +621,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
-"ATTENZIONE: la configurazione non puo` essere salvata. Impossibile aprire il "
+"ATTENZIONE: la configurazione non può essere salvata. Impossibile aprire il "
 "file!"
 
 #: src/etc/inc/config.lib.inc:504
@@ -639,11 +637,11 @@ msgstr "Ripristinato a %s."
 
 #: src/etc/inc/config.lib.inc:652
 msgid "Installing configuration..."
-msgstr "Installazione configurazione..."
+msgstr "Installazione della configurazione in corso..."
 
 #: src/etc/inc/config.lib.inc:654
 msgid "Installing configuration ...."
-msgstr "Installazione configurazione...."
+msgstr "Installazione della configurazione in corso..."
 
 #: src/etc/inc/config.lib.inc:705
 msgid "XML error: unable to open file"
@@ -730,7 +728,7 @@ msgstr "Successo"
 
 #: src/etc/inc/dyndns.class:1073 src/etc/inc/dyndns.class:1125
 msgid "Curl error occurred:"
-msgstr "Si e` verificato un errore Curl"
+msgstr "Si è verificato un errore Curl"
 
 #: src/etc/inc/dyndns.class:1083 src/etc/inc/dyndns.class:1138
 #: src/etc/inc/dyndns.class:1161 src/etc/inc/dyndns.class:1180
@@ -1031,7 +1029,7 @@ msgstr "Aggiornamenti troppo frequenti, sospetto abuso."
 
 #: src/etc/inc/dyndns.class:1432 src/etc/inc/dyndns.class:1496
 msgid "Bad Request - The IP provided was invalid."
-msgstr "Richiesta errata - L'IP fornito non e` valido."
+msgstr "Richiesta errata - L'IP fornito non è valido."
 
 #: src/etc/inc/dyndns.class:1434
 msgid "Bad Request - Required parameters were not provided."
@@ -1067,7 +1065,7 @@ msgstr "Richiesta malformata (controllare le impostazioni)."
 
 #: src/etc/inc/dyndns.class:1478 src/etc/inc/dyndns.class:1498
 msgid "Bad Request - A hostname was not provided."
-msgstr "Richiesta errata - Non e` stato fornito un hostname."
+msgstr "Richiesta errata - Non è stato fornito un hostname."
 
 #: src/etc/inc/dyndns.class:1480 src/etc/inc/dyndns.class:1500
 #: src/etc/inc/dyndns.class:1527
@@ -1140,11 +1138,11 @@ msgstr "Utente non autorizzato ad amministrare il dominio selezionato."
 
 #: src/etc/inc/dyndns.class:1664
 msgid "Not A FQDN"
-msgstr "Non e` un FQDN"
+msgstr "Non è un FQDN"
 
 #: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr "L'Hostname non esiste o DynDNS non e` abilitato"
+msgstr "L'Hostname non esiste o DynDNS non è abilitato"
 
 #: src/etc/inc/dyndns.class:1676
 msgid "Bad request"
@@ -1152,7 +1150,7 @@ msgstr "Richiesta errata"
 
 #: src/etc/inc/dyndns.class:1678
 msgid "Dynamic DNS access has been blocked!"
-msgstr "L'accesso al DNS dinamico e` stato bloccato!"
+msgstr "L'accesso al DNS dinamico è stato bloccato!"
 
 #: src/etc/inc/dyndns.class:1680
 msgid "Error on Google's end, retry in 5 minutes"
@@ -2140,8 +2138,8 @@ msgstr "Nome"
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Stato"
@@ -3097,7 +3095,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Client mobile"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3768,27 +3766,31 @@ msgid "Norwegian Bokmål"
 msgstr "Bokmål norvegese"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portoghese (Brasile)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Nessun servizio"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3804,83 +3806,83 @@ msgstr "Nessun servizio"
 msgid "Mode"
 msgstr "Modalità"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Servizio regolamentato"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Servizio valido"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Servizio convenzioni internazionali regolamentato"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Servizio risparmio energia"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Servizio sconosciuto"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "Stato SIM / locked non valido"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Stato SIM non valido"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Stato SIM CS non valido"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Servizio limitato"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Inizializzazione servizio"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Sblocca o correggi il servizio MCC/MNC"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -5514,7 +5516,7 @@ msgstr "Permetti l'accesso alla pagina 'Status: Captive Portal'."
 
 #: src/etc/inc/priv.defs.inc:847
 msgid "WebCfg - Status: Captive Portal: Expire Vouchers"
-msgstr ""
+msgstr "WebCfg - Stato: Captive Portal: Voucher Scaduto"
 
 #: src/etc/inc/priv.defs.inc:848
 msgid "Allow access to the 'Status: Captive Portal: Expire Vouchers' page."
@@ -6791,7 +6793,7 @@ msgstr "Seleziona opzioni per questa coda"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -6872,7 +6874,7 @@ msgstr ""
 #: src/etc/inc/shaper.inc:2288 src/etc/inc/shaper.inc:2801
 #: src/etc/inc/shaper.inc:3074
 msgid "Choose the amount of bandwidth for this queue"
-msgstr ""
+msgstr "Indica la quantità di banda per questa coda"
 
 #: src/etc/inc/shaper.inc:2292
 msgid "Max bandwidth for queue."
@@ -6903,7 +6905,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "La priorità deve essere compresa fra 0 e 7"
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -7188,7 +7190,7 @@ msgstr ""
 #: src/etc/inc/shaper.inc:4642
 #, php-format
 msgid "Welcome to the %s Traffic Shaper."
-msgstr ""
+msgstr "Benvenuto nel %s Traffic Shaper"
 
 #: src/etc/inc/shaper.inc:4645
 #, php-format
@@ -7230,26 +7232,26 @@ msgstr ""
 #: src/etc/inc/system.inc:758
 #, php-format
 msgid "ROUTING: setting default route to %s"
-msgstr ""
+msgstr "ROUTING: imposta una rotta di default a %s"
 
 #: src/etc/inc/system.inc:769
 #, php-format
 msgid "ROUTING: setting IPv6 default route to %s"
-msgstr ""
+msgstr "ROUTING: imposta una rotta IPv6 di dafault a %s"
 
 #: src/etc/inc/system.inc:790
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
-msgstr ""
+msgstr "Rotte statiche: next-hop non trovato a %s"
 
 #: src/etc/inc/system.inc:1015
 msgid "Starting syslog..."
-msgstr ""
+msgstr "Avvio di syslog in corso..."
 
 #: src/etc/inc/system.inc:1188
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
-msgstr ""
+msgstr "Errore: non posso aprire syslog.conf in system_syslogd_start().%s"
 
 #: src/etc/inc/system.inc:1274
 msgid "Creating SSL Certificate for this host"
@@ -7268,7 +7270,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1301
 #, php-format
 msgid "Generated new self-signed HTTPS certificate (%s)"
-msgstr ""
+msgstr "Crea un nuovo certificato HTTPS auto-firmato %s"
 
 #: src/etc/inc/system.inc:1309
 msgid "Starting webConfigurator..."
@@ -7998,7 +8000,7 @@ msgstr "Conferma"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8588,7 +8590,7 @@ msgstr "Wake-on-LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -9705,7 +9707,7 @@ msgstr "Indirizzo IPv6"
 
 #: src/usr/local/www/diag_ndp.php:142
 msgid "Expiration"
-msgstr ""
+msgstr "Scaduto"
 
 #: src/usr/local/www/diag_ndp.php:178
 msgid "Delete NDP entry"
@@ -10069,14 +10071,14 @@ msgstr ""
 
 #: src/usr/local/www/diag_pftop.php:119
 msgid "Destination Address"
-msgstr ""
+msgstr "IP destinazione"
 
 #: src/usr/local/www/diag_pftop.php:120 src/usr/local/www/easyrule.php:96
 #: src/usr/local/www/firewall_nat_out.php:283
 #: src/usr/local/www/firewall_nat_out.php:536
 #: src/usr/local/www/status_logs_common.inc:477
 msgid "Destination Port"
-msgstr ""
+msgstr "Porta destinazione"
 
 #: src/usr/local/www/diag_pftop.php:121
 msgid "Expiry"
@@ -10282,7 +10284,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_routes.php:101
 msgid "Use a regular expression to filter the tables."
-msgstr ""
+msgstr "Usa una regular expression per filtrare i risultati"
 
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
@@ -10298,7 +10300,7 @@ msgstr "Aggiorna"
 
 #: src/usr/local/www/diag_routes.php:192
 msgid "IPv4 Routes"
-msgstr ""
+msgstr "Rotte IPv4"
 
 #: src/usr/local/www/diag_routes.php:202 src/usr/local/www/diag_routes.php:220
 msgid "Gathering data, please wait..."
@@ -10306,7 +10308,7 @@ msgstr "Raccogliendo i dati, attendere..."
 
 #: src/usr/local/www/diag_routes.php:210
 msgid "IPv6 Routes"
-msgstr ""
+msgstr "Rotte IPv6"
 
 #: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:405
 #: src/usr/local/www/widgets/include/smart_status.inc:23
@@ -10421,7 +10423,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_sockets.php:36
 msgid "Show all socket connections"
-msgstr ""
+msgstr "Mostra tutte le connessioni"
 
 #: src/usr/local/www/diag_sockets.php:62
 msgid "System Socket Information"
@@ -10492,7 +10494,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "IP"
 
@@ -10722,7 +10724,7 @@ msgstr ""
 #: src/usr/local/www/diag_traceroute.php:62
 #, php-format
 msgid "Maximum number of hops must be between 1 and %s"
-msgstr ""
+msgstr "Il numero massimo di hops deve essere compreso fra 1 e %s"
 
 #: src/usr/local/www/diag_traceroute.php:115
 #, php-format
@@ -10735,7 +10737,7 @@ msgstr "Selezionare il protocollo da utilizzare."
 
 #: src/usr/local/www/diag_traceroute.php:147
 msgid "Maximum number of hops"
-msgstr ""
+msgstr "Massimo numero di hops"
 
 #: src/usr/local/www/diag_traceroute.php:150
 msgid "Select the maximum number of network hops to trace."
@@ -10743,7 +10745,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_traceroute.php:154
 msgid "Reverse Address Lookup"
-msgstr ""
+msgstr "Risoluzione inversa del record DNS"
 
 #: src/usr/local/www/diag_traceroute.php:157
 msgid ""
@@ -10819,7 +10821,7 @@ msgstr "Tipo di regola"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Origine"
@@ -10839,7 +10841,7 @@ msgstr "Protocollo IP"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destinazione"
@@ -11249,7 +11251,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:507
 msgid "Edited a firewall alias."
-msgstr ""
+msgstr "Modifica un firewall alias"
 
 #: src/usr/local/www/firewall_aliases_edit.php:536
 #: src/usr/local/www/firewall_aliases_edit.php:617
@@ -11381,7 +11383,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:654
 msgid "Properties"
-msgstr ""
+msgstr "Proprietà"
 
 #: src/usr/local/www/firewall_aliases_edit.php:663
 #: src/usr/local/www/firewall_aliases_import.php:257
@@ -11389,6 +11391,8 @@ msgid ""
 "The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and "
 "_\"."
 msgstr ""
+"Il nome dell'alias deve contenere solo i seguenti caratteri \"a-z, A-Z, 0-9 "
+"and _\"."
 
 #: src/usr/local/www/firewall_aliases_edit.php:675
 #: src/usr/local/www/firewall_virtual_ip_edit.php:321
@@ -11418,17 +11422,17 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_import.php:65
 msgid "Aliases to import"
-msgstr ""
+msgstr "Aliases da importare"
 
 #: src/usr/local/www/firewall_aliases_import.php:128
 #, php-format
 msgid "%s is not a valid port or port range."
-msgstr ""
+msgstr "%s non è una porta oppure un range di porte valido"
 
 #: src/usr/local/www/firewall_aliases_import.php:145
 #, php-format
 msgid "%s is not an IP address. Please correct the error to continue"
-msgstr ""
+msgstr "%s non è un indirizzo IP. Correggi l'errore per continuare"
 
 #: src/usr/local/www/firewall_aliases_import.php:157
 msgid ""
@@ -11442,7 +11446,7 @@ msgstr "La descrizione deve essere più breve di 200 caratteri."
 
 #: src/usr/local/www/firewall_aliases_import.php:186
 msgid "Imported a firewall alias."
-msgstr ""
+msgstr "Importa un firewall alias"
 
 #: src/usr/local/www/firewall_aliases_import.php:215
 msgid "Port Alias Details"
@@ -11461,7 +11465,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_import.php:226
 msgid "4000:4099 Description of a port range"
-msgstr ""
+msgstr "4000:4099 Descrizione port range"
 
 #: src/usr/local/www/firewall_aliases_import.php:229
 msgid "IP Alias Details"
@@ -11497,7 +11501,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:175
 msgid "Firewall: NAT: Port forward, enable/disable NAT rule"
-msgstr ""
+msgstr "Firewall: NAT: Port forward, abilita/disabilita regole di NAT"
 
 #: src/usr/local/www/firewall_nat.php:183
 #: src/usr/local/www/firewall_nat.php:197
@@ -11598,7 +11602,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:437
 msgid "Edit rule"
-msgstr ""
+msgstr "Modifica regola"
 
 #: src/usr/local/www/firewall_nat.php:438
 msgid "Add a new NAT based on this one"
@@ -11626,7 +11630,7 @@ msgstr "Cancella le regole selezionate"
 #: src/usr/local/www/firewall_nat.php:471
 #: src/usr/local/www/firewall_rules.php:831
 msgid "Save rule order"
-msgstr ""
+msgstr "Salva l'ordine delle regole"
 
 #: src/usr/local/www/firewall_nat.php:475
 #: src/usr/local/www/firewall_rules.php:835
@@ -11641,7 +11645,7 @@ msgstr "Separatore"
 #: src/usr/local/www/firewall_nat.php:488
 #: src/usr/local/www/firewall_rules.php:885
 msgid "Enter a description, Save, then drag to final location."
-msgstr ""
+msgstr "Inserisci una descrizione, salva e sposta della posizione finale"
 
 #: src/usr/local/www/firewall_nat.php:524
 msgid ""
@@ -11790,12 +11794,12 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
 #: src/usr/local/www/firewall_nat_edit.php:252
 msgid "Destination address"
-msgstr ""
+msgstr "Indirizzo di destinazione"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:314
 msgid "Alias entries must specify a single host or alias."
-msgstr ""
+msgstr "L'alias deve essere un singolo host oppure un alias."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:193
 #, php-format
@@ -12001,7 +12005,7 @@ msgstr "Tipo"
 #: src/usr/local/www/firewall_nat_edit.php:754
 #: src/usr/local/www/firewall_nat_edit.php:822
 msgid "Address/mask"
-msgstr ""
+msgstr "Indirizzo/subnet mask"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:496
 msgid ""
@@ -12013,7 +12017,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:801
 #: src/usr/local/www/firewall_nat_out_edit.php:544
 msgid "*Destination"
-msgstr ""
+msgstr "Destinazione"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:524
 msgid ""
@@ -12144,7 +12148,7 @@ msgstr "La destinazione deve essere IPv4"
 
 #: src/usr/local/www/firewall_nat_edit.php:357
 msgid "The target port range must be an integer between 1 and 65535."
-msgstr ""
+msgstr "La porta di destinazione deve essere compresa fra 1 e 65535"
 
 #: src/usr/local/www/firewall_nat_edit.php:383
 msgid "The destination port range overlaps with an existing entry."
@@ -12266,7 +12270,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:749
 #: src/usr/local/www/services_ntpd_gps.php:339
 msgid "Custom"
-msgstr ""
+msgstr "Personalizzato"
 
 #: src/usr/local/www/firewall_nat_edit.php:786
 #: src/usr/local/www/firewall_nat_edit.php:848
@@ -12763,7 +12767,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:565
 #: src/usr/local/www/firewall_nat_out_edit.php:628
 msgid "Port or Range"
-msgstr ""
+msgstr "Porta o range di porte"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:558
 msgid "Destination network for the outbound NAT mapping."
@@ -12814,7 +12818,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:608
 msgid "Source hash"
-msgstr ""
+msgstr "hash sorgente"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:609
 msgid "Bit mask"
@@ -13053,7 +13057,7 @@ msgstr "impostazioni avanzate"
 
 #: src/usr/local/www/firewall_rules.php:514
 msgid "traffic is logged"
-msgstr ""
+msgstr "Traffico loggato"
 
 #: src/usr/local/www/firewall_rules.php:533
 #: src/usr/local/www/firewall_schedule.php:35
@@ -13189,7 +13193,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:699
 #: src/usr/local/www/firewall_rules_edit.php:1321
 msgid "ICMP subtypes"
-msgstr ""
+msgstr "sottotipo ICMP"
 
 #: src/usr/local/www/firewall_rules.php:777
 msgid "Copy"
@@ -25848,7 +25852,7 @@ msgstr ""
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr ""
 
@@ -26656,7 +26660,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr ""
@@ -31205,7 +31209,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr ""
 
@@ -33877,7 +33881,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -34010,39 +34014,43 @@ msgstr ""
 msgid "Uptime: %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Mobile"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "Tunnel Attivi"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Tunnel Inattivi"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Utenti Mobile"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Recupero dati di revisione"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Recupero dati tunnel"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Recupero dati mobile"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Non ci sono Tunnel IPsec configurati"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec puo` essere configurato <a href=\"vpn_ipsec.php\">qui</a>."
 
@@ -34368,36 +34376,36 @@ msgstr "Ultimi 1, 5 e 15 minuti"
 msgid "CPU usage"
 msgstr "Utilizzo CPU"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Utilizzo RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "Utilizzo medio di swap"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "Utilizzo Disco"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr " di "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "nella RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Elemento"
 

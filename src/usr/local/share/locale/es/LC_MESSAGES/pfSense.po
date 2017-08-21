@@ -1,5 +1,6 @@
 # Alejandro Guzman <aguzman@deltatech.com.mx>, 2017. #zanata
 # Brujo Nicaragüense <brujonic@gmail.com>, 2017. #zanata
+# Carlos Caro <carloscaro@gmail.com>, 2017. #zanata
 # Cristian Menghi <cristian@menghi.biz>, 2017. #zanata
 # Eduardo <root@eduardo.link>, 2017. #zanata
 # Enrique Sánchez <kikesan7@gmail.com>, 2017. #zanata
@@ -11,17 +12,18 @@
 # Nahuel Lofeudo <nahuel@nahuellofeudo.com>, 2017. #zanata
 # Noel <contact@nbalonso.com>, 2017. #zanata
 # Ricardo Zambrano <ricardozamj@hotmail.com>, 2017. #zanata
+# Robert <robert2403@gmail.com>, 2017. #zanata
 # mxDude01 <Tardis@openmailbox.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 14:12-0300\n"
+"POT-Creation-Date: 2017-08-21 08:37-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-08 06:25-0400\n"
-"Last-Translator: Enrique Sánchez <kikesan7@gmail.com>\n"
+"PO-Revision-Date: 2017-08-18 11:46-0400\n"
+"Last-Translator: Robert <robert2403@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -71,7 +73,7 @@ msgstr "¡ERROR! No se ha podido conectar al servidor %s"
 #: src/etc/inc/auth.inc:887
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr "LDAP: no se puede buscar en el CA referencias para el host %s"
+msgstr "LDAP: No se puede buscar en el CA referencias para el host %s"
 
 #: src/etc/inc/auth.inc:962
 #, php-format
@@ -2162,8 +2164,8 @@ msgstr "Nombre "
 #: src/usr/local/www/system_usermanager.php:615
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:214
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:230
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
 msgstr "Estado "
@@ -2176,6 +2178,8 @@ msgstr "Componentes"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Tiempo agotado al esperar una dirección IPv6 en estado tentativo. dpinger no "
+"se ejecutará."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2784,7 +2788,7 @@ msgstr "Hay un conflicto entre los valores de MTU %1$s y VLAN( %2$s )"
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "Llamando a interface_dhcpv6_configure."
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
@@ -3147,7 +3151,7 @@ msgstr "30 (Brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Cliente Movil"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3137
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3809,7 +3813,7 @@ msgstr "Chino (Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:2943
 msgid "Dutch"
-msgstr ""
+msgstr "Holandés"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "English"
@@ -3824,27 +3828,31 @@ msgid "Norwegian Bokmål"
 msgstr "Noruego Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2947
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Portuguese (Brazil)"
 msgstr "Portugués (Brasil)"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Russian"
 msgstr "Ruso"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Spanish"
 msgstr "Español"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish (Argentina)"
 msgstr "Español (Argentina)"
 
-#: src/etc/inc/pfsense-utils.inc:3145 src/etc/inc/pfsense-utils.inc:3160
-#: src/etc/inc/pfsense-utils.inc:3186
+#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "No Service"
 msgstr "Sin servicio"
 
-#: src/etc/inc/pfsense-utils.inc:3155 src/etc/inc/pfsense-utils.inc:3198
+#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3860,83 +3868,83 @@ msgstr "Sin servicio"
 msgid "Mode"
 msgstr "Modo"
 
-#: src/etc/inc/pfsense-utils.inc:3161
+#: src/etc/inc/pfsense-utils.inc:3162
 msgid "Restricted Service"
 msgstr "Servicio restringido"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Valid Service"
 msgstr "Servicio válido"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Restricted Regional Service"
 msgstr "Servicio Regional restringido"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Powersaving Service"
 msgstr "Servicio de ahorro de energía"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Unknown Service"
 msgstr "Servicio desconocido"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3172
 msgid "Invalid SIM/locked State"
 msgstr "SIM inválida / estado bloqueado"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Valid SIM State"
 msgstr "Estado de SIM Válido "
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Invalid SIM CS State"
 msgstr "Estado de SIM CS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM PS State"
 msgstr "Estado de SIM PS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM CS/PS State"
 msgstr "Estado de SIM CS/PS Inválido"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Missing SIM State"
 msgstr "Falta el Estado de SIM"
 
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Limited Service"
 msgstr "Servicio limitado"
 
-#: src/etc/inc/pfsense-utils.inc:3203
+#: src/etc/inc/pfsense-utils.inc:3204
 msgid "Initializing Service"
 msgstr "Inicializando servicio"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Network Lock error Service"
 msgstr "Servicio de Red bloqueado, Error"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Locked Service"
 msgstr "Servicio de red Bloqueada"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Servicio MCC / MNC desbloqueado o correcta"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3213
 msgid "No action State"
 msgstr "Ningún Estado la acción"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "Network lock State"
 msgstr "Estado de bloqueo de red"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "(U)SIM card lock State"
 msgstr " Estado del bloqueo de tarjeta (U)SIM"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Bloqueo de red y estado de bloqueo de tarjeta (U)SIM"
 
@@ -6515,15 +6523,15 @@ msgstr "Iniciando resolución DNS ..."
 
 #: src/etc/inc/services.inc:2270
 msgid "Unbound start waiting on dhcp6c."
-msgstr ""
+msgstr "Inicio de Unbound pendiente de dhcp6c."
 
 #: src/etc/inc/services.inc:2274
 msgid "dhcp6 init complete. Continuing"
-msgstr ""
+msgstr "Inicio de dhcp6 completado. Continuando"
 
 #: src/etc/inc/services.inc:2283
 msgid "sync unbound done."
-msgstr ""
+msgstr "Sincronización de Unbound finalizada."
 
 #: src/etc/inc/services.inc:2321
 msgid "Starting SNMP daemon... "
@@ -6756,6 +6764,9 @@ msgid ""
 "is 0 to 15, queues with a higher priority are preferred in the case of "
 "overload."
 msgstr ""
+"Para cbq y fairq el rango es de 0 a 7. El valor predeterminado es 1. Para "
+"priq el rango es de 0 a 15, siendo preferibles las colas con mayor prioridad "
+"en caso de sobrecarga."
 
 #: src/etc/inc/shaper.inc:1442
 msgid "Queue limit in packets."
@@ -6908,7 +6919,7 @@ msgstr "Seleccione las opciones para esta cola"
 #: src/usr/local/www/vpn_openvpn_csc.php:663
 #: src/usr/local/www/vpn_openvpn_server.php:746
 #: src/usr/local/www/vpn_openvpn_server.php:1340
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
@@ -7027,7 +7038,7 @@ msgstr "Dividir B/W en una cola de retrasos."
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "La prioridad debe ser un número entero entre 0 y 7."
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -8188,7 +8199,7 @@ msgstr "Confirmar"
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:501
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:262
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
@@ -8779,7 +8790,7 @@ msgstr "Activación de la LAN"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:162
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:502
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/diag_smart.php:253
@@ -10068,6 +10079,20 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
+"%1$sEl modo No-promiscuo captura sólo tráfico directamente relevante para el "
+"host (enviado por él, enviado o transmitido hacia él, o enrutado a través de "
+"él) y no muestra paquetes que se ignoran a nivel de adaptador de red. "
+"%2$s%3$sModo promiscuo%4$s (\"sniffing\") captura todos los datos vistos por "
+"el adaptador, independientemente de la relación que tienen con el host, "
+"aunque en algunos casos pueden tener efectos secundarios no deseados y no "
+"todos los adaptadores apoyan esta opción. Pulsa Info para más detalles. "
+"%5$sLos paquetes procesados a través del modo promiscuo requieren más "
+"operaciones de kernel. Ello provoca un consumo de recursos más intenso, "
+"especialmente en redes sobreutilizadas o procesadores de baja potencia. El "
+"cambio en el procesamiento de paquetes puede permitir que un host hostil "
+"detecte que un adaptador está en modo promiscuo o generar una 'huella "
+"digital' del kernel (ver %6$s). Es posible que algunos adaptadores de red no "
+"admitan o funcionen bien en modo promiscuo (ver %7$s).%8$s"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -10769,7 +10794,7 @@ msgstr "conteos de protocolo"
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/services_dnsmasq.php:372
 #: src/usr/local/www/services_dnsmasq.php:446
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
 msgid "IP"
 msgstr "J"
 
@@ -11118,7 +11143,7 @@ msgstr "Tipo de regla"
 #: src/usr/local/www/status_logs_filter_dynamic.php:392
 #: src/usr/local/www/vpn_ipsec_mobile.php:455
 #: src/usr/local/www/vpn_ipsec_mobile.php:465
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Fuente "
@@ -11138,7 +11163,7 @@ msgstr "Protocolo IP"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/status_logs_filter.php:162
 #: src/usr/local/www/status_logs_filter_dynamic.php:393
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destino"
@@ -18030,7 +18055,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:527
 msgid "Enable IPv6 auto linklocal"
-msgstr ""
+msgstr "Habilita la autoconfiguración de enlace-local IPv6"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:530
 msgid ""
@@ -18038,6 +18063,10 @@ msgid ""
 "cleared on every member interface. This is required when the bridge "
 "interface is used for stateless autoconfiguration. "
 msgstr ""
+"Cuando está habilitado, el indicador AUTO_LINKLOCAL se establece en la "
+"interfaz de puente y se borra en cada interfaz miembro. Esto se requiere "
+"cuando se utiliza la interfaz de puente para la configuración automática sin "
+"estado."
 
 #: src/usr/local/www/interfaces_bridge_edit.php:536
 msgid "Enable RSTP/STP"
@@ -24622,6 +24651,12 @@ msgid ""
 "Key.%1$sDNSimple: Enter the API token.%1$sCloudflare: Enter the Global API "
 "Key."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Ingrese el \"Token de Autenticación\" "
+"proporcionado por FreeDNS.%1$sDNS Made Easy:  Contraseña del DNS dinámico."
+"%1$sRoute 53: Ingrese la Clave Secreta de Acceso.%1$sGleSYS: Ingrese la "
+"llave del API.%1$sDreamhost: Introduzca la Llave del API.%1$sDNSimple: "
+"Introduzca el token del API.%1$sCloudflare: Introduzca la Llave del API "
+"Global."
 
 #: src/usr/local/www/services_dyndns_edit.php:378
 msgid "Zone ID"
@@ -24808,6 +24843,17 @@ msgid ""
 "a pool of NTP servers and not a single address. This is assumed for *.pool."
 "ntp.org."
 msgstr ""
+"NTP sólo sincronizará si la mayoría de los servidores acuerdan en el tiempo. "
+"Para obtener mejores resultados, debe configurar entre 3 y 5 "
+"servidores(%4$sLas páginas de soporte de NTP recomiendan al menos 4 o "
+"5%5$s), o un pool. Si sólo se configura un servidor, %2$sserá%3$s creído, y "
+"si 2 servidores están configurados y no están de acuerdo, %2$sninguno%3$s "
+"será creído. Opciones:%1$s%2$sPreferir%3$s - NTP debe favorecer el uso de "
+"este servidor más que todos los demás.%1$s%2$sNo Seleccionar%3$s - NTP no "
+"debe usar este servidor por tiempo, pero se recopilarán y mostrarán las "
+"estadísticas de este servidor.%1$s%2$sEs un Pool%3$s - Esta entrada es un "
+"grupo de servidores NTP y no una sola dirección. Esto se supone para *.pool."
+"ntp.org."
 
 #: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
@@ -24873,6 +24919,17 @@ msgid ""
 "information and files for downloading can be found on their %1$swebsite%2$s, "
 "and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
+"Los segundos de salto pueden agregarse o restarse a finales de Junio o "
+"Diciembre. Los segundos de salto son administrados por el %1$sIERS%2$s, que "
+"los publican en su Boletín C aproximadamente 6 - 12 meses de antelación. "
+"Normalmente, esta corrección sólo debe ser necesaria si el servidor es un "
+"servidor NTP de estrato 1, pero muchos servidores NTP no anuncian un próximo "
+"salto en segundo lugar cuando otros servidores NTP se sincronizan con ellos."
+"%3$s%4$sSi el segundo salto es importante para los servicios de red, es "
+"%6$sgood practice%2$s descargar y agregar el segundo archivo de salto por lo "
+"menos un día antes de cualquier corrección de tiempo%5$s.%3$s Más "
+"información y archivos para descargar se pueden encontrar en su "
+"%1$swebsite%2$s, y también en el%7$NIST%2$s y %8$sNTP%2$s sitios web."
 
 #: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
@@ -26014,6 +26071,8 @@ msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
 msgstr ""
+"Una Zona Local de Dominio de Sistema del tipo \"redireccionar\" no es "
+"compatible con el registro DHCP dinámico."
 
 #: src/usr/local/www/services_unbound.php:175
 msgid ""
@@ -27904,7 +27963,7 @@ msgstr "Desconectado"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
 msgid "Overview"
 msgstr "Visión de conjunto"
 
@@ -28804,7 +28863,7 @@ msgstr "VPN inicios de sesión"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/system_usermanager_addprivs.php:142
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Usuario "
@@ -29239,6 +29298,11 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
+"No utilice '.local' como parte final del dominio (TLD), el dominio '.local' "
+"es %1$sextensamente utilizado%2$s por mDNS (incluyendo Avahi y Apple OS X "
+"Bonjour/Rendezvous/Airprint/Airplay ), y algunos sistemas Windows y "
+"dispositivos en red. Estos no funcionarán correctamente si el enrutador "
+"utiliza '.local'. Alternativas como '.local.lan' o '.mylocal' son seguras."
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -30916,6 +30980,8 @@ msgid ""
 "This option resets all states when a WAN IP Address changes instead of only "
 "states associated with the previous IP Address."
 msgstr ""
+"Esta opción restablece todos los estados cuando cambia una Dirección IP WAN "
+"en lugar de sólo los estados asociados con la Dirección IP anterior."
 
 #: src/usr/local/www/system_advanced_network.php:304
 msgid "Enable flowtable support"
@@ -32120,6 +32186,9 @@ msgid ""
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr ""
+"Los siguientes atributos se agregan a los certificados y solicitudes cuando "
+"se crean o ser firman. Estos atributos se comportan de manera diferente "
+"dependiendo del modo seleccionado."
 
 #: src/usr/local/www/system_certmanager.php:968
 msgid ""
@@ -32134,12 +32203,18 @@ msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr ""
+"Para las Solicitudes de Firma de Certificado, estos atributos se agregan a "
+"la solicitud pero pueden ser ignorados o modificados por la CA que firma la "
+"solicitud."
 
 #: src/usr/local/www/system_certmanager.php:972
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr ""
+"Si este CSR se firmará utilizando el Administrador de Certificados en este "
+"cortafuegos, establezca los atributos al firmar en su lugar ya que no se "
+"pueden transferir."
 
 #: src/usr/local/www/system_certmanager.php:973
 msgid ""
@@ -32147,6 +32222,9 @@ msgid ""
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr ""
+"Al Firmar una Solicitud de Certificado, los atributos existentes en la "
+"solicitud no se pueden copiar. Los siguientes atributos se aplicarán al "
+"certificado resultante."
 
 #: src/usr/local/www/system_certmanager.php:979
 msgid "*Certificate Type"
@@ -32158,6 +32236,9 @@ msgid ""
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr ""
+"Agregue tipo de atributos de uso específico al certificado firmado. Se "
+"utiliza para colocar restricciones de uso en el certificado firmado u "
+"otorgarle las habilidades necesarias."
 
 #: src/usr/local/www/system_certmanager.php:997
 msgid "Alternative Names"
@@ -32169,6 +32250,10 @@ msgid ""
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr ""
+"Introduzca indicadores adicionales para el certificado en la lista. El campo "
+"Nombre Común se agrega automáticamente al certificado como un nombre "
+"alternativo. La firma por parte del CA puede ignorar o cambiar estos valores."
+""
 
 #: src/usr/local/www/system_certmanager.php:1048
 msgid "Complete Signing Request for "
@@ -33925,7 +34010,7 @@ msgstr "Se salvaron los cambios de configuracion para los tuneles IPsec"
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
 msgstr "- 12 Túneles"
 
@@ -34417,11 +34502,11 @@ msgstr "El tiempo de vida P1 debe ser un entero."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:250
 msgid "The margintime must be an integer."
-msgstr ""
+msgstr "El Margen de Tiempo debe ser un entero."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:252
 msgid "The margintime must be smaller than the P1 lifetime."
-msgstr ""
+msgstr "El Margen de Tiempo debe ser menor que el tiempo de vida de P1."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
@@ -34745,13 +34830,15 @@ msgstr "Desactivar cambio de claves"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 msgid "Margintime (Seconds)"
-msgstr ""
+msgstr "Margen de Tiempo (segundos)."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:860
 msgid ""
 "How long before connection expiry or keying-channel expiry should attempt to "
 "negotiate a replacement begin."
 msgstr ""
+"¿Cuánto tiempo antes de la expiración de la conexión o la caducidad keying-"
+"channel debe intentar negociar un reemplazo de inicio?"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
@@ -36994,7 +37081,7 @@ msgstr "Todas las entradas DynDNS están ocultas."
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:347
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:134
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:479
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 msgid "Show"
@@ -37131,39 +37218,43 @@ msgstr "Guardadas interfaces de filtro a través del tablero de instrumentos."
 msgid "Uptime: %s"
 msgstr "Tiempo de funcionamiento: %s"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:184
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
 msgstr "Móvil"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
 msgid "Active Tunnels"
 msgstr "túneles activos"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
 msgid "Inactive Tunnels"
 msgstr "Los túneles inactivos"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:199
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
 msgid "Mobile Users"
 msgstr "Usuarios móviles:"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
 msgstr "Recuperando datos generales "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
 msgstr "Recuperando datos del túnel "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
 msgstr "Recuperación de datos móviles "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:241
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+msgid "No mobile tunnels have been configured"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
 msgstr "Hay túneles IPSec no están configurados"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:242
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec puede configurarse <a href=\"vpn_ipsec.php\"> aquí </a>."
 
@@ -37207,7 +37298,7 @@ msgstr "Intervalo de actualizacion"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sRecuperando información de soporte %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -37385,7 +37476,7 @@ msgstr "Uso del disco"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Obteniendo estado de actualización %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -37409,15 +37500,16 @@ msgstr "El sistema está en la versión más reciente."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
-msgstr ""
+msgstr "El sistema utiliza una versión posterior a la versión oficial."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
 msgstr ""
+"Error al comparar la versión instalada con la última versión disponible."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Información de versión actualizada a las"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -37492,36 +37584,36 @@ msgstr "Últimos 1, 5 y 15 minutos"
 msgid "CPU usage"
 msgstr "uso de CPU"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:392
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "Recuperando datos de CPU %s"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:401
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
 msgstr "Uso de memoria"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:419
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
 msgstr "el uso del intercambio"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:439
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
 msgstr "Uso del disco"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
 msgstr " de "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:445
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
 msgstr "en RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:456
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
 msgstr "Todos los objetos de Información del Sistema están ocultos."
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:478
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
 msgstr "Objeto"
 
@@ -38063,7 +38155,7 @@ msgstr "Habilitar interfaz"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv6 utilizará el enlace de conectividad IPv4 (PPoE)."
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -39236,7 +39328,7 @@ msgstr "Suprimir los mensajes ARP"
 
 #: src/usr/local/www/system_advanced_network.php:296
 msgid "Reset all states if WAN IP Address changes"
-msgstr ""
+msgstr "Reinicia todos los estados si la dirección IP WAN cambia."
 
 #: src/usr/local/www/system_advanced_notifications.php:225
 msgid "Disable SMTP Notifications"

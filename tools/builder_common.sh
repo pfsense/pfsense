@@ -712,7 +712,7 @@ customize_stagearea_for_image() {
 	#      staging server during build phase
 	if [ -n "${USE_PKG_REPO_STAGING}" ]; then
 		_read_cmd="select value from repodata where key='packagesite'"
-		if [ -n "${_IS_RELEASE}" ]; then
+		if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 			local _tgt_server="${PKG_REPO_SERVER_RELEASE}"
 		else
 			local _tgt_server="${PKG_REPO_SERVER_DEVEL}"

@@ -600,13 +600,11 @@ function stats(x) {
 	updateMemory(values[2]);
 	updateState(values[4]);
 	updateTemp(values[5]);
-	updateInterfaceStats(values[7]);
-	updateInterfaces(values[8]);
-	updateCpuFreq(values[9]);
-	updateLoadAverage(values[10]);
-	updateMbuf(values[11]);
-	updateMbufMeter(values[12]);
-	updateStateMeter(values[13]);
+	updateCpuFreq(values[7]);
+	updateLoadAverage(values[8]);
+	updateMbuf(values[9]);
+	updateMbufMeter(values[10]);
+	updateStateMeter(values[11]);
 
 }
 
@@ -707,56 +705,6 @@ function updateCpuFreq(x) {
 function updateLoadAverage(x) {
 	if ($('#load_average')) {
 		$("#load_average").html(x);
-	}
-}
-
-function updateInterfaceStats(x) {
-	if (widgetActive("interface_statistics")) {
-		statistics_split = x.split(",");
-		var counter = 1;
-		for (var y=0; y<statistics_split.length-1; y++) {
-			if ($('#stat' + counter)) {
-				$('#stat' + counter).html(statistics_split[y]);
-				counter++;
-			}
-		}
-	}
-}
-
-function updateInterfaces(x) {
-	if (widgetActive("interfaces")) {
-		interfaces_split = x.split("~");
-		interfaces_split.each(function(iface){
-			details = iface.split("^");
-			if (details[2] == '') {
-				ipv4_details = '';
-			} else {
-				ipv4_details = details[2] + '<br />';
-			}
-			switch (details[1]) {
-				case "up":
-					$('#' + details[0] + '-up').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
-					break;
-				case "down":
-					$('#' + details[0] + '-down').css("display","inline");
-					$('#' + details[0] + '-up').css("display","none");
-					$('#' + details[0] + '-block').css("display","none");
-					$('#' + details[0] + '-ip').html(ipv4_details);
-					$('#' + details[0] + '-ipv6').html(details[3]);
-					$('#' + details[0] + '-media').html(details[4]);
-					break;
-				case "block":
-					$('#' + details[0] + '-block').css("display","inline");
-					$('#' + details[0] + '-down').css("display","none");
-					$('#' + details[0] + '-up').css("display","none");
-					break;
-			}
-		});
 	}
 }
 

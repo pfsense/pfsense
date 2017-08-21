@@ -567,12 +567,12 @@ function updateMbufMeter(x) {
 
 function updateCPU(total, used) {
 	if ((lastTotal <= total) && (lastUsed <= used)) { // Just in case it wraps
-		// Calculate the total ticks and the used ticks sine the last time it was checked
+		// Calculate the total ticks and the used ticks since the last time it was checked
 		var d_total = total - lastTotal;
 		var d_used = used - lastUsed;
 
 		// Convert to percent
-		var x = Math.trunc( ((d_total - d_used)/d_total) * 100);
+		var x = Math.trunc(((d_total - d_used)/d_total) * 100);
 
 		if ($('#cpumeter')) {
 			$('[id="cpumeter"]').html(x + '%');

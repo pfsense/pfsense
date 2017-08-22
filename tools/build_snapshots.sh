@@ -184,27 +184,32 @@ while [ /bin/true ]; do
 "
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 		exec_and_update_status \
-		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports \
-		    || exit $?
+		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports
+		rc=$?
 
-		exec_and_update_status \
-		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo \
-		    || exit $?
+		if [ $rc -eq 0 ]; then
+			exec_and_update_status \
+			    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
+			    --update-pkg-repo
+			rc=$?
+		fi
 	else
 		exec_and_update_status \
-		    ${BUILDER_ROOT}/build.sh --clean-builder \
-		    || exit $?
+		    ${BUILDER_ROOT}/build.sh --clean-builder
+		rc=$?
 
-		exec_and_update_status \
-		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
-		    ${IMAGES} \
-		    || exit $?
+		if [ $rc -eq 0 ]; then
+			exec_and_update_status \
+			    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
+			    ${IMAGES}
+			rc=$?
+		fi
 	fi
 	IFS=${OIFS}
 
 	if [ -z "${LOOPED_SNAPSHOTS}" ]; then
 		# only one build required, exiting
-		exit
+		exit ${rc}
 	fi
 
 	# Count some sheep or wait until a new commit turns up

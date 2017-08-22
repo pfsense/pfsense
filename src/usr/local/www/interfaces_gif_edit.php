@@ -61,10 +61,10 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ((!is_ipaddr($_POST['tunnel-local-addr'])) ||
-	    (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
-	    (!is_ipaddr($_POST['remote-addr']))) {
-		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses.");
+	if ((!is_ipaddr($_POST['tunnel-local-addr']) || is_subnet($_POST['tunnel-local-addr'])) ||
+	    (!is_ipaddr($_POST['tunnel-remote-addr']) || is_subnet($_POST['tunnel-remote-addr'])) ||
+	    (!is_ipaddr($_POST['remote-addr']) || is_subnet($_POST['remote-addr']))) {
+		$input_errors[] = gettext("The tunnel local and tunnel remote fields must have valid IP addresses and must not contain CIDR masks or prefixes.");
 	}
 
 	if (!is_numericint($_POST['tunnel-remote-net'])) {

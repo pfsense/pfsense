@@ -197,14 +197,14 @@ if ($_REQUEST['updateme']) {
 <?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-var d = new Date('<?=date_format(date_create(), 'c')?>');
+var ntp_d = new Date('<?=date_format(date_create(), 'c')?>');
 var tz = '<?=date('T');?>';
 
 setInterval(function() {
-	d.setSeconds(d.getSeconds() + 1);
-	var thisSecond = d.getSeconds();
-	var thisMinute = d.getMinutes();
-	var thisHour = d.getHours();
+	ntp_d.setSeconds(ntp_d.getSeconds() + 1);
+	var thisSecond = ntp_d.getSeconds();
+	var thisMinute = ntp_d.getMinutes();
+	var thisHour = ntp_d.getHours();
 
 	// Add leading zeros to minutes and seconds as required
 	thisMinute = thisMinute < 10 ? "0" + thisMinute : thisMinute;

@@ -30,7 +30,7 @@ usage() {
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
-NO_IMAGES=""
+IMAGES="all"
 NO_RESET=""
 NO_UPLOAD=""
 LOOPED_SNAPSHOTS=""
@@ -40,7 +40,7 @@ POUDRIERE_SNAPSHOTS=""
 while getopts lnpru opt; do
 	case ${opt} in
 		n)
-			NO_IMAGES="none"
+			IMAGES="none"
 			;;
 		l)
 			LOOPED_SNAPSHOTS=1
@@ -197,7 +197,7 @@ while [ /bin/true ]; do
 
 		exec_and_update_status \
 		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
-		    ${NO_IMAGES} "memstick memstickadi memstickserial iso" \
+		    ${IMAGES} \
 		    || exit $?
 	fi
 	IFS=${OIFS}

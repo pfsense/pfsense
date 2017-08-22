@@ -30,7 +30,7 @@ usage() {
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
-NO_IMAGES=""
+IMAGES="all"
 NO_RESET=""
 NO_UPLOAD=""
 LOOPED_SNAPSHOTS=""
@@ -40,7 +40,7 @@ POUDRIERE_SNAPSHOTS=""
 while getopts lnpru opt; do
 	case ${opt} in
 		n)
-			NO_IMAGES="none"
+			IMAGES="none"
 			;;
 		l)
 			LOOPED_SNAPSHOTS=1
@@ -78,6 +78,23 @@ export _sleeping=0
 snapshot_update_status() {
 	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} ${POUDRIERE_SNAPSHOTS} \
 		--snapshot-update-status "$*"
+}
+
+exec_and_update_status() {
+	local _cmd="${@}"
+
+	[ -z "${_cmd}" ] \
+		&& return 1
+
+	# Ref. https://stackoverflow.com/a/30658405
+	exec 4>&1
+	local _result=$( \
+	    { { ${_cmd} 2>&1 3>&-; printf $? 1>&3; } 4>&- \
+	    | while read -r LINE; do \
+	    snapshot_update_status "${LINE}"; done 1>&4; } 3>&1)
+	exec 4>&-
+
+	return ${_result}
 }
 
 git_last_commit() {
@@ -166,26 +183,22 @@ while [ /bin/true ]; do
 	IFS="
 "
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
-		(${BUILDER_ROOT}/build.sh --update-poudriere-ports 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports \
+		    || exit $?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo \
+		    || exit $?
 	else
-		(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh --clean-builder \
+		    || exit $?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
-		    --snapshots ${NO_IMAGES} all 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
+		    ${IMAGES} \
+		    || exit $?
 	fi
 	IFS=${OIFS}
 

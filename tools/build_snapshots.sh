@@ -184,20 +184,20 @@ while [ /bin/true ]; do
 "
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 		exec_and_update_status \
-		    "${BUILDER_ROOT}/build.sh --update-poudriere-ports" \
+		    ${BUILDER_ROOT}/build.sh --update-poudriere-ports \
 		    || exit $?
 
 		exec_and_update_status \
-		    "${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo" \
+		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo \
 		    || exit $?
 	else
 		exec_and_update_status \
-		    "${BUILDER_ROOT}/build.sh --clean-builder" \
+		    ${BUILDER_ROOT}/build.sh --clean-builder \
 		    || exit $?
 
 		exec_and_update_status \
-		    "${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots " \
-		    "${NO_IMAGES} 'memstick memstickadi memstickserial iso'" \
+		    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
+		    ${NO_IMAGES} "memstick memstickadi memstickserial iso" \
 		    || exit $?
 	fi
 	IFS=${OIFS}

@@ -80,6 +80,23 @@ snapshot_update_status() {
 		--snapshot-update-status "$*"
 }
 
+exec_and_update_status() {
+	local _cmd="${@}"
+
+	[ -z "${_cmd}" ] \
+		&& return 1
+
+	# Ref. https://stackoverflow.com/a/30658405
+	exec 4>&1
+	local _result=$( \
+	    { { ${_cmd} 2>&1 3>&-; printf $? 1>&3; } 4>&- \
+	    | while read -r LINE; do \
+	    snapshot_update_status "${LINE}"; done 1>&4; } 3>&1)
+	exec 4>&-
+
+	return ${_result}
+}
+
 git_last_commit() {
 	[ -z "${NO_RESET}" ] \
 		&& git -C "${BUILDER_ROOT}" reset --hard >/dev/null 2>&1
@@ -166,26 +183,22 @@ while [ /bin/true ]; do
 	IFS="
 "
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
-		(${BUILDER_ROOT}/build.sh --update-poudriere-ports 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    "${BUILDER_ROOT}/build.sh --update-poudriere-ports" \
+		    || exit $?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    "${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --update-pkg-repo" \
+		    || exit $?
 	else
-		(${BUILDER_ROOT}/build.sh --clean-builder 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    "${BUILDER_ROOT}/build.sh --clean-builder" \
+		    || exit $?
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
-		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial iso" 2>&1) \
-		    | while read -r LINE; do
-			snapshot_update_status "${LINE}"
-		done
+		exec_and_update_status \
+		    "${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots " \
+		    "${NO_IMAGES} 'memstick memstickadi memstickserial iso'" \
+		    || exit $?
 	fi
 	IFS=${OIFS}
 

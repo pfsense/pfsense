@@ -173,6 +173,10 @@ while test "$1" != ""; do
 	shift
 done
 
+# Let user define ARCH_LIST in build.conf
+[ -z "${ARCH_LIST}" -a -n "${DEFAULT_ARCH_LIST}" ] \
+	&& ARCH_LIST="${DEFAULT_ARCH_LIST}"
+
 # Suck in local vars
 . ${BUILDER_TOOLS}/builder_defaults.sh
 

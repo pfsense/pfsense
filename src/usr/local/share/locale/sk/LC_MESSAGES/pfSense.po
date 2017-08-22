@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 08:37-0300\n"
+"POT-Creation-Date: 2017-08-22 14:14-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-20 05:17-0400\n"
+"PO-Revision-Date: 2017-08-21 10:01-0400\n"
 "Last-Translator: Patrik Zakhar <123patokt@gmail.com>\n"
 "Language-Team: Slovak\n"
 "Language: sk\n"
@@ -1258,7 +1258,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS aktualizoval IP adresu na rozhraní %1$s (%2$s) na %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2712 src/etc/inc/services.inc:2724
+#: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: aktualizácia vyrovnávacieho súboru %1$s: %2$s"
@@ -1740,9 +1740,9 @@ msgstr "Filter je vypnutý. Pravidlá sa nenačítajú."
 #: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
 #: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
 #: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
-#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2284
-#: src/etc/inc/services.inc:2510 src/etc/inc/system.inc:1257
+#: src/etc/inc/services.inc:1600 src/etc/inc/services.inc:2003
+#: src/etc/inc/services.inc:2220 src/etc/inc/services.inc:2288
+#: src/etc/inc/services.inc:2514 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
@@ -2231,7 +2231,7 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
-#: src/usr/local/www/firewall_nat_1to1.php:149
+#: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -3108,7 +3108,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobilný klient"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3416,7 +3416,7 @@ msgstr ""
 #: src/etc/inc/openvpn.inc:1292
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr "OpenVPN ID %1$s PID %2$s stále beží, zabíja sa."
+msgstr "OpenVPN ID %1$s PID %2$s stále beží, ukončuje sa."
 
 #: src/etc/inc/openvpn.inc:1527
 #, php-format
@@ -3774,39 +3774,43 @@ msgid "English"
 msgstr "Angličtina"
 
 #: src/etc/inc/pfsense-utils.inc:2945
+msgid "French"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
 msgstr "Nemčina (Nemecko)"
 
-#: src/etc/inc/pfsense-utils.inc:2946
+#: src/etc/inc/pfsense-utils.inc:2947
 msgid "Norwegian Bokmål"
 msgstr "Nórština (Bokmål)"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
 msgstr "Portugalsky (Brazília)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
 msgstr "Ruština"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
 msgstr "Španielčina"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
 msgstr "Španielsky (Argentína)"
 
-#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "No Service"
 msgstr "Žiadna služba"
 
-#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3200
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3822,83 +3826,83 @@ msgstr "Žiadna služba"
 msgid "Mode"
 msgstr "Režim"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
 msgstr "Obmedzená služba"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
 msgstr "Platná služba"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Restricted Regional Service"
 msgstr "Obmedzená regionálna služba"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Powersaving Service"
 msgstr "Úsporná služba"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
 msgstr "Neznáma služba"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
 msgstr "Neplatná SIM/uzamknutý stav"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
 msgstr "Platný SIM stav"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
 msgstr "Neplatný SIM CS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
 msgstr "Neplatný SIM PS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
 msgstr "Neplatný SIM CS/PS stav"
 
-#: src/etc/inc/pfsense-utils.inc:3177
+#: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
 msgstr "Chýbajúci SIM stav"
 
-#: src/etc/inc/pfsense-utils.inc:3188
+#: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
 msgstr "Obmedzená služba"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Initializing Service"
 msgstr "Inicializácia služby"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3216
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -6382,69 +6386,69 @@ msgstr ""
 "Chyba: nebolo možné otvoriť súbor dhcpd.conf v services_dhcpdv4_configure()."
 "%s"
 
-#: src/etc/inc/services.inc:1649
+#: src/etc/inc/services.inc:1653
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Nebolo možné zapísať Igmpproxy konfiguračný súbor!"
 
-#: src/etc/inc/services.inc:1662
+#: src/etc/inc/services.inc:1666
 msgid "Started IGMP proxy service."
 msgstr "Služba IGMP proxy spustená."
 
-#: src/etc/inc/services.inc:1686
+#: src/etc/inc/services.inc:1690
 msgid "Starting DHCP relay service..."
 msgstr "Spúšťa sa služba DHCP relé..."
 
-#: src/etc/inc/services.inc:1711
+#: src/etc/inc/services.inc:1715
 msgid "No destination IP has been configured!"
 msgstr "Nebola nakonfigurovaná žiadna cieľová IP!"
 
-#: src/etc/inc/services.inc:1785
+#: src/etc/inc/services.inc:1789
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Nebolo nájdené žiadne vhodné rozhranie pre spustenie dhcrelay!"
 
-#: src/etc/inc/services.inc:1821
+#: src/etc/inc/services.inc:1825
 msgid "Starting DHCPv6 relay service..."
 msgstr "Spúšťa sa služba DHCPv6 relé..."
 
-#: src/etc/inc/services.inc:1912
+#: src/etc/inc/services.inc:1916
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "Nebolo nájdené žiadne vhodné rozhranie pre spustenie dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1973
+#: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
 msgstr "Spúšťajú sa klienti DynDNS..."
 
-#: src/etc/inc/services.inc:2079
+#: src/etc/inc/services.inc:2083
 msgid "Starting DNS forwarder..."
 msgstr "Spúšťa sa DNS Forwarder"
 
-#: src/etc/inc/services.inc:2254
+#: src/etc/inc/services.inc:2258
 msgid "Starting DNS Resolver..."
 msgstr "Spúšťa sa DNS Resolver..."
 
-#: src/etc/inc/services.inc:2270
+#: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
 msgstr ""
 
-#: src/etc/inc/services.inc:2274
+#: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
 msgstr ""
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
 msgstr ""
 
-#: src/etc/inc/services.inc:2321
+#: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
 msgstr "Spúšťa sa démon SNMP..."
 
-#: src/etc/inc/services.inc:2332
+#: src/etc/inc/services.inc:2336
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 "Chyba: nebolo možné otvoriť súbor snmpd.conf v services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2661
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6452,7 +6456,7 @@ msgstr ""
 "phpDynDNS: A záznamy %s nebudú aktualizované, pretože IP adresa sa nezmenila."
 ""
 
-#: src/etc/inc/services.inc:2680
+#: src/etc/inc/services.inc:2684
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6461,45 +6465,45 @@ msgstr ""
 "phpDynDNS: AAAA záznamy %s nebudú aktualizované, pretože IPv6 adresa sa "
 "nezmenila."
 
-#: src/etc/inc/services.inc:2715
+#: src/etc/inc/services.inc:2719
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS aktualizoval IP adresu (A) pre %1$s na rozhraní %2$s (%3$s) na %4$s"
 
-#: src/etc/inc/services.inc:2727
+#: src/etc/inc/services.inc:2731
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS aktualizoval IPv6 adresu (AAAA) pre %1$s na rozhraní %2$s (%3$s) na "
 "%4$s"
 
-#: src/etc/inc/services.inc:2735
+#: src/etc/inc/services.inc:2739
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr "phpDynDNS: CHYBA počas aktualizácie IP adresy (A) pre %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2740
+#: src/etc/inc/services.inc:2744
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr "phpDynDNS: CHYBA počas aktualizácie IP adresy (AAAA) pre %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2774
+#: src/etc/inc/services.inc:2778
 msgid "Created:"
 msgstr "Vytvorený:"
 
-#: src/etc/inc/services.inc:2800
+#: src/etc/inc/services.inc:2804
 msgid "If possible do not add items to this file manually."
 msgstr "Ak je to možné, nepridávajte manuálne záznamy do tohto súboru."
 
-#: src/etc/inc/services.inc:2801
+#: src/etc/inc/services.inc:2805
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Ak tak bolo urobené, tento súbor musí byť ukončený prázdnym riadok (napr. "
 "nový riadok)"
 
-#: src/etc/inc/services.inc:2851
+#: src/etc/inc/services.inc:2855
 msgid "Starting UPnP service... "
 msgstr "Spúšťa sa služba UpPnP..."
 
@@ -6705,7 +6709,7 @@ msgstr "Vyberte možnosti pre tento front"
 #: src/usr/local/www/firewall_aliases_edit.php:726
 #: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:232
-#: src/usr/local/www/firewall_nat_1to1.php:153
+#: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
@@ -7010,7 +7014,7 @@ msgstr "Oneskorenie musí byť celé číslo."
 
 #: src/etc/inc/shaper.inc:3790 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
-#: src/usr/local/www/firewall_nat_1to1.php:244
+#: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/firewall_nat_npt.php:232
 #: src/usr/local/www/firewall_nat_out.php:504
 #: src/usr/local/www/firewall_rules.php:829
@@ -8043,7 +8047,7 @@ msgstr "Potvrdiť"
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
-#: src/usr/local/www/firewall_nat_1to1.php:248
+#: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/firewall_nat_npt.php:236
 #: src/usr/local/www/firewall_nat_out.php:508
 #: src/usr/local/www/firewall_rules.php:833
@@ -8223,7 +8227,7 @@ msgstr "Druh spojenia"
 #: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
-#: src/usr/local/www/firewall_nat_1to1.php:154
+#: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/firewall_nat_npt.php:152
 #: src/usr/local/www/firewall_nat_out.php:288
 #: src/usr/local/www/firewall_rules.php:391
@@ -9337,11 +9341,11 @@ msgstr "Filter"
 
 #: src/usr/local/www/diag_dump_states.php:160
 msgid "Kill States"
-msgstr "Zabiť stavy"
+msgstr "Ukončit stavy"
 
 #: src/usr/local/www/diag_dump_states.php:166
 msgid "Kill filtered states"
-msgstr "Zabiť filtrované stavy"
+msgstr "Ukončiť filtrované stavy"
 
 #: src/usr/local/www/diag_dump_states.php:168
 msgid "Remove all states to and from the filtered address"
@@ -11089,8 +11093,8 @@ msgstr "Odstrániť alias"
 #: src/usr/local/www/firewall_aliases.php:271
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_nat.php:465
-#: src/usr/local/www/firewall_nat_1to1.php:236
-#: src/usr/local/www/firewall_nat_1to1.php:240
+#: src/usr/local/www/firewall_nat_1to1.php:243
+#: src/usr/local/www/firewall_nat_1to1.php:247
 #: src/usr/local/www/firewall_nat_npt.php:224
 #: src/usr/local/www/firewall_nat_npt.php:228
 #: src/usr/local/www/firewall_nat_out.php:496
@@ -11746,7 +11750,7 @@ msgid "NAT Ports"
 msgstr "NAT porty"
 
 #: src/usr/local/www/firewall_nat.php:291
-#: src/usr/local/www/firewall_nat_1to1.php:177
+#: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:295
 #: src/usr/local/www/vpn_ipsec.php:430
@@ -11754,7 +11758,7 @@ msgid "click to toggle enabled/disabled status"
 msgstr "kliknite pre prepnutie povoleného/zablokovaného stavu"
 
 #: src/usr/local/www/firewall_nat.php:293
-#: src/usr/local/www/firewall_nat_1to1.php:179
+#: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr "Negated: Toto pravidlo vylučuje NAT z neskoršieho pravidla"
 
@@ -11773,6 +11777,7 @@ msgstr "Firewall pravidlo ID %s je spravované týmto pravidlom"
 #: src/usr/local/www/firewall_nat.php:384
 #: src/usr/local/www/firewall_nat.php:401
 #: src/usr/local/www/firewall_nat.php:419
+#: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_rules.php:708
 #: src/usr/local/www/firewall_rules.php:717
 #: src/usr/local/www/firewall_rules.php:726
@@ -11876,63 +11881,63 @@ msgstr "Firewall: NAT: 1:1 - povolené NAT 1:1 pravidlo."
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
 msgstr "Firewall: NAT: 1:1 - zakázané NAT 1:1 pravidlo."
 
-#: src/usr/local/www/firewall_nat_1to1.php:142
+#: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
 msgstr "NAT 1:1 priradenia"
 
-#: src/usr/local/www/firewall_nat_1to1.php:150
+#: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
 msgstr "Externá IP adresa"
 
-#: src/usr/local/www/firewall_nat_1to1.php:151
+#: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
 msgstr "Interná IP adresa"
 
-#: src/usr/local/www/firewall_nat_1to1.php:152
+#: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
 msgstr "Cieľová IP adresa"
 
-#: src/usr/local/www/firewall_nat_1to1.php:218
+#: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
 msgstr "Úprava priradení"
 
-#: src/usr/local/www/firewall_nat_1to1.php:219
+#: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
 msgstr "Pridať nové priradenie založené na tomto priradení"
 
-#: src/usr/local/www/firewall_nat_1to1.php:220
+#: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
 msgstr "Odstrániť priradenie"
 
-#: src/usr/local/www/firewall_nat_1to1.php:234
+#: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
 msgstr "Pridať priradenie na začiatok zoznamu"
 
-#: src/usr/local/www/firewall_nat_1to1.php:238
+#: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
 msgstr "Pridať priradenie na koniec zoznamu"
 
-#: src/usr/local/www/firewall_nat_1to1.php:242
+#: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
 msgstr "Odstrániť označené priradenia"
 
-#: src/usr/local/www/firewall_nat_1to1.php:246
+#: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
 msgstr "Uložiť poradie priradení"
 
-#: src/usr/local/www/firewall_nat_1to1.php:254
+#: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
@@ -11941,7 +11946,7 @@ msgstr ""
 "V závislosti na spôsobe nastavenia WAN pripojenia, toto môže taktiež "
 "potrebovať %1$svirtuálnu IP adresu%2$s."
 
-#: src/usr/local/www/firewall_nat_1to1.php:256
+#: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
 "If a 1:1 NAT entry is added for any of the interface IPs on this system, it "
 "will make this system inaccessible on that IP address. i.e. if the WAN IP "
@@ -11954,7 +11959,7 @@ msgstr ""
 "(IPsec, OpenVPN server, atď.), ktorá používa WAN IP adresu prestane fungovať."
 ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:291
+#: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
@@ -17759,9 +17764,9 @@ msgid "gif tunnel remote netmask"
 msgstr ""
 
 #: src/usr/local/www/interfaces_gif_edit.php:67
-#: src/usr/local/www/interfaces_gre_edit.php:70
 msgid ""
-"The tunnel local and tunnel remote fields must have valid IP addresses."
+"The tunnel local and tunnel remote fields must have valid IP addresses and "
+"must not contain CIDR masks or prefixes."
 msgstr ""
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
@@ -17888,6 +17893,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_gre_edit.php:63
 msgid "Remote tunnel network"
+msgstr ""
+
+#: src/usr/local/www/interfaces_gre_edit.php:70
+msgid ""
+"The tunnel local and tunnel remote fields must have valid IP addresses."
 msgstr ""
 
 #: src/usr/local/www/interfaces_gre_edit.php:74
@@ -27532,7 +27542,7 @@ msgstr "Odoslané/prijaté bajty"
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:78
 #, php-format
 msgid "Kill client connection from %s"
-msgstr "Zabiť pripojenie klienta z %s"
+msgstr "Ukončiť pripojenie klienta z %s"
 
 #: src/usr/local/www/status_openvpn.php:175
 #: src/usr/local/www/status_openvpn.php:177
@@ -28871,23 +28881,23 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:421
 msgid "AC Power"
-msgstr ""
+msgstr "AC napájanie"
 
 #: src/usr/local/www/system_advanced_misc.php:428
 msgid "Battery Power"
-msgstr ""
+msgstr "Napájanie z batérie"
 
 #: src/usr/local/www/system_advanced_misc.php:435
 msgid "Unknown Power"
-msgstr ""
+msgstr "Neznáme napájanie"
 
 #: src/usr/local/www/system_advanced_misc.php:441
 msgid "Cryptographic & Thermal Hardware"
-msgstr ""
+msgstr "Kryptografický a termálny hardvér"
 
 #: src/usr/local/www/system_advanced_misc.php:445
 msgid "Cryptographic Hardware"
-msgstr ""
+msgstr "Kryptografický hardvér"
 
 #: src/usr/local/www/system_advanced_misc.php:448
 msgid ""
@@ -28898,12 +28908,19 @@ msgid ""
 "not contain a crypto chip, this option will have no effect. To unload the "
 "selected module, set this option to \"none\" and then reboot."
 msgstr ""
+"Modul akcelerácie kryptografie použije hardvérovú podporu pre zrýchlenie "
+"niektorých kryptografických funkcií v systémoch, ktoré majú tento čip. "
+"Načítaním BSD kryptografického zariadenia povolí prístup k akceleračným "
+"zariadeniam použitím ovládačov vstavaných do kernela, ako napríklad k "
+"čipsetom Hifn alebo ubsec. Ak firewall neobsahuje kryptografický čip, táto "
+"možnosť nebude mať žiadny účinok. Pre zrušenie načítania zvoleného modulu, "
+"nastavte túto možnosť na \"žiadne\" a reštartujte firewall."
 
 #: src/usr/local/www/system_advanced_misc.php:457
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:268
 msgid "Thermal Sensors"
-msgstr ""
+msgstr "Termálne senzory"
 
 #: src/usr/local/www/system_advanced_misc.php:460
 msgid ""
@@ -28917,7 +28934,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:473
 msgid "Schedule States"
-msgstr ""
+msgstr "Rozvrh stavov"
 
 #: src/usr/local/www/system_advanced_misc.php:476
 msgid ""
@@ -28929,11 +28946,11 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:206
 msgid "Gateway Monitoring"
-msgstr ""
+msgstr "Monitorovanie brán"
 
 #: src/usr/local/www/system_advanced_misc.php:485
 msgid "State Killing on Gateway Failure"
-msgstr ""
+msgstr "Ukončenie stavov pri zlyhaní brány"
 
 #: src/usr/local/www/system_advanced_misc.php:488
 msgid ""
@@ -28943,7 +28960,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
-msgstr ""
+msgstr "Vynechať pravidlá keď je brána neaktívna"
 
 #: src/usr/local/www/system_advanced_misc.php:496
 msgid ""
@@ -28951,14 +28968,17 @@ msgid ""
 "the rule is created omitting the gateway. This option overrides that "
 "behavior by omitting the entire rule instead."
 msgstr ""
+"Ak je v pravidle uvedená brána, a táto brána je neaktívna, predvolene je "
+"pravidlo vytvorené vynechaním brány. Povolením tejto možnosti sa namiesto "
+"toho vynechá celé pravidlo."
 
 #: src/usr/local/www/system_advanced_misc.php:501
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
-msgstr ""
+msgstr "Nastavenia RAM disku (Reštartujte pre použitie zmien)"
 
 #: src/usr/local/www/system_advanced_misc.php:505
 msgid "Use RAM Disks"
-msgstr ""
+msgstr "Použiť RAM disky"
 
 #: src/usr/local/www/system_advanced_misc.php:508
 msgid ""
@@ -28968,50 +28988,55 @@ msgid ""
 "retained. Changing this setting will cause the firewall to reboot after "
 "clicking \"Save\"."
 msgstr ""
+"Povoľte túto možnosť pre použitie RAM diskov (disky s pamäťovým súborovým "
+"systémom) pre oddiely /tmp a /var na úplných inštaláciách namiesto použitia "
+"pevného disku. Povolenie tejto možnosti zapríčiní stratu údajov v /tmp a /"
+"var. RRD, DHCP prenájmy a priečinky so súbormi denníkov budú ponechané. "
+"Zmenou tejto možnosti sa firewall reštartuje po kliknutí na \"Uložiť\"."
 
 #: src/usr/local/www/system_advanced_misc.php:513
 msgid "RAM Disk Size"
-msgstr ""
+msgstr "Veľkosť RAM disku"
 
 #: src/usr/local/www/system_advanced_misc.php:517
 msgid "/tmp RAM Disk Size"
-msgstr ""
+msgstr "Veľkosť /tmp RAM disku"
 
 #: src/usr/local/www/system_advanced_misc.php:521
 msgid "/tmp RAM Disk<br />Do not set lower than 40."
-msgstr ""
+msgstr "/tmp RAM disk<br />Nenastavte nižšiu hodnotu ako 40."
 
 #: src/usr/local/www/system_advanced_misc.php:525
 msgid "/var RAM Disk Size"
-msgstr ""
+msgstr "Veľkosť /var RAM disku"
 
 #: src/usr/local/www/system_advanced_misc.php:529
 msgid "/var RAM Disk<br />Do not set lower than 60."
-msgstr ""
+msgstr "/var RAM disk<br />Nenastavte nižšiu hodnotu ako 60."
 
 #: src/usr/local/www/system_advanced_misc.php:531
 msgid "Sets the size, in MiB, for the RAM disks."
-msgstr ""
+msgstr "Nastaví veľkosť v MiB pre RAM disky."
 
 #: src/usr/local/www/system_advanced_misc.php:535
 msgid "Periodic RAM Disk Data Backups"
-msgstr ""
+msgstr "Pravidelné zálohy údajov RAM diskov"
 
 #: src/usr/local/www/system_advanced_misc.php:539
 msgid "Periodic RRD Backup"
-msgstr ""
+msgstr "Pravidelné zálohy RRD údajov"
 
 #: src/usr/local/www/system_advanced_misc.php:547
 msgid "Periodic DHCP Leases Backup"
-msgstr ""
+msgstr "Pravidelné zálohy DHCP prenájmov"
 
 #: src/usr/local/www/system_advanced_misc.php:555
 msgid "Periodic Logs Backup"
-msgstr ""
+msgstr "Pravidelné zálohy denníka"
 
 #: src/usr/local/www/system_advanced_misc.php:559
 msgid "Log Directory"
-msgstr ""
+msgstr "Priečinok súborov denníka"
 
 #: src/usr/local/www/system_advanced_misc.php:561
 msgid ""
@@ -29020,18 +29045,22 @@ msgid ""
 "mind that the more frequent the backup, the more writes will happen to the "
 "media."
 msgstr ""
+"Nastaví interval v hodinách pre pravidelné zálohovanie týchto oblastí údajov "
+"RAM diskov, takže môžu byť automaticky obnovené pri najbližšom zapnutí. "
+"Majte na pamäti, že čím sú zálohy pravidelnejšie, tým viac zápisov sa udeje "
+"na médiu."
 
 #: src/usr/local/www/system_advanced_misc.php:569
 msgid "Hardware Settings"
-msgstr ""
+msgstr "Nastavenia hardvéru"
 
 #: src/usr/local/www/system_advanced_misc.php:578
 msgid "Always on"
-msgstr ""
+msgstr "Vždy zapnutý"
 
 #: src/usr/local/www/system_advanced_misc.php:576
 msgid "Hard disk standby time"
-msgstr ""
+msgstr "Pohotovostný režim pevného disku"
 
 #: src/usr/local/www/system_advanced_misc.php:579
 #, php-format
@@ -29039,20 +29068,24 @@ msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
 "elapsed since the last access.%1$s%2$sDo not set this for CF cards.%3$s"
 msgstr ""
+"Prepne pevný disk do pohotovostného režimu po uplynutí uvedeného počtu minút "
+"od posledného prístupu.%1$s%2$sNenastavujte túto možnosť pre CF karty.%3$s"
 
 #: src/usr/local/www/system_advanced_misc.php:584
 msgid "Installation Feedback"
-msgstr ""
+msgstr "Spätná väzba inštalácie"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Netgate Device ID"
-msgstr ""
+msgstr "ID zariadenia Netgate"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
 msgstr ""
+"Povoľte túto možnosť pre zakázanie odosielania ID zariadenia Netgate do "
+"pfSense ako súčasť hlavičky User-Agent."
 
 #: src/usr/local/www/system_advanced_misc.php:597
 msgid ""
@@ -29060,6 +29093,8 @@ msgid ""
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
 "confirm."
 msgstr ""
+"Nastavenie \\\"Použiť RAM disk\\\" bolo zmenené. Toto zapríčiní okamžitý "
+"reštart\\nfirewallu po uložení nových nastavení.\\n\\nProsím potvrďte."
 
 #: src/usr/local/www/system_advanced_network.php:58
 msgid "An IP address to NAT IPv6 packets must be specified."
@@ -29067,25 +29102,27 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:65
 msgid "A valid DUID must be specified"
-msgstr ""
+msgstr "Musí byť uvedené platné DUID"
 
 #: src/usr/local/www/system_advanced_network.php:178
 msgid "IPv6 Options"
-msgstr ""
+msgstr "Možnosti IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:182
 msgid "Allow IPv6"
-msgstr ""
+msgstr "Povoliť IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:185
 msgid ""
 "NOTE: This does not disable any IPv6 features on the firewall, it only "
 "blocks traffic."
 msgstr ""
+"POZNÁMKA: Toto nezakazuje žiadne IPv6 funkcie vo firewalle, iba zablokuje "
+"tok dát."
 
 #: src/usr/local/www/system_advanced_network.php:190
 msgid "IPv6 over IPv4 Tunneling"
-msgstr ""
+msgstr "Tunelovanie IPv6 cez IPv4"
 
 #: src/usr/local/www/system_advanced_network.php:193
 #, php-format
@@ -29102,7 +29139,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:206
 msgid "Prefer IPv4 over IPv6"
-msgstr ""
+msgstr "Uprednostniť IPv4 pred IPv6"
 
 #: src/usr/local/www/system_advanced_network.php:209
 msgid ""
@@ -29110,10 +29147,13 @@ msgid ""
 "addresses, IPv6 will be used. If this option is selected, IPv4 will be "
 "preferred over IPv6."
 msgstr ""
+"Ak je nakonfigurovaná IPv6 a názov hostiteľa vyrieši IPv4 aj IPv6 adresu, "
+"predvolene sa použije IPv6. Ak je táto možnosť povolená, uprednostní sa IPv4 "
+"namiesto IPv6."
 
 #: src/usr/local/www/system_advanced_network.php:214
 msgid "IPv6 DNS entry"
-msgstr ""
+msgstr "IPv6 DNS záznam"
 
 #: src/usr/local/www/system_advanced_network.php:217
 msgid ""
@@ -29128,11 +29168,11 @@ msgstr ""
 #: src/usr/local/www/system_advanced_network.php:222
 #: src/usr/local/www/system_advanced_network.php:226
 msgid "DHCP6 DUID"
-msgstr ""
+msgstr "DHCP6 DUID"
 
 #: src/usr/local/www/system_advanced_network.php:234
 msgid "Copy DUID"
-msgstr ""
+msgstr "Kopírovať DUID"
 
 #: src/usr/local/www/system_advanced_network.php:242
 #, php-format
@@ -29223,11 +29263,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:104
 msgid "Growl passwords must match"
-msgstr ""
+msgstr "Growl heslá sa musia zhodovať"
 
 #: src/usr/local/www/system_advanced_notifications.php:137
 msgid "SMTP passwords must match"
-msgstr ""
+msgstr "SMTP heslá sa musia zhodovať"
 
 #: src/usr/local/www/system_advanced_notifications.php:172
 #, php-format
@@ -36753,7 +36793,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:191
 msgid "Enable IPv6 over IPv4 tunneling"
-msgstr "Povoliť IPv6 cez IPv4 tunneling"
+msgstr "Povoliť tunelovanie IPv6 cez IPv4"
 
 #: src/usr/local/www/system_advanced_network.php:207
 msgid "Prefer to use IPv4 even if IPv6 is available"

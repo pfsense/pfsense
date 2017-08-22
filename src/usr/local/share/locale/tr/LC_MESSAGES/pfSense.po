@@ -2,6 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Mehmet Dasci <meda.debian@gmail.com>, 2017. #zanata
 # Necati Selim Güner <selimguner2000@gmail.com>, 2017. #zanata
 # Onur Başer <onur@baserler.com>, 2017. #zanata
 # Samet YILMAZ <sametyilmaznet@gmail.com>, 2017. #zanata
@@ -12,12 +13,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 08:37-0300\n"
+"POT-Creation-Date: 2017-08-22 14:14-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-07-06 10:48-0400\n"
-"Last-Translator: Onur Başer <onur@baserler.com>\n"
+"PO-Revision-Date: 2017-08-22 11:49-0400\n"
+"Last-Translator: Mehmet Dasci <meda.debian@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -29,6 +30,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"Erişim reddedildi<br/><br/>İstemci listesinden geçici olarak çıkarılmış "
+"adresten erişim denemesi<br /><br />Çıkarılma süresi bittikten sonra yeniden "
+"deneyin."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -46,7 +50,7 @@ msgstr "Yönlendiriliyor..."
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
-msgstr "Anasayfa'ya yönlendiriliyor..."
+msgstr "Anasayfaya yönlendiriliyor..."
 
 #: src/etc/inc/auth.inc:446 src/etc/inc/auth.inc:470 src/etc/inc/auth.inc:547
 #: src/etc/inc/auth.inc:588 src/etc/inc/auth.inc:657 src/etc/inc/auth.inc:815
@@ -59,7 +63,7 @@ msgstr "Çalışan: %s "
 #: src/etc/inc/auth.inc:1350
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "HATA!  Sunucuya bağlantı kurulamadı %s."
+msgstr "HATA!  Sunucuyla bağlantı kurulamadı %s."
 
 #: src/etc/inc/auth.inc:887
 #, php-format
@@ -252,7 +256,7 @@ msgstr "Bu cihaz şu anda %s tarafından bakıma alındı."
 #: src/etc/inc/authgui.inc:283
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:285
 #, php-format
@@ -271,6 +275,10 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"Bu yönlendiriciye erişmek için kullanılan IP adresi yerel olarak "
+"yapılandırılmamış, NAT veya başka araçlar tarafından iletilmiş olabilir.\n"
+"                                 Eğer bu iletim beklenmedik ise, \"man-in-"
+"the-middle\" saldırısı yer almadığı doğrulanabilir. "
 
 #: src/etc/inc/authgui.inc:399
 msgid "The browser must support cookies to login."
@@ -318,15 +326,15 @@ msgstr "Bağlantıyı kesmek için aşağıdaki butona tıklayınız"
 #: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr "Hata:  captiveportal_write_elements()%2$s içinde '%1$s' açılamadı. "
 
 #: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "Captive Portal izinli kullanıcılar ayarları değişti "
 
 #: src/etc/inc/certs.inc:44
 msgid "FQDN or Hostname"
-msgstr ""
+msgstr "FQDN ya da Makine Adı"
 
 #: src/etc/inc/certs.inc:45 src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
@@ -343,11 +351,11 @@ msgstr "IP adresi"
 
 #: src/etc/inc/certs.inc:46
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr ""
+msgstr "e-posta adresi "
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -356,13 +364,13 @@ msgstr "TEHLIKE!  UYARI!  DİKKAT!"
 #: src/etc/inc/config.console.inc:46
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr ""
+msgstr "%1$s, düzgün çalışmak için *EN AZ*  %2$s RAM gereksinimi var.%3$s"
 
 #: src/etc/inc/config.console.inc:47
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
+msgstr "Sadece (%1$s) MB RAM algılandı,  (%2$s) ile %3$s.%4$s kullanılabilir."
 
 #: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
@@ -382,6 +390,9 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
+"VLAN'lar kullanılmayacaksa, ya da sadece isteğe bağlı arayüzler için "
+"kullanılacaksa, burada \n"
+"hayır deyin ve gerekirse VLAN'ları ayarlamak için webConfigurator kullanın. "
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
@@ -412,11 +423,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sLAN arayüzü adı girin ya da otomatik algılama için 'a' tuşuna basın %2$s "
+"NOT:  bu eylem, tam Firewall/NAT modunu etkinleştirir.  %3$s (%4$s bittiyse "
+"a tuşuna basın ya da boş bırakıp devam edin):%5$s"
 
 #: src/etc/inc/config.console.inc:175
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$s  İsteğe bağlı arayüz :%2$s tanım bulundu %3$s"
 
 #: src/etc/inc/config.console.inc:178
 #, php-format
@@ -677,7 +691,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:368
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): _güncelleme() başlatılıyor."
 
 #: src/etc/inc/dyndns.class:465
 #, php-format
@@ -909,6 +923,8 @@ msgid ""
 "Client disabled. Client should exit and not perform any more updates without "
 "user intervention."
 msgstr ""
+"İstemci devre dışı bırakıldı. İstemci, kullanıcı müdahalesi olmadan çıkış "
+"yapmalı ve daha fazla güncelleme yapmamalı. "
 
 #: src/etc/inc/dyndns.class:1299
 msgid "Unknown Response:"
@@ -925,11 +941,11 @@ msgstr "Servis yok: Dinamik DNS servisi bu alanadı için devredışı bırakıl
 
 #: src/etc/inc/dyndns.class:1309
 msgid "Illegal Input: Self-Explanatory"
-msgstr ""
+msgstr "Yasak girdi: Öz açıklamalı "
 
 #: src/etc/inc/dyndns.class:1311
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
-msgstr ""
+msgstr "Çok Erken: Son Güncellemeden Sonra Yeterli Zaman Geçmedi"
 
 #: src/etc/inc/dyndns.class:1313
 msgid "IP Updated Successfully!"
@@ -959,11 +975,13 @@ msgstr "IP Adresi Başarıyla Güncellendi!"
 #: src/etc/inc/dyndns.class:1343
 msgid ""
 "Bad Request - The URL was malformed. Required parameters were not provided."
-msgstr ""
+msgstr "Bozuk İstek - URL hatalı. Gerekli parametreler sağlanmadı."
 
 #: src/etc/inc/dyndns.class:1345
 msgid "Update Too Soon - Attempted to update too quickly since last change."
 msgstr ""
+"Güncelleme İçin Çok Erken - Son değişiklikten sonra çok çabuk güncelleme "
+"denemesi."
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
@@ -973,6 +991,7 @@ msgstr "Veritabanı Hatası : Sunucu tarafli veritabanı hatası oluştu."
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
 msgstr ""
+"Makina adı Hatası - Makina adı  (%1$s) bir kullanıcıya (%2$s) ait değil."
 
 #: src/etc/inc/dyndns.class:1413
 msgid "Not a valid username or password!"
@@ -988,11 +1007,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1423
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Çok sık güncelleme yapılıyor, kötüye kullanım olarak sayıldı. "
 
 #: src/etc/inc/dyndns.class:1432 src/etc/inc/dyndns.class:1496
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Kötü İstek - Girilen IP geçersiz."
 
 #: src/etc/inc/dyndns.class:1434
 msgid "Bad Request - Required parameters were not provided."
@@ -1208,7 +1227,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr ""
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2712 src/etc/inc/services.inc:2724
+#: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr ""
@@ -1682,9 +1701,9 @@ msgstr "Filtreleme devre dışı.  Kurallar yüklenmiyor."
 #: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
 #: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
 #: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
-#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2284
-#: src/etc/inc/services.inc:2510 src/etc/inc/system.inc:1257
+#: src/etc/inc/services.inc:1600 src/etc/inc/services.inc:2003
+#: src/etc/inc/services.inc:2220 src/etc/inc/services.inc:2288
+#: src/etc/inc/services.inc:2514 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
@@ -2152,7 +2171,7 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
-#: src/usr/local/www/firewall_nat_1to1.php:149
+#: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -2997,7 +3016,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobil İstemci"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3630,39 +3649,43 @@ msgid "English"
 msgstr "İngilizce"
 
 #: src/etc/inc/pfsense-utils.inc:2945
-msgid "German (Germany)"
+msgid "French"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2946
-msgid "Norwegian Bokmål"
+msgid "German (Germany)"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2947
-msgid "Polish"
+msgid "Norwegian Bokmål"
 msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2948
+msgid "Polish"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
 msgstr "Portekizce (Brezilya)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
 msgstr "İspanyolca"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "No Service"
 msgstr "Servis yok"
 
-#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3200
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3678,83 +3701,83 @@ msgstr "Servis yok"
 msgid "Mode"
 msgstr "Kip"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
 msgstr "Kısıtlı Servis"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
 msgstr "Geçerli Servis"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Restricted Regional Service"
 msgstr "Kısıtlı Bölgesel Servis"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Powersaving Service"
 msgstr "Güç Tasarrufu Servisi"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3177
+#: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3188
+#: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
 msgstr "Limitli servis"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Initializing Service"
 msgstr "Servis Başlatılıyor"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Lock error Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Network Locked Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "No action State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "(U)SIM card lock State"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:3216
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr ""
 
@@ -6175,114 +6198,114 @@ msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
 "Hata: services_dhcpdv4_configure().%s içerisindeki dhcpd.conf açılamıyor"
 
-#: src/etc/inc/services.inc:1649
+#: src/etc/inc/services.inc:1653
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Igmpproxy yapılandırma dosyasına yazılamıyor!"
 
-#: src/etc/inc/services.inc:1662
+#: src/etc/inc/services.inc:1666
 msgid "Started IGMP proxy service."
 msgstr "IGMP vekil servisi başlatıldı."
 
-#: src/etc/inc/services.inc:1686
+#: src/etc/inc/services.inc:1690
 msgid "Starting DHCP relay service..."
 msgstr "DHCP relay servisi başlatılıyor..."
 
-#: src/etc/inc/services.inc:1711
+#: src/etc/inc/services.inc:1715
 msgid "No destination IP has been configured!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1785
+#: src/etc/inc/services.inc:1789
 msgid "No suitable interface found for running dhcrelay!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1821
+#: src/etc/inc/services.inc:1825
 msgid "Starting DHCPv6 relay service..."
 msgstr "DHCPv6 relay servisi başlatılıyor..."
 
-#: src/etc/inc/services.inc:1912
+#: src/etc/inc/services.inc:1916
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr ""
 
-#: src/etc/inc/services.inc:1973
+#: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
 msgstr "DynDNS istemcisi başlatılıyor..."
 
-#: src/etc/inc/services.inc:2079
+#: src/etc/inc/services.inc:2083
 msgid "Starting DNS forwarder..."
 msgstr "DNS yönlendiricisi başlatılıyor..."
 
-#: src/etc/inc/services.inc:2254
+#: src/etc/inc/services.inc:2258
 msgid "Starting DNS Resolver..."
 msgstr ""
 
-#: src/etc/inc/services.inc:2270
+#: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
 msgstr ""
 
-#: src/etc/inc/services.inc:2274
+#: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
 msgstr ""
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
 msgstr ""
 
-#: src/etc/inc/services.inc:2321
+#: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
 msgstr "SNMP servisi başlatılıyor..."
 
-#: src/etc/inc/services.inc:2332
+#: src/etc/inc/services.inc:2336
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "Hata: %s services_snmpd_configure() içinde snmpd.conf açılamıyor"
 
-#: src/etc/inc/services.inc:2661
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2680
+#: src/etc/inc/services.inc:2684
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr ""
 
-#: src/etc/inc/services.inc:2715
+#: src/etc/inc/services.inc:2719
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2727
+#: src/etc/inc/services.inc:2731
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 
-#: src/etc/inc/services.inc:2735
+#: src/etc/inc/services.inc:2739
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2740
+#: src/etc/inc/services.inc:2744
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2774
+#: src/etc/inc/services.inc:2778
 msgid "Created:"
 msgstr "Created:"
 
-#: src/etc/inc/services.inc:2800
+#: src/etc/inc/services.inc:2804
 msgid "If possible do not add items to this file manually."
 msgstr "If possible do not add items to this file manually."
 
-#: src/etc/inc/services.inc:2801
+#: src/etc/inc/services.inc:2805
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 
-#: src/etc/inc/services.inc:2851
+#: src/etc/inc/services.inc:2855
 msgid "Starting UPnP service... "
 msgstr "UPnP servisi başlatılıyor..."
 
@@ -6483,7 +6506,7 @@ msgstr "Bu kuyruk için seçeneği işaretleyin"
 #: src/usr/local/www/firewall_aliases_edit.php:726
 #: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:232
-#: src/usr/local/www/firewall_nat_1to1.php:153
+#: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
@@ -6782,7 +6805,7 @@ msgstr "Gecikme tamsayı olmalıdır."
 
 #: src/etc/inc/shaper.inc:3790 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
-#: src/usr/local/www/firewall_nat_1to1.php:244
+#: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/firewall_nat_npt.php:232
 #: src/usr/local/www/firewall_nat_out.php:504
 #: src/usr/local/www/firewall_rules.php:829
@@ -7759,7 +7782,7 @@ msgstr "Onaylama"
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
-#: src/usr/local/www/firewall_nat_1to1.php:248
+#: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/firewall_nat_npt.php:236
 #: src/usr/local/www/firewall_nat_out.php:508
 #: src/usr/local/www/firewall_rules.php:833
@@ -7935,7 +7958,7 @@ msgstr "Bağlantı Türü"
 #: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
-#: src/usr/local/www/firewall_nat_1to1.php:154
+#: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/firewall_nat_npt.php:152
 #: src/usr/local/www/firewall_nat_out.php:288
 #: src/usr/local/www/firewall_rules.php:391
@@ -8802,15 +8825,15 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:75
 msgid "Factory Reset"
-msgstr ""
+msgstr "Sıfırla"
 
 #: src/usr/local/www/diag_defaults.php:77
 msgid "Return to the dashboard"
-msgstr ""
+msgstr "Gösterge paneline geri dön"
 
 #: src/usr/local/www/diag_defaults.php:79
 msgid "Keep Configuration"
-msgstr ""
+msgstr "Yapılandırmayı Koru"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:387
@@ -8874,25 +8897,25 @@ msgstr "Sorgu Zamanı"
 #: src/usr/local/www/diag_dns.php:213
 #, php-format
 msgid "Host \"%s\" could not be resolved."
-msgstr ""
+msgstr "\"%s\" makinası çözülemedi"
 
 #: src/usr/local/www/diag_dns.php:218
 msgid "Alias was updated successfully."
-msgstr ""
+msgstr "Takma ad başarıyla güncellendi."
 
 #: src/usr/local/www/diag_dns.php:220
 msgid "Alias was created successfully."
-msgstr ""
+msgstr "Takma ad başarıyla oluşturuldu."
 
 #: src/usr/local/www/diag_dns.php:228
 #, php-format
 msgid "Could not update alias for %s"
-msgstr ""
+msgstr " %s için takma ad güncellenemedi"
 
 #: src/usr/local/www/diag_dns.php:230
 #, php-format
 msgid "Could not create alias for %s"
-msgstr ""
+msgstr " %s için takma ad oluşturulamadı"
 
 #: src/usr/local/www/diag_dns.php:239 src/usr/local/www/diag_ping.php:131
 #: src/usr/local/www/diag_testport.php:221
@@ -8902,41 +8925,41 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:177
 #: src/usr/local/www/system.php:450
 msgid "*Hostname"
-msgstr ""
+msgstr "*Makine adı"
 
 #: src/usr/local/www/diag_dns.php:249
 #: src/usr/local/www/status_logs_filter_summary.php:176
 msgid "Lookup"
-msgstr ""
+msgstr "Arama"
 
 #: src/usr/local/www/diag_dns.php:256
 msgid "Update alias"
-msgstr ""
+msgstr "Takma adı güncelle"
 
 #: src/usr/local/www/diag_dns.php:258
 msgid "Add alias"
-msgstr ""
+msgstr "Takma ad ekle"
 
 #: src/usr/local/www/diag_dns.php:274 src/usr/local/www/diag_ping.php:173
 #: src/usr/local/www/diag_traceroute.php:181
 msgid "Results"
-msgstr ""
+msgstr "Sonuçlar"
 
 #: src/usr/local/www/diag_dns.php:280
 msgid "Result"
-msgstr ""
+msgstr "Sonuç"
 
 #: src/usr/local/www/diag_dns.php:281
 msgid "Record type"
-msgstr ""
+msgstr "Kayıt türü"
 
 #: src/usr/local/www/diag_dns.php:298
 msgid "Timings"
-msgstr ""
+msgstr "Zamanlamalar"
 
 #: src/usr/local/www/diag_dns.php:303
 msgid "Name server"
-msgstr ""
+msgstr "Ad sunucusu"
 
 #: src/usr/local/www/diag_dns.php:304
 msgid "Query time"
@@ -8944,7 +8967,7 @@ msgstr "Sorgu zamanı"
 
 #: src/usr/local/www/diag_dns.php:321
 msgid "More Information"
-msgstr ""
+msgstr "Daha fazla bilgi"
 
 #: src/usr/local/www/diag_dns.php:324 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
@@ -9005,12 +9028,12 @@ msgstr "Durumları Sıfırla"
 
 #: src/usr/local/www/diag_dump_states.php:119
 msgid "State Filter"
-msgstr ""
+msgstr "Durum Filtresi"
 
 #: src/usr/local/www/diag_dump_states.php:139
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
-msgstr ""
+msgstr "İfadeyi filtrele "
 
 #: src/usr/local/www/diag_dump_states.php:147
 #: src/usr/local/www/diag_dump_states_sources.php:106
@@ -9025,15 +9048,15 @@ msgstr "Filtre"
 
 #: src/usr/local/www/diag_dump_states.php:160
 msgid "Kill States"
-msgstr ""
+msgstr "Durumları Sonlandır"
 
 #: src/usr/local/www/diag_dump_states.php:166
 msgid "Kill filtered states"
-msgstr ""
+msgstr "Filtrelenmiş durumları sonlandır"
 
 #: src/usr/local/www/diag_dump_states.php:168
 msgid "Remove all states to and from the filtered address"
-msgstr ""
+msgstr "Filtrelenmiş adreslerden ve adreslere olan bütün durumları kaldır"
 
 #: src/usr/local/www/diag_dump_states.php:182
 #: src/usr/local/www/diag_states_summary.php:153
@@ -9061,7 +9084,7 @@ msgstr "Protokol"
 
 #: src/usr/local/www/diag_dump_states.php:183
 msgid "Source (Original Source) -> Destination (Original Destination)"
-msgstr ""
+msgstr "Kaynak (Özgün Kaynak) -> Hedef (Özgün Hedef)"
 
 #: src/usr/local/www/diag_dump_states.php:184
 #: src/usr/local/www/status_dhcpv6_leases.php:539
@@ -9080,11 +9103,11 @@ msgstr "Bayt"
 #: src/usr/local/www/diag_dump_states.php:254
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
-msgstr ""
+msgstr "%1$s'den %2$s'e olan bütün durum girdilerini kaldır."
 
 #: src/usr/local/www/diag_dump_states.php:269
 msgid "No states were found that match the current filter."
-msgstr ""
+msgstr "Geçerli filtreye uyan hiçbir durum bulunamadı."
 
 #: src/usr/local/www/diag_dump_states.php:271
 msgid ""
@@ -9098,11 +9121,11 @@ msgstr "Herhangi bir durum bulunamadı."
 
 #: src/usr/local/www/diag_dump_states_sources.php:93
 msgid "Filters"
-msgstr ""
+msgstr "Filtreler"
 
 #: src/usr/local/www/diag_dump_states_sources.php:115
 msgid "Current Source Tracking Entries"
-msgstr ""
+msgstr "Geçerli Kaynak İzleme Girdileri "
 
 #: src/usr/local/www/diag_dump_states_sources.php:120
 msgid "Source -> Destination"
@@ -10694,8 +10717,8 @@ msgstr "Grup sil"
 #: src/usr/local/www/firewall_aliases.php:271
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_nat.php:465
-#: src/usr/local/www/firewall_nat_1to1.php:236
-#: src/usr/local/www/firewall_nat_1to1.php:240
+#: src/usr/local/www/firewall_nat_1to1.php:243
+#: src/usr/local/www/firewall_nat_1to1.php:247
 #: src/usr/local/www/firewall_nat_npt.php:224
 #: src/usr/local/www/firewall_nat_npt.php:228
 #: src/usr/local/www/firewall_nat_out.php:496
@@ -11298,7 +11321,7 @@ msgid "NAT Ports"
 msgstr "NAT Portları"
 
 #: src/usr/local/www/firewall_nat.php:291
-#: src/usr/local/www/firewall_nat_1to1.php:177
+#: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:295
 #: src/usr/local/www/vpn_ipsec.php:430
@@ -11306,7 +11329,7 @@ msgid "click to toggle enabled/disabled status"
 msgstr "açık/kapalı durumunu değiştirmek için tıklayın"
 
 #: src/usr/local/www/firewall_nat.php:293
-#: src/usr/local/www/firewall_nat_1to1.php:179
+#: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr ""
 
@@ -11325,6 +11348,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat.php:384
 #: src/usr/local/www/firewall_nat.php:401
 #: src/usr/local/www/firewall_nat.php:419
+#: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_rules.php:708
 #: src/usr/local/www/firewall_rules.php:717
 #: src/usr/local/www/firewall_rules.php:726
@@ -11426,70 +11450,70 @@ msgstr ""
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:142
+#: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:150
+#: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
 msgstr "Dış IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:151
+#: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
 msgstr "İç IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:152
+#: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
 msgstr "Hedef IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:218
+#: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:219
+#: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:220
+#: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:234
+#: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:238
+#: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:242
+#: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:246
+#: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:254
+#: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:256
+#: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
 "If a 1:1 NAT entry is added for any of the interface IPs on this system, it "
 "will make this system inaccessible on that IP address. i.e. if the WAN IP "
@@ -11497,7 +11521,7 @@ msgid ""
 "using the WAN IP address will no longer function."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1.php:291
+#: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
@@ -17026,10 +17050,10 @@ msgid "gif tunnel remote netmask"
 msgstr ""
 
 #: src/usr/local/www/interfaces_gif_edit.php:67
-#: src/usr/local/www/interfaces_gre_edit.php:70
 msgid ""
-"The tunnel local and tunnel remote fields must have valid IP addresses."
-msgstr "Yerel ve uzak tünel alanlarına geçerli IP adresleri girilmeli."
+"The tunnel local and tunnel remote fields must have valid IP addresses and "
+"must not contain CIDR masks or prefixes."
+msgstr ""
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -17157,6 +17181,11 @@ msgstr ""
 #: src/usr/local/www/interfaces_gre_edit.php:63
 msgid "Remote tunnel network"
 msgstr "Uzak tünel ağı"
+
+#: src/usr/local/www/interfaces_gre_edit.php:70
+msgid ""
+"The tunnel local and tunnel remote fields must have valid IP addresses."
+msgstr "Yerel ve uzak tünel alanlarına geçerli IP adresleri girilmeli."
 
 #: src/usr/local/www/interfaces_gre_edit.php:74
 msgid "The GRE tunnel subnet must be an integer."
@@ -33834,11 +33863,11 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:175
 msgid "No logs to display"
-msgstr ""
+msgstr "Gösterilecek günlük yok"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:239
 msgid "Number of entries"
-msgstr ""
+msgstr "Girdi sayısı"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:247
 msgid "Filter actions"
@@ -33887,22 +33916,22 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
 msgid "Updating..."
-msgstr ""
+msgstr "Güncelleniyor"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:54
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:127
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:204
 msgid "Name/Time"
-msgstr ""
+msgstr "Ad/Saat"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:55
 msgid "Real/Virtual IP"
-msgstr ""
+msgstr "Gerçek/Sanal IP"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:128
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:205
 msgid "Remote/Virtual IP"
-msgstr ""
+msgstr "Uzak/Sanal IP"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:261
 msgid "No OpenVPN instances defined"
@@ -33985,15 +34014,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:41
 msgid "Current Date/Time"
-msgstr ""
+msgstr "Geçerli Tarih/Saat"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:42
 msgid "DNS Server(s)"
-msgstr ""
+msgstr "DNS suncuları"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:43
 msgid "Last Config Change"
-msgstr ""
+msgstr "Son Yapılandırma Değişikliği"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:44
 msgid "State Table Size"
@@ -34007,27 +34036,27 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:357
 msgid "Temperature"
-msgstr ""
+msgstr "Sıcaklık"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:47
 msgid "Load Average"
-msgstr ""
+msgstr "Yük Ortalaması"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:48
 msgid "CPU Usage"
-msgstr ""
+msgstr "İşlemci Kullanımı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:49
 msgid "Memory Usage"
-msgstr ""
+msgstr "Bellek Kullanımı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:50
 msgid "Swap Usage"
-msgstr ""
+msgstr "Takas Kullanımı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:51
 msgid "Disk Usage"
-msgstr ""
+msgstr "Disk Kullanımı "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
@@ -34036,15 +34065,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
-msgstr ""
+msgstr "<i> Güncelleme kontrol edilemiyor</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:78
 msgid "<i>Error in version information</i>"
-msgstr ""
+msgstr "<i>Sürüm bilgisinde hata</i>"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:89
 msgid "Version "
-msgstr ""
+msgstr "Sürüm"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:90
 msgid "is available."
@@ -34072,7 +34101,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:170
 msgid "Unknown system"
-msgstr ""
+msgstr "Bilinmeyen sistem"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:174
 msgid "Serial: "
@@ -34080,27 +34109,27 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
-msgstr ""
+msgstr "Netgate Aygıt Kimliği:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:201
 msgid "Vendor: "
-msgstr ""
+msgstr "Sağlayıcı:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:204
 msgid "Version: "
-msgstr ""
+msgstr "Sürüm:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:207
 msgid "Release Date: "
-msgstr ""
+msgstr "Çıkış Tarihi:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:223
 msgid "built on"
-msgstr ""
+msgstr "Yapı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:247
 msgid "CPUs"
-msgstr ""
+msgstr "İşlemciler"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:262
 msgid "Hardware crypto"
@@ -34112,11 +34141,11 @@ msgstr "Güncel tarih/saat"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:290
 msgid "DNS server(s)"
-msgstr ""
+msgstr "DNS sunucuları"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:309
 msgid "Last config change"
-msgstr ""
+msgstr "Son yapılandırma değişikliği"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:319
 msgid "State table size"
@@ -34128,15 +34157,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:374
 msgid "Load average"
-msgstr ""
+msgstr "Ortalama yük"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:376
 msgid "Last 1, 5 and 15 minutes"
-msgstr ""
+msgstr "Son 1, 5 ve 15 dakika"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:385
 msgid "CPU usage"
-msgstr ""
+msgstr "İşlemci kullanımı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
@@ -34145,15 +34174,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
-msgstr ""
+msgstr "Bellek kullanımı "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:418
 msgid "SWAP usage"
-msgstr ""
+msgstr "Takas Kullanımı"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
-msgstr ""
+msgstr "Disk Kullanımı "
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
@@ -34177,7 +34206,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:195
 msgid "(Updating...)"
-msgstr ""
+msgstr "(Güncelleniyor...)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Thresholds in"
@@ -34205,19 +34234,19 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:238
 msgid "Display settings:"
-msgstr ""
+msgstr "Görüntü ayarlar:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:242
 msgid "Show raw output"
-msgstr ""
+msgstr "Ham çıktıyı göster"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "(no graph)"
-msgstr ""
+msgstr "(çizelge yok)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:252
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Sensör adını tam göster"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:267
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -34225,7 +34254,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:268
 msgid "section"
-msgstr ""
+msgstr "bölüm"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:76
 msgid "Updated traffic graphs widget settings via dashboard."
@@ -34237,7 +34266,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:153
 msgid "Refresh Interval"
-msgstr ""
+msgstr "Yenileme aralığı"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:160
 msgid "Inverse"
@@ -34245,7 +34274,7 @@ msgstr "Ters"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:177
 msgid "Unit Size"
-msgstr ""
+msgstr "Bizim Boyutu"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:56
 msgid "Saved Wake on LAN Filter via Dashboard."
@@ -34253,15 +34282,15 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
 msgid "Device"
-msgstr ""
+msgstr "Aygıt"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:68
 msgid "Wake"
-msgstr ""
+msgstr "Uyan"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:106
 msgid "Wake up!"
-msgstr ""
+msgstr "Uyan!"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:114
 msgid "All WoL entries are hidden."
@@ -34273,7 +34302,7 @@ msgstr "Kayıtlı WoL (Lan ile Uyan) adresleri yok"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:137
 msgid "DHCP Leases Status"
-msgstr ""
+msgstr "DHCP Kira Durumu"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:154
 msgid "MAC"
@@ -34282,11 +34311,11 @@ msgstr ""
 #: src/usr/local/www/wizard.php:53 src/usr/local/www/wizard.php:65
 #, php-format
 msgid "Could not open %s."
-msgstr ""
+msgstr "%s açılamadı."
 
 #: src/usr/local/www/wizard.php:59
 msgid "Invalid path specified."
-msgstr ""
+msgstr "Geçersiz yol belirtildi. "
 
 #: src/usr/local/www/wizard.php:71
 #, php-format
@@ -34299,7 +34328,7 @@ msgstr ""
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
-msgstr ""
+msgstr "Sihirbaz"
 
 #: src/usr/local/www/wizard.php:418
 #, php-format
@@ -34325,7 +34354,7 @@ msgstr ""
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:57
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:63
 msgid "The number of connections must be specified."
-msgstr ""
+msgstr "Bağlantı sayısı belirtilmeli. "
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:62
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:68
@@ -34448,7 +34477,7 @@ msgstr ""
 
 #: src/usr/local/www/xmlrpc.php:68
 msgid "Authentication failed: Invalid username or password"
-msgstr ""
+msgstr "Yetkilendirme hatası: Geçersiz kullanıcı adı ya da şifre"
 
 #: src/usr/local/www/xmlrpc.php:85
 msgid "Authentication failed: not enough privileges"
@@ -34462,15 +34491,15 @@ msgstr "XMLRPC istemcisinden (%s bölümleri) yapılandırmaya dahil edildi."
 
 #: src/etc/inc/pfsense-utils.inc:305
 msgid "Sort Alphabetically"
-msgstr ""
+msgstr "Ada göre sırala"
 
 #: src/etc/inc/pfsense-utils.inc:340
 msgid "Manage Log"
-msgstr ""
+msgstr "Günlüğü Yönet"
 
 #: src/etc/inc/pfsense-utils.inc:347
 msgid "Monitoring Settings"
-msgstr ""
+msgstr "İzleme Ayarları"
 
 #: src/etc/inc/pfsense-utils.inc:389
 msgid "Disable details in alias popups"
@@ -34490,15 +34519,15 @@ msgstr "Kuyruk Disiplini ve alt öğeleri Aktif/Pasif"
 
 #: src/etc/inc/shaper.inc:2297
 msgid "Upper Limit"
-msgstr ""
+msgstr "Üst Sınır"
 
 #: src/etc/inc/shaper.inc:2330
 msgid "Real Time"
-msgstr ""
+msgstr "Gerçek Zamanlı"
 
 #: src/etc/inc/shaper.inc:2362
 msgid "Link Share"
-msgstr ""
+msgstr "Bağlantı Paylaşımı"
 
 #: src/etc/inc/shaper.inc:2808
 msgid "Borrow from other queues when available"
@@ -34510,7 +34539,7 @@ msgstr "Limitleyici ve Alt Öğeleri Aktif"
 
 #: src/etc/inc/shaper.inc:4139
 msgid "Enable this queue"
-msgstr ""
+msgstr "Bu kuyruğu etkinleştir."
 
 #: src/usr/local/www/diag_backup.php:504
 msgid "Do not backup package information."
@@ -34537,11 +34566,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:406
 msgid "Do reverse DNS lookup"
-msgstr ""
+msgstr "Ters DNS araması yap"
 
 #: src/usr/local/www/diag_pf_info.php:68
 msgid "Automatically refresh the output below"
-msgstr ""
+msgstr "Aşağıdaki çıktıyı otomatik yenile"
 
 #: src/usr/local/www/diag_resetstate.php:97
 msgid "Reset the firewall state table"
@@ -34549,7 +34578,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_resetstate.php:105
 msgid "Reset firewall source tracking"
-msgstr ""
+msgstr "Firewall kaynak izlemeyi sıfırla."
 
 #: src/usr/local/www/diag_smart.php:221
 msgid "Info"
@@ -34561,7 +34590,7 @@ msgstr "Sağlık"
 
 #: src/usr/local/www/diag_smart.php:237
 msgid "S.M.A.R.T. Capabilities"
-msgstr ""
+msgstr "S.M.A.R.T. Yetileri"
 
 #: src/usr/local/www/diag_smart.php:245
 msgid "Attributes"
@@ -34585,7 +34614,7 @@ msgstr "Kendi kendini test"
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
-msgstr ""
+msgstr "Uzak metni göster"
 
 #: src/usr/local/www/firewall_aliases_edit.php:686
 msgid "<span class=\"helptext\">"
@@ -34613,13 +34642,13 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:698
 msgid "Disable redirection for traffic matching this rule"
-msgstr ""
+msgstr "Bu kurala uyan trafik için yönlendirmeyi devre dışı bırak."
 
 #: src/usr/local/www/firewall_nat_edit.php:738
 #: src/usr/local/www/firewall_nat_edit.php:806
 #: src/usr/local/www/firewall_rules_edit.php:1341
 msgid "Invert match."
-msgstr ""
+msgstr "Eşleşmeyi ters çevir."
 
 #: src/usr/local/www/firewall_nat_edit.php:903
 msgid "Do not automatically sync to other CARP members"
@@ -34757,7 +34786,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2776
 msgid "Reset at each hour (\"0 * * * *\")"
-msgstr ""
+msgstr "Her saat başı resetle (\"0 * * * *\")"
 
 #: src/usr/local/www/interfaces.php:2865
 msgid ""
@@ -34823,23 +34852,23 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:789
 msgid "Monthly (0 0 1 * *)"
-msgstr ""
+msgstr "Aylık (0 0 1 * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:797
 msgid "Weekly (0 0 * * 0)"
-msgstr ""
+msgstr "Haftalık (0 0 * * 0)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:805
 msgid "Daily (0 0 * * *)"
-msgstr ""
+msgstr "Günlük (0 0 * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:813
 msgid "Hourly (0 * * * *)"
-msgstr ""
+msgstr "Saatlik (0 * * * *)"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:842
 msgid "Enable Dial-on-Demand mode. "
-msgstr ""
+msgstr "İstenildiğine-Bağlan kipini etkinleştir. "
 
 #: src/usr/local/www/interfaces_ppps_edit.php:859
 msgid "Disable vjcomp (compression, auto-negotiated by default)."
@@ -34962,7 +34991,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:891
 msgid "No updates"
-msgstr ""
+msgstr "Güncelle yok"
 
 #: src/usr/local/www/services_captiveportal.php:899
 msgid "Stop/Start"
@@ -34994,7 +35023,7 @@ msgstr "Acct-Input-Octets ve Acct-Output-Octets ters çevir"
 
 #: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
-msgstr ""
+msgstr "Oturum zamanına, boşta zamanını ekle"
 
 #: src/usr/local/www/services_captiveportal.php:1020
 msgid "Enable HTTPS login"
@@ -35010,15 +35039,15 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:857
 msgid "Ignore BOOTP queries"
-msgstr ""
+msgstr "BOOTP sorgularını gözardı et. "
 
 #: src/usr/local/www/services_dhcp.php:864
 msgid "Only the clients defined below will get DHCP leases from this server."
-msgstr ""
+msgstr "Sadece aşağıda tanımlı olan istemciler DHCP kirası alacak."
 
 #: src/usr/local/www/services_dhcp.php:871
 msgid "Denied clients will be ignored rather than rejected."
-msgstr ""
+msgstr "Engellenen istemciler, ret yerine gözardı edilecek. "
 
 #: src/usr/local/www/services_dhcp.php:878
 msgid ""
@@ -35032,15 +35061,15 @@ msgstr "Statik ARP girdilerini etkinleştir"
 
 #: src/usr/local/www/services_dhcp.php:1064
 msgid "Change DHCP display lease time from UTC to local time"
-msgstr ""
+msgstr "DHCP kira zamanlarını UTC saatinden yerel saate çevir. "
 
 #: src/usr/local/www/services_dhcp.php:1071
 msgid "Enable RRD statistics graphs"
-msgstr ""
+msgstr "RRD istatistik çizimlerini etkinleştir."
 
 #: src/usr/local/www/services_dhcp.php:1094
 msgid "Enable registration of DHCP client names in DNS"
-msgstr ""
+msgstr "DHCP istemci adlarını DNS içinde kayıtlarını etkinleştir. "
 
 #: src/usr/local/www/services_dhcp.php:1109
 #: src/usr/local/www/services_dhcpv6.php:794
@@ -35051,7 +35080,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1254
 msgid "Enables network booting"
-msgstr ""
+msgstr "Ağdan başlatmayı etkinteştir. "
 
 #: src/usr/local/www/services_dhcp.php:1316
 msgid "<div class=\"alert alert-info\"> "
@@ -35081,11 +35110,11 @@ msgstr "İsteklere devre ve uygulama kimliklerini ekle"
 
 #: src/usr/local/www/services_dhcpv6.php:605
 msgid "Enable DHCPv6 server on interface "
-msgstr ""
+msgstr "DHCPv6 sunucusunu bu arayüzde etkinleştir."
 
 #: src/usr/local/www/services_dhcpv6.php:624
 msgid " bits"
-msgstr ""
+msgstr "bitler"
 
 #: src/usr/local/www/services_dhcpv6.php:629
 msgid " to "
@@ -35694,11 +35723,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:191
 msgid "Enable IPv6 over IPv4 tunneling"
-msgstr ""
+msgstr "IPv4 tünelleme üzerinden IPv6'yı etkinleştir. "
 
 #: src/usr/local/www/system_advanced_network.php:207
 msgid "Prefer to use IPv4 even if IPv6 is available"
-msgstr ""
+msgstr "IPv6 kullanılabilir olduğunda bile IPv4'ü tercih et"
 
 #: src/usr/local/www/system_advanced_network.php:215
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
@@ -35730,7 +35759,7 @@ msgstr "Smtp Bildirimlerini kapat"
 
 #: src/usr/local/www/system_advanced_notifications.php:258
 msgid "Enable SMTP over SSL/TLS"
-msgstr ""
+msgstr "SSL/TLS üzerinden STMP'yi etkinleştir"
 
 #: src/usr/local/www/system_advanced_notifications.php:316
 msgid "Disable the startup/shutdown beep"
@@ -35738,7 +35767,7 @@ msgstr "Başlangıç/Kapanış sesini kapat"
 
 #: src/usr/local/www/system_advanced_notifications.php:328
 msgid "Disable Growl Notifications"
-msgstr ""
+msgstr "Bildirimleri Devre Dışı Bırak"
 
 #: src/usr/local/www/system_authservers.php:539
 msgid ""
@@ -35803,7 +35832,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways_edit.php:238
 msgid "Mark Gateway as Down"
-msgstr ""
+msgstr "Ağ geçidini Çalışmıyor olarak İşaretle"
 
 #: src/usr/local/www/system_gateways_edit.php:410
 msgid "Use non-local gateway through interface specific route."
@@ -35846,7 +35875,7 @@ msgstr "NAT yapılandırması"
 
 #: src/usr/local/www/system_hasync.php:241
 msgid "IPsec configuration "
-msgstr ""
+msgstr "IPsec yapılandırması"
 
 #: src/usr/local/www/system_hasync.php:249
 msgid "OpenVPN configuration "
@@ -35895,10 +35924,11 @@ msgstr "Bu statik yönlendirmeyi kapat"
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the automatic dashboard auto-update check"
 msgstr ""
+"Otomatik gösterge paneli kendinden-güncelleme kontrolünü devre dışı bırak."
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
-msgstr ""
+msgstr "Yeniden başlatmadan önce depo/bölüm eşzamanlamasını etkinleştir. "
 
 #: src/usr/local/www/system_update_settings.php:219
 msgid "Minimal"
@@ -35914,7 +35944,7 @@ msgstr "Komut İstemini Göster"
 
 #: src/usr/local/www/system_update_settings.php:247
 msgid "Dry Run"
-msgstr ""
+msgstr "Sınama Yap"
 
 #: src/usr/local/www/system_usermanager.php:738
 msgid "This user cannot login"
@@ -35924,6 +35954,8 @@ msgstr "Bu kullanıcı giriş yapamıyor"
 msgid ""
 "Use individual customized GUI options and dashboard layout for this user."
 msgstr ""
+"Bu kullanıcı için bireysel özelleştirilmiş GUI seçenekleri ve gösterge "
+"paneli düzeni kullan."
 
 #: src/usr/local/www/system_usermanager.php:871
 msgid "Click to create a user certificate"
@@ -35945,7 +35977,7 @@ msgstr "İstemcilere sanal IP sağla"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:511
 msgid "Provide a virtual IPv6 address to clients"
-msgstr ""
+msgstr "İstemcilere sanal IPv6 adresi kullan"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:548
 msgid "Provide a list of accessible networks to clients"
@@ -35999,6 +36031,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:851
 msgid "Disables renegotiation when a connection is about to expire."
 msgstr ""
+"Bağlantının süresi dolmak üzereyken yeniden el sıkışmayı devre dışı bırakır"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:865
 msgid ""
@@ -36157,7 +36190,7 @@ msgstr "Köprüdeki istemcilerin DHCP den yararlanmasına izin ver."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
-msgstr ""
+msgstr "Bağlanan istemcilere seçili Sıkıştırma ayarını zorla."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"

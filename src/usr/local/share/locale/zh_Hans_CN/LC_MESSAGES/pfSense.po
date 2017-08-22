@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 08:37-0300\n"
+"POT-Creation-Date: 2017-08-22 14:14-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1175,7 +1175,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "动态DNS已将%1$s (%2$s) 上的IP地址更新为%3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2712 src/etc/inc/services.inc:2724
+#: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "php 动态DNS：更新缓存文件%1$s: %2$s"
@@ -1649,9 +1649,9 @@ msgstr "过滤器已禁用。未加载规则。"
 #: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
 #: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
 #: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
-#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2284
-#: src/etc/inc/services.inc:2510 src/etc/inc/system.inc:1257
+#: src/etc/inc/services.inc:1600 src/etc/inc/services.inc:2003
+#: src/etc/inc/services.inc:2220 src/etc/inc/services.inc:2288
+#: src/etc/inc/services.inc:2514 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
@@ -2115,7 +2115,7 @@ msgstr "更新网关组网关%1$s 为新网关 %2$s"
 #: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
-#: src/usr/local/www/firewall_nat_1to1.php:149
+#: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -2947,7 +2947,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "移动客户端"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3578,39 +3578,43 @@ msgid "English"
 msgstr "英语"
 
 #: src/etc/inc/pfsense-utils.inc:2945
+msgid "French"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
 msgstr "德语"
 
-#: src/etc/inc/pfsense-utils.inc:2946
+#: src/etc/inc/pfsense-utils.inc:2947
 msgid "Norwegian Bokmål"
 msgstr "挪威博克马尔"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
 msgstr "葡萄牙"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
 msgstr "俄语"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
 msgstr "西班牙"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
 msgstr "西班牙语（阿根廷）"
 
-#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "No Service"
 msgstr "无服务"
 
-#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3200
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3626,83 +3630,83 @@ msgstr "无服务"
 msgid "Mode"
 msgstr "模式"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
 msgstr "受限服务"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
 msgstr "有效服务"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Restricted Regional Service"
 msgstr "受限区域服务"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Powersaving Service"
 msgstr "节能服务"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
 msgstr "未知服务"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
 msgstr "无效的 SIM/处于锁定状态"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
 msgstr "有效的SIM卡状态"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
 msgstr "无效的 SIM CS 状态"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
 msgstr "无效的 SIM PS 状态"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
 msgstr "无效的 SIM CS/PS 状态"
 
-#: src/etc/inc/pfsense-utils.inc:3177
+#: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
 msgstr "缺少SIM状态"
 
-#: src/etc/inc/pfsense-utils.inc:3188
+#: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
 msgstr "有限服务"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Initializing Service"
 msgstr "初始化服务"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Lock error Service"
 msgstr "网络锁定错误服务"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Network Locked Service"
 msgstr "网络锁定服务"
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "已解锁或正确的MCC / MNC服务"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "No action State"
 msgstr "无操作状态"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network lock State"
 msgstr "网络锁状态"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM卡锁定状态"
 
-#: src/etc/inc/pfsense-utils.inc:3216
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "网络锁定和SIM卡锁定状态"
 
@@ -6098,114 +6102,114 @@ msgstr "DHCP地址池无效 %1$s -  检测到 %3$s 子网%4$s/%5$s的%2$s， 请
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr "错误：无法在services_dhcpdv4_configure().%s中打开dhcpd.conf"
 
-#: src/etc/inc/services.inc:1649
+#: src/etc/inc/services.inc:1653
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "无法写入Igmpproxy配置文件！"
 
-#: src/etc/inc/services.inc:1662
+#: src/etc/inc/services.inc:1666
 msgid "Started IGMP proxy service."
 msgstr "启动IGMP代理服务。"
 
-#: src/etc/inc/services.inc:1686
+#: src/etc/inc/services.inc:1690
 msgid "Starting DHCP relay service..."
 msgstr "正在启动DHCP中继服务..."
 
-#: src/etc/inc/services.inc:1711
+#: src/etc/inc/services.inc:1715
 msgid "No destination IP has been configured!"
 msgstr "未配置目标IP！"
 
-#: src/etc/inc/services.inc:1785
+#: src/etc/inc/services.inc:1789
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "没有找到合适的接口运行dhcrelay！"
 
-#: src/etc/inc/services.inc:1821
+#: src/etc/inc/services.inc:1825
 msgid "Starting DHCPv6 relay service..."
 msgstr "正在启动DHCPv6中继服务..."
 
-#: src/etc/inc/services.inc:1912
+#: src/etc/inc/services.inc:1916
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "找不到合适的接口运行dhcrelay -6！"
 
-#: src/etc/inc/services.inc:1973
+#: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
 msgstr "正在启动DynDNS客户端..."
 
-#: src/etc/inc/services.inc:2079
+#: src/etc/inc/services.inc:2083
 msgid "Starting DNS forwarder..."
 msgstr "正在启动DNS转发器..."
 
-#: src/etc/inc/services.inc:2254
+#: src/etc/inc/services.inc:2258
 msgid "Starting DNS Resolver..."
 msgstr "正在启动DNS解析器..."
 
-#: src/etc/inc/services.inc:2270
+#: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
 msgstr "Unbound 在dhcp6c上开始等待。"
 
-#: src/etc/inc/services.inc:2274
+#: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
 msgstr "dhcp6 init 完成。继续"
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
 msgstr "同步unbound完成。"
 
-#: src/etc/inc/services.inc:2321
+#: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
 msgstr "启动SNMP守护程序..."
 
-#: src/etc/inc/services.inc:2332
+#: src/etc/inc/services.inc:2336
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "错误：无法在services_snmpd_configure()%s中打开snmpd.conf"
 
-#: src/etc/inc/services.inc:2661
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr "phpDynDNS: 不更新 %s 记录，因为IP地址未更改。"
 
-#: src/etc/inc/services.inc:2680
+#: src/etc/inc/services.inc:2684
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
 "changed."
 msgstr "phpDynDNS: 不更新%s AAAA记录，因为IPv6地址未更改。"
 
-#: src/etc/inc/services.inc:2715
+#: src/etc/inc/services.inc:2719
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "动态DNS将%2$s (%3$s)上的%1$s的IP地址（A）更新为％ %4$s"
 
-#: src/etc/inc/services.inc:2727
+#: src/etc/inc/services.inc:2731
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS已将%2$s (%3$s) 上的%1$s的IPv6地址（AAAA）更新为%4$s"
 
-#: src/etc/inc/services.inc:2735
+#: src/etc/inc/services.inc:2739
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr "phpDynDNS: 在更新 %1$s的IP地址（A）时发生错误 (%2$s)"
 
-#: src/etc/inc/services.inc:2740
+#: src/etc/inc/services.inc:2744
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr "phpDynDNS: 在更新 %1$s的IP地址（AAAA）时发生错误 (%2$s)"
 
-#: src/etc/inc/services.inc:2774
+#: src/etc/inc/services.inc:2778
 msgid "Created:"
 msgstr "创建："
 
-#: src/etc/inc/services.inc:2800
+#: src/etc/inc/services.inc:2804
 msgid "If possible do not add items to this file manually."
 msgstr "如果可能，请不要手动将项目添加到这个文件。"
 
-#: src/etc/inc/services.inc:2801
+#: src/etc/inc/services.inc:2805
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr "如果这样做，此文件必须以空行终止（例如，新行）"
 
-#: src/etc/inc/services.inc:2851
+#: src/etc/inc/services.inc:2855
 msgid "Starting UPnP service... "
 msgstr "正在启动UPnP服务..."
 
@@ -6403,7 +6407,7 @@ msgstr "选择此队列的选项"
 #: src/usr/local/www/firewall_aliases_edit.php:726
 #: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:232
-#: src/usr/local/www/firewall_nat_1to1.php:153
+#: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
@@ -6696,7 +6700,7 @@ msgstr "延迟必须为整数。"
 
 #: src/etc/inc/shaper.inc:3790 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
-#: src/usr/local/www/firewall_nat_1to1.php:244
+#: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/firewall_nat_npt.php:232
 #: src/usr/local/www/firewall_nat_out.php:504
 #: src/usr/local/www/firewall_rules.php:829
@@ -7659,7 +7663,7 @@ msgstr "确认"
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
-#: src/usr/local/www/firewall_nat_1to1.php:248
+#: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/firewall_nat_npt.php:236
 #: src/usr/local/www/firewall_nat_out.php:508
 #: src/usr/local/www/firewall_rules.php:833
@@ -7835,7 +7839,7 @@ msgstr "链接类型"
 #: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
-#: src/usr/local/www/firewall_nat_1to1.php:154
+#: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/firewall_nat_npt.php:152
 #: src/usr/local/www/firewall_nat_out.php:288
 #: src/usr/local/www/firewall_rules.php:391
@@ -10590,8 +10594,8 @@ msgstr "删除别名"
 #: src/usr/local/www/firewall_aliases.php:271
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_nat.php:465
-#: src/usr/local/www/firewall_nat_1to1.php:236
-#: src/usr/local/www/firewall_nat_1to1.php:240
+#: src/usr/local/www/firewall_nat_1to1.php:243
+#: src/usr/local/www/firewall_nat_1to1.php:247
 #: src/usr/local/www/firewall_nat_npt.php:224
 #: src/usr/local/www/firewall_nat_npt.php:228
 #: src/usr/local/www/firewall_nat_out.php:496
@@ -11202,7 +11206,7 @@ msgid "NAT Ports"
 msgstr "映射端口"
 
 #: src/usr/local/www/firewall_nat.php:291
-#: src/usr/local/www/firewall_nat_1to1.php:177
+#: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:295
 #: src/usr/local/www/vpn_ipsec.php:430
@@ -11210,7 +11214,7 @@ msgid "click to toggle enabled/disabled status"
 msgstr "点击切换启用/禁用状态"
 
 #: src/usr/local/www/firewall_nat.php:293
-#: src/usr/local/www/firewall_nat_1to1.php:179
+#: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr "Negated：此规则将NAT从稍后的规则中排除"
 
@@ -11229,6 +11233,7 @@ msgstr "防火墙规则ID %s 由此规则管理"
 #: src/usr/local/www/firewall_nat.php:384
 #: src/usr/local/www/firewall_nat.php:401
 #: src/usr/local/www/firewall_nat.php:419
+#: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_rules.php:708
 #: src/usr/local/www/firewall_rules.php:717
 #: src/usr/local/www/firewall_rules.php:726
@@ -11330,70 +11335,70 @@ msgstr "防火墙: NAT: 1:1 - 已启用NAT 1：1映射规则。"
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
 msgstr "防火墙: NAT: 1:1 - 已禁用NAT 1：1映射规则。"
 
-#: src/usr/local/www/firewall_nat_1to1.php:142
+#: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
 msgstr "NAT 1：1映射"
 
-#: src/usr/local/www/firewall_nat_1to1.php:150
+#: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
 msgstr "外部IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:151
+#: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
 msgstr "内部IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:152
+#: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
 msgstr "目的IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:218
+#: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
 msgstr "编辑映射"
 
-#: src/usr/local/www/firewall_nat_1to1.php:219
+#: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
 msgstr "基于这个添加一个新的映射"
 
-#: src/usr/local/www/firewall_nat_1to1.php:220
+#: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
 msgstr "删除映射"
 
-#: src/usr/local/www/firewall_nat_1to1.php:234
+#: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
 msgstr "将映射添加到列表顶部"
 
-#: src/usr/local/www/firewall_nat_1to1.php:238
+#: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
 msgstr "将映射添加到列表的结尾"
 
-#: src/usr/local/www/firewall_nat_1to1.php:242
+#: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
 msgstr "删除选定的映射"
 
-#: src/usr/local/www/firewall_nat_1to1.php:246
+#: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
 msgstr "保存映射顺序"
 
-#: src/usr/local/www/firewall_nat_1to1.php:254
+#: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr "根据WAN连接的设置方式，这可能需要一个%1$s虚拟IP%2$s。"
 
-#: src/usr/local/www/firewall_nat_1to1.php:256
+#: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
 "If a 1:1 NAT entry is added for any of the interface IPs on this system, it "
 "will make this system inaccessible on that IP address. i.e. if the WAN IP "
@@ -11403,7 +11408,7 @@ msgstr ""
 "如果为此系统上的任何接口IP添加1：1 NAT条目，将使该系统在该IP地址上不可访问。 即如果使用WAN IP地址，则使用WAN "
 "IP地址的该系统（IPsec，OpenVPN服务器等）上的任何服务将不再起作用。"
 
-#: src/usr/local/www/firewall_nat_1to1.php:291
+#: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr "一个或多个NAT 1：1映射已移动，但尚未保存"
@@ -16917,10 +16922,10 @@ msgid "gif tunnel remote netmask"
 msgstr "GIF 隧道远程子网"
 
 #: src/usr/local/www/interfaces_gif_edit.php:67
-#: src/usr/local/www/interfaces_gre_edit.php:70
 msgid ""
-"The tunnel local and tunnel remote fields must have valid IP addresses."
-msgstr "隧道本地和隧道远程字段必须具有有效的IP地址。"
+"The tunnel local and tunnel remote fields must have valid IP addresses and "
+"must not contain CIDR masks or prefixes."
+msgstr ""
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -17047,6 +17052,11 @@ msgstr "远程隧道 IP地址"
 #: src/usr/local/www/interfaces_gre_edit.php:63
 msgid "Remote tunnel network"
 msgstr "远程隧道网络"
+
+#: src/usr/local/www/interfaces_gre_edit.php:70
+msgid ""
+"The tunnel local and tunnel remote fields must have valid IP addresses."
+msgstr "隧道本地和隧道远程字段必须具有有效的IP地址。"
 
 #: src/usr/local/www/interfaces_gre_edit.php:74
 msgid "The GRE tunnel subnet must be an integer."

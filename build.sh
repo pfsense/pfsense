@@ -69,7 +69,7 @@ usage() {
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
-	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
+	echo "		--snapshots - Build snapshots"
 	echo "		--poudriere-snapshots - Update poudriere packages and send them to PKG_RSYNC_HOSTNAME"
 	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
 	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
@@ -78,7 +78,7 @@ usage() {
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
 	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
 	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
-	echo "		--do-not-upload|-u - Do not upload pkgs or snapshots"
+	echo "		--upload|-U - Upload pkgs and/or snapshots"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -90,7 +90,7 @@ unset _SKIP_REBUILD_PRESTAGE
 unset _USE_OLD_DATESTRING
 unset pfPORTTOBUILD
 unset IMAGETYPE
-unset DO_NOT_UPLOAD
+unset UPLOAD
 unset SNAPSHOTS
 unset POUDRIERE_SNAPSHOTS
 unset ARCH_LIST
@@ -204,8 +204,8 @@ while test "$1" != ""; do
 		--update-pkg-repo)
 			BUILDACTION="update_pkg_repo"
 			;;
-		--do-not-upload|-u)
-			export DO_NOT_UPLOAD=1
+		--upload|-U)
+			export UPLOAD=1
 			;;
 		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
 			BUILDACTION="images"
@@ -305,7 +305,7 @@ case $BUILDACTION in
 		snapshots_scp_files
 	;;
 	update_pkg_repo)
-		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
+		if [ -n "${UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
 			echo "ERROR: rsync is not installed, aborting..."
 			exit 1
 		fi
@@ -321,7 +321,7 @@ if [ "${BUILDACTION}" != "images" ]; then
 	exit 0
 fi
 
-if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
+if [ -n "${SNAPSHOTS}" -a -n "${UPLOAD}" ]; then
 	_required=" \
 		RSYNCIP \
 		RSYNCUSER \
@@ -525,13 +525,13 @@ if [ -n "${_bg_pids}" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" ]; then
-	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
+	if [ "${IMAGETYPE}" = "none" -a -n "${UPLOAD}" ]; then
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	elif [ "${IMAGETYPE}" != "none" ]; then
 		snapshots_copy_to_staging_iso_updates
 		snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
 		# SCP files to snapshot web hosting area
-		if [ -z "${DO_NOT_UPLOAD}" ]; then
+		if [ -n "${UPLOAD}" ]; then
 			snapshots_scp_files
 		fi
 	fi

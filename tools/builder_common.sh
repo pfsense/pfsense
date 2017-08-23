@@ -2020,7 +2020,7 @@ pkg_repo_rsync() {
 		fi
 	fi
 
-	if [ -n "${DO_NOT_UPLOAD}" ]; then
+	if [ -z "${UPLOAD}" ]; then
 		return
 	fi
 
@@ -2438,7 +2438,7 @@ poudriere_bulk() {
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
-	if [ -z "${DO_NOT_UPLOAD}" -a -z "${PKG_RSYNC_HOSTNAME}" ]; then
+	if [ -n "${UPLOAD}" -a -z "${PKG_RSYNC_HOSTNAME}" ]; then
 		echo ">>> ERROR: PKG_RSYNC_HOSTNAME is not set"
 		print_error_pfS
 	fi

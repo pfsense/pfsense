@@ -24,7 +24,7 @@ usage() {
 	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
 	echo "	-r: Do not reset local changes"
-	echo "	-u: Do not upload snapshots"
+	echo "	-U: Upload snapshots"
 }
 
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
@@ -32,7 +32,7 @@ export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
 IMAGES="all"
 NO_RESET=""
-NO_UPLOAD=""
+UPLOAD=""
 LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
@@ -52,7 +52,7 @@ while getopts lnpru opt; do
 			NO_RESET=1
 			;;
 		u)
-			NO_UPLOAD="-u"
+			UPLOAD="-U"
 			;;
 		*)
 			usage
@@ -76,7 +76,7 @@ export COUNTER=0
 export _sleeping=0
 
 snapshot_update_status() {
-	${BUILDER_ROOT}/build.sh ${NO_UPLOAD} ${POUDRIERE_SNAPSHOTS} \
+	${BUILDER_ROOT}/build.sh ${UPLOAD} ${POUDRIERE_SNAPSHOTS} \
 		--snapshot-update-status "$*"
 }
 
@@ -189,7 +189,7 @@ while [ /bin/true ]; do
 
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
-			    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
+			    ${BUILDER_ROOT}/build.sh ${UPLOAD} \
 			    --update-pkg-repo
 			rc=$?
 		fi
@@ -200,7 +200,7 @@ while [ /bin/true ]; do
 
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
-			    ${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --snapshots \
+			    ${BUILDER_ROOT}/build.sh ${UPLOAD} --snapshots \
 			    ${IMAGES}
 			rc=$?
 		fi

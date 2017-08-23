@@ -65,11 +65,11 @@ function print_details($cpent) {
 		$last_act = $last_act ? $last_act : $cpent[0];
 
 		$idle_time = time() - $last_act;
-		printf(gettext("Idle time: %s") . "<br>", convert_seconds_to_dhms($idle_time));
+		printf(gettext("Idle time: %s") . "<br>", convert_seconds_to_dhms((int)$idle_time));
 
 		if (!empty($cpent[8])) {
 			$idle_time_left = $last_act + $cpent[8] - time();
-			printf(gettext("Idle time left: %s") . "<br>", convert_seconds_to_dhms($idle_time_left));
+			printf(gettext("Idle time left: %s") . "<br>", convert_seconds_to_dhms((int)$idle_time_left));
 		}
 	}
 

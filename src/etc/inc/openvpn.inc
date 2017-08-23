@@ -124,7 +124,7 @@ global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
 	'' => gettext("Omit Preference (Use OpenVPN Default)"),
 	'lz4' => gettext("LZ4 Compression [compress lz4]"),
-	'lz4-v2' => gettext("LZ4 Comression v2 [compress lz4-v2]"),
+	'lz4-v2' => gettext("LZ4 Compression v2 [compress lz4-v2]"),
 	'lzo' => gettext("LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"),
 	'stub' => gettext("Enable Compression (stub) [compress]"),
 	'noadapt' => gettext("Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-noadapt]"),

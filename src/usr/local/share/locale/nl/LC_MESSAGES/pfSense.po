@@ -23,11 +23,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 08:37-0300\n"
+"POT-Creation-Date: 2017-08-22 14:14-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-21 07:19-0400\n"
+"PO-Revision-Date: 2017-08-22 12:30-0400\n"
 "Last-Translator: Hijmen <zanata@hijmen.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -343,7 +343,7 @@ msgstr "Fout : kan '%1$s' niet openen in captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
-msgstr "Toegansprotaal toegestane gebruikers instellingen aangepast"
+msgstr "Toegansprotaal toegestane gebruikers configuratie aangepast"
 
 #: src/etc/inc/certs.inc:44
 msgid "FQDN or Hostname"
@@ -480,7 +480,7 @@ msgstr "Wilt u het LAN IP adres verwijderen en de interface nu stoppen [y|n]?"
 #: src/etc/inc/config.console.inc:370
 #, php-format
 msgid "%sWriting configuration..."
-msgstr "%sSchrijven configuratie..."
+msgstr "%sWegschrijven configuratie..."
 
 #: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
@@ -621,7 +621,7 @@ msgstr "Kon geen werkbaar configuratie bestand vinden. Wordt afgesloten...."
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
-"Begin configuratie upgraden %s, stel de uitvoering time-out naar 15 minuten "
+"Begin configuratie upgrade om %s, stel de uitvoering time-out op 15 minuten "
 "in"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
@@ -631,7 +631,7 @@ msgstr "Bogon update frequentie ingesteld op 03:00"
 #: src/etc/inc/config.lib.inc:389
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Configuratie upgrade gestopt op %s"
+msgstr "Configuratie upgrade afgerond om %s"
 
 #: src/etc/inc/config.lib.inc:391
 #, php-format
@@ -644,13 +644,13 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
-"Configuratie opslaan toegang is geweigerd door de 'Gebruiker - Configuratie: "
-"Verbied Schrijven Configuratie' rechten voor gebruiker '%s'."
+"Toegang tot Configuratie opslaan is geweigerd door de 'Gebruiker - "
+"Configuratie: Verbied Schrijven Configuratie' rechten voor gebruiker '%s'."
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
-"Waarschuwing: Configuratie inhoud kon niet worden opgeslagen. Het bestand "
+"WAARSCHUWING: Configuratie inhoud kon niet worden opgeslagen. Het bestand "
 "kon niet worden geopend!"
 
 #: src/etc/inc/config.lib.inc:504
@@ -1275,7 +1275,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS heeft IP Adres  %1$s (%2$s) bijgewerkt naar %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2712 src/etc/inc/services.inc:2724
+#: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: heeft cache bestand %1$s: %2$s bijgewerkt"
@@ -1757,9 +1757,9 @@ msgstr "Filter is uitgeschakeld. Geen regels aan het laden."
 #: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
 #: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
 #: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
-#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2284
-#: src/etc/inc/services.inc:2510 src/etc/inc/system.inc:1257
+#: src/etc/inc/services.inc:1600 src/etc/inc/services.inc:2003
+#: src/etc/inc/services.inc:2220 src/etc/inc/services.inc:2288
+#: src/etc/inc/services.inc:2514 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
@@ -2245,7 +2245,7 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
-#: src/usr/local/www/firewall_nat_1to1.php:149
+#: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -2546,7 +2546,7 @@ msgstr "VLAN: aangeroepen met verkeerde opties. Probleem met configuratie!"
 
 #: src/etc/inc/interfaces.inc:235
 msgid "interface_vlan_configure called with if undefined."
-msgstr "interface_vlan_configure aangeroepen met if ongedefineerd."
+msgstr "interface_vlan_configure aangeroepen met ongedefinieerde if."
 
 #: src/etc/inc/interfaces.inc:281 src/etc/inc/interfaces.inc:376
 #, php-format
@@ -2558,7 +2558,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:288
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
-msgstr "interface_qinq_configure aangeroepen met if ongedefineerd.%s"
+msgstr "interface_qinq_configure aangeroepen met ongedefinieerde if.%s"
 
 #: src/etc/inc/interfaces.inc:293
 #, php-format
@@ -2572,7 +2572,7 @@ msgstr "Configureren QinQ interfaces..."
 #: src/etc/inc/interfaces.inc:384
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
-msgstr "interface_qinq2_configure aangeroepen met if ongedefineerd.%s"
+msgstr "interface_qinq2_configure aangeroepen met ongedefinieerde if.%s"
 
 #: src/etc/inc/interfaces.inc:405
 msgid "Creating wireless clone interfaces..."
@@ -2776,7 +2776,7 @@ msgstr "Er is een conflict met de MTU tussen bovenliggende %1$s en VLAN(%2$s)"
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "Aanroepen van interface_dhcpv6_configure."
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
@@ -2795,8 +2795,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
-"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet geldig, "
-"overslaan van configureren als 6RD tunnel"
+"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet geldig, 6RD "
+"tunnel niet geconfigureerd"
 
 #: src/etc/inc/interfaces.inc:3756
 #, php-format
@@ -2810,8 +2810,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
-"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet publiek, "
-"overslaan van configureren als 6RD tunnel"
+"Het interface IPv4 '%1$s' adres op interface '%2$s' is niet publiek, 6RD "
+"tunnel niet geconfigureerd"
 
 #: src/etc/inc/interfaces.inc:3816
 #, php-format
@@ -3139,7 +3139,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiele Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3803,39 +3803,43 @@ msgid "English"
 msgstr "Engels"
 
 #: src/etc/inc/pfsense-utils.inc:2945
+msgid "French"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
 msgstr "Duits (Duitsland)"
 
-#: src/etc/inc/pfsense-utils.inc:2946
+#: src/etc/inc/pfsense-utils.inc:2947
 msgid "Norwegian Bokmål"
 msgstr "Noorweegse Bokmål"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
 msgstr "Portugees (Braziliaans)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
 msgstr "Russich"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
 msgstr "Spaans"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
 msgstr "Spaans (Argentinie)"
 
-#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "No Service"
 msgstr "Geen Service"
 
-#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3200
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3851,83 +3855,83 @@ msgstr "Geen Service"
 msgid "Mode"
 msgstr "Mode"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
 msgstr "Beperkte Service"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
 msgstr "Geldige Service"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Restricted Regional Service"
 msgstr "Beperkte Regionale Service"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Powersaving Service"
 msgstr "Zuinige Service"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
 msgstr "Onbekende Service"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
 msgstr "Ongeldige SIM/vergrendeld Status"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
 msgstr "Geldige SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
 msgstr "Ongeldige SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
 msgstr "Ongeldige SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
 msgstr "Ongeldige SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3177
+#: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
 msgstr "Ontbrekende SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3188
+#: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
 msgstr "Beperkte Service"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Initializing Service"
 msgstr "Initializeren van Service"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Lock error Service"
 msgstr "Netwerk Vergrendeld fout Service"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Network Locked Service"
 msgstr "Netwerk Vergrendeld Service"
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Ontgrendeld of correcte MCC/MNC Service"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "No action State"
 msgstr "Geen actie Status"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network lock State"
 msgstr "Netwerk vergendelstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM kaart vergrendelstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3216
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Netwerk Vergrendel en (U)SIM kaart vergrendel Status"
 
@@ -4671,11 +4675,11 @@ msgstr "Sta toegang toe tot de 'Firewall: Aliassen' pagina."
 
 #: src/etc/inc/priv.defs.inc:216
 msgid "WebCfg - Firewall: Alias: Edit"
-msgstr "WebCfg - Firewall: Alias: Bewerk"
+msgstr "WebCfg - Firewall: Alias: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:217
 msgid "Allow access to the 'Firewall: Alias: Edit' page."
-msgstr "Sta toegang toe tot de 'Firewall: Alias: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Firewall: Alias: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:222
 msgid "WebCfg - Firewall: Alias: Import"
@@ -4703,20 +4707,20 @@ msgstr "Sta toegang toe tot de 'Firewall: NAT: 1:1' pagina."
 
 #: src/etc/inc/priv.defs.inc:240
 msgid "WebCfg - Firewall: NAT: 1:1: Edit"
-msgstr "WebCfg - Firewall: NAT: 1:1: Bewerk"
+msgstr "WebCfg - Firewall: NAT: 1:1: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:241
 msgid "Allow access to the 'Firewall: NAT: 1:1: Edit' page."
-msgstr "Sta toegang toe tot de 'Firewall: NAT: 1:1: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Firewall: NAT: 1:1: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:246
 msgid "WebCfg - Firewall: NAT: Port Forward: Edit"
-msgstr "WebCfg - Firewall: NAT: Poort Doorsturen: Bewerk"
+msgstr "WebCfg - Firewall: NAT: Poort Doorsturen: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:247
 msgid "Allow access to the 'Firewall: NAT: Port Forward: Edit' page."
 msgstr ""
-"Sta toegang toe tot de 'Firewall: NAT: Poort Doorsturen: Bewerk' pagina."
+"Sta toegang toe tot de 'Firewall: NAT: Poort Doorsturen: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:252
 msgid "WebCfg - Firewall: NAT: NPt"
@@ -4728,11 +4732,11 @@ msgstr "Sta toegang toe tot de 'Firewall: NAT: NPt' pagina."
 
 #: src/etc/inc/priv.defs.inc:258
 msgid "WebCfg - Firewall: NAT: NPt: Edit"
-msgstr "WebCfg - Firewall: NAT: NPt: Bewerk"
+msgstr "WebCfg - Firewall: NAT: NPt: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:259
 msgid "Allow access to the 'Firewall: NAT: NPt: Edit' page."
-msgstr "Sta toegang toe tot de 'Firewall: NAT: NPt: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Firewall: NAT: NPt: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:264
 msgid "WebCfg - Firewall: NAT: Outbound"
@@ -4744,11 +4748,11 @@ msgstr "Sta toegang toe tot de 'Firewall: NAT: Uitgaand' pagina."
 
 #: src/etc/inc/priv.defs.inc:270
 msgid "WebCfg - Firewall: NAT: Outbound: Edit"
-msgstr "WebCfg - Firewall: NAT: Uitgaand: Bewerk"
+msgstr "WebCfg - Firewall: NAT: Uitgaand: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:271
 msgid "Allow access to the 'Firewall: NAT: Outbound: Edit' page."
-msgstr "Sta toegang toe tot de 'Firewall: NAT: Uitgaand: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Firewall: NAT: Uitgaand: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
@@ -4760,11 +4764,11 @@ msgstr "Sta toegang toe tot de 'Firewall: Regels' pagina."
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr "WebCfg - Firewall: Regels: Bewerk"
+msgstr "WebCfg - Firewall: Regels: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
-msgstr "Sta toegang toe tot de 'Firewall: Regels: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Firewall: Regels: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
@@ -4776,11 +4780,11 @@ msgstr "Sta toegang toe tot de 'Firewall: Schema's' pagina."
 
 #: src/etc/inc/priv.defs.inc:294
 msgid "WebCfg - Firewall: Schedules: Edit"
-msgstr "WebCfg - Firewall: Schema's: Bewerk"
+msgstr "WebCfg - Firewall: Schema's: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:295
 msgid "Allow access to the 'Firewall: Schedules: Edit' page."
-msgstr "Geef ttoegang tot de 'Firewall: Schema's: Bewerk' pagina."
+msgstr "Geef ttoegang tot de 'Firewall: Schema's: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:300
 msgid "WebCfg - Firewall: Traffic Shaper"
@@ -4824,12 +4828,12 @@ msgstr "Sta toegang toe tot de 'Firewall: Virtuele IP Adressen' pagina."
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
-msgstr "WebCfg - Firewall: Virtuele IP Adressen: Bewerk"
+msgstr "WebCfg - Firewall: Virtuele IP Adressen: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
 msgstr ""
-"Sta toegang toe tot de 'Firewall: Virtuele IP Adressen: Bewerk' pagina."
+"Sta toegang toe tot de 'Firewall: Virtuele IP Adressen: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
@@ -4907,11 +4911,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: Bridge' pagina."
 
 #: src/etc/inc/priv.defs.inc:391
 msgid "WebCfg - Interfaces: Bridge edit"
-msgstr "WebCfg - Interfaces: Bridge: Bewerk"
+msgstr "WebCfg - Interfaces: Bridge: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:392
 msgid "Allow access to the 'Interfaces: Bridge : Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: Bridge: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: Bridge: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:397
 msgid "WebCfg - Interfaces: GIF"
@@ -4923,11 +4927,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: GIF' pagina."
 
 #: src/etc/inc/priv.defs.inc:403
 msgid "WebCfg - Interfaces: GIF: Edit"
-msgstr "WebCfg - Interfaces: GIF: Bewerk"
+msgstr "WebCfg - Interfaces: GIF: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:404
 msgid "Allow access to the 'Interfaces: GIF: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: GIF: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: GIF: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:409
 msgid "WebCfg - Interfaces: GRE"
@@ -4939,11 +4943,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: GRE' pagina."
 
 #: src/etc/inc/priv.defs.inc:415
 msgid "WebCfg - Interfaces: GRE: Edit"
-msgstr "WebCfg - Interfaces: GRE: Bewerk"
+msgstr "WebCfg - Interfaces: GRE: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:416
 msgid "Allow access to the 'Interfaces: GRE: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: GRE: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: GRE: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:421
 msgid "WebCfg - Interfaces: Groups"
@@ -4955,11 +4959,11 @@ msgstr "Maak interface groepen"
 
 #: src/etc/inc/priv.defs.inc:427
 msgid "WebCfg - Interfaces: Groups: Edit"
-msgstr "WebCfg - Interfaces: Groups: Bewerk"
+msgstr "WebCfg - Interfaces: Groups: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:428
 msgid "Allow access to the 'Interfaces: Groups: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: Groups: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: Groups: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:433
 msgid "WebCfg - Interfaces: LAGG:"
@@ -4971,11 +4975,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: LAGG' pagina."
 
 #: src/etc/inc/priv.defs.inc:439
 msgid "WebCfg - Interfaces: LAGG: Edit"
-msgstr "WebCfg - Interfaces: LAGG: Bewerk"
+msgstr "WebCfg - Interfaces: LAGG: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:440
 msgid "Allow access to the 'Interfaces: LAGG: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: LAGG: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: LAGG: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:445
 msgid "WebCfg - Interfaces: PPPs"
@@ -4987,11 +4991,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: PPPs' pagina."
 
 #: src/etc/inc/priv.defs.inc:451
 msgid "WebCfg - Interfaces: PPPs: Edit"
-msgstr "WebCfg - Interfaces: PPPs: Bewerk"
+msgstr "WebCfg - Interfaces: PPPs: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:452
 msgid "Allow access to the 'Interfaces: PPPs: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: PPPs: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: PPPs: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:457
 msgid "WebCfg - Interfaces: QinQ"
@@ -5003,11 +5007,11 @@ msgstr "Sta toegang toe tot de 'Interfaces QinQ' pagina."
 
 #: src/etc/inc/priv.defs.inc:463
 msgid "WebCfg - Interfaces: QinQ: Edit"
-msgstr "WebCfg - Interfaces QinQ: Bewerk"
+msgstr "WebCfg - Interfaces QinQ: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:464
 msgid "Allow access to 'Interfaces: QinQ: Edit' page"
-msgstr "Sta toegang toe tot de 'Interfaces QinQ: Bewerk' pagina"
+msgstr "Sta toegang toe tot de 'Interfaces QinQ: Bewerken' pagina"
 
 #: src/etc/inc/priv.defs.inc:469
 msgid "WebCfg - Interfaces: VLAN"
@@ -5019,11 +5023,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: VLAN' pagina."
 
 #: src/etc/inc/priv.defs.inc:475
 msgid "WebCfg - Interfaces: VLAN: Edit"
-msgstr "WebCfg - Interfaces: VLAN: Bewerk"
+msgstr "WebCfg - Interfaces: VLAN: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:476
 msgid "Allow access to the 'Interfaces: VLAN: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: VLAN: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: VLAN: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:481
 msgid "WebCfg - Interfaces: Wireless"
@@ -5035,11 +5039,11 @@ msgstr "Sta toegang toe tot de 'Interfaces: Draadloos' pagina."
 
 #: src/etc/inc/priv.defs.inc:487
 msgid "WebCfg - Interfaces: Wireless: Edit"
-msgstr "WebCfg - Interfaces: Draadloos: Bewerk"
+msgstr "WebCfg - Interfaces: Draadloos: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:488
 msgid "Allow access to the 'Interfaces: Wireless: Edit' page."
-msgstr "Sta toegang toe tot de 'Interfaces: Draadloos: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Interfaces: Draadloos: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:493
 msgid "WebCfg - System: License"
@@ -5059,12 +5063,12 @@ msgstr "Sta toegang toe tot de 'Services: Load Balancer: Monitors' pagina."
 
 #: src/etc/inc/priv.defs.inc:505
 msgid "WebCfg - Services: Load Balancer: Monitor: Edit"
-msgstr "WebCfg - Services: Load Balancer: Monitor: Bewerk"
+msgstr "WebCfg - Services: Load Balancer: Monitor: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:506
 msgid "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Load Balancer: Monitor: Bewerk' pagina."
+"Sta toegang toe tot de 'Services: Load Balancer: Monitor: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:511
 msgid "WebCfg - Load Balancer: Pool"
@@ -5076,11 +5080,11 @@ msgstr "Toegang toestaat tot de 'Load Balancer: Pool' pagina."
 
 #: src/etc/inc/priv.defs.inc:517
 msgid "WebCfg - Load Balancer: Pool: Edit"
-msgstr "WebCfg - Load Balancer: Pool: Edit"
+msgstr "WebCfg - Load Balancer: Pool: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:518
 msgid "Allow access to the 'Load Balancer: Pool: Edit' page."
-msgstr "Toegang toestaat tot de 'Load Balancer: Pool: Bewerk' pagina."
+msgstr "Toegang toestaat tot de 'Load Balancer: Pool: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:523
 msgid "WebCfg - Services: Load Balancer: Settings"
@@ -5102,12 +5106,12 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:535
 msgid "WebCfg - Load Balancer: Virtual Server: Edit"
-msgstr "WebCfg - Load Balancer: Virtuele Servers: Bewerk"
+msgstr "WebCfg - Load Balancer: Virtuele Servers: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:536
 msgid "Allow access to the 'Load Balancer: Virtual Server: Edit' page."
 msgstr ""
-"Sta toegang toe tot de 'Load Balancer: Virtuele Servers: Bewerk' pagina."
+"Sta toegang toe tot de 'Load Balancer: Virtuele Servers: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:541
 msgid "WebCfg - Package: Settings"
@@ -5119,11 +5123,11 @@ msgstr "Sta toegang toe tot de 'Pakket: Instellingen' pagina."
 
 #: src/etc/inc/priv.defs.inc:547
 msgid "WebCfg - Package: Edit"
-msgstr "WebCfg - Pakket: Bewerk"
+msgstr "WebCfg - Pakket: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:548
 msgid "Allow access to the 'Package: Edit' page."
-msgstr "Sta toegang toe tot de 'Pakket: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Pakket: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:553
 msgid "WebCfg - System: Package Manager"
@@ -5183,13 +5187,13 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:589
 msgid "WebCfg - Services: Captive Portal: Edit Allowed Hostnames"
-msgstr "WebCfg - Services: Toegangsportaal: Bewerk Toegestane Hostnamen"
+msgstr "WebCfg - Services: Toegangsportaal: Bewerken Toegestane Hostnamen"
 
 #: src/etc/inc/priv.defs.inc:590
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerk Toegestane "
+"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerken Toegestane "
 "Hostnamen' pagina."
 
 #: src/etc/inc/priv.defs.inc:595
@@ -5203,12 +5207,12 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:601
 msgid "WebCfg - Services: Captive Portal: Edit Allowed IPs"
-msgstr "WebCfg - Services: Toegangsportaal: Bewerk Toegestane IP's"
+msgstr "WebCfg - Services: Toegangsportaal: Bewerken Toegestane IP's"
 
 #: src/etc/inc/priv.defs.inc:602
 msgid "Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerk Toegestane IP's' "
+"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerken Toegestane IP's' "
 "pagina."
 
 #: src/etc/inc/priv.defs.inc:607
@@ -5222,13 +5226,13 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:613
 msgid "WebCfg - Services: Captive Portal: Edit MAC Addresses"
-msgstr "WebCfg - Services: Toegangsportaal: Bewerk MAC adressen"
+msgstr "WebCfg - Services: Toegangsportaal: Bewerken MAC adressen"
 
 #: src/etc/inc/priv.defs.inc:614
 msgid ""
 "Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerk MAC adressen'."
+"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerken MAC adressen'."
 
 #: src/etc/inc/priv.defs.inc:619
 msgid "WebCfg - Services: Captive Portal Vouchers"
@@ -5246,7 +5250,7 @@ msgstr "WebCfg - Services: Toegangsportaal Tickets Lijsten"
 msgid ""
 "Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Toegangsportaal Bewerk Tickets Lijsten' "
+"Sta toegang toe tot de 'Services: Toegangsportaal Bewerken Tickets Lijsten' "
 "pagina."
 
 #: src/etc/inc/priv.defs.inc:631
@@ -5259,12 +5263,12 @@ msgstr "Sta toegang toe tot de 'Services: Toegangsportaal Zones' pagina."
 
 #: src/etc/inc/priv.defs.inc:637
 msgid "WebCfg - Services: Captive Portal: Edit Zones"
-msgstr "WebCfg - Services: Toegangsportaal: Bewerk Zones"
+msgstr "WebCfg - Services: Toegangsportaal: Bewerken Zones"
 
 #: src/etc/inc/priv.defs.inc:638
 msgid "Allow access to the 'Services: Captive Portal: Edit Zones' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerk Zones' pagina."
+"Sta toegang toe tot de 'Services: Toegangsportaal: Bewerken Zones' pagina."
 
 #: src/etc/inc/priv.defs.inc:643
 msgid "WebCfg - Services: Check IP Service"
@@ -5293,12 +5297,12 @@ msgstr "Sta toegang toe tot de 'Services: DHCP Server' pagina."
 
 #: src/etc/inc/priv.defs.inc:661
 msgid "WebCfg - Services: DHCP Server: Edit static mapping"
-msgstr "WebCfg - Services: DHCP Server: Bewerk statische mapping"
+msgstr "WebCfg - Services: DHCP Server: Bewerken statische mapping"
 
 #: src/etc/inc/priv.defs.inc:662
 msgid "Allow access to the 'Services: DHCP Server: Edit static mapping' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: DHCP Server: Bewerk statische mapping' "
+"Sta toegang toe tot de 'Services: DHCP Server: Bewerken statische mapping' "
 "pagina."
 
 #: src/etc/inc/priv.defs.inc:667
@@ -5319,14 +5323,14 @@ msgstr "Sta toegang toe tot de 'Services: DHCPv6 Server' pagina."
 
 #: src/etc/inc/priv.defs.inc:679
 msgid "WebCfg - Services: DHCPv6 Server: Edit static mapping"
-msgstr "WebCfg - Services: DHCPv6 Server: Bewerk statische mapping"
+msgstr "WebCfg - Services: DHCPv6 Server: Bewerken statische mapping"
 
 #: src/etc/inc/priv.defs.inc:680
 msgid ""
 "Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: DHCPv6 Server : Bewerk statische mapping' "
-"pagina."
+"Sta toegang toe tot de 'Services: DHCPv6 Server : Bewerken statische "
+"mapping' pagina."
 
 #: src/etc/inc/priv.defs.inc:685
 msgid "WebCfg - Services: DHCPv6 Relay"
@@ -5346,22 +5350,23 @@ msgstr "Sta toegang toe tot de 'Services: DNS Forwarder' pagina."
 
 #: src/etc/inc/priv.defs.inc:697
 msgid "WebCfg - Services: DNS Forwarder: Edit Domain Override"
-msgstr "WebCfg - Services: DNS Forwarder: Bewerk Domein Overschrijving"
+msgstr "WebCfg - Services: DNS Forwarder: Bewerken Domein Overschrijving"
 
 #: src/etc/inc/priv.defs.inc:698
 msgid ""
 "Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: DNS Forwarder: Bewerk Domein "
+"Sta toegang toe tot de 'Services: DNS Forwarder: Bewerken Domein "
 "Overschrijving' pagina."
 
 #: src/etc/inc/priv.defs.inc:703
 msgid "WebCfg - Services: DNS Forwarder: Edit host"
-msgstr "WebCfg - Services: DNS Forwarder: Bewerk host"
+msgstr "WebCfg - Services: DNS Forwarder: Bewerken host"
 
 #: src/etc/inc/priv.defs.inc:704
 msgid "Allow access to the 'Services: DNS Forwarder: Edit host' page."
-msgstr "Sta toegang toe tot de 'Services: DNS Forwarder: Bewerk host' pagina."
+msgstr ""
+"Sta toegang toe tot de 'Services: DNS Forwarder: Bewerken host' pagina."
 
 #: src/etc/inc/priv.defs.inc:709
 msgid "WebCfg - Services: Dynamic DNS clients"
@@ -5389,11 +5394,11 @@ msgstr "Sta toegang toe tot de 'Services: IGMP Proxy' pagina."
 
 #: src/etc/inc/priv.defs.inc:727
 msgid "WebCfg - Services: IGMP Proxy: Edit"
-msgstr "WebCfg - Services: IGMP Proxy: Bewerk"
+msgstr "WebCfg - Services: IGMP Proxy: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:728
 msgid "Allow access to the 'Services: IGMP Proxy: Edit' page."
-msgstr "Sta toegang toe tot de 'Services: IGMP Proxy: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Services: IGMP Proxy: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:733
 msgid "WebCfg - Services: NTP Settings"
@@ -5437,11 +5442,11 @@ msgstr "Sta toegang toe tot de 'Services: PPPoE Server' pagina."
 
 #: src/etc/inc/priv.defs.inc:763
 msgid "WebCfg - Services: PPPoE Server: Edit"
-msgstr "WebCfg - Services: PPPoE Server: Bewerk"
+msgstr "WebCfg - Services: PPPoE Server: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:764
 msgid "Allow access to the 'Services: PPPoE Server: Edit' page."
-msgstr "Sta toegang toe tot de 'Services: PPPoE Server: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Services: PPPoE Server: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:769
 msgid "WebCfg - Services: RFC 2136 Clients"
@@ -5453,11 +5458,11 @@ msgstr "Sta toegang toe tot de 'Services: RFC 2136 Clienten' pagina."
 
 #: src/etc/inc/priv.defs.inc:775
 msgid "WebCfg - Services: RFC 2136 Client: Edit"
-msgstr "WebCfg - Services: RFC 2136 Client: Bewerk"
+msgstr "WebCfg - Services: RFC 2136 Client: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:776
 msgid "Allow access to the 'Services: RFC 2136 Client: Edit' page."
-msgstr "Sta toegang toe tot de 'Services: RFC 2136 Client: Bewerk' pagina."
+msgstr "Sta toegang toe tot de 'Services: RFC 2136 Client: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:781
 msgid "WebCfg - Services: Router Advertisements"
@@ -5502,22 +5507,23 @@ msgstr "Sta toegang toe tot de 'Services: DNS Resolver: Geavanceerd' pagina."
 
 #: src/etc/inc/priv.defs.inc:811
 msgid "WebCfg - Services: DNS Resolver: Edit Domain Override"
-msgstr "WebCfg - Services: DNS Resolver: Bewerk Domein Overschrijving"
+msgstr "WebCfg - Services: DNS Resolver: Bewerken Domein Overschrijving"
 
 #: src/etc/inc/priv.defs.inc:812
 msgid ""
 "Allow access to the 'Services: DNS Resolver: Edit Domain Override' page."
 msgstr ""
-"Sta toegang toe tot de 'Services: DNS Resolver: Bewerk Domein "
+"Sta toegang toe tot de 'Services: DNS Resolver: Bewerken Domein "
 "Overschrijving' pagina."
 
 #: src/etc/inc/priv.defs.inc:817
 msgid "WebCfg - Services: DNS Resolver: Edit host"
-msgstr "WebCfg - Services: DNS Resolver: Bewerk host"
+msgstr "WebCfg - Services: DNS Resolver: Bewerken host"
 
 #: src/etc/inc/priv.defs.inc:818
 msgid "Allow access to the 'Services: DNS Resolver: Edit host' page."
-msgstr "Sta toegang toe tot de 'Services: DNS Resolver: Bewerk host' pagina."
+msgstr ""
+"Sta toegang toe tot de 'Services: DNS Resolver: Bewerken host' pagina."
 
 #: src/etc/inc/priv.defs.inc:823
 msgid "WebCfg - Services: Wake-on-LAN"
@@ -5529,11 +5535,11 @@ msgstr "Sta toegang toe tot de 'Services: Wake-on-LAN' pagina."
 
 #: src/etc/inc/priv.defs.inc:829
 msgid "WebCfg - Services: Wake-on-LAN: Edit"
-msgstr "WebCfg - Services: Wake-on-LAN: Bewerk"
+msgstr "WebCfg - Services: Wake-on-LAN: Bewerken"
 
 #: src/etc/inc/priv.defs.inc:830
 msgid "Allow access to the 'Services: Wake-on-LAN: Edit' page."
-msgstr "Sta toegang toe tot de 'Services: Wake-on-LAN: Edit' pagina."
+msgstr "Sta toegang toe tot de 'Services: Wake-on-LAN: Bewerken' pagina."
 
 #: src/etc/inc/priv.defs.inc:835
 msgid "WebCfg - Hidden: Detailed Status"
@@ -5916,12 +5922,12 @@ msgstr "Sta toegang toe tot de 'Systeem: Gateway Groepen' pagina."
 
 #: src/etc/inc/priv.defs.inc:1115
 msgid "WebCfg - System: Gateways: Edit Gateway Groups"
-msgstr "WebCfg - Systeem: Gateways: Bewerk Gateway Groepen"
+msgstr "WebCfg - Systeem: Gateways: Bewerken Gateway Groepen"
 
 #: src/etc/inc/priv.defs.inc:1116
 msgid "Allow access to the 'System: Gateways: Edit Gateway Groups' page."
 msgstr ""
-"Sta toegang toe tot de 'Systeem: Gateways: Bewerk Gateway Groepen' pagina."
+"Sta toegang toe tot de 'Systeem: Gateways: Bewerken Gateway Groepen' pagina."
 
 #: src/etc/inc/priv.defs.inc:1121
 msgid "WebCfg - System: Gateways"
@@ -5933,11 +5939,11 @@ msgstr "Sta toegang toe tot de 'Systeem: Gateways' pagina."
 
 #: src/etc/inc/priv.defs.inc:1127
 msgid "WebCfg - System: Gateways: Edit Gateway"
-msgstr "WebCfg - Systeem: Gateways: Bewerk Gateway"
+msgstr "WebCfg - Systeem: Gateways: Bewerken Gateway"
 
 #: src/etc/inc/priv.defs.inc:1128
 msgid "Allow access to the 'System: Gateways: Edit Gateway' page."
-msgstr "Sta toegang toe tot de 'Systeem: Gateways: Bewerk Gateway' pagina."
+msgstr "Sta toegang toe tot de 'Systeem: Gateways: Bewerken Gateway' pagina."
 
 #: src/etc/inc/priv.defs.inc:1133
 msgid "WebCfg - System: Group Manager"
@@ -5968,21 +5974,20 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1153
 msgid "WebCfg - System: Static Routes"
-msgstr "WebCfg - Systeem: Statische Routeringen"
+msgstr "WebCfg - Systeem: Statische Routes"
 
 #: src/etc/inc/priv.defs.inc:1154
 msgid "Allow access to the 'System: Static Routes' page."
-msgstr "Sta toegang toe tot de 'Systeem: Statische Routeringen' pagina."
+msgstr "Sta toegang toe tot de 'Systeem: Statische Routes' pagina."
 
 #: src/etc/inc/priv.defs.inc:1159
 msgid "WebCfg - System: Static Routes: Edit route"
-msgstr "WebCfg - Systeem: Static Routeringen: Bewerk routering"
+msgstr "WebCfg - Systeem: Statische Routes: Bewerken route"
 
 #: src/etc/inc/priv.defs.inc:1160
 msgid "Allow access to the 'System: Static Routes: Edit route' page."
 msgstr ""
-"Sta toegang toe tot de 'Systeem: Statische Routeringen: Bewerk routering' "
-"pagina."
+"Sta toegang toe tot de 'Systeem: Statische Routes: Bewerken route' pagina."
 
 #: src/etc/inc/priv.defs.inc:1165
 msgid "WebCfg - System: Update: Settings"
@@ -6063,12 +6068,13 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1222
 msgid "WebCfg - VPN: IPsec: Edit Pre-Shared Keys"
-msgstr "WebCfg - VPN: IPsec: Bewerk Vooraf Gedeelde Sleutels"
+msgstr "WebCfg - VPN: IPsec: Bewerken Vooraf Gedeelde Sleutels"
 
 #: src/etc/inc/priv.defs.inc:1223
 msgid "Allow access to the 'VPN: IPsec: Edit Pre-Shared Keys' page."
 msgstr ""
-"Sta toegang toe tot de 'VPN: IPsec: Bewerk Vooraf Gedeelde Sleutels' pagina."
+"Sta toegang toe tot de 'VPN: IPsec: Bewerken Vooraf Gedeelde Sleutels' "
+"pagina."
 
 #: src/etc/inc/priv.defs.inc:1228
 msgid "WebCfg - VPN: IPsec: Mobile"
@@ -6080,19 +6086,19 @@ msgstr "Sta toegang toe tot de 'VPN: IPsec: Mobiel' pagina."
 
 #: src/etc/inc/priv.defs.inc:1234
 msgid "WebCfg - VPN: IPsec: Edit Phase 1"
-msgstr "WebCfg - VPN: IPsec: Bewerk Fase 1"
+msgstr "WebCfg - VPN: IPsec: Bewerken Fase 1"
 
 #: src/etc/inc/priv.defs.inc:1235
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 1' page."
-msgstr "Sta toegang toe tot de 'VPN: IPsec: Bewerk Fase 1' pagina."
+msgstr "Sta toegang toe tot de 'VPN: IPsec: Bewerken Fase 1' pagina."
 
 #: src/etc/inc/priv.defs.inc:1240
 msgid "WebCfg - VPN: IPsec: Edit Phase 2"
-msgstr "WebCfg - VPN: IPsec: Bewerk Fase 2"
+msgstr "WebCfg - VPN: IPsec: Bewerken Fase 2"
 
 #: src/etc/inc/priv.defs.inc:1241
 msgid "Allow access to the 'VPN: IPsec: Edit Phase 2' page."
-msgstr "Sta toegang toe tot de 'VPN: IPsec: Bewerk Fase 2' pagina."
+msgstr "Sta toegang toe tot de 'VPN: IPsec: Bewerken Fase 2' pagina."
 
 #: src/etc/inc/priv.defs.inc:1246
 msgid "WebCfg - VPN: IPsec: Settings"
@@ -6418,70 +6424,70 @@ msgstr ""
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr "Fout: kan dhcpd.conf niet openen in services_dhcpdv4_configure(). %s"
 
-#: src/etc/inc/services.inc:1649
+#: src/etc/inc/services.inc:1653
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Kan het lgmpproxy configuratie bestand niet schrijven!"
 
-#: src/etc/inc/services.inc:1662
+#: src/etc/inc/services.inc:1666
 msgid "Started IGMP proxy service."
 msgstr "IGMP proxy service is gestart."
 
-#: src/etc/inc/services.inc:1686
+#: src/etc/inc/services.inc:1690
 msgid "Starting DHCP relay service..."
 msgstr "Bezig met het starten van de DHCP relay service..."
 
-#: src/etc/inc/services.inc:1711
+#: src/etc/inc/services.inc:1715
 msgid "No destination IP has been configured!"
 msgstr "Er is geen doel IP is geconfigureerd!"
 
-#: src/etc/inc/services.inc:1785
+#: src/etc/inc/services.inc:1789
 msgid "No suitable interface found for running dhcrelay!"
 msgstr ""
 "Er is geen geschikte interface gevonden voor het draaien van dhcrelay!"
 
-#: src/etc/inc/services.inc:1821
+#: src/etc/inc/services.inc:1825
 msgid "Starting DHCPv6 relay service..."
 msgstr "Bezig met het starten van de DHCPv6 relay service..."
 
-#: src/etc/inc/services.inc:1912
+#: src/etc/inc/services.inc:1916
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr ""
 "Er is geen geschikte interface gevonden voor het draaien van dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1973
+#: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
 msgstr "Bezig met het starten van de DynDNS clienten..."
 
-#: src/etc/inc/services.inc:2079
+#: src/etc/inc/services.inc:2083
 msgid "Starting DNS forwarder..."
 msgstr "Bezig met het starten van de DNS forwarder..."
 
-#: src/etc/inc/services.inc:2254
+#: src/etc/inc/services.inc:2258
 msgid "Starting DNS Resolver..."
 msgstr "Bezig met het starten van de DNS Resolver..."
 
-#: src/etc/inc/services.inc:2270
+#: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
 msgstr "Unbound start wacht op dhcp6c"
 
-#: src/etc/inc/services.inc:2274
+#: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
 msgstr "dhcp6 initialisatie voltooid. Er wordt voortgedaan. "
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
 msgstr "synchronisatie unbound klaar "
 
-#: src/etc/inc/services.inc:2321
+#: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
 msgstr "Bezig met het starten van de SNMP daemon... "
 
-#: src/etc/inc/services.inc:2332
+#: src/etc/inc/services.inc:2336
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "Fout: kan snmpd.conf niet openen in services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2661
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6489,7 +6495,7 @@ msgstr ""
 "phpDynDNS: Bijwerken van %s A record overgeslagen omdat het IP adres niet is "
 "veranderd."
 
-#: src/etc/inc/services.inc:2680
+#: src/etc/inc/services.inc:2684
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6498,48 +6504,48 @@ msgstr ""
 "phpDynDNS: Bijwerken van %s AAAA record overgeslagen omdat het IPv6 adres "
 "niet is veranderd."
 
-#: src/etc/inc/services.inc:2715
+#: src/etc/inc/services.inc:2719
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS heeft het IP Adres (A) voor %1$s op %2$s (%3$s) naar %4$s bijgewerkt"
 
-#: src/etc/inc/services.inc:2727
+#: src/etc/inc/services.inc:2731
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS heeft het IPv6 Adres (AAAA) voor %1$s op %2$s (%3$s) naar %4$s "
 "bijgewerkt"
 
-#: src/etc/inc/services.inc:2735
+#: src/etc/inc/services.inc:2739
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: FOUT tijdens het bijwerken van het IP Adres (A) voor %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2740
+#: src/etc/inc/services.inc:2744
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: FOUT tijdens het bijwerken van het IP Adres (AAAA) voor %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2774
+#: src/etc/inc/services.inc:2778
 msgid "Created:"
 msgstr "Aangemaakt:"
 
-#: src/etc/inc/services.inc:2800
+#: src/etc/inc/services.inc:2804
 msgid "If possible do not add items to this file manually."
 msgstr "Voeg indien mogelijk geen items handmatig aan dit bestand toe."
 
-#: src/etc/inc/services.inc:2801
+#: src/etc/inc/services.inc:2805
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Indien dit toch is gedaan moet dit bestand worden beeindigd met een lege "
 "regel (dus: nieuwe regel)"
 
-#: src/etc/inc/services.inc:2851
+#: src/etc/inc/services.inc:2855
 msgid "Starting UPnP service... "
 msgstr "Bezig met het starten van de UPnP service... "
 
@@ -6750,7 +6756,7 @@ msgstr "Selecteer opties voor deze wachtrij"
 #: src/usr/local/www/firewall_aliases_edit.php:726
 #: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:232
-#: src/usr/local/www/firewall_nat_1to1.php:153
+#: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
@@ -7044,8 +7050,8 @@ msgstr "Een schema moet worden gespecificeerd voor elk extra item."
 msgid ""
 "If more than one bandwidth configured all schedules need to be selected."
 msgstr ""
-"Indien er meer dan Ã©Ã©n bandbreedte geconfigureerd is dienen alle schema's "
-"te worden geselecteerd."
+"Indien er meer dan een (1) bandbreedte geconfigureerd is dienen alle "
+"schema's te worden geselecteerd."
 
 #: src/etc/inc/shaper.inc:3483
 msgid "At least one bw specification is necessary."
@@ -7057,7 +7063,7 @@ msgstr "Delay dient een geheel getal te zijn."
 
 #: src/etc/inc/shaper.inc:3790 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
-#: src/usr/local/www/firewall_nat_1to1.php:244
+#: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/firewall_nat_npt.php:232
 #: src/usr/local/www/firewall_nat_out.php:504
 #: src/usr/local/www/firewall_rules.php:829
@@ -7403,7 +7409,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1601
 #, php-format
 msgid "Error: cannot open %1$s in system_generate_nginx_config().%2$s"
-msgstr "Fout: kan %1$s niet openen in system_generate_nginx_config()%2$s"
+msgstr "Fout: kan %1$s niet openen in system_generate_nginx_config().%2$s"
 
 #: src/etc/inc/system.inc:1650
 msgid "Setting timezone..."
@@ -7542,8 +7548,8 @@ msgid ""
 "accessed a particular page (the lock will be freed if the user leaves or "
 "saves the page form)."
 msgstr ""
-"Geeft aan of deze gebruiker toegang blokkeerd tot specifieke HTML pagina's "
-"nadat een specifieke pagina bezocht is (de blokkade word opgeheven zodra de "
+"Geeft aan of deze gebruiker individuele HTML pagina's lockt zodra een "
+"specifieke pagina bezocht wordt (de blokkade word opgeheven zodra de "
 "gebruiker vertrekt of het formulier opslaat)."
 
 #: src/etc/inc/upgrade_config.inc:623
@@ -8111,7 +8117,7 @@ msgstr "Bevestig"
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
-#: src/usr/local/www/firewall_nat_1to1.php:248
+#: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/firewall_nat_npt.php:236
 #: src/usr/local/www/firewall_nat_out.php:508
 #: src/usr/local/www/firewall_rules.php:833
@@ -8144,7 +8150,7 @@ msgstr "Bevestig"
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:241
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 msgid "Save"
-msgstr "Bewaar"
+msgstr "Opslaan"
 
 #: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/diag_arp.php:269
 #: src/usr/local/www/diag_authentication.php:69
@@ -8291,7 +8297,7 @@ msgstr "Link Type"
 #: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
-#: src/usr/local/www/firewall_nat_1to1.php:154
+#: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/firewall_nat_npt.php:152
 #: src/usr/local/www/firewall_nat_out.php:288
 #: src/usr/local/www/firewall_rules.php:391
@@ -9053,8 +9059,8 @@ msgid ""
 "the \"Diff\" button."
 msgstr ""
 "Om de verschillen te zien tussen een oude en nieuwe configuratie te zien, "
-"selecteer de oude configuratie met de radioknoppen in de linker colom en "
-"selecteer de nieuwere configuratie in de rechter colom. Klik vervolgens op "
+"selecteer de oude configuratie met de radioknoppen in de linker kolom en "
+"selecteer de nieuwere configuratie in de rechter kolom. Klik vervolgens op "
 "de \"Verschil\" knop."
 
 #: src/usr/local/www/diag_confbak.php:213
@@ -10456,10 +10462,10 @@ msgid ""
 "will be cleared for all clients.%sThis does not clear active connection "
 "states, only source tracking."
 msgstr ""
-"Resetten van de bron opsporings tabel zal alle bron/doel associaties "
-"verwijderen. Dit betekent dat de \"sticky\" bron/doel associatie zal worden "
-"verwijderd voor iedere client.%sDit leegt geen actieve connectie statussen, "
-"alleen bron opsporing."
+"Resetten van de bron volgtabel zal alle bron/doel associaties verwijderen. "
+"Dit betekent dat de \"sticky\" bron/doel associatie zal worden verwijderd "
+"voor iedere client.%sDit leegt geen actieve connectie statussen, alleen "
+"gevolgde bronnen."
 
 #: src/usr/local/www/diag_resetstate.php:92
 msgid "State reset options"
@@ -11098,7 +11104,7 @@ msgstr "IP Protocol"
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
-msgstr "Bestemming"
+msgstr "Doel"
 
 #: src/usr/local/www/easyrule.php:118
 msgid ""
@@ -11146,7 +11152,7 @@ msgstr "Alias kan niet verwijderd worden. Deze is in gebruik door %s."
 
 #: src/usr/local/www/firewall_aliases.php:100
 msgid "Deleted a firewall alias."
-msgstr "Verwijder een firewall alias."
+msgstr "Firewall alias verwijderd."
 
 #: src/usr/local/www/firewall_aliases.php:150
 msgid "Ports"
@@ -11217,8 +11223,8 @@ msgstr "Verwijder alias"
 #: src/usr/local/www/firewall_aliases.php:271
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_nat.php:465
-#: src/usr/local/www/firewall_nat_1to1.php:236
-#: src/usr/local/www/firewall_nat_1to1.php:240
+#: src/usr/local/www/firewall_nat_1to1.php:243
+#: src/usr/local/www/firewall_nat_1to1.php:247
 #: src/usr/local/www/firewall_nat_npt.php:224
 #: src/usr/local/www/firewall_nat_npt.php:228
 #: src/usr/local/www/firewall_nat_out.php:496
@@ -11881,7 +11887,7 @@ msgid "NAT Ports"
 msgstr "NAT Poorten"
 
 #: src/usr/local/www/firewall_nat.php:291
-#: src/usr/local/www/firewall_nat_1to1.php:177
+#: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:295
 #: src/usr/local/www/vpn_ipsec.php:430
@@ -11889,7 +11895,7 @@ msgid "click to toggle enabled/disabled status"
 msgstr "klik om de ingeschakeld/uitgeschakeld status te wisselen"
 
 #: src/usr/local/www/firewall_nat.php:293
-#: src/usr/local/www/firewall_nat_1to1.php:179
+#: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr "Ongedaan gemaakt: Deze regel sluit NAT uit van een latere regel"
 
@@ -11908,6 +11914,7 @@ msgstr "Firewallregel ID %s is beheerd door deze regel"
 #: src/usr/local/www/firewall_nat.php:384
 #: src/usr/local/www/firewall_nat.php:401
 #: src/usr/local/www/firewall_nat.php:419
+#: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_rules.php:708
 #: src/usr/local/www/firewall_rules.php:717
 #: src/usr/local/www/firewall_rules.php:726
@@ -11998,11 +12005,11 @@ msgstr "Firewall: NAT: 1:1 - herschikte NAT 1:1 koppelingen."
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr "Firewall: NAT: 1:1 - verwijderde NAT 1:1 koppeling."
+msgstr "Firewall: NAT: 1:1 - NAT 1:1 mapping verwijderd."
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr "Firewall: NAT: 1:1 - verwijder geselecteerde NAT 1:1 koppelingen."
+msgstr "Firewall: NAT: 1:1 - geselecteerde NAT 1:1 mappings verwijderd."
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
@@ -12012,63 +12019,63 @@ msgstr "Firewall: NAT: 1:1 - een NAT 1:1 regel ingeschakeld."
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
 msgstr "Firewall: NAT: 1:1 - gedeactiveerde NAT 1:1 koppeling."
 
-#: src/usr/local/www/firewall_nat_1to1.php:142
+#: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
 msgstr "NAT 1:1 Koppelingen"
 
-#: src/usr/local/www/firewall_nat_1to1.php:150
+#: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
 msgstr "Externe IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:151
+#: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
 msgstr "Interne IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:152
+#: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
-msgstr "Bestemming IP"
+msgstr "Doel IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:218
+#: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
 msgstr "Wijzig mapping"
 
-#: src/usr/local/www/firewall_nat_1to1.php:219
+#: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
 msgstr "Voeg een nieuwe mapping toe gebaseerd op deze"
 
-#: src/usr/local/www/firewall_nat_1to1.php:220
+#: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
-msgstr "Verwijder koppeling"
+msgstr "Verwijder mapping"
 
-#: src/usr/local/www/firewall_nat_1to1.php:234
+#: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
 msgstr "Voeg mapping toe bovenaan de lijst"
 
-#: src/usr/local/www/firewall_nat_1to1.php:238
+#: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
 msgstr "Voeg mapping toe aan het einde van de lijst"
 
-#: src/usr/local/www/firewall_nat_1to1.php:242
+#: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
-msgstr "Verwijder geselecteerde koppelingen"
+msgstr "Verwijder geselecteerde mappings"
 
-#: src/usr/local/www/firewall_nat_1to1.php:246
+#: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
-msgstr "Sla koppeling volgorde op"
+msgstr "Sla mapping volgorde op"
 
-#: src/usr/local/www/firewall_nat_1to1.php:254
+#: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
@@ -12077,7 +12084,7 @@ msgstr ""
 "Afhankelijk van hoe de WAN verbinding is opgezet heeft dit mogelijk ook een "
 "%1$sVirtueel IP%2$s nodig."
 
-#: src/usr/local/www/firewall_nat_1to1.php:256
+#: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
 "If a 1:1 NAT entry is added for any of the interface IPs on this system, it "
 "will make this system inaccessible on that IP address. i.e. if the WAN IP "
@@ -12089,10 +12096,10 @@ msgstr ""
 "het WAN IP adres word gebruikt zullen de services op dit systeem (IPsec, "
 "OpenVPN server etc) die dit WAN adres gebruiken niet langer functioneren."
 
-#: src/usr/local/www/firewall_nat_1to1.php:291
+#: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
-msgstr "Een of meer NAT 1:1 mappings is verplaatst maar nog niet opgeslagen"
+msgstr "Een of meer NAT 1:1 mappings zijn verplaatst maar nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
@@ -12120,7 +12127,7 @@ msgstr "Bron adres"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
 #: src/usr/local/www/firewall_nat_edit.php:252
 msgid "Destination address"
-msgstr "Bestemming adres"
+msgstr "Doel adres"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:314
@@ -12513,7 +12520,7 @@ msgstr "NAT Portforward"
 
 #: src/usr/local/www/firewall_nat_edit.php:555
 msgid "Firewall: NAT: Port Forward - saved/edited a port forward rule."
-msgstr "Firewall: NAT: Portforward - opgeslagen/bewerkte portforwardregel."
+msgstr "Firewall: NAT: Portforward - Poortdoorstuurregel opgeslagen/bewerkt."
 
 #: src/usr/local/www/firewall_nat_edit.php:607
 #: src/usr/local/www/firewall_nat_out_edit.php:525
@@ -12780,11 +12787,11 @@ msgstr "Firewall: NAT: NPt - herschikte NPt mappings."
 
 #: src/usr/local/www/firewall_nat_npt.php:79
 msgid "Firewall: NAT: NPt - deleted NPt mapping."
-msgstr "Firewall: NAT: NPt - verwijderde NPt mapping."
+msgstr "Firewall: NAT: NPt - NPt mapping verwijderd."
 
 #: src/usr/local/www/firewall_nat_npt.php:94
 msgid "Firewall: NAT: NPt - deleted selected NPt mappings."
-msgstr "Firewall: NAT: NPt - verwijderde geselecteerde NPt mappings."
+msgstr "Firewall: NAT: NPt - geselecteerde NPt mappings verwijderd."
 
 #: src/usr/local/www/firewall_nat_npt.php:106
 msgid "Firewall: NAT: NPt - enabled NPt rule."
@@ -12808,8 +12815,7 @@ msgstr "Interne prefix"
 
 #: src/usr/local/www/firewall_nat_npt.php:268
 msgid "One or more NPt mappings have been moved but have not yet been saved"
-msgstr ""
-"Ã‰Ã©n of meerdere NPt koppelingen zijn verplaats maar nog niet opgeslagen"
+msgstr "Een of meerdere NPt mappings zijn verplaats maar nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:97
 msgid "Source prefix"
@@ -12817,11 +12823,11 @@ msgstr "Bron prefix"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:99
 msgid "Destination prefix"
-msgstr "Bestemming prefix"
+msgstr "Doel prefix"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:131
 msgid "Firewall: NAT: NPt - saved/edited NPt mapping."
-msgstr "Firewall: NAT: NPt - opgeslagen/bewerkte NPt mapping."
+msgstr "Firewall: NAT: NPt - NPt mapping opgeslagen/bewerkt."
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:184
 msgid "Edit NAT NPt Entry"
@@ -12864,7 +12870,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:218
 msgid "Destination IPv6 prefix"
-msgstr "Doel IPv6 voorvoegsel"
+msgstr "Doel IPv6 prefix"
 
 #: src/usr/local/www/firewall_nat_npt_edit.php:228
 msgid "Global Unicast routable IPv6 prefix"
@@ -12893,13 +12899,12 @@ msgstr "Firewall: NAT: Uitgaand - uitgaande NAT instellingen zijn opgeslagen."
 
 #: src/usr/local/www/firewall_nat_out.php:155
 msgid "Firewall: NAT: Outbound - deleted outbound NAT mapping."
-msgstr "Firewall: NAT: Uitgaand - uitgaande NAT mappings zijn verwijderd."
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT mappings verwijderd."
 
 #: src/usr/local/www/firewall_nat_out.php:176
 msgid "Firewall: NAT: Outbound - deleted selected outbound NAT mappings."
 msgstr ""
-"Firewall: NAT: Uitgaand - geselecteerde uitgaande NAT mappings zijn "
-"verwijderd."
+"Firewall: NAT: Uitgaand - geselecteerde uitgaande NAT mappings verwijderd."
 
 #: src/usr/local/www/firewall_nat_out.php:188
 msgid "Firewall: NAT: Outbound - enabled outbound NAT rule."
@@ -13123,7 +13128,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:385
 msgid "Firewall: NAT: Outbound - saved/edited outbound NAT mapping."
-msgstr "Firewall: NAT: Uitgaand - opgeslagen/bewerkte uitgaande NAT mapping."
+msgstr "Firewall: NAT: Uitgaand - uitgaande NAT mapping  opgeslagen/bewerkt."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:411
 #: src/usr/local/www/system_gateway_groups_edit.php:160
@@ -13746,7 +13751,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:989
 msgid "One or more rules have been moved but have not yet been saved"
-msgstr "EÃ©n of meer regels zijn verplaatst, maar zijn nog niet opgeslagen"
+msgstr "Een of meer regels zijn verplaatst, maar zijn nog niet opgeslagen"
 
 #: src/usr/local/www/firewall_rules_edit.php:39
 #: src/usr/local/www/firewall_rules_edit.php:40
@@ -14520,7 +14525,7 @@ msgid ""
 "Leave as 'default' to use the system routing table. Or choose a gateway to "
 "utilize policy based routing."
 msgstr ""
-"Laat op 'standaard' om de systeem routeringtabel te gebruiken. Of kies een "
+"Laat op 'standaard' om de systeem routeringstabel te gebruiken. Of kies een "
 "gateway om gebruik te maken van policy based routering."
 
 #: src/usr/local/www/firewall_rules_edit.php:1700
@@ -14642,7 +14647,7 @@ msgstr "Ongeldige eind tijd - '%s'"
 
 #: src/usr/local/www/firewall_schedule_edit.php:170
 msgid "The schedule must have at least one time range configured."
-msgstr "Het schema dient tenminste een tijdreeks te bevatten."
+msgstr "Het schema dient tenminste een (1) tijdreeks te bevatten."
 
 #: src/usr/local/www/firewall_schedule_edit.php:189
 msgid "Firewall schedule configured."
@@ -14891,7 +14896,7 @@ msgid ""
 "NAT mapping."
 msgstr ""
 "Dit item kan niet worden verwijderd omdat het nog gebruikt word door "
-"tenminste Ã©Ã©n NAT mapping."
+"tenminste een (1) NAT mapping."
 
 #: src/usr/local/www/firewall_virtual_ip.php:98
 #: src/usr/local/www/license.php:112
@@ -14917,7 +14922,7 @@ msgid ""
 "Gateway."
 msgstr ""
 "Dit item kan niet worden verwijderd omdat het nog gebruikt word door "
-"tenminste Ã©Ã©n gateway."
+"tenminste een (1) gateway."
 
 #: src/usr/local/www/firewall_virtual_ip.php:182
 #, php-format
@@ -14926,7 +14931,7 @@ msgid ""
 "with the description %s."
 msgstr ""
 "Dit item kan niet worden verwijderd omdat het nog gebruikt word door een "
-"CARP met de omschrijving %s."
+"CARP ip met de omschrijving %s."
 
 #: src/usr/local/www/firewall_virtual_ip.php:188
 #, php-format
@@ -15059,7 +15064,7 @@ msgstr "Een IPv6 virtueel IP kan niet onder een IPv4 CARP hangen."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:273
 msgid "Saved/edited a virtual IP."
-msgstr "Opgeslagen/aangepast virtueel IP."
+msgstr "Virtueel IP opgeslagen/bewerkt."
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:283
 msgid ""
@@ -15782,7 +15787,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:625
 msgid "One or more widgets have been moved but have not yet been saved"
-msgstr "Ã‰Ã©n of meerdere widgets zijn verplaatst maar nog niet opgeslagen"
+msgstr "Een of meerdere widgets zijn verplaatst maar nog niet opgeslagen"
 
 #: src/usr/local/www/interfaces.php:419
 msgid "The settings have already been applied!"
@@ -15946,7 +15951,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:639
 msgid "Only one interface can be configured within a single 6rd prefix."
 msgstr ""
-"Slechts Ã©Ã©n interface kan worden geconfigureerd binnen een enkele 6rd "
+"Slechts een (1) interface kan worden geconfigureerd binnen een enkele 6rd "
 "prefix."
 
 #: src/usr/local/www/interfaces.php:645
@@ -15956,7 +15961,7 @@ msgstr "6RD Border Relay dient een IPv4 adres te zijn."
 #: src/usr/local/www/interfaces.php:654
 #, php-format
 msgid "Only one interface can be configured as 6to4."
-msgstr "Slechts Ã©Ã©n interface kan worden geconfigureerd als 6to4."
+msgstr "Slechts een (1) interface kan worden geconfigureerd als 6to4."
 
 #: src/usr/local/www/interfaces.php:669
 msgid "A valid interface to track must be selected."
@@ -16378,7 +16383,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1864
 msgid "Static IPv4 Configuration"
-msgstr "Statisch IPv4 configuratie"
+msgstr "Statische IPv4 configuratie"
 
 #: src/usr/local/www/interfaces.php:1869
 msgid "*IPv4 Address"
@@ -16411,7 +16416,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1898
 msgid "Static IPv6 Configuration"
-msgstr "Statisch IPv6 configuratie"
+msgstr "Statische IPv6 configuratie"
 
 #: src/usr/local/www/interfaces.php:1903
 msgid "*IPv6 address"
@@ -16686,7 +16691,7 @@ msgstr "Kijk %1$shier%2$s voor meer informatie"
 
 #: src/usr/local/www/interfaces.php:2484
 msgid "6RD Configuration"
-msgstr "6rd configuratie"
+msgstr "6RD Configuratie"
 
 #: src/usr/local/www/interfaces.php:2489
 msgid "6RD Prefix"
@@ -16732,8 +16737,8 @@ msgid ""
 "(Delegated) IPv6 prefix ID. This determines the configurable network ID "
 "based on the dynamic IPv6 connection. The default value is 0."
 msgstr ""
-"(%1$shexadecimal%2$s van 0 tot %3$s) De waarde in dit veld i de  "
-"(Gedeligeerde) IPv6 prefix ID. Dit bepaald het netwerk ID wat geconfigureerd "
+"(%1$shexadecimal%2$s van 0 tot %3$s) De waarde in dit veld si de  "
+"(Gedelegeerde) IPv6 prefix ID. Dit bepaald het netwerk ID dat geconfigureerd "
 "kan worden gebaseerd op een dynamische IPv6 verbinding. De standaard waarde "
 "is 0."
 
@@ -16887,8 +16892,8 @@ msgid ""
 "Click for additional PPPoE configuration options. Save first if changes have "
 "been made."
 msgstr ""
-"Klik voor extra PPPoE configuratie opties. Indien u aanpassingen heeft "
-"gedaan sla deze dan eerst op."
+"Klik voor extra PPPoE configuratie opties. Sla eerst de wijzigingen op als "
+"deze er zijn."
 
 #: src/usr/local/www/interfaces.php:2793
 msgid "PPTP/L2TP Configuration"
@@ -17428,8 +17433,8 @@ msgid ""
 "The interface has a traffic shaper queue configured.\n"
 "Please remove all queues on the interface to continue."
 msgstr ""
-"De interface heeft een verkeer shaper wachtrij geconfigureerd. Verwijder "
-"eerst alle wachtrijen op de interface."
+"De interface heeft een verkeer shaper wachtrij geconfigureerd. \n"
+"Verwijder eerst alle wachtrijen op de interface om door te gaan."
 
 #: src/usr/local/www/interfaces_assign.php:437
 msgid "Interface has been deleted."
@@ -17598,8 +17603,8 @@ msgid ""
 "Interfaces that are configured as members of a lagg(4) interface will not be "
 "shown."
 msgstr ""
-"Interfaces geconfigureerd als lid van een lagg(4) zullen niet getoond worden."
-""
+"Interfaces geconfigureerd als lid van een lagg(4) interface zullen niet "
+"getoond worden."
 
 #: src/usr/local/www/interfaces_assign.php:580
 msgid ""
@@ -17628,7 +17633,7 @@ msgstr "Verkeerde index aangegeven"
 #: src/usr/local/www/interfaces_bridge.php:58
 msgid "This bridge cannot be deleted because it is assigned as an interface."
 msgstr ""
-"De brug kan niet verwijderd worden omdat deze is toegekend aan een interface."
+"De brug kan niet verwijderd worden omdat deze is toegekend als een interface."
 ""
 
 #: src/usr/local/www/interfaces_bridge.php:96
@@ -18147,12 +18152,10 @@ msgid "gif tunnel remote netmask"
 msgstr "GIF tunnel remote netmask"
 
 #: src/usr/local/www/interfaces_gif_edit.php:67
-#: src/usr/local/www/interfaces_gre_edit.php:70
 msgid ""
-"The tunnel local and tunnel remote fields must have valid IP addresses."
+"The tunnel local and tunnel remote fields must have valid IP addresses and "
+"must not contain CIDR masks or prefixes."
 msgstr ""
-"De velden \"tunnel lokaal\" en \"tunnel remote\" moeten een valide IP adres "
-"bevatten."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -18291,6 +18294,13 @@ msgstr "Remote tunnel IP-adres"
 #: src/usr/local/www/interfaces_gre_edit.php:63
 msgid "Remote tunnel network"
 msgstr "Remote tunnelnetwerk"
+
+#: src/usr/local/www/interfaces_gre_edit.php:70
+msgid ""
+"The tunnel local and tunnel remote fields must have valid IP addresses."
+msgstr ""
+"De velden \"tunnel lokaal\" en \"tunnel remote\" moeten een valide IP adres "
+"bevatten."
 
 #: src/usr/local/www/interfaces_gre_edit.php:74
 msgid "The GRE tunnel subnet must be an integer."
@@ -18472,7 +18482,7 @@ msgstr "id"
 #: src/usr/local/www/interfaces_lagg.php:64
 msgid "This LAGG interface cannot be deleted because it is still being used."
 msgstr ""
-"Deze LAGG interface kan niet worden verwijderd omdat het nogsteeds in "
+"Deze LAGG interface kan niet worden verwijderd omdat het nog steeds in "
 "gebruik is."
 
 #: src/usr/local/www/interfaces_lagg.php:98
@@ -18883,7 +18893,7 @@ msgid ""
 "Service name."
 msgstr ""
 "Dit veld kan meestal leeg worden gelaten. Service naam wordt niet "
-"geconfigureerd als dit veld leeg is. Controleer het 'Configuratie NULL' veld "
+"geconfigureerd als dit veld leeg is. Vink het 'Configuratie NULL' hokje aan "
 "om een lege Service naam te configureren."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:745
@@ -19052,7 +19062,7 @@ msgid ""
 "Protocol field compression. This option saves one byte per frame for most "
 "frames."
 msgstr ""
-"Protocol veld compressie. Deze optie bespaart Ã©Ã©n byte per frame voor de "
+"Protocol veld compressie. Deze optie bespaart een (1) byte per frame voor de "
 "meeste frames."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:903
@@ -19198,8 +19208,8 @@ msgstr "Voeg Tag toe"
 msgid ""
 "This VLAN cannot be deleted because it is still being used as an interface."
 msgstr ""
-"Het VLAN kan niet verwijderd worden omdat het nog in gebruikt is als een "
-"interface."
+"Het VLAN kan niet verwijderd worden omdat het nog steeds als een interface "
+"gebruikt wordt."
 
 #: src/usr/local/www/interfaces_vlan.php:101
 msgid "VLAN Interfaces"
@@ -19233,7 +19243,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_vlan.php:163
 msgid "Are you sure you want to delete this VLAN?"
-msgstr "Bent u zeker dat u dit VLAN wil verwijderen?"
+msgstr "Weet u zeker dat u dit VLAN wil verwijderen?"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:74
 msgid "The VLAN tag must be an integer between 1 and 4094."
@@ -19495,7 +19505,7 @@ msgid ""
 "pool."
 msgstr ""
 "Deze invoer kan niet worden verwijderd omdat het nog steeds door ten minste "
-"Ã©Ã©n pool wordt verwezen."
+"een (1) pool wordt verwezen."
 
 #: src/usr/local/www/load_balancer_monitor.php:71
 #: src/usr/local/www/load_balancer_monitor.php:93
@@ -19670,7 +19680,7 @@ msgid ""
 "virtual server."
 msgstr ""
 "Deze invoer kan niet worden verwijderd omdat er nog steeds door ten minste "
-"Ã©Ã©n virtuele server naar wordt verwezen."
+"een (1) virtuele server naar wordt verwezen."
 
 #: src/usr/local/www/load_balancer_pool.php:112
 #: src/usr/local/www/load_balancer_virtual_server.php:143
@@ -20061,7 +20071,7 @@ msgstr "Bestand niet gevonden %s."
 #: src/usr/local/www/pkg.php:109
 msgid "Package configuration changes saved from package settings page."
 msgstr ""
-"Wijzigingen in package configuraties worden opgeslagen op de pagina voor "
+"Wijzigingen in package configuraties zijn opgeslagen via de pagina voor "
 "package instellingen."
 
 #: src/usr/local/www/pkg.php:132
@@ -20074,7 +20084,7 @@ msgstr "Bezig met het opslaan van wijzigingen..."
 
 #: src/usr/local/www/pkg.php:266
 msgid "Confirmation Required to save changes."
-msgstr "Bevestiging noodzakelijk om alle wijzigingen op te slaan."
+msgstr "Bevestiging noodzakelijk om de wijzigingen op te slaan."
 
 #: src/usr/local/www/pkg.php:325
 msgid "Filter by: "
@@ -20409,7 +20419,7 @@ msgstr "Categorie"
 #: src/usr/local/www/pkg_mgr_installed.php:91
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:70
 msgid "Package is configured, but not installed!"
-msgstr "Package is geconfigureerd, maar niet geÃ¯nstalleerd!"
+msgstr "Package is geconfigureerd, maar niet geinstalleerd!"
 
 #: src/usr/local/www/pkg_mgr_installed.php:97
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:76
@@ -20659,7 +20669,7 @@ msgstr "Bestandsbeheerder"
 
 #: src/usr/local/www/services_captiveportal.php:531
 msgid "Captive Portal Configuration"
-msgstr "Toegangsportaal Instellingen"
+msgstr "Toegangsportaal Configuratie"
 
 #: src/usr/local/www/services_captiveportal.php:542
 #: src/usr/local/www/services_dnsmasq.php:337
@@ -21409,7 +21419,7 @@ msgstr "Wijzig hostnaam"
 
 #: src/usr/local/www/services_captiveportal_hostname.php:136
 msgid "Delete hostname"
-msgstr "Verwijder hoostnaam"
+msgstr "Verwijder hostnaam"
 
 #: src/usr/local/www/services_captiveportal_hostname.php:144
 #, php-format
@@ -21605,7 +21615,7 @@ msgstr "Er bestaat geen vermelding voor dit mac adres:"
 
 #: src/usr/local/www/services_captiveportal_mac.php:157
 msgid "The Captive Portal MAC address configuration has been changed."
-msgstr "De MAC adres instelling van het Toegangsportaal is gewijzigd."
+msgstr "De MAC adres configuratie van het Toegangsportaal is gewijzigd."
 
 #: src/usr/local/www/services_captiveportal_mac.php:173
 #: src/usr/local/www/services_captiveportal_mac_edit.php:95
@@ -21918,7 +21928,7 @@ msgid ""
 msgstr ""
 "Reserveert een reeks in iedere voucher om het Ticket# waar deze bij hoort op "
 "te slaan. Toegestane reeks: 1..16. Gebruik van 16 bits zorgt dat een rol "
-"maximaal 65535 vouchers kan bevatten. Een bit array, opgeslagen in RAM an in "
+"maximaal 65535 vouchers kan bevatten. Een bit array, opgeslagen in RAM en in "
 "de configuratie, wordt gebruikt om vast te leggen of een voucher gebruikt is."
 " Een bit array voor 65534 vouchers heeft 8KB opslagruimte nodig."
 
@@ -22003,7 +22013,8 @@ msgstr "Vouchersynchronisatie gebruikersnaam"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:540
 msgid "This is the username of the master voucher nodes webConfigurator."
-msgstr "Dit is de gebruikersnaam van de master voucher nodes webConfigurator."
+msgstr ""
+"Dit is de gebruikersnaam van de webConfigurator van de master vouchernode."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:544
 msgid "Voucher sync password"
@@ -22011,7 +22022,8 @@ msgstr "Vouchersynchronisatie wachtwoord"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:547
 msgid "This is the password of the master voucher nodes webConfigurator."
-msgstr "Dit is het wachtwoord van de master voucher nodes webConfigurator."
+msgstr ""
+"Dit is het wachtwoord van de webConfigurator van de master vouchernode."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:568
 msgid ""
@@ -22588,8 +22600,8 @@ msgid ""
 "The specified range must not be within the range configured on a DHCP pool "
 "for this interface."
 msgstr ""
-"Het opgegeven bereik mag niet binnen het bereik zijn ingesteld op een DHCP "
-"pool voor deze interface."
+"De opgegeven range mag niet in de geconfigureerde DHCP pool-range vallen van "
+"deze interface."
 
 #: src/usr/local/www/services_dhcp.php:485
 #: src/usr/local/www/services_dhcpv6.php:407
@@ -23473,7 +23485,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp_relay.php:144
 msgid "DHCP Relay Configuration"
-msgstr "DHCP relayconfiguratie"
+msgstr "DHCP Relay Configuratie"
 
 #: src/usr/local/www/services_dhcp_relay.php:155
 #: src/usr/local/www/services_dhcpv6_relay.php:155
@@ -24545,7 +24557,7 @@ msgstr ""
 
 #: src/usr/local/www/services_igmpproxy_edit.php:68
 msgid "Only one 'upstream' interface can be configured."
-msgstr "Er kan slechts een 'stroomopwaartse' interface worden geconfigureerd."
+msgstr "Er kan slechts een 'upstream' interface worden geconfigureerd."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:142
 msgid "IGMP Proxy Edit"
@@ -24574,7 +24586,7 @@ msgstr ""
 "maar 1 upstream interface zijn.%1$sDownstreamnetwerk interfaces zijn de "
 "distribuerende interfaces naar de doel-netwerken, waar multicast clients "
 "kunnen bij groepen kunnen aansluiten en multicast data kunnen ontvangen. Er "
-"meoten 1 of meerdere downstream interfaces worden ingesteld."
+"moeten 1 of meerdere downstream interfaces worden geconfigureerd."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:177
 msgid "Threshold"
@@ -24630,7 +24642,7 @@ msgstr "PPS"
 
 #: src/usr/local/www/services_ntpd.php:211
 msgid "NTP Server Configuration"
-msgstr "NTP Server Instellingen"
+msgstr "NTP Server Configuratie"
 
 #: src/usr/local/www/services_ntpd.php:221
 #, php-format
@@ -24651,7 +24663,7 @@ msgstr "Tijdserver"
 #: src/usr/local/www/services_ntpd.php:232
 #, php-format
 msgid "%d is the maximum number of configured servers."
-msgstr "%d is het maximum te configureren servers."
+msgstr "%d is het maximum aantal te configureren servers."
 
 #: src/usr/local/www/services_ntpd.php:285
 #, php-format
@@ -24669,16 +24681,16 @@ msgid ""
 msgstr ""
 "NTP zal alleen synchroniseren als de tijd op de meerderheid van de servers "
 "overeenkomt. Voor de beste resultaten moet je tussen de 3 en 5 servers "
-"instellen (%4$sNTP support pagina's bevelen ten minste 4 or 5 aan%5$s), of "
-"een Verzameling (pool). Indien slechts één server is ingesteld, zal deze "
-"%2$saltijd%3$s worden vertrouwd, en indien 2 servers zijn ingesteld en deze "
-"zijn het niet eens, zullen %2$sbeide niet%3$s worden vertrouwd. Opties:"
-"%1$s%2$sVoorkeur%3$s - NTP moet de voorkeur geven aan deze server boven alle "
-"andere.%1$s%2$sNiet Kiezen%3$s - NTP moet deze server niet voor de tijd "
-"gebruiken, maar statistieken van deze server worden wel verzameld en getoond."
-"%1$s%2$sIs een Verzamling%3$s - Deze invoer is een Verzameling van NTP "
-"servers en niet een enkel adres.  Hiervan wordt standaard uitgegaan voor *."
-"pool.ntp.org."
+"configureren (%4$sNTP support pagina's bevelen ten minste 4 or 5 aan%5$s), "
+"of een Verzameling (pool). Indien slechts één server is geconfigureerd, zal "
+"deze %2$saltijd%3$s worden vertrouwd, en indien 2 servers zijn "
+"geconfigureerd en deze zijn het niet eens, zullen %2$sbeide niet%3$s worden "
+"vertrouwd. Opties:%1$s%2$sVoorkeur%3$s - NTP moet de voorkeur geven aan deze "
+"server boven alle andere.%1$s%2$sNiet Kiezen%3$s - NTP moet deze server niet "
+"voor de tijd gebruiken, maar statistieken van deze server worden wel "
+"verzameld en getoond.%1$s%2$sIs een Verzamling%3$s - Deze invoer is een "
+"Verzameling van NTP servers en niet een enkel adres.  Hiervan wordt "
+"standaard uitgegaan voor *.pool.ntp.org."
 
 #: src/usr/local/www/services_ntpd.php:300
 msgid "Orphan Mode"
@@ -24883,11 +24895,11 @@ msgid ""
 "if the GPS is not listed.%1$sThe predefined configurations assume the GPS "
 "has already been set to NMEA mode."
 msgstr ""
-"Deze optie staat toe dat voorgedefinieerde instellingen kunnen worden "
-"geselecteerd. Standaard is dit de instellingen van pfSense 2.1 en ouder "
+"Deze optie staat toe dat een voorgedefinieerde configuratie kan worden "
+"geselecteerd. Standaard is dit de configuratie van pfSense 2.1 en eerder "
 "(niet aanbevolen). Selecteer Generiek indien de GPS niet in de lijst "
-"voorkomt..%1$sDe voorgedefinieerde instellingen gaan ervan uit dat de GPS al "
-"is ingesteld op NMEA mode."
+"voorkomt..%1$sDe voorgedefinieerde configuraties gaan ervan uit dat de GPS "
+"al is ingesteld op NMEA mode."
 
 #: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
@@ -24909,8 +24921,8 @@ msgid ""
 "at a baud rate of 4800 or 9600."
 msgstr ""
 "Een hogere baud snelheid is normaal gesproken alleen nuttig als de GPS te "
-"veel sentences verzend. Het is aanbevolen om de GPS maar Ã©Ã©n sentence te "
-"laten verzenden met een snelheid van 4800 of 9600 baud."
+"veel sentences verzend. Het is aanbevolen om de GPS te configureren maar een "
+"(1) sentence te laten verzenden met een snelheid van 4800 of 9600 baud."
 
 #: src/usr/local/www/services_ntpd_gps.php:380
 msgid "NMEA Sentences"
@@ -25449,7 +25461,8 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:55
 msgid "Only interfaces configured with a static IP will be shown."
-msgstr "Alleen interfaces met een statisch IP adres worden getoond."
+msgstr ""
+"Alleen interfaces geconfigureerd met een statisch IP adres worden getoond."
 
 #: src/usr/local/www/services_router_advertisements.php:105
 msgid "Router Only - RA Flags [none], Prefix Flags [router]"
@@ -25535,7 +25548,7 @@ msgstr "Beheerd"
 msgid ""
 "Will advertise this router with all configuration through a DHCPv6 server."
 msgstr ""
-"Zal deze router bekendmaken met alle instellingen via een DHCPv6 server."
+"Zal deze router bekendmaken met alle configuratie via een DHCPv6 server."
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
@@ -25546,8 +25559,8 @@ msgid ""
 "Will advertise this router with configuration through a DHCPv6 server and/or "
 "stateless autoconfig."
 msgstr ""
-"Zal deze router bekendmaken met alle instellingen via een DHCPv6 server en/"
-"of sessieonafhankelijke automatische configuratie"
+"Zal deze router bekendmaken met configuratie via een DHCPv6 server en/of "
+"sessieonafhankelijke automatische configuratie"
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
@@ -25559,7 +25572,7 @@ msgid ""
 "information available via DHCPv6."
 msgstr ""
 "Zal deze router bekendmaken met sessieonafhankelijke automatische "
-"configuratie en andere beschikbare instellingen via DHCPv6."
+"configuratie en andere beschikbare configuratie informatie via DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:133
 msgid ""
@@ -25717,7 +25730,7 @@ msgstr "Subnets"
 
 #: src/usr/local/www/services_router_advertisements.php:442
 msgid "DNS Configuration"
-msgstr "DNS COnfiguratie"
+msgstr "DNS Configuratie"
 
 #: src/usr/local/www/services_router_advertisements.php:447
 msgid "Server "
@@ -25871,7 +25884,7 @@ msgid ""
 "This system is configured to use the DNS Resolver as its DNS server, so "
 "Localhost or All must be selected in Network Interfaces."
 msgstr ""
-"Dit systeem is ingesteld om de DNS Resolver te gebruiken als zijn DNS "
+"Dit systeem is geconfigureerd om de DNS Resolver te gebruiken als zijn DNS "
 "server, daarom moet Localhost of Alle worden geselecteerd in de Netwerk "
 "Interfaces."
 
@@ -25900,13 +25913,13 @@ msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
-"Het gegenereerde configuratiebestand kan niet worden ontleed door unbound. "
+"Het gegenereerde configuratiebestand kan niet worden verwerkt door unbound. "
 "Corrigeer de volgende fouten:"
 
 #: src/usr/local/www/services_unbound.php:191
 #: src/usr/local/www/services_unbound_advanced.php:190
 msgid "DNS Resolver configured."
-msgstr "DNS Resolver ingesteld."
+msgstr "DNS Resolver geconfigureerd."
 
 #: src/usr/local/www/services_unbound.php:211
 msgid "Host override deleted from DNS Resolver."
@@ -25929,7 +25942,7 @@ msgstr "Algemene Instellingen"
 #: src/usr/local/www/services_unbound_acls.php:180
 #: src/usr/local/www/services_unbound_advanced.php:211
 msgid "The DNS resolver configuration has been changed."
-msgstr "De instellingen van de DNS Resolver zijn aangepast."
+msgstr "De configuratie van de DNS Resolver is aangepast."
 
 #: src/usr/local/www/services_unbound.php:269
 #: src/usr/local/www/services_unbound_acls.php:185
@@ -26091,7 +26104,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:60
 msgid "Access list deleted from DNS Resolver."
-msgstr "Toegangslijst verwijderd voor DNS Resolver"
+msgstr "Toegangslijst verwijderd uit de DNS Resolver"
 
 #: src/usr/local/www/services_unbound_acls.php:104
 #: src/usr/local/www/services_unbound_acls.php:118
@@ -26117,7 +26130,7 @@ msgstr "Opslaan"
 
 #: src/usr/local/www/services_unbound_acls.php:146
 msgid "Access list configured for DNS Resolver."
-msgstr "Toegangslijst ingesteld voor DNS Resolver"
+msgstr "Toegangslijst geconfigureerd voor DNS Resolver"
 
 #: src/usr/local/www/services_unbound_acls.php:155
 #, php-format
@@ -26156,7 +26169,7 @@ msgid ""
 msgstr ""
 "%1$sSnoop Toestaan:%2$s Sta recursieve en niet recursieve toegang toe van "
 "hosts binnen het hieronder gedefinieerde netblok. Gebruikt voor cache "
-"snooping en zou idealiter alleen moeten worden ingesteld voor de "
+"snooping en zou idealiter alleen moeten worden geconfigureerd voor de "
 "administratieve host.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:159
@@ -26455,8 +26468,8 @@ msgid ""
 msgstr ""
 "Maximale Time to  Live voor RRsets en berichten in de cache. Standaard is "
 "86400 seconden (1 dag). Wanneer de interne TTL verstrijkt, is het gecachte "
-"item verlopen. Dit kan worden ingesteld om de Resolver te dwingen vaker de "
-"data op te vragen en (hoge) TTL waarden niet te vertrouwen."
+"item verlopen. Dit kan worden geconfigureerd om de Resolver te dwingen vaker "
+"de data op te vragen en (hoge) TTL waarden niet te vertrouwen."
 
 #: src/usr/local/www/services_unbound_advanced.php:313
 msgid "Minimum TTL for RRsets and Messages"
@@ -26555,6 +26568,10 @@ msgid ""
 "system are permitted. Allowed networks must be manually configured on the "
 "Access Lists tab if the auto-added entries are disabled."
 msgstr ""
+"Standaard zijn IPv4- en IPv6-netwerken toegestaan die op interne interfaces "
+"van dit systeem zitten. Toegestane netwerken moeten handmatig worden "
+"geconfigureerd op het tabblad Toegangslijsten als het automatisch toevoegen "
+"is uitgeschakeld."
 
 #: src/usr/local/www/services_unbound_advanced.php:364
 msgid "Disable Auto-added Host Entries"
@@ -26568,6 +26585,10 @@ msgid ""
 "%1$sSystem: General Setup%2$s. This disables the auto generation of these "
 "entries."
 msgstr ""
+"Standaard worden de primaire IPv4- en IPv6-adressen van deze firewall "
+"toegevoegd als records voor het systeemdomein van deze firewall zoals "
+"geconfigureerd in %1$sSysteem: Algemene instellingen%2$s. Hiermee wordt de "
+"automatische generatie van deze vermeldingen uitgeschakeld."
 
 #: src/usr/local/www/services_unbound_advanced.php:371
 msgid "Experimental Bit 0x20 Support"
@@ -26590,7 +26611,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:99
 msgid "Domain override configured for DNS Resolver."
-msgstr "Domein overschrijving ingesteld voor de DNS Resolver."
+msgstr "Domein overschrijving geconfigureerd voor de DNS Resolver."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:117
 msgid "Domains to Override with Custom Lookup Servers"
@@ -26639,7 +26660,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_host_edit.php:174
 msgid "Host override configured for DNS Resolver."
-msgstr "Host overschrijving ingesteld voor de DNS Resolver."
+msgstr "Host overschrijving geconfigureerd voor de DNS Resolver."
 
 #: src/usr/local/www/services_unbound_host_edit.php:199
 #, php-format
@@ -26724,7 +26745,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:102
 msgid "Deleted a device from WOL configuration."
-msgstr ""
+msgstr "Een apparaat verwijderd van de WOL Configuratie."
 
 #: src/usr/local/www/services_wol.php:113
 msgid ""
@@ -26737,6 +26758,8 @@ msgid ""
 "The NIC in the computer that is to be woken up must support Wake-on-LAN and "
 "must be properly configured (WOL cable, BIOS settings)."
 msgstr ""
+"De NIC in de computer die wakker moet worden moet Wake-on-LAN ondersteunen "
+"en moet correct zijn geconfigureerd (WOL-kabel, BIOS-instellingen)."
 
 #: src/usr/local/www/services_wol.php:138
 msgid "Choose which interface the host to be woken up is connected to."
@@ -26782,7 +26805,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol_edit.php:104
 msgid "Configured a wake-on-LAN entry."
-msgstr ""
+msgstr "Een wake-on-LAN-ingang geconfigureerd."
 
 #: src/usr/local/www/services_wol_edit.php:130
 msgid "Edit WOL Entry"
@@ -26825,6 +26848,8 @@ msgstr ""
 #: src/usr/local/www/status.php:363
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
+"Veel voorkomende wachtwoordvelden in config.xml zijn automatisch geredigeerd."
+""
 
 #: src/usr/local/www/status.php:365
 #, php-format
@@ -26952,7 +26977,7 @@ msgid ""
 "No Captive Portal zones have been configured. New zones may be added here: "
 "%1$sServices > Captive Portal%2$s."
 msgstr ""
-"Er zijn geen Toegangsportaal zones ingesteld. Nieuwe zones kunnen hier "
+"Er zijn geen Toegangsportaal zones geconfigureerd. Nieuwe zones kunnen hier "
 "worden toegevoegd: %1$sServices > Toegangsportaal%2$s."
 
 #: src/usr/local/www/status_captiveportal.php:277
@@ -27066,7 +27091,7 @@ msgid ""
 "reboot and some configuration changes will re-enable."
 msgstr ""
 "%s IP's zijn uitgeschakeld. Let op dat uitschakelen verloren gaat na een "
-"herstart en enkele instellingen weer ingeschakeld zullen zijn."
+"herstart en enkele configuratie aanpassingen weer ingeschakeld zullen zijn."
 
 #: src/usr/local/www/status_carp.php:76
 msgid "CARP has been enabled."
@@ -27079,6 +27104,8 @@ msgstr "Geen CARP interface gedefinieerd"
 #: src/usr/local/www/status_carp.php:134
 msgid "High availability sync settings can be configured here."
 msgstr ""
+"Hoge Beschikbaarheid Synchronisatie instellingen kunnen hier worden "
+"geconfigureerd."
 
 #: src/usr/local/www/status_carp.php:149
 msgid ""
@@ -27090,6 +27117,8 @@ msgstr ""
 #: src/usr/local/www/status_carp.php:151
 msgid "Check the link status on all interfaces configured with CARP VIPs and "
 msgstr ""
+"Controleer de verbindingsstatus van alle interfaces geconfigureerd met CARP "
+"VIPs en"
 
 #: src/usr/local/www/status_carp.php:152
 #, php-format
@@ -27278,7 +27307,7 @@ msgstr "Toon alleen actieve en statische reserveringen"
 #: src/usr/local/www/status_dhcp_leases.php:529
 #: src/usr/local/www/status_dhcpv6_leases.php:609
 msgid "Show all configured leases"
-msgstr "Toon alle ingestelde reserveringen"
+msgstr "Toon alle geconfigureerde reserveringen"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:199
 msgid "released"
@@ -27311,7 +27340,7 @@ msgstr "Herlaad filter"
 
 #: src/usr/local/www/status_filter_reload.php:66
 msgid "Force Config Sync"
-msgstr ""
+msgstr "Forceer Configuratie Synchronisatie"
 
 #: src/usr/local/www/status_filter_reload.php:75
 msgid "Reload status"
@@ -27799,7 +27828,7 @@ msgstr "Verzamelen van IPsec status informatie."
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr ""
+msgstr "IPsec kan %1$shier%2$s worden geconfigureerd."
 
 #: src/usr/local/www/status_ipsec.php:550
 msgid "No IPsec status information available."
@@ -27859,7 +27888,7 @@ msgstr ""
 
 #: src/usr/local/www/status_ipsec_spd.php:101
 msgid "No IPsec security policies configured."
-msgstr ""
+msgstr "Geen IPsec beveiligingsbeleid geconfigureerd."
 
 #: src/usr/local/www/status_lb_pool.php:105
 msgid "Updated load balancer pools via status screen."
@@ -27883,7 +27912,7 @@ msgstr "(standaard)"
 
 #: src/usr/local/www/status_lb_vs.php:56
 msgid "No load balancers have been configured."
-msgstr "Geen load balancers geconfigureerd"
+msgstr "Er zijn geen load balancers geconfigureerd."
 
 #: src/usr/local/www/status_lb_vs.php:98
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:72
@@ -28132,17 +28161,18 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:721
 msgid "Log Display Settings Saved: "
-msgstr ""
+msgstr "Log Display Instellingen opgeslagen: "
 
 #: src/usr/local/www/status_logs_common.inc:724
 msgid "Log Display Settings Saved (no backup, no sync): "
-msgstr ""
+msgstr "Log Display Instellingen opgeslagen (no backup, no sync): "
 
 #: src/usr/local/www/status_logs_common.inc:732
 #: src/usr/local/www/status_logs_settings.php:178
 #: src/usr/local/www/system_advanced_admin.php:562
 msgid "webConfigurator configuration has changed. Restarting webConfigurator."
 msgstr ""
+"webConfigurator configuratie is aangepast. WebConfigurator opnieuw starten."
 
 #: src/usr/local/www/status_logs_common.inc:734
 #: src/usr/local/www/status_logs_settings.php:180
@@ -28283,7 +28313,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:950
 msgid "Saves changed settings."
-msgstr ""
+msgstr "Gewijzigde instellingen worden opgeslagen."
 
 #: src/usr/local/www/status_logs_common.inc:955
 msgid "Clear log"
@@ -28294,6 +28324,8 @@ msgid ""
 "Clears local log file and reinitializes it as an empty log. Save any "
 "settings changes first."
 msgstr ""
+"Schoont alle lokale log bestanden en initialiseert deze als lege bestanden. "
+"Sla eerst de aanpassingen in de instellingen op."
 
 #: src/usr/local/www/status_logs_filter.php:45
 msgid "Cannot resolve"
@@ -28833,7 +28865,7 @@ msgstr ""
 
 #: src/usr/local/www/status_queues.php:115
 msgid "Traffic shaping is not configured."
-msgstr ""
+msgstr "Traffic shaping is niet geconfigureerd."
 
 #: src/usr/local/www/status_queues.php:154
 msgid "Status Queues"
@@ -28966,6 +28998,8 @@ msgid ""
 "Each configured DNS server must have a unique IP address. Remove the "
 "duplicated IP."
 msgstr ""
+"Elke geconfigureerde DNS-server moet een uniek IP-adres hebben. Verwijder de "
+"dubbele IP."
 
 #: src/usr/local/www/system.php:257
 #, php-format
@@ -28994,6 +29028,12 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
+"Gebruik niet '.local' als het laatste deel van het domein (TLD). Het '."
+"local' domein wordt %1$sbreed gebruikt%2$s door mDNS (inclusief Avahi en "
+"Apple OS X's Bonjour/Rendezvous/Airprint/Airplay), en sommige Windows "
+"systemen en netwerkapparaten. Deze zullen niet correct in het netwerk werken "
+"als de router '.local' gebruikt. Alternatieven zoals '.local.lan' of '."
+"mylocal' zijn wel veilig te gebruiken."
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -29095,7 +29135,7 @@ msgstr "*Taal"
 
 #: src/usr/local/www/system.php:588
 msgid "Choose a language for the webConfigurator"
-msgstr ""
+msgstr "Kies een taal voor de webConfigurator"
 
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
@@ -29251,6 +29291,9 @@ msgid ""
 "default (80 for HTTP, 443 for HTTPS). Changes will take effect immediately "
 "after save."
 msgstr ""
+"Voer hierboven een aangepast poortnummer in voor de webConfigurator om de "
+"standaard (80 voor HTTP, 443 voor HTTPS) te overschrijven. Wijzigingen "
+"zullen onmiddellijk na het opslaan van kracht worden."
 
 #: src/usr/local/www/system_advanced_admin.php:358
 msgid "Max Processes"
@@ -29276,8 +29319,8 @@ msgid ""
 "even on port 80, regardless of the listening port configured. Check this box "
 "to disable this automatically added redirect rule."
 msgstr ""
-"Wanneer dit niet is ingeschakeld is toegang tot de webconfigurator altijd "
-"toegestaan, zelfs in poort 80, ongeacht de geconfigureerde poort. Vink aan "
+"Wanneer dit niet is ingeschakeld is toegang tot de webConfigurator altijd "
+"toegestaan, zelfs op poort 80, ongeacht de geconfigureerde poort. Vink aan "
 "om deze automatisch toegevoegd omleidregel uit te schakelen."
 
 #: src/usr/local/www/system_advanced_admin.php:376
@@ -29292,7 +29335,7 @@ msgid ""
 "browsers will prompt to save credentials (NOTE: Some browsers do not respect "
 "this option)."
 msgstr ""
-"Indien dit is aangevinkt mogen inlog gegevens voor de WebConfigurator door "
+"Indien dit is aangevinkt mogen inlog gegevens voor de webConfigurator door "
 "de browser worden opgeslagen. Hoewel handig vereisen sommige "
 "beveiligingstandaarden dat dit is uitgeschakeld. Vink dit vakje aan om "
 "autocomplete in het aanmeldformulier in te schakelen, zodat browsers vragen "
@@ -29308,6 +29351,8 @@ msgid ""
 "When this is checked, successful logins to the webConfigurator will not be "
 "logged."
 msgstr ""
+"Indien dit is aangevinkt worden succesvolle logins op de webConfigurator "
+"niet gelogd."
 
 #: src/usr/local/www/system_advanced_admin.php:401
 msgid "Anti-lockout"
@@ -29345,6 +29390,11 @@ msgid ""
 "servers. Check this box to disable this protection if it interferes with "
 "webConfigurator access or name resolution in the environment."
 msgstr ""
+"Wanneer dit niet is ingeschakeld, is het systeem beschermd tegen %1$sDNS "
+"Rebinding attacks%2$s. Dit blokkeert privé-IP-reacties van de "
+"geconfigureerde DNS-servers. Vink dit vakje aan om deze beveiliging uit te "
+"schakelen als het interfereert met webConfigurator toegang of naamresolutie "
+"in de omgeving."
 
 #: src/usr/local/www/system_advanced_admin.php:425
 msgid "Alternate Hostnames"
@@ -29373,7 +29423,7 @@ msgid ""
 "using external scripts to interact with this system. More information on "
 "HTTP_REFERER is available from %1$sWikipedia%2$s"
 msgstr ""
-"Wanneer dit niet is ingeschakeld, wordt de toegang tot de webconfigurator "
+"Wanneer dit niet is ingeschakeld, wordt de toegang tot de webConfigurator "
 "beveiligd tegen HTTP_REFERER omleidpogingen. Vink aan om deze beveiliging "
 "uit te schakelen als het interfereert met de toegang tot webConfigurator in "
 "bepaalde gevallen, zoals het gebruik van externe scripts om met dit systeem "
@@ -29472,11 +29522,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:551
 msgid "secure shell configuration has changed. Stopping sshd."
-msgstr ""
+msgstr "secure shell configuratie is aangepast. Sshd aan het stoppen."
 
 #: src/usr/local/www/system_advanced_admin.php:554
 msgid "secure shell configuration has changed. Restarting sshd."
-msgstr ""
+msgstr "secure shell configuratie is aangepast. Sshd aan het herstarten."
 
 #: src/usr/local/www/system_advanced_firewall.php:83
 msgid "The Firewall Adaptive values must be set together."
@@ -29783,8 +29833,8 @@ msgid ""
 "aliases. %1$sNote:\t Leave this blank for the default (300s)."
 msgstr ""
 "Interval, in seconden, that wordt gebruikt om hostnamen te herleiden die "
-"ingesteld zijn op aliassen. %1$sOpmerking:\t Laat leeg voor de standaard "
-"waarde (300 sec)."
+"geconfigureerd zijn op aliassen. %1$sOpmerking:\t Laat leeg voor de "
+"standaard waarde (300 sec)."
 
 #: src/usr/local/www/system_advanced_firewall.php:547
 msgid "Check certificate of aliases URLs"
@@ -29860,6 +29910,22 @@ msgid ""
 "%3$sIndividual rules may be configured to override this system setting on a "
 "per-rule basis."
 msgstr ""
+"%1$sDe pure NAT-modus maakt gebruik van een set NAT-regels om pakketten naar "
+"de doelpoort door te sturen. Het heeft betere een schaalbaarheid, maar het "
+"moet mogelijk zijn om de interface en gateway IP die voor communicatie met "
+"het doel wordt gebruikt nauwkeurig te bepalen op het moment dat de regels "
+"worden geladen. Er zijn geen inherente grenzen aan het aantal poorten anders "
+"dan de grenzen van de protocollen. Alle protocollen die beschikbaar zijn "
+"voor poort doorsturen worden ondersteund.%2$sDe NAT + proxy-modus maakt "
+"gebruik van een hulpprogramma om pakketten te verzenden naar het doel van de "
+"doorgestuurde poort. Dit is handig in opstellingen waarbij de interface en/"
+"of gateway IP die gebruikt wordt voor communicatie met het doel niet "
+"nauwkeurig kan worden bepaald op het moment dat de regels worden geladen. "
+"Reflectie regels worden niet gecreëerd voor bereiken groter dan 500 poorten "
+"en zullen niet worden gebruikt voor meer dan 1000 poorten totaal tussen alle "
+"doorgestuurde poorten. Alleen TCP- en UDP-protocollen worden ondersteund."
+"%3$sIndividuele regels kunnen worden geconfigureerd om deze "
+"systeeminstelling per regel te overschrijven."
 
 #: src/usr/local/www/system_advanced_firewall.php:609
 msgid "Reflection Timeout"
@@ -30343,6 +30409,9 @@ msgid ""
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
 "confirm."
 msgstr ""
+"De \\\"Gebruik Ramdisk\\\" instelling is veranderd. Dit zorgt ervoor dat de "
+"firewall\\nonmiddelijk wordt herstart zodra de nieuwe instelling wordt "
+"opgeslagen.\\n\\nBevestig  a.u.b."
 
 #: src/usr/local/www/system_advanced_network.php:58
 msgid "An IP address to NAT IPv6 packets must be specified."
@@ -30417,6 +30486,12 @@ msgid ""
 "entries are added to the system's DNS. Enabling this option prevents those "
 "IPv6 records from being created."
 msgstr ""
+"Als de IPv6-configuratie van een LAN-interface is ingesteld op Track, en de "
+"gekoppelde interface de verbinding verliest, kan het leiden dat verbindingen "
+"met deze firewall die via hostnaam zijn gemaakt mislukken. Dit kan onbedoeld "
+"gebeuren bij toegang tot de firewall via de hostnaam, aangezien standaard "
+"IPv4 en IPv6-ingangen aan het systeem DNS worden toegevoegd. Als u deze "
+"optie inschakelt worden deze IPv6-records niet gecreëerd."
 
 #: src/usr/local/www/system_advanced_network.php:222
 #: src/usr/local/www/system_advanced_network.php:226
@@ -30443,13 +30518,13 @@ msgstr ""
 "Dit is de DHCPv6 Unique Identifier (DUID) die door de firewall wordt "
 "gebruikt wanneer u een IPv6-adres aanvraagt. %1$sStandaard maakt de firewall "
 "automatisch een dynamische DUID, die niet opgeslagen is in de firewall "
-"instellingen. Om ervoor te zorgen dat dezelfde DUID altijd wordt gebruikt "
+"configuratie. Om ervoor te zorgen dat dezelfde DUID altijd wordt gebruikt "
 "door de firewall, voer een DUID in dit veld in. De nieuwe DUID wordt van "
 "kracht na een herstart of wanneer de WAN-interface(s) door de firewall "
-"opnieuw worden ingesteld.%1$sAls de firewall is geconfigureerd om een RAM-"
-"schijf te gebruiken voor /var, is het de beste manier om hier een DUID op te "
-"slaan omdat anders de DUID bij elke herstart zal veranderen.%1$s%1$sU kunt "
-"de kopieer DUID-knop gebruiken om de getoonde, door het systeem-"
+"opnieuw worden geconfigureerd.%1$sAls de firewall is geconfigureerd om een "
+"RAM-schijf te gebruiken voor /var, is het de beste manier om hier een DUID "
+"op te slaan omdat anders de DUID bij elke herstart zal veranderen.%1$s%1$sU "
+"kunt de kopieer DUID-knop gebruiken om de getoonde, door het systeem-"
 "gedetecteerde, DUID te kopiëren."
 
 #: src/usr/local/www/system_advanced_network.php:252
@@ -30469,6 +30544,11 @@ msgid ""
 "NICs. This will take effect after a machine reboot or re-configure of each "
 "interface."
 msgstr ""
+"Als u deze optie kiest, wordt de hardware checksum offloading uitgeschakeld."
+"%1$sChecksum offloading werkt niet in sommige hardware, met name sommige "
+"Realtek-kaarten. Soms kunnen drivers problemen hebben met checksum "
+"offloading en enkele specifieke NICs. Dit wordt van kracht na het opnieuw "
+"opstarten van de machine of het opnieuw configureren van iedere interface. "
 
 #: src/usr/local/www/system_advanced_network.php:267
 msgid "Hardware TCP Segmentation Offloading"
@@ -30481,6 +30561,11 @@ msgid ""
 "impact performance with some specific NICs. This will take effect after a "
 "machine reboot or re-configure of each interface."
 msgstr ""
+"Als u deze optie kiest, wordt de hardware TCP-segmentatie offloading "
+"uitgeschakeld (TSO, TSO4, TSO6). Deze offloading werkt niet in sommige "
+"hardware drivers, en kan de prestaties beïnvloeden met sommige specifieke "
+"NIC's. Dit wordt van kracht na het opnieuw opstarten van de machine of het "
+"opnieuw configureren van iedere interface."
 
 #: src/usr/local/www/system_advanced_network.php:277
 msgid "Hardware Large Receive Offloading"
@@ -30493,6 +30578,11 @@ msgid ""
 "performance with some specific NICs. This will take effect after a machine "
 "reboot or re-configure of each interface."
 msgstr ""
+"Als u deze optie kiest, wordt de hardware Large Receive Offloading (LRO) "
+"uitgeschakeld. Deze offloading werkt niet in sommige hardware drivers, en "
+"kan de prestaties beïnvloeden met sommige specifieke NIC's. Dit wordt van "
+"kracht na het opnieuw opstarten van de machine of het opnieuw configureren "
+"van iedere interface. "
 
 #: src/usr/local/www/system_advanced_network.php:287
 msgid "ARP Handling"
@@ -30667,6 +30757,9 @@ msgid ""
 "A test notification will be sent even if the service is marked as disabled.  "
 "The last SAVED values will be used, not necessarily the values entered here."
 msgstr ""
+"Een test notificatie zal worden verstuurd zelfs als de service is gemarkeerd "
+"als uitgeschakeld. De laatste opgeslagen waarden zullen worden gebruikt, "
+"niet noodzakelijkerwijs de hier opgegeven waarden."
 
 #: src/usr/local/www/system_advanced_notifications.php:311
 msgid "Sounds"
@@ -30923,7 +31016,7 @@ msgstr "Wijzig server"
 #: src/usr/local/www/system_authservers.php:456
 #: src/usr/local/www/vpn_openvpn_server.php:1371
 msgid "Delete server"
-msgstr ""
+msgstr "Verwijder server"
 
 #: src/usr/local/www/system_authservers.php:488
 msgid "Server Settings"
@@ -31162,6 +31255,8 @@ msgstr "Maak een tussenliggende Certificaat Autoriteit"
 #, php-format
 msgid "Certificate Authority %s and its CRLs (if any) successfully deleted."
 msgstr ""
+"Certificate Authority %s en bijbehorende CRL's (indien aanwezig) succesvol "
+"verwijderd."
 
 #: src/usr/local/www/system_camanager.php:168
 #: src/usr/local/www/system_certmanager.php:236
@@ -31361,11 +31456,11 @@ msgstr ""
 
 #: src/usr/local/www/system_camanager.php:439
 msgid "Delete CA and its CRLs"
-msgstr ""
+msgstr "Verwijder CA en bijbehorende CRL's"
 
 #: src/usr/local/www/system_camanager.php:481
 msgid "Create / Edit CA"
-msgstr ""
+msgstr "Maak / Wijzig CA"
 
 #: src/usr/local/www/system_camanager.php:493
 #: src/usr/local/www/system_certmanager.php:645
@@ -31509,7 +31604,7 @@ msgstr ""
 #: src/usr/local/www/system_certmanager.php:95
 #, php-format
 msgid "Certificate %s successfully deleted."
-msgstr ""
+msgstr "Certificaat %s succesvol verwijderd."
 
 #: src/usr/local/www/system_certmanager.php:216
 msgid "CA to sign with"
@@ -31792,7 +31887,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1241
 msgid "Delete Certificate"
-msgstr ""
+msgstr "Certificaat verwijderen"
 
 #: src/usr/local/www/system_certmanager.php:1257
 msgid "Add/Sign"
@@ -31836,12 +31931,12 @@ msgstr ""
 #: src/usr/local/www/system_crlmanager.php:177
 #, php-format
 msgid "Deleted Certificate %1$s from CRL %2$s."
-msgstr ""
+msgstr "Certificaat %1$s verwijderd van CRL %2$s."
 
 #: src/usr/local/www/system_crlmanager.php:184
 #, php-format
 msgid "Failed to delete Certificate %1$s from CRL %2$s."
-msgstr ""
+msgstr "Verwijderen Certificaat %1$s van CRL %2$s mislukt."
 
 #: src/usr/local/www/system_crlmanager.php:199
 msgid "Certificate Revocation List data"
@@ -31915,7 +32010,7 @@ msgstr ""
 
 #: src/usr/local/www/system_crlmanager.php:492
 msgid "Delete this certificate from the CRL"
-msgstr ""
+msgstr "Verwijder dit certificaat van de CRL"
 
 #: src/usr/local/www/system_crlmanager.php:516
 msgid "No certificates found for this CA."
@@ -31957,7 +32052,7 @@ msgstr "Wijzig Certificaat Herroepingslijst (CRL)"
 
 #: src/usr/local/www/system_crlmanager.php:657
 msgid "Delete CRL"
-msgstr ""
+msgstr "Verwijder CRL"
 
 #: src/usr/local/www/system_gateway_groups.php:72
 #, php-format
@@ -31967,7 +32062,7 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups.php:112
 #: src/usr/local/www/system_gateways.php:232
 msgid "The gateway configuration has been changed."
-msgstr ""
+msgstr "De gateway configuratie is aangepast."
 
 #: src/usr/local/www/system_gateway_groups.php:117
 #: src/usr/local/www/system_gateways.php:237
@@ -31989,7 +32084,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateway_groups.php:170
 msgid "Delete gateway group"
-msgstr ""
+msgstr "Verwijder gateway groep"
 
 #: src/usr/local/www/system_gateway_groups.php:191
 #, php-format
@@ -32089,6 +32184,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be deleted because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
+"Gateway \"%1$s\" kan niet worden verwijderd omdat deze in gebruik is op "
+"Gateway Groep \"%2$s\""
 
 #: src/usr/local/www/system_gateways.php:90
 #, php-format
@@ -32132,7 +32229,7 @@ msgstr ""
 
 #: src/usr/local/www/system_gateways.php:310
 msgid "Delete gateway"
-msgstr ""
+msgstr "Verwijder gateway"
 
 #: src/usr/local/www/system_gateways_edit.php:149
 msgid "Edit Gateway"
@@ -32347,16 +32444,19 @@ msgid ""
 "usually indicative of a configuration error, but is required for some "
 "scenarios."
 msgstr ""
+"Dit zal het gebruik van een gateway buiten het subnet van dit interface "
+"mogelijk maken. Dit is meestal een indicatie voor een configuratiefout, maar "
+"is vereist voor sommige scenario's."
 
 #: src/usr/local/www/system_groupmanager.php:74
 #, php-format
 msgid "Group %s successfully deleted."
-msgstr ""
+msgstr "Groep %s succesvol verwijderd."
 
 #: src/usr/local/www/system_groupmanager.php:98
 #, php-format
 msgid "Privilege %s successfully deleted."
-msgstr ""
+msgstr "Rechten %s succesvol verwijderd."
 
 #: src/usr/local/www/system_groupmanager.php:123
 msgid "Selected groups removed successfully."
@@ -32388,7 +32488,7 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager.php:242
 #: src/usr/local/www/system_usermanager.php:494
 msgid "Delete Privilege"
-msgstr ""
+msgstr "Verwijder rechten"
 
 #: src/usr/local/www/system_groupmanager.php:250
 msgid ""
@@ -32499,6 +32599,10 @@ msgid ""
 "users in the group because the user gains access to execute general "
 "commands, edit system files,  modify users, change passwords or similar:"
 msgstr ""
+"De volgende rechten geven effectief beheerdersniveau toegang aan gebruikers "
+"in de groep omdat de gebruiker toegang krijgt tot het uitvoeren van algemene "
+"commando's, systeembestanden bewerken, gebruikers wijzigen, wachtwoorden "
+"wijzigen en dergelijke: "
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:196
 #: src/usr/local/www/system_usermanager_addprivs.php:180
@@ -32588,11 +32692,11 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:152
 msgid "Configuration Synchronization Settings (XMLRPC Sync)"
-msgstr ""
+msgstr "Configuratie Synchronisatie Instellingen (XMLRPC Sync)"
 
 #: src/usr/local/www/system_hasync.php:156
 msgid "Synchronize Config to IP"
-msgstr ""
+msgstr "Synchroniseer Configuratie naar IP"
 
 #: src/usr/local/www/system_hasync.php:160
 #, php-format
@@ -32604,6 +32708,12 @@ msgid ""
 "not use the Synchronize Config to IP and password option on backup cluster "
 "members!"
 msgstr ""
+"Voer het IP-adres van de firewall in waarnaar de geselecteerde configuratie "
+"secties moeten worden gesynchroniseerd.%1$s%1$sXMLRPC synchronisatie wordt "
+"momenteel alleen ondersteund via verbindingen met hetzelfde protocol en "
+"poort als dit systeem - zorg ervoor dat de poort en het protocol van het "
+"externe systeem hetzelfde zijn ingesteld!%1$sGebruik de Synchroniseer Config "
+"naar IP en wachtwoord optie niet op back-up clusterleden! "
 
 #: src/usr/local/www/system_hasync.php:166
 msgid "Remote System Username"
@@ -32616,6 +32726,10 @@ msgid ""
 "synchronizing the configuration.%1$sDo not use the Synchronize Config to IP "
 "and username option on backup cluster members!"
 msgstr ""
+"Voer de gebruikersnaam van de webConfigurator in van het hierboven "
+"ingestelde systeem om de configuratie te synchroniseren%1$sGebruik de "
+"Synchroniseer Config naar IP en wachtwoord optie niet op back-up "
+"clusterleden! "
 
 #: src/usr/local/www/system_hasync.php:174
 msgid "Remote System Password"
@@ -32628,6 +32742,9 @@ msgid ""
 "synchronizing the configuration.%1$sDo not use the Synchronize Config to IP "
 "and password option on backup cluster members!"
 msgstr ""
+"Voer het wachtwoord van de webConfigurator in van het hierboven ingestelde "
+"systeem om de configuratie te synchroniseren%1$sGebruik de Synchroniseer "
+"Config naar IP en wachtwoord optie niet op back-up clusterleden! "
 
 #: src/usr/local/www/system_hasync.php:180
 msgid "Select options to sync"
@@ -32732,11 +32849,11 @@ msgstr "route naar %s uitschakelen"
 
 #: src/usr/local/www/system_routes.php:203
 msgid "Saved static routes configuration."
-msgstr "Statische routes instellingen opgeslagen."
+msgstr "Statische routes configuratie opgeslagen."
 
 #: src/usr/local/www/system_routes.php:224
 msgid "The static route configuration has been changed."
-msgstr "De Statische routes instellingen zijn aangepast."
+msgstr "De Statische routes configuratie is aangepast."
 
 #: src/usr/local/www/system_routes.php:273
 msgid "Edit route"
@@ -32804,10 +32921,11 @@ msgstr "Een route naar deze bestemmingsnetwerken bestaat al"
 #, php-format
 msgid "This network conflicts with address configured on interface %s."
 msgstr ""
+"Dit netwerk conflicteert met een adres geconfigureerd op interface %s."
 
 #: src/usr/local/www/system_routes_edit.php:212
 msgid "Saved static route configuration."
-msgstr "Statische route instelling opgeslagen."
+msgstr "Statische route configuratie opgeslagen."
 
 #: src/usr/local/www/system_routes_edit.php:239
 msgid "Edit Route Entry"
@@ -32847,7 +32965,7 @@ msgstr "Systeem updateinstellingen opgeslagen."
 
 #: src/usr/local/www/system_update_settings.php:92
 msgid "Changes have been saved successfully"
-msgstr ""
+msgstr "Wijzigingen zijn succesvol opgeslagen"
 
 #: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
@@ -32950,6 +33068,7 @@ msgstr ""
 #: src/usr/local/www/system_user_settings.php:54
 msgid "The settings cannot be managed for a non-local user."
 msgstr ""
+"De instellingen kunnen niet worden beheerd voor een niet-lokale gebruiker."
 
 #: src/usr/local/www/system_user_settings.php:145
 #, php-format
@@ -32966,6 +33085,8 @@ msgstr ""
 msgid ""
 "Cannot delete user %s because you are currently logged in as that user."
 msgstr ""
+"Kan gebruiker %s niet verwijderen omdat je op dit moment bent ingelogd als "
+"deze gebruiker."
 
 #: src/usr/local/www/system_usermanager.php:98
 #: src/usr/local/www/system_usermanager.php:149
@@ -33045,6 +33166,8 @@ msgstr "CA"
 #: src/usr/local/www/system_usermanager.php:554
 msgid "Remove this certificate association? (Certificate will not be deleted)"
 msgstr ""
+"Associatie met dit certificaat verwijderen? (Certificaat zal niet worden "
+"verwijderd)"
 
 #: src/usr/local/www/system_usermanager.php:614
 #: src/usr/local/www/system_usermanager.php:782
@@ -33076,6 +33199,10 @@ msgid ""
 "webConfigurator can be assigned directly or inherited from group memberships."
 " Some system object properties can be modified but they cannot be deleted."
 msgstr ""
+"Extra gebruikers kunnen hier toegevoegd worden. Gebruikersrechten voor "
+"toegang tot de webConfigurator kunnen direct worden toegewezen of geërfd "
+"worden uit groepslidmaatschappen. Sommige systeemobject eigenschappen kunnen "
+"worden gewijzigd, maar ze kunnen niet worden verwijderd. "
 
 #: src/usr/local/www/system_usermanager.php:673
 msgid ""
@@ -33139,6 +33266,9 @@ msgid ""
 "No private CAs found. A private CA is required to create a new user "
 "certificate. Save the user first to import an external certificate."
 msgstr ""
+"Er zijn geen privé-CA's gevonden. Een privé-CA is verplicht om een nieuw "
+"gebruikerscertificaat te maken. Sla de gebruiker eerst op om een extern "
+"certificaat te importeren."
 
 #: src/usr/local/www/system_usermanager.php:890
 msgid "Effective Privileges"
@@ -33198,6 +33328,10 @@ msgid ""
 "access  because the user gains access to execute general commands, edit "
 "system files,  modify users, change passwords or similar:"
 msgstr ""
+"De volgende rechten geven de gebruiker effectief beheerdersniveau toegang "
+"omdat de gebruiker toegang krijgt tot het uitvoeren van algemene commando's, "
+"systeembestanden bewerken, gebruikers wijzigen, wachtwoorden wijzigen en "
+"dergelijke: "
 
 #: src/usr/local/www/system_usermanager_addprivs.php:240
 msgid ""
@@ -33282,12 +33416,16 @@ msgid ""
 "Settings have been saved, but the test was not performed because it is not "
 "supported for local databases."
 msgstr ""
+"Instellingen zijn opgeslagen, maar de test is niet uitgevoerd omdat het niet "
+"ondersteund wordt voor lokale databases."
 
 #: src/usr/local/www/system_usermanager_settings.php:143
 msgid ""
 "Settings have been saved, but the test was not performed because it is "
 "supported only for LDAP based backends."
 msgstr ""
+"Instellingen zijn opgeslagen, maar de test is niet uitgevoerd omdat het "
+"alleen ondersteund wordt voor LDAP-gebaseerde backends."
 
 #: src/usr/local/www/system_usermanager_settings.php:203
 msgid ""
@@ -33315,7 +33453,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_settings.php:230
 msgid "Save & Test"
-msgstr ""
+msgstr "Opslaan & Testen"
 
 #: src/usr/local/www/system_usermanager_settings.php:237
 msgid "LDAP settings"
@@ -33327,27 +33465,27 @@ msgstr ""
 
 #: src/usr/local/www/uploadconfig.php:43
 msgid "ERR Could not save configuration."
-msgstr ""
+msgstr "FOUT Kan de configuratie niet opslaan."
 
 #: src/usr/local/www/uploadconfig.php:52
 msgid "ERR Could not install configuration."
-msgstr ""
+msgstr "FOUT Kan de configuratie niet installeren."
 
 #: src/usr/local/www/uploadconfig.php:55
 msgid "ERR Invalid configuration received."
-msgstr ""
+msgstr "FOUT ongeldige configuratie ontvangen."
 
 #: src/usr/local/www/vpn_ipsec.php:68
 msgid "Deleted selected IPsec Phase 1 entries."
-msgstr ""
+msgstr "Geselecteerde IPsec Phase 1 items verwijderd"
 
 #: src/usr/local/www/vpn_ipsec.php:78
 msgid "Deleted selected IPsec Phase 2 entries."
-msgstr ""
+msgstr "Geselecteerde IPsec Phase 2 items verwijderd"
 
 #: src/usr/local/www/vpn_ipsec.php:212
 msgid "Saved configuration changes for IPsec tunnels."
-msgstr ""
+msgstr "Wijzigingen in de configuratie voor IPsec tunnels opgeslagen."
 
 #: src/usr/local/www/vpn_ipsec.php:219 src/usr/local/www/vpn_ipsec.php:226
 #: src/usr/local/www/vpn_ipsec_keys.php:87
@@ -33386,7 +33524,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec.php:237 src/usr/local/www/vpn_ipsec_keys.php:83
 #: src/usr/local/www/vpn_ipsec_mobile.php:407
 msgid "The IPsec tunnel configuration has been changed."
-msgstr ""
+msgstr "De IPsec tunnel configuratie is aangepast."
 
 #: src/usr/local/www/vpn_ipsec.php:243
 msgid "IPsec Tunnels"
@@ -33435,7 +33573,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:361 src/usr/local/www/vpn_ipsec.php:362
 msgid "Delete phase1 entry"
-msgstr ""
+msgstr "Verwijder Phase 1 item"
 
 #: src/usr/local/www/vpn_ipsec.php:390
 #, php-format
@@ -33480,11 +33618,11 @@ msgstr "Voeg een nieuwe Phase 2 toe gebaseerd op deze"
 
 #: src/usr/local/www/vpn_ipsec.php:481
 msgid "Delete phase2 entry"
-msgstr ""
+msgstr "Verwijder Phase 2 item"
 
 #: src/usr/local/www/vpn_ipsec.php:482
 msgid "delete phase2 entry"
-msgstr ""
+msgstr "verwijder phase2 item"
 
 #: src/usr/local/www/vpn_ipsec.php:491
 msgid "Add P2"
@@ -33496,11 +33634,11 @@ msgstr "Voeg P1 toe"
 
 #: src/usr/local/www/vpn_ipsec.php:523
 msgid "Delete selected P1s"
-msgstr ""
+msgstr "Verwijder geselecteerde P1's"
 
 #: src/usr/local/www/vpn_ipsec.php:525
 msgid "Delete P1s"
-msgstr ""
+msgstr "Verwijder P1's"
 
 #: src/usr/local/www/vpn_ipsec.php:532
 #, php-format
@@ -33527,15 +33665,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec.php:559
 msgid "Confirmation required to delete this P1 entry."
-msgstr ""
+msgstr "Bevestiging nodig om dit P1 item te verwijderen."
 
 #: src/usr/local/www/vpn_ipsec.php:565
 msgid "Confirmation required to delete this P2 entry."
-msgstr ""
+msgstr "Bevestiging nodig om dit P2 item te verwijderen."
 
 #: src/usr/local/www/vpn_ipsec_keys.php:65
 msgid "Deleted IPsec Pre-Shared Key"
-msgstr ""
+msgstr "IPsec Pre-Shared Key verwijderd"
 
 #: src/usr/local/www/vpn_ipsec_keys.php:101
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
@@ -33688,7 +33826,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:297
 msgid "Saved IPsec Mobile Clients configuration."
-msgstr "Instellingen voor IPsec Mobiele Clienten opgeslagen."
+msgstr "Configuratie voor IPsec Mobiele Clienten opgeslagen."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:415
 msgid ""
@@ -33733,7 +33871,7 @@ msgstr "*Groepsauthenticatie"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:469
 msgid "Client Configuration (mode-cfg)"
-msgstr "Client Instellingen (mode-cfg)"
+msgstr "Client Configuratie (mode-cfg)"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:473
 msgid "Virtual Address Pool"
@@ -33741,7 +33879,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:491
 msgid "Network configuration for Virtual Address Pool"
-msgstr ""
+msgstr "Netwerk configuratie voor de Virtuele Adres Pool"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:510
 msgid "Virtual IPv6 Address Pool"
@@ -33753,7 +33891,7 @@ msgstr "IPv6 Netwerk"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:528
 msgid "Network configuration for Virtual IPv6 Address Pool"
-msgstr ""
+msgstr "Netwerk configuratie voor de Virtuele IPv6 Adres Pool"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:547
 msgid "Network List"
@@ -33761,15 +33899,15 @@ msgstr "Netwerklijst"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:554
 msgid "Save Xauth Password"
-msgstr ""
+msgstr "Xauth Wachtwoord opslaan"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:557
 msgid ""
 "NOTE: With iPhone clients, this does not work when deployed via the iPhone "
 "configuration utility, only by manual entry."
 msgstr ""
-"OPMERKING: Voor iPhone cliënten zal dit niet werken wanneer via het "
-"configuratieprogramma van iPhone wordt geïmplementeerd, alleen bij "
+"OPMERKING: Voor iPhone clients zal dit niet werken wanneer via het "
+"configuratieprogramma van de iPhone wordt geïmplementeerd, alleen bij "
 "handmatige invoer."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:561
@@ -33980,7 +34118,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:533
 msgid "Saved IPsec tunnel Phase 1 configuration."
-msgstr ""
+msgstr "IPsec tunnel Phase 1 configuratie opgeslagen."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:561
 #, php-format
@@ -34078,6 +34216,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr ""
+"Selecteer een eerder geconfigureerd certificaat in de Certificaat Manager."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:796
 #: src/usr/local/www/vpn_openvpn_client.php:672
@@ -34092,6 +34231,8 @@ msgid ""
 "Select a certificate authority previously configured in the Certificate "
 "Manager."
 msgstr ""
+"Selecteer een eerder geconfigureerde certificaat authoriteit in de "
+"Certificaat Manager."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:803
 msgid "Phase 1 Proposal (Algorithms)"
@@ -34239,6 +34380,8 @@ msgid ""
 "A network type address cannot be configured for NAT while only an address "
 "type is selected for local source."
 msgstr ""
+"Een netwerk type adres kan niet worden geconfigureerd voor NAT terwijl "
+"alleen een adres type is geselecteerd voor de lokale bron."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:188
 msgid "A valid NAT local network IP address must be specified."
@@ -34293,6 +34436,9 @@ msgid ""
 "The local and remote networks of a phase 2 entry cannot overlap the outside "
 "of the tunnel (interface and remote gateway) configured in its phase 1."
 msgstr ""
+"De lokale en externe netwerken van een phase 2-invoer kunnen de buitenkant "
+"van de tunnel (interface en externe gateway) die in zijn phase 1 zijn "
+"geconfigureerd niet overlappen."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:336
 msgid "At least one encryption algorithm must be selected."
@@ -34308,7 +34454,7 @@ msgstr "De P2 levensduur moet een geheel getal zijn."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:395
 msgid "Saved IPsec tunnel Phase 2 configuration."
-msgstr ""
+msgstr "IPsec tunnel Phase 2 configuratie opgeslagen."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:404
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
@@ -34387,7 +34533,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:166
 msgid "Saved IPsec advanced settings."
-msgstr ""
+msgstr "IPsec geavanceerde instellingen opgeslagen"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:225
 msgid "IPsec Logging Controls"
@@ -34405,7 +34551,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:246
 msgid "Configure Unique IDs as"
-msgstr ""
+msgstr "Configureer Unieke ID's als"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:250
 #, php-format
@@ -34420,6 +34566,16 @@ msgid ""
 "to reject new IKE_SA setups and keep the duplicate established earlier. "
 "Defaults to Yes."
 msgstr ""
+"Of een bepaalde deelnemer ID uniek moet worden gehouden, waarbij elke nieuwe "
+"IKE_SA een ID gebruikt die alle oude vervangt met die ID. Deelnemer ID's "
+"zijn normaal gesproken uniek, zodat een nieuwe IKE_SA die dezelfde ID "
+"gebruikt bijna altijd bedoeld is om een oude te vervangen. Het verschil "
+"tussen %1$snee%2$s en %1$snooit%2$s is dat de oude IKE_SA's zullen worden "
+"vervangen wanneer een INITIAL_CONTACT wordt ontvangen, als de optie 'nee' "
+"is, maar dit negeert deze, als %1$snooit%2$s is geconfigureerd. De daemon "
+"accepteert ook de waarde %1$sbehouden%2$s om nieuwe IKE_SA opzetten te "
+"weigeren en het eerder is ingestelde duplicaat te behouden. Standaard op Ja. "
+""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:262
 msgid "IP Compression"
@@ -34667,7 +34823,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:60
 msgid "Deleted a L2TP VPN user."
-msgstr "Verwijderde L2TP VPN gebruiker."
+msgstr "L2TP VPN gebruiker verwijderd."
 
 #: src/usr/local/www/vpn_l2tp_users.php:74
 msgid "RADIUS is enabled. The local user database will not be used."
@@ -34700,7 +34856,7 @@ msgstr "Het ingevulde IP-adres is niet geldig"
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:130
 msgid "Configured a L2TP VPN user."
-msgstr ""
+msgstr "L2TP VPN gebruiker geconfigureerd."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:165
 msgid "To change the users password, enter it here."
@@ -34967,7 +35123,7 @@ msgstr "Cryptografische Instellingen"
 #: src/usr/local/www/vpn_openvpn_client.php:633
 #: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
-msgstr ""
+msgstr "TLS Configuratie"
 
 #: src/usr/local/www/vpn_openvpn_client.php:636
 #: src/usr/local/www/vpn_openvpn_server.php:760
@@ -35278,6 +35434,8 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:850
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr ""
+"Specificeert de methode die wordt gebruikt om een IP-adres van een virtueel "
+"adapter te configureren."
 
 #: src/usr/local/www/vpn_openvpn_client.php:854
 #: src/usr/local/www/vpn_openvpn_server.php:1096
@@ -35344,6 +35502,11 @@ msgid ""
 "To test the best value for a site, start at 512KiB and test higher and lower "
 "values."
 msgstr ""
+"Configureer een Verzend en Ontvang buffer-grootte voor OpenVPN. De standaard "
+"buffergrootte kan in veel gevallen te klein zijn, afhankelijk van de "
+"hardware netwerk snelheid. Het vinden van de beste buffergrootte kan enig "
+"experimenteren vergen. Om de beste waarde voor een site te testen, begin bij "
+"512KiB en test hogere en lagere waarden. "
 
 #: src/usr/local/www/vpn_openvpn_client.php:904
 #: src/usr/local/www/vpn_openvpn_server.php:1301
@@ -35679,20 +35842,20 @@ msgstr "Wijzig CSC Overschrijving"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:685
 msgid "Delete CSC Override"
-msgstr ""
+msgstr "Verwijder CSC Overschrijving"
 
 #: src/usr/local/www/vpn_openvpn_server.php:89
 #, php-format
 msgid "Deleted OpenVPN server from %1$s:%2$s %3$s"
-msgstr ""
+msgstr "OpenVPN server verwijderd van %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:91
 msgid "Deleted empty OpenVPN server"
-msgstr ""
+msgstr "Lege OpenVPN server verwijderd"
 
 #: src/usr/local/www/vpn_openvpn_server.php:95
 msgid "Server successfully deleted."
-msgstr ""
+msgstr "Server succesvol verwijderd."
 
 #: src/usr/local/www/vpn_openvpn_server.php:294
 msgid ""
@@ -36142,7 +36305,7 @@ msgid ""
 "0\""
 msgstr ""
 "Voer eventuele extra opties in die u hier wilt toevoegen aan de OpenVPN "
-"server instellingen, gescheiden door een puntkomma..%1$sBIJVOORBEELD: push "
+"server configuratie, gescheiden door een puntkomma..%1$sBIJVOORBEELD: push "
 "\"route 10.0.0.0 255.255.255.0\""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1332
@@ -36219,7 +36382,7 @@ msgstr "Wake-on-Lan"
 
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
-msgstr "verwijder"
+msgstr "verwijderen"
 
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 msgid "No CARP Interfaces Defined."
@@ -36228,11 +36391,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 #, php-format
 msgid "Click %1$shere%2$s to configure CARP."
-msgstr ""
+msgstr "Klik %1$shier%2$s om CARP te configureren."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:136
 msgid "Saved Dynamic DNS Filter via Dashboard."
-msgstr ""
+msgstr "Dynamisch DNS Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:178
 msgid "Int."
@@ -36310,7 +36473,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
-msgstr ""
+msgstr "Pakketten kunnen hier worden toegevoegd/beheerd:"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:38
 msgid "Packets In"
@@ -36354,7 +36517,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
-msgstr ""
+msgstr "Interface Statistieken Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:200
 msgid "Retrieving interface data"
@@ -36378,7 +36541,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:49
 msgid "Saved Interfaces Filter via Dashboard."
-msgstr ""
+msgstr "Interface Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:121
 #, php-format
@@ -36415,19 +36578,19 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
-msgstr ""
+msgstr "Er zijn geen mobiele tunnels geconfigureerd"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
-msgstr ""
+msgstr "Er zijn geen geconfigureerde IPsec Tunnels"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
-msgstr ""
+msgstr "IPsec kan <a href=\"vpn_ipsec.php\">hier</a> worden geconfigureerd."
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:71
 msgid "Saved Filter Log Entries via Dashboard."
-msgstr ""
+msgstr "Logregels Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:116
 msgid "Act"
@@ -36523,11 +36686,11 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:319
 msgid "Saved OpenVPN Filter via Dashboard."
-msgstr ""
+msgstr "OpenVPN Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:62
 msgid "Picture widget saved via Dashboard."
-msgstr ""
+msgstr "Afbeelding widget opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:79
 msgid "New picture:"
@@ -36535,7 +36698,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:34
 msgid "Saved RSS Widget feed via Dashboard."
-msgstr ""
+msgstr "RSS widget feed opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:133
 msgid "Feeds"
@@ -36555,7 +36718,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:66
 msgid "Saved Service Status Filter via Dashboard."
-msgstr ""
+msgstr "Service Status Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:112
 msgid "All services are hidden"
@@ -36567,7 +36730,7 @@ msgstr "Geen services gevonden"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:54
 msgid "Saved SMART Status Filter via Dashboard."
-msgstr ""
+msgstr "SMART Status Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:65
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:137
@@ -36602,7 +36765,7 @@ msgstr "DNS Server(s)"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:43
 msgid "Last Config Change"
-msgstr ""
+msgstr "Laatste configuratie wijziging"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:44
 msgid "State Table Size"
@@ -36725,7 +36888,7 @@ msgstr "DNS server(s)"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:309
 msgid "Last config change"
-msgstr ""
+msgstr "Laatste configuratie wijziging"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:319
 msgid "State table size"
@@ -36782,7 +36945,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:124
 msgid "Saved thermal_sensors_widget settings via Dashboard."
-msgstr ""
+msgstr "Thermische_sensoren_widget instellingen opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:195
 msgid "(Updating...)"
@@ -36831,6 +36994,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:267
 msgid "* A proper Thermal Sensor / Module can be configured under"
 msgstr ""
+"* Een goede Thermische Sensor / Module kan worden geconfigureerd onder"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:268
 msgid "section"
@@ -36858,7 +37022,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:56
 msgid "Saved Wake on LAN Filter via Dashboard."
-msgstr ""
+msgstr "Wake on LAN Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
 msgid "Device"
@@ -36878,7 +37042,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:119
 msgid "No saved WoL addresses"
-msgstr ""
+msgstr "Geen opgeslagen WOL adressen"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:137
 msgid "DHCP Leases Status"
@@ -36904,7 +37068,7 @@ msgstr ""
 
 #: src/usr/local/www/wizard.php:119
 msgid "Configuration changed via the pfSense wizard subsystem."
-msgstr ""
+msgstr "Configuratie is gewijzigd via het pfSense wizard subsysteem ."
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
@@ -36930,6 +37094,8 @@ msgstr "OpenVPN Wizard"
 msgid ""
 "OpenVPN configuration saved via OpenVPN Remote Access Server setup wizard."
 msgstr ""
+"OpenVPN-configuratie opgeslagen via de OpenVPN Remote Access Server setup "
+"wizard."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:57
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:63
@@ -37025,7 +37191,7 @@ msgstr ""
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
-msgstr ""
+msgstr "Shaper configuratie opgeslagen via de pfSense traffic shaper wizard."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:48
 msgid ""
@@ -37131,11 +37297,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:518
 msgid "Encrypt this configuration file."
-msgstr ""
+msgstr "Versleutel dit configuratiebestand."
 
 #: src/usr/local/www/diag_backup.php:565
 msgid "Configuration file is encrypted."
-msgstr ""
+msgstr "Configuratiebestand is versleuteld."
 
 #: src/usr/local/www/diag_packet_capture.php:316
 msgid "Enable promiscuous mode"
@@ -37296,7 +37462,7 @@ msgstr "Standaard gateway"
 
 #: src/usr/local/www/interfaces.php:2010 src/usr/local/www/interfaces.php:2195
 msgid "Configuration Override"
-msgstr ""
+msgstr "Configuratie Overschrijving"
 
 #: src/usr/local/www/interfaces.php:2093
 msgid "FreeBSD default"
@@ -37378,6 +37544,8 @@ msgid ""
 "Preserve common wireless configuration through interface deletions and "
 "reassignments."
 msgstr ""
+"Bewaar de algemene draadloze configuratie bij het verwijderen en opnieuw "
+"toewijzen van de interfaces."
 
 #: src/usr/local/www/interfaces.php:3065
 msgid ""
@@ -37426,6 +37594,10 @@ msgid ""
 "filtering is not performed which allows asymmetric routing of the outer "
 "traffic."
 msgstr ""
+"Schakel automatische filtering uit van de buitenste GIF bron die een "
+"overeenkomst met de geconfigureerde externe peer verzekert. Wanneer "
+"uitgeschakeld, worden martian en inkomende filtering niet uitgevoerd "
+"waardoor asymmetrische routering van het buitenste verkeer mogelijk is."
 
 #: src/usr/local/www/interfaces_gre_edit.php:201
 msgid ""
@@ -37441,7 +37613,7 @@ msgstr "Schakel blijvende logging van de uptime van de verbinding in."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:733
 msgid "Configure NULL service name"
-msgstr ""
+msgstr "Configureer NULL servicenaam"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:789
 msgid "Monthly (0 0 1 * *)"
@@ -37675,6 +37847,8 @@ msgid ""
 "Force dynamic DNS hostname to be the same as configured hostname for Static "
 "Mappings"
 msgstr ""
+"Forceeer de dynamische DNS-hostnaam om hetzelfde te zijn als de "
+"geconfigureerde hostnaam voor de Statische Mappings"
 
 #: src/usr/local/www/services_dhcp.php:1254
 msgid "Enables network booting"
@@ -37820,7 +37994,7 @@ msgstr "Schakel KOD pakketten in."
 
 #: src/usr/local/www/services_ntpd_acls.php:209
 msgid "Deny run-time Configuration (nomodify) by ntpq and ntpdc."
-msgstr "Weiger run-time Instellingen (nomodify) door ntpq en ntpdc."
+msgstr "Weiger run-time configuratie (nomodify) door ntpq en ntpdc."
 
 #: src/usr/local/www/services_ntpd_acls.php:216
 msgid "Disable ntpq and ntpdc queries (noquery)."
@@ -37853,15 +38027,15 @@ msgid ""
 msgstr ""
 "Een via de seriele poort verbonden GPS kan worden gebruikt als een "
 "referentie klok voor NTP. Als de GPS ook PPS ondersteund en correct is "
-"ingesteld en verbonden, kan die GPS ook worden gebruikt als een Pulse Per "
-"Seconde klok referentie. OPMERKING: een USB GPS kan werken, maar is niet "
+"geconfigureerd en verbonden, kan die GPS ook worden gebruikt als een Pulse "
+"Per Seconde klok referentie. OPMERKING: een USB GPS kan werken, maar is niet "
 "aanbevolen vanwege timing problemen met de USB bus.<br />Voor het beste "
 "resultaat moet NTP minimaal drie bronnen voor tijd hebben. Het is dus "
-"aanbevolen minimaal 2 servers in te stellen bij <a href=\"services_ntpd."
+"aanbevolen minimaal 2 servers te configureren bij <a href=\"services_ntpd."
 "php\">Services > NTP > Instellingen</a> om de afwijking van de klok te "
 "minimaliseren als de GPS data niet geldig is na verloop van tijd. Anders kan "
 "ntpd alleen waarden van de niet gesynchroniseerde lokale klok gebruiken "
-"wanneer de tijd aan cliënten wordt doorgegeven."
+"wanneer de tijd aan clients wordt doorgegeven."
 
 #: src/usr/local/www/services_ntpd_gps.php:389
 msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
@@ -37930,7 +38104,7 @@ msgstr ""
 "keuze. Een PPS signaal levert alleen een referentie naar de verandering van "
 "een seconde, dus er moet ten minste één andere bron zijn die de seconden "
 "doorgeeft.<br /><br />Er moeten ten minste drie aanvullende bronnen van tijd "
-"zijn ingesteld bij <a href=\"services_ntpd.php\">Services > NTP > "
+"zijn geconfigureerd bij <a href=\"services_ntpd.php\">Services > NTP > "
 "Instellingen</a> om betrouwbaar de tijd te leveren van iedere PPS puls."
 
 #: src/usr/local/www/services_ntpd_pps.php:177
@@ -38237,10 +38411,11 @@ msgstr "Schakel webConfigurator aanmeldgegevens automatisch aanvullen in"
 #: src/usr/local/www/system_advanced_admin.php:388
 msgid "Disable logging of webConfigurator successful logins"
 msgstr ""
+"Logging van geslaagde aanmeldingen bij de webConfigurator uitschakelen."
 
 #: src/usr/local/www/system_advanced_admin.php:402
 msgid "Disable webConfigurator anti-lockout rule"
-msgstr ""
+msgstr "WebConfigurator Anti-lockout regel uitschakelen"
 
 #: src/usr/local/www/system_advanced_admin.php:415
 msgid "Disable DNS Rebinding Checks"
@@ -38303,7 +38478,7 @@ msgstr "Schakel reply-to op WAN regels uit"
 
 #: src/usr/local/www/system_advanced_firewall.php:529
 msgid "Disable Negate rule on policy routing rules"
-msgstr ""
+msgstr "Schakel Regel teniet doen uit voor policy routeringsregels"
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
@@ -38534,7 +38709,7 @@ msgstr "WOL server instellingen"
 
 #: src/usr/local/www/system_hasync.php:273
 msgid "Static Route configuration "
-msgstr "Statische routering configuratie"
+msgstr "Statische Route configuratie"
 
 #: src/usr/local/www/system_hasync.php:281
 msgid "Load Balancer configuration "
@@ -38630,7 +38805,7 @@ msgstr "Voorzie clienten met een lijst van bereikbare netwerken"
 #: src/usr/local/www/vpn_ipsec_mobile.php:555
 msgid "Allow clients to save Xauth passwords (Cisco VPN client only)."
 msgstr ""
-"Sta toe dat clienten Xauth paswoorden mogen opslaan (Alleen voor Cisco VPN "
+"Sta toe dat clienten Xauth wachtwoorden mogen opslaan (Alleen voor Cisco VPN "
 "applicatie)"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
@@ -38892,5 +39067,5 @@ msgid ""
 "Run \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
 "and \"ipconfig /registerdns\" on connection initiation."
 msgstr ""
-"Start \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
-"en \"ipconfig /registerdns\" bij het opzetten van de verbinding"
+"Voer \"net stop dnscache\", \"net start dnscache\", \"ipconfig /flushdns\" "
+"en \"ipconfig /registerdns\" uit bij het opzetten van de verbinding"

@@ -38,12 +38,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 08:37-0300\n"
+"POT-Creation-Date: 2017-08-22 14:14-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-20 02:35-0400\n"
-"Last-Translator: Josef <zanata@veloc1ty.de>\n"
+"PO-Revision-Date: 2017-08-21 05:15-0400\n"
+"Last-Translator: Alexander Franz <afranz@outlook.com>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -1319,7 +1319,7 @@ msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
 msgstr "DynDNS hat IP Adresse bei %1$s (%2$s) zu %3$s aktualisiert"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
-#: src/etc/inc/services.inc:2712 src/etc/inc/services.inc:2724
+#: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: aktualisiere Zwischenspeicher Datei %1$s: %2$s"
@@ -1799,9 +1799,9 @@ msgstr "Filter deaktiviert, lade keine Regeln."
 #: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
 #: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
 #: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/rrd.inc:970
-#: src/etc/inc/services.inc:1596 src/etc/inc/services.inc:1999
-#: src/etc/inc/services.inc:2216 src/etc/inc/services.inc:2284
-#: src/etc/inc/services.inc:2510 src/etc/inc/system.inc:1257
+#: src/etc/inc/services.inc:1600 src/etc/inc/services.inc:2003
+#: src/etc/inc/services.inc:2220 src/etc/inc/services.inc:2288
+#: src/etc/inc/services.inc:2514 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
@@ -2204,9 +2204,12 @@ msgid "Component"
 msgstr "Komponente"
 
 #: src/etc/inc/gwlb.inc:172
+#, fuzzy
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Timeout beim Warten auf eine IPv6 Adresse im vorläufigen Status. dpinger "
+"läuft nicht."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2284,7 +2287,7 @@ msgstr "Aktualisiere Gateway der Gateway-Gruppe %1$s - Neues Gateway ist %2$s"
 #: src/usr/local/www/diag_dump_states.php:181
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
-#: src/usr/local/www/firewall_nat_1to1.php:149
+#: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/firewall_nat_1to1_edit.php:122
 #: src/usr/local/www/firewall_nat_1to1_edit.php:125
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -3189,7 +3192,7 @@ msgstr "30 (brainpool ecp512)"
 msgid "Mobile Client"
 msgstr "Mobiler Client"
 
-#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3138
+#: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
 #: src/usr/local/www/diag_pftop.php:116
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -3861,39 +3864,43 @@ msgid "English"
 msgstr "Englisch"
 
 #: src/etc/inc/pfsense-utils.inc:2945
+msgid "French"
+msgstr ""
+
+#: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
 msgstr "Deutsch (Deutschland)"
 
-#: src/etc/inc/pfsense-utils.inc:2946
+#: src/etc/inc/pfsense-utils.inc:2947
 msgid "Norwegian Bokmål"
 msgstr "norwegisch"
 
-#: src/etc/inc/pfsense-utils.inc:2947
-msgid "Polish"
-msgstr ""
-
 #: src/etc/inc/pfsense-utils.inc:2948
+msgid "Polish"
+msgstr "Polnisch"
+
+#: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
 msgstr "Portugiesisch (Brasilien)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
 msgstr "Russisch"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
 msgstr "Spanisch (Argentinien)"
 
-#: src/etc/inc/pfsense-utils.inc:3146 src/etc/inc/pfsense-utils.inc:3161
-#: src/etc/inc/pfsense-utils.inc:3187
+#: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "No Service"
 msgstr "Kein Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3156 src/etc/inc/pfsense-utils.inc:3199
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3200
 #: src/usr/local/www/firewall_nat_out.php:230
 #: src/usr/local/www/firewall_nat_out.php:234
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
@@ -3909,83 +3916,83 @@ msgstr "Kein Dienst"
 msgid "Mode"
 msgstr "Modus"
 
-#: src/etc/inc/pfsense-utils.inc:3162
+#: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
 msgstr "Eingeschränkter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3163
+#: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
 msgstr "Gültiger Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3164
+#: src/etc/inc/pfsense-utils.inc:3165
 msgid "Restricted Regional Service"
 msgstr "Eingeschränkter regionaler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3165
+#: src/etc/inc/pfsense-utils.inc:3166
 msgid "Powersaving Service"
 msgstr "Stromspar-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3166
+#: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
 msgstr "Unbekannter Service"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
 msgstr "Ungültiger SIM/gesperrt Status"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
 msgstr "Gültiger SIM-Status"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
 msgstr "Ungültiger SIM CS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3175
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
 msgstr "Ungültiger SIM PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3176
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
 msgstr "Ungültiger SIM CS/PS Status"
 
-#: src/etc/inc/pfsense-utils.inc:3177
+#: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
 msgstr "Fehlender SIM Status"
 
-#: src/etc/inc/pfsense-utils.inc:3188
+#: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
 msgstr "Begrenzter Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3204
+#: src/etc/inc/pfsense-utils.inc:3205
 msgid "Initializing Service"
 msgstr "Initialisiere Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3205
+#: src/etc/inc/pfsense-utils.inc:3206
 msgid "Network Lock error Service"
 msgstr "Netzwerksperre Fehler Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3206
+#: src/etc/inc/pfsense-utils.inc:3207
 msgid "Network Locked Service"
 msgstr "Netzwerk gesperrt Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3208
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Freigeschalteter oder zutreffender MCC/MNC-Dienst"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3214
 msgid "No action State"
 msgstr "Kein Aktionsstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Network lock State"
 msgstr "Status Netzwerksperre"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "(U)SIM card lock State"
 msgstr "(U-)SIM-Karten-Sperrstatus"
 
-#: src/etc/inc/pfsense-utils.inc:3216
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Netzwerksperre und (U)SIM-Kartensperrstatus"
 
@@ -6496,72 +6503,72 @@ msgstr ""
 "Fehler: Die \"dhcpd.conf\" in \"services_dhcpdv4_configure()\" kann nicht "
 "geöffnet werden. %s"
 
-#: src/etc/inc/services.inc:1649
+#: src/etc/inc/services.inc:1653
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Die \"lgmpproxy\"-Konfigurationsdatei konnte nicht geschrieben werden!"
 
-#: src/etc/inc/services.inc:1662
+#: src/etc/inc/services.inc:1666
 msgid "Started IGMP proxy service."
 msgstr "Starte IGMP-Proxy-Dienst."
 
-#: src/etc/inc/services.inc:1686
+#: src/etc/inc/services.inc:1690
 msgid "Starting DHCP relay service..."
 msgstr "Starte DHCP-Weiterleitungsdienst..."
 
-#: src/etc/inc/services.inc:1711
+#: src/etc/inc/services.inc:1715
 msgid "No destination IP has been configured!"
 msgstr "Es wurde keine Ziel-IP angegeben!"
 
-#: src/etc/inc/services.inc:1785
+#: src/etc/inc/services.inc:1789
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Keine passende Schnittstelle zum Ausführen von dhcrelay gefunden!"
 
-#: src/etc/inc/services.inc:1821
+#: src/etc/inc/services.inc:1825
 msgid "Starting DHCPv6 relay service..."
 msgstr "Starte DHCPv6-Weiterleitungsdienst"
 
-#: src/etc/inc/services.inc:1912
+#: src/etc/inc/services.inc:1916
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr ""
 "Keine passende Schnittstelle für die Ausführung von \"dhcrelay -6\" "
 "gefunden!"
 
-#: src/etc/inc/services.inc:1973
+#: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
 msgstr "Starte DynDNS Clients...."
 
-#: src/etc/inc/services.inc:2079
+#: src/etc/inc/services.inc:2083
 msgid "Starting DNS forwarder..."
 msgstr "Starte DNS-Forwarder..."
 
-#: src/etc/inc/services.inc:2254
+#: src/etc/inc/services.inc:2258
 msgid "Starting DNS Resolver..."
 msgstr "Strate DNS-Resolver..."
 
-#: src/etc/inc/services.inc:2270
+#: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
 msgstr "Starten von Unbound wartet auf dhcp6c"
 
-#: src/etc/inc/services.inc:2274
+#: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
 msgstr "dhcp6 Initalisierung komplett. Mache weiter."
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
 msgstr "Unbound wurde synchronisiert."
 
-#: src/etc/inc/services.inc:2321
+#: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
 msgstr "Starte SNMP-Daemon..."
 
-#: src/etc/inc/services.inc:2332
+#: src/etc/inc/services.inc:2336
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 "Fehler: Die \"snmpd.conf\" in \"services_snmpd_configure()\" kann nicht "
 "geöffnet werden. %s"
 
-#: src/etc/inc/services.inc:2661
+#: src/etc/inc/services.inc:2665
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -6569,7 +6576,7 @@ msgstr ""
 "phpDynDNS: %s A Eintrag wird nicht aktualisiert, da die IP-Adresse "
 "unverändert ist."
 
-#: src/etc/inc/services.inc:2680
+#: src/etc/inc/services.inc:2684
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -6578,47 +6585,47 @@ msgstr ""
 "phpDynDNS: %s AAAA Eintrag wird nicht aktualisiert, da die IPv6-Adresse "
 "unverändert ist."
 
-#: src/etc/inc/services.inc:2715
+#: src/etc/inc/services.inc:2719
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS hat IP-Adresse (A) für %1$s am %2$s (%3$s) zu %4$s aktualisiert."
 
-#: src/etc/inc/services.inc:2727
+#: src/etc/inc/services.inc:2731
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS hat IPv6-Adresse (AAAA) für %1$s am %2$s (%3$s) zu %4$s aktualisiert."
 
-#: src/etc/inc/services.inc:2735
+#: src/etc/inc/services.inc:2739
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: Fehler bei der Aktualisierung der IP-Adresse (A) für %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2740
+#: src/etc/inc/services.inc:2744
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: Fehler bei der Aktualisierung der IP-Adresse (AAAA) für %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2774
+#: src/etc/inc/services.inc:2778
 msgid "Created:"
 msgstr "Erzeugt:"
 
-#: src/etc/inc/services.inc:2800
+#: src/etc/inc/services.inc:2804
 msgid "If possible do not add items to this file manually."
 msgstr "Wenn möglich, Einträge in dieser Datei nicht manuell erzeugen."
 
-#: src/etc/inc/services.inc:2801
+#: src/etc/inc/services.inc:2805
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Wenn es so gemacht wird, muss die Datei mit einer Leerzeilen (z.B. NewLine "
 "enden)"
 
-#: src/etc/inc/services.inc:2851
+#: src/etc/inc/services.inc:2855
 msgid "Starting UPnP service... "
 msgstr "Starte UPnP-Dienst..."
 
@@ -6829,7 +6836,7 @@ msgstr "Wählen Sie Optionen für diese Queue"
 #: src/usr/local/www/firewall_aliases_edit.php:726
 #: src/usr/local/www/firewall_aliases_import.php:262
 #: src/usr/local/www/firewall_nat.php:232
-#: src/usr/local/www/firewall_nat_1to1.php:153
+#: src/usr/local/www/firewall_nat_1to1.php:154
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/firewall_nat_edit.php:894
 #: src/usr/local/www/firewall_nat_npt.php:151
@@ -7136,7 +7143,7 @@ msgstr "Verzögerung muss eine Zahl sein."
 
 #: src/etc/inc/shaper.inc:3790 src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/firewall_nat.php:469
-#: src/usr/local/www/firewall_nat_1to1.php:244
+#: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/firewall_nat_npt.php:232
 #: src/usr/local/www/firewall_nat_out.php:504
 #: src/usr/local/www/firewall_rules.php:829
@@ -8204,7 +8211,7 @@ msgstr "Bestätigen"
 #: src/usr/local/www/diag_confbak.php:179 src/usr/local/www/diag_edit.php:122
 #: src/usr/local/www/diag_edit.php:124 src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_nat.php:487
-#: src/usr/local/www/firewall_nat_1to1.php:248
+#: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/firewall_nat_npt.php:236
 #: src/usr/local/www/firewall_nat_out.php:508
 #: src/usr/local/www/firewall_rules.php:833
@@ -8384,7 +8391,7 @@ msgstr "Verbindungstyp"
 #: src/usr/local/www/diag_ndp.php:143
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/firewall_nat.php:233
-#: src/usr/local/www/firewall_nat_1to1.php:154
+#: src/usr/local/www/firewall_nat_1to1.php:155
 #: src/usr/local/www/firewall_nat_npt.php:152
 #: src/usr/local/www/firewall_nat_out.php:288
 #: src/usr/local/www/firewall_rules.php:391
@@ -11306,8 +11313,8 @@ msgstr "Alias löschen"
 #: src/usr/local/www/firewall_aliases.php:271
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_nat.php:465
-#: src/usr/local/www/firewall_nat_1to1.php:236
-#: src/usr/local/www/firewall_nat_1to1.php:240
+#: src/usr/local/www/firewall_nat_1to1.php:243
+#: src/usr/local/www/firewall_nat_1to1.php:247
 #: src/usr/local/www/firewall_nat_npt.php:224
 #: src/usr/local/www/firewall_nat_npt.php:228
 #: src/usr/local/www/firewall_nat_out.php:496
@@ -11972,7 +11979,7 @@ msgid "NAT Ports"
 msgstr "NAT-Ports"
 
 #: src/usr/local/www/firewall_nat.php:291
-#: src/usr/local/www/firewall_nat_1to1.php:177
+#: src/usr/local/www/firewall_nat_1to1.php:182
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501 src/usr/local/www/vpn_ipsec.php:295
 #: src/usr/local/www/vpn_ipsec.php:430
@@ -11980,7 +11987,7 @@ msgid "click to toggle enabled/disabled status"
 msgstr "Klicken zum Aktivieren/Deaktivieren"
 
 #: src/usr/local/www/firewall_nat.php:293
-#: src/usr/local/www/firewall_nat_1to1.php:179
+#: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
 msgstr "Negiert: Diese Regel schliesst NAT einer späteren Regel aus"
 
@@ -11999,6 +12006,7 @@ msgstr "Firewall Regel ID %s wird von dieser Regel verwaltet"
 #: src/usr/local/www/firewall_nat.php:384
 #: src/usr/local/www/firewall_nat.php:401
 #: src/usr/local/www/firewall_nat.php:419
+#: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_rules.php:708
 #: src/usr/local/www/firewall_rules.php:717
 #: src/usr/local/www/firewall_rules.php:726
@@ -12102,63 +12110,63 @@ msgstr "Firewall: NAT: 1:1 - Regel aktiviert"
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
 msgstr "Firewall: NAT: 1:1 - Regel deaktiviert"
 
-#: src/usr/local/www/firewall_nat_1to1.php:142
+#: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
 msgstr "NAT 1:1 Zuordnungen"
 
-#: src/usr/local/www/firewall_nat_1to1.php:150
+#: src/usr/local/www/firewall_nat_1to1.php:151
 msgid "External IP"
 msgstr "Externe IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:151
+#: src/usr/local/www/firewall_nat_1to1.php:152
 #: src/usr/local/www/status_upnp.php:71
 msgid "Internal IP"
 msgstr "Interne IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:152
+#: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
 msgstr "Ziel IP"
 
-#: src/usr/local/www/firewall_nat_1to1.php:218
+#: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_npt.php:207
 #: src/usr/local/www/firewall_nat_out.php:479
 msgid "Edit mapping"
 msgstr "Zuordnung bearbeiten"
 
-#: src/usr/local/www/firewall_nat_1to1.php:219
+#: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_npt.php:208
 #: src/usr/local/www/firewall_nat_out.php:480
 msgid "Add a new mapping based on this one"
 msgstr "Neue Zuordnung basierend auf dieser"
 
-#: src/usr/local/www/firewall_nat_1to1.php:220
+#: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_npt.php:209
 #: src/usr/local/www/firewall_nat_out.php:481
 msgid "Delete mapping"
 msgstr "Zuordnung löschen"
 
-#: src/usr/local/www/firewall_nat_1to1.php:234
+#: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
 msgstr "Mapping an den Anfang der Liste verschieben"
 
-#: src/usr/local/www/firewall_nat_1to1.php:238
+#: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
 msgstr "Mapping an das Ende der Liste verschieben"
 
-#: src/usr/local/www/firewall_nat_1to1.php:242
+#: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
 msgstr "Ausgewählte Mappings löschen"
 
-#: src/usr/local/www/firewall_nat_1to1.php:246
+#: src/usr/local/www/firewall_nat_1to1.php:253
 #: src/usr/local/www/firewall_nat_npt.php:234
 #: src/usr/local/www/firewall_nat_out.php:506
 msgid "Save mapping order"
 msgstr "Mapping Reihenfolge speichern."
 
-#: src/usr/local/www/firewall_nat_1to1.php:254
+#: src/usr/local/www/firewall_nat_1to1.php:261
 #, php-format
 msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
@@ -12167,7 +12175,7 @@ msgstr ""
 "Abhängig davon, wie die WAN-Verbindung aufgebaut ist, ist ggf. eine "
 "%1$sVirtuelle IP%2$s erforderlich."
 
-#: src/usr/local/www/firewall_nat_1to1.php:256
+#: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
 "If a 1:1 NAT entry is added for any of the interface IPs on this system, it "
 "will make this system inaccessible on that IP address. i.e. if the WAN IP "
@@ -12180,7 +12188,7 @@ msgstr ""
 "keine Dienste (IPSec, OpenVPN Server, etc.) mehr, welche die WAN IP-Adresse "
 "benutzen."
 
-#: src/usr/local/www/firewall_nat_1to1.php:291
+#: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
@@ -18287,12 +18295,10 @@ msgid "gif tunnel remote netmask"
 msgstr "Entfernte GIF Tunnel Netzmaske"
 
 #: src/usr/local/www/interfaces_gif_edit.php:67
-#: src/usr/local/www/interfaces_gre_edit.php:70
 msgid ""
-"The tunnel local and tunnel remote fields must have valid IP addresses."
+"The tunnel local and tunnel remote fields must have valid IP addresses and "
+"must not contain CIDR masks or prefixes."
 msgstr ""
-"Die Felder für lokalen und entfernten Endpunkt des Tunnels müssen gültige IP-"
-"Adressen enthalten."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -18429,6 +18435,13 @@ msgstr "Entfernte Tunnel IP Adresse"
 #: src/usr/local/www/interfaces_gre_edit.php:63
 msgid "Remote tunnel network"
 msgstr "Entfernte Tunnel Netzmaske"
+
+#: src/usr/local/www/interfaces_gre_edit.php:70
+msgid ""
+"The tunnel local and tunnel remote fields must have valid IP addresses."
+msgstr ""
+"Die Felder für lokalen und entfernten Endpunkt des Tunnels müssen gültige IP-"
+"Adressen enthalten."
 
 #: src/usr/local/www/interfaces_gre_edit.php:74
 msgid "The GRE tunnel subnet must be an integer."
@@ -34912,6 +34925,8 @@ msgid ""
 "Specify optional secret shared between peers. Required on some devices/"
 "setups."
 msgstr ""
+"Geben Sie das optionale Geheimnis an, welches zwischen den Peers geteilt "
+"wird.Wird von einigen Geräten/Konfigurationen benötigt."
 
 #: src/usr/local/www/vpn_l2tp.php:259
 msgid "*Authentication type"
@@ -35125,6 +35140,8 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr ""
+"Das Limitieren der ausgehenden Bandbreite ist nicht mit UDP Fast I/O "
+"kompatibel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:364
 #: src/usr/local/www/vpn_openvpn_server.php:471
@@ -35180,6 +35197,9 @@ msgid ""
 "compatible mode across all platforms.%1$s\"tap\" mode is capable of carrying "
 "802.3 (OSI Layer 2.)"
 msgstr ""
+"Der \"tun\" Modus kann IPv4 und IPv6 (OSI Schicht 3) übertragen und ist der "
+"verbreitetste und kompatibelste Modus über alles Plattformen. %1$s\"tap "
+"Modus kann 802.3 (OSI Schicht 2) übertragen."
 
 #: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
@@ -35227,6 +35247,9 @@ msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
 "server.%1$sTCP must be used for the client and server protocol."
 msgstr ""
+"Die Adresse eines Proxyservers, welchen dieser Client nutzen kann, um sich "
+"auf einen entfernten Server zu verbinden. %1$sTCP muss für das Client- und "
+"Serverprotokolle verwendet werden."
 
 #: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
@@ -35298,6 +35321,9 @@ msgid ""
 "Paste the TLS key here.%1$sThis key is used to sign control channel packets "
 "with an HMAC signature for authentication when establishing the tunnel. "
 msgstr ""
+"Fügen sie hier den TLS Schlüssel ein. %1$s Dieser Schlüssel wird verwendet, "
+"um Steuerkanalpakete mit einer HMAC Signatur zur Authentifizierung zu "
+"unterzeichnen, wenn ein Tunnel aufgebaut wird."
 
 #: src/usr/local/www/vpn_openvpn_client.php:658
 #: src/usr/local/www/vpn_openvpn_server.php:783
@@ -35314,6 +35340,11 @@ msgid ""
 "communication, providing more privacy and traffic control channel "
 "obfuscation."
 msgstr ""
+"Im Authentifizierungsmodus wird der TLS Schlüssel nur für den Steuerkanal "
+"zur HMAC Authentifizierung verwendet, um die Peers vor nicht autoriserten "
+"Verbindungen zu schützen. %1$s Verschlüsselungs- und Authentifizierungsmodus "
+"verschlüsselt zusätzlich die Kommunikation auf dem Steuerkanal, wodurch der "
+"Datenschutz erhöht und der Datenverkehr verschleiert wird."
 
 #: src/usr/local/www/vpn_openvpn_client.php:686
 #: src/usr/local/www/vpn_openvpn_client.php:692
@@ -35378,6 +35409,9 @@ msgid ""
 "compatible set of acceptable cryptographic Encryption Algorithms from those "
 "selected in the NCP Algorithms list below.%1$s%2$s%3$s"
 msgstr ""
+"Aktivieren Sie diese Option, damit OpenVPN Clients und Server ein "
+"kompatibles Set akzeptabler Kryptographiealgorithmen aus der NCP "
+"Algorithmenliste unten auszuhandeln. %1$s%2$s%3$s"
 
 #: src/usr/local/www/vpn_openvpn_client.php:742
 #: src/usr/local/www/vpn_openvpn_server.php:909
@@ -35411,6 +35445,10 @@ msgid ""
 "so long as it is selected in this list or chosen as the Encryption Algorithm."
 ""
 msgstr ""
+"Verbindet sich ein älterer Peer, welcher kein NCP unterstützt, so verwendet "
+"OpenVPN aus Gründen der Abwärtskompatibilität den vom Peer angeforderten "
+"Verschlüsselungsalgorithmus, sofern er in dieser Liste oder als "
+"Verschlüsselungsalgorithmus ausgewählt ist."
 
 #: src/usr/local/www/vpn_openvpn_client.php:763
 #: src/usr/local/www/vpn_openvpn_server.php:930
@@ -35436,6 +35474,12 @@ msgid ""
 "not the data channel.%1$sLeave this set to SHA1 unless the server uses a "
 "different value. SHA1 is the default for OpenVPN. "
 msgstr ""
+"Algorithmus welcher zum Authentifizieren der Pakete des Datenkanals und, "
+"wenn ein TLS Schlüssel vorhanden ist, für Pakete des Steuerkanals verwendet "
+"wird. %1$sWird ein AEAD Verschlüsselungsalgorithmus verwendet, etwa AES-CGM, "
+"so wird dieser Hash nur für den Steuerkanal und nicht dem Datenkanal "
+"verwendet.%1$sBelassen Sie dieser Einstellung auf SHA1 solange der Server "
+"nicht eine andere Einstellung verwendet. SHA1 ist der Standard für OpenVPN."
 
 #: src/usr/local/www/vpn_openvpn_client.php:783
 #: src/usr/local/www/vpn_openvpn_server.php:951
@@ -36182,6 +36226,11 @@ msgid ""
 "The ::1 address in the network will be assigned to the server virtual "
 "interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
+"Dies ist das in CIDR Notation (z.B. fe80::/64) angegebene virtuelle IPv6 "
+"Netzwerk, welches für die private Kommunikation zwischen diesem Server und "
+"Clientsystemen genutzt wird. Die ::1 Adresse im Netzwerk wird der virtuellen "
+"Schnittstelle des Servers zugewiesen. Die übrigen Adressen werden den sich "
+"verbindenden Clients vergeben."
 
 #: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
@@ -36199,10 +36248,16 @@ msgid ""
 "are used by OpenVPN for the bridge. Setting this to \"none\" will cause the "
 "Server Bridge DHCP settings below to be ignored."
 msgstr ""
+"Die Schnittstelle auf welche diese TAP-Schnittstelle gedrückt wird. Dies "
+"geschieht nicht automatisch. Diese Schnittstelle muss zugewiesen und die "
+"Brücke separat erstellt werden. Diese Einstellung steuert, welche "
+"existierende IP Adresse und Netzmaske von OpenVPN für die Brücke verwendet "
+"werden soll. Wird dies auf \"keine\" gesetzt, so werden die Server Bridge "
+"DHCP Einstellungen unten ignoriert."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1013
 msgid "Server Bridge DHCP Start"
-msgstr ""
+msgstr "Server Bridge DHCP Anfang"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1016
 msgid ""
@@ -36211,6 +36266,11 @@ msgid ""
 "these settings are left blank, DHCP will be passed through to the LAN, and "
 "the interface setting above will be ignored."
 msgstr ""
+"Wird der TAP Modus als Multi-Point Server verwendet, so kann optional ein "
+"DHCP Bereich auf der Schnittstelle verwendet werden, auf welcher diese TAP "
+"Instanz gebrückt wurde. Werden diese Einstellungen leer gelassen, so wird "
+"DHCP zum LAN hindurchgereicht und die Schnitstelleneinstellungen oben werden "
+"ignoriert."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1022
 msgid "Server Bridge DHCP End"
@@ -36292,6 +36352,11 @@ msgid ""
 "versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may "
 "require \"net30\"."
 msgstr ""
+"Gibt an,  mit welcher Methode die IP Adresse eines virtuellen Adapters den "
+"Clients mitgeteilt wird, wenn der TUN Modus auf IPv4 verwendet wird."
+"%1$sEinige Clients, wie OpenVPN Connect (iOS/Android), können verlangen, "
+"dass dies auch für IPv6 auf \"Subnetz\" gesetzt ist. Ältere Versionen von "
+"OpenVPN (vor 2.0.9) oder Clients wie Yealink können \"net30\" voraussetzen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
@@ -36676,7 +36741,7 @@ msgstr "Rufe Mobile Daten ab"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
-msgstr ""
+msgstr "Es wurden keine mobilen Tunnel konfiguriert"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
@@ -36725,7 +36790,7 @@ msgstr "Aktualisierungsintervall"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sEmpfange Support Informationen %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -36902,7 +36967,7 @@ msgstr "Speicherplatz Auslastung"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Empfange Aktualisierungsstatus %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -36927,14 +36992,17 @@ msgstr "Das System ist aktuell."
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
 msgstr ""
+"Das System ist auf einem neueren Versionsstand als der offizielle Release."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
 msgstr ""
+"Fehler beim Vergleichen der installierten mit der neuesten verfügbaren "
+"Version"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Versionsinformationen aktualisiert bei"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -37011,7 +37079,7 @@ msgstr "CPU Auslastung"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "Empfange CPU Daten %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
@@ -37726,6 +37794,10 @@ msgid ""
 "filtering is not performed which allows asymmetric routing of the outer "
 "traffic."
 msgstr ""
+"Reaktivere automatisches Filtern der äußeren GIF Quelle, wodurch ein "
+"Abgleich mit dem entfernten Peer sichergestellt wird. Wenn deaktiviert, so "
+"werden netzfremde Adressen und eingehende Verbindungen nicht gefiltert, was "
+"wiederum asymmetrisches Routing des externen Traffics erlaubt."
 
 #: src/usr/local/www/interfaces_gre_edit.php:201
 msgid ""
@@ -37916,7 +37988,7 @@ msgstr "Benutze die RADIUS Session-Timeout Attribute"
 
 #: src/usr/local/www/services_captiveportal.php:978
 msgid "Invert Acct-Input-Octets and Acct-Output-Octets"
-msgstr ""
+msgstr "Ivertiere Acct-Input-Oktette und Acct-Output-Oktette"
 
 #: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
@@ -38207,6 +38279,8 @@ msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
 msgstr ""
+"Protokolliere den Sekundenbruchteil des empfangenen Zeitstempels (Standard: "
+"nicht ausgewählt, nicht protokolliert)."
 
 #: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
@@ -38362,10 +38436,13 @@ msgid "version.server and version.bind queries are refused"
 msgstr "Verbiete Anfragen für version.server und version.bind"
 
 #: src/usr/local/www/services_unbound_advanced.php:241
+#, fuzzy
 msgid ""
 "Message cache elements are prefetched before they expire to help keep the "
 "cache up to date"
 msgstr ""
+"Elemente aus dem Nachrichten-Cache werden (?vorab geladen?) bevor sie "
+"ablaufen, um den Cache aktuell zu halten."
 
 #: src/usr/local/www/services_unbound_advanced.php:248
 msgid ""

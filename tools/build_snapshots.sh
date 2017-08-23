@@ -19,7 +19,7 @@
 # limitations under the License.
 
 usage() {
-	echo "Usage: $(basename $0) [-l] [-n] [-r] [-u] [-p]"
+	echo "Usage: $(basename $0) [-l] [-n] [-r] [-U] [-p]"
 	echo "	-l: Build looped operations"
 	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
@@ -37,7 +37,7 @@ LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
 # Handle command line arguments
-while getopts lnpru opt; do
+while getopts lnprU opt; do
 	case ${opt} in
 		n)
 			IMAGES="none"
@@ -51,7 +51,7 @@ while getopts lnpru opt; do
 		r)
 			NO_RESET=1
 			;;
-		u)
+		U)
 			UPLOAD="-U"
 			;;
 		*)

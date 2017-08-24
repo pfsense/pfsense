@@ -5407,7 +5407,7 @@ function upgrade_169_to_170() {
 				$wlan['descr'] = "Wireless interface {$friendly}";
 				/* It was not possible to create clones of _wlan0 before, so this is safe. */
 				$wlan['cloneif'] = "{$iface['if']}_wlan0";
-				/* Make sure this entry is first in the list of wireless interface clones. */
+				/* Make sure this entry is placed in the list of wireless interface clones. */
 				if (!is_array($config['wireless'])) {
 					$config['wireless'] = array();
 					$config['wireless']['clone'] = array();

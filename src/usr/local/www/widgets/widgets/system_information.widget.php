@@ -572,7 +572,7 @@ function updateCPU(total, used) {
 		var d_used = used - lastUsed;
 
 		// Convert to percent
-		var x = Math.trunc(((d_total - d_used)/d_total) * 100);
+		var x = Math.floor(((d_total - d_used)/d_total) * 100);
 
 		if ($('#cpumeter')) {
 			$('[id="cpumeter"]').html(x + '%');

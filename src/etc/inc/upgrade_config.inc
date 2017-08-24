@@ -5392,6 +5392,34 @@ function upgrade_168_to_169() {
 	);
 }
 
+/* Upgrade wireless interfaces to the format required for 2.4
+ * Each wireless interface now needs to be a cloned instance, the card itself
+ * Can no longer be assigned. https://redmine.pfsense.org/issues/6770 */
+function upgrade_169_to_170() {
+	global $config;
+	foreach ($config['interfaces'] as $friendly => & $iface) {
+		if (is_array($iface['wireless']) && !empty($iface['wireless']['mode'])) {
+			/* This test can only be true for one instance per card, so it is safe. */
+			if (stristr($iface['if'], '_wlan') === false) {
+				$wlan = array();
+				$wlan['if'] = $iface['if'];
+				$wlan['mode'] = $iface['wireless']['mode'];
+				$wlan['descr'] = "Wireless interface {$friendly}";
+				/* It was not possible to create clones of _wlan0 before, so this is safe. */
+				$wlan['cloneif'] = "{$iface['if']}_wlan0";
+				/* Make sure this entry is first in the list of wireless interface clones. */
+				if (!is_array($config['wireless'])) {
+					$config['wireless'] = array();
+					$config['wireless']['clone'] = array();
+				}
+				$config['wireless']['clone'][] = $wlan;
+				/* The interface assignment must now be the cloned interface name. */
+				$iface['if'] = $wlan['cloneif'];
+			}
+		}
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

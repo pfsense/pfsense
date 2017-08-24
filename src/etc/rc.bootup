@@ -121,6 +121,13 @@ if (file_exists("/conf/trigger_initial_wizard") && !file_exists("/conf/assign_co
 	check_for_alternate_interfaces();
 }
 
+/* Convert configuration
+ * This must happen before the interface mismatch test, see
+ * https://redmine.pfsense.org/issues/7809 */
+echo "Updating configuration...";
+convert_config();
+echo "done.\n";
+
 /*
  *	Determine if we need to throw a interface exception
  *	and ask the user to reassign interfaces.  This will
@@ -145,11 +152,6 @@ while (is_interface_mismatch() == true) {
 	set_networking_interfaces_ports();
 	led_kitt();
 }
-
-/* convert config and clean backups */
-echo "Updating configuration...";
-convert_config();
-echo "done.\n";
 
 echo "Checking config backups consistency...";
 cleanup_backupcache(true);

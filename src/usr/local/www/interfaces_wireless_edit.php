@@ -132,7 +132,7 @@ if ($_POST['save']) {
 				}
 
 				usort($a_clones, "clone_compare");
-				write_config();
+				write_config(gettext("Edited wireless clone interface configuration."));
 
 				header("Location: interfaces_wireless.php");
 				exit;

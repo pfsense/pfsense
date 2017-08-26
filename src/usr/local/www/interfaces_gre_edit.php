@@ -126,7 +126,7 @@ if ($_POST['save']) {
 				$a_gres[] = $gre;
 			}
 
-			write_config();
+			write_config(gettext("Edited GRE tunnel configuration."));
 
 			$confif = convert_real_interface_to_friendly_interface_name($gre['greif']);
 

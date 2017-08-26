@@ -45,7 +45,7 @@ if ($_POST['act'] == "del") {
 			}
 		}
 		unset($a_ifgroups[$_POST['id']]);
-		write_config();
+		write_config(gettext("Deleted an interface group."));
 		header("Location: interfaces_groups.php");
 		exit;
 	}

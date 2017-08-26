@@ -62,7 +62,7 @@ if ($_POST['act'] == "del") {
 
 		if (!$input_errors) {
 			unset($a_pool[$_POST['id']]);
-			write_config();
+			write_config(gettext("Load Balancer: Pools: deleted a pool."));
 			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_pool.php");
 			exit;

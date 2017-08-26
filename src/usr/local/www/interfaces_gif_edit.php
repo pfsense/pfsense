@@ -133,7 +133,7 @@ if ($_POST['save']) {
 				$a_gifs[] = $gif;
 			}
 
-			write_config();
+			write_config(gettext("Edited gif tunnel configuration."));
 
 			$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
 

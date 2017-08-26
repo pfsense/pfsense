@@ -92,7 +92,7 @@ if ($_GET) {
 		case "delete":
 			if ($queue) {
 				$queue->delete_queue();
-				if (write_config()) {
+				if (write_config(gettext("Deleted a traffic shaper queue."))) {
 					mark_subsystem_dirty('shaper');
 				}
 			}
@@ -121,7 +121,7 @@ if ($_GET) {
 				}
 			}
 
-			if (write_config()) {
+			if (write_config(gettext("Removed a traffic shaper."))) {
 				$changes_applied = true;
 				$retval = 0;
 				$retval |= filter_configure();
@@ -188,7 +188,7 @@ if ($_GET) {
 			if ($queue) {
 				$queue->SetEnabled("on");
 				$sform = $queue->build_form();
-				if (write_config()) {
+				if (write_config(gettext("Enabled a traffic shaper queue."))) {
 					mark_subsystem_dirty('shaper');
 				}
 			} else {
@@ -199,7 +199,7 @@ if ($_GET) {
 			if ($queue) {
 				$queue->SetEnabled("");
 				$sform = $queue->build_form();
-				if (write_config()) {
+				if (write_config(gettext("Disabled a traffic shaper queue."))) {
 					mark_subsystem_dirty('shaper');
 				}
 			} else {
@@ -226,7 +226,7 @@ if ($_POST) {
 			$tmppath[] = $altq->GetInterface();
 			$altq->SetLink($tmppath);
 			$altq->wconfig();
-			if (write_config()) {
+			if (write_config(gettext("Added a traffic shaper."))) {
 				mark_subsystem_dirty('shaper');
 			}
 			$can_enable = true;
@@ -254,7 +254,7 @@ if ($_POST) {
 				} else {
 					$can_add = false;
 				}
-				if (write_config()) {
+				if (write_config(gettext("Added a traffic shaper queue."))) {
 					mark_subsystem_dirty('shaper');
 				}
 				$can_enable = true;
@@ -272,7 +272,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
 	} else if ($_POST['apply']) {
-		write_config();
+		write_config(gettext("Applied traffic shaper configuration changes."));
 		$changes_applied = true;
 		$retval = 0;
 		$retval |= filter_configure();
@@ -296,7 +296,7 @@ if ($_POST) {
 		if (!$input_errors) {
 			$queue->update_altq_queue_data($_POST);
 			$queue->wconfig();
-			if (write_config()) {
+			if (write_config(gettext("Edited a traffic shaper queue configuration."))) {
 				mark_subsystem_dirty('shaper');
 			}
 			$dontshow = false;

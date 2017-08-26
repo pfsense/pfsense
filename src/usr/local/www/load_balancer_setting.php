@@ -76,7 +76,7 @@ if ($_POST) {
 			$lbsetting['interval'] = $_POST['interval'];
 			$lbsetting['prefork'] = $_POST['prefork'];
 
-			write_config();
+			write_config(gettext("Load Balancer: Settings: applied relayd global settings."));
 			mark_subsystem_dirty('loadbalancer');
 		}
 	}

@@ -82,7 +82,7 @@ if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 		}
 
 		unset($a_allowedips[$_POST['id']]);
-		write_config();
+		write_config(gettext("Services: Captive Portal: Allowed IPs: deleted IP addresses."));
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}

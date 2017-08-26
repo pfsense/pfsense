@@ -65,7 +65,7 @@ if ($_POST['act'] == "del") {
 
 		unset($a_bridges[$_POST['id']]);
 
-		write_config();
+		write_config(gettext("Deleted a bridge."));
 
 		header("Location: interfaces_bridge.php");
 		exit;

@@ -203,7 +203,7 @@ if ($_POST['save']) {
 			}
 		}
 
-		write_config();
+		write_config(gettext("Edited QinQ interface configuration."));
 
 		header("Location: interfaces_qinq.php");
 		exit;

@@ -180,7 +180,7 @@ if ($_POST['save']) {
 			$a_ifgroups[] = $ifgroupentry;
 		}
 
-		write_config();
+		write_config(gettext("Edited interface group configuration."));
 		interface_group_setup($ifgroupentry);
 
 		header("Location: interfaces_groups.php");

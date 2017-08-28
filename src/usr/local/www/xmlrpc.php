@@ -286,7 +286,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		/* Log what happened */
-		$mergedkeys = implode(",", array_merge(array_keys($sections),
+		$mergedkeys = implode(", ", array_merge(array_keys($sections),
 		    $syncd_full_sections));
 		write_config(sprintf(gettext(
 		    "Merged in config (%s sections) from XMLRPC client."),
@@ -413,7 +413,7 @@ class pfsense_xmlrpc_server {
 
 		$config['installedpackages'] = array_merge(
 		    $config['installedpackages'], $section);
-		$mergedkeys = implode(",", array_keys($section));
+		$mergedkeys = implode(", ", array_keys($section));
 		write_config(sprintf(gettext(
 		    "Merged in config (%s sections) from XMLRPC client."),
 		    $mergedkeys));
@@ -440,7 +440,7 @@ class pfsense_xmlrpc_server {
 
 		$config_new = $this->array_overlay($config, $section);
 		$config = $config_new;
-		$mergedkeys = implode(",", array_keys($section));
+		$mergedkeys = implode(", ", array_keys($section));
 		write_config(sprintf(gettext(
 		    "Merged in config (%s sections) from XMLRPC client."),
 		    $mergedkeys));

@@ -110,7 +110,7 @@ if ($_REQUEST['getupdatestatus']) {
 ?>
 	<div>
 		<?printf("%s %s", gettext("Version information updated at"),
-		    date("Y-m-d H:i", filemtime($cache_file)));?>
+		    date("D M j G:i:s T Y", filemtime($cache_file)));?>
 		    &nbsp;
 		    <a id="updver" href="#" class="fa fa-refresh"></a>
 	</div>
@@ -204,7 +204,7 @@ $rows_displayed = false;
 				<?=gettext("Version: ");?><strong><?=$biosversion[0];?></strong><br/>
 			<?php endif; ?>
 			<?php if (!empty($biosdate[0])): ?>
-				<?=gettext("Release Date: ");?><strong><?=$biosdate[0];?></strong><br/>
+				<?=gettext("Release Date: ");?><strong><?= date("D M j Y ",strtotime($biosdate[0]));?></strong><br/>
 			<?php endif; ?>
 			</td>
 		</tr>

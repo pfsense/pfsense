@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-21 09:35-0400\n"
+"PO-Revision-Date: 2017-08-28 02:42-0400\n"
 "Last-Translator: everfree <everfreewing@gmail.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -761,8 +761,7 @@ msgstr "指定的DNS-O-Matic用戶名或密碼不正確。 在解決此問題之
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
-msgstr ""
-"指定的主機名不是完全合格功能變數名稱(FQDN)。FQDN是指主機名加上全路徑，全路徑中列出了序列中所有域成員，是主機名的一種完全表示形式。"
+msgstr "指定的主機名不是完整網域名稱(FQDN)。FQDN是指主機名加上全路徑，全路徑中列出了序列中所有域成員，是主機名的一種完全表示形式。"
 
 #: src/etc/inc/dyndns.class:1149
 msgid ""
@@ -789,7 +788,7 @@ msgstr "遇到DNS錯誤。 停止更新30分鐘。"
 #: src/etc/inc/dyndns.class:1542 src/etc/inc/dyndns.class:1606
 #: src/etc/inc/dyndns.class:1728
 msgid "Not A FQDN!"
-msgstr "不是一個完全合格功能變數名稱（FQDN）！"
+msgstr "不是一個完整網域名稱（FQDN）！"
 
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1730
 msgid "No such host"
@@ -1065,7 +1064,7 @@ msgstr "用戶無法管理所選域。"
 
 #: src/etc/inc/dyndns.class:1664
 msgid "Not A FQDN"
-msgstr "不是一個FQDN（完全合格功能變數名稱）"
+msgstr "不是一個FQDN（完整網域名稱）"
 
 #: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
@@ -3111,8 +3110,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4壓縮[compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4壓縮v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3313,7 +3312,7 @@ msgstr "僅主機名"
 
 #: src/etc/inc/pfsense-utils.inc:263
 msgid "Fully Qualified Domain Name"
-msgstr "完全合格功能變數名稱"
+msgstr "完整網域名稱"
 
 #: src/etc/inc/pfsense-utils.inc:261
 msgid "Hostname in Menu"
@@ -3582,7 +3581,7 @@ msgstr "英語"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "法國"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -4198,11 +4197,11 @@ msgstr "允許訪問 '系統診斷: 認證檢測'頁面。"
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
-msgstr "Web配置- 系統診斷: 備份恢復"
+msgstr "Web配置- 系統診斷: 備份還原"
 
 #: src/etc/inc/priv.defs.inc:43
 msgid "Allow access to the 'Diagnostics: Backup & Restore' page."
-msgstr "允許訪問 '系統診斷: 備份恢復' 頁面。"
+msgstr "允許訪問 '系統診斷: 備份還原' 頁面。"
 
 #: src/etc/inc/priv.defs.inc:49
 msgid "WebCfg - Diagnostics: Command"
@@ -4278,11 +4277,11 @@ msgstr "允許訪問 '系統診斷:關閉系統' 頁面。"
 
 #: src/etc/inc/priv.defs.inc:108
 msgid "WebCfg - Diagnostics: Limiter Info"
-msgstr "Web配置- 系統診斷: 流量管制資訊"
+msgstr "Web配置- 系統診斷: 限制器資訊"
 
 #: src/etc/inc/priv.defs.inc:109
 msgid "Allows access to the 'Diagnostics: Limiter Info' page"
-msgstr "允許訪問“系統診斷：流量管制資訊”頁面"
+msgstr "允許訪問“系統診斷：限制器資訊”頁面"
 
 #: src/etc/inc/priv.defs.inc:114
 msgid "WebCfg - Diagnostics: NDP Table"
@@ -4502,19 +4501,19 @@ msgstr "允許訪問 '防火牆: NAT: 轉出:編輯' 頁面"
 
 #: src/etc/inc/priv.defs.inc:276
 msgid "WebCfg - Firewall: Rules"
-msgstr "Web配置- 防火牆: 規則策略"
+msgstr "Web配置- 防火牆: 策略規則"
 
 #: src/etc/inc/priv.defs.inc:277
 msgid "Allow access to the 'Firewall: Rules' page."
-msgstr "允許訪問 '防火牆: 規則策略' 頁面"
+msgstr "允許訪問 '防火牆: 策略規則' 頁面"
 
 #: src/etc/inc/priv.defs.inc:282
 msgid "WebCfg - Firewall: Rules: Edit"
-msgstr "Web配置- 防火牆: 規則策略: 編輯"
+msgstr "Web配置- 防火牆: 策略規則: 編輯"
 
 #: src/etc/inc/priv.defs.inc:283
 msgid "Allow access to the 'Firewall: Rules: Edit' page."
-msgstr "允許訪問 '防火牆: 規則策略: 編輯' 頁面"
+msgstr "允許訪問 '防火牆: 策略規則: 編輯' 頁面"
 
 #: src/etc/inc/priv.defs.inc:288
 msgid "WebCfg - Firewall: Schedules"
@@ -6739,7 +6738,7 @@ msgstr "新增新排程"
 #: src/usr/local/www/firewall_shaper_vinterface.php:372
 #: src/usr/local/www/firewall_shaper_wizards.php:75
 msgid "Limiters"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/shaper.inc:3825 src/etc/inc/shaper.inc:4138
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
@@ -6928,7 +6927,7 @@ msgstr "佇列"
 
 #: src/etc/inc/shaper.inc:4647
 msgid "limiters"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/shaper.inc:4649
 #, php-format
@@ -6942,7 +6941,7 @@ msgstr "佇列"
 
 #: src/etc/inc/shaper.inc:4651
 msgid "limiter"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/system.inc:564
 msgid "Error: cannot open hosts file in system_hosts_generate()."
@@ -8069,7 +8068,7 @@ msgstr "m0n0wall配置已經恢復，並已經升級轉換到pfSense了"
 
 #: src/usr/local/www/diag_backup.php:392
 msgid "The configuration could not be restored."
-msgstr "無法恢復配置檔"
+msgstr "無法還原配置檔"
 
 #: src/usr/local/www/diag_backup.php:397
 msgid "The configuration could not be restored (file upload error)."
@@ -8273,7 +8272,7 @@ msgstr "全部"
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/head.inc:385
 #: src/usr/local/www/head.inc:681
 msgid "Backup & Restore"
-msgstr "備份恢復"
+msgstr "備份還原"
 
 #: src/usr/local/www/diag_backup.php:478
 msgid "The firewall configuration has been changed."
@@ -8339,18 +8338,18 @@ msgstr "下載XML配置檔"
 
 #: src/usr/local/www/diag_backup.php:541
 msgid "Restore Backup"
-msgstr "恢復備份"
+msgstr "還原備份"
 
 #: src/usr/local/www/diag_backup.php:545
 #, php-format
 msgid ""
 "Open a %s configuration XML file and click the button below to restore the "
 "configuration."
-msgstr "打開 %sXML配置檔，然後點選下面的按鈕恢復備份。"
+msgstr "打開 %sXML配置檔，然後點選下面的按鈕還原備份。"
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Restore area"
-msgstr "恢復區"
+msgstr "還原區"
 
 #: src/usr/local/www/diag_backup.php:557
 msgid "Configuration file"
@@ -8358,11 +8357,11 @@ msgstr "配置檔"
 
 #: src/usr/local/www/diag_backup.php:581
 msgid "Restore Configuration"
-msgstr "恢復配置"
+msgstr "還原配置"
 
 #: src/usr/local/www/diag_backup.php:584
 msgid "The firewall will reboot after restoring the configuration."
-msgstr "恢復配置後，防火牆將重新啟動。"
+msgstr "還原配置後，防火牆將重新啟動。"
 
 #: src/usr/local/www/diag_backup.php:591
 msgid "Package Functions"
@@ -9294,7 +9293,7 @@ msgstr "取消"
 
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:396
 msgid "Limiter Info"
-msgstr "流量管制資訊"
+msgstr "限制器資訊"
 
 #: src/usr/local/www/diag_limiter_info.php:37
 msgid "No limiters were found on this system."
@@ -9311,7 +9310,7 @@ msgstr "佇列狀態"
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"
-msgstr "流量管制資訊"
+msgstr "限制器資訊"
 
 #: src/usr/local/www/diag_limiter_info.php:82
 msgid "Gathering Limiter information, please wait..."
@@ -9657,7 +9656,7 @@ msgstr "自動更新頁面"
 
 #: src/usr/local/www/diag_pf_info.php:67
 msgid "Refresh"
-msgstr "刷新"
+msgstr "更新"
 
 #: src/usr/local/www/diag_pf_info.php:102 src/usr/local/www/diag_pftop.php:164
 msgid "Output"
@@ -9850,11 +9849,11 @@ msgstr "重新啟動系統"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
-msgstr "狀態表已成功刷新。"
+msgstr "狀態表已成功更新。"
 
 #: src/usr/local/www/diag_resetstate.php:52
 msgid "The source tracking table has been flushed successfully."
-msgstr "來源跟蹤表已成功刷新。 "
+msgstr "來源跟蹤表已成功更新。 "
 
 #: src/usr/local/www/diag_resetstate.php:68
 #, php-format
@@ -9871,7 +9870,7 @@ msgstr ""
 "重置狀態表將刪除相應表中的所有項目。 這意味著所有打開的連接將被中斷，並且將必須重新建立。 在對防火牆和/"
 "或NAT規則進行實質性更改之後，這可能是必要的，特別是如果存在具有開放連接的IP協定映射 (例如: 對於PPTP 或 IPv6) "
 "。%1$s在更改規則時，防火牆通常會保持狀態表的完整性。%2$s%3$s注意:%4$s "
-"重置防火牆狀態表可能會導致瀏覽器會話在點選&quot;重置&quot;時顯示為掛起 ，只需刷新頁面即可繼續。"
+"重置防火牆狀態表可能會導致瀏覽器會話在點選&quot;重置&quot;時顯示為掛起 ，只需更新頁面即可繼續。"
 
 #: src/usr/local/www/diag_resetstate.php:75
 #, php-format
@@ -10171,7 +10170,7 @@ msgstr "每個IP總計 "
 
 #: src/usr/local/www/diag_states_summary.php:199
 msgid "By IP Pair"
-msgstr "按IP對 "
+msgstr "按IP Pair "
 
 #: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
@@ -10986,7 +10985,7 @@ msgid ""
 "192.168.1.16/28 may also be entered and a list of individual IP addresses "
 "will be generated."
 msgstr ""
-"根據需要輸入任意數量的主機。 主機必須由其IP地址或完全合格功能變數名稱（FQDN）指定。 定期重新解析和更新FQDN主機名。 "
+"根據需要輸入任意數量的主機。 主機必須由其IP地址或完整網域名稱（FQDN）指定。 定期重新解析和更新FQDN主機名。 "
 "如果DNS查詢返回多個IP，則使用所有。 還可以輸入IP範圍（例如192.168.1.1-192.168.1.10）或小型子網（例如192.168.1."
 "16/28），並生成單個IP地址的列表。"
 
@@ -11194,7 +11193,7 @@ msgstr "NPt"
 #: src/usr/local/www/firewall_rules_edit.php:1110
 #: src/usr/local/www/head.inc:299
 msgid "Rules"
-msgstr "規則策略"
+msgstr "策略規則"
 
 #: src/usr/local/www/firewall_nat.php:228
 msgid "Dest. Address"
@@ -14684,7 +14683,7 @@ msgstr "管理日誌"
 
 #: src/usr/local/www/head.inc:621
 msgid "Refresh Graph"
-msgstr "刷新圖表"
+msgstr "更新圖表"
 
 #: src/usr/local/www/head.inc:626
 msgid "Export Graph"
@@ -15243,7 +15242,7 @@ msgstr "跟蹤介面"
 
 #: src/usr/local/www/interfaces.php:1726
 msgid "Default (no preference, typically autoselect)"
-msgstr "預設（無首選項，通常為自動選擇）"
+msgstr "預設（無偏好，通常為自動選擇）"
 
 #: src/usr/local/www/interfaces.php:1727
 msgid "------- Media Supported by this interface -------"
@@ -16929,7 +16928,7 @@ msgstr "GIF 隧道遠端子網"
 msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
-msgstr ""
+msgstr "本地端與遠端隧道欄位必須有適當的IP位址並且不能包含CIDR遮罩"
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -18982,7 +18981,7 @@ msgstr "重新安裝所有套件失敗。"
 
 #: src/usr/local/www/pkg_mgr_install.php:557
 msgid "This may take several minutes. Do not leave or refresh the page!"
-msgstr "這會需要幾分鐘，不要離開或刷新頁面！"
+msgstr "這會需要幾分鐘，不要離開或更新頁面！"
 
 #: src/usr/local/www/pkg_mgr_install.php:560
 msgid "This may take several minutes!"
@@ -22505,8 +22504,8 @@ msgid ""
 "hostname and the domain separately, with the domain being the domain or "
 "subdomain zone being handled by the provider."
 msgstr ""
-"輸入完整的完全合格功能變數名稱。 如：myhost.dyndns.org%1$sDNS Made Easy: 動態DNS ID "
-"(不要主機名)%1$she.net tunnelbroker:輸入隧道ID。%1$sGleSYS: 輸入記錄ID。%1$sDNSimple: "
+"輸入完整的完整網域名稱。 如：myhost.dyndns.org%1$sDNS Made Easy: 動態DNS ID (不要主機名)%1$she."
+"net tunnelbroker:輸入隧道ID。%1$sGleSYS: 輸入記錄ID。%1$sDNSimple: "
 "只輸入功能變數名稱。%1$sNamecheap, Cloudflare, GratisDNS, Hover: "
 "分別輸入主機名和功能變數名稱，功能變數名稱由是提供商處理的域或子域區域。"
 
@@ -25135,7 +25134,7 @@ msgstr "重載狀態"
 msgid ""
 "This page will automatically refresh every 3 seconds until the filter is "
 "done reloading."
-msgstr "此頁面將每3秒自動刷新一次，直到篩檢程式重新載入。"
+msgstr "此頁面將每3秒自動更新一次，直到篩檢程式重新載入。"
 
 #: src/usr/local/www/status_filter_reload.php:104
 msgid "Obtaining filter status..."
@@ -25259,7 +25258,7 @@ msgstr "遠端 "
 
 #: src/usr/local/www/status_graph.php:157
 msgid "FQDN"
-msgstr "完全合格功能變數名稱"
+msgstr "完整網域名稱"
 
 #: src/usr/local/www/status_graph.php:159
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:228
@@ -26683,7 +26682,7 @@ msgstr "清除所有會話"
 msgid ""
 "Rescan has been initiated in the background. Refresh this page in 10 seconds "
 "to see the results."
-msgstr "已在後臺啟動重新掃描。 在10秒內刷新此頁面可以查看結果。"
+msgstr "已在後臺啟動重新掃描。 在10秒內更新此頁面可以查看結果。"
 
 #: src/usr/local/www/status_wireless.php:77
 msgid "Nearby Access Points or Ad-Hoc Peers"
@@ -26856,7 +26855,7 @@ msgid ""
 "timezone for the firewall. %1$sChoose a special or \"Etc\" zone only in "
 "cases where the geographic zones do not properly handle the clock offset "
 "required for this firewall."
-msgstr "選擇地理區域名稱（大陸/位置）以確定防火牆的時區。 %1$s僅在地理區域未正確處理此防火牆所需的時鐘偏移的情況下選擇特殊或“Etc”區域。"
+msgstr "選擇地理區域名稱（洲/位置）以確定防火牆的時區。 %1$s僅在地理區域未正確處理此防火牆所需的時鐘偏移的情況下選擇特殊或“Etc”區域。"
 
 #: src/usr/local/www/system.php:577
 msgid "Timeservers"
@@ -27342,7 +27341,7 @@ msgid ""
 msgstr ""
 "這允許與不設定分片位（Don't Fragment）生成的碎片數據包的主機的通信， "
 "這將導致篩檢程式不丟棄這樣的包，而是清除不分片位。注意：不同的鏈路類型能夠支持的最大傳輸單元值（MTU: Maxitum Transmission "
-"Unit）主要是由相關RFC文檔規定的，常見的以太網鏈路的MTU值為1500，如果需要轉發的IP報文超出其轉發介面的MTU值，則在轉發該報文之前，需要將其分片，分為多個適合於該鏈路類型傳輸的報文，這些分片報文在到達接收方的時候，由接收方完成重組。由於分片會導致很多問題，一般應用程式都會儘量避免分片的產生，其通過將IP報文的分片標誌中的DF位（Don’t "
+"Unit）主要是由相關RFC文檔規定的，常見的乙太網鏈路的MTU值為1500，如果需要轉發的IP報文超出其轉發介面的MTU值，則在轉發該報文之前，需要將其分片，分為多個適合於該鏈路類型傳輸的報文，這些分片報文在到達接收方的時候，由接收方完成重組。由於分片會導致很多問題，一般應用程式都會儘量避免分片的產生，其通過將IP報文的分片標誌中的DF位（Don’t "
 "Fragment）置一來實現，而這可能給應用帶來一些難以預料的麻煩。"
 
 #: src/usr/local/www/system_advanced_firewall.php:403
@@ -27440,7 +27439,7 @@ msgstr "狀態的超時可以隨著狀態表項目的數量增長而自適應地
 
 #: src/usr/local/www/system_advanced_firewall.php:472
 msgid "Firewall Maximum States"
-msgstr "防火牆最大狀態"
+msgstr "防火牆最大狀態連線數"
 
 #: src/usr/local/www/system_advanced_firewall.php:476
 #, php-format
@@ -27947,7 +27946,7 @@ msgstr "閘道故障時清除狀態"
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
-msgstr "如果選中此複選框，則當閘道故障時，監視程序將刷新所有狀態。"
+msgstr "如果選中此複選框，則當閘道故障時，監視程序將更新所有狀態。"
 
 #: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
@@ -28037,7 +28036,7 @@ msgstr "硬碟設定"
 
 #: src/usr/local/www/system_advanced_misc.php:578
 msgid "Always on"
-msgstr "一直"
+msgstr "總是"
 
 #: src/usr/local/www/system_advanced_misc.php:576
 msgid "Hard disk standby time"
@@ -28114,7 +28113,7 @@ msgstr "隧道同行的IPv4地址"
 
 #: src/usr/local/www/system_advanced_network.php:206
 msgid "Prefer IPv4 over IPv6"
-msgstr "首選IPv4 over IPv6"
+msgstr "IPv4優先"
 
 #: src/usr/local/www/system_advanced_network.php:209
 msgid ""
@@ -30916,7 +30915,7 @@ msgstr "會話超時必須是一個整值。 "
 msgid ""
 "Authentication refresh time must be an integer between 0 and 3600 "
 "(inclusive)."
-msgstr "認證刷新時間必須是介於0和3600（含）之間的整數。"
+msgstr "認證更新時間必須是介於0和3600（含）之間的整數。"
 
 #: src/usr/local/www/system_usermanager_settings.php:133
 msgid ""
@@ -30939,7 +30938,7 @@ msgstr "以分鐘為單位，預設為4小時（240分鐘），輸入0則永不�
 
 #: src/usr/local/www/system_usermanager_settings.php:221
 msgid "Auth Refresh Time"
-msgstr "認證刷新時間"
+msgstr "認證更新時間"
 
 #: src/usr/local/www/system_usermanager_settings.php:225
 msgid ""
@@ -31540,7 +31539,7 @@ msgstr "請輸入“對等識別字”的keyid標籤"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:364
 msgid "Please enter a fully qualified domain name for 'Peer Identifier'"
-msgstr "請輸入“對等識別字”的完全合格功能變數名稱"
+msgstr "請輸入“對等識別字”的完整網域名稱"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:368
 msgid ""
@@ -33748,12 +33747,6 @@ msgstr "無法擷取狀態"
 msgid "No packages installed."
 msgstr "未安裝套件。"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr "本系統可用套件列表，請點<a href=\"pkg_mgr.php\" class=\"alert-link\">這裏</a>。"
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "ok"
@@ -34107,7 +34100,7 @@ msgstr "版本"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:90
 msgid "is available."
-msgstr "不可用。"
+msgstr "可用。"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:97
 msgid "The system is on the latest version."
@@ -34296,7 +34289,7 @@ msgstr "所有流量圖表都被隱藏。"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:153
 msgid "Refresh Interval"
-msgstr "刷新間隔"
+msgstr "更新間隔"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:160
 msgid "Inverse"
@@ -34595,7 +34588,7 @@ msgstr "反向DNS查找"
 
 #: src/usr/local/www/diag_pf_info.php:68
 msgid "Automatically refresh the output below"
-msgstr "自動刷新下面的輸出"
+msgstr "自動更新下面的輸出"
 
 #: src/usr/local/www/diag_resetstate.php:97
 msgid "Reset the firewall state table"
@@ -35956,8 +35949,8 @@ msgid "Disable this static route"
 msgstr "停用此靜態路由"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "停用儀錶板的自動更新檢查。"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

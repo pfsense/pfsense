@@ -49,12 +49,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-22 04:29-0400\n"
-"Last-Translator: Quentin <quent.fleury@gmail.com>\n"
+"PO-Revision-Date: 2017-08-22 03:26-0400\n"
+"Last-Translator: Laurent Paumier <laurent.paumier@fnac.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -3404,8 +3404,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4 Compression [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 Compression v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3919,7 +3919,7 @@ msgstr "English"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Français"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -18347,6 +18347,8 @@ msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
 msgstr ""
+"Les champs adresse locale et adresse distante doivent contenir des adresses "
+"IP valides sans masque CIDR ni préfixe."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -37232,14 +37234,6 @@ msgstr "Impossible de récupérer le statut"
 msgid "No packages installed."
 msgstr "Aucun paquet installé"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-"Des paquets peuvent être installés <a href=\"pkg_mgr.php\" class=\"alert-"
-"link\">ici</a>"
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "Valider"
@@ -39615,8 +39609,8 @@ msgid "Disable this static route"
 msgstr "Désactiver cette route statique"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr " Désactiver la mise à jour automatique du tableau de bord"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

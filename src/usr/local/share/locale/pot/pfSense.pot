@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3110,7 +3110,7 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
@@ -33274,12 +33274,6 @@ msgstr ""
 msgid "No packages installed."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr ""
@@ -35467,7 +35461,7 @@ msgid "Disable this static route"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
+msgid "Disable the Dashboard auto-update check"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173

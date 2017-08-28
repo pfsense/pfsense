@@ -41,8 +41,8 @@ function get_pkg_stats() {
 	});
 
 	if (empty($installed_packages)) {
-		print_info_box(gettext("No packages installed.") . " " . gettext('Packages can be installed <a href="pkg_mgr.php" class="alert-link">here</a>.'), 'warning', false);
-		exit;
+		print_info_box(gettext("No packages installed."), 'warning', false);
+		return;
 	}
 
 	print("<thead>\n");

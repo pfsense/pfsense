@@ -23,11 +23,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-22 12:30-0400\n"
+"PO-Revision-Date: 2017-08-23 10:44-0400\n"
 "Last-Translator: Hijmen <zanata@hijmen.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -404,9 +404,9 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Als VLANs gebruikt worden, of alleen voor optionele interfaces, dan is het "
-"normaal om hier 'nee' te zeggen en de webConfigurator te gebruiken, om later "
-"VLANs te configureren, indien nodig."
+"Als VLANs niet gebruikt worden, of alleen voor optionele interfaces, dan is "
+"het normaal om hier 'nee' te zeggen en de webConfigurator te gebruiken om "
+"later VLANs te configureren, indien nodig."
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
@@ -597,7 +597,7 @@ msgstr "Kon config.xml niet herstellen."
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr "%1$s is configuratie aan het herstellen %2$s"
+msgstr "%1$s is de configuratie aan het herstellen %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
@@ -615,7 +615,7 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kon geen werkbaar configuratie bestand vinden. Wordt afgesloten...."
+msgstr "Kon geen bruikbaar configuratie bestand vinden. Wordt afgesloten...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
@@ -2348,16 +2348,16 @@ msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
 msgstr ""
-"Dynamische gateway waardes kunnen niet worden gespecificeerd op interfaces "
-"met een statische IPv4 configuratie."
+"Dynamische gateway waardes kunnen niet worden ingesteld op interfaces met "
+"een statische IPv4 configuratie."
 
 #: src/etc/inc/gwlb.inc:1474
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
 msgstr ""
-"Dynamische gateway waardes kunnen niet worden gespecificeerd op interfaces "
-"met een statische IPv6 configuratie."
+"Dynamische gateway waardes kunnen niet worden ingesteld op interfaces met "
+"een statische IPv6 configuratie."
 
 #: src/etc/inc/gwlb.inc:1482
 msgid "A valid data payload must be specified."
@@ -2825,9 +2825,7 @@ msgstr "Mislukt om het gebruiker DUID bestand te schrijven!"
 #: src/etc/inc/interfaces.inc:4503
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
-msgstr ""
-"Fout: kan het bestand %s in DHCP6_Config_File_Override() niet openen om te "
-"lezen."
+msgstr "Fout: kan %s niet openen voor lezen in DHCP6_Config_File_Override()"
 
 #: src/etc/inc/interfaces.inc:4531
 #, php-format
@@ -3304,8 +3302,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4 Compressie [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 Compressie v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3436,8 +3434,8 @@ msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr ""
-"Het bouwen van een OpenVPN server configuratie is mislukt. De geselecteerde "
-"DH Parameter lengte kan niet gebruikt worden."
+"Het samenstellen van een OpenVPN server configuratie is mislukt. De "
+"geselecteerde DH Parameter lengte kan niet gebruikt worden."
 
 #: src/etc/inc/openvpn.inc:1292
 #, php-format
@@ -3984,7 +3982,7 @@ msgstr ""
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
-"Herinstalleren van pakket %1$s omdat het configuratiebestand (%2$s) "
+"Pakket %1$s wordt opnieuw geinstalleerd omdat het include-bestand (%2$s) "
 "ontbreekt!"
 
 #: src/etc/inc/pkg-utils.inc:641
@@ -4259,7 +4257,7 @@ msgstr "Gebruiker - Systeem: Shell account toegang"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
-msgstr "Geeft aan of de gebruiker met bijvoorbeeld SSH kan inloggen."
+msgstr "Geeft aan of deze gebruiker kan inloggen via bijvoorbeeld SSH."
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
@@ -7539,7 +7537,7 @@ msgid ""
 "Indicates whether this user will lock access to the webConfigurator for "
 "other users."
 msgstr ""
-"Geeft aan of deze gebruiker toegang blokkeerd tot de webConfigurator voor "
+"Geeft aan of deze gebruiker toegang tot de webConfigurator blokkeert voor "
 "andere gebruikers."
 
 #: src/etc/inc/upgrade_config.inc:620
@@ -8489,7 +8487,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:259
 msgid "Upgrading m0n0wall configuration to pfsense."
-msgstr "Opwaarderen van m0n0wall configuratie naar pfsense."
+msgstr "m0n0wall configuratie naar pfsense aan het upgraden."
 
 #: src/usr/local/www/diag_backup.php:267 src/usr/local/www/diag_backup.php:270
 msgid ""
@@ -8504,7 +8502,7 @@ msgstr ""
 msgid ""
 "Unset RRD data from configuration after restoring %s configuration area"
 msgstr ""
-"Haal de RRD data uit de configuratie bij na het herstellen van het %s "
+"Haal de RRD data uit de configuratie na het herstellen van het %s "
 "configuratie deel"
 
 #: src/usr/local/www/diag_backup.php:280
@@ -8525,7 +8523,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:302
 msgid "Restore serial console enabling in configuration."
-msgstr "Herstel serial console activeren in configuratie."
+msgstr "Herstel het activeren van de seriele console in de configuratie."
 
 #: src/usr/local/www/diag_backup.php:311
 msgid "Unset RRD data from configuration after restoring full configuration"
@@ -8995,7 +8993,7 @@ msgstr "Voer deze PHP-code uit"
 
 #: src/usr/local/www/diag_command.php:351
 msgid "Example"
-msgstr "Voorbeeld"
+msgstr "Bijvoorbeeld"
 
 #: src/usr/local/www/diag_confbak.php:34
 msgid "Invalid Backup Count specified"
@@ -9043,7 +9041,7 @@ msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
 "or leave blank for the default value (%s for the current platform)."
 msgstr ""
-"Maximum van oude configuraties om in de cache te houden, 0 voor geen "
+"Maximum aantal oude configuraties om in de cache te houden, 0 voor geen "
 "backups, of leeglaten voor de standaard waarde (%s voor het huidige "
 "platvorm)."
 
@@ -9058,10 +9056,10 @@ msgid ""
 "options and select the newer configuration in the right column, then press "
 "the \"Diff\" button."
 msgstr ""
-"Om de verschillen te zien tussen een oude en nieuwe configuratie te zien, "
-"selecteer de oude configuratie met de radioknoppen in de linker kolom en "
-"selecteer de nieuwere configuratie in de rechter kolom. Klik vervolgens op "
-"de \"Verschil\" knop."
+"Om de verschillen tussen een oude en nieuwe configuratie te zien, selecteer "
+"de oude configuratie met de radioknoppen in de linker kolom en selecteer de "
+"nieuwere configuratie in de rechter kolom. Klik vervolgens op de "
+"\"Verschil\" knop."
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
@@ -9123,7 +9121,7 @@ msgstr "Configuratie terugdraaien"
 msgid ""
 "Confirmation Required to replace the current configuration with this backup."
 msgstr ""
-"Bevestiging nodig om de huidige configuratie te vervangen voor deze backup."
+"Bevestiging nodig om de huidige configuratie te vervangen door deze backup."
 
 #: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
@@ -9158,8 +9156,8 @@ msgid ""
 "Resetting the system to factory defaults will remove all user configuration "
 "and apply the following settings:"
 msgstr ""
-"Terugzetten van het systeem naar de fabrieksinstellingen zal alle "
-"gebruikersinstellingen overschrijven en de volgende instellingen toepassen:"
+"Terugzetten van het systeem naar de standaardinstellingen zal alle "
+"gebruikersinstellingen verwijderen en de volgende instellingen toepassen:"
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
@@ -9191,12 +9189,14 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:68
 msgid "webConfigurator admin username will be reset to 'admin'"
 msgstr ""
-"webConfigurator admingebruikersnaam zal worden teruggezet naar 'admin'"
+"webConfigurator administrator gebruikersnaam zal worden teruggezet naar "
+"'admin'"
 
 #: src/usr/local/www/diag_defaults.php:69
 #, php-format
 msgid "webConfigurator admin password will be reset to '%s'"
-msgstr "webConfigurator adminwachtwoord zal worden teruggezet naar '%s'"
+msgstr ""
+"webConfigurator administrator wachtwoord zal worden teruggezet naar '%s'"
 
 #: src/usr/local/www/diag_defaults.php:71
 msgid "Are you sure you want to proceed?"
@@ -10090,15 +10090,15 @@ msgid ""
 "is left blank, all packets on the specified interface will be captured."
 msgstr ""
 "Deze waarde is het IP adres van de bron of de bestemming, subnet in CIDR "
-"notatie, of MAC adres.%1$sMatching kan worden opgeheven door de een \"!\" "
+"notatie, of MAC adres.%1$sDe omgekeerde-werking wordt bereikt door een \"!\" "
 "voor de waarde te plaatsen. Meerdere IP adressen of CIDR subnets mogen "
-"worden gespecificeerd. Op komma (\",\") gesepareerde waarden wordt een "
-"\"EN\" operatie uitgevoerd. Op pipe (\"|\") gesepareerde waarden wordt een "
-"\"OF\" operatie uitgevoerd.%1$sMAC adressen moeten in dubbele punt formaat "
-"forden ingevoerd, zoals xx:xx:xx:xx:xx:xx of een gedeeltelijk adres dat "
-"bestaat uit één (xx), twee (xx:xx), of vier (xx:xx:xx:xx) segmenten.%1$sAls "
-"dit veld leeg gelaten wordt, dan worden alle pakketten op de gespecificeerde "
-"interface opgenomen."
+"worden opgegeven. Op komma (\",\") gesepareerde waarden wordt een \"EN\" "
+"operatie uitgevoerd. Op pipe (\"|\") gesepareerde waarden wordt een \"OF\" "
+"operatie uitgevoerd.%1$sMAC adressen moeten in dubbele punt formaat worden "
+"ingevoerd, zoals xx:xx:xx:xx:xx:xx of een gedeeltelijk adres dat bestaat uit "
+"één (xx), twee (xx:xx), of vier (xx:xx:xx:xx) segmenten.%1$sAls dit veld "
+"leeg gelaten wordt, dan worden alle pakketten op de opgegeven interface "
+"opgenomen."
 
 #: src/usr/local/www/diag_packet_capture.php:367
 #: src/usr/local/www/diag_testport.php:52
@@ -10963,7 +10963,7 @@ msgid ""
 "it will not work."
 msgstr ""
 "Als IPv4 of IPv6 geforceerd wordt en er wordt een hostnaam gebruikt die geen "
-"gesultaat bevat dat dit protocol gebruikt, zal dit resulteren in een fout. "
+"resultaat bevat dat dit protocol gebruikt, zal dit resulteren in een fout. "
 "Bijvoorbeeld als IPv4 wordt geforceerd en er wordt een hostnaam gebruikt die "
 "alleen een AAAA IPv6 adres terug geeft, zal dit niet werken."
 
@@ -11490,7 +11490,7 @@ msgstr "Het maximum aantal items in een alias is %s"
 #: src/usr/local/www/firewall_aliases_import.php:141
 #, php-format
 msgid "IPv6 address ranges are not supported (%s)"
-msgstr "IPv6 adres ranges worden niet ondersteund (%s)"
+msgstr "IPv6 adres bereiken worden niet ondersteund (%s)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:383
 #, php-format
@@ -11624,9 +11624,9 @@ msgstr ""
 "specificeert een enkele IPv6 host, /24 bepaalt 255.255.255.0, /64 "
 "specificeert een normaal IPv6 netwerk, enz. Hostnamen (FQDNs) mogen ook "
 "gespecificeerd worden, gebruik daarvoor een /32 masker voor IPv4 of /128 "
-"voor IPv6. Een IP range zoals 192.168.1.1-192.168.1.254 mag ook worden "
-"ingevuld, een lijst van CIDR netwerken zal worden afgeleid om de range op te "
-"vullen."
+"voor IPv6. Een IP bereik zoals 192.168.1.1-192.168.1.254 mag ook worden "
+"ingevuld, een lijst van CIDR netwerken zal worden afgeleid om het bereik op "
+"te vullen."
 
 #: src/usr/local/www/firewall_aliases_edit.php:569
 msgid ""
@@ -11640,7 +11640,7 @@ msgstr ""
 "Vul zo veel hosts in als nodig. Hosts moeten worden gespecificeerd met hun "
 "IP adres of FQDN. FQDN hostnamen worden periodiek opnieuw herleid en "
 "bijgewerkt. Als een DNS query meerdere IPs teruggeeft worden ze allen "
-"gebruikt. Een IP range zoals 192.168.1.1-192.168.1.10 of een klein subnet "
+"gebruikt. Een IP bereik zoals 192.168.1.1-192.168.1.10 of een klein subnet "
 "zoals 192.168.1.16/28 kan ook worden ingevoerd, daarop zal een lijst van "
 "individuele IP adressen worden gegenereerd."
 
@@ -11649,8 +11649,8 @@ msgid ""
 "Enter ports as desired, with a single port or port range per entry. Port "
 "ranges can be expressed by separating with a colon."
 msgstr ""
-"Vul poorten in zoals nodig met een enkele poort of poortrange per item. "
-"Poortranges kunnen worden uitgedrukt door ze te scheiden met een dubbele "
+"Vul poorten in zoals gewenst met een enkele poort of poortbereik per item. "
+"Poortbereiken kunnen worden opgegeven door ze te scheiden met een dubbele "
 "punt."
 
 #: src/usr/local/www/firewall_aliases_edit.php:571
@@ -11690,8 +11690,8 @@ msgid ""
 "Enter a single URL containing a list of Port numbers and/or Port ranges. "
 "After saving, the URL will be downloaded."
 msgstr ""
-"Vul een enkele URL in die een lijst poortnummers en/of poortranges bevat. Na "
-"het opslaan zal de URL worden gedownload."
+"Vul een enkele URL in die een lijst poortnummers en/of poortbereiken bevat. "
+"Na het opslaan zal de URL worden gedownload."
 
 #: src/usr/local/www/firewall_aliases_edit.php:654
 msgid "Properties"
@@ -11739,7 +11739,7 @@ msgstr "Aliassen om te importeren"
 #: src/usr/local/www/firewall_aliases_import.php:128
 #, php-format
 msgid "%s is not a valid port or port range."
-msgstr "%s is geen geldige poortrange."
+msgstr "%s is geen geldige poort of poortbereik."
 
 #: src/usr/local/www/firewall_aliases_import.php:145
 #, php-format
@@ -11897,7 +11897,7 @@ msgstr "klik om de ingeschakeld/uitgeschakeld status te wisselen"
 #: src/usr/local/www/firewall_nat.php:293
 #: src/usr/local/www/firewall_nat_1to1.php:184
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr "Ongedaan gemaakt: Deze regel sluit NAT uit van een latere regel"
+msgstr "Omgekeerde-werking: Deze regel sluit NAT uit van een latere regel"
 
 #: src/usr/local/www/firewall_nat.php:301
 msgid "All traffic matching this NAT entry is passed"
@@ -12974,7 +12974,9 @@ msgstr "Klik om ingeschakeld/uitgeschakeld status te wisselen"
 
 #: src/usr/local/www/firewall_nat_out.php:336
 msgid "Negated: Traffic matching this rule is not translated."
-msgstr "Teniet gedaan: Verkeer dat deze regel matched word niet vertaald."
+msgstr ""
+"Omgekeerde-werking: Verkeer dat met deze regel overeenkomt word niet "
+"vertaald."
 
 #: src/usr/local/www/firewall_nat_out.php:494
 msgid "Add new mapping to the top of the list"
@@ -13091,7 +13093,7 @@ msgstr "Een geldig doel moet worden opgegeven."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:226
 msgid "Negating destination address of \"any\" is invalid."
-msgstr "Het omkeren van het doel adres \"alle\" is ongeldig."
+msgstr "De omgekeerd-werking van het doel adres \"alle\" is ongeldig."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:231
 msgid "A valid target IP address must be specified."
@@ -13335,7 +13337,7 @@ msgid ""
 msgstr ""
 "Geef de externe bron %1$sPoort of Bereik%2$s die word gebruikt om de "
 "originele bron poort van verbindingen die met de regel overeenkomen te "
-"mappen. %3$sPoort bereiken zijn een laag en een hoge poort nummer gescheiden "
+"mappen. %3$sPoortbereiken zijn een laag en een hoge poort nummer gescheiden "
 "door een \":\".%4$sLaat leeg wanneer %1$sStatische Poort%2$s is aangevinkt."
 
 #: src/usr/local/www/firewall_nat_out_edit.php:651
@@ -14730,12 +14732,12 @@ msgid ""
 "Select the time range for the day(s) selected on the Month(s) above. A full "
 "day is 0:00-23:59."
 msgstr ""
-"Selecteer de tijd reeks voor de dag(en) geselecteerd op de maand(en) "
+"Selecteer de tijdreeks voor de dag(en) geselecteerd op de maand(en) "
 "hierboven. Een volledige dag is 0:00-23:59."
 
 #: src/usr/local/www/firewall_schedule_edit.php:424
 msgid "Time range description"
-msgstr "Tijd reeks omschrijving"
+msgstr "Tijdreeks omschrijving"
 
 #: src/usr/local/www/firewall_schedule_edit.php:433
 msgid "Add Time"
@@ -16288,7 +16290,7 @@ msgstr "De wijzigingen dienen te worden toegepast voordat ze effect hebben."
 #: src/usr/local/www/interfaces.php:1772
 msgid "Don't forget to adjust the DHCP Server range if needed after applying."
 msgstr ""
-"Vergeet niet indien nodig de DHCP Server range aan te passen na het "
+"Vergeet niet indien nodig het DHCP Server bereik aan te passen na het "
 "toepassen."
 
 #: src/usr/local/www/interfaces.php:1781
@@ -16997,8 +16999,8 @@ msgid ""
 msgstr ""
 "Legenda:  Draadloze standaard - kanaal # (frequentie @ max TX power / TX "
 "power toegestaan in reg. domain) %1$sMogelijk worden niet alle kanalen "
-"ondersteund door sommige kaarten. Auto kan de geselecteerde waarde hierboven "
-"overschijven."
+"ondersteund door sommige kaarten. Auto kan de draadloze standaard hierboven "
+"overschrijven."
 
 #: src/usr/local/www/interfaces.php:2937
 msgid "Antenna Settings"
@@ -18581,10 +18583,10 @@ msgid ""
 msgstr ""
 "Balanceert uitgaande verkeer over de actieve poorten op basis van de hashed "
 "protocol header informatie en accepteert inkomend verkeer van elke actieve "
-"poort. Dit is een statische configuratie en onderhandelt geen aggregation "
-"met de peer of exchange frames om de link te monitoren. De hash bevat het "
-"Ethernet bronadres en bestemmingsadres en, indien beschikbaar, de VLAN tag "
-"en het IP bronadres en bestemmingsadres."
+"poort. Dit is een statische configuratie en onderhandelt geen aggregatie met "
+"de peer of wisselt frames geen uit om de link te monitoren. De hash bevat "
+"het Ethernet bronadres en bestemmingsadres en, indien beschikbaar, de VLAN "
+"tag en het IP bronadres en bestemmingsadres."
 
 #: src/usr/local/www/interfaces_lagg_edit.php:86
 msgid ""
@@ -21942,7 +21944,7 @@ msgid ""
 "Ticket#. Allowed range is 0..31."
 msgstr ""
 "Reserveert een reeks in iedere voucher om een simpel controlegetal met Roll "
-"# en Ticket#. Toegestane reeks is 0..31"
+"# en Ticket# op te slaan. Toegestane reeks is 0..31"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:495
 msgid "Magic number"
@@ -22005,7 +22007,7 @@ msgstr "Voucher synchronisatiepoort"
 #: src/usr/local/www/services_captiveportal_vouchers.php:533
 msgid "The port of the master voucher node's webConfigurator. Example: 443 "
 msgstr ""
-"De poort van de webConfigurator van de master vouchernode. Voorbeeld: 443"
+"De poort van de webConfigurator van de master vouchernode. Bijvoorbeeld: 443"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:537
 msgid "Voucher sync username"
@@ -22336,16 +22338,18 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:259
 msgid "A valid IPv4 address must be specified for range from."
-msgstr "Een geldig IPv4 adres moet opgegeven worden als bron."
+msgstr ""
+"Een geldig IPv4 adres moet opgegeven worden voor het begin van het bereik."
 
 #: src/usr/local/www/services_dhcp.php:262
 msgid "A valid IPv4 address must be specified for range to."
-msgstr "Een geldig IPv4 adres moet worden opgegeven voor de range om."
+msgstr ""
+"Een geldig IPv4 adres moet worden opgegeven voor het eind van het bereik."
 
 #: src/usr/local/www/services_dhcp.php:265
 #: src/usr/local/www/services_dhcpv6.php:301
 msgid "Range From and Range To must both be entered."
-msgstr "Reeks van en reeks naar moet worden ingevuld."
+msgstr "Reeks begin en reeks eind moeten beide worden ingevuld."
 
 #: src/usr/local/www/services_dhcp.php:268
 msgid "A valid IP address must be specified for the gateway."
@@ -22471,7 +22475,9 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:358
 msgid "The network address cannot be used in the starting subnet range."
-msgstr "Het netwerkadres kan niet worden gebruikt in de subnet range."
+msgstr ""
+"Het netwerkadres kan niet worden gebruikt aan het begin van het subnet "
+"bereik."
 
 #: src/usr/local/www/services_dhcp.php:361
 msgid "The broadcast address cannot be used in the ending subnet range."
@@ -22513,40 +22519,35 @@ msgstr "Boolean type moet zijn rue, false, on, of off."
 
 #: src/usr/local/www/services_dhcp.php:398
 msgid "Unsigned 8-bit integer type must be a number in the range 0 to 255."
-msgstr ""
-"Unsigned 8-bit integer type moet een getal zijn in het bereik 0 tot 255."
+msgstr "Unsigned 8-bit integer type moet een getal zijn tussen 0 en 255."
 
 #: src/usr/local/www/services_dhcp.php:400
 msgid "Unsigned 16-bit integer type must be a number in the range 0 to 65535."
-msgstr ""
-"Unsigned 16-bits integer type moet een getal zijn in het bereik 0 tot 65535."
+msgstr "Unsigned 16-bits integer type moet een getal zijn tussen 0 en 65535."
 
 #: src/usr/local/www/services_dhcp.php:402
 msgid ""
 "Unsigned 32-bit integer type must be a number in the range 0 to 4294967295."
 msgstr ""
-"Unsigned 32-bit integer type moet een getal zijn in het bereik 0 tot "
-"4294967295."
+"Unsigned 32-bit integer type moet een getal zijn tussen 0 en 4294967295."
 
 #: src/usr/local/www/services_dhcp.php:404
 msgid "Signed 8-bit integer type must be a number in the range -128 to 127."
-msgstr ""
-"Signed 8-bits integer type moet een getal zijn in het bereik -128 tot 127."
+msgstr "Signed 8-bits integer type moet een getal zijn tussen -128 en 127."
 
 #: src/usr/local/www/services_dhcp.php:406
 msgid ""
 "Signed 16-bit integer type must be a number in the range -32768 to 32767."
 msgstr ""
-"Signed 16-bit integer type moet een nummer bevatten in de reeks -32768 tot "
-"en met 32767."
+"Signed 16-bit integer type moet een getal zijn tussen -32768 en 32767."
 
 #: src/usr/local/www/services_dhcp.php:408
 msgid ""
 "Signed 32-bit integer type must be a number in the range -2147483648 to "
 "2147483647."
 msgstr ""
-"Ondertekend 32-bits integer type moet een geheel getal tussen -2147483648 en "
-"2147483647 zijn."
+"Signed 32-bits integer type moet een getal zijn tussen -2147483648 en "
+"2147483647."
 
 #: src/usr/local/www/services_dhcp.php:410
 msgid "IP address or host type must be an IP address or host name."
@@ -22586,7 +22587,7 @@ msgstr "The reeks in invalide (eerste element is hoger dan tweede)"
 #: src/usr/local/www/services_dhcp.php:451
 #: src/usr/local/www/services_dhcpv6.php:386
 msgid "The specified range lies outside of the current subnet."
-msgstr "De ingestelde reeks valt buiten het huidige subnet."
+msgstr "Het opgegeven bereik valt buiten het huidige subnet."
 
 #: src/usr/local/www/services_dhcp.php:461
 msgid ""
@@ -22600,8 +22601,8 @@ msgid ""
 "The specified range must not be within the range configured on a DHCP pool "
 "for this interface."
 msgstr ""
-"De opgegeven range mag niet in de geconfigureerde DHCP pool-range vallen van "
-"deze interface."
+"Het opgegeven bereik mag niet in de geconfigureerde DHCP pool-range vallen "
+"van deze interface."
 
 #: src/usr/local/www/services_dhcp.php:485
 #: src/usr/local/www/services_dhcpv6.php:407
@@ -22728,8 +22729,8 @@ msgid ""
 "If additional pools of addresses are needed inside of this subnet outside "
 "the above Range, they may be specified here."
 msgstr ""
-"Als er extra pools van adressen nodig zijn binnen dit subnet en/of buiten de "
-"bovenstaande range, dan kunnen ze hier worden aangepast."
+"Als er extra pools van adressen nodig zijn binnen dit subnet en/of buiten "
+"het bovenstaande bereik, dan kunnen deze hier worden opgegeven."
 
 #: src/usr/local/www/services_dhcp.php:982
 #: src/usr/local/www/vpn_openvpn_csc.php:554
@@ -23182,14 +23183,14 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:205
 #, php-format
 msgid "The IP address must not be within the DHCP range for this interface."
-msgstr "Het IP-adres mag niet in de DHCP-range van deze interface vallen."
+msgstr "Het IP-adres mag niet in het DHCP-bereik van deze interface vallen."
 
 #: src/usr/local/www/services_dhcp_edit.php:210
 msgid ""
 "The IP address must not be within the range configured on a DHCP pool for "
 "this interface."
 msgstr ""
-"Het IP adres mag niet in de de geconfigureerde DHCP pool-range vallen van "
+"Het IP adres mag niet in de het geconfigureerde DHCP pool-bereik vallen van "
 "deze interface."
 
 #: src/usr/local/www/services_dhcp_edit.php:218
@@ -23306,7 +23307,7 @@ msgid ""
 "network, overrides setting on main page."
 msgstr ""
 "Naam van het bestand dat moet worden geladen wanneer deze host opstart van "
-"het netwerk, overschrijft de instelling op de hoofdpagina."
+"het netwerk, overschrijft de instelling van de hoofdpagina."
 
 #: src/usr/local/www/services_dhcp_edit.php:461
 msgid "Root Path"
@@ -23315,7 +23316,7 @@ msgstr "Rootpad"
 #: src/usr/local/www/services_dhcp_edit.php:464
 msgid "Enter the root-path-string, overrides setting on main page."
 msgstr ""
-"Voer de root-path-string in, overschrijdt de instelling op de hoofdpagina."
+"Voer de root-path-string in, overschrijft de instelling van de hoofdpagina."
 
 #: src/usr/local/www/services_dhcp_edit.php:476
 msgid "ARP Table Static Entry"
@@ -23467,12 +23468,12 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_relay.php:88
 #, php-format
 msgid "Destination Server IP address %s is not a valid IPv4 address."
-msgstr "IP adres van Doelsever %s is geen geldig IPv4 adres."
+msgstr "IP adres van Doelserver %s is geen geldig IPv4 adres."
 
 #: src/usr/local/www/services_dhcp_relay.php:102
 #: src/usr/local/www/services_dhcpv6_relay.php:102
 msgid "At least one Destination Server IP address must be specified."
-msgstr "Tenminste Ã©Ã©n Doel Server IP adres moet ingevuld zijn."
+msgstr "Tenminste een (1) Doelserver IP adres moet ingevuld zijn."
 
 #: src/usr/local/www/services_dhcp_relay.php:129
 msgid ""
@@ -23621,7 +23622,7 @@ msgstr "Subnetmasker"
 
 #: src/usr/local/www/services_dhcpv6.php:628
 msgid "Available Range"
-msgstr "Beschikbare range"
+msgstr "Beschikbare Bereik"
 
 #: src/usr/local/www/services_dhcpv6.php:630
 msgid ""
@@ -23817,16 +23818,17 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:253
 msgid "Enter the root-path string. This overrides setting on main page."
 msgstr ""
-"Enter the root-path string. Dit overschrijft de setting van de hoofdpagina."
+"Voer de root-path-string in. Dit overschrijft de instelling van de "
+"hoofdpagina."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:79
 msgid "Destination Server"
-msgstr "Doel server"
+msgstr "Doelserver"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:89
 #, php-format
 msgid "Destination Server IP address %s is not a valid IPv6 address."
-msgstr "IP adres van Doelsever %s is geen geldig IPv6 adres."
+msgstr "IP adres van Doelserver %s is geen geldig IPv6 adres."
 
 #: src/usr/local/www/services_dhcpv6_relay.php:129
 msgid ""
@@ -23979,10 +23981,11 @@ msgid ""
 msgstr ""
 "Indien deze optie is ingeschakeld zal %s DNS Forwarder (dnsmasq)  omgekeerde "
 "DNS lookups (PTR) voor private adressen (RFC 1918), niet doorsturen naar "
-"hoger liggende name servers.  Alle vermeldingen in de Domein Overrides "
-"sectie die private \"n.n.n.in-addr.arpa\" doorstuurt naar een specifieke "
-"server worden nog steeds doorgestuurd. Als de naam niet bekend is in /etc/"
-"hosts of DHCP zal een \"niet gevonden\" antwoord worden teruggestuurd."
+"hoger liggende name servers.  Alle vermeldingen in de Domein "
+"Overschrijvingen sectie die private \"n.n.n.in-addr.arpa\" doorstuuren naar "
+"een specifieke server worden nog steeds doorgestuurd. Als de naam niet "
+"bekend is in /etc/hosts, DHCP of een specifieke domein overschrijving zal "
+"een \"niet gevonden\" antwoord worden teruggestuurd."
 
 #: src/usr/local/www/services_dnsmasq.php:327
 #: src/usr/local/www/services_unbound.php:286
@@ -24169,7 +24172,7 @@ msgid ""
 "Domain to override (NOTE: this does not have to be a valid TLD!)%1$se.g.: "
 "test or mycompany.localdomain or 1.168.192.in-addr.arpa"
 msgstr ""
-"Domeinen te omzeilen (OPMERKING: dit hoeft geen geldige TLD te "
+"Te overschrijven Domein (OPMERKING: dit hoeft geen geldige TLD te "
 "zijn!)%1$sbijv.:  test of mijnbedrijf.lokaaldomein of 1.168.192.in-addr.arpa"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:143
@@ -24182,9 +24185,9 @@ msgid ""
 msgstr ""
 "IP adres van de gezaghebbende DNS server voor dit domein%1$sbijv.: 192.168."
 "100.100%1$sOf vul hier # in on een uitsluiting voor deze host/dit subdomein "
-"door te geven aan de standaard nameservers van een vorige omzeiling.%1$sOf "
-"vul hier ! in om aanvragen voor deze host/dit subdomein helemaal NIET door "
-"te geven."
+"door te geven aan de standaard nameservers in plaats van een eerdere "
+"overschrijving.%1$sOf vul hier ! in om aanvragen voor deze host/dit "
+"subdomein helemaal NIET door te geven."
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:150
 msgid "Source IP"
@@ -24196,8 +24199,8 @@ msgid ""
 "Leave blank unless the DNS server is accessed through a VPN tunnel."
 msgstr ""
 "Bron IP adres voor aanvragen gericht aan de DNS server ten behoeve van "
-"domein omzeiling. Laat dit veld leeg tenzij de DNS server word benaderd door "
-"een VPN tunnel."
+"domein overschrijving. Laat dit veld leeg tenzij de DNS server word benaderd "
+"door een VPN tunnel."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:67
 #: src/usr/local/www/system.php:202
@@ -24241,16 +24244,16 @@ msgstr "Een geldige domeinnaam moet worden opgegeven in de alias lijst."
 msgid ""
 "This host/domain override combination already exists with an IPv4 address."
 msgstr ""
-"Deze combinatie van host/domeinnaam bestaat al met een IPv4 adres in de "
-"uitsluiting"
+"Deze combinatie van host/domeinnaam overschrijving bestaat al met een IPv4 "
+"adres."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:140
 #: src/usr/local/www/services_unbound_host_edit.php:151
 msgid ""
 "This host/domain override combination already exists with an IPv6 address."
 msgstr ""
-"Deze combinatie van host/domeinnaam bestaat al met een IPv6 adres in de "
-"uitsluiting"
+"Deze combinatie van host/domeinnaam overschrijving bestaat al met een IPv6 "
+"adres."
 
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 #: src/usr/local/www/services_unbound_host_edit.php:181
@@ -24260,7 +24263,7 @@ msgstr "Wijzig Host Overschrijving"
 #: src/usr/local/www/services_dnsmasq_edit.php:198
 #: src/usr/local/www/services_unbound_host_edit.php:192
 msgid "Host Override Options"
-msgstr "Host  Omzeilen Opties"
+msgstr "Hostoverschrijving Opties"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:205
 #, php-format
@@ -25205,14 +25208,14 @@ msgid ""
 "the client range.%1$sNOTE: This should NOT be set to any IP address "
 "currently in use on this firewall."
 msgstr ""
-"Voer het IP adres in dat de PPPoE server moet doorgeven aan cliënten om te "
+"Voer het IP adres in dat de PPPoE server moet doorgeven aan clients om te "
 "gebruiken als \"gateway\".%1$sNormaal gesproken is dit ingesteld op een "
-"ongebruikte IP net buiten het clientenbereik.%1$sOPMERKING: Dit moet niet "
+"ongebruikte IP net buiten het client bereik.%1$sOPMERKING: Dit moet niet "
 "worden ingesteld op een IP adres dat al in gebruik is op deze firewall."
 
 #: src/usr/local/www/services_pppoe_edit.php:330
 msgid "*Remote Address Range"
-msgstr "*Remote Adresbereik"
+msgstr "*Externe Adresbereik"
 
 #: src/usr/local/www/services_pppoe_edit.php:332
 #: src/usr/local/www/vpn_l2tp.php:241
@@ -25449,7 +25452,7 @@ msgid ""
 msgstr ""
 "Er moet een DNS server worden geconfigureerd in %1$sSysteem: Algemene "
 "Instellingen %2$sof sta toe dat de DNS server door DHCP/PPP op WAN mag "
-"worden vervangen om dynamisch DNS bijwerken te laten functioneren."
+"worden overschreven om dynamisch DNS bijwerken te laten functioneren."
 
 #: src/usr/local/www/services_router_advertisements.php:54
 msgid ""
@@ -26028,7 +26031,7 @@ msgstr ""
 "Indien deze optie is ingeschakeld zullen DNS verzoeken worden doorgestuurd "
 "naar hoger liggende DNS servers die gedefinieerd zijn in %1$sSysteem &gt; "
 "Algemene Instellingen%2$s of die verkregen zijn via DHCP/PPP op WAN (als "
-"daar DNS Server Override is ingeschakeld)."
+"daar DNS Serveroverschrijving is ingeschakeld)."
 
 #: src/usr/local/www/services_unbound.php:341
 #, php-format
@@ -26100,7 +26103,7 @@ msgstr ""
 "is ingeschakeld, zal de DNS Resolver de DNS servers gebruiken die opgegeven "
 "zijn in %1$sSysteem &gt; Algemene Instellingen%2$s of degene die via DHCP of "
 "PPP op WAN zijn verkregen indien &quot;sta toe dat de DNS server door DHCP/"
-"PPP op WAN mag worden vervangen&quot; is aangevinkt."
+"PPP op WAN mag worden overschreven&quot; is aangevinkt."
 
 #: src/usr/local/www/services_unbound_acls.php:60
 msgid "Access list deleted from DNS Resolver."
@@ -26604,14 +26607,17 @@ msgid ""
 "A valid IP address and port must be specified, for example 192.168.100."
 "10@5353."
 msgstr ""
+"Er moet een geldig IP-adres en poort worden opgegeven, bijvoorbeeld 192.168."
+"100.10@5353."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:81
 msgid "A valid IP address must be specified, for example 192.168.100.10."
 msgstr ""
+"Er moet een geldig IP-adres worden opgegeven, bijvoorbeeld 192.168.100.10."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:99
 msgid "Domain override configured for DNS Resolver."
-msgstr "Domein overschrijving geconfigureerd voor de DNS Resolver."
+msgstr "Domeinoverschrijving geconfigureerd voor de DNS Resolver."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:117
 msgid "Domains to Override with Custom Lookup Servers"
@@ -26660,7 +26666,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_host_edit.php:174
 msgid "Host override configured for DNS Resolver."
-msgstr "Host overschrijving geconfigureerd voor de DNS Resolver."
+msgstr "Hostoverschrijving geconfigureerd voor de DNS Resolver."
 
 #: src/usr/local/www/services_unbound_host_edit.php:199
 #, php-format
@@ -26668,6 +26674,8 @@ msgid ""
 "Name of the host, without the domain part%1$se.g. enter \"myhost\" if the "
 "full domain name is \"myhost.example.com\""
 msgstr ""
+"Naam van de host, zonder het domein deel%1$svoer bijvoorbeeld 'myhost' in "
+"als de volledige domeinnaam 'myhost.example.com' is"
 
 #: src/usr/local/www/services_unbound_host_edit.php:207
 #, php-format
@@ -26675,6 +26683,8 @@ msgid ""
 "Parent domain of the host%1$se.g. enter \"example.com\" for \"myhost.example."
 "com\""
 msgstr ""
+"Domein van de host%1$svoer bijvoorbeeld 'example.com' in voor 'myhost."
+"example.com'"
 
 #: src/usr/local/www/services_unbound_host_edit.php:214
 #, php-format
@@ -26710,6 +26720,8 @@ msgid ""
 "If the host can be accessed using multiple names, then enter any other names "
 "for the host which should also be overridden."
 msgstr ""
+"Als de host met meerdere namen benaderd kan worden, geef dan de andere namen "
+"voor de host op de ook overschreven moeten worden."
 
 #: src/usr/local/www/services_wol.php:53
 #, php-format
@@ -29071,7 +29083,7 @@ msgstr "Voeg DNS Server toe"
 
 #: src/usr/local/www/system.php:545
 msgid "DNS Server Override"
-msgstr ""
+msgstr "DNS Serveroverschrijving"
 
 #: src/usr/local/www/system.php:548
 #, php-format
@@ -29173,7 +29185,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:615
 msgid "Orange"
-msgstr ""
+msgstr "Oranje"
 
 #: src/usr/local/www/system.php:611
 msgid "Login page color"
@@ -29807,7 +29819,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:528
 msgid "Disable Negate rules"
-msgstr ""
+msgstr "Omgekeerde-werking regels uitschakelen"
 
 #: src/usr/local/www/system_advanced_firewall.php:531
 msgid ""
@@ -30267,6 +30279,9 @@ msgid ""
 "are killed. This option overrides that behavior by not clearing states for "
 "existing connections."
 msgstr ""
+"Standaard, als een schema verloopt, worden verbindingen die toegestaan zijn "
+"door dat schema verbroken. Deze optie negeert dat gedrag door statussen voor "
+"bestaande verbindingen niet te schonen."
 
 #: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:206
@@ -30293,6 +30308,9 @@ msgid ""
 "the rule is created omitting the gateway. This option overrides that "
 "behavior by omitting the entire rule instead."
 msgstr ""
+"Standaard, als voor een regel een gateway is opgegeven en deze gateway is "
+"niet beschikbaar, wordt de gateway weggelaten en de regel uitgevoerd. Deze "
+"optie overschrijft dit gedrag door de hele regel over te slaan."
 
 #: src/usr/local/www/system_advanced_misc.php:501
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
@@ -31127,7 +31145,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:629
 msgid "Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
-msgstr ""
+msgstr "Bijvoorbeeld: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
 
 #: src/usr/local/www/system_authservers.php:635
 msgid "Bind anonymous"
@@ -34750,14 +34768,14 @@ msgid ""
 "client range.%1$s%1$sNOTE: This should NOT be set to any IP address "
 "currently in use on this firewall."
 msgstr ""
-"Voer het IP adres in dat de L2TP server moet doorgeven aan cliënten om te "
+"Voer het IP adres in dat de L2TP server moet doorgeven aan clients om te "
 "gebruiken als \"gateway\".%1$sNormaal gesproken is dit ingesteld op een "
-"ongebruikte IP net buiten het clientenbereik..%1$s%1$sOPMERKING: Dit moet "
-"niet worden ingesteld op een IP adres dat al in gebruik is op deze firewall."
+"ongebruikte IP net buiten het client bereik.%1$s%1$sOPMERKING: Dit moet niet "
+"worden ingesteld op een IP adres dat al in gebruik is op deze firewall."
 
 #: src/usr/local/www/vpn_l2tp.php:238
 msgid "*Remote address range"
-msgstr " "
+msgstr "*Externe Adresbereik"
 
 #: src/usr/local/www/vpn_l2tp.php:245
 msgid "*Number of L2TP users"
@@ -35527,10 +35545,10 @@ msgstr ""
 "Elk niveau geeft alle informatie van de vorige niveaus.\n"
 "Niveau 3 wordt aanbevolen voor een goede samenvatting van wat er gebeurt "
 "zonder te worden overspoeld door de uitvoer.%1$s%1$sGeen: Alleen fatale "
-"fouten%1$sStandaard door 4: Normaal gebruiksgebied%1$s5: Stuurt R en W "
-"tekens naar de console voor elk gelezen en geschreven pakket. De hoofdletter "
-"wordt gebruikt voor TCP / UDP-pakketten en kleine letters worden gebruikt "
-"voor TUN / TAP-pakketten.%1$s6-11: Debug informatie bereik"
+"fouten%1$sStandaard tot 4: Normaal gebruiksgebied%1$s5: Stuurt R en W tekens "
+"naar de console voor elk gelezen en geschreven pakket. De hoofdletter wordt "
+"gebruikt voor TCP / UDP-pakketten en kleine letters worden gebruikt voor TUN "
+"/ TAP-pakketten.%1$s6-11: Debug informatiegebied"
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
@@ -35618,8 +35636,8 @@ msgid ""
 "Select the servers that will utilize this override. When no servers are "
 "selected, the override will apply to all servers."
 msgstr ""
-"Selecteer de servers die deze override gebruiken. Als er geen servers zijn "
-"geselecteerd, is de override van toepassing op alle servers."
+"Selecteer de servers die deze overschrijving gebruiken. Als er geen servers "
+"zijn geselecteerd, is de overschrijving van toepassing op alle servers."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:337
 msgid ""
@@ -35739,7 +35757,7 @@ msgstr ""
 "Dit zijn de IPv4 client-side netwerken die gerouteerd zullen worden vanaf "
 "deze specifieke client met gebruik van iroute, zodat site-to-site VPN "
 "verbindingen kunnen worden opgezet. Uitgedrukt in een komma gescheiden lijst "
-"met één of meer CIDR netwerken. Kan leeg gelaten worden als er geen te "
+"met één of meer CIDR bereiken. Kan leeg gelaten worden als er geen te "
 "routeren client-side netwerken zijn.%1$sOPMERKING: Denk eraan deze subnetten "
 "toe te voegen aan de IPv4 Remote Netwerk lijst bij de betreffende OpenVPN "
 "server instellingen."
@@ -35829,8 +35847,8 @@ msgid ""
 "0\"; "
 msgstr ""
 "Voer eventuele extra opties in die u hier wilt toevoegen aan de client "
-"specifieke overschrijvingen, gescheiden door een puntkomma. %1$sVOORBEELD: "
-"push \"route 10.0.0.0 255.255.255.0\"; "
+"specifieke overschrijvingen, gescheiden door een puntkomma. %1$sBIJVOORBEELD:"
+" push \"route 10.0.0.0 255.255.255.0\"; "
 
 #: src/usr/local/www/vpn_openvpn_csc.php:656
 msgid "CSC Overrides"
@@ -36459,12 +36477,6 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
 msgid "No packages installed."
-msgstr ""
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
 msgstr ""
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
@@ -37669,6 +37681,9 @@ msgid ""
 "individual numbers.<br />Click \"Add Tag\" as many times as needed to add "
 "new inputs."
 msgstr ""
+"Bereiken kunnen worden opgegeven in de invoervelden hieronder. Voer een "
+"bereik in (2-3) of individuele nummers.<br />Klik zo vaak als nodig op \"Tag "
+"toevoegen\" om nieuwe invoervelden toe te voegen."
 
 #: src/usr/local/www/load_balancer_pool_edit.php:359
 msgid ""
@@ -38268,6 +38283,7 @@ msgstr "<span class=\"help-block\">"
 #: src/usr/local/www/status_logs_common.inc:786
 msgid "These settings override the \"General Logging Options\" settings."
 msgstr ""
+"Deze instellingen overschrijven de \"Algemene Logging Opties\" instellingen."
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
@@ -38478,7 +38494,7 @@ msgstr "Schakel reply-to op WAN regels uit"
 
 #: src/usr/local/www/system_advanced_firewall.php:529
 msgid "Disable Negate rule on policy routing rules"
-msgstr "Schakel Regel teniet doen uit voor policy routeringsregels"
+msgstr "Schakel Omgekeerde-werking uit voor policy routeringsregels"
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
@@ -38740,8 +38756,8 @@ msgid "Disable this static route"
 msgstr "Schakel deze statische route uit."
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "Schakel automatische dashboard auto-update controle uit."
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
@@ -38836,7 +38852,7 @@ msgid ""
 "Provide the Phase2 PFS group to clients ( overrides all mobile phase2 "
 "settings )"
 msgstr ""
-"Voorzie clienten met de Phase2 FPS groep (overschrijft alle mobiele phase2 "
+"Voorzie clients met de Phase2 FPS groep (overschrijft alle mobiele phase2 "
 "instellingen)"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:682

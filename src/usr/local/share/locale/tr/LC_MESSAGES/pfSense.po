@@ -13,11 +13,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-22 11:49-0400\n"
+"PO-Revision-Date: 2017-08-28 09:45-0400\n"
 "Last-Translator: Mehmet Dasci <meda.debian@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
@@ -282,7 +282,7 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:399
 msgid "The browser must support cookies to login."
-msgstr "Tarayıcı giriş yapmak için mutlaka çerezleri desteklemelidir."
+msgstr "Giriş için tarayıcının çerezleri kabul etmesi gerek."
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -438,6 +438,8 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$s Isteğe bağlı %2$s bir arayüz adı girin ya da otomatik algılama için 'a' "
+"tuşuna basın%3$s(%4$s 'a' tuşuna basın ya da boş bırakıp devam edin):%5$s"
 
 #: src/etc/inc/config.console.inc:185
 msgid "Optional"
@@ -625,6 +627,8 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"'Kullanıcı - Yapı: Yapılandırma Değiştirmeyi Reddet' izinleri tarafından, "
+"'%s' kullanıcısı için yapılandırma kaydetme izni reddedildi. "
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
@@ -633,7 +637,7 @@ msgstr "UYARI: Yapılandırma içeriği kaydedilemedi. Dosya açılamadı! "
 #: src/etc/inc/config.lib.inc:504
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "write_config()%2$s içerisinde yazmak için %1$s/config.xml açılamadı "
 
 #: src/etc/inc/config.lib.inc:635
 #, php-format
@@ -680,6 +684,8 @@ msgstr "Dinamik DNS: updatedns() başlatılıyor"
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dinamik DNS (%1$s): %2$s için get_failover_interface çalıştırılıyor. %3$s "
+"bulundu"
 
 #: src/etc/inc/dyndns.class:278
 #, php-format
@@ -687,6 +693,8 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dinamik DNS (%1$s)  %2$s (%3$s %4$s) arayüzleri için genel IP sağlanmaya "
+"çalışılırken hata oluştu. "
 
 #: src/etc/inc/dyndns.class:368
 #, php-format
@@ -699,6 +707,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dinamik DNS (%1$s) (%2$s): No-IP ücretsiz hesapta yapay güncelleme işlemi "
+"yapılıyor. IP geçici olarak  %3$s yapıldı."
 
 #: src/etc/inc/dyndns.class:705
 #, php-format
@@ -708,17 +718,17 @@ msgstr "%s istek gönderiliyor"
 #: src/etc/inc/dyndns.class:938
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s):  _remove() başlatılıyor."
 
 #: src/etc/inc/dyndns.class:1006
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): _listCurrent() başlatılıyor."
 
 #: src/etc/inc/dyndns.class:1066
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): _checkLookupStatus() başlatılıyor."
 
 #: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/usr/local/www/pkg_mgr_install.php:119
@@ -753,6 +763,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Dinamik DNS %1$s (%2$s): _checkLookupStatus() bitiyor. Eşleşen kayıt "
+"bulunamadı."
 
 #: src/etc/inc/dyndns.class:1117
 #, php-format
@@ -794,24 +806,32 @@ msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"DNS-O-Matic kullanıcı adı ve şifresi yanlış. Bu çözülene kadar hiçbir "
+"güncelleme verilmeyecek."
 
 #: src/etc/inc/dyndns.class:1147
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Verilen makine adı, tam nitelikli bir alan adı değil. Her hangi bir makine "
+"adı içermiyorsa, notfqdn bir kere döndürülecek. "
 
 #: src/etc/inc/dyndns.class:1149
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"Onaylanmış makine adı, yapılandırılmış herhangi bir servise uymadı. Çıkış "
+"konundaki servis alanı boş bırakılacak."
 
 #: src/etc/inc/dyndns.class:1151
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"20 taneye kadar sunucu güncellenecek. 20'den fazlası ya da birbirini "
+"güncelleme denenirse sunucu sayısı geri döndürülür. "
 
 #: src/etc/inc/dyndns.class:1153
 msgid "The hostname is blocked for update abuse."
@@ -913,10 +933,12 @@ msgstr "DNS Grubu güncel , güncelleme yapılamadı."
 #: src/etc/inc/dyndns.class:1286
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
+"Girilen makine adı ya da grup için istemci desteği güncelleme kullanılabilir "
+"değil. "
 
 #: src/etc/inc/dyndns.class:1289
 msgid "Hostname supplied does not have offline settings configured."
-msgstr ""
+msgstr "Girilen makine adı, yapılandırılmış çevrimdışı ayarları yok."
 
 #: src/etc/inc/dyndns.class:1292 src/etc/inc/dyndns.class:1295
 msgid ""
@@ -985,7 +1007,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
-msgstr "Veritabanı Hatası : Sunucu tarafli veritabanı hatası oluştu."
+msgstr "Veritabanı Hatası : Sunucu tarafında veritabanı hatası oluştu."
 
 #: src/etc/inc/dyndns.class:1349
 #, php-format
@@ -1003,7 +1025,7 @@ msgstr "Belirtilen ana makine adı mevcut değil."
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Hostname specified exists, but not under the username specified."
-msgstr ""
+msgstr "Girilen makine adı var, ama girilen kullanıcı adı altında değil. "
 
 #: src/etc/inc/dyndns.class:1423
 msgid "Updating too frequently, considered abuse."
@@ -1015,12 +1037,12 @@ msgstr "Kötü İstek - Girilen IP geçersiz."
 
 #: src/etc/inc/dyndns.class:1434
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Hatalı İstek - Gerekli parametreler girilmedi."
 
 #: src/etc/inc/dyndns.class:1436
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
-msgstr ""
+msgstr "Hatalı İstek - Kullanıcı adı ya da şifrede kural dışı karakterler. "
 
 #: src/etc/inc/dyndns.class:1438
 msgid "Invalid password."
@@ -1041,11 +1063,11 @@ msgstr "Sunucu tarafında hata."
 
 #: src/etc/inc/dyndns.class:1460
 msgid "Badly Formed Request (check the settings)."
-msgstr ""
+msgstr "Hatalı Oluşturulmuş İstek (ayarları kontrol edin)."
 
 #: src/etc/inc/dyndns.class:1478 src/etc/inc/dyndns.class:1498
 msgid "Bad Request - A hostname was not provided."
-msgstr ""
+msgstr "Hatalı İstek - Bir makine adı girilmedi."
 
 #: src/etc/inc/dyndns.class:1480 src/etc/inc/dyndns.class:1500
 #: src/etc/inc/dyndns.class:1527
@@ -1059,15 +1081,15 @@ msgstr "IP Adresinde Değişim Yok."
 
 #: src/etc/inc/dyndns.class:1523
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "Hatalı İstek - Eksik/Geçersiz Parametreler."
 
 #: src/etc/inc/dyndns.class:1525
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "Hatalı İstek - Geçersiz Tünel Kimliği."
 
 #: src/etc/inc/dyndns.class:1559
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Route53 API çağrımı başarısız. "
 
 #: src/etc/inc/dyndns.class:1563
 msgid "IP address changed successfully"
@@ -1087,10 +1109,12 @@ msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"Geçersiz Kimlik Bilgileri! CloudFlare ile şifre alanına API Anahtarı "
+"kullanmayı unutmayın."
 
 #: src/etc/inc/dyndns.class:1598
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "Alan veya Sunucu kimliği bulunamadı, makine adını kontrol edin. "
 
 #: src/etc/inc/dyndns.class:1600
 msgid "UNKNOWN ERROR"
@@ -1163,79 +1187,79 @@ msgstr "Sistem tarafından farkedilmeyen genel sistem hatası"
 #: src/etc/inc/dyndns.class:1775
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_checkStatus() sonuç: %1$s"
 
 #: src/etc/inc/dyndns.class:1786
 msgid "No record exists."
-msgstr ""
+msgstr "Hiç kayıt yok. "
 
 #: src/etc/inc/dyndns.class:1790
 msgid "No type exists."
-msgstr ""
+msgstr "Hiç tip yok."
 
 #: src/etc/inc/dyndns.class:1794
 msgid "No value exists."
-msgstr ""
+msgstr "Hiç değer yok."
 
 #: src/etc/inc/dyndns.class:1797
 msgid "No such zone exists."
-msgstr ""
+msgstr "Böyle bir alan yok. "
 
 #: src/etc/inc/dyndns.class:1800
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "Girilen kayıt geçersiz."
 
 #: src/etc/inc/dyndns.class:1803
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "Girilen tip geçersiz."
 
 #: src/etc/inc/dyndns.class:1806
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "Girilen değer geçersiz."
 
 #: src/etc/inc/dyndns.class:1809
 msgid "Record is not editable."
-msgstr ""
+msgstr "Kayıt düzeltilebilir değil."
 
 #: src/etc/inc/dyndns.class:1812
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "Kayıt var ama düzeltilebilir değil. "
 
 #: src/etc/inc/dyndns.class:1815
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "Kayıt var ama eklemeden önce kaldırılmalı. "
 
 #: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1824
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "Alanı güncellerken uzak sunucu hatası oluştu. "
 
 #: src/etc/inc/dyndns.class:1821
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "Alan yüklenirken uzak sunucu hatası oluştu."
 
 #: src/etc/inc/dyndns.class:1827
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "Yeni kayıt eklenirken uzak sunucu hatası oluştu."
 
 #: src/etc/inc/dyndns.class:1830
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "Var olan bir kayıt silinirken uzak sunucu hatası oluştu."
 
 #: src/etc/inc/dyndns.class:1844
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS %1$s (%2$s) IP adresini %3$s olarak güncelledi."
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr ""
+msgstr "phpDynDNS: önbellek dosyası %1$s: %2$s güncelleniyor. "
 
 #: src/etc/inc/dyndns.class:1852
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS %1$s (%2$s) üzerindeki IPv6 adresini  %3$s olarak güncelledi."
 
 #: src/etc/inc/dyndns.class:1868
 msgid "ERROR!"
@@ -1243,7 +1267,7 @@ msgstr "HATA!"
 
 #: src/etc/inc/dyndns.class:1874
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Hiçbir Dinamik  Servis sağlayıcı seçilmedi."
 
 #: src/etc/inc/dyndns.class:1877
 msgid "No Username Provided."
@@ -1259,11 +1283,11 @@ msgstr "Sunucu Adı Sağlanmadı."
 
 #: src/etc/inc/dyndns.class:1886
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "Dinamik DNS Servis sağlayıcı henüz desteklenmiyor."
 
 #: src/etc/inc/dyndns.class:1889
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "Hiçbir URL girilmedi."
 
 #: src/etc/inc/dyndns.class:1892
 msgid "Invalid ZoneID"
@@ -1279,6 +1303,8 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
+"IP adresimde hiçbir değişiklik olmadı ve/veya  %s gün geçmedi. Dinamik DNS "
+"girdisi güncellenmiyor. "
 
 #: src/etc/inc/dyndns.class:1901
 msgid "Unknown Response."
@@ -1287,7 +1313,7 @@ msgstr "Bilinmeyen Yanıt."
 #: src/etc/inc/dyndns.class:1920
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): _detectChange() başlatılıyor. "
 
 #: src/etc/inc/dyndns.class:1927
 #, php-format
@@ -1295,11 +1321,12 @@ msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
 msgstr ""
+"Dinamik Dns (%s): Güncel WAN IP saptanamadı, güncelleme işlemi atlanıyor. "
 
 #: src/etc/inc/dyndns.class:1930
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dinamik Dns (%1$s): Güncel WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1938
 #, php-format
@@ -1321,17 +1348,17 @@ msgstr "Önbelleklenmiş IP bulunamadı."
 
 #: src/etc/inc/dyndns.class:1972
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dinamik Dns: cacheIP !=wan_ip. Güncelleniyor."
 
 #: src/etc/inc/dyndns.class:1973
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "Önbelleklenmiş IP: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1978
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dinamik Dns:  %s günden fazla. Güncelleniyor."
 
 #: src/etc/inc/dyndns.class:1983
 msgid "Initial update."
@@ -1340,29 +1367,29 @@ msgstr "İlk güncelleme."
 #: src/etc/inc/dyndns.class:2020
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): _checkIP() başlatılıyor."
 
 #: src/etc/inc/dyndns.class:2045
 #, php-format
 msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
-msgstr ""
+msgstr "Dinamik DNS %1$s hata ayıklama bilgisi (%2$s): %3$s  "
 
 #: src/etc/inc/dyndns.class:2064
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): %4$s'den %3$s çıkarıldı. "
 
 #: src/etc/inc/dyndns.class:2067
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): IP adresi  %3$s'den çıkarılamadı."
 
 #: src/etc/inc/dyndns.class:2072
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dinamik DNS %1$s (%2$s): Yerel sistemden %3$s çıkarıldı."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
@@ -1379,7 +1406,7 @@ msgstr "Firewall günlük görüntüleyicideki bloke edilen ana bağlantılar"
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "Easy Rule tarafından engellenmiş sunucu %s"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
@@ -1422,7 +1449,7 @@ msgstr "Arayüzde tanımlanmış engel kuralı yok:"
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "Easy Rule tarafından engellenmemiş sunucu %s"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
@@ -1483,7 +1510,7 @@ msgstr "Alternatif Host"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Veri iletisi dönüşüm hatası"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
@@ -1523,11 +1550,11 @@ msgstr "Bilgi talebi"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr ""
+msgstr "IPv6 Ben-buradayım"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr ""
+msgstr "IPv6 Sen-neredesin"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
@@ -1551,15 +1578,15 @@ msgstr "Adres maskesi talebi"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr ""
+msgstr "Gezici sunucu yönlendirmesi."
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr ""
+msgstr "Gezici kayıt yanıtı"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr ""
+msgstr "Gezici kayıt isteği"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
@@ -1570,8 +1597,9 @@ msgid "mtrace resp"
 msgstr ""
 
 #: src/etc/inc/filter.inc:71
+#, fuzzy
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Bitişik ilan"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
@@ -1579,15 +1607,15 @@ msgstr "Komşu talebi"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "Nod bilgisi isteği"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr ""
+msgstr "Nod bilgisi yanıtı"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr ""
+msgstr "Parametre sorunu (geçersiz IP  başlığı)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
@@ -1607,7 +1635,7 @@ msgstr "Yönlendirici talebi"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Yönlendirici yeniden numaralandırılıyor"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
@@ -1646,11 +1674,11 @@ msgstr "Hedef ulaşılabilir değil"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "Kimsin yanıtı"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "Kimsin isteği"
 
 #: src/etc/inc/filter.inc:240
 msgid "Initializing"
@@ -1755,6 +1783,7 @@ msgstr "Tamam"
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
 msgstr ""
+"Sadece sayı içerecen takma adlar geçersizdir.  %s takma adı geçiliyor. "
 
 #: src/etc/inc/filter.inc:853
 msgid "Creating gateway group item..."
@@ -1769,6 +1798,8 @@ msgstr "Yönlendirme ayarlanıyor %1$s ile %2$s"
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
+"%s grubunda çok fazla üye var, kural dizisi içindeki ağ geçidi grubu "
+"küçültüldü. "
 
 #: src/etc/inc/filter.inc:909
 #, php-format
@@ -1790,11 +1821,11 @@ msgstr "%s için yansıma kuralı oluşturuluyor..."
 
 #: src/etc/inc/filter.inc:1493
 msgid "Not installing NAT reflection rules for a port range > 500"
-msgstr ""
+msgstr "Port aralığı > 500 olanlar için NAT yansıma kuralları kurulamıyor "
 
 #: src/etc/inc/filter.inc:1499
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr ""
+msgstr "Kısmi NAT yansıma kuralları kuruluyor. Üst sınır 1000 ulaşıldı."
 
 #: src/etc/inc/filter.inc:1580
 msgid "localhost"
@@ -1830,7 +1861,7 @@ msgstr "IPsec kullanıcı"
 
 #: src/etc/inc/filter.inc:1710
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr " ISAKMP için otomatik kural yaratıldı"
 
 #: src/etc/inc/filter.inc:1720
 msgid "Auto created rule"
@@ -1870,7 +1901,7 @@ msgstr "Filtre kuralı %s oluşturuluyor ..."
 #: src/etc/inc/filter.inc:2416
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
-msgstr ""
+msgstr "filter_generate_port: %1$s geçerli bir %2$s portu değil."
 
 #: src/etc/inc/filter.inc:2653
 #, php-format
@@ -1880,36 +1911,36 @@ msgstr "Filitre kuralları oluşturuluyor %s ..."
 #: src/etc/inc/filter.inc:2708
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr " '%2$s' kuralı için '%1$s' takma adı kaynağı çözebilir değil. "
 
 #: src/etc/inc/filter.inc:2713
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "'%2$s' kuralı için '%1$s' takma adı hedefi çözebilir değil"
 
 #: src/etc/inc/filter.inc:2723
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "'%2$s' kuralı için '%1$s' takma adı potu çözebilir değil"
 
 #: src/etc/inc/filter.inc:2725
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "'%2$s' kuralı için '%1$s' takma adı kaynak portu boş"
 
 #: src/etc/inc/filter.inc:2739
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "'%2$s' kuralı için '%1$s' takma adı port hedefi çözebilir değil"
 
 #: src/etc/inc/filter.inc:2741
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "'%2$s' kuralı için '%1$s' takma adı hedef portu boş"
 
 #: src/etc/inc/filter.inc:2749
 msgid "Setting up pass/block rules"
-msgstr ""
+msgstr "Onay/engelle kuralları ayarlanıyor. "
 
 #: src/etc/inc/filter.inc:2776
 #, php-format
@@ -1919,7 +1950,7 @@ msgstr "%s İzin/Engel kuralı ayarlanıyor"
 #: src/etc/inc/filter.inc:2800
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr ""
+msgstr "Ağ geçidi: %s geçersiz ya da bilinmiyor, kullanılmayacak. "
 
 #: src/etc/inc/filter.inc:2819
 #, php-format
@@ -1975,6 +2006,8 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Günlük girdisi incelenirken hata oluştu: %s. Lütfen e-posta gruplarına ya da "
+"forumlarına bildirin."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -1982,12 +2015,16 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"Kural numarası : %s incelenirken hata oluştu. Lütfen e-posta grubuna ya da "
+"foruma bildirin."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
+"kural:  %s incelenirken hata oluştu. Lütfen e-posta grubuna ya da foruma "
+"bildirin."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
@@ -2102,51 +2139,57 @@ msgstr "Bileşen"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Geçici durumdaki IPv6 adresi için zaman aşımı bekleniyor. dpinger "
+"çalışmayacak."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
-msgstr ""
+msgstr "İzlenecek ağ geçidi yok. dpinger çalışmayacak. "
 
 #: src/etc/inc/gwlb.inc:237 src/etc/inc/gwlb.inc:278
 #, php-format
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
 msgstr ""
+"%1$s  izlemek için olan sabit yol kaldırılıyor ve %2$s yoluyla yeni yol "
+"ekleniyor."
 
 #: src/etc/inc/gwlb.inc:306
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr ""
+msgstr "%s için izleme ağ geçidini başlatırken hata oluştu"
 
 #: src/etc/inc/gwlb.inc:319
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr ""
+msgstr "dpinger: %s ağ geçidi için hiçbir dpinger oturumu çalışmıyor "
 
 #: src/etc/inc/gwlb.inc:333
 #, php-format
 msgid "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
-msgstr ""
+msgstr "dpinger: %1$s - %2$s (%3$s) durum yuvasına bağlanamıyor. "
 
 #: src/etc/inc/gwlb.inc:1000
 #, php-format
 msgid "MONITOR: %1$s is down, omitting from routing group %2$s"
-msgstr ""
+msgstr "İzleme: %1$s kapalı, yönlendirme grubu %2$s ile ayrılıyor"
 
 #: src/etc/inc/gwlb.inc:1004
 #, php-format
 msgid "MONITOR: %1$s has packet loss, omitting from routing group %2$s"
-msgstr ""
+msgstr "İzleme: %1$s kayıp paketi var, yönlendirme grubu %2$s ile ayrılıyor"
 
 #: src/etc/inc/gwlb.inc:1008
 #, php-format
 msgid "MONITOR: %1$s has high latency, omitting from routing group %2$s"
 msgstr ""
+"İzleme:  %1$s yüksek gecikmeye sahip, yönlendirme grubu %2$s ile ayrılıyor"
 
 #: src/etc/inc/gwlb.inc:1031
 #, php-format
 msgid "MONITOR: %1$s is available now, adding to routing group %2$s"
 msgstr ""
+"İzleme:  %1$s şimdi kullanılabilir, yönlendirme grubuna %2$s ekleniyor"
 
 #: src/etc/inc/gwlb.inc:1049
 #, php-format
@@ -2154,11 +2197,14 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
+"Ağ geçidi durumu belirlenemedi, hepsi açık/etkin olarak varsayılıyor. (Group:"
+" %s)"
 
 #: src/etc/inc/gwlb.inc:1092
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
 msgstr ""
+"AĞ GEÇİDİ: %1$s grubu,  %2$s portunda çalışır bir ağ geçidine sahip değil!"
 
 #: src/etc/inc/gwlb.inc:1114
 #, php-format
@@ -2220,7 +2266,7 @@ msgstr "Arabirim"
 
 #: src/etc/inc/gwlb.inc:1367
 msgid "gateway"
-msgstr ""
+msgstr "ağ geçidi"
 
 #: src/etc/inc/gwlb.inc:1376 src/usr/local/www/system_gateways.php:78
 #, php-format
@@ -2228,6 +2274,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
+"Ağ geçidi \"%1$s\" devre  dışı bırakılamıyor çünkü Ağ geçidi Grubu \"%2$s\" "
+"üstünde kullanıyor"
 
 #: src/etc/inc/gwlb.inc:1388 src/usr/local/www/system_gateways.php:94
 #, php-format
@@ -2235,6 +2283,8 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Static Route "
 "\"%2$s\""
 msgstr ""
+"Ağ geçidi \"%1$s\" devre  dışı bırakılamıyor çünkü Sabit Yol  \"%2$s\" "
+"üstünde kullanımda"
 
 #: src/etc/inc/gwlb.inc:1396
 msgid "A valid gateway IP address must be specified."
@@ -2245,19 +2295,22 @@ msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
+"IPv4 Ağ geçidi Adresi eklenmedi çünkü arayüzde IPv4 adresi bulunamadı."
 
 #: src/etc/inc/gwlb.inc:1428 src/etc/inc/gwlb.inc:1461
 #, php-format
 msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
-msgstr ""
+msgstr "%s ağ geçidi adresi seçilen arayüzün alt ağı içinde yer almıyor."
 
 #: src/etc/inc/gwlb.inc:1439
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
+"IPv6 Ağ Geçidi Adresi eklenemedi çünkü hiçbir IPv6 adresi arayüzünde "
+"bulunamadı."
 
 #: src/etc/inc/gwlb.inc:1469
 msgid ""
@@ -2277,27 +2330,27 @@ msgstr ""
 
 #: src/etc/inc/gwlb.inc:1482
 msgid "A valid data payload must be specified."
-msgstr ""
+msgstr "Geçerli bir veri yükü girilmeli. "
 
 #: src/etc/inc/gwlb.inc:1487
 #, php-format
 msgid "The IPv6 gateway address '%s' can not be used as a IPv4 gateway."
-msgstr ""
+msgstr "'%s' IPv6 Ağ Geçidi adresi IPv4 ağ geçidi olarak kullanılamaz. "
 
 #: src/etc/inc/gwlb.inc:1490
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
-msgstr ""
+msgstr "'%s'  IPv4 ağ geçidi adresi bir IPv6 ağ geçidi olarak kullanılamaz."
 
 #: src/etc/inc/gwlb.inc:1496
 #, php-format
 msgid "The IPv6 monitor address '%s' can not be used on a IPv4 gateway."
-msgstr ""
+msgstr "'%s'  IPv6 izleme adresi bir IPv4 ağ geçidinde kullanılamaz."
 
 #: src/etc/inc/gwlb.inc:1499
 #, php-format
 msgid "The IPv4 monitor address '%s' can not be used on a IPv6 gateway."
-msgstr ""
+msgstr "'%s'  IPv4 izleme adresi IPv6 ağ geçidi olarak kullanılamaz."
 
 #: src/etc/inc/gwlb.inc:1508
 msgid "Changing name on a gateway is not allowed."
@@ -2319,6 +2372,7 @@ msgid ""
 "The monitor IP address \"%s\" is already in use. A different monitor IP must "
 "be chosen."
 msgstr ""
+"\"%s\" IP adresi zaten kullanımda. Farklı bir izleme IP adresi seçilmeli."
 
 #: src/etc/inc/gwlb.inc:1539
 msgid "The low latency threshold needs to be a numeric value."
@@ -2364,63 +2418,67 @@ msgstr "Yüksek paket kaybı eşiğinin 100 yada daha az olması gerekir."
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
 msgstr ""
+"Sonuçların ortalamasının alınacağı zaman aralığı sayısal değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1589
 msgid "The time period over which results are averaged needs to be positive."
 msgstr ""
+"Sonuçların ortalamasının alınacağı zaman aralığı artı bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1598
 msgid "The probe interval needs to be a numeric value."
-msgstr ""
+msgstr "Yoklama aralığı sayısal bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1600
 msgid "The probe interval needs to be positive."
-msgstr ""
+msgstr "Yoklama aralığı artı bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1609
 msgid "The loss interval needs to be a numeric value."
-msgstr ""
+msgstr "Kayıp aralığı sayısal bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1611
 msgid "The loss interval setting needs to be positive."
-msgstr ""
+msgstr "Kayıp aralığı ayarı artı bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1620
 msgid "The alert interval needs to be a numeric value."
-msgstr ""
+msgstr "Uyarı aralığı sayısal bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1622
 msgid "The alert interval setting needs to be positive."
-msgstr ""
+msgstr "Uyarı aralığı artı bir değer olmalı."
 
 #: src/etc/inc/gwlb.inc:1630
 msgid ""
 "The high latency threshold needs to be greater than the low latency "
 "threshold"
-msgstr ""
+msgstr "Yüksek gecikme eşiği, düşük gecikme eşiğinden büyük olmalı."
 
 #: src/etc/inc/gwlb.inc:1635
 msgid ""
 "The high packet loss threshold needs to be higher than the low packet loss "
 "threshold"
-msgstr ""
+msgstr "Yüksek veri kaybı eşiği, düşük veri kaybı eşiğinden büyük olmalı."
 
 #: src/etc/inc/gwlb.inc:1641
 msgid ""
 "The loss interval needs to be greater than or equal to the high latency "
 "threshold."
-msgstr ""
+msgstr "Kayıp aralığı, yüksek gecikme eşiğinden büyük ya da eşit olmalı."
 
 #: src/etc/inc/gwlb.inc:1646
 msgid ""
 "The time period needs to be greater than twice the probe interval plus the "
 "loss interval."
 msgstr ""
+"Zaman dilimi, yoklama ve kayıp aralığı toplamının iki katından fazla olmalı. "
+""
 
 #: src/etc/inc/gwlb.inc:1652
 msgid ""
 "The alert interval needs to be greater than or equal to the probe interval."
-msgstr ""
+msgstr "Uyarı aralığı, yoklama aralığından eşit veya fazla olmalı."
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
@@ -2520,7 +2578,7 @@ msgstr "%s yapılandırılıyor"
 #: src/etc/inc/interfaces.inc:1263
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr ""
+msgstr "%1$s arayüzü kapalı sayılacak, %2$s imha ediliyor."
 
 #: src/etc/inc/interfaces.inc:1277
 msgid "Wrong parameters used during interface_bring_down"
@@ -2543,6 +2601,8 @@ msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
+"PPTP/L2TP bağlantısı için  %s üstünde yerel IP alınamadı. IP olarak  0.0.0.0 "
+"kullanılacak."
 
 #: src/etc/inc/interfaces.inc:1717
 #, php-format
@@ -2562,17 +2622,18 @@ msgstr "%s Aygıtı yok. PPP bağlantısı, modem cihazı olmadan başlatılamaz
 #: src/etc/inc/interfaces.inc:1729
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr ""
+msgstr "PPP arayüzü olarak bilinmeyen %s yapılandırıldı."
 
 #: src/etc/inc/interfaces.inc:2049
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
+"Hata: mpd_%1$s.conf içerisinde interface_ppps_configure().%2$s açılamadı."
 
 #: src/etc/inc/interfaces.inc:2144
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr ""
+msgstr " '%2$s' arayüzü için '%1$s' aygıtı üzerinde 3gstats.php başlatılıyor."
 
 #: src/etc/inc/interfaces.inc:2161
 msgid "Configuring CARP settings..."
@@ -2585,7 +2646,7 @@ msgstr "Pfsync bekliyor ..."
 #: src/etc/inc/interfaces.inc:2208
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr ""
+msgstr "pfsync %s saniye içinde bitecek."
 
 #: src/etc/inc/interfaces.inc:2209
 msgid "Configuring CARP settings finalize..."
@@ -2628,21 +2689,23 @@ msgstr "%1$s Klon arabirim başarısız %2$s hata kodu, %3$s çıkışı"
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
+"RA kipi olmadan DHCP6 içerisinde, %s WAN arayüzü için dhcp6 istemcisi "
+"başlatılıyor."
 
 #: src/etc/inc/interfaces.inc:3199
 #, php-format
 msgid "OpenVPN: Resync server %s"
-msgstr ""
+msgstr "OpenVPN: %s sunucusunu yeniden eş zamanla"
 
 #: src/etc/inc/interfaces.inc:3212
 #, php-format
 msgid "OpenVPN: Resync client %s"
-msgstr ""
+msgstr "OpenVPN: %s istemcisini yeniden eş zamanla"
 
 #: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr ""
+msgstr "%s arayüzü için yönlendirici ilanını reddet"
 
 #: src/etc/inc/interfaces.inc:3379
 msgid "Generating new MAC address."
@@ -2654,11 +2717,13 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"%1$s arayüzü üzerindeki geçersiz MAC adresi (ff:ff:ff:ff:ff:ff) %2$s ile "
+"otomatik olarak değiştirildi."
 
 #: src/etc/inc/interfaces.inc:3450
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
-msgstr ""
+msgstr "%1$s üst öğesi ve VLAN(%2$s) arasında MTU ile ilgili çakışma var."
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
@@ -2668,12 +2733,12 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:3778
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
-msgstr ""
+msgstr "%1$s  arayüzü var olamayan %2$s arayüzünü takip ediyor. "
 
 #: src/etc/inc/interfaces.inc:3651 src/etc/inc/interfaces.inc:3657
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
-msgstr ""
+msgstr "%2$s %3$s tarafından %1$s  arayüzü yapılandırıldı."
 
 #: src/etc/inc/interfaces.inc:3720
 #, php-format
@@ -2681,6 +2746,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
+"%2$s arayüzünde arayüz IPv4 %1$s adresi geçersiz, 6RD tüneli "
+"yapılandırılmıyor."
 
 #: src/etc/inc/interfaces.inc:3756
 #, php-format
@@ -2702,7 +2769,7 @@ msgstr ""
 
 #: src/etc/inc/interfaces.inc:4028
 msgid "Failed to write user DUID file!"
-msgstr ""
+msgstr "DUID kullanıcı dosyası yazılırken hata oluştu"
 
 #: src/etc/inc/interfaces.inc:4503
 #, php-format
@@ -2839,7 +2906,7 @@ msgstr "Çevir"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr ""
+msgstr "Ham"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
@@ -3047,7 +3114,7 @@ msgstr ""
 #: src/etc/inc/meta.inc:97
 #, php-format
 msgid "unable to read %s"
-msgstr ""
+msgstr "%s okunamıyor"
 
 #: src/etc/inc/meta.inc:134
 #, php-format
@@ -3077,7 +3144,7 @@ msgstr "Yazmak için %s açılamadı"
 #: src/etc/inc/notices.inc:79
 #, php-format
 msgid "New alert found: %s"
-msgstr ""
+msgstr "Yeni uyarı bulundu: %s"
 
 #: src/etc/inc/notices.inc:321
 #, php-format
@@ -3094,21 +3161,23 @@ msgid ""
 "Growl IP Address is invalid. Check the setting in System Advanced "
 "Notifications."
 msgstr ""
+"Bildirim IP adresi geçersiz. Sistem İleri Bildirimlerinde ayarları kontrol "
+"edin."
 
 #: src/etc/inc/notices.inc:383
 #, php-format
 msgid "%1$s (%2$s) - Notification"
-msgstr ""
+msgstr "%1$s (%2$s) - Bildirimler."
 
 #: src/etc/inc/notices.inc:387
 #, php-format
 msgid "Could not send Growl notification to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "%1$s için açılır bildirim gönderilemedi -- Hata: %2$s"
 
 #: src/etc/inc/notices.inc:445
 #, php-format
 msgid "Could not send register Growl on %1$s -- Error: %2$s"
-msgstr ""
+msgstr "%1$s üstünde Kayıt Bildirimi gönderilemedi -- Hata: %2$s"
 
 #: src/etc/inc/openvpn.inc:53 src/usr/local/www/firewall_rules.php:760
 #: src/usr/local/www/firewall_rules_edit.php:1665
@@ -3128,27 +3197,27 @@ msgstr "varsayılan"
 
 #: src/etc/inc/openvpn.inc:56
 msgid "3 (recommended)"
-msgstr ""
+msgstr "3 (önerilen)"
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
-msgstr ""
+msgstr "Bir (Istemci+Sunucu)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
-msgstr ""
+msgstr "İKİ (İstemci+Aracı+Sunucu)"
 
 #: src/etc/inc/openvpn.inc:102
 msgid "Three (Client+2xIntermediate+Server)"
-msgstr ""
+msgstr "Üç (İstemci+2XAracı+Sunucu)"
 
 #: src/etc/inc/openvpn.inc:103
 msgid "Four (Client+3xIntermediate+Server)"
-msgstr ""
+msgstr "Dört (İstemci+3XAracı+Sunucu)"
 
 #: src/etc/inc/openvpn.inc:104
 msgid "Five (Client+4xIntermediate+Server)"
-msgstr ""
+msgstr "Beş (İstemci+4XAracı+Sunucu)"
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
@@ -3172,50 +3241,53 @@ msgstr "Uzaktan Erişim (SSL/TLS + Kullanıcı Kimlik Doğrulaması)"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
-msgstr ""
+msgstr "Başka Seçim (OpenVPN varsayılanı Kullan)"
 
 #: src/etc/inc/openvpn.inc:126
 msgid "LZ4 Compression [compress lz4]"
-msgstr ""
+msgstr "LZ4 Sıkıştırma [ls4 sıkıştır]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
 "LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"
 msgstr ""
+"LZO Sıkıştırma [lzo sıkıştır, comp-lzo'ya eşdeğer uyumluluk için evet]"
 
 #: src/etc/inc/openvpn.inc:129
 msgid "Enable Compression (stub) [compress]"
-msgstr ""
+msgstr "Sıkıştırmayı Etkinleştir [sıkıştır]"
 
 #: src/etc/inc/openvpn.inc:130
 msgid ""
 "Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-"
 "noadapt]"
 msgstr ""
+"Başka Seçim, + Uyumlu LZO Sıkıştırmasını Devre dışı bırak [Eski biçim, comp-"
+"noadapt]"
 
 #: src/etc/inc/openvpn.inc:131
 msgid "Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"
-msgstr ""
+msgstr "Uyumlu LZO Sıkıştırması [Eksi biçim, comp-lzo uyumlu]"
 
 #: src/etc/inc/openvpn.inc:132
 msgid "LZO Compression [Legacy style, comp-lzo yes]"
-msgstr ""
+msgstr "LZO Sıkıştırma [Eski biçim, comp-lzo evet]"
 
 #: src/etc/inc/openvpn.inc:133
 msgid "No LZO Compression [Legacy style, comp-lzo no]"
-msgstr ""
+msgstr "LZO Sıkıştırma Yok [Eski Biçim, comp-lzo yok]"
 
 #: src/etc/inc/openvpn.inc:138
 msgid "Subnet -- One IP address per client in a common subnet"
-msgstr ""
+msgstr "Alt ağ -- Ortak alt ağda her istemciye bir IP adresi"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr ""
+msgstr "net30 -- Yalıtılmış /30 ağ her istemciye"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
@@ -3292,7 +3364,7 @@ msgstr "'%s' Alanı geçerli bir IP adresi ya da etkialanı adı içermeli."
 #: src/etc/inc/openvpn.inc:567
 #, php-format
 msgid "The field '%1$s' must contain a single valid %2$s CIDR range."
-msgstr ""
+msgstr "'%1$s' alanı tekil geçerli bir  %2$s CIDR aralığı içermeli."
 
 #: src/etc/inc/openvpn.inc:582
 #, php-format
@@ -3300,31 +3372,35 @@ msgid ""
 "The field '%1$s' must contain only valid %2$s CIDR range(s) separated by "
 "commas."
 msgstr ""
+"'%1$s' alanı sadece geçerli %2$s CIDR aralığı içermeli, birden fazlası için "
+"virgülle ayırın. "
 
 #: src/etc/inc/openvpn.inc:1124
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
 msgstr ""
+"OpenVPN sunucu yapılandırması başarısız. Seçilen DH parametresi uzunluğu "
+"kullanılamaz. "
 
 #: src/etc/inc/openvpn.inc:1292
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
-msgstr ""
+msgstr "%1$s OpenVPN kimliği, %2$s PID hala çalışıyor, sonlandırılıyor.   "
 
 #: src/etc/inc/openvpn.inc:1527
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
-msgstr ""
+msgstr "%s arayüzü için OpenVPN örnekleri yeniden eşleniyor. "
 
 #: src/etc/inc/openvpn.inc:1529
 msgid "Resyncing OpenVPN instances."
-msgstr ""
+msgstr "OpenVPN örnekleri yeniden eşleniyor."
 
 #: src/etc/inc/openvpn.inc:1562
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
-msgstr ""
+msgstr "%1$s grup %2$s sunucu ağ geçidi için OpenVPN yeniden eşleniyor. "
 
 #: src/etc/inc/openvpn.inc:1571
 #, php-format
@@ -3406,56 +3482,65 @@ msgid ""
 "If selected, lists of interfaces will be sorted by description, otherwise "
 "they are listed wan,lan,optn..."
 msgstr ""
+"Seçildiğine, arayüz listeleri açıklamaya göre sıralanacak, yoksa wan, lan, "
+"optn... şeklinde listelenir. "
 
 #: src/etc/inc/pfsense-utils.inc:321
 msgid "Associated Panels Show/Hide"
-msgstr ""
+msgstr "İlişkili Panelleri Göster/Gizle"
 
 #: src/etc/inc/pfsense-utils.inc:328
 msgid "Show the Available Widgets panel on the Dashboard."
-msgstr ""
+msgstr "Kullanılabilir Araçları Gösterge Panelinde göster."
 
 #: src/etc/inc/pfsense-utils.inc:335
 msgid "Show the Log Filter panel in System Logs."
-msgstr ""
+msgstr "Sistem Günlüklerinde Günlük Filtrelerini Göster."
 
 #: src/etc/inc/pfsense-utils.inc:342
 msgid "Show the Manage Log panel in System Logs."
-msgstr ""
+msgstr "Sistem Günlüklerinde Günlük Yönetimini Göster."
 
 #: src/etc/inc/pfsense-utils.inc:349
 msgid "Show the Settings panel in Status Monitoring."
-msgstr ""
+msgstr "Durum İzlemede Ayarlar panelini Göster."
 
 #: src/etc/inc/pfsense-utils.inc:351
 msgid ""
 "These options allow certain panels to be automatically hidden on page load. "
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
+"Bu seçenekler belli panellerin sayfa yüklenmesi sırasında otomatik "
+"gizlenmesine izin verir. Başlık çubuğundaki bu denetim, paneli gizleme-meye "
+"yarar. "
 
 #: src/etc/inc/pfsense-utils.inc:369
 msgid "Left Column Labels"
-msgstr ""
+msgstr "Sol Sütun Etiketleri"
 
 #: src/etc/inc/pfsense-utils.inc:372
 msgid ""
 "If selected, clicking a label in the left column will select/toggle the "
 "first item of the group."
 msgstr ""
+"Seçildiğinde, sol sütundaki bir etikete tıklandığında gruptaki ilk nesneyi "
+"seçer/geçiş yapar. "
 
 #: src/etc/inc/pfsense-utils.inc:388
 msgid "Alias Popups"
-msgstr ""
+msgstr "Takma ad Açılır penceleri"
 
 #: src/etc/inc/pfsense-utils.inc:391
 msgid ""
 "If selected, the details in alias popups will not be shown, just the alias "
 "description (e.g. in Firewall Rules)."
 msgstr ""
+"Seçildiğine, takma ad açılır pencerelerinde detaylar gösterilmez, sadece "
+"takma ad açıklamaları(örk: Firewall Kuralları)"
 
 #: src/etc/inc/pfsense-utils.inc:407
 msgid "Browser tab text"
-msgstr ""
+msgstr "Tarayıcı sekme metni"
 
 #: src/etc/inc/pfsense-utils.inc:410
 msgid ""
@@ -3463,10 +3548,13 @@ msgid ""
 "current page. Check this box to display the current page followed by the "
 "host name."
 msgstr ""
+"Bu seçilmediğine, tarayıcı sekmesi, geçerli sayfayı izleyen sunucu ismini "
+"gösterir. Sunucu ismini izleyen geçerli sayfanın gösterilmesi için bu kutuyu "
+"seçin. "
 
 #: src/etc/inc/pfsense-utils.inc:454
 msgid "Require State Filter"
-msgstr ""
+msgstr "Durum Filtresi Gerekiyor"
 
 #: src/etc/inc/pfsense-utils.inc:457
 msgid ""
@@ -3474,6 +3562,9 @@ msgid ""
 "States. This option requires a filter to be entered before the states are "
 "displayed. Useful for systems with large state tables."
 msgstr ""
+"Varsayılan olarak, Tanılar > Durumlar'a girildiğinde tüm durum tablosu "
+"gösterilir. Bu seçenek, durumları göstermeden önce bir filtrenin girilmesini "
+"ister. Geniş durum tablolu sistemler için kullanışlıdır. "
 
 #: src/etc/inc/pfsense-utils.inc:477
 msgid "Rule Information"
@@ -3521,7 +3612,7 @@ msgstr "setsockopt() başarısız, hata: %s"
 #: src/etc/inc/pfsense-utils.inc:846
 #, php-format
 msgid "Magic Packet sent (%1$s) to (%2$s) MAC=%3$s"
-msgstr ""
+msgstr "(%1$s) sihirli verisi (%2$s)'ye gönderildi MAC=%3$s"
 
 #: src/etc/inc/pfsense-utils.inc:909 src/etc/inc/pfsense-utils.inc:929
 #, php-format
@@ -3580,43 +3671,45 @@ msgstr "DNS ARABELLEĞİ: Eski IP %1$s ve yeni IP %2$s buldu"
 #: src/etc/inc/pfsense-utils.inc:1880
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
-msgstr ""
+msgstr "%s şifreleme hızlandırıcı birimi yükleniyor."
 
 #: src/etc/inc/pfsense-utils.inc:1897
 #, php-format
 msgid "Loading %s thermal monitor module."
-msgstr ""
+msgstr "%s ısı izleme birimi yükleniyor"
 
 #: src/etc/inc/pfsense-utils.inc:1974 src/etc/inc/pfsense-utils.inc:2030
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
-msgstr ""
+msgstr "Dosya indirme başarısız, durum kodu %1$s. URL: %2$s"
 
 #: src/etc/inc/pfsense-utils.inc:2249
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
-msgstr ""
+msgstr " %s takma adından gelen var olmayan dosya işlenemiyor"
 
 #: src/etc/inc/pfsense-utils.inc:2254
 #, php-format
 msgid "Could not process empty file from alias: %s"
-msgstr ""
+msgstr "%s takma adından gelen boş dosya işlenemiyor."
 
 #: src/etc/inc/pfsense-utils.inc:2259
 #, php-format
 msgid "Could not process aliases from alias: %s"
-msgstr ""
+msgstr "%s takma adından gelen takma adları işlenemiyor."
 
 #: src/etc/inc/pfsense-utils.inc:2316
 #, php-format
 msgid "Failed to download alias %s"
-msgstr ""
+msgstr "%s takma adı indirmesi başarısız."
 
 #: src/etc/inc/pfsense-utils.inc:2345
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
 msgstr ""
+"Takma adı arşivi bir .tar/tgz dosyası, yardımcı uygulama kayıp olduğu için "
+"sıkıştırma açılamıyor. "
 
 #: src/etc/inc/pfsense-utils.inc:2355
 #, php-format
@@ -3630,7 +3723,7 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2940
 msgid "Bosnian"
-msgstr ""
+msgstr "Boşnakça"
 
 #: src/etc/inc/pfsense-utils.inc:2941
 msgid "Chinese (Simplified, China)"
@@ -3638,11 +3731,11 @@ msgstr "Çince (Basitleştirilmiş, Çin)"
 
 #: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
-msgstr ""
+msgstr "Çince (Tayvan)"
 
 #: src/etc/inc/pfsense-utils.inc:2943
 msgid "Dutch"
-msgstr ""
+msgstr "Felemenkçe"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "English"
@@ -3650,19 +3743,19 @@ msgstr "İngilizce"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Fransızca"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
-msgstr ""
+msgstr "Almanca (Almanya)"
 
 #: src/etc/inc/pfsense-utils.inc:2947
 msgid "Norwegian Bokmål"
-msgstr ""
+msgstr "Norveççe (Bokmål)"
 
 #: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
-msgstr ""
+msgstr "Lehçe"
 
 #: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
@@ -3670,7 +3763,7 @@ msgstr "Portekizce (Brezilya)"
 
 #: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
-msgstr ""
+msgstr "Rusça"
 
 #: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
@@ -3678,7 +3771,7 @@ msgstr "İspanyolca"
 
 #: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
-msgstr ""
+msgstr "Ispanyolca (Arjantin)"
 
 #: src/etc/inc/pfsense-utils.inc:3147 src/etc/inc/pfsense-utils.inc:3162
 #: src/etc/inc/pfsense-utils.inc:3188
@@ -3719,31 +3812,31 @@ msgstr "Güç Tasarrufu Servisi"
 
 #: src/etc/inc/pfsense-utils.inc:3167
 msgid "Unknown Service"
-msgstr ""
+msgstr "Bilinmeyen Servis"
 
 #: src/etc/inc/pfsense-utils.inc:3173
 msgid "Invalid SIM/locked State"
-msgstr ""
+msgstr "Geçersiz SIM/kilitli Durumu"
 
 #: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid SIM State"
-msgstr ""
+msgstr "Geçerli SIM Durumu"
 
 #: src/etc/inc/pfsense-utils.inc:3175
 msgid "Invalid SIM CS State"
-msgstr ""
+msgstr "Geçersiz SIM CS Durumu"
 
 #: src/etc/inc/pfsense-utils.inc:3176
 msgid "Invalid SIM PS State"
-msgstr ""
+msgstr "Geçersiz SIM PS DURUMU"
 
 #: src/etc/inc/pfsense-utils.inc:3177
 msgid "Invalid SIM CS/PS State"
-msgstr ""
+msgstr "Geçersiz SIM CS/PS Durumu"
 
 #: src/etc/inc/pfsense-utils.inc:3178
 msgid "Missing SIM State"
-msgstr ""
+msgstr "Kayıp SIM DURUMU "
 
 #: src/etc/inc/pfsense-utils.inc:3189
 msgid "Limited Service"
@@ -3810,11 +3903,11 @@ msgstr "Tüm paketlerin yapılandırmaları yeniden senkronize ediliyor."
 
 #: src/etc/inc/pkg-utils.inc:567
 msgid "Syncing packages..."
-msgstr ""
+msgstr "Paketler eşleniyor..."
 
 #: src/etc/inc/pkg-utils.inc:589
 msgid "Removing package..."
-msgstr ""
+msgstr "Paketler kaldırılıyor..."
 
 #: src/etc/inc/pkg-utils.inc:622
 #, php-format
@@ -3825,12 +3918,12 @@ msgstr "%s Paketi kayıp, yapılandırma dosyası yeniden yüklenmeli."
 #: src/etc/inc/pkg-utils.inc:638
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
-msgstr ""
+msgstr "%1$s paketi yeniden yükleniyor çünkü içerik dosyası (%2$s) eksik!"
 
 #: src/etc/inc/pkg-utils.inc:641
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
-msgstr ""
+msgstr "%s paketi yeniden kurulumu başarısız. Uygun önlemler alın!"
 
 #: src/etc/inc/pkg-utils.inc:734
 msgid "Beginning package installation."
@@ -3895,7 +3988,7 @@ msgstr "Paket kullanma talimatları yükleniyor..."
 #: src/etc/inc/pkg-utils.inc:786
 #, php-format
 msgid "Include %s is missing!"
-msgstr ""
+msgstr "%s içeren eksik!"
 
 #: src/etc/inc/pkg-utils.inc:797
 msgid "Custom commands..."
@@ -3940,12 +4033,12 @@ msgstr "Yapılandırma kaydediliyor... "
 #: src/etc/inc/pkg-utils.inc:873
 #, php-format
 msgid "Successfully installed package: %s."
-msgstr ""
+msgstr "Paket başarıyla kuruldu: %s."
 
 #: src/etc/inc/pkg-utils.inc:893
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
-msgstr ""
+msgstr "%1$s paketi kurulmadı. %2$s silme işlemi iptal edildi."
 
 #: src/etc/inc/pkg-utils.inc:898
 #, php-format
@@ -3993,10 +4086,12 @@ msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
+"Pkg veri bilgisini güncellemek ve paket yeniden kurulumunu bitirmek için "
+"İnternet bağlantısı bekleniyor. "
 
 #: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
-msgstr ""
+msgstr "Paket yeniden kurulum"
 
 #: src/etc/inc/pkg-utils.inc:1048
 msgid ""
@@ -4032,69 +4127,74 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:14
 msgid "WebCfg - Help pages"
-msgstr ""
+msgstr "WebCfg - Yardım sayfaları"
 
 #: src/etc/inc/priv/user.priv.inc:15
 msgid "Show all items on help menu and allow access to Help shortcut links"
 msgstr ""
+"Yardım menüsündeki tüm nesneleri göster ve Yardım kısayolu bağlantılarına "
+"ulaşıma izin ver"
 
 #: src/etc/inc/priv/user.priv.inc:20
 msgid "WebCfg - Dashboard (all)"
-msgstr ""
+msgstr "WebCfg - Gösterge paneli (tümü)"
 
 #: src/etc/inc/priv/user.priv.inc:21
 msgid "Allow access to all pages required for the dashboard."
-msgstr ""
+msgstr "Gösterge paneli için gerekli tüm sayfalara erişime izin ver. "
 
 #: src/etc/inc/priv/user.priv.inc:32
 msgid "WebCfg - Dashboard widgets (direct access)."
-msgstr ""
+msgstr "WebCfg - Gösterge paneli araçları (doğrudan erişim)"
 
 #: src/etc/inc/priv/user.priv.inc:33
 msgid ""
 "Allow direct access to all Dashboard widget pages, required for some widgets "
 "using AJAX."
 msgstr ""
+"Gösterge panelinin tüm araç sayfalarına doğrudan erişime izin ver, AJAX "
+"kullanan bazı araçlar için gerekli."
 
 #: src/etc/inc/priv/user.priv.inc:38
 msgid "User - Config: Deny Config Write"
-msgstr ""
+msgstr "Kullanıcı - Yapılandırma: Yapılandırma Yazmayı Reddet"
 
 #: src/etc/inc/priv/user.priv.inc:39
 msgid "If present, ignores requests from this user to write config.xml."
-msgstr ""
+msgstr "Varsa, config.xml yazma isteklerini bu kullanıcı için göz ardı et."
 
 #: src/etc/inc/priv/user.priv.inc:42
 msgid "User - Notices: View"
-msgstr ""
+msgstr "Kullancı - Bildiri: Görünüm"
 
 #: src/etc/inc/priv/user.priv.inc:43
 msgid "This user can view system notices."
-msgstr ""
+msgstr "Bu kullanıcı sistem bildirilerini görebilir."
 
 #: src/etc/inc/priv/user.priv.inc:46
 msgid "User - Notices: View and Clear"
-msgstr ""
+msgstr "Kullanıcı - Bildiri: Gör ve Temizle"
 
 #: src/etc/inc/priv/user.priv.inc:47
 msgid "This user can view and clear system notices."
-msgstr ""
+msgstr "Bu kullanıcı sistem bildirilerini görebilir ve silebilir. "
 
 #: src/etc/inc/priv/user.priv.inc:50
 msgid "User - System: Shell account access"
-msgstr ""
+msgstr "Kullanıcı - Sistem: Shell hesap erişi"
 
 #: src/etc/inc/priv/user.priv.inc:51
 msgid "Indicates whether the user is able to login for example via SSH."
 msgstr ""
+"Kullanıcının giriş yapıp yapamayacağını gösterir, örneğin SSH üzerinden. "
 
 #: src/etc/inc/priv/user.priv.inc:55
 msgid "User - System: Copy files (scp)"
-msgstr ""
+msgstr "Kullanıcı - Sistem: Dosyaları kopyala (scp)"
 
 #: src/etc/inc/priv/user.priv.inc:60
 msgid "User - System: Copy files to home directory (chrooted scp)"
-msgstr ""
+msgstr "Kullanıcı - Sistem: Ev dizinine dosyaları kopyala (chrooted scp)"
 
 #: src/etc/inc/priv/user.priv.inc:61
 msgid ""
@@ -4103,10 +4203,13 @@ msgid ""
 "privilege.Warning: Manual chroot setup required, see /usr/local/etc/rc.d/"
 "scponlyc."
 msgstr ""
+"SCP/SFTP yoluyla ev dizinine dosya kopyalamaya bu kullanıcıya izin verilip "
+"verilmeyeceğini belirtir. Not: Kullanıcı - Dosya kopyala (scp) ile çakışır. "
+"Uyarı: Elle chroot kurulumu gerekir, bknz: /usr/local/etc/rc.d/scponlyc."
 
 #: src/etc/inc/priv/user.priv.inc:66
 msgid "User - System: SSH tunneling"
-msgstr ""
+msgstr "Kullanıcı - Sistem: SSH tünelleme"
 
 #: src/etc/inc/priv/user.priv.inc:67
 msgid ""
@@ -4163,7 +4266,7 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:101
 msgid "Allow access to the 'Status: Logs: System: Gateways' page."
-msgstr ""
+msgstr "'Durum: Günlükler: Sistem: Ağ geçidi' sayfasına ulaşmaya izin ver."
 
 #: src/etc/inc/priv/user.priv.inc:106
 msgid "WebCfg - Status: Logs: Resolver"
@@ -4179,7 +4282,7 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:113 src/etc/inc/priv/user.priv.inc:131
 msgid "Allow access to the 'Status: System Logs: IPsec VPN' page."
-msgstr ""
+msgstr "'Durum: Sistem Günlükleri: IPsec VPN' sayfasına erişime için ver"
 
 #: src/etc/inc/priv/user.priv.inc:118
 msgid "WebCfg - Status: System Logs: NTP"
@@ -8750,11 +8853,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
-msgstr ""
+msgstr "Yapılandırmayı indir"
 
 #: src/usr/local/www/diag_confbak.php:269
 msgid "Delete config"
-msgstr ""
+msgstr "Yapılandırmayı sil"
 
 #: src/usr/local/www/diag_confbak.php:286
 msgid "No backups found."
@@ -8769,16 +8872,20 @@ msgid ""
 "The system has been reset to factory defaults and is now rebooting. This may "
 "take a few minutes, depending on the hardware."
 msgstr ""
+"Sistem fabrika ayarlarına döndü ve yeniden başlatılıyor. Donamına bağlı "
+"olarak bir kaç dakika sürebilir. "
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
-msgstr ""
+msgstr "Fabrika Ayarlarına Dön"
 
 #: src/usr/local/www/diag_defaults.php:61
 msgid ""
 "Resetting the system to factory defaults will remove all user configuration "
 "and apply the following settings:"
 msgstr ""
+"Fabrika ayarlarına dönmek tüm kullanıcı ayarlarını silecek ve şu ayarları "
+"uygula:"
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
@@ -8821,7 +8928,7 @@ msgstr "Devam etmek istediğinize emin misiniz?"
 
 #: src/usr/local/www/diag_defaults.php:73
 msgid "Perform a factory reset"
-msgstr ""
+msgstr "Fabrika ayarlarına dön. "
 
 #: src/usr/local/www/diag_defaults.php:75
 msgid "Factory Reset"
@@ -9169,39 +9276,39 @@ msgstr "Dosya Düzenle"
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
-msgstr ""
+msgstr "Hiçbir dosya adı belirtilmedi. "
 
 #: src/usr/local/www/diag_edit.php:44
 msgid "Loading a directory is not supported."
-msgstr ""
+msgstr "Yüklenen dizin desteklenmiyor."
 
 #: src/usr/local/www/diag_edit.php:48
 msgid "File does not exist or is not a regular file."
-msgstr ""
+msgstr "Böyle bir dosya yok ya da normal bir dosya değil. "
 
 #: src/usr/local/www/diag_edit.php:54
 msgid "Failed to read file."
-msgstr ""
+msgstr "Dosya okuma başarısız. "
 
 #: src/usr/local/www/diag_edit.php:79
 msgid "Failed to write file."
-msgstr ""
+msgstr "Dosya yazma başarısız."
 
 #: src/usr/local/www/diag_edit.php:83
 msgid "Error while writing file."
-msgstr ""
+msgstr "Dosya yazarken hata oldu. "
 
 #: src/usr/local/www/diag_edit.php:87
 msgid "File saved successfully."
-msgstr ""
+msgstr "Dosya başarılı olarak kaydedildi. "
 
 #: src/usr/local/www/diag_edit.php:107
 msgid "Save / Load a File from the Filesystem"
-msgstr ""
+msgstr "Dosya sisteminden bir dosya Kaydet / Yükle"
 
 #: src/usr/local/www/diag_edit.php:111
 msgid "Path to file to be edited"
-msgstr ""
+msgstr "Düzenlenecek dosya yolu"
 
 #: src/usr/local/www/diag_edit.php:114 src/usr/local/www/diag_edit.php:116
 msgid "Load"
@@ -9221,39 +9328,39 @@ msgstr ""
 
 #: src/usr/local/www/diag_gmirror.php:38
 msgid "Forget all formerly connected consumers"
-msgstr ""
+msgstr "Eski bağlı tüm tüketicileri unut"
 
 #: src/usr/local/www/diag_gmirror.php:39
 msgid "Remove metadata from disk"
-msgstr ""
+msgstr "Diskten veri bilgisini sil"
 
 #: src/usr/local/www/diag_gmirror.php:40
 msgid "Insert consumer into mirror"
-msgstr ""
+msgstr "Yansıya tüketici ekle"
 
 #: src/usr/local/www/diag_gmirror.php:41
 msgid "Remove consumer from mirror"
-msgstr ""
+msgstr "Yansıdan alıcı kaldır"
 
 #: src/usr/local/www/diag_gmirror.php:42
 msgid "Reactivate consumer on mirror"
-msgstr ""
+msgstr "Yansıda alıcı etkinleştir"
 
 #: src/usr/local/www/diag_gmirror.php:43
 msgid "Deactivate consumer from mirror"
-msgstr ""
+msgstr "Yansıdan alıcı etkisizleştir"
 
 #: src/usr/local/www/diag_gmirror.php:44
 msgid "Force rebuild of mirror consumer"
-msgstr ""
+msgstr "Yansı alıcısını yeniden yapmayı zorla"
 
 #: src/usr/local/www/diag_gmirror.php:62
 msgid "A valid mirror name must be supplied."
-msgstr ""
+msgstr "Geçerli bir yansı adı girilmeli."
 
 #: src/usr/local/www/diag_gmirror.php:66
 msgid "A valid consumer name must be supplied"
-msgstr ""
+msgstr "Geçerli bir alıcı adı girilmeli "
 
 #: src/usr/local/www/diag_gmirror.php:73
 msgid ""
@@ -10788,7 +10895,7 @@ msgstr "Ekle"
 
 #: src/usr/local/www/firewall_aliases.php:278
 msgid "Import"
-msgstr ""
+msgstr "İçe aktar"
 
 #: src/usr/local/www/firewall_aliases.php:289
 msgid ""
@@ -10812,31 +10919,31 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:69
 msgid "host"
-msgstr ""
+msgstr "sunucu"
 
 #: src/usr/local/www/firewall_aliases_edit.php:70
 msgid "network"
-msgstr ""
+msgstr "ağ"
 
 #: src/usr/local/www/firewall_aliases_edit.php:71
 msgid "port"
-msgstr ""
+msgstr "port"
 
 #: src/usr/local/www/firewall_aliases_edit.php:72
 msgid "URL (IP)"
-msgstr ""
+msgstr "URL (IP)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:73
 msgid "URL (Port)"
-msgstr ""
+msgstr "URL (Port)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:74
 msgid "URL Table (IP)"
-msgstr ""
+msgstr "URL Tablosu (IP)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:75
 msgid "URL Table (Port)"
-msgstr ""
+msgstr "URLTablosu (Port)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:143
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -11029,56 +11136,56 @@ msgstr "Port(lar)"
 #: src/usr/local/www/firewall_aliases_edit.php:559
 #: src/usr/local/www/firewall_aliases_edit.php:619
 msgid "URL (IPs)"
-msgstr ""
+msgstr "URL (IPler)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:540
 #: src/usr/local/www/firewall_aliases_edit.php:560
 #: src/usr/local/www/firewall_aliases_edit.php:620
 msgid "URL (Ports)"
-msgstr ""
+msgstr "URL (Portlar)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:541
 #: src/usr/local/www/firewall_aliases_edit.php:561
 #: src/usr/local/www/firewall_aliases_edit.php:621
 msgid "URL Table (IPs)"
-msgstr ""
+msgstr "URL Tablosu (IPler)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:542
 #: src/usr/local/www/firewall_aliases_edit.php:562
 #: src/usr/local/www/firewall_aliases_edit.php:622
 msgid "URL Table (Ports)"
-msgstr ""
+msgstr "URL Tablosu (Portlar)"
 
 #: src/usr/local/www/firewall_aliases_edit.php:546
 #: src/usr/local/www/services_unbound_acls.php:268
 msgid "Add Network"
-msgstr ""
+msgstr "Ağ Ekle"
 
 #: src/usr/local/www/firewall_aliases_edit.php:547
 msgid "Add Host"
-msgstr ""
+msgstr "Sunucu Ekle"
 
 #: src/usr/local/www/firewall_aliases_edit.php:548
 msgid "Add Port"
-msgstr ""
+msgstr "Port Ekle"
 
 #: src/usr/local/www/firewall_aliases_edit.php:549
 #: src/usr/local/www/firewall_aliases_edit.php:550
 msgid "Add URL"
-msgstr ""
+msgstr "URL Ekle"
 
 #: src/usr/local/www/firewall_aliases_edit.php:551
 #: src/usr/local/www/firewall_aliases_edit.php:552
 msgid "Add URL Table"
-msgstr ""
+msgstr "URL Tablosu Ekle"
 
 #: src/usr/local/www/firewall_aliases_edit.php:556
 msgid "Network or FQDN"
-msgstr ""
+msgstr "Ağ ya da FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:557
 msgid "IP or FQDN"
-msgstr ""
+msgstr "IP ya da FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:565
 msgid "The value after the \"/\" is the update frequency in days."
@@ -11140,7 +11247,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:654
 msgid "Properties"
-msgstr ""
+msgstr "Özellikler"
 
 #: src/usr/local/www/firewall_aliases_edit.php:663
 #: src/usr/local/www/firewall_aliases_import.php:257
@@ -11154,7 +11261,7 @@ msgstr "Grup adı \"a-z, A-Z, 0-9 ve _\" karakterleri içerebilir."
 #: src/usr/local/www/services_igmpproxy_edit.php:167
 #: src/usr/local/www/system_authservers.php:499
 msgid "*Type"
-msgstr ""
+msgstr "*Tip"
 
 #: src/usr/local/www/firewall_aliases_edit.php:685
 msgid "Hint"
@@ -11182,7 +11289,7 @@ msgstr "İçeri aktarılacak gruplar"
 #: src/usr/local/www/firewall_aliases_import.php:128
 #, php-format
 msgid "%s is not a valid port or port range."
-msgstr ""
+msgstr "%s geçerli bir port ya da port aralığı değil."
 
 #: src/usr/local/www/firewall_aliases_import.php:145
 #, php-format
@@ -11197,7 +11304,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_import.php:165
 msgid "Descriptions must be less than 200 characters long."
-msgstr ""
+msgstr "Açıklama 200 ya da daha az karakter olmalı. "
 
 #: src/usr/local/www/firewall_aliases_import.php:186
 msgid "Imported a firewall alias."
@@ -33718,12 +33825,6 @@ msgstr ""
 msgid "No packages installed."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr ""
@@ -35922,9 +36023,8 @@ msgid "Disable this static route"
 msgstr "Bu statik yönlendirmeyi kapat"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
+msgid "Disable the Dashboard auto-update check"
 msgstr ""
-"Otomatik gösterge paneli kendinden-güncelleme kontrolünü devre dışı bırak."
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
@@ -36159,12 +36259,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:424
 #: src/usr/local/www/vpn_openvpn_server.php:1030
 msgid "Force all client generated traffic through the tunnel."
-msgstr ""
+msgstr "Tünelden geçen istemci üretimi tüm trafiği zorla."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:436
 msgid ""
 "Prevent this client from receiving any server-defined client settings. "
-msgstr ""
+msgstr "Bu istemcinin sunucu-tanımlı istemci ayarları almasına engel ol. "
 
 #: src/usr/local/www/vpn_openvpn_csc.php:504
 #: src/usr/local/www/vpn_openvpn_server.php:1207

@@ -1,15 +1,16 @@
 # Jack Brennan <social@sourcenix.com>, 2017. #zanata
 # Knut Edvard Klock <knut@netgate.com>, 2017. #zanata
+# Martin Jomafjell <marbosa@outlook.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-14 10:06-0400\n"
-"Last-Translator: Knut Edvard Klock <knut@netgate.com>\n"
+"PO-Revision-Date: 2017-08-24 03:10-0400\n"
+"Last-Translator: Martin Jomafjell <marbosa@outlook.com>\n"
 "Language-Team: Norwegian Bokmål\n"
 "Language: nb\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -21,9 +22,9 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
-"Ingen tilgang<br/><br/>Tilgang forsøk fra en midlertidig utestengt klient "
-"adresse.<br /><br />Prøv å få tilgang til brannmuren igjen etter at "
-"utelukkelsen er utløpt."
+"Ingen tilgang<br/><br/>Tilgang forsøk fra en midlertidig utestengt "
+"klientadresse.<br /><br />Prøv å få tilgang til brannmuren igjen etter at "
+"utestengelsen er utløpt."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -33,7 +34,7 @@ msgid ""
 msgstr ""
 "Et potensielt \"DNS Rebind\" angrep oppdaget, se http://en.wikipedia.org/"
 "wiki/DNS_rebinding<br /> Prøv å koble til ruteren ved å benytte IP-adressen "
-"i stedet for hostnavnet."
+"i stedet for vertsnavnet."
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
@@ -61,7 +62,7 @@ msgstr "FEIL! Kan ikke koble til serveren %s."
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr ""
 "LDAP: Kunne ikke gjøre oppslag mot sertifikat-autoritet (CA) ved bruk av "
-"referanse for host %s"
+"referanse for tjeneren %s"
 
 #: src/etc/inc/auth.inc:962
 #, php-format
@@ -74,7 +75,7 @@ msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"FEIL! ldap_get_user_ous() ingen LDAP Autentisering server spesifisert "
+"FEIL! ldap_get_user_ous() ingen LDAP Autentiserings-server spesifisert "
 
 #: src/etc/inc/auth.inc:1052
 #, php-format
@@ -119,7 +120,7 @@ msgid ""
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
 "FEIL! ldap_backed() kall med ingen LDAP autentiseringsserver definert. "
-"Bytter til lokal brukerdatabase. Besøk System -> Brukerhåndtering"
+"Bytter til lokal brukerdatabase. Gå til System -> Brukerhåndtering"
 
 #: src/etc/inc/auth.inc:1320
 msgid ""
@@ -139,7 +140,7 @@ msgstr "FEIL! Kunne ikke binde til server %s."
 #: src/etc/inc/auth.inc:1386
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr "Søker i mappen for %s"
+msgstr "Søker i mappen etter %s"
 
 #: src/etc/inc/auth.inc:1395
 #, php-format
@@ -184,11 +185,11 @@ msgstr "RADIUS Autentisering vellykket"
 #: src/etc/inc/auth.inc:1540
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Auth ikke godkjent"
+msgstr "RADIUS Autentiering avvist"
 
 #: src/etc/inc/auth.inc:1662
 msgid "Widget configuration has been changed."
-msgstr "Widget konfigurasjonen har blitt endret"
+msgstr "Widget-konfigurasjonen har blitt endret"
 
 #: src/etc/inc/auth.inc:1667
 #, php-format
@@ -241,7 +242,7 @@ msgstr "Ugyldig innlogging (%s)"
 #: src/etc/inc/authgui.inc:200
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "Enheten er foreløpig vedlikeholdt av: %s."
+msgstr "Enheten er foreløpig under kontroll av: %s."
 
 #: src/etc/inc/authgui.inc:283
 #, php-format
@@ -265,14 +266,15 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
-"IP-adressen som brukes til å få tilgang til denne ruteren, er ikke "
-"konfigurert lokalt, som kan videresendes med NAT eller andre midler.\n"
-"Hvis denne videresending er uventet, bør det bekreftes at et man-i-midten-"
+"IP-adressen som brukes til å få tilgang til denne ruteren er ikke "
+"konfigurert lokalt, som kan være videresent med NAT eller andre midler. \n"
+"\n"
+"Hvis denne videresendingen er uventet, bør det bekreftes at et man-i-midten-"
 "angrep ikke finner sted "
 
 #: src/etc/inc/authgui.inc:399
 msgid "The browser must support cookies to login."
-msgstr "Nettleseren må støtte Informasjonskapseler"
+msgstr "Nettleseren må støtte Informasjonskapseler for å kunne logge inn"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -320,7 +322,7 @@ msgstr "Feil: Kan ikke åpne '%1$s' i captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
-msgstr "Captive Portal tillate brukere Konfigurasjonen er endret"
+msgstr "Captive Portal tillate brukere, Konfigurasjonen er endret"
 
 #: src/etc/inc/certs.inc:44
 msgid "FQDN or Hostname"
@@ -337,7 +339,7 @@ msgstr "FQDN eller Vertsnavn"
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
-msgstr "IPadresse"
+msgstr "IP-adresse"
 
 #: src/etc/inc/certs.inc:46
 msgid "URI"
@@ -345,7 +347,7 @@ msgstr "URI"
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr "Epost adresse"
+msgstr "E-postadresse"
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
@@ -354,7 +356,7 @@ msgstr "ADVARSEL!  WARNING!  ACHTUNG!"
 #: src/etc/inc/config.console.inc:46
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr "%1$s krever *MINIMUM* %2$s RAM for å fungere fullstendig.%3$s"
+msgstr "%1$s krever *MINIMUM* %2$s RAM for å fungere nomalt.%3$s"
 
 #: src/etc/inc/config.console.inc:47
 #, php-format
@@ -365,11 +367,11 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
-msgstr "Press ENTER for å fortsette"
+msgstr "Trykk ENTER for å fortsette"
 
 #: src/etc/inc/config.console.inc:66 src/etc/inc/config.console.inc:445
 msgid "No interfaces found!"
-msgstr "Ingen porter funnet!"
+msgstr "Ingen grensesnitt funnet!"
 
 #: src/etc/inc/config.console.inc:84
 msgid "Do VLANs need to be set up first?"
@@ -381,10 +383,9 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
-"Hvis VLAN ikke vil bli brukt, eller bare for valgfrie porter, er det vanlig "
-"å\n"
-"si nei her og bruker webConfigurator til å konfigurere VLAN senere, om "
-"nødvendig."
+"Hvis VLAN ikke skal brukes, eller bare for valgfrie porter, er det vanlig å\n"
+"si nei her og bruke web-konfigureringsverktøyet til å konfigurere VLAN "
+"senere, om nødvendig."
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
@@ -392,12 +393,13 @@ msgstr "Vill du konfigurerer VLANs nå [y|n]?"
 
 #: src/etc/inc/config.console.inc:101
 msgid "VLAN interfaces:"
-msgstr "VLAN Porter:"
+msgstr "VLAN-grensesnitt:"
 
 #: src/etc/inc/config.console.inc:121
 msgid "Enter the WAN interface name or 'a' for auto-detection"
 msgstr ""
-"Skriv inn navnet på WAN Porten eller press 'a' for automatisk gjenkjenning"
+"Skriv inn navnet på WAN-grensesnittet eller trykk 'a' for automatisk "
+"gjenkjenning"
 
 #: src/etc/inc/config.console.inc:122
 #, php-format
@@ -408,7 +410,7 @@ msgstr "%1$s(%2$s or a): "
 #: src/etc/inc/config.console.inc:192 src/etc/inc/config.console.inc:468
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr "%1$sUgyldig Port navn '%2$s'%3$s"
+msgstr "%1$sUgyldig grensesnitt '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:138
 #, php-format
@@ -416,14 +418,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sSkriv inn navnet på LAN Porten eller press 'a' for automatisk "
+"%1$sSkriv inn navnet på LAN-grensesnittet eller trykk 'a' for automatisk "
 "gjenkjenning %2$sMERK: Dette aktiverer full Brannmur / NAT-modus.%3$s(%4$s a "
 "eller ingenting hvis ferdig):%5$s"
 
 #: src/etc/inc/config.console.inc:175
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr "%1$sValgfritt Port %2$s Beskrivelse funnet: %3$s"
+msgstr "%1$sValgfritt grensesnitt %2$s Beskrivelse funnet: %3$s"
 
 #: src/etc/inc/config.console.inc:178
 #, php-format
@@ -431,7 +433,7 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
-"%1$sSkriv inn Valgfritt %2$s Port navn eller 'a' for automatisk "
+"%1$sSkriv inn navn på valgfritt grensesnitt %2$s eller 'a' for automatisk "
 "gjenkjenning%3$s(%4$s eller ingenting hvis ferdig):%5$s"
 
 #: src/etc/inc/config.console.inc:185
@@ -440,7 +442,7 @@ msgstr "Valgfritt"
 
 #: src/etc/inc/config.console.inc:221
 msgid "The interfaces will be assigned as follows:"
-msgstr "Portene vil bli satt opp som følgende:"
+msgstr "Grensesnittene vil bli satt opp som følgende:"
 
 #: src/etc/inc/config.console.inc:231 src/etc/inc/config.console.inc:428
 msgid "Do you want to proceed [y|n]?"
@@ -448,13 +450,14 @@ msgstr "Ønsker du å fortsette [y|n]?"
 
 #: src/etc/inc/config.console.inc:248
 msgid "You have chosen to remove the LAN interface."
-msgstr "Du har valgt å fjerne LAN porten."
+msgstr "Du har valgt å fjerne LAN-grensesnittet."
 
 #: src/etc/inc/config.console.inc:249
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr "Ønsker du å fjerne LAN IP-adressen og fjerne LAN Porten nå [y|n]?"
+msgstr ""
+"Ønsker du å fjerne LAN IP-adressen og fjerne LAN-grensesnittet nå [y|n]?"
 
 #: src/etc/inc/config.console.inc:370
 #, php-format
@@ -463,7 +466,7 @@ msgstr "%sLagrer Konfigurasjon ..."
 
 #: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
-msgstr "Tildeling av porter over konsoll "
+msgstr "Tildeling av grensesnitt over konsoll "
 
 #: src/etc/inc/config.console.inc:372
 #, php-format
@@ -472,7 +475,7 @@ msgstr "Ferdig.%s"
 
 #: src/etc/inc/config.console.inc:380
 msgid "One moment while the settings are reloading..."
-msgstr "Et øyeblikk mens innstillingene blir oppdatert"
+msgstr "Et øyeblikk mens innstillingene blir oppdatert..."
 
 #: src/etc/inc/config.console.inc:381
 msgid " done!"
@@ -481,31 +484,31 @@ msgstr "Ferdig!"
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr "Oppdaget link-up på port %1$s.%2$s"
+msgstr "Oppdaget tilkoblet link på grensesnittet %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:410
 #, php-format
 msgid "No link-up detected.%s"
-msgstr "Ingen link-up oppdages.%s"
+msgstr "Ingen link ble funnet.%s"
 
 #: src/etc/inc/config.console.inc:427
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr "ADVARSEL: alle eksisterende VLAN vil bli slettet hvis du fortsetter!"
+msgstr "ADVARSEL: alle eksisterende VLANs vil bli slettet hvis du fortsetter!"
 
 #: src/etc/inc/config.console.inc:443
 msgid "VLAN Capable interfaces:"
-msgstr "VLAN-kompatible porter:"
+msgstr "VLAN-kompatible grensesnitt:"
 
 #: src/etc/inc/config.console.inc:458
 msgid "No VLAN capable interfaces detected."
-msgstr "Ingen VLAN dyktige grensesnitt oppdaget."
+msgstr "Ingen VLAN-kompatible grensesnitt oppdaget."
 
 #: src/etc/inc/config.console.inc:462
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
-"Angi den overordnede port navnet for den nye VLAN (eller ingenting hvis "
-"ferdig):"
+"Angi navnet til det overordnede grensesnittet for det nye VLAN'et (eller "
+"ingenting hvis ferdig):"
 
 #: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
@@ -519,11 +522,12 @@ msgstr "%1$sUgyldig VLAN-ID '%2$s'%3$s"
 #: src/etc/inc/config.console.inc:486
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr "Denne overordnede porten  og VLAN er allerede opprettet."
+msgstr ""
+"Det overordnede grensesnittet og tilhørende VLAN er allerede opprettet."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "Oppgraderer M0n0wall konfigurasjonen til pfSense ..."
+msgstr "Oppgraderer M0n0wall-konfigurasjonen til pfSense ..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
@@ -540,12 +544,13 @@ msgstr "Fant konfigurasjon på %1$s.%2$s"
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
-"Ingen config.xml funnet, forsøker siste kjente konfigurasjon gjenoppretting."
+"Ingen config.xml funnet, forsøker gjenoppretting av siste kjente "
+"konfigurasjon."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
-"Ingen config.xml eller konfigurasjon backup funnet, tilbakestiller til "
+"Ingen config.xml eller konfigurasjons-backup funnet, tilbakestiller til "
 "fabrikkinnstillingene ."
 
 #: src/etc/inc/config.lib.inc:63
@@ -578,7 +583,7 @@ msgstr "%1$sgjenoppretter konfigurasjonen %2$s"
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr "Fant ikke XML-konfigurasjons filen. %s kan ikke fortsette oppstart."
+msgstr "Fant ikke XML-konfigurasjonsfilen. %s kan ikke fortsette oppstart."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
@@ -586,32 +591,32 @@ msgid ""
 "file for accuracy."
 msgstr ""
 "Siste kjente konfigurasjon funnet og gjenopprettet. Vennligst dobbelsjekk "
-"konfigurasjons filen for nøyaktighet."
+"konfigurasjons-filen for nøyaktighet."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr "Kunne ikke finne en brukbar konfigurasjons fil! Avslutter ...."
+msgstr "Kunne ikke finne en brukbar konfigurasjonsfil! Avslutter ...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
-"Start konfigurering oppgradering til %s, innstilt gjennomføring tidsavbrudd "
-"satt til 15 minutter"
+"Start konfigurasjonsoppgradering klokken %s,  tidsavbrudd satt til 15 "
+"minutter"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr "Oppdatert Bogon oppdateringfrekvensen er satt til 03:00"
+msgstr "Oppdaterte Bogon oppdateringfrekvensen til 03:00"
 
 #: src/etc/inc/config.lib.inc:389
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr "Avsluttet konfigurasjons oppgradering på %s"
+msgstr "Avsluttet konfigurasjonsoppgradering klokken %s"
 
 #: src/etc/inc/config.lib.inc:391
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr "Oppgradert konfigurasjon versjon nivå fra %1$s til %2$s"
+msgstr "Oppgraderte versjonsnivå på konfigurasjon fra %1$s til %2$s"
 
 #: src/etc/inc/config.lib.inc:469
 #, php-format
@@ -619,13 +624,13 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
-"Save config permission denied by the 'User - Config: Deny Config Write' "
-"permission for user '%s'."
+"Lagre konfigurasjon, ikke tillat av  'Bruker - Konfigurasjon: Skriv konfig "
+"ikke tillat' -tillatelsen for bruker '%s'."
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
-"ADVARSEL: Konfigurasjons innholdet kunne ikke lagres. Kunne ikke åpne fil!"
+"ADVARSEL: Konfigurasjonsinnholdet kunne ikke lagres. Kunne ikke åpne fil!"
 
 #: src/etc/inc/config.lib.inc:504
 #, php-format
@@ -657,12 +662,13 @@ msgstr "%1$s på linje %2$d"
 #: src/etc/inc/config.lib.inc:764 src/etc/inc/config.lib.inc:766
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr "Mellomlagring filen for backup %s er korrupt fjerner tilknytning."
+msgstr ""
+"Sikkerhetskopi av mellomlagringsfilen %s er korrupt, fjerner tilknytning."
 
 #: src/etc/inc/config.lib.inc:917
 #, php-format
 msgid "%s made unknown change"
-msgstr "%s gjorde ukjent endring"
+msgstr "%s gjorde en ukjent endring"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
@@ -676,8 +682,7 @@ msgstr "Dynamisk DNS: updatedns() starter"
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
-msgstr ""
-"Dynamisk DNS(%1$s): kjører get_failover_interface for %2$s. funnet %3$s"
+msgstr "Dynamisk DNS(%1$s): kjører get_failover_interface for %2$s. fant %3$s"
 
 #: src/etc/inc/dyndns.class:278
 #, php-format
@@ -685,8 +690,8 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
-"Dynamisk DNS(%1$s) Det oppstod en feil, forsøker å finne den offentlige IP "
-"addressen for port - %2$s (%3$s %4$s)."
+"Dynamisk DNS(%1$s) Det oppstod en feil ved å fastslå den offentlige IP-"
+"addressen for grensesnittt - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:368
 #, php-format
@@ -699,7 +704,7 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
-"Dynamisk DNS %1$s (%2$s): Behandler dummy oppdatering på No-IP gratis konto. "
+"Dynamisk DNS %1$s (%2$s): Behandler dummy-oppdatering på No-IP gratis konto. "
 "IP midlertidig satt til %3$s"
 
 #: src/etc/inc/dyndns.class:705
@@ -725,7 +730,7 @@ msgstr "Dynamisk DNS %1$s (%2$s): _checkLookupStatus() starter."
 #: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr "vellykket"
+msgstr "Vellykket"
 
 #: src/etc/inc/dyndns.class:1073 src/etc/inc/dyndns.class:1125
 msgid "Curl error occurred:"
@@ -755,8 +760,8 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
-"Dynamisk DNS %1$s (%2$s): _checkLookupStatus() avslutter. Ingen matchende "
-"poster funnet."
+"Dynamisk DNS %1$s (%2$s): _checkLookupStatus() avslutter. Ingen samsvarende "
+"oppføringer ble funnet."
 
 #: src/etc/inc/dyndns.class:1117
 #, php-format
@@ -773,7 +778,7 @@ msgstr "Dynamisk DNS %1$s (%2$s): _checkStatus() starter."
 #: src/etc/inc/dyndns.class:1735 src/etc/inc/dyndns.class:1747
 #: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1781
 msgid "IP Address Changed Successfully!"
-msgstr "IP-adresse er endret!"
+msgstr "IP-adressen er endret!"
 
 #: src/etc/inc/dyndns.class:1137 src/etc/inc/dyndns.class:1160
 #: src/etc/inc/dyndns.class:1179 src/etc/inc/dyndns.class:1197
@@ -798,7 +803,7 @@ msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
-"DNS-O-Matic brukernavn eller passord spesifisert er feil. Ingen "
+"Spesifisert DNS-O-Matic brukernavn eller passord er feil. Ingen "
 "oppdateringer vil bli distribuert til tjenester inntil dette er løst."
 
 #: src/etc/inc/dyndns.class:1147
@@ -807,15 +812,15 @@ msgid ""
 "included, notfqdn will be returned once."
 msgstr ""
 "Det angitte vertsnavnet er ikke et fullt kvalifisert domenenavn. Hvis ingen "
-"vertsnavn er angitt ingen FQDN vil bli returnert"
+"vertsnavn er angitt vil NOTFQDN bli returnert"
 
 #: src/etc/inc/dyndns.class:1149
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
-"Det angitte vertsnavnet kunne ikke bli matchet til noen tjenestene som er "
-"konfigurert. Tjeneste feltet vil være tomt i returkoden."
+"Det angitte vertsnavnet kunne ikke bli matchet til noen av tjenestene som er "
+"konfigurert. Tjenestefeltet vil være tomt i returkoden."
 
 #: src/etc/inc/dyndns.class:1151
 msgid ""
@@ -827,11 +832,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1153
 msgid "The hostname is blocked for update abuse."
-msgstr "Det angitte vertsnavnet er blokkert for oppdatering misbruk."
+msgstr "Det angitte vertsnavnet er blokkert for oppdateringsmisbruk."
 
 #: src/etc/inc/dyndns.class:1158
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr "DNS-feil oppstod. Stopper oppdatering for 30 minutter."
+msgstr "DNS-feil oppstod. Stopper oppdatering i 30 minutter."
 
 #: src/etc/inc/dyndns.class:1167 src/etc/inc/dyndns.class:1187
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1221
@@ -859,7 +864,7 @@ msgstr "Ingen endring i IP-adresse"
 #: src/etc/inc/dyndns.class:1614 src/etc/inc/dyndns.class:1672
 #: src/etc/inc/dyndns.class:1738
 msgid "User Authorization Failed"
-msgstr "Bruker Godkjenning mislyktes"
+msgstr "Brukergodkjenning mislyktes"
 
 #: src/etc/inc/dyndns.class:1243
 msgid "IP address is current, no update performed."
@@ -867,11 +872,11 @@ msgstr "IP-adressen er gjeldende, ingen oppdatering utført."
 
 #: src/etc/inc/dyndns.class:1247
 msgid "DNS hostname update successful."
-msgstr "DNS-vertsnavn oppdatering vellykket."
+msgstr "DNS-vertsnavn, oppdatering vellykket."
 
 #: src/etc/inc/dyndns.class:1251
 msgid "Hostname supplied does not exist."
-msgstr "angitte vertsnavnet finnes ikke."
+msgstr "Det angitte vertsnavnet finnes ikke."
 
 #: src/etc/inc/dyndns.class:1254
 msgid "Invalid Username."
@@ -887,20 +892,19 @@ msgstr "For mange oppdateringer sendt."
 
 #: src/etc/inc/dyndns.class:1263
 msgid "Account disabled due to violation of No-IP terms of service."
-msgstr ""
-"Kontoen er deaktivert på grunn av brudd på No-IP vilkårene for tjenesten."
+msgstr "Kontoen er deaktivert på grunn av brudd på vilkårene til No-IP."
 
 #: src/etc/inc/dyndns.class:1266
 msgid ""
 "Invalid IP. IP Address submitted is improperly formatted or is a private IP "
 "address or is on a blacklist."
 msgstr ""
-"Ugyldig IP. Angitt IP-adresse er feil formatert, privat IP-adresse eller er "
-"på en svarteliste."
+"Ugyldig IP. Angitt IP-adresse er feil formatert, en privat IP-adresse eller "
+"er på en svarteliste."
 
 #: src/etc/inc/dyndns.class:1269
 msgid "Disabled / Locked Hostname."
-msgstr "Deaktivert / stengt vertsnavn ."
+msgstr "Deaktivert / låst vertsnavn ."
 
 #: src/etc/inc/dyndns.class:1272
 msgid ""
@@ -915,7 +919,7 @@ msgstr "Angitt Gruppe finnes ikke."
 
 #: src/etc/inc/dyndns.class:1278
 msgid "DNS group update is successful."
-msgstr "DNS gruppe oppdateringen er vellykket."
+msgstr "DNS-gruppe, oppdateringen er vellykket."
 
 #: src/etc/inc/dyndns.class:1282
 msgid "DNS group is current, no update performed."
@@ -924,13 +928,13 @@ msgstr "DNS gruppen er gjeldende, ingen oppdatering utført."
 #: src/etc/inc/dyndns.class:1286
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
-"Oppdatering klient støtte er ikke tilgjengelig for angitt vertsnavn eller "
-"gruppe."
+"Oppdater klientstøtte er ikke tilgjengelig for angitt vertsnavn eller gruppe."
+""
 
 #: src/etc/inc/dyndns.class:1289
 msgid "Hostname supplied does not have offline settings configured."
 msgstr ""
-"Angitt vertsnavn har for øyeblikket ikke noe frakoblede innstillinger "
+"Angitt vertsnavn har for øyeblikket ikke noen frakoblet-innstillinger "
 "konfigurert."
 
 #: src/etc/inc/dyndns.class:1292 src/etc/inc/dyndns.class:1295
@@ -947,7 +951,7 @@ msgstr "Ukjent Respons:"
 
 #: src/etc/inc/dyndns.class:1305
 msgid "Authentication Failed: Username and/or Password was Incorrect."
-msgstr "Autentisering mislyktes: brukernavn og / eller passord var feil."
+msgstr "Autentisering mislyktes: Brukernavn og / eller passord var feil."
 
 #: src/etc/inc/dyndns.class:1307
 msgid "No Service: Dynamic DNS Service has been disabled for this domain."
@@ -956,7 +960,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1309
 msgid "Illegal Input: Self-Explanatory"
-msgstr "Ulovlig Input: selvforklarende"
+msgstr "Uakseptabel Input: selvforklarende"
 
 #: src/etc/inc/dyndns.class:1311
 msgid "Too Soon: Not Enough Time Has Elapsed Since Last Update"
@@ -1002,12 +1006,12 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Database Error - There was a server-sided database error."
-msgstr "Database Feil - Det var en databasefeil på server sidien."
+msgstr "Databasefeil - Det var en databasefeil på serversiden."
 
 #: src/etc/inc/dyndns.class:1349
 #, php-format
 msgid "Hostname Error - The hostname (%1$s) doesn't belong to user (%2$s)."
-msgstr "Vertsnavn Feil - Vertsnavnet (%1$s) tilhører ikke brukeren (%2$s)."
+msgstr "Vertsnavnfeil - Vertsnavnet (%1$s) tilhører ikke brukeren (%2$s)."
 
 #: src/etc/inc/dyndns.class:1413
 msgid "Not a valid username or password!"
@@ -1054,7 +1058,7 @@ msgstr "Oppdaterer for ofte."
 #: src/etc/inc/dyndns.class:1444 src/etc/inc/dyndns.class:1458
 #: src/etc/inc/dyndns.class:1476
 msgid "Server side error."
-msgstr "Server side feil."
+msgstr "Feil på serversiden."
 
 #: src/etc/inc/dyndns.class:1460
 msgid "Badly Formed Request (check the settings)."
@@ -1125,7 +1129,7 @@ msgstr "Ukjent brukernavn - Bruker finnes ikke."
 
 #: src/etc/inc/dyndns.class:1627
 msgid "Wrong password - Remember password is case sensitive."
-msgstr "Feil passord - Husk passord er sensitive på små og store bokstaver."
+msgstr "Feil passord - Husk passord skiller mellom små og store bokstaver."
 
 #: src/etc/inc/dyndns.class:1629
 msgid "User unable to administer the selected domain."
@@ -1157,7 +1161,7 @@ msgstr "Ugyldig brukernavn eller passord"
 
 #: src/etc/inc/dyndns.class:1697
 msgid "Account suspended"
-msgstr "konto suspendert"
+msgstr "Konto suspendert"
 
 #: src/etc/inc/dyndns.class:1700
 msgid "Account revoked"
@@ -1165,11 +1169,11 @@ msgstr "Konto inndratt"
 
 #: src/etc/inc/dyndns.class:1703
 msgid "Record does not exist in the system. Unable to update record"
-msgstr "DNS-Record finnes ikke i systemet. Kan ikke oppdatere DNS-Record"
+msgstr "Oppføringen finnes ikke i systemet. Kan ikke oppdatere"
 
 #: src/etc/inc/dyndns.class:1706
 msgid "User does not have access to this record"
-msgstr "Bruker har ikke tilgang til denne posten"
+msgstr "Bruker har ikke tilgang til denne oppføringen"
 
 #: src/etc/inc/dyndns.class:1713
 msgid "General system error recognized by the system"
@@ -1202,7 +1206,7 @@ msgstr "Ingen slik sone eksisterer."
 
 #: src/etc/inc/dyndns.class:1800
 msgid "The specified record is invalid."
-msgstr "Den angitte posten er ugyldig."
+msgstr "Den angitte oppføringen er ugyldig."
 
 #: src/etc/inc/dyndns.class:1803
 msgid "The specified type is invalid."
@@ -1218,27 +1222,28 @@ msgstr "Posten kan ikke redigeres."
 
 #: src/etc/inc/dyndns.class:1812
 msgid "Record exists but is not editable."
-msgstr "Opptak eksisterer, men kan ikke redigeres."
+msgstr "Oppføringen eksisterer, men kan ikke redigeres."
 
 #: src/etc/inc/dyndns.class:1815
 msgid "Record exists and must be removed before adding."
-msgstr "Opptak eksisterer og må fjernes før du legger til."
+msgstr "Oppføring eksisterer og må fjernes før du legger til."
 
 #: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1824
 msgid "A remote server error occurred updating the zone."
-msgstr "Det oppsto en ekstern serverfeil som oppdaterte sonen."
+msgstr "Det oppsto en ekstern serverfeil ved oppdatering av sonen."
 
 #: src/etc/inc/dyndns.class:1821
 msgid "A remote server error occurred loading the zone."
-msgstr "Det oppsto en ekstern serverfeil som lastet inn sonen."
+msgstr "Det oppsto en ekstern serverfeil ved innlasting av sonen."
 
 #: src/etc/inc/dyndns.class:1827
 msgid "A remote server error occurred adding a new record."
-msgstr "En ekstern serverfeil oppstod ved å legge til en ny post."
+msgstr "En ekstern serverfeil oppstod under innlegging av ny oppføring"
 
 #: src/etc/inc/dyndns.class:1830
 msgid "A remote server error occurred removing an existing record."
-msgstr "En ekstern serverfeil oppstod ved å fjerne en eksisterende plate."
+msgstr ""
+"En ekstern serverfeil oppstod under fjerning av en eksisterende oppføring"
 
 #: src/etc/inc/dyndns.class:1844
 #, php-format
@@ -1249,7 +1254,7 @@ msgstr "DynDNS oppdatert IP-adresse på %1$s (%2$s) til %3$s"
 #: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr "phpDynDNS: Oppdatere mellomlagring filen %1$s: %2$s"
+msgstr "phpDynDNS: Oppdatere mellomlagringsfilen %1$s: %2$s"
 
 #: src/etc/inc/dyndns.class:1852
 #, php-format
@@ -1282,7 +1287,7 @@ msgstr "Dynamic DNS tjenesten er foreløpig ikke støttet."
 
 #: src/etc/inc/dyndns.class:1889
 msgid "No Update URL Provided."
-msgstr "Ingen oppdatering URL angitt"
+msgstr "Ingen oppdaterings-URL angitt"
 
 #: src/etc/inc/dyndns.class:1892
 msgid "Invalid ZoneID"
@@ -1298,8 +1303,8 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
-"Ingen endring i min IP-adresse og / eller %s dager har ikke passert. Ikke "
-"oppdatere dynamisk DNS oppføring."
+"Ingen endring i min IP-adresse og / eller %s dager har ikke passert. "
+"Oppdaterer ikke dynamisk DNS -oppføring."
 
 #: src/etc/inc/dyndns.class:1901
 msgid "Unknown Response."
@@ -1344,7 +1349,7 @@ msgstr "Ingen Hurtigbufrede IP funnet."
 
 #: src/etc/inc/dyndns.class:1972
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr "Dynamisk DNS: buffer IP = wan_ip!. Oppdatering."
+msgstr "Dynamisk DNS: buffer IP = wan_ip!. Oppdaterer."
 
 #: src/etc/inc/dyndns.class:1973
 #, php-format
@@ -1354,11 +1359,11 @@ msgstr "Hurtigbufrede IP: %1$s WAN IP: %2$s"
 #: src/etc/inc/dyndns.class:1978
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr "Dynamisk DNS: Flere enn %s dager. Oppdatering."
+msgstr "Dynamisk DNS: Flere enn %s dager. Oppdaterer."
 
 #: src/etc/inc/dyndns.class:1983
 msgid "Initial update."
-msgstr "Førstegangs oppdatering."
+msgstr "Førstegangs-oppdatering."
 
 #: src/etc/inc/dyndns.class:2020
 #, php-format
@@ -1372,7 +1377,7 @@ msgid ""
 "using interface IP %4$s."
 msgstr ""
 "Dynamisk DNS %1$s debug informasjon (%2$s): Klarer ikke å løse%3$s til IP "
-"nor bruker port IP %4$s."
+"ved bruk av gensesnitt-IP %4$s."
 
 #: src/etc/inc/dyndns.class:2064
 #, php-format
@@ -1395,7 +1400,7 @@ msgstr "Enkel regel: Blokkert av Brannmur, Vis Logg"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr "Input lagt til"
+msgstr "Oppføring lagt til"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1404,7 +1409,7 @@ msgstr "Verter blokkert av Brannmur, Vis Logg"
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr "Blokkert verten %s via enkel regel"
+msgstr "Blokkerte verten %s via enkel regel"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
@@ -1417,7 +1422,7 @@ msgstr "Prøvde å blokkere ugyldig IP:"
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr "Ugyldig port for blokk regelen:"
+msgstr "Ugyldig grensesnitt for blokkeringsregelen:"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
@@ -1425,7 +1430,8 @@ msgstr "Vert ble lagt til"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr "Klarte ikke å opprette blokk regelen, aliaset, eller legge til vert."
+msgstr ""
+"Klarte ikke å opprette blokkeringsregelen, aliaset, eller legge til vert."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
@@ -1433,7 +1439,7 @@ msgstr "Prøvde å blokkere, men hadde ingen vert IP eller Port"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr "Ukjent blokk feil."
+msgstr "Ukjent blokkeringsfeil."
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
@@ -1441,7 +1447,7 @@ msgstr "Prøvde å oppheve blokkering av ugyldig IP:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr "Ingen blokk regel sat for valgt port"
+msgstr "Ingen blokkeringsregel satt på valgt grensesnitt"
 
 #: src/etc/inc/easyrule.inc:416
 #, php-format
@@ -1450,7 +1456,7 @@ msgstr "Blokkering opphevet for verten %s via enkel regel"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr "Opphevingen av blokkeringen for verten var vellykket"
+msgstr "Oppheving av blokkeringen for verten var vellykket"
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
@@ -1458,55 +1464,55 @@ msgstr "Verten er ikke på blokkeringslisten:"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr "Prøvde å oppheve blokkeringen, men hadde ingen verts IP eller port"
+msgstr "Prøvde å oppheve blokkeringen, men hadde ingen verts-IP eller port"
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr "Ugyldig port for pass-regelen:"
+msgstr "Ugyldig grensesnitt for tillatelse:"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr "Ugyldig protokoll for pass-regelen:"
+msgstr "Ugyldig protokoll for tillatelse:"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr "Prøvde å sende ugyldig kilde IP:"
+msgstr "Prøvde å sende ugyldig kilde-IP:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr "Prøvde å sende ugyldig destinasjon IP:"
+msgstr "Prøvde å sende ugyldig destinasjons-IP:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr "Mangler destinasjon port:"
+msgstr "Mangler destinasjonsport:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr "Prøvde å sende ugyldig destinasjon port:"
+msgstr "Prøvde å sende ugyldig destinasjonsport:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr "Har lagt til pass regelen!"
+msgstr "Tillatelse lagt til!"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr "Kunne ikke legge til pass-regelen."
+msgstr "Kunne ikke legge til tillatelse."
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr "Manglende parametere for pass-regelen."
+msgstr "Manglende parametere for tillatelse."
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr "Ukjent pass feil."
+msgstr "Ukjent feil ved tillatelse."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr "Alternativ Host"
+msgstr "Alternativ vert"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr "Datagram konvertering feil"
+msgstr "Datagram konverteringsfeil"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
@@ -1526,23 +1532,23 @@ msgstr "FQDN spørring"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr "Gruppe medlemskap spørring"
+msgstr "Gruppemedlemskapsspørring"
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr "Gruppe medlemskap rapport"
+msgstr "Gruppemedlemskapsrapport"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr "Gruppe medlemskap avslutning"
+msgstr "Avslutning av gruppemedlemskap"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr "informasjon svar"
+msgstr "Informasjonssvar"
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr "informasjon forespørsel"
+msgstr "Informasjonsforespørsel"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
@@ -1554,39 +1560,39 @@ msgstr "IPv6 hvor-er-du"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr "Multicast lytteren ferdig"
+msgstr "Multicast-lytteren er ferdig"
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr "Multicast lytteren rapport"
+msgstr "Rapport fra multicast-lytteren"
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr "Multicast lytteren spørring"
+msgstr "Spør multicast-lytteren"
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr "Adresse maske svar"
+msgstr "Adressesegment, svar"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr "Adresse maske forespørsel"
+msgstr "Adressesegment, forespørsel"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr "Mobile vert viderekobling"
+msgstr "Viderekobling til mobil vert"
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr "Mobile registrering svar"
+msgstr "Svar fra mobil registrering"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr "Mobile registrering forespørsel"
+msgstr "Forespørsel om mobil registrering"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr "mtrace meldinger"
+msgstr "mtrace-meldinger"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
@@ -1594,23 +1600,23 @@ msgstr "mtrace resp"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr "nabo annonsering"
+msgstr "Nabo-annonsering"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr "nabo oppfordring"
+msgstr "Nabo-oppfordring"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr "Node informasjon forespørsel"
+msgstr "Node-informasjonsforespørsel"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr "Node informasjon svar"
+msgstr "Svar fra node-informasjonsforespørsel"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr "Parameter problem (ugyldig IP header)"
+msgstr "Parameterproblem (Ugyldig IP header)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
@@ -1622,23 +1628,23 @@ msgstr "Omadresser"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr "Router annonsering"
+msgstr "Router-annonsering"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr "Router oppfordring"
+msgstr "Router-oppfordring"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr "Router omnummereringen"
+msgstr "Router-omnummerering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr "SKIP"
+msgstr "Hopp over"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr "kilde slukke"
+msgstr "Kilde-demping"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
@@ -1650,7 +1656,7 @@ msgstr "Tidsstempel"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr "tid overskredet"
+msgstr "Tid overskredet"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
@@ -1661,27 +1667,27 @@ msgstr "Pakken er for stor"
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
-msgstr "Traceroute"
+msgstr "Pakkesporing"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr "Destinasjon kan ikke nås"
+msgstr "Destinasjonen kan ikke nås"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr "Hvem er du svar"
+msgstr "Hvem er du, svar"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr "Hvem er du forespørsel"
+msgstr "Hvem er du, forespørsel"
 
 #: src/etc/inc/filter.inc:240
 msgid "Initializing"
-msgstr "initialisering"
+msgstr "Initialiserer"
 
 #: src/etc/inc/filter.inc:252
 msgid "Configuring firewall"
-msgstr "konfigurering av brannmur"
+msgstr "Konfigurering av brannmur"
 
 #: src/etc/inc/filter.inc:259
 msgid "Creating aliases"
@@ -1689,23 +1695,23 @@ msgstr "Oppretter aliaser"
 
 #: src/etc/inc/filter.inc:265
 msgid "Generating Limiter rules"
-msgstr "Generering av Sperre regler"
+msgstr "Genererer begrensningsregler"
 
 #: src/etc/inc/filter.inc:268
 msgid "Generating NAT rules"
-msgstr "Generering av NAT regler"
+msgstr "Genererer NAT-regler"
 
 #: src/etc/inc/filter.inc:274
 msgid "Generating filter rules"
-msgstr "Generering av filterreglene"
+msgstr "Genererer filterreglene"
 
 #: src/etc/inc/filter.inc:281
 msgid "Generating ALTQ queues"
-msgstr "Generering av ALTQ køer"
+msgstr "Genererer ALTQ-køer"
 
 #: src/etc/inc/filter.inc:286
 msgid "Loading filter rules"
-msgstr "Laster filter regler"
+msgstr "Laster filterregler"
 
 #: src/etc/inc/filter.inc:293
 msgid "Filter is disabled.  Not loading rules."
@@ -1734,41 +1740,41 @@ msgstr "ferdig"
 
 #: src/etc/inc/filter.inc:391
 msgid "Setting up logging information"
-msgstr "Sette opp logging informasjon"
+msgstr "Setter opp logginformasjon"
 
 #: src/etc/inc/filter.inc:396
 msgid "Setting up SCRUB information"
-msgstr "Sette opp SCRUB informasjon"
+msgstr "Setter opp SCRUB-informasjon"
 
 #: src/etc/inc/filter.inc:442
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr "Linjen det gjelder leses [%1$d]: %2$s"
+msgstr "Linjen det gjelder viser [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:449
 msgid "PF was wedged/busy and has been reset."
-msgstr "PF var opptatt og har blitt tilbakestilt ."
+msgstr "PF var fastkjørt eller opptatt og har blitt tilbakestilt ."
 
 #: src/etc/inc/filter.inc:455 src/etc/inc/filter.inc:456
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr "Det oppstod en feil ved lasting av reglene: %1$s - %2$s"
+msgstr "Det oppstod en feil ved lasting av regelen(e): %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:532
 msgid "Processing down interface states"
-msgstr "Behandler ned porter stater"
+msgstr "Behandler status for frakoblede grensesnitt"
 
 #: src/etc/inc/filter.inc:536
 msgid "Running plugins"
-msgstr "kjører plugins"
+msgstr "Kjører utvidelser"
 
 #: src/etc/inc/filter.inc:540
 msgid "Running plugins (pf)"
-msgstr "Kjører plugins (PF)"
+msgstr "Kjører utvidelser (PF)"
 
 #: src/etc/inc/filter.inc:542
 msgid "Plugins completed."
-msgstr "Plugins fullført."
+msgstr "Utvidelser fullført."
 
 #: src/etc/inc/filter.inc:545
 msgid "Done"
@@ -1781,18 +1787,18 @@ msgstr "Aliaser med kun numeriske navn er ikke gyldige. Hopper over alias %s"
 
 #: src/etc/inc/filter.inc:853
 msgid "Creating gateway group item..."
-msgstr "Oppretter gateway gruppe element ..."
+msgstr "Oppretter gateway-gruppeelement ..."
 
 #: src/etc/inc/filter.inc:893
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr "Sette opp ruten med %1$s på %2$s"
+msgstr "Setter opp ruten med %1$s på %2$s"
 
 #: src/etc/inc/filter.inc:897
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
 msgstr ""
-"For mange medlemmer i gruppen %s, gateway gruppe avkortet i regelsett."
+"For mange medlemmer i gruppen %s, gateway-gruppe avkortet i regelsett."
 
 #: src/etc/inc/filter.inc:909
 #, php-format
@@ -1806,20 +1812,20 @@ msgstr ""
 #: src/etc/inc/filter.inc:1274
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr "Oppretter NAT refleksjon regel for %s..."
+msgstr "Oppretter NAT-refleksjonsregel for %s..."
 
 #: src/etc/inc/filter.inc:1372
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr "Oppretter refleksjon regel for %s..."
+msgstr "Oppretter refleksjonsregel for %s..."
 
 #: src/etc/inc/filter.inc:1493
 msgid "Not installing NAT reflection rules for a port range > 500"
-msgstr "Ingen installasjon av NAT refleksjons regler for portområde > 500"
+msgstr "Ingen installasjon av NAT-refleksjonsregler for portområde > 500"
 
 #: src/etc/inc/filter.inc:1499
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr "Installering av delvis NAT refleksjon regler. Maks 1000 nådd."
+msgstr "Installering av delvis NAT-refleksjonsregler. Maks 1000 nådd."
 
 #: src/etc/inc/filter.inc:1580
 msgid "localhost"
@@ -1855,11 +1861,11 @@ msgstr "IPsec klient"
 
 #: src/etc/inc/filter.inc:1710
 msgid "Auto created rule for ISAKMP"
-msgstr "Auto opprettet regelen for ISAKMP"
+msgstr "Auto-genererte regel for ISAKMP"
 
 #: src/etc/inc/filter.inc:1720
 msgid "Auto created rule"
-msgstr "Auto opprettet regelen"
+msgstr "Auto-genererte regel"
 
 #: src/etc/inc/filter.inc:1853
 msgid "Creating 1:1 rules..."
@@ -1868,11 +1874,11 @@ msgstr "Oppretter 1:1 regler ..."
 #: src/etc/inc/filter.inc:2038
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr "Oppretter avanserte utgående regel %s"
+msgstr "Oppretter avansert utgående regel %s"
 
 #: src/etc/inc/filter.inc:2085
 msgid "Creating outbound NAT rules"
-msgstr "Oppretter utgående NAT regler"
+msgstr "Oppretter utgående NAT-regler"
 
 #: src/etc/inc/filter.inc:2092
 msgid "Creating automatic outbound rules"
@@ -1880,12 +1886,12 @@ msgstr "Oppretter automatiske utgående regler"
 
 #: src/etc/inc/filter.inc:2122
 msgid "Setting up TFTP helper"
-msgstr "Sette opp TFTP helper"
+msgstr "Setter opp TFTP-hjelper"
 
 #: src/etc/inc/filter.inc:2166
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr "Oppretter NAT regel %s"
+msgstr "Oppretter NAT-regel %s"
 
 #: src/etc/inc/filter.inc:2392
 #, php-format
@@ -1905,46 +1911,46 @@ msgstr "Oppretter filterreglene %s ..."
 #: src/etc/inc/filter.inc:2708
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
-msgstr "Uløselig kilde alias '%1$s' for regelen '%2$s'"
+msgstr "Uløselig kildealias '%1$s' for regelen '%2$s'"
 
 #: src/etc/inc/filter.inc:2713
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
-msgstr "Uløselig destinasjon alias '%1$s' for regelen '%2$s'"
+msgstr "Uløselig destinasjonsalias '%1$s' for regelen '%2$s'"
 
 #: src/etc/inc/filter.inc:2723
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr "Uløselig kilde port alias '%1$s' for regelen '%2$s'"
+msgstr "Uløselig kildeport-alias '%1$s' for regelen '%2$s'"
 
 #: src/etc/inc/filter.inc:2725
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr "Tomme kilde port alias '%1$s' for regelen '%2$s'"
+msgstr "Tomt kildeport-alias '%1$s' for regelen '%2$s'"
 
 #: src/etc/inc/filter.inc:2739
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr "Uløselig destinasjon port alias '%1$s' for regelen '%2$s'"
+msgstr "Uløselig destinasjonsport-alias '%1$s' for regelen '%2$s'"
 
 #: src/etc/inc/filter.inc:2741
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr "Tomme destinasjon port alias '%1$s' for rule '%2$s'"
+msgstr "Tomt destinasjonsport-alias '%1$s' for rule '%2$s'"
 
 #: src/etc/inc/filter.inc:2749
 msgid "Setting up pass/block rules"
-msgstr "Sette opp pass / blokkeringsreglene"
+msgstr "Setter opp tillatelses- og blokkeringsregler"
 
 #: src/etc/inc/filter.inc:2776
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr "Sette opp pass / blokk regler %s"
+msgstr "Setter opp tillatelses- og blokkeringsregler %s"
 
 #: src/etc/inc/filter.inc:2800
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr "Gateway: %s er ugyldig eller ukjent"
+msgstr "Gateway: %s er ugyldig eller ukjent, kommer ikke til å bli brukt"
 
 #: src/etc/inc/filter.inc:2819
 #, php-format
@@ -1954,11 +1960,11 @@ msgstr "Oppretter regel %s"
 #: src/etc/inc/filter.inc:3064
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr "[TDR DEBUG] status sant - regeltype  '%s'"
+msgstr "[TDR DEBUG] status sann -- regeltype  '%s'"
 
 #: src/etc/inc/filter.inc:3108
 msgid "Creating default rules"
-msgstr "Oppretter standardreglene"
+msgstr "Oppretter standardregler"
 
 #: src/etc/inc/filter.inc:3789
 msgid "Creating IPsec rules..."
@@ -1966,16 +1972,16 @@ msgstr "Oppretter IPsec regler ..."
 
 #: src/etc/inc/filter.inc:3885
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr "Installert 15 minutters filter reload for tidsbaserte regler"
+msgstr "Installerte 15 minutters filteroppdatering for tidsbaserte regler"
 
 #: src/etc/inc/filter.inc:3892
 msgid "Removed 15 minute filter reload for Time Based Rules"
-msgstr "Fjernet 15 minutters filter reload for tidsbaserte regler"
+msgstr "Fjernet 15 minutters filteroppdatering for tidsbaserte regler"
 
 #: src/etc/inc/filter.inc:4276
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr "Sjekker for %1$s PF kroker i pakken %2$s"
+msgstr "Kontrollerer om det finnes %1$s PF kroker i pakken %2$s"
 
 #: src/etc/inc/filter.inc:4289
 #, php-format
@@ -1985,11 +1991,11 @@ msgstr "Behandler begynnelsen av %1$s regelverk for pakken %2$s"
 #: src/etc/inc/filter.inc:4299
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr "Det oppstod en feil under analyse av pakken filter regler for %s."
+msgstr "Det oppstod en feil under analyse av pakkefilter-reglene for %s."
 
 #: src/etc/inc/filter.inc:4367
 msgid "delete this separator"
-msgstr "slette denne separator"
+msgstr "slett denne separator"
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -1998,8 +2004,8 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
-"Det var en feil analyse loggoppføring: %s. Vennligst rapportere til "
-"epostlisten eller forum."
+"Det oppstod en feil under analyse av loggoppføring: %s. Vennligst rapporter "
+"til epostlisten eller forum."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -2007,21 +2013,21 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
-"Det var en feil parsing regel nummer: %s. Vennligst rapportere til "
-"epostlisten eller forum."
+"Det oppstod en feil under analyse av regel nummer: %s. Vennligst rapporter "
+"til epostlisten eller forum."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
-"Det var en feil parsing regel: %s. Vennligst rapportere til epostlisten "
-"eller forum."
+"Det oppstod en feil ved analyse av regel: %s. Vennligst rapporter til "
+"epostlisten eller forum."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
 msgid "Service %1$s/%2$s: %3$s"
-msgstr "Tjenesten %1$s/%2$s: %3$s"
+msgstr "Tjeneste %1$s/%2$s: %3$s"
 
 #: src/etc/inc/gmirror.inc:65
 msgid "No mirrors found."
@@ -2131,6 +2137,7 @@ msgstr "Komponent"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Timeout venter på IPv6-adresse i foreløpig tilstand. dpinger vil ikke kjøre."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2141,17 +2148,18 @@ msgstr "Ingen gatewayer å overvåke. dpinger vil ikke kjøre."
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
 msgstr ""
-"Fjerne statisk rute for overvåke %1$s og legger til en ny rute gjennom %2$s"
+"Fjerner statisk rute for overvåking %1$s og legger til en ny rute gjennom "
+"%2$s"
 
 #: src/etc/inc/gwlb.inc:306
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr "Feil ved starte gateway overvåking for %s"
+msgstr "Feil ved start av gateway-overvåking for %s"
 
 #: src/etc/inc/gwlb.inc:319
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr "dpinger: Ingen dpinger økt kjører for gateway %s"
+msgstr "dpinger: Ingen dpinger-økt kjører for gateway %s"
 
 #: src/etc/inc/gwlb.inc:333
 #, php-format
@@ -2161,22 +2169,22 @@ msgstr "dpinger: får ikke koblet til status socket %1$s - %2$s (%3$s)"
 #: src/etc/inc/gwlb.inc:1000
 #, php-format
 msgid "MONITOR: %1$s is down, omitting from routing group %2$s"
-msgstr "MONITOR: %1$s er nede, utelate fra ruting gruppe %2$s"
+msgstr "MONITOR: %1$s er nede, utelatt fra ruting-gruppe %2$s"
 
 #: src/etc/inc/gwlb.inc:1004
 #, php-format
 msgid "MONITOR: %1$s has packet loss, omitting from routing group %2$s"
-msgstr "MONITOR: %1$s har pakketap, utelat fra ruting gruppe %2$s"
+msgstr "MONITOR: %1$s har pakketap, utelatt fra ruting-gruppe %2$s"
 
 #: src/etc/inc/gwlb.inc:1008
 #, php-format
 msgid "MONITOR: %1$s has high latency, omitting from routing group %2$s"
-msgstr "MONITOR: %1$s har høy latency, utelat fra ruting gruppe %2$s"
+msgstr "MONITOR: %1$s har høy forsinkelse, utelatt fra ruting-gruppe %2$s"
 
 #: src/etc/inc/gwlb.inc:1031
 #, php-format
 msgid "MONITOR: %1$s is available now, adding to routing group %2$s"
-msgstr "MONITOR: %1$s er tilgjengelig nå, og legger til ruting gruppe %2$s"
+msgstr "MONITOR: %1$s er tilgjengelig nå, og legger til ruting-gruppe %2$s"
 
 #: src/etc/inc/gwlb.inc:1049
 #, php-format
@@ -2184,18 +2192,18 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
-"Gateways status kunne ikke fastslås , vurderer alle som opp / aktiv (Gruppe: "
-"%s)"
+"Gatewayenes status kunne ikke fastslås , anser alle som oppe / aktive "
+"(Gruppe: %s)"
 
 #: src/etc/inc/gwlb.inc:1092
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
-msgstr "GATEWAYS : Gruppe %1$s har ikke noen gatewayer opp på tier %2$s!"
+msgstr "GATEWAYS : Gruppe %1$s har ikke noen gatewayer oppe på nivå %2$s!"
 
 #: src/etc/inc/gwlb.inc:1114
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
-msgstr "Oppdatering gateway gruppe gateway for %1$s - ny gateway er %2$s"
+msgstr "Oppdaterer gateway  for gateway-gruppe for %1$s - ny gateway er %2$s"
 
 #: src/etc/inc/gwlb.inc:1359 src/usr/local/www/diag_arp.php:332
 #: src/usr/local/www/diag_dump_states.php:132
@@ -2247,7 +2255,7 @@ msgstr "Oppdatering gateway gruppe gateway for %1$s - ny gateway er %2$s"
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
 msgid "Interface"
-msgstr "Ports"
+msgstr "Grensesnitt"
 
 #: src/etc/inc/gwlb.inc:1367
 msgid "gateway"
@@ -2259,7 +2267,7 @@ msgid ""
 "Gateway \"%1$s\" cannot be disabled because it is in use on Gateway Group "
 "\"%2$s\""
 msgstr ""
-"Gateway \"%1$s\" kan ikke deaktiveres fordi den er i bruk på Gateway Group "
+"Gateway \"%1$s\" kan ikke deaktiveres fordi den er i bruk på Gateway-gruppe "
 "\"%2$s\""
 
 #: src/etc/inc/gwlb.inc:1388 src/usr/local/www/system_gateways.php:94
@@ -2273,37 +2281,38 @@ msgstr ""
 
 #: src/etc/inc/gwlb.inc:1396
 msgid "A valid gateway IP address must be specified."
-msgstr "Et gyldig gateway IP-adresse må oppgis."
+msgstr "En gyldig IP-addresse for gatewayen må angis"
 
 #: src/etc/inc/gwlb.inc:1406
 msgid ""
 "Cannot add IPv4 Gateway Address because no IPv4 address could be found on "
 "the interface."
 msgstr ""
-"Kan ikke legge til IPv4-gateway Adresse fordi ingen IPv4-adresse kan bli "
-"funnet på porten."
+"Kan ikke legge til IPv4-addresse for gatewayen fordi ingen IPv4-adresse kan "
+"bli funnet på grensesnittet."
 
 #: src/etc/inc/gwlb.inc:1428 src/etc/inc/gwlb.inc:1461
 #, php-format
 msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
-msgstr "Gateway-adressen %s ikke ligger i ett av de valgte porten subnett."
+msgstr ""
+"Gateway-adressen %s ikke ligger i ett av subnettene til grensesnittet."
 
 #: src/etc/inc/gwlb.inc:1439
 msgid ""
 "Cannot add IPv6 Gateway Address because no IPv6 address could be found on "
 "the interface."
 msgstr ""
-"Kan ikke legge til IPv6 Gateway-adresse fordi ingen IPv6-adresse kan bli "
-"funnet på porten."
+"Kan ikke legge til IPv6-addresse for gatewayen fordi ingen IPv6-adresse kan "
+"bli funnet på grensesnittet."
 
 #: src/etc/inc/gwlb.inc:1469
 msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv4 "
 "configuration."
 msgstr ""
-"Dynamiske gateway verdiene kan ikke angis for porten mot en statisk IPv4-"
+"Dynamiske gateway-verdier kan ikke angis for grensesnitt med en statisk IPv4-"
 "konfigurasjon."
 
 #: src/etc/inc/gwlb.inc:1474
@@ -2311,7 +2320,7 @@ msgid ""
 "Dynamic gateway values cannot be specified for interfaces with a static IPv6 "
 "configuration."
 msgstr ""
-"Dynamiske gateway verdiene kan ikke angis for port mot en statisk IPv6-"
+"Dynamiske gateway-verdier kan ikke angis for grensesnitt med en statisk IPv6-"
 "konfigurasjon."
 
 #: src/etc/inc/gwlb.inc:1482
@@ -2326,7 +2335,7 @@ msgstr "IPv6-gatewayadresse '%s' kan ikke brukes som en IPv4-gateway."
 #: src/etc/inc/gwlb.inc:1490
 #, php-format
 msgid "The IPv4 gateway address '%s' can not be used as a IPv6 gateway."
-msgstr "IPv4-gateway-adresse '%s' kan ikke brukes som et IPv6-gateway."
+msgstr "IPv4-gateway-adresse '%s' kan ikke brukes som en IPv6-gateway."
 
 #: src/etc/inc/gwlb.inc:1496
 #, php-format
@@ -2340,17 +2349,17 @@ msgstr "IPv4-monitor adresse '%s' kan ikke brukes på en IPv6-gateway."
 
 #: src/etc/inc/gwlb.inc:1508
 msgid "Changing name on a gateway is not allowed."
-msgstr "Endre navn på en gateway er ikke tillatt."
+msgstr "Å endre navn på en gateway er ikke tillatt."
 
 #: src/etc/inc/gwlb.inc:1514
 #, php-format
 msgid "The gateway name \"%s\" already exists."
-msgstr "Inngangsporten navnet finnes allerede \"%s\""
+msgstr "En gateway med navnet \"%s\" finnes allerede"
 
 #: src/etc/inc/gwlb.inc:1520
 #, php-format
 msgid "The gateway IP address \"%s\" already exists."
-msgstr "The gateway IP-adressen finnes allerede \"%s\" "
+msgstr "En gateway med addressen \"%s\" finnes allerede"
 
 #: src/etc/inc/gwlb.inc:1526
 #, php-format
@@ -2358,59 +2367,57 @@ msgid ""
 "The monitor IP address \"%s\" is already in use. A different monitor IP must "
 "be chosen."
 msgstr ""
-"Overvåker IP-adresse \"%s\" er allerede i bruk. En annen overvåker IP må "
-"velges."
+"IP-adressen \"%s\" er allerede i bruk for en overvåker. En annen overvåker-"
+"IP må velges."
 
 #: src/etc/inc/gwlb.inc:1539
 msgid "The low latency threshold needs to be a numeric value."
-msgstr "Lav forsinkelser terskel må være en numerisk verdi."
+msgstr "Terskel for lav forsinkelse må være en nummerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1541
 msgid "The low latency threshold needs to be positive."
-msgstr "Lav forsinkelser terskel må være positiv."
+msgstr "Terskel for lav forsinkelse må være positiv."
 
 #: src/etc/inc/gwlb.inc:1550
 msgid "The high latency threshold needs to be a numeric value."
-msgstr "Høy forsinkelser terskel må være en numerisk verdi."
+msgstr "Terskel for høy forsinkelse må være en nummerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1552
 msgid "The high latency threshold needs to be positive."
-msgstr "Høy forsinkelser terskel må være positiv."
+msgstr "Terskel for høy forsinkelse må være positiv."
 
 #: src/etc/inc/gwlb.inc:1561
 msgid "The low Packet Loss threshold needs to be a numeric value."
-msgstr "Den lave Pakke tap terskelen må være en numerisk verdi."
+msgstr "Terskel for lavt pakketap må være en numerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1563
 msgid "The low Packet Loss threshold needs to be positive."
-msgstr "Den lave Pakke tap terskelen må være positiv."
+msgstr "Terskel for lavt pakketap må være positiv."
 
 #: src/etc/inc/gwlb.inc:1565
 msgid "The low Packet Loss threshold needs to be less than 100."
-msgstr "Den lave Pakke tap terskelen må være mindre enn 100."
+msgstr "Terskel for lavt pakketap må være mindre en 100."
 
 #: src/etc/inc/gwlb.inc:1574
 msgid "The high Packet Loss threshold needs to be a numeric value."
-msgstr "Den høye Pakke tap terskelen må være en numerisk verdi."
+msgstr "Terskel for høyt pakketap må være en nummerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1576
 msgid "The high Packet Loss threshold needs to be positive."
-msgstr "Den høye Pakke tap terskelen må være positiv."
+msgstr "Terskel for høyt pakketap må være positiv."
 
 #: src/etc/inc/gwlb.inc:1578
 msgid "The high Packet Loss threshold needs to be 100 or less."
-msgstr "Den høye Pakke tap terskelen må være 100 eller mindre."
+msgstr "Terskel for høyt pakketap må være 100 eller mindre."
 
 #: src/etc/inc/gwlb.inc:1587
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
-msgstr ""
-"Tidsperioden over hvilke resultater er gjennomsnitt må være en numerisk "
-"verdi."
+msgstr "Tidsperioden for gjennomsnitt må være en numerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1589
 msgid "The time period over which results are averaged needs to be positive."
-msgstr "Tidsperioden over hvilke resultater er gjennomsnitt må være positiv."
+msgstr "Tidsperioden for gjennomsnitt må være positiv."
 
 #: src/etc/inc/gwlb.inc:1598
 msgid "The probe interval needs to be a numeric value."
@@ -2422,15 +2429,15 @@ msgstr "Sondens intervall må være positiv."
 
 #: src/etc/inc/gwlb.inc:1609
 msgid "The loss interval needs to be a numeric value."
-msgstr "Tapet intervall må være en numerisk verdi."
+msgstr "Tapsintervall må være en numerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1611
 msgid "The loss interval setting needs to be positive."
-msgstr "Tapet intervallinnstillingen må være positiv."
+msgstr "Tapsintervall må være positiv."
 
 #: src/etc/inc/gwlb.inc:1620
 msgid "The alert interval needs to be a numeric value."
-msgstr "Varselet intervall må være en numerisk verdi."
+msgstr "Varselintervall må være en numerisk verdi."
 
 #: src/etc/inc/gwlb.inc:1622
 msgid "The alert interval setting needs to be positive."
@@ -2441,35 +2448,32 @@ msgid ""
 "The high latency threshold needs to be greater than the low latency "
 "threshold"
 msgstr ""
-"Den høye terskel forsinkelser må være høyere enn den lave terskel "
-"forsinkelser"
+"Terskel for høy forsinkelse må være høyere en terskel for lav forsinkelse"
 
 #: src/etc/inc/gwlb.inc:1635
 msgid ""
 "The high packet loss threshold needs to be higher than the low packet loss "
 "threshold"
-msgstr ""
-"Den høye pakketap terskel må være høyere enn det lave pakketap terskel"
+msgstr "Terskel for høyt pakketap må være høyere en terskel for lavt pakketap"
 
 #: src/etc/inc/gwlb.inc:1641
 msgid ""
 "The loss interval needs to be greater than or equal to the high latency "
 "threshold."
-msgstr ""
-"Tapet intervall må være større enn eller lik den høy ventetid terskel."
+msgstr "Tapsintervall må være lik eller høyere en terskel for høy forsinkelse"
 
 #: src/etc/inc/gwlb.inc:1646
 msgid ""
 "The time period needs to be greater than twice the probe interval plus the "
 "loss interval."
 msgstr ""
-"Tidsperioden må være større enn det dobbelte av sonderingsintervall pluss "
-"tapet intervallet."
+"Tidsperioden må minst være det dobbelte av sondeintervall pluss "
+"tapsintervall"
 
 #: src/etc/inc/gwlb.inc:1652
 msgid ""
 "The alert interval needs to be greater than or equal to the probe interval."
-msgstr "Varsel intervall må være større enn eller lik den sonderingsintervall"
+msgstr "Varselsintervall må være lik eller større enn sondeintervallet"
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
@@ -2477,11 +2481,11 @@ msgstr "interfaces_bring_up () ble kalt, men ingen variabel definert."
 
 #: src/etc/inc/interfaces.inc:193
 msgid "Configuring loopback interface..."
-msgstr "Konfigurering loopback port ..."
+msgstr "Konfigurerer loopback-grensesnitt ..."
 
 #: src/etc/inc/interfaces.inc:206
 msgid "Configuring VLAN interfaces..."
-msgstr "Konfigurasjon av VLAN-port ..."
+msgstr "Konfigurerer VLAN-grensesnitt..."
 
 #: src/etc/inc/interfaces.inc:230
 msgid "VLAN: called with wrong options. Problems with config!"
@@ -2500,7 +2504,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:288
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
-msgstr "interface_qinq_configure kalt med hvis udefinert %s"
+msgstr "interface_qinq_configure kalt med if udefinert. %s"
 
 #: src/etc/inc/interfaces.inc:293
 #, php-format
@@ -2509,7 +2513,7 @@ msgstr "interface_qinq_configure kalt med ugyldige if.%s"
 
 #: src/etc/inc/interfaces.inc:359
 msgid "Configuring QinQ interfaces..."
-msgstr "Konfigurering QinQ port..."
+msgstr "Konfigurering QinQ grensesnitt..."
 
 #: src/etc/inc/interfaces.inc:384
 #, php-format
@@ -2518,7 +2522,7 @@ msgstr "interface_qinq2_configure kalt med if udefinert.%s"
 
 #: src/etc/inc/interfaces.inc:405
 msgid "Creating wireless clone interfaces..."
-msgstr "Oppretter trådløse klone port"
+msgstr "Oppretter trådløse grensesnittkloner..."
 
 #: src/etc/inc/interfaces.inc:483
 #, php-format
@@ -2527,52 +2531,52 @@ msgstr "Ingen medlemmer funnet på %s"
 
 #: src/etc/inc/interfaces.inc:547
 msgid "realif not defined in interfaces bridge - up"
-msgstr "lettelse er ikke definert i port bridge - opp"
+msgstr "realif er ikke definert i grensesnitt-broen - oppe"
 
 #: src/etc/inc/interfaces.inc:568
 msgid "bridgeif not defined -- could not bring interface up"
-msgstr "bridgeif ikke definert - kunne ikke få port opp"
+msgstr "bridgeif ikke definert - kunne ikke aktivere grensesnitt"
 
 #: src/etc/inc/interfaces.inc:742
 msgid "Configuring LAGG interfaces..."
-msgstr "Konfigurering LAG port ..."
+msgstr "Konfigurerer LAG-grensesnitt ..."
 
 #: src/etc/inc/interfaces.inc:893
 msgid "Could not bring greif up -- variable not defined."
-msgstr "Kunne ikke bringe greif opp - variabel ikke definert."
+msgstr "Kunne ikke aktivere greif - variabel ikke definert."
 
 #: src/etc/inc/interfaces.inc:976
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
-"kunne ikke få realif opp - variabel som ikke er definert - "
+"kunne ikke aktivere realif - variabel ikke definert - "
 "interface_gif_configure ()"
 
 #: src/etc/inc/interfaces.inc:1023
 msgid "could not bring gifif up -- variable not defined"
-msgstr "kunne ikke få gifif opp - variabel ikke definert"
+msgstr "kunne ikke aktivere gifif - variabel ikke definert"
 
 #: src/etc/inc/interfaces.inc:1105 src/etc/inc/interfaces.inc:1135
 #: src/etc/inc/interfaces.inc:1159 src/etc/inc/interfaces.inc:1177
 #, php-format
 msgid "Configuring %s interface..."
-msgstr "Konfigurering %s port..."
+msgstr "Konfigurerer %s grensesnitt..."
 
 #: src/etc/inc/interfaces.inc:1109 src/etc/inc/interfaces.inc:1138
 #: src/etc/inc/interfaces.inc:1162 src/etc/inc/interfaces.inc:1180
 #, php-format
 msgid "Configuring %s"
-msgstr "Konfigurering av %s"
+msgstr "Konfigurerer %s"
 
 #: src/etc/inc/interfaces.inc:1263
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
-msgstr "Ringe port ned etter port %1$s, ødelegger %2$s"
+msgstr "Kjører deaktivering for grensesnitt %1$s, destruerer %2$s"
 
 #: src/etc/inc/interfaces.inc:1277
 msgid "Wrong parameters used during interface_bring_down"
-msgstr "Feil parametre som brukes ved interface_bring_down"
+msgstr "Feil parametre gitt til interface_bring_down"
 
 #: src/etc/inc/interfaces.inc:1448
 msgid "Enter CARP maintenance mode"
@@ -2591,7 +2595,7 @@ msgid ""
 "interfaces_ppps_configure. Using 0.0.0.0 ip!"
 msgstr ""
 "Kunne ikke få en lokal IP-adresse etter PPTP / L2TP link på %s  i "
-"interfaces_ppps_configure. Bruke 0.0.0.0 ip!"
+"interfaces_ppps_configure. Bruker IP 0.0.0.0 !"
 
 #: src/etc/inc/interfaces.inc:1717
 #, php-format
@@ -2612,7 +2616,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:1729
 #, php-format
 msgid "Unknown %s configured as ppp interface."
-msgstr "Ukjent %s konfigurert som PPP-grensesnittet."
+msgstr "Ukjent %s konfigurert som PPP-grensesnitt."
 
 #: src/etc/inc/interfaces.inc:2049
 #, php-format
@@ -2622,24 +2626,24 @@ msgstr "Feil: Kan ikke åpne mpd_%1$s.conf i interface_ppps_configure ().%2$s"
 #: src/etc/inc/interfaces.inc:2144
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
-msgstr "Starter 3gstats.php på enheten '%1$s' for port '%2$s'"
+msgstr "Starter 3gstats.php på enheten '%1$s' for grensesnitt '%2$s'"
 
 #: src/etc/inc/interfaces.inc:2161
 msgid "Configuring CARP settings..."
-msgstr "Konfigurering av CARP innstillinger"
+msgstr "Konfigurerer CARP-innstillinger..."
 
 #: src/etc/inc/interfaces.inc:2202
 msgid "waiting for pfsync..."
-msgstr "venter på pfsync"
+msgstr "venter på pfsync..."
 
 #: src/etc/inc/interfaces.inc:2208
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr "pfsync ferding om %s seconds."
+msgstr "pfsync ferding om %s sekunder."
 
 #: src/etc/inc/interfaces.inc:2209
 msgid "Configuring CARP settings finalize..."
-msgstr "Konfigurering av CARP innstillinger fullfører"
+msgstr "Konfigurering av CARP-innstillinger er straks ferdig..."
 
 #: src/etc/inc/interfaces.inc:2436
 #, php-format
@@ -2647,38 +2651,38 @@ msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
-"Porten er spesifisert av den virtuelle IP-adressen %s finnes ikke. Du hopper "
-"over denne VIP."
+"Grensesnittet som er angitt for den virtuelle IP-adressen %s finnes ikke. "
+"Hopper over denne VIP'en."
 
 #: src/etc/inc/interfaces.inc:2496
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr "Port %s endret til hostap modus"
+msgstr "Grensesnittet %s byttet til hostap-modus"
 
 #: src/etc/inc/interfaces.inc:2500
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr "Port %s endret til adhoc-modus"
+msgstr "Grensesnittet %s endret til adhoc-modus"
 
 #: src/etc/inc/interfaces.inc:2504
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
-msgstr "Port %s endret til infrastrukturmodus"
+msgstr "Grensesnittet %s endret til infrastrukturmodus"
 
 #: src/etc/inc/interfaces.inc:2517
 #, php-format
 msgid "Cloning new wireless interface %s"
-msgstr "Kloning ny trådløs port %s"
+msgstr "Kloner nytt trådløst grensesnitt %s"
 
 #: src/etc/inc/interfaces.inc:2522
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
-msgstr "Klarte ikke å klone port %1$s med feilkode %2$s, utgang %3$s"
+msgstr "Klarte ikke å klone grensesnitt %1$s med feilkode %2$s, detaljer %3$s"
 
 #: src/etc/inc/interfaces.inc:3178
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
-msgstr "Starter dhcp6 klient for wan port %s i DHCP6 uten RA-modus"
+msgstr "Starter dhcp6 klient for wan-grensesnitt %s i DHCP6 uten RA-modus"
 
 #: src/etc/inc/interfaces.inc:3199
 #, php-format
@@ -2693,11 +2697,11 @@ msgstr "OpenVPN: Resynkronisering av klient %s"
 #: src/etc/inc/interfaces.inc:3347
 #, php-format
 msgid "Deny router advertisements for interface %s"
-msgstr "Avslå router annonsering for port %s"
+msgstr "Avslå router-annonsering for grensesnitt %s"
 
 #: src/etc/inc/interfaces.inc:3379
 msgid "Generating new MAC address."
-msgstr "Generere ny MAC-adresse."
+msgstr "Genererer ny MAC-adresse."
 
 #: src/etc/inc/interfaces.inc:3384 src/etc/inc/interfaces.inc:3385
 #, php-format
@@ -2705,28 +2709,30 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
-"Det ugyldige MAC-adressen (ff:ff:ff:ff:ff:ff) på port %1$s har blitt "
+"Det ugyldige MAC-adressen (ff:ff:ff:ff:ff:ff) på grensesnitt %1$s har blitt "
 "automatisk erstattet med %2$s"
 
 #: src/etc/inc/interfaces.inc:3450
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
-msgstr "TDet er en konflikt på MTU mellom foreldre port %1$s og VLAN(%2$s)"
+msgstr ""
+"Det er en konflikt på MTU mellom det fysiske grensesnittet  %1$s og "
+"VLAN(%2$s)"
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "Kaller interface_dhcpv6_configure."
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
-msgstr "port %1$s  sporer en ikke-eksisterende port %2$s"
+msgstr "Grensesnittet %1$s  sporer ikke-eksisterende grensesnitt %2$s"
 
 #: src/etc/inc/interfaces.inc:3651 src/etc/inc/interfaces.inc:3657
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
-msgstr "Port %1$s konfigureres via %2$s typen%3$s"
+msgstr "Grensesnitt %1$s konfigureres via %2$s type %3$s"
 
 #: src/etc/inc/interfaces.inc:3720
 #, php-format
@@ -2734,8 +2740,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
 "configuring 6RD tunnel"
 msgstr ""
-"Portens IPv4 '%1$s' adresse for port '%2$s' er ikke gyldig, kan ikke "
-"konfigurerer 6RD tunnel"
+"Grensesnittets IPv4 '%1$s' adresse for grensesnitt '%2$s' er ikke gyldig, "
+"kan ikke konfigurere 6RD tunnel"
 
 #: src/etc/inc/interfaces.inc:3756
 #, php-format
@@ -2749,8 +2755,8 @@ msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
 "configuring 6RD tunnel"
 msgstr ""
-"Portens IPv4 '%1$s' adresse for port '%2$s' er ikke offentlig, kan ikke "
-"konfigurere 6RD tunnel"
+"Grensesnittets IPv4 '%1$s' adresse for grensesnitt '%2$s' er ikke offentlig, "
+"kan ikke konfigurere 6RD tunnel"
 
 #: src/etc/inc/interfaces.inc:3816
 #, php-format
@@ -2764,7 +2770,7 @@ msgstr "Klarte ikke å skrive brukerens duid fil!"
 #: src/etc/inc/interfaces.inc:4503
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
-msgstr "Feil: kan ikke åpne %s i DHCP6_Config_File_Override () av å lese"
+msgstr "Feil: kan ikke åpne %s i DHCP6_Config_File_Override () for avlesning"
 
 #: src/etc/inc/interfaces.inc:4531
 #, php-format
@@ -2772,23 +2778,23 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
 "writing."
 msgstr ""
-"Feil: kan ikke åpne dhclient_%s.conf i interface_dhcp_configure () av å "
+"Feil: kan ikke åpne dhclient_%s.conf i interface_dhcp_configure () for å "
 "skrive"
 
 #: src/etc/inc/interfaces.inc:4544
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
-msgstr "Ugyldig port \"%s\" i interface_dhcp_configure()"
+msgstr "Ugyldig grensesnitt \"%s\" i interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4600
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
-msgstr "Kunne ikke få opp %s port i interface_dhcp_configure()"
+msgstr "Kunne ikke aktivere %s grensesnitt i interface_dhcp_configure()"
 
 #: src/etc/inc/interfaces.inc:4693
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
-msgstr "Feil: kan ikke åpne %s i DHCP_Config_File_Override() av å lese."
+msgstr "Feil: kan ikke åpne %s i DHCP_Config_File_Override() for avlesning."
 
 #: src/etc/inc/interfaces.inc:5734 src/etc/inc/service-utils.inc:365
 #: src/usr/local/www/diag_backup.php:432
@@ -2811,11 +2817,11 @@ msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
-msgstr "Daemon"
+msgstr "Daemon (Bakgrunnstjeneste)"
 
 #: src/etc/inc/ipsec.inc:27 src/etc/inc/ipsec.inc:57
 msgid "SA Manager"
-msgstr "SA Manager"
+msgstr "SA-Behandling"
 
 #: src/etc/inc/ipsec.inc:28 src/etc/inc/ipsec.inc:58
 msgid "IKE SA"
@@ -2827,15 +2833,15 @@ msgstr "IKE Child SA"
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr "Job Behandler"
+msgstr "Jobbehandler"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
-msgstr "konfigurasjon bakstykket"
+msgstr "Konfigurasjonsplatform"
 
 #: src/etc/inc/ipsec.inc:32 src/etc/inc/ipsec.inc:62
 msgid "Kernel Interface"
-msgstr "Kernel port"
+msgstr "Kjernegrensesnitt"
 
 #: src/etc/inc/ipsec.inc:33 src/etc/inc/ipsec.inc:63
 #: src/usr/local/www/system_advanced_admin.php:299
@@ -2850,31 +2856,31 @@ msgstr "Nettverk"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
-msgstr "ASN koding"
+msgstr "ASN-koding"
 
 #: src/etc/inc/ipsec.inc:35 src/etc/inc/ipsec.inc:65
 msgid "Message encoding"
-msgstr "Meldings koding"
+msgstr "Meldings-koding"
 
 #: src/etc/inc/ipsec.inc:36 src/etc/inc/ipsec.inc:66
 msgid "Integrity checker"
-msgstr "integritet kontrolløren"
+msgstr "Integritetskontroll"
 
 #: src/etc/inc/ipsec.inc:37 src/etc/inc/ipsec.inc:67
 msgid "Integrity Verifier"
-msgstr "integritet bekrefteren"
+msgstr "Integritetsbekreftelse"
 
 #: src/etc/inc/ipsec.inc:38 src/etc/inc/ipsec.inc:68
 msgid "Platform Trust Service"
-msgstr "Platform Tillit Tjeneste"
+msgstr "Platformpålitlighets-tjeneste"
 
 #: src/etc/inc/ipsec.inc:39 src/etc/inc/ipsec.inc:69
 msgid "TLS handler"
-msgstr "TLS handler"
+msgstr "TLS-Behandler"
 
 #: src/etc/inc/ipsec.inc:40 src/etc/inc/ipsec.inc:70
 msgid "IPsec traffic"
-msgstr "IPsec trafikk"
+msgstr "IPsec-trafikk"
 
 #: src/etc/inc/ipsec.inc:41 src/etc/inc/ipsec.inc:71
 msgid "StrongSwan Lib"
@@ -2886,7 +2892,7 @@ msgstr "Stille"
 
 #: src/etc/inc/ipsec.inc:47
 msgid "Audit"
-msgstr "Revidere"
+msgstr "Revider"
 
 #: src/etc/inc/ipsec.inc:48
 msgid "Control"
@@ -2902,15 +2908,15 @@ msgstr "Rå"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
-msgstr "høyeste"
+msgstr "Høyeste"
 
 #: src/etc/inc/ipsec.inc:76
 msgid "My IP address"
-msgstr "Min IPadresse"
+msgstr "Min IP-adresse"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
-msgstr "unike navn"
+msgstr "Unikt navn"
 
 #: src/etc/inc/ipsec.inc:79 src/etc/inc/ipsec.inc:91
 msgid "User distinguished name"
@@ -2918,7 +2924,7 @@ msgstr "Brukerens unike navn"
 
 #: src/etc/inc/ipsec.inc:80 src/etc/inc/ipsec.inc:92
 msgid "ASN.1 distinguished Name"
-msgstr "ASN.1 unike navn"
+msgstr "ASN.1 unikt navn"
 
 #: src/etc/inc/ipsec.inc:81 src/etc/inc/ipsec.inc:93
 msgid "KeyID tag"
@@ -2949,11 +2955,11 @@ msgstr "Dynamisk DNS"
 #: src/usr/local/www/firewall_rules_edit.php:1506
 #: src/usr/local/www/interfaces.php:3050
 msgid "Any"
-msgstr "enhver"
+msgstr "Enhver"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
-msgstr "Peer IPadresse"
+msgstr "Peer IP-adresse"
 
 #: src/etc/inc/ipsec.inc:166
 msgid "Hybrid RSA + Xauth"
@@ -2989,11 +2995,11 @@ msgstr "Gjensidig PSK"
 
 #: src/etc/inc/ipsec.inc:184
 msgid "Tunnel IPv4"
-msgstr "Tunnel IPv4"
+msgstr "Tunnell IPv4"
 
 #: src/etc/inc/ipsec.inc:185
 msgid "Tunnel IPv6"
-msgstr "Tunnel IPv6"
+msgstr "Tunnell IPv6"
 
 #: src/etc/inc/ipsec.inc:186 src/usr/local/www/system_authservers.php:228
 msgid "Transport"
@@ -3073,7 +3079,7 @@ msgstr "30 (brainpool ecp512)"
 
 #: src/etc/inc/ipsec.inc:411 src/usr/local/www/vpn_ipsec.php:323
 msgid "Mobile Client"
-msgstr "mobile klient"
+msgstr "Mobilklient"
 
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/pfsense-utils.inc:3139
 #: src/etc/inc/shaper.inc:3869 src/etc/inc/shaper.inc:4173
@@ -3095,8 +3101,8 @@ msgid ""
 "Unable to find IPsec daemon leases file. Could not display mobile user "
 "stats!"
 msgstr ""
-"Kan ikke finne filen for IPsec-daemon leieavtaler. Kunne ikke vise mobile "
-"brukerens statistikk!"
+"Kan ikke finne filen for IPsec-daemon leieavtaler. Kunne ikke vise "
+"statistikk for mobil bruker!"
 
 #: src/etc/inc/meta.inc:61
 #, php-format
@@ -3111,7 +3117,7 @@ msgstr "kan ikke lese %s"
 #: src/etc/inc/meta.inc:134
 #, php-format
 msgid "error: tag mismatch ( %1$s != %2$s ) in '%3$s'%4$s"
-msgstr "feil: tag mismatch ( %1$s != %2$s ) i '%3$s'%4$s"
+msgstr "feil: tag samsvarer ikke ( %1$s != %2$s ) i '%3$s'%4$s"
 
 #: src/etc/inc/meta.inc:145
 #, php-format
@@ -3240,8 +3246,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4 Komprimering [kompress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 Komprimering v2 [kompress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3736,7 +3742,7 @@ msgstr "Engelsk"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Fransk"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -3748,7 +3754,7 @@ msgstr "Norsk bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
-msgstr ""
+msgstr "Polsk"
 
 #: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
@@ -6346,15 +6352,15 @@ msgstr "Starter DNS Resolver..."
 
 #: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
-msgstr ""
+msgstr "Unbound start venter på dhcp6c."
 
 #: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
-msgstr ""
+msgstr "Dhcp6 init fullført. fortsetter"
 
 #: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
-msgstr ""
+msgstr "Synkroniser unbound ferdig."
 
 #: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
@@ -6576,6 +6582,9 @@ msgid ""
 "is 0 to 15, queues with a higher priority are preferred in the case of "
 "overload."
 msgstr ""
+"For cbq og fairq området er 0 til 7. Standard er 1. For priq området er 0 "
+"til 15, køer med en høyere prioritet er foretrukket i tilfelle av "
+"overbelastning."
 
 #: src/etc/inc/shaper.inc:1442
 msgid "Queue limit in packets."
@@ -6846,7 +6855,7 @@ msgstr "Andel av båndbredde i backlogg køen."
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "Prioritet må være et heltall mellom 0 og 7."
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -17830,6 +17839,8 @@ msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
 msgstr ""
+"Lokale tunneler og tunnelfelt må ha gyldige IP-adresser og må ikke inneholde "
+"CIDR-masker eller prefikser."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -24035,6 +24046,11 @@ msgid ""
 "Key.%1$sDNSimple: Enter the API token.%1$sCloudflare: Enter the Global API "
 "Key."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Skriv inn \"Autentiseringstoken\" som tilbys "
+"av FreeDNS.%1$sDNS Made Easy: Dynamisk DNS-passord%1$sRute 53: Skriv inn den "
+"hemmelige tilgangsnøkkelen.%1$sGleSYS: Skriv inn API-nøkkel.%1$sDreamhost: "
+"Skriv inn API-nøkkel.%1$sDNSimple: Skriv inn API-nøkkel.%1$sCloudflare: "
+"Skriv inn den globale API-nøkkelen."
 
 #: src/usr/local/www/services_dyndns_edit.php:378
 msgid "Zone ID"
@@ -36203,14 +36219,6 @@ msgstr "Kan ikke hente status"
 msgid "No packages installed."
 msgstr "Ingen pakker installert."
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-"Pakker kan installeres <a href=\"pkg_mgr.php\" class=\"alert-link\">here</a>."
-""
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "OK"
@@ -36322,7 +36330,7 @@ msgstr "Henter mobildata"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
-msgstr ""
+msgstr "Ingen mobile tunneler er konfigurert"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
@@ -36371,7 +36379,7 @@ msgstr "oppdateringsintervallet"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sHenter supportinformasjon %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -36548,7 +36556,7 @@ msgstr "Disk Bruk"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Henter oppdateringsstatus %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -36572,15 +36580,15 @@ msgstr "Systemet er på den nyeste versjonen."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
-msgstr ""
+msgstr "Systemet er på en senere versjon enn offisiell utgivelse."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
-msgstr ""
+msgstr "Feil å sammenligne installert med nyeste versjon tilgjengelig"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Versjonsinformasjon oppdatert"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -36657,7 +36665,7 @@ msgstr "CPU bruk"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "Henter CPU-data %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
@@ -38519,8 +38527,8 @@ msgid "Disable this static route"
 msgstr "Deaktiver denne statisk rute"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "Deaktivere automatisk dashbordet automatisk oppdatering sjekk"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

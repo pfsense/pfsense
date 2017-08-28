@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-17 04:56-0400\n"
+"PO-Revision-Date: 2017-08-23 05:02-0400\n"
 "Last-Translator: Michał Skibicki <michal@skibicki.net>\n"
 "Language-Team: Polish\n"
 "Language: pl\n"
@@ -2272,7 +2272,7 @@ msgstr "Aktualizowanie grupy bram dla bramy %1$s - nowa brama to %2$s"
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
 msgid "Interface"
-msgstr "Berło"
+msgstr "Interfejs"
 
 #: src/etc/inc/gwlb.inc:1367
 msgid "gateway"
@@ -2314,7 +2314,7 @@ msgid ""
 "The gateway address %s does not lie within one of the chosen interface's "
 "subnets."
 msgstr ""
-", Adres bramy% s nie leży w obrębie jednego z podsieci wybranego interfejsu."
+"Adres bramy %s nie leży w obrębie jednego z podsieci wybranego interfejsu."
 
 #: src/etc/inc/gwlb.inc:1439
 msgid ""
@@ -2874,7 +2874,7 @@ msgstr "Interfejs jądra"
 #: src/usr/local/www/system_advanced_notifications.php:212
 #: src/usr/local/www/system_advanced_sysctl.php:140
 msgid "Networking"
-msgstr "Sieciowanie"
+msgstr "Sieć"
 
 #: src/etc/inc/ipsec.inc:34 src/etc/inc/ipsec.inc:64
 msgid "ASN encoding"
@@ -3268,8 +3268,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4 Kompresja [kompresja lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 Comression v2 [kompresja lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3307,7 +3307,7 @@ msgstr "Subnet - Jeden adres IP na klienta w wspólnej podsieci"
 
 #: src/etc/inc/openvpn.inc:139
 msgid "net30 -- Isolated /30 network per client"
-msgstr "Net30 - Pojedyncza / 30 sieci na klienta"
+msgstr "Net30 - Pojedyńcza sieć /30 sieć na klienta"
 
 #: src/etc/inc/openvpn.inc:145
 msgid "TLS Authentication"
@@ -3679,7 +3679,7 @@ msgstr "bloking"
 
 #: src/etc/inc/pfsense-utils.inc:1720
 msgid "check for ethernet loops"
-msgstr "Sprawdź pętle sieciowe"
+msgstr "Sprawdzaj pętle sieciowe"
 
 #: src/etc/inc/pfsense-utils.inc:1723
 msgid "learning"
@@ -4118,8 +4118,8 @@ msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
 msgstr ""
-", Oczekiwanie na połączenie z Internetem w celu aktualizacji metadanych pkg "
-"i zakończenia pakietu, ponownej instalacji"
+"Oczekiwanie na połączenie z Internetem w celu aktualizacji metadanych pkg i "
+"zakończenia pakietu, ponownej instalacji"
 
 #: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
 msgid "Package reinstall"
@@ -4129,8 +4129,8 @@ msgstr "Zainstaluj pakiet"
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
-", Proces ponownego instalowania pakietu został Zlikwidowany ze względu na "
-"brak łączności z Internetem"
+"Proces ponownego instalowania pakietu został Zlikwidowany ze względu na brak "
+"łączności z Internetem"
 
 #: src/etc/inc/pkg-utils.inc:1087
 #, php-format
@@ -7302,7 +7302,7 @@ msgstr "Wygenerowane nowe, samopodpisane certyfikaty HTTPS (% s)"
 
 #: src/etc/inc/system.inc:1309
 msgid "Starting webConfigurator..."
-msgstr "Uruchamianie konwertera internetowego ..."
+msgstr "Uruchamianie webKonfiguratora ..."
 
 #: src/etc/inc/system.inc:1359 src/etc/inc/system.inc:2235
 #: src/etc/inc/system.inc:2238
@@ -7397,16 +7397,14 @@ msgstr "%sWarning: usunięto regułę filtru (interfejs '% s' nie istnieje)."
 #, php-format
 msgid ""
 "%sWarning: filter rule removed (source network '%s' does not exist anymore)."
-msgstr ""
-",%sWarning: usunięto regułę filtru (sieć źródłowa '% s' nie istnieje już)."
+msgstr "%s Uwaga: usunięto regułę filtru (sieć źródłowa '%s' nie istnieje)."
 
 #: src/etc/inc/upgrade_config.inc:127
 #, php-format
 msgid ""
 "%sWarning: filter rule removed (destination network '%s' does not exist "
 "anymore)."
-msgstr ""
-",%sWarning: usunięto regułę filtru (sieć docelowa '% s' nie istnieje)."
+msgstr "%s Uwaga: usunięto regułę filtru (sieć docelowa '%s' nie istnieje)."
 
 #: src/etc/inc/upgrade_config.inc:147
 #, php-format
@@ -7422,8 +7420,7 @@ msgid ""
 "%sWarning: traffic shaper rule removed (source network '%s' does not exist "
 "anymore)."
 msgstr ""
-",%sWarning: usunięto regułę przekroju ruchu (sieć źródłowa '% s' nie "
-"istnieje)."
+"%s Uwaga: usunięto regułę przekroju ruchu (sieć źródłowa '%s' nie istnieje)."
 
 #: src/etc/inc/upgrade_config.inc:172
 #, php-format
@@ -7431,7 +7428,7 @@ msgid ""
 "%sWarning: traffic shaper rule removed (destination network '%s' does not "
 "exist anymore)."
 msgstr ""
-",%sWarning: usunięto regułę klina ruchu (sieć docelowa '% s' nie istnieje)."
+"%s Warning: usunięto regułę klina ruchu (sieć docelowa '%s' nie istnieje)."
 
 #: src/etc/inc/upgrade_config.inc:343
 #, php-format
@@ -9254,7 +9251,7 @@ msgid ""
 "NOTE: The following links are to external services, so their reliability "
 "cannot be guaranteed."
 msgstr ""
-", UWAGA: Poniższe linki to usługi zewnętrzne, a zatem ich niezawodność nie "
+"UWAGA: Poniższe linki to usługi zewnętrzne, a zatem ich niezawodność nie "
 "może być zagwarantowana."
 
 #: src/usr/local/www/diag_dns.php:329
@@ -9800,7 +9797,7 @@ msgstr "Nieprawidłowy interfejs."
 
 #: src/usr/local/www/diag_packet_capture.php:153
 msgid "Invalid address family."
-msgstr "Nieprawidłowa rodzina adresów."
+msgstr "Nieprawidłowy protokół."
 
 #: src/usr/local/www/diag_packet_capture.php:158
 msgid "IPv4 with ICMPv6 is not valid."
@@ -9885,7 +9882,7 @@ msgstr "Opcje przechwytywania pakietów"
 #: src/usr/local/www/vpn_openvpn_client.php:539
 #: src/usr/local/www/vpn_openvpn_server.php:731
 msgid "*Interface"
-msgstr "*Berło"
+msgstr "*Interfejs"
 
 #: src/usr/local/www/diag_packet_capture.php:311
 msgid "Select the interface on which to capture traffic. "
@@ -9896,7 +9893,7 @@ msgid "Promiscuous"
 msgstr "Bezładny"
 
 #: src/usr/local/www/diag_packet_capture.php:318
-#, php-format
+#, fuzzy, php-format
 msgid ""
 "%1$sNon-promiscuous mode captures only traffic that is directly relevant to "
 "the host (sent by it, sent or broadcast to it, or routed through it) and "
@@ -9912,10 +9909,10 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
-"%1$sTryb Non-promiscuous przechwytuje tylko ruch, który jest bezpośrednio "
+"%1$s Tryb Non-promiscuous przechwytuje tylko ruch, który jest bezpośrednio "
 "związany z hostem (wysyłanym przez niego, wysyłanym, emitowanym do niego lub "
 "przekierowywanym przez niego), a nie pokazuje pakietów, które są ignorowane "
-"na poziomie karty sieciowej. 2$s%3$sPromiscuous mode%4$s (\"sniffing\") "
+"na poziomie karty sieciowej. 2$s%3$s Promiscuous mode %4$s (\"sniffing\") "
 "przechwytuje wszystkie dane widoczne przez adapter, niezależnie od tego, czy "
 "jest prawidłowy czy powiązany z hostem, ale w niektórych przypadkach może "
 "mieć niepożądane skutki uboczne i nie wszystkie karty obsługują tę opcję. "
@@ -9940,7 +9937,7 @@ msgstr "Tylko IPv6"
 #: src/usr/local/www/firewall_rules_edit.php:1286
 #: src/usr/local/www/system_gateways_edit.php:167
 msgid "*Address Family"
-msgstr "* Adres Rodzina"
+msgstr "* Protokół"
 
 #: src/usr/local/www/diag_packet_capture.php:344
 msgid "Select the type of traffic to be captured."
@@ -10977,7 +10974,7 @@ msgstr "Protokół IP"
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
-msgstr "przeznaczenie"
+msgstr "Cel"
 
 #: src/usr/local/www/easyrule.php:118
 msgid ""
@@ -12231,7 +12228,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:801
 #: src/usr/local/www/firewall_nat_out_edit.php:544
 msgid "*Destination"
-msgstr "*Przeznaczenie"
+msgstr "*Cel"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:524
 msgid ""
@@ -12469,7 +12466,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:252
 #: src/usr/local/www/system_gateways_edit.php:455
 msgid "Display Advanced"
-msgstr "Wyświetlacz Zaawansowane"
+msgstr "Wyświetl Zaawansowane"
 
 #: src/usr/local/www/firewall_nat_edit.php:737
 msgid "Source not"
@@ -18007,7 +18004,7 @@ msgid ""
 "The alias IP address family has to match the family of the remote peer "
 "address."
 msgstr ""
-", Rodzina adresów IP aliasów musi odpowiadać rodzinie zdalnego adresu "
+"Protokół aliasów adresów IP musi odpowiadać protokołowi zdalnego adresu "
 "równorzędnego."
 
 #: src/usr/local/www/interfaces_gif_edit.php:105
@@ -26207,13 +26204,13 @@ msgid ""
 "intended. High values can lead to trouble as the data in the cache might not "
 "match up with the actual data anymore."
 msgstr ""
-", Minimalny czas życia dla RRsets i wiadomości w pamięci podręcznej. "
-"Wartością domyślną jest, 0 sekundy. Jeśli minimalna wartość wejdzie w "
-"pamięć, dane są przechowywane w pamięci podręcznej dłużej, niż przewiduje "
-"właściciel domen, a więc mniej pytań wyszukuje dane. , Wartość 0 zapewnia, "
-"że ​​dane w pamięci podręcznej są zgodne z przeznaczeniem właściciela domeny."
-" , Wysokie wartości mogą prowadzić do problemów, ponieważ dane w pamięci "
-"podręcznej mogą się nie zgadzać, a faktyczne dane będą już dostępne."
+"Minimalny czas życia dla RRsets i wiadomości w pamięci podręcznej. Wartością "
+"domyślną jest, 0 sekundy. Jeśli minimalna wartość wejdzie w pamięć, dane są "
+"przechowywane w pamięci podręcznej dłużej, niż przewiduje właściciel domen, "
+"a więc mniej pytań wyszukuje dane. , Wartość 0 zapewnia, że ​​dane w pamięci "
+"podręcznej są zgodne z przeznaczeniem właściciela domeny. , Wysokie wartości "
+"mogą prowadzić do problemów, ponieważ dane w pamięci podręcznej mogą się nie "
+"zgadzać, a faktyczne dane będą już dostępne."
 
 #: src/usr/local/www/services_unbound_advanced.php:320
 msgid "minutes"
@@ -27279,7 +27276,7 @@ msgstr "Zrzeczenie się najmu"
 
 #: src/usr/local/www/status_interfaces.php:112
 msgid " Interface "
-msgstr " Berło"
+msgstr "Interfejs"
 
 #: src/usr/local/www/status_interfaces.php:117
 #: src/usr/local/www/status_interfaces.php:118
@@ -27940,7 +27937,7 @@ msgstr "Zarządzaj logiem%1$s"
 #: src/usr/local/www/status_logs_common.inc:791
 #: src/usr/local/www/status_logs_settings.php:235
 msgid "Forward/Reverse Display"
-msgstr "Wyświetlacz do przodu / do tyłu"
+msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:799
 msgid "(newest at bottom)"
@@ -27993,7 +27990,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:849
 msgid "Formatted/Raw Display"
-msgstr "Wyświetlacz sformatowany / surowy"
+msgstr "Wyświetlanie sformatowane/źródłowe"
 
 #: src/usr/local/www/status_logs_common.inc:875
 msgid ""
@@ -32881,7 +32878,7 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:95
 #, php-format
 msgid "The gateway \"%1$s\" is a different Address Family than network \"%2$s\"."
-msgstr "Brama \"%1$s\" to inna rodzina adresowa niż sieć \"%2$s\"."
+msgstr "Brama \"%1$s\" to inna rodzina adresów niż sieć \"%2$s\"."
 
 #: src/usr/local/www/system_routes_edit.php:109
 msgid "A IPv4 subnet can not be over 32 bits."
@@ -36513,14 +36510,6 @@ msgstr "Nie można pobrać stanu"
 msgid "No packages installed."
 msgstr "Nie zainstalowano żadnych pakietów."
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-", Pakiety można instalować <a href=\"pkg_mgr.php\" class=\"alert-link\"> "
-"tutaj </, a>."
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "ok"
@@ -38865,8 +38854,8 @@ msgid "Disable this static route"
 msgstr "Wyłącz tę statyczną trasę"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "Wyłącz automatyczną kontrolę automatycznej deski rozdzielczej"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

@@ -11,11 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-18 04:47-0400\n"
+"PO-Revision-Date: 2017-08-22 02:26-0400\n"
 "Last-Translator: Lars Bemersjö <bemersjo@gmail.com>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -3244,8 +3244,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4-komprimering [komprimera lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4-komprimering v2 [komprimera lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -13033,16 +13033,16 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:651
 msgid "Traffic matching this rule is currently being allowed"
-msgstr ""
+msgstr "Trafik som matchar den här regeln tillåts för tillfället"
 
 #: src/usr/local/www/firewall_rules.php:660
 msgid "This rule is not currently active because its period has expired"
-msgstr ""
+msgstr "Den här regeln är inte aktiv för perioden har gått ut"
 
 #: src/usr/local/www/firewall_rules.php:699
 #: src/usr/local/www/firewall_rules_edit.php:1321
 msgid "ICMP subtypes"
-msgstr ""
+msgstr "ICMP subtyper"
 
 #: src/usr/local/www/firewall_rules.php:777
 msgid "Copy"
@@ -13054,7 +13054,7 @@ msgstr "Ta bort denna regel"
 
 #: src/usr/local/www/firewall_rules.php:808
 msgid "No floating rules are currently defined."
-msgstr ""
+msgstr "Inga flytande regler är definierade"
 
 #: src/usr/local/www/firewall_rules.php:810
 msgid "No rules are currently defined for this interface"
@@ -33587,12 +33587,6 @@ msgstr "Kunde inte hämta status"
 msgid "No packages installed."
 msgstr "Inga paket installerade."
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "ok"
@@ -35787,7 +35781,7 @@ msgid "Disable this static route"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
+msgid "Disable the Dashboard auto-update check"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173

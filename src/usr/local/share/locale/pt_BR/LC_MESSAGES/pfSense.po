@@ -13,6 +13,7 @@
 # José Carlos Bilhega <bilhega@gmail.com>, 2017. #zanata
 # Leandro Scardua da Silva <leandroscar@gmail.com>, 2017. #zanata
 # Luiz Fernando Barros <lfb@outlook.com.br>, 2017. #zanata
+# Marcelo Coutinho <marcelocoutinho_1994@hotmail.com>, 2017. #zanata
 # Marco Antonio Alves Pereira <marcoaapereira@gmail.com>, 2017. #zanata
 # Osni Pezzini Junior <osni.pezzini@gmail.com>, 2017. #zanata
 # Ramon <ramon.silva@giassi.com.br>, 2017. #zanata
@@ -29,12 +30,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-11 09:02-0400\n"
-"Last-Translator: Ramon <ramon.silva@giassi.com.br>\n"
+"PO-Revision-Date: 2017-08-28 12:07-0400\n"
+"Last-Translator: Marcelo Coutinho <marcelocoutinho_1994@hotmail.com>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -2181,6 +2182,8 @@ msgstr "Componente"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Tempo limite aguardando o endereço IPv6 no estado tentativo. Dpinger não "
+"será executado"
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2782,7 +2785,7 @@ msgstr "Existe um problema na MTU entre o parete %1$s e VLAN(%2$s)"
 
 #: src/etc/inc/interfaces.inc:3520
 msgid "calling interface_dhcpv6_configure."
-msgstr ""
+msgstr "Chamando interface_dhcpv6_configure."
 
 #: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
 #: src/etc/inc/interfaces.inc:3778
@@ -3310,8 +3313,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "Compressão LZ4 [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "Compressão LZ4 v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3811,7 +3814,7 @@ msgstr "Inglês"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Francês"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -3823,7 +3826,7 @@ msgstr "Norueguês Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
-msgstr ""
+msgstr "Polaco"
 
 #: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
@@ -6453,15 +6456,15 @@ msgstr "Iniciando DNS Resolver..."
 
 #: src/etc/inc/services.inc:2274
 msgid "Unbound start waiting on dhcp6c."
-msgstr ""
+msgstr "Não consolidado comece a aguardar o dhcp6c."
 
 #: src/etc/inc/services.inc:2278
 msgid "dhcp6 init complete. Continuing"
-msgstr ""
+msgstr "Dhcp6 inicialização completa. Continuando"
 
 #: src/etc/inc/services.inc:2287
 msgid "sync unbound done."
-msgstr ""
+msgstr "Sincronização não consolidada."
 
 #: src/etc/inc/services.inc:2325
 msgid "Starting SNMP daemon... "
@@ -6691,6 +6694,9 @@ msgid ""
 "is 0 to 15, queues with a higher priority are preferred in the case of "
 "overload."
 msgstr ""
+"Para cbq e fairq, o intervalo é 0 a 7. O padrão é 1. Para priq o intervalo é "
+"de 0 a 15, as filas com maior prioridade são preferidas no caso de "
+"sobrecarga."
 
 #: src/etc/inc/shaper.inc:1442
 msgid "Queue limit in packets."
@@ -6961,7 +6967,7 @@ msgstr "B/W compartilhamento de uma fila com atraso."
 
 #: src/etc/inc/shaper.inc:2650 src/etc/inc/shaper.inc:2932
 msgid "Priority must be an integer between 0 and 7."
-msgstr ""
+msgstr "A prioridade deve ser um número inteiro entre 0 e 7."
 
 #: src/etc/inc/shaper.inc:2779
 msgid "NOTITLE"
@@ -18072,6 +18078,8 @@ msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
 msgstr ""
+"O túnel local e os campos remotos do túnel devem ter endereços IP válidos e "
+"não devem conter máscaras ou prefixos CIDR."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -24392,6 +24400,12 @@ msgid ""
 "Key.%1$sDNSimple: Enter the API token.%1$sCloudflare: Enter the Global API "
 "Key."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Digite o \"Token de autenticação\" fornecido "
+"pelo FreeDNS\n"
+"%1$sDNS Made Easy: Dynamic DNS Password%1$sRoute 53: Digite a Chave de "
+"Acesso Secreto.%1$sGleSYS: Digite a chave da API.%1$sDreamhost: Digite a "
+"chave da API.%1$sDNSimple: Digite o token da API.%1$sCloudflare: Digite a "
+"chave global da API."
 
 #: src/usr/local/www/services_dyndns_edit.php:378
 msgid "Zone ID"
@@ -36746,14 +36760,6 @@ msgstr "Não foi possível recuperar o status"
 msgid "No packages installed."
 msgstr "Não há pacotes instalados."
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-"Pacotes podem ser instalados<a href=\"pkg_mgr.php\" class=\"alert-"
-"link\">here</a>."
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "ok"
@@ -36866,7 +36872,7 @@ msgstr "Recuperando dados móveis"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
-msgstr ""
+msgstr "Não foram configurados túneis móveis"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
@@ -36915,7 +36921,7 @@ msgstr "Intervalo de atualização"
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sRecuperando informações de suporte %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
@@ -37092,7 +37098,7 @@ msgstr "Uso de disco"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Obtendo status de atualização %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -37116,15 +37122,15 @@ msgstr "O sistema está na versão mais recente."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
-msgstr ""
+msgstr "O sistema está em versão posterior ao lançamento oficial."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
-msgstr ""
+msgstr "Comparação de erros instalada com a última versão disponível"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Informação de versão atualizada em"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -37203,7 +37209,7 @@ msgstr "utilização do CPU"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "Recuperando dados de CPU %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
@@ -39096,8 +39102,8 @@ msgid "Disable this static route"
 msgstr "Desabilita esta rota estática"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "Desabilitar automaticamente a checagem de auto atualização do painel."
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

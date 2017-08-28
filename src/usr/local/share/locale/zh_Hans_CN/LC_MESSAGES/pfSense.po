@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-17 09:17-0400\n"
+"PO-Revision-Date: 2017-08-25 03:37-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
@@ -2960,7 +2960,7 @@ msgstr "移动客户端"
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/vpn_ipsec_phase2.php:544
 msgid "None"
-msgstr "没有"
+msgstr "None"
 
 #: src/etc/inc/ipsec.inc:612
 msgid ""
@@ -3108,8 +3108,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4压缩[compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4压缩v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3579,7 +3579,7 @@ msgstr "英语"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "法语"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -3591,11 +3591,11 @@ msgstr "挪威博克马尔"
 
 #: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
-msgstr ""
+msgstr "波兰语"
 
 #: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
-msgstr "葡萄牙"
+msgstr "葡萄牙语"
 
 #: src/etc/inc/pfsense-utils.inc:2950
 msgid "Russian"
@@ -11685,7 +11685,7 @@ msgstr "禁用"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
 #: src/usr/local/www/firewall_nat_edit.php:910
 msgid "NAT reflection"
-msgstr "NAT回流"
+msgstr "NAT转换"
 
 #: src/usr/local/www/firewall_nat_edit.php:153
 #, php-format
@@ -16925,7 +16925,7 @@ msgstr "GIF 隧道远程子网"
 msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
-msgstr ""
+msgstr "隧道本地和隧道远程字段必须具有有效的IP地址，不能包含CIDR掩码或前缀。"
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -26768,9 +26768,9 @@ msgid ""
 "devices. These will not network correctly if the router uses '.local'. "
 "Alternatives such as '.local.lan' or '.mylocal' are safe."
 msgstr ""
-"不要使用'.local'作为域的最终部分（TLD），'.local'域是%1$s被mDNS广泛使用的%2$s（包括Avahi和Apple OS "
-"X的Bonjour / Rendezvous / Airprint / Airplay），以及一些Windows系统和网络设备。 如果路由器使用'."
-"local'，这些网络将无法正确连接。 诸如'.local.lan'或'.mylocal'的替代方案是安全的。"
+"不要使用'.local'作为域的最终部分（TLD），'.local'域被%1$smDNS%2$s广泛使用（包括Avahi和Apple OS "
+"X的Bonjour / Rendezvous / Airprint / Airplay），包括其他一些Windows系统和网络设备。 如果路由器使用'."
+"local'作为域，这些网络将无法正确连接。 可以采用'.local.lan'或'.mylocal'这样的替代方案。"
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -27572,7 +27572,7 @@ msgstr "纯NAT"
 
 #: src/usr/local/www/system_advanced_firewall.php:583
 msgid "NAT Reflection mode for port forwards"
-msgstr "NAT端口转发映射模式"
+msgstr "端口转发NAT的转换模式"
 
 #: src/usr/local/www/system_advanced_firewall.php:590
 #, php-format
@@ -33740,12 +33740,6 @@ msgstr "无法检索状态"
 msgid "No packages installed."
 msgstr "未安装插件。"
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr "本系统可用插件列表，请点<a href=\"pkg_mgr.php\" class=\"alert-link\">这里</a>。"
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr "ok"
@@ -33857,7 +33851,7 @@ msgstr "检索移动数据"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
-msgstr ""
+msgstr "没有配置移动隧道"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
 msgid "There are no configured IPsec Tunnels"
@@ -34099,7 +34093,7 @@ msgstr "版本"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:90
 msgid "is available."
-msgstr "不可用。"
+msgstr "可用。"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:97
 msgid "The system is on the latest version."
@@ -34355,7 +34349,7 @@ msgstr "向导"
 #: src/usr/local/www/wizard.php:418
 #, php-format
 msgid "Step %s of %s"
-msgstr "%s的步骤%s"
+msgstr "第%s步/共%s步"
 
 #: src/usr/local/www/wizards/openvpn_wizard.inc:637
 #: src/usr/local/www/wizards/openvpn_wizard.inc:654
@@ -35947,8 +35941,8 @@ msgid "Disable this static route"
 msgstr "禁用此静态路由"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "禁用系统面板的自动更新检查。"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
@@ -36129,7 +36123,7 @@ msgstr "通过RADIUS服务器颁布IP地址。"
 #: src/usr/local/www/vpn_openvpn_client.php:634
 #: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
-msgstr "用一个TLS密钥"
+msgstr "启用TLS密钥"
 
 #: src/usr/local/www/vpn_openvpn_client.php:644
 #: src/usr/local/www/vpn_openvpn_server.php:768

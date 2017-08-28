@@ -12,6 +12,7 @@
 # Julian Schlüter <julianschlueter91@gmail.com>, 2017. #zanata
 # Klaus Stock <zanata@stock-consulting.com>, 2017. #zanata
 # Lars <l.wegener@outlook.com>, 2017. #zanata
+# Lucas Greuloch <lucas.greuloch@gmail.com>, 2017. #zanata
 # Marc <mschacht@gmx.net>, 2017. #zanata
 # Mathias <mathias@mediamixx.de>, 2017. #zanata
 # Michael <sonic@dersonic.org>, 2017. #zanata
@@ -38,11 +39,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-21 05:15-0400\n"
+"PO-Revision-Date: 2017-08-27 06:29-0400\n"
 "Last-Translator: Alexander Franz <afranz@outlook.com>\n"
 "Language-Team: German (Germany)\n"
 "Language: de-DE\n"
@@ -3357,8 +3358,8 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr "LZ4 Kompression [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
-msgstr "LZ4 Kompression v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
+msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3865,7 +3866,7 @@ msgstr "Englisch"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Französisch"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -10130,6 +10131,22 @@ msgid ""
 "Some network adapters may not support or work well in promiscuous mode (see "
 "%7$s).%8$s"
 msgstr ""
+"%1$sDer Non-promiscuous Modus erfasst nur Verkehr, welcher direkt für den "
+"Host relevant ist (von ihm gesendet, per Broadcast übermittelt oder durch "
+"ihn hindurchgeroutet) und keine Pakete zeigt, welche bereits von der "
+"Netzwerkkarte ignoriert werden.%2$s%3$sPromiscuous Modus%4$s "
+"(\"Schnüffeln\") erfasst alle Daten, welche vom Netzwerkadapter gesehen "
+"werden, unabhängig davon, ob sie gültig oder für den Host relevant sind. In "
+"einigen Fällen können unvorhergesehen Seiteneffekte  auftreten und nicht "
+"alle Netzwerkkarten unterstützen diese Option. Klicken Sie auf Info für "
+"Details.%5$sDer Promiscuous Modus benötigt mehr Kernelverarbeitung der "
+"Pakete. Dadurch werden die Systemressourcen leicht höher beansprucht, "
+"speziell auf sehr ausgelasteten Netzwerken oder leistungsschwachen "
+"Prozessoren. Änderungen an der Paketverarbeitung kann es potenziellen "
+"Angreifern erlauben zu erkennen, dass ein Netzwerkadapter im Promiscuous "
+"Modus ist oder den Kernel zu erkennen (\"Fingerabdruck\", siehe %6$s). "
+"Einige Netzwerkadapter unterstützen diesen Modus nicht oder arbeiten nicht "
+"korrekt im Promiscuous Modus (siehe %7$s).%8$s"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -18299,6 +18316,8 @@ msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
 msgstr ""
+"Das Felder für lokal und remote müssen gültige IP Adressen enthalten und "
+"dürfen nicht in CIDR oder mit Präfixen angegeben werden."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -24672,6 +24691,12 @@ msgid ""
 "Key.%1$sDNSimple: Enter the API token.%1$sCloudflare: Enter the Global API "
 "Key."
 msgstr ""
+"FreeDNS (freedns.afraid.org): Geben Sie das \"Authentifizierungstoken\" ein, "
+"welches Sie von FreeDNS zur Verfügung gestellt bekommen. %1$sDNS Made Easy: "
+"Dynamisches DNS Passwort%1$sRoute 53: Geben Sie den geheimen "
+"Zugangsschlüssel ein.%1$sGleSYS: Geben Sie den API Schlüssel ein."
+"%1$sDreamhost: Geben Sie den API Schlüssel ein.%1$sDNSimple: Geben Sie das "
+"API Token ein.%1$sCloudflare: Geben Sie den globalen API Schlüssel ein."
 
 #: src/usr/local/www/services_dyndns_edit.php:378
 msgid "Zone ID"
@@ -24934,6 +24959,18 @@ msgid ""
 "information and files for downloading can be found on their %1$swebsite%2$s, "
 "and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
+"Schaltsekunden können Ende Juni oder Dezember addiert oder subtrahiert "
+"werden. Schaltsekunden werden von %1$sIERS%2$s verwaltet, welche in deren "
+"Bulletin C durchschnittlich 6-12 Monate im Voraus bekanntgegeben werden. "
+"Normalerweise werden diese Korrekturen nur benötigt, wenn der Server ein "
+"Schicht 1 NTP Server ist. Viele NTP Server kündigen allerdings keine "
+"anstehenden Schaltsekunden an, wenn sich andere NTP Server mit ihnen "
+"synchronisieren. %3$s%4$sFalls die Schaltsekunde wichtig für Ihre "
+"Netzwerkdienste ist, so ist es %6$s vorteilhaft%2$s, die Schaltsekundendatei "
+"spätestens einen Tag vor einer Zeitkorrektur herunterzuladen und "
+"hinzuzufügen %5$s. %3$s Zusätzliche Informationen können auf deren "
+"%1$sWebsite%2$s gefunden werden und zusätzlich auf der %7$NIST%2$s und "
+"%8$sNTP%2$s Website."
 
 #: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
@@ -25062,6 +25099,11 @@ msgid ""
 "if the GPS is not listed.%1$sThe predefined configurations assume the GPS "
 "has already been set to NMEA mode."
 msgstr ""
+"Diese Option erlaubt es, eine vordefinierte Konfiguration auszuwählen. "
+"Standard ist die Konfiguration von pfSense 2.1 und früher (nicht empfohlen). "
+"Wählen Sie Allgemein, wenn das GPS nicht aufgelistet wird.&1$sDie "
+"vordefinierte Konfiguration setzt voraus, dass das GPS bereits auf den NMEA "
+"Modus gesetzt wurde."
 
 #: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
@@ -25142,12 +25184,16 @@ msgid ""
 "Enabling this will rapidly fill the log, but is useful for tuning Fudge time "
 "2."
 msgstr ""
+"Wenn aktiviert, wird das Log sehr schnell gefüllt, aber es ist nützlich, um "
+"die Fuge Zeit 2 abzugleichen."
 
 #: src/usr/local/www/services_ntpd_gps.php:468
 msgid ""
 "Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS "
 "initialization commands."
 msgstr ""
+"Aktiveren Sie den erweiterten GPS Status, falls GPGSV oder GPGGA explizit "
+"von den GPS Initialisierungsbefehlen aktiviert wurden."
 
 #: src/usr/local/www/services_ntpd_gps.php:472
 #: src/usr/local/www/services_ntpd_pps.php:190
@@ -25219,6 +25265,9 @@ msgid ""
 "such as the transmission delay between the transmitter and the receiver "
 "(default: 0.0)."
 msgstr ""
+"Die Fuge Zeit wird verwendet,  um den PPS Signalversatz zur aktuellen "
+"Sekunde, wie die Übertragungsverzögerung zwischen Sender und Empfänger, zu "
+"spezifizieren (Standard: 0.0)."
 
 #: src/usr/local/www/services_ntpd_pps.php:162
 #: src/usr/local/www/status_ntpd.php:298
@@ -25231,6 +25280,9 @@ msgid ""
 "useful to, for some reason, have ntpd prefer a different clock and just "
 "monitor this source."
 msgstr ""
+"Dies kann verwendet werden, um die PPS Clock Schicht zu verändern (Standard: "
+"0). Dies kann in einigen Fällen nützlich sein, um ntpd eine andere Uhr "
+"verwenden zu lassen und diese Quelle nur zu überwachen."
 
 #: src/usr/local/www/services_ntpd_pps.php:194
 msgid "This may be used to change the PPS Clock ID (default: PPS)."
@@ -25687,9 +25739,10 @@ msgid "Unmanaged"
 msgstr "Nicht verwaltet"
 
 #: src/usr/local/www/services_router_advertisements.php:128
-#, fuzzy
 msgid "Will advertise this router with stateless autoconfig."
-msgstr "Macht diesen Router mit \"zustandsloser autoconfig\" bekannt."
+msgstr ""
+"Veröffentlicht diesen Router mit einer zustandslosen automatischen "
+"Konfiguration."
 
 #: src/usr/local/www/services_router_advertisements.php:129
 msgid "Managed"
@@ -25707,13 +25760,12 @@ msgid "Assisted"
 msgstr "assistiert"
 
 #: src/usr/local/www/services_router_advertisements.php:130
-#, fuzzy
 msgid ""
 "Will advertise this router with configuration through a DHCPv6 server and/or "
 "stateless autoconfig."
 msgstr ""
-"Macht diesen Router mit Kinfigurationen durch einen DHCPv6 Server und/oder "
-"\"zustandsloser autoconfig\" bekannt."
+"Veröffentlicht diesen Router mit Konfigurationen durch einen DHCPv6 Server "
+"und/oder zustandslosen automatischen Konfiguration"
 
 #: src/usr/local/www/services_router_advertisements.php:131
 msgid "Stateless DHCP"
@@ -25724,6 +25776,9 @@ msgid ""
 "Will advertise this router with stateless autoconfig and other configuration "
 "information available via DHCPv6."
 msgstr ""
+"Veröffentlicht diesen Router mit einer zustandslosen automatischen "
+"Konfiguration und anderen über DHCPv6 erhältlichen "
+"Konfigurationsinformationen."
 
 #: src/usr/local/www/services_router_advertisements.php:133
 msgid ""
@@ -25761,13 +25816,12 @@ msgid "Minimum advertisement interval must be no less than 3."
 msgstr "Das minimal Ankündigungsinterval darf nicht kleiner als 3 sein."
 
 #: src/usr/local/www/services_router_advertisements.php:192
-#, fuzzy
 msgid ""
 "Minimum advertisement interval must be no greater than 0.75 * Maximum "
 "advertisement interval"
 msgstr ""
-"Das minimale Ankündigungsinterval darf nicht größer als 0,75 * maximales "
-"Ankündigungsinterval sein."
+"Das minimale Veröffentlichungsinterval muss mindestens 75% des maximales "
+"Veröffentlichungsintervals sein."
 
 #: src/usr/local/www/services_router_advertisements.php:197
 msgid "Maximum advertisement interval must be an integer."
@@ -25834,6 +25888,10 @@ msgid ""
 "sent) that addresses generated from the prefix via stateless address "
 "autoconfiguration remain preferred.%1$sThe default is 14400 seconds."
 msgstr ""
+"Sekunden. Die Zeitspanne in Sekunden (relativ zur Übertragungszeit des "
+"Pakets), welche Adressen aus dem Präfix\n"
+"mittels zustandsloser automatischer Konfiguration generieren, bleibt "
+"bevorzugt.%1$sDer Standard ist 14400 Sekunden."
 
 #: src/usr/local/www/services_router_advertisements.php:371
 msgid "Minimum RA interval"
@@ -26055,15 +26113,16 @@ msgid ""
 "A System Domain Local Zone Type of \"redirect\" is not compatible with "
 "dynamic DHCP Registration."
 msgstr ""
+"Ein System Domain Local Zone Typ \"redirect\" ist nicht mit dynamischer DHCP "
+"Registrierung kompatibel."
 
 #: src/usr/local/www/services_unbound.php:175
-#, fuzzy
 msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
 "Die generierte Konfigurationsdatei kann von unbound nicht geparst werden. "
-"Bitte den folgenden Fehler beheben:"
+"Bitte die folgenden Fehler beheben:"
 
 #: src/usr/local/www/services_unbound.php:191
 #: src/usr/local/www/services_unbound_advanced.php:190
@@ -26144,6 +26203,9 @@ msgid ""
 "send queries to authoritative servers and receive their replies. By default "
 "all interfaces are used."
 msgstr ""
+"Verwende (eine) andere Netzwerkschnittstelle(n), welche(s) der DNS Resolver "
+"zum Senden von Anfragen an autoritative Server und Empfangen derer Antworten "
+"verwenden soll. Als Standard werden alle Schnittstellen genutzt."
 
 #: src/usr/local/www/services_unbound.php:315
 msgid "*System Domain Local Zone Type"
@@ -26155,6 +26217,9 @@ msgid ""
 "Setup | Domain).  Transparent is the default.  Local-Zone type descriptions "
 "are available in the unbound.conf(5) manual pages."
 msgstr ""
+"Der lokale Zonentyp den die pfSense Sytem Domäne verwendet (Sytem | "
+"Allgemeine Einstellungen | Domäne). Standard: Transparent. Beschreibungen "
+"des lokalen Zonentyps sind in den Man-pages unter unbound.conf(5) verfügbar."
 
 #: src/usr/local/www/services_unbound.php:322
 msgid "DNSSEC"
@@ -26192,6 +26257,10 @@ msgid ""
 "DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
+"Wenn diese Option gesetzt ist, dann werden statische DHCP Zuordnungen im DNS "
+"Resolver registriert, damit ihr Name aufgelöst werden kann. Die Domäne in "
+"%1$sSystem &gt; General Setup%2$s sollte ebenfalls auf einen korrekten Wert "
+"gesetzt werden."
 
 #: src/usr/local/www/services_unbound.php:363
 #: src/usr/local/www/services_unbound.php:399
@@ -26282,14 +26351,14 @@ msgstr ""
 "Netzwerksegment.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:156
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
-"%1$sRefuse:%2$s Stoppt Anfragen von Hosts, die in den unten angegebenen "
-"Netzbereichen liegen, aber sendet den DNS rcode REFUSED Fehler zum Client "
-"zurück.%3$s"
+"%1$sAblehnen:%2$s Stoppt Anfragen von Hosts aus unten angegebenen "
+"Netzwerksegmenten,  sendet aber einen DNS rcode REFUSED Fehlernachricht zum "
+"Client zurück.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:157
 #, php-format
@@ -26307,6 +26376,10 @@ msgid ""
 "within the netblock defined below. Used for cache snooping and ideally "
 "should only be configured for the administrative host.%3$s"
 msgstr ""
+"%1$sErlaube Schnüffeln:%2$s Erlaubt den rekursiven und nicht-rekursiven "
+"Zugriff von Hosts aus dem unten definierten Netzwerksegment. Wird für "
+"gepuffertes Schnüffeln verwendet und sollte idealerweise nur auf dem "
+"administrativen Host konfiguriert werden. %3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:159
 #, php-format
@@ -26315,6 +26388,9 @@ msgid ""
 "hosts within the netblock defined below. Messages that are disallowed are "
 "dropped.%3$s"
 msgstr ""
+"%1$sLehne nicht-lokale ab:%2$s Erlaube nur autoritative lokale Anfragen von "
+"Hosts aus dem unten definierten Netzwerksegment. Nachrichten, welche nicht "
+"erlaubt sind, werden verworfen.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:160
 #, php-format
@@ -26323,6 +26399,9 @@ msgid ""
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
+"%1$sVerweigere nicht-lokale:%2$s Erlaube nur autoritative lokale Anfragen "
+"von Hosts aus dem unten definierten Netzwerksegment. Sendet für nicht "
+"erlaubte Nachrichten eine DNS rcode REFUSED Nachricht zurück an den Client."
 
 #: src/usr/local/www/services_unbound_acls.php:193
 msgid "New Access List"
@@ -26404,14 +26483,17 @@ msgstr "Ein valider Wert muss eingegeben werden für den Jostle Timeout."
 #: src/usr/local/www/services_unbound_advanced.php:112
 msgid "'Maximum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
+"'Maximum TTL for RRsets and Messages' muss eine positive Ganzzahl sein."
 
 #: src/usr/local/www/services_unbound_advanced.php:115
 msgid "'Minimum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
+"'Minimum TTL for RRsets and Messages' muss eine positive Ganzzahl sein."
 
 #: src/usr/local/www/services_unbound_advanced.php:118
 msgid "A valid value must be specified for TTL for Host Cache Entries."
 msgstr ""
+"Für TTL for Host Cache Entries muss ein gültiger Wert angegeben werden."
 
 #: src/usr/local/www/services_unbound_advanced.php:121
 msgid "A valid value must be specified for Number of Hosts to Cache."
@@ -26420,7 +26502,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:124
 msgid "A valid value must be specified for Unwanted Reply Threshold."
-msgstr ""
+msgstr "Für Unwanted Reply Threshold muss ein gültiger Wert angegeben werden."
 
 #: src/usr/local/www/services_unbound_advanced.php:127
 msgid "A valid value must be specified for Log Level."
@@ -26455,6 +26537,9 @@ msgid ""
 "traffic and load on the server, but frequently requested items will not "
 "expire from the cache."
 msgstr ""
+"Wenn aktiviert, so kann diese Optionen einen Anstieg des DNS Verkehrs und "
+"der Serverauslastung um etwa 10% zur Folge haben, aber regelmäßig angefragte "
+"Objekte im Puffer laufen nicht ab."
 
 #: src/usr/local/www/services_unbound_advanced.php:247
 msgid "Prefetch DNS Key Support"
@@ -26478,6 +26563,9 @@ msgid ""
 "If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC "
 "data is received, then the zone is made insecure. "
 msgstr ""
+"Fehlen diese Daten, so wird die Zone als gefälscht betrachtet. Wenn "
+"deaktiviert und keine DNSSEC Daten empfangen werden, so wird diese Zone als "
+"unsicher eingestuft."
 
 #: src/usr/local/www/services_unbound_advanced.php:261
 msgid "Message Cache Size"
@@ -26490,6 +26578,10 @@ msgid ""
 "automatically be set to twice this amount. The RRSet cache contains the "
 "actual RR data. The default is 4 megabytes."
 msgstr ""
+"Größe des Nachrichtenpuffers. Der Nachrichtenpuffer speichert DNS "
+"Antowortcodes und Validierungstatus. Der Resource Record Set (RRSet) Puffer "
+"wird automatisch auf den doppelten Wert gesetzt. Der RRSet Puffer beinhaltet "
+"die aktuellen RR Daten. Der Standard ist 4 Megabyte."
 
 #: src/usr/local/www/services_unbound_advanced.php:268
 msgid "Outgoing TCP Buffers"
@@ -26540,6 +26632,9 @@ msgid ""
 "queries arrive that need to be serviced, and no queries can be jostled, then "
 "these queries are dropped."
 msgstr ""
+"Die Anzahl der Anfragen, welche jeder Thread gleichzeitig bedient. Wenn mehr "
+"Anfragen ankommen als bedient werden können und keine Anfragen angestossen "
+"werden können, so werden diese Anfragen verworfen."
 
 #: src/usr/local/www/services_unbound_advanced.php:298
 msgid "Jostle Timeout"
@@ -26554,7 +26649,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:305
 msgid "Maximum TTL for RRsets and Messages"
-msgstr ""
+msgstr "Maximale TTL für RRSets und Nachrichten"
 
 #: src/usr/local/www/services_unbound_advanced.php:308
 msgid ""
@@ -26565,9 +26660,8 @@ msgid ""
 msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:313
-#, fuzzy
 msgid "Minimum TTL for RRsets and Messages"
-msgstr "Geringste TTL für RRsets und Nachrichten"
+msgstr "Mindeste TTL für RRsets und Nachrichten"
 
 #: src/usr/local/www/services_unbound_advanced.php:316
 msgid ""
@@ -26584,9 +26678,8 @@ msgid "minutes"
 msgstr "Minuten"
 
 #: src/usr/local/www/services_unbound_advanced.php:323
-#, fuzzy
 msgid "TTL for Host Cache Entries"
-msgstr "TTL für Host Cache Einträge"
+msgstr "TTL für Host Puffer Einträge"
 
 #: src/usr/local/www/services_unbound_advanced.php:326
 msgid ""
@@ -26613,7 +26706,7 @@ msgstr "Million"
 
 #: src/usr/local/www/services_unbound_advanced.php:338
 msgid "Unwanted Reply Threshold"
-msgstr ""
+msgstr "Schwelle für ungewollte Antworten"
 
 #: src/usr/local/www/services_unbound_advanced.php:342
 msgid ""
@@ -26637,7 +26730,6 @@ msgid "Select the log verbosity."
 msgstr "Wählen Sie den Log Detaillierungsgrad aus."
 
 #: src/usr/local/www/services_unbound_advanced.php:356
-#, fuzzy
 msgid "Disable Auto-added Access Control"
 msgstr "Deaktiviert automatisch hinzugefügte Access Control"
 
@@ -26653,7 +26745,6 @@ msgstr ""
 "Einträge deaktiviert sind."
 
 #: src/usr/local/www/services_unbound_advanced.php:364
-#, fuzzy
 msgid "Disable Auto-added Host Entries"
 msgstr "Deaktiviert automatisch hinzugefügte Host Einträge"
 
@@ -26690,27 +26781,31 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:99
 msgid "Domain override configured for DNS Resolver."
-msgstr ""
+msgstr "Für den DNS Resolver konfigurierte Domänenüberschreibungen"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:117
 msgid "Domains to Override with Custom Lookup Servers"
 msgstr ""
+"Domänen, welche mit benutzerdefinierten Lookup Servern überschrieben werden "
+"sollen."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:124
 msgid ""
 "Domain whose lookups will be directed to a user-specified DNS lookup server."
 msgstr ""
+"Domänen, deren Lookups auf einen benutzerdefinierten  DNS Lookup Server "
+"weitergeleitet werden."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:130
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "IPv4 or IPv6 address of the authoritative DNS server for this domain. e.g.: "
 "192.168.100.100%1$sTo use a non-default port for communication, append an "
 "'@' with the port number."
 msgstr ""
-"IPv4 oder IPv6 Adresse des authoritativen DNS Servers für diese Domäne. z.B.:"
-" 192.168.100.100%1$sUm einen Nicht-Standard-Port zur  Kommunication zu "
-"verwenden, füge ein '@' mit der Portnummer hinzu."
+"IPv4 oder IPv6 Adresse des autoritativen DNS Servers für diese Domäne. z.B.: "
+"192.168.100.100%1$sWird ein Nicht-Standard-Port zur  Kommunikation zu "
+"verwendet, so muss ein '@' mit der Portnummer hinzugefügt werden."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:152
 msgid ""
@@ -26724,6 +26819,15 @@ msgid ""
 "for the domain (including all of its subdomains), and other lookup servers "
 "will not be queried."
 msgstr ""
+"Diese Seite wird wendet, um Domänen anzugeben, bei denen der Standard DNS "
+"Lookup Prozess überschrieben werden soll und der Resolver stattdessen einen "
+"anderen (nicht-standard) Lokus Server anfragen soll. Es ist möglich, 'nicht-"
+"standard', 'ungültige' und 'lokale' Domänen wie 'test', 'mycompany."
+"localdomain' oder '1.168.192.in-addr.arpa', oder aber auch öffentlich "
+"auflösbare Domänen wie 'org', 'info', oder 'google.co.uk' anzugeben.Die "
+"eingegebene IP-Adresse wird als IP-Adresse eines autoritativen Lookup "
+"Servers für die Domäne angesehen (inklusive aller Subdomänen) und dass keine "
+"weiteren Lookup Server benötigt werden."
 
 #: src/usr/local/www/services_unbound_host_edit.php:78
 msgid ""
@@ -26735,25 +26839,25 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_host_edit.php:174
 msgid "Host override configured for DNS Resolver."
-msgstr ""
+msgstr "Überschriebene Hosteinträge für den DNS Resolver"
 
 #: src/usr/local/www/services_unbound_host_edit.php:199
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Name of the host, without the domain part%1$se.g. enter \"myhost\" if the "
 "full domain name is \"myhost.example.com\""
 msgstr ""
-"Name des Hosts, ohne den Domänenteil%1$sz.B. trage \"myhost\" ein, wenn der "
-"vollquaifizierte Domänenname \"myhost.example.com\" ist"
+"Name des Hosts ohne den Domänenteil%1$strage z.B. \"myhost\" bei einem "
+"vollquaifizierten Domänennamen \"myhost.example.com\" ein."
 
 #: src/usr/local/www/services_unbound_host_edit.php:207
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Parent domain of the host%1$se.g. enter \"example.com\" for \"myhost.example."
 "com\""
 msgstr ""
-"Elterndomäne des Hosts%1$sz.B. trage \"example.com\" für \"myhost.example."
-"com\""
+"Übergeordnete Domäne des Hosts%1$strage z.B. \"example.com\" für \"myhost."
+"example.com\" ein"
 
 #: src/usr/local/www/services_unbound_host_edit.php:214
 #, php-format
@@ -26776,6 +26880,16 @@ msgid ""
 "arpa', as well as usual publicly resolvable names such as 'www' or 'google."
 "co.uk'."
 msgstr ""
+"Diese Seite wird verwendet, um den gewöhnlichen Lookup Prozess eines "
+"bestimmten Hosts zu überschreiben. Ein Host wird durch seinen Namen und "
+"seine übergeordnete Domäne definiert (z.B. wird 'somesit.google.de' als host="
+"'somesite' und übergeordnete Domäne='google.de' eingegeben). Jeder Lookup "
+"Versuch dieses Hosts gibt automatisch die angegebene IP-Adresse zurück und "
+"es wird kein externer Lookup Server für diese Domäne benötigt. Der Name und "
+"die übergeordnete Domäne können beide 'nicht-standard', 'ungültige' und "
+"'lokale' Domänen wie 'test', 'mycompany.localdomain' oder '1.168.192.in-addr."
+"arpa' beinhalten, aber auch normalerweise öffentlich aufgelöste Namen wie "
+"'www' oder 'google.co.uk'."
 
 #: src/usr/local/www/services_unbound_host_edit.php:304
 msgid ""
@@ -27673,24 +27787,29 @@ msgid "Cell SIM State"
 msgstr "Mobilfunk SIM-Status"
 
 #: src/usr/local/www/status_interfaces.php:127
+#, fuzzy
 msgid "Cell Service"
-msgstr ""
+msgstr "Mobilfunkanbieter"
 
 #: src/usr/local/www/status_interfaces.php:128
+#, fuzzy
 msgid "Cell Upstream"
-msgstr ""
+msgstr "Mobilfunk Upstream"
 
 #: src/usr/local/www/status_interfaces.php:129
+#, fuzzy
 msgid "Cell Downstream"
-msgstr ""
+msgstr "Mobilfunk Downstream"
 
 #: src/usr/local/www/status_interfaces.php:130
+#, fuzzy
 msgid "Cell Current Up"
-msgstr ""
+msgstr "Mobilfunk aktueller Upstream"
 
 #: src/usr/local/www/status_interfaces.php:131
+#, fuzzy
 msgid "Cell Current Down"
-msgstr ""
+msgstr "Mobilfunk aktueller Downstream"
 
 #: src/usr/local/www/status_interfaces.php:141
 msgid "IPv4 Address"
@@ -28543,6 +28662,11 @@ msgid ""
 "set the size, then clear all logs using the \"Reset Log Files\" option "
 "farther down this page. "
 msgstr ""
+"ANMERKUNG: Log Größen werden das nächste Mal geändert, wenn eine Logdatei "
+"geändert oder gelöscht wird. Um die Größe der Logdateien sofort zu erhöhen, "
+"sichern Sie als erstes die Optionen zum Setzen der Größe. Anschließend "
+"leeren Sie alle Logs mit Hilfe der \"Logdateien zurücksetzen\" Option weiter "
+"unten auf dieser Seite."
 
 #: src/usr/local/www/status_logs_settings.php:194
 msgid ""
@@ -28758,15 +28882,15 @@ msgstr "Ausgewählt"
 
 #: src/usr/local/www/status_ntpd.php:84
 msgid "Excess Peer"
-msgstr ""
+msgstr "Überschüssiger Peer"
 
 #: src/usr/local/www/status_ntpd.php:87
 msgid "False Ticker"
-msgstr ""
+msgstr "Falscher Ticker"
 
 #: src/usr/local/www/status_ntpd.php:90
 msgid "Outlier"
-msgstr ""
+msgstr "Ausreißer"
 
 #: src/usr/local/www/status_ntpd.php:201
 #, php-format
@@ -34882,6 +35006,8 @@ msgid ""
 "The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
 "is empty."
 msgstr ""
+"Der zweite L2TP DNS Server kann nicht gesetzt werden, wenn kein erster L2TP "
+"DNS Server angegeben wurde."
 
 #: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
@@ -35507,6 +35633,11 @@ msgid ""
 "virtual interface. Leave blank if the server is capable of providing "
 "addresses to clients."
 msgstr ""
+"Hier ist die das private IPv4 Netzwerk in CIDR Notation angegeben, welches "
+"für die Kommunikation zwischen Client und Server dient (z.B. 10.0.8.0/24). "
+"Die zweite nutzbare Adresse in dem Netzwerk wird der virtuellen "
+"Schnittstelle des Clients zugewiesen. Leer lassen, wenn der Server in der "
+"Lage ist Adressen an die Clients zu vergeben."
 
 #: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
@@ -35522,6 +35653,11 @@ msgid ""
 "assigned to the client virtual interface. Leave blank if the server is "
 "capable of providing addresses to clients."
 msgstr ""
+"Hier ist die das private IPv4 Netzwerk in CIDR Notation angegeben, welches "
+"für die Kommunikation zwischen Client und Server dient (z.B. fe80::/64). "
+"Wird über dieses Feld eine statische Adresse gesetzt, so wird die Adresse ::"
+"2 der virtuellen Schnittstelle des Clients zugewiesen. Leer lassen, wenn der "
+"Server in der Lage ist Adressen an die Clients zu vergeben."
 
 #: src/usr/local/www/vpn_openvpn_client.php:813
 #: src/usr/local/www/vpn_openvpn_server.php:1055
@@ -35573,6 +35709,9 @@ msgid ""
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
+"Maximale ausgehende Bandbreite für diesen Tunnel. Leer lassen für kein Limit."
+" Der eingegebene Wert muss zwischen 100 byte/sek. und 100 MByte/sek. liegen "
+"(eingeben in Bytes pro Sekunde). Nicht mit UDP Fast I/O kompatibel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:843
 #: src/usr/local/www/vpn_openvpn_server.php:1083
@@ -35611,6 +35750,8 @@ msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
 msgstr ""
+"Diese Option erlaubt dem Server weiterhin, die TCP/IP Eigenschaften der TUN/"
+"TAP Schnittstelle des Clients zu setzen."
 
 #: src/usr/local/www/vpn_openvpn_client.php:868
 msgid "Don't add/remove routes"
@@ -35621,6 +35762,9 @@ msgid ""
 "Do not execute operating system commands to install routes. Instead, pass "
 "routes to --route-up script using environmental variables."
 msgstr ""
+"Verwenden Sie keine Betriebsystembefehle, um Routen zu setzen. Übergeben sie "
+"Routen stattdessen mit dem --route-up Skript mit Hilfe von "
+"Umgebungsvariablen."
 
 #: src/usr/local/www/vpn_openvpn_client.php:882
 msgid ""
@@ -35642,6 +35786,9 @@ msgid ""
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
 msgstr ""
+"Optimiert den Paketschreibzyklus, erhöht die CPU Effektivität um 5% bis 10%. "
+"Nicht kompatibel mit allen Plattformen, und nicht kompatibel mit OpenVPN "
+"Bandbreitenlimitierung."
 
 #: src/usr/local/www/vpn_openvpn_client.php:894
 #: src/usr/local/www/vpn_openvpn_server.php:1291
@@ -35657,6 +35804,11 @@ msgid ""
 "To test the best value for a site, start at 512KiB and test higher and lower "
 "values."
 msgstr ""
+"Konfiguriert eine Sende- und Empfangspuffergröße für OpenVPN. Die "
+"Standardgröße kann in vielen Fällen zu klein sein, abhängig von der Hardware "
+"und der Netzwerk Upload Geschwindigkeit. Um die beste Puffergröße zu finden, "
+"können einige Versuche nötig sein. Um den besten Wert für eine Site zu "
+"finden, starten Sie mit 512 kB und testen sie höhere und niedrigere Werte."
 
 #: src/usr/local/www/vpn_openvpn_client.php:904
 #: src/usr/local/www/vpn_openvpn_server.php:1301
@@ -35674,6 +35826,13 @@ msgid ""
 "and write. Uppercase is used for TCP/UDP packets and lowercase is used for "
 "TUN/TAP packets.%1$s6-11: Debug info range"
 msgstr ""
+"Jede Stufe zeigt die Informationen der vorherigen Stufen. Stufe 3 wird "
+"empfohlen, um eine gute Zusammenfassung über die Vorgänge zu erhalten, ohne "
+"mit zu vielen Informationen überschwemmt zu werden.%1$s%1$sKein: Nur fatale "
+"Fehler %1$sStandard bis 4: Normaler Anwendungsbereich%1$s5: Gibt R und W "
+"Buchstaben für jedes gelesene und geschriebene Paket auf der Konsole aus. "
+"Großbuchstaben werden für TCP/UDP Pakete und Kleinbuchstaben für TUN/TAP "
+"Pakete verwendet. %1$s6-11: Debug Informationsbereich"
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
@@ -35817,6 +35976,12 @@ msgid ""
 "network address of the /30 is assumed to be the server address and the "
 "second network address will be assigned to the client."
 msgstr ""
+"Das virtuelle IPv4 Netzwerk in CIDR Notation, welches für die private "
+"Kommunikation zwischen Clients und Servern genutzt wird (z.B. 10.0.8.0/24). "
+"%1$sMit einer Subnet-Topologie, müssen die die Client IP Adresse und die "
+"Netzmaske dem IPv4 Tunnelnetzwerk auf dem Server entsprechen. %1$sMit einer "
+"net30 Topologie wir die erste Adresse des /30 Netzwerks als Serveradresse "
+"angenommen und die zweite Adresse wird dem Client zugewiesen."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:379
 #, php-format
@@ -35826,6 +35991,10 @@ msgid ""
 "the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel "
 "Network prefix on the server. "
 msgstr ""
+"Das virtuelle IPv6 Netzwerk mit Präfix ausgedrückt, welches für die private "
+"Kommunikation zwischen diesem Client und dem Server (z.B. 2001:db9:1:1::100/"
+"64). %1$sGeben sie die Client IPv6 Adresse und das Präfix an. Das Präfix "
+"muss mit dem Präfix des Tunnelnetzwerks auf dem Server übereinstimmen."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:385
 msgid "IPv4 Local Network/s"
@@ -35839,6 +36008,11 @@ msgid ""
 "networks. %1$sNOTE: Networks do not need to be specified here if they have "
 "already been defined on the main server configuration."
 msgstr ""
+"Dies sind die serverseitigen IPv4 Netzwerke, welche von diesem bestimmten "
+"Client aus erreichbar sein sollen. Angegeben in eine kommagetrennten Liste "
+"von CIDR Netzwerken. %1$sACHTUNG: Netzwerke müssen hier nicht angegeben "
+"werden, wenn sie bereits in der Hauptkonfiguration des Servers definiert "
+"wurden."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:394
 msgid "IPv6 Local Network/s"
@@ -35852,6 +36026,11 @@ msgid ""
 "PREFIX networks.%1$sNOTE: Networks do not need to be specified here if they "
 "have already been defined on the main server configuration."
 msgstr ""
+"Dies sind die serverseitigen IPv6 Netzwerke, welche von diesem bestimmten "
+"Client aus erreichbar sein sollen. Angegeben in eine kommagetrennten Liste "
+"von IP/PRÄFIX Netzwerken. %1$sACHTUNG: Netzwerke müssen hier nicht angegeben "
+"werden, wenn sie bereits in der Hauptkonfiguration des Servers definiert "
+"wurden."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:403
 msgid "IPv4 Remote Network/s"
@@ -36621,14 +36800,6 @@ msgstr "Ermittlung des Status nicht möglich"
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
 msgid "No packages installed."
 msgstr "Keine Pakete installiert."
-
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-"Pakete können <a href=\"pkg_mgr.php\" class=\"alert-link\">hier</a> "
-"installiert werden."
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
@@ -38981,8 +39152,8 @@ msgid "Disable this static route"
 msgstr "Diese statische Route deaktivieren"
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
-msgstr "Deaktiviert die automatische Update-Überprüfung auf der Hauptseite"
+msgid "Disable the Dashboard auto-update check"
+msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

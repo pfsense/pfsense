@@ -1,14 +1,15 @@
+# Tharwat Abdel aal othman <elnesre@gmail.com>, 2017. #zanata
 # khaled osama <khaled.osama@hcww.com.eg>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 14:14-0300\n"
+"POT-Creation-Date: 2017-08-28 16:46-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-04-03 06:54-0400\n"
-"Last-Translator: khaled osama <khaled.osama@hcww.com.eg>\n"
+"PO-Revision-Date: 2017-08-27 07:26-0400\n"
+"Last-Translator: Tharwat Abdel aal othman <elnesre@gmail.com>\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -21,6 +22,8 @@ msgid ""
 "address.<br /><br />Try accessing the firewall again after the lockout "
 "expires."
 msgstr ""
+"دخول مرفوض<br/><br/>محاولة لتسجيل الدخول من عنوان محظور مؤقتاً .<br /><br /"
+">أعد المحاولة بعد انتهاء الحظر."
 
 #: src/etc/inc/auth.inc:121
 msgid ""
@@ -28,10 +31,13 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
+"تم الكشف عن هجوم متكرر, قم بزيارة http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br />حاول الوصول الى المودم باستخدام عنوان الايبى بالاضافة الى "
+"اسم المضيف"
 
 #: src/etc/inc/auth.inc:140 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "إعادة توجيه"
+msgstr " .... إعادة توجيه"
 
 #: src/etc/inc/auth.inc:146
 msgid "Redirecting to the dashboard..."
@@ -58,7 +64,7 @@ msgstr "LDAP: تعذر البحث عن CA بالرجوع إلى المضيف %s.
 #: src/etc/inc/auth.inc:962
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr ""
+msgstr "خطأ! ldap_test_bind() لا يمكن بدء TLS بالخادم %s."
 
 #: src/etc/inc/auth.inc:1024
 msgid ""
@@ -69,7 +75,7 @@ msgstr ""
 #: src/etc/inc/auth.inc:1052
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
-msgstr ""
+msgstr "خطأ! ldap_get_user_ous() لا يمكن بدء TLS بالخادم %s."
 
 #: src/etc/inc/auth.inc:1062
 #, php-format
@@ -120,56 +126,57 @@ msgstr ""
 #: src/etc/inc/auth.inc:1368
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr ""
+msgstr "خطاً! تعذر الربط بالخادم  %s."
 
 #: src/etc/inc/auth.inc:1386
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr ""
+msgstr "يتم الآن البحث عن %s بالقاموس ."
 
 #: src/etc/inc/auth.inc:1395
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr ""
+msgstr "البحث الآن بالخادم %1$s, محتوى %2$s باستخدام المرشح %3$s."
 
 #: src/etc/inc/auth.inc:1409
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr ""
+msgstr "نتائج البحث بالخطأ : %s"
 
 #: src/etc/inc/auth.inc:1425
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr ""
+msgstr "خطاً! LDAP  إما بالبحث او تم العثور على العديد من المستخدمين"
 
 #: src/etc/inc/auth.inc:1432
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr ""
+msgstr "خطأ! لا يمكن الدخول الى الخادم %1$s كمستخدم %2$s: %3$s"
 
 #: src/etc/inc/auth.inc:1439
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr ""
+"تم تسجيل الدخول بنجاح كـ %1$s بواسطة LDAP الخادم %2$s  باستخدام DN = %3$s"
 
 #: src/etc/inc/auth.inc:1514
 #, php-format
 msgid "RADIUS start: %s"
-msgstr ""
+msgstr " بداية المجال : %s"
 
 #: src/etc/inc/auth.inc:1526
 #, php-format
 msgid "RADIUS send failed: %s"
-msgstr ""
+msgstr "فشل ارسال المجال: %s"
 
 #: src/etc/inc/auth.inc:1534
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr ""
+msgstr "تمت المصادقة"
 
 #: src/etc/inc/auth.inc:1540
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr ""
+msgstr "تم رفض المصادقة"
 
 #: src/etc/inc/auth.inc:1662
 msgid "Widget configuration has been changed."
@@ -178,7 +185,7 @@ msgstr "تم تغيير تكوين القطعة."
 #: src/etc/inc/auth.inc:1667
 #, php-format
 msgid "(User %s)"
-msgstr ""
+msgstr "(المستخدم %s)"
 
 #: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
 msgid "Local Database"
@@ -212,7 +219,7 @@ msgstr "خطأ: %1$s الوصف: %2$s"
 #: src/etc/inc/dyndns.class:1121 src/etc/inc/dyndns.class:1869
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
-msgstr ""
+msgstr "خطاً"
 
 #: src/etc/inc/authgui.inc:194
 msgid "unknown reason"
@@ -226,22 +233,22 @@ msgstr "تسجيل دخول غير صحيح (%s)."
 #: src/etc/inc/authgui.inc:200
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr "هذا الجهاز يقوم بصيانته حالبا : %s."
+msgstr "الجهاز تحت الصيانة بواسطة  : %s ."
 
 #: src/etc/inc/authgui.inc:283
 #, php-format
 msgid "%1$s.%2$s"
-msgstr ""
+msgstr "%1$s.%2$s"
 
 #: src/etc/inc/authgui.inc:285
 #, php-format
 msgid "Login to %1$s"
-msgstr "سجل الدخول %1$s"
+msgstr "تسجيل الدخول الى %1$s"
 
 #: src/etc/inc/authgui.inc:302
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
-msgstr "دخول"
+msgstr "تسجيل الدخول"
 
 #: src/etc/inc/authgui.inc:348
 msgid ""
@@ -250,6 +257,10 @@ msgid ""
 "\t\t\t\t\t\t\t\tIf this forwarding is unexpected, it should be verified that "
 "a man-in-the-middle attack is not taking place."
 msgstr ""
+"العنوان الايبى المستخدم للوصول الى المودم لم تتم تهئيته محلياً , لربما تم "
+"اعادة توجيهه بواسطه NAT او بوسائل أخرى .\n"
+"                                اذا كان هذا التوجيه غير متوقعاً , ينبغى "
+"التحقق فى المنتصف حتى لا يكتمل "
 
 #: src/etc/inc/authgui.inc:399
 msgid "The browser must support cookies to login."
@@ -258,16 +269,16 @@ msgstr "يجب أن يدعم المتصفح ملفات تعريف الارتبا
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr "%s البوابة المقيدة"
+msgstr "%s بوابة الدخول"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr "مرحبا بكم في  %s البوابة المقيدة!"
+msgstr "مرحبا بكم في  %s بوابة الدخول!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr "أسم المستخدم:"
+msgstr "أسم المستخدم :"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
@@ -275,7 +286,7 @@ msgstr "كلمة السر:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr "أدخل رمز القسيمة:"
+msgstr "أدخل رمز القسيمة :"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:99
 msgid "Continue"
@@ -283,29 +294,29 @@ msgstr "استمرار"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "إعادة التوجيه لـ"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:238
 #: src/usr/local/www/head.inc:548
 msgid "Logout"
-msgstr ""
+msgstr "تسجيل الخروج"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "إضغط الزر بالاسفل لقطع الإتصال"
 
 #: src/etc/inc/captiveportal.inc:1752
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr " خطأ : لا يمكن فتح'%1$s' فى بوابة التقييد  العناصر المكتوبة  ()%2$s"
 
 #: src/etc/inc/captiveportal.inc:2344
 msgid "Captive Portal allowed users configuration changed"
-msgstr ""
+msgstr "بوابة الدخول , التكوين تغير للمستخدمين المصرح لهم"
 
 #: src/etc/inc/certs.inc:44
 msgid "FQDN or Hostname"
-msgstr ""
+msgstr "FQDN او إسم المضيف "
 
 #: src/etc/inc/certs.inc:45 src/etc/inc/ipsec.inc:77 src/etc/inc/ipsec.inc:89
 #: src/usr/local/www/diag_arp.php:333 src/usr/local/www/services_dhcp.php:1444
@@ -318,42 +329,42 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:95
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:80
 msgid "IP address"
-msgstr ""
+msgstr "عنوان الايبى"
 
 #: src/etc/inc/certs.inc:46
 msgid "URI"
-msgstr ""
+msgstr "الرابط"
 
 #: src/etc/inc/certs.inc:47
 msgid "email address"
-msgstr ""
+msgstr "البريد الإلكترونى"
 
 #: src/etc/inc/config.console.inc:45
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "خطر! تحذير!  تنبيه!"
 
 #: src/etc/inc/config.console.inc:46
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr ""
+msgstr "%1$s يتطلب* على الاقل * %2$s ذاكرة لتعمل الوظائف بشكل صحيح .%3$s"
 
 #: src/etc/inc/config.console.inc:47
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
+msgstr "تم الكشف عن(%1$s) فقط من الذاكرة , بـ (%2$s) المتاح لـ %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:48
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "إضغط ENTER للإستمرار ."
 
 #: src/etc/inc/config.console.inc:66 src/etc/inc/config.console.inc:445
 msgid "No interfaces found!"
-msgstr ""
+msgstr "لم يتم العثور على  واجهة !"
 
 #: src/etc/inc/config.console.inc:84
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "هل تحتاج VLANS الى الاعداد اولاً ؟"
 
 #: src/etc/inc/config.console.inc:87
 msgid ""
@@ -361,29 +372,31 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
+"فى حالة عدم إستخدام VLANs , أو للواجهات الاختيارية فقط , فمن الانسب استخدام "
+"المتصفح لتهيئة VLANs لاحقاً , اذا تطلب ذلك ."
 
 #: src/etc/inc/config.console.inc:90
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "هل ينبغى إعداد VLANs الآن [ نعم | لا ] ؟"
 
 #: src/etc/inc/config.console.inc:101
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "واجهات VLANs :"
 
 #: src/etc/inc/config.console.inc:121
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr ""
+msgstr "ادخل إسم واجهة WAN او إضغط 'a' للكشف التلقائى "
 
 #: src/etc/inc/config.console.inc:122
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr ""
+msgstr "%1$s(%2$s or a): "
 
 #: src/etc/inc/config.console.inc:130 src/etc/inc/config.console.inc:156
 #: src/etc/inc/config.console.inc:192 src/etc/inc/config.console.inc:468
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr ""
+msgstr "%1$s خطأ بإسم الواجهة  '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:138
 #, php-format
@@ -391,11 +404,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$s ادخل إسم واجهة LAN او إضغط 'a' للكشف التلقائى %2$s\n"
+"ملاحظة : سوف يَمكن ذلك نظام الجدار النارى /  NAT %3$s ) . %4$s إضغط 'a' او "
+"لاشىء للإنهاء) : %5$s"
 
 #: src/etc/inc/config.console.inc:175
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$s واجهة اختيارية %2$s  تم العثور على الوصف : %3$s"
 
 #: src/etc/inc/config.console.inc:178
 #, php-format
@@ -403,28 +419,30 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sادخل إسم الواجهة الاختيارية %2$s او قم بالضغط على 'a' للكشف التلقائى "
+"%3$s (%4$sاو لا شىء اذا تم  الانتهاء ) : %5$s"
 
 #: src/etc/inc/config.console.inc:185
 msgid "Optional"
-msgstr ""
+msgstr "اختيارى"
 
 #: src/etc/inc/config.console.inc:221
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "سيتم تعيين الواجهات على النحو التالى : "
 
 #: src/etc/inc/config.console.inc:231 src/etc/inc/config.console.inc:428
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "هل تريد الإستمرار [نعم | لا] ؟"
 
 #: src/etc/inc/config.console.inc:248
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "لقد اخترت ازالة واجهة الـ LAN"
 
 #: src/etc/inc/config.console.inc:249
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr ""
+msgstr "هل ترغب بازالة عنوان LAN وإفراغ الواجهة الآن ؟"
 
 #: src/etc/inc/config.console.inc:370
 #, php-format
@@ -433,93 +451,96 @@ msgstr "%sحفظ التغييرات..."
 
 #: src/etc/inc/config.console.inc:371
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "وحدة تحديد الواجهات "
 
 #: src/etc/inc/config.console.inc:372
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "تم . %s"
 
 #: src/etc/inc/config.console.inc:380
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "دقيقة حتى يتم اعادة تحميل الاعدادات"
 
 #: src/etc/inc/config.console.inc:381
 msgid " done!"
-msgstr ""
+msgstr "تم ."
 
 #: src/etc/inc/config.console.inc:405
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr " الارتباط المكتشف على الواجهة  %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:410
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "لم يتم الكشف عن ارتباط %s ."
 
 #: src/etc/inc/config.console.inc:427
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "تحذير : فى حالة الإستمرار سيتم ازالة جميع VLANs الحالية ! ."
 
 #: src/etc/inc/config.console.inc:443
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "واجهات مؤهلة لـ VLAN"
 
 #: src/etc/inc/config.console.inc:458
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "لم يتم اكتشاف واجهات مؤهلة للـ VLAN ."
 
 #: src/etc/inc/config.console.inc:462
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"أدخل إسم الواجهة الرئيسية لـ VLAN الحديثة (او لا شىء فى حالة الانتهاء ) : "
 
 #: src/etc/inc/config.console.inc:475
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "أدخل وسم VLAN (1- 4094 ) :"
 
 #: src/etc/inc/config.console.inc:479
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sخاطىء VLAN وسم '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:486
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "الواجهة الرئيسية و VLAN موجودة بالفعل ."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "ترقية  التهيئة m0n0wall لـ pfsense"
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "خطأ! لا يمكن تحويل m0n0wall -> pfsense فى ملف  config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "عثر على التهيئة   %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
 #: src/etc/inc/config.lib.inc:232 src/etc/inc/config.lib.inc:253
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
-msgstr ""
+msgstr "لم يتم العثور على ملف config.xml , حاول إستعادة اخر ملف معروف ."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"لم يتم العثور على ملف config.xml او تكوين احتياطى , قم بإعادة القيم "
+"الافتراضية ."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "ملف Config.xml مفتوح ."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "كلمة مرور خاطئة . من فضلك اعد المحاولة ."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -527,50 +548,52 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"ملف Config.xml تالف بحجم  0 bytes . لايمكن استعادة نسخ احتياطى سابق من الملف "
+"."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:525
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "لا يمكن إستعادة ملف config.xml ."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s يتم الإستعادة الآن  التكوين %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "لم يتم العثور على ملف التكوين XML  .  لا يمكن إستمرار الاقلاع %s ."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
-msgstr ""
+msgstr "تم التعرف على آخر ملف تهيئة واستعادته . اضغط من فضلك لفحص الملف بدقة"
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "لم يتم العثور على ملف التهيئة المستخدم ! انهاء ...."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
-msgstr ""
+msgstr "بدأت ترقية التهيئة عند  %s, الزمن المتوقع للتنفيذ 15 دقيقة"
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "bogon محدث تكرار التحديث حتى 3am"
 
 #: src/etc/inc/config.lib.inc:389
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "انتهت ترقية التهيئة عند %s"
 
 #: src/etc/inc/config.lib.inc:391
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "ترقية اصدار التهيئة من المستوى %1$s حتى %2$s"
 
 #: src/etc/inc/config.lib.inc:469
 #, php-format
@@ -578,61 +601,65 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
+"تم منع حفظ تصاريح التكوين بواسطة المستخدم غير مصرح بكتابة التكوين للمستخدم "
+"'%s' ."
 
 #: src/etc/inc/config.lib.inc:502
 msgid "WARNING: Config contents could not be saved. Could not open file!"
-msgstr ""
+msgstr "تحذير : لا يمكن حفظ محتوى التكوين . لا يمكن فتح الملف ! "
 
 #: src/etc/inc/config.lib.inc:504
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
 msgstr ""
+"غير قادر على فتح الملف %1$s/config.xml من اجل الكتابة write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:635
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "عادت لـ %s ."
 
 #: src/etc/inc/config.lib.inc:652
 msgid "Installing configuration..."
-msgstr ""
+msgstr "تثبيت التكوين ...."
 
 #: src/etc/inc/config.lib.inc:654
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "تثبيت التكوين ...."
 
 #: src/etc/inc/config.lib.inc:705
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "خطأ xml : لا يمكن فتح الملف "
 
 #: src/etc/inc/config.lib.inc:711
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s بالسطر %2$d"
 
 #: src/etc/inc/config.lib.inc:764 src/etc/inc/config.lib.inc:766
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "ملف كاش النسخ الاحتياطى تالف %s . غير مرتبط"
 
 #: src/etc/inc/config.lib.inc:917
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "اجراء تغيير مجهول %s"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "فشل تشفير / فك تشفير البيانات !"
 
 #: src/etc/inc/dyndns.class:200
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "ديناميكى DNS: updatedns() بدأ"
 
 #: src/etc/inc/dyndns.class:269
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 
 #: src/etc/inc/dyndns.class:278
 #, php-format
@@ -640,11 +667,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+" Dynamic DNS (%1$s) كان هناك خطأ فى التعرف على عنوان الواجهة الرئيسية - %2$s "
+"(%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:368
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _update() starting."
 
 #: src/etc/inc/dyndns.class:465
 #, php-format
@@ -652,35 +681,37 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. "
+"العنوان ثبت مؤقتاً لـ  %3$s"
 
 #: src/etc/inc/dyndns.class:705
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "إرسال طلب لـ : %s"
 
 #: src/etc/inc/dyndns.class:938
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _remove() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _remove() starting."
 
 #: src/etc/inc/dyndns.class:1006
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _listCurrent() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _listCurrent() بدأ."
 
 #: src/etc/inc/dyndns.class:1066
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkLookupStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkLookupStatus() بدأ."
 
 #: src/etc/inc/dyndns.class:1068 src/etc/inc/dyndns.class:1120
 #: src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "بنجاح"
 
 #: src/etc/inc/dyndns.class:1073 src/etc/inc/dyndns.class:1125
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Curl حدث خطاً :"
 
 #: src/etc/inc/dyndns.class:1083 src/etc/inc/dyndns.class:1138
 #: src/etc/inc/dyndns.class:1161 src/etc/inc/dyndns.class:1180
@@ -698,7 +729,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1720 src/etc/inc/dyndns.class:1741
 #: src/etc/inc/dyndns.class:1756 src/etc/inc/dyndns.class:1767
 msgid "PAYLOAD:"
-msgstr ""
+msgstr "الاحمال :"
 
 #: src/etc/inc/dyndns.class:1102
 #, php-format
@@ -706,11 +737,12 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): _checkLookupStatus() ending.  No matching records "
 "found."
 msgstr ""
+"Dynamic DNS %1$s (%2$s): _checkLookupStatus() انهاء .  لا يجود سجلات مطابقة"
 
 #: src/etc/inc/dyndns.class:1117
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkStatus() بدأ."
 
 #: src/etc/inc/dyndns.class:1134 src/etc/inc/dyndns.class:1155
 #: src/etc/inc/dyndns.class:1174 src/etc/inc/dyndns.class:1192
@@ -722,7 +754,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1735 src/etc/inc/dyndns.class:1747
 #: src/etc/inc/dyndns.class:1763 src/etc/inc/dyndns.class:1781
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "تم تغيير ip بنجاح !"
 
 #: src/etc/inc/dyndns.class:1137 src/etc/inc/dyndns.class:1160
 #: src/etc/inc/dyndns.class:1179 src/etc/inc/dyndns.class:1197
@@ -740,50 +772,57 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1740 src/etc/inc/dyndns.class:1755
 #: src/etc/inc/dyndns.class:1766
 msgid "Unknown Response"
-msgstr ""
+msgstr "رد غير معروف"
 
 #: src/etc/inc/dyndns.class:1145
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"The DNS-O-Maticإسم المستخدم وكلمة المرور المحددة غير صحيحة .  لن يتم نشر "
+"التحديث الى الخدمة تى يتم حل المشكلة ."
 
 #: src/etc/inc/dyndns.class:1147
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"إسم المضيف المحدد غير مناسب  للنطاق . اذا لم يتم ادراج اسم مضيف , notfqdn "
+"ستعود مرة ."
 
 #: src/etc/inc/dyndns.class:1149
 msgid ""
 "The hostname passed could not be matched to any services configured. The "
 "service field will be blank in the return code."
 msgstr ""
+"المضيف الممرر لا يمكن ان يطابق اى خدمة مهيئة . حقل الخدمة سيصبح فارغاً ."
 
 #: src/etc/inc/dyndns.class:1151
 msgid ""
 "Up to 20 hosts my be updated. numhost is returned if attempting to update "
 "more than 20 or update a round-robin."
 msgstr ""
+"ربما يتم تحديث ما يقرب من 20 مضيف . numhost سيعود اذا حاولت تحديث اكثر من 20 "
+"دورة "
 
 #: src/etc/inc/dyndns.class:1153
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "إسم المضيف معطل لغرض التحديث ."
 
 #: src/etc/inc/dyndns.class:1158
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "DNS  صادف خطأ . إيقاف التحديث لمدة 30 دقيقة "
 
 #: src/etc/inc/dyndns.class:1167 src/etc/inc/dyndns.class:1187
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1221
 #: src/etc/inc/dyndns.class:1542 src/etc/inc/dyndns.class:1606
 #: src/etc/inc/dyndns.class:1728
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "Not A FQDN!"
 
 #: src/etc/inc/dyndns.class:1169 src/etc/inc/dyndns.class:1730
 msgid "No such host"
-msgstr ""
+msgstr "لا يوجد هذا المضيف "
 
 #: src/etc/inc/dyndns.class:1171 src/etc/inc/dyndns.class:1189
 #: src/etc/inc/dyndns.class:1206 src/etc/inc/dyndns.class:1223
@@ -792,7 +831,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1666 src/etc/inc/dyndns.class:1709
 #: src/etc/inc/dyndns.class:1732
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "لا تغيير فى عنوان الايبى "
 
 #: src/etc/inc/dyndns.class:1177 src/etc/inc/dyndns.class:1195
 #: src/etc/inc/dyndns.class:1212 src/etc/inc/dyndns.class:1229
@@ -800,7 +839,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1614 src/etc/inc/dyndns.class:1672
 #: src/etc/inc/dyndns.class:1738
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "فشل ترخيص المستخدم"
 
 #: src/etc/inc/dyndns.class:1243
 msgid "IP address is current, no update performed."
@@ -1021,198 +1060,200 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1593
 #, php-format
 msgid "%1$s updated to %2$s"
-msgstr ""
+msgstr "%1$s التحديث حتى %2$s"
 
 #: src/etc/inc/dyndns.class:1596
 msgid ""
 "Invalid Credentials! Don't forget to use API Key for password field with "
 "CloudFlare."
 msgstr ""
+"بيانات اعتماد غير صحيحه!  لاتنسى  ان تستخدم مفتاح API  فى حقل كلمة المرور مع "
+"CloudFlare. "
 
 #: src/etc/inc/dyndns.class:1598
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr ""
+msgstr "لا يمكن العثور على ID المنطقه او المضيف ، تفحص إسم المضيف ."
 
 #: src/etc/inc/dyndns.class:1600
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "خطأ غير محدد"
 
 #: src/etc/inc/dyndns.class:1623
 msgid "Wrong values - Update could not be completed."
-msgstr ""
+msgstr "قيمه خاطئة - لا يمكن إكمال التحديث ."
 
 #: src/etc/inc/dyndns.class:1625
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "إسم مستخدم غير معروف - المستخدم غير موجود"
 
 #: src/etc/inc/dyndns.class:1627
 msgid "Wrong password - Remember password is case sensitive."
-msgstr ""
+msgstr "كلمة مرور خاطئة - تذكر كلمة المرور حساسه لحالة الحروف ."
 
 #: src/etc/inc/dyndns.class:1629
 msgid "User unable to administer the selected domain."
-msgstr ""
+msgstr "المستخدم غير قادر على ادارة النطاق المحدد ."
 
 #: src/etc/inc/dyndns.class:1664
 msgid "Not A FQDN"
-msgstr ""
+msgstr "ليست FQDN"
 
 #: src/etc/inc/dyndns.class:1674
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "إسم المضيف غير موجود او DynDNS  غير مفعل ."
 
 #: src/etc/inc/dyndns.class:1676
 msgid "Bad request"
-msgstr ""
+msgstr "طلب خاطىء"
 
 #: src/etc/inc/dyndns.class:1678
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "تم حظر الوصول Dynamic DNS !"
 
 #: src/etc/inc/dyndns.class:1680
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr ""
+msgstr "خطأ بنهاية جوجل ، أعد المحاولة خلال 5 دقائق ."
 
 #: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1752
 msgid "Invalid username or password"
-msgstr ""
+msgstr "خطأ بإسم المستخدم او كلمة المرور"
 
 #: src/etc/inc/dyndns.class:1697
 msgid "Account suspended"
-msgstr ""
+msgstr "الحساب معطل"
 
 #: src/etc/inc/dyndns.class:1700
 msgid "Account revoked"
-msgstr ""
+msgstr "حساب ملغى "
 
 #: src/etc/inc/dyndns.class:1703
 msgid "Record does not exist in the system. Unable to update record"
-msgstr ""
+msgstr "السجل غير موجود بالنظام . لا يمكن تحديث السجل "
 
 #: src/etc/inc/dyndns.class:1706
 msgid "User does not have access to this record"
-msgstr ""
+msgstr "لا يمكن للمستخدم الوصول الى ذلك السجل "
 
 #: src/etc/inc/dyndns.class:1713
 msgid "General system error recognized by the system"
-msgstr ""
+msgstr "خطأ عام بالنظام تم التعرف عليه من قبل النظام"
 
 #: src/etc/inc/dyndns.class:1716
 msgid "General system error unrecognized by the system"
-msgstr ""
+msgstr "خطأ عام بالنظام لا يمكن للنظام التعرف عليه"
 
 #: src/etc/inc/dyndns.class:1775
 #, php-format
 msgid "_checkStatus() results: %1$s"
-msgstr ""
+msgstr "_checkStatus() النتائج : %1$s"
 
 #: src/etc/inc/dyndns.class:1786
 msgid "No record exists."
-msgstr ""
+msgstr "لا يوجد سجل"
 
 #: src/etc/inc/dyndns.class:1790
 msgid "No type exists."
-msgstr ""
+msgstr "النوع غير موجود"
 
 #: src/etc/inc/dyndns.class:1794
 msgid "No value exists."
-msgstr ""
+msgstr "القيمة غير موجودة"
 
 #: src/etc/inc/dyndns.class:1797
 msgid "No such zone exists."
-msgstr ""
+msgstr "المنطقة غير موجودة"
 
 #: src/etc/inc/dyndns.class:1800
 msgid "The specified record is invalid."
-msgstr ""
+msgstr "السجل المحدد خاطىء . "
 
 #: src/etc/inc/dyndns.class:1803
 msgid "The specified type is invalid."
-msgstr ""
+msgstr "النوع المحدد خاطىء . "
 
 #: src/etc/inc/dyndns.class:1806
 msgid "The specified value is invalid."
-msgstr ""
+msgstr "القمية المحددة خاطئة ."
 
 #: src/etc/inc/dyndns.class:1809
 msgid "Record is not editable."
-msgstr ""
+msgstr "السجل غير قابل للتعديل ."
 
 #: src/etc/inc/dyndns.class:1812
 msgid "Record exists but is not editable."
-msgstr ""
+msgstr "السجل موجود ولكن لا يمكن تعديله"
 
 #: src/etc/inc/dyndns.class:1815
 msgid "Record exists and must be removed before adding."
-msgstr ""
+msgstr "السجل موجود ويجب حذفه قبل الاضافه ."
 
 #: src/etc/inc/dyndns.class:1818 src/etc/inc/dyndns.class:1824
 msgid "A remote server error occurred updating the zone."
-msgstr ""
+msgstr "حدث خطأ بالسيرفر أثناء تحديث المنطقة ."
 
 #: src/etc/inc/dyndns.class:1821
 msgid "A remote server error occurred loading the zone."
-msgstr ""
+msgstr "حدث خطأ بالسيرفر أثناء تحميل المنطقة ."
 
 #: src/etc/inc/dyndns.class:1827
 msgid "A remote server error occurred adding a new record."
-msgstr ""
+msgstr "حدث خطأ بالسيرفر أثناء إضافة سجل جديد ."
 
 #: src/etc/inc/dyndns.class:1830
 msgid "A remote server error occurred removing an existing record."
-msgstr ""
+msgstr "حدث خطأ بالسيرفر اثناء حذف سجل موجود بالفعل ."
 
 #: src/etc/inc/dyndns.class:1844
 #, php-format
 msgid "DynDNS updated IP Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNSعنوان ايبى مُحدث  %1$s (%2$s) حتى %3$s"
 
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #: src/etc/inc/services.inc:2716 src/etc/inc/services.inc:2728
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
-msgstr ""
+msgstr "phpDynDNS: تحديث كاش الملف %1$s: %2$s"
 
 #: src/etc/inc/dyndns.class:1852
 #, php-format
 msgid "DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s"
-msgstr ""
+msgstr "DynDNS عنوان ايبىIPv6   محدث %1$s (%2$s) to %3$s"
 
 #: src/etc/inc/dyndns.class:1868
 msgid "ERROR!"
-msgstr ""
+msgstr "خطأ!"
 
 #: src/etc/inc/dyndns.class:1874
 msgid "No Dynamic DNS Service provider was selected."
-msgstr ""
+msgstr "Dynamic DNS لم يحدد مقدم خدمة  ."
 
 #: src/etc/inc/dyndns.class:1877
 msgid "No Username Provided."
-msgstr ""
+msgstr "لم يقدم إسم المستخدم ."
 
 #: src/etc/inc/dyndns.class:1880
 msgid "No Password Provided."
-msgstr ""
+msgstr "لم تقدم كلمة المرور ."
 
 #: src/etc/inc/dyndns.class:1883
 msgid "No Hostname Provided."
-msgstr ""
+msgstr "لم يقدم إسم المضيف ."
 
 #: src/etc/inc/dyndns.class:1886
 msgid "The Dynamic DNS Service provided is not yet supported."
-msgstr ""
+msgstr "مقدم خدمة  Dynamic DNS غير مدعوم ."
 
 #: src/etc/inc/dyndns.class:1889
 msgid "No Update URL Provided."
-msgstr ""
+msgstr "لم  يقدم رابط محدث ."
 
 #: src/etc/inc/dyndns.class:1892
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "خطاً بمعرف المنطقة ."
 
 #: src/etc/inc/dyndns.class:1895
 msgid "Invalid TTL"
-msgstr ""
+msgstr "خطاً TTL"
 
 #: src/etc/inc/dyndns.class:1898
 #, php-format
@@ -1220,68 +1261,69 @@ msgid ""
 "No change in my IP address and/or %s days has not passed. Not updating "
 "dynamic DNS entry."
 msgstr ""
+"لا تغيير فى عنوان الايبى او %s لم تمرر الايام . مدخل dynamic DNS غير محدث"
 
 #: src/etc/inc/dyndns.class:1901
 msgid "Unknown Response."
-msgstr ""
+msgstr "رد غير معلوم"
 
 #: src/etc/inc/dyndns.class:1920
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _detectChange() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _detectChange() بداية."
 
 #: src/etc/inc/dyndns.class:1927
 #, php-format
 msgid ""
 "Dynamic Dns (%s): Current WAN IP could not be determined, skipping update "
 "process."
-msgstr ""
+msgstr "ايبى WAN الحالى لا يمكن التعرف عليه  ، تجاهل عملية التحديث . "
 
 #: src/etc/inc/dyndns.class:1930
 #, php-format
 msgid "Dynamic Dns (%1$s): Current WAN IP: %2$s"
-msgstr ""
+msgstr "Dynamic Dns (%1$s): ايبى WAN  الحالى : %2$s"
 
 #: src/etc/inc/dyndns.class:1938
 #, php-format
 msgid "Cached IPv6: %s"
-msgstr ""
+msgstr "مؤقتاً  IPv6: %s"
 
 #: src/etc/inc/dyndns.class:1944
 msgid "No Cached IPv6 found."
-msgstr ""
+msgstr "لا يمكن العثور على IPv6  مؤقت ."
 
 #: src/etc/inc/dyndns.class:1952
 #, php-format
 msgid "Cached IP: %s"
-msgstr ""
+msgstr "Cached عنوان: %s"
 
 #: src/etc/inc/dyndns.class:1958
 msgid "No Cached IP found."
-msgstr ""
+msgstr "لا يمكن العثور على عنوان Cached ."
 
 #: src/etc/inc/dyndns.class:1972
 msgid "Dynamic Dns: cacheIP != wan_ip. Updating."
-msgstr ""
+msgstr "Dynamic Dns: cacheIP != wan_ip. محدث."
 
 #: src/etc/inc/dyndns.class:1973
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr ""
+msgstr "Cached IP: %1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1978
 #, php-format
 msgid "Dynamic Dns: More than %s days. Updating."
-msgstr ""
+msgstr "Dynamic Dns: اكثر من %s ايام . تحديث ."
 
 #: src/etc/inc/dyndns.class:1983
 msgid "Initial update."
-msgstr ""
+msgstr "تحديث مبدئى ."
 
 #: src/etc/inc/dyndns.class:2020
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkIP() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): _checkIP() بداية."
 
 #: src/etc/inc/dyndns.class:2045
 #, php-format
@@ -1289,343 +1331,345 @@ msgid ""
 "Dynamic DNS %1$s debug information (%2$s): Could not resolve %3$s to IP "
 "using interface IP %4$s."
 msgstr ""
+"Dynamic DNS %1$s مصحح المعلومات (%2$s): Could not resolve %3$s الى ايبى "
+"المنفذ السمتخدم  IP %4$s."
 
 #: src/etc/inc/dyndns.class:2064
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from %4$s"
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s مستخرج من  %4$s"
 
 #: src/etc/inc/dyndns.class:2067
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): IP address could not be extracted from %3$s"
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): لا يمكن استخراج عنوان الايبى من  %3 $s"
 
 #: src/etc/inc/dyndns.class:2072
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s): %3$s استخراج من النظام المحلى ."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr ""
+msgstr "قاعدة سيطة : محظور من عرض سجل الجدار النارى"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "أضيف المدخل "
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
-msgstr ""
+msgstr "تم حظر عرض المضيفون من سجل الجدار النارى"
 
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr ""
+msgstr "مضيف محظور %s من خلال القاعدة السهلة "
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
-msgstr ""
+msgstr "القاعدة السهلة : ممر من عرض سجل جدار الحماية"
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "محاولة منع ايبى غير صالح ."
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "منفذ خاطىء للقاعدة المحظورة :"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "تم إضافة المضيف بنجاح"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
-msgstr ""
+msgstr "فشل انشاء قاعدة محظورة ، إسم مستعار ، او اضافة مضيف ."
 
 #: src/etc/inc/easyrule.inc:366
 msgid "Tried to block but had no host IP or interface"
-msgstr ""
+msgstr "محاولة للحظر لكن يملك عنوان ايبى او منفذ"
 
 #: src/etc/inc/easyrule.inc:368
 msgid "Unknown block error."
-msgstr ""
+msgstr "خطأ محظور غير معلوم . "
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "محاولة الغاء حظر  عنوان ايبى خاطىء :"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
-msgstr ""
+msgstr "لم تطبق قواعد حظر على المنفذ : "
 
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr ""
+msgstr "مضيف غير محظور من خلال القاعدة البسيطة "
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
-msgstr ""
+msgstr "تم الغاء حظر المضيف بنجاح "
 
 #: src/etc/inc/easyrule.inc:425
 msgid "Host is not on block list: "
-msgstr ""
+msgstr "المضيف غير مدرج  بقائمة الحظر :"
 
 #: src/etc/inc/easyrule.inc:429
 msgid "Tried to unblock but had no host IP or interface"
-msgstr ""
+msgstr "محاولة لرفع الحظر لكن لا  يتوفر عنوان ايبى او منفذ "
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "خطأ بالمنفذ او القاعدة الممررة : "
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "خطأ ببرتوكول القاعدة الممررة : "
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "محاولة لتمرير مصدر ايبى خاطىء : "
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "محاولة لتمرير وجهة ايبى خاطئة ."
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "وجهة المنفذ مفقودة : "
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "محاولة لتمرير وجهة منفذ خاطئة ."
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "تم تمرير القاعدة بنجاح"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "خطأ باضافة قاعدة ممررة . "
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "معرفات مفقودة  لتمرير القاعدة . "
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "خطأ تمرير غير معلوم ."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr ""
+msgstr "المضيف البديل "
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "خطأ في تحويل مخطط البيانات"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr ""
+msgstr "تكرير الرد"
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr ""
+msgstr "تكرير الطلب"
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "FQDN رد"
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "FQDN إستعلام "
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr ""
+msgstr "إستعلام عضوية المجموعة "
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "تقرير عضوية المجموعة "
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "إنهاء عضوية المجموعة"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr ""
+msgstr "رد معلوماتى "
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr ""
+msgstr "طلب معلومة"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr ""
+msgstr "IPv6 -انا-هنا"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr ""
+msgstr "IPv6 أين انت "
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr ""
+msgstr "الاستماع المتعدد تم"
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr ""
+msgstr "تقرير الاستماع المتعدد"
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr ""
+msgstr "إستعلام الاستماع المتعدد"
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr ""
+msgstr "رد عنوان مقنع"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr ""
+msgstr "طلب عنوان مقنع"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr ""
+msgstr "اعادة توجيه مضيف الجوال "
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr ""
+msgstr "رد تسجيل الجوال"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr ""
+msgstr "طلب تسجيل الجوال"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "mtrace رسائل"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr ""
+msgstr "mtrace resp"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "إعلانات  مجاورة"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr ""
+msgstr "جار ملامس"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "طلب معلومات العقدة"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr ""
+msgstr "رد معلومات العقدة"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr ""
+msgstr "مشكلة بالمتغير (عنوان خاطىء)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr ""
+msgstr "Photuris"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:796
 msgid "Redirect"
-msgstr ""
+msgstr "إعادة توجيه "
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "إعلانات المودم"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "المودم الملامس"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "إعادة ترقيم الموجه"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "تجاهل"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
-msgstr ""
+msgstr "أخماد المصدر"
 
 #: src/etc/inc/filter.inc:83
 msgid "Timestamp reply"
-msgstr ""
+msgstr "رد الخريطة الزمنيه"
 
 #: src/etc/inc/filter.inc:84
 msgid "Timestamp"
-msgstr ""
+msgstr "الخريطة الزمنيه"
 
 #: src/etc/inc/filter.inc:85
 msgid "Time exceeded"
-msgstr ""
+msgstr "الوقت المتجاوز"
 
 #: src/etc/inc/filter.inc:86
 msgid "Packet too big"
-msgstr ""
+msgstr "الباقة كبيرة الحجم"
 
 #: src/etc/inc/filter.inc:87 src/usr/local/www/diag_dns.php:325
 #: src/usr/local/www/diag_traceroute.php:37
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
-msgstr ""
+msgstr "متتبع"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
-msgstr ""
+msgstr "لا يمكن الوصول للوجهة"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr ""
+msgstr "من صاحب الرد"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr ""
+msgstr "من صاحب الطلب"
 
 #: src/etc/inc/filter.inc:240
 msgid "Initializing"
-msgstr ""
+msgstr "جارٍ التهيئة"
 
 #: src/etc/inc/filter.inc:252
 msgid "Configuring firewall"
-msgstr ""
+msgstr "تهيئة الجدار النارى"
 
 #: src/etc/inc/filter.inc:259
 msgid "Creating aliases"
-msgstr ""
+msgstr "تكوين الاسماء المستعارة"
 
 #: src/etc/inc/filter.inc:265
 msgid "Generating Limiter rules"
-msgstr ""
+msgstr "توليد قواعد المحدد"
 
 #: src/etc/inc/filter.inc:268
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "توليد قواعد  NAT"
 
 #: src/etc/inc/filter.inc:274
 msgid "Generating filter rules"
-msgstr ""
+msgstr "توليد قواعد التصفيه"
 
 #: src/etc/inc/filter.inc:281
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "توليد صفوف انتظار ALTQ"
 
 #: src/etc/inc/filter.inc:286
 msgid "Loading filter rules"
-msgstr ""
+msgstr "تحميل مبادىء التصفيه"
 
 #: src/etc/inc/filter.inc:293
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "تم تعطيل الفلتر . لا يمكن تحميل المبادىء"
 
 #: src/etc/inc/filter.inc:295 src/etc/inc/filter.inc:547
 #: src/etc/inc/interfaces.inc:198 src/etc/inc/interfaces.inc:222
@@ -1646,263 +1690,264 @@ msgstr ""
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
-msgstr ""
+msgstr "تم ."
 
 #: src/etc/inc/filter.inc:391
 msgid "Setting up logging information"
-msgstr ""
+msgstr "إعداد معلومات السجل"
 
 #: src/etc/inc/filter.inc:396
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "إعداد معلومات SCRUB"
 
 #: src/etc/inc/filter.inc:442
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "السطر المذكور يقرأ  [%1$d]: %2$s"
 
 #: src/etc/inc/filter.inc:449
 msgid "PF was wedged/busy and has been reset."
-msgstr ""
+msgstr "PF  تم اعادة تعيين المثبت / المشغول"
 
 #: src/etc/inc/filter.inc:455 src/etc/inc/filter.inc:456
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "لقد حدث خطأ بتحميل المبادىء : %1$s - %2$s"
 
 #: src/etc/inc/filter.inc:532
 msgid "Processing down interface states"
-msgstr ""
+msgstr "معالجة حالة المنفذ الهابط"
 
 #: src/etc/inc/filter.inc:536
 msgid "Running plugins"
-msgstr ""
+msgstr "تشعيل الملحقات"
 
 #: src/etc/inc/filter.inc:540
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "تشيغل الملحقات (pf)"
 
 #: src/etc/inc/filter.inc:542
 msgid "Plugins completed."
-msgstr ""
+msgstr "إكتملت الملحقات ."
 
 #: src/etc/inc/filter.inc:545
 msgid "Done"
-msgstr ""
+msgstr "تم"
 
 #: src/etc/inc/filter.inc:775
 #, php-format
 msgid "Aliases with numeric-only names are not valid. Skipping alias %s"
 msgstr ""
+"غير مسموح بالاسماء المستعارة المكونة من ارقام  فقط . سيتم تجاهل الاسماء %s"
 
 #: src/etc/inc/filter.inc:853
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "تكوين عنصر مجموعة البوابة ..."
 
 #: src/etc/inc/filter.inc:893
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "اعداد المسار %1$s on %2$s"
 
 #: src/etc/inc/filter.inc:897
 #, php-format
 msgid "Too many members in group %s, gateway group truncated in ruleset."
-msgstr ""
+msgstr "اعضاء كثيرون داخل المجموعة ، تم قطع مجموعة البوابة بالمبادىء."
 
 #: src/etc/inc/filter.inc:909
 #, php-format
 msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
-msgstr ""
+msgstr "حدث خطأ اثناء محاولة البحث عن المنفذ %s .  لم يتم اضافة القاعدة ."
 
 #: src/etc/inc/filter.inc:1274
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr ""
+msgstr "إنشاء انعكاس لقاعدة NAT %s..."
 
 #: src/etc/inc/filter.inc:1372
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr ""
+msgstr "إنشاء إنعكاس لقاعدة %s..."
 
 #: src/etc/inc/filter.inc:1493
 msgid "Not installing NAT reflection rules for a port range > 500"
-msgstr ""
+msgstr "لم يتم تثبيت إنعكاس مبادىء لـ NAT من اجل مدى المنفذ > 500"
 
 #: src/etc/inc/filter.inc:1499
 msgid "Installing partial NAT reflection rules. Maximum 1,000 reached."
-msgstr ""
+msgstr "تثبيت جزئى لمبادىء الانعكاس . وصل الحد الاقصى 1,000 . "
 
 #: src/etc/inc/filter.inc:1580
 msgid "localhost"
-msgstr ""
+msgstr "السيرفر المحلى"
 
 #: src/etc/inc/filter.inc:1589
 msgid "static route"
-msgstr ""
+msgstr "موجه ثابت"
 
 #: src/etc/inc/filter.inc:1601
 msgid "DHCP alias address"
-msgstr ""
+msgstr "عنوان الاسم المستعار DHCP"
 
 #: src/etc/inc/filter.inc:1635
 msgid "PPPoE server"
-msgstr ""
+msgstr "سيرفر برودباند"
 
 #: src/etc/inc/filter.inc:1646
 msgid "L2TP server"
-msgstr ""
+msgstr "L2TP سيرفر"
 
 #: src/etc/inc/filter.inc:1655
 msgid "OpenVPN server"
-msgstr ""
+msgstr "OpenVPN سيرفر"
 
 #: src/etc/inc/filter.inc:1664
 msgid "OpenVPN client"
-msgstr ""
+msgstr "OpenVPN عميل"
 
 #: src/etc/inc/filter.inc:1674
 msgid "IPsec client"
-msgstr ""
+msgstr "IPsec عميل"
 
 #: src/etc/inc/filter.inc:1710
 msgid "Auto created rule for ISAKMP"
-msgstr ""
+msgstr "قاعدة انشئت تلقائياً لـ ISAKMP"
 
 #: src/etc/inc/filter.inc:1720
 msgid "Auto created rule"
-msgstr ""
+msgstr "قاعدة أنشئت تلقائياً"
 
 #: src/etc/inc/filter.inc:1853
 msgid "Creating 1:1 rules..."
-msgstr ""
+msgstr "تكوين 1:1 قواعد ..."
 
 #: src/etc/inc/filter.inc:2038
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr ""
+msgstr "تكوين قاعدة صادر متقدمة  %s"
 
 #: src/etc/inc/filter.inc:2085
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "تكوين قواعد صادر لـ NAT"
 
 #: src/etc/inc/filter.inc:2092
 msgid "Creating automatic outbound rules"
-msgstr ""
+msgstr "إنشاء قواعد صادر تلقائية"
 
 #: src/etc/inc/filter.inc:2122
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "إعداد مساعد TFTP"
 
 #: src/etc/inc/filter.inc:2166
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "تكوين قاعدة  NAT %s"
 
 #: src/etc/inc/filter.inc:2392
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "تكوين قاعدة الفلتر  %s ..."
 
 #: src/etc/inc/filter.inc:2416
 #, php-format
 msgid "filter_generate_port: %1$s is not a valid %2$s port."
-msgstr ""
+msgstr "filter_generate_port: %1$s غير صالح %2$s منفذ ."
 
 #: src/etc/inc/filter.inc:2653
 #, php-format
 msgid "Creating filter rules %s ..."
-msgstr ""
+msgstr "تكوين قواعد الفلتر %s ..."
 
 #: src/etc/inc/filter.inc:2708
 #, php-format
 msgid "Unresolvable source alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "اسماء مستعار غير قابلة للحل  '%1$s' for rule '%2$s'"
 
 #: src/etc/inc/filter.inc:2713
 #, php-format
 msgid "Unresolvable destination alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "وجهة مستعارة غير قابلة للحل  '%1$s' for rule '%2$s'"
 
 #: src/etc/inc/filter.inc:2723
 #, php-format
 msgid "Unresolvable source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "الاسم المستعار للمنفذ المصدر غير قابل للحل '%1$s' for rule '%2$s'"
 
 #: src/etc/inc/filter.inc:2725
 #, php-format
 msgid "Empty source port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "الاسم المستعار لمصدر المنفذ فارغ '%1$s'  للقاعدة  '%2$s'"
 
 #: src/etc/inc/filter.inc:2739
 #, php-format
 msgid "Unresolvable destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "الاسم المستعار للمنفذ الموجه غير قابل للحل '%1$s' للقاعدة '%2$s'"
 
 #: src/etc/inc/filter.inc:2741
 #, php-format
 msgid "Empty destination port alias '%1$s' for rule '%2$s'"
-msgstr ""
+msgstr "الاسم المستعار لوجهة المنفذ فارغ '%1$s' للقاعدة '%2$s'"
 
 #: src/etc/inc/filter.inc:2749
 msgid "Setting up pass/block rules"
-msgstr ""
+msgstr "إعداد قواعد المرور / الحظر"
 
 #: src/etc/inc/filter.inc:2776
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr ""
+msgstr "اعداد قواعد المرور / الحظر %s"
 
 #: src/etc/inc/filter.inc:2800
 #, php-format
 msgid "The gateway: %s is invalid or unknown, not using it."
-msgstr ""
+msgstr "البوابة : خاطئة او مجهولة ، لا تقم باستخدامها ."
 
 #: src/etc/inc/filter.inc:2819
 #, php-format
 msgid "Creating rule %s"
-msgstr ""
+msgstr "تكوين قاعدة %s"
 
 #: src/etc/inc/filter.inc:3064
 #, php-format
 msgid "[TDR DEBUG] status true -- rule type '%s'"
-msgstr ""
+msgstr "[TDR DEBUG] الحالة true -- rule type '%s'"
 
 #: src/etc/inc/filter.inc:3108
 msgid "Creating default rules"
-msgstr ""
+msgstr "تكون القواعد الافتراضية"
 
 #: src/etc/inc/filter.inc:3789
 msgid "Creating IPsec rules..."
-msgstr ""
+msgstr "تكون قواعد IPsec ..."
 
 #: src/etc/inc/filter.inc:3885
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr ""
+msgstr "التثبيت 15  دقيقة مدة إعادة تحميل الفلتر بناء على القواعد "
 
 #: src/etc/inc/filter.inc:3892
 msgid "Removed 15 minute filter reload for Time Based Rules"
-msgstr ""
+msgstr "الازالة 15 دقيقة مدة اعادة تحميل الفلتر بناءاً على القواعد"
 
 #: src/etc/inc/filter.inc:4276
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr ""
+msgstr "فحص %1$s PF الخطاطيف فى الباقة  %2$s"
 
 #: src/etc/inc/filter.inc:4289
 #, php-format
 msgid "Processing early %1$s rules for package %2$s"
-msgstr ""
+msgstr "معالجة مبكرة %1$s القواعد للباقات %2$s"
 
 #: src/etc/inc/filter.inc:4299
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr ""
+msgstr "حدث خطأ اثناء تحليل قواعد فلتر الحزم  لـ %s."
 
 #: src/etc/inc/filter.inc:4367
 msgid "delete this separator"
-msgstr ""
+msgstr "حذف الفاصل"
 
 #: src/etc/inc/filter_log.inc:227 src/etc/inc/filter_log.inc:249
 #: src/etc/inc/filter_log.inc:272 src/etc/inc/filter_log.inc:295
@@ -1911,6 +1956,8 @@ msgid ""
 "There was a error parsing log entry: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"حدث خطأ اثناء تحليل سجل الإدخال.  من فضلك ارسل تقريراً الى القائمة البريدة "
+"او المنتدى ."
 
 #: src/etc/inc/filter_log.inc:426
 #, php-format
@@ -1918,21 +1965,25 @@ msgid ""
 "There was a error parsing rule number: %s. Please report to mailing list or "
 "forum."
 msgstr ""
+"حدث خطأ اثناء تحليل قاعدة الرقم : %s. من فضلك ارسل تقريراً للقائمة البريديه "
+"او المنتدى ."
 
 #: src/etc/inc/filter_log.inc:436
 #, php-format
 msgid ""
 "There was a error parsing rule: %s. Please report to mailing list or forum."
 msgstr ""
+"حدث خطأ اثناء تحليل القاعدة : %s. من فضلك ارسل تقريراً للقائمة البريديه او "
+"المنتدى ."
 
 #: src/etc/inc/filter_log.inc:450
 #, php-format
 msgid "Service %1$s/%2$s: %3$s"
-msgstr ""
+msgstr "الخدمة %1$s/%2$s: %3$s"
 
 #: src/etc/inc/gmirror.inc:65
 msgid "No mirrors found."
-msgstr ""
+msgstr "لم يتم العثور على انعاكسات ."
 
 #: src/etc/inc/gmirror.inc:73 src/etc/inc/gwlb.inc:1359
 #: src/etc/inc/shaper.inc:1201 src/etc/inc/shaper.inc:3286
@@ -1974,7 +2025,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:34
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:154
 msgid "Name"
-msgstr ""
+msgstr "الإسم"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:122
@@ -2028,41 +2079,43 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 msgid "Status"
-msgstr ""
+msgstr "الحاله"
 
 #: src/etc/inc/gmirror.inc:75 src/usr/local/www/diag_gmirror.php:223
 msgid "Component"
-msgstr ""
+msgstr "العنصر"
 
 #: src/etc/inc/gwlb.inc:172
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"المهلة الزمنية لانتظار العنوان IPv6  فى الحالة المؤقتة  . dpinger لن يتم "
+"التشغيل ."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
-msgstr ""
+msgstr "لا يوجد بوابات للمراقبة . dpinger لن يتم التشغيل ."
 
 #: src/etc/inc/gwlb.inc:237 src/etc/inc/gwlb.inc:278
 #, php-format
 msgid ""
 "Removing static route for monitor %1$s and adding a new route through %2$s"
-msgstr ""
+msgstr "ازالة إحصائيات الموجه للمراقبه %1$s واضافة موجه جديد من خلال %2$s"
 
 #: src/etc/inc/gwlb.inc:306
 #, php-format
 msgid "Error starting gateway monitor for %s"
-msgstr ""
+msgstr "خطأ بدء بوابة المراقبة لـ %s"
 
 #: src/etc/inc/gwlb.inc:319
 #, php-format
 msgid "dpinger: No dpinger session running for gateway %s"
-msgstr ""
+msgstr "dpinger: No dpinger جلسة تشتغيل البوابة %s"
 
 #: src/etc/inc/gwlb.inc:333
 #, php-format
 msgid "dpinger: cannot connect to status socket %1$s - %2$s (%3$s)"
-msgstr ""
+msgstr "dpinger: لا يكمن الإتصال بمنفذ الحاله  %1$s - %2$s (%3$s)"
 
 #: src/etc/inc/gwlb.inc:1000
 #, php-format
@@ -3099,7 +3152,7 @@ msgid "LZ4 Compression [compress lz4]"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:127
-msgid "LZ4 Comression v2 [compress lz4-v2]"
+msgid "LZ4 Compression v2 [compress lz4-v2]"
 msgstr ""
 
 #: src/etc/inc/openvpn.inc:128
@@ -33311,12 +33364,6 @@ msgstr ""
 msgid "No packages installed."
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
-msgid ""
-"Packages can be installed <a href=\"pkg_mgr.php\" class=\"alert-link\">here</"
-"a>."
-msgstr ""
-
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
 msgstr ""
@@ -35507,7 +35554,7 @@ msgid "Disable this static route"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:161
-msgid "Disable the automatic dashboard auto-update check"
+msgid "Disable the Dashboard auto-update check"
 msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:173

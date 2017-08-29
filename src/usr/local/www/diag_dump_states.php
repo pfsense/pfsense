@@ -75,6 +75,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
 $pglinks = array("", "@self", "@self");
 include("head.inc");
+$delmsg = gettext("Are you sure you wish to delete this state?");
 ?>
 
 <script type="text/javascript">
@@ -84,19 +85,22 @@ events.push(function() {
 		var el = $(this);
 		var data = $(this).data('entry').split('|');
 
-		$.ajax(
-			'/diag_dump_states.php',
-			{
-				type: 'post',
-				data: {
-					action: 'remove',
-					srcip: data[0],
-					dstip: data[1]
-				},
-				success: function() {
-					el.parents('tr').remove();
-				},
-		});
+		if (confirm("<?=$delmsg?>")) {
+
+			$.ajax(
+				'/diag_dump_states.php',
+				{
+					type: 'post',
+					data: {
+						action: 'remove',
+						srcip: data[0],
+						dstip: data[1]
+					},
+					success: function() {
+						el.parents('tr').remove();
+					},
+			});
+		}
 	});
 });
 //]]>
@@ -250,7 +254,7 @@ print $form;
 						    <?= format_bytes($res[$i]['bytes out']) ?></td>
 
 						<td>
-							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$killdstip?>"
+							<a class="btn fa fa-trash no-confirm" data-entry="<?=$srcip?>|<?=$killdstip?>"
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
 						</td>
 					</tr>

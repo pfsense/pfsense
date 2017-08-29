@@ -1339,7 +1339,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
-		if (!(ldap_start_tls($ldap))) {
+		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_backed() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
 			return false;

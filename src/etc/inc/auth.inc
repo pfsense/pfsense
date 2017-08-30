@@ -1815,7 +1815,7 @@ function session_auth() {
 			exit;
 		} else {
 			/* give the user an error message */
-			$_SESSION['Login_Error'] = "Username or Password incorrect";
+			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
 			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";

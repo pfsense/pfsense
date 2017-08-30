@@ -509,7 +509,7 @@ if (are_notices_pending()) {
 					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
 					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
 //					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
-                    ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
+                    ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank' rel='noopener']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
@@ -663,7 +663,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 ?>
 	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
 		<li>
-			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
+			<a href="<?=$helpurl?>" target="_blank" rel="noopener" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>

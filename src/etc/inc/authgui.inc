@@ -359,7 +359,18 @@ if (is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['n
 								</svg>
 							</div>
 						</div>
-						<div class="col-sm-8 nowarning msgbox text-center">
+
+						<!-- Header center message box -->
+						<div class="col-sm-4 nowarning msgbox text-center text-danger">
+<?php
+						if (!empty($_POST['usernamefld'])) {
+							print("<h4>" . $_SESSION['Login_Error'] . "</h4>");
+						}
+?>
+						</div>
+
+						<!-- Header right message box (hostname or msg) -->
+						<div class="col-sm-4 nowarning msgbox text-center">
 							<span id="hostspan">
 								<a><h4><?=$loginbannerstr?></h4></a>
 							</span>

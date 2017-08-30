@@ -79,7 +79,7 @@ function get_pkg_table() {
 		$pkgtbl .= 	'<td>' . "\n";
 
 		if (($index['www']) && ($index['www'] != "UNKNOWN")) {
-			$pkgtbl .= 	'<a title="' . gettext("Visit official website") . '" target="_blank" href="' . htmlspecialchars($index['www']) . '">' . "\n";
+			$pkgtbl .= 	'<a title="' . gettext("Visit official website") . '" target="_blank" rel="noopener" href="' . htmlspecialchars($index['www']) . '">' . "\n";
 			$pkgtbl .= htmlspecialchars($index['shortname']) . '</a>' . "\n";
 		} else {
 			$pkgtbl .= htmlspecialchars($index['shortname']);
@@ -88,7 +88,7 @@ function get_pkg_table() {
 		$pkgtbl .= 	'<td>' . "\n";
 
 		if (!$g['disablepackagehistory']) {
-			$pkgtbl .= '<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($index['changeloglink']) . '">' . "\n";
+			$pkgtbl .= '<a target="_blank" rel="noopener" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($index['changeloglink']) . '">' . "\n";
 			$pkgtbl .= htmlspecialchars($index['version']) . '</a>' . "\n";
 		} else {
 			$pkgtbl .= htmlspecialchars($index['version']);
@@ -102,7 +102,7 @@ function get_pkg_table() {
 			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<br/>\n";
 
 			foreach ($index['deps'] as $pdep) {
-				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
+				$pkgtbl .= '<a target="_blank" rel="noopener" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
 			}
 
 			$pkgtbl .= "\n";
@@ -113,7 +113,7 @@ function get_pkg_table() {
 		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?pkg=' . $index['name'] . '" class="btn btn-success btn-sm"><i class="fa fa-plus icon-embed-btn"></i>Install</a>' . "\n";
 
 		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
-			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
+			$pkgtbl .= '<a target="_blank" rel="noopener" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
 		}
 
 		$pkgtbl .= 	'</td>' . "\n";

@@ -34,7 +34,9 @@ if (!session_auth()) {
 	display_login_form();
 	exit;
 }
+
 phpsession_begin();
+
 /*
  * Once here, the user has authenticated with the web server.
  * We give them access only to the appropriate pages based on
@@ -312,6 +314,7 @@ function display_login_form() {
 			<header>
 				<div id="headerrow">
 					<div class="row">
+						<!-- Header left logo box -->
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
 								<svg role="img" aria-labelledby="pfsense-logo" x="0px" y="0px" viewBox="0 0 282.8 84.2" width="240" height="100%">
@@ -333,7 +336,18 @@ function display_login_form() {
 								</svg>
 							</div>
 						</div>
-						<div class="col-sm-8 nowarning msgbox text-center">
+
+						<!-- Header center message box -->
+						<div class="col-sm-4 nowarning msgbox text-center text-danger">
+<?php
+						if (!empty($_POST['usernamefld'])) {
+							print("<h4>" . $_SESSION['Login_Error'] . "</h4>");
+						}
+?>
+						</div>
+
+						<!-- Header right message box (hostname or msg)-->
+						<div class="col-sm-4 nowarning msgbox text-center">
 							<span id="hostspan">
 								<a><h4><?=$loginbannerstr?></h4></a>
 							</span>

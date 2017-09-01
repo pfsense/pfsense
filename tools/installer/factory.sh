@@ -74,6 +74,7 @@ get_cur_model() {
 	echo "$_cur_model"
 }
 
+if="*"
 if ! pgrep -q dhclient; then
 	# First, find a connected interface
 	if=$(ifconfig \
@@ -88,19 +89,29 @@ if ! pgrep -q dhclient; then
 		exit 0
 	fi
 
+	# Use a custom dhclient.conf to obtain 'user-class' and detect custom
+	# installation
+	echo "request user-class, classless-routes, domain-name-servers;" \
+	    > /tmp/dhclient.conf
+
 	# Then, try to obtain an IP address to it running dhclient
 	# if it fails, abort
-	if ! /sbin/dhclient ${if}; then
+	if ! /sbin/dhclient -c /tmp/dhclient.conf ${if}; then
 		exit 0
 	fi
+	if=".${if}"
 fi
 
 # Check if we are in buildroom, if not, abort
 unset buildroom
 if /usr/bin/grep -q 'option classless-routes 32,1,2,3,4,127,0,0,1' \
-    /var/db/dhclient.leases*; then
+    /var/db/dhclient.leases${if}; then
 	buildroom=1
 fi
+
+# Check for 'user-class'
+custom=$(grep user-class /var/db/dhclient.leases${if} 2>/dev/null | \
+    tail -n 1 | cut -d'"' -f2)
 
 # Try to read serial
 machine_arch=$(uname -p)
@@ -336,6 +347,24 @@ else
 	fi
 fi
 
+if [ -n "${custom}" ]; then
+	custom_url="http://factory-logger.pfmechanics.com/${custom}-install.sh"
+
+	if ! fetch -o /tmp/custom.sh ${custom_url}; then
+		echo "Error downloading custom script from ${custom_url}"
+		exit 1
+	fi
+
+	if ! /bin/sh /tmp/custom.sh; then
+		echo "Error executing custom script from ${custom_url}"
+		exit 1
+	fi
+
+	if [ -f /tmp/custom_order ]; then
+		order=$(cat /tmp/custom_order)
+	fi
+fi
+
 default_serial="${serial}"
 serial_size=0
 sticker=1
@@ -422,8 +451,12 @@ postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"
 postreq="${postreq}&uniqueid=${UID}"
 
+if [ -n "${order}" ]; then
+	postreq="${postreq}&order=${order}"
+fi
+
 if [ "${selected_model}" != "SG-1000" ]; then
-	postreq="${postreq}&wlan_mac=${wlan_mac}&order=${order}&builder=${builder}"
+	postreq="${postreq}&wlan_mac=${wlan_mac}&builder=${builder}"
 fi
 
 if [ -n "${support_type}" ]; then

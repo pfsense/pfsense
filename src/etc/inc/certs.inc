@@ -459,6 +459,7 @@ function csr_sign($csr, & $ca, $duration, $type = "user", $altnames) {
 	}
 
 	$args = array(
+		"digest_alg" => "sha256", // use sha256 digest until user interface allows specification
 		"x509_extensions" => $cert_type,
 		"req_extensions" => "req_{$cert_type}"
 	);

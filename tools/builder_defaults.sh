@@ -137,7 +137,7 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"cryptodev i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv ena ichwd udf"}
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"cryptodev i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv ichwd udf"}
 
 # gnid
 export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}

@@ -100,4 +100,6 @@ gpart delete -i 2 ${update_dev}
 
 touch /root/force_growfs
 
-pfSense-upgrade -y
+echo "Done. Your system was converted to a Full Install. Please upgrade it"
+echo "immediately using console menu option 13 or calling pfSense-upgrade"
+exit 0

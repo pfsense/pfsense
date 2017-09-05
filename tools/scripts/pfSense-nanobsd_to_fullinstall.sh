@@ -87,6 +87,21 @@ fi
 # Following commands must not fail
 set -e
 
+# Move /cf content to / partition
+mkdir -p /mnt/cf
+sed -i '' -e 's,[[:blank:]]/cf, /mnt/cf,' /etc/fstab
+umount -f /cf
+mount /mnt/cf
+cp -Rp /mnt/cf/* /cf
+sync; sync
+umount -f /mnt/cf
+
+# Remove /cf partition
+gpart delete -i 3 ${update_dev}
+
+# Cleanup fstab
+sed -i '' -e '/\/mnt\/cf/d' /etc/fstab
+
 pkg set -y -o security/pfSense-base-nanobsd:security/pfSense-base \
     pfSense-base-nanobsd
 pkg set -y -n pfSense-base-nanobsd:pfsense-base \

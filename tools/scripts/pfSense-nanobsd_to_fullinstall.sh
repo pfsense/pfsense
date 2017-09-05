@@ -104,7 +104,7 @@ sed -i '' -e '/\/mnt\/cf/d' /etc/fstab
 
 pkg set -y -o security/pfSense-base-nanobsd:security/pfSense-base \
     pfSense-base-nanobsd
-pkg set -y -n pfSense-base-nanobsd:pfsense-base \
+pkg set -y -n pfSense-base-nanobsd:pfSense-base \
     pfSense-base-nanobsd
 
 echo pfSense > /etc/platform

@@ -84,6 +84,9 @@ if ! grep -q 'v2_4' $cur_repo; then
 	fi
 fi
 
+# Following commands must not fail
+set -e
+
 pkg set -y -o security/pfSense-base-nanobsd:security/pfSense-base \
     pfSense-base-nanobsd
 pkg set -y -n pfSense-base-nanobsd:pfsense-base \

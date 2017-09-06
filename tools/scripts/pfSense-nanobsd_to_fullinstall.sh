@@ -65,6 +65,11 @@ fi
 
 update_dev="/dev/${update_dev}"
 
+if [ ! -e "${update_dev}s2a" -o ! -e "${update_dev}s3" ]; then
+	echo "Filesystem structure looks wrong, aborting..."
+	exit 1
+fi
+
 cur_repo=/usr/local/etc/pkg/repos/pfSense.conf
 
 /etc/rc.conf_mount_rw

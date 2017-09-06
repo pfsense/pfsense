@@ -118,6 +118,9 @@ sed -i .bkp -e 's/ro,sync/rw/' /etc/fstab
 
 gpart delete -i 2 ${update_dev}
 
+gpart set -a active -i 1 ${update_dev}
+boot0cfg -s 1 ${update_dev}
+
 touch /root/force_growfs
 
 echo "Done. Your system was converted to a Full Install. Please upgrade it"

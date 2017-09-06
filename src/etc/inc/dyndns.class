@@ -222,6 +222,7 @@
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
 				break;
+			case 'route53-v6':
 			case 'route53':
 				if (!$dnsZoneID) $this->_error(8);
 				if (!$dnsTTL) $this->_error(9);
@@ -239,6 +240,7 @@
 				case 'he-net-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
+				case 'route53-v6':
 				case 'duiadns-v6':
 				case 'freedns-v6':
 				case 'cloudflare-v6':
@@ -315,6 +317,7 @@
 					case 'selfhost':
 					case 'he-net-tunnelbroker':
 					case 'route53':
+					case 'route53-v6':
 					case 'cloudflare':
 					case 'cloudflare-v6':
 					case 'eurodns':
@@ -673,6 +676,23 @@
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
 					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
 					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
+					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
+					if($this->_dnsVerboseLog){
+						log_error(sprintf("Sending reuquest to: %s", $apiurl));
+						foreach($httphead as $hv){
+							log_error(sprintf("Header: %s", $hv));
+						}
+						log_error(sprintf("XMLPOST: %s", $xmlreq));
+					}
+					curl_setopt($ch, CURLOPT_URL, $apiurl);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
+					break;
+				case 'route53-v6':		
+					require_once("r53.class");
+					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
+					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
+					$xmlreq = $r53->getRequestBodyV6($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
 					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
@@ -1555,6 +1575,7 @@
 					}
 					break;
 				case 'route53':
+				case 'route53-v6':
 					if(preg_match('/ErrorResponse/', $data)){
 						$status = $status_intro . $error_str . gettext("Route53 API call failed");
 						log_error(sprintf("error message: %s", $data));

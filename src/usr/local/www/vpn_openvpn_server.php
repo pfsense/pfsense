@@ -1334,6 +1334,7 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Crypto")?></th>
@@ -1348,6 +1349,9 @@ else:
 	foreach ($a_server as $server):
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
+					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($server['interface'])?>
+					</td>
 					<td>
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
 					</td>

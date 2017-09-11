@@ -2148,6 +2148,22 @@ function is_interface_vlan_mismatch() {
 function is_interface_mismatch() {
 	global $config, $g;
 
+	/* EC2 instance can change NIC when instance type changes */
+	if (substr($g['default-config-flavor'], 0, 3) == 'ec2') {
+		if (does_interface_exist('ixv0')) {
+			$if = 'ixv0';
+		} elseif (does_interface_exist('ena0')) {
+			$if = 'ena0';
+		} else {
+			$if = 'xn0';
+		}
+
+		if ($config['interfaces']['wan']['if'] != $if) {
+			$config['interfaces']['wan']['if'] = $if;
+			write_config("Adjusting EC2 WAN interface to '{$if}'");
+		}
+	}
+
 	$do_assign = false;
 	$i = 0;
 	$missing_interfaces = array();

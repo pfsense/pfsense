@@ -23,12 +23,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-28 16:46-0300\n"
+"POT-Creation-Date: 2017-09-11 16:44-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-23 10:44-0400\n"
-"Last-Translator: Hijmen <zanata@hijmen.nl>\n"
+"PO-Revision-Date: 2017-09-11 05:28-0400\n"
+"Last-Translator: A. olde Kalter <arian@oldekalter.com>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -69,23 +69,23 @@ msgstr "U wordt omgeleid naar het dashboard..."
 msgid "Running: %s"
 msgstr "Uitgevoerd: %s"
 
-#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:950 src/etc/inc/auth.inc:1038
-#: src/etc/inc/auth.inc:1350
+#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:952 src/etc/inc/auth.inc:1040
+#: src/etc/inc/auth.inc:1352
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
 msgstr "FOUT! Kon niet met server %s verbinden."
 
-#: src/etc/inc/auth.inc:887
+#: src/etc/inc/auth.inc:889
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr "LDAP: Kon CA niet opzoeken met referentie voor host %s."
 
-#: src/etc/inc/auth.inc:962
+#: src/etc/inc/auth.inc:964
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr "FOUT! ldap_test_bind() kon niet verbinden met server %s via STARTTLS."
 
-#: src/etc/inc/auth.inc:1024
+#: src/etc/inc/auth.inc:1026
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
@@ -93,46 +93,46 @@ msgstr ""
 "FOUT! ldap_get_user_ous() ondersteunde geselecteerde zonder opgegeven LDAP "
 "authenticatieserver."
 
-#: src/etc/inc/auth.inc:1052
+#: src/etc/inc/auth.inc:1054
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
 "FOUT! ldap_get_user_ous() kon niet verbinden met server %s via STARTTLS."
 
-#: src/etc/inc/auth.inc:1062
+#: src/etc/inc/auth.inc:1064
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
 "FOUT! ldap_get_user_ous() kon niet anoniem gekoppeld worden met server %s."
 
-#: src/etc/inc/auth.inc:1067
+#: src/etc/inc/auth.inc:1069
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
 msgstr "FOUT! ldap_get_user_ous() kon niet binden aan server %s."
 
-#: src/etc/inc/auth.inc:1183
+#: src/etc/inc/auth.inc:1185
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
 msgstr "FOUT! ldap_get_groups() kon niet verbinden met server %s."
 
-#: src/etc/inc/auth.inc:1195
+#: src/etc/inc/auth.inc:1197
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
 "FOUT! ldap_get_groups() kon niet verbinden met de server %s via STARTTLS."
 
-#: src/etc/inc/auth.inc:1206
+#: src/etc/inc/auth.inc:1208
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
 "FOUT! ldap_get_groups() kon niet anoniem gebonden worden met server %s."
 
-#: src/etc/inc/auth.inc:1211
+#: src/etc/inc/auth.inc:1213
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
 msgstr "FOUT! ldap_get_groups() kon niet gebonden worden aan server %s."
 
-#: src/etc/inc/auth.inc:1317
+#: src/etc/inc/auth.inc:1319
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
@@ -141,146 +141,150 @@ msgstr ""
 "Terugval op de lokale gebruikers databank. Ga naar Systeem -> Gebruiker "
 "Beheerder."
 
-#: src/etc/inc/auth.inc:1320
+#: src/etc/inc/auth.inc:1322
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
 "FOUT! ldap_backed() aangeroepen zonder opgegeven LDAP authenticatieserver."
 
-#: src/etc/inc/auth.inc:1343
+#: src/etc/inc/auth.inc:1345
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr "FOUT! ldap_backed() kan niet verbinden met server %s via STARTTLS."
 
-#: src/etc/inc/auth.inc:1368
+#: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "ERROR! Could not bind to server %s."
 msgstr "FOUT! Kon niet binden aan server %s."
 
-#: src/etc/inc/auth.inc:1386
+#: src/etc/inc/auth.inc:1388
 #, php-format
 msgid "Now Searching for %s in directory."
 msgstr "Zoeken naar %s in de map."
 
-#: src/etc/inc/auth.inc:1395
+#: src/etc/inc/auth.inc:1397
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
 msgstr "Zoeken in server %1$s, houder %2$s met filter %3$s."
 
-#: src/etc/inc/auth.inc:1409
+#: src/etc/inc/auth.inc:1411
 #, php-format
 msgid "Search resulted in error: %s"
 msgstr "Zoek opdracht resulteerde in fout: %s"
 
-#: src/etc/inc/auth.inc:1425
+#: src/etc/inc/auth.inc:1427
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
 "FOUT! Of de LDAP zoekopdracht mislukte, of er waren meerdere gebruikers "
 "gevonden."
 
-#: src/etc/inc/auth.inc:1432
+#: src/etc/inc/auth.inc:1434
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr "FOUT! Kon niet inloggen op server %1$s als gebruiker %2$s: %3$s"
 
-#: src/etc/inc/auth.inc:1439
+#: src/etc/inc/auth.inc:1441
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr "Login gelukt als %1$s via LDAP server %2$s met DN = %3$s."
 
-#: src/etc/inc/auth.inc:1514
+#: src/etc/inc/auth.inc:1516
 #, php-format
 msgid "RADIUS start: %s"
 msgstr "RADIUS start: %s"
 
-#: src/etc/inc/auth.inc:1526
+#: src/etc/inc/auth.inc:1528
 #, php-format
 msgid "RADIUS send failed: %s"
 msgstr "RADIUS opdracht mislukt: %s"
 
-#: src/etc/inc/auth.inc:1534
+#: src/etc/inc/auth.inc:1536
 #, php-format
 msgid "RADIUS Auth succeeded"
 msgstr "RADIUS Authenticatie geslaagd"
 
-#: src/etc/inc/auth.inc:1540
+#: src/etc/inc/auth.inc:1542
 #, php-format
 msgid "RADIUS Auth rejected"
 msgstr "RADIUS Authenticatie afgewezen"
 
-#: src/etc/inc/auth.inc:1662
+#: src/etc/inc/auth.inc:1664
 msgid "Widget configuration has been changed."
 msgstr "Widget configuratie is aangepast."
 
-#: src/etc/inc/auth.inc:1667
+#: src/etc/inc/auth.inc:1669
 #, php-format
 msgid "(User %s)"
 msgstr "(Gebruiker %s)"
 
-#: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
+#: src/etc/inc/auth.inc:1687 src/etc/inc/auth.inc:1703
 msgid "Local Database"
 msgstr "Lokale database"
 
-#: src/etc/inc/auth.inc:1805
+#: src/etc/inc/auth.inc:1807
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
 msgstr "Successvolle login voor gebruiker '%1$s' van: %2$s"
 
-#: src/etc/inc/auth.inc:1864
+#: src/etc/inc/auth.inc:1820
+msgid "Username or Password incorrect"
+msgstr ""
+
+#: src/etc/inc/auth.inc:1866
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
 msgstr "Sessie verlopen voor '%1$s' van: %2$s"
 
-#: src/etc/inc/auth.inc:1866
+#: src/etc/inc/auth.inc:1868
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
 msgstr "Gebruiker afgemeld voor de gebruiker '%1$s' uit: %2$s"
 
-#: src/etc/inc/authgui.inc:74
+#: src/etc/inc/authgui.inc:76
 msgid "No page assigned to this user! Click here to logout."
 msgstr "Geen pagina gekoppeld aan deze gebruiker! Klik hier om uit te loggen."
 
-#: src/etc/inc/authgui.inc:105
+#: src/etc/inc/authgui.inc:107
 #, php-format
 msgid "Error: %1$s Description: %2$s"
 msgstr "Fout: %1$s Omschrijving: %2$s"
 
-#: src/etc/inc/authgui.inc:118 src/etc/inc/dyndns.class:1069
+#: src/etc/inc/authgui.inc:120 src/etc/inc/dyndns.class:1069
 #: src/etc/inc/dyndns.class:1121 src/etc/inc/dyndns.class:1869
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "Fout"
 
-#: src/etc/inc/authgui.inc:194
+#: src/etc/inc/authgui.inc:196
 msgid "unknown reason"
 msgstr "onbekende reden"
 
-#: src/etc/inc/authgui.inc:195
+#: src/etc/inc/authgui.inc:197
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "Incorrecte login (%s)."
 
-#: src/etc/inc/authgui.inc:200
+#: src/etc/inc/authgui.inc:202
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "Dit apparaat wordt op dit moment beheerd door: %s."
 
-#: src/etc/inc/authgui.inc:283
+#: src/etc/inc/authgui.inc:285
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s.%2$s"
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:287
 #, php-format
 msgid "Login to %1$s"
 msgstr "Inloggen op %1$s"
 
-#: src/etc/inc/authgui.inc:302
+#: src/etc/inc/authgui.inc:304
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "Inloggen"
 
-#: src/etc/inc/authgui.inc:348
+#: src/etc/inc/authgui.inc:362
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -293,7 +297,7 @@ msgstr ""
 "\t\t\t\t\t\t\t\tAls deze door verwijzing onverwacht is, verifieer of er geen "
 "man-in-middle aanval plaats vind."
 
-#: src/etc/inc/authgui.inc:399
+#: src/etc/inc/authgui.inc:413
 msgid "The browser must support cookies to login."
 msgstr "De browser moet cookies ondersteunen om in te loggen."
 
@@ -2093,7 +2097,7 @@ msgstr "Geen mirrors gevonden."
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:358
-#: src/usr/local/www/system_certmanager.php:1107
+#: src/usr/local/www/system_certmanager.php:1118
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -2169,6 +2173,8 @@ msgstr "Component"
 msgid ""
 "Timeout waiting for IPv6 address in tentative state.  dpinger will not run."
 msgstr ""
+"Time-out wachten op een IPv6-adres in voorlopige staat. dpinger zal niet "
+"worden uitgevoerd."
 
 #: src/etc/inc/gwlb.inc:189
 msgid "No gateways to monitor. dpinger will not run."
@@ -2241,8 +2247,8 @@ msgstr ""
 "Bijwerken van gateway groep gateway voor %1$s - nieuwe gateway is %2$s"
 
 #: src/etc/inc/gwlb.inc:1359 src/usr/local/www/diag_arp.php:332
-#: src/usr/local/www/diag_dump_states.php:132
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:136
+#: src/usr/local/www/diag_dump_states.php:185
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:150
@@ -3303,7 +3309,7 @@ msgstr "LZ4 Compressie [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Compression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "LZ4 Compressie v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3377,12 +3383,12 @@ msgid "CA: %s"
 msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:363
-#: src/usr/local/www/system_certmanager.php:1110
+#: src/usr/local/www/system_certmanager.php:1121
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr "In Gebruik"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1206
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1229
 msgid "Revoked"
 msgstr "Ingetrokken"
 
@@ -3802,7 +3808,7 @@ msgstr "Engels"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
-msgstr ""
+msgstr "Frans"
 
 #: src/etc/inc/pfsense-utils.inc:2946
 msgid "German (Germany)"
@@ -3814,7 +3820,7 @@ msgstr "Noorweegse Bokmål"
 
 #: src/etc/inc/pfsense-utils.inc:2948
 msgid "Polish"
-msgstr ""
+msgstr "Pools"
 
 #: src/etc/inc/pfsense-utils.inc:2949
 msgid "Portuguese (Brazil)"
@@ -5871,12 +5877,11 @@ msgstr "Sta toegang toe tot de 'Systeem: Geavanceerd: Notificaties' pagina."
 
 #: src/etc/inc/priv.defs.inc:1078
 msgid "WebCfg - System: Advanced: Tunables"
-msgstr "WebCfg - Systeem: Geavanceerd: Aanpasbare Waarden"
+msgstr "WebCfg - Systeem: Geavanceerd: Fijnafstemming"
 
 #: src/etc/inc/priv.defs.inc:1079
 msgid "Allow access to the 'System: Advanced: Tunables' page."
-msgstr ""
-"Sta toegang toe tot de 'Systeem: Geavanceerd: Aanpasbare Waarden' pagina."
+msgstr "Sta toegang toe tot de 'Systeem: Geavanceerd: Fijnafstemming' pagina."
 
 #: src/etc/inc/priv.defs.inc:1084
 msgid "WebCfg - System: Authentication Servers"
@@ -5896,11 +5901,11 @@ msgstr "Sta toegang toe tot de 'Systeem: CA Beheerder' pagina."
 
 #: src/etc/inc/priv.defs.inc:1097
 msgid "WebCfg - System: Certificate Manager"
-msgstr "WebCfg - Systeem: Certificaat Beheerder"
+msgstr "WebCfg - Systeem: Certificaatbeheer"
 
 #: src/etc/inc/priv.defs.inc:1098
 msgid "Allow access to the 'System: Certificate Manager' page."
-msgstr "Sta toegang toe tot de 'Systeem: Certificaat Beheerder' pagina."
+msgstr "Sta toegang toe tot de 'Systeem: Certificaatbeheer' pagina."
 
 #: src/etc/inc/priv.defs.inc:1103
 msgid "WebCfg - System: CRL Manager"
@@ -6269,7 +6274,7 @@ msgstr "Systeem Logger Daemon"
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1224
+#: src/usr/local/www/system_certmanager.php:1247
 msgid "Captive Portal"
 msgstr "Toegangsportaal"
 
@@ -7081,7 +7086,7 @@ msgstr "Delay dient een geheel getal te zijn."
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:527
-#: src/usr/local/www/system_certmanager.php:1015
+#: src/usr/local/www/system_certmanager.php:1026
 #: src/usr/local/www/system_usermanager.php:663
 msgid "Delete"
 msgstr "Verwijderen"
@@ -8128,9 +8133,9 @@ msgstr "Bevestig"
 #: src/usr/local/www/system_authservers.php:82
 #: src/usr/local/www/system_camanager.php:318
 #: src/usr/local/www/system_camanager.php:349
-#: src/usr/local/www/system_certmanager.php:206
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:618
+#: src/usr/local/www/system_certmanager.php:207
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
@@ -8340,7 +8345,7 @@ msgstr "Link Type"
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:444
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1112
+#: src/usr/local/www/system_certmanager.php:1123
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -8663,7 +8668,7 @@ msgstr "Syslog"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -9267,7 +9272,7 @@ msgstr "Hostnaam"
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -9382,8 +9387,8 @@ msgid "invalid input"
 msgstr "ongeldige invoer"
 
 #: src/usr/local/www/diag_dump_states.php:75
-#: src/usr/local/www/diag_dump_states.php:107
-#: src/usr/local/www/diag_dump_states.php:175
+#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:58
 #: src/usr/local/www/diag_resetstate.php:56
@@ -9394,7 +9399,11 @@ msgstr "ongeldige invoer"
 msgid "States"
 msgstr "Staten"
 
-#: src/usr/local/www/diag_dump_states.php:109
+#: src/usr/local/www/diag_dump_states.php:78
+msgid "Are you sure you wish to delete this state?"
+msgstr ""
+
+#: src/usr/local/www/diag_dump_states.php:113
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:59
 #: src/usr/local/www/diag_resetstate.php:84
@@ -9402,23 +9411,23 @@ msgstr "Staten"
 msgid "Source Tracking"
 msgstr "Bron opsporen"
 
-#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:115
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_resetstate.php:56
 #: src/usr/local/www/diag_resetstate.php:87
 msgid "Reset States"
 msgstr "Statussen resetten"
 
-#: src/usr/local/www/diag_dump_states.php:119
+#: src/usr/local/www/diag_dump_states.php:123
 msgid "State Filter"
 msgstr "Staatfilter"
 
-#: src/usr/local/www/diag_dump_states.php:139
+#: src/usr/local/www/diag_dump_states.php:143
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
 msgstr "Filterexpressie"
 
-#: src/usr/local/www/diag_dump_states.php:147
+#: src/usr/local/www/diag_dump_states.php:151
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
@@ -9429,19 +9438,19 @@ msgstr "Filterexpressie"
 msgid "Filter"
 msgstr "Filter"
 
-#: src/usr/local/www/diag_dump_states.php:160
+#: src/usr/local/www/diag_dump_states.php:164
 msgid "Kill States"
 msgstr "Staten Beeindigen"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:170
 msgid "Kill filtered states"
 msgstr "Gefilterde staten beeindigen"
 
-#: src/usr/local/www/diag_dump_states.php:168
+#: src/usr/local/www/diag_dump_states.php:172
 msgid "Remove all states to and from the filtered address"
 msgstr "Alle staten verwijderen van en naar het gefilterde adres"
 
-#: src/usr/local/www/diag_dump_states.php:182
+#: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/easyrule.php:90 src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -9465,34 +9474,34 @@ msgstr "Alle staten verwijderen van en naar het gefilterde adres"
 msgid "Protocol"
 msgstr "Protocol"
 
-#: src/usr/local/www/diag_dump_states.php:183
+#: src/usr/local/www/diag_dump_states.php:187
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr "Bron (Orginele Bron) -> Doel (Originele Doel)"
 
-#: src/usr/local/www/diag_dump_states.php:184
+#: src/usr/local/www/diag_dump_states.php:188
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
 msgstr "Staat"
 
-#: src/usr/local/www/diag_dump_states.php:185
+#: src/usr/local/www/diag_dump_states.php:189
 msgid "Packets"
 msgstr "Pakketten"
 
-#: src/usr/local/www/diag_dump_states.php:186
+#: src/usr/local/www/diag_dump_states.php:190
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
 msgstr "Bytes"
 
-#: src/usr/local/www/diag_dump_states.php:254
+#: src/usr/local/www/diag_dump_states.php:258
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr "Verwijder alle staat items van %1$s naar %2$s"
 
-#: src/usr/local/www/diag_dump_states.php:269
+#: src/usr/local/www/diag_dump_states.php:273
 msgid "No states were found that match the current filter."
 msgstr "Er zijn geen staten gevonden die voldoen aan het huidige filter."
 
-#: src/usr/local/www/diag_dump_states.php:271
+#: src/usr/local/www/diag_dump_states.php:275
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
@@ -9500,7 +9509,7 @@ msgstr ""
 "Staten weergave onderdrukt zonder opgegeven filter. Zie Systeem -> Generieke "
 "Instellingen, Vereis Staat Filter."
 
-#: src/usr/local/www/diag_dump_states.php:274
+#: src/usr/local/www/diag_dump_states.php:278
 msgid "No states were found."
 msgstr "Geen statussen zijn gevonden."
 
@@ -9895,13 +9904,13 @@ msgstr "Pakket Vangst"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:419
-#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1238
 msgid "OpenVPN Server"
 msgstr "OpenVPN Server"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:422
-#: src/usr/local/www/system_certmanager.php:1218
+#: src/usr/local/www/system_certmanager.php:1241
 msgid "OpenVPN Client"
 msgstr "OpenVPN Client"
 
@@ -10520,10 +10529,10 @@ msgstr "Gebruik een reguliere expression om de tabellen te filteren."
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
-#: src/usr/local/www/system_certmanager.php:530
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:1044
-#: src/usr/local/www/system_certmanager.php:1092
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1055
+#: src/usr/local/www/system_certmanager.php:1103
 #: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -11274,7 +11283,7 @@ msgstr "Verwijder alias"
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:470
 #: src/usr/local/www/system_camanager.php:453
-#: src/usr/local/www/system_certmanager.php:1034
+#: src/usr/local/www/system_certmanager.php:1045
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -11388,7 +11397,7 @@ msgstr "URL Tabel (Poort)"
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:411
 #: src/usr/local/www/system_camanager.php:319
-#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -12335,8 +12344,8 @@ msgstr "Inverteer de interpretatie van de match."
 #: src/usr/local/www/system_authservers.php:225
 #: src/usr/local/www/system_authservers.php:248
 #: src/usr/local/www/system_authservers.php:442
-#: src/usr/local/www/system_certmanager.php:1001
-#: src/usr/local/www/system_certmanager.php:1004
+#: src/usr/local/www/system_certmanager.php:1012
+#: src/usr/local/www/system_certmanager.php:1015
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -15360,7 +15369,7 @@ msgstr "alleen de eerste 10k items worden getoond"
 #: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:1011
+#: src/usr/local/www/system_certmanager.php:1022
 msgid "Value"
 msgstr "Waarde"
 
@@ -18158,6 +18167,8 @@ msgid ""
 "The tunnel local and tunnel remote fields must have valid IP addresses and "
 "must not contain CIDR masks or prefixes."
 msgstr ""
+"De lokale tunnel en externe tunnel velden moeten geldige IP adressen "
+"bevatten en moeten geen CIDR maskers of prefixes bevatten."
 
 #: src/usr/local/www/interfaces_gif_edit.php:71
 msgid "The gif tunnel subnet must be an integer."
@@ -21716,7 +21727,7 @@ msgstr "Voucher is verlopen"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:152
 msgid "Cannot write private key file"
-msgstr "Private key bestand kan niet geschreven worden"
+msgstr "Persoonlijke sleutel bestand kan niet geschreven worden"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:174
 msgid "Need private RSA key to print vouchers"
@@ -21793,7 +21804,7 @@ msgstr "Dit lijkt niet op een RSA Public key."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:241
 msgid "This doesn't look like an RSA Private key."
-msgstr "Dit lijkt niet op een RSA Private key."
+msgstr "Dit lijkt niet op een RSA Persoonlijke sleutel."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:244
 msgid "The voucher database cannot be sync'd to this host (itself)."
@@ -21877,7 +21888,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:459
 msgid "Voucher Private Key"
-msgstr "Voucher Private Key"
+msgstr "Voucher Persoonlijke Sleutel"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:461
 msgid ""
@@ -21885,9 +21896,9 @@ msgid ""
 "only used to generate encrypted vouchers and doesn't need to be available if "
 "the vouchers have been generated offline."
 msgstr ""
-"Plak hier een RSA private sleutel (64 Bit of kleiner) in PEM formaat. Deze "
-"sleutel wordt alleen gebruikt om versleutelde vouchers te genereren en hoeft "
-"niet beschikbaar te zijn indien de vouchers offline zijn aangemaakt."
+"Plak hier een RSA persoonlijke sleutel (64 Bit of kleiner) in PEM formaat. "
+"Deze sleutel wordt alleen gebruikt om versleutelde vouchers te genereren en "
+"hoeft niet beschikbaar te zijn indien de vouchers offline zijn aangemaakt."
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:465
 msgid "Character set"
@@ -26457,10 +26468,13 @@ msgid ""
 "denial of service by slow queries or high query rates. The default value is "
 "200 milliseconds. "
 msgstr ""
+"Deze timeout wordt gebruikt wanneer de server erg druk is. Dit beschermt "
+"tegen Denial of Service dor langzame verzoeken of grote aantallen verzoeken. "
+"De standaard waarde is 200 miliseconde."
 
 #: src/usr/local/www/services_unbound_advanced.php:305
 msgid "Maximum TTL for RRsets and Messages"
-msgstr ""
+msgstr "Maximum TTL voor RRsets and Berichten"
 
 #: src/usr/local/www/services_unbound_advanced.php:308
 msgid ""
@@ -26476,7 +26490,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:313
 msgid "Minimum TTL for RRsets and Messages"
-msgstr ""
+msgstr "Miniimum TTL voor RRsets and Berichten"
 
 #: src/usr/local/www/services_unbound_advanced.php:316
 msgid ""
@@ -26559,11 +26573,11 @@ msgstr "Log niveau"
 
 #: src/usr/local/www/services_unbound_advanced.php:352
 msgid "Select the log verbosity."
-msgstr ""
+msgstr "Selecteer het log informatie nivo"
 
 #: src/usr/local/www/services_unbound_advanced.php:356
 msgid "Disable Auto-added Access Control"
-msgstr ""
+msgstr "Schakel automatisch toegevoegde Toegang Controle uit"
 
 #: src/usr/local/www/services_unbound_advanced.php:359
 msgid ""
@@ -26578,7 +26592,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_advanced.php:364
 msgid "Disable Auto-added Host Entries"
-msgstr ""
+msgstr "Schakel automatisch toegevoegde Host invoer uit"
 
 #: src/usr/local/www/services_unbound_advanced.php:367
 #, php-format
@@ -26621,12 +26635,14 @@ msgstr "Domeinoverschrijving geconfigureerd voor de DNS Resolver."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:117
 msgid "Domains to Override with Custom Lookup Servers"
-msgstr ""
+msgstr "Domeinen om te overschrijven met aangepaste Lookup Servers"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:124
 msgid ""
 "Domain whose lookups will be directed to a user-specified DNS lookup server."
 msgstr ""
+"Domein waarvan de opzoekingen worden gestuurd naar een door de gebruiker "
+"opgegeven DNS-lookup server."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:130
 #, php-format
@@ -26635,6 +26651,9 @@ msgid ""
 "192.168.100.100%1$sTo use a non-default port for communication, append an "
 "'@' with the port number."
 msgstr ""
+"IPv4 of IPv6-adres van de gezaghebbende DNS-server voor dit domein. "
+"Bijvoorbeeld: 192.168.100.100%1$sOm een niet standaard poort te gebruiken "
+"voor de communicatie, voeg een '@' toe met het poortnummer."
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:152
 msgid ""
@@ -26663,6 +26682,8 @@ msgid ""
 "The hostname can only contain the characters A-Z, 0-9, '_' and '-'. It may "
 "not start or end with '-'."
 msgstr ""
+"De hostnaam kan alleen de karakters A-Z,0-9, '_' en '-' bevatten. Het mag "
+"niet beginnen of eindigen met '-'."
 
 #: src/usr/local/www/services_unbound_host_edit.php:174
 msgid "Host override configured for DNS Resolver."
@@ -26692,6 +26713,8 @@ msgid ""
 "IPv4 or IPv6 address to be returned for the host%1$se.g.: 192.168.100.100 or "
 "fd00:abcd::1"
 msgstr ""
+"IPv4 of IPv6-adres dat teruggestuurd moet worden voor de "
+"host%1$sBijvoorbeeld: 192.168.100.100 of fd00:abcd::1"
 
 #: src/usr/local/www/services_unbound_host_edit.php:236
 msgid ""
@@ -26726,7 +26749,7 @@ msgstr ""
 #: src/usr/local/www/services_wol.php:53
 #, php-format
 msgid "Sent magic packet to %1$s (%2$s)."
-msgstr ""
+msgstr "Stuur magisch pakket naar %1$s (%2$s)."
 
 #: src/usr/local/www/services_wol.php:56
 #, php-format
@@ -26734,10 +26757,12 @@ msgid ""
 "Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not "
 "complete successfully."
 msgstr ""
+"Controleer a.u.b. de %1$ssysteem log%2$s, het wol commando voor %3$s (%4$s) "
+"is niet succesvol afgerond."
 
 #: src/usr/local/www/services_wol.php:77
 msgid "A valid interface must be specified."
-msgstr ""
+msgstr "Er moet een geldige interface worden opgegeven."
 
 #: src/usr/local/www/services_wol.php:84
 msgid "A valid ip could not be found!"
@@ -26746,7 +26771,7 @@ msgstr "Er kon geen valide IP gevonden worden"
 #: src/usr/local/www/services_wol.php:89
 #, php-format
 msgid "Sent magic packet to %s."
-msgstr ""
+msgstr "Magisch pakket verzonden naar %s."
 
 #: src/usr/local/www/services_wol.php:92
 #, php-format
@@ -26754,6 +26779,8 @@ msgid ""
 "Please check the %1$ssystem log%2$s, the wol command for %3$s did not "
 "complete successfully."
 msgstr ""
+"Controleer a.u.b. de %1$ssysteem log%2$s, het wol commando voor %3$s is niet "
+"succesvol afgerond."
 
 #: src/usr/local/www/services_wol.php:102
 msgid "Deleted a device from WOL configuration."
@@ -26764,6 +26791,8 @@ msgid ""
 "This service can be used to wake up (power on) computers by sending special "
 "\"Magic Packets\"."
 msgstr ""
+"Deze service kan worden gebruikt om computers wakker te maken (aanzetten) "
+"door speciale \"Magische Pakketten\" te sturen."
 
 #: src/usr/local/www/services_wol.php:114
 msgid ""
@@ -26775,7 +26804,7 @@ msgstr ""
 
 #: src/usr/local/www/services_wol.php:138
 msgid "Choose which interface the host to be woken up is connected to."
-msgstr ""
+msgstr "Kies de interface waar de wakker te maken host mee verbonden is."
 
 #: src/usr/local/www/services_wol.php:142
 #: src/usr/local/www/services_wol_edit.php:141
@@ -26793,7 +26822,7 @@ msgstr "Wake-on-LAn apparaten"
 
 #: src/usr/local/www/services_wol.php:165
 msgid "Click the MAC address to wake up an individual device."
-msgstr ""
+msgstr "Klik op het MAC-adres om een afzonderlijk apparaat wakker te maken."
 
 #: src/usr/local/www/services_wol.php:189
 msgid "Edit Device"
@@ -26813,7 +26842,7 @@ msgstr "Maak alle apparaten wakker"
 
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
-msgstr ""
+msgstr "Deze wake-on-LAN-invoer voor deze interface en MAC-adres bestaat al."
 
 #: src/usr/local/www/services_wol_edit.php:104
 msgid "Configured a wake-on-LAN entry."
@@ -26825,7 +26854,7 @@ msgstr "Wijzig WOL regel"
 
 #: src/usr/local/www/services_wol_edit.php:137
 msgid "Choose which interface this host is connected to."
-msgstr ""
+msgstr "Kies de interface waar deze host mee verbonden is."
 
 #: src/usr/local/www/shortcuts.inc:90
 msgid "Related settings"
@@ -27153,11 +27182,11 @@ msgstr "Schakel CARP in"
 
 #: src/usr/local/www/status_carp.php:165
 msgid "Leave Persistent CARP Maintenance Mode"
-msgstr ""
+msgstr "Verlaat de Persistent CARP Onderhoudsmodus"
 
 #: src/usr/local/www/status_carp.php:165
 msgid "Enter Persistent CARP Maintenance Mode"
-msgstr ""
+msgstr "Ga naar de Persistent CARP Onderhoudsmodus"
 
 #: src/usr/local/www/status_carp.php:170
 msgid "CARP Interfaces"
@@ -27363,14 +27392,16 @@ msgid ""
 "This page will automatically refresh every 3 seconds until the filter is "
 "done reloading."
 msgstr ""
+"Deze pagina wordt automatisch om de 3 seconden vernieuwd totdat het filter "
+"is herladen."
 
 #: src/usr/local/www/status_filter_reload.php:104
 msgid "Obtaining filter status..."
-msgstr ""
+msgstr "Filterstatus ophalen ..."
 
 #: src/usr/local/www/status_filter_reload.php:110
 msgid "Queue Status"
-msgstr ""
+msgstr "Wachtrij Status"
 
 #: src/usr/local/www/status_gateway_groups.php:43
 #: src/usr/local/www/status_gateway_groups.php:47
@@ -27385,12 +27416,12 @@ msgstr ""
 #: src/usr/local/www/system_gateways.php:238
 #: src/usr/local/www/system_routes.php:230
 msgid "Gateway Groups"
-msgstr ""
+msgstr "Gateway Groepen"
 
 #: src/usr/local/www/status_gateway_groups.php:92
 #, php-format
 msgid "Tier %s"
-msgstr ""
+msgstr "Tier %s"
 
 #: src/usr/local/www/status_gateway_groups.php:120
 #: src/usr/local/www/status_gateways.php:129
@@ -27403,16 +27434,16 @@ msgstr "Offline"
 #: src/usr/local/www/status_gateway_groups.php:123
 #: src/usr/local/www/status_gateways.php:135
 msgid "Warning, Packetloss"
-msgstr ""
+msgstr "Waarschuwing, Pakketverlies"
 
 #: src/usr/local/www/status_gateway_groups.php:126
 #: src/usr/local/www/status_gateways.php:141
 msgid "Warning, Latency"
-msgstr ""
+msgstr "Waarschuwing, Latency"
 
 #: src/usr/local/www/status_gateway_groups.php:132
 msgid "Gathering data"
-msgstr ""
+msgstr "Data aan het verzamelen"
 
 #: src/usr/local/www/status_gateways.php:63
 msgid "RTT"
@@ -27436,33 +27467,33 @@ msgstr "Verlies"
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:144
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:145
 msgid "Pending"
-msgstr ""
+msgstr "In Afwachting"
 
 #: src/usr/local/www/status_gateways.php:126
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:110
 msgid "Offline (forced)"
-msgstr ""
+msgstr "Offline (geforceerd)"
 
 #: src/usr/local/www/status_gateways.php:132
 msgid "Danger, Packetloss"
-msgstr ""
+msgstr "Gevaar, Pakketverlies"
 
 #: src/usr/local/www/status_gateways.php:138
 msgid "Danger, Latency"
-msgstr ""
+msgstr "Gevaar, Latency"
 
 #: src/usr/local/www/status_gateways.php:145
 #: src/usr/local/www/status_gateways.php:154
 msgid "Online (unmonitored)"
-msgstr ""
+msgstr "Online (niet gemonitord)"
 
 #: src/usr/local/www/status_gateways.php:171
 msgid "Last checked"
-msgstr ""
+msgstr "Laatst gecontroleerd"
 
 #: src/usr/local/www/status_graph.php:117
 msgid "Graph Settings"
-msgstr ""
+msgstr "Grafiek Instellingen"
 
 #: src/usr/local/www/status_graph.php:133
 #: src/usr/local/www/status_graph.php:280
@@ -27482,7 +27513,7 @@ msgstr "Lokaal"
 #: src/usr/local/www/status_graph.php:144
 #: src/usr/local/www/system_groupmanager.php:403
 msgid "Remote"
-msgstr ""
+msgstr "Extern"
 
 #: src/usr/local/www/status_graph.php:157
 msgid "FQDN"
@@ -27495,11 +27526,11 @@ msgstr "Weergeven"
 
 #: src/usr/local/www/status_graph.php:166
 msgid "Clear graphs when not visible."
-msgstr ""
+msgstr "Maak grafieken leeg wanneer niet zichtbaar."
 
 #: src/usr/local/www/status_graph.php:167
 msgid "Keep graphs updated on inactive tab. (increases cpu usage)"
-msgstr ""
+msgstr "Houd grafieken bijgewerkt op inactief tabblad. (verhoogt cpu gebruik)"
 
 #: src/usr/local/www/status_graph.php:169
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:194
@@ -27522,7 +27553,7 @@ msgstr "Host naam of IP"
 #: src/usr/local/www/status_graph_cpu.php:33
 #: src/usr/local/www/status_graph_cpu.php:39
 msgid "CPU Load Graph"
-msgstr ""
+msgstr "CPU belastingsgrafiek"
 
 #: src/usr/local/www/status_graph_cpu.php:46
 msgid "Note"
@@ -27534,6 +27565,8 @@ msgid ""
 "If the graph cannot be seen, the %1$sAdobe SVG viewer%2$s may need to be "
 "installed"
 msgstr ""
+"Als de grafiek niet zichtbaar is, moet de %1$sAdobe SVG viewer%2$s worden "
+"geïnstalleerd"
 
 #: src/usr/local/www/status_interfaces.php:105
 msgid "Send a gratuitous DHCP release packet to the server."
@@ -27577,7 +27610,7 @@ msgstr "Verbinden"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:272
 msgid "Uptime"
-msgstr ""
+msgstr "Uptime"
 
 #: src/usr/local/www/status_interfaces.php:123
 msgid "(historical)"
@@ -27609,11 +27642,11 @@ msgstr "Mobiel Downstream"
 
 #: src/usr/local/www/status_interfaces.php:130
 msgid "Cell Current Up"
-msgstr ""
+msgstr "Mobiel momenteel actief"
 
 #: src/usr/local/www/status_interfaces.php:131
 msgid "Cell Current Down"
-msgstr ""
+msgstr "Mobiel momenteel niet actief"
 
 #: src/usr/local/www/status_interfaces.php:141
 msgid "IPv4 Address"
@@ -27641,11 +27674,11 @@ msgstr "Media"
 
 #: src/usr/local/www/status_interfaces.php:161
 msgid "LAGG Protocol"
-msgstr ""
+msgstr "LAGG Protocol"
 
 #: src/usr/local/www/status_interfaces.php:162
 msgid "LAGG Ports"
-msgstr ""
+msgstr "LAGG Poorten"
 
 #: src/usr/local/www/status_interfaces.php:165
 msgid "BSSID"
@@ -27657,15 +27690,15 @@ msgstr "RSSI"
 
 #: src/usr/local/www/status_interfaces.php:168
 msgid "In/out packets"
-msgstr ""
+msgstr "In/uit pakketten"
 
 #: src/usr/local/www/status_interfaces.php:170
 msgid "In/out packets (pass)"
-msgstr ""
+msgstr "In/uit pakketten (doorgegeven)"
 
 #: src/usr/local/www/status_interfaces.php:172
 msgid "In/out packets (block)"
-msgstr ""
+msgstr "In/uit pakketten (geblokkeerd)"
 
 #: src/usr/local/www/status_interfaces.php:174
 msgid "In/out errors"
@@ -27679,11 +27712,11 @@ msgstr "Botsingen"
 #: src/usr/local/www/status_interfaces.php:178
 #, php-format
 msgid "Bridge (%1$s)"
-msgstr ""
+msgstr "Brug (%1$s)"
 
 #: src/usr/local/www/status_interfaces.php:195
 msgid "Total interrupts"
-msgstr ""
+msgstr "Totale interrupts"
 
 #: src/usr/local/www/status_interfaces.php:206
 #, php-format
@@ -27693,6 +27726,11 @@ msgid ""
 "%1$snot%2$s prevent dial-on-demand from making connections to the outside! "
 "Don't use dial-on-demand if the line is to be kept disconnected."
 msgstr ""
+"Met behulp van de dial-on-demand wordt de verbinding opnieuw opzetten als "
+"een pakket het activeert. Om dit punt te verduidelijken: handmatig de "
+"verbinding verbreken, zal %1$sniet%2$s voorkomen dat de dial-on-demand "
+"verbinding zal maken met de buitenwereld! Gebruik geen dial-on-demand als de "
+"lijn beschikbaar moet blijven. "
 
 #: src/usr/local/www/status_ipsec.php:114
 #: src/usr/local/www/status_ipsec.php:147
@@ -27706,21 +27744,21 @@ msgstr "secondes ("
 #: src/usr/local/www/status_ipsec.php:221
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr ""
+msgstr "%1$s seconden (%2$s) geleden"
 
 #: src/usr/local/www/status_ipsec.php:230
 #: src/usr/local/www/status_ipsec.php:232
 #: src/usr/local/www/status_ipsec.php:453
 msgid "Connect VPN"
-msgstr ""
+msgstr "Maak verbinding met VPN"
 
 #: src/usr/local/www/status_ipsec.php:237
 msgid "Disconnect VPN"
-msgstr ""
+msgstr "Verbreek verbinding met VPN"
 
 #: src/usr/local/www/status_ipsec.php:254
 msgid "Show child SA entries"
-msgstr ""
+msgstr "Toon child SA invoer"
 
 #: src/usr/local/www/status_ipsec.php:288
 msgid "Local: "
@@ -27733,17 +27771,17 @@ msgstr "Extern: "
 #: src/usr/local/www/status_ipsec.php:309
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Rekey: %1$s seconden (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:311
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Levensduur: %1$s seconden (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:313
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Installeren: %1$s seconden (%2$s)"
 
 #: src/usr/local/www/status_ipsec.php:334
 msgid "IPComp: "
@@ -27755,19 +27793,19 @@ msgstr "Bytes-In: "
 
 #: src/usr/local/www/status_ipsec.php:345
 msgid "Packets-In: "
-msgstr ""
+msgstr "Inkomende Pakketten:"
 
 #: src/usr/local/www/status_ipsec.php:346
 msgid "Bytes-Out: "
-msgstr ""
+msgstr "Uitgaande Bytes:"
 
 #: src/usr/local/www/status_ipsec.php:347
 msgid "Packets-Out: "
-msgstr ""
+msgstr "Uitgaande Pakketten:"
 
 #: src/usr/local/www/status_ipsec.php:351
 msgid "Disconnect Child SA"
-msgstr ""
+msgstr "Verbreek verbinding met Child SA"
 
 #: src/usr/local/www/status_ipsec.php:440
 msgid "Awaiting connections"
@@ -27804,7 +27842,7 @@ msgstr "SPDs"
 
 #: src/usr/local/www/status_ipsec.php:480
 msgid "IPsec Status"
-msgstr ""
+msgstr "IPsec Status"
 
 #: src/usr/local/www/status_ipsec.php:486
 msgid "Local ID"
@@ -27824,11 +27862,11 @@ msgstr "Rol"
 
 #: src/usr/local/www/status_ipsec.php:491
 msgid "Reauth"
-msgstr ""
+msgstr "Opnieuw autoriseren "
 
 #: src/usr/local/www/status_ipsec.php:492
 msgid "Algo"
-msgstr ""
+msgstr "Algo"
 
 #: src/usr/local/www/status_ipsec.php:500
 msgid "Collecting IPsec status information."
@@ -27856,7 +27894,7 @@ msgstr "Nog geen reserveringen vanuit deze pool."
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
-msgstr ""
+msgstr "Geen IPsec pools."
 
 #: src/usr/local/www/status_ipsec_sad.php:69
 msgid "SPI"
@@ -27864,7 +27902,7 @@ msgstr "SPI"
 
 #: src/usr/local/www/status_ipsec_sad.php:70
 msgid "Enc. alg."
-msgstr ""
+msgstr "Enc. alg."
 
 #: src/usr/local/www/status_ipsec_sad.php:71
 msgid "Auth. alg."
@@ -27876,11 +27914,11 @@ msgstr "Data"
 
 #: src/usr/local/www/status_ipsec_sad.php:106
 msgid "Remove this SPD Entry"
-msgstr ""
+msgstr "Verwijder deze SPD invoer"
 
 #: src/usr/local/www/status_ipsec_sad.php:117
 msgid "No IPsec security associations."
-msgstr ""
+msgstr "Geen IPsec beveiliging associaties."
 
 #: src/usr/local/www/status_ipsec_spd.php:61
 msgid "Direction"
@@ -27888,7 +27926,7 @@ msgstr "Richting"
 
 #: src/usr/local/www/status_ipsec_spd.php:63
 msgid "Tunnel endpoints"
-msgstr ""
+msgstr "Tunnel eindpunten"
 
 #: src/usr/local/www/status_ipsec_spd.php:71
 msgid " Inbound"
@@ -27896,7 +27934,7 @@ msgstr "Inkomend"
 
 #: src/usr/local/www/status_ipsec_spd.php:73
 msgid " Outbound"
-msgstr ""
+msgstr "Uitgaand"
 
 #: src/usr/local/www/status_ipsec_spd.php:101
 msgid "No IPsec security policies configured."
@@ -27940,12 +27978,12 @@ msgstr "Onbeschikbaar"
 #: src/usr/local/www/status_lb_vs.php:106
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:80
 msgid "Unknown - relayd not running?"
-msgstr ""
+msgstr "Onbekend - relayd draait mogelijk niet?"
 
 #: src/usr/local/www/status_lb_vs.php:118
 #, php-format
 msgid "Total Sessions: %s"
-msgstr ""
+msgstr "Totale Sessies: %s"
 
 #: src/usr/local/www/status_lb_vs.php:121
 #, php-format
@@ -28072,33 +28110,33 @@ msgstr "L2TP Service"
 #: src/usr/local/www/status_logs_common.inc:143
 #, php-format
 msgid "%1$s Matched %2$s Log Entries."
-msgstr ""
+msgstr "%1$s Overeenkomende %2$s Log Regels."
 
 #: src/usr/local/www/status_logs_common.inc:145
 #, php-format
 msgid "Last %1$s %2$s Log Entries."
-msgstr ""
+msgstr "Laatste %1$s %2$s Log Regels."
 
 #: src/usr/local/www/status_logs_common.inc:149
 #, php-format
 msgid "%1$d Matched %2$s Log Entries."
-msgstr ""
+msgstr "%1$d Overeenkomende %2$s Log Regels."
 
 #: src/usr/local/www/status_logs_common.inc:151
 #, php-format
 msgid "Last %1$d %2$s Log Entries."
-msgstr ""
+msgstr "Laatste %1$d %2$s Log Regels."
 
 #: src/usr/local/www/status_logs_common.inc:155
 #, php-format
 msgid "Maximum %d"
-msgstr ""
+msgstr "Maximale %d"
 
 #: src/usr/local/www/status_logs_common.inc:234
 #: src/usr/local/www/status_logs_common.inc:395
 #: src/usr/local/www/status_logs_vpn.php:349
 msgid "Advanced Log Filter"
-msgstr ""
+msgstr "Geavanceerd Log Filter"
 
 #: src/usr/local/www/status_logs_common.inc:265
 #: src/usr/local/www/status_logs_common.inc:305
@@ -28135,19 +28173,19 @@ msgstr "Filter Expressie"
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "Regular expression reference"
-msgstr ""
+msgstr "Reguliere expressie referentie"
 
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "Precede with exclamation (!) to exclude match."
-msgstr ""
+msgstr "Zet een uitroepteken (!) ervoor om uit te sluiten"
 
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 #: src/usr/local/www/status_logs_vpn.php:481
 msgid "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
-msgstr ""
+msgstr "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
 
 #: src/usr/local/www/status_logs_common.inc:404
 msgid "Source IP Address"
@@ -28164,12 +28202,14 @@ msgstr "Protocol vlaggen"
 #: src/usr/local/www/status_logs_common.inc:645
 #: src/usr/local/www/status_logs_settings.php:100
 msgid "Number of log entries to show must be between 5 and 2000."
-msgstr ""
+msgstr "Aantal te tonen logregels moet tussen 5 en 2000 zijn."
 
 #: src/usr/local/www/status_logs_common.inc:651
 #: src/usr/local/www/status_logs_settings.php:105
 msgid "Log file size must be numeric and greater than or equal to 100000."
 msgstr ""
+"Logbestand grootte moet een numeriek getal en en groter of gelijk aan 100000 "
+"zijn."
 
 #: src/usr/local/www/status_logs_common.inc:721
 msgid "Log Display Settings Saved: "
@@ -28189,17 +28229,17 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:734
 #: src/usr/local/www/status_logs_settings.php:180
 msgid "WebGUI process is restarting."
-msgstr ""
+msgstr "WebGUI proces is aan het herstarten."
 
 #: src/usr/local/www/status_logs_common.inc:782
 #, php-format
 msgid "Manage %1$s Log"
-msgstr ""
+msgstr "Beheer %1$s Log"
 
 #: src/usr/local/www/status_logs_common.inc:791
 #: src/usr/local/www/status_logs_settings.php:235
 msgid "Forward/Reverse Display"
-msgstr ""
+msgstr "Oplopende/Aflopende Weergave"
 
 #: src/usr/local/www/status_logs_common.inc:799
 msgid "(newest at bottom)"
@@ -28211,7 +28251,7 @@ msgstr "(nieuwste bovenaan)"
 
 #: src/usr/local/www/status_logs_common.inc:817
 msgid "Show log entries in forward or reverse order."
-msgstr ""
+msgstr "Toon logregels in oplopende of aflopende volgorde."
 
 #: src/usr/local/www/status_logs_common.inc:820
 #: src/usr/local/www/status_logs_common.inc:825
@@ -28224,12 +28264,14 @@ msgid ""
 "This is the number of log entries displayed in the GUI. It does not affect "
 "how many entries are contained in the log."
 msgstr ""
+"Dit is het aantal logregels dat wordt weergegeven in de GUI. Het heeft geen "
+"invloed op het aantal regels die in de log zijn opgenomen."
 
 #: src/usr/local/www/status_logs_common.inc:834
 #: src/usr/local/www/status_logs_common.inc:839
 #: src/usr/local/www/status_logs_settings.php:250
 msgid "Log file size (Bytes)"
-msgstr ""
+msgstr "Logbestand grootte (Bytes)"
 
 #: src/usr/local/www/status_logs_common.inc:844
 #, php-format
@@ -28266,7 +28308,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:883
 #: src/usr/local/www/status_logs_settings.php:286
 msgid "Web Server Log"
-msgstr ""
+msgstr "Web Server Log"
 
 #: src/usr/local/www/status_logs_common.inc:886
 msgid ""
@@ -28279,7 +28321,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:894
 #: src/usr/local/www/status_logs_settings.php:258
 msgid "Log firewall default blocks"
-msgstr ""
+msgstr "Log firewall standaard blokkeringen"
 
 #: src/usr/local/www/status_logs_common.inc:897
 msgid ""
@@ -28287,32 +28329,38 @@ msgid ""
 "logged if this option is unchecked. Per-rule logging options are still "
 "respected."
 msgstr ""
+"Pakketten die worden geblokkeerd door de impliciete standaardblokregel "
+"worden niet gelogd als deze optie is uitgeschakeld. Per-regel log opties "
+"worden nog steeds gerespecteerd. "
 
 #: src/usr/local/www/status_logs_common.inc:904
 msgid ""
 "Packets that are allowed by the implicit default pass rule will be logged if "
 "this option is checked. Per-rule logging options are still respected. "
 msgstr ""
+"Pakketten die worden toegestaan door de impliciete standaardtoestaan-regel "
+"worden gelogd als deze optie is ingeschakeld. Per-regel log opties worden "
+"nog steeds gerespecteerd. "
 
 #: src/usr/local/www/status_logs_common.inc:925
 #: src/usr/local/www/status_logs_settings.php:310
 msgid "Dont load descriptions"
-msgstr ""
+msgstr "Laad geen beschrijvingen"
 
 #: src/usr/local/www/status_logs_common.inc:926
 #: src/usr/local/www/status_logs_settings.php:311
 msgid "Display as column"
-msgstr ""
+msgstr "Tonen als kolom"
 
 #: src/usr/local/www/status_logs_common.inc:927
 #: src/usr/local/www/status_logs_settings.php:312
 msgid "Display as second row"
-msgstr ""
+msgstr "Tonen als tweede rij"
 
 #: src/usr/local/www/status_logs_common.inc:922
 #: src/usr/local/www/status_logs_settings.php:307
 msgid "Where to show rule descriptions"
-msgstr ""
+msgstr "Waar regelbeschrijvingen te tonen"
 
 #: src/usr/local/www/status_logs_common.inc:929
 #: src/usr/local/www/status_logs_settings.php:314
@@ -28322,6 +28370,9 @@ msgid ""
 "%1$sDisplaying rule descriptions for all lines in the log might affect "
 "performance with large rule sets."
 msgstr ""
+"Toon de omschrijving van de toegepaste regel onder of in de firewal "
+"logregels.%1$sHet weergeven van regelbeschrijvingen voor alle regels in het "
+"logboek kan prestaties beïnvloeden met grote regelsets."
 
 #: src/usr/local/www/status_logs_common.inc:950
 msgid "Saves changed settings."
@@ -28329,7 +28380,7 @@ msgstr "Gewijzigde instellingen worden opgeslagen."
 
 #: src/usr/local/www/status_logs_common.inc:955
 msgid "Clear log"
-msgstr ""
+msgstr "Logboek leegmaken"
 
 #: src/usr/local/www/status_logs_common.inc:965
 msgid ""
@@ -28345,11 +28396,11 @@ msgstr "Kan niet herleiden"
 
 #: src/usr/local/www/status_logs_filter.php:85
 msgid "The rule that triggered this action is"
-msgstr ""
+msgstr "De regel die deze actie heeft geactiveerd is"
 
 #: src/usr/local/www/status_logs_filter.php:156
 msgid "Rule"
-msgstr ""
+msgstr "Regel"
 
 #: src/usr/local/www/status_logs_filter.php:235
 #: src/usr/local/www/status_logs_filter.php:244
@@ -28401,6 +28452,8 @@ msgstr "Bestemming Poorten"
 msgid ""
 "This is a summary of the last %1$s lines of the firewall log (Max %2$s)."
 msgstr ""
+"Dit is een samenvatting van de laatste  %1$s regels van het firewalllogboek "
+"(Max %2$s)."
 
 #: src/usr/local/www/status_logs_filter_summary.php:166
 msgid "Data points"
@@ -28426,22 +28479,28 @@ msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #1."
 msgstr ""
+"Een geldig IP adres of hostnaam moet worden opgegeven voor de externe syslog "
+"server #1."
 
 #: src/usr/local/www/status_logs_settings.php:93
 msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #2."
 msgstr ""
+"Een geldig IP adres of hostnaam moet worden opgegeven voor de externe syslog "
+"server #2."
 
 #: src/usr/local/www/status_logs_settings.php:96
 msgid ""
 "A valid IP address/hostname or IP/hostname:port must be specified for remote "
 "syslog server #3."
 msgstr ""
+"Een geldig IP adres of hostnaam moet worden opgegeven voor de externe syslog "
+"server #3."
 
 #: src/usr/local/www/status_logs_settings.php:163
 msgid "Changed system logging options."
-msgstr ""
+msgstr "Systeem log opties zijn gewijzigd."
 
 #: src/usr/local/www/status_logs_settings.php:191
 msgid ""
@@ -28450,6 +28509,10 @@ msgid ""
 "By default this is approximately 500KB per log file, and there are nearly 20 "
 "such log files."
 msgstr ""
+"Logboeken worden in roterende logbestanden van constante omvang gehouden. "
+"Met dit veld wordt bepaald hoe groot elk logbestand is en dus hoeveel regels "
+"in het logboek kunnen staan. Standaard bedraagt dit ongeveer 500KB per "
+"logbestand en er zijn bijna 20 dergelijke logbestanden."
 
 #: src/usr/local/www/status_logs_settings.php:193
 msgid ""
@@ -28473,11 +28536,11 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:195
 msgid "Disk space currently used by log files is: "
-msgstr ""
+msgstr "Schijfruimte momenteel gebruikt door logbestanden is:"
 
 #: src/usr/local/www/status_logs_settings.php:196
 msgid " Remaining disk space for log files: "
-msgstr ""
+msgstr "Resterende schijfruimte voor logbestanden:"
 
 #: src/usr/local/www/status_logs_settings.php:198
 msgid ""
@@ -28492,6 +28555,9 @@ msgid ""
 "If a single IP is picked, remote syslog servers must all be of that IP type. "
 "To mix IPv4 and IPv6 remote syslog servers, bind to all interfaces."
 msgstr ""
+"Als een enkel IP wordt gekozen, moeten externe syslog-servers allemaal van "
+"dat IP type zijn. Om IPv4 en IPv6 remote syslog servers te mengen, verbind "
+"deze dan aan alle interfaces."
 
 #: src/usr/local/www/status_logs_settings.php:201
 msgid ""
@@ -28503,13 +28569,16 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "General Logging Options"
-msgstr ""
+msgstr "Algemene Log Opties"
 
 #: src/usr/local/www/status_logs_settings.php:246
 msgid ""
 "This is only the number of log entries displayed in the GUI. It does not "
 "affect how many entries are contained in the actual log files."
 msgstr ""
+"Dit is uitsluitend het aantal logregels dat wordt weergegeven in de GUI. Het "
+"heeft geen invloed op het aantal regels die in het logbestand  zijn "
+"opgenomen."
 
 #: src/usr/local/www/status_logs_settings.php:261
 #, php-format
@@ -28517,6 +28586,8 @@ msgid ""
 "Log packets that are %1$sblocked%2$s by the implicit default block rule. - "
 "Per-rule logging options are still respected."
 msgstr ""
+"Log pakketten die worden %1$sgeblokkeerd%2$s door de impliciete "
+"standaardblokregel. Per-regel log opties worden nog steeds gerespecteerd. "
 
 #: src/usr/local/www/status_logs_settings.php:268
 #, php-format
@@ -28524,6 +28595,9 @@ msgid ""
 "Log packets that are %1$sallowed%2$s by the implicit default pass rule. - "
 "Per-rule logging options are still respected. "
 msgstr ""
+"Log pakketten die worden  %1$stoegestaan %2$s door de impliciete "
+"standaardtoestaan-regel. Per-regel log opties worden nog steeds "
+"gerespecteerd. "
 
 #: src/usr/local/www/status_logs_settings.php:289
 msgid ""
@@ -28535,7 +28609,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:293
 msgid "Raw Logs"
-msgstr ""
+msgstr "Onbewerkte logboeken"
 
 #: src/usr/local/www/status_logs_settings.php:296
 msgid ""
@@ -28563,7 +28637,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:333
 msgid "Remote Logging Options"
-msgstr ""
+msgstr "Externe Log Opties"
 
 #: src/usr/local/www/status_logs_settings.php:338
 msgid "Enable Remote Logging"
@@ -28583,7 +28657,7 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_settings.php:359
 msgid "Remote log servers"
-msgstr ""
+msgstr "Externe logservers"
 
 #: src/usr/local/www/status_logs_settings.php:364
 #: src/usr/local/www/vpn_openvpn_csc.php:475
@@ -28606,7 +28680,7 @@ msgstr "Server 3"
 
 #: src/usr/local/www/status_logs_settings.php:388
 msgid "Remote Syslog Contents"
-msgstr ""
+msgstr "Externe Syslog inhoud"
 
 #: src/usr/local/www/status_logs_settings.php:482
 msgid ""
@@ -28635,11 +28709,11 @@ msgstr "Log Bericht"
 
 #: src/usr/local/www/status_ntpd.php:66
 msgid "Pool Placeholder"
-msgstr ""
+msgstr "Pool Plaatsvervangers"
 
 #: src/usr/local/www/status_ntpd.php:68
 msgid "Unreach/Pending"
-msgstr ""
+msgstr "Onbereikbaar/In Afwachting"
 
 #: src/usr/local/www/status_ntpd.php:72
 msgid "Active Peer"
@@ -28647,7 +28721,7 @@ msgstr "Actieve Peers"
 
 #: src/usr/local/www/status_ntpd.php:75
 msgid "Candidate"
-msgstr ""
+msgstr "Kandidaat"
 
 #: src/usr/local/www/status_ntpd.php:78
 msgid "PPS Peer"
@@ -28655,19 +28729,19 @@ msgstr "PPS Peer"
 
 #: src/usr/local/www/status_ntpd.php:81
 msgid "Selected"
-msgstr ""
+msgstr "Geselecteerd"
 
 #: src/usr/local/www/status_ntpd.php:84
 msgid "Excess Peer"
-msgstr ""
+msgstr "Overmatige Peer"
 
 #: src/usr/local/www/status_ntpd.php:87
 msgid "False Ticker"
-msgstr ""
+msgstr "Foutieve Ticker"
 
 #: src/usr/local/www/status_ntpd.php:90
 msgid "Outlier"
-msgstr ""
+msgstr "Outlier"
 
 #: src/usr/local/www/status_ntpd.php:201
 #, php-format
@@ -28685,48 +28759,48 @@ msgstr "Geen peers gevonden, %1$sidraait de  ntp service?%2$s"
 
 #: src/usr/local/www/status_ntpd.php:264
 msgid "in view "
-msgstr ""
+msgstr "in zicht"
 
 #: src/usr/local/www/status_ntpd.php:271
 msgid "in use "
-msgstr ""
+msgstr "in gebruik"
 
 #: src/usr/local/www/status_ntpd.php:279
 msgid "Google Maps Link"
-msgstr ""
+msgstr "Google Maps Koppeling"
 
 #: src/usr/local/www/status_ntpd.php:290
 msgid "Network Time Protocol Status"
-msgstr ""
+msgstr "Network Time Protocol Status"
 
 #: src/usr/local/www/status_ntpd.php:297
 msgid "Ref ID"
-msgstr ""
+msgstr "Ref ID"
 
 #: src/usr/local/www/status_ntpd.php:300
 msgid "When"
-msgstr ""
+msgstr "Wanneer"
 
 #: src/usr/local/www/status_ntpd.php:301
 msgid "Poll"
-msgstr ""
+msgstr "Poll"
 
 #: src/usr/local/www/status_ntpd.php:302
 msgid "Reach"
-msgstr ""
+msgstr "Reach"
 
 #: src/usr/local/www/status_ntpd.php:303
 #: src/usr/local/www/vpn_ipsec_phase1.php:926
 msgid "Delay"
-msgstr ""
+msgstr "Vertraging"
 
 #: src/usr/local/www/status_ntpd.php:304
 msgid "Offset"
-msgstr ""
+msgstr "Offset"
 
 #: src/usr/local/www/status_ntpd.php:305
 msgid "Jitter"
-msgstr ""
+msgstr "Jitter"
 
 #: src/usr/local/www/status_ntpd.php:327
 msgid "GPS Information"
@@ -28734,20 +28808,20 @@ msgstr "GPS informatie"
 
 #: src/usr/local/www/status_ntpd.php:332
 msgid "Clock Latitude"
-msgstr ""
+msgstr "Klok Latitude"
 
 #: src/usr/local/www/status_ntpd.php:333
 msgid "Clock Longitude"
-msgstr ""
+msgstr "Klok Longitude"
 
 #: src/usr/local/www/status_ntpd.php:337
 msgid "Clock Altitude"
-msgstr ""
+msgstr "Klok Altitude"
 
 #: src/usr/local/www/status_ntpd.php:344
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:180
 msgid "Satellites"
-msgstr ""
+msgstr "Satellieten"
 
 #: src/usr/local/www/status_openvpn.php:81
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:409
@@ -28762,29 +28836,29 @@ msgstr "Client Verbindingen"
 #: src/usr/local/www/status_openvpn.php:188
 #: src/usr/local/www/vpn_openvpn_csc.php:662
 msgid "Common Name"
-msgstr ""
+msgstr "Common Name"
 
 #: src/usr/local/www/status_openvpn.php:104
 #: src/usr/local/www/status_openvpn.php:189
 msgid "Real Address"
-msgstr ""
+msgstr "Werkelijke adres"
 
 #: src/usr/local/www/status_openvpn.php:105
 #: src/usr/local/www/status_openvpn.php:239
 #: src/usr/local/www/status_openvpn.php:300
 msgid "Virtual Address"
-msgstr ""
+msgstr "Virtuele adres"
 
 #: src/usr/local/www/status_openvpn.php:106
 #: src/usr/local/www/status_openvpn.php:238
 #: src/usr/local/www/status_openvpn.php:298
 msgid "Connected Since"
-msgstr ""
+msgstr "Verbonden sinds"
 
 #: src/usr/local/www/status_openvpn.php:107
 #: src/usr/local/www/status_openvpn.php:302
 msgid "Bytes Sent/Received"
-msgstr ""
+msgstr "Bytes Verzonden/Ontvangen"
 
 #: src/usr/local/www/status_openvpn.php:140
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:78
@@ -28807,11 +28881,11 @@ msgstr "Routingtabel"
 
 #: src/usr/local/www/status_openvpn.php:190
 msgid "Target Network"
-msgstr ""
+msgstr "Doelnetwerk"
 
 #: src/usr/local/www/status_openvpn.php:191
 msgid "Last Used"
-msgstr ""
+msgstr "Laatst gebruikt"
 
 #: src/usr/local/www/status_openvpn.php:211
 msgid ""
@@ -28824,16 +28898,16 @@ msgstr ""
 #: src/usr/local/www/status_openvpn.php:231
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:122
 msgid "Peer to Peer Server Instance Statistics"
-msgstr ""
+msgstr "Peer to Peer Server Instantie Statistieken"
 
 #: src/usr/local/www/status_openvpn.php:240
 #: src/usr/local/www/status_openvpn.php:301
 msgid "Remote Host"
-msgstr ""
+msgstr "Externe Host"
 
 #: src/usr/local/www/status_openvpn.php:241
 msgid "Bytes Sent / Received"
-msgstr ""
+msgstr "Bytes Verzonden / Ontvangen"
 
 #: src/usr/local/www/status_openvpn.php:291
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:199
@@ -28856,24 +28930,27 @@ msgstr ""
 
 #: src/usr/local/www/status_openvpn.php:365
 msgid "No OpenVPN instances defined."
-msgstr ""
+msgstr "Geen OpenVPN instanties gedefinieerd."
 
 #: src/usr/local/www/status_pkglogs.php:81
 msgid "No packages with logging facilities are currently installed."
 msgstr ""
+"Er zijn momenteel geen pakketten met logging faciliteiten geïnstalleerd."
 
 #: src/usr/local/www/status_pkglogs.php:102
 #, php-format
 msgid "Last %1$s %2$s Log Entries"
-msgstr ""
+msgstr "Laatste %1$s %2$s Log Regels."
 
 #: src/usr/local/www/status_queues.php:53
 msgid "Something wrong happened during communication with stat gathering."
 msgstr ""
+"Er is iets fout gebeurd tijdens de communicatie met het verzamelen van "
+"statussen."
 
 #: src/usr/local/www/status_queues.php:63
 msgid "No queue statistics could be read."
-msgstr ""
+msgstr "Geen konden geen wachtrijstatistieken worden gelezen."
 
 #: src/usr/local/www/status_queues.php:115
 msgid "Traffic shaping is not configured."
@@ -28881,7 +28958,7 @@ msgstr "Traffic shaping is niet geconfigureerd."
 
 #: src/usr/local/www/status_queues.php:154
 msgid "Status Queues"
-msgstr ""
+msgstr "Status Wachtrijen"
 
 #: src/usr/local/www/status_queues.php:160
 msgid "Statistics"
@@ -28905,7 +28982,7 @@ msgstr "Lengte"
 
 #: src/usr/local/www/status_queues.php:185
 msgid "Queue graphs take 5 seconds to sample data."
-msgstr ""
+msgstr "Wachtrijgrafieken duren 5 seconden om gegevens te verzamelen."
 
 #: src/usr/local/www/status_queues.php:248
 msgid "Loading"
@@ -28917,7 +28994,7 @@ msgstr "Geen services gevonden."
 
 #: src/usr/local/www/status_upnp.php:35
 msgid "Rules have been cleared and the daemon restarted."
-msgstr ""
+msgstr "Regels zijn gewist en de daemon herstart."
 
 #: src/usr/local/www/status_upnp.php:55
 #, php-format
@@ -28932,11 +29009,11 @@ msgstr "Services &gt; UPnP &amp; NAT-PMP"
 
 #: src/usr/local/www/status_upnp.php:63
 msgid "UPnP &amp; NAT-PMP Rules"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP Regels"
 
 #: src/usr/local/www/status_upnp.php:72
 msgid "Int. Port"
-msgstr ""
+msgstr "Int. Poort"
 
 #: src/usr/local/www/status_upnp.php:120 src/usr/local/www/status_upnp.php:122
 msgid "Clear all sessions"
@@ -28947,10 +29024,12 @@ msgid ""
 "Rescan has been initiated in the background. Refresh this page in 10 seconds "
 "to see the results."
 msgstr ""
+"Herscan is gestart in de achtergrond. Vernieuw deze pagina over 10 seconden "
+"om de resultaten te zien."
 
 #: src/usr/local/www/status_wireless.php:77
 msgid "Nearby Access Points or Ad-Hoc Peers"
-msgstr ""
+msgstr "Access Points of Ad-Hoc Peers in de buurt"
 
 #: src/usr/local/www/status_wireless.php:146
 msgid "Associated or Ad-Hoc Peers"
@@ -28968,6 +29047,10 @@ msgid ""
 "hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot "
 "time."
 msgstr ""
+"%1$sFlags:%2$s A = authorized, E = Extended Rate (802.11g), P = Power saving "
+"mode.%3$s%1$sCapabilities:%2$s E = ESS (infrastructure mode), I = IBSS (ad-"
+"hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot "
+"time."
 
 #: src/usr/local/www/system.php:127
 msgid "AHEAD of"
@@ -28981,29 +29064,29 @@ msgstr "ACHTER"
 #, php-format
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(%1$s uur %2$s GMT)"
+msgstr[1] "(%1$s uur %2$s GMT)"
 
 #: src/usr/local/www/system.php:210
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
-msgstr ""
+msgstr "De domeinnaam mag alleen de karakters a-z, 0-9, '-' en '.' bevatten."
 
 #: src/usr/local/www/system.php:223
 #, php-format
 msgid "A valid IP address must be specified for DNS server %s."
-msgstr ""
+msgstr "Een geldig IP-adres moet worden opgegeven voor DNS Server %s."
 
 #: src/usr/local/www/system.php:229
 #, php-format
 msgid ""
 "The IPv6 gateway \"%1$s\" can not be specified for IPv4 DNS server \"%2$s\"."
-msgstr ""
+msgstr "De IPv6 gateway \"%1$s\" kan niet worden voor IPv4 DNS server \"%2$s\"."
 
 #: src/usr/local/www/system.php:232
 #, php-format
 msgid ""
 "The IPv4 gateway \"%1$s\" can not be specified for IPv6 DNS server \"%2$s\"."
-msgstr ""
+msgstr "De IPv4 gateway \"%1$s\" kan niet worden voor IPv6 DNS server \"%2$s\"."
 
 #: src/usr/local/www/system.php:245
 msgid ""
@@ -29019,6 +29102,8 @@ msgid ""
 "A gateway can not be assigned to DNS '%s' server which is on a directly "
 "connected network."
 msgstr ""
+"Er kan geen gateway worden toegewezen aan DNS '%s' server die op een direct "
+"verbonden netwerk zit."
 
 #: src/usr/local/www/system.php:270
 msgid ""
@@ -29029,7 +29114,7 @@ msgstr ""
 
 #: src/usr/local/www/system.php:454
 msgid "Name of the firewall host, without domain part"
-msgstr ""
+msgstr "Naam van de firewall host, zonder domein."
 
 #: src/usr/local/www/system.php:462
 #, php-format
@@ -29054,6 +29139,8 @@ msgstr "DNS Server Instellingen"
 #: src/usr/local/www/system.php:479
 msgid "Enter IP addresses to be used by the system for DNS resolution."
 msgstr ""
+"Voer de IP adressen in die gebruikt moeten worden door het systeem voor DNS "
+"resolutie."
 
 #: src/usr/local/www/system.php:480
 msgid ""
@@ -29065,13 +29152,15 @@ msgstr ""
 
 #: src/usr/local/www/system.php:481
 msgid "Optionally select the gateway for each DNS server."
-msgstr ""
+msgstr "Selecteer optioneel de gateway voor elke DNS-server."
 
 #: src/usr/local/www/system.php:482
 msgid ""
 "When using multiple WAN connections there should be at least one unique DNS "
 "server per gateway."
 msgstr ""
+"Bij het gebruik van meerdere WAN-verbindingen moet er minstens één unieke "
+"DNS-server per gateway zijn."
 
 #: src/usr/local/www/system.php:497
 msgid "DNS Server"
@@ -29130,6 +29219,10 @@ msgid ""
 "cases where the geographic zones do not properly handle the clock offset "
 "required for this firewall."
 msgstr ""
+"Selecteer een geografische regio naam (Continent/Locatie) om de tijdzone van "
+"de firewall te bepalen. %1$sKies een speciaal of \"Etc\" -zone alleen in "
+"gevallen waarin de geografische zones de klokverschuiving die voor deze "
+"firewall nodig zijn niet goed verwerken."
 
 #: src/usr/local/www/system.php:577
 msgid "Timeservers"
@@ -29140,6 +29233,9 @@ msgid ""
 "Use a space to separate multiple hosts (only one required). Remember to set "
 "up at least one DNS server if a host name is entered here!"
 msgstr ""
+"Gebruik een spatie om meerdere hosts te scheiden (slechts 1 vereist). "
+"Vergeet niet om tenminste 1 DNS-server op te zetten als hier een hostnaam is "
+"ingevoerd!"
 
 #: src/usr/local/www/system.php:585
 msgid "*Language"
@@ -29151,37 +29247,37 @@ msgstr "Kies een taal voor de webConfigurator"
 
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1209
+#: src/usr/local/www/system_certmanager.php:1232
 msgid "webConfigurator"
 msgstr "webConfigurator"
 
 #: src/usr/local/www/system.php:613
 msgid "Blue"
-msgstr ""
+msgstr "Blauw"
 
 #: src/usr/local/www/system.php:613
 msgid "Green"
-msgstr ""
+msgstr "Groen"
 
 #: src/usr/local/www/system.php:613
 msgid "Red"
-msgstr ""
+msgstr "Rood"
 
 #: src/usr/local/www/system.php:614
 msgid "Purple"
-msgstr ""
+msgstr "Paars"
 
 #: src/usr/local/www/system.php:614
 msgid "Gray"
-msgstr ""
+msgstr "Grijs"
 
 #: src/usr/local/www/system.php:614
 msgid "Dark gray"
-msgstr ""
+msgstr "Donkergrijs"
 
 #: src/usr/local/www/system.php:615
 msgid "Brown"
-msgstr ""
+msgstr "Bruin"
 
 #: src/usr/local/www/system.php:615
 msgid "Orange"
@@ -29189,11 +29285,11 @@ msgstr "Oranje"
 
 #: src/usr/local/www/system.php:611
 msgid "Login page color"
-msgstr ""
+msgstr "Inlogpagina kleur"
 
 #: src/usr/local/www/system.php:616
 msgid "Choose a color for the login page"
-msgstr ""
+msgstr "Kies een kleur voor de inlogpagina"
 
 #: src/usr/local/www/system.php:620
 msgid "Login hostname"
@@ -29205,6 +29301,8 @@ msgstr "Login hostname"
 #, php-format
 msgid "%sUser-created themes are unsupported, use at your own risk."
 msgstr ""
+"%sDoor gebruikers gemaakte thema's worden iet ondersteund, gebruik op eigen "
+"risico."
 
 #: src/usr/local/www/system_advanced_admin.php:80
 msgid "A valid webConfigurator port number must be specified"
@@ -29212,7 +29310,7 @@ msgstr "Er moet een geldige webConfigurator poort worden opgegeven."
 
 #: src/usr/local/www/system_advanced_admin.php:86
 msgid "Max Processes must be a number 1 or greater"
-msgstr ""
+msgstr "Mxx processen moet een getal van 1 of groter zijn"
 
 #: src/usr/local/www/system_advanced_admin.php:94
 #, php-format
@@ -29221,7 +29319,7 @@ msgstr "Alternatieve hostnaam %s is geen geldige hostnaam."
 
 #: src/usr/local/www/system_advanced_admin.php:101
 msgid "A valid port number must be specified"
-msgstr ""
+msgstr "Er moet een geldig poortnummer worden opgegeven."
 
 #: src/usr/local/www/system_advanced_admin.php:271
 #, php-format
@@ -29268,7 +29366,7 @@ msgstr "Overig"
 #: src/usr/local/www/system_advanced_sysctl.php:142
 #: src/usr/local/www/system_advanced_sysctl.php:149
 msgid "System Tunables"
-msgstr ""
+msgstr "Systeem Fijnafstemming"
 
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_firewall.php:383
@@ -29424,7 +29522,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:434
 msgid "Browser HTTP_REFERER enforcement"
-msgstr ""
+msgstr "Browser HTTP_REFERER handhaving"
 
 #: src/usr/local/www/system_advanced_admin.php:437
 #, php-format
@@ -29526,11 +29624,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:511
 msgid "Console Options"
-msgstr ""
+msgstr "Console Opties"
 
 #: src/usr/local/www/system_advanced_admin.php:515
 msgid "Console menu"
-msgstr ""
+msgstr "Console menu"
 
 #: src/usr/local/www/system_advanced_admin.php:551
 msgid "secure shell configuration has changed. Stopping sshd."
@@ -29542,19 +29640,19 @@ msgstr "secure shell configuratie is aangepast. Sshd aan het herstarten."
 
 #: src/usr/local/www/system_advanced_firewall.php:83
 msgid "The Firewall Adaptive values must be set together."
-msgstr ""
+msgstr "De Firewall Adaptive waarden moeten samen worden ingesteld."
 
 #: src/usr/local/www/system_advanced_firewall.php:86
 msgid "The Firewall Adaptive Start value must be an integer."
-msgstr ""
+msgstr "De Firewall Adaptive Start waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/system_advanced_firewall.php:89
 msgid "The Firewall Adaptive End value must be an integer."
-msgstr ""
+msgstr "De Firewall Adaptive Eind waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/system_advanced_firewall.php:92
 msgid "The Firewall Maximum States value must be an integer."
-msgstr ""
+msgstr "De Firewall Maximum States waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/system_advanced_firewall.php:95
 msgid "The Aliases Hostname Resolve Interval value must be an integer."
@@ -29563,11 +29661,12 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:98
 msgid "The Firewall Maximum Table Entries value must be an integer."
-msgstr ""
+msgstr "De Firewall Maximum Tabel Invoer waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/system_advanced_firewall.php:101
 msgid "The Firewall Maximum Fragment Entries value must be an integer."
 msgstr ""
+"De Firewall Maximum Fragment Invoer waarde moet een geheel getal zijn."
 
 #: src/usr/local/www/system_advanced_firewall.php:104
 msgid "The TCP idle timeout must be an integer."
@@ -29643,7 +29742,7 @@ msgstr "Geavanceerde firewall"
 
 #: src/usr/local/www/system_advanced_firewall.php:393
 msgid "IP Do-Not-Fragment compatibility"
-msgstr ""
+msgstr "IP Do-Not-Fragment compatibiliteit"
 
 #: src/usr/local/www/system_advanced_firewall.php:396
 msgid ""
@@ -29652,10 +29751,14 @@ msgid ""
 "will cause the filter to not drop such packets but instead clear the don't "
 "fragment bit."
 msgstr ""
+"Dit staat communicatie toe met hosts die gefragmenteerde pakketten genereren "
+"met de niet-fragment (DF) bit instellen. Linux NFS staat erom bekend dit te "
+"doen. Dit zal ervoor zorgen dat het filter deze pakketten niet laat "
+"uitvallen, maar in plaats daarvan het DF-bit wissen. "
 
 #: src/usr/local/www/system_advanced_firewall.php:403
 msgid "IP Random id generation"
-msgstr ""
+msgstr "IP Willekeurige id generatie"
 
 #: src/usr/local/www/system_advanced_firewall.php:406
 msgid ""
@@ -29664,6 +29767,10 @@ msgid ""
 "only applies to packets that are not fragmented after the optional packet "
 "reassembly."
 msgstr ""
+"Vervangt het IP-identificatieveld van pakketten met willekeurige waarden om "
+"te compenseren voor besturingssystemen die gebruikmaken van voorspelbare "
+"waarden. Deze optie is alleen van toepassing op pakketten die niet "
+"versnipperd zijn na het optionele pakketherstel."
 
 #: src/usr/local/www/system_advanced_firewall.php:417
 msgid "High-latency"
@@ -29680,11 +29787,11 @@ msgstr "Conservatief"
 
 #: src/usr/local/www/system_advanced_firewall.php:413
 msgid "Firewall Optimization Options"
-msgstr ""
+msgstr "Firewall Optimalisatie Opties"
 
 #: src/usr/local/www/system_advanced_firewall.php:421
 msgid "Select the type of state table optimization to use"
-msgstr ""
+msgstr "Selecteer type Status Tabel optimalisatie moet worden gebruikt"
 
 #: src/usr/local/www/system_advanced_firewall.php:425
 msgid "Disable Firewall"
@@ -29704,11 +29811,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:434
 msgid "Disable Firewall Scrub"
-msgstr ""
+msgstr "Schakel Firewall Scrub uit"
 
 #: src/usr/local/www/system_advanced_firewall.php:439
 msgid "Firewall Adaptive Timeouts"
-msgstr ""
+msgstr "Firewall Adaptive Timeouts"
 
 #: src/usr/local/www/system_advanced_firewall.php:443
 msgid "Adaptive start"
@@ -29746,7 +29853,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:472
 msgid "Firewall Maximum States"
-msgstr ""
+msgstr "Firewall Maximale aantal Statussen"
 
 #: src/usr/local/www/system_advanced_firewall.php:476
 #, php-format
@@ -29760,7 +29867,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:482
 msgid "Firewall Maximum Table Entries"
-msgstr ""
+msgstr "Firewall Maximale aantal Tabel invoer"
 
 #: src/usr/local/www/system_advanced_firewall.php:486
 #, php-format
@@ -29775,7 +29882,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:494
 msgid "Firewall Maximum Fragment Entries"
-msgstr ""
+msgstr "Firewall Maximale aantal Fragment invoer"
 
 #: src/usr/local/www/system_advanced_firewall.php:497
 msgid ""
@@ -29802,7 +29909,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:511
 msgid "Disable Auto-added VPN rules"
-msgstr ""
+msgstr "Schakel automatisch toegevoegde VPN regels uit"
 
 #: src/usr/local/www/system_advanced_firewall.php:514
 msgid "Note: This disables automatically added rules for IPsec."
@@ -29850,7 +29957,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:547
 msgid "Check certificate of aliases URLs"
-msgstr ""
+msgstr "Controleer certificaat van alias URLs"
 
 #: src/usr/local/www/system_advanced_firewall.php:550
 msgid ""
@@ -29860,7 +29967,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:554
 msgid "Bogon Networks"
-msgstr ""
+msgstr "Bogon Networks"
 
 #: src/usr/local/www/system_advanced_firewall.php:561
 msgid "Monthly"
@@ -29886,7 +29993,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:571
 msgid "Network Address Translation"
-msgstr ""
+msgstr "Netwerk Adres Translatie"
 
 #: src/usr/local/www/system_advanced_firewall.php:586
 msgid "disabled"
@@ -30016,7 +30123,7 @@ msgstr "Overig"
 
 #: src/usr/local/www/system_advanced_firewall.php:707
 msgid "The default optimization algorithm"
-msgstr ""
+msgstr "Het standaard optimalisatie algoritme"
 
 #: src/usr/local/www/system_advanced_firewall.php:709
 msgid ""
@@ -30030,24 +30137,28 @@ msgid ""
 "Expires idle connections quicker. More efficient use of CPU and memory but "
 "can drop legitimate idle connections"
 msgstr ""
+"Laat inactieve verbindingen sneller verlopen. Meer efficiënt gebruik van CPU "
+"en geheugen, maar kan rechtmatige inactieve verbindingen verbreken"
 
 #: src/usr/local/www/system_advanced_firewall.php:713
 msgid ""
 "Tries to avoid dropping any legitimate idle connections at the expense of "
 "increased memory usage and CPU utilization"
 msgstr ""
+"Probeert het verbreken van rechtmatige inactieve verbindingen te vermijden "
+"ten koste van een verhoogd geheugen- en CPU-gebruik"
 
 #: src/usr/local/www/system_advanced_misc.php:76
 msgid "AES-NI CPU-based Acceleration"
-msgstr ""
+msgstr "AES-NI CPU-gebaseerde Versnelling"
 
 #: src/usr/local/www/system_advanced_misc.php:77
 msgid "BSD Crypto Device (cryptodev)"
-msgstr ""
+msgstr "BSD Crypto Apparaat (cryptodev)"
 
 #: src/usr/local/www/system_advanced_misc.php:81
 msgid "Intel Core* CPU on-die thermal sensor"
-msgstr ""
+msgstr "Intel Core* in de CPU geintegreerde thermische sensor"
 
 #: src/usr/local/www/system_advanced_misc.php:82
 msgid "AMD K8, K10 and K11 CPU on-die thermal sensor"
@@ -30055,61 +30166,63 @@ msgstr "AMD K8, K10 and K11 in de CPU geÃ¯ntegreerde temperatuur sensor"
 
 #: src/usr/local/www/system_advanced_misc.php:92
 msgid "Please select a valid Cryptographic Accelerator."
-msgstr ""
+msgstr "Selecteer aub een geldige Cryptografische Accelerator."
 
 #: src/usr/local/www/system_advanced_misc.php:96
 msgid "Please select a valid Thermal Hardware Sensor."
-msgstr ""
+msgstr "Selecteer aub een geldige Thermische Hardware Sensor."
 
 #: src/usr/local/www/system_advanced_misc.php:100
 msgid "/tmp Size must be numeric and should not be less than 40MiB."
-msgstr ""
+msgstr "/tmp Grootte moet numeriek zijn en niet kleiner dan 40MiB."
 
 #: src/usr/local/www/system_advanced_misc.php:104
 msgid "/var Size must be numeric and should not be less than 60MiB."
-msgstr ""
+msgstr "/var Grootte moet numeriek zijn en niet kleiner dan 60MiB."
 
 #: src/usr/local/www/system_advanced_misc.php:108
 msgid "Proxy port must be a valid port number, 1-65535."
-msgstr ""
+msgstr "Proxy poort moet een geldig poortnummer zijn, 1-65535"
 
 #: src/usr/local/www/system_advanced_misc.php:112
 msgid "Proxy URL must be a valid IP address or FQDN."
-msgstr ""
+msgstr "Proxy URL moet een geldig IP adres of FQDN zijn."
 
 #: src/usr/local/www/system_advanced_misc.php:116
 msgid "The proxy username contains invalid characters."
-msgstr ""
+msgstr "De proxy gebruikersnaam bevat ongeldige tekens."
 
 #: src/usr/local/www/system_advanced_misc.php:120
 msgid "Proxy password and confirmation must match."
-msgstr ""
+msgstr "Proxy wachtwoord en de wachtwoordbevestiging moeten overeenkomen."
 
 #: src/usr/local/www/system_advanced_misc.php:318
 msgid "Proxy Support"
-msgstr ""
+msgstr "Proxy Ondersteuning"
 
 #: src/usr/local/www/system_advanced_misc.php:322
 msgid "Proxy URL"
-msgstr ""
+msgstr "Proxy URL"
 
 #: src/usr/local/www/system_advanced_misc.php:325
 msgid ""
 "Hostname or IP address of proxy server this system will use for its outbound "
 "Internet access."
 msgstr ""
+"Hostnaam of IP-adres van de proxy server die dit systeem zal gebruiken voor "
+"de uitgaande internet toegang."
 
 #: src/usr/local/www/system_advanced_misc.php:330
 msgid "Proxy Port"
-msgstr ""
+msgstr "Proxy Poort"
 
 #: src/usr/local/www/system_advanced_misc.php:333
 msgid "Port where proxy server is listening."
-msgstr ""
+msgstr "Poort waar de proxy server op luistert."
 
 #: src/usr/local/www/system_advanced_misc.php:337
 msgid "Proxy Username"
-msgstr ""
+msgstr "Proxy Gebruikersnaam"
 
 #: src/usr/local/www/system_advanced_misc.php:340
 msgid ""
@@ -30121,7 +30234,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:345
 msgid "Proxy Password"
-msgstr ""
+msgstr "Proxy Wachtwoord"
 
 #: src/usr/local/www/system_advanced_misc.php:348
 msgid "Password for authentication to proxy server."
@@ -30130,12 +30243,12 @@ msgstr "Wachtwoord voor authenticatie bij de proxy server. "
 #: src/usr/local/www/system_advanced_misc.php:351
 #: src/usr/local/www/system_advanced_misc.php:353
 msgid "Load Balancing"
-msgstr ""
+msgstr "Load Balancing"
 
 #: src/usr/local/www/system_advanced_misc.php:357
 #: src/usr/local/www/system_advanced_misc.php:358
 msgid "Use sticky connections"
-msgstr ""
+msgstr "Gebruik sticky verbindingen"
 
 #: src/usr/local/www/system_advanced_misc.php:360
 msgid ""
@@ -30157,7 +30270,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:370
 msgid "Source tracking timeout"
-msgstr ""
+msgstr "Bron opsporen timeout"
 
 #: src/usr/local/www/system_advanced_misc.php:374
 msgid ""
@@ -30166,10 +30279,14 @@ msgid ""
 "timeout higher will cause the source/destination relationship to persist for "
 "longer periods of time."
 msgstr ""
+"Stel de time-out in voor het opsporen van bronnen voor sticky verbindingen. "
+"Standaard is dit 0, waardoor bron opsporing wordt verwijderd zodra de status "
+"verloopt. Het hoger instellen van deze time-out zorgt dat de bron / "
+"bestemmingsrelatie langere tijd wordt vastgehouden. "
 
 #: src/usr/local/www/system_advanced_misc.php:383
 msgid "Default gateway switching"
-msgstr ""
+msgstr "Standaard gateway omschakeling"
 
 #: src/usr/local/www/system_advanced_misc.php:386
 msgid ""
@@ -30184,11 +30301,11 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:391
 msgid "Power Savings"
-msgstr ""
+msgstr "Energiebesparing"
 
 #: src/usr/local/www/system_advanced_misc.php:395
 msgid "PowerD"
-msgstr ""
+msgstr "PowerD"
 
 #: src/usr/local/www/system_advanced_misc.php:398
 msgid ""
@@ -30206,6 +30323,21 @@ msgid ""
 "consumption.\t It raises frequency faster, drops slower and keeps twice "
 "lower CPU load."
 msgstr ""
+"Het powerd hulpprogramma controleert de systeemstatus en stelt daarbij "
+"verschillende energiebeheer opties in. Het biedt vier modi (maximaal, "
+"minimaal, adaptief en hoog-adaptief) die apart kunnen worden geselecteerd "
+"voor netvoeding of batterijvoeding. De maximale, minimale, adaptieve en hoog-"
+"adaptieve modes kunnen worden afgekort tot max, min, adp, hadp. Maximale "
+"modus kiest de hoogste prestatiewaarden. Minimum modus selecteert de laagste "
+"prestatiewaarden om de meeste energiebesparingen te krijgen. De adaptieve "
+"modus probeert een evenwicht te bereiken door de prestaties te verminderen "
+"wanneer het systeem inactief is en te verhogen wanneer het systeem actief is."
+" Het biedt een goede balans tussen een klein prestatieverlies voor sterk "
+"verhoogde energiebesparingen. Hoog-adaptief mode is net zoals adaptieve "
+"modus, maar dan afgestemd op systemen waar prestatie en interactiviteit "
+"belangrijker zijn dan het stroomverbruik. Het verhoogt de frequentie "
+"sneller, schakelt later terug en houdt twee keer langer de lage CPU-"
+"belasting."
 
 #: src/usr/local/www/system_advanced_misc.php:413
 msgid "Hiadaptive"
@@ -30252,6 +30384,14 @@ msgid ""
 "not contain a crypto chip, this option will have no effect. To unload the "
 "selected module, set this option to \"none\" and then reboot."
 msgstr ""
+"Een cryptografische versnellingsmodule zal hardwareondersteuning gebruiken "
+"om sommige cryptografische functies te versnellen op systemen die de chip "
+"hebben. Als u de BSD Crypto Device module laadt, kunt u toegang tot "
+"versnellingsapparatuur gebruiken met drivers die in de kernel zijn "
+"ingebouwd, zoals Hifn of ubsec chipsets. Als de firewall geen crypto-chip "
+"bevat, heeft deze optie geen effect. Als u de geselecteerde module wilt "
+"verwijderen uit het geheugen  stelt u deze optie in op \"geen\" en start u "
+"vervolgens opnieuw op. "
 
 #: src/usr/local/www/system_advanced_misc.php:457
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
@@ -30268,6 +30408,14 @@ msgid ""
 "system, this option will have no effect. To unload the selected module, set "
 "this option to \"none\" and then reboot."
 msgstr ""
+"Met een ondersteunde CPU zal wanneer u een thermische sensor selecteert het "
+"juiste stuurprogramma worden geladen om de temperatuur uit te lezen. Als u "
+"dit instelt op \"Geen\", wordt geprobeerd de temperatuur van een ACPI-"
+"compatibele moederbord sensor uit te lezen als er een aanwezig is. Als er "
+"geen ondersteunde thermische sensor chip in het systeem is, zal deze optie "
+"geen effect hebben. Als u de geselecteerde module wilt verwijderen uit het "
+"geheugen  stelt u deze optie in op \"geen\" en start u vervolgens opnieuw op."
+" "
 
 #: src/usr/local/www/system_advanced_misc.php:473
 msgid "Schedule States"
@@ -30286,21 +30434,23 @@ msgstr ""
 #: src/usr/local/www/system_advanced_misc.php:481
 #: src/usr/local/www/system_gateways_edit.php:206
 msgid "Gateway Monitoring"
-msgstr ""
+msgstr "Gateway Monitoring"
 
 #: src/usr/local/www/system_advanced_misc.php:485
 msgid "State Killing on Gateway Failure"
-msgstr ""
+msgstr "Status vernietigen bij Gateway Storing"
 
 #: src/usr/local/www/system_advanced_misc.php:488
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
 msgstr ""
+"Het monitorproces zal alle statussen wissen zodra een gateway niet meer "
+"beschikbaar is als dit vakje is aangevinkt."
 
 #: src/usr/local/www/system_advanced_misc.php:493
 msgid "Skip rules when gateway is down"
-msgstr ""
+msgstr "Sla regels over als de gateway niet meer beschikbaar is"
 
 #: src/usr/local/www/system_advanced_misc.php:496
 msgid ""
@@ -30340,11 +30490,11 @@ msgstr "RAM Disk Omvang"
 
 #: src/usr/local/www/system_advanced_misc.php:517
 msgid "/tmp RAM Disk Size"
-msgstr ""
+msgstr "/tmp RAM Disk Grootte"
 
 #: src/usr/local/www/system_advanced_misc.php:521
 msgid "/tmp RAM Disk<br />Do not set lower than 40."
-msgstr ""
+msgstr "/tmp RAM Disk<br />Stel niet lager in dan 40."
 
 #: src/usr/local/www/system_advanced_misc.php:525
 msgid "/var RAM Disk Size"
@@ -30352,11 +30502,11 @@ msgstr "/var RAM Disk Omvang"
 
 #: src/usr/local/www/system_advanced_misc.php:529
 msgid "/var RAM Disk<br />Do not set lower than 60."
-msgstr ""
+msgstr "/var RAM Disk<br />Stel niet lager in dan 60."
 
 #: src/usr/local/www/system_advanced_misc.php:531
 msgid "Sets the size, in MiB, for the RAM disks."
-msgstr ""
+msgstr "Stel de grootte in, in MiB, voor de RAM schijven."
 
 #: src/usr/local/www/system_advanced_misc.php:535
 msgid "Periodic RAM Disk Data Backups"
@@ -30385,6 +30535,10 @@ msgid ""
 "mind that the more frequent the backup, the more writes will happen to the "
 "media."
 msgstr ""
+"Stel het interval in, in uren, om periodiek deze delen van RAM-"
+"schijfgegevens te back-uppen zodat ze automatisch bij de volgende opstart "
+"kunnen worden hersteld. Houd er rekening mee dat hoe vaker de back-up wordt "
+"uitgevoerd, hoe meer schrijfacties op de schijf zullen plaatsvinden."
 
 #: src/usr/local/www/system_advanced_misc.php:569
 msgid "Hardware Settings"
@@ -30396,7 +30550,7 @@ msgstr "Altijd aan"
 
 #: src/usr/local/www/system_advanced_misc.php:576
 msgid "Hard disk standby time"
-msgstr ""
+msgstr "Harddisk standby tijd "
 
 #: src/usr/local/www/system_advanced_misc.php:579
 #, php-format
@@ -30404,14 +30558,17 @@ msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
 "elapsed since the last access.%1$s%2$sDo not set this for CF cards.%3$s"
 msgstr ""
+"Zet de harddisk in de stand-bymodus wanneer het geselecteerde aantal minuten "
+"is verstreken sinds de laatste toegang.%1$s%2$sDit niet instellen voor CF-"
+"kaarten.%3$s"
 
 #: src/usr/local/www/system_advanced_misc.php:584
 msgid "Installation Feedback"
-msgstr ""
+msgstr "Installatie Feedback"
 
 #: src/usr/local/www/system_advanced_misc.php:588
 msgid "Netgate Device ID"
-msgstr ""
+msgstr "Netgate Device ID"
 
 #: src/usr/local/www/system_advanced_misc.php:591
 msgid ""
@@ -30437,7 +30594,7 @@ msgstr "Een IP adres moet worden opgegeven om IPv6 pakketjes te NAT-ten ."
 
 #: src/usr/local/www/system_advanced_network.php:65
 msgid "A valid DUID must be specified"
-msgstr ""
+msgstr "Een valide DUID moet ingevuld worden"
 
 #: src/usr/local/www/system_advanced_network.php:178
 msgid "IPv6 Options"
@@ -30551,7 +30708,7 @@ msgstr "Netwerk interfaces"
 
 #: src/usr/local/www/system_advanced_network.php:256
 msgid "Hardware Checksum Offloading"
-msgstr ""
+msgstr "Hardware Checksum Offloading"
 
 #: src/usr/local/www/system_advanced_network.php:259
 #, php-format
@@ -30570,7 +30727,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:267
 msgid "Hardware TCP Segmentation Offloading"
-msgstr ""
+msgstr "Hardware TCP Segmentatie Offloading"
 
 #: src/usr/local/www/system_advanced_network.php:270
 msgid ""
@@ -30587,7 +30744,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_network.php:277
 msgid "Hardware Large Receive Offloading"
-msgstr ""
+msgstr "Hardware Large Receive Offloading"
 
 #: src/usr/local/www/system_advanced_network.php:280
 msgid ""
@@ -30642,29 +30799,31 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:104
 msgid "Growl passwords must match"
-msgstr ""
+msgstr "Growl wachtwoorden moeten overeenkomen"
 
 #: src/usr/local/www/system_advanced_notifications.php:137
 msgid "SMTP passwords must match"
-msgstr ""
+msgstr "SMTP wachtwoorden moeten overeenkomen"
 
 #: src/usr/local/www/system_advanced_notifications.php:172
 #, php-format
 msgid "This is a test message from %s.  It is safe to ignore this message."
 msgstr ""
+"Dit is een testbericht van %s.  Dit bericht kan veilig worden genegeerd."
 
 #: src/usr/local/www/system_advanced_notifications.php:174
 msgid "Growl testing notification successfully sent"
-msgstr ""
+msgstr "Growl testbericht succesvol verzonden"
 
 #: src/usr/local/www/system_advanced_notifications.php:187
 #, php-format
 msgid "This is a test message from %s. It is safe to ignore this message."
 msgstr ""
+"Dit is een testbericht van %s.  Dit bericht kan veilig worden genegeerd."
 
 #: src/usr/local/www/system_advanced_notifications.php:189
 msgid "SMTP testing e-mail successfully sent"
-msgstr ""
+msgstr "SMTP test e-mail succesvol verzonden"
 
 #: src/usr/local/www/system_advanced_notifications.php:220
 msgid "E-Mail"
@@ -30680,16 +30839,22 @@ msgid ""
 "below. Some other mechanisms, such as packages, may need these settings in "
 "place to function."
 msgstr ""
+"Vink deze optie aan om SMTP-notificaties uit te schakelen maar de "
+"onderstaande instellingen te behouden. Sommige andere mechanismen, zoals "
+"pakketten, hebben mogelijk deze instellingen nodig om te kunnen functioneren."
+""
 
 #: src/usr/local/www/system_advanced_notifications.php:233
 msgid "E-Mail server"
-msgstr ""
+msgstr "E-Mail server"
 
 #: src/usr/local/www/system_advanced_notifications.php:236
 msgid ""
 "This is the FQDN or IP address of the SMTP E-Mail server to which "
 "notifications will be sent."
 msgstr ""
+"Dit is het FQDN of IP-adres van de SMTP e-mailserver waarnaar de "
+"notificaties worden verzonden."
 
 #: src/usr/local/www/system_advanced_notifications.php:241
 msgid "SMTP Port of E-Mail server"
@@ -30700,20 +30865,24 @@ msgid ""
 "This is the port of the SMTP E-Mail server, typically 25, 587 (submission) "
 "or 465 (smtps)."
 msgstr ""
+"Dit is de poort van de SMTP e-mail server, gewoonlijk 25, 587 (submission) "
+"of 465 (smtps)"
 
 #: src/usr/local/www/system_advanced_notifications.php:249
 msgid "Connection timeout to E-Mail server"
-msgstr ""
+msgstr "Verbindingstimeout naar de e-mailserver"
 
 #: src/usr/local/www/system_advanced_notifications.php:252
 msgid ""
 "This is how many seconds it will wait for the SMTP server to connect. "
 "Default is 20s."
 msgstr ""
+"Dit is hoe lang er gewacht wordt tot de SMTP-server verbinding maakt. "
+"Standaard is 20s."
 
 #: src/usr/local/www/system_advanced_notifications.php:254
 msgid "Secure SMTP Connection"
-msgstr ""
+msgstr "Beveiligde SMTP Verbinding"
 
 #: src/usr/local/www/system_advanced_notifications.php:257
 msgid "Enable SSL/TLS"
@@ -30725,19 +30894,19 @@ msgstr "Van e-mail adres"
 
 #: src/usr/local/www/system_advanced_notifications.php:269
 msgid "This is the e-mail address that will appear in the from field."
-msgstr ""
+msgstr "Dit is het e-mailadres dat in het \"van\" het veld verschijnt."
 
 #: src/usr/local/www/system_advanced_notifications.php:273
 msgid "Notification E-Mail address"
-msgstr ""
+msgstr "Notificatie e-mailadres"
 
 #: src/usr/local/www/system_advanced_notifications.php:276
 msgid "Enter the e-mail address to send email notifications to."
-msgstr ""
+msgstr "Vul het e-mailadres in om e-mail notificaties naar te verzenden."
 
 #: src/usr/local/www/system_advanced_notifications.php:281
 msgid "Notification E-Mail auth username (optional)"
-msgstr ""
+msgstr "Notificatie e-mail auth gebruikersnaam (optioneel)"
 
 #: src/usr/local/www/system_advanced_notifications.php:285
 msgid "Enter the e-mail address username for SMTP authentication."
@@ -30746,7 +30915,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:289
 msgid "Notification E-Mail auth password"
-msgstr ""
+msgstr "Notificatie e-mail auth wachtwoord"
 
 #: src/usr/local/www/system_advanced_notifications.php:292
 msgid "Enter the e-mail account password for SMTP authentication."
@@ -30755,7 +30924,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:296
 msgid "Notification E-Mail auth mechanism"
-msgstr ""
+msgstr "Notificatie e-mail auth mechanisme"
 
 #: src/usr/local/www/system_advanced_notifications.php:299
 msgid ""
@@ -30785,11 +30954,13 @@ msgstr "Geluiden"
 
 #: src/usr/local/www/system_advanced_notifications.php:315
 msgid "Startup/Shutdown Sound"
-msgstr ""
+msgstr "Opstart- / Afsluitgeluid"
 
 #: src/usr/local/www/system_advanced_notifications.php:318
 msgid "When this is checked, startup and shutdown sounds will no longer play."
 msgstr ""
+"Indien dit is aangevinkt worden opstart- en afsluitgeluiden niet meer "
+"afgespeeld."
 
 #: src/usr/local/www/system_advanced_notifications.php:323
 msgid "Growl"
@@ -30804,51 +30975,55 @@ msgid ""
 "Check this option to disable growl notifications but preserve the settings "
 "below."
 msgstr ""
+"Vink deze optie aan om growl-notificaties uit te schakelen maar de "
+"onderstaande instellingen te behouden. "
 
 #: src/usr/local/www/system_advanced_notifications.php:335
 msgid "Registration Name"
-msgstr ""
+msgstr "Registratie Naam"
 
 #: src/usr/local/www/system_advanced_notifications.php:339
 msgid "Enter the name to register with the Growl server."
-msgstr ""
+msgstr "Voer de naam in om te registreren met de Growl server"
 
 #: src/usr/local/www/system_advanced_notifications.php:343
 msgid "Notification Name"
-msgstr ""
+msgstr "Notificatie Naam"
 
 #: src/usr/local/www/system_advanced_notifications.php:348
 msgid "Enter a name for the Growl notifications."
-msgstr ""
+msgstr "Voer een naam in voor de Growl notificaties."
 
 #: src/usr/local/www/system_advanced_notifications.php:355
 msgid "This is the IP address to send growl notifications to."
-msgstr ""
+msgstr "Dit is het IP-adres om growl-notificaties naar te versturen."
 
 #: src/usr/local/www/system_advanced_notifications.php:362
 msgid "Enter the password of the remote growl notification device."
-msgstr ""
+msgstr "Voer het wachtwoord in van het externe growl-notificatie apparaat."
 
 #: src/usr/local/www/system_advanced_notifications.php:366
 msgid "Test Growl Settings"
-msgstr ""
+msgstr "Test Growl Instellingen"
 
 #: src/usr/local/www/system_advanced_notifications.php:369
 msgid ""
 "A test notification will be sent even if the service is marked as disabled."
 msgstr ""
+"Een test notificatie zal worden verstuurd zelfs als de service is gemarkeerd "
+"als uitgeschakeld."
 
 #: src/usr/local/www/system_advanced_sysctl.php:93
 msgid "Both a name and a value must be specified."
-msgstr ""
+msgstr "Zowel een naam als een waarde moeten worden opgegeven."
 
 #: src/usr/local/www/system_advanced_sysctl.php:95
 msgid "The value may only contain alphanumeric characters, -, _, %, and /."
-msgstr ""
+msgstr "De waarde mag alleen alfanumerieke tekens,  -, _, %, en / bevatten."
 
 #: src/usr/local/www/system_advanced_sysctl.php:134
 msgid "The firewall tunables have changed."
-msgstr ""
+msgstr "De firewall fijnafstemming is aangepast."
 
 #: src/usr/local/www/system_advanced_sysctl.php:154
 msgid "NOTE: "
@@ -30857,10 +31032,12 @@ msgstr "OPMERKING:"
 #: src/usr/local/www/system_advanced_sysctl.php:154
 msgid "The options on this page are intended for use by advanced users only."
 msgstr ""
+"De opties op deze pagina zijn uitsluitend bedoeld voor gebruik door "
+"gevorderde gebruikers."
 
 #: src/usr/local/www/system_advanced_sysctl.php:157
 msgid "Tunable Name"
-msgstr ""
+msgstr "Naam Fijnafstembaar onderdeel"
 
 #: src/usr/local/www/system_advanced_sysctl.php:160
 msgid "New"
@@ -30868,19 +31045,19 @@ msgstr "Nieuw"
 
 #: src/usr/local/www/system_advanced_sysctl.php:180
 msgid "Edit tunable"
-msgstr "Wijzig tunable"
+msgstr "Wijzig Fijnafstemming"
 
 #: src/usr/local/www/system_advanced_sysctl.php:182
 msgid "Delete/Reset tunable"
-msgstr "Verwijder/Reset tunable"
+msgstr "Verwijder/Reset Fijnafstemming"
 
 #: src/usr/local/www/system_advanced_sysctl.php:197
 msgid "Edit Tunable"
-msgstr "Wijzig Tunable"
+msgstr "Wijzig Fijnafstemming"
 
 #: src/usr/local/www/system_advanced_sysctl.php:201
 msgid "*Tunable"
-msgstr ""
+msgstr "*Fijnafstemming"
 
 #: src/usr/local/www/system_advanced_sysctl.php:208
 msgid "*Value"
@@ -30892,7 +31069,7 @@ msgstr "Selecteer de LDAP containers voor authenticatie"
 
 #: src/usr/local/www/system_authservers.php:58
 msgid "Containers"
-msgstr ""
+msgstr "Containers"
 
 #: src/usr/local/www/system_authservers.php:136
 #, php-format
@@ -30904,34 +31081,34 @@ msgstr "Authenticatieserver %s verwijderd."
 #: src/usr/local/www/system_camanager.php:167
 #: src/usr/local/www/system_camanager.php:184
 #: src/usr/local/www/system_camanager.php:199
-#: src/usr/local/www/system_certmanager.php:215
-#: src/usr/local/www/system_certmanager.php:235
-#: src/usr/local/www/system_certmanager.php:252
-#: src/usr/local/www/system_certmanager.php:270
-#: src/usr/local/www/system_certmanager.php:537
+#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:201
 #: src/usr/local/www/system_usermanager.php:918
 msgid "Descriptive name"
-msgstr ""
+msgstr "Beschrijvende naam"
 
 #: src/usr/local/www/system_authservers.php:226
 #: src/usr/local/www/system_authservers.php:250
 msgid "Hostname or IP"
-msgstr ""
+msgstr "Hostnaam of IP"
 
 #: src/usr/local/www/system_authservers.php:227
 msgid "Port value"
-msgstr ""
+msgstr "Poort waarde"
 
 #: src/usr/local/www/system_authservers.php:229
 msgid "Protocol version"
-msgstr ""
+msgstr "Protocol versie"
 
 #: src/usr/local/www/system_authservers.php:230
 msgid "Search level"
-msgstr ""
+msgstr "Zoekniveau"
 
 #: src/usr/local/www/system_authservers.php:231
 msgid "User naming Attribute"
@@ -30968,7 +31145,7 @@ msgstr "Accounting poort"
 
 #: src/usr/local/www/system_authservers.php:274
 msgid "The host name contains invalid characters."
-msgstr ""
+msgstr "De hostnaam bevat ongeldige tekens."
 
 #: src/usr/local/www/system_authservers.php:278
 msgid "An authentication server with the same name already exists."
@@ -30977,7 +31154,7 @@ msgstr "Er bestaat al een authenticatie server met deze naam."
 #: src/usr/local/www/system_authservers.php:284
 #, php-format
 msgid "%s Timeout value must be numeric and positive."
-msgstr ""
+msgstr "%s Timeout moet een positieve numerieke waarde zijn."
 
 #: src/usr/local/www/system_authservers.php:291
 msgid "IPv6 does not work for RADIUS authentication, see Bug #4154."
@@ -31007,7 +31184,7 @@ msgstr "Authenticatieservers"
 #: src/usr/local/www/vpn_l2tp_users.php:84
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "Gebruikers"
 
 #: src/usr/local/www/system_authservers.php:427
 #: src/usr/local/www/system_groupmanager.php:269
@@ -31020,11 +31197,11 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:127
 #: src/usr/local/www/system_usermanager_settings.php:183
 msgid "Groups"
-msgstr ""
+msgstr "Groepen"
 
 #: src/usr/local/www/system_authservers.php:441
 msgid "Server Name"
-msgstr ""
+msgstr "Servernaam"
 
 #: src/usr/local/www/system_authservers.php:455
 #: src/usr/local/www/vpn_openvpn_server.php:1370
@@ -31038,25 +31215,25 @@ msgstr "Verwijder server"
 
 #: src/usr/local/www/system_authservers.php:488
 msgid "Server Settings"
-msgstr ""
+msgstr "Serverinstellingen"
 
 #: src/usr/local/www/system_authservers.php:492
 #: src/usr/local/www/system_camanager.php:485
-#: src/usr/local/www/system_certmanager.php:653
-#: src/usr/local/www/system_certmanager.php:1052
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1063
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
-msgstr ""
+msgstr "*Beschrijvende naam"
 
 #: src/usr/local/www/system_authservers.php:507
 msgid "LDAP Server Settings"
-msgstr ""
+msgstr "LDAP Server Instellingen"
 
 #: src/usr/local/www/system_authservers.php:515
 #: src/usr/local/www/system_authservers.php:742
 msgid "*Hostname or IP address"
-msgstr ""
+msgstr "*Hostnaam of IP adres"
 
 #: src/usr/local/www/system_authservers.php:518
 msgid ""
@@ -31068,43 +31245,46 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:523
 msgid "*Port value"
-msgstr ""
+msgstr "*Poort waarde"
 
 #: src/usr/local/www/system_authservers.php:530
 msgid "*Transport"
-msgstr ""
+msgstr "*Transport"
 
 #: src/usr/local/www/system_authservers.php:538
 #: src/usr/local/www/system_authservers.php:550
 msgid "Peer Certificate Authority"
-msgstr ""
+msgstr "Peer Certificeringsinstantie"
 
 #: src/usr/local/www/system_authservers.php:553
 msgid ""
 "This option is used if 'SSL Encrypted' or 'TCP - STARTTLS' options are "
 "chosen. It must match with the CA in the AD otherwise problems will arise."
 msgstr ""
+"Deze optie wordt gebruikt als 'SSL Encrypted' of 'TCP - STARTTLS' opties "
+"worden gekozen. Het moet overeenkomen met de CA in de AD, anders zullen er "
+"problemen optreden."
 
 #: src/usr/local/www/system_authservers.php:560
 msgid "*Protocol version"
-msgstr ""
+msgstr "*Protocol versie"
 
 #: src/usr/local/www/system_authservers.php:567
 msgid "Server Timeout"
-msgstr ""
+msgstr "Server Timeout"
 
 #: src/usr/local/www/system_authservers.php:571
 msgid "Timeout for LDAP operations (seconds)"
-msgstr ""
+msgstr "Time-out voor LDAP-bewerkingen (seconden)"
 
 #: src/usr/local/www/system_authservers.php:573
 #: src/usr/local/www/system_authservers.php:591
 msgid "Search scope"
-msgstr ""
+msgstr "Zoekgebied"
 
 #: src/usr/local/www/system_authservers.php:577
 msgid "*Level"
-msgstr ""
+msgstr "*Niveau"
 
 #: src/usr/local/www/system_authservers.php:584
 msgid "Base DN"
@@ -31116,7 +31296,7 @@ msgstr "Authenticatie containers"
 
 #: src/usr/local/www/system_authservers.php:598
 msgid "*Containers"
-msgstr ""
+msgstr "*Containers"
 
 #: src/usr/local/www/system_authservers.php:601
 #, php-format
@@ -31132,16 +31312,16 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:607
 msgid "Select a container"
-msgstr ""
+msgstr "Selecteer een container"
 
 #: src/usr/local/www/system_authservers.php:616
 msgid "Extended query"
-msgstr ""
+msgstr "Uitgebreide zoekopdracht"
 
 #: src/usr/local/www/system_authservers.php:621
 #: src/usr/local/www/system_authservers.php:626
 msgid "Query"
-msgstr ""
+msgstr "Zoekopdracht"
 
 #: src/usr/local/www/system_authservers.php:629
 msgid "Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
@@ -31149,11 +31329,11 @@ msgstr "Bijvoorbeeld: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)"
 
 #: src/usr/local/www/system_authservers.php:635
 msgid "Bind anonymous"
-msgstr ""
+msgstr "Bind anoniem"
 
 #: src/usr/local/www/system_authservers.php:640
 msgid "*Bind credentials"
-msgstr ""
+msgstr "*Bind gebruikersreferenties"
 
 #: src/usr/local/www/system_authservers.php:645
 msgid "User DN:"
@@ -31161,7 +31341,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:667
 msgid "Initial Template"
-msgstr ""
+msgstr "Initiele Sjabloon"
 
 #: src/usr/local/www/system_authservers.php:675
 msgid "*User naming attribute"
@@ -31177,7 +31357,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:696
 msgid "RFC 2307 Groups"
-msgstr ""
+msgstr "RFC 2307 Groepen"
 
 #: src/usr/local/www/system_authservers.php:699
 msgid ""
@@ -31188,31 +31368,35 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:705
 msgid "Group Object Class"
-msgstr ""
+msgstr "Group Object Class"
 
 #: src/usr/local/www/system_authservers.php:709
 msgid ""
 "Object class used for groups in RFC2307 mode. Typically \"posixGroup\" or "
 "\"group\"."
 msgstr ""
+"Object class gebruikt voor groepen in RFC2307 mode. Gewoonlijk "
+"\"posixGroup\" of \"group\"."
 
 #: src/usr/local/www/system_authservers.php:714
 msgid "UTF8 Encode"
-msgstr ""
+msgstr "UTF8 Encode"
 
 #: src/usr/local/www/system_authservers.php:717
 msgid ""
 "Required to support international characters, but may not be supported by "
 "every LDAP server."
 msgstr ""
+"Vereist om internationale karakters te ondersteunen, maar wordt mogelijk "
+"niet ondersteund door elke LDAP-server."
 
 #: src/usr/local/www/system_authservers.php:722
 msgid "Username Alterations"
-msgstr ""
+msgstr "Gebruikersnaam Aanpassingen"
 
 #: src/usr/local/www/system_authservers.php:725
 msgid "e.g. user@host becomes user when unchecked."
-msgstr ""
+msgstr "bijv. gebruiker@host wordt gebruiker wanneer deze niet is aangevinkt."
 
 #: src/usr/local/www/system_authservers.php:730
 msgid "RADIUS Server Settings"
@@ -31220,7 +31404,7 @@ msgstr "RADIUS Server Instellingen"
 
 #: src/usr/local/www/system_authservers.php:749
 msgid "*Shared Secret"
-msgstr ""
+msgstr "*Gedeeld geheim"
 
 #: src/usr/local/www/system_authservers.php:756
 msgid "*Services offered"
@@ -31247,11 +31431,11 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:799
 msgid "LDAP containers"
-msgstr ""
+msgstr "LDAP containers"
 
 #: src/usr/local/www/system_authservers.php:816
 msgid "Please fill the required values."
-msgstr ""
+msgstr "Vul de verplichte waarden in s.v.p."
 
 #: src/usr/local/www/system_authservers.php:823
 msgid "Please fill the bind username/password."
@@ -31259,55 +31443,57 @@ msgstr ""
 
 #: src/usr/local/www/system_camanager.php:35
 msgid "Import an existing Certificate Authority"
-msgstr "Importeer een bestaande Certificaat Autoristeit"
+msgstr "Importeer een bestaande Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:36
 msgid "Create an internal Certificate Authority"
-msgstr "Maak een interne Certificaat Autoriteit"
+msgstr "Maak een interne Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:37
 msgid "Create an intermediate Certificate Authority"
-msgstr "Maak een tussenliggende Certificaat Autoriteit"
+msgstr "Maak een tussenliggende Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:94
 #, php-format
 msgid "Certificate Authority %s and its CRLs (if any) successfully deleted."
 msgstr ""
-"Certificate Authority %s en bijbehorende CRL's (indien aanwezig) succesvol "
+"Certificeringsinstantie %s en bijbehorende CRL's (indien aanwezig) succesvol "
 "verwijderd."
 
 #: src/usr/local/www/system_camanager.php:168
-#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:237
 msgid "Certificate data"
-msgstr ""
+msgstr "Certificaat gegevens"
 
 #: src/usr/local/www/system_camanager.php:170
-#: src/usr/local/www/system_certmanager.php:239
+#: src/usr/local/www/system_certmanager.php:240
 msgid "This certificate does not appear to be valid."
-msgstr ""
+msgstr "Het certificaat lijkt niet geldig te zijn."
 
 #: src/usr/local/www/system_camanager.php:173
 msgid "Encrypted private keys are not yet supported."
-msgstr ""
+msgstr "Versleutelde persoonlijke sleutels worden nog niet ondersteund."
 
 #: src/usr/local/www/system_camanager.php:176
-#: src/usr/local/www/system_certmanager.php:243
+#: src/usr/local/www/system_certmanager.php:244
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr ""
+"De ingevoerde persoonlijke sleutel komt niet overeen met de ingediende "
+"certificaatgegevens."
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
-#: src/usr/local/www/system_certmanager.php:254
-#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:272
 #: src/usr/local/www/system_usermanager.php:203
 #: src/usr/local/www/system_usermanager.php:932
 msgid "Key length"
-msgstr ""
+msgstr "Sleutellengte"
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
-#: src/usr/local/www/system_certmanager.php:256
+#: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_usermanager.php:204
 #: src/usr/local/www/system_usermanager.php:952
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
@@ -31316,149 +31502,150 @@ msgstr "Levensduur"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
-#: src/usr/local/www/system_certmanager.php:257
-#: src/usr/local/www/system_certmanager.php:272
+#: src/usr/local/www/system_certmanager.php:258
+#: src/usr/local/www/system_certmanager.php:273
 msgid "Distinguished name Country Code"
-msgstr ""
+msgstr "Unieke naam Land Code"
 
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
-#: src/usr/local/www/system_certmanager.php:258
-#: src/usr/local/www/system_certmanager.php:273
+#: src/usr/local/www/system_certmanager.php:259
+#: src/usr/local/www/system_certmanager.php:274
 msgid "Distinguished name State or Province"
-msgstr ""
+msgstr "Unieke naam Staat of Provincie"
 
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
-#: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_certmanager.php:274
+#: src/usr/local/www/system_certmanager.php:260
+#: src/usr/local/www/system_certmanager.php:275
 msgid "Distinguished name City"
-msgstr ""
+msgstr "Unieke naam Stad"
 
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
-#: src/usr/local/www/system_certmanager.php:260
-#: src/usr/local/www/system_certmanager.php:275
+#: src/usr/local/www/system_certmanager.php:261
+#: src/usr/local/www/system_certmanager.php:276
 msgid "Distinguished name Organization"
-msgstr ""
+msgstr "Unieke naam organisatie"
 
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
-#: src/usr/local/www/system_certmanager.php:261
-#: src/usr/local/www/system_certmanager.php:276
+#: src/usr/local/www/system_certmanager.php:262
+#: src/usr/local/www/system_certmanager.php:277
 msgid "Distinguished name Email Address"
-msgstr ""
+msgstr "Unieke naam e-mailadres"
 
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_camanager.php:208
-#: src/usr/local/www/system_certmanager.php:262
-#: src/usr/local/www/system_certmanager.php:277
+#: src/usr/local/www/system_certmanager.php:263
+#: src/usr/local/www/system_certmanager.php:278
 msgid "Distinguished name Common Name"
-msgstr ""
+msgstr "Unieke naam Algemene Naam"
 
 #: src/usr/local/www/system_camanager.php:200
 msgid "Signing Certificate Authority"
-msgstr ""
+msgstr "Ondertekenende Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:215
 msgid "The field 'Descriptive Name' contains invalid characters."
-msgstr ""
+msgstr "Het veld 'Beschrijvende Naam' bevat ongeldige tekens."
 
 #: src/usr/local/www/system_camanager.php:221
-#: src/usr/local/www/system_certmanager.php:356
+#: src/usr/local/www/system_certmanager.php:357
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
-msgstr ""
+msgstr "Het veld 'Unieke naam E-mailadres' bevat ongeldige tekens."
 
 #: src/usr/local/www/system_camanager.php:226
-#: src/usr/local/www/system_certmanager.php:362
-#: src/usr/local/www/system_certmanager.php:369
+#: src/usr/local/www/system_certmanager.php:363
+#: src/usr/local/www/system_certmanager.php:370
 msgid "Please select a valid Key Length."
-msgstr ""
+msgstr "Selecteer aub een geldige Sleutellengte."
 
 #: src/usr/local/www/system_camanager.php:229
-#: src/usr/local/www/system_certmanager.php:365
-#: src/usr/local/www/system_certmanager.php:372
+#: src/usr/local/www/system_certmanager.php:366
+#: src/usr/local/www/system_certmanager.php:373
+#: src/usr/local/www/system_certmanager.php:376
 msgid "Please select a valid Digest Algorithm."
-msgstr ""
+msgstr "Selecteer aub een geldig Digest Algoritme."
 
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
-msgstr ""
+msgstr "Certificaatbeheer"
 
 #: src/usr/local/www/system_camanager.php:315
 #: src/usr/local/www/system_camanager.php:344
-#: src/usr/local/www/system_certmanager.php:602
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
-msgstr ""
+msgstr "CA's"
 
 #: src/usr/local/www/system_camanager.php:345
 #: src/usr/local/www/system_camanager.php:361
-#: src/usr/local/www/system_certmanager.php:584
-#: src/usr/local/www/system_certmanager.php:603
-#: src/usr/local/www/system_certmanager.php:1101
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1112
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
-msgstr ""
+msgstr "Certificaten"
 
 #: src/usr/local/www/system_camanager.php:346
-#: src/usr/local/www/system_certmanager.php:604
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
-msgstr ""
+msgstr "Certificaat Herroeping"
 
 #: src/usr/local/www/system_camanager.php:352
 msgid "Certificate Authorities"
-msgstr ""
+msgstr "Certificeringsinstanties"
 
 #: src/usr/local/www/system_camanager.php:359
 #: src/usr/local/www/system_crlmanager.php:579
 msgid "Internal"
-msgstr ""
+msgstr "Interne"
 
 #: src/usr/local/www/system_camanager.php:360
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "Issuer"
-msgstr ""
+msgstr "Uitgever"
 
 #: src/usr/local/www/system_camanager.php:362
-#: src/usr/local/www/system_certmanager.php:1109
+#: src/usr/local/www/system_certmanager.php:1120
 msgid "Distinguished Name"
-msgstr ""
+msgstr "Unieke naam (DN)"
 
 #: src/usr/local/www/system_camanager.php:380
-#: src/usr/local/www/system_certmanager.php:1134
+#: src/usr/local/www/system_certmanager.php:1145
 msgid "self-signed"
-msgstr ""
+msgstr "Zelfondertekend"
 
 #: src/usr/local/www/system_camanager.php:382
-#: src/usr/local/www/system_certmanager.php:1136
+#: src/usr/local/www/system_certmanager.php:1147
 msgid "external"
-msgstr ""
+msgstr "Externe"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid From"
-msgstr ""
+msgstr "Geldig vanaf"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid Until"
-msgstr ""
+msgstr "Geldig tot"
 
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1221
+#: src/usr/local/www/system_certmanager.php:1244
 msgid "IPsec Tunnel"
-msgstr ""
+msgstr "IPsec Tunnel"
 
 #: src/usr/local/www/system_camanager.php:428
 msgid "LDAP Server"
-msgstr ""
+msgstr "LDAP Server"
 
 #: src/usr/local/www/system_camanager.php:433
 msgid "Edit CA"
@@ -31466,11 +31653,11 @@ msgstr "Wijzig CA"
 
 #: src/usr/local/www/system_camanager.php:434
 msgid "Export CA"
-msgstr ""
+msgstr "CA exporteren"
 
 #: src/usr/local/www/system_camanager.php:436
 msgid "Export key"
-msgstr ""
+msgstr "Sleutel exporteren"
 
 #: src/usr/local/www/system_camanager.php:439
 msgid "Delete CA and its CRLs"
@@ -31481,28 +31668,28 @@ msgid "Create / Edit CA"
 msgstr "Maak / Wijzig CA"
 
 #: src/usr/local/www/system_camanager.php:493
-#: src/usr/local/www/system_certmanager.php:645
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
-msgstr ""
+msgstr "*Methode"
 
 #: src/usr/local/www/system_camanager.php:501
 msgid "Existing Certificate Authority"
-msgstr "Bestaande Certificaat Autoriteit"
+msgstr "Bestaande Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:506
-#: src/usr/local/www/system_certmanager.php:731
+#: src/usr/local/www/system_certmanager.php:742
 msgid "*Certificate data"
-msgstr ""
+msgstr "*Certificaat gegevens"
 
 #: src/usr/local/www/system_camanager.php:508
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:744
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr "Plak hier een certificaat in het X.509 PEM formaat"
 
 #: src/usr/local/www/system_camanager.php:512
 msgid "Certificate Private Key (optional)"
-msgstr ""
+msgstr "Persoonlijke Sleutel Certificaat (optioneel)"
 
 #: src/usr/local/www/system_camanager.php:514
 msgid ""
@@ -31510,40 +31697,43 @@ msgid ""
 "most cases, but is required when generating a Certificate Revocation List "
 "(CRL)."
 msgstr ""
-"Plak hier de private sleutel voor het bovenstaande certificaat. Dit is "
+"Plak hier de persoonlijke sleutel voor het bovenstaande certificaat. Dit is "
 "optioneel in de meeste gevallen, maar is verplicht bij het genereren van een "
 "Certificaat Herroepingslijst (CRL)"
 
 #: src/usr/local/www/system_camanager.php:520
 msgid "Serial for next certificate"
-msgstr ""
+msgstr "Volgnummer voor het volgende certificaat"
 
 #: src/usr/local/www/system_camanager.php:523
 msgid ""
 "Enter a decimal number to be used as the serial number for the next "
 "certificate to be created using this CA."
 msgstr ""
+"Voer een decimaal nummer in dat gebruikt moet worden als het volgnummer voor "
+"het volgende certificaat dat met deze CA wordt gemaakt."
 
 #: src/usr/local/www/system_camanager.php:528
 msgid "Internal Certificate Authority"
-msgstr ""
+msgstr "Interne Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:540
 msgid "*Signing Certificate Authority"
-msgstr ""
+msgstr "*Ondertekenende Certificeringsinstantie"
 
 #: src/usr/local/www/system_camanager.php:552
 msgid "*Key length (bits)"
-msgstr ""
+msgstr "*Sleutellengte (bits)"
 
 #: src/usr/local/www/system_camanager.php:559
-#: src/usr/local/www/system_certmanager.php:779
-#: src/usr/local/www/system_certmanager.php:860
+#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:790
+#: src/usr/local/www/system_certmanager.php:871
 msgid "*Digest Algorithm"
-msgstr ""
+msgstr "*Digest Algoritme"
 
 #: src/usr/local/www/system_camanager.php:562
-#: src/usr/local/www/system_certmanager.php:782
+#: src/usr/local/www/system_certmanager.php:793
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
@@ -31552,52 +31742,52 @@ msgstr ""
 "dat serker is dan SHA1."
 
 #: src/usr/local/www/system_camanager.php:567
-#: src/usr/local/www/system_certmanager.php:787
+#: src/usr/local/www/system_certmanager.php:798
 msgid "*Lifetime (days)"
 msgstr "*Levensduur (dagen)"
 
 #: src/usr/local/www/system_camanager.php:574
-#: src/usr/local/www/system_certmanager.php:794
-#: src/usr/local/www/system_certmanager.php:868
+#: src/usr/local/www/system_certmanager.php:805
+#: src/usr/local/www/system_certmanager.php:879
 msgid "*Country Code"
-msgstr ""
+msgstr "*Land Code"
 
 #: src/usr/local/www/system_camanager.php:581
-#: src/usr/local/www/system_certmanager.php:801
-#: src/usr/local/www/system_certmanager.php:875
+#: src/usr/local/www/system_certmanager.php:812
+#: src/usr/local/www/system_certmanager.php:886
 msgid "*State or Province"
-msgstr ""
+msgstr "*Staat of Provincie"
 
 #: src/usr/local/www/system_camanager.php:589
-#: src/usr/local/www/system_certmanager.php:809
-#: src/usr/local/www/system_certmanager.php:883
+#: src/usr/local/www/system_certmanager.php:820
+#: src/usr/local/www/system_certmanager.php:894
 msgid "*City"
-msgstr ""
+msgstr "*Stad"
 
 #: src/usr/local/www/system_camanager.php:597
-#: src/usr/local/www/system_certmanager.php:817
-#: src/usr/local/www/system_certmanager.php:891
+#: src/usr/local/www/system_certmanager.php:828
+#: src/usr/local/www/system_certmanager.php:902
 msgid "*Organization"
-msgstr ""
+msgstr "*Organisatie"
 
 #: src/usr/local/www/system_camanager.php:605
-#: src/usr/local/www/system_certmanager.php:825
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:836
+#: src/usr/local/www/system_certmanager.php:910
 msgid "Organizational Unit"
-msgstr ""
+msgstr "Organisatie-eenheid"
 
 #: src/usr/local/www/system_camanager.php:613
-#: src/usr/local/www/system_certmanager.php:833
-#: src/usr/local/www/system_certmanager.php:907
+#: src/usr/local/www/system_certmanager.php:844
+#: src/usr/local/www/system_certmanager.php:918
 msgid "*Email Address"
-msgstr ""
+msgstr "*E-mailadres"
 
 #: src/usr/local/www/system_camanager.php:621
-#: src/usr/local/www/system_certmanager.php:841
-#: src/usr/local/www/system_certmanager.php:915
+#: src/usr/local/www/system_certmanager.php:852
+#: src/usr/local/www/system_certmanager.php:926
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
-msgstr ""
+msgstr "*Algemene naam (CN)"
 
 #: src/usr/local/www/system_certmanager.php:35
 msgid "Import an existing Certificate"
@@ -31609,212 +31799,232 @@ msgstr "Maak een intern Certificaat"
 
 #: src/usr/local/www/system_certmanager.php:37
 msgid "Create a Certificate Signing Request"
-msgstr "Maak een Certificaar Teken Versoek (CSR)"
+msgstr "Maak een Certificaat-Ondertekeningsverzoek (CSR)"
 
 #: src/usr/local/www/system_certmanager.php:38
 msgid "Sign a Certificate Signing Request"
-msgstr ""
+msgstr " Certificaat-Ondertekeningsverzoek  ondertekenen"
 
 #: src/usr/local/www/system_certmanager.php:54
 msgid "Choose an existing certificate"
-msgstr ""
+msgstr "Kies een bestaand Certificaat"
 
 #: src/usr/local/www/system_certmanager.php:95
 #, php-format
 msgid "Certificate %s successfully deleted."
 msgstr "Certificaat %s succesvol verwijderd."
 
-#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:217
 msgid "CA to sign with"
-msgstr ""
+msgstr "CA om mee te ondertekenen"
 
-#: src/usr/local/www/system_certmanager.php:221
+#: src/usr/local/www/system_certmanager.php:222
 msgid "This signing request does not appear to be valid."
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:225
-msgid "This private does not appear to be valid."
-msgstr ""
+msgstr "Dit ondertekeningsverzoek lijkt niet geldig te zijn."
 
 #: src/usr/local/www/system_certmanager.php:226
+msgid "This private does not appear to be valid."
+msgstr "Deze persoonlijke sleutel lijkt niet geldig te zijn."
+
+#: src/usr/local/www/system_certmanager.php:227
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr ""
+"Sleutel gegevensveld moet leeg zijn, of een geldige x509 persoonlijke "
+"sleutel"
 
-#: src/usr/local/www/system_certmanager.php:237
-#: src/usr/local/www/system_certmanager.php:713
+#: src/usr/local/www/system_certmanager.php:238
+#: src/usr/local/www/system_certmanager.php:717
 msgid "Key data"
-msgstr ""
+msgstr "Sleutel gegevens"
 
-#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:254
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:925
 msgid "Certificate authority"
-msgstr ""
+msgstr "Certificeringsinstantie"
 
-#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:256
 msgid "Certificate Type"
-msgstr ""
+msgstr "Certificaat Type"
 
-#: src/usr/local/www/system_certmanager.php:282
+#: src/usr/local/www/system_certmanager.php:283
 msgid "Existing Certificate Choice"
 msgstr "Bestaande Certificaat keuze"
 
-#: src/usr/local/www/system_certmanager.php:538
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
-msgstr ""
+msgstr "Definitieve Certificaat gegevens"
 
-#: src/usr/local/www/system_certmanager.php:562
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr ""
+"De openbare sleutel van het certificaat komt niet overeen met de publieke "
+"sleutel van het ondertekeningsverzoek ."
 
-#: src/usr/local/www/system_certmanager.php:640
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr "Toevoegen/Ondertekenen Nieuw Certificaat"
 
-#: src/usr/local/www/system_certmanager.php:685
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
-msgstr ""
+msgstr "Nieuwe CSR (Hieronder plakken)"
 
-#: src/usr/local/www/system_certmanager.php:688
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
-msgstr ""
+msgstr "CSR ondertekenen"
 
-#: src/usr/local/www/system_certmanager.php:693
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
-msgstr ""
+msgstr "*CA om mee te ondertekenen"
 
-#: src/usr/local/www/system_certmanager.php:700
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
-msgstr ""
+msgstr "*CSR om te ondertekenen"
 
-#: src/usr/local/www/system_certmanager.php:707
+#: src/usr/local/www/system_certmanager.php:711
 msgid "CSR data"
-msgstr ""
+msgstr "CSR gegevens"
 
-#: src/usr/local/www/system_certmanager.php:709
+#: src/usr/local/www/system_certmanager.php:713
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
-msgstr "Plak hier een Certificaat Teken Verzoek in het X.509 PEM formaat"
+msgstr ""
+"Plak hier een  Certificaat-Ondertekeningsverzoek in het X.509 PEM formaat"
 
-#: src/usr/local/www/system_certmanager.php:715
+#: src/usr/local/www/system_certmanager.php:719
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr ""
-"Kopieer hier optioneel een prive sleutel. Deze sleutel zal gekoppeld worden "
-"aan het new getekende certificaat in pfSense"
+"Kopieer hier optioneel een persoonlijke sleutel. Deze sleutel zal gekoppeld "
+"worden aan het nieuw ondertekende certificaat in pfSense"
 
-#: src/usr/local/www/system_certmanager.php:719
+#: src/usr/local/www/system_certmanager.php:723
 msgid "*Certificate Lifetime (days)"
 msgstr "*Levensduur Certificaat (dagen)"
 
-#: src/usr/local/www/system_certmanager.php:726
-msgid "Import Certificate"
-msgstr "Impeorteer Certificaat"
-
-#: src/usr/local/www/system_certmanager.php:737
-msgid "*Private key data"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:739
-msgid "Paste a private key in X.509 PEM format here."
-msgstr "Plak hier een prive sleutel in het X.509 PEM formaat"
-
-#: src/usr/local/www/system_certmanager.php:742
-msgid "Internal Certificate"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:748
-msgid "No internal Certificate Authorities have been defined. "
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:749
-msgid ""
-"An internal CA must be defined in order to create an internal certificate. "
-msgstr ""
-"Er moet een interne CA worden gedefinieerd om een intern certificaat aan te "
-"maken."
-
-#: src/usr/local/www/system_certmanager.php:750
-#, php-format
-msgid "%1$sCreate%2$s an internal CA."
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:747
-#: src/usr/local/www/system_certmanager.php:764
-msgid "*Certificate authority"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:772
-#: src/usr/local/www/system_certmanager.php:853
-msgid "*Key length"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:848
-msgid "External Signing Request"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:863
+#: src/usr/local/www/system_certmanager.php:732
+#: src/usr/local/www/system_certmanager.php:874
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr ""
 "OPMERKING: Het is aanbevolen om indien mogelijk een algoritme te gebruiken "
 "dat serker is dan SHA1."
 
-#: src/usr/local/www/system_certmanager.php:922
+#: src/usr/local/www/system_certmanager.php:737
+msgid "Import Certificate"
+msgstr "Impeorteer Certificaat"
+
+#: src/usr/local/www/system_certmanager.php:748
+msgid "*Private key data"
+msgstr "*Persoonlijke sleutel gegevens"
+
+#: src/usr/local/www/system_certmanager.php:750
+msgid "Paste a private key in X.509 PEM format here."
+msgstr "Plak hier een persoonlijke sleutel in het X.509 PEM formaat"
+
+#: src/usr/local/www/system_certmanager.php:753
+msgid "Internal Certificate"
+msgstr "Intern Certificaat"
+
+#: src/usr/local/www/system_certmanager.php:759
+msgid "No internal Certificate Authorities have been defined. "
+msgstr "Er zijn geen Interne Certificeringsinstanties gedefinieerd."
+
+#: src/usr/local/www/system_certmanager.php:760
+msgid ""
+"An internal CA must be defined in order to create an internal certificate. "
+msgstr ""
+"Er moet een interne CA worden gedefinieerd om een intern certificaat aan te "
+"maken."
+
+#: src/usr/local/www/system_certmanager.php:761
+#, php-format
+msgid "%1$sCreate%2$s an internal CA."
+msgstr "%1$sMaak%2$s een interne CA"
+
+#: src/usr/local/www/system_certmanager.php:758
+#: src/usr/local/www/system_certmanager.php:775
+msgid "*Certificate authority"
+msgstr "*Certificeringsinstantie"
+
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:864
+msgid "*Key length"
+msgstr "*Sleutellengte"
+
+#: src/usr/local/www/system_certmanager.php:859
+msgid "External Signing Request"
+msgstr "Externe Ondertekeningsverzoek"
+
+#: src/usr/local/www/system_certmanager.php:933
 msgid "Choose an Existing Certificate"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:951
-msgid "*Existing Certificates"
-msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:958
-msgid "Certificate Attributes"
-msgstr ""
+msgstr "Kies een bestaand Certificaat"
 
 #: src/usr/local/www/system_certmanager.php:962
+msgid "*Existing Certificates"
+msgstr "*Bestaande Certificaten"
+
+#: src/usr/local/www/system_certmanager.php:969
+msgid "Certificate Attributes"
+msgstr "Certificaat Attributen"
+
+#: src/usr/local/www/system_certmanager.php:973
 msgid "Attribute Notes"
 msgstr "Attribuut Opmerkingen"
 
-#: src/usr/local/www/system_certmanager.php:964
+#: src/usr/local/www/system_certmanager.php:975
 msgid ""
 "The following attributes are added to certificates and requests when they "
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr ""
+"De volgende attributen worden toegevoegd aan certificaten en aanvragen "
+"wanneer ze worden gemaakt of ondertekend. Deze eigenschappen gedragen zich "
+"anders afhankelijk van de geselecteerde modus."
 
-#: src/usr/local/www/system_certmanager.php:968
+#: src/usr/local/www/system_certmanager.php:979
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr ""
+"Voor Interne Certificaten worden deze attributen rechtstreeks toegevoegd aan "
+"het certificaat zoals getoond."
 
-#: src/usr/local/www/system_certmanager.php:970
+#: src/usr/local/www/system_certmanager.php:981
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr ""
+"Voor certificaat-ondertekeningsverzoeken worden deze attributen toegevoegd "
+"aan het verzoek, maar ze kunnen worden genegeerd of gewijzigd door de CA die "
+"het verzoek tekent."
 
-#: src/usr/local/www/system_certmanager.php:972
+#: src/usr/local/www/system_certmanager.php:983
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr ""
+"Als deze CSR ondertekend wordt met behulp van het Certificaatbeheer op deze "
+"firewall, stelt dan de attributen in bij het ondertekenen omdat ze niet "
+"kunnen worden overgedragen."
 
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:984
 msgid ""
 "When Signing a Certificate Request, existing attributes in the request "
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr ""
+"Bij het ondertekenen van een certificaatverzoek kunnen bestaande attributen "
+"in het verzoek niet worden gekopieerd. De onderstaande attributen worden "
+"toegepast op het resulterende certificaat."
 
-#: src/usr/local/www/system_certmanager.php:979
+#: src/usr/local/www/system_certmanager.php:990
 msgid "*Certificate Type"
-msgstr ""
+msgstr "*Certificaat Type"
 
-#: src/usr/local/www/system_certmanager.php:982
+#: src/usr/local/www/system_certmanager.php:993
 msgid ""
 "Add type-specific usage attributes to the signed certificate. Used for "
 "placing usage restrictions on, or granting abilities to, the signed "
@@ -31824,90 +32034,105 @@ msgstr ""
 "Gebruikt om het getekende certificaat gebruiksbeperkingen op te leggen of "
 "mogelijkheden toe te kennen"
 
-#: src/usr/local/www/system_certmanager.php:997
+#: src/usr/local/www/system_certmanager.php:1008
 msgid "Alternative Names"
 msgstr "Alternatieve namen"
 
-#: src/usr/local/www/system_certmanager.php:1022
+#: src/usr/local/www/system_certmanager.php:1033
 msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr ""
-
-#: src/usr/local/www/system_certmanager.php:1048
-msgid "Complete Signing Request for "
-msgstr ""
+"Voer aanvullende identificaties in voor het certificaat in deze lijst. Het "
+"veld Common Name wordt automatisch toegevoegd aan het certificaat als een "
+"alternatieve naam. De ondertekenende CA kan deze waarden negeren of wijzigen."
+""
 
 #: src/usr/local/www/system_certmanager.php:1059
-msgid "Signing request data"
-msgstr ""
+msgid "Complete Signing Request for "
+msgstr "Rond Ondertekeningsverzoek af voor"
 
-#: src/usr/local/www/system_certmanager.php:1063
+#: src/usr/local/www/system_certmanager.php:1070
+msgid "Signing request data"
+msgstr "Ondertekeningsverzoek gegevens"
+
+#: src/usr/local/www/system_certmanager.php:1074
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr ""
+"Kopieer de certificaatondertekeningsgegevens hier vandaan en stuur deze door "
+"naar een Certificeringsinstantie voor ondertekening."
 
-#: src/usr/local/www/system_certmanager.php:1067
+#: src/usr/local/www/system_certmanager.php:1078
 msgid "*Final certificate data"
-msgstr ""
+msgstr "*Definitieve Certificaat gegevens"
 
-#: src/usr/local/www/system_certmanager.php:1070
+#: src/usr/local/www/system_certmanager.php:1081
 msgid "Paste the certificate received from the certificate authority here."
 msgstr ""
-"Plak hier het Certificaat dat ontvangen is van de Certificaat Autoriteit."
+"Plak hier het Certificaat dat ontvangen is van de Certificeringsinstantie."
 
-#: src/usr/local/www/system_certmanager.php:1146
+#: src/usr/local/www/system_certmanager.php:1157
 msgid "private key only"
-msgstr ""
+msgstr "uitsluitend een persoonlijke sleutel"
 
-#: src/usr/local/www/system_certmanager.php:1152
+#: src/usr/local/www/system_certmanager.php:1163
 msgid "external - signature pending"
+msgstr "In afwachting van externe ondertekening"
+
+#: src/usr/local/www/system_certmanager.php:1189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Serial: "
+msgstr "Serienummer:"
+
+#: src/usr/local/www/system_certmanager.php:1195
+msgid "Signature Digest: "
 msgstr ""
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1200
 msgid "SAN: "
-msgstr ""
+msgstr "SAN: "
 
-#: src/usr/local/www/system_certmanager.php:1182
+#: src/usr/local/www/system_certmanager.php:1205
 msgid "KU: "
-msgstr ""
+msgstr "KU: "
 
-#: src/usr/local/www/system_certmanager.php:1187
+#: src/usr/local/www/system_certmanager.php:1210
 msgid "EKU: "
-msgstr ""
+msgstr "EKU: "
 
-#: src/usr/local/www/system_certmanager.php:1212
+#: src/usr/local/www/system_certmanager.php:1235
 msgid "User Cert"
-msgstr ""
+msgstr "Gebruikerscertificaat"
 
-#: src/usr/local/www/system_certmanager.php:1230
+#: src/usr/local/www/system_certmanager.php:1253
 msgid "Export Certificate"
-msgstr ""
+msgstr "Certificaat exporteren"
 
-#: src/usr/local/www/system_certmanager.php:1232
-#: src/usr/local/www/system_certmanager.php:1238
+#: src/usr/local/www/system_certmanager.php:1255
+#: src/usr/local/www/system_certmanager.php:1261
 msgid "Export Key"
-msgstr ""
+msgstr "Sleutel exporteren"
 
-#: src/usr/local/www/system_certmanager.php:1234
+#: src/usr/local/www/system_certmanager.php:1257
 msgid "Export P12"
-msgstr ""
+msgstr "P12 exporteren"
 
-#: src/usr/local/www/system_certmanager.php:1236
+#: src/usr/local/www/system_certmanager.php:1259
 msgid "Update CSR"
 msgstr "CSR bijwerken"
 
-#: src/usr/local/www/system_certmanager.php:1237
+#: src/usr/local/www/system_certmanager.php:1260
 msgid "Export Request"
-msgstr ""
+msgstr "Verzoek exporteren"
 
-#: src/usr/local/www/system_certmanager.php:1241
+#: src/usr/local/www/system_certmanager.php:1264
 msgid "Delete Certificate"
 msgstr "Certificaat verwijderen"
 
-#: src/usr/local/www/system_certmanager.php:1257
+#: src/usr/local/www/system_certmanager.php:1280
 msgid "Add/Sign"
 msgstr "Toevoegen/Ondertekenen"
 
@@ -31921,7 +32146,7 @@ msgstr "Importeer een bestaande Certificaat Herroepingslijst (CRL)"
 
 #: src/usr/local/www/system_crlmanager.php:80
 msgid "Invalid CRL reference."
-msgstr ""
+msgstr "Ongeldige CRL referentie"
 
 #: src/usr/local/www/system_crlmanager.php:87
 #, php-format
@@ -31936,15 +32161,15 @@ msgstr "Certificaat herroepingslijst %s is succesvol verwijderd."
 
 #: src/usr/local/www/system_crlmanager.php:136
 msgid "Both the Certificate and CRL must be specified."
-msgstr ""
+msgstr "Zowel het certificaat als de CRL moeten worden opgegeven."
 
 #: src/usr/local/www/system_crlmanager.php:140
 msgid "CA mismatch between the Certificate and CRL. Unable to Revoke."
-msgstr ""
+msgstr "CA-mismatch tussen het certificaat en het CRL. Kan niet intrekken."
 
 #: src/usr/local/www/system_crlmanager.php:143
 msgid "Cannot revoke certificates for an imported/external CRL."
-msgstr ""
+msgstr "Kan geen Certificaten intrekken voor een geïmporteerde / externe CRL."
 
 #: src/usr/local/www/system_crlmanager.php:177
 #, php-format
@@ -31965,7 +32190,7 @@ msgstr "Certificaat herroepingslijst gegevens"
 #: src/usr/local/www/vpn_openvpn_client.php:329
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
-msgstr ""
+msgstr "Certificeringsinstantie"
 
 #: src/usr/local/www/system_crlmanager.php:345
 msgid "Create new Revocation List"
@@ -31973,7 +32198,7 @@ msgstr "Maak een nieuwe Herroepingslijst"
 
 #: src/usr/local/www/system_crlmanager.php:365
 msgid "*Certificate Authority"
-msgstr ""
+msgstr "*Certificeringsinstantie"
 
 #: src/usr/local/www/system_crlmanager.php:372
 msgid "Existing Certificate Revocation List"
@@ -31982,7 +32207,7 @@ msgstr "Bestaande Certificaat Herroepingslijst (CRL)"
 #: src/usr/local/www/system_crlmanager.php:377
 #: src/usr/local/www/system_crlmanager.php:430
 msgid "*CRL data"
-msgstr ""
+msgstr "*CRL gegevens"
 
 #: src/usr/local/www/system_crlmanager.php:379
 #: src/usr/local/www/system_crlmanager.php:432
@@ -32000,7 +32225,7 @@ msgstr "Levensduur (dagen)"
 
 #: src/usr/local/www/system_crlmanager.php:396
 msgid "Serial"
-msgstr ""
+msgstr "Volgnummer"
 
 #: src/usr/local/www/system_crlmanager.php:419
 msgid "Edit Imported Certificate Revocation List"
@@ -32008,15 +32233,15 @@ msgstr "Wijzig geimporteerde Certificaat Herroepingslijst (CRL)"
 
 #: src/usr/local/www/system_crlmanager.php:459
 msgid "Currently Revoked Certificates for CRL"
-msgstr ""
+msgstr "Momenteel ingetrokken certificaten voor CRL"
 
 #: src/usr/local/www/system_crlmanager.php:463
 msgid "No certificates found for this CRL."
-msgstr ""
+msgstr "Geen certificaten gevonden voor deze CRL."
 
 #: src/usr/local/www/system_crlmanager.php:469
 msgid "Certificate Name"
-msgstr ""
+msgstr "Certificaat Naam"
 
 #: src/usr/local/www/system_crlmanager.php:470
 msgid "Revocation Reason"
@@ -32024,7 +32249,7 @@ msgstr " Herroepings rede"
 
 #: src/usr/local/www/system_crlmanager.php:471
 msgid "Revoked At"
-msgstr ""
+msgstr "Ingetrokken op"
 
 #: src/usr/local/www/system_crlmanager.php:492
 msgid "Delete this certificate from the CRL"
@@ -32032,11 +32257,11 @@ msgstr "Verwijder dit certificaat van de CRL"
 
 #: src/usr/local/www/system_crlmanager.php:516
 msgid "No certificates found for this CA."
-msgstr ""
+msgstr "Geen certificaten gevonden voor deze CA."
 
 #: src/usr/local/www/system_crlmanager.php:518
 msgid "Choose a Certificate to Revoke"
-msgstr ""
+msgstr "Kies een certificaat dat u wilt intrekken"
 
 #: src/usr/local/www/system_crlmanager.php:526
 #: src/usr/local/www/system_usermanager.php:870
@@ -32044,11 +32269,11 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:226
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate"
-msgstr ""
+msgstr "Certificaat"
 
 #: src/usr/local/www/system_crlmanager.php:533
 msgid "Reason"
-msgstr ""
+msgstr "Reden"
 
 #: src/usr/local/www/system_crlmanager.php:573
 msgid "Additional Certificate Revocation Lists"
@@ -32061,7 +32286,7 @@ msgstr "CRL toevoegen of importeren"
 
 #: src/usr/local/www/system_crlmanager.php:646
 msgid "Export CRL"
-msgstr ""
+msgstr "Exporteer CRL"
 
 #: src/usr/local/www/system_crlmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:653
@@ -33165,7 +33390,7 @@ msgstr "Ongeldig vervaldatum formaat; gebruik in plaats hiervan MM/DD/YYYY."
 
 #: src/usr/local/www/system_usermanager.php:282
 msgid "Invalid internal Certificate Authority"
-msgstr ""
+msgstr "Ongeldige Interne Certificeringsinstantie"
 
 #: src/usr/local/www/system_usermanager.php:466
 msgid "Inherited from"
@@ -33479,7 +33704,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_settings.php:240
 msgid "Test results"
-msgstr ""
+msgstr "Test Resultaten"
 
 #: src/usr/local/www/uploadconfig.php:43
 msgid "ERR Could not save configuration."
@@ -34234,7 +34459,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "Select a certificate previously configured in the Certificate Manager."
 msgstr ""
-"Selecteer een eerder geconfigureerd certificaat in de Certificaat Manager."
+"Selecteer een eerder geconfigureerd certificaat in het Certificaatbeheer."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:796
 #: src/usr/local/www/vpn_openvpn_client.php:672
@@ -34242,15 +34467,15 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:799
 #: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
-msgstr ""
+msgstr "*Peer Certificeringsinstantie"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:799
 msgid ""
 "Select a certificate authority previously configured in the Certificate "
 "Manager."
 msgstr ""
-"Selecteer een eerder geconfigureerde certificaat authoriteit in de "
-"Certificaat Manager."
+"Selecteer een eerder geconfigureerde Certificeringsinstantie in het "
+"Certificaatbeheer."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:803
 msgid "Phase 1 Proposal (Algorithms)"
@@ -36845,6 +37070,8 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
 msgstr ""
+"Fout bij het vergelijken van de geinstalleerde versie met de laatst "
+"beschikbare versie"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
@@ -36857,10 +37084,6 @@ msgstr "Systeem Informatie Widget opgeslagen via Dashbord."
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:170
 msgid "Unknown system"
 msgstr "Onbekend systeem"
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
-msgid "Serial: "
-msgstr "Serienummer:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
@@ -37365,7 +37588,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:382
 msgid "Self-test"
-msgstr ""
+msgstr "Zelftest"
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
@@ -38273,7 +38496,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
-#: src/usr/local/www/system_certmanager.php:963
+#: src/usr/local/www/system_certmanager.php:974
 #: src/usr/local/www/system_gateways_edit.php:373
 #: src/usr/local/www/system_groupmanager_addprivs.php:189
 #: src/usr/local/www/system_usermanager_addprivs.php:173
@@ -38603,7 +38826,7 @@ msgid ""
 "No Certificate Authorities defined.<br/>Create one under <a href="
 "\"system_camanager.php\">System &gt; Cert. Manager</a>."
 msgstr ""
-"Geen certificaatautoriteiten gespecifieerd.<br/> Maak er een aan onder <a "
+"Geen Certificeringsinstantie gespecifieerd.<br/> Maak er een aan onder <a "
 "href=\"system_camanager.php\">Systeem &gt; Cert. Beheer</a>."
 
 #: src/usr/local/www/system_authservers.php:592
@@ -38689,7 +38912,7 @@ msgstr "Authenticatieservers (o.a. LDAP, RADIUS)"
 msgid ""
 "Certificate Authorities, Certificates, and Certificate Revocation Lists"
 msgstr ""
-"Certificaat Autoriteiten, Certificaten en Certificaat herroepingslijst"
+"Certificeringsinstanties, Certificaten en Certificaat herroepingslijst"
 
 #: src/usr/local/www/system_hasync.php:209
 msgid "Firewall rules "

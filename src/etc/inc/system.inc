@@ -2265,11 +2265,14 @@ function system_setup_sysctl() {
 	}
 
 	$platform = system_identify_specific_platform();
-	if ($platform['name'] == "uFW") {
+	switch ($platform['name']) {
+	case 'ROGUE-1':
+	case 'uFW':
 		set_sysctl(array(
 			"hw.intr_storm_threshold" => "0",
 			"kern.random.harvest.mask" => "351",
 		));
+		break;
 	}
 }
 

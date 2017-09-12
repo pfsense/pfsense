@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-28 16:46-0300\n"
+"POT-Creation-Date: 2017-09-11 16:44-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-25 03:37-0400\n"
+"PO-Revision-Date: 2017-09-10 11:42-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
@@ -46,206 +46,210 @@ msgstr "重新导向至系统面板..."
 msgid "Running: %s"
 msgstr "正在运行: %s"
 
-#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:950 src/etc/inc/auth.inc:1038
-#: src/etc/inc/auth.inc:1350
+#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:952 src/etc/inc/auth.inc:1040
+#: src/etc/inc/auth.inc:1352
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
 msgstr "错误！无法连接到服务器 %s。"
 
-#: src/etc/inc/auth.inc:887
+#: src/etc/inc/auth.inc:889
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr "LDAP: 无法通过主机%s查询CA。"
 
-#: src/etc/inc/auth.inc:962
+#: src/etc/inc/auth.inc:964
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr "错误! ldap_test_bind() 不能启动TLS 服务器%s。"
 
-#: src/etc/inc/auth.inc:1024
+#: src/etc/inc/auth.inc:1026
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr "错误！ ldap_get_user_ous（）选择时未定义LDAP认证服务器。"
 
-#: src/etc/inc/auth.inc:1052
+#: src/etc/inc/auth.inc:1054
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr "错误! ldap_get_user_ous() 不能启动TLS服务器 %s。"
 
-#: src/etc/inc/auth.inc:1062
+#: src/etc/inc/auth.inc:1064
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr "错误！ ldap_get_user_ous（）无法匿名绑定到服务器 %s。"
 
-#: src/etc/inc/auth.inc:1067
+#: src/etc/inc/auth.inc:1069
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
 msgstr "错误！ ldap_get_user_ous（）无法绑定到服务器 %s。"
 
-#: src/etc/inc/auth.inc:1183
+#: src/etc/inc/auth.inc:1185
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
 msgstr "错误！ ldap_get_groups（）无法连接到服务器 %s。"
 
-#: src/etc/inc/auth.inc:1195
+#: src/etc/inc/auth.inc:1197
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr "错误! ldap_get_groups() 不能启动TLS服务器%s。"
 
-#: src/etc/inc/auth.inc:1206
+#: src/etc/inc/auth.inc:1208
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr "错误！ ldap_get_groups（）无法匿名绑定到服务器 %s。"
 
-#: src/etc/inc/auth.inc:1211
+#: src/etc/inc/auth.inc:1213
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
 msgstr "错误！ ldap_get_groups（）无法绑定到服务器 %s。"
 
-#: src/etc/inc/auth.inc:1317
+#: src/etc/inc/auth.inc:1319
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr "错误！ ldap_backed（）调用时未定义LDAP认证服务器。 默认为本地用户数据库。 访问系统 - >用户管理器。"
 
-#: src/etc/inc/auth.inc:1320
+#: src/etc/inc/auth.inc:1322
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr "错误！ ldap_backed（）调用时未定义LDAP认证服务器。"
 
-#: src/etc/inc/auth.inc:1343
+#: src/etc/inc/auth.inc:1345
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr "错误! ldap_backed() 不能启动TLS服务器%s。"
 
-#: src/etc/inc/auth.inc:1368
+#: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "ERROR! Could not bind to server %s."
 msgstr "错误! 不能绑定服务器 %s。"
 
-#: src/etc/inc/auth.inc:1386
+#: src/etc/inc/auth.inc:1388
 #, php-format
 msgid "Now Searching for %s in directory."
 msgstr "正在目录中搜索%s。"
 
-#: src/etc/inc/auth.inc:1395
+#: src/etc/inc/auth.inc:1397
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
 msgstr "正在服务器%1$s中搜索, 容器 %2$s 过滤器 %3$s."
 
-#: src/etc/inc/auth.inc:1409
+#: src/etc/inc/auth.inc:1411
 #, php-format
 msgid "Search resulted in error: %s"
 msgstr "搜索结果错误: %s"
 
-#: src/etc/inc/auth.inc:1425
+#: src/etc/inc/auth.inc:1427
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr "错误！ LDAP搜索失败，或找到多个用户。"
 
-#: src/etc/inc/auth.inc:1432
+#: src/etc/inc/auth.inc:1434
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr "错误！ 无法以用户%2$s: %3$s的身份登录服务器%1$s"
 
-#: src/etc/inc/auth.inc:1439
+#: src/etc/inc/auth.inc:1441
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr "成功登录%1$s，通过 LDAP服务器 %2$s， DN = %3$s."
 
-#: src/etc/inc/auth.inc:1514
+#: src/etc/inc/auth.inc:1516
 #, php-format
 msgid "RADIUS start: %s"
 msgstr "RADIUS 启动: %s"
 
-#: src/etc/inc/auth.inc:1526
+#: src/etc/inc/auth.inc:1528
 #, php-format
 msgid "RADIUS send failed: %s"
 msgstr "RADIUS 发送失败: %s"
 
-#: src/etc/inc/auth.inc:1534
+#: src/etc/inc/auth.inc:1536
 #, php-format
 msgid "RADIUS Auth succeeded"
 msgstr "RADIUS认证成功"
 
-#: src/etc/inc/auth.inc:1540
+#: src/etc/inc/auth.inc:1542
 #, php-format
 msgid "RADIUS Auth rejected"
 msgstr "RADIUS认证被拒绝"
 
-#: src/etc/inc/auth.inc:1662
+#: src/etc/inc/auth.inc:1664
 msgid "Widget configuration has been changed."
 msgstr "部件配置已更改。"
 
-#: src/etc/inc/auth.inc:1667
+#: src/etc/inc/auth.inc:1669
 #, php-format
 msgid "(User %s)"
 msgstr "(用户 %s)"
 
-#: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
+#: src/etc/inc/auth.inc:1687 src/etc/inc/auth.inc:1703
 msgid "Local Database"
 msgstr "本地数据库"
 
-#: src/etc/inc/auth.inc:1805
+#: src/etc/inc/auth.inc:1807
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
 msgstr "成功登录用户 '%1$s'，来自：%2$s"
 
-#: src/etc/inc/auth.inc:1864
+#: src/etc/inc/auth.inc:1820
+msgid "Username or Password incorrect"
+msgstr ""
+
+#: src/etc/inc/auth.inc:1866
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
 msgstr "用户 '%1$s'的会话已超时：%2$s"
 
-#: src/etc/inc/auth.inc:1866
+#: src/etc/inc/auth.inc:1868
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
 msgstr "用户'%1$s' 已注销：%2$s"
 
-#: src/etc/inc/authgui.inc:74
+#: src/etc/inc/authgui.inc:76
 msgid "No page assigned to this user! Click here to logout."
 msgstr "没有为此用户分配页面！点击这里退出。"
 
-#: src/etc/inc/authgui.inc:105
+#: src/etc/inc/authgui.inc:107
 #, php-format
 msgid "Error: %1$s Description: %2$s"
 msgstr "错误：%1$s 说明: %2$s"
 
-#: src/etc/inc/authgui.inc:118 src/etc/inc/dyndns.class:1069
+#: src/etc/inc/authgui.inc:120 src/etc/inc/dyndns.class:1069
 #: src/etc/inc/dyndns.class:1121 src/etc/inc/dyndns.class:1869
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "错误"
 
-#: src/etc/inc/authgui.inc:194
+#: src/etc/inc/authgui.inc:196
 msgid "unknown reason"
 msgstr "未知原因"
 
-#: src/etc/inc/authgui.inc:195
+#: src/etc/inc/authgui.inc:197
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "登录无效 (%s)."
 
-#: src/etc/inc/authgui.inc:200
+#: src/etc/inc/authgui.inc:202
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "该设备目前由以下帐号维护: %s."
 
-#: src/etc/inc/authgui.inc:283
+#: src/etc/inc/authgui.inc:285
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s。%2$s"
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:287
 #, php-format
 msgid "Login to %1$s"
 msgstr "登录到 %1$s"
 
-#: src/etc/inc/authgui.inc:302
+#: src/etc/inc/authgui.inc:304
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "登录"
 
-#: src/etc/inc/authgui.inc:348
+#: src/etc/inc/authgui.inc:362
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -255,7 +259,7 @@ msgstr ""
 "用于访问此路由器的IP地址未在本地配置，可以通过NAT或其他方式转发。\n"
 "\t\t\t\t\t\t\t\t如果这个转发是意想不到的，应该验证是否发生了中间人的攻击。"
 
-#: src/etc/inc/authgui.inc:399
+#: src/etc/inc/authgui.inc:413
 msgid "The browser must support cookies to login."
 msgstr "您的浏览器必须支持cookies才能登录。"
 
@@ -799,7 +803,7 @@ msgstr "没有这样的主机"
 #: src/etc/inc/dyndns.class:1666 src/etc/inc/dyndns.class:1709
 #: src/etc/inc/dyndns.class:1732
 msgid "No Change In IP Address"
-msgstr "没有更改IP地址"
+msgstr "IP地址没有变化"
 
 #: src/etc/inc/dyndns.class:1177 src/etc/inc/dyndns.class:1195
 #: src/etc/inc/dyndns.class:1212 src/etc/inc/dyndns.class:1229
@@ -1003,7 +1007,7 @@ msgstr "用户名包含无效字符"
 #: src/etc/inc/dyndns.class:1485 src/etc/inc/dyndns.class:1505
 #: src/etc/inc/dyndns.class:1532 src/etc/inc/dyndns.class:1544
 msgid "No Change In IP Address."
-msgstr "IP地址没有改变。"
+msgstr "IP地址没有变化。"
 
 #: src/etc/inc/dyndns.class:1523
 msgid "Bad Request - Missing/Invalid Parameters."
@@ -1263,7 +1267,7 @@ msgstr "找不到缓存IPv6。"
 #: src/etc/inc/dyndns.class:1952
 #, php-format
 msgid "Cached IP: %s"
-msgstr "缓存IP: %s"
+msgstr "缓存IP:%s"
 
 #: src/etc/inc/dyndns.class:1958
 msgid "No Cached IP found."
@@ -1276,7 +1280,7 @@ msgstr "动态 Dns: cacheIP != wan_ip. Updating."
 #: src/etc/inc/dyndns.class:1973
 #, php-format
 msgid "Cached IP: %1$s WAN IP: %2$s"
-msgstr "缓存IP：%1$s WAN IP: %2$s"
+msgstr "缓存IP:%1$s WAN IP: %2$s"
 
 #: src/etc/inc/dyndns.class:1978
 #, php-format
@@ -1586,7 +1590,7 @@ msgstr "包太大"
 #: src/usr/local/www/diag_traceroute.php:121
 #: src/usr/local/www/diag_traceroute.php:170 src/usr/local/www/head.inc:410
 msgid "Traceroute"
-msgstr "跟踪路由"
+msgstr "路由跟踪"
 
 #: src/etc/inc/filter.inc:88
 msgid "Destination unreachable"
@@ -1971,7 +1975,7 @@ msgstr "未找到镜像。"
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:358
-#: src/usr/local/www/system_certmanager.php:1107
+#: src/usr/local/www/system_certmanager.php:1118
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -2111,8 +2115,8 @@ msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr "更新网关组网关%1$s 为新网关 %2$s"
 
 #: src/etc/inc/gwlb.inc:1359 src/usr/local/www/diag_arp.php:332
-#: src/usr/local/www/diag_dump_states.php:132
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:136
+#: src/usr/local/www/diag_dump_states.php:185
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:150
@@ -2821,7 +2825,7 @@ msgstr "动态 DNS"
 #: src/usr/local/www/firewall_rules_edit.php:1506
 #: src/usr/local/www/interfaces.php:3050
 msgid "Any"
-msgstr "任意"
+msgstr "Any"
 
 #: src/etc/inc/ipsec.inc:88
 msgid "Peer IP address"
@@ -3047,7 +3051,7 @@ msgstr "无法在%1$s上发送注册Grow  -- 错误: %2$s"
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "none"
-msgstr "没有"
+msgstr "none"
 
 #: src/etc/inc/openvpn.inc:54 src/usr/local/www/diag_pftop.php:94
 #: src/usr/local/www/firewall_rules_edit.php:1668
@@ -3109,7 +3113,7 @@ msgstr "LZ4压缩[compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Compression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "LZ4 压缩 v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3180,12 +3184,12 @@ msgid "CA: %s"
 msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:363
-#: src/usr/local/www/system_certmanager.php:1110
+#: src/usr/local/www/system_certmanager.php:1121
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr "正在使用"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1206
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1229
 msgid "Revoked"
 msgstr "已撤销"
 
@@ -4187,11 +4191,11 @@ msgstr "允许访问 '系统诊断: ARP表' 页面。"
 
 #: src/etc/inc/priv.defs.inc:36
 msgid "WebCfg - Diagnostics: Authentication"
-msgstr "Web配置- 系统诊断: 认证检测"
+msgstr "Web配置- 系统诊断: 认证测试"
 
 #: src/etc/inc/priv.defs.inc:37
 msgid "Allow access to the 'Diagnostics: Authentication' page."
-msgstr "允许访问 '系统诊断: 认证检测'页面。"
+msgstr "允许访问 '系统诊断: 认证测试'页面。"
 
 #: src/etc/inc/priv.defs.inc:42
 msgid "WebCfg - Diagnostics: Backup & Restore"
@@ -4371,11 +4375,11 @@ msgstr "允许访问 '系统诊断: 状态摘要' 页面"
 
 #: src/etc/inc/priv.defs.inc:180
 msgid "WebCfg - Diagnostics: System Activity"
-msgstr "Web配置- 系统诊断: 系统活动"
+msgstr "Web配置- 系统诊断: 系统性能"
 
 #: src/etc/inc/priv.defs.inc:181
 msgid "Allows access to the 'Diagnostics: System Activity' page"
-msgstr "允许访问“诊断：系统活动”页面"
+msgstr "允许访问“诊断：系统性能”页面"
 
 #: src/etc/inc/priv.defs.inc:186
 msgid "WebCfg - Diagnostics: pf Table IP addresses"
@@ -4395,11 +4399,11 @@ msgstr "允许访问 '系统诊断: 测试端口' 页面"
 
 #: src/etc/inc/priv.defs.inc:198
 msgid "WebCfg - Diagnostics: Traceroute"
-msgstr "Web配置- 系统诊断: 跟踪路由"
+msgstr "Web配置- 系统诊断: 路由跟踪"
 
 #: src/etc/inc/priv.defs.inc:199
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr "允许访问 '系统诊断: 跟踪路由' 页面"
+msgstr "允许访问 '系统诊断: 路由跟踪' 页面"
 
 #: src/etc/inc/priv.defs.inc:204
 msgid "WebCfg - Firewall: Easy Rule add/status"
@@ -4563,19 +4567,19 @@ msgstr "允许访问 '防火墙: 流量整形: 向导' 页面"
 
 #: src/etc/inc/priv.defs.inc:324
 msgid "WebCfg - Firewall: Virtual IP Addresses"
-msgstr "Web配置- 防火墙: 虚拟接口"
+msgstr "Web配置- 防火墙: 虚拟IPS"
 
 #: src/etc/inc/priv.defs.inc:325
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr "允许访问 '防火墙: 虚拟接口' 页面"
+msgstr "允许访问 '防火墙: 虚拟IPS' 页面"
 
 #: src/etc/inc/priv.defs.inc:330
 msgid "WebCfg - Firewall: Virtual IP Address: Edit"
-msgstr "Web配置- 防火墙: 虚拟接口: 编辑"
+msgstr "Web配置- 防火墙: 虚拟IPS: 编辑"
 
 #: src/etc/inc/priv.defs.inc:331
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
-msgstr "允许访问 '防火墙: 虚拟接口:编辑' 页面"
+msgstr "允许访问 '防火墙: 虚拟IPS:编辑' 页面"
 
 #: src/etc/inc/priv.defs.inc:336
 msgid "WebCfg - AJAX: Get Service Providers"
@@ -5953,7 +5957,7 @@ msgstr "系统记录器守护进程"
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1224
+#: src/usr/local/www/system_certmanager.php:1247
 msgid "Captive Portal"
 msgstr "入网认证"
 
@@ -6720,14 +6724,14 @@ msgstr "延迟必须为整数。"
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:527
-#: src/usr/local/www/system_certmanager.php:1015
+#: src/usr/local/www/system_certmanager.php:1026
 #: src/usr/local/www/system_usermanager.php:663
 msgid "Delete"
 msgstr "删除"
 
 #: src/etc/inc/shaper.inc:3798
 msgid "Add Schedule"
-msgstr "添加新计划表"
+msgstr "添加管道"
 
 #: src/etc/inc/shaper.inc:3821 src/etc/inc/shaper.inc:4134
 #: src/usr/local/www/firewall_shaper.php:372
@@ -6736,7 +6740,7 @@ msgstr "添加新计划表"
 #: src/usr/local/www/firewall_shaper_vinterface.php:372
 #: src/usr/local/www/firewall_shaper_wizards.php:75
 msgid "Limiters"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/shaper.inc:3825 src/etc/inc/shaper.inc:4138
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
@@ -6772,7 +6776,7 @@ msgstr "目的地址"
 
 #: src/etc/inc/shaper.inc:3867 src/etc/inc/shaper.inc:4171
 msgid "Mask"
-msgstr "Mask"
+msgstr "掩码"
 
 #: src/etc/inc/shaper.inc:3870 src/etc/inc/shaper.inc:4174
 msgid ""
@@ -6781,8 +6785,8 @@ msgid ""
 "each source/destination IP address encountered, respectively. This makes it "
 "possible to easily specify bandwidth limits per host."
 msgstr ""
-"如果选择“源”或“目的地”时，将分别为所遇到的每个源/目的地IP地址创建具有上面给出的带宽，延迟，分组丢失和队列大小的动态管道。 "
-"这使得可以容易地指定每个主机的带宽限制。"
+"如果选择“源地址”或“目的地址”时，将分别为所遇到的每个源地址/目的地址IP创建上面给出的带宽、延迟、分组丢失和队列大小的动态管道， "
+"这样就可以很容易的限制每个主机的带宽。"
 
 #: src/etc/inc/shaper.inc:3881 src/etc/inc/shaper.inc:4185
 #, php-format
@@ -6827,7 +6831,7 @@ msgstr "IPv6掩码位%1$s%2$s"
 #: src/usr/local/www/vpn_openvpn_server.php:749
 msgid ""
 "A description may be entered here for administrative reference (not parsed)."
-msgstr "在这里输入描述以供参考。"
+msgstr "在这里输入描述以供管理员参考。"
 
 #: src/etc/inc/shaper.inc:3901 src/etc/inc/shaper.inc:4205
 #: src/usr/local/www/firewall_rules_edit.php:1493
@@ -6844,7 +6848,7 @@ msgstr "延迟 (ms)"
 #: src/etc/inc/shaper.inc:3908
 msgid ""
 "In most cases, zero (0) should specified here (or leave the field empty)."
-msgstr "提示：在大多数情况下，您应在此处指定0（或将字段留空）"
+msgstr "提示：在大多数情况下，应在此处指定0（或将字段留空）"
 
 #: src/etc/inc/shaper.inc:3912 src/etc/inc/shaper.inc:4218
 msgid "Packet Loss Rate"
@@ -6854,7 +6858,7 @@ msgstr "丢包率"
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped."
-msgstr "提示：在大多数情况下，您应在此处指定0（或将字段留空）。值为0.001表示1000中的一个数据包被丢弃"
+msgstr "提示：在大多数情况下，应在此处指定0（或将字段留空）。值为0.001表示1000中的一个数据包被丢弃。"
 
 #: src/etc/inc/shaper.inc:3921 src/etc/inc/shaper.inc:4227
 msgid "Queue size (slots)"
@@ -6867,7 +6871,7 @@ msgid ""
 "specified in the Delay field, and then they are delivered to their "
 "destination."
 msgstr ""
-"提示：在大多数情况下，您应该将该字段留空。此管道中的所有数据包首先放置在固定大小的队列中，然后按照延迟字段中指定的值进行延迟，然后将它们传递到其目标。"
+"提示：在大多数情况下，应该将该字段留空。此管道中的所有数据包首先放置在固定大小的队列中，然后按照延迟字段中指定的值进行延迟，然后将它们传递到其目标。"
 
 #: src/etc/inc/shaper.inc:3929 src/etc/inc/shaper.inc:4235
 msgid "Bucket size (slots)"
@@ -6877,7 +6881,7 @@ msgstr "桶大小(slots)"
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set."
-msgstr "提示：在大多数情况下，您应该将该字段留空。它增加了散列大小集。"
+msgstr "提示：在大多数情况下，应该将该字段留空。它增加了散列大小集。"
 
 #: src/etc/inc/shaper.inc:4003
 msgid "Weight must be an integer between 1 and 100."
@@ -6897,13 +6901,13 @@ msgstr "提示：对于同一父集下的队列，这指定了队列获得的共
 msgid ""
 "In most cases, zero (0) should be specified here (or leave the field empty). "
 "A value of 0.001 means one packet in 1000 gets dropped"
-msgstr "提示：在大多数情况下，您应在此处指定0（或将字段留空）。值为0.001表示1000中的一个数据包被丢弃"
+msgstr "提示：在大多数情况下，应在此处指定0（或将字段留空）。值为0.001表示1000中的一个数据包被丢弃。"
 
 #: src/etc/inc/shaper.inc:4238
 msgid ""
 "In most cases, this field should be left empty. It increases the hash size "
 "set"
-msgstr "提示：在大多数情况下，您应该将该字段留空。它增加了散列大小集。"
+msgstr "提示：在大多数情况下，应该将该字段留空。它增加了散列大小集。"
 
 #: src/etc/inc/shaper.inc:4633
 msgid "Clone Shaper to this Interface"
@@ -6917,7 +6921,7 @@ msgstr "欢迎使用%s 流量整形。"
 #: src/etc/inc/shaper.inc:4645
 #, php-format
 msgid "The tree on the left navigates through the %s."
-msgstr "左侧的树导航通过%s。"
+msgstr "左侧的树通过%s导航。"
 
 #: src/etc/inc/shaper.inc:4646
 msgid "queues"
@@ -6925,7 +6929,7 @@ msgstr "队列"
 
 #: src/etc/inc/shaper.inc:4647
 msgid "limiters"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/shaper.inc:4649
 #, php-format
@@ -6939,7 +6943,7 @@ msgstr "队列"
 
 #: src/etc/inc/shaper.inc:4651
 msgid "limiter"
-msgstr "限制"
+msgstr "限制器"
 
 #: src/etc/inc/system.inc:564
 msgid "Error: cannot open hosts file in system_hosts_generate()."
@@ -7526,7 +7530,7 @@ msgstr "错误: 无法将 %s写入IPsec CA文件。"
 #: src/etc/inc/vpn.inc:1376
 #, php-format
 msgid "No phase2 specifications for tunnel with REQID = %s"
-msgstr "没有phase2规格的隧道 REQID = %s"
+msgstr "REQID = %s的隧道没有Phase2规范"
 
 #: src/etc/inc/vpn.inc:1495
 #, php-format
@@ -7676,9 +7680,9 @@ msgstr "确认"
 #: src/usr/local/www/system_authservers.php:82
 #: src/usr/local/www/system_camanager.php:318
 #: src/usr/local/www/system_camanager.php:349
-#: src/usr/local/www/system_certmanager.php:206
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:618
+#: src/usr/local/www/system_certmanager.php:207
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
@@ -7884,7 +7888,7 @@ msgstr "链接类型"
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:444
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1112
+#: src/usr/local/www/system_certmanager.php:1123
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -7902,7 +7906,7 @@ msgstr "动作"
 
 #: src/usr/local/www/diag_arp.php:363
 msgid "Delete arp cache entry"
-msgstr "删除arp缓存条目"
+msgstr "删除ARP缓存条目"
 
 #: src/usr/local/www/diag_arp.php:385
 #, php-format
@@ -7912,7 +7916,7 @@ msgstr "本地IPv6对等体使用%1$sNDP%2$s而不是ARP。"
 #: src/usr/local/www/diag_arp.php:386
 msgid ""
 "Permanent ARP entries are shown for local interfaces or static ARP entries."
-msgstr "显示本地接口或静态ARP条目的永久ARP条目。"
+msgstr "本地接口或静态ARP表项显示永久ARP表项。"
 
 #: src/usr/local/www/diag_arp.php:387
 msgid ""
@@ -7952,7 +7956,7 @@ msgstr "认证失败。"
 #: src/usr/local/www/guiconfig.inc:162 src/usr/local/www/head.inc:384
 #: src/usr/local/www/services_captiveportal.php:685
 msgid "Authentication"
-msgstr "认证检测"
+msgstr "认证测试"
 
 #: src/usr/local/www/diag_authentication.php:83
 msgid "Authentication Test"
@@ -8188,7 +8192,7 @@ msgstr "系统日志"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -8287,7 +8291,7 @@ msgstr "历史配置文件"
 
 #: src/usr/local/www/diag_backup.php:492
 msgid "Backup Configuration"
-msgstr "备份配置"
+msgstr "备份"
 
 #: src/usr/local/www/diag_backup.php:496
 msgid "Backup area"
@@ -8336,14 +8340,14 @@ msgstr "下载XML配置文件"
 
 #: src/usr/local/www/diag_backup.php:541
 msgid "Restore Backup"
-msgstr "恢复备份"
+msgstr "恢复"
 
 #: src/usr/local/www/diag_backup.php:545
 #, php-format
 msgid ""
 "Open a %s configuration XML file and click the button below to restore the "
 "configuration."
-msgstr "打开 %sXML配置文件，然后单击下面的按钮恢复备份。"
+msgstr "打开 %sXML配置文件，然后单击恢复配置按钮。"
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Restore area"
@@ -8363,7 +8367,7 @@ msgstr "恢复配置后，防火墙将重新启动。"
 
 #: src/usr/local/www/diag_backup.php:591
 msgid "Package Functions"
-msgstr "插件功能"
+msgstr "插件配置"
 
 #: src/usr/local/www/diag_backup.php:598
 msgid "Reinstall Packages"
@@ -8372,7 +8376,7 @@ msgstr "重新安装插件"
 #: src/usr/local/www/diag_backup.php:601
 msgid ""
 "Click this button to reinstall all system packages.  This may take a while."
-msgstr "点击此按钮，重新安装所有系统插件，这需要一段时间。"
+msgstr "点击这个按钮，将重新安装所有系统插件。"
 
 #: src/usr/local/www/diag_backup.php:611
 msgid "Clear Package Lock"
@@ -8401,7 +8405,7 @@ msgstr "没有以前的配置"
 msgid ""
 "The capabilities offered here can be dangerous. No support is available. Use "
 "them at your own risk!"
-msgstr "仅限高级用户使用，自行承担风险！"
+msgstr "仅限高级用户使用！"
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
@@ -8435,7 +8439,7 @@ msgstr "调用下一个命令"
 
 #: src/usr/local/www/diag_command.php:216
 msgid "Clear command entry"
-msgstr "清除命令条目"
+msgstr "清除命令记录"
 
 #: src/usr/local/www/diag_command.php:218 src/usr/local/www/pkg_mgr.php:164
 #: src/usr/local/www/system_groupmanager_addprivs.php:213
@@ -8499,11 +8503,11 @@ msgstr "执行此PHP代码"
 
 #: src/usr/local/www/diag_command.php:351
 msgid "Example"
-msgstr "例子"
+msgstr "例如"
 
 #: src/usr/local/www/diag_confbak.php:34
 msgid "Invalid Backup Count specified"
-msgstr "指定的备份计数无效"
+msgstr "指定的备份数量无效"
 
 #: src/usr/local/www/diag_confbak.php:43
 msgid "(platform default)"
@@ -8512,7 +8516,7 @@ msgstr "（平台默认）"
 #: src/usr/local/www/diag_confbak.php:45
 #, php-format
 msgid "Changed backup revision count to %s"
-msgstr "将备份修订版计数更改为 %s"
+msgstr "将备份数量更改为 %s"
 
 #: src/usr/local/www/diag_confbak.php:53
 #, php-format
@@ -8535,22 +8539,22 @@ msgstr "比较%1$s 到 %2$s的配置"
 
 #: src/usr/local/www/diag_confbak.php:160
 msgid "Configuration Backup Cache Settings"
-msgstr "配置备份缓存设置"
+msgstr "历史备份设置"
 
 #: src/usr/local/www/diag_confbak.php:164
 msgid "Backup Count"
-msgstr "备份计数"
+msgstr "备份数量"
 
 #: src/usr/local/www/diag_confbak.php:168
 #, php-format
 msgid ""
 "Maximum number of old configurations to keep in the cache, 0 for no backups, "
 "or leave blank for the default value (%s for the current platform)."
-msgstr "要在缓存中保留的历史配置的最大数量，0表示不备份，或为默认值（当前平台的%s ）留空。"
+msgstr "保留的历史配置的最大数量，0表示不备份，留空为默认值（当前平台为%s个 ）。"
 
 #: src/usr/local/www/diag_confbak.php:173
 msgid "Current space used by backups"
-msgstr "备份使用的当前空间"
+msgstr "当前备份占用空间"
 
 #: src/usr/local/www/diag_confbak.php:194
 msgid ""
@@ -8588,7 +8592,7 @@ msgstr "大小"
 
 #: src/usr/local/www/diag_confbak.php:221
 msgid "Configuration Change"
-msgstr "配置更改"
+msgstr "配置变化"
 
 #: src/usr/local/www/diag_confbak.php:236
 msgid "Current configuration"
@@ -8651,7 +8655,7 @@ msgstr "恢复出厂配置"
 msgid ""
 "Resetting the system to factory defaults will remove all user configuration "
 "and apply the following settings:"
-msgstr "将系统重置为出厂默认值将删除所有用户配置并应用以下设置："
+msgstr "将系统重置为出厂默认值将删除所有用户配置，并恢复以下设置："
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
@@ -8664,17 +8668,17 @@ msgstr "局域网的IP地址将被重置为192.168.1.1/24"
 #: src/usr/local/www/diag_defaults.php:65
 msgid ""
 "System will be configured as a DHCP server on the default LAN interface"
-msgstr "系统将默认在LAN接口上配置开启DHCP服务功能"
+msgstr "系统将默认在LAN接口上开启DHCP服务"
 
 #: src/usr/local/www/diag_defaults.php:66
 msgid "Reboot after changes are installed"
-msgstr "更改安装后重新启动"
+msgstr "恢复出厂设置将会重新启动系统"
 
 #: src/usr/local/www/diag_defaults.php:67
 msgid ""
 "WAN interface will be set to obtain an address automatically from a DHCP "
 "server"
-msgstr "WAN接口将设置自动获取IP"
+msgstr "WAN接口将设置为自动获取IP"
 
 #: src/usr/local/www/diag_defaults.php:68
 msgid "webConfigurator admin username will be reset to 'admin'"
@@ -8683,11 +8687,11 @@ msgstr "WEB管理员用户名将被重置为“admin”"
 #: src/usr/local/www/diag_defaults.php:69
 #, php-format
 msgid "webConfigurator admin password will be reset to '%s'"
-msgstr "WEB配置界面管理员密码将被重置为 '%s'"
+msgstr "WEB管理员密码将被重置为 '%s'"
 
 #: src/usr/local/www/diag_defaults.php:71
 msgid "Are you sure you want to proceed?"
-msgstr "你确定你要继续吗？"
+msgstr "您确定要继续吗？"
 
 #: src/usr/local/www/diag_defaults.php:73
 msgid "Perform a factory reset"
@@ -8703,7 +8707,7 @@ msgstr "返回到系统面板"
 
 #: src/usr/local/www/diag_defaults.php:79
 msgid "Keep Configuration"
-msgstr "保持配置"
+msgstr "保持现有配置"
 
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:235
 #: src/usr/local/www/head.inc:387
@@ -8754,7 +8758,7 @@ msgstr "主机名"
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -8867,8 +8871,8 @@ msgid "invalid input"
 msgstr "输入无效"
 
 #: src/usr/local/www/diag_dump_states.php:75
-#: src/usr/local/www/diag_dump_states.php:107
-#: src/usr/local/www/diag_dump_states.php:175
+#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:58
 #: src/usr/local/www/diag_resetstate.php:56
@@ -8879,7 +8883,11 @@ msgstr "输入无效"
 msgid "States"
 msgstr "状态"
 
-#: src/usr/local/www/diag_dump_states.php:109
+#: src/usr/local/www/diag_dump_states.php:78
+msgid "Are you sure you wish to delete this state?"
+msgstr ""
+
+#: src/usr/local/www/diag_dump_states.php:113
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:59
 #: src/usr/local/www/diag_resetstate.php:84
@@ -8887,23 +8895,23 @@ msgstr "状态"
 msgid "Source Tracking"
 msgstr "源追踪"
 
-#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:115
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_resetstate.php:56
 #: src/usr/local/www/diag_resetstate.php:87
 msgid "Reset States"
 msgstr "复位状态"
 
-#: src/usr/local/www/diag_dump_states.php:119
+#: src/usr/local/www/diag_dump_states.php:123
 msgid "State Filter"
 msgstr "状态过滤器"
 
-#: src/usr/local/www/diag_dump_states.php:139
+#: src/usr/local/www/diag_dump_states.php:143
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
 msgstr "过滤表达式"
 
-#: src/usr/local/www/diag_dump_states.php:147
+#: src/usr/local/www/diag_dump_states.php:151
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
@@ -8914,19 +8922,19 @@ msgstr "过滤表达式"
 msgid "Filter"
 msgstr "过滤器"
 
-#: src/usr/local/www/diag_dump_states.php:160
+#: src/usr/local/www/diag_dump_states.php:164
 msgid "Kill States"
 msgstr "清除状态"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:170
 msgid "Kill filtered states"
 msgstr "清除过滤器状态"
 
-#: src/usr/local/www/diag_dump_states.php:168
+#: src/usr/local/www/diag_dump_states.php:172
 msgid "Remove all states to and from the filtered address"
 msgstr "删除已过滤地址的所有状态"
 
-#: src/usr/local/www/diag_dump_states.php:182
+#: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/easyrule.php:90 src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -8950,40 +8958,40 @@ msgstr "删除已过滤地址的所有状态"
 msgid "Protocol"
 msgstr "协议"
 
-#: src/usr/local/www/diag_dump_states.php:183
+#: src/usr/local/www/diag_dump_states.php:187
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr "源（原始来源） - >目的地（原始目的地）"
 
-#: src/usr/local/www/diag_dump_states.php:184
+#: src/usr/local/www/diag_dump_states.php:188
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
 msgstr "状态"
 
-#: src/usr/local/www/diag_dump_states.php:185
+#: src/usr/local/www/diag_dump_states.php:189
 msgid "Packets"
 msgstr "数据包"
 
-#: src/usr/local/www/diag_dump_states.php:186
+#: src/usr/local/www/diag_dump_states.php:190
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
 msgstr "字节"
 
-#: src/usr/local/www/diag_dump_states.php:254
+#: src/usr/local/www/diag_dump_states.php:258
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr "删除从“%1$s”到“%2$s”的所有状态条目"
 
-#: src/usr/local/www/diag_dump_states.php:269
+#: src/usr/local/www/diag_dump_states.php:273
 msgid "No states were found that match the current filter."
 msgstr "未找到与当前过滤器匹配的状态。"
 
-#: src/usr/local/www/diag_dump_states.php:271
+#: src/usr/local/www/diag_dump_states.php:275
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
 msgstr "禁用状态显示，不提交过滤器。 请参见系统>常规设置，需求状态过滤器。"
 
-#: src/usr/local/www/diag_dump_states.php:274
+#: src/usr/local/www/diag_dump_states.php:278
 msgid "No states were found."
 msgstr "未找到任何状态。"
 
@@ -9265,18 +9273,18 @@ msgstr "实际上并没有停止（调试设置为真）%s"
 
 #: src/usr/local/www/diag_halt.php:66
 msgid "System Halt Confirmation"
-msgstr "确认重新启动系统"
+msgstr "确认关机"
 
 #: src/usr/local/www/diag_halt.php:70
 msgid ""
 "Click \"Halt\" to halt the system immediately, or \"Cancel\" to go to the "
 "system dashboard. (There will be a brief delay before the dashboard appears."
 ")"
-msgstr "单击“关闭系统“立即关闭系统，单击“取消”则转到系统面板。（系统面板显示前会有一段时间的延迟。）"
+msgstr "单击“关机“立即关闭系统，单击“取消”则转到系统面板。"
 
 #: src/usr/local/www/diag_halt.php:72 src/usr/local/www/diag_halt.php:74
 msgid "Halt"
-msgstr "关闭系统 "
+msgstr "关机"
 
 #: src/usr/local/www/diag_halt.php:72
 msgid "Halt the system and power off"
@@ -9338,7 +9346,7 @@ msgstr "IPv6地址"
 
 #: src/usr/local/www/diag_ndp.php:142
 msgid "Expiration"
-msgstr "截止"
+msgstr "满期"
 
 #: src/usr/local/www/diag_ndp.php:178
 msgid "Delete NDP entry"
@@ -9355,13 +9363,13 @@ msgstr "数据捕获"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:419
-#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1238
 msgid "OpenVPN Server"
 msgstr "OpenVPN服务器 "
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:422
-#: src/usr/local/www/system_certmanager.php:1218
+#: src/usr/local/www/system_certmanager.php:1241
 msgid "OpenVPN Client"
 msgstr "OpenVPN客户端 "
 
@@ -9429,11 +9437,11 @@ msgstr "停止"
 
 #: src/usr/local/www/diag_packet_capture.php:274
 msgid "Exclude"
-msgstr "排除"
+msgstr "Exclude"
 
 #: src/usr/local/www/diag_packet_capture.php:304
 msgid "Packet Capture Options"
-msgstr "数据捕获选项"
+msgstr "选项"
 
 #: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
@@ -9482,10 +9490,10 @@ msgid ""
 "%7$s).%8$s"
 msgstr ""
 "%1$sNon-"
-"promiscuous（非混杂）模式仅捕获与主机直接相关的流量（由其发送，发送或广播或通过其路由），并且不显示在网络适配器层被忽略的数据包。%2$s%3$sPromiscuous（混杂）模式e%4$s "
-"(\"sniffing\")捕获适配器看到的所有数据，无论其是否有效或与主机相关，但在某些情况下可能会产生不良副作用，并且并非所有适配器都支持此选项。单击%5$s获取更多信息。混杂模式需要更多的内核处理数据包。这对系统资源的需求略高，特别是在非常繁忙的网络或低功耗处理器上。 "
-"数据包处理的变化可能允许有敌意的主机检测到适配器处于混杂模式或“fingerprint（指纹）”内核（请参阅 %6$s）。 "
-"某些网络适配器可能不支持在混杂模式下工作（参见 %7$s）。%8$s"
+"promiscuous（非混杂）模式仅捕获与主机直接相关的流量（由它发送，发送或广播，或通过它路由），并且不显示在网络适配器层被忽略的数据包。%2$s%3$sPromiscuous（混杂）模式%4$s "
+"(\"sniffing\")捕获适配器看到的所有数据，无论其是否有效或与主机相关，但在某些情况下可能会产生不良副作用，并且并非所有适配器都支持此选项。单击 "
+"%5$s获取更多信息。混杂模式需要更多的内核处理数据包。这对系统资源的需求略高，特别是在非常繁忙的网络或低功耗处理器上。分组处理的改变可能允许敌对主机检测到适配器处于混杂模式或“fingerprint（指纹）”内核（请参阅 "
+"%6$s）。 某些网络适配器可能不支持在混杂模式下工作（参见 %7$s）。%8$s"
 
 #: src/usr/local/www/diag_packet_capture.php:341
 msgid "IPv4 Only"
@@ -9518,7 +9526,7 @@ msgstr "*协议"
 
 #: src/usr/local/www/diag_packet_capture.php:351
 msgid "Select the protocol to capture, or \"Any\". "
-msgstr "选择要捕获的协议，或“任意”。"
+msgstr "选择要捕获的协议，或“Any”。"
 
 #: src/usr/local/www/diag_packet_capture.php:355
 msgid "Host Address"
@@ -9578,14 +9586,14 @@ msgstr "包长度是将捕获的每个包的字节数。 默认值为0，这将�
 #: src/usr/local/www/diag_ping.php:50
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:84
 msgid "Count"
-msgstr "计数"
+msgstr "数量"
 
 #: src/usr/local/www/diag_packet_capture.php:386
 #, php-format
 msgid ""
 "This is the number of packets the packet capture will grab. Default value is "
 "100.%sEnter 0 (zero) for no count limit."
-msgstr "这是数据包捕获将抓取的数据包数量， 默认值为100。%s输入0（零）表示无计数限制。"
+msgstr "这是数据包捕获将抓取的数据包数量， 默认值为100。%s输入0表示无数量限制。"
 
 #: src/usr/local/www/diag_packet_capture.php:394
 #: src/usr/local/www/services_router_advertisements.php:112
@@ -9650,7 +9658,7 @@ msgstr "pfsense信息"
 
 #: src/usr/local/www/diag_pf_info.php:63
 msgid "Auto Update Page"
-msgstr "自动更新页面"
+msgstr "自动刷新设置"
 
 #: src/usr/local/www/diag_pf_info.php:67
 msgid "Refresh"
@@ -9806,7 +9814,7 @@ msgstr "最大ping数"
 
 #: src/usr/local/www/diag_ping.php:156
 msgid "Select the maximum number of pings."
-msgstr "选择最大ping数。"
+msgstr "选择ping的次数。"
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
@@ -9832,7 +9840,7 @@ msgstr "%1$s尚未准备好 ，请在 %2$s秒后重试。"
 
 #: src/usr/local/www/diag_reboot.php:107
 msgid "System Reboot Confirmation"
-msgstr "确认重新启动系统"
+msgstr "确认重启系统"
 
 #: src/usr/local/www/diag_reboot.php:111
 msgid ""
@@ -9865,8 +9873,8 @@ msgid ""
 "Resetting the firewall state table may cause the browser session to appear "
 "hung after clicking &quot;Reset&quot;. Simply refresh the page to continue."
 msgstr ""
-"重置状态表将删除相应表中的所有条目。 这意味着所有打开的连接将被中断，并且将必须重新建立。 在对防火墙和/"
-"或NAT规则进行实质性更改之后，这可能是必要的，特别是如果存在具有开放连接的IP协议映射 (例如: 对于PPTP 或 IPv6) "
+"重置状态表将删除相应表中的所有条目。 这意味着所有打开的连接将被中断，然后重新建立。 在对防火墙和/"
+"或NAT规则进行实质性更改之后，这一步是必须要做的，特别是如果存在具有开放连接的IP协议映射 (例如: 对于PPTP 或 IPv6)的时候 "
 "。%1$s在更改规则时，防火墙通常会保持状态表的完整性。%2$s%3$s注意:%4$s "
 "重置防火墙状态表可能会导致浏览器会话在单击&quot;重置&quot;时显示为挂起 ，只需刷新页面即可继续。"
 
@@ -9917,7 +9925,7 @@ msgstr "名称解析"
 msgid ""
 "Enabling name resolution may cause the query to take longer. It can be "
 "stopped at any time by clicking the Stop button in the browser."
-msgstr "启用名称解析可能会导致查询花费更长时间。 可以通过单击浏览器中的停止按钮随时停止。"
+msgstr "启用名称解析可能会花费更长查询时间。 可以单击浏览器的停止按钮随时停止。"
 
 #: src/usr/local/www/diag_routes.php:91
 msgid "Rows to display"
@@ -9930,10 +9938,10 @@ msgstr "使用正则表达式过滤表。"
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
-#: src/usr/local/www/system_certmanager.php:530
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:1044
-#: src/usr/local/www/system_certmanager.php:1092
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1055
+#: src/usr/local/www/system_certmanager.php:1103
 #: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -10168,11 +10176,11 @@ msgstr "每个IP总计 "
 
 #: src/usr/local/www/diag_states_summary.php:199
 msgid "By IP Pair"
-msgstr "按IP对 "
+msgstr "按IP配对"
 
 #: src/usr/local/www/diag_system_activity.php:31 src/usr/local/www/head.inc:409
 msgid "System Activity"
-msgstr "系统活动"
+msgstr "系统性能"
 
 #: src/usr/local/www/diag_system_activity.php:86
 msgid "CPU Activity"
@@ -10202,7 +10210,7 @@ msgstr "%s 表"
 
 #: src/usr/local/www/diag_tables.php:136
 msgid "Table to Display"
-msgstr "要显示的表"
+msgstr "选择表的类型"
 
 #: src/usr/local/www/diag_tables.php:137
 msgid "Table"
@@ -10216,7 +10224,7 @@ msgid ""
 "contents displayed on this page reflect the current addresses inside tables "
 "used by the firewall."
 msgstr ""
-"选择用户定义的别名或系统表名称以查看它的内容。 %s加载到活动防火墙规则集时，别名变为表。 此页面上显示的内容反映防火墙使用的表中的当前地址。"
+"选择用户定义的别名或系统表名称以查看它的内容。 %s加载到活动防火墙规则集时，别名变为表。 此页面上显示的内容反映了防火墙使用的表内的当前地址。"
 
 #: src/usr/local/www/diag_tables.php:159
 msgid "Empty Table"
@@ -10225,11 +10233,11 @@ msgstr "空表"
 #: src/usr/local/www/diag_tables.php:189
 #, php-format
 msgid "Table last updated on %s."
-msgstr "表最后更新时间为 %s."
+msgstr "表最近更新时间为 %s."
 
 #: src/usr/local/www/diag_tables.php:191
 msgid "Date of last update of table is unknown."
-msgstr "表的最后更新日期未知。"
+msgstr "表的最近更新日期未知。"
 
 #: src/usr/local/www/diag_tables.php:194
 #, php-format
@@ -10314,7 +10322,7 @@ msgstr "此页面执行简单的TCP连接测试，以确定主机是否已启动
 msgid ""
 "This test does not function for UDP since there is no way to reliably "
 "determine if a UDP port accepts connections in this manner."
-msgstr "此测试不适用于UDP，因为没有办法可靠地确定UDP端口是否以此方式接受连接。"
+msgstr "此测试不适用于UDP，因为没有办法确定UDP端口是否接受此方式的连接。"
 
 #: src/usr/local/www/diag_testport.php:229
 #: src/usr/local/www/load_balancer_pool_edit.php:326
@@ -10329,7 +10337,7 @@ msgstr "远程文本"
 msgid ""
 "Shows the text given by the server when connecting to the port. If checked "
 "it will take 10+ seconds to display in a panel below this form."
-msgstr "显示连接到端口时服务器给出的文本。 如果选中，则需要10秒钟才能在此窗体下方的面板中显示。"
+msgstr "显示连接到端口时服务器给出的文本。 如果选中，则需要10秒钟才能在下方显示。"
 
 #: src/usr/local/www/diag_testport.php:252
 #: src/usr/local/www/diag_traceroute.php:140
@@ -10348,7 +10356,7 @@ msgid ""
 "is forced and a hostname is used that only returns an AAAA IPv6 IP address, "
 "it will not work."
 msgstr ""
-"如果强制使用IPv4或IPv6，并且使用不包含使用该协议的结果的主机名，将导致错误。 例如，如果强制IPv4并且使用仅返回AAAA IPv6 "
+"如果强制使用IPv4或IPv6，并且使用不包含使用该协议结果的主机名，将导致错误。 例如，如果强制IPv4并且使用仅返回AAAA IPv6 "
 "IP地址的主机名，则它将不起作用。"
 
 #: src/usr/local/www/diag_testport.php:281
@@ -10390,7 +10398,7 @@ msgid ""
 "When checked, traceroute will attempt to perform a PTR lookup to locate "
 "hostnames for hops along the path. This will slow down the process as it has "
 "to wait for DNS replies."
-msgstr "选中时，跟踪路由将尝试执行PTR查询，以查询沿路径跳转的主机名。 这将减慢进程，因为它必须等待DNS回复。"
+msgstr "选中时，路由跟踪将尝试执行PTR查询，以查询沿路径跳转的主机名。 这将减慢进程，因为它必须等待DNS回复。"
 
 #: src/usr/local/www/diag_traceroute.php:161
 msgid "Use ICMP"
@@ -10400,7 +10408,7 @@ msgstr "使用ICMP"
 msgid ""
 "By default, traceroute uses UDP but that may be blocked by some routers. "
 "Check this box to use ICMP instead, which may succeed. "
-msgstr "默认情况下，跟踪路由使用UDP，但可能被一些路由器阻止。 选中此框以使用ICMP协议，这可能会成功。"
+msgstr "默认情况下，路由跟踪使用UDP，但可能被一些路由器阻止。 选中此框以使用ICMP协议，这会提高成功率。"
 
 #: src/usr/local/www/easyrule.php:53 src/usr/local/www/easyrule.php:101
 msgid "Invalid action specified."
@@ -10645,7 +10653,7 @@ msgstr "删除别名"
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:470
 #: src/usr/local/www/system_camanager.php:453
-#: src/usr/local/www/system_certmanager.php:1034
+#: src/usr/local/www/system_certmanager.php:1045
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -10661,7 +10669,7 @@ msgstr "删除别名"
 #: src/usr/local/www/vpn_openvpn_csc.php:700
 #: src/usr/local/www/vpn_openvpn_server.php:1386
 msgid "Add"
-msgstr "增加"
+msgstr "添加"
 
 #: src/usr/local/www/firewall_aliases.php:278
 msgid "Import"
@@ -10750,7 +10758,7 @@ msgstr "网址表（端口）"
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:411
 #: src/usr/local/www/system_camanager.php:319
-#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -10959,7 +10967,7 @@ msgstr "IP 或FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:565
 msgid "The value after the \"/\" is the update frequency in days."
-msgstr "“/”后的值是更新频率（以天为单位）。"
+msgstr "“/”后面的值是以天为单位的更新频率。"
 
 #: src/usr/local/www/firewall_aliases_edit.php:568
 msgid ""
@@ -11405,8 +11413,8 @@ msgid ""
 "address is used, any services on this system (IPsec, OpenVPN server, etc.) "
 "using the WAN IP address will no longer function."
 msgstr ""
-"如果为此系统上的任何接口IP添加1：1 NAT条目，将使该系统在该IP地址上不可访问。 即如果使用WAN IP地址，则使用WAN "
-"IP地址的该系统（IPsec，OpenVPN服务器等）上的任何服务将不再起作用。"
+"如果在系统的任何接口IP上添加1：1 NAT条目，将不能再通过这个IP地址访问系统。 即如果使用WAN IP地址，则使用WAN "
+"IP地址的系统（IPsec，OpenVPN服务器等）上的任何服务将不再起作用。"
 
 #: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
@@ -11527,7 +11535,7 @@ msgstr "单台主机或别名"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:416
 msgid "Edit NAT 1:1 Entry"
-msgstr "编辑NAT1：1记录"
+msgstr "编辑NAT1:1条目"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:423
 msgid "When disabled, the rule will not have any effect."
@@ -11634,8 +11642,8 @@ msgstr "反转匹配"
 #: src/usr/local/www/system_authservers.php:225
 #: src/usr/local/www/system_authservers.php:248
 #: src/usr/local/www/system_authservers.php:442
-#: src/usr/local/www/system_certmanager.php:1001
-#: src/usr/local/www/system_certmanager.php:1004
+#: src/usr/local/www/system_certmanager.php:1012
+#: src/usr/local/www/system_certmanager.php:1015
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -11666,7 +11674,7 @@ msgstr "*目标"
 msgid ""
 "The 1:1 mapping will only be used for connections to or from the specified "
 "destination. Hint: this is usually \"Any\"."
-msgstr "1：1映射将仅用于到指定目标的连接或从指定目标的连接。 提示：这通常是“任意”。"
+msgstr "1：1映射将仅用于到指定目标的连接或从指定目标的连接。 提示：这通常是“Any”。"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
 #: src/usr/local/www/firewall_nat_edit.php:913
@@ -11811,7 +11819,7 @@ msgstr "防火墙 (self)"
 
 #: src/usr/local/www/firewall_nat_edit.php:686
 msgid "Edit Redirect Entry"
-msgstr "编辑重定向条目"
+msgstr "编辑端口转发条目"
 
 #: src/usr/local/www/firewall_nat_edit.php:697
 msgid "No RDR (NOT)"
@@ -11922,7 +11930,7 @@ msgid ""
 "and almost never equal to the destination port range (and should usually be "
 "'any'). The 'to' field may be left empty if only filtering a single port."
 msgstr ""
-"指定此规则的源端口或端口范围。 这通常是随机的，并且几乎不会等于目标端口范围（通常应为“任意”）。 如果只过滤单个端口，则“到”字段可以为空。"
+"指定此规则的源端口或端口范围。 这通常是随机的，并且几乎不会等于目标端口范围（通常应为“Any”）。 如果只过滤单个端口，则“到”字段可以为空。"
 
 #: src/usr/local/www/firewall_nat_edit.php:805
 msgid "Destination not"
@@ -14005,7 +14013,7 @@ msgstr "IP别名"
 #: src/usr/local/www/firewall_virtual_ip_edit.php:286
 #: src/usr/local/www/head.inc:302
 msgid "Virtual IPs"
-msgstr "虚拟接口"
+msgstr "虚拟IPS"
 
 #: src/usr/local/www/firewall_virtual_ip.php:240
 msgid "The VIP configuration has been changed."
@@ -14104,7 +14112,7 @@ msgstr "掩码必须是网络的子网掩码。 它不指定CIDR范围。"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:284
 msgid "Enter a CIDR block of proxy ARP addresses."
-msgstr "这是代理ARP地址的CIDR block"
+msgstr "输入代理ARP的CIDR地址块"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:319
 msgid "Edit Virtual IP"
@@ -14140,7 +14148,7 @@ msgstr "VHID组"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:399
 msgid "Enter the VHID group that the machines will share."
-msgstr "进入VHID组的机器将共享。"
+msgstr "输入设备将共享的VHID组。"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:401
 msgid "Advertising frequency"
@@ -14161,7 +14169,7 @@ msgid ""
 "The frequency that this machine will advertise. 0 means usually master. "
 "Otherwise the lowest combination of both values in the cluster determines "
 "the master."
-msgstr "该机器将广播的频率。 0表示通常是主节点。 否则，集群中两个值的最低组合确定主节点。"
+msgstr "该设备将广播的频率。 0表示通常是主节点。 否则，由集群中两个值的最低组合决定主节点。"
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:449
 msgid ""
@@ -14204,7 +14212,7 @@ msgstr "自动缩放"
 #: src/usr/local/www/graph.php:114
 #, php-format
 msgid "Graph shows last %s seconds"
-msgstr "图表显示最后%s秒"
+msgstr "图表显示最近%s秒"
 
 #: src/usr/local/www/graph.php:117 src/usr/local/www/graph_cpu.php:77
 msgid "Collecting initial data, please wait"
@@ -14376,7 +14384,7 @@ msgstr "只列出前10k项目"
 #: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:1011
+#: src/usr/local/www/system_certmanager.php:1022
 msgid "Value"
 msgstr "值"
 
@@ -14636,7 +14644,7 @@ msgstr "关于本页"
 
 #: src/usr/local/www/head.inc:423
 msgid "Bug Database"
-msgstr "问题提交"
+msgstr "问题反馈"
 
 #: src/usr/local/www/head.inc:426
 msgid "User Forum"
@@ -14652,7 +14660,7 @@ msgstr "商业服务"
 
 #: src/usr/local/www/head.inc:429
 msgid "pfSense Book"
-msgstr "pfSense摘要"
+msgstr "pfSense图书"
 
 #: src/usr/local/www/head.inc:430
 msgid "FreeBSD Handbook"
@@ -15265,7 +15273,7 @@ msgstr "基本配置"
 #: src/usr/local/www/interfaces.php:1793
 #: src/usr/local/www/load_balancer_monitor_edit.php:271
 msgid "*Description"
-msgstr "*说明"
+msgstr "*描述"
 
 #: src/usr/local/www/interfaces.php:1796
 msgid "Enter a description (name) for the interface here."
@@ -17212,7 +17220,7 @@ msgstr "组成员"
 msgid ""
 "NOTE: Rules for WAN type interfaces in groups do not contain the reply-to "
 "mechanism upon which Multi-WAN typically relies. %1$sMore Information%2$s"
-msgstr "注意：组中WAN类型接口的规则不包含多WAN通常依赖的回复机制。%1$s更多信息%2$s"
+msgstr "注意：组中WAN类型接口的规则不包含多WAN通常依赖的回复机制。获取%1$s更多信息%2$s。"
 
 #: src/usr/local/www/interfaces_groups_edit.php:237
 #: src/usr/local/www/interfaces_vlan_edit.php:222
@@ -17353,7 +17361,7 @@ msgstr "*LAGG协议"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:252
 msgid "Enter a description here for reference only (Not parsed)."
-msgstr "在这里输入描述，仅供参考（不解析）"
+msgstr "在这里输入描述以供管理员参考。"
 
 #: src/usr/local/www/interfaces_ppps.php:56
 msgid ""
@@ -17594,7 +17602,7 @@ msgstr "选择一个复位时序类型"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:754
 msgid "Reset Date/Time"
-msgstr "重置 日期/时间"
+msgstr "重置日期/时间"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:762
 msgid "Hour"
@@ -18003,13 +18011,15 @@ msgstr "许可"
 #: src/usr/local/www/license.php:36
 #, php-format
 msgid "%1$s is Copyright &copy; %2$s %3$s. All rights reserved."
-msgstr "%1$s is是版权＆副本; %2$s %3$s。 版权所有。"
+msgstr "%1$s is Copyright &copy; %2$s %3$s. All rights reserved."
 
 #: src/usr/local/www/license.php:37
 msgid ""
 "m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All "
 "rights reserved."
-msgstr "m0n0wall是版权＆副本; 2002-2015 Manuel Kasper（mk@neon1.net）。 版权所有。"
+msgstr ""
+"m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All "
+"rights reserved."
 
 #: src/usr/local/www/license.php:38
 #, php-format
@@ -18017,7 +18027,10 @@ msgid ""
 "Licensed under the Apache License, Version 2.0 (the \"License\");%1$syou may "
 "not use this file except in compliance with the License.%1$sYou may obtain a "
 "copy of the License at"
-msgstr "根据Apache许可证2.0版（“许可证”）授权;%1$s您不得使用此文件，除非有符合的许可证。%1$s您可以通过获取许可证的副本"
+msgstr ""
+"Licensed under the Apache License, Version 2.0 (the \"License\");%1$syou may "
+"not use this file except in compliance with the License.%1$sYou may obtain a "
+"copy of the License at"
 
 #: src/usr/local/www/license.php:40
 #, php-format
@@ -18028,7 +18041,11 @@ msgid ""
 "implied.%1$sSee the License for the specific language governing permissions "
 "and%1$slimitations under the License."
 msgstr ""
-"除非适用法律要求或书面同意，否则根据许可证分发的软件%1$s将按“原样”基础，%1$s分发，不论明示或暗示的担保或条件。%1$s请参阅管理权限的特定语言的许可证和%1$s许可证的限制。"
+"Unless required by applicable law or agreed to in writing, "
+"software%1$sdistributed under the License is distributed on an \\\"AS IS\\\" "
+"BASIS,%1$sWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or "
+"implied.%1$sSee the License for the specific language governing permissions "
+"and%1$slimitations under the License."
 
 #: src/usr/local/www/license.php:44
 msgid "Third Party Credits"
@@ -18040,7 +18057,10 @@ msgid ""
 "%1$s is based upon/includes various free software packages, listed below. "
 "The authors of %1$s would like to thank the authors of these software "
 "packages for their efforts."
-msgstr "%1$s 基于/包含以下列出的各种免费插件。 %1$s 的作者感谢这些插件作者的努力。"
+msgstr ""
+"%1$s 包含以下列出的各种免费插件， "
+"%1$s作者感谢这些插件作者的努力。同时也感谢志愿者将软件WEB界面翻译成多国语言，方便全球用户使用。你现在看到的简体中文界面（繁体中文）翻译由来自中国的鐵血男兒独立完成，博客地址：http:"
+"//fxn2025.blog.51cto.com。"
 
 #: src/usr/local/www/license.php:52 src/usr/local/www/license.php:56
 #: src/usr/local/www/license.php:63 src/usr/local/www/license.php:67
@@ -18238,11 +18258,11 @@ msgstr "HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:200
 msgid "Send/Expect"
-msgstr "发送/接受"
+msgstr "Send/Expect"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:260
 msgid "Edit Load Balancer - Monitor Entry"
-msgstr "编辑负载均衡器 - 监视条目"
+msgstr "编辑监视条目"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:285
 msgid "HTTP Options"
@@ -18273,7 +18293,7 @@ msgstr "HTTPS 代码"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:337
 msgid "Send/Expect Options"
-msgstr "发送/接受 选项"
+msgstr "Send/Expect 选项"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:342
 #: src/usr/local/www/services_wol.php:151
@@ -18414,7 +18434,7 @@ msgstr "可选指定在声明它之前重试检查服务器的次数。"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:341
 msgid "Add Item to the Pool"
-msgstr "添加到地址池"
+msgstr "添加地址池"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:363
 msgid "Server IP Address"
@@ -18569,7 +18589,7 @@ msgstr "创建 '%s' vs:"
 
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:168
 msgid "Edit Load Balancer - Virtual Server Entry"
-msgstr "编辑负载均衡器 - 虚拟服务器条目"
+msgstr "虚拟服务器编辑"
 
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:186
 #: src/usr/local/www/services_captiveportal_ip_edit.php:216
@@ -20007,7 +20027,7 @@ msgstr "编辑入网门户IP规则"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:225
 msgid "Enter a description here for reference only. (Not parsed)"
-msgstr "您可以在这里输入描述，仅供参考（不解析）。"
+msgstr "在这里输入描述以供管理员参考。"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:232
 msgid ""
@@ -20060,7 +20080,7 @@ msgstr "入网门户MAC地址配置已更改。"
 #: src/usr/local/www/system_usermanager.php:469
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:78
 msgid "Action"
-msgstr "行动"
+msgstr "动作"
 
 #: src/usr/local/www/services_captiveportal_mac.php:197
 msgid "Edit MAC address"
@@ -20250,18 +20270,18 @@ msgstr "卷号"
 #: src/usr/local/www/services_captiveportal_vouchers.php:391
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:81
 msgid "Minutes/Ticket"
-msgstr "分钟/票"
+msgstr "时长（分钟）"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:392
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:82
 msgid "# of Tickets"
-msgstr "门票号"
+msgstr "凭证数量"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:393
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:198
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:83
 msgid "Comment"
-msgstr "注解"
+msgstr "描述"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:409
 msgid "Edit voucher roll"
@@ -20468,7 +20488,7 @@ msgstr "输入在生成/打印的凭证上找到的卷号 (0..%d) "
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:184
 msgid "*Minutes per ticket"
-msgstr "*每张票数"
+msgstr "*时长"
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:187
 msgid ""
@@ -20478,7 +20498,7 @@ msgstr "定义允许用户访问的时间（以分钟为单位）。第一次使
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:191
 msgid "*Count"
-msgstr "*计数"
+msgstr "*凭证数量"
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:194
 #, php-format
@@ -20486,7 +20506,7 @@ msgid ""
 "Enter the number of vouchers (1..%d) found on top of the generated/printed "
 "vouchers. WARNING: Changing this number for an existing Roll will mark all "
 "vouchers as unused again"
-msgstr "输入在生成/打印的凭证上找到的凭证数量(1..%d)。 警告：更改现有卷的编号会将所有凭证重新标记为未使用"
+msgstr "输入在生成/打印的凭证上找到的凭证数量(1..%d)。 警告：更改现有卷的编号会将所有凭证重新标记为未使用。"
 
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:201
 msgid "Can be used to further identify this roll. Ignored by the system."
@@ -20498,7 +20518,7 @@ msgstr "入网门户条目列表已更改。"
 
 #: src/usr/local/www/services_captiveportal_zones.php:69
 msgid "Captive Portal Zones"
-msgstr "编辑入网门户区域"
+msgstr "入网门户区域"
 
 #: src/usr/local/www/services_captiveportal_zones.php:74
 #: src/usr/local/www/services_rfc2136_edit.php:201
@@ -20508,7 +20528,7 @@ msgstr "区域名称"
 #: src/usr/local/www/services_captiveportal_zones.php:76
 #: src/usr/local/www/services_pppoe.php:101
 msgid "Number of users"
-msgstr "用户数"
+msgstr "用户数量"
 
 #: src/usr/local/www/services_captiveportal_zones.php:102
 msgid "Edit zone"
@@ -20520,7 +20540,7 @@ msgstr "删除区域"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 msgid "Add Zone"
-msgstr "增加区域"
+msgstr "添加区域"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:56
 msgid "The zone name can only contain letters, digits, and underscores ( _ )."
@@ -21388,7 +21408,7 @@ msgstr "编号"
 
 #: src/usr/local/www/services_dhcp.php:1430
 msgid "DHCP Static Mappings for this Interface"
-msgstr "此接口的DHCP静态映射"
+msgstr "DHCP静态映射"
 
 #: src/usr/local/www/services_dhcp.php:1440
 #: src/usr/local/www/status_dhcp_leases.php:358
@@ -22003,7 +22023,7 @@ msgstr "DHCPv6中继配置"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:159
 msgid "Interfaces without an IPv6 address will not be shown."
-msgstr "不显示没有IPv6地址的接口。"
+msgstr "没有IPv6地址的接口将不显示。"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:168
 #, php-format
@@ -22381,17 +22401,17 @@ msgstr "主机IP地址%1$s例如: 192.168.100.100 或 fd00:abcd::1"
 #: src/usr/local/www/services_dnsmasq_edit.php:241
 #: src/usr/local/www/services_unbound_host_edit.php:247
 msgid "Additional Names for this Host"
-msgstr "此主机的其他名称"
+msgstr "主机其他名称"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:260
 #: src/usr/local/www/services_unbound_host_edit.php:266
 msgid "Host name"
-msgstr "主机名"
+msgstr "主机名称"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:290
 #: src/usr/local/www/services_unbound_host_edit.php:296
 msgid "Add Host Name"
-msgstr "添加主机名"
+msgstr "添加主机名称"
 
 #: src/usr/local/www/services_dyndns.php:48
 msgid "Dynamic DNS client deleted."
@@ -22498,7 +22518,7 @@ msgid ""
 "hostname and the domain separately, with the domain being the domain or "
 "subdomain zone being handled by the provider."
 msgstr ""
-"输入完整的完全合格域名。 如：myhost.dyndns.org%1$sDNS Made Easy: 动态DNS ID (不要主机名)%1$she."
+"输入完整的完全合格域名。 如：myhost.dyndns.org。%1$sDNS Made Easy: 动态DNS ID (不要主机名)%1$s。he."
 "net tunnelbroker:输入隧道ID。%1$sGleSYS: 输入记录ID。%1$sDNSimple: "
 "只输入域名。%1$sNamecheap, Cloudflare, GratisDNS, Hover: "
 "分别输入主机名和域名，域名由是提供商处理的域或子域区域。"
@@ -22744,7 +22764,7 @@ msgid ""
 "ntp.org."
 msgstr ""
 "NTP只有在大多数服务器同意的情况下才能同步。 为了获得最佳效果，您应该配置3到5个服务器(%4$sNTP支持页面至少推荐4或5%5$s), "
-"或一个地址池。如果仅配置了一个服务器,它将 %2$s将会%3$s被信任, 如果配置了2台服务器，并且它们不同意， %2$s也不%3$s会被信任。选项:"
+"或一个地址池。如果仅配置了一个服务器,它将%2$s会%3$s被信任, 如果配置了2台服务器，并且它们不同意， 也%2$s不会%3$s被信任。选项:"
 "%1$s%2$sPrefer%3$s - 相比其他服务器，NTP优先使用此服务器。%1$s%2$sNo Select%3$s - "
 "NTP不使用此服务器的时间，但是将收集并显示此服务器的统计信息。%1$s%2$sIs a Pool%3$s -此条目是NTP服务器池，而不是单个地址。 "
 "这假定为* .pool.ntp.org。"
@@ -22806,9 +22826,9 @@ msgid ""
 "and also on the %7$NIST%2$s and %8$sNTP%2$s websites."
 msgstr ""
 "6月或12月底可能会增加或减少闰秒。 闰秒由%1$sIERS%2$s管理，IERS在大约6-12个月提前公布。 "
-"通常情况下，如果服务器是层级1的NTP服务器，则只需要进行此更正，但是当其他NTP服务器与其同步时，许多NTP服务器不会通告即将到来的闰秒。%3$s%4$s如果闰秒对您的网络服务很重要， "
-" %6$s良好的做法%2$s是在任何时候更正之前至少提前一天下载并添加闰秒文件%5$s。%3$s 更多的信息和文件可以在他们的 "
-"%1$s网站%2$s上找到, 也可以在 %7$NIST%2$s 和%8$sNTP%2$s 网站上查阅。"
+"通常情况下，如果服务器是层级1的NTP服务器，则只需要进行此更正，但是当其他NTP服务器与其同步时，许多NTP服务器不会广播即将到来的闰秒。%3$s%4$s如果闰秒对您的网络服务很重要， "
+" %6$s良好的做法%2$s是在任何时候更正之前至少提前一天下载并添加闰秒文件%5$s。%3$s "
+"更多的信息和文件可以在他们的%1$s网站%2$s上找到, 也可以在%7$NIST%2$s 和%8$sNTP%2$s 网站上查阅。"
 
 #: src/usr/local/www/services_ntpd.php:400
 msgid "Enter Leap second configuration as text OR select a file to upload."
@@ -22912,7 +22932,7 @@ msgstr "GLL"
 
 #: src/usr/local/www/services_ntpd_gps.php:294
 msgid "ZDA or ZDG"
-msgstr "ZDA or ZDG"
+msgstr "ZDA 或 ZDG"
 
 #: src/usr/local/www/services_ntpd_gps.php:328
 msgid "NTP Serial GPS Configuration"
@@ -22931,7 +22951,7 @@ msgid ""
 "has already been set to NMEA mode."
 msgstr ""
 "此选项允许选择预定义配置。 默认是pfSense 2.1和更早版本的配置（不推荐）。 "
-"如果未列出GPS，请选择Generic。%1$s预定义配置假定GPS已设置为NMEA模式。"
+"如果未列出GPS，请选择Generic。%1$s默认配置假定GPS已设置为NMEA模式。"
 
 #: src/usr/local/www/services_ntpd_gps.php:362
 #: src/usr/local/www/services_ntpd_pps.php:147
@@ -23063,7 +23083,7 @@ msgid ""
 "Fudge time is used to specify the PPS signal offset from the actual second "
 "such as the transmission delay between the transmitter and the receiver "
 "(default: 0.0)."
-msgstr "Fudge Time用于指定从实际秒数的PPS信号偏移，例如发射机和接收机之间的传输延迟（默认值：0.0）。"
+msgstr "Fudge Time用于指定从实际秒数的PPS信号偏移量，例如发射机和接收机之间的传输延迟（默认值：0.0）。"
 
 #: src/usr/local/www/services_ntpd_pps.php:162
 #: src/usr/local/www/status_ntpd.php:298
@@ -23088,15 +23108,15 @@ msgstr "PPPoE条目列表已更改。"
 #: src/usr/local/www/services_pppoe.php:100
 #: src/usr/local/www/status_ipsec.php:487
 msgid "Local IP"
-msgstr "本地IP "
+msgstr "本地IP地址"
 
 #: src/usr/local/www/services_pppoe.php:125
 msgid "Edit PPPoE instance"
-msgstr "编辑pppoe实例"
+msgstr "编辑PPPoE条目"
 
 #: src/usr/local/www/services_pppoe.php:126
 msgid "Delete PPPoE instance"
-msgstr "删除PPPoE实例 "
+msgstr "删除PPPoE条目 "
 
 #: src/usr/local/www/services_pppoe_edit.php:105
 #: src/usr/local/www/vpn_l2tp.php:61
@@ -23745,7 +23765,7 @@ msgid ""
 "The community string is like a password, restricting access to querying SNMP "
 "to hosts knowing the community string. Use a strong value here to protect "
 "from unauthorized information disclosure."
-msgstr "单位字符串就像一个密码，限制向知道单位字符串的主机查询SNMP的访问。 有很大的使用价值，可以防止未经授权的信息泄露。"
+msgstr "单位字符串就像一个密码，限制向知道单位字符串的主机查询SNMP的访问。 可以防止未经授权的信息泄露。"
 
 #: src/usr/local/www/services_snmp.php:254
 msgid "SNMP Traps Enable"
@@ -23951,7 +23971,7 @@ msgid ""
 "DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
 "&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
-"如果设置此选项，则DHCP静态映射将在DNS解析器中注册，以便可以解析其名称。注意%1$s系统&gt; 常规设置%2$s 中的“域名”必须设置正确。"
+"如果设置此选项，则DHCP静态映射将在DNS解析器中注册，以便可以解析其名称。注意%1$s系统&gt; 常规设置%2$s 中的“域”必须设置正确。"
 
 #: src/usr/local/www/services_unbound.php:363
 #: src/usr/local/www/services_unbound.php:399
@@ -23974,11 +23994,11 @@ msgstr "主机的父域"
 
 #: src/usr/local/www/services_unbound.php:449
 msgid "IP to return for host"
-msgstr "IP返回主机"
+msgstr "主机返回IP"
 
 #: src/usr/local/www/services_unbound.php:533
 msgid "Lookup Server IP Address"
-msgstr "查询服务器IP地址"
+msgstr "查找服务器IP地址"
 
 #: src/usr/local/www/services_unbound.php:583
 #, php-format
@@ -24103,11 +24123,11 @@ msgstr "*网络"
 
 #: src/usr/local/www/services_unbound_acls.php:279
 msgid "Access Lists to Control Access to the DNS Resolver"
-msgstr "访问列表控制对DNS解析器的访问"
+msgstr "访问列表"
 
 #: src/usr/local/www/services_unbound_acls.php:285
 msgid "Access List Name"
-msgstr "访问列表名称"
+msgstr "列表名称"
 
 #: src/usr/local/www/services_unbound_acls.php:307
 msgid "Edit ACL"
@@ -24202,7 +24222,7 @@ msgstr "预取DNS密钥支持"
 msgid ""
 "This helps lower the latency of requests but does utilize a little more CPU. "
 "See: %1$sWikipedia%2$s"
-msgstr "这有助于降低请求的延迟，但增加了更多的CPU负载。参见: %1$s维基百科%2$s"
+msgstr "这有助于降低请求的延迟，但增加了更多的CPU负载。参见%1$s维基百科%2$s。"
 
 #: src/usr/local/www/services_unbound_advanced.php:254
 msgid "Harden DNSSEC Data"
@@ -24423,12 +24443,12 @@ msgstr "为DNS解析器配置的域覆盖。"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:117
 msgid "Domains to Override with Custom Lookup Servers"
-msgstr "使用自定义查询服务器的域覆盖"
+msgstr "使用自定义查找服务器覆盖的域"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:124
 msgid ""
 "Domain whose lookups will be directed to a user-specified DNS lookup server."
-msgstr "查找将被引导到用户指定的域名查询服务器的域。"
+msgstr "其查找将被定向到用户指定的DNS查找服务器的域。"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:130
 #, php-format
@@ -24437,7 +24457,7 @@ msgid ""
 "192.168.100.100%1$sTo use a non-default port for communication, append an "
 "'@' with the port number."
 msgstr ""
-"该域的权威DNS服务器的IPv4或IPv6地址。 例如：192.168.100.100%1$s要使用非默认端口进行通信，请使用端口号附加“@”。"
+"该域的权威DNS服务器的IPv4或IPv6地址。 例如：192.168.100.100%1$s要使用非默认端口进行通信，请在“@”后面添加端口值。"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:152
 msgid ""
@@ -24471,21 +24491,21 @@ msgstr "为DNS解析器配置主机覆盖。"
 msgid ""
 "Name of the host, without the domain part%1$se.g. enter \"myhost\" if the "
 "full domain name is \"myhost.example.com\""
-msgstr "主机名称，不含域名部分%1$s，例如： 如果完整的域名是“myhost.example.com”，请输入“myhost”"
+msgstr "主机名称，不含域名部分%1$s例如： 如果完整的域名是“myhost.example.com”，请输入“myhost”"
 
 #: src/usr/local/www/services_unbound_host_edit.php:207
 #, php-format
 msgid ""
 "Parent domain of the host%1$se.g. enter \"example.com\" for \"myhost.example."
 "com\""
-msgstr "主机的父域%1$s。例如： 输入“example.com”作为“myhost.example.com”"
+msgstr "主机的父域%1$s例如： 输入“example.com”作为“myhost.example.com”"
 
 #: src/usr/local/www/services_unbound_host_edit.php:214
 #, php-format
 msgid ""
 "IPv4 or IPv6 address to be returned for the host%1$se.g.: 192.168.100.100 or "
 "fd00:abcd::1"
-msgstr "要为主机返回的IPv4或IPv6地址%1$s。例如: 192.168.100.100或fd00：abcd :: 1"
+msgstr "要为主机返回的IPv4或IPv6地址%1$s 例如: 192.168.100.100或fd00：abcd :: 1"
 
 #: src/usr/local/www/services_unbound_host_edit.php:236
 msgid ""
@@ -24508,7 +24528,7 @@ msgstr ""
 msgid ""
 "If the host can be accessed using multiple names, then enter any other names "
 "for the host which should also be overridden."
-msgstr "如果主机可以使用多个名称进行访问，那么请输入主机的任何其他名称，这些名称也应该被覆盖。"
+msgstr "如果主机可以使用多个名称进行访问，那么请输入主机的其他名称，这些名称也会被覆盖。"
 
 #: src/usr/local/www/services_wol.php:53
 #, php-format
@@ -24622,7 +24642,7 @@ msgstr "相关状态"
 
 #: src/usr/local/www/shortcuts.inc:128
 msgid "Related log entries"
-msgstr "相关日志条目"
+msgstr "相关记录"
 
 #: src/usr/local/www/status.php:162
 #, php-format
@@ -25065,7 +25085,7 @@ msgstr "没有要显示的租约"
 
 #: src/usr/local/www/status_dhcp_leases.php:490
 msgid "Leases in Use"
-msgstr "租约使用"
+msgstr "租约使用情况"
 
 #: src/usr/local/www/status_dhcp_leases.php:498
 msgid "# of leases in use"
@@ -25100,11 +25120,11 @@ msgstr "IAID"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:528
 msgid "Delegated Prefixes"
-msgstr "委派的前缀"
+msgstr "委派前缀"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:534
 msgid "IPv6 Prefix"
-msgstr "Pv6前缀 "
+msgstr "IPv6前缀 "
 
 #: src/usr/local/www/status_dhcpv6_leases.php:586
 msgid "Routed To"
@@ -25120,7 +25140,7 @@ msgstr "强制配置同步"
 
 #: src/usr/local/www/status_filter_reload.php:75
 msgid "Reload status"
-msgstr "重载状态"
+msgstr "重置状态"
 
 #: src/usr/local/www/status_filter_reload.php:82
 msgid ""
@@ -25457,8 +25477,8 @@ msgid ""
 "%1$snot%2$s prevent dial-on-demand from making connections to the outside! "
 "Don't use dial-on-demand if the line is to be kept disconnected."
 msgstr ""
-"如果任何数据包触发它，使用按需拨号将使连接重新开始。 要证实这一点：手动断开连接将%1$s不%2$s阻止拨号请求连接到外面！ "
-"如果线路要保持断开连接，请不要使用按需拨号。"
+"如果有任何数据包触发，选中按需拨号将会重新开始连接。 要证实这一点：手动断开连接将%1$s不会%2$s阻止重新拨号请求连接！ "
+"如果线路要保持断开状态，则不要选中按需拨号。"
 
 #: src/usr/local/www/status_ipsec.php:114
 #: src/usr/local/www/status_ipsec.php:147
@@ -25606,7 +25626,7 @@ msgstr "收集IPsec状态信息。"
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr "IPsec可以在%1$s这里%2$s配置"
+msgstr "IPsec可以在%1$s这里%2$s进行配置"
 
 #: src/usr/local/www/status_ipsec.php:550
 msgid "No IPsec status information available."
@@ -25670,11 +25690,11 @@ msgstr "未配置IPsec安全策略。"
 
 #: src/usr/local/www/status_lb_pool.php:105
 msgid "Updated load balancer pools via status screen."
-msgstr "通过状态屏幕更新负载均衡器地址池。"
+msgstr "通过状态屏幕更新负载均衡地址池。"
 
 #: src/usr/local/www/status_lb_pool.php:128
 msgid "Load Balancer Pools"
-msgstr "负载均衡器地址池"
+msgstr "负载均衡地址池"
 
 #: src/usr/local/www/status_lb_pool.php:153
 msgid "Load balancing"
@@ -25726,7 +25746,7 @@ msgstr "平均: %s"
 #: src/usr/local/www/status_logs.php:41
 #: src/usr/local/www/status_logs_common.inc:103
 msgid "General"
-msgstr "常规"
+msgstr "常规设置"
 
 #: src/usr/local/www/status_logs.php:45
 #: src/usr/local/www/status_logs_common.inc:91
@@ -25843,7 +25863,7 @@ msgstr "%1$s 匹配的 %2$s日志条目。"
 #: src/usr/local/www/status_logs_common.inc:145
 #, php-format
 msgid "Last %1$s %2$s Log Entries."
-msgstr "最后%1$s %2$s日志条目。"
+msgstr "最近%1$s 条%2$s记录。"
 
 #: src/usr/local/www/status_logs_common.inc:149
 #, php-format
@@ -25853,12 +25873,12 @@ msgstr "%1$d 匹配的%2$s Log 日志条目。"
 #: src/usr/local/www/status_logs_common.inc:151
 #, php-format
 msgid "Last %1$d %2$s Log Entries."
-msgstr "最后%1$d %2$s日志条目。"
+msgstr "最近%1$d条%2$s记录。"
 
 #: src/usr/local/www/status_logs_common.inc:155
 #, php-format
 msgid "Maximum %d"
-msgstr "最大%d"
+msgstr "上限%d条"
 
 #: src/usr/local/www/status_logs_common.inc:234
 #: src/usr/local/www/status_logs_common.inc:395
@@ -26153,7 +26173,7 @@ msgstr "目标端口"
 #, php-format
 msgid ""
 "This is a summary of the last %1$s lines of the firewall log (Max %2$s)."
-msgstr "这是防火墙日志最后%1$s 行的摘要（最大 %2$s）。"
+msgstr "这是防火墙日志最近%1$s 条的摘要（上限 %2$s条）。"
 
 #: src/usr/local/www/status_logs_filter_summary.php:166
 msgid "Data points"
@@ -26248,7 +26268,7 @@ msgstr "注意：如果IP地址不能位于所选择的接口上，则守护程�
 
 #: src/usr/local/www/status_logs_settings.php:231
 msgid "General Logging Options"
-msgstr "日志记录一般选项"
+msgstr "日志选项"
 
 #: src/usr/local/www/status_logs_settings.php:246
 msgid ""
@@ -26300,7 +26320,7 @@ msgstr "清除所有本地日志文件。 这也会重新启动DHCP守护程序�
 
 #: src/usr/local/www/status_logs_settings.php:333
 msgid "Remote Logging Options"
-msgstr "远程日志记录选项"
+msgstr "远程日志选项"
 
 #: src/usr/local/www/status_logs_settings.php:338
 msgid "Enable Remote Logging"
@@ -26381,7 +26401,7 @@ msgstr "延伸/待定"
 
 #: src/usr/local/www/status_ntpd.php:72
 msgid "Active Peer"
-msgstr "活动的同伴"
+msgstr "主动点"
 
 #: src/usr/local/www/status_ntpd.php:75
 msgid "Candidate"
@@ -26515,7 +26535,7 @@ msgstr "虚拟地址 "
 #: src/usr/local/www/status_openvpn.php:238
 #: src/usr/local/www/status_openvpn.php:298
 msgid "Connected Since"
-msgstr "已连接自"
+msgstr "连接时间"
 
 #: src/usr/local/www/status_openvpn.php:107
 #: src/usr/local/www/status_openvpn.php:302
@@ -26596,7 +26616,7 @@ msgstr "当前未安装具有日志记录功能的插件。"
 #: src/usr/local/www/status_pkglogs.php:102
 #, php-format
 msgid "Last %1$s %2$s Log Entries"
-msgstr "最近 %1$s 个%2$s记录条目"
+msgstr "最近 %1$s 条%2$s记录"
 
 #: src/usr/local/www/status_queues.php:53
 msgid "Something wrong happened during communication with stat gathering."
@@ -26665,7 +26685,7 @@ msgstr "UPnP &amp; NAT-PMP规则"
 
 #: src/usr/local/www/status_upnp.php:72
 msgid "Int. Port"
-msgstr "Int. 端口"
+msgstr "接口. 端口"
 
 #: src/usr/local/www/status_upnp.php:120 src/usr/local/www/status_upnp.php:122
 msgid "Clear all sessions"
@@ -26870,7 +26890,7 @@ msgstr "为WEB配置器选择一种语言"
 
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1209
+#: src/usr/local/www/system_certmanager.php:1232
 msgid "webConfigurator"
 msgstr "WEB 配置器"
 
@@ -28492,11 +28512,11 @@ msgstr "已删除认证服务器 %s。"
 #: src/usr/local/www/system_camanager.php:167
 #: src/usr/local/www/system_camanager.php:184
 #: src/usr/local/www/system_camanager.php:199
-#: src/usr/local/www/system_certmanager.php:215
-#: src/usr/local/www/system_certmanager.php:235
-#: src/usr/local/www/system_certmanager.php:252
-#: src/usr/local/www/system_certmanager.php:270
-#: src/usr/local/www/system_certmanager.php:537
+#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:201
@@ -28630,8 +28650,8 @@ msgstr "服务器设置"
 
 #: src/usr/local/www/system_authservers.php:492
 #: src/usr/local/www/system_camanager.php:485
-#: src/usr/local/www/system_certmanager.php:653
-#: src/usr/local/www/system_certmanager.php:1052
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1063
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
@@ -28858,12 +28878,12 @@ msgid "Certificate Authority %s and its CRLs (if any) successfully deleted."
 msgstr "证书颁发机构 %s 和它的CRL（如果有的话）已成功删除。"
 
 #: src/usr/local/www/system_camanager.php:168
-#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:237
 msgid "Certificate data"
 msgstr "证书数据 "
 
 #: src/usr/local/www/system_camanager.php:170
-#: src/usr/local/www/system_certmanager.php:239
+#: src/usr/local/www/system_certmanager.php:240
 msgid "This certificate does not appear to be valid."
 msgstr "此证书似乎无效。"
 
@@ -28872,15 +28892,15 @@ msgid "Encrypted private keys are not yet supported."
 msgstr "不支持加密的私钥。"
 
 #: src/usr/local/www/system_camanager.php:176
-#: src/usr/local/www/system_certmanager.php:243
+#: src/usr/local/www/system_certmanager.php:244
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr "提交的私钥与提交的证书数据不匹配。"
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
-#: src/usr/local/www/system_certmanager.php:254
-#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:272
 #: src/usr/local/www/system_usermanager.php:203
 #: src/usr/local/www/system_usermanager.php:932
 msgid "Key length"
@@ -28888,7 +28908,7 @@ msgstr "密钥长度 "
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
-#: src/usr/local/www/system_certmanager.php:256
+#: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_usermanager.php:204
 #: src/usr/local/www/system_usermanager.php:952
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
@@ -28897,43 +28917,43 @@ msgstr "有效期"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
-#: src/usr/local/www/system_certmanager.php:257
-#: src/usr/local/www/system_certmanager.php:272
+#: src/usr/local/www/system_certmanager.php:258
+#: src/usr/local/www/system_certmanager.php:273
 msgid "Distinguished name Country Code"
 msgstr "可分辨名称国家代码"
 
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
-#: src/usr/local/www/system_certmanager.php:258
-#: src/usr/local/www/system_certmanager.php:273
+#: src/usr/local/www/system_certmanager.php:259
+#: src/usr/local/www/system_certmanager.php:274
 msgid "Distinguished name State or Province"
 msgstr "可分辨名称州或省"
 
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
-#: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_certmanager.php:274
+#: src/usr/local/www/system_certmanager.php:260
+#: src/usr/local/www/system_certmanager.php:275
 msgid "Distinguished name City"
 msgstr "可分辨名称城市"
 
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
-#: src/usr/local/www/system_certmanager.php:260
-#: src/usr/local/www/system_certmanager.php:275
+#: src/usr/local/www/system_certmanager.php:261
+#: src/usr/local/www/system_certmanager.php:276
 msgid "Distinguished name Organization"
 msgstr "可分辨名称组织 "
 
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
-#: src/usr/local/www/system_certmanager.php:261
-#: src/usr/local/www/system_certmanager.php:276
+#: src/usr/local/www/system_certmanager.php:262
+#: src/usr/local/www/system_certmanager.php:277
 msgid "Distinguished name Email Address"
 msgstr "可分辨名称电邮地址 "
 
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_camanager.php:208
-#: src/usr/local/www/system_certmanager.php:262
-#: src/usr/local/www/system_certmanager.php:277
+#: src/usr/local/www/system_certmanager.php:263
+#: src/usr/local/www/system_certmanager.php:278
 msgid "Distinguished name Common Name"
 msgstr "可分辨名称通用名称"
 
@@ -28946,48 +28966,49 @@ msgid "The field 'Descriptive Name' contains invalid characters."
 msgstr "描述性名称包含无效字符。"
 
 #: src/usr/local/www/system_camanager.php:221
-#: src/usr/local/www/system_certmanager.php:356
+#: src/usr/local/www/system_certmanager.php:357
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
 msgstr "字段“可分辨名称电子邮件地址”包含无效字符。"
 
 #: src/usr/local/www/system_camanager.php:226
-#: src/usr/local/www/system_certmanager.php:362
-#: src/usr/local/www/system_certmanager.php:369
+#: src/usr/local/www/system_certmanager.php:363
+#: src/usr/local/www/system_certmanager.php:370
 msgid "Please select a valid Key Length."
 msgstr "请选择有效的密钥长度"
 
 #: src/usr/local/www/system_camanager.php:229
-#: src/usr/local/www/system_certmanager.php:365
-#: src/usr/local/www/system_certmanager.php:372
+#: src/usr/local/www/system_certmanager.php:366
+#: src/usr/local/www/system_certmanager.php:373
+#: src/usr/local/www/system_certmanager.php:376
 msgid "Please select a valid Digest Algorithm."
 msgstr "请选择有效的摘要算法。"
 
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
 msgstr "证书管理 "
 
 #: src/usr/local/www/system_camanager.php:315
 #: src/usr/local/www/system_camanager.php:344
-#: src/usr/local/www/system_certmanager.php:602
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
 msgstr "CAs"
 
 #: src/usr/local/www/system_camanager.php:345
 #: src/usr/local/www/system_camanager.php:361
-#: src/usr/local/www/system_certmanager.php:584
-#: src/usr/local/www/system_certmanager.php:603
-#: src/usr/local/www/system_certmanager.php:1101
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1112
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
 msgstr "证书 "
 
 #: src/usr/local/www/system_camanager.php:346
-#: src/usr/local/www/system_certmanager.php:604
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
@@ -29003,37 +29024,37 @@ msgid "Internal"
 msgstr "内部 "
 
 #: src/usr/local/www/system_camanager.php:360
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "Issuer"
 msgstr "签发者 "
 
 #: src/usr/local/www/system_camanager.php:362
-#: src/usr/local/www/system_certmanager.php:1109
+#: src/usr/local/www/system_certmanager.php:1120
 msgid "Distinguished Name"
 msgstr "可分辨名称"
 
 #: src/usr/local/www/system_camanager.php:380
-#: src/usr/local/www/system_certmanager.php:1134
+#: src/usr/local/www/system_certmanager.php:1145
 msgid "self-signed"
 msgstr "自签署 "
 
 #: src/usr/local/www/system_camanager.php:382
-#: src/usr/local/www/system_certmanager.php:1136
+#: src/usr/local/www/system_certmanager.php:1147
 msgid "external"
 msgstr "外部 "
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid From"
 msgstr "有效期自"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid Until"
 msgstr "有效期至"
 
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1221
+#: src/usr/local/www/system_certmanager.php:1244
 msgid "IPsec Tunnel"
 msgstr "IPsec隧道"
 
@@ -29062,7 +29083,7 @@ msgid "Create / Edit CA"
 msgstr "创建/编辑CA"
 
 #: src/usr/local/www/system_camanager.php:493
-#: src/usr/local/www/system_certmanager.php:645
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
 msgstr "*证书来源"
@@ -29072,12 +29093,12 @@ msgid "Existing Certificate Authority"
 msgstr "现有的证书颁发机构"
 
 #: src/usr/local/www/system_camanager.php:506
-#: src/usr/local/www/system_certmanager.php:731
+#: src/usr/local/www/system_certmanager.php:742
 msgid "*Certificate data"
 msgstr "*证书数据 "
 
 #: src/usr/local/www/system_camanager.php:508
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:744
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr "粘贴X.509 PEM格式的证书。 "
 
@@ -29100,7 +29121,7 @@ msgstr "下一个证书的序列号"
 msgid ""
 "Enter a decimal number to be used as the serial number for the next "
 "certificate to be created using this CA."
-msgstr "输入要使用此证书颁发机构创建的下一个证书的序列号的十进制数。"
+msgstr "输入要使用此证书颁发机构创建的下一个证书序列号的十进制数。"
 
 #: src/usr/local/www/system_camanager.php:528
 msgid "Internal Certificate Authority"
@@ -29115,62 +29136,63 @@ msgid "*Key length (bits)"
 msgstr "*密钥长度（位）"
 
 #: src/usr/local/www/system_camanager.php:559
-#: src/usr/local/www/system_certmanager.php:779
-#: src/usr/local/www/system_certmanager.php:860
+#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:790
+#: src/usr/local/www/system_certmanager.php:871
 msgid "*Digest Algorithm"
 msgstr "*摘要算法"
 
 #: src/usr/local/www/system_camanager.php:562
-#: src/usr/local/www/system_certmanager.php:782
+#: src/usr/local/www/system_certmanager.php:793
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
 msgstr "注意：如果可能，建议使用比SHA1更强的算法。"
 
 #: src/usr/local/www/system_camanager.php:567
-#: src/usr/local/www/system_certmanager.php:787
+#: src/usr/local/www/system_certmanager.php:798
 msgid "*Lifetime (days)"
 msgstr "*有效期（天）"
 
 #: src/usr/local/www/system_camanager.php:574
-#: src/usr/local/www/system_certmanager.php:794
-#: src/usr/local/www/system_certmanager.php:868
+#: src/usr/local/www/system_certmanager.php:805
+#: src/usr/local/www/system_certmanager.php:879
 msgid "*Country Code"
 msgstr "*国家代码"
 
 #: src/usr/local/www/system_camanager.php:581
-#: src/usr/local/www/system_certmanager.php:801
-#: src/usr/local/www/system_certmanager.php:875
+#: src/usr/local/www/system_certmanager.php:812
+#: src/usr/local/www/system_certmanager.php:886
 msgid "*State or Province"
 msgstr "*州或省"
 
 #: src/usr/local/www/system_camanager.php:589
-#: src/usr/local/www/system_certmanager.php:809
-#: src/usr/local/www/system_certmanager.php:883
+#: src/usr/local/www/system_certmanager.php:820
+#: src/usr/local/www/system_certmanager.php:894
 msgid "*City"
 msgstr "*城市 "
 
 #: src/usr/local/www/system_camanager.php:597
-#: src/usr/local/www/system_certmanager.php:817
-#: src/usr/local/www/system_certmanager.php:891
+#: src/usr/local/www/system_certmanager.php:828
+#: src/usr/local/www/system_certmanager.php:902
 msgid "*Organization"
 msgstr "*组织 "
 
 #: src/usr/local/www/system_camanager.php:605
-#: src/usr/local/www/system_certmanager.php:825
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:836
+#: src/usr/local/www/system_certmanager.php:910
 msgid "Organizational Unit"
 msgstr "组织单位"
 
 #: src/usr/local/www/system_camanager.php:613
-#: src/usr/local/www/system_certmanager.php:833
-#: src/usr/local/www/system_certmanager.php:907
+#: src/usr/local/www/system_certmanager.php:844
+#: src/usr/local/www/system_certmanager.php:918
 msgid "*Email Address"
 msgstr "*邮件地址 "
 
 #: src/usr/local/www/system_camanager.php:621
-#: src/usr/local/www/system_certmanager.php:841
-#: src/usr/local/www/system_certmanager.php:915
+#: src/usr/local/www/system_certmanager.php:852
+#: src/usr/local/www/system_certmanager.php:926
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
 msgstr "*通用名称 "
@@ -29200,280 +29222,290 @@ msgstr "选择现有证书 "
 msgid "Certificate %s successfully deleted."
 msgstr "证书 %s 已被成功删除。"
 
-#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:217
 msgid "CA to sign with"
 msgstr "CA签署"
 
-#: src/usr/local/www/system_certmanager.php:221
+#: src/usr/local/www/system_certmanager.php:222
 msgid "This signing request does not appear to be valid."
 msgstr "此签名请求无效。"
 
-#: src/usr/local/www/system_certmanager.php:225
+#: src/usr/local/www/system_certmanager.php:226
 msgid "This private does not appear to be valid."
 msgstr "这个私钥无效。"
 
-#: src/usr/local/www/system_certmanager.php:226
+#: src/usr/local/www/system_certmanager.php:227
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr "密钥数据字段应为空白或有效的x509私钥"
 
-#: src/usr/local/www/system_certmanager.php:237
-#: src/usr/local/www/system_certmanager.php:713
+#: src/usr/local/www/system_certmanager.php:238
+#: src/usr/local/www/system_certmanager.php:717
 msgid "Key data"
 msgstr "密钥数据 "
 
-#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:254
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:925
 msgid "Certificate authority"
 msgstr "证书颁发机构"
 
-#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:256
 msgid "Certificate Type"
 msgstr "证书类型 "
 
-#: src/usr/local/www/system_certmanager.php:282
+#: src/usr/local/www/system_certmanager.php:283
 msgid "Existing Certificate Choice"
 msgstr "现有证书选择 "
 
-#: src/usr/local/www/system_certmanager.php:538
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
 msgstr "最终证书数据"
 
-#: src/usr/local/www/system_certmanager.php:562
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr "证书公钥与签名请求公钥不符。"
 
-#: src/usr/local/www/system_certmanager.php:640
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr "添加/签署新证书"
 
-#: src/usr/local/www/system_certmanager.php:685
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
 msgstr "添加 CSR (在下面粘贴)"
 
-#: src/usr/local/www/system_certmanager.php:688
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
 msgstr "签署CSR"
 
-#: src/usr/local/www/system_certmanager.php:693
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
 msgstr "*CA签署"
 
-#: src/usr/local/www/system_certmanager.php:700
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
 msgstr "*CSR签署"
 
-#: src/usr/local/www/system_certmanager.php:707
+#: src/usr/local/www/system_certmanager.php:711
 msgid "CSR data"
 msgstr "CSR数据"
 
-#: src/usr/local/www/system_certmanager.php:709
+#: src/usr/local/www/system_certmanager.php:713
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
 msgstr "以X.509 PEM格式粘贴证书签名请求。"
 
-#: src/usr/local/www/system_certmanager.php:715
+#: src/usr/local/www/system_certmanager.php:719
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr "可选择在此处粘贴私钥。 密钥将与pfSense中新签署的证书相关联"
 
-#: src/usr/local/www/system_certmanager.php:719
+#: src/usr/local/www/system_certmanager.php:723
 msgid "*Certificate Lifetime (days)"
 msgstr "*证书有效期(天)"
 
-#: src/usr/local/www/system_certmanager.php:726
-msgid "Import Certificate"
-msgstr "导入证书 "
-
-#: src/usr/local/www/system_certmanager.php:737
-msgid "*Private key data"
-msgstr "*私钥数据"
-
-#: src/usr/local/www/system_certmanager.php:739
-msgid "Paste a private key in X.509 PEM format here."
-msgstr "在此处将私钥粘贴到X.509 PEM格式中。"
-
-#: src/usr/local/www/system_certmanager.php:742
-msgid "Internal Certificate"
-msgstr "内部证书 "
-
-#: src/usr/local/www/system_certmanager.php:748
-msgid "No internal Certificate Authorities have been defined. "
-msgstr "没有定义内部证书颁发机构。"
-
-#: src/usr/local/www/system_certmanager.php:749
-msgid ""
-"An internal CA must be defined in order to create an internal certificate. "
-msgstr "必须定义内部CA才能创建内部证书。"
-
-#: src/usr/local/www/system_certmanager.php:750
-#, php-format
-msgid "%1$sCreate%2$s an internal CA."
-msgstr "%1$s创建%2$s内部CA。"
-
-#: src/usr/local/www/system_certmanager.php:747
-#: src/usr/local/www/system_certmanager.php:764
-msgid "*Certificate authority"
-msgstr "*证书颁发机构"
-
-#: src/usr/local/www/system_certmanager.php:772
-#: src/usr/local/www/system_certmanager.php:853
-msgid "*Key length"
-msgstr "*密钥长度 "
-
-#: src/usr/local/www/system_certmanager.php:848
-msgid "External Signing Request"
-msgstr "外部签名请求 "
-
-#: src/usr/local/www/system_certmanager.php:863
+#: src/usr/local/www/system_certmanager.php:732
+#: src/usr/local/www/system_certmanager.php:874
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr "注意：如果可能，建议使用比SHA1更强的算法。 "
 
-#: src/usr/local/www/system_certmanager.php:922
+#: src/usr/local/www/system_certmanager.php:737
+msgid "Import Certificate"
+msgstr "导入证书 "
+
+#: src/usr/local/www/system_certmanager.php:748
+msgid "*Private key data"
+msgstr "*私钥数据"
+
+#: src/usr/local/www/system_certmanager.php:750
+msgid "Paste a private key in X.509 PEM format here."
+msgstr "在此处将私钥粘贴到X.509 PEM格式中。"
+
+#: src/usr/local/www/system_certmanager.php:753
+msgid "Internal Certificate"
+msgstr "内部证书 "
+
+#: src/usr/local/www/system_certmanager.php:759
+msgid "No internal Certificate Authorities have been defined. "
+msgstr "没有定义内部证书颁发机构。"
+
+#: src/usr/local/www/system_certmanager.php:760
+msgid ""
+"An internal CA must be defined in order to create an internal certificate. "
+msgstr "必须定义内部CA才能创建内部证书。"
+
+#: src/usr/local/www/system_certmanager.php:761
+#, php-format
+msgid "%1$sCreate%2$s an internal CA."
+msgstr "%1$s创建%2$s内部CA。"
+
+#: src/usr/local/www/system_certmanager.php:758
+#: src/usr/local/www/system_certmanager.php:775
+msgid "*Certificate authority"
+msgstr "*证书颁发机构"
+
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:864
+msgid "*Key length"
+msgstr "*密钥长度 "
+
+#: src/usr/local/www/system_certmanager.php:859
+msgid "External Signing Request"
+msgstr "外部签名请求 "
+
+#: src/usr/local/www/system_certmanager.php:933
 msgid "Choose an Existing Certificate"
 msgstr "选择一个现有的证书 "
 
-#: src/usr/local/www/system_certmanager.php:951
+#: src/usr/local/www/system_certmanager.php:962
 msgid "*Existing Certificates"
 msgstr "*现有证书 "
 
-#: src/usr/local/www/system_certmanager.php:958
+#: src/usr/local/www/system_certmanager.php:969
 msgid "Certificate Attributes"
 msgstr "证书属性"
 
-#: src/usr/local/www/system_certmanager.php:962
+#: src/usr/local/www/system_certmanager.php:973
 msgid "Attribute Notes"
 msgstr "属性注释"
 
-#: src/usr/local/www/system_certmanager.php:964
+#: src/usr/local/www/system_certmanager.php:975
 msgid ""
 "The following attributes are added to certificates and requests when they "
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr "以下属性在创建或签名时添加到证书和请求中。 这些属性根据所选模式的不同而有所不同。"
 
-#: src/usr/local/www/system_certmanager.php:968
+#: src/usr/local/www/system_certmanager.php:979
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr "对于内部证书，这些属性将直接添加到证书中，如图所示。"
 
-#: src/usr/local/www/system_certmanager.php:970
+#: src/usr/local/www/system_certmanager.php:981
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr "对于证书签名请求，这些属性被添加到请求中，但是它们可能被签署请求的CA忽略或更改。"
 
-#: src/usr/local/www/system_certmanager.php:972
+#: src/usr/local/www/system_certmanager.php:983
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr "如果此CSR将使用此防火墙上的证书管理器进行签名，请在签署时设置属性，因为它们无法继承。"
 
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:984
 msgid ""
 "When Signing a Certificate Request, existing attributes in the request "
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr "签名证书请求时，请求中的现有属性无法复制。 以下属性将应用于生成的证书。"
 
-#: src/usr/local/www/system_certmanager.php:979
+#: src/usr/local/www/system_certmanager.php:990
 msgid "*Certificate Type"
 msgstr "*证书类型 "
 
-#: src/usr/local/www/system_certmanager.php:982
+#: src/usr/local/www/system_certmanager.php:993
 msgid ""
 "Add type-specific usage attributes to the signed certificate. Used for "
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr "将特定类型的使用属性添加到签名证书。 用于对签署的证书设置使用限制或授予其他功能。"
 
-#: src/usr/local/www/system_certmanager.php:997
+#: src/usr/local/www/system_certmanager.php:1008
 msgid "Alternative Names"
 msgstr "替代名称"
 
-#: src/usr/local/www/system_certmanager.php:1022
+#: src/usr/local/www/system_certmanager.php:1033
 msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr "在此列表中输入证书的其他标识符。 公用名称字段将作为备用名称自动添加到证书中。 签名CA可以忽略或更改这些值。"
 
-#: src/usr/local/www/system_certmanager.php:1048
+#: src/usr/local/www/system_certmanager.php:1059
 msgid "Complete Signing Request for "
 msgstr "完成签名请求"
 
-#: src/usr/local/www/system_certmanager.php:1059
+#: src/usr/local/www/system_certmanager.php:1070
 msgid "Signing request data"
 msgstr "签名请求数据"
 
-#: src/usr/local/www/system_certmanager.php:1063
+#: src/usr/local/www/system_certmanager.php:1074
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr "从此处复制证书签名数据，并将其转发到证书颁发机构进行签名。"
 
-#: src/usr/local/www/system_certmanager.php:1067
+#: src/usr/local/www/system_certmanager.php:1078
 msgid "*Final certificate data"
 msgstr "*最终证书数据"
 
-#: src/usr/local/www/system_certmanager.php:1070
+#: src/usr/local/www/system_certmanager.php:1081
 msgid "Paste the certificate received from the certificate authority here."
 msgstr "将从证书颁发机构收到的证书粘贴到此处。"
 
-#: src/usr/local/www/system_certmanager.php:1146
+#: src/usr/local/www/system_certmanager.php:1157
 msgid "private key only"
 msgstr "仅私钥"
 
-#: src/usr/local/www/system_certmanager.php:1152
+#: src/usr/local/www/system_certmanager.php:1163
 msgid "external - signature pending"
 msgstr "外部 - 签名等候"
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Serial: "
+msgstr "串号："
+
+#: src/usr/local/www/system_certmanager.php:1195
+msgid "Signature Digest: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1200
 msgid "SAN: "
 msgstr "SAN: "
 
-#: src/usr/local/www/system_certmanager.php:1182
+#: src/usr/local/www/system_certmanager.php:1205
 msgid "KU: "
 msgstr "KU: "
 
-#: src/usr/local/www/system_certmanager.php:1187
+#: src/usr/local/www/system_certmanager.php:1210
 msgid "EKU: "
 msgstr "EKU: "
 
-#: src/usr/local/www/system_certmanager.php:1212
+#: src/usr/local/www/system_certmanager.php:1235
 msgid "User Cert"
 msgstr "用户证书"
 
-#: src/usr/local/www/system_certmanager.php:1230
+#: src/usr/local/www/system_certmanager.php:1253
 msgid "Export Certificate"
 msgstr "导出证书"
 
-#: src/usr/local/www/system_certmanager.php:1232
-#: src/usr/local/www/system_certmanager.php:1238
+#: src/usr/local/www/system_certmanager.php:1255
+#: src/usr/local/www/system_certmanager.php:1261
 msgid "Export Key"
 msgstr "导出密钥 "
 
-#: src/usr/local/www/system_certmanager.php:1234
+#: src/usr/local/www/system_certmanager.php:1257
 msgid "Export P12"
 msgstr "导出 p12"
 
-#: src/usr/local/www/system_certmanager.php:1236
+#: src/usr/local/www/system_certmanager.php:1259
 msgid "Update CSR"
 msgstr "更新CSR "
 
-#: src/usr/local/www/system_certmanager.php:1237
+#: src/usr/local/www/system_certmanager.php:1260
 msgid "Export Request"
 msgstr "导出请求"
 
-#: src/usr/local/www/system_certmanager.php:1241
+#: src/usr/local/www/system_certmanager.php:1264
 msgid "Delete Certificate"
 msgstr "删除证书"
 
-#: src/usr/local/www/system_certmanager.php:1257
+#: src/usr/local/www/system_certmanager.php:1280
 msgid "Add/Sign"
 msgstr "添加/签署"
 
@@ -29892,7 +29924,7 @@ msgstr "丢包阈值"
 #: src/usr/local/www/system_gateways_edit.php:319
 #, php-format
 msgid "Low and high thresholds for packet loss in %%. Default is %1$d/%2$d."
-msgstr "丢包的低和高阈值 %%。默认是 %1$d/%2$d."
+msgstr "丢包的低和高阈值%%。默认是 %1$d/%2$d。"
 
 #: src/usr/local/www/system_gateways_edit.php:325
 msgid "Probe Interval"
@@ -30184,7 +30216,7 @@ msgstr "（此权限将向组中的用户提供管理员级别的访问权限）
 #: src/usr/local/www/vpn_openvpn_client.php:265
 #: src/usr/local/www/vpn_openvpn_client.php:343
 msgid "Password and confirmation must match."
-msgstr "密码两次输入必须一致"
+msgstr "密码两次输入必须一致。"
 
 #: src/usr/local/www/system_hasync.php:78
 msgid "pfsync Synchronize Peer IP must be an IPv4 IP."
@@ -30192,7 +30224,7 @@ msgstr "pfsync同步对等IP必须是IPv4 IP。"
 
 #: src/usr/local/www/system_hasync.php:102
 msgid "High Availability Sync"
-msgstr "高可靠性同步"
+msgstr "同步设置"
 
 #: src/usr/local/www/system_hasync.php:119
 msgid "State Synchronization Settings (pfsync)"
@@ -30239,7 +30271,7 @@ msgstr "同步对等IP"
 msgid ""
 "Setting this option will force pfsync to synchronize its state table to this "
 "IP address. The default is directed multicast."
-msgstr "设置此选项将强制pfsync将其状态表同步到此IP地址。 默认值为定向多播。"
+msgstr "设置此选项将强制pfsync将其状态表同步到此IP地址。 默认为定向多播。"
 
 #: src/usr/local/www/system_hasync.php:152
 msgid "Configuration Synchronization Settings (XMLRPC Sync)"
@@ -30484,7 +30516,7 @@ msgstr "*网关"
 #, php-format
 msgid ""
 "Choose which gateway this route applies to or %1$sadd a new one first%2$s"
-msgstr "选择此路由应用于哪个网关或%1$s添加一个新的网关%2$s"
+msgstr "选择此路由应用于哪个网关或%1$s添加一个新的网关%2$s。"
 
 #: src/usr/local/www/system_routes_edit.php:265
 msgid ""
@@ -31029,15 +31061,15 @@ msgstr "远程网关"
 
 #: src/usr/local/www/vpn_ipsec.php:253
 msgid "P1 Protocol"
-msgstr "P1 协议"
+msgstr "P1 加密算法"
 
 #: src/usr/local/www/vpn_ipsec.php:254
 msgid "P1 Transforms"
-msgstr "P1 转换"
+msgstr "P1 哈希算法"
 
 #: src/usr/local/www/vpn_ipsec.php:255
 msgid "P1 Description"
-msgstr "P1 目标"
+msgstr "P1 描述"
 
 #: src/usr/local/www/vpn_ipsec.php:292 src/usr/local/www/vpn_ipsec.php:355
 #: src/usr/local/www/vpn_ipsec.php:356
@@ -31058,7 +31090,7 @@ msgstr "编辑phase1条目"
 
 #: src/usr/local/www/vpn_ipsec.php:359
 msgid "Copy phase1 entry"
-msgstr "复制PHASE1记录"
+msgstr "复制PHASE1条目"
 
 #: src/usr/local/www/vpn_ipsec.php:361 src/usr/local/www/vpn_ipsec.php:362
 msgid "Delete phase1 entry"
@@ -31079,11 +31111,11 @@ msgstr "远程子网 "
 
 #: src/usr/local/www/vpn_ipsec.php:401
 msgid "P2 Protocol"
-msgstr "P2 协议"
+msgstr "P2 加密算法"
 
 #: src/usr/local/www/vpn_ipsec.php:402
 msgid "P2 Transforms"
-msgstr "P2 转换"
+msgstr "P2 哈希算法"
 
 #: src/usr/local/www/vpn_ipsec.php:403
 msgid "P2 Auth Methods"
@@ -32439,7 +32471,7 @@ msgid ""
 "compatible mode across all platforms.%1$s\"tap\" mode is capable of carrying "
 "802.3 (OSI Layer 2.)"
 msgstr ""
-"“tun”模式携带IPv4和IPv6（OSI第3层），是所有平台中最常见和兼容的模式。%1$s\"tap\" 模式能够承载802.3（OSI第2层）"
+"“tun”模式包含IPv4和IPv6（OSI第3层），是所有平台中最常见和最兼容的模式。%1$s\"tap\" 模式能承载802.3（OSI第2层）。"
 
 #: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
@@ -32638,7 +32670,7 @@ msgstr "NCP算法"
 msgid ""
 "Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm "
 "from the list"
-msgstr "可用的NCP加密算法%1$s，单击从列表中添加或删除算法"
+msgstr "可用的NCP加密算法%1$s单击从列表中添加或删除算法。"
 
 #: src/usr/local/www/vpn_openvpn_client.php:761
 #: src/usr/local/www/vpn_openvpn_server.php:928
@@ -32868,9 +32900,9 @@ msgid ""
 "and write. Uppercase is used for TCP/UDP packets and lowercase is used for "
 "TUN/TAP packets.%1$s6-11: Debug info range"
 msgstr ""
-"每个级别显示前一级别的所有信息。 建议使用级别3，以便对发生的情况进行良好的摘要，而不会受到输出的影响。%1$s%1$s没有:"
-"只显示致命错误%1$s4：默认值，正常使用范围%1$s5：将R和W字符输出到控制台用于对于每个数据包读取和写入。 大写用于TCP / "
-"UDP数据包，小写用于TUN / TAP数据包%1$s6-11：调试信息范围"
+"每个级别显示前一级别的所有信息。 "
+"建议使用级别3，以便对发生的情况进行良好的摘要，而不会受到输出的影响。%1$s%1$sNone：只显示致命错误%1$s4：默认值，正常使用范围%1$s5：将R和W字符输出到控制台用于对于每个数据包读取和写入。 "
+"大写用于TCP / UDP数据包，小写用于TUN / TAP数据包%1$s6-11：调试信息范围"
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
@@ -33584,8 +33616,7 @@ msgid ""
 "here, separated by semicolon.%1$sEXAMPLE: push \"route 10.0.0.0 255.255.255."
 "0\""
 msgstr ""
-"输入要添加到OpenVPN服务器配置的任何其他选项，以分号分隔。%1$s示例: push \"route 10.0.0.0 255.255.255."
-"0\""
+"输入要添加到OpenVPN服务器配置的任何其他选项，以分号分隔。%1$s示例：push \"route 10.0.0.0 255.255.255.0\""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
@@ -34038,7 +34069,7 @@ msgstr "DNS 服务器"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:43
 msgid "Last Config Change"
-msgstr "最后一次配置"
+msgstr "最近一次配置"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:44
 msgid "State Table Size"
@@ -34109,7 +34140,7 @@ msgstr "与可用的最新版本比较时发生错误"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr "版本信息更新于"
+msgstr "系统最后更新时间："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -34118,10 +34149,6 @@ msgstr "保存的系统信息小组件通过信息中心过滤。"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:170
 msgid "Unknown system"
 msgstr "未知系统"
-
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
-msgid "Serial: "
-msgstr "串号："
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
@@ -34161,7 +34188,7 @@ msgstr "DNS服务器"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:309
 msgid "Last config change"
-msgstr "最后一次配置"
+msgstr "最近一次配置"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:319
 msgid "State table size"
@@ -34547,7 +34574,7 @@ msgstr "从可用的其他队列借用"
 
 #: src/etc/inc/shaper.inc:3826
 msgid "Enable limiter and its children"
-msgstr "启用限制器及其子项"
+msgstr "启用限制器和其他选项"
 
 #: src/etc/inc/shaper.inc:4139
 msgid "Enable this queue"
@@ -34561,7 +34588,7 @@ msgstr "不备份插件信息"
 msgid ""
 "Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config."
 "xml space!)"
-msgstr "不备份RRD的数据（注：RRD的数据会消耗超过4M字节的config.xml的空间！）"
+msgstr "不备份RRD的数据（RRD的数据会消耗超过4M字节的config.xml的空间）"
 
 #: src/usr/local/www/diag_backup.php:518
 msgid "Encrypt this configuration file."
@@ -34569,7 +34596,7 @@ msgstr "对此配置文件进行加密"
 
 #: src/usr/local/www/diag_backup.php:565
 msgid "Configuration file is encrypted."
-msgstr "配置文件已加密。"
+msgstr "配置文件已加密"
 
 #: src/usr/local/www/diag_packet_capture.php:316
 msgid "Enable promiscuous mode"
@@ -34581,7 +34608,7 @@ msgstr "反向域名查询"
 
 #: src/usr/local/www/diag_pf_info.php:68
 msgid "Automatically refresh the output below"
-msgstr "自动刷新下面的输出"
+msgstr "自动更新数据"
 
 #: src/usr/local/www/diag_resetstate.php:97
 msgid "Reset the firewall state table"
@@ -34851,7 +34878,7 @@ msgstr "禁用外部GIF源的自动过滤，以确保与配置的远程对等体
 msgid ""
 "Add an explicit static route for the remote inner tunnel address/subnet via "
 "the local tunnel address"
-msgstr "通过本地隧道地址为远程内部隧道地址/子网添加明晰的静态路由"
+msgstr "通过本地隧道地址为远程内部隧道地址/子网添加明确的静态路由。"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:715
 msgid "Enable persistent logging of connection uptime. "
@@ -35201,51 +35228,51 @@ msgstr "验证SSL证书信任"
 
 #: src/usr/local/www/services_ntpd.php:311
 msgid "Enable RRD graphs of NTP statistics (default: disabled)."
-msgstr "启用NTP统计的RRD图（默认值：禁用）。"
+msgstr "启用NTP统计的RRD图（默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd.php:318
 msgid "Log peer messages (default: disabled)."
-msgstr "日志对等体消息（默认值：禁用）。"
+msgstr "日志对等体消息（默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd.php:325
 msgid "Log system messages (default: disabled)."
-msgstr "日志系统消息（默认值：禁用）。"
+msgstr "日志系统消息（默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd.php:348
 msgid "Log reference clock statistics (default: disabled)."
-msgstr "日志参考时钟统计（​​默认值：禁用）。"
+msgstr "日志参考时钟统计（​​默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd.php:355
 msgid "Log clock discipline statistics (default: disabled)."
-msgstr "日志时钟纪律统计（默认值：禁用）。"
+msgstr "日志时钟纪律统计（默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd.php:362
 msgid "Log NTP peer statistics (default: disabled)."
-msgstr "日志NTP对等体统计（默认值：禁用）。"
+msgstr "日志NTP对等体统计（默认值：禁用）"
 
 #: src/usr/local/www/services_ntpd_acls.php:202
 msgid "Enable KOD packets."
-msgstr "启用KOD数据包。"
+msgstr "启用KOD数据包"
 
 #: src/usr/local/www/services_ntpd_acls.php:209
 msgid "Deny run-time Configuration (nomodify) by ntpq and ntpdc."
-msgstr "ntpq和ntpdc拒绝运行时配置（nomodify）。"
+msgstr "ntpq和ntpdc拒绝运行时配置（nomodify）"
 
 #: src/usr/local/www/services_ntpd_acls.php:216
 msgid "Disable ntpq and ntpdc queries (noquery)."
-msgstr "禁用ntpq和ntpdc查询（noquery）。"
+msgstr "禁用ntpq和ntpdc查询（noquery）"
 
 #: src/usr/local/www/services_ntpd_acls.php:223
 msgid "Disable all except ntpq and ntpdc queries (noserve)."
-msgstr "禁用除ntpq和ntpdc查询之外的所有操作（noserve）。"
+msgstr "禁用除ntpq和ntpdc查询之外的所有操作（noserve）"
 
 #: src/usr/local/www/services_ntpd_acls.php:230
 msgid "Deny packets that attempt a peer association (nopeer)."
-msgstr "拒绝尝试对等关联（nopeer）的数据包。"
+msgstr "拒绝尝试对等关联（nopeer）的数据包"
 
 #: src/usr/local/www/services_ntpd_acls.php:237
 msgid "Deny mode 6 control message trap service (notrap)."
-msgstr "拒绝模式6控制消息陷阱服务（notrap）。"
+msgstr "拒绝模式6控制消息陷阱服务（notrap）"
 
 #: src/usr/local/www/services_ntpd_gps.php:332
 msgid ""
@@ -35266,48 +35293,48 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:389
 msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
-msgstr "进程PGRMF。 忽略所有其他NMEA句子。 （默认值：未选中）。"
+msgstr "进程PGRMF。 忽略所有其他NMEA句子。 （默认值：未选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:417
 msgid "Prefer this clock (default: checked)."
-msgstr "首选此时钟（默认值：选中）。"
+msgstr "首选此时钟（默认值：选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:424
 msgid ""
 "Do not use this clock, display for reference only (default: unchecked)."
-msgstr "不要使用此时钟，显示仅供参考（默认值：未选中）。"
+msgstr "不要使用此时钟，显示仅供参考（默认值：未选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:431
 msgid "Enable PPS signal processing (default: checked)."
-msgstr "启用PPS信号处理（默认值：选中）。"
+msgstr "启用PPS信号处理（默认值：选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:438
 #: src/usr/local/www/services_ntpd_pps.php:170
 msgid ""
 "Enable falling edge PPS signal processing (default: unchecked, rising edge)."
-msgstr "启用下降edge PPS信号处理（默认值：未选中，上升沿）。"
+msgstr "启用下降edge PPS信号处理（默认值：未选中，上升沿）"
 
 #: src/usr/local/www/services_ntpd_gps.php:445
 msgid "Enable kernel PPS clock discipline (default: checked)."
-msgstr "启用内核PPS时钟纪律（默认值：选中）。"
+msgstr "启用内核PPS时钟纪律（默认值：选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:452
 msgid "Obscure location in timestamp (default: unchecked, unobscured)."
-msgstr "在时间戳中隐藏位置（默认值：未选中，未隐藏）。"
+msgstr "在时间戳中隐藏位置（默认值：未选中，未隐藏）"
 
 #: src/usr/local/www/services_ntpd_gps.php:459
 msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
-msgstr "记录接收到的时间戳的子秒部分（默认值：未选中，未记录）。"
+msgstr "记录接收到的时间戳的子秒部分（默认值：未选中，未记录）"
 
 #: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
-msgstr "显示扩展的GPS状态（默认值：选中）。"
+msgstr "显示扩展的GPS状态（默认值：选中）"
 
 #: src/usr/local/www/services_ntpd_gps.php:502
 msgid "Auto correct malformed initialization commands. (default: unchecked)."
-msgstr "自动纠正格式不正确的初始化命令。 （默认值：未选中）。"
+msgstr "自动纠正格式不正确的初始化命令。 （默认值：未选中）"
 
 #: src/usr/local/www/services_ntpd_pps.php:128
 msgid ""
@@ -35327,13 +35354,13 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_pps.php:177
 msgid "Enable kernel PPS clock discipline (default: unchecked)."
-msgstr "启用内核PPS时钟纪律（默认值：未选中）。"
+msgstr "启用内核PPS时钟纪律（默认值：未选中）"
 
 #: src/usr/local/www/services_ntpd_pps.php:184
 msgid ""
 "Record a timestamp once for each second, useful for constructing Allan "
 "deviation plots (default: unchecked)."
-msgstr "每秒记录一次时间戳，用于构建艾伦偏差图（默认值：未选中）。"
+msgstr "每秒记录一次时间戳，用于构建艾伦偏差图（默认值：未选中）"
 
 #: src/usr/local/www/services_pppoe_edit.php:293
 msgid "Enable PPPoE Server"
@@ -35473,7 +35500,7 @@ msgstr "在DNS查询中使用0x-20编码的随机比特来进行欺骗尝试。"
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
-#: src/usr/local/www/system_certmanager.php:963
+#: src/usr/local/www/system_certmanager.php:974
 #: src/usr/local/www/system_gateways_edit.php:373
 #: src/usr/local/www/system_groupmanager_addprivs.php:189
 #: src/usr/local/www/system_usermanager_addprivs.php:173
@@ -35942,7 +35969,7 @@ msgstr "禁用此静态路由"
 
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the Dashboard auto-update check"
-msgstr ""
+msgstr "禁用系统面板的自动更新检查"
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

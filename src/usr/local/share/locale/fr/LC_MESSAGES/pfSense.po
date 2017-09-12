@@ -49,12 +49,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-28 16:46-0300\n"
+"POT-Creation-Date: 2017-09-11 16:44-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-22 03:26-0400\n"
-"Last-Translator: Laurent Paumier <laurent.paumier@fnac.net>\n"
+"PO-Revision-Date: 2017-09-09 07:38-0400\n"
+"Last-Translator: chris <csanchez@montpellier-events.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -95,25 +95,25 @@ msgstr "Redirection vers le tableau de bord ..."
 msgid "Running: %s"
 msgstr "En cours : %s"
 
-#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:950 src/etc/inc/auth.inc:1038
-#: src/etc/inc/auth.inc:1350
+#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:952 src/etc/inc/auth.inc:1040
+#: src/etc/inc/auth.inc:1352
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
 msgstr "ERREUR ! Impossible de se connecter au serveur %s."
 
-#: src/etc/inc/auth.inc:887
+#: src/etc/inc/auth.inc:889
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr "LDAP : Impossible de rechercher le CA par référence pour l'hôte %s."
 
-#: src/etc/inc/auth.inc:962
+#: src/etc/inc/auth.inc:964
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr ""
 "ERREUR ! ldap_test_bind() n'a pas pu établir de connexion STARTTLS vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1024
+#: src/etc/inc/auth.inc:1026
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
@@ -121,209 +121,213 @@ msgstr ""
 "ERREUR ! ldap_get_user_ous() sélectionné sans serveur LDAP "
 "d'authentification défini"
 
-#: src/etc/inc/auth.inc:1052
+#: src/etc/inc/auth.inc:1054
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
 "ERREUR! ldap_get_user_ous() n'a pas pu établir de connexion STARTTLS vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1062
+#: src/etc/inc/auth.inc:1064
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr ""
 "ERREUR! ldap_get_user_ous() n'arrive pas à effectuer une liaison anonyme "
 "vers le serveur %s ."
 
-#: src/etc/inc/auth.inc:1067
+#: src/etc/inc/auth.inc:1069
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
 msgstr ""
 "ERREUR ! ldap_get_user_ous() n'arrive pas à effectuer une connexion vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1183
+#: src/etc/inc/auth.inc:1185
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
 msgstr "ERREUR ! ldap_get_groups() n'arrive pas à se connecter au serveur %s."
 
-#: src/etc/inc/auth.inc:1195
+#: src/etc/inc/auth.inc:1197
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
 "ERREUR ! ldap_get_groups() n'a pas pu établir de connection STARTTLS vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1206
+#: src/etc/inc/auth.inc:1208
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr ""
-"ERREUR ! ldap_get_groups() n'arrive pas à effectuer une liaisons anonymes "
+"ERREUR ! ldap_get_groups() n'arrive pas à effectuer une liaisons anonyme "
 "vers le serveur %s."
 
-#: src/etc/inc/auth.inc:1211
+#: src/etc/inc/auth.inc:1213
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
 msgstr ""
 "ERREUR ! ldap_get_groups() n'arrive pas à effectuer une liaison vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1317
+#: src/etc/inc/auth.inc:1319
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
 "ERREUR ! ldap_backed() appelé sans serveur d'authentification LDAP défini. "
-"Utilisation du mode par défaut : base de données utilisateur locale. Aller "
+"Utilisation du mode par défaut : base de données utilisateur local. Aller "
 "voir Système -> Gestion des utilisateurs."
 
-#: src/etc/inc/auth.inc:1320
+#: src/etc/inc/auth.inc:1322
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
 "ERREUR ! ldap_backed() appelé sans serveur d'authentification LDAP défini."
 
-#: src/etc/inc/auth.inc:1343
+#: src/etc/inc/auth.inc:1345
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr ""
 "ERREUR ! ldap_backed() n'a pas pu établir de connexion STARTTLS vers le "
 "serveur %s."
 
-#: src/etc/inc/auth.inc:1368
+#: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "ERROR! Could not bind to server %s."
 msgstr "ERREUR ! Impossible d'effectuer une connexion vers le serveur %s."
 
-#: src/etc/inc/auth.inc:1386
+#: src/etc/inc/auth.inc:1388
 #, php-format
 msgid "Now Searching for %s in directory."
 msgstr "Recherche en cours de %s dans le répertoire."
 
-#: src/etc/inc/auth.inc:1395
+#: src/etc/inc/auth.inc:1397
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
 msgstr "Recherche dans le serveur %1$s, conteneur %2$s avec le filtre %3$s."
 
-#: src/etc/inc/auth.inc:1409
+#: src/etc/inc/auth.inc:1411
 #, php-format
 msgid "Search resulted in error: %s"
 msgstr "La recherche a abouti à une erreur: %s"
 
-#: src/etc/inc/auth.inc:1425
+#: src/etc/inc/auth.inc:1427
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
 "ERREUR ! La recherche LDAP a échoué ou plusieurs utilisateurs ont été "
 "trouvés."
 
-#: src/etc/inc/auth.inc:1432
+#: src/etc/inc/auth.inc:1434
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr ""
 "ERREUR ! Impossible de se connecter au serveur %1$s en tant qu'utilisateur "
 "%2$s:%3$s"
 
-#: src/etc/inc/auth.inc:1439
+#: src/etc/inc/auth.inc:1441
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr ""
 "Connecté avec succès comme étant %1$s via le serveur LDAP %2$s avec le DN = "
 "%3$s."
 
-#: src/etc/inc/auth.inc:1514
+#: src/etc/inc/auth.inc:1516
 #, php-format
 msgid "RADIUS start: %s"
 msgstr "RADIUS démarre : %s"
 
-#: src/etc/inc/auth.inc:1526
+#: src/etc/inc/auth.inc:1528
 #, php-format
 msgid "RADIUS send failed: %s"
 msgstr "RADIUS Echec de l'envoi: %s"
 
-#: src/etc/inc/auth.inc:1534
+#: src/etc/inc/auth.inc:1536
 #, php-format
 msgid "RADIUS Auth succeeded"
 msgstr "RADIUS Authentification réussie"
 
-#: src/etc/inc/auth.inc:1540
+#: src/etc/inc/auth.inc:1542
 #, php-format
 msgid "RADIUS Auth rejected"
 msgstr "RADIUS Authentification rejetée"
 
-#: src/etc/inc/auth.inc:1662
+#: src/etc/inc/auth.inc:1664
 msgid "Widget configuration has been changed."
 msgstr "La configuration du Widget logiciel a été modifiée."
 
-#: src/etc/inc/auth.inc:1667
+#: src/etc/inc/auth.inc:1669
 #, php-format
 msgid "(User %s)"
 msgstr "(Utilisateur %s)"
 
-#: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
+#: src/etc/inc/auth.inc:1687 src/etc/inc/auth.inc:1703
 msgid "Local Database"
 msgstr "Base de données locale"
 
-#: src/etc/inc/auth.inc:1805
+#: src/etc/inc/auth.inc:1807
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
 msgstr "Connexion réussie de l'utilisateur '%1$s' à partir de:%2$s"
 
-#: src/etc/inc/auth.inc:1864
+#: src/etc/inc/auth.inc:1820
+msgid "Username or Password incorrect"
+msgstr ""
+
+#: src/etc/inc/auth.inc:1866
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
 msgstr "La session a expiré pour l'utilisateur '%1$s' à partir de:%2$s"
 
-#: src/etc/inc/auth.inc:1866
+#: src/etc/inc/auth.inc:1868
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
 msgstr "L'utilisateur '%1$s' s'est déconnecté à partir de:%2$s"
 
-#: src/etc/inc/authgui.inc:74
+#: src/etc/inc/authgui.inc:76
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
 "Aucune page associée à cet utilisateur! Cliquez ici pour se déconnecter."
 
-#: src/etc/inc/authgui.inc:105
+#: src/etc/inc/authgui.inc:107
 #, php-format
 msgid "Error: %1$s Description: %2$s"
 msgstr "Erreur: %1$s Description: %2$s"
 
-#: src/etc/inc/authgui.inc:118 src/etc/inc/dyndns.class:1069
+#: src/etc/inc/authgui.inc:120 src/etc/inc/dyndns.class:1069
 #: src/etc/inc/dyndns.class:1121 src/etc/inc/dyndns.class:1869
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "Erreur"
 
-#: src/etc/inc/authgui.inc:194
+#: src/etc/inc/authgui.inc:196
 msgid "unknown reason"
 msgstr "raison inconnue "
 
-#: src/etc/inc/authgui.inc:195
+#: src/etc/inc/authgui.inc:197
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "Identifiant invalide (%s)."
 
-#: src/etc/inc/authgui.inc:200
+#: src/etc/inc/authgui.inc:202
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "Cet appareil est actuellement géré par: %s."
 
-#: src/etc/inc/authgui.inc:283
+#: src/etc/inc/authgui.inc:285
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s.%2$s"
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:287
 #, php-format
 msgid "Login to %1$s"
 msgstr "Se connecter à %1$s"
 
-#: src/etc/inc/authgui.inc:302
+#: src/etc/inc/authgui.inc:304
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "Connexion"
 
-#: src/etc/inc/authgui.inc:348
+#: src/etc/inc/authgui.inc:362
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -331,12 +335,12 @@ msgid ""
 "a man-in-the-middle attack is not taking place."
 msgstr ""
 "L'adresse IP utilisée pour se connecter à ce routeur n'est pas configurée "
-"localement,  cela signifie qu'elle peut-être transmise par NAT ou par "
+"localement, cela signifie qu'elle peut-être transmise par NAT ou par "
 "d'autres moyens.\n"
-"                                Si cette transmission n'est pas souhaitée, "
-"vérifier qu'une attaque de type l'homme du milieu n'est pas en cours."
+"\t\t\t\t\t\t\t\tSi cette transmission n'est pas souhaitée, vérifier qu'une "
+"attaque de type l'homme du milieu n'est pas en cours."
 
-#: src/etc/inc/authgui.inc:399
+#: src/etc/inc/authgui.inc:413
 msgid "The browser must support cookies to login."
 msgstr "Le navigateur doit prendre en charge les cookies pour se connecter."
 
@@ -524,7 +528,7 @@ msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
 msgstr ""
-"Voulez vous supprimer l'adresse IP du LAN et désactiver l'interface [o|n]?"
+"Voulez-vous supprimer l'adresse IP du LAN et désactiver l'interface [o|n]?"
 
 #: src/etc/inc/config.console.inc:370
 #, php-format
@@ -538,7 +542,7 @@ msgstr "Console d'association des interfaces"
 #: src/etc/inc/config.console.inc:372
 #, php-format
 msgid "done.%s"
-msgstr "Terminé. %s"
+msgstr "fait. %s"
 
 #: src/etc/inc/config.console.inc:380
 msgid "One moment while the settings are reloading..."
@@ -694,7 +698,7 @@ msgid ""
 "Save config permission denied by the 'User - Config: Deny Config Write' "
 "permission for user '%s'."
 msgstr ""
-"La sauvegarde de configuration a été refusé par le paramètre 'Utilisateur - "
+"La sauvegarde de configuration a été refusée par le paramètre 'Utilisateur - "
 "Configuration: Pas d'accès en écriture' pour l'utilisateur '%s'."
 
 #: src/etc/inc/config.lib.inc:502
@@ -983,8 +987,8 @@ msgstr "Nom d'hôte désactivé / verrouillé."
 msgid ""
 "Host updated is configured as a web redirect and no update was performed."
 msgstr ""
-"L'hôte mis à jour est configuré comme une redirection web, aucune mise a "
-"jour a été faite."
+"L'hôte mis à jour est configuré comme une redirection web, aucune mise à "
+"jour n'a été faite."
 
 #: src/etc/inc/dyndns.class:1275
 msgid "Group supplied does not exist."
@@ -1001,7 +1005,7 @@ msgstr "Le groupe DNS est à jour, aucune modification effectuée."
 #: src/etc/inc/dyndns.class:1286
 msgid "Update client support not available for supplied hostname or group."
 msgstr ""
-"Le Support de mise a jour du client n'est pas disponible pour le nom d’hôte "
+"Le Support de mise à jour du client n'est pas disponible pour le nom d’hôte "
 "ou le groupe fourni."
 
 #: src/etc/inc/dyndns.class:1289
@@ -1096,7 +1100,7 @@ msgstr "Nom d'utilisateur ou mot de passe invalide !"
 
 #: src/etc/inc/dyndns.class:1415
 msgid "Hostname specified does not exist."
-msgstr "La nom d'hôte spécifié n'existe pas."
+msgstr "Le nom d'hôte spécifié n'existe pas."
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Hostname specified exists, but not under the username specified."
@@ -1194,7 +1198,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1598
 msgid "Zone or Host ID was not found, check the hostname."
-msgstr "Zone ou ID d'hôte non trouvé, vérifier le nom d'hôte"
+msgstr "Zone ou ID d'hôte non trouvé, vérifier le nom d'hôte."
 
 #: src/etc/inc/dyndns.class:1600
 msgid "UNKNOWN ERROR"
@@ -1202,7 +1206,7 @@ msgstr "ERREUR INCONNUE"
 
 #: src/etc/inc/dyndns.class:1623
 msgid "Wrong values - Update could not be completed."
-msgstr "Valeurs erronées - Mise à jour impossible."
+msgstr "Valeurs erronées - La mise à jour ne peut être terminée."
 
 #: src/etc/inc/dyndns.class:1625
 msgid "Unknown username - User does not exist."
@@ -1236,7 +1240,7 @@ msgstr "L'accès au DNS dynamique a été bloqué !"
 
 #: src/etc/inc/dyndns.class:1680
 msgid "Error on Google's end, retry in 5 minutes"
-msgstr "Erreur Google, nouvel essai dans 5 minutes"
+msgstr "Erreur du côté de Google, nouvel essai dans 5 minutes"
 
 #: src/etc/inc/dyndns.class:1694 src/etc/inc/dyndns.class:1752
 msgid "Invalid username or password"
@@ -1486,11 +1490,11 @@ msgstr ""
 #: src/etc/inc/dyndns.class:2072
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): %3$s extracted from local system."
-msgstr "Dynamique DNS %1$s (%2$s) : %3$s extrait du système local."
+msgstr "DNS Dynamique %1$s (%2$s) : %3$s extrait du système local."
 
 #: src/etc/inc/easyrule.inc:113
 msgid "Easy Rule: Blocked from Firewall Log View"
-msgstr "Règle rapide : bloqué depuis le journal du pare-feu"
+msgstr "Règle rapide : Bloqué depuis le journal du pare-feu"
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
@@ -1503,7 +1507,7 @@ msgstr "Hôtes bloqués depuis le journal du pare-feu"
 #: src/etc/inc/easyrule.inc:266
 #, php-format
 msgid "Blocked host %s via easy rule"
-msgstr "Bloqué l'hôte %s avec une règle rapide"
+msgstr "Hôte bloqué %s avec une règle rapide"
 
 #: src/etc/inc/easyrule.inc:295
 msgid "Easy Rule: Passed from Firewall Log View"
@@ -1549,7 +1553,7 @@ msgstr "Pas de règles de blocage activées sur cette interface :"
 #: src/etc/inc/easyrule.inc:416
 #, php-format
 msgid "Unblocked host %s via easy rule"
-msgstr "Débloqué l'hôte %s avec une règle rapide"
+msgstr "Hôte débloqué %s avec une règle rapide"
 
 #: src/etc/inc/easyrule.inc:422
 msgid "Host unblocked successfully"
@@ -1699,11 +1703,11 @@ msgstr "réponse mtrace"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr "Neighbor advertisement"
+msgstr "Avertissement du voisinage"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr "Neighbor solicitation"
+msgstr "Sollicitation du voisinage"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
@@ -1727,11 +1731,11 @@ msgstr "Rediriger"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr "Router advertisement"
+msgstr "Avertissement du routeur"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr "Router solicitation"
+msgstr "Sollicitation du routeur"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
@@ -1739,7 +1743,7 @@ msgstr "Router renumbering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr "Ignorer"
+msgstr "Passer"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
@@ -1774,11 +1778,11 @@ msgstr "Destination inaccessible"
 
 #: src/etc/inc/filter.inc:89
 msgid "Who are you reply"
-msgstr "Qui vous répond"
+msgstr "Réponse qui êtes-vous"
 
 #: src/etc/inc/filter.inc:90
 msgid "Who are you request"
-msgstr "Qui vous interrogez"
+msgstr "Requête qui êtes-vous"
 
 #: src/etc/inc/filter.inc:240
 msgid "Initializing"
@@ -1835,7 +1839,7 @@ msgstr "Filtrage désactivé. Chargement des règles interrompu."
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
 #: src/etc/inc/system.inc:2232
 msgid "done."
-msgstr "terminé."
+msgstr "fait."
 
 #: src/etc/inc/filter.inc:391
 msgid "Setting up logging information"
@@ -1877,7 +1881,7 @@ msgstr "Greffons chargés."
 
 #: src/etc/inc/filter.inc:545
 msgid "Done"
-msgstr "Terminé"
+msgstr "Fait"
 
 #: src/etc/inc/filter.inc:775
 #, php-format
@@ -2176,7 +2180,7 @@ msgstr "Aucun miroir trouvé."
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:358
-#: src/usr/local/www/system_certmanager.php:1107
+#: src/usr/local/www/system_certmanager.php:1118
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -2314,26 +2318,26 @@ msgid ""
 "Gateways status could not be determined, considering all as up/active. "
 "(Group: %s)"
 msgstr ""
-"Le Statut des passerelles ne peut pas être déterminé. Elles sont considérées "
-"étant fonctionnelles et actives. (Groupe : %s)"
+"Le Statut des passerelles ne peut pas être déterminé. Elles sont toutes "
+"considérées comme fonctionnelles/actives. (Groupe : %s)"
 
 #: src/etc/inc/gwlb.inc:1092
 #, php-format
 msgid "GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!"
 msgstr ""
 "PASSERELLES : le groupe %1$s n'a aucune passerelle fonctionnelle pour le "
-"tier %2$s !"
+"tiers %2$s !"
 
 #: src/etc/inc/gwlb.inc:1114
 #, php-format
 msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr ""
-"Mise a jour de la passerelle pour le groupe de passerelles %1$s - la "
+"Mise à jour de la passerelle pour le groupe de passerelles %1$s - la "
 "nouvelle passerelle est %2$s "
 
 #: src/etc/inc/gwlb.inc:1359 src/usr/local/www/diag_arp.php:332
-#: src/usr/local/www/diag_dump_states.php:132
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:136
+#: src/usr/local/www/diag_dump_states.php:185
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:150
@@ -2503,7 +2507,7 @@ msgid ""
 "be chosen."
 msgstr ""
 "L'adresse IP de surveillance \"%s\" est déjà utilisé. Une adresse de "
-"surveillance différente doit être choisi."
+"surveillance différente doit être choisie."
 
 #: src/etc/inc/gwlb.inc:1539
 msgid "The low latency threshold needs to be a numeric value."
@@ -2549,13 +2553,13 @@ msgstr "Le seuil haut de perte de paquets doit être inférieur ou égal à 100.
 msgid ""
 "The time period over which results are averaged needs to be a numeric value."
 msgstr ""
-"La période de temps pendant laquelle les résultats seront moyenné doit être "
+"La période de temps pendant laquelle les résultats seront moyennés doit être "
 "une valeur numérique."
 
 #: src/etc/inc/gwlb.inc:1589
 msgid "The time period over which results are averaged needs to be positive."
 msgstr ""
-"La période de temps pendant laquelle les résultats seront moyenné doit être "
+"La période de temps pendant laquelle les résultats seront moyennés doit être "
 "une valeur positive."
 
 #: src/etc/inc/gwlb.inc:1598
@@ -2611,7 +2615,7 @@ msgid ""
 "loss interval."
 msgstr ""
 "La période de temps doit être supérieure à deux fois l'intervalle de la "
-"sonde ajouté de l'intervalle de perte."
+"sonde ajoutée de l'intervalle de perte."
 
 #: src/etc/inc/gwlb.inc:1652
 msgid ""
@@ -2622,7 +2626,7 @@ msgstr ""
 
 #: src/etc/inc/interfaces.inc:33
 msgid "interfaces_bring_up() was called but no variable defined."
-msgstr "interfaces_bring_up() appelé mais aucune variable défini."
+msgstr "interfaces_bring_up() appelée mais aucune variable défini."
 
 #: src/etc/inc/interfaces.inc:193
 msgid "Configuring loopback interface..."
@@ -2639,7 +2643,7 @@ msgstr ""
 
 #: src/etc/inc/interfaces.inc:235
 msgid "interface_vlan_configure called with if undefined."
-msgstr "interface_vlan_configure appelé avec condition if indéfinie."
+msgstr "interface_vlan_configure appelé avec une condition if non définie."
 
 #: src/etc/inc/interfaces.inc:281 src/etc/inc/interfaces.inc:376
 #, php-format
@@ -2651,12 +2655,12 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:288
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
-msgstr "interface_qinq_configure appelé avec condition if indéfinie. %s"
+msgstr "interface_qinq_configure appelé avec une condition if non définie. %s"
 
 #: src/etc/inc/interfaces.inc:293
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
-msgstr "interface_qinq_configure appelé avec condition if invalide.%s"
+msgstr "interface_qinq_configure appelé avec une condition if invalide.%s"
 
 #: src/etc/inc/interfaces.inc:359
 msgid "Configuring QinQ interfaces..."
@@ -2665,7 +2669,7 @@ msgstr "Configuration des interfaces QinQ..."
 #: src/etc/inc/interfaces.inc:384
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
-msgstr "interface_qinq2_configure appelé avec condition if indéfinie.%s"
+msgstr "interface_qinq2_configure appelé avec une condition if non définie.%s"
 
 #: src/etc/inc/interfaces.inc:405
 msgid "Creating wireless clone interfaces..."
@@ -2682,7 +2686,7 @@ msgstr "realif non définie sur l'interface bridge - up"
 
 #: src/etc/inc/interfaces.inc:568
 msgid "bridgeif not defined -- could not bring interface up"
-msgstr "bridgeif non défini -- impossible de d'activer l'interface"
+msgstr "bridgeif non défini -- impossible d'activer l'interface"
 
 #: src/etc/inc/interfaces.inc:742
 msgid "Configuring LAGG interfaces..."
@@ -2791,7 +2795,7 @@ msgstr "en attente de pfsync..."
 #: src/etc/inc/interfaces.inc:2208
 #, php-format
 msgid "pfsync done in %s seconds."
-msgstr "pfsync fini dans %s secondes."
+msgstr "pfsync fait dans %s secondes."
 
 #: src/etc/inc/interfaces.inc:2209
 msgid "Configuring CARP settings finalize..."
@@ -2864,7 +2868,7 @@ msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
-"L'adresse MAC invalide (ff:ff:ff:ff:ff:ff) sur l'interface %1$s a été "
+"L'adresse MAC non valide (ff:ff:ff:ff:ff:ff) sur l'interface %1$s a été "
 "automatiquement remplacée par %2$s"
 
 #: src/etc/inc/interfaces.inc:3450
@@ -2990,7 +2994,7 @@ msgstr "IKE Child SA"
 
 #: src/etc/inc/ipsec.inc:30 src/etc/inc/ipsec.inc:60
 msgid "Job Processing"
-msgstr "Traitement des taches"
+msgstr "Traitement des tâches"
 
 #: src/etc/inc/ipsec.inc:31 src/etc/inc/ipsec.inc:61
 msgid "Configuration backend"
@@ -3057,11 +3061,11 @@ msgstr "Contrôle"
 
 #: src/etc/inc/ipsec.inc:49
 msgid "Diag"
-msgstr "Diagnostique"
+msgstr "Diagnostic"
 
 #: src/etc/inc/ipsec.inc:50 src/usr/local/www/status_logs_common.inc:862
 msgid "Raw"
-msgstr "Brute"
+msgstr "Brut"
 
 #: src/etc/inc/ipsec.inc:51
 msgid "Highest"
@@ -3280,7 +3284,7 @@ msgstr ""
 #: src/etc/inc/meta.inc:145
 #, php-format
 msgid "warning: tag %1$s has no data in '%2$s'%3$s"
-msgstr "attention: l’étiquette %1$s a aucune données dans '%2$s'%3$s"
+msgstr "attention: l’étiquette %1$s n'a aucune données dans '%2$s'%3$s"
 
 #: src/etc/inc/meta.inc:168
 #, php-format
@@ -3310,7 +3314,7 @@ msgstr "Impossible d'envoyer le message a %1$s Erreur: %2$s"
 #: src/etc/inc/notices.inc:327
 #, php-format
 msgid "Message sent to %s OK"
-msgstr "Message envoyé a %s OK"
+msgstr "Message envoyé à %s OK"
 
 #: src/etc/inc/notices.inc:364 src/etc/inc/notices.inc:420
 msgid ""
@@ -3357,23 +3361,23 @@ msgstr "3 (recommandé)"
 
 #: src/etc/inc/openvpn.inc:100
 msgid "One (Client+Server)"
-msgstr "Un (client + serveur)"
+msgstr "Un (Client + Serveur)"
 
 #: src/etc/inc/openvpn.inc:101
 msgid "Two (Client+Intermediate+Server)"
-msgstr "Deux (client + intermédiaire + serveur)"
+msgstr "Deux (Client + Intermédiaire + Serveur)"
 
 #: src/etc/inc/openvpn.inc:102
 msgid "Three (Client+2xIntermediate+Server)"
-msgstr "Trois (client + 2 intermédiaires + serveur)"
+msgstr "Trois (Client + 2 Intermédiaires + Serveur)"
 
 #: src/etc/inc/openvpn.inc:103
 msgid "Four (Client+3xIntermediate+Server)"
-msgstr "Quatre (client + 3 intermédiaires + serveur)"
+msgstr "Quatre (Client + 3 Intermédiaires + Serveur)"
 
 #: src/etc/inc/openvpn.inc:104
 msgid "Five (Client+4xIntermediate+Server)"
-msgstr "Cinq (client + 4 intermédiaires + serveur)"
+msgstr "Cinq (Client + 4 Intermédiaires + Serveur)"
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
@@ -3397,15 +3401,15 @@ msgstr "Accès à distance (SSL/TLS + Authentification utilisateur)"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
-msgstr "Ne pas préciser de préférence (Utilisation de OpenVPN Default)"
+msgstr "Ne pas préciser de préférence (Utilisation de OpenVPN par défaut)"
 
 #: src/etc/inc/openvpn.inc:126
 msgid "LZ4 Compression [compress lz4]"
-msgstr "LZ4 Compression [compress lz4]"
+msgstr "Compression LZ4 [compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Compression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "Compression LZ4 v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3464,7 +3468,7 @@ msgstr "===== Certificats serveur ====="
 
 #: src/etc/inc/openvpn.inc:228
 msgid "===== Non-Server Certificates ====="
-msgstr "===== Non-Server Certificates ====="
+msgstr "===== Certificats Non-Serveur ====="
 
 #: src/etc/inc/openvpn.inc:238
 msgid "Server: Yes"
@@ -3480,12 +3484,12 @@ msgid "CA: %s"
 msgstr "CA : %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:363
-#: src/usr/local/www/system_certmanager.php:1110
+#: src/usr/local/www/system_certmanager.php:1121
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr "En cours d'utilisation"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1206
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1229
 msgid "Revoked"
 msgstr "Révoqué"
 
@@ -3593,11 +3597,11 @@ msgid ""
 "the webConfigurator. css files are located in /usr/local/www/css/%s"
 msgstr ""
 "Choisissez un autre fichier css (si installé) pour changer l'apparence du "
-"Configuration Web. Les fichiers css se trouvent dans /usr/local/www/css/%s"
+"webConfigurateur. Les fichiers css se trouvent dans /usr/local/www/css/%s"
 
 #: src/etc/inc/pfsense-utils.inc:244
 msgid "Scrolls with page"
-msgstr "Défiler avec la page"
+msgstr "Défilent avec la page"
 
 #: src/etc/inc/pfsense-utils.inc:244
 msgid "Fixed (Remains visible at top of page)"
@@ -3609,7 +3613,7 @@ msgstr "Menu du haut"
 
 #: src/etc/inc/pfsense-utils.inc:245
 msgid "The fixed option is intended for large screens only."
-msgstr "L'option Fixe est prévue prévue pour les grands écrans uniquement."
+msgstr "L'option Fixe est prévue pour les grands écrans uniquement."
 
 #: src/etc/inc/pfsense-utils.inc:263
 msgid "Default (No hostname)"
@@ -3682,7 +3686,7 @@ msgid ""
 "A control is provided in the title bar to un-hide the panel."
 msgstr ""
 "Cette option autorise certain panneaux a être automatiquement caché au "
-"chargement de la page. Un bouton est disponible dans la bar de titre pour "
+"chargement de la page. Un bouton est disponible dans la barre de titre pour "
 "afficher le panneau."
 
 #: src/etc/inc/pfsense-utils.inc:369
@@ -3735,7 +3739,7 @@ msgid ""
 "displayed. Useful for systems with large state tables."
 msgstr ""
 "Par défaut, la totalité de la table d'état est affichée lorsqu'on se rend "
-"dans Diagnostique > États. Cette option nécessite qu'un filtre soit saisi "
+"dans Diagnostics > États. Cette option nécessite qu'un filtre soit saisi "
 "avant d'afficher la table d'état. Très pratique pour les système disposant "
 "d'une grande table d'état."
 
@@ -3832,11 +3836,11 @@ msgstr "Vérification des boucles ethernet"
 
 #: src/etc/inc/pfsense-utils.inc:1723
 msgid "learning"
-msgstr "apprend"
+msgstr "apprentissage"
 
 #: src/etc/inc/pfsense-utils.inc:1726
 msgid "forwarding"
-msgstr "transfère "
+msgstr "transfert"
 
 #: src/etc/inc/pfsense-utils.inc:1860
 #, php-format
@@ -3862,17 +3866,17 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:2249
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
-msgstr "Impossible de traiter un fichier non existant depuis l'aliase : %s"
+msgstr "Impossible de traiter un fichier non existant depuis l'alias : %s"
 
 #: src/etc/inc/pfsense-utils.inc:2254
 #, php-format
 msgid "Could not process empty file from alias: %s"
-msgstr "Impossible de traiter un fichier vide depuis l'aliase : %s"
+msgstr "Impossible de traiter un fichier vide depuis l'alias : %s"
 
 #: src/etc/inc/pfsense-utils.inc:2259
 #, php-format
 msgid "Could not process aliases from alias: %s"
-msgstr "Impossible de traiter les aliases pour l'aliase : %s"
+msgstr "Impossible de traiter les alias depuis l'alias : %s"
 
 #: src/etc/inc/pfsense-utils.inc:2316
 #, php-format
@@ -3890,7 +3894,7 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:2355
 #, php-format
 msgid "Could not open %s/aliases for writing!"
-msgstr "Impossible d'ouvrir %s/aliases en écriture"
+msgstr "Impossible d'ouvrir %s/alias en écriture"
 
 #: src/etc/inc/pfsense-utils.inc:2361
 #, php-format
@@ -3903,11 +3907,11 @@ msgstr "Bosniaque"
 
 #: src/etc/inc/pfsense-utils.inc:2941
 msgid "Chinese (Simplified, China)"
-msgstr "Chinese (Simplified, China)"
+msgstr "Chinois (Simplifié, Chine)"
 
 #: src/etc/inc/pfsense-utils.inc:2942
 msgid "Chinese (Taiwan)"
-msgstr "Chinese (Taiwan)"
+msgstr "Chinois (Taiwan)"
 
 #: src/etc/inc/pfsense-utils.inc:2943
 msgid "Dutch"
@@ -3915,7 +3919,7 @@ msgstr "Néerlandais"
 
 #: src/etc/inc/pfsense-utils.inc:2944
 msgid "English"
-msgstr "English"
+msgstr "Anglais"
 
 #: src/etc/inc/pfsense-utils.inc:2945
 msgid "French"
@@ -3943,7 +3947,7 @@ msgstr "Russe"
 
 #: src/etc/inc/pfsense-utils.inc:2951
 msgid "Spanish"
-msgstr "Spanish"
+msgstr "Espagnol"
 
 #: src/etc/inc/pfsense-utils.inc:2952
 msgid "Spanish (Argentina)"
@@ -3972,7 +3976,7 @@ msgstr "Mode"
 
 #: src/etc/inc/pfsense-utils.inc:3163
 msgid "Restricted Service"
-msgstr "Service Limité"
+msgstr "Service restreint "
 
 #: src/etc/inc/pfsense-utils.inc:3164
 msgid "Valid Service"
@@ -4451,7 +4455,7 @@ msgstr "Indique si l'utilisateur est autorisé à dialoguer via PPPOE"
 
 #: src/etc/inc/priv/user.priv.inc:88
 msgid "WebCfg - Status: System Logs: Portal Auth"
-msgstr "WebCfg - Status: System Logs: Portal Auth"
+msgstr "WebCfg - Status: System Logs: Authentification Portail"
 
 #: src/etc/inc/priv/user.priv.inc:89
 msgid "Allow access to the 'Status: System Logs: Portal Auth' page."
@@ -4547,7 +4551,7 @@ msgstr "Autoriser l'accès à toutes les pages"
 
 #: src/etc/inc/priv.defs.inc:24
 msgid "WebCfg - Crash reporter"
-msgstr "WebCfg - Crash reporter"
+msgstr "WebCfg - Rapporteur de Crash"
 
 #: src/etc/inc/priv.defs.inc:25
 msgid "Uploads crash reports to pfSense and or deletes crash reports."
@@ -4557,7 +4561,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:30
 msgid "WebCfg - Diagnostics: ARP Table"
-msgstr "WebCfg - Diagnostics: ARP Table"
+msgstr "WebCfg - Diagnostics: Table ARP"
 
 #: src/etc/inc/priv.defs.inc:31
 msgid "Allow access to the 'Diagnostics: ARP Table' page."
@@ -4637,7 +4641,7 @@ msgstr "Autoriser l'accès à la page 'Diagnostics: Edit File'."
 
 #: src/etc/inc/priv.defs.inc:96
 msgid "WebCfg - Diagnostics: GEOM Mirrors"
-msgstr "WebCfg - Diagnostics: GEOM Mirrors"
+msgstr "WebCfg - Diagnostics: Miroirs GEOM"
 
 #: src/etc/inc/priv.defs.inc:97
 msgid "Allow access to the 'Diagnostics: GEOM Mirrors' page."
@@ -4701,7 +4705,7 @@ msgstr "Autoriser l'accès à la page 'Diagnostics: Ping'."
 
 #: src/etc/inc/priv.defs.inc:144
 msgid "WebCfg - Diagnostics: Reboot System"
-msgstr "WebCfg - Diagnostics: Redemarage System"
+msgstr "WebCfg - Diagnostics: Redémarrage Système"
 
 #: src/etc/inc/priv.defs.inc:145
 msgid "Allow access to the 'Diagnostics: Reboot System' page."
@@ -4790,7 +4794,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:210
 msgid "WebCfg - Firewall: Aliases"
-msgstr "WebCfg - Pare-feu: Aliases"
+msgstr "WebCfg - Pare-feu: Alias"
 
 #: src/etc/inc/priv.defs.inc:211
 msgid "Allow access to the 'Firewall: Aliases' page."
@@ -6372,7 +6376,7 @@ msgstr "Le Démon du 'Router Advertisement'"
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 msgid "DNS Forwarder"
-msgstr "Transitaire DNS"
+msgstr "Redirecteur DNS"
 
 #: src/etc/inc/service-utils.inc:257 src/usr/local/www/diag_backup.php:425
 #: src/usr/local/www/head.inc:309 src/usr/local/www/services_unbound.php:249
@@ -6412,7 +6416,7 @@ msgstr "Le Démon de la journalisation système"
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1224
+#: src/usr/local/www/system_certmanager.php:1247
 msgid "Captive Portal"
 msgstr "Portail Captif"
 
@@ -6719,8 +6723,8 @@ msgstr "Type de bande passante"
 #: src/etc/inc/shaper.inc:443
 msgid "Bandwidth must be set.  This is usually the interface speed."
 msgstr ""
-"La bande passante doit être définie. C'est souvent la vitesse de l'interface."
-""
+"La bande passante doit être définie. C'est habituellement la vitesse de "
+"l'interface."
 
 #: src/etc/inc/shaper.inc:446 src/etc/inc/shaper.inc:1205
 #: src/etc/inc/shaper.inc:1912
@@ -7036,7 +7040,7 @@ msgstr "La valeur limite supérieure de m1 doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1936
 msgid "upperlimit d value needs to be numeric"
-msgstr "La valeur limite supérieure de d doit être numerique"
+msgstr "La valeur limite supérieure de d doit être numérique"
 
 #: src/etc/inc/shaper.inc:1939
 msgid "upperlimit m2 value needs to be Kb, Mb, Gb, or %"
@@ -7061,7 +7065,7 @@ msgstr "La valeur m1 du partage de liens doit être en Kb, Mb, Gb, or %"
 
 #: src/etc/inc/shaper.inc:1965
 msgid "linkshare d value needs to be numeric"
-msgstr "La valeur d du partage de liens doit être numerique"
+msgstr "La valeur d du partage de liens doit être numérique"
 
 #: src/etc/inc/shaper.inc:1968
 msgid "linkshare m2 value needs to be Kb, Mb, Gb, or %"
@@ -7081,15 +7085,15 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:1992
 msgid "realtime m1 value needs to be Kb, Mb, Gb, or %"
-msgstr "La valeur temps réel m1 doit etre Kb, Mb, Gb, or % "
+msgstr "La valeur temps réel m1 doit être Kb, Mb, Gb, or % "
 
 #: src/etc/inc/shaper.inc:1995
 msgid "realtime d value needs to be numeric"
-msgstr "La valeur temps réel d doit être numerique"
+msgstr "La valeur temps réel d doit être numérique"
 
 #: src/etc/inc/shaper.inc:1998
 msgid "realtime m2 value needs to be Kb, Mb, Gb, or %"
-msgstr "La valeur temps réel m2 doit etre Kb, Mb, Gb, or % "
+msgstr "La valeur temps réel m2 doit être Kb, Mb, Gb, or % "
 
 #: src/etc/inc/shaper.inc:2265
 msgid "Service Curve (sc)"
@@ -7141,7 +7145,7 @@ msgstr "Option de Planificateur"
 
 #: src/etc/inc/shaper.inc:3080
 msgid "Scheduler specific options"
-msgstr "Options specifique de Planificateur"
+msgstr "Options spécifique de Planificateur"
 
 #: src/etc/inc/shaper.inc:3083
 msgid "Number of buckets available"
@@ -7232,7 +7236,7 @@ msgstr "Le délais doit être un nombre entier."
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:527
-#: src/usr/local/www/system_certmanager.php:1015
+#: src/usr/local/www/system_certmanager.php:1026
 #: src/usr/local/www/system_usermanager.php:663
 msgid "Delete"
 msgstr "Supprimer"
@@ -7733,7 +7737,7 @@ msgstr "Ignorer les paquets vers des ports TCP fermés sans renvoyer de RST"
 #: src/etc/inc/upgrade_config.inc:652
 msgid "Do not send ICMP port unreachable messages for closed UDP ports"
 msgstr ""
-"Ne pas renvoyer de message ICMP port unreachable pour les ports UDP fermés"
+"Ne pas renvoyer de message ICMP port non joignable pour les ports UDP fermés"
 
 #: src/etc/inc/upgrade_config.inc:656
 msgid ""
@@ -7825,7 +7829,7 @@ msgstr "Interface %s Passerelle Dynamique"
 #: src/etc/inc/upgrade_config.inc:825
 #, php-format
 msgid "Upgraded static route for %s"
-msgstr "Statique Route mis a jour pour %s"
+msgstr "Route statique mise à jour pour %s"
 
 #: src/etc/inc/upgrade_config.inc:923
 #, php-format
@@ -7861,7 +7865,7 @@ msgid ""
 "WEP is no longer supported. It will be disabled on the %s interface and the "
 "interface will be disabled. Please reconfigure the interface."
 msgstr ""
-"WEP n'est plus supporté. Il sera désactivé sur l'interface $s et l'interface "
+"WEP n'est plus supporté. Il sera désactivé sur l'interface %s et l'interface "
 "sera désactivé. Merci de reconfigurer l'interface"
 
 #: src/etc/inc/upgrade_config.inc:4229
@@ -7903,7 +7907,7 @@ msgstr "rrdtool restore -f '%1$s' '%2$s' a échoué en retournant %3$s."
 #: src/etc/inc/util.inc:98
 #, php-format
 msgid "WARNING: Could not mark subsystem: %s dirty"
-msgstr "Attention, impossible de marquer le sous système: %s souillé "
+msgstr "ATTENTION: Impossible de marquer le sous-système: %s souillé "
 
 #: src/etc/inc/util.inc:112
 msgid "WARNING: A name must be given as parameter to lock() function."
@@ -8281,9 +8285,9 @@ msgstr "Confirmer"
 #: src/usr/local/www/system_authservers.php:82
 #: src/usr/local/www/system_camanager.php:318
 #: src/usr/local/www/system_camanager.php:349
-#: src/usr/local/www/system_certmanager.php:206
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:618
+#: src/usr/local/www/system_certmanager.php:207
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
@@ -8341,7 +8345,7 @@ msgstr "Transmission..."
 
 #: src/usr/local/www/crash_reporter.php:97
 msgid "Deleted crash report files from local disk."
-msgstr "Supprimé les fichiers de rapport de panne du disque local."
+msgstr "Fichiers supprimés de rapport de panne du disque local."
 
 #: src/usr/local/www/crash_reporter.php:101
 msgid "Could not find any crash files."
@@ -8493,7 +8497,7 @@ msgstr "Type de lien"
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:444
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1112
+#: src/usr/local/www/system_certmanager.php:1123
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -8646,7 +8650,7 @@ msgid ""
 "An area to restore was selected but the correct xml tag could not be located."
 ""
 msgstr ""
-"Une zone à restaurée a été sélectionnée mais le tag XML correspondant n'a "
+"Une zone à restaurer a été sélectionnée mais le tag XML correspondant n'a "
 "pas pu être trouvé."
 
 #: src/usr/local/www/diag_backup.php:276
@@ -8670,7 +8674,7 @@ msgstr ""
 msgid ""
 "A full configuration restore was selected but a %s tag could not be located."
 msgstr ""
-"Une restauration de l' configuration complète a été sélectionnée mais un tag "
+"Une restauration de la configuration complète a été sélectionnée mais un tag "
 "%s n'a pas pu être trouvé."
 
 #: src/usr/local/www/diag_backup.php:302
@@ -8707,7 +8711,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases_import.php:55
 #: src/usr/local/www/head.inc:297
 msgid "Aliases"
-msgstr "Aliases"
+msgstr "Alias"
 
 #: src/usr/local/www/diag_backup.php:423
 msgid "Captive Portal Vouchers"
@@ -8817,7 +8821,7 @@ msgstr "Syslog"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -8932,7 +8936,7 @@ msgstr "Ignorer les données RRD"
 
 #: src/usr/local/www/diag_backup.php:517 src/usr/local/www/diag_backup.php:564
 msgid "Encryption"
-msgstr "Chiifrement"
+msgstr "Chiffrement"
 
 #: src/usr/local/www/diag_backup.php:524 src/usr/local/www/diag_backup.php:571
 #: src/usr/local/www/interfaces.php:2613
@@ -9038,7 +9042,7 @@ msgid ""
 "them at your own risk!"
 msgstr ""
 "Les capacités offerte ici peuvent être dangereuse. Aucun support n'est "
-"disponible. A utilisé a vos risques et périls."
+"disponible. A utiliser à vos risques et périls."
 
 #: src/usr/local/www/diag_command.php:174 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
@@ -9265,7 +9269,7 @@ msgstr "Inconnu"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid "Revert config"
-msgstr "Rétablir la conf."
+msgstr "Rétablir la configuration"
 
 #: src/usr/local/www/diag_confbak.php:267
 msgid ""
@@ -9276,11 +9280,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:268
 msgid "Download config"
-msgstr "Télécharger la conf."
+msgstr "Télécharger la configuration"
 
 #: src/usr/local/www/diag_confbak.php:269
 msgid "Delete config"
-msgstr "Supprimer la conf."
+msgstr "Supprimer la configuration"
 
 #: src/usr/local/www/diag_confbak.php:286
 msgid "No backups found."
@@ -9416,7 +9420,7 @@ msgstr "Nom d'hôte"
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -9531,8 +9535,8 @@ msgid "invalid input"
 msgstr " Saisie invalide"
 
 #: src/usr/local/www/diag_dump_states.php:75
-#: src/usr/local/www/diag_dump_states.php:107
-#: src/usr/local/www/diag_dump_states.php:175
+#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:58
 #: src/usr/local/www/diag_resetstate.php:56
@@ -9543,7 +9547,11 @@ msgstr " Saisie invalide"
 msgid "States"
 msgstr "États"
 
-#: src/usr/local/www/diag_dump_states.php:109
+#: src/usr/local/www/diag_dump_states.php:78
+msgid "Are you sure you wish to delete this state?"
+msgstr ""
+
+#: src/usr/local/www/diag_dump_states.php:113
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:59
 #: src/usr/local/www/diag_resetstate.php:84
@@ -9551,23 +9559,23 @@ msgstr "États"
 msgid "Source Tracking"
 msgstr "Surveillance de source"
 
-#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:115
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_resetstate.php:56
 #: src/usr/local/www/diag_resetstate.php:87
 msgid "Reset States"
 msgstr "Réinitialiser les états"
 
-#: src/usr/local/www/diag_dump_states.php:119
+#: src/usr/local/www/diag_dump_states.php:123
 msgid "State Filter"
 msgstr "Filtre d'états"
 
-#: src/usr/local/www/diag_dump_states.php:139
+#: src/usr/local/www/diag_dump_states.php:143
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
 msgstr "Expression du filtre"
 
-#: src/usr/local/www/diag_dump_states.php:147
+#: src/usr/local/www/diag_dump_states.php:151
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
@@ -9578,19 +9586,19 @@ msgstr "Expression du filtre"
 msgid "Filter"
 msgstr "Filtrer"
 
-#: src/usr/local/www/diag_dump_states.php:160
+#: src/usr/local/www/diag_dump_states.php:164
 msgid "Kill States"
 msgstr "Supprimer les états"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:170
 msgid "Kill filtered states"
 msgstr "Supprimer les états filtrés"
 
-#: src/usr/local/www/diag_dump_states.php:168
+#: src/usr/local/www/diag_dump_states.php:172
 msgid "Remove all states to and from the filtered address"
 msgstr "Supprimer les états depuis et vers l'adresse filtrée"
 
-#: src/usr/local/www/diag_dump_states.php:182
+#: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/easyrule.php:90 src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -9614,34 +9622,34 @@ msgstr "Supprimer les états depuis et vers l'adresse filtrée"
 msgid "Protocol"
 msgstr "Protocole"
 
-#: src/usr/local/www/diag_dump_states.php:183
+#: src/usr/local/www/diag_dump_states.php:187
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr "Source (Source Originale) -> Destination (Destination Originale)"
 
-#: src/usr/local/www/diag_dump_states.php:184
+#: src/usr/local/www/diag_dump_states.php:188
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
 msgstr "État"
 
-#: src/usr/local/www/diag_dump_states.php:185
+#: src/usr/local/www/diag_dump_states.php:189
 msgid "Packets"
 msgstr "Paquets"
 
-#: src/usr/local/www/diag_dump_states.php:186
+#: src/usr/local/www/diag_dump_states.php:190
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
 msgstr "Octets"
 
-#: src/usr/local/www/diag_dump_states.php:254
+#: src/usr/local/www/diag_dump_states.php:258
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr "Supprimer tous les états de %1$s vers %2$s"
 
-#: src/usr/local/www/diag_dump_states.php:269
+#: src/usr/local/www/diag_dump_states.php:273
 msgid "No states were found that match the current filter."
 msgstr "Aucun état ne correspond au filtre actuel."
 
-#: src/usr/local/www/diag_dump_states.php:271
+#: src/usr/local/www/diag_dump_states.php:275
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
@@ -9649,7 +9657,7 @@ msgstr ""
 "Affichage des états désactivé en l'absence de filtre. Voir Système > "
 "Configuration Générale, Exiger un filtre d'état."
 
-#: src/usr/local/www/diag_dump_states.php:274
+#: src/usr/local/www/diag_dump_states.php:278
 msgid "No states were found."
 msgstr "Aucun état trouvé."
 
@@ -10046,13 +10054,13 @@ msgstr "Capture réseau"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:419
-#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1238
 msgid "OpenVPN Server"
 msgstr "Serveur OpenVPN"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:422
-#: src/usr/local/www/system_certmanager.php:1218
+#: src/usr/local/www/system_certmanager.php:1241
 msgid "OpenVPN Client"
 msgstr "Client OpenVPN"
 
@@ -10670,10 +10678,10 @@ msgstr "Utilisez une expression régulière pour filtrer les tables."
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
-#: src/usr/local/www/system_certmanager.php:530
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:1044
-#: src/usr/local/www/system_certmanager.php:1092
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1055
+#: src/usr/local/www/system_certmanager.php:1103
 #: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -11421,7 +11429,7 @@ msgstr "Supprimer un alias"
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:470
 #: src/usr/local/www/system_camanager.php:453
-#: src/usr/local/www/system_certmanager.php:1034
+#: src/usr/local/www/system_certmanager.php:1045
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -11534,7 +11542,7 @@ msgstr "Table URL (Port)"
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:411
 #: src/usr/local/www/system_camanager.php:319
-#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -12486,8 +12494,8 @@ msgstr "Inverse le sens de la correspondance."
 #: src/usr/local/www/system_authservers.php:225
 #: src/usr/local/www/system_authservers.php:248
 #: src/usr/local/www/system_authservers.php:442
-#: src/usr/local/www/system_certmanager.php:1001
-#: src/usr/local/www/system_certmanager.php:1004
+#: src/usr/local/www/system_certmanager.php:1012
+#: src/usr/local/www/system_certmanager.php:1015
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -15537,7 +15545,7 @@ msgstr "liste uniquement les 10 000 premiers items"
 #: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:1011
+#: src/usr/local/www/system_certmanager.php:1022
 msgid "Value"
 msgstr "Valeur"
 
@@ -29502,7 +29510,7 @@ msgstr "Choisissez une langue pour le configurateur Web"
 
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1209
+#: src/usr/local/www/system_certmanager.php:1232
 msgid "webConfigurator"
 msgstr "Configurateur Web"
 
@@ -31379,11 +31387,11 @@ msgstr "Serveur d'authentification %s supprimé"
 #: src/usr/local/www/system_camanager.php:167
 #: src/usr/local/www/system_camanager.php:184
 #: src/usr/local/www/system_camanager.php:199
-#: src/usr/local/www/system_certmanager.php:215
-#: src/usr/local/www/system_certmanager.php:235
-#: src/usr/local/www/system_certmanager.php:252
-#: src/usr/local/www/system_certmanager.php:270
-#: src/usr/local/www/system_certmanager.php:537
+#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:201
@@ -31518,8 +31526,8 @@ msgstr "Paramètres du serveur"
 
 #: src/usr/local/www/system_authservers.php:492
 #: src/usr/local/www/system_camanager.php:485
-#: src/usr/local/www/system_certmanager.php:653
-#: src/usr/local/www/system_certmanager.php:1052
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1063
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
@@ -31764,12 +31772,12 @@ msgstr ""
 "avec succès."
 
 #: src/usr/local/www/system_camanager.php:168
-#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:237
 msgid "Certificate data"
 msgstr "Données de certificat"
 
 #: src/usr/local/www/system_camanager.php:170
-#: src/usr/local/www/system_certmanager.php:239
+#: src/usr/local/www/system_certmanager.php:240
 msgid "This certificate does not appear to be valid."
 msgstr "Ce certificat ne semble pas valide."
 
@@ -31778,7 +31786,7 @@ msgid "Encrypted private keys are not yet supported."
 msgstr "Les clefs privées chiffrées ne sont pas encore supportées."
 
 #: src/usr/local/www/system_camanager.php:176
-#: src/usr/local/www/system_certmanager.php:243
+#: src/usr/local/www/system_certmanager.php:244
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr ""
@@ -31786,8 +31794,8 @@ msgstr ""
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
-#: src/usr/local/www/system_certmanager.php:254
-#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:272
 #: src/usr/local/www/system_usermanager.php:203
 #: src/usr/local/www/system_usermanager.php:932
 msgid "Key length"
@@ -31795,7 +31803,7 @@ msgstr "Longueur de la clé"
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
-#: src/usr/local/www/system_certmanager.php:256
+#: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_usermanager.php:204
 #: src/usr/local/www/system_usermanager.php:952
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
@@ -31804,43 +31812,43 @@ msgstr "Durée de vie"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
-#: src/usr/local/www/system_certmanager.php:257
-#: src/usr/local/www/system_certmanager.php:272
+#: src/usr/local/www/system_certmanager.php:258
+#: src/usr/local/www/system_certmanager.php:273
 msgid "Distinguished name Country Code"
 msgstr "Nom distinctif code pays"
 
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
-#: src/usr/local/www/system_certmanager.php:258
-#: src/usr/local/www/system_certmanager.php:273
+#: src/usr/local/www/system_certmanager.php:259
+#: src/usr/local/www/system_certmanager.php:274
 msgid "Distinguished name State or Province"
 msgstr "Nom distinctif état ou région"
 
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
-#: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_certmanager.php:274
+#: src/usr/local/www/system_certmanager.php:260
+#: src/usr/local/www/system_certmanager.php:275
 msgid "Distinguished name City"
 msgstr "Nom distinctif ville"
 
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
-#: src/usr/local/www/system_certmanager.php:260
-#: src/usr/local/www/system_certmanager.php:275
+#: src/usr/local/www/system_certmanager.php:261
+#: src/usr/local/www/system_certmanager.php:276
 msgid "Distinguished name Organization"
 msgstr "Nom distinctif organisation"
 
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
-#: src/usr/local/www/system_certmanager.php:261
-#: src/usr/local/www/system_certmanager.php:276
+#: src/usr/local/www/system_certmanager.php:262
+#: src/usr/local/www/system_certmanager.php:277
 msgid "Distinguished name Email Address"
 msgstr "Adresse courriel du nom différencié"
 
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_camanager.php:208
-#: src/usr/local/www/system_certmanager.php:262
-#: src/usr/local/www/system_certmanager.php:277
+#: src/usr/local/www/system_certmanager.php:263
+#: src/usr/local/www/system_certmanager.php:278
 msgid "Distinguished name Common Name"
 msgstr "Nom distinctif nom commun"
 
@@ -31853,7 +31861,7 @@ msgid "The field 'Descriptive Name' contains invalid characters."
 msgstr "Le champ « Nom descriptif » contient des caractères invalides."
 
 #: src/usr/local/www/system_camanager.php:221
-#: src/usr/local/www/system_certmanager.php:356
+#: src/usr/local/www/system_certmanager.php:357
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
 msgstr ""
@@ -31861,42 +31869,43 @@ msgstr ""
 "invalides."
 
 #: src/usr/local/www/system_camanager.php:226
-#: src/usr/local/www/system_certmanager.php:362
-#: src/usr/local/www/system_certmanager.php:369
+#: src/usr/local/www/system_certmanager.php:363
+#: src/usr/local/www/system_certmanager.php:370
 msgid "Please select a valid Key Length."
 msgstr "Veuillez choisir une longueur de clé valide."
 
 #: src/usr/local/www/system_camanager.php:229
-#: src/usr/local/www/system_certmanager.php:365
-#: src/usr/local/www/system_certmanager.php:372
+#: src/usr/local/www/system_certmanager.php:366
+#: src/usr/local/www/system_certmanager.php:373
+#: src/usr/local/www/system_certmanager.php:376
 msgid "Please select a valid Digest Algorithm."
 msgstr "Sélectionnez un algorithme de synthèse valide."
 
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
 msgstr "Gestionnaire de certificats"
 
 #: src/usr/local/www/system_camanager.php:315
 #: src/usr/local/www/system_camanager.php:344
-#: src/usr/local/www/system_certmanager.php:602
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
 msgstr "ACs"
 
 #: src/usr/local/www/system_camanager.php:345
 #: src/usr/local/www/system_camanager.php:361
-#: src/usr/local/www/system_certmanager.php:584
-#: src/usr/local/www/system_certmanager.php:603
-#: src/usr/local/www/system_certmanager.php:1101
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1112
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
 msgstr "Certificats"
 
 #: src/usr/local/www/system_camanager.php:346
-#: src/usr/local/www/system_certmanager.php:604
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
@@ -31912,37 +31921,37 @@ msgid "Internal"
 msgstr "Interne"
 
 #: src/usr/local/www/system_camanager.php:360
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "Issuer"
 msgstr "Émetteur"
 
 #: src/usr/local/www/system_camanager.php:362
-#: src/usr/local/www/system_certmanager.php:1109
+#: src/usr/local/www/system_certmanager.php:1120
 msgid "Distinguished Name"
 msgstr "Nom différencié"
 
 #: src/usr/local/www/system_camanager.php:380
-#: src/usr/local/www/system_certmanager.php:1134
+#: src/usr/local/www/system_certmanager.php:1145
 msgid "self-signed"
 msgstr "auto-signé"
 
 #: src/usr/local/www/system_camanager.php:382
-#: src/usr/local/www/system_certmanager.php:1136
+#: src/usr/local/www/system_certmanager.php:1147
 msgid "external"
 msgstr "externe"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid From"
 msgstr "Valable depuis"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid Until"
 msgstr "Valide jusqu'au"
 
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1221
+#: src/usr/local/www/system_certmanager.php:1244
 msgid "IPsec Tunnel"
 msgstr "Tunnel IPsec"
 
@@ -31971,7 +31980,7 @@ msgid "Create / Edit CA"
 msgstr "Créer / Modifier l'AC"
 
 #: src/usr/local/www/system_camanager.php:493
-#: src/usr/local/www/system_certmanager.php:645
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
 msgstr "*Méthode"
@@ -31981,12 +31990,12 @@ msgid "Existing Certificate Authority"
 msgstr "Autorité du certification existante"
 
 #: src/usr/local/www/system_camanager.php:506
-#: src/usr/local/www/system_certmanager.php:731
+#: src/usr/local/www/system_certmanager.php:742
 msgid "*Certificate data"
 msgstr "*Données du certificat"
 
 #: src/usr/local/www/system_camanager.php:508
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:744
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr "Collez un certificat au format PEM X.509 ici."
 
@@ -32029,13 +32038,14 @@ msgid "*Key length (bits)"
 msgstr "*Longueur de la clé (bits)"
 
 #: src/usr/local/www/system_camanager.php:559
-#: src/usr/local/www/system_certmanager.php:779
-#: src/usr/local/www/system_certmanager.php:860
+#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:790
+#: src/usr/local/www/system_certmanager.php:871
 msgid "*Digest Algorithm"
 msgstr "*Algorithme de synthèse"
 
 #: src/usr/local/www/system_camanager.php:562
-#: src/usr/local/www/system_certmanager.php:782
+#: src/usr/local/www/system_certmanager.php:793
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
@@ -32044,49 +32054,49 @@ msgstr ""
 "lorsque cela est possible."
 
 #: src/usr/local/www/system_camanager.php:567
-#: src/usr/local/www/system_certmanager.php:787
+#: src/usr/local/www/system_certmanager.php:798
 msgid "*Lifetime (days)"
 msgstr "*Durée de vie (jours)"
 
 #: src/usr/local/www/system_camanager.php:574
-#: src/usr/local/www/system_certmanager.php:794
-#: src/usr/local/www/system_certmanager.php:868
+#: src/usr/local/www/system_certmanager.php:805
+#: src/usr/local/www/system_certmanager.php:879
 msgid "*Country Code"
 msgstr "*Code de pays"
 
 #: src/usr/local/www/system_camanager.php:581
-#: src/usr/local/www/system_certmanager.php:801
-#: src/usr/local/www/system_certmanager.php:875
+#: src/usr/local/www/system_certmanager.php:812
+#: src/usr/local/www/system_certmanager.php:886
 msgid "*State or Province"
 msgstr "*État ou province"
 
 #: src/usr/local/www/system_camanager.php:589
-#: src/usr/local/www/system_certmanager.php:809
-#: src/usr/local/www/system_certmanager.php:883
+#: src/usr/local/www/system_certmanager.php:820
+#: src/usr/local/www/system_certmanager.php:894
 msgid "*City"
 msgstr "*Ville"
 
 #: src/usr/local/www/system_camanager.php:597
-#: src/usr/local/www/system_certmanager.php:817
-#: src/usr/local/www/system_certmanager.php:891
+#: src/usr/local/www/system_certmanager.php:828
+#: src/usr/local/www/system_certmanager.php:902
 msgid "*Organization"
 msgstr "*Organisation"
 
 #: src/usr/local/www/system_camanager.php:605
-#: src/usr/local/www/system_certmanager.php:825
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:836
+#: src/usr/local/www/system_certmanager.php:910
 msgid "Organizational Unit"
 msgstr "Unité organisationnelle"
 
 #: src/usr/local/www/system_camanager.php:613
-#: src/usr/local/www/system_certmanager.php:833
-#: src/usr/local/www/system_certmanager.php:907
+#: src/usr/local/www/system_certmanager.php:844
+#: src/usr/local/www/system_certmanager.php:918
 msgid "*Email Address"
 msgstr "*Adresse courriel"
 
 #: src/usr/local/www/system_camanager.php:621
-#: src/usr/local/www/system_certmanager.php:841
-#: src/usr/local/www/system_certmanager.php:915
+#: src/usr/local/www/system_certmanager.php:852
+#: src/usr/local/www/system_certmanager.php:926
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
 msgstr "*Nom commun"
@@ -32116,46 +32126,46 @@ msgstr "Choisissez un certificat existant"
 msgid "Certificate %s successfully deleted."
 msgstr "Le certificat « %s » a été supprimé avec succès."
 
-#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:217
 msgid "CA to sign with"
 msgstr "AC avec lequel signer"
 
-#: src/usr/local/www/system_certmanager.php:221
+#: src/usr/local/www/system_certmanager.php:222
 msgid "This signing request does not appear to be valid."
 msgstr "Cette demande de signature ne semble pas être valide."
 
-#: src/usr/local/www/system_certmanager.php:225
+#: src/usr/local/www/system_certmanager.php:226
 msgid "This private does not appear to be valid."
 msgstr "Ce privé ne semble pas être valide."
 
-#: src/usr/local/www/system_certmanager.php:226
+#: src/usr/local/www/system_certmanager.php:227
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr "Le champ de données clés doit être vide ou une clé privée x509 valide"
 
-#: src/usr/local/www/system_certmanager.php:237
-#: src/usr/local/www/system_certmanager.php:713
+#: src/usr/local/www/system_certmanager.php:238
+#: src/usr/local/www/system_certmanager.php:717
 msgid "Key data"
 msgstr "Données de la clé"
 
-#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:254
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:925
 msgid "Certificate authority"
 msgstr "Autorité de certification"
 
-#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:256
 msgid "Certificate Type"
 msgstr "Type de certificat"
 
-#: src/usr/local/www/system_certmanager.php:282
+#: src/usr/local/www/system_certmanager.php:283
 msgid "Existing Certificate Choice"
 msgstr "Choix du certificat existant"
 
-#: src/usr/local/www/system_certmanager.php:538
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
 msgstr "Données du certificat final"
 
-#: src/usr/local/www/system_certmanager.php:562
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
@@ -32163,36 +32173,36 @@ msgstr ""
 "La clé publique de certificat ne correspond pas à la clé publique de demande "
 "de signature."
 
-#: src/usr/local/www/system_certmanager.php:640
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr "Ajouter/Signer un nouveau certificat"
 
-#: src/usr/local/www/system_certmanager.php:685
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
 msgstr "Nouvelle CSR (Coller ci-dessous)"
 
-#: src/usr/local/www/system_certmanager.php:688
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
 msgstr "Signez CSR"
 
-#: src/usr/local/www/system_certmanager.php:693
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
 msgstr "*AC avec lequel signer"
 
-#: src/usr/local/www/system_certmanager.php:700
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
 msgstr "*CSR à signer"
 
-#: src/usr/local/www/system_certmanager.php:707
+#: src/usr/local/www/system_certmanager.php:711
 msgid "CSR data"
 msgstr "Données CSR"
 
-#: src/usr/local/www/system_certmanager.php:709
+#: src/usr/local/www/system_certmanager.php:713
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
 msgstr ""
 "Collez une requête de signature de certificat au format PEM X.509 ici."
 
-#: src/usr/local/www/system_certmanager.php:715
+#: src/usr/local/www/system_certmanager.php:719
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
@@ -32200,80 +32210,81 @@ msgstr ""
 "Vous pouvez également coller une clé privée ici. La clé sera associée au "
 "certificat nouvellement signé dans pfSense"
 
-#: src/usr/local/www/system_certmanager.php:719
+#: src/usr/local/www/system_certmanager.php:723
 msgid "*Certificate Lifetime (days)"
 msgstr "*Durée de vie du certificat (jours)"
 
-#: src/usr/local/www/system_certmanager.php:726
-msgid "Import Certificate"
-msgstr "Importer le certificat"
-
-#: src/usr/local/www/system_certmanager.php:737
-msgid "*Private key data"
-msgstr "*Données de la clé privée"
-
-#: src/usr/local/www/system_certmanager.php:739
-msgid "Paste a private key in X.509 PEM format here."
-msgstr "Coller une clef privée au format X.509 PEM ici."
-
-#: src/usr/local/www/system_certmanager.php:742
-msgid "Internal Certificate"
-msgstr "Certificat interne"
-
-#: src/usr/local/www/system_certmanager.php:748
-msgid "No internal Certificate Authorities have been defined. "
-msgstr "Aucune autorité de certification interne n'a été définie."
-
-#: src/usr/local/www/system_certmanager.php:749
-msgid ""
-"An internal CA must be defined in order to create an internal certificate. "
-msgstr ""
-"Une autorité de certification interne doit être définie afin de créer un "
-"certificat interne."
-
-#: src/usr/local/www/system_certmanager.php:750
-#, php-format
-msgid "%1$sCreate%2$s an internal CA."
-msgstr "%1$sCréer%2$s une AC interne."
-
-#: src/usr/local/www/system_certmanager.php:747
-#: src/usr/local/www/system_certmanager.php:764
-msgid "*Certificate authority"
-msgstr "*Autorité de certification"
-
-#: src/usr/local/www/system_certmanager.php:772
-#: src/usr/local/www/system_certmanager.php:853
-msgid "*Key length"
-msgstr "*Longueur de la clé"
-
-#: src/usr/local/www/system_certmanager.php:848
-msgid "External Signing Request"
-msgstr "Demande de signature externe"
-
-#: src/usr/local/www/system_certmanager.php:863
+#: src/usr/local/www/system_certmanager.php:732
+#: src/usr/local/www/system_certmanager.php:874
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr ""
 "REMARQUE: il est recommandé d'utiliser un algorithme plus fort que SHA1 "
 "lorsque cela est possible"
 
-#: src/usr/local/www/system_certmanager.php:922
+#: src/usr/local/www/system_certmanager.php:737
+msgid "Import Certificate"
+msgstr "Importer le certificat"
+
+#: src/usr/local/www/system_certmanager.php:748
+msgid "*Private key data"
+msgstr "*Données de la clé privée"
+
+#: src/usr/local/www/system_certmanager.php:750
+msgid "Paste a private key in X.509 PEM format here."
+msgstr "Coller une clef privée au format X.509 PEM ici."
+
+#: src/usr/local/www/system_certmanager.php:753
+msgid "Internal Certificate"
+msgstr "Certificat interne"
+
+#: src/usr/local/www/system_certmanager.php:759
+msgid "No internal Certificate Authorities have been defined. "
+msgstr "Aucune autorité de certification interne n'a été définie."
+
+#: src/usr/local/www/system_certmanager.php:760
+msgid ""
+"An internal CA must be defined in order to create an internal certificate. "
+msgstr ""
+"Une autorité de certification interne doit être définie afin de créer un "
+"certificat interne."
+
+#: src/usr/local/www/system_certmanager.php:761
+#, php-format
+msgid "%1$sCreate%2$s an internal CA."
+msgstr "%1$sCréer%2$s une AC interne."
+
+#: src/usr/local/www/system_certmanager.php:758
+#: src/usr/local/www/system_certmanager.php:775
+msgid "*Certificate authority"
+msgstr "*Autorité de certification"
+
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:864
+msgid "*Key length"
+msgstr "*Longueur de la clé"
+
+#: src/usr/local/www/system_certmanager.php:859
+msgid "External Signing Request"
+msgstr "Demande de signature externe"
+
+#: src/usr/local/www/system_certmanager.php:933
 msgid "Choose an Existing Certificate"
 msgstr "Choisissez un certificat existant"
 
-#: src/usr/local/www/system_certmanager.php:951
+#: src/usr/local/www/system_certmanager.php:962
 msgid "*Existing Certificates"
 msgstr "*Certificats existants"
 
-#: src/usr/local/www/system_certmanager.php:958
+#: src/usr/local/www/system_certmanager.php:969
 msgid "Certificate Attributes"
 msgstr "Attributs de certificat"
 
-#: src/usr/local/www/system_certmanager.php:962
+#: src/usr/local/www/system_certmanager.php:973
 msgid "Attribute Notes"
 msgstr "Notes d'attributs"
 
-#: src/usr/local/www/system_certmanager.php:964
+#: src/usr/local/www/system_certmanager.php:975
 msgid ""
 "The following attributes are added to certificates and requests when they "
 "are created or signed. These attributes behave differently depending on the "
@@ -32283,7 +32294,7 @@ msgstr ""
 "lorsqu'ils sont créés ou signés. Ces attributs se comportent différemment en "
 "fonction du mode sélectionné."
 
-#: src/usr/local/www/system_certmanager.php:968
+#: src/usr/local/www/system_certmanager.php:979
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
@@ -32291,7 +32302,7 @@ msgstr ""
 "Pour les certificats internes, ces attributs sont ajoutés directement au "
 "certificat comme indiqué."
 
-#: src/usr/local/www/system_certmanager.php:970
+#: src/usr/local/www/system_certmanager.php:981
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
@@ -32300,7 +32311,7 @@ msgstr ""
 "la demande, mais ils peuvent être ignorés ou modifiés par l'AC qui signe la "
 "demande."
 
-#: src/usr/local/www/system_certmanager.php:972
+#: src/usr/local/www/system_certmanager.php:983
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
@@ -32309,7 +32320,7 @@ msgstr ""
 "feu, définissez les attributs lors de la signature à la place, car ils ne "
 "peuvent être reportés."
 
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:984
 msgid ""
 "When Signing a Certificate Request, existing attributes in the request "
 "cannot be copied. The attributes below will be applied to the resulting "
@@ -32319,11 +32330,11 @@ msgstr ""
 "dans la demande ne peuvent pas être copiés. Les attributs ci-dessous seront "
 "appliqués au certificat résultant."
 
-#: src/usr/local/www/system_certmanager.php:979
+#: src/usr/local/www/system_certmanager.php:990
 msgid "*Certificate Type"
 msgstr "*Type de certificat"
 
-#: src/usr/local/www/system_certmanager.php:982
+#: src/usr/local/www/system_certmanager.php:993
 msgid ""
 "Add type-specific usage attributes to the signed certificate. Used for "
 "placing usage restrictions on, or granting abilities to, the signed "
@@ -32333,11 +32344,11 @@ msgstr ""
 "pour placer les restrictions d'utilisation ou l'octroi de capacités au "
 "certificat signé."
 
-#: src/usr/local/www/system_certmanager.php:997
+#: src/usr/local/www/system_certmanager.php:1008
 msgid "Alternative Names"
 msgstr "Noms alternatifs"
 
-#: src/usr/local/www/system_certmanager.php:1022
+#: src/usr/local/www/system_certmanager.php:1033
 msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name. "
@@ -32347,15 +32358,15 @@ msgstr ""
 "Le champ Nom commun est automatiquement ajouté au certificat en tant que nom "
 "alternatif. La signature CA peut ignorer ou modifier ces valeurs."
 
-#: src/usr/local/www/system_certmanager.php:1048
+#: src/usr/local/www/system_certmanager.php:1059
 msgid "Complete Signing Request for "
 msgstr "Compléter la demande de signature pour"
 
-#: src/usr/local/www/system_certmanager.php:1059
+#: src/usr/local/www/system_certmanager.php:1070
 msgid "Signing request data"
 msgstr "Signature des données de demande"
 
-#: src/usr/local/www/system_certmanager.php:1063
+#: src/usr/local/www/system_certmanager.php:1074
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
@@ -32363,64 +32374,73 @@ msgstr ""
 "Copiez les données de signature de certificat à partir de là et renvoyez-la "
 "à une autorité de certification pour la signature."
 
-#: src/usr/local/www/system_certmanager.php:1067
+#: src/usr/local/www/system_certmanager.php:1078
 msgid "*Final certificate data"
 msgstr "*Données de certificat final"
 
-#: src/usr/local/www/system_certmanager.php:1070
+#: src/usr/local/www/system_certmanager.php:1081
 msgid "Paste the certificate received from the certificate authority here."
 msgstr "Collez le certificat reçu de l'autorité de certification ici."
 
-#: src/usr/local/www/system_certmanager.php:1146
+#: src/usr/local/www/system_certmanager.php:1157
 msgid "private key only"
 msgstr "Clef privée uniquement"
 
-#: src/usr/local/www/system_certmanager.php:1152
+#: src/usr/local/www/system_certmanager.php:1163
 msgid "external - signature pending"
 msgstr "Signature externe en attente"
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Serial: "
+msgstr "Numéro de série:"
+
+#: src/usr/local/www/system_certmanager.php:1195
+msgid "Signature Digest: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1200
 msgid "SAN: "
 msgstr "SAN: "
 
-#: src/usr/local/www/system_certmanager.php:1182
+#: src/usr/local/www/system_certmanager.php:1205
 msgid "KU: "
 msgstr "KU: "
 
-#: src/usr/local/www/system_certmanager.php:1187
+#: src/usr/local/www/system_certmanager.php:1210
 msgid "EKU: "
 msgstr "EKU: "
 
-#: src/usr/local/www/system_certmanager.php:1212
+#: src/usr/local/www/system_certmanager.php:1235
 msgid "User Cert"
 msgstr "Certificat utilisateur"
 
-#: src/usr/local/www/system_certmanager.php:1230
+#: src/usr/local/www/system_certmanager.php:1253
 msgid "Export Certificate"
 msgstr "Exporter le certificat"
 
-#: src/usr/local/www/system_certmanager.php:1232
-#: src/usr/local/www/system_certmanager.php:1238
+#: src/usr/local/www/system_certmanager.php:1255
+#: src/usr/local/www/system_certmanager.php:1261
 msgid "Export Key"
 msgstr "Exporter la clé"
 
-#: src/usr/local/www/system_certmanager.php:1234
+#: src/usr/local/www/system_certmanager.php:1257
 msgid "Export P12"
 msgstr "Exporter P12"
 
-#: src/usr/local/www/system_certmanager.php:1236
+#: src/usr/local/www/system_certmanager.php:1259
 msgid "Update CSR"
 msgstr "Mise à jour de la CSR"
 
-#: src/usr/local/www/system_certmanager.php:1237
+#: src/usr/local/www/system_certmanager.php:1260
 msgid "Export Request"
 msgstr "Exporter la requête"
 
-#: src/usr/local/www/system_certmanager.php:1241
+#: src/usr/local/www/system_certmanager.php:1264
 msgid "Delete Certificate"
 msgstr "Supprimer le certificat"
 
-#: src/usr/local/www/system_certmanager.php:1257
+#: src/usr/local/www/system_certmanager.php:1280
 msgid "Add/Sign"
 msgstr "Ajouter/Signer"
 
@@ -37617,10 +37637,6 @@ msgstr "Widget d'informations système enregistré via le tableau de bord."
 msgid "Unknown system"
 msgstr "Système inconnu"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
-msgid "Serial: "
-msgstr "Numéro de série:"
-
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
 msgstr "ID de l'appareil Netgate:"
@@ -39093,7 +39109,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
-#: src/usr/local/www/system_certmanager.php:963
+#: src/usr/local/www/system_certmanager.php:974
 #: src/usr/local/www/system_gateways_edit.php:373
 #: src/usr/local/www/system_groupmanager_addprivs.php:189
 #: src/usr/local/www/system_usermanager_addprivs.php:173
@@ -39611,6 +39627,8 @@ msgstr "Désactiver cette route statique"
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the Dashboard auto-update check"
 msgstr ""
+"Désactiver la vérification automatique de mise à  jour sur le tableau de "
+"bord"
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

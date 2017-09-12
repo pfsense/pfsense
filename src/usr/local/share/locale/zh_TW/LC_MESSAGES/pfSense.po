@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-28 16:46-0300\n"
+"POT-Creation-Date: 2017-09-11 16:44-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-28 02:42-0400\n"
+"PO-Revision-Date: 2017-08-29 02:20-0400\n"
 "Last-Translator: everfree <everfreewing@gmail.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-TW\n"
@@ -48,206 +48,210 @@ msgstr "重新導向至儀錶板..."
 msgid "Running: %s"
 msgstr "正在運行: %s"
 
-#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:950 src/etc/inc/auth.inc:1038
-#: src/etc/inc/auth.inc:1350
+#: src/etc/inc/auth.inc:869 src/etc/inc/auth.inc:952 src/etc/inc/auth.inc:1040
+#: src/etc/inc/auth.inc:1352
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
 msgstr "錯誤！無法連接到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:887
+#: src/etc/inc/auth.inc:889
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
 msgstr "LDAP: 無法通過主機%s查找CA。"
 
-#: src/etc/inc/auth.inc:962
+#: src/etc/inc/auth.inc:964
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr "錯誤! ldap_test_bind() 不能啟動TLS 伺服器%s。"
 
-#: src/etc/inc/auth.inc:1024
+#: src/etc/inc/auth.inc:1026
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr "錯誤！ ldap_get_user_ous（）選擇時未定義LDAP認證伺服器。"
 
-#: src/etc/inc/auth.inc:1052
+#: src/etc/inc/auth.inc:1054
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr "錯誤! ldap_get_user_ous() 不能啟動TLS伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1062
+#: src/etc/inc/auth.inc:1064
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
 msgstr "錯誤！ ldap_get_user_ous（）無法匿名綁定到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1067
+#: src/etc/inc/auth.inc:1069
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
 msgstr "錯誤！ ldap_get_user_ous（）無法綁定到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1183
+#: src/etc/inc/auth.inc:1185
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
 msgstr "錯誤！ ldap_get_groups（）無法連接到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1195
+#: src/etc/inc/auth.inc:1197
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr "錯誤! ldap_get_groups() 不能啟動TLS伺服器%s。"
 
-#: src/etc/inc/auth.inc:1206
+#: src/etc/inc/auth.inc:1208
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
 msgstr "錯誤！ ldap_get_groups（）無法匿名綁定到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1211
+#: src/etc/inc/auth.inc:1213
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
 msgstr "錯誤！ ldap_get_groups（）無法綁定到伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1317
+#: src/etc/inc/auth.inc:1319
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr "錯誤！ ldap_backed（）調用時未定義LDAP認證伺服器。 預設為本地用戶數據庫。 訪問系統 - >用戶管理器。"
 
-#: src/etc/inc/auth.inc:1320
+#: src/etc/inc/auth.inc:1322
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr "錯誤！ ldap_backed（）調用時未定義LDAP認證伺服器。"
 
-#: src/etc/inc/auth.inc:1343
+#: src/etc/inc/auth.inc:1345
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr "錯誤! ldap_backed() 不能啟動TLS伺服器%s。"
 
-#: src/etc/inc/auth.inc:1368
+#: src/etc/inc/auth.inc:1370
 #, php-format
 msgid "ERROR! Could not bind to server %s."
 msgstr "錯誤! 不能綁定伺服器 %s。"
 
-#: src/etc/inc/auth.inc:1386
+#: src/etc/inc/auth.inc:1388
 #, php-format
 msgid "Now Searching for %s in directory."
 msgstr "正在目錄中搜索%s。"
 
-#: src/etc/inc/auth.inc:1395
+#: src/etc/inc/auth.inc:1397
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
 msgstr "正在伺服器%1$s中搜索, 容器 %2$s 篩檢程式 %3$s."
 
-#: src/etc/inc/auth.inc:1409
+#: src/etc/inc/auth.inc:1411
 #, php-format
 msgid "Search resulted in error: %s"
 msgstr "搜索結果錯誤: %s"
 
-#: src/etc/inc/auth.inc:1425
+#: src/etc/inc/auth.inc:1427
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr "錯誤！ LDAP搜索失敗，或找到多個用戶。"
 
-#: src/etc/inc/auth.inc:1432
+#: src/etc/inc/auth.inc:1434
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr "錯誤！ 無法以用戶%2$s: %3$s的身份登入伺服器%1$s"
 
-#: src/etc/inc/auth.inc:1439
+#: src/etc/inc/auth.inc:1441
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
 msgstr "成功登入%1$s，通過 LDAP伺服器 %2$s， DN = %3$s."
 
-#: src/etc/inc/auth.inc:1514
+#: src/etc/inc/auth.inc:1516
 #, php-format
 msgid "RADIUS start: %s"
 msgstr "RADIUS 啟動: %s"
 
-#: src/etc/inc/auth.inc:1526
+#: src/etc/inc/auth.inc:1528
 #, php-format
 msgid "RADIUS send failed: %s"
 msgstr "RADIUS 發送失敗: %s"
 
-#: src/etc/inc/auth.inc:1534
+#: src/etc/inc/auth.inc:1536
 #, php-format
 msgid "RADIUS Auth succeeded"
 msgstr "RADIUS認證成功"
 
-#: src/etc/inc/auth.inc:1540
+#: src/etc/inc/auth.inc:1542
 #, php-format
 msgid "RADIUS Auth rejected"
 msgstr "RADIUS認證被拒絕"
 
-#: src/etc/inc/auth.inc:1662
+#: src/etc/inc/auth.inc:1664
 msgid "Widget configuration has been changed."
 msgstr "小工具配置已更改。"
 
-#: src/etc/inc/auth.inc:1667
+#: src/etc/inc/auth.inc:1669
 #, php-format
 msgid "(User %s)"
 msgstr "(用戶 %s)"
 
-#: src/etc/inc/auth.inc:1685 src/etc/inc/auth.inc:1701
+#: src/etc/inc/auth.inc:1687 src/etc/inc/auth.inc:1703
 msgid "Local Database"
 msgstr "本地資料庫"
 
-#: src/etc/inc/auth.inc:1805
+#: src/etc/inc/auth.inc:1807
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
 msgstr "成功登入用戶 '%1$s'，來自：%2$s"
 
-#: src/etc/inc/auth.inc:1864
+#: src/etc/inc/auth.inc:1820
+msgid "Username or Password incorrect"
+msgstr ""
+
+#: src/etc/inc/auth.inc:1866
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
 msgstr "用戶 '%1$s'的會話已超時：%2$s"
 
-#: src/etc/inc/auth.inc:1866
+#: src/etc/inc/auth.inc:1868
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
 msgstr "用戶'%1$s' 已登出：%2$s"
 
-#: src/etc/inc/authgui.inc:74
+#: src/etc/inc/authgui.inc:76
 msgid "No page assigned to this user! Click here to logout."
 msgstr "沒有為此用戶分配頁面！點擊這裏登出。"
 
-#: src/etc/inc/authgui.inc:105
+#: src/etc/inc/authgui.inc:107
 #, php-format
 msgid "Error: %1$s Description: %2$s"
 msgstr "錯誤：%1$s 說明: %2$s"
 
-#: src/etc/inc/authgui.inc:118 src/etc/inc/dyndns.class:1069
+#: src/etc/inc/authgui.inc:120 src/etc/inc/dyndns.class:1069
 #: src/etc/inc/dyndns.class:1121 src/etc/inc/dyndns.class:1869
 #: src/usr/local/www/diag_smart.php:374
 msgid "Error"
 msgstr "錯誤"
 
-#: src/etc/inc/authgui.inc:194
+#: src/etc/inc/authgui.inc:196
 msgid "unknown reason"
 msgstr "未知原因"
 
-#: src/etc/inc/authgui.inc:195
+#: src/etc/inc/authgui.inc:197
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "登入無效 (%s)."
 
-#: src/etc/inc/authgui.inc:200
+#: src/etc/inc/authgui.inc:202
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "該設備目前由以下帳號維護: %s."
 
-#: src/etc/inc/authgui.inc:283
+#: src/etc/inc/authgui.inc:285
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s。%2$s"
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:287
 #, php-format
 msgid "Login to %1$s"
 msgstr "登入到 %1$s"
 
-#: src/etc/inc/authgui.inc:302
+#: src/etc/inc/authgui.inc:304
 #: src/usr/local/www/services_captiveportal.php:1019
 msgid "Login"
 msgstr "登入"
 
-#: src/etc/inc/authgui.inc:348
+#: src/etc/inc/authgui.inc:362
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -257,7 +261,7 @@ msgstr ""
 "用於訪問此路由器的IP地址未在本地配置，可以通過NAT或其他方式轉發。\n"
 "\t\t\t\t\t\t\t\t如果這個轉發是意想不到的，應該驗證是否發生了中間人的攻擊。"
 
-#: src/etc/inc/authgui.inc:399
+#: src/etc/inc/authgui.inc:413
 msgid "The browser must support cookies to login."
 msgstr "您的瀏覽器必須支持cookies才能登入。"
 
@@ -1973,7 +1977,7 @@ msgstr "未找到鏡像。"
 #: src/usr/local/www/status_openvpn.php:236
 #: src/usr/local/www/status_openvpn.php:296
 #: src/usr/local/www/system_camanager.php:358
-#: src/usr/local/www/system_certmanager.php:1107
+#: src/usr/local/www/system_certmanager.php:1118
 #: src/usr/local/www/system_crlmanager.php:578
 #: src/usr/local/www/system_gateways.php:250
 #: src/usr/local/www/system_groupmanager.php:224
@@ -2113,8 +2117,8 @@ msgid "Updating gateway group gateway for %1$s - new gateway is %2$s"
 msgstr "更新閘道組閘道%1$s 為新閘道 %2$s"
 
 #: src/etc/inc/gwlb.inc:1359 src/usr/local/www/diag_arp.php:332
-#: src/usr/local/www/diag_dump_states.php:132
-#: src/usr/local/www/diag_dump_states.php:181
+#: src/usr/local/www/diag_dump_states.php:136
+#: src/usr/local/www/diag_dump_states.php:185
 #: src/usr/local/www/diag_ndp.php:141 src/usr/local/www/easyrule.php:80
 #: src/usr/local/www/easyrule.php:88 src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/firewall_nat_1to1.php:150
@@ -2264,43 +2268,43 @@ msgstr "監視的IP地址 \"%s\" 已在使用中。請另外選擇一個。"
 
 #: src/etc/inc/gwlb.inc:1539
 msgid "The low latency threshold needs to be a numeric value."
-msgstr "低延遲閾值必須為數值。"
+msgstr "低延遲臨界值必須為數值。"
 
 #: src/etc/inc/gwlb.inc:1541
 msgid "The low latency threshold needs to be positive."
-msgstr "低延遲閾值必須為正值。"
+msgstr "低延遲臨界值必須為正值。"
 
 #: src/etc/inc/gwlb.inc:1550
 msgid "The high latency threshold needs to be a numeric value."
-msgstr "高延遲閾值必須為數值。"
+msgstr "高延遲臨界值必須為數值。"
 
 #: src/etc/inc/gwlb.inc:1552
 msgid "The high latency threshold needs to be positive."
-msgstr "高延遲閾值必須為正值。"
+msgstr "高延遲臨界值必須為正值。"
 
 #: src/etc/inc/gwlb.inc:1561
 msgid "The low Packet Loss threshold needs to be a numeric value."
-msgstr "低封包遺失丟失閾值必須為數值。"
+msgstr "低封包遺失丟失臨界值必須為數值。"
 
 #: src/etc/inc/gwlb.inc:1563
 msgid "The low Packet Loss threshold needs to be positive."
-msgstr "低封包遺失閾值必須為正值。"
+msgstr "低封包遺失臨界值必須為正值。"
 
 #: src/etc/inc/gwlb.inc:1565
 msgid "The low Packet Loss threshold needs to be less than 100."
-msgstr "低封包遺失丟失閾值必須小於100。"
+msgstr "低封包遺失丟失臨界值必須小於100。"
 
 #: src/etc/inc/gwlb.inc:1574
 msgid "The high Packet Loss threshold needs to be a numeric value."
-msgstr "高封包遺失閾值必須為數值。"
+msgstr "高封包遺失臨界值必須為數值。"
 
 #: src/etc/inc/gwlb.inc:1576
 msgid "The high Packet Loss threshold needs to be positive."
-msgstr "高封包遺失閾值必須為正值。"
+msgstr "高封包遺失臨界值必須為正值。"
 
 #: src/etc/inc/gwlb.inc:1578
 msgid "The high Packet Loss threshold needs to be 100 or less."
-msgstr "高封包遺失閾值必須為100或更小。"
+msgstr "高封包遺失臨界值必須為100或更小。"
 
 #: src/etc/inc/gwlb.inc:1587
 msgid ""
@@ -2339,19 +2343,19 @@ msgstr "警報間隔必須為正值。"
 msgid ""
 "The high latency threshold needs to be greater than the low latency "
 "threshold"
-msgstr "高延遲閾值必須大於低延遲閾值"
+msgstr "高延遲臨界值必須大於低延遲臨界值"
 
 #: src/etc/inc/gwlb.inc:1635
 msgid ""
 "The high packet loss threshold needs to be higher than the low packet loss "
 "threshold"
-msgstr "高封包遺失閾值必須高於低封包遺失閾值"
+msgstr "高封包遺失臨界值必須高於低封包遺失臨界值"
 
 #: src/etc/inc/gwlb.inc:1641
 msgid ""
 "The loss interval needs to be greater than or equal to the high latency "
 "threshold."
-msgstr "丟失間隔必須大於或等於高等待時間閾值。"
+msgstr "丟失間隔必須大於或等於高等待時間臨界值。"
 
 #: src/etc/inc/gwlb.inc:1646
 msgid ""
@@ -3111,7 +3115,7 @@ msgstr "LZ4壓縮[compress lz4]"
 
 #: src/etc/inc/openvpn.inc:127
 msgid "LZ4 Compression v2 [compress lz4-v2]"
-msgstr ""
+msgstr "LZ4 壓縮 v2 [compress lz4-v2]"
 
 #: src/etc/inc/openvpn.inc:128
 msgid ""
@@ -3182,12 +3186,12 @@ msgid "CA: %s"
 msgstr "CA: %s"
 
 #: src/etc/inc/openvpn.inc:246 src/usr/local/www/system_camanager.php:363
-#: src/usr/local/www/system_certmanager.php:1110
+#: src/usr/local/www/system_certmanager.php:1121
 #: src/usr/local/www/system_crlmanager.php:581
 msgid "In Use"
 msgstr "正在使用"
 
-#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1206
+#: src/etc/inc/openvpn.inc:249 src/usr/local/www/system_certmanager.php:1229
 msgid "Revoked"
 msgstr "已撤銷"
 
@@ -5955,7 +5959,7 @@ msgstr "系統記錄器守護程序"
 #: src/usr/local/www/status_captiveportal_test.php:55
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
-#: src/usr/local/www/system_certmanager.php:1224
+#: src/usr/local/www/system_certmanager.php:1247
 msgid "Captive Portal"
 msgstr "網頁認證"
 
@@ -6722,7 +6726,7 @@ msgstr "延遲必須為整數。"
 #: src/usr/local/www/services_unbound_acls.php:255
 #: src/usr/local/www/services_unbound_host_edit.php:284
 #: src/usr/local/www/system.php:527
-#: src/usr/local/www/system_certmanager.php:1015
+#: src/usr/local/www/system_certmanager.php:1026
 #: src/usr/local/www/system_usermanager.php:663
 msgid "Delete"
 msgstr "刪除"
@@ -7678,9 +7682,9 @@ msgstr "確認"
 #: src/usr/local/www/system_authservers.php:82
 #: src/usr/local/www/system_camanager.php:318
 #: src/usr/local/www/system_camanager.php:349
-#: src/usr/local/www/system_certmanager.php:206
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:618
+#: src/usr/local/www/system_certmanager.php:207
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:622
 #: src/usr/local/www/system_crlmanager.php:256
 #: src/usr/local/www/system_crlmanager.php:341
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:268
@@ -7886,7 +7890,7 @@ msgstr "連結類型"
 #: src/usr/local/www/status_services.php:89
 #: src/usr/local/www/system_authservers.php:444
 #: src/usr/local/www/system_camanager.php:364
-#: src/usr/local/www/system_certmanager.php:1112
+#: src/usr/local/www/system_certmanager.php:1123
 #: src/usr/local/www/system_crlmanager.php:582
 #: src/usr/local/www/system_gateway_groups.php:132
 #: src/usr/local/www/system_gateways.php:255
@@ -8190,7 +8194,7 @@ msgstr "系統日誌"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_authservers.php:407
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_gateway_groups.php:101
 #: src/usr/local/www/system_gateway_groups_edit.php:144
@@ -8756,7 +8760,7 @@ msgstr "主機名"
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:233
 #: src/usr/local/www/status_ntpd.php:296
-#: src/usr/local/www/system_certmanager.php:1168
+#: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/vpn_openvpn_client.php:940
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
@@ -8869,8 +8873,8 @@ msgid "invalid input"
 msgstr "輸入無效"
 
 #: src/usr/local/www/diag_dump_states.php:75
-#: src/usr/local/www/diag_dump_states.php:107
-#: src/usr/local/www/diag_dump_states.php:175
+#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:179
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:58
 #: src/usr/local/www/diag_resetstate.php:56
@@ -8881,7 +8885,11 @@ msgstr "輸入無效"
 msgid "States"
 msgstr "狀態"
 
-#: src/usr/local/www/diag_dump_states.php:109
+#: src/usr/local/www/diag_dump_states.php:78
+msgid "Are you sure you wish to delete this state?"
+msgstr ""
+
+#: src/usr/local/www/diag_dump_states.php:113
 #: src/usr/local/www/diag_dump_states_sources.php:53
 #: src/usr/local/www/diag_dump_states_sources.php:59
 #: src/usr/local/www/diag_resetstate.php:84
@@ -8889,23 +8897,23 @@ msgstr "狀態"
 msgid "Source Tracking"
 msgstr "來源追蹤"
 
-#: src/usr/local/www/diag_dump_states.php:111
+#: src/usr/local/www/diag_dump_states.php:115
 #: src/usr/local/www/diag_dump_states_sources.php:60
 #: src/usr/local/www/diag_resetstate.php:56
 #: src/usr/local/www/diag_resetstate.php:87
 msgid "Reset States"
 msgstr "重置狀態"
 
-#: src/usr/local/www/diag_dump_states.php:119
+#: src/usr/local/www/diag_dump_states.php:123
 msgid "State Filter"
 msgstr "狀態篩檢程式"
 
-#: src/usr/local/www/diag_dump_states.php:139
+#: src/usr/local/www/diag_dump_states.php:143
 #: src/usr/local/www/diag_dump_states_sources.php:97
 msgid "Filter expression"
 msgstr "過濾運算式"
 
-#: src/usr/local/www/diag_dump_states.php:147
+#: src/usr/local/www/diag_dump_states.php:151
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/diag_routes.php:98 src/usr/local/www/pkg.php:352
 #: src/usr/local/www/status_graph.php:147
@@ -8916,19 +8924,19 @@ msgstr "過濾運算式"
 msgid "Filter"
 msgstr "篩檢程式"
 
-#: src/usr/local/www/diag_dump_states.php:160
+#: src/usr/local/www/diag_dump_states.php:164
 msgid "Kill States"
 msgstr "清除狀態"
 
-#: src/usr/local/www/diag_dump_states.php:166
+#: src/usr/local/www/diag_dump_states.php:170
 msgid "Kill filtered states"
 msgstr "清除篩檢程式狀態"
 
-#: src/usr/local/www/diag_dump_states.php:168
+#: src/usr/local/www/diag_dump_states.php:172
 msgid "Remove all states to and from the filtered address"
 msgstr "刪除已過濾地址的所有狀態"
 
-#: src/usr/local/www/diag_dump_states.php:182
+#: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/easyrule.php:90 src/usr/local/www/firewall_nat.php:225
 #: src/usr/local/www/firewall_nat_edit.php:239
@@ -8952,40 +8960,40 @@ msgstr "刪除已過濾地址的所有狀態"
 msgid "Protocol"
 msgstr "協定"
 
-#: src/usr/local/www/diag_dump_states.php:183
+#: src/usr/local/www/diag_dump_states.php:187
 msgid "Source (Original Source) -> Destination (Original Destination)"
 msgstr "來源（原始來源） - >目的地（原始目的地）"
 
-#: src/usr/local/www/diag_dump_states.php:184
+#: src/usr/local/www/diag_dump_states.php:188
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
 msgstr "狀態"
 
-#: src/usr/local/www/diag_dump_states.php:185
+#: src/usr/local/www/diag_dump_states.php:189
 msgid "Packets"
 msgstr "數據包"
 
-#: src/usr/local/www/diag_dump_states.php:186
+#: src/usr/local/www/diag_dump_states.php:190
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
 msgstr "位元組"
 
-#: src/usr/local/www/diag_dump_states.php:254
+#: src/usr/local/www/diag_dump_states.php:258
 #, php-format
 msgid "Remove all state entries from %1$s to %2$s"
 msgstr "刪除從“%1$s”到“%2$s”的所有狀態項目"
 
-#: src/usr/local/www/diag_dump_states.php:269
+#: src/usr/local/www/diag_dump_states.php:273
 msgid "No states were found that match the current filter."
 msgstr "未找到與現在篩檢程式匹配的狀態。"
 
-#: src/usr/local/www/diag_dump_states.php:271
+#: src/usr/local/www/diag_dump_states.php:275
 msgid ""
 "State display suppressed without filter submission. See System > General "
 "Setup, Require State Filter."
 msgstr "停用狀態顯示，不提交篩檢程式。 請參見系統>基礎設定，需求狀態篩檢程式。"
 
-#: src/usr/local/www/diag_dump_states.php:274
+#: src/usr/local/www/diag_dump_states.php:278
 msgid "No states were found."
 msgstr "未找到任何狀態。"
 
@@ -9357,13 +9365,13 @@ msgstr "封包擷取"
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:419
-#: src/usr/local/www/system_certmanager.php:1215
+#: src/usr/local/www/system_certmanager.php:1238
 msgid "OpenVPN Server"
 msgstr "OpenVPN伺服器 "
 
 #: src/usr/local/www/diag_packet_capture.php:127
 #: src/usr/local/www/system_camanager.php:422
-#: src/usr/local/www/system_certmanager.php:1218
+#: src/usr/local/www/system_certmanager.php:1241
 msgid "OpenVPN Client"
 msgstr "OpenVPN客戶端 "
 
@@ -9932,10 +9940,10 @@ msgstr "使用正則運算式過濾表。"
 #: src/usr/local/www/diag_routes.php:107 src/usr/local/www/diag_tables.php:152
 #: src/usr/local/www/head.inc:240 src/usr/local/www/pkg_mgr_install.php:244
 #: src/usr/local/www/pkg_mgr_installed.php:211
-#: src/usr/local/www/system_certmanager.php:530
-#: src/usr/local/www/system_certmanager.php:587
-#: src/usr/local/www/system_certmanager.php:1044
-#: src/usr/local/www/system_certmanager.php:1092
+#: src/usr/local/www/system_certmanager.php:534
+#: src/usr/local/www/system_certmanager.php:591
+#: src/usr/local/www/system_certmanager.php:1055
+#: src/usr/local/www/system_certmanager.php:1103
 #: src/usr/local/www/system_update_settings.php:98
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
@@ -10647,7 +10655,7 @@ msgstr "刪除別名"
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/system_authservers.php:470
 #: src/usr/local/www/system_camanager.php:453
-#: src/usr/local/www/system_certmanager.php:1034
+#: src/usr/local/www/system_certmanager.php:1045
 #: src/usr/local/www/system_crlmanager.php:537
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/system_gateways.php:325
@@ -10752,7 +10760,7 @@ msgstr "網址表（通訊埠）"
 #: src/usr/local/www/system_advanced_sysctl.php:119
 #: src/usr/local/www/system_authservers.php:411
 #: src/usr/local/www/system_camanager.php:319
-#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_crlmanager.php:257
 #: src/usr/local/www/system_gateway_groups_edit.php:144
 #: src/usr/local/www/system_gateways_edit.php:111
@@ -11636,8 +11644,8 @@ msgstr "反轉匹配"
 #: src/usr/local/www/system_authservers.php:225
 #: src/usr/local/www/system_authservers.php:248
 #: src/usr/local/www/system_authservers.php:442
-#: src/usr/local/www/system_certmanager.php:1001
-#: src/usr/local/www/system_certmanager.php:1004
+#: src/usr/local/www/system_certmanager.php:1012
+#: src/usr/local/www/system_certmanager.php:1015
 #: src/usr/local/www/vpn_ipsec_keys.php:102
 #: src/usr/local/www/vpn_ipsec_phase2.php:525
 #: src/usr/local/www/vpn_ipsec_phase2.php:551
@@ -14379,7 +14387,7 @@ msgstr "只列出前10k專案"
 #: src/usr/local/www/services_dhcp.php:1363
 #: src/usr/local/www/services_dhcpv6.php:969
 #: src/usr/local/www/system_advanced_sysctl.php:159
-#: src/usr/local/www/system_certmanager.php:1011
+#: src/usr/local/www/system_certmanager.php:1022
 msgid "Value"
 msgstr "值"
 
@@ -17281,8 +17289,8 @@ msgid ""
 "a new configuration."
 msgstr ""
 "LACP，基於IEEE802.3ax標準的LACP（Link Aggregation Control "
-"Protocol，鏈路彙聚控制協定）是一種實現鏈路動態彙聚的協定。\tLACP協定通過LACPDU（Link Aggregation Control "
-"Protocol Data Unit，鏈路彙聚控制協定數據單元）與對端交互資訊。  "
+"Protocol，頻寬聚合控制協定）是一種實現鏈路動態彙聚的協定。\tLACP協定通過LACPDU（Link Aggregation Control "
+"Protocol Data Unit，頻寬聚合控制協定數據單元）與對端交互資訊。  "
 "啟用某通訊埠的LACP協定後，該通訊埠將通過發送LACPDU向對端通告自己的系統優先順序、系統MAC地址、通訊埠優先順序、通訊埠號和操作密鑰。\t對端接收到這些資訊後，將這些資訊與其它通訊埠所儲存的資訊比較以選擇能夠彙聚的通訊埠，從而雙方可以對通訊埠加入或退出某個動態彙聚組達成一致。"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:63
@@ -17298,7 +17306,7 @@ msgstr ""
 msgid ""
 "Supports Cisco EtherChannel.  This is a static setup and does not negotiate "
 "aggregation with the peer or exchange frames to monitor the link."
-msgstr "支持Cisco以太網通道。 這是一個靜態設定，不會與對等體或交換幀協商聚合以監控鏈路。"
+msgstr "支持Cisco乙太網通道。 這是一個靜態設定，不會與對等體或交換訊框以監控連結。"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:76
 msgid ""
@@ -17309,8 +17317,8 @@ msgid ""
 "and destination address, and, if available, the VLAN tag, and the IP source "
 "and destination address."
 msgstr ""
-"根據Hash協定報頭資訊平衡跨活動通訊埠的傳出流量，並接受來自任何活動通訊埠的傳入流量。\t 這是一個靜態設定，不會與對等體或交換幀協商聚合以監控鏈路。 "
-"Hash包括以太網來源和目標地址，以及VLAN標記（如果可用）以及IP來源和目標地址。"
+"根據Hash協定報頭資訊平衡跨活動通訊埠的傳出流量，並接受來自任何活動通訊埠的傳入流量。\t 這是一個靜態設定，不會與對等體或交換訊框以監控連結。 "
+"Hash包括乙太網來源和目標地址，以及VLAN標記（如果可用）以及IP來源和目標地址。"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:86
 msgid ""
@@ -22667,14 +22675,14 @@ msgstr ""
 
 #: src/usr/local/www/services_igmpproxy_edit.php:177
 msgid "Threshold"
-msgstr "閾值"
+msgstr "臨界值"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:180
 msgid ""
 "Defines the TTL threshold for the network interface. Packets with a lower "
 "TTL than the threshold value will be ignored. This setting is optional, and "
 "by default the threshold is 1."
-msgstr "定義網路介面的TTL閾值。 TTL低於閾值的數據包將被忽略。 此設定是可選的，預設情況下閾值為1。 "
+msgstr "定義網路介面的TTL臨界值。 TTL低於臨界值的數據包將被忽略。 此設定是可選的，預設情況下臨界值為1。 "
 
 #: src/usr/local/www/services_igmpproxy_edit.php:240
 msgid "Add network"
@@ -23708,7 +23716,7 @@ msgstr "輪詢通訊埠"
 
 #: src/usr/local/www/services_snmp.php:112
 msgid "Invalid character '#' in SNMP trap string"
-msgstr "SNMP陷阱字串中的字元'＃'無效"
+msgstr "SNMP Traps字串中的字元'＃'無效"
 
 #: src/usr/local/www/services_snmp.php:116
 #: src/usr/local/www/services_snmp.php:275
@@ -23756,11 +23764,11 @@ msgstr "單位字串就像一個密碼，限制向知道單位字串的主機查
 
 #: src/usr/local/www/services_snmp.php:254
 msgid "SNMP Traps Enable"
-msgstr "啟用SNMP陷阱"
+msgstr "啟用SNMP Traps"
 
 #: src/usr/local/www/services_snmp.php:265
 msgid "SNMP Trap Settings"
-msgstr "SNMP陷阱設定"
+msgstr "SNMP Traps設定"
 
 #: src/usr/local/www/services_snmp.php:278
 msgid "Enter the trap server name"
@@ -23776,7 +23784,7 @@ msgstr "輸入發送陷阱的通訊埠（預設162）"
 
 #: src/usr/local/www/services_snmp.php:289
 msgid "SNMP Trap String"
-msgstr "SNMP陷阱字串"
+msgstr "SNMP Traps字串"
 
 #: src/usr/local/www/services_snmp.php:296
 msgid "SNMP Modules"
@@ -24167,7 +24175,7 @@ msgstr "必須為要緩存的主機數指定有效值。"
 
 #: src/usr/local/www/services_unbound_advanced.php:124
 msgid "A valid value must be specified for Unwanted Reply Threshold."
-msgstr "必須為不需要的回復閾值指定有效值。"
+msgstr "必須為不需要的回復臨界值指定有效值。"
 
 #: src/usr/local/www/services_unbound_advanced.php:127
 msgid "A valid value must be specified for Log Level."
@@ -24356,7 +24364,7 @@ msgstr "百萬"
 
 #: src/usr/local/www/services_unbound_advanced.php:338
 msgid "Unwanted Reply Threshold"
-msgstr "不需要回復的閾值"
+msgstr "不需要回復的臨界值"
 
 #: src/usr/local/www/services_unbound_advanced.php:342
 msgid ""
@@ -24366,7 +24374,7 @@ msgid ""
 "RRSet and message caches, hopefully flushing away any poison. The default is "
 "disabled, but if enabled a value of 10 million is suggested."
 msgstr ""
-" 如果啟用，則在每個線程中記錄不需要回復的總數。當它達到閾值時，將採取防禦性操作，並向日誌檔發送警告。這個防禦動作是清除RRSet和消息緩存。預設為停用，但如果啟用，建議值為1000萬。"
+" 如果啟用，則在每個線程中記錄不需要回復的總數。當它達到臨界值時，將採取防禦性操作，並向日誌檔發送警告。這個防禦動作是清除RRSet和消息緩存。預設為停用，但如果啟用，建議值為1000萬。"
 
 #: src/usr/local/www/services_unbound_advanced.php:346
 msgid "level"
@@ -26877,7 +26885,7 @@ msgstr "為WEB配置器選擇一種語言"
 
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
-#: src/usr/local/www/system_certmanager.php:1209
+#: src/usr/local/www/system_certmanager.php:1232
 msgid "webConfigurator"
 msgstr "WEB 配置器"
 
@@ -28499,11 +28507,11 @@ msgstr "已刪除認證伺服器 %s。"
 #: src/usr/local/www/system_camanager.php:167
 #: src/usr/local/www/system_camanager.php:184
 #: src/usr/local/www/system_camanager.php:199
-#: src/usr/local/www/system_certmanager.php:215
-#: src/usr/local/www/system_certmanager.php:235
-#: src/usr/local/www/system_certmanager.php:252
-#: src/usr/local/www/system_certmanager.php:270
-#: src/usr/local/www/system_certmanager.php:537
+#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:541
 #: src/usr/local/www/system_crlmanager.php:198
 #: src/usr/local/www/system_crlmanager.php:204
 #: src/usr/local/www/system_usermanager.php:201
@@ -28637,8 +28645,8 @@ msgstr "伺服器設定"
 
 #: src/usr/local/www/system_authservers.php:492
 #: src/usr/local/www/system_camanager.php:485
-#: src/usr/local/www/system_certmanager.php:653
-#: src/usr/local/www/system_certmanager.php:1052
+#: src/usr/local/www/system_certmanager.php:657
+#: src/usr/local/www/system_certmanager.php:1063
 #: src/usr/local/www/system_crlmanager.php:358
 #: src/usr/local/www/system_crlmanager.php:423
 msgid "*Descriptive name"
@@ -28865,12 +28873,12 @@ msgid "Certificate Authority %s and its CRLs (if any) successfully deleted."
 msgstr "憑證頒發機構 %s 和它的CRL（如果有的話）已成功刪除。"
 
 #: src/usr/local/www/system_camanager.php:168
-#: src/usr/local/www/system_certmanager.php:236
+#: src/usr/local/www/system_certmanager.php:237
 msgid "Certificate data"
 msgstr "憑證數據 "
 
 #: src/usr/local/www/system_camanager.php:170
-#: src/usr/local/www/system_certmanager.php:239
+#: src/usr/local/www/system_certmanager.php:240
 msgid "This certificate does not appear to be valid."
 msgstr "此憑證似乎無效。"
 
@@ -28879,15 +28887,15 @@ msgid "Encrypted private keys are not yet supported."
 msgstr "不支持加密的私鑰。"
 
 #: src/usr/local/www/system_camanager.php:176
-#: src/usr/local/www/system_certmanager.php:243
+#: src/usr/local/www/system_certmanager.php:244
 msgid ""
 "The submitted private key does not match the submitted certificate data."
 msgstr "提交的私鑰與提交的憑證數據不匹配。"
 
 #: src/usr/local/www/system_camanager.php:185
 #: src/usr/local/www/system_camanager.php:201
-#: src/usr/local/www/system_certmanager.php:254
-#: src/usr/local/www/system_certmanager.php:271
+#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:272
 #: src/usr/local/www/system_usermanager.php:203
 #: src/usr/local/www/system_usermanager.php:932
 msgid "Key length"
@@ -28895,7 +28903,7 @@ msgstr "密鑰長度 "
 
 #: src/usr/local/www/system_camanager.php:186
 #: src/usr/local/www/system_camanager.php:202
-#: src/usr/local/www/system_certmanager.php:256
+#: src/usr/local/www/system_certmanager.php:257
 #: src/usr/local/www/system_usermanager.php:204
 #: src/usr/local/www/system_usermanager.php:952
 #: src/usr/local/www/vpn_ipsec_phase2.php:668
@@ -28904,43 +28912,43 @@ msgstr "有效期"
 
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
-#: src/usr/local/www/system_certmanager.php:257
-#: src/usr/local/www/system_certmanager.php:272
+#: src/usr/local/www/system_certmanager.php:258
+#: src/usr/local/www/system_certmanager.php:273
 msgid "Distinguished name Country Code"
 msgstr "可分辨名稱國家代碼"
 
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
-#: src/usr/local/www/system_certmanager.php:258
-#: src/usr/local/www/system_certmanager.php:273
+#: src/usr/local/www/system_certmanager.php:259
+#: src/usr/local/www/system_certmanager.php:274
 msgid "Distinguished name State or Province"
 msgstr "可分辨名稱州或省"
 
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
-#: src/usr/local/www/system_certmanager.php:259
-#: src/usr/local/www/system_certmanager.php:274
+#: src/usr/local/www/system_certmanager.php:260
+#: src/usr/local/www/system_certmanager.php:275
 msgid "Distinguished name City"
 msgstr "可分辨名稱城市"
 
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
-#: src/usr/local/www/system_certmanager.php:260
-#: src/usr/local/www/system_certmanager.php:275
+#: src/usr/local/www/system_certmanager.php:261
+#: src/usr/local/www/system_certmanager.php:276
 msgid "Distinguished name Organization"
 msgstr "可分辨名稱組織 "
 
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
-#: src/usr/local/www/system_certmanager.php:261
-#: src/usr/local/www/system_certmanager.php:276
+#: src/usr/local/www/system_certmanager.php:262
+#: src/usr/local/www/system_certmanager.php:277
 msgid "Distinguished name Email Address"
 msgstr "可分辨名稱電郵地址 "
 
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_camanager.php:208
-#: src/usr/local/www/system_certmanager.php:262
-#: src/usr/local/www/system_certmanager.php:277
+#: src/usr/local/www/system_certmanager.php:263
+#: src/usr/local/www/system_certmanager.php:278
 msgid "Distinguished name Common Name"
 msgstr "可分辨名稱通用名稱"
 
@@ -28953,48 +28961,49 @@ msgid "The field 'Descriptive Name' contains invalid characters."
 msgstr "描述性名稱包含無效字元。"
 
 #: src/usr/local/www/system_camanager.php:221
-#: src/usr/local/www/system_certmanager.php:356
+#: src/usr/local/www/system_certmanager.php:357
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
 msgstr "字段“可分辨名稱電子郵件地址”包含無效字元。"
 
 #: src/usr/local/www/system_camanager.php:226
-#: src/usr/local/www/system_certmanager.php:362
-#: src/usr/local/www/system_certmanager.php:369
+#: src/usr/local/www/system_certmanager.php:363
+#: src/usr/local/www/system_certmanager.php:370
 msgid "Please select a valid Key Length."
 msgstr "請選擇有效的密鑰長度"
 
 #: src/usr/local/www/system_camanager.php:229
-#: src/usr/local/www/system_certmanager.php:365
-#: src/usr/local/www/system_certmanager.php:372
+#: src/usr/local/www/system_certmanager.php:366
+#: src/usr/local/www/system_certmanager.php:373
+#: src/usr/local/www/system_certmanager.php:376
 msgid "Please select a valid Digest Algorithm."
 msgstr "請選擇有效的摘要演算法。"
 
 #: src/usr/local/www/system_camanager.php:315
-#: src/usr/local/www/system_certmanager.php:584
+#: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_crlmanager.php:253
 msgid "Certificate Manager"
 msgstr "憑證管理 "
 
 #: src/usr/local/www/system_camanager.php:315
 #: src/usr/local/www/system_camanager.php:344
-#: src/usr/local/www/system_certmanager.php:602
+#: src/usr/local/www/system_certmanager.php:606
 #: src/usr/local/www/system_crlmanager.php:336
 msgid "CAs"
 msgstr "CAs"
 
 #: src/usr/local/www/system_camanager.php:345
 #: src/usr/local/www/system_camanager.php:361
-#: src/usr/local/www/system_certmanager.php:584
-#: src/usr/local/www/system_certmanager.php:603
-#: src/usr/local/www/system_certmanager.php:1101
+#: src/usr/local/www/system_certmanager.php:588
+#: src/usr/local/www/system_certmanager.php:607
+#: src/usr/local/www/system_certmanager.php:1112
 #: src/usr/local/www/system_crlmanager.php:337
 #: src/usr/local/www/system_crlmanager.php:580
 msgid "Certificates"
 msgstr "憑證 "
 
 #: src/usr/local/www/system_camanager.php:346
-#: src/usr/local/www/system_certmanager.php:604
+#: src/usr/local/www/system_certmanager.php:608
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_crlmanager.php:338
 msgid "Certificate Revocation"
@@ -29010,37 +29019,37 @@ msgid "Internal"
 msgstr "內部 "
 
 #: src/usr/local/www/system_camanager.php:360
-#: src/usr/local/www/system_certmanager.php:1108
+#: src/usr/local/www/system_certmanager.php:1119
 msgid "Issuer"
 msgstr "簽發者 "
 
 #: src/usr/local/www/system_camanager.php:362
-#: src/usr/local/www/system_certmanager.php:1109
+#: src/usr/local/www/system_certmanager.php:1120
 msgid "Distinguished Name"
 msgstr "可分辨名稱"
 
 #: src/usr/local/www/system_camanager.php:380
-#: src/usr/local/www/system_certmanager.php:1134
+#: src/usr/local/www/system_certmanager.php:1145
 msgid "self-signed"
 msgstr "自簽署 "
 
 #: src/usr/local/www/system_camanager.php:382
-#: src/usr/local/www/system_certmanager.php:1136
+#: src/usr/local/www/system_certmanager.php:1147
 msgid "external"
 msgstr "外部 "
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid From"
 msgstr "有效期自"
 
 #: src/usr/local/www/system_camanager.php:414
-#: src/usr/local/www/system_certmanager.php:1200
+#: src/usr/local/www/system_certmanager.php:1223
 msgid "Valid Until"
 msgstr "有效期至"
 
 #: src/usr/local/www/system_camanager.php:425
-#: src/usr/local/www/system_certmanager.php:1221
+#: src/usr/local/www/system_certmanager.php:1244
 msgid "IPsec Tunnel"
 msgstr "IPsec隧道"
 
@@ -29069,7 +29078,7 @@ msgid "Create / Edit CA"
 msgstr "創建/編輯CA"
 
 #: src/usr/local/www/system_camanager.php:493
-#: src/usr/local/www/system_certmanager.php:645
+#: src/usr/local/www/system_certmanager.php:649
 #: src/usr/local/www/system_crlmanager.php:349
 msgid "*Method"
 msgstr "*憑證來源"
@@ -29079,12 +29088,12 @@ msgid "Existing Certificate Authority"
 msgstr "現有的憑證頒發機構"
 
 #: src/usr/local/www/system_camanager.php:506
-#: src/usr/local/www/system_certmanager.php:731
+#: src/usr/local/www/system_certmanager.php:742
 msgid "*Certificate data"
 msgstr "*憑證數據 "
 
 #: src/usr/local/www/system_camanager.php:508
-#: src/usr/local/www/system_certmanager.php:733
+#: src/usr/local/www/system_certmanager.php:744
 msgid "Paste a certificate in X.509 PEM format here."
 msgstr "粘貼X.509 PEM格式的憑證。 "
 
@@ -29122,62 +29131,63 @@ msgid "*Key length (bits)"
 msgstr "*密鑰長度（位）"
 
 #: src/usr/local/www/system_camanager.php:559
-#: src/usr/local/www/system_certmanager.php:779
-#: src/usr/local/www/system_certmanager.php:860
+#: src/usr/local/www/system_certmanager.php:729
+#: src/usr/local/www/system_certmanager.php:790
+#: src/usr/local/www/system_certmanager.php:871
 msgid "*Digest Algorithm"
 msgstr "*摘要演算法"
 
 #: src/usr/local/www/system_camanager.php:562
-#: src/usr/local/www/system_certmanager.php:782
+#: src/usr/local/www/system_certmanager.php:793
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible."
 ""
 msgstr "注意：如果可能，建議使用比SHA1更強的演算法。"
 
 #: src/usr/local/www/system_camanager.php:567
-#: src/usr/local/www/system_certmanager.php:787
+#: src/usr/local/www/system_certmanager.php:798
 msgid "*Lifetime (days)"
 msgstr "*有效期（天）"
 
 #: src/usr/local/www/system_camanager.php:574
-#: src/usr/local/www/system_certmanager.php:794
-#: src/usr/local/www/system_certmanager.php:868
+#: src/usr/local/www/system_certmanager.php:805
+#: src/usr/local/www/system_certmanager.php:879
 msgid "*Country Code"
 msgstr "*國家代碼"
 
 #: src/usr/local/www/system_camanager.php:581
-#: src/usr/local/www/system_certmanager.php:801
-#: src/usr/local/www/system_certmanager.php:875
+#: src/usr/local/www/system_certmanager.php:812
+#: src/usr/local/www/system_certmanager.php:886
 msgid "*State or Province"
 msgstr "*州或省"
 
 #: src/usr/local/www/system_camanager.php:589
-#: src/usr/local/www/system_certmanager.php:809
-#: src/usr/local/www/system_certmanager.php:883
+#: src/usr/local/www/system_certmanager.php:820
+#: src/usr/local/www/system_certmanager.php:894
 msgid "*City"
 msgstr "*城市 "
 
 #: src/usr/local/www/system_camanager.php:597
-#: src/usr/local/www/system_certmanager.php:817
-#: src/usr/local/www/system_certmanager.php:891
+#: src/usr/local/www/system_certmanager.php:828
+#: src/usr/local/www/system_certmanager.php:902
 msgid "*Organization"
 msgstr "*組織 "
 
 #: src/usr/local/www/system_camanager.php:605
-#: src/usr/local/www/system_certmanager.php:825
-#: src/usr/local/www/system_certmanager.php:899
+#: src/usr/local/www/system_certmanager.php:836
+#: src/usr/local/www/system_certmanager.php:910
 msgid "Organizational Unit"
 msgstr "組織單位"
 
 #: src/usr/local/www/system_camanager.php:613
-#: src/usr/local/www/system_certmanager.php:833
-#: src/usr/local/www/system_certmanager.php:907
+#: src/usr/local/www/system_certmanager.php:844
+#: src/usr/local/www/system_certmanager.php:918
 msgid "*Email Address"
 msgstr "*郵件地址 "
 
 #: src/usr/local/www/system_camanager.php:621
-#: src/usr/local/www/system_certmanager.php:841
-#: src/usr/local/www/system_certmanager.php:915
+#: src/usr/local/www/system_certmanager.php:852
+#: src/usr/local/www/system_certmanager.php:926
 #: src/usr/local/www/vpn_openvpn_csc.php:341
 msgid "*Common Name"
 msgstr "*通用名稱 "
@@ -29207,280 +29217,290 @@ msgstr "選擇現有憑證"
 msgid "Certificate %s successfully deleted."
 msgstr "憑證 %s 已被成功刪除。"
 
-#: src/usr/local/www/system_certmanager.php:216
+#: src/usr/local/www/system_certmanager.php:217
 msgid "CA to sign with"
 msgstr "CA簽署"
 
-#: src/usr/local/www/system_certmanager.php:221
+#: src/usr/local/www/system_certmanager.php:222
 msgid "This signing request does not appear to be valid."
 msgstr "此簽名請求無效。"
 
-#: src/usr/local/www/system_certmanager.php:225
+#: src/usr/local/www/system_certmanager.php:226
 msgid "This private does not appear to be valid."
 msgstr "這個私鑰無效。"
 
-#: src/usr/local/www/system_certmanager.php:226
+#: src/usr/local/www/system_certmanager.php:227
 msgid "Key data field should be blank, or a valid x509 private key"
 msgstr "密鑰數據字段應為空白或有效的x509私鑰"
 
-#: src/usr/local/www/system_certmanager.php:237
-#: src/usr/local/www/system_certmanager.php:713
+#: src/usr/local/www/system_certmanager.php:238
+#: src/usr/local/www/system_certmanager.php:717
 msgid "Key data"
 msgstr "密鑰數據 "
 
-#: src/usr/local/www/system_certmanager.php:253
+#: src/usr/local/www/system_certmanager.php:254
 #: src/usr/local/www/system_usermanager.php:202
 #: src/usr/local/www/system_usermanager.php:925
 msgid "Certificate authority"
 msgstr "憑證頒發機構"
 
-#: src/usr/local/www/system_certmanager.php:255
+#: src/usr/local/www/system_certmanager.php:256
 msgid "Certificate Type"
 msgstr "憑證類型 "
 
-#: src/usr/local/www/system_certmanager.php:282
+#: src/usr/local/www/system_certmanager.php:283
 msgid "Existing Certificate Choice"
 msgstr "現有憑證選擇 "
 
-#: src/usr/local/www/system_certmanager.php:538
+#: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
 msgstr "最終憑證數據"
 
-#: src/usr/local/www/system_certmanager.php:562
+#: src/usr/local/www/system_certmanager.php:566
 #, php-format
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr "憑證公鑰與簽名請求公鑰不符。"
 
-#: src/usr/local/www/system_certmanager.php:640
+#: src/usr/local/www/system_certmanager.php:644
 msgid "Add/Sign a New Certificate"
 msgstr "新增/簽署新憑證"
 
-#: src/usr/local/www/system_certmanager.php:685
+#: src/usr/local/www/system_certmanager.php:689
 msgid "New CSR (Paste below)"
 msgstr "新增 CSR (在下面粘貼)"
 
-#: src/usr/local/www/system_certmanager.php:688
+#: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
 msgstr "簽署CSR"
 
-#: src/usr/local/www/system_certmanager.php:693
+#: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
 msgstr "*CA簽署"
 
-#: src/usr/local/www/system_certmanager.php:700
+#: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
 msgstr "*CSR簽署"
 
-#: src/usr/local/www/system_certmanager.php:707
+#: src/usr/local/www/system_certmanager.php:711
 msgid "CSR data"
 msgstr "CSR數據"
 
-#: src/usr/local/www/system_certmanager.php:709
+#: src/usr/local/www/system_certmanager.php:713
 msgid "Paste a Certificate Signing Request in X.509 PEM format here."
 msgstr "以X.509 PEM格式粘貼憑證簽名請求。"
 
-#: src/usr/local/www/system_certmanager.php:715
+#: src/usr/local/www/system_certmanager.php:719
 msgid ""
 "Optionally paste a private key here. The key will be associated with the "
 "newly signed certificate in pfSense"
 msgstr "可選擇在此處粘貼私鑰。 密鑰將與pfSense中新簽署的憑證相關聯"
 
-#: src/usr/local/www/system_certmanager.php:719
+#: src/usr/local/www/system_certmanager.php:723
 msgid "*Certificate Lifetime (days)"
 msgstr "*憑證有效期(天)"
 
-#: src/usr/local/www/system_certmanager.php:726
-msgid "Import Certificate"
-msgstr "導入憑證"
-
-#: src/usr/local/www/system_certmanager.php:737
-msgid "*Private key data"
-msgstr "*私鑰數據"
-
-#: src/usr/local/www/system_certmanager.php:739
-msgid "Paste a private key in X.509 PEM format here."
-msgstr "在此處將私鑰粘貼到X.509 PEM格式中。"
-
-#: src/usr/local/www/system_certmanager.php:742
-msgid "Internal Certificate"
-msgstr "內部憑證"
-
-#: src/usr/local/www/system_certmanager.php:748
-msgid "No internal Certificate Authorities have been defined. "
-msgstr "沒有定義內部憑證頒發機構。"
-
-#: src/usr/local/www/system_certmanager.php:749
-msgid ""
-"An internal CA must be defined in order to create an internal certificate. "
-msgstr "必須定義內部CA才能創建內部憑證。"
-
-#: src/usr/local/www/system_certmanager.php:750
-#, php-format
-msgid "%1$sCreate%2$s an internal CA."
-msgstr "%1$s創建%2$s內部CA。"
-
-#: src/usr/local/www/system_certmanager.php:747
-#: src/usr/local/www/system_certmanager.php:764
-msgid "*Certificate authority"
-msgstr "*憑證頒發機構"
-
-#: src/usr/local/www/system_certmanager.php:772
-#: src/usr/local/www/system_certmanager.php:853
-msgid "*Key length"
-msgstr "*密鑰長度 "
-
-#: src/usr/local/www/system_certmanager.php:848
-msgid "External Signing Request"
-msgstr "外部簽名請求 "
-
-#: src/usr/local/www/system_certmanager.php:863
+#: src/usr/local/www/system_certmanager.php:732
+#: src/usr/local/www/system_certmanager.php:874
 msgid ""
 "NOTE: It is recommended to use an algorithm stronger than SHA1 when possible"
 msgstr "注意：如果可能，建議使用比SHA1更強的演算法。 "
 
-#: src/usr/local/www/system_certmanager.php:922
+#: src/usr/local/www/system_certmanager.php:737
+msgid "Import Certificate"
+msgstr "導入憑證"
+
+#: src/usr/local/www/system_certmanager.php:748
+msgid "*Private key data"
+msgstr "*私鑰數據"
+
+#: src/usr/local/www/system_certmanager.php:750
+msgid "Paste a private key in X.509 PEM format here."
+msgstr "在此處將私鑰粘貼到X.509 PEM格式中。"
+
+#: src/usr/local/www/system_certmanager.php:753
+msgid "Internal Certificate"
+msgstr "內部憑證"
+
+#: src/usr/local/www/system_certmanager.php:759
+msgid "No internal Certificate Authorities have been defined. "
+msgstr "沒有定義內部憑證頒發機構。"
+
+#: src/usr/local/www/system_certmanager.php:760
+msgid ""
+"An internal CA must be defined in order to create an internal certificate. "
+msgstr "必須定義內部CA才能創建內部憑證。"
+
+#: src/usr/local/www/system_certmanager.php:761
+#, php-format
+msgid "%1$sCreate%2$s an internal CA."
+msgstr "%1$s創建%2$s內部CA。"
+
+#: src/usr/local/www/system_certmanager.php:758
+#: src/usr/local/www/system_certmanager.php:775
+msgid "*Certificate authority"
+msgstr "*憑證頒發機構"
+
+#: src/usr/local/www/system_certmanager.php:783
+#: src/usr/local/www/system_certmanager.php:864
+msgid "*Key length"
+msgstr "*密鑰長度 "
+
+#: src/usr/local/www/system_certmanager.php:859
+msgid "External Signing Request"
+msgstr "外部簽名請求 "
+
+#: src/usr/local/www/system_certmanager.php:933
 msgid "Choose an Existing Certificate"
 msgstr "選擇一個現有的憑證"
 
-#: src/usr/local/www/system_certmanager.php:951
+#: src/usr/local/www/system_certmanager.php:962
 msgid "*Existing Certificates"
 msgstr "*現有憑證 "
 
-#: src/usr/local/www/system_certmanager.php:958
+#: src/usr/local/www/system_certmanager.php:969
 msgid "Certificate Attributes"
 msgstr "憑證屬性"
 
-#: src/usr/local/www/system_certmanager.php:962
+#: src/usr/local/www/system_certmanager.php:973
 msgid "Attribute Notes"
 msgstr "屬性注釋"
 
-#: src/usr/local/www/system_certmanager.php:964
+#: src/usr/local/www/system_certmanager.php:975
 msgid ""
 "The following attributes are added to certificates and requests when they "
 "are created or signed. These attributes behave differently depending on the "
 "selected mode."
 msgstr "以下屬性在創建或簽名時新增到憑證和請求中。 這些屬性根據所選模式的不同而有所不同。"
 
-#: src/usr/local/www/system_certmanager.php:968
+#: src/usr/local/www/system_certmanager.php:979
 msgid ""
 "For Internal Certificates, these attributes are added directly to the "
 "certificate as shown."
 msgstr "對於內部憑證，這些屬性將直接新增到憑證中，如圖所示。"
 
-#: src/usr/local/www/system_certmanager.php:970
+#: src/usr/local/www/system_certmanager.php:981
 msgid ""
 "For Certificate Signing Requests, These attributes are added to the request "
 "but they may be ignored or changed by the CA that signs the request. "
 msgstr "對於憑證簽名請求，這些屬性被新增到請求中，但是它們可能被簽署請求的CA忽略或更改。"
 
-#: src/usr/local/www/system_certmanager.php:972
+#: src/usr/local/www/system_certmanager.php:983
 msgid ""
 "If this CSR will be signed using the Certificate Manager on this firewall, "
 "set the attributes when signing instead as they cannot be carried over."
 msgstr "如果此CSR將使用此防火牆上的憑證管理器進行簽名，請在簽署時設定屬性，因為它們無法繼承。"
 
-#: src/usr/local/www/system_certmanager.php:973
+#: src/usr/local/www/system_certmanager.php:984
 msgid ""
 "When Signing a Certificate Request, existing attributes in the request "
 "cannot be copied. The attributes below will be applied to the resulting "
 "certificate."
 msgstr "簽名憑證請求時，請求中的現有屬性無法複製。 以下屬性將應用於生成的憑證。"
 
-#: src/usr/local/www/system_certmanager.php:979
+#: src/usr/local/www/system_certmanager.php:990
 msgid "*Certificate Type"
 msgstr "*憑證類型 "
 
-#: src/usr/local/www/system_certmanager.php:982
+#: src/usr/local/www/system_certmanager.php:993
 msgid ""
 "Add type-specific usage attributes to the signed certificate. Used for "
 "placing usage restrictions on, or granting abilities to, the signed "
 "certificate."
 msgstr "將特定類型的使用屬性新增到簽名憑證。 用於對簽署的憑證設定使用限制或授予其他功能。"
 
-#: src/usr/local/www/system_certmanager.php:997
+#: src/usr/local/www/system_certmanager.php:1008
 msgid "Alternative Names"
 msgstr "替代名稱"
 
-#: src/usr/local/www/system_certmanager.php:1022
+#: src/usr/local/www/system_certmanager.php:1033
 msgid ""
 "Enter additional identifiers for the certificate in this list. The Common "
 "Name field is automatically added to the certificate as an Alternative Name. "
 "The signing CA may ignore or change these values."
 msgstr "在此列表中輸入憑證的其他識別字。 公用名稱字段將作為備用名稱自動新增到憑證中。 簽名CA可以忽略或更改這些值。"
 
-#: src/usr/local/www/system_certmanager.php:1048
+#: src/usr/local/www/system_certmanager.php:1059
 msgid "Complete Signing Request for "
 msgstr "完成簽名請求"
 
-#: src/usr/local/www/system_certmanager.php:1059
+#: src/usr/local/www/system_certmanager.php:1070
 msgid "Signing request data"
 msgstr "簽名請求數據"
 
-#: src/usr/local/www/system_certmanager.php:1063
+#: src/usr/local/www/system_certmanager.php:1074
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr "從此處複製憑證簽名數據，並將其轉發到憑證頒發機構進行簽名。"
 
-#: src/usr/local/www/system_certmanager.php:1067
+#: src/usr/local/www/system_certmanager.php:1078
 msgid "*Final certificate data"
 msgstr "*最終憑證數據"
 
-#: src/usr/local/www/system_certmanager.php:1070
+#: src/usr/local/www/system_certmanager.php:1081
 msgid "Paste the certificate received from the certificate authority here."
 msgstr "將從憑證頒發機構收到的憑證粘貼到此處。"
 
-#: src/usr/local/www/system_certmanager.php:1146
+#: src/usr/local/www/system_certmanager.php:1157
 msgid "private key only"
 msgstr "僅私鑰"
 
-#: src/usr/local/www/system_certmanager.php:1152
+#: src/usr/local/www/system_certmanager.php:1163
 msgid "external - signature pending"
 msgstr "外部 - 簽名等候"
 
-#: src/usr/local/www/system_certmanager.php:1177
+#: src/usr/local/www/system_certmanager.php:1189
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
+msgid "Serial: "
+msgstr "序列號："
+
+#: src/usr/local/www/system_certmanager.php:1195
+msgid "Signature Digest: "
+msgstr ""
+
+#: src/usr/local/www/system_certmanager.php:1200
 msgid "SAN: "
 msgstr "SAN: "
 
-#: src/usr/local/www/system_certmanager.php:1182
+#: src/usr/local/www/system_certmanager.php:1205
 msgid "KU: "
 msgstr "KU: "
 
-#: src/usr/local/www/system_certmanager.php:1187
+#: src/usr/local/www/system_certmanager.php:1210
 msgid "EKU: "
 msgstr "EKU: "
 
-#: src/usr/local/www/system_certmanager.php:1212
+#: src/usr/local/www/system_certmanager.php:1235
 msgid "User Cert"
 msgstr "用戶憑證"
 
-#: src/usr/local/www/system_certmanager.php:1230
+#: src/usr/local/www/system_certmanager.php:1253
 msgid "Export Certificate"
 msgstr "導出憑證"
 
-#: src/usr/local/www/system_certmanager.php:1232
-#: src/usr/local/www/system_certmanager.php:1238
+#: src/usr/local/www/system_certmanager.php:1255
+#: src/usr/local/www/system_certmanager.php:1261
 msgid "Export Key"
 msgstr "導出密鑰 "
 
-#: src/usr/local/www/system_certmanager.php:1234
+#: src/usr/local/www/system_certmanager.php:1257
 msgid "Export P12"
 msgstr "導出 p12"
 
-#: src/usr/local/www/system_certmanager.php:1236
+#: src/usr/local/www/system_certmanager.php:1259
 msgid "Update CSR"
 msgstr "更新CSR "
 
-#: src/usr/local/www/system_certmanager.php:1237
+#: src/usr/local/www/system_certmanager.php:1260
 msgid "Export Request"
 msgstr "導出請求"
 
-#: src/usr/local/www/system_certmanager.php:1241
+#: src/usr/local/www/system_certmanager.php:1264
 msgid "Delete Certificate"
 msgstr "刪除憑證"
 
-#: src/usr/local/www/system_certmanager.php:1257
+#: src/usr/local/www/system_certmanager.php:1280
 msgid "Add/Sign"
 msgstr "新增/簽署"
 
@@ -29876,7 +29896,7 @@ msgstr "在閘道組中使用此閘道的權重。"
 
 #: src/usr/local/www/system_gateways_edit.php:278
 msgid "Data Payload"
-msgstr "數據有效載荷"
+msgstr "數據有效負荷"
 
 #: src/usr/local/www/system_gateways_edit.php:282
 msgid "Define data payload to send on ICMP packets to gateway monitor IP."
@@ -29884,22 +29904,22 @@ msgstr "定義要在ICMP數據包上發送到閘道監視IP的數據有效負載
 
 #: src/usr/local/www/system_gateways_edit.php:284
 msgid "Latency thresholds"
-msgstr "延遲閾值"
+msgstr "延遲臨界值"
 
 #: src/usr/local/www/system_gateways_edit.php:299
 #, php-format
 msgid ""
 "Low and high thresholds for latency in milliseconds. Default is %1$d/%2$d."
-msgstr "低延遲和高延遲閾值（以毫秒為單位）。 預設值為%1$d/%2$d."
+msgstr "低延遲和高延遲臨界值（以毫秒為單位）。 預設值為%1$d/%2$d."
 
 #: src/usr/local/www/system_gateways_edit.php:304
 msgid "Packet Loss thresholds"
-msgstr "封包遺失閾值"
+msgstr "封包遺失臨界值"
 
 #: src/usr/local/www/system_gateways_edit.php:319
 #, php-format
 msgid "Low and high thresholds for packet loss in %%. Default is %1$d/%2$d."
-msgstr "封包遺失的低和高閾值 %%。預設是 %1$d/%2$d."
+msgstr "封包遺失的低和高臨界值 %%。預設是 %1$d/%2$d."
 
 #: src/usr/local/www/system_gateways_edit.php:325
 msgid "Probe Interval"
@@ -30008,7 +30028,7 @@ msgstr "- 警報間隔必須大於或等於探測頻率。"
 msgid ""
 "- The loss interval must be greater than or equal to the high latency "
 "threshold."
-msgstr "- 封包遺失間隔必須大於或等於高延遲閾值。"
+msgstr "- 封包遺失間隔必須大於或等於高延遲臨界值。"
 
 #: src/usr/local/www/system_gateways_edit.php:409
 msgid "Use non-local gateway"
@@ -34126,10 +34146,6 @@ msgstr "儲存的系統資訊小工具通過資訊中心過濾。"
 msgid "Unknown system"
 msgstr "未知系統"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
-msgid "Serial: "
-msgstr "序列號："
-
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
 msgstr "閘道設備ID:"
@@ -34233,7 +34249,7 @@ msgstr "（正在更新...）"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Thresholds in"
-msgstr "閾值"
+msgstr "臨界值"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "(1 to 100):"
@@ -35394,7 +35410,7 @@ msgstr "啟用SNMP後臺程序及其控制器"
 
 #: src/usr/local/www/services_snmp.php:259
 msgid "Enable the SNMP Trap and its controls"
-msgstr "啟用SNMP陷阱及其控制器"
+msgstr "啟用SNMP Traps及其控制器"
 
 #: src/usr/local/www/services_snmp.php:303
 msgid "MibII"
@@ -35480,7 +35496,7 @@ msgstr "在DNS查詢中使用0x-20編碼的隨機比特來進行欺騙嘗試。"
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:235
 #: src/usr/local/www/services_unbound_host_edit.php:303
-#: src/usr/local/www/system_certmanager.php:963
+#: src/usr/local/www/system_certmanager.php:974
 #: src/usr/local/www/system_gateways_edit.php:373
 #: src/usr/local/www/system_groupmanager_addprivs.php:189
 #: src/usr/local/www/system_usermanager_addprivs.php:173
@@ -35950,7 +35966,7 @@ msgstr "停用此靜態路由"
 
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the Dashboard auto-update check"
-msgstr ""
+msgstr "停用儀錶板自動系統更新檢查"
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"

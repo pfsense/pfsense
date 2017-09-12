@@ -1133,7 +1133,7 @@ $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $plugin
 $i = 0;
 foreach ($a_cert as $i => $cert):
 	$name = htmlspecialchars($cert['descr']);
-
+	$sans = array();
 	if ($cert['crt']) {
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);

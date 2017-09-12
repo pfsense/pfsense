@@ -25,8 +25,15 @@ require_once("config.inc");
 require_once("openvpn.inc");
 require_once("util.inc");
 
-function has_special_chars($text) {
-	return preg_match('/[^A-Za-z0-9 _-]/', $text);
+// Load valid country codes
+$dn_cc = array();
+if (file_exists("/etc/ca_countries")) {
+	$dn_cc_file=file("/etc/ca_countries");
+	foreach ($dn_cc_file as $line) {
+		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
+			$dn_cc[$matches[1]] = $matches[1];
+		}
+	}
 }
 
 function step1_stepsubmitbeforesave() {
@@ -190,7 +197,7 @@ function step6_submitphpaction() {
 }
 
 function step7_submitphpaction() {
-	global $input_errors, $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config, $dn_cc;
 
 	$canames = array();
 	$cacns = array();
@@ -211,10 +218,9 @@ function step7_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
-	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
+	} elseif (!array_key_exists($_POST['country'], $dn_cc)) {
 		$stepid--;
-		$input_errors[] = "Please limit Certificate field names to only the following characters: A-Z, a-z, space, underscore, and dash.";
+		$input_errors[] = "Please enter a valid country code.";
 	} elseif (in_array($_POST['descr'], $canames) || in_array($_POST['descr'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certificate Authority. A Certificate Authority with that name already exists.";
@@ -293,7 +299,7 @@ function step9_stepbeforeformdisplay() {
 }
 
 function step9_submitphpaction() {
-	global $input_errors, $stepid, $savemsg, $_POST, $config;
+	global $input_errors, $stepid, $savemsg, $_POST, $config, $dn_cc;
 
 	$certnames = array();
 	$certcns = array();
@@ -314,10 +320,9 @@ function step9_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
-	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
+	} elseif (!array_key_exists($_POST['country'], $dn_cc)) {
 		$stepid--;
-		$input_errors[] = "Please do not use special characters in Certificate field names.";
+		$input_errors[] = "Please enter a valid country code.";
 	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";
@@ -504,11 +509,11 @@ function step12_submitphpaction() {
 		$ca['descr'] = $pconfig['step6']['certca'];
 		$dn = array(
 			'countryName' => $pconfig['step6']['country'],
-			'stateOrProvinceName' => $pconfig['step6']['state'],
-			'localityName' => $pconfig['step6']['city'],
-			'organizationName' => $pconfig['step6']['organization'],
-			'emailAddress' => $pconfig['step6']['email'],
-			'commonName' => $pconfig['step6']['certca']);
+			'stateOrProvinceName' => cert_escape_x509_chars($pconfig['step6']['state']),
+			'localityName' => cert_escape_x509_chars($pconfig['step6']['city']),
+			'organizationName' => cert_escape_x509_chars($pconfig['step6']['organization']),
+			'emailAddress' => cert_escape_x509_chars($pconfig['step6']['email']),
+			'commonName' => cert_escape_x509_chars($pconfig['step6']['certca']));
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn, "sha256");
 		if (!is_array($config['ca']))
@@ -531,11 +536,13 @@ function step12_submitphpaction() {
 		$cert['descr'] = $pconfig['step9']['certname'];
 		$dn = array(
 			'countryName' => $pconfig['step9']['country'],
-			'stateOrProvinceName' => $pconfig['step9']['state'],
-			'localityName' => $pconfig['step9']['city'],
-			'organizationName' => $pconfig['step9']['organization'],
-			'emailAddress' => $pconfig['step9']['email'],
-			'commonName' => $pconfig['step9']['certname']);
+			'stateOrProvinceName' => cert_escape_x509_chars($pconfig['step9']['state']),
+			'localityName' => cert_escape_x509_chars($pconfig['step9']['city']),
+			'organizationName' => cert_escape_x509_chars($pconfig['step9']['organization']),
+			'emailAddress' => cert_escape_x509_chars($pconfig['step9']['email']),
+			'commonName' => cert_escape_x509_chars($pconfig['step9']['certname']),
+			'subjectAltName' => cert_add_altname_type($pconfig['step9']['certname']),
+			);
 
 		cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn, 'server', "sha256");
 		if (!is_array($config['cert']))

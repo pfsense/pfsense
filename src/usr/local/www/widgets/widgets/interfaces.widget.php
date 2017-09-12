@@ -90,7 +90,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		if ($ifinfo == NULL) {
 			continue;
 		}
-		$typeicon = 'sitemap';
+		$typeicon = ($ifname == "host") ? 'crosshairs' : 'share-alt';
 		$switchport = true;
 	} else {
 		$switchport = false;
@@ -161,6 +161,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 					<?=htmlspecialchars($ifinfo['media']['active']);?>
 				<?php else: ?>
 					<?=htmlspecialchars($ifinfo['media']['current']);?>
+				<?php endif; ?>
+				<br/>
+				<?php if ($ifname == "host") :?>
+					<em style="font-size:small"><?= gettext("Switch Uplink"); ?></em>
+				<?php else: ?>
+					<em style="font-size:small"><?= gettext("Switch Port"); ?></em>
 				<?php endif; ?>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['media']);?>

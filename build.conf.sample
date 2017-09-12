@@ -33,15 +33,15 @@ export PRODUCT_URL="https://www.pfsense.org/"
 #export NO_CLEAN_FREEBSD_OBJ=YES
 
 # rsync data to upload snapshots
-export RSYNCIP="firmware.netgate.com"
-export RSYNCUSER="wwwsync"
-export RSYNCPATH="/firmware/beta/snapshots"
-
+#export RSYNCIP="nfs1.nyi.netgate.com"
+#export RSYNCUSER="wwwsync"
+#export RSYNCPATH="/storage/files/firmware/beta/snapshots"
+#
 # rsync data to upload pkg repo
-export PKG_RSYNC_HOSTNAME="firmware.netgate.com"
-export PKG_RSYNC_USERNAME="wwwsync"
-export PKG_RSYNC_SSH_PORT="22"
-export PKG_RSYNC_DESTDIR="/firmware/beta/packages"
+#export PKG_RSYNC_HOSTNAME="firmware.netgate.com"
+#export PKG_RSYNC_USERNAME="wwwsync"
+#export PKG_RSYNC_SSH_PORT="22"
+#export PKG_RSYNC_DESTDIR="/storage/files/firmware/beta/packages"
 
 # pkg repo URL
 #export PKG_REPO_SERVER_DEVEL="pkg+http://firmware.netgate.com/beta/packages"

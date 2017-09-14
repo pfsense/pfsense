@@ -323,13 +323,13 @@ function get_dpinger_status($gwname, $detailed = false) {
 	$proc = $running_processes[$gwname];
 	unset($running_processes);
 
-	if (!file_exists($proc['socket'])) {
-		log_error("dpinger: status socket {$proc['socket']} not found");
-		return false;
-	}
 	$timeoutcounter = 0;
 	while (true) {
-		$fp = stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
+		if (!file_exists($proc['socket'])) {
+			log_error("dpinger: status socket {$proc['socket']} not found");
+			return false;
+		}
+		$fp = @stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
 		if (!$fp) {
 			log_error(sprintf(gettext('dpinger: cannot connect to status socket %1$s - %2$s (%3$s)'), $proc['socket'], $errstr, $errno));
 			return false;

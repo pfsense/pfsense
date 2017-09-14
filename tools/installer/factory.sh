@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
 does_if_exist() {
 	local _if="$1"
 
@@ -20,6 +22,73 @@ get_if_mac() {
 	fi
 
 	echo "${_if_mac}"
+}
+
+upgrade_netgate_coreboot() {
+	local _roms_dir=/usr/local/share/pfSense-pkg-Netgate_Coreboot_Upgrade/roms
+
+	# No roms found in this installation media, aborting
+	[ -d /mnt/${_roms_dir} ] \
+	    || return 0
+
+	local _adi_flash_util=/usr/local/sbin/adi_flash_util
+
+	# Upgrade utility is not available
+	[ -f /mnt/${_adi_flash_util} ] \
+	    || return 0
+
+	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
+	local _coreboot_model=""
+
+	case "${_product}" in
+		RCC-VE)
+			_coreboot_model="RCCVE"
+			;;
+		DFFv2)
+			_coreboot_model="DFF2"
+			;;
+		RCC)
+			_coreboot_model="RCC"
+			;;
+		*)
+			# Unsupported model
+			return 0
+			;;
+	esac
+
+	# Look for available rom for this model
+	local _avail_rom=$(cd /mnt/${_roms_dir} && \
+	    ls -1 ADI_${_coreboot_model}-*.rom 2>/dev/null | tail -n 1)
+
+	[ -f "/mnt/${_roms_dir}/${_avail_rom}" ] \
+	    || return 0
+
+	# Get available version
+	local _avail_version=$(echo "${_avail_rom}" | \
+	    sed "s/^ADI_${_coreboot_model}-//; s/-.*//")
+
+	# Check current model and version
+	local _cur_model=$(/bin/kenv -q smbios.bios.version 2>/dev/null | \
+	    sed 's/^ADI_//; s/-.*//')
+	local _cur_version=$(/bin/kenv -q smbios.bios.version 2>/dev/null | \
+	    sed "s/^ADI_${_cur_model}-//; s/-.*//")
+
+	# Models don't match, leave it alone
+	[ "${_coreboot_model}" != "${_cur_model}" ] \
+	    && return 0
+
+	# Installed version is the latest, nothing to be done here
+	[ "${_avail_version}" = "${_cur_version}" ] \
+	    && return 0
+
+	# Upgrade coreboot
+	echo "===> Upgrading Netgate Coreboot"
+	mkdir -p /mnt/dev
+	mount -t devfs devfs /mnt/dev
+	chroot /mnt ${_adi_flash_util} -u ${_roms_dir}/${_avail_rom}
+	local _rc=$?
+	umount -f /mnt/dev
+	return ${_rc}
 }
 
 get_cur_model() {
@@ -219,6 +288,12 @@ fi
 
 if [ -z "${buildroom}" ]; then
 	exit 0
+fi
+
+# Make sure coreboot is in the last version
+if ! upgrade_netgate_coreboot; then
+	echo "Error while upgrading Netgate Coreboot"
+	exit 1
 fi
 
 # Get WAN mac address

@@ -458,7 +458,6 @@ while [ "${selected_model}" != "SG-1000" ]; do
 		"Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
 		"Order Number" 3 0 "" 3 $col 16 0 \
 		"Print sticker (0/1)" 4 0 "${sticker}" 4 $col 2 1 \
-		"Builder Initials" 5 0 "" 5 $col 16 0 \
 		2>&1 1>&3)
 	exec 3>&-
 
@@ -473,7 +472,6 @@ while [ "${selected_model}" != "SG-1000" ]; do
 			{
 				print "order=\""$1"\""
 				print "sticker=\""$2"\"";
-				print "builder=\""$3"\"";
 			}')
 	else
 		set_vars=$(echo "$factory_data" | \
@@ -483,7 +481,6 @@ while [ "${selected_model}" != "SG-1000" ]; do
 				print "serial=\""$1"\"";
 				print "order=\""$2"\""
 				print "sticker=\""$3"\"";
-				print "builder=\""$4"\"";
 			}')
 	fi
 
@@ -493,13 +490,13 @@ while [ "${selected_model}" != "SG-1000" ]; do
 		sticker=1
 	fi
 
-	if [ -n "${serial}" -a -n "${order}" -a -n "${builder}" ]; then
+	if [ -n "${serial}" -a -n "${order}" ]; then
 		break
 	fi
 
 	dialog --backtitle "pfSense installer" --title "Error" \
 		--msgbox \
-		"Serial, Order Number and Builder Initials are mandatory" \
+		"Serial and Order Number are mandatory" \
 		0 0
 done
 
@@ -531,7 +528,7 @@ if [ -n "${order}" ]; then
 fi
 
 if [ "${selected_model}" != "SG-1000" ]; then
-	postreq="${postreq}&wlan_mac=${wlan_mac}&builder=${builder}"
+	postreq="${postreq}&wlan_mac=${wlan_mac}"
 fi
 
 if [ -n "${support_type}" ]; then

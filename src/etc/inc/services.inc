@@ -1990,7 +1990,7 @@ function services_dyndns_configure($int = "") {
 				} else {
 					$group_int = $gwgroups[$dyndns['interface']][0]['int'];
 					$friendly_group_int =
-					    convert_real_interface_to_friendly_name(
+					    convert_real_interface_to_friendly_interface_name(
 						$group_int);
 				}
 			}
@@ -2553,7 +2553,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			} else {
 				$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
 				$friendly_group_int =
-				    convert_real_interface_to_friendly_name(
+				    convert_real_interface_to_friendly_interface_name(
 					$group_int);
 			}
 		}

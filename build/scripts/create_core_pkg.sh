@@ -186,5 +186,5 @@ fi
 run "Creating core package ${template_name}" \
 	"pkg create -o ${destdir} -p ${plist} -r ${root} -m ${metadir}"
 
-force_rm ${scratchdir}
+#force_rm ${scratchdir}
 trap "-" 1 2 15 EXIT

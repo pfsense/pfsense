@@ -51,7 +51,7 @@ END
 	exit 1
 }
 
-while getopts t:f:v:r:F:d:h opt; do
+while getopts s:t:f:v:r:F:d:h opt; do
 	case "$opt" in
 		t)
 			template=$OPTARG

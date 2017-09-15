@@ -77,7 +77,8 @@ core_pkg_create() {
 	local _flavor="${2}"
 	local _version="${3}"
 	local _root="${4}"
-	local _filter="${5}"
+	local _findroot="${5}"
+	local _filter="${6}"
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
@@ -86,6 +87,7 @@ core_pkg_create() {
 		-f "${_flavor}" \
 		-v "${_version}" \
 		-r "${_root}" \
+		-s "${_findroot}" \
 		-F "${_filter}" \
 		-d "${CORE_PKG_REAL_PATH}/All" \
 		|| print_error_pfS
@@ -161,7 +163,7 @@ build_all_kernels() {
 		ensure_kernel_exists $KERNEL_DESTDIR
 
 		echo ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
-		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \*.ko.debug
+		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} ./boot/kernel \*.ko.debug
 		rm -rf ${KERNEL_DESTDIR}/usr
 
 		echo ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}

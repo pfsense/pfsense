@@ -130,7 +130,9 @@ else
 		filter="-name ${filter}"
 	fi
 echo ${root}
-	: ${findroot="."}
+	if [ -z "${findroot}" ]; then
+		findroot="."
+	fi
 echo ${findroot}
 	for froot in ${findroot}; do
 echo froot ${froot}

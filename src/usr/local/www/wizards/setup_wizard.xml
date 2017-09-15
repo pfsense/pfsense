@@ -40,9 +40,20 @@
 </step>
 <step>
 	<id>2</id>
-	<title>Bling your pfSense with pfSense Gold</title>
+	<title>Netgate Global Support is available</title>
 	<disableheader>true</disableheader>
-	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now. &lt;br/&gt; &lt;br/&gt; </description>
+	<description>
+    pfSense firewalls are known for their reliability, manageability,and flexibility.
+    &lt;br/&gt; &lt;br/&gt;
+    You know that network security is crucial,now more than ever.
+    Support provides peace-of-mind and help if you need it.
+    &lt;br/&gt; &lt;br/&gt;
+    Netgate offers 24/7/365 world-class support subscriptions that cover every need, from SOHO to Enterprise.
+    &lt;br/&gt; &lt;br/&gt;
+    &lt;a href="https://netgate.com/more-support-info/" target="_blank"&gt;
+    &lt;span class="btn btn-info" "&gt;Learn More &lt;/button&gt;&lt;/a&gt;
+    &lt;br/&gt; &lt;br/&gt;
+  </description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -767,8 +778,8 @@
 	<description>
 	<![CDATA[
 		Congratulations!  pfSense is now configured.<p>
-		Please consider contributing back to the project!</p><p>
-		Click <a target='_blank' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.</p><p>
+		Remember, we're here to help.</p><p>
+		Click <a target='_blank' href='https://www.netgate.com/more-support-info/'>here</a> to learn about Netgate 24/7/365 support.</p><p>
 		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
 	]]>
 	</description>

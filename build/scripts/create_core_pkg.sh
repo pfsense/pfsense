@@ -129,7 +129,9 @@ else
 	if [ -n "${filter}" ]; then
 		filter="-name ${filter}"
 	fi
-	: ${findroot="."}
+	if [ -z "${findroot}" ]; then
+		findroot="."
+	fi
 	for froot in ${findroot}; do
 		(cd ${root} \
 			&& find ${froot} ${filter} -type f -or -type l \

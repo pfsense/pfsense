@@ -3880,7 +3880,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$tmpstfiface = pfSense_interface_create("stf");
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
-	mwexec("/sbin/ifconfig {$stfiface} inet6 no_dad {$rd6prefix}/{$rd6prefixlen}");
+	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	mwexec("/sbin/ifconfig {$stfiface} stfv4br " . escapeshellarg($wancfg['gateway-6rd']));
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32) {
 		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));

@@ -112,7 +112,7 @@ scratchdir=$(mktemp -d -q ${TMPDIR}/${template_name}.XXXXXXX)
 [ -n "${scratchdir}" -a -d ${scratchdir} ] \
 	|| err "error creating temporary directory"
 
-trap "force_rm ${scratchdir}" 1 2 15 EXIT
+#trap "force_rm ${scratchdir}" 1 2 15 EXIT
 
 metadir=${scratchdir}/${template_name}_metadir
 
@@ -129,14 +129,20 @@ else
 	if [ -n "${filter}" ]; then
 		filter="-name ${filter}"
 	fi
+echo ${root}
 	: ${findroot="."}
+echo ${findroot}
 	for froot in ${findroot}; do
+echo froot ${froot}
 		(cd ${root} \
 			&& find ${froot} ${filter} -type f -or -type l \
 				| sed 's,^.,,' \
 				| sort -u \
 		) >> ${plist}
 	done
+if [ ${template} == "kernel" ]; then
+	exit
+fi
 fi
 
 if [ -f "${template_path}/exclude_plist" ]; then

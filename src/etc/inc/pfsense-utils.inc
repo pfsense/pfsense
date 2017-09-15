@@ -1164,7 +1164,14 @@ function setup_serial_port($when = "save", $path = "") {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
-	$loader_conf = file_get_contents($loader_conf_file);
+	if (file_exists($loader_conf_file)) {
+		$loader_conf = file_get_contents($loader_conf_file);
+	} elseif (file_exists("{$path}/boot/loader.conf.local")) {
+		$loader_conf_file = "{$path}/boot/loader.conf.local";
+		$loader_conf = file_get_contents($loader_conf_file);
+	} else {
+		$loader_conf = "";
+	}
 	$loader_conf_split = explode("\n", $loader_conf);
 
 	$data = array();

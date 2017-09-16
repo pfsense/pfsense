@@ -2460,6 +2460,9 @@ function system_identify_specific_platform() {
 		case 'APU2':
 			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
 			break;
+		case 'VirtualBox':
+			return (array('name' => 'VirtualBox', 'descr' => 'VirtualBox Virtual Machine'));
+			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));

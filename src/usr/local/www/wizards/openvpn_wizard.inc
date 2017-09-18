@@ -562,21 +562,20 @@ function step12_submitphpaction() {
 	$server['vpnid'] = openvpn_vpnid_next();
 	switch ($auth['type']) {
 		case "ldap":
-			$server['authmode'] = $auth['name'];
 			$server['mode'] = "server_user";
+			$server['authmode'] = $auth['name'];
 			break;
 		case "radius":
-			$server['authmode'] = $auth['name'];
 			$server['mode'] = "server_user";
+			$server['authmode'] = $auth['name'];
 			break;
 		default:
-			$server['authmode'] = "Local Database";
 			$server['mode'] = "server_tls_user";
+			$server['authmode'] = "Local Database";
 			break;
 	}
-	$server['caref'] = $ca['refid'];
-	$server['certref'] = $cert['refid'];
 	$server['protocol'] = $pconfig['step10']['protocol'];
+	$server['dev_mode'] = 'tun';
 	$server['interface'] = $pconfig['step10']['interface'];
 	if (isset($pconfig['step10']['localport']))
 		$server['local_port'] = $pconfig['step10']['localport'];
@@ -592,9 +591,14 @@ function step12_submitphpaction() {
 			$tlskey = $pconfig['step10']['tlskey'];
 		$server['tls'] = base64_encode($tlskey);
 	}
+	$server['tls_type'] = 'auth';
+	$server['caref'] = $ca['refid'];
+	$server['certref'] = $cert['refid'];
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
+	$server['crypto'] = $pconfig['step10']['crypto'];
+	$server['digest'] = $pconfig['step10']['digest'];
+	$server['engine'] = $pconfig['step10']['engine'];
 	$server['tunnel_network'] = $pconfig['step10']['tunnelnet'];
-	$server['topology'] = $pconfig['step10']['topology'];
 	if (isset($pconfig['step10']['rdrgw']))
 		$server['gwredir'] = $pconfig['step10']['rdrgw'];
 	if (isset($pconfig['step10']['localnet']))
@@ -609,8 +613,9 @@ function step12_submitphpaction() {
 		$server['client2client'] = $pconfig['step10']['interclient'];
 	if (isset($pconfig['step10']['duplicate_cn']))
 		$server['duplicate_cn'] = $pconfig['step10']['duplicate_cn'];
-	if (isset($pconfig['step10']['dynip']))
-		$server['dynamic_ip'] = $pconfig['step10']['dynip'];
+	if (isset($pconfig['step10']['dynip']) && ($pconfig['step10']['dynip'] == "on"))
+		$server['dynamic_ip'] = "yes";
+	$server['topology'] = $pconfig['step10']['topology'];
 	if (isset($pconfig['step10']['defaultdomain']))
 		$server['dns_domain'] = $pconfig['step10']['defaultdomain'];
 	if (isset($pconfig['step10']['dns1']))
@@ -635,9 +640,6 @@ function step12_submitphpaction() {
 			$server['netbios_scope'] = $pconfig['step10']['nbtscope'];
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
-	$server['crypto'] = $pconfig['step10']['crypto'];
-	$server['digest'] = $pconfig['step10']['digest'];
-	$server['engine'] = $pconfig['step10']['engine'];
 
 	if (isset($pconfig['step11']['ovpnrule'])) {
 		$rule = array();

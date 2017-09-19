@@ -356,9 +356,9 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 		/* Release allocated pipes for this zone */
-		captiveportal_free_dnrules();
+		$pipes_to_remove = captiveportal_free_dnrules();
 
-		captiveportal_delete_rules();
+		captiveportal_delete_rules($pipes_to_remove);
 
 		if (empty($config['captiveportal'])) {
 			set_single_sysctl("net.link.ether.ipfw", "0");
@@ -687,7 +687,7 @@ function captiveportal_init_rules($reinit = false) {
 }
 
 /* Delete all rules related to specific cpzone */
-function captiveportal_delete_rules() {
+function captiveportal_delete_rules($pipes_to_remove = array()) {
 	global $g, $cpzoneid, $cpzone;
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
@@ -713,6 +713,10 @@ function captiveportal_delete_rules() {
 	$delrules = "";
 	foreach ($tables as $table) {
 		$delrules .= "table {$table} destroy\n";
+	}
+
+	foreach ($pipes_to_remove as $pipeno) {
+		$delrules .= "pipe delete {$pipeno}\n";
 	}
 
 	if (empty($delrules)) {
@@ -1764,6 +1768,8 @@ function captiveportal_write_elements() {
 function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 64500) {
 	global $g, $cpzone;
 
+	$removed_pipes = array();
+
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
@@ -1771,8 +1777,10 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx] == $cpzone) {
 				$rules[$ridx] = false;
+				$removed_pipes[] = $ridx;
 				$ridx++;
 				$rules[$ridx] = false;
+				$removed_pipes[] = $ridx;
 				$ridx++;
 			} else {
 				$ridx += 2;
@@ -1782,6 +1790,8 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 		unset($rules);
 	}
 	unlock($cpruleslck);
+
+	return $removed_pipes;
 }
 
 function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {

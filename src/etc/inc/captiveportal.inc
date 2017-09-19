@@ -721,7 +721,7 @@ function captiveportal_delete_rules() {
 
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules", $delrules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules", true);
-	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.del.rules");
+	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules");
 }
 
 /*

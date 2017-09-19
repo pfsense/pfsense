@@ -688,7 +688,7 @@ function captiveportal_init_rules($reinit = false) {
 
 /* Delete all rules related to specific cpzone */
 function captiveportal_delete_rules() {
-	global $g, $cpzoneid;
+	global $g, $cpzoneid, $cpzone;
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
 	$skipto2 = $skipto1 + $g['captiveportal_rules_interval'];
@@ -1762,7 +1762,7 @@ function captiveportal_write_elements() {
 }
 
 function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 64500) {
-	global $cpzone;
+	global $g, $cpzone;
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {

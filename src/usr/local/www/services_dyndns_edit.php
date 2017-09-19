@@ -409,7 +409,8 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('A description may be entered here for administrative reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).%1$s' .
+			'This field will be used in the Dynamic DNS Status Widget for Custom services.', '<br />');
 
 if (isset($id) && $a_dyndns[$id]) {
 	$section->addInput(new Form_Input(

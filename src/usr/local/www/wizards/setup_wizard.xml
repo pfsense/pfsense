@@ -43,9 +43,9 @@
 	<title>Netgate Global Support is available</title>
 	<disableheader>true</disableheader>
 	<description>
-    pfSense firewalls are known for their reliability, manageability,and flexibility.
+    pfSense firewalls are known for their reliability, manageability, and flexibility.
     &lt;br/&gt; &lt;br/&gt;
-    You know that network security is crucial,now more than ever.
+    You know that network security is crucial, now more than ever.
     Support provides peace-of-mind and help if you need it.
     &lt;br/&gt; &lt;br/&gt;
     Netgate offers 24/7/365 world-class support subscriptions that cover every need, from SOHO to Enterprise.
@@ -777,7 +777,7 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		Congratulations!  pfSense is now configured.<p>
+		<p>Congratulations! pfSense is now configured.</p>
 		Remember, we're here to help.</p><p>
 		Click <a target='_blank' href='https://www.netgate.com/more-support-info/'>here</a> to learn about Netgate 24/7/365 support.</p><p>
 		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>

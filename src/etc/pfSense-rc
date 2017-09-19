@@ -224,8 +224,10 @@ echo
 /sbin/conscontrol mute off >/dev/null
 
 SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-/sbin/swapon -a 2>/dev/null >/dev/null
-/etc/rc.savecore
+if [ -n "${SWAPDEVICE}" ]; then
+	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
+fi
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null

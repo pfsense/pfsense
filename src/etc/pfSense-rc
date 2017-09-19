@@ -52,6 +52,12 @@ get_version ()
 
 get_version
 
+mv_soc_model=$(/sbin/sysctl -qn hw.mv_soc_model)
+if [ -n "${mv_soc_model}" -a -c /dev/gpioc1 ]; then
+	# Update the boot status on SG-3100, pfSense is loading.
+	/usr/sbin/gpioctl -f /dev/gpioc1 2 duty 150
+fi
+
 # Read product_name from $g, defaults to pfSense
 # Use php -n here because we are not ready to load extensions yet
 product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)

@@ -27,12 +27,15 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
+$platform = system_identify_specific_platform();
 $ifdescrs = get_configured_interface_with_descr();
-$swdevs = switch_get_devices();
-if (count($swdevs) > 0) {
-	foreach ($swdevs as $swdev) {
-		$swifs = switch_get_configured_interface_with_descr($swdev);
-		$ifdescrs = array_merge($ifdescrs, $swifs);
+if ($platform['name'] == "ROGUE-1") {
+	$swdevs = switch_get_devices();
+	if (count($swdevs) > 0) {
+		foreach ($swdevs as $swdev) {
+			$swifs = switch_get_configured_interface_with_descr($swdev);
+			$ifdescrs = array_merge($ifdescrs, $swifs);
+		}
 	}
 }
 // Update once per minute by default, instead of every 10 seconds

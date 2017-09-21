@@ -2304,11 +2304,13 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$_gb = @pfSense_ipfw_pipe("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
 			$rule_entry = "{$clientip}/" . (is_ipaddrv6($clientip) ? "128" : "32");
+			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
+
+			/* Add MAC address on UP rule only */
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 				$rule_entry .= ",{$clientmac}";
 			}
 			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_up", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_up_pipeno);
-			$_gb = @pfSense_ipfw_table("{$cpzone}_auth_down", IP_FW_TABLE_XADD, "{$rule_entry}", $bw_down_pipeno);
 
 			if ($attributes['voucher']) {
 				$attributes['session_timeout'] = $remaining_time;

@@ -702,8 +702,8 @@ function unbound_acls_config($cfgsubdir = "") {
 	global $g, $config;
 
 	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
-		$aclcfg = "access-control: 127.0.0.1/32 allow\n";
-		$aclcfg .= "access-control: ::1 allow\n";
+		$aclcfg = "access-control: 127.0.0.1/32 allow_snoop\n";
+		$aclcfg .= "access-control: ::1 allow_snoop\n";
 		// Add our networks for active interfaces including localhost
 		if (!empty($config['unbound']['active_interface'])) {
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));

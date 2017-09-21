@@ -626,7 +626,7 @@ $group->add(new Form_Input(
 	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com');
+))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com');
 
 $section->add($group);
 

@@ -85,10 +85,9 @@ function print_ipsec_body() {
 	$a_phase1 = &$config['ipsec']['phase1'];
 	$status = ipsec_list_sa();
 	$ipsecconnected = array();
-
 	if (is_array($status)) {
 		foreach ($status as $ikeid => $ikesa) {
-			$con_id = substr($ikeid, 3);
+			$con_id = substr($ikesa['con-id'],3);
 
 			if ($ikesa['version'] == 1) {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
@@ -227,14 +226,14 @@ function print_ipsec_body() {
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" usepost>');
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '&amp;ikesaid=' .$ikesa['uniqueid'] . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" usepost>');
 				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
 				print(gettext("Connect VPN"));
 				print("</a>\n");
 
 			} else {
 
-				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '" usepost>');
+				print('<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=' . $con_id . '&amp;ikesaid=' .$ikesa['uniqueid'] . '"class="btn btn-xs btn-danger" data-toggle="tooltip" title="' . gettext("Disconnect VPN") . '" usepost>');
 				print('<i class="fa fa-trash icon-embed-btn"></i>');
 				print(gettext("Disconnect"));
 				print("</a><br />\n");
@@ -249,13 +248,13 @@ function print_ipsec_body() {
 			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 
 				print('<div>');
-				print('<a type="button" id="btnchildsa-' . $ikeid .  '" class="btn btn-sm btn-info">');
+				print('<a type="button" id="btnchildsa-con'. $con_id .'-'. $ikesa['uniqueid'] .  '" class="btn btn-sm btn-info">');
 				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
 				print(gettext('Show child SA entries'));
 				print("</a>\n");
 				print("	</div>\n");
 
-				print('<table class="table table-hover table-condensed" id="childsa-' . $ikeid . '" style="display:none">');
+				print('<table class="table table-hover table-condensed" id="childsa-con'.$con_id.'-' . $ikesa['uniqueid'] . '" style="display:none">');
 				print("<thead>\n");
 				print('<tr class="bg-info">');
 				print('<th><?=gettext("Local subnets")?></th>');
@@ -539,6 +538,16 @@ events.push(function() {
 				type: "post",
 				data: {
 					ajax: 	"ajax"
+				},
+				tryCount : 0,
+				retryLimit :3,
+				error: function(xhr, textStatus, errorThrown){
+					//alert("error.... retrying");
+					if (this.tryCount <= this.retryLimit){
+						ajax_lock = false;
+						update_table();
+					}
+					return;
 				}
 			}
 		);

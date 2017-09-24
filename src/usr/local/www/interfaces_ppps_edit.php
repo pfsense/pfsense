@@ -476,87 +476,6 @@ function build_country_list() {
 	return($list);
 }
 
-function build_link_list() {
-	global $config, $pconfig;
-
-	$linklist = array('list' => array(), 'selected' => array());
-
-	$selected_ports = array();
-
-	if (is_array($pconfig['interfaces'])) {
-		$selected_ports = $pconfig['interfaces'];
-	} elseif (!empty($pconfig['interfaces'])) {
-		$selected_ports = explode(',', $pconfig['interfaces']);
-	}
-
-	if (!is_dir("/var/spool/lock")) {
-		mwexec("/bin/mkdir -p /var/spool/lock");
-	}
-
-	if ($pconfig['type'] == 'ppp') {
-		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
-		$serport_count = 0;
-
-		foreach ($serialports as $port) {
-			$serport_count++;
-
-			$linklist['list'][$port] = trim($port);
-
-			if (in_array($port, $selected_ports)) {
-				array_push($linklist['selected'], $port);
-			}
-		}
-	} else {
-		$port_count = 0;
-		$portlist = get_interface_list();
-		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				$portlist[$vlan['vlanif']] = $vlan;
-			}
-		}
-		$lagglist = get_lagg_interface_list();
-		foreach ($lagglist as $laggif => $lagg) {
-			/* LAGG members cannot be assigned */
-			$laggmembers = explode(',', $lagg['members']);
-			foreach ($laggmembers as $lagm) {
-				if (isset($portlist[$lagm])) {
-					unset($portlist[$lagm]);
-				}
-			}
-		}
-		foreach ($portlist as $ifn => $ifinfo) {
-			$port_count++;
-			$string = "";
-
-			if (is_array($ifinfo)) {
-				$string .= $ifn;
-				if ($ifinfo['mac']) {
-					$string .= " ({$ifinfo['mac']})";
-				}
-				if ($ifinfo['friendly']) {
-					$string .= " - " . convert_friendly_interface_to_friendly_descr($ifinfo['friendly']);
-				} elseif ($ifinfo['descr']) {
-					$string .= " - {$ifinfo['descr']}";
-				}
-			} else {
-				$string .= $ifinfo;
-			}
-
-			$linklist['list'][$ifn] = $string;
-
-			if (in_array($ifn, $selected_ports)) {
-				array_push($linklist['selected'], $ifn);
-			}
-		}
-
-		if ($serport_count > $port_count) {
-			$port_count = $serport_count;
-		}
-	}
-
-	return($linklist);
-}
-
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -577,7 +496,7 @@ $section->addInput(new Form_Select(
 	$types
 ));
 
-$linklist = build_link_list();
+$linklist = build_ppps_link_list();
 
 $section->addInput(new Form_Select(
 	'interfaces',

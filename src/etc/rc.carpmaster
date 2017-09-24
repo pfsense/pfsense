@@ -53,6 +53,7 @@ foreach ($vips as $vip) {
 	notify_via_growl($notificationmsg);
 	log_error($notificationmsg);
 }
+restart_ppp_interfaces_using_interfaces($vips);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;

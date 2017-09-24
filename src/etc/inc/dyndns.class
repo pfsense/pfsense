@@ -62,6 +62,7 @@
 	 *    - DuiaDNS IPv6 (www.duiadns.net)
 	 *    - Hover (www.hover.com)
 	 *    - DreamHost DNS (www.dreamhost.com)
+         *    - GoDaddy DNS (www.godaddy.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -118,6 +119,7 @@
 	 *  Hover           - Last Tested: 15 February 2017
 	 *  DreamHost       - Last Tested: 30 April 2017
 	 *  DreamHost IPv6  - Not Yet Tested
+         *  GoDaddy         - Last Tested: 24 September 2017
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -215,6 +217,7 @@
 				break;
 			case "cloudflare-v6":
 			case "cloudflare":
+                        case "godaddy":
 			case "gratisdns":
 			case "hover":
 				if (!$dnsUser) $this->_error(3);
@@ -322,6 +325,7 @@
 					case 'ovh-dynhost':
 					case 'citynetwork':
 					case 'dnsimple':
+                                        case 'godaddy':
 					case 'googledomains':
 					case 'dnsmadeeasy':
 					case 'spdyn':
@@ -668,7 +672,7 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
-				case 'route53':		
+                                case 'route53':
 					require_once("r53.class");
 					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
 					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
@@ -909,6 +913,32 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
+                                case 'godaddy':
+					$this->_FQDN = ltrim($this->_FQDN, '@.');
+					$recordType = "A";
+					$needsIP = TRUE;
+					$dnsServer ='api.godaddy.com';
+					$dnsHost = str_replace(' ', '', $this->_dnsHost);
+
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Authorization: sso-key '.$this->_dnsUser.':'.$this->_dnsPass.'',
+						'Content-Type: application/json'
+					));
+
+                                        $updateHost = "https://{$dnsServer}/v1/domains/{$this->_dnsDomain}/records/{$recordType}/{$dnsHost}";
+                                        $hostData = array(
+                                                "data" => "{$this->_dnsIP}",
+                                                "type" => "{$recordType}",
+                                                "ttl" => 600
+                                        );
+                                        $data_json = json_encode($hostData);
+
+					curl_setopt($ch, CURLOPT_URL, $updateHostId);
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+                                        log_error("URI:{$updateHost}, Data:{$hostData}");
+					break;
 				default:
 					break;
 			}
@@ -922,14 +952,14 @@
 				@curl_close($ch);
 			}
 		}
-		
+
 		/**
 		 * Private Function (added 23 Feb 17)
 		 *   Send Removal To Selected Service.
-		 *   
+		 *
 		 *   Some services do not perform an inplace upgrade.  If they do not then the solution
 		 *   is to remove the existing record and add a new record.
-		 *   
+		 *
 		 * @param unknown $existing_ip If required, an existing IP address for the record.
 		 */
 		function _remove($existing_ip = NULL) {
@@ -937,25 +967,25 @@
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _remove() starting.'), $this->_dnsService, $this->_FQDN));
 			}
-			
+
 			if (strstr($this->_dnsRequestIf, "_vip")) {
 				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
 			} else {
 				$realparentif = $this->_dnsRequestIf;
 			}
-			
+
 			$ch = curl_init();
-			
+
 			if ($this->_useIPv6 == false) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
-			
+
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-			
+
 			switch ($this->_dnsService) {
 			case 'dreamhost':
 			case 'dreamhost-v6':
@@ -992,38 +1022,38 @@
 				@curl_close($ch);
 			}
 		}
-		
+
 		/**
 		 * Private Function (added 23 Feb 17)
 		 * Retrieves current DNS records from an external API source.
-		 * 
-		 * Some services cannot perform new operations without the caller 
-		 * providing existing record information. 
+		 *
+		 * Some services cannot perform new operations without the caller
+		 * providing existing record information.
 		 */
 		function _lookup_current() {
 			$lookup_allowed = false;
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _listCurrent() starting.'), $this->_dnsService, $this->_FQDN));
 			}
-				
+
 			if (strstr($this->_dnsRequestIf, "_vip")) {
 				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
 			} else {
 				$realparentif = $this->_dnsRequestIf;
 			}
-				
+
 			$ch = curl_init();
-				
+
 			if ($this->_useIPv6 == false) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
-				
+
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 120); // Completely empirical
-				
+
 			switch ($this->_dnsService) {
 			case 'dreamhost':
 			case 'dreamhost-v6':
@@ -1058,7 +1088,7 @@
 		}
 
 		/*
-		 * Private Function (added 23 Feb 17) 
+		 * Private Function (added 23 Feb 17)
 		 *   Retrieve Lookup Status from the provided data and/or header
 		 */
 		function _checkLookupStatus($ch, $data, $header) {
@@ -1085,7 +1115,7 @@
 					return;
 				} else {
 					foreach($result["data"] as $key => $row) {
-						if($row["record"] == $this->_dnsHost && 
+						if($row["record"] == $this->_dnsHost &&
 								(($row["type"] == "A" && !$this->_useIPv6)
 										|| ($row["type"] == "AAAA" && $this->_useIPv6)
 								)) {
@@ -1750,7 +1780,7 @@
 						$status = $status_intro . $error_str . gettext("Result did not match.");
 					} else if (preg_match("/\s401\sUnauthorized/i", $header)) {
 						$status = $status_intro . $error_str . gettext("Invalid username or password");
-					} 
+					}
 					else {
 							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 							log_error($status_intro . gettext("PAYLOAD:") . " " . $header.$data);
@@ -1832,6 +1862,25 @@
 					default:
 						break;
 					}
+                                case 'godaddy':
+					// Responds with HTTP 200 on success.
+					if (preg_match("/\s200\sOK/i", $header)) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else if (preg_match("/\s401\d\d\s/i", $header)) {
+                                                $status = $status_intro . $error_str . gettext("User Authorization Failed");
+                                        } else if (preg_match("/\s403\d\d\s/i", $header)) {
+                                                $status = $status_intro . $error_str . gettext("User Authorization Failed");
+                                        } else if (preg_match("/\s404\d\d\s/i", $header)) {
+                                                $status = $status_intro . $error_str . gettext("No such zone exists.");
+                                        } else if (preg_match("/\s422\d\d\s/i", $header)) {
+                                                $status = $status_intro . $error_str . gettext("The specified record is invalid.");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
 				default:
 					break;
 			}

@@ -39,5 +39,6 @@
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree
 ./usr/local/share/%%PRODUCT_NAME%%/base.txz
 ./usr/local/share/%%PRODUCT_NAME%%/pkg
+./usr/local/share/%%PRODUCT_NAME%%/rc
 ./var/db/pkg
 ./zanata.xml

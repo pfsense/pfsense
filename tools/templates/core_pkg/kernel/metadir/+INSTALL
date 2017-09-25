@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+PKGNAME="${1}"
+FLAVOR=$(echo "${PKGNAME}" | \
+    sed -E 's/^%%PRODUCT_NAME%%-kernel-//; s/%%PRODUCT_NAME%%-//; s/([azAZ]*-[0-9]*)-.*/\1/')
+
+if [ -z "${FLAVOR}" ]; then
+	exit 0
+fi
+
+NEW_CONF="/usr/local/share/%%PRODUCT_NAME%%/rc/${FLAVOR}/loader.rc.local"
+
+if [ ! -f "${NEW_CONF}" ]; then
+	exit 0
+fi
+
+CUR_CONF="/boot/loader.rc.local"
+
+if [ ! -f "${CUR_CONF}" ]; then
+	touch ${CUR_CONF}
+fi
+
+TMP_CONF=/tmp/loader.rc.local
+cat ${CUR_CONF} ${NEW_CONF} >> ${TMP_CONF}
+sort -u ${TMP_CONF} > ${CUR_CONF}
+rm -f ${TMP_CONF}

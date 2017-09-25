@@ -1,3 +1,4 @@
+share/%%PRODUCT_NAME%%/rc/SG-3100/loader.rc.local
 /etc/pfSense-rc
 /etc/pfSense-rc.shutdown
 /etc/rc

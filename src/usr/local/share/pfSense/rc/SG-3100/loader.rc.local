@@ -1,0 +1,7 @@
+ubenv import
+ubenv import boardpn
+ubenv import boardsn
+ubenv import boardrev
+ubenv import ethaddr
+ubenv import eth1addr
+ubenv import eth2addr

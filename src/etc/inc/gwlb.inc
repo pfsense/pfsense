@@ -927,9 +927,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
 			if ($gwsttng['no_defgw_switch']) {
 				// do not elect this gateway if the `skip` option is set
-				log_error(sprintf(gettext('Found UP gateway %1$s but it was administratively skipped due to gateway settings'), $gwname));
+				if ($g['debug']) {
+					log_error(sprintf(gettext('Found UP gateway %1$s but it was administratively skipped due to gateway settings'), $gwname));
+				}
 			} else {
-				// log_error(sprintf(gettext('Found UP gateway %1$s'), $gwname));
+				if ($g['debug']) {
+					log_error(sprintf(gettext('Found UP gateway %1$s'), $gwname));
+				}
 				$upgw = $gwname;
 			}
 		}

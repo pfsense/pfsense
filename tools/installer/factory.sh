@@ -95,6 +95,7 @@ get_cur_model() {
 	local _cur_model=""
 
 	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
+	local _planar_product=$(/bin/kenv -q smbios.planar.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
 	local _hw_ncpu=$(sysctl -n hw.ncpu)
 
@@ -139,6 +140,10 @@ get_cur_model() {
 			esac
 			;;
 	esac
+
+	if [ "${_planar_product}" = 'X10SDV-8C-TLN4F+' ]; then
+		_cur_model="XG-1537"
+	fi
 
 	echo "$_cur_model"
 }

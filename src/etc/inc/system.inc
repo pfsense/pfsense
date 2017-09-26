@@ -2472,6 +2472,13 @@ function system_identify_specific_platform() {
 			break;
 	}
 
+	$_gb = exec('/bin/kenv -q smbios.planar.product 2>/dev/null',
+	    $planar_product);
+	if (isset($planar_product[0]) &&
+	    $planar_product[0] == 'X10SDV-8C-TLN4F+') {
+		return array('name' => 'XG-1537', 'descr' => 'Super Micro XG-1537');
+	}
+
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}

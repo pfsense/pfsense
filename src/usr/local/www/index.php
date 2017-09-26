@@ -649,7 +649,10 @@ events.push(function() {
 			data: wd.parms,
 
 			success: function(data){
-				wd.callback(data);
+				if (data.length > 0 ) {
+					wd.callback(data);
+				}
+
 				ajaxmutex = false;
 			},
 

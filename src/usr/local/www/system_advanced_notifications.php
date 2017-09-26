@@ -171,7 +171,7 @@ if ($_POST) {
 			register_via_growl();
 			$test_result = notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 			if (empty($test_result)) {
-				$test_result = gettext("Growl testing notification successfully sent");
+				$test_result = gettext("Growl test notification successfully sent");
 				$test_class = 'success';
 			} else {
 				$test_class = 'danger';
@@ -186,7 +186,7 @@ if ($_POST) {
 		}
 		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
 		if (empty($test_result)) {
-			$test_result = gettext("SMTP testing e-mail successfully sent");
+			$test_result = gettext("Test email successfully sent");
 			$test_class = 'success';
 		} else {
 			$test_class = 'danger';
@@ -217,7 +217,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('E-Mail');
+$section = new Form_Section('Email');
 
 $section->addInput(new Form_Checkbox(
 	'disable_smtp',
@@ -230,81 +230,81 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'smtpipaddress',
-	'E-Mail server',
+	'SMTP server',
 	'text',
 	$pconfig['smtpipaddress']
-))->setHelp('This is the FQDN or IP address of the SMTP E-Mail server to '.
+))->setHelp('The FQDN or IP address of the SMTP mail server to '.
 	'which notifications will be sent.');
 
 $section->addInput(new Form_Input(
 	'smtpport',
-	'SMTP Port of E-Mail server',
+	'SMTP port',
 	'number',
 	$pconfig['smtpport']
-))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
+))->setHelp('Port that the SMTP server accepts connections on. Typically 25, 587 '.
 	'(submission) or 465 (smtps).');
+
+$section->addInput(new Form_Checkbox(
+	'smtpssl',
+	'SSL/TLS encryption',
+	'Enable SMTP over SSL/TLS',
+	$pconfig['smtpssl']
+));
 
 $section->addInput(new Form_Input(
 	'smtptimeout',
-	'Connection timeout to E-Mail server',
+	'Connection timeout',
 	'number',
 	$pconfig['smtptimeout']
-))->setHelp('This is how many seconds it will wait for the SMTP server to connect. Default is 20s.');
-
-$group = new Form_Group('Secure SMTP Connection');
-$group->add(new Form_Checkbox(
-	'smtpssl',
-	'Enable SSL/TLS',
-	'Enable SMTP over SSL/TLS',
-	isset($pconfig['smtpssl'])
-));
-
-$section->add($group);
+))->setHelp('Number of seconds to wait for the SMTP connection to succeed. Default is 20.');
 
 $section->addInput(new Form_Input(
 	'smtpfromaddress',
-	'From e-mail address',
+	'From email address',
 	'text',
 	$pconfig['smtpfromaddress']
-))->setHelp('This is the e-mail address that will appear in the from field.');
+))->setHelp('The email address that will appear in the From field.');
 
 $section->addInput(new Form_Input(
 	'smtpnotifyemailaddress',
-	'Notification E-Mail address',
+	'To email address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
-))->setHelp('Enter the e-mail address to send email notifications to.');
+))->setHelp('The email address to send notifications to. Multiple addresses may be '.
+	'entered, separated by a comma.');
 
 // This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(
 	'smtpusername',
-	'Notification E-Mail auth username (optional)',
+	'Auth username (optional)',
 	'text',
 	$pconfig['smtpusername'],
 	['autocomplete' => 'off']
-))->setHelp('Enter the e-mail address username for SMTP authentication.');
+))->setHelp('If required by the SMTP server, enter a username for authentication.');
 
 $section->addPassword(new Form_Input(
 	'smtppassword',
-	'Notification E-Mail auth password',
+	'Auth password',
 	'password',
 	$pconfig['smtppassword']
-))->setHelp('Enter the e-mail account password for SMTP authentication.');
+))->setHelp('Password for SMTP authentication.');
 
 $section->addInput(new Form_Select(
 	'smtpauthmech',
-	'Notification E-Mail auth mechanism',
+	'Auth mechanism',
 	$pconfig['smtpauthmech'],
 	$smtp_authentication_mechanisms
-))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN. ');
+))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, '.
+	'some servers like Exchange or Office365 might require LOGIN.');
 
 $section->addInput(new Form_Button(
 	'test-smtp',
-	'Test SMTP Settings',
+	'Test SMTP settings',
 	null,
 	'fa-send'
-))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
+))->addClass('btn-info')->setHelp('A test email will be sent even if the service is '.
+	'marked as disabled. If you have changed any settings, click SAVE before clicking '.
+	'this button.');
 
 $form->add($section);
 
@@ -312,11 +312,10 @@ $section = new Form_Section('Sounds');
 
 $section->addInput(new Form_Checkbox(
 	'disablebeep',
-	'Startup/Shutdown Sound',
+	'Startup/Shutdown sound',
 	'Disable the startup/shutdown beep',
 	$pconfig['disablebeep']
-))->setHelp('When this is checked, startup and shutdown sounds will no longer '.
-	'play.');
+))->setHelp('When this is checked, startup and shutdown sounds will not be played.');
 
 $form->add($section);
 
@@ -332,7 +331,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'name',
-	'Registration Name',
+	'Registration name',
 	'text',
 	$pconfig['name'],
 	['placeholder' => 'pfSense-Growl']
@@ -340,7 +339,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'notification_name',
-	'Notification Name',
+	'Notification name',
 	'text',
 	$pconfig['notification_name'],
 	['placeholder' => $g["product_name"].' growl alert']
@@ -349,7 +348,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ipaddress',
-	'IP Address',
+	'IP address',
 	'text',
 	$pconfig['ipaddress']
 ))->setHelp('This is the IP address to send growl notifications to.');
@@ -363,7 +362,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Button(
 	'test-growl',
-	'Test Growl Settings',
+	'Test Growl settings',
 	null,
 	'fa-rss'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.

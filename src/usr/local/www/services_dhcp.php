@@ -143,6 +143,7 @@ if (is_array($dhcpdconf)) {
 	// Global Options
 	if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['enable'] = isset($dhcpdconf['enable']);
+		$pconfig['enable_aliases'] = isset($dhcpdconf['enable_aliases']);
 		$pconfig['staticarp'] = isset($dhcpdconf['staticarp']);
 		// No reason to specify this per-pool, per the dhcpd.conf man page it needs to be in every
 		//	 pool and should be specified in every pool both nodes share, so we'll treat it as global
@@ -524,6 +525,7 @@ if (isset($_POST['save'])) {
 			}
 
 			$dhcpdconf['enable'] = $new_dhcpd_enable;
+			$dhcpdconf['enable_aliases'] = ($_POST['enable_aliases']) ? true : false;
 			$dhcpdconf['staticarp'] = ($_POST['staticarp']) ? true : false;
 			$previous = $dhcpdconf['failover_peerip'];
 			if ($previous != $_POST['failover_peerip']) {
@@ -845,6 +847,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 			'Enable',
 			sprintf(gettext("Enable DHCP server on %s interface"), htmlspecialchars($iflist[$if])),
 			$pconfig['enable']
+		));
+		$section->addInput(new Form_Checkbox(
+			'enable_aliases',
+			'Virtual IPs',
+			sprintf(gettext("Allow DHCP static mappings on virtual IP subnets bound to %s interface"), htmlspecialchars($iflist[$if])),
+			$pconfig['enable_aliases']
 		));
 	}
 } else {

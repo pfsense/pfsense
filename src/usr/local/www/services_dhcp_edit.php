@@ -74,6 +74,7 @@ if (!is_array($config['dhcpd'][$if]['pool'])) {
 
 $a_pools = &$config['dhcpd'][$if]['pool'];
 
+$aliases_enabled=isset($config['dhcpd'][$if]['enable_aliases']);
 $static_arp_enabled=isset($config['dhcpd'][$if]['staticarp']);
 $netboot_enabled=isset($config['dhcpd'][$if]['netboot']);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
@@ -214,7 +215,7 @@ if ($_POST['save']) {
 
 		$lansubnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
 		$lansubnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
-		if (!is_inrange_v4($_POST['ipaddr'], $lansubnet_start, $lansubnet_end)) {
+		if ((!$aliases_enabled || !ip_in_interface_alias_subnet($if, $_POST['ipaddr'])) && (!is_inrange_v4($_POST['ipaddr'], $lansubnet_start, $lansubnet_end))) {
 			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."), $ifcfgdescr);
 		}
 

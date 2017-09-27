@@ -651,6 +651,18 @@ EOPP;
 		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
 		$subnetmask = gen_subnet_mask($ifcfgsn);
 
+		$vipaliases = Array();
+		if (is_array($config['virtualip']['vip'])) {
+			foreach ($config['virtualip']['vip'] as $vipent) {
+				if ($vipent['mode'] != 'ipalias') continue;
+				if ($vipent['interface'] != $dhcpif) continue;
+				$vipalias = Array();
+				$vipalias['subnet'] = $vipent['subnet'];
+				$vipalias['subnet_bits'] = $vipent['subnet_bits'];
+				array_push($vipaliases, $vipalias);
+			}
+		}
+
 		if (!is_ipaddr($subnet)) {
 			continue;
 		}
@@ -763,7 +775,15 @@ EOPP;
 				$dhcpdconf .= '}' . "\n";
 			}
 		}
-
+		if (isset($config['dhcpd'][$dhcpif]['enable_aliases'])) {
+			$dhcpdconf .= "shared-network {$dhcpif} {\n";
+			foreach ($vipaliases as $vipalias) {
+				$vipsubnet = gen_subnet($vipalias['subnet'], $vipalias['subnet_bits']);
+				$vipsubnetbits = $vipalias['subnet_bits'];
+				$vipsubnetmask = gen_subnet_mask($vipalias['subnet_bits']);
+				$dhcpdconf .= "subnet {$vipsubnet} netmask {$vipsubnetmask} {}\n";
+			}
+		}
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 		// Setup pool options
@@ -2275,18 +2295,18 @@ function services_unbound_configure($restart_dhcp = true) {
 			$wanif = get_real_interface("wan", "inet6");
 			if (platform_booting()) {
 				for ($i=1; $i <= 10; $i++) {
-					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) { 
+					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) {
 						log_error(gettext("Unbound start waiting on dhcp6c."));
 						sleep(1);
 					} else {
 						unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
 						log_error(gettext("dhcp6 init complete. Continuing"));
 						break;
-					}						
+					}
 				}
 			}
 		}
-		
+
 		sync_unbound_service();
 		if (platform_booting()) {
 			log_error(gettext("sync unbound done."));

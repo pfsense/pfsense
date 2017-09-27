@@ -219,25 +219,25 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<link rel="stylesheet" href="/css/pfSense.css" />
-	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
-	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
-</head>
-<body id="loading-wizard" class="no-menu">
-	<div id="jumbotron">
-		<div class="container">
-			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-				<font color="white">
-				<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
-				<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
-				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
-				</font>
+	<head>
+		<link rel="stylesheet" href="/css/pfSense.css" />
+		<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
+		<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
+	</head>
+	<body id="loading-wizard" class="no-menu">
+		<div id="jumbotron">
+			<div class="container">
+				<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+					<font color="white">
+					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
+					<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
+					<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
+					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
+					</font>
+				</div>
 			</div>
 		</div>
-	</div>
-</body>
+	</body>
 </html>
 <?php
 	exit;
@@ -488,6 +488,15 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 
 </div>
 
+<?php
+// Import the modal form used to display the copyright/usage information, then rename it
+// THis should cause it to display only once per install or update
+if (file_exists('/usr/local/www/copynotice.inc')) {
+	require_once('/usr/local/www/copynotice.inc');
+	rename('/usr/local/www/copynotice.inc', '/usr/local/www/copynotice.old');
+}
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -567,7 +576,7 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 		});
 }
 
-// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+// ---------------------Centralized widget refresh system -------------------------------------------
 // These need to live outsie of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
 var ajaxidx = 0;

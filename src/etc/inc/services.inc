@@ -688,6 +688,18 @@ EOPP;
 		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
 		$subnetmask = gen_subnet_mask($ifcfgsn);
 
+		$vipaliases = Array();
+		if (is_array($config['virtualip']['vip'])) {
+			foreach ($config['virtualip']['vip'] as $vipent) {
+				if ($vipent['mode'] != 'ipalias') continue;
+				if ($vipent['interface'] != $dhcpif) continue;
+				$vipalias = Array();
+				$vipalias['subnet'] = $vipent['subnet'];
+				$vipalias['subnet_bits'] = $vipent['subnet_bits'];
+				array_push($vipaliases, $vipalias);
+			}
+		}
+
 		if (!is_ipaddr($subnet)) {
 			continue;
 		}
@@ -798,6 +810,16 @@ EOPP;
 				// Skip the first octet of the MAC address - for media type, typically Ethernet ("01") and match the rest.
 				$dhcpdconf .= '	match if substring (hardware, 1, ' . (substr_count($mac, ':') + 1) . ') = ' . $mac . ';' . "\n";
 				$dhcpdconf .= '}' . "\n";
+			}
+		}
+        $vipaliases = Array();
+		if (isset($config['dhcpd'][$dhcpif]['enable_aliases'])) {
+			$dhcpdconf .= "shared-network {$dhcpif} {\n";
+			foreach ($vipaliases as $vipalias) {
+				$vipsubnet = gen_subnet($vipalias['subnet'], $vipalias['subnet_bits']);
+				$vipsubnetbits = $vipalias['subnet_bits'];
+				$vipsubnetmask = gen_subnet_mask($vipalias['subnet_bits']);
+				$dhcpdconf .= "subnet {$vipsubnet} netmask {$vipsubnetmask} {}\n";
 			}
 		}
 
@@ -1066,6 +1088,9 @@ EOD;
 }
 
 EOD;
+		if (isset($config['dhcpd'][$dhcpif]['enable_aliases'])) {
+			$dhcpdconf .= "}\n";
+		}
 
 		/* add static mappings */
 		if (is_array($dhcpifconf['staticmap'])) {

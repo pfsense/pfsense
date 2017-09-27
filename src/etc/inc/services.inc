@@ -1049,6 +1049,9 @@ EOD;
 }
 
 EOD;
+		if (isset($config['dhcpd'][$dhcpif]['enable_aliases'])) {
+			$dhcpdconf .= "}\n";
+		}
 
 		/* add static mappings */
 		if (is_array($dhcpifconf['staticmap'])) {

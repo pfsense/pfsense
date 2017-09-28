@@ -490,7 +490,7 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 
 <?php
 // Import the modal form used to display the copyright/usage information, then rename it
-// THis should cause it to display only once per install or update
+// This should cause it to display only once per install or update
 if (file_exists('/usr/local/www/copynotice.inc')) {
 	require_once('/usr/local/www/copynotice.inc');
 	rename('/usr/local/www/copynotice.inc', '/usr/local/www/copynotice.old');

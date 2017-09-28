@@ -185,6 +185,7 @@ fi
 unset selected_model
 cur_model=$(get_cur_model)
 
+unset is_arm
 if [ -n "${is_adi}" ]; then
 	case "${cur_model}" in
 		SG-2220|SG-2440|XG-2758|XG-1537)
@@ -214,7 +215,12 @@ elif [ "${machine_arch}" != "armv6" ]; then
 			selected_model="Default"
 	esac
 else
-	selected_model="SG-1000"
+	if ifconfig cpsw0 >/dev/null 2>&1; then
+		selected_model="SG-1000"
+	else
+		selected_model="SG-3100"
+	fi
+	is_arm=1
 fi
 
 if [ -z "${selected_model}" ]; then
@@ -290,6 +296,9 @@ case "${selected_model}" in
 	SG-1000)
 		wan_if="cpsw0"
 		;;
+	SG-3100)
+		wan_if="mvneta2"
+		;;
 	*)
 		wan_if="igb0"
 		;;
@@ -357,6 +366,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
+#elif [ "${selected_model}" = "SG-3100" ]; then
 else
 	support_types=$(fetch -o - http://prodtrack.netgate.com/listspt 2>/dev/null)
 	if [ -z "${support_types}" ]; then
@@ -413,7 +423,7 @@ sticker=1
 if [ -z "${default_serial}" ]; then
 	serial_size=16
 fi
-while [ "${selected_model}" != "SG-1000" ]; do
+while [ -z "${is_arm}" ]; do
 	exec 3>&1
 	col=30
 	factory_raw_data=$(dialog --nocancel \

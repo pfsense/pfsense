@@ -148,45 +148,6 @@ get_cur_model() {
 	echo "$_cur_model"
 }
 
-if="*"
-if ! pgrep -q dhclient; then
-	# First, find a connected interface
-	if=$(ifconfig \
-		| sed -E '/^([a-z]|[[:blank:]]*status: )/!d; /^lo0:/d' \
-		| sed -e 'N; s/\n/ /' \
-		| egrep 'status: *active' \
-		| sed 's,:.*,,' \
-		| head -n 1)
-
-	# If we couldn't, just abort
-	if [ -z "${if}" ]; then
-		exit 0
-	fi
-
-	# Use a custom dhclient.conf to obtain 'user-class' and detect custom
-	# installation
-	echo "request user-class, classless-routes, domain-name-servers;" \
-	    > /tmp/dhclient.conf
-
-	# Then, try to obtain an IP address to it running dhclient
-	# if it fails, abort
-	if ! /sbin/dhclient -c /tmp/dhclient.conf ${if}; then
-		exit 0
-	fi
-	if=".${if}"
-fi
-
-# Check if we are in buildroom, if not, abort
-unset buildroom
-if /usr/bin/grep -q 'option classless-routes 32,1,2,3,4,127,0,0,1' \
-    /var/db/dhclient.leases${if}; then
-	buildroom=1
-fi
-
-# Check for 'user-class'
-custom=$(grep user-class /var/db/dhclient.leases${if} 2>/dev/null | \
-    tail -n 1 | cut -d'"' -f2)
-
 # Try to read serial
 machine_arch=$(uname -p)
 unset is_adi
@@ -291,7 +252,7 @@ if [ "${machine_arch}" != "armv6" ]; then
 	echo 'hw.usb.no_pf="1"' >> /tmp/loader.conf.pfSense
 fi
 
-if [ -z "${buildroom}" ]; then
+if [ ! -f /tmp/buildroom ]; then
 	exit 0
 fi
 
@@ -427,7 +388,7 @@ else
 	fi
 fi
 
-if [ -n "${custom}" ]; then
+if [ -f /tmp/custom ]; then
 	custom_url="http://factory-logger.pfmechanics.com/${custom}-install.sh"
 
 	if ! fetch -o /tmp/custom.sh ${custom_url}; then

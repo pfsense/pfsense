@@ -187,7 +187,7 @@ cur_model=$(get_cur_model)
 
 if [ -n "${is_adi}" ]; then
 	case "${cur_model}" in
-		SG-2220|SG-2440|XG-2758)
+		SG-2220|SG-2440|XG-2758|XG-1537)
 			selected_model="${cur_model}"
 			;;
 		SG-4860|SG-8860)

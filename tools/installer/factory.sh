@@ -188,7 +188,7 @@ cur_model=$(get_cur_model)
 unset is_arm
 if [ -n "${is_adi}" ]; then
 	case "${cur_model}" in
-		SG-2220|SG-2440|XG-2758|XG-1537)
+		SG-2220|SG-2440|XG-2758)
 			selected_model="${cur_model}"
 			;;
 		SG-4860|SG-8860)
@@ -202,7 +202,7 @@ if [ -n "${is_adi}" ]; then
 	esac
 elif [ "${machine_arch}" != "armv6" ]; then
 	case "${cur_model}" in
-		C2758|APU|SG-2320|SG-2340)
+		C2758|APU|SG-2320|SG-2340|XG-1537)
 			selected_model="${cur_model}"
 			;;
 		XG-1540)

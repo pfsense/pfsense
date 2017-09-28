@@ -787,6 +787,7 @@ create_iso_image() {
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -831,7 +832,6 @@ create_memstick_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -839,6 +839,7 @@ create_memstick_image() {
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -871,7 +872,6 @@ create_memstick_serial_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -881,6 +881,7 @@ create_memstick_serial_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
@@ -919,7 +920,6 @@ create_memstick_adi_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -929,6 +929,7 @@ create_memstick_adi_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}

@@ -329,7 +329,7 @@ export VARIANTUPDATES=""
 if [ -n "${_IS_RELEASE}" ]; then
 	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
-	export RSYNCPATH=${RSYNCPATH:-"/storage/ce"}
+	export RSYNCPATH=${RSYNCPATH:-"/staging/ce"}
 else
 	export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}

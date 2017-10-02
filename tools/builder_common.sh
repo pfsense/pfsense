@@ -2476,11 +2476,17 @@ EOF
 
 	# Copy over pkg repo templates to pfSense-repo
 	mkdir -p /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
-	cp -f ${PKG_REPO_BASE}/* \
-		/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
 
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
+
+		if [ "${jail_arch}" = "i386.i386" ]; then
+			cp -f ${PKG_REPO_BASE}_i386/* \
+				/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
+		else
+			cp -f ${PKG_REPO_BASE}/* \
+				/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
+		fi
 
 		if ! poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
 			echo ">>> Poudriere jail ${jail_name} not found, skipping..." | tee -a ${LOGFILE}

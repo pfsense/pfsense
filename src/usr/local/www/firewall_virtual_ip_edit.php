@@ -256,7 +256,6 @@ if ($_POST) {
 		/* CARP specific fields */
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
-			$vipent['uniqid'] = $_POST['uniqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
 
@@ -267,9 +266,14 @@ if ($_POST) {
 			}
 		}
 
-		/* IPalias specific fields */
-		if ($_POST['mode'] === "ipalias") {
-			$vipent['uniqid'] = $_POST['uniqid'];
+		/* IPalias and CARP should have a uniqid */
+		if ($_POST['mode'] === "carp" || $_POST['mode'] === "ipalias") {
+			if (empty($_POST['uniqid'])) {
+				// if we changed a 'parp' or 'other' alias to 'carp'/'ipalias' it needs a uniqid
+				$vipent['uniqid'] = uniqid();
+			} else {
+				$vipent['uniqid'] = $_POST['uniqid'];
+			}
 		}
 
 		/* Common fields */

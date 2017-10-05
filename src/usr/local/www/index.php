@@ -489,11 +489,14 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 </div>
 
 <?php
-// Import the modal form used to display the copyright/usage information, then rename it
-// This should cause it to display only once per install or update
-if (file_exists('/usr/local/www/copynotice.inc')) {
-	require_once('/usr/local/www/copynotice.inc');
-	rename('/usr/local/www/copynotice.inc', '/usr/local/www/copynotice.old');
+/*
+ * Import the modal form used to display the copyright/usage information
+ * when trigger file exists. Trigger file is created during upgrade process
+ * when /etc/version changes
+ */
+if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
+	require_once("{$g['www_path']}/copynotice.inc");
+	@unlink("{$g['cf_conf_path']}/copynotice_display");
 }
 ?>
 

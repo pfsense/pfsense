@@ -130,12 +130,12 @@
 /etc/rc.firmware
 /etc/rc.firmware_auto
 /etc/rc.initial.firmware_update
+/etc/rc.initial.store_config_to_removable_device
 /etc/rc.linkup.sh
 /etc/rc.nanobsd_switch_boot_slice
 /etc/rc.parse-isc-dhcpd
 /etc/rc.restore_full_backup
 /etc/rc.sendmail
-/etc/rc.initial.store_config_to_removable_device
 /etc/rrdtool.core
 /etc/ttys_wrap
 /etc/usbd.conf
@@ -571,7 +571,6 @@
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
-/usr/local/www/diag_system_pftop.php
 /usr/local/etc/pkg.conf
 /usr/local/info
 /usr/local/lib/engines
@@ -831,8 +830,8 @@
 /usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
-/usr/local/www/copyright-master.txt
 /usr/local/www/copynotice.old
+/usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css
 /usr/local/www/d3pie
@@ -868,6 +867,7 @@
 /usr/local/www/diag_patterns.php
 /usr/local/www/diag_pkglogs.php
 /usr/local/www/diag_showbogons.php
+/usr/local/www/diag_system_pftop.php
 /usr/local/www/dom-drag.js
 /usr/local/www/draglist.js
 /usr/local/www/dtree.js

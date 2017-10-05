@@ -85,18 +85,19 @@ main() {
 	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
 
 	echo "Fixing ${TYPE} labels..."
-	# Get / ufsid
-	UFSID=$(/sbin/glabel status -s "${DEV}s2a" 2>/dev/null \
-		| /usr/bin/head -n 1 | /usr/bin/cut -d' ' -f1)
-
-	if [ -z "${UFSID}" ]; then
+	# Found available label for PFSENSEROOT
+	idx=0
+	while [ -e "/dev/label/PFSENSEROOT${idx}" ]; do
+		idx=$((idx+1))
+	done
+	ROOT_LABEL="PFSENSEROOT${idx}"
+	if ! /sbin/glabel label ${ROOT_LABEL} "/dev/${DEV}s2a"; then
 		echo
-		echo "error obtaining UFSID.  aborting."
+		echo "error setting ROOT label.  aborting."
 		sleep 5
 		reboot
 	fi
-
-	if ! /sbin/mount /dev/${UFSID} /mnt; then
+	if ! /sbin/mount /dev/label/${ROOT_LABEL} /mnt; then
 		echo
 		echo "error mounting pfSense partition.  aborting."
 		sleep 5
@@ -118,7 +119,7 @@ main() {
 
 	/usr/bin/sed -i '' \
 		-e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${BOOT_LABEL}," \
-		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${ROOT_LABEL}," \
 		/mnt/etc/fstab
 
 	/sbin/umount /mnt
@@ -129,6 +130,8 @@ main() {
 	echo
 	echo "The system will halt now, please power off and remove the firmware"
 	echo "recovery storage device."
+	echo
+	echo
 	echo
 	echo
 

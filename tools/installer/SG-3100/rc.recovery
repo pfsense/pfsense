@@ -78,12 +78,12 @@ main() {
 	esac
 
 	# Update LED status.
-	/usr/sbin/gpioctl -f /dev/gpioc1 2 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 5 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 8 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 1 duty 200 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 4 duty 100 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 7 duty 35 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 5 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 8 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 200 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 35 > /dev/null
 
 	echo "Erasing the ${TYPE} contents..."
 	/bin/dd if=/dev/zero of=/dev/${DEV} bs=4m count=15 2> /dev/null
@@ -131,14 +131,14 @@ main() {
 	sync ; sync ; sync
 
 	# Update the boot status on SG-3100, pfSense is installed.
-	/usr/sbin/gpioctl -f /dev/gpioc1 1 duty 100 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 4 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc1 7 duty 0 > /dev/null
-	/sbin/sysctl -q dev.gpio.1.led.1.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.1.led.2.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.1.led.0.T1-T3=1040 > /dev/null
-	/sbin/sysctl -q dev.gpio.1.led.0.T2=520 > /dev/null
-	/sbin/sysctl -q dev.gpio.1.pin.1.T4=3640 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 0 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.pin.1.T4=3640 > /dev/null
 
 	echo
 	echo "Done!"
@@ -152,6 +152,16 @@ main() {
 
 	trap "-" 1 2 15 EXIT
 	/sbin/shutdown -h now
+}
+
+sg3100_gpiounit() {
+	local _boardrev=$(/bin/kenv -q uboot.boardrev)
+
+	if [ "${_boardrev}" == "R100" ]; then
+		echo "1"
+	else
+		echo "0"
+	fi
 }
 
 # Try to read serial
@@ -178,7 +188,7 @@ fi
 
 echo "Netgate SG-3100 firmware recovery"
 
-if [ -z "${product}" -o "${product}" != "80500-0148-G00" ]; then
+if [ -z "${product}" -o "${product%-*}" != "80500-0148" ]; then
 	echo
 	echo "unsupported system: unknown product.  aborting."
 	sleep 5
@@ -195,10 +205,11 @@ fi
 echo "Serial: ${serial}"
 
 # Okay we are ready to start.
-/usr/sbin/gpioctl -f /dev/gpioc1 2 duty 200 > /dev/null
-/sbin/sysctl -q dev.gpio.1.led.0.pwm=0 > /dev/null
-/sbin/sysctl -q dev.gpio.1.led.1.pwm=0 > /dev/null
-/sbin/sysctl -q dev.gpio.1.led.2.pwm=0 > /dev/null
+gpiodev=$(sg3100_gpiounit)
+/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 200 > /dev/null
+/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
+/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
+/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
 
 # Find the eMMC device
 for DEV in mmcsd0

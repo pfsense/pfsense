@@ -77,6 +77,14 @@ main() {
 		reboot
 	esac
 
+	# Update LED status.
+	/usr/sbin/gpioctl -f /dev/gpioc1 2 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 5 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 8 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 1 duty 200 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 4 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 7 duty 35 > /dev/null
+
 	echo "Erasing the ${TYPE} contents..."
 	/bin/dd if=/dev/zero of=/dev/${DEV} bs=4m count=15 2> /dev/null
 
@@ -85,19 +93,16 @@ main() {
 	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${DEV} bs=4m
 
 	echo "Fixing ${TYPE} labels..."
-	# Found available label for PFSENSEROOT
-	idx=0
-	while [ -e "/dev/label/PFSENSEROOT${idx}" ]; do
-		idx=$((idx+1))
-	done
-	ROOT_LABEL="PFSENSEROOT${idx}"
-	if ! /sbin/glabel label ${ROOT_LABEL} "/dev/${DEV}s2a"; then
+	DISKID=$(/sbin/glabel status -s "${DEV}" 2>/dev/null \
+		| /usr/bin/grep diskid | /usr/bin/cut -d' ' -f1)
+
+	if [ -z "${DISKID}" ]; then
 		echo
-		echo "error setting ROOT label.  aborting."
+		echo "error obtaining DISKID.  aborting."
 		sleep 5
 		reboot
 	fi
-	if ! /sbin/mount /dev/label/${ROOT_LABEL} /mnt; then
+	if ! /sbin/mount /dev/${DISKID}s2a /mnt; then
 		echo
 		echo "error mounting pfSense partition.  aborting."
 		sleep 5
@@ -110,7 +115,7 @@ main() {
 		idx=$((idx+1))
 	done
 	BOOT_LABEL="PFSENSEBOOT${idx}"
-	if ! /sbin/glabel label ${BOOT_LABEL} "/dev/${DEV}s1"; then
+	if ! /sbin/glabel label ${BOOT_LABEL} "/dev/${DISKID}s1"; then
 		echo
 		echo "error setting BOOT label.  aborting."
 		sleep 5
@@ -118,12 +123,22 @@ main() {
 	fi
 
 	/usr/bin/sed -i '' \
-		-e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${BOOT_LABEL}," \
-		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${ROOT_LABEL}," \
+		-e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
 		/mnt/etc/fstab
 
 	/sbin/umount /mnt
 	sync ; sync ; sync
+
+	# Update the boot status on SG-3100, pfSense is installed.
+	/usr/sbin/gpioctl -f /dev/gpioc1 1 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 4 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc1 7 duty 0 > /dev/null
+	/sbin/sysctl -q dev.gpio.1.led.1.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.1.led.2.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.1.led.0.T1-T3=1040 > /dev/null
+	/sbin/sysctl -q dev.gpio.1.led.0.T2=520 > /dev/null
+	/sbin/sysctl -q dev.gpio.1.pin.1.T4=3640 > /dev/null
 
 	echo
 	echo "Done!"
@@ -178,6 +193,12 @@ if [ -z "${serial}" ]; then
 fi
 
 echo "Serial: ${serial}"
+
+# Okay we are ready to start.
+/usr/sbin/gpioctl -f /dev/gpioc1 2 duty 200 > /dev/null
+/sbin/sysctl -q dev.gpio.1.led.0.pwm=0 > /dev/null
+/sbin/sysctl -q dev.gpio.1.led.1.pwm=0 > /dev/null
+/sbin/sysctl -q dev.gpio.1.led.2.pwm=0 > /dev/null
 
 # Find the eMMC device
 for DEV in mmcsd0

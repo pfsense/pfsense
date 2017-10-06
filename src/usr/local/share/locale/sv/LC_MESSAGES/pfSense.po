@@ -12,11 +12,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-21 09:08-0300\n"
+"POT-Creation-Date: 2017-10-06 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-08-29 02:36-0400\n"
+"PO-Revision-Date: 2017-09-30 11:08-0400\n"
 "Last-Translator: Johan Hedlund <johan@joh.se>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -31,42 +31,42 @@ msgstr "Aldrig"
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "Speglingslistan har ändrats. Föregående: (%s) Ny: (%s) "
 
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr ""
+msgstr "Spegling %s status förändrad från %s till %s."
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
 #, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
-msgstr ""
+msgstr "Spegling %s konsumenträknare ändrad från %d till %d"
 
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "Spegling %s disk status förändrad. Föregående: (%s) Ny: (%s)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "Brandvägg: NAT: 1:1 - omflyttning NAT 1:1 mappningar."
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "Brandvägg: NAT: 1:1 - borttagning av NAT 1:1 mappning."
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "Brandvägg: NAT: 1:1 - borttagning av valda NAT 1:1 mappningar."
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Brandvägg: NAT: 1:1 - aktiverade en NAT 1:1 regel."
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Brandvägg: NAT: 1:1 - deaktiverade en NAT 1:1 regel."
 
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -157,7 +157,7 @@ msgstr "NAT-konfigurationen har ändrats."
 #: src/usr/local/www/firewall_rules.php:332
 #: src/usr/local/www/system_gateway_groups.php:112
 msgid "The changes must be applied for them to take effect."
-msgstr ""
+msgstr "Förändringarna måste tillämpas för att aktiveras."
 
 #: src/usr/local/www/firewall_nat_1to1.php:134
 #: src/usr/local/www/firewall_nat_out.php:220
@@ -166,7 +166,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:676
 #: src/usr/local/www/firewall_nat_npt.php:133
 msgid "Port Forward"
-msgstr ""
+msgstr "Port Forward"
 
 #: src/usr/local/www/firewall_nat_1to1.php:136
 #: src/usr/local/www/firewall_nat_out.php:202
@@ -188,7 +188,7 @@ msgstr "NPt"
 
 #: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
-msgstr ""
+msgstr "NAT 1:1 mappningar"
 
 #: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/interfaces_assign.php:511
@@ -256,7 +256,7 @@ msgid "Destination IP"
 msgstr "Destinations-IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
-#: src/usr/local/www/status_ipsec.php:485
+#: src/usr/local/www/status_ipsec.php:484
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/load_balancer_pool.php:122
 #: src/usr/local/www/guiconfig.inc:1177
@@ -449,12 +449,12 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:177
 #: src/usr/local/www/firewall_rules.php:501
 msgid "click to toggle enabled/disabled status"
-msgstr ""
+msgstr "klicka för att växla aktiverad/deaktiverad status"
 
 #: src/usr/local/www/firewall_nat_1to1.php:184
 #: src/usr/local/www/firewall_nat.php:293
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr ""
+msgstr "Negerad: Den här regeln exkluderar NAT från en senare regel"
 
 #: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_nat.php:332
@@ -474,24 +474,24 @@ msgstr "Aliasdetaljer"
 #: src/usr/local/www/firewall_nat_out.php:479
 #: src/usr/local/www/firewall_nat_npt.php:207
 msgid "Edit mapping"
-msgstr ""
+msgstr "Editera mappning"
 
 #: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_out.php:480
 #: src/usr/local/www/firewall_nat_npt.php:208
 msgid "Add a new mapping based on this one"
-msgstr ""
+msgstr "Lägg till en ny mappning baserad på denna"
 
 #: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_out.php:481
 #: src/usr/local/www/firewall_nat_npt.php:209
 msgid "Delete mapping"
-msgstr ""
+msgstr "Ta bort mappning"
 
 #: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
-msgstr ""
+msgstr "Lägg till mappning högst upp i listan"
 
 #: src/usr/local/www/firewall_nat_1to1.php:243
 #: src/usr/local/www/firewall_nat_1to1.php:247
@@ -568,12 +568,12 @@ msgstr "Lägg till"
 #: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
-msgstr ""
+msgstr "Lägg till mappning i slutet av listan"
 
 #: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
-msgstr ""
+msgstr "Ta bort valda mappningar"
 
 #: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/interfaces_assign.php:540
@@ -606,7 +606,7 @@ msgstr "Ta bort"
 #: src/usr/local/www/firewall_nat_out.php:506
 #: src/usr/local/www/firewall_nat_npt.php:234
 msgid "Save mapping order"
-msgstr ""
+msgstr "Spara ordning på mappningar"
 
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:573
@@ -654,6 +654,8 @@ msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
+"Beroende på hur WAN-anslutningen är uppsatt så kan den här behöva en "
+"%1$sVirtual IP%2$s."
 
 #: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
@@ -662,27 +664,32 @@ msgid ""
 "address is used, any services on this system (IPsec, OpenVPN server, etc.) "
 "using the WAN IP address will no longer function."
 msgstr ""
+"Om en 1:1 NAT läggs till på något av IP-interfacen på brandväggen så kommer "
+"brandväggen bli oåtkomlig på den IP-adressen. Exempelvis om WAN IP-adressen "
+"används så kommer tjänsterna på brandväggen (IPsec, OpenVPN server etc.) som "
+"använder WAN IP-adressen sluta fungera."
 
 #: src/usr/local/www/firewall_nat_1to1.php:298
 msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
+"En eller flera NAT 1:1 mappningar har blivit flyttade men är inte sparade än"
 
-#: src/usr/local/www/status_ipsec.php:114
-#: src/usr/local/www/status_ipsec.php:147
+#: src/usr/local/www/status_ipsec.php:113
+#: src/usr/local/www/status_ipsec.php:146
 msgid "Any identifier"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:119
-#: src/usr/local/www/status_ipsec.php:128
-#: src/usr/local/www/status_ipsec.php:161
-#: src/usr/local/www/status_ipsec.php:173
-#: src/usr/local/www/status_ipsec.php:281
-#: src/usr/local/www/status_ipsec.php:303
-#: src/usr/local/www/status_ipsec.php:394
-#: src/usr/local/www/status_ipsec.php:404
-#: src/usr/local/www/status_ipsec.php:415
-#: src/usr/local/www/status_ipsec.php:424
+#: src/usr/local/www/status_ipsec.php:118
+#: src/usr/local/www/status_ipsec.php:127
+#: src/usr/local/www/status_ipsec.php:160
+#: src/usr/local/www/status_ipsec.php:172
+#: src/usr/local/www/status_ipsec.php:280
+#: src/usr/local/www/status_ipsec.php:302
+#: src/usr/local/www/status_ipsec.php:393
+#: src/usr/local/www/status_ipsec.php:403
+#: src/usr/local/www/status_ipsec.php:414
+#: src/usr/local/www/status_ipsec.php:423
 #: src/usr/local/www/pkg_mgr_installed.php:112
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
@@ -691,27 +698,27 @@ msgstr ""
 msgid "Unknown"
 msgstr "Okänd"
 
-#: src/usr/local/www/status_ipsec.php:198
+#: src/usr/local/www/status_ipsec.php:197
 msgid " seconds ("
 msgstr "sekunder ("
 
-#: src/usr/local/www/status_ipsec.php:221
+#: src/usr/local/www/status_ipsec.php:220
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr ""
+msgstr "%1$s sekunder (%2$s) sen"
 
-#: src/usr/local/www/status_ipsec.php:230
-#: src/usr/local/www/status_ipsec.php:232
-#: src/usr/local/www/status_ipsec.php:453
+#: src/usr/local/www/status_ipsec.php:229
+#: src/usr/local/www/status_ipsec.php:231
+#: src/usr/local/www/status_ipsec.php:452
 msgid "Connect VPN"
 msgstr "Anslut VPN"
 
-#: src/usr/local/www/status_ipsec.php:237
+#: src/usr/local/www/status_ipsec.php:236
 msgid "Disconnect VPN"
 msgstr "Koppla från VPN"
 
-#: src/usr/local/www/status_ipsec.php:239
-#: src/usr/local/www/status_ipsec.php:353
+#: src/usr/local/www/status_ipsec.php:238
+#: src/usr/local/www/status_ipsec.php:352
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
@@ -719,38 +726,38 @@ msgstr "Koppla från VPN"
 msgid "Disconnect"
 msgstr "Koppla ner"
 
-#: src/usr/local/www/status_ipsec.php:254
+#: src/usr/local/www/status_ipsec.php:253
 msgid "Show child SA entries"
-msgstr ""
+msgstr "Visa child SA entries"
 
-#: src/usr/local/www/status_ipsec.php:288
+#: src/usr/local/www/status_ipsec.php:287
 msgid "Local: "
 msgstr "Lokal:"
 
-#: src/usr/local/www/status_ipsec.php:292
+#: src/usr/local/www/status_ipsec.php:291
 msgid "Remote: "
 msgstr "Fjärr: "
 
-#: src/usr/local/www/status_ipsec.php:309
+#: src/usr/local/www/status_ipsec.php:308
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:311
+#: src/usr/local/www/status_ipsec.php:310
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:313
+#: src/usr/local/www/status_ipsec.php:312
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:334
+#: src/usr/local/www/status_ipsec.php:333
 msgid "IPComp: "
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:338
+#: src/usr/local/www/status_ipsec.php:337
 #: src/usr/local/www/vpn_openvpn_client.php:585
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
@@ -760,36 +767,36 @@ msgstr ""
 msgid "none"
 msgstr "ingen"
 
-#: src/usr/local/www/status_ipsec.php:344
+#: src/usr/local/www/status_ipsec.php:343
 msgid "Bytes-In: "
-msgstr ""
+msgstr "Bytes-In: "
+
+#: src/usr/local/www/status_ipsec.php:344
+msgid "Packets-In: "
+msgstr "Packets-In: "
 
 #: src/usr/local/www/status_ipsec.php:345
-msgid "Packets-In: "
-msgstr ""
+msgid "Bytes-Out: "
+msgstr "Bytes-Ut: "
 
 #: src/usr/local/www/status_ipsec.php:346
-msgid "Bytes-Out: "
-msgstr ""
-
-#: src/usr/local/www/status_ipsec.php:347
 msgid "Packets-Out: "
-msgstr ""
+msgstr "Packets-Ut: "
 
-#: src/usr/local/www/status_ipsec.php:351
+#: src/usr/local/www/status_ipsec.php:350
 msgid "Disconnect Child SA"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:440
+#: src/usr/local/www/status_ipsec.php:439
 msgid "Awaiting connections"
-msgstr ""
+msgstr "Väntar på anslutningar"
 
-#: src/usr/local/www/status_ipsec.php:448
+#: src/usr/local/www/status_ipsec.php:447
 msgid "Disconnected"
 msgstr "Frånkopplad"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:493
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:492
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:57
 #: src/usr/local/www/status_captiveportal_expire.php:55
@@ -842,7 +849,7 @@ msgstr "Frånkopplad"
 msgid "Status"
 msgstr "Status"
 
-#: src/usr/local/www/status_ipsec.php:465
+#: src/usr/local/www/status_ipsec.php:464
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -867,8 +874,8 @@ msgstr "Status"
 msgid "IPsec"
 msgstr "IPsec"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:472
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:471
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
@@ -876,7 +883,7 @@ msgstr "IPsec"
 msgid "Overview"
 msgstr "Översikt"
 
-#: src/usr/local/www/status_ipsec.php:473
+#: src/usr/local/www/status_ipsec.php:472
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:41
 #: src/usr/local/www/status_ipsec_sad.php:55
@@ -886,70 +893,70 @@ msgstr "Översikt"
 msgid "Leases"
 msgstr "Lån"
 
-#: src/usr/local/www/status_ipsec.php:474
+#: src/usr/local/www/status_ipsec.php:473
 #: src/usr/local/www/status_ipsec_leases.php:42
 #: src/usr/local/www/status_ipsec_sad.php:36
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "SADs"
 
-#: src/usr/local/www/status_ipsec.php:475
+#: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:43
 #: src/usr/local/www/status_ipsec_sad.php:57
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "SPDs"
 
-#: src/usr/local/www/status_ipsec.php:480
+#: src/usr/local/www/status_ipsec.php:479
 msgid "IPsec Status"
 msgstr "IPsec-status"
 
-#: src/usr/local/www/status_ipsec.php:486
+#: src/usr/local/www/status_ipsec.php:485
 msgid "Local ID"
-msgstr ""
+msgstr "Lokal ID"
 
-#: src/usr/local/www/status_ipsec.php:487
+#: src/usr/local/www/status_ipsec.php:486
 #: src/usr/local/www/services_pppoe.php:100
 msgid "Local IP"
 msgstr "Lokal IP"
 
-#: src/usr/local/www/status_ipsec.php:488
+#: src/usr/local/www/status_ipsec.php:487
 msgid "Remote ID"
-msgstr ""
+msgstr "Fjärr ID"
+
+#: src/usr/local/www/status_ipsec.php:488
+msgid "Remote IP"
+msgstr "Fjärr IP"
 
 #: src/usr/local/www/status_ipsec.php:489
-msgid "Remote IP"
-msgstr ""
+msgid "Role"
+msgstr "Roll"
 
 #: src/usr/local/www/status_ipsec.php:490
-msgid "Role"
-msgstr ""
+msgid "Reauth"
+msgstr "Reauth"
 
 #: src/usr/local/www/status_ipsec.php:491
-msgid "Reauth"
-msgstr ""
-
-#: src/usr/local/www/status_ipsec.php:492
 msgid "Algo"
 msgstr "Algo"
 
-#: src/usr/local/www/status_ipsec.php:500
+#: src/usr/local/www/status_ipsec.php:499
 msgid "Collecting IPsec status information."
-msgstr ""
+msgstr "Insamlar IPsec statusinformation"
 
-#: src/usr/local/www/status_ipsec.php:517
+#: src/usr/local/www/status_ipsec.php:516
 #: src/usr/local/www/status_ipsec_leases.php:129
 #: src/usr/local/www/status_ipsec_sad.php:129
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr ""
+msgstr "IPsec kan konfigureras %1$shär%2$s."
 
-#: src/usr/local/www/status_ipsec.php:550
+#: src/usr/local/www/status_ipsec.php:559
 msgid "No IPsec status information available."
-msgstr ""
+msgstr "Ingen IPsec statusinformation tillgänglig."
 
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_lagg_edit.php:217
@@ -977,7 +984,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:76
 #: src/usr/local/www/interfaces_lagg.php:76
 msgid "Interfaces"
-msgstr "Gränssnitt"
+msgstr "Interface"
 
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_assign.php:494
@@ -991,7 +998,7 @@ msgstr "Gränssnitt"
 #: src/usr/local/www/interfaces_vlan.php:83
 #: src/usr/local/www/interfaces_lagg.php:85
 msgid "Interface Assignments"
-msgstr ""
+msgstr "Interface-tilldelning"
 
 #: src/usr/local/www/interfaces_assign.php:49
 #, php-format
@@ -1008,7 +1015,7 @@ msgstr "LAN"
 
 #: src/usr/local/www/interfaces_assign.php:247
 msgid "Interface has been added."
-msgstr "Gränssnittet har lagts till."
+msgstr "Interfacet har lagts till."
 
 #: src/usr/local/www/interfaces_assign.php:286
 #, php-format
@@ -3889,7 +3896,7 @@ msgstr "tid"
 msgid "View"
 msgstr "Vy"
 
-#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:547
+#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -5148,7 +5155,7 @@ msgid ""
 "Setup</a> page."
 msgstr ""
 
-#: src/usr/local/www/index.php:549 src/usr/local/www/services_unbound.php:231
+#: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/diag_backup.php:454
@@ -5168,7 +5175,7 @@ msgstr ""
 msgid "All"
 msgstr "Alla"
 
-#: src/usr/local/www/index.php:625
+#: src/usr/local/www/index.php:637
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 
@@ -16471,35 +16478,35 @@ msgstr ""
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:361
+#: src/usr/local/www/status.php:362
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:363
+#: src/usr/local/www/status.php:364
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:365
+#: src/usr/local/www/status.php:366
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:368 src/usr/local/www/diag_command.php:233
+#: src/usr/local/www/status.php:369 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1102
 #: src/usr/local/www/services_captiveportal.php:1136
 #: src/usr/local/www/services_captiveportal.php:1168
 msgid "Download"
 msgstr "Ladda ned"
 
-#: src/usr/local/www/status.php:378
+#: src/usr/local/www/status.php:379
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:386
+#: src/usr/local/www/status.php:387
 msgid "Done."
 msgstr "Klar."
 
@@ -24569,6 +24576,18 @@ msgstr ""
 msgid "Enter the root-path string. This overrides setting on main page."
 msgstr ""
 
+#: src/usr/local/www/copynotice.inc:46
+msgid ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense is a "
+"federally registered trademark of Electric Sheep Fencing, LLC. Any "
+"unauthorized use of this trademark is prohibited by state and federal law "
+"and by international law. Refer to our Trademark Usage Guidelines for how to "
+"properly use the marks. All rights reserved.</p><p align="
+"\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
+"strong></font></p>"
+msgstr ""
+
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
 msgstr ""
@@ -27922,11 +27941,11 @@ msgstr ""
 msgid "Setting hard disk standby... "
 msgstr "Sätter hårddisken i standby..."
 
-#: src/etc/inc/system.inc:2476
+#: src/etc/inc/system.inc:2483
 msgid "PC Engines WRAP"
 msgstr ""
 
-#: src/etc/inc/system.inc:2480 src/etc/inc/system.inc:2499
+#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
 msgid "PC Engines ALIX"
 msgstr ""
 

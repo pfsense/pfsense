@@ -13,12 +13,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-21 09:08-0300\n"
+"POT-Creation-Date: 2017-10-06 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-09-06 02:32-0400\n"
-"Last-Translator: Onur Başer <onur@baserler.com>\n"
+"PO-Revision-Date: 2017-09-27 09:15-0400\n"
+"Last-Translator: Mehmet Dasci <meda.debian@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -32,42 +32,42 @@ msgstr "Hiçbir zaman"
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "Yansı listesi değişti. Eski: (%s)  Yeni: (%s) "
 
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr ""
+msgstr "%s yansı durumu, eski %s, yeni %s olarak değişti."
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
 #, php-format
 msgid "Mirror %s consumer count changed from %d to %d."
-msgstr ""
+msgstr "%s yansı kullanıcı sayısı, eski %d, yeni %d olarak değişti. "
 
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
-msgstr ""
+msgstr "%s yansısı sürücü durumu değişti. Eski: (%s) Yeni:(%s)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - NAT 1:1 haritalandırılması yeniden düzenlendi."
 
 #: src/usr/local/www/firewall_nat_1to1.php:79
 msgid "Firewall: NAT: 1:1 - deleted NAT 1:1 mapping."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - NAT 1:1 haritalandırılması silindi."
 
 #: src/usr/local/www/firewall_nat_1to1.php:95
 msgid "Firewall: NAT: 1:1 - deleted selected NAT 1:1 mappings."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - seçilen NAT 1:1 hatiralandırılması silindi"
 
 #: src/usr/local/www/firewall_nat_1to1.php:107
 msgid "Firewall: NAT: 1:1 - enabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Bir NAT 1:1 kuralı etkinleştirildi."
 
 #: src/usr/local/www/firewall_nat_1to1.php:110
 msgid "Firewall: NAT: 1:1 - disabled a NAT 1:1 rule."
-msgstr ""
+msgstr "Firewall: NAT: 1:1 - Bir NAT 1:1 kuralı etkisizleştirildi."
 
 #: src/usr/local/www/firewall_nat_1to1.php:120
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
@@ -158,7 +158,7 @@ msgstr "NAT yapılandırması değiştirildi."
 #: src/usr/local/www/firewall_rules.php:332
 #: src/usr/local/www/system_gateway_groups.php:112
 msgid "The changes must be applied for them to take effect."
-msgstr ""
+msgstr "Değişikliklerin etkili olması için uygulanması gerekli."
 
 #: src/usr/local/www/firewall_nat_1to1.php:134
 #: src/usr/local/www/firewall_nat_out.php:220
@@ -189,7 +189,7 @@ msgstr "NPt"
 
 #: src/usr/local/www/firewall_nat_1to1.php:143
 msgid "NAT 1:1 Mappings"
-msgstr ""
+msgstr "NAt 1:1 haritalandırma"
 
 #: src/usr/local/www/firewall_nat_1to1.php:150
 #: src/usr/local/www/interfaces_assign.php:511
@@ -257,7 +257,7 @@ msgid "Destination IP"
 msgstr "Hedef IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
-#: src/usr/local/www/status_ipsec.php:485
+#: src/usr/local/www/status_ipsec.php:484
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/load_balancer_pool.php:122
 #: src/usr/local/www/guiconfig.inc:1177
@@ -455,7 +455,7 @@ msgstr "açık/kapalı durumunu değiştirmek için tıklayın"
 #: src/usr/local/www/firewall_nat_1to1.php:184
 #: src/usr/local/www/firewall_nat.php:293
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr ""
+msgstr "Olumsuzlaştı: Bu kural, daha sonraki bir kuralı dışarıda bırakıyor."
 
 #: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_nat.php:332
@@ -469,30 +469,30 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:726
 #: src/usr/local/www/firewall_rules.php:735
 msgid "Alias details"
-msgstr ""
+msgstr "Takma ad detayları."
 
 #: src/usr/local/www/firewall_nat_1to1.php:225
 #: src/usr/local/www/firewall_nat_out.php:479
 #: src/usr/local/www/firewall_nat_npt.php:207
 msgid "Edit mapping"
-msgstr ""
+msgstr "Haritalama değiştir."
 
 #: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_out.php:480
 #: src/usr/local/www/firewall_nat_npt.php:208
 msgid "Add a new mapping based on this one"
-msgstr ""
+msgstr "Bunu baz alarak yeni bir haritalandırma ekle."
 
 #: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_out.php:481
 #: src/usr/local/www/firewall_nat_npt.php:209
 msgid "Delete mapping"
-msgstr ""
+msgstr "Haritalandırma sil"
 
 #: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
 msgid "Add mapping to the top of the list"
-msgstr ""
+msgstr "Listenin başına haritalandırma ekle"
 
 #: src/usr/local/www/firewall_nat_1to1.php:243
 #: src/usr/local/www/firewall_nat_1to1.php:247
@@ -569,12 +569,12 @@ msgstr "Ekle"
 #: src/usr/local/www/firewall_nat_1to1.php:245
 #: src/usr/local/www/firewall_nat_npt.php:226
 msgid "Add mapping to the end of the list"
-msgstr ""
+msgstr "Listenin sonuna haritalandırma ekle"
 
 #: src/usr/local/www/firewall_nat_1to1.php:249
 #: src/usr/local/www/firewall_nat_npt.php:230
 msgid "Delete selected mappings"
-msgstr ""
+msgstr "Seçili haritalandırmaları sil"
 
 #: src/usr/local/www/firewall_nat_1to1.php:251
 #: src/usr/local/www/interfaces_assign.php:540
@@ -607,7 +607,7 @@ msgstr "Sil"
 #: src/usr/local/www/firewall_nat_out.php:506
 #: src/usr/local/www/firewall_nat_npt.php:234
 msgid "Save mapping order"
-msgstr ""
+msgstr "Haritalandırma düzenini kaydet"
 
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:573
@@ -655,6 +655,7 @@ msgid ""
 "Depending on the way the WAN connection is setup, this may also need a "
 "%1$sVirtual IP%2$s."
 msgstr ""
+"WAN bağlantı kurulumuna bağlı olarak, bir %1$sSanal IP%2$s gerekli olabilir."
 
 #: src/usr/local/www/firewall_nat_1to1.php:263
 msgid ""
@@ -669,21 +670,21 @@ msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:114
-#: src/usr/local/www/status_ipsec.php:147
+#: src/usr/local/www/status_ipsec.php:113
+#: src/usr/local/www/status_ipsec.php:146
 msgid "Any identifier"
-msgstr ""
+msgstr "Her hangi bir belirteç"
 
-#: src/usr/local/www/status_ipsec.php:119
-#: src/usr/local/www/status_ipsec.php:128
-#: src/usr/local/www/status_ipsec.php:161
-#: src/usr/local/www/status_ipsec.php:173
-#: src/usr/local/www/status_ipsec.php:281
-#: src/usr/local/www/status_ipsec.php:303
-#: src/usr/local/www/status_ipsec.php:394
-#: src/usr/local/www/status_ipsec.php:404
-#: src/usr/local/www/status_ipsec.php:415
-#: src/usr/local/www/status_ipsec.php:424
+#: src/usr/local/www/status_ipsec.php:118
+#: src/usr/local/www/status_ipsec.php:127
+#: src/usr/local/www/status_ipsec.php:160
+#: src/usr/local/www/status_ipsec.php:172
+#: src/usr/local/www/status_ipsec.php:280
+#: src/usr/local/www/status_ipsec.php:302
+#: src/usr/local/www/status_ipsec.php:393
+#: src/usr/local/www/status_ipsec.php:403
+#: src/usr/local/www/status_ipsec.php:414
+#: src/usr/local/www/status_ipsec.php:423
 #: src/usr/local/www/pkg_mgr_installed.php:112
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
@@ -692,27 +693,27 @@ msgstr ""
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: src/usr/local/www/status_ipsec.php:198
+#: src/usr/local/www/status_ipsec.php:197
 msgid " seconds ("
-msgstr ""
+msgstr "saniye ("
 
-#: src/usr/local/www/status_ipsec.php:221
+#: src/usr/local/www/status_ipsec.php:220
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
-msgstr ""
+msgstr "%1$s saniye (%2$s) önce"
 
-#: src/usr/local/www/status_ipsec.php:230
-#: src/usr/local/www/status_ipsec.php:232
-#: src/usr/local/www/status_ipsec.php:453
+#: src/usr/local/www/status_ipsec.php:229
+#: src/usr/local/www/status_ipsec.php:231
+#: src/usr/local/www/status_ipsec.php:452
 msgid "Connect VPN"
-msgstr ""
+msgstr "VPN bağla"
 
-#: src/usr/local/www/status_ipsec.php:237
+#: src/usr/local/www/status_ipsec.php:236
 msgid "Disconnect VPN"
-msgstr ""
+msgstr "VPN bağlantısını kes"
 
-#: src/usr/local/www/status_ipsec.php:239
-#: src/usr/local/www/status_ipsec.php:353
+#: src/usr/local/www/status_ipsec.php:238
+#: src/usr/local/www/status_ipsec.php:352
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
@@ -720,38 +721,38 @@ msgstr ""
 msgid "Disconnect"
 msgstr "Bağlantıyı Kes"
 
-#: src/usr/local/www/status_ipsec.php:254
+#: src/usr/local/www/status_ipsec.php:253
 msgid "Show child SA entries"
-msgstr ""
+msgstr "Alt SA girdilerini göster"
 
-#: src/usr/local/www/status_ipsec.php:288
+#: src/usr/local/www/status_ipsec.php:287
 msgid "Local: "
-msgstr ""
+msgstr "Yerel:"
 
-#: src/usr/local/www/status_ipsec.php:292
+#: src/usr/local/www/status_ipsec.php:291
 msgid "Remote: "
-msgstr ""
+msgstr "Uzak:"
 
-#: src/usr/local/www/status_ipsec.php:309
+#: src/usr/local/www/status_ipsec.php:308
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:311
+#: src/usr/local/www/status_ipsec.php:310
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Ömrü: %1$s saniye (%2$s)"
 
-#: src/usr/local/www/status_ipsec.php:313
+#: src/usr/local/www/status_ipsec.php:312
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
-msgstr ""
+msgstr "Kurulum: %1$s saniye (%2$s)"
 
-#: src/usr/local/www/status_ipsec.php:334
+#: src/usr/local/www/status_ipsec.php:333
 msgid "IPComp: "
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:338
+#: src/usr/local/www/status_ipsec.php:337
 #: src/usr/local/www/vpn_openvpn_client.php:585
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
@@ -761,36 +762,36 @@ msgstr ""
 msgid "none"
 msgstr "Hiçbiri"
 
-#: src/usr/local/www/status_ipsec.php:344
+#: src/usr/local/www/status_ipsec.php:343
 msgid "Bytes-In: "
-msgstr ""
+msgstr "Giren-bayt:"
+
+#: src/usr/local/www/status_ipsec.php:344
+msgid "Packets-In: "
+msgstr "Giren-paket:"
 
 #: src/usr/local/www/status_ipsec.php:345
-msgid "Packets-In: "
-msgstr ""
+msgid "Bytes-Out: "
+msgstr "Çıkan-bayt:"
 
 #: src/usr/local/www/status_ipsec.php:346
-msgid "Bytes-Out: "
-msgstr ""
-
-#: src/usr/local/www/status_ipsec.php:347
 msgid "Packets-Out: "
-msgstr ""
+msgstr "Çıkan-paket:"
 
-#: src/usr/local/www/status_ipsec.php:351
+#: src/usr/local/www/status_ipsec.php:350
 msgid "Disconnect Child SA"
-msgstr ""
+msgstr "Alt SA bağlantısını kes"
 
-#: src/usr/local/www/status_ipsec.php:440
+#: src/usr/local/www/status_ipsec.php:439
 msgid "Awaiting connections"
-msgstr ""
+msgstr "Bağlantılar bekleniyor"
 
-#: src/usr/local/www/status_ipsec.php:448
+#: src/usr/local/www/status_ipsec.php:447
 msgid "Disconnected"
-msgstr ""
+msgstr "Bağlantı kesildi"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:493
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:492
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:57
 #: src/usr/local/www/status_captiveportal_expire.php:55
@@ -843,7 +844,7 @@ msgstr ""
 msgid "Status"
 msgstr "Durum"
 
-#: src/usr/local/www/status_ipsec.php:465
+#: src/usr/local/www/status_ipsec.php:464
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -868,8 +869,8 @@ msgstr "Durum"
 msgid "IPsec"
 msgstr "IPsec"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:472
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:471
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
@@ -877,7 +878,7 @@ msgstr "IPsec"
 msgid "Overview"
 msgstr "Görünüm"
 
-#: src/usr/local/www/status_ipsec.php:473
+#: src/usr/local/www/status_ipsec.php:472
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:41
 #: src/usr/local/www/status_ipsec_sad.php:55
@@ -885,62 +886,62 @@ msgstr "Görünüm"
 #: src/usr/local/www/status_dhcpv6_leases.php:431
 #: src/usr/local/www/status_dhcp_leases.php:346
 msgid "Leases"
-msgstr ""
+msgstr "Kiralar"
 
-#: src/usr/local/www/status_ipsec.php:474
+#: src/usr/local/www/status_ipsec.php:473
 #: src/usr/local/www/status_ipsec_leases.php:42
 #: src/usr/local/www/status_ipsec_sad.php:36
 #: src/usr/local/www/status_ipsec_sad.php:56
 #: src/usr/local/www/status_ipsec_spd.php:49
 msgid "SADs"
-msgstr ""
+msgstr "SAD'ler"
 
-#: src/usr/local/www/status_ipsec.php:475
+#: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:43
 #: src/usr/local/www/status_ipsec_sad.php:57
 #: src/usr/local/www/status_ipsec_spd.php:39
 #: src/usr/local/www/status_ipsec_spd.php:50
 msgid "SPDs"
-msgstr ""
+msgstr "SPD'ler"
 
-#: src/usr/local/www/status_ipsec.php:480
+#: src/usr/local/www/status_ipsec.php:479
 msgid "IPsec Status"
-msgstr ""
+msgstr "IPsec durumu"
+
+#: src/usr/local/www/status_ipsec.php:485
+msgid "Local ID"
+msgstr "Yerel Kimlik"
 
 #: src/usr/local/www/status_ipsec.php:486
-msgid "Local ID"
-msgstr ""
-
-#: src/usr/local/www/status_ipsec.php:487
 #: src/usr/local/www/services_pppoe.php:100
 msgid "Local IP"
 msgstr "Yerel IP"
 
-#: src/usr/local/www/status_ipsec.php:488
+#: src/usr/local/www/status_ipsec.php:487
 msgid "Remote ID"
-msgstr ""
+msgstr "Uzak Kimlik"
 
-#: src/usr/local/www/status_ipsec.php:489
+#: src/usr/local/www/status_ipsec.php:488
 msgid "Remote IP"
 msgstr "Uzak IP"
 
-#: src/usr/local/www/status_ipsec.php:490
+#: src/usr/local/www/status_ipsec.php:489
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
-#: src/usr/local/www/status_ipsec.php:491
+#: src/usr/local/www/status_ipsec.php:490
 msgid "Reauth"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:492
+#: src/usr/local/www/status_ipsec.php:491
 msgid "Algo"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:500
+#: src/usr/local/www/status_ipsec.php:499
 msgid "Collecting IPsec status information."
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:517
+#: src/usr/local/www/status_ipsec.php:516
 #: src/usr/local/www/status_ipsec_leases.php:129
 #: src/usr/local/www/status_ipsec_sad.php:129
 #: src/usr/local/www/status_ipsec_spd.php:113
@@ -948,7 +949,7 @@ msgstr ""
 msgid "IPsec can be configured %1$shere%2$s."
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:550
+#: src/usr/local/www/status_ipsec.php:559
 msgid "No IPsec status information available."
 msgstr ""
 
@@ -1083,7 +1084,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_assign.php:477
 msgid "The interface configuration has been changed."
-msgstr ""
+msgstr "Arayüz yapılandırması değişti."
 
 #: src/usr/local/www/interfaces_assign.php:495
 #: src/usr/local/www/interfaces_wireless.php:81
@@ -1230,15 +1231,15 @@ msgstr "Ağ portu"
 
 #: src/usr/local/www/interfaces_assign.php:538
 msgid "Delete interface"
-msgstr ""
+msgstr "Arayüzü sil"
 
 #: src/usr/local/www/interfaces_assign.php:550
 msgid "Available network ports:"
-msgstr ""
+msgstr "Kullanılabilir ağ portları:"
 
 #: src/usr/local/www/interfaces_assign.php:562
 msgid "Add selected interface"
-msgstr ""
+msgstr "Seçili arayüzü ekle"
 
 #: src/usr/local/www/interfaces_assign.php:578
 msgid ""
@@ -1252,7 +1253,7 @@ msgstr ""
 msgid ""
 "Wireless interfaces must be created on the Wireless tab before they can be "
 "assigned."
-msgstr ""
+msgstr "Kablosuz arayüzü atanmadan önce Kablosuz sekmesinde yaratılmalıdır."
 
 #: src/usr/local/www/diag_limiter_info.php:31
 #: src/usr/local/www/diag_dump_states.php:75
@@ -1283,11 +1284,11 @@ msgstr "Limitleyici Bilgisi"
 
 #: src/usr/local/www/diag_limiter_info.php:37
 msgid "No limiters were found on this system."
-msgstr ""
+msgstr "Hiçbir sınırlayıcı bu sistemde bulunamadı."
 
 #: src/usr/local/www/diag_limiter_info.php:39
 msgid "Limiters:"
-msgstr ""
+msgstr "Sınırlayıcılar:"
 
 #: src/usr/local/www/diag_limiter_info.php:43
 #: src/usr/local/www/status_queues.php:110 src/usr/local/www/head.inc:358
@@ -1296,7 +1297,7 @@ msgstr "Kuyruklar"
 
 #: src/usr/local/www/diag_limiter_info.php:80
 msgid "Limiter Information"
-msgstr ""
+msgstr "Sınırlayıcı Bilgisi"
 
 #: src/usr/local/www/diag_limiter_info.php:82
 msgid "Gathering Limiter information, please wait..."
@@ -1311,7 +1312,7 @@ msgstr "Havuz"
 
 #: src/usr/local/www/status_ipsec_leases.php:53
 msgid "Usage"
-msgstr ""
+msgstr "Kullanım"
 
 #: src/usr/local/www/status_ipsec_leases.php:54
 #: src/usr/local/www/status_gateways.php:147
@@ -1344,7 +1345,7 @@ msgstr "Host"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
-msgstr ""
+msgstr "Bu havuzdan henüz kira alınmadı."
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
@@ -1448,7 +1449,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
-msgstr ""
+msgstr "Her ikisi ya IPv4 ya da  IPv6 olmalı. "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:115
 #: src/usr/local/www/firewall_nat_out_edit.php:156
@@ -1477,7 +1478,7 @@ msgstr "Hedef adres"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:314
 msgid "Alias entries must specify a single host or alias."
-msgstr ""
+msgstr "Takma ad girdileri, tek sunucu ya da takma ad olmalı."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:193
 #, php-format
@@ -1485,6 +1486,7 @@ msgid ""
 "The external IP address (%1$s) and internal IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"İç IP adresi (%1$s) ve dış IP adresi (%2$s) farklı adres gruplarındandır. "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:202
 msgid "A valid internal bit count must be specified."
@@ -1496,6 +1498,7 @@ msgid ""
 "The external IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"Dış IP adresi (%1$s) ve hedef IP adresi (%2$s) farklı adres gruplarındandır."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:226
 #, php-format
@@ -1503,6 +1506,7 @@ msgid ""
 "The internal IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
+"İç IP adresi (%1$s) ve hedef IP adresi (%2$s) farklı adres gruplarındandır."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
 #: src/usr/local/www/firewall_nat_edit.php:337
@@ -1655,7 +1659,7 @@ msgstr "Devredışı"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:423
 msgid "When disabled, the rule will not have any effect."
-msgstr ""
+msgstr "Devre dışı olduğunda, bu kuralın her hangi bir etkisi olmaz. "
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:427
 msgid "No BINAT (NOT)"
@@ -1722,18 +1726,18 @@ msgstr "OpenVPN"
 #: src/usr/local/www/vpn_openvpn_server.php:731
 #: src/usr/local/www/firewall_nat_npt_edit.php:195
 msgid "*Interface"
-msgstr ""
+msgstr "*Arayüz"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:465
 #: src/usr/local/www/firewall_nat_edit.php:707
 msgid ""
 "Choose which interface this rule applies to. In most cases \"WAN\" is "
 "specified."
-msgstr ""
+msgstr "Bu kuralın uygulanacağı arayüzü seçin. Çoğu durumda \"WAN\" seçilir."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:469
 msgid "*External subnet IP"
-msgstr ""
+msgstr "*Dış alt ağ IP adresi"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:471
 msgid ""
@@ -1744,12 +1748,12 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:474
 msgid "*Internal IP"
-msgstr ""
+msgstr "*İç IP"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:481
 #: src/usr/local/www/firewall_nat_1to1_edit.php:508
 msgid "Invert the sense of the match."
-msgstr ""
+msgstr "Eşleşeni tersine çevir."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:488
 #: src/usr/local/www/firewall_nat_1to1_edit.php:515
@@ -1786,7 +1790,7 @@ msgstr "Tür"
 #: src/usr/local/www/firewall_nat_edit.php:754
 #: src/usr/local/www/firewall_nat_edit.php:822
 msgid "Address/mask"
-msgstr ""
+msgstr "Adres/maske"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:496
 msgid ""
@@ -1800,7 +1804,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:801
 #: src/usr/local/www/firewall_nat_out_edit.php:544
 msgid "*Destination"
-msgstr ""
+msgstr "*Hedef"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:524
 msgid ""
@@ -1982,7 +1986,7 @@ msgstr "Havuzlar"
 #: src/usr/local/www/load_balancer_setting.php:100
 #: src/usr/local/www/status_lb_pool.php:110
 msgid "The load balancer configuration has been changed."
-msgstr ""
+msgstr "Yük dengeleyicisi yapılandırması değişti."
 
 #: src/usr/local/www/load_balancer_pool.php:104
 #: src/usr/local/www/load_balancer_monitor.php:92
@@ -2148,7 +2152,7 @@ msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:134
 msgid "Entire Subtree"
-msgstr ""
+msgstr "Tüm Altağaç"
 
 #: src/usr/local/www/guiconfig.inc:161
 msgid "Authentication and Accounting"
@@ -2168,27 +2172,27 @@ msgstr "Hesaplandırma"
 
 #: src/usr/local/www/guiconfig.inc:229
 msgid "This Firewall"
-msgstr ""
+msgstr "Bu Firewall"
 
 #: src/usr/local/www/guiconfig.inc:240
 msgid "autoselect"
-msgstr ""
+msgstr "Otoseçim"
 
 #: src/usr/local/www/guiconfig.inc:241
 msgid "100BASE-TX full-duplex"
-msgstr ""
+msgstr "100BASE-TX full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:242
 msgid "100BASE-TX half-duplex"
-msgstr ""
+msgstr "100BASE-TX full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:243
 msgid "10BASE-T full-duplex"
-msgstr ""
+msgstr "10BASE-T full-duplex"
 
 #: src/usr/local/www/guiconfig.inc:244
 msgid "10BASE-T half-duplex"
-msgstr ""
+msgstr "10BASE-T half-duplex"
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
@@ -2211,33 +2215,34 @@ msgstr "Erişim Noktası (Access Point - AP)"
 #: src/usr/local/www/guiconfig.inc:256
 #, php-format
 msgid "The field %s contains invalid characters."
-msgstr ""
+msgstr "%s alanı geçersiz karakter içeriyor. "
 
 #: src/usr/local/www/guiconfig.inc:262
 #, php-format
 msgid "The field %s is required."
-msgstr ""
+msgstr "%s alanı gerekli."
 
 #: src/usr/local/www/guiconfig.inc:269
 msgid "The following input errors were detected:"
-msgstr ""
+msgstr "Bu giriş hataları saptandı:"
 
 #: src/usr/local/www/guiconfig.inc:333
 msgid "Apply Changes"
-msgstr ""
+msgstr "Değişiklikleri Uygula"
 
 #: src/usr/local/www/guiconfig.inc:389
 msgid "The changes have been applied successfully."
-msgstr ""
+msgstr "Değişiklikler başarıyla uygulandı."
 
 #: src/usr/local/www/guiconfig.inc:392
 #, php-format
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
+"Değişiklikler uygulanırken hata oluştu. Bakınız %1$sSistem Günlükleri%2$s."
 
 #: src/usr/local/www/guiconfig.inc:400
 msgid "The firewall rules are now reloading in the background."
-msgstr ""
+msgstr "Firewall kuralları arka planda yeniden yükleniyor."
 
 #: src/usr/local/www/guiconfig.inc:401
 #, php-format
@@ -2251,19 +2256,19 @@ msgstr ""
 #: src/usr/local/www/guiconfig.inc:629 src/usr/local/www/guiconfig.inc:680
 #, php-format
 msgid "File %s is a directory."
-msgstr ""
+msgstr "%s dosyası bir klasördür."
 
 #: src/usr/local/www/guiconfig.inc:631 src/usr/local/www/guiconfig.inc:682
 msgid "Log file started."
-msgstr ""
+msgstr "Günlük dosyası başladı."
 
 #: src/usr/local/www/guiconfig.inc:1069
 msgid "Currently viewing: "
-msgstr ""
+msgstr "Şu an gösterilen:"
 
 #: src/usr/local/www/guiconfig.inc:1167
 msgid "listing only first 10k items"
-msgstr ""
+msgstr "sadece ilk 10bin nesne listeleniyor"
 
 #: src/usr/local/www/guiconfig.inc:1177
 #: src/usr/local/www/services_dhcpv6.php:969
@@ -2313,7 +2318,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:301
 #: src/usr/local/www/services_dhcp.php:265
 msgid "Range From and Range To must both be entered."
-msgstr ""
+msgstr "Başlangıç ve bitiş aralığı girilmeli."
 
 #: src/usr/local/www/services_dhcpv6.php:304
 msgid "A valid IPv6 address must be specified for the gateway."
@@ -2476,7 +2481,7 @@ msgstr "Altağ Maskesi"
 
 #: src/usr/local/www/services_dhcpv6.php:628
 msgid "Available Range"
-msgstr ""
+msgstr "Kullanılabilir Aralık"
 
 #: src/usr/local/www/services_dhcpv6.php:630
 msgid ""
@@ -2509,7 +2514,7 @@ msgstr "Hedef"
 #: src/usr/local/www/services_dhcpv6.php:660
 #: src/usr/local/www/services_dhcp.php:932
 msgid "*Range"
-msgstr ""
+msgstr "*Aralık"
 
 #: src/usr/local/www/services_dhcpv6.php:685
 msgid "Prefix Delegation Range"
@@ -2584,7 +2589,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:748
 msgid "Max lease time"
-msgstr ""
+msgstr "Kira süresi üst sınırı"
 
 #: src/usr/local/www/services_dhcpv6.php:751
 #, php-format
@@ -2800,7 +2805,7 @@ msgstr "LDAP URI"
 #: src/usr/local/www/services_dhcpv6.php:906
 #: src/usr/local/www/services_dhcpv6.php:912
 msgid "Network booting"
-msgstr ""
+msgstr "Ağdan başlatma"
 
 #: src/usr/local/www/services_dhcpv6.php:919
 msgid "Bootfile URL"
@@ -2819,7 +2824,7 @@ msgstr "Sıra"
 
 #: src/usr/local/www/services_dhcpv6.php:987
 msgid "Add Option"
-msgstr ""
+msgstr "Seçenek Ekle"
 
 #: src/usr/local/www/services_dhcpv6.php:1010
 #, php-format
@@ -2908,7 +2913,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1864
 #: src/usr/local/www/services_ntpd_gps.php:681
 msgid "Hide Advanced"
-msgstr ""
+msgstr "Gelişmişi Gizle"
 
 #: src/usr/local/www/vpn_l2tp_users.php:29
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -2961,7 +2966,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:74
 msgid "RADIUS is enabled. The local user database will not be used."
-msgstr ""
+msgstr "RADIUS etkin. Yerel kullanıcı veritabanı kullanılmayacak."
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "The L2TP user list has been modified."
@@ -2969,11 +2974,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "The changes must be applied for them to take effect"
-msgstr ""
+msgstr "Değişikliklerin etkili olabilmesi için uygulanması gerekli."
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "Warning: this will terminate all current L2TP sessions!"
-msgstr ""
+msgstr "Uyarı: bu tüm güncel L2TP oturumlarını sonlandıracaktır."
 
 #: src/usr/local/www/vpn_l2tp_users.php:83
 #: src/usr/local/www/services_captiveportal_vouchers.php:373
@@ -2990,7 +2995,7 @@ msgstr "Yapılandırma"
 
 #: src/usr/local/www/vpn_l2tp_users.php:88
 msgid "L2TP Users"
-msgstr ""
+msgstr "L2TP Kullanıcıları"
 
 #: src/usr/local/www/vpn_l2tp_users.php:94
 #: src/usr/local/www/vpn_openvpn_client.php:590
@@ -3032,12 +3037,12 @@ msgstr "IP adresi"
 #: src/usr/local/www/system_usermanager.php:643
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 msgid "Edit user"
-msgstr ""
+msgstr "Kullanıcı düzenle"
 
 #: src/usr/local/www/vpn_l2tp_users.php:111
 #: src/usr/local/www/system_usermanager.php:645
 msgid "Delete user"
-msgstr ""
+msgstr "Kullanıcı sil"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:35
 msgid "Add Zone"
@@ -3055,7 +3060,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones_edit.php:61
 #, php-format
 msgid "Zone [%s] already exists."
-msgstr ""
+msgstr "[%s] bölgesi zaten var."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:87
 msgid "Add Captive Portal Zone"
@@ -3063,21 +3068,22 @@ msgstr "Hizmet Portalı Bölgesi Ekle"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:91
 msgid "*Zone name"
-msgstr ""
+msgstr "*Bölge adı"
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:92
 msgid ""
 "Zone name. Can only contain letters, digits, and underscores (_) and may not "
 "start with a digit."
 msgstr ""
+"Bölge adı sadece harf, sayı, alt çizgi içerebilir ve sayı ile başlamaz."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:96
 msgid "Zone description"
-msgstr ""
+msgstr "Bölge tanımı."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:103
 msgid "Save & Continue"
-msgstr ""
+msgstr "Kaydet & Devam et"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
 #: src/usr/local/www/vpn_ipsec_keys.php:101
@@ -3103,7 +3109,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:79
 #: src/usr/local/www/vpn_ipsec_phase1.php:241
 msgid "Pre-Shared Key contains invalid characters."
-msgstr ""
+msgstr "Ön paylaşımlı anahtar geçersiz anahtar içeriyor."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:86
 msgid "Another entry with the same identifier already exists."
@@ -3135,13 +3141,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:134
 msgid "*Identifier"
-msgstr ""
+msgstr "*Tanımlayıcı"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:137
 msgid ""
 "This can be either an IP address, fully qualified domain name or an e-mail "
 "address."
 msgstr ""
+"Bu, IP adresi, tam alan adı ya da e-posta adresinden her hangi birisi "
+"olabilir"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:141
 msgid "*Secret type"
@@ -3150,12 +3158,14 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:148
 #: src/usr/local/www/vpn_ipsec_phase1.php:782
 msgid "*Pre-Shared Key"
-msgstr ""
+msgstr "*Ön Paylaşımlı Anahtar"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:168
 #: src/usr/local/www/vpn_ipsec_keys.php:174
 msgid "PSK for any user can be set by using an identifier of any."
 msgstr ""
+"Her hangi bir kullanıcı için olan PSK, her hangi bir tanımlayıcı kullanarak "
+"kurulabilir."
 
 #: src/usr/local/www/diag_dump_states.php:55
 #: src/usr/local/www/status_openvpn.php:47
@@ -3179,7 +3189,7 @@ msgstr "Durumlar"
 
 #: src/usr/local/www/diag_dump_states.php:78
 msgid "Are you sure you wish to delete this state?"
-msgstr ""
+msgstr "Bu durumu silmek istediğinizden emin misiniz?"
 
 #: src/usr/local/www/diag_dump_states.php:113
 #: src/usr/local/www/diag_resetstate.php:84
@@ -3324,7 +3334,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns.php:79
 #: src/usr/local/www/services_dyndns.php:86
 msgid "Dynamic DNS Clients"
-msgstr ""
+msgstr "Dinamik DNS İstemcileri"
 
 #: src/usr/local/www/services_checkip.php:76
 #: src/usr/local/www/services_rfc2136.php:58
@@ -3332,7 +3342,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:145
 #: src/usr/local/www/services_dyndns.php:80
 msgid "RFC 2136 Clients"
-msgstr ""
+msgstr "RFC 2136 İstemcileri"
 
 #: src/usr/local/www/services_checkip.php:94
 #: src/usr/local/www/services_checkip_edit.php:63
@@ -3343,7 +3353,7 @@ msgstr "URL"
 #: src/usr/local/www/services_checkip_edit.php:155
 #: src/usr/local/www/services_checkip_edit.php:156
 msgid "Verify SSL Peer"
-msgstr ""
+msgstr "SSL eşini Onayla"
 
 #: src/usr/local/www/services_checkip.php:135
 #: src/usr/local/www/services_dyndns.php:191
@@ -3902,7 +3912,7 @@ msgstr ""
 msgid "View"
 msgstr "Görüntüle"
 
-#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:547
+#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -5169,7 +5179,7 @@ msgid ""
 "Setup</a> page."
 msgstr ""
 
-#: src/usr/local/www/index.php:549 src/usr/local/www/services_unbound.php:231
+#: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/diag_backup.php:454
@@ -5189,7 +5199,7 @@ msgstr ""
 msgid "All"
 msgstr "Tümü"
 
-#: src/usr/local/www/index.php:625
+#: src/usr/local/www/index.php:637
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 
@@ -16585,35 +16595,35 @@ msgstr ""
 msgid "This status page includes the following information"
 msgstr "Durum sayfası aşağıdaki bilgileri içerir"
 
-#: src/usr/local/www/status.php:361
+#: src/usr/local/www/status.php:362
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:363
+#: src/usr/local/www/status.php:364
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:365
+#: src/usr/local/www/status.php:366
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:368 src/usr/local/www/diag_command.php:233
+#: src/usr/local/www/status.php:369 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1102
 #: src/usr/local/www/services_captiveportal.php:1136
 #: src/usr/local/www/services_captiveportal.php:1168
 msgid "Download"
 msgstr "İndir"
 
-#: src/usr/local/www/status.php:378
+#: src/usr/local/www/status.php:379
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:386
+#: src/usr/local/www/status.php:387
 msgid "Done."
 msgstr ""
 
@@ -24759,6 +24769,18 @@ msgstr ""
 msgid "Enter the root-path string. This overrides setting on main page."
 msgstr ""
 
+#: src/usr/local/www/copynotice.inc:46
+msgid ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense is a "
+"federally registered trademark of Electric Sheep Fencing, LLC. Any "
+"unauthorized use of this trademark is prohibited by state and federal law "
+"and by international law. Refer to our Trademark Usage Guidelines for how to "
+"properly use the marks. All rights reserved.</p><p align="
+"\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
+"strong></font></p>"
+msgstr ""
+
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
 msgstr ""
@@ -28133,11 +28155,11 @@ msgstr "Hata: system_dmesg_save().%s içindeki dmesg.boot açılamıyor"
 msgid "Setting hard disk standby... "
 msgstr "Sabit disk hazırda beklemeye ayarlanıyor..."
 
-#: src/etc/inc/system.inc:2476
+#: src/etc/inc/system.inc:2483
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2480 src/etc/inc/system.inc:2499
+#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 

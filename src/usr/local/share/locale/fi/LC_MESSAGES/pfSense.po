@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-21 09:08-0300\n"
+"POT-Creation-Date: 2017-10-06 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -250,7 +250,7 @@ msgid "Destination IP"
 msgstr "Kohde IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
-#: src/usr/local/www/status_ipsec.php:485
+#: src/usr/local/www/status_ipsec.php:484
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/load_balancer_pool.php:122
 #: src/usr/local/www/guiconfig.inc:1177
@@ -667,21 +667,21 @@ msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr "Yksi tai useampi NAT 1:1 kartoitus on siirretty mutta ei tallenettu"
 
-#: src/usr/local/www/status_ipsec.php:114
-#: src/usr/local/www/status_ipsec.php:147
+#: src/usr/local/www/status_ipsec.php:113
+#: src/usr/local/www/status_ipsec.php:146
 msgid "Any identifier"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:119
-#: src/usr/local/www/status_ipsec.php:128
-#: src/usr/local/www/status_ipsec.php:161
-#: src/usr/local/www/status_ipsec.php:173
-#: src/usr/local/www/status_ipsec.php:281
-#: src/usr/local/www/status_ipsec.php:303
-#: src/usr/local/www/status_ipsec.php:394
-#: src/usr/local/www/status_ipsec.php:404
-#: src/usr/local/www/status_ipsec.php:415
-#: src/usr/local/www/status_ipsec.php:424
+#: src/usr/local/www/status_ipsec.php:118
+#: src/usr/local/www/status_ipsec.php:127
+#: src/usr/local/www/status_ipsec.php:160
+#: src/usr/local/www/status_ipsec.php:172
+#: src/usr/local/www/status_ipsec.php:280
+#: src/usr/local/www/status_ipsec.php:302
+#: src/usr/local/www/status_ipsec.php:393
+#: src/usr/local/www/status_ipsec.php:403
+#: src/usr/local/www/status_ipsec.php:414
+#: src/usr/local/www/status_ipsec.php:423
 #: src/usr/local/www/pkg_mgr_installed.php:112
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
@@ -690,27 +690,27 @@ msgstr ""
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: src/usr/local/www/status_ipsec.php:198
+#: src/usr/local/www/status_ipsec.php:197
 msgid " seconds ("
 msgstr "sekunnit ("
 
-#: src/usr/local/www/status_ipsec.php:221
+#: src/usr/local/www/status_ipsec.php:220
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:230
-#: src/usr/local/www/status_ipsec.php:232
-#: src/usr/local/www/status_ipsec.php:453
+#: src/usr/local/www/status_ipsec.php:229
+#: src/usr/local/www/status_ipsec.php:231
+#: src/usr/local/www/status_ipsec.php:452
 msgid "Connect VPN"
 msgstr "Yhdistä VPN"
 
-#: src/usr/local/www/status_ipsec.php:237
+#: src/usr/local/www/status_ipsec.php:236
 msgid "Disconnect VPN"
 msgstr "Katkaise VPN yhteys"
 
-#: src/usr/local/www/status_ipsec.php:239
-#: src/usr/local/www/status_ipsec.php:353
+#: src/usr/local/www/status_ipsec.php:238
+#: src/usr/local/www/status_ipsec.php:352
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
@@ -718,38 +718,38 @@ msgstr "Katkaise VPN yhteys"
 msgid "Disconnect"
 msgstr "Katkaise yhteys"
 
-#: src/usr/local/www/status_ipsec.php:254
+#: src/usr/local/www/status_ipsec.php:253
 msgid "Show child SA entries"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:288
+#: src/usr/local/www/status_ipsec.php:287
 msgid "Local: "
 msgstr "Paikallinen:"
 
-#: src/usr/local/www/status_ipsec.php:292
+#: src/usr/local/www/status_ipsec.php:291
 msgid "Remote: "
 msgstr "Ulkoinen:"
 
-#: src/usr/local/www/status_ipsec.php:309
+#: src/usr/local/www/status_ipsec.php:308
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:311
+#: src/usr/local/www/status_ipsec.php:310
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:313
+#: src/usr/local/www/status_ipsec.php:312
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:334
+#: src/usr/local/www/status_ipsec.php:333
 msgid "IPComp: "
 msgstr "IPComp: "
 
-#: src/usr/local/www/status_ipsec.php:338
+#: src/usr/local/www/status_ipsec.php:337
 #: src/usr/local/www/vpn_openvpn_client.php:585
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
@@ -759,36 +759,36 @@ msgstr "IPComp: "
 msgid "none"
 msgstr "Tyhjä"
 
-#: src/usr/local/www/status_ipsec.php:344
+#: src/usr/local/www/status_ipsec.php:343
 msgid "Bytes-In: "
 msgstr "Bittejä sisään:"
 
-#: src/usr/local/www/status_ipsec.php:345
+#: src/usr/local/www/status_ipsec.php:344
 msgid "Packets-In: "
 msgstr "Paketteja sisään:"
 
-#: src/usr/local/www/status_ipsec.php:346
+#: src/usr/local/www/status_ipsec.php:345
 msgid "Bytes-Out: "
 msgstr "Bittejä ulos:"
 
-#: src/usr/local/www/status_ipsec.php:347
+#: src/usr/local/www/status_ipsec.php:346
 msgid "Packets-Out: "
 msgstr "Paketteja ulos:"
 
-#: src/usr/local/www/status_ipsec.php:351
+#: src/usr/local/www/status_ipsec.php:350
 msgid "Disconnect Child SA"
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:440
+#: src/usr/local/www/status_ipsec.php:439
 msgid "Awaiting connections"
 msgstr "Odottaa yhteyttä"
 
-#: src/usr/local/www/status_ipsec.php:448
+#: src/usr/local/www/status_ipsec.php:447
 msgid "Disconnected"
 msgstr "Yhteys katkaistu"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:493
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:492
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:57
 #: src/usr/local/www/status_captiveportal_expire.php:55
@@ -841,7 +841,7 @@ msgstr "Yhteys katkaistu"
 msgid "Status"
 msgstr "Tila"
 
-#: src/usr/local/www/status_ipsec.php:465
+#: src/usr/local/www/status_ipsec.php:464
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -866,8 +866,8 @@ msgstr "Tila"
 msgid "IPsec"
 msgstr "IPsec"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:472
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:471
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
@@ -875,7 +875,7 @@ msgstr "IPsec"
 msgid "Overview"
 msgstr "Yleiskatsaus"
 
-#: src/usr/local/www/status_ipsec.php:473
+#: src/usr/local/www/status_ipsec.php:472
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:41
 #: src/usr/local/www/status_ipsec_sad.php:55
@@ -885,7 +885,7 @@ msgstr "Yleiskatsaus"
 msgid "Leases"
 msgstr "Lainat"
 
-#: src/usr/local/www/status_ipsec.php:474
+#: src/usr/local/www/status_ipsec.php:473
 #: src/usr/local/www/status_ipsec_leases.php:42
 #: src/usr/local/www/status_ipsec_sad.php:36
 #: src/usr/local/www/status_ipsec_sad.php:56
@@ -893,7 +893,7 @@ msgstr "Lainat"
 msgid "SADs"
 msgstr "SAD:t"
 
-#: src/usr/local/www/status_ipsec.php:475
+#: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:43
 #: src/usr/local/www/status_ipsec_sad.php:57
 #: src/usr/local/www/status_ipsec_spd.php:39
@@ -901,44 +901,44 @@ msgstr "SAD:t"
 msgid "SPDs"
 msgstr "SPD:t"
 
-#: src/usr/local/www/status_ipsec.php:480
+#: src/usr/local/www/status_ipsec.php:479
 msgid "IPsec Status"
 msgstr "IPsec Tila"
 
-#: src/usr/local/www/status_ipsec.php:486
+#: src/usr/local/www/status_ipsec.php:485
 msgid "Local ID"
 msgstr "Paikallinen ID"
 
-#: src/usr/local/www/status_ipsec.php:487
+#: src/usr/local/www/status_ipsec.php:486
 #: src/usr/local/www/services_pppoe.php:100
 msgid "Local IP"
 msgstr "Paikkallinen IP"
 
-#: src/usr/local/www/status_ipsec.php:488
+#: src/usr/local/www/status_ipsec.php:487
 msgid "Remote ID"
 msgstr "Ulkoinen ID"
 
-#: src/usr/local/www/status_ipsec.php:489
+#: src/usr/local/www/status_ipsec.php:488
 msgid "Remote IP"
 msgstr "Ulkoinen IP"
 
-#: src/usr/local/www/status_ipsec.php:490
+#: src/usr/local/www/status_ipsec.php:489
 msgid "Role"
 msgstr "Rooli"
 
-#: src/usr/local/www/status_ipsec.php:491
+#: src/usr/local/www/status_ipsec.php:490
 msgid "Reauth"
 msgstr "Reauth"
 
-#: src/usr/local/www/status_ipsec.php:492
+#: src/usr/local/www/status_ipsec.php:491
 msgid "Algo"
 msgstr "Algo"
 
-#: src/usr/local/www/status_ipsec.php:500
+#: src/usr/local/www/status_ipsec.php:499
 msgid "Collecting IPsec status information."
 msgstr "Kerätää IPsec tilan tietoja"
 
-#: src/usr/local/www/status_ipsec.php:517
+#: src/usr/local/www/status_ipsec.php:516
 #: src/usr/local/www/status_ipsec_leases.php:129
 #: src/usr/local/www/status_ipsec_sad.php:129
 #: src/usr/local/www/status_ipsec_spd.php:113
@@ -946,7 +946,7 @@ msgstr "Kerätää IPsec tilan tietoja"
 msgid "IPsec can be configured %1$shere%2$s."
 msgstr ""
 
-#: src/usr/local/www/status_ipsec.php:550
+#: src/usr/local/www/status_ipsec.php:559
 msgid "No IPsec status information available."
 msgstr ""
 
@@ -3917,7 +3917,7 @@ msgstr "aika"
 msgid "View"
 msgstr "näkymä"
 
-#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:547
+#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -5179,7 +5179,7 @@ msgid ""
 "Setup</a> page."
 msgstr ""
 
-#: src/usr/local/www/index.php:549 src/usr/local/www/services_unbound.php:231
+#: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/diag_backup.php:454
@@ -5199,7 +5199,7 @@ msgstr ""
 msgid "All"
 msgstr "Kaikki"
 
-#: src/usr/local/www/index.php:625
+#: src/usr/local/www/index.php:637
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr ""
 "Yhtä tai useampaa vimpainta on liikutettu, mutta tallennusta ei ole vielä "
@@ -16700,35 +16700,35 @@ msgstr "Palomuurin tila %s"
 msgid "This status page includes the following information"
 msgstr ""
 
-#: src/usr/local/www/status.php:361
+#: src/usr/local/www/status.php:362
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
 msgstr ""
 
-#: src/usr/local/www/status.php:363
+#: src/usr/local/www/status.php:364
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 
-#: src/usr/local/www/status.php:365
+#: src/usr/local/www/status.php:366
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
 "downloaded via scp or using this button: "
 msgstr ""
 
-#: src/usr/local/www/status.php:368 src/usr/local/www/diag_command.php:233
+#: src/usr/local/www/status.php:369 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1102
 #: src/usr/local/www/services_captiveportal.php:1136
 #: src/usr/local/www/services_captiveportal.php:1168
 msgid "Download"
 msgstr "Lataa"
 
-#: src/usr/local/www/status.php:378
+#: src/usr/local/www/status.php:379
 msgid "Saving output to archive..."
 msgstr ""
 
-#: src/usr/local/www/status.php:386
+#: src/usr/local/www/status.php:387
 msgid "Done."
 msgstr "Valmis"
 
@@ -25074,6 +25074,18 @@ msgstr ""
 msgid "Enter the root-path string. This overrides setting on main page."
 msgstr "Anna root polku. Tämä ohittaa pääsivun asetuksen."
 
+#: src/usr/local/www/copynotice.inc:46
+msgid ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense is a "
+"federally registered trademark of Electric Sheep Fencing, LLC. Any "
+"unauthorized use of this trademark is prohibited by state and federal law "
+"and by international law. Refer to our Trademark Usage Guidelines for how to "
+"properly use the marks. All rights reserved.</p><p align="
+"\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
+"strong></font></p>"
+msgstr ""
+
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
 msgstr ""
@@ -28476,11 +28488,11 @@ msgstr "Virhe: ystem_dmesg_save() ei voinut avata dmesg.boot. %s"
 msgid "Setting hard disk standby... "
 msgstr "Asetetaan levyn valmiustila..."
 
-#: src/etc/inc/system.inc:2476
+#: src/etc/inc/system.inc:2483
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2480 src/etc/inc/system.inc:2499
+#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 

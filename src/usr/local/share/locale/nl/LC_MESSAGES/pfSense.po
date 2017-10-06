@@ -23,12 +23,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-21 09:08-0300\n"
+"POT-Creation-Date: 2017-10-06 08:25-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-09-13 11:27-0400\n"
-"Last-Translator: Arnon Hoogerwerf <admin@hoogerwerf.xyz>\n"
+"PO-Revision-Date: 2017-10-03 12:16-0400\n"
+"Last-Translator: Hijmen <zanata@hijmen.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -42,7 +42,7 @@ msgstr "Nooit"
 #: src/usr/local/sbin/gmirror_status_check.php:45
 #, php-format
 msgid "List of mirrors changed. Old: (%s) New: (%s)"
-msgstr "De lijst van mirrors is veranderd. Oud: (%s) Neiuw: (%s)"
+msgstr "De lijst van mirrors is veranderd. Oud: (%s) Nieuw: (%s)"
 
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
@@ -267,7 +267,7 @@ msgid "Destination IP"
 msgstr "Doel IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:154
-#: src/usr/local/www/status_ipsec.php:485
+#: src/usr/local/www/status_ipsec.php:484
 #: src/usr/local/www/firewall_nat_1to1_edit.php:530
 #: src/usr/local/www/load_balancer_pool.php:122
 #: src/usr/local/www/guiconfig.inc:1177
@@ -685,21 +685,21 @@ msgid ""
 "One or more NAT 1:1 mappings have been moved but have not yet been saved"
 msgstr "Een of meer NAT 1:1 mappings zijn verplaatst maar nog niet opgeslagen"
 
-#: src/usr/local/www/status_ipsec.php:114
-#: src/usr/local/www/status_ipsec.php:147
+#: src/usr/local/www/status_ipsec.php:113
+#: src/usr/local/www/status_ipsec.php:146
 msgid "Any identifier"
 msgstr "Elke identifier"
 
-#: src/usr/local/www/status_ipsec.php:119
-#: src/usr/local/www/status_ipsec.php:128
-#: src/usr/local/www/status_ipsec.php:161
-#: src/usr/local/www/status_ipsec.php:173
-#: src/usr/local/www/status_ipsec.php:281
-#: src/usr/local/www/status_ipsec.php:303
-#: src/usr/local/www/status_ipsec.php:394
-#: src/usr/local/www/status_ipsec.php:404
-#: src/usr/local/www/status_ipsec.php:415
-#: src/usr/local/www/status_ipsec.php:424
+#: src/usr/local/www/status_ipsec.php:118
+#: src/usr/local/www/status_ipsec.php:127
+#: src/usr/local/www/status_ipsec.php:160
+#: src/usr/local/www/status_ipsec.php:172
+#: src/usr/local/www/status_ipsec.php:280
+#: src/usr/local/www/status_ipsec.php:302
+#: src/usr/local/www/status_ipsec.php:393
+#: src/usr/local/www/status_ipsec.php:403
+#: src/usr/local/www/status_ipsec.php:414
+#: src/usr/local/www/status_ipsec.php:423
 #: src/usr/local/www/pkg_mgr_installed.php:112
 #: src/usr/local/www/diag_confbak.php:245
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
@@ -708,27 +708,27 @@ msgstr "Elke identifier"
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: src/usr/local/www/status_ipsec.php:198
+#: src/usr/local/www/status_ipsec.php:197
 msgid " seconds ("
 msgstr "secondes ("
 
-#: src/usr/local/www/status_ipsec.php:221
+#: src/usr/local/www/status_ipsec.php:220
 #, php-format
 msgid "%1$s seconds (%2$s) ago"
 msgstr "%1$s seconden (%2$s) geleden"
 
-#: src/usr/local/www/status_ipsec.php:230
-#: src/usr/local/www/status_ipsec.php:232
-#: src/usr/local/www/status_ipsec.php:453
+#: src/usr/local/www/status_ipsec.php:229
+#: src/usr/local/www/status_ipsec.php:231
+#: src/usr/local/www/status_ipsec.php:452
 msgid "Connect VPN"
 msgstr "Maak verbinding met VPN"
 
-#: src/usr/local/www/status_ipsec.php:237
+#: src/usr/local/www/status_ipsec.php:236
 msgid "Disconnect VPN"
 msgstr "Verbreek verbinding met VPN"
 
-#: src/usr/local/www/status_ipsec.php:239
-#: src/usr/local/www/status_ipsec.php:353
+#: src/usr/local/www/status_ipsec.php:238
+#: src/usr/local/www/status_ipsec.php:352
 #: src/usr/local/www/status_interfaces.php:119
 #: src/usr/local/www/status_interfaces.php:120
 #: src/usr/local/www/status_interfaces.php:121
@@ -736,38 +736,38 @@ msgstr "Verbreek verbinding met VPN"
 msgid "Disconnect"
 msgstr "Sluiten"
 
-#: src/usr/local/www/status_ipsec.php:254
+#: src/usr/local/www/status_ipsec.php:253
 msgid "Show child SA entries"
 msgstr "Toon child SA invoer"
 
-#: src/usr/local/www/status_ipsec.php:288
+#: src/usr/local/www/status_ipsec.php:287
 msgid "Local: "
 msgstr "Lokaal:"
 
-#: src/usr/local/www/status_ipsec.php:292
+#: src/usr/local/www/status_ipsec.php:291
 msgid "Remote: "
 msgstr "Extern: "
 
-#: src/usr/local/www/status_ipsec.php:309
+#: src/usr/local/www/status_ipsec.php:308
 #, php-format
 msgid "Rekey: %1$s seconds (%2$s)"
 msgstr "Rekey: %1$s seconden (%2$s)"
 
-#: src/usr/local/www/status_ipsec.php:311
+#: src/usr/local/www/status_ipsec.php:310
 #, php-format
 msgid "Life: %1$s seconds (%2$s)"
 msgstr "Levensduur: %1$s seconden (%2$s)"
 
-#: src/usr/local/www/status_ipsec.php:313
+#: src/usr/local/www/status_ipsec.php:312
 #, php-format
 msgid "Install: %1$s seconds (%2$s)"
 msgstr "Installeren: %1$s seconden (%2$s)"
 
-#: src/usr/local/www/status_ipsec.php:334
+#: src/usr/local/www/status_ipsec.php:333
 msgid "IPComp: "
 msgstr "IPComp: "
 
-#: src/usr/local/www/status_ipsec.php:338
+#: src/usr/local/www/status_ipsec.php:337
 #: src/usr/local/www/vpn_openvpn_client.php:585
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
@@ -777,36 +777,36 @@ msgstr "IPComp: "
 msgid "none"
 msgstr "geen"
 
-#: src/usr/local/www/status_ipsec.php:344
+#: src/usr/local/www/status_ipsec.php:343
 msgid "Bytes-In: "
 msgstr "Bytes-In: "
 
-#: src/usr/local/www/status_ipsec.php:345
+#: src/usr/local/www/status_ipsec.php:344
 msgid "Packets-In: "
 msgstr "Inkomende Pakketten:"
 
-#: src/usr/local/www/status_ipsec.php:346
+#: src/usr/local/www/status_ipsec.php:345
 msgid "Bytes-Out: "
 msgstr "Uitgaande Bytes:"
 
-#: src/usr/local/www/status_ipsec.php:347
+#: src/usr/local/www/status_ipsec.php:346
 msgid "Packets-Out: "
 msgstr "Uitgaande Pakketten:"
 
-#: src/usr/local/www/status_ipsec.php:351
+#: src/usr/local/www/status_ipsec.php:350
 msgid "Disconnect Child SA"
 msgstr "Verbreek verbinding met Child SA"
 
-#: src/usr/local/www/status_ipsec.php:440
+#: src/usr/local/www/status_ipsec.php:439
 msgid "Awaiting connections"
 msgstr "In afwachting van verbindingen"
 
-#: src/usr/local/www/status_ipsec.php:448
+#: src/usr/local/www/status_ipsec.php:447
 msgid "Disconnected"
 msgstr "Verbinding verbroken"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:493
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:492
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:57
 #: src/usr/local/www/status_captiveportal_expire.php:55
@@ -859,7 +859,7 @@ msgstr "Verbinding verbroken"
 msgid "Status"
 msgstr "Status"
 
-#: src/usr/local/www/status_ipsec.php:465
+#: src/usr/local/www/status_ipsec.php:464
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -884,8 +884,8 @@ msgstr "Status"
 msgid "IPsec"
 msgstr "IPsec"
 
-#: src/usr/local/www/status_ipsec.php:465
-#: src/usr/local/www/status_ipsec.php:472
+#: src/usr/local/www/status_ipsec.php:464
+#: src/usr/local/www/status_ipsec.php:471
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
@@ -893,7 +893,7 @@ msgstr "IPsec"
 msgid "Overview"
 msgstr "Overzicht"
 
-#: src/usr/local/www/status_ipsec.php:473
+#: src/usr/local/www/status_ipsec.php:472
 #: src/usr/local/www/status_ipsec_leases.php:32
 #: src/usr/local/www/status_ipsec_leases.php:41
 #: src/usr/local/www/status_ipsec_sad.php:55
@@ -903,7 +903,7 @@ msgstr "Overzicht"
 msgid "Leases"
 msgstr "Reserveringen"
 
-#: src/usr/local/www/status_ipsec.php:474
+#: src/usr/local/www/status_ipsec.php:473
 #: src/usr/local/www/status_ipsec_leases.php:42
 #: src/usr/local/www/status_ipsec_sad.php:36
 #: src/usr/local/www/status_ipsec_sad.php:56
@@ -911,7 +911,7 @@ msgstr "Reserveringen"
 msgid "SADs"
 msgstr "SADs"
 
-#: src/usr/local/www/status_ipsec.php:475
+#: src/usr/local/www/status_ipsec.php:474
 #: src/usr/local/www/status_ipsec_leases.php:43
 #: src/usr/local/www/status_ipsec_sad.php:57
 #: src/usr/local/www/status_ipsec_spd.php:39
@@ -919,44 +919,44 @@ msgstr "SADs"
 msgid "SPDs"
 msgstr "SPDs"
 
-#: src/usr/local/www/status_ipsec.php:480
+#: src/usr/local/www/status_ipsec.php:479
 msgid "IPsec Status"
 msgstr "IPsec Status"
 
-#: src/usr/local/www/status_ipsec.php:486
+#: src/usr/local/www/status_ipsec.php:485
 msgid "Local ID"
 msgstr "Lokaal ID"
 
-#: src/usr/local/www/status_ipsec.php:487
+#: src/usr/local/www/status_ipsec.php:486
 #: src/usr/local/www/services_pppoe.php:100
 msgid "Local IP"
 msgstr "Lokaal IP"
 
-#: src/usr/local/www/status_ipsec.php:488
+#: src/usr/local/www/status_ipsec.php:487
 msgid "Remote ID"
 msgstr "Extern ID"
 
-#: src/usr/local/www/status_ipsec.php:489
+#: src/usr/local/www/status_ipsec.php:488
 msgid "Remote IP"
 msgstr "Extern IP"
 
-#: src/usr/local/www/status_ipsec.php:490
+#: src/usr/local/www/status_ipsec.php:489
 msgid "Role"
 msgstr "Rol"
 
-#: src/usr/local/www/status_ipsec.php:491
+#: src/usr/local/www/status_ipsec.php:490
 msgid "Reauth"
 msgstr "Opnieuw autoriseren "
 
-#: src/usr/local/www/status_ipsec.php:492
+#: src/usr/local/www/status_ipsec.php:491
 msgid "Algo"
 msgstr "Algo"
 
-#: src/usr/local/www/status_ipsec.php:500
+#: src/usr/local/www/status_ipsec.php:499
 msgid "Collecting IPsec status information."
 msgstr "Verzamelen van IPsec status informatie."
 
-#: src/usr/local/www/status_ipsec.php:517
+#: src/usr/local/www/status_ipsec.php:516
 #: src/usr/local/www/status_ipsec_leases.php:129
 #: src/usr/local/www/status_ipsec_sad.php:129
 #: src/usr/local/www/status_ipsec_spd.php:113
@@ -964,7 +964,7 @@ msgstr "Verzamelen van IPsec status informatie."
 msgid "IPsec can be configured %1$shere%2$s."
 msgstr "IPsec kan %1$shier%2$s worden geconfigureerd."
 
-#: src/usr/local/www/status_ipsec.php:550
+#: src/usr/local/www/status_ipsec.php:559
 msgid "No IPsec status information available."
 msgstr "Geen  IPsec status informatie beschikbaar."
 
@@ -2665,7 +2665,7 @@ msgid ""
 "Lease time in seconds. Used for clients that do not ask for a specific "
 "expiration time. %1$sThe default is 7200 seconds."
 msgstr ""
-"Reserveringstijd in seconden. Gebruikt voor klanten die geen specifieke "
+"Reserveringstijd in seconden. Gebruikt voor clients die geen specifieke "
 "verlooptijd vragen. %1$s De standaardwaarde is 7200 seconden."
 
 #: src/usr/local/www/services_dhcpv6.php:748
@@ -2678,7 +2678,7 @@ msgid ""
 "Maximum lease time for clients that ask for a specific expiration time. "
 "%1$sThe default is 86400 seconds."
 msgstr ""
-"Maximale reserveringstijd voor klanten die een specifieke verlooptijd vragen."
+"Maximale reserveringstijd voor clients die een specifieke verlooptijd vragen."
 " %1$s De standaardwaarde is 86400 seconden."
 
 #: src/usr/local/www/services_dhcpv6.php:756
@@ -3077,15 +3077,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "The L2TP user list has been modified."
-msgstr ""
+msgstr "De L2TP gebruikerslijst is gewijzigd."
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "The changes must be applied for them to take effect"
-msgstr ""
+msgstr "De wijzigingen moeten worden toegepast voordat van toepassing zijn."
 
 #: src/usr/local/www/vpn_l2tp_users.php:78
 msgid "Warning: this will terminate all current L2TP sessions!"
-msgstr ""
+msgstr "Waarschuwing: hiermee worden alle huidige L2TP-sessies beëindigd!"
 
 #: src/usr/local/www/vpn_l2tp_users.php:83
 #: src/usr/local/www/services_captiveportal_vouchers.php:373
@@ -3196,7 +3196,7 @@ msgstr "Opslaan en doorgaan"
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
 #: src/usr/local/www/vpn_ipsec_keys.php:101
 msgid "Identifier"
-msgstr ""
+msgstr "Identifier"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:65
 #: src/usr/local/www/vpn_ipsec_keys.php:103
@@ -3207,16 +3207,18 @@ msgstr "Vooraf gedeelde sleutel"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:70
 msgid "The identifier contains invalid characters."
-msgstr ""
+msgstr "De identificatie bevat ongeldige tekens."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:74
 msgid "A user with this name already exists. Add the key to the user instead."
 msgstr ""
+"Een gebruiker met deze naam bestaat al. Voeg de sleutel toe aan de gebruiker "
+"in plaats daarvan."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:79
 #: src/usr/local/www/vpn_ipsec_phase1.php:241
 msgid "Pre-Shared Key contains invalid characters."
-msgstr ""
+msgstr "Pre-Shared Key bevat ongeldige tekens."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:86
 msgid "Another entry with the same identifier already exists."
@@ -3240,7 +3242,7 @@ msgstr "IPsec Pre-Shared Keys toegevoegd"
 #: src/usr/local/www/vpn_ipsec_phase2.php:490
 #: src/usr/local/www/vpn_ipsec_settings.php:219
 msgid "Pre-Shared Keys"
-msgstr ""
+msgstr "Pre-Shared Key"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:130
 msgid "Edit Pre-Shared-Secret"
@@ -3248,27 +3250,31 @@ msgstr "Wijzig Vooraf-Gedeelde-Geheim"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:134
 msgid "*Identifier"
-msgstr ""
+msgstr "*Identifier"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:137
 msgid ""
 "This can be either an IP address, fully qualified domain name or an e-mail "
 "address."
 msgstr ""
+"Dit kan een IP-adres, een volledig gekwalificeerde domeinnaam of een e-"
+"mailadres zijn."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:141
 msgid "*Secret type"
-msgstr ""
+msgstr "*Geheime type"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:148
 #: src/usr/local/www/vpn_ipsec_phase1.php:782
 msgid "*Pre-Shared Key"
-msgstr ""
+msgstr "*Pre-Shared Key"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:168
 #: src/usr/local/www/vpn_ipsec_keys.php:174
 msgid "PSK for any user can be set by using an identifier of any."
 msgstr ""
+"PSK voor elke gebruiker kan worden ingesteld met behulp van een "
+"identificatie van elk."
 
 #: src/usr/local/www/diag_dump_states.php:55
 #: src/usr/local/www/status_openvpn.php:47
@@ -4026,7 +4032,7 @@ msgstr "tijd"
 msgid "View"
 msgstr "Weergave"
 
-#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:547
+#: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
 #: src/usr/local/www/system_advanced_misc.php:447
 #: src/usr/local/www/firewall_nat_edit.php:923
@@ -5279,7 +5285,7 @@ msgid ""
 "respected."
 msgstr ""
 "Pakketten die worden geblokkeerd door de impliciete standaardblokregel "
-"worden niet gelogd als deze optie is uitgeschakeld. Per-regel log opties "
+"worden niet gelogd als deze optie niet is aangevinkt. Per-regel log opties "
 "worden nog steeds gerespecteerd. "
 
 #: src/usr/local/www/status_logs_common.inc:904
@@ -5288,8 +5294,8 @@ msgid ""
 "this option is checked. Per-rule logging options are still respected. "
 msgstr ""
 "Pakketten die worden toegestaan door de impliciete standaardtoestaan-regel "
-"worden gelogd als deze optie is ingeschakeld. Per-regel log opties worden "
-"nog steeds gerespecteerd. "
+"worden gelogd als deze optie is aangevinkt. Per-regel log opties worden nog "
+"steeds gerespecteerd. "
 
 #: src/usr/local/www/status_logs_common.inc:925
 #: src/usr/local/www/status_logs_settings.php:310
@@ -5419,7 +5425,7 @@ msgstr ""
 "Andere dashboard instelling zijn beschikbaar via de <a href=\"%s\">Algemene "
 "instellingen</a> pagina."
 
-#: src/usr/local/www/index.php:549 src/usr/local/www/services_unbound.php:231
+#: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
 #: src/usr/local/www/services_snmp.php:176
 #: src/usr/local/www/diag_backup.php:454
@@ -5439,7 +5445,7 @@ msgstr ""
 msgid "All"
 msgstr "Alle"
 
-#: src/usr/local/www/index.php:625
+#: src/usr/local/www/index.php:637
 msgid "One or more widgets have been moved but have not yet been saved"
 msgstr "Een of meerdere widgets zijn verplaatst maar nog niet opgeslagen"
 
@@ -5571,7 +5577,7 @@ msgstr "Wijzigingen in de configuratie voor IPsec tunnels opgeslagen."
 #: src/usr/local/www/vpn_ipsec_settings.php:217
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
 msgid "Tunnels"
-msgstr ""
+msgstr "Tunnels"
 
 #: src/usr/local/www/vpn_ipsec.php:227
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
@@ -5583,7 +5589,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase2.php:489
 #: src/usr/local/www/vpn_ipsec_settings.php:218
 msgid "Mobile Clients"
-msgstr "Mobiele Clienten"
+msgstr "Mobiele Clients"
 
 #: src/usr/local/www/vpn_ipsec.php:229
 #: src/usr/local/www/services_unbound_acls.php:185
@@ -5607,7 +5613,7 @@ msgstr "De IPsec tunnel configuratie is aangepast."
 
 #: src/usr/local/www/vpn_ipsec.php:243
 msgid "IPsec Tunnels"
-msgstr ""
+msgstr "IPsec Tunnels"
 
 #: src/usr/local/www/vpn_ipsec.php:250
 msgid "IKE"
@@ -5615,7 +5621,7 @@ msgstr "IKE"
 
 #: src/usr/local/www/vpn_ipsec.php:251
 msgid "Remote Gateway"
-msgstr ""
+msgstr "Externe gateway"
 
 #: src/usr/local/www/vpn_ipsec.php:253
 msgid "P1 Protocol"
@@ -5623,16 +5629,16 @@ msgstr "P1 Protocol"
 
 #: src/usr/local/www/vpn_ipsec.php:254
 msgid "P1 Transforms"
-msgstr ""
+msgstr "P1 Transforms"
 
 #: src/usr/local/www/vpn_ipsec.php:255
 msgid "P1 Description"
-msgstr ""
+msgstr "P1 Beschrijving"
 
 #: src/usr/local/www/vpn_ipsec.php:292 src/usr/local/www/vpn_ipsec.php:355
 #: src/usr/local/www/vpn_ipsec.php:356
 msgid "Move checked entries to here"
-msgstr ""
+msgstr "Verplaats aangevinkte items hierheen"
 
 #: src/usr/local/www/vpn_ipsec.php:323 src/etc/inc/ipsec.inc:411
 msgid "Mobile Client"
@@ -5652,7 +5658,7 @@ msgstr "Wijzig Phase 1 invoer"
 
 #: src/usr/local/www/vpn_ipsec.php:359
 msgid "Copy phase1 entry"
-msgstr ""
+msgstr "Kopieer fase1 invoer"
 
 #: src/usr/local/www/vpn_ipsec.php:361 src/usr/local/www/vpn_ipsec.php:362
 msgid "Delete phase1 entry"
@@ -5661,15 +5667,15 @@ msgstr "Verwijder Phase 1 item"
 #: src/usr/local/www/vpn_ipsec.php:390
 #, php-format
 msgid "Show Phase 2 Entries (%s)"
-msgstr ""
+msgstr "Toon Fase 2 inzendingen (%s)"
 
 #: src/usr/local/www/vpn_ipsec.php:399
 msgid "Local Subnet"
-msgstr ""
+msgstr "Lokaal subnet"
 
 #: src/usr/local/www/vpn_ipsec.php:400
 msgid "Remote Subnet"
-msgstr ""
+msgstr "Extern subnet"
 
 #: src/usr/local/www/vpn_ipsec.php:401
 msgid "P2 Protocol"
@@ -5677,19 +5683,19 @@ msgstr "P2 Protocol"
 
 #: src/usr/local/www/vpn_ipsec.php:402
 msgid "P2 Transforms"
-msgstr ""
+msgstr "P2 Transforms"
 
 #: src/usr/local/www/vpn_ipsec.php:403
 msgid "P2 Auth Methods"
-msgstr ""
+msgstr "P2 Auth Methoden"
 
 #: src/usr/local/www/vpn_ipsec.php:404
 msgid "P2 actions"
-msgstr ""
+msgstr "P2 Acties"
 
 #: src/usr/local/www/vpn_ipsec.php:427 src/usr/local/www/vpn_ipsec.php:478
 msgid "Move checked P2s here"
-msgstr ""
+msgstr "Verplaats aangevinkte P2s hierheen"
 
 #: src/usr/local/www/vpn_ipsec.php:479
 msgid "Edit phase2 entry"
@@ -5726,11 +5732,11 @@ msgstr "Verwijder P1's"
 #: src/usr/local/www/vpn_ipsec.php:532
 #, php-format
 msgid "The IPsec status can be checked at %1$s%2$s%3$s."
-msgstr ""
+msgstr "De IPsec-status kan worden gecontroleerd op %1$s%2$s%3$s."
 
 #: src/usr/local/www/vpn_ipsec.php:532
 msgid "Status:IPsec"
-msgstr ""
+msgstr "Status: IPsec"
 
 #: src/usr/local/www/vpn_ipsec.php:533
 #, php-format
@@ -5739,12 +5745,12 @@ msgstr "IPsec debug modus kan worden ingeschakeld in %1$s%2$s%3$s."
 
 #: src/usr/local/www/vpn_ipsec.php:533 src/usr/local/www/vpn_ipsec.php:534
 msgid "VPN:IPsec:Advanced Settings"
-msgstr ""
+msgstr "VPN: IPsec: Geavanceerde instellingen"
 
 #: src/usr/local/www/vpn_ipsec.php:534
 #, php-format
 msgid "IPsec can be set to prefer older SAs at %1$s%2$s%3$s."
-msgstr ""
+msgstr "IPsec kan ingesteld worden op SA op %1$s%2$s%3$s."
 
 #: src/usr/local/www/vpn_ipsec.php:559
 msgid "Confirmation required to delete this P1 entry."
@@ -5836,14 +5842,14 @@ msgstr ""
 "Berichten die niet worden toegelaten worden genegeerd%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:160
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "%1$sRefuse Nonlocal:%2$s Allow only authoritative local-data queries from "
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
 "%1$sWeiger Niet-Lokaal:%2$s Laat alleen gezaghebbende lokale-gegevens "
-"verzoeken van hosts toe uit het hieronder gedefinieerde netblok. Stuurt een "
+"queries van hosts toe uit het hieronder gedefinieerde netblok. Stuurt een "
 "DNS rcode GEWEIGERD foutmelding terug naar de client voor niet toegestane "
 "berichten."
 
@@ -6041,7 +6047,7 @@ msgid ""
 msgstr ""
 "Gebruik \"Van\" om altijd toegang toe te staan via de Toegangsportaal naar "
 "een adres (zonder authenticatie). Gebruik \"Aan\" om toegang tot dit IP toe "
-"te staan voor alle clienten (zelfs niet geautenticeerde) die via de portaal "
+"te staan voor alle clients (zelfs niet geautenticeerde) die via de portaal "
 "binnenkomen."
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:237
@@ -6372,12 +6378,12 @@ msgstr "Groepseigenschappen"
 
 #: src/usr/local/www/system_groupmanager.php:384
 msgid "*Group name"
-msgstr ""
+msgstr "*Groep naam"
 
 #: src/usr/local/www/system_groupmanager.php:394
 #: src/usr/local/www/system_groupmanager.php:401
 msgid "*Scope"
-msgstr ""
+msgstr "*Omvang"
 
 #: src/usr/local/www/system_groupmanager.php:403
 #: src/usr/local/www/status_graph.php:143
@@ -6396,11 +6402,11 @@ msgstr "Groep omschrijving, alleen voor administratieve informatie"
 #: src/usr/local/www/system_groupmanager.php:419
 #: src/usr/local/www/system_usermanager.php:809
 msgid "Group membership"
-msgstr ""
+msgstr "Groep lidmaatschap"
 
 #: src/usr/local/www/system_groupmanager.php:440
 msgid "Not members"
-msgstr ""
+msgstr "Niet leden"
 
 #: src/usr/local/www/system_groupmanager.php:448
 #: src/usr/local/www/interfaces_groups.php:80
@@ -6411,11 +6417,11 @@ msgstr "Leden"
 
 #: src/usr/local/www/system_groupmanager.php:456
 msgid "Move to \"Members\""
-msgstr ""
+msgstr "Verplaats naar \"leden\""
 
 #: src/usr/local/www/system_groupmanager.php:463
 msgid "Move to \"Not members"
-msgstr ""
+msgstr "Verplaats naar \"niet leden\""
 
 #: src/usr/local/www/system_groupmanager.php:468
 #: src/usr/local/www/system_groupmanager_addprivs.php:169
@@ -6425,6 +6431,8 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:162
 msgid "Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items."
 msgstr ""
+"Houd de CTRL (PC) / COMMAND (Mac) toets ingedrukt om meerdere items te "
+"selecteren."
 
 #: src/usr/local/www/system_groupmanager.php:474
 msgid "Assigned Privileges"
@@ -6474,6 +6482,8 @@ msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
 "IP address cannot be selected."
 msgstr ""
+"Protocollen en IP-adresfamilies komen niet overeen. Naar IPv6-protocol en "
+"IPv4-IP-adres kunnen niet worden geselecteerd."
 
 #: src/usr/local/www/vpn_openvpn_client.php:203
 #: src/usr/local/www/vpn_openvpn_server.php:272
@@ -6481,6 +6491,8 @@ msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
 "IP address cannot be selected."
 msgstr ""
+"Protocollen en IP-adresfamilies komen niet overeen. Naar IPv4-protocol en "
+"IPv6-IP-adres kunnen niet worden geselecteerd."
 
 #: src/usr/local/www/vpn_openvpn_client.php:208
 #: src/usr/local/www/vpn_openvpn_server.php:277
@@ -6504,11 +6516,12 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr ""
+"De opgegeven 'Lokale poort' is in gebruik. Selecteer een andere waarde"
 
 #: src/usr/local/www/vpn_openvpn_client.php:246
 #: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
-msgstr ""
+msgstr "De veld 'Topologie' bevat een ongeldige selectie"
 
 #: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
@@ -6518,11 +6531,11 @@ msgstr "Gebruikersnaam en wachtwoord zijn nodig voor proxy met authenticatie."
 #: src/usr/local/www/vpn_openvpn_client.php:343
 #: src/usr/local/www/system_hasync.php:73
 msgid "Password and confirmation must match."
-msgstr ""
+msgstr "Wachtwoord en bevestiging moeten overeenkomen."
 
 #: src/usr/local/www/vpn_openvpn_client.php:291
 msgid "The bandwidth limit must be a positive numeric value."
-msgstr ""
+msgstr "De bandbreedte limiet moet een positieve cijferwaarde zijn."
 
 #: src/usr/local/www/vpn_openvpn_client.php:301
 #: src/usr/local/www/vpn_openvpn_server.php:338
@@ -6548,7 +6561,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:324
 #: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
-msgstr ""
+msgstr "Een of meer van de geselecteerde NCP-algoritmes is niet geldig."
 
 #: src/usr/local/www/vpn_openvpn_client.php:329
 #: src/usr/local/www/system_crlmanager.php:205
@@ -6573,12 +6586,12 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
-msgstr ""
+msgstr "Limit Outgoing Bandwidth is niet compatibel met UDP Fast I/O."
 
 #: src/usr/local/www/vpn_openvpn_client.php:364
 #: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
-msgstr ""
+msgstr "De bijgeleverde verzend/ontvangen buffer grootte is ongeldig."
 
 #: src/usr/local/www/vpn_openvpn_client.php:454
 #, php-format
@@ -6595,7 +6608,7 @@ msgstr "OpenVPN client toegevoegd aan server %1$s:%2$s %3$s"
 #: src/usr/local/www/vpn_openvpn_csc.php:303
 #: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
-msgstr "Clienten"
+msgstr "Clients"
 
 #: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/vpn_openvpn_csc.php:282
@@ -6659,6 +6672,9 @@ msgid ""
 "compatible mode across all platforms.%1$s\"tap\" mode is capable of carrying "
 "802.3 (OSI Layer 2.)"
 msgstr ""
+"\"tun\" modus transporteert IPv4 en IPv6 (OSI layer 3) en is de meest "
+"gebruikte en compatibele modus over alle platvormen..%1$s\"tap\" modus kan "
+"802.3 (OSI layer 2) transporteren."
 
 #: src/usr/local/www/vpn_openvpn_client.php:542
 msgid ""
@@ -6677,18 +6693,20 @@ msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
 msgstr ""
+"Stel deze optie in om te binden aan een specifieke poort. Laat dit leeg of "
+"voer 0 in voor een willekeurige dynamische poort."
 
 #: src/usr/local/www/vpn_openvpn_client.php:554
 msgid "*Server host or address"
-msgstr ""
+msgstr "* Server host of adres"
 
 #: src/usr/local/www/vpn_openvpn_client.php:557
 msgid "The IP address or hostname of the OpenVPN server."
-msgstr ""
+msgstr "Het IP-adres of hostnaam van de OpenVPN-server."
 
 #: src/usr/local/www/vpn_openvpn_client.php:561
 msgid "*Server port"
-msgstr ""
+msgstr "*Server poort"
 
 #: src/usr/local/www/vpn_openvpn_client.php:564
 msgid "The port used by the server to receive client connections."
@@ -6698,7 +6716,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:568
 msgid "Proxy host or address"
-msgstr ""
+msgstr "Proxy host of adres"
 
 #: src/usr/local/www/vpn_openvpn_client.php:571
 #, php-format
@@ -6712,7 +6730,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
-msgstr ""
+msgstr "Proxy Poort"
 
 #: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "basic"
@@ -6720,7 +6738,7 @@ msgstr "basis"
 
 #: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "ntlm"
-msgstr ""
+msgstr "ntlm"
 
 #: src/usr/local/www/vpn_openvpn_client.php:583
 msgid "Proxy Authentication"
@@ -6761,11 +6779,11 @@ msgstr "Gebruikers Authenticatie Instellingen"
 
 #: src/usr/local/www/vpn_openvpn_client.php:618
 msgid "Leave empty when no user name is needed"
-msgstr ""
+msgstr "Laat leeg als er geen gebruikersnaam nodig is"
 
 #: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
-msgstr ""
+msgstr "Laat leeg als er geen wachtwoord nodig is"
 
 #: src/usr/local/www/vpn_openvpn_client.php:629
 #: src/usr/local/www/vpn_openvpn_server.php:753
@@ -6853,7 +6871,7 @@ msgstr "Automatisch genereren"
 #: src/usr/local/www/vpn_openvpn_client.php:706
 #: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
-msgstr ""
+msgstr "*Gedeelde sleutel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:708
 #: src/usr/local/www/vpn_openvpn_server.php:888
@@ -6908,7 +6926,7 @@ msgid ""
 "compatible set of acceptable cryptographic Encryption Algorithms from those "
 "selected in the NCP Algorithms list below.%1$s%2$s%3$s"
 msgstr ""
-"Vink deze optie aan om OpenVPN cliënten en servers toe te staan om een "
+"Vink deze optie aan om OpenVPN cliënts en servers toe te staan om een "
 "compatibele set van acceptabele cryptografische Encryptie Algoritmes te "
 "onderhandelen uit degenen die geselecteerd zijn in de NCP Algoritmes lijst "
 "hieronder.%1$s%2$s%3$s"
@@ -6916,7 +6934,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:742
 #: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
-msgstr ""
+msgstr "NCP Algoritmes"
 
 #: src/usr/local/www/vpn_openvpn_client.php:751
 #: src/usr/local/www/vpn_openvpn_server.php:918
@@ -6963,7 +6981,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:774
 #: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
-msgstr ""
+msgstr "*Auth digest algoritme"
 
 #: src/usr/local/www/vpn_openvpn_client.php:777
 #, php-format
@@ -6985,19 +7003,19 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
-msgstr ""
+msgstr "Hardware cryptografie"
 
 #: src/usr/local/www/vpn_openvpn_client.php:790
 #: src/usr/local/www/vpn_openvpn_csc.php:362
 #: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
-msgstr ""
+msgstr "Tunnel instellingen"
 
 #: src/usr/local/www/vpn_openvpn_client.php:794
 #: src/usr/local/www/vpn_openvpn_csc.php:366
 #: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
-msgstr ""
+msgstr "IPv4 Tunnel Network"
 
 #: src/usr/local/www/vpn_openvpn_client.php:797
 msgid ""
@@ -7011,13 +7029,13 @@ msgstr ""
 "tussen deze client en de server, uitgedrukt met CIDR-notatie (bijvoorbeeld "
 "10.0.8.0/24). Het tweede bruikbare adres in het netwerk wordt toegewezen aan "
 "de virtuele interface van de client. Verlaat leeg als de server in staat is "
-"om adressen aan cliënten te verstrekken."
+"om adressen aan clients te verstrekken."
 
 #: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:376
 #: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
-msgstr ""
+msgstr "IPv6 Tunnel netwerk"
 
 #: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
@@ -7031,12 +7049,12 @@ msgstr ""
 "tussen deze client en de server, uitgedrukt met CIDR-notatie (bijvoorbeeld "
 "fe80::/64). Het ::2 adres in het netwerk wordt toegewezen aan de virtuele "
 "interface van de client. Verlaat leeg als de server in staat is om adressen "
-"aan cliënten te verstrekken."
+"aan clients te verstrekken."
 
 #: src/usr/local/www/vpn_openvpn_client.php:813
 #: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
-msgstr ""
+msgstr "IPv4 externe netwerk (en)"
 
 #: src/usr/local/www/vpn_openvpn_client.php:816
 #: src/usr/local/www/vpn_openvpn_server.php:1058
@@ -7056,7 +7074,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:822
 #: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
-msgstr ""
+msgstr "IPv6 externe netwerk (en)"
 
 #: src/usr/local/www/vpn_openvpn_client.php:825
 #: src/usr/local/www/vpn_openvpn_server.php:1067
@@ -7075,7 +7093,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:831
 msgid "Limit outgoing bandwidth"
-msgstr ""
+msgstr "Beperk de uitgaande bandbreedte"
 
 #: src/usr/local/www/vpn_openvpn_client.php:835
 msgid ""
@@ -7083,6 +7101,9 @@ msgid ""
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
+"Maximale uitgaande bandbreedte voor deze tunnel. Laat leeg voor geen limiet. "
+"De opgegeven waarde moet tussen 100 bytes/sec en 100 Mbytes/sec (opgegeven "
+"als bytes per seconde) liggen. Niet compatibel met UDP Fast I/O."
 
 #: src/usr/local/www/vpn_openvpn_client.php:840
 #: src/usr/local/www/interfaces_ppps_edit.php:858
@@ -7097,11 +7118,15 @@ msgid ""
 "dynamically disable compression for a period of time if OpenVPN detects that "
 "the data in the packets is not being compressed efficiently."
 msgstr ""
+"Comprimeer tunnelpakketten met behulp van het LZO-algoritme. Adaptieve "
+"compressie zal dynamisch de compressie uitschakelen  gedurende een bepaalde "
+"periode als OpenVPN detecteert dat de gegevens in de pakketten niet "
+"efficiënt worden gecomprimeerd."
 
 #: src/usr/local/www/vpn_openvpn_client.php:847
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
-msgstr ""
+msgstr "Topologie"
 
 #: src/usr/local/www/vpn_openvpn_client.php:850
 msgid "Specifies the method used to configure a virtual adapter IP address."
@@ -7112,7 +7137,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:854
 #: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
-msgstr ""
+msgstr "Type dienst"
 
 #: src/usr/local/www/vpn_openvpn_client.php:861
 msgid "Don't pull routes"
@@ -7167,7 +7192,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:886
 #: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
-msgstr ""
+msgstr "UDP Snel I/O"
 
 #: src/usr/local/www/vpn_openvpn_client.php:889
 #: src/usr/local/www/vpn_openvpn_server.php:1286
@@ -7176,11 +7201,14 @@ msgid ""
 " Not compatible with all platforms, and not compatible with OpenVPN "
 "bandwidth limiting."
 msgstr ""
+"Optimaliseert de packet-schrijf gebeurtenislus, waardoor de CPU-efficiëntie "
+"met 5% tot 10% wordt verbeterd. Niet compatibel met alle platformen en niet "
+"compatibel met OpenVPN bandbreedte beperking."
 
 #: src/usr/local/www/vpn_openvpn_client.php:894
 #: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
-msgstr ""
+msgstr "Verzenden/ontvangen buffer"
 
 #: src/usr/local/www/vpn_openvpn_client.php:897
 #: src/usr/local/www/vpn_openvpn_server.php:1294
@@ -7200,7 +7228,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:904
 #: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
-msgstr ""
+msgstr "Verbositeitsniveau"
 
 #: src/usr/local/www/vpn_openvpn_client.php:907
 #: src/usr/local/www/vpn_openvpn_server.php:1304
@@ -7223,7 +7251,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
-msgstr "OpenVPN Clienten"
+msgstr "OpenVPN Clients"
 
 #: src/usr/local/www/interfaces_wireless.php:58
 msgid ""
@@ -7482,7 +7510,7 @@ msgid ""
 "addresses to clients."
 msgstr ""
 "De DHCP server vereist een statisch IPv4 subnet dat groot genoeg is om "
-"adressen aan clienten uit te delen."
+"adressen aan clients uit te delen."
 
 #: src/usr/local/www/services_dhcp.php:832 src/usr/local/www/pkg_edit.php:743
 msgid "General Options"
@@ -7635,7 +7663,7 @@ msgid ""
 "This is used for clients that do not ask for a specific expiration time. The "
 "default is 7200 seconds."
 msgstr ""
-"Dit wordt gebruikt voor klanten die geen specifieke verlooptijd vragen. De "
+"Dit wordt gebruikt voor clients die geen specifieke verlooptijd vragen. De "
 "standaardwaarde is 7200 seconden."
 
 #: src/usr/local/www/services_dhcp.php:1038
@@ -7648,7 +7676,7 @@ msgid ""
 "This is the maximum lease time for clients that ask for a specific "
 "expiration time. The default is 86400 seconds."
 msgstr ""
-"Dit is de maximale reserveringstijd voor klanten die een specifieke "
+"Dit is de maximale reserveringstijd voor clients die een specifieke "
 "verlooptijd vragen. De standaardwaarde is 86400 seconden."
 
 #: src/usr/local/www/services_dhcp.php:1046
@@ -8037,7 +8065,7 @@ msgid ""
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
 "Interface IP's die door de DNS Resolver worden gebruikt om te antwoorden op "
-"verzoeken van cliënten. Als een interface zowel IPv4 als IPv6 IP's heeft "
+"verzoeken van clients. Als een interface zowel IPv4 als IPv6 IP's heeft "
 "worden beide gebruikt. Verzoeken aan andere IP's die hieronder niet zijn "
 "geselecteerd worden genegeerd. Standaard wordt op alle beschikbare IPv4 en "
 "IPv6 adressen antwoorden op verzoeken gestuurd."
@@ -8201,7 +8229,7 @@ msgid ""
 msgstr ""
 "Indien de DNS Resolver is ingeschakeld, zal de DHCP service (indien "
 "ingeschakeld) automatisch het LAN IP adres doorgeven als DNS server aan de "
-"DHCP clieten zodat zij de DNS Resolver zullen gebruiken. Indien doorsturen "
+"DHCP clients zodat zij de DNS Resolver zullen gebruiken. Indien doorsturen "
 "is ingeschakeld, zal de DNS Resolver de DNS servers gebruiken die opgegeven "
 "zijn in %1$sSysteem &gt; Algemene Instellingen%2$s of degene die via DHCP of "
 "PPP op WAN zijn verkregen indien &quot;sta toe dat de DNS server door DHCP/"
@@ -9042,7 +9070,7 @@ msgstr "Serienummer:"
 
 #: src/usr/local/www/system_certmanager.php:1195
 msgid "Signature Digest: "
-msgstr ""
+msgstr "Handtekening Digest: "
 
 #: src/usr/local/www/system_certmanager.php:1200
 msgid "SAN: "
@@ -9180,15 +9208,15 @@ msgstr "Doel netwerk"
 
 #: src/usr/local/www/system_routes_edit.php:76
 msgid "Destination network bit count"
-msgstr ""
+msgstr "Bestemmingsnetwerk bit teller"
 
 #: src/usr/local/www/system_routes_edit.php:82
 msgid "A valid IPv4 or IPv6 destination network must be specified."
-msgstr ""
+msgstr "Een geldig IPv4- of IPv6-bestemmingsnetwerk moet worden opgegeven."
 
 #: src/usr/local/www/system_routes_edit.php:85
 msgid "A valid destination network bit count must be specified."
-msgstr ""
+msgstr "Er moet een geldig bestemmingsnetwerkbitgetal worden opgegeven."
 
 #: src/usr/local/www/system_routes_edit.php:89
 msgid "A valid gateway must be specified."
@@ -9205,11 +9233,11 @@ msgstr ""
 #: src/usr/local/www/system_routes_edit.php:95
 #, php-format
 msgid "The gateway \"%1$s\" is a different Address Family than network \"%2$s\"."
-msgstr ""
+msgstr "De gateway \"%1$s\" is een ander adresfamilie dan netwerk \"%2$s\"."
 
 #: src/usr/local/www/system_routes_edit.php:109
 msgid "A IPv4 subnet can not be over 32 bits."
-msgstr ""
+msgstr "Een IPv4-subnet kan niet meer dan 32 bits zijn."
 
 #: src/usr/local/www/system_routes_edit.php:158
 msgid "A route to these destination networks already exists"
@@ -9242,7 +9270,7 @@ msgstr "Wijzig Route invoer"
 
 #: src/usr/local/www/system_routes_edit.php:243
 msgid "*Destination network"
-msgstr ""
+msgstr "*Bestemmingsnetwerk"
 
 #: src/usr/local/www/system_routes_edit.php:246
 msgid "Destination network for this static route"
@@ -9250,7 +9278,7 @@ msgstr "Bestemmingsnetwerk voor deze statische route"
 
 #: src/usr/local/www/system_routes_edit.php:254
 msgid "*Gateway"
-msgstr ""
+msgstr "*Gateway"
 
 #: src/usr/local/www/system_routes_edit.php:257
 #, php-format
@@ -9271,16 +9299,16 @@ msgstr ""
 #: src/usr/local/www/wizard.php:53 src/usr/local/www/wizard.php:65
 #, php-format
 msgid "Could not open %s."
-msgstr ""
+msgstr "Kon %s niet openen."
 
 #: src/usr/local/www/wizard.php:59
 msgid "Invalid path specified."
-msgstr ""
+msgstr "Ongeldige pad opgegeven."
 
 #: src/usr/local/www/wizard.php:71
 #, php-format
 msgid "Could not parse %1$s/wizards/%2$s file."
-msgstr ""
+msgstr "Kan %1$s/wizards/%2$s bestand niet analyseren."
 
 #: src/usr/local/www/wizard.php:119
 msgid "Configuration changed via the pfSense wizard subsystem."
@@ -9288,12 +9316,12 @@ msgstr "Configuratie is gewijzigd via het pfSense wizard subsysteem ."
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
-msgstr ""
+msgstr "Wizard"
 
 #: src/usr/local/www/wizard.php:418
 #, php-format
 msgid "Step %s of %s"
-msgstr ""
+msgstr "Stap %s van %s"
 
 #: src/usr/local/www/system_usermanager_settings.php:44
 #, php-format
@@ -9324,7 +9352,7 @@ msgstr "Poging om de Organisatie Eenheid te verkrijgen van %1$s%2$s%3$s"
 
 #: src/usr/local/www/system_usermanager_settings.php:67
 msgid "Organization units found"
-msgstr ""
+msgstr "Organisatie-eenheden gevonden"
 
 #: src/usr/local/www/system_usermanager_settings.php:77
 #: src/usr/local/www/system_usermanager_settings.php:83
@@ -9394,7 +9422,7 @@ msgstr "Opslaan & Testen"
 
 #: src/usr/local/www/system_usermanager_settings.php:237
 msgid "LDAP settings"
-msgstr ""
+msgstr "LDAP Instellingen"
 
 #: src/usr/local/www/system_usermanager_settings.php:240
 msgid "Test results"
@@ -9523,11 +9551,12 @@ msgstr "L2TP VPN gebruiker geconfigureerd."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:165
 msgid "To change the users password, enter it here."
-msgstr ""
+msgstr "Om het gebruikerswachtwoord te wijzigen, voer het hier in."
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:174
 msgid "To assign the user a specific IP address, enter it here."
 msgstr ""
+"Om de gebruiker een specifiek IP-adres toe te kennen, voer het hier in."
 
 #: src/usr/local/www/status_openvpn.php:81
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:409
@@ -10162,11 +10191,11 @@ msgstr "Wachtwoord aanpassen"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:103
 msgid "*Confirmation"
-msgstr ""
+msgstr "*Bevestiging"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:105
 msgid "Select a new password"
-msgstr ""
+msgstr "Selecteer een nieuw wachtwoord"
 
 #: src/usr/local/www/diag_dump_states_sources.php:93
 msgid "Filters"
@@ -10674,11 +10703,11 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:78
 msgid "pfsync Synchronize Peer IP must be an IPv4 IP."
-msgstr ""
+msgstr "pfsync Synchroniseer Peer IP moet een IPv4 IP zijn."
 
 #: src/usr/local/www/system_hasync.php:102
 msgid "High Availability Sync"
-msgstr ""
+msgstr "Hoge Beschikbaarheid Sync"
 
 #: src/usr/local/www/system_hasync.php:119
 msgid "State Synchronization Settings (pfsync)"
@@ -10708,7 +10737,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:134
 msgid "Synchronize Interface"
-msgstr ""
+msgstr "Synchroniseer de interface"
 
 #: src/usr/local/www/system_hasync.php:137
 #, php-format
@@ -10728,7 +10757,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:144
 msgid "pfsync Synchronize Peer IP"
-msgstr ""
+msgstr "pfsync Synchroniseer Peer IP"
 
 #: src/usr/local/www/system_hasync.php:148
 msgid ""
@@ -10765,7 +10794,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:166
 msgid "Remote System Username"
-msgstr ""
+msgstr "Gebruikersnaam van het externe systeem"
 
 #: src/usr/local/www/system_hasync.php:169
 #, php-format
@@ -10781,7 +10810,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:174
 msgid "Remote System Password"
-msgstr ""
+msgstr "Wachtwoord van het externe systeem"
 
 #: src/usr/local/www/system_hasync.php:177
 #, php-format
@@ -10796,7 +10825,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:180
 msgid "Select options to sync"
-msgstr ""
+msgstr "Selecteer opties om te synchroniseren"
 
 #: src/usr/local/www/system_hasync.php:184
 msgid "Synchronize Users and Groups"
@@ -10816,19 +10845,19 @@ msgstr "Synchroniseer regels"
 
 #: src/usr/local/www/system_hasync.php:216
 msgid "Synchronize Firewall schedules"
-msgstr ""
+msgstr "Synchroniseer Firewall schema's"
 
 #: src/usr/local/www/system_hasync.php:224
 msgid "Synchronize Firewall aliases"
-msgstr ""
+msgstr "Synchroniseer Firewall aliassen"
 
 #: src/usr/local/www/system_hasync.php:232
 msgid "Synchronize NAT"
-msgstr ""
+msgstr "Synchroniseer NAT"
 
 #: src/usr/local/www/system_hasync.php:240
 msgid "Synchronize IPsec"
-msgstr ""
+msgstr "Synchroniseer IPsec"
 
 #: src/usr/local/www/system_hasync.php:248
 msgid "Synchronize OpenVPN"
@@ -10848,19 +10877,19 @@ msgstr "Synchroniseer statische routes"
 
 #: src/usr/local/www/system_hasync.php:280
 msgid "Synchronize Load Balancer"
-msgstr ""
+msgstr "Synchroniseer load balancer"
 
 #: src/usr/local/www/system_hasync.php:288
 msgid "Synchronize Virtual IPs"
-msgstr ""
+msgstr "Synchroniseer virtuele IP's"
 
 #: src/usr/local/www/system_hasync.php:296
 msgid "Synchronize traffic shaper (queues)"
-msgstr ""
+msgstr "Synchroniseer verkeersvervormer (wachtrijen)"
 
 #: src/usr/local/www/system_hasync.php:304
 msgid "Synchronize traffic shaper (limiter)"
-msgstr ""
+msgstr "Synchroniseer verkeersvervormer (limiter)"
 
 #: src/usr/local/www/system_hasync.php:312
 msgid "Synchronize DNS (Forwarder/Resolver)"
@@ -11642,8 +11671,8 @@ msgid ""
 "If this is checked, the DHCP relay will append the circuit ID (%s interface "
 "number) and the agent ID to the DHCP request."
 msgstr ""
-"Wanneer ingeschakeld zal de DHCP relay het cicuit ID (%s interface nummer) "
-"en agent ID aan het DHCP verzoek  toevoegen."
+"Wanneer aangevinkt zal de DHCP relay het circuit ID (%s interface nummer) en "
+"agent ID aan het DHCP verzoek  toevoegen."
 
 #: src/usr/local/www/services_dhcp_relay.php:173
 #: src/usr/local/www/services_dhcpv6_relay.php:173
@@ -12801,7 +12830,7 @@ msgid ""
 "Used for clients that do not ask for a specific expiration time. The default "
 "is 7200 seconds."
 msgstr ""
-"Gebruikt voor clienten die geen specifieke verlooptijd vragen. De "
+"Gebruikt voor clients die geen specifieke verlooptijd vragen. De "
 "standaardwaarde is 7200 seconden."
 
 #: src/usr/local/www/services_dhcp_edit.php:568
@@ -13983,6 +14012,11 @@ msgid ""
 "When using bridging, this behavior must be disabled if the WAN gateway IP is "
 "different from the gateway IP of the hosts behind the bridged interface."
 msgstr ""
+"Met Multi-WAN is het over het algemeen gewenst om ervoor te zorgen dat het "
+"verkeer vertrekt vanaf dezelfde interface als waarop het binnen komt, daarom "
+"wordt standaard automatisch reply-to toegevoegd. Bij gebruik van bruggen "
+"moet dit gedrag worden uitgeschakeld als de WAN gateway IP verschilt van de "
+"gateway IP van de hosts achter de brug interface."
 
 #: src/usr/local/www/system_advanced_firewall.php:528
 msgid "Disable Negate rules"
@@ -14024,6 +14058,9 @@ msgid ""
 "Make sure the certificate is valid for all HTTPS addresses on aliases. If "
 "it's not valid or is revoked, do not download it."
 msgstr ""
+"Zorg ervoor dat het certificaat geldig is voor alle HTTPS-adressen op de "
+"aliassen. Als het niet geldig is of is ingetrokken, moet u het niet "
+"downloaden."
 
 #: src/usr/local/www/system_advanced_firewall.php:554
 msgid "Bogon Networks"
@@ -14050,6 +14087,8 @@ msgid ""
 "The frequency of updating the lists of IP addresses that are reserved (but "
 "not RFC 1918) or not yet assigned by IANA."
 msgstr ""
+"De frequentie van het bijwerken van de lijsten van IP-adressen die "
+"gereserveerd zijn (maar niet RFC 1918) of nog niet door IANA toegewezen."
 
 #: src/usr/local/www/system_advanced_firewall.php:571
 msgid "Network Address Translation"
@@ -14069,7 +14108,7 @@ msgstr "Pure NAT"
 
 #: src/usr/local/www/system_advanced_firewall.php:583
 msgid "NAT Reflection mode for port forwards"
-msgstr ""
+msgstr "NAT Reflectie modus voor port forward"
 
 #: src/usr/local/www/system_advanced_firewall.php:590
 #, php-format
@@ -14108,7 +14147,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_firewall.php:609
 msgid "Reflection Timeout"
-msgstr ""
+msgstr "Reflectie Time-out"
 
 #: src/usr/local/www/system_advanced_firewall.php:613
 #, php-format
@@ -14319,7 +14358,7 @@ msgid ""
 "authenticated ones) behind the portal to this Hostname."
 msgstr ""
 "Gebruik \"Van\" om een hostnaam altijd toe te staan door de Toegangsportaal "
-"(zonder authenticatie). Gebruik \"Naar\" om alle clienten achter de "
+"(zonder authenticatie). Gebruik \"Naar\" om alle clients achter de "
 "Toegangsportaal (zelfs niet gevalideerde) toegang te geven tot deze hostname."
 ""
 
@@ -14428,6 +14467,9 @@ msgid ""
 "used for the quality RRD graphs as well as the load balancer entries. Use "
 "this if the gateway does not respond to ICMP echo requests (pings)."
 msgstr ""
+"Vul hier een alternatief adres in om de verbinding te controleren. Dit wordt "
+"gebruikt voor de kwaliteit RRD grafieken evenals de load balancer items. "
+"Gebruik dit als de gateway niet reageert op ICMP echo requests (pings)."
 
 #: src/usr/local/www/system_gateways_edit.php:237
 msgid "Force state"
@@ -14553,6 +14595,9 @@ msgid ""
 "loss, but will increase the time before a latency or loss alert is triggered."
 ""
 msgstr ""
+"Een langere periode levert geleidelijke resultaten op round trip tijd en "
+"verlies, maar verhoogt de tijd voordat een vertraging- of "
+"verlieswaarschuwing wordt geactiveerd."
 
 #: src/usr/local/www/system_gateways_edit.php:381
 msgid ""
@@ -14560,6 +14605,10 @@ msgid ""
 "loss alert is triggered, but will use more network resource. Longer probe "
 "intervals will degrade the accuracy of the quality graphs."
 msgstr ""
+"Een kortere uitvraaginterval zal de benodigde tijd verminderen voordat een "
+"vertraging- of verlieswaarschuwing wordt geactiveerd, maar zal meer "
+"netwerkbronnen gebruiken. Langer uitvraagintervallen zullen de "
+"nauwkeurigheid van de kwaliteitsgrafieken verminderen."
 
 #: src/usr/local/www/system_gateways_edit.php:385
 msgid ""
@@ -14567,23 +14616,33 @@ msgid ""
 "also controls the resolution of loss reporting. To determine the resolution, "
 "the following formula can be used:"
 msgstr ""
+"De verhouding van het uitvraaginterval tot de tijdsperiode (minus het "
+"verliesinterval) bepaalt ook de resolutie van verliesrapportage. Om de "
+"resolutie te bepalen kan de volgende formule worden gebruikt:"
 
 #: src/usr/local/www/system_gateways_edit.php:389
 msgid ""
 "&nbsp;&nbsp;&nbsp;&nbsp;100 * probe interval / (time period - loss interval)"
 msgstr ""
+"&nbsp;&nbsp;&nbsp;&nbsp;100 * uitvraaginterval / (tijdsperiode - "
+"verliesinterval)"
 
 #: src/usr/local/www/system_gateways_edit.php:391
 msgid ""
 "Rounding up to the nearest whole number will yield the resolution of loss "
 "reporting in percent. The default values provide a resolution of 1%."
 msgstr ""
+"Afronden tot het dichtstbijzijnde gehele getal zal de resolutie van "
+"verliesrapportage in procenten geven. De standaardwaarden geven een "
+"resolutie van 1%."
 
 #: src/usr/local/www/system_gateways_edit.php:394
 msgid ""
 "The default settings are recommended for most use cases. However if changing "
 "the settings, please observe the following restrictions:"
 msgstr ""
+"De standaardinstellingen worden voor de meeste gevallen aanbevolen. Als u de "
+"instellingen wijzigt, let dan op de volgende beperkingen:"
 
 #: src/usr/local/www/system_gateways_edit.php:397
 msgid ""
@@ -14591,12 +14650,18 @@ msgid ""
 "loss interval. This guarantees there is at least one completed probe at all "
 "times. "
 msgstr ""
+"- De tijdsperiode moet groter zijn dan tweemaal het uitvraaginterval plus "
+"het verliesinterval. Dit garandeert dat er altijd ten minste één voltooide "
+"uitvraging is."
 
 #: src/usr/local/www/system_gateways_edit.php:400
 msgid ""
 "- The alert interval must be greater than or equal to the probe interval. "
 "There is no point checking for alerts more often than probes are done."
 msgstr ""
+"- Het alarminterval moet groter zijn dan of gelijk aan het uitvraaginterval. "
+"Het heeft geen nut om de waarschuwingen vaker te controleren dan "
+"uitvragingen zijn gedaan."
 
 #: src/usr/local/www/system_gateways_edit.php:403
 msgid ""
@@ -14933,10 +14998,10 @@ msgid ""
 msgstr ""
 "Gebruik niet '.local' als het laatste deel van het domein (TLD). Het '."
 "local' domein wordt %1$sbreed gebruikt%2$s door mDNS (inclusief Avahi en "
-"Apple OS X's Bonjour/Rendezvous/Airprint/Airplay), en sommige Windows "
-"systemen en netwerkapparaten. Deze zullen niet correct in het netwerk werken "
-"als de router '.local' gebruikt. Alternatieven zoals '.local.lan' of '."
-"mylocal' zijn wel veilig te gebruiken."
+"Apple OS X's Bonjour/Rendezvous/Airprint/Airplay), sommige Windows systemen "
+"en netwerkapparaten. Deze zullen niet correct in het netwerk werken als de "
+"router '.local' gebruikt. Alternatieven zoals '.local.lan' of '.mylocal' "
+"zijn wel veilig te gebruiken."
 
 #: src/usr/local/www/system.php:471
 msgid "DNS Server Settings"
@@ -14990,7 +15055,7 @@ msgstr ""
 "Als deze optie is ingesteld zal %s de DNS servers die door een DHCP/PPP "
 "server op WAN zijn toegewezen gebruiken voor eigen doeleinden (inclusief de "
 "DNS Forwarder/DNS Resolver). Echter zullen deze niet worden toegewezen aan "
-"DHCP cliënten."
+"DHCP clients."
 
 #: src/usr/local/www/system.php:555
 msgid "Disable DNS Forwarder"
@@ -15253,6 +15318,8 @@ msgid ""
 "'Server address' parameter should NOT be set to any IP address currently in "
 "use on this firewall."
 msgstr ""
+"Parameter 'Serveradres' moet NIET worden ingesteld op enig IP-adres dat "
+"momenteel in gebruik is op deze firewall."
 
 #: src/usr/local/www/vpn_l2tp.php:78
 #: src/usr/local/www/services_pppoe_edit.php:119
@@ -15266,7 +15333,7 @@ msgstr "Een geldig RADIUS server adres moet worden gedefinieerd."
 
 #: src/usr/local/www/vpn_l2tp.php:85
 msgid "Secret and confirmation must match"
-msgstr ""
+msgstr "Geheim en bevestiging moeten overeenkomen"
 
 #: src/usr/local/www/vpn_l2tp.php:89
 msgid "RADIUS secret and confirmation must match"
@@ -15274,7 +15341,7 @@ msgstr "Radius geheim en bevestiging moeten overeenkomen"
 
 #: src/usr/local/www/vpn_l2tp.php:93
 msgid "Number of L2TP users must be between 1 and 255"
-msgstr ""
+msgstr "Gebruikersnaam van de externe systemen"
 
 #: src/usr/local/www/vpn_l2tp.php:99
 #: src/usr/local/www/services_pppoe_edit.php:136
@@ -15283,22 +15350,26 @@ msgstr "Het gedefinieerde server adres ligt in het remote subnet."
 
 #: src/usr/local/www/vpn_l2tp.php:102
 msgid "The specified server address is equal to the LAN interface address."
-msgstr ""
+msgstr "Het opgegeven serveradres is gelijk aan het LAN-interfaceadres."
 
 #: src/usr/local/www/vpn_l2tp.php:107
 msgid "The field 'Primary L2TP DNS Server' must contain a valid IPv4 address."
 msgstr ""
+"Het veld 'Primair L2TP DNS Server' moet een geldig IPv4-adres bevatten."
 
 #: src/usr/local/www/vpn_l2tp.php:110
 msgid ""
 "The field 'Secondary L2TP DNS Server' must contain a valid IPv4 address."
 msgstr ""
+"Het veld 'Secundair L2TP DNS Server' moet een geldig IPv4-adres bevatten."
 
 #: src/usr/local/www/vpn_l2tp.php:113
 msgid ""
 "The Secondary L2TP DNS Server cannot be set when the Primary L2TP DNS Server "
 "is empty."
 msgstr ""
+"De secundaire L2TP DNS Server is niet ingesteld worden wanneer de primaire "
+"L2TP DNS server leeg is."
 
 #: src/usr/local/www/vpn_l2tp.php:171
 msgid "L2TP VPN configuration changed."
@@ -15348,6 +15419,8 @@ msgid ""
 "Specify optional secret shared between peers. Required on some devices/"
 "setups."
 msgstr ""
+"Specificeer optioneel geheim gedeeld tussen pers. Vereist op sommige "
+"apparaten / instellingen."
 
 #: src/usr/local/www/vpn_l2tp.php:259
 msgid "*Authentication type"
@@ -15414,7 +15487,7 @@ msgstr "RADIUS uitgegeven IPs"
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from L2TP clients."
 msgstr ""
-"Vergeet niet een firewallregel toe te voegen om verkeer van L2TP-clienten "
+"Vergeet niet een firewallregel toe te voegen om verkeer van L2TP-clients "
 "mogelijk te maken."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:69
@@ -15610,12 +15683,16 @@ msgstr "Groep Authenticatiebron"
 msgid ""
 "A valid IP address for 'Virtual Address Pool Network' must be specified."
 msgstr ""
+"Een geldig IP-adres voor 'Virtual Address Pool Network' moet worden "
+"opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:166
 msgid ""
 "A valid IPv6 address for 'Virtual IPv6 Address Pool Network' must be "
 "specified."
 msgstr ""
+"Een geldig IPv6-adres voor 'Virtual IPv6 Address Pool Network' moet worden "
+"opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:171
 msgid "A valid value for 'DNS Default Domain' must be specified."
@@ -15624,7 +15701,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:181
 msgid "A valid split DNS domain list must be specified."
-msgstr ""
+msgstr "Er moet een geldige gesplitste DNS-domeinnelijst worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:191
 msgid ""
@@ -15635,19 +15712,19 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:194
 msgid "A valid IP address for 'DNS Server #1' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'DNS Server # ' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:197
 msgid "A valid IP address for 'DNS Server #2' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'DNS Server #2' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:200
 msgid "A valid IP address for 'DNS Server #3' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'DNS Server #3' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:203
 msgid "A valid IP address for 'DNS Server #4' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'DNS Server #4' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:209
 msgid ""
@@ -15658,11 +15735,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:212
 msgid "A valid IP address for 'WINS Server #1' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'WINS Server #1' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:215
 msgid "A valid IP address for 'WINS Server #2' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'WINS Server #2' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:221
 msgid "A valid value for 'Login Banner' must be specified."
@@ -15679,19 +15756,19 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:297
 msgid "Saved IPsec Mobile Clients configuration."
-msgstr "Configuratie voor IPsec Mobiele Clienten opgeslagen."
+msgstr "Configuratie voor IPsec Mobiele Clients opgeslagen."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:415
 msgid ""
 "Support for IPsec Mobile Clients is enabled but a Phase 1 definition was not "
 "found"
 msgstr ""
-"Ondersteuning voor IPsec Mobiele Clienten is ingeschakeld maar geen Phase 1 "
+"Ondersteuning voor IPsec Mobiele Clients is ingeschakeld maar geen Phase 1 "
 "definitie gevonden"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:415
 msgid "Please click Create to define one."
-msgstr ""
+msgstr "Klik op Creëren om een te definiëren."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:415
 msgid "Create Phase 1"
@@ -15704,7 +15781,7 @@ msgstr "Ondersteuning voor IPsec Mobiele Client inschakelen"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:434
 msgid "IKE Extensions"
-msgstr ""
+msgstr "IKE Extensions"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:441
 msgid "Extended Authentication (Xauth)"
@@ -15728,7 +15805,7 @@ msgstr "Client Configuratie (mode-cfg)"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:473
 msgid "Virtual Address Pool"
-msgstr ""
+msgstr "Virtueel adres pool"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:491
 msgid "Network configuration for Virtual Address Pool"
@@ -15736,7 +15813,7 @@ msgstr "Netwerk configuratie voor de Virtuele Adres Pool"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:510
 msgid "Virtual IPv6 Address Pool"
-msgstr ""
+msgstr "Virtueel IPv6 adres pool"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:525
 msgid "IPv6 Network"
@@ -15768,15 +15845,15 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:1143
 #: src/usr/local/www/vpn_openvpn_server.php:1150
 msgid "DNS Default Domain"
-msgstr ""
+msgstr "DNS Standaard Domein"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:578
 msgid "Specify domain as DNS Default Domain"
-msgstr ""
+msgstr "Specificeer domein als DNS Standaard Domein"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:584
 msgid "Split DNS"
-msgstr ""
+msgstr "Split DNS"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:601
 msgid ""
@@ -15795,7 +15872,7 @@ msgstr "Server #"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:658
 msgid "Phase2 PFS Group"
-msgstr ""
+msgstr "Phase2 PFS Groep"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:663
 #: src/usr/local/www/vpn_ipsec_mobile.php:672
@@ -15805,7 +15882,7 @@ msgstr "Groep"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:681
 msgid "Login Banner"
-msgstr ""
+msgstr "Inloggen Banner"
 
 #: src/usr/local/www/status_pkglogs.php:71 src/usr/local/www/head.inc:357
 msgid "Package Logs"
@@ -17562,11 +17639,11 @@ msgstr "Voeg Rechten toe"
 #: src/usr/local/www/system_groupmanager_addprivs.php:65
 #: src/usr/local/www/system_usermanager_addprivs.php:62
 msgid "Selected privileges"
-msgstr ""
+msgstr "Geselecteerde rechten"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:150
 msgid "Group Privileges"
-msgstr ""
+msgstr "Groepsrechten"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:164
 #: src/usr/local/www/system_usermanager_addprivs.php:148
@@ -17576,12 +17653,12 @@ msgstr "* Toegewezen rechten"
 #: src/usr/local/www/system_groupmanager_addprivs.php:173
 #: src/usr/local/www/system_usermanager_addprivs.php:157
 msgid "Shadow"
-msgstr ""
+msgstr "Schaduw"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:185
 #: src/usr/local/www/system_usermanager_addprivs.php:169
 msgid "Show only the choices containing this term"
-msgstr ""
+msgstr "Toon alleen de keuzes die deze term bevatten"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:188
 #: src/usr/local/www/system_usermanager_addprivs.php:172
@@ -17602,18 +17679,19 @@ msgstr ""
 #: src/usr/local/www/system_groupmanager_addprivs.php:196
 #: src/usr/local/www/system_usermanager_addprivs.php:180
 msgid "Please take care when granting these privileges."
-msgstr ""
+msgstr "Let op als u deze rechten toekent."
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:226
 #: src/usr/local/www/system_usermanager_addprivs.php:220
 msgid "Select a privilege from the list above for a description"
-msgstr ""
+msgstr "Selecteer een recht uit de bovenstaande lijst voor een beschrijving"
 
 #: src/usr/local/www/system_groupmanager_addprivs.php:246
 msgid ""
 "(This privilege effectively gives administrator-level access to users in the "
 "group)"
 msgstr ""
+"(Dit recht geeft gebruikers in de groep effectief beheerders-niveau toegang)"
 
 #: src/usr/local/www/services_checkip_edit.php:68
 msgid "The Check IP Service name contains invalid characters."
@@ -17733,19 +17811,19 @@ msgstr "Client specifieke overschrijving succesvol verwijderd."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:158
 msgid "The field 'DNS Server #1' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'DNS Server #1' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:161
 msgid "The field 'DNS Server #2' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'DNS Server #2' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:164
 msgid "The field 'DNS Server #3' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'DNS Server #3' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:167
 msgid "The field 'DNS Server #4' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'DNS Server #4' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:173
 #: src/usr/local/www/vpn_openvpn_server.php:369
@@ -17770,12 +17848,12 @@ msgstr "Het veld 'NTP Server #4' moet een geldig IP adres bevatten"
 #: src/usr/local/www/vpn_openvpn_csc.php:189
 #: src/usr/local/www/vpn_openvpn_server.php:385
 msgid "The field 'WINS Server #1' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'WINS Server #1' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:192
 #: src/usr/local/www/vpn_openvpn_server.php:388
 msgid "The field 'WINS Server #2' must contain a valid IP address"
-msgstr ""
+msgstr "Het veld 'WINS Server #2' moet een geldig IP-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:197
 #: src/usr/local/www/vpn_openvpn_server.php:393
@@ -17783,6 +17861,8 @@ msgid ""
 "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP "
 "address"
 msgstr ""
+"Het veld 'NetBIOS Data Distribution Server #1' moet een geldig IP-adres "
+"bevatten"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:265
 #, php-format
@@ -17797,7 +17877,7 @@ msgstr "OpenVPN client specifieke overschrijving %1$s %2$s toegevoegd"
 #: src/usr/local/www/vpn_openvpn_csc.php:318
 #, php-format
 msgid "OpenVPN Server %d: %s"
-msgstr ""
+msgstr "OpenVPN Server %d: %s"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:329
 msgid ""
@@ -17826,11 +17906,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:351
 msgid "A description for administrative reference (not parsed)."
-msgstr ""
+msgstr "Een beschrijving voor administratieve referentie (niet verwerkt)."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:355
 msgid "Connection blocking"
-msgstr ""
+msgstr "Verbinding blokkeren"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:358
 msgid ""
@@ -17876,7 +17956,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:385
 msgid "IPv4 Local Network/s"
-msgstr ""
+msgstr "IPv4 Locale Netwerk(en)"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:388
 #, php-format
@@ -17893,7 +17973,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:394
 msgid "IPv6 Local Network/s"
-msgstr ""
+msgstr "IPv6 Locale Netwerk(en)"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:397
 #, php-format
@@ -17910,7 +17990,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:403
 msgid "IPv4 Remote Network/s"
-msgstr ""
+msgstr "IPv4 Externe Netwerk(en)"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:406
 #, php-format
@@ -17932,7 +18012,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:413
 msgid "IPv6 Remote Network/s"
-msgstr ""
+msgstr "IPv6 Externe Netwerk(en)"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:416
 #, php-format
@@ -17964,12 +18044,12 @@ msgstr "Client Instellingen"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:435
 msgid "Server Definitions"
-msgstr ""
+msgstr "Server Definities"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:447
 #: src/usr/local/www/vpn_openvpn_csc.php:452
 msgid "DNS Domain"
-msgstr ""
+msgstr "DNS Domein"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:475
 #: src/usr/local/www/vpn_openvpn_csc.php:516
@@ -17992,22 +18072,24 @@ msgstr "Server 3"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:496
 msgid "Server 4"
-msgstr ""
+msgstr "Server 4"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:531
 msgid "NetBIOS Options"
-msgstr ""
+msgstr "NetBIOS Opties"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:534
 msgid ""
 "If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) "
 "will be disabled. "
 msgstr ""
+"Als deze optie niet is ingeschakeld, worden alle NetBIOS-over-TCP/IP-opties "
+"(inclusief WINS) uitgeschakeld."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:538
 #: src/usr/local/www/vpn_openvpn_server.php:1234
 msgid "Node Type"
-msgstr ""
+msgstr "Node Type"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:541
 msgid ""
@@ -18025,6 +18107,9 @@ msgid ""
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
 "only those nodes with the same NetBIOS scope ID. "
 msgstr ""
+"Een NetBIOS Scope ID biedt een uitgebreide naming service voor NetBIOS over "
+"TCP/IP. De NetBIOS scope ID isoleert NetBIOS-verkeer op een enkel netwerk "
+"voor alleen die nodes met hetzelfde NetBIOS-scope ID."
 
 #: src/usr/local/www/vpn_openvpn_csc.php:583
 #, php-format
@@ -18039,7 +18124,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_csc.php:656
 msgid "CSC Overrides"
-msgstr ""
+msgstr "CSC Overschrijvingen"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:684
 msgid "Edit CSC Override"
@@ -18083,7 +18168,7 @@ msgstr "Firewall status over %s"
 msgid "This status page includes the following information"
 msgstr "De status pagina bevat de volgende informatie"
 
-#: src/usr/local/www/status.php:361
+#: src/usr/local/www/status.php:362
 msgid ""
 "Make sure all sensitive information is removed! (Passwords, etc.) before "
 "posting information from this page in public places (like mailing lists)."
@@ -18092,13 +18177,13 @@ msgstr ""
 "voordat informatie van deze pagina wordt geplaatst in publieke plaatsen "
 "(zoals mailing lijsten)."
 
-#: src/usr/local/www/status.php:363
+#: src/usr/local/www/status.php:364
 msgid "Common password fields in config.xml have been automatically redacted."
 msgstr ""
 "Veel voorkomende wachtwoordvelden in config.xml zijn automatisch geredigeerd."
 ""
 
-#: src/usr/local/www/status.php:365
+#: src/usr/local/www/status.php:366
 #, php-format
 msgid ""
 "When the page has finished loading, the output is stored in %1$s. It may be "
@@ -18107,18 +18192,18 @@ msgstr ""
 "Zodra de pagina klaar is met laden wordt de uitvoer opgeslagen in %1$s. Het "
 "kan worden gedownload via scp of door deze knop te gebruiken:"
 
-#: src/usr/local/www/status.php:368 src/usr/local/www/diag_command.php:233
+#: src/usr/local/www/status.php:369 src/usr/local/www/diag_command.php:233
 #: src/usr/local/www/services_captiveportal.php:1102
 #: src/usr/local/www/services_captiveportal.php:1136
 #: src/usr/local/www/services_captiveportal.php:1168
 msgid "Download"
 msgstr "Download"
 
-#: src/usr/local/www/status.php:378
+#: src/usr/local/www/status.php:379
 msgid "Saving output to archive..."
 msgstr "Bezig met het opslaan van de uitvoer in een archief..."
 
-#: src/usr/local/www/status.php:386
+#: src/usr/local/www/status.php:387
 msgid "Done."
 msgstr "Klaar"
 
@@ -18158,15 +18243,15 @@ msgstr "Zoekniveau"
 
 #: src/usr/local/www/system_authservers.php:231
 msgid "User naming Attribute"
-msgstr ""
+msgstr "Gebruikersnaam Attribuut"
 
 #: src/usr/local/www/system_authservers.php:232
 msgid "Group naming Attribute"
-msgstr ""
+msgstr "Groepsnaam Attribuut"
 
 #: src/usr/local/www/system_authservers.php:233
 msgid "Group member attribute"
-msgstr ""
+msgstr "Groepsleden Attribuut"
 
 #: src/usr/local/www/system_authservers.php:234
 msgid "Authentication container"
@@ -18174,11 +18259,11 @@ msgstr "Authenticatie container"
 
 #: src/usr/local/www/system_authservers.php:239
 msgid "Bind user DN"
-msgstr ""
+msgstr "Bind gebruiker DN"
 
 #: src/usr/local/www/system_authservers.php:240
 msgid "Bind Password"
-msgstr ""
+msgstr "Bind Wachtwoord"
 
 #: src/usr/local/www/system_authservers.php:249
 msgid "Radius Protocol"
@@ -18347,7 +18432,7 @@ msgstr "*Bind gebruikersreferenties"
 
 #: src/usr/local/www/system_authservers.php:645
 msgid "User DN:"
-msgstr ""
+msgstr "Gebruiker DN:"
 
 #: src/usr/local/www/system_authservers.php:667
 msgid "Initial Template"
@@ -18355,15 +18440,15 @@ msgstr "Initiele Sjabloon"
 
 #: src/usr/local/www/system_authservers.php:675
 msgid "*User naming attribute"
-msgstr ""
+msgstr "*Gebruikersnaam Attribuut"
 
 #: src/usr/local/www/system_authservers.php:682
 msgid "*Group naming attribute"
-msgstr ""
+msgstr "*Groepsnaam Attribuut"
 
 #: src/usr/local/www/system_authservers.php:689
 msgid "*Group member attribute"
-msgstr ""
+msgstr "*Groepsleden Attribuut"
 
 #: src/usr/local/www/system_authservers.php:696
 msgid "RFC 2307 Groups"
@@ -18375,6 +18460,10 @@ msgid ""
 "rather than using groups listed on user object. Leave unchecked for Active "
 "Directory style group membership (RFC 2307bis)."
 msgstr ""
+"RFC 2307-stijl groepslidmaatschap heeft leden die op het groepsobject zijn "
+"opgenomen, in plaats van groepen die zijn opgenomen op het gebruikersobject. "
+"Vink het vakje niet aan voor Active Directory-stijl groepslidmaatschap (RFC "
+"2307bis)."
 
 #: src/usr/local/www/system_authservers.php:705
 msgid "Group Object Class"
@@ -19919,7 +20008,6 @@ msgid "TCPmssFix"
 msgstr "TCPmssFix"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:871
-#, fuzzy
 msgid ""
 "Causes mpd to adjust incoming and outgoing TCP SYN segments so that the "
 "requested maximum segment size is not greater than the amount allowed by the "
@@ -19940,13 +20028,13 @@ msgstr ""
 "ICMP Datagram Too Big berichten verwijderen. Data die word verzonden door de "
 "oorspronkelijke verzender en dan door de des betreffende router passeert en "
 "dan zonder deze berichten verder gaan kan het een machine bereiken met een "
-"MTU die dan niet groot genoeg is. Omdat de optie â€œIP Don't Fragmentâ€? is "
-"ingesteld, stuurt deze machine een â€œICMP Datagram Too Bigâ€? bericht terug "
+"MTU die dan niet groot genoeg is. Omdat de optie 'IP Don't Fragment' is "
+"ingesteld, stuurt deze machine een 'ICMP Datagram Too Big' bericht terug "
 "naar de oorspronkelijke verzender en verwijdert het data pakket. Vervolgens "
-"wordt het â€œICMPâ€? bericht verwijderd door de des betreffende router en de "
+"wordt het 'ICMP' bericht verwijderd door de des betreffende router en de "
 "oorspronkelijke verzender krijgt nooit het bericht door dat het de fragment "
-"grootte moet aanpassen of de optie â€œIP Don't Fragmentâ€? uit de uitgaande "
-"data te verwijderen."
+"grootte moet aanpassen of de optie 'IP Don't Fragment' uit de uitgaande data "
+"moet verwijderen."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:879
 msgid "ShortSeq"
@@ -20212,7 +20300,7 @@ msgstr "Gebruikers %s succesvol verwijderd."
 #: src/usr/local/www/system_usermanager.php:170
 #, php-format
 msgid "Certificate %s association removed."
-msgstr ""
+msgstr "Certificaat %s-associatie verwijderd."
 
 #: src/usr/local/www/system_usermanager.php:179
 #, php-format
@@ -20225,11 +20313,11 @@ msgstr "De gebruikersnaam is langer dan 16 karakters."
 
 #: src/usr/local/www/system_usermanager.php:223
 msgid "IPsec Pre-Shared Key contains invalid characters."
-msgstr ""
+msgstr "IPsec Pre-Shared Key bevat ongeldige tekens."
 
 #: src/usr/local/www/system_usermanager.php:230
 msgid "One or more invalid groups was submitted."
-msgstr ""
+msgstr "Er zijn een of meer ongeldige groepen ingediend."
 
 #: src/usr/local/www/system_usermanager.php:255
 msgid "That username is reserved by the system."
@@ -20245,7 +20333,7 @@ msgstr "Ongeldige Interne Certificeringsinstantie"
 
 #: src/usr/local/www/system_usermanager.php:466
 msgid "Inherited from"
-msgstr ""
+msgstr "Overgenomen van"
 
 #: src/usr/local/www/system_usermanager.php:508
 msgid "Security notice: This user effectively has administrator-level access"
@@ -20301,11 +20389,11 @@ msgstr "Gebruikerseigenschappen"
 
 #: src/usr/local/www/system_usermanager.php:724
 msgid "Defined by"
-msgstr ""
+msgstr "Gedefinieerd door"
 
 #: src/usr/local/www/system_usermanager.php:774
 msgid "Confirm Password"
-msgstr ""
+msgstr "Bevestig Wachtwoord"
 
 #: src/usr/local/www/system_usermanager.php:785
 msgid "User's full name, for administrative information only"
@@ -20326,23 +20414,23 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:801
 msgid "Custom Settings"
-msgstr ""
+msgstr "Aangepaste Instellingen"
 
 #: src/usr/local/www/system_usermanager.php:834
 msgid "Not member of"
-msgstr ""
+msgstr "Geen lid van"
 
 #: src/usr/local/www/system_usermanager.php:842
 msgid "Member of"
-msgstr ""
+msgstr "Lid van"
 
 #: src/usr/local/www/system_usermanager.php:850
 msgid "Move to \"Member of\" list"
-msgstr ""
+msgstr "Verplaats naar \"Lid van\"-lijst"
 
 #: src/usr/local/www/system_usermanager.php:857
 msgid "Move to \"Not member of\" list"
-msgstr ""
+msgstr "Verplaats naar \"Geen lid van\"-lijst"
 
 #: src/usr/local/www/system_usermanager.php:877
 msgid ""
@@ -20359,7 +20447,7 @@ msgstr "Effectieve Rechten"
 
 #: src/usr/local/www/system_usermanager.php:900
 msgid "User Certificates"
-msgstr ""
+msgstr "Gebruikers Certificaten"
 
 #: src/usr/local/www/system_usermanager.php:912
 msgid "Create Certificate for User"
@@ -20395,11 +20483,11 @@ msgstr "Geautoriseerde SSH sleutels"
 
 #: src/usr/local/www/system_usermanager.php:976
 msgid "Enter authorized SSH keys for this user"
-msgstr ""
+msgstr "Voer geautoriseerde SSH-sleutels in voor deze gebruiker"
 
 #: src/usr/local/www/system_usermanager.php:980
 msgid "IPsec Pre-Shared Key"
-msgstr ""
+msgstr "IPsec Pre-Shared Key"
 
 #: src/usr/local/www/firewall_rules_edit.php:39
 #: src/usr/local/www/firewall_rules_edit.php:40
@@ -21872,8 +21960,7 @@ msgid ""
 "DNS and one WAN DNS will go to all clients."
 msgstr ""
 "Indien ingevoerd zullen deze servers worden doorgegeven aan alle PPPoE "
-"cliënten, anders worden LAN DNS en één WAN DNS aan alle klanten worden "
-"gestuurd."
+"clients, anders worden LAN DNS en één WAN DNS aan alle clients  gestuurd."
 
 #: src/usr/local/www/services_pppoe_edit.php:366
 msgid ""
@@ -21955,7 +22042,7 @@ msgstr "Voeg gebruiker toe"
 msgid ""
 "Don't forget to add a firewall rule to permit traffic from PPPoE clients."
 msgstr ""
-"Vergeet niet om firewall regels toe te voegen om verkeer van PPPoE cliënten "
+"Vergeet niet om firewall regels toe te voegen om verkeer van PPPoE clients "
 "toe te staan."
 
 #: src/usr/local/www/services_ntpd_gps.php:52
@@ -23011,7 +23098,7 @@ msgid ""
 "must be above 0 hours if pass-through credits are enabled."
 msgstr ""
 "Na het verstrijken van deze hoeveelheid tijd sinds het eerste gebruik, "
-"worden de beschikbare pass-through credits voor klanten hersteld naar het "
+"worden de beschikbare pass-through credits voor clients  hersteld naar het "
 "oorspronkelijke aantal . Dit moet meer dan 0 uur zijn indien pass-through "
 "credits ingeschakeld is."
 
@@ -23038,10 +23125,10 @@ msgid ""
 "captive portal. This allows clients to explicitly disconnect themselves "
 "before the idle or hard timeout occurs."
 msgstr ""
-"Indien ingeschakeld zal er een popup scherm verschijnen wanneer clienten "
-"worden toegestaan door de Toegangsportaal. Dit geeft clienten de "
-"mogelijkheid handmatig de verbinding te verbreken voordat de idle- of harde "
-"timeout optreed."
+"Indien ingeschakeld zal er een popup scherm verschijnen wanneer clients "
+"worden toegestaan door de Toegangsportaal. Dit geeft clients de mogelijkheid "
+"handmatig de verbinding te verbreken voordat de idle- of harde timeout "
+"optreed."
 
 #: src/usr/local/www/services_captiveportal.php:606
 msgid "Pre-authentication redirect URL"
@@ -23065,8 +23152,8 @@ msgid ""
 "Clients will be redirected to this URL instead of the one they initially "
 "tried to access after they've authenticated."
 msgstr ""
-"Klanten worden omgeleid naar deze URL in plaats van die zij aanvankelijk "
-"probeerden te openen nadat ze zijn geauthenticeerd."
+"Clients worden nadat ze zijn geauthenticeerd omgeleid naar deze URL in "
+"plaats van die zij aanvankelijk probeerden te openen."
 
 #: src/usr/local/www/services_captiveportal.php:620
 msgid "Blocked MAC address redirect URL"
@@ -23106,10 +23193,11 @@ msgid ""
 "authentication cannot be used."
 msgstr ""
 "Indien ingeschakeld zal er geen poging worden gedaan om zeker te stellen dat "
-"het MAC adres van de klanten gelijk blijft gedurende de tijd dat ze zijn "
-"ingelogd. Dit is noodzakelijk als het MAC adres van de klant niet kan worden "
-"vastgesteld (meestal omdat er routers tussen pfSense en de klanten zitten). "
-"Indien dit is ingeschakeld kan RADIUS MAC authenticatie niet worden gebruikt"
+"het MAC adres van de clients gelijk blijft gedurende de tijd dat ze zijn "
+"ingelogd. Dit is noodzakelijk als het MAC adres van de client niet kan "
+"worden vastgesteld (meestal omdat er routers tussen pfSense en de clients "
+"zitten). Indien dit is ingeschakeld kan RADIUS MAC authenticatie niet worden "
+"gebruikt"
 
 #: src/usr/local/www/services_captiveportal.php:644
 msgid "Pass-through MAC Auto Entry"
@@ -23412,7 +23500,7 @@ msgstr ""
 "Deze naam wordt gebruikt in de formulier actie voor de HTTPS POST en moet "
 "overeenkomen met de Common Name (CN) in het certificaat (anders laat de "
 "client waarschijnlijk een beveiligingswaarschuwing zien). Zorg ervoor dart "
-"de Toegangsportaal clienten deze naam kunnen herleiden in de  DNS en "
+"de Toegangsportaal clients deze naam kunnen herleiden in de  DNS en "
 "controleer in de client dat het IP adres herleidt naar de juiste interface "
 "IP in pfSense."
 
@@ -23753,11 +23841,11 @@ msgstr "Dashboard Kolommen"
 #: src/usr/local/www/system_user_settings.php:145
 #, php-format
 msgid "User settings successfully changed for user %s."
-msgstr ""
+msgstr "Gebruikersinstellingen succesvol aangepast voor gebruiker %s."
 
 #: src/usr/local/www/system_user_settings.php:162
 msgid "User Settings for "
-msgstr ""
+msgstr "Gebruikersinstellingen voor"
 
 #: src/usr/local/www/firewall_schedule.php:69
 #, php-format
@@ -23797,11 +23885,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:199
 msgid "EAP-MSChapv2 can only be used with IKEv2 type VPNs."
-msgstr ""
+msgstr "EAP-MSChapv2 kan alleen worden gebruikt met IKEv2 type VPNs."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:204
 msgid "EAP-TLS can only be used with IKEv2 type VPNs."
-msgstr ""
+msgstr "EAP-TLS kan alleen worden gebruikt met IKEv2 type VPNs."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:209
 msgid "EAP-RADIUS can only be used with IKEv2 type VPNs."
@@ -23809,7 +23897,7 @@ msgstr "EAP-RADIUS kan alleen worden gebruikt met VPN's van het type IKEv2."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:234
 msgid "Remote gateway"
-msgstr ""
+msgstr "Externe gateway"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:245
 msgid "The P1 lifetime must be an integer."
@@ -23825,65 +23913,74 @@ msgstr "De grenstijd moet kleiner zijn dan de P1 levensduur."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:258
 msgid "A valid remote gateway address or host name must be specified."
-msgstr ""
+msgstr "Een geldig externe-gateway adres of hostnaam moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:260
 msgid ""
 "A valid remote gateway IPv4 address must be specified or protocol needs to "
 "be changed to IPv6"
 msgstr ""
+"Een geldig externe-gateway IPv4 adres moet worden opgegeven of het protocol "
+"moet worden aangepast naar IPv6."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:262
 msgid ""
 "A valid remote gateway IPv6 address must be specified or protocol needs to "
 "be changed to IPv4"
 msgstr ""
+"Een geldig externe-gateway IPv6 adres moet worden opgegeven of het protocol "
+"moet worden aangepast naar IPv4."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:272
 #, php-format
 msgid "The remote gateway \"%1$s\" is already used by phase1 \"%2$s\"."
-msgstr ""
+msgstr "De externe-gateway \"%1$s\" is al in gebruik door phase1 \"%2$s\"."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:283
 msgid "There is a Phase 2 using IPv6, cannot use IPv4."
 msgstr ""
+"Er is een Phase 2 die gebruik maakt van IPv6, kan IPv4 niet gebruiken."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:287
 msgid "There is a Phase 2 using IPv4, cannot use IPv6."
 msgstr ""
+"Er is een Phase 2 die gebruik maakt van IPv4, kan IPv6 niet gebruiken."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:301
 msgid "Please enter an address for 'My Identifier'"
-msgstr ""
+msgstr "Geef a.u.b. een adres op voor 'My Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:305
 msgid "Please enter a keyid tag for 'My Identifier'"
-msgstr ""
+msgstr "Geef a.u.b. een KeyID tag op voor 'My Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:309
 msgid "Please enter a fully qualified domain name for 'My Identifier'"
 msgstr ""
+"Geef a.u.b. een volledig gekwalificeerde domeinnaam op voor 'My Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:313
 msgid ""
 "Please enter a user and fully qualified domain name for 'My Identifier'"
 msgstr ""
+"Geef a.u.b. een gebruiker en volledig gekwalificeerde domeinnaam op voor 'My "
+"Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:317
 msgid "Please enter a dynamic domain name for 'My Identifier'"
-msgstr ""
+msgstr "Geef a.u.b. een dynamische domeinnaam op voor 'My Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:321
 msgid "A valid IP address for 'My identifier' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'My Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:325
 msgid "A valid domain name for 'My identifier' must be specified."
-msgstr ""
+msgstr "Een geldige domeinnaam voor 'My Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:330
 msgid "A valid FQDN for 'My identifier' must be specified."
-msgstr ""
+msgstr "Een geldig FQDN voor 'My Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:337
 msgid ""
@@ -23896,35 +23993,40 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:343
 msgid "A valid Dynamic DNS address for 'My identifier' must be specified."
 msgstr ""
+"Een geldig Dynamisch DNS-adres voor 'My Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:356
 msgid "Please enter an address for 'Peer Identifier'"
-msgstr ""
+msgstr "Geef a.u.b. een adres op voor 'Peer Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:360
 msgid "Please enter a keyid tag for 'Peer Identifier'"
-msgstr ""
+msgstr "Geef a.u.b. een KeyID tag op voor 'Peer Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:364
 msgid "Please enter a fully qualified domain name for 'Peer Identifier'"
 msgstr ""
+"Geef a.u.b. een volledig gekwalificeerde domeinnaam op voor 'Peer "
+"Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:368
 msgid ""
 "Please enter a user and fully qualified domain name for 'Peer Identifier'"
 msgstr ""
+"Geef a.u.b. een gebruiker en volledig gekwalificeerde domeinnaam op voor "
+"'Peer Identifier'"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:372
 msgid "A valid IP address for 'Peer identifier' must be specified."
-msgstr ""
+msgstr "Een geldig IP-adres voor 'Peer Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:376
 msgid "A valid domain name for 'Peer identifier' must be specified."
-msgstr ""
+msgstr "Een geldige domeinnaam voor 'Peer Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:381
 msgid "A valid FQDN for 'Peer identifier' must be specified."
-msgstr ""
+msgstr "Een geldig FQDN voor 'Peer Identifier' moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:388
 msgid ""
@@ -23936,19 +24038,20 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:395
 msgid "A numeric value must be specified for DPD delay."
-msgstr ""
+msgstr "Er moet een numerieke waarde worden opgegeven voor DPD vertraging."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:399
 msgid "A numeric value must be specified for DPD retries."
 msgstr ""
+"Er moet een numerieke waarde worden opgegeven voor DPD nieuwe pogingen."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:404
 msgid "A numeric value must be specified for TFC bytes."
-msgstr ""
+msgstr "Er moet een numerieke waarde worden opgegeven voor TFC bytes."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:408
 msgid "Valid arguments for IKE type are v1, v2 or auto"
-msgstr ""
+msgstr "Geldige argumenten voor IKE-type zijn v1, v2 of auto"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:412
 msgid "Encryption Algorithm AES-GCM can only be used with IKEv2"
@@ -23960,7 +24063,7 @@ msgid ""
 "Clients tab in order to set EAP-RADIUS as the authentication method."
 msgstr ""
 "Een geldige RADIUS server moet voor gebruikersauthenticatie worden "
-"geselecteerd op de Mobiel Cliënten tab om EAP-RADIUS in te kunnen stellen "
+"geselecteerd op de Mobiele Clients tab om EAP-RADIUS in te kunnen stellen "
 "als de Authenticatiemethode."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:533
@@ -23970,7 +24073,7 @@ msgstr "IPsec tunnel Phase 1 configuratie opgeslagen."
 #: src/usr/local/www/vpn_ipsec_phase1.php:561
 #, php-format
 msgid "GW Group %s"
-msgstr ""
+msgstr "GW Groep %s"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:651
 #: src/usr/local/www/vpn_ipsec_phase1.php:654
@@ -23987,25 +24090,28 @@ msgstr "Auto"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:686
 msgid "*Key Exchange version"
-msgstr ""
+msgstr "*Sleutel Uitwisseling versie"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:689
 msgid ""
 "Select the Internet Key Exchange protocol version to be used. Auto uses "
 "IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder."
 msgstr ""
+"Selecteer het te gebruiken Internet Sleutel Uitwisseling protocol. Auto "
+"gebruikt IKEv2 als initiatiefnemer, en accepteert zowel IKEv1 of IKEv2 als "
+"beantwoorder."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:693
 msgid "*Internet Protocol"
-msgstr ""
+msgstr "*Internet Protocol"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:696
 msgid "Select the Internet Protocol family."
-msgstr ""
+msgstr "Selecteer de Internet Protocol familie."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:703
 msgid "Select the interface for the local endpoint of this phase1 entry."
-msgstr ""
+msgstr "Selecteer de interface voor het lokale eindpunt van dit phase1 item"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:708
 msgid "*Remote Gateway"
@@ -24023,7 +24129,7 @@ msgstr "Phase 1 Voorstel (Authenticatie)"
 #: src/usr/local/www/vpn_ipsec_phase1.php:828
 #: src/usr/local/www/vpn_ipsec_phase1.php:835
 msgid "Must match the setting chosen on the remote side."
-msgstr ""
+msgstr "Moet overeenkomen met de instellingen van de externe zijde."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:736
 msgid "Main"
@@ -24031,19 +24137,19 @@ msgstr "Hoofd"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:734
 msgid "*Negotiation mode"
-msgstr ""
+msgstr "*Onderhandelings modus"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:737
 msgid "Aggressive is more flexible, but less secure."
-msgstr ""
+msgstr "Agressief is flexibeler, maar minder veilig."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:739
 msgid "*My identifier"
-msgstr ""
+msgstr "*My identifier"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:757
 msgid "*Peer identifier"
-msgstr ""
+msgstr "*Peer identifier"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:775
 msgid ""
@@ -24054,11 +24160,11 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:785
 msgid "Enter the Pre-Shared Key string."
-msgstr ""
+msgstr "Voer de Pre-Shared Key string in."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:789
 msgid "*My Certificate"
-msgstr ""
+msgstr "*Mijn Certificaat"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:792
 msgid "Select a certificate previously configured in the Certificate Manager."
@@ -24075,15 +24181,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:803
 msgid "Phase 1 Proposal (Algorithms)"
-msgstr ""
+msgstr "Phase 1 Voorstel (Algoritmes)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:825
 msgid "*Hash Algorithm"
-msgstr ""
+msgstr "*Hash Algoritme"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:832
 msgid "*DH Group"
-msgstr ""
+msgstr "*DH Groep"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:839
 msgid "*Lifetime (Seconds)"
@@ -24091,7 +24197,7 @@ msgstr "*Levensduur (Seconden)"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:850
 msgid "Disable rekey"
-msgstr ""
+msgstr "Herversleutelen uitschakelen"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 msgid "Margintime (Seconds)"
@@ -24102,14 +24208,17 @@ msgid ""
 "How long before connection expiry or keying-channel expiry should attempt to "
 "negotiate a replacement begin."
 msgstr ""
+"Hoe lang voor het verstrijken van de verbinding of het verstrijken van het "
+"versleutelingskanaal moet geprobeerd worden om een vervangend begin te "
+"onderhandelen."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:864
 msgid "Disable Reauth"
-msgstr ""
+msgstr "Opnieuw autoriseren uitschakelen"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:871
 msgid "Responder Only"
-msgstr ""
+msgstr "Alleen Beantwoorder"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:880
 msgid "Force"
@@ -24117,7 +24226,7 @@ msgstr "Forceer"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:878
 msgid "NAT Traversal"
-msgstr ""
+msgstr "NAT Traversal"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:881
 msgid ""
@@ -24126,36 +24235,38 @@ msgid ""
 "restrictive firewalls."
 msgstr ""
 "Stel deze optie in om het gebruik van NAT-T (dat wil zeggen de inkapseling "
-"van ESP in UDP-pakketten) mogelijk te maken, die kan helpen bij cliënten die "
+"van ESP in UDP-pakketten) mogelijk te maken, die kan helpen bij clients die "
 "achter restrictieve firewalls zitten."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:886
 msgid "MOBIKE"
-msgstr ""
+msgstr "MOBIKE"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "Set this option to control the use of MOBIKE"
-msgstr ""
+msgstr "Gebruik deze optie om het gebruik van MOBIKE te regelen"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:893
 msgid "Split connections"
-msgstr ""
+msgstr "Gesplitste verbindingen"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:919
 msgid "Dead Peer Detection"
-msgstr ""
+msgstr "Dead Peer Detectie"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:929
 msgid "Delay between requesting peer acknowledgement."
-msgstr ""
+msgstr "Vertraging tussen het aanvragen van bevestiging van de Peer."
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:933
 msgid "Max failures"
-msgstr ""
+msgstr "Maximum fouten"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:936
 msgid "Number of consecutive failures allowed before disconnect. "
 msgstr ""
+"Aantal toegestane opeenvolgende fouten voordat de verbinding wordt verbroken."
+""
 
 #: src/usr/local/www/uploadconfig.php:43
 msgid "ERR Could not save configuration."
@@ -24530,7 +24641,7 @@ msgstr "Verwijder interfacebrug"
 
 #: src/usr/local/www/system_usermanager_addprivs.php:134
 msgid "User Privileges"
-msgstr ""
+msgstr "Bebruikersbevoegdheden"
 
 #: src/usr/local/www/system_usermanager_addprivs.php:174
 msgid ""
@@ -24547,6 +24658,7 @@ msgstr ""
 msgid ""
 "(This privilege effectively gives administrator-level access to the user)"
 msgstr ""
+"(Deze bevoegdheid geeft de gebruiker effectief beheerders-niveau toegang)"
 
 #: src/usr/local/www/status_dhcpv6_leases.php:194
 #: src/usr/local/www/status_dhcp_leases.php:141
@@ -24832,8 +24944,8 @@ msgid ""
 "is 10. If 0 is selected then TCP queries are not accepted from clients."
 msgstr ""
 "Het aantal inkomende TCP buffers toe te wijzen per thread. De standaard "
-"waarde is 10. Indien 0 is geselecteerd worden geen TCP verzoeken van "
-"clienten geaccepteerd."
+"waarde is 10. Indien 0 is geselecteerd worden geen TCP verzoeken van clients "
+"geaccepteerd."
 
 #: src/usr/local/www/services_unbound_advanced.php:282
 msgid "EDNS Buffer Size"
@@ -25364,54 +25476,58 @@ msgstr "notrap"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:137
 msgid "A valid ikeid must be specified."
-msgstr ""
+msgstr "Er moet een geldig ikeid worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:142
 msgid "Local network type"
-msgstr ""
+msgstr "Lokaal netwerk type"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:142
 msgid "Unique Identifier"
-msgstr ""
+msgstr "Unieke identificatie"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:145
 msgid "Remote network type"
-msgstr ""
+msgstr "Extern netwerk type"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:154
 msgid "A valid local network bit count must be specified."
-msgstr ""
+msgstr "Er moet een geldig lokaal netwerkbitgetal worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:158
 msgid "A valid local network IP address must be specified."
-msgstr ""
+msgstr "Een geldig lokaal IP-adres moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:160
 msgid ""
 "A valid local network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
 msgstr ""
+"Een geldig lokaal netwerk IPv4 adres moet worden opgegeven of de Modus moet "
+"worden aangepast naar IPv6."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:162
 msgid ""
 "A valid local network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
 msgstr ""
+"Een geldig lokaal netwerk IPv6 adres moet worden opgegeven of de Modus moet "
+"worden aangepast naar IPv4."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:173
 #: src/usr/local/www/vpn_ipsec_phase2.php:203
 msgid "Invalid Local Network."
-msgstr ""
+msgstr "Ongeldig Lokaal Netwerk."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:173
 #: src/usr/local/www/vpn_ipsec_phase2.php:203
 #, php-format
 msgid "%s has no subnet."
-msgstr ""
+msgstr "%s heeft geen subnet."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:181
 msgid "A valid NAT local network bit count must be specified."
-msgstr ""
+msgstr "Er moet een geldig NAT lokaal netwerkbitgetal worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:184
 msgid ""
@@ -25423,50 +25539,60 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:188
 msgid "A valid NAT local network IP address must be specified."
-msgstr ""
+msgstr "Een geldig NAT lokaal IP-adres moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:190
 msgid ""
 "A valid NAT local network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
 msgstr ""
+"Een geldig NAT lokaal netwerk IPv4 adres moet worden opgegeven of de Modus "
+"moet worden aangepast naar IPv6."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:192
 msgid ""
 "A valid NAT local network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
 msgstr ""
+"Een geldig NAT lokaal netwerk IPv6 adres moet worden opgegeven of de Modus "
+"moet worden aangepast naar IPv4."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:211
 msgid "A valid remote network bit count must be specified."
-msgstr ""
+msgstr "Er moet een geldig extern netwerkbitgetal worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:215
 msgid "A valid remote network IP address must be specified."
-msgstr ""
+msgstr "Een geldig extern IP-adres moet worden opgegeven."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:217
 msgid ""
 "A valid remote network IPv4 address must be specified or Mode needs to be "
 "changed to IPv6"
 msgstr ""
+"Een geldig extern netwerk IPv4 adres moet worden opgegeven of de Modus moet "
+"worden aangepast naar IPv6."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:219
 msgid ""
 "A valid remote network IPv6 address must be specified or Mode needs to be "
 "changed to IPv4"
 msgstr ""
+"Een geldig extern netwerk IPv6 adres moet worden opgegeven of de Modus moet "
+"worden aangepast naar IPv4."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:245
 msgid "Phase2 with this Local Network is already defined for mobile clients."
 msgstr ""
-"Phase2 met dit lokale netwerk is al gedefinieerd voor mobiele clienten."
+"Phase2 met dit lokale netwerk is al gedefinieerd voor mobiele clients."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:278
 msgid ""
 "Phase2 with this Local/Remote networks combination is already defined for "
 "this Phase1."
 msgstr ""
+"Fase2 met deze combinatie Lokale/externe netwerken is al gedefinieerd voor "
+"deze fase1."
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:317
 #: src/usr/local/www/vpn_ipsec_phase2.php:322
@@ -25501,25 +25627,27 @@ msgstr "Wijzig Phase 2"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:512
 msgid "*Local Network"
-msgstr ""
+msgstr "*Lokaal Netwerk"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:535
 msgid "NAT/BINAT translation"
-msgstr ""
+msgstr "NAT/BINAT vertaling"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:559
 msgid ""
 "If NAT/BINAT is required on this network specify the address to be "
 "translated"
 msgstr ""
+"Als NAT / BINAT op dit netwerk vereist is specificeer het adres dat moet "
+"worden vertaald"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:563
 msgid "*Remote Network"
-msgstr ""
+msgstr "*Extern Netwerk"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:591
 msgid "Phase 2 Proposal (SA/Key Exchange)"
-msgstr ""
+msgstr "Phase 2 Proposal (SA/Key Exchange)"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:598
 msgid "ESP is encryption, AH is authentication only."
@@ -25539,16 +25667,16 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:642
 msgid "*Hash Algorithms"
-msgstr ""
+msgstr "*Hash Algoritmes"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:661
 msgid "PFS key group"
-msgstr ""
+msgstr "PFS sleutel groep"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:671
 #: src/usr/local/www/widgets/widgets/log.widget.php:285
 msgid "Seconds"
-msgstr ""
+msgstr "Seconden"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:679
 msgid "Automatically ping host"
@@ -25601,30 +25729,34 @@ msgid ""
 "This firewall does not have any WAN-type interfaces assigned that are "
 "capable of using ALTQ traffic shaping."
 msgstr ""
+"Deze firewall heeft geen WAN-type interfaces toegewezen die in staat zijn om "
+"ALTQ-verkeervorming te gebruiken."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:53
 msgid ""
 "This firewall does not have any LAN-type interfaces assigned that are "
 "capable of using ALTQ traffic shaping."
 msgstr ""
+"Deze firewall heeft geen LAN-type interfaces toegewezen die in staat zijn om "
+"ALTQ-verkeervorming te gebruiken."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:63
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:57
 msgid "The number of connections must be specified."
-msgstr ""
+msgstr "Het aantal verbindingen moet worden opgegeven."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:68
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:62
 msgid "The number of connections should be greater than 1."
-msgstr ""
+msgstr "Het aantal verbindingen moet groter zijn dan 1."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:74
 msgid "The number of LAN type interfaces must be specified."
-msgstr ""
+msgstr "Het aantal LAN-type interfaces moet worden opgegeven."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:79
 msgid "The number of LAN type interfaces should be greater than 1."
-msgstr ""
+msgstr "Het aantal LAN-type interfaces moet groter zijn dan 1."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:109
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:116
@@ -25633,20 +25765,25 @@ msgid ""
 "The specified number of connections is greater than the number of ALTQ-"
 "capable assigned interfaces!"
 msgstr ""
+"Het opgegeven aantal verbindingen is groter dan het aantal toegewezen ALTQ-"
+"interfaces!"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:333
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:299
 msgid "The specified bandwidth cannot be less than 1."
-msgstr ""
+msgstr "De opgegeven bandbreedte kan niet kleiner zijn dan 1."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:346
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:310
 msgid "The same interface cannot be selected for local and outside."
 msgstr ""
+"Dezelfde interface kan niet voor lokaal en buiten geselecteerd worden."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:355
 msgid "The same interface cannot be selected twice on local interfaces."
 msgstr ""
+"Dezelfde interface kan niet twee keer op lokale interfaces worden "
+"geselecteerd."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:545
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:663
@@ -25656,13 +25793,15 @@ msgid ""
 "Address must be a valid IP address or Firewall Alias.  Please correct this "
 "value to continue."
 msgstr ""
+"Adres moet een geldig IP adres of Firewall Alias zijn. Pas deze waarde aan "
+"om door te gaan.."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:651
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:678
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:581
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:610
 msgid "Only percentage bandwidth specification is allowed."
-msgstr ""
+msgstr "Alleen het opgeven van een bandbreedte percentage is toegestaan."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:834
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:766
@@ -25670,6 +25809,8 @@ msgid ""
 "Custom Bandwidths are greater than 30%. Please lower them for the wizard to "
 "continue."
 msgstr ""
+"Aangepaste bandbreedten zijn groter dan 30%. Verlaag deze a.u.b. om met de "
+"wizard door te gaan."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1232
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1150
@@ -25677,11 +25818,13 @@ msgid ""
 "Custom Bandwidths are greater than 40%. Please lower them for the wizard to "
 "continue."
 msgstr ""
+"Aangepaste bandbreedten zijn groter dan 40%. Verlaag deze a.u.b. om met de "
+"wizard door te gaan."
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1545
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1456
 msgid "Penalty Box"
-msgstr ""
+msgstr "Straf Box"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1552
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1573
@@ -25699,17 +25842,17 @@ msgstr ""
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1557
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1636
 msgid "Traffic Shaper Wizard"
-msgstr ""
+msgstr "Traffic Shaper Wizard"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
 msgid "Connections From Upstream SIP Server"
-msgstr ""
+msgstr "Verbindingen van de Upstream SIP Server"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1579
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1489
 msgid "Connections To Upstream SIP Server"
-msgstr ""
+msgstr "Verbindingen naar de Upstream SIP Server"
 
 #: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
 #: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
@@ -26883,7 +27026,7 @@ msgid ""
 "Provides extra security by isolating clients so they cannot directly "
 "communicate with one another"
 msgstr ""
-"Voeg extra beveiliging toe door het isoleren van clienten zodat deze niet "
+"Voeg extra beveiliging toe door het isoleren van clients zodat deze niet "
 "direct kunnen communiceren met elkaar."
 
 #: src/usr/local/www/interfaces.php:3072
@@ -27180,6 +27323,18 @@ msgid "Enter the root-path string. This overrides setting on main page."
 msgstr ""
 "Voer de root-path-string in. Dit overschrijft de instelling van de "
 "hoofdpagina."
+
+#: src/usr/local/www/copynotice.inc:46
+msgid ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense is a "
+"federally registered trademark of Electric Sheep Fencing, LLC. Any "
+"unauthorized use of this trademark is prohibited by state and federal law "
+"and by international law. Refer to our Trademark Usage Guidelines for how to "
+"properly use the marks. All rights reserved.</p><p align="
+"\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
+"strong></font></p>"
+msgstr ""
 
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
@@ -27918,36 +28073,37 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:354
 msgid "The field 'DNS Server #1' must contain a valid IPv4 or IPv6 address"
-msgstr ""
+msgstr "Het veld 'DNS Server #1' moet een geldig IPv4 of IPv6-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_server.php:357
 msgid "The field 'DNS Server #2' must contain a valid IPv4 or IPv6 address"
-msgstr ""
+msgstr "Het veld 'DNS Server #2' moet een geldig IPv4 of IPv6-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_server.php:360
 msgid "The field 'DNS Server #3' must contain a valid IPv4 or IPv6 address"
-msgstr ""
+msgstr "Het veld 'DNS Server #3' moet een geldig IPv4 of IPv6-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_server.php:363
 msgid "The field 'DNS Server #4' must contain a valid IPv4 or IPv6 address"
-msgstr ""
+msgstr "Het veld 'DNS Server #4' moet een geldig IPv4 of IPv6-adres bevatten"
 
 #: src/usr/local/www/vpn_openvpn_server.php:399
 msgid "The field 'Concurrent connections' must be numeric."
-msgstr ""
+msgstr "Het veld 'Gelijktijdige verbindingen' moet numeriek zijn."
 
 #: src/usr/local/www/vpn_openvpn_server.php:409
 msgid "The selected certificate is not valid"
-msgstr ""
+msgstr "Het geselecteerde certificaat is ongeldig."
 
 #: src/usr/local/www/vpn_openvpn_server.php:413
 msgid ""
 "The specified DH Parameter length is invalid or the DH file does not exist."
 msgstr ""
+"De opgegeven DH-parameterlengte is ongeldig of het DH-bestand bestaat niet."
 
 #: src/usr/local/www/vpn_openvpn_server.php:417
 msgid "The specified ECDH Curve is invalid."
-msgstr ""
+msgstr "De opgegeven ECDH-curve is ongeldig."
 
 #: src/usr/local/www/vpn_openvpn_server.php:442
 msgid "IPv4 Tunnel network"
@@ -27957,6 +28113,8 @@ msgstr "IPv4 Tunnel netwerk"
 msgid ""
 "Using a tunnel network and server bridge settings together is not allowed."
 msgstr ""
+"Het gebruik van een tunnelnetwerk en serverbruginstellingen tezamen is niet "
+"toegestaan."
 
 #: src/usr/local/www/vpn_openvpn_server.php:449
 msgid "Server Bridge DHCP Start and End must both be empty, or defined."
@@ -27989,6 +28147,8 @@ msgstr " OpenVPN server toegevoegd aan %1$s:%2$s %3$s"
 msgid ""
 "Set this option to disable this server without removing it from the list."
 msgstr ""
+"Zet deze optie om deze server uit te schakelen zonder deze uit de lijst te "
+"verwijderen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:708
 msgid "*Backend for authentication"
@@ -28004,11 +28164,12 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:738
 msgid "*Local port"
-msgstr ""
+msgstr "*Lokale poort"
 
 #: src/usr/local/www/vpn_openvpn_server.php:742
 msgid "The port used by OpenVPN to receive client connections."
 msgstr ""
+"De poort die door OpenVPN wordt gebruikt om clientverbindingen te ontvangen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:830
 #: src/usr/local/www/vpn_openvpn_server.php:1764
@@ -28016,15 +28177,18 @@ msgid ""
 "Warning: The selected server certificate was not created as an SSL Server "
 "certificate and may not work as expected"
 msgstr ""
+"Waarschuwing: Het geselecteerde servercertificaat is niet aangemaakt als een "
+"SSL-servercertificaat en werkt mogelijk niet zoals verwacht"
 
 #: src/usr/local/www/vpn_openvpn_server.php:834
 #, php-format
 msgid "No Certificates defined. One may be created here: %1$s%2$s%3$s"
 msgstr ""
+"Geen certificaten gedefinieerd. Deze kan hier worden gemaakt: %1$s%2$s%3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:834
 msgid "System &gt; Cert. Manager"
-msgstr ""
+msgstr "Systeem &gt; Cert. Beheer"
 
 #: src/usr/local/www/vpn_openvpn_server.php:844
 msgid "*Server certificate"
@@ -28036,13 +28200,15 @@ msgstr "*DH parameter lengte"
 
 #: src/usr/local/www/vpn_openvpn_server.php:856
 msgid "Only DH parameter sets which exist in /etc/ are shown."
-msgstr ""
+msgstr "Alleen DH parameter sets die bestaan in /etc/ worden getoond."
 
 #: src/usr/local/www/vpn_openvpn_server.php:858
 msgid ""
 "Generating new or stronger DH parameters is CPU-intensive and must be "
 "performed manually."
 msgstr ""
+"Het genereren van nieuwe of sterkere DH parameters is CPU-intensief en moet "
+"handmatig worden uitgevoerd."
 
 #: src/usr/local/www/vpn_openvpn_server.php:859
 #, php-format
@@ -28057,10 +28223,12 @@ msgstr ""
 #, php-format
 msgid "Diffie-Hellman (DH) parameter set used for key exchange.%1$s%2$s%3$s"
 msgstr ""
+"Diffie-Hellman (DH) -parameterset gebruikt voor sleuteluitwisseling."
+"%1$s%2$s%3$s"
 
 #: src/usr/local/www/vpn_openvpn_server.php:867
 msgid "ECDH Curve"
-msgstr ""
+msgstr "ECDH-curve"
 
 #: src/usr/local/www/vpn_openvpn_server.php:870
 #, php-format
@@ -28069,6 +28237,9 @@ msgid ""
 "certificate is used by default when the server uses an ECDSA certificate. "
 "Otherwise, secp384r1 is used as a fallback."
 msgstr ""
+"De te gebruiken Elliptic Curve voor sleuteluitwisseling. %1$sDe curve van "
+"het servercertificaat wordt standaard gebruikt als de server een ECDSA-"
+"certificaat gebruikt. Anders wordt secp384r1 gebruikt als fallback."
 
 #: src/usr/local/www/vpn_openvpn_server.php:944
 #, php-format
@@ -28083,16 +28254,16 @@ msgstr ""
 "controlekanaal pakketten als een TLS-sleutel aanwezig is..%1$sWanneer een "
 "AEAD Encryptie Algoritme-modus wordt gebruikt, zoals AES-GCM, wordt deze "
 "alleen gebruikt voor het controlekanaal, niet het datakanaal.%1$sLaat deze "
-"op SHA1 staan, tenzij alle cliënten op dezelfde waarde zijn ingesteld. SHA1 "
+"op SHA1 staan, tenzij alle clients op dezelfde waarde zijn ingesteld. SHA1 "
 "is de standaard voor OpenVPN."
 
 #: src/usr/local/www/vpn_openvpn_server.php:960
 msgid "Do Not Check"
-msgstr ""
+msgstr "Niet Controleren"
 
 #: src/usr/local/www/vpn_openvpn_server.php:958
 msgid "*Certificate Depth"
-msgstr ""
+msgstr "*Certificaat Diepte"
 
 #: src/usr/local/www/vpn_openvpn_server.php:961
 msgid ""
@@ -28107,13 +28278,16 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:966
 msgid "Strict User-CN Matching"
-msgstr ""
+msgstr "Strikte Gebruiker-CN Overeenkomst"
 
 #: src/usr/local/www/vpn_openvpn_server.php:969
 msgid ""
 "When authenticating users, enforce a match between the common name of the "
 "client certificate and the username given at login."
 msgstr ""
+"Tijdens het authentiseren van gebruikers afdwingen dat de Common Name van "
+"het client-certificaat en de gebruikersnaam die bij inloggen is opgegeven "
+"overeenkomen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:980
 msgid ""
@@ -28123,6 +28297,11 @@ msgid ""
 "virtual interface. The remaining usable addresses will be assigned to "
 "connecting clients."
 msgstr ""
+"Dit is het virtuele IPv4 netwerk dat wordt gebruikt voor privécommunicatie "
+"tussen deze server en client hosts, uitgedrukt met CIDR notatie "
+"(bijvoorbeeld 10.0.8.0/24). Het eerste bruikbare adres in het netwerk wordt "
+"toegewezen aan de virtuele interface van de server. De resterende bruikbare "
+"adressen worden toegewezen aan clients die verbinden."
 
 #: src/usr/local/www/vpn_openvpn_server.php:990
 msgid ""
@@ -28131,6 +28310,11 @@ msgid ""
 "The ::1 address in the network will be assigned to the server virtual "
 "interface. The remaining addresses will be assigned to connecting clients."
 msgstr ""
+"Dit is het virtuele IPv6 netwerk dat wordt gebruikt voor privécommunicatie "
+"tussen deze server en client hosts, uitgedrukt met CIDR notatie "
+"(bijvoorbeeld fe80::/64). Het  ::1 adres in het netwerk wordt toegewezen aan "
+"de virtuele interface van de server. De resterende adressen worden "
+"toegewezen aan clients die verbinden."
 
 #: src/usr/local/www/vpn_openvpn_server.php:997
 msgid "Bridge DHCP"
@@ -28194,7 +28378,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1046
 msgid "IPv6 Local network(s)"
-msgstr ""
+msgstr "IPv6 Locale Netwerk(en)"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1049
 msgid ""
@@ -28210,21 +28394,23 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1073
 msgid "Concurrent connections"
-msgstr ""
+msgstr "Gelijktijdige verbindingen"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1076
 msgid ""
 "Specify the maximum number of clients allowed to concurrently connect to "
 "this server."
 msgstr ""
+"Specificeer het maximale aantal clients dat gelijktijdig verbinding mag "
+"maken met deze server."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1089
 msgid "Push Compression"
-msgstr ""
+msgstr "Push Compressie"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1103
 msgid "Inter-client communication"
-msgstr "Communicatie tussen cliënten onderling"
+msgstr "Communicatie tussen cliënts onderling"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1110
 msgid "Duplicate Connection"
@@ -28234,6 +28420,8 @@ msgstr "Dubbele connectie"
 msgid ""
 "(This is not generally recommended, but may be needed for some scenarios.)"
 msgstr ""
+"(Dit wordt meestal niet aanbevolen, maar kan voor sommige scenario's nodig "
+"zijn.)"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1122
 msgid "Dynamic IP"
@@ -28249,11 +28437,11 @@ msgid ""
 "require \"net30\"."
 msgstr ""
 "Specificeert de methode die wordt gebruikt om een IP-adres voor een virtuele "
-"adapter te leveren aan cliënten bij gebruik van de TUN-modus op IPv4.."
-"%1$sVoor sommige cliënten, zoals OpenVPN Connect (iOS/Android), is het "
+"adapter te leveren aan clients bij gebruik van de TUN-modus op IPv4.."
+"%1$sVoor sommige clients, zoals OpenVPN Connect (iOS/Android), is het "
 "noodzakelijk dit op \"subnet\" in te stellen zelfs voor IPv6. Oudere versies "
-"van OpenVPN (voor 2.0.9) of cliënten zoals Yealink telefoons kunnen "
-"\"net30\" vereisen."
+"van OpenVPN (voor 2.0.9) of clients zoals Yealink telefoons kunnen \"net30\" "
+"vereisen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1138
 msgid "Advanced Client Settings"
@@ -28281,7 +28469,7 @@ msgstr "DNS Server 4"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1192
 msgid "Block Outside DNS"
-msgstr ""
+msgstr "Blokkeer DNS uit de buitenwereld"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1195
 msgid ""
@@ -28290,8 +28478,8 @@ msgid ""
 "not affected."
 msgstr ""
 "Vereist Windows 10 en OpenVPN 2.3.9 of hoger. Alleen Windows 10 is gevoelig "
-"voor DNS-lekken op deze manier, andere cliënten zullen de optie negeren "
-"omdat ze niet worden beïnvloed."
+"voor DNS-lekken op deze manier, andere clients zullen de optie negeren omdat "
+"ze niet worden beïnvloed."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1199
 msgid "Force DNS cache update"
@@ -28300,6 +28488,7 @@ msgstr "Forceer bijwerken van de DNS cache"
 #: src/usr/local/www/vpn_openvpn_server.php:1202
 msgid "This is known to kick Windows into recognizing pushed DNS servers."
 msgstr ""
+"Hiervan is bekend dat het Windows gepushte DNS-servers laat herkennen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1206
 msgid "NTP Server enable"
@@ -28314,6 +28503,8 @@ msgid ""
 "If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) "
 "will be disabled."
 msgstr ""
+"Als deze optie niet is ingeschakeld, worden alle NetBIOS-over-TCP/IP-opties "
+"(inclusief WINS) uitgeschakeld."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1237
 msgid ""
@@ -28327,7 +28518,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1242
 msgid "Scope ID"
-msgstr ""
+msgstr "Scope ID"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1245
 msgid ""
@@ -28335,6 +28526,9 @@ msgid ""
 "IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to "
 "only those nodes with the same NetBIOS scope ID"
 msgstr ""
+"Een NetBIOS Scope ID biedt een uitgebreide naming service voor NetBIOS over "
+"TCP/IP. De NetBIOS scope ID isoleert NetBIOS-verkeer op een enkel netwerk "
+"voor alleen die nodes met hetzelfde NetBIOS-scope ID"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1251
 msgid "WINS server enable"
@@ -28361,15 +28555,15 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_server.php:1332
 msgid "OpenVPN Servers"
-msgstr ""
+msgstr "OpenVPN Servers"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1337
 msgid "Protocol / Port"
-msgstr ""
+msgstr "Protocol / Poort"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1338
 msgid "Tunnel Network"
-msgstr ""
+msgstr "Tunnel Netwerk"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1339
 msgid "Crypto"
@@ -28618,10 +28812,12 @@ msgid ""
 "Changes the log verbosity for the IPsec daemon, so that more detail will be "
 "generated to aid in troubleshooting."
 msgstr ""
+"Wijzigt de log verbositeit voor de IPsec-daemon, zodat meer details "
+"gegenereerd worden om te helpen bij het oplossen van problemen."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:242
 msgid "Advanced IPsec Settings"
-msgstr ""
+msgstr "Geavanceerde IPsec Instellingen"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:246
 msgid "Configure Unique IDs as"
@@ -28657,12 +28853,12 @@ msgstr "IP compressie"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:265
 msgid "IPComp compression of content is proposed on the connection."
-msgstr ""
+msgstr "IPComp compressie van inhoud wordt voorgesteld op de verbinding."
 
 #: src/usr/local/www/vpn_ipsec_settings.php:269
 #: src/usr/local/www/services_dnsmasq.php:347
 msgid "Strict interface binding"
-msgstr ""
+msgstr "Strikte Interface binding"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:272
 msgid ""
@@ -28676,7 +28872,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:276
 msgid "Unencrypted payloads in IKEv1 Main Mode"
-msgstr ""
+msgstr "Onversleutelde payloads in IKEv1 Main Mode"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:280
 msgid ""
@@ -28729,7 +28925,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:321
 msgid "Strict CRL Checking"
-msgstr ""
+msgstr "Strikte CRL Controle"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:324
 msgid ""
@@ -28742,7 +28938,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:328
 msgid "Make before Break"
-msgstr ""
+msgstr "Make before Break"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:331
 msgid ""
@@ -28765,7 +28961,7 @@ msgstr "Automatisch LAN adres uitsluiten"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:340
 msgid "Exclude traffic from LAN subnet to LAN IP address from IPsec."
-msgstr ""
+msgstr "Sluit verkeer uit het LAN-subnet naar het LAN-IP-adres van IPsec uit."
 
 #: src/usr/local/www/graph_cpu.php:76
 msgid "Cannot get CPU load"
@@ -28997,15 +29193,15 @@ msgstr "Dynamisch DNS Status"
 
 #: src/usr/local/www/widgets/include/rss.inc:22
 msgid "RSS"
-msgstr ""
+msgstr "RSS"
 
 #: src/usr/local/www/widgets/include/picture.inc:22
 msgid "Picture"
-msgstr ""
+msgstr "Afbeelding"
 
 #: src/usr/local/www/widgets/include/traffic_graph.inc:22
 msgid "Traffic Graphs"
-msgstr ""
+msgstr "Verkeersgrafieken"
 
 #: src/usr/local/www/widgets/include/ntp_status.inc:23
 msgid "NTP Status"
@@ -29021,7 +29217,7 @@ msgstr "Syteem Informatie"
 
 #: src/usr/local/www/widgets/include/interface_statistics.inc:23
 msgid "Interface Statistics"
-msgstr ""
+msgstr "Interfacestatistieken"
 
 #: src/usr/local/www/widgets/include/captiveportal.inc:22
 msgid "Captive Portal Status"
@@ -29029,11 +29225,11 @@ msgstr "Toegangsportaal Status"
 
 #: src/usr/local/www/widgets/include/load_balancer.inc:22
 msgid "Load Balancer Status"
-msgstr ""
+msgstr "Load Balancer Status"
 
 #: src/usr/local/www/widgets/include/gmirror_status.inc:22
 msgid "GEOM Mirror Status"
-msgstr ""
+msgstr "GEOM Mirror Status"
 
 #: src/usr/local/www/widgets/include/carp_status.inc:24
 msgid "CARP Status"
@@ -29045,19 +29241,19 @@ msgstr "Verkeersgrafieken widget instellingen via het dashbord bijgewerkt."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:141
 msgid "All traffic graphs are hidden."
-msgstr ""
+msgstr "Alle verkeersgrafieken zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:153
 msgid "Refresh Interval"
-msgstr ""
+msgstr "Verversinterval"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:160
 msgid "Inverse"
-msgstr ""
+msgstr "Omkeren"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:177
 msgid "Unit Size"
-msgstr ""
+msgstr "Eenheid Grootte"
 
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:194
 #: src/usr/local/www/status_graph.php:169
@@ -29076,44 +29272,44 @@ msgstr "Achtergrond updates"
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
 msgid "Show"
-msgstr ""
+msgstr "Toon"
 
 #: src/usr/local/www/widgets/widgets/netgate_services_and_support.widget.php:115
 #, php-format
 msgid "%sRetrieving support information %s %s"
-msgstr ""
+msgstr "%sSupport informatie ophalen %s %s"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:43
 msgid "stratum"
-msgstr ""
+msgstr "stratum"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:151
 msgid "Server Time"
-msgstr ""
+msgstr "Servertijd"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:158
 msgid "Sync Source"
-msgstr ""
+msgstr "Sync Bron"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:161
 msgid "No active peers available"
-msgstr ""
+msgstr "Geen actieve peers beschikbaar"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:169
 msgid "Clock location"
-msgstr ""
+msgstr "Klok locatie"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:183
 msgid "in view"
-msgstr ""
+msgstr "in zicht"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:185
 msgid "in use"
-msgstr ""
+msgstr "in gebruik"
 
 #: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
 msgid "Updating..."
-msgstr ""
+msgstr "Bijwerken…"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:124
 msgid "Saved thermal_sensors_widget settings via Dashboard."
@@ -29121,35 +29317,35 @@ msgstr "Thermische_sensoren_widget instellingen opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:195
 msgid "(Updating...)"
-msgstr ""
+msgstr "(Bijwerken...)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "Thresholds in"
-msgstr ""
+msgstr "Grenswaarden in"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:206
 msgid "(1 to 100):"
-msgstr ""
+msgstr "(1 tot 100):"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:210
 msgid "Zone Warning"
-msgstr ""
+msgstr "Zone Waarschuwing"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:217
 msgid "Zone Critical"
-msgstr ""
+msgstr "Zone Kritiek"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:224
 msgid "Core Warning"
-msgstr ""
+msgstr "Kern Waarschuwing"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:231
 msgid "Core Critical"
-msgstr ""
+msgstr "Kern Kritiek"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:238
 msgid "Display settings:"
-msgstr ""
+msgstr "Weergave-instellingen:"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:242
 msgid "Show raw output"
@@ -29157,11 +29353,11 @@ msgstr "Toon onbewerkte uitvoer"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "(no graph)"
-msgstr ""
+msgstr "(geen grafiek)"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:252
 msgid "Show full sensor name"
-msgstr ""
+msgstr "Toon volledige naam sensor"
 
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:267
 msgid "* A proper Thermal Sensor / Module can be configured under"
@@ -29190,15 +29386,15 @@ msgstr "Dynamisch DNS Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:178
 msgid "Int."
-msgstr ""
+msgstr "Int."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:214
 msgid "Checking ..."
-msgstr ""
+msgstr "Controleren ..."
 
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:221
 msgid "All Dyn DNS entries are hidden."
-msgstr ""
+msgstr "Alle Dyn DNS items zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
 msgid "Mobile"
@@ -29218,15 +29414,15 @@ msgstr "Mobiele gebruikers"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Retrieving overview data "
-msgstr ""
+msgstr "Ophalen overzichtsgegevens"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 msgid "Retrieving tunnel data "
-msgstr ""
+msgstr "Ophalen tunnelgegevens"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "Retrieving mobile data "
-msgstr ""
+msgstr "Ophalen mobielegegevens"
 
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "No mobile tunnels have been configured"
@@ -29244,24 +29440,24 @@ msgstr "IPsec kan <a href=\"vpn_ipsec.php\">hier</a> worden geconfigureerd."
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:127
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:204
 msgid "Name/Time"
-msgstr ""
+msgstr "Naam/Tijd"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:55
 msgid "Real/Virtual IP"
-msgstr ""
+msgstr "Echt/Virtueel IP"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:128
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:205
 msgid "Remote/Virtual IP"
-msgstr ""
+msgstr "Extern/Virtueel IP"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:261
 msgid "No OpenVPN instances defined"
-msgstr ""
+msgstr "Geen OpenVPN instanties gedefinieerd."
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:263
 msgid "All OpenVPN instances are hidden"
-msgstr ""
+msgstr "Alle  OpenVPN instanties zijn verborgen"
 
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:319
 msgid "Saved OpenVPN Filter via Dashboard."
@@ -29269,19 +29465,19 @@ msgstr "OpenVPN Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:38
 msgid "Packets In"
-msgstr ""
+msgstr "Inkomende Pakketten"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:39
 msgid "Packets Out"
-msgstr ""
+msgstr "Uitgaande Pakketten"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:40
 msgid "Bytes In"
-msgstr ""
+msgstr "Inkomende Bytes"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:41
 msgid "Bytes Out"
-msgstr ""
+msgstr "Uitgaande Bytes"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:42
 msgid "Errors In"
@@ -29295,17 +29491,17 @@ msgstr "Fouten Uit"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:152
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:147
 msgid "All interfaces are hidden."
-msgstr ""
+msgstr "Alle interfaces zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:105
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:154
 msgid "All selected interfaces are down."
-msgstr ""
+msgstr "Alle geselecteerde interfaces zijn niet beschikbaar."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:114
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:136
 msgid "All statistics are hidden."
-msgstr ""
+msgstr "Alle statistieken zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:191
 msgid "Saved Interface Statistics Filter via Dashboard."
@@ -29313,31 +29509,31 @@ msgstr "Interface Statistieken Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:200
 msgid "Retrieving interface data"
-msgstr ""
+msgstr "Ophalen interface gegevens"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:209
 msgid "Orientation"
-msgstr ""
+msgstr "Orientatie"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:226
 msgid "Each interface in a column"
-msgstr ""
+msgstr "Elke interface in een kolom"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:229
 msgid "Each interface in a row"
-msgstr ""
+msgstr "Elke interface in een rij"
 
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:266
 msgid "Stats Item"
-msgstr ""
+msgstr "Stats Item"
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:44
 msgid "No packages installed."
-msgstr ""
+msgstr "Geen pakketten geinstalleerd."
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:88
 msgid "ok"
-msgstr ""
+msgstr "ok"
 
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:145
 msgid "Packages may be added/managed here: "
@@ -29350,7 +29546,7 @@ msgstr "Interface Filter opgeslagen via Dashbord."
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:121
 #, php-format
 msgid "Uptime: %s"
-msgstr ""
+msgstr "Uptime: %s"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:71
 msgid "Saved Filter Log Entries via Dashboard."
@@ -29362,27 +29558,27 @@ msgstr "Act"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:118
 msgid "IF"
-msgstr ""
+msgstr "IF"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:153
 msgid "Rule that triggered this action"
-msgstr ""
+msgstr "Regel die deze actie heeft geactiveerd"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:175
 msgid "No logs to display"
-msgstr ""
+msgstr "Geen logs om weer te geven"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:239
 msgid "Number of entries"
-msgstr ""
+msgstr "Aantal regels"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:247
 msgid "Filter actions"
-msgstr ""
+msgstr "Filter acties"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:267
 msgid "Filter interface"
-msgstr ""
+msgstr "Filter interface"
 
 #: src/usr/local/www/widgets/widgets/log.widget.php:280
 msgid "Update interval"
@@ -29391,7 +29587,7 @@ msgstr "Update interval"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:198
 msgid "BIOS"
-msgstr ""
+msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:240
@@ -29400,7 +29596,7 @@ msgstr "CPU Type"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:41
 msgid "Current Date/Time"
-msgstr ""
+msgstr "Huidige Datum/Tijd"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:42
 msgid "DNS Server(s)"
@@ -29417,7 +29613,7 @@ msgstr "State Tabel Grootte"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:45
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:338
 msgid "MBUF Usage"
-msgstr ""
+msgstr "MBUF Gebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:357
@@ -29426,28 +29622,28 @@ msgstr "Temperatuur"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:47
 msgid "Load Average"
-msgstr ""
+msgstr "Gemiddelde Belasting"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:48
 msgid "CPU Usage"
-msgstr ""
+msgstr "CPU-gebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:49
 msgid "Memory Usage"
-msgstr ""
+msgstr "Geheugengebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:50
 msgid "Swap Usage"
-msgstr ""
+msgstr "SWAP gebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:51
 msgid "Disk Usage"
-msgstr ""
+msgstr "Schijfgebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:55
 #, php-format
 msgid "Obtaining update status %s"
-msgstr ""
+msgstr "Update status ophalen %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:71
 msgid "<i>Unable to check for updates</i>"
@@ -29471,7 +29667,7 @@ msgstr "Het systeem heeft de nieuwste versie."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:101
 msgid "The system is on a later version than official release."
-msgstr ""
+msgstr "Het systeem heeft een latere versie dan de officiele release"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:105
 msgid "Error comparing installed with latest version available"
@@ -29481,7 +29677,7 @@ msgstr ""
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version information updated at"
-msgstr ""
+msgstr "Versie-informatie is bijgewerkt op"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:136
 msgid "Saved System Information Widget Filter via Dashboard."
@@ -29493,23 +29689,23 @@ msgstr "Onbekend systeem"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:179
 msgid "Netgate Device ID:"
-msgstr ""
+msgstr "Netgate Apparaat ID:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:201
 msgid "Vendor: "
-msgstr ""
+msgstr "Leverancier:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:204
 msgid "Version: "
-msgstr ""
+msgstr "Versie:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:207
 msgid "Release Date: "
-msgstr ""
+msgstr "Releasedatum:"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:223
 msgid "built on"
-msgstr ""
+msgstr "Gebouwd op"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:247
 msgid "CPUs"
@@ -29517,7 +29713,7 @@ msgstr "CPU's"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:262
 msgid "Hardware crypto"
-msgstr ""
+msgstr "Hardware cryptografie"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:281
 msgid "Current date/time"
@@ -29541,11 +29737,11 @@ msgstr "Toon states"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:374
 msgid "Load average"
-msgstr ""
+msgstr "Gemiddelde belasting"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:376
 msgid "Last 1, 5 and 15 minutes"
-msgstr ""
+msgstr "Laatste 1, 5 en 15 minuten"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:385
 msgid "CPU usage"
@@ -29554,7 +29750,7 @@ msgstr "Processor gebruik"
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:391
 #, php-format
 msgid "Retrieving CPU data %s"
-msgstr ""
+msgstr "CPU gegevens ophalen %s"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:400
 msgid "Memory usage"
@@ -29566,15 +29762,15 @@ msgstr "SWAP gebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:438
 msgid "Disk usage"
-msgstr ""
+msgstr "Schijfgebruik"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid " of "
-msgstr ""
+msgstr "of"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:444
 msgid "in RAM"
-msgstr ""
+msgstr "in RAM"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:455
 msgid "All System Information items are hidden."
@@ -29582,7 +29778,7 @@ msgstr "Alle Systeem Informatie onderdelen zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:476
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:56
 msgid "Saved Wake on LAN Filter via Dashboard."
@@ -29590,19 +29786,19 @@ msgstr "Wake on LAN Filter opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:65
 msgid "Device"
-msgstr ""
+msgstr "Apparaat"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:68
 msgid "Wake"
-msgstr ""
+msgstr "Wakker"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:106
 msgid "Wake up!"
-msgstr ""
+msgstr "Wakker worden!"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:114
 msgid "All WoL entries are hidden."
-msgstr ""
+msgstr "Alle WOL items zijn verborgen"
 
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:119
 msgid "No saved WoL addresses"
@@ -29626,7 +29822,7 @@ msgstr "Feeds"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:140
 msgid "# Stories"
-msgstr ""
+msgstr "# Verhalen"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:147
 msgid "Widget height"
@@ -29634,7 +29830,7 @@ msgstr "Widget hoogte"
 
 #: src/usr/local/www/widgets/widgets/rss.widget.php:154
 msgid "Content limit"
-msgstr ""
+msgstr "Inhoud limiet"
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:62
 msgid "Picture widget saved via Dashboard."
@@ -29642,11 +29838,11 @@ msgstr "Afbeelding widget opgeslagen via Dashbord."
 
 #: src/usr/local/www/widgets/widgets/picture.widget.php:79
 msgid "New picture:"
-msgstr ""
+msgstr "Nieuwe afbeelding"
 
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 msgid "No CARP Interfaces Defined."
-msgstr ""
+msgstr "Geen CARP interfaces gedefinieerd"
 
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:91
 #, php-format
@@ -29660,29 +29856,29 @@ msgstr "SMART Status Filter opgeslagen via Dashbord."
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:65
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:137
 msgid "Drive"
-msgstr ""
+msgstr "Schijf"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:66
 msgid "Ident"
-msgstr ""
+msgstr "Ident"
 
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:115
 msgid "All SMART drives are hidden."
-msgstr ""
+msgstr "Alle SMART schijven zijn verborgen."
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:116
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:119
 msgid "Packetloss"
-msgstr ""
+msgstr "Pakketverlies"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:122
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:125
 msgid "Latency"
-msgstr ""
+msgstr "Latency"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:129
 msgid "Online <br/>(unmonitored)"
-msgstr ""
+msgstr "Online <br/>(niet gemonitord)"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:154
 msgid "All gateways are hidden."
@@ -29703,11 +29899,11 @@ msgstr "Weergeven"
 
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:252
 msgid "Gateway IP"
-msgstr ""
+msgstr "Gateway IP"
 
 #: src/usr/local/www/widgets/widgets/gmirror_status.widget.php:52
 msgid "Unable to retrieve status"
-msgstr ""
+msgstr "Kan status niet ophalen."
 
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:106
 msgid "delete"
@@ -29910,11 +30106,11 @@ msgstr "Wijzigingen zijn succesvol opgeslagen"
 
 #: src/usr/local/www/system_update_settings.php:144
 msgid "Firmware Branch"
-msgstr ""
+msgstr "Firmware Branch"
 
 #: src/usr/local/www/system_update_settings.php:148
 msgid "*Branch"
-msgstr ""
+msgstr "*Branch"
 
 #: src/usr/local/www/system_update_settings.php:151
 #, php-format
@@ -29931,11 +30127,11 @@ msgstr "Updates"
 
 #: src/usr/local/www/system_update_settings.php:160
 msgid "Dashboard check"
-msgstr ""
+msgstr "Dashboard controle"
 
 #: src/usr/local/www/system_update_settings.php:168
 msgid "GitSync"
-msgstr ""
+msgstr "GitSync"
 
 #: src/usr/local/www/system_update_settings.php:172
 msgid "Auto sync on update"
@@ -29945,10 +30141,12 @@ msgstr "Automatisch synchroniseren bij bijwerken"
 msgid ""
 "After updating, sync with the following repository/branch before reboot."
 msgstr ""
+"Na het updaten, synchroniseer met de volgende repository/branch voor het "
+"opnieuw opstarten."
 
 #: src/usr/local/www/system_update_settings.php:187
 msgid "Repository URL"
-msgstr ""
+msgstr "URL van de Repository"
 
 #: src/usr/local/www/system_update_settings.php:190
 #, php-format
@@ -29956,10 +30154,12 @@ msgid ""
 "The most recently used repository was %s. This repository will be used if "
 "the field is left blank."
 msgstr ""
+"De meest recente gebruikte repository was %s. Deze repository wordt gebruikt "
+"als het veld leeg wordt gelaten."
 
 #: src/usr/local/www/system_update_settings.php:208
 msgid "Branch name"
-msgstr ""
+msgstr "Branch naam"
 
 #: src/usr/local/www/system_update_settings.php:211
 #, php-format
@@ -29973,7 +30173,7 @@ msgstr ""
 
 #: src/usr/local/www/system_update_settings.php:214
 msgid "Sync options"
-msgstr ""
+msgstr "Synchronisatie opties"
 
 #: src/usr/local/www/system_update_settings.php:221
 msgid "Copy of only the updated files."
@@ -29981,22 +30181,23 @@ msgstr "Alleen de bijgewerkte bestanden kopieren."
 
 #: src/usr/local/www/system_update_settings.php:228
 msgid "Copy of only the different or missing files."
-msgstr ""
+msgstr "Kopieer alleen de afwijkende of ontbrekende bestanden."
 
 #: src/usr/local/www/system_update_settings.php:235
 #, php-format
 msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
 msgstr ""
+"Toon de afwijkende en ontbrekende bestanden.%1$sMet de'Diff/Minimal' optie."
 
 #: src/usr/local/www/system_update_settings.php:242
 #, php-format
 msgid "Show constructed command.%1$sWith 'Diff/Minimal' option."
-msgstr ""
+msgstr "Toon het opgebouwde commando.%1$sMet de'Diff/Minimal' optie."
 
 #: src/usr/local/www/system_update_settings.php:249
 #, php-format
 msgid "Dry-run only.%1$sNo files copied."
-msgstr ""
+msgstr "Alleen proefdraaien.%1$sEr worden geen bestanden gekopieerd."
 
 #: src/usr/local/www/system_update_settings.php:251
 msgid ""
@@ -30841,11 +31042,11 @@ msgstr "Fout: kan dmesg.boot niet openen in system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Harddisk op standby aan het zetten... "
 
-#: src/etc/inc/system.inc:2476
+#: src/etc/inc/system.inc:2483
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2480 src/etc/inc/system.inc:2499
+#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -31031,7 +31232,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:1977
 msgid "Starting DynDNS clients..."
-msgstr "Bezig met het starten van de DynDNS clienten..."
+msgstr "Bezig met het starten van de DynDNS clients..."
 
 #: src/etc/inc/services.inc:2088
 msgid "Starting DNS forwarder..."
@@ -35017,7 +35218,7 @@ msgstr "WebCfg - Services: RFC 2136 Clients"
 
 #: src/etc/inc/priv.defs.inc:770
 msgid "Allow access to the 'Services: RFC 2136 Clients' page."
-msgstr "Sta toegang toe tot de 'Services: RFC 2136 Clienten' pagina."
+msgstr "Sta toegang toe tot de 'Services: RFC 2136 Clients' pagina."
 
 #: src/etc/inc/priv.defs.inc:775
 msgid "WebCfg - Services: RFC 2136 Client: Edit"
@@ -37270,7 +37471,7 @@ msgstr "dpinger: kan niet verbinden met status socket %1$s - %2$s (%3$s)"
 #: src/etc/inc/gwlb.inc:362
 #, php-format
 msgid "dpinger: timeout while retrieving status for gateway %s"
-msgstr ""
+msgstr "dpinger: timeout bij het ophalen van de status voor gateway %s"
 
 #: src/etc/inc/gwlb.inc:1018
 #, php-format
@@ -37541,7 +37742,7 @@ msgstr "Schakel deze regel uit"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:428
 msgid "Do not perform binat for the specified address"
-msgstr ""
+msgstr "Voer geen BINAT uit voor het opgegeven adres"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:479
 #: src/usr/local/www/firewall_nat_1to1_edit.php:506
@@ -37608,16 +37809,16 @@ msgstr ""
 
 #: src/usr/local/www/status_logs_common.inc:796
 msgid "Forward"
-msgstr ""
+msgstr "Vooruit"
 
 #: src/usr/local/www/status_logs_common.inc:804
 msgid "Reverse"
-msgstr ""
+msgstr "Omgekeerd"
 
 #: src/usr/local/www/status_logs_common.inc:812
 #: src/usr/local/www/status_logs_common.inc:870
 msgid "General Logging Options Setting"
-msgstr ""
+msgstr "Algemene Log Opties Instelling"
 
 #: src/usr/local/www/status_logs_common.inc:854
 msgid "Formatted"
@@ -37626,27 +37827,27 @@ msgstr "Opgemaakt"
 #: src/usr/local/www/status_logs_common.inc:884
 #: src/usr/local/www/status_logs_settings.php:287
 msgid "Log errors from the web server process"
-msgstr ""
+msgstr "Log fouten van het web server proces"
 
 #: src/usr/local/www/status_logs_common.inc:895
 #: src/usr/local/www/status_logs_settings.php:259
 msgid "Log packets matched from the default block rules in the ruleset"
-msgstr ""
+msgstr "Log pakketten van de standaardblokregels in de regelset"
 
 #: src/usr/local/www/status_logs_common.inc:902
 #: src/usr/local/www/status_logs_settings.php:266
 msgid "Log packets matched from the default pass rules put in the ruleset"
-msgstr ""
+msgstr "Log pakketten van de standaarddoorlaatregels in de regelset"
 
 #: src/usr/local/www/status_logs_common.inc:909
 #: src/usr/local/www/status_logs_settings.php:273
 msgid "Log packets blocked by 'Block Bogon Networks' rules"
-msgstr ""
+msgstr "Log pakketten van de  'Blokkeer Bogon Netwerken' regels"
 
 #: src/usr/local/www/status_logs_common.inc:916
 #: src/usr/local/www/status_logs_settings.php:280
 msgid "Log packets blocked by 'Block Private Networks' rules"
-msgstr ""
+msgstr "Log pakketten van de  'Blokkeer Private Netwerken' regels"
 
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:151
 #: src/usr/local/www/system_certmanager.php:974
@@ -37706,20 +37907,22 @@ msgstr "Geen routes automatisch toevoegen of verwijderen"
 #: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
+"Gebruik snelle I/O-operaties met UDP schrijfacties naar tun/tap. "
+"Experimenteel."
 
 #: src/usr/local/www/services_dhcp.php:857
 msgid "Ignore BOOTP queries"
-msgstr ""
+msgstr "Negeer BOOTP queries"
 
 #: src/usr/local/www/services_dhcp.php:864
 msgid "Only the clients defined below will get DHCP leases from this server."
 msgstr ""
-"Alleen de hieronder gedefinieerde cliënten zullen een DHCP reservering van "
+"Alleen de hieronder gedefinieerde clients zullen een DHCP reservering van "
 "deze server ontvangen."
 
 #: src/usr/local/www/services_dhcp.php:871
 msgid "Denied clients will be ignored rather than rejected."
-msgstr "Geweigerde cliënten worden genegeerd in plaats van afgewezen."
+msgstr "Geweigerde clients worden genegeerd in plaats van afgewezen."
 
 #: src/usr/local/www/services_dhcp.php:878
 msgid ""
@@ -37791,15 +37994,15 @@ msgstr "Herleid eerst DHCP mappings"
 
 #: src/usr/local/www/services_dnsmasq.php:298
 msgid "Query DNS servers sequentially"
-msgstr ""
+msgstr "Query DNS servers sequentieel"
 
 #: src/usr/local/www/services_dnsmasq.php:307
 msgid "Require domain"
-msgstr ""
+msgstr "Vereisen domein"
 
 #: src/usr/local/www/services_dnsmasq.php:316
 msgid "Do not forward private reverse lookups"
-msgstr ""
+msgstr "Stuur private omgekeerde lookups niet door"
 
 #: src/usr/local/www/system_routes_edit.php:263
 msgid "Disable this static route"
@@ -37851,6 +38054,8 @@ msgid ""
 "Record a timestamp once for each second, useful for constructing Allan "
 "deviation plots (default: unchecked)."
 msgstr ""
+"Leg eenmaal voor iedere seconde een tijdstempel vast, handig voor het "
+"opbouwen van Allan-afwijkingsplots (standaard: niet aangevinkt)."
 
 #: src/usr/local/www/system_advanced_misc.php:384
 msgid "Enable default gateway switching"
@@ -37862,7 +38067,7 @@ msgstr "Schakel PowerD in"
 
 #: src/usr/local/www/system_advanced_misc.php:474
 msgid "Do not kill connections when schedule expires"
-msgstr ""
+msgstr "Verbindingen niet verbreken als het schema verloopt"
 
 #: src/usr/local/www/system_advanced_misc.php:486
 msgid "Flush all states when a gateway goes down"
@@ -37878,7 +38083,7 @@ msgstr "Gebruik geheugen systeem bestand voor /tmp en /var"
 
 #: src/usr/local/www/system_advanced_misc.php:589
 msgid "Do NOT send Netgate Device ID with user agent"
-msgstr ""
+msgstr "GEEN Netgate Device ID versturen met user agent"
 
 #: src/usr/local/www/system_hasync.php:124
 msgid ""
@@ -37968,7 +38173,7 @@ msgstr "Schakel Promiscuous mode in"
 
 #: src/usr/local/www/diag_packet_capture.php:406
 msgid "Do reverse DNS lookup"
-msgstr ""
+msgstr "Omgekeerde DNS lookup uitvoeren"
 
 #: src/usr/local/www/services_dhcp_relay.php:149
 msgid "Enable DHCP relay on interface"
@@ -37986,7 +38191,7 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd.php:318
 msgid "Log peer messages (default: disabled)."
-msgstr ""
+msgstr "Log peer berichten (standaard: uitgeschakeld)."
 
 #: src/usr/local/www/services_ntpd.php:325
 msgid "Log system messages (default: disabled)."
@@ -37998,7 +38203,7 @@ msgstr "Log referentie klok statistieken (standaard: uit)."
 
 #: src/usr/local/www/services_ntpd.php:355
 msgid "Log clock discipline statistics (default: disabled)."
-msgstr ""
+msgstr "Log klok discipline statistieken (standaard: uitgeschakeld)."
 
 #: src/usr/local/www/services_ntpd.php:362
 msgid "Log NTP peer statistics (default: disabled)."
@@ -38017,6 +38222,8 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:597
 msgid "Make dynamic DNS registered hostname the same as Hostname above."
 msgstr ""
+"Maak de geregistreerde dynamische DNS hostnaam hetzelfde als de Hostnaam "
+"hierboven."
 
 #: src/usr/local/www/services_snmp.php:216
 msgid "Enable the SNMP Daemon and its controls"
@@ -38028,27 +38235,27 @@ msgstr "Schakel de SNMP Trap en zijn controls in"
 
 #: src/usr/local/www/services_snmp.php:303
 msgid "MibII"
-msgstr ""
+msgstr "MibII"
 
 #: src/usr/local/www/services_snmp.php:310
 msgid "Netgraph"
-msgstr ""
+msgstr "Netgraph"
 
 #: src/usr/local/www/services_snmp.php:317
 msgid "PF"
-msgstr ""
+msgstr "PF"
 
 #: src/usr/local/www/services_snmp.php:325
 msgid "Host Resources"
-msgstr ""
+msgstr "Host Bronnen"
 
 #: src/usr/local/www/services_snmp.php:333
 msgid "UCD"
-msgstr ""
+msgstr "UCD"
 
 #: src/usr/local/www/services_snmp.php:340
 msgid "Regex"
-msgstr ""
+msgstr "Regex"
 
 #: src/usr/local/www/services_dyndns_edit.php:317
 msgid "Enable Wildcard"
@@ -38064,20 +38271,23 @@ msgstr "Schakel verbose logging in"
 
 #: src/usr/local/www/services_dyndns_edit.php:340
 msgid "Force IPv4 DNS Resolution"
-msgstr ""
+msgstr "Forceer IPv4 DNS Resolutie"
 
 #: src/usr/local/www/services_dyndns_edit.php:347
 msgid "Verify SSL Certificate Trust"
-msgstr ""
+msgstr "Controleer het vertrouwen in het SSL-certificaat"
 
 #: src/usr/local/www/system_advanced_firewall.php:394
 msgid "Clear invalid DF bits instead of dropping the packets"
 msgstr ""
+"Verwijder ongeldige DF bits in plaats van de pakketten te laten vervallen"
 
 #: src/usr/local/www/system_advanced_firewall.php:404
 msgid ""
 "Insert a stronger ID into IP header of packets passing through the filter."
 msgstr ""
+"Plaats een sterkere ID in de IP-koptekst van pakketten die door het filter "
+"gaan"
 
 #: src/usr/local/www/system_advanced_firewall.php:426
 msgid "Disable all packet filtering."
@@ -38087,7 +38297,7 @@ msgstr "Schakel alle pakket filtering uit"
 msgid ""
 "Disables the PF scrubbing option which can sometimes interfere with NFS "
 "traffic."
-msgstr ""
+msgstr "Schakelt de PF scrub-optie uit die soms NFS-verkeer kan storen."
 
 #: src/usr/local/www/system_advanced_firewall.php:502
 msgid "Bypass firewall rules for traffic on the same interface"
@@ -38107,7 +38317,7 @@ msgstr "Schakel Omgekeerde-werking uit voor policy routeringsregels"
 
 #: src/usr/local/www/system_advanced_firewall.php:548
 msgid "Verify HTTPS certificates when downloading alias URLs"
-msgstr ""
+msgstr "Verifieer HTTPS-certificaten bij het downloaden van alias-URL's"
 
 #: src/usr/local/www/system_advanced_firewall.php:619
 msgid ""
@@ -38138,7 +38348,7 @@ msgstr "Schakel gateway monitoring uit"
 
 #: src/usr/local/www/system_gateways_edit.php:214
 msgid "Disable Gateway Monitoring Action"
-msgstr ""
+msgstr "Schakel Gateway Monitoring Actie uit"
 
 #: src/usr/local/www/system_gateways_edit.php:238
 msgid "Mark Gateway as Down"
@@ -38192,12 +38402,21 @@ msgid ""
 "in a priority level are exhausted then the next available link(s) in the "
 "next priority level will be used."
 msgstr ""
+"De hier geselecteerde prioriteit bepaalt in welke volgorde failover en "
+"balancing van koppelingen zal worden uitgevoerd. Meerdere koppelingen van "
+"dezelfde prioriteit zullen verbindingen balanceren totdat alle koppelingen "
+"in de prioriteit verdwenen zijn. Als alle koppelingen in een "
+"prioriteitsniveau verdwenen zijn, dan wordt de volgende beschikbare "
+"koppeling(en) in het volgende prioriteitsniveau gebruikt."
 
 #: src/usr/local/www/system_gateway_groups_edit.php:318
 msgid ""
 "The virtual IP field selects which (virtual) IP should be used when this "
 "group applies to a local Dynamic DNS, IPsec or OpenVPN endpoint."
 msgstr ""
+"Het virtuele IP-veld selecteert welk (virtueel) IP moet worden gebruikt "
+"wanneer deze groep van toepassing is op een lokaal Dynamisch DNS, IPsec of "
+"OpenVPN eindpunt."
 
 #: src/usr/local/www/vpn_l2tp.php:204
 msgid "Enable L2TP server"
@@ -38217,44 +38436,46 @@ msgstr "Geef IP adressen uit via de RADIUS server."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:474
 msgid "Provide a virtual IP address to clients"
-msgstr "Voorzie clienten met een virtueel IP adres"
+msgstr "Voorzie clients van een virtueel IP adres"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:511
 msgid "Provide a virtual IPv6 address to clients"
-msgstr "Voorzie clienten met een virtueel IPv6 adres"
+msgstr "Voorzie clients van een virtueel IPv6 adres"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:548
 msgid "Provide a list of accessible networks to clients"
-msgstr "Voorzie clienten met een lijst van bereikbare netwerken"
+msgstr "Voorzie clients van een lijst van bereikbare netwerken"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:555
 msgid "Allow clients to save Xauth passwords (Cisco VPN client only)."
 msgstr ""
-"Sta toe dat clienten Xauth wachtwoorden mogen opslaan (Alleen voor Cisco VPN "
+"Sta toe dat clients Xauth wachtwoorden mogen opslaan (Alleen voor Cisco VPN "
 "applicatie)"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:562
 #: src/usr/local/www/vpn_openvpn_csc.php:443
 #: src/usr/local/www/vpn_openvpn_server.php:1144
 msgid "Provide a default domain name to clients"
-msgstr "Voorzie clienten met een standaard domeinnaam."
+msgstr "Voorzie clients van een standaard domeinnaam."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:585
 msgid ""
 "Provide a list of split DNS domain names to clients. Enter a space separated "
 "list."
 msgstr ""
+"Geef een lijst van gesplitste DNS domeinnamen aan clients. Voer een lijst in "
+"geschieden door spaties."
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:608
 #: src/usr/local/www/vpn_openvpn_csc.php:463
 msgid "Provide a DNS server list to clients"
-msgstr "Voorzie clienten met een DNS server lijst"
+msgstr "Voorzie clients van een DNS server lijst"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:633
 #: src/usr/local/www/vpn_openvpn_csc.php:555
 #: src/usr/local/www/vpn_openvpn_server.php:1252
 msgid "Provide a WINS server list to clients"
-msgstr "Voorzie clienten met een WINS server lijst"
+msgstr "Voorzie clients van een WINS server lijst"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:659
 msgid ""
@@ -38266,18 +38487,22 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:682
 msgid "Provide a login banner to clients"
-msgstr "Voorzie clienten met een login banner"
+msgstr "Voorzie clients van een login banner"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:359
 msgid ""
 "Please add a monitor IP address on the monitors tab to use this feature.\""
 msgstr ""
+"Voeg a.u.b. een monitor-IP-adres toe op het tabblad Monitors om deze functie "
+"te gebruiken. \""
 
 #: src/usr/local/www/firewall_virtual_ip_edit.php:383
 msgid ""
 "Disable expansion of this entry into IPs on NAT lists (e.g. 192.168.1.0/24 "
 "expands to 256 entries.) "
 msgstr ""
+"Schakel uitbreiding van dit item in IP's op NAT-lijsten uit (bijv. 192.168.1."
+"0/24 breidt zich uit tot 256 vermeldingen.)"
 
 #: src/usr/local/www/system_advanced_admin.php:368
 msgid "Disable webConfigurator redirect rule"
@@ -38298,11 +38523,11 @@ msgstr "WebConfigurator Anti-lockout regel uitschakelen"
 
 #: src/usr/local/www/system_advanced_admin.php:415
 msgid "Disable DNS Rebinding Checks"
-msgstr ""
+msgstr "Schakel DNS Rebinding Controles uit"
 
 #: src/usr/local/www/system_advanced_admin.php:435
 msgid "Disable HTTP_REFERER enforcement check"
-msgstr ""
+msgstr "Schakel HTTP_REFERER handhaving controle uit"
 
 #: src/usr/local/www/system_advanced_admin.php:452
 msgid "Enable Secure Shell"
@@ -38311,6 +38536,7 @@ msgstr "Schakel Secure Shell in"
 #: src/usr/local/www/system_advanced_admin.php:459
 msgid "Disable password login for Secure Shell (RSA/DSA key only)"
 msgstr ""
+"Schakel inloggen met paswoord voor Secure Shell uit (alleen RSA/DSA key)"
 
 #: src/usr/local/www/system_advanced_admin.php:481
 msgid ""
@@ -38345,7 +38571,7 @@ msgstr "Voorkom dat deze client instellingen van de server accepteert."
 #: src/usr/local/www/vpn_openvpn_csc.php:504
 #: src/usr/local/www/vpn_openvpn_server.php:1207
 msgid "Provide an NTP server list to clients"
-msgstr "Voorzie clienten van een NTP server lijst"
+msgstr "Voorzie clients van een NTP server lijst"
 
 #: src/usr/local/www/vpn_openvpn_csc.php:532
 #: src/usr/local/www/vpn_openvpn_server.php:1228
@@ -38379,6 +38605,7 @@ msgstr "LDAP Server gebruik RFC 2307 stijl groep lid"
 #: src/usr/local/www/system_authservers.php:715
 msgid "UTF8 encode LDAP parameters before sending them to the server."
 msgstr ""
+"Versleutel LDAP parameters met UTF8 voor deze naar de server te sturen."
 
 #: src/usr/local/www/system_authservers.php:723
 msgid "Do not strip away parts of the username after the @ symbol"
@@ -38392,11 +38619,11 @@ msgstr "Het omleiden uitschakelen voor verkeer dat overeenkomt met deze regel"
 #: src/usr/local/www/firewall_nat_edit.php:806
 #: src/usr/local/www/firewall_rules_edit.php:1341
 msgid "Invert match."
-msgstr ""
+msgstr "Inverteer match."
 
 #: src/usr/local/www/firewall_nat_edit.php:903
 msgid "Do not automatically sync to other CARP members"
-msgstr ""
+msgstr "Niet automatisch synchroniseren met andere CARP leden"
 
 #: src/usr/local/www/interfaces_gre_edit.php:201
 msgid ""
@@ -38408,7 +38635,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_testport.php:246
 msgid "Show remote text"
-msgstr ""
+msgstr "Tonen externe tekst "
 
 #: src/usr/local/www/interfaces_ppps_edit.php:715
 msgid "Enable persistent logging of connection uptime. "
@@ -38440,7 +38667,7 @@ msgstr "Schakel Dial-On-Demand modus in."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:859
 msgid "Disable vjcomp (compression, auto-negotiated by default)."
-msgstr ""
+msgstr "Vjcomp uitschakelen (compressie, standaard automatisch onderhandeld)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:869
 msgid "Disable tcpmssfix (enabled by default)."
@@ -38448,15 +38675,16 @@ msgstr "Schakel tcpmssfix uit (standaard ingeschakeld)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:880
 msgid "Disable shortseq (auto-negotiated by default)."
-msgstr ""
+msgstr "Shortseq uitschakelen (standaard automatisch onderhandeld)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:888
 msgid "Disable ACF compression (auto-negotiated by default)"
-msgstr ""
+msgstr "ACF compressie uitschakelen (standaard automatisch onderhandeld)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:895
 msgid "Disable Protocol compression (auto-negotiated by default)"
 msgstr ""
+"Protocol compressie uitschakelen (standaard automatisch onderhandeld)."
 
 #: src/usr/local/www/interfaces_ppps_edit.php:941
 msgid "<span id=\"linkparamhelp\">"
@@ -38497,7 +38725,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1468
 msgid "Log packets that are handled by this rule"
-msgstr ""
+msgstr "Log pakketten die door deze regel worden afgehandeld"
 
 #: src/usr/local/www/firewall_rules_edit.php:1519
 msgid ""
@@ -38509,7 +38737,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1527
 msgid "Disable auto generated reply-to for this rule."
-msgstr ""
+msgstr "Automatisch gegenereerde \"reply-to\" voor deze regel uitschakelen."
 
 #: src/usr/local/www/firewall_rules_edit.php:1605
 msgid "Prevent states created by this rule to be sync'ed over pfsync."
@@ -38521,6 +38749,8 @@ msgstr ""
 msgid ""
 "Prevent the rule on Master from automatically syncing to other CARP members"
 msgstr ""
+"Voorkom dat de regel op de Master automatisch synchroniseert naar andere "
+"CARP leden"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:149
 msgid "Enable DHCPv6 relay on interface"
@@ -38543,19 +38773,19 @@ msgstr "Geef voorkeur aan IPv4 ondanks dat IPv6 beschikbaar is"
 
 #: src/usr/local/www/system_advanced_network.php:215
 msgid "Do not generate local IPv6 DNS entries for LAN interfaces"
-msgstr ""
+msgstr "Genereer geen lokale IPv6 DNS-vermeldingen voor LAN-interfaces"
 
 #: src/usr/local/www/system_advanced_network.php:257
 msgid "Disable hardware checksum offload"
-msgstr ""
+msgstr "Hardware Checksum Offloading uitschakelen"
 
 #: src/usr/local/www/system_advanced_network.php:268
 msgid "Disable hardware TCP segmentation offload"
-msgstr ""
+msgstr "Hardware TCP Segmentatie Offloading uitschakelen"
 
 #: src/usr/local/www/system_advanced_network.php:278
 msgid "Disable hardware large receive offload"
-msgstr ""
+msgstr "Hardware Large Receive Offloading uitschakelen"
 
 #: src/usr/local/www/system_advanced_network.php:288
 msgid "Suppress ARP messages"
@@ -38617,15 +38847,19 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:389
 msgid "Process PGRMF. Ignores ALL other NMEA sentences. (default: unchecked)."
 msgstr ""
+"Verwerk PGRMF. Negeer ALLE andere NMEA sentences. (standaard: uitgeschakeld)."
+""
 
 #: src/usr/local/www/services_ntpd_gps.php:417
 msgid "Prefer this clock (default: checked)."
-msgstr ""
+msgstr "Voorkeur voor deze klok (standaard: ingeschakeld)."
 
 #: src/usr/local/www/services_ntpd_gps.php:424
 msgid ""
 "Do not use this clock, display for reference only (default: unchecked)."
 msgstr ""
+"Gebruik deze klok niet, alleen voor referentie weergeven (standaard: "
+"uitgeschakeld)."
 
 #: src/usr/local/www/services_ntpd_gps.php:431
 msgid "Enable PPS signal processing (default: checked)."
@@ -38638,16 +38872,19 @@ msgstr "Schakel kernel PPS klok discipline in (standaard: aangevinkt)."
 #: src/usr/local/www/services_ntpd_gps.php:452
 msgid "Obscure location in timestamp (default: unchecked, unobscured)."
 msgstr ""
+"Verberg locatie uit tijdstempel (standaard: uitgeschakeld, niet verborgen)"
 
 #: src/usr/local/www/services_ntpd_gps.php:459
 msgid ""
 "Log the sub-second fraction of the received time stamp (default: unchecked, "
 "not logged)."
 msgstr ""
+"Log de sub-seconde fractie van de ontvangen tijdstempel aan (standaard: "
+"uitgeschakeld, niet gelogd)."
 
 #: src/usr/local/www/services_ntpd_gps.php:466
 msgid "Display extended GPS status (default: checked)."
-msgstr ""
+msgstr "Toon uitgebreide GPS status (standaard: ingeschakeld)"
 
 #: src/usr/local/www/services_ntpd_gps.php:502
 msgid "Auto correct malformed initialization commands. (default: unchecked)."
@@ -38657,13 +38894,15 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:241
 msgid "Use TCP instead of UDP"
-msgstr ""
+msgstr "Gebruik TCP in plaats van UDP"
 
 #: src/usr/local/www/services_rfc2136_edit.php:248
 msgid ""
 "If the interface IP is private, attempt to fetch and use the public IP "
 "instead."
 msgstr ""
+"Als de interface IP een prive adres is, probeer dan in plaats daarvan het "
+"openbare IP op te halen en te gebruiken."
 
 #: src/usr/local/www/services_rfc2136_edit.php:257
 msgid "A (IPv4)"
@@ -38678,6 +38917,8 @@ msgid ""
 "Enabling this option will disable NAT for traffic matching this rule and "
 "stop processing Outbound NAT rules"
 msgstr ""
+"Als u deze optie inschakelt, wordt NAT uitgeschakeld voor verkeer die "
+"overeenkomt met deze regel en stopt het verwerken van uitgaande NAT-regels"
 
 #: src/usr/local/www/services_captiveportal.php:536
 msgid "Enable Captive Portal"
@@ -38693,11 +38934,11 @@ msgstr "Schakel Uitlog popup scherm in"
 
 #: src/usr/local/www/services_captiveportal.php:628
 msgid "Disable Concurrent user logins"
-msgstr ""
+msgstr "Inloggen door meerdere gelijktijdige gebruikers uitschakelen"
 
 #: src/usr/local/www/services_captiveportal.php:636
 msgid "Disable MAC filtering"
-msgstr ""
+msgstr "MAC filteren uitschakelen"
 
 #: src/usr/local/www/services_captiveportal.php:645
 msgid "Enable Pass-through MAC automatic additions"
@@ -38717,7 +38958,7 @@ msgstr "Geen authenticatie"
 
 #: src/usr/local/www/services_captiveportal.php:701
 msgid "Local User Manager / Vouchers"
-msgstr ""
+msgstr "Lokale Gebruiker Manager / Vouchers"
 
 #: src/usr/local/www/services_captiveportal.php:709
 msgid "RADIUS Authentication"
@@ -38763,11 +39004,11 @@ msgstr "Stop/Start (FreeRADIUS)"
 
 #: src/usr/local/www/services_captiveportal.php:915
 msgid "Interim"
-msgstr ""
+msgstr "Interim"
 
 #: src/usr/local/www/services_captiveportal.php:930
 msgid "Reauthenticate connected users every minute"
-msgstr ""
+msgstr "Herauthentiseer verbonden gebruikers iedere minuut"
 
 #: src/usr/local/www/services_captiveportal.php:940
 msgid "Enable RADIUS MAC authentication"
@@ -38783,7 +39024,7 @@ msgstr "Draai Acct-Input-Octets en Acct-Output-Octets om"
 
 #: src/usr/local/www/services_captiveportal.php:986
 msgid "Include idle time in session time"
-msgstr ""
+msgstr "Voeg de idle tijd aan de sessietijd toe"
 
 #: src/usr/local/www/services_captiveportal.php:1020
 msgid "Enable HTTPS login"
@@ -38791,7 +39032,7 @@ msgstr "Schakel aanmelden via HTTPS in"
 
 #: src/usr/local/www/services_captiveportal.php:1044
 msgid "Disable HTTPS Forwards"
-msgstr ""
+msgstr "HTTPS Forwards uitschakelen"
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:680
 msgid ""
@@ -38842,11 +39083,11 @@ msgstr "<span class=\"helptext\">"
 
 #: src/usr/local/www/services_unbound_advanced.php:227
 msgid "id.server and hostname.bind queries are refused"
-msgstr ""
+msgstr "id.server en hostname.bind queries worden geweigerd"
 
 #: src/usr/local/www/services_unbound_advanced.php:234
 msgid "version.server and version.bind queries are refused"
-msgstr ""
+msgstr "version.server en version.bind queries worden geweigerd"
 
 #: src/usr/local/www/services_unbound_advanced.php:241
 msgid ""
@@ -38861,29 +39102,35 @@ msgid ""
 "DNSKEYs are fetched earlier in the validation process when a Delegation "
 "signer is encountered"
 msgstr ""
+"DNSKEY's worden eerder gehaald in het validatieproces wanneer er een "
+"Delegatie-ondertekenaar wordt aangetroffen"
 
 #: src/usr/local/www/services_unbound_advanced.php:255
 msgid "DNSSEC data is required for trust-anchored zones."
-msgstr ""
+msgstr "DNSSEC gegevens zijn vereist voor vertrouwde-verankerde zones."
 
 #: src/usr/local/www/services_unbound_advanced.php:357
 msgid "Disable the automatically-added access control entries"
-msgstr ""
+msgstr "Schakel de automatisch toegevoegde toegangscontrole items uit"
 
 #: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Disable the automatically-added host entries"
-msgstr ""
+msgstr "Schakel de automatisch toegevoegde host items uit"
 
 #: src/usr/local/www/services_unbound_advanced.php:372
 msgid ""
 "Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts."
 msgstr ""
+"Gebruik 0x-20 gecodeerde willekeurige bits in de DNS-query om spoofing "
+"pogingen te verijdelen."
 
 #: src/usr/local/www/interfaces_gif_edit.php:208
 msgid ""
 "ECN friendly behavior violates RFC2893. This should be used in mutual "
 "agreement with the peer. "
 msgstr ""
+"ECN vriendelijk gedrag schendt RFC2893. Dit moet in onderlinge "
+"overeenstemming met de peer worden gebruikt."
 
 #: src/usr/local/www/interfaces_gif_edit.php:215
 msgid ""
@@ -38903,11 +39150,11 @@ msgstr "Info"
 
 #: src/usr/local/www/diag_smart.php:229
 msgid "Health"
-msgstr ""
+msgstr "Gezondheid"
 
 #: src/usr/local/www/diag_smart.php:237
 msgid "S.M.A.R.T. Capabilities"
-msgstr ""
+msgstr "S.M.A.R.T. Mogelijkheden"
 
 #: src/usr/local/www/diag_smart.php:245
 msgid "Attributes"
@@ -38915,15 +39162,15 @@ msgstr "Attributen"
 
 #: src/usr/local/www/diag_smart.php:309
 msgid "Short"
-msgstr ""
+msgstr "Kort"
 
 #: src/usr/local/www/diag_smart.php:317
 msgid "Long"
-msgstr ""
+msgstr "Lang"
 
 #: src/usr/local/www/diag_smart.php:325
 msgid "Conveyance"
-msgstr ""
+msgstr "Transporteren"
 
 #: src/usr/local/www/diag_smart.php:382
 msgid "Self-test"
@@ -38968,7 +39215,7 @@ msgstr "Schakel interface in"
 
 #: src/usr/local/www/interfaces.php:1911
 msgid "IPv6 will use the IPv4 connectivity link (PPPoE)"
-msgstr ""
+msgstr "IPv6 zal de IPv4 verbindingslink (PPPoE) gebruiken"
 
 #: src/usr/local/www/interfaces.php:1943 src/usr/local/www/interfaces.php:3276
 msgid "Default gateway"
@@ -38996,12 +39243,14 @@ msgstr "Vraag een IPv6 prefix/informatie op via de IPv4 verbinding"
 
 #: src/usr/local/www/interfaces.php:2211
 msgid "Only request an IPv6 prefix, do not request an IPv6 address"
-msgstr ""
+msgstr "Vraag alleen een IPv6-prefix aan, geen IPv6-adres"
 
 #: src/usr/local/www/interfaces.php:2225
 msgid ""
 "Send an IPv6 prefix hint to indicate the desired prefix size for delegation"
 msgstr ""
+"Stuur een IPv6 prefix hint om de gewenste prefix grootte voor de delegatie "
+"aan te geven"
 
 #: src/usr/local/www/interfaces.php:2232
 msgid "Start DHCP6 client in debug mode"
@@ -39009,7 +39258,7 @@ msgstr "Start DHCP6-client in debug-modus"
 
 #: src/usr/local/www/interfaces.php:2238
 msgid "Required by some ISPs, especially those not using PPPoE"
-msgstr ""
+msgstr "Vereist door sommige ISP's, met name die welke geen PPPoE gebruiken"
 
 #: src/usr/local/www/interfaces.php:2244
 msgid ""
@@ -39027,11 +39276,11 @@ msgstr "Alleen Informatie uitwisselen"
 
 #: src/usr/local/www/interfaces.php:2303
 msgid "Non-Temporary Address Allocation"
-msgstr ""
+msgstr "Niet-tijdelijke adrestoewijzing"
 
 #: src/usr/local/www/interfaces.php:2344
 msgid "Prefix Delegation "
-msgstr ""
+msgstr "Prefix delegatie"
 
 #: src/usr/local/www/interfaces.php:2695 src/usr/local/www/interfaces.php:2827
 msgid "Enable Dial-On-Demand mode "
@@ -39066,12 +39315,12 @@ msgid ""
 "Allow packets to pass between wireless clients directly when operating as an "
 "access point"
 msgstr ""
-"Sta het rechtstreeks sturen van pakketjes tussen draadloze clienten toe "
+"Sta het rechtstreeks sturen van pakketjes tussen draadloze clients toe "
 "wanneer als Access Punt ingesteld"
 
 #: src/usr/local/www/interfaces.php:3073
 msgid "Force the card to use WME (wireless QoS)"
-msgstr ""
+msgstr "Dwing de kaart om WME (draadloze QoS) te gebruiken"
 
 #: src/usr/local/www/interfaces.php:3081
 msgid ""
@@ -39079,7 +39328,7 @@ msgid ""
 "for some clients, and the SSID may still be discovered by other means.)"
 msgstr ""
 "Schakel het uitzenden van de SSID voor dit netwerk uit (Dit kan problemen "
-"veroorzaken voor sommige cliënten, en de SSID kan nog steeds op andere "
+"veroorzaken voor sommige clients en de SSID kan nog steeds op andere "
 "manieren worden achterhaald."
 
 #: src/usr/local/www/interfaces.php:3094
@@ -39113,7 +39362,7 @@ msgstr "Schakel Growl notificaties uit"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:259
 msgid "Adds interface to QinQ interface groups"
-msgstr ""
+msgstr "Voegt interface toe aan QinQ interface groepen"
 
 #: src/usr/local/www/interfaces_qinq_edit.php:272
 msgid ""
@@ -39129,6 +39378,7 @@ msgstr ""
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:225
 msgid "Please add a pool on the \"Pools\" tab to use this feature. "
 msgstr ""
+"Voeg een pool toe op het tabblad 'Pools' om deze functie te gebruiken."
 
 #: src/usr/local/www/vpn_openvpn_server.php:676
 msgid "Disable this server"
@@ -39140,38 +39390,38 @@ msgstr "Dwing een overeenkomst af"
 
 #: src/usr/local/www/vpn_openvpn_server.php:998
 msgid "Allow clients on the bridge to obtain DHCP."
-msgstr "Sta toe dat clienten op deze bridge  DHCP kunnen verkrijgen."
+msgstr "Sta toe dat clients op deze bridge  DHCP kunnen verkrijgen."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1090
 msgid "Push the selected Compression setting to connecting clients."
 msgstr ""
-"Installeer de geselecteerde compressie-instellingen naar de verbindende "
-"clienten."
+"Stuur de geselecteerde compressie-instellingen naar de clients die "
+"verbinding maken."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1104
 msgid "Allow communication between clients connected to this server"
-msgstr "Sta communicatie tussen de met deze server verbonden clienten toe"
+msgstr "Sta communicatie tussen de met deze server verbonden clients toe"
 
 #: src/usr/local/www/vpn_openvpn_server.php:1111
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
 "Name."
 msgstr ""
-"Laat meerdere gelijktijdige verbindingen toe van clienten met dezelfde "
-"Common Name."
+"Laat meerdere gelijktijdige verbindingen toe van clients met dezelfde Common "
+"Name."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1123
 msgid ""
 "Allow connected clients to retain their connections if their IP address "
 "changes."
 msgstr ""
-"Sta verbonden clienten toe om hun verbinding te behouden wanneer hun IP "
+"Sta verbonden clients toe om hun verbindingen te behouden wanneer hun IP "
 "adres veranderd."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1158
 msgid "Provide a DNS server list to clients. Addresses may be IPv4 or IPv6."
 msgstr ""
-"Geef een DNS server lijst aan de clienten. Adressen mogen IPv4 of IPv6 zijn."
+"Geef een DNS server lijst aan de clients. Adressen mogen IPv4 of IPv6 zijn."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1193
 msgid ""
@@ -39179,7 +39429,7 @@ msgid ""
 "while connected, forcing clients to use only VPN DNS servers."
 msgstr ""
 "Blokkeer toegang tot DNS servers buiten het OpenVPN netwerk voor Windows 10 "
-"gebruikers, waardoor clienten alleen gebruik kunnen maken van de opgegeven "
+"gebruikers, waardoor clients alleen gebruik kunnen maken van de opgegeven "
 "VPN DNS servers."
 
 #: src/usr/local/www/vpn_openvpn_server.php:1200
@@ -39224,7 +39474,7 @@ msgstr "Schakel negeer voor LAN interface IP in"
 
 #: src/usr/local/www/status_logs_settings.php:236
 msgid "Show log entries in reverse order (newest entries on top)"
-msgstr ""
+msgstr "Toon logregels in omgekeerde volgorde (nieuwste bovenaan)"
 
 #: src/usr/local/www/status_logs_settings.php:294
 msgid "Show raw filter logs"
@@ -39236,11 +39486,11 @@ msgstr "Schakel verbose logging in (Standaard is terse logging)"
 
 #: src/usr/local/www/status_logs_settings.php:321
 msgid "Disable writing log files to the local disk"
-msgstr ""
+msgstr "Schakel Logbestanden naar lokale schijf schrijven uit"
 
 #: src/usr/local/www/status_logs_settings.php:339
 msgid "Send log messages to remote syslog server"
-msgstr ""
+msgstr "Stuur logboekberichten naar externe syslog server"
 
 #: src/usr/local/www/status_logs_settings.php:394
 msgid "Everything"
@@ -39298,11 +39548,11 @@ msgstr "Draadloze Gebeurtenissen (hostapd)"
 #: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
 #: src/usr/local/www/pkg_edit.php:1338
 msgid "<br />"
-msgstr ""
+msgstr "<br />"
 
 #: src/usr/local/www/system_update_settings.php:161
 msgid "Disable the Dashboard auto-update check"
-msgstr ""
+msgstr "Schakel de automatische updatecontrole van het Dashboard uit"
 
 #: src/usr/local/www/system_update_settings.php:173
 msgid "Enable repository/branch sync before reboot"
@@ -39330,19 +39580,19 @@ msgstr "Schakel  discipline en onderliggende items in/uit."
 
 #: src/etc/inc/shaper.inc:2297
 msgid "Upper Limit"
-msgstr ""
+msgstr "Bovengrens"
 
 #: src/etc/inc/shaper.inc:2330
 msgid "Real Time"
-msgstr ""
+msgstr "Real Time"
 
 #: src/etc/inc/shaper.inc:2362
 msgid "Link Share"
-msgstr ""
+msgstr "Link delen"
 
 #: src/etc/inc/shaper.inc:2808
 msgid "Borrow from other queues when available"
-msgstr ""
+msgstr "Leen uit andere wachtrijen indien beschikbaar"
 
 #: src/etc/inc/shaper.inc:3826
 msgid "Enable limiter and its children"
@@ -39354,23 +39604,23 @@ msgstr "Schakel deze wachtrij in"
 
 #: src/etc/inc/pfsense-utils.inc:305
 msgid "Sort Alphabetically"
-msgstr ""
+msgstr "Sorteren alfabetisch"
 
 #: src/etc/inc/pfsense-utils.inc:340
 msgid "Manage Log"
-msgstr ""
+msgstr "Beheer log"
 
 #: src/etc/inc/pfsense-utils.inc:347
 msgid "Monitoring Settings"
-msgstr ""
+msgstr "Monitorinstellingen"
 
 #: src/etc/inc/pfsense-utils.inc:389
 msgid "Disable details in alias popups"
-msgstr ""
+msgstr "Deactiveren details in alias popups"
 
 #: src/etc/inc/pfsense-utils.inc:408
 msgid "Display page name first in browser tab"
-msgstr ""
+msgstr "Weergave pagina naam in eerste browser tabblad"
 
 #: src/etc/inc/pfsense-utils.inc:455
 msgid "Do not display state table without a filter"

@@ -18,7 +18,7 @@ get_if_mac() {
 
 	if does_if_exist ${_if}; then
 		_if_mac=$(ifconfig ${_if} \
-			| awk '/ether/ {gsub(/:/, "", $2); print $2}')
+		    | awk '/ether/ {gsub(/:/, "", $2); print $2}')
 	fi
 
 	echo "${_if_mac}"
@@ -37,7 +37,7 @@ upgrade_netgate_coreboot() {
 	[ -f /mnt/${_adi_flash_util} ] \
 	    || return 0
 
-	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
+	local _product=$(kenv -q smbios.system.product 2>/dev/null)
 	local _coreboot_model=""
 
 	case "${_product}" in
@@ -68,18 +68,18 @@ upgrade_netgate_coreboot() {
 	    sed "s/^ADI_${_coreboot_model}-//; s/-.*//")
 
 	# Check current model and version
-	local _cur_model=$(/bin/kenv -q smbios.bios.version 2>/dev/null | \
+	local _cur_model=$(kenv -q smbios.bios.version 2>/dev/null | \
 	    sed 's/^ADI_//; s/-.*//')
-	local _cur_version=$(/bin/kenv -q smbios.bios.version 2>/dev/null | \
+	local _cur_version=$(kenv -q smbios.bios.version 2>/dev/null | \
 	    sed "s/^ADI_${_cur_model}-//; s/-.*//")
 
 	# Models don't match, leave it alone
 	[ "${_coreboot_model}" != "${_cur_model}" ] \
-	    && return 0
+		&& return 0
 
 	# Installed version is the latest, nothing to be done here
 	[ "${_avail_version}" = "${_cur_version}" ] \
-	    && return 0
+		&& return 0
 
 	# Upgrade coreboot
 	echo "===> Upgrading Netgate Coreboot"
@@ -94,8 +94,8 @@ upgrade_netgate_coreboot() {
 get_cur_model() {
 	local _cur_model=""
 
-	local _product=$(/bin/kenv -q smbios.system.product 2>/dev/null)
-	local _planar_product=$(/bin/kenv -q smbios.planar.product 2>/dev/null)
+	local _product=$(kenv -q smbios.system.product 2>/dev/null)
+	local _planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
 	local _hw_ncpu=$(sysctl -n hw.ncpu)
 
@@ -161,8 +161,8 @@ case "${machine_arch}" in
 				is_adi=1
 				;;
 			"Minnowboard Turbot D0 PLATFORM")
-				serial=$(ifconfig igb0 | \
-					sed -n '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
+				serial=$(ifconfig igb0 | sed -n \
+				    '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
 				is_turbot=1
 				;;
 		esac
@@ -170,7 +170,7 @@ case "${machine_arch}" in
 	armv6)
 		dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16
 		serial=$(hexdump -C /tmp/serial.bin | \
-			sed '1!d; s,\.*\|$,,; s,^.*\|,,')
+		    sed '1!d; s,\.*\|$,,; s,^.*\|,,')
 		;;
 	*)
 		echo "Unsupported platform"
@@ -193,8 +193,8 @@ if [ -n "${is_adi}" ]; then
 			;;
 		SG-4860|SG-8860)
 			models="\
-				\"${cur_model}\" \"${cur_model}\" \
-				\"${cur_model}-1U\" \"${cur_model}-1U\" \
+			    \"${cur_model}\" \"${cur_model}\" \
+			    \"${cur_model}-1U\" \"${cur_model}-1U\" \
 			"
 			;;
 		*)
@@ -207,8 +207,8 @@ elif [ "${machine_arch}" != "armv6" ]; then
 			;;
 		XG-1540)
 			models="\
-			\"XG-1540\" \"XG-1540\" \
-			\"XG-1541\" \"XG-1541\" \
+			    \"XG-1540\" \"XG-1540\" \
+			    \"XG-1541\" \"XG-1541\" \
 			"
 			;;
 		*)
@@ -226,10 +226,10 @@ fi
 if [ -z "${selected_model}" ]; then
 	exec 3>&1
 	selected_model=$(echo $models | xargs dialog \
-		--backtitle "pfSense installer" \
-		--title "Hardware model" \
-		--menu "Select corresponding hardware model" \
-		0 0 0 2>&1 1>&3) || exit 1
+	    --backtitle "pfSense installer" \
+	    --title "Hardware model" \
+	    --menu "Select corresponding hardware model" \
+	    0 0 0 2>&1 1>&3) || exit 1
 	exec 3>&-
 fi
 
@@ -324,9 +324,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	image_url=$(kenv -q ufw.install.image.url)
 	image_url=${image_url:-${image_default_url}}
 
-	fetch -o - "${image_url}" \
-		| gunzip \
-		| dd of=/dev/mmcsd0 bs=1m
+	fetch -o - "${image_url}" | gunzip | dd of=/dev/mmcsd0 bs=1m
 	if [ $? -ne 0 ]; then
 		echo "Error: Anything went wrong when tried to dd image to eMMC"
 		exit 1
@@ -334,7 +332,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 
 	# Get / ufsid
 	UFSID=$(glabel status -s mmcsd0s2a 2>/dev/null \
-		| head -n 1 | cut -d' ' -f1)
+	    | head -n 1 | cut -d' ' -f1)
 
 	if [ -z "${UFSID}" ]; then
 		echo "Error obtaining UFSID"
@@ -360,29 +358,27 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	fi
 
 	sed -i '' \
-		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${EMMCBOOT_LABEL}," \
-		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
-		/mnt/etc/fstab
+	    -e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${EMMCBOOT_LABEL}," \
+	    -e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
+	    /mnt/etc/fstab
 
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
 elif [ "${selected_model}" = "SG-3100" ]; then
-	[ "$(/bin/kenv -q uboot.boardrev)" = "R100" ] \
+	[ "$(kenv -q uboot.boardrev)" = "R100" ] \
 		&& gpiodev="1" \
 		|| gpiodev="0"
 
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 200 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 2 duty 200 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
 
 	# Find the eMMC device
 	DEV=mmcsd0
-	if /sbin/geom disk list ${DEV} 2>/dev/null | /usr/bin/grep -q MMCHC
-	then
+	if geom disk list ${DEV} 2>/dev/null | grep -q MMCHC; then
 		TARGET=${DEV}
-	elif /sbin/geom disk list ${DEV} 2>/dev/null | /usr/bin/grep -q SDHC
-	then
+	elif geom disk list ${DEV} 2>/dev/null | grep -q SDHC; then
 		TARGET=${DEV}
 	else
 		echo "Error: no eMMC device detected.  aborting."
@@ -393,7 +389,7 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	M2DEV=""
 	for DEV in ada0 ada1 ada2 ada3 ada4 ada5 ada6 ada7 ada8 ada9
 	do
-		if /sbin/geom disk list ${DEV} 2>/dev/null; then
+		if geom disk list ${DEV} 2>/dev/null; then
 			M2DEV="${M2DEV}${M2DEV:+ }${DEV}"
 		fi
 	done
@@ -402,7 +398,7 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 		read -p \
 		    "Type the name of the destination device (${M2DEV}): " \
 		    TARGET
-		if [ -z "${TARGET}" ] || ! /sbin/geom disk list ${TARGET}; then
+		if [ -z "${TARGET}" ] || ! geom disk list ${TARGET}; then
 			echo "Error: Invalid device ${TARGET}"
 			exit 1
 		fi
@@ -411,15 +407,15 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	fi
 
 	# Update LED status.
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 5 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 8 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 200 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 100 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 35 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 2 duty 0 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 5 duty 0 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 8 duty 0 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 1 duty 200 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 4 duty 100 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 7 duty 35 > /dev/null
 
 	echo "Erasing the disk contents..."
-	/bin/dd if=/dev/zero of=/dev/${TARGET} bs=4m count=15 2> /dev/null
+	dd if=/dev/zero of=/dev/${TARGET} bs=4m count=15 2> /dev/null
 
 	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-SG-3100-latest.img.gz"
 	image_url=$(kenv -q ufw.install.image.url)
@@ -427,24 +423,22 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 
 	echo "Writing the firmware to disk..."
 	echo "(this may take a few minutes to complete)"
-	fetch -o - "${image_url}" \
-		| gunzip \
-		| dd of=/dev/${TARGET} bs=4m
+	fetch -o - "${image_url}" | gunzip | dd of=/dev/${TARGET} bs=4m
 	if [ $? -ne 0 ]; then
 		echo "Error: Anything went wrong when tried to dd image to disk"
 		exit 1
 	fi
 
 	echo "Fixing disk labels..."
-	DISKID=$(/sbin/glabel status -s "${TARGET}" 2>/dev/null \
-		| /usr/bin/grep diskid | /usr/bin/cut -d' ' -f1)
+	DISKID=$(glabel status -s "${TARGET}" 2>/dev/null \
+	    | grep diskid | cut -d' ' -f1)
 
 	if [ -z "${DISKID}" ]; then
 		echo
 		echo "error obtaining DISKID.  aborting."
 		exit 1
 	fi
-	if ! /sbin/mount /dev/${DISKID}s2a /mnt; then
+	if ! mount /dev/${DISKID}s2a /mnt; then
 		echo
 		echo "error mounting pfSense partition.  aborting."
 		exit 1
@@ -456,29 +450,29 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 		idx=$((idx+1))
 	done
 	BOOT_LABEL="PFSENSEBOOT${idx}"
-	if ! /sbin/glabel label ${BOOT_LABEL} "/dev/${DISKID}s1"; then
+	if ! glabel label ${BOOT_LABEL} "/dev/${DISKID}s1"; then
 		echo
 		echo "error setting BOOT label.  aborting."
 		exit 1
 	fi
 
-	/usr/bin/sed -i '' \
-		-e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
-		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
-		/mnt/etc/fstab
+	sed -i '' \
+	    -e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
+	    -e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
+	    /mnt/etc/fstab
 
-	/sbin/umount /mnt
+	umount /mnt
 	sync ; sync ; sync
 
 	# Update the boot status on SG-3100, pfSense is installed.
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 0 > /dev/null
-	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 0 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=1 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
-	/sbin/sysctl -q dev.gpio.${gpiodev}.pin.1.T4=3640 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 4 duty 0 > /dev/null
+	gpioctl -f /dev/gpioc${gpiodev} 7 duty 0 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.1.pwm=1 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.2.pwm=1 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
+	sysctl -q dev.gpio.${gpiodev}.pin.1.T4=3640 > /dev/null
 else
 	support_types=$(fetch -o - http://prodtrack.netgate.com/listspt 2>/dev/null)
 	if [ -z "${support_types}" ]; then
@@ -502,10 +496,10 @@ else
 	if [ -n "${support_menu}" ]; then
 		exec 3>&1
 		support_type=$(echo $support_menu | xargs dialog \
-			--backtitle "pfSense installer" \
-			--title "Support type" \
-			--menu "Select corresponding support type" \
-			0 0 0 2>&1 1>&3) || exit 1
+		    --backtitle "pfSense installer" \
+		    --title "Support type" \
+		    --menu "Select corresponding support type" \
+		    0 0 0 2>&1 1>&3) || exit 1
 		exec 3>&-
 	fi
 fi
@@ -518,7 +512,7 @@ if [ -f /tmp/custom ]; then
 		exit 1
 	fi
 
-	if ! /bin/sh /tmp/custom.sh; then
+	if ! sh /tmp/custom.sh; then
 		echo "Error executing custom script from ${custom_url}"
 		exit 1
 	fi
@@ -539,37 +533,37 @@ while [ -z "${is_arm}" ]; do
 	exec 3>&1
 	col=30
 	factory_raw_data=$(dialog --nocancel \
-		--backtitle "pfSense installer" \
-		--title "Register Serial Number" \
-		--form "Enter system information" 0 0 0 \
-		"Model" 1 0 "${selected_model}" 1 $col 0 0 \
-		"Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
-		"Order Number" 3 0 "" 3 $col 16 0 \
-		"Print sticker (0/1)" 4 0 "${sticker}" 4 $col 2 1 \
-		2>&1 1>&3)
+	    --backtitle "pfSense installer" \
+	    --title "Register Serial Number" \
+	    --form "Enter system information" 0 0 0 \
+	    "Model" 1 0 "${selected_model}" 1 $col 0 0 \
+	    "Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
+	    "Order Number" 3 0 "" 3 $col 16 0 \
+	    "Print sticker (0/1)" 4 0 "${sticker}" 4 $col 2 1 \
+	    2>&1 1>&3)
 	exec 3>&-
 
 	factory_data=$(echo "$factory_raw_data" \
-		| sed 's,#,,g' \
-		| paste -d'#' -s -)
+	    | sed 's,#,,g' \
+	    | paste -d'#' -s -)
 
 	if [ ${serial_size} -eq 0 ]; then
 		set_vars=$(echo "$factory_data" | \
-			awk '
-			BEGIN { FS="#" }
-			{
-				print "order=\""$1"\""
-				print "sticker=\""$2"\"";
-			}')
+		    awk '
+		    BEGIN { FS="#" }
+		    {
+		    	print "order=\""$1"\""
+		    	print "sticker=\""$2"\"";
+		    }')
 	else
 		set_vars=$(echo "$factory_data" | \
-			awk '
-			BEGIN { FS="#" }
-			{
-				print "serial=\""$1"\"";
-				print "order=\""$2"\""
-				print "sticker=\""$3"\"";
-			}')
+		    awk '
+		    BEGIN { FS="#" }
+		    {
+		    	print "serial=\""$1"\"";
+		    	print "order=\""$2"\""
+		    	print "sticker=\""$3"\"";
+		    }')
 	fi
 
 	eval "${set_vars}"
@@ -583,9 +577,9 @@ while [ -z "${is_arm}" ]; do
 	fi
 
 	dialog --backtitle "pfSense installer" --title "Error" \
-		--msgbox \
-		"Serial and Order Number are mandatory" \
-		0 0
+	    --msgbox \
+	    "Serial and Order Number are mandatory" \
+	    0 0
 done
 
 release_ver="UNKNOWN"
@@ -605,7 +599,7 @@ sync; sync; sync
 trap "-" 1 2 15 EXIT
 
 # Calculate the "Unique ID" for support and tracking purposes
-UID=$(/usr/sbin/gnid)
+UID=$(gnid)
 
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"

@@ -1,25 +1,27 @@
 #!/bin/sh
 
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
 clear_disk() {
 	local _disk="${1}"
-	local _mirror=$(/sbin/gmirror dump ${_disk} 2>/dev/null | \
+	local _mirror=$(gmirror dump ${_disk} 2>/dev/null | \
 	    sed '/name: /!d; s,^.*: ,,')
 
 	if [ -n "${_mirror}" ]; then
-		/sbin/gmirror destroy -f ${_mirror} >/dev/null 2>&1
+		gmirror destroy -f ${_mirror} >/dev/null 2>&1
 	fi
-	/sbin/gmirror clear ${_disk} >/dev/null 2>&1
+	gmirror clear ${_disk} >/dev/null 2>&1
 }
 
 if="*"
 if ! pgrep -q dhclient; then
 	# First, find a connected interface
 	if=$(ifconfig \
-		| sed -E '/^([a-z]|[[:blank:]]*status: )/!d; /^lo0:/d' \
-		| sed -e 'N; s/\n/ /' \
-		| egrep 'status: *active' \
-		| sed 's,:.*,,' \
-		| head -n 1)
+	    | sed -E '/^([a-z]|[[:blank:]]*status: )/!d; /^lo0:/d' \
+	    | sed -e 'N; s/\n/ /' \
+	    | egrep 'status: *active' \
+	    | sed 's,:.*,,' \
+	    | head -n 1)
 
 	# If we couldn't, just abort
 	if [ -z "${if}" ]; then
@@ -33,14 +35,14 @@ if ! pgrep -q dhclient; then
 
 	# Then, try to obtain an IP address to it running dhclient
 	# if it fails, abort
-	if ! /sbin/dhclient -c /tmp/dhclient.conf ${if}; then
+	if ! dhclient -c /tmp/dhclient.conf ${if}; then
 		exit 0
 	fi
 	if=".${if}"
 fi
 
 # Check if we are in buildroom, if not, abort
-/usr/bin/grep -q 'option classless-routes 32,1,2,3,4,127,0,0,1' \
+grep -q 'option classless-routes 32,1,2,3,4,127,0,0,1' \
     /var/db/dhclient.leases${if} \
 	&& touch /tmp/buildroom \
 	|| rm -f /tmp/buildroom

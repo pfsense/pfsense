@@ -366,7 +366,119 @@ if [ "${selected_model}" = "SG-1000" ]; then
 
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
-#elif [ "${selected_model}" = "SG-3100" ]; then
+elif [ "${selected_model}" = "SG-3100" ]; then
+	[ "$(/bin/kenv -q uboot.boardrev)" = "R100" ] \
+		&& gpiodev="1" \
+		|| gpiodev="0"
+
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 200 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.pwm=0 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
+
+	# Find the eMMC device
+	DEV=mmcsd0
+	if /sbin/geom disk list ${DEV} 2>/dev/null | /usr/bin/grep -q MMCHC
+	then
+		TARGET=${DEV}
+	elif /sbin/geom disk list ${DEV} 2>/dev/null | /usr/bin/grep -q SDHC
+	then
+		TARGET=${DEV}
+	else
+		echo "Error: no eMMC device detected.  aborting."
+		exit 1
+	fi
+
+	# Find the M.2 device
+	M2DEV=""
+	for DEV in ada0 ada1 ada2 ada3 ada4 ada5 ada6 ada7 ada8 ada9
+	do
+		if /sbin/geom disk list ${DEV} 2>/dev/null; then
+			M2DEV="${M2DEV}${M2DEV:+ }${DEV}"
+		fi
+	done
+
+	if echo "${M2DEV}" | grep -q " "; then
+		read -p \
+		    "Type the name of the destination device (${M2DEV}): " \
+		    TARGET
+		if [ -z "${TARGET}" ] || ! /sbin/geom disk list ${TARGET}; then
+			echo "Error: Invalid device ${TARGET}"
+			exit 1
+		fi
+	elif [ -n "${M2DEV}" ]; then
+		TARGET=${M2DEV}
+	fi
+
+	# Update LED status.
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 2 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 5 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 8 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 200 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 35 > /dev/null
+
+	echo "Erasing the disk contents..."
+	/bin/dd if=/dev/zero of=/dev/${TARGET} bs=4m count=15 2> /dev/null
+
+	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-SG-3100-latest.img.gz"
+	image_url=$(kenv -q ufw.install.image.url)
+	image_url=${image_url:-${image_default_url}}
+
+	echo "Writing the firmware to disk..."
+	echo "(this may take a few minutes to complete)"
+	fetch -o - "${image_url}" \
+		| gunzip \
+		| dd of=/dev/${TARGET} bs=4m
+	if [ $? -ne 0 ]; then
+		echo "Error: Anything went wrong when tried to dd image to disk"
+		exit 1
+	fi
+
+	echo "Fixing disk labels..."
+	DISKID=$(/sbin/glabel status -s "${TARGET}" 2>/dev/null \
+		| /usr/bin/grep diskid | /usr/bin/cut -d' ' -f1)
+
+	if [ -z "${DISKID}" ]; then
+		echo
+		echo "error obtaining DISKID.  aborting."
+		exit 1
+	fi
+	if ! /sbin/mount /dev/${DISKID}s2a /mnt; then
+		echo
+		echo "error mounting pfSense partition.  aborting."
+		exit 1
+	fi
+
+	# Found available label for PFSENSEBOOT
+	idx=0
+	while [ -e "/dev/label/PFSENSEBOOT${idx}" ]; do
+		idx=$((idx+1))
+	done
+	BOOT_LABEL="PFSENSEBOOT${idx}"
+	if ! /sbin/glabel label ${BOOT_LABEL} "/dev/${DISKID}s1"; then
+		echo
+		echo "error setting BOOT label.  aborting."
+		exit 1
+	fi
+
+	/usr/bin/sed -i '' \
+		-e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
+		/mnt/etc/fstab
+
+	/sbin/umount /mnt
+	sync ; sync ; sync
+
+	# Update the boot status on SG-3100, pfSense is installed.
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 4 duty 0 > /dev/null
+	/usr/sbin/gpioctl -f /dev/gpioc${gpiodev} 7 duty 0 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.1.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.2.pwm=1 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T1-T3=1040 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.led.0.T2=520 > /dev/null
+	/sbin/sysctl -q dev.gpio.${gpiodev}.pin.1.T4=3640 > /dev/null
 else
 	support_types=$(fetch -o - http://prodtrack.netgate.com/listspt 2>/dev/null)
 	if [ -z "${support_types}" ]; then

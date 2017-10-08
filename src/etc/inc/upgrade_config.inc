@@ -5420,7 +5420,7 @@ function upgrade_169_to_170() {
 	}
 }
 
-function upgrade_169_to_170() {
+function upgrade_170_to_171() {
 	global $config;
 
 	/* Remove dashboard update period configuration, no longer used with central refresh system */

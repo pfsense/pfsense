@@ -297,7 +297,7 @@ case "${selected_model}" in
 		wan_if="cpsw0"
 		;;
 	SG-3100)
-		wan_if="mvneta2"
+		wan_if="mvn2"
 		;;
 	*)
 		wan_if="igb0"

@@ -5420,6 +5420,15 @@ function upgrade_169_to_170() {
 	}
 }
 
+function upgrade_169_to_170() {
+	global $config;
+
+	/* Remove dashboard update period configuration, no longer used with central refresh system */
+	if (isset($config['widgets']['period'])) {
+		unset($config['widgets']['period']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -191,6 +191,12 @@ if ($_POST) {
 				unset($config['unbound']['use_caps']);
 			}
 
+			if (isset($_POST['serve_expired'])) {
+				$config['unbound']['serve_expired'] = true;
+			} else {
+				unset($config['unbound']['serve_expired']);
+			}
+			
 			write_config(gettext("DNS Resolver configured."));
 
 			mark_subsystem_dirty('unbound');

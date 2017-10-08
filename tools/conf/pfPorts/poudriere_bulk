@@ -23,7 +23,6 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-net-snmp
 net-mgmt/%%PRODUCT_NAME%%-pkg-snmptt
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 sysutils/htop
-sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder

@@ -79,6 +79,10 @@ if (isset($config['unbound']['use_caps'])) {
 	$pconfig['use_caps'] = true;
 }
 
+if (isset($config['unbound']['serve_expired'])) {
+	$pconfig['serve_expired'] = true;
+}
+
 if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
@@ -372,6 +376,14 @@ $section->addInput(new Form_Checkbox(
 	'Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts.',
 	$pconfig['use_caps']
 ))->setHelp('See the implementation %1$sdraft dns-0x20%2$s for more information.', '<a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">', '</a>');
+
+$section->addInput(new Form_Checkbox(
+	'serve_expired',
+	'Serve Expired',
+	'Serve old responses from cache with a TTL of 0.',
+	$pconfig['serve_expired']
+))->setHelp('If enabled, attempts to serve old responses from cache with a TTL of 0 in the response without waiting for the actual resolution to finish. ' .
+			'The actual resolution answer ends up in the cache later on.');
 
 $form->add($section);
 print($form);

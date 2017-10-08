@@ -265,6 +265,7 @@ EOF;
 	$msg_cache_size = (!empty($unboundcfg['msgcachesize'])) ? $unboundcfg['msgcachesize'] : "4";
 	$verbosity = isset($unboundcfg['log_verbosity']) ? $unboundcfg['log_verbosity'] : 1;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
+	$serve_expired = isset($unboundcfg['serve_expired']) ? "yes" : "no";
 
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
@@ -357,6 +358,7 @@ outgoing-range: 4096
 prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
+serve-expired: {$serve_expired}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to

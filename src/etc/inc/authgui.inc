@@ -127,7 +127,7 @@ function display_error_form($http_code, $desc) {
 					<div class="row">
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
-								<?php echo file_get_contents("logo.svg"); ?>
+								<?php include("/usr/local/www/logo.svg"); ?>
 							</div>
 						</div>
 						<div class="col-sm-8 nowarning msgbox text-center">
@@ -301,7 +301,7 @@ function display_login_form() {
 						<!-- Header left logo box -->
 						<div class="col-sm-4">
 							<div id="logodiv" style="text-align:center" class="nowarning">
-								<?php echo file_get_contents("logo.svg"); ?>
+								<?php include("/usr/local/www/logo.svg"); ?>
 							</div>
 						</div>
 

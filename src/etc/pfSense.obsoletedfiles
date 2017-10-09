@@ -872,6 +872,8 @@
 /usr/local/share/mobile-broadband-provider-info/iso_3166-1_list_en.xml
 /usr/local/share/nls
 /usr/local/share/pbi-keys
+/usr/local/share/pfSense/custom_logos/logo-black.png
+/usr/local/share/pfSense/custom_logos/logo.png
 /usr/local/share/pfSense/keys/pkg/revoked/.empty
 /usr/local/share/pfSense/keys/pkg/trusted/.empty
 /usr/local/share/pfSense/pfSense-repo-devel.conf

@@ -235,12 +235,10 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	rsync_repos)
-		unset SKIP_FINAL_RSYNC
 		export UPLOAD=1
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	;;
 	rsync_snapshots)
-		unset SKIP_FINAL_RSYNC
 		export UPLOAD=1
 		snapshots_scp_files
 	;;

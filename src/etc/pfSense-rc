@@ -372,8 +372,10 @@ echo -n "Launching the init system..."
 
 # Copy custom logo over if it's present
 if [ -d /usr/local/share/${product}/custom_logos ]; then
-	cp -f /usr/local/share/${product}/custom_logos/*png \
+	cp -f /usr/local/share/${product}/custom_logos/*svg \
 		/usr/local/www
+	cp -f /usr/local/share/${product}/custom_logos/*css \
+		/usr/local/www/css
 fi
 
 /etc/rc.bootup

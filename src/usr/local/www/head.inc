@@ -468,7 +468,7 @@ if (are_notices_pending()) {
 				<span class="icon-bar"></span>
 			</button>
 			<a class="navbar-brand" href="/">
-				<?php echo file_get_contents("logo.svg"); ?>
+				<?php include("/usr/local/www/logo.svg"); ?>
 				<span style="color:white;font-size:.5em;text-transform:uppercase;letter-spacing:1px;">Community Edition</span>
 			</a>
 		</div>

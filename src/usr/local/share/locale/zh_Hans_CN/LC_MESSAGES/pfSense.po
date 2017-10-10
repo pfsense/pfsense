@@ -4,11 +4,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 08:25-0300\n"
+"POT-Creation-Date: 2017-10-10 07:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-09-23 08:01-0400\n"
+"PO-Revision-Date: 2017-10-08 08:52-0400\n"
 "Last-Translator: fxneng <85926545@qq.com>\n"
 "Language-Team: Chinese (China) <fxneng@gmail.com>\n"
 "Language: zh-Hans-CN\n"
@@ -1256,7 +1256,7 @@ msgstr "无线接口必须在无线选项卡上创建，然后才能分配。"
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_defaults.php:41
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/diag_tables.php:29
-#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:681
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:665
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_pf_info.php:31
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/diag_halt.php:45
@@ -2006,7 +2006,7 @@ msgstr "监视"
 #: src/usr/local/www/system_usermanager.php:598
 #: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/load_balancer_virtual_server.php:128
-#: src/usr/local/www/head.inc:613
+#: src/usr/local/www/head.inc:597
 #: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/services_ntpd_acls.php:189
 #: src/usr/local/www/firewall_rules.php:417
@@ -3444,7 +3444,7 @@ msgstr "失败 "
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_advanced_network.php:155
-#: src/usr/local/www/head.inc:679 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:663 src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_gateways.php:217
@@ -3487,7 +3487,7 @@ msgstr "更新设置"
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:129 src/usr/local/www/diag_backup.php:441
-#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:679
+#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:663
 msgid "Package Manager"
 msgstr "插件管理"
 
@@ -12356,7 +12356,7 @@ msgstr "已删除时间戳%1$s和描述为 \"%2$s\"的备份"
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/diag_backup.php:469
 #: src/usr/local/www/diag_backup.php:493 src/usr/local/www/head.inc:385
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 msgid "Backup & Restore"
 msgstr "备份恢复"
 
@@ -21409,7 +21409,7 @@ msgstr ""
 "55%1$sCisco：0011.2233.4455%1$sUnformatted：001122334455"
 
 #: src/usr/local/www/services_captiveportal.php:1019
-#: src/etc/inc/authgui.inc:304
+#: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "登录"
 
@@ -21574,7 +21574,7 @@ msgstr ""
 "不要忘记在入网门户界面上启用DHCP服务器！ 确保默认/最大DHCP租用时间高于在此页面上输入的强制超时。 "
 "此外，DNS转发器或解析器必须启用域名查询由未经身份认证的客户端工作。"
 
-#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:548
+#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:532
 #: src/etc/inc/captiveportal.inc:269
 msgid "Logout"
 msgstr "注销系统"
@@ -21663,53 +21663,53 @@ msgstr "pfSense图书"
 msgid "FreeBSD Handbook"
 msgstr "FreeBSD手册"
 
-#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
+#: src/usr/local/www/head.inc:523 src/usr/local/www/head.inc:695
 msgid "Notices"
 msgstr "通知"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:560
 msgid "Save dashboard layout"
 msgstr "保存系统面板布局"
 
-#: src/usr/local/www/head.inc:584
+#: src/usr/local/www/head.inc:568
 msgid "Available widgets"
 msgstr "可用的部件"
 
-#: src/usr/local/www/head.inc:592
+#: src/usr/local/www/head.inc:576
 msgid "Log filter"
 msgstr "日志过滤器"
 
-#: src/usr/local/www/head.inc:603
+#: src/usr/local/www/head.inc:587
 msgid "Manage log"
 msgstr "管理日志"
 
-#: src/usr/local/www/head.inc:621
+#: src/usr/local/www/head.inc:605
 msgid "Refresh Graph"
 msgstr "刷新图表"
 
-#: src/usr/local/www/head.inc:626
+#: src/usr/local/www/head.inc:610
 msgid "Export Graph"
 msgstr "导出图表"
 
-#: src/usr/local/www/head.inc:666
+#: src/usr/local/www/head.inc:650
 msgid "Help for items on this page"
 msgstr "本页帮助"
 
-#: src/usr/local/www/head.inc:677
+#: src/usr/local/www/head.inc:661
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
 "%2$s%1$sDo not make changes in the GUI until this is complete.%2$s"
 msgstr "%1$s%3$s正在启动，插件将在后台重新安装。%2$s%1$s在完成之前，不要在GUI中进行更改。%2$s"
 
-#: src/usr/local/www/head.inc:680
+#: src/usr/local/www/head.inc:664
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
 "not make changes in the GUI until this is complete.%2$s"
 msgstr "%1$s插件正在后台重新安装。%2$s%1$s在完成之前，不要在GUI中进行更改。%2$s"
 
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -21717,15 +21717,15 @@ msgid ""
 "%2$s"
 msgstr "%1$s如果上述消息在几个小时后仍显示，请使用 %3$s页面上的“清除插件锁定”按钮，然后手动重新安装插件。%2$s"
 
-#: src/usr/local/www/head.inc:691
+#: src/usr/local/www/head.inc:675
 msgid "This page is currently being managed by a remote machine."
 msgstr "此页面当前由远程计算机管理。"
 
-#: src/usr/local/www/head.inc:750
+#: src/usr/local/www/head.inc:734
 msgid "Close"
 msgstr "关闭"
 
-#: src/usr/local/www/head.inc:752
+#: src/usr/local/www/head.inc:736
 msgid "Mark All as Read"
 msgstr "标记为已读"
 
@@ -23498,55 +23498,55 @@ msgstr "地址必须为有效的IP地址或防火墙别名。请更正然后继�
 msgid "Only percentage bandwidth specification is allowed."
 msgstr "只能填入百分比。"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:834
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:766
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:840
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:772
 msgid ""
 "Custom Bandwidths are greater than 30%. Please lower them for the wizard to "
 "continue."
 msgstr "自定义带宽大于30％，请降低数值以使向导继续。"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1232
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1150
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1244
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1162
 msgid ""
 "Custom Bandwidths are greater than 40%. Please lower them for the wizard to "
 "continue."
 msgstr "自定义带宽大于40％，请降低数值以使向导继续。"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1545
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1456
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1557
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1468
 msgid "Penalty Box"
 msgstr "惩罚箱"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1552
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1573
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1587
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1604
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1623
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1647
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1674
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1727
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1463
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1483
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1497
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1514
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1533
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1557
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1636
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1564
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1585
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1599
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1616
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1635
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1659
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1686
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1739
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1495
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1509
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1526
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1545
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1569
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1648
 msgid "Traffic Shaper Wizard"
 msgstr "流量整形向导"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1577
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1487
 msgid "Connections From Upstream SIP Server"
 msgstr "上行SIP服务器的连接"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1579
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1489
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1591
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1501
 msgid "Connections To Upstream SIP Server"
 msgstr "连接到上游SIP服务器"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1745
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1654
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
 msgstr "通过pfSense流量整形器向导保存整形器配置。"
 
@@ -24878,6 +24878,14 @@ msgid ""
 "\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
 "strong></font></p>"
 msgstr ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> is "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense is a "
+"federally registered trademark of Electric Sheep Fencing, LLC. Any "
+"unauthorized use of this trademark is prohibited by state and federal law "
+"and by international law. Refer to our Trademark Usage Guidelines for how to "
+"properly use the marks. All rights reserved.</p><p align="
+"\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
+"strong></font></p>"
 
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
@@ -30714,31 +30722,31 @@ msgstr "错误：%1$s 说明: %2$s"
 msgid "Error"
 msgstr "错误"
 
-#: src/etc/inc/authgui.inc:196
+#: src/etc/inc/authgui.inc:180
 msgid "unknown reason"
 msgstr "未知原因"
 
-#: src/etc/inc/authgui.inc:197
+#: src/etc/inc/authgui.inc:181
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "登录无效 (%s)."
 
-#: src/etc/inc/authgui.inc:202
+#: src/etc/inc/authgui.inc:186
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "该设备目前由以下帐号维护: %s."
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:269
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s。%2$s"
 
-#: src/etc/inc/authgui.inc:287
+#: src/etc/inc/authgui.inc:271
 #, php-format
 msgid "Login to %1$s"
 msgstr "登录到 %1$s"
 
-#: src/etc/inc/authgui.inc:362
+#: src/etc/inc/authgui.inc:330
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -30748,7 +30756,7 @@ msgstr ""
 "用于访问此路由器的IP地址未在本地配置，可以通过NAT或其他方式转发。\n"
 "\t\t\t\t\t\t\t\t如果这个转发是意想不到的，应该验证是否发生了中间人的攻击。"
 
-#: src/etc/inc/authgui.inc:413
+#: src/etc/inc/authgui.inc:381
 msgid "The browser must support cookies to login."
 msgstr "您的浏览器必须支持cookies才能登录。"
 

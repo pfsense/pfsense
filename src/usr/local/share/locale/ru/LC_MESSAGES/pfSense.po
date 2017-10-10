@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 08:25-0300\n"
+"POT-Creation-Date: 2017-10-10 07:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1290,7 +1290,7 @@ msgstr ""
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_defaults.php:41
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/diag_tables.php:29
-#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:681
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:665
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_pf_info.php:31
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/diag_halt.php:45
@@ -2063,7 +2063,7 @@ msgstr "Мониторы"
 #: src/usr/local/www/system_usermanager.php:598
 #: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/load_balancer_virtual_server.php:128
-#: src/usr/local/www/head.inc:613
+#: src/usr/local/www/head.inc:597
 #: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/services_ntpd_acls.php:189
 #: src/usr/local/www/firewall_rules.php:417
@@ -3578,7 +3578,7 @@ msgstr "Не удалось"
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_advanced_network.php:155
-#: src/usr/local/www/head.inc:679 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:663 src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_gateways.php:217
@@ -3621,7 +3621,7 @@ msgstr "Настройки Обновлений"
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:129 src/usr/local/www/diag_backup.php:441
-#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:679
+#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:663
 msgid "Package Manager"
 msgstr "Менеджер Пакетов"
 
@@ -13321,7 +13321,7 @@ msgstr "Удалена резервная копия с отметкой вре�
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/diag_backup.php:469
 #: src/usr/local/www/diag_backup.php:493 src/usr/local/www/head.inc:385
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 msgid "Backup & Restore"
 msgstr "Резервное копирование и Восстановление"
 
@@ -23391,7 +23391,7 @@ msgstr ""
 "4455 %1$sНеотформатирован: 001122334455"
 
 #: src/usr/local/www/services_captiveportal.php:1019
-#: src/etc/inc/authgui.inc:304
+#: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "Логин"
 
@@ -23578,7 +23578,7 @@ msgstr ""
 "жесткий тайм-аут, введенный на этой странице. Кроме того, DNS Forwarder или "
 "Resolver должны быть разрешены для работы DNS для неавторизованых клиентов ."
 
-#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:548
+#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:532
 #: src/etc/inc/captiveportal.inc:269
 msgid "Logout"
 msgstr "Выйти"
@@ -23667,39 +23667,39 @@ msgstr "Книга о pfSense"
 msgid "FreeBSD Handbook"
 msgstr "Справочник по FreeBSD"
 
-#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
+#: src/usr/local/www/head.inc:523 src/usr/local/www/head.inc:695
 msgid "Notices"
 msgstr "Заметки"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:560
 msgid "Save dashboard layout"
 msgstr "Сохранить раскладку приборной панели"
 
-#: src/usr/local/www/head.inc:584
+#: src/usr/local/www/head.inc:568
 msgid "Available widgets"
 msgstr "Доступные виджеты"
 
-#: src/usr/local/www/head.inc:592
+#: src/usr/local/www/head.inc:576
 msgid "Log filter"
 msgstr "Фильтр лога"
 
-#: src/usr/local/www/head.inc:603
+#: src/usr/local/www/head.inc:587
 msgid "Manage log"
 msgstr "Управление логами"
 
-#: src/usr/local/www/head.inc:621
+#: src/usr/local/www/head.inc:605
 msgid "Refresh Graph"
 msgstr "Обновить график"
 
-#: src/usr/local/www/head.inc:626
+#: src/usr/local/www/head.inc:610
 msgid "Export Graph"
 msgstr "Экспортировать график"
 
-#: src/usr/local/www/head.inc:666
+#: src/usr/local/www/head.inc:650
 msgid "Help for items on this page"
 msgstr "Помочь с пунктами на этой странице"
 
-#: src/usr/local/www/head.inc:677
+#: src/usr/local/www/head.inc:661
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -23709,7 +23709,7 @@ msgstr ""
 "%2$s%1$sНе производите изменений в GUI до тех пор, пока переустановка не "
 "завершится.%2$s "
 
-#: src/usr/local/www/head.inc:680
+#: src/usr/local/www/head.inc:664
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -23719,7 +23719,7 @@ msgstr ""
 "производите изменений в GUI до тех пор, пока переустановка не завершится."
 "%2$s "
 
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -23730,15 +23730,15 @@ msgstr ""
 "часов, используйте книпку \"Снять Блокировку Пакета\" на странице %3$s  и "
 "переустановите пакеты вручную. %2$s"
 
-#: src/usr/local/www/head.inc:691
+#: src/usr/local/www/head.inc:675
 msgid "This page is currently being managed by a remote machine."
 msgstr "В данный момент эта  страница  управляется удалённой машиной."
 
-#: src/usr/local/www/head.inc:750
+#: src/usr/local/www/head.inc:734
 msgid "Close"
 msgstr "Закрыть"
 
-#: src/usr/local/www/head.inc:752
+#: src/usr/local/www/head.inc:736
 msgid "Mark All as Read"
 msgstr "Пометить всё как прочтённое"
 
@@ -25709,8 +25709,8 @@ msgstr ""
 msgid "Only percentage bandwidth specification is allowed."
 msgstr "Разрешено только определение полосы пропускания в процентах."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:834
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:766
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:840
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:772
 msgid ""
 "Custom Bandwidths are greater than 30%. Please lower them for the wizard to "
 "continue."
@@ -25718,8 +25718,8 @@ msgstr ""
 "Пользовательская Полоса пропускания больше, чем 30%. Пожалуйста, уменьшите "
 "её, для того чтобы мастер смог продолжить."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1232
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1150
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1244
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1162
 msgid ""
 "Custom Bandwidths are greater than 40%. Please lower them for the wizard to "
 "continue."
@@ -25727,41 +25727,41 @@ msgstr ""
 "Пользовательская Полоса пропускания больше, чем 40%. Пожалуйста, уменьшите "
 "её, для того чтобы мастер смог продолжить."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1545
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1456
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1557
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1468
 msgid "Penalty Box"
 msgstr "Штрафная Площадка"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1552
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1573
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1587
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1604
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1623
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1647
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1674
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1727
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1463
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1483
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1497
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1514
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1533
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1557
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1636
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1564
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1585
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1599
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1616
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1635
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1659
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1686
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1739
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1495
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1509
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1526
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1545
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1569
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1648
 msgid "Traffic Shaper Wizard"
 msgstr "Мастер Трафик Шейпера"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1577
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1487
 msgid "Connections From Upstream SIP Server"
 msgstr "Соединения От Восходящего SIP Сервера"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1579
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1489
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1591
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1501
 msgid "Connections To Upstream SIP Server"
 msgstr "Соединения К Восходящему SIP Серверу"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1745
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1654
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
 msgstr ""
 "Настройки шейпера сохранены через мастер настройки трафик шейпера pfSense."
@@ -33553,31 +33553,31 @@ msgstr "Ошибка:%1$s Описание:%2$s"
 msgid "Error"
 msgstr "Ошибка"
 
-#: src/etc/inc/authgui.inc:196
+#: src/etc/inc/authgui.inc:180
 msgid "unknown reason"
 msgstr "неизвестная причина"
 
-#: src/etc/inc/authgui.inc:197
+#: src/etc/inc/authgui.inc:181
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "Неверный логин (%s)."
 
-#: src/etc/inc/authgui.inc:202
+#: src/etc/inc/authgui.inc:186
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "Данное устройство сейчас поддерживается : %s."
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:269
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s.%2$s"
 
-#: src/etc/inc/authgui.inc:287
+#: src/etc/inc/authgui.inc:271
 #, php-format
 msgid "Login to %1$s"
 msgstr "Логин в %1$s"
 
-#: src/etc/inc/authgui.inc:362
+#: src/etc/inc/authgui.inc:330
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -33590,7 +33590,7 @@ msgstr ""
 "                                 Если эта пересылка неожиданна, следует "
 "проверить, что не происходит атака «man-in-the-midle» ."
 
-#: src/etc/inc/authgui.inc:413
+#: src/etc/inc/authgui.inc:381
 msgid "The browser must support cookies to login."
 msgstr "Ваш браузер должен поддерживать cookie, чтобы войти в систему."
 

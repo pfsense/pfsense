@@ -140,6 +140,22 @@ tr.disabled a {
     height: auto;
 }
 
+.navbar-brand svg#logo {
+    width: 105px;
+}
+
+.logo-st0 {
+    fill:#FFFFFF;
+}
+
+.logo-st1 {
+    fill:#FFFFFF;
+}
+
+.logo-st2 {
+    fill:#FFFFFF;
+}
+
 .navbar-brand {
     padding: 5px 10px 0 10px;
     line-height: .3em;

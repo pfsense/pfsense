@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 08:25-0300\n"
+"POT-Creation-Date: 2017-10-10 07:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1298,7 +1298,7 @@ msgstr ""
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_defaults.php:41
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/diag_tables.php:29
-#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:681
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:665
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_pf_info.php:31
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/diag_halt.php:45
@@ -2071,7 +2071,7 @@ msgstr "Monitores"
 #: src/usr/local/www/system_usermanager.php:598
 #: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/load_balancer_virtual_server.php:128
-#: src/usr/local/www/head.inc:613
+#: src/usr/local/www/head.inc:597
 #: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/services_ntpd_acls.php:189
 #: src/usr/local/www/firewall_rules.php:417
@@ -3601,7 +3601,7 @@ msgstr "Suspendieron"
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_advanced_network.php:155
-#: src/usr/local/www/head.inc:679 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:663 src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_gateways.php:217
@@ -3644,7 +3644,7 @@ msgstr "Actualizar ajustes"
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:129 src/usr/local/www/diag_backup.php:441
-#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:679
+#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:663
 msgid "Package Manager"
 msgstr "Gerente de empaquetación"
 
@@ -13436,7 +13436,7 @@ msgstr ""
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/diag_backup.php:469
 #: src/usr/local/www/diag_backup.php:493 src/usr/local/www/head.inc:385
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 msgid "Backup & Restore"
 msgstr "Copia de seguridad y Restauración"
 
@@ -23625,7 +23625,7 @@ msgstr ""
 "%1$sUnformatted: 001122334455"
 
 #: src/usr/local/www/services_captiveportal.php:1019
-#: src/etc/inc/authgui.inc:304
+#: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "Ingresar"
 
@@ -23815,7 +23815,7 @@ msgstr ""
 "Forwarder DNS o Resolver deben estar habilitadas para las búsquedas DNS de "
 "los clientes no autenticados a trabajar."
 
-#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:548
+#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:532
 #: src/etc/inc/captiveportal.inc:269
 msgid "Logout"
 msgstr "Salir"
@@ -23904,39 +23904,39 @@ msgstr "pfSense libro"
 msgid "FreeBSD Handbook"
 msgstr "Manual de FreeBSD"
 
-#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
+#: src/usr/local/www/head.inc:523 src/usr/local/www/head.inc:695
 msgid "Notices"
 msgstr "Notificaciones"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:560
 msgid "Save dashboard layout"
 msgstr "Guardar disposición de panel de control"
 
-#: src/usr/local/www/head.inc:584
+#: src/usr/local/www/head.inc:568
 msgid "Available widgets"
 msgstr "Widgets disponibles"
 
-#: src/usr/local/www/head.inc:592
+#: src/usr/local/www/head.inc:576
 msgid "Log filter"
 msgstr "Entrar filtro"
 
-#: src/usr/local/www/head.inc:603
+#: src/usr/local/www/head.inc:587
 msgid "Manage log"
 msgstr "Administrador de Log"
 
-#: src/usr/local/www/head.inc:621
+#: src/usr/local/www/head.inc:605
 msgid "Refresh Graph"
 msgstr "Actualizar Gráfico"
 
-#: src/usr/local/www/head.inc:626
+#: src/usr/local/www/head.inc:610
 msgid "Export Graph"
 msgstr "Exportación de gráficos"
 
-#: src/usr/local/www/head.inc:666
+#: src/usr/local/www/head.inc:650
 msgid "Help for items on this page"
 msgstr "Ayuda para los artículos de esta página"
 
-#: src/usr/local/www/head.inc:677
+#: src/usr/local/www/head.inc:661
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -23946,7 +23946,7 @@ msgstr ""
 "%2$s%1$sPor favor no realize ningún cambio en el sistema hasta que la "
 "instalación termine.%2$s"
 
-#: src/usr/local/www/head.inc:680
+#: src/usr/local/www/head.inc:664
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -23955,7 +23955,7 @@ msgstr ""
 "%1$sPaquetes se están instalando en segundo plano.%2$s%1$sPor favor no "
 "realize ningún cambio en el sistema hasta que la instalación termine.%2$s"
 
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -23966,15 +23966,15 @@ msgstr ""
 "utilice el botón \"Quitar bloqueo de paquete\" en la página %3$s y reinstale "
 "los paquetes manualmente.%2$s"
 
-#: src/usr/local/www/head.inc:691
+#: src/usr/local/www/head.inc:675
 msgid "This page is currently being managed by a remote machine."
 msgstr "Esta página está siendo manejado por una máquina remota."
 
-#: src/usr/local/www/head.inc:750
+#: src/usr/local/www/head.inc:734
 msgid "Close"
 msgstr "Cerca"
 
-#: src/usr/local/www/head.inc:752
+#: src/usr/local/www/head.inc:736
 msgid "Mark All as Read"
 msgstr "Marcar todo como leído"
 
@@ -25955,8 +25955,8 @@ msgstr ""
 msgid "Only percentage bandwidth specification is allowed."
 msgstr "se permite la especificación de ancho de banda porcentaje Only."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:834
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:766
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:840
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:772
 msgid ""
 "Custom Bandwidths are greater than 30%. Please lower them for the wizard to "
 "continue."
@@ -25964,8 +25964,8 @@ msgstr ""
 "Los anchos de banda personalizados son superiores al 30%. Por favor, "
 "bajarlos a que el asistente para continuar."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1232
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1150
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1244
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1162
 msgid ""
 "Custom Bandwidths are greater than 40%. Please lower them for the wizard to "
 "continue."
@@ -25973,41 +25973,41 @@ msgstr ""
 "Los anchos de banda personalizados son mayores que 40%. Por favor, bajarlos "
 "a que el asistente para continuar."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1545
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1456
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1557
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1468
 msgid "Penalty Box"
 msgstr "ÁREA DE PENALTI"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1552
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1573
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1587
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1604
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1623
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1647
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1674
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1727
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1463
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1483
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1497
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1514
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1533
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1557
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1636
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1564
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1585
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1599
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1616
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1635
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1659
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1686
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1739
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1495
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1509
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1526
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1545
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1569
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1648
 msgid "Traffic Shaper Wizard"
 msgstr "Asistente de Conformador de Tráfico"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1577
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1487
 msgid "Connections From Upstream SIP Server"
 msgstr "Conexiones desde aguas arriba del servidor SIP"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1579
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1489
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1591
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1501
 msgid "Connections To Upstream SIP Server"
 msgstr "Las conexiones al servidor SIP Upstream"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1745
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1654
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
 msgstr ""
 "Configuración del conformador guardada mediante el asistente de Conformado "
@@ -33895,31 +33895,31 @@ msgstr "Error: %1$s Descripción: %2$s"
 msgid "Error"
 msgstr "Error"
 
-#: src/etc/inc/authgui.inc:196
+#: src/etc/inc/authgui.inc:180
 msgid "unknown reason"
 msgstr "razón desconocida"
 
-#: src/etc/inc/authgui.inc:197
+#: src/etc/inc/authgui.inc:181
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "Ingreso incorrecto (%s)."
 
-#: src/etc/inc/authgui.inc:202
+#: src/etc/inc/authgui.inc:186
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "Este dispositivo esta siendo mantenido en este momento por: %s."
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:269
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s.%2$s"
 
-#: src/etc/inc/authgui.inc:287
+#: src/etc/inc/authgui.inc:271
 #, php-format
 msgid "Login to %1$s"
 msgstr "Ingreso a %1$s"
 
-#: src/etc/inc/authgui.inc:362
+#: src/etc/inc/authgui.inc:330
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -33931,7 +33931,7 @@ msgstr ""
 "\t\t\t\t\t\t\t\tSi este reenvío es inesperado, debe verificarse que un "
 "ataque man-in-the-middle no esté ocurriendo."
 
-#: src/etc/inc/authgui.inc:413
+#: src/etc/inc/authgui.inc:381
 msgid "The browser must support cookies to login."
 msgstr "El navegador debe soportar cookies para ingresar."
 

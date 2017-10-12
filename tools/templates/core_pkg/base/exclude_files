@@ -4,7 +4,7 @@
 ./boot/loader.conf
 ./boot/loader.conf.local
 ./boot/loader.rc.local
-./boot/modules/bwi_v3_ucode.ko
+./boot/modules
 ./cf/conf/config.xml
 ./cf/conf/enableserial_force
 ./cf/conf/trigger_initial_wizard

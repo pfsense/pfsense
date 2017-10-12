@@ -191,6 +191,7 @@ fi
 	|| mkdir /home
 
 /bin/rm -f /root/force_fsck
+/bin/rm -f /root/force_growfs
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
 
@@ -223,8 +224,10 @@ echo
 /sbin/conscontrol mute off >/dev/null
 
 SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-/sbin/swapon -a 2>/dev/null >/dev/null
-/etc/rc.savecore
+if [ -n "${SWAPDEVICE}" ]; then
+	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
+fi
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
@@ -369,8 +372,10 @@ echo -n "Launching the init system..."
 
 # Copy custom logo over if it's present
 if [ -d /usr/local/share/${product}/custom_logos ]; then
-	cp -f /usr/local/share/${product}/custom_logos/*png \
+	cp -f /usr/local/share/${product}/custom_logos/*svg \
 		/usr/local/www
+	cp -f /usr/local/share/${product}/custom_logos/*css \
+		/usr/local/www/css
 fi
 
 /etc/rc.bootup

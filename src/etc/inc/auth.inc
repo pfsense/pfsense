@@ -883,6 +883,8 @@ function ldap_setup_caenv($authcfg) {
 		return;
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
+		$param = array('caref' => $authcfg['ldap_caref']);
+		$cachain = ca_chain($param);
 		if (!$caref) {
 			log_error(sprintf(gettext("LDAP: Could not lookup CA by reference for host %s."), $authcfg['ldap_caref']));
 			/* XXX: Prevent for credential leaking since we cannot setup the CA env. Better way? */
@@ -895,7 +897,7 @@ function ldap_setup_caenv($authcfg) {
 		if (file_exists("{$g['varrun_path']}/certs/{$caref['refid']}.ca")) {
 			@unlink("{$g['varrun_path']}/certs/{$caref['refid']}.ca");
 		}
-		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", base64_decode($caref['crt']));
+		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", $cachain);
 		@chmod("{$g['varrun_path']}/certs/{$caref['refid']}.ca", 0600);
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
@@ -958,7 +960,7 @@ function ldap_test_bind($authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
-		if (!(ldap_start_tls($ldap))) {
+		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_test_bind() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
 			return false;
@@ -1048,7 +1050,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
-		if (!(ldap_start_tls($ldap))) {
+		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
 			return false;
@@ -1191,7 +1193,7 @@ function ldap_get_groups($username, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
-		if (!(ldap_start_tls($ldap))) {
+		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
 			return false;
@@ -1339,7 +1341,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
 	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
-		if (!(ldap_start_tls($ldap))) {
+		if (!(@ldap_start_tls($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_backed() could not STARTTLS to server %s."), $ldapname));
 			@ldap_close($ldap);
 			return false;
@@ -1815,7 +1817,7 @@ function session_auth() {
 			exit;
 		} else {
 			/* give the user an error message */
-			$_SESSION['Login_Error'] = "Username or Password incorrect";
+			$_SESSION['Login_Error'] = gettext("Username or Password incorrect");
 			log_auth("webConfigurator authentication error for '{$_POST['usernamefld']}' from {$_SERVER['REMOTE_ADDR']}");
 			if (isAjax()) {
 				echo "showajaxmessage('{$_SESSION['Login_Error']}');";

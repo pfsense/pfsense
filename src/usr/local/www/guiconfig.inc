@@ -1039,7 +1039,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 	}
 
 	if ($tab_array_char_limit == '') {
-		$tab_array_char_limit = 92;
+		$tab_array_char_limit = 256;
 	}
 
 	foreach ($tab_array as $tab_id => $ta) {

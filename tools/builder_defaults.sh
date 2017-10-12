@@ -134,7 +134,7 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"cryptodev ena i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"cryptodev i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
 # gnid
 export GNID_REPO_BASE=${GNID_REPO_BASE:-"${GIT_REPO_BASE}/gnid.git"}
@@ -326,9 +326,15 @@ export VARIANTIMAGES=""
 export VARIANTUPDATES=""
 
 # Rsync data to send snapshots
-export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
-export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
-export RSYNCPATH=${RSYNCPATH:-"/storage/files/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+if [ -n "${_IS_RELEASE}" ]; then
+	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
+	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
+	export RSYNCPATH=${RSYNCPATH:-"/staging/ce/images"}
+else
+	export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
+	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
+	export RSYNCPATH=${RSYNCPATH:-"/storage/files/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+fi
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}

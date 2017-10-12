@@ -470,7 +470,7 @@ if ($pconfig['gid'] != 1998) { // all users group
 
 }
 
-if ($_POST['act'] != "new") {
+if (isset($pconfig['gid'])) {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(

@@ -303,6 +303,14 @@ if ($_POST) {
 									}
 									unset($loaderconf);
 								}
+								if (file_exists("/boot/loader.conf.local")) {
+									$loaderconf = file_get_contents("/boot/loader.conf.local");
+									if (strpos($loaderconf, "console=\"comconsole")) {
+										$config['system']['enableserial'] = true;
+										write_config(gettext("Restore serial console enabling in configuration."));
+									}
+									unset($loaderconf);
+								}
 								/* extract out rrd items, unset from $config when done */
 								if ($config['rrddata']) {
 									restore_rrddata();

@@ -323,30 +323,48 @@ function get_dpinger_status($gwname, $detailed = false) {
 	$proc = $running_processes[$gwname];
 	unset($running_processes);
 
-	if (!file_exists($proc['socket'])) {
-		log_error("dpinger: status socket {$proc['socket']} not found");
-		return false;
-	}
+	$timeoutcounter = 0;
+	while (true) {
+		if (!file_exists($proc['socket'])) {
+			log_error("dpinger: status socket {$proc['socket']} not found");
+			return false;
+		}
+		$fp = @stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
+		if (!$fp) {
+			log_error(sprintf(gettext('dpinger: cannot connect to status socket %1$s - %2$s (%3$s)'), $proc['socket'], $errstr, $errno));
+			return false;
+		}
 
-	$fp = stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
-	if (!$fp) {
-		log_error(sprintf(gettext('dpinger: cannot connect to status socket %1$s - %2$s (%3$s)'), $proc['socket'], $errstr, $errno));
-		return false;
-	}
+		$status = '';
+		while (!feof($fp)) {
+			$status .= fgets($fp, 1024);
+		}
+		fclose($fp);
 
-	$status = '';
-	while (!feof($fp)) {
-		$status .= fgets($fp, 1024);
-	}
-	fclose($fp);
+		$r = array();
+		list(
+			$r['gwname'],
+			$r['latency_avg'],
+			$r['latency_stddev'],
+			$r['loss']
+		) = explode(' ', preg_replace('/\n/', '', $status));
 
-	$r = array();
-	list(
-	    $r['gwname'],
-	    $r['latency_avg'],
-	    $r['latency_stddev'],
-	    $r['loss']
-	) = explode(' ', preg_replace('/\n/', '', $status));
+		// dpinger returns '<gwname> 0 0 0' when queried directly after it starts.
+		// while a latency of 0 and a loss of 0 would be perfect, in a real world it doesnt happen.
+		// or does it, anyone? if so we must 'detect' the initialization period differently..
+		$ready = $r['latency_stddev'] != '0' || $r['loss'] != '0';
+		
+		if ($ready) {
+			break;
+		} else {
+			$timeoutcounter++;
+			if ($timeoutcounter > 300) {
+				log_error(sprintf(gettext('dpinger: timeout while retrieving status for gateway %s'), $gwname));
+				return false;
+			}
+			usleep(10000);
+		}
+	}
 
 	$r['srcip'] = $proc['srcip'];
 	$r['targetip'] = $proc['targetip'];

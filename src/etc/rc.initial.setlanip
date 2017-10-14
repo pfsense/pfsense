@@ -269,6 +269,11 @@ function console_configure_ip_address($version) {
 				echo "\n" . sprintf(gettext('Enter the new %1$s %2$s address.  Press <ENTER> for none:'),
 							$upperifname, $label_IPvX) . "\n> ";
 				$intip = chop(fgets($fp));
+				$intbits_ok = false;
+				if (strstr($intip, "/")) {
+					list($intip, $intbits) = explode("/", $intip);
+					$intbits_ok = (is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits))) ? true : false;
+				}
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
 				if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
 					$ip_conflict = true;
@@ -277,21 +282,23 @@ function console_configure_ip_address($version) {
 					$ip_conflict = false;
 				}
 			} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
-			if ($intip != '') {
-				echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
+			if ($is_ipaddr && $intip != '') {
+				if ($intbits_ok == false) {
+					echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
 							$g['product_name']) . "\n";
-				if ($version === 6) {
-					echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
-					echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
-					echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
-				} else {
-					echo "e.g. 255.255.255.0 = 24\n";
-					echo "     255.255.0.0   = 16\n";
-					echo "     255.0.0.0     = 8\n";
+					if ($version === 6) {
+						echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
+						echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
+						echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
+					} else {
+						echo "e.g. 255.255.255.0 = 24\n";
+						echo "     255.255.0.0   = 16\n";
+						echo "     255.0.0.0     = 8\n";
+					}
 				}
-				do {
+				while ($intbits_ok == false) {
 					$upperifname = strtoupper($interface);
 					echo "\n" . sprintf(gettext('Enter the new %1$s %2$s subnet bit count (1 to %3$s):'),
 								$upperifname, $label_IPvX, $maxbits) . "\n> ";
@@ -310,7 +317,7 @@ function console_configure_ip_address($version) {
 							$intbits_ok = false;
 						}
 					}
-				} while (!$intbits_ok);
+				}
 
 				if ($version === 6) {
 					$subnet = gen_subnetv6($intip, $intbits);

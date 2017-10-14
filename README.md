@@ -17,8 +17,6 @@ The pfSense project welcomes contributions, big or small. Members of the pfSense
 
 All of the pfSense project source code is on Github. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [Github in general](https://help.github.com).
 
-For legal reasons, we require those seeking to contribute source code changes to [review and sign the license agreement (LA) and either the Individual or Corporate CLA](https://doc.pfsense.org/index.php/Contributor_License_Agreement_for_Developers).
-
 If you want to contribute but do not have a specific topic in mind, review the [list of open bug reports and other issues that are in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
 
 Before making source code changes, be sure to review our [Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide) so that the submitted code matches our preferred coding style.

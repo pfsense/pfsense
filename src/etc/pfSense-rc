@@ -69,6 +69,7 @@ fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
 	while [ ${fsck_forced_iterations} -gt 0 ]; do
+		/sbin/mount -ur /
 		/sbin/fsck -y -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
@@ -78,6 +79,12 @@ if [ -e /root/force_growfs ]; then
 	/etc/rc.d/growfs onestart
 fi
 
+#              
+# The file system needs to be unmounted to guarantee a clean operation of fsck.
+# Pending changes can keep the file system dirty until all the cached data is
+# flushed to the disk.
+#
+/sbin/mount -ur /
 FSCK_ACTION_NEEDED=0
 /sbin/fsck -p
 case $? in

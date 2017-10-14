@@ -2311,14 +2311,10 @@ function services_unbound_configure($restart_dhcp = true) {
 }
 
 function platform_snmpd_hostres_supported() {
-	// does hostres have trouble with all VM's? if so then perhaps the check could be done with: isvm()
 	// hostres causes high cpu usage on at least these hypervisors when a cd drive is pressent
-	$problem_hypervisors = array('vmware', 'virtualbox', 'proxmox');
-	$specplatform = system_identify_specific_platform();
-	if (file_exists('/dev/cd0')) {
-		if (in_array(strtolower($specplatform['name']), $problem_hypervisors)) {
-			return false;
-		}
+	// problem is confirmed on at least these platforms: vmware/hyperv/proxmox/virtualbox/xen
+	if (file_exists('/dev/cd0') && isvm()) {
+		return false;
 	}
 	return true;
 }

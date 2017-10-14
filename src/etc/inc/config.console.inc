@@ -165,8 +165,8 @@ EOD;
 	$optif = array();
 
 	if ($lanif <> "") {
-		while (1) {
-			if ($optif[$i]) {
+		while (strlen(trim($ifsmallist)) > 0) {
+			if (!empty($optif[$i])) {
 				$i++;
 			}
 			$io = $i + 1;

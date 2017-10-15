@@ -58,21 +58,19 @@ $shortcut_section = "captiveportal-vouchers";
 
 include("head.inc");
 
-if ($_POST['save']) {
-	if ($_POST['vouchers']) {
-		$test_results = voucher_auth($_POST['vouchers'], 1);
-		$output = "";
-		$class = 'warning';
+if ($_POST['Submit'] && $_POST['vouchers']) {
+	$test_results = voucher_auth(trim($_POST['vouchers']), 1);
+	$output = "";
+	$class = 'warning';
 
-		foreach ($test_results as $result) {
-			$output .= htmlspecialchars($result) . '<br />';
+	foreach ($test_results as $result) {
+		$output .= htmlspecialchars($result) . '<br />';
 
-			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$class = 'success';
-			}
+		if (strpos($result, " good ") || strpos($result, " granted ")) {
+			$class = 'success';
 		}
-		print_info_box($output, $class, false);
 	}
+	print_info_box($output, $class, false);
 }
 
 $tab_array = array();

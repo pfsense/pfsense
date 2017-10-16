@@ -5448,7 +5448,7 @@ function upgrade_171_to_172() {
 	/* Remove dashboard update period configuration, no longer used with central refresh system */
 	if (isset($config['widgets']['period'])) {
 		unset($config['widgets']['period']);
-  }
+	}
 }
 
 /*

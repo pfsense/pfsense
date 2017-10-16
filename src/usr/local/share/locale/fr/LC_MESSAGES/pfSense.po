@@ -51,12 +51,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 08:25-0300\n"
+"POT-Creation-Date: 2017-10-10 07:36-0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-09-20 06:35-0400\n"
-"Last-Translator: Mathieu Vanneste <vanneste.mathieu@gmail.com>\n"
+"PO-Revision-Date: 2017-10-09 04:37-0400\n"
+"Last-Translator: Laurent Paumier <laurent.paumier@fnac.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 3.9.6\n"
@@ -75,7 +75,7 @@ msgstr "Liste des miroirs modifiés. Ancien(s): (%s) Nouveau(x): (%s)"
 #: src/usr/local/sbin/gmirror_status_check.php:53
 #, php-format
 msgid "Mirror %s status changed from %s to %s."
-msgstr "Statut du miroir %s  changé de %s à %s"
+msgstr "État du miroir %s  changé de %s à %s."
 
 #: src/usr/local/sbin/gmirror_status_check.php:58
 #, php-format
@@ -85,7 +85,7 @@ msgstr "Nombre de consommateurs du miroir %s changé de %d à %d."
 #: src/usr/local/sbin/gmirror_status_check.php:65
 #, php-format
 msgid "Mirror %s drive status changed. Old: (%s) New: (%s)"
-msgstr "Statut disque changé sur miroir %s. Ancien : (%s) Nouveau : (%s)"
+msgstr "État disque changé sur miroir %s. Ancien : (%s) Nouveau : (%s)"
 
 #: src/usr/local/www/firewall_nat_1to1.php:56
 msgid "Firewall: NAT: 1:1 - reordered NAT 1:1 mappings."
@@ -493,7 +493,7 @@ msgstr "Cliquez pour commuter le statut"
 #: src/usr/local/www/firewall_nat_1to1.php:184
 #: src/usr/local/www/firewall_nat.php:293
 msgid "Negated: This rule excludes NAT from a later rule"
-msgstr "Négation: Cette règle exclue le NAT pour toutes les règles suivantes"
+msgstr "Négation: Cette règle exclut la NAT pour toutes les règles suivantes"
 
 #: src/usr/local/www/firewall_nat_1to1.php:211
 #: src/usr/local/www/firewall_nat.php:332
@@ -513,19 +513,19 @@ msgstr "Détails de l'alias"
 #: src/usr/local/www/firewall_nat_out.php:479
 #: src/usr/local/www/firewall_nat_npt.php:207
 msgid "Edit mapping"
-msgstr "Modifier la cartographie"
+msgstr "Modifier le mappage"
 
 #: src/usr/local/www/firewall_nat_1to1.php:226
 #: src/usr/local/www/firewall_nat_out.php:480
 #: src/usr/local/www/firewall_nat_npt.php:208
 msgid "Add a new mapping based on this one"
-msgstr "Ajouter une nouvelle cartographie basée sur celle-ci"
+msgstr "Ajouter un nouveau mappage basée sur celle-ci"
 
 #: src/usr/local/www/firewall_nat_1to1.php:227
 #: src/usr/local/www/firewall_nat_out.php:481
 #: src/usr/local/www/firewall_nat_npt.php:209
 msgid "Delete mapping"
-msgstr "Supprimer la cartographie"
+msgstr "Supprimer le mappage"
 
 #: src/usr/local/www/firewall_nat_1to1.php:241
 #: src/usr/local/www/firewall_nat_npt.php:222
@@ -645,7 +645,7 @@ msgstr "Supprimer"
 #: src/usr/local/www/firewall_nat_out.php:506
 #: src/usr/local/www/firewall_nat_npt.php:234
 msgid "Save mapping order"
-msgstr "Sauvegarder l'ordre de la cartographie"
+msgstr "Sauvegarder l'ordre du mappage"
 
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:573
@@ -809,23 +809,23 @@ msgstr "aucun"
 
 #: src/usr/local/www/status_ipsec.php:343
 msgid "Bytes-In: "
-msgstr "Bytes entrant: "
+msgstr "Octets entrants: "
 
 #: src/usr/local/www/status_ipsec.php:344
 msgid "Packets-In: "
-msgstr "Paquets entrant:"
+msgstr "Paquets entrants:"
 
 #: src/usr/local/www/status_ipsec.php:345
 msgid "Bytes-Out: "
-msgstr "Bytes sortant: "
+msgstr "Octets sortants: "
 
 #: src/usr/local/www/status_ipsec.php:346
 msgid "Packets-Out: "
-msgstr "Bytes sortant:"
+msgstr "Paquets sortants:"
 
 #: src/usr/local/www/status_ipsec.php:350
 msgid "Disconnect Child SA"
-msgstr "Déconnexion enfant SA"
+msgstr "Déconnexion SA enfant"
 
 #: src/usr/local/www/status_ipsec.php:439
 msgid "Awaiting connections"
@@ -887,7 +887,7 @@ msgstr "Déconnecté"
 #: src/usr/local/www/status_gateway_groups.php:47
 #: src/usr/local/www/status_graph.php:110 src/etc/inc/gmirror.inc:74
 msgid "Status"
-msgstr "Statut"
+msgstr "État"
 
 #: src/usr/local/www/status_ipsec.php:464
 #: src/usr/local/www/status_ipsec_leases.php:32
@@ -931,7 +931,7 @@ msgstr "Vue d'ensemble"
 #: src/usr/local/www/status_dhcpv6_leases.php:431
 #: src/usr/local/www/status_dhcp_leases.php:346
 msgid "Leases"
-msgstr "Bails"
+msgstr "Baux"
 
 #: src/usr/local/www/status_ipsec.php:473
 #: src/usr/local/www/status_ipsec_leases.php:42
@@ -960,7 +960,7 @@ msgstr "ID local"
 #: src/usr/local/www/status_ipsec.php:486
 #: src/usr/local/www/services_pppoe.php:100
 msgid "Local IP"
-msgstr "IP local"
+msgstr "Adresse IP locale"
 
 #: src/usr/local/www/status_ipsec.php:487
 msgid "Remote ID"
@@ -992,7 +992,7 @@ msgstr "Récupération des informations d'état IPsec."
 #: src/usr/local/www/status_ipsec_spd.php:113
 #, php-format
 msgid "IPsec can be configured %1$shere%2$s."
-msgstr "IPsec peut être configuré %1$s ici %2$s."
+msgstr "IPsec peut être configuré %1$sici%2$s."
 
 #: src/usr/local/www/status_ipsec.php:559
 msgid "No IPsec status information available."
@@ -1077,7 +1077,7 @@ msgid ""
 "Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be "
 "created please fix the issue before continuing."
 msgstr ""
-"L'interface %1$s parente du VLAN n'existe plus dont le VLAN avec l'id %2$s "
+"L'interface %1$s parente du VLAN n'existe plus donc le VLAN avec l'id %2$s "
 "ne peut pas être créé. Veuillez corriger ce problème avant de continuer."
 
 #: src/usr/local/www/interfaces_assign.php:384
@@ -1331,7 +1331,7 @@ msgstr ""
 #: src/usr/local/www/diag_arp.php:269 src/usr/local/www/diag_testport.php:38
 #: src/usr/local/www/diag_routes.php:66 src/usr/local/www/diag_defaults.php:41
 #: src/usr/local/www/diag_command.php:78 src/usr/local/www/diag_tables.php:29
-#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:681
+#: src/usr/local/www/crash_reporter.php:62 src/usr/local/www/head.inc:665
 #: src/usr/local/www/diag_ndp.php:121 src/usr/local/www/diag_smart.php:36
 #: src/usr/local/www/diag_pf_info.php:31
 #: src/usr/local/www/diag_traceroute.php:37 src/usr/local/www/diag_halt.php:45
@@ -1406,7 +1406,7 @@ msgstr "Hôte"
 
 #: src/usr/local/www/status_ipsec_leases.php:106
 msgid "No leases from this pool yet."
-msgstr "Il n'y a pas encore de baux de ce bassin."
+msgstr "Il n'y a pas encore de bail dans ce pool."
 
 #: src/usr/local/www/status_ipsec_leases.php:117
 msgid "No IPsec pools."
@@ -1512,7 +1512,7 @@ msgstr "Expire"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:42
 msgid "They must be either both IPv4 or both IPv6 addresses."
-msgstr "Toutes les adresses doivent être soit IPv4 soit IPv6"
+msgstr "Les adresses doivent toutes être de type IPv4 ou IPv6."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:115
 #: src/usr/local/www/firewall_nat_out_edit.php:156
@@ -1562,7 +1562,7 @@ msgid ""
 "The external IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
-"L'adresse ip externe (%1$s) et l'adresse IP de destination (%2$s) sont de "
+"L'adresse IP externe (%1$s) et l'adresse IP de destination (%2$s) sont de "
 "différentes familles d'adresses."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:226
@@ -1571,7 +1571,7 @@ msgid ""
 "The internal IP address (%1$s) and destination IP address (%2$s) are of "
 "different address families."
 msgstr ""
-"L'adresse ip interne (%1$s) et l'adresse IP de destination (%2$s) sont de "
+"L'adresse IP interne (%1$s) et l'adresse IP de destination (%2$s) sont de "
 "différentes familles d'adresses."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:235
@@ -1583,7 +1583,7 @@ msgstr "Un nombre de bits destination valide doit être spécifié."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:282
 msgid "Firewall: NAT: 1:1 - saved/edited NAT 1:1 mapping."
-msgstr "Pare-feu : NAT: 1:1 - Mappage NAT 1:1 sauvegardé/modifé."
+msgstr "Pare-feu: NAT: 1:1 - Mappage NAT 1:1 sauvegardé/modifé."
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:290
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
@@ -1805,7 +1805,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:469
 msgid "*External subnet IP"
-msgstr "*IP externe du subnet"
+msgstr "*Adresse IP du sous-réseau externe"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:471
 msgid ""
@@ -1819,7 +1819,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:474
 msgid "*Internal IP"
-msgstr "*IP interne"
+msgstr "*Adresse IP interne"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:481
 #: src/usr/local/www/firewall_nat_1to1_edit.php:508
@@ -1927,7 +1927,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
 #: src/usr/local/www/firewall_nat_edit.php:913
 msgid "Use system default"
-msgstr "Utiliser les paramètres défaut du système"
+msgstr "Utiliser les paramètres par défaut du système"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:541
 #: src/usr/local/www/services_dhcp.php:838
@@ -1972,7 +1972,7 @@ msgid ""
 "virtual server."
 msgstr ""
 "Cette entrée ne peut pas être supprimée car elle est toujours référencée par "
-"au moins un serveur virtuel"
+"au moins un serveur virtuel."
 
 #: src/usr/local/www/load_balancer_pool.php:83
 #: src/usr/local/www/services_dhcpv6.php:505
@@ -2046,7 +2046,7 @@ msgstr "Services"
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:154
 #: src/usr/local/www/status_logs_settings.php:223
 msgid "Load Balancer"
-msgstr "Équilibreur de charge"
+msgstr "Répartiteur de charge"
 
 #: src/usr/local/www/load_balancer_pool.php:83
 #: src/usr/local/www/load_balancer_pool.php:103
@@ -2065,7 +2065,7 @@ msgstr "Pools"
 #: src/usr/local/www/load_balancer_setting.php:100
 #: src/usr/local/www/status_lb_pool.php:110
 msgid "The load balancer configuration has been changed."
-msgstr "La configuration de l'équilibreur de charge a été modifiée."
+msgstr "La configuration du répartiteur de charge a été modifiée."
 
 #: src/usr/local/www/load_balancer_pool.php:104
 #: src/usr/local/www/load_balancer_monitor.php:92
@@ -2106,7 +2106,7 @@ msgstr "Moniteurs"
 #: src/usr/local/www/system_usermanager.php:598
 #: src/usr/local/www/services_ntpd_gps.php:320
 #: src/usr/local/www/load_balancer_virtual_server.php:128
-#: src/usr/local/www/head.inc:613
+#: src/usr/local/www/head.inc:597
 #: src/usr/local/www/system_usermanager_addprivs.php:128
 #: src/usr/local/www/services_ntpd_acls.php:189
 #: src/usr/local/www/firewall_rules.php:417
@@ -2251,7 +2251,7 @@ msgstr "Comptabilité"
 
 #: src/usr/local/www/guiconfig.inc:229
 msgid "This Firewall"
-msgstr "Ce pare-feut"
+msgstr "Ce pare-feu"
 
 #: src/usr/local/www/guiconfig.inc:240
 msgid "autoselect"
@@ -2263,7 +2263,7 @@ msgstr "100BASE-TX duplex intégral (« full-duplex »)"
 
 #: src/usr/local/www/guiconfig.inc:242
 msgid "100BASE-TX half-duplex"
-msgstr "100BASE-TX semi-duplex(« half-duplex »)"
+msgstr "100BASE-TX semi-duplex (« half-duplex »)"
 
 #: src/usr/local/www/guiconfig.inc:243
 msgid "10BASE-T full-duplex"
@@ -2271,7 +2271,7 @@ msgstr "10BASE-T duplex intégral (« full-duplex »)"
 
 #: src/usr/local/www/guiconfig.inc:244
 msgid "10BASE-T half-duplex"
-msgstr "10BASE-T semi-duplex(« half-duplex »)"
+msgstr "10BASE-T semi-duplex (« half-duplex »)"
 
 #: src/usr/local/www/guiconfig.inc:247
 #: src/usr/local/www/interfaces_wireless_edit.php:186
@@ -2283,7 +2283,7 @@ msgstr "Infrastructure (BSS)"
 #: src/usr/local/www/interfaces_wireless_edit.php:187
 #: src/usr/local/www/interfaces.php:3035
 msgid "Ad-hoc (IBSS)"
-msgstr "Ad hoc (IBSS)"
+msgstr "Ad-hoc (IBSS)"
 
 #: src/usr/local/www/guiconfig.inc:249
 #: src/usr/local/www/interfaces_wireless_edit.php:188
@@ -2294,12 +2294,12 @@ msgstr "Point d'accès"
 #: src/usr/local/www/guiconfig.inc:256
 #, php-format
 msgid "The field %s contains invalid characters."
-msgstr "Le champ « %s » contient des caractères invalides."
+msgstr "Le champ %s contient des caractères invalides."
 
 #: src/usr/local/www/guiconfig.inc:262
 #, php-format
 msgid "The field %s is required."
-msgstr "Le champ « %s » est requis."
+msgstr "Le champ %s est requis."
 
 #: src/usr/local/www/guiconfig.inc:269
 msgid "The following input errors were detected:"
@@ -2318,18 +2318,16 @@ msgstr "Les modifications ont été appliquées avec succès."
 msgid "There was a problem applying the changes. See the %1$sSystem Logs%2$s."
 msgstr ""
 "Un problème s'est produit lors de l'application des modifications. Consultez "
-"%1$sSystem Logs%2$s."
+"les %1$sJournaux Système%2$s."
 
 #: src/usr/local/www/guiconfig.inc:400
 msgid "The firewall rules are now reloading in the background."
-msgstr ""
-"Les règles du pare-feu sont maintenant en train de recharger en arrière-plan."
-""
+msgstr "Les règles du pare-feu sont en cours de rechargement en arrière-plan."
 
 #: src/usr/local/www/guiconfig.inc:401
 #, php-format
 msgid "%1$sMonitor%2$s the filter reload progress."
-msgstr "%1$sMonitorerr%2$s le processus de rechargement des filtres."
+msgstr "%1$sSurveiller%2$s le rechargement des filtres."
 
 #: src/usr/local/www/guiconfig.inc:582
 msgid "Widget title"
@@ -2342,7 +2340,7 @@ msgstr "Le fichier %s est un répertoire."
 
 #: src/usr/local/www/guiconfig.inc:631 src/usr/local/www/guiconfig.inc:682
 msgid "Log file started."
-msgstr "La journalisation a débutée."
+msgstr "La journalisation a commencé."
 
 #: src/usr/local/www/guiconfig.inc:1069
 msgid "Currently viewing: "
@@ -2350,7 +2348,7 @@ msgstr "En cours de visionnement:"
 
 #: src/usr/local/www/guiconfig.inc:1167
 msgid "listing only first 10k items"
-msgstr "liste uniquement les 10 000 premiers items"
+msgstr "liste uniquement les 10k premiers éléments"
 
 #: src/usr/local/www/guiconfig.inc:1177
 #: src/usr/local/www/services_dhcpv6.php:969
@@ -2363,12 +2361,12 @@ msgstr "Valeur"
 #: src/usr/local/www/services_dhcpv6.php:237
 #: src/usr/local/www/services_dhcp.php:249
 msgid "Range begin"
-msgstr "Plage commence"
+msgstr "Début de le plage"
 
 #: src/usr/local/www/services_dhcpv6.php:237
 #: src/usr/local/www/services_dhcp.php:249
 msgid "Range end"
-msgstr "Plage termine"
+msgstr "Fin de la plage"
 
 #: src/usr/local/www/services_dhcpv6.php:243
 #: src/usr/local/www/services_dhcpv6.php:246
@@ -2379,13 +2377,15 @@ msgstr "Une plage de préfixe valide doit être spécifiée."
 #, php-format
 msgid "Prefix Delegation From address is not a valid IPv6 Netmask for %s"
 msgstr ""
-"L'adresse Prefix Delegation From n'est pas un Netmask IPv6 valide pour %s"
+"L'adresse Prefix Delegation From n'est pas un masque de réseau IPv6 valide "
+"pour %s"
 
 #: src/usr/local/www/services_dhcpv6.php:269
 #, php-format
 msgid "Prefix Delegation To address is not a valid IPv6 Netmask for %s"
 msgstr ""
-"L'adresse Prefix Delegation To n'est pas un Netmask IPv6 valide pour %s"
+"L'adresse Prefix Delegation To n'est pas un masque de réseau IPv6 valide "
+"pour %s"
 
 #: src/usr/local/www/services_dhcpv6.php:278
 #: src/usr/local/www/services_dhcpv6.php:290
@@ -2398,13 +2398,13 @@ msgstr "Un intervalle valide doit être spécifié."
 #, php-format
 msgid "The prefix (upper %1$s bits) must be zero.  Use the form %2$s"
 msgstr ""
-"Le préfixe (%1$s bits de poids forts) doivent être à zéro. Utilisez la forme "
+"Le préfixe (%1$s bits de poids forts) doit être à zéro. Utilisez la forme "
 "%2$s"
 
 #: src/usr/local/www/services_dhcpv6.php:301
 #: src/usr/local/www/services_dhcp.php:265
 msgid "Range From and Range To must both be entered."
-msgstr "Début de plage et Fin de Plage doivent tous deux être renseignés."
+msgstr "Le début et la fin de plage doivent tous deux être renseignés."
 
 #: src/usr/local/www/services_dhcpv6.php:304
 msgid "A valid IPv6 address must be specified for the gateway."
@@ -2463,7 +2463,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:330
 #: src/usr/local/www/services_dhcp_edit.php:271
 msgid "A valid domain search list must be specified."
-msgstr "Une liste valide de domaines de recherche doit être spécifiée"
+msgstr "Une liste valide de domaines de recherche doit être spécifiée."
 
 #: src/usr/local/www/services_dhcpv6.php:340
 msgid ""
@@ -2476,14 +2476,14 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:343
 #: src/usr/local/www/services_dhcp.php:348
 msgid "A valid domain name must be specified for the DNS domain."
-msgstr "Un nom de domaine valide doit être spécifié pour le domaine DNS"
+msgstr "Un nom de domaine valide doit être spécifié pour le domaine DNS."
 
 #: src/usr/local/www/services_dhcpv6.php:346
 msgid ""
 "A valid IPv6 address or hostname must be specified for the TFTP server."
 msgstr ""
-"Une adresse IPv6 valide ou un nom d'hôte doivent être spécifiés pour le "
-"serveur TFTP."
+"Une adresse IPv6 valide ou un nom d'hôte doit être spécifié pour le serveur "
+"TFTP."
 
 #: src/usr/local/www/services_dhcpv6.php:349
 msgid "A valid URL must be specified for the network bootfile."
@@ -2575,7 +2575,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
 msgid "Subnet"
-msgstr "Subnet"
+msgstr "Sous-réseau"
 
 #: src/usr/local/www/services_dhcpv6.php:623
 #: src/usr/local/www/services_dhcpv6.php:636
@@ -2614,7 +2614,7 @@ msgstr "De"
 #: src/usr/local/www/system_gateways_edit.php:314
 #: src/usr/local/www/firewall_rules_edit.php:1448
 msgid "To"
-msgstr "A"
+msgstr "À"
 
 #: src/usr/local/www/services_dhcpv6.php:660
 #: src/usr/local/www/services_dhcp.php:932
@@ -2635,9 +2635,10 @@ msgid ""
 "for assigning networks to subrouters. The start and end of the range must "
 "end on boundaries of the prefix delegation size."
 msgstr ""
-"Un préfixe peut être défini ici pour la délégation de préfixe via DHCP. Cela "
-"permet d'assigner des réseaux à des \"sous-routeurs\". Le début et la fin de "
-"la tranche doivent correspondre aux limites de la taille du préfixe délégué."
+"Une plage de préfixe peut être définie ici pour la délégation de préfixe via "
+"DHCP. Cela permet d'assigner des réseaux à des sous-routeurs. Le début et la "
+"fin de la plage doivent correspondre aux limites de la taille du préfixe "
+"délégué."
 
 #: src/usr/local/www/services_dhcpv6.php:709
 #: src/usr/local/www/services_dhcp_edit.php:500
@@ -2652,9 +2653,9 @@ msgid ""
 "Leave blank to use the system default DNS servers, this interface's IP if "
 "DNS forwarder is enabled, or the servers configured on the \"General\" page."
 msgstr ""
-"Laissez vide pour utiliser les serveurs DNS par défaut du système, c'est "
-"l'IP de cette interface si le forwarder DNS est activé our les serveurs "
-"configurés sur la page \"Générale\"."
+"Laissez vide pour utiliser les serveurs DNS par défaut du système, l'adresse "
+"IP de cette interface si le forwarder DNS est activé, ou les serveurs "
+"configurés sur la page \"Général\"."
 
 #: src/usr/local/www/services_dhcpv6.php:726
 #: src/usr/local/www/services_dhcp.php:1017
@@ -2672,7 +2673,7 @@ msgid ""
 msgstr ""
 "Le fonctionnement par défaut est d'utiliser le nom de domaine de ce système "
 "comme nom de domaine par défaut fourni par le DHCP. Un domaine alternatif "
-"pourra être ici spécifié."
+"pourra être spécifié ici."
 
 #: src/usr/local/www/services_dhcpv6.php:733
 #: src/usr/local/www/services_router_advertisements.php:455
@@ -2728,8 +2729,8 @@ msgid ""
 "DHCPv6 lease time will be displayed in local time and set to time zone "
 "selected. This will be used for all DHCPv6 interfaces lease time."
 msgstr ""
-"Par défaut les baux DHCPv6 sont affichés avec l'heure en UTC. En cochant "
-"cette case les baux seront affichés avec l'heure locale et le fuseau horaire "
+"Par défaut les baux DHCPv6 sont affichés avec l'heure UTC. En cochant cette "
+"case les baux seront affichés avec l'heure locale et le fuseau horaire "
 "choisi. Ce paramètre sera utilisé sur toutes les interfaces pour les baux "
 "DHCPv6."
 
@@ -2807,7 +2808,7 @@ msgstr "Enregistrement DHCP"
 #: src/usr/local/www/services_dhcp.php:1100
 #: src/usr/local/www/services_dhcp_edit.php:603
 msgid "DDNS Domain"
-msgstr "Domaine DNS dynamique"
+msgstr "Domaine DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:789
 #: src/usr/local/www/services_dhcp_edit.php:606
@@ -2822,7 +2823,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:793
 #: src/usr/local/www/services_dhcp.php:1108
 msgid "DDNS Hostnames"
-msgstr "Noms d'hôte DNS dynamique"
+msgstr "Noms d'hôtes DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:796
 #: src/usr/local/www/services_dhcp.php:1111
@@ -2832,7 +2833,7 @@ msgstr "Par défaut le nom d'hôte enregistré est fournie par le client DHCP."
 #: src/usr/local/www/services_dhcpv6.php:800
 #: src/usr/local/www/services_dhcp_edit.php:610
 msgid "DDNS Server IP"
-msgstr "IP du serveur DNS dynamique"
+msgstr "Adresse IP du serveur DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:803
 msgid ""
@@ -2845,7 +2846,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:807
 #: src/usr/local/www/services_dhcp_edit.php:617
 msgid "DDNS Domain Key name"
-msgstr "Nom du DDNS clé de domaine."
+msgstr "Nom de la clé de domaine DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:810
 #: src/usr/local/www/services_dhcp_edit.php:620
@@ -2859,7 +2860,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:814
 #: src/usr/local/www/services_dhcp_edit.php:624
 msgid "DDNS Domain Key secret"
-msgstr "Secret du DDNS clé de domaine."
+msgstr "Secret de la clé de domaine DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:817
 #: src/usr/local/www/services_dhcp_edit.php:627
@@ -2867,7 +2868,7 @@ msgid ""
 "Enter the dynamic DNS domain key secret which will be used to register "
 "client names in the DNS server."
 msgstr ""
-"Entrer la clé secrète du DNS dynamique qui sera utilisée pour enregistrer "
+"Entrer le secret de la clé DNS dynamique qui sera utilisée pour enregistrer "
 "les noms des clients dans le serveur DNS."
 
 #: src/usr/local/www/services_dhcpv6.php:824
@@ -2886,7 +2887,7 @@ msgstr "Ignorer"
 
 #: src/usr/local/www/services_dhcpv6.php:821
 msgid "DDNS Client Updates"
-msgstr "Mises à jour du client de DNS dynamique"
+msgstr "Mises à jour du client DDNS"
 
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid ""
@@ -2896,12 +2897,12 @@ msgid ""
 "DHCP will do the update and the client can also attempt the update usually "
 "using a different domain name."
 msgstr ""
-"Comment les entrées directes sont traitées lorsque le client indique "
-"qu'elles souhaitent mettre à jour le DNS. Autoriser empêche le DHCP de "
-"mettre à jour les entrées vers l'avant, Refuser indique que DHCP effectuera "
-"les mises à jour et que le client ne devrait pas, Ignorer spécifie que le "
-"DHCP effectuera la mise à jour et que le client peut également essayer la "
-"mise à jour en utilisant habituellement un nom de domaine différent."
+"Comment les entrées directes sont traitées lorsque le client indique qu'il "
+"souhaite mettre à jour le DNS. Autoriser empêche le DHCP de mettre à jour "
+"les entrées directes, Refuser indique que DHCP effectuera les mises à jour "
+"et que le client ne devrait pas, Ignorer spécifie que le DHCP effectuera la "
+"mise à jour et que le client peut également essayer la mise à jour en "
+"utilisant habituellement un nom de domaine différent."
 
 #: src/usr/local/www/services_dhcpv6.php:834
 msgid "DDNS Reverse"
@@ -2910,7 +2911,7 @@ msgstr "DDNS Inverse"
 #: src/usr/local/www/services_dhcpv6.php:849
 #: src/usr/local/www/services_dhcp_edit.php:639
 msgid "NTP servers"
-msgstr "serveurs NTP"
+msgstr "Serveurs NTP"
 
 #: src/usr/local/www/services_dhcpv6.php:853
 #: src/usr/local/www/services_dhcp_edit.php:643
@@ -2971,9 +2972,9 @@ msgid ""
 "The DNS servers entered in %1$sSystem: General Setup%3$s (or the %2$sDNS "
 "forwarder%3$s if enabled) will be assigned to clients by the DHCP server."
 msgstr ""
-"Les serveurs DNS renseignés dans %1$s Système: Paramètres Généraux %3$s (ou "
-"le %2$sDNS forwarder %3$s si activé) seront assignés aux clients par le "
-"serveur DHCP."
+"Les serveurs DNS renseignés dans %1$sSystème: Paramètres Généraux%3$s (ou le "
+"%2$sDNS forwarder%3$s si activé) seront assignés aux clients par le serveur "
+"DHCP."
 
 #: src/usr/local/www/services_dhcpv6.php:1016
 #, php-format
@@ -2981,8 +2982,8 @@ msgid ""
 "The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page."
 ""
 msgstr ""
-"La table de bail DHCP peut être visualisée sur la page %1$s Statut: Baux "
-"DHCPv6 %2$s."
+"La table des baux DHCP peut être visualisée sur la page %1$sStatut: Baux "
+"DHCPv6%2$s."
 
 #: src/usr/local/www/services_dhcpv6.php:1024
 msgid "DHCPv6 Static Mappings for this Interface"
@@ -3025,12 +3026,12 @@ msgstr "Nom d'hôte"
 #: src/usr/local/www/services_dhcp.php:1486
 #: src/usr/local/www/status_dhcp_leases.php:465
 msgid "Edit static mapping"
-msgstr "Modifier la cartographie statique"
+msgstr "Modifier le mappage statique"
 
 #: src/usr/local/www/services_dhcpv6.php:1058
 #: src/usr/local/www/services_dhcp.php:1487
 msgid "Delete static mapping"
-msgstr "Supprimer la cartographie statique"
+msgstr "Supprimer le mappage statique"
 
 #: src/usr/local/www/services_dhcpv6.php:1120
 #: src/usr/local/www/services_dhcpv6.php:1155
@@ -3178,13 +3179,13 @@ msgstr "Nom d'utilisateur"
 #: src/usr/local/www/status_dhcp_leases.php:352 src/etc/inc/ipsec.inc:77
 #: src/etc/inc/ipsec.inc:89 src/etc/inc/certs.inc:45
 msgid "IP address"
-msgstr "adresse IP"
+msgstr "Adresse IP"
 
 #: src/usr/local/www/vpn_l2tp_users.php:110
 #: src/usr/local/www/system_usermanager.php:643
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 msgid "Edit user"
-msgstr "Modifier utilisateur"
+msgstr "Modifier l'utilisateur"
 
 #: src/usr/local/www/vpn_l2tp_users.php:111
 #: src/usr/local/www/system_usermanager.php:645
@@ -3203,8 +3204,8 @@ msgstr "Nom de zone"
 #: src/usr/local/www/services_captiveportal_zones_edit.php:56
 msgid "The zone name can only contain letters, digits, and underscores ( _ )."
 msgstr ""
-"Le nom de la zone ne peut contenir que des lettres, chiffres et caractère de "
-"soulignement (_)"
+"Le nom de la zone ne peut contenir que des lettres, des chiffres et des "
+"caractères de soulignement ( _ )."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:61
 #, php-format
@@ -3224,8 +3225,8 @@ msgid ""
 "Zone name. Can only contain letters, digits, and underscores (_) and may not "
 "start with a digit."
 msgstr ""
-"Nom de zone. Ne peut contenir que des lettres, chiffres et caractère de "
-"soulignement (_). Ne peut débuter par une chiffre."
+"Nom de zone. Ne peut contenir que des lettres, des chiffres et des "
+"caractères de soulignement ( _ ). Ne peut pas commencer par une chiffre."
 
 #: src/usr/local/www/services_captiveportal_zones_edit.php:96
 msgid "Zone description"
@@ -3260,7 +3261,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:79
 #: src/usr/local/www/vpn_ipsec_phase1.php:241
 msgid "Pre-Shared Key contains invalid characters."
-msgstr "La clé pré-partagée contient des caractères non valides."
+msgstr "La clé pré-partagée contient des caractères invalides."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:86
 msgid "Another entry with the same identifier already exists."
@@ -3272,7 +3273,7 @@ msgstr "Clés pré-partagées IPsec modifiées"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:108
 msgid "Added IPsec Pre-Shared Keys"
-msgstr "Ajout de clés pré-partagées IPsec ajoutées"
+msgstr "Clés pré-partagées IPsec ajoutées"
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:119
 #: src/usr/local/www/vpn_ipsec.php:228
@@ -3299,8 +3300,8 @@ msgid ""
 "This can be either an IP address, fully qualified domain name or an e-mail "
 "address."
 msgstr ""
-"Cela peut être soit une adresse IP, un nom de domaine entièrement qualifié, "
-"soit une adresse e-mail."
+"Cela peut être une adresse IP, un nom de domaine entièrement qualifié, ou "
+"une adresse e-mail."
 
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:141
 msgid "*Secret type"
@@ -3631,7 +3632,7 @@ msgstr "Échec"
 #: src/usr/local/www/system_crlmanager.php:253
 #: src/usr/local/www/system_usermanager.php:573
 #: src/usr/local/www/system_advanced_network.php:155
-#: src/usr/local/www/head.inc:679 src/usr/local/www/system_user_settings.php:32
+#: src/usr/local/www/head.inc:663 src/usr/local/www/system_user_settings.php:32
 #: src/usr/local/www/system_usermanager_addprivs.php:38
 #: src/usr/local/www/system_advanced_notifications.php:197
 #: src/usr/local/www/system_gateways.php:217
@@ -3674,7 +3675,7 @@ msgstr "Paramètres de mise à jour"
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182 src/usr/local/www/pkg_mgr.php:38
 #: src/usr/local/www/pkg_mgr.php:129 src/usr/local/www/diag_backup.php:441
-#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:679
+#: src/usr/local/www/head.inc:243 src/usr/local/www/head.inc:663
 msgid "Package Manager"
 msgstr "Gestionnaire de paquets"
 
@@ -3806,8 +3807,8 @@ msgstr "Réinstallation de tous les paquets échouée !"
 #: src/usr/local/www/pkg_mgr_install.php:559
 msgid "Please wait while the reinstallation of all packages completes."
 msgstr ""
-"Veuillez patienter pendant que réinstallation de tous les paquets se termine."
-""
+"Veuillez patienter pendant que la réinstallation de tous les paquets se "
+"termine."
 
 #: src/usr/local/www/pkg_mgr_install.php:396
 msgid "Package Reinstallation"
@@ -3902,7 +3903,8 @@ msgstr "Un nom et une valeur doivent être spécifiés"
 #: src/usr/local/www/system_advanced_sysctl.php:95
 msgid "The value may only contain alphanumeric characters, -, _, %, and /."
 msgstr ""
-"La valeur ne peut contenir que des caractères alphanumériques, -, _, %, et/."
+"La valeur ne peut contenir que des caractères alphanumériques, -, _, %, et /."
+""
 
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_advanced_misc.php:295
@@ -3996,7 +3998,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:157
 msgid "Tunable Name"
-msgstr "Nom tunelable"
+msgstr "Nom du paramètre"
 
 #: src/usr/local/www/system_advanced_sysctl.php:160
 msgid "New"
@@ -4004,11 +4006,11 @@ msgstr "Nouveau"
 
 #: src/usr/local/www/system_advanced_sysctl.php:180
 msgid "Edit tunable"
-msgstr "Modifier tunable"
+msgstr "Modifier paramètre"
 
 #: src/usr/local/www/system_advanced_sysctl.php:182
 msgid "Delete/Reset tunable"
-msgstr "Supprimer / Réinitialiser tunable"
+msgstr "Supprimer / Réinitialiser paramètre"
 
 #: src/usr/local/www/system_advanced_sysctl.php:197
 msgid "Edit Tunable"
@@ -4095,7 +4097,7 @@ msgstr "Aucun"
 
 #: src/usr/local/www/diag_pftop.php:117
 msgid "Age"
-msgstr "âge"
+msgstr "Âge"
 
 #: src/usr/local/www/diag_pftop.php:119
 msgid "Destination Address"
@@ -4164,14 +4166,13 @@ msgstr "Routeur seulement - Drapeaux RA [aucun], Drapeaux préfixe [routeur]"
 #: src/usr/local/www/services_router_advertisements.php:106
 msgid "Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"
 msgstr ""
-"Non géré - Drapeaux RA [géré, autre statefull], Drapeaux préfixe [onlink, "
-"routeur]"
+"Non géré - Drapeaux RA [aucun], Drapeaux préfixe [onlink, auto, routeur]"
 
 #: src/usr/local/www/services_router_advertisements.php:107
 msgid ""
 "Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"
 msgstr ""
-"Géré - Drapeaux RA [géré, autre statefull], Drapeaux préfixes [onlink, "
+"Géré - Drapeaux RA [géré, autre stateful], Drapeaux préfixes [onlink, "
 "routeur]"
 
 #: src/usr/local/www/services_router_advertisements.php:108
@@ -4179,7 +4180,7 @@ msgid ""
 "Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
-"Assisté - Drapeaux RA [géré, autre statefull], Drapeaux Préfixes [onlink, "
+"Assisté - Drapeaux RA [géré, autre stateful], Drapeaux Préfixes [onlink, "
 "auto, routeur]"
 
 #: src/usr/local/www/services_router_advertisements.php:109
@@ -4187,7 +4188,7 @@ msgid ""
 "Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, "
 "router]"
 msgstr ""
-"DHCP sans état - Drapeaux RA [autre statefull], Drapeaux préfixes [onlink, "
+"DHCP sans état - Drapeaux RA [autre stateful], Drapeaux préfixes [onlink, "
 "auto, routeur]"
 
 #: src/usr/local/www/services_router_advertisements.php:111
@@ -4213,10 +4214,10 @@ msgid ""
 "assigned."
 msgstr ""
 "Les sous-réseaux sont spécifiés au format CIDR. Sélectionnez le masque CIDR "
-"correspondant à chaque entrée. /128 spécifie un seul hôte IPv6; /64 spécifie "
-"un réseau IPv6 normal; Etc. Si aucun sous-réseau n'est spécifié ici, le "
-"Daemon du Router Advertisement (RA) fera l'annonce sur le sous-réseau auquel "
-"l'interface du routeur est affectée."
+"correspondant à chaque entrée.\t/128 spécifie un seul hôte IPv6; /64 "
+"spécifie un réseau IPv6 normal; etc. Si aucun sous-réseau n'est spécifié "
+"ici, le Daemon du Router Advertisement (RA) fera l'annonce sur le sous-"
+"réseau auquel l'interface du routeur est affectée."
 
 #: src/usr/local/www/services_router_advertisements.php:123
 msgid "Select the Operating Mode for the Router Advertisement (RA) Daemon."
@@ -4230,7 +4231,7 @@ msgstr "RADVD ne sera pas activé sur cette interface."
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Router Only"
-msgstr "Aiguilleur seulement"
+msgstr "Routeur seulement"
 
 #: src/usr/local/www/services_router_advertisements.php:127
 msgid "Will advertise this router."
@@ -4242,7 +4243,7 @@ msgstr "Non géré"
 
 #: src/usr/local/www/services_router_advertisements.php:128
 msgid "Will advertise this router with stateless autoconfig."
-msgstr "Annoncez ce routeur avec une configuration automatique sans état."
+msgstr "Ce routeur sera annoncé avec une configuration automatique sans état."
 
 #: src/usr/local/www/services_router_advertisements.php:129
 msgid "Managed"
@@ -4252,7 +4253,7 @@ msgstr "Géré"
 msgid ""
 "Will advertise this router with all configuration through a DHCPv6 server."
 msgstr ""
-"Annoncera ce routeur avec toute la configuration via un serveur DHCPv6."
+"Ce routeur sera annoncé avec toute la configuration via un serveur DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:130
 msgid "Assisted"
@@ -4263,7 +4264,7 @@ msgid ""
 "Will advertise this router with configuration through a DHCPv6 server and/or "
 "stateless autoconfig."
 msgstr ""
-"Annoncera ce routeur avec une configuration via un serveur DHCPv6 et / ou "
+"Ce routeur sera annoncé avec une configuration via un serveur DHCPv6 et/ou "
 "une configuration automatique sans état."
 
 #: src/usr/local/www/services_router_advertisements.php:131
@@ -4275,7 +4276,7 @@ msgid ""
 "Will advertise this router with stateless autoconfig and other configuration "
 "information available via DHCPv6."
 msgstr ""
-"Annoncera ce routeur avec une configuration automatique sans état et "
+"Ce routeur sera annoncé avec une configuration automatique sans état et "
 "d'autres informations de configuration disponibles via DHCPv6."
 
 #: src/usr/local/www/services_router_advertisements.php:133
@@ -4285,7 +4286,7 @@ msgid ""
 "the network."
 msgstr ""
 "Il n'est pas nécessaire d'activer le serveur DHCPv6 sur pfSense lorsqu'il "
-"est défini sur \"Managé\", \"Assisté\" ou \"DHCP sans état\", il peut s'agir "
+"est défini sur \"Géré\", \"Assisté\" ou \"DHCP sans état\", il peut s'agir "
 "d'un autre hôte sur le réseau."
 
 #: src/usr/local/www/services_router_advertisements.php:160
@@ -4311,7 +4312,7 @@ msgstr "L'intervalle d'annonce minimal doit être un nombre entier."
 
 #: src/usr/local/www/services_router_advertisements.php:189
 msgid "Minimum advertisement interval must be no less than 3."
-msgstr "L'intervalle d'annonce minimal ne doit pas être en dessous de 3."
+msgstr "L'intervalle d'annonce minimal ne doit pas être inférieur à 3."
 
 #: src/usr/local/www/services_router_advertisements.php:192
 msgid ""
@@ -4330,8 +4331,8 @@ msgid ""
 "Maximum advertisement interval must be no less than 4 and no greater than "
 "1800."
 msgstr ""
-"L'intervalle d'annonce maximal ne doit pas être en dessous de 4 ou supérieur "
-"à 1800."
+"L'intervalle d'annonce maximal ne doit pas être inférieur à 4 ou supérieur à "
+"1800."
 
 #: src/usr/local/www/services_router_advertisements.php:204
 msgid "Router lifetime must be an integer between 1 and 9000."
@@ -4353,8 +4354,7 @@ msgstr "*Priorité du routeur"
 
 #: src/usr/local/www/services_router_advertisements.php:322
 msgid "Select the Priority for the Router Advertisement (RA) Daemon."
-msgstr ""
-"Sélectionnez la priorité pour le Daemon du 'Router Advertisement' (RA)."
+msgstr "Sélectionnez la priorité pour le Daemon du Router Advertisement (RA)."
 
 #: src/usr/local/www/services_router_advertisements.php:346
 msgid "RA Interface"
@@ -4362,8 +4362,7 @@ msgstr "Interface RA"
 
 #: src/usr/local/www/services_router_advertisements.php:349
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
-msgstr ""
-"Sélectionnez l'interface pour le Démon du 'Router Advertisement' (RA)."
+msgstr "Sélectionnez l'interface pour le Démon du Router Advertisement (RA)."
 
 #: src/usr/local/www/services_router_advertisements.php:354
 msgid "Default valid lifetime"
@@ -4434,7 +4433,7 @@ msgstr "Sous-réseaux RA"
 
 #: src/usr/local/www/services_router_advertisements.php:410
 msgid "Subnets"
-msgstr "Subnets"
+msgstr "Sous-réseaux"
 
 #: src/usr/local/www/services_router_advertisements.php:442
 msgid "DNS Configuration"
@@ -4450,7 +4449,7 @@ msgid ""
 "character as separator."
 msgstr ""
 "Le serveur RA peut éventuellement fournir une liste de recherche de domaine. "
-"Utilisez le caractère de point-virgule comme séparateur."
+"Utilisez le caractère point-virgule comme séparateur."
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
@@ -4493,7 +4492,7 @@ msgid ""
 msgstr ""
 "Remettre à zéro la table de suivi des sources va supprimer toutes les "
 "associations source/destination. Ceci indique que l'association \"sticky\" "
-"source/destination sera effacée pour tous les clients. %s Ceci n'efface pas "
+"source/destination sera effacée pour tous les clients. %sCeci n'efface pas "
 "la table des connexions actives, seulement la table de suivi des sources."
 
 #: src/usr/local/www/diag_resetstate.php:92
@@ -4502,7 +4501,7 @@ msgstr "Option de réinitialisation d'état"
 
 #: src/usr/local/www/diag_resetstate.php:96
 msgid "State Table"
-msgstr "Table des états"
+msgstr "Table d'états"
 
 #: src/usr/local/www/diag_resetstate.php:114
 #: src/usr/local/www/status_lb_pool.php:249
@@ -4523,7 +4522,7 @@ msgid ""
 "Rescan has been initiated in the background. Refresh this page in 10 seconds "
 "to see the results."
 msgstr ""
-"Un nouvea scan a été lancé en arrière-plan. Rafraichissez la page dans 10 "
+"Un rebalayage a été lancé en arrière-plan. Rafraichissez la page dans 10 "
 "secondes pour voir les résultats."
 
 #: src/usr/local/www/status_wireless.php:77
@@ -4532,7 +4531,7 @@ msgstr "Points d'accès à proximité ou pairs Ad-Hoc"
 
 #: src/usr/local/www/status_wireless.php:146
 msgid "Associated or Ad-Hoc Peers"
-msgstr "Associés ou pairs ad hoc"
+msgstr "Associés ou pairs Ad-Hoc"
 
 #: src/usr/local/www/status_wireless.php:203
 msgid "Rescan"
@@ -4546,10 +4545,10 @@ msgid ""
 "hoc mode), P = privacy (WEP/TKIP/AES), S = Short preamble, s = Short slot "
 "time."
 msgstr ""
-"%1$s Étiquettes: %2$s A = autorisé, E = taux étendu (802.11g), P = mode "
-"d'économie d'énergie.%3$s%1$s Capacités: %2$s E = ESS (mode infrastructure), "
-"I = IBSS (mode ad-hoc), P = confidentialité (WEP / TKIP / AES), S = "
-"Préambule court, s = Court intervalle."
+"%1$sDrapeaux: %2$s A = autorisé, E = taux étendu (802.11g), P = mode "
+"d'économie d'énergie.%3$s%1$sCapacités: %2$s E = ESS (mode infrastructure), "
+"I = IBSS (mode ad-hoc), P = confidentialité (WEP/TKIP/AES), S = préambule "
+"court, s = intervalle court."
 
 #: src/usr/local/www/status_logs_vpn.php:42
 msgid "VPN Logins"
@@ -4597,7 +4596,7 @@ msgstr "Journaux système"
 #: src/usr/local/www/status_logs_filter_dynamic.php:390
 #: src/usr/local/www/widgets/widgets/log.widget.php:117
 msgid "Time"
-msgstr "Temps"
+msgstr "Heure"
 
 #: src/usr/local/www/status_logs_vpn.php:139
 #: src/usr/local/www/status_logs_vpn.php:366
@@ -4719,7 +4718,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:322
 #: src/usr/local/www/status_logs_common.inc:541
 msgid "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
-msgstr "<a target=\"_blank\" href=\"http://www.php.net/manual/en/book.pcre.php\">"
+msgstr "<a target=\"_blank\" href=\"http://www.php.net/manual/fr/book.pcre.php\">"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/services_igmpproxy.php:63
@@ -4730,11 +4729,11 @@ msgstr "Proxy IGMP"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:68
 msgid "Only one 'upstream' interface can be configured."
-msgstr "Seulement une interface upstream doit être configurée."
+msgstr "Une seule interface 'upstream' peut être configurée."
 
 #: src/usr/local/www/services_igmpproxy_edit.php:142
 msgid "IGMP Proxy Edit"
-msgstr "Modifier le mandataire (« proxy ») IGMP"
+msgstr "Modifier le proxy IGMP"
 
 #: src/usr/local/www/services_igmpproxy_edit.php:169
 msgid "Upstream Interface"
@@ -4896,7 +4895,7 @@ msgstr "Protocole Lagg"
 #: src/usr/local/www/interfaces_lagg_edit.php:140
 #, php-format
 msgid "Interface supplied as member (%s) is invalid"
-msgstr "L'interface fournie comme membre (« %s ») est invalide"
+msgstr "L'interface fournie comme membre (%s) est invalide"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:144
 msgid "Interface supplied as member is invalid"
@@ -5132,7 +5131,7 @@ msgstr "Passerelles"
 #: src/usr/local/www/system_gateways.php:217
 #: src/usr/local/www/system_gateway_groups.php:101
 msgid "Routing"
-msgstr "Aiguillage (routing)"
+msgstr "Routage"
 
 #: src/usr/local/www/status_logs_common.inc:106
 #: src/usr/local/www/services_unbound_acls.php:162
@@ -5149,22 +5148,22 @@ msgstr "Résolveur DNS"
 #: src/usr/local/www/status_logs_common.inc:143
 #, php-format
 msgid "%1$s Matched %2$s Log Entries."
-msgstr "%1$s Correspondance %2$s aux entrées du journal."
+msgstr "%1$s correspondance(s) dans le journal %2$s."
 
 #: src/usr/local/www/status_logs_common.inc:145
 #, php-format
 msgid "Last %1$s %2$s Log Entries."
-msgstr "Dernières %1$s%2$s entrées du journal."
+msgstr "%1$s dernière(s) entrée(s) dans le journal %2$s."
 
 #: src/usr/local/www/status_logs_common.inc:149
 #, php-format
 msgid "%1$d Matched %2$s Log Entries."
-msgstr "%1$d Correspondance %2$s aux entrées du journal."
+msgstr "%1$d correspondance(s) dans le journal %2$s."
 
 #: src/usr/local/www/status_logs_common.inc:151
 #, php-format
 msgid "Last %1$d %2$s Log Entries."
-msgstr "Dernières %1$s%2$s entrées du journal."
+msgstr "%1$d dernière(s) entrée(s) dans le journal %2$s."
 
 #: src/usr/local/www/status_logs_common.inc:155
 #, php-format
@@ -5195,7 +5194,7 @@ msgstr "Adresse IP de Destination"
 #: src/usr/local/www/services_captiveportal_mac_edit.php:200
 #: src/usr/local/www/status_logs_common.inc:419
 msgid "Pass"
-msgstr "Admettre"
+msgstr "Autoriser"
 
 #: src/usr/local/www/status_logs_common.inc:459
 #: src/usr/local/www/services_captiveportal_mac.php:61
@@ -5205,7 +5204,7 @@ msgstr "Admettre"
 #: src/usr/local/www/services_captiveportal_mac_edit.php:200
 #: src/usr/local/www/status_logs_common.inc:460
 msgid "Block"
-msgstr "Bloque"
+msgstr "Bloquer"
 
 #: src/usr/local/www/status_logs_common.inc:484
 msgid "Protocol Flags"
@@ -5273,7 +5272,7 @@ msgstr "Afficher les entrées des journaux dans  l'ordre normal ou inversé."
 #: src/usr/local/www/status_logs_common.inc:825
 #: src/usr/local/www/status_logs_settings.php:242
 msgid "GUI Log Entries"
-msgstr "GUI Entrées des journaux"
+msgstr "Entrées des journaux de l'IHM"
 
 #: src/usr/local/www/status_logs_common.inc:831
 msgid ""
@@ -5330,7 +5329,7 @@ msgid ""
 "If this is checked, errors from the nginx web server process for the GUI or "
 "Captive Portal will appear in the system log."
 msgstr ""
-"Si activé, les erreurs du processus serveur web nginx pour la GUI ou le "
+"Si activé, les erreurs du processus serveur web nginx pour l'IHM ou le "
 "portail captif vont apparaître dans les journaux."
 
 #: src/usr/local/www/status_logs_common.inc:894
@@ -5344,18 +5343,18 @@ msgid ""
 "logged if this option is unchecked. Per-rule logging options are still "
 "respected."
 msgstr ""
-"Les paquets bloqués par la règle implicite de blocage ne seront pas "
-"journalisés si cette option est active. La journalisation par règle reste "
-"respectée."
+"Les paquets qui sont bloqués par la règle implicite de blocage ne seront pas "
+"journalisés si cette option est désactivée. La journalisation par règle "
+"reste respectée."
 
 #: src/usr/local/www/status_logs_common.inc:904
 msgid ""
 "Packets that are allowed by the implicit default pass rule will be logged if "
 "this option is checked. Per-rule logging options are still respected. "
 msgstr ""
-"Les paquets qui ne sont pas autorisés par la règle d'autorisation implicite "
-"seront journalisés si cette option est active. La journalisation par règle "
-"reste respectée."
+"Les paquets qui sont autorisés par la règle d'autorisation implicite seront "
+"journalisés si cette option est activée. La journalisation par règle reste "
+"respectée."
 
 #: src/usr/local/www/status_logs_common.inc:925
 #: src/usr/local/www/status_logs_settings.php:310
@@ -5422,7 +5421,7 @@ msgid ""
 "Enter multiple vouchers separated by space or newline. The remaining time, "
 "if valid, will be shown for each voucher."
 msgstr ""
-"Entrez plusieurs coupons séparés par espace ou nouvelle ligne. Le temps "
+"Entrez plusieurs coupons séparés par des espace ou sauts de ligne. Le temps "
 "restant, s'il est valide, sera affiché pour chaque coupon."
 
 #: src/usr/local/www/status_captiveportal_test.php:107
@@ -5461,7 +5460,7 @@ msgid ""
 "to run than the normal GUI."
 msgstr ""
 "Usagers de la plateforme intégrée: SVP soyez patient, l'assistant nécessite "
-"un peu plus de temps à démarrer que le GUI régulier."
+"un peu plus de temps à démarrer que l'IHM normale."
 
 #: src/usr/local/www/index.php:235
 #, php-format
@@ -5529,12 +5528,12 @@ msgstr "Aucun paquet valide définit."
 #: src/usr/local/www/pkg.php:50
 #, php-format
 msgid "Package path %s not found."
-msgstr "Le chemin du paquet (« %s ») est introuvable."
+msgstr "Le chemin du paquet (%s) est introuvable."
 
 #: src/usr/local/www/pkg.php:52
 #, php-format
 msgid "Invalid path %s specified."
-msgstr "Chemin spécifié invalide (« %s »)."
+msgstr "Chemin spécifié invalide (%s)."
 
 #: src/usr/local/www/pkg.php:57
 msgid "Try reinstalling the package."
@@ -5621,11 +5620,11 @@ msgstr "Ajouter un nouvel élément"
 
 #: src/usr/local/www/vpn_ipsec.php:68
 msgid "Deleted selected IPsec Phase 1 entries."
-msgstr "Supprime les entrées IPsec sélectionnées de la Phase 1."
+msgstr "Supprime les entrées IPsec Phase 1 sélectionnées."
 
 #: src/usr/local/www/vpn_ipsec.php:78
 msgid "Deleted selected IPsec Phase 2 entries."
-msgstr "Supprime les entrées IPsec sélectionnées de la Phase 2."
+msgstr "Supprime les entrées IPsec Phase 2 sélectionnées."
 
 #: src/usr/local/www/vpn_ipsec.php:212
 msgid "Saved configuration changes for IPsec tunnels."
@@ -5702,7 +5701,7 @@ msgstr "Description P1"
 #: src/usr/local/www/vpn_ipsec.php:292 src/usr/local/www/vpn_ipsec.php:355
 #: src/usr/local/www/vpn_ipsec.php:356
 msgid "Move checked entries to here"
-msgstr "Déplacer les entrées cochées ici"
+msgstr "Déplacer les entrées sélectionnées ici"
 
 #: src/usr/local/www/vpn_ipsec.php:323 src/etc/inc/ipsec.inc:411
 msgid "Mobile Client"
@@ -5718,20 +5717,20 @@ msgstr "bits"
 
 #: src/usr/local/www/vpn_ipsec.php:357
 msgid "Edit phase1 entry"
-msgstr "Modifier l'entrée de phase 1"
+msgstr "Modifier l'entrée phase 1"
 
 #: src/usr/local/www/vpn_ipsec.php:359
 msgid "Copy phase1 entry"
-msgstr "Copier l'entrée de phase 1"
+msgstr "Copier l'entrée phase 1"
 
 #: src/usr/local/www/vpn_ipsec.php:361 src/usr/local/www/vpn_ipsec.php:362
 msgid "Delete phase1 entry"
-msgstr "Supprimer l'entrée de phase 1"
+msgstr "Supprimer l'entrée phase 1"
 
 #: src/usr/local/www/vpn_ipsec.php:390
 #, php-format
 msgid "Show Phase 2 Entries (%s)"
-msgstr "Afficher les entrées de phase 2 (%s)"
+msgstr "Afficher les entrées phase 2 (%s)"
 
 #: src/usr/local/www/vpn_ipsec.php:399
 msgid "Local Subnet"
@@ -5759,11 +5758,11 @@ msgstr "Actions P2"
 
 #: src/usr/local/www/vpn_ipsec.php:427 src/usr/local/www/vpn_ipsec.php:478
 msgid "Move checked P2s here"
-msgstr "Déplacer les P2s cochées ici"
+msgstr "Déplacer les P2s sélectionnées ici"
 
 #: src/usr/local/www/vpn_ipsec.php:479
 msgid "Edit phase2 entry"
-msgstr "Modifier l'entrée de phase 2"
+msgstr "Modifier l'entrée phase 2"
 
 #: src/usr/local/www/vpn_ipsec.php:480
 msgid "Add a new Phase 2 based on this one"
@@ -5771,11 +5770,11 @@ msgstr "Ajouter une phase 2 basée sur celle-ci"
 
 #: src/usr/local/www/vpn_ipsec.php:481
 msgid "Delete phase2 entry"
-msgstr "Supprimer l'entrée de phase 2"
+msgstr "Supprimer l'entrée phase 2"
 
 #: src/usr/local/www/vpn_ipsec.php:482
 msgid "delete phase2 entry"
-msgstr "supprimer l'entrée de phase 2"
+msgstr "supprimer l'entrée phase 2"
 
 #: src/usr/local/www/vpn_ipsec.php:491
 msgid "Add P2"
@@ -5861,8 +5860,8 @@ msgid ""
 "%1$sDeny:%2$s Stops queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
-"%1$s Interdire: %2$s Arrête les requêtes des hôtes dans le netblock défini "
-"ci-dessous.%3$s"
+"%1$sInterdire:%2$s Arrête les requêtes des hôtes dans le netblock défini ci-"
+"dessous.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:156
 #, php-format
@@ -5870,7 +5869,7 @@ msgid ""
 "%1$sRefuse:%2$s Stops queries from hosts within the netblock defined below, "
 "but sends a DNS rcode REFUSED error message back to the client.%3$s"
 msgstr ""
-"%1$s Refuser: %2$s Arrête les requêtes des hôtes dans le netblock défini ci-"
+"%1$sRefuser:%2$s Arrête les requêtes des hôtes dans le netblock défini ci-"
 "dessous, mais envoie un message d'erreur DNS rcode REFUSED au client.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:157
@@ -5879,8 +5878,8 @@ msgid ""
 "%1$sAllow:%2$s Allow queries from hosts within the netblock defined below."
 "%3$s"
 msgstr ""
-" %1$s Autoriser:%2$s Autoriser les requêtes des hôtes dans le netblock "
-"défini ci-dessous.%3$s"
+" %1$sAutoriser:%2$s Autoriser les requêtes des hôtes dans le netblock défini "
+"ci-dessous.%3$s"
 
 #: src/usr/local/www/services_unbound_acls.php:158
 #, php-format
@@ -5889,7 +5888,7 @@ msgid ""
 "within the netblock defined below. Used for cache snooping and ideally "
 "should only be configured for the administrative host.%3$s"
 msgstr ""
-"%1$s Autoriser Snoop: %2$s Autoriser l'accès récursif et non récurrent des "
+"%1$sAutoriser Snoop:%2$s Autoriser l'accès récursif et non récurrent des "
 "hôtes dans le netblock défini ci-dessous. Utilisé pour le snooping du cache "
 "et idéalement, ne doit être configuré que pour l'hôte administratif.%3$s"
 
@@ -5900,7 +5899,7 @@ msgid ""
 "hosts within the netblock defined below. Messages that are disallowed are "
 "dropped.%3$s"
 msgstr ""
-"%1$s Interdire Non-local: %2$s Permet uniquement les requêtes autorisées de "
+"%1$sInterdire Non-local:%2$s Permet uniquement les requêtes autorisées de "
 "données locales à partir d'hôtes dans le netblock défini ci-dessous. Les "
 "messages refusés sont abandonnés.%3$s"
 
@@ -5911,7 +5910,7 @@ msgid ""
 "hosts within the netblock defined below. Sends a DNS rcode REFUSED error "
 "message back to the client for messages that are disallowed."
 msgstr ""
-"%1$s Refuser Non-local: %2$s Permet uniquement les requêtes autorisées de "
+"%1$sRefuser Non-local:%2$s Permet uniquement les requêtes autorisées de "
 "données locales des hôtes dans le netblock défini ci-dessous. Envoie un "
 "message d'erreur DNS rcode REFUSED au client pour les messages qui ne sont "
 "pas autorisés."
@@ -5948,7 +5947,7 @@ msgstr "Nom de la liste d'accès"
 
 #: src/usr/local/www/services_unbound_acls.php:214
 msgid "Provide an Access List name."
-msgstr "Fournisser un nom de liste d'accès."
+msgstr "Donner un nom de liste d'accès."
 
 #: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:792
 msgid "Refuse"
@@ -5964,7 +5963,7 @@ msgstr "Interdire Non-local"
 
 #: src/usr/local/www/services_unbound_acls.php:220
 msgid "Refuse Nonlocal"
-msgstr "*"
+msgstr "Refuser Non-local"
 
 #: src/usr/local/www/services_unbound_acls.php:218
 #: src/usr/local/www/firewall_rules_edit.php:1184
@@ -5975,7 +5974,7 @@ msgstr "*Action"
 #: src/usr/local/www/services_unbound_acls.php:228
 msgid "A description may be entered here for administrative reference."
 msgstr ""
-"Une description doit être renseigné ici pour les références administratives."
+"Une description doit être renseignée ici pour référence administrative."
 
 #: src/usr/local/www/services_unbound_acls.php:238
 msgid "*Networks"
@@ -5997,11 +5996,11 @@ msgstr "Listes d'accès pour contrôler l'accès au serveur de résolution DNS"
 
 #: src/usr/local/www/services_unbound_acls.php:285
 msgid "Access List Name"
-msgstr "Nom ACL"
+msgstr "Nom de liste d'accès"
 
 #: src/usr/local/www/services_unbound_acls.php:307
 msgid "Edit ACL"
-msgstr "Modifier"
+msgstr "Modifier ACL"
 
 #: src/usr/local/www/services_unbound_acls.php:308
 msgid "Delete ACL"
@@ -6016,11 +6015,11 @@ msgstr "Supprimer ACL"
 #: src/usr/local/www/services_captiveportal_ip.php:96
 #: src/usr/local/www/services_captiveportal_filemanager.php:141
 msgid "Allowed IP Addresses"
-msgstr "Adresses IP permises"
+msgstr "Adresses IP autorisées"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:89
 msgid "Allowed IP address"
-msgstr "Adresses IP autorisée"
+msgstr "Adresse IP autorisée"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:89
 #: src/usr/local/www/services_dhcp.php:898
@@ -6039,7 +6038,7 @@ msgstr "Une adresse IP valide doit être spécifiée. [%s]"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:98
 msgid "A valid subnet mask must be specified"
-msgstr "Un masque de subnet valide doit être spécifié"
+msgstr "Un masque de sous-réseau valide doit être spécifié"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:102
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:101
@@ -6056,7 +6055,7 @@ msgstr "La vitesse de téléchargement doit être un entier"
 #: src/usr/local/www/services_captiveportal_ip_edit.php:110
 #: src/usr/local/www/services_captiveportal_mac_edit.php:121
 msgid "Upload speed must be between 1 and 999999"
-msgstr "La vitesse de chargement doit être comprise entre 1 et 999999"
+msgstr "La vitesse d'upload doit être comprise entre 1 et 999999"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:114
 #: src/usr/local/www/services_captiveportal_mac_edit.php:124
@@ -6239,8 +6238,8 @@ msgid ""
 "%s IPs have been disabled. Please note that disabling does not survive a "
 "reboot and some configuration changes will re-enable."
 msgstr ""
-"%s Les IP ont été désactivées. Notez que la désactivation ne survit pas à un "
-"redémarrage et que certaines modifications de configuration seront "
+"Les adresses IP %s ont été désactivées. Notez que la désactivation ne survit "
+"pas à un redémarrage et que certaines modifications de configuration seront "
 "réactivées."
 
 #: src/usr/local/www/status_carp.php:76
@@ -6266,24 +6265,25 @@ msgstr ""
 #: src/usr/local/www/status_carp.php:149
 msgid ""
 "CARP has detected a problem and this unit has a non-zero demotion status."
-msgstr "CARP a détecté un problème et cette unité a un statut différent de "
+msgstr ""
+"CARP a détecté un problème et cette unité a un statut de démotion non nul."
 
 #: src/usr/local/www/status_carp.php:151
 msgid "Check the link status on all interfaces configured with CARP VIPs and "
 msgstr ""
-"Vérifier le statut du lien sur toutes les interfaces configurées avec CARP "
-"VIPs"
+"Vérifier le statut du lien sur toutes les interfaces configurées avec des "
+"VIPs CARP et"
 
 #: src/usr/local/www/status_carp.php:152
 #, php-format
 msgid "search the %1$sSystem Log%2$s for CARP demotion-related events."
 msgstr ""
-"Rechercher dans %1$s Journaux Système%2$s pour les événements relatifs à "
-"CARP"
+"Rechercher dans les %1$sJournaux Système%2$s pour les événements relatifs à "
+"CARP."
 
 #: src/usr/local/www/status_carp.php:155 src/usr/local/www/status_carp.php:157
 msgid "Reset CARP Demotion Status"
-msgstr "Remettre à 0 le status CARP Demotion"
+msgstr "Remettre à 0 l'état de démotion CARP"
 
 #: src/usr/local/www/status_carp.php:164
 msgid "Temporarily Disable CARP"
@@ -6315,7 +6315,7 @@ msgstr "Interface CARP"
 #: src/usr/local/www/system_gateway_groups_edit.php:305
 #: src/usr/local/www/system_gateway_groups_edit.php:317
 msgid "Virtual IP"
-msgstr "IP virtuelle"
+msgstr "adresse IP virtuelle"
 
 #: src/usr/local/www/status_carp.php:225
 msgid "pfSync Nodes"
@@ -6352,7 +6352,7 @@ msgstr "Nom du groupe"
 #: src/usr/local/www/system_groupmanager.php:144
 #, php-format
 msgid "The (%s) group name contains invalid characters."
-msgstr "Le nom de groupe '%s' contient des caractères invalides."
+msgstr "Le nom de groupe (%s) contient des caractères invalides."
 
 #: src/usr/local/www/system_groupmanager.php:149
 msgid "The group name is longer than 16 characters."
@@ -6360,7 +6360,7 @@ msgstr "Le nom de groupe a plus de 16 caractères."
 
 #: src/usr/local/www/system_groupmanager.php:156
 msgid "One or more invalid group members was submitted."
-msgstr "Un ou plusieurs nom(s) de groupe est/sont invalide(s)."
+msgstr "Un ou plusieurs membres de groupe sont invalides."
 
 #: src/usr/local/www/system_groupmanager.php:165
 msgid "Another entry with the same group name already exists."
@@ -6424,7 +6424,7 @@ msgstr "Nom du groupe"
 
 #: src/usr/local/www/system_groupmanager.php:305
 msgid "Member Count"
-msgstr "Nom de membre"
+msgstr "Nombre de membres"
 
 #: src/usr/local/www/system_groupmanager.php:329
 #: src/usr/local/www/interfaces_groups.php:112
@@ -6495,7 +6495,7 @@ msgstr "Passer à \"Non membres"
 #: src/usr/local/www/system_usermanager_addprivs.php:162
 msgid "Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items."
 msgstr ""
-"Maintenez la touche CTRL(PC) / COMMAND(Mac) enfoncée pour sélectionner "
+"Maintenez la touche CTRL (PC)/COMMAND (Mac) enfoncée pour sélectionner "
 "plusieurs éléments."
 
 #: src/usr/local/www/system_groupmanager.php:474
@@ -6586,13 +6586,13 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:246
 #: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
-msgstr "Le champ « Topologie » contient une sélection invalide."
+msgstr "Le champ 'Topologie' contient une sélection invalide."
 
 #: src/usr/local/www/vpn_openvpn_client.php:261
 msgid "User name and password are required for proxy with authentication."
 msgstr ""
-"Nom d'utilisateur et mot de passe sont requis pour le proxy avec "
-"authentification."
+"Nom d'utilisateur et mot de passe requis pour le proxy avec authentification."
+""
 
 #: src/usr/local/www/vpn_openvpn_client.php:265
 #: src/usr/local/www/vpn_openvpn_client.php:343
@@ -6623,7 +6623,7 @@ msgstr "Le champ 'Mode d'utilisation de la clé TLS' n'est pas valide"
 #: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
-"Les algorithmes d'encryptage GCM  ne peuvent pas être utilisés avec le mode "
+"Les algorithmes de chiffrement GCM ne peuvent pas être utilisés avec le mode "
 "de clé partagée."
 
 #: src/usr/local/www/vpn_openvpn_client.php:324
@@ -6649,13 +6649,13 @@ msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
 msgstr ""
-"Si aucun Certificat Client est sélectionné, un nom d'utilisateur et/ou un "
-"mot de passe doit être entré."
+"Si aucun Certificat Client n'est sélectionné, un nom d'utilisateur et/ou un "
+"mot de passe doivent être entrés."
 
 #: src/usr/local/www/vpn_openvpn_client.php:357
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr ""
-"Limite La bande passante sortante n'est pas compatible avec UDP Fast E/S."
+"La limite de bande passante sortante n'est pas compatible avec UDP Fast E/S."
 
 #: src/usr/local/www/vpn_openvpn_client.php:364
 #: src/usr/local/www/vpn_openvpn_server.php:471
@@ -6670,7 +6670,7 @@ msgstr "Client OpenVPN mis à jour au serveur %1$s:%2$s%3$s"
 #: src/usr/local/www/vpn_openvpn_client.php:457
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
-msgstr "Le client OpenVPN à été ajouté au serveur  %1$s:%2$s %3$s"
+msgstr "Le client OpenVPN à été ajouté au serveur %1$s:%2$s %3$s"
 
 #: src/usr/local/www/vpn_openvpn_client.php:472
 #: src/usr/local/www/vpn_openvpn_client.php:497
@@ -6780,7 +6780,7 @@ msgstr "*Port du serveur"
 #: src/usr/local/www/vpn_openvpn_client.php:564
 msgid "The port used by the server to receive client connections."
 msgstr ""
-"Le port utilisé par le serveur afin de recevoir les connections des clients."
+"Le port utilisé par le serveur afin de recevoir les connexions des clients."
 
 #: src/usr/local/www/vpn_openvpn_client.php:568
 msgid "Proxy host or address"
@@ -6798,7 +6798,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:576
 msgid "Proxy port"
-msgstr "Port du mandataire (« proxy »)"
+msgstr "Port du proxy"
 
 #: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "basic"
@@ -6810,11 +6810,11 @@ msgstr "ntlm"
 
 #: src/usr/local/www/vpn_openvpn_client.php:583
 msgid "Proxy Authentication"
-msgstr "Authentification du mandataire (proxy)"
+msgstr "Authentification du proxy"
 
 #: src/usr/local/www/vpn_openvpn_client.php:586
 msgid "The type of authentication used by the proxy server."
-msgstr "Le type d'authentification utilisé par le serveur mandataire (proxy)."
+msgstr "Le type d'authentification utilisé par le serveur proxy."
 
 #: src/usr/local/www/vpn_openvpn_client.php:597
 #: src/usr/local/www/vpn_openvpn_client.php:622
@@ -6847,11 +6847,11 @@ msgstr "Paramètres d'authentification de l'utilisateur"
 
 #: src/usr/local/www/vpn_openvpn_client.php:618
 msgid "Leave empty when no user name is needed"
-msgstr "Laisser vide lorsque aaucun nom d'utilisateur n'est nécessaire"
+msgstr "Laisser vide lorsque aucun nom d'utilisateur n'est nécessaire"
 
 #: src/usr/local/www/vpn_openvpn_client.php:625
 msgid "Leave empty when no password is needed"
-msgstr "Laisser vide lorsque aaucun mot de passe n'est nécessaire"
+msgstr "Laisser vide lorsque aucun mot de passe n'est nécessaire"
 
 #: src/usr/local/www/vpn_openvpn_client.php:629
 #: src/usr/local/www/vpn_openvpn_server.php:753
@@ -6872,12 +6872,12 @@ msgid ""
 "proper key to be dropped, protecting the peers from attack or unauthorized "
 "connections.The TLS Key does not have any effect on tunnel data."
 msgstr ""
-"Une touche TLS améliore la sécurité d'une connexion OpenVPN en demandant aux "
+"Une clé TLS améliore la sécurité d'une connexion OpenVPN en demandant aux "
 "deux parties d'avoir une clé commune avant qu'un pair puisse effectuer une "
-"poignée de main TLS. Cette couche d'authentification HMAC permet de "
-"transférer les paquets de canal de contrôle sans que la clé appropriée soit "
-"supprimée, protégeant les pairs contre les attaques ou les connexions non "
-"autorisées. La touche TLS n'a aucun effet sur les données du tunnel."
+"négociation TLS. Cette couche d'authentification HMAC permet de transférer "
+"les paquets de canal de contrôle sans que la clé appropriée soit supprimée, "
+"protégeant les pairs contre les attaques ou les connexions non autorisées. "
+"La clé TLS n'a aucun effet sur les données du tunnel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:651
 #: src/usr/local/www/vpn_openvpn_server.php:775
@@ -6891,14 +6891,14 @@ msgid ""
 "Paste the TLS key here.%1$sThis key is used to sign control channel packets "
 "with an HMAC signature for authentication when establishing the tunnel. "
 msgstr ""
-"Collez la touche TLS ici. %1$s Cette touche permet de signaler des paquets "
-"de canaux de contrôle avec une signature HMAC pour l'authentification lors "
-"de l'établissement du tunnel."
+"Collez la clé TLS ici. %1$sCette clé permet de signer les paquets du canal "
+"de contrôle avec une signature HMAC pour l'authentification lors de "
+"l'établissement du tunnel."
 
 #: src/usr/local/www/vpn_openvpn_client.php:658
 #: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
-msgstr "* Mode d'utilisation de la clé TLS"
+msgstr "*Mode d'utilisation de la clé TLS"
 
 #: src/usr/local/www/vpn_openvpn_client.php:661
 #: src/usr/local/www/vpn_openvpn_server.php:786
@@ -6910,11 +6910,11 @@ msgid ""
 "communication, providing more privacy and traffic control channel "
 "obfuscation."
 msgstr ""
-"En mode Authentification, la touche TLS est utilisée uniquement comme "
+"En mode Authentification, la clé TLS est utilisée uniquement comme "
 "authentification HMAC pour le canal de contrôle, protégeant les pairs contre "
-"les connexions non autorisées. %1$s Le mode Chiffrement et  Authentification "
-"chiffre également la communication de canal de contrôle, offrant plus "
-"d'obstruction des canaux de confidentialité et de trafic."
+"les connexions non autorisées. %1$sLe mode Chiffrement et Authentification "
+"chiffre également la communication du canal de contrôle, offrant plus de "
+"confidentialité et d'obfuscation du trafic sur le canal de contrôle."
 
 #: src/usr/local/www/vpn_openvpn_client.php:672
 #: src/usr/local/www/vpn_openvpn_client.php:678
@@ -6922,7 +6922,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:799
 #: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
-msgstr "*Authorité de certification de pair"
+msgstr "*Authorité de certification du pair"
 
 #: src/usr/local/www/vpn_openvpn_client.php:686
 #: src/usr/local/www/vpn_openvpn_client.php:692
@@ -6947,7 +6947,7 @@ msgstr "Copier la clef partagée ici"
 
 #: src/usr/local/www/vpn_openvpn_client.php:714
 msgid "Client Certificate"
-msgstr "Certificat du client"
+msgstr "Certificat client"
 
 #: src/usr/local/www/vpn_openvpn_client.php:721
 #: src/usr/local/www/vpn_ipsec_phase1.php:805
@@ -6961,7 +6961,7 @@ msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
 "Cryptographic Parameter (NCP) support is not available."
 msgstr ""
-"L'algorithme de chiffrement utilisé pour les paquets de chaînes de données "
+"L'algorithme de chiffrement utilisé pour les paquets du canal de données "
 "lorsque le support de paramètre cryptographique négociable (NCP) n'est pas "
 "disponible."
 
@@ -7011,7 +7011,7 @@ msgid ""
 "Available NCP Encryption Algorithms%1$sClick to add or remove an algorithm "
 "from the list"
 msgstr ""
-"Algorithmes de chiffrement NCP disponibles %1$s Cliquez pour ajouter ou "
+"Algorithmes de chiffrement NCP disponibles%1$sCliquez pour ajouter ou "
 "supprimer un algorithme de la liste"
 
 #: src/usr/local/www/vpn_openvpn_client.php:761
@@ -7044,12 +7044,12 @@ msgid ""
 "%1$s%2$s%3$s"
 msgstr ""
 "L'ordre des Algorithmes de chiffrement NCP sélectionnés est respecté par "
-"OpenVPN. %1$s%2$s%3$s"
+"OpenVPN.%1$s%2$s%3$s"
 
 #: src/usr/local/www/vpn_openvpn_client.php:774
 #: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
-msgstr "Algorithme d'authentification"
+msgstr "*Algorithme de hachage d'authentification"
 
 #: src/usr/local/www/vpn_openvpn_client.php:777
 #, php-format
@@ -7060,18 +7060,18 @@ msgid ""
 "not the data channel.%1$sLeave this set to SHA1 unless the server uses a "
 "different value. SHA1 is the default for OpenVPN. "
 msgstr ""
-"L'algorithme utilisé pour authentifier les paquets des chaînes de données et "
-"les paquets des canaux de contrôle si une clé TLS est présente. %1$s "
-"Lorsqu'un mode Algorithme de chiffrement AEAD est utilisé, comme AES-GCM, ce "
-"résumé est utilisé uniquement pour le canal de contrôle, et non le Canal de "
-"données. %1$s Laissez cet ensemble sur SHA1 à moins que le serveur n'utilise "
+"L'algorithme utilisé pour authentifier les paquets du canal de données et "
+"les paquets du canal de contrôle si une clé TLS est présente.%1$sLorsqu'un "
+"mode Algorithme de chiffrement AEAD est utilisé, comme AES-GCM, ce hachage "
+"est utilisé uniquement pour le canal de contrôle, et non le canal de données."
+"%1$sLaissez cette configuration sur SHA1 à moins que le serveur n'utilise "
 "une valeur différente. SHA1 est la valeur par défaut pour OpenVPN."
 
 #: src/usr/local/www/vpn_openvpn_client.php:783
 #: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
-msgstr "Encryption matérielle"
+msgstr "Chiffrement matériel"
 
 #: src/usr/local/www/vpn_openvpn_client.php:790
 #: src/usr/local/www/vpn_openvpn_csc.php:362
@@ -7116,7 +7116,7 @@ msgstr ""
 "Il s'agit du réseau virtuel IPv6 utilisé pour les communications privées "
 "entre ce client et le serveur exprimé en utilisant la notation CIDR (par "
 "exemple, fe80 :: / 64). Lorsqu'il est défini à l'aide de ce champ statique, "
-"l'adresse :: 2 du réseau sera affectée à l'interface virtuelle du client. "
+"l'adresse ::2 du réseau sera affectée à l'interface virtuelle du client. "
 "Laissez vide si le serveur est capable de fournir des adresses aux clients."
 
 #: src/usr/local/www/vpn_openvpn_client.php:813
@@ -7136,8 +7136,8 @@ msgstr ""
 "Les réseaux IPv4 qui seront acheminés par le tunnel, de sorte qu'un VPN site "
 "à site peut être établi sans changer manuellement les tables de routage. "
 "Exprimé sous la forme d'une liste séparée par des virgules d'une ou "
-"plusieurs gammes CIDR. S'il s'agit d'un VPN de site à site, entrez les LAN / "
-"s distants ici. Peut être laissé vide pour VPN non-site-à-site."
+"plusieurs gammes CIDR. S'il s'agit d'un VPN de site à site, entrez les LAN/s "
+"distants ici. Peut être laissé vide pour VPN non-site-à-site."
 
 #: src/usr/local/www/vpn_openvpn_client.php:822
 #: src/usr/local/www/vpn_openvpn_server.php:1064
@@ -7156,8 +7156,8 @@ msgstr ""
 "Ce sont les réseaux IPv6 qui seront acheminés via le tunnel, de sorte qu'un "
 "VPN site à site peut être établi sans changer manuellement les tables de "
 "routage. Exprimé sous la forme d'une liste séparée par des virgules d'un ou "
-"plusieurs IP / PREFIX. S'il s'agit d'un VPN de site à site, entrez les LAN / "
-"s distants ici. Peut être laissé vide pour VPN non-site-à-site."
+"plusieurs IP/PREFIX. S'il s'agit d'un VPN de site à site, entrez les LAN/s "
+"distants ici. Peut être laissé vide pour VPN non-site-à-site."
 
 #: src/usr/local/www/vpn_openvpn_client.php:831
 msgid "Limit outgoing bandwidth"
@@ -7170,8 +7170,8 @@ msgid ""
 "(entered as bytes per second). Not compatible with UDP Fast I/O."
 msgstr ""
 "Bande passante maximale pour ce tunnel. Laissez vide pour aucune limite. La "
-"valeur d'entrée doit être comprise entre 100 octets / sec et 100 Moctets / "
-"sec (entrée en octets par seconde). Non compatible avec UDP Fast I / O."
+"valeur d'entrée doit être comprise entre 100 octets/sec et 100 Moctets/sec "
+"(entrée en octets par seconde). Non compatible avec UDP Fast E/S."
 
 #: src/usr/local/www/vpn_openvpn_client.php:840
 #: src/usr/local/www/interfaces_ppps_edit.php:858
@@ -7188,7 +7188,7 @@ msgid ""
 msgstr ""
 "Compresser les paquets du tunnel en utilisant l’algorithme LZO.  La "
 "compression sera désactivée dynamiquement si OpenVPN détecte que les données "
-"dans les paquets ne sont pas compressées avec efficience."
+"dans les paquets ne sont pas compressées efficacement."
 
 #: src/usr/local/www/vpn_openvpn_client.php:847
 #: src/usr/local/www/vpn_openvpn_server.php:1129
@@ -7208,7 +7208,7 @@ msgstr "Type de service"
 
 #: src/usr/local/www/vpn_openvpn_client.php:861
 msgid "Don't pull routes"
-msgstr "Ne pas récupérer les itinéraires"
+msgstr "Ne pas récupérer les routes"
 
 #: src/usr/local/www/vpn_openvpn_client.php:864
 msgid ""
@@ -7312,11 +7312,11 @@ msgid ""
 msgstr ""
 "Chaque niveau affiche toutes les informations des niveaux précédents. Le "
 "niveau 3 est recommandé pour un bon résumé de ce qui se passe sans être "
-"submergé par la sortie. %1$s%1$s Aucun: Seules les erreurs fatales %1$s "
-"Défaut à 4: Plage d'utilisation normale %1$s 5: Caractères R et W de sortie "
-"de la console pour chaque paquet en lecture et écriture. Les majuscules sont "
-"utilisées pour les paquets TCP/UDP et les minuscules sont utilisées pour les "
-"paquets TUN/TAP. %1$s 6-11: plage d'informations de débogage"
+"submergé par la sortie.%1$s%1$sAucun: Seules les erreurs fatales%1$sDéfaut à "
+"4: Plage d'utilisation normale%1$s5: Caractères R et W sur la console pour "
+"chaque paquet lu et écrit. Les majuscules sont utilisées pour les paquets "
+"TCP/UDP et les minuscules sont utilisées pour les paquets TUN/TAP.%1$s6-11: "
+"plage d'informations de débogage"
 
 #: src/usr/local/www/vpn_openvpn_client.php:934
 msgid "OpenVPN Clients"
@@ -7327,8 +7327,7 @@ msgid ""
 "This wireless clone cannot be deleted because it is assigned as an interface."
 ""
 msgstr ""
-"Ce clone sans fil ne peut être supprimé car il n'est pas assigné à une "
-"interface."
+"Ce clone sans fil ne peut être supprimé car il est assigné à une interface."
 
 #: src/usr/local/www/interfaces_wireless.php:93
 msgid "Wireless Interfaces"
@@ -7552,12 +7551,12 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:726
 #: src/usr/local/www/status_dhcp_leases.php:496
 msgid "Pool Start"
-msgstr "Début de la Pool"
+msgstr "Début du Pool"
 
 #: src/usr/local/www/services_dhcp.php:727
 #: src/usr/local/www/status_dhcp_leases.php:497
 msgid "Pool End"
-msgstr "Fin de la Pool"
+msgstr "Fin du Pool"
 
 #: src/usr/local/www/services_dhcp.php:764
 #: src/usr/local/www/services_dhcp_edit.php:390
@@ -7640,9 +7639,9 @@ msgid ""
 "server behavior violates the official DHCP specification."
 msgstr ""
 "Cette option peut être utile lorsqu'un client peut dual boot en utilisant "
-"différents identifiants, mais avec la même adresse matérielle (MAC). Notez "
-"que ce comportement du serveur est contraire aux spécifications officielles "
-"de DHCP."
+"différents identifiants client, mais avec la même adresse matérielle (MAC). "
+"Notez que ce comportement du serveur est contraire aux spécifications "
+"officielles de DHCP."
 
 #: src/usr/local/www/services_dhcp.php:886
 msgid "Pool Description"
@@ -7658,7 +7657,7 @@ msgstr "Plage disponible"
 
 #: src/usr/local/www/services_dhcp.php:953
 msgid "Additional Pools"
-msgstr "Pool additionnels"
+msgstr "Pools additionnels"
 
 #: src/usr/local/www/services_dhcp.php:957
 msgid "Add pool"
@@ -7825,7 +7824,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1115
 msgid "Primary DDNS address"
-msgstr "Adresse DNS dynamique primaire"
+msgstr "Adresse DDNS primaire"
 
 #: src/usr/local/www/services_dhcp.php:1118
 msgid "Primary domain name server IP address for the dynamic domain name."
@@ -7863,7 +7862,7 @@ msgstr "Contrôle d'adresse MAC"
 
 #: src/usr/local/www/services_dhcp.php:1151
 msgid "MAC Allow"
-msgstr "MAC permis"
+msgstr "MAC autorisés"
 
 #: src/usr/local/www/services_dhcp.php:1154
 msgid ""
@@ -7970,8 +7969,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1317
 #, php-format
 msgid "For a list of available options please visit this %1$s URL%2$s.%3$s"
-msgstr ""
-"Pour obtenir une liste des options,  visiter cette %1$s URL %2$s. %3$s"
+msgstr "Pour obtenir une liste des options,  visiter cette %1$s URL %2$s.%3$s"
 
 #: src/usr/local/www/services_dhcp.php:1325
 msgid "Text"
@@ -8073,7 +8071,8 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:145
 msgid "One or more Outgoing Network Interfaces must be selected."
-msgstr "Un ou plusieurs réseau(x) sortant(s) doit être sélectionné."
+msgstr ""
+"Une ou plusieurs interfaces réseau sortante doivent être sélectionnées."
 
 #: src/usr/local/www/services_unbound.php:149
 #: src/usr/local/www/services_dnsmasq.php:159
@@ -8100,8 +8099,8 @@ msgid ""
 "The generated config file cannot be parsed by unbound. Please correct the "
 "following errors:"
 msgstr ""
-"Le fichier de configuration générale ne peut pas être parcouru par la sortie."
-" Merci de corriger les erreurs suivantes:"
+"Le fichier de configuration généré ne peut pas être interprété par unbound. "
+"Merci de corriger les erreurs suivantes:"
 
 #: src/usr/local/www/services_unbound.php:191
 #: src/usr/local/www/services_unbound_advanced.php:190
@@ -8110,18 +8109,15 @@ msgstr "DNS Resolver configuré."
 
 #: src/usr/local/www/services_unbound.php:211
 msgid "Host override deleted from DNS Resolver."
-msgstr ""
-"La suppression d'hôte a été désactivée depuis le serveur de résolution DNS."
+msgstr "La surcharge d'hôte a été supprimée du DNS Resolver."
 
 #: src/usr/local/www/services_unbound.php:219
 msgid "Domain override deleted from DNS Resolver."
-msgstr ""
-" La suppression de domaine a été désactivée depuis le serveur de résolution "
-"DNS."
+msgstr "La surcharge de domaine a été supprimée du DNS Resolver."
 
 #: src/usr/local/www/services_unbound.php:275
 msgid "General DNS Resolver Options"
-msgstr "Options générales de résolution DNS"
+msgstr "Options générales du DNS Resolver"
 
 #: src/usr/local/www/services_unbound.php:286
 #: src/usr/local/www/services_dnsmasq.php:327
@@ -8134,13 +8130,13 @@ msgid ""
 "The port used for responding to DNS queries. It should normally be left "
 "blank unless another service needs to bind to TCP/UDP port 53."
 msgstr ""
-"Le port utilisé pour répondre aux requêtes DNS. Il devrai normalement être "
-"laissé vide, à moins qu'un autre service n'ai besoin de lier le port TCP/UDP "
-"numéro 53."
+"Le port utilisé pour répondre aux requêtes DNS. Il devrait normalement être "
+"laissé vide, à moins qu'un autre service n'ai besoin d'utiliser le port TCP/"
+"UDP numéro 53."
 
 #: src/usr/local/www/services_unbound.php:296
 msgid "*Network Interfaces"
-msgstr "*Interfaces de réseau"
+msgstr "*Interfaces réseau"
 
 #: src/usr/local/www/services_unbound.php:300
 msgid ""
@@ -8149,11 +8145,12 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
-"IP d'interface utilisée par le serveur de résolution DNS pour répondre aux "
-"requêtes des clients. Si une interface possède une IPv4 et une IPv6, les "
-"deux sont utilisés. Les requêtes vers d'autres interfaces IP non "
-"sélectionnées ci-dessous sont rejetées. Le comportement par défaut est de "
-"répondre aux requêtes sur toutes les adresses IPv4 et IPv6 disponibles."
+"Adresses IP d'interface utilisée par le serveur de résolution DNS pour "
+"répondre aux requêtes des clients. Si une interface possède une adresse IPv4 "
+"et une adresse IPv6, les deux sont utilisées. Les requêtes vers d'autres "
+"interfaces IP non sélectionnées ci-dessous sont rejetées. Le comportement "
+"par défaut est de répondre aux requêtes sur toutes les adresses IPv4 et IPv6 "
+"disponibles."
 
 #: src/usr/local/www/services_unbound.php:307
 msgid "*Outgoing Network Interfaces"
@@ -8165,9 +8162,9 @@ msgid ""
 "send queries to authoritative servers and receive their replies. By default "
 "all interfaces are used."
 msgstr ""
-"Utilise différentes interfaces de réseau que le serveur de résolution DNS "
-"utilisera pour envoyer des requêtes aux serveurs faisant autorité et pour "
-"recevoir leurs réponses. Par défaut, toutes les interfaces sont utilisées."
+"Interfaces réseau utilisées par le DNS Resolver pour envoyer des requêtes "
+"aux serveurs faisant autorité et pour recevoir leurs réponses. Par défaut, "
+"toutes les interfaces sont utilisées."
 
 #: src/usr/local/www/services_unbound.php:315
 msgid "*System Domain Local Zone Type"
@@ -8202,9 +8199,9 @@ msgid ""
 "via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
 msgstr ""
 "Si cette option est définie, les requêtes DNS seront transmises aux serveurs "
-"DNS en amont définis sous %1$s Système &gt; Configuration Générale %2$s ou "
-"celles obtenues via DHCP / PPP sur WAN (si la ré-écriture du serveur DNS est "
-"activé ici)."
+"DNS en amont définis sous %1$sSystème &gt; Configuration Générale%2$s ou "
+"ceux obtenus via DHCP/PPP sur le WAN (si la surcharge de serveur DNS est "
+"activée ici)."
 
 #: src/usr/local/www/services_unbound.php:341
 #, php-format
@@ -8216,9 +8213,9 @@ msgid ""
 msgstr ""
 "Si cette option est définie, les machines qui spécifient leur nom d'hôte "
 "lors de la demande d'un bail DHCP seront enregistrées dans le serveur de "
-"résolution DNS, afin que leur nom puisse être résolu. Le domaine dans %1$s "
-"Système &gt; Configuration Générale %2$s doit également être définie sur la "
-"valeur appropriée."
+"résolution DNS, afin que leur nom puisse être résolu. Le domaine dans "
+"%1$sSystème &gt; Configuration Générale%2$s doit également être défini sur "
+"la valeur appropriée."
 
 #: src/usr/local/www/services_unbound.php:347
 #: src/usr/local/www/services_dnsmasq.php:274
@@ -8234,13 +8231,13 @@ msgid ""
 msgstr ""
 "Si cette option est définie, les mappages statiques DHCP seront enregistrés "
 "dans le serveur de résolution DNS, afin que leur nom puisse être résolu. Le "
-"domaine dans %1$s Système &gt; Configuration Générale %2$s doit également "
-"être définie sur la valeur appropriée."
+"domaine dans %1$sSystème &gt; Configuration Générale%2$s doit également être "
+"défini sur la valeur appropriée."
 
 #: src/usr/local/www/services_unbound.php:363
 #: src/usr/local/www/services_unbound.php:399
 msgid "Display Custom Options"
-msgstr "Options personnalisés d'affichage"
+msgstr "Afficher les options personnalisées"
 
 #: src/usr/local/www/services_unbound.php:371
 msgid ""
@@ -8248,37 +8245,37 @@ msgid ""
 "configuration here, separated by a newline."
 msgstr ""
 "Entrez les paramètres de configuration supplémentaires à ajouter à la "
-"configuration du serveur de résolution DNS ici, séparés par une nouvelle "
-"ligne."
+"configuration du serveur de résolution DNS ici, séparés par un saut de ligne."
+""
 
 #: src/usr/local/www/services_unbound.php:397
 msgid "Hide Custom Options"
-msgstr "Masquer  les options personnalisés"
+msgstr "Masquer les options personnalisées"
 
 #: src/usr/local/www/services_unbound.php:442
 #: src/usr/local/www/services_dnsmasq.php:365
 msgid "Host Overrides"
-msgstr "L'hôte outrepasse"
+msgstr "Surcharges d'hôtes"
 
 #: src/usr/local/www/services_unbound.php:448
 msgid "Parent domain of host"
-msgstr "Domaine parent ou hôte"
+msgstr "Domaine parent de l'hôte"
 
 #: src/usr/local/www/services_unbound.php:449
 msgid "IP to return for host"
-msgstr "IP à retourner pour l'hôte"
+msgstr "IP à renvoyer pour l'hôte"
 
 #: src/usr/local/www/services_unbound.php:473
 #: src/usr/local/www/services_unbound.php:497
 #: src/usr/local/www/services_dnsmasq.php:395
 #: src/usr/local/www/services_dnsmasq.php:419
 msgid "Edit host override"
-msgstr "Editer l'outre-passement d'hôte"
+msgstr "Editer la surcharge d'hôte"
 
 #: src/usr/local/www/services_unbound.php:474
 #: src/usr/local/www/services_dnsmasq.php:396
 msgid "Delete host override"
-msgstr "Supprimer la dérogation de l'hôte"
+msgstr "Supprimer la surcharge d'hôte"
 
 #: src/usr/local/www/services_unbound.php:490
 #: src/usr/local/www/services_dnsmasq.php:412
@@ -8318,9 +8315,9 @@ msgstr ""
 "servira automatiquement l'adresse IP du réseau local en tant que serveur DNS "
 "aux clients DHCP afin qu'ils utilisent le serveur de résolution DNS. Si "
 "Forwarding est activé, le serveur de résolution DNS utilisera les serveurs "
-"DNS entrés dans %1$s Système &gt; Configuration Générale %2$s ou celles "
-"obtenues via DHCP ou PPP sur WAN si l'option &quot;Autoriser la liste du "
-"serveur DNS à être remplacée par DHCP / PPP sur WAN &quot; est cochée."
+"DNS entrés dans %1$sSystème &gt; Configuration Générale%2$s ou ceux obtenus "
+"via DHCP ou PPP sur WAN si l'option &quot;Autoriser la liste du serveur DNS "
+"à être remplacée par DHCP/PPP sur WAN &quot; est cochée."
 
 #: src/usr/local/www/diag_reboot.php:43 src/usr/local/www/diag_reboot.php:113
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:403
@@ -8407,14 +8404,14 @@ msgid ""
 "The DNS Resolver is enabled using this port. Choose a non-conflicting port, "
 "or disable DNS Resolver."
 msgstr ""
-"Le Résolveur DNS est activé en utilisant ce port. Choisir un port n'entrant "
-"pas en conflit, ou désactiver le Resolveur DNS."
+"Le DNS Resolver est activé en utilisant ce port. Choisir un port n'entrant "
+"pas en conflit, ou désactiver le DNS Resolver."
 
 #: src/usr/local/www/services_dnsmasq.php:152
 msgid ""
 "DHCP Server must be enabled for DHCP Registration to work in DNS Forwarder."
 msgstr ""
-"Le serveur DHCP doit petre activé pour que l'enregistrement DHCP fonctionne "
+"Le serveur DHCP doit être activé pour que l'enregistrement DHCP fonctionne "
 "dans le DNS Forwarder."
 
 #: src/usr/local/www/services_dnsmasq.php:178
@@ -8428,7 +8425,7 @@ msgstr "Options personnalisés invalides"
 #: src/usr/local/www/services_dnsmasq_edit.php:187
 #: src/etc/inc/service-utils.inc:250
 msgid "DNS Forwarder"
-msgstr "Redirecteur DNS"
+msgstr "DNS Forwarder"
 
 #: src/usr/local/www/services_dnsmasq.php:246
 msgid "The DNS forwarder configuration has been changed."
@@ -8447,7 +8444,7 @@ msgid ""
 "to the proper value."
 msgstr ""
 "Si cette option est active, les machines qui indiquent leur nom d'hôte lors "
-"de la demande d'un bail DHCP seront enregistrées dans le DNS forwarder, afin "
+"de la demande d'un bail DHCP seront enregistrées dans le DNS Forwarder, afin "
 "que leur nom puisse être résolu. Le domaine indiqué dans %1$sSystème: "
 "Paramètres Généraux%2$s devra également être positionné à la bonne valeur."
 
@@ -8459,7 +8456,7 @@ msgid ""
 "General Setup%2$s should also be set to the proper value."
 msgstr ""
 "Si cette option est active, la correspondance statique DHCP sera enregistrée "
-"dans le DNS forwarder, de sorte que le noms d'hôtes soient résolus. Le "
+"dans le DNS Forwarder, de sorte que les noms d'hôtes soient résolus. Le "
 "domaine dans %1$sSystème: Paramètres Généraux%2$s devra également être "
 "positionné à la bonne valeur."
 
@@ -8485,7 +8482,7 @@ msgid ""
 msgstr ""
 "Si cette option est active, %1$s DNS Forwarder (dnsmasq) interrogera les "
 "serveurs DNS de façon séquentielle dans l'ordre indiqué  (%2$sSysteème - "
-"Paramètres Généraux - Serveurs DNS %3$s), plutôt qu'en interrogeant en "
+"Paramètres Généraux - Serveurs DNS%3$s), plutôt qu'en interrogeant en "
 "parallèle."
 
 #: src/usr/local/www/services_dnsmasq.php:309
@@ -8497,10 +8494,10 @@ msgid ""
 "found\" answer is returned. "
 msgstr ""
 "Si cette option est active, %s DNS Forwarder (dnsmasq) ne transfèrera pas "
-"les requêtes de type A ou AAAA pour les noms complets, sans points ou "
-"parties des domaines, vers les serveurs de noms en aval. Si le nom est "
-"inconnu par /etc/hosts ou le DHCP alors une réponse \"non trouvé\" sera "
-"renvoyée."
+"les requêtes de type A ou AAAA pour les noms simples, sans points ou parties "
+"des domaines, vers les serveurs de noms en aval.\t Si le nom est inconnu du "
+"fichier /etc/hosts ou du DHCP alors une réponse \"non trouvé\" sera renvoyée."
+" "
 
 #: src/usr/local/www/services_dnsmasq.php:318
 #, php-format
@@ -8514,11 +8511,11 @@ msgid ""
 msgstr ""
 "Si cette option est active, %s DNS Forwarder (dnsmasq) ne transférera pas "
 "les recherches DNS inversées (PTR) pour les adresses privées (RFC 1918) vers "
-"lles serveurs en aval. Toute requête dans la section Domain Override "
+"les serveurs en aval. Toute requête dans la section Domain Override "
 "transférant les noms privés (n.n.n.in-addr.arpa) vers un serveur spécifique "
 "seront encore transférées. Si la conversion IP vers nom n'est pas connue par "
-"le fichier /Etc/hosts ou qu'un domaine spécifique n'est présent, alors une "
-"réponse \"pas trouvé\" sera immédiatement renvoyée."
+"le fichier /etc/hosts ou qu'un domaine spécifique n'est présent, alors une "
+"réponse \"non trouvé\" sera immédiatement renvoyée."
 
 #: src/usr/local/www/services_dnsmasq.php:337
 #: src/usr/local/www/services_captiveportal.php:542
@@ -8532,11 +8529,12 @@ msgid ""
 "to other interface IPs not selected below are discarded. The default "
 "behavior is to respond to queries on every available IPv4 and IPv6 address."
 msgstr ""
-"IP d'interface utilisée par le DNS Forwarder pour répondre aux requêtes des "
-"clients. Si une interface dispose à la fois d'une IPv4 et IPv6, les deux "
-"adresses seront utilisées. Les requêtes vers les autres IP d'interfaces non "
-"sélectionnées sont supprimées. Le comportement par défaut est de répondre "
-"aux requêtes sur chaque adresse IPv4 et IPv6."
+"Adresses IP d'interface utilisée par le DNS Forwarder pour répondre aux "
+"requêtes des clients. Si une interface dispose à la fois d'une adresse IPv4 "
+"et d'une adresse IPv6, les deux adresses seront utilisées. Les requêtes vers "
+"les autres adresses IP d'interfaces non sélectionnées seront ignorées. Le "
+"comportement par défaut est de répondre aux requêtes sur toutes les adresse "
+"IPv4 et IPv6."
 
 #: src/usr/local/www/services_dnsmasq.php:346
 msgid "Strict binding"
@@ -8550,11 +8548,11 @@ msgid ""
 "interfaces and discarding queries to other addresses.%1$sThis option does "
 "NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses."
 msgstr ""
-"Si cette option est active, le DNS Forwarder liera uniquement les interfaces "
-"contenant les adresses IP sélectionnées ci-dessus, plutôt que lier à toutes "
-"les interfaces, et supprimera les requêtes sur les autres interfaces. %1$s "
-"Cette option ne fonctionne PAS avec IPv6. Si active, le dnsmasq ne liera pas "
-"les adresses IPv6."
+"Si cette option est active, le DNS Forwarder écoutera uniquement sur les "
+"interfaces contenant les adresses IP sélectionnées ci-dessus, plutôt que "
+"d'écouter sur toutes les interfaces, et supprimera les requêtes sur les "
+"autres interfaces. %1$sCette option ne fonctionne PAS avec IPv6. Si active, "
+"le dnsmasq n'écoutera pas sur les adresses IPv6."
 
 #: src/usr/local/www/services_dnsmasq.php:357
 msgid ""
@@ -8578,7 +8576,7 @@ msgid ""
 "automatically serve the LAN IP address as a DNS server to DHCP clients so "
 "they will use the forwarder."
 msgstr ""
-"Si le DNS forwarder est activé, le service DHCP (si activé) servira "
+"Si le DNS Forwarder est activé, le service DHCP (si activé) servira "
 "automatiquement l'adresse IP du réseau local en tant que serveur DNS aux "
 "clients DHCP afin qu'ils utilisent le forwarder."
 
@@ -8591,13 +8589,13 @@ msgid ""
 "not used (or if a static IP address is used on WAN), at least one DNS server "
 "must be manually specified on the %1$sSystem > General Setup%2$s page."
 msgstr ""
-"Le DNS forwarder utilisera les serveurs DNS renseignés dans %1$s Système > "
-"Configuration générale %2$s ou ceux obtenus via DHCP ou PPP sur WAN si "
-"l'option &quot;Autoriser la liste des serveurs DNS à être remplacée par DHCP "
-"/ PPP sur WAN &quot; est cochée. Si cette option n'est pas utilisée (ou si "
-"une adresse IP statique est utilisée sur WAN), au moins un serveur DNS doit "
-"être spécifié manuellement dans la page %1$s Système > Configuration "
-"générale %2$s."
+"Le DNS forwarder utilisera les serveurs DNS renseignés dans %1$sSystème > "
+"Configuration générale%2$s ou ceux obtenus via DHCP ou PPP sur WAN si "
+"l'option &quot;Autoriser la liste des serveurs DNS à être remplacée par DHCP/"
+"PPP sur le WAN&quot; est cochée. Si cette option n'est pas utilisée (ou si "
+"une adresse IP statique est utilisée sur le WAN), au moins un serveur DNS "
+"doit être spécifié manuellement dans la page %1$sSystème > Configuration "
+"générale%2$s."
 
 #: src/usr/local/www/system_certmanager.php:35
 msgid "Import an existing Certificate"
@@ -8609,11 +8607,11 @@ msgstr "Créer un certificat interne"
 
 #: src/usr/local/www/system_certmanager.php:37
 msgid "Create a Certificate Signing Request"
-msgstr "Créer un CSR (Certificate Signing Request)"
+msgstr "Créer une demande de signature"
 
 #: src/usr/local/www/system_certmanager.php:38
 msgid "Sign a Certificate Signing Request"
-msgstr "Signer un CSR (Certificate Signing Request)"
+msgstr "Signer une demande de signature"
 
 #: src/usr/local/www/system_certmanager.php:54
 msgid "Choose an existing certificate"
@@ -8643,19 +8641,21 @@ msgstr "Nom descriptif"
 
 #: src/usr/local/www/system_certmanager.php:217
 msgid "CA to sign with"
-msgstr "AC avec lequel signer"
+msgstr "AC avec laquelle signer"
 
 #: src/usr/local/www/system_certmanager.php:222
 msgid "This signing request does not appear to be valid."
-msgstr "Cette demande de signature ne semble pas être valide."
+msgstr "Cette demande de signature ne semble pas valide."
 
 #: src/usr/local/www/system_certmanager.php:226
 msgid "This private does not appear to be valid."
-msgstr "Ce privé ne semble pas être valide."
+msgstr "Cette clé privée ne semble pas valide."
 
 #: src/usr/local/www/system_certmanager.php:227
 msgid "Key data field should be blank, or a valid x509 private key"
-msgstr "Le champ de données clés doit être vide ou une clé privée x509 valide"
+msgstr ""
+"Le champ Données de la clé doit être vide ou contenir une clé privée x509 "
+"valide"
 
 #: src/usr/local/www/system_certmanager.php:237
 #: src/usr/local/www/system_camanager.php:168
@@ -8676,8 +8676,7 @@ msgstr "Ce certificat ne semble pas valide."
 #: src/usr/local/www/system_camanager.php:176
 msgid ""
 "The submitted private key does not match the submitted certificate data."
-msgstr ""
-"La clef privée soumise ne correspond pas aux données du certificat soumis."
+msgstr "La clé privée ne correspond pas aux données du certificat."
 
 #: src/usr/local/www/system_certmanager.php:254
 #: src/usr/local/www/system_usermanager.php:202
@@ -8712,42 +8711,42 @@ msgstr "Durée de vie"
 #: src/usr/local/www/system_camanager.php:187
 #: src/usr/local/www/system_camanager.php:203
 msgid "Distinguished name Country Code"
-msgstr "Nom distinctif code pays"
+msgstr "Nom distinctif Code pays"
 
 #: src/usr/local/www/system_certmanager.php:259
 #: src/usr/local/www/system_certmanager.php:274
 #: src/usr/local/www/system_camanager.php:188
 #: src/usr/local/www/system_camanager.php:204
 msgid "Distinguished name State or Province"
-msgstr "Nom distinctif état ou région"
+msgstr "Nom distinctif État ou Région"
 
 #: src/usr/local/www/system_certmanager.php:260
 #: src/usr/local/www/system_certmanager.php:275
 #: src/usr/local/www/system_camanager.php:189
 #: src/usr/local/www/system_camanager.php:205
 msgid "Distinguished name City"
-msgstr "Nom distinctif ville"
+msgstr "Nom distinctif Ville"
 
 #: src/usr/local/www/system_certmanager.php:261
 #: src/usr/local/www/system_certmanager.php:276
 #: src/usr/local/www/system_camanager.php:190
 #: src/usr/local/www/system_camanager.php:206
 msgid "Distinguished name Organization"
-msgstr "Nom distinctif organisation"
+msgstr "Nom distinctif Organisation"
 
 #: src/usr/local/www/system_certmanager.php:262
 #: src/usr/local/www/system_certmanager.php:277
 #: src/usr/local/www/system_camanager.php:191
 #: src/usr/local/www/system_camanager.php:207
 msgid "Distinguished name Email Address"
-msgstr "Adresse courriel du nom différencié"
+msgstr "Nom distinctif Adresse courriel"
 
 #: src/usr/local/www/system_certmanager.php:263
 #: src/usr/local/www/system_certmanager.php:278
 #: src/usr/local/www/system_camanager.php:192
 #: src/usr/local/www/system_camanager.php:208
 msgid "Distinguished name Common Name"
-msgstr "Nom distinctif nom commun"
+msgstr "Nom distinctif Nom commun"
 
 #: src/usr/local/www/system_certmanager.php:283
 msgid "Existing Certificate Choice"
@@ -8758,21 +8757,21 @@ msgstr "Choix du certificat existant"
 msgid ""
 "The field 'Distinguished name Email Address' contains invalid characters."
 msgstr ""
-"Le champ « Adresse courriel du nom différencié » contient des caractères "
+"Le champ « Nom distinctif Adresse courriel » contient des caractères "
 "invalides."
 
 #: src/usr/local/www/system_certmanager.php:363
 #: src/usr/local/www/system_certmanager.php:370
 #: src/usr/local/www/system_camanager.php:226
 msgid "Please select a valid Key Length."
-msgstr "Veuillez choisir une longueur de clé valide."
+msgstr "Sélectionnez une longueur de clé valide."
 
 #: src/usr/local/www/system_certmanager.php:366
 #: src/usr/local/www/system_certmanager.php:373
 #: src/usr/local/www/system_certmanager.php:376
 #: src/usr/local/www/system_camanager.php:229
 msgid "Please select a valid Digest Algorithm."
-msgstr "Sélectionnez un algorithme de synthèse valide."
+msgstr "Sélectionnez un algorithme de hachage valide."
 
 #: src/usr/local/www/system_certmanager.php:542
 msgid "Final Certificate data"
@@ -8783,8 +8782,7 @@ msgstr "Données du certificat final"
 msgid ""
 "The certificate public key does not match the signing request public key."
 msgstr ""
-"La clé publique de certificat ne correspond pas à la clé publique de demande "
-"de signature."
+"La clé publique du certificat ne correspond pas à la demande de signature."
 
 #: src/usr/local/www/system_certmanager.php:588
 #: src/usr/local/www/system_camanager.php:315
@@ -8841,11 +8839,11 @@ msgstr "Nouvelle CSR (Coller ci-dessous)"
 
 #: src/usr/local/www/system_certmanager.php:692
 msgid "Sign CSR"
-msgstr "Signez CSR"
+msgstr "Signer CSR"
 
 #: src/usr/local/www/system_certmanager.php:697
 msgid "*CA to sign with"
-msgstr "*AC avec lequel signer"
+msgstr "*AC avec laquelle signer"
 
 #: src/usr/local/www/system_certmanager.php:704
 msgid "*CSR to sign"
@@ -8877,7 +8875,7 @@ msgstr "*Durée de vie du certificat (jours)"
 #: src/usr/local/www/system_certmanager.php:871
 #: src/usr/local/www/system_camanager.php:559
 msgid "*Digest Algorithm"
-msgstr "*Algorithme de synthèse"
+msgstr "*Algorithme de hachage"
 
 #: src/usr/local/www/system_certmanager.php:732
 #: src/usr/local/www/system_certmanager.php:874
@@ -8920,9 +8918,7 @@ msgstr "Aucune autorité de certification interne n'a été définie."
 #: src/usr/local/www/system_certmanager.php:760
 msgid ""
 "An internal CA must be defined in order to create an internal certificate. "
-msgstr ""
-"Une autorité de certification interne doit être définie afin de créer un "
-"certificat interne."
+msgstr "Une AC interne doit être définie afin de créer un certificat interne."
 
 #: src/usr/local/www/system_certmanager.php:761
 #, php-format
@@ -8957,13 +8953,13 @@ msgstr "*Durée de vie (jours)"
 #: src/usr/local/www/system_certmanager.php:879
 #: src/usr/local/www/system_camanager.php:574
 msgid "*Country Code"
-msgstr "*Code de pays"
+msgstr "*Code pays"
 
 #: src/usr/local/www/system_certmanager.php:812
 #: src/usr/local/www/system_certmanager.php:886
 #: src/usr/local/www/system_camanager.php:581
 msgid "*State or Province"
-msgstr "*État ou province"
+msgstr "*État ou Province"
 
 #: src/usr/local/www/system_certmanager.php:820
 #: src/usr/local/www/system_certmanager.php:894
@@ -9096,15 +9092,15 @@ msgstr "Compléter la demande de signature pour"
 
 #: src/usr/local/www/system_certmanager.php:1070
 msgid "Signing request data"
-msgstr "Signature des données de demande"
+msgstr "Données de la demande de signature"
 
 #: src/usr/local/www/system_certmanager.php:1074
 msgid ""
 "Copy the certificate signing data from here and forward it to a certificate "
 "authority for signing."
 msgstr ""
-"Copiez les données de signature de certificat à partir de là et renvoyez-la "
-"à une autorité de certification pour la signature."
+"Copiez les données de signature de certificat à partir de là et envoyez-la à "
+"une autorité de certification pour la signature."
 
 #: src/usr/local/www/system_certmanager.php:1078
 msgid "*Final certificate data"
@@ -9122,7 +9118,7 @@ msgstr "Émetteur"
 #: src/usr/local/www/system_certmanager.php:1120
 #: src/usr/local/www/system_camanager.php:362
 msgid "Distinguished Name"
-msgstr "Nom différencié"
+msgstr "Nom distinctif"
 
 #: src/usr/local/www/system_certmanager.php:1121
 #: src/usr/local/www/system_camanager.php:363
@@ -9142,11 +9138,11 @@ msgstr "externe"
 
 #: src/usr/local/www/system_certmanager.php:1157
 msgid "private key only"
-msgstr "Clef privée uniquement"
+msgstr "clé privée uniquement"
 
 #: src/usr/local/www/system_certmanager.php:1163
 msgid "external - signature pending"
-msgstr "Signature externe en attente"
+msgstr "externe - signature en attente"
 
 #: src/usr/local/www/system_certmanager.php:1189
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:174
@@ -9187,7 +9183,7 @@ msgstr "Révoqué"
 #: src/usr/local/www/system.php:592
 #: src/usr/local/www/system_advanced_admin.php:308
 msgid "webConfigurator"
-msgstr "Configurateur Web"
+msgstr "webConfigurator"
 
 #: src/usr/local/www/system_certmanager.php:1235
 msgid "User Cert"
@@ -9229,7 +9225,7 @@ msgstr "Mise à jour de la CSR"
 
 #: src/usr/local/www/system_certmanager.php:1260
 msgid "Export Request"
-msgstr "Exporter la requête"
+msgstr "Exporter la demande"
 
 #: src/usr/local/www/system_certmanager.php:1264
 msgid "Delete Certificate"
@@ -9255,7 +9251,7 @@ msgstr "L'utilisateur %s s'est authentifié avec succès."
 
 #: src/usr/local/www/diag_authentication.php:50
 msgid "This user is a member of groups"
-msgstr "L'utilisateur appartient à des groupes"
+msgstr "Cet utilisateur appartient à des groupes"
 
 #: src/usr/local/www/diag_authentication.php:58
 msgid "Authentication failed."
@@ -9312,8 +9308,8 @@ msgid ""
 "The gateway is disabled but the route is not. The route must be disabled in "
 "order to choose a disabled gateway."
 msgstr ""
-"La passerelle est désactivée mais la route n'est pas. L'itinéraire doit être "
-"désactivé afin de choisir une passerelle désactivée."
+"La passerelle est désactivée mais la route ne l'est pas. L'itinéraire doit "
+"être désactivé afin de choisir une passerelle désactivée."
 
 #: src/usr/local/www/system_routes_edit.php:95
 #, php-format
@@ -9353,7 +9349,7 @@ msgstr "Routes statiques"
 
 #: src/usr/local/www/system_routes_edit.php:239
 msgid "Edit Route Entry"
-msgstr "Modifier l'entrée d'itinéraire"
+msgstr "Modifier l'entrée de routage"
 
 #: src/usr/local/www/system_routes_edit.php:243
 msgid "*Destination network"
@@ -9372,15 +9368,15 @@ msgstr "*Passerelle"
 msgid ""
 "Choose which gateway this route applies to or %1$sadd a new one first%2$s"
 msgstr ""
-"Choisissez la passerelle sur laquelle s'applique cette route ou %1$s ajoutez "
-"une nouvelle première %2$s"
+"Choisissez la passerelle sur laquelle s'applique cette route ou %1$sajoutez-"
+"en une nouvelle%2$s"
 
 #: src/usr/local/www/system_routes_edit.php:265
 msgid ""
 "Set this option to disable this static route without removing it from the "
 "list."
 msgstr ""
-"Définissez cette option pour désactiver cette route statique sans le "
+"Définissez cette option pour désactiver cette route statique sans la "
 "supprimer de la liste."
 
 #: src/usr/local/www/wizard.php:53 src/usr/local/www/wizard.php:65
@@ -9395,12 +9391,11 @@ msgstr "Chemin spécifié invalide"
 #: src/usr/local/www/wizard.php:71
 #, php-format
 msgid "Could not parse %1$s/wizards/%2$s file."
-msgstr "Impossible de parcourir %1$s/assistants, fichier /%2$s "
+msgstr "Impossible de charger le fichier %1$s/wizards/%2$s. "
 
 #: src/usr/local/www/wizard.php:119
 msgid "Configuration changed via the pfSense wizard subsystem."
-msgstr ""
-"La configuration a été modifiée via l'assistant du sous système pfSense"
+msgstr "Configuration modifiée via l'assistant pfSense"
 
 #: src/usr/local/www/wizard.php:181
 msgid "Wizard"
@@ -9414,7 +9409,7 @@ msgstr "Etape %s de %s"
 #: src/usr/local/www/system_usermanager_settings.php:44
 #, php-format
 msgid "%1$sError: Could not find settings for %2$s%3$s"
-msgstr "%1$s Erreur: Impossible de trouver les paramètres pour %2$s%3$s"
+msgstr "%1$sErreur: Impossible de trouver les paramètres pour %2$s%3$s"
 
 #: src/usr/local/www/system_usermanager_settings.php:51
 #, php-format
@@ -9450,7 +9445,7 @@ msgstr "échoué"
 
 #: src/usr/local/www/system_usermanager_settings.php:121
 msgid "Session timeout must be an integer value."
-msgstr "Le délai d'attente de session doit être une valeur entière."
+msgstr "Le délai d'expiration de session doit être une valeur entière."
 
 #: src/usr/local/www/system_usermanager_settings.php:128
 msgid ""
@@ -13465,7 +13460,7 @@ msgstr "Sauvegarde avec l'horodatage %1$s et la description \"%2$s\" supprimée.
 #: src/usr/local/www/diag_confbak.php:101
 #: src/usr/local/www/diag_confbak.php:114 src/usr/local/www/diag_backup.php:469
 #: src/usr/local/www/diag_backup.php:493 src/usr/local/www/head.inc:385
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 msgid "Backup & Restore"
 msgstr "Sauvegarde & Restauration"
 
@@ -23648,7 +23643,7 @@ msgstr ""
 "%1$sCisco: 0011.2233.4455 %1$sNon formatté: 001122334455"
 
 #: src/usr/local/www/services_captiveportal.php:1019
-#: src/etc/inc/authgui.inc:304
+#: src/etc/inc/authgui.inc:288
 msgid "Login"
 msgstr "Connexion"
 
@@ -23838,7 +23833,7 @@ msgstr ""
 "également que les Forwarders et Resolvers DNS sont actifs pour que les "
 "requêtes émises depuis des clients non authentifiés soient honorées."
 
-#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:548
+#: src/usr/local/www/head.inc:238 src/usr/local/www/head.inc:532
 #: src/etc/inc/captiveportal.inc:269
 msgid "Logout"
 msgstr "Déconnexion"
@@ -23927,39 +23922,39 @@ msgstr "Livre pfSense"
 msgid "FreeBSD Handbook"
 msgstr "Livre FreeBSD"
 
-#: src/usr/local/www/head.inc:539 src/usr/local/www/head.inc:711
+#: src/usr/local/www/head.inc:523 src/usr/local/www/head.inc:695
 msgid "Notices"
 msgstr "Avis"
 
-#: src/usr/local/www/head.inc:576
+#: src/usr/local/www/head.inc:560
 msgid "Save dashboard layout"
 msgstr "Sauvegarder la disposition du tableau de bord"
 
-#: src/usr/local/www/head.inc:584
+#: src/usr/local/www/head.inc:568
 msgid "Available widgets"
 msgstr "Widgets disponibles"
 
-#: src/usr/local/www/head.inc:592
+#: src/usr/local/www/head.inc:576
 msgid "Log filter"
 msgstr "Filtre du journal"
 
-#: src/usr/local/www/head.inc:603
+#: src/usr/local/www/head.inc:587
 msgid "Manage log"
 msgstr "Gestion du journal"
 
-#: src/usr/local/www/head.inc:621
+#: src/usr/local/www/head.inc:605
 msgid "Refresh Graph"
 msgstr "Rafraîchir le graphique"
 
-#: src/usr/local/www/head.inc:626
+#: src/usr/local/www/head.inc:610
 msgid "Export Graph"
 msgstr "Exporter le graphique"
 
-#: src/usr/local/www/head.inc:666
+#: src/usr/local/www/head.inc:650
 msgid "Help for items on this page"
 msgstr "Aide pour les éléments de cette page"
 
-#: src/usr/local/www/head.inc:677
+#: src/usr/local/www/head.inc:661
 #, php-format
 msgid ""
 "%1$s%3$s is booting, then packages will be reinstalled in the background."
@@ -23969,7 +23964,7 @@ msgstr ""
 "arrière-plan. %2$s%1$sNe pas faire de modification dans le GUI avant la "
 "complétion.%2$s"
 
-#: src/usr/local/www/head.inc:680
+#: src/usr/local/www/head.inc:664
 #, php-format
 msgid ""
 "%1$sPackages are currently being reinstalled in the background.%2$s%1$sDo "
@@ -23979,7 +23974,7 @@ msgstr ""
 "%2$s%1$s Ne pas effectuer de changement dans l'interface tant que le "
 "processus n'est pas terminé.%2$s"
 
-#: src/usr/local/www/head.inc:681
+#: src/usr/local/www/head.inc:665
 #, php-format
 msgid ""
 "%1$sIf the above message is still displayed after a couple of hours, use the "
@@ -23990,15 +23985,15 @@ msgstr ""
 "utiliser le bouton \"Corriger le blocage des paquets\" et la page %3$s et "
 "réinstaller les paquets manuellement.%2$s"
 
-#: src/usr/local/www/head.inc:691
+#: src/usr/local/www/head.inc:675
 msgid "This page is currently being managed by a remote machine."
 msgstr "Cette page est actuellement gérée par une machine distante."
 
-#: src/usr/local/www/head.inc:750
+#: src/usr/local/www/head.inc:734
 msgid "Close"
 msgstr "Fermer"
 
-#: src/usr/local/www/head.inc:752
+#: src/usr/local/www/head.inc:736
 msgid "Mark All as Read"
 msgstr "Marquer tous comme lu"
 
@@ -25984,8 +25979,8 @@ msgstr ""
 msgid "Only percentage bandwidth specification is allowed."
 msgstr "Seules les valeurs en pourcentages de bande passante sont autorisées."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:834
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:766
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:840
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:772
 msgid ""
 "Custom Bandwidths are greater than 30%. Please lower them for the wizard to "
 "continue."
@@ -25993,8 +25988,8 @@ msgstr ""
 "Les définitions de bande passante sont supérieures à 30%. Merci de réduire "
 "ces valeurs pour que l'assistant puisse continuer."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1232
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1150
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1244
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1162
 msgid ""
 "Custom Bandwidths are greater than 40%. Please lower them for the wizard to "
 "continue."
@@ -26002,41 +25997,41 @@ msgstr ""
 "Les définitions de bande passante sont supérieures à 40%. Merci de réduire "
 "ces valeurs pour que l'assistant puisse continuer."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1545
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1456
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1557
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1468
 msgid "Penalty Box"
 msgstr "Boite pénalités"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1552
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1573
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1587
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1604
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1623
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1647
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1674
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1727
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1463
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1483
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1497
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1514
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1533
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1557
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1636
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1564
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1585
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1599
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1616
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1635
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1659
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1686
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1739
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1495
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1509
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1526
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1545
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1569
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1648
 msgid "Traffic Shaper Wizard"
 msgstr "Assistant de Régulation de Trafic"
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1565
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1475
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1577
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1487
 msgid "Connections From Upstream SIP Server"
 msgstr "Connexions depuis un serveur SIP en amont."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1579
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1489
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1591
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1501
 msgid "Connections To Upstream SIP Server"
 msgstr "Connexions vers un serveur SIP en amont."
 
-#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1733
-#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1642
+#: src/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc:1745
+#: src/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc:1654
 msgid "Shaper configuration saved via pfSense traffic shaper wizard."
 msgstr ""
 "La configuration de la régulation de flux a été sauvegardée via l'assistant "
@@ -27505,9 +27500,9 @@ msgid ""
 "%1$sIf no IPv6 address is given, one will be dynamically allocated from the "
 "pool."
 msgstr ""
-"Si une adresse Ipv6 est indiquée, l'adresse doit petre en dehors de la plage."
-" %1$s si aucune IPv6 n'est indiquée, une adresse sera allouée dynamiquement "
-"dans la plage spécifiée."
+"Si une adresse Ipv6 est indiquée, l'adresse doit être en dehors de la plage. "
+"%1$s si aucune adresse IPv6 n'est indiquée, une adresse sera allouée "
+"dynamiquement dans la plage spécifiée."
 
 #: src/usr/local/www/services_dhcpv6_edit.php:253
 msgid "Enter the root-path string. This overrides setting on main page."
@@ -27526,6 +27521,14 @@ msgid ""
 "\"center\"><strong>Absolutely No Commercial Distribution Is Allowed</"
 "strong></font></p>"
 msgstr ""
+"<p><font size=\"4\"><strong>pfSense</strong>&reg;</font><font size=\"3\"> "
+"Copyright 2004-2017 Rubicon Communications, LLC (Netgate)</p><p>pfSense est "
+"une marque déposée de Electric Sheep Fencing, LLC. Toute utilisation non "
+"autorisée de cette marque est interdite par la loi fédérale et par le droit "
+"international. Reportez-vous à nos directives sur l'utilisation des marques "
+"pour savoir comment utiliser correctement les marques. Tous droits réservés."
+"</p><p align=\"center\"><strong>Absolument aucune distribution commerciale "
+"n'est autorisée</strong></font></p>"
 
 #: src/usr/local/www/services_wol_edit.php:86
 msgid "This interface and MAC address wake-on-LAN entry already exists."
@@ -33953,31 +33956,31 @@ msgstr "Erreur: %1$s Description: %2$s"
 msgid "Error"
 msgstr "Erreur"
 
-#: src/etc/inc/authgui.inc:196
+#: src/etc/inc/authgui.inc:180
 msgid "unknown reason"
 msgstr "raison inconnue "
 
-#: src/etc/inc/authgui.inc:197
+#: src/etc/inc/authgui.inc:181
 #, php-format
 msgid "Invalid login (%s)."
 msgstr "Identifiant invalide (%s)."
 
-#: src/etc/inc/authgui.inc:202
+#: src/etc/inc/authgui.inc:186
 #, php-format
 msgid "This device is currently being maintained by: %s."
 msgstr "Cet appareil est actuellement géré par: %s."
 
-#: src/etc/inc/authgui.inc:285
+#: src/etc/inc/authgui.inc:269
 #, php-format
 msgid "%1$s.%2$s"
 msgstr "%1$s.%2$s"
 
-#: src/etc/inc/authgui.inc:287
+#: src/etc/inc/authgui.inc:271
 #, php-format
 msgid "Login to %1$s"
 msgstr "Se connecter à %1$s"
 
-#: src/etc/inc/authgui.inc:362
+#: src/etc/inc/authgui.inc:330
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means.\n"
@@ -33990,7 +33993,7 @@ msgstr ""
 "\t\t\t\t\t\t\t\tSi cette transmission n'est pas souhaitée, vérifier qu'une "
 "attaque de type l'homme du milieu n'est pas en cours."
 
-#: src/etc/inc/authgui.inc:413
+#: src/etc/inc/authgui.inc:381
 msgid "The browser must support cookies to login."
 msgstr "Le navigateur doit prendre en charge les cookies pour se connecter."
 
@@ -37799,6 +37802,7 @@ msgstr ""
 #, php-format
 msgid "dpinger: timeout while retrieving status for gateway %s"
 msgstr ""
+"dpinger: délai expiré durant la récupération de l'état de la passerelle %s"
 
 #: src/etc/inc/gwlb.inc:1018
 #, php-format

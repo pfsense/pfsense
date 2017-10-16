@@ -735,7 +735,10 @@ customize_stagearea_for_image() {
 	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 		cp -f \
-			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.svg \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.css \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
 

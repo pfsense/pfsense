@@ -1562,7 +1562,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-		    !stristr($ifname, "_vlan") && !stristr($ifname, "_wlan")) {
+		    interface_is_vlan($ifname) == NULL && !stristr($ifname, "_wlan")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -2153,7 +2153,8 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			if (interface_is_vlan($ifcfg['if']) != NULL ||
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

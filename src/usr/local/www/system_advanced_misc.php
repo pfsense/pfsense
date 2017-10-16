@@ -74,7 +74,8 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 
 $crypto_modules = array(
 	'aesni' => gettext("AES-NI CPU-based Acceleration"),
-	'cryptodev' => gettext("BSD Crypto Device (cryptodev)")
+	'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
+	'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
 );
 
 $thermal_hardware_modules = array(

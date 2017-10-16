@@ -929,9 +929,50 @@ EOPP;
 				if (!empty($poolconf['nextserver']) && ($poolconf['nextserver'] != $dhcpifconf['nextserver'])) {
 					$dhcpdconf .= "		next-server {$poolconf['nextserver']};\n";
 				}
-				if (!empty($poolconf['filename']) && ($poolconf['filename'] != $dhcpifconf['filename'])) {
-					$dhcpdconf .= "		filename \"{$poolconf['filename']}\";\n";
+
+				if (!empty($poolconf['filename']) &&
+				    (!isset($dhcpifconf['filename']) ||
+				    ($poolconf['filename'] != $dhcpifconf['filename']))) {
+					$filename = $poolconf['filename'];
 				}
+				if (!empty($poolconf['filename32']) &&
+				    (!isset($dhcpifconf['filename32']) ||
+				    ($poolconf['filename32'] != $dhcpifconf['filename32']))) {
+					$filename32 = $poolconf['filename32'];
+				}
+				if (!empty($poolconf['filename64']) &&
+				    (!isset($dhcpifconf['filename64']) ||
+				    ($poolconf['filename64'] != $dhcpifconf['filename64']))) {
+					$filename64 = $poolconf['filename64'];
+				}
+
+				if (!empty($filename32) || !empty($filename64)) {
+					if (empty($filename) && !empty($dhcpifconf['filename'])) {
+						$filename = $dhcpifconf['filename'];
+					}
+					if (empty($filename32) && !empty($dhcpifconf['filename32'])) {
+						$filename32 = $dhcpifconf['filename32'];
+					}
+					if (empty($filename64) && !empty($dhcpifconf['filename64'])) {
+						$filename64 = $dhcpifconf['filename64'];
+					}
+				}
+
+				if (!empty($filename) && !empty($filename32) && !empty($filename64)) {
+					$dhcpdconf .= "		if option arch = 00:06 {\n";
+					$dhcpdconf .= "			filename \"{$filename32}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:07 {\n";
+					$dhcpdconf .= "			filename \"{$filename64}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:09 {\n";
+					$dhcpdconf .= "			filename \"{$filename64}\";\n";
+					$dhcpdconf .= "		} else {\n";
+					$dhcpdconf .= "			filename \"{$filename}\";\n";
+					$dhcpdconf .= "		}\n\n";
+				} elseif (!empty($filename)) {
+					$dhcpdconf .= "		filename \"{$filename}\";\n";
+				}
+				unset($filename, $filename32, $filename64);
+
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
 					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
 				}
@@ -2310,6 +2351,15 @@ function services_unbound_configure($restart_dhcp = true) {
 	return $return;
 }
 
+function platform_snmpd_hostres_supported() {
+	// hostres causes high cpu usage on at least these hypervisors when a cd drive is pressent
+	// problem is confirmed on at least these platforms: vmware/hyperv/proxmox/virtualbox/xen
+	if (file_exists('/dev/cd0') && isvm()) {
+		return false;
+	}
+	return true;
+}
+
 function services_snmpd_configure() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -2479,7 +2529,7 @@ EOD;
 			}
 
 			if (isset($config['snmpd']['modules']['hostres'])
-			    && !(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
+			    && platform_snmpd_hostres_supported()) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 

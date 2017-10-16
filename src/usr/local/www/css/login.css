@@ -1,3 +1,5 @@
+@import url("/css/logo.css");
+
 body, html {
     height: 100%;
     padding: 0;
@@ -172,6 +174,11 @@ form.login a:hover
 }
 
 .logoCol {
+    height: 100%;
+}
+
+#logodiv svg#logo {
+    width: 240px;
     height: 100%;
 }
 

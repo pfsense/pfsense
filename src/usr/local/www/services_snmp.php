@@ -32,8 +32,7 @@
 
 require_once("guiconfig.inc");
 require_once("functions.inc");
-
-$specplatform = system_identify_specific_platform();
+require_once("services.inc");
 
 if (!is_array($config['snmpd'])) {
 	$config['snmpd'] = array();
@@ -318,7 +317,7 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['pf']
 ));
 
-if (!(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
+if (platform_snmpd_hostres_supported()) {
 	$group->add(new Form_MultiCheckbox(
 		'hostres',
 		null,
@@ -342,11 +341,11 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $section->add($group);
-if ((($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
+if (!platform_snmpd_hostres_supported()) {
 	$section->addInput(new Form_StaticText(
 		NULL,
 		NULL
-	))->setHelp(sprint_info_box('The hostres module is not compatible with VMware virtual ' .
+	))->setHelp(sprint_info_box('The hostres module is not compatible with VMware/Proxmox/Virtualbox virtual ' .
 		    'machines configured with a virtual CD/DVD Drive.', 'warning', false));
 }
 

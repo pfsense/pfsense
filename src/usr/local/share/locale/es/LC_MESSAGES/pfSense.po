@@ -991,7 +991,7 @@ msgstr "No información de estado IPsec disponible."
 #: src/usr/local/www/interfaces_vlan.php:76
 #: src/usr/local/www/interfaces_lagg.php:76
 msgid "Interfaces"
-msgstr "Interfases"
+msgstr "Interfaces"
 
 #: src/usr/local/www/interfaces_assign.php:34
 #: src/usr/local/www/interfaces_assign.php:494

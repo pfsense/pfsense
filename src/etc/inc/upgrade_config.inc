@@ -5420,6 +5420,28 @@ function upgrade_169_to_170() {
 	}
 }
 
+/* Upgrade the VLAN interface names to use $if.$tag instead of $if_vlan$tag.
+ * This helps keep the interface names smaller than the limit.
+ */
+function upgrade_170_to_171() {
+	global $config;
+
+	if (!is_array($config['vlans']['vlan']) || count($config['vlans']['vlan']) == 0) {
+		return;
+	}
+	$iflist = get_configured_interface_list(true);
+	foreach ($config['vlans']['vlan'] as $id => $vlan) {
+		/* Make sure to update the interfaces section with the new name. */
+		$vlan_name = "{$vlan['if']}_vlan{$vlan['tag']}";
+		foreach ($iflist as $ifname) {
+			if ($config['interfaces'][$ifname]['if'] == $vlan_name) {
+				$config['interfaces'][$ifname]['if'] = vlan_interface($vlan);
+			}
+		}
+		$config['vlans']['vlan'][$id]['vlanif'] = vlan_interface($vlan);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

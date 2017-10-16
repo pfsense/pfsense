@@ -200,6 +200,39 @@ function interfaces_loopback_configure() {
 	return 0;
 }
 
+function interface_is_vlan($if = NULL) {
+	global $config;
+
+	if ($if == NULL || empty($if) || !is_array($config['vlans']['vlan'])) {
+		return (NULL);
+	}
+
+	/* Check basic format. */
+	list($vlanif, $vlantag) = explode(".", $if);
+	if (empty($vlanif) || empty($vlantag) ||
+	    intval($vlantag) < 0 || intval($vlantag) > 4094) {
+		return (NULL);
+	}
+
+	/* Find the VLAN interface. */
+	foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
+		if ($if == $vlan['vlanif']) {
+			return ($vlan);
+		}
+	}
+
+	return (NULL);
+}
+
+function vlan_interface($vlan = NULL) {
+
+	if ($vlan == NULL || !is_array($vlan) ||
+	    !isset($vlan['if']) || !isset($vlan['tag'])) {
+		return (NULL);
+	}
+	return ("{$vlan['if']}.{$vlan['tag']}");
+}
+
 function interfaces_vlan_configure($realif = "") {
 	global $config, $g;
 	if (platform_booting()) {
@@ -208,7 +241,7 @@ function interfaces_vlan_configure($realif = "") {
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (empty($vlan['vlanif'])) {
-				$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+				$vlan['vlanif'] = vlan_interface($vlan);
 			}
 			if (!empty($realif) && $realif != $vlan['vlanif']) {
 				continue;
@@ -228,15 +261,19 @@ function interface_vlan_configure(&$vlan) {
 
 	if (!is_array($vlan)) {
 		log_error(gettext("VLAN: called with wrong options. Problems with config!"));
-		return;
+		return(NULL);
 	}
 	$if = $vlan['if'];
 	if (empty($if)) {
 		log_error(gettext("interface_vlan_configure called with if undefined."));
-		return;
+		return(NULL);
 	}
 
-	$vlanif = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$vlanif = empty($vlan['vlanif']) ? vlan_interface($vlan) : $vlan['vlanif'];
+	if ($vlanif == NULL) {
+		log_error(gettext("vlan_interface called with if undefined var."));
+		return(NULL);
+	}
 	$tag = $vlan['tag'];
 	$pcp  = empty($vlan['pcp']) ? 0 : $vlan['pcp'];	/* Apply "Best Effort" if not set */
 
@@ -295,6 +332,10 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 	}
 
 	$vlanif = interface_vlan_configure($vlan);
+	if ($vlanif == NULL) {
+		log_error(gettext("interface_qinq_configure cannot create VLAN interface"));
+		return;
+	}
 
 	if ($fd == NULL) {
 		$exec = true;
@@ -3183,8 +3224,8 @@ function run_dhcp6client_process($interface, $interface_name, $wancfg) {
 function interface_virtual_create($interface) {
 	global $config;
 
-	if (strstr($interface, "_vlan")) {
-		interfaces_vlan_configure($vlan);
+	if (interface_is_vlan($interface) != NULL) {
+		interfaces_vlan_configure($interface);
 	} else if (substr($interface, 0, 3) == "gre") {
 		interfaces_gre_configure(0, $interface);
 	} else if (substr($interface, 0, 3) == "gif") {
@@ -3433,7 +3474,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($wantedmtu == 0) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuif);
 	}
-	if ($wantedmtu == 0 && stristr($mtuif, "_vlan") && interface_isppp_type($interface)) {
+	if ($wantedmtu == 0 && interface_is_vlan($mtuif) != NULL && interface_isppp_type($interface)) {
 		$wantedmtu = interface_mtu_wanted_for_pppoe($mtuhwif);
 	}
 
@@ -3442,7 +3483,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$wantedmtu = 1500; /* Default */
 	}
 
-	if (stristr($mtuif, "_vlan")) {
+	if (interface_is_vlan($mtuif) != NULL) {
 		$assignedparent = convert_real_interface_to_friendly_interface_name($mtuhwif);
 		if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
 			$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
@@ -4978,15 +5019,9 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 			case "static":
 			default:
 				// Handle _vlans
-				if (strpos($realif, '_vlan') !== FALSE) {
-					if (is_array($config['vlans']['vlan'])) {
-						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
-							if ($ifcfg['if'] == $vlan['vlanif']) {
-								$parents[0] = $vlan['if'];
-								break;
-							}
-						}
-					}
+				$vlan = interface_is_vlan($ifcfg['if']);
+				if ($vlan != NULL) {
+					$parents[0] = $vlan['if'];
 				}
 				break;
 		}
@@ -4994,15 +5029,9 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 
 	if (empty($parents)) {
 		// Handle _vlans not assigned to an interface
-		if (strpos($realif, '_vlan') !== FALSE) {
-			if (is_array($config['vlans']['vlan'])) {
-				foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
-					if ($realif == $vlan['vlanif']) {
-						$parents[0] = $vlan['if'];
-						break;
-					}
-				}
-			}
+		$vlan = interface_is_vlan($realif);
+		if ($vlan != NULL) {
+			$parents[0] = $vlan['if'];
 		}
 	}
 
@@ -5114,7 +5143,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 				break;
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				$interface = substr($interface, 5);
-			} else if (strstr($interface, "_vlan") ||
+			} else if (interface_is_vlan($interface) != NULL ||
 			    does_interface_exist($interface, $flush)) {
 				/*
 				 * If a real interface was already passed simply
@@ -6022,7 +6051,7 @@ function is_altq_capable($int) {
 		return true;
 	} else if (stristr($int, "l2tp")) { /* VLANs are named $parent_$vlan now */
 		return true;
-	} else if (stristr($int, "_vlan")) { /* VLANs are named $parent_$vlan now */
+	} else if (interface_is_vlan($int) != NULL) { /* VLANs are named $parent.$vlan now */
 		return true;
 	} else if (stristr($int, "_wlan")) { /* WLANs are named $parent_$wlan now */
 		return true;

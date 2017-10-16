@@ -229,7 +229,12 @@ if ($_REQUEST['updateme']) {
 
 <script type="text/javascript">
 //<![CDATA[
-var ntp_d = new Date('<?=date_format(date_create(), 'c')?>');
+// Have to convet the date to UTC time to match the PHP clock not the local client clock.
+function convertDateToUTC(date) {
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+}
+
+var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'));
 var tz = '<?=date('T');?>';
 
 setInterval(function() {

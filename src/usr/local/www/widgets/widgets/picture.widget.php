@@ -94,12 +94,14 @@ if ($_POST) {
 }
 
 ?>
+<?php if($user_settings['widgets']['picturewidget_filename'] != null) {?>
 <a href="/widgets/widgets/picture.widget.php?getpic=true" target="_blank">
 	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
 </a>
-
+<?php } ?>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer"
+	<?php echo "class= " . "'" . "panel-footer". ($user_settings['widgets']['picturewidget_filename'] != null ? " collapse": ""). "'";  ?>>
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
 	<label for="pictfile"><?=gettext('New picture:')?> </label>

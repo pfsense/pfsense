@@ -65,12 +65,15 @@ if ($_POST['widgetkey']) {
 }
 
 ?>
+<?php
+if($user_settings['widgets'][$widgetkey] != null){?>
 <a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" target="_blank">
 	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" alt="picture" />
 </a>
-
+<?php } ?>
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
+</div><div id="<?=$widget_panel_footer_id?>"
+	<?php echo "class= " . "'" . "panel-footer". ($user_settings['widgets'][$widgetkey] != null ? " collapse": ""). "'";  ?>>
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-horizontal">
 	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">

@@ -32,7 +32,6 @@
 
 require_once("guiconfig.inc");
 require_once("functions.inc");
-require_once("services.inc");
 
 if (!is_array($config['snmpd'])) {
 	$config['snmpd'] = array();
@@ -317,14 +316,12 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['pf']
 ));
 
-if (platform_snmpd_hostres_supported()) {
-	$group->add(new Form_MultiCheckbox(
-		'hostres',
-		null,
-		'Host Resources',
-		$pconfig['hostres']
-	));
-}
+$group->add(new Form_MultiCheckbox(
+	'hostres',
+	null,
+	'Host Resources',
+	$pconfig['hostres']
+));
 
 $group->add(new Form_MultiCheckbox(
 	'ucd',
@@ -341,14 +338,6 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $section->add($group);
-if (!platform_snmpd_hostres_supported()) {
-	$section->addInput(new Form_StaticText(
-		NULL,
-		NULL
-	))->setHelp(sprint_info_box('The hostres module is not compatible with VMware/Proxmox/Virtualbox virtual ' .
-		    'machines configured with a virtual CD/DVD Drive.', 'warning', false));
-}
-
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');

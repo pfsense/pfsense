@@ -28,7 +28,7 @@
 
 $nocsrf = true;
 
-//require_once("auth_check.inc"); // THis will cause the session timer to be checked and potentially log out the user
+require_once("auth_check.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 

@@ -1879,13 +1879,16 @@ function load_crypto() {
 	global $config, $g;
 	$crypto_modules = array('aesni', 'cryptodev');
 
-	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
-		return false;
-	}
+	$enabled_modules = explode('_', $config['system']['crypto_hardware']);
 
-	if (!empty($config['system']['crypto_hardware']) && !is_module_loaded($config['system']['crypto_hardware'])) {
-		log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $config['system']['crypto_hardware']));
-		mwexec("/sbin/kldload {$config['system']['crypto_hardware']}");
+	foreach ($enabled_modules as $enmod) {
+		if (empty($enmod) || !in_array($enmod, $crypto_modules)) {
+			continue;
+		}
+		if (!is_module_loaded($enmod)) {
+			log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $enmod));
+			mwexec("/sbin/kldload " . escapeshellarg($enmod));
+		}
 	}
 }
 

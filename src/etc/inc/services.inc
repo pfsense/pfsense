@@ -2351,6 +2351,15 @@ function services_unbound_configure($restart_dhcp = true) {
 	return $return;
 }
 
+function platform_snmpd_hostres_supported() {
+	// hostres causes high cpu usage on at least these hypervisors when a cd drive is pressent
+	// problem is confirmed on at least these platforms: vmware/hyperv/proxmox/virtualbox/xen
+	if (file_exists('/dev/cd0') && isvm()) {
+		return false;
+	}
+	return true;
+}
+
 function services_snmpd_configure() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -2520,7 +2529,7 @@ EOD;
 			}
 
 			if (isset($config['snmpd']['modules']['hostres'])
-			    && !(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
+			    && platform_snmpd_hostres_supported()) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 

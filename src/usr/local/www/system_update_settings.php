@@ -232,7 +232,7 @@ if (file_exists("/usr/local/bin/git")) {
 		null,
 		'Show Files',
 		isset($gitcfg['show_files'])
-		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option..', '<br />');
+		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option.', '<br />');
 
 	$group->add(new Form_Checkbox(
 		'show_command',

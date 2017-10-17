@@ -161,6 +161,7 @@ if ($act == "edit") {
 		$pconfig['remote_networkv6'] = $a_client[$id]['remote_networkv6'];
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
+		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
 		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
 		$pconfig['sndrcvbuf'] = $a_client[$id]['sndrcvbuf'];
@@ -435,6 +436,7 @@ if ($_POST['save']) {
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];
 		$client['compression'] = $pconfig['compression'];
+		$client['auth-retry-none'] = $pconfig['auth-retry-none'];
 		$client['passtos'] = $pconfig['passtos'];
 		$client['udp_fast_io'] = $pconfig['udp_fast_io'];
 		$client['sndrcvbuf'] = $pconfig['sndrcvbuf'];
@@ -623,6 +625,13 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['auth_pass']
 	))->setHelp('Leave empty when no password is needed');
+
+	$section->addInput(new Form_Checkbox(
+		'auth-retry-none',
+		'Authentication Retry',
+		'Do not retry connection when authentication fails',
+		$pconfig['auth-retry-none']
+	))->setHelp('When enabled, the OpenVPN process will exit if it receives an authentication failure message. The default behavior is to retry.');
 
 	$form->add($section);
 

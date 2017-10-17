@@ -28,7 +28,7 @@
 
 $nocsrf = true;
 
-require_once("auth_check.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
@@ -253,9 +253,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<p  style="padding-left:10px;"><?=gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')?></p>
 	</div>
 <?php endif;
-// This function was in index.php It seems that the ipsec widget is the only place it is used
-// so now it lives here. It wouldn't hurt to update this function and the tab display, but it
-// looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match
+
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -310,11 +308,15 @@ events.push(function(){
 
 	// Callback function called by refresh system when data is retrieved
 	function ipsec_callback(s) {
-		var obj = JSON.parse(s);
+		try{
+			var obj = JSON.parse(s);
 
-		$('tbody', '#<?=$widgetkey_nodash?>-Overview').html(obj.overview);
-		$('tbody', '#<?=$widgetkey_nodash?>-tunnel').html(obj.tunnel);
-		$('tbody', '#<?=$widgetkey_nodash?>-mobile').html(obj.mobile);
+			$('tbody', '#<?=$widgetkey_nodash?>-Overview').html(obj.overview);
+			$('tbody', '#<?=$widgetkey_nodash?>-tunnel').html(obj.tunnel);
+			$('tbody', '#<?=$widgetkey_nodash?>-mobile').html(obj.mobile);
+		}catch(e){
+
+		}
 	}
 
 	// POST data to send via AJAX

@@ -28,14 +28,14 @@
 
 $nocsrf = true;
 
-// require_once("auth_check.inc");  // THis will cause the session timer to be checked and potentially log out the user
+require_once("auth_check.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
-	if (isset($config['ipsec']['phase1'])) {
+	if (isset($config['ipsec']['phase1']) && is_array($config['ipsec']['phase1'])) {
 		$spd = ipsec_dump_spd();
 		$sad = ipsec_dump_sad();
 		$mobile = ipsec_dump_mobile();
@@ -46,7 +46,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		$ipsec_detail_array = array();
 		$ikenum = array();
-		if (isset($config['ipsec']['phase2'])) {
+		if (isset($config['ipsec']['phase2']) && is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
 					continue;
@@ -78,30 +78,32 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				}
 
 				$found = false;
-				foreach ($ipsec_status as $id => $ikesa) {
-					if (isset($ikesa['child-sas'])) {
-						foreach ($ikesa['child-sas'] as $childid => $childsa) {
-							list($childcid, $childsid) = explode('-', $childid, 2);
-							if ($ikeid == $childcid) {
-								$found = true;
-								break;
+				if(is_array($ipsec_status) && !empty($ipsec_status)){
+					foreach ($ipsec_status as $id => $ikesa) {
+						if (isset($ikesa['child-sas'])) {
+							foreach ($ikesa['child-sas'] as $childid => $childsa) {
+								list($childcid, $childsid) = explode('-', $childid, 2);
+								if ($ikeid == $childcid) {
+									$found = true;
+									break;
+								}
 							}
+						} else if ($ikeid == $id) {
+							$found = true;
 						}
-					} else if ($ikeid == $id) {
-						$found = true;
-					}
 
-					if ($found === true) {
-						if ($ikesa['state'] == 'ESTABLISHED') {
-							/* tunnel is up */
-							$iconfn = "true";
-							$activecounter++;
-						} else {
-							/* tunnel is down */
-							$iconfn = "false";
-							$inactivecounter++;
+						if ($found === true) {
+							if ($ikesa['state'] == 'ESTABLISHED') {
+								/* tunnel is up */
+								$iconfn = "true";
+								$activecounter++;
+							} else {
+								/* tunnel is down */
+								$iconfn = "false";
+								$inactivecounter++;
+							}
+							break;
 						}
-						break;
 					}
 				}
 
@@ -133,19 +135,21 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$jsondata .= "\",\n";
 
 	$jsondata .= "\"tunnel\":\"";
-	foreach ($ipsec_detail_array as $ipsec) {
-		$jsondata .= "<tr>";
-		$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
-		$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
-		$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
+	if(is_array($ipsec_detail_array) && !empty($ipsec_detail_array)){
+		foreach ($ipsec_detail_array as $ipsec) {
+			$jsondata .= "<tr>";
+			$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
+			$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
+			$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
 
-		if ($ipsec['status'] == "true") {
-			$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
-		} else {
-			$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
+			if ($ipsec['status'] == "true") {
+				$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
+			} else {
+				$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
+			}
+
+			$jsondata .= "</tr>";
 		}
-
-		$jsondata .= "</tr>";
 	}
 
 	$jsondata .= "\",\n";
@@ -158,13 +162,14 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			if (!is_array($pool['lease'])) {
 				continue;
 			}
-
-			foreach ($pool['lease'] as $muser) {
-				$jsondata .= "<tr>";
-				$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
-				$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
-				$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
-				$jsondata .= "</tr>";
+			if(is_array($pool['lease']) && !empty($pool['lease'])){
+				foreach ($pool['lease'] as $muser) {
+					$jsondata .= "<tr>";
+					$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
+					$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
+					$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
+					$jsondata .= "</tr>";
+				}
 			}
 		}
 	}
@@ -248,7 +253,6 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<p  style="padding-left:10px;"><?=gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')?></p>
 	</div>
 <?php endif;
-
 // This function was in index.php It seems that the ipsec widget is the only place it is used
 // so now it lives here. It wouldn't hurt to update this function and the tab display, but it
 // looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match

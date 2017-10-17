@@ -127,10 +127,9 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		return false;
@@ -206,8 +205,8 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 
 
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		return -1;

@@ -5442,7 +5442,6 @@ function upgrade_170_to_171() {
 	}
 }
 
-=======
 /* Upgrade the QinQ interface names to use $if.$tag instead of $if_$tag.
  * This helps keep the interface names smaller than the limit (but they are still
  * big with the QinQ subtag).

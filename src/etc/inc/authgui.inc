@@ -116,7 +116,7 @@ function display_error_form($http_code, $desc) {
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-	    <link rel="stylesheet" href="/css/login.css" type="text/css">
+	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
 		<title><?=gettext("Error"); ?></title>
 	</head>
 
@@ -284,7 +284,7 @@ function display_login_form() {
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-	    <link rel="stylesheet" href="/css/login.css" type="text/css">
+	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
 		<title><?=gettext("Login"); ?></title>
 		<script type="text/javascript">
 			//<![CDATA{

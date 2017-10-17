@@ -13,29 +13,61 @@
  * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgment:
+ *    "This product includes software developed by the pfSense Project
+ *    for use in the pfSense® software distribution. (http://www.pfsense.org/).
+ *
+ * 4. The names "pfSense" and "pfSense Project" must not be used to
+ *    endorse or promote products derived from this software without
+ *    prior written permission. For written permission, please contact
+ *    coreteam@pfsense.org.
+ *
+ * 5. Products derived from this software may not be called "pfSense"
+ *    nor may "pfSense" appear in their names without prior written
+ *    permission of the Electric Sheep Fencing, LLC.
+ *
+ * 6. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *
+ * "This product includes software developed by the pfSense Project
+ * for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 $nocsrf = true;
 
-require_once("guiconfig.inc");
+require_once("auth_check.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
 
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
-	if (isset($config['ipsec']['phase1']) && is_array($config['ipsec']['phase1'])) {
+	if (isset($config['ipsec']['phase1'])) {
 		$spd = ipsec_dump_spd();
 		$sad = ipsec_dump_sad();
 		$mobile = ipsec_dump_mobile();
@@ -46,7 +78,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		$ipsec_detail_array = array();
 		$ikenum = array();
-		if (isset($config['ipsec']['phase2']) && is_array($config['ipsec']['phase2'])) {
+		if (isset($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
 					continue;
@@ -78,32 +110,30 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				}
 
 				$found = false;
-				if(is_array($ipsec_status) && !empty($ipsec_status)){
-					foreach ($ipsec_status as $id => $ikesa) {
-						if (isset($ikesa['child-sas'])) {
-							foreach ($ikesa['child-sas'] as $childid => $childsa) {
-								list($childcid, $childsid) = explode('-', $childid, 2);
-								if ($ikeid == $childcid) {
-									$found = true;
-									break;
-								}
+				foreach ($ipsec_status as $id => $ikesa) {
+					if (isset($ikesa['child-sas'])) {
+						foreach ($ikesa['child-sas'] as $childid => $childsa) {
+							list($childcid, $childsid) = explode('-', $childid, 2);
+							if ($ikeid == $childcid) {
+								$found = true;
+								break;
 							}
-						} else if ($ikeid == $id) {
-							$found = true;
 						}
+					} else if ($ikeid == $id) {
+						$found = true;
+					}
 
-						if ($found === true) {
-							if ($ikesa['state'] == 'ESTABLISHED') {
-								/* tunnel is up */
-								$iconfn = "true";
-								$activecounter++;
-							} else {
-								/* tunnel is down */
-								$iconfn = "false";
-								$inactivecounter++;
-							}
-							break;
+					if ($found === true) {
+						if ($ikesa['state'] == 'ESTABLISHED') {
+							/* tunnel is up */
+							$iconfn = "true";
+							$activecounter++;
+						} else {
+							/* tunnel is down */
+							$iconfn = "false";
+							$inactivecounter++;
 						}
+						break;
 					}
 				}
 
@@ -123,7 +153,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		unset($ikenum);
 	}
 
-	// Generate JSON formatted data for the widget to update from
+	// Only generate the data for the tab that is currently being viewed
 	$jsondata = "{";
 
 	$jsondata .= "\"overview\":\"";
@@ -135,41 +165,37 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$jsondata .= "\",\n";
 
 	$jsondata .= "\"tunnel\":\"";
-	if(is_array($ipsec_detail_array) && !empty($ipsec_detail_array)){
-		foreach ($ipsec_detail_array as $ipsec) {
-			$jsondata .= "<tr>";
-			$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
-			$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
-			$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
+	foreach ($ipsec_detail_array as $ipsec) {
+		$jsondata .= "<tr>";
+		$jsondata .= "<td>" . htmlspecialchars($ipsec['src']) . "</td>";
+		$jsondata .= "<td>" . $ipsec['remote-subnet'] . "<br />(" . htmlspecialchars($ipsec['dest']) . ")</td>";
+		$jsondata .= "<td>" . htmlspecialchars($ipsec['descr']) . "</td>";
 
-			if ($ipsec['status'] == "true") {
-				$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
-			} else {
-				$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
-			}
-
-			$jsondata .= "</tr>";
+		if ($ipsec['status'] == "true") {
+			$jsondata .= '<td><i class=\"fa fa-arrow-up text-success\"></i></td>';
+		} else {
+			$jsondata .= '<td><i class=\"fa fa-arrow-down text-danger\"></i></td>';
 		}
+
+		$jsondata .= "</tr>";
 	}
 
 	$jsondata .= "\",\n";
 
 
-	$jsondata .= "\"mobile\":\"";
-
+$jsondata .= "\"mobile\":\"";
 	if (is_array($mobile['pool'])) {
 		foreach ($mobile['pool'] as $pool) {
 			if (!is_array($pool['lease'])) {
 				continue;
 			}
-			if(is_array($pool['lease']) && !empty($pool['lease'])){
-				foreach ($pool['lease'] as $muser) {
-					$jsondata .= "<tr>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
-					$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
-					$jsondata .= "</tr>";
-				}
+
+			foreach ($pool['lease'] as $muser) {
+				$jsondata .= "<tr>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['id']) . "</td>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['host']) . "</td>";
+				$jsondata .= "<td>" . htmlspecialchars($muser['status']) . "</td>";
+				$jsondata .= "</tr>";
 			}
 		}
 	}
@@ -253,6 +279,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 	</div>
 <?php endif;
 
+// This function was in index.php It seems that the ipsec widget is the only place it is used
+// so now it lives here. It wouldn't hurt to update this function and the tab display, but it
+// looks OK for now. The display_widget_tabs() function in guiconfig.inc would need to be updated to match
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -308,15 +337,11 @@ events.push(function(){
 
 	// Callback function called by refresh system when data is retrieved
 	function ipsec_callback(s) {
-		try{
-			var obj = JSON.parse(s);
+		var obj = JSON.parse(s);
 
-			$('tbody', '#<?=$widgetkey_nodash?>-Overview').html(obj.overview);
-			$('tbody', '#<?=$widgetkey_nodash?>-tunnel').html(obj.tunnel);
-			$('tbody', '#<?=$widgetkey_nodash?>-mobile').html(obj.mobile);
-		}catch(e){
-
-		}
+		$('tbody', '#ipsec-Overviews').html(obj.overview);
+		$('tbody', '#ipsec-Tunnels').html(obj.tunnel);
+		$('tbody', '#body-Mobiles').html(obj.mobile);
 	}
 
 	// POST data to send via AJAX

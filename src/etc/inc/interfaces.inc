@@ -2672,8 +2672,16 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	$wlan_setup_log = fopen("{$g['tmp_path']}/{$if}_setup.log", "w");
 
 	/* set values for /path/program */
-	$hostapd = "/usr/sbin/hostapd";
-	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
+	if (file_exists("/usr/local/sbin/hostapd")) {
+		$hostapd = "/usr/local/sbin/hostapd";
+	} else {
+		$hostapd = "/usr/sbin/hostapd";
+	}
+	if (file_exists("/usr/local/sbin/wpa_supplicant")) {
+		$wpa_supplicant = "/usr/local/sbin/wpa_supplicant";
+	} else {
+		$wpa_supplicant = "/usr/sbin/wpa_supplicant";
+	}
 	$ifconfig = "/sbin/ifconfig";
 	$sysctl = "/sbin/sysctl";
 	$killall = "/usr/bin/killall";

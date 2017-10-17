@@ -3400,7 +3400,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -accept_rtadv", true);
 	}
 	/* wireless configuration? */
-	if (is_array($wancfg['wireless'])) {
+	if (is_array($wancfg['wireless']) && !$linkupevent) {
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 

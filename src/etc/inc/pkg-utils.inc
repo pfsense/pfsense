@@ -159,8 +159,8 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	conf_mount_rw();
 
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		conf_mount_ro();
@@ -239,8 +239,8 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 	conf_mount_rw();
 
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		conf_mount_ro();

@@ -200,6 +200,91 @@ function interfaces_loopback_configure() {
 	return 0;
 }
 
+function vlan_valid_tag($tag = NULL) {
+
+	if ($tag == NULL || empty($tag) ||
+	    !is_numericint($tag) || intval($tag) < 1 || intval($tag) > 4094) {
+		return (false);
+	}
+	return (true);
+}
+
+function qinq_inuse($qinq = NULL, $inqtag = NULL) {
+        global $config;
+  
+	if ($qinq == NULL || $inqtag == NULL ||
+	    !is_array($qinq) || !vlan_valid_tag($inqtag)) {
+		return (false);
+	}
+ 
+        $iflist = get_configured_interface_list(true);
+        foreach ($iflist as $if) {
+                if ($config['interfaces'][$if]['if'] == qinq_interface($qinq, $inqtag)) {
+                        return (true);
+                }
+        }
+       
+        return (false);
+}      
+
+function qinq_interface($qinq = NULL, $inqtag = NULL) {
+
+	if ($qinq == NULL || $inqtag == NULL || !is_array($qinq) ||
+	    !isset($qinq['if']) || !isset($qinq['tag']) ||
+	    !vlan_valid_tag($qinq['tag']) || !vlan_valid_tag($inqtag)) {
+		return (NULL);
+	}
+	return ("{$qinq['if']}.{$qinq['tag']}.{$inqtag}");
+}
+
+function interface_is_qinq($if = NULL) {
+	global $config;
+
+	if ($if == NULL || empty($if) || !is_array($config['qinqs']['qinqentry'])) {
+		return (NULL);
+	}
+
+	/* Check basic format. */
+	list($qinqif, $vlantag, $inqtag) = explode(".", $if);
+	if (empty($qinqif) || empty($vlantag) || empty($inqtag) ||
+	    !vlan_valid_tag($vlantag) || !vlan_valid_tag($inqtag)) {
+		return (NULL);
+	}
+
+	foreach ($config['qinqs']['qinqentry'] as $qinqidx => $qinq) {
+		if ("{$qinqif}.{$vlantag}" != $qinq['vlanif']) {
+			continue;
+		}
+		if (empty($qinq['members'])) {
+			continue;
+		}
+		foreach (explode(" ", $qinq['members']) as $tag) {
+			if ($if == qinq_interface($qinq, $tag)) {
+				return ($qinq);
+			}
+		}
+	}
+
+	return (NULL);
+}
+
+function vlan_inuse($vlan) {
+	global $config;
+
+	if ($vlan == NULL || !is_array($vlan)) {
+		return (false);
+	}
+
+	$iflist = get_configured_interface_list(true);
+	foreach ($iflist as $if) {
+		if ($config['interfaces'][$if]['if'] == $vlan['vlanif']) {
+			return (true);
+		}
+	}
+
+	return (false);
+}
+
 function interface_is_vlan($if = NULL) {
 	global $config;
 
@@ -227,7 +312,8 @@ function interface_is_vlan($if = NULL) {
 function vlan_interface($vlan = NULL) {
 
 	if ($vlan == NULL || !is_array($vlan) ||
-	    !isset($vlan['if']) || !isset($vlan['tag'])) {
+	    !isset($vlan['if']) || !isset($vlan['tag']) ||
+	    intval($vlan['tag']) < 0 || intval($vlan['tag']) > 4094) {
 		return (NULL);
 	}
 	return ("{$vlan['if']}.{$vlan['tag']}");
@@ -311,16 +397,16 @@ function interface_vlan_configure(&$vlan) {
 	return $vlanif;
 }
 
-function interface_qinq_configure(&$vlan, $fd = NULL) {
+function interface_qinq_configure(&$qinq, $fd = NULL) {
 	global $config, $g;
 
-	if (!is_array($vlan)) {
+	if (!is_array($qinq)) {
 		log_error(sprintf(gettext("QinQ compat VLAN: called with wrong options. Problems with config!%s"), "\n"));
 		return;
 	}
 
-	$qinqif = $vlan['if'];
-	$tag = $vlan['tag'];
+	$qinqif = $qinq['if'];
+	$tag = $qinq['tag'];
 	if (empty($qinqif)) {
 		log_error(sprintf(gettext("interface_qinq_configure called with if undefined.%s"), "\n"));
 		return;
@@ -331,8 +417,8 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 		return;
 	}
 
-	$vlanif = interface_vlan_configure($vlan);
-	if ($vlanif == NULL) {
+	$vlanif = interface_vlan_configure($qinq);
+	if ($vlanif == NULL || $vlanif != $qinq['vlanif']) {
 		log_error(gettext("interface_qinq_configure cannot create VLAN interface"));
 		return;
 	}
@@ -347,47 +433,53 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 	interfaces_bring_up($qinqif);
 
 	pfSense_ngctl_attach(".", $qinqif);
+	$ngif = str_replace(".", "_", $vlanif);
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		fwrite($fd, "shutdown {$vlanif}qinq:\n");
-		exec("/usr/sbin/ngctl msg {$vlanif}qinq: gettable", $result);
+		exec("/usr/sbin/ngctl shutdown {$ngif}qinq: > /dev/null 2>&1");
+		exec("/usr/sbin/ngctl msg {$ngif}qinq: gettable > /dev/null 2>&1", $result);
 		if (empty($result)) {
-			fwrite($fd, "mkpeer {$vlanif}: vlan lower downstream\n");
-			fwrite($fd, "name {$vlanif}:lower {$vlanif}qinq\n");
-			fwrite($fd, "connect {$vlanif}: {$vlanif}qinq: upper nomatch\n");
+			fwrite($fd, "mkpeer {$ngif}: vlan lower downstream\n");
+			fwrite($fd, "name {$ngif}:lower {$ngif}qinq\n");
+			fwrite($fd, "connect {$ngif}: {$ngif}qinq: upper nomatch\n");
 		}
 	} else {
-		fwrite($fd, "mkpeer {$vlanif}: vlan lower downstream\n");
-		fwrite($fd, "name {$vlanif}:lower {$vlanif}qinq\n");
-		fwrite($fd, "connect {$vlanif}: {$vlanif}qinq: upper nomatch\n");
+		fwrite($fd, "mkpeer {$ngif}: vlan lower downstream\n");
+		fwrite($fd, "name {$ngif}:lower {$ngif}qinq\n");
+		fwrite($fd, "connect {$ngif}: {$ngif}qinq: upper nomatch\n");
 	}
 
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	if (!stristr($qinqif, "_vlan")) {
+	if (interface_is_vlan($qinqif) == NULL) {
 		mwexec("/sbin/ifconfig {$qinqif} promisc\n");
 	}
 
 	$macaddr = get_interface_mac($qinqif);
-	if (!empty($vlan['members'])) {
-		$members = explode(" ", $vlan['members']);
+	if (!empty($qinq['members'])) {
+		$qinqcmdbuf = "";
+		$members = explode(" ", $qinq['members']);
 		foreach ($members as $qtag) {
-			$qinq = array();
-			$qinq['tag'] = $qtag;
-			$qinq['if'] = $vlanif;
-			interface_qinq2_configure($qinq, $fd, $macaddr);
+			$qinq2 = array();
+			$qinq2['tag'] = $qtag;
+			$qinq2['if'] = $vlanif;
+			interface_qinq2_configure($qinq2, $qinqcmdbuf, $macaddr);
+			unset($qinq2);
+		}
+		if (strlen($qinqcmdbuf) > 0) {
+			fwrite($fd, $qinqcmdbuf);
 		}
 	}
 	if ($exec == true) {
 		fclose($fd);
-		mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
+		mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
 	}
 
 	interfaces_bring_up($qinqif);
-	if (!empty($vlan['members'])) {
-		$members = explode(" ", $vlan['members']);
-		foreach ($members as $qif) {
-			interfaces_bring_up("{$vlanif}_{$qif}");
+	if (!empty($qinq['members'])) {
+		$members = explode(" ", $qinq['members']);
+		foreach ($members as $qtag) {
+			interfaces_bring_up(qinq_interface($qinq, $qtag));
 		}
 	}
 
@@ -410,7 +502,7 @@ function interfaces_qinq_configure() {
 	}
 }
 
-function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
+function interface_qinq2_configure(&$qinq, &$cmdbuf, $macaddr) {
 	global $config, $g;
 
 	if (!is_array($qinq)) {
@@ -419,19 +511,25 @@ function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
 	}
 
 	$if = $qinq['if'];
-	$tag = $qinq['tag'];
-	$vlanif = "{$if}_{$tag}";
 	if (empty($if)) {
 		log_error(sprintf(gettext("interface_qinq2_configure called with if undefined.%s"), "\n"));
 		return;
 	}
+	$tag = $qinq['tag'];
+	$vlanif = "{$if}.{$tag}";
+	$ngif = str_replace(".", "_", $if);
+	if (strlen($vlanif) > IF_NAMESIZE) {
+		log_error(sprintf(gettext("interface_qinq2_configure interface name too big %s. (max. size: %d).%s"),
+		    $vlanif, IF_NAMESIZE, "\n"));
+		return;
+	}
 
-	fwrite($fd, "shutdown {$if}h{$tag}:\n");
-	fwrite($fd, "mkpeer {$if}qinq: eiface {$if}{$tag} ether\n");
-	fwrite($fd, "name {$if}qinq:{$if}{$tag} {$if}h{$tag}\n");
-	fwrite($fd, "msg {$if}qinq: addfilter { vlan={$tag} hook=\"{$if}{$tag}\" }\n");
-	fwrite($fd, "msg {$if}h{$tag}: setifname \"{$vlanif}\"\n");
-	fwrite($fd, "msg {$if}h{$tag}: set {$macaddr}\n");
+	exec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}: > /dev/null 2>&1");
+	$cmdbuf .= "mkpeer {$ngif}qinq: eiface {$ngif}{$tag} ether\n";
+	$cmdbuf .= "name {$ngif}qinq:{$ngif}{$tag} {$ngif}h{$tag}\n";
+	$cmdbuf .= "msg {$ngif}qinq: addfilter { vlan={$tag} hook=\"{$ngif}{$tag}\" }\n";
+	$cmdbuf .= "msg {$ngif}h{$tag}: setifname \"{$vlanif}\"\n";
+	$cmdbuf .= "msg {$ngif}h{$tag}: set {$macaddr}\n";
 
 	/* invalidate interface cache */
 	get_interface_arr(true);

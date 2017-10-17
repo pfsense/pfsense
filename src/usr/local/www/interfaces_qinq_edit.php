@@ -143,10 +143,22 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("At least one tag must be entered.");
 	}
 
+	$nmembers = explode(" ", $members);
+	if (isset($id) && $a_qinqs[$id]) {
+		$omembers = explode(" ", $a_qinqs[$id]['members']);
+		$delmembers = array_diff($omembers, $nmembers);
+		foreach ($delmembers as $tag) {
+			if (qinq_inuse($a_qinqs[$id], $tag)) {
+				$input_errors[] = gettext("This QinQ tag cannot be deleted because it is still being used as an interface.");
+				break;
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
 		$qinqentry['descr'] = $_POST['descr'];
-		$qinqentry['vlanif'] = "{$_POST['if']}_{$_POST['tag']}";
+		$qinqentry['vlanif'] = vlan_interface($_POST);
 		$nmembers = explode(" ", $members);
 
 		if (isset($id) && $a_qinqs[$id]) {
@@ -155,22 +167,29 @@ if ($_POST['save']) {
 			$addmembers = array_diff($nmembers, $omembers);
 
 			if ((count($delmembers) > 0) || (count($addmembers) > 0)) {
-				$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
 				foreach ($delmembers as $tag) {
-					fwrite($fd, "shutdown {$qinqentry['vlanif']}h{$tag}:\n");
-					fwrite($fd, "msg {$qinqentry['vlanif']}qinq: delfilter \\\"{$qinqentry['vlanif']}{$tag}\\\"\n");
+					$ngif = str_replace(".", "_", $qinqentry['vlanif']);
+					exec("/usr/sbin/ngctl shutdown {$ngif}h{$tag}: > /dev/null 2>&1");
+					exec("/usr/sbin/ngctl msg {$ngif}qinq: delfilter \\\"{$ngif}{$tag}\\\" > /dev/null 2>&1");
 				}
 
+				$qinqcmdbuf = "";
 				foreach ($addmembers as $member) {
 					$qinq = array();
 					$qinq['if'] = $qinqentry['vlanif'];
 					$qinq['tag'] = $member;
 					$macaddr = get_interface_mac($qinqentry['vlanif']);
-					interface_qinq2_configure($qinq, $fd, $macaddr);
+					interface_qinq2_configure($qinq, $qinqcmdbuf, $macaddr);
 				}
 
-				fclose($fd);
-				mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
+				if (strlen($qinqcmdbuf) > 0) {
+					$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+					if ($fd) {
+						fwrite($fd, $qinqcmdbuf);
+						fclose($fd);
+						mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd > /dev/null 2>&1");
+					}
+				}
 			}
 			$a_qinqs[$id] = $qinqentry;
 		} else {
@@ -189,7 +208,7 @@ if ($_POST['save']) {
 			}
 			$additions = "";
 			foreach ($nmembers as $qtag) {
-				$additions .= "{$qinqentry['vlanif']}_{$qtag} ";
+				$additions .= qinq_interface($qinqentry, $qtag) . " ";
 			}
 			$additions .= "{$qinqentry['vlanif']}";
 			if ($found == true) {

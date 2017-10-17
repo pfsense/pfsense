@@ -38,26 +38,13 @@ if (!is_array($config['vlans']['vlan'])) {
 
 $a_vlans = &$config['vlans']['vlan'] ;
 
-function vlan_inuse($num) {
-	global $config, $a_vlans;
-
-	$iflist = get_configured_interface_list(true);
-	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif']) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
 		$input_errors[] = gettext("Wrong parameters supplied");
 	} else if (empty($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
-	} else if (vlan_inuse($_POST['id'])) {
+	} else if (vlan_inuse($a_vlans[$_POST['id']])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
 	} else {
 		if (does_interface_exist($a_vlans[$_POST['id']]['vlanif'])) {

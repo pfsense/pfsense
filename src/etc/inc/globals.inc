@@ -32,6 +32,9 @@ define("IPV6", 6);
 define("IPV4V6", 2);
 define("ALIAS", 1);
 
+// Interface Name Size
+define("IF_NAMESIZE", 15);	/* 16 minus the terminating NULL */
+
 // AddPassword method defines
 define('DMYPWD', "********");
 

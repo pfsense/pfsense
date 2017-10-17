@@ -294,8 +294,7 @@ function interface_is_vlan($if = NULL) {
 
 	/* Check basic format. */
 	list($vlanif, $vlantag) = explode(".", $if);
-	if (empty($vlanif) || empty($vlantag) ||
-	    intval($vlantag) < 0 || intval($vlantag) > 4094) {
+	if (empty($vlanif) || empty($vlantag) || !vlan_valid_tag($vlantag)) {
 		return (NULL);
 	}
 
@@ -311,9 +310,8 @@ function interface_is_vlan($if = NULL) {
 
 function vlan_interface($vlan = NULL) {
 
-	if ($vlan == NULL || !is_array($vlan) ||
-	    !isset($vlan['if']) || !isset($vlan['tag']) ||
-	    intval($vlan['tag']) < 0 || intval($vlan['tag']) > 4094) {
+	if ($vlan == NULL || !is_array($vlan) || !isset($vlan['if']) ||
+	    !isset($vlan['tag']) || !vlan_valid_tag($vlan['tag'])) {
 		return (NULL);
 	}
 	return ("{$vlan['if']}.{$vlan['tag']}");

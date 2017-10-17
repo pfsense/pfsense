@@ -70,7 +70,7 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
+	if (isset($_POST['tag']) && !vlan_valid_tag($_POST['tag'])) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 	if (isset($_POST['pcp']) && !empty($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {

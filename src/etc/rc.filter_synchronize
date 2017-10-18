@@ -195,9 +195,6 @@ function carp_sync_xml($sections) {
 		switch ($section) {
 			case 'virtualip':
 				$xml[$section] = backup_vip_config_section();
-				if ($xml[$section] == NULL) {
-					$xml[$section] = array();
-				}
 				break;
 			case 'user':
 				$xml['system'][$section] = $config_copy['system'][$section];
@@ -209,15 +206,9 @@ function carp_sync_xml($sections) {
 				break;
 			case 'authserver':
 				$xml['system'][$section] = $config_copy['system'][$section];
-				if ($xml['system'][$section] == NULL) {
-					$xml['system'][$section] = array();
-				}
 				break;
 			default:
 				$xml[$section] = $config_copy[$section];
-				if ($xml[$section] == NULL) {
-					$xml[$section] = array();
-				}
 		}
 	}
 	

@@ -137,12 +137,18 @@ print("</div>");
 
 				success: function(data){
 					if (data.length > 0) {
-						var obj = JSON.parse(data);
+						try{
+							var obj = JSON.parse(data);
 
-						$('#summary').removeClass("alert");
-						$('#summary').removeClass("alert-warning");
-						$('#summary').html(obj.summary);
-						$('#htmltxt').html(obj.htmltext);
+							$('#summary').removeClass("alert");
+							$('#summary').removeClass("alert-warning");
+							$('#summary').html(obj.summary);
+							$('#htmltxt').html(obj.htmltext);
+
+						}catch(e){
+
+						}
+
 					}
 				},
 

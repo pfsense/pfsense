@@ -305,6 +305,12 @@ function interface_is_vlan($if = NULL) {
 			return ($vlan);
 		}
 	}
+	/* Check for the first level tag in QinQ interfaces. */
+	foreach ($config['qinqs']['qinqentry'] as $qinqidx => $qinq) {
+		if ($if == $qinq['vlanif']) {
+			return ($qinq);
+		}
+	}
 
 	return (NULL);
 }

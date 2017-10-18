@@ -79,11 +79,9 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-bandwidthd
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent22
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent32
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent34
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy22
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy32
-net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy34
 net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 net/%%PRODUCT_NAME%%-pkg-freeradius3

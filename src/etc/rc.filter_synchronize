@@ -41,11 +41,13 @@ require_once("xmlrpc_client.inc");
 function backup_vip_config_section() {
 	global $config;
 
-	if (!is_array($config['virtualip']['vip'])) {
-		return;
-	}
 	$temp = array();
 	$temp['vip'] = array();
+
+	if (!is_array($config['virtualip']['vip'])) {
+		return $temp;
+	}
+
 	foreach ($config['virtualip']['vip'] as $section) {
 		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') &&
 		    (strpos($section['interface'], '_vip') === FALSE) &&

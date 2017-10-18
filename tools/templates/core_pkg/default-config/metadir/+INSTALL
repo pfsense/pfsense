@@ -19,4 +19,18 @@ fi
 FLAVOR="%%FLAVOR%%"
 echo ${FLAVOR##-} > /etc/default-config-flavor
 
+if [ "${FLAVOR##-}" = "ec2" ]; then
+	touch /boot/loader.conf /boot/loader.conf.local
+	# Make sure we cleanup it to make ENA work
+	sed -i '' -e "/^vm.kmem_size=/d" \
+		  -e "/^vm.kmem_size_max=/d" \
+		  /boot/loader.conf \
+		  /boot/loader.conf.local
+
+	if ! grep -q 'if_ena_load="YES"' /boot/loader.conf && \
+	   ! grep -q 'if_ena_load="YES"' /boot/loader.conf.local; then
+		echo 'if_ena_load="YES"' >> /boot/loader.conf.local
+	fi
+fi
+
 exit 0

@@ -72,6 +72,7 @@ $pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout'];
 $pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout'];
 $pconfig['othersingletimeout'] = $config['system']['othersingletimeout'];
 $pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout'];
+$pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']);
 
 if ($_POST) {
 
@@ -181,6 +182,12 @@ if ($_POST) {
 			$config['system']['scrubrnid'] = "enabled";
 		} else {
 			unset($config['system']['scrubrnid']);
+		}
+
+		if ($_POST['ip_change_kill_states'] == "yes") {
+			$config['system']['ip_change_kill_states'] = true;
+		} else {
+			unset($config['system']['ip_change_kill_states']);
 		}
 
 		if (is_numericint($_POST['adaptiveend'])) {
@@ -435,6 +442,14 @@ $section->addInput(new Form_Checkbox(
 	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
 	isset($config['system']['disablescrub'])
 ));
+
+$section->addInput(new Form_Checkbox(
+	'ip_change_kill_states',
+	'Reset All States',
+	'Reset all states if WAN IP address changes',
+	isset($config['system']['ip_change_kill_states'])
+))->setHelp('This option resets all states when %1$sany%2$s WAN IP address changes, instead of only '.
+    'states associated with the IP address that was updated.', '<em>', '</em>');
 
 $group = new Form_Group('Firewall Adaptive Timeouts');
 

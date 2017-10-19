@@ -2360,7 +2360,7 @@ function system_get_serial() {
 		return $serial;
 	}
 
-	return get_single_sysctl('kern.hostuuid');
+	return "";
 }
 
 function system_get_uniqueid() {

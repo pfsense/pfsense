@@ -276,7 +276,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 	}
 }
 
-function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipproto) {
+function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $desc, $ipproto) {
 	global $config;
 
 	/* No rules, start a new array */
@@ -292,7 +292,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	$filterent['type'] = 'pass';
 	$filterent['interface'] = $int;
 	$filterent['ipprotocol'] = $ipproto;
-	$filterent['descr'] = gettext("Easy Rule: Passed from Firewall Log View");
+	$filterent['descr'] = gettext($desc);
 
 	if ($proto != "any") {
 		$filterent['protocol'] = $proto;
@@ -448,7 +448,7 @@ function easyrule_parse_getblock($int = 'wan', $sep = "\n") {
 
 }
 
-function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = "inet") {
+function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $desc="Easy Rule: Passed from Firewall Log View", $ipproto = "inet") {
 	/* Check for valid int, srchost, dsthost, dstport, and proto */
 	global $protocols_with_ports;
 	$src = trim($src, "[]");
@@ -479,7 +479,7 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 			$dstport = 0;
 		}
 		/* Should have valid input... */
-		if (easyrule_pass_rule_add($int, $proto, $src, $dst, $dstport, $ipproto)) {
+		if (easyrule_pass_rule_add($int, $proto, $src, $dst, $dstport, $desc, $ipproto)) {
 			return gettext("Successfully added pass rule!");
 		} else {
 			return gettext("Failed to add pass rule.");

@@ -162,22 +162,27 @@ $rows_displayed = false;
 		<tr>
 			<th><?=gettext("System");?></th>
 			<td>
-			<?php
+<?php
 				$platform = system_identify_specific_platform();
 				if (isset($platform['descr'])) {
 					echo $platform['descr'];
 				} else {
 					echo gettext('Unknown system');
 				}
-			?>
-			<br />
-			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
-<?php
-		// If the uniqueID is available, display it here
-		$uniqueid = system_get_uniqueid();
-		if (!empty($uniqueid)) {
-			print("<br />" . gettext("Netgate Device ID:") . " <strong>{$uniqueid}</strong>");
-		}
+
+				$serial = system_get_serial();
+				if (!empty($serial)) {
+					print("<br />" . gettext("Serial:") .
+					    " <strong>{$serial}</strong>\n");
+				}
+
+				// If the uniqueID is available, display it here
+				$uniqueid = system_get_uniqueid();
+				if (!empty($uniqueid)) {
+					print("<br />" .
+					    gettext("Netgate Device ID:") .
+					    " <strong>{$uniqueid}</strong>");
+				}
 ?>
 			</td>
 		</tr>

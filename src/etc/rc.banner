@@ -30,6 +30,13 @@ $hostname = $config['system']['hostname'];
 $product = $g['product_name'];
 $machine = trim(`uname -m`);
 
+$platform = system_identify_specific_platform();
+$serial = system_get_serial();
+if (isset($platform['descr']) && !empty($serial)) {
+	printf("%s - %s: %s\n\n", $platform['descr'], gettext("Serial"),
+	    $serial);
+}
+
 print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(true);

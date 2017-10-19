@@ -200,7 +200,7 @@ function get_firewall_info() {
 
 	$serial = system_get_serial();
 	if (!empty($serial)) {
-		$firewall_info .= "<br/>SN/UUID: " . htmlspecialchars($serial);
+		$firewall_info .= "<br/>Serial: " . htmlspecialchars($serial);
 	}
 
 	if (!empty($g['product_version_string'])) {

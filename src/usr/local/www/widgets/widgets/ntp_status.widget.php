@@ -204,9 +204,8 @@ function convertDateToUTC(date,offset) {
 	return d;
 }
 
-var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'));
+var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'), '<?=date('Z')?>');
 var tz = '<?=date('T');?>';
-
 setInterval(function() {
 	ntp_d.setSeconds(ntp_d.getSeconds() + 1);
 	var thisSecond = ntp_d.getSeconds();

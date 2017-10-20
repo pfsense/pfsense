@@ -98,6 +98,8 @@ get_cur_model() {
 	local _planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
 	local _hw_ncpu=$(sysctl -n hw.ncpu)
+	local _boardpn=$(/bin/kenv -q uboot.boardpn 2>/dev/null)
+	local _ufw_product=$(/bin/kenv -q uboot.board_name 2>/dev/null)
 
 	case "${_product}" in
 		RCC-VE)
@@ -145,47 +147,58 @@ get_cur_model() {
 		_cur_model="XG-1537"
 	fi
 
+	if [ "${_boardpn%-*}" == "80500-0148" ]; then
+		_cur_model="SG-3100"
+	fi
+
+	if [ "${_ufw_product}" == "A335uFW" ]; then
+		_cur_model="SG-1000"
+	fi
+
 	echo "$_cur_model"
 }
 
+unset selected_model
+cur_model=$(get_cur_model)
+
 # Try to read serial
 machine_arch=$(uname -p)
+unset is_arm
 unset is_adi
 unset is_turbot
-case "${machine_arch}" in
-	amd64)
-		serial=$(kenv smbios.system.serial)
-		product=$(kenv -q smbios.system.product)
-		case "${product}" in
-			RCC-VE|DFFv2|RCC)
-				is_adi=1
-				;;
-			"Minnowboard Turbot D0 PLATFORM")
-				serial=$(ifconfig igb0 | sed -n \
-				    '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
-				is_turbot=1
-				;;
-		esac
-		;;
-	armv6)
-		dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16
-		serial=$(hexdump -C /tmp/serial.bin | \
-		    sed '1!d; s,\.*\|$,,; s,^.*\|,,')
-		;;
-	*)
-		echo "Unsupported platform"
-		exit 1
-esac
+if [ "${cur_model}" == "SG-1000" ]; then
+	is_arm=1
+	dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16
+	serial=$(hexdump -C /tmp/serial.bin | \
+	    sed '1!d; s,\.*\|$,,; s,^.*\|,,')
+
+elif [ "${cur_model}" == "SG-3100" ]; then
+	is_arm=1
+	serial=$(/bin/kenv -q uboot.boardsn 2>/dev/null)
+
+elif [ "${machine_arch}" == "amd64" ]; then
+	serial=$(kenv smbios.system.serial)
+	product=$(kenv -q smbios.system.product)
+	case "${product}" in
+		RCC-VE|DFFv2|RCC)
+			is_adi=1
+			;;
+		"Minnowboard Turbot D0 PLATFORM")
+			serial=$(ifconfig igb0 | sed -n \
+			    '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
+			is_turbot=1
+			;;
+	esac
+else
+	echo "Unsupported platform"
+	exit 1
+fi
 
 # XXX is it really necessary?
 if [ "${serial}" = "123456789" ]; then
 	serial=""
 fi
 
-unset selected_model
-cur_model=$(get_cur_model)
-
-unset is_arm
 if [ -n "${is_adi}" ]; then
 	case "${cur_model}" in
 		SG-2220|SG-2440|XG-2758)
@@ -215,12 +228,7 @@ elif [ "${machine_arch}" != "armv6" ]; then
 			selected_model="Default"
 	esac
 else
-	if ifconfig cpsw0 >/dev/null 2>&1; then
-		selected_model="SG-1000"
-	else
-		selected_model="SG-3100"
-	fi
-	is_arm=1
+	selected_model=${cur_model}
 fi
 
 if [ -z "${selected_model}" ]; then
@@ -418,7 +426,6 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	dd if=/dev/zero of=/dev/${TARGET} bs=4m count=15 2> /dev/null
 
 	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-SG-3100-latest.img.gz"
-	image_url=$(kenv -q ufw.install.image.url)
 	image_url=${image_url:-${image_default_url}}
 
 	echo "Writing the firmware to disk..."
@@ -460,9 +467,6 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	    -e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
 	    -e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
 	    /mnt/etc/fstab
-
-	umount /mnt
-	sync ; sync ; sync
 
 	# Update the boot status on SG-3100, pfSense is installed.
 	gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null

@@ -15,13 +15,18 @@ clear_disk() {
 
 if="*"
 if ! pgrep -q dhclient; then
-	# First, find a connected interface
-	if=$(ifconfig \
-	    | sed -E '/^([a-z]|[[:blank:]]*status: )/!d; /^lo0:/d' \
-	    | sed -e 'N; s/\n/ /' \
-	    | egrep 'status: *active' \
-	    | sed 's,:.*,,' \
-	    | head -n 1)
+	boardpn=$(/bin/kenv -q uboot.boardpn)
+	if [ "${_boardpn%-*}" == "80500-0148" ]; then
+		if="mvneta2"
+	else
+		# First, find a connected interface
+		if=$(ifconfig \
+		    | sed -E '/^([a-z]|[[:blank:]]*status: )/!d; /^lo0:/d' \
+		    | sed -e 'N; s/\n/ /' \
+		    | egrep 'status: *active' \
+		    | sed 's,:.*,,' \
+		    | head -n 1)
+	fi
 
 	# If we couldn't, just abort
 	if [ -z "${if}" ]; then

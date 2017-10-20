@@ -198,8 +198,10 @@ if ($_REQUEST['updateme']) {
 <script type="text/javascript">
 //<![CDATA[
 // Have to convet the date to UTC time to match the PHP clock not the local client clock.
-function convertDateToUTC(date) {
-    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+function convertDateToUTC(date,offset) {
+	hours_offset = offset/3600;
+	d = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours() + hours_offset, date.getUTCMinutes(), date.getUTCSeconds())
+	return d;
 }
 
 var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'));

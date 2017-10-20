@@ -76,11 +76,13 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['action_disable'] = isset($a_gateways[$id]['action_disable']);
+	$pconfig['notifications_disable'] = isset($a_gateways[$id]['notifications_disable']);
 	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
+	$pconfig['no_defgw_switch'] = isset($a_gateways[$id]['no_defgw_switch']);
 }
 
 if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
@@ -199,7 +201,29 @@ $section->addInput(new Form_Checkbox(
 	'Default Gateway',
 	'This will select the above gateway as the default gateway.',
 	$pconfig['defaultgw']
-));
+))->toggles('.toggle-nodefgwswitch');
+
+$group = new Form_Group('Skip Default');
+$group->addClass('toggle-nodefgwswitch', 'collapse');
+
+if ($pconfig['defaultgw'] == false)
+	$group->addClass('in');
+
+$group->add(new Form_Checkbox(
+	'no_defgw_switch',
+	null,
+	'Not eligible to become the default gateway',
+	$pconfig['no_defgw_switch']
+))->setHelp('If checked, this gateway will not be chosen during default gateway switching (see %1$sSystem &gt; Advanced%2$s).','<a href="system_advanced_misc.php">','</a>');
+
+$section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'notifications_disable',
+	'Notifications',
+	'Disable Gateway Notifications',
+	$pconfig['notifications_disable']
+))->setHelp('Notifications will not be sent for gateway events.');
 
 $section->addInput(new Form_Checkbox(
 	'monitor_disable',

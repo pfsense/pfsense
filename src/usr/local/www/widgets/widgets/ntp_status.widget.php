@@ -296,7 +296,3 @@ events.push(function(){
 
 //]]>
 </script>
-<<<<<<< HEAD
-=======
-<?php endif; ?>
->>>>>>> fe814d92aa... Fixed #7714 Edited it to show correct timezone

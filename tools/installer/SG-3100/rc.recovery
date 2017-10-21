@@ -14,14 +14,11 @@ main() {
 	DEVS=""
 	TYPE=""
 	DEFAULT=""
-	BOOTDEV=""
-	BOOTFROM=""
 	if [ -n "${MMCDEV}" ]; then
 		echo eMMC device: ${MMCDEV}
 		DEVS=${MMCDEV}
 		DEFAULT=${MMCDEV}
 		TYPE="eMMC"
-		BOOTFROM="-e"
 	fi
 	if [ -n "${SDDEV}" ]; then
 		if [ -n "${DEVS}" ]; then
@@ -31,7 +28,6 @@ main() {
 		DEVS="${DEVS}${SDDEV}"
 		DEFAULT=${SDDEV}
 		TYPE="SD Card"
-		BOOTFROM="-e"
 		echo SD card device: ${SDDEV}
 	fi
 	if [ -n "${M2DEV}" ]; then
@@ -40,8 +36,6 @@ main() {
 			DEVS="${DEVS},"
 		fi
 		DEVS="${DEVS}${M2DEV}"
-		BOOTDEV="0"
-		BOOTFROM="-m"
 		echo M.2 device: ${M2DEV}
 	fi
 	echo
@@ -50,17 +44,24 @@ main() {
 	echo
 
 	DEV=""
+	BOOTDEV=""
+	BOOTFROM=""
 	if [ -z "${destdev}" ]; then
 		DEV=${DEFAULT}
+		BOOTFROM="-e"
 	elif [ "${destdev}" == "${MMCDEV}" ]; then
 		DEV=${MMCDEV}
 		TYPE="eMMC"
+		BOOTFROM="-e"
 	elif [ "${destdev}" == "${SDDEV}" ]; then
 		DEV=${SDDEV}
 		TYPE="SD Card"
+		BOOTFROM="-e"
 	elif [ "${destdev}" == "${M2DEV}" ]; then
 		DEV=${M2DEV}
 		TYPE="M.2"
+		BOOTDEV=${DEV#ada*}
+		BOOTFROM="-m"
 	fi
 	if [ -z "${DEV}" ]; then
 		echo

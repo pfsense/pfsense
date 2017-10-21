@@ -5472,6 +5472,28 @@ function upgrade_171_to_172() {
 }
 
 /*
+ * Upgrade the VLAN interface names to use $if.$tag on PPP items
+ */
+function upgrade_172_to_173() {
+	global $config;
+
+	if (!is_array($config['ppps']['ppp']) ||
+	    count($config['ppps']['ppp']) == 0) {
+		return;
+	}
+	$iflist = get_configured_interface_list(true);
+	foreach ($config['ppps']['ppp'] as $id => $ppp) {
+		if (empty($ppp['ports']) ||
+		    strpos($ppp['ports'], "_vlan") == false) {
+			continue;
+		}
+
+		$config['ppps']['ppp'][$id]['ports'] = str_replace('_vlan', '.',
+		    $ppp['ports']);
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

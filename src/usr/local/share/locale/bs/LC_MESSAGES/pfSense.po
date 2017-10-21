@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-10 07:36-0300\n"
+"POT-Creation-Date: 2017-10-20 10:59-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -147,7 +147,7 @@ msgstr "NAT konfiguracija je promijenjena. "
 #: src/usr/local/www/firewall_nat_npt.php:129
 #: src/usr/local/www/load_balancer_virtual_server.php:120
 #: src/usr/local/www/vpn_ipsec_keys.php:83
-#: src/usr/local/www/services_unbound_advanced.php:211
+#: src/usr/local/www/services_unbound_advanced.php:220
 #: src/usr/local/www/system_gateways.php:232
 #: src/usr/local/www/firewall_rules.php:332
 #: src/usr/local/www/system_gateway_groups.php:112
@@ -203,7 +203,7 @@ msgstr "NAT 1:1 Mapiranja"
 #: src/usr/local/www/services_ntpd.php:217
 #: src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/services_wol.php:170
-#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/interfaces_gif.php:97
 #: src/usr/local/www/services_pppoe.php:99
 #: src/usr/local/www/firewall_virtual_ip.php:257
@@ -229,7 +229,7 @@ msgstr "NAT 1:1 Mapiranja"
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:94
 #: src/usr/local/www/interfaces_lagg.php:104
 #: src/usr/local/www/status_dhcp_leases.php:495
 #: src/usr/local/www/status_graph.php:126
@@ -271,8 +271,8 @@ msgstr "Destinacijski IP"
 #: src/usr/local/www/system_groupmanager.php:304
 #: src/usr/local/www/system_groupmanager.php:409
 #: src/usr/local/www/load_balancer_monitor.php:107
-#: src/usr/local/www/vpn_openvpn_client.php:604
-#: src/usr/local/www/vpn_openvpn_client.php:941
+#: src/usr/local/www/vpn_openvpn_client.php:606
+#: src/usr/local/www/vpn_openvpn_client.php:950
 #: src/usr/local/www/interfaces_wireless.php:101
 #: src/usr/local/www/services_dhcp.php:728
 #: src/usr/local/www/services_dhcp.php:1446
@@ -295,7 +295,7 @@ msgstr "Destinacijski IP"
 #: src/usr/local/www/status_upnp.php:73 src/usr/local/www/services_wol.php:172
 #: src/usr/local/www/services_dyndns_edit.php:409
 #: src/usr/local/www/services_captiveportal_hostname.php:116
-#: src/usr/local/www/interfaces_qinq.php:112
+#: src/usr/local/www/interfaces_qinq.php:110
 #: src/usr/local/www/interfaces_gif.php:99
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:188
 #: src/usr/local/www/services_igmpproxy.php:86
@@ -303,7 +303,7 @@ msgstr "Destinacijski IP"
 #: src/usr/local/www/services_pppoe.php:102
 #: src/usr/local/www/system_gateway_groups_edit.php:306
 #: src/usr/local/www/system_gateway_groups_edit.php:335
-#: src/usr/local/www/interfaces_vlan_edit.php:206
+#: src/usr/local/www/interfaces_vlan_edit.php:207
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/interfaces_bridge_edit.php:410
 #: src/usr/local/www/load_balancer_pool_edit.php:319
@@ -347,7 +347,7 @@ msgstr "Destinacijski IP"
 #: src/usr/local/www/services_wol_edit.php:148
 #: src/usr/local/www/services_unbound_host_edit.php:219
 #: src/usr/local/www/services_unbound_host_edit.php:280
-#: src/usr/local/www/interfaces_qinq_edit.php:265
+#: src/usr/local/www/interfaces_qinq_edit.php:284
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:179
 #: src/usr/local/www/system_gateways.php:254
 #: src/usr/local/www/services_dnsmasq_edit.php:225
@@ -358,9 +358,9 @@ msgstr "Destinacijski IP"
 #: src/usr/local/www/firewall_rules.php:390
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
-#: src/usr/local/www/interfaces_vlan.php:110
+#: src/usr/local/www/interfaces_vlan.php:97
 #: src/usr/local/www/interfaces_lagg.php:106
 #: src/usr/local/www/status_dhcp_leases.php:363
 #: src/usr/local/www/services_captiveportal_mac_edit.php:228
@@ -381,7 +381,7 @@ msgstr "Opis"
 #: src/usr/local/www/services_unbound_acls.php:288
 #: src/usr/local/www/system_groupmanager.php:306
 #: src/usr/local/www/load_balancer_monitor.php:108
-#: src/usr/local/www/vpn_openvpn_client.php:942
+#: src/usr/local/www/vpn_openvpn_client.php:951
 #: src/usr/local/www/interfaces_wireless.php:102
 #: src/usr/local/www/services_dhcp.php:729
 #: src/usr/local/www/services_unbound.php:451
@@ -401,7 +401,7 @@ msgstr "Opis"
 #: src/usr/local/www/services_wol.php:173
 #: src/usr/local/www/diag_confbak.php:222
 #: src/usr/local/www/services_captiveportal_hostname.php:117
-#: src/usr/local/www/interfaces_qinq.php:113
+#: src/usr/local/www/interfaces_qinq.php:111
 #: src/usr/local/www/interfaces_gif.php:100
 #: src/usr/local/www/services_igmpproxy.php:87
 #: src/usr/local/www/services_pppoe.php:103
@@ -430,7 +430,7 @@ msgstr "Opis"
 #: src/usr/local/www/services_dyndns.php:97
 #: src/usr/local/www/firewall_rules.php:391
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
-#: src/usr/local/www/interfaces_vlan.php:111
+#: src/usr/local/www/interfaces_vlan.php:98
 #: src/usr/local/www/interfaces_lagg.php:107
 #: src/usr/local/www/status_dhcp_leases.php:368
 #: src/usr/local/www/system_gateway_groups.php:132
@@ -497,12 +497,12 @@ msgstr "Dodaj mapiranje na vrh liste"
 #: src/usr/local/www/services_checkip.php:161
 #: src/usr/local/www/services_rfc2136.php:203
 #: src/usr/local/www/services_router_advertisements.php:435
-#: src/usr/local/www/pkg.php:580
+#: src/usr/local/www/pkg.php:577
 #: src/usr/local/www/services_unbound_acls.php:324
 #: src/usr/local/www/system_groupmanager.php:263
 #: src/usr/local/www/system_groupmanager.php:347
 #: src/usr/local/www/load_balancer_monitor.php:145
-#: src/usr/local/www/vpn_openvpn_client.php:979
+#: src/usr/local/www/vpn_openvpn_client.php:988
 #: src/usr/local/www/interfaces_wireless.php:140
 #: src/usr/local/www/services_dhcp.php:964
 #: src/usr/local/www/services_dhcp.php:1379
@@ -523,7 +523,7 @@ msgstr "Dodaj mapiranje na vrh liste"
 #: src/usr/local/www/system_camanager.php:453
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/services_captiveportal_hostname.php:160
-#: src/usr/local/www/interfaces_qinq.php:152
+#: src/usr/local/www/interfaces_qinq.php:150
 #: src/usr/local/www/interfaces_gif.php:130
 #: src/usr/local/www/services_igmpproxy.php:136
 #: src/usr/local/www/services_pppoe.php:143
@@ -552,8 +552,8 @@ msgstr "Dodaj mapiranje na vrh liste"
 #: src/usr/local/www/vpn_openvpn_server.php:1386
 #: src/usr/local/www/services_dyndns.php:217
 #: src/usr/local/www/firewall_rules.php:821
-#: src/usr/local/www/firewall_rules.php:825 src/usr/local/www/pkg_edit.php:1470
-#: src/usr/local/www/interfaces_vlan.php:149
+#: src/usr/local/www/firewall_rules.php:825 src/usr/local/www/pkg_edit.php:1466
+#: src/usr/local/www/interfaces_vlan.php:136
 #: src/usr/local/www/interfaces_lagg.php:145
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/services_captiveportal_filemanager.php:235
@@ -590,9 +590,9 @@ msgstr "Obriši označena mapiranja"
 #: src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/interfaces_qinq_edit.php:309
+#: src/usr/local/www/interfaces_qinq_edit.php:328
 #: src/usr/local/www/services_dnsmasq_edit.php:278
-#: src/usr/local/www/firewall_rules.php:829 src/usr/local/www/pkg_edit.php:1458
+#: src/usr/local/www/firewall_rules.php:829 src/usr/local/www/pkg_edit.php:1454
 #: src/etc/inc/shaper.inc:3790
 msgid "Delete"
 msgstr "Obriši"
@@ -606,7 +606,7 @@ msgstr "Spasi redoslijed mapiranja"
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:573
 #: src/usr/local/www/system_advanced_sysctl.php:88
-#: src/usr/local/www/status_logs_common.inc:940 src/usr/local/www/pkg.php:598
+#: src/usr/local/www/status_logs_common.inc:940 src/usr/local/www/pkg.php:595
 #: src/usr/local/www/classes/Form.class.php:38
 #: src/usr/local/www/system_certmanager.php:207
 #: src/usr/local/www/system_certmanager.php:591
@@ -633,13 +633,13 @@ msgstr "Spasi redoslijed mapiranja"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:292
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:195
 #: src/usr/local/www/widgets/widgets/log.widget.php:290
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:504
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
-#: src/usr/local/www/widgets/widgets/picture.widget.php:86
+#: src/usr/local/www/widgets/widgets/picture.widget.php:89
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
-#: src/usr/local/www/pkg_edit.php:611
+#: src/usr/local/www/pkg_edit.php:607
 msgid "Save"
 msgstr "Spasi"
 
@@ -752,7 +752,7 @@ msgid "IPComp: "
 msgstr "IPComp: "
 
 #: src/usr/local/www/status_ipsec.php:337
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
 #: src/usr/local/www/firewall_rules_edit.php:1706
@@ -831,8 +831,8 @@ msgstr "Odspojeno"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_logs_filter_summary.php:67
 #: src/usr/local/www/status_logs_settings.php:187
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
@@ -873,7 +873,7 @@ msgstr "IPsec"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:186
 msgid "Overview"
 msgstr "Pregled"
 
@@ -959,10 +959,10 @@ msgstr "Nikakve IPsec statusne informacije nisu dostupne "
 #: src/usr/local/www/interfaces_groups.php:54
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/interfaces_groups_edit.php:33
-#: src/usr/local/www/interfaces_qinq.php:80
+#: src/usr/local/www/interfaces_qinq.php:78
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/diag_backup.php:437
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_ppps.php:73
 #: src/usr/local/www/services_captiveportal_zones.php:75
@@ -975,7 +975,7 @@ msgstr "Nikakve IPsec statusne informacije nisu dostupne "
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/interfaces_qinq_edit.php:29
 #: src/usr/local/www/widgets/include/interfaces.inc:23
-#: src/usr/local/www/interfaces_vlan.php:76
+#: src/usr/local/www/interfaces_vlan.php:63
 #: src/usr/local/www/interfaces_lagg.php:76
 msgid "Interfaces"
 msgstr "Interfejsi"
@@ -984,12 +984,12 @@ msgstr "Interfejsi"
 #: src/usr/local/www/interfaces_assign.php:494
 #: src/usr/local/www/interfaces_wireless.php:80
 #: src/usr/local/www/interfaces_groups.php:60
-#: src/usr/local/www/interfaces_qinq.php:89
+#: src/usr/local/www/interfaces_qinq.php:87
 #: src/usr/local/www/interfaces_gif.php:78
 #: src/usr/local/www/interfaces_ppps.php:78
 #: src/usr/local/www/interfaces_gre.php:78
 #: src/usr/local/www/interfaces_bridge.php:83
-#: src/usr/local/www/interfaces_vlan.php:83
+#: src/usr/local/www/interfaces_vlan.php:70
 #: src/usr/local/www/interfaces_lagg.php:85
 msgid "Interface Assignments"
 msgstr "Zadani interfejsi"
@@ -1096,12 +1096,12 @@ msgstr "Interface konfiguracija je promijenjena. "
 #: src/usr/local/www/interfaces_groups.php:61
 #: src/usr/local/www/interfaces_groups.php:73
 #: src/usr/local/www/interfaces_groups_edit.php:33
-#: src/usr/local/www/interfaces_qinq.php:90
+#: src/usr/local/www/interfaces_qinq.php:88
 #: src/usr/local/www/interfaces_gif.php:79
 #: src/usr/local/www/interfaces_ppps.php:79
 #: src/usr/local/www/interfaces_gre.php:79
 #: src/usr/local/www/interfaces_bridge.php:84
-#: src/usr/local/www/interfaces_vlan.php:84
+#: src/usr/local/www/interfaces_vlan.php:71
 #: src/usr/local/www/interfaces_lagg.php:86
 msgid "Interface Groups"
 msgstr "Interfejs grupe"
@@ -1114,12 +1114,12 @@ msgstr "Interfejs grupe"
 #: src/usr/local/www/interfaces_groups.php:62
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/status_logs.php:63
-#: src/usr/local/www/interfaces_qinq.php:91
+#: src/usr/local/www/interfaces_qinq.php:89
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_ppps.php:80
 #: src/usr/local/www/interfaces_gre.php:80 src/usr/local/www/head.inc:376
 #: src/usr/local/www/interfaces_bridge.php:85
-#: src/usr/local/www/interfaces_vlan.php:85
+#: src/usr/local/www/interfaces_vlan.php:72
 #: src/usr/local/www/interfaces_lagg.php:87
 msgid "Wireless"
 msgstr "Wireless"
@@ -1127,14 +1127,14 @@ msgstr "Wireless"
 #: src/usr/local/www/interfaces_assign.php:497
 #: src/usr/local/www/interfaces_wireless.php:83
 #: src/usr/local/www/interfaces_groups.php:63
-#: src/usr/local/www/interfaces_qinq.php:92
+#: src/usr/local/www/interfaces_qinq.php:90
 #: src/usr/local/www/interfaces_gif.php:81
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/interfaces_ppps.php:81
 #: src/usr/local/www/interfaces_gre.php:81
 #: src/usr/local/www/interfaces_bridge.php:86
-#: src/usr/local/www/interfaces_vlan.php:76
-#: src/usr/local/www/interfaces_vlan.php:86
+#: src/usr/local/www/interfaces_vlan.php:63
+#: src/usr/local/www/interfaces_vlan.php:73
 #: src/usr/local/www/interfaces_lagg.php:88
 msgid "VLANs"
 msgstr "VLANovi"
@@ -1142,14 +1142,14 @@ msgstr "VLANovi"
 #: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/interfaces_wireless.php:84
 #: src/usr/local/www/interfaces_groups.php:64
-#: src/usr/local/www/interfaces_qinq.php:80
-#: src/usr/local/www/interfaces_qinq.php:93
+#: src/usr/local/www/interfaces_qinq.php:78
+#: src/usr/local/www/interfaces_qinq.php:91
 #: src/usr/local/www/interfaces_gif.php:82
 #: src/usr/local/www/interfaces_ppps.php:82
 #: src/usr/local/www/interfaces_gre.php:82
 #: src/usr/local/www/interfaces_bridge.php:87
 #: src/usr/local/www/interfaces_qinq_edit.php:29
-#: src/usr/local/www/interfaces_vlan.php:87
+#: src/usr/local/www/interfaces_vlan.php:74
 #: src/usr/local/www/interfaces_lagg.php:89
 msgid "QinQs"
 msgstr "QinQovi"
@@ -1157,14 +1157,14 @@ msgstr "QinQovi"
 #: src/usr/local/www/interfaces_assign.php:499
 #: src/usr/local/www/interfaces_wireless.php:85
 #: src/usr/local/www/interfaces_groups.php:65
-#: src/usr/local/www/interfaces_qinq.php:94
+#: src/usr/local/www/interfaces_qinq.php:92
 #: src/usr/local/www/interfaces_gif.php:83
 #: src/usr/local/www/interfaces_ppps.php:73
 #: src/usr/local/www/interfaces_ppps.php:83
 #: src/usr/local/www/interfaces_ppps_edit.php:451
 #: src/usr/local/www/interfaces_gre.php:83
 #: src/usr/local/www/interfaces_bridge.php:88
-#: src/usr/local/www/interfaces_vlan.php:88
+#: src/usr/local/www/interfaces_vlan.php:75
 #: src/usr/local/www/interfaces_lagg.php:90
 msgid "PPPs"
 msgstr "PPPovi"
@@ -1172,14 +1172,14 @@ msgstr "PPPovi"
 #: src/usr/local/www/interfaces_assign.php:500
 #: src/usr/local/www/interfaces_wireless.php:86
 #: src/usr/local/www/interfaces_groups.php:66
-#: src/usr/local/www/interfaces_qinq.php:95
+#: src/usr/local/www/interfaces_qinq.php:93
 #: src/usr/local/www/interfaces_gif.php:84
 #: src/usr/local/www/interfaces_ppps.php:84
 #: src/usr/local/www/interfaces_gre_edit.php:153
 #: src/usr/local/www/interfaces_gre.php:70
 #: src/usr/local/www/interfaces_gre.php:84
 #: src/usr/local/www/interfaces_bridge.php:89
-#: src/usr/local/www/interfaces_vlan.php:89
+#: src/usr/local/www/interfaces_vlan.php:76
 #: src/usr/local/www/interfaces_lagg.php:91
 msgid "GREs"
 msgstr "GREovi"
@@ -1187,14 +1187,14 @@ msgstr "GREovi"
 #: src/usr/local/www/interfaces_assign.php:501
 #: src/usr/local/www/interfaces_wireless.php:87
 #: src/usr/local/www/interfaces_groups.php:67
-#: src/usr/local/www/interfaces_qinq.php:96
+#: src/usr/local/www/interfaces_qinq.php:94
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/interfaces_gif.php:85
 #: src/usr/local/www/interfaces_ppps.php:85
 #: src/usr/local/www/interfaces_gre.php:85
 #: src/usr/local/www/interfaces_bridge.php:90
 #: src/usr/local/www/interfaces_gif_edit.php:160
-#: src/usr/local/www/interfaces_vlan.php:90
+#: src/usr/local/www/interfaces_vlan.php:77
 #: src/usr/local/www/interfaces_lagg.php:92
 msgid "GIFs"
 msgstr "GIFovi"
@@ -1202,14 +1202,14 @@ msgstr "GIFovi"
 #: src/usr/local/www/interfaces_assign.php:502
 #: src/usr/local/www/interfaces_wireless.php:88
 #: src/usr/local/www/interfaces_groups.php:68
-#: src/usr/local/www/interfaces_qinq.php:97
+#: src/usr/local/www/interfaces_qinq.php:95
 #: src/usr/local/www/interfaces_gif.php:86
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_ppps.php:86
 #: src/usr/local/www/interfaces_gre.php:86
 #: src/usr/local/www/interfaces_bridge.php:75
 #: src/usr/local/www/interfaces_bridge.php:91
-#: src/usr/local/www/interfaces_vlan.php:91
+#: src/usr/local/www/interfaces_vlan.php:78
 #: src/usr/local/www/interfaces_lagg.php:93
 msgid "Bridges"
 msgstr "Bridgeovi"
@@ -1218,12 +1218,12 @@ msgstr "Bridgeovi"
 #: src/usr/local/www/interfaces_lagg_edit.php:217
 #: src/usr/local/www/interfaces_wireless.php:89
 #: src/usr/local/www/interfaces_groups.php:69
-#: src/usr/local/www/interfaces_qinq.php:98
+#: src/usr/local/www/interfaces_qinq.php:96
 #: src/usr/local/www/interfaces_gif.php:87
 #: src/usr/local/www/interfaces_ppps.php:87
 #: src/usr/local/www/interfaces_gre.php:87
 #: src/usr/local/www/interfaces_bridge.php:92
-#: src/usr/local/www/interfaces_vlan.php:92
+#: src/usr/local/www/interfaces_vlan.php:79
 #: src/usr/local/www/interfaces_lagg.php:76
 #: src/usr/local/www/interfaces_lagg.php:94
 msgid "LAGGs"
@@ -1382,25 +1382,25 @@ msgid "Captive Portal"
 msgstr "Sigurnosni portal"
 
 #: src/usr/local/www/status_captiveportal_expire.php:55
-#: src/usr/local/www/status_captiveportal_expire.php:75
-#: src/usr/local/www/status_captiveportal_expire.php:80
-#: src/usr/local/www/status_captiveportal_test.php:83
+#: src/usr/local/www/status_captiveportal_expire.php:73
+#: src/usr/local/www/status_captiveportal_expire.php:78
+#: src/usr/local/www/status_captiveportal_test.php:81
 #: src/usr/local/www/status_captiveportal.php:151
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:72
 #: src/usr/local/www/status_captiveportal_vouchers.php:98
 msgid "Expire Vouchers"
 msgstr "Istekli vaučeri"
 
-#: src/usr/local/www/status_captiveportal_expire.php:63
+#: src/usr/local/www/status_captiveportal_expire.php:62
 msgid "Voucher(s) successfully marked."
 msgstr "Vaučer(i) uspješno označeni. "
 
-#: src/usr/local/www/status_captiveportal_expire.php:65
+#: src/usr/local/www/status_captiveportal_expire.php:64
 msgid "Voucher(s) could not be processed."
 msgstr "Vaučer(i) ne mogu biti procesirani. "
 
-#: src/usr/local/www/status_captiveportal_expire.php:71
-#: src/usr/local/www/status_captiveportal_test.php:79
+#: src/usr/local/www/status_captiveportal_expire.php:69
+#: src/usr/local/www/status_captiveportal_test.php:77
 #: src/usr/local/www/status_captiveportal.php:137
 #: src/usr/local/www/status_captiveportal.php:147
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:68
@@ -1408,8 +1408,8 @@ msgstr "Vaučer(i) ne mogu biti procesirani. "
 msgid "Active Users"
 msgstr "Aktivni korisnici"
 
-#: src/usr/local/www/status_captiveportal_expire.php:72
-#: src/usr/local/www/status_captiveportal_test.php:80
+#: src/usr/local/www/status_captiveportal_expire.php:70
+#: src/usr/local/www/status_captiveportal_test.php:78
 #: src/usr/local/www/status_captiveportal.php:148
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:69
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
@@ -1417,8 +1417,8 @@ msgstr "Aktivni korisnici"
 msgid "Active Vouchers"
 msgstr "Aktivni vaučeri"
 
-#: src/usr/local/www/status_captiveportal_expire.php:73
-#: src/usr/local/www/status_captiveportal_test.php:81
+#: src/usr/local/www/status_captiveportal_expire.php:71
+#: src/usr/local/www/status_captiveportal_test.php:79
 #: src/usr/local/www/services_captiveportal_vouchers.php:384
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:173
 #: src/usr/local/www/status_captiveportal.php:149
@@ -1428,22 +1428,22 @@ msgstr "Aktivni vaučeri"
 msgid "Voucher Rolls"
 msgstr "Voucher Rolls"
 
-#: src/usr/local/www/status_captiveportal_expire.php:74
+#: src/usr/local/www/status_captiveportal_expire.php:72
 #: src/usr/local/www/status_captiveportal_test.php:55
-#: src/usr/local/www/status_captiveportal_test.php:82
-#: src/usr/local/www/status_captiveportal_test.php:88
+#: src/usr/local/www/status_captiveportal_test.php:80
+#: src/usr/local/www/status_captiveportal_test.php:86
 #: src/usr/local/www/status_captiveportal.php:150
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:71
 #: src/usr/local/www/status_captiveportal_vouchers.php:97
 msgid "Test Vouchers"
 msgstr "Testni vaučeri"
 
-#: src/usr/local/www/status_captiveportal_expire.php:84
-#: src/usr/local/www/status_captiveportal_test.php:92
+#: src/usr/local/www/status_captiveportal_expire.php:82
+#: src/usr/local/www/status_captiveportal_test.php:90
 msgid "*Vouchers"
 msgstr "*Vaučeri"
 
-#: src/usr/local/www/status_captiveportal_expire.php:86
+#: src/usr/local/www/status_captiveportal_expire.php:84
 msgid ""
 "Enter multiple vouchers separated by space or newline. All valid vouchers "
 "will be marked as expired."
@@ -1451,7 +1451,7 @@ msgstr ""
 "Unesite više vaučera razdvojenih razmakom ili novim redom. Svi validni će "
 "biti označeni kao istekli. "
 
-#: src/usr/local/www/status_captiveportal_expire.php:99
+#: src/usr/local/www/status_captiveportal_expire.php:97
 msgid "Expire"
 msgstr "Isteklo"
 
@@ -1537,7 +1537,7 @@ msgstr "Firewall: NAT: 1:1 - spašeno/modifikovano NAT 1:1 mapiranje"
 #: src/usr/local/www/services_unbound_acls.php:166
 #: src/usr/local/www/services_captiveportal_ip_edit.php:63
 #: src/usr/local/www/system_groupmanager.php:273
-#: src/usr/local/www/vpn_openvpn_client.php:476
+#: src/usr/local/www/vpn_openvpn_client.php:478
 #: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
@@ -1548,7 +1548,7 @@ msgstr "Firewall: NAT: 1:1 - spašeno/modifikovano NAT 1:1 mapiranje"
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/system_gateways_edit.php:111
 #: src/usr/local/www/system_gateway_groups_edit.php:144
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/load_balancer_pool_edit.php:181
@@ -1647,7 +1647,7 @@ msgstr "Modifikuj NAT 1:1 unos"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
 #: src/usr/local/www/services_router_advertisements.php:104
 #: src/usr/local/www/services_router_advertisements.php:126
-#: src/usr/local/www/vpn_openvpn_client.php:510
+#: src/usr/local/www/vpn_openvpn_client.php:512
 #: src/usr/local/www/system_routes_edit.php:262
 #: src/usr/local/www/system_gateways_edit.php:153
 #: src/usr/local/www/load_balancer_pool_edit.php:402
@@ -1700,7 +1700,7 @@ msgstr "PPPoE Server"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
 #: src/usr/local/www/status_logs_common.inc:96
-#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:474
 #: src/usr/local/www/status_openvpn.php:30 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/diag_backup.php:440
 #: src/usr/local/www/vpn_openvpn_csc.php:282
@@ -1713,13 +1713,13 @@ msgstr "PPPoE Server"
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 #: src/usr/local/www/status_graph.php:49
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
-#: src/etc/inc/service-utils.inc:365 src/etc/inc/interfaces.inc:5734
+#: src/etc/inc/service-utils.inc:365 src/etc/inc/interfaces.inc:5873
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
 #: src/usr/local/www/services_igmpproxy_edit.php:153
-#: src/usr/local/www/vpn_openvpn_client.php:539
+#: src/usr/local/www/vpn_openvpn_client.php:541
 #: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/services_wol.php:135
 #: src/usr/local/www/system_gateways_edit.php:160
@@ -1833,7 +1833,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones_edit.php:97
 #: src/usr/local/www/services_igmpproxy_edit.php:163
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:138
-#: src/usr/local/www/vpn_openvpn_client.php:607
+#: src/usr/local/www/vpn_openvpn_client.php:609
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/interfaces_wireless_edit.php:197
 #: src/usr/local/www/services_dhcp_edit.php:472
@@ -1855,7 +1855,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:238
 #: src/usr/local/www/services_wol_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:222
-#: src/usr/local/www/interfaces_qinq_edit.php:268
+#: src/usr/local/www/interfaces_qinq_edit.php:287
 #: src/usr/local/www/services_dnsmasq_edit.php:228
 #: src/usr/local/www/vpn_openvpn_server.php:749
 #: src/usr/local/www/firewall_nat_npt_edit.php:235 src/etc/inc/shaper.inc:3897
@@ -1879,8 +1879,8 @@ msgstr "Koristi sistemski zadano"
 #: src/usr/local/www/services_dnsmasq.php:255
 #: src/usr/local/www/services_dhcp_relay.php:148
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
-#: src/usr/local/www/services_snmp.php:215
-#: src/usr/local/www/services_snmp.php:258 src/usr/local/www/vpn_l2tp.php:203
+#: src/usr/local/www/services_snmp.php:213
+#: src/usr/local/www/services_snmp.php:256 src/usr/local/www/vpn_l2tp.php:203
 #: src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/services_checkip_edit.php:120
 #: src/usr/local/www/services_dhcpv6_relay.php:148
@@ -1938,7 +1938,7 @@ msgstr ""
 #: src/usr/local/www/status_services.php:56
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/services_dhcp_edit.php:390
-#: src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/services_snmp.php:194
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_dyndns_edit.php:238
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -1960,7 +1960,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/head.inc:359
-#: src/usr/local/www/services_unbound_advanced.php:197
+#: src/usr/local/www/services_unbound_advanced.php:206
 #: src/usr/local/www/services_captiveportal_ip.php:59
 #: src/usr/local/www/services_ntpd_acls.php:175
 #: src/usr/local/www/services_dhcpv6_edit.php:194
@@ -2113,12 +2113,12 @@ msgstr "Ime"
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:65
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:70
-#: src/etc/inc/pfsense-utils.inc:3164 src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3167 src/etc/inc/pfsense-utils.inc:3210
 msgid "Mode"
 msgstr "Način"
 
 #: src/usr/local/www/load_balancer_pool.php:119
-#: src/usr/local/www/vpn_openvpn_client.php:496
+#: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_vs.php:65
 #: src/usr/local/www/status_lb_pool.php:135
@@ -2803,7 +2803,7 @@ msgid "Allow"
 msgstr "Dozvoli"
 
 #: src/usr/local/www/services_dhcpv6.php:825
-#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:791
+#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:793
 msgid "Deny"
 msgstr "Odbij"
 
@@ -2990,7 +2990,7 @@ msgstr "Sakrij napredno"
 #: src/usr/local/www/status_logs_vpn.php:84
 #: src/usr/local/www/status_logs_common.inc:94
 #: src/usr/local/www/vpn_ipsec.php:219
-#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:474
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 #: src/usr/local/www/vpn_l2tp.php:179
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
@@ -3069,8 +3069,8 @@ msgid "L2TP Users"
 msgstr "L2TP Korisnici"
 
 #: src/usr/local/www/vpn_l2tp_users.php:94
-#: src/usr/local/www/vpn_openvpn_client.php:590
-#: src/usr/local/www/vpn_openvpn_client.php:615
+#: src/usr/local/www/vpn_openvpn_client.php:592
+#: src/usr/local/www/vpn_openvpn_client.php:617
 #: src/usr/local/www/vpn_l2tp_users_edit.php:77
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/services_dyndns_edit.php:94
@@ -3286,7 +3286,7 @@ msgstr "Filter stanja"
 msgid "Filter expression"
 msgstr "Izraz filtera"
 
-#: src/usr/local/www/diag_dump_states.php:151 src/usr/local/www/pkg.php:352
+#: src/usr/local/www/diag_dump_states.php:151 src/usr/local/www/pkg.php:349
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_groupmanager_addprivs.php:202
@@ -3313,7 +3313,7 @@ msgstr "Ukloni sva stanja od i ka filtriranim adresama"
 #: src/usr/local/www/status_ipsec_sad.php:68
 #: src/usr/local/www/status_logs_filter.php:163
 #: src/usr/local/www/status_logs_common.inc:443
-#: src/usr/local/www/vpn_openvpn_client.php:939
+#: src/usr/local/www/vpn_openvpn_client.php:948
 #: src/usr/local/www/firewall_nat.php:225 src/usr/local/www/status_upnp.php:70
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/interfaces_bridge_edit.php:548
@@ -3482,7 +3482,7 @@ msgid "RFC2136 Clients"
 msgstr "RFC2136 Klijenti"
 
 #: src/usr/local/www/services_rfc2136.php:82
-#: src/usr/local/www/vpn_openvpn_client.php:940
+#: src/usr/local/www/vpn_openvpn_client.php:949
 #: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/services_rfc2136_edit.php:233
@@ -3497,7 +3497,7 @@ msgid "Cached IP"
 msgstr "Kešovani IP"
 
 #: src/usr/local/www/services_rfc2136.php:177
-#: src/usr/local/www/vpn_openvpn_client.php:963
+#: src/usr/local/www/vpn_openvpn_client.php:972
 msgid "Edit client"
 msgstr "Modifikuj klijenta"
 
@@ -3510,7 +3510,7 @@ msgid "Enable client"
 msgstr "Uključi klijenta"
 
 #: src/usr/local/www/services_rfc2136.php:186
-#: src/usr/local/www/vpn_openvpn_client.php:964
+#: src/usr/local/www/vpn_openvpn_client.php:973
 msgid "Delete client"
 msgstr "Obriši klijenta"
 
@@ -3532,7 +3532,7 @@ msgstr "Nije uspjelo"
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
-#: src/usr/local/www/system_advanced_misc.php:295
+#: src/usr/local/www/system_advanced_misc.php:296
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -3819,7 +3819,7 @@ msgid "The value may only contain alphanumeric characters, -, _, %, and /."
 msgstr "Vrijednost može sadržavati samo alfanumeričke znakove, -, _, % i /. "
 
 #: src/usr/local/www/system_advanced_sysctl.php:115
-#: src/usr/local/www/system_advanced_misc.php:295
+#: src/usr/local/www/system_advanced_misc.php:296
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_gateways_edit.php:265
 #: src/usr/local/www/system_advanced_admin.php:284
@@ -3834,7 +3834,7 @@ msgstr "Napredno"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_advanced_sysctl.php:142
 #: src/usr/local/www/system_advanced_sysctl.php:149
-#: src/usr/local/www/system_advanced_misc.php:313
+#: src/usr/local/www/system_advanced_misc.php:314
 #: src/usr/local/www/system_advanced_firewall.php:382
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_network.php:172
@@ -3847,7 +3847,7 @@ msgid "The firewall tunables have changed."
 msgstr "Firewall štimanja su promijenjena. "
 
 #: src/usr/local/www/system_advanced_sysctl.php:138
-#: src/usr/local/www/system_advanced_misc.php:309
+#: src/usr/local/www/system_advanced_misc.php:310
 #: src/usr/local/www/system_advanced_firewall.php:378
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_admin.php:297
@@ -3857,7 +3857,7 @@ msgid "Admin Access"
 msgstr "Admin pristup"
 
 #: src/usr/local/www/system_advanced_sysctl.php:139
-#: src/usr/local/www/system_advanced_misc.php:310
+#: src/usr/local/www/system_advanced_misc.php:311
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_firewall.php:379
 #: src/usr/local/www/system_advanced_admin.php:298
@@ -3867,7 +3867,7 @@ msgid "Firewall & NAT"
 msgstr "Firewall & NAT"
 
 #: src/usr/local/www/system_advanced_sysctl.php:140
-#: src/usr/local/www/system_advanced_misc.php:311
+#: src/usr/local/www/system_advanced_misc.php:312
 #: src/usr/local/www/system_advanced_firewall.php:380
 #: src/usr/local/www/system_advanced_admin.php:299
 #: src/usr/local/www/system_advanced_network.php:155
@@ -3878,8 +3878,8 @@ msgid "Networking"
 msgstr "Umrežavanje"
 
 #: src/usr/local/www/system_advanced_sysctl.php:141
-#: src/usr/local/www/system_advanced_misc.php:295
-#: src/usr/local/www/system_advanced_misc.php:312
+#: src/usr/local/www/system_advanced_misc.php:296
+#: src/usr/local/www/system_advanced_misc.php:313
 #: src/usr/local/www/system_advanced_firewall.php:381
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_network.php:171
@@ -3889,7 +3889,7 @@ msgid "Miscellaneous"
 msgstr "Razni/Razno"
 
 #: src/usr/local/www/system_advanced_sysctl.php:143
-#: src/usr/local/www/system_advanced_misc.php:314
+#: src/usr/local/www/system_advanced_misc.php:315
 #: src/usr/local/www/system_advanced_firewall.php:383
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_network.php:173
@@ -3936,7 +3936,7 @@ msgstr "*Vrijednost"
 
 #: src/usr/local/www/system_advanced_sysctl.php:223
 #: src/usr/local/www/interfaces_groups_edit.php:237
-#: src/usr/local/www/interfaces_vlan_edit.php:222
+#: src/usr/local/www/interfaces_vlan_edit.php:223
 msgid "id"
 msgstr "id"
 
@@ -3993,7 +3993,7 @@ msgstr "Pogled"
 
 #: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
-#: src/usr/local/www/system_advanced_misc.php:447
+#: src/usr/local/www/system_advanced_misc.php:448
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -4001,7 +4001,7 @@ msgstr "Pogled"
 #: src/usr/local/www/interfaces.php:1713 src/usr/local/www/interfaces.php:1714
 #: src/usr/local/www/interfaces.php:1740 src/usr/local/www/interfaces.php:1753
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/shaper.inc:3869
-#: src/etc/inc/shaper.inc:4173 src/etc/inc/pfsense-utils.inc:3146
+#: src/etc/inc/shaper.inc:4173 src/etc/inc/pfsense-utils.inc:3149
 msgid "None"
 msgstr "Nijedan"
 
@@ -4517,7 +4517,7 @@ msgstr "Radnja"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
 #: src/usr/local/www/system_usermanager_addprivs.php:142
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:232
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Korisnik"
@@ -4798,7 +4798,7 @@ msgid "Protocol supplied is invalid"
 msgstr "Protokol koji je dat je pogrešan"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:163
-#: src/usr/local/www/interfaces_vlan_edit.php:133
+#: src/usr/local/www/interfaces_vlan_edit.php:134
 #: src/usr/local/www/interfaces_bridge_edit.php:345
 #: src/usr/local/www/interfaces_gre_edit.php:121
 #: src/usr/local/www/interfaces_gif_edit.php:128
@@ -4840,7 +4840,7 @@ msgstr "Unesi opis zbog reference (Nije proslijeđeno). "
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:92
 #: src/usr/local/www/firewall_rules.php:383
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:215
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Izvor"
@@ -4855,7 +4855,7 @@ msgstr "Izvor"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/easyrule.php:94 src/usr/local/www/firewall_rules.php:385
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:216
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destinacija"
@@ -5026,7 +5026,7 @@ msgstr "Rutiranje"
 #: src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/status_logs.php:61 src/usr/local/www/diag_backup.php:433
 #: src/usr/local/www/head.inc:309
-#: src/usr/local/www/services_unbound_advanced.php:197
+#: src/usr/local/www/services_unbound_advanced.php:206
 #: src/usr/local/www/services_unbound_host_edit.php:181
 #: src/etc/inc/service-utils.inc:257
 msgid "DNS Resolver"
@@ -5296,7 +5296,7 @@ msgstr "CPU aktivnost"
 msgid "Gathering CPU activity, please wait..."
 msgstr "Dobijanje CPU aktivnosti, molimo sačekajte..."
 
-#: src/usr/local/www/status_captiveportal_test.php:94
+#: src/usr/local/www/status_captiveportal_test.php:92
 msgid ""
 "Enter multiple vouchers separated by space or newline. The remaining time, "
 "if valid, will be shown for each voucher."
@@ -5304,7 +5304,7 @@ msgstr ""
 "Unesite više vaučera razdvojenih razmakom ili novim redom. Preostalo "
 "vrijeme, ako je validno, će biti prikazano za svaki vaučer. "
 
-#: src/usr/local/www/status_captiveportal_test.php:107
+#: src/usr/local/www/status_captiveportal_test.php:105
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_testport.php:269 src/usr/local/www/diag_smart.php:280
 msgid "Test"
@@ -5366,7 +5366,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
-#: src/usr/local/www/services_snmp.php:176
+#: src/usr/local/www/services_snmp.php:174
 #: src/usr/local/www/diag_backup.php:454
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
@@ -5375,11 +5375,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:293
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:196
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:505
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:300
-#: src/usr/local/www/pkg_edit.php:1208 src/usr/local/www/status_graph.php:145
+#: src/usr/local/www/pkg_edit.php:1204 src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
 msgstr "Sve"
@@ -5431,65 +5431,65 @@ msgstr ""
 msgid "Package configuration item deleted from package settings page."
 msgstr "Stavka paketne konfiguracije obrisana sa stranice paketne postavke. "
 
-#: src/usr/local/www/pkg.php:265
+#: src/usr/local/www/pkg.php:262
 msgid "Saving changes..."
 msgstr "Spašavanje promjena..."
 
-#: src/usr/local/www/pkg.php:266
+#: src/usr/local/www/pkg.php:263
 msgid "Confirmation Required to save changes."
 msgstr "Potvrda potrebna za spašavanje promjena. "
 
-#: src/usr/local/www/pkg.php:325
+#: src/usr/local/www/pkg.php:322
 msgid "Filter by: "
 msgstr "Filtriraj po: "
 
-#: src/usr/local/www/pkg.php:337
+#: src/usr/local/www/pkg.php:334
 msgid "Filter field: "
 msgstr "Polje filtera: "
 
-#: src/usr/local/www/pkg.php:349
+#: src/usr/local/www/pkg.php:346
 msgid "Filter text: "
 msgstr "Tekst filtera: "
 
-#: src/usr/local/www/pkg.php:384
+#: src/usr/local/www/pkg.php:381
 #, php-format
 msgid "Displaying page %1$s of %2$s"
 msgstr "Prikazujem stranicu %1$s od %2$s"
 
-#: src/usr/local/www/pkg.php:385
+#: src/usr/local/www/pkg.php:382
 msgid "Rows per page: "
 msgstr "Redova po stranici: "
 
-#: src/usr/local/www/pkg.php:482 src/usr/local/www/diag_defaults.php:36
+#: src/usr/local/www/pkg.php:479 src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77
 #: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_pf_info.php:33
 msgid "No"
 msgstr "Ne"
 
-#: src/usr/local/www/pkg.php:484 src/usr/local/www/diag_defaults.php:45
+#: src/usr/local/www/pkg.php:481 src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73
 #: src/usr/local/www/crash_reporter.php:144
 msgid "Yes"
 msgstr "Da"
 
-#: src/usr/local/www/pkg.php:518
+#: src/usr/local/www/pkg.php:515
 msgid "Edit this item"
 msgstr "Modifikuj ovu stavku "
 
-#: src/usr/local/www/pkg.php:523
+#: src/usr/local/www/pkg.php:520
 msgid "Delete this item"
 msgstr "Obriši ovu stavku "
 
-#: src/usr/local/www/pkg.php:547
+#: src/usr/local/www/pkg.php:544
 msgid "Previous page"
 msgstr "Prethodna stranica"
 
-#: src/usr/local/www/pkg.php:560
+#: src/usr/local/www/pkg.php:557
 msgid "Next page"
 msgstr "Naredna stranica"
 
-#: src/usr/local/www/pkg.php:578
+#: src/usr/local/www/pkg.php:575
 msgid "Add a new item"
 msgstr "Dodaj novu stavku"
 
@@ -5513,7 +5513,7 @@ msgstr "Spašene konfiguracijske promjene za IPsec tunele. "
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:187
 msgid "Tunnels"
 msgstr "Tuneli"
 
@@ -5535,8 +5535,8 @@ msgstr "Mobilni klijenti"
 #: src/usr/local/www/vpn_ipsec_mobile.php:426
 #: src/usr/local/www/vpn_ipsec_keys.php:90
 #: src/usr/local/www/vpn_ipsec_phase1.php:670
-#: src/usr/local/www/services_unbound_advanced.php:197
-#: src/usr/local/www/services_unbound_advanced.php:216
+#: src/usr/local/www/services_unbound_advanced.php:206
+#: src/usr/local/www/services_unbound_advanced.php:225
 #: src/usr/local/www/vpn_ipsec_phase2.php:491
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
@@ -5790,13 +5790,13 @@ msgstr ""
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_acls.php:186
 #: src/usr/local/www/services_unbound.php:270
-#: src/usr/local/www/services_unbound_advanced.php:217
+#: src/usr/local/www/services_unbound_advanced.php:226
 msgid "Access Lists"
 msgstr "Pristupne liste"
 
 #: src/usr/local/www/services_unbound_acls.php:180
 #: src/usr/local/www/services_unbound.php:264
-#: src/usr/local/www/services_unbound_advanced.php:211
+#: src/usr/local/www/services_unbound_advanced.php:220
 msgid "The DNS resolver configuration has been changed."
 msgstr "Konfiguracija DNS resolvera je promijenjena. "
 
@@ -5804,7 +5804,7 @@ msgstr "Konfiguracija DNS resolvera je promijenjena. "
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 #: src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound.php:268
-#: src/usr/local/www/services_unbound_advanced.php:215
+#: src/usr/local/www/services_unbound_advanced.php:224
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "General Settings"
 msgstr "Generalne postavke"
@@ -5821,7 +5821,7 @@ msgstr "Ime pristupne liste"
 msgid "Provide an Access List name."
 msgstr "Daj ime pristupne liste"
 
-#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:792
+#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:794
 msgid "Refuse"
 msgstr "Odbij"
 
@@ -6394,12 +6394,12 @@ msgstr "Obrisan prazan OpenVPN klijent"
 msgid "Client successfully deleted."
 msgstr "Klijent uspješno obrisan"
 
-#: src/usr/local/www/vpn_openvpn_client.php:196
+#: src/usr/local/www/vpn_openvpn_client.php:197
 #: src/usr/local/www/vpn_openvpn_server.php:265
 msgid "The selected Encryption Algorithm is not valid."
 msgstr "Odabrani enkripcijski algoritam nije validan. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:201
+#: src/usr/local/www/vpn_openvpn_client.php:202
 #: src/usr/local/www/vpn_openvpn_server.php:270
 msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
@@ -6408,7 +6408,7 @@ msgstr ""
 "Protokol i familija IP adresa se ne poklapaju. Nemoguće selektovati IPv6 "
 "protokol i IPv4 adresu. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:203
+#: src/usr/local/www/vpn_openvpn_client.php:204
 #: src/usr/local/www/vpn_openvpn_server.php:272
 msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
@@ -6417,7 +6417,7 @@ msgstr ""
 "Protokol i familija IP adresa se ne poklapaju. Nemoguće selektovati IPv4 "
 "protokol i IPv6 adresu. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:208
+#: src/usr/local/www/vpn_openvpn_client.php:209
 #: src/usr/local/www/vpn_openvpn_server.php:277
 msgid ""
 "An IPv4 protocol was selected, but the selected interface has no IPv4 "
@@ -6425,7 +6425,7 @@ msgid ""
 msgstr ""
 "IPv4 protokol je selektovan, ali selektovani interfejs nema IPv4 adresu. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:214
+#: src/usr/local/www/vpn_openvpn_client.php:215
 #: src/usr/local/www/vpn_openvpn_server.php:283
 msgid ""
 "An IPv6 protocol was selected, but the selected interface has no IPv6 "
@@ -6433,72 +6433,72 @@ msgid ""
 msgstr ""
 "IPv6 protokol je selektovan, ali odabrani interfejs nema IPv6 adresu. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:233
+#: src/usr/local/www/vpn_openvpn_client.php:234
 #: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr ""
 "Specificirani 'Lokalni Port' se koristi. Molimo odaberite drugu vrijednost "
 
-#: src/usr/local/www/vpn_openvpn_client.php:246
+#: src/usr/local/www/vpn_openvpn_client.php:247
 #: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
 msgstr "Polje 'Topologija' sadrži nevaljan odabir"
 
-#: src/usr/local/www/vpn_openvpn_client.php:261
+#: src/usr/local/www/vpn_openvpn_client.php:262
 msgid "User name and password are required for proxy with authentication."
 msgstr "Korisničko ime i lozinka su neophodno za proxy sa autentikacijom. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:265
-#: src/usr/local/www/vpn_openvpn_client.php:343
+#: src/usr/local/www/vpn_openvpn_client.php:266
+#: src/usr/local/www/vpn_openvpn_client.php:344
 #: src/usr/local/www/system_hasync.php:73
 msgid "Password and confirmation must match."
 msgstr "Lozinka i potvrda se moraju poklapati. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:291
+#: src/usr/local/www/vpn_openvpn_client.php:292
 msgid "The bandwidth limit must be a positive numeric value."
 msgstr "Limit propusnosti mora biti pozitivna numerička vrijednost. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:301
+#: src/usr/local/www/vpn_openvpn_client.php:302
 #: src/usr/local/www/vpn_openvpn_server.php:338
 msgid "The field 'Shared Key' does not appear to be valid"
 msgstr "Polje 'Dijeljeni ključ' izgleda da nije validno"
 
-#: src/usr/local/www/vpn_openvpn_client.php:308
+#: src/usr/local/www/vpn_openvpn_client.php:309
 #: src/usr/local/www/vpn_openvpn_server.php:345
 msgid "The field 'TLS Key' does not appear to be valid"
 msgstr "Polje 'TLS ključ' izgleda da nije validno"
 
-#: src/usr/local/www/vpn_openvpn_client.php:311
+#: src/usr/local/www/vpn_openvpn_client.php:312
 #: src/usr/local/www/vpn_openvpn_server.php:348
 msgid "The field 'TLS Key Usage Mode' is not valid"
 msgstr "Polje 'Način korištenja TLS Ključa' nije validno"
 
-#: src/usr/local/www/vpn_openvpn_client.php:316
+#: src/usr/local/www/vpn_openvpn_client.php:317
 #: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
 "GCM enkripcijski algoritmi ne mogu biti korišteni u načinu rada Dijeljenih "
 "ključeva"
 
-#: src/usr/local/www/vpn_openvpn_client.php:324
+#: src/usr/local/www/vpn_openvpn_client.php:325
 #: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
 msgstr "Jedan ili više selektovanih NCP algoritama nije validan. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:329
+#: src/usr/local/www/vpn_openvpn_client.php:330
 #: src/usr/local/www/system_crlmanager.php:205
 #: src/usr/local/www/vpn_ipsec_phase1.php:226
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
 msgstr "Autoritet certifikata"
 
-#: src/usr/local/www/vpn_openvpn_client.php:333
+#: src/usr/local/www/vpn_openvpn_client.php:334
 #: src/usr/local/www/vpn_openvpn_server.php:433
 #: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Shared key"
 msgstr "Dijeljeni ključ "
 
-#: src/usr/local/www/vpn_openvpn_client.php:339
+#: src/usr/local/www/vpn_openvpn_client.php:340
 msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
@@ -6506,40 +6506,40 @@ msgstr ""
 "Ako nijedan klijent certifikat nije selektovan, korisničko ime i/ili lozinka "
 "moraju biti uneseni. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:357
+#: src/usr/local/www/vpn_openvpn_client.php:358
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr "Odlazeći protočni limit nije kompatibilan sa UDP Brzim U/I. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:364
+#: src/usr/local/www/vpn_openvpn_client.php:365
 #: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
 msgstr "Data veličina buffera slanja/primanja nije valjana. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:454
+#: src/usr/local/www/vpn_openvpn_client.php:456
 #, php-format
 msgid "Updated OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Ažuriran OpenVPN klijent na server %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:457
+#: src/usr/local/www/vpn_openvpn_client.php:459
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Dodan OpenVPN klijent serveru %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:472
-#: src/usr/local/www/vpn_openvpn_client.php:497
+#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:499
 #: src/usr/local/www/vpn_openvpn_csc.php:303
 #: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
 msgstr "Klijenti"
 
-#: src/usr/local/www/vpn_openvpn_client.php:498
+#: src/usr/local/www/vpn_openvpn_client.php:500
 #: src/usr/local/www/vpn_openvpn_csc.php:282
 #: src/usr/local/www/vpn_openvpn_csc.php:304
 #: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Client Specific Overrides"
 msgstr "Specifični overrideovi klijenata"
 
-#: src/usr/local/www/vpn_openvpn_client.php:499
+#: src/usr/local/www/vpn_openvpn_client.php:501
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/firewall_shaper_wizards.php:76
 #: src/usr/local/www/firewall_shaper_vinterface.php:373
@@ -6550,7 +6550,7 @@ msgstr "Specifični overrideovi klijenata"
 msgid "Wizards"
 msgstr "Čarobnjaci"
 
-#: src/usr/local/www/vpn_openvpn_client.php:506
+#: src/usr/local/www/vpn_openvpn_client.php:508
 #: src/usr/local/www/vpn_openvpn_csc.php:312
 #: src/usr/local/www/vpn_ipsec_phase1.php:675
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
@@ -6558,19 +6558,19 @@ msgstr "Čarobnjaci"
 msgid "General Information"
 msgstr "Generalne informacije"
 
-#: src/usr/local/www/vpn_openvpn_client.php:513
+#: src/usr/local/www/vpn_openvpn_client.php:515
 msgid ""
 "Set this option to disable this client without removing it from the list."
 msgstr ""
 "Postavite ovu opciju za isključivanje ovog klijenta bez njegovog uklanjanja "
 "sa liste. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:517
+#: src/usr/local/www/vpn_openvpn_client.php:519
 #: src/usr/local/www/vpn_openvpn_server.php:682
 msgid "*Server mode"
 msgstr "*Server način"
 
-#: src/usr/local/www/vpn_openvpn_client.php:524
+#: src/usr/local/www/vpn_openvpn_client.php:526
 #: src/usr/local/www/diag_packet_capture.php:348
 #: src/usr/local/www/system_authservers.php:735
 #: src/usr/local/www/firewall_nat_edit.php:713
@@ -6581,12 +6581,12 @@ msgstr "*Server način"
 msgid "*Protocol"
 msgstr "*Protokol"
 
-#: src/usr/local/www/vpn_openvpn_client.php:531
+#: src/usr/local/www/vpn_openvpn_client.php:533
 #: src/usr/local/www/vpn_openvpn_server.php:723
 msgid "*Device mode"
 msgstr "*Način uređaja"
 
-#: src/usr/local/www/vpn_openvpn_client.php:534
+#: src/usr/local/www/vpn_openvpn_client.php:536
 #: src/usr/local/www/vpn_openvpn_server.php:726
 #, php-format
 msgid ""
@@ -6598,18 +6598,18 @@ msgstr ""
 "najkompatibilnijih načina neovisno od platforme. %1$s\"tap\" način je u "
 "mogućnosti nošenja 802.3 (OSI layer 2). "
 
-#: src/usr/local/www/vpn_openvpn_client.php:542
+#: src/usr/local/www/vpn_openvpn_client.php:544
 msgid ""
 "The interface used by the firewall to originate this OpenVPN client "
 "connection"
 msgstr ""
 "Interfejs korišten firewallom za stvaranje ove OpenVPN klijent konekcije"
 
-#: src/usr/local/www/vpn_openvpn_client.php:546
+#: src/usr/local/www/vpn_openvpn_client.php:548
 msgid "Local port"
 msgstr "Lokalni port"
 
-#: src/usr/local/www/vpn_openvpn_client.php:550
+#: src/usr/local/www/vpn_openvpn_client.php:552
 msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
@@ -6617,27 +6617,27 @@ msgstr ""
 "Postavite ovu opciju za dodjelu specifičnom portu. Ostavite prazno ili "
 "unesite 0 za nasumični dinamički port.  "
 
-#: src/usr/local/www/vpn_openvpn_client.php:554
+#: src/usr/local/www/vpn_openvpn_client.php:556
 msgid "*Server host or address"
 msgstr "*Server host ili adresa"
 
-#: src/usr/local/www/vpn_openvpn_client.php:557
+#: src/usr/local/www/vpn_openvpn_client.php:559
 msgid "The IP address or hostname of the OpenVPN server."
 msgstr "IP adresa ili hostname OpenVPN servera. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:561
+#: src/usr/local/www/vpn_openvpn_client.php:563
 msgid "*Server port"
 msgstr "*Server port"
 
-#: src/usr/local/www/vpn_openvpn_client.php:564
+#: src/usr/local/www/vpn_openvpn_client.php:566
 msgid "The port used by the server to receive client connections."
 msgstr "Port korišten od servera za primanje klijent konekcija. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:568
+#: src/usr/local/www/vpn_openvpn_client.php:570
 msgid "Proxy host or address"
 msgstr "Proxy host ili adresa"
 
-#: src/usr/local/www/vpn_openvpn_client.php:571
+#: src/usr/local/www/vpn_openvpn_client.php:573
 #, php-format
 msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
@@ -6646,28 +6646,28 @@ msgstr ""
 "Adresa HTTP proxy koju ovaj klijent može koristiti za spajanje udaljenom "
 "serveru. %1$sTCP mora biti korišten za klijent i server protokol. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:576
+#: src/usr/local/www/vpn_openvpn_client.php:578
 msgid "Proxy port"
 msgstr "Proxy port"
 
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 msgid "basic"
 msgstr "osnovno"
 
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 msgid "ntlm"
 msgstr "ntlm"
 
-#: src/usr/local/www/vpn_openvpn_client.php:583
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "Proxy Authentication"
 msgstr "Proxy autentikacija"
 
-#: src/usr/local/www/vpn_openvpn_client.php:586
+#: src/usr/local/www/vpn_openvpn_client.php:588
 msgid "The type of authentication used by the proxy server."
 msgstr "Tip autentikacije korišten od proxy servera. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:597
-#: src/usr/local/www/vpn_openvpn_client.php:622
+#: src/usr/local/www/vpn_openvpn_client.php:599
+#: src/usr/local/www/vpn_openvpn_client.php:624
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_l2tp_users_edit.php:159
 #: src/usr/local/www/system_usermanager_passwordmg.php:40
@@ -6691,29 +6691,39 @@ msgstr "Tip autentikacije korišten od proxy servera. "
 msgid "Password"
 msgstr "Lozinka"
 
-#: src/usr/local/www/vpn_openvpn_client.php:610
+#: src/usr/local/www/vpn_openvpn_client.php:612
 msgid "User Authentication Settings"
 msgstr "Korisničke postavke autentikacije"
 
-#: src/usr/local/www/vpn_openvpn_client.php:618
+#: src/usr/local/www/vpn_openvpn_client.php:620
 msgid "Leave empty when no user name is needed"
 msgstr "Ostavite prazno kada korisničko ime nije potrebno "
 
-#: src/usr/local/www/vpn_openvpn_client.php:625
+#: src/usr/local/www/vpn_openvpn_client.php:627
 msgid "Leave empty when no password is needed"
 msgstr "Ostavite prazno kada lozinka nije potrebna"
 
-#: src/usr/local/www/vpn_openvpn_client.php:629
+#: src/usr/local/www/vpn_openvpn_client.php:631
+msgid "Authentication Retry"
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:634
+msgid ""
+"When enabled, the OpenVPN process will exit if it receives an authentication "
+"failure message. The default behavior is to retry."
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:638
 #: src/usr/local/www/vpn_openvpn_server.php:753
 msgid "Cryptographic Settings"
 msgstr "Kriptografske postavke "
 
-#: src/usr/local/www/vpn_openvpn_client.php:633
+#: src/usr/local/www/vpn_openvpn_client.php:642
 #: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
 msgstr "TLS konfiguracija"
 
-#: src/usr/local/www/vpn_openvpn_client.php:636
+#: src/usr/local/www/vpn_openvpn_client.php:645
 #: src/usr/local/www/vpn_openvpn_server.php:760
 msgid ""
 "A TLS key enhances security of an OpenVPN connection by requiring both "
@@ -6728,12 +6738,12 @@ msgstr ""
 "bacanja odgovarajućeg ključa, štiteći peerove od napada ili neautorizovanih "
 "konekcija. TLS ključ nema uticaja na tunnel podatke. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:651
+#: src/usr/local/www/vpn_openvpn_client.php:660
 #: src/usr/local/www/vpn_openvpn_server.php:775
 msgid "*TLS Key"
 msgstr "*TLS ključ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:653
+#: src/usr/local/www/vpn_openvpn_client.php:662
 #: src/usr/local/www/vpn_openvpn_server.php:777
 #, php-format
 msgid ""
@@ -6744,12 +6754,12 @@ msgstr ""
 "kontrolnih kanalnih paketa sa HMAC potpisom za autentikaciju kada se tunnel "
 "uspostavlja. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:658
+#: src/usr/local/www/vpn_openvpn_client.php:667
 #: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
 msgstr "*TLS ključ način korištenja"
 
-#: src/usr/local/www/vpn_openvpn_client.php:661
+#: src/usr/local/www/vpn_openvpn_client.php:670
 #: src/usr/local/www/vpn_openvpn_server.php:786
 #, php-format
 msgid ""
@@ -6765,46 +6775,46 @@ msgstr ""
 "kontrolu komunikacije kanala, tako da daju više privatnosti i kontrole "
 "prometa. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:672
-#: src/usr/local/www/vpn_openvpn_client.php:678
+#: src/usr/local/www/vpn_openvpn_client.php:681
+#: src/usr/local/www/vpn_openvpn_client.php:687
 #: src/usr/local/www/vpn_ipsec_phase1.php:796
 #: src/usr/local/www/vpn_openvpn_server.php:799
 #: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
 msgstr "*Autoritet Peer Certifikata"
 
-#: src/usr/local/www/vpn_openvpn_client.php:686
-#: src/usr/local/www/vpn_openvpn_client.php:692
+#: src/usr/local/www/vpn_openvpn_client.php:695
+#: src/usr/local/www/vpn_openvpn_client.php:701
 #: src/usr/local/www/vpn_openvpn_server.php:813
 #: src/usr/local/www/vpn_openvpn_server.php:819
 msgid "Peer Certificate Revocation list"
 msgstr "Peer lista ukinuća certifikata"
 
-#: src/usr/local/www/vpn_openvpn_client.php:699
+#: src/usr/local/www/vpn_openvpn_client.php:708
 msgid "Auto generate"
 msgstr "Automatski generiši"
 
-#: src/usr/local/www/vpn_openvpn_client.php:706
+#: src/usr/local/www/vpn_openvpn_client.php:715
 #: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
 msgstr "*Dijeljeni ključ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:708
+#: src/usr/local/www/vpn_openvpn_client.php:717
 #: src/usr/local/www/vpn_openvpn_server.php:888
 msgid "Paste the shared key here"
 msgstr "Zalijepi dijeljeni ključ ovdje"
 
-#: src/usr/local/www/vpn_openvpn_client.php:714
+#: src/usr/local/www/vpn_openvpn_client.php:723
 msgid "Client Certificate"
 msgstr "Klijent certifikat"
 
-#: src/usr/local/www/vpn_openvpn_client.php:721
+#: src/usr/local/www/vpn_openvpn_client.php:730
 #: src/usr/local/www/vpn_ipsec_phase1.php:805
 #: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr "*Enkripcijski algoritam"
 
-#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_client.php:733
 #: src/usr/local/www/vpn_openvpn_server.php:895
 msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
@@ -6813,12 +6823,12 @@ msgstr ""
 "Enkripcijski algoritam korišten za kanalne pakete za Podesivi Kriptografski "
 "Parametar (NCP) podrška nije dostupna. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:728
+#: src/usr/local/www/vpn_openvpn_client.php:737
 #: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable NCP"
 msgstr "Uključi NCP"
 
-#: src/usr/local/www/vpn_openvpn_client.php:735
+#: src/usr/local/www/vpn_openvpn_client.php:744
 #: src/usr/local/www/vpn_openvpn_server.php:905
 msgid ""
 "When both peers support NCP and have it enabled, NCP overrides the "
@@ -6827,13 +6837,13 @@ msgstr ""
 "Kada oba peera podržavaju NCP i imaju ga uključenog, NCP overridea "
 "enkripcijski algoritam iznad. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:736
+#: src/usr/local/www/vpn_openvpn_client.php:745
 #: src/usr/local/www/vpn_openvpn_server.php:906
 msgid "When disabled, only the selected Encryption Algorithm is allowed."
 msgstr ""
 "Kada je isključeno, samo selektovani enkripcijski algoritam je dozvoljen. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:731
+#: src/usr/local/www/vpn_openvpn_client.php:740
 #: src/usr/local/www/vpn_openvpn_server.php:902
 #, php-format
 msgid ""
@@ -6845,12 +6855,12 @@ msgstr ""
 "traže kompatibilan skup prihvativih kriptografskih enkripcijskih algoritama "
 "od onih koji su selektovani u NCP listi algoritama ispod. %1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:742
+#: src/usr/local/www/vpn_openvpn_client.php:751
 #: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
 msgstr "NCP algoritmi"
 
-#: src/usr/local/www/vpn_openvpn_client.php:751
+#: src/usr/local/www/vpn_openvpn_client.php:760
 #: src/usr/local/www/vpn_openvpn_server.php:918
 #, php-format
 msgid ""
@@ -6860,7 +6870,7 @@ msgstr ""
 "Dostupni NCP enkripcijski algoritmi%1$sKlikni za dodavanje ili uklanjanje "
 "algoritma sa liste. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:761
+#: src/usr/local/www/vpn_openvpn_client.php:770
 #: src/usr/local/www/vpn_openvpn_server.php:928
 msgid ""
 "Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from "
@@ -6869,7 +6879,7 @@ msgstr ""
 "Dozvoljeni NCP enkripcijski algoritmi. Klikni na ime algoritma za njegovo "
 "uklanjanje sa liste. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:766
+#: src/usr/local/www/vpn_openvpn_client.php:775
 #: src/usr/local/www/vpn_openvpn_server.php:933
 msgid ""
 "For backward compatibility, when an older peer connects that does not "
@@ -6881,7 +6891,7 @@ msgstr ""
 "NCP, OpenVPN će koristiti enkripcijski algoritam zahtijevan od peera dokle "
 "god je on selektovan u listi ili ako je odabran kao enkripcijski algoritam. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:763
+#: src/usr/local/www/vpn_openvpn_client.php:772
 #: src/usr/local/www/vpn_openvpn_server.php:930
 #, php-format
 msgid ""
@@ -6891,12 +6901,12 @@ msgstr ""
 "Redoslijed selektovanih NCP enkripcijskih algoritama se poštuje OpenVPNom. "
 "%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:774
+#: src/usr/local/www/vpn_openvpn_client.php:783
 #: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
 msgstr "*Autentikacijski digest algoritam "
 
-#: src/usr/local/www/vpn_openvpn_client.php:777
+#: src/usr/local/www/vpn_openvpn_client.php:786
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -6912,25 +6922,25 @@ msgstr ""
 "ovo na SHA1 osim ako server koristi drugu vrijednost. SHA1 je zadano za "
 "OpenVPN. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:783
+#: src/usr/local/www/vpn_openvpn_client.php:792
 #: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
 msgstr "Hardverski kripto"
 
-#: src/usr/local/www/vpn_openvpn_client.php:790
+#: src/usr/local/www/vpn_openvpn_client.php:799
 #: src/usr/local/www/vpn_openvpn_csc.php:362
 #: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
 msgstr "Tunnel postavke"
 
-#: src/usr/local/www/vpn_openvpn_client.php:794
+#: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:366
 #: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
 msgstr "IPv4 tunnel mreža"
 
-#: src/usr/local/www/vpn_openvpn_client.php:797
+#: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
 "this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). "
@@ -6944,13 +6954,13 @@ msgstr ""
 "interfejsu. Ostavite prazno ako je server u mogućnosti davanja adresa "
 "klijentima. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:803
+#: src/usr/local/www/vpn_openvpn_client.php:812
 #: src/usr/local/www/vpn_openvpn_csc.php:376
 #: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
 msgstr "IPv6 Tunnel mreža"
 
-#: src/usr/local/www/vpn_openvpn_client.php:806
+#: src/usr/local/www/vpn_openvpn_client.php:815
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
 "this client and the server expressed using CIDR notation (e.g. fe80::/64). "
@@ -6964,12 +6974,12 @@ msgstr ""
 "dodijeljena klijentskom virtualnom interfejsu. Ostavite prazno ako je server "
 "u mogućnosti davanja adresa klijentima. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_client.php:822
 #: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
 msgstr "IPv4 Udaljena mreža(e)"
 
-#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_client.php:825
 #: src/usr/local/www/vpn_openvpn_server.php:1058
 msgid ""
 "IPv4 networks that will be routed through the tunnel, so that a site-to-site "
@@ -6984,12 +6994,12 @@ msgstr ""
 "site VPN, unesite udaljene LAN/ove ovdje. Može biti ostavljeno prazno za bez "
 "site-to-site VPNa. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:822
+#: src/usr/local/www/vpn_openvpn_client.php:831
 #: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
 msgstr "IPv6 udaljena mreža(e)"
 
-#: src/usr/local/www/vpn_openvpn_client.php:825
+#: src/usr/local/www/vpn_openvpn_client.php:834
 #: src/usr/local/www/vpn_openvpn_server.php:1067
 msgid ""
 "These are the IPv6 networks that will be routed through the tunnel, so that "
@@ -7004,11 +7014,11 @@ msgstr ""
 "ovaj site-to-site VPN, unesite udaljene LAN/ove ovdje. Može biti ostavljeno "
 "prazno za bez site-to-site VPNa. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:831
+#: src/usr/local/www/vpn_openvpn_client.php:840
 msgid "Limit outgoing bandwidth"
 msgstr "Ograniči odlazeći protok"
 
-#: src/usr/local/www/vpn_openvpn_client.php:835
+#: src/usr/local/www/vpn_openvpn_client.php:844
 msgid ""
 "Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The "
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
@@ -7019,13 +7029,13 @@ msgstr ""
 "Mbajta/sek (uneseno kao bajti po sekundi). Nije kompatibilno sa UDP Brzim U/"
 "I. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_client.php:849
 #: src/usr/local/www/interfaces_ppps_edit.php:858
 #: src/usr/local/www/vpn_openvpn_server.php:1080
 msgid "Compression"
 msgstr "Kompresija "
 
-#: src/usr/local/www/vpn_openvpn_client.php:843
+#: src/usr/local/www/vpn_openvpn_client.php:852
 #: src/usr/local/www/vpn_openvpn_server.php:1083
 msgid ""
 "Compress tunnel packets using the LZO algorithm. Adaptive compression will "
@@ -7036,27 +7046,27 @@ msgstr ""
 "dinamički isključiti kompresiju za vremenski period ako OpenVPN detektuje da "
 "podaci u paketima nisu efikasno kompresovani. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:847
+#: src/usr/local/www/vpn_openvpn_client.php:856
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
 msgstr "Topologija"
 
-#: src/usr/local/www/vpn_openvpn_client.php:850
+#: src/usr/local/www/vpn_openvpn_client.php:859
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr ""
 "Specificira metodu korištenu za konfigurisanje adaptera virtualne IP adrese. "
 ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:854
+#: src/usr/local/www/vpn_openvpn_client.php:863
 #: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
 msgstr "Tip usluge"
 
-#: src/usr/local/www/vpn_openvpn_client.php:861
+#: src/usr/local/www/vpn_openvpn_client.php:870
 msgid "Don't pull routes"
 msgstr "Ne povlači ove rute"
 
-#: src/usr/local/www/vpn_openvpn_client.php:864
+#: src/usr/local/www/vpn_openvpn_client.php:873
 msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
@@ -7064,11 +7074,11 @@ msgstr ""
 "Ova opcija i dalje dozvoljava serveru da postavi TCP/IP svojstva klijentskog "
 "TUN/TAP interfejsa. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:868
+#: src/usr/local/www/vpn_openvpn_client.php:877
 msgid "Don't add/remove routes"
 msgstr "Ne dodaji/uklanjaj rute"
 
-#: src/usr/local/www/vpn_openvpn_client.php:871
+#: src/usr/local/www/vpn_openvpn_client.php:880
 msgid ""
 "Do not execute operating system commands to install routes. Instead, pass "
 "routes to --route-up script using environmental variables."
@@ -7076,7 +7086,7 @@ msgstr ""
 "Ne izvršavaj komande operativnog sistema za instaliranje ruta. Umjesto toga, "
 "daj rute --route-up skripti koristeći prostorne varijable. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:875
+#: src/usr/local/www/vpn_openvpn_client.php:884
 #: src/usr/local/www/interfaces_bridge_edit.php:432
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
@@ -7085,7 +7095,7 @@ msgstr ""
 msgid "Advanced Configuration"
 msgstr "Napredna konfiguracija"
 
-#: src/usr/local/www/vpn_openvpn_client.php:880
+#: src/usr/local/www/vpn_openvpn_client.php:889
 #: src/usr/local/www/services_unbound.php:355
 #: src/usr/local/www/services_unbound.php:369
 #: src/usr/local/www/services_dnsmasq.php:355
@@ -7093,7 +7103,7 @@ msgstr "Napredna konfiguracija"
 msgid "Custom options"
 msgstr "Specifične opcije"
 
-#: src/usr/local/www/vpn_openvpn_client.php:882
+#: src/usr/local/www/vpn_openvpn_client.php:891
 msgid ""
 "Enter any additional options to add to the OpenVPN client configuration "
 "here, separated by semicolon."
@@ -7101,12 +7111,12 @@ msgstr ""
 "Unesite bilo koju dodatnu opciju za dodavanje OpenVPN klijentske "
 "konfiguracije ovdje, razdvojene tačka zarezom. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:886
+#: src/usr/local/www/vpn_openvpn_client.php:895
 #: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
 msgstr "UDP brzi U/I"
 
-#: src/usr/local/www/vpn_openvpn_client.php:889
+#: src/usr/local/www/vpn_openvpn_client.php:898
 #: src/usr/local/www/vpn_openvpn_server.php:1286
 msgid ""
 "Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%."
@@ -7117,12 +7127,12 @@ msgstr ""
 "Nije kompatibilno sa svim platformama, i nije kompatibilno sa OpenVPN "
 "protočnim limitiranjem. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:894
+#: src/usr/local/www/vpn_openvpn_client.php:903
 #: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
 msgstr "Pošalji/Primi buffer"
 
-#: src/usr/local/www/vpn_openvpn_client.php:897
+#: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
 "Configure a Send and Receive Buffer size for OpenVPN. The default buffer "
@@ -7137,12 +7147,12 @@ msgstr ""
 "testiranjem/eksperimentisanjem. Za dobijanje najbolje vrijednosti za "
 "stranicu, počnite sa 512KiB i testirajte više i niže vrijednosti.  "
 
-#: src/usr/local/www/vpn_openvpn_client.php:904
+#: src/usr/local/www/vpn_openvpn_client.php:913
 #: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
 msgstr "Nivo preopširnosti "
 
-#: src/usr/local/www/vpn_openvpn_client.php:907
+#: src/usr/local/www/vpn_openvpn_client.php:916
 #: src/usr/local/www/vpn_openvpn_server.php:1304
 #, php-format
 msgid ""
@@ -7160,7 +7170,7 @@ msgstr ""
 "i pisanje. Velika slova se koriste za TCP/UDP pakete a mala za TUN/TAP "
 "pakete. %1$s6-11: Domet debagiranja informacija"
 
-#: src/usr/local/www/vpn_openvpn_client.php:934
+#: src/usr/local/www/vpn_openvpn_client.php:943
 msgid "OpenVPN Clients"
 msgstr "OpenVPN klijenti"
 
@@ -7416,7 +7426,7 @@ msgstr ""
 "DHCP server zahtijeva statički IPv4 subnet dovoljno velik da služi adrese "
 "klijentima. "
 
-#: src/usr/local/www/services_dhcp.php:832 src/usr/local/www/pkg_edit.php:743
+#: src/usr/local/www/services_dhcp.php:832 src/usr/local/www/pkg_edit.php:739
 msgid "General Options"
 msgstr "Generalne opcije"
 
@@ -7923,7 +7933,7 @@ msgstr ""
 "popravite sljedeće greške"
 
 #: src/usr/local/www/services_unbound.php:191
-#: src/usr/local/www/services_unbound_advanced.php:190
+#: src/usr/local/www/services_unbound_advanced.php:199
 msgid "DNS Resolver configured."
 msgstr "DNS resolver konfigurisan. "
 
@@ -8372,7 +8382,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:446
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/diag_states_summary.php:151
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "IP"
 msgstr "IP"
 
@@ -8948,7 +8958,6 @@ msgid "external - signature pending"
 msgstr "vanjski - čekanje na potvrdu "
 
 #: src/usr/local/www/system_certmanager.php:1189
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
 msgid "Serial: "
 msgstr "Serijski: "
 
@@ -9883,7 +9892,7 @@ msgstr "Spoji"
 
 #: src/usr/local/www/status_interfaces.php:123
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:272
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:277
 msgid "Uptime"
 msgstr "Vrijeme rada"
 
@@ -10124,55 +10133,59 @@ msgstr "AES-NI CPU-bazira akceleracija"
 msgid "BSD Crypto Device (cryptodev)"
 msgstr "BSD Crypto Uređaj (cryptodev)"
 
-#: src/usr/local/www/system_advanced_misc.php:81
+#: src/usr/local/www/system_advanced_misc.php:78
+msgid "AES-NI and BSD Crypto Device (aesni, cryptodev)"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_misc.php:82
 msgid "Intel Core* CPU on-die thermal sensor"
 msgstr "Intel Core* CPU on-die termalni senzor"
 
-#: src/usr/local/www/system_advanced_misc.php:82
+#: src/usr/local/www/system_advanced_misc.php:83
 msgid "AMD K8, K10 and K11 CPU on-die thermal sensor"
 msgstr "AMD K8, K10 i K11 CPU on-die termalni senzor"
 
-#: src/usr/local/www/system_advanced_misc.php:92
+#: src/usr/local/www/system_advanced_misc.php:93
 msgid "Please select a valid Cryptographic Accelerator."
 msgstr "Molimo odaberite validan kriptografski akcelerator. "
 
-#: src/usr/local/www/system_advanced_misc.php:96
+#: src/usr/local/www/system_advanced_misc.php:97
 msgid "Please select a valid Thermal Hardware Sensor."
 msgstr "Molimo odaberite validan termalni hardver senzor. "
 
-#: src/usr/local/www/system_advanced_misc.php:100
+#: src/usr/local/www/system_advanced_misc.php:101
 msgid "/tmp Size must be numeric and should not be less than 40MiB."
 msgstr "/tmp Veličina mora biti numerička i ne smije biti manja od 40MiB"
 
-#: src/usr/local/www/system_advanced_misc.php:104
+#: src/usr/local/www/system_advanced_misc.php:105
 msgid "/var Size must be numeric and should not be less than 60MiB."
 msgstr "/var Veličina mora biti numerička i ne smije biti manja od 60MiB. "
 
-#: src/usr/local/www/system_advanced_misc.php:108
+#: src/usr/local/www/system_advanced_misc.php:109
 msgid "Proxy port must be a valid port number, 1-65535."
 msgstr "Proxy port mora biti validan port broj, 1-65535. "
 
-#: src/usr/local/www/system_advanced_misc.php:112
+#: src/usr/local/www/system_advanced_misc.php:113
 msgid "Proxy URL must be a valid IP address or FQDN."
 msgstr "Proxy URL mora biti validna IP adresa ili FQDN. "
 
-#: src/usr/local/www/system_advanced_misc.php:116
+#: src/usr/local/www/system_advanced_misc.php:117
 msgid "The proxy username contains invalid characters."
 msgstr "Proxy korisničko ime sadrži nevaljane karaktere. "
 
-#: src/usr/local/www/system_advanced_misc.php:120
+#: src/usr/local/www/system_advanced_misc.php:121
 msgid "Proxy password and confirmation must match."
 msgstr "Proxy password i potvrđeni password se moraju poklapati. "
 
-#: src/usr/local/www/system_advanced_misc.php:318
+#: src/usr/local/www/system_advanced_misc.php:319
 msgid "Proxy Support"
 msgstr "Proxy podrška"
 
-#: src/usr/local/www/system_advanced_misc.php:322
+#: src/usr/local/www/system_advanced_misc.php:323
 msgid "Proxy URL"
 msgstr "Proxy URL"
 
-#: src/usr/local/www/system_advanced_misc.php:325
+#: src/usr/local/www/system_advanced_misc.php:326
 msgid ""
 "Hostname or IP address of proxy server this system will use for its outbound "
 "Internet access."
@@ -10180,19 +10193,19 @@ msgstr ""
 "Hostname ili IP adresa proxy servera ovog sistema će koristiti za vanopsežni "
 "internetski pristup. "
 
-#: src/usr/local/www/system_advanced_misc.php:330
+#: src/usr/local/www/system_advanced_misc.php:331
 msgid "Proxy Port"
 msgstr "Proxy Port"
 
-#: src/usr/local/www/system_advanced_misc.php:333
+#: src/usr/local/www/system_advanced_misc.php:334
 msgid "Port where proxy server is listening."
 msgstr "Port koji proxy server prati. "
 
-#: src/usr/local/www/system_advanced_misc.php:337
+#: src/usr/local/www/system_advanced_misc.php:338
 msgid "Proxy Username"
 msgstr "Proxy korisničko ime"
 
-#: src/usr/local/www/system_advanced_misc.php:340
+#: src/usr/local/www/system_advanced_misc.php:341
 msgid ""
 "Username for authentication to proxy server. Optional, leave blank to not "
 "use authentication."
@@ -10200,25 +10213,25 @@ msgstr ""
 "Korisničko ime za autentikaciju na proxy server. Opcionalno, ostavite prazno "
 "ako ne želite autentikaciju. "
 
-#: src/usr/local/www/system_advanced_misc.php:345
+#: src/usr/local/www/system_advanced_misc.php:346
 msgid "Proxy Password"
 msgstr "Proxy lozinka"
 
-#: src/usr/local/www/system_advanced_misc.php:348
+#: src/usr/local/www/system_advanced_misc.php:349
 msgid "Password for authentication to proxy server."
 msgstr "Password za autentikaciju na proxy server"
 
-#: src/usr/local/www/system_advanced_misc.php:351
-#: src/usr/local/www/system_advanced_misc.php:353
+#: src/usr/local/www/system_advanced_misc.php:352
+#: src/usr/local/www/system_advanced_misc.php:354
 msgid "Load Balancing"
 msgstr "Balansiranje opterećenja"
 
-#: src/usr/local/www/system_advanced_misc.php:357
 #: src/usr/local/www/system_advanced_misc.php:358
+#: src/usr/local/www/system_advanced_misc.php:359
 msgid "Use sticky connections"
 msgstr "Koristi sticky konekcije"
 
-#: src/usr/local/www/system_advanced_misc.php:360
+#: src/usr/local/www/system_advanced_misc.php:361
 msgid ""
 "Successive connections will be redirected to the servers in a round-robin "
 "manner with connections from the same source being sent to the same web "
@@ -10235,11 +10248,11 @@ msgstr ""
 "Daljnje konekcije će biti preusmjerene na sljedeći web server u round robinu."
 " Mijenjanje ove opcije će restarovati servis balansiranja opterećenja. "
 
-#: src/usr/local/www/system_advanced_misc.php:370
+#: src/usr/local/www/system_advanced_misc.php:371
 msgid "Source tracking timeout"
 msgstr "Timeout izvora praćenja"
 
-#: src/usr/local/www/system_advanced_misc.php:374
+#: src/usr/local/www/system_advanced_misc.php:375
 msgid ""
 "Set the source tracking timeout for sticky connections. By default this is "
 "0, so source tracking is removed as soon as the state expires. Setting this "
@@ -10251,11 +10264,11 @@ msgstr ""
 "opcije na veću vrijednost će uzrokovati da izvorna/destinacijska veza "
 "opstane duži vremenski period. "
 
-#: src/usr/local/www/system_advanced_misc.php:383
+#: src/usr/local/www/system_advanced_misc.php:384
 msgid "Default gateway switching"
 msgstr "Zadano prebacivanje gatewaya"
 
-#: src/usr/local/www/system_advanced_misc.php:386
+#: src/usr/local/www/system_advanced_misc.php:387
 msgid ""
 "If the default gateway goes down, switch the default gateway to another "
 "available one. This is not enabled by default, as it's unnecessary in most "
@@ -10265,15 +10278,15 @@ msgstr ""
 "nije uključeno kao zadano, jer je nepotrebno u mnogim situacijama koje inače "
 "koriste gateway grupe. "
 
-#: src/usr/local/www/system_advanced_misc.php:391
+#: src/usr/local/www/system_advanced_misc.php:392
 msgid "Power Savings"
 msgstr "Štednja energije "
 
-#: src/usr/local/www/system_advanced_misc.php:395
+#: src/usr/local/www/system_advanced_misc.php:396
 msgid "PowerD"
 msgstr "PowerD"
 
-#: src/usr/local/www/system_advanced_misc.php:398
+#: src/usr/local/www/system_advanced_misc.php:399
 msgid ""
 "The powerd utility monitors the system state and sets various power control "
 "options accordingly.  It offers four modes (maximum, minimum, adaptive and "
@@ -10303,43 +10316,43 @@ msgstr ""
 "energije. Diže frekvenciju brže, opada sporije i drži CPU opterećenje duplo "
 "niže. "
 
-#: src/usr/local/www/system_advanced_misc.php:413
+#: src/usr/local/www/system_advanced_misc.php:414
 msgid "Hiadaptive"
 msgstr "Hiadaptivni"
 
-#: src/usr/local/www/system_advanced_misc.php:414
+#: src/usr/local/www/system_advanced_misc.php:415
 msgid "Adaptive"
 msgstr "Adaptivni"
 
-#: src/usr/local/www/system_advanced_misc.php:415
+#: src/usr/local/www/system_advanced_misc.php:416
 msgid "Minimum"
 msgstr "Minimum"
 
-#: src/usr/local/www/system_advanced_misc.php:416
+#: src/usr/local/www/system_advanced_misc.php:417
 msgid "Maximum"
 msgstr "Maksimum"
 
-#: src/usr/local/www/system_advanced_misc.php:421
+#: src/usr/local/www/system_advanced_misc.php:422
 msgid "AC Power"
 msgstr "AC Snaga"
 
-#: src/usr/local/www/system_advanced_misc.php:428
+#: src/usr/local/www/system_advanced_misc.php:429
 msgid "Battery Power"
 msgstr "Snaga baterija"
 
-#: src/usr/local/www/system_advanced_misc.php:435
+#: src/usr/local/www/system_advanced_misc.php:436
 msgid "Unknown Power"
 msgstr "Nepoznat izvor snage"
 
-#: src/usr/local/www/system_advanced_misc.php:441
+#: src/usr/local/www/system_advanced_misc.php:442
 msgid "Cryptographic & Thermal Hardware"
 msgstr "Kriptografski & Termalni hardver"
 
-#: src/usr/local/www/system_advanced_misc.php:445
+#: src/usr/local/www/system_advanced_misc.php:446
 msgid "Cryptographic Hardware"
 msgstr "Kriptografski hardver"
 
-#: src/usr/local/www/system_advanced_misc.php:448
+#: src/usr/local/www/system_advanced_misc.php:449
 msgid ""
 "A cryptographic accelerator module will use hardware support to speed up "
 "some cryptographic functions on systems which have the chip. Loading the BSD "
@@ -10356,13 +10369,13 @@ msgstr ""
 "neće imati nikakvog efekta. Da ponovo učitate selektovani modul, postavite "
 "ovu opciju na \"none\" i zatim ponovo pokrenite. "
 
-#: src/usr/local/www/system_advanced_misc.php:457
+#: src/usr/local/www/system_advanced_misc.php:458
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:268
 msgid "Thermal Sensors"
 msgstr "Termalni senzori"
 
-#: src/usr/local/www/system_advanced_misc.php:460
+#: src/usr/local/www/system_advanced_misc.php:461
 msgid ""
 "With a supported CPU, selecting a thermal sensor will load the appropriate "
 "driver to read its temperature. Setting this to \"None\" will attempt to "
@@ -10378,18 +10391,18 @@ msgstr ""
 "ova opcija neće imati nikakvog efekta. Za ponovo učitavanje selektovanog "
 "modula, stavite ovu opciju na \"none\" i zatim ponovo pokrenite. "
 
-#: src/usr/local/www/system_advanced_misc.php:469
+#: src/usr/local/www/system_advanced_misc.php:470
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/head.inc:300 src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 msgid "Schedules"
 msgstr "Rasporedi "
 
-#: src/usr/local/www/system_advanced_misc.php:473
+#: src/usr/local/www/system_advanced_misc.php:474
 msgid "Schedule States"
 msgstr "Stanja rasporeda"
 
-#: src/usr/local/www/system_advanced_misc.php:476
+#: src/usr/local/www/system_advanced_misc.php:477
 msgid ""
 "By default, when a schedule expires, connections permitted by that schedule "
 "are killed. This option overrides that behavior by not clearing states for "
@@ -10399,16 +10412,16 @@ msgstr ""
 "uništene. Ova opcija overridea takvo ponašanje tako što ne čisti stanja za "
 "već postojeće konekcije. "
 
-#: src/usr/local/www/system_advanced_misc.php:481
+#: src/usr/local/www/system_advanced_misc.php:482
 #: src/usr/local/www/system_gateways_edit.php:206
 msgid "Gateway Monitoring"
 msgstr "Praćenje gatewaya"
 
-#: src/usr/local/www/system_advanced_misc.php:485
+#: src/usr/local/www/system_advanced_misc.php:486
 msgid "State Killing on Gateway Failure"
 msgstr "Uništavanje stanja na neuspjehu gatewaya"
 
-#: src/usr/local/www/system_advanced_misc.php:488
+#: src/usr/local/www/system_advanced_misc.php:489
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
@@ -10416,11 +10429,11 @@ msgstr ""
 "Ovaj proces praćenja će očistiti sva stanja kada gateway padne ako je ova "
 "opcija odabrana. "
 
-#: src/usr/local/www/system_advanced_misc.php:493
+#: src/usr/local/www/system_advanced_misc.php:494
 msgid "Skip rules when gateway is down"
 msgstr "Preskoči pravila kada je gateway pao. "
 
-#: src/usr/local/www/system_advanced_misc.php:496
+#: src/usr/local/www/system_advanced_misc.php:497
 msgid ""
 "By default, when a rule has a gateway specified and this gateway is down, "
 "the rule is created omitting the gateway. This option overrides that "
@@ -10430,15 +10443,15 @@ msgstr ""
 "pravilo je stvorilo izostavljanje gatewaya. Ova opcija overridea to "
 "ponašanje izostavljanjem cijelog pravila. "
 
-#: src/usr/local/www/system_advanced_misc.php:501
+#: src/usr/local/www/system_advanced_misc.php:502
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
 msgstr "RAM Disk Postavke (Ponovo pokrenite za primjenjivanje postavki)"
 
-#: src/usr/local/www/system_advanced_misc.php:505
+#: src/usr/local/www/system_advanced_misc.php:506
 msgid "Use RAM Disks"
 msgstr "Koristi RAM diskove"
 
-#: src/usr/local/www/system_advanced_misc.php:508
+#: src/usr/local/www/system_advanced_misc.php:509
 msgid ""
 "Set this to use /tmp and /var as RAM disks (memory file system disks) on a "
 "full install rather than use the hard disk. Setting this will cause the data "
@@ -10452,61 +10465,61 @@ msgstr ""
 "biti zadržani. Mijenjanje ove postavke će uticati na to da će se firewall "
 "ponovo pokrenuti nakon klika na dugme \"Spasi\". "
 
-#: src/usr/local/www/system_advanced_misc.php:513
+#: src/usr/local/www/system_advanced_misc.php:514
 msgid "RAM Disk Size"
 msgstr "RAM Disk veličina"
 
-#: src/usr/local/www/system_advanced_misc.php:517
+#: src/usr/local/www/system_advanced_misc.php:518
 msgid "/tmp RAM Disk Size"
 msgstr "/tmp RAM Disk veličina"
 
-#: src/usr/local/www/system_advanced_misc.php:521
+#: src/usr/local/www/system_advanced_misc.php:522
 msgid "/tmp RAM Disk<br />Do not set lower than 40."
 msgstr "/tmp RAM Disk <br />Ne postavljaj ispod 40. "
 
-#: src/usr/local/www/system_advanced_misc.php:525
+#: src/usr/local/www/system_advanced_misc.php:526
 msgid "/var RAM Disk Size"
 msgstr "/var RAM Disk veličina"
 
-#: src/usr/local/www/system_advanced_misc.php:529
+#: src/usr/local/www/system_advanced_misc.php:530
 msgid "/var RAM Disk<br />Do not set lower than 60."
 msgstr "/var RAM Disk<br />Ne postavljajte ispod 60. "
 
-#: src/usr/local/www/system_advanced_misc.php:531
+#: src/usr/local/www/system_advanced_misc.php:532
 msgid "Sets the size, in MiB, for the RAM disks."
 msgstr "Postavlja veličinu u MiB za RAM diskove. "
 
-#: src/usr/local/www/system_advanced_misc.php:535
+#: src/usr/local/www/system_advanced_misc.php:536
 msgid "Periodic RAM Disk Data Backups"
 msgstr "Periodičke RAM sigurnosne kopije diskovnih podataka"
 
-#: src/usr/local/www/system_advanced_misc.php:539
+#: src/usr/local/www/system_advanced_misc.php:540
 msgid "Periodic RRD Backup"
 msgstr "Periodične RRD sigurnosne kopije podataka"
 
-#: src/usr/local/www/system_advanced_misc.php:543
+#: src/usr/local/www/system_advanced_misc.php:544
 #: src/usr/local/www/diag_backup.php:442
 msgid "RRD Data"
 msgstr "RRD Data"
 
-#: src/usr/local/www/system_advanced_misc.php:547
+#: src/usr/local/www/system_advanced_misc.php:548
 msgid "Periodic DHCP Leases Backup"
 msgstr "Periodične DHCP sigurnosne kopije posudbi"
 
-#: src/usr/local/www/system_advanced_misc.php:551
+#: src/usr/local/www/system_advanced_misc.php:552
 #: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 msgid "DHCP Leases"
 msgstr "DHCP najmovi"
 
-#: src/usr/local/www/system_advanced_misc.php:555
+#: src/usr/local/www/system_advanced_misc.php:556
 msgid "Periodic Logs Backup"
 msgstr "Sigurnosne kopije periodičnih logova"
 
-#: src/usr/local/www/system_advanced_misc.php:559
+#: src/usr/local/www/system_advanced_misc.php:560
 msgid "Log Directory"
 msgstr "Log direktorij"
 
-#: src/usr/local/www/system_advanced_misc.php:561
+#: src/usr/local/www/system_advanced_misc.php:562
 msgid ""
 "Sets the interval, in hours, to periodically backup these portions of RAM "
 "disk data so they can be restored automatically on the next boot. Keep in "
@@ -10518,19 +10531,19 @@ msgstr ""
 "na sljedećem bootu. Zapamtite da što češći backup traži sve češće pisanje na "
 "podacima. "
 
-#: src/usr/local/www/system_advanced_misc.php:569
+#: src/usr/local/www/system_advanced_misc.php:570
 msgid "Hardware Settings"
 msgstr "Hardverske postavke"
 
-#: src/usr/local/www/system_advanced_misc.php:578
+#: src/usr/local/www/system_advanced_misc.php:579
 msgid "Always on"
 msgstr "Uvijek uključen"
 
-#: src/usr/local/www/system_advanced_misc.php:576
+#: src/usr/local/www/system_advanced_misc.php:577
 msgid "Hard disk standby time"
 msgstr "Hard disk vrijeme čekanja"
 
-#: src/usr/local/www/system_advanced_misc.php:579
+#: src/usr/local/www/system_advanced_misc.php:580
 #, php-format
 msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
@@ -10539,15 +10552,15 @@ msgstr ""
 "Stavlja hard disk u način mirovanja kada selektovani broj minuta prođe od "
 "posljednjeg pristupa. %1$s%2$sNe postavljajte ovo za CF kartice.%3$s"
 
-#: src/usr/local/www/system_advanced_misc.php:584
+#: src/usr/local/www/system_advanced_misc.php:585
 msgid "Installation Feedback"
 msgstr "Instalacijski feedback"
 
-#: src/usr/local/www/system_advanced_misc.php:588
+#: src/usr/local/www/system_advanced_misc.php:589
 msgid "Netgate Device ID"
 msgstr "Netgate Uređaj ID"
 
-#: src/usr/local/www/system_advanced_misc.php:591
+#: src/usr/local/www/system_advanced_misc.php:592
 msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
@@ -10555,7 +10568,7 @@ msgstr ""
 "Omogućite ovu opciju da ne šaljete Netgate Uređaj ID pfSense-u kao dio User-"
 "Agent headera."
 
-#: src/usr/local/www/system_advanced_misc.php:597
+#: src/usr/local/www/system_advanced_misc.php:598
 msgid ""
 "The \\\"Use Ramdisk\\\" setting has been changed. This will cause the "
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
@@ -10770,7 +10783,7 @@ msgstr "Kategorija"
 #: src/usr/local/www/diag_confbak.php:219
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:37
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:218
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:223
 msgid "Version"
 msgstr "Verzija"
 
@@ -12289,7 +12302,7 @@ msgid "Wireless Interface Configuration"
 msgstr "Konfiguracija wireless interfacea"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:176
-#: src/usr/local/www/interfaces_vlan_edit.php:183
+#: src/usr/local/www/interfaces_vlan_edit.php:184
 #: src/usr/local/www/interfaces_gre_edit.php:168
 #: src/usr/local/www/interfaces_gif_edit.php:175
 msgid "*Parent Interface"
@@ -12789,73 +12802,73 @@ msgstr ""
 msgid "Packages"
 msgstr "Paketi"
 
-#: src/usr/local/www/services_snmp.php:90
+#: src/usr/local/www/services_snmp.php:88
 msgid "Invalid character '#' in system location"
 msgstr "Pogrešan karakter '#' u sistemskoj lokaciji"
 
-#: src/usr/local/www/services_snmp.php:93
+#: src/usr/local/www/services_snmp.php:91
 msgid "Invalid character '#' in system contact"
 msgstr "Pogrešan karakter '#' u sistemskom kontaktu"
 
-#: src/usr/local/www/services_snmp.php:96
+#: src/usr/local/www/services_snmp.php:94
 msgid "Invalid character '#' in read community string"
 msgstr "Pogrešan karakter '#' u čitanju stringa zajednice "
 
-#: src/usr/local/www/services_snmp.php:100
+#: src/usr/local/www/services_snmp.php:98
 msgid "Community"
 msgstr "Zajednica"
 
-#: src/usr/local/www/services_snmp.php:104
-#: src/usr/local/www/services_snmp.php:226
+#: src/usr/local/www/services_snmp.php:102
+#: src/usr/local/www/services_snmp.php:224
 msgid "Polling Port"
 msgstr "Port pollinga"
 
-#: src/usr/local/www/services_snmp.php:112
+#: src/usr/local/www/services_snmp.php:110
 msgid "Invalid character '#' in SNMP trap string"
 msgstr "Pogrešan karakter '#' u SNMP trap stringu"
 
-#: src/usr/local/www/services_snmp.php:116
-#: src/usr/local/www/services_snmp.php:275
+#: src/usr/local/www/services_snmp.php:114
+#: src/usr/local/www/services_snmp.php:273
 msgid "Trap server"
 msgstr "Trap server"
 
-#: src/usr/local/www/services_snmp.php:120
+#: src/usr/local/www/services_snmp.php:118
 msgid "Trap server port"
 msgstr "Port trap servera"
 
-#: src/usr/local/www/services_snmp.php:124
+#: src/usr/local/www/services_snmp.php:122
 msgid "Trap string"
 msgstr "Trap string"
 
-#: src/usr/local/www/services_snmp.php:196 src/usr/local/www/head.inc:323
+#: src/usr/local/www/services_snmp.php:194 src/usr/local/www/head.inc:323
 msgid "SNMP"
 msgstr "SNMP"
 
-#: src/usr/local/www/services_snmp.php:211
+#: src/usr/local/www/services_snmp.php:209
 msgid "SNMP Daemon"
 msgstr "SNMP Daemon"
 
-#: src/usr/local/www/services_snmp.php:222
+#: src/usr/local/www/services_snmp.php:220
 msgid "SNMP Daemon Settings"
 msgstr "SNMP Daemon postavke"
 
-#: src/usr/local/www/services_snmp.php:229
+#: src/usr/local/www/services_snmp.php:227
 msgid "Enter the port to accept polling events on (default 161)."
 msgstr "Unesite port za prihvatanje polling eventova na (zadano je 161)"
 
-#: src/usr/local/www/services_snmp.php:233
+#: src/usr/local/www/services_snmp.php:231
 msgid "System Location"
 msgstr "Sistemska lokacija"
 
-#: src/usr/local/www/services_snmp.php:240
+#: src/usr/local/www/services_snmp.php:238
 msgid "System Contact"
 msgstr "Sistemski kontakt"
 
-#: src/usr/local/www/services_snmp.php:247
+#: src/usr/local/www/services_snmp.php:245
 msgid "Read Community String"
 msgstr "Čitaj string zajednice"
 
-#: src/usr/local/www/services_snmp.php:250
+#: src/usr/local/www/services_snmp.php:248
 msgid ""
 "The community string is like a password, restricting access to querying SNMP "
 "to hosts knowing the community string. Use a strong value here to protect "
@@ -12865,43 +12878,43 @@ msgstr ""
 "u znanju stringa zajednice. Koristite jaku vrijednost ovdje da bi se zaštili "
 "od neautorizovanog otkrivanja informacija"
 
-#: src/usr/local/www/services_snmp.php:254
+#: src/usr/local/www/services_snmp.php:252
 msgid "SNMP Traps Enable"
 msgstr "Uključi SNMP trapove"
 
-#: src/usr/local/www/services_snmp.php:265
+#: src/usr/local/www/services_snmp.php:263
 msgid "SNMP Trap Settings"
 msgstr "Postavke SNMP trapova"
 
-#: src/usr/local/www/services_snmp.php:278
+#: src/usr/local/www/services_snmp.php:276
 msgid "Enter the trap server name"
 msgstr "Unesite trap server ime"
 
-#: src/usr/local/www/services_snmp.php:282
+#: src/usr/local/www/services_snmp.php:280
 msgid "Trap Server Port"
 msgstr "Trap server port"
 
-#: src/usr/local/www/services_snmp.php:285
+#: src/usr/local/www/services_snmp.php:283
 msgid "Enter the port to send the traps to (default 162)"
 msgstr "Unesite port za slanje trapova ka (zadano 162)"
 
-#: src/usr/local/www/services_snmp.php:289
+#: src/usr/local/www/services_snmp.php:287
 msgid "SNMP Trap String"
 msgstr "SNMP trap string"
 
-#: src/usr/local/www/services_snmp.php:296
+#: src/usr/local/www/services_snmp.php:294
 msgid "SNMP Modules"
 msgstr "SNMP moduli"
 
-#: src/usr/local/www/services_snmp.php:298
+#: src/usr/local/www/services_snmp.php:296
 msgid "SNMP modules"
 msgstr "SNMP moduli"
 
-#: src/usr/local/www/services_snmp.php:355
+#: src/usr/local/www/services_snmp.php:343
 msgid "Interface Binding"
 msgstr "Dodjela interfaceova"
 
-#: src/usr/local/www/services_snmp.php:361
+#: src/usr/local/www/services_snmp.php:349
 msgid "Bind Interfaces"
 msgstr "Dodijeli interface"
 
@@ -12953,7 +12966,7 @@ msgid "Group Description"
 msgstr "Opis grupe"
 
 #: src/usr/local/www/interfaces_groups_edit.php:220
-#: src/usr/local/www/interfaces_vlan_edit.php:210
+#: src/usr/local/www/interfaces_vlan_edit.php:211
 msgid ""
 "A group description may be entered here for administrative reference (not "
 "parsed)."
@@ -13193,9 +13206,7 @@ msgstr ""
 "staru konfiguraciju koristeći lijevu kolonu radio opcija i izberite novu "
 "konfiguraciju u desnoj koloni pa zatim pritisnite \"Diff\" dugme. "
 
-#: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
-#: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
 #: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
@@ -14015,38 +14026,44 @@ msgstr ""
 "Pokušava baciti bilo kakvu legitimnu odsutnu konekciju za cijenu povećane "
 "potrošnje memorije i korištenja CPU"
 
-#: src/usr/local/www/interfaces_qinq.php:56
+#: src/usr/local/www/interfaces_qinq.php:43
 msgid ""
 "This QinQ cannot be deleted because it is still being used as an interface."
 msgstr ""
 "Ovaj QinQ ne može biti obrisan jer se još uvijek koristi kao interface. "
 
-#: src/usr/local/www/interfaces_qinq.php:58
+#: src/usr/local/www/interfaces_qinq.php:45
 msgid "QinQ interface does not exist"
 msgstr "QinQ interface ne postoji "
 
-#: src/usr/local/www/interfaces_qinq.php:103
+#: src/usr/local/www/interfaces_qinq.php:52
+msgid ""
+"This QinQ cannot be deleted because one of it tags is still being used as an "
+"interface."
+msgstr ""
+
+#: src/usr/local/www/interfaces_qinq.php:101
 msgid "QinQ Interfaces"
 msgstr "QinQ Interfejsi"
 
-#: src/usr/local/www/interfaces_qinq.php:110
+#: src/usr/local/www/interfaces_qinq.php:108
 #: src/usr/local/www/firewall_rules_edit.php:1533
 msgid "Tag"
 msgstr "Tag"
 
-#: src/usr/local/www/interfaces_qinq.php:111
+#: src/usr/local/www/interfaces_qinq.php:109
 msgid "QinQ members"
 msgstr "QinQ članovi "
 
-#: src/usr/local/www/interfaces_qinq.php:136
+#: src/usr/local/www/interfaces_qinq.php:134
 msgid "Edit Q-in-Q interface"
 msgstr "Modifikuj Q-in-Q interface"
 
-#: src/usr/local/www/interfaces_qinq.php:137
+#: src/usr/local/www/interfaces_qinq.php:135
 msgid "Delete Q-in-Q interface"
 msgstr "Obriši Q-in-Q interface"
 
-#: src/usr/local/www/interfaces_qinq.php:157
+#: src/usr/local/www/interfaces_qinq.php:155
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
@@ -14062,7 +14079,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_gif.php:52
 #: src/usr/local/www/interfaces_gre.php:53
 #: src/usr/local/www/interfaces_bridge.php:53
-#: src/usr/local/www/interfaces_vlan.php:56
+#: src/usr/local/www/interfaces_vlan.php:43
 #: src/usr/local/www/interfaces_lagg.php:59
 msgid "Wrong parameters supplied"
 msgstr "Pogrešni parametri dati"
@@ -14070,7 +14087,7 @@ msgstr "Pogrešni parametri dati"
 #: src/usr/local/www/interfaces_gif.php:54
 #: src/usr/local/www/interfaces_gre.php:55
 #: src/usr/local/www/interfaces_bridge.php:55
-#: src/usr/local/www/interfaces_vlan.php:58
+#: src/usr/local/www/interfaces_vlan.php:45
 #: src/usr/local/www/interfaces_lagg.php:61
 msgid "Wrong index supplied"
 msgstr "Dat pogrešan indeks"
@@ -15228,7 +15245,7 @@ msgstr ""
 "Ne zaboravite dodati firewall pravilo za zabranu prometa od L2TP klijenata. "
 
 #: src/usr/local/www/interfaces_vlan_edit.php:69
-#: src/usr/local/www/interfaces_vlan.php:108
+#: src/usr/local/www/interfaces_vlan.php:95
 msgid "VLAN tag"
 msgstr "VLAN tag"
 
@@ -15262,31 +15279,31 @@ msgstr ""
 "QinQ VLAN već postoji na %s sa ovim tagom. Molimo uklonite ga za normalan "
 "VLAN. "
 
-#: src/usr/local/www/interfaces_vlan_edit.php:179
+#: src/usr/local/www/interfaces_vlan_edit.php:180
 msgid "VLAN Configuration"
 msgstr "VLAN konfiguracija "
 
-#: src/usr/local/www/interfaces_vlan_edit.php:186
+#: src/usr/local/www/interfaces_vlan_edit.php:187
 msgid "Only VLAN capable interfaces will be shown."
 msgstr "Samo VLAN kompatibilni interfejsi će biti prikazani. "
 
-#: src/usr/local/www/interfaces_vlan_edit.php:190
+#: src/usr/local/www/interfaces_vlan_edit.php:191
 msgid "*VLAN Tag"
 msgstr "*VLAN tag"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:194
+#: src/usr/local/www/interfaces_vlan_edit.php:195
 msgid "802.1Q VLAN tag (between 1 and 4094)."
 msgstr "802.1Q VLAN tag (između 1 i 4094)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:198
+#: src/usr/local/www/interfaces_vlan_edit.php:199
 msgid "VLAN Priority"
 msgstr "VLAN prioritet"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:202
+#: src/usr/local/www/interfaces_vlan_edit.php:203
 msgid "802.1Q VLAN Priority (between 0 and 7)."
 msgstr "802.1Q VLAN Prioritet (između 0 i 7)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:214
+#: src/usr/local/www/interfaces_vlan_edit.php:215
 msgid "vlanif"
 msgstr "vlanif"
 
@@ -16013,7 +16030,7 @@ msgstr ""
 "maksimum 2 sekunde. "
 
 #: src/usr/local/www/interfaces_bridge_edit.php:592
-#: src/usr/local/www/interfaces_vlan.php:109
+#: src/usr/local/www/interfaces_vlan.php:96
 #: src/usr/local/www/system_gateway_groups.php:130 src/etc/inc/shaper.inc:1430
 msgid "Priority"
 msgstr "Prioritet"
@@ -24371,83 +24388,83 @@ msgstr "Prikaži aktivne i statičke posudbe samo"
 msgid "Show all configured leases"
 msgstr "Prikaži sve konfigurisane posudbe"
 
-#: src/usr/local/www/services_unbound_advanced.php:94
+#: src/usr/local/www/services_unbound_advanced.php:98
 msgid "A valid value for Message Cache Size must be specified."
 msgstr "Validna vrijednost za veličinu keša poruka mora biti specificirana. "
 
-#: src/usr/local/www/services_unbound_advanced.php:97
+#: src/usr/local/www/services_unbound_advanced.php:101
 msgid "A valid value must be specified for Outgoing TCP Buffers."
 msgstr "Validna vrijednost mora biti specificirana za odlazeće TCP buffere. "
 
-#: src/usr/local/www/services_unbound_advanced.php:100
+#: src/usr/local/www/services_unbound_advanced.php:104
 msgid "A valid value must be specified for Incoming TCP Buffers."
 msgstr "Validna vrijednost mora biti specificirana za dolazeće TCP buffere. "
 
-#: src/usr/local/www/services_unbound_advanced.php:103
+#: src/usr/local/www/services_unbound_advanced.php:107
 msgid "A valid value must be specified for EDNS Buffer Size."
 msgstr "Validna vrijednost mora biti specificirana za EDNS buffer veličinu"
 
-#: src/usr/local/www/services_unbound_advanced.php:106
+#: src/usr/local/www/services_unbound_advanced.php:110
 msgid "A valid value must be specified for Number of Queries per Thread."
 msgstr "Validna vrijednost mora biti specificirana za broj upita po threadu. "
 
-#: src/usr/local/www/services_unbound_advanced.php:109
+#: src/usr/local/www/services_unbound_advanced.php:113
 msgid "A valid value must be specified for Jostle Timeout."
 msgstr "Validna vrijednost mora biti specificirana za Jostle Timeout. "
 
-#: src/usr/local/www/services_unbound_advanced.php:112
+#: src/usr/local/www/services_unbound_advanced.php:116
 msgid "'Maximum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
 "'Maksimalan TTL za RRsetove i Poruke' mora biti pozitivan cijeli broj. "
 
-#: src/usr/local/www/services_unbound_advanced.php:115
+#: src/usr/local/www/services_unbound_advanced.php:119
 msgid "'Minimum TTL for RRsets and Messages' must be a positive integer."
 msgstr ""
 "'Minimalan TTL za RRsetove i Poruke' mora biti pozitivan cijeli broj. "
 
-#: src/usr/local/www/services_unbound_advanced.php:118
+#: src/usr/local/www/services_unbound_advanced.php:122
 msgid "A valid value must be specified for TTL for Host Cache Entries."
 msgstr ""
 "Validna vrijednost mora biti specificirana za TTL za Host keširane unose. "
 
-#: src/usr/local/www/services_unbound_advanced.php:121
+#: src/usr/local/www/services_unbound_advanced.php:125
 msgid "A valid value must be specified for Number of Hosts to Cache."
 msgstr ""
 "Validna vrijednost mora biti specificirana za broj hostova za keširanje. "
 
-#: src/usr/local/www/services_unbound_advanced.php:124
+#: src/usr/local/www/services_unbound_advanced.php:128
 msgid "A valid value must be specified for Unwanted Reply Threshold."
 msgstr ""
 "Validna vrijednost mora biti specificirana za neželjeni prag odgovaranja. "
 
-#: src/usr/local/www/services_unbound_advanced.php:127
+#: src/usr/local/www/services_unbound_advanced.php:131
 msgid "A valid value must be specified for Log Level."
 msgstr "Validna vrijednost mora biti specificirana za log nivo. "
 
-#: src/usr/local/www/services_unbound_advanced.php:130
+#: src/usr/local/www/services_unbound_advanced.php:134
 msgid ""
 "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled."
 msgstr ""
 "Harden DNSSEC Data opcija može biti uključena ako DNSSEC podrška je "
 "uključena. "
 
-#: src/usr/local/www/services_unbound_advanced.php:222
+#: src/usr/local/www/services_unbound_advanced.php:231
 msgid "Advanced Resolver Options"
 msgstr "Napredne opcije resolvera"
 
-#: src/usr/local/www/services_unbound_advanced.php:226
+#: src/usr/local/www/services_unbound_advanced.php:235
 msgid "Hide Identity"
 msgstr "Sakrij identitet"
 
-#: src/usr/local/www/services_unbound_advanced.php:233
+#: src/usr/local/www/services_unbound_advanced.php:242
 msgid "Hide Version"
 msgstr "Sakrij verziju"
 
-#: src/usr/local/www/services_unbound_advanced.php:240
+#: src/usr/local/www/services_unbound_advanced.php:249
 msgid "Prefetch Support"
 msgstr "Predučitaj podršku"
 
-#: src/usr/local/www/services_unbound_advanced.php:243
+#: src/usr/local/www/services_unbound_advanced.php:252
 msgid ""
 "When enabled, this option can cause an increase of around 10% more DNS "
 "traffic and load on the server, but frequently requested items will not "
@@ -24456,11 +24473,11 @@ msgstr ""
 "Kad je uključena, ova opcija može povećati 10% DNS prometa i opterećenja na "
 "serveru ali često traženi predmeti neće isteći iz keša. "
 
-#: src/usr/local/www/services_unbound_advanced.php:247
+#: src/usr/local/www/services_unbound_advanced.php:256
 msgid "Prefetch DNS Key Support"
 msgstr "Predučitaj DNS ključ podrške"
 
-#: src/usr/local/www/services_unbound_advanced.php:250
+#: src/usr/local/www/services_unbound_advanced.php:259
 #, php-format
 msgid ""
 "This helps lower the latency of requests but does utilize a little more CPU. "
@@ -24469,11 +24486,11 @@ msgstr ""
 "Ovo pomaže u smanjenju kašnjenja zahtjeva ali zahtijeva više CPU. Pogledajte:"
 " %1$sWikipedia%2$s"
 
-#: src/usr/local/www/services_unbound_advanced.php:254
+#: src/usr/local/www/services_unbound_advanced.php:263
 msgid "Harden DNSSEC Data"
 msgstr "Harden DNSSEC Data"
 
-#: src/usr/local/www/services_unbound_advanced.php:257
+#: src/usr/local/www/services_unbound_advanced.php:266
 msgid ""
 "If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC "
 "data is received, then the zone is made insecure. "
@@ -24481,11 +24498,23 @@ msgstr ""
 "Ako su ovakvi podaci odsutno, zona postaje prividna. Ako je isključeno i "
 "nikakvi DNSSEC podaci nisu dobijeni, tada zona nije sigurna. "
 
-#: src/usr/local/www/services_unbound_advanced.php:261
+#: src/usr/local/www/services_unbound_advanced.php:270
+msgid "Serve Expired"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:273
+msgid ""
+"When enabled, allows unbound to serve one query even with a TTL of 0, if TTL "
+"is 0 then new record will be requested in the background when the cache is "
+"served to ensure cache is updated without latency on service of the DNS "
+"request."
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:277
 msgid "Message Cache Size"
 msgstr "Veličina keša poruke"
 
-#: src/usr/local/www/services_unbound_advanced.php:264
+#: src/usr/local/www/services_unbound_advanced.php:280
 msgid ""
 "Size of the message cache. The message cache stores DNS response codes and "
 "validation statuses. The Resource Record Set (RRSet) cache will "
@@ -24497,11 +24526,11 @@ msgstr ""
 "dvostruku ovu vrijednost. RRSet keš sadrži RR podatke i zadana vrijednost je "
 "4 megabajta. "
 
-#: src/usr/local/www/services_unbound_advanced.php:268
+#: src/usr/local/www/services_unbound_advanced.php:284
 msgid "Outgoing TCP Buffers"
 msgstr "Odlazeći TCP baferi"
 
-#: src/usr/local/www/services_unbound_advanced.php:271
+#: src/usr/local/www/services_unbound_advanced.php:287
 msgid ""
 "The number of outgoing TCP buffers to allocate per thread. The default value "
 "is 10. If 0 is selected then TCP queries are not sent to authoritative "
@@ -24511,11 +24540,11 @@ msgstr ""
 "Ako je 0 selektovano, tada TCP upiti neće biti poslani autoritativnim "
 "serverima. "
 
-#: src/usr/local/www/services_unbound_advanced.php:275
+#: src/usr/local/www/services_unbound_advanced.php:291
 msgid "Incoming TCP Buffers"
 msgstr "Dolazeći TCP baferi"
 
-#: src/usr/local/www/services_unbound_advanced.php:278
+#: src/usr/local/www/services_unbound_advanced.php:294
 msgid ""
 "The number of incoming TCP buffers to allocate per thread. The default value "
 "is 10. If 0 is selected then TCP queries are not accepted from clients."
@@ -24523,11 +24552,11 @@ msgstr ""
 "Broj dolazećih TCP bafera za alokaciju po threadu. Zadana vrijednost je 10. "
 "Ako je 0 selektovana, tada TCP upiti nisu prihvaćeni od klijenata. "
 
-#: src/usr/local/www/services_unbound_advanced.php:282
+#: src/usr/local/www/services_unbound_advanced.php:298
 msgid "EDNS Buffer Size"
 msgstr "EDNS veličina buffera"
 
-#: src/usr/local/www/services_unbound_advanced.php:285
+#: src/usr/local/www/services_unbound_advanced.php:301
 msgid ""
 "Number of bytes size to advertise as the EDNS reassembly buffer size. This "
 "is the value that is used in UDP datagrams sent to peers. RFC recommendation "
@@ -24543,11 +24572,11 @@ msgstr ""
 "vremena), tada bi trebala proći vrijednost od 1480. 512 vrijednost prolazi "
 "mnoge MTU probleme, ali može stvoriti prevelik broj TCP fallbackova. "
 
-#: src/usr/local/www/services_unbound_advanced.php:291
+#: src/usr/local/www/services_unbound_advanced.php:307
 msgid "Number of Queries per Thread"
 msgstr "Broj upita po threadu"
 
-#: src/usr/local/www/services_unbound_advanced.php:294
+#: src/usr/local/www/services_unbound_advanced.php:310
 msgid ""
 "The number of queries that every thread will service simultaneously. If more "
 "queries arrive that need to be serviced, and no queries can be jostled, then "
@@ -24557,11 +24586,11 @@ msgstr ""
 "koji trebaju biti servisirani i nijedan upit ne može biti izguran ispred "
 "drugog, tada se ovi upiti bacaju. "
 
-#: src/usr/local/www/services_unbound_advanced.php:298
+#: src/usr/local/www/services_unbound_advanced.php:314
 msgid "Jostle Timeout"
 msgstr "Timeout izguravanja"
 
-#: src/usr/local/www/services_unbound_advanced.php:301
+#: src/usr/local/www/services_unbound_advanced.php:317
 msgid ""
 "This timeout is used for when the server is very busy. This protects against "
 "denial of service by slow queries or high query rates. The default value is "
@@ -24571,11 +24600,11 @@ msgstr ""
 "servisa zbog sporih upita ili visoke frekvencije upita. Zadana vrijednost je "
 "200 milisekundi. "
 
-#: src/usr/local/www/services_unbound_advanced.php:305
+#: src/usr/local/www/services_unbound_advanced.php:321
 msgid "Maximum TTL for RRsets and Messages"
 msgstr "Maksimalna vrijednost TTL za RRsetove i Poruke"
 
-#: src/usr/local/www/services_unbound_advanced.php:308
+#: src/usr/local/www/services_unbound_advanced.php:324
 msgid ""
 "The Maximum Time to Live for RRsets and messages in the cache. The default "
 "is 86400 seconds (1 day). When the internal TTL expires the cache item is "
@@ -24587,11 +24616,11 @@ msgstr ""
 "biti konfigurisano da forsira resolver da traži upite podataka sve češće i "
 "ne vjeruje velikim TTL vrijednostima. "
 
-#: src/usr/local/www/services_unbound_advanced.php:313
+#: src/usr/local/www/services_unbound_advanced.php:329
 msgid "Minimum TTL for RRsets and Messages"
 msgstr "Minimalan TTL za RRsetove i poruke"
 
-#: src/usr/local/www/services_unbound_advanced.php:316
+#: src/usr/local/www/services_unbound_advanced.php:332
 msgid ""
 "The Minimum Time to Live for RRsets and messages in the cache. The default "
 "is 0 seconds. If the minimum value kicks in, the data is cached for longer "
@@ -24607,15 +24636,15 @@ msgstr ""
 "vlasnik domene predvidio. Visoke vrijednosti mogu uzrokovati problem jer "
 "podaci u kešu se možda ne budu poklapali sa stvarnim podacima. "
 
-#: src/usr/local/www/services_unbound_advanced.php:320
+#: src/usr/local/www/services_unbound_advanced.php:336
 msgid "minutes"
 msgstr "minute"
 
-#: src/usr/local/www/services_unbound_advanced.php:323
+#: src/usr/local/www/services_unbound_advanced.php:339
 msgid "TTL for Host Cache Entries"
 msgstr "TTL za host keš unose"
 
-#: src/usr/local/www/services_unbound_advanced.php:326
+#: src/usr/local/www/services_unbound_advanced.php:342
 msgid ""
 "Time to Live, in seconds, for entries in the infrastructure host cache. The "
 "infrastructure host cache contains round trip timing, lameness, and EDNS "
@@ -24625,11 +24654,11 @@ msgstr ""
 "Infrastruktura host keša sadrži round trip tajming, lameness i EDNS podršku "
 "za DNS servere. Zadana vrijednost je 15 minuta. "
 
-#: src/usr/local/www/services_unbound_advanced.php:330
+#: src/usr/local/www/services_unbound_advanced.php:346
 msgid "Number of Hosts to Cache"
 msgstr "Broj hostova za keširanje"
 
-#: src/usr/local/www/services_unbound_advanced.php:333
+#: src/usr/local/www/services_unbound_advanced.php:349
 msgid ""
 "Number of infrastructure hosts for which information is cached. The default "
 "is 10,000."
@@ -24637,15 +24666,15 @@ msgstr ""
 "Broj infrastrukturnih hostova za koje je informacija keširana. Zadano je "
 "10,000. "
 
-#: src/usr/local/www/services_unbound_advanced.php:335
+#: src/usr/local/www/services_unbound_advanced.php:351
 msgid "million"
 msgstr "milion"
 
-#: src/usr/local/www/services_unbound_advanced.php:338
+#: src/usr/local/www/services_unbound_advanced.php:354
 msgid "Unwanted Reply Threshold"
 msgstr "Neželjeni prag odgovora"
 
-#: src/usr/local/www/services_unbound_advanced.php:342
+#: src/usr/local/www/services_unbound_advanced.php:358
 msgid ""
 "If enabled, a total number of unwanted replies is kept track of in every "
 "thread. When it reaches the threshold, a defensive action is taken and a "
@@ -24659,23 +24688,23 @@ msgstr ""
 "da će otkloniti svaku opasnost. Po zadanom je ovo isključeno, ali ako je "
 "uključeno, kao zadana vrijednost se preporučuje 10 miliona. "
 
-#: src/usr/local/www/services_unbound_advanced.php:346
+#: src/usr/local/www/services_unbound_advanced.php:362
 msgid "level"
 msgstr "nivo"
 
-#: src/usr/local/www/services_unbound_advanced.php:349
+#: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Log Level"
 msgstr "Log nivo"
 
-#: src/usr/local/www/services_unbound_advanced.php:352
+#: src/usr/local/www/services_unbound_advanced.php:368
 msgid "Select the log verbosity."
 msgstr "Unesi preopširnost loga"
 
-#: src/usr/local/www/services_unbound_advanced.php:356
+#: src/usr/local/www/services_unbound_advanced.php:372
 msgid "Disable Auto-added Access Control"
 msgstr "Isključite automatski dodanu kontrolu pristupa"
 
-#: src/usr/local/www/services_unbound_advanced.php:359
+#: src/usr/local/www/services_unbound_advanced.php:375
 msgid ""
 "By default, IPv4 and IPv6 networks residing on internal interfaces of this "
 "system are permitted. Allowed networks must be manually configured on the "
@@ -24685,11 +24714,11 @@ msgstr ""
 "ovom sistemu su zabranjene. Dozvoljene mreže moraju biti ručno konfigurisane "
 "preko menija pristupne liste ako su automatski dodani unosi isključeni. "
 
-#: src/usr/local/www/services_unbound_advanced.php:364
+#: src/usr/local/www/services_unbound_advanced.php:380
 msgid "Disable Auto-added Host Entries"
 msgstr "Isključi automatski dodane host unose"
 
-#: src/usr/local/www/services_unbound_advanced.php:367
+#: src/usr/local/www/services_unbound_advanced.php:383
 #, php-format
 msgid ""
 "By default, the primary IPv4 and IPv6 addresses of this firewall are added "
@@ -24701,11 +24730,11 @@ msgstr ""
 "za sistem domenu ovog firewalla kao što je konfigurisano u %1$sSistem: "
 "Generalne postavke%2$s. Ovo isključuje automatsko stvaranje takvih unosa. "
 
-#: src/usr/local/www/services_unbound_advanced.php:371
+#: src/usr/local/www/services_unbound_advanced.php:387
 msgid "Experimental Bit 0x20 Support"
 msgstr "Eksperimentalna bit 0x20 podrška"
 
-#: src/usr/local/www/services_unbound_advanced.php:374
+#: src/usr/local/www/services_unbound_advanced.php:390
 #, php-format
 msgid "See the implementation %1$sdraft dns-0x20%2$s for more information."
 msgstr ""
@@ -27322,27 +27351,33 @@ msgstr ""
 msgid "At least one tag must be entered."
 msgstr "Barem jedan tag mora biti unesen. "
 
-#: src/usr/local/www/interfaces_qinq_edit.php:201
+#: src/usr/local/www/interfaces_qinq_edit.php:152
+msgid ""
+"This QinQ tag cannot be deleted because it is still being used as an "
+"interface."
+msgstr ""
+
+#: src/usr/local/www/interfaces_qinq_edit.php:220
 msgid "QinQ VLANs group"
 msgstr "QinQ VLAN grupa"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:239
+#: src/usr/local/www/interfaces_qinq_edit.php:258
 msgid "QinQ Configuration"
 msgstr "QinQ konfiguracija"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:243
+#: src/usr/local/www/interfaces_qinq_edit.php:262
 msgid "*Parent interface"
 msgstr "*Roditeljski interface"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:246
+#: src/usr/local/www/interfaces_qinq_edit.php:265
 msgid "Only QinQ capable interfaces will be shown."
 msgstr "Samo QinQ kompatibilni interfejsi će biti prikazani.  "
 
-#: src/usr/local/www/interfaces_qinq_edit.php:250
+#: src/usr/local/www/interfaces_qinq_edit.php:269
 msgid "*First level tag"
 msgstr "*Tag prvog nivoa"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:254
+#: src/usr/local/www/interfaces_qinq_edit.php:273
 msgid ""
 "This is the first level VLAN tag. On top of this are stacked the member "
 "VLANs defined below."
@@ -27350,23 +27385,23 @@ msgstr ""
 "Ovo je prvi nivo VLAN taga. Iznad ovoga su poredani članovi VLANa koji su "
 "definisani ispod. "
 
-#: src/usr/local/www/interfaces_qinq_edit.php:258
+#: src/usr/local/www/interfaces_qinq_edit.php:277
 msgid "Option(s)"
 msgstr "Opcija(e)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:261
+#: src/usr/local/www/interfaces_qinq_edit.php:280
 msgid "Allows rules to be written more easily."
 msgstr "Dozvoljava pravilima da se lakše pišu. "
 
-#: src/usr/local/www/interfaces_qinq_edit.php:271
+#: src/usr/local/www/interfaces_qinq_edit.php:290
 msgid "Member(s)"
 msgstr "Član(ovi)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:297
+#: src/usr/local/www/interfaces_qinq_edit.php:316
 msgid "*Tag(s)"
 msgstr "*Tag(ovi)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:321
+#: src/usr/local/www/interfaces_qinq_edit.php:340
 msgid "Add Tag"
 msgstr "Dodaj tag"
 
@@ -28750,7 +28785,7 @@ msgstr "Pozadinska ažuriranja"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:242
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:267
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:170
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:482
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
@@ -28790,7 +28825,7 @@ msgstr "u pregledu"
 msgid "in use"
 msgstr "u korištenu"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:227
 msgid "Updating..."
 msgstr "Ažuriranje..."
 
@@ -28879,43 +28914,43 @@ msgstr "Provjeravanje..."
 msgid "All Dyn DNS entries are hidden."
 msgstr "Svi dinamički DNS unosi su skriveni"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:188
 msgid "Mobile"
 msgstr "Mobilno"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:201
 msgid "Active Tunnels"
 msgstr "Aktivni tuneli"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Inactive Tunnels"
 msgstr "Neaktivni tuneli"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
 msgid "Mobile Users"
 msgstr "Mobilni korisnici"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:207
 msgid "Retrieving overview data "
 msgstr "Preuzimanje podataka o pregledu "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "Retrieving tunnel data "
 msgstr "Preuzimanje podataka o tunelu"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "Retrieving mobile data "
 msgstr "Preuzimanje mobilnih podataka"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:243
 msgid "No mobile tunnels have been configured"
 msgstr ""
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:252
 msgid "There are no configured IPsec Tunnels"
 msgstr "Nema konfigurisanih IPsec tunela. "
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:253
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPsec može biti konfigurisan <a href=\"vpn_ipsec.php\">ovdje</a>."
 
@@ -29068,12 +29103,12 @@ msgid "Update interval"
 msgstr "Interval ažuriranja"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:198
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:203
 msgid "BIOS"
 msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:240
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:245
 msgid "CPU Type"
 msgstr "CPU tip"
 
@@ -29094,12 +29129,12 @@ msgid "State Table Size"
 msgstr "Veličina statusne tablice"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:45
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:338
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:343
 msgid "MBUF Usage"
 msgstr "MBUF korištenje"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:357
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:362
 msgid "Temperature"
 msgstr "Temperatura"
 
@@ -29168,96 +29203,100 @@ msgstr "Spašene sistemske informacije o widget filteru preko kontrolne ploče"
 msgid "Unknown system"
 msgstr "Nepoznat sistem"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:179
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
+msgid "Serial:"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:183
 msgid "Netgate Device ID:"
 msgstr "Netgate ID uređaja: "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:201
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:206
 msgid "Vendor: "
 msgstr "Prodavač: "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:204
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:209
 msgid "Version: "
 msgstr "Verzija: "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:207
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:212
 msgid "Release Date: "
 msgstr "Datum izlaska: "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:223
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:228
 msgid "built on"
 msgstr "građeno na"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:247
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:252
 msgid "CPUs"
 msgstr "CPUovi"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:262
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:267
 msgid "Hardware crypto"
 msgstr "Hardverski kripto"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:281
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:286
 msgid "Current date/time"
 msgstr "Trenutni datum/vrijeme"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:295
 msgid "DNS server(s)"
 msgstr "DNS server(i)"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:309
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:314
 msgid "Last config change"
 msgstr "Posljednja promjena konfiguracije"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:319
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:324
 msgid "State table size"
 msgstr "Veličina statusne tablice"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:329
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:334
 msgid "Show states"
 msgstr "Prikaži stanja"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:374
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:379
 msgid "Load average"
 msgstr "Prosjek opterećenosti"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:376
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:381
 msgid "Last 1, 5 and 15 minutes"
 msgstr "Posljednja 1, 5 i 15 minuta. "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:385
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:390
 msgid "CPU usage"
 msgstr "CPU korištenje"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:396
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr "Preuzimanje podataka o procesoru %s"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:405
 msgid "Memory usage"
 msgstr "Korištenje memorije"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:423
 msgid "SWAP usage"
 msgstr "SWAP korištenje"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:443
 msgid "Disk usage"
 msgstr "Korištenje diska"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:449
 msgid " of "
 msgstr "od"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:449
 msgid "in RAM"
 msgstr "u RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:460
 msgid "All System Information items are hidden."
 msgstr "Sve sistemske informacije su skrivene. "
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:481
 msgid "Item"
 msgstr "Predmet"
 
@@ -29317,7 +29356,7 @@ msgstr "Limit sadržaja"
 msgid "Picture widget saved via Dashboard."
 msgstr "Widget slike spašen preko kontrolne ploče. "
 
-#: src/usr/local/www/widgets/widgets/picture.widget.php:79
+#: src/usr/local/www/widgets/widgets/picture.widget.php:82
 msgid "New picture:"
 msgstr "Nova slika: "
 
@@ -29390,45 +29429,45 @@ msgstr "Nemoguće uzeti status"
 msgid "delete"
 msgstr "obriši"
 
-#: src/usr/local/www/pkg_edit.php:662
+#: src/usr/local/www/pkg_edit.php:658
 msgid "Advanced Features"
 msgstr "Napredne značajke"
 
-#: src/usr/local/www/pkg_edit.php:1208
+#: src/usr/local/www/pkg_edit.php:1204
 msgid "Listen on All interfaces/ip addresses "
 msgstr "Slušaj na svim interfejsima / ip adresama"
 
-#: src/usr/local/www/pkg_edit.php:1212
+#: src/usr/local/www/pkg_edit.php:1208
 msgid "loopback"
 msgstr "loopback"
 
-#: src/usr/local/www/pkg_edit.php:1513 src/usr/local/www/pkg_edit.php:1532
+#: src/usr/local/www/pkg_edit.php:1509 src/usr/local/www/pkg_edit.php:1528
 msgid "Show Advanced Options"
 msgstr "Prikaži napredne opcije"
 
-#: src/usr/local/www/pkg_edit.php:1533
+#: src/usr/local/www/pkg_edit.php:1529
 msgid "Hide Advanced Options"
 msgstr "Sakrij napredne opcije"
 
-#: src/usr/local/www/interfaces_vlan.php:61
+#: src/usr/local/www/interfaces_vlan.php:48
 msgid ""
 "This VLAN cannot be deleted because it is still being used as an interface."
 msgstr ""
 "Ovaj VLAN ne može biti obrisan jer se još uvijek koristi kao interface. "
 
-#: src/usr/local/www/interfaces_vlan.php:101
+#: src/usr/local/www/interfaces_vlan.php:88
 msgid "VLAN Interfaces"
 msgstr "VLAN interfejsi"
 
-#: src/usr/local/www/interfaces_vlan.php:132
+#: src/usr/local/www/interfaces_vlan.php:119
 msgid "Edit VLAN"
 msgstr "Modifikuj VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:133
+#: src/usr/local/www/interfaces_vlan.php:120
 msgid "Delete VLAN"
 msgstr "Obriši VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:156
+#: src/usr/local/www/interfaces_vlan.php:143
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
@@ -29441,7 +29480,7 @@ msgstr ""
 "ali smanjeni MTU će stvarati probleme. %1$s Pogledaj %2$s upute za "
 "informacije o podržanim karticama. "
 
-#: src/usr/local/www/interfaces_vlan.php:163
+#: src/usr/local/www/interfaces_vlan.php:150
 msgid "Are you sure you want to delete this VLAN?"
 msgstr "Da li ste sigurni da želite obrisati ovaj VLAN?"
 
@@ -29662,9 +29701,8 @@ msgstr "Kopija samo različitih ili fajlova koji nedostaju. "
 
 #: src/usr/local/www/system_update_settings.php:235
 #, php-format
-msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
+msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option."
 msgstr ""
-"Prikaži različite i drugačije fajlove. %1$sSa 'Diff/Minimal' opcijom..."
 
 #: src/usr/local/www/system_update_settings.php:242
 #, php-format
@@ -29876,232 +29914,232 @@ msgstr "Globalni unicast rutabilni IPv6 prefiks"
 msgid "Warning, could not open log for writing."
 msgstr "Upozorenje, nije moguće otvoriti log za pisanje"
 
-#: src/etc/inc/pkg-utils.inc:187
+#: src/etc/inc/pkg-utils.inc:186
 #, php-format
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
 msgstr ""
 "GREŠKA!!! Uočena je greška na pkg izvršavanju (rc = %d) sa parametrima '%s'."
 
-#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
+#: src/etc/inc/pkg-utils.inc:434 src/etc/inc/pkg-utils.inc:438
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr "GREŠKA: Greška uočena pri dobijanju liste paketa. Obustavljam..."
 
-#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
+#: src/etc/inc/pkg-utils.inc:476 src/etc/inc/pkg-utils.inc:480
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr "GREŠKA: Greška uočena pri očitavanju verzije paketa. Obustavljam..."
 
-#: src/etc/inc/pkg-utils.inc:532
+#: src/etc/inc/pkg-utils.inc:531
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Pokrećem posljednje korake %s instalacije."
 
-#: src/etc/inc/pkg-utils.inc:545
+#: src/etc/inc/pkg-utils.inc:544
 msgid "Resyncing configuration for all packages."
 msgstr "Ponovno sinhroniziranje svih paketa."
 
-#: src/etc/inc/pkg-utils.inc:567
+#: src/etc/inc/pkg-utils.inc:566
 msgid "Syncing packages..."
 msgstr "Sinhroniziranje paketa."
 
-#: src/etc/inc/pkg-utils.inc:589
+#: src/etc/inc/pkg-utils.inc:588
 msgid "Removing package..."
 msgstr "Uklanjanje paketa..."
 
-#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
-#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
-#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
-#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
-#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
-#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
-#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/system.inc:1257
+#: src/etc/inc/pkg-utils.inc:594 src/etc/inc/pkg-utils.inc:742
+#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:801
+#: src/etc/inc/pkg-utils.inc:806 src/etc/inc/pkg-utils.inc:811
+#: src/etc/inc/pkg-utils.inc:829 src/etc/inc/pkg-utils.inc:846
+#: src/etc/inc/pkg-utils.inc:873 src/etc/inc/pkg-utils.inc:919
+#: src/etc/inc/pkg-utils.inc:945 src/etc/inc/pkg-utils.inc:988
+#: src/etc/inc/pkg-utils.inc:1007 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
-#: src/etc/inc/system.inc:2232 src/etc/inc/services.inc:1600
-#: src/etc/inc/services.inc:2008 src/etc/inc/services.inc:2225
-#: src/etc/inc/services.inc:2293 src/etc/inc/services.inc:2519
+#: src/etc/inc/system.inc:2232 src/etc/inc/services.inc:1641
+#: src/etc/inc/services.inc:2049 src/etc/inc/services.inc:2266
+#: src/etc/inc/services.inc:2334 src/etc/inc/services.inc:2559
 #: src/etc/inc/rrd.inc:970 src/etc/inc/interfaces.inc:198
-#: src/etc/inc/interfaces.inc:222 src/etc/inc/interfaces.inc:368
-#: src/etc/inc/interfaces.inc:430 src/etc/inc/interfaces.inc:759
-#: src/etc/inc/interfaces.inc:1113 src/etc/inc/interfaces.inc:1144
-#: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:1189
-#: src/etc/inc/interfaces.inc:2223 src/etc/inc/filter.inc:295
+#: src/etc/inc/interfaces.inc:345 src/etc/inc/interfaces.inc:505
+#: src/etc/inc/interfaces.inc:573 src/etc/inc/interfaces.inc:902
+#: src/etc/inc/interfaces.inc:1256 src/etc/inc/interfaces.inc:1287
+#: src/etc/inc/interfaces.inc:1311 src/etc/inc/interfaces.inc:1332
+#: src/etc/inc/interfaces.inc:2366 src/etc/inc/filter.inc:295
 #: src/etc/inc/filter.inc:547
 msgid "done."
 msgstr "Završeno."
 
-#: src/etc/inc/pkg-utils.inc:622
+#: src/etc/inc/pkg-utils.inc:621
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
 msgstr "%s paketu fale konfiguracijski fajlovi i mora biti reinstaliran."
 
-#: src/etc/inc/pkg-utils.inc:638
+#: src/etc/inc/pkg-utils.inc:637
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr "Reinstaliranje paketa %1$s jer njegov include fajl (%2$s) fali!"
 
-#: src/etc/inc/pkg-utils.inc:641
+#: src/etc/inc/pkg-utils.inc:640
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr "Reinstaliranje paketa %s nije uspjelo. Poduzmi potrebne mjere!!!"
 
-#: src/etc/inc/pkg-utils.inc:734
+#: src/etc/inc/pkg-utils.inc:733
 msgid "Beginning package installation."
 msgstr "Početak instaliranja paketa."
 
-#: src/etc/inc/pkg-utils.inc:735
+#: src/etc/inc/pkg-utils.inc:734
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "Početak instaliranja paketa za %s."
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:738
 msgid "Saving updated package information..."
 msgstr "Spašavanje ažuriranih informacija o paketima..."
 
-#: src/etc/inc/pkg-utils.inc:742
+#: src/etc/inc/pkg-utils.inc:741
 #, php-format
 msgid "Installed %s package."
 msgstr "Instaliran %s paket"
 
-#: src/etc/inc/pkg-utils.inc:746
+#: src/etc/inc/pkg-utils.inc:745
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "Pisao preko prethodne instalacije %s"
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:746
 msgid "overwrite!"
 msgstr "pisanje preko!"
 
-#: src/etc/inc/pkg-utils.inc:750
+#: src/etc/inc/pkg-utils.inc:749
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr "Srednji config piše tokom instaliranja paketa za %s"
 
-#: src/etc/inc/pkg-utils.inc:754
+#: src/etc/inc/pkg-utils.inc:753
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "%1$s paket nije instaliran. %2$s Instalacija prekinuta."
 
-#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:757 src/etc/inc/pkg-utils.inc:789
+#: src/etc/inc/pkg-utils.inc:865
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Greška prilikom instaliranja paketa: %s"
 
-#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 msgid "Failed to install package."
 msgstr "Greška prilikom instaliranja paketa."
 
-#: src/etc/inc/pkg-utils.inc:764
+#: src/etc/inc/pkg-utils.inc:763
 msgid "Loading package configuration... "
 msgstr "Učitavanje paketskih konfiguracija. "
 
-#: src/etc/inc/pkg-utils.inc:767
+#: src/etc/inc/pkg-utils.inc:766
 msgid "Configuring package components..."
 msgstr "Konfigurisanje komponenti paketa..."
 
-#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
+#: src/etc/inc/pkg-utils.inc:778 src/etc/inc/pkg-utils.inc:960
 msgid "Loading package instructions..."
 msgstr "Učitavanje paketnih instrukcija..."
 
-#: src/etc/inc/pkg-utils.inc:786
+#: src/etc/inc/pkg-utils.inc:785
 #, php-format
 msgid "Include %s is missing!"
 msgstr "Include %s nije pronađen!"
 
-#: src/etc/inc/pkg-utils.inc:797
+#: src/etc/inc/pkg-utils.inc:796
 msgid "Custom commands..."
 msgstr "Vlastite komande..."
 
-#: src/etc/inc/pkg-utils.inc:800
+#: src/etc/inc/pkg-utils.inc:799
 msgid "Executing custom_php_global_functions()..."
 msgstr "Pokrećem custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:804
 msgid "Executing custom_php_install_command()..."
 msgstr "Pokrećem custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:809
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Pokrećem custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
+#: src/etc/inc/pkg-utils.inc:816 src/etc/inc/pkg-utils.inc:908
 msgid "Menu items... "
 msgstr "Stavke menija"
 
-#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:833 src/etc/inc/pkg-utils.inc:923
 msgid "Services... "
 msgstr "Usluge..."
 
-#: src/etc/inc/pkg-utils.inc:861
+#: src/etc/inc/pkg-utils.inc:860
 msgid "Loading package configuration... failed!"
 msgstr "Učitavanje paketnih informacija... Nije uspjelo!"
 
-#: src/etc/inc/pkg-utils.inc:861
+#: src/etc/inc/pkg-utils.inc:860
 msgid "Installation aborted."
 msgstr "Instalacija prekinuta"
 
-#: src/etc/inc/pkg-utils.inc:862
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Unable to load package configuration. Installation aborted."
 msgstr "Nije moguće učitati paketnu konfiguraciju. Prekid instalacije."
 
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:870
 msgid "Writing configuration... "
 msgstr "Pisanje konfiguracije"
 
-#: src/etc/inc/pkg-utils.inc:873
+#: src/etc/inc/pkg-utils.inc:872
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Uspješno instaliran paket: %s"
 
-#: src/etc/inc/pkg-utils.inc:893
+#: src/etc/inc/pkg-utils.inc:892
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "%1$s paket nije instaliran. %2$s Brisanje zaustavljeno."
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:897
 #, php-format
 msgid "Removing %s package... "
 msgstr "Brisanje %s paketa"
 
-#: src/etc/inc/pkg-utils.inc:899
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s components..."
 msgstr "Brisanje %s komponenti"
 
-#: src/etc/inc/pkg-utils.inc:952
+#: src/etc/inc/pkg-utils.inc:951
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr "Napredno konfiguracijsko pisanje prilikom brisanja paketa za %s"
 
-#: src/etc/inc/pkg-utils.inc:968
+#: src/etc/inc/pkg-utils.inc:967
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Include fajl %s nije pronađen i ne može se iskoristiti."
 
-#: src/etc/inc/pkg-utils.inc:986
+#: src/etc/inc/pkg-utils.inc:985
 msgid "Deinstall commands... "
 msgstr "Komande deinstalacije..."
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:990
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr "Ne pokrećem svojstvene deinstalacijske kopče jer include fali."
 
-#: src/etc/inc/pkg-utils.inc:998
+#: src/etc/inc/pkg-utils.inc:997
 msgid "Syslog entries... "
 msgstr "Syslog unosi..."
 
-#: src/etc/inc/pkg-utils.inc:1006
+#: src/etc/inc/pkg-utils.inc:1005
 msgid "Configuration... "
 msgstr "Konfiguracija..."
 
-#: src/etc/inc/pkg-utils.inc:1009
+#: src/etc/inc/pkg-utils.inc:1008
 #, php-format
 msgid "Removed %s package."
 msgstr "Uklonjen %s paket."
 
-#: src/etc/inc/pkg-utils.inc:1034
+#: src/etc/inc/pkg-utils.inc:1033
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -30109,24 +30147,24 @@ msgstr ""
 "Čekanje na internet konekciju radi ažuriranja pkg metadate i dovršavanja "
 "paketne reinstalacije"
 
-#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
+#: src/etc/inc/pkg-utils.inc:1046 src/etc/inc/pkg-utils.inc:1085
 msgid "Package reinstall"
 msgstr "Paketna reinstalacija"
 
-#: src/etc/inc/pkg-utils.inc:1048
+#: src/etc/inc/pkg-utils.inc:1047
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "Reinstalacija paketnog procesa je prekinuta zbog nedostatka internet "
 "konekcije"
 
-#: src/etc/inc/pkg-utils.inc:1087
+#: src/etc/inc/pkg-utils.inc:1086
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
 msgstr "Paket %s ne postoji u trenutnoj %s verziji i uklonjen je."
 
-#: src/etc/inc/pkg-utils.inc:1108
+#: src/etc/inc/pkg-utils.inc:1107
 msgid "Stopping all packages."
 msgstr "Zaustavljanje svih paketa. "
 
@@ -30504,11 +30542,11 @@ msgstr "Greška: nemoguće otvoriti dmesg.boot u system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Postavljenje hard disk standbya..."
 
-#: src/etc/inc/system.inc:2483
+#: src/etc/inc/system.inc:2486
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
+#: src/etc/inc/system.inc:2490 src/etc/inc/system.inc:2509
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -30539,31 +30577,31 @@ msgstr ""
 "config.xml niti konfiguracijska kopija nisu pronađeni, vraćam na tvorničke "
 "zadane postavke."
 
-#: src/etc/inc/unbound.inc:793
+#: src/etc/inc/unbound.inc:795
 msgid "Static"
 msgstr "Statično"
 
-#: src/etc/inc/unbound.inc:794
+#: src/etc/inc/unbound.inc:796
 msgid "Transparent"
 msgstr "Transparentno"
 
-#: src/etc/inc/unbound.inc:795
+#: src/etc/inc/unbound.inc:797
 msgid "Type Transparent"
 msgstr "Tipski transparentno"
 
-#: src/etc/inc/unbound.inc:796 src/etc/inc/filter.inc:77
+#: src/etc/inc/unbound.inc:798 src/etc/inc/filter.inc:77
 msgid "Redirect"
 msgstr "Redirekt"
 
-#: src/etc/inc/unbound.inc:797
+#: src/etc/inc/unbound.inc:799
 msgid "Inform"
 msgstr "Informiši"
 
-#: src/etc/inc/unbound.inc:798
+#: src/etc/inc/unbound.inc:800
 msgid "Inform Deny"
 msgstr "Informiši i odbij"
 
-#: src/etc/inc/unbound.inc:799
+#: src/etc/inc/unbound.inc:801
 msgid "No Default"
 msgstr "Bez zadanog"
 
@@ -30654,79 +30692,79 @@ msgstr ""
 "Pogrešan DHCP izbor %1$s - %2$s za %3$s subnet %4$s/%5$s detektovano. Molimo "
 "ispravite postavke u Servisi, DHCP Server"
 
-#: src/etc/inc/services.inc:1146
+#: src/etc/inc/services.inc:1187
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr "Greška: nemoguće otvoriti dhcp.conf u services_dhcpdv4_configure().%s"
 
-#: src/etc/inc/services.inc:1653
+#: src/etc/inc/services.inc:1694
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Nije moguće pisati lgmpproxy konfiguracijski fajl!"
 
-#: src/etc/inc/services.inc:1666
+#: src/etc/inc/services.inc:1707
 msgid "Started IGMP proxy service."
 msgstr "Startan IGMP proxy servis."
 
-#: src/etc/inc/services.inc:1690
+#: src/etc/inc/services.inc:1731
 msgid "Starting DHCP relay service..."
 msgstr "Startam DHCP relej servis..."
 
-#: src/etc/inc/services.inc:1715
+#: src/etc/inc/services.inc:1756
 msgid "No destination IP has been configured!"
 msgstr "Nijedan destinacijski IP nije konfigurisan!"
 
-#: src/etc/inc/services.inc:1789
+#: src/etc/inc/services.inc:1830
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Ne postoji odgovarajući interface za pokretanje dhcrelay!"
 
-#: src/etc/inc/services.inc:1825
+#: src/etc/inc/services.inc:1866
 msgid "Starting DHCPv6 relay service..."
 msgstr "Startam DHCPv6 relej servis..."
 
-#: src/etc/inc/services.inc:1916
+#: src/etc/inc/services.inc:1957
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "Ne postoji odgovarajući interface za pokretanje dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1977
+#: src/etc/inc/services.inc:2018
 msgid "Starting DynDNS clients..."
 msgstr "Startam DynDNS klijente..."
 
-#: src/etc/inc/services.inc:2088
+#: src/etc/inc/services.inc:2129
 msgid "Starting DNS forwarder..."
 msgstr "Startam DNS forwarder...."
 
-#: src/etc/inc/services.inc:2263
+#: src/etc/inc/services.inc:2304
 msgid "Starting DNS Resolver..."
 msgstr "Startam DNS resolver..."
 
-#: src/etc/inc/services.inc:2279
+#: src/etc/inc/services.inc:2320
 msgid "Unbound start waiting on dhcp6c."
 msgstr "Nepovezani start čeka na dhcp6c."
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2324
 msgid "dhcp6 init complete. Continuing"
 msgstr "dhcp6 inicijalizacija gotova. Nastavljam"
 
-#: src/etc/inc/services.inc:2292
+#: src/etc/inc/services.inc:2333
 msgid "sync unbound done."
 msgstr "završena sinhronizacija nepovezanih."
 
-#: src/etc/inc/services.inc:2330
+#: src/etc/inc/services.inc:2371
 msgid "Starting SNMP daemon... "
 msgstr "Startam SNMP daemon..."
 
-#: src/etc/inc/services.inc:2341
+#: src/etc/inc/services.inc:2382
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr "Greška: nemoguće otvoriti snmpd.conf u services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2675
+#: src/etc/inc/services.inc:2715
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
 msgstr "phpDynDNS: Ne ažuriram %s A stavku jer IP adresa nije promijenjena."
 
-#: src/etc/inc/services.inc:2694
+#: src/etc/inc/services.inc:2734
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -30734,46 +30772,46 @@ msgid ""
 msgstr ""
 "phpDynDNS: Ne ažuriram %s AAAA stavku jer IPv6 adresa nije promijenjena."
 
-#: src/etc/inc/services.inc:2726 src/etc/inc/services.inc:2738
+#: src/etc/inc/services.inc:2766 src/etc/inc/services.inc:2778
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS: Ažuriram keš fajl %1$s: %2$s"
 
-#: src/etc/inc/services.inc:2729
+#: src/etc/inc/services.inc:2769
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS ažurirana IP adresa (A) za %1$s na %2$s (%3$s) za %4$s"
 
-#: src/etc/inc/services.inc:2741
+#: src/etc/inc/services.inc:2781
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS ažurirana IPv6 adresa (AAAA) za %1$s na %2$s (%3$s) za %4$s"
 
-#: src/etc/inc/services.inc:2749
+#: src/etc/inc/services.inc:2789
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr "phpDynDNS: Greška prilikom ažuriranja IP Adrese (A) za %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2754
+#: src/etc/inc/services.inc:2794
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr "phpDynDNS: Greška prilikom ažuriranja IP Adrese (AAAA) za %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2788
+#: src/etc/inc/services.inc:2828
 msgid "Created:"
 msgstr "Stvoreno:"
 
-#: src/etc/inc/services.inc:2814
+#: src/etc/inc/services.inc:2854
 msgid "If possible do not add items to this file manually."
 msgstr "Ako je moguće, ne dodaji iteme na ovaj fajl ručno."
 
-#: src/etc/inc/services.inc:2815
+#: src/etc/inc/services.inc:2855
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr "Ako je tako određeno, ovaj fajl mora biti okončan novim redom. "
 
-#: src/etc/inc/services.inc:2865
+#: src/etc/inc/services.inc:2905
 msgid "Starting UPnP service... "
 msgstr "Startam UPnP servis..."
 
@@ -31287,7 +31325,7 @@ msgstr ""
 "Polje '%1$s' mora sadržavati samo validan %2$s CIDR raspon(e) razdvojene "
 "zarezom."
 
-#: src/etc/inc/openvpn.inc:1124
+#: src/etc/inc/openvpn.inc:1127
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
@@ -31295,39 +31333,39 @@ msgstr ""
 "Greška pri stvaranju OpenVPN server konfiguracije. Selektovana dužina DH "
 "parametra ne može biti korištena."
 
-#: src/etc/inc/openvpn.inc:1292
+#: src/etc/inc/openvpn.inc:1295
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
 msgstr "OpenVPN ID %1$s PID %2$s je još pokrenut, uništavam proces."
 
-#: src/etc/inc/openvpn.inc:1527
+#: src/etc/inc/openvpn.inc:1530
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
 msgstr "Ponovno sinhronizovanje OpenVPN instanci za interface %s."
 
-#: src/etc/inc/openvpn.inc:1529
+#: src/etc/inc/openvpn.inc:1532
 msgid "Resyncing OpenVPN instances."
 msgstr "Ponovno sinhronizovanje OpenVPN instanci."
 
-#: src/etc/inc/openvpn.inc:1562
+#: src/etc/inc/openvpn.inc:1565
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
 msgstr "Ponovno sinhronizovanje OpenVPN za gateway grupu %1$s server %2$s."
 
-#: src/etc/inc/openvpn.inc:1571
+#: src/etc/inc/openvpn.inc:1574
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
 msgstr "Ponovno sinhronizovanje OpenVPN za gateway grupu %1$s klijent %2$s."
 
-#: src/etc/inc/openvpn.inc:1580
+#: src/etc/inc/openvpn.inc:1583
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
 msgstr "openvpn_resync_gwgroup pozvan sa null gwgroup parametrom."
 
-#: src/etc/inc/openvpn.inc:1686 src/etc/inc/openvpn.inc:1817
+#: src/etc/inc/openvpn.inc:1689 src/etc/inc/openvpn.inc:1820
 msgid "Unable to contact daemon"
 msgstr "Nije moguće spojiti se sa daemonom."
 
-#: src/etc/inc/openvpn.inc:1687 src/etc/inc/openvpn.inc:1818
+#: src/etc/inc/openvpn.inc:1690 src/etc/inc/openvpn.inc:1821
 msgid "Service not running?"
 msgstr "Servis nije pokrenut?"
 
@@ -32063,42 +32101,42 @@ msgstr "prosljeđivanje"
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNSCACHE: Pronašao stari IP %1$s i novi IP %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:1887
+#: src/etc/inc/pfsense-utils.inc:1889
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr "Učitavanje %s kriptografskih akceleratorskih modula."
 
-#: src/etc/inc/pfsense-utils.inc:1904
+#: src/etc/inc/pfsense-utils.inc:1907
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr "Učitavanje %s termalnog monitorskog modula."
 
-#: src/etc/inc/pfsense-utils.inc:1981 src/etc/inc/pfsense-utils.inc:2037
+#: src/etc/inc/pfsense-utils.inc:1984 src/etc/inc/pfsense-utils.inc:2040
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr "Preuzimanje fajla nije uspjelo sa status kodom %1$s. URL: %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2256
+#: src/etc/inc/pfsense-utils.inc:2259
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr "Nije moguće procesirati nepostojeći fajl iz aliasa: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2261
+#: src/etc/inc/pfsense-utils.inc:2264
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr "Nije moguće procesirati prazan fajl iz aliasa: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2266
+#: src/etc/inc/pfsense-utils.inc:2269
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr "Nije moguće procesirati aliase iz aliasa: %s"
 
-#: src/etc/inc/pfsense-utils.inc:2323
+#: src/etc/inc/pfsense-utils.inc:2326
 #, php-format
 msgid "Failed to download alias %s"
 msgstr "Preuzimanje aliasa %s nije uspjelo "
 
-#: src/etc/inc/pfsense-utils.inc:2352
+#: src/etc/inc/pfsense-utils.inc:2355
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
@@ -32106,150 +32144,150 @@ msgstr ""
 "Alias arhiva je .tar/tgz fajl koji ne može biti dekompresovan jer utility "
 "nije pronađen!"
 
-#: src/etc/inc/pfsense-utils.inc:2362
+#: src/etc/inc/pfsense-utils.inc:2365
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr "Nije moguće otvoriti %s/aliase za pisanje!"
 
-#: src/etc/inc/pfsense-utils.inc:2368
+#: src/etc/inc/pfsense-utils.inc:2371
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr "Sljedeći fajl nije moguće pročitati %1$s sa %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Bosnian"
 msgstr "Bosanski"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Chinese (Simplified, China)"
 msgstr "Kineski (Simplificirani, Kina)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Chinese (Taiwan)"
 msgstr "Kineski (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2953
 msgid "Dutch"
 msgstr "Belgijski"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2954
 msgid "English"
 msgstr "Engleski "
 
-#: src/etc/inc/pfsense-utils.inc:2952
+#: src/etc/inc/pfsense-utils.inc:2955
 msgid "French"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2953
+#: src/etc/inc/pfsense-utils.inc:2956
 msgid "German (Germany)"
 msgstr "Njemački (Njemačka)"
 
-#: src/etc/inc/pfsense-utils.inc:2954
+#: src/etc/inc/pfsense-utils.inc:2957
 msgid "Norwegian Bokmål"
 msgstr "Norveški Bokmål"
 
-#: src/etc/inc/pfsense-utils.inc:2955
+#: src/etc/inc/pfsense-utils.inc:2958
 msgid "Polish"
 msgstr ""
 
-#: src/etc/inc/pfsense-utils.inc:2956
+#: src/etc/inc/pfsense-utils.inc:2959
 msgid "Portuguese (Brazil)"
 msgstr "Portugalski (Brazil)"
 
-#: src/etc/inc/pfsense-utils.inc:2957
+#: src/etc/inc/pfsense-utils.inc:2960
 msgid "Russian"
 msgstr "Ruski"
 
-#: src/etc/inc/pfsense-utils.inc:2958
+#: src/etc/inc/pfsense-utils.inc:2961
 msgid "Spanish"
 msgstr "Španski"
 
-#: src/etc/inc/pfsense-utils.inc:2959
+#: src/etc/inc/pfsense-utils.inc:2962
 msgid "Spanish (Argentina)"
 msgstr "Španski (Argentina)"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3169
-#: src/etc/inc/pfsense-utils.inc:3195
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3198
 msgid "No Service"
 msgstr "Bez signala"
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Restricted Service"
 msgstr "Zabranjena usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid Service"
 msgstr "Ispravna usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Restricted Regional Service"
 msgstr "Zabranjena regionalna usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Powersaving Service"
 msgstr "Usluga štednje energije"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Unknown Service"
 msgstr "Nepoznat servis"
 
-#: src/etc/inc/pfsense-utils.inc:3180
+#: src/etc/inc/pfsense-utils.inc:3183
 msgid "Invalid SIM/locked State"
 msgstr "Pogrešan SIM/zaključano stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3181
+#: src/etc/inc/pfsense-utils.inc:3184
 msgid "Valid SIM State"
 msgstr "Validno SIM stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3182
+#: src/etc/inc/pfsense-utils.inc:3185
 msgid "Invalid SIM CS State"
 msgstr "Pogrešno CIM CS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3183
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "Invalid SIM PS State"
 msgstr "Pogrešno SIM PS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3184
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Invalid SIM CS/PS State"
 msgstr "Pogrešno SIM CS/PS stanje"
 
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Missing SIM State"
 msgstr "Nedostatak SIM stanja"
 
-#: src/etc/inc/pfsense-utils.inc:3196
+#: src/etc/inc/pfsense-utils.inc:3199
 msgid "Limited Service"
 msgstr "Limitirana usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Initializing Service"
 msgstr "Inicijalizacija usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock error Service"
 msgstr "Greška mrežnog zaključavanja usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Locked Service"
 msgstr "Zaključana mreža usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3218
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Otključana ili tačna MCC/MNC usluga"
 
-#: src/etc/inc/pfsense-utils.inc:3221
+#: src/etc/inc/pfsense-utils.inc:3224
 msgid "No action State"
 msgstr "Stanje bez radnji"
 
-#: src/etc/inc/pfsense-utils.inc:3222
+#: src/etc/inc/pfsense-utils.inc:3225
 msgid "Network lock State"
 msgstr "Stanje zaključavanja mreže"
 
-#: src/etc/inc/pfsense-utils.inc:3223
+#: src/etc/inc/pfsense-utils.inc:3226
 msgid "(U)SIM card lock State"
 msgstr "(U)SIM stanje zakjučavanja kartice"
 
-#: src/etc/inc/pfsense-utils.inc:3224
+#: src/etc/inc/pfsense-utils.inc:3227
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Zaključavanje mreže i (USIM) stanje zaključavanja kartice"
 
@@ -32779,41 +32817,41 @@ msgstr ""
 msgid "The command '%1$s' returned exit code '%2$d', the output was '%3$s' "
 msgstr "Komanda '%1$s' je vratila izlazni kod '%2$d' i izlaz je '%3$s'"
 
-#: src/etc/inc/util.inc:2576
+#: src/etc/inc/util.inc:2578
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
 msgstr "%s mora biti validna IPv4 adresa ili alias."
 
-#: src/etc/inc/util.inc:2580
+#: src/etc/inc/util.inc:2582
 #, php-format
 msgid "%s must be a valid IPv4 address."
 msgstr "%s mora biti validna IPv4 adresa."
 
-#: src/etc/inc/util.inc:2592
+#: src/etc/inc/util.inc:2594
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
 msgstr "%s mora biti validna IPv6 adresa ili alias."
 
-#: src/etc/inc/util.inc:2596
+#: src/etc/inc/util.inc:2598
 #, php-format
 msgid "%s must be a valid IPv6 address."
 msgstr "%s mora biti validna IPv6 adresa."
 
-#: src/etc/inc/util.inc:2610
+#: src/etc/inc/util.inc:2612
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
 msgstr "%s mora biti validna IPv4 ili IPv6 adresa ili alias."
 
-#: src/etc/inc/util.inc:2614
+#: src/etc/inc/util.inc:2616
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
 msgstr "%s mora biti validna IPv4 ili IPv6 adresa."
 
-#: src/etc/inc/util.inc:2669
+#: src/etc/inc/util.inc:2671
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
 msgstr "Greška: pokušaj pisanja DUID fajla - pogrešan DUID detektovan"
 
-#: src/etc/inc/util.inc:2679
+#: src/etc/inc/util.inc:2681
 msgid "Error: attempting to write DUID file - File write error"
 msgstr "Greška: pokušaj pisanja DUID fajla - greška pri pisanju"
 
@@ -33269,69 +33307,83 @@ msgstr "interfaces_bring_up() je pozvan ali varijabla nije definisana."
 msgid "Configuring loopback interface..."
 msgstr "Konfigurišem loopback interface..."
 
-#: src/etc/inc/interfaces.inc:206
+#: src/etc/inc/interfaces.inc:329
 msgid "Configuring VLAN interfaces..."
 msgstr "Konfigurišem VLAN interfaceove..."
 
-#: src/etc/inc/interfaces.inc:230
+#: src/etc/inc/interfaces.inc:353
 msgid "VLAN: called with wrong options. Problems with config!"
 msgstr "VLAN: pozvan sa pogrešnim opcijama. Problemi sa configom!"
 
-#: src/etc/inc/interfaces.inc:235
+#: src/etc/inc/interfaces.inc:358
 msgid "interface_vlan_configure called with if undefined."
 msgstr "interface_vlan_configure pozvan sa nedefinisanim if."
 
-#: src/etc/inc/interfaces.inc:281 src/etc/inc/interfaces.inc:376
+#: src/etc/inc/interfaces.inc:364
+msgid "vlan_interface called with if undefined var."
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:408 src/etc/inc/interfaces.inc:513
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
 msgstr ""
 "QinQ compat VLAN: pozvan sa pogrešnim opcijama. Problemi sa configom!%s"
 
-#: src/etc/inc/interfaces.inc:288
+#: src/etc/inc/interfaces.inc:415
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
 msgstr "interface_qinq_configure je pozvan sa nedefinisanim if. %s"
 
-#: src/etc/inc/interfaces.inc:293
+#: src/etc/inc/interfaces.inc:420
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
 msgstr "interface_qinq_configure pozvan sa neispravnim if. %s"
 
-#: src/etc/inc/interfaces.inc:359
+#: src/etc/inc/interfaces.inc:426
+msgid "interface_qinq_configure cannot create VLAN interface"
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:496
 msgid "Configuring QinQ interfaces..."
 msgstr "Konfigurišem QinQ interfaceove..."
 
-#: src/etc/inc/interfaces.inc:384
+#: src/etc/inc/interfaces.inc:519
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
 msgstr "interface_qinq2_configure pozvan sa nedefinisanim if. %s"
 
-#: src/etc/inc/interfaces.inc:405
+#: src/etc/inc/interfaces.inc:526
+#, php-format
+msgid ""
+"interface_qinq2_configure interface name too big %s. (max. size: %d).%s"
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:548
 msgid "Creating wireless clone interfaces..."
 msgstr "Stvaram wireless clone interfacea..."
 
-#: src/etc/inc/interfaces.inc:483
+#: src/etc/inc/interfaces.inc:626
 #, php-format
 msgid "No members found on %s"
 msgstr "Nijedan član nije pronađen na %s"
 
-#: src/etc/inc/interfaces.inc:547
+#: src/etc/inc/interfaces.inc:690
 msgid "realif not defined in interfaces bridge - up"
 msgstr "realif nije definisan u interfaceovom prelazu - gore"
 
-#: src/etc/inc/interfaces.inc:568
+#: src/etc/inc/interfaces.inc:711
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr "bridgeif nije definisan -- nemoguće pokrenuti interface"
 
-#: src/etc/inc/interfaces.inc:742
+#: src/etc/inc/interfaces.inc:885
 msgid "Configuring LAGG interfaces..."
 msgstr "Konfigurišem LAGG interfaceove..."
 
-#: src/etc/inc/interfaces.inc:893
+#: src/etc/inc/interfaces.inc:1036
 msgid "Could not bring greif up -- variable not defined."
 msgstr "Nije moguće pokrenuti greif -- varijabla nije definisana."
 
-#: src/etc/inc/interfaces.inc:976
+#: src/etc/inc/interfaces.inc:1119
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
@@ -33339,42 +33391,42 @@ msgstr ""
 "Nije moguće pokrenuti realif -- varijabla nije definisiana -- "
 "interface_gif_configure()"
 
-#: src/etc/inc/interfaces.inc:1023
+#: src/etc/inc/interfaces.inc:1166
 msgid "could not bring gifif up -- variable not defined"
 msgstr "Nije moguće pokrenuti gifif -- varijabla nije definisana"
 
-#: src/etc/inc/interfaces.inc:1105 src/etc/inc/interfaces.inc:1135
-#: src/etc/inc/interfaces.inc:1159 src/etc/inc/interfaces.inc:1177
+#: src/etc/inc/interfaces.inc:1248 src/etc/inc/interfaces.inc:1278
+#: src/etc/inc/interfaces.inc:1302 src/etc/inc/interfaces.inc:1320
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "Konfigurisanje %s interfacea..."
 
-#: src/etc/inc/interfaces.inc:1109 src/etc/inc/interfaces.inc:1138
-#: src/etc/inc/interfaces.inc:1162 src/etc/inc/interfaces.inc:1180
+#: src/etc/inc/interfaces.inc:1252 src/etc/inc/interfaces.inc:1281
+#: src/etc/inc/interfaces.inc:1305 src/etc/inc/interfaces.inc:1323
 #, php-format
 msgid "Configuring %s"
 msgstr "Konfigurisanje %s"
 
-#: src/etc/inc/interfaces.inc:1263
+#: src/etc/inc/interfaces.inc:1406
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr "Pozivanje interfacea za interface %1$s, unišititi %2$s"
 
-#: src/etc/inc/interfaces.inc:1277
+#: src/etc/inc/interfaces.inc:1420
 msgid "Wrong parameters used during interface_bring_down"
 msgstr "Pogrešni parametri uneseni prilikom korištenja interface_bring_down"
 
-#: src/etc/inc/interfaces.inc:1448
+#: src/etc/inc/interfaces.inc:1591
 msgid "Enter CARP maintenance mode"
 msgstr "Uđi u CARP mod održavanja"
 
-#: src/etc/inc/interfaces.inc:1652
+#: src/etc/inc/interfaces.inc:1795
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
 "Nije moguće pronaći PPP konfiguraciju za %s u interface_ppps_configure()."
 
-#: src/etc/inc/interfaces.inc:1710
+#: src/etc/inc/interfaces.inc:1853
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
@@ -33383,7 +33435,7 @@ msgstr ""
 "Nije moguće dobiti lokalnu IP adresu za PPTP/L2TP link na %s u "
 "interfaces_ppps_configure. Koristim 0.0.0.0 ip!"
 
-#: src/etc/inc/interfaces.inc:1717
+#: src/etc/inc/interfaces.inc:1860
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
@@ -33392,47 +33444,47 @@ msgstr ""
 "Nije moguće dobiti PPTP/L2TP IP adresu sa %1$s za %2$s u "
 "interfaces_ppps_configure."
 
-#: src/etc/inc/interfaces.inc:1724
+#: src/etc/inc/interfaces.inc:1867
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr "Uređaj %s ne postoji. PPP link se ne može pokrenuti bez modema."
 
-#: src/etc/inc/interfaces.inc:1729
+#: src/etc/inc/interfaces.inc:1872
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr "Nepoznat %s konfigurisan kao ppp interface."
 
-#: src/etc/inc/interfaces.inc:2049
+#: src/etc/inc/interfaces.inc:2192
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
 "Greška: Nije moguće otvoriti mpd__%1$s.conf u interface_ppps_configure()."
 "%2$s"
 
-#: src/etc/inc/interfaces.inc:2144
+#: src/etc/inc/interfaces.inc:2287
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr "Startam 3gstats.php na uređaju '%1$s' za interface '%2$s'"
 
-#: src/etc/inc/interfaces.inc:2161
+#: src/etc/inc/interfaces.inc:2304
 msgid "Configuring CARP settings..."
 msgstr "Konfigurišem CARP postavke..."
 
-#: src/etc/inc/interfaces.inc:2202
+#: src/etc/inc/interfaces.inc:2345
 msgid "waiting for pfsync..."
 msgstr "čekam na pfsync..."
 
-#: src/etc/inc/interfaces.inc:2208
+#: src/etc/inc/interfaces.inc:2351
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "pfsync dovršen za %s sekundi."
 
-#: src/etc/inc/interfaces.inc:2209
+#: src/etc/inc/interfaces.inc:2352
 msgid "Configuring CARP settings finalize..."
 msgstr "Finalno konfigurisanje CARP postavki..."
 
-#: src/etc/inc/interfaces.inc:2436
+#: src/etc/inc/interfaces.inc:2579
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
@@ -33441,58 +33493,58 @@ msgstr ""
 "Interface specificiran za virtualnu IP adresu %s ne postoji. Preskačem ovaj "
 "VIP."
 
-#: src/etc/inc/interfaces.inc:2496
+#: src/etc/inc/interfaces.inc:2639
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "Interface %s prebačen na hostap način."
 
-#: src/etc/inc/interfaces.inc:2500
+#: src/etc/inc/interfaces.inc:2643
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "Interface %s prebačen na adhoc način"
 
-#: src/etc/inc/interfaces.inc:2504
+#: src/etc/inc/interfaces.inc:2647
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "Interface %s prebačen na infrastrukturni način"
 
-#: src/etc/inc/interfaces.inc:2517
+#: src/etc/inc/interfaces.inc:2660
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr "Kloniram novi wireless interface %s"
 
-#: src/etc/inc/interfaces.inc:2522
+#: src/etc/inc/interfaces.inc:2665
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
 "Greška pri kloniranju interfacea %1$s sa kodom greške %2$s, izlaz %3$s"
 
-#: src/etc/inc/interfaces.inc:3178
+#: src/etc/inc/interfaces.inc:3329
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
 "Pokrećem dhcp6 klijent za interface wan %s u DHCP6 bez RA načinu rada."
 
-#: src/etc/inc/interfaces.inc:3199
+#: src/etc/inc/interfaces.inc:3350
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr "OpenVPN: Reaktualiziranje servera %s"
 
-#: src/etc/inc/interfaces.inc:3212
+#: src/etc/inc/interfaces.inc:3363
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr "OpenVPN: Reaktualiziranje klijenta %s"
 
-#: src/etc/inc/interfaces.inc:3347
+#: src/etc/inc/interfaces.inc:3498
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "Odbijanje router reklama za interface %s"
 
-#: src/etc/inc/interfaces.inc:3379
+#: src/etc/inc/interfaces.inc:3530
 msgid "Generating new MAC address."
 msgstr "Generišem novu MAC adresu."
 
-#: src/etc/inc/interfaces.inc:3384 src/etc/inc/interfaces.inc:3385
+#: src/etc/inc/interfaces.inc:3535 src/etc/inc/interfaces.inc:3536
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
@@ -33501,27 +33553,27 @@ msgstr ""
 "Pogrešna MAC adresa (ff:ff:ff:ff:ff:ff) na interfaceu %1$s je automatski "
 "zamijenjena sa %2$s"
 
-#: src/etc/inc/interfaces.inc:3450
+#: src/etc/inc/interfaces.inc:3601
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr "Pronađeno preklapanje na MTU između parenta %1$s i VLAN(%2$s)"
 
-#: src/etc/inc/interfaces.inc:3520
+#: src/etc/inc/interfaces.inc:3671
 msgid "calling interface_dhcpv6_configure."
 msgstr "pozivam interface_dhcpv6_configure."
 
-#: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
-#: src/etc/inc/interfaces.inc:3778
+#: src/etc/inc/interfaces.inc:3795 src/etc/inc/interfaces.inc:3865
+#: src/etc/inc/interfaces.inc:3929
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "Interface %1$s prati nepostojeći interface %2$s"
 
-#: src/etc/inc/interfaces.inc:3651 src/etc/inc/interfaces.inc:3657
+#: src/etc/inc/interfaces.inc:3802 src/etc/inc/interfaces.inc:3808
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "Interface %1$s konfigurisan preko %2$s tipom %3$s"
 
-#: src/etc/inc/interfaces.inc:3720
+#: src/etc/inc/interfaces.inc:3871
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
@@ -33530,13 +33582,13 @@ msgstr ""
 "Interface IPv4 '%1$s' adresa na interfaceu '%2$s' nije validna, ne "
 "konfiguriše se 6RD prolaz."
 
-#: src/etc/inc/interfaces.inc:3756
+#: src/etc/inc/interfaces.inc:3907
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "rd6 %1$s sa ipv6 adresom %2$s baziran na %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:3784 src/etc/inc/interfaces.inc:3839
-#: src/etc/inc/interfaces.inc:3922
+#: src/etc/inc/interfaces.inc:3935 src/etc/inc/interfaces.inc:3990
+#: src/etc/inc/interfaces.inc:4073
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
@@ -33545,22 +33597,22 @@ msgstr ""
 "Interface IPv4 '%1$s' adresa na interfaceu '%2$s' nije javna, ne "
 "konfigurišem 6RD prolaz."
 
-#: src/etc/inc/interfaces.inc:3816
+#: src/etc/inc/interfaces.inc:3967
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "sixto4 %1$s sa ip adresom %2$s bazirana na %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:4028
+#: src/etc/inc/interfaces.inc:4179
 msgid "Failed to write user DUID file!"
 msgstr "Greška pi pisanju korisničkog DUID fajla!"
 
-#: src/etc/inc/interfaces.inc:4503
+#: src/etc/inc/interfaces.inc:4654
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 "Greška: nije moguće otvoriti %s u DHCP6_Config_File_Override() za čitanje."
 
-#: src/etc/inc/interfaces.inc:4531
+#: src/etc/inc/interfaces.inc:4682
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
@@ -33569,17 +33621,17 @@ msgstr ""
 "Greška: nije moguće otvoriti dhclient_%s.conf u interface_dhcp_configure() "
 "za pisanje."
 
-#: src/etc/inc/interfaces.inc:4544
+#: src/etc/inc/interfaces.inc:4695
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "Pogrešan interface \"%s\" u interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:4600
+#: src/etc/inc/interfaces.inc:4751
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr "Nije moguće pokrenuti %s interface u interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:4693
+#: src/etc/inc/interfaces.inc:4844
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
@@ -37208,32 +37260,36 @@ msgstr "Log paketi blokirani sa pravilima 'Blokiraj Privatne Mreže'"
 msgid "<span class=\"help-block\">"
 msgstr "<span class=\"help-block\">"
 
-#: src/usr/local/www/vpn_openvpn_client.php:511
+#: src/usr/local/www/vpn_openvpn_client.php:513
 #: src/usr/local/www/services_dyndns_edit.php:255
 msgid "Disable this client"
 msgstr "Isključi ovog klijenta"
 
-#: src/usr/local/www/vpn_openvpn_client.php:634
+#: src/usr/local/www/vpn_openvpn_client.php:632
+msgid "Do not retry connection when authentication fails"
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:643
 #: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
 msgstr "Koristi TLS ključ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:644
+#: src/usr/local/www/vpn_openvpn_client.php:653
 #: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
 msgstr "Automatski generiši TLS ključ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:700
+#: src/usr/local/www/vpn_openvpn_client.php:709
 #: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
 msgstr "Automatski generiši dijeljeni ključ"
 
-#: src/usr/local/www/vpn_openvpn_client.php:729
+#: src/usr/local/www/vpn_openvpn_client.php:738
 #: src/usr/local/www/vpn_openvpn_server.php:900
 msgid "Enable Negotiable Cryptographic Parameters"
 msgstr "Uključi svojevoljne kriptografske parametre"
 
-#: src/usr/local/www/vpn_openvpn_client.php:855
+#: src/usr/local/www/vpn_openvpn_client.php:864
 #: src/usr/local/www/vpn_openvpn_server.php:1097
 msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
@@ -37242,15 +37298,15 @@ msgstr ""
 "Postavi TOS IP vrijednost naslova tunel paketa da se poklapa sa "
 "enkapsuliranom paketnom vrijednosti. "
 
-#: src/usr/local/www/vpn_openvpn_client.php:862
+#: src/usr/local/www/vpn_openvpn_client.php:871
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr "Zabranjuje serveru dodavanje ruta na klijentovu ruting tablicu"
 
-#: src/usr/local/www/vpn_openvpn_client.php:869
+#: src/usr/local/www/vpn_openvpn_client.php:878
 msgid "Don't add or remove routes automatically"
 msgstr "Nemoj dodavati ili uklanjati rute automatski"
 
-#: src/usr/local/www/vpn_openvpn_client.php:887
+#: src/usr/local/www/vpn_openvpn_client.php:896
 #: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
@@ -37401,31 +37457,31 @@ msgstr ""
 "Upiši timestamp jednom za svaku sekundu, korisno pri konstrukciji Allan "
 "devijacijskih plotova (zadano: nije odabrano). "
 
-#: src/usr/local/www/system_advanced_misc.php:384
+#: src/usr/local/www/system_advanced_misc.php:385
 msgid "Enable default gateway switching"
 msgstr "Uključi zadano mijenjanje gejtveja"
 
-#: src/usr/local/www/system_advanced_misc.php:396
+#: src/usr/local/www/system_advanced_misc.php:397
 msgid "Enable PowerD"
 msgstr "Uključi PowerD"
 
-#: src/usr/local/www/system_advanced_misc.php:474
+#: src/usr/local/www/system_advanced_misc.php:475
 msgid "Do not kill connections when schedule expires"
 msgstr "Ne uništavaj konekcije kada raspored istekne"
 
-#: src/usr/local/www/system_advanced_misc.php:486
+#: src/usr/local/www/system_advanced_misc.php:487
 msgid "Flush all states when a gateway goes down"
 msgstr "Očisti sva stanja kada gejtvej bude ugašen"
 
-#: src/usr/local/www/system_advanced_misc.php:494
+#: src/usr/local/www/system_advanced_misc.php:495
 msgid "Do not create rules when gateway is down"
 msgstr "Ne stvaraj pravila kada gejtvej nije uključen"
 
-#: src/usr/local/www/system_advanced_misc.php:506
+#: src/usr/local/www/system_advanced_misc.php:507
 msgid "Use memory file system for /tmp and /var"
 msgstr "Koristi memorijski fajl sistem za /tmp i /var"
 
-#: src/usr/local/www/system_advanced_misc.php:589
+#: src/usr/local/www/system_advanced_misc.php:590
 msgid "Do NOT send Netgate Device ID with user agent"
 msgstr "NE šalji Netgate Uređaj ID"
 
@@ -37562,35 +37618,35 @@ msgstr "Stvori ARP tablicu statičkih unosa za ovaj MAC & IP par adresa"
 msgid "Make dynamic DNS registered hostname the same as Hostname above."
 msgstr "Stvori dinamički DNS registrovani hostname isti kao hostname iznad. "
 
-#: src/usr/local/www/services_snmp.php:216
+#: src/usr/local/www/services_snmp.php:214
 msgid "Enable the SNMP Daemon and its controls"
 msgstr "Uključi SNMP Daemon i njegova kontrola"
 
-#: src/usr/local/www/services_snmp.php:259
+#: src/usr/local/www/services_snmp.php:257
 msgid "Enable the SNMP Trap and its controls"
 msgstr "Uključi SNMP Trap i njegovu kontrolu"
 
-#: src/usr/local/www/services_snmp.php:303
+#: src/usr/local/www/services_snmp.php:301
 msgid "MibII"
 msgstr "MibII"
 
-#: src/usr/local/www/services_snmp.php:310
+#: src/usr/local/www/services_snmp.php:308
 msgid "Netgraph"
 msgstr "Netgraph"
 
-#: src/usr/local/www/services_snmp.php:317
+#: src/usr/local/www/services_snmp.php:315
 msgid "PF"
 msgstr "PF"
 
-#: src/usr/local/www/services_snmp.php:325
+#: src/usr/local/www/services_snmp.php:322
 msgid "Host Resources"
 msgstr "Host Resursi"
 
-#: src/usr/local/www/services_snmp.php:333
+#: src/usr/local/www/services_snmp.php:329
 msgid "UCD"
 msgstr "UCD"
 
-#: src/usr/local/www/services_snmp.php:340
+#: src/usr/local/www/services_snmp.php:336
 msgid "Regex"
 msgstr "Regex"
 
@@ -38400,15 +38456,15 @@ msgstr "Uključi DPD"
 msgid "<span class=\"helptext\">"
 msgstr "<span class=\"helptext\">"
 
-#: src/usr/local/www/services_unbound_advanced.php:227
+#: src/usr/local/www/services_unbound_advanced.php:236
 msgid "id.server and hostname.bind queries are refused"
 msgstr "id.server i hostname.bind upiti su odbijeni "
 
-#: src/usr/local/www/services_unbound_advanced.php:234
+#: src/usr/local/www/services_unbound_advanced.php:243
 msgid "version.server and version.bind queries are refused"
 msgstr "version.server i version.bind upiti su odbijeni "
 
-#: src/usr/local/www/services_unbound_advanced.php:241
+#: src/usr/local/www/services_unbound_advanced.php:250
 msgid ""
 "Message cache elements are prefetched before they expire to help keep the "
 "cache up to date"
@@ -38416,7 +38472,7 @@ msgstr ""
 "Poruka keširanih elemenata je dobijena prije nego isteknu da bi se uspješno "
 "mogao ažurirati keš"
 
-#: src/usr/local/www/services_unbound_advanced.php:248
+#: src/usr/local/www/services_unbound_advanced.php:257
 msgid ""
 "DNSKEYs are fetched earlier in the validation process when a Delegation "
 "signer is encountered"
@@ -38424,19 +38480,23 @@ msgstr ""
 "DNSKEY ključevi su preuzeti ranije u procesu validacije kada se naišlo na "
 "Delegation signer-a. "
 
-#: src/usr/local/www/services_unbound_advanced.php:255
+#: src/usr/local/www/services_unbound_advanced.php:264
 msgid "DNSSEC data is required for trust-anchored zones."
 msgstr "DNSSEC podaci su potrebni za zone zasnovane na povjerenju. "
 
-#: src/usr/local/www/services_unbound_advanced.php:357
+#: src/usr/local/www/services_unbound_advanced.php:271
+msgid "Serve cache records even with TTL of 0"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:373
 msgid "Disable the automatically-added access control entries"
 msgstr "Isključi automatski dodan pristup kontrolnim unosima"
 
-#: src/usr/local/www/services_unbound_advanced.php:365
+#: src/usr/local/www/services_unbound_advanced.php:381
 msgid "Disable the automatically-added host entries"
 msgstr "Isključi automatski-dodane host unose"
 
-#: src/usr/local/www/services_unbound_advanced.php:372
+#: src/usr/local/www/services_unbound_advanced.php:388
 msgid ""
 "Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts."
 msgstr ""
@@ -38673,11 +38733,11 @@ msgstr "Isključi zvuk pri pokretanju/gašenju"
 msgid "Disable Growl Notifications"
 msgstr "Isključi Growl notifikacije"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:259
+#: src/usr/local/www/interfaces_qinq_edit.php:278
 msgid "Adds interface to QinQ interface groups"
 msgstr "Dodaje interfejs u QinQ interfejs grupu"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:272
+#: src/usr/local/www/interfaces_qinq_edit.php:291
 msgid ""
 "Ranges can be specified in the inputs below. Enter a range (2-3) or "
 "individual numbers.<br />Click \"Add Tag\" as many times as needed to add "
@@ -38855,8 +38915,8 @@ msgstr "Mrežno vrijeme protokol eventova (NTP daemon, NTP klijent)"
 msgid "Wireless Events (hostapd)"
 msgstr "Wireless eventovi (hostapd)"
 
-#: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
-#: src/usr/local/www/pkg_edit.php:1338
+#: src/usr/local/www/pkg_edit.php:1323 src/usr/local/www/pkg_edit.php:1329
+#: src/usr/local/www/pkg_edit.php:1334
 msgid "<br />"
 msgstr "<br />"
 

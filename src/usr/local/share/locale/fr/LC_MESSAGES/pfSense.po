@@ -51,7 +51,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-10 07:36-0300\n"
+"POT-Creation-Date: 2017-10-20 10:59-0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -191,7 +191,7 @@ msgstr "La configuration NAT a été modifiée."
 #: src/usr/local/www/firewall_nat_npt.php:129
 #: src/usr/local/www/load_balancer_virtual_server.php:120
 #: src/usr/local/www/vpn_ipsec_keys.php:83
-#: src/usr/local/www/services_unbound_advanced.php:211
+#: src/usr/local/www/services_unbound_advanced.php:220
 #: src/usr/local/www/system_gateways.php:232
 #: src/usr/local/www/firewall_rules.php:332
 #: src/usr/local/www/system_gateway_groups.php:112
@@ -247,7 +247,7 @@ msgstr "Mappages NAT 1:1"
 #: src/usr/local/www/services_ntpd.php:217
 #: src/usr/local/www/firewall_nat.php:224
 #: src/usr/local/www/services_wol.php:170
-#: src/usr/local/www/interfaces_qinq.php:109
+#: src/usr/local/www/interfaces_qinq.php:107
 #: src/usr/local/www/interfaces_gif.php:97
 #: src/usr/local/www/services_pppoe.php:99
 #: src/usr/local/www/firewall_virtual_ip.php:257
@@ -273,7 +273,7 @@ msgstr "Mappages NAT 1:1"
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:169
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:66
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:153
-#: src/usr/local/www/interfaces_vlan.php:107
+#: src/usr/local/www/interfaces_vlan.php:94
 #: src/usr/local/www/interfaces_lagg.php:104
 #: src/usr/local/www/status_dhcp_leases.php:495
 #: src/usr/local/www/status_graph.php:126
@@ -315,8 +315,8 @@ msgstr "IP de destination"
 #: src/usr/local/www/system_groupmanager.php:304
 #: src/usr/local/www/system_groupmanager.php:409
 #: src/usr/local/www/load_balancer_monitor.php:107
-#: src/usr/local/www/vpn_openvpn_client.php:604
-#: src/usr/local/www/vpn_openvpn_client.php:941
+#: src/usr/local/www/vpn_openvpn_client.php:606
+#: src/usr/local/www/vpn_openvpn_client.php:950
 #: src/usr/local/www/interfaces_wireless.php:101
 #: src/usr/local/www/services_dhcp.php:728
 #: src/usr/local/www/services_dhcp.php:1446
@@ -339,7 +339,7 @@ msgstr "IP de destination"
 #: src/usr/local/www/status_upnp.php:73 src/usr/local/www/services_wol.php:172
 #: src/usr/local/www/services_dyndns_edit.php:409
 #: src/usr/local/www/services_captiveportal_hostname.php:116
-#: src/usr/local/www/interfaces_qinq.php:112
+#: src/usr/local/www/interfaces_qinq.php:110
 #: src/usr/local/www/interfaces_gif.php:99
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:188
 #: src/usr/local/www/services_igmpproxy.php:86
@@ -347,7 +347,7 @@ msgstr "IP de destination"
 #: src/usr/local/www/services_pppoe.php:102
 #: src/usr/local/www/system_gateway_groups_edit.php:306
 #: src/usr/local/www/system_gateway_groups_edit.php:335
-#: src/usr/local/www/interfaces_vlan_edit.php:206
+#: src/usr/local/www/interfaces_vlan_edit.php:207
 #: src/usr/local/www/load_balancer_monitor_edit.php:79
 #: src/usr/local/www/interfaces_bridge_edit.php:410
 #: src/usr/local/www/load_balancer_pool_edit.php:319
@@ -391,7 +391,7 @@ msgstr "IP de destination"
 #: src/usr/local/www/services_wol_edit.php:148
 #: src/usr/local/www/services_unbound_host_edit.php:219
 #: src/usr/local/www/services_unbound_host_edit.php:280
-#: src/usr/local/www/interfaces_qinq_edit.php:265
+#: src/usr/local/www/interfaces_qinq_edit.php:284
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:179
 #: src/usr/local/www/system_gateways.php:254
 #: src/usr/local/www/services_dnsmasq_edit.php:225
@@ -402,9 +402,9 @@ msgstr "IP de destination"
 #: src/usr/local/www/firewall_rules.php:390
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:62
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:77
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:212
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:152
-#: src/usr/local/www/interfaces_vlan.php:110
+#: src/usr/local/www/interfaces_vlan.php:97
 #: src/usr/local/www/interfaces_lagg.php:106
 #: src/usr/local/www/status_dhcp_leases.php:363
 #: src/usr/local/www/services_captiveportal_mac_edit.php:228
@@ -425,7 +425,7 @@ msgstr "Description"
 #: src/usr/local/www/services_unbound_acls.php:288
 #: src/usr/local/www/system_groupmanager.php:306
 #: src/usr/local/www/load_balancer_monitor.php:108
-#: src/usr/local/www/vpn_openvpn_client.php:942
+#: src/usr/local/www/vpn_openvpn_client.php:951
 #: src/usr/local/www/interfaces_wireless.php:102
 #: src/usr/local/www/services_dhcp.php:729
 #: src/usr/local/www/services_unbound.php:451
@@ -445,7 +445,7 @@ msgstr "Description"
 #: src/usr/local/www/services_wol.php:173
 #: src/usr/local/www/diag_confbak.php:222
 #: src/usr/local/www/services_captiveportal_hostname.php:117
-#: src/usr/local/www/interfaces_qinq.php:113
+#: src/usr/local/www/interfaces_qinq.php:111
 #: src/usr/local/www/interfaces_gif.php:100
 #: src/usr/local/www/services_igmpproxy.php:87
 #: src/usr/local/www/services_pppoe.php:103
@@ -474,7 +474,7 @@ msgstr "Description"
 #: src/usr/local/www/services_dyndns.php:97
 #: src/usr/local/www/firewall_rules.php:391
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:52
-#: src/usr/local/www/interfaces_vlan.php:111
+#: src/usr/local/www/interfaces_vlan.php:98
 #: src/usr/local/www/interfaces_lagg.php:107
 #: src/usr/local/www/status_dhcp_leases.php:368
 #: src/usr/local/www/system_gateway_groups.php:132
@@ -541,12 +541,12 @@ msgstr "Ajouter le mappage au début de la liste"
 #: src/usr/local/www/services_checkip.php:161
 #: src/usr/local/www/services_rfc2136.php:203
 #: src/usr/local/www/services_router_advertisements.php:435
-#: src/usr/local/www/pkg.php:580
+#: src/usr/local/www/pkg.php:577
 #: src/usr/local/www/services_unbound_acls.php:324
 #: src/usr/local/www/system_groupmanager.php:263
 #: src/usr/local/www/system_groupmanager.php:347
 #: src/usr/local/www/load_balancer_monitor.php:145
-#: src/usr/local/www/vpn_openvpn_client.php:979
+#: src/usr/local/www/vpn_openvpn_client.php:988
 #: src/usr/local/www/interfaces_wireless.php:140
 #: src/usr/local/www/services_dhcp.php:964
 #: src/usr/local/www/services_dhcp.php:1379
@@ -567,7 +567,7 @@ msgstr "Ajouter le mappage au début de la liste"
 #: src/usr/local/www/system_camanager.php:453
 #: src/usr/local/www/services_wol.php:202
 #: src/usr/local/www/services_captiveportal_hostname.php:160
-#: src/usr/local/www/interfaces_qinq.php:152
+#: src/usr/local/www/interfaces_qinq.php:150
 #: src/usr/local/www/interfaces_gif.php:130
 #: src/usr/local/www/services_igmpproxy.php:136
 #: src/usr/local/www/services_pppoe.php:143
@@ -596,8 +596,8 @@ msgstr "Ajouter le mappage au début de la liste"
 #: src/usr/local/www/vpn_openvpn_server.php:1386
 #: src/usr/local/www/services_dyndns.php:217
 #: src/usr/local/www/firewall_rules.php:821
-#: src/usr/local/www/firewall_rules.php:825 src/usr/local/www/pkg_edit.php:1470
-#: src/usr/local/www/interfaces_vlan.php:149
+#: src/usr/local/www/firewall_rules.php:825 src/usr/local/www/pkg_edit.php:1466
+#: src/usr/local/www/interfaces_vlan.php:136
 #: src/usr/local/www/interfaces_lagg.php:145
 #: src/usr/local/www/system_gateway_groups.php:186
 #: src/usr/local/www/services_captiveportal_filemanager.php:235
@@ -634,9 +634,9 @@ msgstr "Supprimer les mappages sélectionnés"
 #: src/usr/local/www/firewall_aliases_edit.php:733
 #: src/usr/local/www/services_ntpd_acls.php:304
 #: src/usr/local/www/services_unbound_host_edit.php:284
-#: src/usr/local/www/interfaces_qinq_edit.php:309
+#: src/usr/local/www/interfaces_qinq_edit.php:328
 #: src/usr/local/www/services_dnsmasq_edit.php:278
-#: src/usr/local/www/firewall_rules.php:829 src/usr/local/www/pkg_edit.php:1458
+#: src/usr/local/www/firewall_rules.php:829 src/usr/local/www/pkg_edit.php:1454
 #: src/etc/inc/shaper.inc:3790
 msgid "Delete"
 msgstr "Supprimer"
@@ -650,7 +650,7 @@ msgstr "Sauvegarder l'ordre du mappage"
 #: src/usr/local/www/firewall_nat_1to1.php:255
 #: src/usr/local/www/interfaces_assign.php:573
 #: src/usr/local/www/system_advanced_sysctl.php:88
-#: src/usr/local/www/status_logs_common.inc:940 src/usr/local/www/pkg.php:598
+#: src/usr/local/www/status_logs_common.inc:940 src/usr/local/www/pkg.php:595
 #: src/usr/local/www/classes/Form.class.php:38
 #: src/usr/local/www/system_certmanager.php:207
 #: src/usr/local/www/system_certmanager.php:591
@@ -677,13 +677,13 @@ msgstr "Sauvegarder l'ordre du mappage"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:292
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:195
 #: src/usr/local/www/widgets/widgets/log.widget.php:290
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:499
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:504
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:182
 #: src/usr/local/www/widgets/widgets/rss.widget.php:162
-#: src/usr/local/www/widgets/widgets/picture.widget.php:86
+#: src/usr/local/www/widgets/widgets/picture.widget.php:89
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:160
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:299
-#: src/usr/local/www/pkg_edit.php:611
+#: src/usr/local/www/pkg_edit.php:607
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -798,7 +798,7 @@ msgid "IPComp: "
 msgstr "IPComp: "
 
 #: src/usr/local/www/status_ipsec.php:337
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 #: src/usr/local/www/vpn_ipsec_mobile.php:462
 #: src/usr/local/www/firewall_rules_edit.php:1665
 #: src/usr/local/www/firewall_rules_edit.php:1706
@@ -877,8 +877,8 @@ msgstr "Déconnecté"
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:55
 #: src/usr/local/www/status_logs_filter_summary.php:67
 #: src/usr/local/www/status_logs_settings.php:187
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:213
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:229
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:218
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:234
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:67
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:39
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:213
@@ -919,7 +919,7 @@ msgstr "IPsec"
 #: src/usr/local/www/status_ipsec_leases.php:40
 #: src/usr/local/www/status_ipsec_sad.php:54
 #: src/usr/local/www/status_ipsec_spd.php:47
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:181
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:186
 msgid "Overview"
 msgstr "Vue d'ensemble"
 
@@ -1005,10 +1005,10 @@ msgstr "Aucune information d'état IPsec disponible."
 #: src/usr/local/www/interfaces_groups.php:54
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/interfaces_groups_edit.php:33
-#: src/usr/local/www/interfaces_qinq.php:80
+#: src/usr/local/www/interfaces_qinq.php:78
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/diag_backup.php:437
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_ppps.php:73
 #: src/usr/local/www/services_captiveportal_zones.php:75
@@ -1021,7 +1021,7 @@ msgstr "Aucune information d'état IPsec disponible."
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/interfaces_qinq_edit.php:29
 #: src/usr/local/www/widgets/include/interfaces.inc:23
-#: src/usr/local/www/interfaces_vlan.php:76
+#: src/usr/local/www/interfaces_vlan.php:63
 #: src/usr/local/www/interfaces_lagg.php:76
 msgid "Interfaces"
 msgstr "Interfaces"
@@ -1030,12 +1030,12 @@ msgstr "Interfaces"
 #: src/usr/local/www/interfaces_assign.php:494
 #: src/usr/local/www/interfaces_wireless.php:80
 #: src/usr/local/www/interfaces_groups.php:60
-#: src/usr/local/www/interfaces_qinq.php:89
+#: src/usr/local/www/interfaces_qinq.php:87
 #: src/usr/local/www/interfaces_gif.php:78
 #: src/usr/local/www/interfaces_ppps.php:78
 #: src/usr/local/www/interfaces_gre.php:78
 #: src/usr/local/www/interfaces_bridge.php:83
-#: src/usr/local/www/interfaces_vlan.php:83
+#: src/usr/local/www/interfaces_vlan.php:70
 #: src/usr/local/www/interfaces_lagg.php:85
 msgid "Interface Assignments"
 msgstr "Assignations des interfaces"
@@ -1151,12 +1151,12 @@ msgstr "La configuration de l'interface a été modifiée."
 #: src/usr/local/www/interfaces_groups.php:61
 #: src/usr/local/www/interfaces_groups.php:73
 #: src/usr/local/www/interfaces_groups_edit.php:33
-#: src/usr/local/www/interfaces_qinq.php:90
+#: src/usr/local/www/interfaces_qinq.php:88
 #: src/usr/local/www/interfaces_gif.php:79
 #: src/usr/local/www/interfaces_ppps.php:79
 #: src/usr/local/www/interfaces_gre.php:79
 #: src/usr/local/www/interfaces_bridge.php:84
-#: src/usr/local/www/interfaces_vlan.php:84
+#: src/usr/local/www/interfaces_vlan.php:71
 #: src/usr/local/www/interfaces_lagg.php:86
 msgid "Interface Groups"
 msgstr "Groupes d'interface"
@@ -1169,12 +1169,12 @@ msgstr "Groupes d'interface"
 #: src/usr/local/www/interfaces_groups.php:62
 #: src/usr/local/www/interfaces_wireless_edit.php:162
 #: src/usr/local/www/status_logs.php:63
-#: src/usr/local/www/interfaces_qinq.php:91
+#: src/usr/local/www/interfaces_qinq.php:89
 #: src/usr/local/www/interfaces_gif.php:80
 #: src/usr/local/www/interfaces_ppps.php:80
 #: src/usr/local/www/interfaces_gre.php:80 src/usr/local/www/head.inc:376
 #: src/usr/local/www/interfaces_bridge.php:85
-#: src/usr/local/www/interfaces_vlan.php:85
+#: src/usr/local/www/interfaces_vlan.php:72
 #: src/usr/local/www/interfaces_lagg.php:87
 msgid "Wireless"
 msgstr "Sans-fil"
@@ -1182,14 +1182,14 @@ msgstr "Sans-fil"
 #: src/usr/local/www/interfaces_assign.php:497
 #: src/usr/local/www/interfaces_wireless.php:83
 #: src/usr/local/www/interfaces_groups.php:63
-#: src/usr/local/www/interfaces_qinq.php:92
+#: src/usr/local/www/interfaces_qinq.php:90
 #: src/usr/local/www/interfaces_gif.php:81
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/interfaces_ppps.php:81
 #: src/usr/local/www/interfaces_gre.php:81
 #: src/usr/local/www/interfaces_bridge.php:86
-#: src/usr/local/www/interfaces_vlan.php:76
-#: src/usr/local/www/interfaces_vlan.php:86
+#: src/usr/local/www/interfaces_vlan.php:63
+#: src/usr/local/www/interfaces_vlan.php:73
 #: src/usr/local/www/interfaces_lagg.php:88
 msgid "VLANs"
 msgstr "VLANs"
@@ -1197,14 +1197,14 @@ msgstr "VLANs"
 #: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/interfaces_wireless.php:84
 #: src/usr/local/www/interfaces_groups.php:64
-#: src/usr/local/www/interfaces_qinq.php:80
-#: src/usr/local/www/interfaces_qinq.php:93
+#: src/usr/local/www/interfaces_qinq.php:78
+#: src/usr/local/www/interfaces_qinq.php:91
 #: src/usr/local/www/interfaces_gif.php:82
 #: src/usr/local/www/interfaces_ppps.php:82
 #: src/usr/local/www/interfaces_gre.php:82
 #: src/usr/local/www/interfaces_bridge.php:87
 #: src/usr/local/www/interfaces_qinq_edit.php:29
-#: src/usr/local/www/interfaces_vlan.php:87
+#: src/usr/local/www/interfaces_vlan.php:74
 #: src/usr/local/www/interfaces_lagg.php:89
 msgid "QinQs"
 msgstr "QinQs"
@@ -1212,14 +1212,14 @@ msgstr "QinQs"
 #: src/usr/local/www/interfaces_assign.php:499
 #: src/usr/local/www/interfaces_wireless.php:85
 #: src/usr/local/www/interfaces_groups.php:65
-#: src/usr/local/www/interfaces_qinq.php:94
+#: src/usr/local/www/interfaces_qinq.php:92
 #: src/usr/local/www/interfaces_gif.php:83
 #: src/usr/local/www/interfaces_ppps.php:73
 #: src/usr/local/www/interfaces_ppps.php:83
 #: src/usr/local/www/interfaces_ppps_edit.php:451
 #: src/usr/local/www/interfaces_gre.php:83
 #: src/usr/local/www/interfaces_bridge.php:88
-#: src/usr/local/www/interfaces_vlan.php:88
+#: src/usr/local/www/interfaces_vlan.php:75
 #: src/usr/local/www/interfaces_lagg.php:90
 msgid "PPPs"
 msgstr "PPPs"
@@ -1227,14 +1227,14 @@ msgstr "PPPs"
 #: src/usr/local/www/interfaces_assign.php:500
 #: src/usr/local/www/interfaces_wireless.php:86
 #: src/usr/local/www/interfaces_groups.php:66
-#: src/usr/local/www/interfaces_qinq.php:95
+#: src/usr/local/www/interfaces_qinq.php:93
 #: src/usr/local/www/interfaces_gif.php:84
 #: src/usr/local/www/interfaces_ppps.php:84
 #: src/usr/local/www/interfaces_gre_edit.php:153
 #: src/usr/local/www/interfaces_gre.php:70
 #: src/usr/local/www/interfaces_gre.php:84
 #: src/usr/local/www/interfaces_bridge.php:89
-#: src/usr/local/www/interfaces_vlan.php:89
+#: src/usr/local/www/interfaces_vlan.php:76
 #: src/usr/local/www/interfaces_lagg.php:91
 msgid "GREs"
 msgstr "GREs"
@@ -1242,14 +1242,14 @@ msgstr "GREs"
 #: src/usr/local/www/interfaces_assign.php:501
 #: src/usr/local/www/interfaces_wireless.php:87
 #: src/usr/local/www/interfaces_groups.php:67
-#: src/usr/local/www/interfaces_qinq.php:96
+#: src/usr/local/www/interfaces_qinq.php:94
 #: src/usr/local/www/interfaces_gif.php:69
 #: src/usr/local/www/interfaces_gif.php:85
 #: src/usr/local/www/interfaces_ppps.php:85
 #: src/usr/local/www/interfaces_gre.php:85
 #: src/usr/local/www/interfaces_bridge.php:90
 #: src/usr/local/www/interfaces_gif_edit.php:160
-#: src/usr/local/www/interfaces_vlan.php:90
+#: src/usr/local/www/interfaces_vlan.php:77
 #: src/usr/local/www/interfaces_lagg.php:92
 msgid "GIFs"
 msgstr "GIFs"
@@ -1257,14 +1257,14 @@ msgstr "GIFs"
 #: src/usr/local/www/interfaces_assign.php:502
 #: src/usr/local/www/interfaces_wireless.php:88
 #: src/usr/local/www/interfaces_groups.php:68
-#: src/usr/local/www/interfaces_qinq.php:97
+#: src/usr/local/www/interfaces_qinq.php:95
 #: src/usr/local/www/interfaces_gif.php:86
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/interfaces_ppps.php:86
 #: src/usr/local/www/interfaces_gre.php:86
 #: src/usr/local/www/interfaces_bridge.php:75
 #: src/usr/local/www/interfaces_bridge.php:91
-#: src/usr/local/www/interfaces_vlan.php:91
+#: src/usr/local/www/interfaces_vlan.php:78
 #: src/usr/local/www/interfaces_lagg.php:93
 msgid "Bridges"
 msgstr "Ponts"
@@ -1273,12 +1273,12 @@ msgstr "Ponts"
 #: src/usr/local/www/interfaces_lagg_edit.php:217
 #: src/usr/local/www/interfaces_wireless.php:89
 #: src/usr/local/www/interfaces_groups.php:69
-#: src/usr/local/www/interfaces_qinq.php:98
+#: src/usr/local/www/interfaces_qinq.php:96
 #: src/usr/local/www/interfaces_gif.php:87
 #: src/usr/local/www/interfaces_ppps.php:87
 #: src/usr/local/www/interfaces_gre.php:87
 #: src/usr/local/www/interfaces_bridge.php:92
-#: src/usr/local/www/interfaces_vlan.php:92
+#: src/usr/local/www/interfaces_vlan.php:79
 #: src/usr/local/www/interfaces_lagg.php:76
 #: src/usr/local/www/interfaces_lagg.php:94
 msgid "LAGGs"
@@ -1437,25 +1437,25 @@ msgid "Captive Portal"
 msgstr "Portail Captif"
 
 #: src/usr/local/www/status_captiveportal_expire.php:55
-#: src/usr/local/www/status_captiveportal_expire.php:75
-#: src/usr/local/www/status_captiveportal_expire.php:80
-#: src/usr/local/www/status_captiveportal_test.php:83
+#: src/usr/local/www/status_captiveportal_expire.php:73
+#: src/usr/local/www/status_captiveportal_expire.php:78
+#: src/usr/local/www/status_captiveportal_test.php:81
 #: src/usr/local/www/status_captiveportal.php:151
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:72
 #: src/usr/local/www/status_captiveportal_vouchers.php:98
 msgid "Expire Vouchers"
 msgstr "Coupons expirés"
 
-#: src/usr/local/www/status_captiveportal_expire.php:63
+#: src/usr/local/www/status_captiveportal_expire.php:62
 msgid "Voucher(s) successfully marked."
 msgstr "Coupon(s) marqué(s) avec succès."
 
-#: src/usr/local/www/status_captiveportal_expire.php:65
+#: src/usr/local/www/status_captiveportal_expire.php:64
 msgid "Voucher(s) could not be processed."
 msgstr "Le(s) coupon(s) n'a(ont) pas pu être traité(s)."
 
-#: src/usr/local/www/status_captiveportal_expire.php:71
-#: src/usr/local/www/status_captiveportal_test.php:79
+#: src/usr/local/www/status_captiveportal_expire.php:69
+#: src/usr/local/www/status_captiveportal_test.php:77
 #: src/usr/local/www/status_captiveportal.php:137
 #: src/usr/local/www/status_captiveportal.php:147
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:68
@@ -1463,8 +1463,8 @@ msgstr "Le(s) coupon(s) n'a(ont) pas pu être traité(s)."
 msgid "Active Users"
 msgstr "Utilisateurs actifs"
 
-#: src/usr/local/www/status_captiveportal_expire.php:72
-#: src/usr/local/www/status_captiveportal_test.php:80
+#: src/usr/local/www/status_captiveportal_expire.php:70
+#: src/usr/local/www/status_captiveportal_test.php:78
 #: src/usr/local/www/status_captiveportal.php:148
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:69
 #: src/usr/local/www/status_captiveportal_vouchers.php:55
@@ -1472,8 +1472,8 @@ msgstr "Utilisateurs actifs"
 msgid "Active Vouchers"
 msgstr "Coupons activés"
 
-#: src/usr/local/www/status_captiveportal_expire.php:73
-#: src/usr/local/www/status_captiveportal_test.php:81
+#: src/usr/local/www/status_captiveportal_expire.php:71
+#: src/usr/local/www/status_captiveportal_test.php:79
 #: src/usr/local/www/services_captiveportal_vouchers.php:384
 #: src/usr/local/www/services_captiveportal_vouchers_edit.php:173
 #: src/usr/local/www/status_captiveportal.php:149
@@ -1483,22 +1483,22 @@ msgstr "Coupons activés"
 msgid "Voucher Rolls"
 msgstr "Rouleaux de coupons"
 
-#: src/usr/local/www/status_captiveportal_expire.php:74
+#: src/usr/local/www/status_captiveportal_expire.php:72
 #: src/usr/local/www/status_captiveportal_test.php:55
-#: src/usr/local/www/status_captiveportal_test.php:82
-#: src/usr/local/www/status_captiveportal_test.php:88
+#: src/usr/local/www/status_captiveportal_test.php:80
+#: src/usr/local/www/status_captiveportal_test.php:86
 #: src/usr/local/www/status_captiveportal.php:150
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:71
 #: src/usr/local/www/status_captiveportal_vouchers.php:97
 msgid "Test Vouchers"
 msgstr "Coupons de test"
 
-#: src/usr/local/www/status_captiveportal_expire.php:84
-#: src/usr/local/www/status_captiveportal_test.php:92
+#: src/usr/local/www/status_captiveportal_expire.php:82
+#: src/usr/local/www/status_captiveportal_test.php:90
 msgid "*Vouchers"
 msgstr "*Coupons"
 
-#: src/usr/local/www/status_captiveportal_expire.php:86
+#: src/usr/local/www/status_captiveportal_expire.php:84
 msgid ""
 "Enter multiple vouchers separated by space or newline. All valid vouchers "
 "will be marked as expired."
@@ -1506,7 +1506,7 @@ msgstr ""
 "Entrez plusieurs coupons séparés par espace ou nouvelle ligne. Tous les "
 "coupons valides seront marqués comme expirés."
 
-#: src/usr/local/www/status_captiveportal_expire.php:99
+#: src/usr/local/www/status_captiveportal_expire.php:97
 msgid "Expire"
 msgstr "Expire"
 
@@ -1593,7 +1593,7 @@ msgstr "Pare-feu: NAT: 1:1 - Mappage NAT 1:1 sauvegardé/modifé."
 #: src/usr/local/www/services_unbound_acls.php:166
 #: src/usr/local/www/services_captiveportal_ip_edit.php:63
 #: src/usr/local/www/system_groupmanager.php:273
-#: src/usr/local/www/vpn_openvpn_client.php:476
+#: src/usr/local/www/vpn_openvpn_client.php:478
 #: src/usr/local/www/system_certmanager.php:592
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
@@ -1604,7 +1604,7 @@ msgstr "Pare-feu: NAT: 1:1 - Mappage NAT 1:1 sauvegardé/modifé."
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:63
 #: src/usr/local/www/system_gateways_edit.php:111
 #: src/usr/local/www/system_gateway_groups_edit.php:144
-#: src/usr/local/www/interfaces_vlan_edit.php:169
+#: src/usr/local/www/interfaces_vlan_edit.php:170
 #: src/usr/local/www/load_balancer_monitor_edit.php:195
 #: src/usr/local/www/interfaces_bridge_edit.php:385
 #: src/usr/local/www/load_balancer_pool_edit.php:181
@@ -1703,7 +1703,7 @@ msgstr "Modifier l'entrée NAT 1:1"
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
 #: src/usr/local/www/services_router_advertisements.php:104
 #: src/usr/local/www/services_router_advertisements.php:126
-#: src/usr/local/www/vpn_openvpn_client.php:510
+#: src/usr/local/www/vpn_openvpn_client.php:512
 #: src/usr/local/www/system_routes_edit.php:262
 #: src/usr/local/www/system_gateways_edit.php:153
 #: src/usr/local/www/load_balancer_pool_edit.php:402
@@ -1756,7 +1756,7 @@ msgstr "Serveur PPPoE"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:457
 #: src/usr/local/www/status_logs_common.inc:96
-#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:474
 #: src/usr/local/www/status_openvpn.php:30 src/usr/local/www/status_logs.php:53
 #: src/usr/local/www/diag_backup.php:440
 #: src/usr/local/www/vpn_openvpn_csc.php:282
@@ -1769,13 +1769,13 @@ msgstr "Serveur PPPoE"
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 #: src/usr/local/www/status_graph.php:49
 #: src/usr/local/www/firewall_nat_npt_edit.php:168
-#: src/etc/inc/service-utils.inc:365 src/etc/inc/interfaces.inc:5734
+#: src/etc/inc/service-utils.inc:365 src/etc/inc/interfaces.inc:5873
 msgid "OpenVPN"
 msgstr "OpenVPN"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:462
 #: src/usr/local/www/services_igmpproxy_edit.php:153
-#: src/usr/local/www/vpn_openvpn_client.php:539
+#: src/usr/local/www/vpn_openvpn_client.php:541
 #: src/usr/local/www/diag_packet_capture.php:308
 #: src/usr/local/www/services_wol.php:135
 #: src/usr/local/www/system_gateways_edit.php:160
@@ -1891,7 +1891,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_zones_edit.php:97
 #: src/usr/local/www/services_igmpproxy_edit.php:163
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:138
-#: src/usr/local/www/vpn_openvpn_client.php:607
+#: src/usr/local/www/vpn_openvpn_client.php:609
 #: src/usr/local/www/system_routes_edit.php:273
 #: src/usr/local/www/interfaces_wireless_edit.php:197
 #: src/usr/local/www/services_dhcp_edit.php:472
@@ -1913,7 +1913,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:238
 #: src/usr/local/www/services_wol_edit.php:151
 #: src/usr/local/www/services_unbound_host_edit.php:222
-#: src/usr/local/www/interfaces_qinq_edit.php:268
+#: src/usr/local/www/interfaces_qinq_edit.php:287
 #: src/usr/local/www/services_dnsmasq_edit.php:228
 #: src/usr/local/www/vpn_openvpn_server.php:749
 #: src/usr/local/www/firewall_nat_npt_edit.php:235 src/etc/inc/shaper.inc:3897
@@ -1937,8 +1937,8 @@ msgstr "Utiliser les paramètres par défaut du système"
 #: src/usr/local/www/services_dnsmasq.php:255
 #: src/usr/local/www/services_dhcp_relay.php:148
 #: src/usr/local/www/services_captiveportal_vouchers.php:441
-#: src/usr/local/www/services_snmp.php:215
-#: src/usr/local/www/services_snmp.php:258 src/usr/local/www/vpn_l2tp.php:203
+#: src/usr/local/www/services_snmp.php:213
+#: src/usr/local/www/services_snmp.php:256 src/usr/local/www/vpn_l2tp.php:203
 #: src/usr/local/www/vpn_l2tp.php:289
 #: src/usr/local/www/services_checkip_edit.php:120
 #: src/usr/local/www/services_dhcpv6_relay.php:148
@@ -1996,7 +1996,7 @@ msgstr ""
 #: src/usr/local/www/status_services.php:56
 #: src/usr/local/www/status_services.php:78
 #: src/usr/local/www/services_dhcp_edit.php:390
-#: src/usr/local/www/services_snmp.php:196
+#: src/usr/local/www/services_snmp.php:194
 #: src/usr/local/www/services_wol.php:108
 #: src/usr/local/www/services_dyndns_edit.php:238
 #: src/usr/local/www/services_captiveportal_hostname.php:62
@@ -2018,7 +2018,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:117
 #: src/usr/local/www/services_captiveportal.php:63
 #: src/usr/local/www/head.inc:359
-#: src/usr/local/www/services_unbound_advanced.php:197
+#: src/usr/local/www/services_unbound_advanced.php:206
 #: src/usr/local/www/services_captiveportal_ip.php:59
 #: src/usr/local/www/services_ntpd_acls.php:175
 #: src/usr/local/www/services_dhcpv6_edit.php:194
@@ -2171,12 +2171,12 @@ msgstr "Nom"
 #: src/usr/local/www/interfaces.php:888 src/usr/local/www/interfaces.php:3033
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:65
 #: src/usr/local/www/load_balancer_virtual_server_edit.php:70
-#: src/etc/inc/pfsense-utils.inc:3164 src/etc/inc/pfsense-utils.inc:3207
+#: src/etc/inc/pfsense-utils.inc:3167 src/etc/inc/pfsense-utils.inc:3210
 msgid "Mode"
 msgstr "Mode"
 
 #: src/usr/local/www/load_balancer_pool.php:119
-#: src/usr/local/www/vpn_openvpn_client.php:496
+#: src/usr/local/www/vpn_openvpn_client.php:498
 #: src/usr/local/www/services_dhcp.php:978
 #: src/usr/local/www/status_lb_vs.php:65
 #: src/usr/local/www/status_lb_pool.php:135
@@ -2877,7 +2877,7 @@ msgid "Allow"
 msgstr "Autoriser"
 
 #: src/usr/local/www/services_dhcpv6.php:825
-#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:791
+#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:793
 msgid "Deny"
 msgstr "Rejeter"
 
@@ -3065,7 +3065,7 @@ msgstr "Masquer les paramètres avancés"
 #: src/usr/local/www/status_logs_vpn.php:84
 #: src/usr/local/www/status_logs_common.inc:94
 #: src/usr/local/www/vpn_ipsec.php:219
-#: src/usr/local/www/vpn_openvpn_client.php:472
+#: src/usr/local/www/vpn_openvpn_client.php:474
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 #: src/usr/local/www/vpn_l2tp.php:179
 #: src/usr/local/www/vpn_ipsec_mobile.php:305
@@ -3146,8 +3146,8 @@ msgid "L2TP Users"
 msgstr "Utilisateurs L2TP"
 
 #: src/usr/local/www/vpn_l2tp_users.php:94
-#: src/usr/local/www/vpn_openvpn_client.php:590
-#: src/usr/local/www/vpn_openvpn_client.php:615
+#: src/usr/local/www/vpn_openvpn_client.php:592
+#: src/usr/local/www/vpn_openvpn_client.php:617
 #: src/usr/local/www/vpn_l2tp_users_edit.php:77
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/services_dyndns_edit.php:94
@@ -3367,7 +3367,7 @@ msgstr "Filtre d'états"
 msgid "Filter expression"
 msgstr "Expression du filtre"
 
-#: src/usr/local/www/diag_dump_states.php:151 src/usr/local/www/pkg.php:352
+#: src/usr/local/www/diag_dump_states.php:151 src/usr/local/www/pkg.php:349
 #: src/usr/local/www/diag_dump_states_sources.php:106
 #: src/usr/local/www/system_groupmanager_addprivs.php:182
 #: src/usr/local/www/system_groupmanager_addprivs.php:202
@@ -3394,7 +3394,7 @@ msgstr "Supprimer les états depuis et vers l'adresse filtrée"
 #: src/usr/local/www/status_ipsec_sad.php:68
 #: src/usr/local/www/status_logs_filter.php:163
 #: src/usr/local/www/status_logs_common.inc:443
-#: src/usr/local/www/vpn_openvpn_client.php:939
+#: src/usr/local/www/vpn_openvpn_client.php:948
 #: src/usr/local/www/firewall_nat.php:225 src/usr/local/www/status_upnp.php:70
 #: src/usr/local/www/diag_states_summary.php:153
 #: src/usr/local/www/interfaces_bridge_edit.php:548
@@ -3564,7 +3564,7 @@ msgid "RFC2136 Clients"
 msgstr "Clients RFC2136"
 
 #: src/usr/local/www/services_rfc2136.php:82
-#: src/usr/local/www/vpn_openvpn_client.php:940
+#: src/usr/local/www/vpn_openvpn_client.php:949
 #: src/usr/local/www/system_certmanager.php:1179
 #: src/usr/local/www/diag_dns.php:195 src/usr/local/www/status_ntpd.php:296
 #: src/usr/local/www/services_rfc2136_edit.php:233
@@ -3579,7 +3579,7 @@ msgid "Cached IP"
 msgstr "IP en cache"
 
 #: src/usr/local/www/services_rfc2136.php:177
-#: src/usr/local/www/vpn_openvpn_client.php:963
+#: src/usr/local/www/vpn_openvpn_client.php:972
 msgid "Edit client"
 msgstr "Modifier le client"
 
@@ -3592,7 +3592,7 @@ msgid "Enable client"
 msgstr "Activer le client"
 
 #: src/usr/local/www/services_rfc2136.php:186
-#: src/usr/local/www/vpn_openvpn_client.php:964
+#: src/usr/local/www/vpn_openvpn_client.php:973
 msgid "Delete client"
 msgstr "Supprimer le client"
 
@@ -3614,7 +3614,7 @@ msgstr "Échec"
 #: src/usr/local/www/system_routes_edit.php:219
 #: src/usr/local/www/system_usermanager_settings.php:109
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
-#: src/usr/local/www/system_advanced_misc.php:295
+#: src/usr/local/www/system_advanced_misc.php:296
 #: src/usr/local/www/system_hasync.php:102
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:182
@@ -3907,7 +3907,7 @@ msgstr ""
 ""
 
 #: src/usr/local/www/system_advanced_sysctl.php:115
-#: src/usr/local/www/system_advanced_misc.php:295
+#: src/usr/local/www/system_advanced_misc.php:296
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_gateways_edit.php:265
 #: src/usr/local/www/system_advanced_admin.php:284
@@ -3922,7 +3922,7 @@ msgstr "Avancé"
 #: src/usr/local/www/system_advanced_sysctl.php:115
 #: src/usr/local/www/system_advanced_sysctl.php:142
 #: src/usr/local/www/system_advanced_sysctl.php:149
-#: src/usr/local/www/system_advanced_misc.php:313
+#: src/usr/local/www/system_advanced_misc.php:314
 #: src/usr/local/www/system_advanced_firewall.php:382
 #: src/usr/local/www/system_advanced_admin.php:301
 #: src/usr/local/www/system_advanced_network.php:172
@@ -3935,7 +3935,7 @@ msgid "The firewall tunables have changed."
 msgstr "Les tunnels du pare-feu ont changé."
 
 #: src/usr/local/www/system_advanced_sysctl.php:138
-#: src/usr/local/www/system_advanced_misc.php:309
+#: src/usr/local/www/system_advanced_misc.php:310
 #: src/usr/local/www/system_advanced_firewall.php:378
 #: src/usr/local/www/system_advanced_admin.php:284
 #: src/usr/local/www/system_advanced_admin.php:297
@@ -3945,7 +3945,7 @@ msgid "Admin Access"
 msgstr "Accès administrateur"
 
 #: src/usr/local/www/system_advanced_sysctl.php:139
-#: src/usr/local/www/system_advanced_misc.php:310
+#: src/usr/local/www/system_advanced_misc.php:311
 #: src/usr/local/www/system_advanced_firewall.php:365
 #: src/usr/local/www/system_advanced_firewall.php:379
 #: src/usr/local/www/system_advanced_admin.php:298
@@ -3955,7 +3955,7 @@ msgid "Firewall & NAT"
 msgstr "Pare-feu et NAT"
 
 #: src/usr/local/www/system_advanced_sysctl.php:140
-#: src/usr/local/www/system_advanced_misc.php:311
+#: src/usr/local/www/system_advanced_misc.php:312
 #: src/usr/local/www/system_advanced_firewall.php:380
 #: src/usr/local/www/system_advanced_admin.php:299
 #: src/usr/local/www/system_advanced_network.php:155
@@ -3966,8 +3966,8 @@ msgid "Networking"
 msgstr "Mise en réseau"
 
 #: src/usr/local/www/system_advanced_sysctl.php:141
-#: src/usr/local/www/system_advanced_misc.php:295
-#: src/usr/local/www/system_advanced_misc.php:312
+#: src/usr/local/www/system_advanced_misc.php:296
+#: src/usr/local/www/system_advanced_misc.php:313
 #: src/usr/local/www/system_advanced_firewall.php:381
 #: src/usr/local/www/system_advanced_admin.php:300
 #: src/usr/local/www/system_advanced_network.php:171
@@ -3977,7 +3977,7 @@ msgid "Miscellaneous"
 msgstr "Divers"
 
 #: src/usr/local/www/system_advanced_sysctl.php:143
-#: src/usr/local/www/system_advanced_misc.php:314
+#: src/usr/local/www/system_advanced_misc.php:315
 #: src/usr/local/www/system_advanced_firewall.php:383
 #: src/usr/local/www/system_advanced_admin.php:302
 #: src/usr/local/www/system_advanced_network.php:173
@@ -4026,7 +4026,7 @@ msgstr "*Valeur"
 
 #: src/usr/local/www/system_advanced_sysctl.php:223
 #: src/usr/local/www/interfaces_groups_edit.php:237
-#: src/usr/local/www/interfaces_vlan_edit.php:222
+#: src/usr/local/www/interfaces_vlan_edit.php:223
 msgid "id"
 msgstr "id"
 
@@ -4083,7 +4083,7 @@ msgstr "vue"
 
 #: src/usr/local/www/diag_pftop.php:116 src/usr/local/www/index.php:559
 #: src/usr/local/www/services_ntpd_pps.php:149
-#: src/usr/local/www/system_advanced_misc.php:447
+#: src/usr/local/www/system_advanced_misc.php:448
 #: src/usr/local/www/firewall_nat_edit.php:923
 #: src/usr/local/www/firewall_rules_edit.php:1617
 #: src/usr/local/www/services_ntpd_gps.php:364
@@ -4091,7 +4091,7 @@ msgstr "vue"
 #: src/usr/local/www/interfaces.php:1713 src/usr/local/www/interfaces.php:1714
 #: src/usr/local/www/interfaces.php:1740 src/usr/local/www/interfaces.php:1753
 #: src/etc/inc/ipsec.inc:414 src/etc/inc/shaper.inc:3869
-#: src/etc/inc/shaper.inc:4173 src/etc/inc/pfsense-utils.inc:3146
+#: src/etc/inc/shaper.inc:4173 src/etc/inc/pfsense-utils.inc:3149
 msgid "None"
 msgstr "Aucun"
 
@@ -4616,7 +4616,7 @@ msgstr "Action"
 #: src/usr/local/www/status_logs_vpn.php:385
 #: src/usr/local/www/vpn_l2tp_users_edit.php:148
 #: src/usr/local/www/system_usermanager_addprivs.php:142
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:227
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:232
 #: src/usr/local/www/services_rfc2136_edit.php:217
 msgid "User"
 msgstr "Utilisateur"
@@ -4906,7 +4906,7 @@ msgid "Protocol supplied is invalid"
 msgstr " Le protocole fourni est invalide"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:163
-#: src/usr/local/www/interfaces_vlan_edit.php:133
+#: src/usr/local/www/interfaces_vlan_edit.php:134
 #: src/usr/local/www/interfaces_bridge_edit.php:345
 #: src/usr/local/www/interfaces_gre_edit.php:121
 #: src/usr/local/www/interfaces_gif_edit.php:128
@@ -4953,7 +4953,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/easyrule.php:82 src/usr/local/www/easyrule.php:92
 #: src/usr/local/www/firewall_rules.php:383
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:210
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:215
 #: src/usr/local/www/widgets/widgets/log.widget.php:119
 msgid "Source"
 msgstr "Source"
@@ -4968,7 +4968,7 @@ msgstr "Source"
 #: src/usr/local/www/status_ipsec_spd.php:60
 #: src/usr/local/www/firewall_nat_out_edit.php:162
 #: src/usr/local/www/easyrule.php:94 src/usr/local/www/firewall_rules.php:385
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:211
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:216
 #: src/usr/local/www/widgets/widgets/log.widget.php:120
 msgid "Destination"
 msgstr "Destination"
@@ -5139,7 +5139,7 @@ msgstr "Routage"
 #: src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/status_logs.php:61 src/usr/local/www/diag_backup.php:433
 #: src/usr/local/www/head.inc:309
-#: src/usr/local/www/services_unbound_advanced.php:197
+#: src/usr/local/www/services_unbound_advanced.php:206
 #: src/usr/local/www/services_unbound_host_edit.php:181
 #: src/etc/inc/service-utils.inc:257
 msgid "DNS Resolver"
@@ -5416,7 +5416,7 @@ msgstr "Activité processeur"
 msgid "Gathering CPU activity, please wait..."
 msgstr "Récupération de l'activité processeur, veuillez patentier..."
 
-#: src/usr/local/www/status_captiveportal_test.php:94
+#: src/usr/local/www/status_captiveportal_test.php:92
 msgid ""
 "Enter multiple vouchers separated by space or newline. The remaining time, "
 "if valid, will be shown for each voucher."
@@ -5424,7 +5424,7 @@ msgstr ""
 "Entrez plusieurs coupons séparés par des espace ou sauts de ligne. Le temps "
 "restant, s'il est valide, sera affiché pour chaque coupon."
 
-#: src/usr/local/www/status_captiveportal_test.php:107
+#: src/usr/local/www/status_captiveportal_test.php:105
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_testport.php:269 src/usr/local/www/diag_smart.php:280
 msgid "Test"
@@ -5487,7 +5487,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:561 src/usr/local/www/services_unbound.php:231
 #: src/usr/local/www/firewall_aliases.php:152
-#: src/usr/local/www/services_snmp.php:176
+#: src/usr/local/www/services_snmp.php:174
 #: src/usr/local/www/diag_backup.php:454
 #: src/usr/local/www/services_ntpd_gps.php:290
 #: src/usr/local/www/widgets/widgets/traffic_graphs.widget.php:242
@@ -5496,11 +5496,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:390
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:293
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:196
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:500
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:505
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:183
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:161
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:300
-#: src/usr/local/www/pkg_edit.php:1208 src/usr/local/www/status_graph.php:145
+#: src/usr/local/www/pkg_edit.php:1204 src/usr/local/www/status_graph.php:145
 #: src/usr/local/www/diag_smart.php:253
 msgid "All"
 msgstr "Tout"
@@ -5556,65 +5556,65 @@ msgstr ""
 "Élément de configuration du paquet supprimé depuis la page de paramètres du "
 "paquet."
 
-#: src/usr/local/www/pkg.php:265
+#: src/usr/local/www/pkg.php:262
 msgid "Saving changes..."
 msgstr "Sauvegarde en cours..."
 
-#: src/usr/local/www/pkg.php:266
+#: src/usr/local/www/pkg.php:263
 msgid "Confirmation Required to save changes."
 msgstr "Confirmation requise pour ajouter sauvegarder les changements."
 
-#: src/usr/local/www/pkg.php:325
+#: src/usr/local/www/pkg.php:322
 msgid "Filter by: "
 msgstr "Filtrer par :"
 
-#: src/usr/local/www/pkg.php:337
+#: src/usr/local/www/pkg.php:334
 msgid "Filter field: "
 msgstr "Filtrer le champ :"
 
-#: src/usr/local/www/pkg.php:349
+#: src/usr/local/www/pkg.php:346
 msgid "Filter text: "
 msgstr "Filtrer le texte :"
 
-#: src/usr/local/www/pkg.php:384
+#: src/usr/local/www/pkg.php:381
 #, php-format
 msgid "Displaying page %1$s of %2$s"
 msgstr "page %1$s sur %2$s"
 
-#: src/usr/local/www/pkg.php:385
+#: src/usr/local/www/pkg.php:382
 msgid "Rows per page: "
 msgstr "Lignes par page :"
 
-#: src/usr/local/www/pkg.php:482 src/usr/local/www/diag_defaults.php:36
+#: src/usr/local/www/pkg.php:479 src/usr/local/www/diag_defaults.php:36
 #: src/usr/local/www/diag_defaults.php:77
 #: src/usr/local/www/crash_reporter.php:148
 #: src/usr/local/www/diag_pf_info.php:33
 msgid "No"
 msgstr "Non"
 
-#: src/usr/local/www/pkg.php:484 src/usr/local/www/diag_defaults.php:45
+#: src/usr/local/www/pkg.php:481 src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73
 #: src/usr/local/www/crash_reporter.php:144
 msgid "Yes"
 msgstr "Oui"
 
-#: src/usr/local/www/pkg.php:518
+#: src/usr/local/www/pkg.php:515
 msgid "Edit this item"
 msgstr "Modifier cet élément"
 
-#: src/usr/local/www/pkg.php:523
+#: src/usr/local/www/pkg.php:520
 msgid "Delete this item"
 msgstr "Supprimer cet élément"
 
-#: src/usr/local/www/pkg.php:547
+#: src/usr/local/www/pkg.php:544
 msgid "Previous page"
 msgstr "Page précédente"
 
-#: src/usr/local/www/pkg.php:560
+#: src/usr/local/www/pkg.php:557
 msgid "Next page"
 msgstr "Page suivante"
 
-#: src/usr/local/www/pkg.php:578
+#: src/usr/local/www/pkg.php:575
 msgid "Add a new item"
 msgstr "Ajouter un nouvel élément"
 
@@ -5638,7 +5638,7 @@ msgstr "Changements de configuration enregistrés pour les tunnels IPsec."
 #: src/usr/local/www/vpn_ipsec_phase2.php:408
 #: src/usr/local/www/vpn_ipsec_phase2.php:488
 #: src/usr/local/www/vpn_ipsec_settings.php:217
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:182
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:187
 msgid "Tunnels"
 msgstr "Tunnels"
 
@@ -5660,8 +5660,8 @@ msgstr "Clients mobiles"
 #: src/usr/local/www/vpn_ipsec_mobile.php:426
 #: src/usr/local/www/vpn_ipsec_keys.php:90
 #: src/usr/local/www/vpn_ipsec_phase1.php:670
-#: src/usr/local/www/services_unbound_advanced.php:197
-#: src/usr/local/www/services_unbound_advanced.php:216
+#: src/usr/local/www/services_unbound_advanced.php:206
+#: src/usr/local/www/services_unbound_advanced.php:225
 #: src/usr/local/www/vpn_ipsec_phase2.php:491
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
@@ -5918,13 +5918,13 @@ msgstr ""
 #: src/usr/local/www/services_unbound_acls.php:162
 #: src/usr/local/www/services_unbound_acls.php:186
 #: src/usr/local/www/services_unbound.php:270
-#: src/usr/local/www/services_unbound_advanced.php:217
+#: src/usr/local/www/services_unbound_advanced.php:226
 msgid "Access Lists"
 msgstr "Listes d'accès"
 
 #: src/usr/local/www/services_unbound_acls.php:180
 #: src/usr/local/www/services_unbound.php:264
-#: src/usr/local/www/services_unbound_advanced.php:211
+#: src/usr/local/www/services_unbound_advanced.php:220
 msgid "The DNS resolver configuration has been changed."
 msgstr "La configuration de la résolution DNS à été modifiée."
 
@@ -5932,7 +5932,7 @@ msgstr "La configuration de la résolution DNS à été modifiée."
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:106
 #: src/usr/local/www/services_unbound.php:249
 #: src/usr/local/www/services_unbound.php:268
-#: src/usr/local/www/services_unbound_advanced.php:215
+#: src/usr/local/www/services_unbound_advanced.php:224
 #: src/usr/local/www/services_unbound_host_edit.php:181
 msgid "General Settings"
 msgstr "Paramètres généraux"
@@ -5949,7 +5949,7 @@ msgstr "Nom de la liste d'accès"
 msgid "Provide an Access List name."
 msgstr "Donner un nom de liste d'accès."
 
-#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:792
+#: src/usr/local/www/services_unbound_acls.php:220 src/etc/inc/unbound.inc:794
 msgid "Refuse"
 msgstr "Refuser"
 
@@ -6535,12 +6535,12 @@ msgstr "Un client OpenVPN vide a été supprimé"
 msgid "Client successfully deleted."
 msgstr "Le client a été supprimé avec succès."
 
-#: src/usr/local/www/vpn_openvpn_client.php:196
+#: src/usr/local/www/vpn_openvpn_client.php:197
 #: src/usr/local/www/vpn_openvpn_server.php:265
 msgid "The selected Encryption Algorithm is not valid."
 msgstr "L'algorithme de cryptage sélectionné n'est pas valide."
 
-#: src/usr/local/www/vpn_openvpn_client.php:201
+#: src/usr/local/www/vpn_openvpn_client.php:202
 #: src/usr/local/www/vpn_openvpn_server.php:270
 msgid ""
 "Protocol and IP address families do not match. An IPv6 protocol and an IPv4 "
@@ -6549,7 +6549,7 @@ msgstr ""
 "Le protocole et la famille d'adresse IP ne correspondent pas. Un protocole "
 "IPv6 et une adresse IP IPv4 ne peuvent être sélectionnés."
 
-#: src/usr/local/www/vpn_openvpn_client.php:203
+#: src/usr/local/www/vpn_openvpn_client.php:204
 #: src/usr/local/www/vpn_openvpn_server.php:272
 msgid ""
 "Protocol and IP address families do not match. An IPv4 protocol and an IPv6 "
@@ -6558,7 +6558,7 @@ msgstr ""
 "Le protocole et la famille d'adresse IP ne correspondent pas. Un protocole "
 "IPv4 et une adresse IP IPv6 ne peuvent être sélectionnés."
 
-#: src/usr/local/www/vpn_openvpn_client.php:208
+#: src/usr/local/www/vpn_openvpn_client.php:209
 #: src/usr/local/www/vpn_openvpn_server.php:277
 msgid ""
 "An IPv4 protocol was selected, but the selected interface has no IPv4 "
@@ -6567,7 +6567,7 @@ msgstr ""
 "Un protocole IPv4 a été sélectionné, mais l'interface sélectionnée n'a pas "
 "d'adresse IPv4"
 
-#: src/usr/local/www/vpn_openvpn_client.php:214
+#: src/usr/local/www/vpn_openvpn_client.php:215
 #: src/usr/local/www/vpn_openvpn_server.php:283
 msgid ""
 "An IPv6 protocol was selected, but the selected interface has no IPv6 "
@@ -6576,75 +6576,75 @@ msgstr ""
 "Un protocole IPv6 a été sélectionné, mais l'interface sélectionnée n'a pas "
 "d'adresse IPv6."
 
-#: src/usr/local/www/vpn_openvpn_client.php:233
+#: src/usr/local/www/vpn_openvpn_client.php:234
 #: src/usr/local/www/vpn_openvpn_server.php:328
 msgid "The specified 'Local port' is in use. Please select another value"
 msgstr ""
 "Le 'port local' spécifié est utilisé. Veuillez, s'il vous plait, "
 "sélectionner une autre valeur."
 
-#: src/usr/local/www/vpn_openvpn_client.php:246
+#: src/usr/local/www/vpn_openvpn_client.php:247
 #: src/usr/local/www/vpn_openvpn_server.php:403
 msgid "The field 'Topology' contains an invalid selection"
 msgstr "Le champ 'Topologie' contient une sélection invalide."
 
-#: src/usr/local/www/vpn_openvpn_client.php:261
+#: src/usr/local/www/vpn_openvpn_client.php:262
 msgid "User name and password are required for proxy with authentication."
 msgstr ""
 "Nom d'utilisateur et mot de passe requis pour le proxy avec authentification."
 ""
 
-#: src/usr/local/www/vpn_openvpn_client.php:265
-#: src/usr/local/www/vpn_openvpn_client.php:343
+#: src/usr/local/www/vpn_openvpn_client.php:266
+#: src/usr/local/www/vpn_openvpn_client.php:344
 #: src/usr/local/www/system_hasync.php:73
 msgid "Password and confirmation must match."
 msgstr "Le mot de passe et la confirmation doivent correspondre."
 
-#: src/usr/local/www/vpn_openvpn_client.php:291
+#: src/usr/local/www/vpn_openvpn_client.php:292
 msgid "The bandwidth limit must be a positive numeric value."
 msgstr "La limite de bande passante doit être une valeur numérique positive."
 
-#: src/usr/local/www/vpn_openvpn_client.php:301
+#: src/usr/local/www/vpn_openvpn_client.php:302
 #: src/usr/local/www/vpn_openvpn_server.php:338
 msgid "The field 'Shared Key' does not appear to be valid"
 msgstr "Le champ 'Clef partagée' ne semble pas valide"
 
-#: src/usr/local/www/vpn_openvpn_client.php:308
+#: src/usr/local/www/vpn_openvpn_client.php:309
 #: src/usr/local/www/vpn_openvpn_server.php:345
 msgid "The field 'TLS Key' does not appear to be valid"
 msgstr "Le champ 'Clef TLS' ne semble pas valide"
 
-#: src/usr/local/www/vpn_openvpn_client.php:311
+#: src/usr/local/www/vpn_openvpn_client.php:312
 #: src/usr/local/www/vpn_openvpn_server.php:348
 msgid "The field 'TLS Key Usage Mode' is not valid"
 msgstr "Le champ 'Mode d'utilisation de la clé TLS' n'est pas valide"
 
-#: src/usr/local/www/vpn_openvpn_client.php:316
+#: src/usr/local/www/vpn_openvpn_client.php:317
 #: src/usr/local/www/vpn_openvpn_server.php:437
 msgid "GCM Encryption Algorithms cannot be used with Shared Key mode."
 msgstr ""
 "Les algorithmes de chiffrement GCM ne peuvent pas être utilisés avec le mode "
 "de clé partagée."
 
-#: src/usr/local/www/vpn_openvpn_client.php:324
+#: src/usr/local/www/vpn_openvpn_client.php:325
 #: src/usr/local/www/vpn_openvpn_server.php:423
 msgid "One or more of the selected NCP Algorithms is not valid."
 msgstr "Un ou ou plusieurs des algorithmes NCP sélectionnés n'est pas valide."
 
-#: src/usr/local/www/vpn_openvpn_client.php:329
+#: src/usr/local/www/vpn_openvpn_client.php:330
 #: src/usr/local/www/system_crlmanager.php:205
 #: src/usr/local/www/vpn_ipsec_phase1.php:226
 #: src/usr/local/www/vpn_openvpn_server.php:429
 msgid "Certificate Authority"
 msgstr "Autorité de certification"
 
-#: src/usr/local/www/vpn_openvpn_client.php:333
+#: src/usr/local/www/vpn_openvpn_client.php:334
 #: src/usr/local/www/vpn_openvpn_server.php:433
 #: src/usr/local/www/vpn_openvpn_server.php:878
 msgid "Shared key"
 msgstr "Clé partagée"
 
-#: src/usr/local/www/vpn_openvpn_client.php:339
+#: src/usr/local/www/vpn_openvpn_client.php:340
 msgid ""
 "If no Client Certificate is selected, a username and/or password must be "
 "entered."
@@ -6652,41 +6652,41 @@ msgstr ""
 "Si aucun Certificat Client n'est sélectionné, un nom d'utilisateur et/ou un "
 "mot de passe doivent être entrés."
 
-#: src/usr/local/www/vpn_openvpn_client.php:357
+#: src/usr/local/www/vpn_openvpn_client.php:358
 msgid "Limit Outgoing Bandwidth is not compatible with UDP Fast I/O."
 msgstr ""
 "La limite de bande passante sortante n'est pas compatible avec UDP Fast E/S."
 
-#: src/usr/local/www/vpn_openvpn_client.php:364
+#: src/usr/local/www/vpn_openvpn_client.php:365
 #: src/usr/local/www/vpn_openvpn_server.php:471
 msgid "The supplied Send/Receive Buffer size is invalid."
 msgstr "La taille fournie du tampon envoi/réception n'est pas valide."
 
-#: src/usr/local/www/vpn_openvpn_client.php:454
+#: src/usr/local/www/vpn_openvpn_client.php:456
 #, php-format
 msgid "Updated OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Client OpenVPN mis à jour au serveur %1$s:%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:457
+#: src/usr/local/www/vpn_openvpn_client.php:459
 #, php-format
 msgid "Added OpenVPN client to server %1$s:%2$s %3$s"
 msgstr "Le client OpenVPN à été ajouté au serveur %1$s:%2$s %3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:472
-#: src/usr/local/www/vpn_openvpn_client.php:497
+#: src/usr/local/www/vpn_openvpn_client.php:474
+#: src/usr/local/www/vpn_openvpn_client.php:499
 #: src/usr/local/www/vpn_openvpn_csc.php:303
 #: src/usr/local/www/vpn_openvpn_server.php:660
 msgid "Clients"
 msgstr "Clients"
 
-#: src/usr/local/www/vpn_openvpn_client.php:498
+#: src/usr/local/www/vpn_openvpn_client.php:500
 #: src/usr/local/www/vpn_openvpn_csc.php:282
 #: src/usr/local/www/vpn_openvpn_csc.php:304
 #: src/usr/local/www/vpn_openvpn_server.php:661
 msgid "Client Specific Overrides"
 msgstr "Ré-écritures spécifiques au client"
 
-#: src/usr/local/www/vpn_openvpn_client.php:499
+#: src/usr/local/www/vpn_openvpn_client.php:501
 #: src/usr/local/www/firewall_shaper_wizards.php:57
 #: src/usr/local/www/firewall_shaper_wizards.php:76
 #: src/usr/local/www/firewall_shaper_vinterface.php:373
@@ -6697,7 +6697,7 @@ msgstr "Ré-écritures spécifiques au client"
 msgid "Wizards"
 msgstr "Assistants"
 
-#: src/usr/local/www/vpn_openvpn_client.php:506
+#: src/usr/local/www/vpn_openvpn_client.php:508
 #: src/usr/local/www/vpn_openvpn_csc.php:312
 #: src/usr/local/www/vpn_ipsec_phase1.php:675
 #: src/usr/local/www/vpn_ipsec_phase2.php:496
@@ -6705,19 +6705,19 @@ msgstr "Assistants"
 msgid "General Information"
 msgstr "Informations Générales"
 
-#: src/usr/local/www/vpn_openvpn_client.php:513
+#: src/usr/local/www/vpn_openvpn_client.php:515
 msgid ""
 "Set this option to disable this client without removing it from the list."
 msgstr ""
 "Sélectionnez cette option pour désactiver ce client sans le supprimer de la "
 "liste."
 
-#: src/usr/local/www/vpn_openvpn_client.php:517
+#: src/usr/local/www/vpn_openvpn_client.php:519
 #: src/usr/local/www/vpn_openvpn_server.php:682
 msgid "*Server mode"
 msgstr "*Mode serveur"
 
-#: src/usr/local/www/vpn_openvpn_client.php:524
+#: src/usr/local/www/vpn_openvpn_client.php:526
 #: src/usr/local/www/diag_packet_capture.php:348
 #: src/usr/local/www/system_authservers.php:735
 #: src/usr/local/www/firewall_nat_edit.php:713
@@ -6728,12 +6728,12 @@ msgstr "*Mode serveur"
 msgid "*Protocol"
 msgstr "*Protocole"
 
-#: src/usr/local/www/vpn_openvpn_client.php:531
+#: src/usr/local/www/vpn_openvpn_client.php:533
 #: src/usr/local/www/vpn_openvpn_server.php:723
 msgid "*Device mode"
 msgstr "*Mode dispositif"
 
-#: src/usr/local/www/vpn_openvpn_client.php:534
+#: src/usr/local/www/vpn_openvpn_client.php:536
 #: src/usr/local/www/vpn_openvpn_server.php:726
 #, php-format
 msgid ""
@@ -6745,7 +6745,7 @@ msgstr ""
 "courant et compatible sur toutes les plates-formes. %1$s Le mode \"tap\" est "
 "capable de transporter 802.3 (couche OSI 2.)"
 
-#: src/usr/local/www/vpn_openvpn_client.php:542
+#: src/usr/local/www/vpn_openvpn_client.php:544
 msgid ""
 "The interface used by the firewall to originate this OpenVPN client "
 "connection"
@@ -6753,11 +6753,11 @@ msgstr ""
 "L'interface utilisée par le pare-feu pour créer cette connexion client "
 "OpenVPN"
 
-#: src/usr/local/www/vpn_openvpn_client.php:546
+#: src/usr/local/www/vpn_openvpn_client.php:548
 msgid "Local port"
 msgstr "Port local"
 
-#: src/usr/local/www/vpn_openvpn_client.php:550
+#: src/usr/local/www/vpn_openvpn_client.php:552
 msgid ""
 "Set this option to bind to a specific port. Leave this blank or enter 0 for "
 "a random dynamic port."
@@ -6765,28 +6765,28 @@ msgstr ""
 "Sélectionnez cette option pour écouter sur un port spécifique. Laissez vide "
 "ou entrez 0 pour utiliser un port aléatoire."
 
-#: src/usr/local/www/vpn_openvpn_client.php:554
+#: src/usr/local/www/vpn_openvpn_client.php:556
 msgid "*Server host or address"
 msgstr "*Nom d'hôte ou adresse du serveur"
 
-#: src/usr/local/www/vpn_openvpn_client.php:557
+#: src/usr/local/www/vpn_openvpn_client.php:559
 msgid "The IP address or hostname of the OpenVPN server."
 msgstr "L'adresse IP ou le nom d'hôte du serveur OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:561
+#: src/usr/local/www/vpn_openvpn_client.php:563
 msgid "*Server port"
 msgstr "*Port du serveur"
 
-#: src/usr/local/www/vpn_openvpn_client.php:564
+#: src/usr/local/www/vpn_openvpn_client.php:566
 msgid "The port used by the server to receive client connections."
 msgstr ""
 "Le port utilisé par le serveur afin de recevoir les connexions des clients."
 
-#: src/usr/local/www/vpn_openvpn_client.php:568
+#: src/usr/local/www/vpn_openvpn_client.php:570
 msgid "Proxy host or address"
 msgstr "Nom d'hôte du serveur mandataire  (« proxy ») ou son adresse"
 
-#: src/usr/local/www/vpn_openvpn_client.php:571
+#: src/usr/local/www/vpn_openvpn_client.php:573
 #, php-format
 msgid ""
 "The address for an HTTP Proxy this client can use to connect to a remote "
@@ -6796,28 +6796,28 @@ msgstr ""
 "serveur distant. %1$s TCP doit être utilisé pour le protocole client et "
 "serveur."
 
-#: src/usr/local/www/vpn_openvpn_client.php:576
+#: src/usr/local/www/vpn_openvpn_client.php:578
 msgid "Proxy port"
 msgstr "Port du proxy"
 
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 msgid "basic"
 msgstr "de base"
 
-#: src/usr/local/www/vpn_openvpn_client.php:585
+#: src/usr/local/www/vpn_openvpn_client.php:587
 msgid "ntlm"
 msgstr "ntlm"
 
-#: src/usr/local/www/vpn_openvpn_client.php:583
+#: src/usr/local/www/vpn_openvpn_client.php:585
 msgid "Proxy Authentication"
 msgstr "Authentification du proxy"
 
-#: src/usr/local/www/vpn_openvpn_client.php:586
+#: src/usr/local/www/vpn_openvpn_client.php:588
 msgid "The type of authentication used by the proxy server."
 msgstr "Le type d'authentification utilisé par le serveur proxy."
 
-#: src/usr/local/www/vpn_openvpn_client.php:597
-#: src/usr/local/www/vpn_openvpn_client.php:622
+#: src/usr/local/www/vpn_openvpn_client.php:599
+#: src/usr/local/www/vpn_openvpn_client.php:624
 #: src/usr/local/www/vpn_l2tp_users_edit.php:80
 #: src/usr/local/www/vpn_l2tp_users_edit.php:159
 #: src/usr/local/www/system_usermanager_passwordmg.php:40
@@ -6841,29 +6841,39 @@ msgstr "Le type d'authentification utilisé par le serveur proxy."
 msgid "Password"
 msgstr "Mot de passe"
 
-#: src/usr/local/www/vpn_openvpn_client.php:610
+#: src/usr/local/www/vpn_openvpn_client.php:612
 msgid "User Authentication Settings"
 msgstr "Paramètres d'authentification de l'utilisateur"
 
-#: src/usr/local/www/vpn_openvpn_client.php:618
+#: src/usr/local/www/vpn_openvpn_client.php:620
 msgid "Leave empty when no user name is needed"
 msgstr "Laisser vide lorsque aucun nom d'utilisateur n'est nécessaire"
 
-#: src/usr/local/www/vpn_openvpn_client.php:625
+#: src/usr/local/www/vpn_openvpn_client.php:627
 msgid "Leave empty when no password is needed"
 msgstr "Laisser vide lorsque aucun mot de passe n'est nécessaire"
 
-#: src/usr/local/www/vpn_openvpn_client.php:629
+#: src/usr/local/www/vpn_openvpn_client.php:631
+msgid "Authentication Retry"
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:634
+msgid ""
+"When enabled, the OpenVPN process will exit if it receives an authentication "
+"failure message. The default behavior is to retry."
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:638
 #: src/usr/local/www/vpn_openvpn_server.php:753
 msgid "Cryptographic Settings"
 msgstr "Paramètres cryptographiques"
 
-#: src/usr/local/www/vpn_openvpn_client.php:633
+#: src/usr/local/www/vpn_openvpn_client.php:642
 #: src/usr/local/www/vpn_openvpn_server.php:757
 msgid "TLS Configuration"
 msgstr "Configuration TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:636
+#: src/usr/local/www/vpn_openvpn_client.php:645
 #: src/usr/local/www/vpn_openvpn_server.php:760
 msgid ""
 "A TLS key enhances security of an OpenVPN connection by requiring both "
@@ -6879,12 +6889,12 @@ msgstr ""
 "protégeant les pairs contre les attaques ou les connexions non autorisées. "
 "La clé TLS n'a aucun effet sur les données du tunnel."
 
-#: src/usr/local/www/vpn_openvpn_client.php:651
+#: src/usr/local/www/vpn_openvpn_client.php:660
 #: src/usr/local/www/vpn_openvpn_server.php:775
 msgid "*TLS Key"
 msgstr "*Clé TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:653
+#: src/usr/local/www/vpn_openvpn_client.php:662
 #: src/usr/local/www/vpn_openvpn_server.php:777
 #, php-format
 msgid ""
@@ -6895,12 +6905,12 @@ msgstr ""
 "de contrôle avec une signature HMAC pour l'authentification lors de "
 "l'établissement du tunnel."
 
-#: src/usr/local/www/vpn_openvpn_client.php:658
+#: src/usr/local/www/vpn_openvpn_client.php:667
 #: src/usr/local/www/vpn_openvpn_server.php:783
 msgid "*TLS Key Usage Mode"
 msgstr "*Mode d'utilisation de la clé TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:661
+#: src/usr/local/www/vpn_openvpn_client.php:670
 #: src/usr/local/www/vpn_openvpn_server.php:786
 #, php-format
 msgid ""
@@ -6916,46 +6926,46 @@ msgstr ""
 "chiffre également la communication du canal de contrôle, offrant plus de "
 "confidentialité et d'obfuscation du trafic sur le canal de contrôle."
 
-#: src/usr/local/www/vpn_openvpn_client.php:672
-#: src/usr/local/www/vpn_openvpn_client.php:678
+#: src/usr/local/www/vpn_openvpn_client.php:681
+#: src/usr/local/www/vpn_openvpn_client.php:687
 #: src/usr/local/www/vpn_ipsec_phase1.php:796
 #: src/usr/local/www/vpn_openvpn_server.php:799
 #: src/usr/local/www/vpn_openvpn_server.php:805
 msgid "*Peer Certificate Authority"
 msgstr "*Authorité de certification du pair"
 
-#: src/usr/local/www/vpn_openvpn_client.php:686
-#: src/usr/local/www/vpn_openvpn_client.php:692
+#: src/usr/local/www/vpn_openvpn_client.php:695
+#: src/usr/local/www/vpn_openvpn_client.php:701
 #: src/usr/local/www/vpn_openvpn_server.php:813
 #: src/usr/local/www/vpn_openvpn_server.php:819
 msgid "Peer Certificate Revocation list"
 msgstr "Liste des Certificats de Révocation de pairs."
 
-#: src/usr/local/www/vpn_openvpn_client.php:699
+#: src/usr/local/www/vpn_openvpn_client.php:708
 msgid "Auto generate"
 msgstr "Générer automatiquement"
 
-#: src/usr/local/www/vpn_openvpn_client.php:706
+#: src/usr/local/www/vpn_openvpn_client.php:715
 #: src/usr/local/www/vpn_openvpn_server.php:886
 msgid "*Shared Key"
 msgstr "*Clé partagée"
 
-#: src/usr/local/www/vpn_openvpn_client.php:708
+#: src/usr/local/www/vpn_openvpn_client.php:717
 #: src/usr/local/www/vpn_openvpn_server.php:888
 msgid "Paste the shared key here"
 msgstr "Copier la clef partagée ici"
 
-#: src/usr/local/www/vpn_openvpn_client.php:714
+#: src/usr/local/www/vpn_openvpn_client.php:723
 msgid "Client Certificate"
 msgstr "Certificat client"
 
-#: src/usr/local/www/vpn_openvpn_client.php:721
+#: src/usr/local/www/vpn_openvpn_client.php:730
 #: src/usr/local/www/vpn_ipsec_phase1.php:805
 #: src/usr/local/www/vpn_openvpn_server.php:892
 msgid "*Encryption Algorithm"
 msgstr "*Algorithme de chiffrement"
 
-#: src/usr/local/www/vpn_openvpn_client.php:724
+#: src/usr/local/www/vpn_openvpn_client.php:733
 #: src/usr/local/www/vpn_openvpn_server.php:895
 msgid ""
 "The Encryption Algorithm used for data channel packets when Negotiable "
@@ -6965,12 +6975,12 @@ msgstr ""
 "lorsque le support de paramètre cryptographique négociable (NCP) n'est pas "
 "disponible."
 
-#: src/usr/local/www/vpn_openvpn_client.php:728
+#: src/usr/local/www/vpn_openvpn_client.php:737
 #: src/usr/local/www/vpn_openvpn_server.php:899
 msgid "Enable NCP"
 msgstr "Activer NCP"
 
-#: src/usr/local/www/vpn_openvpn_client.php:735
+#: src/usr/local/www/vpn_openvpn_client.php:744
 #: src/usr/local/www/vpn_openvpn_server.php:905
 msgid ""
 "When both peers support NCP and have it enabled, NCP overrides the "
@@ -6979,14 +6989,14 @@ msgstr ""
 "Lorsque les deux pairs prennent en charge NCP et le permettent, NCP remplace "
 "l'Algorithme de chiffrement ci-dessus."
 
-#: src/usr/local/www/vpn_openvpn_client.php:736
+#: src/usr/local/www/vpn_openvpn_client.php:745
 #: src/usr/local/www/vpn_openvpn_server.php:906
 msgid "When disabled, only the selected Encryption Algorithm is allowed."
 msgstr ""
 "Lorsqu'il est désactivé, seul l'Algorithme de chiffrement sélectionné est "
 "autorisé."
 
-#: src/usr/local/www/vpn_openvpn_client.php:731
+#: src/usr/local/www/vpn_openvpn_client.php:740
 #: src/usr/local/www/vpn_openvpn_server.php:902
 #, php-format
 msgid ""
@@ -6999,12 +7009,12 @@ msgstr ""
 "cryptographiques acceptables à partir de ceux sélectionnés dans la liste des "
 "Algorithmes NCP ci-dessous. %1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:742
+#: src/usr/local/www/vpn_openvpn_client.php:751
 #: src/usr/local/www/vpn_openvpn_server.php:909
 msgid "NCP Algorithms"
 msgstr "Algorithmes NCP"
 
-#: src/usr/local/www/vpn_openvpn_client.php:751
+#: src/usr/local/www/vpn_openvpn_client.php:760
 #: src/usr/local/www/vpn_openvpn_server.php:918
 #, php-format
 msgid ""
@@ -7014,7 +7024,7 @@ msgstr ""
 "Algorithmes de chiffrement NCP disponibles%1$sCliquez pour ajouter ou "
 "supprimer un algorithme de la liste"
 
-#: src/usr/local/www/vpn_openvpn_client.php:761
+#: src/usr/local/www/vpn_openvpn_client.php:770
 #: src/usr/local/www/vpn_openvpn_server.php:928
 msgid ""
 "Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from "
@@ -7023,7 +7033,7 @@ msgstr ""
 "Algorithmes de chiffrement NCP autorisés. Cliquez sur un nom d'algorithme "
 "pour le supprimer de la liste"
 
-#: src/usr/local/www/vpn_openvpn_client.php:766
+#: src/usr/local/www/vpn_openvpn_client.php:775
 #: src/usr/local/www/vpn_openvpn_server.php:933
 msgid ""
 "For backward compatibility, when an older peer connects that does not "
@@ -7036,7 +7046,7 @@ msgstr ""
 "chiffrement demandé par le pair tant qu'il est sélectionné dans cette liste "
 "ou choisi comme Algorithme de chiffrement."
 
-#: src/usr/local/www/vpn_openvpn_client.php:763
+#: src/usr/local/www/vpn_openvpn_client.php:772
 #: src/usr/local/www/vpn_openvpn_server.php:930
 #, php-format
 msgid ""
@@ -7046,12 +7056,12 @@ msgstr ""
 "L'ordre des Algorithmes de chiffrement NCP sélectionnés est respecté par "
 "OpenVPN.%1$s%2$s%3$s"
 
-#: src/usr/local/www/vpn_openvpn_client.php:774
+#: src/usr/local/www/vpn_openvpn_client.php:783
 #: src/usr/local/www/vpn_openvpn_server.php:941
 msgid "*Auth digest algorithm"
 msgstr "*Algorithme de hachage d'authentification"
 
-#: src/usr/local/www/vpn_openvpn_client.php:777
+#: src/usr/local/www/vpn_openvpn_client.php:786
 #, php-format
 msgid ""
 "The algorithm used to authenticate data channel packets, and control channel "
@@ -7067,25 +7077,25 @@ msgstr ""
 "%1$sLaissez cette configuration sur SHA1 à moins que le serveur n'utilise "
 "une valeur différente. SHA1 est la valeur par défaut pour OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:783
+#: src/usr/local/www/vpn_openvpn_client.php:792
 #: src/usr/local/www/vpn_openvpn_server.php:951
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:39
 msgid "Hardware Crypto"
 msgstr "Chiffrement matériel"
 
-#: src/usr/local/www/vpn_openvpn_client.php:790
+#: src/usr/local/www/vpn_openvpn_client.php:799
 #: src/usr/local/www/vpn_openvpn_csc.php:362
 #: src/usr/local/www/vpn_openvpn_server.php:973
 msgid "Tunnel Settings"
 msgstr "Paramètres du tunnel"
 
-#: src/usr/local/www/vpn_openvpn_client.php:794
+#: src/usr/local/www/vpn_openvpn_client.php:803
 #: src/usr/local/www/vpn_openvpn_csc.php:366
 #: src/usr/local/www/vpn_openvpn_server.php:977
 msgid "IPv4 Tunnel Network"
 msgstr "Réseau Tunnel IPv4"
 
-#: src/usr/local/www/vpn_openvpn_client.php:797
+#: src/usr/local/www/vpn_openvpn_client.php:806
 msgid ""
 "This is the IPv4 virtual network used for private communications between "
 "this client and the server expressed using CIDR notation (e.g. 10.0.8.0/24). "
@@ -7099,13 +7109,13 @@ msgstr ""
 "affectée à l'interface virtuelle du client. Laissez vide si le serveur est "
 "capable de fournir des adresses aux clients."
 
-#: src/usr/local/www/vpn_openvpn_client.php:803
+#: src/usr/local/www/vpn_openvpn_client.php:812
 #: src/usr/local/www/vpn_openvpn_csc.php:376
 #: src/usr/local/www/vpn_openvpn_server.php:987
 msgid "IPv6 Tunnel Network"
 msgstr "Tunnel réseau IPv6"
 
-#: src/usr/local/www/vpn_openvpn_client.php:806
+#: src/usr/local/www/vpn_openvpn_client.php:815
 msgid ""
 "This is the IPv6 virtual network used for private communications between "
 "this client and the server expressed using CIDR notation (e.g. fe80::/64). "
@@ -7119,12 +7129,12 @@ msgstr ""
 "l'adresse ::2 du réseau sera affectée à l'interface virtuelle du client. "
 "Laissez vide si le serveur est capable de fournir des adresses aux clients."
 
-#: src/usr/local/www/vpn_openvpn_client.php:813
+#: src/usr/local/www/vpn_openvpn_client.php:822
 #: src/usr/local/www/vpn_openvpn_server.php:1055
 msgid "IPv4 Remote network(s)"
 msgstr "Réseau(x) distant(s) IPv4"
 
-#: src/usr/local/www/vpn_openvpn_client.php:816
+#: src/usr/local/www/vpn_openvpn_client.php:825
 #: src/usr/local/www/vpn_openvpn_server.php:1058
 msgid ""
 "IPv4 networks that will be routed through the tunnel, so that a site-to-site "
@@ -7139,12 +7149,12 @@ msgstr ""
 "plusieurs gammes CIDR. S'il s'agit d'un VPN de site à site, entrez les LAN/s "
 "distants ici. Peut être laissé vide pour VPN non-site-à-site."
 
-#: src/usr/local/www/vpn_openvpn_client.php:822
+#: src/usr/local/www/vpn_openvpn_client.php:831
 #: src/usr/local/www/vpn_openvpn_server.php:1064
 msgid "IPv6 Remote network(s)"
 msgstr "Réseau(x) distant(s) IPv6"
 
-#: src/usr/local/www/vpn_openvpn_client.php:825
+#: src/usr/local/www/vpn_openvpn_client.php:834
 #: src/usr/local/www/vpn_openvpn_server.php:1067
 msgid ""
 "These are the IPv6 networks that will be routed through the tunnel, so that "
@@ -7159,11 +7169,11 @@ msgstr ""
 "plusieurs IP/PREFIX. S'il s'agit d'un VPN de site à site, entrez les LAN/s "
 "distants ici. Peut être laissé vide pour VPN non-site-à-site."
 
-#: src/usr/local/www/vpn_openvpn_client.php:831
+#: src/usr/local/www/vpn_openvpn_client.php:840
 msgid "Limit outgoing bandwidth"
 msgstr "Limiter la bande passante sortante"
 
-#: src/usr/local/www/vpn_openvpn_client.php:835
+#: src/usr/local/www/vpn_openvpn_client.php:844
 msgid ""
 "Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The "
 "input value has to be something between 100 bytes/sec and 100 Mbytes/sec "
@@ -7173,13 +7183,13 @@ msgstr ""
 "valeur d'entrée doit être comprise entre 100 octets/sec et 100 Moctets/sec "
 "(entrée en octets par seconde). Non compatible avec UDP Fast E/S."
 
-#: src/usr/local/www/vpn_openvpn_client.php:840
+#: src/usr/local/www/vpn_openvpn_client.php:849
 #: src/usr/local/www/interfaces_ppps_edit.php:858
 #: src/usr/local/www/vpn_openvpn_server.php:1080
 msgid "Compression"
 msgstr "Compression"
 
-#: src/usr/local/www/vpn_openvpn_client.php:843
+#: src/usr/local/www/vpn_openvpn_client.php:852
 #: src/usr/local/www/vpn_openvpn_server.php:1083
 msgid ""
 "Compress tunnel packets using the LZO algorithm. Adaptive compression will "
@@ -7190,27 +7200,27 @@ msgstr ""
 "compression sera désactivée dynamiquement si OpenVPN détecte que les données "
 "dans les paquets ne sont pas compressées efficacement."
 
-#: src/usr/local/www/vpn_openvpn_client.php:847
+#: src/usr/local/www/vpn_openvpn_client.php:856
 #: src/usr/local/www/vpn_openvpn_server.php:1129
 msgid "Topology"
 msgstr "Topologie"
 
-#: src/usr/local/www/vpn_openvpn_client.php:850
+#: src/usr/local/www/vpn_openvpn_client.php:859
 msgid "Specifies the method used to configure a virtual adapter IP address."
 msgstr ""
 "Spécifie la méthode utilisée pour configurer un adaptateur d'adresse IP "
 "virtuelle."
 
-#: src/usr/local/www/vpn_openvpn_client.php:854
+#: src/usr/local/www/vpn_openvpn_client.php:863
 #: src/usr/local/www/vpn_openvpn_server.php:1096
 msgid "Type-of-Service"
 msgstr "Type de service"
 
-#: src/usr/local/www/vpn_openvpn_client.php:861
+#: src/usr/local/www/vpn_openvpn_client.php:870
 msgid "Don't pull routes"
 msgstr "Ne pas récupérer les routes"
 
-#: src/usr/local/www/vpn_openvpn_client.php:864
+#: src/usr/local/www/vpn_openvpn_client.php:873
 msgid ""
 "This option still allows the server to set the TCP/IP properties of the "
 "client's TUN/TAP interface. "
@@ -7218,11 +7228,11 @@ msgstr ""
 "Cette option permet encore au serveur de définir les propriétés TCP/IP de "
 "l'interface TUN/TAP du client."
 
-#: src/usr/local/www/vpn_openvpn_client.php:868
+#: src/usr/local/www/vpn_openvpn_client.php:877
 msgid "Don't add/remove routes"
 msgstr "Ne pas ajouter ou supprimer des routes"
 
-#: src/usr/local/www/vpn_openvpn_client.php:871
+#: src/usr/local/www/vpn_openvpn_client.php:880
 msgid ""
 "Do not execute operating system commands to install routes. Instead, pass "
 "routes to --route-up script using environmental variables."
@@ -7231,7 +7241,7 @@ msgstr ""
 "itinéraires. Au lieu de cela, passez des itinéraires vers le script --route-"
 "up en utilisant des variables environnementales."
 
-#: src/usr/local/www/vpn_openvpn_client.php:875
+#: src/usr/local/www/vpn_openvpn_client.php:884
 #: src/usr/local/www/interfaces_bridge_edit.php:432
 #: src/usr/local/www/interfaces_ppps_edit.php:836
 #: src/usr/local/www/vpn_ipsec_phase2.php:675
@@ -7240,7 +7250,7 @@ msgstr ""
 msgid "Advanced Configuration"
 msgstr "Configuration avancée"
 
-#: src/usr/local/www/vpn_openvpn_client.php:880
+#: src/usr/local/www/vpn_openvpn_client.php:889
 #: src/usr/local/www/services_unbound.php:355
 #: src/usr/local/www/services_unbound.php:369
 #: src/usr/local/www/services_dnsmasq.php:355
@@ -7248,7 +7258,7 @@ msgstr "Configuration avancée"
 msgid "Custom options"
 msgstr "Options personnalisés"
 
-#: src/usr/local/www/vpn_openvpn_client.php:882
+#: src/usr/local/www/vpn_openvpn_client.php:891
 msgid ""
 "Enter any additional options to add to the OpenVPN client configuration "
 "here, separated by semicolon."
@@ -7256,12 +7266,12 @@ msgstr ""
 "Entrez toutes les options supplémentaires à ajouter à la configuration du "
 "client OpenVPN ici, séparées par un point-virgule."
 
-#: src/usr/local/www/vpn_openvpn_client.php:886
+#: src/usr/local/www/vpn_openvpn_client.php:895
 #: src/usr/local/www/vpn_openvpn_server.php:1283
 msgid "UDP Fast I/O"
 msgstr "UDP Fast E/S"
 
-#: src/usr/local/www/vpn_openvpn_client.php:889
+#: src/usr/local/www/vpn_openvpn_client.php:898
 #: src/usr/local/www/vpn_openvpn_server.php:1286
 msgid ""
 "Optimizes the packet write event loop, improving CPU efficiency by 5% to 10%."
@@ -7273,12 +7283,12 @@ msgstr ""
 "plates-formes, et non compatible avec la limitation de bande passante "
 "OpenVPN."
 
-#: src/usr/local/www/vpn_openvpn_client.php:894
+#: src/usr/local/www/vpn_openvpn_client.php:903
 #: src/usr/local/www/vpn_openvpn_server.php:1291
 msgid "Send/Receive Buffer"
 msgstr "Tampon d'envoi/réception"
 
-#: src/usr/local/www/vpn_openvpn_client.php:897
+#: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/vpn_openvpn_server.php:1294
 msgid ""
 "Configure a Send and Receive Buffer size for OpenVPN. The default buffer "
@@ -7294,12 +7304,12 @@ msgstr ""
 "expériences. Pour tester la meilleure valeur pour un site, commencez à "
 "512KiB et testez des valeurs plus élevées et plus faibles."
 
-#: src/usr/local/www/vpn_openvpn_client.php:904
+#: src/usr/local/www/vpn_openvpn_client.php:913
 #: src/usr/local/www/vpn_openvpn_server.php:1301
 msgid "Verbosity level"
 msgstr "Niveau de verbosité"
 
-#: src/usr/local/www/vpn_openvpn_client.php:907
+#: src/usr/local/www/vpn_openvpn_client.php:916
 #: src/usr/local/www/vpn_openvpn_server.php:1304
 #, php-format
 msgid ""
@@ -7318,7 +7328,7 @@ msgstr ""
 "TCP/UDP et les minuscules sont utilisées pour les paquets TUN/TAP.%1$s6-11: "
 "plage d'informations de débogage"
 
-#: src/usr/local/www/vpn_openvpn_client.php:934
+#: src/usr/local/www/vpn_openvpn_client.php:943
 msgid "OpenVPN Clients"
 msgstr "Clients OpenVPN"
 
@@ -7583,7 +7593,7 @@ msgstr ""
 "Le serveur DHCP requiert une plage de sous-réseau IPv4 assez grade pour "
 "servir des adresses aux clients."
 
-#: src/usr/local/www/services_dhcp.php:832 src/usr/local/www/pkg_edit.php:743
+#: src/usr/local/www/services_dhcp.php:832 src/usr/local/www/pkg_edit.php:739
 msgid "General Options"
 msgstr "Options générales"
 
@@ -8103,7 +8113,7 @@ msgstr ""
 "Merci de corriger les erreurs suivantes:"
 
 #: src/usr/local/www/services_unbound.php:191
-#: src/usr/local/www/services_unbound_advanced.php:190
+#: src/usr/local/www/services_unbound_advanced.php:199
 msgid "DNS Resolver configured."
 msgstr "DNS Resolver configuré."
 
@@ -8566,7 +8576,7 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq.php:446
 #: src/usr/local/www/firewall_aliases.php:149
 #: src/usr/local/www/diag_states_summary.php:151
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:228
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
 msgid "IP"
 msgstr "IP"
 
@@ -9145,7 +9155,6 @@ msgid "external - signature pending"
 msgstr "externe - signature en attente"
 
 #: src/usr/local/www/system_certmanager.php:1189
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:174
 msgid "Serial: "
 msgstr "Numéro de série:"
 
@@ -10092,7 +10101,7 @@ msgstr "Connecter"
 
 #: src/usr/local/www/status_interfaces.php:123
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:40
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:272
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:277
 msgid "Uptime"
 msgstr "Temps de fonctionnement"
 
@@ -10335,59 +10344,63 @@ msgstr "Accélération matérielle des instructions AES-NI "
 msgid "BSD Crypto Device (cryptodev)"
 msgstr "Dispositif cryptographique BSD (cryptodev)"
 
-#: src/usr/local/www/system_advanced_misc.php:81
+#: src/usr/local/www/system_advanced_misc.php:78
+msgid "AES-NI and BSD Crypto Device (aesni, cryptodev)"
+msgstr ""
+
+#: src/usr/local/www/system_advanced_misc.php:82
 msgid "Intel Core* CPU on-die thermal sensor"
 msgstr "Sonde de température intégrée au processeur Intel Core*"
 
-#: src/usr/local/www/system_advanced_misc.php:82
+#: src/usr/local/www/system_advanced_misc.php:83
 msgid "AMD K8, K10 and K11 CPU on-die thermal sensor"
 msgstr "Sonde de température intégrée au processeur AMD K8, K10 et K11"
 
-#: src/usr/local/www/system_advanced_misc.php:92
+#: src/usr/local/www/system_advanced_misc.php:93
 msgid "Please select a valid Cryptographic Accelerator."
 msgstr "Veuillez choisir un accélérateur cryptographique valide."
 
-#: src/usr/local/www/system_advanced_misc.php:96
+#: src/usr/local/www/system_advanced_misc.php:97
 msgid "Please select a valid Thermal Hardware Sensor."
 msgstr "Veuillez choisir un capteur de température matérielle valide."
 
-#: src/usr/local/www/system_advanced_misc.php:100
+#: src/usr/local/www/system_advanced_misc.php:101
 msgid "/tmp Size must be numeric and should not be less than 40MiB."
 msgstr ""
 "La taille de /tmp doit être numérique et ne devrait pas être inférieure à "
 "40Mio"
 
-#: src/usr/local/www/system_advanced_misc.php:104
+#: src/usr/local/www/system_advanced_misc.php:105
 msgid "/var Size must be numeric and should not be less than 60MiB."
 msgstr ""
 "La taille de /var doit être numérique et ne devrait pas être inférieure à "
 "60Mio"
 
-#: src/usr/local/www/system_advanced_misc.php:108
+#: src/usr/local/www/system_advanced_misc.php:109
 msgid "Proxy port must be a valid port number, 1-65535."
 msgstr "Le port de proxy doit être un numéro de port valide, 1-65535."
 
-#: src/usr/local/www/system_advanced_misc.php:112
+#: src/usr/local/www/system_advanced_misc.php:113
 msgid "Proxy URL must be a valid IP address or FQDN."
 msgstr "L'URL du proxy doit être une adresse IP valide ou un FQDN."
 
-#: src/usr/local/www/system_advanced_misc.php:116
+#: src/usr/local/www/system_advanced_misc.php:117
 msgid "The proxy username contains invalid characters."
 msgstr "Le nom d'utilisateur du proxy contient des caractères invalides."
 
-#: src/usr/local/www/system_advanced_misc.php:120
+#: src/usr/local/www/system_advanced_misc.php:121
 msgid "Proxy password and confirmation must match."
 msgstr "Le mot de passe de proxy et sa confirmation doivent correspondre."
 
-#: src/usr/local/www/system_advanced_misc.php:318
+#: src/usr/local/www/system_advanced_misc.php:319
 msgid "Proxy Support"
 msgstr "Support de proxy"
 
-#: src/usr/local/www/system_advanced_misc.php:322
+#: src/usr/local/www/system_advanced_misc.php:323
 msgid "Proxy URL"
 msgstr "URL du mandataire (« proxy »)"
 
-#: src/usr/local/www/system_advanced_misc.php:325
+#: src/usr/local/www/system_advanced_misc.php:326
 msgid ""
 "Hostname or IP address of proxy server this system will use for its outbound "
 "Internet access."
@@ -10395,19 +10408,19 @@ msgstr ""
 "Nom d'hôte ou adresse IP du serveur proxy que ce système va utiliser pour sa "
 "connexion sortante à Internet."
 
-#: src/usr/local/www/system_advanced_misc.php:330
+#: src/usr/local/www/system_advanced_misc.php:331
 msgid "Proxy Port"
 msgstr "Port du mandataire (« proxy »)"
 
-#: src/usr/local/www/system_advanced_misc.php:333
+#: src/usr/local/www/system_advanced_misc.php:334
 msgid "Port where proxy server is listening."
 msgstr "Port d'écoute du Proxy."
 
-#: src/usr/local/www/system_advanced_misc.php:337
+#: src/usr/local/www/system_advanced_misc.php:338
 msgid "Proxy Username"
 msgstr "Nom d'utilisateur du Proxy"
 
-#: src/usr/local/www/system_advanced_misc.php:340
+#: src/usr/local/www/system_advanced_misc.php:341
 msgid ""
 "Username for authentication to proxy server. Optional, leave blank to not "
 "use authentication."
@@ -10415,25 +10428,25 @@ msgstr ""
 "Nom d'utilisateur pour l'authentification sur le serveur proxy. Optionel, "
 "laisser vide pour ne pas utiliser d'authentification."
 
-#: src/usr/local/www/system_advanced_misc.php:345
+#: src/usr/local/www/system_advanced_misc.php:346
 msgid "Proxy Password"
 msgstr "Mot de passe du mandataire (« proxy »)"
 
-#: src/usr/local/www/system_advanced_misc.php:348
+#: src/usr/local/www/system_advanced_misc.php:349
 msgid "Password for authentication to proxy server."
 msgstr "Mot de passe pour l'authentification sur le serveur proxy."
 
-#: src/usr/local/www/system_advanced_misc.php:351
-#: src/usr/local/www/system_advanced_misc.php:353
+#: src/usr/local/www/system_advanced_misc.php:352
+#: src/usr/local/www/system_advanced_misc.php:354
 msgid "Load Balancing"
 msgstr "Équilibrage de charge"
 
-#: src/usr/local/www/system_advanced_misc.php:357
 #: src/usr/local/www/system_advanced_misc.php:358
+#: src/usr/local/www/system_advanced_misc.php:359
 msgid "Use sticky connections"
 msgstr "Utiliser des connexions persistantes"
 
-#: src/usr/local/www/system_advanced_misc.php:360
+#: src/usr/local/www/system_advanced_misc.php:361
 msgid ""
 "Successive connections will be redirected to the servers in a round-robin "
 "manner with connections from the same source being sent to the same web "
@@ -10451,11 +10464,11 @@ msgstr ""
 "seront redirigés vers le prochain serveur Web dans le round robin. La "
 "modification de cette option redémarre le service d'équilibrage de charge."
 
-#: src/usr/local/www/system_advanced_misc.php:370
+#: src/usr/local/www/system_advanced_misc.php:371
 msgid "Source tracking timeout"
 msgstr "Délai de suivi de la source"
 
-#: src/usr/local/www/system_advanced_misc.php:374
+#: src/usr/local/www/system_advanced_misc.php:375
 msgid ""
 "Set the source tracking timeout for sticky connections. By default this is "
 "0, so source tracking is removed as soon as the state expires. Setting this "
@@ -10467,11 +10480,11 @@ msgstr ""
 "expire. Si vous définissez ce délai plus haut, la relation source / "
 "destination persistera pendant de plus longues périodes."
 
-#: src/usr/local/www/system_advanced_misc.php:383
+#: src/usr/local/www/system_advanced_misc.php:384
 msgid "Default gateway switching"
 msgstr "Commutation de la passerelle par défaut"
 
-#: src/usr/local/www/system_advanced_misc.php:386
+#: src/usr/local/www/system_advanced_misc.php:387
 msgid ""
 "If the default gateway goes down, switch the default gateway to another "
 "available one. This is not enabled by default, as it's unnecessary in most "
@@ -10482,15 +10495,15 @@ msgstr ""
 "dans la plupart des scénarios, mais à la place, utiliser des groupes de "
 "passerelle."
 
-#: src/usr/local/www/system_advanced_misc.php:391
+#: src/usr/local/www/system_advanced_misc.php:392
 msgid "Power Savings"
 msgstr "Économie d'énergie"
 
-#: src/usr/local/www/system_advanced_misc.php:395
+#: src/usr/local/www/system_advanced_misc.php:396
 msgid "PowerD"
 msgstr "PowerD"
 
-#: src/usr/local/www/system_advanced_misc.php:398
+#: src/usr/local/www/system_advanced_misc.php:399
 msgid ""
 "The powerd utility monitors the system state and sets various power control "
 "options accordingly.  It offers four modes (maximum, minimum, adaptive and "
@@ -10523,43 +10536,43 @@ msgstr ""
 "fréquence plus rapidement, diminue plus lentement et maintient la charge de "
 "CPU deux fois plus faible."
 
-#: src/usr/local/www/system_advanced_misc.php:413
+#: src/usr/local/www/system_advanced_misc.php:414
 msgid "Hiadaptive"
 msgstr "Haut adaptatif"
 
-#: src/usr/local/www/system_advanced_misc.php:414
+#: src/usr/local/www/system_advanced_misc.php:415
 msgid "Adaptive"
 msgstr "Adaptatif"
 
-#: src/usr/local/www/system_advanced_misc.php:415
+#: src/usr/local/www/system_advanced_misc.php:416
 msgid "Minimum"
 msgstr "Minimum"
 
-#: src/usr/local/www/system_advanced_misc.php:416
+#: src/usr/local/www/system_advanced_misc.php:417
 msgid "Maximum"
 msgstr "Maximum"
 
-#: src/usr/local/www/system_advanced_misc.php:421
+#: src/usr/local/www/system_advanced_misc.php:422
 msgid "AC Power"
 msgstr "Alimentation secteur"
 
-#: src/usr/local/www/system_advanced_misc.php:428
+#: src/usr/local/www/system_advanced_misc.php:429
 msgid "Battery Power"
 msgstr "Alimentation batterie"
 
-#: src/usr/local/www/system_advanced_misc.php:435
+#: src/usr/local/www/system_advanced_misc.php:436
 msgid "Unknown Power"
 msgstr "Alimentation inconnue"
 
-#: src/usr/local/www/system_advanced_misc.php:441
+#: src/usr/local/www/system_advanced_misc.php:442
 msgid "Cryptographic & Thermal Hardware"
 msgstr "Matériel cryptographique et thermique"
 
-#: src/usr/local/www/system_advanced_misc.php:445
+#: src/usr/local/www/system_advanced_misc.php:446
 msgid "Cryptographic Hardware"
 msgstr "Matériel cryptographique"
 
-#: src/usr/local/www/system_advanced_misc.php:448
+#: src/usr/local/www/system_advanced_misc.php:449
 msgid ""
 "A cryptographic accelerator module will use hardware support to speed up "
 "some cryptographic functions on systems which have the chip. Loading the BSD "
@@ -10576,13 +10589,13 @@ msgstr ""
 "cryptographique, cette option n'aura aucun effet. Pour décharger le module "
 "sélectionné, définissez cette option sur \"aucun\" puis redémarrez."
 
-#: src/usr/local/www/system_advanced_misc.php:457
+#: src/usr/local/www/system_advanced_misc.php:458
 #: src/usr/local/www/widgets/include/thermal_sensors.inc:24
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:268
 msgid "Thermal Sensors"
 msgstr "Capteurs thermiques"
 
-#: src/usr/local/www/system_advanced_misc.php:460
+#: src/usr/local/www/system_advanced_misc.php:461
 msgid ""
 "With a supported CPU, selecting a thermal sensor will load the appropriate "
 "driver to read its temperature. Setting this to \"None\" will attempt to "
@@ -10599,18 +10612,18 @@ msgstr ""
 "décharger le module sélectionné, définissez cette option sur \"aucun\" puis "
 "redémarrez."
 
-#: src/usr/local/www/system_advanced_misc.php:469
+#: src/usr/local/www/system_advanced_misc.php:470
 #: src/usr/local/www/firewall_schedule_edit.php:52
 #: src/usr/local/www/head.inc:300 src/usr/local/www/firewall_schedule.php:42
 #: src/usr/local/www/firewall_schedule.php:87
 msgid "Schedules"
 msgstr "Plannings"
 
-#: src/usr/local/www/system_advanced_misc.php:473
+#: src/usr/local/www/system_advanced_misc.php:474
 msgid "Schedule States"
 msgstr "Planifier les états"
 
-#: src/usr/local/www/system_advanced_misc.php:476
+#: src/usr/local/www/system_advanced_misc.php:477
 msgid ""
 "By default, when a schedule expires, connections permitted by that schedule "
 "are killed. This option overrides that behavior by not clearing states for "
@@ -10620,16 +10633,16 @@ msgstr ""
 "planning sont stoppées. Cette option remplace ce comportement en ne "
 "corrigeant pas les états pour les connexions existantes."
 
-#: src/usr/local/www/system_advanced_misc.php:481
+#: src/usr/local/www/system_advanced_misc.php:482
 #: src/usr/local/www/system_gateways_edit.php:206
 msgid "Gateway Monitoring"
 msgstr "Supervision de passerelle"
 
-#: src/usr/local/www/system_advanced_misc.php:485
+#: src/usr/local/www/system_advanced_misc.php:486
 msgid "State Killing on Gateway Failure"
 msgstr "Etat stoppé sur échec de la passerelle"
 
-#: src/usr/local/www/system_advanced_misc.php:488
+#: src/usr/local/www/system_advanced_misc.php:489
 msgid ""
 "The monitoring process will flush all states when a gateway goes down if "
 "this box is checked."
@@ -10637,11 +10650,11 @@ msgstr ""
 "Le processus de suivi élimine tous les états lorsqu'une passerelle tombe en "
 "panne si cette case est cochée."
 
-#: src/usr/local/www/system_advanced_misc.php:493
+#: src/usr/local/www/system_advanced_misc.php:494
 msgid "Skip rules when gateway is down"
 msgstr "Passer les règles quand la passerelle ne fonctionne pas"
 
-#: src/usr/local/www/system_advanced_misc.php:496
+#: src/usr/local/www/system_advanced_misc.php:497
 msgid ""
 "By default, when a rule has a gateway specified and this gateway is down, "
 "the rule is created omitting the gateway. This option overrides that "
@@ -10651,17 +10664,17 @@ msgstr ""
 "passerelle est en panne, la règle est créée en omettant la passerelle. Cette "
 "option remplace ce comportement en omettant la règle entière à la place."
 
-#: src/usr/local/www/system_advanced_misc.php:501
+#: src/usr/local/www/system_advanced_misc.php:502
 msgid "RAM Disk Settings (Reboot to Apply Changes)"
 msgstr ""
 "Paramètres des disques en mémoire (redémarrer pour appliquer les "
 "modifications)"
 
-#: src/usr/local/www/system_advanced_misc.php:505
+#: src/usr/local/www/system_advanced_misc.php:506
 msgid "Use RAM Disks"
 msgstr "Utiliser un disque en mémoire"
 
-#: src/usr/local/www/system_advanced_misc.php:508
+#: src/usr/local/www/system_advanced_misc.php:509
 msgid ""
 "Set this to use /tmp and /var as RAM disks (memory file system disks) on a "
 "full install rather than use the hard disk. Setting this will cause the data "
@@ -10676,61 +10689,61 @@ msgstr ""
 "log seront conservés. La modification de ce paramètre entraînera le "
 "redémarrage du pare-feu après avoir cliqué sur \"Enregistrer\"."
 
-#: src/usr/local/www/system_advanced_misc.php:513
+#: src/usr/local/www/system_advanced_misc.php:514
 msgid "RAM Disk Size"
 msgstr "Taille du disque en mémoire"
 
-#: src/usr/local/www/system_advanced_misc.php:517
+#: src/usr/local/www/system_advanced_misc.php:518
 msgid "/tmp RAM Disk Size"
 msgstr "Taille du disque en mémoire de /tmp"
 
-#: src/usr/local/www/system_advanced_misc.php:521
+#: src/usr/local/www/system_advanced_misc.php:522
 msgid "/tmp RAM Disk<br />Do not set lower than 40."
 msgstr "Le disque en mémoire /tmp <br />Ne pas mettre en dessous de 40."
 
-#: src/usr/local/www/system_advanced_misc.php:525
+#: src/usr/local/www/system_advanced_misc.php:526
 msgid "/var RAM Disk Size"
 msgstr "Taille du disque en mémoire de /var"
 
-#: src/usr/local/www/system_advanced_misc.php:529
+#: src/usr/local/www/system_advanced_misc.php:530
 msgid "/var RAM Disk<br />Do not set lower than 60."
 msgstr "Le disque en mémoire /var <br />Ne pas mettre en dessous de 60."
 
-#: src/usr/local/www/system_advanced_misc.php:531
+#: src/usr/local/www/system_advanced_misc.php:532
 msgid "Sets the size, in MiB, for the RAM disks."
 msgstr "Défini la taille, en Mio, pour les disques en mémoire."
 
-#: src/usr/local/www/system_advanced_misc.php:535
+#: src/usr/local/www/system_advanced_misc.php:536
 msgid "Periodic RAM Disk Data Backups"
 msgstr "Sauvegarde périodique des disques en mémoire"
 
-#: src/usr/local/www/system_advanced_misc.php:539
+#: src/usr/local/www/system_advanced_misc.php:540
 msgid "Periodic RRD Backup"
 msgstr "Sauvegarde périodique des RRD"
 
-#: src/usr/local/www/system_advanced_misc.php:543
+#: src/usr/local/www/system_advanced_misc.php:544
 #: src/usr/local/www/diag_backup.php:442
 msgid "RRD Data"
 msgstr "Données RRD"
 
-#: src/usr/local/www/system_advanced_misc.php:547
+#: src/usr/local/www/system_advanced_misc.php:548
 msgid "Periodic DHCP Leases Backup"
 msgstr "Sauvegarde périodique des bails DHCP"
 
-#: src/usr/local/www/system_advanced_misc.php:551
+#: src/usr/local/www/system_advanced_misc.php:552
 #: src/usr/local/www/head.inc:349 src/usr/local/www/status_dhcp_leases.php:36
 msgid "DHCP Leases"
 msgstr "Bails DHCP"
 
-#: src/usr/local/www/system_advanced_misc.php:555
+#: src/usr/local/www/system_advanced_misc.php:556
 msgid "Periodic Logs Backup"
 msgstr "Sauvegarde périodique des journaux"
 
-#: src/usr/local/www/system_advanced_misc.php:559
+#: src/usr/local/www/system_advanced_misc.php:560
 msgid "Log Directory"
 msgstr "Répertoire des journaux"
 
-#: src/usr/local/www/system_advanced_misc.php:561
+#: src/usr/local/www/system_advanced_misc.php:562
 msgid ""
 "Sets the interval, in hours, to periodically backup these portions of RAM "
 "disk data so they can be restored automatically on the next boot. Keep in "
@@ -10742,19 +10755,19 @@ msgstr ""
 "automatiquement lors du prochain démarrage. Gardez à l'esprit que plus la "
 "sauvegarde est fréquente, plus d'écritures apparaîtront sur les médias."
 
-#: src/usr/local/www/system_advanced_misc.php:569
+#: src/usr/local/www/system_advanced_misc.php:570
 msgid "Hardware Settings"
 msgstr "Paramètres matériel"
 
-#: src/usr/local/www/system_advanced_misc.php:578
+#: src/usr/local/www/system_advanced_misc.php:579
 msgid "Always on"
 msgstr "Toujours allumé"
 
-#: src/usr/local/www/system_advanced_misc.php:576
+#: src/usr/local/www/system_advanced_misc.php:577
 msgid "Hard disk standby time"
 msgstr "Durée de mise en veille du disque dur"
 
-#: src/usr/local/www/system_advanced_misc.php:579
+#: src/usr/local/www/system_advanced_misc.php:580
 #, php-format
 msgid ""
 "Puts the hard disk into standby mode when the selected number of minutes has "
@@ -10764,15 +10777,15 @@ msgstr ""
 "écoulé depuis le dernier accès.%1$s%2$s Ne pas activer pour les cartes CF."
 "%3$s"
 
-#: src/usr/local/www/system_advanced_misc.php:584
+#: src/usr/local/www/system_advanced_misc.php:585
 msgid "Installation Feedback"
 msgstr "Commentaires sur l'installation"
 
-#: src/usr/local/www/system_advanced_misc.php:588
+#: src/usr/local/www/system_advanced_misc.php:589
 msgid "Netgate Device ID"
 msgstr "ID d'appareil Netgate"
 
-#: src/usr/local/www/system_advanced_misc.php:591
+#: src/usr/local/www/system_advanced_misc.php:592
 msgid ""
 "Enable this option to not send Netgate Device ID to pfSense as part of User-"
 "Agent header."
@@ -10780,7 +10793,7 @@ msgstr ""
 "Activez cette option pour ne pas envoyer l'ID de périphérique Netgate à "
 "pfSense dans l'en-tête de l'agent utilisateur."
 
-#: src/usr/local/www/system_advanced_misc.php:597
+#: src/usr/local/www/system_advanced_misc.php:598
 msgid ""
 "The \\\"Use Ramdisk\\\" setting has been changed. This will cause the "
 "firewall\\nto reboot immediately after the new setting is saved.\\n\\nPlease "
@@ -10999,7 +11012,7 @@ msgstr "Catégorie"
 #: src/usr/local/www/diag_confbak.php:219
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:37
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:218
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:223
 msgid "Version"
 msgstr "Version"
 
@@ -12586,7 +12599,7 @@ msgid "Wireless Interface Configuration"
 msgstr "Configuration de l'interface sans-fil"
 
 #: src/usr/local/www/interfaces_wireless_edit.php:176
-#: src/usr/local/www/interfaces_vlan_edit.php:183
+#: src/usr/local/www/interfaces_vlan_edit.php:184
 #: src/usr/local/www/interfaces_gre_edit.php:168
 #: src/usr/local/www/interfaces_gif_edit.php:175
 msgid "*Parent Interface"
@@ -13096,73 +13109,73 @@ msgstr ""
 msgid "Packages"
 msgstr "Paquets"
 
-#: src/usr/local/www/services_snmp.php:90
+#: src/usr/local/www/services_snmp.php:88
 msgid "Invalid character '#' in system location"
 msgstr "Caractère invalide '#' dans la localisation du système"
 
-#: src/usr/local/www/services_snmp.php:93
+#: src/usr/local/www/services_snmp.php:91
 msgid "Invalid character '#' in system contact"
 msgstr "Caractère invalide '#' dans le contact du système"
 
-#: src/usr/local/www/services_snmp.php:96
+#: src/usr/local/www/services_snmp.php:94
 msgid "Invalid character '#' in read community string"
 msgstr "Caractère invalide '#' dans la chaine de communauté en lecture"
 
-#: src/usr/local/www/services_snmp.php:100
+#: src/usr/local/www/services_snmp.php:98
 msgid "Community"
 msgstr "Communauté"
 
-#: src/usr/local/www/services_snmp.php:104
-#: src/usr/local/www/services_snmp.php:226
+#: src/usr/local/www/services_snmp.php:102
+#: src/usr/local/www/services_snmp.php:224
 msgid "Polling Port"
 msgstr "Port de vote"
 
-#: src/usr/local/www/services_snmp.php:112
+#: src/usr/local/www/services_snmp.php:110
 msgid "Invalid character '#' in SNMP trap string"
 msgstr "Caractère invalide '#' dans la chaine SNMP trap "
 
-#: src/usr/local/www/services_snmp.php:116
-#: src/usr/local/www/services_snmp.php:275
+#: src/usr/local/www/services_snmp.php:114
+#: src/usr/local/www/services_snmp.php:273
 msgid "Trap server"
 msgstr "Serveur Trap"
 
-#: src/usr/local/www/services_snmp.php:120
+#: src/usr/local/www/services_snmp.php:118
 msgid "Trap server port"
 msgstr "Port du serveur Trap"
 
-#: src/usr/local/www/services_snmp.php:124
+#: src/usr/local/www/services_snmp.php:122
 msgid "Trap string"
 msgstr "Chaîne Trap"
 
-#: src/usr/local/www/services_snmp.php:196 src/usr/local/www/head.inc:323
+#: src/usr/local/www/services_snmp.php:194 src/usr/local/www/head.inc:323
 msgid "SNMP"
 msgstr "SNMP"
 
-#: src/usr/local/www/services_snmp.php:211
+#: src/usr/local/www/services_snmp.php:209
 msgid "SNMP Daemon"
 msgstr "Démon SNMP"
 
-#: src/usr/local/www/services_snmp.php:222
+#: src/usr/local/www/services_snmp.php:220
 msgid "SNMP Daemon Settings"
 msgstr "Paramètres du démon SNMP"
 
-#: src/usr/local/www/services_snmp.php:229
+#: src/usr/local/www/services_snmp.php:227
 msgid "Enter the port to accept polling events on (default 161)."
 msgstr "Entrer le port acceptant r les événements de vote (par défaut: 161)."
 
-#: src/usr/local/www/services_snmp.php:233
+#: src/usr/local/www/services_snmp.php:231
 msgid "System Location"
 msgstr "Emplacement du système"
 
-#: src/usr/local/www/services_snmp.php:240
+#: src/usr/local/www/services_snmp.php:238
 msgid "System Contact"
 msgstr "Contact du système"
 
-#: src/usr/local/www/services_snmp.php:247
+#: src/usr/local/www/services_snmp.php:245
 msgid "Read Community String"
 msgstr "Chaîne de communauté en lecture"
 
-#: src/usr/local/www/services_snmp.php:250
+#: src/usr/local/www/services_snmp.php:248
 msgid ""
 "The community string is like a password, restricting access to querying SNMP "
 "to hosts knowing the community string. Use a strong value here to protect "
@@ -13173,43 +13186,43 @@ msgstr ""
 "Utiliser une valeur complexe pour une bonne protection des accès à "
 "l'information."
 
-#: src/usr/local/www/services_snmp.php:254
+#: src/usr/local/www/services_snmp.php:252
 msgid "SNMP Traps Enable"
 msgstr "Activer les Traps SNMP"
 
-#: src/usr/local/www/services_snmp.php:265
+#: src/usr/local/www/services_snmp.php:263
 msgid "SNMP Trap Settings"
 msgstr "Paramètres des Traps SNMP"
 
-#: src/usr/local/www/services_snmp.php:278
+#: src/usr/local/www/services_snmp.php:276
 msgid "Enter the trap server name"
 msgstr "Entrer le nom du serveur Trap"
 
-#: src/usr/local/www/services_snmp.php:282
+#: src/usr/local/www/services_snmp.php:280
 msgid "Trap Server Port"
 msgstr "Port du serveur Trap"
 
-#: src/usr/local/www/services_snmp.php:285
+#: src/usr/local/www/services_snmp.php:283
 msgid "Enter the port to send the traps to (default 162)"
 msgstr "Entrer le port vers lequel envoyer les traps (par défaut: 162)"
 
-#: src/usr/local/www/services_snmp.php:289
+#: src/usr/local/www/services_snmp.php:287
 msgid "SNMP Trap String"
 msgstr "Chaîne des Traps SNMP"
 
-#: src/usr/local/www/services_snmp.php:296
+#: src/usr/local/www/services_snmp.php:294
 msgid "SNMP Modules"
 msgstr "Modules SNMP"
 
-#: src/usr/local/www/services_snmp.php:298
+#: src/usr/local/www/services_snmp.php:296
 msgid "SNMP modules"
 msgstr "Modules SNMP"
 
-#: src/usr/local/www/services_snmp.php:355
+#: src/usr/local/www/services_snmp.php:343
 msgid "Interface Binding"
 msgstr "Liaison d'interface"
 
-#: src/usr/local/www/services_snmp.php:361
+#: src/usr/local/www/services_snmp.php:349
 msgid "Bind Interfaces"
 msgstr "Liaison d'interfaces"
 
@@ -13263,7 +13276,7 @@ msgid "Group Description"
 msgstr "Description de groupe"
 
 #: src/usr/local/www/interfaces_groups_edit.php:220
-#: src/usr/local/www/interfaces_vlan_edit.php:210
+#: src/usr/local/www/interfaces_vlan_edit.php:211
 msgid ""
 "A group description may be entered here for administrative reference (not "
 "parsed)."
@@ -13508,9 +13521,7 @@ msgstr ""
 "radio dans la colonne de gauche et sélectionner la nouvelle configuration "
 "dans la colonne de droite, puis appuyer sur le bouton \"Diff\"."
 
-#: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_confbak.php:215
-#: src/usr/local/www/diag_confbak.php:277
 #: src/usr/local/www/diag_confbak.php:279
 #: src/usr/local/www/system_update_settings.php:226
 msgid "Diff"
@@ -14352,39 +14363,45 @@ msgstr ""
 "Essaye d'éviter l'abandon de toutes connexions inactives au prix d'un usage "
 "mémoire et processeur supérieur"
 
-#: src/usr/local/www/interfaces_qinq.php:56
+#: src/usr/local/www/interfaces_qinq.php:43
 msgid ""
 "This QinQ cannot be deleted because it is still being used as an interface."
 msgstr ""
 "Ce QInQ ne peut pas être supprimé car il est encore utilisé pour une "
 "interface."
 
-#: src/usr/local/www/interfaces_qinq.php:58
+#: src/usr/local/www/interfaces_qinq.php:45
 msgid "QinQ interface does not exist"
 msgstr "L'interface QinQ n'existe pas."
 
-#: src/usr/local/www/interfaces_qinq.php:103
+#: src/usr/local/www/interfaces_qinq.php:52
+msgid ""
+"This QinQ cannot be deleted because one of it tags is still being used as an "
+"interface."
+msgstr ""
+
+#: src/usr/local/www/interfaces_qinq.php:101
 msgid "QinQ Interfaces"
 msgstr "Interfaces Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:110
+#: src/usr/local/www/interfaces_qinq.php:108
 #: src/usr/local/www/firewall_rules_edit.php:1533
 msgid "Tag"
 msgstr "Marque"
 
-#: src/usr/local/www/interfaces_qinq.php:111
+#: src/usr/local/www/interfaces_qinq.php:109
 msgid "QinQ members"
 msgstr "Membres Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:136
+#: src/usr/local/www/interfaces_qinq.php:134
 msgid "Edit Q-in-Q interface"
 msgstr "Modifier l'interface Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:137
+#: src/usr/local/www/interfaces_qinq.php:135
 msgid "Delete Q-in-Q interface"
 msgstr "Supprimer l'interface Q-in-Q"
 
-#: src/usr/local/www/interfaces_qinq.php:157
+#: src/usr/local/www/interfaces_qinq.php:155
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q QinQ tagging properly. %1$sOn cards that "
@@ -14400,7 +14417,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_gif.php:52
 #: src/usr/local/www/interfaces_gre.php:53
 #: src/usr/local/www/interfaces_bridge.php:53
-#: src/usr/local/www/interfaces_vlan.php:56
+#: src/usr/local/www/interfaces_vlan.php:43
 #: src/usr/local/www/interfaces_lagg.php:59
 msgid "Wrong parameters supplied"
 msgstr "Paramètre erroné fourni"
@@ -14408,7 +14425,7 @@ msgstr "Paramètre erroné fourni"
 #: src/usr/local/www/interfaces_gif.php:54
 #: src/usr/local/www/interfaces_gre.php:55
 #: src/usr/local/www/interfaces_bridge.php:55
-#: src/usr/local/www/interfaces_vlan.php:58
+#: src/usr/local/www/interfaces_vlan.php:45
 #: src/usr/local/www/interfaces_lagg.php:61
 msgid "Wrong index supplied"
 msgstr "Indice erroné fourni"
@@ -15600,7 +15617,7 @@ msgstr ""
 "depuis les clients L2TP."
 
 #: src/usr/local/www/interfaces_vlan_edit.php:69
-#: src/usr/local/www/interfaces_vlan.php:108
+#: src/usr/local/www/interfaces_vlan.php:95
 msgid "VLAN tag"
 msgstr "Balise VLAN"
 
@@ -15635,31 +15652,31 @@ msgstr ""
 "Un VLAN QinQ existe on %s  avec ce tag. S'il vous plait supprimer le pour "
 "pouvoir utiliser ce tag pour un VLAN normal."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:179
+#: src/usr/local/www/interfaces_vlan_edit.php:180
 msgid "VLAN Configuration"
 msgstr "Configuration VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:186
+#: src/usr/local/www/interfaces_vlan_edit.php:187
 msgid "Only VLAN capable interfaces will be shown."
 msgstr "Seules les interfaces compatibles VLAN seront affichées."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:190
+#: src/usr/local/www/interfaces_vlan_edit.php:191
 msgid "*VLAN Tag"
 msgstr "*Balise VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:194
+#: src/usr/local/www/interfaces_vlan_edit.php:195
 msgid "802.1Q VLAN tag (between 1 and 4094)."
 msgstr "Balise VLAN 802.1Q (entre 1 et 4094)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:198
+#: src/usr/local/www/interfaces_vlan_edit.php:199
 msgid "VLAN Priority"
 msgstr "Priorité du VLAN"
 
-#: src/usr/local/www/interfaces_vlan_edit.php:202
+#: src/usr/local/www/interfaces_vlan_edit.php:203
 msgid "802.1Q VLAN Priority (between 0 and 7)."
 msgstr "Priorité VLAN 802.1Q (entre 0 et 7)."
 
-#: src/usr/local/www/interfaces_vlan_edit.php:214
+#: src/usr/local/www/interfaces_vlan_edit.php:215
 msgid "vlanif"
 msgstr "vlanif"
 
@@ -16412,7 +16429,7 @@ msgstr ""
 "valeur minimum est 1 seconde et maximum est 2 secondes. "
 
 #: src/usr/local/www/interfaces_bridge_edit.php:592
-#: src/usr/local/www/interfaces_vlan.php:109
+#: src/usr/local/www/interfaces_vlan.php:96
 #: src/usr/local/www/system_gateway_groups.php:130 src/etc/inc/shaper.inc:1430
 msgid "Priority"
 msgstr "Priorité"
@@ -24966,86 +24983,86 @@ msgstr "Montrer uniquement les bails actifs et statiques"
 msgid "Show all configured leases"
 msgstr "Montrer tous les bails configurés"
 
-#: src/usr/local/www/services_unbound_advanced.php:94
+#: src/usr/local/www/services_unbound_advanced.php:98
 msgid "A valid value for Message Cache Size must be specified."
 msgstr ""
 "Une valeur valide pour la taille du cache des messages doit être spécifiée."
 
-#: src/usr/local/www/services_unbound_advanced.php:97
+#: src/usr/local/www/services_unbound_advanced.php:101
 msgid "A valid value must be specified for Outgoing TCP Buffers."
 msgstr "Une valeur valide doit être spécifiée pour les buffers TCP sortants."
 
-#: src/usr/local/www/services_unbound_advanced.php:100
+#: src/usr/local/www/services_unbound_advanced.php:104
 msgid "A valid value must be specified for Incoming TCP Buffers."
 msgstr "Une valeur valide doit être indiquée pour les tampons TCP en entrée."
 
-#: src/usr/local/www/services_unbound_advanced.php:103
+#: src/usr/local/www/services_unbound_advanced.php:107
 msgid "A valid value must be specified for EDNS Buffer Size."
 msgstr "Une valeur valide doit être indiquée pour la taille du tampon EDNS."
 
-#: src/usr/local/www/services_unbound_advanced.php:106
+#: src/usr/local/www/services_unbound_advanced.php:110
 msgid "A valid value must be specified for Number of Queries per Thread."
 msgstr ""
 "Une valeur valide doit être indiquée pour le nombre de requêtes par Thread."
 
-#: src/usr/local/www/services_unbound_advanced.php:109
+#: src/usr/local/www/services_unbound_advanced.php:113
 msgid "A valid value must be specified for Jostle Timeout."
 msgstr "Une valeur valide doit être indiquée pour l'expiration Jostle"
 
-#: src/usr/local/www/services_unbound_advanced.php:112
+#: src/usr/local/www/services_unbound_advanced.php:116
 msgid "'Maximum TTL for RRsets and Messages' must be a positive integer."
 msgstr "'TTL maximum pour RRsets et Messages\" doit être un entier positif."
 
-#: src/usr/local/www/services_unbound_advanced.php:115
+#: src/usr/local/www/services_unbound_advanced.php:119
 msgid "'Minimum TTL for RRsets and Messages' must be a positive integer."
 msgstr "'Minimum TTL pour RRsets et Messages\" doit être un entier positif."
 
-#: src/usr/local/www/services_unbound_advanced.php:118
+#: src/usr/local/www/services_unbound_advanced.php:122
 msgid "A valid value must be specified for TTL for Host Cache Entries."
 msgstr ""
 "Une valeur valide doit être indiquée pour spécifier le TTL des entrées de "
 "caches des hôtes."
 
-#: src/usr/local/www/services_unbound_advanced.php:121
+#: src/usr/local/www/services_unbound_advanced.php:125
 msgid "A valid value must be specified for Number of Hosts to Cache."
 msgstr ""
 "Une valeur valide doit être spécifiée pour le cache du nombre d'hôtes."
 
-#: src/usr/local/www/services_unbound_advanced.php:124
+#: src/usr/local/www/services_unbound_advanced.php:128
 msgid "A valid value must be specified for Unwanted Reply Threshold."
 msgstr ""
 "Une valeur valide doit être indiquée pour le seuil de réponses non "
 "sollicitées."
 
-#: src/usr/local/www/services_unbound_advanced.php:127
+#: src/usr/local/www/services_unbound_advanced.php:131
 msgid "A valid value must be specified for Log Level."
 msgstr ""
 "Une valeur valide doit être indiquée pour le niveau de journalisation."
 
-#: src/usr/local/www/services_unbound_advanced.php:130
+#: src/usr/local/www/services_unbound_advanced.php:134
 msgid ""
 "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled."
 msgstr ""
 "L'option renforcer les données DNSSEC ne peut être activée que si le support "
 "de DNSSEC est actif."
 
-#: src/usr/local/www/services_unbound_advanced.php:222
+#: src/usr/local/www/services_unbound_advanced.php:231
 msgid "Advanced Resolver Options"
 msgstr "Options avancées du Resolver"
 
-#: src/usr/local/www/services_unbound_advanced.php:226
+#: src/usr/local/www/services_unbound_advanced.php:235
 msgid "Hide Identity"
 msgstr "Cacher identité"
 
-#: src/usr/local/www/services_unbound_advanced.php:233
+#: src/usr/local/www/services_unbound_advanced.php:242
 msgid "Hide Version"
 msgstr "Cacher version"
 
-#: src/usr/local/www/services_unbound_advanced.php:240
+#: src/usr/local/www/services_unbound_advanced.php:249
 msgid "Prefetch Support"
 msgstr "Support de la prélecture"
 
-#: src/usr/local/www/services_unbound_advanced.php:243
+#: src/usr/local/www/services_unbound_advanced.php:252
 msgid ""
 "When enabled, this option can cause an increase of around 10% more DNS "
 "traffic and load on the server, but frequently requested items will not "
@@ -25055,11 +25072,11 @@ msgstr ""
 "plus du trafic DNS et de la charge du serveur, toutefois les éléments les "
 "plus souvent sollicités n'expireront pas dans le cache."
 
-#: src/usr/local/www/services_unbound_advanced.php:247
+#: src/usr/local/www/services_unbound_advanced.php:256
 msgid "Prefetch DNS Key Support"
 msgstr "Support de la clé de prélecture DNS"
 
-#: src/usr/local/www/services_unbound_advanced.php:250
+#: src/usr/local/www/services_unbound_advanced.php:259
 #, php-format
 msgid ""
 "This helps lower the latency of requests but does utilize a little more CPU. "
@@ -25068,11 +25085,11 @@ msgstr ""
 "Ceci aide à réduire la latence des requêtes mais utilise un peu plus de CPU, "
 "Voir %1$sWikipedia%2$s"
 
-#: src/usr/local/www/services_unbound_advanced.php:254
+#: src/usr/local/www/services_unbound_advanced.php:263
 msgid "Harden DNSSEC Data"
 msgstr "Renforcer données DNSSEC"
 
-#: src/usr/local/www/services_unbound_advanced.php:257
+#: src/usr/local/www/services_unbound_advanced.php:266
 msgid ""
 "If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC "
 "data is received, then the zone is made insecure. "
@@ -25080,11 +25097,23 @@ msgstr ""
 "Si ce type de donnée est absent, la zone devient corrompue. Si désactivé, et "
 "qu'aucune donnée DNSSEC n'est reçue, alors la zone deviendra vulnérable."
 
-#: src/usr/local/www/services_unbound_advanced.php:261
+#: src/usr/local/www/services_unbound_advanced.php:270
+msgid "Serve Expired"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:273
+msgid ""
+"When enabled, allows unbound to serve one query even with a TTL of 0, if TTL "
+"is 0 then new record will be requested in the background when the cache is "
+"served to ensure cache is updated without latency on service of the DNS "
+"request."
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:277
 msgid "Message Cache Size"
 msgstr "Taille de la cache des messages"
 
-#: src/usr/local/www/services_unbound_advanced.php:264
+#: src/usr/local/www/services_unbound_advanced.php:280
 msgid ""
 "Size of the message cache. The message cache stores DNS response codes and "
 "validation statuses. The Resource Record Set (RRSet) cache will "
@@ -25096,11 +25125,11 @@ msgstr ""
 "sera automatiquement défini à deux fois cette taille. Le cache RRSet "
 "contient les données RR actuelles. Par défaut: 4Mo."
 
-#: src/usr/local/www/services_unbound_advanced.php:268
+#: src/usr/local/www/services_unbound_advanced.php:284
 msgid "Outgoing TCP Buffers"
 msgstr "Tampons TCP de sortie."
 
-#: src/usr/local/www/services_unbound_advanced.php:271
+#: src/usr/local/www/services_unbound_advanced.php:287
 msgid ""
 "The number of outgoing TCP buffers to allocate per thread. The default value "
 "is 10. If 0 is selected then TCP queries are not sent to authoritative "
@@ -25110,11 +25139,11 @@ msgstr ""
 "10. Si la valeur est à 0, alors les requêtes TCP ne sont pas envoyées aux "
 "serveurs autoritaires."
 
-#: src/usr/local/www/services_unbound_advanced.php:275
+#: src/usr/local/www/services_unbound_advanced.php:291
 msgid "Incoming TCP Buffers"
 msgstr "Tampons TCP entrants."
 
-#: src/usr/local/www/services_unbound_advanced.php:278
+#: src/usr/local/www/services_unbound_advanced.php:294
 msgid ""
 "The number of incoming TCP buffers to allocate per thread. The default value "
 "is 10. If 0 is selected then TCP queries are not accepted from clients."
@@ -25123,11 +25152,11 @@ msgstr ""
 "défaut est 10. Si la valeur est à 0, alors les requêtes TCP des clients ne "
 "sont pas acceptées."
 
-#: src/usr/local/www/services_unbound_advanced.php:282
+#: src/usr/local/www/services_unbound_advanced.php:298
 msgid "EDNS Buffer Size"
 msgstr "Taille tampon EDNS."
 
-#: src/usr/local/www/services_unbound_advanced.php:285
+#: src/usr/local/www/services_unbound_advanced.php:301
 msgid ""
 "Number of bytes size to advertise as the EDNS reassembly buffer size. This "
 "is the value that is used in UDP datagrams sent to peers. RFC recommendation "
@@ -25144,11 +25173,11 @@ msgstr ""
 "problème. La valeur 512 devrai contourner tout problème de MTU, mais pourrai "
 "générer un nom excessif de fallback TCP."
 
-#: src/usr/local/www/services_unbound_advanced.php:291
+#: src/usr/local/www/services_unbound_advanced.php:307
 msgid "Number of Queries per Thread"
 msgstr "Nombre de requêtes par thread"
 
-#: src/usr/local/www/services_unbound_advanced.php:294
+#: src/usr/local/www/services_unbound_advanced.php:310
 msgid ""
 "The number of queries that every thread will service simultaneously. If more "
 "queries arrive that need to be serviced, and no queries can be jostled, then "
@@ -25158,11 +25187,11 @@ msgstr ""
 "requêtes arrivent, il faut effectuer un entretien, et aucune requête ne peut "
 "être congestionnée, ces requêtes sont supprimées."
 
-#: src/usr/local/www/services_unbound_advanced.php:298
+#: src/usr/local/www/services_unbound_advanced.php:314
 msgid "Jostle Timeout"
 msgstr "Délai de congestion"
 
-#: src/usr/local/www/services_unbound_advanced.php:301
+#: src/usr/local/www/services_unbound_advanced.php:317
 msgid ""
 "This timeout is used for when the server is very busy. This protects against "
 "denial of service by slow queries or high query rates. The default value is "
@@ -25172,11 +25201,11 @@ msgstr ""
 "le déni de service par des requêtes lentes ou des taux de requêtes élevés. "
 "La valeur par défaut est de 200 millisecondes."
 
-#: src/usr/local/www/services_unbound_advanced.php:305
+#: src/usr/local/www/services_unbound_advanced.php:321
 msgid "Maximum TTL for RRsets and Messages"
 msgstr "TTL maximum pour RRsets et messages"
 
-#: src/usr/local/www/services_unbound_advanced.php:308
+#: src/usr/local/www/services_unbound_advanced.php:324
 msgid ""
 "The Maximum Time to Live for RRsets and messages in the cache. The default "
 "is 86400 seconds (1 day). When the internal TTL expires the cache item is "
@@ -25189,11 +25218,11 @@ msgstr ""
 "serveur de résolution à rechercher des données plus souvent et à ne pas "
 "faire (trop) confiance aux valeurs TTL."
 
-#: src/usr/local/www/services_unbound_advanced.php:313
+#: src/usr/local/www/services_unbound_advanced.php:329
 msgid "Minimum TTL for RRsets and Messages"
 msgstr "TTL minimum pour RRsets et messages"
 
-#: src/usr/local/www/services_unbound_advanced.php:316
+#: src/usr/local/www/services_unbound_advanced.php:332
 msgid ""
 "The Minimum Time to Live for RRsets and messages in the cache. The default "
 "is 0 seconds. If the minimum value kicks in, the data is cached for longer "
@@ -25210,15 +25239,15 @@ msgstr ""
 "propriétaire du domaine. Les valeurs élevées peuvent entraîner des problèmes "
 "car les données du cache peuvent ne plus correspondre aux données réelles."
 
-#: src/usr/local/www/services_unbound_advanced.php:320
+#: src/usr/local/www/services_unbound_advanced.php:336
 msgid "minutes"
 msgstr "minutes"
 
-#: src/usr/local/www/services_unbound_advanced.php:323
+#: src/usr/local/www/services_unbound_advanced.php:339
 msgid "TTL for Host Cache Entries"
 msgstr "TTL pour les entrées du cache hôte"
 
-#: src/usr/local/www/services_unbound_advanced.php:326
+#: src/usr/local/www/services_unbound_advanced.php:342
 msgid ""
 "Time to Live, in seconds, for entries in the infrastructure host cache. The "
 "infrastructure host cache contains round trip timing, lameness, and EDNS "
@@ -25229,11 +25258,11 @@ msgstr ""
 "informations sur le temps de retour, la faiblesse et les informations de "
 "support EDNS pour les serveurs DNS. La valeur par défaut est de 15 minutes."
 
-#: src/usr/local/www/services_unbound_advanced.php:330
+#: src/usr/local/www/services_unbound_advanced.php:346
 msgid "Number of Hosts to Cache"
 msgstr "Nombre d'hôtes vers le cache"
 
-#: src/usr/local/www/services_unbound_advanced.php:333
+#: src/usr/local/www/services_unbound_advanced.php:349
 msgid ""
 "Number of infrastructure hosts for which information is cached. The default "
 "is 10,000."
@@ -25241,15 +25270,15 @@ msgstr ""
 "Nombre d'hébergeurs d'infrastructure pour lesquels des informations sont "
 "mises en cache. La valeur par défaut est 10 000."
 
-#: src/usr/local/www/services_unbound_advanced.php:335
+#: src/usr/local/www/services_unbound_advanced.php:351
 msgid "million"
 msgstr "million"
 
-#: src/usr/local/www/services_unbound_advanced.php:338
+#: src/usr/local/www/services_unbound_advanced.php:354
 msgid "Unwanted Reply Threshold"
 msgstr "Seuil de réponse indésirable"
 
-#: src/usr/local/www/services_unbound_advanced.php:342
+#: src/usr/local/www/services_unbound_advanced.php:358
 msgid ""
 "If enabled, a total number of unwanted replies is kept track of in every "
 "thread. When it reaches the threshold, a defensive action is taken and a "
@@ -25264,23 +25293,23 @@ msgstr ""
 "ranger tout poison. La valeur par défaut est désactivée, mais si elle est "
 "activée, une valeur de 10 millions est proposée."
 
-#: src/usr/local/www/services_unbound_advanced.php:346
+#: src/usr/local/www/services_unbound_advanced.php:362
 msgid "level"
 msgstr "niveau"
 
-#: src/usr/local/www/services_unbound_advanced.php:349
+#: src/usr/local/www/services_unbound_advanced.php:365
 msgid "Log Level"
 msgstr "Niveau de journalisation"
 
-#: src/usr/local/www/services_unbound_advanced.php:352
+#: src/usr/local/www/services_unbound_advanced.php:368
 msgid "Select the log verbosity."
 msgstr "Sélectionnez la verbosité du journal."
 
-#: src/usr/local/www/services_unbound_advanced.php:356
+#: src/usr/local/www/services_unbound_advanced.php:372
 msgid "Disable Auto-added Access Control"
 msgstr "Désactiver l'ajout automatique du contrôle d'accès"
 
-#: src/usr/local/www/services_unbound_advanced.php:359
+#: src/usr/local/www/services_unbound_advanced.php:375
 msgid ""
 "By default, IPv4 and IPv6 networks residing on internal interfaces of this "
 "system are permitted. Allowed networks must be manually configured on the "
@@ -25291,11 +25320,11 @@ msgstr ""
 "manuellement dans l'onglet Listes d'accès si les entrées ajoutées "
 "automatiquement sont désactivées."
 
-#: src/usr/local/www/services_unbound_advanced.php:364
+#: src/usr/local/www/services_unbound_advanced.php:380
 msgid "Disable Auto-added Host Entries"
 msgstr "Désactiver les entrées d'hôtes ajoutées automatiquement "
 
-#: src/usr/local/www/services_unbound_advanced.php:367
+#: src/usr/local/www/services_unbound_advanced.php:383
 #, php-format
 msgid ""
 "By default, the primary IPv4 and IPv6 addresses of this firewall are added "
@@ -25308,11 +25337,11 @@ msgstr ""
 "que configuré en %1$s Système: Configuration Générale %2$s. Cela désactive "
 "la génération automatique de ces entrées."
 
-#: src/usr/local/www/services_unbound_advanced.php:371
+#: src/usr/local/www/services_unbound_advanced.php:387
 msgid "Experimental Bit 0x20 Support"
 msgstr "Support expérimental du Bit 0x20"
 
-#: src/usr/local/www/services_unbound_advanced.php:374
+#: src/usr/local/www/services_unbound_advanced.php:390
 #, php-format
 msgid "See the implementation %1$sdraft dns-0x20%2$s for more information."
 msgstr ""
@@ -28006,27 +28035,33 @@ msgstr ""
 msgid "At least one tag must be entered."
 msgstr "Au moins une balise doit être renseignée."
 
-#: src/usr/local/www/interfaces_qinq_edit.php:201
+#: src/usr/local/www/interfaces_qinq_edit.php:152
+msgid ""
+"This QinQ tag cannot be deleted because it is still being used as an "
+"interface."
+msgstr ""
+
+#: src/usr/local/www/interfaces_qinq_edit.php:220
 msgid "QinQ VLANs group"
 msgstr "Groupe QinQ VLANs"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:239
+#: src/usr/local/www/interfaces_qinq_edit.php:258
 msgid "QinQ Configuration"
 msgstr "Configuration QinQ"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:243
+#: src/usr/local/www/interfaces_qinq_edit.php:262
 msgid "*Parent interface"
 msgstr "*Interface parent"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:246
+#: src/usr/local/www/interfaces_qinq_edit.php:265
 msgid "Only QinQ capable interfaces will be shown."
 msgstr "Seules les interfaces QinQ compatibles seront affichées."
 
-#: src/usr/local/www/interfaces_qinq_edit.php:250
+#: src/usr/local/www/interfaces_qinq_edit.php:269
 msgid "*First level tag"
 msgstr "*Balise de premier niveau"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:254
+#: src/usr/local/www/interfaces_qinq_edit.php:273
 msgid ""
 "This is the first level VLAN tag. On top of this are stacked the member "
 "VLANs defined below."
@@ -28034,23 +28069,23 @@ msgstr ""
 "Ceci est le premier level de tag VLAN. Au dessus de cela ce trouve le "
 "participants du VLAN définit ci-dessous."
 
-#: src/usr/local/www/interfaces_qinq_edit.php:258
+#: src/usr/local/www/interfaces_qinq_edit.php:277
 msgid "Option(s)"
 msgstr "Option(s)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:261
+#: src/usr/local/www/interfaces_qinq_edit.php:280
 msgid "Allows rules to be written more easily."
 msgstr "Permet aux règles d'être écrites plus facilement."
 
-#: src/usr/local/www/interfaces_qinq_edit.php:271
+#: src/usr/local/www/interfaces_qinq_edit.php:290
 msgid "Member(s)"
 msgstr "Membre(s)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:297
+#: src/usr/local/www/interfaces_qinq_edit.php:316
 msgid "*Tag(s)"
 msgstr "*Balise(s)"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:321
+#: src/usr/local/www/interfaces_qinq_edit.php:340
 msgid "Add Tag"
 msgstr "Ajouter une balise"
 
@@ -29477,7 +29512,7 @@ msgstr "Mises à jour en tâche de fond"
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:242
 #: src/usr/local/www/widgets/widgets/interface_statistics.widget.php:267
 #: src/usr/local/www/widgets/widgets/interfaces.widget.php:170
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:477
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:482
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:155
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:138
 #: src/usr/local/www/widgets/widgets/gateways.widget.php:273
@@ -29517,7 +29552,7 @@ msgstr "Vue interne"
 msgid "in use"
 msgstr "En cours d'utilisation"
 
-#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:222
+#: src/usr/local/www/widgets/widgets/ntp_status.widget.php:227
 msgid "Updating..."
 msgstr "Mise à jour..."
 
@@ -29606,43 +29641,43 @@ msgstr "Vérification..."
 msgid "All Dyn DNS entries are hidden."
 msgstr "Toutes les entrées Dyn DNS sont masquées"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:183
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:188
 msgid "Mobile"
 msgstr "Mobile"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:196
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:201
 msgid "Active Tunnels"
 msgstr "Tunnels Actifs"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:197
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
 msgid "Inactive Tunnels"
 msgstr "Tunnels Inactifs"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:198
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:203
 msgid "Mobile Users"
 msgstr "Utilisateurs Mobiles."
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:202
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:207
 msgid "Retrieving overview data "
 msgstr "Récupération des données d'apperçu"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:217
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "Retrieving tunnel data "
 msgstr "Récupération des données de tunnel"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:233
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
 msgid "Retrieving mobile data "
 msgstr "Récupération des données mobiles"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:238
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:243
 msgid "No mobile tunnels have been configured"
 msgstr "Aucun tunnel mobile n'a été configuré"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:247
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:252
 msgid "There are no configured IPsec Tunnels"
 msgstr "Pas de tunnel IPSec configuré"
 
-#: src/usr/local/www/widgets/widgets/ipsec.widget.php:248
+#: src/usr/local/www/widgets/widgets/ipsec.widget.php:253
 msgid "IPsec can be configured <a href=\"vpn_ipsec.php\">here</a>."
 msgstr "IPSec peut être configuré <a href=\"vpn_ipsec.php\">ici</a>."
 
@@ -29796,12 +29831,12 @@ msgid "Update interval"
 msgstr "Intervalle de rafraichissement"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:36
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:198
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:203
 msgid "BIOS"
 msgstr "BIOS"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:38
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:240
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:245
 msgid "CPU Type"
 msgstr "Type de CPU"
 
@@ -29822,12 +29857,12 @@ msgid "State Table Size"
 msgstr "Taille de la table des états"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:45
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:338
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:343
 msgid "MBUF Usage"
 msgstr "Utilisation MBUF"
 
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:46
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:357
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:362
 msgid "Temperature"
 msgstr "Température"
 
@@ -29896,96 +29931,100 @@ msgstr "Widget d'informations système enregistré via le tableau de bord."
 msgid "Unknown system"
 msgstr "Système inconnu"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:179
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:175
+msgid "Serial:"
+msgstr ""
+
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:183
 msgid "Netgate Device ID:"
 msgstr "ID de l'appareil Netgate:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:201
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:206
 msgid "Vendor: "
 msgstr "Fournisseur:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:204
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:209
 msgid "Version: "
 msgstr "Version:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:207
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:212
 msgid "Release Date: "
 msgstr "Date de sortie:"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:223
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:228
 msgid "built on"
 msgstr "Basé sur"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:247
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:252
 msgid "CPUs"
 msgstr "CPUs"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:262
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:267
 msgid "Hardware crypto"
 msgstr "Encryption matérielle"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:281
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:286
 msgid "Current date/time"
 msgstr "Date/Heure actuels"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:290
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:295
 msgid "DNS server(s)"
 msgstr "Serveur(s) DNS"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:309
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:314
 msgid "Last config change"
 msgstr "Dernière modification de la configuration"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:319
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:324
 msgid "State table size"
 msgstr "Taille de la table d'état"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:329
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:334
 msgid "Show states"
 msgstr "Afficher les états"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:374
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:379
 msgid "Load average"
 msgstr "Moyenne de charge"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:376
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:381
 msgid "Last 1, 5 and 15 minutes"
 msgstr "Dernières 1, 5 et 15 minutes"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:385
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:390
 msgid "CPU usage"
 msgstr "Utilisation CPU"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:391
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:396
 #, php-format
 msgid "Retrieving CPU data %s"
 msgstr "Récupération des données CPU %s"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:400
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:405
 msgid "Memory usage"
 msgstr "Utilisation de la mémoire"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:418
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:423
 msgid "SWAP usage"
 msgstr "Utilisation de la mémoire d'échange (SWAP)"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:438
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:443
 msgid "Disk usage"
 msgstr "Utilisation du Disque"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:449
 msgid " of "
 msgstr "de"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:444
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:449
 msgid "in RAM"
 msgstr "en RAM"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:455
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:460
 msgid "All System Information items are hidden."
 msgstr "Toutes les informations système sont cachées"
 
-#: src/usr/local/www/widgets/widgets/system_information.widget.php:476
+#: src/usr/local/www/widgets/widgets/system_information.widget.php:481
 msgid "Item"
 msgstr "Objet"
 
@@ -30047,7 +30086,7 @@ msgstr "Limite de contenu"
 msgid "Picture widget saved via Dashboard."
 msgstr "Widget d'image sauvegardé via le Tableau de Bord"
 
-#: src/usr/local/www/widgets/widgets/picture.widget.php:79
+#: src/usr/local/www/widgets/widgets/picture.widget.php:82
 msgid "New picture:"
 msgstr "Nouvelle image:"
 
@@ -30120,46 +30159,46 @@ msgstr "Impossible de récupérer le statut"
 msgid "delete"
 msgstr "supprimer"
 
-#: src/usr/local/www/pkg_edit.php:662
+#: src/usr/local/www/pkg_edit.php:658
 msgid "Advanced Features"
 msgstr "Caractéristiques avancées"
 
-#: src/usr/local/www/pkg_edit.php:1208
+#: src/usr/local/www/pkg_edit.php:1204
 msgid "Listen on All interfaces/ip addresses "
 msgstr "Ecouter sur toutes les interfaces/adresses IP"
 
-#: src/usr/local/www/pkg_edit.php:1212
+#: src/usr/local/www/pkg_edit.php:1208
 msgid "loopback"
 msgstr "boucle locale"
 
-#: src/usr/local/www/pkg_edit.php:1513 src/usr/local/www/pkg_edit.php:1532
+#: src/usr/local/www/pkg_edit.php:1509 src/usr/local/www/pkg_edit.php:1528
 msgid "Show Advanced Options"
 msgstr "Afficher  les options avancées"
 
-#: src/usr/local/www/pkg_edit.php:1533
+#: src/usr/local/www/pkg_edit.php:1529
 msgid "Hide Advanced Options"
 msgstr "Masquer  les options avancées"
 
-#: src/usr/local/www/interfaces_vlan.php:61
+#: src/usr/local/www/interfaces_vlan.php:48
 msgid ""
 "This VLAN cannot be deleted because it is still being used as an interface."
 msgstr ""
 "Ce VLAN ne peut pas être supprimé car il est toujours utilisé en tant "
 "qu'interface."
 
-#: src/usr/local/www/interfaces_vlan.php:101
+#: src/usr/local/www/interfaces_vlan.php:88
 msgid "VLAN Interfaces"
 msgstr "Interfaces de réseau local virtuel (« VLAN »)"
 
-#: src/usr/local/www/interfaces_vlan.php:132
+#: src/usr/local/www/interfaces_vlan.php:119
 msgid "Edit VLAN"
 msgstr "Modifier le VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:133
+#: src/usr/local/www/interfaces_vlan.php:120
 msgid "Delete VLAN"
 msgstr "Supprimer le VLAN"
 
-#: src/usr/local/www/interfaces_vlan.php:156
+#: src/usr/local/www/interfaces_vlan.php:143
 #, php-format
 msgid ""
 "Not all drivers/NICs support 802.1Q VLAN tagging properly. %1$sOn cards that "
@@ -30172,7 +30211,7 @@ msgstr ""
 "VLAN fonctionneront mais la MTU réduite pourra poser des problèmes.%1$sVoir "
 "le %2$s handbook pour plus d'informations sur les cartes supportées."
 
-#: src/usr/local/www/interfaces_vlan.php:163
+#: src/usr/local/www/interfaces_vlan.php:150
 msgid "Are you sure you want to delete this VLAN?"
 msgstr "Etes-vous sûr de vouloir supprimer ce VLAN ?"
 
@@ -30396,10 +30435,8 @@ msgstr "Copie des fichiers différents ou manquants."
 
 #: src/usr/local/www/system_update_settings.php:235
 #, php-format
-msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option.."
+msgid "Show different and missing files.%1$sWith 'Diff/Minimal' option."
 msgstr ""
-"Afficher les fichiers différents et manquants. %1$s Avec l'option 'Diff / "
-"Minimal'."
 
 #: src/usr/local/www/system_update_settings.php:242
 #, php-format
@@ -30614,7 +30651,7 @@ msgstr "Prefix IPv6 Global Unicast routable "
 msgid "Warning, could not open log for writing."
 msgstr "Attention, impossible d'ouvrir le journal en écriture."
 
-#: src/etc/inc/pkg-utils.inc:187
+#: src/etc/inc/pkg-utils.inc:186
 #, php-format
 msgid ""
 "ERROR!!! An error occurred on pkg execution (rc = %d) with parameters '%s':"
@@ -30622,55 +30659,55 @@ msgstr ""
 "ERREUR!!! Une erreur est survenue dans l'exécution de la commande pkg (rc = "
 "%d) avec les paramètres '%s' :"
 
-#: src/etc/inc/pkg-utils.inc:435 src/etc/inc/pkg-utils.inc:439
+#: src/etc/inc/pkg-utils.inc:434 src/etc/inc/pkg-utils.inc:438
 msgid "ERROR: Error trying to get packages list. Aborting..."
 msgstr ""
 "ERREUR: Erreur lors de l'obtention de la liste des paquets. Abandon..."
 
-#: src/etc/inc/pkg-utils.inc:477 src/etc/inc/pkg-utils.inc:481
+#: src/etc/inc/pkg-utils.inc:476 src/etc/inc/pkg-utils.inc:480
 msgid "ERROR: Error trying to get package version. Aborting..."
 msgstr ""
 "ERREUR: Erreur lors de l'obtention de la version du paquet. Abandon..."
 
-#: src/etc/inc/pkg-utils.inc:532
+#: src/etc/inc/pkg-utils.inc:531
 #, php-format
 msgid "Running last steps of %s installation."
 msgstr "Exécution des dernières étapes de l'installation de %s."
 
-#: src/etc/inc/pkg-utils.inc:545
+#: src/etc/inc/pkg-utils.inc:544
 msgid "Resyncing configuration for all packages."
 msgstr "Resynchronisation de la configuration de tous les paquets."
 
-#: src/etc/inc/pkg-utils.inc:567
+#: src/etc/inc/pkg-utils.inc:566
 msgid "Syncing packages..."
 msgstr "Synchronisation des paquets..."
 
-#: src/etc/inc/pkg-utils.inc:589
+#: src/etc/inc/pkg-utils.inc:588
 msgid "Removing package..."
 msgstr "Suppression du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:595 src/etc/inc/pkg-utils.inc:743
-#: src/etc/inc/pkg-utils.inc:766 src/etc/inc/pkg-utils.inc:802
-#: src/etc/inc/pkg-utils.inc:807 src/etc/inc/pkg-utils.inc:812
-#: src/etc/inc/pkg-utils.inc:830 src/etc/inc/pkg-utils.inc:847
-#: src/etc/inc/pkg-utils.inc:874 src/etc/inc/pkg-utils.inc:920
-#: src/etc/inc/pkg-utils.inc:946 src/etc/inc/pkg-utils.inc:989
-#: src/etc/inc/pkg-utils.inc:1008 src/etc/inc/system.inc:1257
+#: src/etc/inc/pkg-utils.inc:594 src/etc/inc/pkg-utils.inc:742
+#: src/etc/inc/pkg-utils.inc:765 src/etc/inc/pkg-utils.inc:801
+#: src/etc/inc/pkg-utils.inc:806 src/etc/inc/pkg-utils.inc:811
+#: src/etc/inc/pkg-utils.inc:829 src/etc/inc/pkg-utils.inc:846
+#: src/etc/inc/pkg-utils.inc:873 src/etc/inc/pkg-utils.inc:919
+#: src/etc/inc/pkg-utils.inc:945 src/etc/inc/pkg-utils.inc:988
+#: src/etc/inc/pkg-utils.inc:1007 src/etc/inc/system.inc:1257
 #: src/etc/inc/system.inc:1357 src/etc/inc/system.inc:1660
-#: src/etc/inc/system.inc:2232 src/etc/inc/services.inc:1600
-#: src/etc/inc/services.inc:2008 src/etc/inc/services.inc:2225
-#: src/etc/inc/services.inc:2293 src/etc/inc/services.inc:2519
+#: src/etc/inc/system.inc:2232 src/etc/inc/services.inc:1641
+#: src/etc/inc/services.inc:2049 src/etc/inc/services.inc:2266
+#: src/etc/inc/services.inc:2334 src/etc/inc/services.inc:2559
 #: src/etc/inc/rrd.inc:970 src/etc/inc/interfaces.inc:198
-#: src/etc/inc/interfaces.inc:222 src/etc/inc/interfaces.inc:368
-#: src/etc/inc/interfaces.inc:430 src/etc/inc/interfaces.inc:759
-#: src/etc/inc/interfaces.inc:1113 src/etc/inc/interfaces.inc:1144
-#: src/etc/inc/interfaces.inc:1168 src/etc/inc/interfaces.inc:1189
-#: src/etc/inc/interfaces.inc:2223 src/etc/inc/filter.inc:295
+#: src/etc/inc/interfaces.inc:345 src/etc/inc/interfaces.inc:505
+#: src/etc/inc/interfaces.inc:573 src/etc/inc/interfaces.inc:902
+#: src/etc/inc/interfaces.inc:1256 src/etc/inc/interfaces.inc:1287
+#: src/etc/inc/interfaces.inc:1311 src/etc/inc/interfaces.inc:1332
+#: src/etc/inc/interfaces.inc:2366 src/etc/inc/filter.inc:295
 #: src/etc/inc/filter.inc:547
 msgid "done."
 msgstr "fait."
 
-#: src/etc/inc/pkg-utils.inc:622
+#: src/etc/inc/pkg-utils.inc:621
 #, php-format
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
@@ -30678,183 +30715,183 @@ msgstr ""
 "Le fichier de configuration du paquet %s est manquant. Le paquet doit être "
 "réinstallé."
 
-#: src/etc/inc/pkg-utils.inc:638
+#: src/etc/inc/pkg-utils.inc:637
 #, php-format
 msgid "Reinstalling package %1$s because its include file(%2$s) is missing!"
 msgstr ""
 "Reinstallation du paquet %1$s car son fichier d'inclusion(%2$s) est manquant "
 "!"
 
-#: src/etc/inc/pkg-utils.inc:641
+#: src/etc/inc/pkg-utils.inc:640
 #, php-format
 msgid "Reinstalling package %s failed. Take appropriate measures!!!"
 msgstr ""
 "La réinstallation du paquet %s a échoué. Prenez les mesures appropriées !!!"
 
-#: src/etc/inc/pkg-utils.inc:734
+#: src/etc/inc/pkg-utils.inc:733
 msgid "Beginning package installation."
 msgstr "Début de l'installation du paquet."
 
-#: src/etc/inc/pkg-utils.inc:735
+#: src/etc/inc/pkg-utils.inc:734
 #, php-format
 msgid "Beginning package installation for %s ."
 msgstr "Début de l'installation du paquet %s ."
 
-#: src/etc/inc/pkg-utils.inc:739
+#: src/etc/inc/pkg-utils.inc:738
 msgid "Saving updated package information..."
 msgstr "Sauvegarde des informations de paquet mises à jour..."
 
-#: src/etc/inc/pkg-utils.inc:742
+#: src/etc/inc/pkg-utils.inc:741
 #, php-format
 msgid "Installed %s package."
 msgstr "Paquet %s installé."
 
-#: src/etc/inc/pkg-utils.inc:746
+#: src/etc/inc/pkg-utils.inc:745
 #, php-format
 msgid "Overwrote previous installation of %s."
 msgstr "Installation précédente de %s écrasée."
 
-#: src/etc/inc/pkg-utils.inc:747
+#: src/etc/inc/pkg-utils.inc:746
 msgid "overwrite!"
 msgstr "écrasé !"
 
-#: src/etc/inc/pkg-utils.inc:750
+#: src/etc/inc/pkg-utils.inc:749
 #, php-format
 msgid "Intermediate config write during package install for %s."
 msgstr ""
 "Ecriture de la configuration intermédiaire durant l'installation du paquet "
 "%s."
 
-#: src/etc/inc/pkg-utils.inc:754
+#: src/etc/inc/pkg-utils.inc:753
 #, php-format
 msgid "The %1$s package is not installed.%2$sInstallation aborted."
 msgstr "Le paquet %1$s n'est pas installé.%2$sInstallation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
-#: src/etc/inc/pkg-utils.inc:866
+#: src/etc/inc/pkg-utils.inc:757 src/etc/inc/pkg-utils.inc:789
+#: src/etc/inc/pkg-utils.inc:865
 #, php-format
 msgid "Failed to install package: %s."
 msgstr "Échec d'installation du paquet : %s."
 
-#: src/etc/inc/pkg-utils.inc:759 src/etc/inc/pkg-utils.inc:791
-#: src/etc/inc/pkg-utils.inc:867
+#: src/etc/inc/pkg-utils.inc:758 src/etc/inc/pkg-utils.inc:790
+#: src/etc/inc/pkg-utils.inc:866
 msgid "Failed to install package."
 msgstr "Échec d'installation du paquet."
 
-#: src/etc/inc/pkg-utils.inc:764
+#: src/etc/inc/pkg-utils.inc:763
 msgid "Loading package configuration... "
 msgstr "Chargement de la configuration du paquet... "
 
-#: src/etc/inc/pkg-utils.inc:767
+#: src/etc/inc/pkg-utils.inc:766
 msgid "Configuring package components..."
 msgstr "Configuration des composants du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:779 src/etc/inc/pkg-utils.inc:961
+#: src/etc/inc/pkg-utils.inc:778 src/etc/inc/pkg-utils.inc:960
 msgid "Loading package instructions..."
 msgstr "Chargement des instructions du paquet..."
 
-#: src/etc/inc/pkg-utils.inc:786
+#: src/etc/inc/pkg-utils.inc:785
 #, php-format
 msgid "Include %s is missing!"
 msgstr "Le fichier d'inclusion %s est manquant !"
 
-#: src/etc/inc/pkg-utils.inc:797
+#: src/etc/inc/pkg-utils.inc:796
 msgid "Custom commands..."
 msgstr "Commandes personnalisées..."
 
-#: src/etc/inc/pkg-utils.inc:800
+#: src/etc/inc/pkg-utils.inc:799
 msgid "Executing custom_php_global_functions()..."
 msgstr "Exécution de custom_php_global_functions()..."
 
-#: src/etc/inc/pkg-utils.inc:805
+#: src/etc/inc/pkg-utils.inc:804
 msgid "Executing custom_php_install_command()..."
 msgstr "Exécution de custom_php_install_command()..."
 
-#: src/etc/inc/pkg-utils.inc:810
+#: src/etc/inc/pkg-utils.inc:809
 msgid "Executing custom_php_resync_config_command()..."
 msgstr "Exécution de custom_php_resync_config_command()..."
 
-#: src/etc/inc/pkg-utils.inc:817 src/etc/inc/pkg-utils.inc:909
+#: src/etc/inc/pkg-utils.inc:816 src/etc/inc/pkg-utils.inc:908
 msgid "Menu items... "
 msgstr "Éléments du menu... "
 
-#: src/etc/inc/pkg-utils.inc:834 src/etc/inc/pkg-utils.inc:924
+#: src/etc/inc/pkg-utils.inc:833 src/etc/inc/pkg-utils.inc:923
 msgid "Services... "
 msgstr "Services..."
 
-#: src/etc/inc/pkg-utils.inc:861
+#: src/etc/inc/pkg-utils.inc:860
 msgid "Loading package configuration... failed!"
 msgstr "Chargement de la configuration du paquet... échec !"
 
-#: src/etc/inc/pkg-utils.inc:861
+#: src/etc/inc/pkg-utils.inc:860
 msgid "Installation aborted."
 msgstr "Installation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:862
+#: src/etc/inc/pkg-utils.inc:861
 msgid "Unable to load package configuration. Installation aborted."
 msgstr ""
 "Impossible de charger la configuration du paquet. Installation abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:871
+#: src/etc/inc/pkg-utils.inc:870
 msgid "Writing configuration... "
 msgstr "Enregistrement de la configuration... "
 
-#: src/etc/inc/pkg-utils.inc:873
+#: src/etc/inc/pkg-utils.inc:872
 #, php-format
 msgid "Successfully installed package: %s."
 msgstr "Paquet installé avec succès : %s."
 
-#: src/etc/inc/pkg-utils.inc:893
+#: src/etc/inc/pkg-utils.inc:892
 #, php-format
 msgid "The %1$s package is not installed.%2$sDeletion aborted."
 msgstr "Le paquet %1$s n'est pas installé.%2$sSuppression abandonnée."
 
-#: src/etc/inc/pkg-utils.inc:898
+#: src/etc/inc/pkg-utils.inc:897
 #, php-format
 msgid "Removing %s package... "
 msgstr "Suppression du paquet %s... "
 
-#: src/etc/inc/pkg-utils.inc:899
+#: src/etc/inc/pkg-utils.inc:898
 #, php-format
 msgid "Removing %s components..."
 msgstr "Suppression des composants de %s..."
 
-#: src/etc/inc/pkg-utils.inc:952
+#: src/etc/inc/pkg-utils.inc:951
 #, php-format
 msgid "Intermediate config write during package removal for %s."
 msgstr ""
 "Ecriture de la configuration intermédiaire durant la suppression du paquet "
 "%s."
 
-#: src/etc/inc/pkg-utils.inc:968
+#: src/etc/inc/pkg-utils.inc:967
 #, php-format
 msgid "Include file %s could not be found for inclusion."
 msgstr "Le fichier d'inclusion %s n'a pas été trouvé."
 
-#: src/etc/inc/pkg-utils.inc:986
+#: src/etc/inc/pkg-utils.inc:985
 msgid "Deinstall commands... "
 msgstr "Commandes de désinstallation..."
 
-#: src/etc/inc/pkg-utils.inc:991
+#: src/etc/inc/pkg-utils.inc:990
 msgid "Not executing custom deinstall hook because an include is missing."
 msgstr ""
 "Commandes de désinstallation personnalisée non exécutées car un fichier "
 "d'inclusion est manquant."
 
-#: src/etc/inc/pkg-utils.inc:998
+#: src/etc/inc/pkg-utils.inc:997
 msgid "Syslog entries... "
 msgstr "Enregistrements syslog... "
 
-#: src/etc/inc/pkg-utils.inc:1006
+#: src/etc/inc/pkg-utils.inc:1005
 msgid "Configuration... "
 msgstr "Configuration... "
 
-#: src/etc/inc/pkg-utils.inc:1009
+#: src/etc/inc/pkg-utils.inc:1008
 #, php-format
 msgid "Removed %s package."
 msgstr "Paquet %s supprimé."
 
-#: src/etc/inc/pkg-utils.inc:1034
+#: src/etc/inc/pkg-utils.inc:1033
 msgid ""
 "Waiting for Internet connection to update pkg metadata and finish package "
 "reinstallation"
@@ -30862,18 +30899,18 @@ msgstr ""
 "Attente de la connexion Internet pour mettre à jour les métadonnées de la "
 "commande pkg et terminer la réinstallation"
 
-#: src/etc/inc/pkg-utils.inc:1047 src/etc/inc/pkg-utils.inc:1086
+#: src/etc/inc/pkg-utils.inc:1046 src/etc/inc/pkg-utils.inc:1085
 msgid "Package reinstall"
 msgstr "Réinstallation du paquet"
 
-#: src/etc/inc/pkg-utils.inc:1048
+#: src/etc/inc/pkg-utils.inc:1047
 msgid ""
 "Package reinstall process was ABORTED due to lack of internet connectivity"
 msgstr ""
 "La réinstallation du paquet a été ABANDONNÉE du fait de l'absence de "
 "connexion à Internet"
 
-#: src/etc/inc/pkg-utils.inc:1087
+#: src/etc/inc/pkg-utils.inc:1086
 #, php-format
 msgid ""
 "Package %s does not exist in current %s version and it has been removed."
@@ -30881,7 +30918,7 @@ msgstr ""
 "Le paquet %s n'existe pas dans la version actuelle de %s et il a été "
 "supprimé."
 
-#: src/etc/inc/pkg-utils.inc:1108
+#: src/etc/inc/pkg-utils.inc:1107
 msgid "Stopping all packages."
 msgstr "Arrêt de tous les paquets."
 
@@ -31266,11 +31303,11 @@ msgstr "Erreur: impossible d'ouvrir dmesg.boot dans system_dmesg_save().%s"
 msgid "Setting hard disk standby... "
 msgstr "Configuration du délai de mise en veille du disque dur... "
 
-#: src/etc/inc/system.inc:2483
+#: src/etc/inc/system.inc:2486
 msgid "PC Engines WRAP"
 msgstr "PC Engines WRAP"
 
-#: src/etc/inc/system.inc:2487 src/etc/inc/system.inc:2506
+#: src/etc/inc/system.inc:2490 src/etc/inc/system.inc:2509
 msgid "PC Engines ALIX"
 msgstr "PC Engines ALIX"
 
@@ -31302,31 +31339,31 @@ msgstr ""
 "Aucun fichier config.xml ou sauvegarde trouvé, retour à la configuration par "
 "défaut."
 
-#: src/etc/inc/unbound.inc:793
+#: src/etc/inc/unbound.inc:795
 msgid "Static"
 msgstr "Statique"
 
-#: src/etc/inc/unbound.inc:794
+#: src/etc/inc/unbound.inc:796
 msgid "Transparent"
 msgstr "Transparent"
 
-#: src/etc/inc/unbound.inc:795
+#: src/etc/inc/unbound.inc:797
 msgid "Type Transparent"
 msgstr "Type transparent"
 
-#: src/etc/inc/unbound.inc:796 src/etc/inc/filter.inc:77
+#: src/etc/inc/unbound.inc:798 src/etc/inc/filter.inc:77
 msgid "Redirect"
 msgstr "Rediriger"
 
-#: src/etc/inc/unbound.inc:797
+#: src/etc/inc/unbound.inc:799
 msgid "Inform"
 msgstr "Informer"
 
-#: src/etc/inc/unbound.inc:798
+#: src/etc/inc/unbound.inc:800
 msgid "Inform Deny"
 msgstr "Information de blocage"
 
-#: src/etc/inc/unbound.inc:799
+#: src/etc/inc/unbound.inc:801
 msgid "No Default"
 msgstr "Pas de valeur par défaut"
 
@@ -31418,76 +31455,76 @@ msgstr ""
 "Plage DHCP invalide détectée: %1$s - %2$s pour %3$s sous réseau %4$s %5$s . "
 "Veuillez corriger les paramètres dans Services:Serveur DHCP"
 
-#: src/etc/inc/services.inc:1146
+#: src/etc/inc/services.inc:1187
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
 msgstr ""
 "Erreur: Impossible d'ouvrir le fichier dhcpd.conf dans "
 "services_dhcpdv4_configure().%s"
 
-#: src/etc/inc/services.inc:1653
+#: src/etc/inc/services.inc:1694
 msgid "Could not write Igmpproxy configuration file!"
 msgstr "Impossible d'enregistrer le fichier de configuration lgmpproxy!"
 
-#: src/etc/inc/services.inc:1666
+#: src/etc/inc/services.inc:1707
 msgid "Started IGMP proxy service."
 msgstr "Service de proxy IGMP démarré."
 
-#: src/etc/inc/services.inc:1690
+#: src/etc/inc/services.inc:1731
 msgid "Starting DHCP relay service..."
 msgstr "Démarrage du service de relais DHCP..."
 
-#: src/etc/inc/services.inc:1715
+#: src/etc/inc/services.inc:1756
 msgid "No destination IP has been configured!"
 msgstr "Aucune IP de destination n'a été configurée!"
 
-#: src/etc/inc/services.inc:1789
+#: src/etc/inc/services.inc:1830
 msgid "No suitable interface found for running dhcrelay!"
 msgstr "Aucune interface convenable n'a été trouvée pour lancer dhcrelay!"
 
-#: src/etc/inc/services.inc:1825
+#: src/etc/inc/services.inc:1866
 msgid "Starting DHCPv6 relay service..."
 msgstr "Démarrage du service de relais DHCPv6..."
 
-#: src/etc/inc/services.inc:1916
+#: src/etc/inc/services.inc:1957
 msgid "No suitable interface found for running dhcrelay -6!"
 msgstr "Aucune interface convenable n'a été trouvée pour lancer dhcrelay -6!"
 
-#: src/etc/inc/services.inc:1977
+#: src/etc/inc/services.inc:2018
 msgid "Starting DynDNS clients..."
 msgstr "Démarrage des clients DynDNS..."
 
-#: src/etc/inc/services.inc:2088
+#: src/etc/inc/services.inc:2129
 msgid "Starting DNS forwarder..."
 msgstr "Démarrage du redirecteur DNS..."
 
-#: src/etc/inc/services.inc:2263
+#: src/etc/inc/services.inc:2304
 msgid "Starting DNS Resolver..."
 msgstr "Démarrage du résolveur DNS..."
 
-#: src/etc/inc/services.inc:2279
+#: src/etc/inc/services.inc:2320
 msgid "Unbound start waiting on dhcp6c."
 msgstr "Unbound commence à attendre dhcp6c."
 
-#: src/etc/inc/services.inc:2283
+#: src/etc/inc/services.inc:2324
 msgid "dhcp6 init complete. Continuing"
 msgstr "Initialisation de dhcp6 complète. Poursuivre"
 
-#: src/etc/inc/services.inc:2292
+#: src/etc/inc/services.inc:2333
 msgid "sync unbound done."
 msgstr "Synchronisation de unbound réalisé."
 
-#: src/etc/inc/services.inc:2330
+#: src/etc/inc/services.inc:2371
 msgid "Starting SNMP daemon... "
 msgstr "Démarrage du démon SNMP..."
 
-#: src/etc/inc/services.inc:2341
+#: src/etc/inc/services.inc:2382
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
 msgstr ""
 "Erreur: impossible d'ouvrir snmpd.conf dans services_snmpd_configure().%s"
 
-#: src/etc/inc/services.inc:2675
+#: src/etc/inc/services.inc:2715
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s A record because the IP address has not changed."
@@ -31495,7 +31532,7 @@ msgstr ""
 "phpDynDNS: L'enregistrement de type A %s non mis à jour car l'adresse IP n'a "
 "pas été modifiée"
 
-#: src/etc/inc/services.inc:2694
+#: src/etc/inc/services.inc:2734
 #, php-format
 msgid ""
 "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not "
@@ -31504,52 +31541,52 @@ msgstr ""
 "phpDynDNS: L'enregistrement de type AAAA %s non mis à jour car l'adresse "
 "IPv6 n'a pas été modifiée"
 
-#: src/etc/inc/services.inc:2726 src/etc/inc/services.inc:2738
+#: src/etc/inc/services.inc:2766 src/etc/inc/services.inc:2778
 #: src/etc/inc/dyndns.class:1845 src/etc/inc/dyndns.class:1853
 #, php-format
 msgid "phpDynDNS: updating cache file %1$s: %2$s"
 msgstr "phpDynDNS : mise à jour du fichier cache %1$s : %2$s"
 
-#: src/etc/inc/services.inc:2729
+#: src/etc/inc/services.inc:2769
 #, php-format
 msgid "DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s"
 msgstr "DynDNS a mis à jour l'adresse IP (A) pour %1$s de %2$s (%3$s) en %4$s"
 
-#: src/etc/inc/services.inc:2741
+#: src/etc/inc/services.inc:2781
 #, php-format
 msgid "DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s"
 msgstr ""
 "DynDNS a mis à jour l'adresse Ipv6 (AAAA) pour %1$s de %2$s (%3$s) en %4$s"
 
-#: src/etc/inc/services.inc:2749
+#: src/etc/inc/services.inc:2789
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: ERREUR de mise à jour de l'adresse IP (A) concernant %1$s (%2$s)"
 
-#: src/etc/inc/services.inc:2754
+#: src/etc/inc/services.inc:2794
 #, php-format
 msgid "phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)"
 msgstr ""
 "phpDynDNS: ERREUR de mise à jour de l'adresse IP (AAAA) concernant %1$s "
 "(%2$s)"
 
-#: src/etc/inc/services.inc:2788
+#: src/etc/inc/services.inc:2828
 msgid "Created:"
 msgstr "Créé:"
 
-#: src/etc/inc/services.inc:2814
+#: src/etc/inc/services.inc:2854
 msgid "If possible do not add items to this file manually."
 msgstr "Si possible, éviter d'ajouter manuellement des éléments à ce fichier"
 
-#: src/etc/inc/services.inc:2815
+#: src/etc/inc/services.inc:2855
 msgid ""
 "If done so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
 "Si configuré ainsi, le fichier doit se terminer par une ligne vide (ex: "
 "nouvelle ligne)"
 
-#: src/etc/inc/services.inc:2865
+#: src/etc/inc/services.inc:2905
 msgid "Starting UPnP service... "
 msgstr "Démarrage du service UPnP..."
 
@@ -32092,7 +32129,7 @@ msgstr ""
 "Le champ « %1$s » doit contenir uniquement une ou des plage(s) CIDR %2$s "
 "valide(s) séparées par une virgule."
 
-#: src/etc/inc/openvpn.inc:1124
+#: src/etc/inc/openvpn.inc:1127
 msgid ""
 "Failed to construct OpenVPN server configuration. The selected DH Parameter "
 "length cannot be used."
@@ -32100,43 +32137,43 @@ msgstr ""
 "Impossible de construire la configuration du serveur OpenVPN. La longueur "
 "choisie pour le paramètre DH ne peut pas être utilisée."
 
-#: src/etc/inc/openvpn.inc:1292
+#: src/etc/inc/openvpn.inc:1295
 #, php-format
 msgid "OpenVPN ID %1$s PID %2$s still running, killing."
 msgstr "OpenVPN ID %1$s PID %2$s déjà lancé, arrêt en cours."
 
-#: src/etc/inc/openvpn.inc:1527
+#: src/etc/inc/openvpn.inc:1530
 #, php-format
 msgid "Resyncing OpenVPN instances for interface %s."
 msgstr "Resynchronisation des instances OpenVPN pour l'interface %s."
 
-#: src/etc/inc/openvpn.inc:1529
+#: src/etc/inc/openvpn.inc:1532
 msgid "Resyncing OpenVPN instances."
 msgstr "Resynchronisation des instances OpenVPN."
 
-#: src/etc/inc/openvpn.inc:1562
+#: src/etc/inc/openvpn.inc:1565
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s server %2$s."
 msgstr ""
 "Resynchronisation OpenVPN pour le groupe de passerelles %1$s pour le serveur "
 "%2$s."
 
-#: src/etc/inc/openvpn.inc:1571
+#: src/etc/inc/openvpn.inc:1574
 #, php-format
 msgid "Resyncing OpenVPN for gateway group %1$s client %2$s."
 msgstr ""
 "Resynchronisation OpenVPN pour le groupe de passerelles %1$s pour le client "
 "%2$s."
 
-#: src/etc/inc/openvpn.inc:1580
+#: src/etc/inc/openvpn.inc:1583
 msgid "openvpn_resync_gwgroup called with null gwgroup parameter."
 msgstr "openvpn_resync_gwgroup appelé avec le paramètre gwgroup à null."
 
-#: src/etc/inc/openvpn.inc:1686 src/etc/inc/openvpn.inc:1817
+#: src/etc/inc/openvpn.inc:1689 src/etc/inc/openvpn.inc:1820
 msgid "Unable to contact daemon"
 msgstr "Impossible de joindre le daemon"
 
-#: src/etc/inc/openvpn.inc:1687 src/etc/inc/openvpn.inc:1818
+#: src/etc/inc/openvpn.inc:1690 src/etc/inc/openvpn.inc:1821
 msgid "Service not running?"
 msgstr "Service non lancé ?"
 
@@ -32902,43 +32939,43 @@ msgstr "transfert"
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
 msgstr "DNSCACHE: Trouvé ancienne IP %1$s et nouvelle IP %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:1887
+#: src/etc/inc/pfsense-utils.inc:1889
 #, php-format
 msgid "Loading %s cryptographic accelerator module."
 msgstr "Chargement %s du module d’accélération cryptographique en cours."
 
-#: src/etc/inc/pfsense-utils.inc:1904
+#: src/etc/inc/pfsense-utils.inc:1907
 #, php-format
 msgid "Loading %s thermal monitor module."
 msgstr "Chargement %s du module de température en cours."
 
-#: src/etc/inc/pfsense-utils.inc:1981 src/etc/inc/pfsense-utils.inc:2037
+#: src/etc/inc/pfsense-utils.inc:1984 src/etc/inc/pfsense-utils.inc:2040
 #, php-format
 msgid "Download file failed with status code %1$s. URL: %2$s"
 msgstr ""
 "Échec de téléchargement du fichier avec le code d'erreur %1$s. URL: %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2256
+#: src/etc/inc/pfsense-utils.inc:2259
 #, php-format
 msgid "Could not process non-existent file from alias: %s"
 msgstr "Impossible de traiter un fichier non existant depuis l'alias : %s"
 
-#: src/etc/inc/pfsense-utils.inc:2261
+#: src/etc/inc/pfsense-utils.inc:2264
 #, php-format
 msgid "Could not process empty file from alias: %s"
 msgstr "Impossible de traiter un fichier vide depuis l'alias : %s"
 
-#: src/etc/inc/pfsense-utils.inc:2266
+#: src/etc/inc/pfsense-utils.inc:2269
 #, php-format
 msgid "Could not process aliases from alias: %s"
 msgstr "Impossible de traiter les alias depuis l'alias : %s"
 
-#: src/etc/inc/pfsense-utils.inc:2323
+#: src/etc/inc/pfsense-utils.inc:2326
 #, php-format
 msgid "Failed to download alias %s"
 msgstr "Échec de Téléchargement de l'alias %s"
 
-#: src/etc/inc/pfsense-utils.inc:2352
+#: src/etc/inc/pfsense-utils.inc:2355
 msgid ""
 "Alias archive is a .tar/tgz file which cannot be decompressed because "
 "utility is missing!"
@@ -32946,150 +32983,150 @@ msgstr ""
 "L'extension de l'archive est un fichier .tar/tgz qui ne peut pas être "
 "décompressé car l'utilitaire nécessaire est manquant !"
 
-#: src/etc/inc/pfsense-utils.inc:2362
+#: src/etc/inc/pfsense-utils.inc:2365
 #, php-format
 msgid "Could not open %s/aliases for writing!"
 msgstr "Impossible d'ouvrir %s/alias en écriture"
 
-#: src/etc/inc/pfsense-utils.inc:2368
+#: src/etc/inc/pfsense-utils.inc:2371
 #, php-format
 msgid "The following file could not be read %1$s from %2$s"
 msgstr "Le Fichier suivant ne peut être lu %1$s depuis %2$s"
 
-#: src/etc/inc/pfsense-utils.inc:2947
+#: src/etc/inc/pfsense-utils.inc:2950
 msgid "Bosnian"
 msgstr "Bosniaque"
 
-#: src/etc/inc/pfsense-utils.inc:2948
+#: src/etc/inc/pfsense-utils.inc:2951
 msgid "Chinese (Simplified, China)"
 msgstr "Chinois (Simplifié, Chine)"
 
-#: src/etc/inc/pfsense-utils.inc:2949
+#: src/etc/inc/pfsense-utils.inc:2952
 msgid "Chinese (Taiwan)"
 msgstr "Chinois (Taiwan)"
 
-#: src/etc/inc/pfsense-utils.inc:2950
+#: src/etc/inc/pfsense-utils.inc:2953
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#: src/etc/inc/pfsense-utils.inc:2951
+#: src/etc/inc/pfsense-utils.inc:2954
 msgid "English"
 msgstr "Anglais"
 
-#: src/etc/inc/pfsense-utils.inc:2952
+#: src/etc/inc/pfsense-utils.inc:2955
 msgid "French"
 msgstr "Français"
 
-#: src/etc/inc/pfsense-utils.inc:2953
+#: src/etc/inc/pfsense-utils.inc:2956
 msgid "German (Germany)"
 msgstr "Allemand (Allemagne)"
 
-#: src/etc/inc/pfsense-utils.inc:2954
+#: src/etc/inc/pfsense-utils.inc:2957
 msgid "Norwegian Bokmål"
 msgstr "Norvégien Bokmål"
 
-#: src/etc/inc/pfsense-utils.inc:2955
+#: src/etc/inc/pfsense-utils.inc:2958
 msgid "Polish"
 msgstr "Polonais"
 
-#: src/etc/inc/pfsense-utils.inc:2956
+#: src/etc/inc/pfsense-utils.inc:2959
 msgid "Portuguese (Brazil)"
 msgstr "Portugais (Brésil)"
 
-#: src/etc/inc/pfsense-utils.inc:2957
+#: src/etc/inc/pfsense-utils.inc:2960
 msgid "Russian"
 msgstr "Russe"
 
-#: src/etc/inc/pfsense-utils.inc:2958
+#: src/etc/inc/pfsense-utils.inc:2961
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: src/etc/inc/pfsense-utils.inc:2959
+#: src/etc/inc/pfsense-utils.inc:2962
 msgid "Spanish (Argentina)"
 msgstr "Espagnol (Argentine)"
 
-#: src/etc/inc/pfsense-utils.inc:3154 src/etc/inc/pfsense-utils.inc:3169
-#: src/etc/inc/pfsense-utils.inc:3195
+#: src/etc/inc/pfsense-utils.inc:3157 src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3198
 msgid "No Service"
 msgstr "Pas de service"
 
-#: src/etc/inc/pfsense-utils.inc:3170
+#: src/etc/inc/pfsense-utils.inc:3173
 msgid "Restricted Service"
 msgstr "Service restreint "
 
-#: src/etc/inc/pfsense-utils.inc:3171
+#: src/etc/inc/pfsense-utils.inc:3174
 msgid "Valid Service"
 msgstr "Service Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3172
+#: src/etc/inc/pfsense-utils.inc:3175
 msgid "Restricted Regional Service"
 msgstr "Service de restriction regional"
 
-#: src/etc/inc/pfsense-utils.inc:3173
+#: src/etc/inc/pfsense-utils.inc:3176
 msgid "Powersaving Service"
 msgstr "Service d'économie d'énergie"
 
-#: src/etc/inc/pfsense-utils.inc:3174
+#: src/etc/inc/pfsense-utils.inc:3177
 msgid "Unknown Service"
 msgstr "Service inconnu"
 
-#: src/etc/inc/pfsense-utils.inc:3180
+#: src/etc/inc/pfsense-utils.inc:3183
 msgid "Invalid SIM/locked State"
 msgstr "Invalide SIM/Etat Bloqué"
 
-#: src/etc/inc/pfsense-utils.inc:3181
+#: src/etc/inc/pfsense-utils.inc:3184
 msgid "Valid SIM State"
 msgstr "Etat de la SIM Valide"
 
-#: src/etc/inc/pfsense-utils.inc:3182
+#: src/etc/inc/pfsense-utils.inc:3185
 msgid "Invalid SIM CS State"
 msgstr "Etat de la SIM CS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3183
+#: src/etc/inc/pfsense-utils.inc:3186
 msgid "Invalid SIM PS State"
 msgstr "Etat de la SIM PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3184
+#: src/etc/inc/pfsense-utils.inc:3187
 msgid "Invalid SIM CS/PS State"
 msgstr "Etat de la SIM CS/PS invalide"
 
-#: src/etc/inc/pfsense-utils.inc:3185
+#: src/etc/inc/pfsense-utils.inc:3188
 msgid "Missing SIM State"
 msgstr "Etat de la SIM manquant"
 
-#: src/etc/inc/pfsense-utils.inc:3196
+#: src/etc/inc/pfsense-utils.inc:3199
 msgid "Limited Service"
 msgstr "Service limité"
 
-#: src/etc/inc/pfsense-utils.inc:3212
+#: src/etc/inc/pfsense-utils.inc:3215
 msgid "Initializing Service"
 msgstr "Initialisation du service"
 
-#: src/etc/inc/pfsense-utils.inc:3213
+#: src/etc/inc/pfsense-utils.inc:3216
 msgid "Network Lock error Service"
 msgstr "Service d'erreur de verrouillage réseau"
 
-#: src/etc/inc/pfsense-utils.inc:3214
+#: src/etc/inc/pfsense-utils.inc:3217
 msgid "Network Locked Service"
 msgstr "Service Reseau Verrouillé"
 
-#: src/etc/inc/pfsense-utils.inc:3215
+#: src/etc/inc/pfsense-utils.inc:3218
 msgid "Unlocked or correct MCC/MNC Service"
 msgstr "Service MCC/MNC déverrouillé ou correct"
 
-#: src/etc/inc/pfsense-utils.inc:3221
+#: src/etc/inc/pfsense-utils.inc:3224
 msgid "No action State"
 msgstr "Aucun état d'action"
 
-#: src/etc/inc/pfsense-utils.inc:3222
+#: src/etc/inc/pfsense-utils.inc:3225
 msgid "Network lock State"
 msgstr "Etat des réseaux verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3223
+#: src/etc/inc/pfsense-utils.inc:3226
 msgid "(U)SIM card lock State"
 msgstr "Etat des cartes(U)SIM verouillés"
 
-#: src/etc/inc/pfsense-utils.inc:3224
+#: src/etc/inc/pfsense-utils.inc:3227
 msgid "Network Lock and (U)SIM card Lock State"
 msgstr "Etat des réseaux et des cartes (U)SIM verouillés"
 
@@ -33625,41 +33662,41 @@ msgstr ""
 "La commande '%1$s' a retourné un code de sortie '%2$d', la sortie était "
 "'%3$s' "
 
-#: src/etc/inc/util.inc:2576
+#: src/etc/inc/util.inc:2578
 #, php-format
 msgid "%s must be a valid IPv4 address or alias."
 msgstr "%s doit être une adresse IPv4 valide ou un alias."
 
-#: src/etc/inc/util.inc:2580
+#: src/etc/inc/util.inc:2582
 #, php-format
 msgid "%s must be a valid IPv4 address."
 msgstr "%s doit être une adresse IPv4 valide."
 
-#: src/etc/inc/util.inc:2592
+#: src/etc/inc/util.inc:2594
 #, php-format
 msgid "%s must be a valid IPv6 address or alias."
 msgstr "%s doit être une adresse IPv6 valide ou un alias."
 
-#: src/etc/inc/util.inc:2596
+#: src/etc/inc/util.inc:2598
 #, php-format
 msgid "%s must be a valid IPv6 address."
 msgstr "%s doit être une adresse IPv6 valide."
 
-#: src/etc/inc/util.inc:2610
+#: src/etc/inc/util.inc:2612
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address or alias."
 msgstr "%s doit être une adresse IPv4 ou IPv6 valide ou un alias."
 
-#: src/etc/inc/util.inc:2614
+#: src/etc/inc/util.inc:2616
 #, php-format
 msgid "%s must be a valid IPv4 or IPv6 address."
 msgstr "%s doit être une adresse IPv4 ou IPv6 valide."
 
-#: src/etc/inc/util.inc:2669
+#: src/etc/inc/util.inc:2671
 msgid "Error: attempting to write DUID file - Invalid DUID detected"
 msgstr "Erreur: Ecriture du fichier DUID - DUID invalide detecté"
 
-#: src/etc/inc/util.inc:2679
+#: src/etc/inc/util.inc:2681
 msgid "Error: attempting to write DUID file - File write error"
 msgstr "Erreur: Ecriture du fichier DUID - erreur d’écriture du fichier"
 
@@ -34126,71 +34163,85 @@ msgstr "interfaces_bring_up() appelée mais aucune variable défini."
 msgid "Configuring loopback interface..."
 msgstr "Configuration de l'interface loopback..."
 
-#: src/etc/inc/interfaces.inc:206
+#: src/etc/inc/interfaces.inc:329
 msgid "Configuring VLAN interfaces..."
 msgstr "Configuration des interfaces VLAN..."
 
-#: src/etc/inc/interfaces.inc:230
+#: src/etc/inc/interfaces.inc:353
 msgid "VLAN: called with wrong options. Problems with config!"
 msgstr ""
 "VLAN : appelé avec une mauvaise option. Problème avec la configuration !"
 
-#: src/etc/inc/interfaces.inc:235
+#: src/etc/inc/interfaces.inc:358
 msgid "interface_vlan_configure called with if undefined."
 msgstr "interface_vlan_configure appelé avec une condition if non définie."
 
-#: src/etc/inc/interfaces.inc:281 src/etc/inc/interfaces.inc:376
+#: src/etc/inc/interfaces.inc:364
+msgid "vlan_interface called with if undefined var."
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:408 src/etc/inc/interfaces.inc:513
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
 msgstr ""
 "QinQ compat VLAN : appelé avec une mauvaise option. Problème dans la "
 "configuration ! %s"
 
-#: src/etc/inc/interfaces.inc:288
+#: src/etc/inc/interfaces.inc:415
 #, php-format
 msgid "interface_qinq_configure called with if undefined.%s"
 msgstr "interface_qinq_configure appelé avec une condition if non définie. %s"
 
-#: src/etc/inc/interfaces.inc:293
+#: src/etc/inc/interfaces.inc:420
 #, php-format
 msgid "interface_qinq_configure called with invalid if.%s"
 msgstr "interface_qinq_configure appelé avec une condition if invalide.%s"
 
-#: src/etc/inc/interfaces.inc:359
+#: src/etc/inc/interfaces.inc:426
+msgid "interface_qinq_configure cannot create VLAN interface"
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:496
 msgid "Configuring QinQ interfaces..."
 msgstr "Configuration des interfaces QinQ..."
 
-#: src/etc/inc/interfaces.inc:384
+#: src/etc/inc/interfaces.inc:519
 #, php-format
 msgid "interface_qinq2_configure called with if undefined.%s"
 msgstr "interface_qinq2_configure appelé avec une condition if non définie.%s"
 
-#: src/etc/inc/interfaces.inc:405
+#: src/etc/inc/interfaces.inc:526
+#, php-format
+msgid ""
+"interface_qinq2_configure interface name too big %s. (max. size: %d).%s"
+msgstr ""
+
+#: src/etc/inc/interfaces.inc:548
 msgid "Creating wireless clone interfaces..."
 msgstr "Création d'un clone de l'interface sans fil"
 
-#: src/etc/inc/interfaces.inc:483
+#: src/etc/inc/interfaces.inc:626
 #, php-format
 msgid "No members found on %s"
 msgstr "Aucun membre trouvé sur %s"
 
-#: src/etc/inc/interfaces.inc:547
+#: src/etc/inc/interfaces.inc:690
 msgid "realif not defined in interfaces bridge - up"
 msgstr "realif non définie sur l'interface bridge - up"
 
-#: src/etc/inc/interfaces.inc:568
+#: src/etc/inc/interfaces.inc:711
 msgid "bridgeif not defined -- could not bring interface up"
 msgstr "bridgeif non défini -- impossible d'activer l'interface"
 
-#: src/etc/inc/interfaces.inc:742
+#: src/etc/inc/interfaces.inc:885
 msgid "Configuring LAGG interfaces..."
 msgstr "Configuration des interfaces LAGG..."
 
-#: src/etc/inc/interfaces.inc:893
+#: src/etc/inc/interfaces.inc:1036
 msgid "Could not bring greif up -- variable not defined."
 msgstr "Impossible d'activer greif -- variable non définie."
 
-#: src/etc/inc/interfaces.inc:976
+#: src/etc/inc/interfaces.inc:1119
 msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
@@ -34198,43 +34249,43 @@ msgstr ""
 "Impossible d'activer realif -- variable non définie -- "
 "interface_gif_configure()"
 
-#: src/etc/inc/interfaces.inc:1023
+#: src/etc/inc/interfaces.inc:1166
 msgid "could not bring gifif up -- variable not defined"
 msgstr "Impossible d'activer gifif -- variable non définie"
 
-#: src/etc/inc/interfaces.inc:1105 src/etc/inc/interfaces.inc:1135
-#: src/etc/inc/interfaces.inc:1159 src/etc/inc/interfaces.inc:1177
+#: src/etc/inc/interfaces.inc:1248 src/etc/inc/interfaces.inc:1278
+#: src/etc/inc/interfaces.inc:1302 src/etc/inc/interfaces.inc:1320
 #, php-format
 msgid "Configuring %s interface..."
 msgstr "Configuration de l'interface %s..."
 
-#: src/etc/inc/interfaces.inc:1109 src/etc/inc/interfaces.inc:1138
-#: src/etc/inc/interfaces.inc:1162 src/etc/inc/interfaces.inc:1180
+#: src/etc/inc/interfaces.inc:1252 src/etc/inc/interfaces.inc:1281
+#: src/etc/inc/interfaces.inc:1305 src/etc/inc/interfaces.inc:1323
 #, php-format
 msgid "Configuring %s"
 msgstr "Configuration de %s"
 
-#: src/etc/inc/interfaces.inc:1263
+#: src/etc/inc/interfaces.inc:1406
 #, php-format
 msgid "Calling interface down for interface %1$s, destroy is %2$s"
 msgstr "Demande d'arrêt de l'interface %1$s, l'élément est %2$s"
 
-#: src/etc/inc/interfaces.inc:1277
+#: src/etc/inc/interfaces.inc:1420
 msgid "Wrong parameters used during interface_bring_down"
 msgstr "Mauvais paramètres utilisés durant interface_bring_down"
 
-#: src/etc/inc/interfaces.inc:1448
+#: src/etc/inc/interfaces.inc:1591
 msgid "Enter CARP maintenance mode"
 msgstr "Basculer CARP en mode maintenance"
 
-#: src/etc/inc/interfaces.inc:1652
+#: src/etc/inc/interfaces.inc:1795
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
 msgstr ""
 "Impossible de trouver la configuration PPP pour %s dans "
 "interface_ppps_configure()."
 
-#: src/etc/inc/interfaces.inc:1710
+#: src/etc/inc/interfaces.inc:1853
 #, php-format
 msgid ""
 "Could not get a Local IP address for PPTP/L2TP link on %s in "
@@ -34243,7 +34294,7 @@ msgstr ""
 "Impossible de déterminer une adresse IP locale pour le lien PPTP/L2TP sur %s "
 "dans interfaces_ppps_configure. Utilisation de l'adresse IP 0.0.0.0 !"
 
-#: src/etc/inc/interfaces.inc:1717
+#: src/etc/inc/interfaces.inc:1860
 #, php-format
 msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
@@ -34252,7 +34303,7 @@ msgstr ""
 "Impossible de déterminer une adresse IP distante PPTP/L2TP de %1$s  pour "
 "%2$s dans interfaces_ppps_configure."
 
-#: src/etc/inc/interfaces.inc:1724
+#: src/etc/inc/interfaces.inc:1867
 #, php-format
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
@@ -34260,42 +34311,42 @@ msgstr ""
 "L’équipement %s n'existe pas. Impossible de démarrer la Ligne PPP sans modem."
 ""
 
-#: src/etc/inc/interfaces.inc:1729
+#: src/etc/inc/interfaces.inc:1872
 #, php-format
 msgid "Unknown %s configured as ppp interface."
 msgstr "L'interface ppp configurée %s est inconnue."
 
-#: src/etc/inc/interfaces.inc:2049
+#: src/etc/inc/interfaces.inc:2192
 #, php-format
 msgid "Error: cannot open mpd_%1$s.conf in interface_ppps_configure().%2$s"
 msgstr ""
 "Erreur : impossible d'ouvrir mpd_%1$s.conf dans interface_ppps_configure()."
 "%2$s"
 
-#: src/etc/inc/interfaces.inc:2144
+#: src/etc/inc/interfaces.inc:2287
 #, php-format
 msgid "Starting 3gstats.php on device '%1$s' for interface '%2$s'"
 msgstr ""
 "Démarrage de 3gstats.php sur l’équipement '%1$s' pour l'interface '%2$s'"
 
-#: src/etc/inc/interfaces.inc:2161
+#: src/etc/inc/interfaces.inc:2304
 msgid "Configuring CARP settings..."
 msgstr "Configuration des paramètres CARP..."
 
-#: src/etc/inc/interfaces.inc:2202
+#: src/etc/inc/interfaces.inc:2345
 msgid "waiting for pfsync..."
 msgstr "en attente de pfsync..."
 
-#: src/etc/inc/interfaces.inc:2208
+#: src/etc/inc/interfaces.inc:2351
 #, php-format
 msgid "pfsync done in %s seconds."
 msgstr "pfsync fait dans %s secondes."
 
-#: src/etc/inc/interfaces.inc:2209
+#: src/etc/inc/interfaces.inc:2352
 msgid "Configuring CARP settings finalize..."
 msgstr "Configuration des paramètres CARP terminé..."
 
-#: src/etc/inc/interfaces.inc:2436
+#: src/etc/inc/interfaces.inc:2579
 #, php-format
 msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
@@ -34304,59 +34355,59 @@ msgstr ""
 "L'interface spécifiée pour l'adresse IP virtuellle %s n'existe pas. Cette "
 "VIP est ignorée."
 
-#: src/etc/inc/interfaces.inc:2496
+#: src/etc/inc/interfaces.inc:2639
 #, php-format
 msgid "Interface %s changed to hostap mode"
 msgstr "Interface %s passée en mode hostap"
 
-#: src/etc/inc/interfaces.inc:2500
+#: src/etc/inc/interfaces.inc:2643
 #, php-format
 msgid "Interface %s changed to adhoc mode"
 msgstr "Interface %s passée en mode adhoc"
 
-#: src/etc/inc/interfaces.inc:2504
+#: src/etc/inc/interfaces.inc:2647
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
 msgstr "Interface %s passée en mode infrastructure"
 
-#: src/etc/inc/interfaces.inc:2517
+#: src/etc/inc/interfaces.inc:2660
 #, php-format
 msgid "Cloning new wireless interface %s"
 msgstr "Duplication de la nouvelle interface sans fil %s"
 
-#: src/etc/inc/interfaces.inc:2522
+#: src/etc/inc/interfaces.inc:2665
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
 msgstr ""
 "Échec de la duplication de l'interface %1$s avec le code d'erreur %2$s, "
 "sortie %3$s"
 
-#: src/etc/inc/interfaces.inc:3178
+#: src/etc/inc/interfaces.inc:3329
 #, php-format
 msgid "Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"
 msgstr ""
 "Démarrage du client dhcp6  pour l'interface wan %s en DHCP sans mode RA"
 
-#: src/etc/inc/interfaces.inc:3199
+#: src/etc/inc/interfaces.inc:3350
 #, php-format
 msgid "OpenVPN: Resync server %s"
 msgstr "OpenVPN : Resynchronisation du serveur %s"
 
-#: src/etc/inc/interfaces.inc:3212
+#: src/etc/inc/interfaces.inc:3363
 #, php-format
 msgid "OpenVPN: Resync client %s"
 msgstr "OpenVPN : Resynchronisation du client %s"
 
-#: src/etc/inc/interfaces.inc:3347
+#: src/etc/inc/interfaces.inc:3498
 #, php-format
 msgid "Deny router advertisements for interface %s"
 msgstr "Interdire les annonces du routeur pour l'interface %s"
 
-#: src/etc/inc/interfaces.inc:3379
+#: src/etc/inc/interfaces.inc:3530
 msgid "Generating new MAC address."
 msgstr "Génération d'une nouvelle adresse MAC."
 
-#: src/etc/inc/interfaces.inc:3384 src/etc/inc/interfaces.inc:3385
+#: src/etc/inc/interfaces.inc:3535 src/etc/inc/interfaces.inc:3536
 #, php-format
 msgid ""
 "The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
@@ -34365,28 +34416,28 @@ msgstr ""
 "L'adresse MAC non valide (ff:ff:ff:ff:ff:ff) sur l'interface %1$s a été "
 "automatiquement remplacée par %2$s"
 
-#: src/etc/inc/interfaces.inc:3450
+#: src/etc/inc/interfaces.inc:3601
 #, php-format
 msgid "There is a conflict on MTU between parent %1$s and VLAN(%2$s)"
 msgstr ""
 "Il y a un conflit de MTU entre l'interface parente %1$s et le VLAN(%2$s)"
 
-#: src/etc/inc/interfaces.inc:3520
+#: src/etc/inc/interfaces.inc:3671
 msgid "calling interface_dhcpv6_configure."
 msgstr "Appel interface_dhcpv6_configure."
 
-#: src/etc/inc/interfaces.inc:3644 src/etc/inc/interfaces.inc:3714
-#: src/etc/inc/interfaces.inc:3778
+#: src/etc/inc/interfaces.inc:3795 src/etc/inc/interfaces.inc:3865
+#: src/etc/inc/interfaces.inc:3929
 #, php-format
 msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr "L'interface %1$s présente l'interface non-existante %2$s"
 
-#: src/etc/inc/interfaces.inc:3651 src/etc/inc/interfaces.inc:3657
+#: src/etc/inc/interfaces.inc:3802 src/etc/inc/interfaces.inc:3808
 #, php-format
 msgid "Interface %1$s configured via %2$s type %3$s"
 msgstr "Interface %1$s configurée avec %2$s de type %3$s"
 
-#: src/etc/inc/interfaces.inc:3720
+#: src/etc/inc/interfaces.inc:3871
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not valid, not "
@@ -34395,13 +34446,13 @@ msgstr ""
 "L'adresse IPv4 '%1$s' sur l'interface '%2$s' n'est pas valide. Le tunnel 6RD "
 "n'a pas été configuré."
 
-#: src/etc/inc/interfaces.inc:3756
+#: src/etc/inc/interfaces.inc:3907
 #, php-format
 msgid "rd6 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "rd6 %1$s avec l'adresses ipv6 %2$s basée sur %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:3784 src/etc/inc/interfaces.inc:3839
-#: src/etc/inc/interfaces.inc:3922
+#: src/etc/inc/interfaces.inc:3935 src/etc/inc/interfaces.inc:3990
+#: src/etc/inc/interfaces.inc:4073
 #, php-format
 msgid ""
 "The interface IPv4 '%1$s' address on interface '%2$s' is not public, not "
@@ -34410,22 +34461,22 @@ msgstr ""
 "L'adresse IPv4 '%1$s' sur l'interface '%2$s' n'est pas une adresse IP "
 "publique. Le tunnel 6RD n'a pas été configuré"
 
-#: src/etc/inc/interfaces.inc:3816
+#: src/etc/inc/interfaces.inc:3967
 #, php-format
 msgid "sixto4 %1$s with ipv6 address %2$s based on %3$s ipv4 %4$s"
 msgstr "sixto4 %1$s avec l'adresse ipv6 %2$s basée sur %3$s ipv4 %4$s"
 
-#: src/etc/inc/interfaces.inc:4028
+#: src/etc/inc/interfaces.inc:4179
 msgid "Failed to write user DUID file!"
 msgstr "Échec de l’écriture du fichier DUID utilisateur !"
 
-#: src/etc/inc/interfaces.inc:4503
+#: src/etc/inc/interfaces.inc:4654
 #, php-format
 msgid "Error: cannot open %s in DHCP6_Config_File_Override() for reading."
 msgstr ""
 "Erreur: Impossible d'ouvrir %s en lecture dans DHCP6_Config_File_Override() "
 
-#: src/etc/inc/interfaces.inc:4531
+#: src/etc/inc/interfaces.inc:4682
 #, php-format
 msgid ""
 "Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for "
@@ -34434,17 +34485,17 @@ msgstr ""
 "Erreur : impossible d'ouvrir dhclient_%s.conf sur interface_dhcp_configure() "
 "pour écriture."
 
-#: src/etc/inc/interfaces.inc:4544
+#: src/etc/inc/interfaces.inc:4695
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
 msgstr "Interface \"%s\" non valide dans interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:4600
+#: src/etc/inc/interfaces.inc:4751
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
 msgstr "Impossible d'activer l'interface %s dans interface_dhcp_configure()"
 
-#: src/etc/inc/interfaces.inc:4693
+#: src/etc/inc/interfaces.inc:4844
 #, php-format
 msgid "Error: cannot open %s in DHCP_Config_File_Override() for reading."
 msgstr ""
@@ -38206,32 +38257,36 @@ msgstr ""
 msgid "<span class=\"help-block\">"
 msgstr "<span class=\"help-block\">"
 
-#: src/usr/local/www/vpn_openvpn_client.php:511
+#: src/usr/local/www/vpn_openvpn_client.php:513
 #: src/usr/local/www/services_dyndns_edit.php:255
 msgid "Disable this client"
 msgstr "Désactiver ce client"
 
-#: src/usr/local/www/vpn_openvpn_client.php:634
+#: src/usr/local/www/vpn_openvpn_client.php:632
+msgid "Do not retry connection when authentication fails"
+msgstr ""
+
+#: src/usr/local/www/vpn_openvpn_client.php:643
 #: src/usr/local/www/vpn_openvpn_server.php:758
 msgid "Use a TLS Key"
 msgstr "Utiliser une clé TLS"
 
-#: src/usr/local/www/vpn_openvpn_client.php:644
+#: src/usr/local/www/vpn_openvpn_client.php:653
 #: src/usr/local/www/vpn_openvpn_server.php:768
 msgid "Automatically generate a TLS Key."
 msgstr "Générer automatiquement une clé TLS."
 
-#: src/usr/local/www/vpn_openvpn_client.php:700
+#: src/usr/local/www/vpn_openvpn_client.php:709
 #: src/usr/local/www/vpn_openvpn_server.php:879
 msgid "Automatically generate a shared key"
 msgstr "Générer automatiquement une clé partagée."
 
-#: src/usr/local/www/vpn_openvpn_client.php:729
+#: src/usr/local/www/vpn_openvpn_client.php:738
 #: src/usr/local/www/vpn_openvpn_server.php:900
 msgid "Enable Negotiable Cryptographic Parameters"
 msgstr "Activer les paramètres cryptographiques négociables"
 
-#: src/usr/local/www/vpn_openvpn_client.php:855
+#: src/usr/local/www/vpn_openvpn_client.php:864
 #: src/usr/local/www/vpn_openvpn_server.php:1097
 msgid ""
 "Set the TOS IP header value of tunnel packets to match the encapsulated "
@@ -38240,16 +38295,16 @@ msgstr ""
 "Définissez la valeur d'en-tête IP TOS des paquets de tunnel pour "
 "correspondre à la valeur du paquet encapsulé."
 
-#: src/usr/local/www/vpn_openvpn_client.php:862
+#: src/usr/local/www/vpn_openvpn_client.php:871
 msgid "Bars the server from adding routes to the client's routing table"
 msgstr ""
 "Empêche le serveur d'ajouter des itinéraires à la table de routage du client"
 
-#: src/usr/local/www/vpn_openvpn_client.php:869
+#: src/usr/local/www/vpn_openvpn_client.php:878
 msgid "Don't add or remove routes automatically"
 msgstr "N'ajoutez pas ou ne supprimez pas de routes automatiquement"
 
-#: src/usr/local/www/vpn_openvpn_client.php:887
+#: src/usr/local/www/vpn_openvpn_client.php:896
 #: src/usr/local/www/vpn_openvpn_server.php:1284
 msgid "Use fast I/O operations with UDP writes to tun/tap. Experimental."
 msgstr ""
@@ -38407,32 +38462,32 @@ msgstr ""
 "Enregistrez un horodatage une fois pour chaque seconde, utile pour "
 "construire des parcelles d'écarts d'Allan (par défaut: non contrôlée)."
 
-#: src/usr/local/www/system_advanced_misc.php:384
+#: src/usr/local/www/system_advanced_misc.php:385
 msgid "Enable default gateway switching"
 msgstr "Activer la commutation de la passerelle par défaut"
 
-#: src/usr/local/www/system_advanced_misc.php:396
+#: src/usr/local/www/system_advanced_misc.php:397
 msgid "Enable PowerD"
 msgstr "Activer PowerD"
 
-#: src/usr/local/www/system_advanced_misc.php:474
+#: src/usr/local/www/system_advanced_misc.php:475
 msgid "Do not kill connections when schedule expires"
 msgstr "Ne pas terminer les connections quand une tache planifiée expire"
 
-#: src/usr/local/www/system_advanced_misc.php:486
+#: src/usr/local/www/system_advanced_misc.php:487
 msgid "Flush all states when a gateway goes down"
 msgstr ""
 "Supprimer toutes les statistiques quand une passerelle n'est plus accessible"
 
-#: src/usr/local/www/system_advanced_misc.php:494
+#: src/usr/local/www/system_advanced_misc.php:495
 msgid "Do not create rules when gateway is down"
 msgstr "Ne pas créer de règles quand la passerelle ne fonctionne pas"
 
-#: src/usr/local/www/system_advanced_misc.php:506
+#: src/usr/local/www/system_advanced_misc.php:507
 msgid "Use memory file system for /tmp and /var"
 msgstr "Utilise le système de fichiers en mémoire pour /tmp et /var"
 
-#: src/usr/local/www/system_advanced_misc.php:589
+#: src/usr/local/www/system_advanced_misc.php:590
 msgid "Do NOT send Netgate Device ID with user agent"
 msgstr "NE PAS envoyer l'ID de périphérique Netgate avec l'agent utilisateur"
 
@@ -38578,35 +38633,35 @@ msgid "Make dynamic DNS registered hostname the same as Hostname above."
 msgstr ""
 "Rendre les hôtes DNS dynamiques identiques aux noms d'hôtes ci-dessus."
 
-#: src/usr/local/www/services_snmp.php:216
+#: src/usr/local/www/services_snmp.php:214
 msgid "Enable the SNMP Daemon and its controls"
 msgstr "Activer le démon SNMP et ses contrôles"
 
-#: src/usr/local/www/services_snmp.php:259
+#: src/usr/local/www/services_snmp.php:257
 msgid "Enable the SNMP Trap and its controls"
 msgstr "Activer les trap SNMP et ses contrôles "
 
-#: src/usr/local/www/services_snmp.php:303
+#: src/usr/local/www/services_snmp.php:301
 msgid "MibII"
 msgstr "MibII"
 
-#: src/usr/local/www/services_snmp.php:310
+#: src/usr/local/www/services_snmp.php:308
 msgid "Netgraph"
 msgstr "Netgraph"
 
-#: src/usr/local/www/services_snmp.php:317
+#: src/usr/local/www/services_snmp.php:315
 msgid "PF"
 msgstr "PF"
 
-#: src/usr/local/www/services_snmp.php:325
+#: src/usr/local/www/services_snmp.php:322
 msgid "Host Resources"
 msgstr "Ressources de l'hote"
 
-#: src/usr/local/www/services_snmp.php:333
+#: src/usr/local/www/services_snmp.php:329
 msgid "UCD"
 msgstr "UCD"
 
-#: src/usr/local/www/services_snmp.php:340
+#: src/usr/local/www/services_snmp.php:336
 msgid "Regex"
 msgstr "Expression régulière"
 
@@ -39445,15 +39500,15 @@ msgstr "Activer DPD"
 msgid "<span class=\"helptext\">"
 msgstr "<span class=\"Texte d'aide\">"
 
-#: src/usr/local/www/services_unbound_advanced.php:227
+#: src/usr/local/www/services_unbound_advanced.php:236
 msgid "id.server and hostname.bind queries are refused"
 msgstr "Les requêtes id.server et hostname.bind ont été refusées"
 
-#: src/usr/local/www/services_unbound_advanced.php:234
+#: src/usr/local/www/services_unbound_advanced.php:243
 msgid "version.server and version.bind queries are refused"
 msgstr "Les requêtes version.server et version.bind ont été refusées"
 
-#: src/usr/local/www/services_unbound_advanced.php:241
+#: src/usr/local/www/services_unbound_advanced.php:250
 msgid ""
 "Message cache elements are prefetched before they expire to help keep the "
 "cache up to date"
@@ -39461,7 +39516,7 @@ msgstr ""
 "Les éléments du cache des messages sont pré-écus avant qu'ils expirent pour "
 "aider à garder le cache à jour"
 
-#: src/usr/local/www/services_unbound_advanced.php:248
+#: src/usr/local/www/services_unbound_advanced.php:257
 msgid ""
 "DNSKEYs are fetched earlier in the validation process when a Delegation "
 "signer is encountered"
@@ -39469,19 +39524,23 @@ msgstr ""
 "Les DNSKEY sont récupérés plus tôt dans le processus de validation lorsqu'un "
 "signataire de délégation est rencontré"
 
-#: src/usr/local/www/services_unbound_advanced.php:255
+#: src/usr/local/www/services_unbound_advanced.php:264
 msgid "DNSSEC data is required for trust-anchored zones."
 msgstr "Les données DNSSEC sont requises pour les zones en confiance."
 
-#: src/usr/local/www/services_unbound_advanced.php:357
+#: src/usr/local/www/services_unbound_advanced.php:271
+msgid "Serve cache records even with TTL of 0"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_advanced.php:373
 msgid "Disable the automatically-added access control entries"
 msgstr "Désactive les entrées de contrôle d'accès automatiquement créées"
 
-#: src/usr/local/www/services_unbound_advanced.php:365
+#: src/usr/local/www/services_unbound_advanced.php:381
 msgid "Disable the automatically-added host entries"
 msgstr "Désactiver les entrées d'hôte automatiquement ajoutées"
 
-#: src/usr/local/www/services_unbound_advanced.php:372
+#: src/usr/local/www/services_unbound_advanced.php:388
 msgid ""
 "Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts."
 msgstr ""
@@ -39723,11 +39782,11 @@ msgstr "Désactiver les bip de démarrage/arrêt"
 msgid "Disable Growl Notifications"
 msgstr "Désactiver les notifications en popup"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:259
+#: src/usr/local/www/interfaces_qinq_edit.php:278
 msgid "Adds interface to QinQ interface groups"
 msgstr "Ajouter l'interface aux groupes d'interfaces QinQ"
 
-#: src/usr/local/www/interfaces_qinq_edit.php:272
+#: src/usr/local/www/interfaces_qinq_edit.php:291
 msgid ""
 "Ranges can be specified in the inputs below. Enter a range (2-3) or "
 "individual numbers.<br />Click \"Add Tag\" as many times as needed to add "
@@ -39916,8 +39975,8 @@ msgstr "Éventements du protocole d'heure réseau (Demon NTP, Client NTP) "
 msgid "Wireless Events (hostapd)"
 msgstr "Éventements du sans fils (hostapd)"
 
-#: src/usr/local/www/pkg_edit.php:1327 src/usr/local/www/pkg_edit.php:1333
-#: src/usr/local/www/pkg_edit.php:1338
+#: src/usr/local/www/pkg_edit.php:1323 src/usr/local/www/pkg_edit.php:1329
+#: src/usr/local/www/pkg_edit.php:1334
 msgid "<br />"
 msgstr "<br />"
 

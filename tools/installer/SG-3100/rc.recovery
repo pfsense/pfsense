@@ -137,6 +137,7 @@ main() {
 	sync ; sync ; sync
 
 	# Set the boot device and update the u-boot environment
+	echo "Fixing u-boot environment..."
 	/bin/dd if=/dev/flash/spi0 of=/root/env bs=64k skip=16 count=1
 	/usr/local/sbin/u-boot-env-update ${BOOTFROM} ${BOOTDEV} /root/env /root/newenv
 	/usr/local/sbin/u-boot-env-write -yY /root/newenv

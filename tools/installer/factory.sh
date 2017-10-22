@@ -388,12 +388,17 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	sysctl -q dev.gpio.${gpiodev}.led.1.pwm=0 > /dev/null
 	sysctl -q dev.gpio.${gpiodev}.led.2.pwm=0 > /dev/null
 
+	BOOTDEV=""
+	BOOTFROM=""
+
 	# Find the eMMC device
 	DEV=mmcsd0
 	if geom disk list ${DEV} 2>/dev/null | grep -q MMCHC; then
 		TARGET=${DEV}
+		BOOTFROM="-e"
 	elif geom disk list ${DEV} 2>/dev/null | grep -q SDHC; then
 		TARGET=${DEV}
+		BOOTFROM="-e"
 	else
 		echo "Error: no eMMC device detected.  aborting."
 		exit 1
@@ -416,8 +421,12 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 			echo "Error: Invalid device ${TARGET}"
 			exit 1
 		fi
+		BOOTFROM="-m"
+		BOOTDEV=${TARGET#ada*}
 	elif [ -n "${M2DEV}" ]; then
 		TARGET=${M2DEV}
+		BOOTFROM="-m"
+		BOOTDEV=${TARGET#ada*}
 	fi
 
 	# Update LED status.
@@ -473,6 +482,12 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	    -e "/[[:blank:]]\/boot\/u-boot[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s1," \
 	    -e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${DISKID}s2a," \
 	    /mnt/etc/fstab
+
+	# Set the boot device and update the u-boot environment
+	echo "Fixing u-boot environment..."
+	/bin/dd if=/dev/flash/spi0 of=/tmp/env bs=64k skip=16 count=1
+	/usr/local/sbin/u-boot-env-update ${BOOTFROM} ${BOOTDEV} /tmp/env /tmp/newenv
+	/usr/local/sbin/u-boot-env-write -yY /tmp/newenv
 
 	# Update the boot status on SG-3100, pfSense is installed.
 	gpioctl -f /dev/gpioc${gpiodev} 1 duty 100 > /dev/null

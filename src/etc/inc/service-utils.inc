@@ -703,7 +703,6 @@ function service_control_stop($name, $extras) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 			usleep(100000);
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-			usleep(100000);
 			// Bug #7984: do not leave sshlockout_pf process orphans
 			sigkillbyname("sshlockout_pf", "TERM");
 			break;

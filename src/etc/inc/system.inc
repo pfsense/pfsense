@@ -1335,12 +1335,13 @@ function system_webgui_start() {
 			$portarg = "443";
 		}
 		$ca = ca_chain($cert);
+		$hsts = isset($config['system']['webgui']['disablehsts']) ? false : true;
 	}
 
 	/* generate nginx configuration */
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-webConfigurator.conf",
 		$crt, $key, $ca, "nginx-webConfigurator.pid", $portarg, "/usr/local/www/",
-		"cert.crt", "cert.key");
+		"cert.crt", "cert.key", false, $hsts);
 
 	/* kill any running nginx */
 	killbypid("{$g['varrun_path']}/nginx-webConfigurator.pid");

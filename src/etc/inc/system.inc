@@ -1242,7 +1242,6 @@ EOD;
 
 		// if it still hasn't responded to the TERM, KILL it.
 		sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-		usleep(100000);
 
 		// Bug #7984: do not leave sshlockout_pf process orphans
 		sigkillbyname("sshlockout_pf", "TERM");

@@ -15,7 +15,11 @@ clear_disk() {
 
 if="*"
 if ! pgrep -q dhclient; then
-	boardpn=$(/bin/kenv -q uboot.boardpn)
+	boardpn=""
+	arch=$(uname -p)
+	if [ "${arch}" == "armv6" -a -f /usr/local/sbin/u-boot-env ]; then
+		boardpn=$(/usr/local/sbin/u-boot-env boardpn)
+	fi
 	if [ "${_boardpn%-*}" == "80500-0148" ]; then
 		if="mvneta2"
 	else

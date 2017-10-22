@@ -5420,6 +5420,79 @@ function upgrade_169_to_170() {
 	}
 }
 
+/* Upgrade the VLAN interface names to use $if.$tag instead of $if_vlan$tag.
+ * This helps keep the interface names smaller than the limit.
+ */
+function upgrade_170_to_171() {
+	global $config;
+
+	if (!is_array($config['vlans']['vlan']) || count($config['vlans']['vlan']) == 0) {
+		return;
+	}
+	$iflist = get_configured_interface_list(true);
+	foreach ($config['vlans']['vlan'] as $id => $vlan) {
+		/* Make sure to update the interfaces section with the new name. */
+		$vlan_name = "{$vlan['if']}_vlan{$vlan['tag']}";
+		foreach ($iflist as $ifname) {
+			if ($config['interfaces'][$ifname]['if'] == $vlan_name) {
+				$config['interfaces'][$ifname]['if'] = vlan_interface($vlan);
+			}
+		}
+		$config['vlans']['vlan'][$id]['vlanif'] = vlan_interface($vlan);
+	}
+}
+
+/* Upgrade the QinQ interface names to use $if.$tag instead of $if_$tag.
+ * This helps keep the interface names smaller than the limit (but they are still
+ * big with the QinQ subtag).
+ */
+function upgrade_171_to_172() {
+	global $config;
+
+	if (!is_array($config['qinqs']['qinqentry']) || count($config['qinqs']['qinqentry']) == 0) {
+		return;
+	}
+	$iflist = get_configured_interface_list(true);
+	foreach ($config['qinqs']['qinqentry'] as $id => $qinq) {
+		$config['qinqs']['qinqentry'][$id]['vlanif'] = vlan_interface($qinq);
+
+		if (!isset($qinq['members'])) {
+			continue;
+		}
+		foreach (explode(" ", $qinq['members']) as $tag) {
+			/* Make sure to update the interfaces section with the new name. */
+			$vlan_name = "{$qinq['if']}_{$qinq['tag']}_{$tag}";
+			foreach ($iflist as $ifname) {
+				if ($config['interfaces'][$ifname]['if'] == $vlan_name) {
+					$config['interfaces'][$ifname]['if'] = qinq_interface($qinq, $tag);
+				}
+			}
+		}
+	}
+}
+
+/*
+ * Upgrade the VLAN interface names to use $if.$tag on PPP items
+ */
+function upgrade_172_to_173() {
+	global $config;
+
+	if (!is_array($config['ppps']['ppp']) ||
+	    count($config['ppps']['ppp']) == 0) {
+		return;
+	}
+	$iflist = get_configured_interface_list(true);
+	foreach ($config['ppps']['ppp'] as $id => $ppp) {
+		if (empty($ppp['ports']) ||
+		    strpos($ppp['ports'], "_vlan") == false) {
+			continue;
+		}
+
+		$config['ppps']['ppp'][$id]['ports'] = str_replace('_vlan', '.',
+		    $ppp['ports']);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

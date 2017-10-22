@@ -845,7 +845,7 @@ if ($_POST['apply']) {
 
 		unset($min_mtu, $max_mtu);
 
-		if (stristr($wancfg['if'], "_vlan")) {
+		if (interface_is_vlan($wancfg['if']) != NULL) {
 			$realhwif_array = get_parent_interface($wancfg['if']);
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
@@ -859,7 +859,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 		} else {
 			foreach ($config['interfaces'] as $idx => $ifdata) {
-				if (($idx == $if) || !preg_match('/_vlan[0-9]/', $ifdata['if'])) {
+				if (($idx == $if) || interface_is_vlan($ifdata['if']) == NULL) {
 					continue;
 				}
 

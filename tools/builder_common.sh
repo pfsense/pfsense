@@ -329,8 +329,8 @@ create_ova_image() {
 	if [ -z "${OVA_SWAP_PART_SIZE_IN_GB}" -o "${OVA_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
 		# first partition size (freebsd-ufs)
 		local OVA_FIRST_PART_SIZE_IN_GB=${VMDK_DISK_CAPACITY_IN_GB}
-		# Calculate real first partition size, removing 128 blocks (65536 bytes) beginning/loader
-		local OVA_FIRST_PART_SIZE=$((${OVA_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real first partition size, removing 256 blocks (131072 bytes) beginning/loader
+		local OVA_FIRST_PART_SIZE=$((${OVA_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Unset swap partition size variable
 		unset OVA_SWAP_PART_SIZE
 		# Parameter used by mkimg
@@ -340,8 +340,8 @@ create_ova_image() {
 		local OVA_FIRST_PART_SIZE_IN_GB=$((VMDK_DISK_CAPACITY_IN_GB-OVA_SWAP_PART_SIZE_IN_GB))
 		# Use first partition size in g
 		local OVA_FIRST_PART_SIZE="${OVA_FIRST_PART_SIZE_IN_GB}g"
-		# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
-		local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Calculate real swap size, removing 256 blocks (131072 bytes) beginning/loader
+		local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-131072))
 		# Parameter used by mkimg
 		local OVA_SWAP_PART_PARAM="-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE}"
 	fi
@@ -735,7 +735,10 @@ customize_stagearea_for_image() {
 	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 		cp -f \
-			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.svg \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.css \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
 
@@ -787,6 +790,7 @@ create_iso_image() {
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -831,7 +835,6 @@ create_memstick_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -839,6 +842,7 @@ create_memstick_image() {
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
@@ -871,7 +875,6 @@ create_memstick_serial_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -881,6 +884,7 @@ create_memstick_serial_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
@@ -919,7 +923,6 @@ create_memstick_adi_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -929,6 +932,7 @@ create_memstick_adi_image() {
 
 	# Activate serial console+video console in loader.conf
 	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}

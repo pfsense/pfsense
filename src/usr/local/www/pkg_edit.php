@@ -552,10 +552,6 @@ if ($pkg['tabs'] != "") {
 			$active = false;
 		}
 
-		if (isset($tab['no_drop_down'])) {
-			$no_drop_down = true;
-		}
-
 		$urltmp = "";
 		if ($tab['url'] != "") {
 			$urltmp = $tab['url'];
@@ -594,7 +590,7 @@ if ($pkg['custom_php_after_head_command']) {
 }
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
-		display_top_tabs($tab); //, $no_drop_down, $tabid);
+		display_top_tabs($tab);
 	}
 }
 

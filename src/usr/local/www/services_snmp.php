@@ -33,8 +33,6 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$specplatform = system_identify_specific_platform();
-
 if (!is_array($config['snmpd'])) {
 	$config['snmpd'] = array();
 	$config['snmpd']['rocommunity'] = "public";
@@ -318,14 +316,12 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['pf']
 ));
 
-if (!(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
-	$group->add(new Form_MultiCheckbox(
-		'hostres',
-		null,
-		'Host Resources',
-		$pconfig['hostres']
-	));
-}
+$group->add(new Form_MultiCheckbox(
+	'hostres',
+	null,
+	'Host Resources',
+	$pconfig['hostres']
+));
 
 $group->add(new Form_MultiCheckbox(
 	'ucd',
@@ -342,14 +338,6 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $section->add($group);
-if ((($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
-	$section->addInput(new Form_StaticText(
-		NULL,
-		NULL
-	))->setHelp(sprint_info_box('The hostres module is not compatible with VMware virtual ' .
-		    'machines configured with a virtual CD/DVD Drive.', 'warning', false));
-}
-
 $form->add($section);
 
 $section = new Form_Section('Interface Binding');

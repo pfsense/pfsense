@@ -6,6 +6,7 @@ comment: <<EOD
 EOD
 maintainer: development@pfsense.org
 prefix: /
+vital: true
 deps: {
 
 }

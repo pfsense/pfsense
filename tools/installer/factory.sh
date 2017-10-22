@@ -100,7 +100,7 @@ get_cur_model() {
 	local _planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
 	local _hw_model=$(sysctl -b hw.model)
 	local _hw_ncpu=$(sysctl -n hw.ncpu)
-	local _boardpn=$(/bin/kenv -q uboot.boardpn 2>/dev/null)
+	local _boardpn=""
 	local _ufw_product=$(/bin/kenv -q uboot.board_name 2>/dev/null)
 
 	case "${_product}" in
@@ -149,8 +149,11 @@ get_cur_model() {
 		_cur_model="XG-1537"
 	fi
 
-	if [ "${_boardpn%-*}" == "80500-0148" ]; then
-		_cur_model="SG-3100"
+	if [ "${machine_arch}" == "armv6" -a -f /usr/local/sbin/u-boot-env ]; then
+		_boardpn=$(/usr/local/sbin/u-boot-env boardpn)
+		if [ "${_boardpn%-*}" == "80500-0148" ]; then
+			_cur_model="SG-3100"
+		fi
 	fi
 
 	if [ "${_ufw_product}" == "A335uFW" ]; then
@@ -160,11 +163,12 @@ get_cur_model() {
 	echo "$_cur_model"
 }
 
+machine_arch=$(uname -p)
+
 unset selected_model
 cur_model=$(get_cur_model)
 
 # Try to read serial
-machine_arch=$(uname -p)
 unset is_arm
 unset is_adi
 unset is_turbot
@@ -176,7 +180,7 @@ if [ "${cur_model}" == "SG-1000" ]; then
 
 elif [ "${cur_model}" == "SG-3100" ]; then
 	is_arm=1
-	serial=$(/bin/kenv -q uboot.boardsn 2>/dev/null)
+	serial=$(/usr/local/sbin/u-boot-env boardsn 2>/dev/null)
 
 elif [ "${machine_arch}" == "amd64" ]; then
 	serial=$(kenv smbios.system.serial)
@@ -375,7 +379,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	# Enable the factory post installation automatic halt
 	touch /mnt/root/factory_boot
 elif [ "${selected_model}" = "SG-3100" ]; then
-	[ "$(kenv -q uboot.boardrev)" = "R100" ] \
+	[ "$(/usr/local/sbin/u-boot-env boardrev 2>/dev/null)" = "R100" ] \
 		&& gpiodev="1" \
 		|| gpiodev="0"
 

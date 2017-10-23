@@ -340,7 +340,7 @@ else
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_DEVEL}}
 fi
 
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
 	export PKG_REPO_SIGN_KEY=${PKG_REPO_SIGN_KEY:-"release${PRODUCT_NAME_SUFFIX}"}
 else
 	export PKG_REPO_SIGN_KEY=${PKG_REPO_SIGN_KEY:-"beta${PRODUCT_NAME_SUFFIX}"}
@@ -390,9 +390,15 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}${PRODUCT_REVISION:+-p}${PRODUCT_REVISION}-%%SIZE%%-${TARGET}-%%TYPE%%-upgrade${TIMESTAMP_SUFFIX}.img"}
 
 # Rsync data to send snapshots
-export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
-export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
-export RSYNCPATH=${RSYNCPATH:-"/storage/files/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+if [ -n "${_IS_RELEASE}" ]; then
+	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
+	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
+	export RSYNCPATH=${RSYNCPATH:-"/staging/ce/images"}
+else
+	export RSYNCIP=${RSYNCIP:-"nfs1.nyi.netgate.com"}
+	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
+	export RSYNCPATH=${RSYNCPATH:-"/storage/files/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+fi
 
 # staging area used on snapshots build
 STAGINGAREA=${STAGINGAREA:-"${SCRATCHDIR}/staging"}

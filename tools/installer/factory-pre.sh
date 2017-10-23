@@ -13,6 +13,9 @@ clear_disk() {
 	gmirror clear ${_disk} >/dev/null 2>&1
 }
 
+[ -f /tmp/factory-pre.done ] \
+	&& exit 0
+
 if="*"
 if ! pgrep -q dhclient; then
 	_boardpn=""
@@ -63,6 +66,8 @@ custom=$(grep user-class /var/db/dhclient.leases${if} 2>/dev/null | \
 [ -n "${custom}" ] \
 	&& touch /tmp/custom \
 	|| rm -f /tmp/custom
+
+touch /tmp/factory-pre.done
 
 if [ ! -f /tmp/buildroom ]; then
 	exit 0

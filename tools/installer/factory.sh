@@ -78,8 +78,8 @@ upgrade_netgate_coreboot() {
 		&& return 0
 
 	# Installed version is the latest, nothing to be done here
-	local _ver_cmp=$(/mnt/usr/local/sbin/pkg version -t "${_cur_version}" \
-	    "${_avail_version}")
+	local _ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
+	    "${_cur_version}" "${_avail_version}")
 	[ "${_ver_cmp}" != "<" ] \
 		&& return 0
 

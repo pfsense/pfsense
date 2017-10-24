@@ -3507,34 +3507,37 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
-	$current_mac = get_interface_mac($realhwif);
-	if (platform_booting()) {
-		$vendor_mac = $current_mac;
-	} else {
-		$vendor_mac = get_interface_vendor_mac($realhwif);
-	}
-	$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
-	/*
-	 * Don't try to reapply the MAC if it's already applied.
-	 * When ifconfig link is used, it cycles the interface down/up, which triggers
-	 * the interface config again, which attempts to apply the MAC again,
-	 * which cycles the link again...
-	 */
-	if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($mac_addr));
-	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
-		/*   this is not a valid mac address.  generate a
-		 *   temporary mac address so the machine can get online.
+	/* Do not set the MAC address for LAGG interfaces. */
+	if (substr($realhwif, 0, 4) != 'lagg') {
+		/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
+		$current_mac = get_interface_mac($realhwif);
+		if (platform_booting()) {
+			$vendor_mac = $current_mac;
+		} else {
+			$vendor_mac = get_interface_vendor_mac($realhwif);
+		}
+		$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
+		/*
+		 * Don't try to reapply the MAC if it's already applied.
+		 * When ifconfig link is used, it cycles the interface down/up, which triggers
+		 * the interface config again, which attempts to apply the MAC again,
+		 * which cycles the link again...
 		 */
-		echo gettext("Generating new MAC address.");
-		$random_mac = generate_random_mac_address();
-		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-			" link " . escapeshellarg($random_mac));
-		$wancfg['spoofmac'] = $random_mac;
-		write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
-		file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
+		if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
+				" link " . escapeshellarg($mac_addr));
+		} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
+			/*   this is not a valid mac address.  generate a
+			 *   temporary mac address so the machine can get online.
+			 */
+			echo gettext("Generating new MAC address.");
+			$random_mac = generate_random_mac_address();
+			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
+				" link " . escapeshellarg($random_mac));
+			$wancfg['spoofmac'] = $random_mac;
+			write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
+			file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
+		}
 	}
 
 	/* media */

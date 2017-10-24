@@ -101,7 +101,6 @@ get_cur_model() {
 	local _hw_model=$(sysctl -b hw.model)
 	local _hw_ncpu=$(sysctl -n hw.ncpu)
 	local _boardpn=""
-	local _ufw_product=$(/bin/kenv -q uboot.board_name 2>/dev/null)
 
 	case "${_product}" in
 		RCC-VE)
@@ -156,8 +155,12 @@ get_cur_model() {
 		fi
 	fi
 
-	if [ "${_ufw_product}" == "A335uFW" ]; then
-		_cur_model="SG-1000"
+	_ti_soc_model=$(sysctl -n hw.ti_soc_model)
+	if [ -n "${_ti_soc_model}" ]; then
+		/sbin/ifconfig cpsw0 >/dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			_cur_model="SG-1000"
+		fi
 	fi
 
 	echo "$_cur_model"

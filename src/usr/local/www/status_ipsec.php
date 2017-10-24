@@ -63,17 +63,21 @@ if ($_POST['act'] == 'connect') {
 		}
 	}
 } else if ($_POST['act'] == 'ikedisconnect') {
+
 	if (ctype_digit($_POST['ikeid'])) {
 		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']) . "[" . escapeshellarg($_POST['ikesaid']) . "]");
+			mwexec_bg("/usr/local/sbin/ipsec down " ."'" . "con" . escapeshellarg($_POST['ikeid']) . "[" . escapeshellarg($_POST['ikesaid']) . "]" . "'");
 		} else {
 			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']));
 		}
 	}
 } else if ($_POST['act'] == 'childdisconnect') {
-	if (ctype_digit($_POST['ikeid'])) {
+	//pull out number from id
+	$id_val = filter_var($_POST['ikeid'], FILTER_SANITIZE_NUMBER_INT);
+
+	if (ctype_digit($id_val)) {
 		if (!empty($_POST['ikesaid']) && ctype_digit($_POST['ikesaid'])) {
-			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_POST['ikeid']) . "{" . escapeshellarg($_POST['ikesaid']) . "}");
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($id_val) . "{" . escapeshellarg($_POST['ikesaid']) . "}");
 		}
 	}
 }
@@ -81,14 +85,17 @@ if ($_POST['act'] == 'connect') {
 // Table body is composed here so that it can be more easily updated via AJAX
 function print_ipsec_body() {
 	global $config;
-
 	$a_phase1 = &$config['ipsec']['phase1'];
 	$status = ipsec_list_sa();
 	$ipsecconnected = array();
 	if (is_array($status)) {
 		foreach ($status as $ikeid => $ikesa) {
-			$con_id = substr($ikesa['con-id'],3);
-
+			//check which array format
+			if(isset($ikesa['con-id'])){
+				$con_id = substr($ikesa['con-id'],3);
+			}else{
+				$con_id = filter_var($ikeid, FILTER_SANITIZE_NUMBER_INT);
+			}
 			if ($ikesa['version'] == 1) {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 				$ipsecconnected[$ph1idx] = $ph1idx;
@@ -246,15 +253,20 @@ function print_ipsec_body() {
 			print("<td colspan = 10>\n");
 
 			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
+				$child_key = "";
+				foreach ($ikesa['child-sas'] as $key => $val){
+					$child_key = $key;
+					break;
+				}
 
 				print('<div>');
-				print('<a type="button" id="btnchildsa-con'. $con_id .'-'. $ikesa['uniqueid'] .  '" class="btn btn-sm btn-info">');
+				print('<a type="button" id="btnchildsa-'. $child_key .  '" class="btn btn-sm btn-info">');
 				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
 				print(gettext('Show child SA entries'));
 				print("</a>\n");
 				print("	</div>\n");
 
-				print('<table class="table table-hover table-condensed" id="childsa-con'.$con_id.'-' . $ikesa['uniqueid'] . '" style="display:none">');
+				print('<table class="table table-hover table-condensed" id="childsa-'.$child_key . '" style="display:none">');
 				print("<thead>\n");
 				print('<tr class="bg-info">');
 				print('<th><?=gettext("Local subnets")?></th>');
@@ -347,7 +359,7 @@ function print_ipsec_body() {
 
 					print("</td>\n");
 					print("<td>\n");
-					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $con_id . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '" usepost>');
+					print('<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=' . $childsa['name'] . '&amp;ikesaid=' . $childsa['uniqueid'] . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="' . gettext('Disconnect Child SA') . '" usepost>');
 					print('<i class="fa fa-trash icon-embed-btn"></i>');
 					print(gettext("Disconnect"));
 					print("</a>\n");

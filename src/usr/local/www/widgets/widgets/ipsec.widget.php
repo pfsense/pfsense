@@ -191,7 +191,6 @@ if (isset($config['ipsec']['phase1'])) {
 }
 
 $mobile = ipsec_dump_mobile();
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
 if (isset($config['ipsec']['phase2'])): ?>
 <div id="<?=$widgetkey_nodash?>-Overview" style="display:block;"  class="table-responsive">

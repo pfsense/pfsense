@@ -197,9 +197,6 @@ if ($_POST['widgetkey']) {
 	exit(0);
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
-$widgetkey_nodash = str_replace("-", "", $widgetkey);
-
 ?>
 
 <div class="table-responsive">

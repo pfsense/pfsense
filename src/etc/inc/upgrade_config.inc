@@ -5471,6 +5471,15 @@ function upgrade_171_to_172() {
 	}
 }
 
+function upgrade_172_to_173() {
+	global $config;
+
+	/* Remove dashboard update period configuration, no longer used with central refresh system */
+	if (isset($config['widgets']['period'])) {
+		unset($config['widgets']['period']);
+	}
+}
+
 /*
  * Upgrade the VLAN interface names to use $if.$tag on PPP items
  */

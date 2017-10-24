@@ -320,9 +320,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	header("Location: /index.php");
 }
 
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
-$widgetkey_nodash = str_replace("-", "", $widgetkey);
-
 ?>
 
 <div id="<?=$widgetkey?>-openvpn-mainpanel" class="content">

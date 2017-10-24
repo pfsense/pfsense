@@ -299,7 +299,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 			'GleSYS: Enter the record ID.%1$s' .
 			'DNSimple: Enter only the domain name.%1$s' .
-			'Namecheap, Cloudflare, GratisDNS, Hover: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
+			'Namecheap, Cloudflare, GratisDNS, Hover, ClouDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.', '<br />');
 
 $section->add($group);
 
@@ -486,6 +486,20 @@ events.push(function() {
 				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
+				break;
+			case "cloudns":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', false);
+				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
+				hideInput('zoneid', true);
+				hideInput('ttl', false);
 				break;
 			case 'dreamhost':
 			case 'dreamhost-v6':

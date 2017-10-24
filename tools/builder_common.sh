@@ -1817,12 +1817,20 @@ install_bsdinstaller() {
 	local _params=""
 
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
+	if [ -f "${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf" ]; then
+		mkdir -p ${FINAL_CHROOT_DIR}/tmp/pkg-repos
+		cp ${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+			${FINAL_CHROOT_DIR}/tmp/pkg-repos
+	fi
 	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller
 	sed -i '' -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME}," \
 		  -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION}," \
 		  -e "s,%%ARCH%%,${TARGET}," \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense.lua \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense_rescue.lua
+	if [ -f "${FINAL_CHROOT_DIR}/tmp/pkg-repos/repo.conf" ]; then
+		rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
+	fi
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
 }
 

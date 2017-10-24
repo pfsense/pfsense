@@ -141,6 +141,9 @@ if ($_POST && $_POST['sequence']) {
 		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
 
 		if ($widget_counter != 'next') {
+			if (!is_numeric($widget_counter)) {
+				continue;
+			}
 			$widget_counter_array[$basename][$widget_counter] = true;
 			$widget_sequence .= $widget_sep . $widget_seq_data;
 			$widget_sep = ',';
@@ -279,6 +282,9 @@ if ($user_settings['widgets']['sequence'] != "") {
 		}
 
 		list($basename, $col, $display, $copynum) = $line_items;
+		if (!is_numeric($copynum)) {
+			continue;
+		}
 
 		// be backwards compatible
 		// If the display column information is missing, we will assign a temporary

@@ -1836,7 +1836,8 @@ function interface_ppps_configure($interface) {
 				interfaces_bring_up($port);
 				pfSense_ngctl_attach(".", $port);
 				/* Enable setautosrc to automatically change mac address if parent interface's changes */
-				mwexec("/usr/sbin/ngctl msg {$port}: setautosrc 1");
+				$ngif = str_replace(".", "_", $port);
+				mwexec("/usr/sbin/ngctl msg {$ngif}: setautosrc 1");
 				break;
 			case "pptp":
 			case "l2tp":

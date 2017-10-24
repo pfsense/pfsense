@@ -30,6 +30,10 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
+// Message to display if the session times out and an AJAX call is made
+$timeoutmessage1 = gettext("The dashboard web session has timed out.");
+$timeoutmessage2 = gettext("It will not update until you refresh the page and log-in again.");
+
 // Turn on buffering to speed up rendering
 ini_set('output_buffering', 'true');
 
@@ -654,7 +658,9 @@ events.push(function() {
 		}
 	});
 
-	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	// --------------------- Centralized widget refresh system ------------------------------
+	ajaxtimeout = false;
+
 	function make_ajax_call(wd) {
 		ajaxmutex = true;
 
@@ -666,7 +672,15 @@ events.push(function() {
 
 			success: function(data){
 				if (data.length > 0 ) {
-					wd.callback(data);
+					// If the session has timed out, display a pop-up
+					if (data.indexOf("SESSION_TIMEOUT") === -1) {
+						wd.callback(data);
+					} else {
+						if (ajaxtimeout === false) {
+							ajaxtimeout = true;
+							alert("<?=$timeoutmessage1?>" + "\n" + "<?=$timeoutmessage2?>");
+						}
+					}
 				}
 
 				ajaxmutex = false;

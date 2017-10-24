@@ -164,7 +164,7 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 	// Callback function called by refresh system when data is retrieved
 	function ts_callback(s) {
 			var thermalSensorsData = s || "";
-			buildThermalSensorsData(thermalSensorsData, "<?=$widgetkey?>", tsParams, true);
+			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
 			firstTime = false;
 	}
 
@@ -191,7 +191,7 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 //]]>
 </script>
 <div style="padding: 5px">
-	<div id="thermalSensorsContainer-<?=$widgetkey?>" class="listr">
+	<div id="thermalSensorsContainer-<?=htmlspecialchars($widgetkey)?>" class="listr">
 		<?=gettext('(Updating...)')?><br /><br />
 	</div>
 </div>
@@ -200,7 +200,7 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 
 <div id="<?=$widget_panel_footer_id?>" class="widgetconfigdiv panel-footer collapse" >
 	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" class="form-horizontal">
-		<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+		<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 		<div class="form-group">
 			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></label>

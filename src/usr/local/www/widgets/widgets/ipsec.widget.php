@@ -183,9 +183,9 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
-	$tab_array[] = array(gettext("Overview"), true, $widgetkey_nodash . "-Overview");
-	$tab_array[] = array(gettext("Tunnels"), false, $widgetkey_nodash . "-tunnel");
-	$tab_array[] = array(gettext("Mobile"), false, $widgetkey_nodash . "-mobile");
+	$tab_array[] = array(gettext("Overview"), true, htmlspecialchars($widgetkey_nodash) . "-Overview");
+	$tab_array[] = array(gettext("Tunnels"), false, htmlspecialchars($widgetkey_nodash) . "-tunnel");
+	$tab_array[] = array(gettext("Mobile"), false, htmlspecialchars($widgetkey_nodash) . "-mobile");
 
 	display_widget_tabs($tab_array);
 }
@@ -194,7 +194,7 @@ $mobile = ipsec_dump_mobile();
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
 if (isset($config['ipsec']['phase2'])): ?>
-<div id="<?=$widgetkey_nodash?>-Overview" style="display:block;"  class="table-responsive">
+<div id="<?=htmlspecialchars($widgetkey_nodash)?>-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
@@ -208,7 +208,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</tbody>
 	</table>
 </div>
-<div class="table-responsive" id="<?=$widgetkey_nodash?>-tunnel" style="display:none;">
+<div class="table-responsive" id="<?=htmlspecialchars($widgetkey_nodash)?>-tunnel" style="display:none;">
 	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
@@ -224,7 +224,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 	</table>
 </div>
 
-	<div id="<?=$widgetkey_nodash?>-mobile" style="display:none;" class="table-responsive">
+	<div id="<?=htmlspecialchars($widgetkey_nodash)?>-mobile" style="display:none;" class="table-responsive">
 		<table class="table table-striped table-hover">
 <?php if (is_array($mobile['pool'])): ?>
 		<thead>
@@ -311,9 +311,9 @@ events.push(function(){
 		try{
 			var obj = JSON.parse(s);
 
-			$('tbody', '#<?=$widgetkey_nodash?>-Overview').html(obj.overview);
-			$('tbody', '#<?=$widgetkey_nodash?>-tunnel').html(obj.tunnel);
-			$('tbody', '#<?=$widgetkey_nodash?>-mobile').html(obj.mobile);
+			$('tbody', '#<?= htmlspecialchars($widgetkey_nodash) ?>-Overview').html(obj.overview);
+			$('tbody', '#<?= htmlspecialchars($widgetkey_nodash) ?>-tunnel').html(obj.tunnel);
+			$('tbody', '#<?= htmlspecialchars($widgetkey_nodash) ?>-mobile').html(obj.mobile);
 		}catch(e){
 
 		}

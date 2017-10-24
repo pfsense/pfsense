@@ -67,8 +67,8 @@ if ($_POST['widgetkey']) {
 ?>
 <?php
 if($user_settings['widgets'][$widgetkey] != null){?>
-<a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" target="_blank">
-	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=$widgetkey?>" alt="picture" />
+<a href="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=htmlspecialchars($widgetkey)?>" target="_blank">
+	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true&widgetkey=<?=htmlspecialchars($widgetkey)?>" alt="picture" />
 </a>
 <?php } ?>
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -76,7 +76,7 @@ if($user_settings['widgets'][$widgetkey] != null){?>
 	<?php echo "class= " . "'" . "panel-footer". ($user_settings['widgets'][$widgetkey] != null ? " collapse": ""). "'";  ?>>
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-horizontal">
-	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
 		<label for="pictfile" class="col-sm-4 control-label"><?=gettext('New picture:')?> </label>

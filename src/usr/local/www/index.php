@@ -31,8 +31,8 @@
 ##|-PRIV
 
 // Message to display if the session times out and an AJAX call is made
-$timeoutmessage1 = gettext("The dashboard web session has timed out.");
-$timeoutmessage2 = gettext("It will not update until you refresh the page and log-in again.");
+$timeoutmessage = gettext("The dashboard web session has timed out.\\n" .
+	"It will not update until you refresh the page and log-in again.");
 
 // Turn on buffering to speed up rendering
 ini_set('output_buffering', 'true');
@@ -678,7 +678,7 @@ events.push(function() {
 					} else {
 						if (ajaxtimeout === false) {
 							ajaxtimeout = true;
-							alert("<?=$timeoutmessage1?>" + "\n" + "<?=$timeoutmessage2?>");
+							alert("<?=$timeoutmessage?>");
 						}
 					}
 				}

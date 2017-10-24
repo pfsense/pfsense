@@ -104,7 +104,7 @@ if (!$_REQUEST['ajax']) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
-	var logWidgetLastRefresh<?=$widgetkey_nodash?> = <?=time()?>;
+	var logWidgetLastRefresh<?=htmlspecialchars($widgetkey_nodash)?> = <?=time()?>;
 //]]>
 </script>
 
@@ -196,14 +196,14 @@ events.push(function(){
 
 	// Callback function called by refresh system when data is retrieved
 	function logs_callback(s) {
-		$('#widget-<?=$widgetkey?> .panel-body').html(s);
+		$(<?=json_encode('#widget-' . $widgetkey . '_panel-body')?>).html(s);
 	}
 
 	// POST data to send via AJAX
 	var postdata = {
 		ajax: "ajax",
-		widgetkey : "<?=$widgetkey?>",
-		lastsawtime: logWidgetLastRefresh<?=$widgetkey_nodash?>
+		widgetkey : <?=json_encode($widgetkey)?>,
+		lastsawtime: logWidgetLastRefresh<?=htmlspecialchars($widgetkey_nodash)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call
@@ -232,7 +232,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 ?>
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
-		<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+		<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 
 		<div class="form-group">

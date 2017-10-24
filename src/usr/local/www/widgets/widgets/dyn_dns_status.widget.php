@@ -232,7 +232,7 @@ if (!function_exists('get_dyndns_service_text')) {
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -278,11 +278,11 @@ if (!function_exists('get_dyndns_service_text')) {
 		// --------------------- Centralized widget refresh system ------------------------------
 
 		// Callback function called by refresh system when data is retrieved
-		function dyndnscallback_<?=$widgetkey_nodash?>(s) {
+		function dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>(s) {
 			// The server returns a string of statuses separated by vertical bars
 			var responseStrings = s.split("|");
 			for (var count=0; count<responseStrings.length; count++) {
-				var divlabel = '#widget-<?=$widgetkey?> #dyndnsstatus' + count;
+				var divlabel = <?=json_encode('#widget-' . $widgetkey . ' #dyndnsstatus')?> + count;
 				$(divlabel).prop('innerHTML',responseStrings[count]);
 			}
 		}
@@ -290,14 +290,14 @@ if (!function_exists('get_dyndns_service_text')) {
 		// POST data to send via AJAX
 		var postdata = {
 			ajax: "ajax",
-		 	getdyndnsstatus : "<?=$widgetkey?>"
+			getdyndnsstatus : <?=json_encode($widgetkey)?>
 		 };
 
 		// Create an object defining the widget refresh AJAX call
 		var dyndnsObject = new Object();
 		dyndnsObject.name = "DynDNS";
 		dyndnsObject.url = "/widgets/widgets/dyn_dns_status.widget.php";
-		dyndnsObject.callback =  dyndnscallback_<?=$widgetkey_nodash?>;
+		dyndnsObject.callback =  dyndnscallback_<?=htmlspecialchars($widgetkey_nodash)?>;
 		dyndnsObject.parms = postdata;
 		dyndnsObject.freq = 1;
 

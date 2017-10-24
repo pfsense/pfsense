@@ -208,5 +208,5 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
-$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns");
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns");
 ?>

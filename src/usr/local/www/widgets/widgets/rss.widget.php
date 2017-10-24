@@ -127,7 +127,7 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 </div><div id="<?=$widget_panel_footer_id?>" class="panel-footer collapse">
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
-	<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+	<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="form-group">
 		<label for="rssfeed" class="col-sm-4 control-label"><?=gettext('Feeds')?></label>

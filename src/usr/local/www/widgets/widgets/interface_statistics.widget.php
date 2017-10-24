@@ -196,7 +196,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 ?>
-<table id="<?=$widgetkey?>-iftbl" class="table table-striped table-hover">
+<table id="<?=htmlspecialchars($widgetkey)?>-iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
 
@@ -233,7 +233,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -298,21 +298,21 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 <script type="text/javascript">
 //<![CDATA[
 /*
-	function get_if_stats_<?=$widgetkey_nodash?>() {
+	function get_if_stats_<?=htmlspecialchars($widgetkey_nodash)?>() {
 		var ajaxRequest;
 
 		ajaxRequest = $.ajax({
 				url: "/widgets/widgets/interface_statistics.widget.php",
 				type: "post",
-				data: { ajax: "ajax", widgetkey: "<?=$widgetkey?>"}
+				data: { ajax: "ajax", widgetkey: <?=json_encode($widgetkey)?>}
 			});
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#<?=$widgetkey?>-iftbl').html(response);
+			$(<?=json_encode('#' . $widgetkey . '-iftbl')?>).html(response);
 
 			// and do it again
-			setTimeout(get_if_stats_<?=$widgetkey_nodash?>, "<?=$widgetperiod?>");
+			setTimeout(get_if_stats_<?=htmlspecialchars($widgetkey_nodash)?>, "<?=$widgetperiod?>");
 		});
 	}
 */
@@ -321,13 +321,13 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
 		// Callback function called by refresh system when data is retrieved
 		function interface_statistics_callback(s) {
-			$('#<?=$widgetkey?>-iftbl').html(s);
+			$(<?=json_encode('#' . $widgetkey . '-iftbl')?>).html(s);
 		}
 
 		// POST data to send via AJAX
 		var postdata = {
 			ajax : "ajax",
-		 	widgetkey :"<?=$widgetkey?>"
+			widgetkey : <?=json_encode($widgetkey)?>
 		 };
 
 		// Create an object defining the widget refresh AJAX call

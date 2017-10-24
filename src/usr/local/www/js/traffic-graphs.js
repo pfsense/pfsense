@@ -164,7 +164,7 @@ function draw_graph(then) {
 			d3.select('#traffic-chart-' + value + ' svg')
 				.append("text")
 				.attr('class', 'interface-label')
-				.attr("x", 20)             
+				.attr("x", 20)
 				.attr("y", 20)
 				.attr("font-size", 18)
 				.text(myData[value]['interfacename']);
@@ -229,11 +229,12 @@ function draw_graph(then) {
 
 			if (error) {
 
-				Visibility.stop(updateIds);
+				//Visibility.stop(updateIds);
 				clearInterval(updateTimerIds);
-				$(".traffic-widget-chart").remove();
-				$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
-				return console.warn(error);
+				//$(".traffic-widget-chart").remove();
+				//$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
+				return console.warn("Caught: " + error);
+
 
 			}
 
@@ -315,7 +316,7 @@ function draw_graph(then) {
 		});
 
 	}
-	
+
 	if(window.graph_backgroundupdate) {
 		updateTimerIds = setInterval(refreshGraphFunction, refreshInterval * 1000);
 	} else {

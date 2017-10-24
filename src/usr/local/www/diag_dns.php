@@ -337,7 +337,7 @@ if (!$input_errors && $type) {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var original_host = "<?=$host;?>";
+	var original_host = "<?=json_encode($host);?>";
 
 	$('input[name="host"]').on('input', function() {
 		if ($('#host').val() == original_host) {

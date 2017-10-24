@@ -21,7 +21,6 @@ net-mgmt/net-snmp
 net-mgmt/iprange
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 sysutils/htop
-sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder

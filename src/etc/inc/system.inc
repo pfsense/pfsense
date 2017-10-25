@@ -1532,7 +1532,10 @@ EOD;
 		location / {
 			index  index.php index.html index.htm;
 		}
-
+		location ~ \.inc$ {
+			deny all;
+			return 403;
+		}
 		location ~ \.php$ {
 			try_files \$uri =404; #  This line closes a potential security hole
 			# ensuring users can't execute uploaded files

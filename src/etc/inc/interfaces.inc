@@ -288,7 +288,7 @@ function vlan_inuse($vlan) {
 function interface_is_vlan($if = NULL) {
 	global $config;
 
-	if ($if == NULL || empty($if) || !is_array($config['vlans']['vlan'])) {
+	if ($if == NULL || empty($if)) {
 		return (NULL);
 	}
 
@@ -299,20 +299,20 @@ function interface_is_vlan($if = NULL) {
 	}
 
 	/* Find the VLAN interface. */
-	foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
-		if ($if == $vlan['vlanif']) {
-			return ($vlan);
+	if (isset($config['vlans']['vlan']) && is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
+			if ($if == $vlan['vlanif']) {
+				return ($vlan);
+			}
 		}
 	}
 
 	/* Check for the first level tag in QinQ interfaces. */
-	if (!isset($config['qinqs']['qinqentry']) ||
-	    !is_array($config['qinqs']['qinqentry'])) {
-		return (NULL);
-	}
-	foreach ($config['qinqs']['qinqentry'] as $qinqidx => $qinq) {
-		if ($if == $qinq['vlanif']) {
-			return ($qinq);
+	if (isset($config['qinqs']['qinqentry']) && is_array($config['qinqs']['qinqentry'])) {
+		foreach ($config['qinqs']['qinqentry'] as $qinqidx => $qinq) {
+			if ($if == $qinq['vlanif']) {
+				return ($qinq);
+			}
 		}
 	}
 

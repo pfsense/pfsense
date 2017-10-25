@@ -308,8 +308,14 @@ tr.disabled a {
 }
 
 .table {
-    margin-bottom: 0;
+    margin-bottom: 0px;
 }
+/*This is parsed by IE10+ only. Need this to stop empty tables from collapsing */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+ .table {
+	  margin-bottom:1px !important;
+  }
+ }
 
 .table>tbody>tr>td {
     padding: 6px 4px 6px 10px;

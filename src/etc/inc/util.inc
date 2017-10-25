@@ -1606,6 +1606,21 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	return $iflist;
 }
 
+function get_lagg_interface_list() {
+	global $config;
+
+	$plist = array();
+	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			$lagg['mac'] = get_interface_mac($lagg['laggif']);
+			$lagg['islagg'] = true;
+			$plist[$lagg['laggif']] = $lagg;
+		}
+	}
+
+	return ($plist);
+}
+
 /****f* util/log_error
 * NAME
 *   log_error  - Sends a string to syslog.

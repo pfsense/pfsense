@@ -39,11 +39,15 @@ if (!is_array($config['vlans']['vlan'])) {
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
-
-/* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
+		}
 	}
 }
 

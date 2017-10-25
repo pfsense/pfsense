@@ -1562,7 +1562,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-		    interface_is_vlan($ifname) == NULL && !stristr($ifname, "_wlan")) {
+		    interface_is_vlan($ifname) == NULL && insterface_is_qinq($ifname) == NULL) &&
+		    !stristr($ifname, "_wlan")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -1603,6 +1604,21 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		}
 	}
 	return $iflist;
+}
+
+function get_lagg_interface_list() {
+	global $config;
+
+	$plist = array();
+	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			$lagg['mac'] = get_interface_mac($lagg['laggif']);
+			$lagg['islagg'] = true;
+			$plist[$lagg['laggif']] = $lagg;
+		}
+	}
+
+	return ($plist);
 }
 
 /****f* util/log_error

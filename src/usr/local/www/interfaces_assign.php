@@ -78,8 +78,9 @@ function interface_assign_description($portinfo, $portname) {
 		}
 	} elseif ($portinfo['islagg']) {
 		$descr = strtoupper($portinfo['laggif']);
+		$descr .= " (" . $portinfo['mac'] . ")";
 		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
+			$descr .= " - " . $portinfo['descr'];
 		}
 	} elseif ($portinfo['isqinq']) {
 		$descr = $portinfo['descr'];
@@ -141,16 +142,14 @@ if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
 }
 
 /* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
-		$portlist[$lagg['laggif']]['islagg'] = true;
-		/* LAGG members cannot be assigned */
-		$lagifs = explode(',', $lagg['members']);
-		foreach ($lagifs as $lagif) {
-			if (isset($portlist[$lagif])) {
-				unset($portlist[$lagif]);
-			}
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
 		}
 	}
 }

@@ -186,6 +186,8 @@ function display_login_form() {
 				printf("showajaxmessage('" . gettext("This device is currently being maintained by: %s.") . "');", $whom);
 			}
 		}
+		//If session ended
+		echo "SESSION_TIMEOUT";
 		exit;
 	}
 
@@ -392,4 +394,3 @@ function display_login_form() {
 
 <?php
 } // end function
-

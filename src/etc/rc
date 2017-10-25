@@ -429,8 +429,10 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
-# Second upgrade stage
-/usr/local/sbin/${product}-upgrade -y -b 2
+if [ "${PLATFORM}" != "cdrom" ]; then
+	# Second upgrade stage
+	/usr/local/sbin/${product}-upgrade -y -b 2
+fi
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
@@ -511,10 +513,12 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-/usr/local/sbin/${product}-upgrade -y -b 3
+if [ "${PLATFORM}" != "cdrom" ]; then
+	/usr/local/sbin/${product}-upgrade -y -b 3
 
-# Update pkg metadata
-/etc/rc.update_pkg_metadata now
+	# Update pkg metadata
+	/etc/rc.update_pkg_metadata now
+fi
 
 # Log product version to syslog
 get_version

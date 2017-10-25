@@ -3512,14 +3512,16 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 	}
 
-	/* Do not set the MAC address for LAGG interfaces. */
-	if (substr($realhwif, 0, 4) != 'lagg') {
+	$current_mac = get_interface_mac($realhwif);
+	$vendor_mac = get_interface_vendor_mac($realhwif);
+	/*
+	 * Do not change the MAC address if the interface does not store the original
+	 * vendor MAC address.
+	 */
+	if ($vendor_mac != NULL) {
 		/* Get the vendor MAC.  Use source dependent upon whether or not booting. */
-		$current_mac = get_interface_mac($realhwif);
 		if (platform_booting()) {
 			$vendor_mac = $current_mac;
-		} else {
-			$vendor_mac = get_interface_vendor_mac($realhwif);
 		}
 		$mac_addr = $wancfg['spoofmac'] ?: $vendor_mac;
 		/*
@@ -3531,18 +3533,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if (!empty($mac_addr) && ($mac_addr != $current_mac)) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 				" link " . escapeshellarg($mac_addr));
-		} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
-			/*   this is not a valid mac address.  generate a
-			 *   temporary mac address so the machine can get online.
-			 */
-			echo gettext("Generating new MAC address.");
-			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
-				" link " . escapeshellarg($random_mac));
-			$wancfg['spoofmac'] = $random_mac;
-			write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
-			file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
 		}
+	} elseif ($current_mac == "ff:ff:ff:ff:ff:ff") {
+		/*   this is not a valid mac address.  generate a
+		 *   temporary mac address so the machine can get online.
+		 */
+		echo gettext("Generating new MAC address.");
+		$random_mac = generate_random_mac_address();
+		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
+			" link " . escapeshellarg($random_mac));
+		$wancfg['spoofmac'] = $random_mac;
+		write_config(sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac));
+		file_notice("MAC Address altered", sprintf(gettext('The invalid MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been automatically replaced with %2$s'), $realif, $random_mac), "Interfaces");
 	}
 
 	/* media */
@@ -6310,7 +6312,10 @@ function get_interface_mac($interface) {
 
 function get_interface_vendor_mac($interface) {
 	$macinfo = pfSense_get_interface_addresses($interface);
-	return $macinfo["hwaddr"] ?: '';
+	if (isset($macinfo["hwaddr"]) && $macinfo["hwaddr"] != "00:00:00:00:00:00") {
+		return ($macinfo["hwaddr"]);
+	}
+	return (NULL); 
 }
 
 /****f* pfsense-utils/generate_random_mac_address

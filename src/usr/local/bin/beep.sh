@@ -54,6 +54,9 @@ BEEP=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablebeep)
 if [ "$BEEP" = "true" ]; then
 	exit;
 fi
+if [ ! -f /usr/local/bin/beep ]; then
+	exit
+fi
 
 # Standard note length
 NOTELENGTH="25"

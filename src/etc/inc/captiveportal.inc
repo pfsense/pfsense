@@ -425,7 +425,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		}
 		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
-			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
+			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone, false);
 	}
 
 	/* generate nginx configuration */
@@ -436,7 +436,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
-		"", "", $cpzone);
+		"", "", $cpzone, false);
 
 	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start nginx */

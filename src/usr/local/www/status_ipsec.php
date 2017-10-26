@@ -111,6 +111,14 @@ function print_ipsec_body() {
 
 			print("<tr>\n");
 			print("<td>\n");
+			if (is_array($a_phase1)) {
+				foreach ($a_phase1 as $ph1) {
+					if($con_id == $ph1['ikeid'] && isset($ph1['mobile'])){
+						print($ph1['descr']);
+						break;
+					}
+				}
+			}
 			print(htmlspecialchars(ipsec_get_descr($ph1idx)));
 			print("</td>\n");
 			print("<td>\n");
@@ -535,7 +543,7 @@ print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a hre
 events.push(function() {
 	ajax_lock = false;		// Mutex so we don't make a call until the previous call is finished
 	sa_open = new Array();	// Array in which to keep the child SA show/hide state
-
+	tryCount = 3;
 	// Fetch the tbody contents from the server
 	function update_table() {
 		if (ajax_lock) {
@@ -551,11 +559,10 @@ events.push(function() {
 				data: {
 					ajax: 	"ajax"
 				},
-				tryCount : 0,
-				retryLimit :3,
 				error: function(xhr, textStatus, errorThrown){
 					//alert("error.... retrying");
-					if (this.tryCount <= this.retryLimit){
+					if (tryCount > 0){
+						tryCount --;
 						ajax_lock = false;
 						update_table();
 					}
@@ -566,7 +573,9 @@ events.push(function() {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-
+			if(textStatus === "success"){
+				tryCount =3;
+			}
 			if (!response) {
 				response = '<tr><td colspan="10"><?=print_info_box(gettext("No IPsec status information available."), "warning", "")?></td></tr>';
 			}

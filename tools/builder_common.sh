@@ -1170,7 +1170,7 @@ clone_to_staging_area() {
 
 	# Include a sample pkg stable conf to base
 	setup_pkg_repo \
-		${PKG_REPO_DEFAULT_${TARGET_ARCH}} \
+		$(eval echo \$PKG_REPO_DEFAULT_${TARGET_ARCH}) \
 		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
 		${TARGET} \
 		${TARGET_ARCH}
@@ -1227,7 +1227,7 @@ clone_to_staging_area() {
 	# Make sure correct repo is available on tmp dir
 	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
 	setup_pkg_repo \
-		${PKG_REPO_DEFAULT_${TARGET_ARCH}} \
+		$(eval echo \$PKG_REPO_DEFAULT_${TARGET_ARCH}) \
 		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
@@ -1622,7 +1622,7 @@ builder_setup() {
 
 		local _arch=$(uname -m)
 		setup_pkg_repo \
-			${PKG_REPO_DEFAULT_${TARGET_ARCH}} \
+			$(eval echo \$PKG_REPO_DEFAULT_${TARGET_ARCH}) \
 			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
@@ -1771,7 +1771,7 @@ pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
 	setup_pkg_repo \
-		${PKG_REPO_DEFAULT_${TARGET_ARCH}} \
+		$(eval echo \$PKG_REPO_DEFAULT_${TARGET_ARCH}) \
 		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \

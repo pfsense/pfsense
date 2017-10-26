@@ -358,9 +358,11 @@ export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${BUILDER_TOOLS}/templates/pkg_repos"}
 if [ "${TARGET_ARCH}" = "amd64" ]; then
-	export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-repo-devel.conf"}
+	export PFSENSE_DEFAULT_REPO="${PRODUCT_NAME}-repo-devel"
+	export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PFSENSE_DEFAULT_REPO}.conf"}
 else
-	export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-repo-devel.conf"}
+	export PFSENSE_DEFAULT_REPO="${PRODUCT_NAME}-repo-devel"
+	export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PFSENSE_DEFAULT_REPO}.conf"}
 fi
 export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}
 

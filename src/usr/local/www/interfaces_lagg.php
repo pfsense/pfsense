@@ -66,7 +66,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_laggs[$_POST['id']]['laggif']);
 		unset($a_laggs[$_POST['id']]);
 
-		write_config();
+		write_config(gettext("Deleted a LAGG interface."));
 
 		header("Location: interfaces_lagg.php");
 		exit;

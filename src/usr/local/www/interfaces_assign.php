@@ -241,7 +241,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		/* XXX: Do not remove this. */
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 
-		write_config();
+		write_config(gettext("Added an interface."));
 
 		$action_msg = gettext("Interface has been added.");
 		$class = "success";
@@ -252,7 +252,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		system_reboot();
 		$rebootingnow = true;
 	} else {
-		write_config();
+		write_config(gettext("Applied interfaces assignment changes."));
 
 		$changes_applied = true;
 		$retval = 0;
@@ -366,7 +366,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			}
 		}
 
-		write_config();
+		write_config(gettext("Saved interface assignments configuration."));
 
 		enable_rrd_graphing();
 	}
@@ -421,7 +421,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 
-			write_config();
+			write_config(gettext("Deleted an interface."));
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which

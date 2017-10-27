@@ -60,7 +60,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_gres[$_POST['id']]['greif']);
 		unset($a_gres[$_POST['id']]);
 
-		write_config();
+		write_config(gettext("Deleted a GRE tunnel."));
 
 		header("Location: interfaces_gre.php");
 		exit;

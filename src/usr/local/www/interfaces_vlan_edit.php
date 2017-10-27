@@ -143,7 +143,7 @@ if ($_POST['save']) {
 				$a_vlans[] = $vlan;
 			}
 
-			write_config();
+			write_config(gettext("Edited VLAN configuration."));
 
 			if ($confif != "") {
 				interface_configure($confif);

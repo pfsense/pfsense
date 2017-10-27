@@ -54,12 +54,12 @@ if ($_POST['act'] == "del") {
 		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	} else if (gif_inuse($_POST['id'])) {
-		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
+		$input_errors[] = gettext("This GIF tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
 		pfSense_interface_destroy($a_gifs[$_POST['id']]['gifif']);
 		unset($a_gifs[$_POST['id']]);
 
-		write_config();
+		write_config(gettext("Deleted a GIF tunnel."));
 
 		header("Location: interfaces_gif.php");
 		exit;

@@ -1477,7 +1477,7 @@ if ($_POST['apply']) {
 			handle_wireless_post();
 		}
 
-		write_config();
+		write_config(gettext("Saved interface configuration."));
 
 		if ($_POST['gatewayip4']) {
 			save_gateway($gateway_settings4);

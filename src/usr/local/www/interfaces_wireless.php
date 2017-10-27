@@ -60,7 +60,7 @@ if ($_POST['act'] == "del") {
 		pfSense_interface_destroy($a_clones[$_POST['id']]['cloneif']);
 		unset($a_clones[$_POST['id']]);
 
-		write_config();
+		write_config(gettext("Deleted a wireless clone interface."));
 
 		header("Location: interfaces_wireless.php");
 		exit;

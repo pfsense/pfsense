@@ -59,7 +59,7 @@ if ($_POST['act'] == "del") {
 		unset($config['ppps']['ppp'][$_POST['id']]['pppoe-reset-type']);
 		handle_pppoe_reset($config['ppps']['ppp'][$_POST['id']]);
 		unset($config['ppps']['ppp'][$_POST['id']]);
-		write_config();
+		write_config(gettext("Deleted a PPP interface."));
 		header("Location: interfaces_ppps.php");
 		exit;
 	}

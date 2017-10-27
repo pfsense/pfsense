@@ -2497,7 +2497,7 @@ function system_identify_specific_platform() {
 			return $result;
 			break;
 		case 'DFFv2':
-			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
+			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate SG-2220'));
 			break;
 		case 'RCC':
 			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));

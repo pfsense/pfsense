@@ -450,6 +450,18 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 
 </div>
 
+<?php
+/*
+ * Import the modal form used to display the copyright/usage information
+ * when trigger file exists. Trigger file is created during upgrade process
+ * when /etc/version changes
+ */
+if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
+	require_once("{$g['www_path']}/copynotice.inc");
+	@unlink("{$g['cf_conf_path']}/copynotice_display");
+}
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 

@@ -60,7 +60,7 @@ if ($_POST['act'] == "del") {
 
 		if (!$input_errors) {
 			unset($a_monitor[$_POST['id']]);
-			write_config();
+			write_config(gettext("Load Balancer: Monitors: deleted a monitor."));
 			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_monitor.php");
 			exit;

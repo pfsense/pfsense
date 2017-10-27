@@ -56,7 +56,7 @@ if ($_POST['act'] == "del") {
 		if (!$input_errors) {
 			cleanup_lb_mark_anchor($a_vs[$_POST['id']]['name']);
 			unset($a_vs[$_POST['id']]);
-			write_config();
+			write_config(gettext("Load Balancer: Virtual Servers: deleted a virtual server."));
 			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_virtual_server.php");
 			exit;

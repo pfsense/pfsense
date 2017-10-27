@@ -15,12 +15,12 @@ Read more at [https://pfsense.org/](https://pfsense.org/ "The pfSense homepage")
 
 The pfSense project welcomes contributions, big or small. Members of the pfSense community frequently contribute bug fixes, enhancements, and documentation changes to improve the functionality and usability of the software.
 
-All of the pfSense project source code is on Github. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [Github in general](https://help.github.com).
+All of the pfSense project source code is on GitHub. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and [GitHub in general](https://help.github.com).
 
 If you want to contribute but do not have a specific topic in mind, review the [list of open bug reports and other issues that are in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
 
 Before making source code changes, be sure to review our [Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide) so that the submitted code matches our preferred coding style.
 
-Changes may be submitted as [pull requests on github](https://help.github.com/articles/using-pull-requests/) once the LA and CLA signing process has been completed. After being submitted, our developers will review the requests, offer feedback, and merge the changes if they are acceptable.
+Changes may be submitted as [pull requests on GitHub](https://help.github.com/articles/using-pull-requests/). After being submitted, our developers will review the requests, offer feedback, and merge the changes if they are acceptable.
 
 Contact [coreteam@pfsense.org](mailto:coreteam@pfsense.org "Mail to coreteam@pfsense.org") with any additional questions or concerns.

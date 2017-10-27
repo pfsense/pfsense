@@ -90,7 +90,7 @@ if ($_POST['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 		}
 
 		unset($a_allowedhostnames[$_POST['id']]);
-		write_config();
+		write_config(gettext("Services: Captive Portal: Allowed Hostnames: deleted a hostname."));
 		captiveportal_allowedhostname_configure();
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;

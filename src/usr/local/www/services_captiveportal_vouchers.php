@@ -139,7 +139,7 @@ if ($_POST['act'] == "del") {
 		unset($a_roll[$id]);
 		voucher_unlink_db($roll);
 		unlock($voucherlck);
-		write_config();
+		write_config(gettext("Services: Captive Portal: Vouchers: deleted a voucher roll."));
 	}
 	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
 	exit;
@@ -275,7 +275,7 @@ if ($_POST['save']) {
 			$newvoucher['descrmsgnoaccess'] = $_POST['msgnoaccess'];
 			$newvoucher['descrmsgexpired'] = $_POST['msgexpired'];
 			$config['voucher'][$cpzone] = $newvoucher;
-			write_config();
+			write_config(gettext("Services: Captive Portal: Vouchers: saved a voucher roll."));
 			voucher_configure_zone();
 		} else {
 			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
@@ -345,7 +345,7 @@ EOF;
 						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s'), $url);
 
 						$config['voucher'][$cpzone] = $newvoucher;
-						write_config();
+						write_config(gettext("Services: Captive Portal: Vouchers: voucher database synchronized from master node."));
 						voucher_configure_zone(true);
 					}
 				}

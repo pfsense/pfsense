@@ -135,7 +135,7 @@ if ($_POST['save']) {
 
 		allowedhostnames_sort();
 
-		write_config();
+		write_config(gettext("Services: Captive Portal: Edit Allowed Hostnames: saved allowed hostnames."));
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);

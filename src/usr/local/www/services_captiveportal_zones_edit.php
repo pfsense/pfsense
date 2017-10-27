@@ -69,7 +69,7 @@ if ($_POST['Submit']) {
 		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];
 		$a_cp[$cpzone]['localauth_priv'] = true;
-		write_config();
+		write_config(gettext("Services: Captive Portal: Edit Zones: added a CP zone."));
 
 		header("Location: services_captiveportal.php?zone={$cpzone}");
 		exit;

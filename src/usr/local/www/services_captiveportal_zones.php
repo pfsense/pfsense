@@ -50,7 +50,7 @@ if ($_POST['act'] == "del" && !empty($_POST['zone'])) {
 		if (isset($config['voucher'][$cpzone])) {
 			unset($config['voucher'][$cpzone]);
 		}
-		write_config();
+		write_config(gettext("Services: Captive Portal: Zones: deleted a zone."));
 	}
 	header("Location: services_captiveportal_zones.php");
 	exit;

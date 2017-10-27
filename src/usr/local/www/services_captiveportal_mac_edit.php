@@ -160,7 +160,7 @@ if ($_POST['save']) {
 		}
 		passthrumacs_sort();
 
-		write_config();
+		write_config(gettext("Services: Captive Portal: MAC addresses: saved allowed MAC addresses."));
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];

@@ -333,11 +333,12 @@ if (!$input_errors && $type) {
 </div>
 <?php
 }
+if (!$input_errors):
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var original_host = "<?=json_encode($host);?>";
+	var original_host = <?=json_encode($host);?>;
 
 	$('input[name="host"]').on('input', function() {
 		if ($('#host').val() == original_host) {
@@ -350,4 +351,5 @@ events.push(function() {
 //]]>
 </script>
 <?php
+endif;
 include("foot.inc");

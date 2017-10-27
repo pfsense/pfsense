@@ -415,7 +415,7 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		ec2|ec2-ic)
 			old_custom_package_list="${custom_package_list}"
 			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-ec2_setup \
-				${PRODUCT_NAME}-openvpn_connect_profile"
+				${PRODUCT_NAME}-openvpn_connect_profile ${PRODUCT_NAME}-pkg-sudo"
 			install_pkg_install_ports
 			create_virt_images ${_IMGTOBUILD} "default-config-${_IMGTOBUILD}"
 			export custom_package_list="${old_custom_package_list}"

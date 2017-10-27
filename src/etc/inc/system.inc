@@ -1237,16 +1237,14 @@ EOD;
 	}
 
 	if (!$sighup) {
-		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
-			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
-		}
+		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
 
-		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-			// if it still hasn't responded to the TERM, KILL it.
-			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-			usleep(100000);
-		}
+		// if it still hasn't responded to the TERM, KILL it.
+		sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+
+		// Bug #7984: do not leave sshlockout_pf process orphans
+		sigkillbyname("sshlockout_pf", "TERM");
 
 		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 	} else {

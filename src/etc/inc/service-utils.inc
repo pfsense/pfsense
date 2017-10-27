@@ -700,14 +700,11 @@ function service_control_stop($name, $extras) {
 			sigkillbyname("relayd", "TERM");
 			break;
 		case 'syslogd':
-			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-				sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
-				usleep(100000);
-			}
-			if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
-				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
-				usleep(100000);
-			}
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+			usleep(100000);
+			sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+			// Bug #7984: do not leave sshlockout_pf process orphans
+			sigkillbyname("sshlockout_pf", "TERM");
 			break;
 		default:
 			stop_service($name);

@@ -708,6 +708,8 @@ function service_control_stop($name, $extras) {
 				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 				usleep(100000);
 			}
+			/* Make sure sshlockout_pf stops as well */
+			sigkillbyname("sshlockout_pf", "TERM");
 			break;
 		default:
 			stop_service($name);

@@ -38,7 +38,7 @@ if ($_GET['reset'] != "") {
 }
 
 if ($_POST['apply']) {
-	write_config();
+	write_config(gettext("Applied traffic shaper configuration changes."));
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */

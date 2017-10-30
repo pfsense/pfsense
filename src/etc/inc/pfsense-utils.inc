@@ -180,7 +180,9 @@ function get_css_files() {
 		$usrcss = $pfscss = $betacss = array();
 
 		foreach ($cssfiles as $css) {
-			if (strpos($css, "login") == 0) {	// Don't display any login page related CSS files
+			// Don't display any login/logo page related CSS files
+			if (strpos($css, "login") == 0 &&
+			    strpos($css, "logo") == 0) {
 				if (strpos($css, "BETA") != 0) {
 					array_push($betacss, $css);
 				} else if (strpos($css, "pfSense") != 0) {

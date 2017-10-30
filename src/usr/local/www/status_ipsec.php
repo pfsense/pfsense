@@ -111,10 +111,10 @@ function print_ipsec_body() {
 
 			print("<tr>\n");
 			print("<td>\n");
-			if (is_array($a_phase1)) {
+			if (is_array($a_phase1) && htmlspecialchars(ipsec_get_descr($ph1idx)) == "") {
 				foreach ($a_phase1 as $ph1) {
-					if($con_id == $ph1['ikeid'] && isset($ph1['mobile'])){
-						print($ph1['descr']);
+					if($con_id == $ph1['ikeid'] && isset($ph1['mobile']) ){
+						print(htmlspecialchars($ph1['descr']));
 						break;
 					}
 				}

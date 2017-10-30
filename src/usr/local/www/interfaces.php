@@ -727,7 +727,7 @@ if ($_POST['apply']) {
 			}
 		}
 	}
-	if (($_POST['type'] == 'staticv6') && $_POST['ipaddrv6']) {
+	if (($_POST['type6'] == 'staticv6') && $_POST['ipaddrv6']) {
 		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
 
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {

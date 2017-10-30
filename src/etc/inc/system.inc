@@ -2271,10 +2271,7 @@ function system_setup_sysctl() {
 	switch ($platform['name']) {
 	case 'ROGUE-1':
 	case 'uFW':
-		set_sysctl(array(
-			"hw.intr_storm_threshold" => "0",
-			"kern.random.harvest.mask" => "351",
-		));
+		set_single_sysctl("hw.intr_storm_threshold", "0");
 		break;
 	}
 }

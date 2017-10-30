@@ -723,6 +723,8 @@ function service_control_stop($name, $extras) {
 				sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
 				usleep(100000);
 			}
+			/* Make sure sshlockout_pf stops as well */
+			sigkillbyname("sshlockout_pf", "TERM");
 			break;
 		case 'watchdogd':
 			killbypid("{$g['varrun_path']}/watchdogd.pid");

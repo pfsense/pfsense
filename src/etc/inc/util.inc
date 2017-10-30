@@ -649,6 +649,14 @@ function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr)) {
 		return false;
 	}
+	/*
+	 * While Net_IPv6::checkIPv6() considers IPv6/mask a valid IPv6,
+	 * is_ipaddrv6() needs to be more strict to keep the compatibility
+	 * with is_ipaddrv4().
+	 */
+	if (strstr($ipaddr, "/")) {
+		return false;
+	}
 	if (strstr($ipaddr, "%") && is_linklocal($ipaddr)) {
 		$tmpip = explode("%", $ipaddr);
 		$ipaddr = $tmpip[0];

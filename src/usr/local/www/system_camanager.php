@@ -175,6 +175,15 @@ if ($_POST['save']) {
 		if (!$input_errors && !empty($_POST['key']) && cert_get_publickey($_POST['cert'], false) != cert_get_publickey($_POST['key'], false, 'prv')) {
 			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 		}
+		/* we must ensure the certificate is capable of acting as a CA
+		 * https://redmine.pfsense.org/issues/7885
+		 */
+		if (!$input_errors) {
+			$purpose = cert_get_purpose($_POST['cert'], false);
+			if ($purpose['ca'] != 'Yes') {
+				$input_errors[] = gettext("The submitted certificate does not appear to be a Certificate Authority, import it on the Certificates tab instead.");
+			}
+		}
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",

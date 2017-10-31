@@ -129,6 +129,8 @@ if ($_GET['act'] == "deluser") {
 		conf_mount_ro();
 		$userdeleted = $a_user[$id]['name'];
 		unset($a_user[$id]);
+		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+		$a_user = array_values($a_user);
 		write_config();
 		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
 	}
@@ -174,6 +176,8 @@ if (isset($_POST['dellall'])) {
 			} else {
 				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
 			}
+			/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+			$a_user = array_values($a_user);
 			write_config($savemsg);
 		}
 	}

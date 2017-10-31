@@ -1080,7 +1080,7 @@ function cert_add_altname_type($str) {
 	$type = "";
 	if (is_ipaddr($str)) {
 		$type = "IP";
-	} elseif (is_hostname($str)) {
+	} elseif (is_hostname($str, true)) {
 		$type = "DNS";
 	} elseif (is_URL($str)) {
 		$type = "URI";

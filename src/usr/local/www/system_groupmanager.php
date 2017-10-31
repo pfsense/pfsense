@@ -70,6 +70,8 @@ if ($_POST['act'] == "delgroup") {
 	local_group_del($a_group[$id]);
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
+	/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+	$a_group = array_values($a_group);
 	write_config();
 	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
 }
@@ -120,6 +122,8 @@ if (isset($_POST['dellall_x'])) {
 				unset($a_group[$groupid]);
 			}
 		}
+		/* Reindex the array to avoid operating on an incorrect index https://redmine.pfsense.org/issues/7733 */
+		$a_group = array_values($a_group);
 		$savemsg = gettext("Selected groups removed successfully.");
 		write_config($savemsg);
 	}

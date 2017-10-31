@@ -347,7 +347,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$pkgs = $g['pkg_prefix'] . '*';
 	}
 
-	
+
 	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
 		// Return early if the caller wants just installed packages and there are none.
 		// Saves doing any calls that might access a remote package repo.
@@ -383,6 +383,8 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		    $pkgs, $out, $err);
 	}
 
+	$use_rquery = false;
+
 	if (($installed_pkgs_only || $rc != 0) &&
 	    $remote_repo_usage_disabled &&
 	    is_pkg_installed($pkgs)) {
@@ -407,7 +409,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		 * (which could be incomplete/out of date), then it makes sense
 		 * to fall back on pkg info to at least return the known
 		 * info about installed pkgs (pkg info should still work),
-		 * instead of failing and returning no info at all. 
+		 * instead of failing and returning no info at all.
 		 * For example, this at least enables offline view + management
 		 * of installed pkgs in GUI/console.
 		 *
@@ -419,8 +421,9 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		 * Note that is_pkg_installed() is a wrapper for pkg info -e
 		 * <pattern> which is what we need here.
 		*/
-		
-		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
+
+		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list
+		$use_rquery = true;
 		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs,
 		    $out, $err);
 	}
@@ -483,8 +486,21 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 				return array();
 			}
 
-			$pkg_info['installed_version'] = str_replace("\n", "",
-			    $out);
+			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+
+			/*
+			* We used pkg info to collect pkg data so remote
+			* version is not available. Lets try to collect it
+			* using rquery if possible
+			*/
+			if ($use_rquery) {
+				$rc = pkg_exec("rquery -U %v {$pkg_info['name']}", $out, $err);
+
+				if ($rc == 0) {
+					$pkg_info['version'] = str_replace("\n", "", $out);
+				}
+			}
+
 		} else if (is_package_installed($pkg_info['shortname'])) {
 			$pkg_info['broken'] = true;
 			$pkg_is_installed = true;
@@ -846,7 +862,7 @@ function install_package_xml($package_name) {
 			update_status(gettext("done.") . "\n");
 		}
  		if (is_array($pkg_config['tabs'])) {
- 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];			
+ 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
  		}
 		/* plugins */
 		if (isset($pkg_config['include_file'])) {

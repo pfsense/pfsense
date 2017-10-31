@@ -64,7 +64,7 @@ custom=$(grep user-class /var/db/dhclient.leases${if} 2>/dev/null | \
     tail -n 1 | cut -d'"' -f2)
 
 [ -n "${custom}" ] \
-	&& touch /tmp/custom \
+	&& echo ${custom} > /tmp/custom \
 	|| rm -f /tmp/custom
 
 touch /tmp/factory-pre.done

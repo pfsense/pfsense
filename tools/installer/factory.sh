@@ -533,6 +533,7 @@ else
 fi
 
 if [ -f /tmp/custom ]; then
+	custom=$(cat /tmp/custom)
 	custom_url="http://factory-logger.pfmechanics.com/${custom}-install.sh"
 
 	if ! fetch -o /tmp/custom.sh ${custom_url}; then

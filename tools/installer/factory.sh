@@ -56,6 +56,23 @@ upgrade_netgate_coreboot() {
 			;;
 	esac
 
+	# Check current model and version
+	local _cur_model=$(kenv -q smbios.bios.version 2>/dev/null | \
+	    sed 's/^ADI_//; s/-.*//')
+	local _cur_version=$(kenv -q smbios.bios.version 2>/dev/null | \
+	    sed "s/^ADI_${_cur_model}-//; s/-.*//")
+
+	# Models don't match, leave it alone
+	[ "${_coreboot_model}" != "${_cur_model}" ] \
+		&& return 0
+
+	# Get remote available version
+	local _remote_version="0"
+	local _url=http://factory-logger.pfmechanics.com/coreboot/${_coreboot_model}_version.txt
+	if fetch -o /tmp/remote_version ${_url} >/dev/null 2>&1; then
+		_remote_version=$(head -n 1 /tmp/remote_version)
+	fi
+
 	# Look for available rom for this model
 	local _avail_rom=$(cd /mnt/${_roms_dir} && \
 	    ls -1 ADI_${_coreboot_model}-*.rom 2>/dev/null | tail -n 1)
@@ -67,19 +84,25 @@ upgrade_netgate_coreboot() {
 	local _avail_version=$(echo "${_avail_rom}" | \
 	    sed "s/^ADI_${_coreboot_model}-//; s/-.*//")
 
-	# Check current model and version
-	local _cur_model=$(kenv -q smbios.bios.version 2>/dev/null | \
-	    sed 's/^ADI_//; s/-.*//')
-	local _cur_version=$(kenv -q smbios.bios.version 2>/dev/null | \
-	    sed "s/^ADI_${_cur_model}-//; s/-.*//")
-
-	# Models don't match, leave it alone
-	[ "${_coreboot_model}" != "${_cur_model}" ] \
-		&& return 0
+	# If local available version is the same, use it
+	local _ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
+	    "${_remote_version}" "${_avail_version}")
+	if [ "${_ver_cmp}" != ">" ]; then
+		local _version="${_avail_version}"
+		local _rom="${_roms_dir}/${_avail_rom}"
+	else
+		local _romname=$(tail -n 1 /tmp/remote_version)
+		local _rom="/tmp/coreboot_rom"
+		if ! fetch -o /mnt${_rom} \
+		    http://factory-logger.pfmechanics.com/coreboot/${_romname}; then
+			return 0
+		fi
+		local _version="${_remote_version}"
+	fi
 
 	# Installed version is the latest, nothing to be done here
-	local _ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
-	    "${_cur_version}" "${_avail_version}")
+	_ver_cmp=$(/mnt/usr/local/sbin/pkg-static version -t \
+	    "${_cur_version}" "${_version}")
 	[ "${_ver_cmp}" != "<" ] \
 		&& return 0
 
@@ -87,7 +110,7 @@ upgrade_netgate_coreboot() {
 	echo "===> Upgrading Netgate Coreboot"
 	mkdir -p /mnt/dev
 	mount -t devfs devfs /mnt/dev
-	chroot /mnt ${_adi_flash_util} -u ${_roms_dir}/${_avail_rom}
+	chroot /mnt ${_adi_flash_util} -u ${_rom}
 	local _rc=$?
 	umount -f /mnt/dev
 	return ${_rc}

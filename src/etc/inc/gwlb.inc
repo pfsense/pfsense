@@ -643,6 +643,15 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$found_defaultv6 = 1;
 				}
 			}
+
+			if (isset($gateway['no_defgw_switch'])) {
+				$gateway['no_defgw_switch'] = true;
+			}
+
+			if (isset($gateway['notifications_disable'])) {
+				$gateway['notifications_disable'] = true;
+			}
+
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
@@ -921,6 +930,17 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
 		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
 			$upgw = $gwname;
+			if ($gwsttng['no_defgw_switch']) {
+				// do not elect this gateway if the `skip` option is set
+				if ($g['debug']) {
+					log_error(sprintf(gettext('Found UP gateway %1$s but it was administratively skipped due to gateway settings'), $gwname));
+				}
+			} else {
+				if ($g['debug']) {
+					log_error(sprintf(gettext('Found UP gateway %1$s'), $gwname));
+				}
+				$upgw = $gwname;
+			}
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
 			break;
@@ -1035,8 +1055,10 @@ function return_gateway_groups_array() {
 							$msg .= "\n".implode("|", $status);
 							touch("/tmp/.down.{$gwname}");
 							log_error($msg);
-							notify_via_growl($msg);
-							notify_via_smtp($msg);
+							if (!isset($gateways_arr[$gwname]['notifications_disable'])) {
+								notify_via_growl($msg);
+								notify_via_smtp($msg);
+							}
 						}
 					} else {
 						$pluginparams['event'] = 'gateway.up';
@@ -1049,8 +1071,10 @@ function return_gateway_groups_array() {
 							$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
 							$msg .= "\n".implode("|", $status);
 							log_error($msg);
-							notify_via_growl($msg);
-							notify_via_smtp($msg);
+							if (!isset($gateways_arr[$gwname]['notifications_disable'])) {
+								notify_via_growl($msg);
+								notify_via_smtp($msg);
+							}
 						}
 					}
 					if (isset($gateways_arr[$gwname]['interface']))
@@ -1518,6 +1542,11 @@ function validate_gateway($gateway_settings, $id = "", $parent_ip = "", $parent_
 		}
 	}
 
+	if (($gateway_settings['no_defgw_switch'] == "yes") && ($gateway_settings['defaultgw'] == "yes")) {
+		/* marking a gateway as the default is mutually exclusive with this option */
+		$input_errors[] = gettext("Gateway cannot be both the default and also excluded from gateway switching. Choose one or the other.");
+	}
+
 	if (isset($gateway_settings['name'])) {
 		/* check for overlaps */
 		foreach ($a_gateways as $gateway) {
@@ -1753,6 +1782,14 @@ function save_gateway($gateway_settings, $realid = "") {
 		} else {
 			mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
 		}
+	}
+
+	if ($gateway_settings['no_defgw_switch'] == "yes" || $gateway_settings['no_defgw_switch'] == "on") {
+		$gateway['no_defgw_switch'] = true;
+	}
+
+	if ($gateway_settings['notifications_disable'] == "yes" || $gateway_settings['notifications_disable'] == "on") {
+		$gateway['notifications_disable'] = true;
 	}
 
 	if ($gateway_settings['defaultgw'] == "yes" || $gateway_settings['defaultgw'] == "on") {

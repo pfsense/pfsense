@@ -422,11 +422,29 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-	unset($rules_loading, $rules_error);
-	$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
-	if (isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "pfctl done at $mt\n";
+	
+	for ($pfctl_try = 1; $pfctl_try <= 10; $pfctl_try++) {
+		unset($rules_loading, $rules_error);
+		$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
+		if (isset($config['system']['developerspew'])) {
+			$mt = microtime();
+			echo "pfctl done at $mt\n";
+		}
+		if ($rules_loading == 0) {
+			// continue when successful
+			if (isset($config['system']['developerspew']) && $pfctl_try > 1) {
+				file_notice("filter_load", sprintf(gettext('pf was busy but succeeded after %s tries'), $pfctl_try), "Filter Reload", "");
+			}
+			break;
+		}
+		if (strstr($_grbg, "DIOCADDALTQ: Device busy") || 
+		    strstr($_grbg, "DIOCXCOMMIT: Device busy")) {
+			// when busy status is returned retry after a short pause
+			usleep(200000);//try again after 200 ms..unless it still fails after 10x
+		} else {
+			// rule loading failed, no need to retry with the same ruleset
+			break;
+		}
 	}
 	/*
 	 * check for a error while loading the rules file.	if an error has occurred

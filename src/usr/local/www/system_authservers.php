@@ -541,7 +541,7 @@ if (empty($a_ca))
 }
 else
 {
-	$ldapCaRef = [];
+	$ldapCaRef = array( 'global' => 'Global Root CA List' );
 	foreach ($a_ca as $ca)
 		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
 

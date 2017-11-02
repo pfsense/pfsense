@@ -84,7 +84,8 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
+		throw new Exception(
+		    sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 		    $name,
 		    xml_get_current_line_number($parser)));
 	}

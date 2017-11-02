@@ -2443,6 +2443,32 @@ function route_add_or_change($args) {
 	return ($rc == 0);
 }
 
+function alias_to_subnets_recursive($name, $returnhostnames = false) {
+	global $aliastable;
+	$result = array();
+	if (!isset($aliastable[$name])) {
+		return $result;
+	}
+	$subnets = preg_split('/\s+/', $aliastable[$name]);
+	foreach ($subnets as $net) {
+		if (is_alias($net)) {
+			$sub = alias_to_subnets_recursive($net, $returnhostnames);
+			$result = array_merge($result, $sub);
+			continue;
+		} elseif (!is_subnet($net)) {
+			if (is_ipaddrv4($net)) {
+				$net .= "/32";
+			} else if (is_ipaddrv6($net)) {
+				$net .= "/128";
+			} else if ($returnhostnames === false || !is_fqdn($net)) {
+				continue;
+			}
+		}
+		$result[] = $net;
+	}
+	return $result;
+}
+
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	global $config, $aliastable;
 
@@ -2460,21 +2486,7 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, 
 		}
 
 		if (is_alias($route['network'])) {
-			if (!isset($aliastable[$route['network']])) {
-				continue;
-			}
-
-			$subnets = preg_split('/\s+/', $aliastable[$route['network']]);
-			foreach ($subnets as $net) {
-				if (!is_subnet($net)) {
-					if (is_ipaddrv4($net)) {
-						$net .= "/32";
-					} else if (is_ipaddrv6($net)) {
-						$net .= "/128";
-					} else if ($returnhostnames === false || !is_fqdn($net)) {
-						continue;
-					}
-				}
+			foreach (alias_to_subnets_recursive($route['network'], $returnhostnames) as $net) {
 				$temproute = $route;
 				$temproute['network'] = $net;
 				$allstaticroutes[] = $temproute;

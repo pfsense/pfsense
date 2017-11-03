@@ -299,7 +299,7 @@ function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btnt
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
 	}
-	$msg = addslashes($msg);
+
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
 	if ($btnname === "close") {

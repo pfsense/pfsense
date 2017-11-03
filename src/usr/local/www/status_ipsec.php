@@ -577,7 +577,7 @@ events.push(function() {
 				tryCount =3;
 			}
 			if (!response) {
-				response = '<tr><td colspan="10"><?=print_info_box(gettext("No IPsec status information available."), "warning", "")?></td></tr>';
+				response = '<tr><td colspan="10"><?=print_info_box(addslashes(gettext("No IPsec status information available.")), "warning", "")?>"</td></tr>';
 			}
 
 			$('#ipsec-body').html(response);

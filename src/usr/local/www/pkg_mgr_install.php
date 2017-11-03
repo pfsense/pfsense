@@ -59,6 +59,7 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //		Respect next_log_line and append log to output window rather than writing it
 
 $pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+$repos = pkg_list_repos();
 
 if ($_REQUEST['ajax']) {
 	$response = "";
@@ -223,6 +224,19 @@ if (!empty($_REQUEST['id'])) {
 	}
 
 	$firmwareupdate = true;
+
+	// If the user changes the firmware branch to sync to, switch to the newly selected repo
+	// and save their choice
+	if ($_REQUEST['refrbranch']) {
+		foreach ($repos as $repo) {
+			if ($repo['name'] == $_POST['fwbranch']) {
+				$config['system']['pkg_repo_conf_path'] = $repo['path'];
+				pkg_switch_repo($repo['path']);
+				write_config(gettext("Saved firmware branch setting."));
+				break;
+			}
+		}
+	}
 } elseif (!$completed && empty($_REQUEST['pkg']) && $pkgmode != 'reinstallall') {
 	header("Location: pkg_mgr_installed.php");
 	return;
@@ -251,6 +265,32 @@ if ($firmwareupdate) {
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
+}
+
+// Create an array of repo names and descriptions to populate the "Branch" selector
+function build_repo_list() {
+	global $repos;
+
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+function get_repo_name($path) {
+	global $repos;
+
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $repos[0]['name'];
 }
 
 include("head.inc");
@@ -283,6 +323,7 @@ if (!$confirmed && !$completed &&
 			$pkgtxt = sprintf(gettext('Confirmation Required to install package %s.'), $pkgname);
 			break;
 	}
+
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -308,11 +349,28 @@ if (!$confirmed && !$completed &&
 ?>
 			</h2>
 		</div>
+
 		<div class="panel-body">
 			<div class="content">
 				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
+	// Draw a selector to allow the user to select a different firmware branch
+	// If the selection is changed, the page will be reloaded and the new choice displayed.
 	if ($firmwareupdate):
+		$group = new Form_Group("Branch");
+
+		$field = new Form_Select(
+			'fwbranch',
+			'*Branch',
+			get_repo_name($config['system']['pkg_repo_conf_path']),
+			build_repo_list()
+		);
+
+		$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+						'Use of the development version is at your own risk!', '<br />');
+
+		$group->add($field);
+		print($group);
 ?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">
@@ -336,7 +394,7 @@ if (!$confirmed && !$completed &&
 					</label>
 					<div class="col-sm-10">
 						<input type="hidden" name="id" value="firmware" />
-						<input type="hidden" name="confirmed" value="true" />
+						<input type="hidden" name="confirmed" id="confirmed" value="true" />
 						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
 							<i class="fa fa-check icon-embed-btn"></i>
 							<?=gettext("Confirm")?>
@@ -715,7 +773,6 @@ function startCountdown() {
 	}, 1000);
 }
 
-
 events.push(function() {
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 3000);
@@ -735,7 +792,14 @@ events.push(function() {
 		get_firmware_versions();
 	}
 
+	// If the user changes the firmware branch selection, submit thee form to record that choice
+	$('#fwbranch').on('change', function() {
+		$('#confirmed').val("false");
+		$('<input>').attr('type','hidden').attr('name', 'refrbranch').attr('value', 'true').appendTo('form');
+		$('form').submit();
+	});
 });
+
 //]]>
 </script>
 

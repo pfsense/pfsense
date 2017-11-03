@@ -2058,6 +2058,7 @@ function system_ntp_configure() {
 	if (is_array($interfaces) && count($interfaces)) {
 		$finterfaces = array();
 		$ntpcfg .= "interface ignore all\n";
+		$ntpcfg .= "interface ignore wildcard\n";
 		foreach ($interfaces as $interface) {
 			$interface = get_real_interface($interface);
 			if (!empty($interface)) {

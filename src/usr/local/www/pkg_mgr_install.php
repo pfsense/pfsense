@@ -792,10 +792,16 @@ events.push(function() {
 		get_firmware_versions();
 	}
 
-	// If the user changes the firmware branch selection, submit thee form to record that choice
+	// If the user changes the firmware branch selection, submit the form to record that choice
 	$('#fwbranch').on('change', function() {
 		$('#confirmed').val("false");
-		$('<input>').attr('type','hidden').attr('name', 'refrbranch').attr('value', 'true').appendTo('form');
+
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'refrbranch',
+			value: 'true'
+		}).appendTo('form');
+
 		$('form').submit();
 	});
 });

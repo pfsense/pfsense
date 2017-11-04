@@ -36,7 +36,7 @@ if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
 }
 
-$a_vlans = &$config['vlans']['vlan'] ;
+$a_vlans = &$config['vlans']['vlan'];
 
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {

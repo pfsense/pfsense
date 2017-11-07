@@ -101,9 +101,9 @@ display_top_tabs($tab_array);
 					</thead>
 					<tbody>
 <?php
-
+	$platform = system_identify_specific_platform();
 	$swvlans = switch_get_system_vlans(true);
-	if ($swvlans != NULL && is_array($swvlans)) {
+	if ($platform['name'] == "uFW" && $swvlans != NULL && is_array($swvlans)) {
 		foreach($swvlans as $swvlan) {
 ?>
 						<tr>

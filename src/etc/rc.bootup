@@ -195,6 +195,9 @@ echo "Starting Secure Shell Services...";
 send_event("service reload sshd");
 echo "done.\n";
 
+/* Load the switches settings. */
+switches_configure();
+
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
 setup_microcode();

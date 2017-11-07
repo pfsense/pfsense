@@ -34,16 +34,15 @@ function switch_r1_get_system_vlans($dot1q_only) {
 	if ($swinfo == NULL) {
 		return (NULL);
 	}
-	$vlans = array();
-	if ($dot1q_only && isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
-		return ($vlans);
-	}
 	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
 		if ($vgroup == NULL) {
 			continue;
 		}
 		if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
+			$vgroup['switchname'] = $swinfo['name'];
+			$vlans[] = $vgroup;
+		} elseif (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" && $vgroup['vid'] == 1) {
 			$vgroup['switchname'] = $swinfo['name'];
 			$vlans[] = $vgroup;
 		}
@@ -257,4 +256,128 @@ function switch_get_configured_interface_with_descr($swdevice = NULL) {
 	return ($rtrn);
 }
 
+function switch_port_is_enabled($swinfo = NULL, $port = NULL) {
+
+	if ($swinfo == NULL || !is_array($swinfo) ||
+	    $port == NULL || !is_numeric($port)) {
+		return (false);
+	}
+	if ($port < 0 || $port >= $swinfo['nports']) {
+		return (false);
+	}
+	if ($swinfo['switch_caps']['PORTS_MASK'] == 1 &&
+	    (!isset($swinfo['ports_mask'][$port]) || $swinfo['ports_mask'][$port] != 1)) {
+		return (false);
+	}
+	return (true);
+}
+
+function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
+
+	if ($swdev == NULL || $vlanmode == NULL) {
+		return (false);
+	}
+
+	switch ($vlanmode) {
+	case "DOT1Q":
+		mwexec("/sbin/etherswitchcfg config vlan_mode dot1q");
+		break;
+	case "PORT":
+		mwexec("/sbin/etherswitchcfg config vlan_mode port");
+		break;
+	default:
+		return (false);
+	}
+
+	return (true);
+}
+
+function r1_switch_configure() {
+	global $config;
+
+	$switches = $config['switches']['switch'];
+	if (!isset($switches) || !is_array($switches)) {
+		return;
+	}
+	/* Find the SG-3100 switch settings. */
+	$swid = -1;
+	foreach($switches as $sid => $switch) {
+		if ($switch['device'] != "/dev/etherswitch0") {
+			continue;
+		}
+		$swid = $sid;
+		break;
+	}
+	if ($swid == -1) {
+		return;
+	}
+	$switch = $switches[$swid];
+
+	/* Set switch mode. */
+	if (isset($switch['vlanmode'])) {
+		switch_set_vlan_mode($switch['device'], $switch['vlanmode']);
+	}
+
+	/* Set vlangroups. */
+	$vgroups = $switch['vlangroups']['vlangroup'];
+	if (isset($vgroups) && is_array($vgroups)) {
+		foreach($vgroups as $vgid => $vgroup) {
+
+			$vgmembers = array();
+			if (isset($vgroup['members'])) {
+				$members = explode(" ", $vgroup['members']);
+			} else {
+				$members = array();
+			}
+			foreach($members as $m) {
+				if ($m[1] == "t") {
+					$m = substr($m, 0, 1);
+					$vgmembers[$m] = array();
+					$vgmembers[$m]['tagged'] = 1;
+				} else {
+					$vgmembers[$m] = array();
+				}
+			}
+
+			pfSense_etherswitch_setvlangroup($switch['device'],
+			    $vgroup['vgroup'], $vgroup['vlanid'], $vgmembers);
+		}
+	}
+
+	/* Set PVID. */
+	$swports = $switch['swports']['swport'];
+	if (!isset($swports) || !is_array($swports)) {
+		return;
+	}
+	foreach($swports as $pid => $swport) {
+		if (isset($swport['pvid'])) {
+//			pfSense_etherswitch_setport($switch['device'],
+//			    $swport['port'], $swport['pvid']);
+		}
+	}
+}
+
+function switches_configure() {
+
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+	case "ROGUE-1":
+	case "uFW":
+		break;
+	default:
+		return;
+	}
+	if (!platform_booting()) {
+		return;
+	}
+	echo gettext("Configuring switch...");
+	switch ($platform['name']) {
+	case "ROGUE-1":
+		r1_switch_configure();
+		break;
+	case "uFW":
+		break;
+	}
+	echo gettext("done.") . "\n";
+}
 ?>

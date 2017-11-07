@@ -29,6 +29,12 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
+if (!is_array($config['switches']['switch'])) {
+	$config['switches']['switch'] = array();
+}
+
+$a_switches = &$config['switches']['switch'];
+
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"));
 $shortcut_section = "vlans";
 include("head.inc");
@@ -59,6 +65,49 @@ function find_pfSense_vlan($vlantag) {
 	return (NULL);
 }
 
+function find_vgroup_id($vgroups = NULL, $vlangroup = -1) {
+
+	if ($vgroups == NULL || !is_array($vgroups) || $vlangroup == -1) {
+		return (-1);
+	}
+
+	foreach($vgroups as $vgid => $vgroup) {
+		if (!isset($vgroup['vgroup']) || $vgroup['vgroup'] != $vlangroup) {
+			continue;
+		}
+		return ($vgid);
+	}
+
+	return (-1);
+}
+
+function get_config_descr($swid = -1, $vlangroup = -1) {
+	global $config;
+
+	if ($swid == -1 || $vlangroup == -1) {
+		return (NULL);
+	}
+	$switch = $config['switches']['switch'][$swid];
+	if (!isset($switch) || !is_array($switch)) {
+		return (NULL);
+	}
+	$vgroups = $switch['vlangroups']['vlangroup'];
+	if (!isset($vgroups) || !is_array($vgroups)) {
+		return (NULL);
+	}
+	$vgid = find_vgroup_id($vgroups, $vlangroup);
+	if ($vgid == -1) {
+		return (NULL);
+	}
+	$vgroup = $vgroups[$vgid];
+
+	if (!isset($vgroup['descr']) || strlen($vgroup['descr']) == 0) {
+		return (NULL);
+	}
+
+	return ($vgroup['descr']);
+}
+
 // Build an array with which to populate the switch device selector
 function get_switches($devicelist) {
 
@@ -77,16 +126,6 @@ function get_switches($devicelist) {
 	}
 
 	return($switches);
-}
-
-// Delete a VLAN
-if ($_GET['act'] == "del") {
-	$vid = $_GET['vid'];
-	$device = $_GET['swdevice'];
-
-	print("Deleting VID: " . $vid . " from device: " . $device . "<br />");
-
-	// ToDo: Add some code to delete the VLAN
 }
 
 // List the available switches
@@ -130,131 +169,226 @@ if ($swinfo == NULL) {
 	$input_errors[] = "Cannot get switch device information\n";
 }
 
+$swid = -1;
+foreach ($a_switches as $sid => $switch) {
+	if ($switch['device'] != $swdevice) {
+		continue;
+	}
+	$pconfig['vlanmode'] = $switch['vlanmode'];
+	$swid = $sid;
+}
+
+$platform = system_identify_specific_platform();
+
+// Delete a VLAN
+if ($_POST['act'] == "del") {
+	$vid = intval($_POST['vid']);
+
+	$a_vgroups = &$a_switches[$swid]['vlangroups']['vlangroup'];
+	if (is_array($a_vgroups) && vlan_valid_tag($vid)) {
+		foreach($a_vgroups as $vgid => $vgroup) {
+			if (!isset($vgroup['vgroup']) ||
+			    !isset($vgroup['vlanid']) || $vgroup['vlanid'] != $vid) {
+				continue;
+			}
+			pfSense_etherswitch_setvlangroup($swdevice, $vgroup['vgroup'], 0, array());
+			unset($a_vgroups[$vgid]);
+			write_config();
+			break;
+		}
+	}
+
+	header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+	exit;
+
+} elseif (isset($_POST['save'])) {
+	/* uFW is always run in DOT1Q mode. */
+	if ($platform['name'] == 'uFW' || isset($_POST['dot1q'])) {
+		$vlanmode = "DOT1Q";
+	} else {
+		$vlanmode = "PORT";
+	}
+	$pconfig['vlanmode'] = $vlanmode;
+
+	$found = false;
+	$update = false;
+	foreach ($config['switches'] as $cswitch) {
+		if ($cswitch['device'] != $swdevice) {
+			continue;
+		}
+		$found = true;
+		if ($cswitch['vlanmode'] != $vlanmode) {
+			$update = true;
+		}
+	}
+
+	if ($update || !$found) {
+
+		$switch = array();
+		$switch['device'] = $swdevice;
+		$switch['vlanmode'] = $vlanmode;
+		$found = false;
+		foreach ($a_switches as $id => $cswitch) {
+			if ($cswitch['device'] != $swdevice) {
+				continue;
+			}
+			$a_switches[$id]['vlanmode'] = $vlanmode;
+			$found = true;
+		}
+		if (!$found) {
+			$a_switches[] = $switch;
+		}
+
+		/* Reset existing settings. */
+		if ($found == true && is_array($a_switches[$id]['vlangroups']['vlangroup'])) {
+			foreach($a_switches[$id]['vlangroups']['vlangroup'] as $vgid => $vgroup) {
+				unset($a_switches[$id]['vlangroups']['vlangroup'][$vgid]);
+			}
+		}
+		if ($found == true && is_array($a_switches[$id]['swports']['swport'])) {
+			foreach($a_switches[$id]['swports']['swport'] as $pid => $swport) {
+				unset($a_switches[$id]['swports']['swport'][$pid]);
+			}
+		}
+
+		write_config();
+
+		/* Set switch mode. */
+		switch_set_vlan_mode($swdevice, $vlanmode);
+
+		header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+		exit;
+	}
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else {
 	// Don't draw the table if there were hardware errors
-?>
-<div class="panel panel-default">
-<?
+	$form = new Form();
+
 	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
-?>
-	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch Port based VLANs')?></h2></div>
-<?
+		$section = new Form_Section(gettext($swtitle) ." ". gettext('Switch Port based VLANs'));
 	} else {
-?>
-	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch 802.1Q VLANs')?></h2></div>
-<?
+		$section = new Form_Section(gettext($swtitle) ." ". gettext('Switch 802.1Q VLANs'));
 	}
-?>
-	<div class="panel-body">
+
+	if ($platform['name'] != 'uFW') {
+		$section->addInput(new Form_Checkbox(
+			'dot1q',
+			'Enable',
+			'Enable 802.1q VLAN mode',
+			($pconfig['vlanmode'] == 'DOT1Q' ? 'yes' : ''),
+			'yes'
+		))->setHelp('If enabled, packets with unknown VLAN tags will be dropped.');
+	}
+
+	$switch_table = ' 
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
-						<th><?=gettext("VLAN group"); ?></th>
-<?
+						<th>'. gettext("VLAN group") ."</th>\n";
 	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
-?>
-						<th><?=gettext("VLAN ID"); ?></th>
-<?
+		$switch_table .= '<th>'. gettext("VLAN tag") ."</th>\n";
 	} else {
-?>
-						<th><?=gettext("Port"); ?></th>
-<?
+		$switch_table .= '<th>'. gettext("Port") ."</th>\n";
 	}
-?>
-						<th><?=gettext("Members"); ?></th>
-						<th><?=gettext("Description"); ?></th>
-						<th><?=gettext("Action"); ?></th>
+	$switch_table .= "
+						<th>". gettext("Members") ."</th>
+						<th>". gettext("Description") ."</th>
+						<th>". gettext("Action") ."</th>
 					</tr>
 				</thead>
-				<tbody>
-<?php
+				<tbody>\n";
 
-for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
-	$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
-	if ($vgroup == NULL) {
-		continue;
-	}
-?>
-					<tr>
-						<td>
-							<?= htmlspecialchars($vgroup['vlangroup']); ?>
-						</td>
-						<td>
-							<?= htmlspecialchars($vgroup['vid']); ?>
-						</td>
-						<td>
-<?
-	$comma = false;
-
-	foreach ($vgroup['members'] as $member => $val) {
-		if ($comma) {
-			echo ",";
-		}
-
-		echo "$member";
-		$comma = true;
-	}
-?>
-						</td>
-						<td>
-<?
-	$sys = false;
-	foreach ($vlans_system as $svlan) {
-		if ($svlan['vid'] != $vgroup['vid']) {
+	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
+		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
+		if ($vgroup == NULL) {
 			continue;
 		}
-
-		echo "Default System VLAN";
-		$sys = true;
-
-		break;
-	}
-	if (!$sys) {
-		$vlan = find_pfSense_vlan($vgroup['vid']);
-		if ($vlan != NULL && is_array($vlan)) {
-			echo htmlspecialchars($vlan['vlan']['descr']);
-		}
-	}
-?>
+		$switch_table .= "
+					<tr>
+						<td>". htmlspecialchars($vgroup['vlangroup']) ."
 						</td>
-						<td>
-<?php
-		if (!$sys) {
-			if (isset($vlan) && $vlan != NULL && is_array($vlan)) {
-?>
-							<a class="fa fa-pencil" title="<?=gettext("Edit"); ?>" href="interfaces_vlan_edit.php?id=<?=htmlspecialchars($vlan['id'])?>"></a>
-							<a class="fa fa-trash no-confirm"       title="<?=gettext('Delete VLAN')?>"     role="button" id="del-<?=$vlan['id']?>"></a>
-<?php
+						<td>". htmlspecialchars($vgroup['vid']) ."
+						</td>
+						<td>\n";
+		$comma = false;
+		foreach ($vgroup['members'] as $member => $val) {
+			if ($comma) {
+				$switch_table .= ",";
+			}
+			$switch_table .= "$member";
+			$comma = true;
+		}
+		$switch_table .= "
+						</td>
+						<td>\n";
+		$sys = false;
+		foreach ($vlans_system as $svlan) {
+			if ($svlan['vid'] != $vgroup['vid']) {
+				continue;
+			}
+
+			$switch_table .= "Default System VLAN";
+			$sys = true;
+
+			break;
+		}
+		if (!$sys && $platform['name'] == 'uFW') {
+			$vlan = find_pfSense_vlan($vgroup['vid']);
+			if ($vlan != NULL && is_array($vlan)) {
+				$switch_table .= htmlspecialchars($vlan['vlan']['descr']);
+			}
+		} else {
+			$descr = get_config_descr($swid, $vgroup['vlangroup']);
+			if ($descr != NULL) {
+				$switch_table .= htmlspecialchars($descr);
 			}
 		}
-?>
+		$switch_table .= "
 						</td>
-					</tr>
-<?
+						<td>\n";
+
+		/* Allow regular VLAN editing on SG-1000. */
+		if (!$sys && $platform['name'] == 'uFW' && isset($vlan) && $vlan != NULL && is_array($vlan)) {
+			$switch_table .= '<a class="fa fa-pencil" title="'. gettext("Edit") .'" href="interfaces_vlan_edit.php?id='. htmlspecialchars($vlan['id']) .'"></a>';
+			$switch_table .= '<a class="fa fa-trash no-confirm"  title="'. gettext('Delete VLAN') .'"     role="button" id="vlandel-'. $vlan['id'] .'"></a>';
+		} elseif ($platform['name'] != 'uFW') {
+			$switch_table .= '<a class="fa fa-pencil" title="'. gettext("Edit") .'" ';
+			$switch_table .= 'href="switch_vlans_edit.php?act=edit&vgroupid='. htmlspecialchars($vgroup['vlangroup']);
+			$switch_table .= '&swdevice='. $swdevice .'"></a>';
+			if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" && !$sys) {
+				$switch_table .= '<a class="fa fa-trash no-confirm"  title="'. gettext('Delete VLAN tag') .'"     role="button" id="del-'. $vgroup['vid'] .'"></a>';
+			}
+		}
+		$switch_table .= "
+						</td>
+					</tr>\n";
 	}
 
-?>
+	$switch_table .= "
 				</tbody>
 			</table>
-		</div>
-	</div>
-</div>
+		</div>\n";
 
-<?php
+	$section->addInput(new Form_StaticText(
+		"VLAN(s) table",
+		$switch_table
+	));
 
-/*
- * Not implemented yet.
- *
- * <nav class="action-buttons">
- *	<a href="switch_vlans_edit.php?swdevice=<?=$swdevice?>&amp;act=new&amp;nports=<?=$swinfo['nports']?>" role="button" class="btn btn-success btn-sm">
- *		<i class="fa fa-plus icon-embed-btn"></i>
- *		<?=gettext("Add");?>
- *	</a>
- * </nav>
- */
+if ($platform['name'] != 'uFW' && isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+	$form->addGlobal(new Form_Button(
+		'addtag',
+		'Add Tag',
+		"switch_vlans_edit.php?swdevice=". htmlspecialchars($swdevice) ."&act=new",
+		'fa-plus'
+	))->addClass('btn-success addbtn');
+}
+
+$form->add($section);
+print($form);
 
 } // e-o-if($input_errors) else . .
 
@@ -273,23 +407,35 @@ events.push(function() {
 </script>
 
 <?php
-        $delmsg = gettext("Are you sure you want to delete this VLAN?");
+        $delmsg = gettext("Are you sure you want to delete this VLAN tag?");
 ?>
 
 <form name="vlan_edit_form" action="interfaces_vlan.php" method="post">
+        <input id="vlanact" type="hidden" name="act" value="" />
+        <input id="vlanid" type="hidden" name="id" value="" />
+</form>
+<form name="switch_vlans_form" action="switch_vlans.php" method="post">
         <input id="act" type="hidden" name="act" value="" />
-        <input id="id" type="hidden" name="id" value="" />
+        <input id="vid" type="hidden" name="vid" value="" />
 </form>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
+	$('[id^=vlandel-]').click(function(event) {
+		if (confirm("<?=$delmsg?>")) {
+			$('#vlanact').val('del');
+			$('#vlanid').val(this.id.replace("vlandel-", ""));
+			$('form[name="vlan_edit_form"]').submit();
+		}
+	});
+
 	$('[id^=del-]').click(function(event) {
 		if (confirm("<?=$delmsg?>")) {
 			$('#act').val('del');
-			$('#id').val(this.id.replace("del-", ""));
-			$('form[name="vlan_edit_form"]').submit();
+			$('#vid').val(this.id.replace("del-", ""));
+			$('form[name="switch_vlans_form"]').submit();
 		}
 	});
 

@@ -1028,6 +1028,11 @@ function reload_interfaces_sync() {
 	}
 
 	if ($g['debug']) {
+		log_error(gettext("Cleaning up Switches"));
+	}
+	switches_configure();
+
+	if ($g['debug']) {
 		log_error(gettext("Cleaning up Interfaces"));
 	}
 
@@ -1087,6 +1092,9 @@ function reload_all_sync() {
 
 	/* enable routing */
 	system_routing_enable();
+
+	/* set up switches. */
+	switches_configure();
 
 	/* set up interfaces */
 	interfaces_configure();

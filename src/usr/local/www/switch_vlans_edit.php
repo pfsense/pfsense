@@ -29,97 +29,365 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
+if (!is_array($config['switches']['switch'])) {
+        $config['switches']['switch'] = array();
+}
+$a_switches = &$config['switches']['switch'];
+
+function find_vgroup_id($vgroups = NULL, $vlangroup = -1) {
+
+	if ($vgroups == NULL || !is_array($vgroups) || $vlangroup == -1) {
+		return (-1);
+	}
+
+	foreach($vgroups as $vgid => $vgroup) {
+		if (!isset($vgroup['vgroup']) || $vgroup['vgroup'] != $vlangroup) {
+			continue;
+		}
+		return ($vgid);
+	}
+
+	return (-1);
+}
+
+function find_vgroup_id_by_vlan($vgroups = NULL, $vlan = -1) {
+
+	if ($vgroups == NULL || !is_array($vgroups) ||
+	    $vlan == -1 || !vlan_valid_tag($vlan)) {
+		return (-1);
+	}
+
+	foreach($vgroups as $vgid => $vgroup) {
+		if (!isset($vgroup['vlanid']) || $vgroup['vlanid'] != $vlan) {
+			continue;
+		}
+		return ($vgid);
+	}
+
+	return (-1);
+}
+
+function get_config_descr($swid = -1, $vlangroup = -1) {
+	global $config;
+
+	if ($swid == -1 || $vlangroup == -1) {
+		return (NULL);
+	}
+	$switch = $config['switches']['switch'][$swid];
+	if (!isset($switch) || !is_array($switch)) {
+		return (NULL);
+	}
+	$vgroups = $switch['vlangroups']['vlangroup'];
+	if (!isset($vgroups) || !is_array($vgroups)) {
+		return (NULL);
+	}
+	$vgid = find_vgroup_id($vgroups, $vlangroup);
+	if ($vgid == -1) {
+		return (NULL);
+	}
+	$vgroup = $vgroups[$vgid];
+
+	if (!isset($vgroup['descr']) || strlen($vgroup['descr']) == 0) {
+		return (NULL);
+	}
+
+	return ($vgroup['descr']);
+}
+
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), gettext("Edit"));
+
+$pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), gettext("Edit"));
+$pglinks = array("", "", "switch_vlans.php", "@self");
 $shortcut_section = "vlans";
 include("head.inc");
 
-// Create an array containing a list of the available ports on the specified switch
-// ToDo: Need to add "tagged" indicator
-function available_ports($swdevice) {
-
-	$portlist = array();
-
-	$swinfo = pfSense_etherswitch_getinfo($swdevice);
-	if ($swinfo == NULL) {
-		return ($portlist);
-	}
-
-	for ($idx = 0; $idx < $swinfo['nports']; $idx++) {
-		$swport = pfSense_etherswitch_getport($swdevice, $idx);
-		if ($swport == NULL)
-			break;
-		$portlist[$idx] = "Port ". $swport['port'];
-	}
-
-	return($portlist);
+/* Check swdevice */
+if (!isset($_REQUEST['swdevice'])) {
+	header("Location: switch_vlans.php");
+	exit;
+}
+$swdevice = $_REQUEST['swdevice'];
+$swinfo = pfSense_etherswitch_getinfo($swdevice);
+if ($swinfo == NULL) {
+	header("Location: switch_vlans.php");
+	exit;
 }
 
+$swid = -1;
+foreach($a_switches as $switchid => $switch) {
+	if ($switch['device'] != $swdevice) {
+		continue;
+	}
+	$swid = $switchid;
+	break;
+}
+if ($swid == -1) {
+	header("Location: switch_vlans.php");
+	exit;
+}
+if (!is_array($a_switches[$swid]['vlangroups'])) {
+        $a_switches[$swid]['vlangroups'] = array();
+}
+if (!is_array($a_switches[$swid]['vlangroups']['vlangroup'])) {
+        $a_switches[$swid]['vlangroups']['vlangroup'] = array();
+}
+$a_vgroups = &$a_switches[$swid]['vlangroups']['vlangroup'];
+
+unset ($input_errors);
 if ($_POST) {
-	// $_POST data will look like this:  [vlanid] => "4321" [desc] => "My test VLAN" [members] => Array ( [0] => 1 [1] => 2 )
-	//print_r($_POST);
-}
 
-switch ($_GET['act']) {
-	case "edit" :
-		$vid = $_GET['vid'];
-		$device = $_GET['swdevice'];
+	$members = "";
 
-		print("<h3>Under construction</h3>");
-		print("<br />");
+	// Read the POSTed member array into a space separated list translating any ranges
+	// into their included values
+	$membercounter = 0;
+	$membername = "member{$membercounter}";
+	$valid_members = array();
+	$posted_tagged = array();
+	$posted_members = array();
 
-		print("Editing VLAN ID: " . $vid . " on device: " . $device);
+	while (isset($_POST[$membername])) {
+		if (!switch_port_is_enabled($swinfo, intval($_POST[$membername]))) {
+			$input_errors[] = "Invalid port: {$_POST[$membername]}";
+		}
 
-	break;
+		if (isset($_POST["tagged{$membercounter}"])) {
+			if (empty($input_errors)) {
+				$valid_members[] = intval($_POST[$membername]). "t";
+			}
+			$posted_tagged[] = intval($_POST[$membername]);
+		} else {
+			if (empty($input_errors)) {
+				$valid_members[] = intval($_POST[$membername]);
+			}
+		}
 
-	case "new" :
-		$device = $_GET['swdevice'];
-		$pconfig['vlanid'] = "";
-		$pconfig['desc'] = "";
-	break;
+		// Remember the POSTed values so they can be redisplayed if there were errors.
+		$posted_members[] = intval($_POST[$membername]);
+
+		$membercounter++;
+		$membername = "member{$membercounter}";
+	}
+
+	if (isset($_POST['vgroupid']) && is_numeric($_POST['vgroupid'])) {
+		if (!is_numeric($_POST['vgroupid']) || $_POST['vgroupid'] < 0 ||
+		    $_POST['vgroupid'] >= $swinfo['nvlangroups']) {
+			$input_errors[] = "Invalid vlangroup: {$_POST['vgroupid']}";
+		}
+		$vgroupid = $_POST['vgroupid'];
+	} else {
+		$vgroupid = -1;
+	}
+	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+		if (!vlan_valid_tag($_POST['vlanid'])) {
+			$input_errors[] = "Invalid VLAN tag: {$_POST['vlanid']}";
+		}
+		if ($_POST['oldvid'] == 1 && $_POST['vlanid'] != $_POST['oldvid']) {
+			$input_errors[] = "VLAN tag 1 cannot change.  Restoring original value.";
+			$_POST['vlanid'] = 1;
+		}
+	} else {
+		if (isset($_POST['oldvid']) && $_POST['vlanid'] != $_POST['oldvid']) {
+			$input_errors[] = "PORT cannot change.  Restoring original value.";
+			$_POST['vlanid'] = $_POST['vgroupid'];
+		}
+	}
+	$vgid = find_vgroup_id($a_vgroups, $vgroupid);
+	$duplicate = find_vgroup_id_by_vlan($a_vgroups, $_POST['vlanid']);
+	if ($vgid == -1 && $duplicate != -1 ||
+	    $vgid != -1 && $duplicate != -1 && $vgid != $duplicate) {
+		$input_errors[] = "VLAN tag is already in use: {$_POST['vlanid']}";
+	}
+
+	if (empty($input_errors)) {
+
+		$vgmembers = array();
+		foreach($posted_members as $m) {
+			$vgmembers[$m] = array();
+			if (in_array($m, $posted_tagged)) {
+				$vgmembers[$m]['tagged'] = 1;
+			}
+		}
+		$err = pfSense_etherswitch_setvlangroup($swdevice, $vgroupid, $_POST['vlanid'], $vgmembers);
+		if ($err == false) {
+		/* XXX */	
+		}
+		if ($vgroupid == -1) {
+			$vgroupid = $err;
+		}
+		$vgroup = array();
+		$vgroup['vgroup'] = $vgroupid;
+		$vgroup['vlanid'] = $_POST['vlanid'];
+		$vgroup['descr'] = $_POST['descr'];
+		$vgroup['members'] = implode(" ", $valid_members);
+		if ($vgid != -1 && isset($a_vgroups[$vgid]) && is_array($a_vgroups[$vgid])) {
+			$a_vgroups[$vgid] = $vgroup;
+		} else {
+			$a_vgroups[] = $vgroup;
+		}
+		write_config();
+
+		header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+		exit;
+	} else {
+		$pconfig['vgroupid'] = $_GET['vgroupid'];
+		$pconfig['vlanid'] = $_POST['vlanid'];
+		$pconfig['descr'] = $_POST['descr'];
+		$pconfig['tagged'] = $posted_tagged;
+		$pconfig['members'] = $posted_members;
+	}
+} else {
+
+	if (!isset($_GET['act'])) {
+		header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+		exit;
+	}
+	switch ($_GET['act']) {
+		case "edit" :
+			$pconfig['vgroupid'] = $_GET['vgroupid'];
+
+			$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $pconfig['vgroupid']);
+			if ($vgroup == NULL) {
+				header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+				exit;
+			}
+
+			$pconfig['vlanid'] = $vgroup['vid'];
+			$descr = get_config_descr($swid, $vgroup['vlangroup']);
+			if ($descr != NULL) {
+				$pconfig['descr'] = $descr;
+			} else {
+				$pconfig['descr'] = "";
+				$vlans_system = switch_get_system_vlans(false);
+				foreach ($vlans_system as $svlan) {
+					if ($svlan['vid'] != $vgroup['vid']) {
+						continue;
+					}
+
+					$pconfig['descr'] = "Default System VLAN";
+					break;
+				}
+			}
+
+			$pconfig['tagged'] = array();
+			$pconfig['members'] = array();
+			foreach ($vgroup['members'] as $member => $val) {
+				if ($member[1] == 't') {
+					$member = substr($member, 0, 1);
+					$pconfig['tagged'][] = $member;
+				}
+				$pconfig['members'][] = $member;
+			}
+
+		break;
+
+		case "new" :
+			$pconfig['vgroupid'] = "";
+			$pconfig['vlanid'] = "";
+			$pconfig['descr'] = "";
+			$pconfig['members'] = array('');
+			$pconfig['tagged'] = array();
+		break;
+
+		default:
+			header("Location: switch_vlans.php?swdevice=". htmlspecialchars($swdevice));
+			exit;
+	}
 }
 
 $form = new Form();
 
 $section = new Form_Section("Vlan properties");
 
+if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+	$vidtag = "VLAN tag";
+	$vidhelp = "Enter a VLAN ID number (that is not already in use.)";
+} else {
+	$vidtag = "PORT";
+	$vidhelp = "";
+}
 $section->addInput(new Form_Input(
 	'vlanid',
-	'VLAN ID',
+	$vidtag,
 	'number',
 	$pconfig['vlanid']
-))->setHelp("Enter a VLAN ID number (that is not already in use.)");
+))->setHelp($vidhelp);
 
 $section->addInput(new Form_Input(
-	'desc',
+	'descr',
 	'Description',
 	'text',
-	$pconfig['desc']
+	$pconfig['descr']
 ))->setHelp("A description may be entered here for administrative reference (not parsed).");
 
-$group = new Form_Group('VLAN Members');
+$counter = 0;
+foreach ($pconfig['members'] as $member) {
 
-$usersGroups = array();
+	$group = new Form_Group($counter == 0 ? '*Member(s)':'');
+	$group->addClass('repeatable');
 
-$group->add(new Form_Select(
-	'availports',
+	$group->add(new Form_Input(
+		'member' . $counter,
+		null,
+		'text',
+		$member
+	))->setWidth(6); // Width must be <= 8 to make room for the duplication buttons
+
+	if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q") {
+		if (in_array($member, $pconfig['tagged'])) {
+			$checked = yes;
+		} else {
+			$checked = '';
+		}
+		$group->add(new Form_Checkbox(
+			'tagged' . $counter,
+			null,
+			'tagged',
+			$checked,
+			'yes'
+		));
+	}
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
+
+	$counter++;
+
+	$section->add($group);
+}
+
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add member',
 	null,
-	array(),
-	available_ports($device),
-	true
-))->setHelp('Available ports<br />Click to add or remove a port from the VLAN');
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
-$group->add(new Form_Select(
-	'members',
+if (isset($pconfig['vgroupid'])) {
+	$section->addInput(new Form_Input(
+		'vgroupid',
+		null,
+		'hidden',
+		$pconfig['vgroupid']
+	));
+}
+
+$section->addInput(new Form_Input(
+	'oldvid',
 	null,
-	array(),
-	$usersGroups,
-	true
-))->setReadonly()
-  ->setHelp('VLAN Members');
-
-$section->add($group);
+	'hidden',
+	$pconfig['vlanid']
+));
 
 $form->add($section);
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 print($form);
 

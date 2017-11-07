@@ -125,10 +125,7 @@ if ($input_errors) {
 <?php
 
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
-		if (isset($swinfo['switch_caps']['PORTS_MASK']) &&
-		    $swinfo['switch_caps']['PORTS_MASK'] == 1 &&
-		    (!isset($swinfo['ports_mask'][$i]) ||
-		    $swinfo['ports_mask'][$i] != 1)) {
+		if (!switch_port_is_enabled($swinfo, $i)) {
 			continue;
 		}
 		$port = pfSense_etherswitch_getport($swdevice, $i);

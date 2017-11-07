@@ -136,6 +136,11 @@ if /sbin/kldstat -qm zfs; then
 			/sbin/zfs set readonly=off $ZFSROOT
 		fi
 		/sbin/zfs mount -a
+		# If /bootpool is present, then there is an additional zfs pool to import
+		# See https://redmine.pfsense.org/issues/8063
+		if [ -d /bootpool ]; then
+			/sbin/zpool import -f bootpool
+		fi
 	fi
 fi
 

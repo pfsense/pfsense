@@ -47,8 +47,8 @@ function listtags() {
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);

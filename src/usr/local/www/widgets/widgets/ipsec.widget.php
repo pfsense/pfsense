@@ -46,6 +46,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		$ipsec_detail_array = array();
 		$ikenum = array();
+
 		if (isset($config['ipsec']['phase2']) && is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if (!ipsec_lookup_phase1($ph2ent,$ph1ent)) {
@@ -60,7 +61,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 					continue;
 				}
 
-				if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
+				if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
 					if (!isset($ikenum[$ph1ent['ikeid']])) {
 						$ikenum[$ph1ent['ikeid']] = 0;
 					} else {
@@ -88,7 +89,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 									break;
 								}
 							}
-						} else if ($ikeid == $id) {
+						} else if ($ikeid == $ikesa['con-id']) {
 							$found = true;
 						}
 

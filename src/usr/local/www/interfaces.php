@@ -101,6 +101,8 @@ if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
 } else if ($if == "lan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "LAN";
+} else if ($if == "opt1" && !$wancfg['descr']) {
+	$wancfg['descr'] = "OPT1";
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */

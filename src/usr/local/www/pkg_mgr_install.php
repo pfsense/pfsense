@@ -357,6 +357,14 @@ if (!$confirmed && !$completed &&
 	// Draw a selector to allow the user to select a different firmware branch
 	// If the selection is changed, the page will be reloaded and the new choice displayed.
 	if ($firmwareupdate):
+
+		// Check to see if any new repositories have become available. This data is cached and
+		// refreshed evrey 24 hours
+		update_repos();
+		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+		$repos = pkg_list_repos();
+
 		$group = new Form_Group("Branch");
 
 		$field = new Form_Select(
@@ -366,8 +374,12 @@ if (!$confirmed && !$completed &&
 			build_repo_list()
 		);
 
-		$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
-						'Use of the development version is at your own risk!', '<br />');
+		if (file_exists($helpfilename)) {
+			$field->setHelp(file_get_contents($helpfilename));
+		} else {
+			$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+							'Use of the development version is at your own risk!', '<br />');
+		}
 
 		$group->add($field);
 		print($group);

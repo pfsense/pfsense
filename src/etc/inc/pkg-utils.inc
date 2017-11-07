@@ -869,7 +869,7 @@ function install_package_xml($package_name) {
 			$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
 		}
 		if (is_array($pkg_config['plugins']['item'])) {
-			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];			
+			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];
 		}
 	} else {
 		pkg_debug("Unable to find config file\n");
@@ -1322,4 +1322,80 @@ function pkg_switch_repo($path) {
 	return;
 }
 
+$FQDN = "https://ews.netgate.com/pfupdate";
+$refreshinterval = (24 * 3600);	// 24 hours
+$idfile = "/var/db/uniqueid";
+$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+$configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
+
+// Update the list of available repositories from the server. This will allow migration to another
+// update repository should the existing one becomes unavailable
+function update_repos() {
+	global $g, $config, $idfile, $FQDN, $repopath;
+
+	if (file_exists($idfile)) {
+		// If the custom repository definition does not exist, or is more than 24 hours old
+		// Fetch a copy from the server
+		if ( (! file_exists($configflename)) || ( time()-filemtime($configflename) > $refreshinterval)) {
+			if (function_exists('curl_version')) {
+				// Gather some information about the system so the proper repo can be returned
+				$nid = file_get_contents($idfile);
+				$serial = system_get_serial();
+				$arch = php_uname(“p”);
+				$version = $g['product_version'];
+				$locale = $config['system']['language'];
+				// Architecture comes from the last word in the uname output
+				$arch = array_pop(explode(' ', php_uname(“p”)));
+
+				$post = ['uid' => $nid,
+						 'language' => $locale,
+						 'serial' => $serial,
+						 'version' => $version,
+						 'arch' => $arch
+						];
+
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_VERBOSE, 0);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+				curl_setopt($ch, CURLOPT_URL, $FQDN);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
+				$response = curl_exec($ch);
+				$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+
+				if ($status == 200) {
+					save_repo($response);
+				}
+			}
+		}
+	}
+}
+
+// Parse the received JSON data and save the custom repository information
+function save_repo($json) {
+	global $repopath, $g;
+	$repo = json_decode($json, true);
+
+	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) && isset($repo['conf']) &&
+	    isset($repo['descr']) && isset($repo['name']) && (strlen($repo['conf']) > 10)) {
+		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
+
+		file_put_contents($basename . "conf", base64_decode($repo['conf']));
+		file_put_contents($basename . "descr", $repo['descr']);
+		file_put_contents($basename . "abi", $repo['abi']);
+		file_put_contents($basename . "altabi", $repo['altabi']);
+		file_put_contents($basename . "name", $repo['name']);
+		file_put_contents($basename . "help", $repo['help']);
+	} else {
+		// If there was anything wrong with the custom repository definition, remove the help text
+		// to avoid possible confusion
+		if (file_exists($basename . "help")) {
+			unlink($basename . "help");
+		}
+	}
+}
 ?>

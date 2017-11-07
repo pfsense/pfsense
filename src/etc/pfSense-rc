@@ -52,18 +52,9 @@ get_version ()
 
 get_version
 
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
-
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
-
-# Setup ddb on all platforms.
-if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/${product}-ddb.conf
-fi
 
 if [ -e /root/force_growfs ]; then
 	/etc/rc.d/growfs onestart
@@ -193,6 +184,15 @@ if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 	/bin/mkdir -p /var/db /var/cache
 	ln -sf ../../root/var/db/pkg /var/db/pkg
 	ln -sf ../../root/var/cache/pkg /var/cache/pkg
+fi
+
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
+# Setup ddb on all platforms.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/${product}-ddb.conf
 fi
 
 # Restore contents of the RAM disk store

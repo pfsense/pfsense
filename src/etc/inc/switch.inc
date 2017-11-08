@@ -351,8 +351,8 @@ function r1_switch_configure() {
 	}
 	foreach($swports as $pid => $swport) {
 		if (isset($swport['pvid'])) {
-//			pfSense_etherswitch_setport($switch['device'],
-//			    $swport['port'], $swport['pvid']);
+			pfSense_etherswitch_setport($switch['device'],
+			    $swport['port'], $swport['pvid']);
 		}
 	}
 }

@@ -408,18 +408,38 @@ function find_service_by_cp_zone($zone) {
 	return array();
 }
 
-function service_name_compare($a, $b) {
-	if (strtolower($a['name']) == strtolower($b['name'])) {
+function service_description_compare($a, $b) {
+	if (strtolower($a['description']) == strtolower($b['description'])) {
 		return 0;
+	}
+	return (strtolower($a['description']) < strtolower($b['description'])) ? -1 : 1;
+}
+
+function service_name_compare($a, $b) {
+	/* If the names are equal, fall back to sorting by description */
+	if (strtolower($a['name']) == strtolower($b['name'])) {
+		return service_description_compare($a, $b);
 	}
 	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
 }
 
 function service_dispname_compare($a, $b) {
-	if (strtolower($a['dispname']) == strtolower($b['dispname'])) {
-		return 0;
+	/* If two items have an instance suffix, perform an integer comparison to avoid awkward sorting */
+	if ((strpos($a['dispname'], '_') > 0) && (strpos($b['dispname'], '_') > 0)) {
+		list($adn1, $adn2) = explode('_', $a['dispname'], 2);
+		list($bdn1, $bdn2) = explode('_', $b['dispname'], 2);
+		if (($adn1 == $bdn1) && is_numeric($adn2) && is_numeric($bdn2)) {
+			if ($adn2 == $bdn2) {
+				return 0;
+			}
+			return ((int)$adn2 < (int)$bdn2) ? -1 : 1;
+		}
 	}
-	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
+	/* If the display names are equal, compare the internal name */
+	if (strtolower($a['dispname']) == strtolower($b['dispname'])) {
+		return service_name_compare($a, $b);
+	}
+	return (strtolower($a['dispname']) < strtolower($b['dispname'])) ? -1 : 1;
 }
 
 function get_pkg_descr($package_name) {

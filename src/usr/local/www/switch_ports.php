@@ -106,7 +106,7 @@ if ($input_errors) {
 		<div class="table-responsive">
 			<table id="vlanporttable" class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
-					<tr>
+					<tr style="cursor:default;">
 						<th><?=gettext("Port #"); ?></th>
 						<th><?=gettext("Port name"); ?></th>
 <?
@@ -133,7 +133,7 @@ if ($input_errors) {
 			continue;
 		}
 ?>
-					<tr>
+					<tr style="cursor:default;">
 						<td>
 <?
 		print(htmlspecialchars($port['port']));
@@ -153,7 +153,7 @@ if ($input_errors) {
 <?
 		if ($swinfo['vlan_mode'] == "DOT1Q") {
 ?>
-						<td title="<?=gettext("Click to edit")?>" class="icon-pointer editable">
+						<td title="<?=gettext("Click to edit")?>" class="editable icon-pointer">
 							<?= htmlspecialchars($port['pvid'])?>
 						</td>
 <?
@@ -209,7 +209,7 @@ if ($input_errors) {
 </div>
 
 <nav class="action-buttons">
-	<button name="Submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
+	<button name="submit" id="submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
 	</button>
@@ -225,12 +225,12 @@ if ($input_errors) {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	$('#vlanporttable').editableTableWidget();
+	$('#vlanporttable').editableTableWidget();	// Make the table cells editable (but only on <td>s with class editable)
 
 	// Automatically submit the form when the selector is changed
-	$('#swdevice').on('change', function () {
-		$('form').submit();
+	$('#submit').on('click', function () {
+		alert("Saving");
+		// $('form').submit();
 	});
 });
 //]]>

@@ -46,6 +46,7 @@
 	<script src="/js/pfSenseHelpers.js?v=<?=filemtime('/usr/local/www/js/pfSenseHelpers.js')?>"></script>
 	<script src="/js/polyfills.js?v=<?=filemtime('/usr/local/www/js/polyfills.js')?>"></script>
 	<script src="/vendor/sortable/sortable.js?v=<?=filemtime('/usr/local/www/vendor/sortable/sortable.js')?>"></script>
+	<script src="/vendor/edittable.js?v=<?=filemtime('/usr/local/www/vendor/edittable.js')?>"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[

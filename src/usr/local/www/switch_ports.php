@@ -104,7 +104,7 @@ if ($input_errors) {
 	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch Ports')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+			<table id="vlanporttable" class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Port #"); ?></th>
@@ -153,7 +153,7 @@ if ($input_errors) {
 <?
 		if ($swinfo['vlan_mode'] == "DOT1Q") {
 ?>
-						<td>
+						<td title="<?=gettext("Click to edit")?>" class="icon-pointer editable">
 							<?= htmlspecialchars($port['pvid'])?>
 						</td>
 <?
@@ -208,9 +208,25 @@ if ($input_errors) {
 	</div>
 </div>
 
+<nav class="action-buttons">
+	<button name="Submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
+		<i class="fa fa-save icon-embed-btn"></i>
+		<?=gettext("Save")?>
+	</button>
+</nav>
+
+<div class="infoblock <?=$swinfo['vlan_mode'] == "DOT1Q" ? "":"blockopen" ?>">
+<?php
+	print_info_box(sprintf(gettext('%1$sVLAN IDs are displayed only if 802.1q VLAN mode is enabled on the "VLANs" tab. %2$s' .
+		'The Port VIDs may be edited by clicking on hte cell in the table above, then clicking "Save"'), '<b>', '</b><br />'), 'info', false);
+?>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('#vlanporttable').editableTableWidget();
 
 	// Automatically submit the form when the selector is changed
 	$('#swdevice').on('change', function () {
@@ -219,5 +235,6 @@ events.push(function() {
 });
 //]]>
 </script>
+
 <?php
 include("foot.inc");

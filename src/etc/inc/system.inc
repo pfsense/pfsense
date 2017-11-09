@@ -1237,6 +1237,7 @@ EOD;
 	}
 
 	if (!$sighup) {
+		sigkillbyname("sshlockout_pf", "TERM");
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful

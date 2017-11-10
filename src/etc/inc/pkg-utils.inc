@@ -374,81 +374,83 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$extra_param = "-U ";
 	}
 
-	// If we want more than just the currently installed packages or
-	//    we want up-to-date remote repo info
-	// then do a full pkg search
+	$search_rc = 0;
+	$info_rc = 0;
+	$search_items = array();
+	$info_items = array();
+
+	/*
+	 * If we want more than just the currently installed packages or
+	 * we want up-to-date remote repo info then do a full pkg search
+	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
-		$rc = pkg_exec(
+		$search_rc = pkg_exec(
 		    "search {$extra_param}-R --raw-format json-compact " .
-		    $pkgs, $out, $err);
+		    $pkgs, $search_out, $search_err);
+		if ($search_rc == 0) {
+			$search_items = explode("\n", $search_out);
+			array_walk($search_items, function(&$v, &$k) {
+				$v = json_decode($v, true);
+			});
+		}
 	}
 
-	$use_rquery = false;
-
-	if (($installed_pkgs_only || $rc != 0) &&
-	    $remote_repo_usage_disabled &&
-	    is_pkg_installed($pkgs)) {
-		/*
-		 * Fall back on pkg info to return locally installed matching
-		 * pkgs instead, if:
-		 *
-		 *   (1) only installed pkgs needed, or
-		 *       we tried to check the local catalog copy (implying that
-		 *       we would have accepted incomplete/outdated pkg info)
-		 *       but it didn't have any contents, or for other reasons
-		 *       returned an error.
-		 *   AND
-		 *   (2) remote repo data is not required
-		 *   AND
-		 *   (3) at least some pkgs matching <pattern> are installed
-		 *
-		 * Following an unsuccessful attempt to access a remote repo
-		 * catalog, the local copy is wiped clear. Thereafter any
-		 * "pkg search" will return an error until online+updated again.
-		 * If the calling code would have accepted local copy info
-		 * (which could be incomplete/out of date), then it makes sense
-		 * to fall back on pkg info to at least return the known
-		 * info about installed pkgs (pkg info should still work),
-		 * instead of failing and returning no info at all.
-		 * For example, this at least enables offline view + management
-		 * of installed pkgs in GUI/console.
-		 *
-		 * We skip this step if no matching pkgs are installed, because
-		 * then pkg info would return a "no matching pkgs" RC code,
-		 * even though this wouldn't be considered an "error" (and
-		 * $out+$err would be correct empty strings if none match).
-		 *
-		 * Note that is_pkg_installed() is a wrapper for pkg info -e
-		 * <pattern> which is what we need here.
-		*/
-
-		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list
-		$use_rquery = true;
-		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs,
-		    $out, $err);
+	/*
+	 * We always should look for local items to detect packages that
+	 * were removed from remote repo but are already installed locally
+	 *
+	 * Take pkg search return code into consideration to fallback to local
+	 * information when remote repo is not accessible
+	 */
+	if (is_pkg_installed($pkgs) || $search_rc != 0) {
+		$info_rc = pkg_exec("info -R --raw-format json-compact " .
+		    $pkgs, $info_out, $info_err);
+		if ($info_rc == 0) {
+			$info_items = explode("\n", $info_out);
+			array_walk($info_items, function(&$v, &$k) {
+				$v = json_decode($v, true);
+			});
+		}
 	}
 
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}
 
-	if ($rc != 0) {
+	if ($search_rc != 0 && $info_rc != 0) {
 		update_status("\n" . gettext(
 		    "ERROR: Error trying to get packages list. Aborting...")
 		    . "\n");
-		update_status($err);
+		update_status($search_err . "\n" . $info_err);
 		$input_errors[] = gettext(
 		    "ERROR: Error trying to get packages list. Aborting...") .
 		    "\n";
-		$input_errors[] = $err;
+		$input_errors[] = $search_err . "\n" . $info_err;
 		return array();
 	}
 
+	/* It was not possible to search, use local information only */
+	$use_rquery = false;
+	if ($search_rc != 0) {
+		$use_rquery = true;
+		$search_items = $info_items;
+	} else {
+		foreach ($info_items as $pkg_info) {
+			if (empty($pkg_info['name'])) {
+				continue;
+			}
+
+			if (!array_search($pkg_info['name'], array_column(
+			    $search_items, 'name'))) {
+				$pkg_info['obsolete'] = true;
+				$search_items[] = $pkg_info;
+			}
+		}
+	}
+
 	$result = array();
-	$pkgs_info = explode("\n", $out);
-	foreach ($pkgs_info as $pkg_info_json) {
-		$pkg_info = json_decode($pkg_info_json, true);
-		if (!isset($pkg_info['name'])) {
+	foreach ($search_items as $pkg_info) {
+		if (empty($pkg_info['name'])) {
 			continue;
 		}
 

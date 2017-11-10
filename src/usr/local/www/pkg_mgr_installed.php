@@ -89,6 +89,11 @@ function get_pkg_table() {
 			$txtcolor = "text-danger";
 			$missing = true;
 			$status = gettext('Package is configured, but not installed!');
+		} else if (isset($pkg['obsolete'])) {
+			// package is configured, but does not exist in the system
+			$txtcolor = "text-danger";
+			$missing = true;
+			$status = gettext('Package is installed, but is not available on remote repository!');
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 
@@ -158,7 +163,7 @@ function get_pkg_table() {
 		if ($upgradeavail) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Update package %s"), $pkg['name']) .
 			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . $vergetstr . '" class="fa fa-refresh"></a>';
-		} else {
+		} else if (!isset($pkg['obsolete'])) {
 			$pkgtbl .='						<a title="' . sprintf(gettext("Reinstall package %s"), $pkg['name']) .
 			    '" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=' . $pkg['name'] . '" class="fa fa-retweet"></a>';
 		}
@@ -219,7 +224,7 @@ display_top_tabs($tab_array);
 		<p>
 		<span class="text-warning"><?=gettext("Newer version available")?></span>
 		</p>
-		<span class="text-danger"><?=gettext("Package is configured but not (fully) installed")?></span>
+		<span class="text-danger"><?=gettext("Package is configured but not (fully) installed or deprecated")?></span>
 	</div>
 </div>
 

@@ -374,6 +374,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$extra_param = "-U ";
 	}
 
+	$did_search = false;
 	$search_rc = 0;
 	$info_rc = 0;
 	$search_items = array();
@@ -384,6 +385,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	 * we want up-to-date remote repo info then do a full pkg search
 	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
+		$did_search = true;
 		$search_rc = pkg_exec(
 		    "search {$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
@@ -430,9 +432,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 	}
 
 	/* It was not possible to search, use local information only */
-	$use_rquery = false;
-	if ($search_rc != 0) {
-		$use_rquery = true;
+	if ($search_rc != 0 || !$did_search) {
 		$search_items = $info_items;
 	} else {
 		foreach ($info_items as $pkg_info) {
@@ -495,7 +495,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 			* version is not available. Lets try to collect it
 			* using rquery if possible
 			*/
-			if ($use_rquery) {
+			if ($search_rc != 0 || !$did_search) {
 				$rc = pkg_exec("rquery -U %v {$pkg_info['name']}", $out, $err);
 
 				if ($rc == 0) {

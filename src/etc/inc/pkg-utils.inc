@@ -440,8 +440,8 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 				continue;
 			}
 
-			if (!array_search($pkg_info['name'], array_column(
-			    $search_items, 'name'))) {
+			if (array_search($pkg_info['name'], array_column(
+			    $search_items, 'name')) === FALSE) {
 				$pkg_info['obsolete'] = true;
 				$search_items[] = $pkg_info;
 			}

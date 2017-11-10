@@ -426,7 +426,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		    "search {$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
 		if ($search_rc == 0) {
-			$search_items = explode("\n", $search_out);
+			$search_items = explode("\n", chop($search_out));
 			array_walk($search_items, function(&$v, &$k) {
 				$v = json_decode($v, true);
 			});
@@ -444,7 +444,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$info_rc = pkg_exec("info -R --raw-format json-compact " .
 		    $pkgs, $info_out, $info_err);
 		if ($info_rc == 0) {
-			$info_items = explode("\n", $info_out);
+			$info_items = explode("\n", chop($info_out));
 			array_walk($info_items, function(&$v, &$k) {
 				$v = json_decode($v, true);
 			});

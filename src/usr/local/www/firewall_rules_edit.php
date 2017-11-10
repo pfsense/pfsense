@@ -1707,7 +1707,7 @@ $section->addInput(new Form_Select(
 	'',
 	[]
 ))->setHelp('Leave as \'default\' to use the system routing table. Or choose a '.
-	'gateway to utilize policy based routing. %sGateway selection is not valid for \"IPV4+IPV6\" address family.', '<br />');
+	'gateway to utilize policy based routing. %sGateway selection is not valid for "IPV4+IPV6" address family.', '<br />');
 
 $group = new Form_Group('In / Out pipe');
 

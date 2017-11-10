@@ -79,10 +79,7 @@ if ($_REQUEST['getupdatestatus']) {
 		exit;
 	}
 
-	$version_compare = pkg_version_compare(
-	    $system_version['installed_version'], $system_version['version']);
-
-	switch ($version_compare) {
+	switch ($system_version['pkg_version_compare']) {
 	case '<':
 ?>
 		<div>

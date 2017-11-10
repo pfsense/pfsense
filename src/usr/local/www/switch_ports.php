@@ -29,6 +29,42 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
+if ($_REQUEST['ajax'] === "ajax") {
+	if ($_REQUEST['vids']) {
+		// Ensure there is some sort of switch configuration to work with
+		if ($config['switches']['switch']) {
+			$a_swports = &$config['switches']['switch'][0];
+			unset($a_swports['swports']
+				);
+			// Decode the JSON array
+			$ja = json_decode($_REQUEST['vids'], true);
+
+			// Extract the port and VID from each item in the list
+			$idx = 0;
+			foreach ($ja['vids'] as $vid ) {
+				$port = $vid['port'];
+				$pvid = $vid['vid'];
+
+				if (! vlan_valid_tag($pvid) ) {
+					$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
+				} else {
+					$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid);
+					$a_swports['swports']['swport'][] = $swporto[$idx];
+				}
+
+				$idx++;
+			}
+
+			if (! $input_errors) {
+				write_config("Updaing switch PVIDs");
+				$savemsg = gettext("Port VIDs updated.");
+			}
+		} else {
+			$input_errors[] = sprintf(gettext("THere is no switch configuration to modify!"));
+		}
+	}
+}
+
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("Ports"));
 $shortcut_section = "ports";
 include("head.inc");
@@ -96,8 +132,12 @@ if ($swinfo == NULL) {
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else {
-	// Don't draw the table if there were hardware errors
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
+
 ?>
 
 <div class="panel panel-default">
@@ -121,9 +161,9 @@ if ($input_errors) {
 						<th><?=gettext("Status"); ?></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="vlanporttablebody">
 <?php
-
+if (! $input_errors) {
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
 		if (!switch_port_is_enabled($swinfo, $i)) {
 			continue;
@@ -200,7 +240,6 @@ if ($input_errors) {
 <?
 		}
 	}
-
 ?>
 				</tbody>
 			</table>
@@ -209,6 +248,10 @@ if ($input_errors) {
 </div>
 
 <nav class="action-buttons">
+<?php
+	if ($swinfo['vlan_mode'] == "DOT1Q") { ?>
+	<span class="pull-left text-info"><?=gettext("Click a Port VID to edit")?></span>
+<?php } ?>
 	<button name="submit" id="submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >
 		<i class="fa fa-save icon-embed-btn"></i>
 		<?=gettext("Save")?>
@@ -218,7 +261,7 @@ if ($input_errors) {
 <div class="infoblock <?=$swinfo['vlan_mode'] == "DOT1Q" ? "":"blockopen" ?>">
 <?php
 	print_info_box(sprintf(gettext('%1$sVLAN IDs are displayed only if 802.1q VLAN mode is enabled on the "VLANs" tab. %2$s' .
-		'The Port VIDs may be edited by clicking on hte cell in the table above, then clicking "Save"'), '<b>', '</b><br />'), 'info', false);
+		'The Port VIDs may be edited by clicking on the cell in the table above, then clicking "Save"'), '<b>', '</b><br />'), 'info', false);
 ?>
 </div>
 
@@ -227,10 +270,44 @@ if ($input_errors) {
 events.push(function() {
 	$('#vlanporttable').editableTableWidget();	// Make the table cells editable (but only on <td>s with class editable)
 
-	// Automatically submit the form when the selector is changed
+	// Create a JSON array of VIDs by port, add it to a form and transmit
 	$('#submit').on('click', function () {
-		alert("Saving");
-		// $('form').submit();
+		var form = $('<form></form>').attr("method", 'post');
+		var json = '{"vids":[';
+		var entry = 0;
+
+		$('#vlanporttablebody tr').each(function() {
+			if (entry > 0) {
+				json += ",\n";
+			}
+
+			json = json + '{"port":"' + $(this).find('td:eq(0)').text().trim() + '", "vid":"' + $(this).find('td:eq(2)').text().trim() + '"}';
+			entry++;
+		});
+
+		json += ']}';
+
+		// Compose a form containing the PVIDs and submit it
+		$('<input>').attr({
+				type: 'hidden',
+				name: 'vids',
+				value: json
+			}).appendTo(form);
+
+		$('<input>').attr({
+				type: 'hidden',
+				name: 'ajax',
+				value: 'ajax'
+			}).appendTo(form);
+
+		$('<input>').attr({
+				type: 'hidden',
+				name: '__csrf_magic',
+				value: csrfMagicToken
+			}).appendTo(form);
+
+		$('body').append(form);
+		$('form').submit();
 	});
 });
 //]]>

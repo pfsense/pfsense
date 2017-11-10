@@ -555,6 +555,7 @@ if ($confirmed && !$completed) {
 }
 
 $uptodatemsg = gettext("Up to date.");
+$newerversionmsg = gettext("Running a newer version.");
 $confirmlabel = gettext("Confirm Update");
 $sysmessage = gettext("Status");
 
@@ -657,9 +658,12 @@ function get_firmware_versions()
 			$('#version').text(json.version);
 
 			// If the installed and latest versions are the same, print an "Up to date" message
-			if (json.installed_version == json.version) {
+			if (json.pkg_version_compare == '=') {
 				$('#confirmlabel').text("<?=$sysmessage?>");
 				$('#uptodate').html('<span class="text-success">' + '<?=$uptodatemsg?>' + "</span>");
+			} else if (json.pkg_version_compare == '>') {
+				$('#confirmlabel').text("<?=$sysmessage?>");
+				$('#uptodate').html('<span class="text-success">' + '<?=$newerversionmsg?>' + "</span>");
 			} else { // If they differ display the "Confirm" button
 				$('#uptodate').hide();
 				$('#confirmlabel').text( "<?=$confirmlabel?>");

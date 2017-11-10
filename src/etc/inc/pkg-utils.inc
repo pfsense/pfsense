@@ -1251,10 +1251,15 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		return false;
 	}
 
-	return array(
+	$result = array(
 	    'version'           => $new_version ?: $pkg_info['version'],
 	    'installed_version' => $pkg_info['installed_version']
 	);
+
+	$result['pkg_version_compare'] = pkg_version_compare(
+	    $result['installed_version'], $result['version']);
+
+	return $result;
 }
 
 /* List available repos */

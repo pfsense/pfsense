@@ -39,7 +39,7 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
-	voucher_expire("$vouchers");
+	return voucher_expire("$vouchers");
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -64,7 +64,7 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	\$cpzone = "$cpzone";
 	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
-	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
+	return captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -82,14 +82,16 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 
 	/* Construct code that is run on remote machine */
 	$execcmd = <<<EOF
-	global \$cpzone;
+	global \$cpzone, \$config;
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
 	\$timeleft = voucher_auth("$voucher_received");
 	\$toreturn = array();
 	\$toreturn['timeleft'] = \$timeleft;
 	\$toreturn['voucher'] = array();
-	\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
+	if (is_array(\$config['voucher'][\$cpzone]['roll'])) {
+		\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
+	}
 
 EOF;
 	$rpc_client = new pfsense_xmlrpc_client();
@@ -106,7 +108,7 @@ EOF;
 		voucher_configure_zone(true);
 		unset($resp['voucher']);
 	} else if (!isset($resp['timeleft'])) {
-		return null;
+		return 0;
 	}
 
 	return $resp['timeleft'];

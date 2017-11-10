@@ -350,8 +350,8 @@ if (is_array($config['hasync'])) {
 	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['captiveportal'])) {
 		$sections[] = 'captiveportal';
 	}
-	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['vouchers'])) {
-		$sections[] = 'vouchers';
+	if ($hasync['synchronizecaptiveportal'] != "" and is_array($config['voucher'])) {
+		$sections[] = 'voucher';
 	}
 
 	if (count($sections) <= 0) {

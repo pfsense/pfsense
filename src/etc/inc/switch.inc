@@ -292,11 +292,29 @@ function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
 	return (true);
 }
 
+function r1_switch_initial_setup() {
+	global $config;
+
+	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
+		unset($config['switches']['switch']);
+		$config['switches']['switch'] = array();
+	}
+
+	/* Default settings for the SG-3100 switch. */
+	$switches = &$config['switches']['switch'];
+	$switch = array();
+	$switch['device'] = "/dev/etherswitch0";
+	$switch['vlanmode'] = "PORT";
+	$switches[] = $switch;
+	write_config();
+}
+
 function r1_switch_configure() {
 	global $config;
 
 	$switches = $config['switches']['switch'];
 	if (!isset($switches) || !is_array($switches)) {
+		r1_switch_initial_setup();
 		return;
 	}
 	/* Find the SG-3100 switch settings. */

@@ -48,7 +48,7 @@ if ($_REQUEST['ajax'] === "ajax") {
 				if (! vlan_valid_tag($pvid) ) {
 					$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
 				} else {
-					$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid);
+					$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid));
 					$a_swports['swports']['swport'][] = $swporto[$idx];
 				}
 

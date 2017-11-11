@@ -29,52 +29,6 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
-if ($_REQUEST['ajax'] === "ajax") {
-	if ($_REQUEST['vids']) {
-		// Ensure there is some sort of switch configuration to work with
-		if ($config['switches']['switch']) {
-			$a_swports = &$config['switches']['switch'][0];
-			unset($a_swports['swports']
-				);
-			// Decode the JSON array
-			$ja = json_decode($_REQUEST['vids'], true);
-
-			// Extract the port and VID from each item in the list
-			$idx = 0;
-			foreach ($ja['vids'] as $vid ) {
-				$port = $vid['port'];
-				$pvid = $vid['vid'];
-
-				if (! vlan_valid_tag($pvid) ) {
-					$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
-				} else {
-					$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid));
-					$a_swports['swports']['swport'][] = $swporto[$idx];
-				}
-
-				$idx++;
-			}
-
-			if (! $input_errors) {
-				write_config("Updaing switch PVIDs");
-				$savemsg = gettext("Port VIDs updated.");
-			}
-		} else {
-			$input_errors[] = sprintf(gettext("THere is no switch configuration to modify!"));
-		}
-	}
-}
-
-$pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("Ports"));
-$shortcut_section = "ports";
-include("head.inc");
-
-$tab_array = array();
-$tab_array[] = array(gettext("System"), false, "switch_system.php");
-$tab_array[] = array(gettext("Ports"), true, "switch_ports.php");
-$tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
-display_top_tabs($tab_array);
-
 // Build an array with which to populate the switch device selector
 function get_switches($devicelist) {
 
@@ -99,6 +53,76 @@ function get_switches($devicelist) {
 $swdevices = switch_get_devices();
 $swtitle = switch_get_title();
 
+// If the selector was changed, the selected value becomes the default
+if($_POST['swdevice']) {
+	$swdevice = $_POST['swdevice'];
+} else {
+	$swdevice = $swdevices[0];
+}
+
+$swinfo = pfSense_etherswitch_getinfo($swdevice);
+if ($swinfo == NULL) {
+	$input_errors[] = "Cannot get switch device information\n";
+}
+
+$swid = -1;
+if (isset($config['switches']['switch']) && is_array($config['switches']['switch'])) {
+	foreach($config['switches']['switch'] as $sid => $switch) {
+		if (!isset($switch['device']) || $switch['device'] != $swdevice) {
+			continue;
+		}
+		$swid = $sid;
+		break;
+	}
+}
+
+if ($_REQUEST['ajax'] === "ajax" && $_REQUEST['vids']) {
+
+	// Ensure there is some sort of switch configuration to work with
+	if ($sw != -1) {
+		$a_swports = &$config['switches']['switch'][$swid];
+		unset($a_swports['swports']);
+		// Decode the JSON array
+		$ja = json_decode($_REQUEST['vids'], true);
+
+		// Extract the port and VID from each item in the list
+		$idx = 0;
+		foreach ($ja['vids'] as $vid ) {
+			$port = $vid['port'];
+			$pvid = $vid['vid'];
+
+			if (! vlan_valid_tag($pvid) ) {
+				$input_errors[] = sprintf(gettext("%d is not a valid VID for port %s"), $pvid, $port);
+			} else {
+				$swporto[] = array('port' => htmlspecialchars($port), 'pvid' => htmlspecialchars($pvid));
+				$a_swports['swports']['swport'][] = $swporto[$idx];
+			}
+
+			$idx++;
+		}
+
+		if (! $input_errors) {
+			write_config("Updaing switch PVIDs");
+			foreach ($ja['vids'] as $vid ) {
+				pfSense_etherswitch_setport($swdevice, $vid['port'], $vid['vid']);
+			}
+			$savemsg = gettext("Port VIDs updated.");
+		}
+	} else {
+		$input_errors[] = sprintf(gettext("There is no switch configuration to modify!"));
+	}
+}
+
+$pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("Ports"));
+$shortcut_section = "ports";
+include("head.inc");
+
+$tab_array = array();
+$tab_array[] = array(gettext("System"), false, "switch_system.php");
+$tab_array[] = array(gettext("Ports"), true, "switch_ports.php");
+$tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
+display_top_tabs($tab_array);
+
 // If there is more than one switch, draw a selector to allow the user to choose which one to look at
 if (count($swdevices) > 1) {
 	$form = new Form(false);
@@ -116,18 +140,6 @@ if (count($swdevices) > 1) {
 
 	print($form);
 
-}
-
-// If the selector was changed, the selected value becomes the default
-if($_POST['swdevice']) {
-	$swdevice = $_POST['swdevice'];
-} else {
-	$swdevice = $swdevices[0];
-}
-
-$swinfo = pfSense_etherswitch_getinfo($swdevice);
-if ($swinfo == NULL) {
-	$input_errors[] = "Cannot get switch device information\n";
 }
 
 if ($input_errors) {
@@ -292,6 +304,12 @@ events.push(function() {
 				type: 'hidden',
 				name: 'vids',
 				value: json
+			}).appendTo(form);
+
+		$('<input>').attr({
+				type: 'hidden',
+				name: 'swdevice',
+				value: '<?= $swdevice ?>'
 			}).appendTo(form);
 
 		$('<input>').attr({

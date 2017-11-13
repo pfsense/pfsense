@@ -142,6 +142,7 @@ if ($act == "edit") {
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
+			$pconfig['crlref'] = $a_client[$id]['crlref'];
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
@@ -416,6 +417,7 @@ if ($_POST['save']) {
 		if ($tls_mode) {
 			$client['caref'] = $pconfig['caref'];
 			$client['certref'] = $pconfig['certref'];
+			$client['crlref'] = $pconfig['crlref'];
 			if ($pconfig['tlsauth_enable']) {
 				if ($pconfig['autotls_enable']) {
 					$pconfig['tls'] = openvpn_create_key();

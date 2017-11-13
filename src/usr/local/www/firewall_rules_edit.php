@@ -1665,37 +1665,35 @@ $section->addInput(new Form_Select(
 	['' => gettext('none')] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
-$gateways = array("" => gettext('default'));
-foreach (return_gateways_array() as $gwname => $gw) {
-	if (($pconfig['ipprotocol'] == "inet46")) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway'])))) {
-		continue;
-	}
-	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway'])))) {
-		continue;
-	}
-	if ($gw == "") {
-		continue;
-	}
+// Build the gateway lists in JSON so the selector can be populated in JS
+$gwjson = '[{"name":"Default", "gateway":"", "family":"inet46"}';
 
-	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']);
+foreach (return_gateways_array() as $gwname => $gw) {
+	$gwjson = $gwjson . "," .'{"name":"' . $gwname . '", "gateway":"' .
+	$gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']) . '","family":"' .
+	$gw['ipprotocol'] . '"}';
 }
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
-	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
-		$gateways[ $gwg_name ] = $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']);
-	}
+	$gwjson = $gwjson . "," .'{"name":"' . $gwg_name . '", "gateway":"' .
+	$gwg_data['name'] . $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']) . '","family":"' .
+	$gwg_data['ipprotocol'] . '"}';
+	$firstgw = false;
 }
 
+$gwjson .= ']';
+$gwselected = $pconfig['gateway'];
+
+// print($gwjson);
+
+// Gateway selector is populated by JavaScript updateGWselect() function
 $section->addInput(new Form_Select(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway'],
-	$gateways
+	'',
+	[]
 ))->setHelp('Leave as \'default\' to use the system routing table. Or choose a '.
-	'gateway to utilize policy based routing.');
+	'gateway to utilize policy based routing. %sGateway selection is not valid for "IPV4+IPV6" address family.', '<br />');
 
 $group = new Form_Group('In / Out pipe');
 
@@ -1918,6 +1916,34 @@ events.push(function() {
 		}
 	}
 
+	// Populate teh "gateway" selector from a JSON array composed in the PHP
+	function updateGWselect() {
+		var selected = "<?=$gwselected?>";
+		var protocol = $('#ipprotocol').val();
+		var json = JSON.parse(<?=json_encode($gwjson)?>);
+
+		// Remove all of the existing optns
+		$('#gateway').find('option').remove();
+
+		// Add new ones as appropriate for the address family
+		json.forEach(function(gwobj) {
+			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
+				$('#gateway').append($('<option>', {
+				    value: gwobj.gateway,
+				    text: gwobj.name
+				}));
+			}
+		});
+
+		// Add "selected" attribute as needed
+		$('#gateway').val(selected);
+
+		// Gateway selection is not permitted for "IPV4+IPV6"
+		if (protocol == "inet46") {
+			$('#gateway').prop("disabled", true);
+		}
+	}
+
 	function proto_change() {
 		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
 		portsenabled = (is_tcpudp ? 1 : 0);
@@ -1964,6 +1990,8 @@ events.push(function() {
 		}
 
 		show_source_port_range();
+
+		updateGWselect();
 	}
 
 	function icmptype_change() {

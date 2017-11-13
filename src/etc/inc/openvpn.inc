@@ -671,6 +671,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 	if ($settings['gwredir']) {
 		$conf .= "push \"redirect-gateway def1\"\n";
 	}
+	if ($settings['gwredir6']) {
+		$conf .= "push \"redirect-gateway ipv6\"\n";
+	}
 }
 
 function openvpn_add_custom(& $settings, & $conf) {
@@ -974,11 +977,11 @@ function openvpn_reconfigure($mode, $settings) {
 			$conf .= "max-clients {$settings['maxclients']}\n";
 		}
 
-		// Can we push routes
-		if ($settings['local_network']) {
+		// Can we push routes, and should we?
+		if ($settings['local_network'] && !$settings['gwredir']) {
 			$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
 		}
-		if ($settings['local_networkv6']) {
+		if ($settings['local_networkv6'] && !$settings['gwredir6']) {
 			$conf .= openvpn_gen_routes($settings['local_networkv6'], "ipv6", true);
 		}
 

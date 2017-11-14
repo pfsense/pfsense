@@ -1666,7 +1666,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
 // Build the gateway lists in JSON so the selector can be populated in JS
-$gwjson = '[{"name":"Default", "gateway":"", "family":"inet46"}';
+$gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
 foreach (return_gateways_array() as $gwname => $gw) {
 	$gwjson = $gwjson . "," .'{"name":"' . $gwname . '", "gateway":"' .
@@ -1916,7 +1916,7 @@ events.push(function() {
 		}
 	}
 
-	// Populate teh "gateway" selector from a JSON array composed in the PHP
+	// Populate the "gateway" selector from a JSON array composed in the PHP
 	function updateGWselect() {
 		var selected = "<?=$gwselected?>";
 		var protocol = $('#ipprotocol').val();
@@ -1929,8 +1929,8 @@ events.push(function() {
 		json.forEach(function(gwobj) {
 			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
 				$('#gateway').append($('<option>', {
-				    value: gwobj.gateway,
-				    text: gwobj.name
+				    text: gwobj.gateway,
+				    value: gwobj.name
 				}));
 			}
 		});

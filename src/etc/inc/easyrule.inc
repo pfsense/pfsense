@@ -62,6 +62,22 @@ function easyrule_find_rule_interface($int) {
 	return false;
 }
 
+function easyrule_list_rule($int = 'wan', $ipproto = "inet") {
+	global $config;
+	/* If no rules, then exit */
+	if (!is_array($config['filter']['rule'])) {
+		return 0;
+	}
+	foreach ($config['filter']['rule'] as $rule) {
+		if (!is_array($rule) || !is_array($rule['source'])) {
+			continue;
+		}
+		$all_rules .= $rule['type']+"-"+$rule['interface'];
+	}
+	return $all_rules;
+	/*return $config['filter']['rule'];*/
+}
+
 function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname, $config;
 	/* No rules, we we know it doesn't exist */
@@ -276,7 +292,7 @@ function easyrule_block_host_add($host, $int = 'wan', $ipproto = "inet") {
 	}
 }
 
-function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $desc, $ipproto) {
+function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $desc = NULL, $ipproto) {
 	global $config;
 
 	/* No rules, start a new array */
@@ -292,7 +308,13 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $des
 	$filterent['type'] = 'pass';
 	$filterent['interface'] = $int;
 	$filterent['ipprotocol'] = $ipproto;
-	$filterent['descr'] = gettext($desc);
+
+	/* If desc is null, then assign default text value using gettext() */
+	if ($desc == NULL) {
+		$filterent['descr'] = gettext("Easy Rule: Passed from Firewall Log View");
+	} else {
+		$filterent['descr'] = $desc;
+	}
 
 	if ($proto != "any") {
 		$filterent['protocol'] = $proto;

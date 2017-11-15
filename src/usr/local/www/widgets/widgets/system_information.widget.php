@@ -434,11 +434,23 @@ $rows_displayed = false;
 	if (!in_array('disk_usage', $skipsysinfoitems)):
 		$rows_displayed = true;
 		$diskidx = 0;
+		$first = true;
 		foreach ($filesystems as $fs):
 ?>
 		<tr>
-			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
+			<th>
+				<?php if ($first): ?>
+					<?=gettext("Disk usage:");?>
+					<br/>
+				<?php endif; ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<?=$fs['mountpoint']?>
+			</th>
 			<td>
+				<?php if ($first):
+					$first = false; ?>
+					<br/>
+				<?php endif; ?>
 				<div class="progress" >
 					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
 					</div>

@@ -553,9 +553,9 @@ waiting for page generation and transmission, compared to
 $portselect='';
 foreach ($portlist as $portname => $portinfo) {
 	$portselect.='<option value="'.$portname.'"'; 
-	if($portname == $iface['if']) {
+	/*if($portname == $iface['if']) {
 		$portselect.=' selected';
-	}
+	}*/
 	$portselect.=">".$ifdescrs[$portname]."</option>\n";
 }
 /*$timeb2 = microtime();
@@ -576,6 +576,7 @@ $profile['html_generated_port_select'] = strlen($portselect);*/
 	<tbody>
 <?php
 	//$timea2 = microtime(true);
+	$i=0;
 	foreach ($config['interfaces'] as $ifname => $iface):
 		if ($iface['descr']) {
 			$ifdescr = $iface['descr'];
@@ -591,9 +592,9 @@ $profile['html_generated_port_select'] = strlen($portselect);*/
 /* replacing the port select menu generation loop that has count(interfaces) iterations 
 and is run count(interfaces) times with a pre-prepared select menu generated outside of
 this loop has produced a significant improvement in page generation and load time */
-//foreach ($portlist as $portname => $portinfo):?>
-<?=$portselect?>
-<?php //endforeach;
+//foreach ($portlist as $portname => $portinfo):
+echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>',$portselect);
+ //endforeach;
 /*$timeb3 = microtime(true);
 $profile['html_if_assign_desc'] = $timeb3-$timea3;*/
 ?>
@@ -608,7 +609,8 @@ $profile['html_if_assign_desc'] = $timeb3-$timea3;*/
 <?php endif;?>
 			</td>
 		</tr>
-<?php endforeach;
+<?php $i++; 
+endforeach;
 /*$timeb2 = microtime(true);
 $profile['html_display_ifs'] = $timeb2-$timea2;*/
 	if (count($config['interfaces']) < count($portlist)):

@@ -52,61 +52,6 @@ global $friendlyifnames;
 /*moved most gettext calls to here, we really don't want to be repeatedly calling gettext() within loops if it can be avoided.*/
 $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'delete'=>gettext('Delete'),'deleteif'=>gettext('Delete interface'),'edit'=>gettext('Edit'),'on'=>gettext('on'));
 
-/* This function is no longer needed, it's been replaced by interface_assign_description_fast() in interfaces_fast.inc
-function interface_assign_description($portinfo, $portname) {
-$timea = microtime(true);
-	global $ovpn_descrs;
-	if ($portinfo['isvlan']) {
-		$descr = sprintf('VLAN %1$s '.$gettextArray['on'].' %2$s', $portinfo['tag'], $portinfo['if']);
-		//$iface = convert_real_interface_to_friendly_interface_name($portinfo['if']);
-		$iface = $friendlyifnames[$portinfo['if']];
-		if (isset($iface) && strlen($iface) > 0) {
-			$descr .= " - $iface";
-		}
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['iswlclone']) {
-		$descr = $portinfo['cloneif'];
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['isppp']) {
-		$descr = $portinfo['descr'];
-	} elseif ($portinfo['isbridge']) {
-		$descr = strtoupper($portinfo['bridgeif']);
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['isgre']) {
-		$descr = "GRE {$portinfo['remote-addr']}";
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['isgif']) {
-		$descr = "GIF {$portinfo['remote-addr']}";
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['islagg']) {
-		$descr = strtoupper($portinfo['laggif']);
-		if ($portinfo['descr']) {
-			$descr .= " (" . $portinfo['descr'] . ")";
-		}
-	} elseif ($portinfo['isqinq']) {
-		$descr = $portinfo['descr'];
-	} elseif (substr($portname, 0, 4) == 'ovpn') {
-		$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
-	} else {
-		$descr = $portname . " (" . $portinfo['mac'] . ")";
-	}
-	
-	$timeb = microtime(true);
-	$profile['if_ass_desc'] = $timeb-$timea;
-
-	return htmlspecialchars($descr);
-}*/
-
 /*
 	In this file, "port" refers to the physical port name,
 	while "interface" refers to LAN, WAN, or OPTn.
@@ -251,11 +196,6 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$newifname = gettext("lan");
 			$descr = gettext("LAN");
 		} else {
-			/*for ($i = 1; $i <= count($config['interfaces']); $i++) {
-				if (!$config['interfaces']["opt{$i}"]) {
-					break;
-				}
-			}*/
 			/*get first available OPT interface number. This code scales better than the foreach it replaces. 
 			* might not work if theres ifs other than 'wan','lan' and 'optx';
 			* The performance increase isn't substantial over the foreach; however as the number of OPT interfaces
@@ -291,8 +231,6 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 		}
 
 		//$timea = microtime(true);
-		/*MAYBE TODO
-		 The callback for this uksort could be worth looking at for further gains? */
 		uksort($config['interfaces'], "compare_interface_friendly_names");
 		/*$timeb = microtime(true);
 		$profile['if_add_uksort'] = $timeb-$timea;*/
@@ -547,18 +485,7 @@ vs
 	$unused = array_flip($unused);
 	$unused_portlist = array_intersect_key($portlist,$unused);//*/
 	unset($unused,$portArray,$ifaceArray);
-/*foreach ($portlist as $portname => $portinfo) {
-	$portused = false;
-	foreach ($config['interfaces'] as $ifname => $ifdata) {
-		if ($ifdata['if'] == $portname) {
-			$portused = true;
-			break;
-		}
-	}
-	if ($portused === false) {
-		$unused_portlist[$portname] = $portinfo;
-	}
-}*/
+
 /*$timeb = microtime(true);
 $profile['build_unused_port_list'] = $timeb-$timea;*/
 
@@ -610,6 +537,31 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 //$timea = microtime(true);
+
+/*generate the port select box only once. 
+Not indenting the HTML and keeping each option to one line in
+this function results in HTML code that is 8.9KB smaller with 500
+VLANS than the original code structure. Multiplied by 500 VLANs 
+this means the page is ~4.5MB smaller and takes over 1s less to 
+transmit and also renders significantly faster in the browser.
+This is too much of an improvement to ignore. Tested with 500
+VLANS, total page output is 17,197.33KB with 8456ms spent 
+waiting for page generation and transmission, compared to 
+21,697.89KB with a wait of 9734ms*/
+
+//$timea2 = microtime();
+$portselect='';
+foreach ($portlist as $portname => $portinfo) {
+	$portselect.='<option value="'.$portname.'"'; 
+	if($portname == $iface['if']) {
+		$portselect.=' selected';
+	}
+	$portselect.=">".$ifdescrs[$portname]."</option>\n";
+}
+/*$timeb2 = microtime();
+$profile['html_generate_port_select'];
+$profile['html_generated_port_select'] = strlen($portselect);*/
+
 ?>
 <form action="interfaces_assign.php" method="post">
 	<div class="table-responsive">
@@ -636,17 +588,12 @@ display_top_tabs($tab_array);
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
 <?php //$timea3 = microtime(true);
-/* As with the gettext() calls, I've removed the interface_assign_description() calls and
-replaced them with my own interface_assign_description_fast() function that's called once
-outside of the loop. Also like the gettext() edits, this change keeps paying for itself. */
-foreach ($portlist as $portname => $portinfo):?>
-					<!--<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
-						<?//=interface_assign_description($portinfo, $portname)?>
-					</option>-->
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
-						<?=$ifdescrs[$portname]?>
-					</option>
-<?php endforeach;
+/* replacing the port select menu generation loop that has count(interfaces) iterations 
+and is run count(interfaces) times with a pre-prepared select menu generated outside of
+this loop has produced a significant improvement in page generation and load time */
+//foreach ($portlist as $portname => $portinfo):?>
+<?=$portselect?>
+<?php //endforeach;
 /*$timeb3 = microtime(true);
 $profile['html_if_assign_desc'] = $timeb3-$timea3;*/
 ?>
@@ -673,13 +620,12 @@ $profile['html_display_ifs'] = $timeb2-$timea2;*/
 			<td>
 				<select name="if_add" id="if_add" class="form-control">
 <?php //$timea2 = microtime(true);
+/* As with the gettext() calls, I've removed the interface_assign_description() calls and
+replaced them with my own interface_assign_description_fast() function that's called once
+outside of the loop. Also like the gettext() edits, this change keeps paying for itself.
+ Also, removing the indents and newlines saves potentially ~9KB of HTML with 500 unassigned VLANs */
 foreach ($unused_portlist as $portname => $portinfo):?>
-					<!--<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
-						<?//=interface_assign_description($portinfo, $portname)?>
-					</option>-->
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
-						<?=$ifdescrs[$portname]?>
-					</option>
+<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>><?=$ifdescrs[$portname]?></option>
 <?php endforeach;
 /*$timeb2 = microtime(true);
 $profile['html_available_ports_list'] = $timeb2-$timea2;*/
@@ -710,7 +656,7 @@ print_info_box(gettext("Interfaces that are configured as members of a lagg(4) i
     gettext("Wireless interfaces must be created on the Wireless tab before they can be assigned."), 'info', false);
 /*$timeallb = microtime(true);
 $profile['total'] = $timeallb - $timealla;
-print_r($profile);**/
+print_r($profile);*/
 ?>
 
 <?php include("foot.inc")?>

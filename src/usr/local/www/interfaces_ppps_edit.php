@@ -941,7 +941,7 @@ foreach ($linklist['list'] as $ifnm => $nm) {
 	$j++;
 
 	$section->add($group);
-	$group->addClass('localip sec-advanced')->addClass('linkparam' . $ifnm);
+	$group->addClass('localip sec-advanced')->addClass('linkparam' . str_replace('.', '_', $ifnm));
 }
 
 $linkparamhelp = new Form_StaticText(
@@ -1088,11 +1088,12 @@ events.push(function() {
 		<?php if ($pconfig['type'] != 'ppp') : ?>
 		var selected = $(".interfaces").val();
 		var length = $(".interfaces :selected").length;
+
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
 			if (showadvopts) {
-				hideClass('linkparam' + selected[i], false);
+				hideClass('linkparam' + selected[i].replace(".", "_"), false);
 				hideInput('linkparamhelp', false);
 			}
 		}

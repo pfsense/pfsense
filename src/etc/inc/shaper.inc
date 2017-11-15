@@ -3613,7 +3613,8 @@ class dnpipe_class extends dummynet_class {
 						foreach ($config['schedules']['schedule'] as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
-									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+									/* pipe throughputs must always be an integer, enforce that restriction again here. */
+									$pfq_rule .= " bw ".round(trim($bw['bw']),0).$bw['bwscale'];
 									if (is_numeric($bw['burst']) && ($bw['burst'] > 0)) {
 										$pfq_rule .= " burst ".trim($bw['burst']);
 									}
@@ -3628,7 +3629,8 @@ class dnpipe_class extends dummynet_class {
 						break;
 					}
 				} else {
-					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+					/* pipe throughputs must always be an integer, enforce that restriction again here. */
+					$pfq_rule .= " bw ".round(trim($bw['bw']), 0).$bw['bwscale'];
 					if (is_numeric($bw['burst']) && ($bw['burst'] > 0)) {
 						$pfq_rule .= " burst ".trim($bw['burst']);
 					}

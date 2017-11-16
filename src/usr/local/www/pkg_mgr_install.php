@@ -762,7 +762,9 @@ function getLogsStatus() {
 
 				// Display any UI notice the package installer may have created
 				if (json.notice.length > 0) {
-					$('#noticebody').html("<div align=\"center\" style=\"font-size:24px;\"><strong>NOTICE</strong></div><br>" + json.notice);
+					var modalheader = "<div align=\"center\" style=\"font-size:24px;\"><strong>NOTICE</strong></div><br>";
+
+					$('#noticebody').html(modalheader + json.notice);
 					$('#notice').modal('show');
 				} else {
 					$('form').submit();

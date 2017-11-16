@@ -1160,6 +1160,8 @@ create_memstick_serial_image() {
 }
 
 create_memstick_adi_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/memstickadi.${TARGET}
 	if [ "${MEMSTICKADIPATH}" = "" ]; then
 		echo ">>> MEMSTICKADIPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
@@ -1168,10 +1170,17 @@ create_memstick_adi_image() {
 
 	mkdir -p $(dirname ${MEMSTICKADIPATH})
 
-	customize_stagearea_for_image "memstickadi"
+	local _image_path=${MEMSTICKADIPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-memstick-ADI-/-memstick-ADI-${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "memstickadi" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Creating serial memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -1196,14 +1205,14 @@ create_memstick_adi_image() {
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
-		${MEMSTICKADIPATH}
+		${_image_path}
 
-	if [ ! -f "${MEMSTICKADIPATH}" ]; then
+	if [ ! -f "${_image_path}" ]; then
 		echo "ERROR! memstick ADI image was not built"
 		print_error_pfS
 	fi
 
-	gzip -qf $MEMSTICKADIPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

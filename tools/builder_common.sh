@@ -1080,6 +1080,10 @@ create_memstick_image() {
 		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
 	fi
 
+	local _image_netboot_path=$(echo "$_image_path" | \
+		sed "s/-memstick-/-memstick-netboot-/")
+	VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_netboot_path}"
+
 	customize_stagearea_for_image "memstick" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
@@ -1096,7 +1100,7 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${_image_path}
 
@@ -1106,6 +1110,18 @@ create_memstick_image() {
 	fi
 
 	gzip -qf $_image_path &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_netboot_path}
+
+	if [ ! -f "${_image_netboot_path}" ]; then
+		echo "ERROR! memstick netboot image was not built"
+		print_error_pfS
+	fi
+
+	gzip -qf $_image_netboot_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
@@ -1177,6 +1193,10 @@ create_memstick_adi_image() {
 		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
 	fi
 
+	local _image_netboot_path=$(echo "$_image_path" | \
+		sed "s/-memstick-ADI-/-memstick-ADI-netboot-/")
+	VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_netboot_path}"
+
 	customize_stagearea_for_image "memstickadi" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
@@ -1203,7 +1223,7 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${_image_path}
 
@@ -1213,6 +1233,18 @@ create_memstick_adi_image() {
 	fi
 
 	gzip -qf $_image_path &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_netboot_path}
+
+	if [ ! -f "${_image_netboot_path}" ]; then
+		echo "ERROR! memstick netboot image was not built"
+		print_error_pfS
+	fi
+
+	gzip -qf $_image_netboot_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

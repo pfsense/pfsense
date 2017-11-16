@@ -83,6 +83,14 @@ if ($_POST) {
 			log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
 			die("Could not read temporary file");
 		} else {
+			// Make sure they upload an image and not some other file
+			$img_info = getimagesize($_FILES['pictfile']['tmp_name']);
+			if($img_info === FALSE){
+				die("Unable to determine image type of uploaded file");
+			}
+			if(($img_info[2] !== IMAGETYPE_GIF) && ($img_info[2] !== IMAGETYPE_JPEG) && ($img_info[2] !== IMAGETYPE_PNG)){
+				die("Not a gif/jpg/png");
+			}
 			$picname = basename($_FILES['uploadedfile']['name']);
 			$user_settings['widgets']['picturewidget'] = base64_encode($data);
 			$user_settings['widgets']['picturewidget_filename'] = $_FILES['pictfile']['name'];

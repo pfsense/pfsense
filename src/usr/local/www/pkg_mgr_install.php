@@ -54,6 +54,7 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //		log:
 //		exitcode:
 //		data:{current:, total}
+//		notice:
 //
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
@@ -100,6 +101,7 @@ if ($_REQUEST['ajax']) {
 		$resparray = array();
 		$statusarray = array();
 		$code = array();
+		$notice = array('notice' => "");
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
@@ -134,8 +136,6 @@ if ($_REQUEST['ajax']) {
 	} else {
 		$resparray['log'] = "not_ready";
 		print(json_encode($resparray));
-	//	file_put_contents("/root/update.log", json_encode($resparray), FILE_APPEND);
-	//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
 		exit;
 	}
 
@@ -161,10 +161,15 @@ if ($_REQUEST['ajax']) {
 		}
 	}
 
+	//
+	$ui_notice = "/tmp/package_ui_notice";
+
+	if (file_exists($ui_notice)) {
+		$notice['notice'] = file_get_contents($ui_notice);
+	}
+
 	// Glob all the arrays we have made together, and convert to JSON
-	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
-//	file_put_contents("/root/update.log", json_encode($resparray + $pidarray + $statusarray + $progarray), FILE_APPEND);
-//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
+	print(json_encode($resparray + $pidarray + $statusarray + $progarray + $notice));
 
 	exit;
 }
@@ -503,6 +508,22 @@ if ($confirmed):
 			<textarea rows="15" class="form-control" id="output" name="output"><?=($completed ? $_POST['output'] : gettext("Please wait while the update system initializes"))?></textarea>
 		</div>
 	</div>
+
+
+	<!-- Modal used to display installation notices -->
+	<div id="notice" name="notice" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" id="noticebody" name="noticebody" style="background-color:#1e3f75; color:white;">
+				</div>
+				<div class="modal-footer" style="background-color:#1e3f75; color:white;">
+					<button type="button" id="modalbtn" name="modalbtn" class="btn btn-xs btn-success" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">Accept</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 <?php
 endif;
 ?>
@@ -739,7 +760,13 @@ function getLogsStatus() {
 					$('#reboot_needed').val("yes");
 				}
 
-				$('form').submit();
+				// Display any UI notice the package installer may have created
+				if (json.notice.length > 0) {
+					$('#noticebody').html("<div align=\"center\" style=\"font-size:24px;\"><strong>NOTICE</strong></div><br>" + json.notice);
+					$('#notice').modal('show');
+				} else {
+					$('form').submit();
+				}
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -818,6 +845,10 @@ events.push(function() {
 			value: 'true'
 		}).appendTo('form');
 
+		$('form').submit();
+	});
+
+	$('#modalbtn').click(function() {
 		$('form').submit();
 	});
 });

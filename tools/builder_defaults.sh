@@ -393,7 +393,7 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}${PRODUCT_REVISION:+-p}${PRODUCT_REVISION}-%%SIZE%%-${TARGET}-%%TYPE%%-upgrade${TIMESTAMP_SUFFIX}.img"}
 
 # Rsync data to send snapshots
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -n "${_IS_RELEASE}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
 	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
 	export RSYNCPATH=${RSYNCPATH:-"/staging/ce/images"}

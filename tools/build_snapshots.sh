@@ -51,12 +51,13 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 usage() {
-	echo "Usage: $(basename $0) [-l] [-n] [-r] [-U] [-p]"
+	echo "Usage: $(basename $0) [-l] [-n] [-r] [-U] [-p] [-i]"
 	echo "	-l: Build looped operations"
 	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
 	echo "	-r: Do not reset local changes"
 	echo "	-U: Upload snapshots"
+	echo "	-i: Skip rsync to final server"
 }
 
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
@@ -65,11 +66,12 @@ export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 NO_IMAGES=""
 NO_RESET=""
 UPLOAD=""
+_SKIP_FINAL_RSYNC=""
 LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
 # Handle command line arguments
-while getopts lnprU opt; do
+while getopts lnprUi opt; do
 	case ${opt} in
 		n)
 			NO_IMAGES="none"
@@ -85,6 +87,9 @@ while getopts lnprU opt; do
 			;;
 		U)
 			UPLOAD="-U"
+			;;
+		i)
+			_SKIP_FINAL_RSYNC="-i"
 			;;
 		*)
 			usage
@@ -108,8 +113,8 @@ export COUNTER=0
 export _sleeping=0
 
 snapshot_update_status() {
-	${BUILDER_ROOT}/build.sh ${UPLOAD} ${POUDRIERE_SNAPSHOTS} \
-		--snapshot-update-status "$*"
+	${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} ${UPLOAD} \
+		${POUDRIERE_SNAPSHOTS} --snapshot-update-status "$*"
 }
 
 exec_and_update_status() {
@@ -221,8 +226,8 @@ while [ /bin/true ]; do
 
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
-			    ${BUILDER_ROOT}/build.sh ${UPLOAD} \
-			    --update-pkg-repo
+			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
+			    ${UPLOAD} --update-pkg-repo
 			rc=$?
 		fi
 	else
@@ -232,9 +237,8 @@ while [ /bin/true ]; do
 
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
-			    ${BUILDER_ROOT}/build.sh ${UPLOAD} --flash-size \
-			    '2g 4g' --snapshots \
-			    ${IMAGES}
+			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
+			    ${UPLOAD} --flash-size '2g 4g' --snapshots ${IMAGES}
 			rc=$?
 		fi
 	fi

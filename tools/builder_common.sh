@@ -1289,6 +1289,7 @@ setup_pkg_repo() {
 		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server_release},g" \
 		-e "s,%%POUDRIERE_PORTS_NAME%%,${POUDRIERE_PORTS_NAME},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
+		-e "s/%%REPO_BRANCH_PREFIX%%/${REPO_BRANCH_PREFIX}/g" \
 		${_template} \
 		> ${_target}
 }
@@ -2015,6 +2016,7 @@ PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE}
 POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
 PFSENSE_DEFAULT_REPO=${PFSENSE_DEFAULT_REPO}
 PRODUCT_NAME=${PRODUCT_NAME}
+REPO_BRANCH_PREFIX=${REPO_BRANCH_PREFIX}
 EOF
 
 	# Change version of pfSense meta ports for snapshots

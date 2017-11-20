@@ -67,6 +67,7 @@ fi
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
 export PRODUCT_NAME_SUFFIX=${PRODUCT_NAME_SUFFIX:-"-netgate"}
+export REPO_BRANCH_PREFIX=${REPO_BRANCH_PREFIX:-""}
 export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
@@ -218,8 +219,12 @@ export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
-export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/factory-ports.git"}
-export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"factory-devel"}
+if [ -z "${REPO_BRANCH_PREFIX}" ]; then
+	export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
+else
+	export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/${REPO_BRANCH_PREFIX}ports.git"}
+fi
+export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"${REPO_BRANCH_PREFIX}devel"}
 
 # Use vX_Y instead of RELENG_X_Y for poudriere to make it shorter
 POUDRIERE_PORTS_BRANCH=$(echo "${POUDRIERE_PORTS_GIT_BRANCH}" | sed 's,RELENG_,v,')
@@ -284,11 +289,11 @@ export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://firmware.
 export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://${STAGING_HOSTNAME}/factory/packages"}
 
 if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
-	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"factory-v2_4_2"}
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"${REPO_BRANCH_PREFIX}v2_4_2"}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_RELEASE}}
 else
-	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"factory-v2_4_2"}
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"${REPO_BRANCH_PREFIX}v2_4_2"}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_DEVEL}}
 fi
@@ -338,7 +343,7 @@ export VARIANTIMAGES=""
 export VARIANTUPDATES=""
 
 # Rsync data to send snapshots
-if [ -n "${_IS_RELEASE}" ]; then
+if [ -n "${_IS_RELEASE}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
 	export RSYNCIP=${RSYNCIP:-"release-staging.netgate.com"}
 	export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
 	export RSYNCPATH=${RSYNCPATH:-"/staging/factory/images"}

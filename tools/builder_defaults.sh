@@ -67,17 +67,11 @@ fi
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
 export PRODUCT_NAME_SUFFIX=${PRODUCT_NAME_SUFFIX:-"-CE"}
+export REPO_BRANCH_PREFIX=${REPO_BRANCH_PREFIX:-""}
 export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
 export XML_ROOTOBJ=${XML_ROOTOBJ:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
-
-# Add PRODUCT_NAME_SUFFIX string when it's not CE
-REPO_BRANCH_PREFIX=${REPO_BRANCH_PREFIX:-""}
-if [ "${PRODUCT_NAME_SUFFIX}" != "-CE" -a -z "${REPO_BRANCH_PREFIX}" ]; then
-	REPO_BRANCH_PREFIX="${PRODUCT_NAME_SUFFIX#-}-"
-fi
-export REPO_BRANCH_PREFIX
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_NETGATE}" != "yes" ]; then
 	echo ">>>ERROR: According the following license, only Netgate can build genuine pfSense® software"

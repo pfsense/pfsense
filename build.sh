@@ -43,6 +43,7 @@ usage() {
 	echo "		--update-poudriere-ports [-a ARCH_LIST]- Update poudriere ports tree"
 	echo "		--update-pkg-repo [-a ARCH_LIST]- Rebuild necessary ports on poudriere and update pkg repo"
 	echo "		--upload|-U - Upload pkgs and/or snapshots"
+	echo "		--skip-final-rsync|-i - Skip rsync to final server"
 	echo "		-V VARNAME - print value of variable VARNAME"
 	exit 1
 }
@@ -149,6 +150,9 @@ while test "$1" != ""; do
 			;;
 		--upload|-U)
 			export UPLOAD=1
+			;;
+		--skip-final-rsync|-i)
+			export SKIP_FINAL_RSYNC=1
 			;;
 		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|ec2|ec2-csm|ec2-ic|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"

@@ -57,6 +57,7 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+header("X-Frame-Options: SAMEORIGIN");
 if (!$nocsrf) {
 	function csrf_startup() {
 		global $config;
@@ -75,7 +76,6 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */

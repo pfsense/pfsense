@@ -71,7 +71,7 @@ function step2_stepbeforeformdisplay() {
 		$found = true;
 		$opts = array();
 		$opts['name'] = $auth['name'];
-		$opts['value'] = $auth['name'];
+		$opts['value'] = $i;
 		$fields[1]['options']['option'][] = $opts;
 	}
 	if ($found == false) {
@@ -133,7 +133,7 @@ function step4_stepbeforeformdisplay() {
 		$found = true;
 		$opts = array();
 		$opts['name'] = $auth['name'];
-		$opts['value'] = $auth['name'];
+		$opts['value'] = $i;
 		$fields[1]['options']['option'][] = $opts;
 	}
 	if ($found == false)

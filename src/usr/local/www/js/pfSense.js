@@ -138,8 +138,11 @@ $(function() {
 				if (select.options.length < max) {
 					for (var i=select.options.length; i<=max; i++)
 						select.options.add(new Option(i, i), 0);
-					// Make sure index 0 is selected otherwise it will stay in "32" for V6
-					select.options.selectedIndex = "0";
+
+					if (isV6) {
+						// Make sure index 0 is selected otherwise it will stay in "32" for V6
+						select.options.selectedIndex = "0";
+					}
 				}
 			}
 		});

@@ -82,8 +82,8 @@ $form = new Form(false);
 
 $section = new Form_Section('Authentication Test');
 
-foreach (auth_get_authserver_list() as $auth_server) {
-	$serverlist[$auth_server['name']] = $auth_server['name'];
+foreach (auth_get_authserver_list() as $key => $auth_server) {
+	$serverlist[$key] = $auth_server['name'];
 }
 
 $section->addInput(new Form_Select(

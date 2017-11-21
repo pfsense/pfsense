@@ -5890,7 +5890,8 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 }
 
 function get_interface_ip($interface = "wan") {
-
+	global $config;
+	
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_vip_ipv4($interface);
 	} else if (substr($interface, 0, 5) == '_lloc') {

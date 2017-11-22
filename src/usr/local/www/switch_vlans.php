@@ -212,7 +212,7 @@ if ($_POST['act'] == "del") {
 
 	$found = false;
 	$update = false;
-	foreach ($config['switches'] as $cswitch) {
+	foreach ($a_switches as $cswitch) {
 		if ($cswitch['device'] != $swdevice) {
 			continue;
 		}

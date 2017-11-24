@@ -93,6 +93,7 @@ function doCmdT($title, $command, $method) {
 				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
 				$line = preg_replace("/<auth_user>.*?<\\/auth_user>/", "<auth_user>xxxxx</auth_user>", $line);
 				$line = preg_replace("/<auth_pass>.*?<\\/auth_pass>/", "<auth_pass>xxxxx</auth_pass>", $line);
+				$line = preg_replace("/<auth_script>.*?<\\/auth_script>/", "<auth_script>xxxxx</auth_script>", $line);
 				$line = preg_replace("/<proxy_user>.*?<\\/proxy_user>/", "<proxy_user>xxxxx</proxy_user>", $line);
 				$line = preg_replace("/<proxy_passwd>.*?<\\/proxy_passwd>/", "<proxy_passwd>xxxxx</proxy_passwd>", $line);
 				$line = preg_replace("/<proxyuser>.*?<\\/proxyuser>/", "<proxyuser>xxxxx</proxyuser>", $line);

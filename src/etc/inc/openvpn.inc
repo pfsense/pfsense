@@ -1108,6 +1108,11 @@ function openvpn_reconfigure($mode, $settings) {
 			if (!($settings['auth_user'] && $settings['auth_pass'])) {
 				$userpass .= "\n";
 			}
+
+			// if auth_script is not empty, we use its output instead of user/pass
+			if ($settings['auth_script']) {
+				$userpass = shell_exec($settings['auth_script']);
+			}
 			file_put_contents($up_file, $userpass);
 		}
 

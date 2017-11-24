@@ -101,7 +101,7 @@ if ($act == "new") {
 }
 
 global $simplefields;
-$simplefields = array('auth_user', 'auth_pass');
+$simplefields = array('auth_user', 'auth_pass', 'auth_script');
 
 if ($act == "edit") {
 	if (isset($id) && $a_client[$id]) {
@@ -627,6 +627,13 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['auth_pass']
 	))->setHelp('Leave empty when no password is needed');
+
+	$section->addInput(new Form_Textarea(
+		'auth_script',
+		'Auth Script',
+		$pconfig['auth_script']
+	))->setHelp('Script that would output credentials as "user<newline>password".' .
+	    'When defined, this will be executed and the results used instead of username and password. Allows use of OTP authentication.', '<br/>');
 
 	$section->addInput(new Form_Checkbox(
 		'auth-retry-none',

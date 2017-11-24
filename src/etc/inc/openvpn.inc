@@ -1074,6 +1074,11 @@ function openvpn_reconfigure($mode, $settings) {
 			if (!($settings['auth_user'] && $settings['auth_pass'])) {
 				$userpass .= "\n";
 			}
+
+			// if auth_script is not empty, we use its output instead of user/pass
+			if ($settings['auth_script']) {
+				$userpass = shell_exec($settings['auth_script']);
+			}
 			file_put_contents($up_file, $userpass);
 		}
 
@@ -1107,15 +1112,15 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			// ca_chain() expects parameter to be passed by reference. 
-			// avoid passing the whole settings array, as param names or 
-			// types might change in future releases. 
-			$param = array('caref' => $settings['caref']);	
+			// ca_chain() expects parameter to be passed by reference.
+			// avoid passing the whole settings array, as param names or
+			// types might change in future releases.
+			$param = array('caref' => $settings['caref']);
 			$ca = ca_chain($param);
 			$ca = base64_encode($ca);
-			
+
 			openvpn_add_keyfile($ca, $conf, $mode_id, "ca");
-			
+
 			unset($ca, $param);
 
 			if (!empty($settings['certref'])) {

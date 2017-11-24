@@ -43,7 +43,8 @@ $output_path = "/tmp/status_output/";
 $output_file = "/tmp/status_output.tgz";
 
 $filtered_tags = array(
-	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_user', 'bcrypt-hash',
+	'accountkey', 'authorizedkeys', 'auth_pass', 'auth_script', 'auth_user',
+	'bcrypt-hash',
 	'crypto_password', 'crypto_password2', 'dns_nsupdatensupdate_key',
 	'gold_encryption_password', 'gold_password', 'ipsecpsk', 'ldap_bindpw',
 	'lighttpd_ls_password', 'lighttpd_ls_password', 'md5-hash',

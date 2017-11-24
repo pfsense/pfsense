@@ -597,6 +597,7 @@ function system_dhcpleases_configure() {
 		require_once('pfsense-utils.inc');
 	}
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
+	$dhcplck = lock("dhcpleasesconfigure", LOCK_EX);
 
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if (((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
@@ -621,6 +622,7 @@ function system_dhcpleases_configure() {
 			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
 			if (intval($retval) == 0) {
 				sigkillbypid($pidfile, "HUP");
+				unlock($dhcplck);
 				return;
 			} else {
 				sigkillbypid($pidfile, "TERM");
@@ -637,6 +639,8 @@ function system_dhcpleases_configure() {
 		sigkillbypid($pidfile, "TERM");
 		@unlink($pidfile);
 	}
+
+	unlock($dhcplck);
 }
 
 function system_hostname_configure() {

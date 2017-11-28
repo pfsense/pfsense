@@ -166,7 +166,7 @@ if (typeof getURL == 'undefined') {
 	}
 }
 
-if ("<?=$_REQUEST['user']?>" != "true") {
+if ("<?=htmlspecialchars($_REQUEST['user'])?>" != "true") {
  	window.setTimeout('update_status_thread()', 1500);
  }
 //]]>

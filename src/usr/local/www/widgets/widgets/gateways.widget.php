@@ -201,7 +201,7 @@ if ($_POST['widgetkey']) {
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
-$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 10;
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 1;
 
 ?>
 

@@ -197,6 +197,16 @@ echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
 
+/* remove leftover dhcp6c lock files if they exist */
+foreach ($config['interfaces'] as $interface) {
+        if ($interface['ipaddrv6'] == "dhcp6") {
+            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
+                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
+                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
+            }
+         }
+     }
+
 /* set up interfaces */
 if (!$debugging) {
 	mute_kernel_msgs();

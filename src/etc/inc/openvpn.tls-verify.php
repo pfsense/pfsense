@@ -34,6 +34,8 @@ require_once("interfaces.inc");
 
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
+parse_str(implode('&', array_slice($argv, 1)), $_GET);
+
 /* read data from command line */
 if (isset($_GET['certdepth'])) {
 	$cert_depth = $_GET['certdepth'];

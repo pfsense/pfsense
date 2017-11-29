@@ -138,7 +138,7 @@ function get_pkg_table() {
 		$pkgtbl .='					<td>';
 
 		if (!$g['disablepackagehistory']) {
-			$pkgtbl .='						<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">' .
+			$pkgtbl .='						<a target="_blank" rel="noopener" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($pkg['changeloglink']) . '">' .
 		    htmlspecialchars($pkg['installed_version']) . '</a>';
 		} else {
 			$pkgtbl .='						' . htmlspecialchars($pkg['installed_version']);
@@ -151,7 +151,7 @@ function get_pkg_table() {
 		if (is_array($pkg['deps']) && count($pkg['deps'])) {
 			$pkgtbl .='						<br /><br />' . gettext("Package Dependencies") . ':<br/>';
 			foreach ($pkg['deps'] as $pdep) {
-				$pkgtbl .='						<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;' .
+				$pkgtbl .='						<a target="_blank" rel="noopener" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;' .
 				    '<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;';
 			}
 		}
@@ -169,7 +169,7 @@ function get_pkg_table() {
 		}
 
 		if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN') {
-			$pkgtbl .='						<a target="_blank" title="' . gettext("View more information") . '" href="' .
+			$pkgtbl .='						<a target="_blank" rel="noopener" title="' . gettext("View more information") . '" href="' .
 			    htmlspecialchars($pkg['www']) . '" class="fa fa-info"></a>';
 		}
 		$pkgtbl .='					</td>';

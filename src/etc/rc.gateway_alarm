@@ -30,6 +30,7 @@ fi
 echo ">>> Gateway alarm: ${GW} (Addr:${alarm_addr} Alarm:${alarm_flag} RTT:${alarm_rtt}ms RTTsd:${alarm_rttsd}ms Loss:${alarm_loss}%)" | /usr/bin/logger -p daemon.info -i -t rc.gateway_alarm
 
 /usr/local/sbin/pfSctl \
+	-c "service reload dns" \
 	-c "service reload dyndns ${GW}" \
 	-c "service reload ipsecdns" \
 	-c "service reload openvpn ${GW}" \

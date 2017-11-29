@@ -196,7 +196,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
-$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 10;
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 1;
 
 ?>
 <table id="<?=htmlspecialchars($widgetkey)?>-iftbl" class="table table-striped table-hover">
@@ -341,7 +341,7 @@ $ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_se
 		ifstatObject.url = "/widgets/widgets/interface_statistics.widget.php";
 		ifstatObject.callback = interface_statistics_callback;
 		ifstatObject.parms = postdata;
-		ifstatObject.freq = <?=$ninterval?>;;
+		ifstatObject.freq = <?=$ninterval?>;
 
 		// Register the AJAX object
 		register_ajax(ifstatObject);

@@ -99,6 +99,23 @@ class Route53
 		return $xmlreq;
 	}
 	
+	public function getRequestBodyV6($fqdn, $ip, $ttl){
+		$xmlreq = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
+		$xmlreq .= "<ChangeBatch><Changes><Change>";
+		$xmlreq .= "<Action>UPSERT</Action>";
+		$xmlreq .= "<ResourceRecordSet>";
+		$xmlreq .= sprintf("<Name>%s</Name>", $fqdn);
+		$xmlreq .= "<Type>AAAA</Type>";
+		$xmlreq .= sprintf("<TTL>%d</TTL>", $ttl);
+		$xmlreq .= sprintf("<ResourceRecords><ResourceRecord><Value>%s</Value></ResourceRecord></ResourceRecords>",	$ip);
+		$xmlreq .= "</ResourceRecordSet>";
+		$xmlreq .= "</Change></Changes></ChangeBatch>";
+		$xmlreq .= "</ChangeResourceRecordSetsRequest>";
+			
+		return $xmlreq;
+	}
+	
 	/**
 	* Return API URL
 	*

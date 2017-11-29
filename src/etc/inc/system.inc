@@ -1553,6 +1553,17 @@ EOD;
 			fastcgi_read_timeout 180;
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
+		location ~ (^/status$) {
+			allow 127.0.0.1;
+			deny all;
+			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
+			fastcgi_index  index.php;
+			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+			# Fix httpoxy - https://httpoxy.org/#fix-now
+			fastcgi_param  HTTP_PROXY  "";
+			fastcgi_read_timeout 360;
+			include        /usr/local/etc/nginx/fastcgi_params;
+		}
 	}
 
 EOD;

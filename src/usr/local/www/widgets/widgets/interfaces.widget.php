@@ -63,7 +63,7 @@ if ($_REQUEST['widgetkey']) {
 	$widgetkey = $_REQUEST['widgetkey'];
 }
 
-$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 60;
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 10;
 
 ?>
 

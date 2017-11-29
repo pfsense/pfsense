@@ -41,7 +41,7 @@
 require_once('interfaces.inc');
 /*
 * does_interface_exist_fast
-Returns an array of interrfaces which exist on the system.
+Returns an array of interfaces which exist on the system.
 The $interface parameter is not used, but is accepted for
 consistency with the function it replaces.
 */
@@ -55,9 +55,8 @@ function does_interface_exist_fast($interface='', $flush = true) {
 /*
  * convert_real_interface_to_friendly_interface_name_fast($interface): convert fxp0 -> wan, etc.
  Returns an array of interfaces and friendly names.
- Doesn't actually use any parameters, they're just accepted for consistency with the function it replaces
  */
-function convert_real_interface_to_friendly_interface_name_fast($interfaces = array(), $checkparent = false) {
+function convert_real_interface_to_friendly_interface_name_fast() {
 	global $config;
 
 	$out = array();

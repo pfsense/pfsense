@@ -47,7 +47,6 @@ require_once("rrd.inc");
 require_once("interfaces_fast.inc");
 
 global $friendlyifnames;
-//global $profile;
 
 /*moved most gettext calls to here, we really don't want to be repeatedly calling gettext() within loops if it can be avoided.*/
 $gettextArray = array('add'=>gettext('Add'),'addif'=>gettext('Add interface'),'delete'=>gettext('Delete'),'deleteif'=>gettext('Delete interface'),'edit'=>gettext('Edit'),'on'=>gettext('on'));
@@ -63,7 +62,7 @@ $portlist = get_interface_list();
 /*another *_fast function from interfaces_fast.inc. These functions are basically the same as the 
 ones they're named after, except they (usually) take an array and (always) return an array. This means that they only
 need to be called once per script run, the returned array contains all the data necessary for repeated use */
-$friendlyifnames = convert_real_interface_to_friendly_interface_name_fast(array_keys($portlist));
+$friendlyifnames = convert_real_interface_to_friendly_interface_name_fast();
 
 /* add wireless clone interfaces */
 if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
@@ -80,8 +79,6 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		$portlist[$vlan['vlanif']] = $vlan;
 		$portlist[$vlan['vlanif']]['isvlan'] = true;
 	}
-	/*$timeb = microtime(true);
-	$profile['add_vlan_if'] = $timeb-$timea;*/
 }
 
 /* add Bridge interfaces */
@@ -172,23 +169,18 @@ if (is_array($config['openvpn'])) {
 	}
 }
 
-//$timea = microtime(true);
+
 $ifdescrs = interface_assign_description_fast($portlist,$friendlyifnames);
-/*$timeb = microtime(true);
-$profile['build_if_descrs'] = $timeb - $timea;*/
 
 if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
-	//$timea = microtime(true);
 	foreach ($config['interfaces'] as $ifname => $ifdata) {
 		if ($ifdata['if'] == $_REQUEST['if_add']) {
 			$portused = true;
 			break;
 		}
 	}
-	/*$timeb = microtime(true);
-	$profile['if_add_portused'] = $timeb-$timea;*/
 
 	if ($portused === false) {
 		/* find next free optional interface number */
@@ -202,7 +194,6 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			* increases, so does the performance gain; from ~0.0003s improvement with 100 VLANs to ~0.0009s with 400.
 			* It is, however, marginally slower (~0.000036s at 50 VLANS) than the foreach with less than 100 VLANs, and 
 			* therefore may not be worth the loss of code readability or performance for the majority of use cases. */
-			//$timea = microtime(true);
 			$step1 = array_keys($config['interfaces']);
 			unset($step1['lan'],$step1['wan']);
 			$step2 = str_replace("opt","",$step1);
@@ -219,9 +210,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$newifname = 'opt' . $i;
 			$descr = "OPT" . $i;
 		}
-		/*$timeb = microtime(true);
-		$profile['if_add_get_free_opt'] = $timeb-$timea;*/
-
+		
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 		$config['interfaces'][$newifname]['if'] = $_POST['if_add'];
@@ -230,18 +219,13 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			interface_sync_wireless_clones($config['interfaces'][$newifname], false);
 		}
 
-		//$timea = microtime(true);
+		
 		uksort($config['interfaces'], "compare_interface_friendly_names");
-		/*$timeb = microtime(true);
-		$profile['if_add_uksort'] = $timeb-$timea;*/
 
 		/* XXX: Do not remove this. */
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 
-		//$timea = microtime(true);
 		write_config();
-		/*$timeb = microtime(true);
-		$profile['if_add_write_config'] = $timeb-$timea;*/
 
 		$action_msg = gettext("Interface has been added.");
 		$class = "success";
@@ -267,39 +251,28 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 	/* Build a list of the port names so we can see how the interfaces map */
 	$portifmap = array();
-	//$timea = microtime(true);
 	foreach ($portlist as $portname => $portinfo) {
 		$portifmap[$portname] = array();
 	}
-	/*$timeb = microtime(true);
-	$profile['post_list_port_names'] = $timeb - $timea;*/
 
 	/* Go through the list of ports selected by the user,
 	build a list of port-to-interface mappings in portifmap */
-	//$timea = microtime(true);
 	foreach ($_POST as $ifname => $ifport) {
 		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
 			$portifmap[$ifport][] = strtoupper($ifname);
 		}
 	}
-	/*$timeb = microtime(true);
-	$profile['post_build_port_if_map']=$timeb-$timea;*/
 
 	/* Deliver error message for any port with more than one assignment */
-	//$timea = microtime(true);
 	foreach ($portifmap as $portname => $ifnames) {
 		if (count($ifnames) > 1) {
 			$errstr = sprintf(gettext('Port %1$s '.
 				' was assigned to %2$s' .
 				' interfaces:'), $portname, count($ifnames));
 
-			//$timea2 = microtime(true);
 			foreach ($portifmap[$portname] as $ifn) {
 				$errstr .= " " . convert_friendly_interface_to_friendly_descr(strtolower($ifn)) . " (" . $ifn . ")";
 			}
-			/*$timeb2 = microtime(true);
-			if ($timeb2-$timea2 > $profile['post_error_multiple_assign_convert_friendly_if_friendly_desc'])
-				$profile['post_error_multiple_assign_convert_friendly_if_friendly_desc'] = $timeb2 - $timea2;*/
 
 			$input_errors[] = $errstr;
 		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
@@ -318,23 +291,17 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			}
 		}
 	}
-	/*$timeb = $microtime(true);
-	$profile['post_error_multiple_assign'] = $timeb-$timea;*/
 
 	if (is_array($config['vlans']['vlan'])) {
-		//$timea = microtime(true);
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (does_interface_exist($vlan['if']) == false) {
 				$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
 			}
 		}
-		/*$timeb = microtime(true);
-		$profile['post_error_vlan_parent_not_exist'] = $timeb - $timea;*/
 	}
 
 	if (!$input_errors) {
 		/* No errors detected, so update the config */
-		//$timea = microtime(true);
 		foreach ($_POST as $ifname => $ifport) {
 
 			if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
@@ -382,13 +349,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 		}
-		/*$timeb = microtime(true);
-		$profile['post_build_config'] = $timeb-$timea;
-
-		$timea = microtime(true);*/
 		write_config();
-		/*$timeb = microtime(true);
-		$profile['post_write_config']=$timeb-$timea;*/
 
 		enable_rrd_graphing();
 	}
@@ -413,10 +374,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$input_errors[] = gettext("The interface has a traffic shaper queue configured.\nPlease remove all queues on the interface to continue.");
 		} else {
 			unset($config['interfaces'][$id]['enable']);
-			//$timea = microtime(true);
 			$realid = get_real_interface($id);
-			/*$timeb = microtime(true);
-			$profile['del_if_get_real_if'] = $timeb-$timea;*/
 			interface_bring_down($id);   /* down the interface */
 
 			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
@@ -446,10 +404,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				}
 			}
 
-			//$timea = microtime(true);
 			write_config();
-			/*$timeb = microtime(true);
-			$profile['del_if_write_config']=$timeb-$timea;
 
 			/* If we are in firewall/routing mode (not single interface)
 			 * then ensure that we are not running DHCP on the wan which
@@ -459,10 +414,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				unset($config['dhcpd']['wan']);
 			}
 
-			//$timea = microtime(true);
 			link_interface_to_vlans($realid, "update");
-			/*$timeb = microtime(true);
-			$profile['del_if_link_if_vlans'] = $timeb-$timea;*/
 
 			$action_msg = gettext("Interface has been deleted.");
 			$class = "success";
@@ -472,22 +424,13 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 
 /* Create a list of unused ports */
 $unused_portlist = array();
-//$timea = microtime(true);
 $portArray = array_keys($portlist);
 
-/*  this code scales much much better 
-0.0065770149230957 seconds
-vs
-0.49271988868713 seconds with 400 vlans*/
-
-	$ifaceArray = array_column($config['interfaces'],'if');
-	$unused = array_diff($portArray,$ifaceArray);
-	$unused = array_flip($unused);
-	$unused_portlist = array_intersect_key($portlist,$unused);//*/
-	unset($unused,$portArray,$ifaceArray);
-
-/*$timeb = microtime(true);
-$profile['build_unused_port_list'] = $timeb-$timea;*/
+$ifaceArray = array_column($config['interfaces'],'if');
+$unused = array_diff($portArray,$ifaceArray);
+$unused = array_flip($unused);
+$unused_portlist = array_intersect_key($portlist,$unused);//*/
+unset($unused,$portArray,$ifaceArray);
 
 include("head.inc");
 
@@ -536,31 +479,16 @@ $tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
-//$timea = microtime(true);
 
 /*generate the port select box only once. 
-Not indenting the HTML and keeping each option to one line in
-this function results in HTML code that is 8.9KB smaller with 500
-VLANS than the original code structure. Multiplied by 500 VLANs 
-this means the page is ~4.5MB smaller and takes over 1s less to 
-transmit and also renders significantly faster in the browser.
-This is too much of an improvement to ignore. Tested with 500
-VLANS, total page output is 17,197.33KB with 8456ms spent 
-waiting for page generation and transmission, compared to 
-21,697.89KB with a wait of 9734ms*/
+Not indenting the HTML to produce smaller code
+and faster load times */
 
-//$timea2 = microtime();
 $portselect='';
 foreach ($portlist as $portname => $portinfo) {
 	$portselect.='<option value="'.$portname.'"'; 
-	/*if($portname == $iface['if']) {
-		$portselect.=' selected';
-	}*/
 	$portselect.=">".$ifdescrs[$portname]."</option>\n";
 }
-/*$timeb2 = microtime();
-$profile['html_generate_port_select'];
-$profile['html_generated_port_select'] = strlen($portselect);*/
 
 ?>
 <form action="interfaces_assign.php" method="post">
@@ -575,7 +503,6 @@ $profile['html_generated_port_select'] = strlen($portselect);*/
 	</thead>
 	<tbody>
 <?php
-	//$timea2 = microtime(true);
 	$i=0;
 	foreach ($config['interfaces'] as $ifname => $iface):
 		if ($iface['descr']) {
@@ -588,15 +515,9 @@ $profile['html_generated_port_select'] = strlen($portselect);*/
 			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
-<?php //$timea3 = microtime(true);
-/* replacing the port select menu generation loop that has count(interfaces) iterations 
-and is run count(interfaces) times with a pre-prepared select menu generated outside of
-this loop has produced a significant improvement in page generation and load time */
-//foreach ($portlist as $portname => $portinfo):
+<?php 
+/*port select menu generation loop replaced with pre-prepared select menu to reduce page generation time */
 echo str_replace('value="'.$iface['if'].'">','value="'.$iface['if'].'" selected>',$portselect);
- //endforeach;
-/*$timeb3 = microtime(true);
-$profile['html_if_assign_desc'] = $timeb3-$timea3;*/
 ?>
 				</select>
 			</td>
@@ -611,8 +532,6 @@ $profile['html_if_assign_desc'] = $timeb3-$timea3;*/
 		</tr>
 <?php $i++; 
 endforeach;
-/*$timeb2 = microtime(true);
-$profile['html_display_ifs'] = $timeb2-$timea2;*/
 	if (count($config['interfaces']) < count($portlist)):
 ?>
 		<tr>
@@ -621,16 +540,11 @@ $profile['html_display_ifs'] = $timeb2-$timea2;*/
 			</th>
 			<td>
 				<select name="if_add" id="if_add" class="form-control">
-<?php //$timea2 = microtime(true);
-/* As with the gettext() calls, I've removed the interface_assign_description() calls and
-replaced them with my own interface_assign_description_fast() function that's called once
-outside of the loop. Also like the gettext() edits, this change keeps paying for itself.
- Also, removing the indents and newlines saves potentially ~9KB of HTML with 500 unassigned VLANs */
+<?php
+/* HTML not indented to save on transmission/render time */
 foreach ($unused_portlist as $portname => $portinfo):?>
 <option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>><?=$ifdescrs[$portname]?></option>
 <?php endforeach;
-/*$timeb2 = microtime(true);
-$profile['html_available_ports_list'] = $timeb2-$timea2;*/
 ?>
 				</select>
 			</td>
@@ -651,14 +565,9 @@ $profile['html_available_ports_list'] = $timeb2-$timea2;*/
 <br />
 
 <?php
-/*$timeb = microtime(true);
-$profile['html'] = $timeb-$timea;*/
 print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.") .
     '<br/><br/>' .
     gettext("Wireless interfaces must be created on the Wireless tab before they can be assigned."), 'info', false);
-/*$timeallb = microtime(true);
-$profile['total'] = $timeallb - $timealla;
-print_r($profile);*/
 ?>
 
 <?php include("foot.inc")?>

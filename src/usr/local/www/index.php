@@ -327,7 +327,7 @@ if ($user_settings['widgets']['sequence'] != "") {
 		if (isset($user_settings['widgets'][$widgetkey]['interval']) && is_numeric($user_settings['widgets'][$widgetkey]['interval'])) {
 			$interval = intval($user_settings['widgets'][$widgetkey]['interval']);
 		} else {
-			$interval = 10;
+			$interval = 1;
 		}
 
 		$widgetsfromconfig[$widgetkey] = array(

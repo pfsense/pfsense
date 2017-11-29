@@ -88,6 +88,12 @@ $g = array(
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
+/*   FIXME - the value of "default_session_timeout_mins" is hard-coded 
+     in guiconfig.inc, because csrf_magic is loaded early before $config is available.
+     See bug 6803.
+     Any change to this default would need changing there as well.
+*/
+	"default_session_timeout_mins" => 240
 	"default_config_backup_count" => 30
 );
 

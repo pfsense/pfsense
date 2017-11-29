@@ -158,6 +158,20 @@ function openvpn_build_mode_list() {
 	return($list);
 }
 
+global $openvpn_interfacenames;
+function convert_openvpn_interface_to_friendly_descr($if) {
+	global $openvpn_interfacenames;
+	if (!is_array($openvpn_interfacenames)) {
+		$openvpn_interfacenames = openvpn_build_if_list();
+	}
+	foreach($openvpn_interfacenames as $key => $value) {
+		list($item_if, $item_ip) = explode("|", $key);
+		if ($if == $item_if) {
+			echo "$value";
+		}
+	}
+}
+
 function openvpn_build_if_list() {
 	$list = array();
 

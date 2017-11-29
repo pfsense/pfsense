@@ -947,6 +947,7 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Protocol")?></th>
 					<th><?=gettext("Server")?></th>
 					<th><?=gettext("Description")?></th>
@@ -961,6 +962,9 @@ else:
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
 				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
+					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($client['interface'])?>
+					</td>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
 					</td>

@@ -1,1 +1,2 @@
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
+net/%%PRODUCT_NAME%%-pkg-haproxy-devel

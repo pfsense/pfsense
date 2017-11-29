@@ -598,7 +598,7 @@ function set_customwidgettitle(& $user_settings) {
 
 function gen_customwidgetinterval_div($widgetinterval) {
 	$divstr = '<div class="form-group">';
-	$divstr .= '  <label for="interval" class="col-sm-4 control-label">' . gettext('Widget interval'). '</label>';
+	$divstr .= '  <label for="interval" class="col-sm-4 control-label">' . gettext('Update interval'). '</label>';
 	$divstr .= '  <div class="col-sm-4">';
 	$divstr .= '    <input type="text" name="interval" id="interval" value="'. $widgetinterval . '" class="form-control" />';
 	$divstr .= '  </div>';

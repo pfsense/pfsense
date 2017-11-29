@@ -174,6 +174,11 @@ if ($act == "edit") {
 
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
+		if (isset($a_client[$id]['create_gw'])) {
+			$pconfig['create_gw'] = $a_client[$id]['create_gw'];
+		} else {
+			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
+		}
 		if (isset($a_client[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
 		} else {
@@ -446,6 +451,7 @@ if ($_POST['save']) {
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
+		$client['create_gw'] = $pconfig['create_gw'];
 
 		if (!empty($pconfig['ncp-ciphers'])) {
 			$client['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
@@ -909,6 +915,37 @@ if ($act=="new" || $act=="edit"):
 				'The default buffer size can be too small in many cases, depending on hardware and network uplink speeds. ' .
 				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
 				'512KiB and test higher and lower values.');
+
+	$group = new Form_Group('Gateway creation');
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'Both',
+		($pconfig['create_gw'] == "both"),
+		'both'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv4 only',
+		($pconfig['create_gw'] == "v4only"),
+		'v4only'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv6 only',
+		($pconfig['create_gw'] == "v6only"),
+		'v6only'
+	))->displayAsRadio();
+
+	$group->setHelp('If you assign a virtual interface to this OpenVPN client, ' .
+		'this setting controls which gateway types will be created. The default ' .
+		'setting is \'both\'.');
+
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',

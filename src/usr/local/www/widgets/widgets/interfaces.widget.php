@@ -35,12 +35,6 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
 	set_customwidgetinterval($user_settings);
 
-	if (is_numeric($_POST['interval'])) {
-		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = intval($_POST['interval']);
-	} else {
-		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = 10;
-	}
-
 	$validNames = array();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {

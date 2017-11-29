@@ -208,8 +208,7 @@ $ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_se
 
 <form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
-	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
-
+	
 	<div class="form-group">
 		<label class="col-sm-3 control-label"><?=gettext('Orientation')?></label>
 		<?php
@@ -291,6 +290,8 @@ $ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_se
 			</div>
 		</div>
 	</div>
+
+	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">

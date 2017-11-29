@@ -608,8 +608,8 @@ function gen_customwidgetinterval_div($widgetinterval) {
 }
 
 function set_customwidgetinterval(& $user_settings) {
-	if ($_POST['interval']) {
-		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = trim($_POST['interval']);
+	if ($_POST['interval'] && is_numeric($_POST['interval'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = int_val($_POST['interval']);
 	} else {
 		unset($user_settings['widgets'][$_POST['widgetkey']]['interval']);
 	}

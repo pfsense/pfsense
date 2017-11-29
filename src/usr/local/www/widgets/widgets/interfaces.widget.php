@@ -33,6 +33,13 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 
 if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
+	set_customwidgetinterval($user_settings);
+
+	if (is_numeric($_POST['interval'])) {
+		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = intval($_POST['interval']);
+	} else {
+		$user_settings['widgets'][$_POST['widgetkey']]['interval'] = 10;
+	}
 
 	$validNames = array();
 
@@ -55,6 +62,8 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 if ($_REQUEST['widgetkey']) {
 	$widgetkey = $_REQUEST['widgetkey'];
 }
+
+$nifinterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 60;
 
 ?>
 
@@ -159,6 +168,8 @@ endif;
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
+	<?=gen_customwidgetinterval_div($widgetconfig['title']); ?>
+
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
 			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">

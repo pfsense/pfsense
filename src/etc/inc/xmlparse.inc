@@ -47,8 +47,8 @@ function listtags() {
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);
@@ -84,7 +84,8 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
+		throw new Exception(
+		    sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 		    $name,
 		    xml_get_current_line_number($parser)));
 	}
@@ -244,6 +245,12 @@ function dump_xml_config_sub($arr, $indent) {
 						} else if ((substr($ent, 0, 5) == "descr") ||
 						    (substr($ent, 0, 6) == "detail") ||
 						    (substr($ent, 0, 12) == "login_banner") ||
+						    (substr($ent, 0, 5) == "state") ||
+						    (substr($ent, 0, 4) == "city") ||
+						    (substr($ent, 0, 12) == "organization") ||
+						    (substr($ent, 0, 5) == "email") ||
+						    (substr($ent, 0, 6) == "certca") ||
+						    (substr($ent, 0, 8) == "certname") ||
 						    (substr($ent, 0, 9) == "ldap_attr") ||
 						    (substr($ent, 0, 9) == "ldap_bind") ||
 						    (substr($ent, 0, 11) == "ldap_basedn") ||
@@ -275,6 +282,12 @@ function dump_xml_config_sub($arr, $indent) {
 				if ((substr($ent, 0, 5) == "descr") ||
 				    (substr($ent, 0, 6) == "detail") ||
 				    (substr($ent, 0, 12) == "login_banner") ||
+				    (substr($ent, 0, 5) == "state") ||
+				    (substr($ent, 0, 4) == "city") ||
+				    (substr($ent, 0, 12) == "organization") ||
+				    (substr($ent, 0, 5) == "email") ||
+				    (substr($ent, 0, 6) == "certca") ||
+				    (substr($ent, 0, 8) == "certname") ||
 				    (substr($ent, 0, 9) == "ldap_attr") ||
 				    (substr($ent, 0, 9) == "ldap_bind") ||
 				    (substr($ent, 0, 11) == "ldap_basedn") ||

@@ -213,7 +213,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 				<th><?=gettext("Status")?></th>
 			</tr>
 		</thead>
-		<tbody id="<?=$widgetkey?>-gwtblbody">
+		<tbody id="<?=htmlspecialchars($widgetkey)?>-gwtblbody">
 <?php
 		print(compose_table_body_contents($widgetkey));
 ?>
@@ -264,7 +264,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -310,13 +310,13 @@ events.push(function(){
 
 	// Callback function called by refresh system when data is retrieved
 	function gateways_callback(s) {
-		$('#<?=$widgetkey?>-gwtblbody').html(s);
+		$(<?= json_encode('#' . $widgetkey . '-gwtblbody')?>).html(s);
 	}
 
 	// POST data to send via AJAX
 	var postdata = {
 		ajax: "ajax",
-	 	widgetkey : "<?=$widgetkey?>"
+		widgetkey : <?=json_encode($widgetkey)?>
 	 };
 
 	// Create an object defining the widget refresh AJAX call

@@ -52,18 +52,20 @@ get_version ()
 
 get_version
 
-# Read product_name from $g, defaults to pfSense
-# Use php -n here because we are not ready to load extensions yet
-product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
-
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
 /etc/rc.dumpon
 
-# Setup ddb on all platforms.
-if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/${product}-ddb.conf
+if [ -e /root/force_growfs ]; then
+	/etc/rc.d/growfs onestart
 fi
+
+#
+# The file system needs to be unmounted to guarantee a clean operation of fsck.
+# Pending changes can keep the file system dirty until all the cached data is
+# flushed to the disk.
+#
+/sbin/mount -ur /
 
 fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
@@ -72,10 +74,6 @@ if [ ! -z "${fsck_forced_iterations}" ]; then
 		/sbin/fsck -y -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
-fi
-
-if [ -e /root/force_growfs ]; then
-	/etc/rc.d/growfs onestart
 fi
 
 FSCK_ACTION_NEEDED=0
@@ -129,6 +127,11 @@ if /sbin/kldstat -qm zfs; then
 			/sbin/zfs set readonly=off $ZFSROOT
 		fi
 		/sbin/zfs mount -a
+		# If /bootpool is present, then there is an additional zfs pool to import
+		# See https://redmine.pfsense.org/issues/8063
+		if [ -d /bootpool ]; then
+			/sbin/zpool import -f bootpool
+		fi
 	fi
 fi
 
@@ -183,6 +186,15 @@ if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
+# Setup ddb on all platforms.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/${product}-ddb.conf
+fi
+
 # Restore contents of the RAM disk store
 /etc/rc.restore_ramdisk_store
 
@@ -224,8 +236,10 @@ echo
 /sbin/conscontrol mute off >/dev/null
 
 SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
-/sbin/swapon -a 2>/dev/null >/dev/null
-/etc/rc.savecore
+if [ -n "${SWAPDEVICE}" ]; then
+	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
+fi
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
@@ -370,8 +384,10 @@ echo -n "Launching the init system..."
 
 # Copy custom logo over if it's present
 if [ -d /usr/local/share/${product}/custom_logos ]; then
-	cp -f /usr/local/share/${product}/custom_logos/*png \
+	cp -f /usr/local/share/${product}/custom_logos/*svg \
 		/usr/local/www
+	cp -f /usr/local/share/${product}/custom_logos/*css \
+		/usr/local/www/css
 fi
 
 /etc/rc.bootup

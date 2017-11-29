@@ -65,8 +65,8 @@ class pfsense_xmlrpc_client {
 		if (is_ipaddrv6($syncip)) {
 			$syncip = "[{$syncip}]";
 		}
-		$user = urlencode($this->username);
-		$pass = urlencode($this->password);
+		$user = rawurlencode($this->username);
+		$pass = rawurlencode($this->password);
 		
 		$this->logurl = "{$scheme}://{$syncip}:{$port}/xmlrpc.php";
 		$this->url = "{$scheme}://{$user}:{$pass}@{$syncip}:{$port}/xmlrpc.php";

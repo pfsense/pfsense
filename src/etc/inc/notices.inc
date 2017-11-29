@@ -215,6 +215,97 @@ function are_notices_pending($category = "all") {
 	return false;
 }
 
+function notices_sendqueue() {
+	global $g;
+	$nothing_done_count = 0;
+	$messagequeue = array();
+	$growlerrorcount = 0;
+	$growlskipped = 0;
+	
+	while(true) {
+		$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+		$nothing_done_count++;
+		$smptcount = 0;
+		$messages = array();
+		if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+			$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+			$messagequeue = $messages;
+			$messages['mails']['item'] = array(); // clear all items to be send
+			file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+			unset($messages);
+		}
+		// clear lock before trying to send messages, so new one's can be added
+		unlock($notifyqueue_lck);
+		
+		if (is_array($messagequeue['mails']['item'])) {
+			$smtpmessage = "";
+			$growlqueue = array();
+			foreach($messagequeue['mails']['item'] as $mail) {
+				switch ($mail['type']) {
+					case 'mail': 
+						$smptcount++;
+						$smtpmessage .= "\r\n" . date("G:i:s",$mail['time']) . " " . $mail['msg'];
+						break;
+					case 'growl':
+						$message = date("G:i:s",$mail['time']) . " " . $mail['msg'];
+						$nothing_done_count = 0;
+						$growlqueue[] = $message;
+						break;
+					default:
+						break;
+				}
+			}
+			if (!empty($smtpmessage)) {
+				$smtpmessage = sprintf(gettext("There are %s notifications below:"), $smptcount) . $smtpmessage;
+				$nothing_done_count = 0;
+				notify_via_smtp($smtpmessage, true);
+			}
+			if (count($growlqueue) > 0) {
+				$nothing_done_count = 0;
+				foreach($growlqueue as $message) {
+					if ($growlerrorcount < 3) {
+						$ret = notify_via_growl($message, true);
+						if (!empty($ret)) {
+							$growlerrorcount++;
+						}
+					} else {
+						$growlskipped++;
+					}
+				}
+			}
+		}
+		if ($nothing_done_count > 6) {
+			break;
+		} else {
+			sleep(10);
+		}
+	}
+	if ($growlskipped > 0) {
+		log_error("{$growlskipped} growl notifications were skipped due to to many errors: {$growlerrorcount}.");
+	}
+}
+
+function notify_via_queue_add($message, $type='mail') {
+	global $g;
+	$mail = array();
+	$mail['time'] = time();
+	$mail['type'] = $type;
+	$mail['msg'] = $message;
+	$notifyqueue_lck = lock("notifyqueue", LOCK_EX);
+	$messages = array();
+	if (file_exists("{$g['vardb_path']}/notifyqueue.messages")) {
+		$messages = unserialize(file_get_contents("{$g['vardb_path']}/notifyqueue.messages"));
+	}
+	if(is_array($messages)) {
+		$messages['mails']['item'][] = $mail;
+		file_put_contents("{$g['vardb_path']}/notifyqueue.messages", serialize($messages));
+	}
+	unset($messages);
+	
+	mwexec_bg('/usr/local/bin/notify_monitor.php');
+	unlock($notifyqueue_lck);
+}
+
 /****f* notices/notify_via_smtp
  * NAME
  *   notify_via_smtp
@@ -242,11 +333,15 @@ function notify_via_smtp($message, $force = false) {
 	}
 
 	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
+	@file_put_contents("/var/db/notices_lastmsg.txt", $message);
+	if (!$force) {
+		notify_via_queue_add($message, 'mail');
+		$ret = true;
+	} else {
+		$ret = send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+	}
 
-	return send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
+	return $ret;
 }
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {
@@ -348,13 +443,20 @@ function notify_via_growl($message, $force=false) {
 	if (empty($config['notifications']['growl']['ipaddress'])) {
 		return;
 	}
-
+	
 	/* Do NOT send the same message twice */
 	if (file_exists("/var/db/growlnotices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/growlnotices_lastmsg.txt"));
 		if ($lastmsg == $message) {
 			return;
 		}
+	}
+	/* Store last message sent to avoid spamming */
+	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
+	
+	if (!$force) {
+		notify_via_queue_add($message, 'growl');
+		return;
 	}
 
 	$ip = $config['notifications']['growl']['ipaddress'];
@@ -389,9 +491,6 @@ function notify_via_growl($message, $force=false) {
 		log_error($err_msg);
 		return($err_msg);
 	}
-
-	/* Store last message sent to avoid spamming */
-	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
 
 	return;
 }

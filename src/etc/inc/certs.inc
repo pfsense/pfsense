@@ -435,7 +435,7 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 	return true;
 }
 
-function csr_sign($csr, & $ca, $duration, $type = "user", $altnames) {
+function csr_sign($csr, & $ca, $duration, $type = "user", $altnames, $digest_alg = "sha256") {
 	global $config;
 	$old_err_level = error_reporting(0);
 
@@ -460,6 +460,7 @@ function csr_sign($csr, & $ca, $duration, $type = "user", $altnames) {
 
 	$args = array(
 		"x509_extensions" => $cert_type,
+		"digest_alg" => $digest_alg,
 		"req_extensions" => "req_{$cert_type}"
 	);
 
@@ -680,6 +681,26 @@ function cert_get_serial($str_crt, $decode = true) {
 	} else {
 		return NULL;
 	}
+}
+
+function cert_get_sigtype($str_crt, $decode = true) {
+	if ($decode) {
+		$str_crt = base64_decode($str_crt);
+	}
+	$crt_details = openssl_x509_parse($str_crt);
+
+	$signature = array();
+	if (isset($crt_details['signatureTypeSN']) && !empty($crt_details['signatureTypeSN'])) {
+		$signature['shortname'] = $crt_details['signatureTypeSN'];
+	}
+	if (isset($crt_details['signatureTypeLN']) && !empty($crt_details['signatureTypeLN'])) {
+		$signature['longname'] = $crt_details['signatureTypeLN'];
+	}
+	if (isset($crt_details['signatureTypeNID']) && !empty($crt_details['signatureTypeNID'])) {
+		$signature['nid'] = $crt_details['signatureTypeNID'];
+	}
+
+	return $signature;
 }
 
 function is_openvpn_server_ca($caref) {
@@ -1059,7 +1080,7 @@ function cert_add_altname_type($str) {
 	$type = "";
 	if (is_ipaddr($str)) {
 		$type = "IP";
-	} elseif (is_hostname($str)) {
+	} elseif (is_hostname($str, true)) {
 		$type = "DNS";
 	} elseif (is_URL($str)) {
 		$type = "URI";

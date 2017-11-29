@@ -101,6 +101,8 @@ if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
 } else if ($if == "lan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "LAN";
+} else if ($if == "opt1" && !$wancfg['descr']) {
+	$wancfg['descr'] = "OPT1";
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */
@@ -727,7 +729,7 @@ if ($_POST['apply']) {
 			}
 		}
 	}
-	if (($_POST['type'] == 'staticv6') && $_POST['ipaddrv6']) {
+	if (($_POST['type6'] == 'staticv6') && $_POST['ipaddrv6']) {
 		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
 
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
@@ -845,7 +847,7 @@ if ($_POST['apply']) {
 
 		unset($min_mtu, $max_mtu);
 
-		if (stristr($wancfg['if'], "_vlan")) {
+		if (interface_is_vlan($wancfg['if']) != NULL) {
 			$realhwif_array = get_parent_interface($wancfg['if']);
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
@@ -859,7 +861,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 		} else {
 			foreach ($config['interfaces'] as $idx => $ifdata) {
-				if (($idx == $if) || !preg_match('/_vlan[0-9]/', $ifdata['if'])) {
+				if (($idx == $if) || interface_is_vlan($ifdata['if']) == NULL) {
 					continue;
 				}
 
@@ -3239,7 +3241,7 @@ $section->addInput(new Form_Checkbox(
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
 			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.%1$s' .
-			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.', '<br />');
+			'Note: The update frequency can be changed under System > Advanced, Firewall & NAT settings.', '<br />');
 
 $form->add($section);
 

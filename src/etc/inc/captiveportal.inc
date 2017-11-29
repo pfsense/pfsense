@@ -356,9 +356,9 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 		/* Release allocated pipes for this zone */
-		captiveportal_free_dnrules();
+		$pipes_to_remove = captiveportal_free_dnrules();
 
-		captiveportal_delete_rules();
+		captiveportal_delete_rules($pipes_to_remove);
 
 		if (empty($config['captiveportal'])) {
 			set_single_sysctl("net.link.ether.ipfw", "0");
@@ -425,7 +425,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		}
 		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
-			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
+			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone, false);
 	}
 
 	/* generate nginx configuration */
@@ -436,7 +436,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
-		"", "", $cpzone);
+		"", "", $cpzone, false);
 
 	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start nginx */
@@ -687,8 +687,8 @@ function captiveportal_init_rules($reinit = false) {
 }
 
 /* Delete all rules related to specific cpzone */
-function captiveportal_delete_rules() {
-	global $g, $cpzoneid;
+function captiveportal_delete_rules($pipes_to_remove = array()) {
+	global $g, $cpzoneid, $cpzone;
 
 	$skipto1 = captiveportal_ipfw_ruleno($cpzoneid);
 	$skipto2 = $skipto1 + $g['captiveportal_rules_interval'];
@@ -715,13 +715,17 @@ function captiveportal_delete_rules() {
 		$delrules .= "table {$table} destroy\n";
 	}
 
+	foreach ($pipes_to_remove as $pipeno) {
+		$delrules .= "pipe delete {$pipeno}\n";
+	}
+
 	if (empty($delrules)) {
 		return;
 	}
 
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules", $delrules);
 	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules", true);
-	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.del.rules");
+	@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.deltable.rules");
 }
 
 /*
@@ -1762,7 +1766,9 @@ function captiveportal_write_elements() {
 }
 
 function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 64500) {
-	global $cpzone;
+	global $g, $cpzone;
+
+	$removed_pipes = array();
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
@@ -1771,8 +1777,10 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx] == $cpzone) {
 				$rules[$ridx] = false;
+				$removed_pipes[] = $ridx;
 				$ridx++;
 				$rules[$ridx] = false;
+				$removed_pipes[] = $ridx;
 				$ridx++;
 			} else {
 				$ridx += 2;
@@ -1782,6 +1790,8 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 		unset($rules);
 	}
 	unlock($cpruleslck);
+
+	return $removed_pipes;
 }
 
 function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {
@@ -2093,8 +2103,9 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	} else {
 		$dwfaultbw_up = $dwfaultbw_down = 0;
 	}
-	$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-	$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+	/* pipe throughputs must always be an integer, enforce that restriction again here. */
+	$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+	$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
@@ -2239,8 +2250,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		} else {
 			$dwfaultbw_up = $dwfaultbw_down = 0;
 		}
-		$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-		$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+		/* pipe throughputs must always be an integer, enforce that restriction again here. */
+		$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+		$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 
 		if ($passthrumac) {
 			$mac = array();

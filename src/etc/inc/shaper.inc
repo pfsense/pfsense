@@ -998,15 +998,28 @@ class priq_queue {
 	}
 	function CheckBandwidth($bw, $bwtype) {
 		$parent = $this->GetParent();
-		$sum = $parent->GetTotalBw(($bw > 0) ? $this : NULL);
-		if ($bw > 0)
-			$sum += get_bandwidth($bw, $bwtype, $parent);
-		if ($sum > get_queue_bandwidth($parent))
-			return 1;
+
+		// If the child queues have bandwidth specified in %, there is no point trying
+		// to compare the total to the parent's bandwidth, which is defined in Kb/S or Mb/S etc.
+		// ToDo: Add check for total % > 100
+		//		 If one child is in %, they must all be
+
+		if ($bwtype != "%") {
+			$sum = $parent->GetTotalBw(($bw > 0) ? $this : NULL);
+
+			if ($bw > 0) {
+				$sum += get_bandwidth($bw, $bwtype, $parent);
+			}
+
+			if ($sum > get_queue_bandwidth($parent)) {
+				return 1;
+			}
+		}
 
 		foreach ($this->subqueues as $q) {
-			if ($q->CheckBandwidth(0, ''))
+			if ($q->CheckBandwidth(0, '')) {
 				return 1;
+			}
 		}
 
 		return 0;
@@ -1214,7 +1227,7 @@ class priq_queue {
 		}
 		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
 			$input_errors[] = "The sum of child bandwidth is higher than parent.";
-		
+
 		if (isset($data['priority']) && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
@@ -3600,7 +3613,8 @@ class dnpipe_class extends dummynet_class {
 						foreach ($config['schedules']['schedule'] as $schedule) {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
-									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+									/* pipe throughputs must always be an integer, enforce that restriction again here. */
+									$pfq_rule .= " bw ".round(trim($bw['bw']),0).$bw['bwscale'];
 									if (is_numeric($bw['burst']) && ($bw['burst'] > 0)) {
 										$pfq_rule .= " burst ".trim($bw['burst']);
 									}
@@ -3615,7 +3629,8 @@ class dnpipe_class extends dummynet_class {
 						break;
 					}
 				} else {
-					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+					/* pipe throughputs must always be an integer, enforce that restriction again here. */
+					$pfq_rule .= " bw ".round(trim($bw['bw']), 0).$bw['bwscale'];
 					if (is_numeric($bw['burst']) && ($bw['burst'] > 0)) {
 						$pfq_rule .= " burst ".trim($bw['burst']);
 					}

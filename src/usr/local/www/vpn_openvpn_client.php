@@ -142,6 +142,7 @@ if ($act == "edit") {
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
+			$pconfig['crlref'] = $a_client[$id]['crlref'];
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
@@ -161,6 +162,7 @@ if ($act == "edit") {
 		$pconfig['remote_networkv6'] = $a_client[$id]['remote_networkv6'];
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
+		$pconfig['auth-retry-none'] = $a_client[$id]['auth-retry-none'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
 		$pconfig['udp_fast_io'] = $a_client[$id]['udp_fast_io'];
 		$pconfig['sndrcvbuf'] = $a_client[$id]['sndrcvbuf'];
@@ -172,6 +174,11 @@ if ($act == "edit") {
 
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
+		if (isset($a_client[$id]['create_gw'])) {
+			$pconfig['create_gw'] = $a_client[$id]['create_gw'];
+		} else {
+			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
+		}
 		if (isset($a_client[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
 		} else {
@@ -415,6 +422,7 @@ if ($_POST['save']) {
 		if ($tls_mode) {
 			$client['caref'] = $pconfig['caref'];
 			$client['certref'] = $pconfig['certref'];
+			$client['crlref'] = $pconfig['crlref'];
 			if ($pconfig['tlsauth_enable']) {
 				if ($pconfig['autotls_enable']) {
 					$pconfig['tls'] = openvpn_create_key();
@@ -435,6 +443,7 @@ if ($_POST['save']) {
 		$client['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$client['use_shaper'] = $pconfig['use_shaper'];
 		$client['compression'] = $pconfig['compression'];
+		$client['auth-retry-none'] = $pconfig['auth-retry-none'];
 		$client['passtos'] = $pconfig['passtos'];
 		$client['udp_fast_io'] = $pconfig['udp_fast_io'];
 		$client['sndrcvbuf'] = $pconfig['sndrcvbuf'];
@@ -442,6 +451,7 @@ if ($_POST['save']) {
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
+		$client['create_gw'] = $pconfig['create_gw'];
 
 		if (!empty($pconfig['ncp-ciphers'])) {
 			$client['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
@@ -623,6 +633,13 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['auth_pass']
 	))->setHelp('Leave empty when no password is needed');
+
+	$section->addInput(new Form_Checkbox(
+		'auth-retry-none',
+		'Authentication Retry',
+		'Do not retry connection when authentication fails',
+		$pconfig['auth-retry-none']
+	))->setHelp('When enabled, the OpenVPN process will exit if it receives an authentication failure message. The default behavior is to retry.');
 
 	$form->add($section);
 
@@ -899,6 +916,37 @@ if ($act=="new" || $act=="edit"):
 				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
 				'512KiB and test higher and lower values.');
 
+	$group = new Form_Group('Gateway creation');
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'Both',
+		($pconfig['create_gw'] == "both"),
+		'both'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv4 only',
+		($pconfig['create_gw'] == "v4only"),
+		'v4only'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv6 only',
+		($pconfig['create_gw'] == "v6only"),
+		'v6only'
+	))->displayAsRadio();
+
+	$group->setHelp('If you assign a virtual interface to this OpenVPN client, ' .
+		'this setting controls which gateway types will be created. The default ' .
+		'setting is \'both\'.');
+
+	$section->add($group);
+
 	$section->addInput(new Form_Select(
 		'verbosity_level',
 		'Verbosity level',
@@ -936,6 +984,7 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Protocol")?></th>
 					<th><?=gettext("Server")?></th>
 					<th><?=gettext("Description")?></th>
@@ -950,6 +999,9 @@ else:
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
 				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
+					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($client['interface'])?>
+					</td>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
 					</td>

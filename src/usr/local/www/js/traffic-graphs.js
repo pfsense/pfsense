@@ -117,6 +117,22 @@ function draw_graph(then) {
 	var size = window.size;
 	var refreshInterval = window.interval;
 	var lasttime = 0;
+	// This is a moving average to average the previous 'x' points to the current
+	var smoothing = window.smoothing;
+	var smoothCount = 0;
+	// hold previous data
+	var priorIn = new Array();
+	var priorOut = new Array();
+	// If the put smoothing == 0 don't initialize first element
+	var interfaceSize = window.interfaces.length;
+	for(var i = 0; i < interfaceSize; i ++){
+		priorIn[i] = new Array();
+		priorOut[i] = new Array();
+		if( smoothing > 0 ){
+			priorIn[i][0] = 0;
+			priorOut[i][0] = 0;
+		}
+	}
 	startTime = 120 * refreshInterval;
 	then.setSeconds(then.getSeconds() - startTime);
 	var thenTime = then.getTime();
@@ -147,7 +163,7 @@ function draw_graph(then) {
 
 			charts[value] = nv.models.lineChart()
 						.useInteractiveGuideline(true)
-						.color(d3.scale.category20().range())
+						.color(d3.scale.category10().range())
 						.rightAlignYAxis(true)
 						.margin({top: 0, left:25, bottom: 30, right: 45});
 
@@ -164,7 +180,7 @@ function draw_graph(then) {
 			d3.select('#traffic-chart-' + value + ' svg')
 				.append("text")
 				.attr('class', 'interface-label')
-				.attr("x", 20)             
+				.attr("x", 20)
 				.attr("y", 20)
 				.attr("font-size", 18)
 				.text(myData[value]['interfacename']);
@@ -229,11 +245,12 @@ function draw_graph(then) {
 
 			if (error) {
 
-				Visibility.stop(updateIds);
+				//Visibility.stop(updateIds);
 				clearInterval(updateTimerIds);
-				$(".traffic-widget-chart").remove();
-				$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
-				return console.warn(error);
+				//$(".traffic-widget-chart").remove();
+				//$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
+				return console.warn("Caught: " + error);
+
 
 			}
 
@@ -250,6 +267,7 @@ function draw_graph(then) {
 			var setTime = true;
 			var xtime = 0;
 			var timeDiff = 0;
+			var interfaceCount = 0;
 			$.each(json, function( key, ifVals ) {
 				if (setTime == true) {
 					var valueTime = ifVals[0].values[0];
@@ -258,12 +276,17 @@ function draw_graph(then) {
 					xtime = valueTime * 1000;
 					setTime = false;
 				}
+
 				label = $('#traffic-chart-' + key + ' svg > .interface-label');
 				$(label).text(ifVals.name);
 				if(!myData[key][0].first) {
-					var trafficIn = ((ifVals[0].values[1] * size) - latest[ifVals[0].key]) / timeDiff;
-					var trafficOut = ((ifVals[1].values[1] * size) - latest[ifVals[1].key]) / timeDiff;
-
+					var currentIn = ((ifVals[0].values[1] * size) - latest[ifVals[0].key]) / timeDiff;
+					var currentOut = ((ifVals[1].values[1] * size) - latest[ifVals[1].key]) / timeDiff;
+					var trafficIn = ( priorIn[interfaceCount].reduce(function(a, b){ return a + b; },0) + currentIn)/(1 + priorIn[interfaceCount].length);
+					var trafficOut = ( priorOut[interfaceCount].reduce(function(a, b){ return a + b; },0) + currentOut) /(1 + priorOut[interfaceCount].length);
+					// circular array to keep track of 'x' amount of data points
+					priorIn[interfaceCount][smoothCount] = currentIn;
+					priorOut[interfaceCount][smoothCount] = currentOut;
 					if(window.invert) {
 						trafficOut = 0 - trafficOut;
 					}
@@ -308,14 +331,17 @@ function draw_graph(then) {
 					 */
 					charts[key].update();
 				}
-
+				interfaceCount++;
+				interfaceCount = interfaceCount % interfaceSize;
 			});
-
+			// increment the circular array
+			smoothCount ++;
+			smoothCount = smoothCount % smoothing;
 			refreshGraphFunction_running = false;
 		});
 
 	}
-	
+
 	if(window.graph_backgroundupdate) {
 		updateTimerIds = setInterval(refreshGraphFunction, refreshInterval * 1000);
 	} else {

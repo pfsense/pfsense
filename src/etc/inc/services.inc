@@ -23,8 +23,9 @@
  * limitations under the License.
  */
 
-define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover loopia namecheap noip noip-free ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 cloudns custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dreamhost dreamhost-v6 duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys godaddy godaddy-v6 googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker hover loopia namecheap noip noip-free ods opendns ovh-dynhost route53 route53-v6 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),ClouDNS,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DreamHost,Dreamhost (v6),DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,GoDaddy,GoDaddy (v6),Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Hover,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,Route 53 (v6),SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -929,9 +930,50 @@ EOPP;
 				if (!empty($poolconf['nextserver']) && ($poolconf['nextserver'] != $dhcpifconf['nextserver'])) {
 					$dhcpdconf .= "		next-server {$poolconf['nextserver']};\n";
 				}
-				if (!empty($poolconf['filename']) && ($poolconf['filename'] != $dhcpifconf['filename'])) {
-					$dhcpdconf .= "		filename \"{$poolconf['filename']}\";\n";
+
+				if (!empty($poolconf['filename']) &&
+				    (!isset($dhcpifconf['filename']) ||
+				    ($poolconf['filename'] != $dhcpifconf['filename']))) {
+					$filename = $poolconf['filename'];
 				}
+				if (!empty($poolconf['filename32']) &&
+				    (!isset($dhcpifconf['filename32']) ||
+				    ($poolconf['filename32'] != $dhcpifconf['filename32']))) {
+					$filename32 = $poolconf['filename32'];
+				}
+				if (!empty($poolconf['filename64']) &&
+				    (!isset($dhcpifconf['filename64']) ||
+				    ($poolconf['filename64'] != $dhcpifconf['filename64']))) {
+					$filename64 = $poolconf['filename64'];
+				}
+
+				if (!empty($filename32) || !empty($filename64)) {
+					if (empty($filename) && !empty($dhcpifconf['filename'])) {
+						$filename = $dhcpifconf['filename'];
+					}
+					if (empty($filename32) && !empty($dhcpifconf['filename32'])) {
+						$filename32 = $dhcpifconf['filename32'];
+					}
+					if (empty($filename64) && !empty($dhcpifconf['filename64'])) {
+						$filename64 = $dhcpifconf['filename64'];
+					}
+				}
+
+				if (!empty($filename) && !empty($filename32) && !empty($filename64)) {
+					$dhcpdconf .= "		if option arch = 00:06 {\n";
+					$dhcpdconf .= "			filename \"{$filename32}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:07 {\n";
+					$dhcpdconf .= "			filename \"{$filename64}\";\n";
+					$dhcpdconf .= "		} else if option arch = 00:09 {\n";
+					$dhcpdconf .= "			filename \"{$filename64}\";\n";
+					$dhcpdconf .= "		} else {\n";
+					$dhcpdconf .= "			filename \"{$filename}\";\n";
+					$dhcpdconf .= "		}\n\n";
+				} elseif (!empty($filename)) {
+					$dhcpdconf .= "		filename \"{$filename}\";\n";
+				}
+				unset($filename, $filename32, $filename64);
+
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
 					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
 				}
@@ -1717,67 +1759,7 @@ function services_dhcrelay_configure() {
 	}
 
 	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ip($ifname);
-			if (!is_ipaddr($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnet($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			// For each enabled static route
-			foreach (get_staticroutes(false, false, true) as $rtent) {
-				if (ip_in_subnet($srvip, $rtent['network'])) {
-					$a_gateways = return_gateways_array(true);
-					$destif = $a_gateways[$rtent['gateway']]['interface'];
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (is_subnetv4($items[0])) {
-					$subnet = $items[0];
-				} elseif (is_ipaddrv4($items[0])) {
-					$subnet = "{$items[0]}/32";
-				} else {
-					// Not a subnet or IP address, skip to the next line.
-					continue;
-				}
-				if (ip_in_subnet($srvip, $subnet)) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
+		$destif = guess_interface_from_ip($srvip);
 		if (!empty($destif)) {
 			$dhcrelayifs[] = $destif;
 		}
@@ -1849,63 +1831,7 @@ function services_dhcrelay6_configure() {
 	$srvips = explode(",", $dhcrelaycfg['server']);
 	$srvifaces = array();
 	foreach ($srvips as $srcidx => $srvip) {
-		unset($destif);
-		foreach ($iflist as $ifname) {
-			$subnet = get_interface_ipv6($ifname);
-			if (!is_ipaddrv6($subnet)) {
-				continue;
-			}
-			$subnet .= "/" . get_interface_subnetv6($ifname);
-			if (ip_in_subnet($srvip, $subnet)) {
-				$destif = get_real_interface($ifname);
-				break;
-			}
-		}
-		if (!isset($destif)) {
-			if (is_array($config['staticroutes']['route'])) {
-				foreach ($config['staticroutes']['route'] as $rtent) {
-					if (isset($rtent['disabled'])) {
-						continue;
-					}
-					if (ip_in_subnet($srvip, $rtent['network'])) {
-						$a_gateways = return_gateways_array(true);
-						$destif = $a_gateways[$rtent['gateway']]['interface'];
-						break;
-					}
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			/* Create a array from the existing route table */
-			exec("/usr/bin/netstat -rnWf inet6", $route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			array_shift($route_str);
-			$route_arr = array();
-			foreach ($route_str as $routeline) {
-				$items = preg_split("/[ ]+/i", $routeline);
-				if (ip_in_subnet($srvip, $items[0])) {
-					$destif = trim($items[6]);
-					break;
-				}
-			}
-		}
-
-		if (!isset($destif)) {
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach ($config['gateways']['gateway_item'] as $gateway) {
-					if (isset($gateway['defaultgw'])) {
-						$destif = get_real_interface($gateway['interface']);
-						break;
-					}
-				}
-			} else {
-				$destif = get_real_interface("wan");
-			}
-		}
-
+		$destif = guess_interface_from_ip($srvip);
 		if (!empty($destif)) {
 			$srvifaces[] = "{$srvip}%{$destif}";
 		}
@@ -1983,14 +1909,19 @@ function services_dyndns_configure($int = "") {
 			 * the active gateway for that group
 			 */
 			$group_int = '';
+			$friendly_group_int = '';
 			if (is_array($gwgroups[$dyndns['interface']])) {
 				if (!empty($gwgroups[$dyndns['interface']][0]['vip'])) {
 					$group_int = $gwgroups[$dyndns['interface']][0]['vip'];
 				} else {
 					$group_int = $gwgroups[$dyndns['interface']][0]['int'];
+					$friendly_group_int =
+					    convert_real_interface_to_friendly_interface_name(
+						$group_int);
 				}
 			}
-			if ((empty($int)) || ($int == $dyndns['interface']) || ($int == $group_int)) {
+			if ((empty($int)) || ($int == $dyndns['interface']) ||
+			    ($int == $group_int) || ($int == $friendly_group_int)) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
@@ -2473,8 +2404,7 @@ begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
 EOD;
 			}
 
-			if (isset($config['snmpd']['modules']['hostres'])
-			    && !(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
+			if (isset($config['snmpd']['modules']['hostres'])) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 
@@ -2541,14 +2471,19 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		 * the active gateway for that group
 		 */
 		$group_int = '';
+		$friendly_group_int = '';
 		if (is_array($gwgroups[$dnsupdate['interface']])) {
 			if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
 				$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
 			} else {
 				$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
+				$friendly_group_int =
+				    convert_real_interface_to_friendly_interface_name(
+					$group_int);
 			}
 		}
-		if (!empty($int) && ($int != $dnsupdate['interface']) && ($int != $group_int)) {
+		if (!empty($int) && ($int != $dnsupdate['interface']) &&
+		    ($int != $group_int) && ($int != $friendly_group_int)) {
 			continue;
 		}
 		if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {

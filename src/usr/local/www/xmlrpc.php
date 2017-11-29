@@ -536,6 +536,10 @@ class pfsense_xmlrpc_server {
 	}
 }
 
+// run script untill its done and can 'unlock' the xmlrpc.lock, this prevents hanging php-fpm / webgui 
+ignore_user_abort(true); 
+set_time_limit(0);
+
 $xmlrpclockkey = lock('xmlrpc', LOCK_EX);
 
 XML_RPC2_Backend::setBackend('php');

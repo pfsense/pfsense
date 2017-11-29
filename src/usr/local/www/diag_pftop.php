@@ -29,6 +29,7 @@
 require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("pfTop"));
+$pftop = "/usr/local/sbin/pftop";
 
 $sorttypes = array('age', 'bytes', 'dest', 'dport', 'exp', 'none', 'pkt', 'sport', 'src');
 $viewtypes = array('default', 'label', 'long', 'queue', 'rules', 'size', 'speed', 'state', 'time');
@@ -52,9 +53,17 @@ if ($_REQUEST['getactivity']) {
 		$viewtype = "default";
 		$numstate = "100";
 	}
-
-	$text = `pftop -b {$sorttype} -w 135 -v {$viewtype} {$numstate}`;
-	echo trim($text);
+	if ($_REQUEST['filter'] != "") {
+		$filter = "-f " . escapeshellarg($_REQUEST['filter']);
+	} else {
+		$filter = "";
+	}
+	$text = shell_exec("$pftop {$filter} -b {$sorttype} -w 135 -v {$viewtype} {$numstate}");
+	if (empty($text)) {
+		echo "Invalid filter, check syntax";
+	} else {
+		echo trim($text);
+	}
 	exit;
 }
 
@@ -75,6 +84,11 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 	$sorttype = "bytes";
 	$viewtype = "default";
 	$numstate = "100";
+}
+if ($_REQUEST['filter'] != "") {
+	$filter = "-f " . escapeshellarg($_REQUEST['filter']);
+} else {
+	$filter = "";
 }
 
 if ($input_errors) {
@@ -108,6 +122,23 @@ $section->addInput(new Form_Select(
 	$validViews
 ));
 
+$section->addInput(new Form_Input(
+	'filter',
+	'Filter expression',
+	'text',
+	$_REQUEST['filter'],
+	['placeholder' => 'e.g. tcp, ip6 or dst net 208.123.73.0/24']
+))->setHelp('<em>click for filter help</em>%1$s' .
+	'<code>[proto &lt;ip|ip6|ah|carp|esp|icmp|ipv6-icmp|pfsync|tcp|udp&gt;]</code><br />' .
+	'<code>[src|dst|gw] [host|net|port] &lt;host/network/port&gt;</code><br />' .
+	'<code>[in|out]</code><br /><br />' .
+	'These are the most common selectors. Some expressions can be combined using "and" / "or". ' .
+	'See %2$s for more detailed expression syntax.%3$s',
+	'<span class="infoblock"><br />',
+	'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=pftop#STATE_FILTERING">pftop(8)</a>',
+	'</span></p>'
+);
+
 $section->addInput(new Form_Select(
 	'sorttype',
 	'Sort by',
@@ -125,7 +156,7 @@ $section->addInput(new Form_Select(
 	)
 ));
 
-$validStates = array(50, 100, 200, 500, 100, 'all');
+$validStates = array(50, 100, 200, 500, 1000, 'all');
 $section->addInput(new Form_Select(
 	'states',
 	'Maximum # of States',

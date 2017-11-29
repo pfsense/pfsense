@@ -62,6 +62,8 @@
 	 *    - DuiaDNS IPv6 (www.duiadns.net)
 	 *    - Hover (www.hover.com)
 	 *    - DreamHost DNS (www.dreamhost.com)
+	 *    - ClouDNS (www.cloudns.net)
+	 *    - GoDaddy (www.godaddy.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -118,6 +120,9 @@
 	 *  Hover           - Last Tested: 15 February 2017
 	 *  DreamHost       - Last Tested: 30 April 2017
 	 *  DreamHost IPv6  - Not Yet Tested
+	 *  ClouDNS         - Last Tested: 22 August 2017
+	 *  GoDaddy         - Last Tested: 22 November 2017
+	 *  GoDaddy IPv6    - Last Tested: 22 November 2017
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -227,6 +232,15 @@
 				if (!$dnsZoneID) $this->_error(8);
 				if (!$dnsTTL) $this->_error(9);
 				break;
+			case 'cloudns':
+			case "godaddy":
+			case "godaddy-v6":
+				if (!$dnsUser) $this->_error(3);
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				if (!$dnsTTL) $this->_error(9);
+				break;
 			case 'custom':
 				if (!$dnsUpdateURL) $this->_error(7);
 				break;
@@ -245,6 +259,7 @@
 				case 'freedns-v6':
 				case 'cloudflare-v6':
 				case 'dreamhost-v6':
+				case 'godaddy-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -330,7 +345,10 @@
 					case 'spdyn':
 					case 'spdyn-v6':
 					case 'all-inkl':
+					case 'cloudns':
 					case 'hover':
+					case 'godaddy':
+					case 'godaddy-v6':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -823,6 +841,25 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
 					break;
+				case 'godaddy':
+				case 'godaddy-v6':
+					/* Uses GoDaddy's REST API
+					   Requires username and Account API sso-key passed in header
+					   Data sent as JSON */
+					$needsIP = TRUE;
+					$server = 'https://api.godaddy.com/v1/domains/';
+					$recordType = $this->_useIPv6 ? "AAAA" : "A";
+					$url = $server  . $this->_dnsDomain . '/records/' . $recordType . '/' . $this->_dnsHost;
+					$jsondata = '[{"data":"' . $this->_dnsIP . '","ttl":' . $this->_dnsTTL . '}]';
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Accept: application/json',
+						'Content-Type: application/json',
+						'Authorization: sso-key ' . $this->_dnsUser . ':' . $this->_dnsPass
+					));
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+					break;
 				case 'googledomains':
 					$needsIP = FALSE;
 					$post_data['username:password'] = $this->_dnsUser . ':' . $this->_dnsPass;
@@ -929,6 +966,36 @@
 					curl_setopt($ch, CURLOPT_URL, $server . $port);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					break;
+				case 'cloudns':
+					/* Uses ClouDNS REST API
+					   Requires auth-id or sub-auth-id or sub-auth-user */
+					// Step 1: Find the Record ID
+					$url = 'https://api.cloudns.net/dns/records.json';
+					$post_data['auth-id'] = $this->_dnsUser;
+					$post_data['auth-password'] = $this->_dnsPass;
+					$post_data['domain-name'] = $this->_dnsDomain;
+					$post_data['host'] = $this->_dnsHost;
+					$post_data['type'] = 'a';
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					$output = json_decode(curl_exec($ch));
+					$recordID = key(get_object_vars($output));
+
+					// Step 2: Set the record
+					$needsIP = TRUE;
+					$url = 'https://api.cloudns.net/dns/mod-record.json';
+					$post_data = array();
+					$post_data['auth-id'] = $this->_dnsUser;
+					$post_data['auth-password'] = $this->_dnsPass;
+					$post_data['domain-name'] = $this->_dnsDomain;
+					$post_data['record-id'] = $recordID;
+					$post_data['host'] = $this->_dnsHost;
+					$post_data['record'] = $this->_dnsIP;
+					$post_data['ttl'] = $this->_dnsTTL;
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
+
 				default:
 					break;
 			}
@@ -1680,6 +1747,30 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'godaddy':
+				case 'godaddy-v6':
+					/* Responds with HTTP 200 on success.
+					   Responds with HTTP 4xx or  on error.
+					   Returns JSON data as body */
+;
+					if (preg_match("/\s200\sOK/i", $header)) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else if (preg_match("/\s4\d\d\s/i", $header)) {
+						$arrbody = json_decode($data, true);
+						$message = $arrbody['message'] . ".";
+						if (isset($arrbody['fields'])) {
+							foreach ($arrbody['fields'] as $error) {
+								$message .= " " . $error['path'] . ": " . $error['message'] . ".";
+							}
+						}
+						$status = $status_intro . $error_str . $message;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
 				case 'googledomains':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Not A FQDN");
@@ -1787,6 +1878,14 @@
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
 						$this->_debug($data);
+					}
+					break;
+				case 'cloudns':
+					$result = json_decode($data, true);
+					if ($result['status'] == 'Success') {
+						$successful_update = true;
+					} else {
+						log_error($result['status'] . "(" . $result['statusDescription'] . ")");
 					}
 					break;
 				case 'dreamhost':

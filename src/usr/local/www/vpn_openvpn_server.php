@@ -106,6 +106,7 @@ if ($act == "new") {
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['cert_depth'] = 1;
+	$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
 	$pconfig['digest'] = "SHA1";
@@ -173,6 +174,7 @@ if ($act == "edit") {
 		$pconfig['remote_network'] = $a_server[$id]['remote_network'];
 		$pconfig['remote_networkv6'] = $a_server[$id]['remote_networkv6'];
 		$pconfig['gwredir'] = $a_server[$id]['gwredir'];
+		$pconfig['gwredir6'] = $a_server[$id]['gwredir6'];
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
@@ -236,6 +238,12 @@ if ($act == "edit") {
 		$pconfig['autotls_enable'] = "yes";
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
+
+		if (isset($a_server[$id]['create_gw'])) {
+			$pconfig['create_gw'] = $a_server[$id]['create_gw'];
+		} else {
+			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
+		}
 
 		if (isset($a_server[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
@@ -536,6 +544,7 @@ if ($_POST['save']) {
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
+		$server['gwredir6'] = $pconfig['gwredir6'];
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
@@ -583,6 +592,7 @@ if ($_POST['save']) {
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
 
+		$server['create_gw'] = $pconfig['create_gw'];
 		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($pconfig['netbios_enable']) {
@@ -1026,9 +1036,15 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Checkbox(
 		'gwredir',
-		'Redirect Gateway',
-		'Force all client generated traffic through the tunnel.',
+		'Redirect IPv4 Gateway',
+		'Force all client-generated IPv4 traffic through the tunnel.',
 		$pconfig['gwredir']
+	));
+	$section->addInput(new Form_Checkbox(
+		'gwredir6',
+		'Redirect IPv6 Gateway',
+		'Force all client-generated IPv6 traffic through the tunnel.',
+		$pconfig['gwredir6']
 	));
 
 	$section->addInput(new Form_Input(
@@ -1296,6 +1312,37 @@ if ($act=="new" || $act=="edit"):
 				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
 				'512KiB and test higher and lower values.');
 
+	$group = new Form_Group('Gateway creation');
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'Both',
+		($pconfig['create_gw'] == "both"),
+		'both'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv4 only',
+		($pconfig['create_gw'] == "v4only"),
+		'v4only'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv6 only',
+		($pconfig['create_gw'] == "v6only"),
+		'v6only'
+	))->displayAsRadio();
+
+	$group->setHelp('If you assign a virtual interface to this OpenVPN server, ' .
+		'this setting controls which gateway types will be created. The default ' .
+		'setting is \'both\'.');
+
+	$section->add($group);
+
 	$section->addInput(new Form_Select(
 		'verbosity_level',
 		'Verbosity level',
@@ -1334,6 +1381,7 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Crypto")?></th>
@@ -1348,6 +1396,9 @@ else:
 	foreach ($a_server as $server):
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
+					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($server['interface'])?>
+					</td>
 					<td>
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
 					</td>
@@ -1479,6 +1530,7 @@ events.push(function() {
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', true);
+				hideCheckbox('gwredir6', true);
 				hideInput('local_network', true);
 				hideInput('local_networkv6', true);
 				hideMultiClass('authmode', true);
@@ -1490,6 +1542,7 @@ events.push(function() {
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', false);
+				hideCheckbox('gwredir6', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
@@ -1501,6 +1554,7 @@ events.push(function() {
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
 				hideCheckbox('gwredir', false);
+				hideCheckbox('gwredir6', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', false);
@@ -1517,6 +1571,7 @@ events.push(function() {
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
 				hideCheckbox('gwredir', false);
+				hideCheckbox('gwredir6', false);
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
@@ -1524,6 +1579,7 @@ events.push(function() {
 		}
 
 		gwredir_change();
+		gwredir6_change();
 		tlsauth_change();
 		autokey_change();
 	}
@@ -1574,8 +1630,13 @@ events.push(function() {
 		var hide = $('#gwredir').prop('checked')
 
 		hideInput('local_network', hide);
-		hideInput('local_networkv6', hide);
 //		hideInput('remote_network', hide);
+	}
+
+	function gwredir6_change() {
+		var hide = $('#gwredir6').prop('checked')
+
+		hideInput('local_networkv6', hide);
 //		hideInput('remote_networkv6', hide);
 	}
 
@@ -1656,6 +1717,7 @@ events.push(function() {
 					// the display status of local network fields depends on
 					// the state of the gwredir checkbox.
 					gwredir_change();
+					gwredir6_change();
 					hideInput('topology', false);
 				}
 				break;
@@ -1723,6 +1785,11 @@ events.push(function() {
 	 // Gateway redirect
 	$('#gwredir').click(function () {
 		gwredir_change();
+	});
+
+	 // Gateway redirect IPv6
+	$('#gwredir6').click(function () {
+		gwredir6_change();
 	});
 
 	 // Auto TLSkey generation
@@ -1812,6 +1879,7 @@ events.push(function() {
 	autokey_change();
 	tlsauth_change();
 	gwredir_change();
+	gwredir6_change();
 	dns_domain_change();
 	dns_server_change();
 	wins_server_change();

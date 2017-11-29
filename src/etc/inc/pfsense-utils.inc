@@ -180,7 +180,9 @@ function get_css_files() {
 		$usrcss = $pfscss = $betacss = array();
 
 		foreach ($cssfiles as $css) {
-			if (strpos($css, "login") == 0) {	// Don't display any login page related CSS files
+			// Don't display any login/logo page related CSS files
+			if (strpos($css, "login") == 0 &&
+			    strpos($css, "logo") == 0) {
 				if (strpos($css, "BETA") != 0) {
 					array_push($betacss, $css);
 				} else if (strpos($css, "pfSense") != 0) {
@@ -1164,7 +1166,14 @@ function setup_serial_port($when = "save", $path = "") {
 		system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 	}
 
-	$loader_conf = file_get_contents($loader_conf_file);
+	if (file_exists($loader_conf_file)) {
+		$loader_conf = file_get_contents($loader_conf_file);
+	} elseif (file_exists("{$path}/boot/loader.conf.local")) {
+		$loader_conf_file = "{$path}/boot/loader.conf.local";
+		$loader_conf = file_get_contents($loader_conf_file);
+	} else {
+		$loader_conf = "";
+	}
 	$loader_conf_split = explode("\n", $loader_conf);
 
 	$data = array();
@@ -1484,6 +1493,7 @@ function get_interface_info($ifdescr) {
 		return;
 	}
 	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
+	$ifinfo['enable'] = isset($config['interfaces'][$ifdescr]['enable']);
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -1872,13 +1882,16 @@ function load_crypto() {
 	global $config, $g;
 	$crypto_modules = array('aesni', 'cryptodev');
 
-	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
-		return false;
-	}
+	$enabled_modules = explode('_', $config['system']['crypto_hardware']);
 
-	if (!empty($config['system']['crypto_hardware']) && !is_module_loaded($config['system']['crypto_hardware'])) {
-		log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $config['system']['crypto_hardware']));
-		mwexec("/sbin/kldload {$config['system']['crypto_hardware']}");
+	foreach ($enabled_modules as $enmod) {
+		if (empty($enmod) || !in_array($enmod, $crypto_modules)) {
+			continue;
+		}
+		if (!is_module_loaded($enmod)) {
+			log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $enmod));
+			mwexec("/sbin/kldload " . escapeshellarg($enmod));
+		}
 	}
 }
 

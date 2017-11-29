@@ -39,11 +39,15 @@ if (!is_array($config['vlans']['vlan'])) {
 $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
-
-/* add LAGG interfaces */
-if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-	foreach ($config['laggs']['lagg'] as $lagg) {
-		$portlist[$lagg['laggif']] = $lagg;
+$lagglist = get_lagg_interface_list();
+$portlist = array_merge($portlist, $lagglist);
+foreach ($lagglist as $laggif => $lagg) {
+	/* LAGG members cannot be assigned */
+	$laggmembers = explode(',', $lagg['members']);
+	foreach ($laggmembers as $lagm) {
+		if (isset($portlist[$lagm])) {
+			unset($portlist[$lagm]);
+		}
 	}
 }
 
@@ -70,7 +74,7 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
+	if (isset($_POST['tag']) && !vlan_valid_tag($_POST['tag'])) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 	if (isset($_POST['pcp']) && !empty($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {
@@ -114,11 +118,11 @@ if ($_POST['save']) {
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
-					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
-					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+					pfSense_interface_destroy(vlan_interface($a_vlans[id]));
+					$confif = convert_real_interface_to_friendly_interface_name(vlan_interface($a_vlans[$id]));
 				}
 				if ($confif != "") {
-					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+					$config['interfaces'][$confif]['if'] = vlan_interface($_POST);
 				}
 			}
 		}
@@ -127,9 +131,10 @@ if ($_POST['save']) {
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['pcp'] = $_POST['pcp'];
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
-		$vlan['vlanif'] = interface_vlan_configure($vlan);
-		if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan")) {
+		$vlan['vlanif'] = vlan_interface($_POST);
+		$vlanif = interface_vlan_configure($vlan);
+		if ($vlanif == NULL || $vlanif != $vlan['vlanif']) {
+			pfSense_interface_destroy($vlan['vlanif']);
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		} else {
 			if (isset($id) && $a_vlans[$id]) {

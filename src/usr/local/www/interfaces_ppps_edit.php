@@ -46,8 +46,6 @@ if (!is_array($config['ppps']['ppp'])) {
 $a_ppps = &$config['ppps']['ppp'];
 
 $iflist = get_configured_interface_with_descr();
-$portlist = get_interface_list();
-$portlist = array_merge($portlist, $iflist);
 
 if (isset($_REQUEST['type'])) {
 	$pconfig['type'] = $_REQUEST['type'];
@@ -516,6 +514,16 @@ function build_link_list() {
 				$portlist[$vlan['vlanif']] = $vlan;
 			}
 		}
+		$lagglist = get_lagg_interface_list();
+		foreach ($lagglist as $laggif => $lagg) {
+			/* LAGG members cannot be assigned */
+			$laggmembers = explode(',', $lagg['members']);
+			foreach ($laggmembers as $lagm) {
+				if (isset($portlist[$lagm])) {
+					unset($portlist[$lagm]);
+				}
+			}
+		}
 		foreach ($portlist as $ifn => $ifinfo) {
 			$port_count++;
 			$string = "";
@@ -933,7 +941,7 @@ foreach ($linklist['list'] as $ifnm => $nm) {
 	$j++;
 
 	$section->add($group);
-	$group->addClass('localip sec-advanced')->addClass('linkparam' . $ifnm);
+	$group->addClass('localip sec-advanced')->addClass('linkparam' . str_replace('.', '_', $ifnm));
 }
 
 $linkparamhelp = new Form_StaticText(
@@ -1080,11 +1088,12 @@ events.push(function() {
 		<?php if ($pconfig['type'] != 'ppp') : ?>
 		var selected = $(".interfaces").val();
 		var length = $(".interfaces :selected").length;
+
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
 			if (showadvopts) {
-				hideClass('linkparam' + selected[i], false);
+				hideClass('linkparam' + selected[i].replace(".", "_"), false);
 				hideInput('linkparamhelp', false);
 			}
 		}

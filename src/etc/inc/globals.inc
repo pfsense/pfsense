@@ -32,6 +32,9 @@ define("IPV6", 6);
 define("IPV4V6", 2);
 define("ALIAS", 1);
 
+// Interface Name Size
+define("IF_NAMESIZE", 15);	/* 16 minus the terminating NULL */
+
 // AddPassword method defines
 define('DMYPWD', "********");
 
@@ -71,7 +74,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "17.0",
+	"latest_config" => "17.3",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -134,6 +137,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.link.bridge.pfil_member" => "1",
 	"net.link.bridge.pfil_bridge" => "0",
 	"net.link.tap.user_open" => "1",
+	"net.link.vlan.mtag_pcp" => "1",
 	"kern.randompid" => "347",
 	"net.inet.ip.intr_queue_maxlen" => "1000",
 	"hw.syscons.kbd_reboot" => "0",
@@ -143,9 +147,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"vfs.read_max" => "32",
 	"kern.ipc.maxsockbuf" => "4262144",
 	"net.inet.ip.process_options" => 0,
-	"kern.random.sys.harvest.interrupt" => 0,
-	"kern.random.sys.harvest.point_to_point" => 0,
-	"kern.random.sys.harvest.ethernet" => 0,
+	"kern.random.harvest.mask" => "351",
 	"net.route.netisr_maxqlen" => 1024,
 	"net.inet.udp.checksum" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
@@ -205,5 +207,5 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
-$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns");
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
 ?>

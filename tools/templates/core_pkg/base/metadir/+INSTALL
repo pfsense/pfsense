@@ -9,6 +9,14 @@ if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
 	exit 1
 fi
 
+# Save a copy of /etc/version to trigger copynotice.inc show when it's needed
+if [ ! -f /cf/conf/copynotice_version ]; then
+	# Create empty file to force it to differ and show notice once
+	echo "" > /cf/conf/copynotice_version
+else
+	/bin/cp -f /etc/version /cf/conf/copynotice_version
+fi
+
 echo %%PRODUCT_NAME%% > /etc/platform
 
 echo "===> Removing schg flag from base files"
@@ -29,6 +37,13 @@ echo "===> Extracting new base tarball"
 # Install new base files
 tar -C / --exclude ./var/empty -xJPUf \
 	/usr/local/share/%%PRODUCT_NAME%%/base.txz
+
+# Create/remove trigger to show copynotice when version changes
+if /usr/bin/cmp -s /etc/version /cf/conf/copynotice_version; then
+	/bin/rm -f /cf/conf/copynotice_display >/dev/null 2>&1
+else
+	/usr/bin/touch /cf/conf/copynotice_display
+fi
 
 echo "===> Removing static obsoleted files"
 

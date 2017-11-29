@@ -249,6 +249,7 @@ EOF;
 	$harden_dnssec_stripped = isset($unboundcfg['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
+	$dns_record_cache = isset($unboundcfg['dnsrecordcache']) ? "yes" : "no";
 	$outgoing_num_tcp = isset($unboundcfg['outgoing_num_tcp']) ? $unboundcfg['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = isset($unboundcfg['incoming_num_tcp']) ? $unboundcfg['incoming_num_tcp'] : "10";
 	$edns_buffer_size = (!empty($unboundcfg['edns_buffer_size'])) ? $unboundcfg['edns_buffer_size'] : "4096";
@@ -265,6 +266,15 @@ EOF;
 	$msg_cache_size = (!empty($unboundcfg['msgcachesize'])) ? $unboundcfg['msgcachesize'] : "4";
 	$verbosity = isset($unboundcfg['log_verbosity']) ? $unboundcfg['log_verbosity'] : 1;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
+
+	if (isset($unboundcfg['regovpnclients'])) {
+		$openvpn_clients_conf .=<<<EOD
+# OpenVPN client entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+EOD;
+	} else {
+		$openvpn_clients_conf = '';
+	}
 
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
@@ -357,6 +367,7 @@ outgoing-range: 4096
 prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
 use-caps-for-id: {$use_caps}
+serve-expired: {$dns_record_cache}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to
@@ -375,6 +386,8 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
+
+{$openvpn_clients_conf}
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
@@ -702,8 +715,8 @@ function unbound_acls_config($cfgsubdir = "") {
 	global $g, $config;
 
 	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
-		$aclcfg = "access-control: 127.0.0.1/32 allow\n";
-		$aclcfg .= "access-control: ::1 allow\n";
+		$aclcfg = "access-control: 127.0.0.1/32 allow_snoop\n";
+		$aclcfg .= "access-control: ::1 allow_snoop\n";
 		// Add our networks for active interfaces including localhost
 		if (!empty($config['unbound']['active_interface'])) {
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));

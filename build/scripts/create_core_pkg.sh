@@ -38,6 +38,7 @@ Options:
 	-f flavor    -- package flavor
 	-v version   -- package version
 	-r root      -- root directory containing package files
+	-s search    -- search path
 	-F filter    -- filter pattern to exclude files from plist
 	-d destdir   -- Destination directory to create package
 	-h           -- Show this help and exit
@@ -50,7 +51,7 @@ END
 	exit 1
 }
 
-while getopts t:f:v:r:F:d:h opt; do
+while getopts s:t:f:v:r:F:d:h opt; do
 	case "$opt" in
 		t)
 			template=$OPTARG
@@ -63,6 +64,9 @@ while getopts t:f:v:r:F:d:h opt; do
 			;;
 		r)
 			root=$OPTARG
+			;;
+		s)
+			findroot=$OPTARG
 			;;
 		F)
 			filter=$OPTARG
@@ -125,11 +129,16 @@ else
 	if [ -n "${filter}" ]; then
 		filter="-name ${filter}"
 	fi
-	(cd ${root} \
-		&& find . ${filter} -type f -or -type l \
-			| sed 's,^.,,' \
-			| sort -u \
-	) > ${plist}
+	if [ -z "${findroot}" ]; then
+		findroot="."
+	fi
+	for froot in ${findroot}; do
+		(cd ${root} \
+			&& find ${froot} ${filter} -type f -or -type l \
+				| sed 's,^.,,' \
+				| sort -u \
+		) >> ${plist}
+	done
 fi
 
 if [ -f "${template_path}/exclude_plist" ]; then

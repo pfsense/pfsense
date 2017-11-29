@@ -30,6 +30,10 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
+// Message to display if the session times out and an AJAX call is made
+$timeoutmessage = gettext("The dashboard web session has timed out.\\n" .
+	"It will not update until you refresh the page and log-in again.");
+
 // Turn on buffering to speed up rendering
 ini_set('output_buffering', 'true');
 
@@ -141,6 +145,9 @@ if ($_POST && $_POST['sequence']) {
 		list($basename, $col, $display, $widget_counter) = explode(':', $widget_seq_data);
 
 		if ($widget_counter != 'next') {
+			if (!is_numeric($widget_counter)) {
+				continue;
+			}
 			$widget_counter_array[$basename][$widget_counter] = true;
 			$widget_sequence .= $widget_sep . $widget_seq_data;
 			$widget_sep = ',';
@@ -219,25 +226,25 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<link rel="stylesheet" href="/css/pfSense.css" />
-	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
-	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
-</head>
-<body id="loading-wizard" class="no-menu">
-	<div id="jumbotron">
-		<div class="container">
-			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-				<font color="white">
-				<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
-				<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
-				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
-				</font>
+	<head>
+		<link rel="stylesheet" href="/css/pfSense.css" />
+		<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
+		<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
+	</head>
+	<body id="loading-wizard" class="no-menu">
+		<div id="jumbotron">
+			<div class="container">
+				<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+					<font color="white">
+					<p><h3><?=sprintf(gettext("Welcome to %s!") . "\n", $g['product_name'])?></h3></p>
+					<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
+					<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
+					<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
+					</font>
+				</div>
 			</div>
 		</div>
-	</div>
-</body>
+	</body>
 </html>
 <?php
 	exit;
@@ -279,6 +286,9 @@ if ($user_settings['widgets']['sequence'] != "") {
 		}
 
 		list($basename, $col, $display, $copynum) = $line_items;
+		if (!is_numeric($copynum)) {
+			continue;
+		}
 
 		// be backwards compatible
 		// If the display column information is missing, we will assign a temporary
@@ -488,6 +498,27 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 
 </div>
 
+<?php
+/*
+ * Import the modal form used to display the copyright/usage information
+ * when trigger file exists. Trigger file is created during upgrade process
+ * when /etc/version changes
+ */
+if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
+	require_once("{$g['www_path']}/copynotice.inc");
+	@unlink("{$g['cf_conf_path']}/copynotice_display");
+}
+
+/*
+ * Import the modal form used to display any HTML text a package may want to display
+ * on installation or removal
+ */
+$ui_notice = "/tmp/package_ui_notice";
+if (file_exists($ui_notice)) {
+	require_once("{$g['www_path']}/upgrnotice.inc");
+}
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -567,7 +598,7 @@ function set_widget_checkbox_events(checkbox_panel_ref, all_none_button_id) {
 		});
 }
 
-// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+// ---------------------Centralized widget refresh system -------------------------------------------
 // These need to live outsie of the events.push() function to enable the widgets to see them
 var ajaxspecs = new Array();	// Array to hold widget refresh specifications (objects )
 var ajaxidx = 0;
@@ -636,7 +667,9 @@ events.push(function() {
 		}
 	});
 
-	// --------------------- EXPERIMENTAL centralized widget refresh system ------------------------------
+	// --------------------- Centralized widget refresh system ------------------------------
+	ajaxtimeout = false;
+
 	function make_ajax_call(wd) {
 		ajaxmutex = true;
 
@@ -647,7 +680,18 @@ events.push(function() {
 			data: wd.parms,
 
 			success: function(data){
-				wd.callback(data);
+				if (data.length > 0 ) {
+					// If the session has timed out, display a pop-up
+					if (data.indexOf("SESSION_TIMEOUT") === -1) {
+						wd.callback(data);
+					} else {
+						if (ajaxtimeout === false) {
+							ajaxtimeout = true;
+							alert("<?=$timeoutmessage?>");
+						}
+					}
+				}
+
 				ajaxmutex = false;
 			},
 

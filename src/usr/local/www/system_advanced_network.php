@@ -47,7 +47,7 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['ip_change_kill_states'] = isset($config['system']['ip_change_kill_states']);
+$pconfig['ip_change_kill_states'] = $config['system']['ip_change_kill_states'];
 
 if ($_POST) {
 

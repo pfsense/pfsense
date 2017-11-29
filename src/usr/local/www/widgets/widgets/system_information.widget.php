@@ -79,10 +79,7 @@ if ($_REQUEST['getupdatestatus']) {
 		exit;
 	}
 
-	$version_compare = pkg_version_compare(
-	    $system_version['installed_version'], $system_version['version']);
-
-	switch ($version_compare) {
+	switch ($system_version['pkg_version_compare']) {
 	case '<':
 ?>
 		<div>
@@ -162,22 +159,27 @@ $rows_displayed = false;
 		<tr>
 			<th><?=gettext("System");?></th>
 			<td>
-			<?php
+<?php
 				$platform = system_identify_specific_platform();
 				if (isset($platform['descr'])) {
 					echo $platform['descr'];
 				} else {
 					echo gettext('Unknown system');
 				}
-			?>
-			<br />
-			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
-<?php
-		// If the uniqueID is available, display it here
-		$uniqueid = system_get_uniqueid();
-		if (!empty($uniqueid)) {
-			print("<br />" . gettext("Netgate Device ID:") . " <strong>{$uniqueid}</strong>");
-		}
+
+				$serial = system_get_serial();
+				if (!empty($serial)) {
+					print("<br />" . gettext("Serial:") .
+					    " <strong>{$serial}</strong>\n");
+				}
+
+				// If the uniqueID is available, display it here
+				$uniqueid = system_get_uniqueid();
+				if (!empty($uniqueid)) {
+					print("<br />" .
+					    gettext("Netgate Device ID:") .
+					    " <strong>{$uniqueid}</strong>");
+				}
 ?>
 			</td>
 		</tr>
@@ -432,11 +434,23 @@ $rows_displayed = false;
 	if (!in_array('disk_usage', $skipsysinfoitems)):
 		$rows_displayed = true;
 		$diskidx = 0;
+		$first = true;
 		foreach ($filesystems as $fs):
 ?>
 		<tr>
-			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
+			<th>
+				<?php if ($first): ?>
+					<?=gettext("Disk usage:");?>
+					<br/>
+				<?php endif; ?>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<?=$fs['mountpoint']?>
+			</th>
 			<td>
+				<?php if ($first):
+					$first = false; ?>
+					<br/>
+				<?php endif; ?>
 				<div class="progress" >
 					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
 					</div>
@@ -468,7 +482,7 @@ $rows_displayed = false;
 <form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
     <div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>

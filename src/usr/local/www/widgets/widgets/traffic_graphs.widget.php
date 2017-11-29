@@ -57,6 +57,10 @@ if ($_POST) {
 		$user_settings["widgets"]["traffic_graphs"]["backgroundupdate"] = $_POST["backgroundupdate"];
 	}
 
+	if (isset($_POST["smoothfactor"])) {
+		$user_settings["widgets"]["traffic_graphs"]["smoothfactor"] = $_POST["smoothfactor"];
+	}
+
 	if (isset($_POST["size"])) {
 		$user_settings["widgets"]["traffic_graphs"]["size"] = $_POST["size"];
 	}
@@ -100,6 +104,12 @@ if (isset($user_settings['widgets']['traffic_graphs']['backgroundupdate'])) {
 	$tg_backgroundupdate = $user_settings['widgets']['traffic_graphs']['backgroundupdate'];
 } else {
 	$tg_backgroundupdate = 'true';
+}
+
+if (isset($user_settings['widgets']['traffic_graphs']['smoothfactor'])) {
+	$tg_smoothfactor = $user_settings['widgets']['traffic_graphs']['smoothfactor'];
+} else {
+	$tg_smoothfactor = 0;
 }
 
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
@@ -207,6 +217,13 @@ $tg_displayed_realifsarray = [];
 			</div>
 		</div>
 
+		<div class="form-group">
+			<label for="smoothfactor" class="col-sm-3 control-label"><?=gettext('Graph Smoothing')?></label>
+			<div class="col-sm-9">
+				<input type='range' id="smoothfactor" name='smoothfactor' class='form-control' min='0' max='5'value="<?= $tg_smoothfactor ?>"/>
+			</div>
+		</div>
+
 		<div class="panel panel-default col-sm-10">
 			<div class="panel-body">
 				<div class="table responsive">
@@ -263,12 +280,13 @@ events.push(function() {
 	window.interval = <?=$tg_refreshinterval?>;
 	window.invert = <?=$tg_invert?>;
 	window.size = <?=$tg_size?>;
+	window.smoothing = <?=$tg_smoothfactor?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 
 	graph_init();
 	graph_visibilitycheck();
-	
+
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalltgitems");
 });
 //]]>

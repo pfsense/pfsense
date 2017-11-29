@@ -25,6 +25,7 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+header("X-Frame-Options: SAMEORIGIN");
 include_once('phpsessionmanager.inc');
 if (!$nocsrf) {
 	function csrf_startup() {
@@ -47,7 +48,6 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
@@ -1039,7 +1039,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills', 
 	}
 
 	if ($tab_array_char_limit == '') {
-		$tab_array_char_limit = 92;
+		$tab_array_char_limit = 256;
 	}
 
 	foreach ($tab_array as $tab_id => $ta) {

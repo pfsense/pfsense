@@ -54,6 +54,10 @@ if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
 }
 
+if (isset($config['unbound']['dnsrecordcache'])) {
+	$pconfig['dnsrecordcache'] = true;
+}
+
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
 $pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
@@ -156,6 +160,11 @@ if ($_POST) {
 			} else {
 				unset($config['unbound']['dnssecstripped']);
 			}
+			if (isset($_POST['dnsrecordcache'])) {
+				$config['unbound']['dnsrecordcache'] = true;
+			} else {
+				unset($config['unbound']['dnsrecordcache']);
+			}
 			$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 			$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
 			$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];
@@ -255,6 +264,13 @@ $section->addInput(new Form_Checkbox(
 	'DNSSEC data is required for trust-anchored zones.',
 	$pconfig['dnssecstripped']
 ))->setHelp('If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC data is received, then the zone is made insecure. ');
+
+$section->addInput(new Form_Checkbox(
+	'dnsrecordcache',
+	'Serve Expired',
+	'Serve cache records even with TTL of 0',
+	$pconfig['dnsrecordcache']
+))->setHelp('When enabled, allows unbound to serve one query even with a TTL of 0, if TTL is 0 then new record will be requested in the background when the cache is served to ensure cache is updated without latency on service of the DNS request.');
 
 $section->addInput(new Form_Select(
 	'msgcachesize',

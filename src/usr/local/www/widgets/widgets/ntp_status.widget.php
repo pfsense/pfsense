@@ -197,9 +197,15 @@ if ($_REQUEST['updateme']) {
 <?php if ($widget_first_instance): ?>
 <script type="text/javascript">
 //<![CDATA[
-var ntp_d = new Date('<?=date_format(date_create(), 'c')?>');
-var tz = '<?=date('T');?>';
+// Have to convet the date to UTC time to match the PHP clock not the local client clock.
+function convertDateToUTC(date,offset) {
+	hours_offset = offset/3600;
+	d = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours() + hours_offset, date.getUTCMinutes(), date.getUTCSeconds())
+	return d;
+}
 
+var ntp_d = convertDateToUTC(new Date('<?=date_format(date_create(), 'c')?>'), '<?=date('Z')?>');
+var tz = '<?=date('T');?>';
 setInterval(function() {
 	ntp_d.setSeconds(ntp_d.getSeconds() + 1);
 	var thisSecond = ntp_d.getSeconds();

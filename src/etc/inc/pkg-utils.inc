@@ -127,10 +127,9 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		return false;
@@ -206,8 +205,8 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 
 
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env($extra_env));
+	$process = proc_open("/usr/local/sbin/pkg-static {$params}",
+	    $descriptorspec, $pipes, '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		return -1;
@@ -348,7 +347,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$pkgs = $g['pkg_prefix'] . '*';
 	}
 
-	
+
 	if ($installed_pkgs_only && !is_pkg_installed($pkgs)) {
 		// Return early if the caller wants just installed packages and there are none.
 		// Saves doing any calls that might access a remote package repo.
@@ -375,78 +374,83 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$extra_param = "-U ";
 	}
 
-	// If we want more than just the currently installed packages or
-	//    we want up-to-date remote repo info
-	// then do a full pkg search
+	$did_search = false;
+	$search_rc = 0;
+	$info_rc = 0;
+	$search_items = array();
+	$info_items = array();
+
+	/*
+	 * If we want more than just the currently installed packages or
+	 * we want up-to-date remote repo info then do a full pkg search
+	 */
 	if (!$installed_pkgs_only || !$remote_repo_usage_disabled) {
-		$rc = pkg_exec(
+		$did_search = true;
+		$search_rc = pkg_exec(
 		    "search {$extra_param}-R --raw-format json-compact " .
-		    $pkgs, $out, $err);
+		    $pkgs, $search_out, $search_err);
+		if ($search_rc == 0) {
+			$search_items = explode("\n", chop($search_out));
+			array_walk($search_items, function(&$v, &$k) {
+				$v = json_decode($v, true);
+			});
+		}
 	}
 
-	if (($installed_pkgs_only || $rc != 0) &&
-	    $remote_repo_usage_disabled &&
-	    is_pkg_installed($pkgs)) {
-		/*
-		 * Fall back on pkg info to return locally installed matching
-		 * pkgs instead, if:
-		 *
-		 *   (1) only installed pkgs needed, or
-		 *       we tried to check the local catalog copy (implying that
-		 *       we would have accepted incomplete/outdated pkg info)
-		 *       but it didn't have any contents, or for other reasons
-		 *       returned an error.
-		 *   AND
-		 *   (2) remote repo data is not required
-		 *   AND
-		 *   (3) at least some pkgs matching <pattern> are installed
-		 *
-		 * Following an unsuccessful attempt to access a remote repo
-		 * catalog, the local copy is wiped clear. Thereafter any
-		 * "pkg search" will return an error until online+updated again.
-		 * If the calling code would have accepted local copy info
-		 * (which could be incomplete/out of date), then it makes sense
-		 * to fall back on pkg info to at least return the known
-		 * info about installed pkgs (pkg info should still work),
-		 * instead of failing and returning no info at all. 
-		 * For example, this at least enables offline view + management
-		 * of installed pkgs in GUI/console.
-		 *
-		 * We skip this step if no matching pkgs are installed, because
-		 * then pkg info would return a "no matching pkgs" RC code,
-		 * even though this wouldn't be considered an "error" (and
-		 * $out+$err would be correct empty strings if none match).
-		 *
-		 * Note that is_pkg_installed() is a wrapper for pkg info -e
-		 * <pattern> which is what we need here.
-		*/
-		
-		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
-		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs,
-		    $out, $err);
+	/*
+	 * We always should look for local items to detect packages that
+	 * were removed from remote repo but are already installed locally
+	 *
+	 * Take pkg search return code into consideration to fallback to local
+	 * information when remote repo is not accessible
+	 */
+	if (is_pkg_installed($pkgs) || $search_rc != 0) {
+		$info_rc = pkg_exec("info -R --raw-format json-compact " .
+		    $pkgs, $info_out, $info_err);
+		if ($info_rc == 0) {
+			$info_items = explode("\n", chop($info_out));
+			array_walk($info_items, function(&$v, &$k) {
+				$v = json_decode($v, true);
+			});
+		}
 	}
 
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}
 
-	if ($rc != 0) {
+	if ($search_rc != 0 && $info_rc != 0) {
 		update_status("\n" . gettext(
 		    "ERROR: Error trying to get packages list. Aborting...")
 		    . "\n");
-		update_status($err);
+		update_status($search_err . "\n" . $info_err);
 		$input_errors[] = gettext(
 		    "ERROR: Error trying to get packages list. Aborting...") .
 		    "\n";
-		$input_errors[] = $err;
+		$input_errors[] = $search_err . "\n" . $info_err;
 		return array();
 	}
 
+	/* It was not possible to search, use local information only */
+	if ($search_rc != 0 || !$did_search) {
+		$search_items = $info_items;
+	} else {
+		foreach ($info_items as $pkg_info) {
+			if (empty($pkg_info['name'])) {
+				continue;
+			}
+
+			if (array_search($pkg_info['name'], array_column(
+			    $search_items, 'name')) === FALSE) {
+				$pkg_info['obsolete'] = true;
+				$search_items[] = $pkg_info;
+			}
+		}
+	}
+
 	$result = array();
-	$pkgs_info = explode("\n", $out);
-	foreach ($pkgs_info as $pkg_info_json) {
-		$pkg_info = json_decode($pkg_info_json, true);
-		if (!isset($pkg_info['name'])) {
+	foreach ($search_items as $pkg_info) {
+		if (empty($pkg_info['name'])) {
 			continue;
 		}
 
@@ -484,8 +488,21 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 				return array();
 			}
 
-			$pkg_info['installed_version'] = str_replace("\n", "",
-			    $out);
+			$pkg_info['installed_version'] = str_replace("\n", "", $out);
+
+			/*
+			* We used pkg info to collect pkg data so remote
+			* version is not available. Lets try to collect it
+			* using rquery if possible
+			*/
+			if ($search_rc != 0 || !$did_search) {
+				$rc = pkg_exec("rquery -U %v {$pkg_info['name']}", $out, $err);
+
+				if ($rc == 0) {
+					$pkg_info['version'] = str_replace("\n", "", $out);
+				}
+			}
+
 		} else if (is_package_installed($pkg_info['shortname'])) {
 			$pkg_info['broken'] = true;
 			$pkg_is_installed = true;
@@ -847,14 +864,14 @@ function install_package_xml($package_name) {
 			update_status(gettext("done.") . "\n");
 		}
  		if (is_array($pkg_config['tabs'])) {
- 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];			
+ 			$config['installedpackages']['package'][$pkgid]['tabs'] = $pkg_config['tabs'];
  		}
 		/* plugins */
 		if (isset($pkg_config['include_file'])) {
 			$config['installedpackages']['package'][$pkgid]['include_file'] = $pkg_config['include_file'];
 		}
 		if (is_array($pkg_config['plugins']['item'])) {
-			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];			
+			$config['installedpackages']['package'][$pkgid]['plugins']['item'] = $pkg_config['plugins']['item'];
 		}
 	} else {
 		pkg_debug("Unable to find config file\n");
@@ -1234,10 +1251,15 @@ function get_system_pkg_version($baseonly = false, $use_cache = true) {
 		return false;
 	}
 
-	return array(
+	$result = array(
 	    'version'           => $new_version ?: $pkg_info['version'],
 	    'installed_version' => $pkg_info['installed_version']
 	);
+
+	$result['pkg_version_compare'] = pkg_version_compare(
+	    $result['installed_version'], $result['version']);
+
+	return $result;
 }
 
 /* List available repos */
@@ -1307,4 +1329,80 @@ function pkg_switch_repo($path) {
 	return;
 }
 
+$FQDN = "https://ews.netgate.com/pfupdate";
+$refreshinterval = (24 * 3600);	// 24 hours
+$idfile = "/var/db/uniqueid";
+$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+$configflename = "{$repopath}/{$g['product_name']}-repo-custom.conf";
+
+// Update the list of available repositories from the server. This will allow migration to another
+// update repository should the existing one becomes unavailable
+function update_repos() {
+	global $g, $config, $idfile, $FQDN, $repopath;
+
+	if (file_exists($idfile)) {
+		// If the custom repository definition does not exist, or is more than 24 hours old
+		// Fetch a copy from the server
+		if ( (! file_exists($configflename)) || ( time()-filemtime($configflename) > $refreshinterval)) {
+			if (function_exists('curl_version')) {
+				// Gather some information about the system so the proper repo can be returned
+				$nid = file_get_contents($idfile);
+				$serial = system_get_serial();
+				$arch = php_uname(“p”);
+				$version = $g['product_version'];
+				$locale = $config['system']['language'];
+				// Architecture comes from the last word in the uname output
+				$arch = array_pop(explode(' ', php_uname(“p”)));
+
+				$post = ['uid' => $nid,
+						 'language' => $locale,
+						 'serial' => $serial,
+						 'version' => $version,
+						 'arch' => $arch
+						];
+
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_VERBOSE, 0);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
+				curl_setopt($ch, CURLOPT_URL, $FQDN);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,4);
+				$response = curl_exec($ch);
+				$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+
+				if ($status == 200) {
+					save_repo($response);
+				}
+			}
+		}
+	}
+}
+
+// Parse the received JSON data and save the custom repository information
+function save_repo($json) {
+	global $repopath, $g;
+	$repo = json_decode($json, true);
+
+	if (($repo != NULL) && isset($repo['abi']) && isset($repo['altabi']) && isset($repo['conf']) &&
+	    isset($repo['descr']) && isset($repo['name']) && (strlen($repo['conf']) > 10)) {
+		$basename = "{$repopath}/{$g['product_name']}-repo-custom.";
+
+		file_put_contents($basename . "conf", base64_decode($repo['conf']));
+		file_put_contents($basename . "descr", $repo['descr']);
+		file_put_contents($basename . "abi", $repo['abi']);
+		file_put_contents($basename . "altabi", $repo['altabi']);
+		file_put_contents($basename . "name", $repo['name']);
+		file_put_contents($basename . "help", $repo['help']);
+	} else {
+		// If there was anything wrong with the custom repository definition, remove the help text
+		// to avoid possible confusion
+		if (file_exists($basename . "help")) {
+			unlink($basename . "help");
+		}
+	}
+}
 ?>

@@ -158,6 +158,20 @@ function openvpn_build_mode_list() {
 	return($list);
 }
 
+global $openvpn_interfacenames;
+function convert_openvpn_interface_to_friendly_descr($if) {
+	global $openvpn_interfacenames;
+	if (!is_array($openvpn_interfacenames)) {
+		$openvpn_interfacenames = openvpn_build_if_list();
+	}
+	foreach($openvpn_interfacenames as $key => $value) {
+		list($item_if, $item_ip) = explode("|", $key);
+		if ($if == $item_if) {
+			echo "$value";
+		}
+	}
+}
+
 function openvpn_build_if_list() {
 	$list = array();
 
@@ -671,6 +685,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 	if ($settings['gwredir']) {
 		$conf .= "push \"redirect-gateway def1\"\n";
 	}
+	if ($settings['gwredir6']) {
+		$conf .= "push \"redirect-gateway ipv6\"\n";
+	}
 }
 
 function openvpn_add_custom(& $settings, & $conf) {
@@ -812,6 +829,17 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls_user':
 				$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
 				$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
+				break;
+		}
+	}
+	if ($settings['dev_mode'] === 'tun' && isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
+		switch($settings['mode']) {
+			case 'server_tls':
+			case 'server_tls_user':
+				$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
+				if (is_domain($domain)) {
+					$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+				}
 				break;
 		}
 	}
@@ -974,11 +1002,11 @@ function openvpn_reconfigure($mode, $settings) {
 			$conf .= "max-clients {$settings['maxclients']}\n";
 		}
 
-		// Can we push routes
-		if ($settings['local_network']) {
+		// Can we push routes, and should we?
+		if ($settings['local_network'] && !$settings['gwredir']) {
 			$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
 		}
-		if ($settings['local_networkv6']) {
+		if ($settings['local_networkv6'] && !$settings['gwredir6']) {
 			$conf .= openvpn_gen_routes($settings['local_networkv6'], "ipv6", true);
 		}
 
@@ -1056,6 +1084,9 @@ function openvpn_reconfigure($mode, $settings) {
 		if (($settings['auth_user'] || $settings['auth_pass']) && $settings['mode'] == "p2p_tls") {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
+			if (!$settings['auth-retry-none']) {
+				$conf .= "auth-retry nointeract\n";
+			}
 			if ($settings['auth_user']) {
 				$userpass = "{$settings['auth_user']}\n";
 			} else {

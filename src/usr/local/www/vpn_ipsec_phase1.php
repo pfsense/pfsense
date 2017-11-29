@@ -1156,11 +1156,11 @@ events.push(function() {
 	});
 
 	 // authentication method
-	$('#authentication_method').click(function () {
+	$('#authentication_method').change(function () {
 		methodsel_change();
 	});
 
-	 // authentication method
+	 // algorithm
 	$('#ealgo').change(function () {
 		ealgosel_change(<?=$keyset?>);
 	});

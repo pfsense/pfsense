@@ -139,17 +139,32 @@ $tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=fi
 $tab_array[] = array(gettext("Update Settings"), true, "system_update_settings.php");
 display_top_tabs($tab_array);
 
+// Check to see if any new repositories have become available. This data is cached and
+// refreshed evrey 24 hours
+update_repos();
+$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+$repos = pkg_list_repos();
+
 $form = new Form();
 
 $section = new Form_Section('Firmware Branch');
 
-$section->addInput(new Form_Select(
-	fwbranch,
+$field = new Form_Select(
+	'fwbranch',
 	'*Branch',
 	get_repo_name($config['system']['pkg_repo_conf_path']),
 	build_repo_list()
-))->setHelp('Please select the stable, or the development branch from which to update the system firmware. %1$s' .
-			'Use of the development version is at your own risk!', '<br />');
+);
+
+if (file_exists($helpfilename)) {
+	$field->setHelp(file_get_contents($helpfilename));
+} else {
+	$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+					'Use of the development version is at your own risk!', '<br />');
+}
+
+$section->addInput($field);
 
 $form->add($section);
 
@@ -232,7 +247,7 @@ if (file_exists("/usr/local/bin/git")) {
 		null,
 		'Show Files',
 		isset($gitcfg['show_files'])
-		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option..', '<br />');
+		))->setHelp('Show different and missing files.%1$sWith \'Diff/Minimal\' option.', '<br />');
 
 	$group->add(new Form_Checkbox(
 		'show_command',

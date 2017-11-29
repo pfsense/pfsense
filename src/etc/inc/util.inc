@@ -649,6 +649,14 @@ function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr)) {
 		return false;
 	}
+	/*
+	 * While Net_IPv6::checkIPv6() considers IPv6/mask a valid IPv6,
+	 * is_ipaddrv6() needs to be more strict to keep the compatibility
+	 * with is_ipaddrv4().
+	 */
+	if (strstr($ipaddr, "/")) {
+		return false;
+	}
 	if (strstr($ipaddr, "%") && is_linklocal($ipaddr)) {
 		$tmpip = explode("%", $ipaddr);
 		$ipaddr = $tmpip[0];
@@ -1562,7 +1570,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$ifname = rtrim(trim($alink[0]), '*');
 		/* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-		    !stristr($ifname, "_vlan") && !stristr($ifname, "_wlan")) {
+		    interface_is_vlan($ifname) == NULL &&
+		    interface_is_qinq($ifname) == NULL &&
+		    !stristr($ifname, "_wlan")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -1603,6 +1613,21 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		}
 	}
 	return $iflist;
+}
+
+function get_lagg_interface_list() {
+	global $config;
+
+	$plist = array();
+	if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			$lagg['mac'] = get_interface_mac($lagg['laggif']);
+			$lagg['islagg'] = true;
+			$plist[$lagg['laggif']] = $lagg;
+		}
+	}
+
+	return ($plist);
 }
 
 /****f* util/log_error
@@ -2153,7 +2178,9 @@ function is_interface_mismatch() {
 	$missing_interfaces = array();
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
-			if (preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
+			if (interface_is_vlan($ifcfg['if']) != NULL ||
+			    interface_is_qinq($ifcfg['if']) != NULL ||
+			    preg_match("/^enc|^cua|^tun|^tap|^l2tp|^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan|_\d{0,4}_\d{0,4}$/i", $ifcfg['if'])) {
 				// Do not check these interfaces.
 				$i++;
 				continue;

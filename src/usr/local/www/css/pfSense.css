@@ -140,6 +140,22 @@ tr.disabled a {
     height: auto;
 }
 
+.navbar-brand svg#logo {
+    width: 105px;
+}
+
+.logo-st0 {
+    fill:#FFFFFF;
+}
+
+.logo-st1 {
+    fill:#FFFFFF;
+}
+
+.logo-st2 {
+    fill:#FFFFFF;
+}
+
 .navbar-brand {
     padding: 5px 10px 0 10px;
     line-height: .3em;
@@ -292,8 +308,14 @@ tr.disabled a {
 }
 
 .table {
-    margin-bottom: 0;
+    margin-bottom: 0px;
 }
+/*This is parsed by IE10+ only. Need this to stop empty tables from collapsing */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+ .table {
+	  margin-bottom:1px !important;
+  }
+ }
 
 .table>tbody>tr>td {
     padding: 6px 4px 6px 10px;

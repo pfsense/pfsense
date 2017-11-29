@@ -77,7 +77,7 @@ EOD;
 				$status = "(down)";
 			$ifsmallist = $ifsmallist . $iface. " ";
 			echo sprintf("%-7s %s %s %s\n", $iface, $ifa['mac'],
-				$status, substr($ifa['dmesg'], 0, 48));
+				$status, substr($ifa['dmesg'], 0, 46));
 		}
 	}
 
@@ -101,11 +101,11 @@ EOD;
 		echo "\n\n" . gettext("VLAN interfaces:") . "\n\n";
 		foreach ($config['vlans']['vlan'] as $vlan) {
 
-			echo sprintf("% -16s%s\n", "{$vlan['if']}_vlan{$vlan['tag']}",
+			echo sprintf("% -16s%s\n", vlan_interface($vlan),
 				"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
-			$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
-			$ifsmallist = $ifsmallist . $vlan['if'] . '_vlan' . $vlan['tag'] . " ";
+			$iflist[vlan_interface($vlan)] = array();
+			$ifsmallist = $ifsmallist . vlan_interface($vlan) . " ";
 		}
 	}
 
@@ -165,8 +165,8 @@ EOD;
 	$optif = array();
 
 	if ($lanif <> "") {
-		while (1) {
-			if ($optif[$i]) {
+		while (strlen(trim($ifsmallist)) > 0) {
+			if (!empty($optif[$i])) {
 				$i++;
 			}
 			$io = $i + 1;
@@ -474,7 +474,7 @@ function vlan_setup() {
 
 		echo gettext("Enter the VLAN tag (1-4094):") . " ";
 		$vlan['tag'] = chop(fgets($fp));
-		$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+		$vlan['vlanif'] = vlan_interface($vlan);
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
 			printf(gettext('%1$sInvalid VLAN tag \'%2$s\'%3$s'), "\n", $vlan['tag'], "\n");
 			continue;

@@ -58,7 +58,7 @@ if ($_REQUEST['widgetkey']) {
 
 ?>
 
-<div class="table-responsive" id="ifaces_status_<?=$widgetkey?>">
+<div class="table-responsive" id="ifaces_status_<?=htmlspecialchars($widgetkey)?>">
 	<table class="table table-striped table-hover table-condensed">
 		<tbody>
 
@@ -161,7 +161,7 @@ endif;
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">
-			<input type="hidden" name="widgetkey" value="<?=$widgetkey; ?>">
+			<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 			<div class="table responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
@@ -215,12 +215,12 @@ if ($_REQUEST['ajax']) {
 
 		// Callback function called by refresh system when data is retrieved
 		function interfaces_callback(s) {
-			$('#ifaces_status_<?=$widgetkey?>').html(s);
+			$(<?=json_encode('#ifaces_status_' . $widgetkey)?>).html(s);
 		}
 
 		// POST data to send via AJAX
 		var postdata = {
-			widgetkey :"<?=$widgetkey?>",
+			widgetkey :<?=json_encode($widgetkey)?>,
 			ajax: "ajax"
 		};
 

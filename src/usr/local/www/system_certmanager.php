@@ -103,6 +103,7 @@ if ($act == "new") {
 	$pconfig['digest_alg'] = "sha256";
 	$pconfig['csr_keylen'] = "2048";
 	$pconfig['csr_digest_alg'] = "sha256";
+	$pconfig['csrsign_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }
@@ -371,6 +372,9 @@ if ($_POST['save']) {
 			if (($pconfig['method'] == "external") && !in_array($_POST["csr_digest_alg"], $openssl_digest_algs)) {
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 			}
+			if (($pconfig['method'] == "sign") && !in_array($_POST["csrsign_digest_alg"], $openssl_digest_algs)) {
+				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+			}
 		}
 
 		/* save modifications */
@@ -398,7 +402,7 @@ if ($_POST['save']) {
 					$altname_str = implode(",", $altnames_tmp);
 				}
 
-				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str);
+				$n509 = csr_sign($csr, $ca, $pconfig['csrsign_lifetime'], $pconfig['type'], $altname_str, $pconfig['csrsign_digest_alg']);
 
 				if ($n509) {
 					// Gather the details required to save the new cert
@@ -718,8 +722,15 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'csrsign_lifetime',
 		'*Certificate Lifetime (days)',
 		'number',
-		$pconfig['duration'] ? $pconfig['duration']:'3650'
+		$pconfig['csrsign_lifetime'] ? $pconfig['csrsign_lifetime']:'3650'
 	));
+	$section->addInput(new Form_Select(
+		'csrsign_digest_alg',
+		'*Digest Algorithm',
+		$pconfig['csrsign_digest_alg'],
+		array_combine($openssl_digest_algs, $openssl_digest_algs)
+	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
+		'SHA1 when possible');
 
 	$form->add($section);
 
@@ -1122,7 +1133,7 @@ $certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $plugin
 $i = 0;
 foreach ($a_cert as $i => $cert):
 	$name = htmlspecialchars($cert['descr']);
-
+	$sans = array();
 	if ($cert['crt']) {
 		$subj = cert_get_subject($cert['crt']);
 		$issuer = cert_get_issuer($cert['crt']);
@@ -1173,6 +1184,18 @@ foreach ($a_cert as $i => $cert):
 						<?=$subj?>
 						<?php
 						$certextinfo = "";
+						$certserial = cert_get_serial($cert['crt']);
+						if (!empty($certserial)) {
+							$certextinfo .= '<b>' . gettext("Serial: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certserial, true));
+							$certextinfo .= '<br/>';
+						}
+						$certsig = cert_get_sigtype($cert['crt']);
+						if (is_array($certsig) && !empty($certsig) && !empty($certsig['shortname'])) {
+							$certextinfo .= '<b>' . gettext("Signature Digest: ") . '</b> ';
+							$certextinfo .= htmlspecialchars(cert_escape_x509_chars($certsig['shortname'], true));
+							$certextinfo .= '<br/>';
+						}
 						if (is_array($sans) && !empty($sans)) {
 							$certextinfo .= '<b>' . gettext("SAN: ") . '</b> ';
 							$certextinfo .= htmlspecialchars(implode(', ', cert_escape_x509_chars($sans, true)));

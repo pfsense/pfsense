@@ -63,7 +63,7 @@ if ($_REQUEST['widgetkey']) {
 	$widgetkey = $_REQUEST['widgetkey'];
 }
 
-$nifinterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 60;
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 60;
 
 ?>
 
@@ -241,7 +241,7 @@ if ($_REQUEST['ajax']) {
 		interfacesObject.url = "/widgets/widgets/interfaces.widget.php";
 		interfacesObject.callback = interfaces_callback;
 		interfacesObject.parms = postdata;
-		interfacesObject.freq = <?=$nifinterval?>;
+		interfacesObject.freq = <?=$ninterval?>;
 
 		// Register the AJAX object
 		register_ajax(interfacesObject);

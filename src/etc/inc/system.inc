@@ -1387,6 +1387,7 @@ function system_generate_nginx_config($filename,
 	if ($captive_portal !== false) {
 		$cp_interfaces = explode(",", $config['captiveportal'][$captive_portal]['interface']);
 		$cp_hostcheck = "";
+		$cp_bypass = "";
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
 			if (is_ipaddr($cpint_ip)) {
@@ -1394,6 +1395,25 @@ function system_generate_nginx_config($filename,
 				$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 				$cp_hostcheck .= "\t\t}\n";
 			}
+		}
+		if (isset($config['captiveportal'][$captive_portal]['bypass_android'])) {
+			$cp_bypass .= "\t\tif (\$http_host ~* connectivitycheck.gstatic.com) {\n";
+			$cp_bypass .= "\t\t\treturn 204;\n";
+			$cp_bypass .= "\t\t}\n";
+			$cp_bypass .= "\t\tif (\$http_host ~* connectivitycheck.android.com) {\n";
+			$cp_bypass .= "\t\t\treturn 204;\n";
+			$cp_bypass .= "\t\t}\n";
+			$cp_bypass .= "\t\tif (\$http_host ~* clients3.google.com) {\n";
+			$cp_bypass .= "\t\t\treturn 204;\n";
+			$cp_bypass .= "\t\t}\n";
+			$cp_bypass .= "\t\tif (\$request_uri ~* generate_204$) {\n";
+			$cp_bypass .= "\t\t\treturn 204;\n";
+			$cp_bypass .= "\t\t}\n";
+		}
+		if (isset($config['captiveportal'][$captive_portal]['bypass_ios'])) {
+			$cp_bypass .= "\t\tif (\$http_user_agent ~* ^CaptiveNetworkSupport.*wispr$) {\n";
+			$cp_bypass .= "\t\t\treturn 200 \"<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>\";\n";
+			$cp_bypass .= "\t\t}\n";
 		}
 		if (isset($config['captiveportal'][$captive_portal]['httpsname']) &&
 		    is_domain($config['captiveportal'][$captive_portal]['httpsname'])) {
@@ -1525,6 +1545,7 @@ EOD;
 		$nginx_config .= <<<EOD
 $captive_portal_maxprocperip
 $cp_hostcheck
+$cp_bypass
 $cp_rewrite
 		log_not_found off;
 

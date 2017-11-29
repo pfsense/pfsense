@@ -324,7 +324,7 @@ if ($user_settings['widgets']['sequence'] != "") {
 			}
 		}
 
-		if (isset($user_settings['widgets'][$widgetkey]['interval']) && is_int($user_settings['widgets'][$widgetkey]['interval'])) {
+		if (isset($user_settings['widgets'][$widgetkey]['interval']) && is_numeric($user_settings['widgets'][$widgetkey]['interval'])) {
 			$interval = intval($user_settings['widgets'][$widgetkey]['interval']);
 		} else {
 			$interval = 10;

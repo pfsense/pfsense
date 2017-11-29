@@ -324,9 +324,16 @@ if ($user_settings['widgets']['sequence'] != "") {
 			}
 		}
 
+		if (isset($user_settings['widgets'][$widgetkey]['interval']) && is_int($user_settings['widgets'][$widgetkey]['interval'])) {
+			$interval = intval($user_settings['widgets'][$widgetkey]['interval']);
+		} else {
+			$interval = 10;
+		}
+
 		$widgetsfromconfig[$widgetkey] = array(
 			'basename' => $basename,
 			'title' => $widgettitle,
+			'interval' => $interval,
 			'col' => $col,
 			'display' => $display,
 			'copynum' => $copynum,

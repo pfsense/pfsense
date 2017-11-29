@@ -27,16 +27,20 @@
 ##|*IDENT=page-interfaces-vlan
 ##|*NAME=Interfaces: VLAN
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
-##|*MATCH=interfaces_vlan.php*
+##|*MATCH=interfaces_vlan_new_prof.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("interfaces_fast.inc");
+
+global $profile;
+//$timealla = microtime(true);
 
 if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
 }
 
-$a_vlans = &$config['vlans']['vlan'];
+$a_vlans = &$config['vlans']['vlan'] ;
 
 if ($_POST['act'] == "del") {
 	if (!isset($_POST['id'])) {
@@ -80,7 +84,7 @@ $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 ?>
-<form action="interfaces_vlan.php" method="post">
+<form action="interfaces_vlan_new_prof.php" method="post">
 	<input id="act" type="hidden" name="act" value="" />
 	<input id="id" type="hidden" name="id" value=""/>
 
@@ -101,28 +105,35 @@ display_top_tabs($tab_array);
 					<tbody>
 <?php
 	$i = 0;
+	//$timea = microtime(true);
+	$gettext_array = array('edit'=>gettext('Edit VLAN'),'del'=>gettext('Delete VLAN'));
+	$ifaces = convert_real_interface_to_friendly_interface_name_fast(array());
 	foreach ($a_vlans as $vlan) {
 ?>
 						<tr>
 							<td>
 <?php
 	printf("%s", htmlspecialchars($vlan['if']));
-	$iface = convert_real_interface_to_friendly_interface_name($vlan['if']);
-	if (isset($iface) && strlen($iface) > 0)
-		printf(" (%s)", htmlspecialchars($iface));
+	//$iface = convert_real_interface_to_friendly_interface_name($vlan['if']);
+	//if (isset($iface) && strlen($iface) > 0)
+	//	printf(" (%s)", htmlspecialchars($iface));
+	if (isset($ifaces[$vlan['if']]) && strlen($ifaces[$vlan['if']]) > 0)
+		printf(" (%s)", htmlspecialchars($ifaces[$vlan['if']]));
 ?>
 							</td>
 							<td><?=htmlspecialchars($vlan['tag']);?></td>
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
-								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa fa-pencil"	title="<?=$gettext_array['edit']?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>" ></a>
+								<a class="fa fa-trash no-confirm"	title="<?=$gettext_array['del']?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php
 			$i++;
 	}
+	/*$timeb = microtime(true);
+	$profile['vlan_list'] = $timeb - $tima;*/
 ?>
 					</tbody>
 				</table>
@@ -166,4 +177,7 @@ events.push(function() {
 //]]>
 </script>
 <?php
+/*$timeallb = microtime(true);
+$profile['total'] = $timeallb - $timealla;
+print_r($profile);*/
 include("foot.inc");

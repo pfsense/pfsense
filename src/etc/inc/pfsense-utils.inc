@@ -1493,6 +1493,7 @@ function get_interface_info($ifdescr) {
 		return;
 	}
 	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
+	$ifinfo['enable'] = isset($config['interfaces'][$ifdescr]['enable']);
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];

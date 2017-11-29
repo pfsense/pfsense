@@ -508,6 +508,15 @@ if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
 	require_once("{$g['www_path']}/copynotice.inc");
 	@unlink("{$g['cf_conf_path']}/copynotice_display");
 }
+
+/*
+ * Import the modal form used to display any HTML text a package may want to display
+ * on installation or removal
+ */
+$ui_notice = "/tmp/package_ui_notice";
+if (file_exists($ui_notice)) {
+	require_once("{$g['www_path']}/upgrnotice.inc");
+}
 ?>
 
 <script type="text/javascript">

@@ -193,6 +193,7 @@
 </step>
 <step>
 	<id>5</id>
+	<skip_flavors>ec2,ec2-ic</skip_flavors>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
 	<description>On this screen the Wide Area Network information will be configured.</description>
@@ -577,6 +578,7 @@
 </step>
 <step>
 	<id>6</id>
+	<skip_flavors>ec2,ec2-ic</skip_flavors>
 	<title>Configure LAN Interface</title>
 	<description>On this screen the Local Area Network information will be configured.</description>
 	<fields>

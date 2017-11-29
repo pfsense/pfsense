@@ -759,11 +759,16 @@ function cleanup_backupcache($lock = false) {
 			if (platform_booting()) {
 				echo ".";
 			}
-			$newxml = parse_xml_config($backup, array($g['xml_rootobj'], 'pfsense'));
+			try {
+				$newxml = parse_xml_config($backup, array($g['xml_rootobj'], 'pfsense'));
+			} catch (Exception $exc) {
+				log_error(sprintf(gettext("The backup cache file %s is corrupted. Parser error message: %s"), $backup, $exc->getMessage()));
+				$newxml = "-1";
+			}
+
 			if ($newxml == "-1") {
 				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				unlink($backup);
-				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				continue;
 			}
 			if ($newxml['revision']['description'] == "") {

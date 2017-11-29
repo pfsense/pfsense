@@ -240,10 +240,11 @@ if ($_POST['save']) {
 		if ($pconfig['enable']) {
 			$client['enable'] = true;
 		}
-
 		if (!empty($pconfig['user_source'])) {
 			$client['user_source'] = implode(",", $pconfig['user_source']);
+			$client['user_source'] = htmlentities($client['user_source'],ENT_COMPAT,'UTF-8');
 		}
+
 		$client['group_source'] = $pconfig['group_source'];
 
 		if ($pconfig['pool_enable']) {
@@ -291,7 +292,6 @@ if ($_POST['save']) {
 		if ($pconfig['login_banner_enable']) {
 			$client['login_banner'] = $pconfig['login_banner'];
 		}
-
 		$a_client = $client;
 
 		write_config(gettext("Saved IPsec Mobile Clients configuration."));

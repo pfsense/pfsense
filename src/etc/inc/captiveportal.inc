@@ -425,7 +425,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		}
 		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
-			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
+			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone, false);
 	}
 
 	/* generate nginx configuration */
@@ -436,7 +436,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
-		"", "", $cpzone);
+		"", "", $cpzone, false);
 
 	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start nginx */
@@ -2103,8 +2103,9 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	} else {
 		$dwfaultbw_up = $dwfaultbw_down = 0;
 	}
-	$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-	$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+	/* pipe throughputs must always be an integer, enforce that restriction again here. */
+	$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+	$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
@@ -2249,8 +2250,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		} else {
 			$dwfaultbw_up = $dwfaultbw_down = 0;
 		}
-		$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-		$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+		/* pipe throughputs must always be an integer, enforce that restriction again here. */
+		$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+		$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 
 		if ($passthrumac) {
 			$mac = array();

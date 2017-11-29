@@ -54,11 +54,13 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 //		log:
 //		exitcode:
 //		data:{current:, total}
+//		notice:
 //
 // Todo:
 //		Respect next_log_line and append log to output window rather than writing it
 
 $pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
+$repos = pkg_list_repos();
 
 if ($_REQUEST['ajax']) {
 	$response = "";
@@ -99,6 +101,7 @@ if ($_REQUEST['ajax']) {
 		$resparray = array();
 		$statusarray = array();
 		$code = array();
+		$notice = array('notice' => "");
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
@@ -133,8 +136,6 @@ if ($_REQUEST['ajax']) {
 	} else {
 		$resparray['log'] = "not_ready";
 		print(json_encode($resparray));
-	//	file_put_contents("/root/update.log", json_encode($resparray), FILE_APPEND);
-	//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
 		exit;
 	}
 
@@ -160,10 +161,15 @@ if ($_REQUEST['ajax']) {
 		}
 	}
 
+	//
+	$ui_notice = "/tmp/package_ui_notice";
+
+	if (file_exists($ui_notice)) {
+		$notice['notice'] = file_get_contents($ui_notice);
+	}
+
 	// Glob all the arrays we have made together, and convert to JSON
-	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
-//	file_put_contents("/root/update.log", json_encode($resparray + $pidarray + $statusarray + $progarray), FILE_APPEND);
-//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
+	print(json_encode($resparray + $pidarray + $statusarray + $progarray + $notice));
 
 	exit;
 }
@@ -223,6 +229,19 @@ if (!empty($_REQUEST['id'])) {
 	}
 
 	$firmwareupdate = true;
+
+	// If the user changes the firmware branch to sync to, switch to the newly selected repo
+	// and save their choice
+	if ($_REQUEST['refrbranch']) {
+		foreach ($repos as $repo) {
+			if ($repo['name'] == $_POST['fwbranch']) {
+				$config['system']['pkg_repo_conf_path'] = $repo['path'];
+				pkg_switch_repo($repo['path']);
+				write_config(gettext("Saved firmware branch setting."));
+				break;
+			}
+		}
+	}
 } elseif (!$completed && empty($_REQUEST['pkg']) && $pkgmode != 'reinstallall') {
 	header("Location: pkg_mgr_installed.php");
 	return;
@@ -251,6 +270,32 @@ if ($firmwareupdate) {
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
+}
+
+// Create an array of repo names and descriptions to populate the "Branch" selector
+function build_repo_list() {
+	global $repos;
+
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+function get_repo_name($path) {
+	global $repos;
+
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $repos[0]['name'];
 }
 
 include("head.inc");
@@ -283,6 +328,7 @@ if (!$confirmed && !$completed &&
 			$pkgtxt = sprintf(gettext('Confirmation Required to install package %s.'), $pkgname);
 			break;
 	}
+
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -308,11 +354,40 @@ if (!$confirmed && !$completed &&
 ?>
 			</h2>
 		</div>
+
 		<div class="panel-body">
 			<div class="content">
 				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
+	// Draw a selector to allow the user to select a different firmware branch
+	// If the selection is changed, the page will be reloaded and the new choice displayed.
 	if ($firmwareupdate):
+
+		// Check to see if any new repositories have become available. This data is cached and
+		// refreshed evrey 24 hours
+		update_repos();
+		$repopath = "/usr/local/share/{$g['product_name']}/pkg/repos";
+		$helpfilename = "{$repopath}/{$g['product_name']}-repo-custom.help";
+		$repos = pkg_list_repos();
+
+		$group = new Form_Group("Branch");
+
+		$field = new Form_Select(
+			'fwbranch',
+			'*Branch',
+			get_repo_name($config['system']['pkg_repo_conf_path']),
+			build_repo_list()
+		);
+
+		if (file_exists($helpfilename)) {
+			$field->setHelp(file_get_contents($helpfilename));
+		} else {
+			$field->setHelp('Please select the branch from which to update the system firmware. %1$s' .
+							'Use of the development version is at your own risk!', '<br />');
+		}
+
+		$group->add($field);
+		print($group);
 ?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">
@@ -336,7 +411,7 @@ if (!$confirmed && !$completed &&
 					</label>
 					<div class="col-sm-10">
 						<input type="hidden" name="id" value="firmware" />
-						<input type="hidden" name="confirmed" value="true" />
+						<input type="hidden" name="confirmed" id="confirmed" value="true" />
 						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
 							<i class="fa fa-check icon-embed-btn"></i>
 							<?=gettext("Confirm")?>
@@ -433,6 +508,22 @@ if ($confirmed):
 			<textarea rows="15" class="form-control" id="output" name="output"><?=($completed ? $_POST['output'] : gettext("Please wait while the update system initializes"))?></textarea>
 		</div>
 	</div>
+
+
+	<!-- Modal used to display installation notices -->
+	<div id="notice" name="notice" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" id="noticebody" name="noticebody" style="background-color:#1e3f75; color:white;">
+				</div>
+				<div class="modal-footer" style="background-color:#1e3f75; color:white;">
+					<button type="button" id="modalbtn" name="modalbtn" class="btn btn-xs btn-success" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">Accept</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 <?php
 endif;
 ?>
@@ -485,6 +576,7 @@ if ($confirmed && !$completed) {
 }
 
 $uptodatemsg = gettext("Up to date.");
+$newerversionmsg = gettext("Running a newer version.");
 $confirmlabel = gettext("Confirm Update");
 $sysmessage = gettext("Status");
 
@@ -587,9 +679,12 @@ function get_firmware_versions()
 			$('#version').text(json.version);
 
 			// If the installed and latest versions are the same, print an "Up to date" message
-			if (json.installed_version == json.version) {
+			if (json.pkg_version_compare == '=') {
 				$('#confirmlabel').text("<?=$sysmessage?>");
 				$('#uptodate').html('<span class="text-success">' + '<?=$uptodatemsg?>' + "</span>");
+			} else if (json.pkg_version_compare == '>') {
+				$('#confirmlabel').text("<?=$sysmessage?>");
+				$('#uptodate').html('<span class="text-success">' + '<?=$newerversionmsg?>' + "</span>");
 			} else { // If they differ display the "Confirm" button
 				$('#uptodate').hide();
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
@@ -665,7 +760,15 @@ function getLogsStatus() {
 					$('#reboot_needed').val("yes");
 				}
 
-				$('form').submit();
+				// Display any UI notice the package installer may have created
+				if (json.notice.length > 0) {
+					var modalheader = "<div align=\"center\" style=\"font-size:24px;\"><strong>NOTICE</strong></div><br>";
+
+					$('#noticebody').html(modalheader + json.notice);
+					$('#notice').modal('show');
+				} else {
+					$('form').submit();
+				}
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -715,7 +818,6 @@ function startCountdown() {
 	}, 1000);
 }
 
-
 events.push(function() {
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 3000);
@@ -735,7 +837,24 @@ events.push(function() {
 		get_firmware_versions();
 	}
 
+	// If the user changes the firmware branch selection, submit the form to record that choice
+	$('#fwbranch').on('change', function() {
+		$('#confirmed').val("false");
+
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'refrbranch',
+			value: 'true'
+		}).appendTo('form');
+
+		$('form').submit();
+	});
+
+	$('#modalbtn').click(function() {
+		$('form').submit();
+	});
 });
+
 //]]>
 </script>
 

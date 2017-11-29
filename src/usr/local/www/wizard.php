@@ -72,9 +72,7 @@ if (!is_array($pkg)) {
 	die;
 }
 
-$title	   = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
-$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
-$totalsteps	 = $pkg['totalsteps'];
+$totalsteps = $pkg['totalsteps'];
 
 if ($pkg['includefile']) {
 	require_once($pkg['includefile']);
@@ -120,10 +118,29 @@ if ($_POST && !$input_errors) {
 	}
 
 	$stepid++;
-	if ($stepid > $totalsteps) {
-		$stepid = $totalsteps;
+}
+
+while (!empty($pkg['step'][$stepid]['skip_flavors'])) {
+	$skip = false;
+	foreach (explode(',', $pkg['step'][$stepid]['skip_flavors']) as $flavor) {
+		if ($flavor == $g['default-config-flavor']) {
+			$skip = true;
+			break;
+		}
+	}
+	if ($skip) {
+		$stepid++;
+	} else {
+		break;
 	}
 }
+
+if ($stepid > $totalsteps) {
+	$stepid = $totalsteps;
+}
+
+$title = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
+$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;

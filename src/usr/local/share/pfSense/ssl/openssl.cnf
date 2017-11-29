@@ -33,9 +33,9 @@ oid_section		= new_oids
 # testoid2=${testoid1}.5.6
 
 # Policies used by the TSA examples.
-tsa_policy1 = 1.2.3.4.1
-tsa_policy2 = 1.2.3.4.5.6
-tsa_policy3 = 1.2.3.4.5.7
+# tsa_policy1 = 1.2.3.4.1
+# tsa_policy2 = 1.2.3.4.5.6
+# tsa_policy3 = 1.2.3.4.5.7
 
 ####################################################################
 [ ca ]
@@ -54,7 +54,7 @@ new_certs_dir	= $dir/newcerts		# default place for new certs.
 
 certificate	= $dir/cacert.pem 	# The CA certificate
 serial		= $dir/serial 		# The current serial number
-crlnumber	= $dir/crlnumber	# the current crl number
+#crlnumber	= $dir/crlnumber	# the current crl number
 					# must be commented out to leave a V1 CRL
 crl		= $dir/crl.pem 		# The current CRL
 private_key	= $dir/private/cakey.pem# The private key
@@ -131,18 +131,18 @@ string_mask = nombstr
 req_extensions = v3_req # The extensions to add to a certificate request
 
 [ req_distinguished_name ]
-countryName			= Country Name (2 letter code)
-countryName_default		= AU
-countryName_min			= 2
-countryName_max			= 2
+countryName			= US
+#countryName_default		= AU
+#countryName_min			= 2
+#countryName_max			= 2
 
-stateOrProvinceName		= State or Province Name (full name)
-stateOrProvinceName_default	= Some-State
+stateOrProvinceName		= Some-State
+#stateOrProvinceName_default	= Some-State
 
-localityName			= Locality Name (eg, city)
+localityName			= Somecity
 
-0.organizationName		= Organization Name (eg, company)
-0.organizationName_default	= Internet Widgits Pty Ltd
+0.organizationName		= CompanyName
+#0.organizationName_default	= Internet Widgits Pty Ltd
 
 # we can do this but it is not needed normally :-)
 #1.organizationName		= Second Organization Name (eg, company)
@@ -152,17 +152,17 @@ organizationalUnitName		= Organizational Unit Name (eg, section)
 #organizationalUnitName_default	=
 
 commonName			= Common Name (e.g. server FQDN or YOUR name)
-commonName_max			= 64
+#commonName_max			= 64
 
 emailAddress			= Email Address
-emailAddress_max		= 64
+#emailAddress_max		= 64
 
 # SET-ex3			= SET extension number 3
 
 [ req_attributes ]
 challengePassword		= A challenge password
-challengePassword_min		= 4
-challengePassword_max		= 20
+#challengePassword_min		= 4
+#challengePassword_max		= 20
 
 unstructuredName		= An optional company name
 

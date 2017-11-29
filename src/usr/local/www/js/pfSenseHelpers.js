@@ -748,38 +748,44 @@ function interceptGET() {
 	});
 }
 
-// Convert a GET argument list such as ?name=fred&action=delete into an array of POST
-// parameters such as [[name, fred],[action, delete]]
+// Convert a GET argument list such as ?name=fred&action=delete into an object of POST
+// parameters such as {name : fred, action : delete}
 function get2post(getargs) {
-	var arglist = new Array();
+	var argdict = {};
 	var argarray = getargs.split('&');
 
-	for (var i=0;i<argarray.length;i++) {
-		var thisarg = argarray[i].split('=');
-		var arg = new Array(thisarg[0], thisarg[1]);
-		arglist[i] = arg;
-	}
+	argarray.forEach(function(arg) {
+		arg = arg.split('=');
+		argdict[arg[0]] = arg[1];
+	});
 
-	return arglist;
+	return argdict;
 }
 
 // Create a form, add, the POST data and submit it
 function postSubmit(data, target) {
+	var $form = $('<form>');
 
-    var form = $(document.createElement('form'));
-
-    $(form).attr("method", "POST");
-    $(form).attr("action", target);
-
-    for (var i=0;i<data.length;i++) {
-		var input = $("<input>").attr("type", "hidden").attr("name", data[i][0]).val(data[i][1]);
-		$(form).append($(input));
+	for (var name in data) {
+		$form.append(
+			$("<input>")
+				.attr("type", "hidden")
+				.attr("name", name)
+				.val(data[name])
+		);
     }
 
-	// The CSRF magic is required because we will be viewing the results of the POST
-	var input = $("<input>").attr("type", "hidden").attr("name", "__csrf_magic").val(csrfMagicToken);
-	$(form).append($(input));
-
-    $(form).appendTo('body').submit();
+	$form
+		.attr("method", "POST")
+		.attr("action", target)
+		// The CSRF magic is required because we will be viewing the results of the POST
+		.append(
+			$("<input>")
+				.attr("type", "hidden")
+				.attr("name", "__csrf_magic")
+				.val(csrfMagicToken)
+		)
+		.appendTo('body')
+		.submit();
 }
 

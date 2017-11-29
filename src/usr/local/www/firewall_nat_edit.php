@@ -141,7 +141,7 @@ if (isset($_REQUEST['dup']) && is_numericint($_REQUEST['dup'])) {
  */
 unset($input_errors);
 
-foreach ($_REQUEST as $key => $value) {
+foreach ($_POST as $key => $value) {
 	if ($key == 'descr') {
 		continue;
 	}
@@ -155,7 +155,6 @@ foreach ($_REQUEST as $key => $value) {
 }
 
 if ($_POST['save']) {
-
 	if (strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") {
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport']) {
 			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
@@ -620,7 +619,7 @@ function build_dsttype_list() {
 			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
-	
+
 	//Temporary array so we can sort IPs
 	$templist = array();
 	if (is_array($config['virtualip']['vip'])) {
@@ -647,7 +646,7 @@ function build_dsttype_list() {
 			}
 		}
 	}
-	
+
 	//Sort temp IP array and append onto main array
 	asort($templist);
 	$list = array_merge($list, $templist);

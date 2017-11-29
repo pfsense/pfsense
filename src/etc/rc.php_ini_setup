@@ -320,7 +320,6 @@ pm = ondemand
 pm.process_idle_timeout = $PHPFPMIDLE
 pm.max_children = $PHPFPMMAX
 pm.max_requests = $PHPFPMREQ
-
 EOF
 
 elif [ $REALMEM -gt 1000 ]; then
@@ -333,7 +332,6 @@ pm.start_servers = $PHPFPMSTART
 pm.max_requests = $PHPFPMREQ
 pm.min_spare_servers=1
 pm.max_spare_servers= $PHPFPMSPARE
-
 EOF
 else
 
@@ -342,7 +340,6 @@ else
 pm = static
 pm.max_children = $PHPFPMMAX
 pm.max_requests = $PHPFPMREQ
-
 EOF
 
 fi
@@ -352,6 +349,7 @@ fi
 pm.status_path = /status
 
 EOF
+
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then
 	/bin/rm /var/run/php_modules_load_errors.txt

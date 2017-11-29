@@ -541,7 +541,7 @@ if (empty($a_ca))
 }
 else
 {
-	$ldapCaRef = [];
+	$ldapCaRef = array( 'global' => 'Global Root CA List' );
 	foreach ($a_ca as $ca)
 		$ldapCaRef[ $ca['refid'] ] = $ca['descr'];
 
@@ -626,7 +626,7 @@ $group->add(new Form_Input(
 	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)');
+))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com');
 
 $section->add($group);
 

@@ -1237,6 +1237,7 @@ EOD;
 	}
 
 	if (!$sighup) {
+		sigkillbyname("sshlockout_pf", "TERM");
 		if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 			sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 			usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
@@ -1335,12 +1336,13 @@ function system_webgui_start() {
 			$portarg = "443";
 		}
 		$ca = ca_chain($cert);
+		$hsts = isset($config['system']['webgui']['disablehsts']) ? false : true;
 	}
 
 	/* generate nginx configuration */
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-webConfigurator.conf",
 		$crt, $key, $ca, "nginx-webConfigurator.pid", $portarg, "/usr/local/www/",
-		"cert.crt", "cert.key");
+		"cert.crt", "cert.key", false, $hsts);
 
 	/* kill any running nginx */
 	killbypid("{$g['varrun_path']}/nginx-webConfigurator.pid");
@@ -1372,7 +1374,8 @@ function system_generate_nginx_config($filename,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.crt",
 	$key_location = "cert.key",
-	$captive_portal = false) {
+	$captive_portal = false,
+	$hsts = true) {
 
 	global $config, $g;
 
@@ -1495,7 +1498,9 @@ EOD;
 		}
 		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
 		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";
-		$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";
+		if ($captive_portal === false && $hsts !== false) {
+			$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";
+		}
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
@@ -1546,6 +1551,17 @@ EOD;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
 			fastcgi_param  HTTP_PROXY  "";
 			fastcgi_read_timeout 180;
+			include        /usr/local/etc/nginx/fastcgi_params;
+		}
+		location ~ (^/status$) {
+			allow 127.0.0.1;
+			deny all;
+			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
+			fastcgi_index  index.php;
+			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+			# Fix httpoxy - https://httpoxy.org/#fix-now
+			fastcgi_param  HTTP_PROXY  "";
+			fastcgi_read_timeout 360;
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
 	}
@@ -2054,6 +2070,7 @@ function system_ntp_configure() {
 	if (is_array($interfaces) && count($interfaces)) {
 		$finterfaces = array();
 		$ntpcfg .= "interface ignore all\n";
+		$ntpcfg .= "interface ignore wildcard\n";
 		foreach ($interfaces as $interface) {
 			$interface = get_real_interface($interface);
 			if (!empty($interface)) {

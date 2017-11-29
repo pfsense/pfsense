@@ -1013,7 +1013,16 @@ EOD;
 						if (empty($casub)) {
 							$casub = "/";
 						}
-						$casub .= "{$casubfield['a']}={$casubfield['v']}/";
+						/* The subfield value could be an array. To avoid duplicating code,
+						 * always make it an array then iterate.
+						 * See https://redmine.pfsense.org/issues/7929
+						 */
+						if (!is_array($casubfield['v'])) {
+							$casubfield['v'] = array($casubfield['v']);
+						}
+						foreach ($casubfield['v'] as $casubval) {
+							$casub .= "{$casubfield['a']}={$casubval}/";
+						}
 					}
 
 				}

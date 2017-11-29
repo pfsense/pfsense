@@ -47,8 +47,8 @@ function listtags() {
 		'qinqentry', 'queue',
 		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
-		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue', 'switch', 'swport',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'vlangroup',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);
@@ -84,7 +84,8 @@ function startElement($parser, $name, $attrs) {
 
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
-		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
+		throw new Exception(
+		    sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
 		    $name,
 		    xml_get_current_line_number($parser)));
 	}

@@ -881,6 +881,10 @@ function ldap_setup_caenv($authcfg) {
 	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
 		putenv('LDAPTLS_REQCERT=never');
 		return;
+	} elseif ($authcfg['ldap_caref'] == "global") {
+		putenv('LDAPTLS_REQCERT=hard');
+		putenv("LDAPTLS_CACERTDIR=/etc/ssl/");
+		putenv("LDAPTLS_CACERT=/etc/ssl/cert.pem");
 	} else {
 		$caref = lookup_ca($authcfg['ldap_caref']);
 		$param = array('caref' => $authcfg['ldap_caref']);

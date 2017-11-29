@@ -2391,10 +2391,12 @@ function system_get_uniqueid() {
 }
 
 /*
- * attempt to identify the specific platform (for embedded systems)
+ * attempt to identify the specific physical/virtual platform (in particular for embedded systems)
  * Returns an array with two elements:
- * name => platform string (e.g. 'wrap', 'alix' etc.)
- * descr => human-readable description (e.g. "PC Engines WRAP")
+ *   name => platform string (e.g. 'wrap', 'alix', 'vmware', etc.)
+ *   descr => human-readable description (e.g. "PC Engines WRAP")
+ * If no specific platform is identified, it returns the strings in $g['platform'] as 
+ * a fallback, and if that's empty then returns 'Unknown platform'.
  */
 function system_identify_specific_platform() {
 	global $g;
@@ -2519,7 +2521,12 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	return array('name' => $g['platform'], 'descr' => $g['platform']);
+	if (strlen($g['platform']) > 0 && $g['platform'] != $g['product_name']) {
+		// if $g['platform'] contains the software/firmware name rather than a hardware name, don't use it.
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	} else {
+		return array('name' => 'Non-specific hardware', 'descr' => 'Non-specific hardware');
+	}
 }
 
 function system_get_dmesg_boot() {

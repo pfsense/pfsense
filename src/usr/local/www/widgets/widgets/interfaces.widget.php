@@ -162,7 +162,7 @@ endif;
 
 <form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
 	<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
-	<?=gen_customwidgetinterval_div($widgetconfig['title']); ?>
+	<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
 
 	<div class="panel panel-default col-sm-10">
 		<div class="panel-body">

@@ -31,6 +31,7 @@ require_once("filter_log.inc");
 
 if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 	set_customwidgettitle($user_settings);
+	set_customwidgetinterval($user_settings);
 
 	if (is_numeric($_POST['filterlogentries'])) {
 		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentries'] = $_POST['filterlogentries'];
@@ -62,12 +63,6 @@ if ($_REQUEST['widgetkey'] && !$_REQUEST['ajax']) {
 		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterfaces']);
 	}
 
-	if (is_numeric($_POST['filterlogentriesinterval'])) {
-		$user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
-	} else {
-		unset($user_settings['widgets'][$_POST['widgetkey']]['filterlogentriesinterval']);
-	}
-
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Filter Log Entries via Dashboard."));
 	Header("Location: /");
 	exit(0);
@@ -92,7 +87,7 @@ $filterfieldsarray = array(
 	"interface" => isset($iface_descr_arr[$nentriesinterfaces]) ? $iface_descr_arr[$nentriesinterfaces] : $nentriesinterfaces
 );
 
-$nentriesinterval = isset($user_settings['widgets'][$widgetkey]['filterlogentriesinterval']) ? $user_settings['widgets'][$widgetkey]['filterlogentriesinterval'] : 60;
+$ninterval = isset($user_settings['widgets'][$widgetkey]['interval']) ? $user_settings['widgets'][$widgetkey]['interval'] : 1;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
@@ -212,7 +207,7 @@ events.push(function(){
 	logsObject.url = "/widgets/widgets/log.widget.php";
 	logsObject.callback = logs_callback;
 	logsObject.parms = postdata;
-	logsObject.freq = <?=$nentriesinterval?>;
+	logsObject.freq = <?=$ninterval?>;
 
 	// Register the AJAX object
 	register_ajax(logsObject);
@@ -276,14 +271,7 @@ $pconfig['nentriesinterval'] = isset($user_settings['widgets'][$widgetkey]['filt
 			</div>
 		</div>
 
-		<div class="form-group">
-			<label for="filterlogentriesinterval" class="col-sm-4 control-label"><?=gettext('Update interval')?></label>
-			<div class="col-sm-4">
-				<input type="number" name="filterlogentriesinterval" id="filterlogentriesinterval" value="<?=$pconfig['nentriesinterval']?>" placeholder="60"
-					min="1" class="form-control" />
-			</div>
-			<?=gettext('Seconds');?>
-		</div>
+		<?=gen_customwidgetinterval_div($widgetconfig['interval']); ?>
 
 		<div class="form-group">
 			<div class="col-sm-offset-4 col-sm-6">

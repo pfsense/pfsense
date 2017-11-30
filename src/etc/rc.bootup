@@ -396,5 +396,5 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
-
+notify_all_remote("Bootup complete");
 ?>

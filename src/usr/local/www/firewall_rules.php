@@ -954,6 +954,7 @@ events.push(function() {
 		$(this).removeClass().addClass("fa fa-anchor");
 	});
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
@@ -971,6 +972,7 @@ events.push(function() {
 	});
 
 	$('table tbody.user-entries').show();
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {

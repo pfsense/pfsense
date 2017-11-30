@@ -215,8 +215,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
 
-	if (strlen($_POST['usernamefld']) > 16) {
-		$input_errors[] = gettext("The username is longer than 16 characters.");
+	if (strlen($_POST['usernamefld']) > 32) {
+		$input_errors[] = gettext("The username is longer than 32 characters.");
 	}
 
 	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {

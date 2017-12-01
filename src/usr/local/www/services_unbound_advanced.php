@@ -359,7 +359,7 @@ $section->addInput(new Form_Select(
 			'and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. ' .
 			'The default is disabled, but if enabled a value of 10 million is suggested.');
 
-$lvl_word = gettext('Level %d');
+$lvl_word = gettext('Level %s');
 $lvl_text = array(
 	'0' => 'No logging',
 	'1' => 'Basic operational information',

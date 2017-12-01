@@ -573,12 +573,14 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
-
+	$certfn = tempnam('/tmp', 'CGM');
+	file_put_contents($certfn, $str_crt);
 	$modulus = "";
 	if (in_array($type, array("crt", "prv", "csr"))) {
 		$type = str_replace(array("crt", "prv", "csr"), array("x509", "rsa", "req"), $type);
-		$modulus = exec("echo \"{$str_crt}\" | openssl {$type} -noout -modulus");
+		$modulus = exec("/usr/bin/openssl {$type} -in {$certfn} -noout -modulus");
 	}
+	unlink($certfn);
 	return $modulus;
 }
 

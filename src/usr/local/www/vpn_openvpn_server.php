@@ -866,7 +866,7 @@ if ($act=="new" || $act=="edit"):
 		    sprint_info_box(gettext('Only DH parameter sets which exist in /etc/ are shown.') .
 		        '<br/>' .
 		        gettext('Generating new or stronger DH parameters is CPU-intensive and must be performed manually.') . ' ' .
-		        sprintf(gettext('Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on generating new or stronger paramater sets.'),
+		        sprintf(gettext('Consult %1$sthe doc wiki article on DH Parameters%2$sfor information on generating new or stronger parameter sets.'),
 					'<a href="https://doc.pfsense.org/index.php/DH_Parameters">',
 					'</a> '),
 				'info', false),

@@ -158,6 +158,20 @@ function openvpn_build_mode_list() {
 	return($list);
 }
 
+global $openvpn_interfacenames;
+function convert_openvpn_interface_to_friendly_descr($if) {
+	global $openvpn_interfacenames;
+	if (!is_array($openvpn_interfacenames)) {
+		$openvpn_interfacenames = openvpn_build_if_list();
+	}
+	foreach($openvpn_interfacenames as $key => $value) {
+		list($item_if, $item_ip) = explode("|", $key);
+		if ($if == $item_if) {
+			echo "$value";
+		}
+	}
+}
+
 function openvpn_build_if_list() {
 	$list = array();
 
@@ -815,6 +829,17 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls_user':
 				$conf .= "client-connect /usr/local/sbin/openvpn.attributes.sh\n";
 				$conf .= "client-disconnect /usr/local/sbin/openvpn.attributes.sh\n";
+				break;
+		}
+	}
+	if ($settings['dev_mode'] === 'tun' && isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
+		switch($settings['mode']) {
+			case 'server_tls':
+			case 'server_tls_user':
+				$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
+				if (is_domain($domain)) {
+					$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+				}
 				break;
 		}
 	}

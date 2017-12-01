@@ -603,20 +603,23 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
 		$str_crt = base64_decode($str_crt);
 	}
+	$certfn = tempnam('/tmp', 'CGPK');
+	file_put_contents($certfn, $str_crt);
 	switch ($type) {
 		case 'prv':
-			exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
+			exec("/usr/bin/openssl pkey -in {$certfn} -pubout", $out);
 			break;
 		case 'crt':
-			exec("echo \"{$str_crt}\" | openssl x509 -inform pem -noout -pubkey", $out);
+			exec("/usr/bin/openssl x509 -in {$certfn} -inform pem -noout -pubkey", $out);
 			break;
 		case 'csr':
-			exec("echo \"{$str_crt}\" | openssl req -inform pem -noout -pubkey", $out);
+			exec("/usr/bin/openssl req -in {$certfn} -inform pem -noout -pubkey", $out);
 			break;
 		default:
 			$out = array();
 			break;
 	}
+	unlink($certfn);
 	return implode("\n", $out);
 }
 

@@ -78,6 +78,7 @@ $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['s
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
+$pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 $pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
@@ -168,6 +169,8 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguicss']);
 	}
+	
+	$config['system']['webgui']['roworderdragging'] = $_POST['roworderdragging'] ? true:false;
 
 	if ($_POST['logincss']) {
 		$config['system']['webgui']['logincss'] = $_POST['logincss'];
@@ -605,6 +608,13 @@ gen_associatedpanels_fields(
 gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 gen_disablealiaspopupdetail_field($section, $pconfig['disablealiaspopupdetail']);
+
+$section->addInput(new Form_Checkbox(
+	'roworderdragging',
+	'Disable dragging',
+	'Disable dragging of firewall/nat rules.',
+	$pconfig['roworderdragging']
+))->setHelp('Disables dragging rows to allow selecting and copying row contents and avoid accidental changes.');
 
 $section->addInput(new Form_Select(
 	'logincss',

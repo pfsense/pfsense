@@ -106,6 +106,7 @@ if ($act == "new") {
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['cert_depth'] = 1;
+	$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
 	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
 	$pconfig['digest'] = "SHA1";
@@ -237,6 +238,12 @@ if ($act == "edit") {
 		$pconfig['autotls_enable'] = "yes";
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
+
+		if (isset($a_server[$id]['create_gw'])) {
+			$pconfig['create_gw'] = $a_server[$id]['create_gw'];
+		} else {
+			$pconfig['create_gw'] = "both"; // v4only, v6only, or both (default: both)
+		}
 
 		if (isset($a_server[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
@@ -585,6 +592,7 @@ if ($_POST['save']) {
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
 
+		$server['create_gw'] = $pconfig['create_gw'];
 		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($pconfig['netbios_enable']) {
@@ -1304,6 +1312,37 @@ if ($act=="new" || $act=="edit"):
 				'Finding the best buffer size can take some experimentation. To test the best value for a site, start at ' .
 				'512KiB and test higher and lower values.');
 
+	$group = new Form_Group('Gateway creation');
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'Both',
+		($pconfig['create_gw'] == "both"),
+		'both'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv4 only',
+		($pconfig['create_gw'] == "v4only"),
+		'v4only'
+	))->displayAsRadio();
+
+	$group->add(new Form_Checkbox(
+		'create_gw',
+		null,
+		'IPv6 only',
+		($pconfig['create_gw'] == "v6only"),
+		'v6only'
+	))->displayAsRadio();
+
+	$group->setHelp('If you assign a virtual interface to this OpenVPN server, ' .
+		'this setting controls which gateway types will be created. The default ' .
+		'setting is \'both\'.');
+
+	$section->add($group);
+
 	$section->addInput(new Form_Select(
 		'verbosity_level',
 		'Verbosity level',
@@ -1342,6 +1381,7 @@ else:
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
+					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Crypto")?></th>
@@ -1356,6 +1396,9 @@ else:
 	foreach ($a_server as $server):
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
+					<td>
+						<?=convert_openvpn_interface_to_friendly_descr($server['interface'])?>
+					</td>
 					<td>
 						<?=htmlspecialchars($server['protocol'])?> / <?=htmlspecialchars($server['local_port'])?>
 					</td>

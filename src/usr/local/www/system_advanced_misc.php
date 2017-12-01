@@ -61,6 +61,8 @@ $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 $pconfig['block_external_services'] = isset($config['system']['block_external_services']);
 
+$use_mfs_tmpvar_before = $pconfig['use_mfs_tmpvar'];
+
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
 	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
@@ -322,6 +324,7 @@ if ($_POST) {
 		}
 	}
 }
+$use_mfs_tmpvar_after = $pconfig['use_mfs_tmpvar'];
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 $pglinks = array("", "system_advanced_admin.php", "@self");
@@ -329,7 +332,6 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-	unset($pconfig['doreboot']);
 }
 
 if ($changes_applied) {
@@ -658,31 +660,16 @@ if ($g['default-config-flavor'] == "ec2-ic") {
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');?>
+$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');
+$use_mfs_tmpvar_changed = $use_mfs_tmpvar_before !== $use_mfs_tmpvar_after && !$input_errors;
+?>
 
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	// Record the state of the Use Ramdisk checkbox on page load
-	use_ramdisk = $('#use_mfs_tmpvar').prop('checked');
-
-	$('form').submit(function(event) {
-		// Has the Use ramdisk checkbox changed state?
-		if ($('#use_mfs_tmpvar').prop('checked') != use_ramdisk) {
-			if (confirm("<?=$ramdisk_msg?>")) {
-				$('form').append('<input type="hidden" name="doreboot" id="doreboot" value="yes"/>');
-			} else {
-				event.preventDefault();
-			}
-		}
-	});
-
-	drb = "<?=$pconfig['doreboot']?>";
-
-	if (drb == "yes") {
-		$('form').append("<input type=\"hidden\" name=\"override\" value=\"yes\" />");
-		$('form').get(0).setAttribute('action', 'diag_reboot.php');
-		$(form).submit();
+	// Has the Use ramdisk checkbox changed state?
+	if (<?=(int)$use_mfs_tmpvar_changed?> && confirm("<?=$ramdisk_msg?>")) {
+		postSubmit({override : 'yes'}, 'diag_reboot.php')
 	}
 
 	// source track timeout field is disabled if sticky connections not enabled

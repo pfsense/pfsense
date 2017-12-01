@@ -201,18 +201,18 @@ if (!function_exists('get_dyndns_service_text')) {
 
 	?>
 	<tr ondblclick="document.location='<?=$dblclick_location;?>?id=<?=$locationid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
-		<td>
-		<?=get_dyndns_interface_text($dyndns['interface']);?>
-		</td>
-		<td>
-		<?=htmlspecialchars(get_dyndns_service_text($dyndns['type']));?>
-		</td>
-		<td>
-		<?=insert_word_breaks_in_domain_name(htmlspecialchars(get_dyndns_hostname_text($dyndns)));?>
-		</td>
-		<td>
-		<div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div>
-		</td>
+		<td><?=get_dyndns_interface_text($dyndns['interface']);?></td>
+<?php
+		if (((get_dyndns_service_text($dyndns['type']) == 'Custom') ||
+			 (get_dyndns_service_text($dyndns['type']) == 'Custom (v6)')) &&
+			 (get_dyndns_service_text($dyndns['descr']) != '')):
+?>
+		<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['descr']));?></td>
+		<?php else:?>
+		<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['type']));?></td>
+		<?php endif;?>
+		<td><?=insert_word_breaks_in_domain_name(htmlspecialchars(get_dyndns_hostname_text($dyndns)));?></td>
+		<td><div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div></td>
 	</tr>
 	<?php endforeach;?>
 	<?php if ($rowid == -1):?>
@@ -250,7 +250,15 @@ if (!function_exists('get_dyndns_service_text')) {
 ?>
 						<tr>
 							<td><?=get_dyndns_interface_text($dyndns['interface'])?></td>
+<?php
+							if (((get_dyndns_service_text($dyndns['type']) == 'Custom') ||
+							     (get_dyndns_service_text($dyndns['type']) == 'Custom (v6)')) &&
+								 (get_dyndns_service_text($dyndns['descr']) != '')):
+?>
+							<td><?=htmlspecialchars(get_dyndns_service_text($dyndns['descr']));?></td>
+							<?php else:?>
 							<td><?=get_dyndns_service_text($dyndns['type'])?></td>
+							<?php endif;?>
 							<td><?=get_dyndns_hostname_text($dyndns)?></td>
 							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_dyndnsent_key($dyndns)?>" type="checkbox" <?=(!in_array(get_dyndnsent_key($dyndns), $skipdyndns) ? 'checked':'')?>></td>
 						</tr>

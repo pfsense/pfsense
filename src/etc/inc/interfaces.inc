@@ -4386,7 +4386,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		}
 		$dhcp6cscript .= "esac\n";
 	} else {
-		// Need to get the paramaters from the dhcp6cwithoutRA run
+		// Need to get the parameters from the dhcp6cwithoutRA run
 		$dhcp6cscript .= "dmips=\$(cat \"/tmp/{$wanif}_domain_name_servers\")\n";
 		$dhcp6cscript .= "dmnames=\$(cat \"/tmp/{$wanif}_new_domain_name\")\n";
 		$dhcp6cscript .= "/bin/sleep 1\n";

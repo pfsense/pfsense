@@ -601,9 +601,8 @@ function cert_get_issuer($str_crt, $decode = true) {
 /* Works for both RSA and ECC (crt) and key (prv) */
 function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 	if ($decode) {
-		$str_crt = escapeshellcmd(base64_decode($str_crt));
+		$str_crt = base64_decode($str_crt);
 	}
-
 	switch ($type) {
 		case 'prv':
 			exec("echo \"{$str_crt}\" | openssl pkey -pubout", $out);
@@ -618,7 +617,6 @@ function cert_get_publickey($str_crt, $decode = true, $type = "crt") {
 			$out = array();
 			break;
 	}
-
 	return implode("\n", $out);
 }
 

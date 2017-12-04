@@ -25,7 +25,6 @@ include_once('notices.inc');
 
 $ret = try_lock("notifyqueue_running", 0);
 if ($ret === NULL) {
-	file_put_contents("/dev/console", "\n[".getmypid()."] EXITQUEUELOCK $date");
 	//only 1 monitor needs to be running.
 	exit;
 }

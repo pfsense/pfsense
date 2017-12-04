@@ -219,6 +219,11 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($_GET['type'] == 'host') {
+		// sort it by index so it deletes the correct one.
+		usort($a_hosts, function($a,$b){
+			return($a['idx'] > $b['idx']);
+		});
+
 		if ($a_hosts[$_GET['id']]) {
 			unset($a_hosts[$_GET['id']]);
 			write_config();
@@ -227,6 +232,11 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	} elseif ($_GET['type'] == 'doverride') {
+		// sort by index to delete the correct one.
+		usort($a_domainOverrides, function($a,$b){
+			return($a['idx'] > $b['idx']);
+		});
+		
 		if ($a_domainOverrides[$_GET['id']]) {
 			unset($a_domainOverrides[$_GET['id']]);
 			write_config();

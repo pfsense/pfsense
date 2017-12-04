@@ -246,6 +246,7 @@ EOF;
 	$port = (is_port($unboundcfg['port'])) ? $unboundcfg['port'] : "53";
 	$hide_identity = isset($unboundcfg['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($unboundcfg['hideversion']) ? "yes" : "no";
+	$ipv6_allow = isset($config['system']['ipv6allow']) ? "yes" : "no";
 	$harden_dnssec_stripped = isset($unboundcfg['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
@@ -337,7 +338,7 @@ hide-identity: {$hide_identity}
 hide-version: {$hide_version}
 harden-glue: yes
 do-ip4: yes
-do-ip6: yes
+do-ip6: {$ipv6_allow}
 do-udp: yes
 do-tcp: yes
 do-daemonize: yes

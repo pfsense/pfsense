@@ -217,18 +217,31 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($_GET['type'] == 'host') {
-		if ($a_hosts[$_GET['id']]) {
-			unset($a_hosts[$_GET['id']]);
+
+if ($_POST['act'] == "del") {
+	if ($_POST['type'] == 'host') {
+		// it gets sorted by hostname on load
+		// sort it by index so it deletes the correct one.
+		usort($a_hosts, function($a,$b){
+			return($a['idx'] > $b['idx']);
+		});
+
+		if ($a_hosts[$_POST['id']]) {
+			unset($a_hosts[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");
 			exit;
 		}
-	} elseif ($_GET['type'] == 'doverride') {
-		if ($a_domainOverrides[$_GET['id']]) {
-			unset($a_domainOverrides[$_GET['id']]);
+	} elseif ($_POST['type'] == 'doverride') {
+		// gets sorted by name on load
+		// sort by index to delete the correct one.
+		usort($a_domainOverrides, function($a,$b){
+			return($a['idx'] > $b['idx']);
+		});
+
+		if ($a_domainOverrides[$_POST['id']]) {
+			unset($a_domainOverrides[$_POST['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
 			header("Location: services_dnsmasq.php");

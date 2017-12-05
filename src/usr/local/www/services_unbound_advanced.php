@@ -359,13 +359,24 @@ $section->addInput(new Form_Select(
 			'and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. ' .
 			'The default is disabled, but if enabled a value of 10 million is suggested.');
 
-$lvl = gettext("level");
+$lvl_word = gettext('Level %s');
+$lvl_text = array(
+	'0' => 'No logging',
+	'1' => 'Basic operational information',
+	'2' => 'Detailed operational information',
+	'3' => 'Query level information',
+	'4' => 'Algorithm level information',
+	'5' => 'Client identification for cache misses'
+);
+foreach ($lvl_text as $k => & $v) {
+	$v = sprintf($lvl_word,$k) . ': ' . gettext($v);
+}
 $section->addInput(new Form_Select(
 	'log_verbosity',
 	'Log Level',
 	$pconfig['log_verbosity'],
-	array_combine(array("0", "1", "2", "3", "4", "5"), array($lvl + " 0", $lvl + " 1", $lvl + " 2", $lvl + " 3", $lvl + " 4", $lvl + " 5"))
-))->setHelp('Select the log verbosity.');
+	$lvl_text
+))->setHelp('Select the level of detail to be logged. Each level also includes the information from previous levels. The default is basic operational information (level 1)');
 
 $section->addInput(new Form_Checkbox(
 	'disable_auto_added_access_control',

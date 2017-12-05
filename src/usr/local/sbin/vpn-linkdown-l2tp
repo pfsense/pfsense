@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# vpn-linkdown
+# vpn-linkdown-l2tp
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2017 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# record logout
-/usr/bin/logger -p local3.info "logout,$1,$5,$6"
-/sbin/pfctl -i $2 -Fs
-/sbin/pfctl -K $5/32
+/usr/local/sbin/vpn-linkdown l2tp $1 $2 $3 $4 $5

@@ -19,4 +19,4 @@
 # limitations under the License.
 
 # record login
-/usr/bin/logger -p local3.info "login,$1,$4,$5"
+/usr/bin/logger -p local3.info "login,$1,$5,$6"

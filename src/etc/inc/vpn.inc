@@ -1633,8 +1633,8 @@ poes:
 	set mppc yes stateless
 
 	set iface group pppoe
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup-poes
+	set iface down-script /usr/local/sbin/vpn-linkdown-poes
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1837,9 +1837,10 @@ l2tps:
 
 	set ccp yes mppc
 
+	set iface name l2tp
 	set iface group l2tp
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup-l2tp
+	set iface down-script /usr/local/sbin/vpn-linkdown-l2tp
 	set iface disable on-demand
 	set iface enable proxy-arp
 

@@ -1447,9 +1447,9 @@ EOD;
 				$ptr_zones = get_v6_ptr_zones($subnetv6, $ifcfgsnv6);
 				foreach ($ptr_zones as $ptr_zone) {
 					$reversezone = array();
-					$reversezone['domain-name'] = $ptr_zone;
-					$reversezone['dns-servers'][] =
-					    $dhcpv6ifconf['ddnsdomainprimary'];
+					$reversezone['ptr-domain'] = $ptr_zone;
+					$reversezone['ddnsdomainkeyname'] = $dhcpv6ifconf['ddnsdomainkeyname'];
+					$reversezone['ddnsdomainkey'] = $dhcpv6ifconf['ddnsdomainkey'];
 					$ddns_zones[] = $reversezone;
 				}
 			}

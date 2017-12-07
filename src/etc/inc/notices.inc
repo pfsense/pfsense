@@ -256,9 +256,10 @@ function notices_sendqueue() {
 				}
 			}
 			if (!empty($smtpmessage)) {
-				$smtpmessage = sprintf(gettext("There are %s notifications below:"), $smptcount) . $smtpmessage;
+				$smtpmessageheader = sprintf(gettext("Notifications in this message: %s"), $smptcount);
+				$smtpmessageheader .= "\n" . str_repeat('=', strlen($smtpmessageheader)) . "\n";
 				$nothing_done_count = 0;
-				notify_via_smtp($smtpmessage, true);
+				notify_via_smtp($smtpmessageheader . $smtpmessage, true);
 			}
 			if (count($growlqueue) > 0) {
 				$nothing_done_count = 0;

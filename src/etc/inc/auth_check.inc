@@ -34,7 +34,8 @@ function session_read_single_var($varname) {
 	$result = $_SESSION[$varname];
 	if ($session_started) {
 		// if we started the session then lets close it..
-		session_abort();
+		// Perform a commit to avoid the session timing out prematurely. See https://redmine.pfsense.org/issues/8116
+		session_commit();
 	}
 	return $result;
 }

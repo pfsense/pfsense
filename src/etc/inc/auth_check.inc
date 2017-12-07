@@ -23,26 +23,21 @@
  * in cases where frequent automatic requests are made like graphs and widget pages.
  */
 
+include_once('phpsessionmanager.inc');
 require_once("auth_func.inc");
 
 function session_read_single_var($varname) {
-	$session_started = false;
-	if (!session_id()) {
-		session_start();
-		$session_started = true;
-	}
+	@phpsession_begin();
 	$result = $_SESSION[$varname];
-	if ($session_started) {
-		// if we started the session then lets close it..
-		session_abort();
-	}
+	// Perform a commit to avoid the session timing out prematurely. See https://redmine.pfsense.org/issues/8116
+	@phpsession_end(true);
 	return $result;
 }
 
 $session_pagematch = session_read_single_var("page-match");
 
 $pageuri = $_SERVER['REQUEST_URI'];
-if (cmp_page_matches($pageuri, $session_pagematch)) {	
+if (cmp_page_matches($pageuri, $session_pagematch)) {
 	return; // auth OK
 }
 require_once("authgui.inc");

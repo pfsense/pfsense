@@ -1169,6 +1169,7 @@ EOD;
 			if ($need_ddns_updates) {
 				$newzone['dns-servers'] = array($dhcpifconf['ddnsdomainprimary']);
 				$newzone['ddnsdomainkeyname'] = $dhcpifconf['ddnsdomainkeyname'];
+				$newzone['ddnsdomainkeyalgorithm'] = $dhcpifconf['ddnsdomainkeyalgorithm'];
 				$newzone['ddnsdomainkey'] = $dhcpifconf['ddnsdomainkey'];
 				$dhcpdconf .= dhcpdkey($dhcpifconf);
 			}
@@ -1215,9 +1216,9 @@ EOD;
 
 function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
-	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "") {
+	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkeyalgorithm'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "") {
 		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
-		$dhcpdconf .= "	algorithm hmac-md5;\n";
+		$dhcpdconf .= "	algorithm {$dhcpifconf['ddnsdomainkeyalgorithm']};\n";
 		$dhcpdconf .= "	secret {$dhcpifconf['ddnsdomainkey']};\n";
 		$dhcpdconf .= "}\n";
 	}

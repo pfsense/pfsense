@@ -29,7 +29,9 @@
 #  Field 8:  Address family
 
 # Read in ipsec ping hosts and check the CARP status
-if [ -f /var/db/ipsecpinghosts ]; then
+# Only perform this check if there are IPsec hosts to ping, see
+#   https://redmine.pfsense.org/issues/8172
+if [ -f /var/db/ipsecpinghosts -a -s /var/db/ipsecpinghosts ]; then
 	IPSECHOSTS="/var/db/ipsecpinghosts"
 	CURRENTIPSECHOSTS="/var/db/currentipsecpinghosts"
 	IFVPNSTATE=`ifconfig $IFVPN | grep "carp: BACKUP vhid" | wc -l`
@@ -53,7 +55,13 @@ if [ -f /var/db/pkgpinghosts ]; then
 	PKGHOSTS="/var/db/pkgpinghosts"
 fi
 
-cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
+# Make sure at least one of these has contents, otherwise cat will be stuck waiting on input
+if [ ! -z "${PKGHOSTS}" -o ! -z "${HOSTS}" -o ! -z "${CURRENTIPSECHOSTS}" ]; then
+	cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
+else
+	# Nothing to do!
+	exit
+fi
 
 if [ ! -d /var/db/pingstatus ]; then
 	/bin/mkdir -p /var/db/pingstatus

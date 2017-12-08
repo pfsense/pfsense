@@ -2659,22 +2659,46 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 	return false;
 }
 
-/* format a string to look (more) like the expected DUID format:
- * 1) Replace any "-" with ":"
- * 2) If the user inputs 14 components, then add the expected "0e:00:" to the front.
- *    This is convenience, because the actual DUID (which is reported in logs) is the last 14 components.
- * 3) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
+/* From DUID configuration inputs, format a string that looks (more) like the expected raw DUID format:
+ * 1) For DUID_LLT, convert the time input to hex, prepend DUID type and hardware type, and append the link-layer address input.
+ * 2) For DUID_EN, convert the enterprise ID input to hex, prepend DUID type, and append the identifier input.
+ * 3) For DUID_LL, prepend DUID type and hardware type.
+ * 4) For DUID_UUID, convert the UUID to hex and prepend DUID type.
+ * 5) Replace any "-" with ":" for DUID_LLT, DUID_EN, and DUID_LL, and remove it for DUID_UUID.
+ * 6) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
+ * 7) If the first two components are not "nn:00" (amd64) or "00:nn" (ARM), then add (length - 2) to the front as a short according to endianness.
+ *    This is convenience, because the DUID reported by dhcp6c in logs does not include the option-len field of the DHCPv6 OPTION_CLIENTID option.
  *
  * The final result should be closer to:
  *
- * "0e:00:00:01:00:01:nn:nn:nn:nn:nn:nn:nn:nn:nn:nn"
+ * "nn:00:00:0n:00:0n:nn:nn:nn:..." (amd64) or "00:nn:00:0n:00:0n:nn:nn:nn:..." (ARM)
  *
- * This function does not validate the input. is_duid() will do validation.
-*/
-function format_duid($dhcp6duid) {
-	$values = explode(":", strtolower(str_replace("-", ":", $dhcp6duid)));
-	if (count($values) == 14) {
-		array_unshift($values, "0e", "00");
+ * This function does not validate the input, although it probably should where it can. is_duid() will do validation.
+ */
+function format_duid($duidtype, $duidpt1, $duidpt2=null) {
+	$values = null;
+
+	switch ($duidtype) {
+	case 1:
+	case 2:
+		$duidpt1 = '000' . $duidtype . ($duidtype == 1 ? '0001' : '') . str_pad(dechex($duidpt1), 8, '0', STR_PAD_LEFT);
+		$values = array_merge(str_split($duidpt1, 2), explode(':', strtolower(str_replace('-', ':', $duidpt2))));
+		break;
+	case 3:
+		$values = explode(':', '00:03:00:01:' . strtolower(str_replace('-', ':', $duidpt1)));
+		break;
+	case 4:
+		$values = str_split('0004' . strtolower(str_replace('-', '', $duidpt1)), 2);
+		break;
+	case 0:
+		$values = explode(":", strtolower(str_replace("-", ":", $duidpt1)));
+		break;
+	}
+
+	if (unpack('S', "\x01\x00")[1] === 1 && hexdec($values[0]) != count($values) - 2) {
+		array_unshift($values, dechex(count($values)), '00');
+	} else if (unpack('S', "\x00\x01")[1] === 1 && hexdec($values[1]) != count($values) - 2) {
+		array_unshift($values, '00', dechex(count($values)));
 	}
 
 	array_walk($values, function(&$value) {
@@ -2684,13 +2708,38 @@ function format_duid($dhcp6duid) {
 	return implode(":", $values);
 }
 
-/* returns true if $dhcp6duid is a valid duid entry */
+/* Returns true if $dhcp6duid is a valid DUID entry.
+ * Parse the entry to check for valid length according to endianness and known DUID types.
+ */
 function is_duid($dhcp6duid) {
 	$values = explode(":", $dhcp6duid);
-	if (count($values) != 16 || strlen($dhcp6duid) != 47) {
+	if (hexdec($values[unpack('S', "\x01\x00")[1] === 1 ? 0 : 1]) == count($values) - 2) {
+		switch (hexdec($values[2] . $values[3])) {
+		case 1:
+			if (count($values) != 16 || strlen($dhcp6duid) != 47) {
+				return false;
+			}
+			break;
+		case 3:
+			if (count($values) != 12 || strlen($dhcp6duid) != 35) {
+				return false;
+			}
+			break;
+		case 4:
+			if (count($values) != 20 || strlen($dhcp6duid) != 59) {
+				return false;
+			}
+			break;
+		default:
+			if (count($values) > 132 || strlen($dhcp6duid) != count($values) * 3 - 1) {
+				return false;
+			}
+			break;
+		}
+	} else {
 		return false;
 	}
-	for ($i = 0; $i < 16; $i++) {
+	for ($i = 0; $i < count($values); $i++) {
 		if (ctype_xdigit($values[$i]) == false)
 			return false;
 		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
@@ -2728,12 +2777,13 @@ function get_duid_from_file() {
 
 	if (file_exists("{$g['vardb_path']}/dhcp6c_duid") &&
 	    ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r"))) {
-		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
-			$buffer = fread($fd,16);
-			while($count < 16) {
+		$fsize = filesize("{$g['vardb_path']}/dhcp6c_duid");
+		if ($fsize <= 132) {
+			$buffer = fread($fd, $fsize);
+			while($count < $fsize) {
 				$duid_ASCII .= bin2hex($buffer[$count]);
 				$count++;
-				if($count < 16) {
+				if($count < $fsize) {
 					$duid_ASCII .= ":";
 				}
 			}

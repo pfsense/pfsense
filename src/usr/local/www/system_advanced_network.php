@@ -58,11 +58,35 @@ if ($_POST) {
 		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
 	}
 
+	switch ($_POST['ipv6duidtype']) {
+	case 1:
+		if (!empty($_POST['ipv6duidllt_time']) && !empty($_POST['ipv6duidllt_ll'])) {
+			$_POST['global-v6duid'] = format_duid(1, $_POST['ipv6duidllt_time'], $_POST['ipv6duidllt_ll']);
+		}
+		break;
+	case 2:
+		if (!empty($_POST['ipv6duiden_en']) && !empty($_POST['ipv6duiden_id'])) {
+			$_POST['global-v6duid'] = format_duid(2, $_POST['ipv6duiden_en'], $_POST['ipv6duiden_id']);
+		}
+		break;
+	case 3:
+		if (!empty($_POST['ipv6duidll'])) {
+			$_POST['global-v6duid'] = format_duid(3, $_POST['ipv6duidll']);
+		}
+		break;
+	case 4:
+		if (!empty($_POST['ipv6duiduuid'])) {
+			$_POST['global-v6duid'] = format_duid(4, $_POST['ipv6duiduuid']);
+		}
+		break;
+	}
+
 	if (!empty($_POST['global-v6duid'])) {
-		$_POST['global-v6duid'] = format_duid($_POST['global-v6duid']);
-		$pconfig['global-v6duid'] = $_POST['global-v6duid'];
-		if (!is_duid($_POST['global-v6duid'])) {
-			$input_errors[] = gettext("A valid DUID must be specified");
+		$_POST['global-v6duid'] = format_duid(0, $_POST['global-v6duid']);
+		if (is_duid($_POST['global-v6duid'])) {
+			$pconfig['global-v6duid'] = $_POST['global-v6duid'];
+		} else {
+			$input_errors[] = gettext("A valid DUID must be specified.");
 		}
 	}
 
@@ -215,18 +239,32 @@ $section->addInput(new Form_Checkbox(
 	'Do not generate local IPv6 DNS entries for LAN interfaces',
 	$pconfig['ipv6dontcreatelocaldns']
 ))->setHelp('If a LAN interface\'s IPv6 configuration is set to Track, and the tracked interface loses connectivity, '.
-    'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
+	'it can cause connections to this firewall that were established via hostname to fail. This can happen '.
 	'unintentionally when accessing the firewall by hostname, since by default both IPv4 and IPv6 entries are added '.
 	'to the system\'s DNS. Enabling this option prevents those IPv6 records from being created.');
 
-$group = new Form_Group('DHCP6 DUID');
+$section->addInput(new Form_Select(
+	'ipv6duidtype',
+	'DHCP6 DUID',
+	'$ipv6duidtype',
+	array('0' => gettext('Raw DUID: As stored in DUID file or seen in firewall logs'),
+		'1' => gettext('DUID-LLT: Based on Link-layer Address Plus Time'),
+		'2' => gettext('DUID-EN: Assigned by Vendor based on Enterprise Number'),
+		'3' => gettext('DUID-LL: Based on Link-layer Address'),
+		'4' => gettext('DUID-UUID: Based on Universally Unique IDentifier')
+	)
+))->setHelp('A DHCPv6 Unique Identifier (DUID) is used by the firewall when requesting an IPv6 address.%1$s%1$s' .
+		'By default, the firewall automatically creates a dynamic DUID-LLT which is not saved in the firewall configuration. '.
+		'To ensure that the same DUID is retained by the firewall at all times, enter a DUID in this section. ' .
+		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.%1$s%1$s' .
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here; otherwise the DUID will change on each reboot.', '<br />');
 
-$group->add(new Form_Input(
+$group = new Form_Group('Raw DUID');
+
+$group->add(new Form_Textarea(
 	'global-v6duid',
 	'DHCP6 DUID',
-	'text',
-	$pconfig['global-v6duid'],
-	['placeholder' => $duid]
+	$pconfig['global-v6duid']
 	));
 
 $btncopyduid = new Form_Button(
@@ -239,14 +277,62 @@ $btncopyduid = new Form_Button(
 $btncopyduid->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 $group->add($btncopyduid);
 
-$group->setHelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. %1$s' .
-		'By default, the firewall automatically creates a dynamic DUID which is not saved in the firewall configuration. '.
-		'To ensure the same DUID is retained by the firewall at all times, enter a DUID in this field. ' .
-		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.%1$s' .
-		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot.%1$s%1$s' .
-		'You may use the Copy DUID button to copy the system detected DUID shown in the placeholder. ', '<br />');
+$group->setHelp('You may use the Copy DUID button to copy the system detected DUID shown in the placeholder.');
 
 $section->add($group);
+
+$group = new Form_Group('DUID-LLT');
+
+$group->add(new Form_Input(
+	'ipv6duidllt_time',
+	'DUID-LLT',
+	'text',
+	$ipv6duidllt_time
+))->setHelp('Time (seconds) since midnight, Jan 1, 2000 UTC');
+
+$group->add(new Form_Input(
+	'ipv6duidllt_ll',
+	'Link-layer address',
+	'text',
+	$ipv6duidllt_ll,
+	[ 'placeholder' => 'xx:xx:xx:xx:xx:xx' ]
+))->setHelp('Link-layer address');
+
+$section->add($group);
+
+$group = new Form_Group('DUID-EN');
+
+$group->add(new Form_Input(
+	'ipv6duiden_en',
+	'DUID-EN',
+	'number',
+	$ipv6duiden_en,
+	[ 'placeholder' => 'Enterprise Number' ]
+))->setHelp('IANA-maintained Private Enterprise Number');
+
+$group->add(new Form_Textarea(
+	'ipv6duiden_id',
+	'Identifier',
+	$ipv6duiden_id
+))->setHelp('Identifier (variable length)');
+
+$section->add($group);
+
+$section->addInput(new Form_Input(
+	'ipv6duidll',
+	'DUID-LL',
+	'text',
+	$ipv6duidll,
+	[ 'placeholder' => 'xx:xx:xx:xx:xx:xx' ]
+))->setHelp('Link-layer address');
+
+$section->addInput(new Form_Input(
+	'ipv6duiduuid',
+	'DUID-UUID',
+	'text',
+	$ipv6duiduuid,
+	[ 'placeholder' => '00000000-0000-0000-0000-000000000000' ]
+))->setHelp('Universally Unique IDentifier');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
@@ -321,6 +407,35 @@ events.push(function() {
 		hideInput('ipv6nat_ipaddr', !$('#ipv6nat_enable').prop('checked'));
 	}
 
+	// Set time for DUID-LLT (number of seconds since UTC midnight, January 1, 2000)
+	function setDUIDTime() {
+		$('#ipv6duidllt_time').val((Date.now() / 1000 | 0) - 946684800);
+	}
+
+	// Set placeholder on raw DUID Textarea
+	function setRawDUIDPlaceholder() {
+		$('#global-v6duid').attr('placeholder', '<?=$duid?>');
+	}
+
+	// Set placeholder on DUID-EN Identifier Textarea
+	function setDUIDENPlaceholder() {
+		$('#ipv6duiden_id').attr('placeholder', 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
+	}
+
+	// Show/hide DUID type subsections
+	function showHideIpv6duid() {
+		hideInput('global-v6duid', $('#ipv6duidtype').prop('value') != '0');
+		hideInput('ipv6duidllt_time', $('#ipv6duidtype').prop('value') != '1');
+		hideInput('ipv6duiden_en', $('#ipv6duidtype').prop('value') != '2');
+		hideInput('ipv6duidll', $('#ipv6duidtype').prop('value') != '3');
+		hideInput('ipv6duiduuid', $('#ipv6duidtype').prop('value') != '4');
+	}
+
+	// On changing selection for DUID type
+	$('#ipv6duidtype').change(function() {
+		showHideIpv6duid();
+	});
+
 	// On click, copy the placeholder DUID to the input field
 	$('#btncopyduid').click(function() {
 		$('#global-v6duid').val('<?=$duid?>');
@@ -333,6 +448,10 @@ events.push(function() {
 
 	// On page load
 	showHideIpv6nat();
+	showHideIpv6duid();
+	setRawDUIDPlaceholder();
+	setDUIDENPlaceholder();
+	setDUIDTime();
 
 
 });

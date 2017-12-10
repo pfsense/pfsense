@@ -1216,9 +1216,10 @@ EOD;
 
 function dhcpdkey($dhcpifconf) {
 	$dhcpdconf = "";
-	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkeyalgorithm'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "") {
+	if (!empty($dhcpifconf['ddnsdomainkeyname']) && !empty($dhcpifconf['ddnsdomainkey'])) {
+		$algorithm = empty($dhcpifconf['ddnsdomainkeyalgorithm']) ? 'hmac-md5' : $dhcpifconf['ddnsdomainkeyalgorithm'];
 		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
-		$dhcpdconf .= "	algorithm {$dhcpifconf['ddnsdomainkeyalgorithm']};\n";
+		$dhcpdconf .= "	algorithm {$algorithm};\n";
 		$dhcpdconf .= "	secret {$dhcpifconf['ddnsdomainkey']};\n";
 		$dhcpdconf .= "}\n";
 	}

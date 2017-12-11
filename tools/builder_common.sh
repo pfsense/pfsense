@@ -1772,7 +1772,7 @@ pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
 	setup_pkg_repo \
-		$(eval echo \$PKG_REPO_DEFAULT_${TARGET_ARCH}) \
+		$(eval echo \$PKG_REPO_BUILD_${TARGET_ARCH}) \
 		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \

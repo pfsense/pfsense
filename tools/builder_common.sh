@@ -1615,6 +1615,7 @@ setup_pkg_repo() {
 		mkdir -p $(dirname ${_pkg_conf})
 		echo "ABI=${ABI}" > ${_pkg_conf}
 		echo "ALTABI=${ALTABI}" >> ${_pkg_conf}
+		sed -i '' -e "s/%%ARCH%%/${_target_arch}/" ${_pkg_conf}
 	fi
 }
 

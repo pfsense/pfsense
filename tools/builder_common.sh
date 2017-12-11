@@ -1608,14 +1608,26 @@ setup_pkg_repo() {
 		${_template} \
 		> ${_target}
 
-	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null)
-	ALTABI=$(cat ${_template%%.conf}.altabi 2>/dev/null)
+	if [ "${_target_arch}" = "amd64" ]; then
+		ALTABI_ARCH="x86:64"
+	elif [ "${_target_arch}" = "i386" ]; then
+		ALTABI_ARCH="x86:32"
+	elif [ "${_target_arch}" = "armv6" ]; then
+		ALTABI_ARCH="32:el:eabi:hardfp"
+	else
+		echo ">>> ERROR: Invalid arch"
+		print_error_pfS
+	fi
+
+	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${_target_arch}/g")
+	ALTABI=$(cat ${_template%%.conf}.altabi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${ALTABI_ARCH}/g")
 
 	if [ -n "${_pkg_conf}" -a -n "${ABI}" -a -n "${ALTABI}" ]; then
 		mkdir -p $(dirname ${_pkg_conf})
 		echo "ABI=${ABI}" > ${_pkg_conf}
 		echo "ALTABI=${ALTABI}" >> ${_pkg_conf}
-		sed -i '' -e "s/%%ARCH%%/${_target_arch}/" ${_pkg_conf}
 	fi
 }
 

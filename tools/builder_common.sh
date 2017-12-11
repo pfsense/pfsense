@@ -644,13 +644,14 @@ clone_to_staging_area() {
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
 	# Make sure correct repo is available on tmp dir
-	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
+	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg/pkg-repos
 	setup_pkg_repo \
 		${PKG_REPO_BUILD} \
-		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+		${STAGE_CHROOT_DIR}/tmp/pkg/pkg-repos/repo.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
-		staging
+		staging \
+		${STAGE_CHROOT_DIR}/tmp/pkg/pkg.conf
 
 	echo "Done!"
 }
@@ -743,7 +744,7 @@ customize_stagearea_for_image() {
 	fi
 
 	# Remove temporary repo conf
-	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
+	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg
 }
 
 create_distribution_tarball() {
@@ -971,6 +972,7 @@ setup_pkg_repo() {
 	local _arch="${3}"
 	local _target_arch="${4}"
 	local _staging="${5}"
+	local _pkg_conf="${6}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
@@ -1002,6 +1004,28 @@ setup_pkg_repo() {
 		-e "s/%%REPO_BRANCH_PREFIX%%/${REPO_BRANCH_PREFIX}/g" \
 		${_template} \
 		> ${_target}
+
+	if [ "${_target_arch}" = "amd64" ]; then
+		ALTABI_ARCH="x86:64"
+	elif [ "${_target_arch}" = "i386" ]; then
+		ALTABI_ARCH="x86:32"
+	elif [ "${_target_arch}" = "armv6" ]; then
+		ALTABI_ARCH="32:el:eabi:hardfp"
+	else
+		echo ">>> ERROR: Invalid arch"
+		print_error_pfS
+	fi
+
+	ABI=$(cat ${_template%%.conf}.abi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${_target_arch}/g")
+	ALTABI=$(cat ${_template%%.conf}.altabi 2>/dev/null \
+	    | sed -e "s/%%ARCH%%/${ALTABI_ARCH}/g")
+
+	if [ -n "${_pkg_conf}" -a -n "${ABI}" -a -n "${ALTABI}" ]; then
+		mkdir -p $(dirname ${_pkg_conf})
+		echo "ABI=${ABI}" > ${_pkg_conf}
+		echo "ALTABI=${ALTABI}" >> ${_pkg_conf}
+	fi
 }
 
 # This routine ensures any ports / binaries that the builder
@@ -1098,8 +1122,11 @@ pkg_chroot() {
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
 	local _params=""
-	if [ -f "${_root}/tmp/pkg-repos/repo.conf" ]; then
-		_params="--repo-conf-dir /tmp/pkg-repos "
+	if [ -f "${_root}/tmp/pkg/pkg-repos/repo.conf" ]; then
+		_params="--repo-conf-dir /tmp/pkg/pkg-repos "
+	fi
+	if [ -f "${_root}/tmp/pkg/pkg.conf" ]; then
+		_params="${_params} --config /tmp/pkg/pkg.conf "
 	fi
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
 		chroot ${_root} pkg ${_params}$@ >/dev/null 2>&1

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CONF=http://factory-logger.pfmechanics.com/robotiq-config.xml
+CONF=http://factory-logger.netgate.com/robotiq-config.xml
 ORDER=67180
 
 # Fetch custom config

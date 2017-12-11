@@ -68,7 +68,7 @@ upgrade_netgate_coreboot() {
 
 	# Get remote available version
 	local _remote_version="0"
-	local _url=http://factory-logger.pfmechanics.com/coreboot/${_coreboot_model}_version.txt
+	local _url=http://factory-logger.netgate.com/coreboot/${_coreboot_model}_version.txt
 	if fetch -o /tmp/remote_version ${_url} >/dev/null 2>&1; then
 		_remote_version=$(head -n 1 /tmp/remote_version)
 	fi
@@ -94,7 +94,7 @@ upgrade_netgate_coreboot() {
 		local _romname=$(tail -n 1 /tmp/remote_version)
 		local _rom="/tmp/coreboot_rom"
 		if ! fetch -o /mnt${_rom} \
-		    http://factory-logger.pfmechanics.com/coreboot/${_romname}; then
+		    http://factory-logger.netgate.com/coreboot/${_romname}; then
 			return 0
 		fi
 		local _version="${_remote_version}"
@@ -360,7 +360,7 @@ fi
 wlan_mac=$(get_if_mac wlan0)
 
 if [ "${selected_model}" = "SG-1000" ]; then
-	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-sg-1000-latest.img.gz"
+	image_default_url="http://factory-logger.netgate.com/pfSense-netgate-sg-1000-latest.img.gz"
 	image_url=$(kenv -q ufw.install.image.url)
 	image_url=${image_url:-${image_default_url}}
 
@@ -466,7 +466,7 @@ elif [ "${selected_model}" = "SG-3100" ]; then
 	echo "Erasing the disk contents..."
 	dd if=/dev/zero of=/dev/${TARGET} bs=4m count=15 2> /dev/null
 
-	image_default_url="http://factory-logger.pfmechanics.com/pfSense-netgate-SG-3100-latest.img.gz"
+	image_default_url="http://factory-logger.netgate.com/pfSense-netgate-SG-3100-latest.img.gz"
 	image_url=${image_url:-${image_default_url}}
 
 	echo "Writing the firmware to disk..."
@@ -557,7 +557,7 @@ fi
 
 if [ -f /tmp/custom ]; then
 	custom=$(cat /tmp/custom)
-	custom_url="http://factory-logger.pfmechanics.com/${custom}-install.sh"
+	custom_url="http://factory-logger.netgate.com/${custom}-install.sh"
 
 	if ! fetch -o /tmp/custom.sh ${custom_url}; then
 		echo "Error downloading custom script from ${custom_url}"

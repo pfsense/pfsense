@@ -47,7 +47,7 @@ index d28754ec11..5085b68305 100755
  fi
  
 +if [ -n "${custom}" ]; then
-+	custom_url="http://factory-logger.pfmechanics.com/${custom}-install.sh"
++	custom_url="http://factory-logger.netgate.com/${custom}-install.sh"
 +
 +	if ! fetch -o /tmp/custom.sh ${custom_url}; then
 +		echo "Error downloading custom script from ${custom_url}"

@@ -164,7 +164,11 @@ function getThermalSensorValue(stringValue) {
 }
 
 function getFahrenheitValue(celc) {
-	return parseInt((celc * 1.8) + 32, 10);
+        return Math.ceil((celc * 1.8) + 32);
+}
+        
+function getCelciusValue(fahr) {
+        return Math.floor((fahr - 32) / 1.8);
 }
 
 // Update the progress indicator

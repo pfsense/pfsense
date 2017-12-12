@@ -72,6 +72,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 		var sensorDataArray = thermalSensorsArray[i].split(":");
 		var sensorName = sensorDataArray[0].trim();
 		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
+		var widgetUnit = 'C';
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
@@ -86,14 +87,19 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
+		if (tsParams.showFahrenheit) {
+			widgetUnit = 'F';
+			thermalSensorValue = (thermalSensorValue * 1.8) + 32;
+		}
+
 		//build temperature item/row for a sensor
 
 		var thermalSensorRow =	'<div class="progress">' +
-									'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
-									'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-									'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
-								'</div>' +
-								'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + ' &deg;C</span>';
+						'<div id="temperaturebarL' + i + widgetKey + '" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="1" style="width: 1%"></div>' +
+						'<div id="temperaturebarM' + i + widgetKey + '" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+						'<div id="temperaturebarH' + i + widgetKey + '" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>' +
+					'</div>' +
+					'<span><b>' + sensorName + ': </b></span>' + '<span id="temperaturemsg' + i + widgetKey + '">' + thermalSensorValue + '</span> &deg;' + widgetUnit;
 
 
 		thermalSensorsHTMLContent = thermalSensorsHTMLContent + thermalSensorRow;
@@ -134,7 +140,11 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
-	setTempProgress(i, thermalSensorValue, widgetKey);
+		if (tsParams.showFahrenheit) {
+			thermalSensorValue = (thermalSensorValue * 1.8) + 32;
+		}
+
+		setTempProgress(i, thermalSensorValue, widgetKey);
 	}
 }
 
@@ -181,5 +191,5 @@ function setTempProgress(bar, percent, widgetKey) {
 	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
 	$('#' + 'temperaturebarH' + bar + widgetKey).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturemsg' + bar + widgetKey).html(percent + ' &deg;C');
+	$('#' + 'temperaturemsg' + bar + widgetKey).html(percent);
 }

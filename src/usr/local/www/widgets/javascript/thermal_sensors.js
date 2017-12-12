@@ -89,9 +89,7 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 		if (tsParams.showFahrenheit) {
 			widgetUnit = 'F';
-			thermalSensorValue = parseInt(thermalSensorValue * 1.8 + 32, 10);
-                        warningTemp = parseInt(warningTemp * 1.8 + 32, 10);
-                        criticalTemp = parseInt(criticalTemp * 1.8 + 32, 10);
+			thermalSensorValue = getFahrenheitValue(thermalSensorValue);
 		}
 
 		//build temperature item/row for a sensor
@@ -142,12 +140,6 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 			sensorName = getSensorFriendlyName(sensorName);
 		}
 
-		if (tsParams.showFahrenheit) {
-			thermalSensorValue = parseInt(thermalSensorValue * 1.8 + 32, 10);
-                        warningTemp = parseInt(warningTemp * 1.8 + 32, 10);
-                        criticalTemp = parseInt(criticalTemp * 1.8 + 32, 10);
-		}
-
 		setTempProgress(i, thermalSensorValue, widgetKey);
 	}
 }
@@ -171,6 +163,10 @@ function getThermalSensorValue(stringValue) {
 	return (+parseFloat(stringValue) || 0).toFixed(1);
 }
 
+function getFahrenheitValue(celc) {
+	return parseInt((celc * 1.8) + 32, 10);
+}
+
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous
 function setTempProgress(bar, percent, widgetKey) {
@@ -185,20 +181,14 @@ function setTempProgress(bar, percent, widgetKey) {
 		barTempM = percent - warningTemp;
 		barTempH = 0;
 	} else {
-		barTempL = warningTemp;
+		barTempL = warningTemp;     
 		barTempM = criticalTemp - warningTemp;
 		barTempH = percent - criticalTemp;
 	}
-        if (widgetUnit === 'F') {
-                // instead of 1-100, we're dealing with 1-212
-                barTempL = parseInt(barTempL * .212, 10);
-                barTempM = parseInt(barTempM * .212, 10);
-                barTempH = parseInt(barTempH * .212, 10);
-        }
 
 	$('#' + 'temperaturebarL' + bar + widgetKey).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
 	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);
 	$('#' + 'temperaturebarH' + bar + widgetKey).css('width', barTempH + '%').attr('aria-valuenow', barTempH);
 
-	$('#' + 'temperaturemsg' + bar + widgetKey).html(percent);
+	$('#' + 'temperaturemsg' + bar + widgetKey).html(widgetUnit === 'F' ? getFahrenheitValue(percent) : percent);
 }

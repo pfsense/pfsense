@@ -18,8 +18,9 @@
  * limitations under the License.
  */
 
-warningTemp = 9999;
-criticalTemp = 100;
+var warningTemp = 9999;
+var criticalTemp = 100;
+var widgetUnit = 'C';
 ajaxBusy = false;
 
 function buildThermalSensorsData(thermalSensorsData, widgetKey, tsParams, firstTime) {
@@ -72,7 +73,6 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 		var sensorDataArray = thermalSensorsArray[i].split(":");
 		var sensorName = sensorDataArray[0].trim();
 		var thermalSensorValue = getThermalSensorValue(sensorDataArray[1]);
-		var widgetUnit = 'C';
 
 		//set thresholds
 		if (sensorName.indexOf("cpu") > -1) { //check CPU Threshold config settings
@@ -89,7 +89,9 @@ function buildThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) {
 
 		if (tsParams.showFahrenheit) {
 			widgetUnit = 'F';
-			thermalSensorValue = (thermalSensorValue * 1.8) + 32;
+			thermalSensorValue = parseInt(thermalSensorValue * 1.8 + 32, 10);
+                        warningTemp = parseInt(warningTemp * 1.8 + 32, 10);
+                        criticalTemp = parseInt(criticalTemp * 1.8 + 32, 10);
 		}
 
 		//build temperature item/row for a sensor
@@ -141,7 +143,9 @@ function updateThermalSensorsDataGraph(thermalSensorsData, tsParams, widgetKey) 
 		}
 
 		if (tsParams.showFahrenheit) {
-			thermalSensorValue = (thermalSensorValue * 1.8) + 32;
+			thermalSensorValue = parseInt(thermalSensorValue * 1.8 + 32, 10);
+                        warningTemp = parseInt(warningTemp * 1.8 + 32, 10);
+                        criticalTemp = parseInt(criticalTemp * 1.8 + 32, 10);
 		}
 
 		setTempProgress(i, thermalSensorValue, widgetKey);
@@ -185,7 +189,12 @@ function setTempProgress(bar, percent, widgetKey) {
 		barTempM = criticalTemp - warningTemp;
 		barTempH = percent - criticalTemp;
 	}
-
+        if (widgetUnit === 'F') {
+                // instead of 1-100, we're dealing with 1-212
+                barTempL = parseInt(barTempL * .212, 10);
+                barTempM = parseInt(barTempM * .212, 10);
+                barTempH = parseInt(barTempH * .212, 10);
+        }
 
 	$('#' + 'temperaturebarL' + bar + widgetKey).css('width', barTempL + '%').attr('aria-valuenow', barTempL);
 	$('#' + 'temperaturebarM' + bar + widgetKey).css('width', barTempM + '%').attr('aria-valuenow', barTempM);

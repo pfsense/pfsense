@@ -192,3 +192,19 @@ function setTempProgress(bar, percent, widgetKey) {
 
 	$('#' + 'temperaturemsg' + bar + widgetKey).html(widgetUnit === 'F' ? getFahrenheitValue(percent) : percent);
 }
+
+events.push(function(){
+	$("#thermal_sensors_widget_show_fahrenheit").on("change", function(e) {
+		if (this.checked) {
+			$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+			$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+			$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+			$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+		} else {
+			$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelciusValue(this.value);});
+			$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelciusValue(this.value);});
+			$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelciusValue(this.value);});
+			$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelciusValue(this.value);});
+		}
+	});
+});

@@ -365,7 +365,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$display_temp?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_use_f ? $temp_deg_c * .212 : $temp_deg_c?>%">
 					</div>
 				</div>
-				<span id="tempmeter"><?=$display_temp?>&deg;<?=$temp_use_f ? 'F' : 'C';?></span>
+				<span id="tempmeter" data-units="<?=$temp_use_f ? 'F' : 'C';?>"><?=$display_temp?></span>&deg;<?=$temp_use_f ? 'F' : 'C';?>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -610,12 +610,10 @@ function updateCPU(total, used) {
 }
 
 function updateTemp(x) {
-	if ($("#tempmeter")) {
-		$('[id="tempmeter"]').html(x + '&deg;' + 'C');
-	}
-	if ($('#tempPB')) {
-		setProgress('tempPB', parseInt(x));
-	}
+	$("#tempmeter").html(function() {
+		return this.dataset.units === "F" ? parseInt(x * 1.8 + 32, 10) : x;
+	});
+	setProgress('tempPB', parseInt(x));
 }
 
 function updateDateTime(x) {

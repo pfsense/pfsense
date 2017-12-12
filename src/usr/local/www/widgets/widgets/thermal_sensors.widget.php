@@ -119,6 +119,7 @@ if ($_POST['widgetkey']) {
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
 	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_fahrenheit");
 
 	//write settings to config file
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved thermal_sensors_widget settings via Dashboard."));
@@ -139,6 +140,7 @@ $thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "
 $thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false, $widgetkey);
 $thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true, $widgetkey);
 $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
+$thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
 //=========================================================================
 ?>
@@ -157,6 +159,8 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
 			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>
+			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
+			
 		};
 
 	// --------------------- Centralized widget refresh system ------------------------------
@@ -253,6 +257,15 @@ $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings,
 			<div class="col-sm-6 checkbox">
 				<label>
 					<input type="checkbox" name="thermal_sensors_widget_show_full_sensor_name" id="thermal_sensors_widget_show_full_sensor_name" value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked" : ""; ?>/>
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="thermal_sensors_widget_show_full_sensor_name" class="col-sm-4 control-label"><?=gettext('Show temperature in Fahrenheit')?></label>
+			<div class="col-sm-6 checkbox">
+				<label>
+					<input type="checkbox" name="thermal_sensors_widget_show_full_sensor_name" id="thermal_sensors_widget_show_fahrenheit" value="<?= $thermal_sensors_widget_showFahrenheit; ?>" <?= ($thermal_sensors_widget_showFahrenheit) ? " checked" : ""; ?>/>
 				</label>
 			</div>
 		</div>

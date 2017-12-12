@@ -238,7 +238,7 @@ while [ /bin/true ]; do
 		if [ $rc -eq 0 ]; then
 			exec_and_update_status \
 			    ${BUILDER_ROOT}/build.sh ${_SKIP_FINAL_RSYNC} \
-			    ${UPLOAD} --flash-size '2g 4g' --snapshots ${IMAGES}
+			    ${UPLOAD} --flash-size '2g 4g' --snapshots ${NO_IMAGES}
 			rc=$?
 		fi
 	fi

@@ -262,10 +262,10 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		</div>
 
 		<div class="form-group">
-			<label for="thermal_sensors_widget_show_full_sensor_name" class="col-sm-4 control-label"><?=gettext('Show temperature in Fahrenheit')?></label>
+			<label for="thermal_sensors_widget_show_fahrenheit" class="col-sm-4 control-label"><?=gettext('Show temperature in Fahrenheit')?></label>
 			<div class="col-sm-6 checkbox">
 				<label>
-					<input type="checkbox" name="thermal_sensors_widget_show_full_sensor_name" id="thermal_sensors_widget_show_fahrenheit" value="<?= $thermal_sensors_widget_showFahrenheit; ?>" <?= ($thermal_sensors_widget_showFahrenheit) ? " checked" : ""; ?>/>
+					<input type="checkbox" name="thermal_sensors_widget_show_fahrenheit" id="thermal_sensors_widget_show_fahrenheit" value="<?= $thermal_sensors_widget_showFahrenheit; ?>" <?= ($thermal_sensors_widget_showFahrenheit) ? " checked" : ""; ?>/>
 				</label>
 			</div>
 		</div>

@@ -438,7 +438,8 @@ events.push(function() {
 
 	// On click, copy the placeholder DUID to the input field
 	$('#btncopyduid').click(function() {
-		$('#global-v6duid').val('<?=$duid?>');
+		if ('<?=$duid?>' != '--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--')
+			$('#global-v6duid').val('<?=$duid?>');
 	});
 
 	// On clicking IPv6 over IPv4 Tunneling checkbox

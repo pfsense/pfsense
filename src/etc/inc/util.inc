@@ -2660,40 +2660,45 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 }
 
 /* From DUID configuration inputs, format a string that looks (more) like the expected raw DUID format:
- * 1) For DUID_LLT, convert the time input to hex, prepend DUID type and hardware type, and append the link-layer address input.
- * 2) For DUID_EN, convert the enterprise ID input to hex, prepend DUID type, and append the identifier input.
- * 3) For DUID_LL, prepend DUID type and hardware type.
- * 4) For DUID_UUID, convert the UUID to hex and prepend DUID type.
- * 5) Replace any "-" with ":" for DUID_LLT, DUID_EN, and DUID_LL, and remove it for DUID_UUID.
- * 6) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
- * 7) If the first two components are not "nn:00" (amd64) or "00:nn" (ARM), then add (length - 2) to the front as a short according to endianness.
- *    This is convenience, because the DUID reported by dhcp6c in logs does not include the option-len field of the DHCPv6 OPTION_CLIENTID option.
+ * 1) For DUIDs entered as a known DUID type, convert to a hexstring and prepend the DUID number, after having done the following:
+ *     a) For DUID-LLT and DUID-EN, convert the time/enterprise ID input to hex and append the link-layer address/identifier input.
+ *     b) For DUID-LLT and DUID-LL, prepend a hardware type of 1.
+ *     c) For DUID-UUID, remove any "-".
+ * 2) Replace any remaining "-" with ":".
+ * 3) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
+ * 4) The first two components should be a 16-bit integer (little- or big-endian, depending on the current machine type) that
+ *    is equal to the number of other components. If not, prepend this as "nn:00" (little-endian) or "00:nn" (big-endian).
+ *    This is convenience, because the DUID reported by dhcp6c in logs does not include this count, which corresponds to the
+ *    option-len field of DHCPv6's OPTION_CLIENTID option.
  *
  * The final result should be closer to:
  *
- * "nn:00:00:0n:00:0n:nn:nn:nn:..." (amd64) or "00:nn:00:0n:00:0n:nn:nn:nn:..." (ARM)
+ * "nn:00:00:0n:nn:nn:nn:..." (little-endian) or "00:nn:00:0n:nn:nn:nn:..." (big-endian)
  *
- * This function does not validate the input, although it probably should where it can. is_duid() will do validation.
+ * This function does not validate the input. is_duid() will do validation.
  */
 function format_duid($duidtype, $duidpt1, $duidpt2=null) {
-	$values = null;
+	if ($duidpt2)
+		$duidpt1 = implode(':', str_split(str_pad(dechex($duidpt1), 8, '0', STR_PAD_LEFT), 2)) . ':' . $duidpt2;
 
-	switch ($duidtype) {
-	case 1:
-	case 2:
-		$duidpt1 = '000' . $duidtype . ($duidtype == 1 ? '0001' : '') . str_pad(dechex($duidpt1), 8, '0', STR_PAD_LEFT);
-		$values = array_merge(str_split($duidpt1, 2), explode(':', strtolower(str_replace('-', ':', $duidpt2))));
-		break;
-	case 3:
-		$values = explode(':', '00:03:00:01:' . strtolower(str_replace('-', ':', $duidpt1)));
-		break;
-	case 4:
-		$values = str_split('0004' . strtolower(str_replace('-', '', $duidpt1)), 2);
-		break;
-	case 0:
-		$values = explode(":", strtolower(str_replace("-", ":", $duidpt1)));
-		break;
+	/* Make hexstrings */
+	if ($duidtype) {
+		switch ($duidtype) {
+		/* Add a hardware type to DUID-LLT and DUID-LL; assume Ethernet */
+		case 1:
+		case 3:
+			$duidpt1 = '00:01:' . $duidpt1;
+			break;
+		/* Remove '-' from given UUID and insert ':' every 2 characters */
+		case 4:
+			$duidpt1 = implode(':', str_split(str_replace('-', '', $duidpt1), 2));
+			break;
+		default:
+		}
+		$duidpt1 = '00:0' . $duidtype . ':' . $duidpt1;
 	}
+
+	$values = explode(':', strtolower(str_replace('-', ':', $duidpt1)));
 
 	if (unpack('S', "\x01\x00")[1] === 1 && hexdec($values[0]) != count($values) - 2) {
 		array_unshift($values, dechex(count($values)), '00');
@@ -2715,36 +2720,36 @@ function is_duid($dhcp6duid) {
 	$values = explode(":", $dhcp6duid);
 	if (hexdec($values[unpack('S', "\x01\x00")[1] === 1 ? 0 : 1]) == count($values) - 2) {
 		switch (hexdec($values[2] . $values[3])) {
+		case 0:
+			return false;
+			break;
 		case 1:
-			if (count($values) != 16 || strlen($dhcp6duid) != 47) {
+			if (count($values) != 16 || strlen($dhcp6duid) != 47)
 				return false;
-			}
 			break;
 		case 3:
-			if (count($values) != 12 || strlen($dhcp6duid) != 35) {
+			if (count($values) != 12 || strlen($dhcp6duid) != 35)
 				return false;
-			}
 			break;
 		case 4:
-			if (count($values) != 20 || strlen($dhcp6duid) != 59) {
+			if (count($values) != 20 || strlen($dhcp6duid) != 59)
 				return false;
-			}
 			break;
+		/* DUID is up to 128 octets; allow 2 octets for type code, 2 more for option-len */
 		default:
-			if (count($values) > 132 || strlen($dhcp6duid) != count($values) * 3 - 1) {
+			if (count($values) > 132 || strlen($dhcp6duid) != count($values) * 3 - 1)
 				return false;
-			}
-			break;
 		}
-	} else {
+	} else
 		return false;
-	}
+
 	for ($i = 0; $i < count($values); $i++) {
 		if (ctype_xdigit($values[$i]) == false)
 			return false;
 		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
 			return false;
 	}
+
 	return true;
 }
 
@@ -2768,7 +2773,7 @@ function write_dhcp6_duid($duidstring) {
 	return false;
 }
 
-/* returns duid string from 'vardb_path']}/dhcp6c_duid' */
+/* returns duid string from {['vardb_path']}/dhcp6c_duid' */
 function get_duid_from_file() {
 	global $g;
 

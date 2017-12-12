@@ -110,6 +110,14 @@ if (!function_exists('getBoolValueFromConfig')) {
 //=========================================================================
 //save widget config settings on POST
 if ($_POST['widgetkey']) {
+	if (isset($_POST["thermal_sensors_widget_show_fahrenheit"])) {
+		// convert back to celcius
+		$_POST["thermal_sensors_widget_zone_warning_threshold"] = floor(($_POST["thermal_sensors_widget_zone_warning_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_zone_critical_threshold"] = floor(($_POST["thermal_sensors_widget_zone_critical_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_core_warning_threshold"] = floor(($_POST["thermal_sensors_widget_core_warning_threshold"] - 32) / 1.8);
+		$_POST["thermal_sensors_widget_core_critical_threshold"] = floor(($_POST["thermal_sensors_widget_core_critical_threshold"] - 32) / 1.8);
+	}
+
 	set_customwidgettitle($user_settings);
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
 	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
@@ -142,6 +150,13 @@ $thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, 
 $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
 $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
+if ($thermal_sensors_widget_showFahrenheit) {
+	$thermal_sensors_widget_zoneWarningTempThreshold = ceil($thermal_sensors_widget_zoneWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_zoneCriticalTempThreshold = ceil($thermal_sensors_widget_zoneCriticalTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreWarningTempThreshold = ceil($thermal_sensors_widget_coreWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreCriticalTempThreshold = ceil($thermal_sensors_widget_coreCriticalTempThreshold * 1.8 + 32);
+}
+
 //=========================================================================
 ?>
 
@@ -158,7 +173,7 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			showRawOutput:<?= $thermal_sensors_widget_showRawOutput ? "true" : "false"; ?>,
 			showFullSensorName:<?= $thermal_sensors_widget_showFullSensorName ? "true" : "false"; ?>,
 			pulsateWarning:<?= $thermal_sensors_widget_pulsateWarning ? "true" : "false"; ?>,
-			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>
+			pulsateCritical:<?= $thermal_sensors_widget_pulsateCritical ? "true" : "false"; ?>,
 			showFahrenheit:<?= $thermal_sensors_widget_showFahrenheit ? "true" : "false"; ?>
 			
 		};
@@ -207,7 +222,7 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 		<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 		<div class="form-group">
-			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></label>
+			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;<?= ($thermal_sensors_widget_showFahrenheit) ? "F" : "C"; ?> <?=gettext(($thermal_sensors_widget_showFahrenheit) ? '(1 to 212)' : '(1 to 100):')?></label>
 		</div>
 
 		<div class="form-group">

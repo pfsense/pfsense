@@ -251,13 +251,13 @@ $section->addInput(new Form_Select(
 		'1' => gettext('DUID-LLT: Based on Link-layer Address Plus Time'),
 		'2' => gettext('DUID-EN: Assigned by Vendor based on Enterprise Number'),
 		'3' => gettext('DUID-LL: Based on Link-layer Address'),
-		'4' => gettext('DUID-UUID: Based on Universally Unique IDentifier')
+		'4' => gettext('DUID-UUID: Based on Universally Unique Identifier')
 	)
 ))->setHelp('A DHCPv6 Unique Identifier (DUID) is used by the firewall when requesting an IPv6 address.%1$s%1$s' .
 		'By default, the firewall automatically creates a dynamic DUID-LLT which is not saved in the firewall configuration. '.
 		'To ensure that the same DUID is retained by the firewall at all times, enter a DUID in this section. ' .
 		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.%1$s%1$s' .
-		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here; otherwise the DUID will change on each reboot.', '<br />');
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here; otherwise, the DUID will change on each reboot.', '<br />');
 
 $group = new Form_Group('Raw DUID');
 
@@ -308,7 +308,7 @@ $group->add(new Form_Input(
 	'number',
 	$ipv6duiden_en,
 	[ 'placeholder' => 'Enterprise Number' ]
-))->setHelp('IANA-maintained Private Enterprise Number');
+))->setHelp('IANA Private Enterprise Number');
 
 $group->add(new Form_Textarea(
 	'ipv6duiden_id',
@@ -332,7 +332,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$ipv6duiduuid,
 	[ 'placeholder' => '00000000-0000-0000-0000-000000000000' ]
-))->setHelp('Universally Unique IDentifier');
+))->setHelp('Universally Unique Identifier');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
@@ -407,19 +407,36 @@ events.push(function() {
 		hideInput('ipv6nat_ipaddr', !$('#ipv6nat_enable').prop('checked'));
 	}
 
-	// Set time for DUID-LLT (number of seconds since UTC midnight, January 1, 2000)
-	function setDUIDTime() {
-		$('#ipv6duidllt_time').val((Date.now() / 1000 | 0) - 946684800);
-	}
-
-	// Set placeholder on raw DUID Textarea
-	function setRawDUIDPlaceholder() {
+	// Set placeholder on raw DUID and DUID-EN Identifier Textareas, time for DUID-LLT
+	// Parse DUID if set in config and set corresponding DUID type and input values on page
+	function setIpv6duid() {
 		$('#global-v6duid').attr('placeholder', '<?=$duid?>');
-	}
-
-	// Set placeholder on DUID-EN Identifier Textarea
-	function setDUIDENPlaceholder() {
+		$('#ipv6duidllt_time').val((Date.now() / 1000 | 0) - 946684800);
 		$('#ipv6duiden_id').attr('placeholder', 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx');
+		<?php if (isset($pconfig['global-v6duid'])): ?>
+		var duid = '<?=$pconfig['global-v6duid']?>';
+		var duidtype = parseInt(duid.substr(6, 5).replace(':', ''), 16);
+		switch (duidtype) {
+		case 1:
+			$('#ipv6duidllt_time').val(parseInt(duid.substr(18, 11).replace(/:/g, ''), 16));
+			$('#ipv6duidllt_ll').val(duid.substr(-17));
+			break;
+		case 2:
+			$('#ipv6duiden_en').val(parseInt(duid.substr(12, 11).replace(/:/g, ''), 16));
+			$('#ipv6duiden_id').val(duid.substr(24));
+			break;
+		case 3:
+			$('#ipv6duidll').val(duid.substr(-17));
+			break;
+		case 4:
+			var uuid = duid.substr(-47).replace(/:/g, '');
+			$('#ipv6duiduuid').val(uuid.substr(0, 8) + '-' + uuid.substr(8, 4) + '-' + uuid.substr(12, 4) + '-' + uuid.substr(16, 4) + '-' + uuid.substr(20));
+			break;
+		default:
+		}
+		if (0 < duidtype && duidtype < 5)
+			$('#ipv6duidtype').val(duidtype);
+		<?php endif; ?>
 	}
 
 	// Show/hide DUID type subsections
@@ -449,10 +466,8 @@ events.push(function() {
 
 	// On page load
 	showHideIpv6nat();
+	setIpv6duid();
 	showHideIpv6duid();
-	setRawDUIDPlaceholder();
-	setDUIDENPlaceholder();
-	setDUIDTime();
 
 
 });

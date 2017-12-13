@@ -2667,13 +2667,13 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
  * 2) Replace any remaining "-" with ":".
  * 3) If any components are input with just a single char (hex digit hopefully), put a "0" in front.
  * 4) The first two components should be a 16-bit integer (little- or big-endian, depending on the current machine type) that
- *    is equal to the number of other components. If not, prepend this as "nn:00" (little-endian) or "00:nn" (big-endian).
+ *    is equal to the number of other components. If not, prepend this as "nn:00" (all pfSense builds are little-endian).
  *    This is convenience, because the DUID reported by dhcp6c in logs does not include this count, which corresponds to the
  *    option-len field of DHCPv6's OPTION_CLIENTID option.
  *
  * The final result should be closer to:
  *
- * "nn:00:00:0n:nn:nn:nn:..." (little-endian) or "00:nn:00:0n:nn:nn:nn:..." (big-endian)
+ * "nn:00:00:0n:nn:nn:nn:..."
  *
  * This function does not validate the input. is_duid() will do validation.
  */
@@ -2700,11 +2700,8 @@ function format_duid($duidtype, $duidpt1, $duidpt2=null) {
 
 	$values = explode(':', strtolower(str_replace('-', ':', $duidpt1)));
 
-	if (unpack('S', "\x01\x00")[1] === 1 && hexdec($values[0]) != count($values) - 2) {
+	if (hexdec($values[0]) != count($values) - 2)
 		array_unshift($values, dechex(count($values)), '00');
-	} else if (unpack('S', "\x00\x01")[1] === 1 && hexdec($values[1]) != count($values) - 2) {
-		array_unshift($values, '00', dechex(count($values)));
-	}
 
 	array_walk($values, function(&$value) {
 		$value = str_pad($value, 2, '0', STR_PAD_LEFT);
@@ -2714,11 +2711,11 @@ function format_duid($duidtype, $duidpt1, $duidpt2=null) {
 }
 
 /* Returns true if $dhcp6duid is a valid DUID entry.
- * Parse the entry to check for valid length according to endianness and known DUID types.
+ * Parse the entry to check for valid length according to known DUID types.
  */
 function is_duid($dhcp6duid) {
 	$values = explode(":", $dhcp6duid);
-	if (hexdec($values[unpack('S', "\x01\x00")[1] === 1 ? 0 : 1]) == count($values) - 2) {
+	if (hexdec($values[0]) == count($values) - 2) {
 		switch (hexdec($values[2] . $values[3])) {
 		case 0:
 			return false;
@@ -2773,7 +2770,7 @@ function write_dhcp6_duid($duidstring) {
 	return false;
 }
 
-/* returns duid string from {['vardb_path']}/dhcp6c_duid' */
+/* returns duid string from 'vardb_path']}/dhcp6c_duid' */
 function get_duid_from_file() {
 	global $g;
 

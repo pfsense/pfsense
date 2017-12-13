@@ -163,11 +163,11 @@ function getThermalSensorValue(stringValue) {
 	return (+parseFloat(stringValue) || 0).toFixed(1);
 }
 
-function getFahrenheitValue(celc) {
-        return Math.ceil((celc * 1.8) + 32);
+function getFahrenheitValue(cels) {
+        return Math.ceil((cels * 1.8) + 32);
 }
         
-function getCelciusValue(fahr) {
+function getCelsiusValue(fahr) {
         return Math.floor((fahr - 32) / 1.8);
 }
 
@@ -185,7 +185,7 @@ function setTempProgress(bar, percent, widgetKey) {
 		barTempM = percent - warningTemp;
 		barTempH = 0;
 	} else {
-		barTempL = warningTemp;     
+		barTempL = warningTemp;
 		barTempM = criticalTemp - warningTemp;
 		barTempH = percent - criticalTemp;
 	}
@@ -205,10 +205,10 @@ events.push(function(){
 			$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
 			$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
 		} else {
-			$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelciusValue(this.value);});
-			$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelciusValue(this.value);});
-			$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelciusValue(this.value);});
-			$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelciusValue(this.value);});
+			$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+			$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+			$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+			$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelsiusValue(this.value);});
 		}
 	});
 });

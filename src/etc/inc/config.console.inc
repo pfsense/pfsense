@@ -71,7 +71,7 @@ EOD;
 
 	if (!is_array($iflist)) {
 		echo gettext("No interfaces found!") . "\n";
-		$iflist = array();
+		return (-1);
 	} else {
 		// ifsmallist is kept with spaces at the beginning and end to assist with str_replace() operations
 		$ifsmallist = " ";

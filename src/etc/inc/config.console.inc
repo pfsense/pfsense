@@ -28,6 +28,13 @@ require_once("globals.inc");
 require_once("interfaces.inc");
 require_once("util.inc");
 
+/*
+ * returns:
+ * -2: error
+ * -1: no interface found
+ *  0: interface(s) assigned
+ *  1: user quit
+ */
 function set_networking_interfaces_ports() {
 	global $noreboot;
 	global $config;
@@ -122,7 +129,7 @@ EOD;
 		printf(gettext('%1$s(%2$s or a): '), "\n", trim($ifsmallist));
 		$wanif = chop(fgets($fp));
 		if ($wanif === "") {
-			return;
+			return (1);
 		}
 		if ($wanif === "a") {
 			$wanif = autodetect_interface("WAN", $fp);
@@ -213,7 +220,7 @@ Error: The same interface name cannot be assigned twice!
 
 EOD;
 				fclose($fp);
-				return;
+				return (-2);
 			}
 		}
 	}
@@ -374,18 +381,20 @@ EOD;
 		fclose($fp);
 
 		if (platform_booting()) {
-			return;
+			return (0);
 		}
 
 		echo gettext("One moment while the settings are reloading...");
-		echo gettext(" done!") . "\n";
-
 		touch("{$g['tmp_path']}/assign_complete");
 
 		if (file_exists("/conf/trigger_initial_wizard")) {
 			// Let the system know that the interface assign part of initial setup has been done.
 			touch("{$g['conf_path']}/assign_complete");
 		}
+
+		echo gettext(" done!") . "\n";
+
+		return (0);
 	}
 }
 

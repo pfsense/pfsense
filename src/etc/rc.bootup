@@ -149,7 +149,12 @@ while (is_interface_mismatch() == true) {
 			interfaces_bring_up($iface);
 		}
 	}
-	set_networking_interfaces_ports();
+	if (set_networking_interfaces_ports() == -1) {
+		echo "\npfSense cannot continue without at least one Network Interface Card.\n";
+		echo "\nHalting the system.\n";
+		system("/sbin/shutdown -h now");
+		exit(0);
+	}
 	led_kitt();
 }
 

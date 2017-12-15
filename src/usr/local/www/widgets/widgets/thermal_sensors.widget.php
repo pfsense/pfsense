@@ -180,7 +180,7 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
 				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
 			} else {
-				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;F")?>');
+				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;C")?>');
 				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;100)")?>');
 				$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelsiusValue(this.value);});
 				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelsiusValue(this.value);});
@@ -241,7 +241,7 @@ if ($thermal_sensors_widget_showFahrenheit) {
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 		<div class="form-group">
 			<label class="col-sm-6 control-label">
-				<?=sprintf(gettext('Thresholds in <span class="thermal_sensors_widget_unit">%s</span><br/><span class="thermal_sensors_widget_range">%s</span>'), $thermal_sensors_widget_showFahrenheit ? "F" : "C", $thermal_sensors_widget_showFahrenheit ? "(1-212)" : "(1-100)")?>
+				<?=sprintf(gettext('Thresholds in <span class="thermal_sensors_widget_unit">%s</span><br/><span class="thermal_sensors_widget_range">%s</span>:'), $thermal_sensors_widget_showFahrenheit ? gettext("&deg;F") : gettext("&deg;C"), $thermal_sensors_widget_showFahrenheit ? gettext("(1&ndash;212)") : gettext("(1&ndash;100)"))?>
 			</label>
 		</div>
 

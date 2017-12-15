@@ -1101,8 +1101,7 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration.%1$s' .
-			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.', '<br />');
+))->setHelp('Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_Checkbox(
 	'ddnsforcehostname',
@@ -1144,7 +1143,7 @@ $section->addInput(new Form_Input(
 	'DNS Domain key secret',
 	'text',
 	$pconfig['ddnsdomainkey']
-))->setHelp('Dynamic DNS domain key secret (HMAC-MD5) which will be used to register client names in the DNS server.');
+))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
 // Advanced MAC
 $btnadv = new Form_Button(

@@ -205,11 +205,11 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 
 		// Create an object defining the widget refresh AJAX call
 		var tsObject = new Object();
-		tsObject.name = "Gateways";
+		tsObject.name = "thermal-sensors";
 		tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
 		tsObject.callback = ts_callback;
 		tsObject.parms = postdata;
-		tsObject.freq = 1;
+		tsObject.freq = 5;
 
 		// Register the AJAX object
 		register_ajax(tsObject);

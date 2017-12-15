@@ -247,28 +247,28 @@ if ($thermal_sensors_widget_showFahrenheit) {
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Zone Warning')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_zone_warning_threshold" id="thermal_sensors_widget_zone_warning_threshold" value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Zone Critical')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_zone_critical_threshold" id="thermal_sensors_widget_zone_critical_threshold" value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Core Warning')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_core_warning_threshold" id="thermal_sensors_widget_core_warning_threshold" value="<?= $thermal_sensors_widget_coreWarningTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-sm-4 control-label"><?=gettext('Core Critical')?></label>
-			<div class="col-sm-2">
+			<div class="col-sm-4">
 				<input type="text" name="thermal_sensors_widget_core_critical_threshold" id="thermal_sensors_widget_core_critical_threshold" value="<?= $thermal_sensors_widget_coreCriticalTempThreshold; ?>" class="form-control" />
 			</div>
 		</div>

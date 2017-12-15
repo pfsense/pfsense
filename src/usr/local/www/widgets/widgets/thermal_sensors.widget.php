@@ -150,13 +150,6 @@ $thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, 
 $thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true, $widgetkey);
 $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_fahrenheit", false, $widgetkey);
 
-if ($thermal_sensors_widget_showFahrenheit) {
-	$thermal_sensors_widget_zoneWarningTempThreshold = ceil($thermal_sensors_widget_zoneWarningTempThreshold * 1.8 + 32);
-	$thermal_sensors_widget_zoneCriticalTempThreshold = ceil($thermal_sensors_widget_zoneCriticalTempThreshold * 1.8 + 32);
-	$thermal_sensors_widget_coreWarningTempThreshold = ceil($thermal_sensors_widget_coreWarningTempThreshold * 1.8 + 32);
-	$thermal_sensors_widget_coreCriticalTempThreshold = ceil($thermal_sensors_widget_coreCriticalTempThreshold * 1.8 + 32);
-}
-
 //=========================================================================
 ?>
 
@@ -209,6 +202,15 @@ if ($thermal_sensors_widget_showFahrenheit) {
 	});
 //]]>
 </script>
+<?php
+// update displayed values
+if ($thermal_sensors_widget_showFahrenheit) {
+	$thermal_sensors_widget_zoneWarningTempThreshold = ceil($thermal_sensors_widget_zoneWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_zoneCriticalTempThreshold = ceil($thermal_sensors_widget_zoneCriticalTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreWarningTempThreshold = ceil($thermal_sensors_widget_coreWarningTempThreshold * 1.8 + 32);
+	$thermal_sensors_widget_coreCriticalTempThreshold = ceil($thermal_sensors_widget_coreCriticalTempThreshold * 1.8 + 32);
+}
+?>
 <div style="padding: 5px">
 	<div id="thermalSensorsContainer-<?=htmlspecialchars($widgetkey)?>" class="listr">
 		<?=gettext('(Updating...)')?><br /><br />

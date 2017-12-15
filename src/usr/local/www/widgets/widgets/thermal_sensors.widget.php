@@ -171,34 +171,50 @@ $thermal_sensors_widget_showFahrenheit = getBoolValueFromConfig($user_settings, 
 			
 		};
 
-	// --------------------- Centralized widget refresh system ------------------------------
+		$("#thermal_sensors_widget_show_fahrenheit").on("change", function(e) {
+			if (this.checked) {
+				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;F")?>');
+				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;212)")?>');
+				$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getFahrenheitValue(this.value);});
+				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getFahrenheitValue(this.value);});
+			} else {
+				$(".thermal_sensors_widget_unit").html('<?=gettext("&deg;F")?>');
+				$(".thermal_sensors_widget_range").html('<?=gettext("(1&ndash;100)")?>');
+				$("#thermal_sensors_widget_zone_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_zone_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_core_warning_threshold").val(function(){return getCelsiusValue(this.value);});
+				$("#thermal_sensors_widget_core_critical_threshold").val(function(){return getCelsiusValue(this.value);});
+			}
+		});
+		// --------------------- Centralized widget refresh system ------------------------------
 
-	// Callback function called by refresh system when data is retrieved
-	function ts_callback(s) {
+		// Callback function called by refresh system when data is retrieved
+		function ts_callback(s) {
 			var thermalSensorsData = s || "";
 			buildThermalSensorsData(thermalSensorsData, "<?=htmlspecialchars($widgetkey)?>", tsParams, true);
 			firstTime = false;
-	}
+		}
 
-	// POST data to send via AJAX
-	var postdata = {
-		ajax: "ajax",
-	 	getThermalSensorsData : "1"
-	 };
+		// POST data to send via AJAX
+		var postdata = {
+			ajax: "ajax",
+			getThermalSensorsData : "1"
+		 };
 
-	// Create an object defining the widget refresh AJAX call
-	var tsObject = new Object();
-	tsObject.name = "Gateways";
-	tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
-	tsObject.callback = ts_callback;
-	tsObject.parms = postdata;
-	tsObject.freq = 1;
+		// Create an object defining the widget refresh AJAX call
+		var tsObject = new Object();
+		tsObject.name = "Gateways";
+		tsObject.url = "/widgets/widgets/thermal_sensors.widget.php";
+		tsObject.callback = ts_callback;
+		tsObject.parms = postdata;
+		tsObject.freq = 1;
 
-	// Register the AJAX object
-	register_ajax(tsObject);
+		// Register the AJAX object
+		register_ajax(tsObject);
 
-	// ---------------------------------------------------------------------------------------------------
-
+		// ---------------------------------------------------------------------------------------------------
 	});
 //]]>
 </script>
@@ -224,7 +240,9 @@ if ($thermal_sensors_widget_showFahrenheit) {
 		<input type="hidden" name="widgetkey" value="<?=htmlspecialchars($widgetkey); ?>">
 		<?=gen_customwidgettitle_div($widgetconfig['title']); ?>
 		<div class="form-group">
-			<label class="col-sm-6 control-label"><?=gettext('Thresholds in')?> &deg;<?= ($thermal_sensors_widget_showFahrenheit) ? "F" : "C"; ?> <?=gettext(($thermal_sensors_widget_showFahrenheit) ? '(1 to 212)' : '(1 to 100):')?></label>
+			<label class="col-sm-6 control-label">
+				<?=sprintf(gettext('Thresholds in <span class="thermal_sensors_widget_unit">%s</span><br/><span class="thermal_sensors_widget_range">%s</span>'), $thermal_sensors_widget_showFahrenheit ? "F" : "C", $thermal_sensors_widget_showFahrenheit ? "(1-212)" : "(1-100)")?>
+			</label>
 		</div>
 
 		<div class="form-group">

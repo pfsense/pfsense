@@ -40,15 +40,16 @@ $icmptypes4 = array('any' => gettext('any'));
 $icmptypes6 = array('any' => gettext('any'));
 $icmptypes46 = array('any' => gettext('any'));
 
+// ICMP descriptions may be translated, so require escaping to handle single quotes (in particular)
 foreach ($icmptypes as $k => $v) {
 	if ($v['valid4']) {
-		$icmptypes4[$k] = $v['descrip'];
+		$icmptypes4[$k] = addslashes($v['descrip']);
 		if ($v['valid6']) {
-			$icmptypes6[$k] = $v['descrip'];
-			$icmptypes46[$k] = $v['descrip'];
+			$icmptypes6[$k] = addslashes($v['descrip']);
+			$icmptypes46[$k] = addslashes($v['descrip']);
 		}
 	} else {
-		$icmptypes6[$k] = $v['descrip'];
+		$icmptypes6[$k] = addslashes($v['descrip']);
 	}
 }
 

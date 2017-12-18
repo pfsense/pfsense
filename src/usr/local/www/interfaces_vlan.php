@@ -84,7 +84,7 @@ $tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 ?>
-<form action="interfaces_vlan_new_prof.php" method="post">
+<form action="interfaces_vlan.php" method="post">
 	<input id="act" type="hidden" name="act" value="" />
 	<input id="id" type="hidden" name="id" value=""/>
 

@@ -188,25 +188,11 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 			$newifname = gettext("lan");
 			$descr = gettext("LAN");
 		} else {
-			/*get first available OPT interface number. This code scales better than the foreach it replaces. 
-			* might not work if theres ifs other than 'wan','lan' and 'optx';
-			* The performance increase isn't substantial over the foreach; however as the number of OPT interfaces
-			* increases, so does the performance gain; from ~0.0003s improvement with 100 VLANs to ~0.0009s with 400.
-			* It is, however, marginally slower (~0.000036s at 50 VLANS) than the foreach with less than 100 VLANs, and 
-			* therefore may not be worth the loss of code readability or performance for the majority of use cases. */
-			$step1 = array_keys($config['interfaces']);
-			unset($step1['lan'],$step1['wan']);
-			$step2 = str_replace("opt","",$step1);
-			$step3 = array_fill(0,end($step2),'x');
-			$step4 = array_flip($step2);
-			$step5 = array_replace($step3,$step2);
-			$step6 = array_unique($step5);
-			$step7 = array_flip($step6);
-			if (isset($step7['x']))
-				$i = $step7['x'];
-			else
-				$i = count($config['interfaces'])-1;
-
+			for ($i = 1; $i <= count($config['interfaces']); $i++) {
+				if (!$config['interfaces']["opt{$i}"]) {
+					break;
+				}
+			}
 			$newifname = 'opt' . $i;
 			$descr = "OPT" . $i;
 		}

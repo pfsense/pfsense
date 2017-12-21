@@ -29,6 +29,84 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("util.inc");
 require_once("notices.inc");
+include_once("interfaces.inc");//required for convert_real_interface_to_friendly_interface_name() in get_queue_stats() to get altq interface name.
+
+function get_queue_stats() {
+	// due to sysutils\qstats not providing accurate stats with 'currently' valid numbers 
+	// in its current implementation this php function does the job for now..
+	$result = array();
+	$result['timestamp'] = gettimeofday(true);
+	$r = exec("/sbin/pfctl -s queue -v", $output, $ret);
+	$interfacestats = array();
+	foreach($output as $line) {
+		$partial = explode('{', $line);
+		$items = explode(" ", $partial[0]);
+		if (isset($partial[1])) {
+			$contains = explode(", ", substr($partial[1], 0, strlen($partial[1]) - 1));
+		} else {
+			unset($contains);
+		}
+		if ($items[0] == "queue") {
+			$level = 1;
+			while (empty($items[$level])) {
+				$level++;
+			}
+			unset($newqueue);
+			$newqueue = array();
+			$currentqueuename = $items[$level];
+			$currentqueueif = $items[$level+2];
+			$newqueue['name'] = $currentqueuename;
+			$newqueue['interface'] = $items[$level+2];
+			
+			if ($items[$level+3] == "bandwidth") {
+				$level += 2;
+			}
+			if ($items[$level+3] == "priority") {
+				$level += 2;
+			}
+			if ($items[$level+3] == "qlimit") {
+				$level += 2;
+			}
+			$tmp = $items[$level+3];
+			if (substr($tmp,strlen($tmp)-1) == "(") {
+				$newqueue['shapertype'] = substr($tmp, 0, strlen($tmp)-1);
+			}
+			
+			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
+			if (is_array($contains)) {
+				$newqueue['contains'] = $contains;
+			}
+		} elseif ($items[0] == "altq") {
+			unset($newqueue);
+			$newqueue = array();
+			$currentqueuename = convert_real_interface_to_friendly_interface_name($items[2]);
+			$currentqueueif = $items[2];
+			$newqueue['name'] = $currentqueuename;
+			$newqueue['interface'] = $items[2];
+			$interfacestats[$currentqueueif][$currentqueuename] = &$newqueue;
+		} else {
+			if ($items[3] == "pkts:") {
+				$newqueue["pkts"] = trim(substr($line, 10, 10));
+				$newqueue["bytes"] = trim(substr($line, 29, 10));
+				$newqueue["droppedpkts"] = trim(substr($line, 55, 6));
+				$newqueue["droppedbytes"] = trim(substr($line, 69, 6));
+			}
+			if ($items[3] == "qlength:") {
+				$subitems = explode("/", substr($line, 13, 8));
+				$newqueue["qlengthitems"] = trim($subitems[0]);
+				$newqueue["qlengthsize"] = trim($subitems[1]);
+				if (substr($line, 22, 8) == "borrows:") {
+					$newqueue["borrows"] = trim(substr($line, 31, 7));
+				}
+				if (substr($line, 39, 9) == "suspends:") {
+					$newqueue["suspends"] = trim(substr($line, 49, 7));
+				}
+			}
+		}
+	}
+	$result['interfacestats'] = $interfacestats;
+	return $result;
+}
 
 /*
  * I admit :) this is derived from xmlparse.inc StartElement()

@@ -294,7 +294,7 @@ if ($_POST) {
 		}
 	}
 }
-$use_mfs_tmpvar_after = $pconfig['use_mfs_tmpvar'];
+$use_mfs_tmpvar_after = isset($pconfig['use_mfs_tmpvar']) ? true : false;
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 $pglinks = array("", "system_advanced_admin.php", "@self");

@@ -2571,11 +2571,7 @@ function system_identify_specific_platform() {
 
 	$_gb = exec('/bin/kenv uboot.boardpn 2>/dev/null', $boardpn);
 	$_gb = exec('/bin/kenv uboot.boardrev 2>/dev/null', $boardrev);
-/*
- * XXX - Update the board revision
- *	if (strpos($hw_model, "Cortex-A9") !== false && $boardrev[0] === "R100" &&
- *	    strpos($boardpn[0], "80500-0148-G") !== false) {
- */
+
 	if (strpos($hw_model, "Cortex-A9") !== false &&
 	    strpos($boardpn[0], "80500-0148-G") !== false) {
 		return array('name' => 'ROGUE-1', 'descr' => gettext('Netgate SG-3100'));

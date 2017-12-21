@@ -545,7 +545,10 @@ function netgate_hardware_setup() {
 	case 'ROGUE-1':
 		$config['interfaces']['wan']['if'] = 'mvneta2';
 		$config['interfaces']['lan']['if'] = 'mvneta1';
-		$config['interfaces']['opt1']['if'] = 'mvneta0';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'mvneta0',
+			'descr' => 'OPT1'
+		);
 		break;
 	case 'RCC-VE':
 	case 'RCC-DFF':

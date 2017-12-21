@@ -510,6 +510,14 @@ function netgate_hardware_setup() {
 
 	/* Determine interfaces */
 	switch ($platform['name']) {
+	case 'PLCC-B':
+		$config['interfaces']['wan']['if'] = 'ix0';
+		$config['interfaces']['lan']['if'] = 'ix2';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'ix1',
+			'descr' => 'OPT1'
+		);
+		break;
 	case 'C2758':
 		$config['interfaces']['wan']['if'] = 'igb0';
 		$config['interfaces']['lan']['if'] = 'igb1';
@@ -683,6 +691,28 @@ function netgate_hardware_setup() {
 			'if' => 'ix1',
 			'descr' => 'OPT4'
 		);
+		break;
+	}
+
+	/* Enable Thermal sensors */
+	switch ($platform['name']) {
+	case 'PLCC-B':
+	case 'RCC':
+	case 'RCC-VE':
+	case 'RCC-DFF':
+	case 'XG-1540':
+		$config['system']['thermal_hardware'] = "coretemp";
+		break;
+	}
+
+	/* Enable AESNI */
+	switch ($platform['name']) {
+	case 'PLCC-B':
+	case 'RCC':
+	case 'RCC-VE':
+	case 'RCC-DFF':
+	case 'XG-1540':
+		$config['system']['crypto_hardware'] = "aesni_cryptodev";
 		break;
 	}
 

@@ -2286,6 +2286,7 @@ function system_setup_sysctl() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case 'PLCC-B':
 	case 'ROGUE-1':
 	case 'uFW':
 		set_single_sysctl("hw.intr_storm_threshold", "0");
@@ -2484,6 +2485,9 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	switch ($product[0]) {
+		case '80300-0134-G00':
+			return (array('name' => 'PLCC-B', 'descr' => 'Netgate PLCC-B'));
+			break;
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
 			break;

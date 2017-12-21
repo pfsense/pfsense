@@ -22,6 +22,34 @@
 /* include all configuration functions */
 require_once("globals.inc");
 
+function switch_plcc_get_system_vlans($dot1q_only) {
+
+	/* Only one switch on PLCC-B. */
+	$swdevices = switch_get_devices();
+	if (!is_array($swdevices)) {
+		return (NULL);
+	}
+	$swdevice = $swdevices[0];
+	$swinfo = pfSense_etherswitch_getinfo($swdevice);
+	if ($swinfo == NULL) {
+		return (NULL);
+	}
+	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
+		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
+		if ($vgroup == NULL) {
+			continue;
+		}
+		if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
+			$vgroup['switchname'] = $swinfo['name'];
+			$vlans[] = $vgroup;
+		} elseif (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" && $vgroup['vid'] == 1) {
+			$vgroup['switchname'] = $swinfo['name'];
+			$vlans[] = $vgroup;
+		}
+	}
+	return ($vlans);
+}
+
 function switch_r1_get_system_vlans($dot1q_only) {
 
 	/* Only one switch on SG-3100. */
@@ -102,6 +130,9 @@ function switch_get_system_vlans($dot1q_only = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "PLCC-B":
+		return (switch_plcc_get_system_vlans($dot1q_only));
+		break;
 	case "ROGUE-1":
 		return (switch_r1_get_system_vlans($dot1q_only));
 		break;
@@ -116,6 +147,19 @@ function switch_get_system_vlans($dot1q_only = false) {
 function switch_ufw_map_port($port) {
 
 	$ports = array("host", "cpsw0", "cpsw1");
+
+	if ($port < 0)
+		$port = 0;
+	if ($port >= count($ports))
+		$port = count($ports) - 1;
+
+	return ($ports[$port]);
+}
+
+function switch_plcc_map_port($port) {
+
+	$ports = array("lan0", "LAN 1", "LAN 2", "LAN 3", "LAN 4", "LAN 5",
+	    "LAN 6", "LAN 7", "LAN 8", "LAN Uplink 1", "LAN Uplink 2");
 
 	if ($port < 0)
 		$port = 0;
@@ -141,6 +185,9 @@ function switch_map_port($port) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "PLCC-B":
+		return (switch_plcc_map_port($port));
+		break;
 	case "ROGUE-1":
 		return (switch_r1_map_port($port));
 		break;
@@ -160,6 +207,7 @@ function switch_get_devices() {
 		return ($swdevices);
 
 	switch ($platform['name']) {
+	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
 		/* Only one switch. */
@@ -177,6 +225,9 @@ function switch_get_title() {
 		return ("");
 
 	switch ($platform['name']) {
+	case "PLCC-B":
+		return ("PLCC-B");
+		break;
 	case "ROGUE-1":
 		return ("SG-3100");
 		break;
@@ -379,6 +430,7 @@ function switches_configure() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
 		break;

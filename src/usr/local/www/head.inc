@@ -272,6 +272,7 @@ if (!isset($config['system']['webgui']['noassigninterfaces'])) {
 $platform = system_identify_specific_platform();
 
 switch ($platform['name']) {
+	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
 		$interfaces_top[] = array(gettext("Switches"), "/switch_system.php");

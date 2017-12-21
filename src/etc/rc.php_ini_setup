@@ -265,10 +265,22 @@ EOF
 
 
 PHPFPMMAX=3
+PHPFPMIDLE=30
+PHPFPMSTART=1
+PHPFPMSPARE=2
+PHPFPMREQ=500
 if [ $REALMEM -lt 250 ]; then
 	PHPFPMMAX=2
+       PHPFPMIDLE=5
+       PHPFPMSTART=1
+       PHPFPMSPARE=1
+       PHPFPMREQ=500
 elif [ ${REALMEM} -gt 1000 ]; then
-	PHPFPMMAX=4
+       PHPFPMMAX=8
+       PHPFPMIDLE=3600
+       PHPFPMSTART=2
+       PHPFPMSPARE=7
+       PHPFPMREQ=5000				 
 fi
 
 /bin/cat > /usr/local/lib/php-fpm.conf <<EOF
@@ -305,21 +317,22 @@ if [ $REALMEM -lt 350 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = ondemand
-pm.process_idle_timeout = 5
+pm.process_idle_timeout = $PHPFPMIDLE
 pm.max_children = $PHPFPMMAX
-pm.max_requests = 500
+pm.max_requests = $PHPFPMREQ
 EOF
 
 elif [ $REALMEM -gt 1000 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = dynamic
-pm.process_idle_timeout = 5
+pm.process_idle_timeout = $PHPFPMIDLE
 pm.max_children = $PHPFPMMAX
-pm.start_servers = 1
-pm.max_requests = 500
+pm.start_servers = $PHPFPMSTART
+pm.max_requests = $PHPFPMREQ
 pm.min_spare_servers=1
-pm.max_spare_servers=1
+pm.max_spare_servers= $PHPFPMSPARE
+
 EOF
 else
 
@@ -327,7 +340,7 @@ else
 
 pm = static
 pm.max_children = $PHPFPMMAX
-pm.max_requests = 500
+pm.max_requests = $PHPFPMREQ
 EOF
 
 fi

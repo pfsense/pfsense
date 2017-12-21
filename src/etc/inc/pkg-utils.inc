@@ -612,6 +612,18 @@ function uninstall_package($package_name) {
 	update_status(gettext("done.") . "\n");
 }
 
+function reinstall_package($package_name) {
+	global $config, $g;
+
+	$internal_name = $package_name;
+	$id = get_package_id($package_name);
+	if ($id >= 0) {
+		$internal_name = get_package_internal_name($config['installedpackages']['package'][$id]);
+	}
+	$pkg_name = $g['pkg_prefix'] . $internal_name;
+	pkg_install($pkg_name);
+}
+
 /* Run <custom_php_resync_config_command> */
 function sync_package($package_name) {
 	global $config, $builder_package_install;
@@ -654,7 +666,7 @@ function sync_package($package_name) {
 		} else {
 			log_error(sprintf(gettext('Reinstalling package %1$s because its include file(%2$s) is missing!'), $package['name'], $include_file));
 			uninstall_package($package['name']);
-			if (install_package($package['name']) != 0) {
+			if (reinstall_package($package['name']) != 0) {
 				log_error(sprintf(gettext("Reinstalling package %s failed. Take appropriate measures!!!"), $package['name']));
 				return;
 			}

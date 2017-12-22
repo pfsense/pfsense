@@ -45,6 +45,13 @@ function hideGroupInput(id, hide) {
 		$('#' + id).parent('div').removeClass('hidden');
 }
 
+function invisibleGroupInput(id, hide) {
+	if (hide)
+		$('#' + id).addClass('invisible');
+	else
+		$('#' + id).removeClass('invisible');
+}
+
 // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 function hideCheckbox(id, hide) {
 	if (hide)

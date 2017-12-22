@@ -805,52 +805,64 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
 
 $form->add($section);
-$section = new Form_Section('NOTITLE');
+
+$rowcount = count($pconfig['encryption']['item']);
+$section = new Form_Section('Phase 1 Proposal (Encryption Algorithm)');
 foreach($pconfig['encryption']['item'] as $key => $p1enc) {
-	$li = new Form_ListItem("");
-	$group = new Form_Group('*Encryption Algorithm');
+	$lastrow = ($counter == $rowcount - 1);
+	$group = new Form_Group($counter == 0 ? '*Encryption Algorithm' : '');
+	$group->addClass("repeatable");
+	
 	$group->add(new Form_Select(
 		'ealgo_algo'.$key,
 		null,
 		$p1enc['encryption-algorithm']['name'],
 		build_eal_list()
-	));
+	))->setHelp($lastrow ? 'Algorithm' : '');
+	
 	$group->add(new Form_Select(
 		'ealgo_keylen'.$key,
 		null,
 		$p1enc['encryption-algorithm']['keylen'],
 		array()
-	));
-	$li->add($group);
+	))->setHelp($lastrow ? 'Key lenght' : '');
 
-	$li->add(new Form_Select(
+	$group->add(new Form_Select(
 		'halgo'.$key,
 		'*Hash Algorithm',
 		$p1enc['hash-algorithm'],
 		$p1_halgos
-	))->setHelp('Must match the setting chosen on the remote side.');
+	))->setHelp($lastrow ? 'Hash' : '');
 
-	$li->add(new Form_Select(
+	$group->add(new Form_Select(
 		'dhgroup'.$key,
 		'*DH Group',
 		$p1enc['dhgroup'],
 		$p1_dhgroups
-	))->setHelp('Must match the setting chosen on the remote side.');
+	))->setHelp($lastrow ? 'DH Group' : '');
+	
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
-	$li->enableDuplication(null);
-	$section->add($li);
+	$section->add($group);
+	$counter += 1;
 }
 $form->add($section);
 
-$section = new Form_Section('NOTITLE');
 $btnaddopt = new Form_Button(
 	'algoaddrow',
-	'Add Encryption Settings',
+	'Add Algorithm',
 	null,
 	'fa-plus'
 );
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$section->addInput($btnaddopt);
 
+$section = new Form_Section('NOTITLE');
 $section->addInput(new Form_Input(
 	'lifetime',
 	'*Lifetime (Seconds)',
@@ -1000,7 +1012,7 @@ events.push(function() {
 			id = getStringInt(this.id);
 			ealgosel_change(id, '');
 		});
-	
+		$(lastRepeatableGroup).find('[id^=ealgo_algo]select').change();
 	});
 
 	function myidsel_change() {
@@ -1088,7 +1100,7 @@ events.push(function() {
 		if (is_array($algodata['keysel'])) {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen'+id, false);
+				invisibleGroupInput('ealgo_keylen'+id, false);
 <?php
 			$key_hi = $algodata['keysel']['hi'];
 			$key_lo = $algodata['keysel']['lo'];
@@ -1105,7 +1117,7 @@ events.push(function() {
 		} else {
 ?>
 			case '<?=$i?>':
-				hideGroupInput('ealgo_keylen'+id, true);
+				invisibleGroupInput('ealgo_keylen'+id, true);
 			break;
 <?php
 		}

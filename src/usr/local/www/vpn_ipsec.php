@@ -344,11 +344,7 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 						}
 						echo $p1_ealgos[$p1algo['encryption-algorithm']['name']]['name'];
 						if ($p1algo['encryption-algorithm']['keylen']) {
-							if ($p1algo['encryption-algorithm']['keylen'] == "auto") {
-								echo " (" . gettext("auto") . ")";
-							} else {
-								echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
-							}
+							echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
 						}
 						$first = false;
 					}

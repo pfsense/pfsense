@@ -154,6 +154,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkeyalgorithm'] = $config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'];
 	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	$pconfig['ddnsforcehostname'] = isset($config['dhcpdv6'][$if]['ddnsforcehostname']);
@@ -316,18 +317,17 @@ if (isset($_POST['apply'])) {
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 	}
-	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
+	if ($_POST['ddnsupdate'] && !is_domain($_POST['ddnsdomain'])) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 	}
-	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
+	if ($_POST['ddnsupdate'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])) {
 		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
 	}
-	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-		($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
-		$input_errors[] = gettext("Both a valid domain key and key name must be specified.");
+	if ($_POST['ddnsupdate'] && (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey'])) {
+		$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
 	}
 	if ($_POST['domainsearchlist']) {
-		$domain_array=preg_split("/[ ;]+/", $_POST['domainsearchlist']);
+		$domain_array = preg_split("/[ ;]+/", $_POST['domainsearchlist']);
 		foreach ($domain_array as $curdomain) {
 			if (!is_domain($curdomain)) {
 				$input_errors[] = gettext("A valid domain search list must be specified.");
@@ -453,6 +453,7 @@ if (isset($_POST['apply'])) {
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpdv6'][$if]['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$config['dhcpdv6'][$if]['ddnsdomainkeyalgorithm'] = $_POST['ddnsdomainkeyalgorithm'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
@@ -786,7 +787,7 @@ $section->addInput(new Form_Input(
 	'DDNS Domain',
 	'text',
 	$pconfig['ddnsdomain']
-))->setHelp('Leave blank to disable dynamic DNS registration. Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
+))->setHelp('Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_Checkbox(
 	'ddnsforcehostname',
@@ -808,6 +809,20 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ddnsdomainkeyname']
 ))->setHelp('Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Select(
+	'ddnsdomainkeyalgorithm',
+	'Key algorithm',
+	$pconfig['ddnsdomainkeyalgorithm'],
+	array(
+		'hmac-md5' => 'HMAC-MD5 (legacy default)',
+		'hmac-sha1' => 'HMAC-SHA1',
+		'hmac-sha224' => 'HMAC-SHA224',
+		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+		'hmac-sha384' => 'HMAC-SHA384',
+		'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+	)
+));
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
@@ -1093,6 +1108,7 @@ events.push(function() {
 			    empty($pconfig['ddnsdomain']) &&
 			    empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) &&
+			    empty($pconfig['ddnsdomainkeyalgorithm']) &&
 			    empty($pconfig['ddnsdomainkey']) &&
 			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
 			    !$pconfig['ddnsreverse']) {
@@ -1112,6 +1128,7 @@ events.push(function() {
 		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
+		hideInput('ddnsdomainkeyalgorithm', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
 		hideInput('ddnsclientupdates', !showadvdns);
 		hideCheckbox('ddnsreverse', !showadvdns);

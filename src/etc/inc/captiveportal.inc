@@ -1192,6 +1192,7 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 }
 
 function captiveportal_passthrumac_delete_entry($macent) {
+	global $cpzone;
 	$rules = "";
 
 	if ($macent['action'] == 'pass') {

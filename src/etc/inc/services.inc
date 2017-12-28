@@ -2532,9 +2532,10 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		}
 
 		/* write key file */
+		$algorithm = empty($dnsupdate['keyalgorithm']) ? 'hmac-md5' : $dnsupdate['keyalgorithm'];
 		$upkey = <<<EOD
 key "{$keyname}" {
-	algorithm hmac-md5;
+	algorithm {$algorithm};
 	secret "{$dnsupdate['keydata']}";
 };
 

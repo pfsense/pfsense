@@ -45,8 +45,8 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	if (!$pconfig['ttl']) {
 		$pconfig['ttl'] = 60;
 	}
-	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
+	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
@@ -155,8 +155,6 @@ $section->addInput(new Form_Checkbox(
 	null,
 	$pconfig['enable']
 ));
-
-$optionlist = array();
 
 $iflist = build_if_list();
 

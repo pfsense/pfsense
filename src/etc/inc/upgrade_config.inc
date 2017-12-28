@@ -5494,6 +5494,17 @@ function upgrade_172_to_173() {
 }
 
 /*
+ * Delete old Dynamic DNS dnssec-keygen style files,
+ * they are replaced with a simpler single ddns-confgen style file.
+ */
+function upgrade_173_to_174() {
+	global $g;
+
+	unlink_if_exists("{$g['varetc_path']}/K*+157+00000.key");
+	unlink_if_exists("{$g['varetc_path']}/K*+157+00000.private");
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

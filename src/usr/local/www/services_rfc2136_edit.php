@@ -47,10 +47,6 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	}
 	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
-	$pconfig['keytype'] = $a_rfc2136[$id]['keytype'];
-	if (!$pconfig['keytype']) {
-		$pconfig['keytype'] = "zone";
-	}
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
@@ -92,7 +88,6 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136['host'] = $_POST['host'];
 		$rfc2136['ttl'] = $_POST['ttl'];
 		$rfc2136['keyname'] = $_POST['keyname'];
-		$rfc2136['keytype'] = $_POST['keytype'];
 		$rfc2136['keydata'] = $_POST['keydata'];
 		$rfc2136['server'] = $_POST['server'];
 		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
@@ -192,34 +187,6 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['keyname']
 ))->setHelp('This must match the setting on the DNS server.');
-
-$group = new Form_Group('*Key Type');
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Zone',
-	($pconfig['keytype'] == 'zone'),
-	'zone'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'Host',
-	($pconfig['keytype'] == 'host'),
-	'host'
-))->displayAsRadio();
-
-$group->add(new Form_Checkbox(
-	'keytype',
-	'Key Type',
-	'User',
-	($pconfig['keytype'] == 'user'),
-	'user'
-))->displayAsRadio();
-
-$section->add($group);
 
 $section->addInput(new Form_Input(
 	'keydata',

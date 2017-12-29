@@ -513,6 +513,10 @@ function netgate_hardware_setup() {
 	case 'PLCC-B':
 		$config['interfaces']['wan']['if'] = 'ix0';
 		$config['interfaces']['lan']['if'] = 'ix2';
+		$config['interfaces']['lan2'] = array(
+			'if' => 'ix3',
+			'descr' => 'LAN2'
+		);
 		$config['interfaces']['opt1'] = array(
 			'if' => 'ix1',
 			'descr' => 'OPT1'

@@ -809,7 +809,8 @@ EOD;
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
 					$lansa = gen_subnet($lanip, $lansn);
-					$ipsecconf .= <<<EOD
+					if (!empty($lansa) && !empty($lansn)) {
+						$ipsecconf .= <<<EOD
 
 conn bypasslan
 	leftsubnet = {$lansa}/{$lansn}
@@ -819,6 +820,7 @@ conn bypasslan
 	auto = route
 
 EOD;
+					}
 				}
 			}
 		}

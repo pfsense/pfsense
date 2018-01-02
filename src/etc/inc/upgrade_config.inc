@@ -5494,14 +5494,15 @@ function upgrade_172_to_173() {
 }
 
 /*
- * Delete old Dynamic DNS dnssec-keygen style files,
- * they are replaced with a simpler single ddns-confgen style file.
+ * Dynamic DNS nsupdate keyfiles have been replaced with a simpler ddns-confgen style file.
  */
 function upgrade_173_to_174() {
-	global $g;
+	global $config;
 
-	unlink_if_exists("{$g['varetc_path']}/K*+157+00000.key");
-	unlink_if_exists("{$g['varetc_path']}/K*+157+00000.private");
+	/* Remove unused keytype field. */
+	foreach ($config['dnsupdates']['dnsupdate'] as $i => &$dnsupdate) {
+		unset($dnsupdate['keytype']);
+	}
 }
 
 /*

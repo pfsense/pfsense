@@ -1,0 +1,14 @@
+devel/aws-sdk-php
+sysutils/pfSense-azure
+sysutils/azure-agent
+sysutils/pfSense-ec2_setup
+sysutils/vm-bhyve
+sysutils/flashrom
+sysutils/%%PRODUCT_NAME%%-builder
+sysutils/xe-guest-utilities
+emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
+sysutils/%%PRODUCT_NAME%%-pkg-blinkled
+sysutils/%%PRODUCT_NAME%%-pkg-gwled
+sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
+sysutils/%%PRODUCT_NAME%%-pkg-Netgate_Coreboot_Upgrade
+net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf

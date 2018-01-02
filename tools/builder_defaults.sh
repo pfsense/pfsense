@@ -138,6 +138,7 @@ export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 if [ -z "${MODULES_OVERRIDE}" ]; then
 	export MODULES_OVERRIDE_armv6="cryptodev i2c ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf hwpmc"
 	export MODULES_OVERRIDE_amd64="${MODULES_OVERRIDE_armv6} aesni amdtemp coretemp ipmi linuxkpi ndis vmm sfxge nmdm ix ixv ichwd udf ena"
+	export MODULES_OVERRIDE_aarch64="${MODULES_OVERRIDE_armv6}"
 	export MODULES_OVERRIDE="${MODULES_OVERRIDE_amd64}"
 fi
 

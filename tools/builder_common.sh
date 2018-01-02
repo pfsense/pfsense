@@ -1295,7 +1295,9 @@ setup_pkg_repo() {
 		${_template} \
 		> ${_target}
 
-	if [ "${_target_arch}" = "amd64" ]; then
+	if [ "${_target_arch}" = "aarch64" ]; then
+		ALTABI_ARCH="aarch64:64"
+	elif [ "${_target_arch}" = "amd64" ]; then
 		ALTABI_ARCH="x86:64"
 	elif [ "${_target_arch}" = "i386" ]; then
 		ALTABI_ARCH="x86:32"
@@ -1706,7 +1708,7 @@ poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs=""
 
-	# If host is amd64, we'll create both repos, and if possible armv6
+	# If host is amd64, we'll create both repos, and if possible arm64 and armv6
 	if [ "${_arch}" = "amd64" ]; then
 		_archs="amd64.amd64"
 
@@ -1716,6 +1718,15 @@ poudriere_possible_archs() {
 
 			if binmiscctl lookup armv6 >/dev/null 2>&1; then
 				_archs="${_archs} arm.armv6"
+			fi
+		fi
+
+		if [ -f /usr/local/bin/qemu-aarch64-static ]; then
+			# Make sure binmiscctl is ok
+			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
+
+			if binmiscctl lookup aarch64 >/dev/null 2>&1; then
+				_archs="${_archs} arm64.aarch64"
 			fi
 		fi
 	fi
@@ -1941,7 +1952,7 @@ EOF
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv6" -o "${jail_arch}" = "arm64.aarch64" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""
@@ -1979,7 +1990,7 @@ poudriere_update_jails() {
 			_create_or_update_text="Creating"
 		fi
 
-		if [ "${jail_arch}" = "arm.armv6" ]; then
+		if [ "${jail_arch}" = "arm.armv6" -o "${jail_arch}" = "arm64.aarch64" ]; then
 			native_xtools="-x"
 		else
 			native_xtools=""

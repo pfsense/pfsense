@@ -1093,7 +1093,7 @@ function cert_add_altname_type($str) {
 	if (!empty($type)) {
 		return "{$type}:" . cert_escape_x509_chars($str);
 	} else {
-		return "";
+		return null;
 	}
 }
 

@@ -28,6 +28,15 @@
 
 require_once("guiconfig.inc");
 
+$tsig_key_algos = array(
+	'hmac-md5'    => 'HMAC-MD5 (legacy default)',
+	'hmac-sha1'   => 'HMAC-SHA1',
+	'hmac-sha224' => 'HMAC-SHA224',
+	'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
+	'hmac-sha384' => 'HMAC-SHA384',
+	'hmac-sha512' => 'HMAC-SHA512 (most secure)',
+);
+
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
 }
@@ -66,21 +75,22 @@ if ($_POST['save'] || $_POST['force']) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = array();
-	$reqdfieldsn = array();
-	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
-	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key")));
+	$reqdfields = array('host', 'ttl', 'keyname', 'keydata');
+	$reqdfieldsn = array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host']))) {
+	if ($_POST['host'] && !is_domain($_POST['host'])) {
 		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	}
-	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) {
+	if ($_POST['ttl'] && !is_numericint($_POST['ttl'])) {
 		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	}
-	if (($_POST['keyname'] && !is_domain($_POST['keyname']))) {
+	if ($_POST['keyname'] && !is_domain($_POST['keyname'])) {
 		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
+	}
+	if ($_POST['keyalgorithm'] && !array_key_exists($_POST['keyalgorithm'], $tsig_key_algos)) {
+		$input_errors[] = gettext("The DNS update key algorithm is invalid.");
 	}
 
 	if (!$input_errors) {
@@ -192,14 +202,7 @@ $section->addInput(new Form_Select(
 	'keyalgorithm',
 	'*Key algorithm',
 	$pconfig['keyalgorithm'],
-	array(
-		'hmac-md5' => 'HMAC-MD5 (legacy default)',
-		'hmac-sha1' => 'HMAC-SHA1',
-		'hmac-sha224' => 'HMAC-SHA224',
-		'hmac-sha256' => 'HMAC-SHA256 (current bind9 default)',
-		'hmac-sha384' => 'HMAC-SHA384',
-		'hmac-sha512' => 'HMAC-SHA512 (most secure)',
-	)
+	$tsig_key_algos
 ));
 
 $section->addInput(new Form_Input(

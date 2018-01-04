@@ -5494,6 +5494,18 @@ function upgrade_172_to_173() {
 }
 
 /*
+ * Dynamic DNS nsupdate keyfiles have been replaced with a simpler ddns-confgen style file.
+ */
+function upgrade_173_to_174() {
+	global $config;
+
+	/* Remove unused keytype field. */
+	foreach ($config['dnsupdates']['dnsupdate'] as $i => &$dnsupdate) {
+		unset($dnsupdate['keytype']);
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

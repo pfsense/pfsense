@@ -108,7 +108,14 @@ if (($argc > 1) && !empty($argv[1])) {
 			$message = easyrule_parse_getblock($argv[2]);
 			break;
 		case 'pass':
-			$message = easyrule_parse_pass($argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
+		    if (is_string($argv[6])){
+			    $message = easyrule_parse_pass($argv[2], $argv[3], $argv[4], $argv[5], 0, $argv[6]);
+			} elseif ($argc > 7){
+			    $message = easyrule_parse_pass($argv[2], $argv[3], $argv[4], $argv[5], $argv[6], $argv[7]);
+			} else {
+			    $message = easyrule_parse_pass($argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
+			}
+
 			break;
 	}
 	echo $message . "\n";
@@ -119,7 +126,7 @@ if (($argc > 1) && !empty($argv[1])) {
 	echo "     " . basename($argv[0]) . " block <interface> <source IP>\n";
 	echo "\n";
 	echo " Passing requires more detail, as it must be as specific as possible. The destination port is optional if you're using a protocol without a port (e.g. ICMP, OSPF, etc).\n";
-	echo "     " . basename($argv[0]) . " pass <interface> <protocol> <source IP> <destination ip> [destination port]\n";
+	echo "     " . basename($argv[0]) . " pass <interface> <protocol> <source IP> <destination ip> [destination port] [\"this is a desc\"]\n";
 	echo "\n";
 	echo " Block example:\n";
 	echo "     " . basename($argv[0]) . " block wan 1.2.3.4\n";

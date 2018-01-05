@@ -209,7 +209,7 @@ foreach ($a_schedules as $schedule):
 			}
 
 			$timeFriendly = $starttime . "-" . $stoptime;
-			$description = $timerange['rangedescr'];
+			$description = htmlspecialchars($timerange['rangedescr']);
 
 			print(($first ? '':'<br />') . $dayFriendly . ' / ' . $timeFriendly . ' / ' . $description);
 		}

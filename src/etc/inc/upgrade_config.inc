@@ -5499,6 +5499,10 @@ function upgrade_172_to_173() {
 function upgrade_173_to_174() {
 	global $config;
 
+	/* Stop if there is nothing to do. */
+	if (!is_array($config['dnsupdates']['dnsupdate'])) {
+		return;
+	}
 	/* Remove unused keytype field. */
 	foreach ($config['dnsupdates']['dnsupdate'] as $i => &$dnsupdate) {
 		unset($dnsupdate['keytype']);

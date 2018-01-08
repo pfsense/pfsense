@@ -3,7 +3,7 @@
  * system_certmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -449,7 +449,12 @@ if ($_POST['save']) {
 					if (!empty($pconfig['dn_organizationalunit'])) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['dn_organizationalunit']);
 					}
-					$altnames_tmp = array(cert_add_altname_type($pconfig['dn_commonname']));
+
+					$altnames_tmp = array();
+					$cn_altname = cert_add_altname_type($pconfig['dn_commonname']);
+					if (!empty($cn_altname)) {
+						$altnames_tmp[] = $cn_altname;
+					}
 					if (count($altnames)) {
 						foreach ($altnames as $altname) {
 							// The CN is added as a SAN automatically, do not add it again.
@@ -484,7 +489,11 @@ if ($_POST['save']) {
 						$dn['organizationalUnitName'] = cert_escape_x509_chars($pconfig['csr_dn_organizationalunit']);
 					}
 
-					$altnames_tmp = array(cert_add_altname_type($pconfig['csr_dn_commonname']));
+					$altnames_tmp = array();
+					$cn_altname = cert_add_altname_type($pconfig['csr_dn_commonname']);
+					if (!empty($cn_altname)) {
+						$altnames_tmp[] = $cn_altname;
+					}
 					if (count($altnames)) {
 						foreach ($altnames as $altname) {
 							// The CN is added as a SAN automatically, do not add it again.

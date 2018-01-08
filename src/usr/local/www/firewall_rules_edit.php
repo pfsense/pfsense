@@ -3,7 +3,7 @@
  * firewall_rules_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -40,15 +40,18 @@ $icmptypes4 = array('any' => gettext('any'));
 $icmptypes6 = array('any' => gettext('any'));
 $icmptypes46 = array('any' => gettext('any'));
 
+// ICMP descriptions may be translated, so require escaping to handle single quotes (in particular)
 foreach ($icmptypes as $k => $v) {
+	$description = addslashes($v['descrip']);
+
 	if ($v['valid4']) {
-		$icmptypes4[$k] = $v['descrip'];
+		$icmptypes4[$k] = $description;
 		if ($v['valid6']) {
-			$icmptypes6[$k] = $v['descrip'];
-			$icmptypes46[$k] = $v['descrip'];
+			$icmptypes6[$k] = $description;
+			$icmptypes46[$k] = $description;
 		}
 	} else {
-		$icmptypes6[$k] = $v['descrip'];
+		$icmptypes6[$k] = $description;
 	}
 }
 
@@ -1666,7 +1669,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
 // Build the gateway lists in JSON so the selector can be populated in JS
-$gwjson = '[{"name":"Default", "gateway":"", "family":"inet46"}';
+$gwjson = '[{"name":"", "gateway":"Default", "family":"inet46"}';
 
 foreach (return_gateways_array() as $gwname => $gw) {
 	$gwjson = $gwjson . "," .'{"name":"' . $gwname . '", "gateway":"' .
@@ -1916,7 +1919,7 @@ events.push(function() {
 		}
 	}
 
-	// Populate teh "gateway" selector from a JSON array composed in the PHP
+	// Populate the "gateway" selector from a JSON array composed in the PHP
 	function updateGWselect() {
 		var selected = "<?=$gwselected?>";
 		var protocol = $('#ipprotocol').val();
@@ -1929,8 +1932,8 @@ events.push(function() {
 		json.forEach(function(gwobj) {
 			if (((gwobj.family == protocol) || (gwobj.family == "inet46")) && (protocol != "inet46")) {
 				$('#gateway').append($('<option>', {
-				    value: gwobj.gateway,
-				    text: gwobj.name
+				    text: gwobj.gateway,
+				    value: gwobj.name
 				}));
 			}
 		});

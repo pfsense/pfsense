@@ -3,7 +3,7 @@
  * status_filter_reload.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -166,7 +166,7 @@ if (typeof getURL == 'undefined') {
 	}
 }
 
-if ("<?=$_REQUEST['user']?>" != "true") {
+if ("<?=htmlspecialchars($_REQUEST['user'])?>" != "true") {
  	window.setTimeout('update_status_thread()', 1500);
  }
 //]]>

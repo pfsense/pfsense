@@ -3,7 +3,7 @@
  * guiconfig.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -25,6 +25,7 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
+header("X-Frame-Options: SAMEORIGIN");
 include_once('phpsessionmanager.inc');
 if (!$nocsrf) {
 	function csrf_startup() {
@@ -47,7 +48,6 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */

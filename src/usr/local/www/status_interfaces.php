@@ -3,7 +3,7 @@
  * status_interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -113,7 +113,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php
-		showDef(true, gettext("Status"), $ifinfo['status']);
+		showDef(true, gettext("Status"), $ifinfo['enable'] ? $ifinfo['status'] : gettext('disabled'));
 		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
 		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
 		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');

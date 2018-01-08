@@ -6,7 +6,7 @@
  * originally based on m0n0wall (http://m0n0.ch/wall)
  * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * Copyright (c) 2009 Erik Kristensen
- * Copyright (c) 2005-2016 Rubicon Communications, LLC (Netgate). All rights reserved.
+ * Copyright (c) 2005-2018 Rubicon Communications, LLC (Netgate). All rights reserved.
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -149,7 +149,12 @@ while (is_interface_mismatch() == true) {
 			interfaces_bring_up($iface);
 		}
 	}
-	set_networking_interfaces_ports();
+	if (set_networking_interfaces_ports() == -1) {
+		echo "\npfSense cannot continue without at least one Network Interface Card.\n";
+		echo "\nHalting the system.\n";
+		system("/sbin/shutdown -h now");
+		exit(0);
+	}
 	led_kitt();
 }
 
@@ -196,6 +201,16 @@ echo "done.\n";
 echo "Setting up interfaces microcode...";
 setup_microcode();
 echo "done.\n";
+
+/* remove leftover dhcp6c lock files if they exist */
+foreach ($config['interfaces'] as $interface) {
+        if ($interface['ipaddrv6'] == "dhcp6") {
+            if (file_exists("/tmp/dhcp6c_" . $interface['if'] . "_lock")) {
+                @unlink("/tmp/dhcp6c_" . $interface['if'] . "_lock");
+                echo("Removed leftover dhcp6c lock file: " . "/tmp/dhcp6c_" . $interface['if'] . "_lock\n");
+            }
+         }
+     }
 
 /* set up interfaces */
 if (!$debugging) {
@@ -386,5 +401,5 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
-
+notify_all_remote("Bootup complete");
 ?>

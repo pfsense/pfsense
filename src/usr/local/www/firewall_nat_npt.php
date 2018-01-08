@@ -3,7 +3,7 @@
  * firewall_nat_npt.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -241,6 +241,8 @@ endforeach;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
@@ -249,6 +251,7 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {

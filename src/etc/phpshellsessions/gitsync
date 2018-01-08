@@ -3,7 +3,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2010-2012 Erik Fonnesbeck
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ $GITSYNC_MERGE = "/root/.gitsync_merge";
 
 /* NOTE: Set branches here */
 $branches = array(
-	"master" => "2.4.1 development branch",
+	"master" => "2.4.3 development branch",
 	"build_commit" => "The commit originally used to build the image"
 );
 

@@ -3,7 +3,7 @@
  * interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -101,8 +101,6 @@ if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
 } else if ($if == "lan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "LAN";
-} else if ($if == "opt1" && !$wancfg['descr']) {
-	$wancfg['descr'] = "OPT1";
 }
 
 /* NOTE: The code here is used to set the $pppid for the curious */
@@ -3241,7 +3239,7 @@ $section->addInput(new Form_Checkbox(
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
 			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.%1$s' .
-			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.', '<br />');
+			'Note: The update frequency can be changed under System > Advanced, Firewall & NAT settings.', '<br />');
 
 $form->add($section);
 

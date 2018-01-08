@@ -2,7 +2,7 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -138,8 +138,11 @@ $(function() {
 				if (select.options.length < max) {
 					for (var i=select.options.length; i<=max; i++)
 						select.options.add(new Option(i, i), 0);
-					// Make sure index 0 is selected otherwise it will stay in "32" for V6
-					select.options.selectedIndex = "0";
+
+					if (isV6) {
+						// Make sure index 0 is selected otherwise it will stay in "32" for V6
+						select.options.selectedIndex = "0";
+					}
 				}
 			}
 		});

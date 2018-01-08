@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Bill Marquette
  * Copyright (c) 2006 Peter Allgeyer
- * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2008-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1899,12 +1899,12 @@ function filter_nat_rules_generate() {
 
 			$srcaddr = filter_generate_address($rule, 'source');
 			$dstaddr = filter_generate_address($rule, 'destination');
-			if (!$dstaddr) {
-				$dstaddr = $FilterIflist[$natif]['ip'];
-			}
-
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
+			
+			if (empty($srcaddr) || empty($dstaddr)) {
+				continue;
+			}
 
 			$tmp = explode('/', $srcaddr);
 			$srcip = $tmp[0];

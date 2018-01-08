@@ -3,7 +3,7 @@
  * openvpn_wizard.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,7 +71,7 @@ function step2_stepbeforeformdisplay() {
 		$found = true;
 		$opts = array();
 		$opts['name'] = $auth['name'];
-		$opts['value'] = $auth['name'];
+		$opts['value'] = $i;
 		$fields[1]['options']['option'][] = $opts;
 	}
 	if ($found == false) {
@@ -133,7 +133,7 @@ function step4_stepbeforeformdisplay() {
 		$found = true;
 		$opts = array();
 		$opts['name'] = $auth['name'];
-		$opts['value'] = $auth['name'];
+		$opts['value'] = $i;
 		$fields[1]['options']['option'][] = $opts;
 	}
 	if ($found == false)

@@ -3,7 +3,7 @@
  * system_usermanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * All rights reserved.
@@ -215,8 +215,8 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("The username contains invalid characters.");
 	}
 
-	if (strlen($_POST['usernamefld']) > 16) {
-		$input_errors[] = gettext("The username is longer than 16 characters.");
+	if (strlen($_POST['usernamefld']) > 32) {
+		$input_errors[] = gettext("The username is longer than 32 characters.");
 	}
 
 	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
@@ -415,9 +415,9 @@ if ($_POST['save']) {
 					'organizationName' => $subject[3]['v'],
 					'emailAddress' => $subject[4]['v'],
 					'commonName' => $userent['name']);
-				$altnames_tmp = array(cert_add_altname_type($userent['name']));
-				if (!empty($altnames_tmp)) {
-					$dn['subjectAltName'] = implode(",", $altnames_tmp);
+				$cn_altname = cert_add_altname_type($userent['name']);
+				if (!empty($cn_altname)) {
+					$dn['subjectAltName'] = $cn_altname;
 				}
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],

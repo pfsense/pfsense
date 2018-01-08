@@ -3,7 +3,7 @@
  * firewall_rules.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -954,6 +954,7 @@ events.push(function() {
 		$(this).removeClass().addClass("fa fa-anchor");
 	});
 
+<?php if(!isset($config['system']['webgui']['roworderdragging'])): ?>
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
@@ -971,6 +972,7 @@ events.push(function() {
 	});
 
 	$('table tbody.user-entries').show();
+<?php endif; ?>
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {

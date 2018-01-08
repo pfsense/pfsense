@@ -3,7 +3,7 @@
 # vpn-linkdown
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,6 @@
 # limitations under the License.
 
 # record logout
-/usr/bin/logger -p local3.info "logout,$1,$4,$5"
-/sbin/pfctl -i $1 -Fs
-/sbin/pfctl -K $4/32
+/usr/bin/logger -p local3.info "logout,$1,$5,$6"
+/sbin/pfctl -i $2 -Fs
+/sbin/pfctl -K $5/32

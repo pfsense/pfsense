@@ -3,7 +3,7 @@
  * diag_authentication.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,8 +82,8 @@ $form = new Form(false);
 
 $section = new Form_Section('Authentication Test');
 
-foreach (auth_get_authserver_list() as $auth_server) {
-	$serverlist[$auth_server['name']] = $auth_server['name'];
+foreach (auth_get_authserver_list() as $key => $auth_server) {
+	$serverlist[$key] = $auth_server['name'];
 }
 
 $section->addInput(new Form_Select(

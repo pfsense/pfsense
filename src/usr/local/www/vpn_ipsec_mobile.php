@@ -3,7 +3,7 @@
  * vpn_ipsec_mobile.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -442,8 +442,8 @@ $section = new Form_Section('Extended Authentication (Xauth)');
 
 $authServers = array();
 
-foreach (auth_get_authserver_list() as $authServer) {
-	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+foreach (auth_get_authserver_list() as $key => $authServer) {
+	$authServers[$key] = $authServer['name']; // Value == name
 }
 
 $section->addInput(new Form_Select(

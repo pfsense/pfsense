@@ -1,6 +1,6 @@
 #!/bin/sh
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2017 Rubicon Communications, LLC
+# Copyright (c) 2017-2018 Rubicon Communications, LLC
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

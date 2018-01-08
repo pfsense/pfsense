@@ -3,7 +3,7 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -507,6 +507,15 @@ foreach ($widgets as $widgetkey => $widgetconfig) {
 if (file_exists("{$g['cf_conf_path']}/copynotice_display")) {
 	require_once("{$g['www_path']}/copynotice.inc");
 	@unlink("{$g['cf_conf_path']}/copynotice_display");
+}
+
+/*
+ * Import the modal form used to display any HTML text a package may want to display
+ * on installation or removal
+ */
+$ui_notice = "/tmp/package_ui_notice";
+if (file_exists($ui_notice)) {
+	require_once("{$g['www_path']}/upgrnotice.inc");
 }
 ?>
 

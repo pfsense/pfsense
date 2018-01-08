@@ -3,7 +3,7 @@
  * system_authservers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -626,7 +626,7 @@ $group->add(new Form_Input(
 	'Query',
 	'text',
 	$pconfig['ldap_extended_query']
-))->setHelp('Example: &amp;(objectClass=inetOrgPerson)(mail=*@example.com)');
+))->setHelp('Example: memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com');
 
 $section->add($group);
 

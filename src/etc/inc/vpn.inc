@@ -3,7 +3,7 @@
  * vpn.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -809,7 +809,8 @@ EOD;
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");
 					$lansa = gen_subnet($lanip, $lansn);
-					$ipsecconf .= <<<EOD
+					if (!empty($lansa) && !empty($lansn)) {
+						$ipsecconf .= <<<EOD
 
 conn bypasslan
 	leftsubnet = {$lansa}/{$lansn}
@@ -819,6 +820,7 @@ conn bypasslan
 	auto = route
 
 EOD;
+					}
 				}
 			}
 		}
@@ -1633,8 +1635,8 @@ poes:
 	set mppc yes stateless
 
 	set iface group pppoe
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup-poes
+	set iface down-script /usr/local/sbin/vpn-linkdown-poes
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1837,9 +1839,10 @@ l2tps:
 
 	set ccp yes mppc
 
+	set iface name l2tp
 	set iface group l2tp
-	set iface up-script /usr/local/sbin/vpn-linkup
-	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface up-script /usr/local/sbin/vpn-linkup-l2tp
+	set iface down-script /usr/local/sbin/vpn-linkdown-l2tp
 	set iface disable on-demand
 	set iface enable proxy-arp
 

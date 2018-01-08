@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +74,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "17.3",
+	"latest_config" => "17.4",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -207,5 +207,5 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
-$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns");
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns", "cloudns", "godaddy", "godaddy-v6");
 ?>

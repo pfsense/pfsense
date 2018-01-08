@@ -3,7 +3,7 @@
  * pfsense-utils.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1493,6 +1493,7 @@ function get_interface_info($ifdescr) {
 		return;
 	}
 	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
+	$ifinfo['enable'] = isset($config['interfaces'][$ifdescr]['enable']);
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -2950,7 +2951,9 @@ function set_language() {
 function get_locale_list() {
 	$locales = array(
 		"bs" => gettext("Bosnian"),
+		"zh_CN" => gettext("Chinese"),
 		"zh_Hans_CN" => gettext("Chinese (Simplified, China)"),
+		"zh_HK" => gettext("Chinese (Hong Kong)"),
 		"zh_TW" => gettext("Chinese (Taiwan)"),
 		"nl" => gettext("Dutch"),
 		"en_US" => gettext("English"),
@@ -2958,6 +2961,7 @@ function get_locale_list() {
 		"de_DE" => gettext("German (Germany)"),
 		"nb" => gettext("Norwegian Bokmål"),
 		"pl" => gettext("Polish"),
+		"pt_PT" => gettext("Portuguese"),
 		"pt_BR" => gettext("Portuguese (Brazil)"),
 		"ru" => gettext("Russian"),
 		"es" => gettext("Spanish"),
@@ -2966,7 +2970,7 @@ function get_locale_list() {
 
 	// If the locales are sorted, the order changes depending on the language selected. If the user accidentally
 	// selects the wrong language, this makes it very difficult to guess the intended language. NOT sorting
-	// allows the user to remember that English (say) is the second on the list and to get back to it more easily
+	// allows the user to remember that English (say) is the seventh on the list and to get back to it more easily
 
 	//asort($locales);
 

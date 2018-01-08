@@ -3,7 +3,7 @@
  * captiveportal.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1192,6 +1192,7 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 }
 
 function captiveportal_passthrumac_delete_entry($macent) {
+	global $cpzone;
 	$rules = "";
 
 	if ($macent['action'] == 'pass') {
@@ -2103,8 +2104,9 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	} else {
 		$dwfaultbw_up = $dwfaultbw_down = 0;
 	}
-	$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-	$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+	/* pipe throughputs must always be an integer, enforce that restriction again here. */
+	$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+	$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
@@ -2249,8 +2251,9 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		} else {
 			$dwfaultbw_up = $dwfaultbw_down = 0;
 		}
-		$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-		$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+		/* pipe throughputs must always be an integer, enforce that restriction again here. */
+		$bw_up = round(!empty($attributes['bw_up']) ? intval($attributes['bw_up'])/1000 : $dwfaultbw_up, 0);
+		$bw_down = round(!empty($attributes['bw_down']) ? intval($attributes['bw_down'])/1000 : $dwfaultbw_down, 0);
 
 		if ($passthrumac) {
 			$mac = array();

@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
- * Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -246,6 +246,7 @@ EOF;
 	$port = (is_port($unboundcfg['port'])) ? $unboundcfg['port'] : "53";
 	$hide_identity = isset($unboundcfg['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($unboundcfg['hideversion']) ? "yes" : "no";
+	$ipv6_allow = isset($config['system']['ipv6allow']) ? "yes" : "no";
 	$harden_dnssec_stripped = isset($unboundcfg['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($unboundcfg['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($unboundcfg['prefetchkey']) ? "yes" : "no";
@@ -266,6 +267,15 @@ EOF;
 	$msg_cache_size = (!empty($unboundcfg['msgcachesize'])) ? $unboundcfg['msgcachesize'] : "4";
 	$verbosity = isset($unboundcfg['log_verbosity']) ? $unboundcfg['log_verbosity'] : 1;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
+
+	if (isset($unboundcfg['regovpnclients'])) {
+		$openvpn_clients_conf .=<<<EOD
+# OpenVPN client entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+EOD;
+	} else {
+		$openvpn_clients_conf = '';
+	}
 
 	// Set up forwarding if it is configured
 	if (isset($unboundcfg['forwarding'])) {
@@ -328,7 +338,7 @@ hide-identity: {$hide_identity}
 hide-version: {$hide_version}
 harden-glue: yes
 do-ip4: yes
-do-ip6: yes
+do-ip6: {$ipv6_allow}
 do-udp: yes
 do-tcp: yes
 do-daemonize: yes
@@ -377,6 +387,8 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
+
+{$openvpn_clients_conf}
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf

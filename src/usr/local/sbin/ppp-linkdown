@@ -3,7 +3,7 @@
 # ppp-linkdown
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,9 @@ if [ -f /tmp/${IF}up ] && [ -f /conf/${IF}.log ]; then
 	/usr/local/sbin/ppp-log-uptime.sh $seconds ${IF} &
 fi
 
-/etc/rc.kill_states ${IF} ${LOCAL_IP}
+if echo "${IF}" | /usr/bin/egrep -qv "ppp[0-9]+"; then
+	/etc/rc.kill_states ${IF} ${LOCAL_IP}
+fi
 
 if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
 	GW=`head -n 1 /tmp/${IF}_defaultgw`

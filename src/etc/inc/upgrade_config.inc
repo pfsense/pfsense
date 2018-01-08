@@ -3,7 +3,7 @@
  * upgrade_config.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -5490,6 +5490,22 @@ function upgrade_172_to_173() {
 
 		$config['ppps']['ppp'][$id]['ports'] = str_replace('_vlan', '.',
 		    $ppp['ports']);
+	}
+}
+
+/*
+ * Dynamic DNS nsupdate keyfiles have been replaced with a simpler ddns-confgen style file.
+ */
+function upgrade_173_to_174() {
+	global $config;
+
+	/* Stop if there is nothing to do. */
+	if (!is_array($config['dnsupdates']['dnsupdate'])) {
+		return;
+	}
+	/* Remove unused keytype field. */
+	foreach ($config['dnsupdates']['dnsupdate'] as $i => &$dnsupdate) {
+		unset($dnsupdate['keytype']);
 	}
 }
 

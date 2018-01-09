@@ -78,7 +78,7 @@ include("head.inc"); ?>
 	function killComplete(req) {
 		var values = req.responseText.split("|");
 		if (values[3] != "0") {
-			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
+	//		alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
 

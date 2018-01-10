@@ -510,6 +510,9 @@ function netgate_hardware_setup() {
 
 	/* Determine interfaces */
 	switch ($platform['name']) {
+	case 'A3700':
+		$config['interfaces']['lan']['if'] = 'mvneta0';
+		break;
 	case 'PLCC-B':
 		$config['interfaces']['wan']['if'] = 'ix0';
 		$config['interfaces']['lan']['if'] = 'ix2';

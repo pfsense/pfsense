@@ -39,7 +39,8 @@ if (!is_module_loaded("zfs.ko")) {
 	echo "    " . gettext("R/r: Reroot (Stop processes, remount disks, re-run startup sequence)") . "\n";
 }
 $platform = system_identify_specific_platform();
-if (($platform['name'] != "uFW") && ($platform['name'] != 'ROGUE-1')) {
+$no_options = array('A37XX', 'ROGUE-1', 'uFW');
+if (!in_array($platform['name'], $no_options)) {
 	echo "    " . gettext("S: Reboot into Single User Mode (requires console access!)") . "\n";
 	echo "    " . gettext("F: Reboot and run a filesystem check") . "\n";
 }

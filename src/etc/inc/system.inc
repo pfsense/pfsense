@@ -2286,6 +2286,7 @@ function system_setup_sysctl() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case 'A37XX':
 	case 'PLCC-B':
 	case 'ROGUE-1':
 	case 'uFW':
@@ -2537,6 +2538,9 @@ function system_identify_specific_platform() {
 			}
 			$result['descr'] = 'Netgate ' . $result['model'];
 			return $result;
+			break;
+		case 'mvebu_armada-37xx':
+			return (array('name' => 'A37XX', 'descr' => 'Marvell Armada 3700'));
 			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':

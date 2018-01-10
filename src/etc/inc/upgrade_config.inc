@@ -2064,13 +2064,6 @@ function upgrade_054_to_055() {
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
 
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
@@ -2783,14 +2776,6 @@ function upgrade_080_to_081() {
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
-
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 
@@ -3254,14 +3239,6 @@ function upgrade_095_to_096() {
 		"inpass6", "outpass6", "inblock6", "outblock6");
 	$rrddbpath = "/var/db/rrd";
 	$rrdtool = "/usr/local/bin/rrdtool";
-
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
 
 	/* Assume 2*10GigE for now */
 	$stream = 2500000000;
@@ -4647,14 +4624,6 @@ function upgrade_145_to_146() {
 	$awkcmd .= "    }\n";
 	$awkcmd .= "    print;\n";
 	$awkcmd .= "}'";
-
-	if (isset($config['system']['use_mfs_tmpvar'])) {
-		/* restore the databases, if we have one */
-		if (restore_rrd()) {
-			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
-		}
-	}
 
 	$databases = return_dir_as_array($rrddbpath, '/-quality\.rrd$/');
 	foreach ($databases as $database) {

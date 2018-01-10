@@ -950,6 +950,15 @@ function openvpn_reconfigure($mode, $settings) {
 							} else {
 								$conf .= "mode server\n";
 							}
+							if (!empty($settings['serverbridge_routegateway']) && is_ipaddrv4($biface_ip)) {
+								$conf .= "push \"route-gateway {$biface_ip}\"\n";
+							}
+							/* OpenVPN doesn't support this yet, clients do not recognize the option fully.
+							$biface_ip6=get_interface_ipv6($settings['serverbridge_interface']);
+							if (!empty($settings['serverbridge_routegateway']) && is_ipaddrv6($biface_ip6)) {
+								$conf .= "push \"route-ipv6-gateway {$biface_ip6}\"\n";
+							}
+							*/
 						} else {
 							$conf .= "mode server\n";
 						}

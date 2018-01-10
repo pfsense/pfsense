@@ -188,6 +188,7 @@ if ($act == "edit") {
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
 		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
+		$pconfig['serverbridge_routegateway'] = $a_server[$id]['serverbridge_routegateway'];
 		$pconfig['serverbridge_dhcp_start'] = $a_server[$id]['serverbridge_dhcp_start'];
 		$pconfig['serverbridge_dhcp_end'] = $a_server[$id]['serverbridge_dhcp_end'];
 
@@ -452,6 +453,10 @@ if ($_POST['save']) {
 		if ($pconfig['serverbridge_dhcp'] && $pconfig['tunnel_network']) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
+		if (($pconfig['serverbridge_dhcp'] && $pconfig['serverbridge_routegateway']) &&
+		    ((empty($pconfig['serverbridge_interface'])) || (strcmp($pconfig['serverbridge_interface'], "none") == 0))) {
+			$input_errors[] = gettext("Bridge Route Gateway requires a valid Bridge Interface.");
+		}
 		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) ||
 		    (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
@@ -558,6 +563,7 @@ if ($_POST['save']) {
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
 		$server['serverbridge_interface'] = $pconfig['serverbridge_interface'];
+		$server['serverbridge_routegateway'] = $pconfig['serverbridge_routegateway'];
 		$server['serverbridge_dhcp_start'] = $pconfig['serverbridge_dhcp_start'];
 		$server['serverbridge_dhcp_end'] = $pconfig['serverbridge_dhcp_end'];
 
@@ -1017,6 +1023,15 @@ if ($act=="new" || $act=="edit"):
 		))->setHelp('The interface to which this TAP instance will be bridged. This is not done automatically. This interface must be assigned ' .
 						'and the bridge created separately. This setting controls which existing IP address and subnet ' .
 						'mask are used by OpenVPN for the bridge. Setting this to "none" will cause the Server Bridge DHCP settings below to be ignored.');
+
+	$section->addInput(new Form_Checkbox(
+		'serverbridge_routegateway',
+		'Bridge Route Gateway',
+		'Push the Bridge Interface IPv4 address to connecting clients as a route gateway',
+		$pconfig['serverbridge_routegateway']
+	))->setHelp('When omitting the <b>IPv4 Tunnel Network</b> for a bridge, connecting clients cannot automatically determine a server-side gateway for <b>IPv4 Local Network(s)</b> ' .
+						'or <b>Redirect IPv4 Gateway</b> traffic. When enabled, this option sends the IPv4 address of the selected <b>Bridge Interface</b> to clients ' .
+						'which they can then use as a gateway for routing traffic outside of the bridged subnet. OpenVPN does not currently support this mechanism for IPv6.');
 
 	$section->addInput(new Form_Input(
 		'serverbridge_dhcp_start',
@@ -1705,6 +1720,7 @@ events.push(function() {
 				hideInput('tunnel_network', false);
 				hideCheckbox('serverbridge_dhcp', true);
 				hideInput('serverbridge_interface', true);
+				hideInput('serverbridge_routegateway', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
 				setRequired('tunnel_network', true);
@@ -1730,16 +1746,19 @@ events.push(function() {
 					hideCheckbox('serverbridge_dhcp', false);
 					disableInput('serverbridge_dhcp', false);
 					hideInput('serverbridge_interface', false);
+					hideInput('serverbridge_routegateway', false);
 					hideInput('serverbridge_dhcp_start', false);
 					hideInput('serverbridge_dhcp_end', false);
 					hideInput('topology', true);
 
 					if ($('#serverbridge_dhcp').prop('checked')) {
 						disableInput('serverbridge_interface', false);
+						disableInput('serverbridge_routegateway', false);
 						disableInput('serverbridge_dhcp_start', false);
 						disableInput('serverbridge_dhcp_end', false);
 					} else {
 						disableInput('serverbridge_interface', true);
+						disableInput('serverbridge_routegateway', true);
 						disableInput('serverbridge_dhcp_start', true);
 						disableInput('serverbridge_dhcp_end', true);
 					}
@@ -1747,6 +1766,7 @@ events.push(function() {
 					hideInput('topology', true);
 					disableInput('serverbridge_dhcp', true);
 					disableInput('serverbridge_interface', true);
+					disableInput('serverbridge_routegateway', true);
 					disableInput('serverbridge_dhcp_start', true);
 					disableInput('serverbridge_dhcp_end', true);
 				}

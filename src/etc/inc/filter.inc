@@ -438,6 +438,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			break;
 		}
 		if (strstr($_grbg, "DIOCADDALTQ: Device busy") || 
+		    strstr($_grbg, "DIOCADDRULE: Device busy") || 
 		    strstr($_grbg, "DIOCXCOMMIT: Device busy")) {
 			// when busy status is returned retry after a short pause
 			usleep(200000);//try again after 200 ms..unless it still fails after 10x

@@ -61,7 +61,8 @@ $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['do_not_send_uniqueid'] = isset($config['system']['do_not_send_uniqueid']);
 $pconfig['block_external_services'] = isset($config['system']['block_external_services']);
 
-$use_mfs_tmpvar_before = $pconfig['use_mfs_tmpvar'];
+$use_mfs_tmpvar_before = isset($config['system']['use_mfs_tmpvar']) ? true : false;
+$use_mfs_tmpvar_after = $use_mfs_tmpvar_before;
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -262,8 +263,10 @@ if ($_POST) {
 
 		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
+			$use_mfs_tmpvar_after = true;
 		} else {
 			unset($config['system']['use_mfs_tmpvar']);
+			$use_mfs_tmpvar_after = false;
 		}
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
@@ -324,7 +327,6 @@ if ($_POST) {
 		}
 	}
 }
-$use_mfs_tmpvar_after = isset($pconfig['use_mfs_tmpvar']) ? true : false;
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 $pglinks = array("", "system_advanced_admin.php", "@self");
@@ -660,8 +662,8 @@ if ($g['default-config-flavor'] == "ec2-ic") {
 
 print $form;
 
-$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');
-$use_mfs_tmpvar_changed = $use_mfs_tmpvar_before !== $use_mfs_tmpvar_after && !$input_errors;
+$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This requires the firewall\nto reboot.\n\nReboot now ?');
+$use_mfs_tmpvar_changed = (($use_mfs_tmpvar_before !== $use_mfs_tmpvar_after) && !$input_errors);
 ?>
 
 <script type="text/javascript">

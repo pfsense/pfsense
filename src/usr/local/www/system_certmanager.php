@@ -329,7 +329,7 @@ if ($_POST) {
 			foreach ($altnames as $idx => $altname) {
 				switch ($altname['type']) {
 					case "DNS":
-						if (!is_hostname($altname['value'], true)) {
+						if (!is_hostname($altname['value'], true) || is_ipaddr($altname['value'])) {
 							array_push($input_errors, "DNS subjectAltName values must be valid hostnames, FQDNs or wildcard domains.");
 						}
 						break;

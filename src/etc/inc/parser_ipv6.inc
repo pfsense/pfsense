@@ -2,7 +2,7 @@
 /*
  * tools_for_debugging.inc
  *
- * Copyright (c) 2017 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-##|+PRIV
-##|*IDENT=page-debugging-tools
-##|*NAME=
-##|*DESCR=Debugging tools that are run if started from command line.
-##|*MATCH=parser_ipv6.inc*
-##|-PRIV
 
 /*
  * List of methods used:
@@ -242,7 +236,7 @@ IPV6;
 /*
  * Small wrapper function to match all the lease content.
  */
-function parse_all_ipv6_to_array ($content) {
-	preg_match_all('/'.ipv6_regex.'/i',$content,$matches,PREG_SET_ORDER);
+function parse_all_ipv6_to_array($content) {
+	preg_match_all('/'.ipv6_regex.'/i', $content, $matches, PREG_SET_ORDER);
 	return $matches;
 }

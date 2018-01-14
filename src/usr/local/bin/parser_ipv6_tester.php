@@ -1,8 +1,9 @@
+#!/usr/local/bin/php -f
 <?php
 /*
  * parser_ipv6_tester.php
  *
- * Copyright (c) 2017 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +18,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-##|+PRIV
-##|*IDENT=page-ipv6-parser-tester
-##|*NAME=IPv6 Tests
-##|*DESCR=Testing IPv6 addresses of various kinds and nature.
-##|*MATCH=parser_ipv6_tester.php*
-##|-PRIV
 
-require_once 'tools_for_debugging_n_testing.inc';
-require_once 'parser_ipv6.inc';
+$pfSense_platform_file = '/etc/platform';
+
+$is_pfSense = file_exists($pfSense_platform_file);
+if ($is_pfSense) {
+	if ( ! preg_match('/^pfSense/i', file_get_contents($pfSense_platform_file))) {
+		$is_pfSense = false;
+	}
+}
+
+if ($is_pfSense) {
+	require_once('tools_for_debugging_n_testing.inc');
+	require_once('parser_ipv6.inc');
+} else {
+	/* Handle situation where we use source files on a non-running pfSense system.
+	 * Get from this file back to 'src' so we can use 'src/etc/inc/'.
+	 */
+	define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))));
+	require_once(__ROOT__.'/etc/inc/tools_for_debugging_n_testing.inc'); 
+	require_once(__ROOT__.'/etc/inc/parser_ipv6.inc'); 
+}
 
 /*
  * Tests the content for valid IPv6 addresses and compares the matches against
@@ -45,68 +58,61 @@ require_once 'parser_ipv6.inc';
  * It is quite ok that a text and list of invalid addresses evaluates to
  * zero fails and zero passes, because of the above!
  */
-function test_parse_ipv6 ($content, $checklist, $only_errors) {
-	$amount_of_matches = preg_match_all('/'.ipv6_regex.'/i',$content,$matches,PREG_SET_ORDER);
+function test_parse_ipv6($content, $checklist, $only_errors) {
+	$amount_of_matches = preg_match_all('/'.ipv6_regex.'/i', $content, $matches, PREG_SET_ORDER);
 
-	$amount_of_entries = count ($checklist);
+	$amount_of_entries = count($checklist);
 	if ($amount_of_matches != $amount_of_entries) {
 		echo "ERROR: Amount of matches does not equal amount of entries in the".
         	     " check list: $amount_of_matches != $amount_of_entries\n";
 		return false;
 	}
 
-	$counter=0;
-	$fail_counter=0;
+	$counter = 0;
+	$fail_counter = 0;
 	foreach ($matches as $val) {
-		$next=$checklist[$counter];
-		if (strcmp ($val['MATCH'],$next) ) {
+		$next = $checklist[$counter];
+		if (strcmp($val['MATCH'], $next) ) {
 			echo "FAIL: '".$val['MATCH']."' != '$next' \n";
-			$fail_counter+=1;
-		}
-		else if ( ! $only_errors) {
-			if (setnlen ($val, 'IPV64')) {
+			$fail_counter += 1;
+		} elseif ( ! $only_errors) {
+			if (setnlen($val, 'IPV64')) {
 				echo "IPv6+IPv4: ".$val['MATCH']."\n";
-			}
-			else if (setnlen ($val, 'IPV6')) {
+			} elseif (setnlen($val, 'IPV6')) {
 				echo "IPv6: ".$val['MATCH']."\n";
-			}
-			else {
+			} else {
 				echo ":-o undefined type: ".$val['MATCH']."\n";
 			}
 		}
 
-		$counter+=1;
+		$counter += 1;
 	}
 	echo "Testing against text\n";
 	echo "Total amount of fails: $fail_counter\n";
 	echo "Total amount of passes: ".($counter - $fail_counter)."\n";
 
-	$counter=0;
-	$fail_counter=0;
+	$counter = 0;
+	$fail_counter = 0;
 	foreach ($checklist as $sample) {
-		if (preg_match('/'.ipv6_regex.'/i',$sample,$matches)) {
-			if (strcmp ($matches['MATCH'],$sample) ) {
+		if (preg_match('/'.ipv6_regex.'/i', $sample, $matches)) {
+			if (strcmp($matches['MATCH'], $sample) ) {
 				echo "FAIL: '".$matches['MATCH']."' != '$sample' \n";
-				$fail_counter+=1;
-			}
-			else if ( ! $only_errors) {
-	        		if (setnlen ($matches, 'IPV64')) {
+				$fail_counter += 1;
+			} elseif ( ! $only_errors) {
+	        		if (setnlen($matches, 'IPV64')) {
 	        			echo "IPv6+IPv4: ".$matches['MATCH']."\n";
-				}
-				else if (setnlen ($matches, 'IPV6')) {
+				} elseif (setnlen($matches, 'IPV6')) {
 					echo "IPv6: ".$matches['MATCH']."\n";
-				}
-				else {
+				} else {
 					echo ":-o undefined type: ".$matches['MATCH']."\n";
 				}
 			}
-		}
-		else {
+		} else {
 			echo "FAIL: Unable to match '$sample' \n";
-			$fail_counter+=1;
+			$fail_counter += 1;
 		}
 
-		$counter+=1;
+		$counter += 1;
 	}
 	echo "Testing against list entries\n";
 	echo "Total amount of fails: $fail_counter\n";
@@ -509,7 +515,7 @@ XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:1.2.3.4
 ::2222:3333:4444:5555:6666:7777:8888:
 AERON_INVALID;
 
-const all_valid_list=[
+const all_valid_list = [
 '::7',
 '::7',
 '::11',
@@ -616,7 +622,7 @@ const all_valid_list=[
 '1111:2222:3333:4444:1::192.64.2.1',
 '4:4:4::6666:192.64.2.1'];
 
-const all_valid_text= <<< 'ALLVALID'
+const all_valid_text = <<< 'ALLVALID'
 ::7
 VALID IPv6:
  ::7
@@ -717,7 +723,7 @@ db0::192.168.0.1
 1111:2222:3333:4444:1::192.64.2.1/56 4:4:4::6666:192.64.2.1/56
 ALLVALID;
 
-const all_invalid_text= <<< 'ALLINVALID'
+const all_invalid_text = <<< 'ALLINVALID'
 FAIL IPv6+IPv4:
 1111:2222:3333:4444:5555:6666:01.01.01.01
 1111:2222:3333:4444:5555:6666:00.00.00.00
@@ -955,7 +961,7 @@ p1:
 ::3333:4444:5555:6666:7777:8888:
 TEST;
 
-const test_list=[
+const test_list = [
 '::7',
 '::7',
 '1111:2222:3333:4444:5555:6666:0.0.0.0',
@@ -1050,18 +1056,18 @@ const test_list=[
 '33::33dd',
 '1111:2222:3333:4444:5555:6666:7777:8888'];
 
-general_debug ('Testing Aeron\'s valid text');
-test_parse_ipv6 (aeron_text, aeron_list, true);
+general_debug('Testing Aeron\'s valid text');
+test_parse_ipv6(aeron_text, aeron_list, true);
 
-general_debug ("\nTesting Aeron's invalid text");
+general_debug("\nTesting Aeron's invalid text");
 // The 4x:: handles comments!
-test_parse_ipv6 (aeron_invalid_text, ['::','::','::','::'], true);
+test_parse_ipv6(aeron_invalid_text, ['::', '::', '::', '::'], true);
 
-general_debug ("\nTesting various valid text");
-test_parse_ipv6 (all_valid_text, all_valid_list, true);
+general_debug("\nTesting various valid text");
+test_parse_ipv6(all_valid_text, all_valid_list, true);
 
-general_debug ("\nTesting various invalid text");
-test_parse_ipv6 (all_invalid_text, [], true);
+general_debug("\nTesting various invalid text");
+test_parse_ipv6(all_invalid_text, [], true);
 
-general_debug ("\nTesting various text");
-test_parse_ipv6 (test_content, test_list, true);
+general_debug("\nTesting various text");
+test_parse_ipv6(test_content, test_list, true);

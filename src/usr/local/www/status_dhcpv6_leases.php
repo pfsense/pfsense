@@ -3,7 +3,7 @@
  * status_dhcpv6_leases.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2018 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos
  * All rights reserved.
  *
@@ -33,7 +33,7 @@
 
 require_once("guiconfig.inc");
 require_once("config.inc");
-require_once("parser/parser_dhcpv6_leases.inc");
+require_once("parser_dhcpv6_leases.inc");
 
 $pgtitle = array(gettext("Status"), gettext("DHCPv6 Leases"));
 $shortcut_section = "dhcp6";
@@ -147,7 +147,7 @@ $lang_pack = [ 'online' =>  $online_string, 'offline' => $offline_string,
                'active' =>  $active_string, 'expired' => $expired_string,
                'reserved' => $reserved_string, 'released' => $released_string,
                'dynamic' => $dynamic_string, 'static' =>  $static_string];
-// Handle the content of the lease file - parser/parser_dhcpv6_leases.inc
+// Handle the content of the lease file - parser_dhcpv6_leases.inc
 gui_parse_leases ($pools, $leases, $prefixes, $mappings, $leases_content,
 		  $ndpdata, $lang_pack);
 
@@ -233,7 +233,7 @@ if (!$leasesfile_found) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table statusdhcpv6leases table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><!-- icon --></th>
@@ -294,13 +294,7 @@ foreach ($leases as $data):
 				<td><?=$data['ip']?></td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
-				<td>
-					<?=$mac?>
-
-					<?php if (isset($mac_man[$mac_hi])):?>
-						(<?=$mac_man[$mac_hi]?>)
-					<?php endif; ?>
-				</td>
+				<td><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></td>
 				<td><?=htmlentities($data['hostname'])?></td>
 <?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
@@ -330,11 +324,12 @@ foreach ($leases as $data):
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table statusdhcpv6prefixes table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><!-- icon --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
+				<th><?=gettext("Routed To")?></th>
 				<th><?=gettext("IAID")?></th>
 				<th><?=gettext("DUID")?></th>
 				<th><?=gettext("Start")?></th>
@@ -375,20 +370,11 @@ foreach ($prefixes as $data):
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
 	}
-
-	 {
-		$dip = "";
-	}
 ?>
 			<tr>
 				<td><i class="fa <?=$icon?>"></i></td>
-				<td>
-					<?=$data['prefix']?>
-<?php if ($mappings[$data['duid']]): ?>
-					<br />
-					<?=gettext('Routed To')?>: <?=$mappings[$data['duid']]?>
-<?php endif; ?>
-				</td>
+				<td><?=$data['prefix']?></td>
+				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
 <?php if ($data['type'] != $static_string):?>

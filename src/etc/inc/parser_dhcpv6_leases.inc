@@ -2,7 +2,7 @@
 /*
  * parser_dhcpv6_leases.inc
  *
- * Copyright (c) 2017 Anders Lind (anders.lind@gmail.com)
+ * Copyright (c) 2017-2018 Anders Lind (anders.lind@gmail.com)
  * All rights reserved.
  *
  * part of pfSense (https://www.pfsense.org)
@@ -22,12 +22,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-##|+PRIV
-##|*IDENT=page-dhcpv6-lease-parse
-##|*NAME=DHCPv6 lease parser
-##|*DESCR=Parses the leases and inserts entries into arrays used by the status lease page.
-##|*MATCH=parser_dhcpv6_leases.inc*
-##|-PRIV
 
 require_once 'tools_for_debugging_n_testing.inc';
 require_once 'parser_ipv6.inc';
@@ -63,7 +57,7 @@ function parse_duid($duid_string) {
 /*
  * Moved over from status_dhcpv6_leases.php
  */
-function get_ndpdata () {
+function get_ndpdata() {
 	exec("/usr/sbin/ndp -an", $rawdata);
 	$ndpdata = array();
 	foreach ($rawdata as $line) {
@@ -87,233 +81,244 @@ const IA_TA = 3;
 /*
  * returns false if it was not possible to parse the leases.
  */
-function gui_parse_leases (&$pools, &$leases, &$prefixes, &$mappings, $raw_leases, $ndpdata, $lang_pack) {
-	$amount_of_matches = preg_match_all('/'.base_regex.'/i',$raw_leases,$lease_array,PREG_SET_ORDER);
+function gui_parse_leases(&$pools, &$leases, &$prefixes, &$mappings, $raw_leases, $ndpdata, $lang_pack) {
+	$amount_of_matches = preg_match_all('/'.base_regex.'/i', $raw_leases, $lease_array, PREG_SET_ORDER);
 
 	if ($amount_of_matches == false) {
 		return false;
 	}
 
-	$amount_of_leases=0;
+	$amount_of_leases = 0;
 	foreach ($lease_array as $val) {
-		general_debug ('---LEASE '.++$amount_of_leases.' START---');
+		general_debug('---LEASE '.++$amount_of_leases.' START---');
 
-		$iaid_duid = parse_duid ($val['IAID_DUID']);
+		$iaid_duid = parse_duid($val['IAID_DUID']);
 
-		general_debug ($val, 'IAID_DUID');
+		general_debug($val, 'IAID_DUID');
 
-		$entry = [ 'iaid' => hexdec(implode("", array_reverse ($iaid_duid[0]))),
-			   'duid' => implode (":", $iaid_duid[1]) ];
+		$entry = [ 'iaid' => hexdec(implode("", array_reverse($iaid_duid[0]))),
+			   'duid' => implode(":", $iaid_duid[1]) ];
 
- 		general_debug ($entry, 'iaid');
-		general_debug ($entry, 'duid');
+		general_debug($entry, 'iaid');
+		general_debug($entry, 'duid');
 
 		if (preg_match('/^ia-na$/i', $val['IA_ASSOC'])) {
-			gui_parse_single_lease (IA_NA, $val['NEXT_LEVEL'], $lang_pack, $ndpdata, $mappings, $entry);
+			gui_parse_single_lease(IA_NA, $val['NEXT_LEVEL'], $lang_pack, $ndpdata, $mappings, $entry);
 			$leases[] = $entry;
-		}
-		else if (preg_match('/^ia-pd$/i', $val['IA_ASSOC'])) {
-				gui_parse_single_lease (IA_PD, $val['NEXT_LEVEL'], $lang_pack, $ndpdata, $mappings, $entry);
-				$prefixes[] = $entry;
-		}
-		else if (preg_match('/^ia-ta$/i', $val['IA_ASSOC'])) {
+		} elseif (preg_match('/^ia-pd$/i', $val['IA_ASSOC'])) {
+			gui_parse_single_lease(IA_PD, $val['NEXT_LEVEL'], $lang_pack, $ndpdata, $mappings, $entry);
+			$prefixes[] = $entry;
+		} elseif (preg_match('/^ia-ta$/i', $val['IA_ASSOC'])) {
 			// Not used in the pfSense UI at the moment.
-			general_debug ('Notice: ia-ta is unhandled for now.');
+			general_debug('Notice: ia-ta is unhandled for now.');
 		}
 
-		general_debug ("---LEASE $amount_of_leases END---\n");
+		general_debug("---LEASE $amount_of_leases END---\n");
 	}
 
 	// Handle failover - NOTE Experimental;
 	// has not been tested on a live configured system.
-	$amount_of_matches = preg_match_all('/'.failover_base_regex.'/i',$raw_leases,$lease_array,PREG_SET_ORDER);
-	$amount_of_leases=0;
+	$amount_of_matches = preg_match_all('/'.failover_base_regex.'/i', $raw_leases, $lease_array, PREG_SET_ORDER);
+	$amount_of_leases = 0;
 	foreach ($lease_array as $val) {
-		general_debug ('---FAILOVER '.++$amount_of_leases.' START---');
+		general_debug('---FAILOVER '.++$amount_of_leases.' START---');
 		$entry = ['name' => $val['FPN']];
-		general_debug ($val, 'FPN');
-		gui_parse_single_failover ($val['NEXT_LEVEL'], $entry);
+		general_debug($val, 'FPN');
+		gui_parse_single_failover($val['NEXT_LEVEL'], $entry);
 		$pools[] = $entry;
-		general_debug ("---FAILOVER $amount_of_leases END---\n");
+		general_debug("---FAILOVER $amount_of_leases END---\n");
 	}
 
-	general_debug ('Leases', $leases);
-	general_debug ('Prefixes', $prefixes);
-	general_debug ('Mappings', $mappings);
-	general_debug ('Pools', $pools);
+	general_debug('Leases', $leases);
+	general_debug('Prefixes', $prefixes);
+	general_debug('Mappings', $mappings);
+	general_debug('Pools', $pools);
 }
 
-function gui_parse_single_lease ($type, $content, $lang_pack, $ndpdata, &$mappings, &$entry) {
-	if ($type === IA_NA) {
-		preg_match_all('/'.na_regex.'/i',$content,$matches,PREG_SET_ORDER);
-	}
-	else if ($type === IA_PD) {
-		preg_match_all('/'.pd_regex.'/i',$content,$matches,PREG_SET_ORDER);
-	}
-	/*else if ($type === IA_TA) {
-		// Not implemented in pfSense.
-	}*/
-	else {
-		general_debug ('Error: Unhandled lease type.');
-		return -1;
+function gui_parse_single_lease($type, $content, $lang_pack, $ndpdata, &$mappings, &$entry) {
+	switch ($type) {
+		case IA_NA:
+			preg_match_all('/'.na_regex.'/i', $content, $matches, PREG_SET_ORDER);
+			break;
+		case IA_PD:
+			preg_match_all('/'.pd_regex.'/i', $content, $matches, PREG_SET_ORDER);
+			break;
+		// case IA_TA: // Not implemented in pfSense.
+		default:
+			general_debug('Error: Unhandled lease type.');
+			return -1;
 	}
 
-	$amount_of_matches=0;
+	$amount_of_matches = 0;
 
 	foreach ($matches as $val) {
-		general_debug ("\n  --Match number " . ++$amount_of_matches . ' start.');
-		general_debug ("Matched: " . $val[0]);
+		general_debug("\n  --Match number " . ++$amount_of_matches . ' start.');
+		general_debug("Matched: " . $val[0]);
 
-		if (setnlen($val,'CLTT')) {
-			$entry['start'] = $val['DATE'] . ' '. $val['TIME'];
-			general_debug ($val, 'CLTT', 'WEEKDAY', 'DATE', 'YEAR', 'MONTH', 'DAY', 'TIME');
-		}
+		check_value_set_entry($val, 'CLTT', $entry, 'start', true, function () use (&$val) {
+			general_debug($val, 'WEEKDAY', 'DATE', 'YEAR', 'MONTH', 'DAY', 'TIME');
+			return $val['DATE'] . ' ' . $val['TIME'];});
 
-		if (setnlen($val,'NEXT_LEVEL')) {
-			general_debug ($val, 'NEXT_LEVEL');
+		if (setnlen($val, 'NEXT_LEVEL')) {
+			general_debug($val, 'NEXT_LEVEL');
 
 			gui_handle_ia($val['NEXT_LEVEL'], $entry, $lang_pack);
 		}
 
 		// For now it does not matter that this goes last.
 		if ($type === IA_NA) {
-			gui_parse_single_na_lease ($val, $lang_pack, $ndpdata, $mappings, $entry);
-		}
-		else if ($type === IA_PD) {
-			gui_parse_single_pd_lease ($val, $lang_pack, $entry);
+			gui_parse_single_na_lease($val, $lang_pack, $ndpdata, $mappings, $entry);
+		} elseif ($type === IA_PD) {
+			gui_parse_single_pd_lease($val, $lang_pack, $entry);
 		}
 
-		general_debug ('  --Match number ' . $amount_of_matches . ' end.');
+		general_debug('  --Match number ' . $amount_of_matches . ' end.');
 	}
 }
 
-function gui_parse_single_na_lease ($val, $lang_pack, $ndpdata, &$mappings, &$entry) {
-	if (setnlen($val,'ADDRESS')) {
-	  	general_debug ($val, 'ADDRESS');
+function gui_parse_single_na_lease($val, $lang_pack, $ndpdata, &$mappings, &$entry) {
+	if (setnlen($val, 'ADDRESS')) {
+	  	general_debug($val, 'ADDRESS');
 
-		$space_result = parse_all_ipv6_to_array ($val['ADDRESS']);
+		$space_result = parse_all_ipv6_to_array($val['ADDRESS']);
 
 		if (count($space_result) == 1) {
-	    		if (setnlen($space_result[0],'MATCH')) {
-				$entry['ip'] = $space_result[0]['MATCH'];
-				$entry['type'] = $lang_pack['dynamic'];
-				if (in_array($entry['ip'], array_keys($ndpdata))) {
-					$entry['online'] = $lang_pack['online'];
+	    		if (setnlen($space_result[0], 'MATCH')) {
+				general_debug("We have a valid ipv6 address");
+				if (check_n_set($entry, 'ip', $space_result[0]['MATCH'], true)) {
+					// In general we trust that $lang_pack exists with values so no checking (either
+					// it works for a certain language/translation or it does not (for all entries.)
+					check_n_set($entry, 'type', $lang_pack['dynamic'], true);
+
+					in_array($entry['ip'], array_keys($ndpdata))
+						? check_n_set($entry, 'online',	$lang_pack['online'], true)
+						: check_n_set($entry, 'online',	$lang_pack['offline'], true);
+
+					// mappings - using DUID and IAID
+					if (setnlen($entry, 'duid') && setnlen($entry, 'iaid')) {
+						// We assume $mappings array exist - else nothing works.
+						general_debug('Setting the mappings array for DUID ' . $entry['duid'] .
+							      ' with IAID ' . $entry['iaid'] . ' as index with value ' .
+							      $entry['ip']);
+						check_n_set($mappings[$entry['duid']], $entry['iaid'], $entry['ip'], true);
+					} else {
+						general_debug('WARNING: DUID or IAID is missing in entry. Likely either has zero length content.');
+					}
+				} // else { } - we use overwrite set to true and entry must have been set.
+			} else {
+				general_debug('Unknown problem with IPv6 address. See output just above.');
+			}
+		} else {
+			general_debug('WARNING: Count of IPv6 addresses is: '.count($space_result));
+		}
+	}
+}
+
+function gui_parse_single_pd_lease($val, $lang_pack, &$entry) {
+	if (setnlen($val, 'SPACE')) {
+		general_debug($val, 'SPACE');
+
+		$space_result = parse_all_ipv6_to_array($val['SPACE']);
+
+		if (count($space_result) == 1) {
+			if (setnlen($space_result[0], 'MATCH')) {
+				general_debug("We have a valid ipv6 address");
+
+				if (setnlen($space_result[0], 'CMR6') &&
+				    preg_match('/::$/', $space_result[0]['CMR6'])) {
+					general_debug("that is properly terminated with ::");
 				} else {
-					$entry['online'] = $lang_pack['offline'];
+					general_debug(", but not a proper subnet that ends with ::");
 				}
 
-				general_debug ("We have a valid ipv6 address");
-
-				$mappings[$entry['duid']] = $entry['ip'];
+				check_value_set_entry($val, 'PREFIX', $entry, 'prefix', true,
+					function () use (&$val, &$lang_pack, &$entry, &$space_result) {
+					check_n_set($entry, 'type', $lang_pack['dynamic'], true);
+					return $space_result[0]['MATCH'].'/'.$val['PREFIX'];});
+			} else {
+				general_debug('Unknown problem with IPv6 address. See output just above.');
 			}
-		}
-		else {
-			general_debug ('WARNING: Count of IPv6 addresses is: '.count($space_result));
-		}
-	}
-}
-
-function gui_parse_single_pd_lease ($val, $lang_pack, &$entry) {
-	if (setnlen($val,'SPACE')) {
-		general_debug ($val, 'SPACE');
-
-		$space_result = parse_all_ipv6_to_array ($val['SPACE']);
-
-		if (count($space_result) == 1) {
-			if (setnlen($space_result[0],'MATCH')) {
-				general_debug ("We have a valid ipv6 address");
-
-				if (setnlen($space_result[0],'CMR6') &&
-					preg_match('/::$/',$space_result[0]['CMR6'])) {
-					general_debug ("that is properly terminated with ::");
-				}
-				else {
-					general_debug (", but not a proper subnet that ends with ::");
-				}
-
-				if (setnlen($val,'PREFIX')) {
-					general_debug ($val, 'PREFIX');
-					$entry['prefix'] = $space_result[0]['MATCH'].'/'.$val['PREFIX'];
-					$entry['type'] = $lang_pack['dynamic'];
-				}
-			}
-		}
-		else {
-			general_debug ('WARNING: Count of IPv6 addresses is: '.count($space_result));
+		} else {
+			general_debug('WARNING: Count of IPv6 addresses is: '.count($space_result));
 		}
 	}
 }
 
 function gui_handle_ia($content, &$entry, $lang_pack) {
-	preg_match_all('/'.ia_regex.'/i',$content,$ia_matches,PREG_SET_ORDER);
+	preg_match_all('/'.ia_regex.'/i', $content, $ia_matches, PREG_SET_ORDER);
 
+	/* The reason why we use foreach and not simply just try lookup content is due to the
+	 * fact that we match with alternation different sets of values from different
+	 * regex groups.
+	 * In theory one set/group could be repeated inside $ia_matches which means we want to
+	 * know if that is the case. check_n_set makes sure to check if the value exists already
+	 * and returns debug info about that.
+	 */
 	foreach ($ia_matches as $ia_val) {
-		if (setnlen($ia_val,'BINDINGSTATE')) {
+		if (setnlen($ia_val, 'BINDINGSTATE')) {
 			switch ($ia_val['BINDINGSTATE']) {
 				case "active":
-					$entry['act'] = $lang_pack['active'];
+					check_n_set($entry, 'act', $lang_pack['active'], true);
+					break;
+				case "expired":
+					check_n_set($entry, 'act', $lang_pack['expired'], true);
 					break;
 				case "free":
-					$entry['act'] = $lang_pack['expired'];
-					$entry['online'] = $lang_pack['offline'];
+					check_n_set($entry, 'act', $lang_pack['expired'], true);
+					check_n_set($entry, 'online', $lang_pack['offline'], true);
 					break;
 				case "backup":
-					$entry['act'] = $lang_pack['reserved'];
-					$entry['online'] = $lang_pack['offline'];
+					check_n_set($entry, 'act', $lang_pack['reserved'], true);
+					check_n_set($entry, 'online', $lang_pack['offline'], true);
 					break;
 				case "released":
-					$entry['act'] = $lang_pack['released'];
-					$entry['online'] = $lang_pack['offline'];
+					check_n_set($entry, 'act', $lang_pack['released'], true);
+					check_n_set($entry, 'online', $lang_pack['offline'], true);
+					break;
+				default:
+					general_debug('Notice: Binding state "' . $ia_val['BINDINGSTATE'] .
+						      '" is not handled.');
 					break;
 			}
 
-			general_debug ($ia_val, 'BINDINGSTATE');
+			general_debug($ia_val, 'BINDINGSTATE');
 		}
-		if (setnlen($ia_val,'PREFLIFE')) {
-			// does not seem to be used by lease gui
-			general_debug ($ia_val, 'PREFLIFE');
-		}
-		if (setnlen($ia_val,'MAXLIFE')) {
-			// does not seem to be used by lease gui
-			general_debug ($ia_val, 'MAXLIFE');
-		}
-		if (setnlen($ia_val,'ENDS')) {
-			$entry['end'] = $ia_val['DATE'] . ' ' . $ia_val['TIME'];
 
-			general_debug ($ia_val, 'ENDS', 'WEEKDAY', 'DATE', 'YEAR', 'MONTH', 'DAY', 'TIME');
-		}
+		// does not seem to be used by lease gui so we do not set anything; we just debug.
+		check_value_set_entry($ia_val, 'PREFLIFE');
+
+		// does not seem to be used by lease gui so we do not set anything; we just debug.
+		check_value_set_entry($ia_val, 'MAXLIFE');
+
+		check_value_set_entry($ia_val, 'ENDS', $entry, 'end', true, function () use (&$ia_val) {
+			general_debug($ia_val, 'WEEKDAY', 'DATE', 'YEAR', 'MONTH', 'DAY', 'TIME');
+			return $ia_val['DATE'] . ' ' . $ia_val['TIME'];});
 	}
 }
 
-function gui_parse_single_failover ($content, &$entry) {
-	preg_match_all('/'.failover_level1_regex.'/i',$content,$matches,PREG_SET_ORDER);
+function gui_parse_single_failover($content, &$entry) {
+	preg_match_all('/'.failover_level1_regex.'/i', $content, $matches, PREG_SET_ORDER);
 
+	/* The reason why we use foreach and not simply just try lookup content is due to the
+	 * fact that we match with alternation different sets of values from different
+	 * regex groups.
+	 * In theory one set/group could be repeated inside $matches which means we want to
+	 * know if that is the case. check_value_set_entry makes sure to check if the value
+	 * exists already and returns debug info about that.
+	 */
 	foreach ($matches as $val) {
-		if (setnlen($val,'MYSTATE')) {
-			general_debug ($val, 'MYSTATE');
-			$entry['mystate'] = $val['MYSTATE'];
-		}
-		if (setnlen($val,'MYDATE')) {
-			general_debug ($val, 'MYDATE');
-			$entry['mydate'] = $val['DATE'] . ' '. $val['TIME'];
-		}
-		if (setnlen($val,'PEERSTATE')) {
-			general_debug ($val, 'PEERSTATE');
-			$entry['peerstate'] = $val['PEERSTATE'];
-		}
-		if (setnlen($val,'PEERDATE')) {
-			general_debug ($val, 'PEERDATE');
-			$entry['peerdate'] = $val['PDATE'] . ' '. $val['PTIME'];
-		}
-		if (setnlen($val,'MCLT')) {
-			/* does not seem to be used by lease gui
-			 * mclt (Maximum Client Lead Time):
-			 * https://kb.isc.org/article/AA-00502/0/A-Basic-Guide-to-Configuring-DHCP-Failover.html
-			 * https://kb.isc.org/article/AA-00268/0/DHCP-Failover-and-MCLT-configuration-implications.html
-			 */
-			general_debug ($val, 'MCLT');
-		}
+		check_value_set_entry($val, 'MYSTATE', $entry, 'mystate', true);
+		check_value_set_entry($val, 'MYDATE', $entry, 'mydate', true,
+				      function () use (&$val) {return $val['DATE'] . ' ' . $val['TIME'];});
+		check_value_set_entry($val, 'PEERSTATE', $entry, 'peerstate', true);
+		check_value_set_entry($val, 'PEERDATE', $entry, 'peerdate', true,
+				      function () use (&$val) {return $val['PDATE'] . ' ' . $val['PTIME'];});
+		/* Does not seem to be used by lease gui so we do not set anything; we just debug.
+		 * mclt (Maximum Client Lead Time):
+		 * https://kb.isc.org/article/AA-00502/0/A-Basic-Guide-to-Configuring-DHCP-Failover.html
+		 * https://kb.isc.org/article/AA-00268/0/DHCP-Failover-and-MCLT-configuration-implications.html
+		 */
+		check_value_set_entry($val, 'MCLT');
 	}
 }
 
@@ -459,6 +464,7 @@ COMMON;
  * "free", "active", "expired", "released", "abandoned", "reset", "backup"
  * write_lease and write_ia use binding_state_names in:
  * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/db.c
+ * defined in https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=server/stables.c
  */
 const ia_regex =
 '(?x)

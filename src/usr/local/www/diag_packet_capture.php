@@ -123,6 +123,7 @@ $interfaces = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
 	$interfaces['enc0'] = "IPsec";
 }
+$interfaces['lo0'] = "Localhost";
 
 foreach (array('server' => gettext('OpenVPN Server'), 'client' => gettext('OpenVPN Client')) as $mode => $mode_descr) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {

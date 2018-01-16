@@ -59,6 +59,8 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
+	$pconfig['updatesource'] = $a_rfc2136[$id]['updatesource'];
+	$pconfig['updatesourcefamily'] = $a_rfc2136[$id]['updatesourcefamily'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
 	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
 	$pconfig['recordtype'] = $a_rfc2136[$id]['recordtype'];
@@ -106,6 +108,8 @@ if ($_POST['save'] || $_POST['force']) {
 		$rfc2136['usepublicip'] = $_POST['usepublicip'] ? true : false;
 		$rfc2136['recordtype'] = $_POST['recordtype'];
 		$rfc2136['interface'] = $_POST['interface'];
+		$rfc2136['updatesource'] = $_POST['updatesource'];
+		$rfc2136['updatesourcefamily'] = $_POST['updatesourcefamily'];
 		$rfc2136['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_rfc2136[$id]) {
@@ -149,6 +153,15 @@ function build_if_list() {
 	return($list);
 }
 
+function build_us_list() {
+	$list = array(
+		'' => 'Default (use Interface above)',
+		'none' => 'Do not specify',
+	);
+
+	return(array_merge($list, get_possible_listen_ips()));
+}
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"), gettext("Edit"));
 $pglinks = array("", "services_dyndns.php", "services_rfc2136.php", "@self");
 include("head.inc");
@@ -175,7 +188,7 @@ $section->addInput(new Form_Select(
 	'*Interface',
 	$pconfig['interface'],
 	$iflist
-));
+))->setHelp('Interface to monitor for updates. The address of this interface will be used in the updated DNS record.');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -232,6 +245,26 @@ $section->addInput(new Form_Checkbox(
 	'If the interface IP is private, attempt to fetch and use the public IP instead.',
 	$pconfig['usepublicip']
 ));
+
+$uslist = build_us_list();
+
+$section->addInput(new Form_Select(
+	'updatesource',
+	'Update Source',
+	$pconfig['updatesource'],
+	$uslist
+))->setHelp('Interface or address from which the firewall will send the DNS update request.');
+
+$section->addInput(new Form_Select(
+	'updatesourcefamily',
+	'Update Source Family',
+	$pconfig['updatesourcefamily'],
+	array(
+		'' => 'Default',
+		'inet' => 'IPv4',
+		'inet6' => 'IPv6',
+	)
+))->setHelp('Address family to use for sourcing updates.');
 
 $group = new Form_Group('*Record Type');
 

@@ -2496,15 +2496,48 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		/* determine interface name */
 		$if = get_failover_interface($dnsupdate['interface']);
 
+		/* Determine address to update and default binding address */
 		if (isset($dnsupdate['usepublicip'])) {
 			$wanip = dyndnsCheckIP($if);
-			$bindip = get_interface_ip($if);
+			$bindipv4 = get_interface_ip($if);
 		} else {
 			$wanip = get_interface_ip($if);
-			$bindip = $wanip;
+			$bindipv4 = $wanip;
+		}
+		$wanipv6 = get_interface_ipv6($if);
+		$bindipv6 = $wanipv6;
+
+		/* Handle non-default interface bindings */
+		if ($dnsupdate['updatesource'] == "none") {
+			/* When empty, the directive will be omitted. */
+			$bindipv4 = "";
+			$bindipv6 = "";
+		} elseif (!empty($dnsupdate['updatesource'])) {
+			/* Find the alternate binding address */
+			$bindipv4 = get_interface_ip($dnsupdate['updatesource']);
+			$bindipv6 = get_interface_ipv6($dnsupdate['updatesource']);
 		}
 
-		$wanipv6 = get_interface_ipv6($if);
+		/* Handle IPv4/IPv6 selection for the update source interface/VIP */
+		switch ($dnsupdate['updatesourcefamily']) {
+			case "inet":
+				$bindip = $bindipv4;
+				break;
+			case "inet6":
+				$bindip = $bindipv6;
+				break;
+			case "":
+			default:
+				/* Try IPv4 first, if that is empty, try IPv6. */
+				/* Only specify the address if it's present, otherwise omit. */
+				if (!empty($bindipv4)) {
+					$bindip = $bindipv4;
+				} elseif (!empty($bindipv6)) {
+					$bindip = $bindipv6;
+				}
+				break;
+		}
+
 		$cacheFile = $g['conf_path'] .
 		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
 		    escapeshellarg($dnsupdate['host']) .
@@ -2573,7 +2606,9 @@ EOD;
 				    "{$dnsupdate['host']}. A\n";
 				$upinst .= "update add {$dnsupdate['host']}. " .
 				    "{$dnsupdate['ttl']} A {$wanip}\n";
-				$upinst .= "local {$bindip}\n";
+				if (!empty($bindip)) {
+					$upinst .= "local {$bindip}\n";
+				}
 				$need_update = true;
 			} else {
 				log_error(sprintf(gettext(

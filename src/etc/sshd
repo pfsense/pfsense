@@ -81,7 +81,7 @@ $sshconf .= "Protocol 2\n";
 foreach ($keys as $key) {
 	$sshconf .= "HostKey {$sshConfigDir}/ssh_host_{$key['suffix']}key\n";
 }
-$sshconf .= "Compression yes\n";
+$sshconf .= "Compression delayed\n";
 $sshconf .= "ClientAliveInterval 30\n";
 $sshconf .= "PermitRootLogin yes\n";
 if (isset($config['system']['ssh']['sshdkeyonly'])) {

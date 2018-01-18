@@ -511,15 +511,21 @@ function netgate_hardware_setup() {
 	/* Determine interfaces */
 	switch ($platform['name']) {
 	case 'A37XX':
-		$config['interfaces']['wan']['if'] = 'mvneta0';
+		$config['vlans']['vlan'] = array();
 		$vlan = array();
 		$vlan['if'] = "mvneta0";
-		$vlan['tag'] = "1001";
-		$vlan['descr'] = "LAN";
-		$vlan['vlanif'] = "mvneta0.1001";
-		$config['vlans']['vlan'] = array();
+		$vlan['tag'] = "4090";
+		$vlan['descr'] = "WAN";
+		$vlan['vlanif'] = "mvneta0.4090";
 		$config['vlans']['vlan'][] = $vlan;
-		$config['interfaces']['lan']['if'] = 'mvneta0.1001';
+		$config['interfaces']['wan']['if'] = 'mvneta0.4090';
+		$vlan = array();
+		$vlan['if'] = "mvneta0";
+		$vlan['tag'] = "4091";
+		$vlan['descr'] = "LAN";
+		$vlan['vlanif'] = "mvneta0.4091";
+		$config['vlans']['vlan'][] = $vlan;
+		$config['interfaces']['lan']['if'] = 'mvneta0.4091';
 		break;
 	case 'PLCC-B':
 		$config['interfaces']['wan']['if'] = 'ix0';

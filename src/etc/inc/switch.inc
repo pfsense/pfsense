@@ -22,37 +22,9 @@
 /* include all configuration functions */
 require_once("globals.inc");
 
-function switch_plcc_get_system_vlans($dot1q_only) {
+function switch_default_get_system_vlans($dot1q_only) {
 
-	/* Only one switch on PLCC-B. */
-	$swdevices = switch_get_devices();
-	if (!is_array($swdevices)) {
-		return (NULL);
-	}
-	$swdevice = $swdevices[0];
-	$swinfo = pfSense_etherswitch_getinfo($swdevice);
-	if ($swinfo == NULL) {
-		return (NULL);
-	}
-	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
-		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
-		if ($vgroup == NULL) {
-			continue;
-		}
-		if (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "PORT") {
-			$vgroup['switchname'] = $swinfo['name'];
-			$vlans[] = $vgroup;
-		} elseif (isset($swinfo['vlan_mode']) && $swinfo['vlan_mode'] == "DOT1Q" && $vgroup['vid'] == 1) {
-			$vgroup['switchname'] = $swinfo['name'];
-			$vlans[] = $vgroup;
-		}
-	}
-	return ($vlans);
-}
-
-function switch_r1_get_system_vlans($dot1q_only) {
-
-	/* Only one switch on SG-3100. */
+	/* Defaults to a single switch. */
 	$swdevices = switch_get_devices();
 	if (!is_array($swdevices)) {
 		return (NULL);
@@ -130,11 +102,10 @@ function switch_get_system_vlans($dot1q_only = false) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "A37XX":
 	case "PLCC-B":
-		return (switch_plcc_get_system_vlans($dot1q_only));
-		break;
 	case "ROGUE-1":
-		return (switch_r1_get_system_vlans($dot1q_only));
+		return (switch_default_get_system_vlans($dot1q_only));
 		break;
 	case "uFW":
 		return (switch_ufw_get_system_vlans($dot1q_only));
@@ -142,6 +113,18 @@ function switch_get_system_vlans($dot1q_only = false) {
 	}
 
 	return (NULL);
+}
+
+function switch_espressobin_map_port($port) {
+
+	$ports = array("Uplink", "WAN", "LAN 1", "LAN 2");
+
+	if ($port < 0)
+		$port = 0;
+	if ($port >= count($ports))
+		$port = count($ports) - 1;
+
+	return ($ports[$port]);
 }
 
 function switch_ufw_map_port($port) {
@@ -185,6 +168,9 @@ function switch_map_port($port) {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "A37XX":
+		return (switch_espressobin_map_port($port));
+		break;
 	case "PLCC-B":
 		return (switch_plcc_map_port($port));
 		break;
@@ -207,6 +193,7 @@ function switch_get_devices() {
 		return ($swdevices);
 
 	switch ($platform['name']) {
+	case "A37XX":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
@@ -225,6 +212,9 @@ function switch_get_title() {
 		return ("");
 
 	switch ($platform['name']) {
+	case "A37XX":
+		return ("Armada 3700");
+		break;
 	case "PLCC-B":
 		return ("PLCC-B");
 		break;
@@ -343,6 +333,54 @@ function switch_set_vlan_mode($swdev = NULL, $vlanmode = NULL) {
 	return (true);
 }
 
+function espressobin_switch_initial_setup() {
+	global $config;
+
+	if (!isset($config['switches']['switch']) || !is_array($config['switches']['switch'])) {
+		unset($config['switches']['switch']);
+		$config['switches']['switch'] = array();
+	}
+
+	/* Default settings for the espressobin switch. */
+	$switches = &$config['switches']['switch'];
+	$switch = array();
+	$switch['device'] = "/dev/etherswitch0";
+	$switch['vlanmode'] = "DOT1Q";
+	$switch['vlangroups']['vlangroup'] = array();
+	$vgroup = array();
+	$vgroup['vgroup'] = "0";
+	$vgroup['vlanid'] = "1";
+	$vgroup['members'] = "0";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$vgroup = array();
+	$vgroup['vgroup'] = "1";
+	$vgroup['vlanid'] = "4090";
+	$vgroup['descr'] = "WAN";
+	$vgroup['members'] = "0t 1";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$vgroup = array();
+	$vgroup['vgroup'] = "2";
+	$vgroup['vlanid'] = "4091";
+	$vgroup['descr'] = "LAN";
+	$vgroup['members'] = "0t 2 3";
+	$switch['vlangroups']['vlangroup'][] = $vgroup;
+	$switch['swports']['swport'] = array();
+	$swport = array();
+	$swport['port'] = "1";
+	$swport['pvid'] = "4090";
+	$switch['swports']['swport'][] = $swport;
+	$swport = array();
+	$swport['port'] = "2";
+	$swport['pvid'] = "4091";
+	$switch['swports']['swport'][] = $swport;
+	$swport = array();
+	$swport['port'] = "3";
+	$swport['pvid'] = "4091";
+	$switch['swports']['swport'][] = $swport;
+	$switches[] = $switch;
+	write_config();
+}
+
 function r1_switch_initial_setup() {
 	global $config;
 
@@ -360,16 +398,25 @@ function r1_switch_initial_setup() {
 	write_config();
 }
 
-function r1_switch_configure() {
+function default_switch_configure() {
 	global $config;
 
 	$switches = $config['switches']['switch'];
 	if (!isset($switches) || !is_array($switches)) {
-		r1_switch_initial_setup();
-		return;
+		$platform = system_identify_specific_platform();
+		switch ($platform['name']) {
+		case "A37XX":
+			espressobin_switch_initial_setup();
+			break;
+		case "ROGUE-1":
+			r1_switch_initial_setup();
+			return;
+			break;
+		}
 	}
-	/* Find the SG-3100 switch settings. */
+	/* Find the default switch settings. */
 	$swid = -1;
+	$switches = $config['switches']['switch'];	/* Update our copy. Can be modified by above xxx_initial_setup(). */
 	foreach($switches as $sid => $switch) {
 		if ($switch['device'] != "/dev/etherswitch0") {
 			continue;
@@ -430,6 +477,7 @@ function switches_configure() {
 
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
+	case "A37XX":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":
@@ -442,8 +490,10 @@ function switches_configure() {
 	}
 	echo gettext("Configuring switch...");
 	switch ($platform['name']) {
+	case "A37XX":
+	case "PLCC":
 	case "ROGUE-1":
-		r1_switch_configure();
+		default_switch_configure();
 		break;
 	case "uFW":
 		break;

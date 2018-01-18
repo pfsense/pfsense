@@ -272,6 +272,7 @@ if (!isset($config['system']['webgui']['noassigninterfaces'])) {
 $platform = system_identify_specific_platform();
 
 switch ($platform['name']) {
+	case "A37XX":
 	case "PLCC-B":
 	case "ROGUE-1":
 	case "uFW":

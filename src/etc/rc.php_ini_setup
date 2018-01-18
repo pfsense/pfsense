@@ -37,11 +37,10 @@ if [ -z "$AVAILMEM" ]; then
 	AVAILMEM=`/sbin/sysctl -n hw.physmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
 fi
 
-
 # Get amount of ram installed on this system
 REALMEM=`/sbin/sysctl -n hw.realmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
-if [ -z "$REALMEM" ]; then
-	REALMEN=$AVAILMEM
+if [ -z "$REALMEM" -o "$REALMEM" == "0" ]; then
+	REALMEM=$AVAILMEM
 fi
 export REALMEM
 export LOWMEM

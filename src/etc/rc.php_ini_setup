@@ -32,14 +32,17 @@ else
 	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
 fi
 
+# Use hw.physmem if $AVAILMEM is zero
 if [ -z "$AVAILMEM" ]; then
-	MEM=`/sbin/sysctl hw.physmem | cut -d':' -f2`
-	AVAILMEM=`/bin/expr $MEM / 1048576`
+	AVAILMEM=`/sbin/sysctl -n hw.physmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
 fi
 
 
 # Get amount of ram installed on this system
-REALMEM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
+REALMEM=`/sbin/sysctl -n hw.realmem | /usr/bin/awk '{print $1/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
+if [ -z "$REALMEM" ]; then
+	REALMEN=$AVAILMEM
+fi
 export REALMEM
 export LOWMEM
 

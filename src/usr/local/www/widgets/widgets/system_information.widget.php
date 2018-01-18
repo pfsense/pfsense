@@ -264,7 +264,14 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
 					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
-				<?php if ($platform['name'] == "ROGUE-1"): ?>
+				<?php if ($platform['name'] == "A37XX"): ?>
+					<br />
+<?
+					exec("dmesg | grep CPU | grep ARM", $cpus);
+					foreach($cpus as $cpu) {
+						echo "$cpu<br>";
+					}
+				elseif ($platform['name'] == "ROGUE-1"): ?>
 					<br />
 					<?=htmlspecialchars(get_single_sysctl("hw.mv_soc_model"));?>
 				<?php endif; ?>

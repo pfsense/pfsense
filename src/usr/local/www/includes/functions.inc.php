@@ -256,6 +256,9 @@ function get_cpu_crypto_support() {
 			if (strpos($armmv, "Marvell 88F682") != 0) {
 				$cpucrypto_type = "Crypto: ". get_single_sysctl('dev.cesa.0.%desc');
 			}
+		case 'arm64':
+			$cpucrypto_type = "Crypto: (inactive)";
+			break;
 		default:
 			/* Unknown/unidentified platform */
 	}

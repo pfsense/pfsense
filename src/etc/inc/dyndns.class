@@ -697,7 +697,7 @@
 					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
-						log_error(sprintf("Sending reuquest to: %s", $apiurl));
+						log_error(sprintf("Sending request to: %s", $apiurl));
 						foreach($httphead as $hv){
 							log_error(sprintf("Header: %s", $hv));
 						}
@@ -714,7 +714,7 @@
 					$httphead = $r53->getHttpPostHeaders($this->_dnsZoneID, "us-east-1", hash("sha256",$xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
-						log_error(sprintf("Sending reuquest to: %s", $apiurl));
+						log_error(sprintf("Sending request to: %s", $apiurl));
 						foreach($httphead as $hv){
 							log_error(sprintf("Header: %s", $hv));
 						}

@@ -3,6 +3,7 @@ sysutils/pfSense-azure
 sysutils/azure-agent
 sysutils/pfSense-ec2_setup
 sysutils/pfSense-openvpn_connect_profile
+sysutils/devcpu-data
 devel/php-xdebug
 sysutils/vm-bhyve
 sysutils/flashrom

@@ -3148,6 +3148,12 @@ function filter_rules_generate() {
 	if (isset($config['syslog']['nologdefaultpass'])) {
 		$log['pass'] = "log";
 	}
+	if (isset($config['syslog']['logsnortblock']) || !isset($config['syslog']['nologdefaultblock'])) {
+		$log['snortblock'] = "log";
+	}
+	if (isset($config['syslog']['logvirusprotblock']) || !isset($config['syslog']['nologdefaultblock'])) {
+		$log['virusprotblock'] = "log";
+	}
 
 	$saved_tracker = $tracker;
 
@@ -3225,8 +3231,8 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # Snort package
-block {$log['block']} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
-block {$log['block']} quick from any to <snort2c> tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
+block {$log['snortblock']} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
+block {$log['snortblock']} quick from any to <snort2c> tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
 
 EOD;
 
@@ -3278,7 +3284,7 @@ EOD;
 	 * Support for allow limiting of TCP connections by establishment rate
 	 * Useful for protecting against sudden outbursts, etc.
 	 */
-	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
+	$ipfrules .= "block in {$log['virusprotblock']} quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;

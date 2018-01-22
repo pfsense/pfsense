@@ -2486,9 +2486,6 @@ function system_identify_specific_platform() {
 	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
 	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	switch ($product[0]) {
-		case '80300-0134-G00':
-			return (array('name' => 'PLCC-B', 'descr' => 'Netgate PLCC-B'));
-			break;
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
 			break;
@@ -2583,6 +2580,10 @@ function system_identify_specific_platform() {
 
 	$_gb = exec('/bin/kenv -q smbios.planar.product 2>/dev/null',
 	    $planar_product);
+	if (isset($planar_product[0]) &&
+	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0134') {
+		return (array('name' => 'PLCC-B', 'descr' => 'Netgate PLCC-B'));
+	}
 	if (isset($planar_product[0]) &&
 	    $planar_product[0] == 'X10SDV-8C-TLN4F+') {
 		return array('name' => 'XG-1537', 'descr' => 'Super Micro XG-1537');

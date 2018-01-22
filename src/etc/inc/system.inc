@@ -2287,6 +2287,7 @@ function system_setup_sysctl() {
 	$platform = system_identify_specific_platform();
 	switch ($platform['name']) {
 	case 'A37XX':
+	case 'DNVNANO':
 	case 'PLCC-B':
 	case 'ROGUE-1':
 	case 'uFW':
@@ -2580,6 +2581,10 @@ function system_identify_specific_platform() {
 
 	$_gb = exec('/bin/kenv -q smbios.planar.product 2>/dev/null',
 	    $planar_product);
+	if (isset($planar_product[0]) &&
+	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0138') {
+		return (array('name' => 'DNVNANO', 'descr' => 'Netgate DNVNANO'));
+	}
 	if (isset($planar_product[0]) &&
 	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0134') {
 		return (array('name' => 'PLCC-B', 'descr' => 'Netgate PLCC-B'));

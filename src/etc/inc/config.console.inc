@@ -527,6 +527,18 @@ function netgate_hardware_setup() {
 		$config['vlans']['vlan'][] = $vlan;
 		$config['interfaces']['lan']['if'] = 'mvneta0.4091';
 		break;
+	case 'DNVNANO':
+		$config['interfaces']['wan']['if'] = 'ix0';
+		$config['interfaces']['lan']['if'] = 'ix1';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'ix2',
+			'descr' => 'OPT1'
+		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'ix3',
+			'descr' => 'OPT2'
+		);
+		break;
 	case 'PLCC-B':
 		$config['interfaces']['wan']['if'] = 'ix0';
 		$config['interfaces']['lan']['if'] = 'ix2';
@@ -720,6 +732,7 @@ function netgate_hardware_setup() {
 
 	/* Enable Thermal sensors */
 	switch ($platform['name']) {
+	case 'DNVNANO':
 	case 'PLCC-B':
 	case 'RCC':
 	case 'RCC-VE':
@@ -731,6 +744,7 @@ function netgate_hardware_setup() {
 
 	/* Enable AESNI */
 	switch ($platform['name']) {
+	case 'DNVNANO':
 	case 'PLCC-B':
 	case 'RCC':
 	case 'RCC-VE':

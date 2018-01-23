@@ -229,35 +229,37 @@ function get_cpu_crypto_support() {
 	$cpucrypto_type = "";
 
 	switch ($machine) {
-		case 'amd64':
-			$cpucrypto_type = "AES-NI CPU Crypto: ";
-			exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
-			if ($cpucrypto_present[0] > 0) {
-				$cpucrypto_type .= "Yes ";
-				$cpucrypto_type .= (is_module_loaded('aesni')) ? "(active)" : "(inactive)";
-			} else {
-				$cpucrypto_type .= "No";
-			}
-		case 'arm':
-			$armplatform = get_single_sysctl('hw.platform');
-			if (in_array($armplatform, $accelerated_arm_platforms)) {
-				/* No drivers yet, so mark inactive! */
-				$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
-				break;
-			}
-			$armmv = get_single_sysctl('hw.mv_soc_model');
-			if (strpos($armmv, "Marvell 88F682") != 0) {
-				$cpucrypto_type = "Crypto: ". get_single_sysctl('dev.cesa.0.%desc');
-			}
-		default:
-			/* Unknown/unidentified platform */
+	case 'amd64':
+		$cpucrypto_type = "AES-NI CPU Crypto: ";
+		exec("/usr/bin/grep -c '  Features.*AESNI' /var/log/dmesg.boot", $cpucrypto_present);
+		if ($cpucrypto_present[0] > 0) {
+			$cpucrypto_type .= "Yes ";
+			$cpucrypto_type .= (is_module_loaded('aesni')) ? "(active)" : "(inactive)";
+		} else {
+			$cpucrypto_type .= "No";
+		}
+		break;
+	case 'arm':
+		$armplatform = get_single_sysctl('hw.platform');
+		if (in_array($armplatform, $accelerated_arm_platforms)) {
+		/* No drivers yet, so mark inactive! */
+			$cpucrypto_type = "{$armplatform} built-in CPU Crypto (inactive)";
+			break;
+		}
+		$armmv = get_single_sysctl('hw.mv_soc_model');
+		if (strpos($armmv, "Marvell 88F682") != 0) {
+			$cpucrypto_type = "Crypto: ". get_single_sysctl('dev.cesa.0.%desc');
+		}
+		break;
+	default:
+		/* Unknown/unidentified platform */
 	}
 
 	if (!empty($cpucrypto_type)) {
 		return $cpucrypto_type;
-	} else {
-		return "CPU Crypto: None/Unknown Platform";
 	}
+
+	return "CPU Crypto: None/Unknown Platform";
 }
 
 function get_cpu_count($show_detail = false) {

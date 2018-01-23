@@ -1387,7 +1387,12 @@ EOD;
 					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
 				}
 			} else {
-				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				if (isset($ph1ent['mobile'])) {
+					$ipsecfin = "\nconn con-mobile\n";
+				}
+				else {
+					$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				}
 				//if (!empty($reqids[$idx])) {
 				//	$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				//}

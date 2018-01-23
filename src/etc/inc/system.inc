@@ -2583,7 +2583,7 @@ function system_identify_specific_platform() {
 	    $planar_product);
 	if (isset($planar_product[0]) &&
 	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0138') {
-		return (array('name' => 'DNVNANO', 'descr' => 'Netgate DNVNANO'));
+		return (array('name' => 'DNVNANO', 'descr' => 'Netgate Denverton NANO'));
 	}
 	if (isset($planar_product[0]) &&
 	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0134') {

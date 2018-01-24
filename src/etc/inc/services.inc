@@ -593,9 +593,14 @@ EOD;
 			$skew = 110;
 			if (is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vipent) {
+					if ($vipent['mode'] != 'carp') {
+						continue;
+					}
 					if ($vipent['interface'] == $dhcpif) {
-						$carp_nw = gen_subnet($vipent['subnet'], $vipent['subnet_bits']);
-						if (ip_in_subnet($dhcpifconf['failover_peerip'], "{$carp_nw}/{$vipent['subnet_bits']}")) {
+						$carp_nw = gen_subnet($config['interfaces'][$dhcpif]['ipaddr'],
+						    $config['interfaces'][$dhcpif]['subnet']);
+						$carp_nw .= "/{$config['interfaces'][$dhcpif]['subnet']}";
+						if (ip_in_subnet($dhcpifconf['failover_peerip'], $carp_nw)) {
 							/* this is the interface! */
 							if (is_numeric($vipent['advskew']) && (intval($vipent['advskew']) < 20)) {
 								$skew = 0;

@@ -2511,7 +2511,7 @@ function interfaces_vips_configure($interface = "") {
 					if (substr($iface, 0, 4) == "_vip")
 						$iface = get_configured_vip_interface($vip['interface']);
 					if (($interface <> "" && $iface <> $interface) ||
-					    !isset($config['interfaces'][$iface]]['enable'])) {
+					    !isset($config['interfaces'][$iface]['enable'])) {
 						continue;
 					}
 					interface_ipalias_configure($vip);

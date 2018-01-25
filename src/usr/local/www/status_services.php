@@ -30,13 +30,13 @@ require_once("guiconfig.inc");
 require_once("service-utils.inc");
 require_once("shortcuts.inc");
 
-if ($_REQUEST['ajax']) {
-	if (isset($_REQUEST['service'])) {
+if ($_POST['ajax']) {
+	if (isset($_POST['service'])) {
 		$service_name = htmlspecialchars($_REQUEST['service']);
 	}
 
 	if (!empty($service_name)) {
-		switch ($_REQUEST['mode']) {
+		switch ($_POST['mode']) {
 			case "restartservice":
 				$savemsg = service_control_restart($service_name, $_REQUEST);
 				break;

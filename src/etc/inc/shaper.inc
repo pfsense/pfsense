@@ -1308,7 +1308,7 @@ class priq_queue {
 
 		if (isset($data['priority']) && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 0) || ($data['priority'] > 15))) {
-			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
+			$input_errors[] = gettext("The priority must be an integer between 0 and 15.");
 		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 				$input_errors[] = gettext("Queue limit must be an integer");

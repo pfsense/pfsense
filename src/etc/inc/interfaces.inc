@@ -2500,7 +2500,8 @@ function interfaces_vips_configure($interface = "") {
 			switch ($vip['mode']) {
 				case "proxyarp":
 					/* nothing it is handled on interface_proxyarp_configure() */
-					if ($interface <> "" && $vip['interface'] <> $interface) {
+					if (($interface <> "" && $vip['interface'] <> $interface) ||
+					    !isset($config['interfaces'][$vip['interface']]['enable'])) {
 						continue;
 					}
 					$anyproxyarp = true;
@@ -2509,13 +2510,15 @@ function interfaces_vips_configure($interface = "") {
 					$iface = $vip['interface'];
 					if (substr($iface, 0, 4) == "_vip")
 						$iface = get_configured_vip_interface($vip['interface']);
-					if ($interface <> "" && $iface <> $interface) {
+					if (($interface <> "" && $iface <> $interface) ||
+					    !isset($config['interfaces'][$iface]]['enable'])) {
 						continue;
 					}
 					interface_ipalias_configure($vip);
 					break;
 				case "carp":
-					if ($interface <> "" && $vip['interface'] <> $interface) {
+					if (($interface <> "" && $vip['interface'] <> $interface) ||
+					    !isset($config['interfaces'][$vip['interface']]['enable'])) {
 						continue;
 					}
 					if ($carp_setuped == false) {

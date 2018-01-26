@@ -1764,6 +1764,27 @@ function handle_pppoe_reset($post_array) {
 	}
 }
 
+function restart_ppp_interfaces_using_interfaces($triggerinterfaces) {
+	global $config;
+	$ppp_list = array();
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			$ports = explode(",", $ppp['ports']);
+			foreach($ports as $port) {
+				foreach($triggerinterfaces as $vip) {
+					if ($port == "_vip{$vip['uniqid']}") {
+						$if = convert_real_interface_to_friendly_interface_name($ppp['if']);
+						$ppp_list[$if] = 1;
+					}
+				}
+			}
+		}
+	}
+	foreach($ppp_list as $pppif => $dummy) {
+		interface_ppps_configure($pppif);
+	}
+}
+
 /*
  * This function can configure PPPoE, MLPPP (PPPoE), PPTP.
  * It writes the mpd config file to /var/etc every time the link is opened.
@@ -1817,10 +1838,17 @@ function interface_ppps_configure($interface) {
 			return 0;
 	}
 	*/
-
-	$ports = explode(',', $ppp['ports']);
-	if ($type != "modem") {
-		foreach ($ports as $pid => $port) {
+	$confports = explode(',', $ppp['ports']);
+	if ($type == "modem") {
+		$ports = $confports;
+	} else {
+		$ports = array();
+		foreach ($confports as $pid => $port) {
+			if (strstr($port, "_vip")) {
+				if (get_carp_interface_status($port) != "MASTER") {
+					continue;
+				}
+			}
 			$ports[$pid] = get_real_interface($port);
 			if (empty($ports[$pid])) {
 				return 0;
@@ -5061,7 +5089,11 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 					foreach ($config['virtualip']['vip'] as $counter => $vip) {
 						if ($vip['mode'] == "carp") {
 							if ($interface == "_vip{$vip['uniqid']}") {
-								return "{$vip['subnet']} - {$vip['descr']}";
+								$descr = $vip['subnet'];
+								if (!empty($vip['descr'])) {
+									$descr .= " - " .$vip['descr'];
+								}
+								return $descr;
 							}
 						}
 					}
@@ -6527,6 +6559,115 @@ function interface_has_dhcp($interface, $family = 4) {
 
 function remove_ifindex($ifname) {
 	return preg_replace("/[0-9]+$/", "", $ifname);
+}
+
+function get_configured_vip_list_with_descr($family = 'all', $type = VIP_ALL) {
+	$viplist = get_configured_vip_list($family, $type);
+	foreach ($viplist as $vip => $address) {
+		$interfaces[$vip] = $address;
+		if (get_vip_descr($address)) {
+			$interfaces[$vip] .= " (" . get_vip_descr($address) . ")";
+		}
+	}
+	return $interfaces;
+}
+
+function return_gateway_groups_array_with_descr() {
+	$interfaces = array();
+	$grouplist = return_gateway_groups_array();
+	foreach ($grouplist as $name => $group) {
+		if ($group[0]['vip'] != "") {
+			$vipif = $group[0]['vip'];
+		} else {
+			$vipif = $group[0]['int'];
+		}
+
+		$interfaces[$name] = "GW Group {$name}";
+	}
+	return $interfaces;
+}
+
+function get_serial_ports() {
+	$linklist = array();
+	if (!is_dir("/var/spool/lock")) {
+		mwexec("/bin/mkdir -p /var/spool/lock");
+	}	
+	$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
+	foreach ($serialports as $port) {
+		$linklist[$port] = trim($port);
+	}	
+	return $linklist;
+}
+
+function get_interface_ports() {
+	global $config;
+	$linklist = array();
+	$portlist = get_interface_list();
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			$portlist[$vlan['vlanif']] = $vlan;
+		}
+	}
+
+	foreach ($portlist as $ifn => $ifinfo) {
+		$string = "";
+		if (is_array($ifinfo)) {
+			$string .= $ifn;
+			if ($ifinfo['mac']) {
+				$string .= " ({$ifinfo['mac']})";
+			}
+			if ($ifinfo['friendly']) {
+				$string .= " - " . convert_friendly_interface_to_friendly_descr($ifinfo['friendly']);
+			} elseif ($ifinfo['descr']) {
+				$string .= " - {$ifinfo['descr']}";
+			}
+		} else {
+			$string .= $ifinfo;
+		}
+
+		$linklist[$ifn] = $string;
+	}	
+	return $linklist;
+}
+
+function build_ppps_link_list() {
+	global $pconfig;
+
+	$linklist = array('list' => array(), 'selected' => array());
+
+	if ($pconfig['type'] == 'ppp') {
+		$linklist['list'] = get_serial_ports();
+	} else {
+		$iflist = get_interface_ports();
+		
+		$viplist = get_configured_vip_list_with_descr('all', VIP_CARP);
+		$linklist['list'] = array_merge($iflist, $viplist);
+		
+		// The members of a LAGG cannot be assigned, used in VLANs, QinQ, or PPP.
+		$lagglist = get_lagg_interface_list();
+		foreach ($lagglist as $laggif => $lagg) {
+			/* LAGG members cannot be assigned */
+			$laggmembers = explode(',', $lagg['members']);
+			foreach ($laggmembers as $lagm) {
+				if (isset($linklist['list'][$lagm])) {
+					unset($linklist['list'][$lagm]);
+				}
+			}
+		}
+	}
+
+	$selected_ports = array();
+	if (is_array($pconfig['interfaces'])) {
+		$selected_ports = $pconfig['interfaces'];
+	} elseif (!empty($pconfig['interfaces'])) {
+		$selected_ports = explode(',', $pconfig['interfaces']);
+	}
+	foreach ($selected_ports as $port) {
+		if (isset($linklist['list'][$port])) {
+			array_push($linklist['selected'], $port);
+		}
+	}
+	return($linklist);
 }
 
 ?>

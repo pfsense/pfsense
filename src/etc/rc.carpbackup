@@ -53,6 +53,7 @@ foreach ($vips as $vip) {
 	notify_via_growl($notificationmsg);
 	log_error($notificationmsg);
 }
+restart_ppp_interfaces_using_interfaces($vips);
 
 /* Stop OpenVPN clients running on this VIP, since multiple active OpenVPN clients on a CARP cluster can be problematic. */
 global $config;

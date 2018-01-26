@@ -20,7 +20,7 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | all | none ]"
+	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | memstick-plcc-b | all | none ]"
 	echo "		all = iso memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
@@ -312,7 +312,7 @@ if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
-		memstickserial memstickadi ova ec2 ec2-ic azure \
+		memstickserial memstickadi memstick-plcc-b ova ec2 ec2-ic azure \
 		kvm bhyve"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
@@ -399,6 +399,9 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 		memstickadi)
 			create_memstick_adi_image
+			;;
+		memstick-plcc-b)
+			create_memstick_plccb_image
 			;;
 		ova)
 			old_custom_package_list="${custom_package_list}"

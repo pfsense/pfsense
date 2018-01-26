@@ -929,7 +929,8 @@ customize_stagearea_for_image() {
 	if [ -n "$2" ]; then
 		_default_config="$2"
 	elif [ "${_image_type}" = "memstickserial" -o \
-	     "${_image_type}" = "memstickadi" ]; then
+	     "${_image_type}" = "memstickadi" -o \
+	     "${_image_type}" = "memstick-plcc-b" ]; then
 		_default_config="default-config-serial"
 	elif [ "${_image_type}" = "ova" ]; then
 		_default_config="default-config-vmware"
@@ -950,7 +951,8 @@ customize_stagearea_for_image() {
 	if [ "${_image_type}" = "iso" -o \
 	     "${_image_type}" = "memstick" -o \
 	     "${_image_type}" = "memstickserial" -o \
-	     "${_image_type}" = "memstickadi" ]; then
+	     "${_image_type}" = "memstickadi" -o \
+	     "${_image_type}" = "memstick-plcc-b" ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
 		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
@@ -1249,6 +1251,63 @@ create_memstick_adi_image() {
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+}
+
+create_memstick_plccb_image() {
+	LOGFILE=${BUILDER_LOGS}/plcc-b.${TARGET}
+	if [ "${PLCCBPATH}" = "" ]; then
+		echo ">>> PLCCBPATH is empty skipping generation of plcc-b memstick image!" | tee -a ${LOGFILE}
+		return
+	fi
+
+	mkdir -p $(dirname ${PLCCBPATH})
+
+	customize_stagearea_for_image "plcc-b"
+	install_default_kernel ${DEFAULT_KERNEL}
+
+	echo ">>> Creating serial plcc-b to ${PLCCBPATH}." 2>&1 | tee -a ${LOGFILE}
+
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
+
+	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
+
+	# Activate serial console+video console in loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'kern.cam.boot_delay=10000' >> ${LOADERCONF}
+	echo 'boot_multicons="YES"' >> ${LOADERCONF}
+	echo 'boot_serial="YES"' >> ${LOADERCONF}
+	echo 'console="comconsole"' >> ${LOADERCONF}
+	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
+	echo 'kern.ipc.nmbclusters="1000000"' >> ${LOADERCONF}
+	echo 'kern.ipc.nmbjumbop="524288"' >> ${LOADERCONF}
+	echo 'kern.ipc.nmbjumbo9="524288"' >> ${LOADERCONF}
+	echo 'hw.usb.no_pf="1"' >> ${LOADERCONF}
+	echo 'hint.mdio.0.at="ix2"' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.addr=0' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.is8190=1' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.port0disabled=1' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.port9cpu=1' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.port10cpu=1' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.port9speed=2500' >> ${LOADERCONF}
+	echo 'hint.e6000sw.0.port10speed=2500' >> ${LOADERCONF}
+
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+
+	create_distribution_tarball
+
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${PLCCBPATH}
+
+	if [ ! -f "${PLCCBPATH}" ]; then
+		echo "ERROR! memstick serial image was not built"
+		print_error_pfS
+	fi
+
+	gzip -qf $PLCCBPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+
+	echo ">>> PLCC-B created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
 # Create pkg conf on desired place with desired arch/branch

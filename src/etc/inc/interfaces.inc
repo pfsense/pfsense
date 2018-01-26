@@ -5090,6 +5090,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 						if ($vip['mode'] == "carp") {
 							if ($interface == "_vip{$vip['uniqid']}") {
 								$descr = $vip['subnet'];
+								$descr .= " (vhid {$vip['vhid']})";
 								if (!empty($vip['descr'])) {
 									$descr .= " - " .$vip['descr'];
 								}
@@ -6565,6 +6566,12 @@ function get_configured_vip_list_with_descr($family = 'all', $type = VIP_ALL) {
 	$viplist = get_configured_vip_list($family, $type);
 	foreach ($viplist as $vip => $address) {
 		$interfaces[$vip] = $address;
+		if ($type = VIP_CARP) {
+			$vip = get_configured_vip($vipid);
+			if (isset($vip) && is_array($vip) ) {
+				$interfaces[$vipid] .= " - vhid {$vip['vhid']}";
+			}
+		}
 		if (get_vip_descr($address)) {
 			$interfaces[$vip] .= " (" . get_vip_descr($address) . ")";
 		}

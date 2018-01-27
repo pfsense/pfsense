@@ -2220,7 +2220,7 @@ snapshots_create_latest_symlink() {
 snapshots_create_sha256() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH} ${VARIANTIMAGES}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${PLCCBPATH} ${OVAPATH} ${VARIANTIMAGES}; do
 		if [ -f "${_img}.gz" ]; then
 			_img="${_img}.gz"
 		fi

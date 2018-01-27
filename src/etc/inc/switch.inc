@@ -491,7 +491,7 @@ function switches_configure() {
 	echo gettext("Configuring switch...");
 	switch ($platform['name']) {
 	case "A37XX":
-	case "PLCC":
+	case "PLCC-B":
 	case "ROGUE-1":
 		default_switch_configure();
 		break;

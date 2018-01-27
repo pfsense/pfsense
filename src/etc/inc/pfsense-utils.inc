@@ -1139,7 +1139,8 @@ function setup_serial_port($when = "save", $path = "") {
 	if ($specific_platform['name'] == 'XG-1540' ||
 	    $specific_platform['name'] == 'Turbot Dual-E') {
 		$vga_only = true;
-	} elseif ($specific_platform['name'] == 'RCC-VE' ||
+	} elseif ($specific_platform['name'] == 'PLCC-B' ||
+	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||
 	    $specific_platform['name'] == 'apu2') {
@@ -1227,6 +1228,15 @@ function setup_serial_port($when = "save", $path = "") {
 		$data[] = 'comconsole_port="0x2F8"';
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';
+	} elseif ($specific_platform['name'] == 'PLCC-B') {
+		$data[] = 'hint.mdio.0.at="ix2"';
+		$data[] = 'hint.e6000sw.0.addr=0';
+		$data[] = 'hint.e6000sw.0.is8190=1';
+		$data[] = 'hint.e6000sw.0.port0disabled=1';
+		$data[] = 'hint.e6000sw.0.port9cpu=1';
+		$data[] = 'hint.e6000sw.0.port10cpu=1';
+		$data[] = 'hint.e6000sw.0.port9speed=2500';
+		$data[] = 'hint.e6000sw.0.port10speed=2500';
 	}
 	$data[] = 'hw.usb.no_pf="1"';
 

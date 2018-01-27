@@ -930,7 +930,7 @@ customize_stagearea_for_image() {
 		_default_config="$2"
 	elif [ "${_image_type}" = "memstickserial" -o \
 	     "${_image_type}" = "memstickadi" -o \
-	     "${_image_type}" = "memstick-plcc-b" ]; then
+	     "${_image_type}" = "plcc-b" ]; then
 		_default_config="default-config-serial"
 	elif [ "${_image_type}" = "ova" ]; then
 		_default_config="default-config-vmware"
@@ -952,7 +952,7 @@ customize_stagearea_for_image() {
 	     "${_image_type}" = "memstick" -o \
 	     "${_image_type}" = "memstickserial" -o \
 	     "${_image_type}" = "memstickadi" -o \
-	     "${_image_type}" = "memstick-plcc-b" ]; then
+	     "${_image_type}" = "plcc-b" ]; then
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
 		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi

@@ -635,11 +635,27 @@
 			<bindstofield>ovpnserver->step10->protocol</bindstofield>
 			<options>
 				<option>
-					<name>UDP</name>
+					<name>UDP on IPv4 only</name>
+					<value>UDP4</value>
+				</option>
+				<option>
+					<name>UDP on IPv6 only</name>
+					<value>UDP6</value>
+				</option>
+				<option>
+					<name>TCP on IPv4 only</name>
+					<value>TCP4</value>
+				</option>
+				<option>
+					<name>TCP on IPv6 only</name>
+					<value>TCP6</value>
+				</option>
+				<option>
+					<name>UDP IPv4 and IPv6 on all interfaces (multihome)</name>
 					<value>UDP</value>
 				</option>
 				<option>
-					<name>TCP</name>
+					<name>TCP IPv4 and IPv6 on all interfaces (multihome)</name>
 					<value>TCP</value>
 				</option>
 			</options>

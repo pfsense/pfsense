@@ -1918,6 +1918,7 @@ function services_dyndns_configure($int = "") {
 			 */
 			$group_int = '';
 			$friendly_group_int = '';
+			$gwgroup_member = false;
 			if (is_array($gwgroups[$dyndns['interface']])) {
 				if (!empty($gwgroups[$dyndns['interface']][0]['vip'])) {
 					$group_int = $gwgroups[$dyndns['interface']][0]['vip'];
@@ -1926,9 +1927,14 @@ function services_dyndns_configure($int = "") {
 					$friendly_group_int =
 					    convert_real_interface_to_friendly_interface_name(
 						$group_int);
+					if (!empty($int)) {
+						$gwgroup_member =
+						    interface_gateway_group_member(get_real_interface($int),
+						    $dyndns['interface']);
+					}
 				}
 			}
-			if ((empty($int)) || ($int == $dyndns['interface']) ||
+			if ((empty($int)) || ($int == $dyndns['interface']) || $gwgroup_member ||
 			    ($int == $group_int) || ($int == $friendly_group_int)) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
@@ -2480,6 +2486,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 		 */
 		$group_int = '';
 		$friendly_group_int = '';
+		$gwgroup_member = false;
 		if (is_array($gwgroups[$dnsupdate['interface']])) {
 			if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
 				$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
@@ -2488,9 +2495,14 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 				$friendly_group_int =
 				    convert_real_interface_to_friendly_interface_name(
 					$group_int);
+				if (!empty($int)) {
+					$gwgroup_member =
+					    interface_gateway_group_member(get_real_interface($int),
+					    $dnsupdate['interface']);
+				}
 			}
 		}
-		if (!empty($int) && ($int != $dnsupdate['interface']) &&
+		if (!empty($int) && ($int != $dnsupdate['interface']) && !$gwgroup_member &&
 		    ($int != $group_int) && ($int != $friendly_group_int)) {
 			continue;
 		}

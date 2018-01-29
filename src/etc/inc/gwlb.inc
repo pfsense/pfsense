@@ -1330,7 +1330,7 @@ function validate_address_family($ipaddr, $gwname, $disabled = false) {
 }
 
 /* check if a interface is part of a gateway group */
-function interface_gateway_group_member($interface) {
+function interface_gateway_group_member($interface, $gwgroup_name = "") {
 	global $config;
 
 	if (is_array($config['gateways']['gateway_group'])) {
@@ -1345,7 +1345,8 @@ function interface_gateway_group_member($interface) {
 			foreach ($group['item'] as $item) {
 				$elements = explode("|", $item);
 				$gwname = $elements[0];
-				if ($interface == $gateways_arr[$gwname]['interface']) {
+				if ($interface == $gateways_arr[$gwname]['interface'] &&
+				    (empty($gwgroup_name) || $gwgroup_name == $group['name'])) {
 					unset($gateways_arr);
 					return true;
 				}

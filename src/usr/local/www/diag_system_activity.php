@@ -32,6 +32,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("System Activity"));
 
 if ($_REQUEST['getactivity']) {
 	$text = `/usr/bin/top -aHS | /usr/bin/cut -c1-105`;
+	header('Content-Type: text/plain; charset=UTF-8');
 	echo $text;
 	exit;
 }
@@ -69,7 +70,7 @@ events.push(function() {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#xhrOutput').html(response);
+			$('#xhrOutput').text(response);
 			ajaxbusy = false;
 		});
 

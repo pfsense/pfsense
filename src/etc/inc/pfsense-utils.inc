@@ -1140,6 +1140,7 @@ function setup_serial_port($when = "save", $path = "") {
 	    $specific_platform['name'] == 'Turbot Dual-E') {
 		$vga_only = true;
 	} elseif ($specific_platform['name'] == 'PLCC-B' ||
+	    $specific_platform['name'] == 'DNVNANO' ||
 	    $specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
 	    $specific_platform['name'] == 'RCC-DFF' ||

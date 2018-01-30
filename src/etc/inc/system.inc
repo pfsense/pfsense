@@ -2587,7 +2587,7 @@ function system_identify_specific_platform() {
 	}
 	if (isset($planar_product[0]) &&
 	    substr($planar_product[0], 0, strrpos($planar_product[0], '-')) == '80300-0134') {
-		return (array('name' => 'PLCC-B', 'descr' => 'Netgate PLCC-B'));
+		return (array('name' => 'PLCC-B', 'descr' => 'Netgate XG-7100'));
 	}
 	if (isset($planar_product[0]) &&
 	    $planar_product[0] == 'X10SDV-8C-TLN4F+') {

@@ -216,7 +216,7 @@ function switch_get_title() {
 		return ("Armada 3700");
 		break;
 	case "PLCC-B":
-		return ("PLCC-B");
+		return ("XG-7100");
 		break;
 	case "ROGUE-1":
 		return ("SG-3100");

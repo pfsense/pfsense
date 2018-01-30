@@ -412,6 +412,8 @@ function default_switch_configure() {
 			r1_switch_initial_setup();
 			return;
 			break;
+		default:
+			return;
 		}
 	}
 	/* Find the default switch settings. */

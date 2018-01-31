@@ -35,7 +35,7 @@ if [ -f /var/log/dmesg.boot ]; then
 fi
 
 # Check for different HZ
-HZ=`/sbin/sysctl -n kern.hz`
+HZ=`/sbin/sysctl -qn kern.hz`
 if [ "$HZ" = "1" ]; then
 	NOTELENGTH="10"
 fi

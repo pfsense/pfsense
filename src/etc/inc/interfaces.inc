@@ -2823,6 +2823,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	}
 	$ifconfig = "/sbin/ifconfig";
 	$sysctl = "/sbin/sysctl";
+	$sysctl_args = "-q";
 	$killall = "/usr/bin/killall";
 
 	/* Set all wireless ifconfig variables (split up to get rid of needed checking) */
@@ -3068,7 +3069,7 @@ EOD;
 	if (!empty($wl_sysctl)) {
 		fwrite($fd_set, "# sysctls for {$baseif}\n");
 		foreach ($wl_sysctl as $wl_sysctl_line) {
-			fwrite($fd_set, "{$sysctl} {$wl_sysctl_prefix}.{$wl_sysctl_line}\n");
+			fwrite($fd_set, "{$sysctl} ${sysctl_args} {$wl_sysctl_prefix}.{$wl_sysctl_line}\n");
 		}
 	}
 

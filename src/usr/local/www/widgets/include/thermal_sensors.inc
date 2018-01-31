@@ -30,7 +30,7 @@ $thermal_sensors_allow_multiple_widget_copies = true;
 //NOTE: depends on proper config in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 function getThermalSensorsData() {
 
-	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;
 	});

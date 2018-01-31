@@ -33,13 +33,13 @@ else
 fi
 
 if [ -z "$AVAILMEM" ]; then
-	MEM=`/sbin/sysctl hw.physmem | cut -d':' -f2`
+	MEM=`/sbin/sysctl -q hw.physmem | cut -d':' -f2`
 	AVAILMEM=`/bin/expr $MEM / 1048576`
 fi
 
 
 # Get amount of ram installed on this system
-REALMEM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
+REALMEM=`/sbin/sysctl -q hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/awk -F '.' '{print $1}'`
 export REALMEM
 export LOWMEM
 

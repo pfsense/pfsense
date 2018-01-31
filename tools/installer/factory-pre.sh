@@ -73,7 +73,7 @@ if [ ! -f /tmp/buildroom ]; then
 	exit 0
 fi
 
-disks=$(sysctl -n kern.disks)
+disks=$(sysctl -qn kern.disks)
 
 d1="1"
 d2="2"

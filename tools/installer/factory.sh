@@ -121,8 +121,8 @@ get_cur_model() {
 
 	local _product=$(kenv -q smbios.system.product 2>/dev/null)
 	local _planar_product=$(kenv -q smbios.planar.product 2>/dev/null)
-	local _hw_model=$(sysctl -b hw.model)
-	local _hw_ncpu=$(sysctl -n hw.ncpu)
+	local _hw_model=$(sysctl -qb hw.model)
+	local _hw_ncpu=$(sysctl -qn hw.ncpu)
 	local _boardpn=""
 
 	case "${_product}" in
@@ -178,7 +178,7 @@ get_cur_model() {
 		fi
 	fi
 
-	_ti_soc_model=$(sysctl -n hw.ti_soc_model)
+	_ti_soc_model=$(sysctl -qn hw.ti_soc_model)
 	if [ -n "${_ti_soc_model}" ]; then
 		/sbin/ifconfig cpsw0 >/dev/null 2>&1
 		if [ $? -eq 0 ]; then
@@ -348,7 +348,7 @@ wan_mac=$(get_if_mac ${wan_if})
 
 if [ "${selected_model}" != "SG-1000" ]; then
 	# Get WLAN mac address
-	wlan_devices=$(sysctl -n net.wlan.devices)
+	wlan_devices=$(sysctl -qn net.wlan.devices)
 	if [ -n "${wlan_devices}" ]; then
 		if ! does_if_exist wlan0; then
 			wlan_dev=$(echo "${wlan_devices}" | awk '{ print $1 }')

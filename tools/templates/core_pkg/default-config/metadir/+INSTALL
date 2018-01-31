@@ -29,7 +29,7 @@ if [ "${FLAVOR##-}" = "ec2" ]; then
 
 	if ! grep -q 'if_ena_load="YES"' /boot/loader.conf && \
 	   ! grep -q 'if_ena_load="YES"' /boot/loader.conf.local; then
-		echo 'if_ena_load="YES"' >> /boot/loader.conf.local
+		echo 'if_ena_load="YES"' >> /boot/loader.conf
 	fi
 fi
 

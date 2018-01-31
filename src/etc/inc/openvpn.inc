@@ -1957,7 +1957,11 @@ function openvpn_create_dirs() {
 
 function openvpn_get_interface_ip($ip, $cidr) {
 	$subnet = gen_subnetv4($ip, $cidr);
-	$ip1 = ip_after($subnet);
+	if ($cidr == 31) {
+		$ip1 = $subnet;
+	} else {
+		$ip1 = ip_after($subnet);
+	}
 	$ip2 = ip_after($ip1);
 	return array($ip1, $ip2);
 }
@@ -1967,6 +1971,9 @@ function openvpn_get_interface_ipv6($ipv6, $prefix) {
 	// Is there a better way to do this math?
 	$ipv6_arr = explode(':', $basev6);
 	$last = hexdec(array_pop($ipv6_arr));
+	if ($prefix == 127) {
+		$last--;
+	}
 	$ipv6_1 = text_to_compressed_ip6(implode(':', $ipv6_arr) . ':' . dechex($last + 1));
 	$ipv6_2 = text_to_compressed_ip6(implode(':', $ipv6_arr) . ':' . dechex($last + 2));
 	return array($ipv6_1, $ipv6_2);
@@ -1986,7 +1993,7 @@ function openvpn_clear_route($mode, $settings) {
 			break;
 		case 'p2p_tls':
 		case 'p2p_shared_key':
-			if ($cidr == 30) {
+			if ($cidr >= 30) {
 				$clear_route = true;
 			}
 			break;

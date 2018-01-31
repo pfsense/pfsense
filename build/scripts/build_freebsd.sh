@@ -95,7 +95,7 @@ done
 [ ! -f ${srcdir}/sys/sys/param.h ] \
 	&& err "Source directory is missing sys/sys/param.h"
 
-ncpu=$(sysctl -n hw.ncpu)
+ncpu=$(sysctl -qn hw.ncpu)
 njobs=$((ncpu*2))
 j="-j${njobs}"
 

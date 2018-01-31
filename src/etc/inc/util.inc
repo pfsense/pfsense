@@ -2031,7 +2031,7 @@ function get_sysctl($names) {
 		$name_list = array(escapeshellarg($names));
 	}
 
-	exec("/sbin/sysctl -i " . implode(" ", $name_list), $output);
+	exec("/sbin/sysctl -iq " . implode(" ", $name_list), $output);
 	$values = array();
 	foreach ($output as $line) {
 		$line = explode(": ", $line, 2);
@@ -2076,12 +2076,12 @@ function set_sysctl($values) {
 		$value_list[] = escapeshellarg($key) . "=" . escapeshellarg($value);
 	}
 
-	exec("/sbin/sysctl -i " . implode(" ", $value_list), $output, $success);
+	exec("/sbin/sysctl -iq " . implode(" ", $value_list), $output, $success);
 
 	/* Retry individually if failed (one or more read-only) */
 	if ($success <> 0 && count($value_list) > 1) {
 		foreach ($value_list as $value) {
-			exec("/sbin/sysctl -i " . $value, $output);
+			exec("/sbin/sysctl -iq " . $value, $output);
 		}
 	}
 

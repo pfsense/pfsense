@@ -26,7 +26,7 @@ require_once("guiconfig.inc");
 //called by showThermalSensorsData() (jQuery Ajax call) in thermal_sensors.js
 if (isset($_REQUEST["getThermalSensorsData"])) {
 
-	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$_gb = exec("/sbin/sysctl -aq | grep temperature", $dfout);
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;
 	});

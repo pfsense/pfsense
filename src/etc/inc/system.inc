@@ -59,7 +59,7 @@ function get_default_sysctl_value($id) {
 
 function get_sysctl_descr($sysctl) {
 	unset($output);
-	$_gb = exec("/sbin/sysctl -nd {$sysctl}", $output);
+	$_gb = exec("/sbin/sysctl -qnd {$sysctl}", $output);
 
 	return $output[0];
 }

@@ -169,6 +169,10 @@ get_cur_model() {
 
 	if [ "${_planar_product}" = 'X10SDV-8C-TLN4F+' ]; then
 		_cur_model="XG-1537"
+	elif [ "${_planar_product%-*}" == "80300-0134" ]; then
+		_cur_model="XG-7100"
+	elif [ "${_planar_product%-*}" == "80300-0138" ]; then
+		_cur_model="DNVNANO"
 	fi
 
 	if [ "${machine_arch}" == "armv6" -a -f /usr/local/sbin/u-boot-env ]; then
@@ -193,11 +197,16 @@ machine_arch=$(uname -p)
 
 unset selected_model
 cur_model=$(get_cur_model)
+if [ -z "${cur_model}" ]; then
+	echo "Unsupported platform"
+	exit 1
+fi
 
 # Try to read serial
 unset is_arm
 unset is_adi
-unset is_turbot
+unset vga_only
+unset serial_only
 if [ "${cur_model}" == "SG-1000" ]; then
 	is_arm=1
 	dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16
@@ -218,9 +227,12 @@ elif [ "${machine_arch}" == "amd64" ]; then
 		"Minnowboard Turbot D0 PLATFORM")
 			serial=$(ifconfig igb0 | sed -n \
 			    '/hwaddr / { s,^.*hwaddr *,,; s,:,,g; p; }')
-			is_turbot=1
+			vga_only=1
 			;;
 	esac
+	if [ "${cur_model}" == "XG-7100" ]; then
+		serial_only=1
+	fi
 else
 	echo "Unsupported platform"
 	exit 1
@@ -273,29 +285,45 @@ if [ -z "${selected_model}" ]; then
 	exec 3>&-
 fi
 
-if [ "${machine_arch}" != "armv6" ]; then
-	if [ -n "${is_turbot}" ]; then
-		echo 'console="vidconsole"' > /tmp/loader.conf.pfSense
+if [ "${machine_arch}" == "amd64" ]; then
+	_loaderconf=/tmp/loader.conf.pfSense
+	echo 'autoboot_delay="3"' > ${_loaderconf}
+	echo 'kern.ipc.nmbclusters="1000000"' >> ${_loaderconf}
+	echo 'kern.ipc.nmbjumbop="524288"' >> ${_loaderconf}
+	echo 'kern.ipc.nmbjumbo9="524288"' >> ${_loaderconf}
+	echo 'hw.usb.no_pf="1"' >> ${_loaderconf}
+
+	if [ -n "${vga_only}" ]; then
+		echo 'console="vidconsole"' >> ${_loaderconf}
 	else
-		echo 'boot_serial="YES"' > /tmp/loader.conf.pfSense
-		if [ -n "${is_adi}" ]; then
+		echo 'boot_serial="YES"' >> ${_loaderconf}
+		if [ -n "${serial_only}" ]; then
 			echo "-S115200 -h" > /tmp/boot.config
-			echo 'console="comconsole"' >> /tmp/loader.conf.pfSense
-			echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
-			echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
-			echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
-			echo 'kern.cam.boot_delay="10000"' >> /tmp/loader.conf.local.pfSense
+			echo 'console="comconsole"' >> ${_loaderconf}
+		elif [ -n "${is_adi}" ]; then
+			echo "-S115200 -h" > /tmp/boot.config
+			echo 'console="comconsole"' >> ${_loaderconf}
+			echo 'comconsole_port="0x2F8"' >> ${_loaderconf}
+			echo 'hint.uart.0.flags="0x00"' >> ${_loaderconf}
+			echo 'hint.uart.1.flags="0x10"' >> ${_loaderconf}
 		else
 			echo "-S115200 -D" > /tmp/boot.config
-			echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense
-			echo 'console="comconsole,vidconsole"' >> /tmp/loader.conf.pfSense
+			echo 'boot_multicons="YES"' >> ${_loaderconf}
+			echo 'console="comconsole,vidconsole"' >> ${_loaderconf}
 		fi
-		echo 'comconsole_speed="115200"' >> /tmp/loader.conf.pfSense
+		echo 'comconsole_speed="115200"' >> ${_loaderconf}
 	fi
-	echo 'kern.ipc.nmbclusters="1000000"' >> /tmp/loader.conf.pfSense
-	echo 'kern.ipc.nmbjumbop="524288"' >> /tmp/loader.conf.pfSense
-	echo 'kern.ipc.nmbjumbo9="524288"' >> /tmp/loader.conf.pfSense
-	echo 'hw.usb.no_pf="1"' >> /tmp/loader.conf.pfSense
+
+	if [ "${cur_model}" == "XG-7100" ]; then
+		echo 'hint.mdio.0.at="ix2"' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.addr=0' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.is8190=1' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.port0disabled=1' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.port9cpu=1' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.port10cpu=1' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.port9speed=2500' >> ${_loaderconf}
+		echo 'hint.e6000sw.0.port10speed=2500' >> ${_loaderconf}
+	fi
 fi
 
 if [ ! -f /tmp/buildroom ]; then

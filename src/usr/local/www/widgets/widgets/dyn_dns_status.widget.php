@@ -20,7 +20,6 @@
  * limitations under the License.
  */
 
-$nocsrf = true;
 global $dyndns_split_domain_types;
 
 require_once("guiconfig.inc");

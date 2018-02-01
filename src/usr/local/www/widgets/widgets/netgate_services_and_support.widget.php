@@ -30,7 +30,6 @@
 
 require_once("guiconfig.inc");
 
-$nocsrf = true;
 $supportfile = "/var/db/support.json";
 $idfile = "/var/db/uniqueid";
 $FQDN = "https://ews.netgate.com/support";

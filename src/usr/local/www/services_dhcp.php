@@ -201,6 +201,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 	$pconfig['statsgraph'] = $dhcpdconf['statsgraph'];
+	$pconfig['ddnsclientupdates'] = $dhcpdconf['ddnsclientupdates'];
 }
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
@@ -585,6 +586,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
+		$dhcpdconf['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
 		unset($dhcpdconf['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -1145,6 +1147,19 @@ $section->addInput(new Form_Input(
 	$pconfig['ddnsdomainkey']
 ))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
+$section->addInput(new Form_Select(
+	'ddnsclientupdates',
+	'DDNS Client Updates',
+	$pconfig['ddnsclientupdates'],
+	array(
+	    'allow' => gettext('Allow'),
+	    'deny' => gettext('Deny'),
+	    'ignore' => gettext('Ignore'))
+))->setHelp('How Forward entries are handled when client indicates they wish to update DNS.  ' .
+	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
+	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
+	    'update and the client can also attempt the update usually using a different domain name.');
+
 // Advanced MAC
 $btnadv = new Form_Button(
 	'btnadvmac',
@@ -1535,8 +1550,14 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkeyalgorithm']) && empty($pconfig['ddnsdomainkey'])) {
+			if (!$pconfig['ddnsupdate'] &&
+				!$pconfig['ddnsforcehostname'] &&
+				empty($pconfig['ddnsdomain']) &&
+				empty($pconfig['ddnsdomainprimary']) &&
+			    empty($pconfig['ddnsdomainkeyname']) &&
+			    empty($pconfig['ddnsdomainkeyalgorithm']) &&
+			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
+			    empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
 				$showadv = true;
@@ -1555,6 +1576,7 @@ events.push(function() {
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkeyalgorithm', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);
+		hideInput('ddnsclientupdates', !showadvdns);
 
 		if (showadvdns) {
 			text = "<?=gettext('Hide Advanced');?>";

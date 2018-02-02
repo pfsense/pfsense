@@ -693,6 +693,14 @@ EOPP;
 				$newzone['domain-name'] = $config['system']['domain'];
 			}
 
+			if (empty($dhcpifconf['ddnsclientupdates'])) {
+				$ddnsclientupdates = 'allow';
+			} else {
+				$ddnsclientupdates = $dhcpifconf['ddnsclientupdates'];
+			}
+
+			$dnscfg .= "	{$ddnsclientupdates} client-updates;\n";
+
 			$revsubnet = array_reverse(explode('.',$subnet));
 
 			/* Take care of full classes first */
@@ -2209,18 +2217,18 @@ function services_unbound_configure($restart_dhcp = true) {
 			$wanif = get_real_interface("wan", "inet6");
 			if (platform_booting()) {
 				for ($i=1; $i <= 10; $i++) {
-					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) { 
+					if (!file_exists("/tmp/{$wanif}_dhcp6_complete")) {
 						log_error(gettext("Unbound start waiting on dhcp6c."));
 						sleep(1);
 					} else {
 						unlink_if_exists("/tmp/{$wanif}_dhcp6_complete");
 						log_error(gettext("dhcp6 init complete. Continuing"));
 						break;
-					}						
+					}
 				}
 			}
 		}
-		
+
 		sync_unbound_service();
 		if (platform_booting()) {
 			log_error(gettext("sync unbound done."));

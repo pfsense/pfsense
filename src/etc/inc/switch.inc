@@ -117,7 +117,7 @@ function switch_get_system_vlans($dot1q_only = false) {
 
 function switch_espressobin_map_port($port) {
 
-	$ports = array("Uplink", "WAN", "LAN 1", "LAN 2");
+	$ports = array("LAN Uplink", "WAN", "LAN 1", "LAN 2");
 
 	if ($port < 0)
 		$port = 0;

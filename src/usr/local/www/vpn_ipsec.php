@@ -252,6 +252,7 @@ if (is_subsystem_dirty('ipsec')) {
 						<th><?=gettext("Mode")?></th>
 						<th><?=gettext("P1 Protocol")?></th>
 						<th><?=gettext("P1 Transforms")?></th>
+						<th><?=gettext("P1 DH-Group")?></th>
 						<th><?=gettext("P1 Description")?></th>
 						<th><?=gettext("Actions")?></th>
 					</tr>
@@ -334,19 +335,47 @@ $i = 0; foreach ($a_phase1 as $ph1ent):
 					<?=$spane?>
 				</td>
 				<td id="frd<?=$i?>">
-					<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name']?>
 <?php
-			if ($ph1ent['encryption-algorithm']['keylen']) {
-				if ($ph1ent['encryption-algorithm']['keylen'] == "auto") {
-					echo " (" . gettext("auto") . ")";
-				} else {
-					echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+				$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo $p1_ealgos[$p1algo['encryption-algorithm']['name']]['name'];
+						if ($p1algo['encryption-algorithm']['keylen']) {
+							echo " ({$p1algo['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+						}
+						$first = false;
+					}
 				}
-			}
 ?>
 						</td>
 						<td>
-							<?=$p1_halgos[$ph1ent['hash-algorithm']]?>
+<?php			$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo $p1_halgos[$p1algo['hash-algorithm']];
+						$first = false;
+					}
+				}
+				?>
+						</td>
+						<td>
+<?php			$first = true;
+				if (is_array($ph1ent['encryption']['item'])) {
+					foreach($ph1ent['encryption']['item'] as $p1algo) {
+						if (!$first) {
+							echo "<br/>";
+						}
+						echo str_replace(" ","&nbsp;",$p1_dhgroups[$p1algo['dhgroup']]);
+						$first = false;
+					}
+				}
+				?>
 						</td>
 						<td>
 							<?=htmlspecialchars($ph1ent['descr'])?>

@@ -5490,4 +5490,23 @@ function additional_config_upgrade() {
 	global $config;
 }
 
+/* IPsec Phase1 now supports multiple authentication ciphers to be specified from the webgui.
+ * This is usefull for mobile users using different OS's supporting different ciphers.
+ */
+function upgrade_173_to_174() {
+	global $config;
+	if (is_array($config['ipsec']['phase1'])) {
+		$a_phase1 = &$config['ipsec']['phase1'];
+		foreach($a_phase1 as &$phase1) {
+			$item = array();
+			$item['encryption-algorithm'] = $phase1['encryption-algorithm'];
+			$item['hash-algorithm'] = $phase1['hash-algorithm'];
+			$item['dhgroup'] = $phase1['dhgroup'];
+			$phase1['encryption']['item'][] = $item;	
+			unset($phase1['encryption-algorithm']);
+			unset($phase1['hash-algorithm']);
+			unset($phase1['dhgroup']);
+		}
+	}
+}
 ?>

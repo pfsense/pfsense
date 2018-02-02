@@ -303,6 +303,13 @@ tr.disabled a {
     border-bottom: none;
 }
 
+.form-listitem {
+	border-top: 3px solid #E0E0E0;
+}
+.form-listitem:first-child {
+	border-top: none;
+}
+
 .input-group-addon {
     padding: 0 12px;
 }
